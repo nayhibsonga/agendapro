@@ -1,0 +1,19 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  name: MyString
+  web_address: MyString
+  logo: MyString
+  pay_due: 1.5
+  economic_sector_id: 1
+  plan_id: 1
+  payment_status_id: 1
+
+two:
+  name: MyString
+  web_address: MyString
+  logo: MyString
+  pay_due: 1.5
+  economic_sector_id: 1
+  plan_id: 1
+  payment_status_id: 1

@@ -1,0 +1,13 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  signature: MyText
+  email: false
+  sms: false
+  company_id: 1
+
+two:
+  signature: MyText
+  email: false
+  sms: false
+  company_id: 1

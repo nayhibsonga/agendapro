@@ -1,0 +1,13 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  open: 2013-12-09 17:05:16
+  close: 2013-12-09 17:05:16
+  location_id: 1
+  day_id: 1
+
+two:
+  open: 2013-12-09 17:05:16
+  close: 2013-12-09 17:05:16
+  location_id: 1
+  day_id: 1

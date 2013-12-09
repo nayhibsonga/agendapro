@@ -1,0 +1,23 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  name: MyString
+  price: 1.5
+  duration: 1
+  description: MyText
+  group_service: false
+  capacity: 1
+  waiting_list: false
+  company_id: 1
+  tag_id: 1
+
+two:
+  name: MyString
+  price: 1.5
+  duration: 1
+  description: MyText
+  group_service: false
+  capacity: 1
+  waiting_list: false
+  company_id: 1
+  tag_id: 1
