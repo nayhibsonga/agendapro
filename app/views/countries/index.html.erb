@@ -1,9 +1,8 @@
-<h1>Listing countries</h1>
+<h1>Países</h1>
 
 <table>
   <thead>
     <tr>
-      <th>Nombre</th>
       <th></th>
       <th></th>
       <th></th>
@@ -13,10 +12,9 @@
   <tbody>
     <% @countries.each do |country| %>
       <tr>
-        <td><%= country.name %></td>
-        <td><%= link_to 'Show', country %></td>
-        <td><%= link_to 'Edit', edit_country_path(country) %></td>
-        <td><%= link_to 'Destroy', country, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+        <td><%= link_to country.name, country %></td>
+        <td><%= link_to 'Editar', edit_country_path(country) %></td>
+        <td><%= link_to 'Eliminar', country, method: :delete, data: { confirm: 'Estás seguro?' } %></td>
       </tr>
     <% end %>
   </tbody>
@@ -24,4 +22,4 @@
 
 <br>
 
-<%= link_to 'New Country', new_country_path %>
+<%= link_to 'Nuevo País', new_country_path %>

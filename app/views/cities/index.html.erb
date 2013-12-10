@@ -1,4 +1,4 @@
-<h1>Listing cities</h1>
+<h1>Ciudades</h1>
 
 <table>
   <thead>
@@ -12,9 +12,9 @@
   <tbody>
     <% @cities.each do |city| %>
       <tr>
-        <td><%= link_to 'Show', city %></td>
-        <td><%= link_to 'Edit', edit_city_path(city) %></td>
-        <td><%= link_to 'Destroy', city, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+        <td><%= link_to city.name, city %></td>
+        <td><%= link_to 'Editar', edit_city_path(city) %></td>
+        <td><%= link_to 'Eliminar', city, method: :delete, data: { confirm: 'Estás seguro?' } %></td>
       </tr>
     <% end %>
   </tbody>
@@ -22,4 +22,4 @@
 
 <br>
 
-<%= link_to 'New City', new_city_path %>
+<%= link_to 'Nueva Ciudad', new_city_path %>

@@ -10,6 +10,7 @@ class DistrictsController < ApplicationController
   # GET /districts/1
   # GET /districts/1.json
   def show
+    @city = City.find(@district.city_id)
   end
 
   # GET /districts/new
@@ -28,7 +29,7 @@ class DistrictsController < ApplicationController
 
     respond_to do |format|
       if @district.save
-        format.html { redirect_to @district, notice: 'District was successfully created.' }
+        format.html { redirect_to @district, notice: 'La comuna fue creada exitosamente.' }
         format.json { render action: 'show', status: :created, location: @district }
       else
         format.html { render action: 'new' }
@@ -42,7 +43,7 @@ class DistrictsController < ApplicationController
   def update
     respond_to do |format|
       if @district.update(district_params)
-        format.html { redirect_to @district, notice: 'District was successfully updated.' }
+        format.html { redirect_to @district, notice: 'La comuna fue actualizada exitosamente.' }
         format.json { head :no_content }
       else
         format.html { render action: 'edit' }
@@ -69,6 +70,6 @@ class DistrictsController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def district_params
-      params[:district]
+      params.require(:district).permit(:name, :city_id)
     end
 end
