@@ -1,7 +1,7 @@
-<%= form_for(@region) do |f| %>
+<%= simple_form_for(@region) do |f| %>
   <% if @region.errors.any? %>
     <div id="error_explanation">
-      <h2><%= pluralize(@region.errors.count, "error") %> prohibited this region from being saved:</h2>
+      <h2><%= pluralize(@region.errors.count, "error") %> no permitió que la región se creara:</h2>
 
       <ul>
       <% @region.errors.full_messages.each do |msg| %>
@@ -10,6 +10,11 @@
       </ul>
     </div>
   <% end %>
+
+  <%= f.label :name %>:
+  <%= f.text_field :name %><br />
+
+  <%= f.association :country %><br />
 
   <div class="actions">
     <%= f.submit %>

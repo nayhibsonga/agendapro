@@ -10,6 +10,7 @@ class RegionsController < ApplicationController
   # GET /regions/1
   # GET /regions/1.json
   def show
+    @country = Country.find(@region.country_id)
   end
 
   # GET /regions/new
@@ -28,7 +29,7 @@ class RegionsController < ApplicationController
 
     respond_to do |format|
       if @region.save
-        format.html { redirect_to @region, notice: 'Region was successfully created.' }
+        format.html { redirect_to @region, notice: 'La región fue creada exitosamente.' }
         format.json { render action: 'show', status: :created, location: @region }
       else
         format.html { render action: 'new' }
@@ -42,7 +43,7 @@ class RegionsController < ApplicationController
   def update
     respond_to do |format|
       if @region.update(region_params)
-        format.html { redirect_to @region, notice: 'Region was successfully updated.' }
+        format.html { redirect_to @region, notice: 'La región fue actualizada exitosamente.' }
         format.json { head :no_content }
       else
         format.html { render action: 'edit' }
@@ -69,6 +70,6 @@ class RegionsController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def region_params
-      params[:region]
+      params.require(:region).permit(:name, :country_id)
     end
 end

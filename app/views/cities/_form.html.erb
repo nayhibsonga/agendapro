@@ -11,6 +11,11 @@
     </div>
   <% end %>
 
+  <%= f.label :name %>:
+  <%= f.text_field :name %><br />
+
+  <%= f.association :region %><br />
+
   <div class="actions">
     <%= f.submit %>
   </div>

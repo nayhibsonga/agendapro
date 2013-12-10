@@ -10,6 +10,7 @@ class CitiesController < ApplicationController
   # GET /cities/1
   # GET /cities/1.json
   def show
+    @region = Region.find(@city.region_id)
   end
 
   # GET /cities/new
@@ -28,7 +29,7 @@ class CitiesController < ApplicationController
 
     respond_to do |format|
       if @city.save
-        format.html { redirect_to @city, notice: 'City was successfully created.' }
+        format.html { redirect_to @city, notice: 'La ciudad fue creada exitosamente.' }
         format.json { render action: 'show', status: :created, location: @city }
       else
         format.html { render action: 'new' }
@@ -42,7 +43,7 @@ class CitiesController < ApplicationController
   def update
     respond_to do |format|
       if @city.update(city_params)
-        format.html { redirect_to @city, notice: 'City was successfully updated.' }
+        format.html { redirect_to @city, notice: 'La ciudad fue creada exitosamente.' }
         format.json { head :no_content }
       else
         format.html { render action: 'edit' }
@@ -69,6 +70,6 @@ class CitiesController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def city_params
-      params[:city]
+      params.require(:city).permit(:name, :region_id)
     end
 end

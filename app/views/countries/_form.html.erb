@@ -1,7 +1,7 @@
-<%= form_for(@country) do |f| %>
+<%= simple_form_for(@country) do |f| %>
   <% if @country.errors.any? %>
     <div id="error_explanation">
-      <h2><%= pluralize(@country.errors.count, "error") %> prohibited this country from being saved:</h2>
+      <h2><%= pluralize(@country.errors.count, "error") %> no permitió que el país se creara:</h2>
 
       <ul>
       <% @country.errors.full_messages.each do |msg| %>
