@@ -42,6 +42,7 @@ ActiveRecord::Schema.define(version: 20131209204752) do
 
   create_table "cities", force: true do |t|
     t.string   "name"
+    t.integer  "region_id"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
@@ -81,6 +82,7 @@ ActiveRecord::Schema.define(version: 20131209204752) do
 
   create_table "districts", force: true do |t|
     t.string   "name"
+    t.integer  "city_id"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
@@ -106,9 +108,6 @@ ActiveRecord::Schema.define(version: 20131209204752) do
     t.string   "phone"
     t.float    "latitude"
     t.float    "longitude"
-    t.integer  "country_id"
-    t.integer  "region_id"
-    t.integer  "city_id"
     t.integer  "district_id"
     t.integer  "company_id"
     t.datetime "created_at"
@@ -151,6 +150,7 @@ ActiveRecord::Schema.define(version: 20131209204752) do
 
   create_table "regions", force: true do |t|
     t.string   "name"
+    t.integer  "country_id"
     t.datetime "created_at"
     t.datetime "updated_at"
   end

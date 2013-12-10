@@ -1,7 +1,5 @@
 class Location < ActiveRecord::Base
-	belongs_to :country
-	belongs_to :region
-	belongs_to :city
+
 	belongs_to :district
 	belongs_to :company
 
