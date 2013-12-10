@@ -49,7 +49,7 @@ end
 #gem 'validates_email_format_of'
 
 #Formularios simples
-#gem 'simple_form'
+gem 'simple_form'
 
 #Por si queremos generar breadcrums fácilmente
 #gem "breadcrumbs_on_rails"

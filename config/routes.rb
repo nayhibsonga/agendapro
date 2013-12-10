@@ -1,4 +1,22 @@
 Agendapro::Application.routes.draw do
+
+  resources :countries
+  resources :regions
+  resources :cities
+  resources :districts
+
+
+
+  resources :tags
+  resources :statuses
+  resources :economic_sectors
+  resources :company_settings
+
+  resources :companies
+  resources :locations
+  resources :services
+  resources :promotions
+
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".
 
