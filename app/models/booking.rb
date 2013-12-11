@@ -5,5 +5,5 @@ class Booking < ActiveRecord::Base
 	belongs_to :location
 	belongs_to :promotion
 
-	validates :start, :end, :presence => true
+	validates :start, :end, :staff_id, :user_id, :status_id, :location_id, :presence => true
 end
