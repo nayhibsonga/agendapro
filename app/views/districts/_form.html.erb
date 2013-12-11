@@ -1,4 +1,4 @@
-<%= form_for(@district) do |f| %>
+<%= simple_form_for(@district) do |f| %>
   <% if @district.errors.any? %>
     <div id="error_explanation">
       <h2><%= pluralize(@district.errors.count, "error") %> no permitió que la comuna se creara:</h2>
@@ -11,10 +11,10 @@
     </div>
   <% end %>
 
-  <%= f.label :name %>:
-  <%= f.text_field :name %><br />
+  
+  Nombre: <%= f.input :name, :label => false %><br />
 
-  <%= f.association :city %><br />
+  Ciudad: <%= f.association :city, :label => false %><br />
 
   <div class="actions">
     <%= f.submit %>

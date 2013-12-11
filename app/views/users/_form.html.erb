@@ -1,0 +1,24 @@
+<%= simple_form_for(@user) do |f| %>
+  <% if @user.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(@user.errors.count, "error") %> no permitió que el usuario fuera creado:</h2>
+
+      <ul>
+      <% @user.errors.full_messages.each do |msg| %>
+        <li><%= msg %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  Nombre: <%= f.input :first_name, :label => false %></br>
+  Apellido: <%= f.input :last_name, :label => false %></br>
+  Email: <%= f.input :email, :label => false %></br>
+  Teléfono: <%= f.input :phone, :label => false %></br>
+  Usuario: <%= f.input :user_name, :label => false %></br>
+  Contraseña: <%= f.input :password, :label => false %></br>
+
+  <div class="actions">
+    <%= f.submit %>
+  </div>
+<% end %>

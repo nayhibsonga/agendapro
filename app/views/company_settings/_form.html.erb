@@ -1,4 +1,4 @@
-<%= form_for(@company_setting) do |f| %>
+<%= simple_form_for(@company_setting) do |f| %>
   <% if @company_setting.errors.any? %>
     <div id="error_explanation">
       <h2><%= pluralize(@company_setting.errors.count, "error") %> prohibited this company_setting from being saved:</h2>
@@ -10,6 +10,11 @@
       </ul>
     </div>
   <% end %>
+
+  Email: <%= f.input :email, :label => false %><br />
+  SMS: <%= f.input :sms, :label => false %><br />
+  Firma: <%= f.input :signature, :label => false %><br />
+  Empresa: <%= f.association :company, :label => false %><br />
 
   <div class="actions">
     <%= f.submit %>

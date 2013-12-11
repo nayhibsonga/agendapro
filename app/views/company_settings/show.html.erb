@@ -1,4 +1,8 @@
 <p id="notice"><%= notice %></p>
 
-<%= link_to 'Edit', edit_company_setting_path(@company_setting) %> |
-<%= link_to 'Back', company_settings_path %>
+<p>Email: <%= @company_setting.email %></p>
+<p>SMS: <%= @company_setting.sms %></p>
+<p>Firma: <%= @company_setting.signature %></p>
+
+<%= link_to 'Editar', edit_company_setting_path(@company_setting) %> |
+<%= link_to 'Atrás', company_settings_path %>

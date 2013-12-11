@@ -10,7 +10,6 @@ class DistrictsController < ApplicationController
   # GET /districts/1
   # GET /districts/1.json
   def show
-    @city = City.find(@district.city_id)
   end
 
   # GET /districts/new

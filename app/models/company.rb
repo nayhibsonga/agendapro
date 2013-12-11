@@ -10,5 +10,5 @@ class Company < ActiveRecord::Base
 	has_many :locations
 	has_one :company_setting
 
-	validates :name, :web_adress, :presence => true
+	validates :name, :web_address, :economic_sector, :plan, :payment_status, :presence => true
 end

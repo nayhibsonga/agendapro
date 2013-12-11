@@ -1,10 +1,10 @@
 class CreateStaffTimes < ActiveRecord::Migration
   def change
     create_table :staff_times do |t|
-      t.time :open
-      t.time :close
-      t.integer :staff_id
-      t.integer :day_id
+      t.time :open, :null => false
+      t.time :close, :null => false
+      t.references :staff, :null => false
+      t.references :day, :null => false
 
       t.timestamps
     end

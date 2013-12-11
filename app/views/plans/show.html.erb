@@ -1,4 +1,9 @@
 <p id="notice"><%= notice %></p>
 
-<%= link_to 'Edit', edit_plan_path(@plan) %> |
-<%= link_to 'Back', plans_path %>
+<p>Nombre: <%= @plan.name %></p>
+<p># Locales: <%= @plan.locations %></p>
+<p># Staffs: <%= @plan.staffs %></p>
+<p>Plan Custom: <%= @plan.custom %></p>
+
+<%= link_to 'Editar', edit_plan_path(@plan) %> |
+<%= link_to 'Atrás', plans_path %>

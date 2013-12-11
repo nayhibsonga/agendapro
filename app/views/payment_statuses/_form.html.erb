@@ -1,4 +1,4 @@
-<%= form_for(@payment_status) do |f| %>
+<%= simple_form_for(@payment_status) do |f| %>
   <% if @payment_status.errors.any? %>
     <div id="error_explanation">
       <h2><%= pluralize(@payment_status.errors.count, "error") %> prohibited this payment_status from being saved:</h2>
@@ -10,6 +10,12 @@
       </ul>
     </div>
   <% end %>
+
+  
+  Nombre: <%= f.input :name, :label => false %><br />
+
+  
+  Descripción: <%= f.input :description, :label => false %><br />
 
   <div class="actions">
     <%= f.submit %>

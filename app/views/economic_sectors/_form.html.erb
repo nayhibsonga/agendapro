@@ -1,7 +1,7 @@
-<%= form_for(@economic_sector) do |f| %>
+<%= simple_form_for(@economic_sector) do |f| %>
   <% if @economic_sector.errors.any? %>
     <div id="error_explanation">
-      <h2><%= pluralize(@economic_sector.errors.count, "error") %> prohibited this economic_sector from being saved:</h2>
+      <h2><%= pluralize(@economic_sector.errors.count, "error") %> no permitió que el sector económico fuera creado:</h2>
 
       <ul>
       <% @economic_sector.errors.full_messages.each do |msg| %>
@@ -10,6 +10,9 @@
       </ul>
     </div>
   <% end %>
+
+  
+  Nombre: <%= f.input :name, :label => false %><br />
 
   <div class="actions">
     <%= f.submit %>

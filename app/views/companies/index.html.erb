@@ -1,4 +1,4 @@
-<h1>Listing companies</h1>
+<h1>Empresas</h1>
 
 <table>
   <thead>
@@ -12,9 +12,9 @@
   <tbody>
     <% @companies.each do |company| %>
       <tr>
-        <td><%= link_to 'Show', company %></td>
-        <td><%= link_to 'Edit', edit_company_path(company) %></td>
-        <td><%= link_to 'Destroy', company, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+        <td><%= link_to company.name, company %></td>
+        <td><%= link_to 'Editar', edit_company_path(company) %></td>
+        <td><%= link_to 'Eliminar', company, method: :delete, data: { confirm: '¿Estás seguro?' } %></td>
       </tr>
     <% end %>
   </tbody>
@@ -22,4 +22,4 @@
 
 <br>
 
-<%= link_to 'New Company', new_company_path %>
+<%= link_to 'Nueva Empresa', new_company_path %>

@@ -1,4 +1,7 @@
 <p id="notice"><%= notice %></p>
 
-<%= link_to 'Edit', edit_payment_status_path(@payment_status) %> |
-<%= link_to 'Back', payment_statuses_path %>
+<p>Nombre: <%= @payment_status.name %></p>
+<p>Descripción: <%= @payment_status.description %></p>
+
+<%= link_to 'Editar', edit_payment_status_path(@payment_status) %> |
+<%= link_to 'Atrás', payment_statuses_path %>

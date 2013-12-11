@@ -1,4 +1,4 @@
-<h1>Listing plans</h1>
+<h1>Planes</h1>
 
 <table>
   <thead>
@@ -12,9 +12,9 @@
   <tbody>
     <% @plans.each do |plan| %>
       <tr>
-        <td><%= link_to 'Show', plan %></td>
-        <td><%= link_to 'Edit', edit_plan_path(plan) %></td>
-        <td><%= link_to 'Destroy', plan, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+        <td><%= link_to plan.name, plan %></td>
+        <td><%= link_to 'Editar', edit_plan_path(plan) %></td>
+        <td><%= link_to 'Eliminar', plan, method: :delete, data: { confirm: '¿Estás seguro?' } %></td>
       </tr>
     <% end %>
   </tbody>
@@ -22,4 +22,4 @@
 
 <br>
 
-<%= link_to 'New Plan', new_plan_path %>
+<%= link_to 'Nuevo Plan', new_plan_path %>

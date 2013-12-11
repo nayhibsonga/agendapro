@@ -1,4 +1,7 @@
 <p id="notice"><%= notice %></p>
 
-<%= link_to 'Edit', edit_status_path(@status) %> |
-<%= link_to 'Back', statuses_path %>
+<p>Nombre: <%= @status.name %></p>
+<p>Descripción: <%= @status.description %></p>
+
+<%= link_to 'Editar', edit_status_path(@status) %> |
+<%= link_to 'Atrás', statuses_path %>

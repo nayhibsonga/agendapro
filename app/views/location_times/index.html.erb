@@ -1,0 +1,25 @@
+<h1>Listing location_times</h1>
+
+<table>
+  <thead>
+    <tr>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @location_times.each do |location_time| %>
+      <tr>
+        <td><%= link_to 'Show', location_time %></td>
+        <td><%= link_to 'Edit', edit_location_time_path(location_time) %></td>
+        <td><%= link_to 'Destroy', location_time, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<br>
+
+<%= link_to 'New Location time', new_location_time_path %>

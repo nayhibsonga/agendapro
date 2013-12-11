@@ -1,4 +1,6 @@
 <p id="notice"><%= notice %></p>
 
-<%= link_to 'Edit', edit_tag_path(@tag) %> |
-<%= link_to 'Back', tags_path %>
+<p>Nombre: <%= @tag.name %></p>
+
+<%= link_to 'Editar', edit_tag_path(@tag) %> |
+<%= link_to 'Atrás', tags_path %>

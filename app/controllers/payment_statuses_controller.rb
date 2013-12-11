@@ -28,7 +28,7 @@ class PaymentStatusesController < ApplicationController
 
     respond_to do |format|
       if @payment_status.save
-        format.html { redirect_to @payment_status, notice: 'Payment status was successfully created.' }
+        format.html { redirect_to @payment_status, notice: 'Estado de pago fue creado exitosamente.' }
         format.json { render action: 'show', status: :created, location: @payment_status }
       else
         format.html { render action: 'new' }
@@ -42,7 +42,7 @@ class PaymentStatusesController < ApplicationController
   def update
     respond_to do |format|
       if @payment_status.update(payment_status_params)
-        format.html { redirect_to @payment_status, notice: 'Payment status was successfully updated.' }
+        format.html { redirect_to @payment_status, notice: 'Estado de pago fue actualizado exitosamente.' }
         format.json { head :no_content }
       else
         format.html { render action: 'edit' }
@@ -69,6 +69,6 @@ class PaymentStatusesController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def payment_status_params
-      params[:payment_status]
+      params.require(:payment_status).permit(:name, :description)
     end
 end

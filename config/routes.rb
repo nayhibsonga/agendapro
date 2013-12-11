@@ -5,13 +5,18 @@ Agendapro::Application.routes.draw do
   resources :cities
   resources :districts
 
-
-
   resources :tags
   resources :statuses
   resources :economic_sectors
   resources :company_settings
+  resources :payment_statuses
+  resources :roles
+  resources :plans
+  resources :staff_times
+  resources :location_times
+  resources :days
 
+  resources :users
   resources :companies
   resources :locations
   resources :services

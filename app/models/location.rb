@@ -7,5 +7,5 @@ class Location < ActiveRecord::Base
 	has_many :staffs
 	has_many :bookings
 
-	validates :name, :address, :phone, :presence => true
+	validates :name, :address, :phone, :company, :district, :presence => true
 end

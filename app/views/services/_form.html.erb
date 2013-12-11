@@ -1,7 +1,7 @@
-<%= form_for(@service) do |f| %>
+<%= simple_form_for(@service) do |f| %>
   <% if @service.errors.any? %>
     <div id="error_explanation">
-      <h2><%= pluralize(@service.errors.count, "error") %> prohibited this service from being saved:</h2>
+      <h2><%= pluralize(@service.errors.count, "error") %> no permitió que el servicio se guardara:</h2>
 
       <ul>
       <% @service.errors.full_messages.each do |msg| %>
@@ -10,6 +10,16 @@
       </ul>
     </div>
   <% end %>
+
+  Nombre: <%= f.input :name, :label => false %><br />
+  Precio: <%= f.input :price, :label => false %><br />
+  Duración: <%= f.input :duration, :label => false %><br />
+  Descripción: <%= f.input :description, :label => false %><br />
+  Servicio de Grupo: <%= f.input :group_service, :label => false %><br />
+  Capacidad: <%= f.input :capacity, :label => false %><br />
+  Lista de Espera: <%= f.input :waiting_list, :label => false %><br />
+  Etiqueta: <%= f.association :tag, :label => false %><br />
+  Empresa: <%= f.association :company, :label => false %><br />
 
   <div class="actions">
     <%= f.submit %>

@@ -1,0 +1,25 @@
+<h1>Listing staff_times</h1>
+
+<table>
+  <thead>
+    <tr>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @staff_times.each do |staff_time| %>
+      <tr>
+        <td><%= link_to 'Show', staff_time %></td>
+        <td><%= link_to 'Edit', edit_staff_time_path(staff_time) %></td>
+        <td><%= link_to 'Destroy', staff_time, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<br>
+
+<%= link_to 'New Staff time', new_staff_time_path %>

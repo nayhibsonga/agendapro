@@ -1,4 +1,4 @@
-<h1>Listing statuses</h1>
+<h1>Estados de Reserva</h1>
 
 <table>
   <thead>
@@ -12,9 +12,9 @@
   <tbody>
     <% @statuses.each do |status| %>
       <tr>
-        <td><%= link_to 'Show', status %></td>
-        <td><%= link_to 'Edit', edit_status_path(status) %></td>
-        <td><%= link_to 'Destroy', status, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+        <td><%= link_to status.name, status %></td>
+        <td><%= link_to 'Editar', edit_status_path(status) %></td>
+        <td><%= link_to 'Eliminar', status, method: :delete, data: { confirm: '¿Estás seguro?' } %></td>
       </tr>
     <% end %>
   </tbody>
@@ -22,4 +22,4 @@
 
 <br>
 
-<%= link_to 'New Status', new_status_path %>
+<%= link_to 'Nuevo Estado', new_status_path %>

@@ -1,8 +1,8 @@
 class CreateRegions < ActiveRecord::Migration
   def change
     create_table :regions do |t|
-      t.string :name
-      t.integer :country_id
+      t.string :name, :null => false
+      t.references :country, :null => false
 
       t.timestamps
     end
