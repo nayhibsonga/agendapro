@@ -194,7 +194,7 @@ ActiveRecord::Schema.define(version: 20131209204752) do
   end
 
   create_table "staffs", force: true do |t|
-    t.integer  "location_id", null: false
+    t.integer  "location_id"
     t.integer  "user_id",     null: false
     t.datetime "created_at"
     t.datetime "updated_at"
@@ -225,8 +225,8 @@ ActiveRecord::Schema.define(version: 20131209204752) do
     t.string   "last_name",  null: false
     t.string   "email",      null: false
     t.string   "phone",      null: false
-    t.string   "user_name",  null: false
-    t.string   "password",   null: false
+    t.string   "user_name"
+    t.string   "password"
     t.integer  "role_id",    null: false
     t.datetime "created_at"
     t.datetime "updated_at"

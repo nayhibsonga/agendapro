@@ -5,8 +5,8 @@ class CreateUsers < ActiveRecord::Migration
       t.string :last_name, :null => false
       t.string :email, :null => false
       t.string :phone, :null => false
-      t.string :user_name, :null => false
-      t.string :password, :null => false
+      t.string :user_name
+      t.string :password
       t.references :role, :null => false
 
       t.timestamps
