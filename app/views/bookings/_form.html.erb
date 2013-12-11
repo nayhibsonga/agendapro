@@ -1,4 +1,4 @@
-<%= form_for(@booking) do |f| %>
+<%= simple_form_for(@booking) do |f| %>
   <% if @booking.errors.any? %>
     <div id="error_explanation">
       <h2><%= pluralize(@booking.errors.count, "error") %> prohibited this booking from being saved:</h2>
@@ -10,6 +10,15 @@
       </ul>
     </div>
   <% end %>
+
+  Inicio: <%= t.input :start, :label => false %><br />
+  Término: <%= t.input :end, :label => false %><br />
+  Nota: <%= t.input :notes, :label => false %><br />
+  Staff: <%= t.association :staff, :label => false %><br />
+  Usuario: <%= t.association :user, :label => false %><br />
+  Status: <%= t.association :status, :label => false %><br />
+  Promoción: <%= t.association :promotion, :label => false %><br />
+  
 
   <div class="actions">
     <%= f.submit %>

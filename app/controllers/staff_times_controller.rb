@@ -69,6 +69,6 @@ class StaffTimesController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def staff_time_params
-      params[:staff_time]
+      params.require(:staff_time).permit(:open, :close, :staff_id, :day_id)
     end
 end

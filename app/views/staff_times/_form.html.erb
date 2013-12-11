@@ -11,6 +11,11 @@
     </div>
   <% end %>
 
+  Apertura: <%= f.input :open, :label => false %><br />
+  Cierre: <%= f.input :close, :label => false %><br />
+  Staff: <%= f.association :staff, :label => false %><br />
+  Día: <%= f.association :day, :label => false %><br />
+
   <div class="actions">
     <%= f.submit %>
   </div>

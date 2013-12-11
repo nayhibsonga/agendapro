@@ -1,4 +1,4 @@
-<h1>Listing bookings</h1>
+<h1>Reservas</h1>
 
 <table>
   <thead>
@@ -12,9 +12,9 @@
   <tbody>
     <% @bookings.each do |booking| %>
       <tr>
-        <td><%= link_to 'Show', booking %></td>
-        <td><%= link_to 'Edit', edit_booking_path(booking) %></td>
-        <td><%= link_to 'Destroy', booking, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+        <td><%= link_to booking.start+" "+booking.end, booking %></td>
+        <td><%= link_to 'Editar', edit_booking_path(booking) %></td>
+        <td><%= link_to 'Eliminar', booking, method: :delete, data: { confirm: '¿Estás seguro?' } %></td>
       </tr>
     <% end %>
   </tbody>
@@ -22,4 +22,4 @@
 
 <br>
 
-<%= link_to 'New Booking', new_booking_path %>
+<%= link_to 'Nueva Reserva', new_booking_path %>

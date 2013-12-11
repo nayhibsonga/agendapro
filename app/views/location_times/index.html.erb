@@ -1,4 +1,4 @@
-<h1>Listing location_times</h1>
+<h1>Horarios de Local</h1>
 
 <table>
   <thead>
@@ -12,9 +12,9 @@
   <tbody>
     <% @location_times.each do |location_time| %>
       <tr>
-        <td><%= link_to 'Show', location_time %></td>
-        <td><%= link_to 'Edit', edit_location_time_path(location_time) %></td>
-        <td><%= link_to 'Destroy', location_time, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+        <td><%= link_to location_time.location.name+" "+ location_time.day.name, location_time %></td>
+        <td><%= link_to 'Editar', edit_location_time_path(location_time) %></td>
+        <td><%= link_to 'Eliminar', location_time, method: :delete, data: { confirm: '¿Estás seguro?' } %></td>
       </tr>
     <% end %>
   </tbody>
@@ -22,4 +22,4 @@
 
 <br>
 
-<%= link_to 'New Location time', new_location_time_path %>
+<%= link_to 'Nuevo Horario de Local', new_location_time_path %>

@@ -69,6 +69,6 @@ class LocationTimesController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def location_time_params
-      params[:location_time]
+      params.require(:location_time).permit(:open, :close, :location_id, :day_id)
     end
 end

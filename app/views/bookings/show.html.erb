@@ -1,4 +1,12 @@
 <p id="notice"><%= notice %></p>
 
-<%= link_to 'Edit', edit_booking_path(@booking) %> |
-<%= link_to 'Back', bookings_path %>
+<p>Inicio: <%= @booking.start %></p>
+<p>Término: <%= @booking.end %></p>
+<p>Nota: <%= @booking.notes %></p>
+<p>Staff: <%= @booking.staff.user.name %></p>
+<p>Usuario: <%= @booking.user.name %></p>
+<p>Status: <%= @booking.status %></p>
+<p>Promoción: <%= @booking.promotion %></p>
+
+<%= link_to 'Editar', edit_booking_path(@booking) %> |
+<%= link_to 'Atrás', bookings_path %>
