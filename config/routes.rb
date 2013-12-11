@@ -1,5 +1,6 @@
 Agendapro::Application.routes.draw do
 
+  devise_for :users
   resources :countries
   resources :regions
   resources :cities

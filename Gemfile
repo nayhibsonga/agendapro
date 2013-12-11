@@ -40,7 +40,7 @@ end
 
 #Accounts, Permissions, Roles:
 #cuentas
-#gem 'devise'
+gem 'devise'
 #permisos
 #gem 'cancan'
 #roles

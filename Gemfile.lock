@@ -44,6 +44,12 @@ GEM
       execjs
     coffee-script-source (1.6.3)
     debug_inspector (0.0.2)
+    devise (3.2.2)
+      bcrypt-ruby (~> 3.0)
+      orm_adapter (~> 0.1)
+      railties (>= 3.2.6, < 5)
+      thread_safe (~> 0.1)
+      warden (~> 1.2.3)
     erubis (2.7.0)
     execjs (2.0.2)
     hike (1.2.3)
@@ -61,6 +67,7 @@ GEM
     mime-types (1.25.1)
     minitest (4.7.5)
     multi_json (1.8.2)
+    orm_adapter (0.5.0)
     pg (0.17.0)
     polyglot (0.3.3)
     quiet_assets (1.0.2)
@@ -117,6 +124,8 @@ GEM
     uglifier (2.3.2)
       execjs (>= 0.3.0)
       json (>= 1.8.0)
+    warden (1.2.3)
+      rack (>= 1.0)
 
 PLATFORMS
   ruby
@@ -127,6 +136,7 @@ DEPENDENCIES
   better_errors
   binding_of_caller
   coffee-rails (~> 4.0.0)
+  devise
   jbuilder (~> 1.2)
   jquery-rails
   pg
