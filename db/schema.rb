@@ -33,6 +33,7 @@ ActiveRecord::Schema.define(version: 20131209204752) do
     t.text     "notes"
     t.integer  "staff_id",     null: false
     t.integer  "user_id",      null: false
+    t.integer  "service_id",   null: false
     t.integer  "location_id",  null: false
     t.integer  "status_id",    null: false
     t.integer  "promotion_id", null: false

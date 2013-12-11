@@ -6,6 +6,7 @@ class CreateBookings < ActiveRecord::Migration
       t.text :notes
       t.references :staff, :null => false
       t.references :user, :null => false
+      t.references :service, :null => false
       t.references :location, :null => false
       t.references :status, :null => false
       t.references :promotion, :null => false
