@@ -1,5 +1,5 @@
 class CompaniesController < ApplicationController
-  before_action :set_company, only: [:show, :edit, :update, :destroy]
+  before_action :set_company, only: [ :edit, :update, :destroy]
 
   # GET /companies
   # GET /companies.json
@@ -10,6 +10,11 @@ class CompaniesController < ApplicationController
   # GET /companies/1
   # GET /companies/1.json
   def show
+    if request.subdomain != ""
+      @company = Company.find_by_web_address(request.subdomain)
+    else
+      @company = Company.find(params[:id])
+    end
   end
 
   # GET /companies/new
