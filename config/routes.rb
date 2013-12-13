@@ -5,6 +5,7 @@ Agendapro::Application.routes.draw do
   get '/' => 'companies#show', :constraints => { :subdomain => /.+/ }
   root :to => 'companies#index'
 
+  devise_for :users
   resources :countries
   resources :regions
   resources :cities

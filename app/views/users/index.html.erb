@@ -3,8 +3,9 @@
 <table>
   <thead>
     <tr>
-      <th></th>
-      <th></th>
+      <th>Nombre</th>
+      <th>Apellido</th>
+      <th>Usuario</th>
       <th></th>
       <th></th>
     </tr>
@@ -13,10 +14,11 @@
   <tbody>
     <% @users.each do |user| %>
       <tr>
-        <td><%= link_to user.name, user %></td>
-        <td><%= user.role.name %></td>
-        <td><%= link_to 'Editar', edit_user_path(user) %></td>
-        <td><%= link_to 'Eliminar', user, method: :delete, data: { confirm: '¿Estás seguro?' } %></td>
+        <td><%= link_to user.first_name, user %></td>
+        <td><%= user.last_name %></td>
+        <td><%= user.user_name %></td>
+        <td><%= link_to 'Editar', edit_user_registration_path %></td>
+        <td><%= link_to 'Eliminar', registration_path(user), method: :delete, data: { confirm: '¿Estás seguro?' } %></td>
       </tr>
     <% end %>
   </tbody>
@@ -24,4 +26,5 @@
 
 <br>
 
-<%= link_to 'Nuevo Usuario', new_user_path %>
+<!-- <%= link_to 'Nuevo Usuario', new_user_path %> -->
+<%= link_to "Sign up", new_user_registration_path, :class => 'navbar-link'  %>
