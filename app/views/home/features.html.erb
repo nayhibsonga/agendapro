@@ -1,0 +1,98 @@
+<!-- start: CSS -->
+<%= stylesheet_link_tag "home/characteristics.css" %>
+<!-- end: CSS -->
+
+<div class="main">
+    <section class="hgroup">
+        <div class="container">
+            <h1>Características</h1>
+            <h2>Aquí encontraras algunas de las principales ventajas de usar nuestro sistema.</h2>
+            <ul class="breadcrumb pull-right">
+                <li><%= link_to "Inicio", home_path %> </li>
+                <li class="active">Características</li>
+            </ul>
+        </div>
+    </section>
+    <section>
+        <div class="container">
+            <div class="marketing">
+                <div class="row">
+                    <div class="col-md-7">
+                        <h2 class="featurette-heading">Reservas Online <span class="text-muted">Acepta reservas 24/7, los 365 días del año</span></h2>
+                        <p class="lead">No pierdas más reservas porque no pudiste contestar el teléfono. Nunca más tendrás que devolver llamadas a tus clientes.</p>
+                    </div>
+                    <div class="col-md-5">
+                    	<%= image_tag "home/features/reservas.png", :alt => "Característica 1", :class => "img-responsive" %>
+                    </div>
+                </div>
+                <hr class="featurette-divider">
+                <div class="row">
+                    <div class="col-md-5">
+                    	<%= image_tag "home/features/calendario_agendapro.png", :alt => "Característica 2", :class => "img-responsive" %>
+                    </div>
+                    <div class="col-md-7">
+                        <h2 class="featurette-heading">Maneja tu Agenda <span class="text-muted">Gestiona tu empresa desde cualquier lugar</span></h2>
+                        <p class="lead">Con AgendaPro podrás gestionar todos tus locales, servicios y staffs desde cualquier lugar. Cambia o revisa que está ocurriendo en tus locales con tan sólo un click. Sólo necesitas una conexión a Internet y listo.</p>
+                    </div>
+                </div>
+                <hr class="featurette-divider">
+                <div class="row">
+                    <div class="col-md-7">
+                        <h2 class="featurette-heading">Recordatorios automáticos <span class="text-muted">Asegúrate que tus clientes lleguen a sus citas</span></h2>
+                        <p class="lead">AgendaPro envía recordatorios automáticos (e-mails y SMS) a todos tus clientes para que nunca más se les olviden sus reservas. Elimina las inasistencias y aumenta tu productividad.</p>
+                    </div>
+                    <div class="col-md-5">
+                    	<%= image_tag "home/features/recordatorios.png", :alt => "Característica 3", :class => "img-responsive" %>
+                    </div>
+                </div>
+                <hr class="featurette-divider">
+                <div class="row">
+                    <div class="col-md-5">
+                    	<%= image_tag "home/features/responsive.png", :alt => "Característica 4", :class => "img-responsive" %>
+                    </div>
+                    <div class="col-md-7">
+                        <h2 class="featurette-heading">Para PCs, tablets y móviles <span class="text-muted">AgendaPro es 100% compatible con PCs, tablets y móviles</span></h2>
+                        <p class="lead">Por medio del uso de la tecnología Responsive, AgendaPro es compatible con la gran mayoría de los dispositivos con acceso a Internet existentes. Tus clientes podrán reservar desde el dispositivo que ellos quieran y a la hora que quieran, lo que asegura que tus ventas se verán incrementadas desde el primer minuto.</p>
+                    </div>
+                </div>
+                <hr class="featurette-divider">
+                <div class="row">
+                    <div class="col-md-7">
+                        <h2 class="featurette-heading">Soporte personalizado <span class="text-muted">Comunícate con personas directamente, no con esas molestas contestadoras</span></h2>
+                        <p class="lead">Los creadores de AgendaPro damos el soporte directamente, sin intermediarios. Somos personas de carne y hueso que viven para brindar el mejor servicio a nuestros clientes, para que tú puedas hacer lo mismo con los tuyos. Llámanos directamente o envíanos un e-mail, siempre tendrás una respuesta rápida de nuestra parte. Lo más probable es que nunca lo tengas que hacer.</p>
+                    </div>
+                    <div class="col-md-5">
+                    	<%= image_tag "home/features/soporte.jpg", :alt => "Característica 5", :class => "img-responsive" %>
+                    </div>
+                </div>
+                <hr class="featurette-divider">
+                <div class="row">
+                    <div class="col-md-5">
+                    	<%= image_tag "home/features/redes_sociales.png", :alt => "Característica 6", :class => "img-responsive" %>
+                    </div>
+                    <div class="col-md-7">
+                        <h2 class="featurette-heading">Conexión con Redes Sociales <span class="text-muted">Facebook y Twitter a un click de distancia</span></h2>
+                        <p class="lead">Todas las reservas realizadas por medio de AgendaPro podrán ser posteadas por los usuarios en las principales Redes Sociales. </p>
+                    </div>
+                </div>
+                <hr class="featurette-divider">
+                <div class="row">
+                    <div class="col-md-7">
+                        <h2 class="featurette-heading">Inteligencia de Negocios <span class="text-muted">Obtén información importante para mejorar tu gestión</span></h2>
+                        <p class="lead">Por medio de Reportes personalizados y métricas pre-definidas, podrás ver el desempeño de tu negocio al instante, permitiéndote tomar decisiones más informadas e inteligentes.</p>
+                    </div>
+                    <div class="col-md-5">
+                    	<%= image_tag "home/features/inteligencia.png", :alt => "Característica 7", :class => "img-responsive" %>
+                    </div>
+                </div>
+                <hr class="featurette-divider">
+            </div>
+        </div>
+    </section>
+</div>
+
+<script type="text/javascript">
+    $(function() {
+        $("#c_feature").addClass("active")
+    });
+</script>

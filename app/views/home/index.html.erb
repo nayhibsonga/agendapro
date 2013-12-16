@@ -1,0 +1,72 @@
+<section id="slider_wrapper">
+    <div id="main_flexslider" class="flexslider">
+        <ul class="slides">
+            <li class="item"  style="background-image: url(<%= asset_path 'home/carousel1.png' %>)">
+                <div class="container">
+                    <div class="carousel-caption">
+                        <h1>Reservas Online</h1>
+                        <p class="lead inverse">Tus clientes podrán reservar tus servicios a cualquier hora del día, desde cualquier lugar</p>
+                    </div>
+                </div>
+            </li>
+            <li class="item" style="background-image: url(<%= asset_path 'home/carousel2.jpg' %>)">
+                <div class="container">
+                    <div class="carousel-caption">
+                        <h1>Gestiona tu negocio</h1>
+                        <p class="lead inverse">Ahorra tiempo y recursos, organizando las reservas para tu staff y revisa el desempeño de cada uno de tus locales</p>
+                    </div>
+                </div>
+            </li>
+            <li class="item" style="background-image: url(<%= asset_path 'home/carousel3.jpg' %>)">
+                <div class="container">
+                    <div class="carousel-caption">
+                        <h1>Simple y Amigable</h1>
+                        <p class="lead inverse">Con una interfaz intuitiva y fácil de usar, AgendaPro te permite gestionar tu negocio de manera rápida y eficiente</p>
+                    </div>
+                </div>
+            </li>
+        </ul>
+    </div>
+</section>
+
+<div class="main">
+    <section class="call_to_action">
+        <div class="container">
+            <h4>AgendaPro, el mejor sistema de Reservas Online</h4>
+            <h4>Gestiona tu negocio desde cualquier lugar del mundo y aumenta tus ventas</h4>
+            <!-- Por medio de recordatorios automáticos, tus clientes nunca más olvidaran una cita. sincronización con google calendar y outlook, compatible con iPad y celulares, soporte, gestión de clientes, reportes, reservas grupales e individuales, minisitio web (no necesitas tener página web!), concetado a redes sociales -->
+            <a class="btn btn-success btn-lg" href="<?php echo WEB_PATH; ?>/index.php?task=pricing_pricing">Pruébalo gratis ahora</a>
+            <p>No se requiere tarjeta de crédito</p>
+        </div>
+    </section>
+    <section class="features_teasers_wrapper">
+        <div class="container">
+            <div class="row">
+                <div class="feature_teaser col-sm-4 col-md-4">
+                	<%= image_tag "home/24_7.png", :alt => "Agenda Online" %>
+                    <h3>Agenda Online</h3>
+                    <p>Tus clientes pueden reservar una hora online en cualquier momento y lugar, sin la necesidad de llamar por tel&eacute;fono.</p>
+                </div>
+                <div class="feature_teaser col-sm-4 col-md-4">
+                	<%= image_tag "home/responsive.png", :alt => "Administra tu Agenda" %>
+                    <h3>Administra tu agenda</h3>
+                    <p>AgendaPro te permite administrar todos tus locales y staff en un mismo lugar.</p>
+                    <p>Confirmaci&oacute;n, edici&oacute;n y cancelaci&oacute;n de reservas online.</p>
+                </div>
+                <div class="feature_teaser col-sm-4 col-md-4">
+                	<%= image_tag "home/mail_reminder.png", :alt => "Recordatorios de hora" %>
+                    <h3>Recordatorios Automáticos</h3>
+                    <p>Tus clientes nunca m&aacute;s olvidar&aacute;n sus citas.</p>
+                    <p>AgendaPro env&iacute;a autom&aacute;ticamente recordatorios por mail y mensajes de texto a tus clientes.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+
+<!-- scripts -->
+<script>
+    $(function() {
+        $("#c_home").addClass("active")
+    });
+</script>

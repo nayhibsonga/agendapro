@@ -2,8 +2,8 @@ Agendapro::Application.routes.draw do
 
   require 'subdomain'
 
-  get '/' => 'companies#show', :constraints => { :subdomain => /.+/ }
-  root :to => 'companies#index'
+  #get '/' => 'companies#show', :constraints => { :subdomain => /.+/ }
+  root :to => 'home#index'
 
   devise_for :users
   resources :countries
@@ -27,7 +27,10 @@ Agendapro::Application.routes.draw do
   resources :services
   resources :promotions
 
-
+  get "home/index", as: :home
+  get "home/features", as: :features
+  get "home/about_us", as: :aboutus
+  get "home/contact"
 
   
 
