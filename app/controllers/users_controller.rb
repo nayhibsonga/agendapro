@@ -1,7 +1,8 @@
 class UsersController < ApplicationController
   #before_action :set_user, only: [:show, :edit, :update, :destroy]
   before_action :authenticate_user!, except: [:index, :new]
-
+  before_action :verify_is_super_admin
+  
   # GET /users
   # GET /users.json
   def index

@@ -1,5 +1,6 @@
 class StaffTimesController < ApplicationController
   before_action :set_staff_time, only: [:show, :edit, :update, :destroy]
+  before_action :authenticate_user!
 
   # GET /staff_times
   # GET /staff_times.json

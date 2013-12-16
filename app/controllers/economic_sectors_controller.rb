@@ -1,5 +1,7 @@
 class EconomicSectorsController < ApplicationController
   before_action :set_economic_sector, only: [:show, :edit, :update, :destroy]
+  before_action :authenticate_user!
+  before_action :verify_is_super_admin
 
   # GET /economic_sectors
   # GET /economic_sectors.json

@@ -1,6 +1,6 @@
-class CreateStaffs < ActiveRecord::Migration
+class CreateServiceProviders < ActiveRecord::Migration
   def change
-    create_table :staffs do |t|
+    create_table :service_providers do |t|
       t.references :location
       t.references :user, :null => false
 

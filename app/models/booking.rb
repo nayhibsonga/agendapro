@@ -1,5 +1,5 @@
 class Booking < ActiveRecord::Base
-	belongs_to :staff
+	belongs_to :service_provider
 	belongs_to :service
 	belongs_to :user
 	belongs_to :status

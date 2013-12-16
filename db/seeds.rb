@@ -30,3 +30,5 @@ days = Day.create([{name: "Lunes"}, {name: "Martes"}, {name: "Miércoles"}, {nam
 plans = Plan.create(name: "Básico", locations: 3, staffs: 10, custom: false)
 
 roles = Role.create([{name: "Super Admin", description: "Administrador de la aplicaión AgendaPro"}, {name: "Admin", description: "Administrador de empresa inscrita en AgendaPro"}, {name: "Administrador Local", description: "Administrador de local"}, {name: "Staff", description: "Usuario con atribuciones de atención en su local"}, {name: "Usuario Registrado", description: "Usuario con cuenta registrada y accesible"}, {name: "Usuario No Registrado", description: "Usuario con cuenta no registrada"}])
+
+admin = User.create(first_name: 'Sebastián', last_name: 'Hevia', email: 'sebastianhevia@gmail.com', phone: '12345678', role: Role.find_by_name('Super Admin'), user_name: 'shevia', password: '12345678', password_confirmation: '12345678')

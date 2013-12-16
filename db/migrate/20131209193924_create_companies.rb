@@ -8,6 +8,7 @@ class CreateCompanies < ActiveRecord::Migration
       t.references :economic_sector, :null => false
       t.references :plan, :null => false
       t.references :payment_status, :null => false
+      t.references :user, :null => false
 
       t.timestamps
     end

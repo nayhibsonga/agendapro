@@ -28,15 +28,15 @@ ActiveRecord::Schema.define(version: 20131211222642) do
   end
 
   create_table "bookings", force: true do |t|
-    t.datetime "start",        null: false
-    t.datetime "end",          null: false
+    t.datetime "start",               null: false
+    t.datetime "end",                 null: false
     t.text     "notes"
-    t.integer  "staff_id",     null: false
-    t.integer  "user_id",      null: false
-    t.integer  "service_id",   null: false
-    t.integer  "location_id",  null: false
-    t.integer  "status_id",    null: false
-    t.integer  "promotion_id", null: false
+    t.integer  "service_provider_id", null: false
+    t.integer  "user_id",             null: false
+    t.integer  "service_id",          null: false
+    t.integer  "location_id",         null: false
+    t.integer  "status_id",           null: false
+    t.integer  "promotion_id",        null: false
     t.datetime "created_at"
     t.datetime "updated_at"
   end
@@ -56,6 +56,7 @@ ActiveRecord::Schema.define(version: 20131211222642) do
     t.integer  "economic_sector_id", null: false
     t.integer  "plan_id",            null: false
     t.integer  "payment_status_id",  null: false
+    t.integer  "user_id",            null: false
     t.datetime "created_at"
     t.datetime "updated_at"
   end
@@ -149,6 +150,15 @@ ActiveRecord::Schema.define(version: 20131211222642) do
     t.datetime "updated_at"
   end
 
+  create_table "provider_times", force: true do |t|
+    t.time     "open",                null: false
+    t.time     "close",               null: false
+    t.integer  "service_provider_id", null: false
+    t.integer  "day_id",              null: false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
   create_table "regions", force: true do |t|
     t.string   "name",       null: false
     t.integer  "country_id", null: false
@@ -163,9 +173,16 @@ ActiveRecord::Schema.define(version: 20131211222642) do
     t.datetime "updated_at"
   end
 
+  create_table "service_providers", force: true do |t|
+    t.integer  "location_id"
+    t.integer  "user_id",     null: false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
   create_table "service_staffs", force: true do |t|
-    t.integer  "service_id", null: false
-    t.integer  "staff_id",   null: false
+    t.integer  "service_id",          null: false
+    t.integer  "service_provider_id", null: false
     t.datetime "created_at"
     t.datetime "updated_at"
   end
@@ -180,22 +197,6 @@ ActiveRecord::Schema.define(version: 20131211222642) do
     t.boolean  "waiting_list",  default: false
     t.integer  "company_id",                    null: false
     t.integer  "tag_id",                        null: false
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
-
-  create_table "staff_times", force: true do |t|
-    t.time     "open",       null: false
-    t.time     "close",      null: false
-    t.integer  "staff_id",   null: false
-    t.integer  "day_id",     null: false
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
-
-  create_table "staffs", force: true do |t|
-    t.integer  "location_id"
-    t.integer  "user_id",     null: false
     t.datetime "created_at"
     t.datetime "updated_at"
   end

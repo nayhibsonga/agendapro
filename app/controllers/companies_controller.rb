@@ -1,5 +1,7 @@
 class CompaniesController < ApplicationController
   before_action :set_company, only: [ :edit, :update, :destroy]
+  before_action :authenticate_user!
+  before_action :verify_is_super_admin
 
   # GET /companies
   # GET /companies.json

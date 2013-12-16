@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
 	
 	<!-- start: Meta -->
@@ -46,7 +46,7 @@
 			      <span class="icon-bar"></span>
 			</button>
 			<a id="main-menu-toggle" class="hidden-xs open"><i class="icon-reorder"></i></a>		
-				<a class="navbar-brand col-lg-2 col-sm-1 col-xs-12" href="index.html"><span>AgendaPro</span></a>
+				<%= link_to '<span>AgendaPro</span>'.html_safe, root_path, { :class => "navbar-brand col-lg-2 col-sm-1 col-xs-12" } %>
 			<!-- start: Header Menu -->
 			<div class="nav-no-collapse header-nav">
 				<ul class="nav navbar-nav pull-right">
@@ -56,7 +56,7 @@
 							<div class="avatar"><%= image_tag("admin/avatar.jpg") %></div>
 							<div class="user">
 								<span class="hello">Bienvenido!</span>
-								<span class="name">***USER</span>
+								<span class="name"><%= current_user.email %></span>
 							</div>
 						</a>
 						<ul class="dropdown-menu">
@@ -66,7 +66,7 @@
 							<li><a href="#"><i class="icon-user"></i> Perfíl</a></li>
 							<li><a href="#"><i class="icon-cog"></i> Configuración</a></li>
 							<li><a href="#"><i class="icon-time"></i> Horario</a></li>
-							<li><a href="#"><i class="icon-off"></i> Cerrar Sesión</a></li>
+							<li><%= link_to '<i class="icon-off"></i> Cerrar Sesión'.html_safe, destroy_user_session_path, method: :delete %></li>
 						</ul>
 					</li>
 					<!-- end: User Dropdown -->
@@ -88,44 +88,51 @@
 				
 				<div class="nav-collapse sidebar-nav collapse navbar-collapse bs-navbar-collapse">
 					<ul class="nav nav-tabs nav-stacked main-menu">
-						<li><a href="companies"><i class="icon-dashboard"></i><span class="hidden-sm"> Dashboard</span></a></li>	
+						<li><%= link_to '<i class="icon-dashboard"></i><span class="hidden-sm"> Dashboard</span>'.html_safe, companies_path %></li>
+						<li><%= link_to '<i class="icon-calendar"></i><span class="hidden-sm"> AgendaPro</span>'.html_safe, companies_path %></li>
+						<% if current_user.role_id == Role.find_by_name("Super Admin").id %>
 						<li>
-							<a class="dropmenu" href="index.html#"><i class="icon-check"></i><span class="hidden-sm"> General</span> <span class="label">4</span></a>
+							<a class="dropmenu"><i class="icon-check"></i><span class="hidden-sm"> General</span> <span class="label">4</span></a>
 							<ul>
-								<li><a class="submenu" href="companies"><i class="icon-lock"></i><span class="hidden-sm"> Empresas</span></a></li>
-								<li><a class="submenu" href="roles"><i class="icon-lock"></i><span class="hidden-sm"> Roles</span></a></li>
-								<li><a class="submenu" href="payment_statuses"><i class="icon-usd"></i><span class="hidden-sm"> Estados de Pago</span></a></li>
-								<li><a class="submenu" href="statuses"><i class="icon-ok"></i><span class="hidden-sm"> Estados de Reserva</span></a></li>
-								<li><a class="submenu" href="statuses"><i class="icon-cloud"></i><span class="hidden-sm"> Gestión Planes</span></a></li>
+								<li><%= link_to '<i class="icon-briefcase"></i><span class="hidden-sm"> Empresas</span>'.html_safe, companies_path, { :class => "submenu" } %></li>
+								<li><%= link_to '<i class="icon-user"></i><span class="hidden-sm"> Usuarios</span>'.html_safe, users_path, { :class => "submenu" } %></li>
+								<li><%= link_to '<i class="icon-lock"></i><span class="hidden-sm"> Roles</span>'.html_safe, roles_path, { :class => "submenu" }  %></li>
+								<li><%= link_to '<i class="icon-usd"></i><span class="hidden-sm"> Estados de Pago</span>'.html_safe, payment_statuses_path, { :class => "submenu" }  %></li>
+								<li><%= link_to '<i class="icon-ok"></i><span class="hidden-sm"> Estados de Reserva</span>'.html_safe, statuses_path, { :class => "submenu" }  %></li>
+								<li><%= link_to '<i class="icon-cloud"></i><span class="hidden-sm"> Gestión Planes</span>'.html_safe, plans_path, { :class => "submenu" }  %></li>
 							</ul>
 						</li>
 						<li>
-							<a class="dropmenu" href="index.html#"><i class="icon-pushpin"></i><span class="hidden-sm"> Lugares</span> <span class="label">4</span></a>
+							<a class="dropmenu"><i class="icon-pushpin"></i><span class="hidden-sm"> Lugares</span> <span class="label">4</span></a>
 							<ul>
-								<li><a class="submenu" href="countries"><i class="icon-globe"></i><span class="hidden-sm"> Países</span></a></li>
-								<li><a class="submenu" href="regions"><i class="icon-picture"></i><span class="hidden-sm"> Regiones</span></a></li>
-								<li><a class="submenu" href="cities"><i class="icon-building"></i><span class="hidden-sm"> Ciudades</span></a></li>
-								<li><a class="submenu" href="districts"><i class="icon-home"></i><span class="hidden-sm"> Comunas</span></a></li>
+								<li><%= link_to '<i class="icon-globe"></i><span class="hidden-sm"> Países</span>'.html_safe, countries_path, { :class => "submenu" } %></li>
+								<li><%= link_to '<i class="icon-picture"></i><span class="hidden-sm"> Regiones</span>'.html_safe, regions_path, { :class => "submenu" } %></li>
+								<li><%= link_to '<i class="icon-building"></i><span class="hidden-sm"> Ciudades</span>'.html_safe, cities_path, { :class => "submenu" } %></li>
+								<li><%= link_to '<i class="icon-home"></i><span class="hidden-sm"> Comunas</span>'.html_safe, districts_path, { :class => "submenu" } %></li>
 							</ul>
 						</li>
+						<% end %>
+						<% if (current_user.role_id == Role.find_by_name("Super Admin").id) || (current_user.role_id == Role.find_by_name("Admin").id) %>
 						<li>
-							<a class="dropmenu" href="index.html#"><i class="icon-wrench"></i><span class="hidden-sm"> Configuración</span> <span class="label">4</span></a>
+							<a class="dropmenu"><i class="icon-wrench"></i><span class="hidden-sm"> Configuración</span> <span class="label">3</span></a>
 							<ul>
-								<li><a class="submenu" href="company_settings"><i class="icon-phone"></i><span class="hidden-sm"> Recordatorios</span></a></li>
-								<li><a class="submenu" href="bookings"><i class="icon-calendar"></i><span class="hidden-sm"> AgendaPro</span></a></li>
-								<li><a class="submenu" href=""><i class="icon-group"></i><span class="hidden-sm"> Clientes</span></a></li>
-								<li><a class="submenu" href="plans"><i class="icon-list"></i><span class="hidden-sm"> Planes</span></a></li>
+								<li><%= link_to '<i class="icon-phone"></i><span class="hidden-sm"> Recordatorios</span>'.html_safe, company_settings_path, { :class => "submenu" } %></li>
+								<li><%= link_to '<i class="icon-group"></i><span class="hidden-sm"> Clientes</span>'.html_safe, companies_path, { :class => "submenu" } %></li>
+								<li><%= link_to '<i class="icon-list"></i><span class="hidden-sm"> Planes</span>'.html_safe, plans_path, { :class => "submenu" } %></li>
 							</ul>
 						</li>
+						<% end %>
+						<% if (current_user.role_id == Role.find_by_name("Super Admin").id) || (current_user.role_id == Role.find_by_name("Super Admin").id) || (current_user.role_id == Role.find_by_name("Administrador Local").id) %>
 						<li>
-							<a class="dropmenu" href="index.html#"><i class="icon-briefcase"></i><span class="hidden-sm"> Administración</span> <span class="label">3</span></a>
+							<a class="dropmenu"><i class="icon-briefcase"></i><span class="hidden-sm"> Administración</span> <span class="label">3</span></a>
 							<ul>
-								<li><a class="submenu" href="locations"><i class="icon-home"></i><span class="hidden-sm"> Locales</span></a></li>
-								<li><a class="submenu" href="services"><i class="icon-book"></i><span class="hidden-sm"> Servicios</span></a></li>
-								<li><a class="submenu" href="staffs"><i class="icon-user"></i><span class="hidden-sm"> Staffs</span></a></li>
+								<li><%= link_to '<i class="icon-home"></i><span class="hidden-sm"> Locales</span>'.html_safe, locations_path, { :class => "submenu" } %></li>
+								<li><%= link_to '<i class="icon-book"></i><span class="hidden-sm"> Servicios</span>'.html_safe, services_path, { :class => "submenu" } %></li>
+								<li><%= link_to '<i class="icon-user"></i><span class="hidden-sm"> Staffs</span>'.html_safe, companies_path, { :class => "submenu" } %></li>
 							</ul>
 						</li>
-						<li><a href="companies"><i class="icon-bar-chart"></i><span class="hidden-sm"> Reportes</span></a></li>
+						<% end %>
+						<li><%= link_to '<i class="icon-bar-chart"></i><span class="hidden-sm"> Reportes</span>'.html_safe, companies_path %></li>
 					</ul>
 				</div>
 			</div>
@@ -145,8 +152,8 @@
 	
 	<footer>
 		<p>
-			<span style="text-align:left;float:left">&copy; 2013 <a href="http://bootstrapmaster.com" alt="Bootstrap Themes">creativeLabs</a></span>
-			<span class="hidden-phone" style="text-align:right;float:right">Powered by: <a href="http://admintemplates.co" alt="Bootstrap Admin Templates">SimpliQ</a></span>
+			<span style="text-align:left;float:left">&copy; 2013 <a href="http://www.agendapro.cl" alt="AgendaPro">AgendaPro</a></span>
+			<span class="hidden-phone" style="text-align:right;float:right">Soporte: <a href="http://www.agendapro.cl" alt="Soporte AgendaPro">AgendaPro</a></span>
 		</p>
 
 	</footer>

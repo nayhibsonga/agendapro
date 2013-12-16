@@ -3,5 +3,5 @@ class Service < ActiveRecord::Base
 	belongs_to :tag
 
 	has_many :bookings
-	has_many :staffs, :through => :service_staffs
+	has_many :service_providers, :through => :service_staffs
 end

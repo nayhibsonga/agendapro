@@ -6,7 +6,7 @@ class User < ActiveRecord::Base
 	belongs_to :role
 
 	has_many :bookings
-	has_one :staffs
+	has_many :service_providers
 
 	validates :first_name, :last_name, :email, :phone, :presence => true
 end

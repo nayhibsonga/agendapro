@@ -9,21 +9,21 @@
     <%= f.input :email, :label => "Email: ", :required => true, :autofocus => true %>
     <%= f.input :phone, :label => "Teléfono: ", :autofocus => true %>
     <% if !current_user.nil? %>
-      <% if current_user.role_id == Role.find_by(name: 'Super Admin') %>
+      <% if current_user.role_id == Role.find_by(name: 'Super Admin').id %>
         <label for="user_role_id">Rol: </label>
         <select id="user_role_id" name="user[role_id]">
           <% Role.all.each do role %>
             <option value='<%= role.id %>'><%= role.name %></option>
           <% end %>
         </select>
-      <% elsif current_user.role_id == Role.find_by(name: 'Admin') %>
+      <% elsif current_user.role_id == Role.find_by(name: 'Admin').id %>
         <label for="user_role_id">Rol: </label>
         <select id="user_role_id" name="user[role_id]">
           <% Role.find([3, 4]).each do role %>
             <option value='<%= role.id %>'><%= role.name %></option>
           <% end %>
         </select>
-      <% elsif current_user.role_id == Role.find_by(name: 'Administrador Local') %>
+      <% elsif current_user.role_id == Role.find_by(name: 'Administrador Local').id %>
         <input id="user_role_id" name="user[role_id]" value="4" type="hidden">
       <% end %>
     <% else %>

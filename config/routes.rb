@@ -2,6 +2,7 @@ Agendapro::Application.routes.draw do
 
   require 'subdomain'
 
+  get '/' => 'companies#index', :constraints => { :subdomain => 'www' }
   get '/' => 'companies#show', :constraints => { :subdomain => /.+/ }
   root :to => 'companies#index'
 

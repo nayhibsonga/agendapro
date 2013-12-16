@@ -1,5 +1,7 @@
 class PlansController < ApplicationController
   before_action :set_plan, only: [:show, :edit, :update, :destroy]
+  before_action :authenticate_user!
+  before_action :verify_is_super_admin, except: [:index]
 
   # GET /plans
   # GET /plans.json

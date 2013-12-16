@@ -1,5 +1,6 @@
 class LocationTimesController < ApplicationController
   before_action :set_location_time, only: [:show, :edit, :update, :destroy]
+  before_action :authenticate_user!
 
   # GET /location_times
   # GET /location_times.json

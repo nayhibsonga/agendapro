@@ -154,8 +154,8 @@ DEPENDENCIES
   better_errors
   binding_of_caller
   coffee-rails (~> 4.0.0)
-  font-awesome-rails
   devise
+  font-awesome-rails
   jbuilder (~> 1.2)
   jquery-rails
   less-rails (= 2.3.3)
