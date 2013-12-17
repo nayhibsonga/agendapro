@@ -18,5 +18,4 @@
 //= require admin/pages/index
 
 //por defecto:
-//= require jquery_ujs
 //= require turbolinks
