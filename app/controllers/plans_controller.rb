@@ -7,6 +7,7 @@ class PlansController < ApplicationController
   # GET /plans.json
   def index
     @plans = Plan.all
+    render layout: "home"
   end
 
   # GET /plans/1

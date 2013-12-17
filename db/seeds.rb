@@ -27,7 +27,7 @@ district = District.create(name: "Las Condes", city: cities)
 
 days = Day.create([{name: "Lunes"}, {name: "Martes"}, {name: "Miércoles"}, {name: "Jueves"}, {name: "Viernes"}, {name: "Sábado"}, {name: "Domingo"}])
 
-plans = Plan.create(name: "Básico", locations: 3, staffs: 10, custom: false)
+plans = Plan.create(name: "Básico", locations: 3, staffs: 10, custom: false, price: 12000, special: true)
 
 roles = Role.create([{name: "Super Admin", description: "Administrador de la aplicaión AgendaPro"}, {name: "Admin", description: "Administrador de empresa inscrita en AgendaPro"}, {name: "Administrador Local", description: "Administrador de local"}, {name: "Staff", description: "Usuario con atribuciones de atención en su local"}, {name: "Usuario Registrado", description: "Usuario con cuenta registrada y accesible"}, {name: "Usuario No Registrado", description: "Usuario con cuenta no registrada"}])
 

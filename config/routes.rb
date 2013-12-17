@@ -4,7 +4,7 @@ Agendapro::Application.routes.draw do
 
   #get '/' => 'companies#index', :constraints => { :subdomain => 'www' }
   #get '/' => 'companies#show', :constraints => { :subdomain => /.+/ }
-  root :to => 'dashboard#index'
+  root :to => 'home#index'
 
   devise_for :users, controllers: {registrations: 'registrations'}
   resources :countries
@@ -33,6 +33,12 @@ Agendapro::Application.routes.draw do
   get '/dashboard', :to => 'dashboard#index', :as => 'dashboard'
   get '/reports', :to => 'reports#index', :as => 'reports'
   get '/clients', :to => 'clients#index', :as => 'clients'
+
+  get "home/index", as: :home
+  get "home/features", as: :features
+  get "home/about_us", as: :aboutus
+  get "home/contact", as: :contact
+  post "home/post_contact"
 
   
 

@@ -1,25 +1,49 @@
-<h1>Planes</h1>
+<div class="full_page_photo img-responsive" style="background-image: url(<%= asset_path "home/features/planes.jpg" %>);">
+     <div class="container">
+          <section class="call_to_action">
+               <h3 class="animated bounceInDown">Elije el <strong>plan</strong> que más te acomode</h3>
+               <h4 class="animated bounceInUp">¡El <strong> primer mes </strong> es <strong>absolutamente gratis!</strong> <br> Con sólo <strong> 2 clicks </strong> crea tu cuenta <strong>AgendaPro</strong></strong></h4>
+          </section>
+     </div>
+</div>
 
-<table>
-  <thead>
-    <tr>
-      <th></th>
-      <th></th>
-      <th></th>
-    </tr>
-  </thead>
+<div class="main">
+    <section class="hgroup">
+        <div class="container">
+            <h1>Planes</h1>
+            <h2>Elige el plan que mejor se acomode a tus necesidades o <strong>contáctanos si necesitas uno a tu medida.</strong></h2>
+            <ul class="breadcrumb pull-right">
+                <li><%= link_to "Inicio", home_path %> </li>
+                <li class="active">Planes</li>
+            </ul>
+        </div>
+    </section>
+    <section class="pricing_wrapper">
+        <div class="container">
+            <div class="row">
+                <% @plans.each do |plan| %>
+                <div class="col-sm-6 col-md-3">
+                    <div class="pricing_plan <%= 'special' if plan.special %>">
+                        <h3><strong><%= plan.name %></strong></h3>
+                        <div class="the_price"><span>$</span><%= plan.price %><small>/Mes (+ IVA)</small></div>
+                        <div class="the_offerings">
+                            <p> <strong>¡Primer mes GRATIS!</strong></p>
+                            <p> <strong><%= plan.locations %></strong> Local(es) </p>
+                            <p> <strong><%= plan.staffs %></strong> Staffs </p>
+                        </div>
+                        <a href="<?php echo WEB_PATH; ?>/index.php?task=company_signup&plan=<?php echo $p['id']; ?>" class="btn btn-success btn-lg">Elegir</a>
+                    </div>
+                </div>
+                <% end %>
+            </div>
+        </div>
+    </section>
+</div>
 
-  <tbody>
-    <% @plans.each do |plan| %>
-      <tr>
-        <td><%= link_to plan.name, plan %></td>
-        <td><%= link_to 'Editar', edit_plan_path(plan) %></td>
-        <td><%= link_to 'Eliminar', plan, method: :delete, data: { confirm: '¿Estás seguro?' } %></td>
-      </tr>
-    <% end %>
-  </tbody>
-</table>
-
-<br>
-
-<%= link_to 'Nuevo Plan', new_plan_path %>
+<!-- scripts -->
+<script>
+    $(function() {
+        $("#c_pricing").addClass("active")
+        $("body").addClass("collapsing_header")
+    });
+</script>
