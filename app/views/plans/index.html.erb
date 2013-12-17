@@ -23,9 +23,9 @@
             <div class="row">
                 <% @plans.each do |plan| %>
                 <div class="col-sm-6 col-md-3">
-                    <div class="pricing_plan"><!---- Especificar si es special ---->
+                    <div class="pricing_plan <%= 'special' if plan.special %>">
                         <h3><strong><%= plan.name %></strong></h3>
-                        <div class="the_price"><span>$</span><!-- precio plan --><small>/Mes (+ IVA)</small></div>
+                        <div class="the_price"><span>$</span><%= plan.price %><small>/Mes (+ IVA)</small></div>
                         <div class="the_offerings">
                             <p> <strong>¡Primer mes GRATIS!</strong></p>
                             <p> <strong><%= plan.locations %></strong> Local(es) </p>
