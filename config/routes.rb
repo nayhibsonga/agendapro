@@ -34,11 +34,12 @@ Agendapro::Application.routes.draw do
   get '/reports', :to => 'reports#index', :as => 'reports'
   get '/clients', :to => 'clients#index', :as => 'clients'
 
-  get "home/index", as: :home
-  get "home/features", as: :features
-  get "home/about_us", as: :aboutus
-  get "home/contact", as: :contact
-  post "home/post_contact"
+  get "/home", :to => 'home#index', :as => 'home'
+  get "/features", :to => 'home#features', :as => 'features'
+  get "/viewplans", :to => 'plans#viewplans', :as => 'viewplans'
+  get "/about_us", :to => 'home#about_us',  :as => 'aboutus'
+  get "/contact", :to => 'home#contact', :as => 'contact'
+  post "/pcontact", :to => 'home#post_contact'
 
   
 

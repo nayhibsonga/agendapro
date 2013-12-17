@@ -1,13 +1,12 @@
 class PlansController < ApplicationController
   before_action :set_plan, only: [:show, :edit, :update, :destroy]
-  before_action :authenticate_user!
-  before_action :verify_is_super_admin, except: [:index]
+  before_action :authenticate_user!, except: [:viewplans]
+  before_action :verify_is_super_admin, except: [:index, :viewplans]
 
   # GET /plans
   # GET /plans.json
   def index
     @plans = Plan.all
-    render layout: "home"
   end
 
   # GET /plans/1
@@ -62,6 +61,11 @@ class PlansController < ApplicationController
       format.html { redirect_to plans_url }
       format.json { head :no_content }
     end
+  end
+
+  def viewplans
+    @plans = Plan.all
+    render layout: "home"
   end
 
   private
