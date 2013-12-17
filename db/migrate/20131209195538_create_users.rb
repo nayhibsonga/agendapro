@@ -8,6 +8,7 @@
       #t.string :user_name
       #t.string :password
       t.references :role, :null => false
+      t.references :company
 
       t.timestamps
     end

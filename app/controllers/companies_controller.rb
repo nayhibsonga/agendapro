@@ -1,7 +1,10 @@
 class CompaniesController < ApplicationController
-  before_action :set_company, only: [ :edit, :update, :destroy]
-  before_action :authenticate_user!
-  before_action :verify_is_super_admin
+  before_action :set_company, only: [:show, :edit, :update, :destroy]
+  before_action :authenticate_user!, except: [:new]
+  before_action :verify_is_super_admin, except: [:new]
+
+  layout false, except: [:show]
+
 
   # GET /companies
   # GET /companies.json
@@ -12,16 +15,12 @@ class CompaniesController < ApplicationController
   # GET /companies/1
   # GET /companies/1.json
   def show
-    if request.subdomain != ""
-      @company = Company.find_by_web_address(request.subdomain)
-    else
-      @company = Company.find(params[:id])
-    end
   end
 
   # GET /companies/new
   def new
     @company = Company.new
+    @user = User.new
   end
 
   # GET /companies/1/edit
@@ -32,9 +31,13 @@ class CompaniesController < ApplicationController
   # POST /companies.json
   def create
     @company = Company.new(company_params)
+    @user = User.new(user_params)
+
+    @user.role = Role.find_by_name("Admin")
+    @user.company = @company
 
     respond_to do |format|
-      if @company.save
+      if @company.save && @user.save
         format.html { redirect_to @company, notice: 'La empresa fue creada exitosamente.' }
         format.json { render action: 'show', status: :created, location: @company }
       else
@@ -76,6 +79,6 @@ class CompaniesController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def company_params
-      params.require(:company).permit(:name, :economic_sector_id, :plan_id, :logo, :payment_status_id, :pay_due, :web_address)
+      params.require(:company).permit(:name, :economic_sector_id, :plan_id, :logo, :payment_status_id, :pay_due, :web_address, :users_attributes[:id, :first_name, :last_name, :email, :phone, :user_name, :password, :role_id, :company_id])
     end
 end

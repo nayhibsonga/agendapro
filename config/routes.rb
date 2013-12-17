@@ -2,11 +2,11 @@ Agendapro::Application.routes.draw do
 
   require 'subdomain'
 
-  get '/' => 'companies#index', :constraints => { :subdomain => 'www' }
-  get '/' => 'companies#show', :constraints => { :subdomain => /.+/ }
-  root :to => 'companies#index'
+  #get '/' => 'companies#index', :constraints => { :subdomain => 'www' }
+  #get '/' => 'companies#show', :constraints => { :subdomain => /.+/ }
+  root :to => 'dashboard#index'
 
-  devise_for :users
+  devise_for :users, controllers: {registrations: 'registrations'}
   resources :countries
   resources :regions
   resources :cities
@@ -27,8 +27,12 @@ Agendapro::Application.routes.draw do
   resources :locations
   resources :services
   resources :promotions
+  resources :bookings
+  resources :service_providers
 
-
+  get '/dashboard', :to => 'dashboard#index', :as => 'dashboard'
+  get '/reports', :to => 'reports#index', :as => 'reports'
+  get '/clients', :to => 'clients#index', :as => 'clients'
 
   
 

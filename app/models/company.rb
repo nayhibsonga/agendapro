@@ -2,8 +2,8 @@ class Company < ActiveRecord::Base
 	belongs_to :economic_sector
 	belongs_to :plan
 	belongs_to :payment_status
-	belongs_to :user
 
+	has_many :users
 	has_many :plan_logs
 	has_many :billing_logs
 	has_many :services

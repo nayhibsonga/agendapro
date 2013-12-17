@@ -5,7 +5,8 @@
 <p>Plan: <%= @company.plan.name %></p>
 <p>Sector Económico: <%= @company.economic_sector.name %></p>
 <p>Estado de Pago: <%= @company.payment_status.name %></p>
+<p>Admin: <%= @company.user.email %></p>
+
 
 <%= link_to 'Editar', edit_company_path(@company) %> |
 <%= link_to 'Atrás', companies_path %>
-<%= link_to "All Blogs", root_url(:subdomain => false) %>

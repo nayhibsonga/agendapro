@@ -17,8 +17,20 @@
   Teléfono: <%= f.input :phone, :label => false %></br>
   Usuario: <%= f.input :user_name, :label => false %></br>
   Contraseña: <%= f.input :password, :label => false %></br>
-
+  Rol:
+  <% if !current_user.nil? %>
+    <% if current_user.role_id == Role.find_by(name: 'Super Admin').id %>
+      <%= f.input :role, :label => false, :collection => Role.where(:name => ["Admin","Administrador Local","Staff"]) %>
+    <% elsif current_user.role_id == Role.find_by(name: 'Admin').id %>
+      <%= f.input :role, :label => false, :collection => Role.where(:name => ["Administrador Local","Staff"]) %>
+    <% elsif current_user.role_id == Role.find_by(name: 'Administrador Local').id %>
+      <% @user.role_id = Role.find_by_name("Staff").id %>
+    <% end %>
+  <% end %><br />
+  
   <div class="actions">
+
+
     <%= f.submit %>
   </div>
 <% end %>

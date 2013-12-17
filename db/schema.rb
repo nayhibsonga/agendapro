@@ -56,7 +56,6 @@ ActiveRecord::Schema.define(version: 20131211222642) do
     t.integer  "economic_sector_id", null: false
     t.integer  "plan_id",            null: false
     t.integer  "payment_status_id",  null: false
-    t.integer  "user_id",            null: false
     t.datetime "created_at"
     t.datetime "updated_at"
   end
@@ -226,6 +225,7 @@ ActiveRecord::Schema.define(version: 20131211222642) do
     t.string   "last_name",                           null: false
     t.string   "phone",                               null: false
     t.integer  "role_id",                             null: false
+    t.integer  "company_id"
     t.datetime "created_at"
     t.datetime "updated_at"
     t.string   "email",                  default: "", null: false
