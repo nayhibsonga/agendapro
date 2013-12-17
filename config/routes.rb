@@ -30,7 +30,8 @@ Agendapro::Application.routes.draw do
   get "home/index", as: :home
   get "home/features", as: :features
   get "home/about_us", as: :aboutus
-  get "home/contact"
+  get "home/contact", as: :contact
+  post "home/post_contact"
 
   
 

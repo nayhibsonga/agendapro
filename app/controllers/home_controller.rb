@@ -12,4 +12,9 @@ class HomeController < ApplicationController
 
 	def contact
 	end
+
+	def post_contact
+		flash[:notice] = "Contactado"
+		redirect_to contact_path
+	end
 end
