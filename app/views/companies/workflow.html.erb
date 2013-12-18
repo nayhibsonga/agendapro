@@ -96,6 +96,7 @@
         }
       }
     }
+
     function nextStep() {
       var next = actualStep + 1;
 
@@ -131,7 +132,51 @@
         alert("Fin del wizard");
       }
     }
-    function stepClick() {}
+
+    function stepClick(event) {
+      var id;
+      if (event.target.getAttribute('id') != null) {
+        id = event.target.getAttribute('id');
+      }
+      else {
+        id = event.target.parentNode.getAttribute('id');
+      }
+      id = parseInt(id.replace('step', ''));
+      if(id < actualStep) {
+        var tmp = actualStep - 1;
+        while (tmp > id) {
+          var tmpStep = '#step' + tmp;
+          $(tmpStep).removeClass('complete')
+          tmp--;
+        }
+        $('#next_button span').text("Siguiente");
+
+        //Actual step
+        var step = '#step' + actualStep;
+        var stepContent = '#step-content' + actualStep;
+
+        //prev step
+        var prevStep = '#step' + id;
+        var prevStepContent = '#step-content' + id;
+
+        /**** Wizard - Bar ****/
+        $(step).removeClass('active');
+        $(prevStep).removeClass('complete').addClass('active');
+
+        /**** Wizard - Content ****/
+        $(prevStepContent).parent().addClass('active');
+        $(stepContent).collapse('toggle');
+        $(prevStepContent).collapse('toggle');
+        $(prevStepContent).on('shown.bs.collapse', function () {
+          $(stepContent).parent().removeClass('active');
+        });
+
+        actualStep = id;
+        if(actualStep == 1) {
+          $('#back_button').prop('disabled', true);
+        }
+      }
+    }
 
     $(function() {
       //Search elements of the wizard
@@ -141,6 +186,9 @@
         var stepContent = '#step-content' + count;
         if($(step).length && $(stepContent).length){
           maxStep = count;
+          $(step).on('click', function(event) {
+            stepClick(event);
+          });
           count++;
         }
         else {
