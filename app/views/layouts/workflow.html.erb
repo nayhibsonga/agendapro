@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]> <html class="no-js lt-ie9 lt-ie8 lt-ie7" lang="es"> <![endif]-->
+<!--[if IE 7]>    <html class="no-js lt-ie9 lt-ie8" lang="es"> <![endif]-->
+<!--[if IE 8]>    <html class="no-js lt-ie9" lang="es"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="es"> <!--<![endif]-->
+
+    <head>
+        <link href="http://fonts.googleapis.com/css?family=Open+Sans:400,300,400italic,600,600italic,700,700italic,300italic" rel="stylesheet" type="text/css">
+
+        <!-- start: Meta -->
+        <meta charset="utf-8">
+        <title><%= @company.name %> - AgendaPro</title>
+        <meta name="author" content="AgendaPro">
+        <meta name="keyword" content="agendapro, agenda, agenda online, reserva, reserva online">
+        <%= csrf_meta_tags %>
+        <!-- end: Meta -->
+
+        <!-- start: Mobile Specific -->
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <!-- end: Mobile Specific -->
+
+        <!-- start: CSS -->
+        <%= stylesheet_link_tag "workflow" %>
+        <!--[if IE 7]>
+            <%= stylesheet_link_tag "homeie7" %>
+        <![endif]-->
+        <!-- end: CSS -->
+
+        <!-- start: JavaScript-->
+        <%= javascript_include_tag "home-head" %>
+        <!-- end: JavaScript-->
+
+        <!-- Fav and touch icons -->
+        <%= favicon_link_tag "Iso_Pro_Color.png", :rel => "shortcut icon" %>
+    </head>
+
+    <body>
+        <!-- start: Header -->
+        <header>
+            <div class="container">
+                <div class="navbar navbar-default" role="navigation">
+                    <div class="navbar-header">
+                        <% if !@company.logo.nil? %>
+                            <a class="navbar-brand">
+                                <%= image_tag @company.logo, :alt => @company.name %>
+                            </a>
+                        <% end %>
+                    </div>
+                    <div class="navbar-header aplogo">
+                        <a class="navbar-brand" href="<%= root_url(:host => request.domain + request.port_string) %>">
+                            <%= image_tag "home/Logo.png", :size => "202x74", :alt => "AgendaPro" %>
+                        </a>
+                    </div>
+                    <h1><%= @company.name %></h1>
+                </div>
+            </div>
+        </header>
+        <div id="sign">
+            <i class="fa fa-user"></i>
+            <% if user_signed_in? %>
+              <%= link_to current_user.user_name, edit_user_registration_path %> /
+              <%= link_to "Salir", destroy_user_session_path, method: :delete %>
+            <% else %>
+              <%= link_to "Inicia Sesión", new_user_session_path %>
+            <% end %>
+        </div>
+        <!-- end: Header -->
+
+        <!-- start: content -->
+        <%= yield %>
+        <!-- end: content -->
+
+        <!-- start: JavaScript-->
+        <%= javascript_include_tag "home" %>
+        <!-- end: JavaScript-->
+        
+        <!------ Originales ------->
+        <!-- Los JS -->
+        <!--<script src='http://connect.facebook.net/en_US/all.js'></script>-->
+    </body>
+</html>

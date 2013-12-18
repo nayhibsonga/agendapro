@@ -2,10 +2,6 @@ Agendapro::Application.routes.draw do
 
   require 'subdomain'
 
-  #get '/' => 'companies#index', :constraints => { :subdomain => 'www' }
-  #get '/' => 'companies#show', :constraints => { :subdomain => /.+/ }
-  root :to => 'home#index'
-
   devise_for :users, controllers: {registrations: 'registrations'}
   resources :countries
   resources :regions
@@ -41,6 +37,10 @@ Agendapro::Application.routes.draw do
   get "/contact", :to => 'home#contact', :as => 'contact'
   post "/pcontact", :to => 'home#post_contact'
 
+  get '/' => 'home#index', :constraints => { :subdomain => 'www' }
+  get '/' => 'companies#workflow', :constraints => { :subdomain => /.+/ }
+  
+  root :to => 'home#index'
   
 
   # The priority is based upon order of creation: first created -> highest priority.

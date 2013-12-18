@@ -1,0 +1,47 @@
+.navbar-header.aplogo {
+    float: right;
+}
+
+.navbar a.navbar-brand img {
+  float: left;
+  margin: 0 6px 0 0;
+  width: 202px;
+  height: 74px;
+}
+
+.navbar a.navbar-brand img.aplogo {
+  float: right;
+  margin: 0 6px 0 0;
+  width: 202px;
+  height: 74px;
+}
+
+.navbar h1 {
+    text-align: center;
+    line-height: 60px !important;
+    color: #006D68 !important;
+}
+
+#mainDiv {
+    margin-top: 20px;
+}
+
+.navbar {
+    margin: 10px 0px;
+}
+
+.pricing_wrapper {
+    padding: 20px 0 40px 0;
+}
+
+.fm_tbale_header {
+    width: 87px !important;
+}
+
+.fm_table_tr {
+    width: 87px !important;
+}
+
+.fm_table_td {
+    height: 42px !important;
+}

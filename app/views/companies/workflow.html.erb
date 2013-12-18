@@ -1,0 +1,157 @@
+<div class="main">
+    <section class="pricing_wrapper">
+        <div class="container">
+            <div id="barra" class="wizard">
+                <ul class="steps">
+                    <li class="step" id="step1"><span class="badge badge-info">1</span></li>
+                    <li class="step" id="step2"><span class="badge">2</span></li>
+                    <li class="step" id="step3"><span class="badge">3</span></li>
+                    <li class="step" id="step4"><span class="badge">4</span></li>
+                </ul>
+                <div class="actions">
+                    <button type="button" class="btn btn-success btn-prev" id="back_button" onclick="prevStep()" disabled="true"><i class="glyphicon glyphicon-chevron-left"></i><span>Anterior</span></button>
+                    <button type="button" class="btn btn-success btn-next" id="next_button" onclick="nextStep()"><span>Siguiente</span><i class="glyphicon glyphicon-chevron-right"></i></button>
+                </div>
+            </div>
+
+            <div class="panel-group step-content" id="accordion">
+              <div class="panel panel-default step-pane">
+                <div class="panel-heading">
+                  <h4 class="panel-title">Paso 1</h4>
+                </div>
+                <div id="step-content1" class="panel-collapse collapse in">
+                  <div class="panel-body">
+                    Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee nulla assumenda shoreditch et. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident. Ad vegan excepteur butcher vice lomo. Leggings occaecat craft beer farm-to-table, raw denim aesthetic synth nesciunt you probably haven't heard of them accusamus labore sustainable VHS.
+                  </div>
+                </div>
+              </div>
+              <div class="panel panel-default step-pane">
+                <div class="panel-heading">
+                  <h4 class="panel-title">Paso 2</h4>
+                </div>
+                <div id="step-content2" class="panel-collapse collapse">
+                  <div class="panel-body">
+                    Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee nulla assumenda shoreditch et. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident. Ad vegan excepteur butcher vice lomo. Leggings occaecat craft beer farm-to-table, raw denim aesthetic synth nesciunt you probably haven't heard of them accusamus labore sustainable VHS.
+                  </div>
+                </div>
+              </div>
+              <div class="panel panel-default step-pane">
+                <div class="panel-heading">
+                  <h4 class="panel-title">Paso 3</h4>
+                </div>
+                <div id="step-content3" class="panel-collapse collapse">
+                  <div class="panel-body">
+                    Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee nulla assumenda shoreditch et. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident. Ad vegan excepteur butcher vice lomo. Leggings occaecat craft beer farm-to-table, raw denim aesthetic synth nesciunt you probably haven't heard of them accusamus labore sustainable VHS.
+                  </div>
+                </div>
+              </div>
+              <div class="panel panel-default step-pane">
+                <div class="panel-heading">
+                  <h4 class="panel-title">Paso 4</h4>
+                </div>
+                <div id="step-content4" class="panel-collapse collapse">
+                  <div class="panel-body">
+                    Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee nulla assumenda shoreditch et. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident. Ad vegan excepteur butcher vice lomo. Leggings occaecat craft beer farm-to-table, raw denim aesthetic synth nesciunt you probably haven't heard of them accusamus labore sustainable VHS.
+                  </div>
+                </div>
+              </div>
+            </div>
+        </div>
+    </section>
+</div>
+
+<script type="text/javascript">
+    var actualStep = 1;
+    var maxStep = 1;
+
+    function prevStep() {
+      var prev = actualStep - 1;
+
+      if(prev >= 1){
+        $('#next_button span').text("Siguiente");
+
+        //Actual step
+        var step = '#step' + actualStep;
+        var stepContent = '#step-content' + actualStep;
+
+        //prev step
+        var prevStep = '#step' + prev;
+        var prevStepContent = '#step-content' + prev;
+
+        /**** Wizard - Bar ****/
+        $(step).removeClass('active');
+        $(prevStep).removeClass('complete').addClass('active');
+
+        /**** Wizard - Content ****/
+        $(prevStepContent).parent().addClass('active');
+        $(stepContent).collapse('toggle');
+        $(prevStepContent).collapse('toggle');
+        $(prevStepContent).on('shown.bs.collapse', function () {
+          $(stepContent).parent().removeClass('active');
+        });
+
+        actualStep--;
+        if(actualStep == 1) {
+          $('#back_button').prop('disabled', true);
+        }
+      }
+    }
+    function nextStep() {
+      var next = actualStep + 1;
+
+      if(next <= maxStep){
+        $('#back_button').prop('disabled', false);
+
+        //Actual step
+        var step = '#step' + actualStep;
+        var stepContent = '#step-content' + actualStep;
+
+        //Next step
+        var nextStep = '#step' + next;
+        var nextStepContent = '#step-content' + next;
+
+        /**** Wizard - Bar ****/
+        $(step).removeClass('active').addClass('complete');
+        $(nextStep).addClass('active');
+
+        /**** Wizard - Content ****/
+        $(nextStepContent).parent().addClass('active');
+        $(stepContent).collapse('toggle');
+        $(nextStepContent).collapse('toggle');
+        $(stepContent).on('hidden.bs.collapse', function () {
+          $(stepContent).parent().removeClass('active');
+        });
+
+        actualStep++;
+        if(actualStep == maxStep) {
+          $('#next_button span').text("Terminar");
+        }
+      }
+      else {
+        alert("Fin del wizard");
+      }
+    }
+    function stepClick() {}
+
+    $(function() {
+      //Search elements of the wizard
+      var count = 1;
+      while (count) {
+        var step = '#step' + count;
+        var stepContent = '#step-content' + count;
+        if($(step).length && $(stepContent).length){
+          maxStep = count;
+          count++;
+        }
+        else {
+          count = 0;
+        }
+      }
+
+      //Active the first element of the wizard
+      var step = '#step' + actualStep;
+      var stepContent = '#step-content' + actualStep;
+      $(step).addClass('active');
+      $(stepContent).parent().addClass('active');
+    });
+</script>

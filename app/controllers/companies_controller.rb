@@ -1,7 +1,7 @@
 class CompaniesController < ApplicationController
   before_action :set_company, only: [:show, :edit, :update, :destroy]
-  before_action :authenticate_user!, except: [:new]
-  before_action :verify_is_super_admin, except: [:new]
+  before_action :authenticate_user!, except: [:new, :workflow]
+  before_action :verify_is_super_admin, except: [:new, :workflow]
 
   layout false, except: [:show]
 
@@ -68,6 +68,15 @@ class CompaniesController < ApplicationController
     respond_to do |format|
       format.html { redirect_to companies_url }
       format.json { head :no_content }
+    end
+  end
+
+  def workflow
+    @company = Company.find_by(web_address: request.subdomain)
+    render layout: "workflow"
+    if @company.nil?
+      flash[:alert] = "No existe la compañia"
+      redirect_to root_url(:host => request.domain + request.port_string)
     end
   end
 
