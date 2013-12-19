@@ -33,4 +33,6 @@ roles = Role.create([{name: "Super Admin", description: "Administrador de la apl
 
 admin = User.create(first_name: 'Sebastián', last_name: 'Hevia', email: 'sebastianhevia@gmail.com', phone: '12345678', role: Role.find_by_name('Super Admin'), user_name: 'shevia', password: '12345678', password_confirmation: '12345678')
 
-company = Company.create(name: 'Company Test', web_address: 'test', economic_sector_id: 1, plan_id: 1, payment_status_id: 1)
+company = Company.create(name: 'Company Test', web_address: 'test', economic_sector_id: 1, plan_id: 1, payment_status_id: 1, description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus pharetra quam neque, eget condimentum purus semper id. In porta ut mauris id congue. Quisque accumsan mauris nec turpis tincidunt, quis rhoncus augue porttitor. Mauris quis malesuada sem. Donec nisi metus.", cancellation_policy: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam tincidunt rutrum sapien vel ultricies. Sed.")
+
+local = Location.create(name: 'Test Location', address: 'Calle 123', phone: '+560222588552', district_id: 1, company_id: 1)

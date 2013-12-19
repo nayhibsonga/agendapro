@@ -39,6 +39,9 @@ Agendapro::Application.routes.draw do
 
   get '/' => 'home#index', :constraints => { :subdomain => 'www' }
   get '/' => 'companies#workflow', :constraints => { :subdomain => /.+/ }
+
+  #Workflow
+  get '/step1', :to => 'companies#loadStep1'
   
   root :to => 'home#index'
   

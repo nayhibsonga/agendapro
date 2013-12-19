@@ -1,7 +1,7 @@
 class CompaniesController < ApplicationController
   before_action :set_company, only: [:show, :edit, :update, :destroy]
-  before_action :authenticate_user!, except: [:new, :workflow]
-  before_action :verify_is_super_admin, except: [:new, :workflow]
+  before_action :authenticate_user!, except: [:new, :workflow, :loadStep1]
+  before_action :verify_is_super_admin, except: [:new, :workflow, :loadStep1]
 
   layout false, except: [:show]
 
@@ -71,13 +71,21 @@ class CompaniesController < ApplicationController
     end
   end
 
+  ##### Workflow #####
   def workflow
     @company = Company.find_by(web_address: request.subdomain)
-    render layout: "workflow"
     if @company.nil?
       flash[:alert] = "No existe la compañia"
       redirect_to root_url(:host => request.domain + request.port_string)
     end
+    @locations = Location.where('company_id = ?', @company.id)
+
+    @selectedLocal = params[:local]
+    #cargar horarios del local seleccionado
+    render layout: "workflow"
+  end
+
+  def loadStep1
   end
 
   private
