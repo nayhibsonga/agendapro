@@ -96,6 +96,10 @@ function stepClick(event) {
   }
   id = parseInt(id.replace('step', ''));
   if(id < actualStep) {
+    //Disable buttons
+    $('#back_button').prop('disabled', true);
+    $('#next_button').prop('disabled', true);
+
     var tmp = actualStep - 1;
     while (tmp > id) {
       var tmpStep = '#step' + tmp;
@@ -122,6 +126,10 @@ function stepClick(event) {
     $(prevStepContent).collapse('toggle');
     $(prevStepContent).on('shown.bs.collapse', function () {
       $(stepContent).parent().removeClass('active');
+      
+      //Eneable buttons
+      $('#back_button').prop('disabled', false);
+      $('#next_button').prop('disabled', false);
     });
 
     actualStep = id;

@@ -80,8 +80,8 @@ class CompaniesController < ApplicationController
     end
     @locations = Location.where('company_id = ?', @company.id)
 
+    #Selected local from fase II
     @selectedLocal = params[:local]
-    #cargar horarios del local seleccionado
     render layout: "workflow"
   end
 

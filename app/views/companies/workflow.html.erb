@@ -38,11 +38,7 @@
                         <h5>Horario</h5>
                       </div>
                       <div class="schedule-body">
-                        <ul class="list-unstyled">
-                          <li>lun 14-15</li>
-                          <li>mar 16-20</li>
-                          <li>mie 10-20</li>
-                        </ul>
+                        No hay un local seleccionado
                       </div>
                     </div>
                   </div>
@@ -109,36 +105,3 @@
         </div>
     </section>
 </div>
-
-<script type="text/javascript">
-  function loadOverview() {
-    $('#services-link').removeClass('active');
-    $('#overview-link').addClass('active');
-    $('#services').css("display", "none");
-    $('#overview').css("display", "block");
-    $('#schedule').show();
-  }
-
-  function loadServices() {
-    $('#overview-link').removeClass('active');
-    $('#services-link').addClass('active');
-    $('#overview').css("display", "none");
-    $('#services').css("display", "block");
-    $('#schedule').hide();
-  }
-
-  $(function() {
-    $('#overview-link').click(function (event) {
-      loadOverview();
-      event.preventDefault(); // Prevent link from following its href
-    });
-    $('#services-link').click(function (event) {
-      loadServices();
-      event.preventDefault(); // Prevent link from following its href
-    });
-    $('#schedule').click(function (event) {
-      loadServices();
-      event.preventDefault(); // Prevent link from following its href
-    });
-  });
-</script>
