@@ -193,14 +193,8 @@ ActiveRecord::Schema.define(version: 20131209204752) do
   end
 
   create_table "staffs", force: true do |t|
-    t.string   "first_name"
-    t.string   "last_name"
-    t.string   "email"
-    t.string   "phone"
-    t.string   "user_name"
-    t.string   "password"
     t.integer  "location_id"
-    t.integer  "role_id"
+    t.integer  "user_id"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
