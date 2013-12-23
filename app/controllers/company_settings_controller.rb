@@ -1,5 +1,6 @@
 class CompanySettingsController < ApplicationController
   before_action :set_company_setting, only: [:show, :edit, :update, :destroy]
+  before_action :authenticate_user!
 
   # GET /company_settings
   # GET /company_settings.json
@@ -69,6 +70,6 @@ class CompanySettingsController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def company_setting_params
-      params[:company_setting]
+      params.require(:company_setting).permit(:email, :sms, :signature)
     end
 end

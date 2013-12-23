@@ -1,4 +1,15 @@
 <p id="notice"><%= notice %></p>
 
-<%= link_to 'Edit', edit_location_path(@location) %> |
-<%= link_to 'Back', locations_path %>
+<p>Nombre: <%= @location.name %></p>
+<p>Dirección: <%= @location.address %></p>
+<p>Teléfono: <%= @location.phone %></p>
+<p>Empresa: <%= @location.company.name %></p>
+<p>Comuna: <%= @location.district.name %></p>
+<p>Ciudad: <%= @location.district.city.name %></p>
+<p>Región: <%= @location.district.city.region.name %></p>
+<p>País: <%= @location.district.city.region.country.name %></p>
+<p>Longitud: <%= @location.longitude %></p>
+<p>Latitud: <%= @location.latitude %></p>
+
+<%= link_to 'Editar', edit_location_path(@location) %> |
+<%= link_to 'Atrás', locations_path %>

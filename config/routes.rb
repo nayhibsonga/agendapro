@@ -1,21 +1,47 @@
 Agendapro::Application.routes.draw do
 
+  require 'subdomain'
+
+  #get '/' => 'companies#index', :constraints => { :subdomain => 'www' }
+  #get '/' => 'companies#show', :constraints => { :subdomain => /.+/ }
+  root :to => 'home#index'
+
+  devise_for :users, controllers: {registrations: 'registrations'}
   resources :countries
   resources :regions
   resources :cities
   resources :districts
 
-
-
   resources :tags
   resources :statuses
   resources :economic_sectors
   resources :company_settings
+  resources :payment_statuses
+  resources :roles
+  resources :plans
+  resources :staff_times
+  resources :location_times
 
+  resources :users
   resources :companies
   resources :locations
   resources :services
   resources :promotions
+  resources :bookings
+  resources :service_providers
+
+  get '/dashboard', :to => 'dashboard#index', :as => 'dashboard'
+  get '/reports', :to => 'reports#index', :as => 'reports'
+  get '/clients', :to => 'clients#index', :as => 'clients'
+
+  get "/home", :to => 'home#index', :as => 'home'
+  get "/features", :to => 'home#features', :as => 'features'
+  get "/viewplans", :to => 'plans#viewplans', :as => 'viewplans'
+  get "/about_us", :to => 'home#about_us',  :as => 'aboutus'
+  get "/contact", :to => 'home#contact', :as => 'contact'
+  post "/pcontact", :to => 'home#post_contact'
+
+  
 
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".

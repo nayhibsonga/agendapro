@@ -21,6 +21,11 @@ gem 'coffee-rails', '~> 4.0.0'
 # Use jquery as the JavaScript library
 gem 'jquery-rails'
 
+gem "therubyracer"
+gem "less-rails", '2.3.3'
+gem "twitter-bootstrap-rails"
+gem "font-awesome-rails"
+
 # Turbolinks makes following links in your web application faster. Read more: https://github.com/rails/turbolinks
 gem 'turbolinks'
 
@@ -40,7 +45,7 @@ end
 
 #Accounts, Permissions, Roles:
 #cuentas
-#gem 'devise'
+gem 'devise'
 #permisos
 #gem 'cancan'
 #roles

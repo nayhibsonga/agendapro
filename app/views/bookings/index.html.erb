@@ -1,0 +1,25 @@
+<h1>Reservas</h1>
+
+<table>
+  <thead>
+    <tr>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @bookings.each do |booking| %>
+      <tr>
+        <td><%= link_to booking.start+" "+booking.end, booking %></td>
+        <td><%= link_to 'Editar', edit_booking_path(booking) %></td>
+        <td><%= link_to 'Eliminar', booking, method: :delete, data: { confirm: '¿Estás seguro?' } %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<br>
+
+<%= link_to 'Nueva Reserva', new_booking_path %>

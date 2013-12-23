@@ -1,4 +1,4 @@
-<h1>Listing districts</h1>
+<h1>Comunas</h1>
 
 <table>
   <thead>
@@ -12,9 +12,9 @@
   <tbody>
     <% @districts.each do |district| %>
       <tr>
-        <td><%= link_to 'Show', district %></td>
-        <td><%= link_to 'Edit', edit_district_path(district) %></td>
-        <td><%= link_to 'Destroy', district, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+        <td><%= link_to district.name, district %></td>
+        <td><%= link_to 'Editar', edit_district_path(district) %></td>
+        <td><%= link_to 'Eliminar', district, method: :delete, data: { confirm: '¿Estás Seguro?' } %></td>
       </tr>
     <% end %>
   </tbody>
@@ -22,4 +22,4 @@
 
 <br>
 
-<%= link_to 'New District', new_district_path %>
+<%= link_to 'Nueva Comuna', new_district_path %>

@@ -1,7 +1,7 @@
-<%= form_for(@plan) do |f| %>
+<%= simple_form_for(@plan) do |f| %>
   <% if @plan.errors.any? %>
     <div id="error_explanation">
-      <h2><%= pluralize(@plan.errors.count, "error") %> prohibited this plan from being saved:</h2>
+      <h2><%= pluralize(@plan.errors.count, "error") %> no permitió que se creara el plan:</h2>
 
       <ul>
       <% @plan.errors.full_messages.each do |msg| %>
@@ -10,6 +10,11 @@
       </ul>
     </div>
   <% end %>
+
+  Nombre: <%= f.input :name, :label => false %><br />
+  # Locales: <%= f.input :locations, :label => false %><br />
+  # Staffs: <%= f.input :staffs, :label => false %><br />
+  Plan Custom: <%= f.input :custom, :label => false %><br />
 
   <div class="actions">
     <%= f.submit %>

@@ -1,7 +1,7 @@
-<%= form_for(@location) do |f| %>
+<%= simple_form_for(@location) do |f| %>
   <% if @location.errors.any? %>
     <div id="error_explanation">
-      <h2><%= pluralize(@location.errors.count, "error") %> prohibited this location from being saved:</h2>
+      <h2><%= pluralize(@location.errors.count, "error") %> no permitió que el local sea creado:</h2>
 
       <ul>
       <% @location.errors.full_messages.each do |msg| %>
@@ -10,6 +10,16 @@
       </ul>
     </div>
   <% end %>
+
+  Nombre: <%= f.input :name, :label => false %><br />
+  Dirección: <%= f.input :address, :label => false %><br />
+  Teléfono: <%= f.input :phone, :label => false %><br />
+  Empresa: <%= f.association :company, :label => false %><br />
+  Comuna: <%= f.association :district, :label => false %><br />
+  Latitud: <%= f.input :latitude, :label => false %><br />
+  Longitud: <%= f.input :longitude, :label => false %><br />
+  
+
 
   <div class="actions">
     <%= f.submit %>

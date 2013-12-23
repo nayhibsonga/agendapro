@@ -1,4 +1,12 @@
 <p id="notice"><%= notice %></p>
 
-<%= link_to 'Edit', edit_company_path(@company) %> |
-<%= link_to 'Back', companies_path %>
+<p>Nombre: <%= @company.name %></p>
+<p>URL: <%= @company.web_address %></p>
+<p>Plan: <%= @company.plan.name %></p>
+<p>Sector Económico: <%= @company.economic_sector.name %></p>
+<p>Estado de Pago: <%= @company.payment_status.name %></p>
+<p>Admin: <%= @company.user.email %></p>
+
+
+<%= link_to 'Editar', edit_company_path(@company) %> |
+<%= link_to 'Atrás', companies_path %>

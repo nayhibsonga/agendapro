@@ -1,7 +1,7 @@
 class CreatePromotions < ActiveRecord::Migration
   def change
     create_table :promotions do |t|
-      t.string :code
+      t.string :code, :null => false
       t.string :first_name
       t.string :last_name
       t.string :email

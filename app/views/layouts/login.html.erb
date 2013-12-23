@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	
+	<!-- start: Meta -->
+	<meta charset="utf-8">
+	<title>Administrador - AgendaPro</title>
+	<meta name="description" content="AgendaPro - Sistema de agendamiento OnLine para empresas y usuarios.">
+	<meta name="author" content="AgendaPro">
+	<meta name="keyword" content="agendapro, agenda, agenda online, reserva, reserva online">
+
+	<%= csrf_meta_tags %>
+	<!-- end: Meta -->
+	
+	<!-- start: Mobile Specific -->
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<!-- end: Mobile Specific -->
+	
+	<!-- start: CSS -->
+	<%= stylesheet_link_tag "admin" %>
+	<!-- end: CSS -->
+	
+
+	<!-- The HTML5 shim, for IE6-8 support of HTML5 elements -->
+	<!--[if lt IE 9]>
+	
+	  	<script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+		<script src="assets/javascripts/admin/respond.min.js"></script>
+		<script src="assets/stylesheets/admin/ie6-8.css"></script>
+		
+	<![endif]-->
+	
+	<!-- start: Favicon and Touch Icons -->
+
+	<!-- end: Favicon and Touch Icons -->	
+		
+</head>
+
+<body>
+		<!-- start: Header -->
+	<!-- end: Header -->
+	
+		<div class="container">
+		<div class="row">
+				
+			<!-- start: Main Menu -->
+			
+			<!-- end: Main Menu -->
+						
+			<!-- start: Content -->
+			<div id="content" class="col-lg-10 col-sm-11">
+				<div class="row" style="min-height: 600px;">
+					<%= yield %>
+				</div>		
+			</div>
+			<!-- end: Content -->
+				
+				</div><!--/row-->		
+		
+	</div><!--/container-->
+	
+	<footer>
+		<p>
+			<span style="text-align:left;float:left">&copy; 2013 <a href="http://bootstrapmaster.com" alt="Bootstrap Themes">creativeLabs</a></span>
+			<span class="hidden-phone" style="text-align:right;float:right">Powered by: <a href="http://admintemplates.co" alt="Bootstrap Admin Templates">SimpliQ</a></span>
+		</p>
+
+	</footer>
+	
+	<!-- start: JavaScript-->
+	<!--[if !IE]>-->
+			<%= javascript_include_tag "admin" %>
+			<script type="text/javascript">
+			window.jQuery || document.write("<script src='assets/admin/js/jquery-2.0.3.min.js'>"+"<"+"/script>");
+			</script>
+
+	<!--<![endif]-->
+
+	<!--[if IE]>
+	
+		<%= javascript_include_tag "adminIE" %>
+		<script type="text/javascript">
+	 	window.jQuery || document.write("<script src='assets/admin/js/jquery-1.10.2.min.js'>"+"<"+"/script>");
+		</script>
+	
+	<![endif]-->
+
+	<!--[if IE8]>
+	
+		<%= javascript_include_tag "adminIE8" %>
+	
+	<![endif]-->
+	
+	<!-- end: JavaScript-->
+	
+</body>
+</html>

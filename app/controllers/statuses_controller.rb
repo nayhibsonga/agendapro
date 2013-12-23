@@ -1,5 +1,7 @@
 class StatusesController < ApplicationController
   before_action :set_status, only: [:show, :edit, :update, :destroy]
+  before_action :authenticate_user!
+  before_action :verify_is_super_admin
 
   # GET /statuses
   # GET /statuses.json
@@ -28,7 +30,7 @@ class StatusesController < ApplicationController
 
     respond_to do |format|
       if @status.save
-        format.html { redirect_to @status, notice: 'Status was successfully created.' }
+        format.html { redirect_to @status, notice: 'Estado de reserva fue creado exitosamente.' }
         format.json { render action: 'show', status: :created, location: @status }
       else
         format.html { render action: 'new' }
@@ -42,7 +44,7 @@ class StatusesController < ApplicationController
   def update
     respond_to do |format|
       if @status.update(status_params)
-        format.html { redirect_to @status, notice: 'Status was successfully updated.' }
+        format.html { redirect_to @status, notice: 'Estado de reserva fue actualizado exitosamente.' }
         format.json { head :no_content }
       else
         format.html { render action: 'edit' }
@@ -69,6 +71,6 @@ class StatusesController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def status_params
-      params[:status]
+      params.require(:status).permit(:name, :description)
     end
 end

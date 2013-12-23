@@ -1,7 +1,7 @@
-<%= form_for(@tag) do |f| %>
+<%= simple_form_for(@tag) do |f| %>
   <% if @tag.errors.any? %>
     <div id="error_explanation">
-      <h2><%= pluralize(@tag.errors.count, "error") %> prohibited this tag from being saved:</h2>
+      <h2><%= pluralize(@tag.errors.count, "error") %> no permitió que la etiqueta sea creado:</h2>
 
       <ul>
       <% @tag.errors.full_messages.each do |msg| %>
@@ -10,6 +10,8 @@
       </ul>
     </div>
   <% end %>
+
+  Nombre: <%= f.input :name, :label => false %><br />
 
   <div class="actions">
     <%= f.submit %>

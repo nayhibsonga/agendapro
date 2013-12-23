@@ -1,4 +1,14 @@
 <p id="notice"><%= notice %></p>
 
-<%= link_to 'Edit', edit_service_path(@service) %> |
-<%= link_to 'Back', services_path %>
+<p>Nombre: <%= @service.name %></p>
+<p>Precio: <%= @service.price %></p>
+<p>Duración: <%= @service.duration %></p>
+<p>Descripción: <%= @service.description %></p>
+<p>Servicio de Grupo: <%= @service.group_service %></p>
+<p>Capacidad: <%= @service.capacity %></p>
+<p>Lista de Espera: <%= @service.waiting_list %></p>
+<p>Empresa: <%= @service.company.name %></p>
+<p>Etiqueta: <%= @service.tag.name %></p>
+
+<%= link_to 'Editar', edit_service_path(@service) %> |
+<%= link_to 'Atrás', services_path %>

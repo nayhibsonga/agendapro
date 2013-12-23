@@ -11,10 +11,10 @@
     </div>
   <% end %>
 
-  <%= f.label :name %>:
-  <%= f.text_field :name %><br />
+  
+  Nombre: <%= f.input :name, :label => false %><br />
 
-  <%= f.association :country %><br />
+  País: <%= f.association :country, :label => false %><br />
 
   <div class="actions">
     <%= f.submit %>

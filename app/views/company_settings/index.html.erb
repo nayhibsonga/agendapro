@@ -1,4 +1,4 @@
-<h1>Listing company_settings</h1>
+<h1>Configuración de Empresa</h1>
 
 <table>
   <thead>
@@ -12,9 +12,9 @@
   <tbody>
     <% @company_settings.each do |company_setting| %>
       <tr>
-        <td><%= link_to 'Show', company_setting %></td>
-        <td><%= link_to 'Edit', edit_company_setting_path(company_setting) %></td>
-        <td><%= link_to 'Destroy', company_setting, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+        <td><%= link_to company_setting.company.name, company_setting %></td>
+        <td><%= link_to 'Editar', edit_company_setting_path(company_setting) %></td>
+        <td><%= link_to 'Eliminar', company_setting, method: :delete, data: { confirm: '¿Estás seguro?' } %></td>
       </tr>
     <% end %>
   </tbody>
@@ -22,4 +22,4 @@
 
 <br>
 
-<%= link_to 'New Company setting', new_company_setting_path %>
+<%= link_to 'Nueva Configuración de Empresa', new_company_setting_path %>

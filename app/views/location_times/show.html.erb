@@ -1,0 +1,9 @@
+<p id="notice"><%= notice %></p>
+
+<p>Apertura: <%= @location_time.open %></p>
+<p>Cierre: <%= @location_time.close %></p>
+<p>Local: <%= @location_time.location.name %></p>
+<p>Día: <%= @location_time.day.name %></p>
+
+<%= link_to 'Editar', edit_location_time_path(@location_time) %> |
+<%= link_to 'Atrás', location_times_path %>

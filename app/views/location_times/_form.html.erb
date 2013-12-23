@@ -1,0 +1,23 @@
+<%= simple_form_for(@location_time) do |f| %>
+  <% if @location_time.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(@location_time.errors.count, "error") %> no permitió que el horario sea guardado:</h2>
+
+      <ul>
+      <% @location_time.errors.full_messages.each do |msg| %>
+        <li><%= msg %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  Apertura: <%= f.input :open, :label => false %><br />
+  Cierre: <%= f.input :close, :label => false %><br />
+  Local: <%= f.association :location, :label => false %><br />
+  Día: <%= f.association :day, :label => false %><br />
+
+
+  <div class="actions">
+    <%= f.submit %>
+  </div>
+<% end %>

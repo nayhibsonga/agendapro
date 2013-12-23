@@ -1,5 +1,7 @@
 class CitiesController < ApplicationController
   before_action :set_city, only: [:show, :edit, :update, :destroy]
+  before_action :authenticate_user!
+  before_action :verify_is_super_admin
 
   # GET /cities
   # GET /cities.json
@@ -10,7 +12,6 @@ class CitiesController < ApplicationController
   # GET /cities/1
   # GET /cities/1.json
   def show
-    @region = Region.find(@city.region_id)
   end
 
   # GET /cities/new

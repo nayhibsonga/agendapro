@@ -1,5 +1,7 @@
 class PlansController < ApplicationController
   before_action :set_plan, only: [:show, :edit, :update, :destroy]
+  before_action :authenticate_user!, except: [:viewplans]
+  before_action :verify_is_super_admin, except: [:index, :viewplans]
 
   # GET /plans
   # GET /plans.json
@@ -28,7 +30,7 @@ class PlansController < ApplicationController
 
     respond_to do |format|
       if @plan.save
-        format.html { redirect_to @plan, notice: 'Plan was successfully created.' }
+        format.html { redirect_to @plan, notice: 'El plan fue creado exitosamente.' }
         format.json { render action: 'show', status: :created, location: @plan }
       else
         format.html { render action: 'new' }
@@ -42,7 +44,7 @@ class PlansController < ApplicationController
   def update
     respond_to do |format|
       if @plan.update(plan_params)
-        format.html { redirect_to @plan, notice: 'Plan was successfully updated.' }
+        format.html { redirect_to @plan, notice: 'El plan fue actualizado exitosamente.' }
         format.json { head :no_content }
       else
         format.html { render action: 'edit' }
@@ -61,6 +63,11 @@ class PlansController < ApplicationController
     end
   end
 
+  def viewplans
+    @plans = Plan.all
+    render layout: "home"
+  end
+
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_plan
@@ -69,6 +76,6 @@ class PlansController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def plan_params
-      params[:plan]
+      params.require(:plan).permit(:name, :locations, :staffs, :custom)
     end
 end

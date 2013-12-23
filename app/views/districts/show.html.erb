@@ -1,4 +1,7 @@
 <p id="notice"><%= notice %></p>
 
-<%= link_to 'Edit', edit_district_path(@district) %> |
-<%= link_to 'Back', districts_path %>
+<p>Nombre: <%= @district.name %></p>
+<p>Ciudad: <%= @district.city.name %></p>
+
+<%= link_to 'Editar', edit_district_path(@district) %> |
+<%= link_to 'Atrás', districts_path %>

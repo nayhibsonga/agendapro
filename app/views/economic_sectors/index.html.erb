@@ -1,0 +1,25 @@
+<h1>Listing economic_sectors</h1>
+
+<table>
+  <thead>
+    <tr>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @economic_sectors.each do |economic_sector| %>
+      <tr>
+        <td><%= link_to economic_sector.name, economic_sector %></td>
+        <td><%= link_to 'Editar', edit_economic_sector_path(economic_sector) %></td>
+        <td><%= link_to 'Eliminar', economic_sector, method: :delete, data: { confirm: 'Estás Seguro?' } %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<br>
+
+<%= link_to 'Nuevo Sector Económico', new_economic_sector_path %>

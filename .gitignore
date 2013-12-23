@@ -14,3 +14,9 @@
 # Ignore all logfiles and tempfiles.
 /log/*.log
 /tmp
+
+#Archivos temporales del editor
+*.*~
+
+#Archivos compilados
+/public/assets
