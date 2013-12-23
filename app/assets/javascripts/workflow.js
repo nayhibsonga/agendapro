@@ -10,6 +10,7 @@
 //= require home/footer.js
 //= require workflow/overview.js
 //= require workflow/wizard.js
+//= require workflow/services.js
 //= require workflow/analytics.js
 
 

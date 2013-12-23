@@ -1,5 +1,6 @@
 var actualStep = 1;
 var maxStep = 1;
+var functions = new Array();
 
 function prevStep() {
   var prev = actualStep - 1;
@@ -34,7 +35,6 @@ function prevStep() {
     });
 
     actualStep--;
-    //alert("actualStep: " + actualStep)
     if(actualStep == 1) {
       $('#back_button').prop('disabled', true);
       //Revisar porque no funciona!!!
@@ -47,42 +47,47 @@ function prevStep() {
 function nextStep() {
   var next = actualStep + 1;
 
-  if(next <= maxStep){
-    //Disable buttons
-    $('#back_button').prop('disabled', true);
-    $('#next_button').prop('disabled', true);
+  //Excecute load function
+  try {
+    if(functions[next - 1]()) {
+      if(next <= maxStep){
+        //Disable buttons
+        $('#back_button').prop('disabled', true);
+        $('#next_button').prop('disabled', true);
 
-    //Actual step
-    var step = '#step' + actualStep;
-    var stepContent = '#step-content' + actualStep;
+        //Actual step
+        var step = '#step' + actualStep;
+        var stepContent = '#step-content' + actualStep;
 
-    //Next step
-    var nextStep = '#step' + next;
-    var nextStepContent = '#step-content' + next;
+        //Next step
+        var nextStep = '#step' + next;
+        var nextStepContent = '#step-content' + next;
 
-    /**** Wizard - Bar ****/
-    $(step).removeClass('active').addClass('complete');
-    $(nextStep).addClass('active');
+        /**** Wizard - Bar ****/
+        $(step).removeClass('active').addClass('complete');
+        $(nextStep).addClass('active');
 
-    /**** Wizard - Content ****/
-    $(nextStepContent).parent().addClass('active');
-    $(stepContent).collapse('toggle');
-    $(nextStepContent).collapse('toggle');
-    $(stepContent).on('hidden.bs.collapse', function () {
-      $(stepContent).parent().removeClass('active');
+        /**** Wizard - Content ****/
+        $(nextStepContent).parent().addClass('active');
+        $(stepContent).collapse('toggle');
+        $(nextStepContent).collapse('toggle');
+        $(stepContent).on('hidden.bs.collapse', function () {
+          $(stepContent).parent().removeClass('active');
 
-      //Eneable buttons
-      $('#back_button').prop('disabled', false);
-      $('#next_button').prop('disabled', false);
-    });
+          //Eneable buttons
+          $('#back_button').prop('disabled', false);
+          $('#next_button').prop('disabled', false);
+        });
 
-    actualStep++;
-    if(actualStep == maxStep) {
-      $('#next_button span').text("Terminar");
+        actualStep++;
+        if(actualStep == maxStep) {
+          $('#next_button span').text("Terminar");
+        }
+      }
     }
   }
-  else {
-    alert("Fin del wizard");
+  catch (err) {
+    alert('Error cargando\n');
   }
 }
 
@@ -141,32 +146,42 @@ function stepClick(event) {
 }
 
 $(function() {
-  //Search elements of the wizard
+  //Search elements and function of the wizard
   var count = 1;
   while (count) {
     var step = '#step' + count;
     var stepContent = '#step-content' + count;
     if($(step).length && $(stepContent).length){
+      //detect element
       maxStep = count;
       $(step).on('click', function(event) {
         stepClick(event);
       });
+
+      //Detect function
+      var fnName = 'loadStep' + count;
+      functions.push(window[fnName]);
+
       count++;
     }
     else {
       count = 0;
     }
   }
-  //Search functions of the wizard
-  /*
-   * Buscar funciones por inspeccion, igual
-   * que como se buscan los elementos y
-   * guardarlos en un arreglo.
-  */
+
+  //Add finish method
+  var fnName = 'finalize';
+  functions.push(window[fnName]);
 
   //Active the first element of the wizard
   var step = '#step' + actualStep;
   var stepContent = '#step-content' + actualStep;
   $(step).addClass('active');
   $(stepContent).parent().addClass('active');
+  try {
+      functions[0]();
+    }
+    catch (err) {
+      alert('Error cargando\n');
+    }
 });

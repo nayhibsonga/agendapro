@@ -85,9 +85,6 @@ class CompaniesController < ApplicationController
     render layout: "workflow"
   end
 
-  def loadStep1
-  end
-
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_company

@@ -61,11 +61,25 @@
               <div class="panel-group step-content" id="accordion">
                 <div class="panel panel-default step-pane">
                   <div class="panel-heading">
-                    <h4 class="panel-title">Selecciona un Local</h4>
+                    <h4 class="panel-title">Selecciona un Servicio</h4>
                   </div>
                   <div id="step-content1" class="panel-collapse collapse in">
                     <div class="panel-body">
-                      Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee nulla assumenda shoreditch et. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident. Ad vegan excepteur butcher vice lomo. Leggings occaecat craft beer farm-to-table, raw denim aesthetic synth nesciunt you probably haven't heard of them accusamus labore sustainable VHS.
+                      <div class="row">
+                        <div class="col-md-6">
+                          <h4>Servicio</h4>
+                          <form role="form">
+                            <div id="services-selector" class="radio">
+                              <%= image_tag "ajax-loader.gif", :alt => "Loader", :id => "loader" %>
+                            </div>
+                          </form>
+                        </div>
+                        <div class="col-md-6">
+                          <h4>Descripción</h4>
+                          <div id="services-description">
+                          </div>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>

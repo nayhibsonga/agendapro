@@ -43,7 +43,7 @@ Agendapro::Application.routes.draw do
   #Workflow
   #Workflow - voerview
   get '/schedule', :to => 'location_times#scheduleLocal'
-  get '/step1', :to => 'companies#loadStep1'
+  get '/step1', :to => 'service_providers#locationServices'
   
   root :to => 'home#index'
   

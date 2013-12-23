@@ -61,6 +61,14 @@ class ServiceProvidersController < ApplicationController
     end
   end
 
+  def locationServices
+    services = []
+    ServiceProvider.where('location_id = ?', params[:location]).each do |service|
+      services.push(service.services)
+    end
+    render :json => services
+  end
+
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_service_provider

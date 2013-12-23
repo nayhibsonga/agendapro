@@ -8,13 +8,12 @@ function loadOverview() {
 
 function loadServices() {
   if ($('[name="localRadio"]').is(':checked')) {
-    var localId = $('input[name=localRadio]:checked').val()
-    alert( localId );
     $('#overview-link').removeClass('active');
     $('#services-link').addClass('active');
     $('#overview').css("display", "none");
     $('#services').css("display", "block");
     $('#schedule').hide();
+    loadStep1();
   }
   else {
     alert("Seleccione un local");
