@@ -15,7 +15,5 @@
 //= require admin/jquery.placeholder.min
 //= require admin/custom.min
 //= require admin/core.min
-//= require admin/pages/index
-
-//por defecto:
-//= require turbolinks
+//= require cocoon
+//= require jquery_ujs

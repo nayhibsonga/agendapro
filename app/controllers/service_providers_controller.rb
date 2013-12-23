@@ -15,6 +15,7 @@ class ServiceProvidersController < ApplicationController
   # GET /service_providers/new
   def new
     @service_provider = ServiceProvider.new
+    @service_provider.company_id = current_user.company_id
   end
 
   # GET /service_providers/1/edit
@@ -25,10 +26,11 @@ class ServiceProvidersController < ApplicationController
   # POST /service_providers.json
   def create
     @service_provider = ServiceProvider.new(service_provider_params)
+    @service_provider.company_id = current_user.company_id
 
     respond_to do |format|
       if @service_provider.save
-        format.html { redirect_to @service_provider, notice: 'Service provider was successfully created.' }
+        format.html { redirect_to @service_provider, notice: 'Staff creado satisfactoriamente.' }
         format.json { render action: 'show', status: :created, location: @service_provider }
       else
         format.html { render action: 'new' }
@@ -42,7 +44,7 @@ class ServiceProvidersController < ApplicationController
   def update
     respond_to do |format|
       if @service_provider.update(service_provider_params)
-        format.html { redirect_to @service_provider, notice: 'Service provider was successfully updated.' }
+        format.html { redirect_to @service_provider, notice: 'Staff actualizado satisfactoriamente.' }
         format.json { head :no_content }
       else
         format.html { render action: 'edit' }
@@ -69,6 +71,6 @@ class ServiceProvidersController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def service_provider_params
-      params[:service_provider]
+      params.require(:service_provider).permit(:user_id, :location_id, provider_times_attributes: [:open, :close, :day_id, :service_provider_id, :_destroy])
     end
 end

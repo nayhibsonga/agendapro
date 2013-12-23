@@ -1,7 +1,7 @@
 class PaymentStatusesController < ApplicationController
   before_action :set_payment_status, only: [:show, :edit, :update, :destroy]
   before_action :authenticate_user!
-  before_action :verify_is_super_admin
+  load_and_authorize_resource
 
   # GET /payment_statuses
   # GET /payment_statuses.json

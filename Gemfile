@@ -7,13 +7,13 @@ gem 'rails', '4.0.1'
 gem 'pg'
 
 # Use SCSS for stylesheets
-gem 'sass-rails', '~> 4.0.0'
+#gem 'sass-rails', '~> 4.0.0'
 
 # Use Uglifier as compressor for JavaScript assets
 gem 'uglifier', '>= 1.3.0'
 
 # Use CoffeeScript for .js.coffee assets and views
-gem 'coffee-rails', '~> 4.0.0'
+#gem 'coffee-rails', '~> 4.0.0'
 
 # See https://github.com/sstephenson/execjs#readme for more supported runtimes
 # gem 'therubyracer', platforms: :ruby
@@ -24,10 +24,12 @@ gem 'jquery-rails'
 gem "therubyracer"
 gem "less-rails", '2.3.3'
 gem "twitter-bootstrap-rails"
-gem "font-awesome-rails"
+#gem "font-awesome-rails"
 
 # Turbolinks makes following links in your web application faster. Read more: https://github.com/rails/turbolinks
 gem 'turbolinks'
+
+gem 'cocoon'
 
 # Build JSON APIs with ease. Read more: https://github.com/rails/jbuilder
 gem 'jbuilder', '~> 1.2'
@@ -47,7 +49,7 @@ end
 #cuentas
 gem 'devise'
 #permisos
-#gem 'cancan'
+gem 'cancan'
 #roles
 #gem 'rolify'
 #validacion de emails

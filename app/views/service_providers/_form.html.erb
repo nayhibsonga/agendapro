@@ -2,8 +2,18 @@
   <%= f.error_notification %>
 
   <div class="form-inputs">
+  	<%= f.association :user, :label => "Usuario" %><br />
+  	<%= f.association :location, :label => "Local" %><br />
+
   </div>
 
+
+  <%= f.simple_fields_for :provider_times do |provider_time| %>
+    <%= render 'provider_time_fields', :f => provider_time %>
+  <% end %>
+  <div class="links">
+      <%= link_to_add_association 'Agregar Bloque Horario', f, :provider_times %>
+    </div>
   <div class="form-actions">
     <%= f.button :submit %>
   </div>

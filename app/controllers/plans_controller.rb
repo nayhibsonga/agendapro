@@ -1,7 +1,7 @@
 class PlansController < ApplicationController
   before_action :set_plan, only: [:show, :edit, :update, :destroy]
   before_action :authenticate_user!, except: [:viewplans]
-  before_action :verify_is_super_admin, except: [:index, :viewplans]
+  load_and_authorize_resource
 
   # GET /plans
   # GET /plans.json
@@ -61,6 +61,18 @@ class PlansController < ApplicationController
       format.html { redirect_to plans_url }
       format.json { head :no_content }
     end
+  end
+
+  def selectplan
+    @plans = Plan.where(:custom => false)
+    @company = Company.find(current_user.company_id)
+
+    if params[:plan_id]
+      
+      @company.plan_id = params[:plan_id]
+      @company.save
+    end
+
   end
 
   def viewplans

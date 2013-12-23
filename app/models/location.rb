@@ -7,5 +7,8 @@ class Location < ActiveRecord::Base
 	has_many :service_providers
 	has_many :bookings
 
+	accepts_nested_attributes_for :location_times, :reject_if => :all_blank, :allow_destroy => true
+
 	validates :name, :address, :phone, :company, :district, :presence => true
 end
+ 

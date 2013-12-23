@@ -11,14 +11,14 @@
     </div>
   <% end %>
 
-  Inicio: <%= t.input :start, :label => false %><br />
-  Término: <%= t.input :end, :label => false %><br />
-  Nota: <%= t.input :notes, :label => false %><br />
-  Staff: <%= t.association :staff, :label => false %><br />
-  Servicio: <%= t.association :service, :label => false %><br />
-  Usuario: <%= t.association :user, :label => false %><br />
-  Status: <%= t.association :status, :label => false %><br />
-  Promoción: <%= t.association :promotion, :label => false %><br />
+  Inicio: <%= f.input :start, :label => false %><br />
+  Término: <%= f.input :end, :label => false %><br />
+  Nota: <%= f.input :notes, :label => false %><br />
+  Staff: <%= f.association :service_provider, :label => false %><br />
+  Servicio: <%= f.association :service, :label => false %><br />
+  Usuario: <%= f.association :user, :label => false %><br />
+  Status: <%= f.association :status, :label => false %><br />
+  Promoción: <%= f.association :promotion, :label => false %><br />
   
 
   <div class="actions">
