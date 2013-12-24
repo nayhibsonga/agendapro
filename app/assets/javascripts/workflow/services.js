@@ -1,19 +1,22 @@
 function loadStep1() {
 	if ($('[name="localRadio"]').is(':checked')) {
+		$('#services-selector').html('<%= image_tag "ajax-loader.gif", :alt => "Loader" %>');
 		var localId = $('input[name=localRadio]:checked').val();
-		$.getJSON('/step1', {location: localId}, function (services) {
+		$.getJSON('/localServices', {location: localId}, function (servicesArray) {
 			$('#services-selector').empty();
-			$.each(services[0], function (key, service) {
-				$('#services-selector').append('<label>' +
-						'<input type="radio" name="serviceRadio" value="' + service.id + '">' +
-						'<p>' + service.name + '</p>' +
-					'</label>'
-				);
+			$.each(servicesArray, function (key, services) {
+				$.each(services, function (key, service) {
+					$('#services-selector').append('<label>' +
+							'<input type="radio" name="serviceRadio" value="' + service.id + '">' +
+							'<p>' + service.name + '</p>' +
+						'</label>'
+					);
+				});
 			});
-		$('[name="serviceRadio"]').on('click', function(event) {
-			var serviceId = event.target.getAttribute('value');
-			loadDescription(serviceId);
-		});
+			$('[name="serviceRadio"]').on('click', function(event) {
+				var serviceId = event.target.getAttribute('value');
+				loadDescription(serviceId);
+			});
 		});
 		return true;
 	}
@@ -36,12 +39,26 @@ function loadDescription (serviceId) {
 
 function loadStep2() {
 	if($('[name="serviceRadio"]').is(':checked')){
+		$('#staff-selector').html('<%= image_tag "ajax-loader.gif", :alt => "Loader" %>');
+		var serviceId = $('input[name=serviceRadio]:checked').val();
+		$.getJSON('/serviceProviders', {id: serviceId}, function (providers) {
+			$('#staff-selector').empty();
+			$.each(providers, function (key, provider) {
+				$('#staff-selector').append('<label>' +
+						'<input type="radio" name="staffRadio" value="' + provider.id + '">' +
+						'<p>Provider: ' + provider.id + '</p>' +
+					'</label>'
+				);
+			});
+		});
+		/*
+		 * Ademas cargar el horario conjunto de los staffs.
+		 * Al seleccionar un staff cargar el horario particular
+		*/
 		return true;
 	}
-	else {
-		alert('Debe elegir un Servicio')
-		return false;
-	}
+	alert('Debe elegir un Servicio')
+	return false;
 }
 
 function loadStep3() {

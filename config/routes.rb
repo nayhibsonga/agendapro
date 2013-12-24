@@ -41,9 +41,11 @@ Agendapro::Application.routes.draw do
   get '/' => 'companies#workflow', :constraints => { :subdomain => /.+/ }
 
   #Workflow
-  #Workflow - voerview
+  #Workflow - overview
   get '/schedule', :to => 'location_times#scheduleLocal'
-  get '/step1', :to => 'service_providers#locationServices'
+  #wrokflow - wizard
+  get '/localServices', :to => 'service_providers#locationServices'
+  get '/serviceProviders', :to => 'services#getProviders'
   
   root :to => 'home#index'
   
