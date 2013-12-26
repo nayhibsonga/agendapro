@@ -16,6 +16,8 @@ class ServiceProvidersController < ApplicationController
   def new
     @service_provider = ServiceProvider.new
     @service_provider.company_id = current_user.company_id
+    @users = User.where(company_id: current_user.company_id)
+    @locations = Location.where(company_id: current_user.company_id)
   end
 
   # GET /service_providers/1/edit

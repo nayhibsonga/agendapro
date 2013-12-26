@@ -11,10 +11,28 @@ class Location < ActiveRecord::Base
 
 	validates :name, :address, :phone, :company, :district, :presence => true
 
+	validate :times_overlap, :time_empty_or_negative
 
+	def times_overlap
+    	self.location_times.each do |location_time1|
+			self.location_times.each do |location_time2|
+				if (location_time1 != location_time2)
+					if(location_time1.day_id == location_time2.day_id)
+						if (location_time1.open - location_time2.close) * (location_time2.open - location_time1.close) >= 0
+				      		errors.add(:location, "Existen bloques horarios sobrepuestos.")
+				    	end
+			    	end
+			    end
+			end
+		end
+  	end
 
-	def overlaps?(location1,location2)
-    	(location1.open - location2.close) * (location2.open - location1.close) >= 0
+  	def time_empty_or_negative
+  		self.location_times.each do |location_time|
+  			if location_time.open >= location_time.close
+  				errors.add(:location, "Existen horarios vacíos o negativos.")
+			end
+  		end
   	end
 end
  

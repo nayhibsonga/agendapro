@@ -12,4 +12,6 @@ class Company < ActiveRecord::Base
 	has_one :company_setting
 
 	validates :name, :web_address, :economic_sector, :plan, :payment_status, :presence => true
+
+	validates_uniqueness_of :web_address
 end

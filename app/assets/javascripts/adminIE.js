@@ -17,4 +17,3 @@
 //= require admin/core.min
 //= require cocoon
 //= require jquery_ujs
-//= require turbolinks

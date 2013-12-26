@@ -1,9 +1,0 @@
-<p id="notice"><%= notice %></p>
-
-<p>Apertura: <%= @staff_time.open %></p>
-<p>Cierre: <%= @staff_time.close %></p>
-<p>Staff: <%= @staff_time.staff.first_name %></p>
-<p>Día: <%= @staff_time.day.name %></p>
-
-<%= link_to 'Editar', edit_staff_time_path(@staff_time) %> |
-<%= link_to 'Atrás', staff_times_path %>

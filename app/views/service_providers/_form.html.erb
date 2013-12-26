@@ -2,8 +2,8 @@
   <%= f.error_notification %>
 
   <div class="form-inputs">
-  	<%= f.association :user, :label => "Usuario" %><br />
-  	<%= f.association :location, :label => "Local" %><br />
+  	<%= f.association :user, :as => :collection_select, collection: @users, :label => "Usuario", :label_method => :email %><br />
+  	<%= f.association :location, :as => :collection_select, collection: @locations, :label => "Local" %><br />
 
   </div>
 

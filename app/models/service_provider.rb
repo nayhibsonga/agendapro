@@ -9,5 +9,27 @@ class ServiceProvider < ActiveRecord::Base
 
 	accepts_nested_attributes_for :provider_times, :reject_if => :all_blank, :allow_destroy => true
 	
-	validates :company, :presence => true
+	validates :company, :user, :location, :presence => true
+
+	def times_overlap
+    	self.provider_times.each do |provider_time1|
+			self.provider_times.each do |provider_time2|
+				if (provider_time1 != provider_time2)
+					if(provider_time1.day_id == provider_time2.day_id)
+						if (provider_time1.open - provider_time2.close) * (provider_time2.open - provider_time1.close) >= 0
+				      		errors.add(:service_provider, "Existen bloques horarios sobrepuestos.")
+				    	end
+			    	end
+			    end
+			end
+		end
+  	end
+
+  	def time_empty_or_negative
+  		self.provider_times.each do |provider_time|
+  			if provider_time.open >= provider_time.close
+  				errors.add(:service_provider, "Existen horarios vacíos o negativos.")
+			end
+  		end
+  	end
 end
