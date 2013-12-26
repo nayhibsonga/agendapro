@@ -1,6 +1,6 @@
 class BookingsController < ApplicationController
   before_action :set_booking, only: [:show, :edit, :update, :destroy]
-  before_action :authenticate_user!
+  before_action :authenticate_user!, except: [:create, :providerBookin]
 
   # GET /bookings
   # GET /bookings.json
@@ -60,6 +60,11 @@ class BookingsController < ApplicationController
       format.html { redirect_to bookings_url }
       format.json { head :no_content }
     end
+  end
+
+  def providerBookin
+    bookings = Booking.where('service_provider_id = ? AND location_id = ?', params[:provider], params[:location]).order(:start)
+    render :json => bookings
   end
 
   private

@@ -91,15 +91,7 @@ function nextStep() {
   }
 }
 
-function stepClick(event) {
-  var id;
-  if (event.target.getAttribute('id') != null) {
-    id = event.target.getAttribute('id');
-  }
-  else {
-    id = event.target.parentNode.getAttribute('id');
-  }
-  id = parseInt(id.replace('step', ''));
+function stepClick(id) {
   if(id < actualStep) {
     //Disable buttons
     $('#back_button').prop('disabled', true);
@@ -155,7 +147,15 @@ $(function() {
       //detect element
       maxStep = count;
       $(step).on('click', function(event) {
-        stepClick(event);
+        var id;
+        if (event.target.getAttribute('id') != null) {
+          id = event.target.getAttribute('id');
+        }
+        else {
+          id = event.target.parentNode.getAttribute('id');
+        }
+        id = parseInt(id.replace('step', ''));
+        stepClick(id);
       });
 
       //Detect function

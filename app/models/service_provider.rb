@@ -5,7 +5,7 @@ class ServiceProvider < ActiveRecord::Base
 
 	has_many :service_staffs
 	has_many :services, :through => :service_staffs
-	has_many :staff_times
+	has_many :provider_times
 	has_many :bookings
 	
 	validates :company, :presence => true
