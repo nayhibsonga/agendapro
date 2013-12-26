@@ -17,6 +17,7 @@ class ServicesController < ApplicationController
   # GET /services/new
   def new
     @service = Service.new
+    @service.company_id = current_user.company_id
   end
 
   # GET /services/1/edit
@@ -27,6 +28,7 @@ class ServicesController < ApplicationController
   # POST /services.json
   def create
     @service = Service.new(service_params)
+    @service.company_id = current_user.company_id
 
     respond_to do |format|
       if @service.save

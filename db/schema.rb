@@ -49,13 +49,13 @@ ActiveRecord::Schema.define(version: 20131217133040) do
   end
 
   create_table "companies", force: true do |t|
-    t.string   "name",               null: false
-    t.string   "web_address",        null: false
+    t.string   "name",                             null: false
+    t.string   "web_address",                      null: false
     t.string   "logo"
-    t.float    "pay_due"
-    t.integer  "economic_sector_id", null: false
-    t.integer  "plan_id",            null: false
-    t.integer  "payment_status_id",  null: false
+    t.float    "pay_due",            default: 0.0
+    t.integer  "economic_sector_id",               null: false
+    t.integer  "plan_id",                          null: false
+    t.integer  "payment_status_id",                null: false
     t.datetime "created_at"
     t.datetime "updated_at"
   end
@@ -177,6 +177,7 @@ ActiveRecord::Schema.define(version: 20131217133040) do
   create_table "service_providers", force: true do |t|
     t.integer  "location_id"
     t.integer  "user_id",     null: false
+    t.integer  "company_id",  null: false
     t.datetime "created_at"
     t.datetime "updated_at"
   end

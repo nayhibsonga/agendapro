@@ -71,6 +71,6 @@ class ServiceProvidersController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def service_provider_params
-      params.require(:service_provider).permit(:user_id, :location_id, provider_times_attributes: [:open, :close, :day_id, :service_provider_id, :_destroy])
+      params.require(:service_provider).permit(:user_id, :location_id, provider_times_attributes: [:id, :open, :close, :day_id, :service_provider_id, :_destroy])
     end
 end

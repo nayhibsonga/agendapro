@@ -3,6 +3,7 @@ class CreateServiceProviders < ActiveRecord::Migration
     create_table :service_providers do |t|
       t.references :location
       t.references :user, :null => false
+      t.references :company, :null => false
 
       t.timestamps
     end
