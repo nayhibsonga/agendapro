@@ -41,10 +41,10 @@ location_times = LocationTime.create([{open: '15:00', close: '20:00', location_i
 
 service_provider = ServiceProvider.create(location_id: 1, user_id: 1, company_id: 1)
 
-service = Service.create([{name: "Corte de pelo", price: 2500, duration: 5, company_id: 1, tag_id: 1}, {name: "Vicios", price: 5000, duration: 15, company_id: 1, tag_id: 1}])
+service = Service.create([{name: "Corte de pelo", price: 2500, duration: 30, company_id: 1, tag_id: 1}, {name: "Vicios", price: 5000, duration: 45, company_id: 1, tag_id: 1}])
 
 service_provider.services << service
 
 provider_times = ProviderTime.create([{open: '8:30', close: '20:00', service_provider_id: 1, day_id: 1}, {open: '10:30', close: '19:30', service_provider_id: 1, day_id: 2}, {open: '14:00', close: '17:00', service_provider_id: 1, day_id: 3}, {open: '8:00', close: '20:30', service_provider_id: 1, day_id: 4}, {open: '9:00', close: '18:00', service_provider_id: 1, day_id: 5}])
 
-bookings = Booking.create([{start: '2013-12-26T08:30z', end: '2013-12-26T10:00', service_provider_id: 1, user_id: 1, service_id: 1, location_id: 1, status_id: 1}, {start: '2013-12-26T13:30z', end: '2013-12-26T15:30', service_provider_id: 1, user_id: 1, service_id: 1, location_id: 1, status_id: 1}, {start: '2013-12-27T010:00z', end: '2013-12-27T12:00', service_provider_id: 1, user_id: 1, service_id: 1, location_id: 1, status_id: 1}, {start: '2013-12-30T16:30z', end: '2013-12-30T18:30', service_provider_id: 1, user_id: 1, service_id: 1, location_id: 1, status_id: 1}, {start: '2013-12-26T08:30z', end: '2013-12-26T10:00', service_provider_id: 1, user_id: 1, service_id: 2, location_id: 1, status_id: 1}])
+bookings = Booking.create([{start: '2013-12-26T08:30z', end: '2013-12-26T10:00', service_provider_id: 1, user_id: 1, service_id: 1, location_id: 1, status_id: 1}, {start: '2013-12-26T13:30z', end: '2013-12-26T15:30', service_provider_id: 1, user_id: 1, service_id: 1, location_id: 1, status_id: 1}, {start: '2013-12-27T010:00z', end: '2013-12-27T12:00', service_provider_id: 1, user_id: 1, service_id: 1, location_id: 1, status_id: 1}, {start: '2013-12-30T16:30z', end: '2013-12-30T18:30', service_provider_id: 1, user_id: 1, service_id: 1, location_id: 1, status_id: 1}, {start: '2013-12-26T09:30z', end: '2013-12-26T11:00', service_provider_id: 1, user_id: 1, service_id: 2, location_id: 1, status_id: 1}])

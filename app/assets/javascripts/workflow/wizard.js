@@ -6,6 +6,8 @@ function prevStep() {
   var prev = actualStep - 1;
 
   if(prev >= 1){
+    $(".alert").hide();
+
     //Disable buttons
     $('#back_button').prop('disabled', true);
     $('#next_button').prop('disabled', true);
@@ -49,6 +51,7 @@ function nextStep() {
 
   //Excecute load function
   try {
+    $(".alert").hide();
     if(functions[next - 1]()) {
       if(next <= maxStep){
         //Disable buttons
@@ -87,12 +90,14 @@ function nextStep() {
     }
   }
   catch (err) {
-    alert('Error cargando\n');
+    alertMessage('Error cargando\n');
   }
 }
 
 function stepClick(id) {
   if(id < actualStep) {
+    $(".alert").hide();
+
     //Disable buttons
     $('#back_button').prop('disabled', true);
     $('#next_button').prop('disabled', true);
@@ -137,6 +142,11 @@ function stepClick(id) {
   }
 }
 
+function alertMessage(message) {
+  $('#alertMessage').html(message);
+  $('.alert').show();
+}
+
 $(function() {
   //Search elements and function of the wizard
   var count = 1;
@@ -179,9 +189,14 @@ $(function() {
   $(step).addClass('active');
   $(stepContent).parent().addClass('active');
   try {
-      functions[0]();
-    }
-    catch (err) {
-      alert('Error cargando\n');
-    }
+    functions[0]();
+  }
+  catch (err) {
+    alertMessage('Error cargando\n');
+  }
+
+  $(".alert").hide();
+  $('.close').on('click', function () {
+    $('.alert').hide();
+  });
 });

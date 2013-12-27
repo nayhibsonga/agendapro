@@ -1,9 +1,11 @@
 function loadOverview() {
-  $('#services-link').removeClass('active');
-  $('#overview-link').addClass('active');
-  $('#services').css("display", "none");
-  $('#overview').css("display", "block");
-  $('#schedule').show();
+  if (confirm("Perdera los datos ¿Desea continuar?")) {
+    $('#services-link').removeClass('active');
+    $('#overview-link').addClass('active');
+    $('#services').css("display", "none");
+    $('#overview').css("display", "block");
+    $('#schedule').show();
+  }
 }
 
 function loadServices() {
@@ -26,10 +28,12 @@ function loadSchedule(id) {
     $('.schedule-body').html('');
     $('.schedule-body').append('<ul class="list-unstyled"></ul>');
     $.each(schedule, function (day, hours) {
-      $('.list-unstyled').append('<li id="' + day + '"><b>' + day + ' </b></li>');
-      $.each(hours, function (pos, hour) {
-        $('#' + day).append(getHour(hour.open) + '-' + getHour(hour.close) + ' ');
-      })
+      if (hours.length) {
+        $('.list-unstyled').append('<li id="' + day + '"><b>' + day + ' </b></li>');
+        $.each(hours, function (pos, hour) {
+          $('#' + day).append(getHour(hour.open) + '-' + getHour(hour.close) + ' ');
+        })
+      }
     })
   });
 }

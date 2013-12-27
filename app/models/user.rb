@@ -10,6 +10,7 @@ class User < ActiveRecord::Base
 	has_many :service_providers
 
 	accepts_nested_attributes_for :company
+	accepts_nested_attributes_for :bookings, :reject_if => :all_blanck
 
 	validates :first_name, :last_name, :email, :phone, :presence => true
 end

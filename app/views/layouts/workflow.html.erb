@@ -54,17 +54,31 @@
                     </div>
                     <h1><%= @company.name %></h1>
                 </div>
+                <div id="sign">
+                    <i class="fa fa-user"></i>
+                    <% if user_signed_in? %>
+                      <%= link_to current_user.user_name, edit_user_registration_path %> /
+                      <%= link_to "Salir", destroy_user_session_path, method: :delete %>
+                    <% else %>
+                      <%= link_to "Inicia Sesión", new_user_session_path %>
+                    <% end %>
+                </div>
+                <!-- start: Alerts -->
+                <% if flash[:notice] %>
+                    <div class="alert alert-info alert-dismissable">
+                        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                        <%= flash[:notice] %>
+                    </div>
+                <% end %>
+                <% if flash[:alert] %>
+                    <div class="alert alert-warning alert-dismissable">
+                        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                        <%= flash[:alert] %>
+                    </div>
+                <% end %>
+                <!-- end: Alerts -->
             </div>
         </header>
-        <div id="sign">
-            <i class="fa fa-user"></i>
-            <% if user_signed_in? %>
-              <%= link_to current_user.user_name, edit_user_registration_path %> /
-              <%= link_to "Salir", destroy_user_session_path, method: :delete %>
-            <% else %>
-              <%= link_to "Inicia Sesión", new_user_session_path %>
-            <% end %>
-        </div>
         <!-- end: Header -->
 
         <!-- start: content -->
