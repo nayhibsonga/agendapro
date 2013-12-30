@@ -16,8 +16,8 @@ class ServiceProvidersController < ApplicationController
   def new
     @service_provider = ServiceProvider.new
     @service_provider.company_id = current_user.company_id
-    @users = User.where(company_id: current_user.company_id)
-    @locations = Location.where(company_id: current_user.company_id)
+    #@users = User.where(company_id: current_user.company_id)
+    #@locations = Location.where(company_id: current_user.company_id)
   end
 
   # GET /service_providers/1/edit
@@ -45,6 +45,9 @@ class ServiceProvidersController < ApplicationController
   # PATCH/PUT /service_providers/1.json
   def update
     respond_to do |format|
+
+    @users = User.where(company_id: current_user.company_id)
+    @locations = Location.where(company_id: current_user.company_id)
       if @service_provider.update(service_provider_params)
         format.html { redirect_to @service_provider, notice: 'Staff actualizado satisfactoriamente.' }
         format.json { head :no_content }

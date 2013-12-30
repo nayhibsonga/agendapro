@@ -1,9 +1,19 @@
 <%= simple_form_for(@service_provider) do |f| %>
-  <%= f.error_notification %>
+  <% if @service_provider.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(@service_provider.errors.count, "error") %> no permitió que el local sea creado:</h2>
+
+      <ul>
+      <% @service_provider.errors.full_messages.each do |msg| %>
+        <li><%= msg %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
 
   <div class="form-inputs">
-  	<%= f.association :user, :as => :collection_select, collection: @users, :label => "Usuario", :label_method => :email %><br />
-  	<%= f.association :location, :as => :collection_select, collection: @locations, :label => "Local" %><br />
+  	<%= f.association :user, :as => :collection_select, collection: User.where(company_id: current_user.company_id), :label => "Usuario", :label_method => :email, value_method: :id %><br />
+  	<%= f.association :location, :as => :collection_select, collection: Location.where(company_id: current_user.company_id), :label => "Local", value_method: :id %><br />
 
   </div>
 

@@ -36,7 +36,7 @@ ActiveRecord::Schema.define(version: 20131217133040) do
     t.integer  "service_id",          null: false
     t.integer  "location_id",         null: false
     t.integer  "status_id",           null: false
-    t.integer  "promotion_id",        null: false
+    t.integer  "promotion_id"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
