@@ -31,7 +31,7 @@
                             <p> <strong><%= plan.locations %></strong> Local(es) </p>
                             <p> <strong><%= plan.staffs %></strong> Staffs </p>
                         </div>
-                        <a href="<?php echo WEB_PATH; ?>/index.php?task=company_signup&plan=<?php echo $p['id']; ?>" class="btn btn-success btn-lg">Elegir</a>
+                        <%= link_to "Elegir", new_user_registration_path(:plan => plan.id), :class => "btn btn-success btn-lg" %>
                     </div>
                 </div>
                 <% end %>
