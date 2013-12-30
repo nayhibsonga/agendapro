@@ -1,6 +1,7 @@
 class LocationTimesController < ApplicationController
   before_action :set_location_time, only: [:show, :edit, :update, :destroy]
   before_action :authenticate_user!, except: [:scheduleLocal]
+  layout "admin", except: [:scheduleLocal]
 
   # GET /location_times
   # GET /location_times.json

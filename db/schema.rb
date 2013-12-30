@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20131223151845) do
+ActiveRecord::Schema.define(version: 20131230170738) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -28,17 +28,21 @@ ActiveRecord::Schema.define(version: 20131223151845) do
   end
 
   create_table "bookings", force: true do |t|
-    t.datetime "start",               null: false
-    t.datetime "end",                 null: false
+    t.datetime "start",                            null: false
+    t.datetime "end",                              null: false
     t.text     "notes"
-    t.integer  "service_provider_id", null: false
-    t.integer  "user_id",             null: false
-    t.integer  "service_id",          null: false
-    t.integer  "location_id",         null: false
-    t.integer  "status_id",           null: false
+    t.integer  "service_provider_id",              null: false
+    t.integer  "user_id",                          null: false
+    t.integer  "service_id",                       null: false
+    t.integer  "location_id",                      null: false
+    t.integer  "status_id",                        null: false
     t.integer  "promotion_id"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.string   "first_name",          default: "", null: false
+    t.string   "last_name",           default: "", null: false
+    t.string   "mail",                default: "", null: false
+    t.string   "phone",               default: "", null: false
   end
 
   create_table "cities", force: true do |t|

@@ -1,5 +1,6 @@
 class ServiceProvidersController < ApplicationController
   before_action :set_service_provider, only: [:show, :edit, :update, :destroy]
+  layout "admin", except: [:locationServices, :providerTime]
 
   # GET /service_providers
   # GET /service_providers.json

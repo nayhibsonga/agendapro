@@ -100,10 +100,11 @@ function loadDescription (serviceId) {
 //====== Manage Calendar ======//
 
 var duration = 30;
-function loadCalendar (startTime, endTime) {
+function loadCalendar (startTime, endTime, hiddenDays) {
 	//Default values
 	startTime = startTime || 0;
 	endTime = endTime || 24;
+	hiddenDays = hiddenDays || [];
 
 	var serviceId = $('input[name="serviceRadio"]:checked').val();
 	$.ajax({
@@ -159,7 +160,8 @@ function loadCalendar (startTime, endTime) {
 	    	moveBooking(event, revertFunc);
 	    },
 	    slotMinutes: duration,
-	    eventColor: '#ff0000'
+	    eventColor: '#ff0000',
+	    hiddenDays: hiddenDays
 	});
 }
 
@@ -194,8 +196,32 @@ function loadProviderTime (providerId) {
 					}
 				}
 		});
-		loadCalendar(minHour + ':' + minMinuts, maxHour + ':' + maxMinuts);
-		loadProviderBooking(providerId);
+		$.getJSON('/schedule', {local: $('input[name=localRadio]:checked').val()}, function (schedule) {
+			hiddenDays = new Array();
+			if (!schedule.domingo.length) {
+				hiddenDays.push(0);
+			}
+			if (!schedule.lunes.length) {
+				hiddenDays.push(1);
+			}
+			if (!schedule.martes.length) {
+				hiddenDays.push(2);
+			}
+			if (!schedule.miercoles.length) {
+				hiddenDays.push(3);
+			}
+			if (!schedule.jueves.length) {
+				hiddenDays.push(4);
+			}
+			if (!schedule.viernes.length) {
+				hiddenDays.push(5);
+			}
+			if (!schedule.sabado.length) {
+				hiddenDays.push(6);
+			}
+			loadCalendar(minHour + ':' + minMinuts, maxHour + ':' + maxMinuts, hiddenDays);
+			loadProviderBooking(providerId);
+		  });
 	});
 }
 

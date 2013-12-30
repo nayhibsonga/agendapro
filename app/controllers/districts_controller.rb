@@ -2,6 +2,7 @@ class DistrictsController < ApplicationController
   before_action :set_district, only: [:show, :edit, :update, :destroy]
   before_action :authenticate_user!
   before_action :verify_is_super_admin
+  layout "admin"
 
   # GET /districts
   # GET /districts.json

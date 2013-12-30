@@ -2,6 +2,7 @@ class StatusesController < ApplicationController
   before_action :set_status, only: [:show, :edit, :update, :destroy]
   before_action :authenticate_user!
   before_action :verify_is_super_admin
+  layout "admin"
 
   # GET /statuses
   # GET /statuses.json
