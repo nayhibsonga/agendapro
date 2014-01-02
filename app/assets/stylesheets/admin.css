@@ -1,7 +1,9 @@
 
  /*
- *= require font-awesome
+ *= require admin/font-awesome.min
  *= require admin/bootstrap.min
  *= require admin/style.min
  *= require admin/retina.min
  */
+
+.admin-logo img{max-height: 37px}

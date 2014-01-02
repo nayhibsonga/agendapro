@@ -5,7 +5,6 @@
 //= require admin/jquery-ui-1.10.3.custom.min
 //= require admin/jquery.ui.touch-punch.min
 //= require admin/jquery.sparkline.min
-//= require admin/fullcalendar.min
 //= require admin/jquery.flot.min
 //= require admin/jquery.flot.pie.min
 //= require admin/jquery.flot.stack.min
@@ -15,7 +14,4 @@
 //= require admin/jquery.placeholder.min
 //= require admin/custom.min
 //= require admin/core.min
-//= require admin/pages/index
-
-//por defecto:
-//= require turbolinks
+//= require jquery_ujs

@@ -1,5 +1,6 @@
 Agendapro::Application.routes.draw do
 
+  get "users/index"
   require 'subdomain'
 
   devise_for :users, controllers: {registrations: 'registrations'}
@@ -18,7 +19,6 @@ Agendapro::Application.routes.draw do
   resources :staff_times
   resources :location_times
 
-  resources :users
   resources :companies
   resources :locations
   resources :services
@@ -26,9 +26,15 @@ Agendapro::Application.routes.draw do
   resources :bookings
   resources :service_providers
 
+  namespace :admin do 
+    get '', to: 'dashboard#index', as: '/'
+    resources :users 
+  end
+
   get '/dashboard', :to => 'dashboard#index', :as => 'dashboard'
   get '/reports', :to => 'reports#index', :as => 'reports'
   get '/clients', :to => 'clients#index', :as => 'clients'
+  get '/select_plan', :to => 'plans#selectplan', :as => 'select_plan'
 
   get "/home", :to => 'home#index', :as => 'home'
   get "/features", :to => 'home#features', :as => 'features'

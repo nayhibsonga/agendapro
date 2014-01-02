@@ -3,6 +3,7 @@ class PaymentStatusesController < ApplicationController
   before_action :authenticate_user!
   before_action :verify_is_super_admin
   layout "admin"
+  load_and_authorize_resource
 
   # GET /payment_statuses
   # GET /payment_statuses.json

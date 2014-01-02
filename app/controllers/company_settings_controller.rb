@@ -2,6 +2,7 @@ class CompanySettingsController < ApplicationController
   before_action :set_company_setting, only: [:show, :edit, :update, :destroy]
   before_action :authenticate_user!
   layout "admin"
+  load_and_authorize_resource
 
   # GET /company_settings
   # GET /company_settings.json
@@ -17,6 +18,7 @@ class CompanySettingsController < ApplicationController
   # GET /company_settings/new
   def new
     @company_setting = CompanySetting.new
+    @company_setting.company_id = current_user.company_id
   end
 
   # GET /company_settings/1/edit
@@ -27,6 +29,7 @@ class CompanySettingsController < ApplicationController
   # POST /company_settings.json
   def create
     @company_setting = CompanySetting.new(company_setting_params)
+    @company_setting.company_id = current_user.company_id
 
     respond_to do |format|
       if @company_setting.save
@@ -71,6 +74,6 @@ class CompanySettingsController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def company_setting_params
-      params.require(:company_setting).permit(:email, :sms, :signature)
+      params.require(:company_setting).permit(:email, :sms, :signature, :company_id)
     end
 end

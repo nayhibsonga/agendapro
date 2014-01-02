@@ -4,6 +4,7 @@ class CompaniesController < ApplicationController
   before_action :verify_is_super_admin, except: [:new, :workflow]
 
   layout "admin", except: [:show, :workflow]
+  load_and_authorize_resource
 
 
   # GET /companies
@@ -15,6 +16,7 @@ class CompaniesController < ApplicationController
   # GET /companies/1
   # GET /companies/1.json
   def show
+
   end
 
   # GET /companies/new
@@ -93,6 +95,7 @@ class CompaniesController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def company_params
-      params.require(:company).permit(:name, :economic_sector_id, :plan_id, :logo, :payment_status_id, :pay_due, :web_address, :users_attributes[:id, :first_name, :last_name, :email, :phone, :user_name, :password, :role_id, :company_id])
+      params.require(:company).permit(:name, :economic_sector_id, :plan_id, :logo, :payment_status_id, :pay_due, :web_address)
+      #params.require(:company).permit(:name, :economic_sector_id, :plan_id, :logo, :payment_status_id, :pay_due, :web_address, :users_attributes[:id, :first_name, :last_name, :email, :phone, :user_name, :password, :role_id, :company_id])
     end
 end
