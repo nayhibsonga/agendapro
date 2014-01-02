@@ -6,7 +6,7 @@ function prevStep() {
   var prev = actualStep - 1;
 
   if(prev >= 1){
-    $(".alert").hide();
+    $("#alertDialog").hide();
 
     //Disable buttons
     $('#back_button').prop('disabled', true);
@@ -51,7 +51,7 @@ function nextStep() {
 
   //Excecute load function
   try {
-    $(".alert").hide();
+    $("#alertDialog").hide();
     if(functions[next - 1]()) {
       if(next <= maxStep){
         //Disable buttons
@@ -96,7 +96,7 @@ function nextStep() {
 
 function stepClick(id) {
   if(id < actualStep) {
-    $(".alert").hide();
+    $("#alertDialog").hide();
 
     //Disable buttons
     $('#back_button').prop('disabled', true);
@@ -144,7 +144,7 @@ function stepClick(id) {
 
 function alertMessage(message) {
   $('#alertMessage').html(message);
-  $('.alert').show();
+  $('#alertDialog').show();
 }
 
 $(function() {
@@ -195,8 +195,8 @@ $(function() {
     alertMessage('Error cargando\n');
   }
 
-  $(".alert").hide();
+  $("#alertDialog").hide();
   $('.close').on('click', function () {
-    $('.alert').hide();
+    $('#alertDialog').hide();
   });
 });

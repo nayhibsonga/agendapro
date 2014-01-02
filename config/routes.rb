@@ -47,7 +47,7 @@ Agendapro::Application.routes.draw do
   get '/localServices', :to => 'service_providers#locationServices'
   get '/serviceProviders', :to => 'services#getProviders'
   get '/providerTime', :to => 'service_providers#providerTime'
-  get '/booking', :to => 'bookings#providerBookin'
+  get '/booking', :to => 'bookings#providerBooking'
   post "/book", :to => 'bookings#bookService'
   
   root :to => 'home#index'

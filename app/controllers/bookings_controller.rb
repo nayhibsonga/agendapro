@@ -1,7 +1,7 @@
 class BookingsController < ApplicationController
   before_action :set_booking, only: [:show, :edit, :update, :destroy]
-  before_action :authenticate_user!, except: [:create, :providerBookin, :bookService]
-  layout "admin", :except: [:bookService]
+  before_action :authenticate_user!, except: [:create, :providerBooking, :bookService]
+  layout "admin", except: [:bookService, :providerBooking]
 
   # GET /bookings
   # GET /bookings.json
@@ -63,24 +63,25 @@ class BookingsController < ApplicationController
     end
   end
 
-  def providerBookin
+  def providerBooking
     bookings = Booking.where('service_provider_id = ? AND location_id = ?', params[:provider], params[:location]).order(:start)
     render :json => bookings
   end
 
   def bookService
-    if params[:user]
-      @booking = Booking.new(start: params[:start], end: params[:end], notes: params[:comment], service_provider_id: params[:provider], service_id: params[:service], location_id: params[:location], status_id: Status.find_by_name('Reservado'), first_name: params[:firstName], last_name: params[:lastName], mail: params[:email], phone: params[:phone], user_id: params[:user])
+    if user_signed_in?
+      @booking = Booking.new(start: params[:start], end: params[:end], notes: params[:comment], service_provider_id: params[:provider], service_id: params[:service], location_id: params[:location], status_id: Status.find_by(name: 'Reservado').id, first_name: params[:firstName], last_name: params[:lastName], mail: params[:email], phone: params[:phone], user_id: current_user.id)
     else
-      @booking = Booking.new(start: params[:start], end: params[:end], notes: params[:comment], service_provider_id: params[:provider], service_id: params[:service], location_id: params[:location], status_id: Status.find_by_name('Reservado'), first_name: params[:firstName], last_name: params[:lastName], mail: params[:email], phone: params[:phone], user_id: 1)
+      @booking = Booking.new(start: params[:start], end: params[:end], notes: params[:comment], service_provider_id: params[:provider], service_id: params[:service], location_id: params[:location], status_id: Status.find_by(name: 'Reservado').id, first_name: params[:firstName], last_name: params[:lastName], mail: params[:email], phone: params[:phone], user_id: 1)
     end
     if @booking.save
-      redirect_to root_path #mostrar pagina succes
+      flash[:notice] = "Servicio agendado"
     else
       flash[:alert] = "Error guardando datos de agenda"
-      redirect_to :back
+      @errors = @booking.errors
     end
-    render layout: "worflow"
+    @company = Location.find(params[:location]).company
+    render layout: "workflow"
   end
 
   private

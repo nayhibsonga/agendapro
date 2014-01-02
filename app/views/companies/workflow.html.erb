@@ -46,7 +46,7 @@
               </div>
             </div>
             <div id="services" class="services">
-              <div class="alert alert-danger">
+              <div id="alertDialog" class="alert alert-danger">
                 <button type="button" class="close" aria-hidden="true">&times;</button>
                 <span id="alertMessage"></span>
               </div>
@@ -145,10 +145,10 @@
                         <div class="form-group">
                           <%= label_tag(:phone, "Teléfono", class: "col-sm-2 control-label") %>
                           <div class="col-sm-10">
-                            <%= telephone_field_tag(:phone, current_user.phonete, :class => "form-control", :placeholder => "97193440", :required => true) %>
+                            <%= telephone_field_tag(:phone, current_user.phone, :class => "form-control", :placeholder => "97193440", :required => true) %>
                           </div>
                         </div>
-                        <% end %>
+                        <% else %>
                         <div class="form-group">
                           <%= label_tag(:firstName, "Nombre", class: "col-sm-2 control-label") %>
                           <div class="col-sm-10">
@@ -173,6 +173,7 @@
                             <%= telephone_field_tag(:phone, nil, :class => "form-control", :placeholder => "97193440", :required => true) %>
                           </div>
                         </div>
+                        <% end %>
                         <div class="form-group">
                           <%= label_tag(:comment, "Comentario", class: "col-sm-2 control-label") %>
                           <div class="col-sm-10">
