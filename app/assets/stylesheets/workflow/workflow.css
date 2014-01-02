@@ -1,0 +1,132 @@
+.navbar-header.aplogo {
+    float: right;
+}
+
+.navbar a.navbar-brand img {
+  float: left;
+  margin: 0 6px 0 0;
+  width: 202px;
+  height: 74px;
+}
+
+.navbar a.navbar-brand img.aplogo {
+  float: right;
+  margin: 0 6px 0 0;
+  width: 202px;
+  height: 74px;
+}
+
+.navbar h1 {
+    text-align: center;
+    line-height: 60px !important;
+    color: #006D68 !important;
+}
+
+#mainDiv {
+    margin-top: 20px;
+}
+
+.navbar {
+    margin: 10px 0px;
+}
+
+.pricing_wrapper {
+    padding: 20px 0 40px 0;
+}
+
+.fm_tbale_header {
+    width: 87px !important;
+}
+
+.fm_table_tr {
+    width: 87px !important;
+}
+
+.fm_table_td {
+    height: 42px !important;
+}
+
+.overview {
+  padding: 5px 15px 10px 15px;
+  border: 2px;
+  border-radius: 10px;
+  border-color: #EFF2FB;
+  background-color: #fff;
+  border-style: solid;
+}
+
+.overview.div.h4 {
+  font-size: 20px;
+  line-height: 1.4;
+  font-weight: 100;
+}
+
+.overview .lead {
+  margin-bottom: 0;
+}
+
+.overview input[type="radio"] {
+  float: left;
+  margin-left: -20px;
+  margin: 10px 0 0 -20px;
+  margin-top: 1px \9;
+  line-height: normal;
+}
+
+.map {
+  width: 100%;
+}
+
+.schedule {
+  font-size: 16px;
+  border: 2px;
+  border-style: solid;
+  border-top-left-radius: 5px;
+  border-top-right-radius: 5px;
+  border-radius: 2px;
+  border-color: #7A6855;
+  min-width: 220px;
+  width: 50%;
+}
+
+.schedule .schedule-title {
+  background-color: #7A6855;
+  padding: 5px 10px 1px 5px;
+}
+
+.schedule .schedule-title h5 {
+  font-size: 18px;
+  font-weight: bold;
+}
+
+.schedule .schedule-body {
+  background-color: #fff;
+  padding: 2px 5px;
+  border-bottom-left-radius: 2px;
+  border-bottom-right-radius: 2px;
+}
+
+.services {
+  display: none;
+}
+
+.menu-bar {
+  line-height: 2.5;
+  padding: 0 25px;
+  font-size: 14px;
+  background-color: #EFF2FB;
+}
+
+.menu-bar .badge {
+  font-size: 14px;
+  display: inherit;
+}
+
+.menu-bar .active .badge {
+  color: #000000;
+  background-color: #FFFFFF;
+}
+
+#sign {
+  right: 10px;
+}

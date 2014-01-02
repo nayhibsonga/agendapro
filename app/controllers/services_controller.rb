@@ -1,6 +1,7 @@
 class ServicesController < ApplicationController
   before_action :set_service, only: [:show, :edit, :update, :destroy]
-  before_action :authenticate_user!
+  before_action :authenticate_user!, except: [:show, :getProviders]
+  layout "admin", except: [:getProviders]
 
   # GET /services
   # GET /services.json
@@ -11,6 +12,8 @@ class ServicesController < ApplicationController
   # GET /services/1
   # GET /services/1.json
   def show
+    service = Service.find(params[:id])
+    render :json => service
   end
 
   # GET /services/new
@@ -60,6 +63,12 @@ class ServicesController < ApplicationController
       format.html { redirect_to services_url }
       format.json { head :no_content }
     end
+  end
+
+  def getProviders
+    service = Service.find(params[:id])
+    providers = service.service_providers
+    render :json => providers
   end
 
   private

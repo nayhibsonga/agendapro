@@ -1,9 +1,9 @@
 class CompaniesController < ApplicationController
   before_action :set_company, only: [:show, :edit, :update, :destroy]
-  before_action :authenticate_user!, except: [:new]
-  before_action :verify_is_super_admin, except: [:new]
+  before_action :authenticate_user!, except: [:new, :workflow]
+  before_action :verify_is_super_admin, except: [:new, :workflow]
 
-  layout false, except: [:show]
+  layout "admin", except: [:show, :workflow]
 
 
   # GET /companies
@@ -69,6 +69,20 @@ class CompaniesController < ApplicationController
       format.html { redirect_to companies_url }
       format.json { head :no_content }
     end
+  end
+
+  ##### Workflow #####
+  def workflow
+    @company = Company.find_by(web_address: request.subdomain)
+    if @company.nil?
+      flash[:alert] = "No existe la compañia"
+      redirect_to root_url(:host => request.domain + request.port_string)
+    end
+    @locations = Location.where('company_id = ?', @company.id)
+
+    #Selected local from fase II
+    @selectedLocal = params[:local]
+    render layout: "workflow"
   end
 
   private

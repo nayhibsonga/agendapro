@@ -48,7 +48,7 @@ class ApplicationController < ActionController::Base
     elsif is_a?(Devise::RegistrationsController)
       return "login"
     else
-      return "admin"
+      return user_signed_in? ? "admin" : "home"
     end
   end
 

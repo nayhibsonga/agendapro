@@ -1,6 +1,7 @@
 class LocationTimesController < ApplicationController
   before_action :set_location_time, only: [:show, :edit, :update, :destroy]
-  before_action :authenticate_user!
+  before_action :authenticate_user!, except: [:scheduleLocal]
+  layout "admin", except: [:scheduleLocal]
 
   # GET /location_times
   # GET /location_times.json
@@ -60,6 +61,26 @@ class LocationTimesController < ApplicationController
       format.html { redirect_to location_times_url }
       format.json { head :no_content }
     end
+  end
+
+  def scheduleLocal
+    lunes = LocationTime.where("location_id = ? AND day_id = ?", params[:local], 1).order(open: :asc)
+    martes = LocationTime.where("location_id = ? AND day_id = ?", params[:local], 2).order(open: :asc)
+    miercoles = LocationTime.where("location_id = ? AND day_id = ?", params[:local], 3).order(open: :asc)
+    jueves = LocationTime.where("location_id = ? AND day_id = ?", params[:local], 4).order(open: :asc)
+    viernes = LocationTime.where("location_id = ? AND day_id = ?", params[:local], 5).order(open: :asc)
+    sabado = LocationTime.where("location_id = ? AND day_id = ?", params[:local], 6).order(open: :asc)
+    domingo = LocationTime.where("location_id = ? AND day_id = ?", params[:local], 7).order(open: :asc)
+
+    render :json => {
+      :lunes => lunes,
+      :martes => martes,
+      :miercoles => miercoles,
+      :jueves => jueves,
+      :viernes => viernes,
+      :sabado => sabado,
+      :domingo => domingo
+    }
   end
 
   private

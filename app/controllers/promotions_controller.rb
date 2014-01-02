@@ -1,6 +1,7 @@
 class PromotionsController < ApplicationController
   before_action :set_promotion, only: [:show, :edit, :update, :destroy]
   before_action :authenticate_user!
+  layout "admin"
 
   # GET /promotions
   # GET /promotions.json

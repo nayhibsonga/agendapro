@@ -32,3 +32,19 @@ plans = Plan.create(name: "Básico", locations: 3, staffs: 10, custom: false, pr
 roles = Role.create([{name: "Super Admin", description: "Administrador de la aplicaión AgendaPro"}, {name: "Admin", description: "Administrador de empresa inscrita en AgendaPro"}, {name: "Administrador Local", description: "Administrador de local"}, {name: "Staff", description: "Usuario con atribuciones de atención en su local"}, {name: "Usuario Registrado", description: "Usuario con cuenta registrada y accesible"}, {name: "Usuario No Registrado", description: "Usuario con cuenta no registrada"}])
 
 admin = User.create(first_name: 'Sebastián', last_name: 'Hevia', email: 'sebastianhevia@gmail.com', phone: '12345678', role: Role.find_by_name('Super Admin'), user_name: 'shevia', password: '12345678', password_confirmation: '12345678')
+
+company = Company.create(name: 'Company Test', web_address: 'test', economic_sector_id: 1, plan_id: 1, payment_status_id: 1, description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus pharetra quam neque, eget condimentum purus semper id. In porta ut mauris id congue. Quisque accumsan mauris nec turpis tincidunt, quis rhoncus augue porttitor. Mauris quis malesuada sem. Donec nisi metus.", cancellation_policy: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam tincidunt rutrum sapien vel ultricies. Sed.")
+
+local = Location.create(name: 'Test Location', address: 'Calle 123', phone: '+560222588552', district_id: 1, company_id: 1)
+
+location_times = LocationTime.create([{open: '15:00', close: '20:00', location_id: 1, day_id: 1}, {open: '15:00', close: '20:00', location_id: 1, day_id: 3}, {open: '15:00', close: '20:00', location_id: 1, day_id: 2}, {open: '08:30', close: '13:30', location_id: 1, day_id: 5}, {open: '08:30', close: '10:00', location_id: 1, day_id: 3}, {open: '08:30', close: '13:30', location_id: 1, day_id: 1}, {open: '11:00', close: '13:30', location_id: 1, day_id: 3}, {open: '11:30', close: '13:30', location_id: 1, day_id: 4}, {open: '09:30', close: '13:30', location_id: 1, day_id: 2}, {open: '15:00', close: '17:00', location_id: 1, day_id: 4}])
+
+service_provider = ServiceProvider.create(location_id: 1, user_id: 1, company_id: 1)
+
+service = Service.create([{name: "Corte de pelo", price: 2500, duration: 30, company_id: 1, tag_id: 1}, {name: "Vicios", price: 5000, duration: 45, company_id: 1, tag_id: 1}])
+
+service_provider.services << service
+
+provider_times = ProviderTime.create([{open: '8:30', close: '20:00', service_provider_id: 1, day_id: 1}, {open: '10:30', close: '19:30', service_provider_id: 1, day_id: 2}, {open: '14:00', close: '17:00', service_provider_id: 1, day_id: 3}, {open: '8:00', close: '20:30', service_provider_id: 1, day_id: 4}, {open: '9:00', close: '18:00', service_provider_id: 1, day_id: 5}])
+
+bookings = Booking.create([{start: '2013-12-26T08:30z', end: '2013-12-26T10:00', service_provider_id: 1, user_id: 1, service_id: 1, location_id: 1, status_id: 1}, {start: '2013-12-26T13:30z', end: '2013-12-26T15:30', service_provider_id: 1, user_id: 1, service_id: 1, location_id: 1, status_id: 1}, {start: '2013-12-27T010:00z', end: '2013-12-27T12:00', service_provider_id: 1, user_id: 1, service_id: 1, location_id: 1, status_id: 1}, {start: '2013-12-30T16:30z', end: '2013-12-30T18:30', service_provider_id: 1, user_id: 1, service_id: 1, location_id: 1, status_id: 1}, {start: '2013-12-26T09:30z', end: '2013-12-26T11:00', service_provider_id: 1, user_id: 1, service_id: 2, location_id: 1, status_id: 1}])

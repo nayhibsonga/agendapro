@@ -1,6 +1,7 @@
 class BookingsController < ApplicationController
   before_action :set_booking, only: [:show, :edit, :update, :destroy]
-  before_action :authenticate_user!
+  before_action :authenticate_user!, except: [:create, :providerBooking, :bookService]
+  layout "admin", except: [:bookService, :providerBooking]
 
   # GET /bookings
   # GET /bookings.json
@@ -62,6 +63,27 @@ class BookingsController < ApplicationController
     end
   end
 
+  def providerBooking
+    bookings = Booking.where('service_provider_id = ? AND location_id = ?', params[:provider], params[:location]).order(:start)
+    render :json => bookings
+  end
+
+  def bookService
+    if user_signed_in?
+      @booking = Booking.new(start: params[:start], end: params[:end], notes: params[:comment], service_provider_id: params[:provider], service_id: params[:service], location_id: params[:location], status_id: Status.find_by(name: 'Reservado').id, first_name: params[:firstName], last_name: params[:lastName], mail: params[:email], phone: params[:phone], user_id: current_user.id)
+    else
+      @booking = Booking.new(start: params[:start], end: params[:end], notes: params[:comment], service_provider_id: params[:provider], service_id: params[:service], location_id: params[:location], status_id: Status.find_by(name: 'Reservado').id, first_name: params[:firstName], last_name: params[:lastName], mail: params[:email], phone: params[:phone], user_id: 1)
+    end
+    if @booking.save
+      flash[:notice] = "Servicio agendado"
+    else
+      flash[:alert] = "Error guardando datos de agenda"
+      @errors = @booking.errors
+    end
+    @company = Location.find(params[:location]).company
+    render layout: "workflow"
+  end
+
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_booking
@@ -70,6 +92,6 @@ class BookingsController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def booking_params
-      params.require(:booking).permit(:start, :end, :notes, :staff_id, :service_id, :user_id, :status_id, :promotion_id)
+      params.require(:booking).permit(:start, :end, :notes, :staff_id, :service_id, :user_id, :status_id, :promotion_id, :first_name, :last_name, :mail, :phone)
     end
 end

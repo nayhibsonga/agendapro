@@ -1,5 +1,6 @@
 class ServiceProvidersController < ApplicationController
   before_action :set_service_provider, only: [:show, :edit, :update, :destroy]
+  layout "admin", except: [:locationServices, :providerTime]
 
   # GET /service_providers
   # GET /service_providers.json
@@ -59,6 +60,19 @@ class ServiceProvidersController < ApplicationController
       format.html { redirect_to service_providers_url }
       format.json { head :no_content }
     end
+  end
+
+  def locationServices
+    services = []
+    ServiceProvider.where('location_id = ?', params[:location]).each do |service|
+      services.push(service.services)
+    end
+    render :json => services
+  end
+
+  def providerTime
+    provider_time = ServiceProvider.find(params[:id]).provider_times
+    render :json => provider_time
   end
 
   private

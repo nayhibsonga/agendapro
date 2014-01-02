@@ -35,7 +35,7 @@
             <h4>AgendaPro, el mejor sistema de Reservas Online</h4>
             <h4>Gestiona tu negocio desde cualquier lugar del mundo y aumenta tus ventas</h4>
             <!-- Por medio de recordatorios automáticos, tus clientes nunca más olvidaran una cita. sincronización con google calendar y outlook, compatible con iPad y celulares, soporte, gestión de clientes, reportes, reservas grupales e individuales, minisitio web (no necesitas tener página web!), concetado a redes sociales -->
-            <a class="btn btn-success btn-lg" href="<?php echo WEB_PATH; ?>/index.php?task=pricing_pricing">Pruébalo gratis ahora</a>
+            <%= link_to "Pruébalo gratis ahora", viewplans_path, :class => "btn btn-success btn-lg" %>
             <p>No se requiere tarjeta de crédito</p>
         </div>
     </section>
@@ -58,6 +58,53 @@
                     <h3>Recordatorios Automáticos</h3>
                     <p>Tus clientes nunca m&aacute;s olvidar&aacute;n sus citas.</p>
                     <p>AgendaPro env&iacute;a autom&aacute;ticamente recordatorios por mail y mensajes de texto a tus clientes.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+    <section class="portfolio_teasers_wrapper">
+        <div class="container">
+            <h2 class="section_header">¿Quién usa AgendaPro?</h2>
+            <div class="portfolio_strict row">
+                <div class="col-sm-3 col-md-3">
+                    <div class="portfolio_item">
+                        <div class="portfolio_photo" style="background-image: url(<%= asset_path 'home/peluqueria.jpg' %>)">
+                            <a><p></p></a> 
+                        </div>
+                        <div class="portfolio_description">
+                            <h3><a>Peluquerías y Centros de Estética</a></h3>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-3 col-md-3">
+                    <div class="portfolio_item">
+                        <div class="portfolio_photo" style="background-image: url(<%= asset_path 'home/centro_medico.jpg' %>)"> 
+                            <a><p></p></a>
+                        </div>
+                        <div class="portfolio_description">
+                            <h3><a>Dentistas, Kinesiólogos y Centros Médicos</a></h3>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-3 col-md-3">
+                    <div class="portfolio_item">
+                        <div class="portfolio_photo" style="background-image: url(<%= asset_path 'home/taller.jpg' %>)"> 
+                            <a><p></p></a> 
+                        </div>
+                        <div class="portfolio_description">
+                            <h3><a>Talleres Mecánicos</a></h3>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-3 col-md-3">
+                    <div class="portfolio_item">
+                        <div class="portfolio_photo" style="background-image: url(<%= asset_path 'home/servicios.jpg' %>)"> 
+                            <a><p></p></a> 
+                        </div>
+                        <div class="portfolio_description">
+                            <h3><a>Servicios a domicilio</a></h3>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

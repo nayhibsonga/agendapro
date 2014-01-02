@@ -2,6 +2,7 @@ class RolesController < ApplicationController
   before_action :set_role, only: [:show, :edit, :update, :destroy]
   before_action :authenticate_user!
   before_action :verify_is_super_admin
+  layout "admin"
 
   # GET /roles
   # GET /roles.json
