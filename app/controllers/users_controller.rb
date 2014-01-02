@@ -1,9 +1,9 @@
 class UsersController < ApplicationController
   #before_action :set_user, only: [:show, :edit, :update, :destroy]
-  before_action :authenticate_user!, except: [:index, :new]
+  before_action :authenticate_user!
   before_action :verify_is_super_admin, except: [:new]
   layout "admin"
-  
+
   # GET /users
   # GET /users.json
   def index
@@ -19,6 +19,7 @@ class UsersController < ApplicationController
   # GET /users/new
   def new
     @user = User.new
+    @user.company_id = current_user.company_id
   end
 
   # GET /users/1/edit
@@ -29,6 +30,7 @@ class UsersController < ApplicationController
   # POST /users.json
   def create
     @user = User.new(user_params)
+    @user.company_id = current_user.company_id
 
     respond_to do |format|
       if @user.save
@@ -73,6 +75,6 @@ class UsersController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def user_params
-      params.require(:user).permit(:first_name, :last_name, :email, :phone, :user_name, :password, :role_id)
+      params.require(:user).permit(:id, :first_name, :last_name, :email, :phone, :user_name, :password, :role_id, :company_id)
     end
 end

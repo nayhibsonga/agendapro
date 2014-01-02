@@ -2,6 +2,8 @@ class TagsController < ApplicationController
   before_action :set_tag, only: [:show, :edit, :update, :destroy]
   before_action :authenticate_user!
   before_action :verify_is_super_admin
+  load_and_authorize_resource
+
   layout "admin"
 
   # GET /tags

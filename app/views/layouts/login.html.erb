@@ -48,7 +48,7 @@
 			<!-- end: Main Menu -->
 						
 			<!-- start: Content -->
-			<div id="content" class="col-lg-10 col-sm-11">
+			<div id="content">
 				<div class="row" style="min-height: 600px;">
 					<%= yield %>
 				</div>		
@@ -58,40 +58,6 @@
 				</div><!--/row-->		
 		
 	</div><!--/container-->
-	
-	<footer>
-		<p>
-			<span style="text-align:left;float:left">&copy; 2013 <a href="http://bootstrapmaster.com" alt="Bootstrap Themes">creativeLabs</a></span>
-			<span class="hidden-phone" style="text-align:right;float:right">Powered by: <a href="http://admintemplates.co" alt="Bootstrap Admin Templates">SimpliQ</a></span>
-		</p>
-
-	</footer>
-	
-	<!-- start: JavaScript-->
-	<!--[if !IE]>-->
-			<%= javascript_include_tag "admin" %>
-			<script type="text/javascript">
-			window.jQuery || document.write("<script src='assets/admin/js/jquery-2.0.3.min.js'>"+"<"+"/script>");
-			</script>
-
-	<!--<![endif]-->
-
-	<!--[if IE]>
-	
-		<%= javascript_include_tag "adminIE" %>
-		<script type="text/javascript">
-	 	window.jQuery || document.write("<script src='assets/admin/js/jquery-1.10.2.min.js'>"+"<"+"/script>");
-		</script>
-	
-	<![endif]-->
-
-	<!--[if IE8]>
-	
-		<%= javascript_include_tag "adminIE8" %>
-	
-	<![endif]-->
-	
-	<!-- end: JavaScript-->
 	
 </body>
 </html>
