@@ -64,7 +64,7 @@
 							<li class="dropdown-menu-title">
 								
 							</li>
-							<li><%= link_to '<i class="fa fa-user"></i> Perfíl'.html_safe, edit_user_path(current_user) %></li>
+							<li><%= link_to '<i class="fa fa-user"></i> Perfíl'.html_safe, edit_admin_user_path(current_user) %></li>
 							<li><%= link_to '<i class="fa fa-power-off"></i> Cerrar Sesión'.html_safe, destroy_user_session_path, method: :delete %></li>
 						</ul>
 					</li>
@@ -128,8 +128,9 @@
 						<% end %>
 						<% if (current_user.role_id == Role.find_by_name("Super Admin").id) || (current_user.role_id == Role.find_by_name("Admin").id) || (current_user.role_id == Role.find_by_name("Administrador Local").id) %>
 						<li>
-							<a class="dropmenu"><i class="fa fa-briefcase"></i><span class="hidden-sm"> Administración</span> <span class="label">3</span></a>
+							<a class="dropmenu"><i class="fa fa-briefcase"></i><span class="hidden-sm"> Administración</span> <span class="label">4</span></a>
 							<ul>
+								<li><%= link_to '<i class="fa fa-sitemap"></i><span class="hidden-sm"> Usuarios</span>'.html_safe, admin_users_path, { :class => "submenu" } %></li>
 								<li><%= link_to '<i class="fa fa-home"></i><span class="hidden-sm"> Locales</span>'.html_safe, locations_path, { :class => "submenu" } %></li>
 								<li><%= link_to '<i class="fa fa-book"></i><span class="hidden-sm"> Servicios</span>'.html_safe, services_path, { :class => "submenu" } %></li>
 								<li><%= link_to '<i class="fa fa-user"></i><span class="hidden-sm"> Staffs</span>'.html_safe, service_providers_path, { :class => "submenu" } %></li>

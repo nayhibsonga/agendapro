@@ -1,5 +1,6 @@
 Agendapro::Application.routes.draw do
 
+  get "users/index"
   require 'subdomain'
 
   #get '/' => 'companies#index', :constraints => { :subdomain => 'www' }
@@ -22,7 +23,6 @@ Agendapro::Application.routes.draw do
   resources :staff_times
   resources :location_times
 
-  resources :users
   resources :companies
   resources :locations
   resources :services
@@ -30,8 +30,9 @@ Agendapro::Application.routes.draw do
   resources :bookings
   resources :service_providers
 
-  scope "/admin" do
-    resources :users
+  namespace :admin do 
+    get '', to: 'dashboard#index', as: '/'
+    resources :users 
   end
 
   get '/dashboard', :to => 'dashboard#index', :as => 'dashboard'
