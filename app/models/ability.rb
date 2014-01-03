@@ -42,6 +42,8 @@ class Ability
 
     can :new, :all
 
+    can :viewplans, Plan
+
     can :read, Booking, :user_id => user.id
     can :update, Booking, :user_id => user.id
     can :destroy, Booking, :user_id => user.id
