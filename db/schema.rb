@@ -31,19 +31,11 @@ ActiveRecord::Schema.define(version: 20131230170738) do
     t.datetime "start",                            null: false
     t.datetime "end",                              null: false
     t.text     "notes"
-<<<<<<< HEAD
     t.integer  "service_provider_id",              null: false
-    t.integer  "user_id",                          null: false
+    t.integer  "user_id"
     t.integer  "service_id",                       null: false
     t.integer  "location_id",                      null: false
     t.integer  "status_id",                        null: false
-=======
-    t.integer  "service_provider_id", null: false
-    t.integer  "user_id",             null: false
-    t.integer  "service_id",          null: false
-    t.integer  "location_id",         null: false
-    t.integer  "status_id",           null: false
->>>>>>> development-validaciones
     t.integer  "promotion_id"
     t.datetime "created_at"
     t.datetime "updated_at"
@@ -61,23 +53,13 @@ ActiveRecord::Schema.define(version: 20131230170738) do
   end
 
   create_table "companies", force: true do |t|
-<<<<<<< HEAD
-    t.string   "name",                null: false
-    t.string   "web_address",         null: false
+    t.string   "name",                              null: false
+    t.string   "web_address",                       null: false
     t.string   "logo"
-    t.float    "pay_due"
-    t.integer  "economic_sector_id",  null: false
-    t.integer  "plan_id",             null: false
-    t.integer  "payment_status_id",   null: false
-=======
-    t.string   "name",                             null: false
-    t.string   "web_address",                      null: false
-    t.string   "logo"
-    t.float    "pay_due",            default: 0.0
-    t.integer  "economic_sector_id",               null: false
-    t.integer  "plan_id",                          null: false
-    t.integer  "payment_status_id",                null: false
->>>>>>> development-validaciones
+    t.float    "pay_due",             default: 0.0
+    t.integer  "economic_sector_id",                null: false
+    t.integer  "plan_id",                           null: false
+    t.integer  "payment_status_id",                 null: false
     t.datetime "created_at"
     t.datetime "updated_at"
     t.text     "description"
@@ -204,7 +186,6 @@ ActiveRecord::Schema.define(version: 20131230170738) do
     t.integer  "company_id",  null: false
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.integer  "company_id",  null: false
   end
 
   create_table "service_staffs", force: true do |t|

@@ -1,8 +1,9 @@
 class CompanySettingsController < ApplicationController
   before_action :set_company_setting, only: [:show, :edit, :update, :destroy]
   before_action :authenticate_user!
-  layout "admin"
   load_and_authorize_resource
+  layout "admin"
+  
 
   # GET /company_settings
   # GET /company_settings.json

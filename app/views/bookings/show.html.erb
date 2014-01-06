@@ -3,10 +3,12 @@
 <p>Inicio: <%= @booking.start %></p>
 <p>Término: <%= @booking.end %></p>
 <p>Nota: <%= @booking.notes %></p>
-<p>Staff: <%= @booking.staff.user.first_name %></p>
-<p>Staff: <%= @booking.user.first_name %></p>
-<p>Usuario: <%= @booking.service.name %></p>
-<p>Status: <%= @booking.status %></p>
+<p>Staff: <%= @booking.service_provider.user.first_name %></p>
+<% if @booking.user %>
+<p>Usuario: <%= @booking.user.first_name %></p>
+<% end %>
+<p>Servicio: <%= @booking.service.name %></p>
+<p>Status: <%= @booking.status.name %></p>
 <p>Promoción: <%= @booking.promotion %></p>
 
 <%= link_to 'Editar', edit_booking_path(@booking) %> |

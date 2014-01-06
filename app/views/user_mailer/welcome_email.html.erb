@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta content='text/html; charset=UTF-8' http-equiv='Content-Type' />
+  </head>
+  <body>
+    <h1>Bienvenido a AgendaPro, <%= @user.first_name %></h1>
+    <p>
+      Te has inscrito satisfactoriamente a agendapro.cl, para inciar sesión debes hacer lo con el mail asociado a tu cuenta: <%= @user.email %>.<br>
+    </p>
+    <p>
+      Para iniciar sesión debes acceder a: <%= @url %>.
+    </p>
+    <p>Gracias por inscribirte!</p>
+  </body>
+</html>

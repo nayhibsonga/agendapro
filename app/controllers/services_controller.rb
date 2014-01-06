@@ -7,14 +7,13 @@ class ServicesController < ApplicationController
   # GET /services
   # GET /services.json
   def index
-    @services = Service.all
+    @services = Service.where(company_id: current_user.company_id)
   end
 
   # GET /services/1
   # GET /services/1.json
   def show
     service = Service.find(params[:id])
-    render :json => service
   end
 
   # GET /services/new

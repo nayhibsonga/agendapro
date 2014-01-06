@@ -11,7 +11,14 @@ class Location < ActiveRecord::Base
 
 	validates :name, :address, :phone, :company, :district, :presence => true
 
-	validate :times_overlap, :time_empty_or_negative
+	validate :times_overlap, :time_empty_or_negative, :plan_locations
+
+	def plan_locations
+		@company = self.company
+		if company.locations.count >= company.plan.locations
+			errors.add(:service_provider, "No se pueden agregar más locales con el plan actual, ¡mejóralo!.")
+		end
+	end
 
 	def times_overlap
     	self.location_times.each do |location_time1|
