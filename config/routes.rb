@@ -1,5 +1,7 @@
 Agendapro::Application.routes.draw do
 
+  get "searchs/index"
+  get "searchs/search"
   get "users/index"
   require 'subdomain'
 

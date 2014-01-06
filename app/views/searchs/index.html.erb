@@ -1,0 +1,69 @@
+<div class="main">
+    <section class="call_to_action">
+        <div class="container">
+			<%= form_tag({action: "search"}, method: "GET", class: "form-horizontal") do %>
+				<div class="form-group">
+					<%= label_tag(:district, "Descubre, encuentra y reserva servicios en", :class => "col-sm-6 control-label") %>
+					<div class="col-sm-4">
+						<%= select_tag 'district', options_from_collection_for_select(@districts, 'id', 'name'), :include_blanck => true, :class => 'form-control' %>
+					</div>
+				</div>
+				<div class="form-group">
+					<div class="col-sm-11">
+						<%= search_field_tag :inputSearch, params[:inputSearch], class: "form-control", placeholder: "Peluqueria, Gimansia, Masaje", :required => "true", :autofocus => "autofocus" %>
+					</div>
+					<div class="col-sm-1">
+						<button type="submit" class="btn btn-default col-sm-12"><i class="glyphicon glyphicon-search"></i></button>
+					</div>
+				</div>
+			<% end %>
+        </div>
+    </section>
+    <section class="portfolio_teasers_wrapper">
+        <div class="container">
+            <h2 class="section_header">Sugerencias de Busqueda</h2>
+            <div class="portfolio_strict row">
+                <div class="col-sm-3 col-md-3">
+                    <div class="portfolio_item">
+                        <div class="portfolio_photo" style="background-image: url(<%= asset_path 'home/peluqueria.jpg' %>)">
+                            <a><p></p></a> 
+                        </div>
+                        <div class="portfolio_description">
+                            <h3><a>Peluquerías y Centros de Estética</a></h3>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-3 col-md-3">
+                    <div class="portfolio_item">
+                        <div class="portfolio_photo" style="background-image: url(<%= asset_path 'home/centro_medico.jpg' %>)"> 
+                            <a><p></p></a>
+                        </div>
+                        <div class="portfolio_description">
+                            <h3><a>Dentistas, Kinesiólogos y Centros Médicos</a></h3>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-3 col-md-3">
+                    <div class="portfolio_item">
+                        <div class="portfolio_photo" style="background-image: url(<%= asset_path 'home/taller.jpg' %>)"> 
+                            <a><p></p></a> 
+                        </div>
+                        <div class="portfolio_description">
+                            <h3><a>Talleres Mecánicos</a></h3>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-3 col-md-3">
+                    <div class="portfolio_item">
+                        <div class="portfolio_photo" style="background-image: url(<%= asset_path 'home/servicios.jpg' %>)"> 
+                            <a><p></p></a> 
+                        </div>
+                        <div class="portfolio_description">
+                            <h3><a>Servicios a domicilio</a></h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>

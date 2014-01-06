@@ -21,7 +21,7 @@
                       <% @locations.each do |local| %>
                       <div class="radio">
                         <label>
-                          <input type="radio" name="localRadio" id="localOption<%= local.id %>" value="<%= local.id %>" <%= "checked" if @selectedLocal == local.id %>>
+                          <input type="radio" name="localRadio" id="localOption<%= local.id %>" value="<%= local.id %>" <%= "checked" if @selectedLocal.to_i == local.id %>>
                           <p class="lead"><%= local.name %></p>
                           <p><%= local.address %>, <%= local.district.name %></p>
                         </label>
