@@ -42,6 +42,13 @@ class Ability
 
     can :new, :all
 
+    can :workflow, Company
+    can :locationData, Location
+    can :serviceData, Service
+    can :getProviders, Service
+    can :providerBooking, Booking
+    can :bookService, Booking
+
     can :read, Booking, :user_id => user.id
     can :update, Booking, :user_id => user.id
     can :destroy, Booking, :user_id => user.id

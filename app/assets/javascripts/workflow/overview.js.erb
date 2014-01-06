@@ -1,3 +1,5 @@
+//====== Overview ======//
+
 function loadOverview() {
   if (confirm("Perdera los datos ¿Desea continuar?")) {
     $('#services-link').removeClass('active');
@@ -44,10 +46,56 @@ function getHour(str) {
   return str;
 }
 
+//====== Google Map ======//
+function initializeMap(lat, lng, mapDiv) {
+    var properties = {
+        center: new google.maps.LatLng(lat, lng),
+        zoom:   17,
+        panControl: false,
+        zoomControl: true,
+        zoomControlOptions: {
+            style: google.maps.ZoomControlStyle.SMALL
+        },
+        mapTypeControl: true,
+        mapTypeControlOptions: {
+            style: google.maps.MapTypeControlStyle.DROPDOWN_MENU
+        },
+        scaleControl: false,
+        streetViewControl: false,
+        overviewMapControl: false,
+        mapTypeId:  google.maps.MapTypeId.ROADMAP
+    };
+    map = new google.maps.Map(document.getElementById(mapDiv), properties);
+}
+
+function setMarker(latlng, local) {
+  var marker = new google.maps.Marker({
+                position: latlng
+              });
+  marker.setMap(map);
+
+  var infowindow = new google.maps.InfoWindow({
+      content: local
+    });
+  google.maps.event.addListener(marker, 'click', function() {
+      infowindow.open(map,marker);
+  });
+}
+
+function localMap(id) {
+  $.getJSON('/local', {id: id}, function (local) {
+    var latLng = new google.maps.LatLng(local.latitude, local.longitude);
+    map.setCenter(latLng);
+    setMarker(latLng, local.name);
+  });
+}
+
 $(function() {
+
   $('[name="localRadio"]').on('click', function(event) {
     var id = event.target.getAttribute('value');
     loadSchedule(id);
+    localMap(id);
   });
 
   $('#overview-link').click(function (event) {
@@ -64,4 +112,8 @@ $(function() {
     loadServices();
     event.preventDefault(); // Prevent link from following its href
   });
+
+  var map;
+  $('#error').hide();
+  initializeMap(-33.413084, -70.592161, 'map');
 });
