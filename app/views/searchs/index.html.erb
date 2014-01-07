@@ -1,22 +1,7 @@
 <div class="main">
     <section class="call_to_action">
         <div class="container">
-			<%= form_tag({action: "search"}, method: "GET", class: "form-horizontal") do %>
-				<div class="form-group">
-					<%= label_tag(:district, "Descubre, encuentra y reserva servicios en", :class => "col-sm-6 control-label") %>
-					<div class="col-sm-4">
-						<%= select_tag 'district', options_from_collection_for_select(@districts, 'id', 'name'), :include_blanck => true, :class => 'form-control' %>
-					</div>
-				</div>
-				<div class="form-group">
-					<div class="col-sm-11">
-						<%= search_field_tag :inputSearch, params[:inputSearch], class: "form-control", placeholder: "Peluqueria, Gimansia, Masaje", :required => "true", :autofocus => "autofocus" %>
-					</div>
-					<div class="col-sm-1">
-						<button type="submit" class="btn btn-default col-sm-12"><i class="glyphicon glyphicon-search"></i></button>
-					</div>
-				</div>
-			<% end %>
+			<%= render 'form' %>
         </div>
     </section>
     <section class="portfolio_teasers_wrapper">
