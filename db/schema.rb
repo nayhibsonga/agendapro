@@ -28,21 +28,21 @@ ActiveRecord::Schema.define(version: 20131230170738) do
   end
 
   create_table "bookings", force: true do |t|
-    t.datetime "start",                            null: false
-    t.datetime "end",                              null: false
+    t.datetime "start",               null: false
+    t.datetime "end",                 null: false
     t.text     "notes"
-    t.integer  "service_provider_id",              null: false
+    t.integer  "service_provider_id", null: false
     t.integer  "user_id"
-    t.integer  "service_id",                       null: false
-    t.integer  "location_id",                      null: false
-    t.integer  "status_id",                        null: false
+    t.integer  "service_id",          null: false
+    t.integer  "location_id",         null: false
+    t.integer  "status_id",           null: false
     t.integer  "promotion_id"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.string   "first_name",          default: "", null: false
-    t.string   "last_name",           default: "", null: false
-    t.string   "mail",                default: "", null: false
-    t.string   "phone",               default: "", null: false
+    t.string   "first_name",          null: false
+    t.string   "last_name",           null: false
+    t.string   "mail",                null: false
+    t.string   "phone",               null: false
   end
 
   create_table "cities", force: true do |t|
