@@ -11,6 +11,7 @@ class Location < ActiveRecord::Base
 
 	validates :name, :address, :phone, :company, :district, :presence => true
 
+
 	validate :times_overlap, :time_empty_or_negative, :plan_locations
 
 	def plan_locations

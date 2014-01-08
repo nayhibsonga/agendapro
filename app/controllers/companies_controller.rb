@@ -1,7 +1,7 @@
 class CompaniesController < ApplicationController
   before_action :set_company, only: [:show, :edit, :update, :destroy]
   before_action :authenticate_user!, except: [:new, :workflow]
-  before_action :verify_is_super_admin, except: [:new, :workflow]
+  before_action :verify_is_super_admin, except: [:new, :workflow, :edit]
 
   layout "admin", except: [:show, :workflow]
   load_and_authorize_resource

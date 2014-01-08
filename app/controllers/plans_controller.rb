@@ -1,7 +1,7 @@
 class PlansController < ApplicationController
   before_action :set_plan, only: [:show, :edit, :update, :destroy]
   before_action :authenticate_user!, except: [:viewplans]
-  before_action :verify_is_super_admin, except: [:index, :viewplans]
+  before_action :verify_is_super_admin, except: [:index, :viewplans, :selectplan]
   layout "admin"
   load_and_authorize_resource
 
