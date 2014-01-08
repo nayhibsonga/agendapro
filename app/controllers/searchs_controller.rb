@@ -17,20 +17,37 @@ class SearchsController < ApplicationController
 		services_tags = Service.where(:tag_id => tags)
 		service_providers = ServiceProvider.joins(:services, :service_staffs).where('service_staffs.service_id' => services_tags).select('location_id')
 		locations_tags = Location.where(district_id: params[:district], id: service_providers)
-		@results.push(locations_tags)
+		# @results.push(locations_tags)
+		locations_tags.each do |location_tag|
+			@results.push(location_tag)
+		end
 
 		# 	optener de los locales los servicios cuyo nombre coincide con la busqueda
 		services_tags = Service.where('name ILIKE ?', search)
 		service_providers = ServiceProvider.joins(:services, :service_staffs).where('service_staffs.service_id' => services_tags).select('location_id')
 		locations_services = Location.where(district_id: params[:district], id: service_providers)
-		@results.push(locations_services)
+		# @results.push(locations_services)
+		locations_services.each do |location_service|
+			@results.push(location_service)
+		end
 
 		# 	optener los locales cuyo nombre se parece a la busqueda
 		locations = Location.where(district_id: params[:district]).where('name ILIKE ?', search)
-		@results.push(locations)
+		# @results.push(locations)
+		locations.each do |location|
+			@results.push(location)
+		end
 
 		# 	optener los locales de las compañias cuyo nombre se parece a la busqueda
 		locations_companies = Location.where(district_id: params[:district]).where(company_id: Company.where('name ILIKE ?', search))
-		@results.push(locations_companies)
+		# @results.push(locations_companies)
+		locations_companies.each do |location_company|
+			@results.push(location_company)
+		end
+
+		respond_to do |format|
+			format.html
+			format.json { render :json => @results }
+		end
 	end
 end

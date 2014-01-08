@@ -12,8 +12,7 @@
                 </div>
                 <div class="col-md-6">
                     <% i = 1
-                     @results.each do |locations|
-                        locations.each do |location| %>
+                     @results.each do |location| %>
                     <div class="row">
                         <div class="col-md-12">
                             <div class="row header">
@@ -71,9 +70,8 @@
                             </div>
                         </div>
                     </div>
-                    <%      i = i + 1
-                        end
-                     end %>
+                        <% i = i + 1
+                    end %>
                     <% if @results.empty? %>
                     <h4>No se encontraron resultados para <strong><%= params[:inputSearch] %></strong>.</h4>
                     <% end %>

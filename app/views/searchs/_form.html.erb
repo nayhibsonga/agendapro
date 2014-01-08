@@ -2,7 +2,8 @@
 	<div class="form-group">
 		<%= label_tag(:district, "Descubre, encuentra y reserva servicios en", :class => "col-sm-6 control-label") %>
 		<div class="col-sm-4">
-			<%= select_tag 'district', options_from_collection_for_select(@districts, 'id', 'name'), :include_blanck => true, :class => 'form-control' %>
+      <a href="#" data-toggle="modal" data-target="#modalLocation"><span class="label label-warning" id="span-location"><i class="glyphicon glyphicon-chevron-right"></i></span></a>
+      <input type="hidden" id="district" name="district">
 		</div>
 	</div>
 	<div class="form-group">
@@ -14,3 +15,47 @@
 		</div>
 	</div>
 <% end %>
+
+<div class="modal fade" id="modalLocation" tabindex="-1" role="dialog" aria-labelledby="modalLocationLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h4 class="modal-title">Seleccione un Lugar</h4>
+      </div>
+      <div class="modal-body">
+      	<%= image_tag "ajax-loader.gif", :alt => "Loader", :id => "loader" %>
+        <form class="form-horizontal" role="form" id="form-location">
+        	<div class="form-group">
+        		<label class="control-label col-xs-2">Pais</label>
+        		<div class="col-xs-8">
+        			<select class="form-control" id="countries"></select>
+        		</div>
+        	</div>
+        	<div class="form-group">
+        		<label class="control-label col-xs-2">regions</label>
+        		<div class="col-xs-8">
+        			<select class="form-control" id="regions" disabled></select>
+        		</div>
+        	</div>
+        	<div class="form-group">
+        		<label class="control-label col-xs-2">Ciudad</label>
+        		<div class="col-xs-8">
+        			<select class="form-control" id="cities" disabled></select>
+        		</div>
+        	</div>
+        	<div class="form-group">
+        		<label class="control-label col-xs-2">Comuna</label>
+        		<div class="col-xs-8">
+        			<select class="form-control" id="districts" disabled></select>
+        		</div>
+        	</div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary" id="save">Guardar</button>
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->

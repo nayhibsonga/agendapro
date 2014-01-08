@@ -46,6 +46,11 @@ Agendapro::Application.routes.draw do
   # Search
   get "searchs/index"
   get '/search', :to => "searchs#search"
+  get '/getcountries', :to => 'countries#getCountries'
+  get '/getregions', :to => 'regions#getRegions'
+  get '/getcities', :to => 'cities#getCities'
+  get '/getdistricts', :to => 'districts#getDistricts'
+  get '/getdistrict', :to => 'districts#getDistrict'
 
   # Workflow
   # Workflow - overview
