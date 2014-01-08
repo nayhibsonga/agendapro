@@ -22,8 +22,10 @@ gem 'uglifier', '>= 1.3.0'
 gem 'jquery-rails'
 
 gem "therubyracer"
-gem "less-rails", '2.3.3'
-gem "twitter-bootstrap-rails"
+
+# Comentado dado que no debería ser usado...
+#gem "less-rails", '2.3.3'
+#gem "twitter-bootstrap-rails"
 #gem "font-awesome-rails"
 
 # Turbolinks makes following links in your web application faster. Read more: https://github.com/rails/turbolinks
