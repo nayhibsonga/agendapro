@@ -12,7 +12,7 @@
   <tbody>
     <% @bookings.each do |booking| %>
       <tr>
-        <td><%= link_to booking.start+" "+booking.end, booking %></td>
+        <td><%= link_to booking.start.to_s+" "+booking.end.to_s, booking %></td>
         <td><%= link_to 'Editar', edit_booking_path(booking) %></td>
         <td><%= link_to 'Eliminar', booking, method: :delete, data: { confirm: '¿Estás seguro?' } %></td>
       </tr>

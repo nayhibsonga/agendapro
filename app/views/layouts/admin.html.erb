@@ -91,9 +91,9 @@
 						<li><%= link_to '<i class="fa fa-calendar"></i><span class="hidden-sm"> AgendaPro</span>'.html_safe, bookings_path %></li>
 						<% if current_user.role_id == Role.find_by_name("Super Admin").id %>
 						<li>
-							<a class="dropmenu"><i class="fa fa-check"></i><span class="hidden-sm"> General</span> <span class="label">4</span></a>
+							<a class="dropmenu"><i class="fa fa-check"></i><span class="hidden-sm"> General</span> <span class="label">5</span></a>
 							<ul>
-								<li><%= link_to '<i class="fa fa-user"></i><span class="hidden-sm"> Usuarios</span>'.html_safe, users_path, { :class => "submenu" } %></li>
+								<li><%= link_to '<i class="fa fa-user"></i><span class="hidden-sm"> Usuarios</span>'.html_safe, admin_users_path, { :class => "submenu" } %></li>
 								<li><%= link_to '<i class="fa fa-lock"></i><span class="hidden-sm"> Roles</span>'.html_safe, roles_path, { :class => "submenu" }  %></li>
 								<li><%= link_to '<i class="fa fa-usd"></i><span class="hidden-sm"> Estados de Pago</span>'.html_safe, payment_statuses_path, { :class => "submenu" }  %></li>
 								<li><%= link_to '<i class="fa fa-check-square-o"></i><span class="hidden-sm"> Estados de Reserva</span>'.html_safe, statuses_path, { :class => "submenu" }  %></li>
