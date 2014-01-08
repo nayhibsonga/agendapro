@@ -85,7 +85,7 @@ function finalize () {
 
 function loadDescription (serviceId) {
 	$('#services-description').html('<%= image_tag "ajax-loader.gif", :alt => "Loader" %>');
-	$.getJSON('/services/' + serviceId + '.json', function (service) {
+	$.getJSON('/service', {id: serviceId}, function (service) {
 		$('#services-description').html('');
 		$('#services-description').html('<dl class="dl-horizontal"></dl>');
 		$('.dl-horizontal').append('<dt>' + "Nombre" + '</dt><dd>' + service.name + '</dd>');
@@ -107,61 +107,53 @@ function loadCalendar (startTime, endTime, hiddenDays) {
 	hiddenDays = hiddenDays || [];
 
 	var serviceId = $('input[name="serviceRadio"]:checked').val();
-	$.ajax({
-		type: 'GET',
-		url: '/services/' + serviceId + '.json',
-		async: false,
-		contentType: 'application/json',
-		dataType: 'json',
-		success: function (service) {
-			duration = service.duration;
-		}
-	});
-
-	$('#calendar').fullCalendar('removeEvents');
-	$('#calendar').empty();
-	$('#calendar').fullCalendar({
-	    header: {
-	    	left: 'title',
-	    	center: 'agendaWeek,agendaDay',
-	    	right: 'prev,today,next'
-	    },
-	    firstDay: 1,	//Lunes
-	    defaultView: 'agendaWeek',
-	    allDaySlot: false,
-	    axisFormat: 'HH:mm',
-	    timeFormat: 'HH:mm{ - HH:mm}',
-	    columnFormat: {
-	    	week: 'ddd d/M',
-	    	day: 'dddd d/M' 
-	    },
-	    titleFormat: {
-	    	week: 'MMM d[ yyyy]{ &#8212;[ MMM] d yyyy}',
-	    	day: 'dddd, d MMM yyyy'  
-	    },
-	    buttonText: {
-		    prev:     '&lsaquo;', // <
-		    next:     '&rsaquo;', // >
-		    today:    'Hoy',
-		    week:     'Semana',
-		    day:      'Día'
-	    },
-	    monthNames: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
-	    monthNamesShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
-	    dayNames: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'],
-	    dayNamesShort: ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'],
-	    minTime: startTime,
-	    maxTime: endTime,
-	    dayClick: function (date) {
-	    	addBooking(date);
-	    },
-	    defaultEventMinutes: duration,
-	    eventDrop: function (event, dayDelta, minuteDelta, allDay, revertFunc) {
-	    	moveBooking(event, revertFunc);
-	    },
-	    slotMinutes: duration,
-	    eventColor: '#ff0000',
-	    hiddenDays: hiddenDays
+	$.getJSON('/service', {id: serviceId}, function (service) {
+		duration = service.duration;
+		$('#calendar').fullCalendar('removeEvents');
+		$('#calendar').empty();
+		$('#calendar').fullCalendar({
+		    header: {
+		    	left: 'title',
+		    	center: 'agendaWeek,agendaDay',
+		    	right: 'prev,today,next'
+		    },
+		    firstDay: 1,	//Lunes
+		    defaultView: 'agendaWeek',
+		    allDaySlot: false,
+		    axisFormat: 'HH:mm',
+		    timeFormat: 'HH:mm{ - HH:mm}',
+		    columnFormat: {
+		    	week: 'ddd d/M',
+		    	day: 'dddd d/M' 
+		    },
+		    titleFormat: {
+		    	week: 'MMM d[ yyyy]{ &#8212;[ MMM] d yyyy}',
+		    	day: 'dddd, d MMM yyyy'  
+		    },
+		    buttonText: {
+			    prev:     '&lsaquo;', // <
+			    next:     '&rsaquo;', // >
+			    today:    'Hoy',
+			    week:     'Semana',
+			    day:      'Día'
+		    },
+		    monthNames: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+		    monthNamesShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
+		    dayNames: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'],
+		    dayNamesShort: ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'],
+		    minTime: startTime,
+		    maxTime: endTime,
+		    dayClick: function (date) {
+		    	addBooking(date);
+		    },
+		    defaultEventMinutes: duration,
+		    /*eventDrop: function (event, dayDelta, minuteDelta, allDay, revertFunc) {
+		    	moveBooking(event, revertFunc);
+		    },*/
+		    slotMinutes: duration,
+		    eventColor: '#ff0000',
+		    hiddenDays: hiddenDays
+		});
 	});
 }
 
@@ -255,18 +247,18 @@ function addBooking (date) {
 				allDay: false,
 				start: date,
 				end: endDate,
-				startEditable: true,
+				// startEditable: true,
 				color: '#1e8584'
 			},
 			true);
 	}
 }
 
-function moveBooking (event, revertFunc) {
+/*function moveBooking (event, revertFunc) {
 	if (!validateBooking(event.start)) {
 		revertFunc();
 	}
-}
+}*/
 
 function validateBooking (startDate) {
 	var valid = true;
@@ -280,11 +272,21 @@ function validateBooking (startDate) {
 		var localId = $('input[name=localRadio]:checked').val();
 		var serviceId = $('input[name=serviceRadio]:checked').val();
 		var providerId = $('input[name=staffRadio]:checked').val();
-		$.ajax({
+		$.getJSON('/booking', {location: localId, provider: providerId}, function (bookings) {
+			$.each(bookings, function (key, booking) {
+				var startBooking = $.fullCalendar.parseDate(booking.start);
+				var endBooking = $.fullCalendar.parseDate(booking.end);
+				if ((endDate > startBooking && endDate < endBooking) || (startDate < endBooking && startDate > startBooking) || (startDate > startBooking && endDate < endBooking)) {
+					valid = false;
+					alertMessage('No pueden topar los horarios.');
+					$('#calendar').fullCalendar('removeEvents', 'newBooking');
+				}
+			});
+		});
+		/*$.ajax({
 			type: 'GET',
 			url: '/booking',
 			async: false,
-			cache: false,
 			contentType: 'application/json',
 			dataType: 'json',
 			data: {
@@ -301,7 +303,7 @@ function validateBooking (startDate) {
 					}
 				});
 			}
-		});
+		});*/
 	}
 	return valid;
 }

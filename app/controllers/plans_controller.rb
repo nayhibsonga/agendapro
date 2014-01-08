@@ -78,7 +78,7 @@ class PlansController < ApplicationController
   end
 
   def viewplans
-    @plans = Plan.all
+    @plans = Plan.where(custom: false)
     render layout: "home"
   end
 

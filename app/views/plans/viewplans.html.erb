@@ -25,7 +25,7 @@
                 <div class="col-sm-6 col-md-3">
                     <div class="pricing_plan <%= 'special' if plan.special %>">
                         <h3><strong><%= plan.name %></strong></h3>
-                        <div class="the_price"><span>$</span><%= plan.price %><small>/Mes (+ IVA)</small></div>
+                        <div class="the_price"><span>$</span><%= number_with_precision(plan.price, precision: 0, separator: '', delimiter: '.') %><small>/Mes<br>(+ IVA)</small></div>
                         <div class="the_offerings">
                             <p> <strong>¡Primer mes GRATIS!</strong></p>
                             <p> <strong><%= plan.locations %></strong> Local(es) </p>

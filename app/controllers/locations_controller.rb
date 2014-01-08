@@ -1,7 +1,7 @@
 class LocationsController < ApplicationController
   before_action :set_location, only: [:show, :edit, :update, :destroy]
-  before_action :authenticate_user!
   load_and_authorize_resource
+  before_action :authenticate_user!, except: [:locationData]
   layout "admin"
 
   # GET /locations
@@ -64,6 +64,11 @@ class LocationsController < ApplicationController
       format.html { redirect_to locations_url }
       format.json { head :no_content }
     end
+  end
+
+  def locationData
+    location = Location.find(params[:id])
+    render :json => location
   end
 
   private

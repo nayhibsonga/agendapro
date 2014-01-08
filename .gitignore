@@ -15,4 +15,8 @@
 /log/*.log
 /tmp
 
+#Archivos temporales del editor
 *.*~
+
+#Archivos compilados
+/public/assets
