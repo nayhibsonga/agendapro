@@ -82,3 +82,7 @@
 </div>
 <%= content_tag "div", id: "results", data: {results: @results} do %>
 <% end %>
+
+<% content_for :map do %>
+    <%= javascript_include_tag "search/map" %>
+<% end %>

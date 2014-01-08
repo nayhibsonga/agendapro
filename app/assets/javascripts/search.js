@@ -11,4 +11,4 @@
 
 
 //por defecto:
-//= require turbolinks
+// require turbolinks
