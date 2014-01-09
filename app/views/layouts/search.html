@@ -65,7 +65,7 @@
                     <i class="fa fa-user"></i>
                     <% if user_signed_in? %>
                       <%= link_to current_user.user_name, edit_user_registration_path %> /
-                      <%= link_to "Salir", destroy_user_session_path, method: :delete %>
+                      <%= link_to "Salir".html_safe, destroy_user_session_path, method: :delete %>
                     <% else %>
                       <%= link_to "Inicia Sesión", new_user_session_path %> /
                       <%= link_to "Regístrate", new_user_registration_path %>
