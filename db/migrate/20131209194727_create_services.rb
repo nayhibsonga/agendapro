@@ -9,7 +9,6 @@ class CreateServices < ActiveRecord::Migration
       t.integer :capacity
       t.boolean :waiting_list, :default => false
       t.references :company, :index => true, :null => false
-      t.references :tag, :index => true
       t.references :service_category, :index => true
 
       t.timestamps
