@@ -7,8 +7,8 @@
       t.string :phone, :null => false
       #t.string :user_name
       #t.string :password
-      t.references :role, :null => false
-      t.references :company
+      t.references :role, :index => true, :null => false
+      t.references :company, :index => true
 
       t.timestamps
     end
