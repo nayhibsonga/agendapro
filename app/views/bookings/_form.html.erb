@@ -14,11 +14,15 @@
   Inicio: <%= f.input :start, :label => false %><br />
   Término: <%= f.input :end, :label => false %><br />
   Nota: <%= f.input :notes, :label => false %><br />
-  Staff: <%= f.association :service_provider, :label => false %><br />
-  Servicio: <%= f.association :service, :label => false %><br />
-  Usuario: <%= f.association :user, :label => false %><br />
+  <%= f.association :service_provider, :as => :collection_select, collection: ServiceProvider.where(company_id: current_user.company_id), :label => "Proveedor Servicio", :label_method => :user, value_method: :id %><br />
+  <%= f.association :service, :as => :collection_select, collection: Service.where(company_id: current_user.company_id), :label => "Servicio", :label_method => :name, value_method: :id %><br />
+  <%= f.association :user, :as => :collection_select, collection: User.where(company_id: current_user.company_id), :label => "Usuario", :label_method => :email, value_method: :id %><br />
   Status: <%= f.association :status, :label => false %><br />
   Promoción: <%= f.association :promotion, :label => false %><br />
+  <%= f.input :first_name, :laber => "Nombre" %><br />
+  <%= f.input :last_name, :laber => "Apellido" %><br />
+  <%= f.input :email, :laber => "Email" %><br />
+  <%= f.input :phone, :laber => "Teléfono" %><br />
   
 
   <div class="actions">

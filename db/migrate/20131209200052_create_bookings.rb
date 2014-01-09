@@ -4,12 +4,12 @@ class CreateBookings < ActiveRecord::Migration
       t.timestamp :start, :null => false
       t.timestamp :end, :null => false
       t.text :notes
-      t.references :service_provider, :null => false
-      t.references :user, :null => false
-      t.references :service, :null => false
-      t.references :location, :null => false
-      t.references :status, :null => false
-      t.references :promotion
+      t.references :service_provider, :index => true, :null => false
+      t.references :user, :index => true
+      t.references :service, :index => true, :null => false
+      t.references :location, :index => true, :null => false
+      t.references :status, :index => true, :null => false
+      t.references :promotion, :index => true
 
       t.timestamps
     end

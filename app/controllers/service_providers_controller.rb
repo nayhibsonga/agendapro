@@ -5,7 +5,7 @@ class ServiceProvidersController < ApplicationController
   # GET /service_providers
   # GET /service_providers.json
   def index
-    @service_providers = ServiceProvider.all
+    @service_providers = ServiceProvider.where(location_id: Location.where(company_id: current_user.company_id))
   end
 
   # GET /service_providers/1
@@ -90,6 +90,6 @@ class ServiceProvidersController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def service_provider_params
-      params.require(:service_provider).permit(:user_id, :location_id, provider_times_attributes: [:id, :open, :close, :day_id, :service_provider_id, :_destroy])
+      params.require(:service_provider).permit(:user_id, :location_id, :public_name, :notification_email, :service_ids => [], provider_times_attributes: [:id, :open, :close, :day_id, :service_provider_id, :_destroy])
     end
 end

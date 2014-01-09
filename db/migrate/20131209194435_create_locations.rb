@@ -6,8 +6,8 @@ class CreateLocations < ActiveRecord::Migration
       t.string :phone, :null => false
       t.float :latitude
       t.float :longitude
-      t.references :district, :null => false
-      t.references :company, :null => false
+      t.references :district, :index => true, :null => false
+      t.references :company, :index => true, :null => false
 
       t.timestamps
     end
