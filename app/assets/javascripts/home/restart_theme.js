@@ -1,14 +1,14 @@
 $(document).ready(function() {
 						   
 //Flickr feed snippet by css-tricks.com			   
-    /*$.getJSON("http://api.flickr.com/services/feeds/photos_public.gne?id=37321137@N03&format=json&jsoncallback=?", function(data) {
-               var target = "#latest-flickr-images ul"; // Where is it going?
-               for (i = 0; i <= 9; i = i + 1) { // Loop through the 10 most recent, [0-9]
-                       var pic = data.items[i];
-                       var liNumber = i + 1; // Add class to each LI (1-12)
-                       $(target).append("<li class='flickr-image no-" + liNumber + "'><a rel='prettyPhoto' title='" + pic.title + "' href='" + pic.link + "'><img src='" + pic.media.m + "' /></a></li>");
-               }
-    });*/
+/*$.getJSON("http://api.flickr.com/services/feeds/photos_public.gne?id=37321137@N03&format=json&jsoncallback=?", function(data) {
+           var target = "#latest-flickr-images ul"; // Where is it going?
+           for (i = 0; i <= 9; i = i + 1) { // Loop through the 10 most recent, [0-9]
+                   var pic = data.items[i];
+                   var liNumber = i + 1; // Add class to each LI (1-12)
+                   $(target).append("<li class='flickr-image no-" + liNumber + "'><a rel='prettyPhoto' title='" + pic.title + "' href='" + pic.link + "'><img src='" + pic.media.m + "' /></a></li>");
+           }
+});*/
 
 //PrettyPhoto
 //$("a[rel^='prettyPhoto']").prettyPhoto();
@@ -100,7 +100,7 @@ removed: function(){}           //{NEW} Callback: function(slider) - Fires after
 	});
 
 //Portfolio Flexslider with carousel	
-$('#carousel').flexslider({
+/*$('#carousel').flexslider({
     animation: "slide",
     controlNav: false,
     animationLoop: false,
@@ -174,14 +174,14 @@ end: function(){},              //Callback: function(slider) - Fires when the sl
 added: function(){},            //{NEW} Callback: function(slider) - Fires after a slide is added
 removed: function(){}           //{NEW} Callback: function(slider) - Fires after a slide is removed
 
-  	});
+  	});*/
 
 $().UItoTop({ easingType: 'easeOutQuart' });	
 	   
 });
 
 
-$(window).load(function(){
+/*$(window).load(function(){
 		    
 	//ISOTOPE
 	// cache container
@@ -206,7 +206,7 @@ $(window).resize(function() {
 var $container = $('.isotope_portfolio_container');
 $container.isotope({ });
 
-});
+});*/
 
 
 
