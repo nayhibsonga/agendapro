@@ -1,7 +1,7 @@
 class CitiesController < ApplicationController
   before_action :set_city, only: [:show, :edit, :update, :destroy]
-  before_action :authenticate_user!
-  before_action :verify_is_super_admin
+  before_action :authenticate_user!, except: [:getCities]
+  before_action :verify_is_super_admin, except: [:getCities]
   layout "admin"
   load_and_authorize_resource
 
@@ -63,6 +63,11 @@ class CitiesController < ApplicationController
       format.html { redirect_to cities_url }
       format.json { head :no_content }
     end
+  end
+
+  def getCities
+    @cities = City.where(region_id: params[:region])
+    render :json => @cities
   end
 
   private
