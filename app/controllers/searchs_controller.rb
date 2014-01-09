@@ -2,11 +2,15 @@ class SearchsController < ApplicationController
 	layout "search"
 
 	def index
-		@districts = District.all
 	end
 
 	def search
-		@districts = District.all
+		district = District.find(params[:district])
+		city = district.city
+		region = city.region
+		country = region.country
+		@geolocation = district.name + ', ' + city.name + ', ' + region.name + ', ' + country.name
+
 		@results = Array.new
 
 		# filtrar pronombres y articulos
