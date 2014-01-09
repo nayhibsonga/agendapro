@@ -17,4 +17,5 @@
 
 
 //por defecto:
+//= require jquery_ujs
 // require turbolinks
