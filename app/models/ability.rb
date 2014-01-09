@@ -42,14 +42,23 @@ class Ability
 
     can :new, :all
 
+    # Home
     can :viewplans, Plan
 
+    # Workflow
     can :workflow, Company
     can :locationData, Location
     can :serviceData, Service
     can :getProviders, Service
     can :providerBooking, Booking
     can :bookService, Booking
+
+    # Search
+    can :getCountries, Country
+    can :getRegions, Region
+    can :getCities, City
+    can :getDistricts, District
+    can :getDistrict, District
 
     can :read, Booking, :user_id => user.id
     can :update, Booking, :user_id => user.id

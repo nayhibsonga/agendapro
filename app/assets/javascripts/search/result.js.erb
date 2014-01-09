@@ -1,0 +1,138 @@
+//====== Result ======//
+
+function loadSchedule(id) {
+  $('#schedule-body' + id).html('<%= image_tag "ajax-loader.gif", :alt => "Loader" %>');
+  $.getJSON('/schedule', {local: id}, function (schedule) {
+    $('#schedule-body' + id).empty();
+    $('#schedule-body' + id).append('<ul class="list-unstyled" id="list' + id + '"></ul>');
+    $.each(schedule, function (day, hours) {
+      if (hours.length) {
+        $('#list' + id).append('<li id="' + day + '-' + id + '"><b>' + day + ' </b></li>');
+        $.each(hours, function (pos, hour) {
+          $('#' + day + '-' + id).append(getHour(hour.open) + '-' + getHour(hour.close) + ' ');
+        })
+      }
+    })
+  });
+}
+
+function getHour(str) {
+  var index = str.indexOf('T'); //2000-1-1T08:00:00Z
+  str = str.substring(index + 1, index + 6); //08:00
+  return str;
+}
+
+//====== Map ======//
+
+function initializeMap(lat, lng, mapDiv) {
+    var properties = {
+        center: new google.maps.LatLng(lat, lng),
+        zoom:   15,
+        panControl: false,
+        zoomControl: true,
+        zoomControlOptions: {
+            style: google.maps.ZoomControlStyle.SMALL
+        },
+        mapTypeControl: true,
+        mapTypeControlOptions: {
+            style: google.maps.MapTypeControlStyle.DROPDOWN_MENU
+        },
+        scaleControl: false,
+        streetViewControl: false,
+        overviewMapControl: false,
+        mapTypeId:  google.maps.MapTypeId.ROADMAP
+    };
+    map = new google.maps.Map(document.getElementById(mapDiv), properties);
+}
+
+function setMarker(latlng, local, n) {
+    var marker;
+    marker = new google.maps.Marker({
+        position: latlng,
+        map: map,
+        icon: new google.maps.MarkerImage(
+            "http://chart.googleapis.com/chart?chst=d_map_pin_letter_withshadow&chld="+ n + "|da4f49|FFFFFF",
+            null, null, new google.maps.Point(0, 42))
+    });
+    marker.setMap(map);
+    
+    var infowindow = new google.maps.InfoWindow({
+        content: local
+    });
+    google.maps.event.addListener(marker, 'click', function() {
+        infowindow.open(map,marker);
+    });
+}
+
+//====== Search ======//
+function changeLocation (district_id) {
+  $.getJSON('/getdistrict', {id: district_id}, function (district) {
+    $('#span-location').html(district.name + '<i class="glyphicon glyphicon-chevron-right"></i>');
+    $('#district').val(district.id);
+  });
+}
+
+//====== Load ======//
+
+$(function() {
+  $('#form-location').hide();
+  changeLocation(1);
+
+  $('#modalLocation').on('show.bs.modal', function (e) {
+    $('#form-location').hide();
+    $('#loader').show();
+    $('#regions').prop('disabled','disabled');
+    $('#cities').prop('disabled','disabled');
+    $('#districts').prop('disabled','disabled');
+    $.getJSON('/getcountries', function (countries) {
+      $('#countries').empty();
+      $.each(countries, function (key, country) {
+        $('#countries').append('<option value="' + country.id + '">' + country.name + '</option>');
+      });
+      $('#form-location').show();
+      $('#loader').hide();
+    });
+  });
+
+  $('#countries').change(function (e) {
+    $('#regions').prop('disabled','disabled');
+    $('#cities').prop('disabled','disabled');
+    $('#districts').prop('disabled','disabled');
+    $.getJSON('/getregions', {country: $('#countries').val()}, function (regionss) {
+      $('#regions').empty();
+      $.each(regionss, function (key, region) {
+        $('#regions').append('<option value="' + region.id + '">' + region.name + '</option>');
+      });
+      $('#regions').removeAttr("disabled");
+    });
+  });
+
+  $('#regions').change(function (e) {
+    $('#cities').prop('disabled','disabled');
+    $('#districts').prop('disabled','disabled');
+    $.getJSON('/getcities', {region: $('#regions').val()}, function (cities) {
+      $('#cities').empty();
+      $.each(cities, function (key, city) {
+        $('#cities').append('<option value="' + city.id + '">' + city.name + '</option>');
+      });
+      $('#cities').removeAttr("disabled");
+    });
+  });
+
+  $('#cities').change(function (e) {
+    $('#districts').prop('disabled','disabled');
+    $.getJSON('/getdistricts', {city: $('#cities').val()}, function (districts) {
+      $('#districts').empty();
+      $.each(districts, function (key, district) {
+        $('#districts').append('<option value="' + district.id + '">' + district.name + '</option>');
+      });
+      $('#districts').removeAttr("disabled");
+    });
+  });
+
+  $('#save').on('click', function () {
+    var district = $('#districts').val();
+    changeLocation(district);
+    $('#modalLocation').modal('hide');
+  });
+});

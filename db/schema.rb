@@ -106,6 +106,13 @@ ActiveRecord::Schema.define(version: 20140109135803) do
     t.datetime "updated_at"
   end
 
+  create_table "dictionaries", force: true do |t|
+    t.string   "name",       null: false
+    t.integer  "tag_id",     null: false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
   create_table "districts", force: true do |t|
     t.string   "name",       null: false
     t.integer  "city_id",    null: false
