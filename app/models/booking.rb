@@ -6,7 +6,7 @@ class Booking < ActiveRecord::Base
 	belongs_to :location
 	belongs_to :promotion
 
-	validates :start, :end, :service_provider_id, :service_id, :status_id, :location_id, :first_name, :last_name, :mail, :phone, :presence => true
+	validates :start, :end, :service_provider_id, :service_id, :status_id, :location_id, :first_name, :last_name, :email, :phone, :presence => true
 
 	validate :time_empty_or_negative, :time_in_provider_time, :booking_duration, :service_staff
 

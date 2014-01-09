@@ -15,8 +15,11 @@
 /log/*.log
 /tmp
 
-#Archivos temporales del editor
+# Archivos temporales del editor
 *.*~
 
-#Archivos compilados
+# Archivos Gemfile
+/Gemfile.lock
+
+# Archivos compilados
 /public/assets

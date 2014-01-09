@@ -116,4 +116,18 @@ $(function() {
   var map;
   $('#error').hide();
   initializeMap(-33.413084, -70.592161, 'map');
+  
+  if ($('[name="localRadio"]').is(':checked')) {
+    var localId = $('input[name=localRadio]:checked').val();
+    loadSchedule(localId);
+    localMap(localId);
+  }
+
+  if ($('[name="localRadio"]').length == 1) {
+    $('input[name=localRadio]').prop("checked", true)
+    var localId = $('input[name=localRadio]').val();
+    loadSchedule(localId);
+    localMap(localId);
+  }
+
 });

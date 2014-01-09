@@ -1,5 +1,7 @@
 Agendapro::Application.routes.draw do
 
+  resources :service_categories
+
   get "users/index"
   require 'subdomain'
 
@@ -43,14 +45,20 @@ Agendapro::Application.routes.draw do
   get "/contact", :to => 'home#contact', :as => 'contact'
   post "/pcontact", :to => 'home#post_contact'
 
-  get '/' => 'home#index', :constraints => { :subdomain => 'www' }
-  get '/' => 'companies#workflow', :constraints => { :subdomain => /.+/ }
+  # Search
+  get "searchs/index"
+  get '/search', :to => "searchs#search"
+  get '/getcountries', :to => 'countries#getCountries'
+  get '/getregions', :to => 'regions#getRegions'
+  get '/getcities', :to => 'cities#getCities'
+  get '/getdistricts', :to => 'districts#getDistricts'
+  get '/getdistrict', :to => 'districts#getDistrict'
 
-  #Workflow
-  #Workflow - overview
+  # Workflow
+  # Workflow - overview
   get '/schedule', :to => 'location_times#scheduleLocal'
   get '/local', :to => 'locations#locationData'
-  #wrokflow - wizard
+  # wrokflow - wizard
   get '/localServices', :to => 'service_providers#locationServices'
   get '/service', :to => 'services#serviceData'
   get '/serviceProviders', :to => 'services#getProviders'
@@ -58,7 +66,11 @@ Agendapro::Application.routes.draw do
   get '/booking', :to => 'bookings#providerBooking'
   post "/book", :to => 'bookings#bookService'
   
-  root :to => 'home#index'
+  # Root
+  get '/' => 'searchs#index', :constraints => { :subdomain => 'www' }
+  get '/' => 'companies#workflow', :constraints => { :subdomain => /.+/ }
+
+  root :to => 'searchs#index'
   
 
   # The priority is based upon order of creation: first created -> highest priority.

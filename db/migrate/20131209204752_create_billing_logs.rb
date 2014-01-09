@@ -4,9 +4,9 @@ class CreateBillingLogs < ActiveRecord::Migration
       t.float :payment, :null => false
       t.float :amount, :null => false
       t.date :next_payment, :null => false
-      t.references :company, :null => false
-      t.references :plan, :null => false
-      t.references :transaction_type, :null => false
+      t.references :company, :index => true, :null => false
+      t.references :plan, :index => true, :null => false
+      t.references :transaction_type, :index => true, :null => false
 
       t.timestamps
     end
