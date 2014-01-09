@@ -2,9 +2,6 @@ class HomeController < ApplicationController
 	layout "home"
 	
 	def index
-	  if current_user
-	    redirect_to :controller=>'dashboard', :action => 'index'
-	  end
 	end
 
 	def features
