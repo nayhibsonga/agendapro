@@ -15,7 +15,7 @@ payment_statuses = PaymentStatus.create(name: "Al día", description: "La empres
 
 economic_sectors = EconomicSector.create(name: "Peluquería")
 
-tags = Tag.create(name: "Corte de Pelo", economic_sector_id: 1)
+tags = Tag.create([{name: "Corte de Pelo", economic_sector_id: 1}, {name: "Color", economic_sector_id: 1}])
 
 countries = Country.create(name: "Chile")
 
@@ -44,6 +44,10 @@ location_times = LocationTime.create([{open: '15:00', close: '20:00', location_i
 service_provider = ServiceProvider.create(location_id: 1, user_id: 1, company_id: 1)
 
 service = Service.create([{name: "Corte de pelo", price: 2500, duration: 30, company_id: 1, service_category_id: 1}, {name: "Visos", price: 5000, duration: 45, company_id: 1, service_category_id: 1}])
+
+Service.find(1).tags << Tag.find(1)
+Service.find(2).tags << Tag.find(2)
+
 
 service_provider.services << service
 

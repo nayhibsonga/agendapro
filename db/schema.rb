@@ -273,7 +273,6 @@ ActiveRecord::Schema.define(version: 20140109135803) do
     t.integer  "capacity"
     t.boolean  "waiting_list",        default: false
     t.integer  "company_id",                          null: false
-    t.integer  "tag_id"
     t.integer  "service_category_id"
     t.datetime "created_at"
     t.datetime "updated_at"
@@ -281,7 +280,6 @@ ActiveRecord::Schema.define(version: 20140109135803) do
 
   add_index "services", ["company_id"], name: "index_services_on_company_id", using: :btree
   add_index "services", ["service_category_id"], name: "index_services_on_service_category_id", using: :btree
-  add_index "services", ["tag_id"], name: "index_services_on_tag_id", using: :btree
 
   create_table "statuses", force: true do |t|
     t.string   "name",        null: false
