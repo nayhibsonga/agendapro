@@ -60,6 +60,8 @@ class Ability
     can :getDistricts, District
     can :getDistrict, District
 
+    can :getDirection, District
+
     can :read, Booking, :user_id => user.id
     can :update, Booking, :user_id => user.id
     can :destroy, Booking, :user_id => user.id

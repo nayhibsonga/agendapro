@@ -1,7 +1,7 @@
 class DistrictsController < ApplicationController
   before_action :set_district, only: [:show, :edit, :update, :destroy]
-  before_action :authenticate_user!, except: [:getDistricts, :getDistrict]
-  before_action :verify_is_super_admin, except: [:getDistricts, :getDistrict]
+  before_action :authenticate_user!, except: [:getDistricts, :getDistrict, :getDirection]
+  before_action :verify_is_super_admin, except: [:getDistricts, :getDistrict, :getDirection]
   layout "admin"
   load_and_authorize_resource
 
@@ -73,6 +73,16 @@ class DistrictsController < ApplicationController
   def getDistrict
     @district = District.find(params[:id])
     render :json => @district
+  end
+
+  def getDirection
+    district = District.find(params[:id])
+    city = district.city
+    region = city.region
+    country = region.country
+    @geolocation = [district.name + ', ' + city.name + ', ' + region.name + ', ' + country.name]
+
+    render :json => @geolocation
   end
 
   private
