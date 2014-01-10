@@ -24,7 +24,7 @@ function getHour(str) {
 
 //====== Search ======//
 function changeLocation (district_id) {
-  $.getJSON('/getdistrict', {id: district_id}, function (district) {
+  $.getJSON('/get_district', {id: district_id}, function (district) {
     $('#span-location').html(district.name + '<i class="glyphicon glyphicon-chevron-right"></i>');
     $('#district').val(district.id);
   });
@@ -42,7 +42,7 @@ $(function() {
     $('#regions').prop('disabled','disabled');
     $('#cities').prop('disabled','disabled');
     $('#districts').prop('disabled','disabled');
-    $.getJSON('/getcountries', function (countries) {
+    $.getJSON('get_countries', function (countries) {
       $('#countries').empty();
       $.each(countries, function (key, country) {
         $('#countries').append('<option value="' + country.id + '">' + country.name + '</option>');
@@ -56,7 +56,7 @@ $(function() {
     $('#regions').prop('disabled','disabled');
     $('#cities').prop('disabled','disabled');
     $('#districts').prop('disabled','disabled');
-    $.getJSON('/getregions', {country: $('#countries').val()}, function (regionss) {
+    $.getJSON('/get_regions', {country: $('#countries').val()}, function (regionss) {
       $('#regions').empty();
       $.each(regionss, function (key, region) {
         $('#regions').append('<option value="' + region.id + '">' + region.name + '</option>');
@@ -68,7 +68,7 @@ $(function() {
   $('#regions').change(function (e) {
     $('#cities').prop('disabled','disabled');
     $('#districts').prop('disabled','disabled');
-    $.getJSON('/getcities', {region: $('#regions').val()}, function (cities) {
+    $.getJSON('/get_cities', {region: $('#regions').val()}, function (cities) {
       $('#cities').empty();
       $.each(cities, function (key, city) {
         $('#cities').append('<option value="' + city.id + '">' + city.name + '</option>');
@@ -79,7 +79,7 @@ $(function() {
 
   $('#cities').change(function (e) {
     $('#districts').prop('disabled','disabled');
-    $.getJSON('/getdistricts', {city: $('#cities').val()}, function (districts) {
+    $.getJSON('/get_districts', {city: $('#cities').val()}, function (districts) {
       $('#districts').empty();
       $.each(districts, function (key, district) {
         $('#districts').append('<option value="' + district.id + '">' + district.name + '</option>');

@@ -40,7 +40,7 @@ Agendapro::Application.routes.draw do
 
   get "/home", :to => 'home#index', :as => 'home'
   get "/features", :to => 'home#features', :as => 'features'
-  get "/viewplans", :to => 'plans#viewplans', :as => 'viewplans'
+  get "/view_plans", :to => 'plans#viewplans', :as => 'view_plans'
   get "/about_us", :to => 'home#about_us',  :as => 'aboutus'
   get "/contact", :to => 'home#contact', :as => 'contact'
   post "/pcontact", :to => 'home#post_contact'
@@ -48,21 +48,21 @@ Agendapro::Application.routes.draw do
   # Search
   get "searchs/index"
   get '/search', :to => "searchs#search"
-  get '/getcountries', :to => 'countries#getCountries'
-  get '/getregions', :to => 'regions#getRegions'
-  get '/getcities', :to => 'cities#getCities'
-  get '/getdistricts', :to => 'districts#getDistricts'
-  get '/getdistrict', :to => 'districts#getDistrict'
+  get 'get_countries', :to => 'countries#getCountries'
+  get '/get_regions', :to => 'regions#getRegions'
+  get '/get_cities', :to => 'cities#getCities'
+  get '/get_districts', :to => 'districts#getDistricts'
+  get '/get_district', :to => 'districts#getDistrict'
 
   # Workflow
   # Workflow - overview
   get '/schedule', :to => 'location_times#scheduleLocal'
   get '/local', :to => 'locations#locationData'
   # wrokflow - wizard
-  get '/localServices', :to => 'service_providers#locationServices'
+  get '/local_services', :to => 'service_providers#locationServices'
   get '/service', :to => 'services#serviceData'
-  get '/serviceProviders', :to => 'services#getProviders'
-  get '/providerTime', :to => 'service_providers#providerTime'
+  get '/providers_services', :to => 'services#getProviders'
+  get '/provider_time', :to => 'service_providers#providerTime'
   get '/booking', :to => 'bookings#providerBooking'
   post "/book", :to => 'bookings#bookService'
   
