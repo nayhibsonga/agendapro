@@ -57,6 +57,7 @@
 </div>
 
 <% if @booking.errors.any? %>
+<% content_for :scripts do %>
 <script type="text/javascript">
 	$(function() {
 		$('#errorDiv').hide();
@@ -65,4 +66,5 @@
 		});
 	});
 </script>
+<% end %>
 <% end %>
