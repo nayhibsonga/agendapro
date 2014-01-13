@@ -1,0 +1,31 @@
+<%= simple_form_for @location, :url => quick_add_location_path, :method => :put do |f| %>
+  <% if @location.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(@location.errors.count, "error") %> no permitió que el local sea creado:</h2>
+
+      <ul>
+      <% @location.errors.full_messages.each do |msg| %>
+        <li><%= msg %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  Nombre: <%= f.input :name, :label => false %><br />
+  Dirección: <%= f.input :address, :label => false %><br />
+  Teléfono: <%= f.input :phone, :label => false %><br />
+  Comuna: <%= f.association :district, :label => false %><br />
+  Latitud: <%= f.input :latitude, :label => false %><br />
+  Longitud: <%= f.input :longitude, :label => false %><br />
+
+  <%= f.simple_fields_for :location_times do |location_time| %>
+    <%= render 'location_time_fields', :f => location_time %>
+  <% end %>
+  <div class="links">
+      <%= link_to_add_association 'Agregar Bloque Horario', f, :location_times %>
+    </div>
+
+  <div class="actions">
+    <%= f.submit %>
+  </div>
+<% end %>
