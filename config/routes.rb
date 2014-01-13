@@ -29,9 +29,16 @@ Agendapro::Application.routes.draw do
   resources :service_providers
 
   namespace :admin do 
-    get '', to: 'dashboard#index', as: '/'
+    get '', :to => 'dashboard#index', :as => '/'
     resources :users 
   end
+
+  get '/quick_add/location', :to => 'quick_add#location', :as => 'quick_add_location'
+  get '/quick_add/services', :to => 'quick_add#services', :as => 'quick_add_services'
+  get '/quick_add/service_provider', :to => 'quick_add#service_provider', :as => 'quick_add_service_provider'
+  put '/quick_add/location', :to => 'quick_add#create_location', :as => 'quick_add_create_location'
+  put '/quick_add/services', :to => 'quick_add#create_services', :as => 'quick_add_create_services'
+  put '/quick_add/service_provider', :to => 'quick_add#create_service_provider', :as => 'quick_add_create_service_provider'
 
   get '/dashboard', :to => 'dashboard#index', :as => 'dashboard'
   get '/reports', :to => 'reports#index', :as => 'reports'

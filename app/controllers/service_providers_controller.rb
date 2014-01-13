@@ -33,7 +33,7 @@ class ServiceProvidersController < ApplicationController
 
     respond_to do |format|
       if @service_provider.save
-        format.html { redirect_to @service_provider, notice: 'Staff creado satisfactoriamente.' }
+        format.html { redirect_to @service_provider, notice: 'Proveedor creado satisfactoriamente.' }
         format.json { render action: 'show', status: :created, location: @service_provider }
       else
         format.html { render action: 'new' }
@@ -50,7 +50,7 @@ class ServiceProvidersController < ApplicationController
     @users = User.where(company_id: current_user.company_id)
     @locations = Location.where(company_id: current_user.company_id)
       if @service_provider.update(service_provider_params)
-        format.html { redirect_to @service_provider, notice: 'Staff actualizado satisfactoriamente.' }
+        format.html { redirect_to @service_provider, notice: 'Proveedor actualizado satisfactoriamente.' }
         format.json { head :no_content }
       else
         format.html { render action: 'edit' }
