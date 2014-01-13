@@ -51,7 +51,7 @@ class ApplicationController < ActionController::Base
   private 
 
   def after_sign_out_path_for(resource_or_scope)
-    new_user_session_path
+    root_path
   end
 
   def layout
@@ -59,8 +59,6 @@ class ApplicationController < ActionController::Base
       return "login"
     elsif is_a?(Devise::RegistrationsController)
       return "login"
-    else
-      return user_signed_in? ? "admin" : "home"
     end
   end
 
