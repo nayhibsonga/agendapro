@@ -15,7 +15,7 @@ payment_statuses = PaymentStatus.create(name: "Al día", description: "La empres
 
 economic_sectors = EconomicSector.create(name: "Peluquería")
 
-tags = Tag.create(name: "Corte de Pelo", economic_sector_id: 1)
+tags = Tag.create([{name: "Corte de Pelo", economic_sector_id: 1}, {name: "Color", economic_sector_id: 1}])
 
 countries = Country.create(name: "Chile")
 
@@ -45,10 +45,14 @@ service_provider = ServiceProvider.create(location_id: 1, user_id: 1, company_id
 
 service = Service.create([{name: "Corte de pelo", price: 2500, duration: 30, company_id: 1, service_category_id: 1}, {name: "Visos", price: 5000, duration: 45, company_id: 1, service_category_id: 1}])
 
+Service.find(1).tags << Tag.find(1)
+Service.find(2).tags << Tag.find(2)
+
+
 service_provider.services << service
 
 provider_times = ProviderTime.create([{open: '8:30', close: '20:00', service_provider_id: 1, day_id: 1}, {open: '10:30', close: '19:30', service_provider_id: 1, day_id: 2}, {open: '14:00', close: '17:00', service_provider_id: 1, day_id: 3}, {open: '8:00', close: '20:30', service_provider_id: 1, day_id: 4}, {open: '9:00', close: '18:00', service_provider_id: 1, day_id: 5}])
 
-bookings = Booking.create([{start: '2014-1-6T08:30z', end: '2014-1-6T10:00', service_provider_id: 1, user_id: 1, service_id: 1, location_id: 1, status_id: 1, first_name: 'Nicolas', last_name: 'Flores', email: 'nflores@agendapro.cl', phone: '95482649'}, {start: '2014-1-7T13:30z', end: '2014-1-7T15:30', service_provider_id: 1, user_id: 1, service_id: 1, location_id: 1, status_id: 1, first_name: 'Nicolas', last_name: 'Flores', email: 'nflores@agendapro.cl', phone: '95482649'}, {start: '2014-1-8T010:00z', end: '2014-1-8T12:00', service_provider_id: 1, user_id: 1, service_id: 1, location_id: 1, status_id: 1, first_name: 'Nicolas', last_name: 'Flores', email: 'nflores@agendapro.cl', phone: '95482649'}, {start: '2014-1-9T16:30z', end: '2014-1-9T18:30', service_provider_id: 1, user_id: 1, service_id: 1, location_id: 1, status_id: 1, first_name: 'Nicolas', last_name: 'Flores', email: 'nflores@agendapro.cl', phone: '95482649'}, {start: '2014-1-10T09:30z', end: '2014-1-10T11:00', service_provider_id: 1, user_id: 1, service_id: 2, location_id: 1, status_id: 1, first_name: 'Nicolas', last_name: 'Flores', email: 'nflores@agendapro.cl', phone: '95482649'}])
+bookings = Booking.create([{start: '2014-1-6T08:30z', end: '2014-1-6T09:00z', service_provider_id: 1, user_id: 1, service_id: 1, location_id: 1, status_id: 1, first_name: 'Nicolas', last_name: 'Flores', email: 'nflores@agendapro.cl', phone: '95482649'}, {start: '2014-1-7T13:30z', end: '2014-1-7T14:00z', service_provider_id: 1, user_id: 1, service_id: 1, location_id: 1, status_id: 1, first_name: 'Nicolas', last_name: 'Flores', email: 'nflores@agendapro.cl', phone: '95482649'}, {start: '2014-1-8T015:00z', end: '2014-1-8T15:30z', service_provider_id: 1, user_id: 1, service_id: 1, location_id: 1, status_id: 1, first_name: 'Nicolas', last_name: 'Flores', email: 'nflores@agendapro.cl', phone: '95482649'}, {start: '2014-1-9T16:30z', end: '2014-1-9T17:00z', service_provider_id: 1, user_id: 1, service_id: 1, location_id: 1, status_id: 1, first_name: 'Nicolas', last_name: 'Flores', email: 'nflores@agendapro.cl', phone: '95482649'}, {start: '2014-1-10T09:30z', end: '2014-1-10T10:15z', service_provider_id: 1, user_id: 1, service_id: 2, location_id: 1, status_id: 1, first_name: 'Nicolas', last_name: 'Flores', email: 'nflores@agendapro.cl', phone: '95482649'}])
 
 dictionaries = Dictionary.create([{name: 'Peluqueria', tag_id: 1}, {name: 'Peluquero', tag_id: 1}, {name: 'Peluquera', tag_id: 1}, {name: 'Salon', tag_id: 1}, {name: 'Salon de Belleza', tag_id: 1}, {name: 'Lavado', tag_id: 1}])

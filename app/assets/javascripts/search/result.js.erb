@@ -22,51 +22,9 @@ function getHour(str) {
   return str;
 }
 
-//====== Map ======//
-
-function initializeMap(lat, lng, mapDiv) {
-    var properties = {
-        center: new google.maps.LatLng(lat, lng),
-        zoom:   15,
-        panControl: false,
-        zoomControl: true,
-        zoomControlOptions: {
-            style: google.maps.ZoomControlStyle.SMALL
-        },
-        mapTypeControl: true,
-        mapTypeControlOptions: {
-            style: google.maps.MapTypeControlStyle.DROPDOWN_MENU
-        },
-        scaleControl: false,
-        streetViewControl: false,
-        overviewMapControl: false,
-        mapTypeId:  google.maps.MapTypeId.ROADMAP
-    };
-    map = new google.maps.Map(document.getElementById(mapDiv), properties);
-}
-
-function setMarker(latlng, local, n) {
-    var marker;
-    marker = new google.maps.Marker({
-        position: latlng,
-        map: map,
-        icon: new google.maps.MarkerImage(
-            "http://chart.googleapis.com/chart?chst=d_map_pin_letter_withshadow&chld="+ n + "|da4f49|FFFFFF",
-            null, null, new google.maps.Point(0, 42))
-    });
-    marker.setMap(map);
-    
-    var infowindow = new google.maps.InfoWindow({
-        content: local
-    });
-    google.maps.event.addListener(marker, 'click', function() {
-        infowindow.open(map,marker);
-    });
-}
-
 //====== Search ======//
 function changeLocation (district_id) {
-  $.getJSON('/getdistrict', {id: district_id}, function (district) {
+  $.getJSON('/get_district', {id: district_id}, function (district) {
     $('#span-location').html(district.name + '<i class="glyphicon glyphicon-chevron-right"></i>');
     $('#district').val(district.id);
   });
@@ -84,7 +42,7 @@ $(function() {
     $('#regions').prop('disabled','disabled');
     $('#cities').prop('disabled','disabled');
     $('#districts').prop('disabled','disabled');
-    $.getJSON('/getcountries', function (countries) {
+    $.getJSON('get_countries', function (countries) {
       $('#countries').empty();
       $.each(countries, function (key, country) {
         $('#countries').append('<option value="' + country.id + '">' + country.name + '</option>');
@@ -98,7 +56,7 @@ $(function() {
     $('#regions').prop('disabled','disabled');
     $('#cities').prop('disabled','disabled');
     $('#districts').prop('disabled','disabled');
-    $.getJSON('/getregions', {country: $('#countries').val()}, function (regionss) {
+    $.getJSON('/get_regions', {country: $('#countries').val()}, function (regionss) {
       $('#regions').empty();
       $.each(regionss, function (key, region) {
         $('#regions').append('<option value="' + region.id + '">' + region.name + '</option>');
@@ -110,7 +68,7 @@ $(function() {
   $('#regions').change(function (e) {
     $('#cities').prop('disabled','disabled');
     $('#districts').prop('disabled','disabled');
-    $.getJSON('/getcities', {region: $('#regions').val()}, function (cities) {
+    $.getJSON('/get_cities', {region: $('#regions').val()}, function (cities) {
       $('#cities').empty();
       $.each(cities, function (key, city) {
         $('#cities').append('<option value="' + city.id + '">' + city.name + '</option>');
@@ -121,7 +79,7 @@ $(function() {
 
   $('#cities').change(function (e) {
     $('#districts').prop('disabled','disabled');
-    $.getJSON('/getdistricts', {city: $('#cities').val()}, function (districts) {
+    $.getJSON('/get_districts', {city: $('#cities').val()}, function (districts) {
       $('#districts').empty();
       $.each(districts, function (key, district) {
         $('#districts').append('<option value="' + district.id + '">' + district.name + '</option>');

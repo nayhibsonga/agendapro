@@ -17,6 +17,7 @@
     <%= f.simple_fields_for :company do |builder| %>
     Nombre Empresa: <%= builder.input :name, :label => false %>
     URL: <%= builder.input :web_address, :label => false %>
+    <% if !params[:plan].nil? then @user.company.plan_id = params[:plan] end %>
     Plan: <%= builder.association :plan, :label => false %>
     Estado de Pago: <%= builder.association :payment_status, :label => false %>
     Rubro: <%= builder.association :economic_sector, :label => false %>

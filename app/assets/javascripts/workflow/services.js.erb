@@ -6,7 +6,7 @@ function loadStep1 () {
 		$('#services-description').empty();
 		$('#services-selector').html('<%= image_tag "ajax-loader.gif", :alt => "Loader" %>');
 		var localId = $('input[name=localRadio]:checked').val();
-		$.getJSON('/localServices', {location: localId}, function (servicesArray) {
+		$.getJSON('/local_services', {location: localId}, function (servicesArray) {
 			$('#services-selector').empty();
 			$.each(servicesArray, function (key, services) {
 				$.each(services, function (key, service) {
@@ -38,7 +38,7 @@ function loadStep2 () {
 		var minMinuts = 59;
 		var maxHour = 00;
 		var maxMinuts = 00;
-		$.getJSON('/serviceProviders', {id: serviceId}, function (providers) {
+		$.getJSON('/providers_services', {id: serviceId}, function (providers) {
 			$('#staff-selector').empty();
 			$.each(providers, function (key, provider) {
 				$('#staff-selector').append('<label>' +
@@ -159,7 +159,7 @@ function loadCalendar (startTime, endTime, hiddenDays) {
 
 function loadProviderTime (providerId) {
 	$('#calendar').html('<%= image_tag "ajax-loader.gif", :alt => "Loader" %>');
-	$.getJSON('/providerTime', {id: providerId}, function (times) {
+	$.getJSON('/provider_time', {id: providerId}, function (times) {
 		var minHour = 23;
 		var minMinuts = 59;
 		var maxHour = 00;

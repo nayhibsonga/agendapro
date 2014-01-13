@@ -188,6 +188,7 @@
 	<![endif]-->
 		<%= javascript_include_tag "fullcalendar_js" if params[:controller] == "bookings" %>
 		<%= javascript_include_tag "cocoon_js" if (params[:controller] == "locations") || (params[:controller] == "service_providers") || (params[:controller] == "quick_add") %>
+		<%= yield :scripts %>
 	
 	<!-- end: JavaScript-->
 	
