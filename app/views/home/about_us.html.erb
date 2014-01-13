@@ -129,9 +129,11 @@
     </section>
 </div>
 
+<% content_for :scripts do %>
 <script type="text/javascript">
     $(function() {
         $("#c_aboutus").addClass("active")
         $("body").addClass("collapsing_header")
     });
 </script>
+<% end %>

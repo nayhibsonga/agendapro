@@ -60,10 +60,11 @@
     </section>
 </div>
 
-<!-- scripts -->
+<% content_for :scripts do %>
 <script>
     $(function() {
         $("#c_contact").addClass("active")
         $("body").addClass("collapsing_header")
     });
 </script>
+<% end %>
