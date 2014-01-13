@@ -53,15 +53,15 @@
                 <span id="alertMessage"></span>
               </div>
               <div id="barra" class="wizard">
-                  <ul class="steps">
-                      <li class="step" id="step1"><span class="badge badge-info">1</span></li>
-                      <li class="step" id="step2"><span class="badge">2</span></li>
-                      <li class="step" id="step3"><span class="badge">3</span></li>
-                  </ul>
-                  <div class="actions">
-                      <button type="button" class="btn btn-success btn-prev" id="back_button" onclick="prevStep()" disabled="true"><i class="glyphicon glyphicon-chevron-left"></i><span>Anterior</span></button>
-                      <button type="button" class="btn btn-success btn-next" id="next_button" onclick="nextStep()"><span>Siguiente</span><i class="glyphicon glyphicon-chevron-right"></i></button>
-                  </div>
+                <ul class="steps">
+                  <li class="step" id="step1"><span class="badge badge-info">1</span></li>
+                  <li class="step" id="step2"><span class="badge">2</span></li>
+                  <li class="step" id="step3"><span class="badge">3</span></li>
+                </ul>
+                <div class="actions">
+                  <button type="button" class="btn btn-success btn-prev" id="back_button" onclick="prevStep()"><i class="glyphicon glyphicon-chevron-left"></i><span>Anterior</span></button>
+                  <button type="button" class="btn btn-success btn-next" id="next_button" onclick="nextStep()"><span>Siguiente</span><i class="glyphicon glyphicon-chevron-right"></i></button>
+                </div>
               </div>
               <div class="panel-group step-content" id="accordion">
                 <div class="panel panel-default step-pane">
@@ -71,7 +71,7 @@
                   <div id="step-content1" class="panel-collapse collapse in">
                     <div class="panel-body">
                       <div class="row">
-                        <div class="col-md-6">
+                        <div class="col-xs-6">
                           <h3>Servicio</h3>
                           <form role="form">
                             <div id="services-selector" class="radio">
@@ -79,7 +79,7 @@
                             </div>
                           </form>
                         </div>
-                        <div class="col-md-6">
+                        <div class="col-xs-6">
                           <h3>Descripción</h3>
                           <div id="services-description">
                           </div>
@@ -191,8 +191,10 @@
                     </div>
                   </div>
                 </div>
+              <div class="wizard visible-xs visible-sm">
+                <button type="button" class="btn btn-success btn-prev" id="back_button" onclick="prevStep()"><i class="glyphicon glyphicon-chevron-left"></i><span>Anterior</span></button>
+                <button type="button" class="btn btn-success btn-next pull-right" id="next_button" onclick="nextStep()"><span>Siguiente</span><i class="glyphicon glyphicon-chevron-right"></i></button>
               </div>
-            </div>
           </div>
         </div>
     </section>

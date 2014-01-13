@@ -183,6 +183,9 @@ $(function() {
   var fnName = 'finalize';
   functions.push(window[fnName]);
 
+  //Disable the back boton
+  $('#back_button').prop('disabled', true);
+
   //Active the first element of the wizard
   var step = '#step' + actualStep;
   var stepContent = '#step-content' + actualStep;
