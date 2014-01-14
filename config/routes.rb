@@ -1,5 +1,7 @@
 Agendapro::Application.routes.draw do
 
+  get "punto_pagos/generate_transaction"
+  get "punto_pagos/recive_results"
   resources :service_categories
 
   get "users/index"

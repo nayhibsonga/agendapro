@@ -85,3 +85,6 @@ gem 'bcrypt-ruby', '~> 3.1.2'
 
 # Use debugger
 # gem 'debugger', group: [:development, :test]
+
+# Pago en linea: Punto Pagos
+gem 'puntopagos'
