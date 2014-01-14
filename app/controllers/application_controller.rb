@@ -26,6 +26,19 @@ class ApplicationController < ActionController::Base
 
   end
 
+  def quick_add
+    if current_user && (current_user.role_id != Role.find_by_name("Super Admin").id) && current_user.company_id
+      @company = Company.find(current_user.company_id)
+      if @company.locations.count == 0
+        redirect_to(quick_add_location_path)
+      elsif @company.services.count == 0
+        redirect_to(quick_add_services_path)
+      elsif @company.service_providers.count == 0
+        redirect_to(quick_add_service_provider_path)
+      end
+    end
+  end
+
   def verify_is_super_admin
     redirect_to(dashboard_path) unless (current_user.role_id == Role.find_by_name("Super Admin").id)
   end

@@ -1,5 +1,7 @@
 class ServiceCategoriesController < ApplicationController
   before_action :set_service_category, only: [:show, :edit, :update, :destroy]
+  before_action :authenticate_user!
+  before_action :quick_add
 
   # GET /service_categories
   # GET /service_categories.json
