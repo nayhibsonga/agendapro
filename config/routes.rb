@@ -68,6 +68,7 @@ Agendapro::Application.routes.draw do
   get '/local', :to => 'locations#locationData'
   # wrokflow - wizard
   get '/local_services', :to => 'service_providers#locationServices'
+  get '/local_providers', :to => 'service_providers#locationServices'
   get '/service', :to => 'services#serviceData'
   get '/providers_services', :to => 'services#getProviders'
   get '/provider_time', :to => 'service_providers#providerTime'

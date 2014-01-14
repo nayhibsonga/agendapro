@@ -1,11 +1,12 @@
 
 //= require admin/fullcalendar.min
+//= require admin/admin-calendar
 
-$(document).ready(function() {
+$(function() {
+  
+  loadProviders();
 
-    // page is now ready, initialize the calendar...
-
-    $('#calendar').fullCalendar({
+  $('#calendar').fullCalendar({
         dayClick: function() {
         	alert('a day has been clicked!');
     	},
@@ -39,5 +40,4 @@ $(document).ready(function() {
 	    dayNames: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'],
 	    dayNamesShort: ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb']
     })
-
 });

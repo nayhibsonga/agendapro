@@ -24,4 +24,22 @@
 
 <%= link_to 'Nueva Reserva', new_booking_path %>
 
+<div class="row">
+  <% @locations.each do |local| %>
+    <div class="radio">
+      <label>
+        <input type="radio" name="localRadio" id="localOption<%= local.id %>" value="<%= local.id %>" <%= "checked" if ((!@selectedLocal) && (local.id == @locations.first.id)) || (@selectedLocal.to_i == local.id) %>>
+        <p><%= local.name %></p>
+      </label>
+    </div>
+  <% end %>
+</div>
+
+<div class="row">
+  <div id="providers-selector" class="radio">
+    <%= image_tag "ajax-loader.gif", :alt => "Loader" %>
+  </div>
+</div>
+<div class="row">
 <div id='calendar'></div>
+</div>

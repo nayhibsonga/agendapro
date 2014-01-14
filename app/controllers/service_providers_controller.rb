@@ -79,6 +79,11 @@ class ServiceProvidersController < ApplicationController
     render :json => services
   end
 
+  def locationServices
+    ServiceProvider.where('location_id = ?', params[:location])
+    render :json => ServiceProvider.where('location_id = ?', params[:location])
+  end
+
   def providerTime
     provider_time = ServiceProvider.find(params[:id]).provider_times
     render :json => provider_time
