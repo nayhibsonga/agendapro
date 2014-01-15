@@ -1,7 +1,5 @@
 Agendapro::Application.routes.draw do
 
-  resources :service_categories
-
   get "users/index"
   require 'subdomain'
 
@@ -27,6 +25,7 @@ Agendapro::Application.routes.draw do
   resources :promotions
   resources :bookings
   resources :service_providers
+  resources :service_categories
 
   namespace :admin do 
     get '', :to => 'dashboard#index', :as => '/'
@@ -74,6 +73,7 @@ Agendapro::Application.routes.draw do
   get '/provider_time', :to => 'service_providers#providerTime'
   get '/booking', :to => 'bookings#providerBooking'
   post "/book", :to => 'bookings#bookService'
+  get '/category_name', :to => 'service_categories#get_category_name'
   
   # Root
   get '/' => 'searchs#index', :constraints => { :subdomain => 'www' }

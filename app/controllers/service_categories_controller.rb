@@ -1,7 +1,7 @@
 class ServiceCategoriesController < ApplicationController
   before_action :set_service_category, only: [:show, :edit, :update, :destroy]
-  before_action :authenticate_user!
-  before_action :quick_add
+  before_action :authenticate_user!, except: [:get_category_name]
+  before_action :quick_add, except: [:get_category_name]
 
   # GET /service_categories
   # GET /service_categories.json
@@ -61,6 +61,11 @@ class ServiceCategoriesController < ApplicationController
       format.html { redirect_to service_categories_url }
       format.json { head :no_content }
     end
+  end
+
+  def get_category_name
+    @service_category = ServiceCategory.find(params[:id])
+    render :json => @service_category
   end
 
   private

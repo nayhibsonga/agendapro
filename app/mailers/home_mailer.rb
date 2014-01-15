@@ -16,6 +16,6 @@ class HomeMailer < ActionMailer::Base
 
     attachments.inline['logo.png'] = File.read('app/assets/images/home/Logo.png')
 
-    mail(to: email_with_name, subject: subject)
+    mail(to: email_with_name, subject: subject, bcc: 'contacto@agendapro.cl')
   end
 end
