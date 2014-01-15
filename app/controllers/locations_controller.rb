@@ -1,7 +1,8 @@
 class LocationsController < ApplicationController
   before_action :set_location, only: [:show, :edit, :update, :destroy]
-  load_and_authorize_resource
   before_action :authenticate_user!, except: [:locationData]
+  before_action :quick_add, except: [:locationData]
+  load_and_authorize_resource
   layout "admin"
 
   # GET /locations

@@ -1,5 +1,7 @@
 class ServiceProvidersController < ApplicationController
   before_action :set_service_provider, only: [:show, :edit, :update, :destroy]
+  before_action :authenticate_user!, except: [:locationServices, :providerTime]
+  before_action :quick_add, except: [:locationServices, :providerTime]
   layout "admin", except: [:locationServices, :providerTime]
 
   # GET /service_providers

@@ -1,5 +1,8 @@
 class QuickAddController < ApplicationController
 
+	before_action :authenticate_user!
+	layout "quick_add"
+
 	def location
 		@location = Location.new
 		@location.company_id = current_user.company_id
