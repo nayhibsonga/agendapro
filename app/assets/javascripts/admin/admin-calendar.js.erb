@@ -28,53 +28,119 @@ function loadCalendar (startTime, endTime, hiddenDays) {
 	endTime = endTime || 24;
 	hiddenDays = hiddenDays || [];
 
-	var serviceId = $('input[name="serviceRadio"]:checked').val();
-	$.getJSON('/service', {id: serviceId}, function (service) {
-		duration = service.duration;
-		$('#calendar').fullCalendar('removeEvents');
-		$('#calendar').empty();
-		$('#calendar').fullCalendar({
-		    header: {
-		    	left: 'title',
-		    	center: 'agendaWeek,agendaDay',
-		    	right: 'prev,today,next'
-		    },
-		    firstDay: 1,	//Lunes
-		    defaultView: 'agendaWeek',
-		    allDaySlot: false,
-		    axisFormat: 'HH:mm',
-		    timeFormat: 'HH:mm{ - HH:mm}',
-		    columnFormat: {
-		    	week: 'ddd d/M',
-		    	day: 'dddd d/M' 
-		    },
-		    titleFormat: {
-		    	week: 'MMM d[ yyyy]{ &#8212;[ MMM] d yyyy}',
-		    	day: 'dddd, d MMM yyyy'  
-		    },
-		    buttonText: {
-			    prev:     '&lsaquo;', // <
-			    next:     '&rsaquo;', // >
-			    today:    'Hoy',
-			    week:     'Semana',
-			    day:      'Día'
-		    },
-		    monthNames: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
-		    monthNamesShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
-		    dayNames: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'],
-		    dayNamesShort: ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'],
-		    minTime: startTime,
-		    maxTime: endTime,
-		    dayClick: function (date) {
-		    	addBooking(date);
-		    },
-		    defaultEventMinutes: duration,
-		    /*eventDrop: function (event, dayDelta, minuteDelta, allDay, revertFunc) {
-		    	moveBooking(event, revertFunc);
-		    },*/
-		    slotMinutes: duration,
-		    eventColor: '#ff0000',
-		    hiddenDays: hiddenDays
-		});
+	$('#calendar').fullCalendar('removeEvents');
+	$('#calendar').empty();
+	$('#calendar').fullCalendar({
+	    header: {
+	    	left: 'title',
+	    	center: 'agendaWeek,agendaDay',
+	    	right: 'prev,today,next'
+	    },
+	    firstDay: 1,	//Lunes
+	    defaultView: 'agendaWeek',
+	    allDaySlot: false,
+	    axisFormat: 'HH:mm',
+	    timeFormat: 'HH:mm{ - HH:mm}',
+	    columnFormat: {
+	    	week: 'ddd d/M',
+	    	day: 'dddd d/M' 
+	    },
+	    titleFormat: {
+	    	week: 'MMM d[ yyyy]{ &#8212;[ MMM] d yyyy}',
+	    	day: 'dddd, d MMM yyyy'  
+	    },
+	    buttonText: {
+		    prev:     '&lsaquo;', // <
+		    next:     '&rsaquo;', // >
+		    today:    'Hoy',
+		    week:     'Semana',
+		    day:      'Día'
+	    },
+	    monthNames: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+	    monthNamesShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
+	    dayNames: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'],
+	    dayNamesShort: ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'],
+	    minTime: startTime,
+	    maxTime: endTime,
+	    dayClick: function (date) {
+	    	addBooking(date);
+	    },
+	    defaultEventMinutes: duration,
+	    /*eventDrop: function (event, dayDelta, minuteDelta, allDay, revertFunc) {
+	    	moveBooking(event, revertFunc);
+	    },*/
+	    slotMinutes: duration,
+	    eventColor: '#ff0000',
+	    hiddenDays: hiddenDays
 	});
+}
+
+function addBooking (date) {
+	if (validateBooking(date)) {
+		var endDate = new Date(date.getTime() + duration * 60 * 1000);
+		$('#calendar').fullCalendar('removeEvents', 'newBooking');
+		$('#calendar').fullCalendar('renderEvent',
+			{
+				id: 'newBooking',
+				title: 'Nueva cita',
+				allDay: false,
+				start: date,
+				end: endDate,
+				// startEditable: true,
+				color: '#1e8584'
+			},
+			true);
+	}
+}
+
+function validateBooking (startDate) {
+	var valid = true;
+	var now = new Date();
+	var endDate = new Date(startDate.getTime() + duration * 60 * 1000);
+	if (startDate <= now) {
+		valid = false;
+		alertMessage('No puede elegir una fecha del pasado.');
+	}
+	else {
+		var localId = $('input[name=localRadio]:checked').val();
+		var providerId = $('input[name=staffRadio]:checked').val();
+		$.getJSON('/booking', {location: localId, provider: providerId}, function (bookings) {
+			$.each(bookings, function (key, booking) {
+				var startBooking = $.fullCalendar.parseDate(booking.start);
+				var endBooking = $.fullCalendar.parseDate(booking.end);
+				if ((endDate > startBooking && endDate < endBooking) || (startDate < endBooking && startDate > startBooking) || (startDate > startBooking && endDate < endBooking)) {
+					valid = false;
+					alertMessage('No pueden topar los horarios.');
+					$('#calendar').fullCalendar('removeEvents', 'newBooking');
+				}
+			});
+		});
+		/*$.ajax({
+			type: 'GET',
+			url: '/booking',
+			async: false,
+			contentType: 'application/json',
+			dataType: 'json',
+			data: {
+				location: localId,
+				provider: providerId
+			},
+			success: function (bookings) {
+				$.each(bookings, function (key, booking) {
+					var startBooking = $.fullCalendar.parseDate(booking.start);
+					var endBooking = $.fullCalendar.parseDate(booking.end);
+					if ((endDate > startBooking && endDate < endBooking) || (startDate < endBooking && startDate > startBooking) || (startDate > startBooking && endDate < endBooking)) {
+						valid = false;
+						alertMessage('No pueden topar los horarios.');
+					}
+				});
+			}
+		});*/
+	}
+	return valid;
+}
+
+function alertMessage(message) {
+  $('#alertMessage').html(message);
+  $('#alertDialog').show();
 }
