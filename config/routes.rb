@@ -55,6 +55,7 @@ Agendapro::Application.routes.draw do
   get '/getcities', :to => 'cities#getCities'
   get '/getdistricts', :to => 'districts#getDistricts'
   get '/getdistrict', :to => 'districts#getDistrict'
+  get '/district_by_name', :to => 'districts#get_district_by_name'
 
   # Workflow
   # Workflow - overview

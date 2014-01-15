@@ -30,11 +30,32 @@ function changeLocation (district_id) {
   });
 }
 
+//====== Geolocation ======//
+function decode (position) {
+  var geocoder = new google.maps.Geocoder();
+  var latlng = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
+  geocoder.geocode({'latLng': latlng}, function (results, status) {
+    if (status == google.maps.GeocoderStatus.OK) {
+      if (results[1]) {
+        var address = results[1].formatted_address;
+        var district = address.substring(0, address.indexOf(','));
+        $.getJSON('/district_by_name', {name: district}, function (district) {
+          $('#span-location').html(district.name + '<i class="glyphicon glyphicon-chevron-right"></i>');
+          $('#district').val(district.id);
+        });
+      }
+    }
+  });
+}
+
+function locationError (error) {
+  changeLocation(1);
+}
+
 //====== Load ======//
 
 $(function() {
   $('#form-location').hide();
-  changeLocation(1);
 
   $('#modalLocation').on('show.bs.modal', function (e) {
     $('#form-location').hide();
@@ -93,4 +114,11 @@ $(function() {
     changeLocation(district);
     $('#modalLocation').modal('hide');
   });
+
+  if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(decode, locationError);
+  }
+  else {
+    changeLocation(1);
+  }
 });

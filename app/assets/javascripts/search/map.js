@@ -1,6 +1,6 @@
 //====== Map ======//
 
-function initializeMap(lat, lng, mapDiv) {
+function initializeMap (lat, lng, mapDiv) {
     var properties = {
         center: new google.maps.LatLng(lat, lng),
         zoom:   15,
@@ -21,7 +21,7 @@ function initializeMap(lat, lng, mapDiv) {
     map = new google.maps.Map(document.getElementById(mapDiv), properties);
 }
 
-function setMarker(latlng, local, n) {
+function setMarker (latlng, local, n) {
     var marker;
     marker = new google.maps.Marker({
         position: latlng,
@@ -40,15 +40,27 @@ function setMarker(latlng, local, n) {
     });
 }
 
-function centerMap(geolocation, fullBounds) {
+function centerMap (geolocation) {
 	var geocoder = new google.maps.Geocoder();
 	geocoder.geocode( { 'address' : geolocation }, function (results, status) {
 		if (status == google.maps.GeocoderStatus.OK) {
 			map.setCenter(results[0].geometry.location);
 		}
 	});
+}
 
+function fitMarkers (fullBounds) {
     map.fitBounds(fullBounds);
+}
+
+function geoLocation (position) {
+    var latLng = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
+    map.setCenter(latLng);
+}
+
+function geoerror (error) {
+    var geolocation = $('#geolocation').data('geolocation');
+    centerMap(geolocation);
 }
 
 $(function() {
@@ -66,7 +78,14 @@ $(function() {
 
         fullBounds.extend(latLng);
 	});
-	
-	var geolocation = $('#geolocation').data('geolocation');
-	centerMap(geolocation, fullBounds);
+
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(geoLocation, geoerror);
+    }
+    else {
+        var geolocation = $('#geolocation').data('geolocation');
+        centerMap(geolocation);
+    }
+
+    fitMarkers(fullBounds);
 });

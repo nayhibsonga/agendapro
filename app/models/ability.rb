@@ -59,6 +59,7 @@ class Ability
     can :getCities, City
     can :getDistricts, District
     can :getDistrict, District
+    can :get_district_by_name, District
 
     can :read, Booking, :user_id => user.id
     can :update, Booking, :user_id => user.id
