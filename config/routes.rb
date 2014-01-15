@@ -73,6 +73,7 @@ Agendapro::Application.routes.draw do
   get '/provider_time', :to => 'service_providers#providerTime'
   get '/booking', :to => 'bookings#providerBooking'
   post "/book", :to => 'bookings#bookService'
+  get '/category_name', :to => 'service_categories#get_category_name'
   
   # Root
   get '/' => 'searchs#index', :constraints => { :subdomain => 'www' }

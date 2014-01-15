@@ -61,6 +61,11 @@ class ServiceCategoriesController < ApplicationController
     end
   end
 
+  def get_category_name
+    @service_category = ServiceCategory.find(params[:id])
+    render :json => @service_category
+  end
+
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_service_category

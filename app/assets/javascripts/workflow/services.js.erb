@@ -7,16 +7,64 @@ function loadStep1 () {
 		$('#services-selector').html('<%= image_tag "ajax-loader.gif", :alt => "Loader" %>');
 		var localId = $('input[name=localRadio]:checked').val();
 		$.getJSON('/local_services', {location: localId}, function (servicesArray) {
+			var categories = new Array();	//Todos los servicios ordenados por categoria
+			var services = new Array();		//Los servicios de una categoria especifica
+			var category = 0;				//La categoria actual
+
+			//====== Separacion de servicios por categoria
+			$.each(servicesArray, function (key, service) {
+				if (service.service_category_id != category) {
+					if (category != 0) {
+						categories.push(services);
+					}
+					services = new Array();
+					category = service.service_category_id;
+				}
+				services.push(service);
+			});
+			categories.push(services);
+
 			$('#services-selector').empty();
-			$.each(servicesArray, function (key, services) {
-				$.each(services, function (key, service) {
-					$('#services-selector').append('<label>' +
+			
+			//====== Escribiendo los servicios
+			$.each(categories, function (key, service_category) {
+				var category_id = service_category[key].id
+				//====== Insertando acordeon
+				$('#services-selector').append(
+					'<div class="panel panel-default">' +
+						'<div class="panel-heading">' +
+							'<h4 class="panel-title">' +
+								'<a data-toggle="collapse" data-parent="#services-selector" href="#collapse' + category_id + '" id="title' + category_id + '">Categoria</a>' +
+							'</h4>' +
+						'</div>' +
+						'<div id="collapse' + category_id + '" class="panel-collapse collapse in">' +
+							'<div class="panel-body">' +
+								'<div id="services-selector' + category_id + '" class="radio">' +
+									'<%= image_tag "ajax-loader.gif", :alt => "Loader" %>' +
+								'</div>' +
+							'</div>' +
+						'</div>' +
+					'</div>'
+				);
+
+				//====== Insertando nombre de la categoria
+				$.getJSON('/category_name', {id: category_id}, function (category_name) {
+					$('#title' + category_id).text(category_name.name);
+				});
+
+				//====== Insertando radiobuttons de servicios
+				$.each(service_category, function (key, service) {
+					if (key == 0) {
+						$('#services-selector' + category_id).empty();
+					}
+					$('#services-selector' + category_id).append('<label>' +
 							'<input type="radio" name="serviceRadio" value="' + service.id + '">' +
 							'<p>' + service.name + '</p>' +
 						'</label>'
 					);
 				});
 			});
+
 			$('[name="serviceRadio"]').on('click', function(event) {
 				var serviceId = event.target.getAttribute('value');
 				loadDescription(serviceId);
