@@ -40,27 +40,33 @@ function setMarker(latlng, local, n) {
     });
 }
 
-function centerMap(geolocation) {
+function centerMap(geolocation, fullBounds) {
 	var geocoder = new google.maps.Geocoder();
 	geocoder.geocode( { 'address' : geolocation }, function (results, status) {
 		if (status == google.maps.GeocoderStatus.OK) {
 			map.setCenter(results[0].geometry.location);
 		}
 	});
+
+    map.fitBounds(fullBounds);
 }
 
 $(function() {
 	var map;
 	initializeMap(-33.413084, -70.592161, 'map');
 	
+    var fullBounds = new google.maps.LatLngBounds();
+
 	var i = 1;
 	$.each($('#results').data('results'), function (key, local) {
 		loadSchedule(local.id);
 		var latLng = new google.maps.LatLng(local.latitude, local.longitude);
 		setMarker(latLng, local.name, i);
 		i++;
+
+        fullBounds.extend(latLng);
 	});
 	
 	var geolocation = $('#geolocation').data('geolocation');
-	centerMap(geolocation);
+	centerMap(geolocation, fullBounds);
 });
