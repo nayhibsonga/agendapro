@@ -29,25 +29,25 @@
         	<div class="form-group">
         		<label class="control-label col-xs-2">Pais</label>
         		<div class="col-xs-8">
-        			<select class="form-control" id="countries"></select>
+        			<select class="form-control" id="countries" onfocus="this.selectedIndex=-1;this.blur();"></select>
         		</div>
         	</div>
         	<div class="form-group">
         		<label class="control-label col-xs-2">regions</label>
         		<div class="col-xs-8">
-        			<select class="form-control" id="regions" disabled></select>
+        			<select class="form-control" id="regions" onfocus="this.selectedIndex=-1;this.blur();" disabled></select>
         		</div>
         	</div>
         	<div class="form-group">
         		<label class="control-label col-xs-2">Ciudad</label>
         		<div class="col-xs-8">
-        			<select class="form-control" id="cities" disabled></select>
+        			<select class="form-control" id="cities" onfocus="this.selectedIndex=-1;this.blur();" disabled></select>
         		</div>
         	</div>
         	<div class="form-group">
         		<label class="control-label col-xs-2">Comuna</label>
         		<div class="col-xs-8">
-        			<select class="form-control" id="districts" disabled></select>
+        			<select class="form-control" id="districts"onfocus="this.selectedIndex=-1;this.blur();" disabled></select>
         		</div>
         	</div>
         </form>

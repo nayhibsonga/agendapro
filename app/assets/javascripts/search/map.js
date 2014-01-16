@@ -80,12 +80,25 @@ $(function() {
 	});
 
     if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(geoLocation, geoerror);
+        if (typeof(Storage) !== "undefined") {
+            if (sessionStorage.manual) {
+                var geolocation = $('#geolocation').data('geolocation');
+                centerMap(geolocation);
+            }
+            else {
+                navigator.geolocation.getCurrentPosition(geoLocation, geoerror);
+            }
+        }
+        else {
+            navigator.geolocation.getCurrentPosition(geoLocation, geoerror);
+        }
     }
     else {
         var geolocation = $('#geolocation').data('geolocation');
         centerMap(geolocation);
     }
 
-    fitMarkers(fullBounds);
+    if (!fullBounds.isEmpty()) {
+        fitMarkers(fullBounds);
+    }
 });

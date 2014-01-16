@@ -27,6 +27,11 @@ function changeLocation (district_id) {
   $.getJSON('/getdistrict', {id: district_id}, function (district) {
     $('#span-location').html(district.name + '<i class="glyphicon glyphicon-chevron-right"></i>');
     $('#district').val(district.id);
+
+    //====== Session Storage
+    if (typeof(Storage) !== "undefined") {
+      sessionStorage.district = district.id;
+    }
   });
 }
 
@@ -42,6 +47,11 @@ function decode (position) {
         $.getJSON('/district_by_name', {name: district}, function (district) {
           $('#span-location').html(district.name + '<i class="glyphicon glyphicon-chevron-right"></i>');
           $('#district').val(district.id);
+
+          //====== Session Storage
+          if (typeof(Storage) !== "undefined") {
+            sessionStorage.district = district.id;
+          }
         });
       }
     }
@@ -49,7 +59,12 @@ function decode (position) {
 }
 
 function locationError (error) {
-  changeLocation(1);
+  if (typeof(Storage) !== "undefined") {
+    changeLocation(sessionStorage.district)
+  }
+  else {
+    changeLocation(1);
+  }
 }
 
 //====== Load ======//
@@ -63,6 +78,7 @@ $(function() {
     $('#regions').prop('disabled','disabled');
     $('#cities').prop('disabled','disabled');
     $('#districts').prop('disabled','disabled');
+
     $.getJSON('/getcountries', function (countries) {
       $('#countries').empty();
       $.each(countries, function (key, country) {
@@ -113,12 +129,39 @@ $(function() {
     var district = $('#districts').val();
     changeLocation(district);
     $('#modalLocation').modal('hide');
+
+    //====== Session Storage
+    if (typeof(Storage) !== "undefined") {
+      sessionStorage.manual = true;
+    }
   });
 
+  //Valor por defecto
+  if (typeof(Storage) !== "undefined") {
+    if (!sessionStorage.manual) {
+      sessionStorage.district = 1;
+    }
+  }
+
   if (navigator.geolocation) {
-    navigator.geolocation.getCurrentPosition(decode, locationError);
+    if (typeof(Storage) !== "undefined") {
+      if (sessionStorage.manual) {
+        changeLocation(sessionStorage.district);
+      }
+      else {
+        navigator.geolocation.getCurrentPosition(decode, locationError);
+      }
+    }
+    else {
+      navigator.geolocation.getCurrentPosition(decode, locationError);
+    }
   }
   else {
-    changeLocation(1);
+    if (typeof(Storage) !== "undefined") {
+      changeLocation(sessionStorage.district)
+    }
+    else {
+      changeLocation(1);
+    }
   }
 });
