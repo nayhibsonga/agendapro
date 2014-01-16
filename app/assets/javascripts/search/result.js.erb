@@ -136,6 +136,22 @@ $(function() {
     }
   });
 
+  $('#geo').on('click', function() {
+    $('#modalLocation').modal('hide');
+
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(decode, locationError);
+    }
+    else {
+      alert('Hubo un error localizandolo')
+    }
+
+    //====== Session Storage
+    if (typeof(Storage) !== "undefined") {
+      sessionStorage.manual = null;
+    }
+  });
+
   //Valor por defecto
   if (typeof(Storage) !== "undefined") {
     if (!sessionStorage.manual) {
