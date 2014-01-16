@@ -29,7 +29,7 @@ class Ability
     # See the wiki for details:
     # https://github.com/ryanb/cancan/wiki/Defining-Abilities
 
-    alias_action :index, :show, :viewplans, :to => :read
+    alias_action :index, :show, :view_plans, :to => :read
     
     #alias_action :workflow, :to => :destroy
     #alias_action :workflow, :to => :update
@@ -43,24 +43,24 @@ class Ability
     can :new, :all
 
     # Home
-    can :viewplans, Plan
+    can :view_plans, Plan
 
     # Workflow
     can :workflow, Company
-    can :locationData, Location
-    can :serviceData, Service
-    can :getProviders, Service
-    can :providerBooking, Booking
-    can :bookService, Booking
+    can :location_data, Location
+    can :service_data, Service
+    can :get_providers, Service
+    can :provider_booking, Booking
+    can :book_service, Booking
 
     # Search
-    can :getCountries, Country
-    can :getRegions, Region
-    can :getCities, City
-    can :getDistricts, District
-    can :getDistrict, District
+    can :get_countries, Country
+    can :get_regions, Region
+    can :get_cities, City
+    can :get_districts, District
+    can :get_district, District
 
-    can :getDirection, District
+    can :get_direction, District
 
     can :read, Booking, :user_id => user.id
     can :update, Booking, :user_id => user.id
@@ -75,7 +75,7 @@ class Ability
 
     elsif user.role_id == Role.find_by_name("Admin").id
 
-        can :selectplan, Plan
+        can :select_plan, Plan
 
         can :read, Company, :id => user.company_id
         can :destroy, Company, :id => user.company_id

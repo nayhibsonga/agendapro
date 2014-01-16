@@ -1,8 +1,8 @@
 class ServicesController < ApplicationController
   before_action :set_service, only: [:show, :edit, :update, :destroy]
-  before_action :authenticate_user!, except: [:serviceData, :getProviders]
-  before_action :quick_add, except: [:serviceData, :getProviders]
-  layout "admin", except: [:getProviders, :serviceData]
+  before_action :authenticate_user!, except: [:service_data, :get_providers]
+  before_action :quick_add, except: [:service_data, :get_providers]
+  layout "admin", except: [:get_providers, :service_data]
   load_and_authorize_resource
 
   # GET /services
@@ -67,13 +67,13 @@ class ServicesController < ApplicationController
     end
   end
 
-  def getProviders
+  def get_providers
     service = Service.find(params[:id])
     providers = service.service_providers
     render :json => providers
   end
 
-  def serviceData
+  def service_data
     service = Service.find(params[:id])
     render :json => service
   end

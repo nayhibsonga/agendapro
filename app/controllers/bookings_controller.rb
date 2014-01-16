@@ -1,8 +1,8 @@
 class BookingsController < ApplicationController
   before_action :set_booking, only: [:show, :edit, :update, :destroy]
-  before_action :authenticate_user!, except: [:create, :providerBooking, :bookService]
-  before_action :quick_add, except: [:create, :providerBooking, :bookService]
-  layout "admin", except: [:bookService, :providerBooking]
+  before_action :authenticate_user!, except: [:create, :provider_booking, :book_service]
+  before_action :quick_add, except: [:create, :provider_booking, :book_service]
+  layout "admin", except: [:book_service, :provider_booking]
   load_and_authorize_resource
 
   # GET /bookings
@@ -69,12 +69,12 @@ class BookingsController < ApplicationController
     end
   end
 
-  def providerBooking
+  def provider_booking
     bookings = Booking.where('service_provider_id = ? AND location_id = ?', params[:provider], params[:location]).order(:start)
     render :json => bookings
   end
 
-  def bookService
+  def book_service
     if user_signed_in?
       @booking = Booking.new(start: params[:start], end: params[:end], notes: params[:comment], service_provider_id: params[:provider], service_id: params[:service], location_id: params[:location], status_id: Status.find_by(name: 'Reservado').id, first_name: params[:firstName], last_name: params[:lastName], email: params[:email], phone: params[:phone], user_id: current_user.id)
     else

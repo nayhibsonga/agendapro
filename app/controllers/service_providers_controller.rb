@@ -1,8 +1,8 @@
 class ServiceProvidersController < ApplicationController
   before_action :set_service_provider, only: [:show, :edit, :update, :destroy]
-  before_action :authenticate_user!, except: [:locationServices, :providerTime]
-  before_action :quick_add, except: [:locationServices, :providerTime]
-  layout "admin", except: [:locationServices, :providerTime]
+  before_action :authenticate_user!, except: [:location_services, :provider_time]
+  before_action :quick_add, except: [:location_services, :provider_time]
+  layout "admin", except: [:location_services, :provider_time]
 
   # GET /service_providers
   # GET /service_providers.json
@@ -71,17 +71,17 @@ class ServiceProvidersController < ApplicationController
     end
   end
 
-  def locationServices
+  def location_services
     services = Service.includes(:service_providers).where('service_providers.location_id = ?', 1).order(:service_category_id)
     render :json => services
   end
 
-  def locationServices
+  def location_providers
     ServiceProvider.where('location_id = ?', params[:location])
     render :json => ServiceProvider.where('location_id = ?', params[:location])
   end
 
-  def providerTime
+  def provider_time
     provider_time = ServiceProvider.find(params[:id]).provider_times
     render :json => provider_time
   end

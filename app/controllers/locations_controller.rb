@@ -1,7 +1,7 @@
 class LocationsController < ApplicationController
   before_action :set_location, only: [:show, :edit, :update, :destroy]
-  before_action :authenticate_user!, except: [:locationData]
-  before_action :quick_add, except: [:locationData]
+  before_action :authenticate_user!, except: [:location_data]
+  before_action :quick_add, except: [:location_data]
   load_and_authorize_resource
   layout "admin"
 
@@ -67,7 +67,7 @@ class LocationsController < ApplicationController
     end
   end
 
-  def locationData
+  def location_data
     location = Location.find(params[:id])
     render :json => location
   end

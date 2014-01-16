@@ -1,8 +1,8 @@
 class LocationTimesController < ApplicationController
   before_action :set_location_time, only: [:show, :edit, :update, :destroy]
-  before_action :authenticate_user!, except: [:scheduleLocal]
-  before_action :quick_add, except: [:scheduleLocal]
-  layout "admin", except: [:scheduleLocal]
+  before_action :authenticate_user!, except: [:schedule_local]
+  before_action :quick_add, except: [:schedule_local]
+  layout "admin", except: [:schedule_local]
 
   # GET /location_times
   # GET /location_times.json
@@ -64,7 +64,7 @@ class LocationTimesController < ApplicationController
     end
   end
 
-  def scheduleLocal
+  def schedule_local
     lunes = LocationTime.where("location_id = ? AND day_id = ?", params[:local], 1).order(open: :asc)
     martes = LocationTime.where("location_id = ? AND day_id = ?", params[:local], 2).order(open: :asc)
     miercoles = LocationTime.where("location_id = ? AND day_id = ?", params[:local], 3).order(open: :asc)

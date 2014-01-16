@@ -42,12 +42,12 @@ Agendapro::Application.routes.draw do
   get '/dashboard', :to => 'dashboard#index', :as => 'dashboard'
   get '/reports', :to => 'reports#index', :as => 'reports'
   get '/clients', :to => 'clients#index', :as => 'clients'
-  get '/select_plan', :to => 'plans#selectplan', :as => 'select_plan'
-  get '/get_direction', :to => 'districts#getDirection'
+  get '/select_plan', :to => 'plans#select_plan', :as => 'select_plan'
+  get '/get_direction', :to => 'districts#get_direction'
 
   get "/home", :to => 'home#index', :as => 'home'
   get "/features", :to => 'home#features', :as => 'features'
-  get "/view_plans", :to => 'plans#viewplans', :as => 'view_plans'
+  get "/view_plans", :to => 'plans#view_plans', :as => 'view_plans'
   get "/about_us", :to => 'home#about_us',  :as => 'aboutus'
   get "/contact", :to => 'home#contact', :as => 'contact'
   post "/pcontact", :to => 'home#post_contact'
@@ -55,24 +55,24 @@ Agendapro::Application.routes.draw do
   # Search
   get "searchs/index"
   get '/search', :to => "searchs#search"
-  get 'get_countries', :to => 'countries#getCountries'
-  get '/get_regions', :to => 'regions#getRegions'
-  get '/get_cities', :to => 'cities#getCities'
-  get '/get_districts', :to => 'districts#getDistricts'
-  get '/get_district', :to => 'districts#getDistrict'
+  get 'get_countries', :to => 'countries#get_countries'
+  get '/get_regions', :to => 'regions#get_regions'
+  get '/get_cities', :to => 'cities#get_cities'
+  get '/get_districts', :to => 'districts#get_districts'
+  get '/get_district', :to => 'districts#get_district'
 
   # Workflow
   # Workflow - overview
-  get '/schedule', :to => 'location_times#scheduleLocal'
-  get '/local', :to => 'locations#locationData'
+  get '/schedule', :to => 'location_times#schedule_local'
+  get '/local', :to => 'locations#location_data'
   # wrokflow - wizard
-  get '/local_services', :to => 'service_providers#locationServices'
-  get '/local_providers', :to => 'service_providers#locationServices'
-  get '/service', :to => 'services#serviceData'
-  get '/providers_services', :to => 'services#getProviders'
-  get '/provider_time', :to => 'service_providers#providerTime'
-  get '/booking', :to => 'bookings#providerBooking'
-  post "/book", :to => 'bookings#bookService'
+  get '/local_services', :to => 'service_providers#location_services'
+  get '/local_providers', :to => 'service_providers#location_providers'
+  get '/service', :to => 'services#service_data'
+  get '/providers_services', :to => 'services#get_providers'
+  get '/provider_time', :to => 'service_providers#provider_time'
+  get '/booking', :to => 'bookings#provider_booking'
+  post "/book", :to => 'bookings#book_service'
   get '/category_name', :to => 'service_categories#get_category_name'
   
   # Root

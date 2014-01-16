@@ -1,7 +1,7 @@
 class CountriesController < ApplicationController
   before_action :set_country, only: [:show, :edit, :update, :destroy]
-  before_action :authenticate_user!, except: [:getCountries]
-  before_action :verify_is_super_admin, except: [:getCountries]
+  before_action :authenticate_user!, except: [:get_countries]
+  before_action :verify_is_super_admin, except: [:get_countries]
   layout "admin"
   load_and_authorize_resource
 
@@ -65,7 +65,7 @@ class CountriesController < ApplicationController
     end
   end
 
-  def getCountries
+  def get_countries
     @countries = Country.all
     render :json => @countries
   end
