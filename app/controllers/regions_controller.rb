@@ -66,7 +66,7 @@ class RegionsController < ApplicationController
   end
 
   def get_regions
-    @regions = Region.where(country_id: params[:country])
+    @regions = Region.where(country_id: params[:country]).order(:name)
     render :json => @regions
   end
 

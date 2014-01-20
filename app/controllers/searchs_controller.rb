@@ -36,16 +36,23 @@ class SearchsController < ApplicationController
 		end
 
 		# => optener los locales cuyo nombre se parece a la busqueda
-		locations = Location.where(district_id: params[:district]).where('name ILIKE ?', search)
+		locations = Location.where(district_id: params[:district]).where('name ILIKE ?', search).order(:name)
 
 		locations.each do |location|
 			@results.push(location)
 		end
 
 		# => optener los locales de las compañias cuyo nombre se parece a la busqueda
-		locations_companies = Location.where(district_id: params[:district]).where(company_id: Company.where('name ILIKE ?', search))
+		locations_companies = Location.where(district_id: params[:district]).where(company_id: Company.where('name ILIKE ?', search).order(:name))
 
 		locations_companies.each do |location_company|
+			@results.push(location_company)
+		end
+
+		# => optener los locales de las compañias cuya url se parece a la busqueda
+		locations_companies_url = Location.where(district_id: params[:district]).where(company_id: Company.where('web_address ILIKE ?', search).order(:web_address))
+
+		locations_companies_url.each do |locations_company|
 			@results.push(location_company)
 		end
 

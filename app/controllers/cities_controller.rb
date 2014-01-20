@@ -66,7 +66,7 @@ class CitiesController < ApplicationController
   end
 
   def get_cities
-    @cities = City.where(region_id: params[:region])
+    @cities = City.where(region_id: params[:region]).order(:name)
     render :json => @cities
   end
 

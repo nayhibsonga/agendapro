@@ -66,7 +66,7 @@ class CountriesController < ApplicationController
   end
 
   def get_countries
-    @countries = Country.all
+    @countries = Country.all.order(:name)
     render :json => @countries
   end
 

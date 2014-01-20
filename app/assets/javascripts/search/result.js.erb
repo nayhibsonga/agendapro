@@ -42,7 +42,7 @@ $(function() {
     $('#regions').prop('disabled','disabled');
     $('#cities').prop('disabled','disabled');
     $('#districts').prop('disabled','disabled');
-    $.getJSON('get_countries', function (countries) {
+    $.getJSON('/get_countries', function (countries) {
       $('#countries').empty();
       $.each(countries, function (key, country) {
         $('#countries').append('<option value="' + country.id + '">' + country.name + '</option>');
