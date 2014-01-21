@@ -5,6 +5,7 @@ class SearchsController < ApplicationController
 	end
 
 	def search
+		# => Geolocation
 		district = District.find(params[:district])
 		city = district.city
 		region = city.region
