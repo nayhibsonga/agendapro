@@ -52,6 +52,10 @@ Agendapro::Application.routes.draw do
   get "/contact", :to => 'home#contact', :as => 'contact'
   post "/pcontact", :to => 'home#post_contact'
 
+  # Punto Pagos
+  get "punto_pagos/generate_transaction"
+  get "punto_pagos/recive_results"
+
   # Search
   get "searchs/index"
   get '/search', :to => "searchs#search"
