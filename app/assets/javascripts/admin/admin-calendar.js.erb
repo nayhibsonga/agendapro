@@ -4,24 +4,33 @@ function loadProviders () {
 		var localId = $('input[name=localRadio]:checked').val();
 		$.getJSON('/local_providers', {location: localId}, function (providersArray) {
 			$('#providers-selector').empty();
+			firstId = providersArray[0]["id"];
+			count = providersArray.length;
 			$.each(providersArray, function (key, provider) {
+				checked = '';
+				if (count == 1 || (count > 1 && provider.id == firstId)) {
+					checked = 'checked'
+				}
 				$('#providers-selector').append('<label>' +
-						'<input type="radio" name="providerRadio" value="' + provider.id + '">' +
+						'<input type="radio" name="providerRadio" value="' + provider.id + '" ' + checked + '>' +
 						'<p>' + provider.public_name + '</p>' +
 					'</label>'
 				);
 			});
 			$('[name="providerRadio"]').on('click', function(event) {
 				var providerId = event.target.getAttribute('value');
-				loadCalendar(providerId);
+				loadCalendar();
+				loadProviderBooking(providerId);
 			});
+			loadCalendar();
+			loadProviderBooking(firstId);
 		});
 		return true;
 	}
 	return false;
 }
 
-var duration = 30;
+var duration = 15;
 function loadCalendar (startTime, endTime, hiddenDays) {
 	//Default values
 	startTime = startTime || 0;
@@ -36,6 +45,10 @@ function loadCalendar (startTime, endTime, hiddenDays) {
 	    	center: 'agendaWeek,agendaDay',
 	    	right: 'prev,today,next'
 	    },
+	    eventClick: function() {
+	    	editBookingModal();
+	    },
+	    ignoreTimezone: true,
 	    firstDay: 1,	//Lunes
 	    defaultView: 'agendaWeek',
 	    allDaySlot: false,
@@ -62,9 +75,6 @@ function loadCalendar (startTime, endTime, hiddenDays) {
 	    dayNamesShort: ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'],
 	    minTime: startTime,
 	    maxTime: endTime,
-	    dayClick: function (date) {
-	    	addBooking(date);
-	    },
 	    defaultEventMinutes: duration,
 	    /*eventDrop: function (event, dayDelta, minuteDelta, allDay, revertFunc) {
 	    	moveBooking(event, revertFunc);
@@ -72,6 +82,23 @@ function loadCalendar (startTime, endTime, hiddenDays) {
 	    slotMinutes: duration,
 	    eventColor: '#ff0000',
 	    hiddenDays: hiddenDays
+	});
+}
+
+function loadProviderBooking (providerId) {
+	var localId = $('input[name=localRadio]:checked').val();
+	var serviceId = $('input[name=serviceRadio]:checked').val();
+	$('#calendar').fullCalendar('removeEvents');
+	$.getJSON('/booking', {location: localId, provider: providerId}, function (bookings) {
+		$.each(bookings, function (key, booking) {
+			var events = {
+				title: 'Ocupado',
+				allDay: false,
+				start: booking.start,
+				end: booking.end,
+			}
+			$('#calendar').fullCalendar('renderEvent', events, true);
+		});
 	});
 }
 
@@ -144,3 +171,68 @@ function alertMessage(message) {
   $('#alertMessage').html(message);
   $('#alertDialog').show();
 }
+
+function newBookingModal() {
+	$('#booking_service_provider_id').val($('input[name=providerRadio]:checked').val());
+	$('#myModal').modal('show');
+}
+
+function editBookingModal() {
+	$('#booking_start_id').val();
+	$('#booking_end_id').val();
+	$('#booking_notes_id').val('1');
+	$('#booking_service_provider_id').val(2);
+	$('#booking_service_id').val(1);
+	$('#booking_user_id').val();
+	$('#booking_status_id').val(1);
+	$('#booking_promotion_id').val();
+	$('#booking_first_name').val("1");
+	$('#booking_last_name').val("1");
+	$('#booking_email').val("1");
+	$('#booking_phone').val("1");
+	$('#myModal').modal('show');
+}
+
+$(function() {
+  loadProviders();
+
+  $('#calendar').fullCalendar({
+        dayClick: function() {
+        	alert('Seleccione un proveedor de servicios para crear reservas!');
+    	},
+		eventClick: function() {
+
+	        alert('Event: ');
+
+	    },
+    	header: {
+	    	left: 'title',
+	    	center: 'agendaWeek,agendaDay',
+	    	right: 'prev,today,next'
+	    },
+	    firstDay: 1,	//Lunes
+	    defaultView: 'agendaWeek',
+	    allDaySlot: false,
+	    axisFormat: 'HH:mm',
+	    timeFormat: 'HH:mm{ - HH:mm}',
+	    columnFormat: {
+	    	week: 'ddd d/M',
+	    	day: 'dddd d/M' 
+	    },
+	    titleFormat: {
+	    	week: 'MMM d[ yyyy]{ &#8212;[ MMM] d yyyy}',
+	    	day: 'dddd, d MMM yyyy'  
+	    },
+	    buttonText: {
+		    prev:     '&lsaquo;', // <
+		    next:     '&rsaquo;', // >
+		    today:    'Hoy',
+		    week:     'Semana',
+		    day:      'Día'
+	    },
+	    monthNames: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+	    monthNamesShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
+	    dayNames: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'],
+	    dayNamesShort: ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb']
+    });
+});
