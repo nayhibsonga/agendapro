@@ -60,6 +60,9 @@ gem 'cancan'
 #Formularios simples
 gem 'simple_form'
 
+#Mandrill mailer
+gem 'mandrill-api'
+
 #Por si queremos generar breadcrums fácilmente
 #gem "breadcrumbs_on_rails"
 

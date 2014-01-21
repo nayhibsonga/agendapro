@@ -89,10 +89,12 @@ class BookingsController < ApplicationController
     if user_signed_in?
       @booking = Booking.new(start: params[:start], end: params[:end], notes: params[:comment], service_provider_id: params[:provider], service_id: params[:service], location_id: params[:location], status_id: Status.find_by(name: 'Reservado').id, first_name: params[:firstName], last_name: params[:lastName], email: params[:email], phone: params[:phone], user_id: current_user.id)
     else
-      @booking = Booking.new(start: params[:start], end: params[:end], notes: params[:comment], service_provider_id: params[:provider], service_id: params[:service], location_id: params[:location], status_id: Status.find_by(name: 'Reservado').id, first_name: params[:firstName], last_name: params[:lastName], email: params[:email], phone: params[:phone], user_id: 1)
+      @booking = Booking.new(start: params[:start], end: params[:end], notes: params[:comment], service_provider_id: params[:provider], service_id: params[:service], location_id: params[:location], status_id: Status.find_by(name: 'Reservado').id, first_name: params[:firstName], last_name: params[:lastName], email: params[:email], phone: params[:phone])
     end
     if @booking.save
       flash[:notice] = "Servicio agendado"
+
+      BookingMailer.book_service_mail(@booking)
     else
       flash[:alert] = "Error guardando datos de agenda"
       @errors = @booking.errors

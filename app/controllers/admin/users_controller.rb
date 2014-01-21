@@ -31,7 +31,7 @@ class  Admin::UsersController < ApplicationController
     @user = User.new(user_params)
     @user.company_id = current_user.company_id
 
-    UserMailer.welcome_email(@user).deliver
+    UserMailer.welcome_email(@user)
 
     respond_to do |format|
       if @user.save
