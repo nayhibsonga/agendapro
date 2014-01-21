@@ -1,7 +1,5 @@
 Agendapro::Application.routes.draw do
 
-  get "mandrill/unsuscribe"
-  get "mandrill/resuscribe"
   resources :service_categories
 
   get "users/index"
