@@ -3,6 +3,11 @@ Agendapro::Application.routes.draw do
   get "users/index"
   require 'subdomain'
 
+  # Mandrill
+  get 'mandrill/confirm_unsuscribe'
+  post "mandrill/unsuscribe"
+  get "mandrill/resuscribe"
+
   devise_for :users, controllers: {registrations: 'registrations'}
   resources :countries
   resources :regions
