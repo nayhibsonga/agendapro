@@ -77,6 +77,8 @@ class Ability
 
         can :select_plan, Plan
 
+        can :get_booking, Booking
+
         can :read, Company, :id => user.company_id
         can :destroy, Company, :id => user.company_id
         can :create, Company, :id => user.company_id
@@ -110,6 +112,8 @@ class Ability
         can :update, Booking, :service_provider => { :company_id => user.company_id }
 
     elsif user.role_id == Role.find_by_name("Administrador Local").id
+
+        can :get_booking, Booking, :service_provider => { :location_id => user.try(:service_providers).try(:location_id) }
 
         can :read, Service, :company_id => user.company_id
         can :destroy, Service, :company_id => user.company_id

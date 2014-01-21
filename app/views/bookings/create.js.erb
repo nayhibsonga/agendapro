@@ -3,17 +3,13 @@
 <% else %>
   alert('Guardado');
   $('#myModal').modal('hide');
-  alert('id: <%= escape_javascript(@booking.id.to_s) %>');
-  alert('title: "<%= escape_javascript(@booking.service.name) %>"');
-  alert('start: "<%= escape_javascript(@booking.start.to_s) %>"');
-  alert('end: "<%= escape_javascript(@booking.end.to_s) %>"');
   $('#calendar').fullCalendar('renderEvent',
 			{
 				id: <%= escape_javascript(@booking.id.to_s) %>,
 				title: "<%= escape_javascript(@booking.service.name) %>",
 				allDay: false,
-				start: "<%= escape_javascript(@booking.start.to_s) %>",
-				end: "<%= escape_javascript(@booking.end.to_s) %>",
+				start: "<%= escape_javascript(@booking.start.to_s.split(/ /)[0]+'T'+@booking.start.to_s.split(/ /)[1]) %>",
+				end: "<%= escape_javascript(@booking.end.to_s.split(/ /)[0]+'T'+@booking.end.to_s.split(/ /)[1]) %>",
 				startEditable: true,
 				color: '#1e8584'
 			},
