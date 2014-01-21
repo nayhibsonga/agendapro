@@ -12,6 +12,7 @@ class BookingsController < ApplicationController
     @locations = Location.where(company_id: @company)
     @service_providers = ServiceProvider.where(location_id: @locations)
     @bookings = Booking.where(service_provider_id: @service_providers)
+    @booking = Booking.new
   end
 
   # GET /bookings/1
@@ -38,9 +39,11 @@ class BookingsController < ApplicationController
       if @booking.save
         format.html { redirect_to @booking, notice: 'Booking was successfully created.' }
         format.json { render action: 'show', status: :created, location: @booking }
+        format.js { }
       else
         format.html { render action: 'new' }
         format.json { render json: @booking.errors, status: :unprocessable_entity }
+        format.js { }
       end
     end
   end
@@ -52,9 +55,11 @@ class BookingsController < ApplicationController
       if @booking.update(booking_params)
         format.html { redirect_to @booking, notice: 'Booking was successfully updated.' }
         format.json { head :no_content }
+        format.js { }
       else
         format.html { render action: 'edit' }
         format.json { render json: @booking.errors, status: :unprocessable_entity }
+        format.js { }
       end
     end
   end
