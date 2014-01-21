@@ -41,7 +41,7 @@ locals = Location.create(name: 'Test Location', address: 'Calle 123', phone: '+5
 
 location_times = LocationTime.create([{open: '15:00', close: '20:00', location_id: 1, day_id: 1}, {open: '15:00', close: '20:00', location_id: 1, day_id: 3}, {open: '15:00', close: '20:00', location_id: 1, day_id: 2}, {open: '08:30', close: '13:30', location_id: 1, day_id: 5}, {open: '08:30', close: '10:00', location_id: 1, day_id: 3}, {open: '08:30', close: '13:30', location_id: 1, day_id: 1}, {open: '11:00', close: '13:30', location_id: 1, day_id: 3}, {open: '11:30', close: '13:30', location_id: 1, day_id: 4}, {open: '09:30', close: '13:30', location_id: 1, day_id: 2}, {open: '15:00', close: '17:00', location_id: 1, day_id: 4}])
 
-service_provider = ServiceProvider.create(location_id: 1, user_id: 1, company_id: 1)
+service_provider = ServiceProvider.create(location_id: 1, user_id: 1, company_id: 1, notification_email: 'contacto@agendapro.cl', public_name: 'Provider Test')
 
 service = Service.create([{name: "Corte de pelo", price: 2500, duration: 30, company_id: 1, service_category_id: 1}, {name: "Visos", price: 5000, duration: 45, company_id: 1, service_category_id: 1}])
 

@@ -53,7 +53,7 @@ class SearchsController < ApplicationController
 		locations_companies_url = Location.where(district_id: params[:district]).where(company_id: Company.where('web_address ILIKE ?', search).order(:web_address))
 
 		locations_companies_url.each do |locations_company|
-			@results.push(location_company)
+			@results.push(locations_company)
 		end
 
 		# => eliminamos los resultados repetidos
