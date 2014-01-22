@@ -42,17 +42,9 @@
 </div>
 <div class="row">
   <div id="add_booking" class="radio">
-    <%= button_to_function "Agregar Reserva", 'newBookingModal()', :class => "btn btn-success btn-sm" %>
+    <%= button_to "Agregar Reserva", new_booking_path, :method => :get, :class => "btn btn-success btn-sm" %>
   </div>
 </div>
 <div class="row">
 <div id='calendar'></div>
 </div>
-<!-- Modal -->
-<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content" id="myModalContentId">
-
-    </div>
-  </div>
-</div><!-- /.modal -->

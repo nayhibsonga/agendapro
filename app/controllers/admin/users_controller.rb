@@ -2,6 +2,7 @@ class  Admin::UsersController < ApplicationController
   before_action :set_user, only: [:show, :edit, :update, :destroy]
   before_action :authenticate_user!
   before_action :quick_add
+  layout "admin"
   #load_and_authorize_resource
   # GET /users
   # GET /users.json
