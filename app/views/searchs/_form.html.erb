@@ -2,7 +2,7 @@
 	<div class="form-group">
 		<%= label_tag(:district, "Descubre, encuentra y reserva servicios en", :class => "col-sm-6 control-label") %>
 		<div class="col-sm-4">
-      <a href="#" data-toggle="modal" data-target="#modalLocation"><span class="label label-warning" id="span-location"><i class="glyphicon glyphicon-chevron-right"></i></span></a>
+      <a href="#" data-toggle="modal" data-target="#modalLocation"><span class="label label-warning" id="span-location" data-toggle="tooltip"><i class="glyphicon glyphicon-chevron-right"></i></span></a>
       <input type="hidden" id="district" name="district">
 		</div>
 	</div>
@@ -11,7 +11,7 @@
 			<%= search_field_tag :inputSearch, params[:inputSearch], class: "form-control", placeholder: "Peluqueria, Gimansia, Masaje", :required => "true", :autofocus => "autofocus" %>
 		</div>
 		<div class="col-sm-1">
-			<button type="submit" class="btn btn-default col-sm-12"><i class="glyphicon glyphicon-search"></i></button>
+			<button type="submit" class="btn btn-default"><i class="glyphicon glyphicon-search"></i> Buscar</button>
 		</div>
 	</div>
 <% end %>
@@ -21,35 +21,17 @@
     <div class="modal-content">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-        <h4 class="modal-title">Seleccione un Lugar</h4>
+        <h4 class="modal-title">Seleccione tu Comuna</h4>
       </div>
       <div class="modal-body">
-      	<%= image_tag "ajax-loader.gif", :alt => "Loader", :id => "loader" %>
         <form class="form-horizontal" role="form" id="form-location">
-        	<div class="form-group">
-        		<label class="control-label col-xs-2">Pais</label>
-        		<div class="col-xs-8">
-        			<select class="form-control" id="countries" onfocus="this.selectedIndex=-1;this.blur();"></select>
-        		</div>
-        	</div>
-        	<div class="form-group">
-        		<label class="control-label col-xs-2">regions</label>
-        		<div class="col-xs-8">
-        			<select class="form-control" id="regions" onfocus="this.selectedIndex=-1;this.blur();" disabled></select>
-        		</div>
-        	</div>
-        	<div class="form-group">
-        		<label class="control-label col-xs-2">Ciudad</label>
-        		<div class="col-xs-8">
-        			<select class="form-control" id="cities" onfocus="this.selectedIndex=-1;this.blur();" disabled></select>
-        		</div>
-        	</div>
-        	<div class="form-group">
-        		<label class="control-label col-xs-2">Comuna</label>
-        		<div class="col-xs-8">
-        			<select class="form-control" id="districts"onfocus="this.selectedIndex=-1;this.blur();" disabled></select>
-        		</div>
-        	</div>
+          <div class="form-group">
+            <%= label_tag :location_autocomplete, 'Comuna', :class => 'control-label col-md-2' %>
+            <div class="col-md-8">
+              <%= text_field_tag :location_autocomplete, nil, :placeholder => 'Las Condes', :class => 'form-control' %>
+              <ul id="suggestions"></ul>
+            </div>
+          </div>
         </form>
       </div>
       <div class="modal-footer">
@@ -62,4 +44,30 @@
 </div><!-- /.modal -->
 
 <%= content_tag "div", id: "geolocation", data: {geolocation: @geolocation} do %>
+<% end %>
+
+<% content_for :map do %>
+  <%= stylesheet_link_tag "jquery-ui.css" %>
+  <%= javascript_include_tag "jquery-ui.js" %>
+  <script type="text/javascript">
+    $(function () {
+      $('#span-location').tooltip({
+        placement: 'auto top',
+        title: 'Selecciona dónde estás'
+      });
+
+      $("#location_autocomplete").autocomplete({
+        source: '/getdistricts',
+        appendTo: '#suggestions',
+        autoFocus: true,
+        minLength: 3,
+        change: function( event, ui ) {
+          var district_name = event.target.value;
+          $.getJSON('/district_by_name', {name: district_name}, function (district) {
+            changeLocation(district.id);
+          });
+        }
+      });
+    })
+  </script>
 <% end %>

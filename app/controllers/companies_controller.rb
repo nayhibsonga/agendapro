@@ -78,7 +78,11 @@ class CompaniesController < ApplicationController
     @company = Company.find_by(web_address: request.subdomain)
     if @company.nil?
       flash[:alert] = "No existe la compañia"
-      redirect_to root_url(:host => request.host_with_port)
+
+      host = request.host_with_port
+      domain = host[host.index(request.domain)..host.length]
+
+      redirect_to root_url(:host => domain)
       return
     end
     @locations = Location.where('company_id = ?', @company.id)

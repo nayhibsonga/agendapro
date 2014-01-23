@@ -66,8 +66,16 @@ class DistrictsController < ApplicationController
   end
 
   def getDistricts
-    @districts = District.where(city_id: params[:city])
-    render :json => @districts
+    districts = District.where('name ~* ?', params[:term])
+
+    @districts_array = Array.new
+    label = 
+    districts.each do |district|
+      label = district.name + ', ' + district.city.name + ', ' + district.city.region.name + ', ' + district.city.region.country.name
+      @districts_array.push({:label => label, :value => district.name})
+    end
+
+    render :json => @districts_array
   end
 
   def getDistrict

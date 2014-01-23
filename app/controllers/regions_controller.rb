@@ -1,7 +1,7 @@
 class RegionsController < ApplicationController
   before_action :set_region, only: [:show, :edit, :update, :destroy]
-  before_action :authenticate_user!, except: [:getRegions]
-  before_action :verify_is_super_admin, except: [:getRegions]
+  before_action :authenticate_user!
+  before_action :verify_is_super_admin
   layout "admin"
   load_and_authorize_resource
 
@@ -63,11 +63,6 @@ class RegionsController < ApplicationController
       format.html { redirect_to regions_url }
       format.json { head :no_content }
     end
-  end
-
-  def getRegions
-    @regions = Region.where(country_id: params[:country])
-    render :json => @regions
   end
 
   private

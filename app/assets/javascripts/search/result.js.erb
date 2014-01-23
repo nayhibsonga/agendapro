@@ -70,64 +70,11 @@ function locationError (error) {
 //====== Load ======//
 
 $(function() {
-  $('#form-location').hide();
-
-  $('#modalLocation').on('show.bs.modal', function (e) {
-    $('#form-location').hide();
-    $('#loader').show();
-    $('#regions').prop('disabled','disabled');
-    $('#cities').prop('disabled','disabled');
-    $('#districts').prop('disabled','disabled');
-
-    $.getJSON('/getcountries', function (countries) {
-      $('#countries').empty();
-      $.each(countries, function (key, country) {
-        $('#countries').append('<option value="' + country.id + '">' + country.name + '</option>');
-      });
-      $('#form-location').show();
-      $('#loader').hide();
-    });
-  });
-
-  $('#countries').change(function (e) {
-    $('#regions').prop('disabled','disabled');
-    $('#cities').prop('disabled','disabled');
-    $('#districts').prop('disabled','disabled');
-    $.getJSON('/getregions', {country: $('#countries').val()}, function (regionss) {
-      $('#regions').empty();
-      $.each(regionss, function (key, region) {
-        $('#regions').append('<option value="' + region.id + '">' + region.name + '</option>');
-      });
-      $('#regions').removeAttr("disabled");
-    });
-  });
-
-  $('#regions').change(function (e) {
-    $('#cities').prop('disabled','disabled');
-    $('#districts').prop('disabled','disabled');
-    $.getJSON('/getcities', {region: $('#regions').val()}, function (cities) {
-      $('#cities').empty();
-      $.each(cities, function (key, city) {
-        $('#cities').append('<option value="' + city.id + '">' + city.name + '</option>');
-      });
-      $('#cities').removeAttr("disabled");
-    });
-  });
-
-  $('#cities').change(function (e) {
-    $('#districts').prop('disabled','disabled');
-    $.getJSON('/getdistricts', {city: $('#cities').val()}, function (districts) {
-      $('#districts').empty();
-      $.each(districts, function (key, district) {
-        $('#districts').append('<option value="' + district.id + '">' + district.name + '</option>');
-      });
-      $('#districts').removeAttr("disabled");
-    });
-  });
-
   $('#save').on('click', function () {
-    var district = $('#districts').val();
-    changeLocation(district);
+    var district = $('#location_autocomplete').val();
+    $.getJSON('/district_by_name', {name: district}, function (district) {
+      changeLocation(district.id);
+    });
     $('#modalLocation').modal('hide');
 
     //====== Session Storage

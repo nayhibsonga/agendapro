@@ -54,9 +54,6 @@ class Ability
     can :bookService, Booking
 
     # Search
-    can :getCountries, Country
-    can :getRegions, Region
-    can :getCities, City
     can :getDistricts, District
     can :getDistrict, District
     can :get_district_by_name, District
