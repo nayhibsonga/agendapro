@@ -1,13 +1,11 @@
 //====== Overview ======//
 
 function loadOverview() {
-  if (confirm("Perdera los datos ¿Desea continuar?")) {
-    $('#services-link').removeClass('active');
-    $('#overview-link').addClass('active');
-    $('#services').css("display", "none");
-    $('#overview').css("display", "block");
-    $('#schedule').show();
-  }
+  $('#services-link').removeClass('active');
+  $('#overview-link').addClass('active');
+  $('#services').css("display", "none");
+  $('#overview').css("display", "block");
+  $('#schedule').show();
 }
 
 function loadServices() {
@@ -20,7 +18,10 @@ function loadServices() {
     loadStep1();
   }
   else {
-    alert("Seleccione un local");
+    myAlert.showAlert(
+      '<h3>Seleccione un local</h3>' +
+      '<p>Debe elegir un local antes de poder agendar.</p>'
+    );
   }
 }
 
@@ -90,7 +91,9 @@ function localMap(id) {
   });
 }
 
+var myAlert;
 $(function() {
+  myAlert = new Alert('.main');
 
   $('[name="localRadio"]').on('click', function(event) {
     var id = event.target.getAttribute('value');
@@ -99,8 +102,12 @@ $(function() {
   });
 
   $('#overview-link').click(function (event) {
-    loadOverview();
     event.preventDefault(); // Prevent link from following its href
+    myAlert.showAlert(
+      '<h3>Advertencia!</h3>' +
+      '<p>Perderá los datos ingresados. ¿Desea continuar?</p>',
+      loadOverview
+    );
   });
 
   $('#services-link').click(function (event) {
