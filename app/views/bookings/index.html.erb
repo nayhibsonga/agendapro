@@ -42,58 +42,9 @@
 </div>
 <div class="row">
   <div id="add_booking" class="radio">
-    <%= button_to_function "Agregar Reserva", 'newBookingModal()', :class => "btn btn-success btn-sm" %>
+    <%= button_to "Agregar Reserva", new_booking_path, :method => :get, :class => "btn btn-success btn-sm" %>
   </div>
 </div>
 <div class="row">
 <div id='calendar'></div>
 </div>
-<!-- Modal -->
-<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-        <h4 class="modal-title" id="myModalLabel">Agregar Nueva Reserva</h4>
-      </div>
-      <div class="modal-body">
-        <%= simple_form_for @booking, remote: true do |f| %>
-          <% if @booking.errors.any? %>
-            <div id="error_explanation">
-              <h2><%= pluralize(@booking.errors.count, "error") %> prohibited this booking from being saved:</h2>
-
-              <ul>
-              <% @booking.errors.full_messages.each do |msg| %>
-                <li><%= msg %></li>
-              <% end %>
-              </ul>
-            </div>
-          <% end %>
-
-          Inicio: <%= f.input :start, :label => false %><br />
-          Término: <%= f.input :end, :label => false %><br />
-          Nota: <%= f.input :notes, :label => false %><br />
-          <%= f.association :service_provider, :as => :collection_select, collection: ServiceProvider.where(company_id: current_user.company_id), :label => "Proveedor Servicio", :label_method => :user, value_method: :id %><br />
-          <%= f.association :service, :as => :collection_select, collection: Service.where(company_id: current_user.company_id), :label => "Servicio", :label_method => :name, value_method: :id %><br />
-          <%= f.association :user, :as => :collection_select, collection: User.where(company_id: current_user.company_id), :label => "Usuario", :label_method => :email, value_method: :id %><br />
-          Status: <%= f.association :status, :label => false %><br />
-          Promoción: <%= f.association :promotion, :label => false %><br />
-          <%= f.input :first_name, :laber => "Nombre" %><br />
-          <%= f.input :last_name, :laber => "Apellido" %><br />
-          <%= f.input :email, :laber => "Email" %><br />
-          <%= f.input :phone, :laber => "Teléfono" %><br />
-          <div id="errors">
-          </div>
-
-          <div class="actions">
-            <%= f.submit %>
-          </div>
-        <% end %>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-        <button type="button" class="btn btn-success">Agregar</button>
-      </div>
-    </div>
-  </div>
-</div><!-- /.modal -->

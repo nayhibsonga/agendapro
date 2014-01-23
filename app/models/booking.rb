@@ -14,27 +14,31 @@ class Booking < ActiveRecord::Base
 
 	def booking_duration
     	if self.service.duration != ((self.end - self.start) / 1.minute ).round
-    		errors.add(:service_provider, "La duración de la reserva no coincide con la duración del servicio.")
+    		errors.add(:booking, "La duración de la reserva no coincide con la duración del servicio.")
     	end
   	end
 
   	def service_staff
     	if !self.service_provider.services.include?(self.service)
-    		errors.add(:service_provider, "El proveedor de servicios no puede realizar este servicio.")
+    		errors.add(:booking, "El proveedor de servicios no puede realizar este servicio.")
     	end
   	end
 
   	def bookings_overlap
 		self.service_provider.bookings.each do |provider_booking|
 			if (provider_booking.start - self.end) * (self.start - provider_booking.end) > 0
-	      		errors.add(:service_provider, "Esa hora ya está agendada para ese proveedor de servicios.")
+				if !self.service.group_service || self.service_id != provider_booking.service_id
+	      			errors.add(:booking, "Esa hora ya está agendada para ese proveedor de servicios.")
+	      		elsif self.service_id == provider_booking.service_id && self.service_provider.bookings.where(:service_id => self.service_id).count >= self.service.capacity
+	      			errors.add(:booking, "Esa hora ya está agendada para ese proveedor de servicios.")
+	      		end
 	    	end
 		end
   	end
 
   	def time_empty_or_negative
 		if self.start >= self.end
-			errors.add(:service_provider, "Existen horarios vacíos o negativos.")
+			errors.add(:booking, "Existen horarios vacíos o negativos.")
   		end
   	end
 
@@ -54,7 +58,7 @@ class Booking < ActiveRecord::Base
 			end
 		end
 		if !in_provider_time
-			errors.add(:service_provider, "El horario de la reserva no es posible para ese proveedor de servicio.")
+			errors.add(:booking, "El horario de la reserva no es posible para ese proveedor de servicio.")
 		end
   	end
 end

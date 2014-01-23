@@ -17,7 +17,7 @@ class Location < ActiveRecord::Base
 	def plan_locations
 		@company = self.company
 		if company.locations.count >= company.plan.locations
-			errors.add(:service_provider, "No se pueden agregar más locales con el plan actual, ¡mejóralo!.")
+			errors.add(:location, "No se pueden agregar más locales con el plan actual, ¡mejóralo!.")
 		end
 	end
 
