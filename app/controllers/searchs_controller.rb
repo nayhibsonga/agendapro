@@ -5,6 +5,11 @@ class SearchsController < ApplicationController
 	end
 
 	def search
+		# => Domain parser
+		host = request.host_with_port
+		@domain = host[host.index(request.domain)..host.length]
+
+		# => Geolocation
 		district = District.find(params[:district])
 		city = district.city
 		region = city.region
