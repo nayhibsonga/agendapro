@@ -12,7 +12,6 @@
 //= require workflow/wizard.js
 //= require workflow/services.js
 //= require fullcalendar.js
-//= require workflow/jquery-ui.custom.min.js
 //= require workflow/analytics.js
 
 

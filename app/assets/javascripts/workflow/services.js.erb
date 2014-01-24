@@ -102,7 +102,10 @@ function loadStep2 () {
 		});
 		return true;
 	}
-	alertMessage('Debe elegir un Servicio')
+	myAlert.showAlert(
+      '<h3>Seleccione un Servicio</h3>' +
+      '<p>Debe elegir un servicio antes de poder continuar.</p>'
+    );
 	return false;
 }
 
@@ -117,10 +120,16 @@ function loadStep3 () {
 			$('#location').val($('input[name=localRadio]:checked').val());
 			return true;
 		}
-		alertMessage('Seleccione un horario');
+		myAlert.showAlert(
+	      '<h3>Seleccione un Horario</h3>' +
+	      '<p>Debe elegir un horario antes de poder continuar.</p>'
+	    );
 		return false;
 	}
-	alertMessage('Seleccione un staff');
+	myAlert.showAlert(
+      '<h3>Seleccione un Staff</h3>' +
+      '<p>Debe elegir un staff para poder agendar un horario.</p>'
+    );
 	return false;
 }
 
@@ -302,19 +311,16 @@ function addBooking (date) {
 	}
 }
 
-/*function moveBooking (event, revertFunc) {
-	if (!validateBooking(event.start)) {
-		revertFunc();
-	}
-}*/
-
 function validateBooking (startDate) {
 	var valid = true;
 	var now = new Date();
 	var endDate = new Date(startDate.getTime() + duration * 60 * 1000);
 	if (startDate <= now) {
 		valid = false;
-		alertMessage('No puede elegir una fecha del pasado.');
+		myAlert.showAlert(
+	      '<h3>Horario Invalido</h3>' +
+	      '<p>La fecha/hora elegida es anterior a la fecha/hora actual.</p>'
+	    );
 	}
 	else {
 		var localId = $('input[name=localRadio]:checked').val();
@@ -326,32 +332,14 @@ function validateBooking (startDate) {
 				var endBooking = $.fullCalendar.parseDate(booking.end);
 				if ((endDate > startBooking && endDate < endBooking) || (startDate < endBooking && startDate > startBooking) || (startDate > startBooking && endDate < endBooking)) {
 					valid = false;
-					alertMessage('No pueden topar los horarios.');
+					myAlert.showAlert(
+				      '<h3>Horario Invalido</h3>' +
+				      '<p>No se puede agendar con esta persona debido a que ya se encuentra ocupado.</p>'
+				    );					alertMessage('No pueden topar los horarios.');
 					$('#calendar').fullCalendar('removeEvents', 'newBooking');
 				}
 			});
 		});
-		/*$.ajax({
-			type: 'GET',
-			url: '/booking',
-			async: false,
-			contentType: 'application/json',
-			dataType: 'json',
-			data: {
-				location: localId,
-				provider: providerId
-			},
-			success: function (bookings) {
-				$.each(bookings, function (key, booking) {
-					var startBooking = $.fullCalendar.parseDate(booking.start);
-					var endBooking = $.fullCalendar.parseDate(booking.end);
-					if ((endDate > startBooking && endDate < endBooking) || (startDate < endBooking && startDate > startBooking) || (startDate > startBooking && endDate < endBooking)) {
-						valid = false;
-						alertMessage('No pueden topar los horarios.');
-					}
-				});
-			}
-		});*/
 	}
 	return valid;
 }

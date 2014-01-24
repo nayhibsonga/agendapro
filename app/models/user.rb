@@ -11,5 +11,5 @@ class User < ActiveRecord::Base
 
 	accepts_nested_attributes_for :company
 
-	validates :first_name, :last_name, :email, :phone, :presence => true
+	validates :email, :presence => true
 end
