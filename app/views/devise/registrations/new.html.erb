@@ -1,4 +1,4 @@
-<h2>Sign up</h2>
+<h2>Regístrate</h2>
 
 <%= simple_form_for(resource, :as => resource_name, :url => registration_path(resource_name)) do |f| %>
   <%= f.error_notification %>
@@ -10,7 +10,7 @@
     <%= f.input :phone, :label => "Teléfono: ", :autofocus => true %>
     <%= f.input :user_name, :label => "Usuario: ", :required => true, :autofocus => true %>
     <%= f.input :password, :label=> "Contraseña: ", :required => true %>
-    <%= f.input :password_confirmation, :label => "Confirmar Contraseña: ", :required => true %>
+    <%= f.input :password_confirmation, :label => "Confirmar contraseña: ", :required => true %>
     <%= f.input :role_id, :label => "Rol", :collection => Role.where(:name => ["Admin","Usuario Registrado"]) %>
 
     <% @user.build_company %>
