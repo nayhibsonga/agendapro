@@ -25,8 +25,10 @@ class QuickAddController < ApplicationController
 	    respond_to do |format|
 	      if @location.save
 	        format.html { redirect_to quick_add_services_path, notice: 'Local creado satisfactoriamente.' }
+        	format.json { render :json => @location }
 	      else
 	        format.html { render action: 'location' }
+	        format.json { render :json => { :errors => @location.errors.full_messages }, :status => 422 }
 	      end
 	    end
 	end
@@ -51,8 +53,10 @@ class QuickAddController < ApplicationController
 	    respond_to do |format|
 	      if @service_provider.save
 	        format.html { redirect_to dashboard_path, notice: 'Proveedor creado satisfactoriamente.' }
+        	format.json { render :json => @service_provider }
 	      else
 	        format.html { render action: 'service_provider' }
+        	format.json { render :json => { :errors => @service_provider.errors.full_messages }, :status => 422 }
 	      end
 	    end
   	end

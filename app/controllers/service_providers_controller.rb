@@ -36,10 +36,10 @@ class ServiceProvidersController < ApplicationController
     respond_to do |format|
       if @service_provider.save
         format.html { redirect_to @service_provider, notice: 'Proveedor creado satisfactoriamente.' }
-        format.json { render action: 'show', status: :created, location: @service_provider }
+        format.json { render :json => @service_provider }
       else
         format.html { render action: 'new' }
-        format.json { render json: @service_provider.errors, status: :unprocessable_entity }
+        format.json { render :json => { :errors => @service_provider.errors.full_messages }, :status => 422 }
       end
     end
   end
@@ -47,16 +47,18 @@ class ServiceProvidersController < ApplicationController
   # PATCH/PUT /service_providers/1
   # PATCH/PUT /service_providers/1.json
   def update
+    @service_provider.services.clear
+    @service_provider.provider_times.destroy_all
     respond_to do |format|
 
     @users = User.where(company_id: current_user.company_id)
     @locations = Location.where(company_id: current_user.company_id)
       if @service_provider.update(service_provider_params)
         format.html { redirect_to @service_provider, notice: 'Proveedor actualizado satisfactoriamente.' }
-        format.json { head :no_content }
+        format.json { render :json => @service_provider }
       else
         format.html { render action: 'edit' }
-        format.json { render json: @service_provider.errors, status: :unprocessable_entity }
+        format.json { render :json => { :errors => @service_provider.errors.full_messages }, :status => 422 }
       end
     end
   end

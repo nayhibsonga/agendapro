@@ -35,10 +35,10 @@ class LocationsController < ApplicationController
     respond_to do |format|
       if @location.save
         format.html { redirect_to @location, notice: 'Local creado satisfactoriamente.' }
-        format.json { render action: 'show', status: :created, location: @location }
+        format.json { render :json => @location }
       else
         format.html { render action: 'new' }
-        format.json { render json: @location.errors, status: :unprocessable_entity }
+        format.json { render :json => { :errors => @location.errors.full_messages }, :status => 422 }
       end
     end
   end
@@ -46,13 +46,14 @@ class LocationsController < ApplicationController
   # PATCH/PUT /locations/1
   # PATCH/PUT /locations/1.json
   def update
+    @location.location_times.destroy_all
     respond_to do |format|
       if @location.update(location_params)
         format.html { redirect_to @location, notice: 'Local actualizado satisfactoriamente.' }
-        format.json { head :no_content }
+        format.json { render :json => @location }
       else
         format.html { render action: 'edit' }
-        format.json { render json: @location.errors, status: :unprocessable_entity }
+        format.json { render :json => { :errors => @location.errors.full_messages }, :status => 422 }
       end
     end
   end
@@ -80,6 +81,6 @@ class LocationsController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def location_params
-      params.require(:location).permit(:name, :address, :phone, :longitude, :latitude, :company_id, :district_id, location_times_attributes: [:id, :open, :close, :day_id, :location_id, :_destroy])
+      params.require(:location).permit(:name, :address, :phone, :longitude, :latitude, :company_id, :district_id, location_times_attributes: [:id, :open, :close, :day_id, :location_id])
     end
 end

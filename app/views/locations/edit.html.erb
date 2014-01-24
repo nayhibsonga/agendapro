@@ -1,6 +1,50 @@
-<h1>Editing location</h1>
+<h1 id='title'>Editar Local</h1>
 
-<%= render 'form' %>
+<%= simple_form_for(@location) do |f| %>
 
-<%= link_to 'Show', @location %> |
-<%= link_to 'Back', locations_path %>
+  <%= content_tag "div", id: "id_data", data: { id: @location.id } do %>
+  <% end %>
+
+  <%= f.input :name, :label => "Nombre" %><br />
+  <%= f.input :address, :label => "Dirección" %><br />
+  <%= f.input :phone, :label => "Teléfono" %><br />
+  <%= f.association :district, :label => "Comuna" %><br />
+  <%= f.input :latitude, :as => :hidden %><br />
+  <%= f.input :longitude, :as => :hidden %>
+
+  <%= content_tag "div", id: "location_times_data", data: { location_times: @location.location_times.to_json } do %>
+  <% end %>
+
+  <div class="row">
+  	<label>Lunes:</label><div id="div1"></div>
+  </div>
+  <div class="row">
+  	<label>Martes:</label><div id="div2"></div>
+  </div>
+  <div class="row">
+  	<label>Miércoles:</label><div id="div3"></div>
+  </div>
+  <div class="row">
+  	<label>Jueves:</label><div id="div4"></div>
+  </div>
+  <div class="row">
+  	<label>Viernes:</label><div id="div5"></div>
+  </div>
+  <div class="row">
+  	<label>Sábado:</label><div id="div6"></div>
+  </div>
+  <div class="row">
+  	<label>Domingo:</label><div id="div7"></div>
+  </div>
+  <br />
+<% end %>
+
+<div class="row">
+  <%= button_to 'Atrás', locations_path, :method => :get, :class => "btn btn-warning btn-sm" %><%= button_to_function "Guardar Local", "updateLocation()", :class => "btn btn-success btn-sm" %>
+</div>
+
+<br />
+<% content_for :scripts do %>
+  <%= javascript_include_tag "http://maps.google.com/maps/api/js?sensor=false" %>
+  <%= javascript_include_tag "admin/geocoder.js" %>
+<% end %>
