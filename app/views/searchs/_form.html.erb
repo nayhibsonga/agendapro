@@ -46,7 +46,7 @@
 <%= content_tag "div", id: "geolocation", data: {geolocation: @geolocation} do %>
 <% end %>
 
-<% content_for :map do %>
+<% content_for :scripts do %>
   <%= stylesheet_link_tag "jquery-ui.css" %>
   <%= javascript_include_tag "jquery-ui.js" %>
   <script type="text/javascript">
