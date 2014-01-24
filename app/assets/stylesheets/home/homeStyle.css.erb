@@ -6001,7 +6001,7 @@ header .container {
   position: relative;
 }
 .navbar {
-  margin: 36px 0px;
+  margin: 10px 0px;
   background-color: transparent !important;
   border: none !important;
   background-color: transparent;
@@ -6039,7 +6039,7 @@ header .container {
   text-shadow: 1px 1px 0px #ffffff;
 }
 .navbar .nav {
-  margin: 27px 0 0 0;
+  margin: 10px 0 0 0;
 }
 .navbar .nav li a {
   font-size: 16px;
@@ -6149,24 +6149,23 @@ header .container {
   color: #fff;
   background: url(<%= asset_path 'home/backgrounds/wild_oliva_blue_light.png' %>);
 }
+
+#barra-superior{
+  background:rgba(27,115,112,1);
+  height:40px;
+}
 #sign {
   position: absolute;
-  top: 7px;
+  top: 9px;
   right: 20px; /*150px;*/
-  font-size: 12px;
+  font-size: 13px;
+  color: #fff;
 }
-#sign i {
-  margin-right: 0px;
-  font-size: 18px;
-  width: 28px;
-  height: 28px;
-  padding: 8px;
-  display: inline-block;
-  text-align: center;
-  position: relative;
-  left: 0px;
-  top: 2px;
+#sign a {
+  color: #fff;
+  font-weight: bold;
 }
+
 /* =Slider and Large Photo headers
 -------------------------------------------------------------- */
 .flexslider {
@@ -6343,7 +6342,7 @@ header .container {
 }
 section.call_to_action {
   text-align: center;
-  padding: 35px 0 45px 0;
+  padding: 35px 0 10px 0;
 }
 section.call_to_action h3 {
   font-weight: 300;
@@ -6375,7 +6374,7 @@ h2.section_header {
   padding: 0 0 16px 0;
 }
 section.portfolio_teasers_wrapper {
-  margin: 35px 0 45px 0;
+  margin: 15px 0 45px 0;
 }
 section.portfolio_teasers_wrapper .porfolio_teaser {
   text-align: center;
@@ -6631,6 +6630,54 @@ figure img {
   margin: 30px;
   border-radius: 30px;
 }
+/* =Portfolio Recomendados
+-------------------------------------------------------------- */
+.localizacion{
+  font-size:28px;
+}
+.texto-localizacion{
+  font-weight: 300;
+  color: #999999;
+}
+.recomendados{
+  height: 750px;
+}
+.box-recomendacion-lg{
+  width: 50%;
+  height: 300px;
+  float: left;
+}
+.box-recomendacion-md{
+  width: 33.33%;
+  height: 400px;
+  float: left;
+}
+.box-recomendacion-sm{
+  width: 100%;
+  height: 200px;
+  float: left;
+}
+.position-background {
+  background-size: cover;
+  background-position: center;
+}
+.overlay{
+  width:100% !important;
+  display: block;
+  background-color: rgba(0,0,0,0.4);
+  color: #ffffff;
+}
+.overlay:hover{
+  background-color: rgba(0,0,0,0);
+  color: #ffffff;
+  text-shadow:2px 2px 4px #000;
+  transition:0.5s;
+  }
+.overlay h3{
+  margin:20px 10px;
+  font-weight: 700;
+}
+
 /* =Portfolio Page elements
 -------------------------------------------------------------- */
 ul.portfolio_filters {

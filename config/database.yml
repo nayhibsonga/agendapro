@@ -57,4 +57,4 @@ production:
   database: agendapro_production
   pool: 5
   username: agendapro
-  password: ap2013lndb
+  password: agendapro
