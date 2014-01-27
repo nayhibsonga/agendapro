@@ -1,18 +1,24 @@
 <%= form_tag({action: "search"}, method: "GET", class: "form-horizontal") do %>
 	<div class="form-group">
-		<%= label_tag(:district, "Descubre, encuentra y reserva servicios en", :class => "col-sm-6 control-label") %>
-		<div class="col-sm-4">
-      <a href="#" data-toggle="modal" data-target="#modalLocation"><span class="label label-warning" id="span-location" data-toggle="tooltip"><i class="glyphicon glyphicon-chevron-right"></i></span></a>
-      <input type="hidden" id="district" name="district">
-		</div>
+    <div class="row">
+      <div class="localizacion">
+    		<%= label_tag(:district, "Descubre, encuentra y reserva servicios en", :class => "control-label texto-localizacion") %>
+          <a href="#" data-toggle="modal" data-target="#modalLocation"><span class="label label-warning" id="span-location"><i class="glyphicon glyphicon-chevron-right"></i></span></a>
+          <input type="hidden" id="district" name="district">
+      </div>
+    </div><!-- /.row -->
 	</div>
 	<div class="form-group">
-		<div class="col-sm-11">
-			<%= search_field_tag :inputSearch, params[:inputSearch], class: "form-control", placeholder: "Peluqueria, Gimansia, Masaje", :required => "true", :autofocus => "autofocus" %>
-		</div>
-		<div class="col-sm-1">
-			<button type="submit" class="btn btn-default"><i class="glyphicon glyphicon-search"></i> Buscar</button>
-		</div>
+    <div class="row">
+      <div class="col-lg-6 col-lg-offset-3">
+        <div class="input-group">
+          <%= search_field_tag :inputSearch, params[:inputSearch], class: "form-control", placeholder: "Peluqueria, Gimansia, Masaje", :required => "true", :autofocus => "autofocus" %>
+          <span class="input-group-btn">
+            <button class="btn btn-default" type="button"><i class="glyphicon glyphicon-search"></i></button>
+          </span>
+        </div><!-- /input-group -->
+      </div><!-- /.col-lg-6 -->
+    </div><!-- /.row -->
 	</div>
 <% end %>
 
