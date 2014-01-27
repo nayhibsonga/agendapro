@@ -9,5 +9,7 @@ class Service < ActiveRecord::Base
 	has_many :service_staffs
 	has_many :service_providers, :through => :service_staffs
 
+	accepts_nested_attributes_for :service_category, :reject_if => :all_blank, :allow_destroy => true
+
 	validates :name, :duration, :company, :presence => true
 end

@@ -10,11 +10,13 @@ class ServiceProvider < ActiveRecord::Base
 
 	attr_accessor :_destroy
 
+	accepts_nested_attributes_for :user, :reject_if => :all_blank, :allow_destroy => true
 	accepts_nested_attributes_for :provider_times, :reject_if => :all_blank, :allow_destroy => true
 	
 	validates :company, :user, :location, :presence => true
 
-	validate :time_empty_or_negative, :time_in_location_time, :times_overlap, :plan_service_providers
+	validate :time_empty_or_negative, :time_in_location_time, :times_overlap
+	validate :plan_service_providers, :on => :create
 
 	def plan_service_providers
 		@company = self.company

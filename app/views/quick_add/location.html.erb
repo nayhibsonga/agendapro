@@ -34,11 +34,11 @@
 <% end %>
 
 <div class="row">
-  <%= button_to 'Atrás', locations_path, :method => :get, :class => "btn btn-warning btn-sm" %><%= button_to_function "Guardar Local", "createLocation()", :class => "btn btn-success btn-sm" %>
+  <%= button_to 'Atrás', locations_path, :method => :get, :class => "btn btn-warning btn-sm" %><%= button_to_function "Guardar Local", "startLocation()", :class => "btn btn-success btn-sm" %>
 </div>
 
 <br />
 <% content_for :scripts do %>
   <%= javascript_include_tag "http://maps.google.com/maps/api/js?sensor=false" %>
-  <%= javascript_include_tag "admin/geocoder.js" %>
+  <%= javascript_include_tag "location" %>
 <% end %>

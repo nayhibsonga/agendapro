@@ -11,17 +11,32 @@
     </div>
   <% end %>
 
-  Nombre: <%= f.input :name, :label => false %><br />
-  Precio: <%= f.input :price, :label => false %><br />
-  Duración: <%= f.input :duration, :label => false %><br />
-  Descripción: <%= f.input :description, :label => false %><br />
-  Servicio de Grupo: <%= f.input :group_service, :label => false %><br />
-  Capacidad: <%= f.input :capacity, :label => false %><br />
-  Lista de Espera: <%= f.input :waiting_list, :label => false %><br />
-  Categoría: <%= f.association :service_category, :label => false %><br />
-  Empresa: <%= f.association :company, :label => false %><br />
+  <%= f.input :name, :label => "Nombre" %><br />
+  <%= f.input :price, :label => "Precio" %><br />
+  <%= f.input :duration, :label => "Duración" %><br />
+  <%= f.input :description, :label => "Descripción" %><br />
+  <%= f.input :group_service, :label => "Servicio de Grupo" %><br />
+  <%= f.input :capacity, :label => "Capacidad" %><br />
+  <%= f.input :waiting_list, :label => "Lista de Espera" %><br />
+  <%= f.association :service_category, :as => :collection_select, collection: ServiceCategory.where(company_id: current_user.company_id), :label => "Categoría de Servicio", :label_method => :name, value_method: :id %><br />
+  <% if @service.service_category.nil? then @service.build_service_category end %>
+  <input type="checkbox" name="catCheck" id="categoryCheckboxId" value="0" onchange="categoryChange()" class="checkbox"> Crear nueva Categoría de Servicios:
+  <%= f.simple_fields_for :service_category do |builder| %>
+  <%= builder.input :name, :label => "Nueva Categoría de Servicio", :input_html => { :value => "" } %>
+  <%= builder.association :company, :as => :hidden, :input_html => { :value => current_user.company_id }  %>
+  <% end %>
+  <%= f.association :tags, 
+                     as: :check_boxes,
+                     collection: Tag.where(economic_sector: Company.find(current_user.company_id).economic_sector),
+                     label_method: :name, 
+                     value_method: :id,
+                     label: 'Etiquetas' %><br />
 
   <div class="actions">
-    <%= f.submit %>
+    <%= f.submit "Crear Nuevo Servicio" %>
   </div>
+<% end %>
+
+<% content_for :scripts do %>
+  <%= javascript_include_tag "service" %>
 <% end %>

@@ -120,7 +120,7 @@ function changeDayStatus(value) {
 
 function createProvider() {
 	var enabledDays = [];
-	$(".checkbox").each( function() {
+	$(".dayCheckbox").each( function() {
 		if ($( this ).val() == 1) {
 			enabledDays.push($(this).attr('id').slice(-1));
 		}
@@ -140,7 +140,7 @@ function createProvider() {
 	$.ajax({
 	    type: "POST",
 	    url: '/service_providers.json',
-	    data: { service_provider: providerJSON },
+	    data: { "service_provider": providerJSON },
 	    dataType: 'json',
 	    success: function(){
 	    	document.location.href = '/service_providers/';
@@ -157,7 +157,7 @@ function createProvider() {
 
 function updateProvider() {
 	var enabledDays = [];
-	$(".dayCheckbox").each( function() {
+	$("input.dayCheckbox").each( function() {
 		if ($( this ).val() == 1) {
 			enabledDays.push($(this).attr('id').slice(-1));
 		}
@@ -170,6 +170,7 @@ function updateProvider() {
 	});
 	var provider_times = [];
 	for (i in enabledDays) {
+		alert('asd');
 		var provider_time = {"open":"2000-01-01T"+ $('#openHourId'+enabledDays[i]).val() +":"+ $('#openMinuteId'+enabledDays[i]).val() +":00Z","close":"2000-01-01T"+ $('#closeHourId'+enabledDays[i]).val() +":"+ $('#closeMinuteId'+enabledDays[i]).val() +":00Z","day_id":parseInt(enabledDays[i])};
 		provider_times.push(provider_time);
 	}
@@ -178,7 +179,7 @@ function updateProvider() {
 	$.ajax({
 	    type: "PATCH",
 	    url: ' /service_providers/'+ JSON.stringify(providerId) +'.json',
-	    data: { service_provider: providerJSON },
+	    data: { "service_provider": providerJSON },
 	    dataType: 'json',
 	    success: function(){
 	    	document.location.href = '/service_providers/';

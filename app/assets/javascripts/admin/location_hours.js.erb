@@ -1,4 +1,3 @@
-
 function buildDay (divId, value) {
 	$('#'+divId).empty();
 	$('#'+divId).append('<input type="checkbox" name="dayStatus'+ value +'" id="dayStatusId'+ value +'" value="0" onchange="changeDayStatus('+ value +')" class="checkbox">  Apertura: '+
@@ -118,38 +117,29 @@ function changeDayStatus(value) {
 	}
 }
 
-function createLocation() {
-	var enabledDays = [];
-	$(".checkbox").each( function() {
-		if ($( this ).val() == 1) {
-			enabledDays.push($(this).attr('id').slice(-1));
-		}
-	});
-	var location_times = [];
-	for (i in enabledDays) {
-		var location_time = {"open":"2000-01-01T"+ $('#openHourId'+enabledDays[i]).val() +":"+ $('#openMinuteId'+enabledDays[i]).val() +":00Z","close":"2000-01-01T"+ $('#closeHourId'+enabledDays[i]).val() +":"+ $('#closeMinuteId'+enabledDays[i]).val() +":00Z","day_id":parseInt(enabledDays[i])};
-		location_times.push(location_time);
+function startLocation() {
+	var district = $('#location_district_id').val();
+	var address = $('#location_address').val();
+	if ((address != '')&&(district != '')) {
+		$.getJSON('/get_direction', {id: district}, function (direction) {
+			var geolocation = address + ', ' + direction;
+			var geoString = JSON.stringify(geolocation);
+			var geocoder = new google.maps.Geocoder();
+			geocoder.geocode( { "address" : geoString }, function (results, status) {
+				alert(status);
+				if (status == google.maps.GeocoderStatus.OK) {
+					alert(results[0].geometry.location.lat());
+					$('#location_latitude').val(results[0].geometry.location.lat());
+					$('#location_longitude').val(results[0].geometry.location.lng());
+				}
+				saveLocation();
+			});
+		});
 	}
-	var locationJSON  = { "name": $('#location_name').val(), "address": $('#location_address').val(), "phone": $('#location_phone').val(), "district_id": $('#location_district_id').val(), "location_times_attributes": location_times };
-	$.ajax({
-	    type: "POST",
-	    url: '/locations.json',
-	    data: { location: locationJSON },
-	    dataType: 'json',
-	    success: function(){
-	    	document.location.href = '/locations/';
-		},
-		error: function(xhr){
-		    var errors = $.parseJSON(xhr.responseText).errors;
-		    for (i in errors) {
-		    	alert(errors[i]);
-		    }
-		    // do something with errors
-		}
-	});
+	alert('Dirección y/o Comuna no pueden estar vacías.');
 }
 
-function updateLocation() {
+function locJSON() {
 	var enabledDays = [];
 	$(".checkbox").each( function() {
 		if ($( this ).val() == 1) {
@@ -161,24 +151,48 @@ function updateLocation() {
 		var location_time = {"open":"2000-01-01T"+ $('#openHourId'+enabledDays[i]).val() +":"+ $('#openMinuteId'+enabledDays[i]).val() +":00Z","close":"2000-01-01T"+ $('#closeHourId'+enabledDays[i]).val() +":"+ $('#closeMinuteId'+enabledDays[i]).val() +":00Z","day_id":parseInt(enabledDays[i])};
 		location_times.push(location_time);
 	}
-	var locationJSON  = { "name": $('#location_name').val(), "address": $('#location_address').val(), "phone": $('#location_phone').val(), "district_id": $('#location_district_id').val(), "location_times_attributes": location_times };
+	var locationJSON  = { "name": $('#location_name').val(), "address": $('#location_address').val(), "phone": $('#location_phone').val(), "district_id": $('#location_district_id').val(), "latitude": parseFloat($('#location_latitude').val()), "longitude": parseFloat($('#location_longitude').val()), "location_times_attributes": location_times };
+	return locationJSON;
+}
+
+function saveLocation() {
+	var locationJSON = locJSON();
 	var locationId = $('#id_data').data('id');
-	$.ajax({
-	    type: "PATCH",
-	    url: ' /locations/'+ JSON.stringify(locationId) +'.json',
-	    data: { location: locationJSON },
-	    dataType: 'json',
-	    success: function(){
-	    	document.location.href = '/locations/';
-		},
-		error: function(xhr){
-		    var errors = $.parseJSON(xhr.responseText).errors;
-		    for (i in errors) {
-		    	alert(errors[i]);
-		    }
-		    // do something with errors
-		}
-	});
+	if ( $('#title').length > 0 ) {
+		$.ajax({
+		    type: "PATCH",
+		    url: ' /locations/'+ JSON.stringify(locationId) +'.json',
+		    data: { location: locationJSON },
+		    dataType: 'json',
+		    success: function(){
+		    	document.location.href = '/locations/';
+			},
+			error: function(xhr){
+			    var errors = $.parseJSON(xhr.responseText).errors;
+			    for (i in errors) {
+			    	alert(errors[i]);
+			    }
+			}
+		});
+	}
+	else {
+		var locationJSON = locJSON();
+		$.ajax({
+		    type: "POST",
+		    url: '/locations.json',
+		    data: { "location": locationJSON },
+		    dataType: 'json',
+		    success: function(){
+		    	document.location.href = '/locations/';
+			},
+			error: function(xhr){
+			    var errors = $.parseJSON(xhr.responseText).errors;
+			    for (i in errors) {
+			    	alert(errors[i]);
+			    }
+			}
+		});
+	}
 }
 
 $(function() {
