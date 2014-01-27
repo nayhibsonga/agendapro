@@ -1,59 +1,93 @@
 <h2>Regístrate</h2>
 
 <% if params[:company] %>
-  <%= simple_form_for(resource, :as => resource_name, :url => registration_path(resource_name)) do |f| %>
-    <%= f.error_notification %>
+  <%= simple_form_for(resource, :as => resource_name, :url => registration_path(resource_name, :company => true, :plan => params[:plan]), :html => { class: 'form-horizontal' }) do |f| %>
 
-    <div class="form-inputs">
-    	<%= f.input :first_name, :label => "Nombre: ", :autofocus => true %>
-    	<%= f.input :last_name, :label => "Apellido: ", :autofocus => true %>
-      <%= f.input :email, :label => "Email: ", :required => true, :autofocus => true %>
-      <%= f.input :phone, :label => "Teléfono: ", :autofocus => true %>
-      <%= f.input :password, :label=> "Contraseña: ", :required => true %>
-      <%= f.input :password_confirmation, :label => "Confirmar Contraseña: ", :required => true %>
-      <%= f.input :role_id, :label => "Rol", :collection => Role.where(:name => ["Admin","Usuario Registrado"]) %>
+    <%= f.input :role_id, :as => :hidden, :label => false, :input_html => {:value => Role.where(:name => "Admin").first.id } %>
 
-      <% @user.build_company %>
-      <%= f.simple_fields_for :company do |builder| %>
-      Nombre Empresa: <%= builder.input :name, :label => false %>
-      URL: <%= builder.input :web_address, :label => false %>
-      <% if !params[:plan].nil? then @user.company.plan_id = params[:plan] end %>
-      Plan: <%= builder.association :plan, :label => false %>
-      Estado de Pago: <%= builder.association :payment_status, :label => false %>
-      Rubro: <%= builder.association :economic_sector, :label => false %>
-      <% end %>
+    <!-- Usuario -->
+    <div class="form-group">
+      <%= f.label :email, :class => 'col-sm-4 control-label' %>
+      <div class="col-sm-8">
+        <%= f.input :email, :label => false, :requiered => true, :autofocus => true %>
+      </div>
+    </div>
+    <div class="form-group">
+      <%= f.label :password, :class => 'col-sm-4 control-label' %>
+      <div class="col-sm-8">
+        <%= f.input :password, :label => false, :requiered => true, :autofocus => true %>
+      </div>
+    </div>
+    <div class="form-group">
+      <%= f.label :password_confirmation, :class => 'col-sm-4 control-label' %>
+      <div class="col-sm-8">
+        <%= f.input :password_confirmation, :label => false, :requiered => false, :autofocus => true %>
+      </div>
     </div>
 
-    <div class="form-actions">
-      <%= f.button :submit, "Regístrate" %>
+    <!-- Company -->
+    <% @user.build_company %>
+    <%= f.simple_fields_for :company do |builder| %>
+      <%= builder.input :payment_status, :as => :hidden, :label => false, :input_html => {:value => PaymentStatus.where(:name => "Al día").first.id } %>
+      <div class="form-group">
+        <%= builder.label :name, "Company Name", :class => 'col-sm-4 control-label' %>
+        <div class="col-sm-8">
+          <%= builder.input :name, :label => false, :requiered => true, :autofocus => true %>
+        </div>
+      </div>
+      <div class="form-group">
+        <%= builder.label :web_address, :class => 'col-sm-4 control-label' %>
+        <div class="col-sm-8">
+          <%= builder.input :web_address, :label => false, :requiered => true, :autofocus => true %>
+        </div>
+      </div>
+      <% if !params[:plan].nil? then @user.company.plan_id = params[:plan] end %>
+      <div class="form-group">
+        <%= builder.label :plan, :class => 'col-sm-4 control-label' %>
+        <div class="col-sm-8">
+          <%= builder.association :plan, :label => false, :autofocus => true, :requiered => true %>
+        </div>
+      </div>
+      <div class="form-group">
+        <%= builder.label :economic_sector, :class => 'col-sm-4 control-label' %>
+        <div class="col-sm-8">
+          <%= builder.association :economic_sector, :label => false, :requiered => true, :autofocus => true %>
+        </div>
+      </div>
+    <% end %>
+
+    <div class="form-group">
+      <div class="col-sm-offset-4 col-sm-8">
+        <%= f.button :submit, 'Regístrate', :class => 'btn btn-default' %>
+      </div>
     </div>
   <% end %>
 <% else %>
   <%= simple_form_for(resource, :as => resource_name, :url => registration_path(resource_name), :html => { class: 'form-horizontal' }) do |f| %>
-      <%= f.input :role_id, :as => :hidden, :label => "false", :input_html => {:value => Role.where(:name => "Usuario Registrado").first.id } %>
-      <div class="form-group">
-          <%= f.label :email, :class => 'col-sm-4 control-label' %>
-          <div class="col-sm-8">
-              <%= f.input :email, :label => false, :requiered => false, :autofocus => true %>
-          </div>
+    <%= f.input :role_id, :as => :hidden, :label => "false", :input_html => {:value => Role.where(:name => "Usuario Registrado").first.id } %>
+    <div class="form-group">
+      <%= f.label :email, :class => 'col-sm-4 control-label' %>
+      <div class="col-sm-8">
+        <%= f.input :email, :label => false, :requiered => true, :autofocus => true %>
       </div>
-      <div class="form-group">
-          <%= f.label :password, :class => 'col-sm-4 control-label' %>
-          <div class="col-sm-8">
-              <%= f.input :password, :label => false, :requiered => false, :autofocus => true %>
-          </div>
+    </div>
+    <div class="form-group">
+      <%= f.label :password, :class => 'col-sm-4 control-label' %>
+      <div class="col-sm-8">
+        <%= f.input :password, :label => false, :requiered => true, :autofocus => true %>
       </div>
-      <div class="form-group">
-          <%= f.label :password_confirmation, :class => 'col-sm-4 control-label' %>
-          <div class="col-sm-8">
-              <%= f.input :password_confirmation, :label => false, :requiered => false, :autofocus => true %>
-          </div>
+    </div>
+    <div class="form-group">
+      <%= f.label :password_confirmation, :class => 'col-sm-4 control-label' %>
+      <div class="col-sm-8">
+        <%= f.input :password_confirmation, :label => false, :requiered => false, :autofocus => true %>
       </div>
-      <div class="form-group">
-          <div class="col-sm-offset-4 col-sm-8">
-              <%= f.button :submit, 'Regístrate', :class => 'btn btn-default' %>
-          </div>
+    </div>
+    <div class="form-group">
+      <div class="col-sm-offset-4 col-sm-8">
+        <%= f.button :submit, 'Regístrate', :class => 'btn btn-default' %>
       </div>
+    </div>
   <% end %>
 <% end %>
 <%= render "devise/shared/links" %>
