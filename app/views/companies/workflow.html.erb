@@ -48,10 +48,6 @@
               </div>
             </div>
             <div id="services" class="services">
-              <div id="alertDialog" class="alert alert-danger">
-                <button type="button" class="close" aria-hidden="true">&times;</button>
-                <span id="alertMessage"></span>
-              </div>
               <div id="barra" class="wizard">
                 <ul class="steps">
                   <li class="step" id="step1"><span class="badge badge-info">1</span></li>
@@ -202,4 +198,5 @@
 
 <% content_for :scripts do %>
   <%= javascript_include_tag "http://maps.google.com/maps/api/js?sensor=false" %>
+  <%= javascript_include_tag 'Alert.js' %>
 <% end %>

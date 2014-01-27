@@ -6,56 +6,48 @@
     </section>
     <section class="portfolio_teasers_wrapper">
         <div class="container">
-            <h2 class="section_header">Sugerencias de Busqueda</h2>
-            <div class="portfolio_strict row">
-                <div class="col-sm-3 col-md-3">
-                    <div class="portfolio_item">
-                        <div class="portfolio_photo" style="background-image: url(<%= asset_path 'home/peluqueria.jpg' %>)">
-                            <a><p>Peluquerías y Centros de Estética</p></a> 
+            <div class="row">
+                <div class="col-lg-10 col-lg-offset-1">
+                    <h2 class="section_header">Sugerencias de Busqueda</h2>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-10 col-lg-offset-1 recomendados">
+                    <div class="box-recomendacion-lg position-background " style="background-image: url(<%= asset_path 'home/peluqueria.jpg' %>)">
+                        <a href="/search?district=1&inputSearch=Peluqueria" class="box-recomendacion-lg overlay">
+                            <h3>Peluquerías</h3>
+                        </a>
+                    </div>
+                    <div class="box-recomendacion-lg position-background " style="background-image: url(<%= asset_path 'home/taller.jpg' %>)">
+                        <a href="/search?district=1&inputSearch=mecanicos" class="box-recomendacion-lg overlay">
+                             <h3>Talleres Mecánicos</h3>
+                        </a>
+                    </div>
+                    <div class="box-recomendacion-md position-background " style="background-image: url(<%= asset_path 'home/centro_medico.jpg' %>)">
+                        <a href="/search?district=1&inputSearch=centros%20medicos" class="box-recomendacion-md overlay">
+                            <h3>Centros Médicos</h3>
+                        </a>
+                    </div>
+                    <div class="box-recomendacion-md">
+                        <div class="box-recomendacion-sm position-background ">
+                            <a href="/search?district=1&inputSearch=Centros%20de%20Estetica" class="box-recomendacion-sm overlay">
+                                <h3>Centros de Estética</h3>
+                            </a>
                         </div>
-                        <div class="portfolio_description">
-                            <h3>
-                                <a href="/search?district=1&inputSearch=Peluqueria">Peluquerías</a>
-                                <a href="/search?district=1&inputSearch=Centros%20de%20Estetica">Centros de Estética</a>
-                            </h3>
+                        <div class="box-recomendacion-sm position-background " style="background-image: url(<%= asset_path 'home/centro_medico.jpg' %>)">
+                            <a href="/search?district=1&inputSearch=dentista" class="box-recomendacion-sm overlay">
+                                <h3>Dentistas</h3>
+                            </a>
                         </div>
                     </div>
-                </div>
-                <div class="col-sm-3 col-md-3">
-                    <div class="portfolio_item">
-                        <div class="portfolio_photo" style="background-image: url(<%= asset_path 'home/centro_medico.jpg' %>)"> 
-                            <a><p>Dentistas, Kinesiólogos y Centros Médicos</p></a>
-                        </div>
-                        <div class="portfolio_description">
-                            <h3>
-                                <a href="/search?district=1&inputSearch=dentista">Dentistas</a>
-                                <a href="/search?district=1&inputSearch=kinesiologo">Kinesiólogos</a>
-                                <a href="/search?district=1&inputSearch=centros%20medicos">Centros Médicos</a>
-                            </h3>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-sm-3 col-md-3">
-                    <div class="portfolio_item">
-                        <div class="portfolio_photo" style="background-image: url(<%= asset_path 'home/taller.jpg' %>)"> 
-                            <a><p>Talleres Mecánicos</p></a> 
-                        </div>
-                        <div class="portfolio_description">
-                            <h3><a href="/search?district=1&inputSearch=mecanicos">Talleres Mecánicos</a></h3>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-sm-3 col-md-3">
-                    <div class="portfolio_item">
-                        <div class="portfolio_photo" style="background-image: url(<%= asset_path 'home/servicios.jpg' %>)"> 
-                            <a><p>Servicios a domicilio</p></a> 
-                        </div>
-                        <div class="portfolio_description">
-                            <h3><a href="/search?district=1&inputSearch=servicios%20a%20domicilio">Servicios a domicilio</a></h3>
-                        </div>
+                    <div class="box-recomendacion-md position-background " style="background-image: url(<%= asset_path 'home/servicios.jpg' %>)">
+                        <a href="/search?district=1&inputSearch=servicios%20a%20domicilio" class="box-recomendacion-md overlay" >
+                            <h3>Servicios a domicilio</h3>
+                        </a>
                     </div>
                 </div>
             </div>
+ 
         </div>
     </section>
 </div>
