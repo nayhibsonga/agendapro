@@ -31,6 +31,7 @@ class ServicesController < ApplicationController
   def create
     @service = Service.new(service_params)
     @service.company_id = current_user.company_id
+    @service.service_category.company_id = current_user.company_id
 
     respond_to do |format|
       if @service.save
@@ -46,6 +47,7 @@ class ServicesController < ApplicationController
   # PATCH/PUT /services/1
   # PATCH/PUT /services/1.json
   def update
+    @service.service_category.company_id = current_user.company_id
     respond_to do |format|
       if @service.update(service_params)
         format.html { redirect_to @service, notice: 'Servicio actualizado satisfactoriamente.' }
@@ -86,6 +88,6 @@ class ServicesController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def service_params
-      params.require(:service).permit(:name, :price, :duration, :description, :group_service, :capacity, :waiting_list, :company_id, :tag_id, :service_category_id)
+      params.require(:service).permit(:name, :price, :duration, :description, :group_service, :capacity, :waiting_list, :company_id, :tag_id, :service_category_id, service_category_attributes: [:name, :company_id] )
     end
 end

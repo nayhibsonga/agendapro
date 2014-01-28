@@ -1,4 +1,4 @@
-<h1>Listing service_providers</h1>
+<h1>Proveedores de Servicios</h1>
 
 <table>
   <thead>
@@ -12,9 +12,9 @@
   <tbody>
     <% @service_providers.each do |service_provider| %>
       <tr>
-        <td><%= link_to 'Show', service_provider %></td>
+        <td><%= link_to service_provider.public_name, service_provider %></td>
         <td><%= link_to 'Edit', edit_service_provider_path(service_provider) %></td>
-        <td><%= link_to 'Destroy', service_provider, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+        <td><%= link_to 'Destroy', service_provider, method: :delete, data: { confirm: 'Estás Seguro?' } %></td>
       </tr>
     <% end %>
   </tbody>
@@ -22,4 +22,4 @@
 
 <br>
 
-<%= link_to 'New Service provider', new_service_provider_path %>
+<%= link_to 'Nuevo Proveedor de Servicios', new_service_provider_path %>

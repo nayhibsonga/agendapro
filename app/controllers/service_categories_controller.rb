@@ -2,11 +2,13 @@ class ServiceCategoriesController < ApplicationController
   before_action :set_service_category, only: [:show, :edit, :update, :destroy]
   before_action :authenticate_user!, except: [:get_category_name]
   before_action :quick_add, except: [:get_category_name]
+  layout "admin"
+  load_and_authorize_resource
 
   # GET /service_categories
   # GET /service_categories.json
   def index
-    @service_categories = ServiceCategory.all
+    @service_categories = ServiceCategory.where(:company_id => current_user.company_id)
   end
 
   # GET /service_categories/1
@@ -17,6 +19,7 @@ class ServiceCategoriesController < ApplicationController
   # GET /service_categories/new
   def new
     @service_category = ServiceCategory.new
+    @service_category.company_id = current_user.company_id
   end
 
   # GET /service_categories/1/edit
@@ -27,6 +30,7 @@ class ServiceCategoriesController < ApplicationController
   # POST /service_categories.json
   def create
     @service_category = ServiceCategory.new(service_category_params)
+    @service_category.company_id = current_user.company_id
 
     respond_to do |format|
       if @service_category.save

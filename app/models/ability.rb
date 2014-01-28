@@ -29,7 +29,7 @@ class Ability
     # See the wiki for details:
     # https://github.com/ryanb/cancan/wiki/Defining-Abilities
 
-    alias_action :index, :show, :view_plans, :to => :read
+    alias_action :index, :show, :to => :read
     
     #alias_action :workflow, :to => :destroy
     #alias_action :workflow, :to => :update
@@ -93,6 +93,11 @@ class Ability
         can :destroy, CompanySetting, :company_id => user.company_id
         can :create, CompanySetting, :company_id => user.company_id
         can :update, CompanySetting, :company_id => user.company_id
+
+        can :read, ServiceCategory, :company_id => user.company_id
+        can :destroy, ServiceCategory, :company_id => user.company_id
+        can :create, ServiceCategory, :company_id => user.company_id
+        can :update, ServiceCategory, :company_id => user.company_id
 
         can :read, LocationTime, :location => { :company_id => user.company_id }
         can :destroy, LocationTime, :location => { :company_id => user.company_id }

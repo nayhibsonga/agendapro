@@ -46,6 +46,7 @@ class LocationsController < ApplicationController
   # PATCH/PUT /locations/1
   # PATCH/PUT /locations/1.json
   def update
+    @location = Location.find(params[:id])
     @location.location_times.destroy_all
     respond_to do |format|
       if @location.update(location_params)
