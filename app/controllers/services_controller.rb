@@ -29,9 +29,14 @@ class ServicesController < ApplicationController
   # POST /services
   # POST /services.json
   def create
-    @service = Service.new(service_params)
+
+    if service_params[:service_category_attributes][:name].nil?
+      new_params = service_params.except(:service_category_attributes)
+    else
+      new_params = service_params
+    end
+    @service = Service.new(new_params)
     @service.company_id = current_user.company_id
-    @service.service_category.company_id = current_user.company_id
 
     respond_to do |format|
       if @service.save
@@ -47,9 +52,13 @@ class ServicesController < ApplicationController
   # PATCH/PUT /services/1
   # PATCH/PUT /services/1.json
   def update
-    @service.service_category.company_id = current_user.company_id
+    if service_params[:service_category_attributes][:name].nil?
+      new_params = service_params.except(:service_category_attributes)
+    else
+      new_params = service_params
+    end
     respond_to do |format|
-      if @service.update(service_params)
+      if @service.update(new_params)
         format.html { redirect_to @service, notice: 'Servicio actualizado satisfactoriamente.' }
         format.json { head :no_content }
       else
@@ -88,6 +97,6 @@ class ServicesController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def service_params
-      params.require(:service).permit(:name, :price, :duration, :description, :group_service, :capacity, :waiting_list, :company_id, :tag_id, :service_category_id, service_category_attributes: [:name, :company_id] )
+      params.require(:service).permit(:name, :price, :duration, :description, :group_service, :capacity, :waiting_list, :company_id, :service_category_id, service_category_attributes: [:name, :company_id],  :tag_ids => [] )
     end
 end

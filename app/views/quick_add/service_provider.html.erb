@@ -44,5 +44,5 @@
   <%= button_to 'Atrás', service_providers_path, :method => :get, :class => "btn btn-warning btn-sm" %><%= button_to_function "Guardar Proveedor", "createProvider()", :class => "btn btn-success btn-sm" %>
 </div>
 <% content_for :scripts do %>
-  <%= javascript_include_tag "provider" %>
+  <%= javascript_include_tag "quick_provider" %>
 <% end %>

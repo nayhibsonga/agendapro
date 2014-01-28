@@ -138,9 +138,6 @@
 	
 	<![endif]-->
 	<%= yield :scripts %>
-	<%= javascript_include_tag "fullcalendar_js" if params[:controller] == "bookings" %>
-	<%= javascript_include_tag "location_js" if (params[:controller] == "locations") || ((params[:action] == "location") && (params[:controller] == "quick_add")) %>
-	<%= javascript_include_tag "provider_js" if (params[:controller] == "service_providers") || ((params[:action] == "service_provider") && (params[:controller] == "quick_add")) %>
 	
 	<!-- end: JavaScript-->
 	
