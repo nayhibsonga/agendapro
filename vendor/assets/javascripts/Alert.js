@@ -58,7 +58,6 @@ function Alert (appendTo) {
 
 	var hide = function () {
 		$('#alertModal').modal('hide');
-		$('#alertModal #closeModal').remove();
 	}
 
 	//==== Public Methods ====//
@@ -76,6 +75,9 @@ function Alert (appendTo) {
 			$('#alertModal #closeModal').click(function (e) {
 				hide();
 				close_function();
+			});
+			$('#alertModal').on('hidden.bs.modal', function (e) {
+				$('#alertModal #closeModal').remove();
 			});
 		}
 

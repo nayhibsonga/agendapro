@@ -93,7 +93,32 @@ class LocationsController < ApplicationController
     day = date.cwday
     provider_times = Location.find(params[:local]).service_providers.find(params[:provider]).provider_times.where(day_id: day).order(:open)
     bookings = Location.find(params[:local]).service_providers.find(params[:provider]).bookings.where(:start => date.to_time.beginning_of_day..date.to_time.end_of_day).order(:start)
+    provider_times_first = Location.find(params[:local]).service_providers.find(params[:provider]).provider_times.order(:open).first
+    provider_times_final = Location.find(params[:local]).service_providers.find(params[:provider]).provider_times.order(close: :desc).first
 
+    # Empty Blocks before
+    if provider_times.length > 0
+      provider_times_first_open = provider_times_first.open
+      provider_time_open = provider_times[0].open
+      while (provider_times_first_open <=> provider_time_open) < 0 do
+        block_hour = Hash.new
+
+        status = 'empty'
+        hour = {
+          :start => '',
+          :end => ''
+        }
+
+        provider_times_first_open += service_duration.minutes
+
+        block_hour[:status] = status
+        block_hour[:hour] = hour
+
+        @available_time << block_hour
+      end
+    end
+
+    # Hour Blocks
     $i = 0
     $length = provider_times.length
     while $i < $length do
@@ -135,7 +160,7 @@ class LocationsController < ApplicationController
           booking_end = DateTime.parse(booking.end.to_s)
 
           if (booking_start - end_time_block) * (start_time_block - booking_end) > 0
-            status = 'accupied'
+            status = 'occupied'
           end
         end
         
@@ -170,6 +195,28 @@ class LocationsController < ApplicationController
       end
 
       $i += 1
+    end
+
+    # Empty Blocks after
+    if provider_times.length > 0
+      provider_times_final_close = provider_times_final.close
+      provider_time_close = provider_times[$length - 1].close
+      while (provider_time_close <=> provider_times_final_close) < 0 do
+        block_hour = Hash.new
+
+        status = 'empty'
+        hour = {
+          :start => '',
+          :end => ''
+        }
+
+        provider_time_close += service_duration.minutes
+
+        block_hour[:status] = status
+        block_hour[:hour] = hour
+
+        @available_time << block_hour
+      end
     end
 
     respond_to do |format|

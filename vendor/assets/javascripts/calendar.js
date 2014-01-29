@@ -16,6 +16,7 @@ function Calendar (source, getData) {
 	var generateCalendar = function (date) {
 		$('.columna-dia').remove();
 		$('.clear').remove();
+		clickEvent = null;
 
 		var now = date || new Date();
 		var today = now.getDay() - 1;
@@ -88,7 +89,7 @@ function Calendar (source, getData) {
 
 	// Generate Hours
 	var generateHours = function (columnDay, sources) {
-		$.getJSON(sources.source, sources.data, function (data) {
+		$.getJSON(sources.source, sources.data, function (data, status) {
 			$.each(data, function (key, hours) {
 				var div = $('<div>', {
 					'class': 'bloque-hora',
@@ -118,40 +119,51 @@ function Calendar (source, getData) {
 				}
 				div.click(function (e) {
 					var element = $(e.currentTarget);
-					var details = {
-						time: new Date(),
-						message: 'Hour ' + element.data('start') + ' - ' + element.data('end') + ' click on day ' + element.parent().data('date'),
-						date: element.parent().data('date'),
-						start: element.data('start'),
-						end: element.data('end'),
-						objectDate: parseDate(element.parent().data('date'), element.data('start')),
-						status: hours.status
-					};
-					$.event.trigger({
-						type: 'hourClick',
-						time: details.time,
-						message: details.message,
-						date: details.date,
-						start: details.start,
-						end: details.end,
-						status: details.status,
-						objectDate: details.objectDate
-					});
-					clickEvent = details;
+					if (element.hasClass('hora-disponible')) {
+						// Activate block
+						$('.hora-activo').addClass('hora-disponible').removeClass('hora-activo');
+						element.removeClass('hora-disponible').addClass('hora-activo');
+
+						// Event
+						var details = {
+							time: new Date(),
+							message: 'Hour ' + element.data('start') + ' - ' + element.data('end') + ' click on day ' + element.parent().data('date'),
+							date: element.parent().data('date'),
+							start: element.data('start'),
+							end: element.data('end'),
+							objectDate: parseDate(element.parent().data('date'), element.data('start')),
+							status: hours.status
+						};
+						$.event.trigger({
+							type: 'hourClick',
+							time: details.time,
+							message: details.message,
+							date: details.date,
+							start: details.start,
+							end: details.end,
+							status: details.status,
+							objectDate: details.objectDate
+						});
+						clickEvent = details;
+					}
 				});
 				columnDay.append(div);
 			});
+			if (!data.length) {
+				columnDay.remove();
+			}
 		});
 	}
 
 	var parseDate = function (date, start) {
 		start = start || '00:00';
-		var month = date.substring(0, date.indexOf('/'));
+		var month = date.substring(0, date.indexOf('/')) - 1;
 		date = date.substring(date.indexOf('/') + 1);
 		var day = date.substring(0, date.indexOf('/'));
 		var year = date.substring(date.indexOf('/') + 1);
 		var hour = start.substring(0, start.indexOf(':'));
 		var minutes = start.substring(start.indexOf(':') + 1);
+
 		return new Date(year, month, day, hour, minutes);
 	}
 
