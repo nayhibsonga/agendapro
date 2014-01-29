@@ -130,7 +130,7 @@ service = Service.create([
 	{name: "Corte Dama", price: 9500, duration: 30, company_id: 2, description: "Incluye: Lavado y secado de cabello"},
 	{name: "Lavado mas brushing pelo corto", price: 8900, duration: 30, company_id: 3, description: "Lavado con productos redken, loreal, diapo, mas brushing (blow dry)"},
 	{name: "Corte", price: 15000, duration: 30, company_id: 3, description:"corte incluye lavado y secado"},
-	{name: "Coloracion Shades EQ REDKEN", price: 29000, duration: 60, company_id: 3,, description:"<p>Color SIN AMONIACO &nbsp;cuida tu cabello, aporte de vitaminas y mucho brillo</p>"},
+	{name: "Coloracion Shades EQ REDKEN", price: 29000, duration: 60, company_id: 3, description:"<p>Color SIN AMONIACO &nbsp;cuida tu cabello, aporte de vitaminas y mucho brillo</p>"},
 	{name: "Color", price: 25000, duration: 60, company_id: 3, description:"<p>Retoque raiz de color, para cabellos con mas de 45% de canas.</p>"},
 	{name: "lavado mas brushing pelo largo", price: 10900, duration: 30, company_id: 3, description:"<p>lavado mas peinado&nbsp;</p>"},
 	{name: "lavado mas brushing pelo XL", price: 12900, duration: 60, company_id: 3, description:"<p>Lavado y brushing para cabellos extra largos</p>"},

@@ -20,7 +20,7 @@ class ServiceProvider < ActiveRecord::Base
 
 	def plan_service_providers
 		@company = self.company
-		if company.service_providers.count >= company.plan.staffs
+		if company.service_providers.count >= company.plan.service_providers
 			errors.add(:service_provider, "No se pueden agregar más proveedores de servicios con el plan actual, ¡mejóralo!.")
 		end
 	end

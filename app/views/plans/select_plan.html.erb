@@ -5,7 +5,7 @@
     <tr>
       <th>Nombre</th>
       <th>Locales</th>
-      <th>Staffs</th>
+      <th>Proveedores de Servicio</th>
       <th>Precio</th>
       <th></th>
     </tr>
@@ -16,7 +16,7 @@
       <tr>
         <td><%= plan.name %></td>
         <td><%= plan.locations %></td>
-        <td><%= plan.staffs %></td>
+        <td><%= plan.service_providers %></td>
         <td><%= plan.price %></td>
         <% if @company.plan_id != plan.id %>
         <td><%= link_to "Elegir este plan", select_plan_path(:plan_id => plan.id) %></td>

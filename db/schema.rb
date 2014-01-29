@@ -173,14 +173,14 @@ ActiveRecord::Schema.define(version: 20140109135803) do
   add_index "plan_logs", ["company_id"], name: "index_plan_logs_on_company_id", using: :btree
 
   create_table "plans", force: true do |t|
-    t.string   "name",                       null: false
-    t.integer  "locations",                  null: false
-    t.integer  "staffs",                     null: false
-    t.boolean  "custom",     default: false
+    t.string   "name",                              null: false
+    t.integer  "locations",                         null: false
+    t.integer  "service_providers",                 null: false
+    t.boolean  "custom",            default: false
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.float    "price",      default: 0.0,   null: false
-    t.boolean  "special",    default: false
+    t.float    "price",             default: 0.0,   null: false
+    t.boolean  "special",           default: false
   end
 
   create_table "promotions", force: true do |t|

@@ -3,9 +3,8 @@
 <p>Nombre: <%= @user.first_name %></p>
 <p>Apellido: <%= @user.last_name %></p>
 <p>Teléfono: <%= @user.phone %></p>
-<p>Usuario: <%= @user.user_name %></p>
-<p>Role: <%= @user.role.name %></p>
+<p>Tipo: <%= @user.role.name %></p>
 <p>Email: <%= @user.email %></p>
 
-<%= link_to 'Edit', edit_admin_user_path(:id => @user.id) %> |
-<%= link_to 'Back', admin_users_path %>
+<%= link_to 'Editar', edit_admin_user_path(:id => @user.id) %> |
+<%= link_to 'Atrás', admin_users_path %>
