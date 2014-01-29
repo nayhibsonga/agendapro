@@ -1,38 +1,14 @@
-<h1>Reservas</h1>
-
-<table>
-  <thead>
-    <tr>
-      <th></th>
-      <th></th>
-      <th></th>
-    </tr>
-  </thead>
-
-  <tbody>
-    <% @bookings.each do |booking| %>
-      <tr>
-        <td><%= link_to booking.start.to_s+" "+booking.end.to_s, booking %></td>
-        <td><%= link_to 'Editar', edit_booking_path(booking) %></td>
-        <td><%= link_to 'Eliminar', booking, method: :delete, data: { confirm: '¿Estás seguro?' } %></td>
-      </tr>
-    <% end %>
-  </tbody>
-</table>
-
-<br>
-
-<%= link_to 'Nueva Reserva', new_booking_path %>
+<h1>Calendario AgendaPro</h1>
 
 <div class="row">
-  <% @locations.each do |local| %>
-    <div class="radio">
-      <label>
-        <input type="radio" name="localRadio" id="localOption<%= local.id %>" value="<%= local.id %>" <%= "checked" if ((!@selectedLocal) && (local.id == @locations.first.id)) || (@selectedLocal.to_i == local.id) %>>
+  <div  class="radio">
+    <label>
+      <% @locations.each do |local| %>
+        <input type="radio" name="localRadio" id="localOption<%= local.id %>" onchange="loadProviders()" value="<%= local.id %>" <%= "checked" if ((!@selectedLocal) && (local.id == @locations.first.id)) || (@selectedLocal.to_i == local.id) %>>
         <p><%= local.name %></p>
-      </label>
-    </div>
-  <% end %>
+      <% end %>
+    </label>
+  </div>
 </div>
 
 <div class="row">
@@ -41,8 +17,8 @@
   </div>
 </div>
 <div class="row">
-  <div id="add_booking" class="radio">
-    <%= button_to "Agregar Reserva", new_booking_path, :method => :get, :class => "btn btn-success btn-sm" %>
+  <div id="add_booking">
+    <%= link_to '<i class="fa fa-calendar"></i>  Agregar Reserva'.html_safe, new_booking_path, :method => :get, :class => "btn btn-primary btn-md" %>
   </div>
 </div>
 <div class="row">

@@ -8,7 +8,9 @@
 <p>Capacidad: <%= @service.capacity %></p>
 <p>Lista de Espera: <%= @service.waiting_list %></p>
 <p>Empresa: <%= @service.company.name %></p>
-<p>Etiqueta: <%= @service.tag.name %></p>
+<% if @service.service_category %>
+<p>Categoría: <%= @service.service_category.name %></p>
+<% end %>
 
 <%= link_to 'Editar', edit_service_path(@service) %> |
 <%= link_to 'Atrás', services_path %>

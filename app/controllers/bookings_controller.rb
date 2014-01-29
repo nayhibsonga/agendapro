@@ -81,8 +81,12 @@ class BookingsController < ApplicationController
   end
 
   def provider_booking
-    bookings = Booking.where('service_provider_id = ? AND location_id = ?', params[:provider], params[:location]).order(:start)
-    render :json => bookings
+    @provider = params[:provider]
+    if @provider.nil?
+      @provider = ServiceProvider.where(:location_id => params[:location])
+    end
+    @bookings = Booking.where(:service_provider_id => @provider, :location_id => params[:location]).order(:start)
+    render :json => @bookings
   end
 
   def book_service
