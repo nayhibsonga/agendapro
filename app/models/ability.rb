@@ -52,6 +52,8 @@ class Ability
     can :get_providers, Service
     can :provider_booking, Booking
     can :book_service, Booking
+    can :get_category_name, ServiceCategory
+    can :get_available_time, Location
 
     # Search
     can :get_districts, District

@@ -11,7 +11,7 @@
 //= require workflow/overview.js
 //= require workflow/wizard.js
 //= require workflow/services.js
-//= require fullcalendar.js
+//= require calendar.js
 //= require workflow/analytics.js
 
 

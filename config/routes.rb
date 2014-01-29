@@ -1,4 +1,5 @@
 Agendapro::Application.routes.draw do
+  get 'locations/get_available_time'
 
   get "users/index"
   require 'subdomain'
@@ -71,10 +72,10 @@ Agendapro::Application.routes.draw do
   # wrokflow - wizard
   get '/local_services', :to => 'service_providers#location_services'
   get '/local_providers', :to => 'service_providers#location_providers'
-  get '/service', :to => 'services#service_data'
+  get '/service', :to => 'services#service_data'  # Fullcalendar
   get '/providers_services', :to => 'services#get_providers'
-  get '/provider_time', :to => 'service_providers#provider_time'
-  get '/booking', :to => 'bookings#provider_booking'
+  get '/provider_time', :to => 'service_providers#provider_time'  # Fullcalendar
+  get '/booking', :to => 'bookings#provider_booking'  # Fullcalendar
   get '/get_booking', :to => 'bookings#get_booking'
   post "/book", :to => 'bookings#book_service'
   get '/category_name', :to => 'service_categories#get_category_name'

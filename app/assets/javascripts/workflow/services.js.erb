@@ -78,26 +78,34 @@ function loadStep1 () {
 function loadStep2 () {
 	if($('[name="serviceRadio"]').is(':checked')){
 		$('#staff-selector').html('<%= image_tag "ajax-loader.gif", :alt => "Loader" %>');
-		$('#calendar').fullCalendar('removeEvents');
-		$('#calendar').empty();
-		$('#calendar').html('Seleccione un staff para ver el horario');
+		// $('#calendar').fullCalendar('removeEvents');
+		// $('#calendar').empty();
+		// $('#calendar').html('Seleccione un staff para ver el horario');
 		var serviceId = $('input[name=serviceRadio]:checked').val();
-		var minHour = 23;
-		var minMinuts = 59;
-		var maxHour = 00;
-		var maxMinuts = 00;
+		// var minHour = 23;
+		// var minMinuts = 59;
+		// var maxHour = 00;
+		// var maxMinuts = 00;
 		$.getJSON('/providers_services', {id: serviceId}, function (providers) {
 			$('#staff-selector').empty();
 			$.each(providers, function (key, provider) {
 				$('#staff-selector').append('<label>' +
 						'<input type="radio" name="staffRadio" value="' + provider.id + '">' +
-						'<p>Provider: ' + provider.id + '</p>' +
+						'<p>' + provider.public_name + '</p>' +
 					'</label>'
 				);
 			});
 			$('[name="staffRadio"]').on('click', function(event) {
-				var providerId = event.target.getAttribute('value');
-				loadProviderTime(providerId);
+				$('#message').hide();
+				$('.horario').show();
+				// var providerId = event.target.getAttribute('value');
+				var data = {
+					provider: event.target.getAttribute('value'),
+					local: $('input[name=localRadio]:checked').val(),
+					service: $('input[name="serviceRadio"]:checked').val()
+				}
+				var calendar = new Calendar('/locations/get_available_time.json', data);
+				// loadProviderTime(providerId);
 			});
 		});
 		return true;
@@ -111,15 +119,15 @@ function loadStep2 () {
 
 function loadStep3 () {
 	if ($('[name="staffRadio"]').is(':checked')){
-		var booking = $('#calendar').fullCalendar('clientEvents', 'newBooking');
-		if (booking.length) {
-			$('#start').val(booking[0].start);
-			$('#end').val(booking[0].end);
-			$('#provider').val($('input[name=staffRadio]:checked').val());
-			$('#service').val($('input[name=serviceRadio]:checked').val());
-			$('#location').val($('input[name=localRadio]:checked').val());
-			return true;
-		}
+		// var booking = $('#calendar').fullCalendar('clientEvents', 'newBooking');
+		// if (booking.length) {
+		// 	$('#start').val(booking[0].start);
+		// 	$('#end').val(booking[0].end);
+		// 	$('#provider').val($('input[name=staffRadio]:checked').val());
+		// 	$('#service').val($('input[name=serviceRadio]:checked').val());
+		// 	$('#location').val($('input[name=localRadio]:checked').val());
+		// 	return true;
+		// }
 		myAlert.showAlert(
 	      '<h3>Seleccione un Horario</h3>' +
 	      '<p>Debe elegir un horario antes de poder continuar.</p>'

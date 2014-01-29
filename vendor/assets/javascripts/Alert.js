@@ -82,7 +82,3 @@ function Alert (appendTo) {
 		show();
 	}
 }
-
-$(function(){
-	alert1 = new Alert();
-})
