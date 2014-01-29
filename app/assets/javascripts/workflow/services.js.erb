@@ -78,26 +78,46 @@ function loadStep1 () {
 function loadStep2 () {
 	if($('[name="serviceRadio"]').is(':checked')){
 		$('#staff-selector').html('<%= image_tag "ajax-loader.gif", :alt => "Loader" %>');
-		$('#calendar').fullCalendar('removeEvents');
-		$('#calendar').empty();
-		$('#calendar').html('Seleccione un staff para ver el horario');
+		$('#message').show();
+		$('.horario').hide();
+		selected = false;
 		var serviceId = $('input[name=serviceRadio]:checked').val();
-		var minHour = 23;
-		var minMinuts = 59;
-		var maxHour = 00;
-		var maxMinuts = 00;
+
 		$.getJSON('/providers_services', {id: serviceId}, function (providers) {
 			$('#staff-selector').empty();
 			$.each(providers, function (key, provider) {
 				$('#staff-selector').append('<label>' +
 						'<input type="radio" name="staffRadio" value="' + provider.id + '">' +
-						'<p>Provider: ' + provider.id + '</p>' +
+						'<p>' + provider.public_name + '</p>' +
 					'</label>'
 				);
 			});
 			$('[name="staffRadio"]').on('click', function(event) {
-				var providerId = event.target.getAttribute('value');
-				loadProviderTime(providerId);
+				$('#message').hide();
+				$('.horario').show();
+
+				var data = {
+					provider: event.target.getAttribute('value'),
+					local: $('input[name=localRadio]:checked').val(),
+					service: $('input[name="serviceRadio"]:checked').val()
+				}
+				var calendar = new Calendar('/get_available_time.json', data);
+				
+				$(document).on('hourClick', function (e) {
+					addBooking(e);
+				});
+
+				$(function () {
+					$('#prev').click(function () {
+						selected = false;
+					});
+					$('#next').click(function () {
+						selected = false;
+					});
+					$('#today').click(function () {
+						selected = false;
+					});
+				});
 			});
 		});
 		return true;
@@ -111,10 +131,7 @@ function loadStep2 () {
 
 function loadStep3 () {
 	if ($('[name="staffRadio"]').is(':checked')){
-		var booking = $('#calendar').fullCalendar('clientEvents', 'newBooking');
-		if (booking.length) {
-			$('#start').val(booking[0].start);
-			$('#end').val(booking[0].end);
+		if (selected) {
 			$('#provider').val($('input[name=staffRadio]:checked').val());
 			$('#service').val($('input[name=serviceRadio]:checked').val());
 			$('#location').val($('input[name=localRadio]:checked').val());
@@ -154,192 +171,34 @@ function loadDescription (serviceId) {
 	});
 }
 
-//====== Manage Calendar ======//
-
-var duration = 30;
-function loadCalendar (startTime, endTime, hiddenDays) {
-	//Default values
-	startTime = startTime || 0;
-	endTime = endTime || 24;
-	hiddenDays = hiddenDays || [];
-
-	var serviceId = $('input[name="serviceRadio"]:checked').val();
-	$.getJSON('/service', {id: serviceId}, function (service) {
-		duration = service.duration;
-		$('#calendar').fullCalendar('removeEvents');
-		$('#calendar').empty();
-		$('#calendar').fullCalendar({
-		    header: {
-		    	left: 'title',
-		    	center: 'agendaWeek,agendaDay',
-		    	right: 'prev,today,next'
-		    },
-		    firstDay: 1,	//Lunes
-		    defaultView: 'agendaWeek',
-		    allDaySlot: false,
-		    axisFormat: 'HH:mm',
-		    timeFormat: 'HH:mm{ - HH:mm}',
-		    columnFormat: {
-		    	week: 'ddd d/M',
-		    	day: 'dddd d/M' 
-		    },
-		    titleFormat: {
-		    	week: 'MMM d[ yyyy]{ &#8212;[ MMM] d yyyy}',
-		    	day: 'dddd, d MMM yyyy'  
-		    },
-		    buttonText: {
-			    prev:     '&lsaquo;', // <
-			    next:     '&rsaquo;', // >
-			    today:    'Hoy',
-			    week:     'Semana',
-			    day:      'Día'
-		    },
-		    monthNames: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
-		    monthNamesShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
-		    dayNames: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'],
-		    dayNamesShort: ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'],
-		    minTime: startTime,
-		    maxTime: endTime,
-		    dayClick: function (date) {
-		    	addBooking(date);
-		    },
-		    defaultEventMinutes: duration,
-		    /*eventDrop: function (event, dayDelta, minuteDelta, allDay, revertFunc) {
-		    	moveBooking(event, revertFunc);
-		    },*/
-		    slotMinutes: duration,
-		    eventColor: '#ff0000',
-		    hiddenDays: hiddenDays
-		});
-	});
-}
-
-function loadProviderTime (providerId) {
-	$('#calendar').html('<%= image_tag "ajax-loader.gif", :alt => "Loader" %>');
-	$.getJSON('/provider_time', {id: providerId}, function (times) {
-		var minHour = 23;
-		var minMinuts = 59;
-		var maxHour = 00;
-		var maxMinuts = 00;
-		$.each(times, function (key, time) {
-				var openHour = parseInt(getHour(time.open).substr(0, getHour(time.open).indexOf(':')));
-				var openMinuts = parseInt(getHour(time.open).substr(getHour(time.open).indexOf(':') + 1));
-				var closeHour = parseInt(getHour(time.close).substr(0, getHour(time.close).indexOf(':')));
-				var closeMinuts = parseInt(getHour(time.close).substr(getHour(time.close).indexOf(':') + 1));
-				if(openHour < minHour) {
-					minHour = openHour;
-					minMinuts = openMinuts;
-				}
-				else if (openHour == minHour) {
-					if(openMinuts < minMinuts) {
-						minMinuts = openMinuts;
-					}
-				}
-				if(closeHour > maxHour) {
-					maxHour = closeHour;
-					maxMinuts = closeMinuts;
-				}
-				else if (closeHour == maxHour) {
-					if(closeMinuts > maxMinuts) {
-						maxMinuts = closeMinuts;
-					}
-				}
-		});
-		$.getJSON('/schedule', {local: $('input[name=localRadio]:checked').val()}, function (schedule) {
-			hiddenDays = new Array();
-			if (!schedule.domingo.length) {
-				hiddenDays.push(0);
-			}
-			if (!schedule.lunes.length) {
-				hiddenDays.push(1);
-			}
-			if (!schedule.martes.length) {
-				hiddenDays.push(2);
-			}
-			if (!schedule.miercoles.length) {
-				hiddenDays.push(3);
-			}
-			if (!schedule.jueves.length) {
-				hiddenDays.push(4);
-			}
-			if (!schedule.viernes.length) {
-				hiddenDays.push(5);
-			}
-			if (!schedule.sabado.length) {
-				hiddenDays.push(6);
-			}
-			loadCalendar(minHour + ':' + minMinuts, maxHour + ':' + maxMinuts, hiddenDays);
-			loadProviderBooking(providerId);
-		  });
-	});
-}
-
-function loadProviderBooking (providerId) {
-	var localId = $('input[name=localRadio]:checked').val();
-	var serviceId = $('input[name=serviceRadio]:checked').val();
-	$('#calendar').fullCalendar('removeEvents');
-	$.getJSON('/booking', {location: localId, provider: providerId}, function (bookings) {
-		$.each(bookings, function (key, booking) {
-			var events = {
-				title: 'Ocupado',
-				allDay: false,
-				start: booking.start,
-				end: booking.end,
-			}
-			$('#calendar').fullCalendar('renderEvent', events, true);
-		});
-	});
-}
-
 //====== Manage Booking ======//
 
-function addBooking (date) {
-	if (validateBooking(date)) {
-		var endDate = new Date(date.getTime() + duration * 60 * 1000);
-		$('#calendar').fullCalendar('removeEvents', 'newBooking');
-		$('#calendar').fullCalendar('renderEvent',
-			{
-				id: 'newBooking',
-				title: 'Nueva cita',
-				allDay: false,
-				start: date,
-				end: endDate,
-				// startEditable: true,
-				color: '#1e8584'
-			},
-			true);
-	}
-}
+var selected = false;
 
-function validateBooking (startDate) {
-	var valid = true;
-	var now = new Date();
-	var endDate = new Date(startDate.getTime() + duration * 60 * 1000);
-	if (startDate <= now) {
-		valid = false;
+function addBooking (booking) {
+	var today = new Date();
+	today.setHours(23, 59, 59, 999);
+	if (today < booking.objectDate) {
+		selected = true;
+		$('#start').val(generateDate(booking.date, booking.start));
+		$('#end').val(generateDate(booking.date, booking.end));
+	}
+	else {
+		selected = false;
+		$('.hora-activo').addClass('hora-disponible').removeClass('hora-activo');
 		myAlert.showAlert(
 	      '<h3>Horario Invalido</h3>' +
 	      '<p>La fecha/hora elegida es anterior a la fecha/hora actual.</p>'
 	    );
 	}
-	else {
-		var localId = $('input[name=localRadio]:checked').val();
-		var serviceId = $('input[name=serviceRadio]:checked').val();
-		var providerId = $('input[name=staffRadio]:checked').val();
-		$.getJSON('/booking', {location: localId, provider: providerId}, function (bookings) {
-			$.each(bookings, function (key, booking) {
-				var startBooking = $.fullCalendar.parseDate(booking.start);
-				var endBooking = $.fullCalendar.parseDate(booking.end);
-				if ((endDate > startBooking && endDate < endBooking) || (startDate < endBooking && startDate > startBooking) || (startDate > startBooking && endDate < endBooking)) {
-					valid = false;
-					myAlert.showAlert(
-				      '<h3>Horario Invalido</h3>' +
-				      '<p>No se puede agendar con esta persona debido a que ya se encuentra ocupado.</p>'
-				    );					alertMessage('No pueden topar los horarios.');
-					$('#calendar').fullCalendar('removeEvents', 'newBooking');
-				}
-			});
-		});
-	}
-	return valid;
+}
+
+function generateDate(date, time) {
+	var month = date.substring(0, date.indexOf('/'));
+	var day = date.substring(date.indexOf('/') + 1, date.lastIndexOf('/'));
+	var year = date.substring(date.lastIndexOf('/') + 1);
+
+	time += ':00';
+
+	return year + '-' + month + '-' + day + ' ' + time;
 }

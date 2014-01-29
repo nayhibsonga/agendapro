@@ -95,6 +95,8 @@ var myAlert;
 $(function() {
   myAlert = new Alert('.main');
 
+  $('.horario').hide();
+
   $('[name="localRadio"]').on('click', function(event) {
     var id = event.target.getAttribute('value');
     loadSchedule(id);
