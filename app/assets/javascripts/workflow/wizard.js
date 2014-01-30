@@ -90,7 +90,7 @@ function nextStep() {
     }
   }
   catch (err) {
-    alertMessage('Error cargando\n');
+    myAlert.showAlert('Error cargando');
   }
 }
 
@@ -142,11 +142,6 @@ function stepClick(id) {
   }
 }
 
-function alertMessage(message) {
-  $('#alertMessage').html(message);
-  $('#alertDialog').show();
-}
-
 $(function() {
   //Search elements and function of the wizard
   var count = 1;
@@ -195,7 +190,7 @@ $(function() {
     functions[0]();
   }
   catch (err) {
-    alertMessage('Error cargando\n');
+    myAlert.showAlert('Error cargando');
   }
 
   $("#alertDialog").hide();

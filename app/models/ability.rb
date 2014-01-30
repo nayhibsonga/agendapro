@@ -56,6 +56,8 @@ class Ability
     can :location_providers, ServiceProvider
     can :provider_time, ServiceProvider
     can :location_time, Location
+    can :get_category_name, ServiceCategory
+    can :get_available_time, Location
 
     # Search
     can :get_districts, District

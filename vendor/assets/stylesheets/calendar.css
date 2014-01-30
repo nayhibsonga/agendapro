@@ -1,0 +1,54 @@
+.horario{
+	width:100%;
+}
+.columna-dia{
+	width:13%;
+	margin:0px 0.6%;
+	float:left;
+}
+.dia-semana{
+	width:100%;
+	height:25px;
+	text-align:center;
+	font-weight:bold;
+	color: #676767;
+}
+.bloque-hora{
+	width:100%;
+	height:44px;
+	border-radius:5px;
+	margin-bottom:10px;
+	text-align:center;
+	line-height: 2.7
+}
+.hora-disponible{
+	cursor:pointer;
+	background: #f8f8f8;
+	background-color: rgba(248, 248, 248, 0.8);
+	border: 1px solid #ccc;
+	color: #262626;
+}
+.hora-disponible:hover{
+	background-color: #006D68;
+	color: #fff;
+	transition:0.5s;
+}
+.hora-ocupada{
+	background-color: #f2dede;
+	border:1px solid #FAA9AA;
+	color: #FC5658;
+}
+.hora-vacia{
+	background:rgba(216,216,216,0.5);
+	border:1px solid #ccc;
+}
+.hora-activo{
+	cursor:pointer;
+	background: #1e8584;
+	background-color: rgba(30, 133, 132, 0.8);
+	border: 1px solid #1e8584;
+	color: #fff;
+}
+.clear{
+	clear:both;
+}

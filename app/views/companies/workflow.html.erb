@@ -1,9 +1,11 @@
+<%= stylesheet_link_tag "calendar" %>
+
 <div class="main">
     <section class="pricing_wrapper">
         <div class="container">
           <div class="menu-bar">
-            <a id="overview-link" href="#" class="active"><span class="badge">Overview</span></a>
-            <a id="services-link" href="#"><span class="badge">Services</span></a>
+            <a id="overview-link" href="#" class="active"><span class="badge">Descripción</span></a>
+            <a id="services-link" href="#"><span class="badge">Servicios</span></a>
             <button id="schedule" type="button" class="btn btn-info pull-right">Agendar</button>
           </div>
           <div class="well well-lg">
@@ -100,8 +102,14 @@
                           </form>
                         </div>
                         <div class="col-md-8">
-                          <div id="calendar">
-                            Seleccione un staf para ver el horario.
+                          <span id="message">Seleccione un staff para ver el horario</span>
+                          <div class="horario">
+                            <div class="header">
+                              <span class="tittle"></span>
+                              <button type="button" class="btn btn-default" id="prev">&lsaquo;</button>
+                              <button type="button" class="btn btn-default" id="today">Hoy</button>
+                              <button type="button" class="btn btn-default" id="next">&rsaquo;</button>
+                            </div>
                           </div>
                         </div>
                       </div>
