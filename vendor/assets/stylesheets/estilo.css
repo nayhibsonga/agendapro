@@ -1,0 +1,52 @@
+@charset "UTF-8";
+
+
+#navegacion-workflow{
+	margin:10px 0px 0px 0px;
+	background: #F3F3F3;
+	border: 1px solid #ccc;
+	border-radius: 5px;
+	padding:5px 0px;
+}
+.btn-success{
+	color: #ffffff;
+	background-color: #FA4616;
+	border-color: #E64215;
+}
+.pasos-reserva a{
+	height:33px;
+	width: 30%;
+	margin:0px 1.5%;
+	float:left;
+	text-align: center;
+	background: #D1D1D1;
+	bordert:1px solid #999;
+	color: #fff;
+	line-height: 2.4;
+	border-radius: 5px;
+	border:1px solid #585656;
+}
+.pasos-reserva a:hover, .pasos-reserva a.selected{
+	background-color: rgba(250, 70, 22, 0.45);
+	border:1px solid #FA4616;
+}
+#espacio-workflow{
+	margin-top:10px;
+}
+
+.box-step{
+	min-height:350px;
+	background:#F3F3F3;
+	border: 1px solid #C0C0C0;
+	border-radius: 5px;
+	float:left;
+}
+.panel-info {
+	border-color: rgba(27,115,112,0.6);
+}
+.panel-info>.panel-heading {
+color: rgba(27,115,112,1);
+background-color: rgba(27,115,112,0.4);
+border-color: rgba(27,115,112,0.6);
+}
+

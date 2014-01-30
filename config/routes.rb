@@ -69,6 +69,7 @@ Agendapro::Application.routes.draw do
   get '/schedule', :to => 'location_times#schedule_local'
   get '/local', :to => 'locations#location_data'
   # wrokflow - wizard
+  get '/workflow', :to => 'companies#workflow', :as => 'workflow'
   get '/local_services', :to => 'service_providers#location_services'
   get '/local_providers', :to => 'service_providers#location_providers'
   get '/service', :to => 'services#service_data'  # Fullcalendar
@@ -83,7 +84,7 @@ Agendapro::Application.routes.draw do
   
   # Root
   get '/' => 'searchs#index', :constraints => { :subdomain => 'www' }
-  get '/' => 'companies#workflow', :constraints => { :subdomain => /.+/ }
+  get '/' => 'companies#overview', :constraints => { :subdomain => /.+/ }
 
   root :to => 'searchs#index'
   

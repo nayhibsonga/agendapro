@@ -1,0 +1,57 @@
+<div class="main">
+    <section class="pricing_wrapper">
+      <div class="container">
+        <div class="overview">
+          <div>
+            <h4>
+              About
+              <button id="schedule" type="button" class="btn btn-info pull-right">Agendar</button>
+            </h4>
+            <p><%= @company.description %></p>
+          </div>
+          <hr>
+          <div>
+            <div class="row">
+              <div class="col-md-4"><!-- Locations -->
+                <h3>Selecciona un Local</h3>
+                <form id="local-form" role="form">
+                  <% @locations.each do |local| %>
+                  <div class="radio">
+                    <label>
+                      <input type="radio" name="localRadio" id="localOption<%= local.id %>" value="<%= local.id %>" <%= "checked" if @selectedLocal.to_i == local.id %>>
+                      <p class="lead"><%= local.name %></p>
+                      <p><%= local.address %>, <%= local.district.name %></p>
+                    </label>
+                  </div>
+                  <% end %>
+                </form>
+              </div>
+              <div class="col-md-8"><!-- Local Description -->
+                <div class="col-md-12">
+                  <div id="map"></div>
+                </div>
+                <div class="col-md-12">
+                  <div class="schedule">
+                    <div class="schedule-title">
+                      <h5>Horario</h5>
+                    </div>
+                    <div class="schedule-body">
+                      No hay un local seleccionado
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+</div>
+
+<%= content_tag "div", id: "workflow_url", data: {url: @url} do %>
+<% end %>
+
+<% content_for :scripts do %>
+  <%= javascript_include_tag "http://maps.google.com/maps/api/js?sensor=false" %>
+  <%= javascript_include_tag "workflow/overview.js" %>
+<% end %>

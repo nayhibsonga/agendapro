@@ -1,47 +1,161 @@
+<%= stylesheet_link_tag "estilo" %>
 <%= stylesheet_link_tag "calendar" %>
 
 <div class="main">
-    <section class="pricing_wrapper">
-        <div class="container">
-          <div class="menu-bar">
-            <a id="overview-link" href="#" class="active"><span class="badge">Descripción</span></a>
-            <a id="services-link" href="#"><span class="badge">Servicios</span></a>
-            <button id="schedule" type="button" class="btn btn-info pull-right">Agendar</button>
+  <section class="pricing_wrapper">
+      <div class="container">
+        <div class="services">
+          <div class="container">
+            <div class="row" id="navegacion-workflow">
+              <div class="col-md-2"><a id="prev2" class="btn btn-success"><i class="glyphicon glyphicon-chevron-left"></i> Anterior</a></div>
+              <div class="col-md-8"><div id="pager2" class="pasos-reserva"></div></div>
+              <div class="col-md-2"><a id="next2" class="btn btn-success pull-right">Siguiente <i class="glyphicon glyphicon-chevron-right"></i></a></div>
+            </div>
           </div>
-          <div class="well well-lg">
-            <div id="overview" class="overview">
-              <div>
-                <h4>About</h4>
-                <p><%= @company.description %></p>
-              </div>
-              <hr>
-              <div>
-                <div class="row">
-                  <div class="col-md-4"><!-- Locations -->
-                    <h3>Selecciona un Local</h3>
-                    <form id="local-form" role="form">
-                      <% @locations.each do |local| %>
-                      <div class="radio">
-                        <label>
-                          <input type="radio" name="localRadio" id="localOption<%= local.id %>" value="<%= local.id %>" <%= "checked" if @selectedLocal.to_i == local.id %>>
-                          <p class="lead"><%= local.name %></p>
-                          <p><%= local.address %>, <%= local.district.name %></p>
-                        </label>
+          <div class="container">
+            <div clas="row" id="espacio-workflow">
+              <div class="col-md-12">
+                <div id="foo4">
+                  <div class="box-step">
+                    <div class="col-md-12">
+                      <h4>Servicios</h4>
+                      <div class="col-md-6" id="services-selector">
+                        <%= image_tag "ajax-loader.gif", :alt => "Loader" %>
                       </div>
-                      <% end %>
-                    </form>
-                  </div>
-                  <div class="col-md-8"><!-- Local Description -->
-                    <div class="col-md-12">
-                      <div id="map"></div>
-                    </div>
-                    <div class="col-md-12">
-                      <div class="schedule">
-                        <div class="schedule-title">
-                          <h5>Horario</h5>
+                      <div class="col-md-6">
+                        <div class="panel panel-info">
+                          <div class="panel-heading">
+                            <h3 class="panel-title">Descripción</h3>
+                          </div>
+                          <div class="panel-body">
+                            <table class="table">
+                              <tbody id="services-description">
+                              </tbody>
+                            </table>
+                          </div>
                         </div>
-                        <div class="schedule-body">
-                          No hay un local seleccionado
+                      </div>
+                    </div>
+                  </div>
+                  <div class="box-step">
+                    <div class="col-md-12">
+                      <h4>Seleccione un Staff</h4>
+                      <div class="col-md-3">
+                        <div class="panel panel-default">
+                          <div class="panel-body">
+                            Seleccione un staff para ver el horario
+                          </div>
+                          <ul class="list-group" id="staff-selector">
+                            <%= image_tag "ajax-loader.gif", :alt => "Loader" %>
+                          </ul>
+                        </div>
+                      </div>
+                      <div class="col-md-9">
+                        <div class="panel panel-info">
+                          <div class="panel-heading">
+                            <h3 class="panel-title">Horario</h3>
+                          </div>
+                          <div class="panel-body">
+                            <div class="horario">
+                              <div class="header">
+                                <button type="button" class="btn btn-default" id="prev">&lsaquo;</button>
+                                <button type="button" class="btn btn-default" id="today">Hoy</button>
+                                <button type="button" class="btn btn-default" id="next">&rsaquo;</button>
+                                <span class="tittle"></span>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="box-step">
+                    <div class="col-md-12">
+                      <h4>Ingresa tus Datos</h4>
+                      <div class="col-md-6">
+                        <div class="panel panel-default">
+                          <div class="panel-heading">
+                            <h3 class="panel-title">Datos</h3>
+                          </div>
+                          <div class="panel-body">
+                            <%= form_tag("book", method: "post", role: "form", class: "form-horizontal", id: "bookingForm" ) do %>
+                              <input type="hidden" name="start" id="start" value="">
+                              <input type="hidden" name="end" id="end" value="">
+                              <input type="hidden" name="provider" id="provider" value="">
+                              <input type="hidden" name="service" id="service" value="">
+                              <input type="hidden" name="location" id="location" value="">
+                              <% if user_signed_in? %>
+                              <input type="hidden" name="user" id="user" value="<%= current_user.id %>">
+                              <div class="form-group">
+                                <%= label_tag(:firstName, "Nombre", class: "col-sm-3 control-label") %>
+                                <div class="col-sm-9">
+                                  <%= text_field_tag(:firstName, current_user.first_name, :class => "form-control", :placeholder => "Nombre", :required => true) %>
+                                </div>
+                              </div>
+                              <div class="form-group">
+                                <%= label_tag(:lastName, "Apellido", class: "col-sm-3 control-label") %>
+                                <div class="col-sm-9">
+                                  <%= text_field_tag(:lastName, current_user.last_name, :class => "form-control", :placeholder => "Apellido", :required => true) %>
+                                </div>
+                              </div>
+                              <div class="form-group">
+                                <%= label_tag(:email, "E-mail", class: "col-sm-3 control-label") %>
+                                <div class="col-sm-9">
+                                  <%= email_field_tag(:email, current_user.email, :class => "form-control", :placeholder => "ejemplo@dominio.com", :required => true) %>
+                                </div>
+                              </div>
+                              <div class="form-group">
+                                <%= label_tag(:phone, "Teléfono", class: "col-sm-3 control-label") %>
+                                <div class="col-sm-9">
+                                  <%= telephone_field_tag(:phone, current_user.phone, :class => "form-control", :placeholder => "97193440", :required => true) %>
+                                </div>
+                              </div>
+                              <% else %>
+                              <div class="form-group">
+                                <%= label_tag(:firstName, "Nombre", class: "col-sm-3 control-label") %>
+                                <div class="col-sm-9">
+                                  <%= text_field_tag(:firstName, nil, :class => "form-control", :placeholder => "Matias", :required => true) %>
+                                </div>
+                              </div>
+                              <div class="form-group">
+                                <%= label_tag(:lastName, "Apellido", class: "col-sm-3 control-label") %>
+                                <div class="col-sm-9">
+                                  <%= text_field_tag(:lastName, nil, :class => "form-control", :placeholder => "Rossi", :required => true) %>
+                                </div>
+                              </div>
+                              <div class="form-group">
+                                <%= label_tag(:email, "E-mail", class: "col-sm-3 control-label") %>
+                                <div class="col-sm-9">
+                                  <%= email_field_tag(:email, nil, :class => "form-control", :placeholder => "ejemplo@dominio.com", :required => true) %>
+                                </div>
+                              </div>
+                              <div class="form-group">
+                                <%= label_tag(:phone, "Teléfono", class: "col-sm-3 control-label") %>
+                                <div class="col-sm-9">
+                                  <%= telephone_field_tag(:phone, nil, :class => "form-control", :placeholder => "97193440", :required => true) %>
+                                </div>
+                              </div>
+                              <% end %>
+                              <div class="form-group">
+                                <%= label_tag(:comment, "Comentario", class: "col-sm-3 control-label") %>
+                                <div class="col-sm-9">
+                                  <%= text_area_tag(:comment, nil, :class => "form-control", :placeholder => "Escriba sus comentarios por favor.", :rows => 4) %>
+                                </div>
+                              </div>
+                              <div class="form-group">
+                                <div class="col-sm-offset-2 col-sm-10">
+                                  <button type="submit" class="btn btn-default" id="submitBtn">Agendar</button>
+                                </div>
+                              </div>
+                            <% end %>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="col-md-6">
+                        <div class="panel panel-info">
+                          <div class="panel-heading">
+                            <h3 class="panel-title">Resumen</h3>
+                          </div>
                         </div>
                       </div>
                     </div>
@@ -49,162 +163,43 @@
                 </div>
               </div>
             </div>
-            <div id="services" class="services">
-              <div id="barra" class="wizard">
-                <ul class="steps">
-                  <li class="step" id="step1"><span class="badge badge-info">1</span></li>
-                  <li class="step" id="step2"><span class="badge">2</span></li>
-                  <li class="step" id="step3"><span class="badge">3</span></li>
-                </ul>
-                <div class="actions">
-                  <button type="button" class="btn btn-success btn-prev" id="back_button" onclick="prevStep()"><i class="glyphicon glyphicon-chevron-left"></i><span>Anterior</span></button>
-                  <button type="button" class="btn btn-success btn-next" id="next_button" onclick="nextStep()"><span>Siguiente</span><i class="glyphicon glyphicon-chevron-right"></i></button>
-                </div>
-              </div>
-              <div class="panel-group step-content" id="accordion">
-                <div class="panel panel-default step-pane">
-                  <div class="panel-heading">
-                    <h4 class="panel-title">Selecciona un Servicio</h4>
-                  </div>
-                  <div id="step-content1" class="panel-collapse collapse in">
-                    <div class="panel-body">
-                      <div class="row">
-                        <div class="col-xs-6">
-                          <h3>Servicio</h3>
-                          <form role="form">
-                            <div class="panel-group" id="services-selector">
-                              <%= image_tag "ajax-loader.gif", :alt => "Loader" %>
-                            </div>
-                          </form>
-                        </div>
-                        <div class="col-xs-6">
-                          <h3>Descripción</h3>
-                          <div id="services-description">
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <div class="panel panel-default step-pane">
-                  <div class="panel-heading">
-                    <h4 class="panel-title">Elije la Hora</h4>
-                  </div>
-                  <div id="step-content2" class="panel-collapse collapse">
-                    <div class="panel-body">
-                      <div class="row">
-                        <div class="col-md-4">
-                          <h3>Seleccione un Staff</h3>
-                          <form role="form">
-                            <div id="staff-selector" class="radio">
-                              <%= image_tag "ajax-loader.gif", :alt => "Loader" %>
-                            </div>
-                          </form>
-                        </div>
-                        <div class="col-md-8">
-                          <span id="message">Seleccione un staff para ver el horario</span>
-                          <div class="horario">
-                            <div class="header">
-                              <span class="tittle"></span>
-                              <button type="button" class="btn btn-default" id="prev">&lsaquo;</button>
-                              <button type="button" class="btn btn-default" id="today">Hoy</button>
-                              <button type="button" class="btn btn-default" id="next">&rsaquo;</button>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <div class="panel panel-default step-pane">
-                  <div class="panel-heading">
-                    <h4 class="panel-title">Ingresa tus Datos</h4>
-                  </div>
-                  <div id="step-content3" class="panel-collapse collapse">
-                    <div class="panel-body">
-                      <%= form_tag("book", method: "post", role: "form", class: "form-horizontal", id: "bookingForm" ) do %>
-                        <input type="hidden" name="start" id="start" value="">
-                        <input type="hidden" name="end" id="end" value="">
-                        <input type="hidden" name="provider" id="provider" value="">
-                        <input type="hidden" name="service" id="service" value="">
-                        <input type="hidden" name="location" id="location" value="">
-                        <% if user_signed_in? %>
-                        <input type="hidden" name="user" id="user" value="<%= current_user.id %>">
-                        <div class="form-group">
-                          <%= label_tag(:firstName, "Nombre", class: "col-sm-2 control-label") %>
-                          <div class="col-sm-10">
-                            <%= text_field_tag(:firstName, current_user.first_name, :class => "form-control", :placeholder => "Nombre", :required => true) %>
-                          </div>
-                        </div>
-                        <div class="form-group">
-                          <%= label_tag(:lastName, "Apellido", class: "col-sm-2 control-label") %>
-                          <div class="col-sm-10">
-                            <%= text_field_tag(:lastName, current_user.last_name, :class => "form-control", :placeholder => "Apellido", :required => true) %>
-                          </div>
-                        </div>
-                        <div class="form-group">
-                          <%= label_tag(:email, "E-mail", class: "col-sm-2 control-label") %>
-                          <div class="col-sm-10">
-                            <%= email_field_tag(:email, current_user.email, :class => "form-control", :placeholder => "ejemplo@dominio.com", :required => true) %>
-                          </div>
-                        </div>
-                        <div class="form-group">
-                          <%= label_tag(:phone, "Teléfono", class: "col-sm-2 control-label") %>
-                          <div class="col-sm-10">
-                            <%= telephone_field_tag(:phone, current_user.phone, :class => "form-control", :placeholder => "97193440", :required => true) %>
-                          </div>
-                        </div>
-                        <% else %>
-                        <div class="form-group">
-                          <%= label_tag(:firstName, "Nombre", class: "col-sm-2 control-label") %>
-                          <div class="col-sm-10">
-                            <%= text_field_tag(:firstName, nil, :class => "form-control", :placeholder => "Matias", :required => true) %>
-                          </div>
-                        </div>
-                        <div class="form-group">
-                          <%= label_tag(:lastName, "Apellido", class: "col-sm-2 control-label") %>
-                          <div class="col-sm-10">
-                            <%= text_field_tag(:lastName, nil, :class => "form-control", :placeholder => "Rossi", :required => true) %>
-                          </div>
-                        </div>
-                        <div class="form-group">
-                          <%= label_tag(:email, "E-mail", class: "col-sm-2 control-label") %>
-                          <div class="col-sm-10">
-                            <%= email_field_tag(:email, nil, :class => "form-control", :placeholder => "ejemplo@dominio.com", :required => true) %>
-                          </div>
-                        </div>
-                        <div class="form-group">
-                          <%= label_tag(:phone, "Teléfono", class: "col-sm-2 control-label") %>
-                          <div class="col-sm-10">
-                            <%= telephone_field_tag(:phone, nil, :class => "form-control", :placeholder => "97193440", :required => true) %>
-                          </div>
-                        </div>
-                        <% end %>
-                        <div class="form-group">
-                          <%= label_tag(:comment, "Comentario", class: "col-sm-2 control-label") %>
-                          <div class="col-sm-10">
-                            <%= text_area_tag(:comment, nil, :class => "form-control", :placeholder => "Escriba sus comentarios por favor.", :rows => 4) %>
-                          </div>
-                        </div>
-                        <div class="form-group">
-                          <div class="col-sm-offset-2 col-sm-10">
-                            <button type="submit" class="btn btn-default" id="submitBtn">Agendar</button>
-                          </div>
-                        </div>
-                      <% end %>
-                    </div>
-                  </div>
-                </div>
-              <div class="wizard visible-xs visible-sm">
-                <button type="button" class="btn btn-success btn-prev" id="back_button" onclick="prevStep()"><i class="glyphicon glyphicon-chevron-left"></i><span>Anterior</span></button>
-                <button type="button" class="btn btn-success btn-next pull-right" id="next_button" onclick="nextStep()"><span>Siguiente</span><i class="glyphicon glyphicon-chevron-right"></i></button>
-              </div>
           </div>
         </div>
+      </div>
     </section>
 </div>
 
+<%= content_tag "div", id: "selectedLocal", data: {local: @location.id} do %>
+<% end %>
+
 <% content_for :scripts do %>
-  <%= javascript_include_tag "http://maps.google.com/maps/api/js?sensor=false" %>
-  <%= javascript_include_tag 'Alert.js' %>
+  <%= javascript_include_tag 'workflow/services' %>
+  <%= javascript_include_tag 'jquery.carouFredSel-6.2.1.js' %>
+  <script type="text/javascript">
+    $(function() {
+      //  Responsive layout, resizing the items
+      $('#foo4').carouFredSel({
+        responsive: true,
+        auto: false,
+        pagination: "#pager2",
+        width: '100%',
+        prev: '#prev2',
+        next: '#next2',
+        direction: "left",
+        circular: false,
+        infinite: false,
+        onCreate: function () {loadStep1();},
+        scroll: {
+          conditions: function (direction) {
+            return scrollEvents(direction);
+          },
+          onEnd: function (direction) {
+            if (direction == 'prev') {
+              step = 1;
+            }
+          }
+        }
+      });
+    });
+  </script>
 <% end %>

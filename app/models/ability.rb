@@ -46,6 +46,7 @@ class Ability
     can :view_plans, Plan
 
     # Workflow
+    can :overview, Company
     can :workflow, Company
     can :location_data, Location
     can :service_data, Service

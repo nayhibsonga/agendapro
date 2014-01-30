@@ -8,10 +8,8 @@
 //= require home/easing.js
 //= require home/restart_theme.js
 //= require home/footer.js
-//= require workflow/overview.js
-//= require workflow/wizard.js
-//= require workflow/services.js
 //= require calendar.js
+//= require Alert
 //= require workflow/analytics.js
 
 

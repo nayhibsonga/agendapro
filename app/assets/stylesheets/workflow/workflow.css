@@ -39,6 +39,15 @@
   border-style: solid;
 }
 
+.services {
+  padding: 5px 15px 10px 15px;
+  border: 2px;
+  border-radius: 10px;
+  border-color: #EFF2FB;
+  background-color: #fff;
+  border-style: solid;
+}
+
 .overview.div.h4 {
   font-size: 20px;
   line-height: 1.4;
@@ -90,10 +99,6 @@
   padding: 2px 5px;
   border-bottom-left-radius: 2px;
   border-bottom-right-radius: 2px;
-}
-
-.services {
-  display: none;
 }
 
 .menu-bar {

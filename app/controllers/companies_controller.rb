@@ -1,10 +1,10 @@
 class CompaniesController < ApplicationController
   before_action :set_company, only: [:show, :edit, :update, :destroy]
-  before_action :authenticate_user!, except: [:new, :workflow]
-  before_action :quick_add, except: [:new, :workflow]
-  before_action :verify_is_super_admin, except: [:new, :workflow, :edit]
+  before_action :authenticate_user!, except: [:new, :overview, :workflow]
+  before_action :quick_add, except: [:new, :overview, :workflow]
+  before_action :verify_is_super_admin, except: [:new, :overview, :workflow, :edit]
 
-  layout "admin", except: [:show, :workflow]
+  layout "admin", except: [:show, :overview, :workflow]
   load_and_authorize_resource
 
 
@@ -75,7 +75,7 @@ class CompaniesController < ApplicationController
   end
 
   ##### Workflow #####
-  def workflow
+  def overview
     @company = Company.find_by(web_address: request.subdomain)
     if @company.nil?
       flash[:alert] = "No existe la compañia"
@@ -88,9 +88,19 @@ class CompaniesController < ApplicationController
     end
     @locations = Location.where('company_id = ?', @company.id)
 
+    # => Domain parser
+    host = request.host_with_port
+    @url = @company.web_address + '.' + host[host.index(request.domain)..host.length]
+
     #Selected local from fase II
     @selectedLocal = params[:local]
     render layout: "workflow"
+  end
+
+  def workflow
+    @company = Company.find_by(web_address: request.subdomain)
+    @location = Location.find(params[:local])
+    render layout: 'workflow'
   end
 
   private
