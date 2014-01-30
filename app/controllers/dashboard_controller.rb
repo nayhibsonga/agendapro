@@ -5,6 +5,7 @@ class DashboardController < ApplicationController
   layout "admin"
 
 	def index
+		@lastBookings = Booking.where(service_provider_id: ServiceProvider.where(company_id: current_user.company_id))
 	end
 	
 end

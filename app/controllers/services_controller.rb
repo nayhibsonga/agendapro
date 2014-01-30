@@ -33,7 +33,7 @@ class ServicesController < ApplicationController
     if service_params[:service_category_attributes][:name].nil?
       new_params = service_params.except(:service_category_attributes)
     else
-      new_params = service_params
+      new_params = service_params.except(:service_category_id)
     end
     @service = Service.new(new_params)
     @service.company_id = current_user.company_id
@@ -55,7 +55,7 @@ class ServicesController < ApplicationController
     if service_params[:service_category_attributes][:name].nil?
       new_params = service_params.except(:service_category_attributes)
     else
-      new_params = service_params
+      new_params = service_params.except(:service_category_id)
     end
     respond_to do |format|
       if @service.update(new_params)

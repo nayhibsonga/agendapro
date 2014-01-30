@@ -15,3 +15,4 @@
 //= require admin/custom.min
 //= require admin/core.min
 //= require jquery_ujs
+//= require Alert

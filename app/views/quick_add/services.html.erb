@@ -1,4 +1,4 @@
-<%= simple_form_for(@service) do |f| %>
+<%= simple_form_for @service, :url => quick_add_create_services_path do |f| %>
   <% if @service.errors.any? %>
     <div id="error_explanation">
       <h2><%= pluralize(@service.errors.count, "error") %> no permitió que el servicio se guardara:</h2>
@@ -18,9 +18,8 @@
   <%= f.input :group_service, :label => "Servicio de Grupo" %><br />
   <%= f.input :capacity, :label => "Capacidad" %><br />
   <%= f.input :waiting_list, :label => "Lista de Espera" %><br />
-  <%= f.association :service_category, :as => :collection_select, collection: ServiceCategory.where(company_id: current_user.company_id), :label => "Categoría de Servicio", :label_method => :name, value_method: :id %><br />
-  <% if @service.service_category.nil? then @service.build_service_category end %>
-  <input type="checkbox" name="catCheck" id="categoryCheckboxId" value="0" onchange="categoryChange()" class="checkbox"> Crear nueva Categoría de Servicios:
+  Crear nueva Categoría de Servicios:
+  <% @service.build_service_category %>
   <%= f.simple_fields_for :service_category do |builder| %>
   <%= builder.input :name, :label => "Nueva Categoría de Servicio", :input_html => { :value => "" } %>
   <%= builder.association :company, :as => :hidden, :input_html => { :value => current_user.company_id }  %>
@@ -35,8 +34,4 @@
   <div class="actions">
     <%= f.submit "Crear Nuevo Servicio" %>
   </div>
-<% end %>
-
-<% content_for :scripts do %>
-  <%= javascript_include_tag "service" %>
 <% end %>

@@ -126,9 +126,7 @@ function startLocation() {
 			var geoString = JSON.stringify(geolocation);
 			var geocoder = new google.maps.Geocoder();
 			geocoder.geocode( { "address" : geoString }, function (results, status) {
-				alert(status);
 				if (status == google.maps.GeocoderStatus.OK) {
-					alert(results[0].geometry.location.lat());
 					$('#location_latitude').val(results[0].geometry.location.lat());
 					$('#location_longitude').val(results[0].geometry.location.lng());
 				}
@@ -136,7 +134,9 @@ function startLocation() {
 			});
 		});
 	}
-	alert('Dirección y/o Comuna no pueden estar vacías.');
+	else {
+		alert('Dirección y/o Comuna no pueden estar vacías.');
+	}
 }
 
 function locJSON() {
@@ -157,42 +157,21 @@ function locJSON() {
 
 function saveLocation() {
 	var locationJSON = locJSON();
-	var locationId = $('#id_data').data('id');
-	if ( $('#title').length > 0 ) {
-		$.ajax({
-		    type: "PATCH",
-		    url: ' /locations/'+ JSON.stringify(locationId) +'.json',
-		    data: { location: locationJSON },
-		    dataType: 'json',
-		    success: function(){
-		    	document.location.href = '/locations/';
-			},
-			error: function(xhr){
-			    var errors = $.parseJSON(xhr.responseText).errors;
-			    for (i in errors) {
-			    	alert(errors[i]);
-			    }
-			}
-		});
-	}
-	else {
-		var locationJSON = locJSON();
-		$.ajax({
-		    type: "POST",
-		    url: '/locations.json',
-		    data: { "location": locationJSON },
-		    dataType: 'json',
-		    success: function(){
-		    	document.location.href = '/locations/';
-			},
-			error: function(xhr){
-			    var errors = $.parseJSON(xhr.responseText).errors;
-			    for (i in errors) {
-			    	alert(errors[i]);
-			    }
-			}
-		});
-	}
+	$.ajax({
+	    type: "POST",
+	    url: '/quick_add/location.json',
+	    data: { "location": locationJSON },
+	    dataType: 'json',
+	    success: function(){
+	    	document.location.href = '/locations/';
+		},
+		error: function(xhr){
+		    var errors = $.parseJSON(xhr.responseText).errors;
+		    for (i in errors) {
+		    	alert(errors[i]);
+		    }
+		}
+	});
 }
 
 $(function() {

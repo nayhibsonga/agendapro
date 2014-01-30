@@ -35,7 +35,7 @@ function loadProviders () {
 				$('[name="providerRadio"]').on('click', function(event) {
 					var providerId = event.target.getAttribute('value');
 					if (providerId == 0) {
-						loadResourcesCalendar(0,24,[],resources,providerId);
+						loadLocationTime (localId, resources);
 					}
 					else {
 						loadProviderTime(providerId);
@@ -220,9 +220,9 @@ function loadResourcesCalendar (startTime, endTime, hiddenDays, resourcesArray, 
 		    prev:     '&lsaquo;', // <
 		    next:     '&rsaquo;', // >
 		    today:    'Hoy',
-		    week:     'Semana',
-		    day:      'Día',
-		    resourceDay: 'Día'
+		    week:     '<i class="fa fa-calendar"></i>  Semana',
+		    day:      '<i class="fa fa-calendar"></i>  Día',
+		    resourceDay: '<i class="fa fa-calendar"></i>  Día'
 	    },
 	    monthNames: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
 	    monthNamesShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
@@ -276,8 +276,8 @@ function loadWeekCalendar (startTime, endTime, hiddenDays, resourcesArray, provi
 		    prev:     '&lsaquo;', // <
 		    next:     '&rsaquo;', // >
 		    today:    'Hoy',
-		    week:     'Semana',
-		    day:      'Día'
+		    week:     '<i class="fa fa-calendar"></i>  Semana',
+		    day:      '<i class="fa fa-calendar"></i>  Día'
 	    },
 	    monthNames: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
 	    monthNamesShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],

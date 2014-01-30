@@ -26,7 +26,7 @@ class UserMailer < ActionMailer::Base
         },
         {
           :name => 'user',
-          :content => book_info.email
+          :content => user.email
         },
         {
           :name => 'URL',

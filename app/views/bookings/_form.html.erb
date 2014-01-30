@@ -1,31 +1,26 @@
 <%= simple_form_for(@booking) do |f| %>
-  <% if @booking.errors.any? %>
-    <div id="error_explanation">
-      <h2><%= pluralize(@booking.errors.count, "error") %> prohibited this booking from being saved:</h2>
+<div class="row">
+  <div class="col-md-4">
 
-      <ul>
-      <% @booking.errors.full_messages.each do |msg| %>
-        <li><%= msg %></li>
-      <% end %>
-      </ul>
-    </div>
-  <% end %>
-
-  Inicio: <%= f.input :start, :label => false %><br />
-  Término: <%= f.input :end, :label => false %><br />
-  Nota: <%= f.input :notes, :label => false %><br />
-  <%= f.association :service_provider, :as => :collection_select, collection: ServiceProvider.where(company_id: current_user.company_id), :label => "Proveedor Servicio", :label_method => :public_name, value_method: :id %><br />
-  <%= f.association :service, :as => :collection_select, collection: Service.where(company_id: current_user.company_id), :label => "Servicio", :label_method => :name, value_method: :id %><br />
-  <%= f.association :user, :as => :collection_select, collection: User.where(company_id: current_user.company_id), :label => "Usuario", :label_method => :email, value_method: :id %><br />
-  Status: <%= f.association :status, :label => false %><br />
-  Promoción: <%= f.association :promotion, :label => false %><br />
-  <%= f.input :first_name, :laber => "Nombre" %><br />
-  <%= f.input :last_name, :laber => "Apellido" %><br />
-  <%= f.input :email, :laber => "Email" %><br />
-  <%= f.input :phone, :laber => "Teléfono" %><br />
-  
-
+    <%= f.input :first_name, :label => "Nombre" %><br />
+    <%= f.input :last_name, :label => "Apellido" %><br />
+    <%= f.input :email, :label => "Email" %><br />
+    <%= f.input :phone, :label => "Teléfono" %><br />
+    <%= f.input :notes, :label => "Notas" %><br />
+    <%= f.association :service_provider, :as => :collection_select, collection: ServiceProvider.where(company_id: current_user.company_id), :label => "Proveedor Servicio", :label_method => :public_name, value_method: :id %><br />
+    <%= f.association :service, :as => :collection_select, collection: Service.where(company_id: current_user.company_id), :label => "Servicio", :label_method => :name, value_method: :id %><br />
+    <%= f.association :status, :label => "Estado" %><br />
+  </div>
+  <div class="col-md-8">
+    <%= f.input :start, :label => "Inicio" %><br />
+    <%= f.input :end, :label => "Término" %><br />
+  </div>
+</div>
+<div class="row">
+  <div class="col-md-12">
   <div class="actions">
     <%= f.submit %>
   </div>
+</div>
+</div>
 <% end %>

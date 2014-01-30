@@ -32,14 +32,21 @@ class QuickAddController < ApplicationController
 	end
 
   	def create_services
-	    @service = Service.new(service_params)
+	    if service_params[:service_category_attributes][:name].nil?
+	      new_params = service_params.except(:service_category_attributes)
+	    else
+	      new_params = service_params
+	    end
+	    @service = Service.new(new_params)
 	    @service.company_id = current_user.company_id
 
 	    respond_to do |format|
 	      if @service.save
-	        format.html { redirect_to quick_add_service_provider_path, notice: 'Servicio creado satisfactoriamente.' }
+	        format.html { redirect_to @service, notice: 'Servicio creado satisfactoriamente.' }
+	        format.json { render action: 'show', status: :created, location: @service }
 	      else
-	        format.html { render action: 'services' }
+	        format.html { render action: 'new' }
+	        format.json { render json: @service.errors, status: :unprocessable_entity }
 	      end
 	    end
   	end
@@ -66,6 +73,6 @@ class QuickAddController < ApplicationController
     end
 
     def service_params
-      params.require(:service).permit(:name, :price, :duration, :description, :group_service, :capacity, :waiting_list, :company_id, :service_category_id, service_category_attributes: [:name, :company_id],  :tag_ids => [] )
+      params.require(:service).permit(:name, :price, :duration, :description, :group_service, :capacity, :waiting_list, :company_id, service_category_attributes: [:name, :company_id],  :tag_ids => [] )
     end
 end

@@ -5,8 +5,13 @@
   <div class="form-inputs">
   	<%= f.input :public_name, :label => "Nombre Público" %>
   	<%= f.input :notification_email, :label => "Email de Notificación" %>
+    <%= f.association :location, :as => :collection_select, collection: Location.where(company_id: current_user.company_id), :label => "Local", value_method: :id %><br />
   	<%= f.association :user, :as => :collection_select, collection: User.where(company_id: current_user.company_id), :label => "Usuario", :label_method => :email, value_method: :id %><br />
-  	<%= f.association :location, :as => :collection_select, collection: Location.where(company_id: current_user.company_id), :label => "Local", value_method: :id %><br />
+    <% if @service_provider.user.nil? then @service_provider.build_user end %>
+  <input type="checkbox" name="userCheck" id="userCheckboxId" value="0" onchange="userChange()" class="userCheckbox"> Crear nuevo Usuario:
+  <%= f.simple_fields_for :user do |builder| %>
+  <%= builder.input :email, :label => "Email Nuevo Usuario", :input_html => { :value => "" } %>
+  <% end %><br />
     <%= f.association :services, 
                      as: :check_boxes,
                      collection: Service.where(company_id: current_user.company_id),
