@@ -174,9 +174,7 @@ end: function(){},              //Callback: function(slider) - Fires when the sl
 added: function(){},            //{NEW} Callback: function(slider) - Fires after a slide is added
 removed: function(){}           //{NEW} Callback: function(slider) - Fires after a slide is removed
 
-  	});*/
-
-$().UItoTop({ easingType: 'easeOutQuart' });	
+  	});*/	
 	   
 });
 

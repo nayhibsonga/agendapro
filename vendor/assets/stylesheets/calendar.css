@@ -1,10 +1,15 @@
 .horario{
 	width:100%;
+	max-height: 300px;
+	overflow: auto;
 }
 .columna-dia{
 	width:13%;
 	margin:0px 0.6%;
 	float:left;
+}
+.columna-hoy{
+	background-color: rgba(0, 109, 104, 0.1);
 }
 .dia-semana{
 	width:100%;

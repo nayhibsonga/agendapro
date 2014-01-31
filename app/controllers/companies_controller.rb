@@ -100,6 +100,11 @@ class CompaniesController < ApplicationController
   def workflow
     @company = Company.find_by(web_address: request.subdomain)
     @location = Location.find(params[:local])
+
+    # => Domain parser
+    host = request.host_with_port
+    @url = @company.web_address + '.' + host[host.index(request.domain)..host.length]
+    
     render layout: 'workflow'
   end
 

@@ -1,4 +1,3 @@
-<%= stylesheet_link_tag "estilo" %>
 <%= stylesheet_link_tag "calendar" %>
 
 <div class="main">
@@ -53,17 +52,14 @@
                       <div class="col-md-9">
                         <div class="panel panel-info">
                           <div class="panel-heading">
-                            <h3 class="panel-title">Horario</h3>
+                            <h3 class="panel-title">
+                              <button type="button" class="btn btn-default" id="prev">&lsaquo;</button>
+                              <span class="tittle"></span>
+                              <button type="button" class="btn btn-default pull-right" id="next">&rsaquo;</button>
+                            </h3>
                           </div>
                           <div class="panel-body">
-                            <div class="horario">
-                              <div class="header">
-                                <button type="button" class="btn btn-default" id="prev">&lsaquo;</button>
-                                <button type="button" class="btn btn-default" id="today">Hoy</button>
-                                <button type="button" class="btn btn-default" id="next">&rsaquo;</button>
-                                <span class="tittle"></span>
-                              </div>
-                            </div>
+                            <div class="horario"></div>
                           </div>
                         </div>
                       </div>
@@ -85,31 +81,34 @@
                               <input type="hidden" name="service" id="service" value="">
                               <input type="hidden" name="location" id="location" value="">
                               <% if user_signed_in? %>
-                              <input type="hidden" name="user" id="user" value="<%= current_user.id %>">
-                              <div class="form-group">
-                                <%= label_tag(:firstName, "Nombre", class: "col-sm-3 control-label") %>
-                                <div class="col-sm-9">
-                                  <%= text_field_tag(:firstName, current_user.first_name, :class => "form-control", :placeholder => "Nombre", :required => true) %>
+                              <div id="user-data">
+                                <input type="hidden" name="user" id="user" value="<%= current_user.id %>">
+                                <div class="form-group">
+                                  <%= label_tag(:firstName, "Nombre", class: "col-sm-3 control-label") %>
+                                  <div class="col-sm-9">
+                                    <%= text_field_tag(:firstName, current_user.first_name, :class => "form-control", :placeholder => "Nombre", :required => true) %>
+                                  </div>
+                                </div>
+                                <div class="form-group">
+                                  <%= label_tag(:lastName, "Apellido", class: "col-sm-3 control-label") %>
+                                  <div class="col-sm-9">
+                                    <%= text_field_tag(:lastName, current_user.last_name, :class => "form-control", :placeholder => "Apellido", :required => true) %>
+                                  </div>
+                                </div>
+                                <div class="form-group">
+                                  <%= label_tag(:email, "E-mail", class: "col-sm-3 control-label") %>
+                                  <div class="col-sm-9">
+                                    <%= email_field_tag(:email, current_user.email, :class => "form-control", :placeholder => "ejemplo@dominio.com", :required => true) %>
+                                  </div>
+                                </div>
+                                <div class="form-group">
+                                  <%= label_tag(:phone, "Teléfono", class: "col-sm-3 control-label") %>
+                                  <div class="col-sm-9">
+                                    <%= telephone_field_tag(:phone, current_user.phone, :class => "form-control", :placeholder => "97193440", :required => true) %>
+                                  </div>
                                 </div>
                               </div>
-                              <div class="form-group">
-                                <%= label_tag(:lastName, "Apellido", class: "col-sm-3 control-label") %>
-                                <div class="col-sm-9">
-                                  <%= text_field_tag(:lastName, current_user.last_name, :class => "form-control", :placeholder => "Apellido", :required => true) %>
-                                </div>
-                              </div>
-                              <div class="form-group">
-                                <%= label_tag(:email, "E-mail", class: "col-sm-3 control-label") %>
-                                <div class="col-sm-9">
-                                  <%= email_field_tag(:email, current_user.email, :class => "form-control", :placeholder => "ejemplo@dominio.com", :required => true) %>
-                                </div>
-                              </div>
-                              <div class="form-group">
-                                <%= label_tag(:phone, "Teléfono", class: "col-sm-3 control-label") %>
-                                <div class="col-sm-9">
-                                  <%= telephone_field_tag(:phone, current_user.phone, :class => "form-control", :placeholder => "97193440", :required => true) %>
-                                </div>
-                              </div>
+                              <p id="user-message">Estas agendando como <%= current_user.email %>. Si no es usted puede dar clik <a href="#" id="user-change">aquí</a>.</p>
                               <% else %>
                               <div class="form-group">
                                 <%= label_tag(:firstName, "Nombre", class: "col-sm-3 control-label") %>
@@ -156,6 +155,12 @@
                           <div class="panel-heading">
                             <h3 class="panel-title">Resumen</h3>
                           </div>
+                          <div class="panel-body">
+                            <table class="table">
+                              <tbody id="summary">
+                              </tbody>
+                            </table>
+                          </div>
                         </div>
                       </div>
                     </div>
@@ -169,7 +174,7 @@
     </section>
 </div>
 
-<%= content_tag "div", id: "selectedLocal", data: {local: @location.id} do %>
+<%= content_tag "div", id: "selectedLocal", data: {local: @location} do %>
 <% end %>
 
 <% content_for :scripts do %>
@@ -177,6 +182,13 @@
   <%= javascript_include_tag 'jquery.carouFredSel-6.2.1.js' %>
   <script type="text/javascript">
     $(function() {
+      $('#user-data').hide();
+      $('#user-change').click(function () {
+        $('#user-data').show();
+        $('#user-message').hide();
+        $('#foo4').trigger('updateSizes');
+      });
+
       //  Responsive layout, resizing the items
       $('#foo4').carouFredSel({
         responsive: true,
