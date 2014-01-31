@@ -27,7 +27,7 @@
 	line-height: 2.7
 }
 .hora-disponible{
-	cursor:pointer;
+	cursor: pointer;
 	background: #f8f8f8;
 	background-color: rgba(248, 248, 248, 0.8);
 	border: 1px solid #ccc;
@@ -53,6 +53,11 @@
 	background-color: rgba(30, 133, 132, 0.8);
 	border: 1px solid #1e8584;
 	color: #fff;
+}
+.hora-pasada {
+	background:rgba(216,216,216,0.5);
+	border:1px solid #ccc;
+	color: #FD7274;
 }
 .clear{
 	clear:both;

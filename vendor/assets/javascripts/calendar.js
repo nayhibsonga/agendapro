@@ -120,6 +120,11 @@ function Calendar (source, getData) {
 						div.addClass('hora-vacia');
 						div.append('<span></span>')
 						break;
+					case 'past':
+						div.addClass('hora-pasada');
+						var span = $('<span>').text(hours.hour.start + ' - ' + hours.hour.end);
+						div.append(span);
+						break;
 					default:
 						div.addClass('hora-vacia');
 						var span = $('<span>').text(hours.hour.start + ' - ' + hours.hour.end);
