@@ -33,16 +33,17 @@ class BookingsController < ApplicationController
   # POST /bookings.json
   def create
     @booking = Booking.new(booking_params)
-    @booking.location = @booking.service_provider.location
-
+    if @booking && @booking.service_provider
+      @booking.location = @booking.service_provider.location
+    end
     respond_to do |format|
       if @booking.save
         format.html { redirect_to @booking, notice: 'Booking was successfully created.' }
-        format.json { render action: 'show', status: :created, location: @booking }
+        format.json { render :json => @booking }
         format.js { }
       else
         format.html { render action: 'new' }
-        format.json { render json: @booking.errors, status: :unprocessable_entity }
+        format.json { render :json => { :errors => @booking.errors.full_messages }, :status => 422 }
         format.js { }
       end
     end
@@ -51,14 +52,15 @@ class BookingsController < ApplicationController
   # PATCH/PUT /bookings/1
   # PATCH/PUT /bookings/1.json
   def update
+    @booking.location = @booking.service_provider.location
     respond_to do |format|
       if @booking.update(booking_params)
         format.html { redirect_to @booking, notice: 'Booking was successfully updated.' }
-        format.json { head :no_content }
+        format.json { render :json => @booking }
         format.js { }
       else
         format.html { render action: 'edit' }
-        format.json { render json: @booking.errors, status: :unprocessable_entity }
+        format.json { render :json => { :errors => @booking.errors.full_messages }, :status => 422 }
         format.js { }
       end
     end

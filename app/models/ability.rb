@@ -49,6 +49,7 @@ class Ability
     can :workflow, Company
     can :location_data, Location
     can :service_data, Service
+    can :services_data, Service
     can :get_providers, Service
     can :provider_booking, Booking
     can :book_service, Booking
