@@ -54,14 +54,17 @@ function Calendar (source, getData) {
 	var generateTittle = function (monday, sunday) {
 		var sameYear = (monday.getFullYear() == sunday.getFullYear());
 		var sameMonth = (monday.getMonth() == sunday.getMonth());
-		var tittle = months[monday.getMonth()];
+		var tittle = 'Semana del ' + monday.getDate();
 		if (sameYear) {
 			if (!sameMonth) {
-				tittle += ' - ' + months[sunday.getMonth()];
+				tittle += ' ' + months[monday.getMonth()] + ' al ' + sunday.getDate() + ' ' + months[sunday.getMonth()];
+			}
+			else {
+				tittle +=  ' al ' + sunday.getDate() + ' ' + months[monday.getMonth()]
 			}
 		}
 		else {
-			tittle += '/' + monday.getFullYear() + ' - ' + months[sunday.getMonth()] + '/' + sunday.getFullYear();
+			tittle += ' ' + months[monday.getMonth()] + '/' + monday.getFullYear() + ' al ' + sunday.getDate() + ' ' + months[sunday.getMonth()] + '/' + sunday.getFullYear();
 		}
 		$('.tittle').text(tittle);
 	}
@@ -84,6 +87,12 @@ function Calendar (source, getData) {
 		generateHours(columnDay, sources);
 
 		columnDay.append('<div class="clear"></div>');
+
+		// Mark today
+		var today = new Date();
+		if (today.toLocaleDateString() == weekDay.toLocaleDateString()) {
+			columnDay.addClass('columna-hoy');
+		}
 		$('.horario').append(columnDay);
 	}
 
@@ -110,6 +119,11 @@ function Calendar (source, getData) {
 					case 'empty':
 						div.addClass('hora-vacia');
 						div.append('<span></span>')
+						break;
+					case 'past':
+						div.addClass('hora-pasada');
+						var span = $('<span>').text(hours.hour.start + ' - ' + hours.hour.end);
+						div.append(span);
 						break;
 					default:
 						div.addClass('hora-vacia');
@@ -206,9 +220,6 @@ function Calendar (source, getData) {
 			var day = new Date(week.getFullYear(), week.getMonth(), week.getDate());
 			day.setDate(week.getDate() + 7);
 			week = generateCalendar(day);
-		});
-		$('#today').click(function () {
-			week = generateCalendar();
 		});
 	});
 }

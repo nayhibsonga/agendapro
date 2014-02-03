@@ -1,41 +1,16 @@
 //====== Overview ======//
-
-function loadOverview() {
-  $('#services-link').removeClass('active');
-  $('#overview-link').addClass('active');
-  $('#services').css("display", "none");
-  $('#overview').css("display", "block");
-  $('#schedule').show();
-}
-
-function loadServices() {
-  if ($('[name="localRadio"]').is(':checked')) {
-    $('#overview-link').removeClass('active');
-    $('#services-link').addClass('active');
-    $('#overview').css("display", "none");
-    $('#services').css("display", "block");
-    $('#schedule').hide();
-    loadStep1();
-  }
-  else {
-    myAlert.showAlert(
-      '<h3>Seleccione un local</h3>' +
-      '<p>Debe elegir un local antes de poder agendar.</p>'
-    );
-  }
-}
-
 function loadSchedule(id) {
-  $('.schedule-body').html('<%= image_tag "ajax-loader.gif", :alt => "Loader" %>');
+  $('#schedule-body').html('<%= image_tag "ajax-loader.gif", :alt => "Loader" %>');
   $.getJSON('/schedule', {local: id}, function (schedule) {
-    $('.schedule-body').html('');
-    $('.schedule-body').append('<ul class="list-unstyled"></ul>');
-    $.each(schedule, function (day, hours) {
-      if (hours.length) {
-        $('.list-unstyled').append('<li id="' + day + '"><b>' + day + ' </b></li>');
-        $.each(hours, function (pos, hour) {
-          $('#' + day).append(getHour(hour.open) + '-' + getHour(hour.close) + ' ');
-        })
+    $('#schedule-body').empty();
+    $.each(schedule, function (day, hour) {
+      if (hour.open) {
+        $('#schedule-body').append(
+          '<tr>' +
+            '<th>' + day + '</th>' +
+            '<th>' + getHour(hour.open) + '-' + getHour(hour.close) + '</th>' +
+          '</tr>'
+        );
       }
     })
   });
@@ -95,35 +70,29 @@ var myAlert;
 $(function() {
   myAlert = new Alert('.main');
 
-  $('.horario').hide();
-
   $('[name="localRadio"]').on('click', function(event) {
     var id = event.target.getAttribute('value');
     loadSchedule(id);
     localMap(id);
+
+    $('.local-seleccionado').removeClass('local-seleccionado');
+    $('#localOption' + id).parents('tr').addClass('local-seleccionado');
   });
 
-  $('#overview-link').click(function (event) {
-    event.preventDefault(); // Prevent link from following its href
-    myAlert.showAlert(
-      '<h3>Advertencia!</h3>' +
-      '<p>Perderá los datos ingresados. ¿Desea continuar?</p>',
-      loadOverview
-    );
-  });
-
-  $('#services-link').click(function (event) {
-    loadServices();
-    event.preventDefault(); // Prevent link from following its href
-  });
-
-  $('#schedule').click(function (event) {
-    loadServices();
-    event.preventDefault(); // Prevent link from following its href
+  $('#boton-agendar').click(function (event) {
+    if (!$('[name="localRadio"]').is(':checked')) {
+      myAlert.showAlert(
+        '<h3>Seleccione un local</h3>' +
+        '<p>Debe elegir un local antes de poder agendar.</p>'
+      );
+      event.preventDefault(); // Prevent link from following its href
+    }
+    else {
+      window.location.href = 'http://' + $('#workflow_url').data('url') + '/workflow?local=' + $('input[name=localRadio]:checked').val();
+    }
   });
 
   var map;
-  $('#error').hide();
   initializeMap(-33.413084, -70.592161, 'map');
   
   if ($('[name="localRadio"]').is(':checked')) {
@@ -133,10 +102,6 @@ $(function() {
   }
 
   if ($('[name="localRadio"]').length == 1) {
-    $('input[name=localRadio]').prop("checked", true)
-    var localId = $('input[name=localRadio]').val();
-    loadSchedule(localId);
-    localMap(localId);
+    $('input[name=localRadio]').trigger('click');
   }
-
 });

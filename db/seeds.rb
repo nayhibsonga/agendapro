@@ -239,7 +239,8 @@ admin = User.create(first_name: 'Monica', last_name: 'Pascual', email: 'la.perpe
 
 service_categories = ServiceCategory.create([{name: "Cortes", company_id: 1}, {name: "Tinturas", company_id: 1}, {name: "Masajes", company_id: 1}])
 
-locals = Location.create(name: 'Test Location', address: 'Nuestra Sra de Los Ángeles 185', phone: '+56 9 5178 5898', district_id: 1, company_id: 1, latitude: -33.4129192, longitude: -70.5921359)
+locals = Location.create([{name: 'Test Location', address: 'Nuestra Sra de Los Ángeles 185', phone: '+56 9 5178 5898', district_id: 1, company_id: 1, latitude: -33.4129192, longitude: -70.5921359},
+	{name: 'Test Location', address: 'Nuestra Sra de Los Ángeles 185', phone: '+56 9 5178 5898', district_id: 1, company_id: 1, latitude: -33.4129192, longitude: -70.5921359}])
 
 location_times = LocationTime.create([{open: '09:00', close: '18:30', location_id: 1, day_id: 1}, {open: '09:00', close: '18:30', location_id: 1, day_id: 2}, {open: '09:00', close: '18:30', location_id: 1, day_id: 3}, {open: '09:00', close: '18:30', location_id: 1, day_id: 4}, {open: '09:00', close: '18:30', location_id: 1, day_id: 5}])
 

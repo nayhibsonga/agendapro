@@ -169,6 +169,12 @@ class LocationsController < ApplicationController
           end
         end
         
+        # Past hours
+        today = Date.today
+        if (date <=> today) < 1
+          status = 'past'
+        end
+
 
         block_hour[:status] = status
         block_hour[:hour] = hour
