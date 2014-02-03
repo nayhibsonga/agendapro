@@ -6,7 +6,12 @@ class UserMailer < ActionMailer::Base
 
     # => Template
     template_name = 'User'
-    template_content = []
+    template_content = [
+      {
+        :name => 'UNSUBSCRIBE',
+        :content => "Si desea dejar de recibir email puede dar click <a href='#{unsubscribe_path(:user => Base64.encode64(book_info.email)}'>aquí</a>."
+      }
+    ]
 
     # => Message
     message = {

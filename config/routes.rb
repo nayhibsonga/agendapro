@@ -4,7 +4,7 @@ Agendapro::Application.routes.draw do
   require 'subdomain'
 
   # Mandrill
-  get 'mandrill/confirm_unsuscribe'
+  get 'mandrill/confirm_unsuscribe', :as => 'unsuscribe'
   post "mandrill/unsuscribe"
   get "mandrill/resuscribe"
 
