@@ -1,38 +1,14 @@
-<h1>Reservas</h1>
-
-<table>
-  <thead>
-    <tr>
-      <th></th>
-      <th></th>
-      <th></th>
-    </tr>
-  </thead>
-
-  <tbody>
-    <% @bookings.each do |booking| %>
-      <tr>
-        <td><%= link_to booking.start.to_s+" "+booking.end.to_s, booking %></td>
-        <td><%= link_to 'Editar', edit_booking_path(booking) %></td>
-        <td><%= link_to 'Eliminar', booking, method: :delete, data: { confirm: '¿Estás seguro?' } %></td>
-      </tr>
-    <% end %>
-  </tbody>
-</table>
-
-<br>
-
-<%= link_to 'Nueva Reserva', new_booking_path %>
-
+<h1>Calendario AgendaPro</h1>
+<div class="col-md-12">
 <div class="row">
-  <% @locations.each do |local| %>
-    <div class="radio">
-      <label>
-        <input type="radio" name="localRadio" id="localOption<%= local.id %>" value="<%= local.id %>" <%= "checked" if ((!@selectedLocal) && (local.id == @locations.first.id)) || (@selectedLocal.to_i == local.id) %>>
+  <div  class="radio">
+    <label>
+      <% @locations.each do |local| %>
+        <input type="radio" name="localRadio" id="localOption<%= local.id %>" onchange="loadProviders()" value="<%= local.id %>" <%= "checked" if ((!@selectedLocal) && (local.id == @locations.first.id)) || (@selectedLocal.to_i == local.id) %>>
         <p><%= local.name %></p>
-      </label>
-    </div>
-  <% end %>
+      <% end %>
+    </label>
+  </div>
 </div>
 
 <div class="row">
@@ -41,12 +17,81 @@
   </div>
 </div>
 <div class="row">
-  <div id="add_booking" class="radio">
-    <%= button_to "Agregar Reserva", new_booking_path, :method => :get, :class => "btn btn-success btn-sm" %>
+  <div id="add_booking">
+    <%= link_to '<i class="fa fa-calendar"></i>  Agregar Reserva'.html_safe, '#', :class => "btn btn-primary btn-md createBooking" %>
   </div>
 </div>
 <div class="row">
 <div id='calendar'></div>
+</div>
+</div>
+<div class="modal fade" id="bookingModal" tabindex="-1" role="dialog" aria-labelledby="bookingModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h4 class="booking-modal-title" id="bookingModalLabel"></h4>
+      </div>
+      <div class="booking-modal-body">
+        <%= simple_form_for(@booking) do |f| %>
+        <p>Fecha: <input type="text" id="datePicker"></p>
+        <div class="input datetime required booking_start">
+          <label class="datetime required control-label" for="booking_start_3i">Horario de la Reserva: </label>         
+          <select class="datetime required" id="bookingStartHour" name="booking[start_hours]">
+            <option value="00">00</option>
+            <option value="01">01</option>
+            <option value="02">02</option>
+            <option value="03">03</option>
+            <option value="04">04</option>
+            <option value="05">05</option>
+            <option value="06">06</option>
+            <option value="07">07</option>
+            <option value="08">08</option>
+            <option value="09">09</option>
+            <option value="10">10</option>
+            <option value="11">11</option>
+            <option value="12">12</option>
+            <option value="13">13</option>
+            <option value="14">14</option>
+            <option value="15">15</option>
+            <option value="16">16</option>
+            <option value="17">17</option>
+            <option value="18">18</option>
+            <option value="19">19</option>
+            <option value="20">20</option>
+            <option value="21">21</option>
+            <option value="22">22</option>
+            <option value="23">23</option>
+          </select>
+           : <select class="datetime required" id="bookingStartMinute" name="booking[start_minutes]">
+            <option value="00">00</option>
+            <option value="05">05</option>
+            <option value="10">10</option>
+            <option value="15">15</option>
+            <option value="20">20</option>
+            <option value="25">25</option>
+            <option value="30">30</option>
+            <option value="35">35</option>
+            <option value="40">40</option>
+            <option value="45">45</option>
+            <option value="50">50</option>
+            <option value="55">55</option>
+          </select> - <span id="bookingEnd">00:00</span>
+        </div>
+        <%= f.association :service_provider, :as => :collection_select, collection: ServiceProvider.where(company_id: current_user.company_id), :label => "Proveedor Servicio", :label_method => :public_name, value_method: :id %>
+        <%= f.association :service, :as => :collection_select, collection: Service.where(company_id: current_user.company_id), :label => "Servicio", :label_method => :name, value_method: :id %>
+        <%= f.association :status, :label => "Estado" %>
+        <%= f.input :first_name, :label => "Nombre" %>
+        <%= f.input :last_name, :label => "Apellido" %>
+        <%= f.input :email, :label => "Email" %>
+        <%= f.input :phone, :label => "Teléfono" %>
+        <%= f.input :notes, :label => "Notas" %>
+        <% end %>
+      </div>
+      <div class="booking-modal-footer">
+      </div>
+    </div>
+  </div>
 </div>
 <% content_for :scripts do %>
   <%= javascript_include_tag "booking" %>

@@ -46,12 +46,20 @@ class Ability
     can :view_plans, Plan
 
     # Workflow
+    can :overview, Company
     can :workflow, Company
     can :location_data, Location
     can :service_data, Service
+    can :services_data, Service
     can :get_providers, Service
     can :provider_booking, Booking
     can :book_service, Booking
+    can :location_services, ServiceProvider
+    can :location_providers, ServiceProvider
+    can :provider_time, ServiceProvider
+    can :location_time, Location
+    can :get_category_name, ServiceCategory
+    can :get_available_time, Location
 
     # Search
     can :get_districts, District
@@ -64,7 +72,6 @@ class Ability
     can :update, Booking, :user_id => user.id
     can :destroy, Booking, :user_id => user.id
     can :create, Booking, :user_id => user.id
-
 
 
     if user.role_id == Role.find_by_name("Super Admin").id

@@ -39,7 +39,7 @@ class Location < ActiveRecord::Base
   	def time_empty_or_negative
   		self.location_times.each do |location_time|
   			if location_time.open >= location_time.close
-  				errors.add(:location, "Existen horarios vacíos o negativos.")
+  				errors.add_to_base(:location, "Existen horarios vacíos o negativos.")
 			end
   		end
   	end

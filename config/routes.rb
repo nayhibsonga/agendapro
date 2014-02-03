@@ -4,7 +4,7 @@ Agendapro::Application.routes.draw do
   require 'subdomain'
 
   # Mandrill
-  get 'mandrill/confirm_unsuscribe'
+  get 'mandrill/confirm_unsuscribe', :as => 'unsuscribe'
   post "mandrill/unsuscribe"
   get "mandrill/resuscribe"
 
@@ -40,9 +40,9 @@ Agendapro::Application.routes.draw do
   get '/quick_add/location', :to => 'quick_add#location', :as => 'quick_add_location'
   get '/quick_add/services', :to => 'quick_add#services', :as => 'quick_add_services'
   get '/quick_add/service_provider', :to => 'quick_add#service_provider', :as => 'quick_add_service_provider'
-  put '/quick_add/location', :to => 'quick_add#create_location', :as => 'quick_add_create_location'
-  put '/quick_add/services', :to => 'quick_add#create_services', :as => 'quick_add_create_services'
-  put '/quick_add/service_provider', :to => 'quick_add#create_service_provider', :as => 'quick_add_create_service_provider'
+  post '/quick_add/location', :to => 'quick_add#create_location', :as => 'quick_add_create_location'
+  post '/quick_add/services', :to => 'quick_add#create_services', :as => 'quick_add_create_services'
+  post '/quick_add/service_provider', :to => 'quick_add#create_service_provider', :as => 'quick_add_create_service_provider'
 
   get '/dashboard', :to => 'dashboard#index', :as => 'dashboard'
   get '/reports', :to => 'reports#index', :as => 'reports'
@@ -69,19 +69,23 @@ Agendapro::Application.routes.draw do
   get '/schedule', :to => 'location_times#schedule_local'
   get '/local', :to => 'locations#location_data'
   # wrokflow - wizard
+  get '/workflow', :to => 'companies#workflow', :as => 'workflow'
   get '/local_services', :to => 'service_providers#location_services'
   get '/local_providers', :to => 'service_providers#location_providers'
-  get '/service', :to => 'services#service_data'
+  get '/service', :to => 'services#service_data'  # Fullcalendar
+  get '/services_list', :to => 'services#services_data'  # Fullcalendar
   get '/providers_services', :to => 'services#get_providers'
-  get '/provider_time', :to => 'service_providers#provider_time'
-  get '/booking', :to => 'bookings#provider_booking'
+  get '/location_time', :to => 'locations#location_time'
+  get '/provider_time', :to => 'service_providers#provider_time'  # Fullcalendar
+  get '/booking', :to => 'bookings#provider_booking'  # Fullcalendar
   get '/get_booking', :to => 'bookings#get_booking'
   post "/book", :to => 'bookings#book_service'
   get '/category_name', :to => 'service_categories#get_category_name'
+  get '/get_available_time', :to => 'locations#get_available_time'
   
   # Root
   get '/' => 'searchs#index', :constraints => { :subdomain => 'www' }
-  get '/' => 'companies#workflow', :constraints => { :subdomain => /.+/ }
+  get '/' => 'companies#overview', :constraints => { :subdomain => /.+/ }
 
   root :to => 'searchs#index'
   

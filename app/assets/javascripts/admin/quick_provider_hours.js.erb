@@ -1,6 +1,7 @@
+
 function buildDay (divId, value) {
 	$('#'+divId).empty();
-	$('#'+divId).append('<input type="checkbox" name="dayStatus'+ value +'" id="dayStatusId'+ value +'" value="0" onchange="changeDayStatus('+ value +')" class="checkbox">  Apertura: '+
+	$('#'+divId).append('<input type="checkbox" name="dayStatus'+ value +'" id="dayStatusId'+ value +'" value="0" onchange="changeDayStatus('+ value +')" class="dayCheckbox">  Apertura: '+
 	'<select id="openHourId'+ value +'" name="openHour'+ value +'" disabled="disabled">'+
 		'<option value="00">00</option>'+
 		'<option value="01">01</option>'+
@@ -78,9 +79,9 @@ function initialize() {
 	buildDay('div7',7);
 
 	if ( $('#title').length > 0 ) {
-		var locationTimesData = $('#location_times_data').data('location-times');
-		$.each(locationTimesData, function(index,locationTime) {
-			var value = locationTime.day_id;
+		var providerTimesData = $('#provider_times_data').data('provider-times');
+		$.each(providerTimesData, function(index,providerTime) {
+			var value = providerTime.day_id;
 			$('#dayStatusId'+ value).prop('checked', true);
 			$('#dayStatusId'+ value).val(1);
 
@@ -89,8 +90,8 @@ function initialize() {
 			$('#closeHourId'+ value).prop('disabled', false);
 			$('#closeMinuteId'+ value).prop('disabled', false);
 
-			var openTime = new Date(Date.parse(locationTime.open)).toUTCString().split(" ")[4].split(":");
-			var closeTime = new Date(Date.parse(locationTime.close)).toUTCString().split(" ")[4].split(":");
+			var openTime = new Date(Date.parse(providerTime.open)).toUTCString().split(" ")[4].split(":");
+			var closeTime = new Date(Date.parse(providerTime.close)).toUTCString().split(" ")[4].split(":");
 
 			$('#openHourId'+ value +' option[value="'+openTime[0]+'"]').attr("selected",true);
 			$('#openMinuteId'+ value +' option[value="'+openTime[1]+'"]').attr("selected",true);
@@ -117,90 +118,43 @@ function changeDayStatus(value) {
 	}
 }
 
-function startLocation() {
-	var district = $('#location_district_id').val();
-	var address = $('#location_address').val();
-	if ((address != '')&&(district != '')) {
-		$.getJSON('/get_direction', {id: district}, function (direction) {
-			var geolocation = address + ', ' + direction;
-			var geoString = JSON.stringify(geolocation);
-			var geocoder = new google.maps.Geocoder();
-			geocoder.geocode( { "address" : geoString }, function (results, status) {
-				if (status == google.maps.GeocoderStatus.OK) {
-					$('#location_latitude').val(results[0].geometry.location.lat());
-					$('#location_longitude').val(results[0].geometry.location.lng());
-				}
-				saveLocation();
-			});
-		});
-	}
-	else {
-		alertId.showAlert('Dirección y/o Comuna no pueden estar vacías.');
-	}
-}
-
-function locJSON() {
+function createProvider() {
 	var enabledDays = [];
-	$(".checkbox").each( function() {
+	$(".dayCheckbox").each( function() {
 		if ($( this ).val() == 1) {
 			enabledDays.push($(this).attr('id').slice(-1));
 		}
 	});
-	var location_times = [];
+	var enabledServices = [];
+	$("input.check_boxes").each( function() {
+		if ($(this).prop('checked')) {
+			enabledServices.push($.parseJSON($(this).val()));
+		}
+	});
+	var provider_times = [];
 	for (i in enabledDays) {
-		var location_time = {"open":"2000-01-01T"+ $('#openHourId'+enabledDays[i]).val() +":"+ $('#openMinuteId'+enabledDays[i]).val() +":00Z","close":"2000-01-01T"+ $('#closeHourId'+enabledDays[i]).val() +":"+ $('#closeMinuteId'+enabledDays[i]).val() +":00Z","day_id":parseInt(enabledDays[i])};
-		location_times.push(location_time);
+		var provider_time = {"open":"2000-01-01T"+ $('#openHourId'+enabledDays[i]).val() +":"+ $('#openMinuteId'+enabledDays[i]).val() +":00Z","close":"2000-01-01T"+ $('#closeHourId'+enabledDays[i]).val() +":"+ $('#closeMinuteId'+enabledDays[i]).val() +":00Z","day_id":parseInt(enabledDays[i])};
+		provider_times.push(provider_time);
 	}
-	var locationJSON  = { "name": $('#location_name').val(), "address": $('#location_address').val(), "phone": $('#location_phone').val(), "district_id": $('#location_district_id').val(), "latitude": parseFloat($('#location_latitude').val()), "longitude": parseFloat($('#location_longitude').val()), "location_times_attributes": location_times };
-	return locationJSON;
+	var providerJSON  = { "public_name": $('#service_provider_public_name').val(), "notification_email": $('#service_provider_notification_email').val(),"location_id": parseInt($('#service_provider_location_id').val()), "user_id": parseInt($('#service_provider_user_id').val()), "service_ids": enabledServices, "provider_times_attributes": provider_times };
+	$.ajax({
+	    type: "POST",
+	    url: '/quick_add/service_provider.json',
+	    data: { "service_provider": providerJSON },
+	    dataType: 'json',
+	    success: function(){
+	    	document.location.href = '/dashboard/';
+		},
+		error: function(xhr){
+		    var errors = $.parseJSON(xhr.responseText).errors;
+		    for (i in errors) {
+		    	alert(errors[i]);
+		    }
+		    // do something with errors
+		}
+	});
 }
 
-function saveLocation() {
-	var locationJSON = locJSON();
-	var locationId = $('#id_data').data('id');
-	if ( $('#title').length > 0 ) {
-		$.ajax({
-		    type: "PATCH",
-		    url: ' /locations/'+ JSON.stringify(locationId) +'.json',
-		    data: { location: locationJSON },
-		    dataType: 'json',
-		    success: function(){
-		    	document.location.href = '/locations/';
-			},
-			error: function(xhr){
-			    var errors = $.parseJSON(xhr.responseText).errors;
-			    var errores = '';
-			    for (i in errors) {
-			    	errores += errors[i];
-			    }
-			    alertId.showAlert(errores);
-			}
-		});
-	}
-	else {
-		var locationJSON = locJSON();
-		$.ajax({
-		    type: "POST",
-		    url: '/locations.json',
-		    data: { "location": locationJSON },
-		    dataType: 'json',
-		    success: function(){
-		    	document.location.href = '/locations/';
-			},
-			error: function(xhr){
-			    var errors = $.parseJSON(xhr.responseText).errors;
-			    var errores = '';
-			    for (i in errors) {
-			    	errores += errors[i];
-			    }
-			    alertId.showAlert(errores);
-			}
-		});
-	}
-}
-
-var alertId;
 $(function() {
-	alertId = new Alert();
   initialize();
 });

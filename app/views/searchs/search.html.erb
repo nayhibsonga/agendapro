@@ -21,7 +21,7 @@
                                     <span><%= i %></span>
                                 </div>
                                 <%= location.name %>
-                                <%= link_to 'Reservar', url_for(:host => location.company.web_address + '.' + @domain, :local => location.id, :controller => 'companies', :action => 'workflow'), :class => "btn btn-info pull-right", :role => "button" %>
+                                <%= link_to 'Reservar', url_for(:host => location.company.web_address + '.' + @domain, :local => location.id, :controller => 'companies', :action => 'overview'), :class => "btn btn-info pull-right", :role => "button" %>
                             </div>
                             <div class="row">
                                 <div class="col-md-12">

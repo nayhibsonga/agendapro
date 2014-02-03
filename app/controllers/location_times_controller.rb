@@ -65,13 +65,68 @@ class LocationTimesController < ApplicationController
   end
 
   def schedule_local
-    lunes = LocationTime.where("location_id = ? AND day_id = ?", params[:local], 1).order(open: :asc)
-    martes = LocationTime.where("location_id = ? AND day_id = ?", params[:local], 2).order(open: :asc)
-    miercoles = LocationTime.where("location_id = ? AND day_id = ?", params[:local], 3).order(open: :asc)
-    jueves = LocationTime.where("location_id = ? AND day_id = ?", params[:local], 4).order(open: :asc)
-    viernes = LocationTime.where("location_id = ? AND day_id = ?", params[:local], 5).order(open: :asc)
-    sabado = LocationTime.where("location_id = ? AND day_id = ?", params[:local], 6).order(open: :asc)
-    domingo = LocationTime.where("location_id = ? AND day_id = ?", params[:local], 7).order(open: :asc)
+    tmp = LocationTime.where("location_id = ? AND day_id = ?", params[:local], 1)
+    lunes = {}
+    if tmp.length > 0
+      lunes = {
+        :open => tmp.order(open: :asc).first.open,
+        :close => tmp.order(close: :desc).first.close
+      }
+    end
+
+    tmp = LocationTime.where("location_id = ? AND day_id = ?", params[:local], 2)
+    martes = {}
+    if tmp.length > 0
+      martes = {
+        :open => tmp.order(open: :asc).first.open,
+        :close => tmp.order(close: :desc).first.close
+      }
+    end
+
+    tmp = LocationTime.where("location_id = ? AND day_id = ?", params[:local], 3)
+    miercoles = {}
+    if tmp.length > 0
+      miercoles = {
+        :open => tmp.order(open: :asc).first.open,
+        :close => tmp.order(close: :desc).first.close
+      }
+    end
+
+    tmp = LocationTime.where("location_id = ? AND day_id = ?", params[:local], 4)
+    jueves = {}
+    if tmp.length > 0
+      jueves = {
+        :open => tmp.order(open: :asc).first.open,
+        :close => tmp.order(close: :desc).first.close
+      }
+    end
+
+    tmp = LocationTime.where("location_id = ? AND day_id = ?", params[:local], 5)
+    viernes = {}
+    if tmp.length > 0
+      viernes = {
+        :open => tmp.order(open: :asc).first.open,
+        :close => tmp.order(close: :desc).first.close
+      }
+    end
+
+    tmp = LocationTime.where("location_id = ? AND day_id = ?", params[:local], 6)
+    sabado = {}
+    if tmp.length > 0
+      sabado = {
+        :open => tmp.order(open: :asc).first.open,
+        :close => tmp.order(close: :desc).first.close
+      }
+    end
+
+    tmp = LocationTime.where("location_id = ? AND day_id = ?", params[:local], 7)
+    domingo = {}
+    if tmp.length > 0
+      domingo = {
+        :open => tmp.order(open: :asc).first.open,
+        :close => tmp.order(close: :desc).first.close
+      }
+    end
 
     render :json => {
       :lunes => lunes,

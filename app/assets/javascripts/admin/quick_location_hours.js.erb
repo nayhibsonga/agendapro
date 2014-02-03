@@ -135,7 +135,7 @@ function startLocation() {
 		});
 	}
 	else {
-		alertId.showAlert('Dirección y/o Comuna no pueden estar vacías.');
+		alert('Dirección y/o Comuna no pueden estar vacías.');
 	}
 }
 
@@ -157,50 +157,23 @@ function locJSON() {
 
 function saveLocation() {
 	var locationJSON = locJSON();
-	var locationId = $('#id_data').data('id');
-	if ( $('#title').length > 0 ) {
-		$.ajax({
-		    type: "PATCH",
-		    url: ' /locations/'+ JSON.stringify(locationId) +'.json',
-		    data: { location: locationJSON },
-		    dataType: 'json',
-		    success: function(){
-		    	document.location.href = '/locations/';
-			},
-			error: function(xhr){
-			    var errors = $.parseJSON(xhr.responseText).errors;
-			    var errores = '';
-			    for (i in errors) {
-			    	errores += errors[i];
-			    }
-			    alertId.showAlert(errores);
-			}
-		});
-	}
-	else {
-		var locationJSON = locJSON();
-		$.ajax({
-		    type: "POST",
-		    url: '/locations.json',
-		    data: { "location": locationJSON },
-		    dataType: 'json',
-		    success: function(){
-		    	document.location.href = '/locations/';
-			},
-			error: function(xhr){
-			    var errors = $.parseJSON(xhr.responseText).errors;
-			    var errores = '';
-			    for (i in errors) {
-			    	errores += errors[i];
-			    }
-			    alertId.showAlert(errores);
-			}
-		});
-	}
+	$.ajax({
+	    type: "POST",
+	    url: '/quick_add/location.json',
+	    data: { "location": locationJSON },
+	    dataType: 'json',
+	    success: function(){
+	    	document.location.href = '/locations/';
+		},
+		error: function(xhr){
+		    var errors = $.parseJSON(xhr.responseText).errors;
+		    for (i in errors) {
+		    	alert(errors[i]);
+		    }
+		}
+	});
 }
 
-var alertId;
 $(function() {
-	alertId = new Alert();
   initialize();
 });

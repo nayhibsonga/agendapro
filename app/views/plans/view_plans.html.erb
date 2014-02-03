@@ -31,7 +31,7 @@
                             <p> <strong><%= plan.locations %></strong> Local(es) </p>
                             <p> <strong><%= plan.service_providers %></strong> Staffs </p>
                         </div>
-                        <%= link_to "Elegir", new_user_registration_path(:plan => plan.id), :class => "btn btn-success btn-lg" %>
+                        <%= link_to "Elegir", new_user_registration_path(:plan => plan.id, :company => true), :class => "btn btn-success btn-lg" %>
                     </div>
                 </div>
                 <% end %>

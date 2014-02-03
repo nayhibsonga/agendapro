@@ -2,6 +2,7 @@ class ServiceProvidersController < ApplicationController
   before_action :set_service_provider, only: [:show, :edit, :update, :destroy]
   before_action :authenticate_user!, except: [:location_services, :provider_time]
   before_action :quick_add, except: [:location_services, :provider_time]
+  load_and_authorize_resource
   layout "admin", except: [:location_services, :provider_time]
 
   # GET /service_providers
@@ -30,7 +31,16 @@ class ServiceProvidersController < ApplicationController
   # POST /service_providers
   # POST /service_providers.json
   def create
-    @service_provider = ServiceProvider.new(service_provider_params)
+    if service_provider_params[:user_attributes][:email].empty?
+      new_params = service_provider_params.except(:user_attributes)
+    else
+      new_params = service_provider_params.except(:user_id)
+      new_params[:user_attributes].merge!(:password =>'12345678').merge!(:role_id => 4).merge!(:company_id => current_user.company_id)
+    end
+
+    puts new_params
+
+    @service_provider = ServiceProvider.new(new_params)
     @service_provider.company_id = current_user.company_id
 
     respond_to do |format|
@@ -96,6 +106,6 @@ class ServiceProvidersController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def service_provider_params
-      params.require(:service_provider).permit(:user_id, :location_id, :public_name, :notification_email, :service_ids => [], provider_times_attributes: [:id, :open, :close, :day_id, :service_provider_id, :_destroy], user_attributes: [:email])
+      params.require(:service_provider).permit(:user_id, :location_id, :public_name, :notification_email, :service_ids => [], provider_times_attributes: [:id, :open, :close, :day_id, :service_provider_id, :_destroy], user_attributes: [:email, :password, :confirm_password, :role_id, :company_id])
     end
 end

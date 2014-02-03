@@ -33,16 +33,17 @@ class BookingsController < ApplicationController
   # POST /bookings.json
   def create
     @booking = Booking.new(booking_params)
-    @booking.location = @booking.service_provider.location
-
+    if @booking && @booking.service_provider
+      @booking.location = @booking.service_provider.location
+    end
     respond_to do |format|
       if @booking.save
         format.html { redirect_to @booking, notice: 'Booking was successfully created.' }
-        format.json { render action: 'show', status: :created, location: @booking }
+        format.json { render :json => @booking }
         format.js { }
       else
         format.html { render action: 'new' }
-        format.json { render json: @booking.errors, status: :unprocessable_entity }
+        format.json { render :json => { :errors => @booking.errors.full_messages }, :status => 422 }
         format.js { }
       end
     end
@@ -51,14 +52,15 @@ class BookingsController < ApplicationController
   # PATCH/PUT /bookings/1
   # PATCH/PUT /bookings/1.json
   def update
+    @booking.location = @booking.service_provider.location
     respond_to do |format|
       if @booking.update(booking_params)
         format.html { redirect_to @booking, notice: 'Booking was successfully updated.' }
-        format.json { head :no_content }
+        format.json { render :json => @booking }
         format.js { }
       else
         format.html { render action: 'edit' }
-        format.json { render json: @booking.errors, status: :unprocessable_entity }
+        format.json { render :json => { :errors => @booking.errors.full_messages }, :status => 422 }
         format.js { }
       end
     end
@@ -81,8 +83,12 @@ class BookingsController < ApplicationController
   end
 
   def provider_booking
-    bookings = Booking.where('service_provider_id = ? AND location_id = ?', params[:provider], params[:location]).order(:start)
-    render :json => bookings
+    @provider = params[:provider]
+    if @provider.nil?
+      @provider = ServiceProvider.where(:location_id => params[:location])
+    end
+    @bookings = Booking.where(:service_provider_id => @provider, :location_id => params[:location]).order(:start)
+    render :json => @bookings
   end
 
   def book_service
