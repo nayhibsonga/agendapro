@@ -74,6 +74,11 @@
           });
         }
       });
+
+      $('#form-location').submit(function (event) {
+        event.preventDefault();
+        $('#save').trigger('click');
+      });
     })
   </script>
 <% end %>
