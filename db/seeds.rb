@@ -111,138 +111,138 @@ ser_orion_1 = Service.create(name: "Corte Dama", price: 9500, duration: 30, comp
 
 ser_mandarina_1 = Service.create(name: "Lavado mas brushing pelo corto", price: 8900, duration: 30, company_id: mandarina.id, description: "Lavado con productos redken, loreal, diapo, mas brushing (blow dry)")
 
-ser_mandarina_2 = Service.create{name: "Corte", price: 15000, duration: 30, company_id: mandarina.id, description:"corte incluye lavado y secado"}
+ser_mandarina_2 = Service.create(name: "Corte", price: 15000, duration: 30, company_id: mandarina.id, description:"corte incluye lavado y secado")
 
-ser_mandarina_3 = Service.create{name: "Coloracion Shades EQ REDKEN", price: 29000, duration: 60, company_id: mandarina.id, description:"<p>Color SIN AMONIACO &nbsp;cuida tu cabello, aporte de vitaminas y mucho brillo</p>"}
+ser_mandarina_3 = Service.create(name: "Coloracion Shades EQ REDKEN", price: 29000, duration: 60, company_id: mandarina.id, description:"<p>Color SIN AMONIACO &nbsp;cuida tu cabello, aporte de vitaminas y mucho brillo</p>")
 
-ser_mandarina_4 = Service.create{name: "Color", price: 25000, duration: 60, company_id: mandarina.id, description:"<p>Retoque raiz de color, para cabellos con mas de 45% de canas.</p>"}
+ser_mandarina_4 = Service.create(name: "Color", price: 25000, duration: 60, company_id: mandarina.id, description:"<p>Retoque raiz de color, para cabellos con mas de 45% de canas.</p>")
 
-ser_mandarina_5 = Service.create{name: "lavado mas brushing pelo largo", price: 10900, duration: 30, company_id: mandarina.id, description:"<p>lavado mas peinado&nbsp;</p>"}
+ser_mandarina_5 = Service.create(name: "lavado mas brushing pelo largo", price: 10900, duration: 30, company_id: mandarina.id, description:"<p>lavado mas peinado&nbsp;</p>")
 
-ser_mandarina_6 = Service.create{name: "lavado mas brushing pelo XL", price: 12900, duration: 60, company_id: mandarina.id, description:"<p>Lavado y brushing para cabellos extra largos</p>"}
+ser_mandarina_6 = Service.create(name: "lavado mas brushing pelo XL", price: 12900, duration: 60, company_id: mandarina.id, description:"<p>Lavado y brushing para cabellos extra largos</p>")
 
-ser_mandarina_7 = Service.create{name: "Mechas-Visos-Reflejos", price: 35000, duration: 60, company_id: mandarina.id, description:"<p>Realizamos mechitas con papel, o visos con gorra, y tambien Reflejos.</p><p>Todos los productos utilizados calidad Loreal y Redken.</p><p>Servicio incluye lavado y secado</p>"}
+ser_mandarina_7 = Service.create(name: "Mechas-Visos-Reflejos", price: 35000, duration: 60, company_id: mandarina.id, description:"<p>Realizamos mechitas con papel, o visos con gorra, y tambien Reflejos.</p><p>Todos los productos utilizados calidad Loreal y Redken.</p><p>Servicio incluye lavado y secado</p>")
 
-ser_mandarina_8 = Service.create{name: "Mechas Californianas o FreeStyle", price: 45000, duration: 60, company_id: mandarina.id, description:"<p>DESDE 45.000 &nbsp;Servicio Mechas californianas</p>"}
+ser_mandarina_8 = Service.create(name: "Mechas Californianas o FreeStyle", price: 45000, duration: 60, company_id: mandarina.id, description:"<p>DESDE 45.000 &nbsp;Servicio Mechas californianas</p>")
 
-ser_mandarina_9 = Service.create{name: "Tratamiento Reparación profunda CHEMISTRY REDKEN", price: 25000, duration: 45, company_id: mandarina.id, description:"<p>Servicio Reparacion Profunda! Dale nueva vida a tu cabello con este sistema innovador de REDKEN</p>"}
+ser_mandarina_9 = Service.create(name: "Tratamiento Reparación profunda CHEMISTRY REDKEN", price: 25000, duration: 45, company_id: mandarina.id, description:"<p>Servicio Reparacion Profunda! Dale nueva vida a tu cabello con este sistema innovador de REDKEN</p>")
 
-ser_mandarina_10 = Service.create{name: "Aplicacion Ampollas PRO KERATINA", price: 15000, duration: 30, company_id: mandarina.id, description:"<p>Servicio incluye lavado y secado</p>"}
+ser_mandarina_10 = Service.create(name: "Aplicacion Ampollas PRO KERATINA", price: 15000, duration: 30, company_id: mandarina.id, description:"<p>Servicio incluye lavado y secado</p>")
 
-ser_mandarina_11 = Service.create{name: "Tratamiento reparación y brillo REDKEN", price: 15000, duration: 30, company_id: mandarina.id, description:"<p>Dale un Shock de Brillo a tu cabello</p>"}
+ser_mandarina_11 = Service.create(name: "Tratamiento reparación y brillo REDKEN", price: 15000, duration: 30, company_id: mandarina.id, description:"<p>Dale un Shock de Brillo a tu cabello</p>")
 
-ser_mandarina_12 = Service.create{name: "ALISADO KERATINA", price: 25000, duration: 60, company_id: mandarina.id, description:"<p>ALISADO KERATINA desde 25.000 depende de tu largo</p><p>recuerda Lunes y Martes 25% descuento en este Servicio!!</p>"}
+ser_mandarina_12 = Service.create(name: "ALISADO KERATINA", price: 25000, duration: 60, company_id: mandarina.id, description:"<p>ALISADO KERATINA desde 25.000 depende de tu largo</p><p>recuerda Lunes y Martes 25% descuento en este Servicio!!</p>")
 
-ser_mandarina_13 = Service.create{name: "BRONCEADO ST TROPEZ", price: 19900, duration: 30, company_id: mandarina.id, description:"<p>BRONCEADO CUERPO COMPLETO CON EL MEJOR PRODUCTO DELICADO!!!!, COLOR NATURAL, NO ZANAHORIA, NI AMARILLO.</p>"}
+ser_mandarina_13 = Service.create(name: "BRONCEADO ST TROPEZ", price: 19900, duration: 30, company_id: mandarina.id, description:"<p>BRONCEADO CUERPO COMPLETO CON EL MEJOR PRODUCTO DELICADO!!!!, COLOR NATURAL, NO ZANAHORIA, NI AMARILLO.</p>")
 
-ser_mandarina_14 = Service.create{name: "MAQUILLAJE NOCHE", price: 25000, duration: 30, company_id: mandarina.id, description:"<p>MAQUILLAJE QUE DURA TODA LA NOCHE!</p>"}
+ser_mandarina_14 = Service.create(name: "MAQUILLAJE NOCHE", price: 25000, duration: 30, company_id: mandarina.id, description:"<p>MAQUILLAJE QUE DURA TODA LA NOCHE!</p>")
 
-ser_mandarina_15 = Service.create{name: "MAQUILLAJE DIA", price: 17900, duration: 30, company_id: mandarina.id, description:"<p>MAQUILLAJE PARA EL DIA</p>"}
+ser_mandarina_15 = Service.create(name: "MAQUILLAJE DIA", price: 17900, duration: 30, company_id: mandarina.id, description:"<p>MAQUILLAJE PARA EL DIA</p>")
 
-ser_silvia_1 = Service.create{name: "Podologia", price: 10000, duration: 45, company_id: silviapodologiaclinica.id, description:"<p>Pie diabetico</p><p>Tratamientos</p><p>Micosis</p><p>&nbsp;</p>"}
+ser_silvia_1 = Service.create(name: "Podologia", price: 10000, duration: 45, company_id: silviapodologiaclinica.id, description:"<p>Pie diabetico</p><p>Tratamientos</p><p>Micosis</p><p>&nbsp;</p>")
 
-ser_silvia_2 = Service.create{name: "Onicocriptosis (uñas encarnadas)", price: 17000, duration: 30, company_id: silviapodologiaclinica.id, description:"<p>Solo se trata el dedo afectado</p>"}
+ser_silvia_2 = Service.create(name: "Onicocriptosis (uñas encarnadas)", price: 17000, duration: 30, company_id: silviapodologiaclinica.id, description:"<p>Solo se trata el dedo afectado</p>")
 
-ser_silvia_3 = Service.create{name: "Depilacion brazileña", price: 15000, duration: 30, company_id: silviapodologiaclinica.id, description:"<p>depilacion total</p>"}
+ser_silvia_3 = Service.create(name: "Depilacion brazileña", price: 15000, duration: 30, company_id: silviapodologiaclinica.id, description:"<p>depilacion total</p>")
 
-ser_silvia_4 = Service.create{name: "manicure", price: 6000, duration: 30, company_id: silviapodologiaclinica.id, description:"<p>Opi</p><p>Sparitual</p>"}
+ser_silvia_4 = Service.create(name: "manicure", price: 6000, duration: 30, company_id: silviapodologiaclinica.id, description:"<p>Opi</p><p>Sparitual</p>")
 
-ser_silvia_5 = Service.create{name: "Masaje corporal 1 hora", price: 18000, duration: 60, company_id: silviapodologiaclinica.id, description:"<p>masaje con aceites naturales (melisa, chocolate, romero, canela y lavanda)</p>"}
+ser_silvia_5 = Service.create(name: "Masaje corporal 1 hora", price: 18000, duration: 60, company_id: silviapodologiaclinica.id, description:"<p>masaje con aceites naturales (melisa, chocolate, romero, canela y lavanda)</p>")
 
-ser_silvia_6 = Service.create{name: "masaje corporal 30 min", price: 9000, duration: 30, company_id: silviapodologiaclinica.id, description:"<p>masaje con aceites naturales (lavanda, canela, melisa y chocolate)</p>"}
+ser_silvia_6 = Service.create(name: "masaje corporal 30 min", price: 9000, duration: 30, company_id: silviapodologiaclinica.id, description:"<p>masaje con aceites naturales (lavanda, canela, melisa y chocolate)</p>")
 
-ser_silvia_7 = Service.create{name: "masoterapia 20 min", price: 6000, duration: 20, company_id: silviapodologiaclinica.id, description:"<p>masaje relajante para pies con aceites naturales</p>"}
+ser_silvia_7 = Service.create(name: "masoterapia 20 min", price: 6000, duration: 20, company_id: silviapodologiaclinica.id, description:"<p>masaje relajante para pies con aceites naturales</p>")
 
-ser_silvia_8= Service.create{name: "Reflexologia", price: 14000, duration: 45, company_id: silviapodologiaclinica.id, description:"<p>logra un equilibrio energetico del cuerpo atravez de estimulos en los pies.</p><p>Obteniendo un beneficio sobre las partes del cuerpo que lo necesiten&nbsp;</p>"}
+ser_silvia_8 = Service.create(name: "Reflexologia", price: 14000, duration: 45, company_id: silviapodologiaclinica.id, description:"<p>logra un equilibrio energetico del cuerpo atravez de estimulos en los pies.</p><p>Obteniendo un beneficio sobre las partes del cuerpo que lo necesiten&nbsp;</p>")
 
-ser_silvia_9= Service.create{name: "Reiki", price: 20000, duration: 60, company_id: silviapodologiaclinica.id, description:"<p>sanacion energetica</p><p>limpieza del chacra</p><p>sacar cordones</p>"}
+ser_silvia_9 = Service.create(name: "Reiki", price: 20000, duration: 60, company_id: silviapodologiaclinica.id, description:"<p>sanacion energetica</p><p>limpieza del chacra</p><p>sacar cordones</p>")
 
-ser_donosura_1= Service.create{name: "Corte Dama", price: 18000, duration: 30, company_id: donosura.id, description:"<p>Corte con tijera</p>"}
+ser_donosura_1 = Service.create(name: "Corte Dama", price: 18000, duration: 30, company_id: donosura.id, description:"<p>Corte con tijera</p>")
 
-ser_donosura_2= Service.create{name: "Lavado con crema", price: 3000, duration: 15, company_id: donosura.id, description:""}
+ser_donosura_2 = Service.create(name: "Lavado con crema", price: 3000, duration: 15, company_id: donosura.id, description:"")
 
-ser_donosura_3= Service.create{name: "Lavado con ampolla", price: 5000, duration: 15, company_id: donosura.id, description:""}
+ser_donosura_3 = Service.create(name: "Lavado con ampolla", price: 5000, duration: 15, company_id: donosura.id, description:"")
 
-ser_donosura_4= Service.create{name: "Brushing pelo corto", price: 6000, duration: 30, company_id: donosura.id, description:""}
+ser_donosura_4 = Service.create(name: "Brushing pelo corto", price: 6000, duration: 30, company_id: donosura.id, description:"")
 
-ser_donosura_5= Service.create{name: "Brushing pelo medio", price: 8000, duration: 30, company_id: donosura.id, description:""}
+ser_donosura_5 = Service.create(name: "Brushing pelo medio", price: 8000, duration: 30, company_id: donosura.id, description:"")
 
-ser_donosura_6= Service.create{name: "Brushing pelo largo", price: 10000, duration: 30, company_id: donosura.id, description:""}
+ser_donosura_6 = Service.create(name: "Brushing pelo largo", price: 10000, duration: 30, company_id: donosura.id, description:"")
 
-ser_donosura_7= Service.create{name: "Peinado simple", price: 12000, duration: 30, company_id: donosura.id, description:""
+ser_donosura_7 = Service.create(name: "Peinado simple", price: 12000, duration: 30, company_id: donosura.id, description:"")
 
-ser_donosura_8= Service.create{name: "Peinado elaborado", price: 18000, duration: 45, company_id: donosura.id, description:""}
+ser_donosura_8 = Service.create(name: "Peinado elaborado", price: 18000, duration: 45, company_id: donosura.id, description:"")
 
-ser_donosura_9= Service.create{name: "Corte varón", price: 8000, duration: 30, company_id: donosura.id, description:""}
+ser_donosura_9 = Service.create(name: "Corte varón", price: 8000, duration: 30, company_id: donosura.id, description:"")
 
-ser_donosura_10= Service.create{name: "Tintura normal", price: 25000, duration: 15, company_id: donosura.id, description:""}
+ser_donosura_10 = Service.create(name: "Tintura normal", price: 25000, duration: 15, company_id: donosura.id, description:"")
 
-ser_donosura_11= Service.create{name: "Tintura raíz a punta", price: 35000, duration: 15, company_id: donosura.id, description:"<p>Productos:</p><p>Bella</p><p>Alfaparf</p><p>Loreal</p><p>BBCos</p><p><strong><span style=\"color: #666699;\">Color con micro pigmentaci&oacute;n&nbsp;</span></strong></p>"}
+ser_donosura_11 = Service.create(name: "Tintura raíz a punta", price: 35000, duration: 15, company_id: donosura.id, description:"<p>Productos:</p><p>Bella</p><p>Alfaparf</p><p>Loreal</p><p>BBCos</p><p><strong><span style=\"color: #666699;\">Color con micro pigmentaci&oacute;n&nbsp;</span></strong></p>")
 
-ser_donosura_12= Service.create{name: "Mechas saltadas", price: 25000, duration: 15, company_id: donosura.id, description:"<p>Productos: blondor</p><p>Azulado sin polvo en suspensi&oacute;n&nbsp;</p>"}
+ser_donosura_12 = Service.create(name: "Mechas saltadas", price: 25000, duration: 15, company_id: donosura.id, description:"<p>Productos: blondor</p><p>Azulado sin polvo en suspensi&oacute;n&nbsp;</p>")
 
-ser_donosura_13= Service.create{name: "Visos con papel", price: 35000, duration: 30, company_id: donosura.id, description:"<p>Productos: blondor Bella y Alparf</p>"}
+ser_donosura_13 = Service.create(name: "Visos con papel", price: 35000, duration: 30, company_id: donosura.id, description:"<p>Productos: blondor Bella y Alparf</p>")
 
-ser_donosura_14= Service.create{name: "Tintura californiana en degrade", price: 45000, duration: 45, company_id: donosura.id, description:""}
+ser_donosura_14 = Service.create(name: "Tintura californiana en degrade", price: 45000, duration: 45, company_id: donosura.id, description:"")
 
-ser_donosura_15= Service.create{name: "Reflejos", price: 35000, duration: 15, company_id: donosura.id, description:"<p>Sin decolorante, color directo.</p>"}
+ser_donosura_15 = Service.create(name: "Reflejos", price: 35000, duration: 15, company_id: donosura.id, description:"<p>Sin decolorante, color directo.</p>")
 
-ser_donosura_16= Service.create{name: "Ondulación basé normal horizontal", price: 20000, duration: 60, company_id: donosura.id, description:"<p>Tratamiento ondulatorio para pelo corto</p><p>Fijador y neutralizante&nbsp;</p>"}
+ser_donosura_16 = Service.create(name: "Ondulación basé normal horizontal", price: 20000, duration: 60, company_id: donosura.id, description:"<p>Tratamiento ondulatorio para pelo corto</p><p>Fijador y neutralizante&nbsp;</p>")
 
-ser_donosura_17= Service.create{name: "Ondulación vertical", price: 30000, duration: 60, company_id: donosura.id, description:"<p>Tratamiento ondulatorio pelo largo</p><p>fijador y neutralizante Lakme y Loreal</p>"}
+ser_donosura_17 = Service.create(name: "Ondulación vertical", price: 30000, duration: 60, company_id: donosura.id, description:"<p>Tratamiento ondulatorio pelo largo</p><p>fijador y neutralizante Lakme y Loreal</p>")
 
-ser_donosura_18= Service.create{name: "Alisado de Keratina pelo normal ", price: 50000, duration: 60, company_id: donosura.id, description:""}
+ser_donosura_18 = Service.create(name: "Alisado de Keratina pelo normal ", price: 50000, duration: 60, company_id: donosura.id, description:"")
 
-ser_donosura_19= Service.create{name: "Alisado de Keratina pelo largo", price: 70000, duration: 60, company_id: donosura.id, description:"<p>Brasil cacao de Oil Argan</p><p>tratamiento anti volumen Inoa</p>"}
+ser_donosura_19 = Service.create(name: "Alisado de Keratina pelo largo", price: 70000, duration: 60, company_id: donosura.id, description:"<p>Brasil cacao de Oil Argan</p><p>tratamiento anti volumen Inoa</p>")
 
-ser_donosura_20= Service.create{name: "Tratamiento hidratante Keratina ", price: 35000, duration: 45, company_id: donosura.id, description:"<p>Producto:</p><p>sebastian</p>"}
+ser_donosura_20 = Service.create(name: "Tratamiento hidratante Keratina ", price: 35000, duration: 45, company_id: donosura.id, description:"<p>Producto:</p><p>sebastian</p>")
 
-ser_donosura_21= Service.create{name: "Tratamiento termo sellante", price: 25000, duration: 30, company_id: donosura.id, description:"<p>Producto:</p><p>sebastian penetraitt&nbsp;</p>"}
+ser_donosura_21 = Service.create(name: "Tratamiento termo sellante", price: 25000, duration: 30, company_id: donosura.id, description:"<p>Producto:</p><p>sebastian penetraitt&nbsp;</p>")
 
-ser_donosura_22= Service.create{name: "Masaje capilar ", price: 18000, duration: 15, company_id: donosura.id, description:"<p>Tratamiento con vaporizador&nbsp;</p><p>crema Sebasti&aacute;n penetraitt</p>"}
+ser_donosura_22 = Service.create(name: "Masaje capilar ", price: 18000, duration: 15, company_id: donosura.id, description:"<p>Tratamiento con vaporizador&nbsp;</p><p>crema Sebasti&aacute;n penetraitt</p>")
 
-ser_donosura_23= Service.create{name: "Maquillaje rostro para fiesta ", price: 18000, duration: 45, company_id: donosura.id, description:""}
+ser_donosura_23 = Service.create(name: "Maquillaje rostro para fiesta ", price: 18000, duration: 45, company_id: donosura.id, description:"")
 
-ser_donosura_24= Service.create{name: "Manicure", price: 7000, duration: 30, company_id: donosura.id, description:"<p>Limado--limpieza--esmaltado.</p>"}
+ser_donosura_24 = Service.create(name: "Manicure", price: 7000, duration: 30, company_id: donosura.id, description:"<p>Limado--limpieza--esmaltado.</p>")
 
-ser_donosura_25= Service.create{name: "Pedicure", price: 9000, duration: 30, company_id: donosura.id, description:"<p>Limado--limpieza---esmaltado.</p>"}
+ser_donosura_25 = Service.create(name: "Pedicure", price: 9000, duration: 30, company_id: donosura.id, description:"<p>Limado--limpieza---esmaltado.</p>")
 
-ser_donosura_26= Service.create{name: "Podologia", price: 12000, duration: 45, company_id: donosura.id, description:"<p>&nbsp;Retiro de durezas--limpieza profunda--limado--esmaltado.</p>"}
+ser_donosura_26 = Service.create(name: "Podologia", price: 12000, duration: 45, company_id: donosura.id, description:"<p>&nbsp;Retiro de durezas--limpieza profunda--limado--esmaltado.</p>")
 
-ser_donosura_27= Service.create{name: "Esmaltado permanente", price: 18000, duration: 45, company_id: donosura.id, description:"<p>Limado--limpieza--esmaltado.</p>"}
+ser_donosura_27 = Service.create(name: "Esmaltado permanente", price: 18000, duration: 45, company_id: donosura.id, description:"<p>Limado--limpieza--esmaltado.</p>")
 
-ser_donosura_28= Service.create{name: "Ondulado de  pestañas permanente con tinte ", price: 18000, duration: 60, company_id: donosura.id, description:"<p>Ondular--fijar--te&ntilde;ir</p>"}
+ser_donosura_28 = Service.create(name: "Ondulado de  pestañas permanente con tinte ", price: 18000, duration: 60, company_id: donosura.id, description:"<p>Ondular--fijar--te&ntilde;ir</p>")
 
-ser_donosura_29= Service.create{name: "Masaje descontracturante", price: 20000, duration: 60, company_id: donosura.id, description:"<p>Ubicar contractura---drenar.</p>"}
+ser_donosura_29 = Service.create(name: "Masaje descontracturante", price: 20000, duration: 60, company_id: donosura.id, description:"<p>Ubicar contractura---drenar.</p>")
 
-ser_donosura_30= Service.create{name: "Masaje relajante", price: 18000, duration: 60, company_id: donosura.id, description:"<p>Relajar hombros y extremidades</p>"}
+ser_donosura_30 = Service.create(name: "Masaje relajante", price: 18000, duration: 60, company_id: donosura.id, description:"<p>Relajar hombros y extremidades</p>")
 
-ser_donosura_31= Service.create{name: "Masaje reductivo con ultracavitacion - 10 sesiones", price: 260000, duration: 60, company_id: donosura.id, description:"<p>Eliminar la grasa localizada--drenar--moldear</p>"}
+ser_donosura_31 = Service.create(name: "Masaje reductivo con ultracavitacion - 10 sesiones", price: 260000, duration: 60, company_id: donosura.id, description:"<p>Eliminar la grasa localizada--drenar--moldear</p>")
 
-ser_donosura_32= Service.create{name: "Masaje reductivo manual. Incluye maderoterapia. 10 sesiones", price: 180000, duration: 60, company_id: donosura.id, description:"<p>drenar-- moldear-- trabajar celulitis .</p>"}
+ser_donosura_32 = Service.create(name: "Masaje reductivo manual. Incluye maderoterapia. 10 sesiones", price: 180000, duration: 60, company_id: donosura.id, description:"<p>drenar-- moldear-- trabajar celulitis .</p>")
 
-ser_donosura_33= Service.create{name: "Manicure express", price: 4000, duration: 15, company_id: donosura.id, description:"<p>Limado--esmaltado</p>"}
+ser_donosura_33 = Service.create(name: "Manicure express", price: 4000, duration: 15, company_id: donosura.id, description:"<p>Limado--esmaltado</p>")
 
 
-ser_proterapias_1= Service.create{name: "APITERAPIA", price: 10000, duration: 30, company_id: proterapias.id, description:"<p>Tratamiento de enfermedades y dolencias con veneno de abejas.</p>"}
+ser_proterapias_1 = Service.create(name: "APITERAPIA", price: 10000, duration: 30, company_id: proterapias.id, description:"<p>Tratamiento de enfermedades y dolencias con veneno de abejas.</p>")
 
-ser_proterapias_2= Service.create{name: "REIKI CHAMANICO ", price: 15000, duration: 60, company_id: proterapias.id, description:"<p>Terapia de canalizaci&oacute;n de energ&iacute;a a trav&eacute;s de la imposici&oacute;n de manos.</p>"}
+ser_proterapias_2 = Service.create(name: "REIKI CHAMANICO ", price: 15000, duration: 60, company_id: proterapias.id, description:"<p>Terapia de canalizaci&oacute;n de energ&iacute;a a trav&eacute;s de la imposici&oacute;n de manos.</p>")
 
-ser_proterapias_3= Service.create{name: "REFLEXOLOGIA", price: 15000, duration: 60, company_id: proterapias.id, description:"<p>Terapia china que se realiza en los pies, mediante t&eacute;cnicas de estimulaci&oacute;n y relajaci&oacute;n en las distintas zonas reflejas.</p>"}
+ser_proterapias_3 = Service.create(name: "REFLEXOLOGIA", price: 15000, duration: 60, company_id: proterapias.id, description:"<p>Terapia china que se realiza en los pies, mediante t&eacute;cnicas de estimulaci&oacute;n y relajaci&oacute;n en las distintas zonas reflejas.</p>")
 
-ser_proterapias_4= Service.create{name: "BIOMAGNETISMO", price: 15000, duration: 60, company_id: proterapias.id, description:"<p>A trav&eacute;s de Imanes, se equilibra el Ph del cuerpo, anulando la existencia de cualquier agente patogeno, se elimina VIRUS BACTERIAS PAR&Aacute;SITOS Y HONGOS.</p><p>Puedes tratar cualquier enfermedad</p>"}
+ser_proterapias_4 = Service.create(name: "BIOMAGNETISMO", price: 15000, duration: 60, company_id: proterapias.id, description:"<p>A trav&eacute;s de Imanes, se equilibra el Ph del cuerpo, anulando la existencia de cualquier agente patogeno, se elimina VIRUS BACTERIAS PAR&Aacute;SITOS Y HONGOS.</p><p>Puedes tratar cualquier enfermedad</p>")
 
-ser_proterapias_5= Service.create{name: "REIKI USUI", price: 15000, duration: 60, company_id: proterapias.id, description:"<p>Traspaso de Energ&iacute;a Universal a trav&eacute;s de la Imposici&oacute;n de Manos, realinea y equilibra los Chacras, alivia malestares tanto fisicos, emocionales y psicologicos</p>"}
+ser_proterapias_5 = Service.create(name: "REIKI USUI", price: 15000, duration: 60, company_id: proterapias.id, description:"<p>Traspaso de Energ&iacute;a Universal a trav&eacute;s de la Imposici&oacute;n de Manos, realinea y equilibra los Chacras, alivia malestares tanto fisicos, emocionales y psicologicos</p>")
 
-ser_proterapias_6= Service.create{name: "E.F.T. Técnicas de Liberación Emocional", price: 15000, duration: 60, company_id: proterapias.id, description:"<p>T&eacute;nica basada en DigitoPuntura y Programaci&oacute;n Neuroling&uuml;istica, que elimina cualquier Emoci&oacute;n atrapada como Duelos, reparaciones, traumas, fobias, Baja Autoestima, Adicciones, etc.</p>"}
+ser_proterapias_6 = Service.create(name: "E.F.T. Técnicas de Liberación Emocional", price: 15000, duration: 60, company_id: proterapias.id, description:"<p>T&eacute;nica basada en DigitoPuntura y Programaci&oacute;n Neuroling&uuml;istica, que elimina cualquier Emoci&oacute;n atrapada como Duelos, reparaciones, traumas, fobias, Baja Autoestima, Adicciones, etc.</p>")
 
-ser_proterapias_7= Service.create{name: "MASAJE CRANEAL HINDÚ ", price: 15000, duration: 30, company_id: proterapias.id, description:"<p>Se centra en la parte superior de la Espalda Hombros, Cuello, Craneo y Rostro. El masaje se da sentado sin la necesidad de desnudar a la persona, Alivia migra&ntilde;as, estados depresivos, bruxismo, y lo complementamos con Reiki.</p>"}
+ser_proterapias_7 = Service.create(name: "MASAJE CRANEAL HINDÚ ", price: 15000, duration: 30, company_id: proterapias.id, description:"<p>Se centra en la parte superior de la Espalda Hombros, Cuello, Craneo y Rostro. El masaje se da sentado sin la necesidad de desnudar a la persona, Alivia migra&ntilde;as, estados depresivos, bruxismo, y lo complementamos con Reiki.</p>")
 
-ser_psnatalia_1= Service.create{name: "Consulta psicológica ", price: 20000, duration: 45, company_id: ps_natalia_campos.id, description:"<p>Psic&oacute;loga Cl&iacute;nica acreditada. Magister en Psicolog&iacute;a Clinica con formaci&oacute;n en terapia familiar, de pareja e individual. Diplomado en Sexualidad. Flores de Bach.</p>"}
+ser_psnatalia_1 = Service.create(name: "Consulta psicológica ", price: 20000, duration: 45, company_id: ps_natalia_campos.id, description:"<p>Psic&oacute;loga Cl&iacute;nica acreditada. Magister en Psicolog&iacute;a Clinica con formaci&oacute;n en terapia familiar, de pareja e individual. Diplomado en Sexualidad. Flores de Bach.</p>")
 
-ser_chely_1= Service.create{name: "Tintura ", price: 21900, duration: 60, company_id: chely.id, description:"<p>Tintura Majirel de L&acute;oreal. Tinturas cortas 60 minutos, tinturas largas una hora y media.</p>"}
+ser_chely_1 = Service.create(name: "Tintura ", price: 21900, duration: 60, company_id: chely.id, description:"<p>Tintura Majirel de L&acute;oreal. Tinturas cortas 60 minutos, tinturas largas una hora y media.</p>")
 
-kathy = User.create(first_name: 'Kathy', last_name: 'Valdes', email: 'mandarinabeauty@gmail.com', phone: '', role: Role.find_by_name('Admin'), password: 'agendapro', password_confirmation: 'agendapro')
+kathy = User.create(first_name: 'Kathy', last_name: 'Valdes', email: 'mandarinabeauty@gmail.com', phone: '', role: Role.find_by_name('Admin'), password: 'agendapro', password_confirmation: 'agendapro', company_id: mandarina.id)
 
 #gabriel = User.create(first_name: 'Gabriel', last_name: 'Morales', email: 'mandarinabeauty@gmail.com', phone: '', role: Role.find_by_name('Staff'), password: 'agendapro', password_confirmation: 'agendapro')
 
@@ -252,33 +252,33 @@ kathy = User.create(first_name: 'Kathy', last_name: 'Valdes', email: 'mandarinab
 
 #vicky = User.create(first_name: 'Vicky', last_name: 'Cancino', email: 'mandarinabeauty@gmail.com', phone: '', role: Role.find_by_name('Staff'), password: 'agendapro', password_confirmation: 'agendapro')
 
-silvia = User.create(first_name: 'Silvia', last_name: 'Sepúlveda', email: 'silviagatitagat@hotmail.com', phone: '', role: Role.find_by_name('Admin'), password: 'perlita', password_confirmation: 'perlita')
+silvia = User.create(first_name: 'Silvia', last_name: 'Sepúlveda', email: 'silviagatitagat@hotmail.com', phone: '', role: Role.find_by_name('Admin'), password: 'perlita', password_confirmation: 'perlita', company_id: silviapodologiaclinica.id)
 
-guillermo = User.create(first_name: 'José Guillermo', last_name: 'Donoso Palma', email: 'donosura.guillermo@gmail.com', phone: '', role: Role.find_by_name('Admin'), password: 'peluqueria', password_confirmation: 'peluqueria')
+guillermo = User.create(first_name: 'José Guillermo', last_name: 'Donoso Palma', email: 'donosura.guillermo@gmail.com', phone: '', role: Role.find_by_name('Admin'), password: 'peluqueria', password_confirmation: 'peluqueria', company_id: donosura.id)
 
 #aida = User.create(first_name: 'aida', last_name: 'sepulveda', email: 'aidy_sep@hotmail.com', phone: '', role: Role.find_by_name('Staff'), password: 'cachito', password_confirmation: 'cachito')
 
 # admin = User.create(first_name: 'silvia', last_name: 'sepulveda', email: 'silviagatitagat@hotmail.com', phone: '', role: Role.find_by_name('Staff'), password: '', password_confirmation: '')
 
-lucia = User.create(first_name: 'Lucía', last_name: 'Albarracin', email: 'albarracinl@gmail.com', phone: '', role: Role.find_by_name('Admin'), password: 'lucy2014', password_confirmation: 'lucy2014')
+lucia = User.create(first_name: 'Lucía', last_name: 'Albarracin', email: 'albarracinl@gmail.com', phone: '', role: Role.find_by_name('Admin'), password: 'lucy2014', password_confirmation: 'lucy2014', company_id: lucy.id)
 
-juan = User.create(first_name: 'Juan', last_name: 'Sanchez', email: 'frommysofa@gmail.com', phone: '', role: Role.find_by_name('Admin'), password: 'larrinaga', password_confirmation: 'larrinaga')
+juan = User.create(first_name: 'Juan', last_name: 'Sanchez', email: 'frommysofa@gmail.com', phone: '', role: Role.find_by_name('Admin'), password: 'larrinaga', password_confirmation: 'larrinaga', company_id: la_cesta.id)
 
-maria = User.create(first_name: 'María Amelia', last_name: 'Barrera', email: 'mariamelia.barrera@gmail.com', phone: '', role: Role.find_by_name('Admin'), password: 'mamelia', password_confirmation: 'mamelia')
+maria = User.create(first_name: 'María Amelia', last_name: 'Barrera', email: 'mariamelia.barrera@gmail.com', phone: '', role: Role.find_by_name('Admin'), password: 'mamelia', password_confirmation: 'mamelia', company_id: cambio_dos.id)
 
-pablo = User.create(first_name: 'Pablo', last_name: 'Henriquez', email: 'pabli80@hotmail.it', phone: '', role: Role.find_by_name('Admin'), password: 'amore', password_confirmation: 'amore')
+pabla = User.create(first_name: 'Pabla', last_name: 'Henriquez', email: 'pabli80@hotmail.it', phone: '', role: Role.find_by_name('Admin'), password: 'amore', password_confirmation: 'amore', company_id: benestetica.id)
 
-rose = User.create(first_name: 'Rose Mary', last_name: 'Arce', email: 'proterapias@gmail.com', phone: '', role: Role.find_by_name('Admin'), password: 'provi', password_confirmation: 'provi')
+rose = User.create(first_name: 'Rose Mary', last_name: 'Arce', email: 'proterapias@gmail.com', phone: '', role: Role.find_by_name('Admin'), password: 'provi', password_confirmation: 'provi', company_id: proterapias.id)
 
 #jose = User.create(first_name: 'José', last_name: 'León', email: 'Josemiel98@yahoo.es', phone: '', role: Role.find_by_name('Staff'), password: '75085153', password_confirmation: '75085153')
 
-natalia = User.create(first_name: 'Natalia', last_name: 'Campos', email: 'nataliacamposv@gmail.com', phone: '', role: Role.find_by_name('Admin'), password: 'natinati', password_confirmation: 'natinati')
+natalia = User.create(first_name: 'Natalia', last_name: 'Campos', email: 'nataliacamposv@gmail.com', phone: '', role: Role.find_by_name('Admin'), password: 'natinati', password_confirmation: 'natinati', company_id: ps_natalia_campos.id)
 
 #sandra = User.create(first_name: 'Sandra', last_name: 'Pacheco Luengo', email: 'sandra.p.luengo@gmail.com', phone: '', role: Role.find_by_name('Staff'), password: 'EFT', password_confirmation: 'EFT')
 
 #carolina = User.create(first_name: 'Carolina', last_name: 'Ulloa', email: 'Moscar_m@hotmail.com', phone: '', role: Role.find_by_name('Staff'), password: '1234', password_confirmation: '1234')
 
-daniella = User.create(first_name: 'Daniella', last_name: 'Leiva', email: 'la.perpetua@gmail.com', phone: '', role: Role.find_by_name('Admin'), password: 'eternos2481', password_confirmation: 'eternos2481')
+daniella = User.create(first_name: 'Daniella', last_name: 'Leiva', email: 'la.perpetua@gmail.com', phone: '', role: Role.find_by_name('Admin'), password: 'eternos2481', password_confirmation: 'eternos2481', company_id: chely.id)
 
 #monica = User.create(first_name: 'Monica', last_name: 'Pascual', email: 'la.perpetua@gmail.com', phone: '', role: Role.find_by_name('Staff'), password: 'peluqueria', password_confirmation: 'peluqueria')
 
@@ -363,18 +363,18 @@ vc_times = ProviderTime.create([
 	{open: '10:00', close: '21:00', service_provider_id: vc.id, day_id: 2}, 
 	{open: '10:00', close: '21:00', service_provider_id: vc.id, day_id: 3}, 
 	{open: '10:00', close: '21:00', service_provider_id: vc.id, day_id: 4}, 
-	{open: '10:00', close: '21:00', service_provider_id: vc.id, day_id: 5,}
+	{open: '10:00', close: '21:00', service_provider_id: vc.id, day_id: 5},
 	{open: '10:00', close: '18:00', service_provider_id: vc.id, day_id: 6}])
 
 kv = ServiceProvider.create(location_id: local_mandarina.id, company_id: mandarina.id, notification_email: 'mandarinabeauty@gmail.com', public_name: 'Kathy Valdes')
 
 kv_times = ProviderTime.create([
-	{open: '10:00', close: '21:00', service_provider_id: ky.id, day_id: 1}, 
-	{open: '10:00', close: '21:00', service_provider_id: ky.id, day_id: 2}, 
-	{open: '10:00', close: '21:00', service_provider_id: ky.id, day_id: 3}, 
-	{open: '10:00', close: '21:00', service_provider_id: ky.id, day_id: 4}, 
-	{open: '10:00', close: '21:00', service_provider_id: ky.id, day_id: 5},
-	{open: '10:00', close: '18:00', service_provider_id: ky.id, day_id: 6}])
+	{open: '10:00', close: '21:00', service_provider_id: kv.id, day_id: 1}, 
+	{open: '10:00', close: '21:00', service_provider_id: kv.id, day_id: 2}, 
+	{open: '10:00', close: '21:00', service_provider_id: kv.id, day_id: 3}, 
+	{open: '10:00', close: '21:00', service_provider_id: kv.id, day_id: 4}, 
+	{open: '10:00', close: '21:00', service_provider_id: kv.id, day_id: 5},
+	{open: '10:00', close: '18:00', service_provider_id: kv.id, day_id: 6}])
 
 as = ServiceProvider.create(location_id: local_silvia.id, company_id: silviapodologiaclinica.id, notification_email: 'aidy_sep@hotmail.com', public_name: 'Aida Sepulveda')
 
@@ -383,7 +383,7 @@ as_times = ProviderTime.create([
 	{open: '10:00', close: '20:00', service_provider_id: as.id, day_id: 2}, 
 	{open: '10:00', close: '20:00', service_provider_id: as.id, day_id: 3}, 
 	{open: '10:00', close: '20:00', service_provider_id: as.id, day_id: 4}, 
-	{open: '10:00', close: '20:00', service_provider_id: as.id, day_id: 5}
+	{open: '10:00', close: '20:00', service_provider_id: as.id, day_id: 5},
 	{open: '10:00', close: '14:00', service_provider_id: as.id, day_id: 6}])
 
 ss = ServiceProvider.create(location_id: local_silvia.id, company_id: silviapodologiaclinica.id, notification_email: 'silviagatitagat@hotmail.com', public_name: 'Silvia Sepulveda')
@@ -646,6 +646,6 @@ bookings_beta = Booking.create([
 {start: '2014-1-31T10:00z', end: '2014-1-31T11:00z', service_provider_id: ng.id, service_id: ser_donosura_31.id, location_id: local_donosura.id, status_id: reservado.id, first_name: 'Sonia', last_name: 'Triana', email: 'soniatriana@me.com', phone: '71078180'},
 {start: '2014-1-30T18:00z', end: '2014-1-30T19:00z', service_provider_id: ng.id, service_id: ser_donosura_31.id, location_id: local_donosura.id, status_id: reservado.id, first_name: 'Violena', last_name: 'meersohn', email: 'vmeersohn@hotmail.com', phone: '92195749'},
 {start: '2014-1-28T14:00z', end: '2014-1-28T15:00z', service_provider_id: ng.id, service_id: ser_donosura_32.id, location_id: local_donosura.id, status_id: reservado.id, first_name: 'Jessica', last_name: 'Perez', email: 'jessica.pekus@gmail.com', phone: '78890277'},
-{start: '2014-1-31T15:00z', end: '2014-1-31T116:00z', service_provider_id: ng.id, service_id: ser_donosura_32.id, location_id: local_donosura.id, status_id: reservado.id, first_name: 'Catalina', last_name: 'Huertas', email: 'catahuertas@gmail.com', phone: '65390746'}])
+{start: '2014-1-31T15:00z', end: '2014-1-31T16:00z', service_provider_id: ng.id, service_id: ser_donosura_32.id, location_id: local_donosura.id, status_id: reservado.id, first_name: 'Catalina', last_name: 'Huertas', email: 'catahuertas@gmail.com', phone: '65390746'}])
 
 #################### Fin de empresas en Beta
