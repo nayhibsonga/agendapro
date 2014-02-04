@@ -3,16 +3,16 @@ class MandrillController < ApplicationController
 	require 'base64'
 	layout 'login'
   
-  def confirm_unsuscribe
+  def confirm_unsubscribe
   	@email  = Base64.decode64(params[:user])
   end
 
-  def unsuscribe
+  def unsubscribe
   	mandrill = Mandrill::API.new 'HL4ERbuZZO6rrM2nlVjzZg'
 
   	# => Decodificando el email del usuario
   	email = Base64.decode64(params[:user])
-  	comment = "Manual unsuscribe"
+  	comment = "Manual unsubscribe"
 
   	result = mandrill.rejects.add email, comment
 
