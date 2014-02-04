@@ -26,7 +26,7 @@ function loadStep1 () {
 		
 		//====== Escribiendo los servicios
 		$.each(categories, function (key, service_category) {
-			var category_id = service_category[key].id
+			var category_id = service_category[key].service_category_id;
 			//====== Insertando acordeon
 			$('#services-selector').append(
 				'<div class="panel panel-default">' +
