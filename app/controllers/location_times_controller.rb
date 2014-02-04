@@ -129,13 +129,13 @@ class LocationTimesController < ApplicationController
     end
 
     render :json => {
-      :lunes => lunes,
-      :martes => martes,
-      :miercoles => miercoles,
-      :jueves => jueves,
-      :viernes => viernes,
-      :sabado => sabado,
-      :domingo => domingo
+      :Lunes => lunes,
+      :Martes => martes,
+      :Miércoles => miercoles,
+      :Jueves => jueves,
+      :Viernes => viernes,
+      :Sábado => sabado,
+      :Domingo => domingo
     }
   end
 

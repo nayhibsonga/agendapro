@@ -1,18 +1,18 @@
 //====== Result ======//
-
 function loadSchedule(id) {
   $('#schedule-body' + id).html('<%= image_tag "ajax-loader.gif", :alt => "Loader" %>');
   $.getJSON('/schedule', {local: id}, function (schedule) {
     $('#schedule-body' + id).empty();
-    $('#schedule-body' + id).append('<ul class="list-unstyled" id="list' + id + '"></ul>');
-    $.each(schedule, function (day, hours) {
-      if (hours.length) {
-        $('#list' + id).append('<li id="' + day + '-' + id + '"><b>' + day + ' </b></li>');
-        $.each(hours, function (pos, hour) {
-          $('#' + day + '-' + id).append(getHour(hour.open) + '-' + getHour(hour.close) + ' ');
-        })
+    $.each(schedule, function (day, hour) {
+      if (hour.open) {
+        $('#schedule-body' + id).append(
+          '<tr>' +
+            '<th>' + day + '</th>' +
+            '<th>' + getHour(hour.open) + '-' + getHour(hour.close) + '</th>' +
+          '</tr>'
+        );
       }
-    })
+    });
   });
 }
 
@@ -25,7 +25,7 @@ function getHour(str) {
 //====== Search ======//
 function changeLocation (district_id) {
   $.getJSON('/get_district', {id: district_id}, function (district) {
-    $('#span-location').html(district.name + '<i class="glyphicon glyphicon-chevron-right"></i>');
+    $('#span-location').html(district.name + '<i class="fa fa-chevron-right"></i>');
     $('#district').val(district.id);
 
     //====== Session Storage
@@ -45,7 +45,7 @@ function decode (position) {
         var address = results[1].formatted_address;
         var district = address.substring(0, address.indexOf(','));
         $.getJSON('/district_by_name', {name: district}, function (district) {
-          $('#span-location').html(district.name + '<i class="glyphicon glyphicon-chevron-right"></i>');
+          $('#span-location').html(district.name + '<i class="fa fa-chevron-right"></i>');
           $('#district').val(district.id);
 
           //====== Session Storage
@@ -68,7 +68,6 @@ function locationError (error) {
 }
 
 //====== Load ======//
-
 $(function() {
   $('#save').on('click', function () {
     var district = $('#location_autocomplete').val();
