@@ -1,5 +1,4 @@
 //====== Map ======//
-
 function initializeMap (lat, lng, mapDiv) {
     var properties = {
         center: new google.maps.LatLng(lat, lng),
@@ -19,6 +18,12 @@ function initializeMap (lat, lng, mapDiv) {
         mapTypeId:  google.maps.MapTypeId.ROADMAP
     };
     map = new google.maps.Map(document.getElementById(mapDiv), properties);
+
+    google.maps.event.addListenerOnce(map, 'bounds_changed', function(event){
+        if (this.getZoom() >= 15){  
+            this.setZoom(15) 
+        }
+    });
 }
 
 function setMarker (latlng, local, n) {
@@ -65,40 +70,41 @@ function geoerror (error) {
 
 $(function() {
 	var map;
-	initializeMap(-33.413084, -70.592161, 'map');
-	
+    initializeMap(-33.413084, -70.592161, 'map');
+    
     var fullBounds = new google.maps.LatLngBounds();
 
-	var i = 1;
-	$.each($('#results').data('results'), function (key, local) {
-		loadSchedule(local.id);
-		var latLng = new google.maps.LatLng(local.latitude, local.longitude);
-		setMarker(latLng, local.name, i);
-		i++;
+    var i = 1;
+    $.each($('#results').data('results'), function (key, local) {
+        loadSchedule(local.id);
+        var latLng = new google.maps.LatLng(local.latitude, local.longitude);
+        setMarker(latLng, local.name, i);
+        i++;
 
         fullBounds.extend(latLng);
-	});
+    });
 
-    if (navigator.geolocation) {
-        if (typeof(Storage) !== "undefined") {
-            if (sessionStorage.manual) {
-                var geolocation = $('#geolocation').data('geolocation');
-                centerMap(geolocation);
+    if (!fullBounds.isEmpty()) {
+        fitMarkers(fullBounds);
+    }
+    else {
+        if (navigator.geolocation) {
+            if (typeof(Storage) !== "undefined") {
+                if (sessionStorage.manual) {
+                    var geolocation = $('#geolocation').data('geolocation');
+                    centerMap(geolocation);
+                }
+                else {
+                    navigator.geolocation.getCurrentPosition(geoLocation, geoerror);
+                }
             }
             else {
                 navigator.geolocation.getCurrentPosition(geoLocation, geoerror);
             }
         }
         else {
-            navigator.geolocation.getCurrentPosition(geoLocation, geoerror);
+            var geolocation = $('#geolocation').data('geolocation');
+            centerMap(geolocation);
         }
-    }
-    else {
-        var geolocation = $('#geolocation').data('geolocation');
-        centerMap(geolocation);
-    }
-
-    if (!fullBounds.isEmpty()) {
-        fitMarkers(fullBounds);
     }
 });
