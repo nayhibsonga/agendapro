@@ -4,8 +4,8 @@ Agendapro::Application.routes.draw do
   require 'subdomain'
 
   # Mandrill
-  get 'mandrill/confirm_unsuscribe', :as => 'unsuscribe'
-  post "mandrill/unsuscribe"
+  get 'mandrill/confirm_unsubscribe', :as => 'unsubscribe'
+  post "mandrill/unsubscribe"
   get "mandrill/resuscribe"
 
   devise_for :users, controllers: {registrations: 'registrations'}
@@ -82,6 +82,9 @@ Agendapro::Application.routes.draw do
   post "/book", :to => 'bookings#book_service'
   get '/category_name', :to => 'service_categories#get_category_name'
   get '/get_available_time', :to => 'locations#get_available_time'
+
+  get '/edit_booking', :to => 'bookings#edit_booking', :as => 'booking_edit'
+  post '/edited_booking', :to => 'bookings#edit_booking_post'
   
   # Root
   get '/' => 'searchs#index', :constraints => { :subdomain => 'www' }

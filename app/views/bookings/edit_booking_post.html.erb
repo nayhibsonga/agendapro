@@ -7,7 +7,7 @@
 				<div class="row">
 					<div class="col-md-8">
 						<p>
-							Lo sentimos, hubo un error agendando su servicio.<br>
+							Lo sentimos, hubo un error actualizando su cita.<br>
 							Puedes ver mas detalles del error pinchando <a id="errorLink" href="#">aquí</a>.<br>
 							Puedes agendar una nueva cita <a href="<%= root_url(:host => @url) %>">aquí</a>.
 						</p>
@@ -23,7 +23,7 @@
 				<% else %>
 				<h3>Gracias <%= @booking.first_name %>!</h3>
 				<p>
-					Su servicio fue agendado correctamente.<br>
+					Su cita fue actualizada correctamente.<br>
 					Si desea agendar una nueva cita pinche <a href="<%= root_url(:host => @url) %>">aquí</a>.
 				</p>
 				<hr>

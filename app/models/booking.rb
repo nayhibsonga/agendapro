@@ -61,4 +61,13 @@ class Booking < ActiveRecord::Base
 			errors.add(:booking, "El horario de la reserva no es posible para ese proveedor de servicio.")
 		end
   	end
+
+  	def confirmation_code
+  		id = self.id.to_s
+  		id_length = id.length.to_s
+  		local_id = self.location_id.to_s
+  		service_id = self.service_id.to_s
+  		provider_id = self.service_provider_id.to_s
+  		return id + local_id + service_id + provider_id + '-' + id_length
+  	end
 end

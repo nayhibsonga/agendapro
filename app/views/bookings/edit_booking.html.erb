@@ -1,0 +1,44 @@
+<%= stylesheet_link_tag "calendar" %>
+
+<div class="main">
+  <div class="container">
+    <div clas="row" id="espacio-workflow">
+      <div class="col-md-12">
+        <div class="well">
+          <h4>Elija la nueva hora</h4>
+          <div class="panel panel-info">
+            <div class="panel-heading">
+              <h3 class="panel-title">
+                <button type="button" class="btn btn-default" id="prev"><i class="fa fa-chevron-left"></i></button>
+                <span class="tittle"></span>
+                <button type="button" class="btn btn-default pull-right" id="next"><i class="fa fa-chevron-right"></i></button>
+              </h3>
+            </div>
+            <div class="panel-body">
+              <div class="horario"></div>
+            </div>
+            <div class="panel-footer">
+              <%= form_tag("/edited_booking", method: "post", role: "form", class: "form-horizontal", id: "edit_form" ) do %>
+                <input type="hidden" name="id" id="id" value="<%= @booking.id %>">
+                <input type="hidden" name="start" id="start" value="">
+                <input type="hidden" name="end" id="end" value="">
+                <div class="form-group">
+                  <div class="col-sm-offset-10 col-sm-2">
+                    <button type="submit" class="btn btn-default">Editar</button>
+                  </div>
+                </div>
+              <% end %>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<%= content_tag "div", id: "booking", data: {booking: @booking} do %>
+<% end %>
+
+<% content_for :scripts do %>
+  <%= javascript_include_tag 'workflow/booking-edit' %>
+<% end %>
