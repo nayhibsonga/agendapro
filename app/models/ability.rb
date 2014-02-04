@@ -61,6 +61,9 @@ class Ability
     can :get_category_name, ServiceCategory
     can :get_available_time, Location
 
+    can :edit_booking, Booking
+    can :edit_booking_post, Booking
+
     # Search
     can :get_districts, District
     can :get_district, District
