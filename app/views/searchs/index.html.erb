@@ -7,38 +7,35 @@
     <section class="portfolio_teasers_wrapper">
         <div class="container">
             <div class="row">
-                <div class="col-lg-10 col-lg-offset-1">
-                    <h2 class="section_header">Sugerencias de Busqueda</h2>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-lg-10 col-lg-offset-1 recomendados">
+                <div class="col-lg-4">
                     <div class="box-recomendacion-lg position-background " style="background-image: url(<%= asset_path 'home/peluqueria.jpg' %>)">
                         <a href="/search?district=1&inputSearch=Peluqueria" class="box-recomendacion-lg overlay">
                             <h3>Peluquerías</h3>
                         </a>
                     </div>
-                    <div class="box-recomendacion-lg position-background " style="background-image: url(<%= asset_path 'home/taller.jpg' %>)">
-                        <a href="/search?district=1&inputSearch=mecanicos" class="box-recomendacion-lg overlay">
+                    <div class="box-recomendacion-md position-background " style="background-image: url(<%= asset_path 'home/taller.jpg' %>)">
+                        <a href="/search?district=1&inputSearch=mecanicos" class="box-recomendacion-md overlay">
                              <h3>Talleres Mecánicos</h3>
                         </a>
                     </div>
+                </div>
+                <div class="col-lg-4">
                     <div class="box-recomendacion-md position-background " style="background-image: url(<%= asset_path 'home/centro_medico.jpg' %>)">
                         <a href="/search?district=1&inputSearch=centros%20medicos" class="box-recomendacion-md overlay">
                             <h3>Centros Médicos</h3>
                         </a>
                     </div>
-                    <div class="box-recomendacion-md">
-                        <div class="box-recomendacion-sm position-background ">
-                            <a href="/search?district=1&inputSearch=Centros%20de%20Estetica" class="box-recomendacion-sm overlay">
-                                <h3>Centros de Estética</h3>
-                            </a>
-                        </div>
-                        <div class="box-recomendacion-sm position-background " style="background-image: url(<%= asset_path 'home/centro_medico.jpg' %>)">
-                            <a href="/search?district=1&inputSearch=dentista" class="box-recomendacion-sm overlay">
-                                <h3>Dentistas</h3>
-                            </a>
-                        </div>
+                    <div class="box-recomendacion-lg position-background">
+                        <a href="/search?district=1&inputSearch=Centros%20de%20Estetica" class="box-recomendacion-lg overlay">
+                            <h3>Centros de Estética</h3>
+                        </a>
+                    </div>
+                </div>
+                <div class="col-lg-4">
+                    <div class="box-recomendacion-lg position-background " style="background-image: url(<%= asset_path 'home/centro_medico.jpg' %>)">
+                        <a href="/search?district=1&inputSearch=dentista" class="box-recomendacion-lg overlay">
+                            <h3>Dentistas</h3>
+                        </a>
                     </div>
                     <div class="box-recomendacion-md position-background " style="background-image: url(<%= asset_path 'home/servicios.jpg' %>)">
                         <a href="/search?district=1&inputSearch=servicios%20a%20domicilio" class="box-recomendacion-md overlay" >
@@ -47,7 +44,6 @@
                     </div>
                 </div>
             </div>
- 
         </div>
     </section>
 </div>
