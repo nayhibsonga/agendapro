@@ -1,6 +1,6 @@
 <h1>Cambiar de Plan</h1>
 
-<table>
+<table class="table table-bordered">
   <thead>
     <tr>
       <th>Nombre</th>
@@ -19,9 +19,9 @@
         <td><%= plan.service_providers %></td>
         <td><%= plan.price %></td>
         <% if @company.plan_id != plan.id %>
-        <td><%= link_to "Elegir este plan", select_plan_path(:plan_id => plan.id) %></td>
+        <td><%= link_to '<i class="fa fa-check"></i>   Elegir este Plan'.html_safe, select_plan_path(:plan_id => plan.id), :class => "btn btn-info"  %></td>
         <% else %>
-        <td>Plan Elegido</td>
+        <td class="success">Plan Elegido</td>
         <% end %>
       </tr>
     <% end %>
