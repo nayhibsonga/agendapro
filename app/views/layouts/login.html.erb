@@ -1,63 +1,79 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-	
-	<!-- start: Meta -->
-	<meta charset="utf-8">
-	<title>Administrador - AgendaPro</title>
-	<meta name="description" content="AgendaPro - Sistema de agendamiento OnLine para empresas y usuarios.">
-	<meta name="author" content="AgendaPro">
-	<meta name="keyword" content="agendapro, agenda, agenda online, reserva, reserva online">
+<!--[if lt IE 7]> <html class="no-js lt-ie9 lt-ie8 lt-ie7" lang="es"> <![endif]-->
+<!--[if IE 7]>    <html class="no-js lt-ie9 lt-ie8" lang="es"> <![endif]-->
+<!--[if IE 8]>    <html class="no-js lt-ie9" lang="es"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="es"> <!--<![endif]-->
+	<head>
+		<!-- start: Meta -->
+        <meta charset="utf-8">
+        <title>AgendaPro</title>
+        <meta name="description" content="AgendaPro - Sistema de agendamiento OnLine para empresas y usuarios.">
+        <meta name="author" content="AgendaPro">
+        <meta name="keyword" content="agendapro, agenda, agenda online, reserva, reserva online">
+        <%= csrf_meta_tags %>
+        <!-- end: Meta -->
 
-	<%= csrf_meta_tags %>
-	<!-- end: Meta -->
-	
-	<!-- start: Mobile Specific -->
-	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<!-- end: Mobile Specific -->
-	
-	<!-- start: CSS -->
-	<%= stylesheet_link_tag "admin" %>
-	<!-- end: CSS -->
-	
+        <!-- start: Mobile Specific -->
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <!-- end: Mobile Specific -->
 
-	<!-- The HTML5 shim, for IE6-8 support of HTML5 elements -->
-	<!--[if lt IE 9]>
-	
-	  	<script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
-		<script src="assets/javascripts/admin/respond.min.js"></script>
-		<script src="assets/stylesheets/admin/ie6-8.css"></script>
-		
-	<![endif]-->
-	
-	<!-- start: Favicon and Touch Icons -->
+        <!-- start: CSS -->
+        <%= stylesheet_link_tag "login" %>
+        <%= stylesheet_link_tag "http://fonts.googleapis.com/css?family=Open+Sans:400,300,400italic,600,600italic,700,700italic,300italic" %>
+        <!--[if IE 7]>
+            <%= stylesheet_link_tag "homeie7" %>
+        <![endif]-->
+        <!-- end: CSS -->
 
-	<!-- end: Favicon and Touch Icons -->	
-		
-</head>
+        <!-- start: JavaScript-->
+        <%= javascript_include_tag "home-head" %>
+        <!-- end: JavaScript-->
 
-<body>
+        <!-- Fav and touch icons -->
+        <%= favicon_link_tag "Iso_Pro_Color.png", :rel => "shortcut icon" %>
+	</head>
+
+	<body>
 		<!-- start: Header -->
-	<!-- end: Header -->
-	
-		<div class="container">
-		<div class="row">
-				
-			<!-- start: Main Menu -->
-			
-			<!-- end: Main Menu -->
-						
-			<!-- start: Content -->
-			<div id="content">
-				<div class="row" style="min-height: 600px;">
-					<%= yield %>
-				</div>		
-			</div>
-			<!-- end: Content -->
-				
-				</div><!--/row-->		
+        <header>
+            <div id="barra-superior">
+                <div class="container">
+                    <div class="row">
+                        <div id="logo-barra">
+                            <a class="navbar-brand" href="/">
+                                <%= image_tag "home/logo_agendaproVerde.png", :size => "127x40", :alt => "AgendaPro" %>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- start: Alerts -->
+            <% if notice %>
+            <div class="alert alert-info alert-dismissable">
+                <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                <%= notice %>
+            </div>
+            <% end %>
+            <% if alert %>
+            <div class="alert alert-warning alert-dismissable">
+                <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                <%= alert %>
+            </div>
+            <% end %>
+            <!-- end: Alerts -->
+        </header>
+        <!-- end: Header -->
 		
-	</div><!--/container-->
-	
-</body>
+		<div class="main">
+			<div class="container">
+				<%= yield %>
+			</div>
+		</div>
+
+		<!-- start: JavaScript-->
+        <%= yield :scripts %>
+        <%= javascript_include_tag "login" %>
+        <!-- end: JavaScript-->
+	</body>
 </html>

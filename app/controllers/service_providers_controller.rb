@@ -1,9 +1,9 @@
 class ServiceProvidersController < ApplicationController
   before_action :set_service_provider, only: [:show, :edit, :update, :destroy]
-  before_action :authenticate_user!, except: [:location_services, :provider_time]
-  before_action :quick_add, except: [:location_services, :provider_time]
+  before_action :authenticate_user!, except: [:location_services, :location_providers, :provider_time]
+  before_action :quick_add, except: [:location_services, :location_providers, :provider_time]
   load_and_authorize_resource
-  layout "admin", except: [:location_services, :provider_time]
+  layout "admin", except: [:location_services, :location_providers, :provider_time]
 
   # GET /service_providers
   # GET /service_providers.json
