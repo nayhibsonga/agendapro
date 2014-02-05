@@ -166,6 +166,7 @@ function Calendar (source, getData) {
 			if (!data.length) {
 				columnDay.remove();
 			}
+			calculateWidth();
 		});
 	}
 
@@ -179,6 +180,12 @@ function Calendar (source, getData) {
 		var minutes = start.substring(start.indexOf(':') + 1);
 
 		return new Date(year, month, day, hour, minutes);
+	}
+
+	var calculateWidth = function () {
+		var count = $('.columna-dia').length;
+		var width = (100 / count) - 1.2;
+		$('.columna-dia').css('width', width + '%');
 	}
 
 	// Auxiliar methods
