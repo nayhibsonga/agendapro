@@ -8,18 +8,20 @@
       </div>
     </div><!-- /.row -->
 	</div>
-	<div class="form-group">
-    <div class="row">
-      <div class="col-lg-8 col-lg-offset-2">
-        <div class="input-group">
-          <%= search_field_tag :inputSearch, params[:inputSearch], class: "form-control", placeholder: "Peluqueria, Gimansia, Masaje", :required => "true", :autofocus => "autofocus" %>
-          <span class="input-group-btn">
-            <button class="btn btn-default" type="submit"><i class="fa fa-search"></i></button>
-          </span>
-        </div><!-- /input-group -->
-      </div><!-- /.col-lg-8 -->
-    </div><!-- /.row -->
-	</div>
+  <fieldset id="search-bar" disabled>
+  	<div class="form-group">
+      <div class="row">
+        <div class="col-lg-8 col-lg-offset-2">
+          <div class="input-group">
+            <%= search_field_tag :inputSearch, params[:inputSearch], class: "form-control", placeholder: "Peluqueria, Gimansia, Masaje", :required => "true", :autofocus => "autofocus" %>
+            <span class="input-group-btn">
+              <button class="btn btn-default" type="submit"><i class="fa fa-search"></i></button>
+            </span>
+          </div><!-- /input-group -->
+        </div><!-- /.col-lg-8 -->
+      </div><!-- /.row -->
+  	</div>
+  </fieldset>
 <% end %>
 
 <div class="modal fade" id="modalLocation" tabindex="-1" role="dialog" aria-labelledby="modalLocationLabel" aria-hidden="true">
@@ -42,7 +44,7 @@
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-info pull-left" id="geo">Geolocalizar</button>
-        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
         <button type="button" class="btn btn-primary" id="save">Guardar</button>
       </div>
     </div><!-- /.modal-content -->

@@ -6,6 +6,7 @@
 //= require home/easing.js
 //= require home/footer.js
 //= require search/result.js.erb
+//= require Alert
 
 
 //por defecto:
