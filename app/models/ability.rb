@@ -63,6 +63,7 @@ class Ability
 
     can :edit_booking, Booking
     can :edit_booking_post, Booking
+    can :cancel_booking, Booking
 
     # Search
     can :get_districts, District

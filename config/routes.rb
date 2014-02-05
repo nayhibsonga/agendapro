@@ -85,6 +85,8 @@ Agendapro::Application.routes.draw do
 
   get '/edit_booking', :to => 'bookings#edit_booking', :as => 'booking_edit'
   post '/edited_booking', :to => 'bookings#edit_booking_post'
+  get '/cancel_booking', :to => 'bookings#cancel_booking', :as => 'booking_cancel'
+  post '/cancel_booking', :to => 'bookings#cancel_booking'
   
   # Root
   get '/' => 'searchs#index', :constraints => { :subdomain => 'www' }

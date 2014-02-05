@@ -1,8 +1,8 @@
 class BookingsController < ApplicationController
   before_action :set_booking, only: [:show, :edit, :update, :destroy]
-  before_action :authenticate_user!, except: [:create, :provider_booking, :book_service, :edit_booking, :edit_booking_post]
-  before_action :quick_add, except: [:create, :provider_booking, :book_service, :edit_booking, :edit_booking_post]
-  layout "admin", except: [:book_service, :provider_booking, :edit_booking, :edit_booking_post]
+  before_action :authenticate_user!, except: [:create, :provider_booking, :book_service, :edit_booking, :edit_booking_post, :cancel_booking]
+  before_action :quick_add, except: [:create, :provider_booking, :book_service, :edit_booking, :edit_booking_post, :cancel_booking]
+  layout "admin", except: [:book_service, :provider_booking, :edit_booking, :edit_booking_post, :cancel_booking]
   load_and_authorize_resource
 
   # GET /bookings
@@ -144,6 +144,32 @@ class BookingsController < ApplicationController
     @url = @company.web_address + '.' + host[host.index(request.domain)..host.length]
 
     render layout: "workflow"
+  end
+
+  def cancel_booking
+    unless params[:id]
+      code = params[:confirmation_code].split('-')
+      id = code[0][0,code[1].to_i].to_i
+      @booking = Booking.find(id)
+    else
+      @booking = Booking.find(params[:id])
+      status = Status.find_by(:name => 'Cancelado').id
+      if @booking.update(status_id: status)
+        flash[:notice] = "Cita cancelada."
+        BookingMailer.cancel_booking(@booking)
+      else
+        flash[:alert] = "Error cancelando cita."
+        @errors = @booking.errors
+      end
+    end
+
+    @company = Location.find(@booking.location_id).company
+
+    # => Domain parser
+    host = request.host_with_port
+    @url = @company.web_address + '.' + host[host.index(request.domain)..host.length]
+
+    render layout: 'workflow'
   end
 
   private

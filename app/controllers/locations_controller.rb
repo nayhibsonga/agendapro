@@ -164,7 +164,7 @@ class LocationsController < ApplicationController
           booking_start = DateTime.parse(booking.start.to_s)
           booking_end = DateTime.parse(booking.end.to_s)
 
-          if (booking_start - end_time_block) * (start_time_block - booking_end) > 0
+          if (booking_start - end_time_block) * (start_time_block - booking_end) > 0 && booking.status_id != Status.find_by(name: 'Cancelado').id
             status = 'occupied'
           end
         end

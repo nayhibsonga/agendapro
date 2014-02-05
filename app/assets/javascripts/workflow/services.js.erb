@@ -66,6 +66,8 @@ function loadStep1 () {
 			var serviceId = event.target.getAttribute('value');
 			loadDescription(serviceId);
 		});
+
+		$('#foo4').trigger('updateSizes');
 	});
 }
 
@@ -90,6 +92,7 @@ function loadStep2 () {
                     '</li>'
 				);
 			});
+
 			$('[name="staffRadio"]').on('click', function(event) {
 				$('.horario').show();
 
@@ -120,6 +123,10 @@ function loadStep2 () {
 					$('#foo4').trigger('updateSizes');
 				},300);
 			});
+
+			setTimeout(function () {
+				$('#foo4').trigger('updateSizes');
+			},500);
 		});
 	}
 }
