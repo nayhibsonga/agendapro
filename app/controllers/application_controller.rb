@@ -1,6 +1,6 @@
 class ApplicationController < ActionController::Base
 
-	layout :layout
+	layout "login" #:layout
 
 	include UrlHelper
   # Prevent CSRF attacks by raising an exception.
@@ -67,12 +67,12 @@ class ApplicationController < ActionController::Base
     root_path
   end
 
-  def layout
-    if is_a?(Devise::SessionsController)
-      return "login"
-    elsif is_a?(Devise::RegistrationsController)
-      return "login"
-    end
-  end
+  # def layout
+  #   if is_a?(Devise::SessionsController)
+  #     return "login"
+  #   elsif is_a?(Devise::RegistrationsController)
+  #     return "login"
+  #   end
+  # end
 
 end

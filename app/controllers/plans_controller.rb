@@ -3,7 +3,7 @@ class PlansController < ApplicationController
   before_action :authenticate_user!, except: [:view_plans]
   before_action :quick_add, except: [:view_plans]
   before_action :verify_is_super_admin, except: [:index, :view_plans, :select_plan]
-  layout "admin"
+  layout "admin", except: [:view_plans]
   load_and_authorize_resource
 
   # GET /plans

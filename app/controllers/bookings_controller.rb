@@ -1,8 +1,8 @@
 class BookingsController < ApplicationController
   before_action :set_booking, only: [:show, :edit, :update, :destroy]
-  before_action :authenticate_user!, except: [:create, :provider_booking, :book_service, :edit_booking]
-  before_action :quick_add, except: [:create, :provider_booking, :book_service, :edit_booking]
-  layout "admin", except: [:book_service, :provider_booking, :edit_booking]
+  before_action :authenticate_user!, except: [:create, :provider_booking, :book_service, :edit_booking, :edit_booking_post]
+  before_action :quick_add, except: [:create, :provider_booking, :book_service, :edit_booking, :edit_booking_post]
+  layout "admin", except: [:book_service, :provider_booking, :edit_booking, :edit_booking_post]
   load_and_authorize_resource
 
   # GET /bookings

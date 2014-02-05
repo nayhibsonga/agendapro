@@ -2,7 +2,7 @@ class ServiceCategoriesController < ApplicationController
   before_action :set_service_category, only: [:show, :edit, :update, :destroy]
   before_action :authenticate_user!, except: [:get_category_name]
   before_action :quick_add, except: [:get_category_name]
-  layout "admin"
+  layout "admin", except: [:get_category_name]
   load_and_authorize_resource
 
   # GET /service_categories
