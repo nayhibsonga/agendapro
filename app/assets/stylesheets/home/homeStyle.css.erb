@@ -3657,9 +3657,7 @@ textarea.input-group-sm > .input-group-btn > .btn {
 }
 .navbar-brand {
   float: left;
-  padding: 15px 15px;
-  font-size: 18px;
-  line-height: 20px;
+  margin-top: 2px;
 }
 .navbar-brand:hover,
 .navbar-brand:focus {
@@ -5994,7 +5992,6 @@ a:focus {
 /* =Header
 -------------------------------------------------------------- */
 header {
-  background: url(<%= asset_path 'home/backgrounds/wild_oliva_light_head.png' %>);
   border-bottom: solid 1px #cccccc;
 }
 header .container {
@@ -6150,25 +6147,46 @@ header .container {
   background: url(<%= asset_path 'home/backgrounds/wild_oliva_blue_light.png' %>);
 }
 
+#logo-barra {
+  width: 200px;
+  float: left;
+}
+
 #barra-superior{
   background:rgba(27,115,112,1);
-  height:40px;
+  height:44px;
 }
 #sign {
-  position: absolute;
-  top: 9px;
-  right: 20px; /*150px;*/
   font-size: 13px;
   color: #fff;
 }
 #sign a {
   color: #fff;
   font-weight: bold;
+  display: inline-block;
+  height: 44px;
+  padding: 0px 10px;
+  line-height: 2.9;
 }
 
-.sign-a:hover, .sign-a:active, .sign-a:focus {
+.sign-a:hover {
+  background: rgba(30,129,125,1);
+}
+
+ #sign .dropdown-sign > li > a {
+  display: block;
+  padding: 3px 20px;
+  clear: both;
+  font-weight: normal;
+  line-height: 1.428571429;
+  color: #333333;
+  white-space: nowrap;
+  height: 30px;
+}
+
+#sign .dropdown-sign > li > a:hover {
+  background: rgba(30,129,125,1);
   color: #fff;
-  font-weight: bold;
 }
 
 /* =Slider and Large Photo headers
@@ -6347,7 +6365,8 @@ header .container {
 }
 section.call_to_action {
   text-align: center;
-  padding: 35px 0 10px 0;
+  padding: 25px 0 20px 0;
+  background: url(<%= asset_path 'home/backgrounds/wild_oliva_light_head.png' %>);
 }
 section.call_to_action h3 {
   font-weight: 300;
@@ -6648,16 +6667,11 @@ figure img {
   height: 750px;
 }
 .box-recomendacion-lg{
-  width: 50%;
-  height: 300px;
-  float: left;
-}
-.box-recomendacion-md{
-  width: 33.33%;
+  width: 100%;
   height: 400px;
   float: left;
 }
-.box-recomendacion-sm{
+.box-recomendacion-md{
   width: 100%;
   height: 200px;
   float: left;
@@ -6665,6 +6679,7 @@ figure img {
 .position-background {
   background-size: cover;
   background-position: center;
+  margin-bottom: 20px;
 }
 .overlay{
   width:100% !important;
@@ -7592,7 +7607,7 @@ blockquote p {
     margin-bottom: 0;
   }
   .navbar a.navbar-brand {
-    width: 280px;
+    width: 200px;
   }
   .navbar a.navbar-brand span.logo_title {
     font-size: 30px;
