@@ -8,31 +8,31 @@
       </div>
       <div class="modal-body">
         <div class="row">
-            <%= simple_form_for(:user, :url => user_session_path, :html => { class: 'form-horizontal' }) do |f| %>
+            <%= form_for (:user, :url => user_session_path, :html => { class: 'form-horizontal' }) do |f| %>
                 <div class="form-group">
-                    <%= f.label :email, :class => 'col-sm-4 control-label' %>
+                    <%= label_tag :email, 'Email', :class => 'col-sm-4 control-label' %>
                     <div class="col-sm-8">
-                        <%= f.input :email, :label => false, :requiered => false, :autofocus => true %>
+                        <%= email_field :email, nil, :requiered => false, :autofocus => true %>
                     </div>
                 </div>
                 <div class="form-group">
-                    <%= f.label :password, :class => 'col-sm-4 control-label' %>
+                    <%= label_tag :password, 'Contraseña', :class => 'col-sm-4 control-label' %>
                     <div class="col-sm-8">
-                        <%= f.input :password, :label => false, :requiered => false, :autofocus => true %>
+                        <%= password_field_tag :password, nil, :requiered => false, :autofocus => true %>
                     </div>
                 </div>
                 <div class="form-group">
                     <div class="col-sm-offset-4 col-sm-8">
                         <div class="checkbox">
                             <label>
-                                <%= f.input :remember_me, :label => 'Recordarme', :as => :boolean %>
+                                <%= check_box_tag :remember_me %>
                             </label>
                         </div>
                     </div>
                 </div>
                 <div class="form-group">
                     <div class="col-sm-offset-4 col-sm-8">
-                        <%= f.button :submit, 'Ingresar', :class => 'btn btn-default' %>
+                        <%= submit_tag 'Ingresar', :class => 'btn btn-default' %>
                     </div>
                 </div>
             <% end %>

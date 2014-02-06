@@ -1,32 +1,33 @@
 <h2>Iniciar Sesión</h2>
 
-<%= simple_form_for(:user, :url => user_session_path, :html => { class: 'form-horizontal' }) do |f| %>
+<%= simple_form_for(:user, :url => user_session_path) do |f| %>
     <div class="form-group">
         <%= f.label :email, :class => 'col-sm-2 control-label' %>
         <div class="col-sm-10">
-            <%= f.input :email, :label => false, :requiered => false, :autofocus => true %>
+            <%= f.input :email, :label => :email, :requiered => false, :autofocus => true %>
         </div>
     </div>
     <div class="form-group">
         <%= f.label :password, :class => 'col-sm-2 control-label' %>
         <div class="col-sm-10">
-            <%= f.input :password, :label => false, :requiered => false, :autofocus => true %>
+            <%= f.input :password, :label => :password, :requiered => false, :autofocus => true %>
         </div>
     </div>
     <div class="form-group">
         <div class="col-sm-offset-2 col-sm-10">
             <div class="checkbox">
                 <label>
-                    <%= f.input :remember_me, :label => 'Recordarme', :as => :boolean %>
+                    <%= f.input :remember_me, :label => :remember_me, :as => :boolean %>
                 </label>
             </div>
         </div>
     </div>
     <div class="form-group">
-        <div class="col-sm-offset-2 col-sm-10">
-            <%= f.button :submit, 'Ingresar', :class => 'btn btn-default' %>
+        <div class="col-xs-offset-3 col-xs-6 col-sm-offset-3 col-sm-6">
+            <%= f.button :submit, 'Ingresar', :class => 'btn-default' %>
         </div>
     </div>
+  </div>
 <% end %>
 
 <%= render "devise/shared/links" %>

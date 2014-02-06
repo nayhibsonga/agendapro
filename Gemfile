@@ -58,7 +58,7 @@ gem 'cancan'
 #gem 'validates_email_format_of'
 
 #Formularios simples
-gem 'simple_form'
+# gem 'simple_form'
 
 #Mandrill mailer
 gem 'mandrill-api'
