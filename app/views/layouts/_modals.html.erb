@@ -8,34 +8,36 @@
       </div>
       <div class="modal-body">
         <div class="row">
-            <%= form_for (:user, :url => user_session_path, :html => { class: 'form-horizontal' }) do |f| %>
-                <div class="form-group">
-                    <%= label_tag :email, 'Email', :class => 'col-sm-4 control-label' %>
-                    <div class="col-sm-8">
-                        <%= email_field :email, nil, :requiered => false, :autofocus => true %>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <%= label_tag :password, 'Contraseña', :class => 'col-sm-4 control-label' %>
-                    <div class="col-sm-8">
-                        <%= password_field_tag :password, nil, :requiered => false, :autofocus => true %>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <div class="col-sm-offset-4 col-sm-8">
-                        <div class="checkbox">
-                            <label>
-                                <%= check_box_tag :remember_me %>
-                            </label>
+            <div class="col-sm-12">
+                <%= form_for :user, :url => user_session_path, :html => { class: 'form-horizontal' } do |f| %>
+                    <div class="form-group">
+                        <%= f.label :email, 'Email', :class => 'col-sm-4 control-label' %>
+                        <div class="col-sm-8">
+                            <%= f.email_field :email, :autofocus => true, :required => true, :class => 'form-control' %>
                         </div>
                     </div>
-                </div>
-                <div class="form-group">
-                    <div class="col-sm-offset-4 col-sm-8">
-                        <%= submit_tag 'Ingresar', :class => 'btn btn-default' %>
+                    <div class="form-group">
+                        <%= f.label :password, 'Contraseña', :class => 'col-sm-4 control-label' %>
+                        <div class="col-sm-8">
+                            <%= f.password_field :password, :required => true, :class => 'form-control' %>
+                        </div>
                     </div>
-                </div>
-            <% end %>
+                    <div class="form-group">
+                        <div class="col-sm-offset-4 col-sm-8">
+                            <div class="checkbox">
+                                <label>
+                                    <%= f.check_box :remember_me %> Recordarme
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-offset-4 col-sm-8">
+                            <%= submit_tag 'Ingresar', :class => 'btn btn-default' %>
+                        </div>
+                    </div>
+                <% end %>
+            </div>
         </div>
       </div>
       <div class="modal-footer">
@@ -54,32 +56,34 @@
       </div>
       <div class="modal-body">
         <div class="row">
-            <%= simple_form_for(:user, :url => user_registration_path, :html => { class: 'form-horizontal' }) do |f| %>
-                <%= f.input :role_id, :as => :hidden, :label => "false", :input_html => {:value => Role.where(:name => "Usuario Registrado").first.id } %>
-                <div class="form-group">
-                    <%= f.label :email, :class => 'col-sm-4 control-label' %>
-                    <div class="col-sm-8">
-                        <%= f.input :email, :label => false, :requiered => false, :autofocus => true %>
+            <div class="col-sm-12">
+                <%= form_for :user, :url => user_registration_path, :html => { class: 'form-horizontal' } do |f| %>
+                    <%= f.hidden_field :role_id, :value => Role.where(:name => "Usuario Registrado").first.id %>
+                    <div class="form-group">
+                        <%= f.label :email, 'Email', :class => 'col-sm-4 control-label' %>
+                        <div class="col-sm-8">
+                            <%= f.email_field :email, :autofocus => true, :required => true, :class => 'form-control' %>
+                        </div>
                     </div>
-                </div>
-                <div class="form-group">
-                    <%= f.label :password, :class => 'col-sm-4 control-label' %>
-                    <div class="col-sm-8">
-                        <%= f.input :password, :label => false, :requiered => false, :autofocus => true %>
+                    <div class="form-group">
+                        <%= f.label :password, 'Contraseña', :class => 'col-sm-4 control-label' %>
+                        <div class="col-sm-8">
+                            <%= f.password_field :password, :required => true, :class => 'form-control' %>
+                        </div>
                     </div>
-                </div>
-                <div class="form-group">
-                    <%= f.label :password_confirmation, :class => 'col-sm-4 control-label' %>
-                    <div class="col-sm-8">
-                        <%= f.input :password_confirmation, :label => false, :requiered => false, :autofocus => true %>
+                    <div class="form-group">
+                        <%= f.label :password_confirmation, 'Confirmar contraseña', :class => 'col-sm-4 control-label' %>
+                        <div class="col-sm-8">
+                            <%= f.password_field :password_confirmation, :required => true, :class => 'form-control' %>
+                        </div>
                     </div>
-                </div>
-                <div class="form-group">
-                    <div class="col-sm-offset-4 col-sm-8">
-                        <%= f.button :submit, 'Regístrate', :class => 'btn btn-default' %>
+                    <div class="form-group">
+                        <div class="col-sm-offset-4 col-sm-8">
+                            <%= submit_tag 'Regístrate', :class => 'btn btn-default' %>
+                        </div>
                     </div>
-                </div>
-            <% end %>
+                <% end %>
+            </div>
         </div>
       </div>
       <div class="modal-footer">
@@ -91,17 +95,17 @@
 <!-- end: Modals -->
 
 <script type="text/javascript">
-function changeModal () {
-    $('#signin-modal').modal('toggle');
-    $('#signup-modal').modal('toggle');
-}
+    function changeModal () {
+        $('#signin-modal').modal('toggle');
+        $('#signup-modal').modal('toggle');
+    }
 
-$(function () {
-    $('#signin-modal .modal-footer button').click(function () {
-        changeModal();
+    $(function () {
+        $('#signin-modal .modal-footer button').click(function () {
+            changeModal();
+        });
+        $('#signup-modal .modal-footer button').click(function () {
+            changeModal();
+        });
     });
-    $('#signup-modal .modal-footer button').click(function () {
-        changeModal();
-    });
-});
 </script>

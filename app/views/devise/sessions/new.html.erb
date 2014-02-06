@@ -1,33 +1,32 @@
 <h2>Iniciar Sesión</h2>
 
-<%= simple_form_for(:user, :url => user_session_path) do |f| %>
+<%= form_for resource, :as => resource_name, :url => session_path(resource_name), :html => { class: 'form-horizontal' } do |f| %>
     <div class="form-group">
-        <%= f.label :email, :class => 'col-sm-2 control-label' %>
-        <div class="col-sm-10">
-            <%= f.input :email, :label => :email, :requiered => false, :autofocus => true %>
+        <%= f.label :email, 'Email', :class => 'col-sm-4 control-label' %>
+        <div class="col-sm-8">
+            <%= f.email_field :email, :autofocus => true, :required => true, :class => 'form-control' %>
         </div>
     </div>
     <div class="form-group">
-        <%= f.label :password, :class => 'col-sm-2 control-label' %>
-        <div class="col-sm-10">
-            <%= f.input :password, :label => :password, :requiered => false, :autofocus => true %>
+        <%= f.label :password, 'Contraseña', :class => 'col-sm-4 control-label' %>
+        <div class="col-sm-8">
+            <%= f.password_field :password, :required => true, :class => 'form-control' %>
         </div>
     </div>
     <div class="form-group">
-        <div class="col-sm-offset-2 col-sm-10">
+        <div class="col-sm-offset-4 col-sm-8">
             <div class="checkbox">
                 <label>
-                    <%= f.input :remember_me, :label => :remember_me, :as => :boolean %>
+                    <%= f.check_box :remember_me %> Recordarme
                 </label>
             </div>
         </div>
     </div>
     <div class="form-group">
-        <div class="col-xs-offset-3 col-xs-6 col-sm-offset-3 col-sm-6">
-            <%= f.button :submit, 'Ingresar', :class => 'btn-default' %>
+        <div class="col-sm-offset-4 col-sm-8">
+            <%= submit_tag 'Ingresar', :class => 'btn btn-default' %>
         </div>
     </div>
-  </div>
 <% end %>
 
 <%= render "devise/shared/links" %>
