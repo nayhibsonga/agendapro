@@ -1,4 +1,4 @@
-<%= simple_form_for(@payment_status) do |f| %>
+<%= form_for @payment_status, :html => {:class => 'form-horizontal'} do |f| %>
   <% if @payment_status.errors.any? %>
     <div id="error_explanation">
       <h2><%= pluralize(@payment_status.errors.count, "error") %> prohibited this payment_status from being saved:</h2>
@@ -11,13 +11,21 @@
     </div>
   <% end %>
 
-  
-  Nombre: <%= f.input :name, :label => false %><br />
-
-  
-  Descripción: <%= f.input :description, :label => false %><br />
-
-  <div class="actions">
-    <%= f.submit %>
+  <div class="form-group">
+    <%= f.label :name, 'Nombre', :class => 'col-sm-4 control.label' %>
+    <div class="col-sm-8">
+      <%= f.text_field :name, :autofocus => true, :class => 'form-control' %>
+    </div>
+  </div>
+  <div class="form-group">
+    <%= f.label :description, 'Descripcion', :class => 'col-sm-4 control.label' %>
+    <div class="col-sm-8">
+      <%= f.text_area :description, :class => 'form-control' %>
+    </div>
+  </div>
+  <div class="form-group">
+    <div class="col-sm-offset-4 col-sm-8">
+      <%= submit_tag 'Guardar', :class => 'btn btn-default' %>
+    </div>
   </div>
 <% end %>

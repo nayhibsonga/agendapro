@@ -158,11 +158,15 @@
           $("#admin-content").addClass("expandir");
           $(".menu-lateral li").addClass("colapsado-ok");
           $(".remove-txt").addClass("kill-txt");
+          $('#closetab > span:first').removeClass('fa-chevron-left');
+          $('#closetab > span:first').addClass('fa-chevron-right');
       }, function () {
           $("#sidebar").removeClass("colapsar");
           $("#admin-content").removeClass("expandir");
           $(".menu-lateral li").removeClass("colapsado-ok");
           $(".remove-txt").removeClass("kill-txt");
+          $('#closetab > span:first').removeClass('fa-chevron-right');
+          $('#closetab > span:first').addClass('fa-chevron-left');
       });
       $('#open-submenu').toggle(function () {
           $("#submenu").removeClass("submenu-close");
