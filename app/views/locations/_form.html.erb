@@ -1,4 +1,4 @@
-<%= simple_form_for(@location) do |f| %>
+<%= form_for(@location), html: {class: "form-horizontal" } do |f| %>
   <% if @location.errors.any? %>
     <div id="error_explanation">
       <h2><%= pluralize(@location.errors.count, "error") %> no permitió que el local sea creado:</h2>
@@ -11,12 +11,31 @@
     </div>
   <% end %>
 
-  <%= f.input :name, :label => "Nombre" %><br />
-  <%= f.input :address, :label => "Dirección" %><br />
-  <%= f.input :phone, :label => "Teléfono" %><br />
+  <div class="form-group">
+    <%= f.label :name, "Nombre: ", class: "col-sm-2 control-label" %>
+    <div class="col-sm-4">
+      <%= f.text_field :name, :autofocus => true, class: "form-control" %>
+    </div>
+  </div>
+  <div class="form-group">
+    <%= f.label :address, "Dirección: ", class: "col-sm-2 control-label" %>
+    <div class="col-sm-4">
+      <%= f.text_field :address, class: "form-control" %>
+    </div>
+  </div>
+  <div class="form-group">
+    <%= f.label :phone, "Teléfono: ", class: "col-sm-2 control-label" %>
+    <div class="col-sm-4">
+      <%= f.text_field :phone, class: "form-control" %>
+    </div>
+  </div>
+
+  COMPLETAR LAS ASOCIACIONES
+
   <%= f.association :district, :label => "Comuna" %><br />
-  <%= f.input :latitude, :as => :hidden %><br />
-  <%= f.input :longitude, :as => :hidden %><br />
+  
+  <%= f.hidden_field :latitude %><br />
+  <%= f.hidden_field :longitude %><br />
 
   <%= f.simple_fields_for :location_times do |location_time| %>
     <%= render 'location_time_fields', :f => location_time %>
