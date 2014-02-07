@@ -6,6 +6,7 @@
   <thead>
     <tr>
       <th>Rol</th>
+      <th>Descripción</th>
       <th>Opciones</th>
     </tr>
   </thead>
@@ -13,7 +14,8 @@
   <tbody>
     <% @roles.each do |role| %>
       <tr>
-        <td><%= link_to role.name, role %></td>
+        <td><%= role.name %></td>
+        <td><%= role.description if role.description %></td>
         <td><%= link_to '<i class="fa fa-pencil"></i>   Editar'.html_safe, edit_role_path(role), :class => "btn btn-warning" %>
         <%= link_to '<i class="fa fa-times"></i>   Eliminar'.html_safe, role, :class => "btn btn-danger", method: :delete, data: { confirm: '¿Estás seguro? (Eliminar en caso de que sea estrictamente necesario, corrobar con Nico y Seba)' } %></td>
       </tr>

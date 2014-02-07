@@ -1,20 +1,23 @@
 <h1>Estados de Reserva</h1>
 
-<table>
+<table class="table table-bordered">
   <thead>
     <tr>
-      <th></th>
-      <th></th>
-      <th></th>
+      <th>Estatus</th>
+      <th>Descripción</th>
+      <th>Opciones</th>
     </tr>
   </thead>
 
   <tbody>
     <% @statuses.each do |status| %>
       <tr>
-        <td><%= link_to status.name, status %></td>
-        <td><%= link_to 'Editar', edit_status_path(status) %></td>
-        <td><%= link_to 'Eliminar', status, method: :delete, data: { confirm: '¿Estás seguro?' } %></td>
+        <td><%= status.name %></td>
+        <td><%= status.description if status.description %></td>
+        <td>
+          <%= link_to '<i class="fa fa-pencil"></i>   Editar'.html_safe, edit_status_path(status), :class => "btn btn-warning" %>
+          <%= link_to '<i class="fa fa-times"></i>   Eliminar'.html_safe, status, :class => "btn btn-danger", method: :delete, data: { confirm: '¿Estás seguro?' } %>
+        </td>
       </tr>
     <% end %>
   </tbody>
@@ -22,4 +25,4 @@
 
 <br>
 
-<%= link_to 'Nuevo Estado', new_status_path %>
+<%= link_to '<i class="fa fa-check"></i>   Nuevo Estado'.html_safe, new_status_path, :class => "btn btn-primary" %>
