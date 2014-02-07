@@ -1,25 +1,25 @@
 <h1>Servicios</h1>
 
-<table>
+<table class="table table-bordered">
   <thead>
     <tr>
-      <th></th>
-      <th></th>
-      <th></th>
+      <th>Nombre</th>
+      <th>Descripción</th>
+      <th>Opciones</th>
     </tr>
   </thead>
 
   <tbody>
     <% @services.each do |service| %>
       <tr>
-        <td><%= link_to service.name, service %></td>
-        <td><%= link_to 'Editar', edit_service_path(service) %></td>
-        <td><%= link_to 'Eliminar', service, method: :delete, data: { confirm: '¿Estás seguro?' } %></td>
+        <td><%= service.name %></td>
+        <td><%= service.description.html_safe if service.description %></td>
+        <td><%= link_to '<i class="fa fa-pencil"></i>   Editar'.html_safe, edit_service_path(service), :class => "btn btn-warning" %>
+        <%= link_to '<i class="fa fa-times"></i>   Eliminar'.html_safe, service, :class => "btn btn-danger", method: :delete, data: { confirm: '¿Estás seguro?' } %></td>
       </tr>
     <% end %>
   </tbody>
 </table>
 
-<br>
 
-<%= link_to 'Nuevo Servicio', new_service_path %>
+<%= link_to 'Nuevo Servicio', new_service_path, :class => "btn btn-primary" %>

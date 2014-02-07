@@ -21,14 +21,12 @@
     </div>
   </div>
 
-  <%= f.fields_for :district do |districts_form| %>
-    <div class="form-group">
-        <%= districts_form.label :id, "Comuna: ", class: "col-sm-2 control-label" %>
-        <div class="col-sm-4">
-        <%= districts_form.collection_select :id, District.all, :id, :name, {}, {class: "form-control"} %>
-        </div> 
+  <div class="form-group">
+    <%= f.label :district, "Comuna: ", class: "col-sm-2 control-label" %>
+    <div class="col-sm-4">
+      <%= f.collection_select :district_id, District.all, :id, :name, {}, { class: "form-control" }%>
     </div>
-  <% end %>
+  </div>
 
   <%= f.hidden_field :latitude %>
   <%= f.hidden_field :longitude %>
@@ -84,8 +82,11 @@
 
 <% end %>
 
-<div class="row">
-  <%= button_to 'Atrás', locations_path, :method => :get, :class => "btn btn-warning btn-sm" %><%= button_to_function "Guardar Local", "startLocation()", :class => "btn btn-success btn-sm" %>
+<div class="form-group">
+  <div class="actions col-sm-offset-2 col-sm-4">
+    <%= link_to '<i class="fa fa-check"></i>   Guardar Local'.html_safe, "#", :class => "btn btn-primary buttonLocation" %>
+    <%= link_to '<i class="fa fa-times"></i>   Cancelar'.html_safe, locations_path, :method => :get, :class => "btn btn-danger" %>    
+  </div>
 </div>
 
 <br />
