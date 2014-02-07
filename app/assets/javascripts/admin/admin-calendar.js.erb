@@ -95,25 +95,25 @@ function loadLocationTime (locationId, resources) {
 			});
 			$.getJSON('/schedule', {local: $('input[name=localRadio]:checked').val()}, function (schedule) {
 				hiddenDays = new Array();
-				if (!schedule.domingo.length) {
+				if (!schedule.Domingo.length) {
 					hiddenDays.push(0);
 				}
-				if (!schedule.lunes.length) {
+				if (!schedule.Lunes.length) {
 					hiddenDays.push(1);
 				}
-				if (!schedule.martes.length) {
+				if (!schedule.Martes.length) {
 					hiddenDays.push(2);
 				}
-				if (!schedule.miercoles.length) {
+				if (!schedule.Miércoles.length) {
 					hiddenDays.push(3);
 				}
-				if (!schedule.jueves.length) {
+				if (!schedule.Jueves.length) {
 					hiddenDays.push(4);
 				}
-				if (!schedule.viernes.length) {
+				if (!schedule.Viernes.length) {
 					hiddenDays.push(5);
 				}
-				if (!schedule.sabado.length) {
+				if (!schedule.Sábado.length) {
 					hiddenDays.push(6);
 				}
 				loadResourcesCalendar(minHour + ':' + minMinuts, maxHour + ':' + maxMinuts, hiddenDays,resources,0);
@@ -158,25 +158,25 @@ function loadProviderTime (providerId) {
 		});
 		$.getJSON('/schedule', {local: $('input[name=localRadio]:checked').val()}, function (schedule) {
 			hiddenDays = new Array();
-			if (!schedule.domingo.length) {
+			if (!schedule.Domingo.length) {
 				hiddenDays.push(0);
 			}
-			if (!schedule.lunes.length) {
+			if (!schedule.Lunes.length) {
 				hiddenDays.push(1);
 			}
-			if (!schedule.martes.length) {
+			if (!schedule.Martes.length) {
 				hiddenDays.push(2);
 			}
-			if (!schedule.miercoles.length) {
+			if (!schedule.Miércoles.length) {
 				hiddenDays.push(3);
 			}
-			if (!schedule.jueves.length) {
+			if (!schedule.Jueves.length) {
 				hiddenDays.push(4);
 			}
-			if (!schedule.viernes.length) {
+			if (!schedule.Viernes.length) {
 				hiddenDays.push(5);
 			}
-			if (!schedule.sabado.length) {
+			if (!schedule.Sábado.length) {
 				hiddenDays.push(6);
 			}
 			loadWeekCalendar(minHour + ':' + minMinuts, maxHour + ':' + maxMinuts, hiddenDays,[],providerId);
