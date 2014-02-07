@@ -1,18 +1,32 @@
 <h2>Cambiar mi contraseña</h2>
 
-<%= simple_form_for(resource, :as => resource_name, :url => password_path(resource_name), :html => { :method => :put }) do |f| %>
-  <%= f.error_notification %>
+<%= form_for resource, :as => resource_name, :url => password_path(resource_name), :html => { :method => :put, :class => 'form-horizontal' } do |f| %>
+  <% if resource.errors.any? %>
+  <h3>Errores</h3>
+  <ul>
+    <% resource.errors.full_messages.each do |msg| %>
+    <li><%= msg %></li>
+    <% end %>
+  </ul>
+  <% end %>
 
-  <%= f.input :reset_password_token, :as => :hidden %>
-  <%= f.full_error :reset_password_token %>
-
-  <div class="form-inputs">
-    <%= f.input :password, :label => "Nueva contraseña", :required => true, :autofocus => true %>
-    <%= f.input :password_confirmation, :label => "Confirma tu nueva contraseña", :required => true %>
+  <%= f.hidden_field :reset_password_token %>
+  <div class="form-group">
+    <%= f.label :password, 'Nueva contraseña', :class => 'col-sm-4 control-lable' %>
+    <div class="col-sm-8">
+      <%= f.password_field :password, :required => true, :autofocus => true, :class => 'form-control' %>
+    </div>
   </div>
-
-  <div class="form-actions">
-    <%= f.button :submit, "Cambiar mi contraseña" %>
+  <div class="form-group">
+    <%= f.label :password_confirmation, 'Confirma tu nueva contraseña', :class => 'col-sm-4 control-lable' %>
+    <div class="col-sm-8">
+      <%= f.password_field :password_confirmation, :required => true, :class => 'form-control' %>
+    </div>
+  </div>
+  <div class="form-group">
+    <div class="col-sm-offset-4 col-sm-8">
+      <%= submit_tag 'Actualizar', :class => 'btn btn-default' %>
+    </div>
   </div>
 <% end %>
 

@@ -1,14 +1,25 @@
 <h2>¿Olvidaste tu contraseña?</h2>
 
-<%= simple_form_for(resource, :as => resource_name, :url => password_path(resource_name), :html => { :method => :post }) do |f| %>
-  <%= f.error_notification %>
+<%= form_for resource, :as => resource_name, :url => password_path(resource_name), :html => { :method => :post, :class => 'form-horizontal' } do |f| %>
+  <% if resource.errors.any? %>
+  <h3>Errores</h3>
+  <ul>
+    <% resource.errors.full_messages.each do |msg| %>
+    <li><%= msg %></li>
+    <% end %>
+  </ul>
+  <% end %>
 
-  <div class="form-inputs">
-    <%= f.input :email, :required => true, :autofocus => true %>
+  <div class="form-group">
+  	<%= f.label :email, 'Email', :class => 'col-sm-4 control-label' %>
+  	<div class="col-sm-8">
+  		<%= f.email_field :email, :required => true, :autofocus => true, :class => 'form-control' %>
+  	</div>
   </div>
-
-  <div class="form-actions">
-    <%= f.button :submit, "Recuperar contraseña" %>
+  <div class="form-group">
+    <div class="col-sm-offset-4 col-sm-8">
+      <%= submit_tag 'Recuperar contraseña', :class => 'btn btn-default' %>
+    </div>
   </div>
 <% end %>
 
