@@ -1,36 +1,87 @@
 <h1>Nuevo Local</h1>
 
-<%= simple_form_for(@location) do |f| %>
+<%= form_for @location, html: {class: "form-horizontal"} do |f| %>
 
-  <%= f.input :name, :label => "Nombre" %><br />
-  <%= f.input :address, :label => "Dirección" %><br />
-  <%= f.input :phone, :label => "Teléfono" %><br />
-  <%= f.association :district, :label => "Comuna" %><br />
-  <%= f.input :latitude, :as => :hidden %><br />
-  <%= f.input :longitude, :as => :hidden %>
+  <div class="form-group">
+    <%= f.label :name, "Nombre: ", class: "col-sm-2 control-label" %>
+    <div class="col-sm-4">
+      <%= f.text_field :name, :autofocus => true, class: "form-control" %>
+    </div>
+  </div>
+  <div class="form-group">
+    <%= f.label :address, "Dirección: ", class: "col-sm-2 control-label" %>
+    <div class="col-sm-4">
+      <%= f.text_field :address, class: "form-control" %>
+    </div>
+  </div>
+  <div class="form-group">
+    <%= f.label :phone, "Teléfono: ", class: "col-sm-2 control-label" %>
+    <div class="col-sm-4">
+      <%= f.text_field :phone, class: "form-control" %>
+    </div>
+  </div>
 
-  <div class="row">
-  	<label>Lunes:</label><div id="div1"></div>
-  </div>
-  <div class="row">
-  	<label>Martes:</label><div id="div2"></div>
-  </div>
-  <div class="row">
-  	<label>Miércoles:</label><div id="div3"></div>
-  </div>
-  <div class="row">
-  	<label>Jueves:</label><div id="div4"></div>
-  </div>
-  <div class="row">
-  	<label>Viernes:</label><div id="div5"></div>
-  </div>
-  <div class="row">
-  	<label>Sábado:</label><div id="div6"></div>
-  </div>
-  <div class="row">
-  	<label>Domingo:</label><div id="div7"></div>
-  </div>
-  <br />
+  <%= f.fields_for :district do |districts_form| %>
+    <div class="form-group">
+        <%= districts_form.label :id, "Comuna: ", class: "col-sm-2 control-label" %>
+        <div class="col-sm-4">
+        <%= districts_form.collection_select :id, District.all, :id, :name, {}, {class: "form-control"} %>
+        </div> 
+    </div>
+  <% end %>
+
+  <%= f.hidden_field :latitude %>
+  <%= f.hidden_field :longitude %>
+
+  <table class="table table-bordered">
+  <thead>
+    <tr>
+      <th>Día</th>
+      <th>¿Abierto?</th>
+      <th>Apertura</th>
+      <th>Cierre</th>
+    </tr>
+  </thead>
+
+  <tbody>
+      <tr id="tr1">
+        <td>
+          <label>Lunes:</label>
+        </td>
+      </tr>
+      <tr id="tr2">
+        <td>
+          <label>Martes:</label>
+        </td>
+      </tr>
+      <tr id="tr3">
+        <td>
+          <label>Miércoles:</label>
+        </td>
+      </tr>
+      <tr id="tr4">
+        <td>
+          <label>Jueves:</label>
+        </td>
+      </tr>
+      <tr id="tr5">
+        <td>
+          <label>Viernes:</label>
+        </td>
+      </tr>
+      <tr id="tr6">
+        <td>
+          <label>Sábado:</label>
+        </td>
+      </tr>
+      <tr id="tr7">
+        <td>
+          <label>Domingo:</label>
+        </td>
+      </tr>
+  </tbody>
+</table>
+
 <% end %>
 
 <div class="row">

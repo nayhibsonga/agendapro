@@ -33,7 +33,7 @@
         <h4 class="booking-modal-title" id="bookingModalLabel"></h4>
       </div>
       <div class="booking-modal-body">
-        <%= simple_form_for(@booking) do |f| %>
+        <%= form_for(@booking) do |f| %>
         <p>Fecha: <input type="text" id="datePicker"></p>
         <div class="input datetime required booking_start">
           <label class="datetime required control-label" for="booking_start_3i">Horario de la Reserva: </label>         

@@ -1,7 +1,6 @@
 function buildDay (divId, value) {
-	$('#'+divId).empty();
-	$('#'+divId).append('<input type="checkbox" name="dayStatus'+ value +'" id="dayStatusId'+ value +'" value="0" onchange="changeDayStatus('+ value +')" class="checkbox">  Apertura: '+
-	'<select id="openHourId'+ value +'" name="openHour'+ value +'" disabled="disabled">'+
+	$('#'+divId).append('<td><input type="checkbox" name="dayStatus'+ value +'" id="dayStatusId'+ value +'" value="0" onchange="changeDayStatus('+ value +')" class="checkbox"></td>'+
+	'<td><select id="openHourId'+ value +'" name="openHour'+ value +'" disabled="disabled">'+
 		'<option value="00">00</option>'+
 		'<option value="01">01</option>'+
 		'<option value="02">02</option>'+
@@ -32,8 +31,8 @@ function buildDay (divId, value) {
 		'<option value="15">15</option>'+
 		'<option value="30">30</option>'+
 		'<option value="45">45</option>'+
-	'</select>'+
-	' - Cierre: <select id="closeHourId'+ value +'" name="closeHour'+ value +'" disabled="disabled">'+
+	'</select></td>'+
+	'<td><select id="closeHourId'+ value +'" name="closeHour'+ value +'" disabled="disabled">'+
 		'<option value="00">00</option>'+
 		'<option value="01">01</option>'+
 		'<option value="02">02</option>'+
@@ -64,18 +63,17 @@ function buildDay (divId, value) {
 		'<option value="15">15</option>'+
 		'<option value="30">30</option>'+
 		'<option value="45">45</option>'+
-	'</select>'+
-  '</div>');
+	'</select></td>');
 }
 
 function initialize() {
-	buildDay('div1',1);
-	buildDay('div2',2);
-	buildDay('div3',3);
-	buildDay('div4',4);
-	buildDay('div5',5);
-	buildDay('div6',6);
-	buildDay('div7',7);
+	buildDay('tr1',1);
+	buildDay('tr2',2);
+	buildDay('tr3',3);
+	buildDay('tr4',4);
+	buildDay('tr5',5);
+	buildDay('tr6',6);
+	buildDay('tr7',7);
 
 	if ( $('#title').length > 0 ) {
 		var locationTimesData = $('#location_times_data').data('location-times');

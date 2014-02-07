@@ -41,15 +41,14 @@
 	<!-- start: Header -->
 	<header>
 			<div id="logo">
-        <li class="dropdown pull-right">
-          <a class="btn account dropdown-toggle" data-toggle="dropdown" href="index.html#">
-              <span class="name"><%= current_user.email %></span>
-          </a>
-          <ul class="dropdown-menu">
-            <li><%= link_to '<i class="fa fa-user"></i> Perfíl'.html_safe, edit_admin_user_path(current_user) %></li>
-            <li><%= link_to '<i class="fa fa-power-off"></i> Cerrar Sesión'.html_safe, destroy_user_session_path, method: :delete %></li>
-          </ul>
-        </li>
+        <ul class="pull-right" id="menu-usuario">
+          <li><a href="#" id="open-usuario"><%= current_user.email %><span class="fa fa-chevron-down"></span></a>
+            <ul id="sub-menu-usuario" class="close-menu-usuario">
+              <li><%= link_to '<i class="fa fa-user"></i> Perfil'.html_safe, edit_admin_user_path(current_user) %></li>
+              <li><%= link_to '<i class="fa fa-power-off"></i> Cerrar Sesión'.html_safe, destroy_user_session_path, method: :delete %></li>
+            </ul>
+          </li>
+        </ul>
       </div>
 	</header>
 	<!-- end: Header -->
@@ -183,6 +182,11 @@
           $("#submenu4").removeClass("submenu-close");
       }, function () {
           $("#submenu4").addClass("submenu-close");
+      });
+      $('#open-usuario').toggle(function () {
+            $("#sub-menu-usuario").removeClass("close-menu-usuario");
+      }, function () {
+            $("#sub-menu-usuario").addClass("close-menu-usuario");
       });
     });
   </script>

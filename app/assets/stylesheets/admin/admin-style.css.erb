@@ -35,6 +35,43 @@ header{
 	height:39px;
 	margin: 2px 0px 0px 20px;
 	background: url(<%= asset_path 'admin/logo-fix-agendapro.png' %>);
+	float: left;
+}
+#menu-usuario{
+	list-style: none;
+	padding: 0px;
+	margin: 0px;
+	position: absolute;
+	right: 20px;
+	z-index: 9999;
+}
+#menu-usuario li a{
+	display: block;
+	height: 44px;
+	line-height: 2.8;
+	padding: 0px 10px;
+	color: #ffffff;
+	font-weight: bold;
+	text-decoration: none;
+	border-bottom: 1px solid #383e4b;
+}
+#menu-usuario li a:hover{
+	background: #ccc;
+	color: #383e4b;
+}
+#menu-usuario ul{
+	list-style: none;
+	padding: 0px;
+	margin: 0px;
+}
+.close-menu-usuario{
+	display: none;
+}
+#menu-usuario ul li a{
+	height: 35px;
+	line-height: 2.3;
+	border-bottom: 0px;
+	background: #383e4b;
 }
 .container{
 	width:100% !important;
