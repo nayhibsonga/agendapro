@@ -22,7 +22,7 @@ class UserMailer < ActionMailer::Base
       :global_merge_vars => [
         {
           :name => 'UNSUBSCRIBE',
-          :content => "Si desea dejar de recibir email puede dar click <a href='#{unsubscribe_url(:user => Base64.encode64(book_info.email))}'>aquí</a>."
+          :content => "Si desea dejar de recibir email puede dar click <a href='#{unsubscribe_url(:user => Base64.encode64(user.email))}'>aquí</a>."
         },
         {
           :name => 'FNAME',

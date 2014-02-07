@@ -1,8 +1,7 @@
-<%= simple_form_for [:admin, @user] do |f| %>
+<%= form_for [:admin, @user], html: {class: "form-horizontal" } do |f| %>
   <% if @user.errors.any? %>
     <div id="error_explanation">
       <h2><%= pluralize(@user.errors.count, "error") %> no permitió que el usuario fuera creado:</h2>
-
       <ul>
       <% @user.errors.full_messages.each do |msg| %>
         <li><%= msg %></li>
@@ -11,25 +10,69 @@
     </div>
   <% end %>
 
-  <%= f.input :first_name, :label => "Nombre: ", :autofocus => true %>
-  <%= f.input :last_name, :label => "Apellido: ", :autofocus => true %>
-  <%= f.input :email, :label => "Email: ", :required => true, :autofocus => true %>
-  <%= f.input :phone, :label => "Teléfono: ", :autofocus => true %>
-  <%= f.input :password, :label=> "Contraseña: ", :required => true %>
-  <%= f.input :password_confirmation, :label => "Confirmar Contraseña: ", :required => true %>
-  <% if !current_user.nil? %>
-    <% if current_user.role_id == Role.find_by(name: 'Super Admin').id %>
-      <%= f.input :role_id, :label => "Rol", :collection => Role.where(:name => ["Admin","Administrador Local","Staff"]) %>
-    <% elsif current_user.role_id == Role.find_by(name: 'Admin').id %>
-      <%= f.input :role_id, :label => "Rol", :collection => Role.where(:name => ["Administrador Local","Staff"]) %>
-    <% elsif current_user.role_id == Role.find_by(name: 'Administrador Local').id %>
-      <% @user.role_id = Role.find_by_name("Staff").id %>
-    <% end %>
-  <% end %><br />
+  <div class="form-group">
+    <%= f.label :first_name, "Nombre: ", class: "col-sm-2 control-label" %>
+    <div class="col-sm-4">
+      <%= f.text_field :first_name, :autofocus => true, class: "form-control" %>
+    </div>
+  </div>
   
-  <div class="actions">
-    <%= button_tag(type: 'submit', class: "btn btn-primary") do %>
-    <i class="fa fa-user"></i> Save
+  <div class="form-group">
+    <%= f.label :last_name, "Apellido: ", class: "col-sm-2 control-label"  %>
+    <div class="col-sm-4">
+      <%= f.text_field :last_name, class: "form-control" %>
+    </div>
+  </div>
+  
+  <div class="form-group">
+    <%= f.label :email, "Email: ", class: "col-sm-2 control-label"  %>
+    <div class="col-sm-4">
+      <%= f.text_field :email, class: "form-control" %>
+    </div>
+  </div>
+  
+  <div class="form-group">
+    <%= f.label :phone, "Teléfono: ", class: "col-sm-2 control-label"  %>
+    <div class="col-sm-4">
+      <%= f.text_field :phone, class: "form-control" %>
+    </div>
+  </div>
+  
+  <div class="form-group">
+    <%= f.label :password, "Contraseña: ", class: "col-sm-2 control-label"  %>
+    <div class="col-sm-4">
+      <%= f.text_field :password, class: "form-control" %>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <%= f.label :password_confirmation, "Confirmar Contraseña: ", class: "col-sm-2 control-label"  %>
+    <div class="col-sm-4">
+      <%= f.text_field :password_confirmation, class: "form-control" %>
+    </div>
+  </div>
+
+  <% if !current_user.nil? %>
+    <div class="form-group">
+      <%= f.label :role_id, "Rol: ", class: "col-sm-2 control-label"  %>
+      <div class="col-sm-4">
+      <% if current_user.role_id == Role.find_by(name: 'Super Admin').id %>
+        <%= f.collection_select :role_id, Role.where(:name => ["Admin","Administrador Local","Staff"]), :id, :name, {selected: @user.role_id}, {class: "form-control"} %>
+      <% elsif current_user.role_id == Role.find_by(name: 'Admin').id %>
+        <%= f.collection_select :role_id, Role.where(:name => ["Administrador Local","Staff"]), :id, :name, {selected: @user.role_id}, {class: "form-control"} %>
+      <% elsif current_user.role_id == Role.find_by(name: 'Administrador Local').id %>
+        <%= f.collection_select :role_id, Role.where(:name => ["Staff"]), :id, :name, {selected: @user.role_id}, {class: "form-control"} %>
+      <% end %>
+      </div>  
+    </div>
   <% end %>
+  
+  <div class="form-group">
+    <div class="actions col-sm-offset-2 col-sm-4">
+      <%= button_tag(type: 'submit', class: "btn btn-primary") do %>
+      <i class="fa fa-check"></i>   Guardar
+    <% end %>
+      <%= link_to '   Cancelar',  admin_users_path, class: "btn btn-danger fa fa-times" %>    
+    </div>
   </div>
 <% end %>
