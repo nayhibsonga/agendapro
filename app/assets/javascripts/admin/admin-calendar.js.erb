@@ -372,21 +372,44 @@ function loadProviderBooking (providerId) {
 }
 
 function editBookingModal(eventId) {
-	$('#bookingModal').modal('hide');
-	$('.booking-modal-title').empty();
-	$('.booking-modal-footer').empty();
-	$('.booking-modal-title').append('Editar Reserva Id: '+ eventId);
-	$('.booking-modal-footer').append('<button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button><button type="button" class="btn btn-primary" onclick="editBooking('+eventId+')">Guardar</button>');
+	$.getJSON('/bookings/'+eventId, function (booking) {
+		var start = booking.start || 0;
+		if (start != 0) {
+			dateArray = start.toString().split('T');
+			$('#datePicker').val(dateArray[0]);
+			$('#bookingStartHour option[value="'+dateArray[1].split(':')[0]+'"]').attr("selected",true);
+			$('#bookingStartMinute option[value="'+dateArray[1].split(':')[1]+'"]').attr("selected",true);
+		}
+		else {
+			$('#datePicker').val('');
+			$('#bookingStartHour').val('');
+			$('#bookingStartMinute').val('');
+		}
+		$('#booking_service_provider_id option[value="'+booking.service_provider_id+'"]').attr("selected",true);
+		$('#booking_service_id option[value="'+booking.service_id+'"]').attr("selected",true);
+		$('#booking_status_id option[value="'+booking.status_id+'"]').attr("selected",true);
+		$('#booking_first_name').val(booking.first_name);
+		$('#booking_last_name').val(booking.last_name);
+		$('#booking_email').val(booking.email);
+		$('#booking_phone').val(booking.phone);
+		$('#booking_notes').val(booking.notes);
+		modalChange();
+		$('#bookingModal').modal('hide');
+		$('.booking-modal-title').empty();
+		$('.booking-modal-footer').empty();
+		$('.booking-modal-title').append('Editando Reserva id: '+eventId);
+		$('.booking-modal-footer').append('<button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button><button type="button" class="btn btn-primary" onclick="editBooking('+eventId+')">Guardar</button><button type="button" class="btn btn-danger" onclick="deleteBooking('+eventId+')">Eliminar</button>');
 
 
-	$('#bookingModal').modal('show');
+
+		$('#bookingModal').modal('show');
+	});	
 }
 
 function createBookingModal(date) {
 	var date = date || 0;
 	if (date != 0) {
 		dateArray = date.toString().split(' ');
-		alert(dateArray);
 		$('#bookingStartHour option[value="'+dateArray[4].split(':')[0]+'"]').attr("selected",true);
 		$('#bookingStartMinute option[value="'+dateArray[4].split(':')[1]+'"]').attr("selected",true);
 		modalChange();
@@ -424,6 +447,10 @@ function editBooking(eventId) {
 
 function createBooking() {
 	saveBooking('POST','');
+}
+
+function deleteBooking(eventId) {
+	saveBooking('DELETE','/'+eventId);
 }
 
 function jsonBooking() {
