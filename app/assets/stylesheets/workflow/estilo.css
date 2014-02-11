@@ -52,7 +52,7 @@
 
 /* PAGINA EMPRESA */
 .header-empresa{
-	height: 200px;
+	height: 175px;
 	background: rgba(27,115,112,0.6);
 	overflow:hidden;
 }
@@ -65,7 +65,7 @@
 	font-weight: bold;
 }
 .info-empresa{
-	height:90px;
+	height:70px;
 }
 .main {
 	background: url(/assets/home/backgrounds/wild_oliva_light.png);
@@ -74,16 +74,16 @@
 	padding-top: 20px;
 }
 .logo-empresa{
-	width:160px;
-	height: 160px;
-	border-radius: 80px;
+	width:140px;
+	height: 140px;
+	border-radius: 70px;
 	background: #fff;
 	margin-top:20px;
 	overflow: hidden;
 }
 .logo-empresa img{
-	width: 100%;
-	height: auto;
+	width: auto;
+	height: 100%;
 }
 #locales-empresa tr:hover{
 	background-color: rgba(27,115,112,0.2);

@@ -1,4 +1,4 @@
-<%= simple_form_for(@service_provider) do |f| %>
+<%= form_for(@service_provider) do |f| %>
   <% if @service_provider.errors.any? %>
     <div id="error_explanation">
       <h2><%= pluralize(@service_provider.errors.count, "error") %> no permitió que el local sea creado:</h2>

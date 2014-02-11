@@ -11,42 +11,42 @@
   <% end %>
 
   <div class="form-group">
-    <%= f.label :first_name, "Nombre: ", class: "col-sm-2 control-label" %>
+    <%= f.label :first_name, "Nombre:", class: "col-sm-3 control-label" %>
     <div class="col-sm-4">
       <%= f.text_field :first_name, :autofocus => true, class: "form-control" %>
     </div>
   </div>
   
   <div class="form-group">
-    <%= f.label :last_name, "Apellido: ", class: "col-sm-2 control-label"  %>
+    <%= f.label :last_name, "Apellido:", class: "col-sm-3 control-label"  %>
     <div class="col-sm-4">
       <%= f.text_field :last_name, class: "form-control" %>
     </div>
   </div>
   
   <div class="form-group">
-    <%= f.label :email, "Email: ", class: "col-sm-2 control-label"  %>
+    <%= f.label :email, "Email:", class: "col-sm-3 control-label"  %>
     <div class="col-sm-4">
       <%= f.text_field :email, class: "form-control" %>
     </div>
   </div>
   
   <div class="form-group">
-    <%= f.label :phone, "Teléfono: ", class: "col-sm-2 control-label"  %>
+    <%= f.label :phone, "Teléfono:", class: "col-sm-3 control-label"  %>
     <div class="col-sm-4">
       <%= f.text_field :phone, class: "form-control" %>
     </div>
   </div>
   
   <div class="form-group">
-    <%= f.label :password, "Contraseña: ", class: "col-sm-2 control-label"  %>
+    <%= f.label :password, "Contraseña:", class: "col-sm-3 control-label"  %>
     <div class="col-sm-4">
       <%= f.text_field :password, class: "form-control" %>
     </div>
   </div>
 
   <div class="form-group">
-    <%= f.label :password_confirmation, "Confirmar Contraseña: ", class: "col-sm-2 control-label"  %>
+    <%= f.label :password_confirmation, "Confirmar Contraseña:", class: "col-sm-3 control-label"  %>
     <div class="col-sm-4">
       <%= f.text_field :password_confirmation, class: "form-control" %>
     </div>
@@ -54,7 +54,7 @@
 
   <% if !current_user.nil? %>
     <div class="form-group">
-      <%= f.label :role_id, "Rol: ", class: "col-sm-2 control-label"  %>
+      <%= f.label :role_id, "Rol:", class: "col-sm-3 control-label"  %>
       <div class="col-sm-4">
       <% if current_user.role_id == Role.find_by(name: 'Super Admin').id %>
         <%= f.collection_select :role_id, Role.where(:name => ["Admin","Administrador Local","Staff"]), :id, :name, {selected: @user.role_id}, {class: "form-control"} %>
@@ -68,7 +68,7 @@
   <% end %>
   
   <div class="form-group">
-    <div class="actions col-sm-offset-2 col-sm-4">
+    <div class="actions col-sm-offset-3 col-sm-4">
       <%= button_tag(type: 'submit', class: "btn btn-primary") do %>
       <i class="fa fa-check"></i>   Guardar
     <% end %>

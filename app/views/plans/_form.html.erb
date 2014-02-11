@@ -12,25 +12,28 @@
   <% end %>
 
   <div class="form-group">
-    <%= f.label :name, 'Nombre', :class => 'col-sm-4 control.label' %>
-    <div class="col-sm-8">
+    <%= f.label :name, 'Nombre:', :class => 'col-sm-3 control-label' %>
+    <div class="col-sm-4">
       <%= f.text_field :name, :autofocus => true, :required => true, :class => 'form-control' %>
     </div>
   </div>
+  
   <div class="form-group">
-    <%= f.label :locations, '# Locales', :class => 'col-sm-4 control.label' %>
-    <div class="col-sm-8">
+    <%= f.label :locations, '# Locales:', :class => 'col-sm-3 control-label' %>
+    <div class="col-sm-4">
       <%= f.number_field :locations, :in => 1...1000, :required => true, :class => 'form-control' %>
     </div>
   </div>
+  
   <div class="form-group">
-    <%= f.label :service_providers, '# Staffs', :class => 'col-sm-4 control.label' %>
-    <div class="col-sm-8">
+    <%= f.label :service_providers, '# Proveedores de Servicios:', :class => 'col-sm-3 control-label' %>
+    <div class="col-sm-4">
       <%= f.number_field :service_providers, :in => 1...1000, :required => true, :class => 'form-control' %>
     </div>
   </div>
+  
   <div class="form-group">
-    <div class="col-sm-offset-4 col-sm-8">
+    <div class="col-sm-offset-3 col-sm-4">
       <div class="checkbox">
         <label>
           <%= f.check_box :custom %> Custom
@@ -38,9 +41,13 @@
       </div>
     </div>
   </div>
+  
   <div class="form-group">
-    <div class="col-sm-offset-4 col-sm-8">
-      <%= submit_tag 'Guardar', :class => 'btn btn-default' %>
+    <div class="actions col-sm-offset-3 col-sm-4">
+      <%= button_tag(type: 'submit', class: "btn btn-primary") do %>
+      <i class="fa fa-check"></i>   Guardar
+    <% end %>
+      <%= link_to '   Cancelar',  plans_path, class: "btn btn-danger fa fa-times" %>    
     </div>
   </div>
 <% end %>

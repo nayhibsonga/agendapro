@@ -1,6 +1,6 @@
 <h1 id='title'>Editar Proveedor de Servicios</h1>
 
-<%= simple_form_for(@service_provider) do |f| %>
+<%= form_for @service_provider, html: {class: "form-horizontal" } do |f| %>
 
   <%= content_tag "div", id: "id_data", data: { id: @service_provider.id } do %>
   <% end %>
