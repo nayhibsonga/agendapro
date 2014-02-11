@@ -61,8 +61,13 @@
   </div>
  
   <% if @service.service_category.nil? then @service.build_service_category end %>
-  <input type="checkbox" name="catCheck" id="categoryCheckboxId" value="0" onchange="categoryChange()" class="checkbox"> Crear nueva Categoría de Servicios:
-  
+    <div class="form-group">
+      <%= f.label :service_category_id, "Crear nueva Categoría de Servicio: ", class: "col-sm-2 control-label" %>
+    <div class="col-sm-4">
+      <input type="checkbox" name="catCheck" id="categoryCheckboxId" value="0" onchange="categoryChange()" class="checkbox">
+    </div>
+  </div>
+
   <%= f.fields_for :service_category do |builder| %>
 
   <div class="form-group">
@@ -76,24 +81,19 @@
   <% end %>
   
   <div class="form-group">
-    <%= f.label :tag, "Categoría de Servicio: ", class: "col-sm-2 control-label" %>
-
-    <div class="col-sm-4">
-      
+    <%= f.label :tag, "Tags de Búsqueda: ", class: "col-sm-2 control-label" %>
+    <div class="col-sm-4"> 
+      <%= f.collection_check_boxes :tag_ids, Tag.where(economic_sector: Company.find(current_user.company_id).economic_sector), :id, :name, html: {class: "checkbox"}%>
     </div>
   </div>
 
-  <%= f.collection_check_boxes :tag_ids, Tag.where(economic_sector: Company.find(current_user.company_id).economic_sector), :id, :name, {}, {} do |b| %>
-      <div class="checkbox">
-        <label>
-          b.label { b.check_box }
-        </label>
-      </div>        
-  <% end %>
-
-  <div class="actions">
-    <%= f.submit "Crear Nuevo Servicio" %>
+  <div class="form-group">
+  <div class="actions col-sm-offset-2 col-sm-4">
+    <%= link_to '<i class="fa fa-check"></i>   Guardar Servicio'.html_safe, "",:class => "btn btn-primary buttonLocation" %>
+    <%= link_to '<i class="fa fa-times"></i>   Cancelar'.html_safe, services_path, :method => :get, :class => "btn btn-danger" %>    
   </div>
+</div>
+
 <% end %>
 
 <% content_for :scripts do %>
