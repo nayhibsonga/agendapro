@@ -7702,3 +7702,180 @@ span.agendapro {
              margin-right: 30px;
       }
 }
+
+.modal-content{
+background: url(/assets/home/backgrounds/wild_oliva_light.png);
+}
+
+.modal-header{
+background: url(/assets/home/backgrounds/wild_oliva_light_head.png);
+}
+
+.modal-footer{
+background: url(/assets/home/backgrounds/wild_oliva_light_head.png);
+}
+
+.btn-agendapro-oscuro{
+color: #ffffff;
+background-color: rgba(27,115,112,1);
+border-color: rgba(24, 101, 99, 1);
+}
+
+.btn-agendapro-oscuro:hover{
+background-color: rgba(24, 101, 99, 1);
+}
+
+.btn-agendapro-claro{
+color: #ffffff;
+background-color: rgba(61,154,150,1);
+border-color: rgba(55, 133, 129, 1);
+}
+
+.btn-agendapro-claro:hover{
+background-color: rgba(55, 133, 129, 1);
+}
+
+/* Nuevo Home AgendaPro - Hecho por JP */
+
+/* Barra superior */
+#barra-superior {
+background: rgba(27,115,112,1);
+height: 44px;
+}
+#logo{
+  display: inline-block;
+  width:187px;
+  height:39px;
+  margin: 2px 0px 0px 0px;
+  background: url(images/logo-fix-agendapro.png);
+}
+#logo span{
+  display: none;
+}
+.nav li a{
+  padding: 12px 15px;
+}
+.nav-pills>li>a {
+  color: #fff;
+  text-transform: uppercase;
+  font-weight: 300;
+}
+.nav-pills>li.active>a{
+  background: rgba(255,255,255,0.2);
+  border-radius: 0px;
+  font-weight: bold;
+}
+.nav-pills>li:hover>a{
+  background: rgba(255,255,255,0.2);
+  border-radius: 0px;
+}
+
+/* -------- */
+.btn-success{
+  color: #ffffff;
+  background-color: #FA4616;
+  border-color: #E64215;
+}
+.btn-success:hover{
+  background-color: #EB4114;
+  border-color: #EB4114;
+}
+
+/* ---------- */
+.carousel-inner{
+  height: 500px;
+}
+.carousel-inner .item img{
+  width: 100%;
+  height: auto;
+}
+.caja-slider-home{
+  width: 100%;
+  height: 500px;
+  background-position: center;
+  background-size: cover;
+}
+#slide1{
+  background-image: url(<%= asset_path 'home/carousel1.png' %>);
+}
+#slide2{
+  background-image: url(<%= asset_path 'home/carousel2.jpg' %>);
+}
+#slide3{
+  background-image: url(<%= asset_path 'home/carousel3.jpg' %>);
+}
+.carousel-caption{
+  bottom: 80px;
+  left: 10%;
+}
+.green-caption{
+  background: rgba(27,115,112,0.5);
+  text-align: left;
+  width: 50%;
+}
+.green-caption h2{
+  font-weight: 200;
+  font-size: 28px;
+  margin: 20px 20px 10px;
+  float: left;
+}
+.green-caption p{
+  font-size: 21px;
+  margin: 0px 20px 20px;
+  float: left;
+}
+.clear{
+  clear: both;
+}
+
+/* ----------- */
+#mensaje-principal{
+  text-align: center;
+}
+#mensaje-principal h3{
+  font-weight: 400;
+}
+#mensaje-principal a{
+  margin-top: 20px;
+}
+
+/* ----------- */
+#caracteristicas-home{
+  margin-top:40px;
+  text-align: center;
+}
+.icono img{
+  width: 100%;
+  height: auto;
+}
+.icono p{
+  margin: 0px 25px 15px;
+  font-size: 15px;
+}
+.icono h3{
+  color: #FA4616;
+}
+
+/* Small devices (tablets, 768px and up) */
+@media (max-width: 768px) { 
+   .carousel-inner{
+    height: 400px;
+  }
+  .carousel-caption{
+    bottom: 120px;
+  }
+  .green-caption{
+    width: 80%;
+  }
+  .green-caption p{
+    font-size: 15px;
+  }
+}
+
+@media (max-width: 750px) { 
+   .icono p{
+    display:none;
+  }
+
+}
+
