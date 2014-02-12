@@ -7,9 +7,9 @@ $(function() {
                     '<div class="footer_teaser col-sm-12 col-md-12">' +
                         '<h3>AgendaPro - Sistema de Reservas Online</h3>' +
                         '<p>' +
-                            '<i class="fa fa-map-marker"></i> Nuestra Se&ntilde;ora de los Angeles 185, Oficina D, Las Condes, Santiago ' +
-                            '<i class="fa fa-phone"></i> (+56 9) 5178 5898 ' +
-                            '<i class="fa fa-envelope"></i> contacto@agendapro.cl' +
+                            '<span class="txt-footer"><i class="fa fa-map-marker"></i> Nuestra Se&ntilde;ora de los Angeles 185, Oficina D, Las Condes, Santiago </span>' +
+                            '<span class="txt-footer"><i class="fa fa-phone"></i> (+56 9) 5178 5898 </span>' +
+                            '<span class="txt-footer"><i class="fa fa-envelope"></i> contacto@agendapro.cl </span>' +
                         '</p>' +
                     '</div>' +
                 '</div>' +
