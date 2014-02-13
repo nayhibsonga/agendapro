@@ -26,7 +26,7 @@ function getHour(str) {
 function changeLocation (district_id) {
   $('#search-bar').attr('disabled', true);
   $.getJSON('/get_district', {id: district_id}, function (district) {
-    $('#span-location').html(district.name + '<i class="fa fa-chevron-right"></i>');
+    $('#span-location').html(district.name + ' <i class="fa fa-chevron-right"></i>');
     $('#district').val(district.id);
     $('#search-bar').removeAttr('disabled');
 
@@ -48,16 +48,30 @@ function decode (position) {
         var district = address.substring(0, address.indexOf(','));
         $('#search-bar').attr('disabled', true);
         $.getJSON('/district_by_name', {name: district}, function (district) {
-          $('#span-location').html(district.name + '<i class="fa fa-chevron-right"></i>');
-          $('#district').val(district.id);
-          $('#search-bar').removeAttr('disabled');
+          if (district) {
+            $('#span-location').html(district.name + ' <i class="fa fa-chevron-right"></i>');
+            $('#district').val(district.id);
+            $('#search-bar').removeAttr('disabled');
 
-          //====== Session Storage
-          if (typeof(Storage) !== "undefined") {
-            sessionStorage.district = district.id;
+            //====== Session Storage
+            if (typeof(Storage) !== "undefined") {
+              sessionStorage.district = district.id;
+            }
+          }
+          else {
+            myAlert.showAlert(
+              '<h3>Hubo un error localizandolo</h3>' +
+              '<p>No se pudo hubicar geograficamente.</p>'
+            );
           }
         });
       }
+    }
+    else {
+      myAlert.showAlert(
+        '<h3>Hubo un error localizandolo</h3>' +
+        '<p>No se pudo hubicar geograficamente.</p>'
+      );
     }
   });
 }
@@ -65,6 +79,10 @@ function decode (position) {
 function locationError (error) {
   if (typeof(Storage) !== "undefined") {
     changeLocation(sessionStorage.district)
+    myAlert.showAlert(
+      '<h3>Hubo un error localizandolo</h3>' +
+      '<p>Se utilizo la ultima ubicacion disponible.</p>'
+    );
   }
   else {
     myAlert.showAlert(
@@ -131,29 +149,5 @@ $(function() {
     }
   }
 
-  if (navigator.geolocation) {
-    if (typeof(Storage) !== "undefined") {
-      if (sessionStorage.manual) {
-        changeLocation(sessionStorage.district);
-      }
-      else {
-        navigator.geolocation.getCurrentPosition(decode, locationError);
-      }
-    }
-    else {
-      navigator.geolocation.getCurrentPosition(decode, locationError);
-    }
-  }
-  else {
-    if (typeof(Storage) !== "undefined") {
-      changeLocation(sessionStorage.district)
-    }
-    else {
-      myAlert.showAlert(
-        '<h3>Hubo un error localizandolo</h3>' +
-        '<p>Se utilizo Las Condes por defecto</p>'
-      );
-      changeLocation(1);
-    }
-  }
+  changeLocation(1);
 });

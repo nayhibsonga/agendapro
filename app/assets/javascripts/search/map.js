@@ -88,23 +88,7 @@ $(function() {
         fitMarkers(fullBounds);
     }
     else {
-        if (navigator.geolocation) {
-            if (typeof(Storage) !== "undefined") {
-                if (sessionStorage.manual) {
-                    var geolocation = $('#geolocation').data('geolocation');
-                    centerMap(geolocation);
-                }
-                else {
-                    navigator.geolocation.getCurrentPosition(geoLocation, geoerror);
-                }
-            }
-            else {
-                navigator.geolocation.getCurrentPosition(geoLocation, geoerror);
-            }
-        }
-        else {
-            var geolocation = $('#geolocation').data('geolocation');
-            centerMap(geolocation);
-        }
+        var geolocation = $('#geolocation').data('geolocation');
+        centerMap(geolocation);
     }
 });
