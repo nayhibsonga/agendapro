@@ -37,54 +37,55 @@
     <body>
         <!-- start: Header -->
         <header>
-        <div id="barra-superior">
-            <div class="container">
-                <div class="row">
-                    <a href="#" id="logo"></a>
-                    <ul class="nav nav-pills pull-right">
-                    <li id="c_home"><%= link_to "Inicio", home_path %></li>
-                    <li id="c_feature"><%= link_to "Características", features_path %></li>
-                    <li id="c_pricing"><%= link_to "Planes", view_plans_path %></li>
-                    <!-- <li><a href="#">Tutorial</a></li> -->
-                    <!-- <li id="c_aboutus"><%= link_to "Sobre Nosotros", aboutus_path %></li> -->
-                    <li id="c_contact"><%= link_to "Contacto", contact_path %></li>
-                    <!-- Inicio Sesión -->
-                        <div id="sign" class="pull-right">
-                            <% if user_signed_in? %>
-                            <div class="dropdown">
-                                <a href="#" data-toggle="dropdown"><%= current_user.email %> <span class="caret"></span></a>
-                                <ul class="dropdown-menu dropdown-sign" role="menu">
-                                    <li><%= link_to 'Dashboard', dashboard_path %></li>
-                                    <li><%= link_to "Editar Perfil", edit_user_registration_path %></li>
-                                    <li class="divider"></li>
-                                    <li><%= link_to 'Salir'.html_safe, destroy_user_session_path, method: :delete %></li>
-                                </ul>
+            <div id="barra-superior">
+                <div class="container">
+                    <div class="row">
+                        <a href="#" id="logo"></a>
+                        <ul class="nav nav-pills pull-right">
+                            <!-- start: Navegacion -->
+                            <li id="c_home"><%= link_to "Inicio", home_path %></li>
+                            <li id="c_feature"><%= link_to "Características", features_path %></li>
+                            <li id="c_pricing"><%= link_to "Planes", view_plans_path %></li>
+                            <!-- <li><a href="#">Tutorial</a></li> -->
+                            <!-- <li id="c_aboutus"><%= link_to "Sobre Nosotros", aboutus_path %></li> -->
+                            <li id="c_contact"><%= link_to "Contacto", contact_path %></li>
+                            <!-- end: Navegacion -->
+                            <!-- Inicio Sesión -->
+                            <div id="sign" class="pull-right">
+                                <% if user_signed_in? %>
+                                <div class="dropdown">
+                                    <a href="#" data-toggle="dropdown"><i class="fa fa-user"></i> <%= current_user.email %> <span class="caret"></span></a>
+                                    <ul class="dropdown-menu dropdown-sign" role="menu">
+                                        <li><%= link_to 'Dashboard', dashboard_path %></li>
+                                        <li><%= link_to "Editar Perfil", edit_user_registration_path %></li>
+                                        <li class="divider"></li>
+                                        <li><%= link_to 'Salir'.html_safe, destroy_user_session_path, method: :delete %></li>
+                                    </ul>
+                                </div>
+                                <% else %>
+                                <a href="#" data-toggle="modal" data-target="#signin-modal"><i class="fa fa-user"></i> Inicia Sesión</a>
+                                <a href="#" data-toggle="modal" data-target="#signup-modal"><i class="fa fa-pencil-square-o"></i> Regístrate</a>
+                                <% end %>
                             </div>
-                            <% else %>
-                            <a href="#" data-toggle="modal" data-target="#signin-modal"><i class="fa fa-user"></i> Inicia Sesión</a>
-                            <a href="#" data-toggle="modal" data-target="#signup-modal"><i class="fa fa-pencil-square-o"></i> Regístrate</a>
-                            <% end %>
-                        </div>
-                    <!-- Fin inicio sesión -->
-                    </ul>
+                            <!-- Fin inicio sesión -->
+                        </ul>
+                    </div>
                 </div>
             </div>
-        </div>
-                <!-- start: Alerts -->
-                <% if notice %>
-                    <div class="alert alert-info alert-dismissable">
-                        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-                        <%= notice %>
-                    </div>
-                <% end %>
-                <% if alert %>
-                    <div class="alert alert-warning alert-dismissable">
-                        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-                        <%= alert %>
-                    </div>
-                <% end %>
-                <!-- end: Alerts -->
-            </div>
+            <!-- start: Alerts -->
+            <% if notice %>
+                <div class="alert alert-info alert-dismissable">
+                    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                    <%= notice %>
+                </div>
+            <% end %>
+            <% if alert %>
+                <div class="alert alert-warning alert-dismissable">
+                    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                    <%= alert %>
+                </div>
+            <% end %>
+            <!-- end: Alerts -->
         </header>
         <!-- end: Header -->
 
