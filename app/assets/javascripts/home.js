@@ -7,7 +7,7 @@
 //= require home/jquery.ui.totop.js
 //= require home/easing.js
 //= require home/restart_theme.js
-//= require home/footer.js
+// require home/footer.js
 
 
 //por defecto:

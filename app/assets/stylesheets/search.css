@@ -1,7 +1,9 @@
 
  /*
  *= require home/prettyPhoto.css
- *= require home/homeStyle.css
+ * require home/homeStyle.css
+ *= require bootstrap.min.css
+ *= require home/style-home.css
  *= require font-awesome.min.css
  *= require search/result.css
  */
