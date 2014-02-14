@@ -18,8 +18,8 @@ $(function() {
         '<section class="copyright">' +
             '<div class="container">' +
                 '<div class="row">' +
-                    '<div class="col-sm-8 col-md-8"> &copy; Copyright 2013 | Gunei Investment SpA | Todos los derechos reservados</div>' +
-                    '<div class="text-right col-sm-4 col-md-4"> <a href="http://www.agendapro.cl/public/TyC.pdf" target="_balnk">T&eacute;rminos y Condiciones</a> </div>' +
+                    '<div class="col-sm-6 col-md-6"> &copy; Copyright 2013 | Gunei Investment SpA | Todos los derechos reservados</div>' +
+                    '<div class="text-right col-sm-6 col-md-6"> <a href="http://www.agendapro.cl/about_us" target="_balnk">Sobre Nosotros</a> | <a href="http://www.agendapro.cl/public/TyC.pdf" target="_balnk">T&eacute;rminos y Condiciones</a> </div>' +
                 '</div>' +
             '</div>' +
         '</section>' +
