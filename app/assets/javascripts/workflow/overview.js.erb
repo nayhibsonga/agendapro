@@ -1,38 +1,16 @@
-function loadOverview() {
-  if (confirm("Perdera los datos ¿Desea continuar?")) {
-    $('#services-link').removeClass('active');
-    $('#overview-link').addClass('active');
-    $('#services').css("display", "none");
-    $('#overview').css("display", "block");
-    $('#schedule').show();
-  }
-}
-
-function loadServices() {
-  if ($('[name="localRadio"]').is(':checked')) {
-    $('#overview-link').removeClass('active');
-    $('#services-link').addClass('active');
-    $('#overview').css("display", "none");
-    $('#services').css("display", "block");
-    $('#schedule').hide();
-    loadStep1();
-  }
-  else {
-    alert("Seleccione un local");
-  }
-}
-
+//====== Overview ======//
 function loadSchedule(id) {
-  $('.schedule-body').html('<%= image_tag "ajax-loader.gif", :alt => "Loader" %>');
+  $('#schedule-body').html('<%= image_tag "ajax-loader.gif", :alt => "Loader" %>');
   $.getJSON('/schedule', {local: id}, function (schedule) {
-    $('.schedule-body').html('');
-    $('.schedule-body').append('<ul class="list-unstyled"></ul>');
-    $.each(schedule, function (day, hours) {
-      if (hours.length) {
-        $('.list-unstyled').append('<li id="' + day + '"><b>' + day + ' </b></li>');
-        $.each(hours, function (pos, hour) {
-          $('#' + day).append(getHour(hour.open) + '-' + getHour(hour.close) + ' ');
-        })
+    $('#schedule-body').empty();
+    $.each(schedule, function (day, hour) {
+      if (hour.open) {
+        $('#schedule-body').append(
+          '<tr>' +
+            '<th>' + day + '</th>' +
+            '<th>' + getHour(hour.open) + '-' + getHour(hour.close) + '</th>' +
+          '</tr>'
+        );
       }
     })
   });
@@ -44,24 +22,86 @@ function getHour(str) {
   return str;
 }
 
+//====== Google Map ======//
+function initializeMap(lat, lng, mapDiv) {
+    var properties = {
+        center: new google.maps.LatLng(lat, lng),
+        zoom:   17,
+        panControl: false,
+        zoomControl: true,
+        zoomControlOptions: {
+            style: google.maps.ZoomControlStyle.SMALL
+        },
+        mapTypeControl: true,
+        mapTypeControlOptions: {
+            style: google.maps.MapTypeControlStyle.DROPDOWN_MENU
+        },
+        scaleControl: false,
+        streetViewControl: false,
+        overviewMapControl: false,
+        mapTypeId:  google.maps.MapTypeId.ROADMAP
+    };
+    map = new google.maps.Map(document.getElementById(mapDiv), properties);
+}
+
+function setMarker(latlng, local) {
+  var marker = new google.maps.Marker({
+                position: latlng
+              });
+  marker.setMap(map);
+
+  var infowindow = new google.maps.InfoWindow({
+      content: local
+    });
+  google.maps.event.addListener(marker, 'click', function() {
+      infowindow.open(map,marker);
+  });
+}
+
+function localMap(id) {
+  $.getJSON('/local', {id: id}, function (local) {
+    var latLng = new google.maps.LatLng(local.latitude, local.longitude);
+    map.setCenter(latLng);
+    setMarker(latLng, local.name);
+  });
+}
+
+var myAlert;
 $(function() {
+  myAlert = new Alert('.main');
+
   $('[name="localRadio"]').on('click', function(event) {
     var id = event.target.getAttribute('value');
     loadSchedule(id);
+    localMap(id);
+
+    $('.local-seleccionado').removeClass('local-seleccionado');
+    $('#localOption' + id).parents('tr').addClass('local-seleccionado');
   });
 
-  $('#overview-link').click(function (event) {
-    loadOverview();
-    event.preventDefault(); // Prevent link from following its href
+  $('#boton-agendar').click(function (event) {
+    if (!$('[name="localRadio"]').is(':checked')) {
+      myAlert.showAlert(
+        '<h3>Seleccione un local</h3>' +
+        '<p>Debe elegir un local antes de poder agendar.</p>'
+      );
+      event.preventDefault(); // Prevent link from following its href
+    }
+    else {
+      window.location.href = 'http://' + $('#workflow_url').data('url') + '/workflow?local=' + $('input[name=localRadio]:checked').val();
+    }
   });
 
-  $('#services-link').click(function (event) {
-    loadServices();
-    event.preventDefault(); // Prevent link from following its href
-  });
+  var map;
+  initializeMap(-33.413084, -70.592161, 'map');
+  
+  if ($('[name="localRadio"]').is(':checked')) {
+    var localId = $('input[name=localRadio]:checked').val();
+    loadSchedule(localId);
+    localMap(localId);
+  }
 
-  $('#schedule').click(function (event) {
-    loadServices();
-    event.preventDefault(); // Prevent link from following its href
-  });
+  if ($('[name="localRadio"]').length == 1) {
+    $('input[name=localRadio]').trigger('click');
+  }
 });

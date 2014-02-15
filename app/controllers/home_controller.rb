@@ -2,9 +2,6 @@ class HomeController < ApplicationController
 	layout "home"
 	
 	def index
-	  if current_user
-	    redirect_to :controller=>'dashboard', :action => 'index'
-	  end
 	end
 
 	def features
@@ -17,7 +14,17 @@ class HomeController < ApplicationController
 	end
 
 	def post_contact
-		flash[:notice] = "Contactado"
+		flash[:notice] = "Gracias por contactarnos"
+
+		@contact_info = Hash.new
+		@contact_info['firstName'] = params[:inputName]
+		@contact_info['lastName'] = params[:inputLastname]
+		@contact_info['email'] = params[:inputEmail]
+		@contact_info['subject'] = params[:inputSubject]
+		@contact_info['message'] = params[:inputMessage]
+
+		HomeMailer.contact_mail(@contact_info)
+
 		render :contact
 	end
 end

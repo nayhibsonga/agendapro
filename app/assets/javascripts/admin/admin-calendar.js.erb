@@ -1,0 +1,534 @@
+function getResources() {
+	resources = [];
+	var localId = $('input[name=localRadio]:checked').val();
+	$.getJSON('/local_providers', {location: localId}, function (providersArray) {
+		if (providersArray.length > 0) {
+			$.each(providersArray, function (key, provider) {
+				resources.push({id: provider.id, name: provider.public_name});
+			});
+		}
+		return resources;
+	});
+}
+
+function loadProviders () {
+	if ($('[name="localRadio"]').is(':checked')) {
+		$('#providers-selector').html('<%= image_tag "ajax-loader.gif", :alt => "Loader" %>');
+		var localId = $('input[name=localRadio]:checked').val();
+		$('#providers-selector').empty();
+		$('#providers-selector').append('<label>' +
+				'<input type="radio" name="providerRadio" value="0" checked>' +
+				'<p>Todos</p>' +
+			'</label>'
+		);
+		resources = [];
+		$.getJSON('/local_providers', {location: localId}, function (providersArray) {
+			if (providersArray.length > 0) {
+				$.each(providersArray, function (key, provider) {
+					$('#providers-selector').append('<label>' +
+							'<input type="radio" name="providerRadio" value="' + provider.id + '">' +
+							'<p>' + provider.public_name + '</p>' +
+						'</label>'
+					);
+					resources.push({id: provider.id, name: provider.public_name});
+				});
+				$('[name="providerRadio"]').on('click', function(event) {
+					$('[name="providerRadio"]').attr('checked',false);
+					$(this).attr('checked',true);
+					var providerId = event.target.getAttribute('value');
+					if (providerId == 0) {
+						loadLocationTime (localId, resources);
+					}
+					else {
+						loadProviderTime(providerId);
+					}
+					
+				});
+				loadLocationTime (localId, resources);
+				return true;
+			}
+			loadWeekCalendar(0,24,[],[],0);
+			return true;
+		});
+		return false;
+	}
+	return false;
+}
+
+function getHour(str) {
+  var index = str.indexOf('T'); //2000-1-1T08:00:00Z
+  str = str.substring(index + 1, index + 6); //08:00
+  return str;
+}
+
+function loadLocationTime (locationId, resources) {
+	$('#calendar').html('<%= image_tag "ajax-loader.gif", :alt => "Loader" %>');
+	$.getJSON('/location_time', {id: locationId}, function (times) {
+		if (times.length > 0) {
+			var minHour = 23;
+			var minMinuts = 59;
+			var maxHour = 00;
+			var maxMinuts = 00;
+			$.each(times, function (key, time) {
+					var openHour = parseInt(getHour(time.open).substr(0, getHour(time.open).indexOf(':')));
+					var openMinuts = parseInt(getHour(time.open).substr(getHour(time.open).indexOf(':') + 1));
+					var closeHour = parseInt(getHour(time.close).substr(0, getHour(time.close).indexOf(':')));
+					var closeMinuts = parseInt(getHour(time.close).substr(getHour(time.close).indexOf(':') + 1));
+					if(openHour < minHour) {
+						minHour = openHour;
+						minMinuts = openMinuts;
+					}
+					else if (openHour == minHour) {
+						if(openMinuts < minMinuts) {
+							minMinuts = openMinuts;
+						}
+					}
+					if(closeHour > maxHour) {
+						maxHour = closeHour;
+						maxMinuts = closeMinuts;
+					}
+					else if (closeHour == maxHour) {
+						if(closeMinuts > maxMinuts) {
+							maxMinuts = closeMinuts;
+						}
+					}
+			});
+			$.getJSON('/schedule', {local: $('input[name=localRadio]:checked').val()}, function (schedule) {
+				hiddenDays = new Array();
+				if (!schedule.Domingo.length) {
+					hiddenDays.push(0);
+				}
+				if (!schedule.Lunes.length) {
+					hiddenDays.push(1);
+				}
+				if (!schedule.Martes.length) {
+					hiddenDays.push(2);
+				}
+				if (!schedule.Miércoles.length) {
+					hiddenDays.push(3);
+				}
+				if (!schedule.Jueves.length) {
+					hiddenDays.push(4);
+				}
+				if (!schedule.Viernes.length) {
+					hiddenDays.push(5);
+				}
+				if (!schedule.Sábado.length) {
+					hiddenDays.push(6);
+				}
+				loadResourcesCalendar(minHour + ':' + minMinuts, maxHour + ':' + maxMinuts, hiddenDays,resources,0);
+			});	
+		}
+		else {
+			loadWeekCalendar(0, 24, [],resources,0);
+		}
+	});
+}
+
+function loadProviderTime (providerId) {
+	$('#calendar').html('<%= image_tag "ajax-loader.gif", :alt => "Loader" %>');
+	$.getJSON('/provider_time', {id: providerId}, function (times) {
+		var minHour = 23;
+		var minMinuts = 59;
+		var maxHour = 00;
+		var maxMinuts = 00;
+		$.each(times, function (key, time) {
+				var openHour = parseInt(getHour(time.open).substr(0, getHour(time.open).indexOf(':')));
+				var openMinuts = parseInt(getHour(time.open).substr(getHour(time.open).indexOf(':') + 1));
+				var closeHour = parseInt(getHour(time.close).substr(0, getHour(time.close).indexOf(':')));
+				var closeMinuts = parseInt(getHour(time.close).substr(getHour(time.close).indexOf(':') + 1));
+				if(openHour < minHour) {
+					minHour = openHour;
+					minMinuts = openMinuts;
+				}
+				else if (openHour == minHour) {
+					if(openMinuts < minMinuts) {
+						minMinuts = openMinuts;
+					}
+				}
+				if(closeHour > maxHour) {
+					maxHour = closeHour;
+					maxMinuts = closeMinuts;
+				}
+				else if (closeHour == maxHour) {
+					if(closeMinuts > maxMinuts) {
+						maxMinuts = closeMinuts;
+					}
+				}
+		});
+		$.getJSON('/schedule', {local: $('input[name=localRadio]:checked').val()}, function (schedule) {
+			hiddenDays = new Array();
+			if (!schedule.Domingo.length) {
+				hiddenDays.push(0);
+			}
+			if (!schedule.Lunes.length) {
+				hiddenDays.push(1);
+			}
+			if (!schedule.Martes.length) {
+				hiddenDays.push(2);
+			}
+			if (!schedule.Miércoles.length) {
+				hiddenDays.push(3);
+			}
+			if (!schedule.Jueves.length) {
+				hiddenDays.push(4);
+			}
+			if (!schedule.Viernes.length) {
+				hiddenDays.push(5);
+			}
+			if (!schedule.Sábado.length) {
+				hiddenDays.push(6);
+			}
+			loadWeekCalendar(minHour + ':' + minMinuts, maxHour + ':' + maxMinuts, hiddenDays,[],providerId);
+		  });
+	});
+}
+
+
+var duration = 15;
+function loadResourcesCalendar (startTime, endTime, hiddenDays, resourcesArray, providerId) {
+	//Default values
+	startTime = startTime || 0;
+	endTime = endTime || 24;
+	hiddenDays = hiddenDays || [];
+
+	$('#calendar').fullCalendar('removeEvents');
+	$('#calendar').empty();
+	$('#calendar').fullCalendar({
+	    header: {
+	    	left: 'agendaWeek,resourceDay',
+	    	center: 'prev,today,next',
+	    	right: 'title'
+	    },
+	    hiddenDays: hiddenDays,
+	    resources: resourcesArray,
+	    eventClick: function(event) {
+	    	editBookingModal(event.id);
+	    },
+	    dayClick: function(date, allDay, jsEvent, view) {
+	        createBookingModal(date);
+	    },
+		//eventMouseover: function(calEvent, domEvent) {
+		// 	var layer =	"<div id='events-layer' class='fc-transparent' style='position:absolute; width:100%; height:100%; top:-1px; text-align:right; z-index:100'>asdfff</div>";
+		// 	$(this).append(layer);
+		// }, 
+ 
+		// eventMouseout: function(calEvent, domEvent) {
+		// 	$(this).find('div[id*=events-layer]').remove();
+		// },
+	    firstDay: 1,	//Lunes
+	    defaultView: 'agendaWeek',
+	    allDaySlot: false,
+	    axisFormat: 'HH:mm',
+	    timeFormat: 'HH:mm{ - HH:mm}',
+	    columnFormat: {
+	    	week: 'ddd d/M',
+	    	day: 'dddd d/M' 
+	    },
+	    titleFormat: {
+	    	week: 'MMM d[ yyyy]{ &#8212;[ MMM] d yyyy}',
+	    	day: 'dddd, d MMM yyyy'  
+	    },
+	    buttonText: {
+		    prev:     '&lsaquo;', // <
+		    next:     '&rsaquo;', // >
+		    today:    'Hoy',
+		    week:     '<i class="fa fa-calendar"></i>  Semana',
+		    day:      '<i class="fa fa-calendar"></i>  Día',
+		    resourceDay: '<i class="fa fa-calendar"></i>  Día'
+	    },
+	    monthNames: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+	    monthNamesShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
+	    dayNames: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'],
+	    dayNamesShort: ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'],
+	    minTime: startTime,
+	    maxTime: endTime,
+	    defaultEventMinutes: duration,
+	    /*eventDrop: function (event, dayDelta, minuteDelta, allDay, revertFunc) {
+	    	moveBooking(event, revertFunc);
+	    },*/
+	    slotMinutes: duration,
+	    eventColor: '#ff0000'
+	});
+	loadProviderBooking(providerId);
+}
+
+function loadWeekCalendar (startTime, endTime, hiddenDays, resourcesArray, providerId) {
+	//Default values
+	startTime = startTime || 0;
+	endTime = endTime || 24;
+	hiddenDays = hiddenDays || [];
+
+	$('#calendar').fullCalendar('removeEvents');
+	$('#calendar').empty();
+	$('#calendar').fullCalendar({
+	    header: {
+	    	left: '',
+	    	center: 'prev,today,next',
+	    	right: 'title'
+	    },
+	    hiddenDays: hiddenDays,
+	    resources: resourcesArray,
+	    eventClick: function(event) {
+	    	editBookingModal(event.id);
+	    },
+	    dayClick: function(date, allDay, jsEvent, view) {
+	        createBookingModal(date);
+	    },
+		// eventMouseover: function(calEvent, domEvent) {
+		// 	var layer =	"<div id='events-layer' class='fc-transparent' style='position:absolute; width:100%; height:100%; top:-1px; text-align:right; z-index:100'>asdfff</div>";
+		// 	$(this).append(layer);
+		// }, 
+ 
+		// eventMouseout: function(calEvent, domEvent) {
+		// 	$(this).find('div[id*=events-layer]').remove();
+		// },
+	    firstDay: 1,	//Lunes
+	    defaultView: 'agendaWeek',
+	    allDaySlot: false,
+	    axisFormat: 'HH:mm',
+	    timeFormat: 'HH:mm{ - HH:mm}',
+	    columnFormat: {
+	    	week: 'ddd d/M',
+	    	day: 'dddd d/M' 
+	    },
+	    titleFormat: {
+	    	week: 'MMM d[ yyyy]{ &#8212;[ MMM] d yyyy}',
+	    	day: 'dddd, d MMM yyyy'  
+	    },
+	    buttonText: {
+		    prev:     '&lsaquo;', // <
+		    next:     '&rsaquo;', // >
+		    today:    'Hoy',
+		    week:     '<i class="fa fa-calendar"></i>  Semana',
+		    day:      '<i class="fa fa-calendar"></i>  Día'
+	    },
+	    monthNames: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+	    monthNamesShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
+	    dayNames: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'],
+	    dayNamesShort: ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'],
+	    minTime: startTime,
+	    maxTime: endTime,
+	    defaultEventMinutes: duration,
+	    /*eventDrop: function (event, dayDelta, minuteDelta, allDay, revertFunc) {
+	    	moveBooking(event, revertFunc);
+	    },*/
+	    slotMinutes: duration,
+	    eventColor: '#ff0000'
+	});
+	loadProviderBooking(providerId);
+}
+
+function loadProviderBooking (providerId) {
+	var localId = $('input[name=localRadio]:checked').val();
+	$('#calendar').fullCalendar('removeEvents');
+	if (providerId == 0) {
+		$.getJSON('/booking', {location: localId}, function (bookings) {
+			if (bookings.length > 0) {
+				$.each(bookings, function (key, booking) {
+					var serviceName = 'Ocupado';
+					for (i in servicesJSON) {
+						if (servicesJSON[i].id == booking.service_id) {
+							serviceName = servicesJSON[i].name;
+						}
+					}
+					var events = {
+						id: booking.id,
+						title: serviceName,
+						allDay: false,
+						start: booking.start,
+						end: booking.end,
+						resourceId: booking.service_provider_id
+					};
+					$('#calendar').fullCalendar('renderEvent', events, true);
+				});
+			}
+		});
+	}
+	else {
+		$.getJSON('/booking', {location: localId, provider: providerId}, function (bookings) {
+			if (bookings.length > 0) {
+				$.each(bookings, function (key, booking) {
+					var serviceName = 'Ocupado';
+					for (i in servicesJSON) {
+						if (servicesJSON[i].id == booking.id) {
+							serviceName = servicesJSON[i].name;
+						}
+					}
+					var events = {
+						id: booking.id,
+						title: serviceName,
+						allDay: false,
+						start: booking.start,
+						end: booking.end,
+						resourceId: booking.service_provider_id
+					};
+					$('#calendar').fullCalendar('renderEvent', events, true);
+				});
+			}
+		});
+	}
+	return false;
+}
+
+function editBookingModal(eventId) {
+	$.getJSON('/bookings/'+eventId, function (booking) {
+		var start = booking.start || 0;
+		if (start != 0) {
+			dateArray = start.toString().split('T');
+			$('#datePicker').val(dateArray[0]);
+			$('#bookingStartHour option[value="'+dateArray[1].split(':')[0]+'"]').attr("selected",true);
+			$('#bookingStartMinute option[value="'+dateArray[1].split(':')[1]+'"]').attr("selected",true);
+		}
+		else {
+			$('#datePicker').val('');
+			$('#bookingStartHour').val('');
+			$('#bookingStartMinute').val('');
+		}
+		$('#booking_service_provider_id option[value="'+booking.service_provider_id+'"]').attr("selected",true);
+		$('#booking_service_id option[value="'+booking.service_id+'"]').attr("selected",true);
+		$('#booking_status_id option[value="'+booking.status_id+'"]').attr("selected",true);
+		$('#booking_first_name').val(booking.first_name);
+		$('#booking_last_name').val(booking.last_name);
+		$('#booking_email').val(booking.email);
+		$('#booking_phone').val(booking.phone);
+		$('#booking_notes').val(booking.notes);
+		modalChange();
+		$('#bookingModal').modal('hide');
+		$('.booking-modal-title').empty();
+		$('.booking-modal-footer').empty();
+		$('.booking-modal-title').append('Editando Reserva id: '+eventId);
+		$('.booking-modal-footer').append('<button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button><button type="button" class="btn btn-primary" onclick="editBooking('+eventId+')">Guardar</button><button type="button" class="btn btn-danger" onclick="deleteBooking('+eventId+')">Eliminar</button>');
+
+
+
+		$('#bookingModal').modal('show');
+	});	
+}
+
+function createBookingModal(date) {
+	var date = date || 0;
+	if (date != 0) {
+		dateArray = date.toString().split(' ');
+		$('#bookingStartHour option[value="'+dateArray[4].split(':')[0]+'"]').attr("selected",true);
+		$('#bookingStartMinute option[value="'+dateArray[4].split(':')[1]+'"]').attr("selected",true);
+		modalChange();
+	}
+	else {
+		$('#datePicker').val('');
+		$('#bookingStartHour').val('');
+		$('#bookingStartMinute').val('');
+	}
+	if (parseInt($('input[name=providerRadio]:checked').val()) > 0) {
+		$('#booking_service_provider_id option[value="'+$('input[name=providerRadio]:checked').val()+'"]').attr("selected",true);
+	}
+	else {
+		$('#booking_service_provider_id').val('');
+	}
+	$('#booking_status_id').val('');
+	$('#booking_first_name').val('');
+	$('#booking_last_name').val('');
+	$('#booking_email').val('');
+	$('#booking_phone').val('');
+	$('#booking_notes').val('');
+	$('#bookingModal').modal('hide');
+	$('.booking-modal-title').empty();
+	$('.booking-modal-footer').empty();
+	$('.booking-modal-title').append('Nueva Reserva');
+	$('.booking-modal-footer').append('<button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button><button type="button" class="btn btn-primary" onclick="createBooking()">Guardar</button>');
+
+
+	$('#bookingModal').modal('show');	
+}
+
+function editBooking(eventId) {
+	saveBooking('PATCH','/'+eventId);
+}
+
+function createBooking() {
+	saveBooking('POST','');
+}
+
+function deleteBooking(eventId) {
+	saveBooking('DELETE','/'+eventId);
+}
+
+function jsonBooking() {
+	var jsBooking = { "start": $('#datePicker').val() +"T"+ $('#bookingStartHour').val() +":"+ $('#bookingStartMinute').val() +":00Z","end":$('#datePicker').val() +"T"+ $('#bookingEnd').text() +":00Z", "service_provider_id": parseInt($('#booking_service_provider_id').val()), "service_id": parseInt($('#booking_service_id').val()), "status_id": parseInt($('#booking_status_id').val()), "first_name": $('#booking_first_name').val(), "last_name": $('#booking_last_name').val(), "email": $('#booking_email').val(), "phone": $('#booking_phone').val(), "notes": $('#booking_notes').val() };
+	return jsBooking;
+}
+
+function saveBooking(typeURL, extraURL) {
+	var bookingJSON = jsonBooking();
+	$.ajax({
+	    type: typeURL,
+	    url: '/bookings'+ extraURL +'.json',
+	    data: { "booking": bookingJSON },
+	    dataType: 'json',
+	    success: function(){
+	    	document.location.href = '/bookings/';
+		},
+		error: function(xhr){
+		    var errors = $.parseJSON(xhr.responseText).errors;
+		    var errores = '';
+		    for (i in errors) {
+		    	errores += errors[i];
+		    }
+		    alertId.showAlert(errores);
+		}
+	});
+}
+
+function modalChange() {
+	$('#bookingEnd').empty()
+	if ($("#bookingStartHour").val() != '' && $("#bookingStartMinute").val() != '' && $("#booking_service_id").val() != '') {
+		var duration = 0;
+		for (i in servicesJSON) {
+			if ($("#booking_service_id").val() == servicesJSON[i].id) {
+				duration = servicesJSON[i].duration;
+			}
+		}
+		var extraCharH = '';
+		var extraCharM = '';
+		var hours = parseInt($("#bookingStartHour").val());
+		var minutes = parseInt($("#bookingStartMinute").val()) + duration;
+		if (minutes >= 60) {
+			hours += 1;
+			minutes -= 60;
+		}
+		if (hours < 10) {
+			extraCharH = '0';
+		}
+		if (minutes < 10) {
+			extraCharM = '0';
+		}
+		$('#bookingEnd').append(extraCharH+hours+':'+extraCharM+minutes);
+	}
+	else {
+		$('#bookingEnd').append($("#bookingStartHour").val()+':'+$("#bookingStartMinute").val());
+	}
+}
+
+var servicesJSON;
+var alertId;
+$(function() {
+	alertId = new Alert();
+	$('.createBooking').click(function() {
+    	createBookingModal();
+	    return false;
+	});
+	$.getJSON('/services', function (services) {
+		servicesJSON = services;
+		loadProviders();
+		$('#datePicker').datepicker({dateFormat: 'yy-mm-dd'});
+		$("#bookingStartHour").on("change", function() { 
+			modalChange();
+		});
+		$("#bookingStartMinute").on("change", function() { 
+			modalChange();
+		});
+		$("#booking_service_id").on("change", function() { 
+			modalChange();
+		});
+	});
+});

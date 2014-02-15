@@ -30,11 +30,11 @@
                         <div class="row">
                             <div class="col-sm-4 col-md-4">
                             	<%= label_tag(:inputName, "Nombre:") %>
-                            	<%= text_field_tag(:inputName, nil, :class => "form-control", :placeholder => "Juan", :required => true) %>
+                            	<%= text_field_tag(:inputName, nil, :class => "form-control", :placeholder => "Nombre", :required => true) %>
                             </div>
                             <div class="col-sm-4 col-md-4">
                             	<%= label_tag(:inputLastname, "Apellido:") %>
-                            	<%= text_field_tag(:inputLastname, nil, :class => "form-control", :placeholder => "Perez", :required => true) %>
+                            	<%= text_field_tag(:inputLastname, nil, :class => "form-control", :placeholder => "Apellido", :required => true) %>
                             </div>
                             <div class="col-sm-8 col-md-8">
                             	<%= label_tag(:inputEmail, "Email:") %>
@@ -60,10 +60,11 @@
     </section>
 </div>
 
-<!-- scripts -->
+<% content_for :scripts do %>
 <script>
     $(function() {
         $("#c_contact").addClass("active")
         $("body").addClass("collapsing_header")
     });
 </script>
+<% end %>

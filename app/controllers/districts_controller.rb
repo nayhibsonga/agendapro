@@ -1,7 +1,7 @@
 class DistrictsController < ApplicationController
   before_action :set_district, only: [:show, :edit, :update, :destroy]
-  before_action :authenticate_user!
-  before_action :verify_is_super_admin
+  before_action :authenticate_user!, except: [:get_districts, :get_district, :get_direction, :get_district_by_name]
+  before_action :verify_is_super_admin, except: [:get_districts, :get_district, :get_direction, :get_district_by_name]
   layout "admin"
   load_and_authorize_resource
 
@@ -63,6 +63,39 @@ class DistrictsController < ApplicationController
       format.html { redirect_to districts_url }
       format.json { head :no_content }
     end
+  end
+
+  def get_districts
+    districts = District.where('name ~* ?', params[:term])
+
+    @districts_array = Array.new
+    label = 
+    districts.each do |district|
+      label = district.name + ', ' + district.city.name + ', ' + district.city.region.name + ', ' + district.city.region.country.name
+      @districts_array.push({:label => label, :value => district.name})
+    end
+
+    render :json => @districts_array
+  end
+
+  def get_district
+    @district = District.find(params[:id])
+    render :json => @district
+  end
+
+  def get_direction
+    district = District.find(params[:id])
+    city = district.city
+    region = city.region
+    country = region.country
+    @geolocation = [district.name + ', ' + city.name + ', ' + region.name + ', ' + country.name]
+
+    render :json => @geolocation
+  end
+
+  def get_district_by_name
+    @district = District.find_by(name: params[:name])
+    render :json => @district
   end
 
   private

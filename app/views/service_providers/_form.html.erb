@@ -1,4 +1,4 @@
-<%= simple_form_for(@service_provider) do |f| %>
+<%= form_for(@service_provider) do |f| %>
   <% if @service_provider.errors.any? %>
     <div id="error_explanation">
       <h2><%= pluralize(@service_provider.errors.count, "error") %> no permitió que el local sea creado:</h2>
@@ -14,6 +14,12 @@
   <div class="form-inputs">
   	<%= f.association :user, :as => :collection_select, collection: User.where(company_id: current_user.company_id), :label => "Usuario", :label_method => :email, value_method: :id %><br />
   	<%= f.association :location, :as => :collection_select, collection: Location.where(company_id: current_user.company_id), :label => "Local", value_method: :id %><br />
+    <%= f.association :services, 
+                     as: :check_boxes,
+                     collection: Service.where(company_id: current_user.company_id),
+                     label_method: :name, 
+                     value_method: :id,
+                     label: 'Servicios' %>
 
   </div>
 

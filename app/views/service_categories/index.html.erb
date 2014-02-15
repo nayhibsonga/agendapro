@@ -1,0 +1,24 @@
+<h1>Listing service_categories</h1>
+
+<table class="table table-bordered">
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Opciones</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @service_categories.each do |service_category| %>
+      <tr>
+        <td><%= service_category.name %></td>
+        <td>
+          <%= link_to '<i class="fa fa-pencil"></i>   Edit'.html_safe, edit_service_category_path(service_category), :class => "btn btn-warning" %>
+          <%= link_to '<i class="fa fa-times"></i>   Destroy'.html_safe, service_category, :class => "btn btn-danger", method: :delete, data: { confirm: 'Are you sure?' } %>
+        </td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<%= link_to '<i class="fa fa-check"></i>   New Service category'.html_safe, new_service_category_path, :class => "btn btn-primary" %>

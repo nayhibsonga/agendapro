@@ -1,25 +1,22 @@
-<h1>Listing service_providers</h1>
+<h1>Proveedores de Servicios</h1>
 
-<table>
+<table class="table table-bordered">
   <thead>
     <tr>
-      <th></th>
-      <th></th>
-      <th></th>
+      <th>Nombre</th>
+      <th>Opciones</th>
     </tr>
   </thead>
 
   <tbody>
     <% @service_providers.each do |service_provider| %>
       <tr>
-        <td><%= link_to 'Show', service_provider %></td>
-        <td><%= link_to 'Edit', edit_service_provider_path(service_provider) %></td>
-        <td><%= link_to 'Destroy', service_provider, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+        <td><%= service_provider.public_name %></td>
+        <td><%= link_to '<i class="fa fa-pencil"></i>   Editar'.html_safe, edit_service_provider_path(service_provider), :class => "btn btn-warning" %>
+        <%= link_to '<i class="fa fa-times"></i>   Eliminar'.html_safe, service_provider, :class => "btn btn-danger", method: :delete, data: { confirm: 'Estás Seguro?' } %></td>
       </tr>
     <% end %>
   </tbody>
 </table>
 
-<br>
-
-<%= link_to 'New Service provider', new_service_provider_path %>
+<%= link_to '<i class="fa fa-plus"></i>   Nuevo Proveedor de Servicios'.html_safe, new_service_provider_path, :class => "btn btn-primary" %>

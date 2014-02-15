@@ -1,0 +1,85 @@
+<%= form_tag({action: "search"}, method: "GET", class: "form-horizontal") do %>
+	<div class="form-group">
+    <div class="row">
+      <div class="localizacion">
+    		<%= label_tag(:district, "Descubre, encuentra y reserva servicios en", :class => "control-label texto-localizacion") %>
+          <a href="#" data-toggle="modal" data-target="#modalLocation"><span class="label label-warning" id="span-location" data-toggle="tooltip"><i class="fa fa-chevron-right"></i></span></a>
+          <input type="hidden" id="district" name="district">
+      </div>
+    </div><!-- /.row -->
+	</div>
+  <fieldset id="search-bar" disabled>
+  	<div class="form-group">
+      <div class="row">
+        <div class="col-lg-8 col-lg-offset-2">
+          <div class="input-group">
+            <%= search_field_tag :inputSearch, params[:inputSearch], class: "form-control", placeholder: "Ejemplo: Corte de Pelo, Masaje, Terapia, Peluquería", :required => "true", :autofocus => "autofocus" %>
+            <span class="input-group-btn">
+              <button class="btn btn-default" type="submit"><i class="fa fa-search"><span> Buscar</span></i></button>
+            </span>
+          </div><!-- /input-group -->
+        </div><!-- /.col-lg-8 -->
+      </div><!-- /.row -->
+  	</div>
+  </fieldset>
+<% end %>
+
+<div class="modal fade" id="modalLocation" tabindex="-1" role="dialog" aria-labelledby="modalLocationLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h4 class="modal-title">Selecciona tu Comuna</h4>
+      </div>
+      <div class="modal-body">
+        <form class="form-horizontal" role="form" id="form-location">
+          <div class="form-group">
+            <%= label_tag :location_autocomplete, 'Comuna', :class => 'control-label col-md-2' %>
+            <div class="col-md-8">
+              <%= text_field_tag :location_autocomplete, nil, :placeholder => 'Las Condes', :class => 'form-control' %>
+              <ul id="suggestions"></ul>
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-info pull-left" id="geo">Geolocalizar</button>
+        <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+        <button type="button" class="btn btn-primary" id="save">Guardar</button>
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+<%= content_tag "div", id: "geolocation", data: {geolocation: @geolocation} do %>
+<% end %>
+
+<% content_for :scripts do %>
+  <%= stylesheet_link_tag "jquery-ui.css" %>
+  <%= javascript_include_tag "jquery-ui.js" %>
+  <script type="text/javascript">
+    $(function () {
+      $('#span-location').tooltip({
+        placement: 'auto top',
+        title: 'Elige donde quieres buscar'
+      });
+      $("#location_autocomplete").autocomplete({
+        source: '/get_districts',
+        appendTo: '#suggestions',
+        autoFocus: true,
+        minLength: 3,
+        change: function( event, ui ) {
+          var district_name = event.target.value;
+          $.getJSON('/district_by_name', {name: district_name}, function (district) {
+            changeLocation(district.id);
+          });
+        }
+      });
+
+      $('#form-location').submit(function (event) {
+        event.preventDefault();
+        $('#save').trigger('click');
+      });
+    });
+  </script>
+<% end %>

@@ -29,7 +29,7 @@ class Ability
     # See the wiki for details:
     # https://github.com/ryanb/cancan/wiki/Defining-Abilities
 
-    alias_action :index, :show, :viewplans, :to => :read
+    alias_action :index, :show, :to => :read
     
     #alias_action :workflow, :to => :destroy
     #alias_action :workflow, :to => :update
@@ -42,11 +42,40 @@ class Ability
 
     can :new, :all
 
+    # Home
+    can :view_plans, Plan
+
+    # Workflow
+    can :overview, Company
+    can :workflow, Company
+    can :location_data, Location
+    can :service_data, Service
+    can :services_data, Service
+    can :get_providers, Service
+    can :provider_booking, Booking
+    can :book_service, Booking
+    can :location_services, ServiceProvider
+    can :location_providers, ServiceProvider
+    can :provider_time, ServiceProvider
+    can :location_time, Location
+    can :get_category_name, ServiceCategory
+    can :get_available_time, Location
+
+    can :edit_booking, Booking
+    can :edit_booking_post, Booking
+    can :cancel_booking, Booking
+
+    # Search
+    can :get_districts, District
+    can :get_district, District
+    can :get_district_by_name, District
+
+    can :get_direction, District
+
     can :read, Booking, :user_id => user.id
     can :update, Booking, :user_id => user.id
     can :destroy, Booking, :user_id => user.id
     can :create, Booking, :user_id => user.id
-
 
 
     if user.role_id == Role.find_by_name("Super Admin").id
@@ -55,7 +84,9 @@ class Ability
 
     elsif user.role_id == Role.find_by_name("Admin").id
 
-        can :selectplan, Plan
+        can :select_plan, Plan
+
+        can :get_booking, Booking
 
         can :read, Company, :id => user.company_id
         can :destroy, Company, :id => user.company_id
@@ -74,6 +105,11 @@ class Ability
         can :create, CompanySetting, :company_id => user.company_id
         can :update, CompanySetting, :company_id => user.company_id
 
+        can :read, ServiceCategory, :company_id => user.company_id
+        can :destroy, ServiceCategory, :company_id => user.company_id
+        can :create, ServiceCategory, :company_id => user.company_id
+        can :update, ServiceCategory, :company_id => user.company_id
+
         can :read, LocationTime, :location => { :company_id => user.company_id }
         can :destroy, LocationTime, :location => { :company_id => user.company_id }
         can :create, LocationTime, :location => { :company_id => user.company_id }
@@ -90,6 +126,8 @@ class Ability
         can :update, Booking, :service_provider => { :company_id => user.company_id }
 
     elsif user.role_id == Role.find_by_name("Administrador Local").id
+
+        can :get_booking, Booking, :service_provider => { :location_id => user.try(:service_providers).try(:location_id) }
 
         can :read, Service, :company_id => user.company_id
         can :destroy, Service, :company_id => user.company_id

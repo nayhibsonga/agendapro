@@ -1,30 +1,26 @@
-<h1>Listing users</h1>
+<h1>Usuarios registrados en tu compañía</h1>
 
-<table>
+<h4>A continuación se presentan los usuarios que tienen cuenta asociada a tu empresa.</h4>
+
+<table class="table table-bordered">
   <thead>
     <tr>
-      <th>Nombre</th>
-      <th>Apellido</th>
-      <th>Usuario</th>
-      <th></th>
-      <th></th>
+      <th>Email</th>
+      <th>Tipo</th>
+      <th>Acciones</th>
     </tr>
   </thead>
 
   <tbody>
     <% @users.each do |user| %>
       <tr>
-        <td><%= link_to user.first_name, admin_user_path(:id => user.id) %></td>
-        <td><%= user.last_name %></td>
-        <td><%= user.user_name %></td>
-        <td><%= link_to 'Editar', edit_admin_user_path(:id => user.id) %></td>
-        <td><%= link_to 'Eliminar', registration_path(user), method: :delete, data: { confirm: '¿Estás seguro?' } %></td>
+        <td><%= user.email %></td>
+        <td><%= user.role.name %></td>
+        <td><%= link_to '<i class="fa fa-pencil"></i>   Editar'.html_safe, edit_admin_user_path(:id => user.id), :class => "btn btn-warning" %>
+          <%= link_to '<i class="fa fa-times"></i>   Eliminar'.html_safe, admin_user_path(user), :class => "btn btn-danger",  method: :delete, data: { confirm: '¿Estás seguro de eliminar al usuario seleccionado?' } unless user.id == current_user.id %></td>
       </tr>
     <% end %>
   </tbody>
 </table>
 
-<br>
-
-<!-- <%= link_to 'Nuevo Usuario', new_admin_user_path %> -->
-<%= link_to "Nuevo Usuario", new_admin_user_path, :class => 'navbar-link'  %>
+<%= link_to "   Nuevo Usuario", new_admin_user_path, :class => "fa fa-plus btn btn-primary" %>

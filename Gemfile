@@ -22,9 +22,11 @@ gem 'uglifier', '>= 1.3.0'
 gem 'jquery-rails'
 
 gem "therubyracer"
-gem "less-rails", '2.3.3'
-gem "twitter-bootstrap-rails"
-#gem "font-awesome-rails"
+
+# Comentado dado que no debería ser usado...
+# gem "less-rails", '2.3.3'
+# gem "twitter-bootstrap-rails"
+# gem "font-awesome-rails"
 
 # Turbolinks makes following links in your web application faster. Read more: https://github.com/rails/turbolinks
 gem 'turbolinks'
@@ -56,7 +58,10 @@ gem 'cancan'
 #gem 'validates_email_format_of'
 
 #Formularios simples
-gem 'simple_form'
+# gem 'simple_form'
+
+#Mandrill mailer
+gem 'mandrill-api'
 
 #Por si queremos generar breadcrums fácilmente
 #gem "breadcrumbs_on_rails"
@@ -83,3 +88,6 @@ gem 'bcrypt-ruby', '~> 3.1.2'
 
 # Use debugger
 # gem 'debugger', group: [:development, :test]
+
+# Pago en linea: Punto Pagos
+gem 'puntopagos'

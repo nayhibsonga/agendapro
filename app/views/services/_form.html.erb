@@ -1,4 +1,4 @@
-<%= simple_form_for(@service) do |f| %>
+<%= form_for @service, html: {class: "form-horizontal"} do |f| %>
   <% if @service.errors.any? %>
     <div id="error_explanation">
       <h2><%= pluralize(@service.errors.count, "error") %> no permitió que el servicio se guardara:</h2>
@@ -11,17 +11,91 @@
     </div>
   <% end %>
 
-  Nombre: <%= f.input :name, :label => false %><br />
-  Precio: <%= f.input :price, :label => false %><br />
-  Duración: <%= f.input :duration, :label => false %><br />
-  Descripción: <%= f.input :description, :label => false %><br />
-  Servicio de Grupo: <%= f.input :group_service, :label => false %><br />
-  Capacidad: <%= f.input :capacity, :label => false %><br />
-  Lista de Espera: <%= f.input :waiting_list, :label => false %><br />
-  Etiqueta: <%= f.association :tag, :label => false %><br />
-  Empresa: <%= f.association :company, :label => false %><br />
-
-  <div class="actions">
-    <%= f.submit %>
+  <div class="form-group">
+    <%= f.label :name, "Nombre: ", class: "col-sm-2 control-label" %>
+    <div class="col-sm-4">
+      <%= f.text_field :name, :autofocus => true, class: "form-control" %>
+    </div>
   </div>
+
+  <div class="form-group">
+    <%= f.label :price, "Precio: ", class: "col-sm-2 control-label" %>
+    <div class="col-sm-4">
+      <%= f.number_field :price, class: "form-control" %>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <%= f.label :duration, "Duración: ", class: "col-sm-2 control-label" %>
+    <div class="col-sm-4">
+      <%= f.number_field :duration, class: "form-control" %>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <%= f.label :description, "Descripción: ", class: "col-sm-2 control-label" %>
+    <div class="col-sm-4">
+      <%= f.text_area :description, class: "form-control" %>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <%= f.label :group_service, "Servicio Grupal: ", class: "col-sm-2 control-label" %>
+    <div class="col-sm-4">
+      <%= f.check_box :group_service %>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <%= f.label :capacity, "Capacidad: ", class: "col-sm-2 control-label" %>
+    <div class="col-sm-4">
+      <%= f.number_field :capacity, class: "form-control" %>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <%= f.label :service_category_id, "Categoría de Servicio: ", class: "col-sm-2 control-label" %>
+    <div class="col-sm-4">
+      <%= f.collection_select :service_category_id, ServiceCategory.where(company_id: current_user.company_id), :id, :name, {}, { class: "form-control" }%>
+    </div>
+  </div>
+ 
+  <% if @service.service_category.nil? then @service.build_service_category end %>
+    <div class="form-group">
+      <%= f.label :service_category_id, "Crear nueva Categoría de Servicio: ", class: "col-sm-2 control-label" %>
+    <div class="col-sm-4">
+      <input type="checkbox" name="catCheck" id="categoryCheckboxId" value="0" onchange="categoryChange()" class="checkbox">
+    </div>
+  </div>
+
+  <%= f.fields_for :service_category do |builder| %>
+
+  <div class="form-group">
+    <%= builder.label :name, "Nueva Categoría de Servicio", class: "col-sm-2 control-label" %>
+    <div class="col-sm-4">
+      <%= builder.text_field :name, class: "form-control", :value => '' %>
+      <%= builder.hidden_field :company_id, class: "form-control", :value => current_user.company_id %>
+    </div>
+  </div>
+
+  <% end %>
+  
+  <div class="form-group">
+    <%= f.label :tag, "Tags de Búsqueda: ", class: "col-sm-2 control-label" %>
+    <div class="col-sm-4"> 
+      <%= f.collection_check_boxes :tag_ids, Tag.where(economic_sector: Company.find(current_user.company_id).economic_sector), :id, :name, html: {class: "checkbox"}%>
+    </div>
+  </div>
+
+  <div class="form-group">
+  <div class="actions col-sm-offset-2 col-sm-4">
+    <%= link_to '<i class="fa fa-check"></i>   Guardar Servicio'.html_safe, "",:class => "btn btn-primary buttonLocation" %>
+    <%= link_to '<i class="fa fa-times"></i>   Cancelar'.html_safe, services_path, :method => :get, :class => "btn btn-danger" %>    
+  </div>
+</div>
+
+<% end %>
+
+<% content_for :scripts do %>
+  <%= javascript_include_tag "service" %>
 <% end %>

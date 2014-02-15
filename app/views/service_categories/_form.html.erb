@@ -1,0 +1,25 @@
+<%= form_for @service_category, :html => {:class => 'form-horizontal'} do |f| %>
+  <% if @service_category.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(@service_category.errors.count, "error") %> no permitió que la empresa sea creada:</h2>
+
+      <ul>
+      <% @service_category.errors.full_messages.each do |msg| %>
+        <li><%= msg %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="form-group">
+    <%= f.label :name, 'Nombre', :class => 'col-sm-4 control.label' %>
+    <div class="col-sm-8">
+      <%= f.text_field :name, :autofocus => true, :required => true, :class => 'form-control' %>
+    </div>
+  </div>
+  <div class="form-group">
+    <div class="col-sm-offset-4 col-sm-8">
+      <%= submit_tag 'Guardar', :class => 'btn btn-default' %>
+    </div>
+  </div>
+<% end %>

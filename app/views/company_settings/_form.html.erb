@@ -1,4 +1,4 @@
-<%= simple_form_for(@company_setting) do |f| %>
+<%= form_for @company_setting, :html => {:class => 'form-horizontal'} do |f| %>
   <% if @company_setting.errors.any? %>
     <div id="error_explanation">
       <h2><%= pluralize(@company_setting.errors.count, "error") %> prohibited this company_setting from being saved:</h2>
@@ -11,12 +11,23 @@
     </div>
   <% end %>
 
-  Email: <%= f.input :email, :label => false %><br />
-  SMS: <%= f.input :sms, :label => false %><br />
-  Firma: <%= f.input :signature, :label => false %><br />
-  Empresa: <%= f.association :company, :label => false %><br />
-
-  <div class="actions">
-    <%= f.submit %>
+  <%= f.hidden_field :company %>
+  <div class="form-group">
+    <%= f.label :email, 'Email', :class => 'col-sm-4 control.label' %>
+    <div class="col-sm-8">
+      <%= f.check_box :email %>
+    </div>
   </div>
+  <div class="form-group">
+    <%= f.label :signature, 'Firma', :class => 'col-sm-4 control.label' %>
+    <div class="col-sm-8">
+      <%= f.text_area :signature, :class => 'form-control' %>
+    </div>
+  </div>
+  <div class="form-group">
+    <div class="col-sm-offset-4 col-sm-8">
+      <%= submit_tag 'Guardar', :class => 'btn btn-default' %>
+    </div>
+  </div>
+
 <% end %>

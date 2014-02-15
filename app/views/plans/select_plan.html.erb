@@ -1,0 +1,31 @@
+<h1>Cambiar de Plan</h1>
+
+<table class="table table-bordered">
+  <thead>
+    <tr>
+      <th>Nombre</th>
+      <th>Locales</th>
+      <th>Proveedores de Servicio</th>
+      <th>Precio</th>
+      <th></th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @plans.each do |plan| %>
+      <tr>
+        <td><%= plan.name %></td>
+        <td><%= plan.locations %></td>
+        <td><%= plan.service_providers %></td>
+        <td><%= plan.price %></td>
+        <% if @company.plan_id != plan.id %>
+        <td><%= link_to '<i class="fa fa-check"></i>   Elegir este Plan'.html_safe, select_plan_path(:plan_id => plan.id), :class => "btn btn-info"  %></td>
+        <% else %>
+        <td class="success">Plan Elegido</td>
+        <% end %>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<br>

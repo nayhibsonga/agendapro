@@ -1,0 +1,151 @@
+@charset "UTF-8";
+
+
+html, body{
+	height: 100%;
+}
+body{
+	background: #757679;
+}
+#wrap-admin{
+	min-height: 100%;
+	height: auto;
+	margin: 0 auto -40px;
+	padding: 0 0 40px;
+}
+footer{
+	height: 40px;
+	background-color: #383e4b;
+	color: #ffffff;
+}
+.footer-data{
+	margin-top: 10px;
+}
+.fix-height{
+	min-height: 100%;
+	height: 100%;
+}
+header{
+	height: 44px;
+	width: 100%;
+	background: #383e4b;
+}
+#logo{
+	width:187px;
+	height:39px;
+	margin: 2px 0px 0px 20px;
+	background: url(<%= asset_path 'admin/logo-fix-agendapro.png' %>);
+	float: left;
+}
+#menu-usuario{
+	list-style: none;
+	padding: 0px;
+	margin: 0px;
+	position: absolute;
+	right: 20px;
+	z-index: 9999;
+}
+#menu-usuario li a{
+	display: block;
+	height: 44px;
+	line-height: 2.8;
+	padding: 0px 10px;
+	color: #ffffff;
+	font-weight: bold;
+	text-decoration: none;
+	border-bottom: 1px solid #383e4b;
+}
+#menu-usuario li a:hover{
+	background: #ccc;
+	color: #383e4b;
+}
+#menu-usuario ul{
+	list-style: none;
+	padding: 0px;
+	margin: 0px;
+}
+.close-menu-usuario{
+	display: none;
+}
+#menu-usuario ul li a{
+	height: 35px;
+	line-height: 2.3;
+	border-bottom: 0px;
+	background: #383e4b;
+}
+.container{
+	width:100% !important;
+}
+
+#admin-content{
+	background: #ffffff;
+	min-height: 400px;
+	width: 83.33333333333334%;
+	float:left;
+}
+#sidebar{
+	padding: 0px;
+	min-width: 50px;
+	width:16.666666666666664%;
+	float: left;
+}
+.colapsar{
+	width:50px !important;
+}
+.expandir{
+	width: calc(100% - 50px) !important;
+}
+.submenu-close{
+	overflow: hidden;
+	height: 0px;
+}
+.menu-lateral, .menu-lateral ul{
+	padding: 0px;
+	margin:0px;
+	list-style: none;
+	font-size: 16px;
+}
+.menu-lateral{
+	margin-top: 50px;
+	border-top: 1px solid #ccc;
+}
+.menu-lateral li{
+	border-bottom: 1px solid #ccc;
+}
+.menu-lateral ul li{
+	border-bottom: none;
+}
+.menu-lateral li a{
+	color: #fff;
+	padding: 5px 0px 5px 15px;
+	display: block;
+}
+.menu-lateral ul li a{
+	color: #fff;
+	padding: 5px 0px 5px 25px;
+	display: block;
+	font-size: 14px;
+}
+.menu-lateral li a:hover, .menu-lateral ul li a:hover{
+	text-decoration: none;
+	background: #383e4b;
+}
+.content-fix{
+	margin: 0px 30px;
+}
+.menu-lateral li:last-child{
+	border-bottom: 0px;
+}
+#closetab{
+	margin-top:40px;
+}
+li.colapsado-ok{
+	font-size: 21px;
+}
+li.colapsado-ok> a> span.colapse-hidden{
+	display:none;
+}
+.kill-txt{
+	display: none;
+}
+

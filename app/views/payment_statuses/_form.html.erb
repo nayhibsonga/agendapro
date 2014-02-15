@@ -1,8 +1,7 @@
-<%= simple_form_for(@payment_status) do |f| %>
+<%= form_for @payment_status, :html => {:class => 'form-horizontal'} do |f| %>
   <% if @payment_status.errors.any? %>
     <div id="error_explanation">
       <h2><%= pluralize(@payment_status.errors.count, "error") %> prohibited this payment_status from being saved:</h2>
-
       <ul>
       <% @payment_status.errors.full_messages.each do |msg| %>
         <li><%= msg %></li>
@@ -11,13 +10,27 @@
     </div>
   <% end %>
 
-  
-  Nombre: <%= f.input :name, :label => false %><br />
-
-  
-  Descripción: <%= f.input :description, :label => false %><br />
-
-  <div class="actions">
-    <%= f.submit %>
+  <div class="form-group">
+    <%= f.label :name, "Nombre: ", class: "col-sm-3 control-label" %>
+    <div class="col-sm-4">
+      <%= f.text_field :name, :autofocus => true, class: "form-control" %>
+    </div>
   </div>
+
+  <div class="form-group">
+    <%= f.label :description, "Descripción: ", :class => "col-sm-3 control-label" %>
+    <div class="col-sm-4">
+      <%= f.text_area :description, :class => 'form-control' %>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <div class="actions col-sm-offset-3 col-sm-4">
+      <%= button_tag(type: 'submit', class: "btn btn-primary") do %>
+      <i class="fa fa-check"></i>   Guardar
+    <% end %>
+      <%= link_to '   Cancelar',  payment_statuses_path, class: "btn btn-danger fa fa-times" %>    
+    </div>
+  </div>
+
 <% end %>

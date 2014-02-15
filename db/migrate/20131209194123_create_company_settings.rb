@@ -4,7 +4,7 @@ class CreateCompanySettings < ActiveRecord::Migration
       t.text :signature
       t.boolean :email, :default => false
       t.boolean :sms, :default => false
-      t.references :company, :null => false
+      t.references :company, :index => true, :null => false
 
       t.timestamps
     end

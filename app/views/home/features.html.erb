@@ -62,7 +62,7 @@
                         <p class="lead">Los creadores de AgendaPro damos el soporte directamente, sin intermediarios. Somos personas de carne y hueso que viven para brindar el mejor servicio a nuestros clientes, para que tú puedas hacer lo mismo con los tuyos. Llámanos directamente o envíanos un e-mail, siempre tendrás una respuesta rápida de nuestra parte. Lo más probable es que nunca lo tengas que hacer.</p>
                     </div>
                     <div class="col-md-5">
-                    	<%= image_tag "home/features/soporte.jpg", :alt => "Característica 5", :class => "img-responsive" %>
+                    	<%= image_tag "home/features/soporte.png", :alt => "Característica 5", :class => "img-responsive" %>
                     </div>
                 </div>
                 <hr class="featurette-divider">
@@ -91,8 +91,10 @@
     </section>
 </div>
 
+<% content_for :scripts do %>
 <script type="text/javascript">
     $(function() {
         $("#c_feature").addClass("active")
     });
 </script>
+<% end %>

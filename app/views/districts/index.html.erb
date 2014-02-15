@@ -1,25 +1,22 @@
 <h1>Comunas</h1>
 
-<table>
+<table class="table table-bordered">
   <thead>
     <tr>
-      <th></th>
-      <th></th>
-      <th></th>
+      <th>Nombre</th>
+      <th>Opciones</th>
     </tr>
   </thead>
 
   <tbody>
     <% @districts.each do |district| %>
       <tr>
-        <td><%= link_to district.name, district %></td>
-        <td><%= link_to 'Editar', edit_district_path(district) %></td>
-        <td><%= link_to 'Eliminar', district, method: :delete, data: { confirm: '¿Estás Seguro?' } %></td>
+        <td><%= district.name %></td>
+        <td><%= link_to '<i class="fa fa-pencil"></i>   Editar'.html_safe, edit_district_path(district), :class => "btn btn-warning" %>
+        <%= link_to '<i class="fa fa-times"></i>   Eliminar'.html_safe, district, :class => "btn btn-danger", method: :delete, data: { confirm: '¿Estás Seguro?' } %></td>
       </tr>
     <% end %>
   </tbody>
 </table>
 
-<br>
-
-<%= link_to 'Nueva Comuna', new_district_path %>
+<%= link_to '   Nueva Comuna', new_district_path, :class => "fa fa-plus btn btn-primary" %>

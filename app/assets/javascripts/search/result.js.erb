@@ -1,0 +1,153 @@
+//====== Result ======//
+function loadSchedule(id) {
+  $('#schedule-body' + id).html('<%= image_tag "ajax-loader.gif", :alt => "Loader" %>');
+  $.getJSON('/schedule', {local: id}, function (schedule) {
+    $('#schedule-body' + id).empty();
+    $.each(schedule, function (day, hour) {
+      if (hour.open) {
+        $('#schedule-body' + id).append(
+          '<tr>' +
+            '<th>' + day + '</th>' +
+            '<th>' + getHour(hour.open) + '-' + getHour(hour.close) + '</th>' +
+          '</tr>'
+        );
+      }
+    });
+  });
+}
+
+function getHour(str) {
+  var index = str.indexOf('T'); //2000-1-1T08:00:00Z
+  str = str.substring(index + 1, index + 6); //08:00
+  return str;
+}
+
+//====== Search ======//
+function changeLocation (district_id) {
+  $('#search-bar').attr('disabled', true);
+  $.getJSON('/get_district', {id: district_id}, function (district) {
+    $('#span-location').html(district.name + ' <i class="fa fa-chevron-right"></i>');
+    $('#district').val(district.id);
+    $('#search-bar').removeAttr('disabled');
+
+    //====== Session Storage
+    if (typeof(Storage) !== "undefined") {
+      sessionStorage.district = district.id;
+    }
+  });
+}
+
+//====== Geolocation ======//
+function decode (position) {
+  var geocoder = new google.maps.Geocoder();
+  var latlng = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
+  geocoder.geocode({'latLng': latlng}, function (results, status) {
+    if (status == google.maps.GeocoderStatus.OK) {
+      if (results[1]) {
+        var address = results[1].formatted_address;
+        var district = address.substring(0, address.indexOf(','));
+        $('#search-bar').attr('disabled', true);
+        $.getJSON('/district_by_name', {name: district}, function (district) {
+          if (district) {
+            $('#span-location').html(district.name + ' <i class="fa fa-chevron-right"></i>');
+            $('#district').val(district.id);
+            $('#search-bar').removeAttr('disabled');
+
+            //====== Session Storage
+            if (typeof(Storage) !== "undefined") {
+              sessionStorage.district = district.id;
+            }
+          }
+          else {
+            myAlert.showAlert(
+              '<h3>Hubo un error localizandolo</h3>' +
+              '<p>No se pudo hubicar geograficamente.</p>'
+            );
+          }
+        });
+      }
+    }
+    else {
+      myAlert.showAlert(
+        '<h3>Hubo un error localizandolo</h3>' +
+        '<p>No se pudo hubicar geograficamente.</p>'
+      );
+    }
+  });
+}
+
+function locationError (error) {
+  if (typeof(Storage) !== "undefined") {
+    changeLocation(sessionStorage.district)
+    myAlert.showAlert(
+      '<h3>Hubo un error localizandolo</h3>' +
+      '<p>Se utilizo la ultima ubicacion disponible.</p>'
+    );
+  }
+  else {
+    myAlert.showAlert(
+      '<h3>Hubo un error localizandolo</h3>' +
+      '<p>Se utilizo Las Condes por defecto</p>'
+    );
+    changeLocation(1);
+  }
+}
+
+//====== Load ======//
+var myAlert;
+$(function() {
+  myAlert = new Alert('.main');
+
+  $('#save').on('click', function () {
+    var district = $('#location_autocomplete').val();
+    $.getJSON('/district_by_name', {name: district}, function (district) {
+      if (district) {
+        changeLocation(district.id);
+      }
+      else {
+        myAlert.showAlert(
+          '<h3>Hubo un error localizandolo</h3>' +
+          '<p>No se encontro su comuna</p>',
+          function () {
+            $('#modalLocation').modal('show');
+          },
+          'Buscar de nuevo'
+        );
+      }
+    });
+    $('#modalLocation').modal('hide');
+
+    //====== Session Storage
+    if (typeof(Storage) !== "undefined") {
+      sessionStorage.manual = true;
+    }
+  });
+
+  $('#geo').on('click', function() {
+    $('#modalLocation').modal('hide');
+
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(decode, locationError);
+    }
+    else {
+      myAlert.showAlert(
+        '<h3>Hubo un error localizandolo</h3>' +
+        '<p>Su navegador no soporta geolocalizacion</p>'
+      );
+    }
+
+    //====== Session Storage
+    if (typeof(Storage) !== "undefined") {
+      sessionStorage.manual = null;
+    }
+  });
+
+  //Valor por defecto
+  if (typeof(Storage) !== "undefined") {
+    if (!sessionStorage.manual) {
+      sessionStorage.district = 1;
+    }
+  }
+
+  changeLocation(1);
+});

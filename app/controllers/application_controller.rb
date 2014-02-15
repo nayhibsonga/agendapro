@@ -1,6 +1,6 @@
 class ApplicationController < ActionController::Base
 
-	layout :layout
+	layout "login" #:layout
 
 	include UrlHelper
   # Prevent CSRF attacks by raising an exception.
@@ -24,6 +24,19 @@ class ApplicationController < ActionController::Base
     devise_parameter_sanitizer.for(:sign_up) << :role_id
     devise_parameter_sanitizer.for(:sign_up) << :company_id
 
+  end
+
+  def quick_add
+    if current_user && (current_user.role_id != Role.find_by_name("Super Admin").id) && current_user.company_id
+      @company = Company.find(current_user.company_id)
+      if @company.locations.count == 0
+        redirect_to(quick_add_location_path)
+      elsif @company.services.count == 0
+        redirect_to(quick_add_services_path)
+      elsif @company.service_providers.count == 0
+        redirect_to(quick_add_service_provider_path)
+      end
+    end
   end
 
   def verify_is_super_admin
@@ -51,17 +64,15 @@ class ApplicationController < ActionController::Base
   private 
 
   def after_sign_out_path_for(resource_or_scope)
-    new_user_session_path
+    root_path
   end
 
-  def layout
-    if is_a?(Devise::SessionsController)
-      return "login"
-    elsif is_a?(Devise::RegistrationsController)
-      return "login"
-    else
-      return user_signed_in? ? "admin" : "home"
-    end
-  end
+  # def layout
+  #   if is_a?(Devise::SessionsController)
+  #     return "login"
+  #   elsif is_a?(Devise::RegistrationsController)
+  #     return "login"
+  #   end
+  # end
 
 end

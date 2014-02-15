@@ -1,0 +1,70 @@
+<div class="main">
+    <section class="pricing_wrapper">
+        <div class="container">
+			<div class="well well-lg">
+				<% if @booking.errors.any? %>
+				<h3>Tuvimos un error</h3>
+				<div class="row">
+					<div class="col-md-8">
+						<p>
+							Lo sentimos, hubo un error agendando su servicio.<br>
+							Puedes ver mas detalles del error pinchando <a id="errorLink" href="#">aquí</a>.<br>
+							Puedes agendar una nueva cita <a href="<%= root_url(:host => @url) %>">aquí</a>.
+						</p>
+					</div>
+					<div class="col-md-4" id="errorDiv">
+						<ol>
+      						<% @booking.errors.full_messages.each do |msg| %>
+        					<li><%= msg %></li>
+      						<% end %>
+      					</ol>
+					</div>
+				</div>
+				<% else %>
+				<h3>Gracias <%= @booking.first_name %>!</h3>
+				<p>
+					Su servicio fue agendado correctamente.<br>
+					Si desea agendar una nueva cita pinche <a href="<%= root_url(:host => @url) %>">aquí</a>.
+				</p>
+				<hr>
+				<h4>Detalles de la cita</h4>
+				<dl class="dl-horizontal">
+					<dt>Local</dt>
+					<dd><%= @booking.location.name %></dd>
+					<dt>Servicio</dt>
+					<dd><%= @booking.service.name %></dd>
+					<dt>Nombre</dt>
+					<dd><%= @booking.first_name %></dd>
+					<dt>Apellido</dt>
+					<dd><%= @booking.last_name %></dd>
+					<dt>Email</dt>
+					<dd><%= @booking.email %></dd>
+					<dt>Teléfono</dt>
+					<dd><%= @booking.phone %></dd>
+					<dt>Inicio</dt>
+					<dd><%= @booking.start %></dd>
+					<dt>Fin</dt>
+					<dd><%= @booking.end %></dd>
+					<% if !@booking.notes.empty? %>
+					<dt>Notas</dt>
+					<dd><%= @booking.notes %></dd>
+					<% end %>
+				</dl>
+				<% end %>
+			</div>
+        </div>
+    </section>
+</div>
+
+<% if @booking.errors.any? %>
+<% content_for :scripts do %>
+<script type="text/javascript">
+	$(function() {
+		$('#errorDiv').hide();
+		$('#errorLink').on('click', function () {
+			$('#errorDiv').show();
+		});
+	});
+</script>
+<% end %>
+<% end %>

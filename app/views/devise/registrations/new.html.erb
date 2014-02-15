@@ -1,31 +1,126 @@
-<h2>Sign up</h2>
+<div class="row">
+	<h2>Regístrate</h2>
+	<h4>Sólo necesitaremos un poco de información. ¡Es absolutamente gratis!</h4>
 
-<%= simple_form_for(resource, :as => resource_name, :url => registration_path(resource_name)) do |f| %>
-  <%= f.error_notification %>
-
-  <div class="form-inputs">
-  	<%= f.input :first_name, :label => "Nombre: ", :autofocus => true %>
-  	<%= f.input :last_name, :label => "Apellido: ", :autofocus => true %>
-    <%= f.input :email, :label => "Email: ", :required => true, :autofocus => true %>
-    <%= f.input :phone, :label => "Teléfono: ", :autofocus => true %>
-    <%= f.input :user_name, :label => "Usuario: ", :required => true, :autofocus => true %>
-    <%= f.input :password, :label=> "Contraseña: ", :required => true %>
-    <%= f.input :password_confirmation, :label => "Confirmar Contraseña: ", :required => true %>
-    <%= f.input :role_id, :label => "Rol", :collection => Role.where(:name => ["Admin","Usuario Registrado"]) %>
-
-    <% @user.build_company %>
-    <%= f.simple_fields_for :company do |builder| %>
-    Nombre Empresa: <%= builder.input :name, :label => false %>
-    URL: <%= builder.input :web_address, :label => false %>
-    Plan: <%= builder.association :plan, :label => false %>
-    Estado de Pago: <%= builder.association :payment_status, :label => false %>
-    Rubro: <%= builder.association :economic_sector, :label => false %>
-    <% end %>
-  </div>
-
-  <div class="form-actions">
-    <%= f.button :submit, "Regístrate" %>
-  </div>
-<% end %>
-
+	<% if params[:company] %>
+		<div class="col-sm-8 col-md-9">
+			<%= form_for resource, :as => resource_name, :url => registration_path(resource_name), :html => { class: 'form-horizontal well' } do |f| %>
+				<!-- start: User -->
+				<%= f.hidden_field :role_id, :value => Role.where(:name => "Admin").first.id %>
+				<div class="form-group">
+					<%= f.label :email, 'Email', :class => 'col-sm-4 control-label' %>
+					<div class="col-sm-8">
+						<%= f.email_field :email, :autofocus => true, :required => true, :class => 'form-control', placeholder: 'ejemplo@dominio.com' %>
+					</div>
+				</div>
+				<div class="form-group">
+					<%= f.label :password, 'Contraseña', :class => 'col-sm-4 control-label' %>
+					<div class="col-sm-8">
+						<%= f.password_field :password, :required => true, :class => 'form-control', placeholder: 'XXXXXXXX' %>
+					</div>
+				</div>
+				<div class="form-group">
+					<%= f.label :password_confirmation, 'Confirmar contraseña', :class => 'col-sm-4 control-label' %>
+					<div class="col-sm-8">
+						<%= f.password_field :password_confirmation, :required => true, :class => 'form-control', placeholder: 'XXXXXXXX' %>
+					</div>
+				</div>
+				<!-- end: User -->
+				<!-- start: Company -->
+				<%= f.fields_for :company_id do |builder| %>
+					<%= builder.hidden_field :payment_status, :value => PaymentStatus.where(:name => "Al día").first.id %>
+					<%= builder.hidden_field :plan, :value => Plan.find(params[:plan]).id %>
+					<div class="form-group">
+						<%= builder.label :name, 'Nombre de la Compañia', :class => 'col-sm-4 control-label' %>
+						<div class="col-sm-8">
+							<%= builder.text_field :name, :required => true, :class => 'form-control', placeholder: 'AgendaPro SpA' %>
+						</div>
+					</div>
+					<div class="form-group">
+						<%= builder.label :web_address, 'Direccion web', :class => 'col-sm-4 control-label' %>
+						<div class="col-sm-8 input-group">
+							<%= builder.text_field :web_address, :required => true, :class => 'form-control', placeholder: 'misitio' %>
+							<span class="input-group-addon">.agendapro.cl</span>
+						</div>
+					</div>
+					<div class="form-group">
+						<%= builder.label :economic_sector, 'Sector Economico', :class => 'col-sm-4 control-label' %>
+						<div class="col-sm-8">
+							<%= builder.collection_select :economic_sector, EconomicSector.all, :id, :name, {}, {:class => 'form-control'} %>
+						</div>
+					</div>
+				<% end %>
+				<!-- end: Company -->
+				<div class="form-group">
+					<div class="col-sm-offset-4 col-sm-8">
+						<div class="checkbox">
+							<label>
+								<input type="checkbox" required> Acepto los <a href="http://www.agendapro.cl/public/TyC.pdf" target="_balnk">Términos y Condiciones</a>.
+							</label>
+						</div>
+					</div>
+				</div>
+				<div class="form-group">
+					<div class="col-sm-offset-4 col-sm-8">
+						<%= submit_tag 'Regístrate', :class => 'btn btn-agendapro-claro' %>
+					</div>
+				</div>
+			<% end %>
+		</div>
+		<div class="col-sm-4 col-md-3">
+			<div class="well well-small">
+				<section class="pricing_wrapper">
+					<div class="pricing_plan">
+						<% @plan = Plan.find(params[:plan]) %>
+						<h3><strong><%= @plan.name %></strong></h3>
+						<div class="the_price">
+							<span>$</span><%= number_with_precision(@plan.price, precision: 0, separator: '', delimiter: '.') %><small>/Mes</small>
+						</div>
+						<div class="the_offerings">
+							<p><strong><%= @plan.locations %></strong> Local(es)</p>
+							<p><strong><%= @plan.service_providers %></strong> Staffs</p>
+						</div>
+					</div>
+				</section>
+				<%= link_to "Cambiar plan", view_plans_path %>
+			</div>
+		</div>
+	<% else %>
+		<%= form_for resource, :as => resource_name, :url => registration_path(resource_name), :html => { class: 'form-horizontal' } do |f| %>
+			<%= f.hidden_field :role_id, :value => Role.where(:name => "Usuario Registrado").first.id %>
+			<div class="form-group">
+				<%= f.label :email, 'Email', :class => 'col-sm-4 control-label' %>
+				<div class="col-sm-8">
+					<%= f.email_field :email, :autofocus => true, :required => true, :class => 'form-control' %>
+				</div>
+			</div>
+			<div class="form-group">
+				<%= f.label :password, 'Contraseña', :class => 'col-sm-4 control-label' %>
+				<div class="col-sm-8">
+					<%= f.password_field :password, :required => true, :class => 'form-control' %>
+				</div>
+			</div>
+			<div class="form-group">
+				<%= f.label :password_confirmation, 'Confirmar contraseña', :class => 'col-sm-4 control-label' %>
+				<div class="col-sm-8">
+					<%= f.password_field :password_confirmation, :required => true, :class => 'form-control' %>
+				</div>
+			</div>
+			<div class="form-group">
+				<div class="col-sm-offset-4 col-sm-8">
+					<div class="checkbox">
+						<label>
+							<input type="checkbox" required> Acepto los <a href="http://www.agendapro.cl/public/TyC.pdf" target="_balnk">Términos y Condiciones</a>.
+						</label>
+					</div>
+				</div>
+			</div>
+			<div class="form-group">
+				<div class="col-sm-offset-4 col-sm-8">
+					<%= submit_tag 'Regístrate', :class => 'btn btn-default' %>
+				</div>
+			</div>
+		<% end %>
+	<% end %>
+</div>
 <%= render "devise/shared/links" %>
