@@ -1,4 +1,3 @@
-
 //= require admin/jquery-migrate-1.2.1.min
 //= require admin/bootstrap.min
 //= require admin/jquery-ui-1.10.3.custom.min

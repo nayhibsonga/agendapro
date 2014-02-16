@@ -2,7 +2,7 @@
 
 body {
   -webkit-font-smoothing: antialiased;
-  background: url(<%= asset_path 'home/backgrounds/wild_oliva_light.png' %>);
+  background: url(<%= asset_path 'backgrounds/wild_oliva_light.png' %>);
 }
 a {
 	color: rgba(61,154,150,1);
@@ -22,7 +22,7 @@ height: 44px;
  	width:127px;
   	height:39px;
 	margin: 2px 0px 0px 0px;
-	background: url(<%= asset_path 'home/logo_agendaproVerde.png' %>);
+	background: url(<%= asset_path 'logos/logo_agendaproVerde.png' %>);
 }
 #logo span{
 	display: none;
@@ -55,7 +55,8 @@ height: 44px;
 .dropdown-menu>li>a:hover {
 	background: rgba(27,115,112,1);
 }
-/* -------- */
+
+/* Botones Modificados AgendaPro */
 .btn-success{
 	color: #ffffff;
 	background-color: #FA4616;
@@ -64,6 +65,41 @@ height: 44px;
 .btn-success:hover{
 	background-color: #EB4114;
 	border-color: #EB4114;
+}
+
+.btn-agendapro-oscuro{
+    color: #ffffff;
+    background-color: rgba(27,115,112,1);
+    border-color: rgba(24, 101, 99, 1);
+}
+
+.btn-agendapro-oscuro:hover{
+    background-color: rgba(24, 101, 99, 1);
+}
+
+.btn-agendapro-claro{
+    color: #ffffff;
+    background-color: rgba(61,154,150,1);
+    border-color: rgba(55, 133, 129, 1);
+}
+
+.btn-agendapro-claro:hover{
+    background-color: rgba(55, 133, 129, 1);
+}
+
+
+/* Estilo de los Modales */
+
+.modal-content{
+	background: url(<%= asset_path 'backgrounds/wild_oliva_light.png' %>);
+}
+
+.modal-header{
+    background: url(<%= asset_path 'backgrounds/wild_oliva_light_head.png' %>);
+}
+
+.modal-footer{
+	background: url(<%= asset_path 'backgrounds/wild_oliva_light_head.png' %>);
 }
 
 /* ---------- */
@@ -151,16 +187,19 @@ footer {
   /*color: #fff;*/
   border-top: solid 2px #E2E3E4;/*solid 2px #fff;*/
   background-color: #E2E3E4;/*#222222;*/
-  background: url(<%= asset_path 'home/backgrounds/wild_oliva_light_head.png' %>);/*url(images/backgrounds/wild_oliva_dark.png);*/
+  background: url(<%= asset_path 'backgrounds/wild_oliva_light_head.png' %>);/*url(images/backgrounds/wild_oliva_dark.png);*/
 }
+
 footer a:hover,
 footer a:active {
   color: #006D68;/*#2a6496;*/
   text-decoration: none;
 }
+
 #footer_teasers_wrapper {
   padding: 10px 0;
 }
+
 #footer_teasers_wrapper .footer_teaser h3 {
   font-size: 18px;
   font-weight: 700;
@@ -170,6 +209,7 @@ footer a:active {
   border-bottom: solid 1px #006D68;/*solid 1px #555555;*/
   color: #006D68;
 }
+
 #footer_teasers_wrapper .footer_teaser p {
   font-size: 15px;
 }
@@ -200,54 +240,63 @@ footer a:active {
 	color: #006D68;
 }
 
-
 /* Estilo del Buscador Principal */
 .main {
-  	background: url(<%= asset_path 'home/backgrounds/wild_oliva_light.png' %>);
+  	background: url(<%= asset_path 'backgrounds/wild_oliva_light.png' %>);
   	background-color: #E2E3E4;
 }
+
 section.call_to_action {
   	text-align: center;
   	padding: 25px 0 20px 0;
-  	background: url(<%= asset_path 'home/backgrounds/wild_oliva_light_head.png' %>);
+  	background: url(<%= asset_path 'backgrounds/wild_oliva_light_head.png' %>);
 }
+
 section.call_to_action h3 {
   	font-weight: 300;
   	font-size: 50px;
   	line-height: 55px;
 }
+
 section.call_to_action h4 {
  	font-weight: 300;
   	font-size: 26px;
   	line-height: 30px;
   	margin: 0 0 20px 0;
 }
+
 .texto-localizacion {
 	font-weight: 300;
 	color: #999999;
 }
+
 .localizacion {
 	font-size: 33px;
 }
+
 .label-warning {
 	background-color: #D55330;
 }
+
 .overlay {
 	width: 100% !important;
 	display: block;
 	background-color: rgba(0,0,0,0.4);
 	color: #ffffff;
 }
+
 .overlay:hover {
 	background-color: rgba(0,0,0,0);
 	color: #ffffff;
 	text-shadow: 2px 2px 4px #000;
 	transition: 0.5s;
 }
+
 .overlay h3 {
 	margin: 20px 10px;
 	font-weight: 700;
 }
+
 .position-background {
 	background-size: cover;
 	background-position: center;
