@@ -37,16 +37,11 @@ function Calendar (source, getData) {
 			else if (i == 6) {
 				sunday = weekDay;
 			}
-
-			// Generate Day
-			// generateDay(weekDay, sources);
 		};
 		generateWeek(monday);
 
 		// Tittle calculation
 		generateTittle(monday, sunday);
-
-		$('.horario').append('<div class="clear"></div>');
 
 		return now;
 	}
@@ -92,7 +87,7 @@ function Calendar (source, getData) {
 
 					// Mark Today
 					var today = new Date();
-					var todayString = today.getFullYear() + '-' + (today.getMonth() + 1) + '-' + today.getDate();
+					var todayString = today.getFullYear() + '-' + correctNumber(today.getMonth() + 1) + '-' + correctNumber(today.getDate());
 					if(todayString == day) {
 						columnDay.addClass('columna-hoy');
 					}
@@ -100,36 +95,10 @@ function Calendar (source, getData) {
 				}
 				pos += 1;
 			});
+			$('.horario').append('<div class="clear"></div>');
 			calculateWidth();
 		});
 	}
-
-	// Generate Day
-	// var generateDay = function (weekDay, sources) {
-	// 	sources.data.date = weekDay.toLocaleDateString();
-
-	// 	var pos = weekDay.getDay() - 1;
-	// 	if (pos < 0) {
-	// 		pos = 6;
-	// 	}
-	// 	var columnDay = $('<div>', {
-	// 		'class': 'columna-dia',
-	// 		'data-date': weekDay.toLocaleDateString()
-	// 	});
-	// 	columnDay.append('<div class="dia-semana">' + days[pos] + ' ' + weekDay.getDate() + '</div>');
-
-	// 	// Generate Hours
-	// 	generateHours(columnDay, sources);
-
-	// 	columnDay.append('<div class="clear"></div>');
-
-	// 	// Mark today
-	// 	var today = new Date();
-	// 	if (today.toLocaleDateString() == weekDay.toLocaleDateString()) {
-	// 		columnDay.addClass('columna-hoy');
-	// 	}
-	// 	$('.horario').append(columnDay);
-	// }
 
 	// Generate Hours
 	var generateHours = function (columnDay, day_blocks) {
@@ -197,18 +166,16 @@ function Calendar (source, getData) {
 			});
 			columnDay.append(div);
 		});
-		// if (!data.length) {
-		// 	columnDay.remove();
-		// }
-		// calculateWidth();
+
 	}
 
 	var parseDate = function (date, start) {
 		start = start || '00:00';
+	// alert(date + ' - ' + start)
 		var year = date.substring(0, date.indexOf('-'));
-		date = date.substring(0, date.indexOf('-'));
+		date = date.substring(date.indexOf('-') + 1);
 		var month = date.substring(0, date.indexOf('-')) - 1;
-		date = date.substring(0, date.indexOf('-'));
+		date = date.substring(date.indexOf('-') + 1);
 		var day = date;
 		var hour = start.substring(0, start.indexOf(':'));
 		var minutes = start.substring(start.indexOf(':') + 1);
@@ -223,6 +190,15 @@ function Calendar (source, getData) {
 	}
 
 	// Auxiliar methods
+	var correctNumber = function (number) {
+		if (number < 10) {
+			return '0' + number;
+		}
+		else {
+			return number;
+		}
+	}
+
 	this.rebuild = function (source, getData) {
 		sources = {
 			source: '/jsontest',
