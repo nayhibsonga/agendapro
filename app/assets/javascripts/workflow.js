@@ -5,8 +5,6 @@
 //= require home/easing.js
 //= require calendar.js
 //= require Alert
-//= require calendar.js
-//= require Alert
 
 //por defecto:
 //= require jquery_ujs

@@ -40,12 +40,11 @@
             <div id="barra-superior">
                 <div class="container">
                     <div class="row">
-<<<<<<< HEAD
-                        <a href="#" id="logo"></a>
-                        <ul class="nav nav-pills pull-right">                    
+                        <a href="<%= root_url(:host => request.domain + request.port_string) %>" id="logo"></a>
+                        <ul class="nav nav-pills pull-right">
                             <% if user_signed_in? %>
                             <li class="dropdown">
-                                <a href="#" class="dropdown-toggle" data-toggle="dropdown"><%= current_user.email %><i class="fa fa-chevron-down"></i></a>
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-user"></i> <%= current_user.email %><i class="fa fa-chevron-down"></i></a>
                                 <ul class="dropdown-menu">
                                     <li><%= link_to '<i class="fa fa-dashboard"></i> Dashboard'.html_safe, dashboard_path %></li>
                                     <li><%= link_to '<i class="fa fa-user"></i> Editar Perfil'.html_safe, edit_user_registration_path %></li>
@@ -82,55 +81,6 @@
                         </div>
                     </div>
                 </div>
-=======
-                        <div id="logo-barra">
-                            <a href="<%= root_url(:host => request.domain + request.port_string) %>" class="navbar-brand">
-                                <%= image_tag 'home/logo_agendaproVerde.png', :alt => "AgendaPro", :size => "127x40" %>
-                            </a>
-                        </div>
-                        <div id="sign" class="pull-right">
-                            <% if user_signed_in? %>
-                            <div class="dropdown">
-                                <a href="#" data-toggle="dropdown"><%= current_user.email %> <span class="caret"></span></a>
-                                <ul class="dropdown-menu  dropdown-sign" role="menu">
-                                    <li><%= link_to 'Dashboard', dashboard_path %></li>
-                                    <li><%= link_to "Editar Perfil", edit_user_registration_path %></li>
-                                    <li class="divider"></li>
-                                    <li><%= link_to 'Salir'.html_safe, destroy_user_session_path, method: :delete %></li>
-                                </ul>
-                            </div>
-                            <% else %>
-                            <a href="#" data-toggle="modal" data-target="#signin-modal">Inicia Sesión</a>
-                            <a href="#" data-toggle="modal" data-target="#signup-modal">Regístrate</a>
-                            <%= link_to 'Crea tu empresa', home_path %>
-                            <% end %>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="header-empresa">
-                <div class="container">
-                    <div class="row">
-                        <div class="col-xs-4 col-sm-4 col-md-2">
-                            <div class="logo-empresa">
-                                <% if !@company.logo.nil? %>
-                                <%= image_tag @company.logo, :alt => @company.name %>
-                                <% else %>
-                                <%= image_tag 'Iso_Pro_Color.png', :alt => 'AgendaPro' %>
-                                <% end %>
-                            </div>
-                        </div>
-                        <div class="col-xs-8 col-sm-8 col-md-8" id="datos-empresa">
-                            <h3><%= @company.name %></h3>
-                            <div class="info-empresa">
-                                <%= @company.description %>
-                            </div>
-                            <a href="http://<%= @url %>" class="btn btn-info">Descripción</a>
-                            <a href="#" class="btn btn-info">Servicio</a>
-                        </div>
-                    </div>
-                </div>
->>>>>>> development-workflow
             </div>
             <!-- start: Alerts -->
             <% if notice %>
@@ -155,28 +105,28 @@
         <!-- end: content -->
 
         <footer>
-        <section id="footer_teasers_wrapper">
-            <div class="container">
-                <div class="row">
-                    <div class="footer_teaser col-sm-12 col-md-12">
-                        <h3>AgendaPro - Sistema de Reservas Online</h3>
-                        <p>
-                            <span class="txt-footer"><i class="fa fa-map-marker"></i> Nuestra Se&ntilde;ora de los Angeles 185, Oficina D, Las Condes, Santiago </span>
-                            <span class="txt-footer"><i class="fa fa-phone"></i> (+56 9) 5178 5898 </span>
-                            <span><i class="fa fa-envelope"></i> contacto@agendapro.cl </span>
-                        </p>
+            <section id="footer_teasers_wrapper">
+                <div class="container">
+                    <div class="row">
+                        <div class="footer_teaser col-sm-12 col-md-12">
+                            <h3>AgendaPro - Sistema de Reservas Online</h3>
+                            <p>
+                                <span class="txt-footer"><i class="fa fa-map-marker"></i> Nuestra Se&ntilde;ora de los Angeles 185, Oficina D, Las Condes, Santiago </span>
+                                <span class="txt-footer"><i class="fa fa-phone"></i> (+56 9) 5178 5898 </span>
+                                <span><i class="fa fa-envelope"></i> contacto@agendapro.cl </span>
+                            </p>
+                        </div>
                     </div>
                 </div>
-            </div>
-        </section>
-        <section class="copyright">
-            <div class="container">
-                <div class="row">
-                    <div class="col-sm-6 col-md-6"> &copy; Copyright 2013 | Gunei Investment SpA | Todos los derechos reservados</div>
-                    <div class="text-right col-sm-6 col-md-6"> <a href="http://www.agendapro.cl/about_us" target="_balnk">Sobre Nosotros</a> | <a href="http://www.agendapro.cl/public/TyC.pdf" target="_balnk">T&eacute;rminos y Condiciones</a> </div>
+            </section>
+            <section class="copyright">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-sm-6 col-md-6"> &copy; Copyright 2013 | Gunei Investment SpA | Todos los derechos reservados</div>
+                        <div class="text-right col-sm-6 col-md-6"> <a href="http://www.agendapro.cl/about_us" target="_balnk">Sobre Nosotros</a> | <a href="http://www.agendapro.cl/public/TyC.pdf" target="_balnk">T&eacute;rminos y Condiciones</a> </div>
+                    </div>
                 </div>
-            </div>
-        </section>
+            </section>
         </footer>
 
         <!-- start: JavaScript-->

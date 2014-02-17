@@ -268,9 +268,9 @@ function addBooking (booking) {
 }
 
 function generateDate(date, time) {
-	var month = date.substring(0, date.indexOf('/'));
-	var day = date.substring(date.indexOf('/') + 1, date.lastIndexOf('/'));
-	var year = date.substring(date.lastIndexOf('/') + 1);
+	var month = date.substring(0, date.indexOf('-'));
+	var day = date.substring(date.indexOf('-') + 1, date.lastIndexOf('-'));
+	var year = date.substring(date.lastIndexOf('-') + 1);
 
 	time += ':00';
 
