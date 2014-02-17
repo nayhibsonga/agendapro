@@ -5,6 +5,8 @@
 //= require home/easing.js
 //= require search/result.js.erb
 //= require Alert
+//= require search/result.js.erb
+//= require Alert
 
 //por defecto:
 //= require jquery_ujs

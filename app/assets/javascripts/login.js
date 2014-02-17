@@ -4,7 +4,6 @@
 //= require jquery-uitop
 //= require home/easing.js
 
-
 //por defecto:
 //= require jquery_ujs
 // require turbolinks
