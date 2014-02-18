@@ -29,9 +29,9 @@
 				</div>
 				<!-- end: User -->
 				<!-- start: Company -->
-				<%= f.fields_for :company_id do |builder| %>
-					<%= builder.hidden_field :payment_status, :value => PaymentStatus.where(:name => "Al día").first.id %>
-					<%= builder.hidden_field :plan, :value => Plan.find(params[:plan]).id %>
+				<%= f.fields_for :company_attributes do |builder| %>
+					<%= builder.hidden_field :payment_status_id, :value => PaymentStatus.where(:name => "Al día").first.id %>
+					<%= builder.hidden_field :plan_id, :value => Plan.find(params[:plan]).id %>
 					<div class="form-group">
 						<%= builder.label :name, 'Nombre de la Compañia', :class => 'col-sm-4 control-label' %>
 						<div class="col-sm-8">
@@ -46,9 +46,9 @@
 						</div>
 					</div>
 					<div class="form-group">
-						<%= builder.label :economic_sector, 'Sector Economico', :class => 'col-sm-4 control-label' %>
+						<%= builder.label :economic_sector_id, 'Sector Economico', :class => 'col-sm-4 control-label' %>
 						<div class="col-sm-8">
-							<%= builder.collection_select :economic_sector, EconomicSector.all, :id, :name, {}, {:class => 'form-control'} %>
+							<%= builder.collection_select :economic_sector_id, EconomicSector.all, :id, :name, {}, {:class => 'form-control'} %>
 						</div>
 					</div>
 				<% end %>

@@ -40,7 +40,7 @@
             <div id="barra-superior">
                 <div class="container">
                     <div class="row">
-                        <a href="#" id="logo"></a>
+                        <a href="<%= root_url(:host => request.domain + request.port_string) %>" id="logo"></a>
                         <ul class="nav nav-pills pull-right">
                             <li id="c_home"><%= link_to "Inicio", home_path %></li>
                             <li id="c_feature"><%= link_to "Características", features_path %></li>
