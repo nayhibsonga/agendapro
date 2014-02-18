@@ -1,90 +1,84 @@
 <div class="main">
+    <!-- Barra superior y Buscador -->
     <section class="call_to_action">
         <div class="container">
 			<%= render 'form' %>
         </div>
     </section>
-    <section class="portfolio_teasers_wrapper">
-        <div class="container">
-            <div class="row">
+    
+    <!-- Resultado Buscador -->
+    <div class="container">
+        <div class="row">
+            <div class="well">
+                <!-- mapa -->
                 <div class="col-md-6">
                     <div id="map"></div>
                 </div>
+
                 <div class="col-md-6">
                     <% i = 1
-                     @results.each do |location| %>
-                    <div class="row">
-                        <div class="col-md-12">
-                            <div class="row header">
-                                <div class="pin">
-                                    <%= image_tag "pin.png", :size => "22x22" %>
+                        @results.each do |location| %>
+                    <div class="panel panel-info"> 
+                        <div class="panel-heading">
+                            <div class="head-local-search">
+                                <div class="number-pin">
                                     <span><%= i %></span>
                                 </div>
-                                <%= location.name %>
-                                <%= link_to 'Reservar', url_for(:host => location.company.web_address + '.' + @domain, :local => location.id, :controller => 'companies', :action => 'overview'), :class => "btn btn-info pull-right", :role => "button" %>
+                                <h3 class="panel-title title-local"><%= location.name %></h3> 
+                                <%= link_to 'Reservar', url_for(:host => location.company.web_address + '.' + @domain, :local => location.id, :controller => 'companies', :action => 'overview'), :class => "btn btn-success pull-right", :role => "button" %>
                             </div>
-                            <div class="row">
-                                <div class="col-md-12">
-                                    <div class="col-md-10">
-                                        <address>
-                                            <%= location.address %>, <%= location.district.name %>.<br>
-                                            <abbr title="Telefono">Tel:</abbr> <%= location.phone %>
-                                        </address>
-                                    </div>
-                                    <div class="col-md-2">
-                                        <% if !location.company.logo.nil? %>
-                                        <%= image_tag location.company.logo, :class => "img-rounded", :size => "90x90" %>
+                        </div>
+
+                        <div class="panel-body">
+                            <!-- Nav tabs -->
+                            <ul class="nav nav-tabs" id="myTab">
+                                <li class="active"><a href="#home<%=i%>" data-toggle="tab"><i class="fa fa-home"></i></a></li>
+                                <li><a href="#profile<%=i%>" data-toggle="tab">Descripción</a></li>
+                                <li><a href="#messages<%=i%>" data-toggle="tab">Horario</a></li>
+                            </ul>
+
+                            <!-- Tab panes -->
+                            <div class="tab-content">
+                              <div class="tab-pane active" id="home<%=i%>">
+                                <div class="data-local-search">
+                                  <p><%= location.address %>, <%= location.district.name %>.</p>
+                                  <p>Tel: <%= location.phone %></p>
+                                </div>
+                                <div class="img-local-search">
+                                </div>
+                              </div>
+                              <div class="tab-pane" id="profile<%=i%>">
+                                <p class="fix-position-search">                                                    
+                                    <% if location.company.description.empty? %>
+                                        <p>No hay descripción para esta empresa.</p>
                                         <% else %>
-                                        <%= image_tag "Iso_Pro_Color.png", :class => "img-rounded", :size => "90x90" %>
+                                        <p><%= location.company.description %></p>
                                         <% end %>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-md-12">
-                                    <div class="panel-group" id="accordion<%= location.id %>">
-                                        <div class="panel panel-default">
-                                            <div class="panel-heading">
-                                                <h4 class="panel-title"><a data-toggle="collapse" data-parent="#accordion<%= location.id %>" href="#collapseOne<%= location.id %>">Descripción</a></h4>
-                                            </div>
-                                            <div id="collapseOne<%= location.id %>" class="panel-collapse collapse in">
-                                                <div class="panel-body">
-                                                    <% if location.company.description.empty? %>
-                                                    <p>No hay descripción para esta empresa.</p>
-                                                    <% else %>
-                                                    <p><%= location.company.description %></p>
-                                                    <% end %>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="panel panel-default">
-                                            <div class="panel-heading">
-                                                <h4 class="panel-title"><a data-toggle="collapse" data-parent="#accordion<%= location.id %>" href="#collapseTwo<%= location.id %>">Horario</a></h4>
-                                            </div>
-                                            <div id="collapseTwo<%= location.id %>" class="panel-collapse collapse">
-                                                <div class="panel-body">
-                                                    <table class="table">
-                                                        <tbody id="schedule-body<%= location.id %>">
-                                                        </tbody>
-                                                    </table>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
+                                </p>
+                              </div>
+                              <div class="tab-pane" id="messages<%=i%>">
+                                <table class="table fix-position-search">
+                                    <tbody id="schedule-body<%= location.id %>">
+                                    </tbody>
+                                </table>
+                              </div>
                             </div>
                         </div>
                     </div>
-                        <% i = i + 1
-                    end %>
+                    
+                    <% i = i + 1 end %>
                     <% if @results.empty? %>
-                    <h4>No se encontraron resultados para <strong><%= params[:inputSearch] %></strong>.</h4>
+                        <h4>No se encontraron resultados para <strong><%= params[:inputSearch] %></strong>.</h4>
                     <% end %>
+
                 </div>
+                <div class="clear"></div>
             </div>
         </div>
-    </section>
+    </div>
 </div>
+
+
 <%= content_tag "div", id: "results", data: {results: @results} do %>
 <% end %>
 
