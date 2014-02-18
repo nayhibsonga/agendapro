@@ -51,7 +51,6 @@ function decode (position) {
           if (district) {
             $('#span-location').html(district.name + ' <i class="fa fa-chevron-right"></i>');
             $('#district').val(district.id);
-            $('#search-bar').removeAttr('disabled');
 
             //====== Session Storage
             if (typeof(Storage) !== "undefined") {
@@ -73,6 +72,7 @@ function decode (position) {
         '<p>No se pudo hubicar geograficamente.</p>'
       );
     }
+    $('#search-bar').removeAttr('disabled');
   });
 }
 
