@@ -61,7 +61,7 @@
 
       <% if current_user.role_id == Role.find_by_name("Super Admin").id %>
         <li>
-          <a id="open-submenu"><i class="fa fa-check"></i><span class="colapse-hidden"> General <span class="fa fa-caret-down"></span></span></a>
+          <a id="open-submenu"><i class="fa fa-check"></i><span class="colapse-hidden"> General <span class="fa fa-caret-down caret-especial"></span></span></a>
             <ul id="submenu" class="submenu-close">
               <li><%= link_to '<i class="fa fa-user"></i><span class="remove-txt"> Usuarios</span>'.html_safe, admin_users_path, { :class => "submenu" } %></li>
               <li><%= link_to '<i class="fa fa-lock"></i><span class="remove-txt"> Roles</span>'.html_safe, roles_path, { :class => "submenu" }  %></li>
@@ -72,7 +72,7 @@
         </li>
 
         <li>
-          <a id="open-submenu2"><i class="fa fa-map-marker"></i><span class="colapse-hidden"> Lugares <span class="fa fa-caret-down"></span></span></a>
+          <a id="open-submenu2"><i class="fa fa-map-marker"></i><span class="colapse-hidden"> Lugares <span class="fa fa-caret-down caret-especial"></span></span></a>
           <ul id="submenu2" class="submenu-close">
             <li><%= link_to '<i class="fa fa-globe"></i><span class="remove-txt"> Países</span>'.html_safe, countries_path, { :class => "submenu" } %></li>
             <li><%= link_to '<i class="fa fa-picture-o"></i><span class="remove-txt"> Regiones</span>'.html_safe, regions_path, { :class => "submenu" } %></li>
@@ -84,8 +84,8 @@
 
       <% if (current_user.role_id == Role.find_by_name("Super Admin").id) || (current_user.role_id == Role.find_by_name("Admin").id) || (current_user.role_id == Role.find_by_name("Administrador Local").id) %>
         <li>
-          <a id="open-submenu4"><i class="fa fa-briefcase"></i><span class="colapse-hidden"> Administración <span class="fa fa-caret-down"></span></span></a>
-          <ul id="submenu4" class="submenu-close">
+          <a id="open-submenu3"><i class="fa fa-briefcase"></i><span class="colapse-hidden"> Administración <span class="fa fa-caret-down caret-especial"></span></span></a>
+          <ul id="submenu3" class="submenu-close">
             <li><%= link_to '<i class="fa fa-sitemap"></i><span class="remove-txt"> Usuarios</span>'.html_safe, admin_users_path, { :class => "submenu" } %></li>
             <li><%= link_to '<i class="fa fa-home"></i><span class="remove-txt"> Locales</span>'.html_safe, locations_path, { :class => "submenu" } %></li>
             <li><%= link_to '<i class="fa fa-book"></i><span class="remove-txt"> Servicios</span>'.html_safe, services_path, { :class => "submenu" } %></li>
@@ -97,8 +97,8 @@
 
       <% if (current_user.role_id == Role.find_by_name("Admin").id) %>
         <li>
-          <a id="open-submenu3"><i class="fa fa-wrench"></i><span class="colapse-hidden"> Configuración <span class="fa fa-caret-down"></span></span></a>
-          <ul id="submenu3" class="submenu-close">
+          <a id="open-submenu4"><i class="fa fa-wrench"></i><span class="colapse-hidden"> Configuración <span class="fa fa-caret-down caret-especial"></span></span></a>
+          <ul id="submenu4" class="submenu-close">
             <li><%= link_to '<i class="fa fa-briefcase"></i><span class="remove-txt"> Empresa</span>'.html_safe, edit_company_path(Company.find(current_user.company_id)), { :class => "submenu" } %></li>
               <li><% if Company.find(current_user.company_id).company_setting %>
                 <%= link_to '<i class="fa fa-phone"></i><span class="remove-txt"> Recordatorios</span>'.html_safe, edit_company_setting_path(Company.find(current_user.company_id).company_setting), { :class => "submenu" } %>
