@@ -4,7 +4,7 @@ html, body{
 	height: 100%;
 }
 body{
-	background: #757679;
+	background: rgba(163,199,198,1);
 }
 #wrap-admin{
 	min-height: 100%;
@@ -22,15 +22,14 @@ footer{
 }
 .fix-height{
 	min-height: 100%;
-	height: 100%;
 }
 header{
 	height: 44px;
 	width: 100%;
-	background: #383e4b;
+	background: rgba(27,115,112,1);
 }
 #logo{
-	width:187px;
+	width:127px;
 	height:39px;
 	margin: 2px 0px 0px 20px;
 	background: url(<%= asset_path 'logos/logo_agendaproVerde.png' %>);
@@ -42,6 +41,7 @@ header{
 	margin: 0px;
 	position: absolute;
 	right: 20px;
+	top: 0px;
 	z-index: 9999;
 }
 #menu-usuario li a{
@@ -78,7 +78,7 @@ header{
 
 #admin-content{
 	background: #ffffff;
-	min-height: 400px;
+	min-height: 100%;
 	width: 83.33333333333334%;
 	float:left;
 }
@@ -115,19 +115,20 @@ header{
 	border-bottom: none;
 }
 .menu-lateral li a{
-	color: #fff;
-	padding: 5px 0px 5px 15px;
+	color: rgba(27,115,112,1);
+	padding: 10px 0px 10px 15px;
 	display: block;
 }
 .menu-lateral ul li a{
-	color: #fff;
-	padding: 5px 0px 5px 25px;
+	color: rgba(27,115,112,1);
+	padding: 7px 0px 7px 25px;
 	display: block;
 	font-size: 14px;
 }
 .menu-lateral li a:hover, .menu-lateral ul li a:hover{
 	text-decoration: none;
-	background: #383e4b;
+	background: rgba(27,115,112,1);
+	color: #fff;
 }
 .content-fix{
 	margin: 0px 30px;
@@ -148,25 +149,58 @@ li.colapsado-ok> a> span.colapse-hidden{
 	display: none;
 }
 
+
+/* Agregado 18 Febrero */
+.caret-especial{
+	float: right;
+	margin-right: 10px;
+	font-size: 21px;
+}
+.panel-info {
+	border-color: rgba(27,115,112,0.6);
+}
+.panel-info>.panel-heading {
+	color: rgba(27,115,112,1);
+	background-color: rgba(27,115,112,0.4);
+	border-color: rgba(27,115,112,0.67);
+}
+.btn-primary {
+	color: #fff;
+	background-color: rgba(27,115,112,0.9);
+	border-color: rgba(27,115,112,1);
+}
+.btn-primary:hover{
+	background-color: rgba(27,115,112,1);
+}
+#providers-selector{
+	width:100%;
+	border: 1px solid #ccc;
+}
+#providers-selector label{
+	display: inline-block;
+	margin-right: 30px;
+}
+
 /* Menu responsivo */
 @media (max-width: 992px) { 
 	#admin-content{
-	width: calc(100% - 50px) !important;
+		width: calc(100% - 50px) !important;
+	}
+	#sidebar{
+		width: 50px !important;
+	}
+	.colapse-hidden{
+		display: none;
+	}
+	.remove-txt{
+		display: none;
+	}
+	.menu-lateral{
+		font-size: 21px;
+	}
+	#submenu>li>a, #submenu2>li>a, #submenu3>li>a{
+		font-size: 18px;
+		padding-left: 20px;
+	}
 }
-#sidebar{
-	width: 50px !important;
-}
-.colapse-hidden{
-	display: none;
-}
-.remove-txt{
-	display: none;
-}
-.menu-lateral{
-	font-size: 21px;
-}
-#submenu>li>a, #submenu2>li>a, #submenu3>li>a{
-	font-size: 18px;
-	padding-left: 20px;
-}
-}
+
