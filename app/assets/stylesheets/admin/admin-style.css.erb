@@ -4,7 +4,8 @@ html, body{
 	height: 100%;
 }
 body{
-	background: rgba(163,199,198,1);
+	background: rgba(163,199,198,1); 
+	background: url(<%= asset_path 'backgrounds/wild_oliva_light_head.png' %>);
 }
 #wrap-admin{
 	min-height: 100%;
@@ -78,9 +79,11 @@ header{
 
 #admin-content{
 	background: #ffffff;
+	background: url(<%= asset_path 'backgrounds/wild_oliva_light.png' %>);
 	min-height: 100%;
 	width: 83.33333333333334%;
 	float:left;
+	padding-bottom: 50px;
 }
 #sidebar{
 	padding: 0px;
@@ -116,14 +119,14 @@ header{
 }
 .menu-lateral li a{
 	color: rgba(27,115,112,1);
-	padding: 10px 0px 10px 15px;
+	padding: 15px 0px 15px 15px;
 	display: block;
 }
 .menu-lateral ul li a{
 	color: rgba(27,115,112,1);
-	padding: 7px 0px 7px 25px;
+	padding: 10px 0px 10px 25px;
 	display: block;
-	font-size: 14px;
+	font-size: 15px;
 }
 .menu-lateral li a:hover, .menu-lateral ul li a:hover{
 	text-decoration: none;
@@ -131,7 +134,7 @@ header{
 	color: #fff;
 }
 .content-fix{
-	margin: 0px 30px;
+	margin: 0px 70px;
 }
 .menu-lateral li:last-child{
 	border-bottom: 0px;
@@ -174,11 +177,39 @@ li.colapsado-ok> a> span.colapse-hidden{
 }
 #providers-selector{
 	width:100%;
-	border: 1px solid #ccc;
+	border: 1px solid rgba(27,115,112,1);
+	background: #ccc;
+	padding: 0px;
+	border-radius: 5px;
+	overflow: hidden;
 }
 #providers-selector label{
 	display: inline-block;
-	margin-right: 30px;
+	background: #ccc;
+	padding: 0px 25px;
+}
+#providers-selector label:hover, #providers-selector label.active{
+	background: rgba(27,115,112,1);
+	color: #fff;
+}
+#providers-selector input[type="radio"]{
+	display: none;
+}
+#providers-selector p{
+	margin: 10px 0 10px;
+}
+#calendar{
+	margin-top: 15px;
+}
+thead{
+	background: rgba(27,115,112,0.6);
+	color: #fff;
+}
+tbody{
+	background: rgba(255, 255, 255, 0.76);
+}
+.table-bordered{
+	border: 1px solid rgba(27,115,112,0.6);
 }
 
 /* Menu responsivo */
@@ -201,6 +232,9 @@ li.colapsado-ok> a> span.colapse-hidden{
 	#submenu>li>a, #submenu2>li>a, #submenu3>li>a{
 		font-size: 18px;
 		padding-left: 20px;
+	}
+	.content-fix{
+		margin: 0px 30px;
 	}
 }
 
