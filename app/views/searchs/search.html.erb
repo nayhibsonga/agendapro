@@ -30,38 +30,40 @@
                         </div>
 
                         <div class="panel-body">
-                            <!-- Nav tabs -->
-                            <ul class="nav nav-tabs" id="myTab">
-                                <li class="active"><a href="#home<%=i%>" data-toggle="tab"><i class="fa fa-home"></i></a></li>
-                                <li><a href="#profile<%=i%>" data-toggle="tab">Descripción</a></li>
-                                <li><a href="#messages<%=i%>" data-toggle="tab">Horario</a></li>
-                            </ul>
+                            <div class="box-tabs">
+                                <!-- Nav tabs -->
+                                <ul class="nav nav-tabs" id="myTab">
+                                    <li class="active"><a href="#home<%=i%>" data-toggle="tab"><i class="fa fa-home"></i></a></li>
+                                    <li><a href="#profile<%=i%>" data-toggle="tab">Descripción</a></li>
+                                    <li><a href="#messages<%=i%>" data-toggle="tab">Horario</a></li>
+                                </ul>
 
-                            <!-- Tab panes -->
-                            <div class="tab-content">
-                              <div class="tab-pane active" id="home<%=i%>">
-                                <div class="data-local-search">
-                                  <p><%= location.address %>, <%= location.district.name %>.</p>
-                                  <p>Tel: <%= location.phone %></p>
+                                <!-- Tab panes -->
+                                <div class="tab-content">
+                                  <div class="tab-pane active" id="home<%=i%>">
+                                    <div class="data-local-search">
+                                      <p><%= location.address %>, <%= location.district.name %>.</p>
+                                      <p>Tel: <%= location.phone %></p>
+                                    </div>
+                                  </div>
+                                  <div class="tab-pane" id="profile<%=i%>">
+                                    <p class="fix-position-search">                                                    
+                                        <% if location.company.description.empty? %>
+                                            <p>No hay descripción para esta empresa.</p>
+                                            <% else %>
+                                            <p><%= location.company.description %></p>
+                                            <% end %>
+                                    </p>
+                                  </div>
+                                  <div class="tab-pane" id="messages<%=i%>">
+                                    <table class="table fix-position-search">
+                                        <tbody id="schedule-body<%= location.id %>">
+                                        </tbody>
+                                    </table>
+                                  </div>
                                 </div>
-                                <div class="img-local-search">
-                                </div>
-                              </div>
-                              <div class="tab-pane" id="profile<%=i%>">
-                                <p class="fix-position-search">                                                    
-                                    <% if location.company.description.empty? %>
-                                        <p>No hay descripción para esta empresa.</p>
-                                        <% else %>
-                                        <p><%= location.company.description %></p>
-                                        <% end %>
-                                </p>
-                              </div>
-                              <div class="tab-pane" id="messages<%=i%>">
-                                <table class="table fix-position-search">
-                                    <tbody id="schedule-body<%= location.id %>">
-                                    </tbody>
-                                </table>
-                              </div>
+                            </div>
+                            <div class="img-local-search">
                             </div>
                         </div>
                     </div>
