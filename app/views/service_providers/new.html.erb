@@ -23,6 +23,12 @@
     </div>
   </div>
 
+  <div class="form-group">
+    <%= f.label :service_ids, "Selecciona el servicio: ", class: "col-sm-2 control-label" %>
+    <div class="col-sm-4"> 
+      <%= f.collection_check_boxes :service_ids, Service.where(company_id: current_user.company_id), :id, :name, {}, {class: "check_boxes"} %>
+    </div>
+  </div>
 
   <div class="row">
   	<label>Lunes:</label><div id="div1"></div>
@@ -46,6 +52,7 @@
   	<label>Domingo:</label><div id="div7"></div>
   </div>
   <br />
+
 <% end %>
 
 <div class="row">
