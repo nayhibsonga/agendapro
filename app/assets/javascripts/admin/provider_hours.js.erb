@@ -137,7 +137,6 @@ function createProvider() {
 		provider_times.push(provider_time);
 	}
 	var providerJSON  = { "public_name": $('#service_provider_public_name').val(), "notification_email": $('#service_provider_notification_email').val(),"location_id": parseInt($('#service_provider_location_id').val()), "user_id": parseInt($('#service_provider_user_id').val()), "service_ids": enabledServices, "provider_times_attributes": provider_times, "user_attributes": { "email": $('#service_provider_user_attributes_email').val() } };
-	alert(JSON.stringify(providerJSON));
 	$.ajax({
 	    type: "POST",
 	    url: '/service_providers.json',
@@ -171,7 +170,6 @@ function updateProvider() {
 	});
 	var provider_times = [];
 	for (i in enabledDays) {
-		alert('asd');
 		var provider_time = {"open":"2000-01-01T"+ $('#openHourId'+enabledDays[i]).val() +":"+ $('#openMinuteId'+enabledDays[i]).val() +":00Z","close":"2000-01-01T"+ $('#closeHourId'+enabledDays[i]).val() +":"+ $('#closeMinuteId'+enabledDays[i]).val() +":00Z","day_id":parseInt(enabledDays[i])};
 		provider_times.push(provider_time);
 	}

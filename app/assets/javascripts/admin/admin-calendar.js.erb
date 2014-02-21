@@ -530,7 +530,11 @@ function editDrag(event) {
 		    	errores += errors[i];
 		    }
 		    alertId.showAlert(errores);
-
+		    $.getJSON('/bookings/'+event.id, function (booking) {
+		    	event.start = booking.start;
+		    	event.end = booking.end;
+		        $('#calendar').fullCalendar('updateEvent', event);
+		    });
 		}
 	});
 }
