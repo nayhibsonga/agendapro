@@ -40,30 +40,35 @@
 
                                 <!-- Tab panes -->
                                 <div class="tab-content">
-                                  <div class="tab-pane active" id="home<%=i%>">
-                                    <div class="data-local-search">
-                                      <p><%= location.address %>, <%= location.district.name %>.</p>
-                                      <p>Tel: <%= location.phone %></p>
+                                    <div class="tab-pane active" id="home<%=i%>">
+                                        <div class="data-local-search">
+                                            <p><%= location.address %>, <%= location.district.name %>.</p>
+                                            <p>Tel: <%= location.phone %></p>
+                                        </div>
                                     </div>
-                                  </div>
-                                  <div class="tab-pane" id="profile<%=i%>">
-                                    <p class="fix-position-search">                                                    
-                                        <% if location.company.description.empty? %>
+                                    <div class="tab-pane" id="profile<%=i%>">
+                                        <p class="fix-position-search">                                                    
+                                            <% if location.company.description.nil? %>
                                             <p>No hay descripción para esta empresa.</p>
                                             <% else %>
                                             <p><%= location.company.description %></p>
                                             <% end %>
-                                    </p>
-                                  </div>
-                                  <div class="tab-pane" id="messages<%=i%>">
-                                    <table class="table fix-position-search">
-                                        <tbody id="schedule-body<%= location.id %>">
-                                        </tbody>
-                                    </table>
-                                  </div>
+                                        </p>
+                                    </div>
+                                    <div class="tab-pane" id="messages<%=i%>">
+                                        <table class="table fix-position-search">
+                                            <tbody id="schedule-body<%= location.id %>">
+                                            </tbody>
+                                        </table>
+                                    </div>
                                 </div>
                             </div>
                             <div class="img-local-search">
+                                <% if location.company.logo_url %>
+                                <%= image_tag location.company.logo_url.to_s, :size => "80x80", :alt => location.company.name %>
+                                <% else %>
+                                <%= image_tag 'Iso_Pro_Color.png', :alt => 'AgendaPro', :size => "80x80" %>
+                                <% end %>
                             </div>
                         </div>
                     </div>

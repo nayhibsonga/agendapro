@@ -64,8 +64,8 @@
                     <div class="row">
                         <div class="col-xs-4 col-sm-4 col-md-2">
                             <div class="logo-empresa">
-                                <% if !@company.logo.nil? %>
-                                <%= image_tag @company.logo, :alt => @company.name %>
+                                <% if @company.logo_url %>
+                                <%= image_tag @company.logo_url.to_s, :alt => @company.name %>
                                 <% else %>
                                 <%= image_tag 'Iso_Pro_Color.png', :alt => 'AgendaPro' %>
                                 <% end %>
