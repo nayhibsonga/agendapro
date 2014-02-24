@@ -20,7 +20,7 @@
             <%= image_tag 'ajax-loader.gif', :alt => 'Loader' %>
           </div>
         </div>
-        <div id="foo4" stylw="display: none;">
+        <div id="foo4" style="visibility: collapse;">
           <div class="box-step">
             <div class="col-md-12">
               <h4>Servicios</h4>
@@ -206,7 +206,7 @@
         infinite: false,
         onCreate: function () {
           $('.center-block').parent().remove();
-          $('#foo4').removeClass('hidden');
+          $('#foo4').css('visibility', 'visible');
           loadStep1();
         },
         scroll: {

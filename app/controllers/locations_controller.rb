@@ -84,16 +84,7 @@ class LocationsController < ApplicationController
 
     # Data
     service_duration = Service.find(params[:service]).duration
-    date = params[:date]
-    begin
-      weekDate = Date.strptime(params[:date], '%m/%d/%Y')
-    rescue
-      begin
-        weekDate = Date.strptime(params[:date], '%d/%m/%Y')
-      rescue
-        weekDate = Date.strptime(params[:date], '%Y/%m/%d')
-      end
-    end
+    weekDate = Date.strptime(params[:date], '%Y-%m-%d')
 
     @week_blocks = Hash.new
     # Week Blocks
@@ -180,22 +171,21 @@ class LocationsController < ApplicationController
           status = 'available'
           start_time_block = DateTime.new(date.year, date.mon, date.mday, open_hour, open_min)
           end_time_block = DateTime.new(date.year, date.mon, date.mday, next_open_hour, next_open_min)
-
-          bookings.each do |booking|
-            booking_start = DateTime.parse(booking.start.to_s)
-            booking_end = DateTime.parse(booking.end.to_s)
-
-            if (booking_start - end_time_block) * (start_time_block - booking_end) > 0 && booking.status_id != Status.find_by(name: 'Cancelado').id
-              status = 'occupied'
-            end
-          end
           
           # Past hours
           today = Date.today
           if (date <=> today) < 1
             status = 'past'
-          end
+          else
+            bookings.each do |booking|
+              booking_start = DateTime.parse(booking.start.to_s)
+              booking_end = DateTime.parse(booking.end.to_s)
 
+              if (booking_start - end_time_block) * (start_time_block - booking_end) > 0 && booking.status_id != Status.find_by(name: 'Cancelado').id
+                status = 'occupied'
+              end
+            end
+          end
 
           block_hour[:status] = status
           block_hour[:hour] = hour

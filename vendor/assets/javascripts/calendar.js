@@ -67,7 +67,7 @@ function Calendar (source, getData) {
 
 	// Generate Week
 	var generateWeek = function (monday) {
-		sources.data.date = monday.toLocaleDateString();
+		sources.data.date = formatDate(monday);
 		$.getJSON(sources.source, sources.data, function (data, status) {
 			var pos = 0;
 			$.each(data, function (day, day_blocks) {
@@ -109,6 +109,11 @@ function Calendar (source, getData) {
 				'data-end': hours.hour.end
 			});
 			switch (hours.status) {
+				case 'past':
+					div.addClass('hora-pasada');
+					var span = $('<span>').text(hours.hour.start + ' - ' + hours.hour.end);
+					div.append(span);
+					break;
 				case 'available':
 					div.addClass('hora-disponible');
 					var span = $('<span>').text(hours.hour.start + ' - ' + hours.hour.end);
@@ -122,11 +127,6 @@ function Calendar (source, getData) {
 				case 'empty':
 					div.addClass('hora-vacia');
 					div.append('<span></span>')
-					break;
-				case 'past':
-					div.addClass('hora-pasada');
-					var span = $('<span>').text(hours.hour.start + ' - ' + hours.hour.end);
-					div.append(span);
 					break;
 				default:
 					div.addClass('hora-vacia');
@@ -168,6 +168,7 @@ function Calendar (source, getData) {
 		});
 	}
 
+	// Auxiliar methods
 	var parseDate = function (date, start) {
 		start = start || '00:00';
 		var year = date.substring(0, date.indexOf('-'));
@@ -187,7 +188,6 @@ function Calendar (source, getData) {
 		$('.columna-dia').css('width', width + '%');
 	}
 
-	// Auxiliar methods
 	var correctNumber = function (number) {
 		if (number < 10) {
 			return '0' + number;
@@ -195,6 +195,10 @@ function Calendar (source, getData) {
 		else {
 			return number;
 		}
+	}
+
+	var formatDate = function (date) {
+		return date.getFullYear() + '-' + correctNumber(date.getMonth() + 1) + '-' + correctNumber(date.getDate());
 	}
 
 	this.rebuild = function (source, getData) {
