@@ -12,8 +12,8 @@
 					<tbody>
 						<% @lastBookings.each do |booking| %>
 						<tr>
-							<td><%= booking.created_at.to_date %></td>
-							<td><%= booking.first_name %> <%= booking.last_name %> reservó <%= booking.service.name %> con <%= booking.service_provider.public_name %> el día <%= booking.start %></td>
+							<td><%= l booking.created_at.to_date %></td>
+							<td><%= booking.first_name %> <%= booking.last_name %> reservó <%= booking.service.name %> con <%= booking.service_provider.public_name %> el día <%= l booking.start %></td>
 						</tr>
 						<% end %>
 					</tbody>

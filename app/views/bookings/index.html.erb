@@ -18,7 +18,7 @@
 </div>
 <div class="row">
   <div id="add_booking">
-    <%= link_to '<i class="fa fa-calendar"></i>  Agregar Reserva'.html_safe, '#', :class => "btn btn-primary btn-md createBooking" %>
+    <%= link_to '<i class="fa fa-calendar"></i>  Agregar Reserva'.html_safe, '#', :class => "btn btn-primary btn-md createBooking pull-right" %>
   </div>
 </div>
 <div class="row">
@@ -142,6 +142,12 @@
     </div>
   </div>
 </div>
+
 <% content_for :scripts do %>
   <%= javascript_include_tag "booking" %>
+  <script>
+      $(function() {
+          $("#l_todos").addClass("active")
+      });
+  </script>
 <% end %>
