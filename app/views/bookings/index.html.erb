@@ -1,7 +1,7 @@
 <h1>Calendario AgendaPro</h1>
 <div class="col-md-12">
 <div class="row">
-  <div  class="radio">
+  <div  id="locals-selector" class="radio">
     <label>
       <% @locations.each do |local| %>
         <input type="radio" name="localRadio" id="localOption<%= local.id %>" onchange="loadProviders()" value="<%= local.id %>" <%= "checked" if ((!@selectedLocal) && (local.id == @locations.first.id)) || (@selectedLocal.to_i == local.id) %>>
