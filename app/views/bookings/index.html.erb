@@ -17,6 +17,7 @@
   </div>
 </div>
 <div class="row">
+  <div id="datePicker-button"></div>
   <div id="add_booking">
     <%= link_to '<i class="fa fa-calendar"></i>  Agregar Reserva'.html_safe, '#', :class => "btn btn-primary btn-md createBooking pull-right" %>
   </div>
@@ -147,7 +148,14 @@
   <%= javascript_include_tag "booking" %>
   <script>
       $(function() {
-          $("#l_todos").addClass("active")
+          $('#l_todos').addClass("active")
       });
+      $('#datePicker-button').datepicker({
+        inline: true,
+        onSelect: function(dateText, inst) {
+            var d = new Date(dateText);
+            $('#calendar').fullCalendar('gotoDate', d);
+        }
+    });
   </script>
 <% end %>
