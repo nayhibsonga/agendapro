@@ -1,8 +1,9 @@
 class UsersController < ApplicationController
   #before_action :set_user, only: [:show, :edit, :update, :destroy]
+  before_action :set_user, only: [:agenda]
   before_action :authenticate_user!
-  before_action :verify_is_super_admin, except: [:new]
-  layout "admin"
+  before_action :verify_is_super_admin, except: [:new, :agenda]
+  layout "admin", except: [:agenda]
 
   # GET /users
   # GET /users.json
@@ -65,6 +66,13 @@ class UsersController < ApplicationController
       format.html { redirect_to users_url }
       format.json { head :no_content }
     end
+  end
+
+  def agenda
+    @activeBookings = Booking.where(:user_id => params[:id], :status_id => Status.find_by(:name => ['Reservado', 'Pagado'])).order(:start)
+    @lastBookings = Booking.where(:user_id => params[:id]).order(updated_at: :desc).limit(10)
+
+    render :layout => 'search'
   end
 
   private
