@@ -69,7 +69,7 @@ class UsersController < ApplicationController
   end
 
   def agenda
-    @activeBookings = Booking.where(:user_id => params[:id], :status_id => Status.find_by(:name => ['Reservado', 'Pagado'])).order(:start)
+    @activeBookings = Booking.where(:user_id => params[:id], :status_id => Status.find_by(:name => ['Reservado', 'Pagado'])).where("start > ?", DateTime.now).order(:start) 
     @lastBookings = Booking.where(:user_id => params[:id]).order(updated_at: :desc).limit(10)
 
     render :layout => 'search'
