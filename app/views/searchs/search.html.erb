@@ -24,7 +24,7 @@
                                 <div class="number-pin">
                                     <span><%= i %></span>
                                 </div>
-                                <h3 class="panel-title title-local"><%= location.name %></h3> 
+                                <h3 class="panel-title title-local"><%= location.company.name %></h3> 
                                 <%= link_to 'Reservar', url_for(:host => location.company.web_address + '.' + @domain, :local => location.id, :controller => 'companies', :action => 'overview'), :class => "btn btn-success pull-right", :role => "button" %>
                             </div>
                         </div>
