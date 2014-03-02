@@ -1,0 +1,439 @@
+@charset "UTF-8";
+
+body {
+  -webkit-font-smoothing: antialiased;
+  background: url(<%= asset_path 'backgrounds/wild_oliva_light.png' %>);
+}
+a {
+	color: rgba(61,154,150,1);
+	text-decoration: none;
+}
+a:hover {
+	color: rgba(27,115,112,1);
+}
+
+/* Barra superior */
+#barra-superior {
+background: rgba(27,115,112,1);
+height: 44px;
+}
+#logo{
+	display: inline-block;
+ 	width:127px;
+  	height:39px;
+	margin: 2px 0px 0px 0px;
+	background: url(<%= asset_path 'logos/logo_agendaproVerde.png' %>);
+}
+#logo span{
+	display: none;
+}
+.nav li a{
+	padding: 12px 15px;
+}
+.nav-pills>li>a {
+	color: #fff;
+	text-transform: uppercase;
+	font-weight: 300;
+}
+.nav-pills>li.active>a{
+	background: rgba(255,255,255,0.2);
+	border-radius: 0px;
+	font-weight: bold;
+}
+.nav-pills>li:hover>a, .nav>li>a:focus{
+	background: rgba(255,255,255,0.2);
+	border-radius: 0px;
+}
+.nav .open>a {
+	background: rgba(255,255,255,0.2) !important;
+	border-radius: 0px;
+	color: #fff;
+}
+.dropdown-menu>li>a {
+	padding: 8px 10px;
+}
+.dropdown-menu>li>a:hover {
+	background: rgba(27,115,112,1);
+}
+
+/* Botones Modificados AgendaPro */
+.btn-success{
+	color: #ffffff;
+	background-color: #D55330;
+	border-color: #E64215;
+}
+.btn-success:hover{
+	background-color: #EB4114;
+	border-color: #EB4114;
+}
+
+.btn-agendapro-oscuro{
+    color: #ffffff;
+    background-color: rgba(27,115,112,1);
+    border-color: rgba(24, 101, 99, 1);
+}
+
+.btn-agendapro-oscuro:hover{
+    background-color: rgba(24, 101, 99, 1);
+}
+
+.btn-agendapro-claro{
+    color: #ffffff;
+    background-color: rgba(61,154,150,1);
+    border-color: rgba(55, 133, 129, 1);
+}
+
+.btn-agendapro-claro:hover{
+    background-color: rgba(55, 133, 129, 1);
+}
+
+
+/* Estilo de los Modales */
+
+.modal-content{
+	background: url(<%= asset_path 'backgrounds/wild_oliva_light.png' %>);
+}
+
+.modal-header{
+    background: url(<%= asset_path 'backgrounds/wild_oliva_light_head.png' %>);
+}
+
+.modal-footer{
+	background: url(<%= asset_path 'backgrounds/wild_oliva_light_head.png' %>);
+}
+
+/* ---------- */
+.carousel-inner{
+	height: 500px;
+}
+.carousel-inner .item img{
+	width: 100%;
+	height: auto;
+}
+.caja-slider-home{
+	width: 100%;
+	height: 500px;
+	background-position: center;
+	background-size: cover;
+}
+#slide1{
+	background-image: url(<%= asset_path 'home/carousel1.png' %>);
+}
+#slide2{
+	background-image: url(<%= asset_path 'home/carousel2.jpg' %>);
+}
+#slide3{
+	background-image: url(<%= asset_path 'home/carousel3.jpg' %>);
+}
+.carousel-caption{
+	bottom: 80px;
+	left: 10%;
+}
+.green-caption{
+	background: rgba(27,115,112,0.5);
+	text-align: left;
+	width: 50%;
+}
+.green-caption h2{
+	font-weight: 200;
+	font-size: 28px;
+	margin: 20px 20px 10px;
+	float: left;
+}
+.green-caption p{
+	font-size: 21px;
+	margin: 0px 20px 20px;
+	float: left;
+}
+.clear{
+	clear: both;
+}
+.carousel-control span{
+  margin-top: 230px;
+  font-size: 28px;
+}
+
+/* ----------- */
+#mensaje-principal{
+	text-align: center;
+}
+#mensaje-principal h3{
+	font-weight: 400;
+}
+#mensaje-principal a{
+	margin-top: 20px;
+}
+
+/* ----------- */
+#caracteristicas-home{
+	margin-top:40px;
+	text-align: center;
+}
+.icono img{
+	width: 100%;
+	height: auto;
+}
+.icono p{
+	margin: 0px 25px 15px;
+	font-size: 15px;
+}
+.icono h3{
+	color: #FA4616;
+}
+
+/* Footer */
+footer {
+  margin-top: 40px;
+  /*color: #fff;*/
+  border-top: solid 2px #E2E3E4;/*solid 2px #fff;*/
+  background-color: #E2E3E4;/*#222222;*/
+  background: url(<%= asset_path 'backgrounds/wild_oliva_light_head.png' %>);/*url(images/backgrounds/wild_oliva_dark.png);*/
+}
+
+footer a:hover,
+footer a:active {
+  color: #006D68;/*#2a6496;*/
+  text-decoration: none;
+}
+
+#footer_teasers_wrapper {
+  padding: 10px 0;
+}
+
+#footer_teasers_wrapper .footer_teaser h3 {
+  font-size: 18px;
+  font-weight: 700;
+  line-height: 18px;
+  padding: 0 0 10px 0;
+  margin: 10px 0 10px 0;
+  border-bottom: solid 1px #006D68;/*solid 1px #555555;*/
+  color: #006D68;
+}
+
+#footer_teasers_wrapper .footer_teaser p {
+  font-size: 15px;
+}
+
+.footer_teaser p i {
+    color: #FA4616;
+}
+
+.txt-footer{
+    display:inline-block;
+    margin-right: 165px;
+}
+
+.copyright {
+  border-top: solid 1px #CBCCCD;/*solid 1px #000;*/
+  padding: 15px 0;
+  background-color: rgba(203, 204, 205, 0.5);/*rgba(0, 0, 0, 0.5);*/
+  font-weight: 300;
+  font-size: 12px;
+  /*color: #999999;*/
+}
+
+.copyright a {
+	color: #1e8584;
+}
+
+.copyright a:hover {
+	color: #006D68;
+}
+
+/* Estilo del Buscador Principal */
+.main {
+  	background: url(<%= asset_path 'backgrounds/wild_oliva_light.png' %>);
+  	background-color: #E2E3E4;
+}
+
+section.call_to_action {
+  	text-align: center;
+  	padding: 25px 0 20px 0;
+  	background: url(<%= asset_path 'backgrounds/wild_oliva_light_head.png' %>);
+}
+
+section.call_to_action h3 {
+  	font-weight: 300;
+  	font-size: 50px;
+  	line-height: 55px;
+}
+
+section.call_to_action h4 {
+ 	font-weight: 300;
+  	font-size: 26px;
+  	line-height: 30px;
+  	margin: 0 0 20px 0;
+}
+
+.texto-localizacion {
+	font-weight: 300;
+	color: #999999;
+}
+
+.localizacion {
+	font-size: 33px;
+}
+
+.label-warning {
+	background-color: #D55330;
+}
+
+.overlay {
+	width: 100% !important;
+	display: block;
+	background-color: rgba(0,0,0,0.4);
+	color: #ffffff;
+}
+
+.overlay:hover {
+	background-color: rgba(0,0,0,0);
+	color: #ffffff;
+	text-shadow: 2px 2px 4px #000;
+	transition: 0.5s;
+}
+
+.overlay h3 {
+	margin: 20px 10px;
+	font-weight: 700;
+}
+
+.position-background {
+	background-size: cover;
+	background-position: center;
+	margin-bottom: 20px;
+}
+section.portfolio_teasers_wrapper {
+	margin: 15px auto 45px;
+	max-width: 1000px;
+}
+a:hover, a:active, a:focus {
+	text-decoration: none;
+}
+.box-recomendacion-lg {
+	width: 100%;
+	height: 400px;
+	float: left;
+}
+.box-recomendacion-md {
+	width: 100%;
+	height: 200px;
+	float: left;
+}
+
+/* Estilo de la página de los planes */
+.hgroup {
+	padding-top: 26px;
+	padding-bottom: 26px;
+}
+.hgroup .container h1 {
+	color: #006D68;
+}
+.hgroup .container h1 {
+	font-size: 50px;
+	font-weight: 500;
+	line-height: 1em;
+	margin: 0;
+	padding: 0;
+}
+.hgroup .container h2 {
+	font-size: 25px;
+	font-weight: 300;
+	line-height: 1.5em;
+	margin: 0 20% 0 0;
+	padding: 0;
+	color: #7b7b7b;
+}
+.hgroup .container .breadcrumb {
+	font-size: 12px;
+	background-color: #f3f3f3;
+	margin: 0 0 0px;
+	padding: 6px 15px;
+	border: solid 1px #cccccc;
+}
+.pricing_wrapper .pricing_plan h3 {
+	background-color: #eeeeee;
+	padding: 30px 5px;
+	margin: 0 0 10px 0;
+	color: #1e8584;
+	font-size: 30px;
+	border-top-right-radius: 6px;
+	border-top-left-radius: 6px;
+	border-bottom: solid 1px #cccccc;
+}
+.pricing_wrapper .pricing_plan a.btn {
+	margin: 30px;
+	border-radius: 5px;
+	padding-left: 30px;
+	padding-right: 30px;
+}
+.pricing_wrapper .pricing_plan {
+	-webkit-box-shadow: 0px 0px 2px 0px rgba(0, 0, 0, 0.1);
+	-moz-box-shadow: 0px 0px 2px 0px rgba(0, 0, 0, 0.1);
+	box-shadow: 0px 0px 2px 0px rgba(0, 0, 0, 0.1);
+	-webkit-box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	box-sizing: border-box;
+	border-radius: 6px;
+	text-align: center;
+	border: solid 1px #1e8584;
+}
+.pricing_wrapper .pricing_plan .the_price {
+	padding: 5px;
+	font-size: 40px;
+	margin: 20px auto;
+	width: 80%;
+	color: #1e8584;
+	text-shadow: 1px 1px 0px #ffffff;
+	border-bottom: dotted 1px #cccccc;
+	line-height: 1.1;
+}
+.pricing_wrapper .pricing_plan .the_price span {
+	font-size: 30px;
+}
+.pricing_wrapper .pricing_plan .the_price small {
+	font-size: 18px;
+}
+.line-breadcrumb{
+	height: 30px;
+	width: 100%;
+	background-image: url(<%= asset_path 'home/features/line.png' %>);
+}
+
+.imagen_superior {
+	height: 400px;
+	background-size: cover;
+	background-position: center center;
+	width: 100%;
+}
+
+.imagen_superior>div.container> div.green-caption {
+	margin-top: 170px;
+	color: #fff;
+}
+
+#foto_planes {
+	background-image: url(<%= asset_path 'home/features/planes.jpg' %>);
+}
+/* Small devices (tablets, 768px and up) */
+@media (max-width: 768px) { 
+	 .carousel-inner{
+		height: 400px;
+	}
+	.carousel-caption{
+		bottom: 120px;
+	}
+	.green-caption{
+		width: 80%;
+	}
+	.green-caption p{
+		font-size: 15px;
+	}
+}
+
+@media (max-width: 750px) { 
+	 .icono p{
+		display:none;
+	}
+
+}
+

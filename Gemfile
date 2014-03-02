@@ -91,3 +91,7 @@ gem 'bcrypt-ruby', '~> 3.1.2'
 
 # Pago en linea: Punto Pagos
 gem 'puntopagos'
+
+# File Upload
+# gem 'rmagick'
+gem 'carrierwave'

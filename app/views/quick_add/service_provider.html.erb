@@ -1,21 +1,27 @@
 <h1>Nuevo Proveedor de Servicios</h1>
 
-<%= simple_form_for(@service_provider) do |f| %>
+<%= form_for @service_provider, html: {class: "form-horizontal" } do |f| %>
 
-  <div class="form-inputs">
-    <%= f.input :public_name, :label => "Nombre Público" %>
-    <%= f.input :notification_email, :label => "Email de Notificación" %>
-    <%= f.association :user, :as => :collection_select, collection: User.where(company_id: current_user.company_id), :label => "Usuario", :label_method => :email, value_method: :id %><br />
-    <%= f.association :location, :as => :collection_select, collection: Location.where(company_id: current_user.company_id), :label => "Local", value_method: :id %><br />
-    <%= f.association :services, 
-                     as: :check_boxes,
-                     collection: Service.where(company_id: current_user.company_id),
-                     label_method: :name, 
-                     value_method: :id,
-                     label: 'Servicios' %>
-
+  <div class="form-group">
+    <%= f.label :public_name, "Nombre Público:", class: "col-sm-3 control-label" %>
+      <div class="col-sm-4">
+        <%= f.text_field :public_name, :autofocus => true, class: "form-control" %>
+      </div>
   </div>
 
+  <div class="form-group">
+    <%= f.label :notification_email, "Email de Notificación:", class: "col-sm-3 control-label" %>
+      <div class="col-sm-4">
+        <%= f.text_field :notification_email, class: "form-control" %>
+      </div>
+  </div>
+ 
+  <div class="form-group">
+    <%= f.label :location_id, "Local:", class: "col-sm-3 control-label" %>
+    <div class="col-sm-4">
+      <%= f.collection_select :location_id, Location.where(company_id: current_user.company_id), :id, :name, {}, {class: "form-control"} %>
+    </div>
+  </div>
 
   <div class="row">
     <label>Lunes:</label><div id="div1"></div>

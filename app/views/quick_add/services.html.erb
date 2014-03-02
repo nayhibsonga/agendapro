@@ -1,4 +1,4 @@
-<%= simple_form_for @service, :url => quick_add_create_services_path do |f| %>
+<%= form_for @service, :url => quick_add_create_services_path, html: {class: "form-horizontal" } do |f| %>
   <% if @service.errors.any? %>
     <div id="error_explanation">
       <h2><%= pluralize(@service.errors.count, "error") %> no permitió que el servicio se guardara:</h2>
@@ -11,25 +11,81 @@
     </div>
   <% end %>
 
-  <%= f.input :name, :label => "Nombre" %><br />
-  <%= f.input :price, :label => "Precio" %><br />
-  <%= f.input :duration, :label => "Duración" %><br />
-  <%= f.input :description, :label => "Descripción" %><br />
-  <%= f.input :group_service, :label => "Servicio de Grupo" %><br />
-  <%= f.input :capacity, :label => "Capacidad" %><br />
-  <%= f.input :waiting_list, :label => "Lista de Espera" %><br />
-  Crear nueva Categoría de Servicios:
-  <% @service.build_service_category %>
-  <%= f.simple_fields_for :service_category do |builder| %>
-  <%= builder.input :name, :label => "Nueva Categoría de Servicio", :input_html => { :value => "" } %>
-  <%= builder.association :company, :as => :hidden, :input_html => { :value => current_user.company_id }  %>
+  <div class="form-group">
+    <%= f.label :name, "Nombre: ", class: "col-sm-2 control-label" %>
+    <div class="col-sm-4">
+      <%= f.text_field :name, :autofocus => true, class: "form-control" %>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <%= f.label :price, "Precio: ", class: "col-sm-2 control-label" %>
+    <div class="col-sm-4">
+      <%= f.number_field :price, class: "form-control" %>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <%= f.label :duration, "Duración: ", class: "col-sm-2 control-label" %>
+    <div class="col-sm-4">
+      <%= f.number_field :duration, class: "form-control" %>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <%= f.label :description, "Descripción: ", class: "col-sm-2 control-label" %>
+    <div class="col-sm-4">
+      <%= f.text_area :description, class: "form-control" %>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <%= f.label :group_service, "Servicio Grupal: ", class: "col-sm-2 control-label" %>
+    <div class="col-sm-4">
+      <%= f.check_box :group_service %>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <%= f.label :capacity, "Capacidad: ", class: "col-sm-2 control-label" %>
+    <div class="col-sm-4">
+      <%= f.number_field :capacity, class: "form-control" %>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <%= f.label :service_category_id, "Categoría de Servicio: ", class: "col-sm-2 control-label" %>
+    <div class="col-sm-4">
+      <%= f.collection_select :service_category_id, ServiceCategory.where(company_id: current_user.company_id), :id, :name, {}, { class: "form-control" }%>
+    </div>
+  </div>
+ 
+  <% if @service.service_category.nil? then @service.build_service_category end %>
+    <div class="form-group">
+      <%= f.label :service_category_id, "Crear nueva Categoría de Servicio: ", class: "col-sm-2 control-label" %>
+    <div class="col-sm-4">
+      <input type="checkbox" name="catCheck" id="categoryCheckboxId" value="0" onchange="categoryChange()" class="checkbox">
+    </div>
+  </div>
+
+  <%= f.fields_for :service_category do |builder| %>
+
+  <div class="form-group">
+    <%= builder.label :name, "Nueva Categoría de Servicio", class: "col-sm-2 control-label" %>
+    <div class="col-sm-4">
+      <%= builder.text_field :name, class: "form-control", :value => '' %>
+      <%= builder.hidden_field :company_id, class: "form-control", :value => current_user.company_id %>
+    </div>
+  </div>
+
   <% end %>
-  <%= f.association :tags, 
-                     as: :check_boxes,
-                     collection: Tag.where(economic_sector: Company.find(current_user.company_id).economic_sector),
-                     label_method: :name, 
-                     value_method: :id,
-                     label: 'Etiquetas' %><br />
+  
+  <div class="form-group">
+    <%= f.label :tag, "Tags de Búsqueda: ", class: "col-sm-2 control-label" %>
+    <div class="col-sm-4"> 
+      <%= f.collection_check_boxes :tag_ids, Tag.where(economic_sector: Company.find(current_user.company_id).economic_sector), :id, :name, html: {class: "checkbox"}%>
+    </div>
+  </div>
 
   <div class="actions">
     <%= f.submit "Crear Nuevo Servicio" %>

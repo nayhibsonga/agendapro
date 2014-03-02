@@ -40,28 +40,23 @@
             <div id="barra-superior">
                 <div class="container">
                     <div class="row">
-                        <div id="logo-barra">
-                            <a href="<%= root_url(:host => request.domain + request.port_string) %>" class="navbar-brand">
-                                <%= image_tag 'home/logo_agendaproVerde.png', :alt => "AgendaPro", :size => "127x40" %>
-                            </a>
-                        </div>
-                        <div id="sign" class="pull-right">
+                        <a href="<%= root_url(:host => request.domain + request.port_string) %>" id="logo"></a>
+                        <ul class="nav nav-pills pull-right">
                             <% if user_signed_in? %>
-                            <div class="dropdown">
-                                <a href="#" data-toggle="dropdown"><i class="fa fa-user"></i> <%= current_user.email %> <span class="caret"></span></a>
-                                <ul class="dropdown-menu  dropdown-sign" role="menu">
-                                    <li><%= link_to 'Dashboard', dashboard_path %></li>
-                                    <li><%= link_to "Editar Perfil", edit_user_registration_path %></li>
-                                    <li class="divider"></li>
-                                    <li><%= link_to 'Salir'.html_safe, destroy_user_session_path, method: :delete %></li>
+                            <li class="dropdown">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-user"></i> <%= current_user.email %><i class="fa fa-chevron-down"></i></a>
+                                <ul class="dropdown-menu">
+                                    <li><%= link_to '<i class="fa fa-calendar"></i> Mi Agenda'.html_safe, my_agenda_path(:id => current_user.id) %></li>
+                                    <li><%= link_to '<i class="fa fa-dashboard"></i> Dashboard'.html_safe, dashboard_path if current_user.role_id != Role.find_by(name: 'Usuario Registrado').id %></li>
+                                    <li><%= link_to '<i class="fa fa-user"></i> Editar Perfil'.html_safe, edit_user_registration_path %></li>
+                                    <li><%= link_to '<i class="fa fa-power-off"></i> Salir'.html_safe, destroy_user_session_path, method: :delete %></li>
                                 </ul>
-                            </div>
+                            </li>
                             <% else %>
-                            <a href="#" data-toggle="modal" data-target="#signin-modal"><i class="fa fa-user"></i> Inicia Sesión</a>
-                            <a href="#" data-toggle="modal" data-target="#signup-modal"><i class="fa fa-pencil-square-o"></i> Regístrate</a>
-                            <%= link_to '<i class="fa fa-home"></i> Agrega tu empresa'.html_safe, home_path %>
+                                <li><a href="#" data-toggle="modal" data-target="#signin-modal"><i class="fa fa-user"></i> Inicia Sesión</a></li>
+                                <li><a href="#" data-toggle="modal" data-target="#signup-modal"><i class="fa fa-pencil-square-o"></i> Regístrate</a></li>
                             <% end %>
-                        </div>
+                        </ul>
                     </div>
                 </div>
             </div>
@@ -70,8 +65,8 @@
                     <div class="row">
                         <div class="col-xs-4 col-sm-4 col-md-2">
                             <div class="logo-empresa">
-                                <% if !@company.logo.nil? %>
-                                <%= image_tag @company.logo, :alt => @company.name %>
+                                <% if @company.logo_url %>
+                                <%= image_tag @company.logo_url.to_s, :alt => @company.name %>
                                 <% else %>
                                 <%= image_tag 'Iso_Pro_Color.png', :alt => 'AgendaPro' %>
                                 <% end %>
@@ -109,6 +104,33 @@
         <%= yield %>
         <%= render 'layouts/modals' %>
         <!-- end: content -->
+
+        <footer>
+            <section id="footer_teasers_wrapper">
+                <div class="container">
+                    <div class="row">
+                        <div class="footer_teaser col-sm-12 col-md-12">
+                            <h3>AgendaPro - Sistema de Reservas Online</h3>
+                            <p>
+                                <span class="txt-footer"><i class="fa fa-map-marker"></i> Nuestra Se&ntilde;ora de los Angeles 185, Oficina D, Las Condes, Santiago </span>
+                                <span class="txt-footer"><i class="fa fa-phone"></i> (+56 9) 5178 5898 </span>
+                                <span><i class="fa fa-envelope"></i> contacto@agendapro.cl </span>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <section class="copyright">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-sm-6 col-md-6"> &copy; Copyright 2013 | Gunei Investment SpA | Todos los derechos reservados</div>
+                        <div class="text-right col-sm-6 col-md-6">
+                            <%= link_to 'Sobre Nosotros', '/about_us', :target => :blank %> | <%= link_to 'Términos y Condiciones', '/TyC.pdf', :target => :blank %>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </footer>
 
         <!-- start: JavaScript-->
         <%= yield :scripts %>

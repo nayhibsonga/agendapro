@@ -37,16 +37,12 @@ function Calendar (source, getData) {
 			else if (i == 6) {
 				sunday = weekDay;
 			}
-
-			// Generate Day
-			generateDay(weekDay, sources);
 		};
+		generateWeek(monday);
 
 		// Tittle calculation
 		generateTittle(monday, sunday);
-
-		$('.horario').append('<div class="clear"></div>');
-
+		
 		return now;
 	}
 
@@ -69,113 +65,117 @@ function Calendar (source, getData) {
 		$('.tittle').text(tittle);
 	}
 
-	// Generate Day
-	var generateDay = function (weekDay, sources) {
-		sources.data.date = weekDay.toLocaleDateString();
-
-		var pos = weekDay.getDay() - 1;
-		if (pos < 0) {
-			pos = 6;
-		}
-		var columnDay = $('<div>', {
-			'class': 'columna-dia',
-			'data-date': weekDay.toLocaleDateString()
-		});
-		columnDay.append('<div class="dia-semana">' + days[pos] + ' ' + weekDay.getDate() + '</div>');
-
-		// Generate Hours
-		generateHours(columnDay, sources);
-
-		columnDay.append('<div class="clear"></div>');
-
-		// Mark today
-		var today = new Date();
-		if (today.toLocaleDateString() == weekDay.toLocaleDateString()) {
-			columnDay.addClass('columna-hoy');
-		}
-		$('.horario').append(columnDay);
-	}
-
-	// Generate Hours
-	var generateHours = function (columnDay, sources) {
+	// Generate Week
+	var generateWeek = function (monday) {
+		sources.data.date = formatDate(monday);
 		$.getJSON(sources.source, sources.data, function (data, status) {
-			$.each(data, function (key, hours) {
-				var div = $('<div>', {
-					'class': 'bloque-hora',
-					'data-start': hours.hour.start,
-					'data-end': hours.hour.end
-				});
-				switch (hours.status) {
-					case 'available':
-						div.addClass('hora-disponible');
-						var span = $('<span>').text(hours.hour.start + ' - ' + hours.hour.end);
-						div.append(span);
-						break;
-					case 'occupied':
-						div.addClass('hora-ocupada');
-						var span = $('<span>').text(hours.hour.start + ' - ' + hours.hour.end);
-						div.append(span);
-						break;
-					case 'empty':
-						div.addClass('hora-vacia');
-						div.append('<span></span>')
-						break;
-					case 'past':
-						div.addClass('hora-pasada');
-						var span = $('<span>').text(hours.hour.start + ' - ' + hours.hour.end);
-						div.append(span);
-						break;
-					default:
-						div.addClass('hora-vacia');
-						var span = $('<span>').text(hours.hour.start + ' - ' + hours.hour.end);
-						div.append(span);
-						break;
-				}
-				div.click(function (e) {
-					var element = $(e.currentTarget);
-					if (element.hasClass('hora-disponible')) {
-						// Activate block
-						$('.hora-activo').addClass('hora-disponible').removeClass('hora-activo');
-						element.removeClass('hora-disponible').addClass('hora-activo');
+			var pos = 0;
+			$.each(data, function (day, day_blocks) {
+				// Generate Day
+				if(day_blocks.length) {
+					var columnDay = $('<div>', {
+						'class': 'columna-dia',
+						'data-date': day
+					});
+					var weekNumber = day.substring(day.lastIndexOf('-') + 1);
+					columnDay.append('<div class="dia-semana">' + days[pos] + ' ' + weekNumber + '</div>');
 
-						// Event
-						var details = {
-							time: new Date(),
-							message: 'Hour ' + element.data('start') + ' - ' + element.data('end') + ' click on day ' + element.parent().data('date'),
-							date: element.parent().data('date'),
-							start: element.data('start'),
-							end: element.data('end'),
-							objectDate: parseDate(element.parent().data('date'), element.data('start')),
-							status: hours.status
-						};
-						$.event.trigger({
-							type: 'hourClick',
-							time: details.time,
-							message: details.message,
-							date: details.date,
-							start: details.start,
-							end: details.end,
-							status: details.status,
-							objectDate: details.objectDate
-						});
-						clickEvent = details;
+					// Generate Hours
+					generateHours(columnDay, day_blocks);
+
+					columnDay.append('<div class="clear"></div>');
+
+					// Mark Today
+					var today = new Date();
+					var todayString = today.getFullYear() + '-' + correctNumber(today.getMonth() + 1) + '-' + correctNumber(today.getDate());
+					if(todayString == day) {
+						columnDay.addClass('columna-hoy');
 					}
-				});
-				columnDay.append(div);
+					$('.horario').append(columnDay);
+				}
+				pos += 1;
 			});
-			if (!data.length) {
-				columnDay.remove();
-			}
+			$('.horario').append('<div class="clear"></div>');
 			calculateWidth();
 		});
 	}
 
+	// Generate Hours
+	var generateHours = function (columnDay, day_blocks) {
+		$.each(day_blocks, function (key, hours) {
+			var div = $('<div>', {
+				'class': 'bloque-hora',
+				'data-start': hours.hour.start,
+				'data-end': hours.hour.end
+			});
+			switch (hours.status) {
+				case 'past':
+					div.addClass('hora-pasada');
+					var span = $('<span>').text(hours.hour.start + ' - ' + hours.hour.end);
+					div.append(span);
+					break;
+				case 'available':
+					div.addClass('hora-disponible');
+					var span = $('<span>').text(hours.hour.start + ' - ' + hours.hour.end);
+					div.append(span);
+					break;
+				case 'occupied':
+					div.addClass('hora-ocupada');
+					var span = $('<span>').text(hours.hour.start + ' - ' + hours.hour.end);
+					div.append(span);
+					break;
+				case 'empty':
+					div.addClass('hora-vacia');
+					div.append('<span></span>')
+					break;
+				default:
+					div.addClass('hora-vacia');
+					var span = $('<span>').text(hours.hour.start + ' - ' + hours.hour.end);
+					div.append(span);
+					break;
+			}
+			div.click(function (e) {
+				var element = $(e.currentTarget);
+				if (element.hasClass('hora-disponible')) {
+					// Activate block
+					$('.hora-activo').addClass('hora-disponible').removeClass('hora-activo');
+					element.removeClass('hora-disponible').addClass('hora-activo');
+
+					// Event
+					var details = {
+						time: new Date(),
+						message: 'Hour ' + element.data('start') + ' - ' + element.data('end') + ' click on day ' + element.parent().data('date'),
+						date: element.parent().data('date'),
+						start: element.data('start'),
+						end: element.data('end'),
+						objectDate: parseDate(element.parent().data('date'), element.data('start')),
+						status: hours.status
+					};
+					$.event.trigger({
+						type: 'hourClick',
+						time: details.time,
+						message: details.message,
+						date: details.date,
+						start: details.start,
+						end: details.end,
+						status: details.status,
+						objectDate: details.objectDate
+					});
+					clickEvent = details;
+				}
+			});
+			columnDay.append(div);
+		});
+	}
+
+	// Auxiliar methods
 	var parseDate = function (date, start) {
 		start = start || '00:00';
-		var month = date.substring(0, date.indexOf('/')) - 1;
-		date = date.substring(date.indexOf('/') + 1);
-		var day = date.substring(0, date.indexOf('/'));
-		var year = date.substring(date.indexOf('/') + 1);
+		var year = date.substring(0, date.indexOf('-'));
+		date = date.substring(date.indexOf('-') + 1);
+		var month = date.substring(0, date.indexOf('-')) - 1;
+		date = date.substring(date.indexOf('-') + 1);
+		var day = date;
 		var hour = start.substring(0, start.indexOf(':'));
 		var minutes = start.substring(start.indexOf(':') + 1);
 
@@ -188,7 +188,19 @@ function Calendar (source, getData) {
 		$('.columna-dia').css('width', width + '%');
 	}
 
-	// Auxiliar methods
+	var correctNumber = function (number) {
+		if (number < 10) {
+			return '0' + number;
+		}
+		else {
+			return number;
+		}
+	}
+
+	var formatDate = function (date) {
+		return date.getFullYear() + '-' + correctNumber(date.getMonth() + 1) + '-' + correctNumber(date.getDate());
+	}
+
 	this.rebuild = function (source, getData) {
 		sources = {
 			source: '/jsontest',

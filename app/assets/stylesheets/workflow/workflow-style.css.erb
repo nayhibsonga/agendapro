@@ -1,0 +1,171 @@
+@charset "UTF-8";
+
+#navegacion-workflow{
+	margin:10px 0px 0px 0px;
+	background: #F3F3F3;
+	border: 1px solid #ccc;
+	border-radius: 5px;
+	padding:5px 0px;
+}
+.btn-success{
+	color: #ffffff;
+	background-color: #D55330;
+	border-color: #E64215;
+}
+.pasos-reserva a{
+	height:33px;
+	width: 30%;
+	margin:0px 1.5%;
+	float:left;
+	text-align: center;
+	background: #D1D1D1;
+	border:1px solid #999;
+	color: #fff;
+	line-height: 2.4;
+	border-radius: 5px;
+	border:1px solid #585656;
+}
+.pasos-reserva a:hover, .pasos-reserva a.selected{
+	background-color: rgba(250, 70, 22, 0.45);
+	border:1px solid #FA4616;
+}
+#espacio-workflow{
+	margin-top:10px;
+}
+
+.box-step{
+	min-height:350px;
+	background:#F3F3F3;
+	border: 1px solid #C0C0C0;
+	border-radius: 5px;
+	float:left;
+}
+.panel-info {
+	border-color: rgba(27,115,112,0.6);
+}
+.panel-info>.panel-heading {
+	color: rgba(27,115,112,1);
+	background-color: rgba(27,115,112,0.4);
+	border-color: rgba(27,115,112,0.67);
+}
+
+/* PAGINA EMPRESA */
+.header-empresa{
+	height: 175px;
+	background: rgba(27,115,112,0.6);
+	overflow:hidden;
+}
+#datos-empresa h3{
+	color: #fff;
+}
+.btn-info {
+	background-color: rgba(27,115,112,0.4);
+	border-color: rgba(27,115,112,0.67);
+	font-weight: bold;
+}
+.info-empresa{
+	height:70px;
+}
+.main {
+	background: url(<%= asset_path 'backgrounds/wild_oliva_light.png' %>);
+	background-color: #E2E3E4;
+	min-height: 400px;
+	padding-top: 20px;
+}
+.logo-empresa{
+	width:140px;
+	height: 140px;
+	border-radius: 70px;
+	background: #fff;
+	margin-top:20px;
+	overflow: hidden;
+}
+.logo-empresa img{
+	width: auto;
+	height: 100%;
+}
+#locales-empresa tr:hover{
+	background-color: rgba(27,115,112,0.2);
+}
+.local-seleccionado{
+	background-color: rgba(27,115,112,0.2);
+}
+
+#boton-agendar{
+	margin-bottom: 10px;
+}
+.google-maps-empresa {
+ 	position: relative;
+	padding-bottom: 75%; // This is the aspect ratio
+ 	height: 0;
+	overflow: hidden;
+	margin-top: 57px;
+}
+.google-maps-empresa #map {
+ 	position: absolute;
+ 	top: 0;
+	left: 0;
+	width: 100% !important;
+    height: 100% !important;
+}
+
+
+
+/* CALENDARIO CSS */
+.horario{
+	width:100%;
+}
+.columna-dia{
+	width:13%;
+	margin:0px 0.6%;
+	float:left;
+}
+.dia-semana{
+	width:100%;
+	height:25px;
+	text-align:center;
+	font-weight:bold;
+	color: #676767;
+}
+.bloque-hora{
+	width:100%;
+	height:44px;
+	border-radius:5px;
+	margin-bottom:10px;
+	text-align:center;
+	line-height: 2.7
+}
+.hora-disponible{
+	cursor:pointer;
+	background: #1e8584;
+	background-color: rgba(30, 133, 132, 0.8);
+	border: 1px solid #1e8584;
+	color: #fff;
+}
+.hora-disponible:hover{
+	background-color: #006D68;
+	transition:1s;
+}
+.hora-ocupada{
+	background-color: #f2dede;
+	border:1px solid #FAA9AA;
+	color: #FC5658;
+}
+.hora-vacia{
+	background:rgba(216,216,216,0.5);
+	border:1px solid #ccc;
+}
+.clear{
+	clear:both;
+}
+
+/* Barra superior */
+#barra-superior {
+background: rgba(27,115,112,1);
+height: 44px;
+}
+
+/* Alineación de el cuadro inferior del WF  */
+#espacio-workflow .col-md-12{
+padding: 0px;
+}

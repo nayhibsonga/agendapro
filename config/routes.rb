@@ -50,6 +50,9 @@ Agendapro::Application.routes.draw do
   get '/select_plan', :to => 'plans#select_plan', :as => 'select_plan'
   get '/get_direction', :to => 'districts#get_direction'
 
+  # My Agenda
+  get '/my_agenda', :to => 'users#agenda', :as => 'my_agenda'
+
   get "/home", :to => 'home#index', :as => 'home'
   get "/features", :to => 'home#features', :as => 'features'
   get "/view_plans", :to => 'plans#view_plans', :as => 'view_plans'
