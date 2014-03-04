@@ -133,6 +133,10 @@ tophair = Company.create(name: 'Tophair', web_address: 'tophair', economic_secto
 
 # Usuarios de la app anterior
 
+lizet = User.create(first_name: 'Lizet', last_name: 'Riquelme', email: 'atencion@geavital.cl', phone: '', role: Role.find_by_name('Admin'), password: 'atenciongeavital', password_confirmation: 'atenciongeavital', company_id: geavital.id)
+
+odette = User.create(first_name: 'Odette', last_name: 'Sandoval', email: 'tophairpeluquerias@gmail.com', phone: '', role: Role.find_by_name('Admin'), password: '12345678', password_confirmation: '12345678', company_id: geavital.id)
+
 kathy = User.create(first_name: 'Kathy', last_name: 'Valdes', email: 'mandarinabeauty@gmail.com', phone: '', role: Role.find_by_name('Admin'), password: 'agendapro', password_confirmation: 'agendapro', company_id: mandarina.id)
 
 #gabriel = User.create(first_name: 'Gabriel', last_name: 'Morales', email: 'mandarinabeauty@gmail.com', phone: '', role: Role.find_by_name('Staff'), password: 'agendapro', password_confirmation: 'agendapro')
@@ -172,7 +176,6 @@ natalia = User.create(first_name: 'Natalia', last_name: 'Campos', email: 'natali
 daniella = User.create(first_name: 'Daniella', last_name: 'Leiva', email: 'la.perpetua@gmail.com', phone: '', role: Role.find_by_name('Admin'), password: 'eternos2481', password_confirmation: 'eternos2481', company_id: chely.id)
 
 #monica = User.create(first_name: 'Monica', last_name: 'Pascual', email: 'la.perpetua@gmail.com', phone: '', role: Role.find_by_name('Staff'), password: 'peluqueria', password_confirmation: 'peluqueria')
-
 
 
 # Locales Clientes Beta, agregar las latitudes!!!
