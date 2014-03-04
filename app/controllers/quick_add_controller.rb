@@ -45,7 +45,7 @@ class QuickAddController < ApplicationController
 	        format.html { redirect_to @service, notice: 'Servicio creado satisfactoriamente.' }
 	        format.json { render action: 'show', status: :created, location: @service }
 	      else
-	        format.html { render action: 'new' }
+	        format.html { render action: 'services' }
 	        format.json { render json: @service.errors, status: :unprocessable_entity }
 	      end
 	    end
@@ -57,7 +57,12 @@ class QuickAddController < ApplicationController
 
 	    respond_to do |format|
 	      if @service_provider.save
-	        format.json { render :layout => false, :json => @service_provider }
+	      	@serviceStaff.new(:service_id => Service.find_by(:company_id => current_user.company_id), :service_provider_id => @service_provider.id)
+	      	if @serviceStaff.save
+	        	format.json { render :layout => false, :json => @service_provider }
+	        else
+	        	format.json { render :layout => false, :json => { :errors => @serviceStaff.errors.full_messages }, :status => 422 }
+	        end
 	      else
 	        format.json { render :layout => false, :json => { :errors => @service_provider.errors.full_messages }, :status => 422 }
 	      end

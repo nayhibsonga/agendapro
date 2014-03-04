@@ -1,93 +1,119 @@
-<%= form_for @service, :url => quick_add_create_services_path, html: {class: "form-horizontal" } do |f| %>
-  <% if @service.errors.any? %>
-    <div id="error_explanation">
-      <h2><%= pluralize(@service.errors.count, "error") %> no permitió que el servicio se guardara:</h2>
+<div class="box-step"></div>
+<div class="box-step">
+  <div class="col-md-12">
+    <h4>Nuevo Servicio</h4>
+    <%= form_for @service, :url => quick_add_create_services_path, html: {class: "form-horizontal" } do |f| %>
+      <div class="col-md-6">
+        <% if @service.errors.any? %>
+          <div id="error_explanation">
+            <h2><%= pluralize(@service.errors.count, "error") %> no permitió que el servicio se guardara:</h2>
+            <ul>
+              <% @service.errors.full_messages.each do |msg| %>
+                <li><%= msg %></li>
+              <% end %>
+            </ul>
+          </div>
+        <% end %>
+        <div class="form-group">
+          <%= f.label :name, "Nombre: ", class: "col-sm-3 control-label" %>
+          <div class="col-sm-9">
+            <%= f.text_field :name, :autofocus => true, class: "form-control" %>
+          </div>
+        </div>
+        <div class="form-group">
+          <%= f.label :price, "Precio: ", class: "col-sm-3 control-label" %>
+          <div class="col-sm-9">
+            <div class="input-group">
+              <span class="input-group-addon">$</span>
+              <%= f.number_field :price, class: "form-control", :min => 0 %>
+              <span class="input-group-addon">Pesos</span>
+            </div>
+          </div>
+        </div>
+        <div class="form-group">
+          <%= f.label :duration, "Duración: ", class: "col-sm-3 control-label" %>
+          <div class="col-sm-9">
+            <div class="input-group">
+              <%= f.number_field :duration, class: "form-control", :in => 5...1440, :step => 5 %>
+              <span class="input-group-addon">Minutos</span>
+            </div>
+          </div>
+        </div>
+        <div class="form-group">
+          <%= f.label :description, "Descripción: ", class: "col-sm-3 control-label" %>
+          <div class="col-sm-9">
+            <%= f.text_area :description, class: "form-control" %>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="form-group">
+          <div class="col-sm-offset-3 col-sm-9">
+            <div class="checkbox">
+              <label>
+                <%= f.check_box :group_service %> Servicio Grupal
+              </label>
+            </div>
+          </div>
+        </div>
+        <div class="form-group hidden">
+          <%= f.label :capacity, "Capacidad: ", class: "col-sm-3 control-label" %>
+          <div class="col-sm-9">
+            <div class="input-group">
+              <%= f.number_field :capacity, class: "form-control", :min => 2 %>
+              <span class="input-group-addon">Personas</span>
+            </div>
+          </div>
+        </div>
+        <div class="form-group">
+          <%= f.label :service_category_id, "Categoría de Servicio: ", class: "col-sm-3 control-label" %>
+          <div class="col-sm-9">
+            <%= f.collection_select :service_category_id, ServiceCategory.where(company_id: current_user.company_id), :id, :name, {}, { class: "form-control" }%>
+          </div>
+        </div>
+        <% if @service.service_category.nil? then @service.build_service_category end %>
+        <div class="form-group">
+          <div class="col-sm-offset-3 col-sm-9">
+            <div class="checkbox">
+              <label>
+                <input type="checkbox" name="catCheck" id="categoryCheckboxId" value="0" onchange="categoryChange()" class="checkbox"> Crear nueva Categoría de Servicio
+              </label>
+            </div>
+          </div>
+        </div>
 
-      <ul>
-      <% @service.errors.full_messages.each do |msg| %>
-        <li><%= msg %></li>
-      <% end %>
-      </ul>
-    </div>
-  <% end %>
+        <%= f.fields_for :service_category do |builder| %>
+        <div class="form-group hidden">
+          <%= builder.label :name, "Nueva Categoría de Servicio", class: "col-sm-3 control-label" %>
+          <div class="col-sm-9">
+            <%= builder.text_field :name, class: "form-control", :value => '' %>
+            <%= builder.hidden_field :company_id, class: "form-control", :value => current_user.company_id %>
+          </div>
+        </div>
+        <% end %>
+        
+        <div class="form-group">
+          <%= f.label :tag, "Tags de Búsqueda: ", class: "col-sm-3 control-label" %>
+          <div class="col-sm-3 col-sm-9"> 
+            <%= f.collection_check_boxes :tag_ids, Tag.where(economic_sector: Company.find(current_user.company_id).economic_sector), :id, :name, html: {class: "checkbox"} do |b|%>
+              <div class="checkbox">
+                <%= b.label %> <%= b.check_box %>
+              </div>
+            <% end %>
+          </div>
+        </div>
 
-  <div class="form-group">
-    <%= f.label :name, "Nombre: ", class: "col-sm-2 control-label" %>
-    <div class="col-sm-4">
-      <%= f.text_field :name, :autofocus => true, class: "form-control" %>
-    </div>
+        <div class="form-group">
+          <div class="col-sm-offset-3 col-sm-9">
+            <%= f.submit "Crear Nuevo Servicio", :class => 'btn btn-default' %>
+          </div>
+        </div>
+      </div>
+    <% end %>
   </div>
+</div>
+<div class="box-step"></div>
 
-  <div class="form-group">
-    <%= f.label :price, "Precio: ", class: "col-sm-2 control-label" %>
-    <div class="col-sm-4">
-      <%= f.number_field :price, class: "form-control" %>
-    </div>
-  </div>
-
-  <div class="form-group">
-    <%= f.label :duration, "Duración: ", class: "col-sm-2 control-label" %>
-    <div class="col-sm-4">
-      <%= f.number_field :duration, class: "form-control" %>
-    </div>
-  </div>
-
-  <div class="form-group">
-    <%= f.label :description, "Descripción: ", class: "col-sm-2 control-label" %>
-    <div class="col-sm-4">
-      <%= f.text_area :description, class: "form-control" %>
-    </div>
-  </div>
-
-  <div class="form-group">
-    <%= f.label :group_service, "Servicio Grupal: ", class: "col-sm-2 control-label" %>
-    <div class="col-sm-4">
-      <%= f.check_box :group_service %>
-    </div>
-  </div>
-
-  <div class="form-group">
-    <%= f.label :capacity, "Capacidad: ", class: "col-sm-2 control-label" %>
-    <div class="col-sm-4">
-      <%= f.number_field :capacity, class: "form-control" %>
-    </div>
-  </div>
-
-  <div class="form-group">
-    <%= f.label :service_category_id, "Categoría de Servicio: ", class: "col-sm-2 control-label" %>
-    <div class="col-sm-4">
-      <%= f.collection_select :service_category_id, ServiceCategory.where(company_id: current_user.company_id), :id, :name, {}, { class: "form-control" }%>
-    </div>
-  </div>
- 
-  <% if @service.service_category.nil? then @service.build_service_category end %>
-    <div class="form-group">
-      <%= f.label :service_category_id, "Crear nueva Categoría de Servicio: ", class: "col-sm-2 control-label" %>
-    <div class="col-sm-4">
-      <input type="checkbox" name="catCheck" id="categoryCheckboxId" value="0" onchange="categoryChange()" class="checkbox">
-    </div>
-  </div>
-
-  <%= f.fields_for :service_category do |builder| %>
-
-  <div class="form-group">
-    <%= builder.label :name, "Nueva Categoría de Servicio", class: "col-sm-2 control-label" %>
-    <div class="col-sm-4">
-      <%= builder.text_field :name, class: "form-control", :value => '' %>
-      <%= builder.hidden_field :company_id, class: "form-control", :value => current_user.company_id %>
-    </div>
-  </div>
-
-  <% end %>
-  
-  <div class="form-group">
-    <%= f.label :tag, "Tags de Búsqueda: ", class: "col-sm-2 control-label" %>
-    <div class="col-sm-4"> 
-      <%= f.collection_check_boxes :tag_ids, Tag.where(economic_sector: Company.find(current_user.company_id).economic_sector), :id, :name, html: {class: "checkbox"}%>
-    </div>
-  </div>
-
-  <div class="actions">
-    <%= f.submit "Crear Nuevo Servicio" %>
-  </div>
+<% content_for :scripts do %>
+  <%= javascript_include_tag "admin/services" %>
 <% end %>

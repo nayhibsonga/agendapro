@@ -249,6 +249,67 @@ tbody{
     z-index: 99999 !important;
 }
 
+/* Quick Add */
+#navegacion-workflow{
+	margin:10px 0px 0px 0px;
+	background: #F3F3F3;
+	border: 1px solid #ccc;
+	border-radius: 5px;
+	padding:5px 0px;
+}
+.btn-success{
+	color: #ffffff;
+	background-color: #FA4616;
+	border-color: #E64215;
+}
+.pasos-reserva a{
+	height:33px;
+	width: 30%;
+	margin:0px 1.5%;
+	float:left;
+	text-align: center;
+	background: #D1D1D1;
+	bordert:1px solid #999;
+	color: #fff;
+	line-height: 2.4;
+	border-radius: 5px;
+	border:1px solid #585656;
+}
+.pasos-reserva a:hover, .pasos-reserva a.selected{
+	background-color: rgba(250, 70, 22, 0.45);
+	border:1px solid #FA4616;
+}
+#espacio-workflow{
+	margin-top:10px;
+}
+#control-slide li{
+	display: inline-block;
+}
+.control-box{
+	background-color: #ccc;
+	display: block;
+	padding: 6px 0px;
+	margin-bottom: 0;
+	font-size: 14px;
+	font-weight: normal;
+	line-height: 1.428571429;
+	text-align: center;
+	white-space: nowrap;
+	vertical-align: middle;
+	cursor: pointer;
+	background-image: none;
+	border: 1px solid transparent;
+	border-radius: 4px;
+	-webkit-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	-o-user-select: none;
+	user-select: none;
+}
+li.selected> div.control-box{
+	background: rgba(27,115,112,0.4);
+}
+
 /* Menu responsivo */
 @media (max-width: 992px) { 
 	#admin-content{
