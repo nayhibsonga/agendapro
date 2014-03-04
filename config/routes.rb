@@ -37,6 +37,7 @@ Agendapro::Application.routes.draw do
     resources :users 
   end
 
+  get '/quick_add/quick_add', :to => 'quick_add#quick_add'
   get '/quick_add/location', :to => 'quick_add#location', :as => 'quick_add_location'
   get '/quick_add/services', :to => 'quick_add#services', :as => 'quick_add_services'
   get '/quick_add/service_provider', :to => 'quick_add#service_provider', :as => 'quick_add_service_provider'

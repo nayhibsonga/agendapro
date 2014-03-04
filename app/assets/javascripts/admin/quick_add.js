@@ -1,13 +1,15 @@
 var my_alert;
 var days = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'];
+var local = 'local';
+var prov = 'prov';
 
-function buildDay (value) {
-	$('tbody').append(
+function buildDay (value, ctrl) {
+	$('#' + ctrl + 'Table').append(
 		'<tr>' +
 			'<th rowspan="2">' +
 				'<div class="checkbox">' +
 				    '<label>' +
-				    	'<input type="checkbox" name="dayStatus'+ value +'" id="dayStatusId'+ value +'" value="0" onchange="changeDayStatus('+ value +')"> ' + days[value - 1] + ':' +
+				    	'<input type="checkbox" name="' + ctrl + 'dayStatus'+ value +'" id="' + ctrl + 'dayStatusId'+ value +'" value="0" onchange="changeDayStatus('+ value +',' + ctrl + ')"> ' + days[value - 1] + ':' +
 				    '</label>' +
 				'</div>' +
 			'</th>' +
@@ -15,7 +17,7 @@ function buildDay (value) {
 			'<th>' +
 				'<form class="form-inline" role="form">' +
 					'<div class="form-group">' +
-						'<select class="form-control" id="openHourId'+ value +'" name="openHour'+ value +'" disabled="disabled">' +
+						'<select class="form-control" id="' + ctrl + 'openHourId'+ value +'" name="' + ctrl + 'openHour'+ value +'" disabled="disabled">' +
 							'<option value="00">00</option>' +
 							'<option value="01">01</option>' +
 							'<option value="02">02</option>' +
@@ -43,7 +45,7 @@ function buildDay (value) {
 						'</select>' +
 					'</div> : ' +
 					'<div class="form-group">' +
-						'<select class="form-control" id="openMinuteId'+ value +'" name="openMinute'+ value +'" disabled="disabled">' +
+						'<select class="form-control" id="' + ctrl + 'openMinuteId'+ value +'" name="' + ctrl + 'openMinute'+ value +'" disabled="disabled">' +
 							'<option value="00">00</option>' +
 							'<option value="15">15</option>' +
 							'<option value="30">30</option>' +
@@ -58,7 +60,7 @@ function buildDay (value) {
 			'<th>' +
 				'<form class="form-inline" role="form">' +
 					'<div class="form-group">' +
-						'<select class="form-control" id="closeHourId'+ value +'" name="closeHour'+ value +'" disabled="disabled">' +
+						'<select class="form-control" id="' + ctrl + 'closeHourId'+ value +'" name="' + ctrl + 'closeHour'+ value +'" disabled="disabled">' +
 							'<option value="00">00</option>' +
 							'<option value="01">01</option>' +
 							'<option value="02">02</option>' +
@@ -86,7 +88,7 @@ function buildDay (value) {
 						'</select>' +
 					'</div> : ' +
 					'<div class="form-group">' +
-						'<select class="form-control" id="closeMinuteId'+ value +'" name="closeMinute'+ value +'" disabled="disabled">' +
+						'<select class="form-control" id="' + ctrl + 'closeMinuteId'+ value +'" name="' + ctrl + 'closeMinute'+ value +'" disabled="disabled">' +
 							'<option value="00">00</option>' +
 							'<option value="15">15</option>' +
 							'<option value="30">30</option>' +
@@ -99,49 +101,114 @@ function buildDay (value) {
   	);
 }
 
-function initialize() {
+function initialize(ctrl) {
 	for(var i = 1; i < 8; ++i) {
-		buildDay(i);
-	}
-
-	if ( $('#title').length > 0 ) {
-		var providerTimesData = $('#provider_times_data').data('provider-times');
-		$.each(providerTimesData, function(index,providerTime) {
-			var value = providerTime.day_id;
-			$('#dayStatusId'+ value).prop('checked', true);
-			$('#dayStatusId'+ value).val(1);
-
-			$('#openHourId'+ value).prop('disabled', false);
-			$('#openMinuteId'+ value).prop('disabled', false);
-			$('#closeHourId'+ value).prop('disabled', false);
-			$('#closeMinuteId'+ value).prop('disabled', false);
-
-			var openTime = new Date(Date.parse(providerTime.open)).toUTCString().split(" ")[4].split(":");
-			var closeTime = new Date(Date.parse(providerTime.close)).toUTCString().split(" ")[4].split(":");
-
-			$('#openHourId'+ value +' option[value="'+openTime[0]+'"]').attr("selected",true);
-			$('#openMinuteId'+ value +' option[value="'+openTime[1]+'"]').attr("selected",true);
-			$('#closeHourId'+ value +' option[value="'+closeTime[0]+'"]').attr("selected",true);
-			$('#closeMinuteId'+ value +' option[value="'+closeTime[1]+'"]').attr("selected",true);
-		});
+		buildDay(i, ctrl);
 	}
 }
 
-function changeDayStatus(value) {
-	if ($('#dayStatusId'+ value).val() == 0) {
-		$('#openHourId'+ value).prop('disabled', false);
-		$('#openMinuteId'+ value).prop('disabled', false);
-		$('#closeHourId'+ value).prop('disabled', false);
-		$('#closeMinuteId'+ value).prop('disabled', false);
-		$('#dayStatusId'+ value).val(1);
+function changeDayStatus(value, ctrl) {
+	if ($('#' + ctrl + 'dayStatusId'+ value).val() == 0) {
+		$('#' + ctrl + 'openHourId'+ value).prop('disabled', false);
+		$('#' + ctrl + 'openMinuteId'+ value).prop('disabled', false);
+		$('#' + ctrl + 'closeHourId'+ value).prop('disabled', false);
+		$('#' + ctrl + 'closeMinuteId'+ value).prop('disabled', false);
+		$('#' + ctrl + 'dayStatusId'+ value).val(1);
 	}
-	else if ($('#dayStatusId'+ value).val() == 1) {
-		$('#openHourId'+ value).prop('disabled', true);
-		$('#openMinuteId'+ value).prop('disabled', true);
-		$('#closeHourId'+ value).prop('disabled', true);
-		$('#closeMinuteId'+ value).prop('disabled', true);
-		$('#dayStatusId'+ value).val(0);
+	else if ($('#' + ctrl + 'dayStatusId'+ value).val() == 1) {
+		$('#' + ctrl + 'openHourId'+ value).prop('disabled', true);
+		$('#' + ctrl + 'openMinuteId'+ value).prop('disabled', true);
+		$('#' + ctrl + 'closeHourId'+ value).prop('disabled', true);
+		$('#' + ctrl + 'closeMinuteId'+ value).prop('disabled', true);
+		$('#' + ctrl + 'dayStatusId'+ value).val(0);
 	}
+}
+
+function startLocation() {
+	var district = $('#location_district_id').val();
+	var address = $('#location_address').val();
+	if ((address != '')&&(district != '')) {
+		$.getJSON('/get_direction', {id: district}, function (direction) {
+			var geolocation = address + ', ' + direction;
+			var geoString = JSON.stringify(geolocation);
+			var geocoder = new google.maps.Geocoder();
+			geocoder.geocode( { "address" : geoString }, function (results, status) {
+				if (status == google.maps.GeocoderStatus.OK) {
+					$('#location_latitude').val(results[0].geometry.location.lat());
+					$('#location_longitude').val(results[0].geometry.location.lng());
+				}
+				else {
+					my_alert.showAlert('Hubo un error geolocalizando su local.');
+				}
+
+				// Al menos un dia seleccionado
+				var bool = false;
+				for(var i = 1; i < 8; ++i) {
+					bool = bool || $('[name="localdayStatusId'+ i +'"]').is(':checked');
+				}
+				if (bool) {
+					// saveLocation();
+					alert()
+				}
+				else {
+					my_alert.showAlert('Tiene que seleccionar al menos un día.');
+				}
+			});
+		});
+	}
+	else {
+		my_alert.showAlert('Dirección y/o Comuna no pueden estar vacías.');
+	}
+}
+
+function locJSON() {
+	var enabledDays = [];
+	$(".checkbox").each( function() {
+		if ($( this ).val() == 1) {
+			enabledDays.push($(this).attr('id').slice(-1));
+		}
+	});
+	var location_times = [];
+	for (i in enabledDays) {
+		var location_time = {"open":"2000-01-01T"+ $('#' + ctrl + 'openHourId'+enabledDays[i]).val() +":"+ $('#' + ctrl + 'openMinuteId'+enabledDays[i]).val() +":00Z","close":"2000-01-01T"+ $('#' + ctrl + 'closeHourId'+enabledDays[i]).val() +":"+ $('#' + ctrl + 'closeMinuteId'+enabledDays[i]).val() +":00Z","day_id":parseInt(enabledDays[i])};
+		location_times.push(location_time);
+	}
+	var locationJSON  = {
+		"name": $('#location_name').val(),
+		"address": $('#location_address').val(),
+		"phone": $('#location_phone').val(),
+		"district_id": $('#location_district_id').val(),
+		"latitude": parseFloat($('#location_latitude').val()),
+		"longitude": parseFloat($('#location_longitude').val()),
+		"location_times_attributes": location_times
+	};
+	return locationJSON;
+}
+
+function saveLocation() {
+	var locationJSON = locJSON();
+	$.ajax({
+	    type: "POST",
+	    url: '/quick_add/location.json',
+	    data: { "location": locationJSON },
+	    dataType: 'json',
+	    success: function(){
+	    	document.location.href = '/locations/';
+		},
+		error: function(xhr){
+		    var errors = $.parseJSON(xhr.responseText).errors;
+		    var error_text = '';
+		    for (i in errors) {
+		    	error_text += '<li>' + errors[i] + '</li>';
+		    }
+		    my_alert.showAlert(
+		    	'<h4>Error</h4>' +
+		    	'<ul>' +
+		    		error_text +
+		    	'</ul>'
+		    );
+		}
+	});
 }
 
 function createProvider() {
@@ -199,6 +266,7 @@ function createProvider() {
 }
 
 $(function() {
+  initialize('local');
   initialize('prov');
   my_alert = new Alert();
 });

@@ -1,0 +1,223 @@
+<div class="box-step">
+  <div class="col-md-12">
+    <h4>Nuevo Local</h4>
+  </div>
+  <div class="col-md-6">
+    <%= form_for @location, html: {class: "form-horizontal"} do |f| %>
+      <%= f.hidden_field :latitude %>
+      <%= f.hidden_field :longitude %>
+
+      <div class="form-group">
+        <%= f.label :name, "Nombre: ", class: "col-sm-3 control-label" %>
+        <div class="col-sm-9">
+          <%= f.text_field :name, :autofocus => true, class: "form-control" %>
+        </div>
+      </div>
+      <div class="form-group">
+        <%= f.label :address, "Dirección: ", class: "col-sm-3 control-label" %>
+        <div class="col-sm-9">
+          <%= f.text_field :address, class: "form-control" %>
+        </div>
+      </div>
+      <div class="form-group">
+        <%= f.label :phone, "Teléfono: ", class: "col-sm-3 control-label" %>
+        <div class="col-sm-9">
+          <%= f.text_field :phone, class: "form-control" %>
+        </div>
+      </div>
+      <div class="form-group">
+        <%= f.label :district, "Comuna: ", class: "col-sm-3 control-label" %>
+        <div class="col-sm-9">
+          <%= f.collection_select :district_id, District.all, :id, :name, {}, { class: "form-control" }%>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <div class="col-sm-offset-3 col-sm-9">
+          <%= button_to 'Atrás', locations_path, :method => :get, :class => "btn btn-warning btn-sm" %>
+          <%= button_to_function "Guardar Local", "startLocation()", :class => "btn btn-success btn-sm" %>
+        </div>
+      </div>
+    <% end %>
+  </div>
+  <div class="col-md-6">
+    <div class="panel panel-info">
+      <div class="panel-heading">
+        <h3 class="panel-title">
+          Horario Local
+        </h3>
+      </div>
+      <div class="panel-body">
+        <table class="table">
+          <tbody id="localTable">
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="box-step">
+  <div class="col-md-12">
+    <h4>Nuevo Servicio</h4>
+    <%= form_for @service, :url => quick_add_create_services_path, html: {class: "form-horizontal" } do |f| %>
+      <div class="col-md-6">
+        <% if @service.errors.any? %>
+          <div id="error_explanation">
+            <h2><%= pluralize(@service.errors.count, "error") %> no permitió que el servicio se guardara:</h2>
+            <ul>
+              <% @service.errors.full_messages.each do |msg| %>
+                <li><%= msg %></li>
+              <% end %>
+            </ul>
+          </div>
+        <% end %>
+        <div class="form-group">
+          <%= f.label :name, "Nombre: ", class: "col-sm-3 control-label" %>
+          <div class="col-sm-9">
+            <%= f.text_field :name, :autofocus => true, class: "form-control" %>
+          </div>
+        </div>
+        <div class="form-group">
+          <%= f.label :price, "Precio: ", class: "col-sm-3 control-label" %>
+          <div class="col-sm-9">
+            <div class="input-group">
+              <span class="input-group-addon">$</span>
+              <%= f.number_field :price, class: "form-control", :min => 0 %>
+              <span class="input-group-addon">Pesos</span>
+            </div>
+          </div>
+        </div>
+        <div class="form-group">
+          <%= f.label :duration, "Duración: ", class: "col-sm-3 control-label" %>
+          <div class="col-sm-9">
+            <div class="input-group">
+              <%= f.number_field :duration, class: "form-control", :in => 5...1440, :step => 5 %>
+              <span class="input-group-addon">Minutos</span>
+            </div>
+          </div>
+        </div>
+        <div class="form-group">
+          <%= f.label :description, "Descripción: ", class: "col-sm-3 control-label" %>
+          <div class="col-sm-9">
+            <%= f.text_area :description, class: "form-control" %>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="form-group">
+          <div class="col-sm-offset-3 col-sm-9">
+            <div class="checkbox">
+              <label>
+                <%= f.check_box :group_service %> Servicio Grupal
+              </label>
+            </div>
+          </div>
+        </div>
+        <div class="form-group hidden">
+          <%= f.label :capacity, "Capacidad: ", class: "col-sm-3 control-label" %>
+          <div class="col-sm-9">
+            <div class="input-group">
+              <%= f.number_field :capacity, class: "form-control", :min => 2 %>
+              <span class="input-group-addon">Personas</span>
+            </div>
+          </div>
+        </div>
+        <div class="form-group">
+          <%= f.label :service_category_id, "Categoría de Servicio: ", class: "col-sm-3 control-label" %>
+          <div class="col-sm-9">
+            <%= f.collection_select :service_category_id, ServiceCategory.where(company_id: current_user.company_id), :id, :name, {}, { class: "form-control" }%>
+          </div>
+        </div>
+        <% if @service.service_category.nil? then @service.build_service_category end %>
+        <div class="form-group">
+          <div class="col-sm-offset-3 col-sm-9">
+            <div class="checkbox">
+              <label>
+                <input type="checkbox" name="catCheck" id="categoryCheckboxId" value="0" onchange="categoryChange()" class="checkbox"> Crear nueva Categoría de Servicio
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <%= f.fields_for :service_category do |builder| %>
+        <div class="form-group hidden">
+          <%= builder.label :name, "Nueva Categoría de Servicio", class: "col-sm-3 control-label" %>
+          <div class="col-sm-9">
+            <%= builder.text_field :name, class: "form-control", :value => '' %>
+            <%= builder.hidden_field :company_id, class: "form-control", :value => current_user.company_id %>
+          </div>
+        </div>
+        <% end %>
+        
+        <div class="form-group">
+          <%= f.label :tag, "Tags de Búsqueda: ", class: "col-sm-3 control-label" %>
+          <div class="col-sm-3 col-sm-9"> 
+            <%= f.collection_check_boxes :tag_ids, Tag.where(economic_sector: Company.find(current_user.company_id).economic_sector), :id, :name, html: {class: "checkbox"} do |b|%>
+              <div class="checkbox">
+                <%= b.label %> <%= b.check_box %>
+              </div>
+            <% end %>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <div class="col-sm-offset-3 col-sm-9">
+            <%= f.submit "Crear Nuevo Servicio", :class => 'btn btn-default' %>
+          </div>
+        </div>
+      </div>
+    <% end %>
+  </div>
+</div>
+<div class="box-step">
+  <div class="col-md-12">
+    <h4>Nuevo Proveedor de Servicios</h4>
+    <%= form_for @service_provider, html: {class: "form-horizontal" } do |f| %>
+      <div class="col-md-6">
+        <div class="form-group">
+          <%= f.label :public_name, "Nombre Público:", class: "col-sm-3 control-label" %>
+          <div class="col-sm-9">
+            <%= f.text_field :public_name, :autofocus => true, class: "form-control" %>
+          </div>
+        </div>
+        <div class="form-group">
+          <%= f.label :notification_email, "Email de Notificación:", class: "col-sm-3 control-label" %>
+          <div class="col-sm-9">
+            <%= f.text_field :notification_email, class: "form-control" %>
+          </div>
+        </div>
+        <div class="form-group">
+          <%= f.label :location_id, "Local:", class: "col-sm-3 control-label" %>
+          <div class="col-sm-9">
+            <%= f.collection_select :location_id, Location.where(company_id: current_user.company_id), :id, :name, {}, {class: "form-control"} %>
+          </div>
+        </div>
+        <div class="form-group">
+          <div class="col-sm-offset-3 col-sm-9">
+            <%= button_to 'Atrás', service_providers_path, :method => :get, :class => "btn btn-warning btn-sm" %>
+            <%= button_to_function "Guardar Proveedor", "createProvider()", :class => "btn btn-success btn-sm" %>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="panel panel-info">
+          <div class="panel-heading">
+            <h3 class="panel-title">Horario Local</h3>
+          </div>
+          <div class="panel-body">
+            <table class="table">
+              <tbody id="provTable">
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    <% end %>
+  </div>
+</div>
+<% content_for :scripts do %>
+  <%= javascript_include_tag "http://maps.google.com/maps/api/js?sensor=false" %>
+  <%= javascript_include_tag "admin/quick_add" %>
+  <%= javascript_include_tag "admin/services" %>
+<% end %>
+

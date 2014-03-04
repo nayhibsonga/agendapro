@@ -18,6 +18,16 @@ class QuickAddController < ApplicationController
 		@service_provider.company_id = current_user.company_id
 	end
 
+	def quick_add
+		@location = Location.new
+		@service = Service.new
+		@service_provider = ServiceProvider.new
+
+		@location.company_id = current_user.company_id
+		@service.company_id = current_user.company_id
+		@service_provider.company_id = current_user.company_id
+	end
+
 	def create_location
 		@location = Location.new(location_params)
 	    @location.company_id = current_user.company_id
