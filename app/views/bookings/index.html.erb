@@ -148,7 +148,11 @@
   <%= javascript_include_tag "booking" %>
   <script>
       $(function() {
-          $('#l_todos').addClass("active")
+          $('[name="localRadio"]').first().parent().addClass("active")
+          $('[name="localRadio"]').click(function (e) {
+            $('[name="localRadio"]').parent().removeClass('active');
+            e.target.parentNode.className += 'active';
+          });
       });
       
       $("#dp").datepicker({

@@ -127,6 +127,12 @@ ps_natalia_campos = Company.create(name: 'Ps Natalia Campos', web_address: 'psna
 
 chely = Company.create(name: 'Salón de Belleza Chely', web_address: 'chely', economic_sector_id: 1, plan_id: 2, payment_status_id: 1, description: "", cancellation_policy: "")
 
+geavital = Company.create(name: 'Geavital Centro de Terapias Integrativas', web_address: 'geavitalcentrodeterapiasintegrativas', economic_sector_id: 2, plan_id: 4, payment_status_id: 1, description: "", cancellation_policy: "")
+
+tophair = Company.create(name: 'Tophair', web_address: 'tophair', economic_sector_id: 1, plan_id: 3, payment_status_id: 1, description: "", cancellation_policy: "")
+
+# Usuarios de la app anterior
+
 kathy = User.create(first_name: 'Kathy', last_name: 'Valdes', email: 'mandarinabeauty@gmail.com', phone: '', role: Role.find_by_name('Admin'), password: 'agendapro', password_confirmation: 'agendapro', company_id: mandarina.id)
 
 #gabriel = User.create(first_name: 'Gabriel', last_name: 'Morales', email: 'mandarinabeauty@gmail.com', phone: '', role: Role.find_by_name('Staff'), password: 'agendapro', password_confirmation: 'agendapro')
@@ -166,6 +172,8 @@ natalia = User.create(first_name: 'Natalia', last_name: 'Campos', email: 'natali
 daniella = User.create(first_name: 'Daniella', last_name: 'Leiva', email: 'la.perpetua@gmail.com', phone: '', role: Role.find_by_name('Admin'), password: 'eternos2481', password_confirmation: 'eternos2481', company_id: chely.id)
 
 #monica = User.create(first_name: 'Monica', last_name: 'Pascual', email: 'la.perpetua@gmail.com', phone: '', role: Role.find_by_name('Staff'), password: 'peluqueria', password_confirmation: 'peluqueria')
+
+
 
 # Locales Clientes Beta, agregar las latitudes!!!
 

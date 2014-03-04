@@ -6,7 +6,7 @@ function loadProviders () {
 		$('#providers-selector').html('<%= image_tag "ajax-loader.gif", :alt => "Loader" %>');
 		var localId = $('input[name=localRadio]:checked').val();
 		$('#providers-selector').empty();
-		$('#providers-selector').append('<label id="l_todos">' +
+		$('#providers-selector').append('<label class="active" id="l_todos">' +
 				'<input type="radio" name="providerRadio" value="0" checked>' +
 				'<p>Todos</p>' +
 			'</label>'
@@ -29,6 +29,8 @@ function loadProviders () {
 					count += 1;
 				});
 				$('[name="providerRadio"]').on('click', function(event) {
+					$('[name="providerRadio"]').parent().removeClass('active');
+            		event.target.parentNode.className += 'active';
 					$('[name="providerRadio"]').attr('checked',false);
 					$(this).attr('checked',true);
 					var providerId = event.target.getAttribute('value');
