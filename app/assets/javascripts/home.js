@@ -3,7 +3,6 @@
 //= require home/jquery.ui.totop.js
 //= require jquery-uitop
 //= require home/easing.js
-//= require home/collapsing-header
 
 //por defecto:
 //= require jquery_ujs
