@@ -137,30 +137,27 @@
     </div>
   </div>
 	
-	<!-- start: JavaScript-->
-	<!--[if !IE]>-->
-			<%= javascript_include_tag "adminNIE" %>
-	<!--<![endif]-->
-	<!--[if IE]>
-		<%= javascript_include_tag "adminIE" %>
-	<!--<![endif]-->
-	<%= javascript_include_tag "admin" %>
-	<!--[if !IE]>-->
-			<script type="text/javascript">
-			window.jQuery || document.write("<script src='assets/admin/js/jquery-2.0.3.min.js'>"+"<"+"/script>");
-			</script>
-	<!--<![endif]-->
-	<!--[if IE]>
-		<script type="text/javascript">
-	 	window.jQuery || document.write("<script src='assets/admin/js/jquery-1.10.2.min.js'>"+"<"+"/script>");
-		</script>
-	<![endif]-->
-
-	<!--[if IE8]>
-	
-		<%= javascript_include_tag "adminIE8" %>
-	
-	<![endif]-->
+  <!-- start: JavaScript-->
+    <!--[if !IE]>-->
+        <%= javascript_include_tag "adminNIE" %>
+    <!--<![endif]-->
+    <!--[if IE]>
+      <%= javascript_include_tag "adminIE" %>
+    <!--<![endif]-->
+    <%= javascript_include_tag "admin" %>
+    <!--[if !IE]>-->
+        <script type="text/javascript">
+        window.jQuery || document.write("<script src='vendor/jquery-2.1.0.min.js'>"+"<"+"/script>");
+        </script>
+    <!--<![endif]-->
+    <!--[if IE]>
+      <script type="text/javascript">
+      window.jQuery || document.write("<script src='vendor/jquery-1.11.0.min.js'>"+"<"+"/script>");
+      </script>
+    <![endif]-->
+    <!--[if IE8]>
+      <%= javascript_include_tag "adminIE8" %>
+  <![endif]-->
 	<%= yield :scripts %>
 	
 	<!-- end: JavaScript-->
