@@ -5,6 +5,9 @@
   <%= content_tag "div", id: "id_data", data: { id: @service_provider.id } do %>
   <% end %>
 
+  <%= content_tag "div", id: "provider_times_data", data: { provider_times: @service_provider.provider_times.to_json } do %>
+  <% end %>
+
   <div class="form-group">
     <%= f.label :public_name, "Nombre Público:", class: "col-sm-3 control-label" %>
       <div class="col-sm-4">
@@ -27,35 +30,55 @@
   </div>
 
   <div class="form-group">
+    <%= f.label :user_id, "Usuario:", class: "col-sm-3 control-label" %>
+    <div class="col-sm-4">
+      <%= f.collection_select :user_id, User.where(company_id: current_user.company_id), :id, :email, {:include_blank => ""}, {class: "form-control"} %>
+    </div>
+  </div>
+
+<% if @service_provider.user.nil? then @service_provider.build_user end %>
+  <div class="form-group">
+    <div class="col-sm-3 control-label"></div>
+    <div class="col-sm-4">
+      <input type="checkbox" name="userCheck" id="userCheckboxId" value="0" onchange="userChange()" class="userCheckbox"> Crear nuevo Usuario
+    </div>
+  </div>
+  <%= f.fields_for :user do |builder| %>
+  <div class="form-group">
+    <%= f.label :email, "Email nuevo usuario:", class: "col-sm-3 control-label" %>
+    <div class="col-sm-4">
+      <%= builder.text_field :email, :label => "Email Nuevo Usuario", :input_html => { :value => "" } %>
+    </div>
+  </div>
+<% end %>
+
+  <div class="form-group">
     <%= f.label :service_ids, "Selecciona el servicio: ", class: "col-sm-2 control-label" %>
     <div class="col-sm-4"> 
       <%= f.collection_check_boxes :service_ids, Service.where(company_id: current_user.company_id), :id, :name, {}, {class: "check_boxes"} %>
     </div>
   </div>
 
-  <%= content_tag "div", id: "provider_times_data", data: { provider_times: @service_provider.provider_times.to_json } do %>
-  <% end %>
-
   <div class="row">
-  	<label>Lunes:</label><div id="div1"></div>
+    <label>Lunes:</label><div id="div1"></div>
   </div>
   <div class="row">
-  	<label>Martes:</label><div id="div2"></div>
+    <label>Martes:</label><div id="div2"></div>
   </div>
   <div class="row">
-  	<label>Miércoles:</label><div id="div3"></div>
+    <label>Miércoles:</label><div id="div3"></div>
   </div>
   <div class="row">
-  	<label>Jueves:</label><div id="div4"></div>
+    <label>Jueves:</label><div id="div4"></div>
   </div>
   <div class="row">
-  	<label>Viernes:</label><div id="div5"></div>
+    <label>Viernes:</label><div id="div5"></div>
   </div>
   <div class="row">
-  	<label>Sábado:</label><div id="div6"></div>
+    <label>Sábado:</label><div id="div6"></div>
   </div>
   <div class="row">
-  	<label>Domingo:</label><div id="div7"></div>
+    <label>Domingo:</label><div id="div7"></div>
   </div>
   <br />
 <% end %>
