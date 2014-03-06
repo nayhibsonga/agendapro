@@ -47,27 +47,27 @@
 					</li>
 				</ul>
 			</div>
-
-	    <!-- start: Alerts -->
-	    <% if notice %>
-        <div class="alert alert-info alert-dismissable">
-            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-        <%= notice %>
-        </div>
-	    <% end %>
-	    <% if alert %>
-        <div class="alert alert-warning alert-dismissable">
-            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-        <%= alert %>
-        </div>
-	    <% end %>
-	    <!-- end: Alerts -->
 		</header>
+
+    <!-- start: Alerts -->
+    <% if notice %>
+      <div class="alert alert-info alert-dismissable">
+          <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+      <%= notice %>
+      </div>
+    <% end %>
+    <% if alert %>
+      <div class="alert alert-warning alert-dismissable">
+          <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+      <%= alert %>
+      </div>
+    <% end %>
+    <!-- end: Alerts -->
 		<!-- end: Header -->
 
 		<div class="container">
 			<div class="row" id="navegacion-workflow">
-		  		<div class="col-md-2"><a id="prev2" class="btn btn-success"><i class="fa fa-chevron-left"></i> Anterior</a></div>
+		  		<div class="col-md-2"><a id="prev2" class="btn btn-agendapro-claro"><i class="fa fa-chevron-left"></i> Anterior</a></div>
 		  		<div class="col-md-8">
 			        <ul id="control-slide">
 						<li class="col-sm-4"><div class="control-box">Nuevo Local</div></li>
@@ -75,7 +75,7 @@
 						<li class="col-sm-4"><div class="control-box">Nuevo Proveedor</div></li>
 			        </ul>
 		      	</div>
-		      	<div class="col-md-2"><a id="next2" class="btn btn-success pull-right">Siguiente <i class="fa fa-chevron-right"></i></a></div>
+		      	<div class="col-md-2"><a id="next2" class="btn btn-agendapro-claro pull-right">Siguiente <i class="fa fa-chevron-right"></i></a></div>
 			</div>
 		</div>
 
@@ -83,7 +83,16 @@
 			<div class="row" id="espacio-workflow">
 				<!-- start: Content -->
 				<div class="col-md-12" >
-					<div id="foo5">
+					<div class ="well">
+	          <div class="center-block" style="display: table;">
+	            <p>
+	              <h3>Cargando Contenido</h3>
+	              <span>Por favor espere</span>
+	            </p>
+	            <%= image_tag 'ajax-loader.gif', :alt => 'Loader' %>
+	          </div>
+	        </div>
+					<div id="foo5" style="visibility: collapse;">
 						<%= yield %>
 					</div>
 				</div>	
@@ -125,10 +134,21 @@
 					prev: '#prev2',
 					next: '#next2',
 					direction: "left",
+	        circular: false,
+	        infinite: false,
 					pagination: {
 						container: '#control-slide',
 						anchorBuilder: false
-					}
+					},
+					onCreate: function () {
+	          $('.center-block').parent().remove();
+	          $('#foo5').css('visibility', 'visible');
+	        },
+	        scroll: {
+	          conditions: function (direction) {
+	            return scrollEvents (direction);
+	          }
+	        }
 				});
 
 				$('#open-usuario').toggle(function () {
