@@ -16,8 +16,8 @@
       <tr>
         <td><%= role.name %></td>
         <td><%= role.description if role.description %></td>
-        <td><%= link_to '<i class="fa fa-pencil"></i>   Editar'.html_safe, edit_role_path(role), :class => "btn btn-warning" %>
-        <%= link_to '<i class="fa fa-times"></i>   Eliminar'.html_safe, role, :class => "btn btn-danger", method: :delete, data: { confirm: '¿Estás seguro? (Eliminar en caso de que sea estrictamente necesario, corrobar con Nico y Seba)' } %></td>
+        <td><%= link_to '<i class="fa fa-pencil"></i> Editar'.html_safe, edit_role_path(role), :class => "btn btn-warning" %>
+        <%= link_to '<i class="fa fa-trash-o"></i> Eliminar'.html_safe, role, :class => "btn btn-danger", method: :delete, data: { confirm: '¿Estás seguro? (Eliminar en caso de que sea estrictamente necesario, corrobar con Nico y Seba)' } %></td>
       </tr>
     <% end %>
   </tbody>
@@ -25,4 +25,4 @@
 
 <br>
 
-<%= link_to '<i class="fa fa-plus"></i>   Nuevo Rol'.html_safe, new_role_path, :class => "btn btn-primary" %>
+<%= link_to '<i class="fa fa-plus"></i> Nuevo Rol'.html_safe, new_role_path, :class => "btn btn-primary" %>

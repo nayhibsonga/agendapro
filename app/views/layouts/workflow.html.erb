@@ -21,9 +21,6 @@
         <!-- start: CSS -->
         <%= stylesheet_link_tag "workflow" %>
         <%= stylesheet_link_tag "http://fonts.googleapis.com/css?family=Open+Sans:400,300,400italic,600,600italic,700,700italic,300italic" %>
-        <!--[if IE 7]>
-            <%= stylesheet_link_tag "homeie7" %>
-        <![endif]-->
         <!-- end: CSS -->
 
         <!-- start: JavaScript-->
@@ -78,7 +75,7 @@
                                 <%= @company.description %>
                             </div>
                             <a href="http://<%= @url %>" class="btn btn-info">Descripción</a>
-                            <a href="#" class="btn btn-info">Servicio</a>
+                            <a href="#" class="btn btn-info" id="boton-servicio">Servicio</a>
                         </div>
                     </div>
                 </div>

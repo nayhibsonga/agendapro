@@ -12,8 +12,8 @@
     <% @service_providers.each do |service_provider| %>
       <tr>
         <td><%= service_provider.public_name %></td>
-        <td><%= link_to '<i class="fa fa-pencil"></i>   Editar'.html_safe, edit_service_provider_path(service_provider), :class => "btn btn-warning" %>
-        <%= link_to '<i class="fa fa-times"></i>   Eliminar'.html_safe, service_provider, :class => "btn btn-danger", method: :delete, data: { confirm: 'Estás Seguro?' } %></td>
+        <td><%= link_to '<i class="fa fa-pencil"></i> Editar'.html_safe, edit_service_provider_path(service_provider), :class => "btn btn-warning" %>
+        <%= link_to '<i class="fa fa-trash-o"></i> Eliminar'.html_safe, service_provider, :class => "btn btn-danger", method: :delete, data: { confirm: 'Estás Seguro?' } %></td>
       </tr>
     <% end %>
   </tbody>

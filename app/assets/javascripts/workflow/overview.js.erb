@@ -92,6 +92,19 @@ $(function() {
     }
   });
 
+  $('#boton-servicio').click(function (event) {
+    if (!$('[name="localRadio"]').is(':checked')) {
+      myAlert.showAlert(
+        '<h3>Seleccione un local</h3>' +
+        '<p>Debe elegir un local antes de poder agendar.</p>'
+      );
+      event.preventDefault(); // Prevent link from following its href
+    }
+    else {
+      window.location.href = 'http://' + $('#workflow_url').data('url') + '/workflow?local=' + $('input[name=localRadio]:checked').val();
+    }
+  });
+
   var map;
   initializeMap(-33.413084, -70.592161, 'map');
   

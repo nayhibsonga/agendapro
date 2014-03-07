@@ -12,14 +12,14 @@
     <% @countries.each do |country| %>
       <tr>
         <td><%= country.name %></td>
-        <td><%= link_to '   Editar', edit_country_path(country), :class => "fa fa-pencil btn btn-warning"  %>
-        <%= link_to '   Eliminar', country, :class => "fa fa-times btn btn-danger", method: :delete, data: { confirm: '¿Estás seguro?' } %></td>
+        <td><%= link_to '<i class="fa fa-pencil"></i> Editar'.html_safe, edit_country_path(country), :class => "btn btn-warning"  %>
+        <%= link_to '<i class="fa fa-trash-o"></i> Eliminar'.html_safe, country, :class => "btn btn-danger", method: :delete, data: { confirm: '¿Estás seguro?' } %></td>
       </tr>
     <% end %>
   </tbody>
 </table>
 
-<%= link_to "   Nuevo País", new_country_path, :class => "fa fa-plus btn btn-primary" %>
+<%= link_to '<i class="fa fa-plus"></i> Nuevo País'.html_safe, new_country_path, :class => "btn btn-primary" %>
 
 </table>
 
