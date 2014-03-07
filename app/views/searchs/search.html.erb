@@ -1,88 +1,88 @@
 <div class="main">
-    <!-- Barra superior y Buscador -->
-    <section class="call_to_action">
-        <div class="container">
+	<!-- Barra superior y Buscador -->
+	<section class="call_to_action">
+		<div class="container">
 			<%= render 'form' %>
-        </div>
-    </section>
-    
-    <!-- Resultado Buscador -->
-    <div class="container">
-        <div class="row">
-            <div class="well">
-                <!-- mapa -->
-                <div class="col-md-6">
-                    <div id="map"></div>
-                </div>
+		</div>
+	</section>
+	
+	<!-- Resultado Buscador -->
+	<div class="container">
+		<div class="row">
+			<div class="well">
+				<!-- mapa -->
+				<div class="col-md-6">
+					<div id="map"></div>
+				</div>
 
-                <div class="col-md-6">
-                    <% i = 1
-                        @results.each do |location| %>
-                    <div class="panel panel-info"> 
-                        <div class="panel-heading">
-                            <div class="head-local-search">
-                                <div class="number-pin">
-                                    <span><%= i %></span>
-                                </div>
-                                <h3 class="panel-title title-local"><%= location.company.name %></h3> 
-                                <%= link_to 'Reservar', url_for(:host => location.company.web_address + '.' + @domain, :local => location.id, :controller => 'companies', :action => 'overview'), :class => "btn btn-success pull-right", :role => "button" %>
-                            </div>
-                        </div>
+				<div class="col-md-6">
+					<% i = 1
+						@results.each do |location| %>
+					<div class="panel panel-info"> 
+						<div class="panel-heading">
+							<div class="head-local-search">
+								<div class="number-pin">
+									<span><%= i %></span>
+								</div>
+								<h3 class="panel-title title-local"><%= location.company.name %></h3> 
+								<%= link_to 'Reservar', url_for(:host => location.company.web_address + '.' + @domain, :local => location.id, :controller => 'companies', :action => 'overview'), :class => "btn btn-success pull-right", :role => "button" %>
+							</div>
+						</div>
 
-                        <div class="panel-body">
-                            <div class="box-tabs">
-                                <!-- Nav tabs -->
-                                <ul class="nav nav-tabs" id="myTab">
-                                    <li class="active"><a href="#home<%=i%>" data-toggle="tab"><i class="fa fa-home"></i></a></li>
-                                    <li><a href="#profile<%=i%>" data-toggle="tab">Descripción</a></li>
-                                    <li><a href="#messages<%=i%>" data-toggle="tab">Horario</a></li>
-                                </ul>
+						<div class="panel-body">
+							<div class="box-tabs">
+								<!-- Nav tabs -->
+								<ul class="nav nav-tabs" id="myTab">
+									<li class="active"><a href="#home<%=i%>" data-toggle="tab"><i class="fa fa-home"></i></a></li>
+									<li><a href="#profile<%=i%>" data-toggle="tab">Descripción</a></li>
+									<li><a href="#messages<%=i%>" data-toggle="tab">Horario</a></li>
+								</ul>
 
-                                <!-- Tab panes -->
-                                <div class="tab-content">
-                                    <div class="tab-pane active" id="home<%=i%>">
-                                        <div class="data-local-search">
-                                            <p><%= location.address %>, <%= location.district.name %>.</p>
-                                            <p>Tel: <%= location.phone %></p>
-                                        </div>
-                                    </div>
-                                    <div class="tab-pane" id="profile<%=i%>">
-                                        <p class="fix-position-search">                                                    
-                                            <% if location.company.description.nil? %>
-                                            <p>No hay descripción para esta empresa.</p>
-                                            <% else %>
-                                            <p><%= location.company.description %></p>
-                                            <% end %>
-                                        </p>
-                                    </div>
-                                    <div class="tab-pane" id="messages<%=i%>">
-                                        <table class="table fix-position-search">
-                                            <tbody id="schedule-body<%= location.id %>">
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="img-local-search">
-                                <% if location.company.logo_url %>
-                                <%= image_tag location.company.logo_url.to_s, :size => "80x80", :alt => location.company.name %>
-                                <% else %>
-                                <%= image_tag 'Iso_Pro_Color.png', :alt => 'AgendaPro', :size => "80x80" %>
-                                <% end %>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <% i = i + 1 end %>
-                    <% if @results.empty? %>
-                        <h4>No se encontraron resultados para <strong><%= params[:inputSearch] %></strong>.</h4>
-                    <% end %>
+								<!-- Tab panes -->
+								<div class="tab-content">
+									<div class="tab-pane active" id="home<%=i%>">
+										<div class="data-local-search">
+											<p><%= location.address %>, <%= location.district.name %>.</p>
+											<p>Tel: <%= location.phone %></p>
+										</div>
+									</div>
+									<div class="tab-pane" id="profile<%=i%>">
+										<p class="fix-position-search">                                                    
+											<% if location.company.description.nil? %>
+											<p>No hay descripción para esta empresa.</p>
+											<% else %>
+											<p><%= location.company.description %></p>
+											<% end %>
+										</p>
+									</div>
+									<div class="tab-pane" id="messages<%=i%>">
+										<table class="table fix-position-search">
+											<tbody id="schedule-body<%= location.id %>">
+											</tbody>
+										</table>
+									</div>
+								</div>
+							</div>
+							<div class="img-local-search">
+								<% if location.company.logo_url %>
+								<%= image_tag location.company.logo_url.to_s, :size => "80x80", :alt => location.company.name %>
+								<% else %>
+								<%= image_tag 'Iso_Pro_Color.png', :alt => 'AgendaPro', :size => "80x80" %>
+								<% end %>
+							</div>
+						</div>
+					</div>
+					
+					<% i = i + 1 end %>
+					<% if @results.empty? %>
+						<h4>No se encontraron resultados para <strong><%= params[:inputSearch] %></strong>.</h4>
+					<% end %>
 
-                </div>
-                <div class="clear"></div>
-            </div>
-        </div>
-    </div>
+				</div>
+				<div class="clear"></div>
+			</div>
+		</div>
+	</div>
 </div>
 
 
@@ -90,5 +90,5 @@
 <% end %>
 
 <% content_for :scripts do %>
-    <%= javascript_include_tag "search/map" %>
+	<%= javascript_include_tag "search/map" %>
 <% end %>
