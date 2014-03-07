@@ -72,12 +72,10 @@ function addBreak(value,divId,openTime,closeTime) {
 		$(event.target).parent().remove();
 	});
 	if (openTime != null){
-		alert(openTime);
 		$('#'+value+'openHourId'+breakCount+' option[value="'+openTime[0]+'"]').attr("selected",true);
 		$('#'+value+'openMinuteId'+breakCount+' option[value="'+openTime[1]+'"]').attr("selected",true);	
 	}
 	if (closeTime != null) {
-		alert(closeTime);
 		$('#'+value+'closeHourId'+breakCount+' option[value="'+closeTime[0]+'"]').attr("selected",true);
 		$('#'+value+'closeMinuteId'+breakCount+' option[value="'+closeTime[1]+'"]').attr("selected",true);	
 	}
@@ -136,26 +134,6 @@ function initialize() {
 				$('#closeHourId'+ value +' option[value="'+closeTime[0]+'"]').attr("selected",true);
 				$('#closeMinuteId'+ value +' option[value="'+closeTime[1]+'"]').attr("selected",true);
 			}
-			// else if (breaksArray[i] == 1) {
-			// 	$.each(providerTimesData, function(index,providerTime) {
-			// 		var value = providerTime.day_id;
-			// 		$('#dayStatusId'+ value).prop('checked', true);
-			// 		$('#dayStatusId'+ value).val(1);
-
-			// 		$('#openHourId'+ value).prop('disabled', false);
-			// 		$('#openMinuteId'+ value).prop('disabled', false);
-			// 		$('#closeHourId'+ value).prop('disabled', false);
-			// 		$('#closeMinuteId'+ value).prop('disabled', false);
-
-			// 		var openTime = new Date(Date.parse(providerTime.open)).toUTCString().split(" ")[4].split(":");
-			// 		var closeTime = new Date(Date.parse(providerTime.close)).toUTCString().split(" ")[4].split(":");
-
-			// 		$('#openHourId'+ value +' option[value="'+openTime[0]+'"]').attr("selected",true);
-			// 		$('#openMinuteId'+ value +' option[value="'+openTime[1]+'"]').attr("selected",true);
-			// 		$('#closeHourId'+ value +' option[value="'+closeTime[0]+'"]').attr("selected",true);
-			// 		$('#closeMinuteId'+ value +' option[value="'+closeTime[1]+'"]').attr("selected",true);
-			// 	});
-			// }
 		}
 	}
 

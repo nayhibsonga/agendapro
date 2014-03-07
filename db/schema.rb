@@ -196,7 +196,7 @@ ActiveRecord::Schema.define(version: 20140109135803) do
   create_table "provider_times", force: true do |t|
     t.time     "open",                null: false
     t.time     "close",               null: false
-    t.integer  "service_provider_id", null: false
+    t.integer  "service_provider_id"
     t.integer  "day_id",              null: false
     t.datetime "created_at"
     t.datetime "updated_at"
