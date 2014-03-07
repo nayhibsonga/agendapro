@@ -5,48 +5,87 @@
   <%= content_tag "div", id: "id_data", data: { id: @service_provider.id } do %>
   <% end %>
 
-  <div class="form-inputs">
-  	<%= f.input :public_name, :label => "Nombre Público" %>
-  	<%= f.input :notification_email, :label => "Email de Notificación" %>
-  	<%= f.association :user, :as => :collection_select, collection: User.where(company_id: current_user.company_id), :label => "Usuario", :label_method => :email, value_method: :id %><br />
-  	<%= f.association :location, :as => :collection_select, collection: Location.where(company_id: current_user.company_id), :label => "Local", value_method: :id %><br />
-    <%= f.association :services, 
-                     as: :check_boxes,
-                     collection: Service.where(company_id: current_user.company_id),
-                     label_method: :name, 
-                     value_method: :id,
-                     label: 'Servicios' %>
-
-  </div>
-
   <%= content_tag "div", id: "provider_times_data", data: { provider_times: @service_provider.provider_times.to_json } do %>
   <% end %>
 
+  <div class="form-group">
+    <%= f.label :public_name, "Nombre Público:", class: "col-sm-3 control-label" %>
+      <div class="col-sm-4">
+        <%= f.text_field :public_name, :autofocus => true, class: "form-control" %>
+      </div>
+  </div>
+
+  <div class="form-group">
+    <%= f.label :notification_email, "Email de Notificación:", class: "col-sm-3 control-label" %>
+      <div class="col-sm-4">
+        <%= f.text_field :notification_email, class: "form-control" %>
+      </div>
+  </div>
+ 
+  <div class="form-group">
+    <%= f.label :location_id, "Local:", class: "col-sm-3 control-label" %>
+    <div class="col-sm-4">
+      <%= f.collection_select :location_id, Location.where(company_id: current_user.company_id), :id, :name, {}, {class: "form-control"} %>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <%= f.label :user_id, "Usuario:", class: "col-sm-3 control-label" %>
+    <div class="col-sm-4">
+      <%= f.collection_select :user_id, User.where(company_id: current_user.company_id), :id, :email, {:include_blank => ""}, {class: "form-control"} %>
+    </div>
+  </div>
+
+<% if @service_provider.user.nil? then @service_provider.build_user end %>
+  <div class="form-group">
+    <div class="col-sm-3 control-label"></div>
+    <div class="col-sm-4">
+      <input type="checkbox" name="userCheck" id="userCheckboxId" value="0" onchange="userChange()" class="userCheckbox"> Crear nuevo Usuario
+    </div>
+  </div>
+  <%= f.fields_for :user do |builder| %>
+  <div class="form-group">
+    <%= f.label :email, "Email nuevo usuario:", class: "col-sm-3 control-label" %>
+    <div class="col-sm-4">
+      <%= builder.text_field :email, :label => "Email Nuevo Usuario", :input_html => { :value => "" } %>
+    </div>
+  </div>
+<% end %>
+
+  <div class="form-group">
+    <%= f.label :service_ids, "Selecciona el servicio: ", class: "col-sm-2 control-label" %>
+    <div class="col-sm-4"> 
+      <%= f.collection_check_boxes :service_ids, Service.where(company_id: current_user.company_id), :id, :name, {}, {class: "check_boxes"} %>
+    </div>
+  </div>
+
   <div class="row">
-  	<label>Lunes:</label><div id="div1"></div>
+    <label>Lunes:</label><div id="div1"></div>
   </div>
   <div class="row">
-  	<label>Martes:</label><div id="div2"></div>
+    <label>Martes:</label><div id="div2"></div>
   </div>
   <div class="row">
-  	<label>Miércoles:</label><div id="div3"></div>
+    <label>Miércoles:</label><div id="div3"></div>
   </div>
   <div class="row">
-  	<label>Jueves:</label><div id="div4"></div>
+    <label>Jueves:</label><div id="div4"></div>
   </div>
   <div class="row">
-  	<label>Viernes:</label><div id="div5"></div>
+    <label>Viernes:</label><div id="div5"></div>
   </div>
   <div class="row">
-  	<label>Sábado:</label><div id="div6"></div>
+    <label>Sábado:</label><div id="div6"></div>
   </div>
   <div class="row">
-  	<label>Domingo:</label><div id="div7"></div>
+    <label>Domingo:</label><div id="div7"></div>
   </div>
   <br />
 <% end %>
+
 <div class="row">
-  <%= button_to 'Atrás', service_providers_path, :method => :get, :class => "btn btn-warning btn-sm" %><%= button_to_function "Guardar Proveedor", "updateProvider()", :class => "btn btn-success btn-sm" %>
+  <%= button_to_function "Guardar Proveedor", "updateProvider()", :class => "btn btn-success btn-sm" %>
+  <%= button_to 'Atrás', service_providers_path, :method => :get, :class => "btn btn-warning btn-sm" %>
 </div>
 
 <% content_for :scripts do %>

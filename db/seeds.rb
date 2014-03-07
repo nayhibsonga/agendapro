@@ -74,11 +74,11 @@ roles = Role.create([{name: "Super Admin", description: "Administrador de la apl
 
 super_admin = User.create(first_name: 'Sebastián', last_name: 'Hevia', email: 'shevia@agendapro.cl', phone: '+56 9 9477 5641', role: Role.find_by_name('Super Admin'), password: '12345678', password_confirmation: '12345678')
 
-admin = User.create(first_name: 'Nicolás', last_name: 'Flores', email: 'nflores@agendapro.cl', phone: '+56 9 9719 8689', role: Role.find_by_name('Admin'), password: '12345678', password_confirmation: '12345678')
+test_company = Company.create(name: 'Test Company', web_address: 'test', economic_sector_id: 1, plan_id: 2, payment_status_id: 1, description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus pharetra quam neque, eget condimentum purus semper id. In porta ut mauris id congue. Quisque accumsan mauris nec turpis tincidunt, quis rhoncus augue porttitor. Mauris quis malesuada sem. Donec nisi metus.", cancellation_policy: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam tincidunt rutrum sapien vel ultricies. Sed.")
+
+admin = User.create(first_name: 'Nicolás', last_name: 'Flores', email: 'nflores@agendapro.cl', phone: '+56 9 9719 8689', role: Role.find_by_name('Admin'), password: '12345678', password_confirmation: '12345678', company_id: test_company.id)
 
 user = User.create(first_name: 'Nicolás', last_name: 'Rossi', email: 'nrossi@agendapro.cl', phone: '+56 9 8289 7145', role: Role.find_by_name('Usuario Registrado'), password: '12345678', password_confirmation: '12345678')
-
-test_company = Company.create(name: 'Test Company', web_address: 'test', economic_sector_id: 1, plan_id: 2, payment_status_id: 1, description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus pharetra quam neque, eget condimentum purus semper id. In porta ut mauris id congue. Quisque accumsan mauris nec turpis tincidunt, quis rhoncus augue porttitor. Mauris quis malesuada sem. Donec nisi metus.", cancellation_policy: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam tincidunt rutrum sapien vel ultricies. Sed.")
 
 local_test = Location.create(name: 'Test Location', address: 'Nuestra Sra de Los Ángeles 185', phone: '+56 9 5178 5898', district_id: 1, company_id: 1, latitude: -33.4129192, longitude: -70.5921359)
 
@@ -127,6 +127,16 @@ ps_natalia_campos = Company.create(name: 'Ps Natalia Campos', web_address: 'psna
 
 chely = Company.create(name: 'Salón de Belleza Chely', web_address: 'chely', economic_sector_id: 1, plan_id: 2, payment_status_id: 1, description: "", cancellation_policy: "")
 
+geavital = Company.create(name: 'Geavital Centro de Terapias Integrativas', web_address: 'geavitalcentrodeterapiasintegrativas', economic_sector_id: 2, plan_id: 4, payment_status_id: 1, description: "", cancellation_policy: "")
+
+tophair = Company.create(name: 'Tophair', web_address: 'tophair', economic_sector_id: 1, plan_id: 3, payment_status_id: 1, description: "", cancellation_policy: "")
+
+# Usuarios de la app anterior
+
+lizet = User.create(first_name: 'Lizet', last_name: 'Riquelme', email: 'atencion@geavital.cl', phone: '', role: Role.find_by_name('Admin'), password: 'atenciongeavital', password_confirmation: 'atenciongeavital', company_id: geavital.id)
+
+odette = User.create(first_name: 'Odette', last_name: 'Sandoval', email: 'tophairpeluquerias@gmail.com', phone: '', role: Role.find_by_name('Admin'), password: '12345678', password_confirmation: '12345678', company_id: geavital.id)
+
 kathy = User.create(first_name: 'Kathy', last_name: 'Valdes', email: 'mandarinabeauty@gmail.com', phone: '', role: Role.find_by_name('Admin'), password: 'agendapro', password_confirmation: 'agendapro', company_id: mandarina.id)
 
 #gabriel = User.create(first_name: 'Gabriel', last_name: 'Morales', email: 'mandarinabeauty@gmail.com', phone: '', role: Role.find_by_name('Staff'), password: 'agendapro', password_confirmation: 'agendapro')
@@ -166,6 +176,7 @@ natalia = User.create(first_name: 'Natalia', last_name: 'Campos', email: 'natali
 daniella = User.create(first_name: 'Daniella', last_name: 'Leiva', email: 'la.perpetua@gmail.com', phone: '', role: Role.find_by_name('Admin'), password: 'eternos2481', password_confirmation: 'eternos2481', company_id: chely.id)
 
 #monica = User.create(first_name: 'Monica', last_name: 'Pascual', email: 'la.perpetua@gmail.com', phone: '', role: Role.find_by_name('Staff'), password: 'peluqueria', password_confirmation: 'peluqueria')
+
 
 # Locales Clientes Beta, agregar las latitudes!!!
 

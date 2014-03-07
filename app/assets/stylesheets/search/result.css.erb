@@ -1,0 +1,167 @@
+@charset "UTF-8";
+
+/* Resultado Search */
+#searchbar-result{
+    margin-top: 18px;
+}
+.header-busqueda{
+    height: 70px;
+}
+.google-maps-search {
+    position: relative;
+    padding-bottom: 75%; // This is the aspect ratio
+    height: 0;
+    overflow: hidden;
+    box-shadow: 2px 2px 4px #ccc;
+    border-top: 1px solid #ccc;
+    border-left: 1px solid #ccc;
+}
+
+.number-pin{
+    display: block;
+    height: 30px;
+    width: 22px;
+    float: left;
+    background: url(<%= asset_path 'pin.png' %>);
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center top;
+}
+.number-pin span{
+    display: block;
+    width: 22px;
+    text-align: center;
+    color: #fff;
+    font-size: 11px;
+    margin-top: 3px;
+}
+.title-local{
+    display: inline-block;
+    font-size: 21px;
+    padding: 3px 0px 8px 10px;
+}
+.data-local-search{
+    width: 80%;
+    float: left;
+    margin-top: 20px;
+}
+.img-local-search{
+    float: left;
+    width: 80px;
+    height: 80px;
+    border-radius: 40px;
+    background: #ccc;
+    margin-top: 20px;
+    margin-left: 15px;
+    overflow: hidden;
+}
+.img-local-search img{
+    width: auto;
+    height: 100%;
+}
+.fix-position-search{
+    margin-top: 20px;
+}
+
+#map {
+    position: relative;
+    padding-bottom: 75%; // This is the aspect ratio
+    height: 0;
+    overflow: hidden;
+    box-shadow: 2px 2px 4px #ccc;
+    border-top: 1px solid #ccc;
+    border-left: 1px solid #ccc;
+    max-height: 330px;
+}
+
+.header {
+    background-color: #A6A6A6;
+    padding: 5px 5px;
+    font-weight: bold;
+    font-size: 24.5px;
+}
+.panel-info {
+    border-color: rgba(27,115,112,0.6);
+}
+.panel-info>.panel-heading {
+    color: rgba(27,115,112,1);
+    background-color: rgba(27,115,112,0.4);
+    border-color: rgba(27,115,112,0.67);
+}
+.box-tabs{
+    width: calc(100% - 100px);
+    float: left;
+}
+
+/* Botones Modificados AgendaPro */
+.btn-success{
+    color: #ffffff;
+    background-color: #D55330;
+    border-color: #E64215;
+}
+.btn-success:hover{
+    background-color: #EB4114;
+    border-color: #EB4114;
+}
+
+.btn-agendapro-oscuro{
+    color: #ffffff;
+    background-color: rgba(27,115,112,1);
+    border-color: rgba(24, 101, 99, 1);
+}
+
+.btn-agendapro-oscuro:hover{
+    background-color: rgba(24, 101, 99, 1);
+}
+
+.btn-agendapro-claro{
+    color: #ffffff;
+    background-color: rgba(61,154,150,1);
+    border-color: rgba(55, 133, 129, 1);
+}
+
+.btn-agendapro-claro:hover{
+    background-color: rgba(55, 133, 129, 1);
+}
+
+/* Estilo antiguo de Nico F. */
+/*.header a {
+    color: #FFF;
+}
+
+a:hover {
+    color: #003AE6;
+    background-color: transparent;
+}
+
+#error {
+    display: none;
+    margin: 5px 1px 0 1px;
+}
+
+legend a {
+    font-size: 26px;
+}
+
+.promotion {
+    font-size: 16px;
+    line-height: 21px;
+    margin: 10px 0 5px 0;
+}*/
+
+.pin {
+    position: relative;
+    width: 100%; /* for IE 6 */
+    display: inline;
+}
+
+.pin span { 
+    position: absolute;
+    left: 0;
+    bottom: 8px;
+    width: 22px;
+    font-weight: bold;
+    font-size: 12px;
+    color: white;
+    text-align: center;
+}

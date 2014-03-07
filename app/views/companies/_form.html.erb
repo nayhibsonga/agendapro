@@ -1,4 +1,4 @@
-<%= form_for @company, :html => {:class => 'form-horizontal'} do |f| %>
+<%= form_for @company, :html => {:class => 'form-horizontal', :multipart => true} do |f| %>
   <% if @company.errors.any? %>
     <div id="error_explanation">
       <h2><%= pluralize(@company.errors.count, "error") %> no permitió que la empresa sea creada:</h2>
@@ -12,27 +12,38 @@
   <% end %>
 
   <div class="form-group">
-    <%= f.label :name, 'Nombre', :class => 'col-sm-4 control.label' %>
-    <div class="col-sm-8">
+    <%= f.label :name, 'Nombre: ', :class => 'col-sm-3 control-label' %>
+    <div class="col-sm-4">
       <%= f.text_field :name, :autofocus => true, :class => 'form-control' %>
     </div>
   </div>
   <div class="form-group">
-    <%= f.label :web_address, 'URL', :class => 'col-sm-4 control.label' %>
-    <div class="col-sm-8">
+    <%= f.label :web_address, 'Dirección Web:', :class => 'col-sm-3 control-label' %>
+    <div class="col-sm-4">
       <%= f.text_field :web_address, :autofocus => true, :required => true, :class => 'form-control' %>
     </div>
   </div>
   <div class="form-group">
-    <%= f.label :logo, 'Logo', :class => 'col-sm-4 control.label' %>
-    <div class="col-sm-8">
+    <%= f.label :logo, 'Logo Compañía: ', :class => 'col-sm-3 control-label' %>
+    <div class="col-sm-4">
       <%= f.file_field :logo, :accept => 'image/png,image/gif,image/jpeg', :class => 'form-control' %>
+    </div>
+  </div>
+  <div class="form-group">
+    <div class="col-sm-offset-3 col-sm-4">
+      <div class="checkbox">
+        <label>
+          <%= f.check_box :remove_logo %> Quitar Logo
+        </label>
+      </div>
     </div>
   </div>
   
   <div class="form-group">
-    <div class="col-sm-offset-4 col-sm-8">
-      <%= submit_tag 'Guardar', :class => 'btn btn-default' %>
-    </div>
+    <div class="col-sm-offset-3 col-sm-4">
+     <%= f.submit 'Guardar', :class => 'btn btn-primary' %>
+     <%= link_to 'Cancelar', company_path, :class => "btn btn-danger" %>
+    </div> 
   </div>
+
 <% end %>

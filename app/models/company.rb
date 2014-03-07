@@ -15,4 +15,6 @@ class Company < ActiveRecord::Base
 	validates :name, :web_address, :economic_sector, :plan, :payment_status, :presence => true
 
 	validates_uniqueness_of :web_address
+
+	mount_uploader :logo, LogoUploader
 end

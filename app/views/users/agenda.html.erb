@@ -1,0 +1,130 @@
+<section class="call_to_action">
+	<div class="container">
+		<%= render "searchs/form"  %> 
+	</div>
+</section>
+
+
+<div class="main">
+	<div class="container">
+		<div class="row">
+			<div class="col-md-12">
+				<h2>Bienvenido a tu agenda</h2>
+				
+			</div>
+			<div class="col-md-3">
+				<div class="panel panel-info">
+					<div class="panel-heading">
+						<h4><%= @user.first_name + " " + @user.last_name %></h4>
+					</div>
+					<div class="panel-body">
+						<address>
+							<strong>Email:</strong> <%= @user.email %>
+							<strong>Telefono:</strong> <%= @user.phone %>
+						</address>
+						<address>
+							<p>Puedes editar tus datos <%= link_to 'aquí', edit_user_registration_path %>.</p>
+						</address>
+					</div>
+				</div>
+			</div>
+			<div class="col-md-9">
+				<div class="well well-sm">
+					<h3>Reservas Activas</h3>
+					<table class="table table-striped">
+						<thead>
+							<tr>
+								<th>Inicio</th>
+								<th>Local</th>
+								<th>Servicio</th>
+								<th>Staff</th>
+								<th>Precio</th>
+								<th></th>
+							</tr>
+						</thead>
+						<tbody>
+							<% @activeBookings.each do |booking| %>
+							<tr>
+								<td><%= booking.start %></td>
+								<td><%= booking.location.name %></td>
+								<td><%= booking.service.name %></td>
+								<td><%= booking.service_provider.public_name %></td>
+								<td><%= number_with_precision(booking.service.price, precision: 0, separator: '', delimiter: '.') %></td>
+								<td>
+									<%= link_to '<i class="fa fa-pencil"></i> Editar'.html_safe, booking_edit_url(:confirmation_code => booking.confirmation_code), :class => 'btn btn-warning' %>
+									<%= link_to '<i class="fa fa-times"></i> Cancelar'.html_safe, booking_cancel_url(:confirmation_code => booking.confirmation_code), :class => 'btn btn-danger' %>
+								</td>
+							</tr>
+							<% end %>
+						</tbody>
+					</table>
+				</div>
+				<div class="row">
+					<div class="col-sm-8">
+						<div class="well well-sm">
+							<h3>Ultimas Reservas</h3>
+							<table class="table table-striped">
+								<thead>
+									<tr>
+										<th>Inicio</th>
+										<th>Local</th>
+										<th>Servicio</th>
+										<th>Staff</th>
+										<th>Estado</th>
+									</tr>
+								</thead>
+								<tbody>
+									<% @lastBookings.each do |booking| %>
+									<tr>
+										<td><%= booking.start %></td>
+										<td><%= booking.location.name %></td>
+										<td><%= booking.service.name %></td>
+										<td><%= booking.service_provider.public_name %></td>
+										<td><%= booking.status.name %></td>
+									</tr>
+									<% end %>
+								</tbody>
+							</table>
+						</div>
+					</div>
+					<div class="col-sm-4 crear-empresa">
+						<img src="<%= asset_path 'home/crea-empresa.png' %>">
+						<a href="#" class="btn btn-success btn-lg btn-block">Crea tu tienda</a>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-md-2 col-sm-4 col-xs-6">
+				<div class="publicidad-agenda" style="background-image: url(<%= asset_path 'home/peluqueria.jpg' %>)">
+					<span class="nombre-publicidad">Peluqueria</span>
+				</div>
+			</div>
+			<div class="col-md-2 col-sm-4 col-xs-6">
+				<div class="publicidad-agenda" style="background-image: url(<%= asset_path 'home/kinesiologo.jpg' %>)">
+					<span class="nombre-publicidad">Kinesiologo</span>
+				</div>
+			</div>
+			<div class="col-md-2 col-sm-4 col-xs-6">
+				<div class="publicidad-agenda" style="background-image: url(<%= asset_path 'home/centro_estetica.jpg' %>)">
+					<span class="nombre-publicidad">Centro de Estetica</span>
+				</div>
+			</div>
+			<div class="col-md-2 col-sm-4 col-xs-6">
+				<div class="publicidad-agenda" style="background-image: url(<%= asset_path 'home/psicologia.jpg' %>)">
+					<span class="nombre-publicidad">Psicologia</span>
+				</div>
+			</div>
+			<div class="col-md-2 col-sm-4 col-xs-6">
+				<div class="publicidad-agenda" style="background-image: url(<%= asset_path 'home/dentista.jpg' %>)">
+					<span class="nombre-publicidad">Dentista</span>
+				</div>
+			</div>
+			<div class="col-md-2 col-sm-4 col-xs-6">
+				<div class="publicidad-agenda" style="background-image: url(<%= asset_path 'home/medicina_alternativa.jpg' %>)">
+					<span class="nombre-publicidad">Medicina Alternativa</span>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

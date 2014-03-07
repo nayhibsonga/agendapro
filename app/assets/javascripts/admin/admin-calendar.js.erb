@@ -1,38 +1,36 @@
-function getResources() {
-	resources = [];
-	var localId = $('input[name=localRadio]:checked').val();
-	$.getJSON('/local_providers', {location: localId}, function (providersArray) {
-		if (providersArray.length > 0) {
-			$.each(providersArray, function (key, provider) {
-				resources.push({id: provider.id, name: provider.public_name});
-			});
-		}
-		return resources;
-	});
-}
+var colors = ["#1e8584","#006D68","#EE5858","#EEE458","#1F6185","#3E4A8D","#E0D20B","#62718B","#C14949","#53565A","#DFD1A7","#7A6855","#FA4616","#628B75","#6B8B62","#8B6286","#6C9FB5","#A4D899","#99D8D7","#727D7D","#99ABD8","#A2E18B","#E18B8B","#108190","#106990","#56918E","#8A9F9E","#0C660E","#294852","#08769A"]
+var resourcesColors = [];
 
 function loadProviders () {
 	if ($('[name="localRadio"]').is(':checked')) {
 		$('#providers-selector').html('<%= image_tag "ajax-loader.gif", :alt => "Loader" %>');
 		var localId = $('input[name=localRadio]:checked').val();
 		$('#providers-selector').empty();
-		$('#providers-selector').append('<label>' +
+		$('#providers-selector').append('<label class="active" id="l_todos">' +
 				'<input type="radio" name="providerRadio" value="0" checked>' +
 				'<p>Todos</p>' +
 			'</label>'
 		);
-		resources = [];
+		var resources = [];
+		resourcesColors = [];
+		var count = 0;
 		$.getJSON('/local_providers', {location: localId}, function (providersArray) {
 			if (providersArray.length > 0) {
 				$.each(providersArray, function (key, provider) {
-					$('#providers-selector').append('<label>' +
+					$('#providers-selector').append('<label id="' + provider.id + '">' +
 							'<input type="radio" name="providerRadio" value="' + provider.id + '">' +
 							'<p>' + provider.public_name + '</p>' +
 						'</label>'
 					);
 					resources.push({id: provider.id, name: provider.public_name});
+					if (count < 30){
+						resourcesColors.push({id: provider.id, color: colors[count]});
+					}
+					count += 1;
 				});
 				$('[name="providerRadio"]').on('click', function(event) {
+					$('[name="providerRadio"]').parent().removeClass('active');
+            		event.target.parentNode.className += 'active';
 					$('[name="providerRadio"]').attr('checked',false);
 					$(this).attr('checked',true);
 					var providerId = event.target.getAttribute('value');
@@ -244,11 +242,12 @@ function loadResourcesCalendar (startTime, endTime, hiddenDays, resourcesArray, 
 	    minTime: startTime,
 	    maxTime: endTime,
 	    defaultEventMinutes: duration,
-	    /*eventDrop: function (event, dayDelta, minuteDelta, allDay, revertFunc) {
-	    	moveBooking(event, revertFunc);
-	    },*/
-	    slotMinutes: duration,
-	    eventColor: '#ff0000'
+	    editable: true,
+	    disableResizing: true,
+	    eventDrop: function (event) {
+	    	editDrag(event);
+	    },
+	    slotMinutes: duration
 	});
 	loadProviderBooking(providerId);
 }
@@ -310,11 +309,12 @@ function loadWeekCalendar (startTime, endTime, hiddenDays, resourcesArray, provi
 	    minTime: startTime,
 	    maxTime: endTime,
 	    defaultEventMinutes: duration,
-	    /*eventDrop: function (event, dayDelta, minuteDelta, allDay, revertFunc) {
-	    	moveBooking(event, revertFunc);
-	    },*/
-	    slotMinutes: duration,
-	    eventColor: '#ff0000'
+	    editable: true,
+	    disableResizing: true,
+	    eventDrop: function (event) {
+	    	editDrag(event);
+	    },
+	    slotMinutes: duration
 	});
 	loadProviderBooking(providerId);
 }
@@ -332,13 +332,20 @@ function loadProviderBooking (providerId) {
 							serviceName = servicesJSON[i].name;
 						}
 					}
+					var eventColor = "#1e8584";
+					for (i in resourcesColors) {
+						if (resourcesColors[i].id == booking.service_provider_id) {
+							eventColor = resourcesColors[i].color
+						}
+					}
 					var events = {
 						id: booking.id,
 						title: serviceName,
 						allDay: false,
 						start: booking.start,
 						end: booking.end,
-						resourceId: booking.service_provider_id
+						resourceId: booking.service_provider_id,
+						color: eventColor
 					};
 					$('#calendar').fullCalendar('renderEvent', events, true);
 				});
@@ -351,8 +358,14 @@ function loadProviderBooking (providerId) {
 				$.each(bookings, function (key, booking) {
 					var serviceName = 'Ocupado';
 					for (i in servicesJSON) {
-						if (servicesJSON[i].id == booking.id) {
+						if (servicesJSON[i].id == booking.service_id) {
 							serviceName = servicesJSON[i].name;
+						}
+					}
+					var eventColor = "#1e8584";
+					for (i in resourcesColors) {
+						if (resourcesColors[i].id == booking.service_provider_id) {
+							eventColor = resourcesColors[i].color
 						}
 					}
 					var events = {
@@ -361,7 +374,8 @@ function loadProviderBooking (providerId) {
 						allDay: false,
 						start: booking.start,
 						end: booking.end,
-						resourceId: booking.service_provider_id
+						resourceId: booking.service_provider_id,
+						color: eventColor
 					};
 					$('#calendar').fullCalendar('renderEvent', events, true);
 				});
@@ -410,6 +424,8 @@ function createBookingModal(date) {
 	var date = date || 0;
 	if (date != 0) {
 		dateArray = date.toString().split(' ');
+		//Falta revisar el tema de las fechas, deberían ser contantes en la app
+		$('#datePicker').val(dateArray[2]+'/'+dateArray[1]+'/'+dateArray[3]);
 		$('#bookingStartHour option[value="'+dateArray[4].split(':')[0]+'"]').attr("selected",true);
 		$('#bookingStartMinute option[value="'+dateArray[4].split(':')[1]+'"]').attr("selected",true);
 		modalChange();
@@ -456,6 +472,46 @@ function deleteBooking(eventId) {
 function jsonBooking() {
 	var jsBooking = { "start": $('#datePicker').val() +"T"+ $('#bookingStartHour').val() +":"+ $('#bookingStartMinute').val() +":00Z","end":$('#datePicker').val() +"T"+ $('#bookingEnd').text() +":00Z", "service_provider_id": parseInt($('#booking_service_provider_id').val()), "service_id": parseInt($('#booking_service_id').val()), "status_id": parseInt($('#booking_status_id').val()), "first_name": $('#booking_first_name').val(), "last_name": $('#booking_last_name').val(), "email": $('#booking_email').val(), "phone": $('#booking_phone').val(), "notes": $('#booking_notes').val() };
 	return jsBooking;
+}
+
+
+function editDrag(event) {
+	var startDate = new Date(event.start);
+	var endDate = new Date(event.end);
+	var extraMonth = "";
+	var extraDate = "";
+	if (startDate.getMonth() < 10) {
+		extraMonth = "0";
+	}
+	if (startDate.getDate() < 10) {
+		extraDate = "0";
+	}
+	var startString = startDate.getFullYear()+"-"+extraMonth+(startDate.getMonth()+1)+"-"+extraDate+startDate.getDate()+"T"+startDate.getHours()+":"+startDate.getMinutes()+":00Z";
+	var endString = endDate.getFullYear()+"-"+extraMonth+(endDate.getMonth()+1)+"-"+extraDate+endDate.getDate()+"T"+endDate.getHours()+":"+endDate.getMinutes()+":00Z";
+
+	var bookingJSON = {start: startString, end: endString};
+	$.ajax({
+	    type: 'PATCH',
+	    url: '/bookings/'+ event.id +'.json',
+	    data: { "booking": bookingJSON },
+	    dataType: 'json',
+	    success: function(){
+	    	alertId.showAlert("Horario de la reserva cambiado exitosamente.");
+		},
+		error: function(xhr){
+		    var errors = $.parseJSON(xhr.responseText).errors;
+		    var errores = '';
+		    for (i in errors) {
+		    	errores += errors[i];
+		    }
+		    alertId.showAlert(errores);
+		    $.getJSON('/bookings/'+event.id, function (booking) {
+		    	event.start = booking.start;
+		    	event.end = booking.end;
+		        $('#calendar').fullCalendar('updateEvent', event);
+		    });
+		}
+	});
 }
 
 function saveBooking(typeURL, extraURL) {

@@ -26,10 +26,8 @@
 
   <div class="form-group">
     <div class="actions col-sm-offset-3 col-sm-4">
-      <%= button_tag(type: 'submit', class: "btn btn-primary") do %>
-      <i class="fa fa-check"></i>   Guardar
-    <% end %>
-      <%= link_to '   Cancelar',  payment_statuses_path, class: "btn btn-danger fa fa-times" %>    
+      <%= f.submit 'Guardar', :class => 'btn btn-primary' %>
+      <%= link_to 'Cancelar', payment_statuses_path, class: "btn btn-danger" %>    
     </div>
   </div>
 

@@ -11,7 +11,16 @@
   <div class="container">
     <div clas="row" id="espacio-workflow">
       <div class="col-md-12">
-        <div id="foo4">
+        <div class ="well">
+          <div class="center-block" style="display: table;">
+            <p>
+              <h3>Cargando Contenido</h3>
+              <span>Por favor espere</span>
+            </p>
+            <%= image_tag 'ajax-loader.gif', :alt => 'Loader' %>
+          </div>
+        </div>
+        <div id="foo4" style="visibility: collapse;">
           <div class="box-step">
             <div class="col-md-12">
               <h4>Servicios</h4>
@@ -195,7 +204,11 @@
         direction: "left",
         circular: false,
         infinite: false,
-        onCreate: function () {loadStep1();},
+        onCreate: function () {
+          $('.center-block').parent().remove();
+          $('#foo4').css('visibility', 'visible');
+          loadStep1();
+        },
         scroll: {
           conditions: function (direction) {
             return scrollEvents(direction);
