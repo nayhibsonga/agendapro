@@ -131,14 +131,15 @@
 					responsive: true,
 					auto: false,
 					width: '100%',
-					// prev: '#prev2',
-					// next: '#next2',
 					direction: "left",
 	        circular: false,
 	        infinite: false,
 					pagination: {
 						container: '#control-slide',
-						anchorBuilder: false
+						anchorBuilder: false,
+						conditions: function () {
+							return false;
+						}
 					},
 					onCreate: function () {
 	          hideLoad();
@@ -158,11 +159,21 @@
 				$('#next2').click(function () {
 					scrollEvents ();
 				});
+
 				$('#open-usuario').toggle(function () {
             $("#sub-menu-usuario").removeClass("close-menu-usuario");
 		      }, function () {
             $("#sub-menu-usuario").addClass("close-menu-usuario");
 	      });
+
+				<% if params[:step] %>
+				$('#foo5').trigger('slideToPage', <%= params[:step] %>);
+					<% if params[:step] == '1' %>
+					nextFn = serviceValid;
+					<% elsif params[:step] == '2' %>
+					nextFn = providerValid;
+					<% end %>
+				<% end %>
 			});
 		</script>
 		<!-- end: JavaScript-->

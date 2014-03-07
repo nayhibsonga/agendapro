@@ -31,17 +31,6 @@
           <%= f.collection_select :district_id, District.all, :id, :name, {}, { class: "form-control" }%>
         </div>
       </div>
-      <!-- <div class="form-group">
-        <div class="col-sm-offset-3 col-sm-9">
-          <a href="#" onClick="startLocation()" class="btn btn-default">Guardar Local</a>
-        </div>
-      </div> -->
-      <!-- <%= f.fields_for :location_times_attributes do |builder| %>
-        <%= builder.label :open, "Apertura", :class => 'col-sm-3 control-label' %>
-        <div class="col-sm-4">
-          <%= builder.time_field :open, :min => 0, :max => 24, :step => 900, :class => 'form-control' %>
-        </div>
-      <% end %> -->
     <% end %>
   </div>
   <div class="col-md-6">
@@ -70,16 +59,6 @@
     <h4>Nuevo Servicio</h4>
     <%= form_for @service, html: {class: "form-horizontal" } do |f| %>
       <div class="col-md-6">
-        <!-- <% if @service.errors.any? %>
-          <div id="error_explanation">
-            <h2><%= pluralize(@service.errors.count, "error") %> no permitió que el servicio se guardara:</h2>
-            <ul>
-              <% @service.errors.full_messages.each do |msg| %>
-                <li><%= msg %></li>
-              <% end %>
-            </ul>
-          </div>
-        <% end %> -->
         <div class="form-group">
           <%= f.label :name, "Nombre: ", class: "col-sm-3 control-label" %>
           <div class="col-sm-9">
@@ -113,22 +92,7 @@
         </div>
       </div>
       <div class="col-md-6">
-        <!-- <div class="form-group">
-          <%= f.label :service_category_id, "Categoría de Servicio: ", class: "col-sm-4 control-label" %>
-          <div class="col-sm-8">
-            <%= f.collection_select :service_category_id, ServiceCategory.where(company_id: current_user.company_id), :id, :name, {}, { class: "form-control" }%>
-          </div>
-        </div> -->
         <% if @service.service_category.nil? then @service.build_service_category end %>
-        <!-- <div class="form-group">
-          <div class="col-sm-offset-4 col-sm-8">
-            <div class="checkbox">
-              <label>
-                <input type="checkbox" name="catCheck" id="categoryCheckboxId" value="0" onchange="categoryChange()" class="checkbox"> Crear nueva Categoría de Servicio
-              </label>
-            </div>
-          </div>
-        </div> -->
         <%= f.fields_for :service_category do |builder| %>
         <div class="form-group">
           <%= builder.label :name, "Categoría de Servicio", class: "col-sm-4 control-label" %>
@@ -166,11 +130,6 @@
             <% end %>
           </div>
         </div>
-        <!-- <div class="form-group">
-          <div class="col-sm-offset-4 col-sm-8">
-            <%= f.submit "Crear Nuevo Servicio", :class => 'btn btn-default' %>
-          </div>
-        </div> -->
       </div>
     <% end %>
   </div>
@@ -196,14 +155,14 @@
       <div class="form-group">
         <%= f.label :location_id, "Local:", class: "col-sm-3 control-label" %>
         <div class="col-sm-9">
+          <% if params[:step] %>
+          <%= f.hidden_field :location_id, class: "form-control", :value => Company.find(current_user.company_id).locations.first.id if params[:step] %>
+          <p class="form-control-static"><%= Company.find(current_user.company_id).locations.first.name %></p>
+          <% else %>
           <%= f.hidden_field :location_id, class: "form-control", :value => '' %>
+          <% end %>
         </div>
       </div>
-      <!-- <div class="form-group">
-        <div class="col-sm-offset-3 col-sm-9">
-          <a href="#" onClick="providerValid()" class="btn btn-default">Guardar Proveedor</a>
-        </div>
-      </div> -->
     <% end %>
   </div>
   <div class="col-md-6">

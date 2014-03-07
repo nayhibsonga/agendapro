@@ -1,22 +1,7 @@
 class QuickAddController < ApplicationController
 
 	before_action :authenticate_user!
-	layout "quick_add", except: [:create_service_provider, :create_location]
-
-	def location
-		@location = Location.new
-		@location.company_id = current_user.company_id
-	end
-
-	def services
-		@service = Service.new
-	    @service.company_id = current_user.company_id
-	end
-
-	def service_provider
-		@service_provider = ServiceProvider.new
-		@service_provider.company_id = current_user.company_id
-	end
+	layout "quick_add", only: [:quick_add]
 
 	def quick_add
 		@location = Location.new
@@ -65,12 +50,7 @@ class QuickAddController < ApplicationController
 
 	    respond_to do |format|
 	      if @service_provider.valid?
-	      	# @serviceStaff = ServiceStaff.new(:service_id => Service.find_by(:company_id => current_user.company_id).id, :service_provider_id => @service_provider.id)
-	      	# if @serviceStaff.valid?
-	        	format.json { render :layout => false, :json => {:valid => true} }
-	        # else
-	        # 	format.json { render :layout => false, :json => { :valid => false, :errors => @serviceStaff.errors.full_messages }, :status => 422 }
-	        # end
+        	format.json { render :layout => false, :json => {:valid => true} }
 	      else
 	        format.json { render :layout => false, :json => { :valid => false, :errors => @service_provider.errors.full_messages }, :status => 422 }
 	      end
