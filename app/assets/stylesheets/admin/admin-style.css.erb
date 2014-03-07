@@ -152,12 +152,97 @@ li.colapsado-ok> a> span.colapse-hidden{
 	display: none;
 }
 
+.center-block {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
 
 /* Agregado 18 Febrero */
 .caret-especial{
 	float: right;
 	margin-right: 10px;
 	font-size: 21px;
+}
+.panel {
+  margin-bottom: 20px;
+  background-color: #ffffff;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  -webkit-box-shadow: 0 1px 1px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.05);
+}
+.panel-body {
+  padding: 15px;
+}
+.panel-body:before,
+.panel-body:after {
+  content: " ";
+  /* 1 */
+
+  display: table;
+  /* 2 */
+
+}
+.panel-body:after {
+  clear: both;
+}
+.panel-body:before,
+.panel-body:after {
+  content: " ";
+  /* 1 */
+
+  display: table;
+  /* 2 */
+
+}
+.panel-body:after {
+  clear: both;
+}
+.panel > .list-group {
+  margin-bottom: 0;
+  max-height: 300px;
+  overflow: auto;
+}
+.panel > .list-group .list-group-item {
+  border-width: 1px 0;
+}
+.panel > .list-group .list-group-item:first-child {
+  border-top-right-radius: 0;
+  border-top-left-radius: 0;
+}
+.panel > .list-group .list-group-item:last-child {
+  border-bottom: 0;
+}
+.panel-heading + .list-group .list-group-item:first-child {
+  border-top-width: 0;
+}
+.panel > .table {
+  margin-bottom: 0;
+}
+.panel > .panel-body + .table {
+  border-top: 1px solid #dddddd;
+}
+.panel-heading {
+  padding: 10px 15px;
+  border-bottom: 1px solid transparent;
+  border-top-right-radius: 3px;
+  border-top-left-radius: 3px;
+}
+.panel-title {
+  margin-top: 0;
+  margin-bottom: 0;
+  font-size: 16px;
+}
+.panel-title > a {
+  color: inherit;
+}
+.panel-footer {
+  padding: 10px 15px;
+  background-color: #f5f5f5;
+  border-top: 1px solid #dddddd;
+  border-bottom-right-radius: 3px;
+  border-bottom-left-radius: 3px;
 }
 .panel-info {
 	border-color: rgba(27,115,112,0.6);
@@ -249,8 +334,103 @@ tbody{
     z-index: 99999 !important;
 }
 
-/* Estilo de los Modales */
+/* Quick Add */
+#navegacion-workflow{
+	margin:10px 0px 0px 0px;
+	background: #F3F3F3;
+	border: 1px solid #ccc;
+	border-radius: 5px;
+	padding:5px 0px;
+}
+.pasos-reserva a{
+	height:33px;
+	width: 30%;
+	margin:0px 1.5%;
+	float:left;
+	text-align: center;
+	background: #D1D1D1;
+	bordert:1px solid #999;
+	color: #fff;
+	line-height: 2.4;
+	border-radius: 5px;
+	border:1px solid #585656;
+}
+.pasos-reserva a:hover, .pasos-reserva a.selected{
+	background-color: rgba(250, 70, 22, 0.45);
+	border:1px solid #FA4616;
+}
+#espacio-workflow{
+	margin-top:10px;
+}
 
+.box-step{
+	min-height:350px;
+	background:#F3F3F3;
+	border: 1px solid #C0C0C0;
+	border-radius: 5px;
+	float:left;
+}
+#control-slide li{
+	display: inline-block;
+}
+.control-box{
+	background-color: #ccc;
+	display: block;
+	padding: 6px 0px;
+	margin-bottom: 0;
+	font-size: 14px;
+	font-weight: normal;
+	line-height: 1.428571429;
+	text-align: center;
+	white-space: nowrap;
+	vertical-align: middle;
+	cursor: pointer;
+	background-image: none;
+	border: 1px solid transparent;
+	border-radius: 4px;
+	-webkit-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	-o-user-select: none;
+	user-select: none;
+}
+li.selected> div.control-box{
+	background: rgba(27,115,112,0.4);
+}
+
+/* Botones Modificados AgendaPro */
+.btn-success{
+	color: #ffffff;
+	background-color: #D55330;
+	border-color: #E64215;
+}
+.btn-success:hover{
+	background-color: #EB4114;
+	border-color: #EB4114;
+}
+
+.btn-agendapro-oscuro{
+    color: #ffffff;
+    background-color: rgba(27,115,112,1);
+    border-color: rgba(24, 101, 99, 1);
+}
+
+.btn-agendapro-oscuro:hover{
+    background-color: rgba(24, 101, 99, 1);
+}
+
+.btn-agendapro-claro{
+    color: #ffffff;
+    background-color: rgba(61,154,150,1);
+    border-color: rgba(55, 133, 129, 1);
+}
+
+.btn-agendapro-claro:hover{
+    background-color: rgba(55, 133, 129, 1);
+}
+
+
+/* Estilo de los Modales */
 .modal-content{
 	background: url(<%= asset_path 'backgrounds/wild_oliva_light.png' %>);
 }
@@ -263,7 +443,6 @@ tbody{
 	background: url(<%= asset_path 'backgrounds/wild_oliva_light_head.png' %>);
 }
 
-/* ---------- */
 
 /* Menu responsivo */
 @media (max-width: 992px) { 

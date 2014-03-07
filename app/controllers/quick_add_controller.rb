@@ -1,21 +1,60 @@
 class QuickAddController < ApplicationController
 
 	before_action :authenticate_user!
-	layout "quick_add", except: [:create_service_provider, :create_location]
+	layout "quick_add", only: [:quick_add]
 
-	def location
+	def quick_add
 		@location = Location.new
-		@location.company_id = current_user.company_id
-	end
-
-	def services
 		@service = Service.new
-	    @service.company_id = current_user.company_id
+		@service_provider = ServiceProvider.new
+
+		@location.company_id = current_user.company_id
+		@service.company_id = current_user.company_id
+		@service_provider.company_id = current_user.company_id
 	end
 
-	def service_provider
-		@service_provider = ServiceProvider.new
-		@service_provider.company_id = current_user.company_id
+	def location_valid
+		@location = Location.new(location_params)
+	    @location.company_id = current_user.company_id
+
+	    respond_to do |format|
+	      if @location.valid?
+	        format.json { render :layout => false, :json => {:valid => true} }
+	      else
+	        format.json { render :layout => false, :json => { :valid => false, :errors => @location.errors.full_messages } }
+	      end
+	    end
+	end
+
+	def services_valid
+		if service_params[:service_category_attributes][:name].nil?
+	      new_params = service_params.except(:service_category_attributes)
+	    else
+	      new_params = service_params
+	    end
+	    @service = Service.new(new_params)
+	    @service.company_id = current_user.company_id
+
+	    respond_to do |format|
+	      if @service.valid?
+	        format.json { render :layout => false, :json => {:valid => true} }
+	      else
+	        format.json { render :layout => false, :json => {:valid => false, :errors => @service.errors.full_messages} }
+	      end
+	    end
+	end
+
+	def service_provider_valid
+		@service_provider = ServiceProvider.new(service_provider_params)
+	    @service_provider.company_id = current_user.company_id
+
+	    respond_to do |format|
+	      if @service_provider.valid?
+        	format.json { render :layout => false, :json => {:valid => true} }
+	      else
+	        format.json { render :layout => false, :json => { :valid => false, :errors => @service_provider.errors.full_messages }, :status => 422 }
+	      end
+	    end
 	end
 
 	def create_location
@@ -42,11 +81,9 @@ class QuickAddController < ApplicationController
 
 	    respond_to do |format|
 	      if @service.save
-	        format.html { redirect_to @service, notice: 'Servicio creado satisfactoriamente.' }
-	        format.json { render action: 'show', status: :created, location: @service }
+	        format.json { render :layout => false, :json => @service }
 	      else
-	        format.html { render action: 'new' }
-	        format.json { render json: @service.errors, status: :unprocessable_entity }
+	        format.json { render :layout => false, :json => { :errors => @service.errors.full_messages, :status => 422} }
 	      end
 	    end
   	end
@@ -57,7 +94,12 @@ class QuickAddController < ApplicationController
 
 	    respond_to do |format|
 	      if @service_provider.save
-	        format.json { render :layout => false, :json => @service_provider }
+	      	@serviceStaff = ServiceStaff.new(:service_id => Service.find_by(:company_id => current_user.company_id).id, :service_provider_id => @service_provider.id)
+	      	if @serviceStaff.save
+	        	format.json { render :layout => false, :json => @service_provider }
+	        else
+	        	format.json { render :layout => false, :json => { :errors => @serviceStaff.errors.full_messages }, :status => 422 }
+	        end
 	      else
 	        format.json { render :layout => false, :json => { :errors => @service_provider.errors.full_messages }, :status => 422 }
 	      end

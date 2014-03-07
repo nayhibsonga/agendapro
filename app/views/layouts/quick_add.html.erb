@@ -1,146 +1,181 @@
 <!DOCTYPE html>
 <html lang="es">
-<head>
-	
-	<!-- start: Meta -->
-	<meta charset="utf-8" />
-	<title>Administrador - AgendaPro</title>
-	<meta name="description" content="AgendaPro - Sistema de agendamiento OnLine para empresas y usuarios.">
-	<meta name="author" content="AgendaPro">
-	<meta name="keyword" content="agendapro, agenda, agenda online, reserva, reserva online">
+	<head>
+		<!-- start: Meta -->
+		<meta charset="utf-8" />
+		<title>Administrador - AgendaPro</title>
+		<meta name="description" content="AgendaPro - Sistema de agendamiento OnLine para empresas y usuarios.">
+		<meta name="author" content="AgendaPro">
+		<meta name="keyword" content="agendapro, agenda, agenda online, reserva, reserva online">
 
-	<%= csrf_meta_tags %>
-	<!-- end: Meta -->
-	
-	<!-- start: Mobile Specific -->
-	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<!-- end: Mobile Specific -->
-	
-	<!-- start: CSS -->
-	<%= stylesheet_link_tag "admin" %>
-	<%= stylesheet_link_tag "fullcalendar_css" if params[:controller] == "bookings" %>
-	<!-- end: CSS -->
-	
-
-	<!-- The HTML5 shim, for IE6-8 support of HTML5 elements -->
-	<!--[if lt IE 9]>
-	
-	  	<script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
-		<script src="assets/javascripts/admin/respond.min.js"></script>
-		<script src="assets/stylesheets/admin/ie6-8.css"></script>
+		<%= csrf_meta_tags %>
+		<!-- end: Meta -->
 		
-	<![endif]-->
-	
-	<!-- start: Favicon and Touch Icons -->
-    <%= favicon_link_tag "Iso_Pro_Color.png", :rel => "shortcut icon" %>
-	<!-- end: Favicon and Touch Icons -->	
+		<!-- start: Mobile Specific -->
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<!-- end: Mobile Specific -->
 		
-</head>
-
-<body>
-<!-- start: Header -->
-<header>
-    <div id="barra-superior">
-        <div class="container">
-            <div class="row">
-                <a href="<%= root_url(:host => request.domain + request.port_string) %>" id="logo"></a>
-                <ul class="nav nav-pills pull-right">
-                <% if user_signed_in? %>
-                    <li class="dropdown">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown"><%= current_user.email %><i class="fa fa-chevron-down"></i></a>
-                    <ul class="dropdown-menu">
-                        <li><%= link_to '<i class="fa fa-dashboard"></i> Dashboard'.html_safe, dashboard_path %></li>
-                        <li><%= link_to '<i class="fa fa-user"></i> Editar Perfil'.html_safe, edit_user_registration_path %></li>
-                        <li><%= link_to '<i class="fa fa-power-off"></i> Salir'.html_safe, destroy_user_session_path, method: :delete %></li>
-                    </ul>
-                    </li>
-                <% else %>
-                    <li><a href="#" data-toggle="modal" data-target="#signin-modal"><i class="fa fa-user"></i> Inicia Sesión</a></li>
-                    <li><a href="#" data-toggle="modal" data-target="#signup-modal"><i class="fa fa-pencil-square-o"></i> Regístrate</a></li>
-                    <li><%= link_to '<i class="fa fa-home"></i> Agrega tu empresa'.html_safe, home_path %></li>
-                <% end %>
-                </ul>
-            </div>
-        </div>
-    </div>
-    <!-- start: Alerts -->
-    <% if notice %>
-        <div class="alert alert-info alert-dismissable">
-            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-        <%= notice %>
-        </div>
-    <% end %>
-    <% if alert %>
-        <div class="alert alert-warning alert-dismissable">
-            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-        <%= alert %>
-        </div>
-    <% end %>
-    <!-- end: Alerts -->
-</header>
-<!-- end: Header -->
-
-	<div class="container">
-		<div class="row" id="navegacion-workflow">
-	  		<div class="col-md-2"><a id="prev2" class="btn btn-success"><i class="fa fa-chevron-left"></i> Anterior</a></div>
-	  		<div class="col-md-8">
-	        <ul id="control-slide">
-	          <li class="col-sm-4"><div class="control-box">Nuevo Local</div></li>
-	          <li class="col-sm-4"><div class="control-box">Nuevo Servicio</div></li>
-	          <li class="col-sm-4"><div class="control-box">Nuevo Proveedor</div></li>
-	        </ul>
-	      </div>
-	      <div class="col-md-2"><a id="next2" class="btn btn-success pull-right">Siguiente <i class="fa fa-chevron-right"></i></a></div>
-		</div>
-	</div>
-
-
-	<div class="container">
-		<div class="row" id="espacio-workflow">			
+		<!-- start: CSS -->
+		<%= stylesheet_link_tag "admin" %>
+		<!-- end: CSS -->
 		
-		<!-- start: Content -->
-		<div class="col-md-12" >
-			<div id="foo5">
-				<%= yield %>
+
+		<!-- The HTML5 shim, for IE6-8 support of HTML5 elements -->
+		<!--[if lt IE 9]>
+		  	<script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+			<script src="assets/javascripts/admin/respond.min.js"></script>
+			<script src="assets/stylesheets/admin/ie6-8.css"></script>
+		<![endif]-->
+		
+		<!-- start: Favicon and Touch Icons -->
+	    <%= favicon_link_tag "Iso_Pro_Color.png", :rel => "shortcut icon" %>
+		<!-- end: Favicon and Touch Icons -->
+	</head>
+
+	<body>
+		<!-- start: Header -->
+		<header>
+			<div id="logo">
+				<ul class="pull-right" id ="menu-usuario">
+					<li><a href="#" id="open-usuario"><%= current_user.email %><span class="fa fa-chevron-down"></span></a>
+						<ul id="sub-menu-usuario" class="close-menu-usuario">
+							<li><%= link_to '<i class="fa fa-calendar"></i> Mi Agenda'.html_safe, my_agenda_path(:id => current_user.id) %></li>
+							<li><%= link_to '<i class="fa fa-dashboard"></i> Dashboard'.html_safe, dashboard_path %></li>
+							<li><%= link_to '<i class="fa fa-user"></i> Perfil'.html_safe, edit_admin_user_path(current_user) %></li>
+							<li><%= link_to '<i class="fa fa-power-off"></i> Cerrar Sesión'.html_safe, destroy_user_session_path, method: :delete %></li>
+						</ul>
+					</li>
+				</ul>
 			</div>
-		</div>	
-		<!-- end: Content -->
-			
-		</div><!--/row-->		
-	</div><!--/container-->
-	
-	<footer>
-		<p>
-			<span style="text-align:left;float:left">&copy; 2013 <a href="http://www.agendapro.cl" alt="AgendaPro">AgendaPro</a></span>
-			<span class="hidden-phone" style="text-align:right;float:right">Soporte: <a href="http://www.agendapro.cl" alt="Soporte AgendaPro">AgendaPro</a></span>
-		</p>
+		</header>
 
-	</footer>
-	
-	<!-- start: JavaScript-->
-	<!--[if !IE]>-->
-			<%= javascript_include_tag "adminNIE" %>
-	<!--<![endif]-->
-	<!--[if IE]>
-		<%= javascript_include_tag "adminIE" %>
-	<!--<![endif]-->
-	<%= javascript_include_tag "admin" %>
-	<!--[if !IE]>-->
+	    <!-- start: Alerts -->
+	    <% if notice %>
+	      <div class="alert alert-info alert-dismissable">
+	          <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+	      <%= notice %>
+	      </div>
+	    <% end %>
+	    <% if alert %>
+	      <div class="alert alert-warning alert-dismissable">
+	          <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+	      <%= alert %>
+	      </div>
+	    <% end %>
+	    <!-- end: Alerts -->
+		<!-- end: Header -->
+
+		<div class="container">
+			<div class="row" id="navegacion-workflow">
+		  		<div class="col-md-2"><a id="prev2" class="btn btn-agendapro-claro disabled"><i class="fa fa-chevron-left"></i> Anterior</a></div>
+		  		<div class="col-md-8">
+			        <ul id="control-slide">
+						<li class="col-sm-4"><div class="control-box">Nuevo Local</div></li>
+						<li class="col-sm-4"><div class="control-box">Nuevo Servicio</div></li>
+						<li class="col-sm-4"><div class="control-box">Nuevo Proveedor</div></li>
+			        </ul>
+		      	</div>
+		      	<div class="col-md-2"><a id="next2" class="btn btn-agendapro-claro pull-right">Siguiente <i class="fa fa-chevron-right"></i></a></div>
+			</div>
+		</div>
+
+		<div class="container">
+			<div class="row" id="espacio-workflow">
+				<!-- start: Content -->
+				<div class="col-md-12" >
+					<div class ="well">
+						<div class="center-block" style="display: table;">
+							<p>
+								<h3>Cargando Contenido</h3>
+								<span>Por favor espere</span>
+							</p>
+							<%= image_tag 'ajax-loader.gif', :alt => 'Loader' %>
+						</div>
+			        </div>
+					<div id="foo5" style="visibility: collapse;">
+						<%= yield %>
+					</div>
+				</div>	
+				<!-- end: Content -->
+			</div><!--/row-->		
+		</div><!--/container-->
+		
+		<!-- start: JavaScript-->
+		<!--[if !IE]>-->
+				<%= javascript_include_tag "adminNIE" %>
+		<!--<![endif]-->
+		<!--[if IE]>
+			<%= javascript_include_tag "adminIE" %>
+		<!--<![endif]-->
+		<%= javascript_include_tag "admin" %>
+		<%= javascript_include_tag 'jquery.carouFredSel-6.2.1.js' %>
+		<!--[if !IE]>-->
+				<script type="text/javascript">
+					window.jQuery || document.write("<script src='vendor/jquery-2.1.0.min.js'>"+"<"+"/script>");
+				</script>
+		<!--<![endif]-->
+		<!--[if IE]>
 			<script type="text/javascript">
-			window.jQuery || document.write("<script src='vendor/jquery-2.1.0.min.js'>"+"<"+"/script>");
+				window.jQuery || document.write("<script src='vendor/jquery-1.11.0.min.js'>"+"<"+"/script>");
 			</script>
-	<!--<![endif]-->
-	<!--[if IE]>
+		<![endif]-->
+
+		<!--[if IE8]>
+			<%= javascript_include_tag "adminIE8" %>
+		<![endif]-->
+		<%= yield :scripts %>
 		<script type="text/javascript">
-	 	window.jQuery || document.write("<script src='vendor/jquery-1.11.0.min.js'>"+"<"+"/script>");
+			$(function() {
+				//	Responsive layout, resizing the items
+				$('#foo5').carouFredSel({
+					responsive: true,
+					auto: false,
+					width: '100%',
+					direction: "left",
+	        		circular: false,
+	        		infinite: false,
+					pagination: {
+						container: '#control-slide',
+						anchorBuilder: false,
+						conditions: function () {
+							return false;
+						}
+					},
+					onCreate: function () {
+	          			hideLoad();
+	        		},
+			        scroll: {
+						conditions: function (direction) {
+							if (direction == 'next') {
+								return true;
+							}
+							else {
+								return false;
+							}
+						}
+			        }
+				});
+
+				$('#next2').click(function () {
+					scrollEvents ();
+				});
+
+				$('#open-usuario').toggle(function () {
+					$("#sub-menu-usuario").removeClass("close-menu-usuario");
+					}, function () {
+					$("#sub-menu-usuario").addClass("close-menu-usuario");
+				});
+
+				<% if params[:step] %>
+				$('#foo5').trigger('slideToPage', <%= params[:step] %>);
+					<% if params[:step] == '1' %>
+					nextFn = serviceValid;
+					<% elsif params[:step] == '2' %>
+					nextFn = providerValid;
+					<% end %>
+				<% end %>
+			});
 		</script>
-	<![endif]-->
-	<!--[if IE8]>
-		<%= javascript_include_tag "adminIE8" %>
-	<![endif]-->
-	<%= yield :scripts %>
-	
-	<!-- end: JavaScript-->
-	
-</body>
+		<!-- end: JavaScript-->
+	</body>
 </html>

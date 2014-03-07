@@ -37,12 +37,17 @@ Agendapro::Application.routes.draw do
     resources :users 
   end
 
-  get '/quick_add/location', :to => 'quick_add#location', :as => 'quick_add_location'
-  get '/quick_add/services', :to => 'quick_add#services', :as => 'quick_add_services'
+  # Quick Add
+  get '/quick_add', :to => 'quick_add#quick_add', :as => 'quick_add'
   get '/quick_add/service_provider', :to => 'quick_add#service_provider', :as => 'quick_add_service_provider'
-  post '/quick_add/location', :to => 'quick_add#create_location', :as => 'quick_add_create_location'
-  post '/quick_add/services', :to => 'quick_add#create_services', :as => 'quick_add_create_services'
-  post '/quick_add/service_provider', :to => 'quick_add#create_service_provider', :as => 'quick_add_create_service_provider'
+    # Validation
+  post '/quick_add/location_valid', :to => 'quick_add#location_valid'
+  post '/quick_add/services_valid', :to => 'quick_add#services_valid'
+  post '/quick_add/service_provider_valid', :to => 'quick_add#service_provider_valid'
+    # POST
+  post '/quick_add/location', :to => 'quick_add#create_location'
+  post '/quick_add/services', :to => 'quick_add#create_services'
+  post '/quick_add/service_provider', :to => 'quick_add#create_service_provider'
 
   get '/dashboard', :to => 'dashboard#index', :as => 'dashboard'
   get '/reports', :to => 'reports#index', :as => 'reports'

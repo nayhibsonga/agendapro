@@ -30,11 +30,11 @@ class ApplicationController < ActionController::Base
     if current_user && (current_user.role_id != Role.find_by_name("Super Admin").id) && current_user.company_id
       @company = Company.find(current_user.company_id)
       if @company.locations.count == 0
-        redirect_to(quick_add_location_path)
+        redirect_to(quick_add_path)
       elsif @company.services.count == 0
-        redirect_to(quick_add_services_path)
+        redirect_to(quick_add_path(:step => 1))
       elsif @company.service_providers.count == 0
-        redirect_to(quick_add_service_provider_path)
+        redirect_to(quick_add_path(:step => 2))
       end
     end
   end
