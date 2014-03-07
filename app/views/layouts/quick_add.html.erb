@@ -23,7 +23,6 @@
 		<!-- The HTML5 shim, for IE6-8 support of HTML5 elements -->
 		<!--[if lt IE 9]>
 		  	<script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
-			<script src="assets/javascripts/admin/respond.min.js"></script>
 			<script src="assets/stylesheets/admin/ie6-8.css"></script>
 		<![endif]-->
 		
@@ -118,10 +117,6 @@
 			<script type="text/javascript">
 				window.jQuery || document.write("<script src='vendor/jquery-1.11.0.min.js'>"+"<"+"/script>");
 			</script>
-		<![endif]-->
-
-		<!--[if IE8]>
-			<%= javascript_include_tag "adminIE8" %>
 		<![endif]-->
 		<%= yield :scripts %>
 		<script type="text/javascript">
