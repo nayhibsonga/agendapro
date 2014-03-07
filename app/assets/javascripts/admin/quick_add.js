@@ -2,6 +2,7 @@ var my_alert;
 var days = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'];
 var local = 'local';
 var prov = 'prov';
+var nextFn;
 
 function buildDay (value, ctrl) {
 	$('#' + ctrl + 'Table').append(
@@ -147,12 +148,14 @@ function startLocation () {
 				}
 				else {
 					my_alert.showAlert('Tiene que seleccionar al menos un día.');
+					hideLoad();
 				}
 			});
 		});
 	}
 	else {
 		my_alert.showAlert('Dirección y/o Comuna no pueden estar vacías.');
+		hideLoad();
 	}
 }
 
@@ -190,7 +193,7 @@ function locationValid (ctrl) {
 	    dataType: 'json',
 	    success: function (result){
 	    	if ($.parseJSON(result.valid)) {
-	    		alert('success');
+	    		saveLocation(ctrl);
 	    	}
 	    	else {
 	    		var errors = result.errors;
@@ -204,6 +207,7 @@ function locationValid (ctrl) {
 			    		error_text +
 			    	'</ul>'
 			    );
+				hideLoad();
 	    	}
 		},
 		error: function (xhr){
@@ -218,6 +222,7 @@ function locationValid (ctrl) {
 		    		error_text +
 		    	'</ul>'
 		    );
+			hideLoad();
 		}
 	});
 }
@@ -225,15 +230,19 @@ function locationValid (ctrl) {
 function serviceValid () {
 	if (!$('#service_name').val()) {
 		my_alert.showAlert('Debe escribir un nombre.');
+		hideLoad();
 	}
 	else if (!$('#service_price').val()) {
 		my_alert.showAlert('Debe elegir un precio.');
+		hideLoad();
 	}
 	else if (!$('#service_duration').val()) {
 		my_alert.showAlert('Debe elegir una duracion.');
+		hideLoad();
 	}
 	else if (!$('#service_service_category_attributes_name').val()) {
 		my_alert.showAlert('Debe elegir una categoria.');
+		hideLoad();
 	}
 	else {
 		$.ajax({
@@ -242,7 +251,7 @@ function serviceValid () {
 			data: $('#new_service').serialize(),
 			success: function (result) {
 				if ($.parseJSON(result.valid)) {
-		    		alert('success');
+		    		createService();
 		    	}
 		    	else {
 		    		var errors = result.errors;
@@ -256,6 +265,7 @@ function serviceValid () {
 				    		error_text +
 				    	'</ul>'
 				    );
+				    hideLoad()
 		    	}
 			},
 			error: function (xhr) {
@@ -270,6 +280,7 @@ function serviceValid () {
 			    		error_text +
 			    	'</ul>'
 			    );
+			    hideLoad()
 			}
 		});
 	}
@@ -282,12 +293,15 @@ function providerValid () {
 	}
 	if (!$('#service_provider_public_name').val()) {
 		my_alert.showAlert('Debe elegir un nombre público.');
+		hideLoad();
 	}
 	else if (!$('#service_provider_notification_email').val()) {
 		my_alert.showAlert('Debe elegir un email de notificación.');
+		hideLoad();
 	}
 	else if (!bool) {
 		my_alert.showAlert('Debe elegir al menos un día.');
+		hideLoad();
 	}
 	else {
 		var enabledDays = [];
@@ -314,9 +328,9 @@ function providerValid () {
 		    url: '/quick_add/service_provider_valid.json',
 		    data: { "service_provider": providerJSON },
 		    dataType: 'json',
-		    success: function(data){
+		    success: function(result){
 		    	if ($.parseJSON(result.valid)) {
-		    		alert('success');
+		    		createProvider();
 		    	}
 		    	else {
 		    		var errors = result.errors;
@@ -330,6 +344,7 @@ function providerValid () {
 				    		error_text +
 				    	'</ul>'
 				    );
+				    hideLoad();
 		    	}
 			},
 			error: function(xhr){
@@ -344,6 +359,7 @@ function providerValid () {
 			    		error_text +
 			    	'</ul>'
 			    );
+			    hideLoad();
 			}
 		});
 	}
@@ -359,11 +375,11 @@ function saveLocation (ctrl) {
 	    dataType: 'json',
 	    success: function (result){
 	    	$('#service_provider_location_id').val(result.id);
-	    	$('#service_provider_location_id').parent().append('<span>' + result.name + '</span>');
-	    	/*
-	    	avansar el quick add
-	    	*/
-	    	// document.location.href = '/locations/';
+	    	$('#service_provider_location_id').parent().append('<p class="form-control-static">' + result.name + '</p>');
+
+	    	nextFn = serviceValid;
+    		$('#foo5').trigger('nextPage');
+    		hideLoad();
 		},
 		error: function (xhr){
 		    var errors = $.parseJSON(xhr.responseText).errors;
@@ -377,6 +393,7 @@ function saveLocation (ctrl) {
 		    		error_text +
 		    	'</ul>'
 		    );
+			hideLoad();
 		}
 	});
 }
@@ -387,8 +404,9 @@ function createService () {
 		url: '/quick_add/services',
 		data: $('#new_service').serialize(),
 		success: function (result) {
-			alert('services')
-			//Make something
+			nextFn = providerValid;
+			$('#foo5').trigger('nextPage');
+    		hideLoad();
 		},
 		error: function (xhr) {
 			var errors = $.parseJSON(xhr.responseText).errors;
@@ -402,87 +420,91 @@ function createService () {
 		    		error_text +
 		    	'</ul>'
 		    );
+			hideLoad();
 		}
 	});
 }
 
 function createProvider () {
-	var bool = false;
+	var enabledDays = [];
 	for(var i = 1; i < 8; ++i) {
-		bool = bool || $('#provdayStatusId'+ i).is(':checked');
+		if ($('#provdayStatusId'+ i).val() == 1) {
+			enabledDays.push($('#provdayStatusId'+ i).attr('id').slice(-1));
+		}
 	}
-	if (!$('#service_provider_public_name').val()) {
-		my_alert.showAlert('Debe elegir un nombre público.');
+	var provider_times = [];
+	for (i in enabledDays) {
+		var provider_time = {"open":"2000-01-01T"+ $('#provopenHourId'+enabledDays[i]).val() +":"+ $('#provopenMinuteId'+enabledDays[i]).val() +":00Z","close":"2000-01-01T"+ $('#provcloseHourId'+enabledDays[i]).val() +":"+ $('#provcloseMinuteId'+enabledDays[i]).val() +":00Z","day_id":parseInt(enabledDays[i])};
+		provider_times.push(provider_time);
 	}
-	else if (!$('#service_provider_notification_email').val()) {
-		my_alert.showAlert('Debe elegir un email de notificación.');
-	}
-	else if (!bool) {
-		my_alert.showAlert('Debe elegir al menos un día.');
+	var providerJSON  = {
+		"public_name": $('#service_provider_public_name').val(),
+		"notification_email": $('#service_provider_notification_email').val(),
+		"location_id": parseInt($('#service_provider_location_id').val()),
+		// "user_id": parseInt($('#service_provider_user_id').val()),
+		// "service_ids": enabledServices,
+		"provider_times_attributes": provider_times
+	};
+	$.ajax({
+	    type: "POST",
+	    url: '/quick_add/service_provider.json',
+	    data: { "service_provider": providerJSON },
+	    dataType: 'json',
+	    success: function(data){
+	    	hideLoad();
+	    	document.location.href = '/dashboard/';
+		},
+		error: function(xhr){
+		    var errors = $.parseJSON(xhr.responseText).errors;
+		    var error_text = '';
+		    for (i in errors) {
+		    	error_text += '<li>' + errors[i] + '</li>';
+		    }
+		    my_alert.showAlert(
+		    	'<h4>Error</h4>' +
+		    	'<ul>' +
+		    		error_text +
+		    	'</ul>'
+		    );
+		    hideLoad();
+		}
+	});
+}
+
+function serviceGroup () {
+	if ($('#service_group_service').is(':checked')) {
+		$('#service_capacity').closest('.form-group').removeClass('hidden');
+		$('#foo5').trigger('updateSizes');
 	}
 	else {
-		var enabledDays = [];
-		for(var i = 1; i < 8; ++i) {
-			if ($('#provdayStatusId'+ i).val() == 1) {
-				enabledDays.push($('#provdayStatusId'+ i).attr('id').slice(-1));
-			}
-		}
-		// $(".dayCheckbox").each( function() {
-		// 	if ($( this ).val() == 1) {
-		// 		enabledDays.push($(this).attr('id').slice(-1));
-		// 	}
-		// });
-		// var enabledServices = [];
-		// $("input.check_boxes").each( function() {
-		// 	if ($(this).prop('checked')) {
-		// 		enabledServices.push($.parseJSON($(this).val()));
-		// 	}
-		// });
-		var provider_times = [];
-		for (i in enabledDays) {
-			var provider_time = {"open":"2000-01-01T"+ $('#provopenHourId'+enabledDays[i]).val() +":"+ $('#provopenMinuteId'+enabledDays[i]).val() +":00Z","close":"2000-01-01T"+ $('#provcloseHourId'+enabledDays[i]).val() +":"+ $('#provcloseMinuteId'+enabledDays[i]).val() +":00Z","day_id":parseInt(enabledDays[i])};
-			provider_times.push(provider_time);
-		}
-		var providerJSON  = {
-			"public_name": $('#service_provider_public_name').val(),
-			"notification_email": $('#service_provider_notification_email').val(),
-			"location_id": parseInt($('#service_provider_location_id').val()),
-			// "user_id": parseInt($('#service_provider_user_id').val()),
-			// "service_ids": enabledServices,
-			"provider_times_attributes": provider_times
-		};
-		$.ajax({
-		    type: "POST",
-		    url: '/quick_add/service_provider.json',
-		    data: { "service_provider": providerJSON },
-		    dataType: 'json',
-		    success: function(data){
-		    	alert('service_provider')
-		    	// document.location.href = '/dashboard/';
-			},
-			error: function(xhr){
-			    var errors = $.parseJSON(xhr.responseText).errors;
-			    var error_text = '';
-			    for (i in errors) {
-			    	error_text += '<li>' + errors[i] + '</li>';
-			    }
-			    my_alert.showAlert(
-			    	'<h4>Error</h4>' +
-			    	'<ul>' +
-			    		error_text +
-			    	'</ul>'
-			    );
-			}
-		});
+		$('#service_capacity').closest('.form-group').addClass('hidden');
 	}
 }
 
-function scrollEvents (direction) {
-	return true;
+// Caroufredsel Methods
+function showLoad () {
+	$('#next2').addClass('disabled');
+	$('.center-block').parent().removeClass('hidden');
+  	$('#foo5').css('visibility', 'collapse');
+}
+
+function hideLoad () {
+	$('.center-block').parent().addClass('hidden');
+  	$('#foo5').css('visibility', 'visible');
+	$('#next2').removeClass('disabled');
+}
+
+function scrollEvents () {
+	showLoad();
+	nextFn();
 }
 
 $(function() {
-  initialize('local');
-  initialize('prov');
-  my_alert = new Alert();
+	nextFn = startLocation;
+	initialize('local');
+	initialize('prov');
+	$('#service_group_service').click(function (e) {
+		serviceGroup();
+	});
+	my_alert = new Alert();
 });

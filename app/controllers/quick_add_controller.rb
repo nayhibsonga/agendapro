@@ -65,12 +65,12 @@ class QuickAddController < ApplicationController
 
 	    respond_to do |format|
 	      if @service_provider.valid?
-	      	@serviceStaff.new(:service_id => Service.find_by(:company_id => current_user.company_id), :service_provider_id => @service_provider.id)
-	      	if @serviceStaff.valid?
+	      	# @serviceStaff = ServiceStaff.new(:service_id => Service.find_by(:company_id => current_user.company_id).id, :service_provider_id => @service_provider.id)
+	      	# if @serviceStaff.valid?
 	        	format.json { render :layout => false, :json => {:valid => true} }
-	        else
-	        	format.json { render :layout => false, :json => { :valid => false, :errors => @serviceStaff.errors.full_messages }, :status => 422 }
-	        end
+	        # else
+	        # 	format.json { render :layout => false, :json => { :valid => false, :errors => @serviceStaff.errors.full_messages }, :status => 422 }
+	        # end
 	      else
 	        format.json { render :layout => false, :json => { :valid => false, :errors => @service_provider.errors.full_messages }, :status => 422 }
 	      end
@@ -114,7 +114,7 @@ class QuickAddController < ApplicationController
 
 	    respond_to do |format|
 	      if @service_provider.save
-	      	@serviceStaff.new(:service_id => Service.find_by(:company_id => current_user.company_id), :service_provider_id => @service_provider.id)
+	      	@serviceStaff = ServiceStaff.new(:service_id => Service.find_by(:company_id => current_user.company_id).id, :service_provider_id => @service_provider.id)
 	      	if @serviceStaff.save
 	        	format.json { render :layout => false, :json => @service_provider }
 	        else

@@ -67,7 +67,7 @@
 
 		<div class="container">
 			<div class="row" id="navegacion-workflow">
-		  		<div class="col-md-2"><a id="prev2" class="btn btn-agendapro-claro"><i class="fa fa-chevron-left"></i> Anterior</a></div>
+		  		<div class="col-md-2"><a id="prev2" class="btn btn-agendapro-claro disabled"><i class="fa fa-chevron-left"></i> Anterior</a></div>
 		  		<div class="col-md-8">
 			        <ul id="control-slide">
 						<li class="col-sm-4"><div class="control-box">Nuevo Local</div></li>
@@ -131,8 +131,8 @@
 					responsive: true,
 					auto: false,
 					width: '100%',
-					prev: '#prev2',
-					next: '#next2',
+					// prev: '#prev2',
+					// next: '#next2',
 					direction: "left",
 	        circular: false,
 	        infinite: false,
@@ -141,16 +141,23 @@
 						anchorBuilder: false
 					},
 					onCreate: function () {
-	          $('.center-block').parent().remove();
-	          $('#foo5').css('visibility', 'visible');
+	          hideLoad();
 	        },
 	        scroll: {
 	          conditions: function (direction) {
-	            return scrollEvents (direction);
+	            if (direction == 'next') {
+	            	return true;
+	            }
+	            else {
+	            	return false;
+	            }
 	          }
 	        }
 				});
 
+				$('#next2').click(function () {
+					scrollEvents ();
+				});
 				$('#open-usuario').toggle(function () {
             $("#sub-menu-usuario").removeClass("close-menu-usuario");
 		      }, function () {
