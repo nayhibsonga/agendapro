@@ -64,6 +64,7 @@ plan_personal = Plan.create(name: "Personal", locations: 1, service_providers: 1
 plan_basico = Plan.create(name: "Básico", locations: 1, service_providers: 30, custom: false, price: 24900, special: false)
 plan_normal = Plan.create(name: "Normal", locations: 2, service_providers: 60, custom: false, price: 39900, special: false)
 plan_premium = Plan.create(name: "Premium", locations: 3, service_providers: 90, custom: false, price: 49900, special: false)
+plan_trial = Plan.create(name: "Trial", locations: 5, service_providers: 90, custom: true, price: 0, special: false)
 
 # Plan para las personas que partieron con nosotros antes en la Beta y no se han querido cambiar...
 plan_beta = Plan.create(name: "Beta", locations: 1, service_providers: 2, custom: true, price: 14900, special: false)

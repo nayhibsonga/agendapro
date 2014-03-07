@@ -35,11 +35,16 @@
                             <p> <strong>¡Primer mes GRATIS!</strong></p>
                             <p> <strong><%= plan.locations %></strong> Local(es) </p>
                             <p> <strong><%= plan.service_providers %></strong> Staffs </p>
+                            <br>
                         </div>
-                        <%= link_to "Elegir", new_user_registration_path(:plan => plan.id, :company => true), :class => "btn btn-success btn-lg" %>
                     </div>
                 </div>
                 <% end %>
+            </div>
+            <br>
+            <br>
+            <div class="row text-center">
+                <%= link_to "¡Pruébalo Gratis Ahora!", new_user_registration_path(:plan => Plan.find_by_name("Trial").id, :company => true), :class => "btn btn-success btn-lg" %>
             </div>
         </div>
     </section>
