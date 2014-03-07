@@ -31,18 +31,18 @@
     <div class="modal-content">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-        <h4 class="booking-modal-title" id="bookingModalLabel"></h4>
+        <h4 class="modal-title booking-modal-title" id="bookingModalLabel"></h4>
       </div>
-      <div class="booking-modal-body">
+      <div class="modal-body booking-modal-body">
         <%= form_for @booking, html: {class: "form-horizontal"} do |f| %>
         <div class="form-group">
-          <label class="col-sm-6 control-label">Fecha: </label>
+          <label class="col-sm-5 control-label">Fecha: </label>
           <div class="col-sm-5">
             <input type="text" id="datePicker" class="form-control">
           </div>
         </div>
         <div class="form-group">
-          <label class="col-sm-6 control-label">Horario de la Reserva: </label>
+          <label class="col-sm-5 control-label">Horario de la Reserva: </label>
           <div class="col-sm-5">
             <div class="input datetime required booking_start">       
               <select class="datetime required" id="bookingStartHour" name="booking[start_hours]">
@@ -89,56 +89,56 @@
           </div>
         </div>
         <div class="form-group">
-          <%= f.label :service_provider, "Proveedor de Servicios: ", class: "col-sm-6 control-label" %>
+          <%= f.label :service_provider, "Proveedor de Servicios: ", class: "col-sm-5 control-label" %>
           <div class="col-sm-5">
             <%= f.collection_select :service_provider_id, ServiceProvider.where(company_id: current_user.company_id), :id, :public_name, {}, { class: "form-control" }%>
           </div>
         </div>
         <div class="form-group">
-          <%= f.label :service, "Servicio: ", class: "col-sm-6 control-label" %>
+          <%= f.label :service, "Servicio: ", class: "col-sm-5 control-label" %>
           <div class="col-sm-5">
             <%= f.collection_select :service_id, Service.where(company_id: current_user.company_id), :id, :name, {}, { class: "form-control" }%>
           </div>
         </div>
         <div class="form-group">
-          <%= f.label :status, "Estado de la Reserva: ", class: "col-sm-6 control-label" %>
+          <%= f.label :status, "Estado de la Reserva: ", class: "col-sm-5 control-label" %>
           <div class="col-sm-5">
             <%= f.collection_select :status_id, Status.all, :id, :name, {}, { class: "form-control" }%>
           </div>
         </div>
         <div class="form-group">
-          <%= f.label :first_name, "Nombre: ", class: "col-sm-6 control-label" %>
-          <div class="col-sm-5">
-            <%= f.text_field :first_name, class: "form-control" %>
-          </div>
-        </div>
-        <div class="form-group">
-          <%= f.label :last_name, "Apellidos: ", class: "col-sm-6 control-label" %>
-          <div class="col-sm-5">
-            <%= f.text_field :last_name, class: "form-control" %>
-          </div>
-        </div>
-        <div class="form-group">
-          <%= f.label :email, "Email: ", class: "col-sm-6 control-label" %>
+          <%= f.label :email, "Email: ", class: "col-sm-5 control-label" %>
           <div class="col-sm-5">
             <%= f.text_field :email, class: "form-control" %>
           </div>
         </div>
         <div class="form-group">
-          <%= f.label :phone, "Teléfono: ", class: "col-sm-6 control-label" %>
+          <%= f.label :first_name, "Nombre: ", class: "col-sm-5 control-label" %>
+          <div class="col-sm-5">
+            <%= f.text_field :first_name, class: "form-control" %>
+          </div>
+        </div>
+        <div class="form-group">
+          <%= f.label :last_name, "Apellidos: ", class: "col-sm-5 control-label" %>
+          <div class="col-sm-5">
+            <%= f.text_field :last_name, class: "form-control" %>
+          </div>
+        </div>
+        <div class="form-group">
+          <%= f.label :phone, "Teléfono: ", class: "col-sm-5 control-label" %>
           <div class="col-sm-5">
             <%= f.text_field :phone, class: "form-control" %>
           </div>
         </div>
         <div class="form-group">
-          <%= f.label :notes, "Notas: ", class: "col-sm-6 control-label" %>
+          <%= f.label :notes, "Notas: ", class: "col-sm-5 control-label" %>
           <div class="col-sm-5">
             <%= f.text_area :notes, class: "form-control" %>
           </div>
         </div>
         <% end %>
       </div>
-      <div class="booking-modal-footer">
+      <div class="modal-footer booking-modal-footer">
       </div>
     </div>
   </div>

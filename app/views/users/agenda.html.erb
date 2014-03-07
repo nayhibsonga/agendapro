@@ -51,8 +51,8 @@
 								<td><%= booking.service_provider.public_name %></td>
 								<td><%= number_with_precision(booking.service.price, precision: 0, separator: '', delimiter: '.') %></td>
 								<td>
-									<%= link_to 'Editar', booking_edit_url(:confirmation_code => booking.confirmation_code), :class => 'btn btn-info' %>
-									<%= link_to 'Cancelar', booking_cancel_url(:confirmation_code => booking.confirmation_code), :class => 'btn btn-danger' %>
+									<%= link_to '<i class="fa fa-pencil"></i> Editar'.html_safe, booking_edit_url(:confirmation_code => booking.confirmation_code), :class => 'btn btn-warning' %>
+									<%= link_to '<i class="fa fa-times"></i> Cancelar'.html_safe, booking_cancel_url(:confirmation_code => booking.confirmation_code), :class => 'btn btn-danger' %>
 								</td>
 							</tr>
 							<% end %>

@@ -89,10 +89,8 @@
 
   <div class="form-group">
   <div class="actions col-sm-offset-2 col-sm-4">
-    <%= button_tag(type: 'submit', class: "btn btn-primary") do %>
-        <i class="fa fa-check"></i>   Guardar
-      <% end %>
-    <%= link_to '<i class="fa fa-times"></i>   Cancelar'.html_safe, services_path, :method => :get, :class => "btn btn-danger" %>    
+    <%= f.submit 'Guardar', :class => 'btn btn-primary' %>
+    <%= link_to 'Cancelar', services_path, :class => "btn btn-danger" %>    
   </div>
 </div>
 
