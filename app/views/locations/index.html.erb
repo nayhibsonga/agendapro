@@ -14,11 +14,11 @@
     <% @locations.each do |location| %>
       <tr>
         <td><%= location.name %></td>
-        <td><%= link_to '<i class="fa fa-pencil"></i>   Editar'.html_safe, edit_location_path(location), :class => "btn btn-warning" %>
-            <%= link_to '<i class="fa fa-times"></i>   Eliminar'.html_safe, location, :class => "btn btn-danger",  method: :delete, data: { confirm: '¿Estás seguro de eliminar el local seleccionado?' } %></td>
+        <td><%= link_to '<i class="fa fa-pencil"></i> Editar'.html_safe, edit_location_path(location), :class => "btn btn-warning" %>
+            <%= link_to '<i class="fa fa-times"></i> Eliminar'.html_safe, location, :class => "btn btn-danger",  method: :delete, data: { confirm: '¿Estás seguro de eliminar el local seleccionado?' } %></td>
       </tr>
     <% end %>
   </tbody>
 </table>
 
-<%= link_to "Nuevo Local", new_location_path, :class => "btn btn-primary" %>
+<%= link_to '<i class="fa fa-plus"></i> Nuevo Local'.html_safe, new_location_path, :class => "btn btn-primary" %>

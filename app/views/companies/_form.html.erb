@@ -41,7 +41,9 @@
   
   <div class="form-group">
     <div class="col-sm-offset-3 col-sm-4">
-      <%= submit_tag 'Guardar', :class => 'btn btn-default' %>
-    </div>
+     <%= f.submit 'Guardar', :class => 'btn btn-primary' %>
+     <%= link_to 'Cancelar', company_path, :class => "btn btn-danger" %>
+    </div> 
   </div>
+
 <% end %>
