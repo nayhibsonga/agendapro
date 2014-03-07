@@ -1,0 +1,22 @@
+<h1>Clientes de la Empresa</h1>
+
+<table class="table table-bordered">
+  <thead>
+    <tr>
+      <th>Nombre</th>
+      <th>Apellido</th>
+      <th>Email</th>
+      <th>Teléfono</th>
+    </tr>
+  </thead>
+  <tbody>
+  	<% @clients.each do |client| %>
+      <tr>
+        <td><%= client[0] %></td>
+        <td><%= client[1] %></td>
+        <td><%= client[2] %></td>
+        <td><%= client[3] %></td>
+      </tr>
+     <% end %>
+  </tbody>
+</table>
