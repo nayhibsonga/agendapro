@@ -12,11 +12,11 @@
     <% @regions.each do |region| %>
       <tr>
         <td><%= region.name %></td>
-        <td><%= link_to '<i class="fa fa-pencil"></i>   Editar'.html_safe, edit_region_path(region), :class => "btn btn-warning" %>
-        <%= link_to '<i class="fa fa-times"></i>   Eliminar'.html_safe, region, :class => "btn btn-danger", method: :delete, data: { confirm: '¿Estás seguro?' } %></td>
+        <td><%= link_to '<i class="fa fa-pencil"></i> Editar'.html_safe, edit_region_path(region), :class => "btn btn-warning" %>
+        <%= link_to '<i class="fa fa-trash-o"></i> Eliminar'.html_safe, region, :class => "btn btn-danger", method: :delete, data: { confirm: '¿Estás seguro?' } %></td>
       </tr>
     <% end %>
   </tbody>
 </table>
 
-<%= link_to '   Nueva Región', new_region_path, :class => "fa fa-plus btn btn-primary" %>
+<%= link_to '<i class="fa fa-plus"></i> Nueva Región'.html_safe, new_region_path, :class => "btn btn-primary" %>

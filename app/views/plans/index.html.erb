@@ -17,8 +17,8 @@
         <td><%= plan.custom %></td>
         <td><%= plan.special %></td>
         <td>
-          <%= link_to '<i class="fa fa-pencil"></i>   Editar'.html_safe, edit_plan_path(plan), :class => "btn btn-warning" %>
-          <%= link_to '<i class="fa fa-times"></i>   Eliminar'.html_safe, plan, :class => "btn btn-danger", method: :delete, data: { confirm: '¿Estás seguro?' } %>
+          <%= link_to '<i class="fa fa-pencil"></i> Editar'.html_safe, edit_plan_path(plan), :class => "btn btn-warning" %>
+          <%= link_to '<i class="fa fa-trash-o"></i> Eliminar'.html_safe, plan, :class => "btn btn-danger", method: :delete, data: { confirm: '¿Estás seguro?' } %>
         </td>
       </tr>
     <% end %>
@@ -27,4 +27,4 @@
 
 <br>
 
-<%= link_to '<i class="fa fa-plus"></i>   Nuevo Plan'.html_safe, new_plan_path, :class => "btn btn-primary" %>
+<%= link_to '<i class="fa fa-plus"></i> Nuevo Plan'.html_safe, new_plan_path, :class => "btn btn-primary" %>

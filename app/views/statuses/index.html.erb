@@ -15,8 +15,8 @@
         <td><%= status.name %></td>
         <td><%= status.description if status.description %></td>
         <td>
-          <%= link_to '<i class="fa fa-pencil"></i>   Editar'.html_safe, edit_status_path(status), :class => "btn btn-warning" %>
-          <%= link_to '<i class="fa fa-times"></i>   Eliminar'.html_safe, status, :class => "btn btn-danger", method: :delete, data: { confirm: '¿Estás seguro?' } %>
+          <%= link_to '<i class="fa fa-pencil"></i> Editar'.html_safe, edit_status_path(status), :class => "btn btn-warning" %>
+          <%= link_to '<i class="fa fa-trash-o"></i> Eliminar'.html_safe, status, :class => "btn btn-danger", method: :delete, data: { confirm: '¿Estás seguro?' } %>
         </td>
       </tr>
     <% end %>
@@ -25,4 +25,4 @@
 
 <br>
 
-<%= link_to '<i class="fa fa-plus"></i>   Nuevo Estado'.html_safe, new_status_path, :class => "btn btn-primary" %>
+<%= link_to '<i class="fa fa-plus"></i> Nuevo Estado'.html_safe, new_status_path, :class => "btn btn-primary" %>
