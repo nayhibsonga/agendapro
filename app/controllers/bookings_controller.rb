@@ -33,6 +33,11 @@ class BookingsController < ApplicationController
   # POST /bookings.json
   def create
     @booking = Booking.new(booking_params)
+    if !booking_params[:user_id]
+      if User.find_by_email(booking_params[:email])
+        @booking.user_id = User.find_by_email(booking_params[:email]).id
+      end
+    end
     if @booking && @booking.service_provider
       @booking.location = @booking.service_provider.location
     end
@@ -53,6 +58,11 @@ class BookingsController < ApplicationController
   # PATCH/PUT /bookings/1.json
   def update
     @booking.location = @booking.service_provider.location
+    if !booking_params[:user_id]
+      if User.find_by_email(booking_params[:email])
+        @booking.user_id = User.find_by_email(booking_params[:email]).id
+      end
+    end
     respond_to do |format|
       if @booking.update(booking_params)
         format.html { redirect_to @booking, notice: 'Booking was successfully updated.' }

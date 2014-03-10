@@ -2,12 +2,12 @@
 <div class="col-md-12">
 <div class="row">
   <div  id="locals-selector" class="radio">
-    <label>
-      <% @locations.each do |local| %>
-        <input type="radio" name="localRadio" id="localOption<%= local.id %>" onchange="loadProviders()" value="<%= local.id %>" <%= "checked" if ((!@selectedLocal) && (local.id == @locations.first.id)) || (@selectedLocal.to_i == local.id) %>>
+    <% @locations.each do |local| %>
+      <label id="<%= local.id %>" >
+        <input type="radio" name="localRadio" id="localOption<%= local.id %>" onchange="loadProviders()" value="<%= local.id %>" <%= 'checked' if ((!@selectedLocal) && (local.id == @locations.first.id)) || (@selectedLocal.to_i == local.id) %>>
         <p><%= local.name %></p>
-      <% end %>
-    </label>
+      </label>
+    <% end %>
   </div>
 </div>
 
