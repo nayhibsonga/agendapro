@@ -35,7 +35,7 @@ class DeviseMandrill < Devise::Mailer
         {
           :type => 'image/png',
           :name => 'logo.png',
-          :content => Base64.encode64(File.read('app/assets/images/admin/logo20.png'))
+          :content => Base64.encode64(File.read('app/assets/images/logos/logo20.png'))
         }
       ]
     }

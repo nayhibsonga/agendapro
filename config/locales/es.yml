@@ -9,7 +9,6 @@ es:
     - vie
     - sáb
     abbr_month_names:
-    -
     - ene
     - feb
     - mar
@@ -35,7 +34,6 @@ es:
       long: ! '%A %d de %B de %Y'
       short: ! '%d de %b'
     month_names:
-    -
     - enero
     - febrero
     - marzo
