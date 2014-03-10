@@ -42,9 +42,9 @@
 					<dt>Teléfono</dt>
 					<dd><%= @booking.phone %></dd>
 					<dt>Inicio</dt>
-					<dd><%= @booking.start %></dd>
+					<dd><%= l @booking.start %></dd>
 					<dt>Fin</dt>
-					<dd><%= @booking.end %></dd>
+					<dd><%= l @booking.end %></dd>
 					<% if !@booking.notes.empty? %>
 					<dt>Notas</dt>
 					<dd><%= @booking.notes %></dd>
