@@ -78,7 +78,7 @@ function loadStep2 () {
 		selected = false;
 		var serviceId = $('input[name=serviceRadio]:checked').val();
 
-		$.getJSON('/providers_services', {id: serviceId}, function (providers) {
+		$.getJSON('/providers_services', {id: serviceId, local: $('#selectedLocal').data('local').id}, function (providers) {
 			$('#staff-selector').empty();
 			$.each(providers, function (key, provider) {
 				$('#staff-selector').append(

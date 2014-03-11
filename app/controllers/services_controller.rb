@@ -80,7 +80,7 @@ class ServicesController < ApplicationController
 
   def get_providers
     service = Service.find(params[:id])
-    providers = service.service_providers
+    providers = service.service_providers.where('location_id = ?', params[:local])
     render :json => providers
   end
 
