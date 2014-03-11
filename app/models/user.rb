@@ -12,4 +12,17 @@ class User < ActiveRecord::Base
 	accepts_nested_attributes_for :company
 
 	validates :email, :presence => true
+
+	after_create :send_welcome_mail, :get_past_bookings
+
+	def send_welcome_mail
+		UserMailer.welcome_email(self)
+	end
+
+	def get_past_bookings
+		Booking.where(email: self.email).each do |booking|
+			booking.user_id = self.id
+			booking.save
+		end
+	end
 end

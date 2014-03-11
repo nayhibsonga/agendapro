@@ -34,8 +34,6 @@ class UsersController < ApplicationController
     @user = User.new(user_params)
     @user.company_id = current_user.company_id
 
-    UserMailer.welcome_email(@user)
-
     respond_to do |format|
       if @user.save
         format.html { redirect_to @user, notice: 'Usuario fue creado exitosamente.' }
