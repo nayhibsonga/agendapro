@@ -58,6 +58,9 @@ Agendapro::Application.routes.draw do
   # My Agenda
   get '/my_agenda', :to => 'users#agenda', :as => 'my_agenda'
 
+  # Add Company from Usuario Registrado
+  get '/add_company', :to => 'companies#add_company', :as => 'add_company'
+
   get "/home", :to => 'home#index', :as => 'home'
   get "/features", :to => 'home#features', :as => 'features'
   get "/view_plans", :to => 'plans#view_plans', :as => 'view_plans'

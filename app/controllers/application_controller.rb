@@ -33,23 +33,23 @@ class ApplicationController < ActionController::Base
   end
 
   def verify_is_super_admin
-    redirect_to(dashboard_path) unless (current_user.role_id == Role.find_by_name("Super Admin").id)
+    redirect_to "/403" unless (current_user.role_id == Role.find_by_name("Super Admin").id)
   end
 
   def verify_is_admin
-    redirect_to(dashboard_path) unless (current_user.role_id == Role.find_by_name("Admin").id)
+    redirect_to "/403" unless (current_user.role_id == Role.find_by_name("Admin").id)
   end
 
   def verify_is_local_admin
-    redirect_to(dashboard_path) unless (current_user.role_id == Role.find_by_name("Administrador Local").id)
+    redirect_to "/403" unless (current_user.role_id == Role.find_by_name("Administrador Local").id)
   end
 
   def verify_is_staff
-    redirect_to(dashboard_path) unless (current_user.role_id == Role.find_by_name("Staff").id)
+    redirect_to "/403" unless (current_user.role_id == Role.find_by_name("Staff").id)
   end
 
   def verify_is_user
-    redirect_to(dashboard_path) unless (current_user.role_id == Role.find_by_name("Usuario Registrado").id)
+    redirect_to "/403" unless (current_user.role_id == Role.find_by_name("Usuario Registrado").id)
   end
 
   private

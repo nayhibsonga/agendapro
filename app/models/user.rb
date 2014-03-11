@@ -21,8 +21,7 @@ class User < ActiveRecord::Base
 
 	def get_past_bookings
 		Booking.where(email: self.email).each do |booking|
-			booking.user_id = self.id
-			booking.save
+			booking.update(user_id: self.id)
 		end
 	end
 end
