@@ -4,6 +4,7 @@ class UsersController < ApplicationController
   before_action :authenticate_user!
   before_action :verify_is_super_admin, except: [:new, :agenda]
   layout "admin", except: [:agenda]
+  load_and_authorize_resource
 
   # GET /users
   # GET /users.json
@@ -32,6 +33,8 @@ class UsersController < ApplicationController
   def create
     @user = User.new(user_params)
     @user.company_id = current_user.company_id
+
+    UserMailer.welcome_email(@user)
 
     respond_to do |format|
       if @user.save

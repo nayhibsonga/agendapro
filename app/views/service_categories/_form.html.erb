@@ -12,14 +12,15 @@
   <% end %>
 
   <div class="form-group">
-    <%= f.label :name, 'Nombre', :class => 'col-sm-4 control.label' %>
-    <div class="col-sm-8">
+    <%= f.label :name, 'Nombre', :class => 'col-sm-3 control-label' %>
+    <div class="col-sm-4">
       <%= f.text_field :name, :autofocus => true, :required => true, :class => 'form-control' %>
     </div>
   </div>
   <div class="form-group">
-    <div class="col-sm-offset-4 col-sm-8">
-      <%= submit_tag 'Guardar', :class => 'btn btn-default' %>
+    <div class="col-sm-offset-3 col-sm-4">
+      <%= f.submit 'Guardar', :class => 'btn btn-primary' %>
+      <%= link_to 'Cancelar', service_categories_path, class: "btn btn-danger" %>  
     </div>
   </div>
 <% end %>

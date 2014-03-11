@@ -15,8 +15,8 @@
         <td><%= payment_status.name %></td>
         <td><%= payment_status.description if payment_status.description %></td>
         <td>
-          <%= link_to '<i class="fa fa-pencil"></i>   Editar'.html_safe, edit_payment_status_path(payment_status), :class => "btn btn-warning" %>
-          <%= link_to '<i class="fa fa-times"></i>   Eliminar'.html_safe, payment_status, :class => "btn btn-danger", method: :delete, data: { confirm: '¿Estás seguro?' } %>
+          <%= link_to '<i class="fa fa-pencil"></i> Editar'.html_safe, edit_payment_status_path(payment_status), :class => "btn btn-warning" %>
+          <%= link_to '<i class="fa fa-trash-o"></i> Eliminar'.html_safe, payment_status, :class => "btn btn-danger", method: :delete, data: { confirm: '¿Estás seguro?' } %>
         </td>
       </tr>
     <% end %>
@@ -25,4 +25,4 @@
 
 <br>
 
-<%= link_to '<i class="fa fa-plus"></i>   Nuevo Estado de Pago'.html_safe, new_payment_status_path, :class => "btn btn-primary" %>
+<%= link_to '<i class="fa fa-plus"></i> Nuevo Estado de Pago'.html_safe, new_payment_status_path, :class => "btn btn-primary" %>

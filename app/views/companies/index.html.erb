@@ -13,8 +13,8 @@
     <% @companies.each do |company| %>
       <tr>
         <td><%= link_to company.name, root_url(:subdomain => company.web_address) %></td>
-        <td><%= link_to '<i class="fa fa-pencil"></i>   Editar'.html_safe, edit_company_path(company) %></td>
-        <td><%= link_to '<i class="fa fa-times"></i>   Eliminar'.html_safe, company, method: :delete, data: { confirm: '¿Estás seguro?' } %></td>
+        <td><%= link_to '<i class="fa fa-pencil"></i> Editar'.html_safe, edit_company_path(company) %></td>
+        <td><%= link_to '<i class="fa fa-trash-o"></i> Eliminar'.html_safe, company, method: :delete, data: { confirm: '¿Estás seguro?' } %></td>
       </tr>
     <% end %>
   </tbody>
@@ -22,4 +22,4 @@
 
 <br>
 
-<%= link_to 'Crear Empresa', new_company_path %>
+<%= link_to '<i class="fa fa-plus"></i> Crear Empresa'.html_safe, new_company_path %>

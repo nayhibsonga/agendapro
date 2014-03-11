@@ -72,10 +72,12 @@ class Ability
 
     can :get_direction, District
 
-    can :read, Booking, :user_id => user.id
-    can :update, Booking, :user_id => user.id
-    can :destroy, Booking, :user_id => user.id
-    can :create, Booking, :user_id => user.id
+    can :read, Booking, :id => user.id
+    can :update, Booking, :id => user.id
+    can :destroy, Booking, :id => user.id
+    can :create, Booking, :id => user.id
+
+    can :agenda, User, :id => user.id
 
 
     if user.role_id == Role.find_by_name("Super Admin").id

@@ -12,49 +12,49 @@
   <% end %>
 
   <div class="form-group">
-    <%= f.label :name, "Nombre: ", class: "col-sm-2 control-label" %>
+    <%= f.label :name, "Nombre: ", class: "col-sm-3 control-label" %>
     <div class="col-sm-4">
       <%= f.text_field :name, :autofocus => true, class: "form-control" %>
     </div>
   </div>
 
   <div class="form-group">
-    <%= f.label :price, "Precio: ", class: "col-sm-2 control-label" %>
+    <%= f.label :price, "Precio: ", class: "col-sm-3 control-label" %>
     <div class="col-sm-4">
       <%= f.number_field :price, class: "form-control" %>
     </div>
   </div>
 
   <div class="form-group">
-    <%= f.label :duration, "Duración: ", class: "col-sm-2 control-label" %>
+    <%= f.label :duration, "Duración: ", class: "col-sm-3 control-label" %>
     <div class="col-sm-4">
       <%= f.number_field :duration, class: "form-control" %>
     </div>
   </div>
 
   <div class="form-group">
-    <%= f.label :description, "Descripción: ", class: "col-sm-2 control-label" %>
+    <%= f.label :description, "Descripción: ", class: "col-sm-3 control-label" %>
     <div class="col-sm-4">
       <%= f.text_area :description, class: "form-control" %>
     </div>
   </div>
 
   <div class="form-group">
-    <%= f.label :group_service, "Servicio Grupal: ", class: "col-sm-2 control-label" %>
+    <%= f.label :group_service, "Servicio Grupal: ", class: "col-sm-3 control-label" %>
     <div class="col-sm-4">
       <%= f.check_box :group_service %>
     </div>
   </div>
 
   <div class="form-group">
-    <%= f.label :capacity, "Capacidad: ", class: "col-sm-2 control-label" %>
+    <%= f.label :capacity, "Capacidad: ", class: "col-sm-3 control-label" %>
     <div class="col-sm-4">
       <%= f.number_field :capacity, class: "form-control" %>
     </div>
   </div>
 
   <div class="form-group">
-    <%= f.label :service_category_id, "Categoría de Servicio: ", class: "col-sm-2 control-label" %>
+    <%= f.label :service_category_id, "Categoría de Servicio: ", class: "col-sm-3 control-label" %>
     <div class="col-sm-4">
       <%= f.collection_select :service_category_id, ServiceCategory.where(company_id: current_user.company_id), :id, :name, {}, { class: "form-control" }%>
     </div>
@@ -62,7 +62,7 @@
  
   <% if @service.service_category.nil? then @service.build_service_category end %>
     <div class="form-group">
-      <%= f.label :service_category_id, "Crear nueva Categoría de Servicio: ", class: "col-sm-2 control-label" %>
+      <%= f.label :service_category_id, "Crear nueva Categoría de Servicio: ", class: "col-sm-3 control-label" %>
     <div class="col-sm-4">
       <input type="checkbox" name="catCheck" id="categoryCheckboxId" value="0" onchange="categoryChange()" class="checkbox">
     </div>
@@ -71,7 +71,7 @@
   <%= f.fields_for :service_category do |builder| %>
 
   <div class="form-group">
-    <%= builder.label :name, "Nueva Categoría de Servicio", class: "col-sm-2 control-label" %>
+    <%= builder.label :name, "Nueva Categoría de Servicio", class: "col-sm-3 control-label" %>
     <div class="col-sm-4">
       <%= builder.text_field :name, class: "form-control", :value => '' %>
       <%= builder.hidden_field :company_id, class: "form-control", :value => current_user.company_id %>
@@ -81,14 +81,14 @@
   <% end %>
   
   <div class="form-group">
-    <%= f.label :tag, "Tags de Búsqueda: ", class: "col-sm-2 control-label" %>
+    <%= f.label :tag, "Tags de Búsqueda: ", class: "col-sm-3 control-label" %>
     <div class="col-sm-4"> 
       <%= f.collection_check_boxes :tag_ids, Tag.where(economic_sector: Company.find(current_user.company_id).economic_sector), :id, :name, html: {class: "checkbox"}%>
     </div>
   </div>
 
   <div class="form-group">
-  <div class="actions col-sm-offset-2 col-sm-4">
+  <div class="actions col-sm-offset-3 col-sm-4">
     <%= f.submit 'Guardar', :class => 'btn btn-primary' %>
     <%= link_to 'Cancelar', services_path, :class => "btn btn-danger" %>    
   </div>

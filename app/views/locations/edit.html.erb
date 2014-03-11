@@ -1,97 +1,12 @@
 <h1 id='title'>Editar Local</h1>
 
-<%= form_for @location, html: {class: "form-horizontal"} do |f| %>
-
-  <%= content_tag "div", id: "id_data", data: { id: @location.id } do %>
+<%= content_tag "div", id: "id_data", data: { id: @location.id } do %>
   <% end %>
-
-  <div class="form-group">
-    <%= f.label :name, "Nombre: ", class: "col-sm-2 control-label" %>
-    <div class="col-sm-4">
-      <%= f.text_field :name, :autofocus => true, class: "form-control" %>
-    </div>
-  </div>
-  <div class="form-group">
-    <%= f.label :address, "Dirección: ", class: "col-sm-2 control-label" %>
-    <div class="col-sm-4">
-      <%= f.text_field :address, class: "form-control" %>
-    </div>
-  </div>
-  <div class="form-group">
-    <%= f.label :phone, "Teléfono: ", class: "col-sm-2 control-label" %>
-    <div class="col-sm-4">
-      <%= f.text_field :phone, class: "form-control" %>
-    </div>
-  </div>
-
-  <div class="form-group">
-    <%= f.label :district, "Comuna: ", class: "col-sm-2 control-label" %>
-    <div class="col-sm-4">
-      <%= f.collection_select :district_id, District.all, :id, :name, {}, { class: "form-control" }%>
-    </div>
-  </div>
-
   <%= content_tag "div", id: "location_times_data", data: { location_times: @location.location_times.to_json } do %>
   <% end %>
+  
+<%= render 'form' %>
 
-  <table class="table table-bordered">
-    <thead>
-      <tr>
-        <th>Día</th>
-        <th>¿Abierto?</th>
-        <th>Apertura</th>
-        <th>Cierre</th>
-      </tr>
-    </thead>
-
-    <tbody>
-        <tr id="tr1">
-          <td>
-            <label>Lunes:</label>
-          </td>
-        </tr>
-        <tr id="tr2">
-          <td>
-            <label>Martes:</label>
-          </td>
-        </tr>
-        <tr id="tr3">
-          <td>
-            <label>Miércoles:</label>
-          </td>
-        </tr>
-        <tr id="tr4">
-          <td>
-            <label>Jueves:</label>
-          </td>
-        </tr>
-        <tr id="tr5">
-          <td>
-            <label>Viernes:</label>
-          </td>
-        </tr>
-        <tr id="tr6">
-          <td>
-            <label>Sábado:</label>
-          </td>
-        </tr>
-        <tr id="tr7">
-          <td>
-            <label>Domingo:</label>
-          </td>
-        </tr>
-    </tbody>
-  </table>
-<% end %>
-
-<div class="form-group">
-  <div class="actions col-sm-offset-2 col-sm-4">
-    <%= link_to '<i class="fa fa-check"></i>   Editar Local'.html_safe, "#", :class => "btn btn-primary buttonLocation" %>
-    <%= link_to '<i class="fa fa-times"></i>   Cancelar'.html_safe, locations_path, :method => :get, :class => "btn btn-danger" %>    
-  </div>
-</div>
-
-<br />
 <% content_for :scripts do %>
   <%= javascript_include_tag "http://maps.google.com/maps/api/js?sensor=false" %>
   <%= javascript_include_tag "location" %>

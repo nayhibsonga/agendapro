@@ -33,7 +33,7 @@
                     </div>
                     <div class="form-group">
                         <div class="col-sm-offset-4 col-sm-8">
-                            <%= submit_tag 'Ingresar', :class => 'btn btn-agendapro-claro' %>
+                            <%= f.submit 'Ingresar', :class => 'btn btn-agendapro-claro' %>
                         </div>
                     </div>
                 <% end %>
@@ -61,9 +61,27 @@
                 <%= form_for :user, :url => user_registration_path, :html => { class: 'form-horizontal' } do |f| %>
                     <%= f.hidden_field :role_id, :value => Role.where(:name => "Usuario Registrado").first.id %>
                     <div class="form-group">
+                        <%= f.label :first_name, 'Nombre', :class => 'col-sm-4 control-label' %>
+                        <div class="col-sm-8">
+                            <%= f.text_field :first_name, :autofocus => true, :required => true, :class => 'form-control' %>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <%= f.label :last_name, 'Apellido', :class => 'col-sm-4 control-label' %>
+                        <div class="col-sm-8">
+                            <%= f.text_field :last_name, :autofocus => true, :required => true, :class => 'form-control' %>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <%= f.label :phone, 'Teléfono', :class => 'col-sm-4 control-label' %>
+                        <div class="col-sm-8">
+                            <%= f.telephone_field :phone, :required => true, :class => 'form-control' %>
+                        </div>
+                    </div>
+                    <div class="form-group">
                         <%= f.label :email, 'Email', :class => 'col-sm-4 control-label' %>
                         <div class="col-sm-8">
-                            <%= f.email_field :email, :autofocus => true, :required => true, :class => 'form-control' %>
+                            <%= f.email_field :email, :required => true, :class => 'form-control' %>
                         </div>
                     </div>
                     <div class="form-group">
@@ -73,14 +91,14 @@
                         </div>
                     </div>
                     <div class="form-group">
-                        <%= f.label :password_confirmation, 'Confirmar contraseña', :class => 'col-sm-4 control-label' %>
+                        <%= f.label :password_confirmation, 'Confirmar Contraseña', :class => 'col-sm-4 control-label' %>
                         <div class="col-sm-8">
                             <%= f.password_field :password_confirmation, :required => true, :class => 'form-control' %>
                         </div>
                     </div>
                     <div class="form-group">
                         <div class="col-sm-offset-4 col-sm-8">
-                            <%= submit_tag 'Regístrate', :class => 'btn btn-agendapro-claro' %>
+                            <%= f.submit 'Regístrate', :class => 'btn btn-agendapro-claro' %>
                         </div>
                     </div>
                 <% end %>

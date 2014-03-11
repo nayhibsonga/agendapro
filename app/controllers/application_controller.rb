@@ -13,8 +13,12 @@ class ApplicationController < ActionController::Base
     params[resource] &&= send(method) if respond_to?(method, true)
   end
 
-  protected
+  rescue_from CanCan::AccessDenied do |exception|
+    redirect_to "/403"
+  end
 
+  protected
+  
   def quick_add
     if current_user && (current_user.role_id != Role.find_by_name("Super Admin").id) && current_user.company_id
       @company = Company.find(current_user.company_id)

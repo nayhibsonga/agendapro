@@ -20,8 +20,8 @@ class ServiceProvidersController < ApplicationController
   def new
     @service_provider = ServiceProvider.new
     @service_provider.company_id = current_user.company_id
-    #@users = User.where(company_id: current_user.company_id)
-    #@locations = Location.where(company_id: current_user.company_id)
+    # @users = User.where(company_id: current_user.company_id)
+    # @locations = Location.where(company_id: current_user.company_id)
   end
 
   # GET /service_providers/1/edit
@@ -31,11 +31,13 @@ class ServiceProvidersController < ApplicationController
   # POST /service_providers
   # POST /service_providers.json
   def create
-    if service_provider_params[:user_attributes][:email].empty?
-      new_params = service_provider_params.except(:user_attributes)
-    else
-      new_params = service_provider_params.except(:user_id)
-      new_params[:user_attributes].merge!(:password =>'12345678').merge!(:role_id => 4).merge!(:company_id => current_user.company_id)
+    if service_provider_params[:user_attributes]
+      if service_provider_params[:user_attributes][:email].empty?
+        new_params = service_provider_params.except(:user_attributes)
+      else
+        new_params = service_provider_params.except(:user_id)
+        new_params[:user_attributes].merge!(:password =>'12345678').merge!(:role_id => 4).merge!(:company_id => current_user.company_id)
+      end
     end
 
     puts new_params
@@ -63,12 +65,12 @@ class ServiceProvidersController < ApplicationController
     @service_provider.provider_times.destroy_all
     respond_to do |format|
 
-    @users = User.where(company_id: current_user.company_id)
-    @locations = Location.where(company_id: current_user.company_id)
+    # @users = User.where(company_id: current_user.company_id)
+    # @locations = Location.where(company_id: current_user.company_id)
       if @service_provider.update(service_provider_params)
         format.html { redirect_to @service_provider, notice: 'Proveedor actualizado satisfactoriamente.' }
         format.json { render :json => @service_provider }
-      else
+      else 
         format.html { render action: 'edit' }
         format.json { render :json => { :errors => @service_provider.errors.full_messages }, :status => 422 }
       end

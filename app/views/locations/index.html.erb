@@ -15,7 +15,7 @@
       <tr>
         <td><%= location.name %></td>
         <td><%= link_to '<i class="fa fa-pencil"></i> Editar'.html_safe, edit_location_path(location), :class => "btn btn-warning" %>
-            <%= link_to '<i class="fa fa-times"></i> Eliminar'.html_safe, location, :class => "btn btn-danger",  method: :delete, data: { confirm: '¿Estás seguro de eliminar el local seleccionado?' } %></td>
+            <%= link_to '<i class="fa fa-trash-o"></i> Eliminar'.html_safe, location, :class => "btn btn-danger",  method: :delete, data: { confirm: '¿Estás seguro de eliminar el local seleccionado?' } %></td>
       </tr>
     <% end %>
   </tbody>

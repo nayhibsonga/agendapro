@@ -14,8 +14,8 @@
       <tr>
         <td><%= service.name %></td>
         <td><%= service.description.html_safe if service.description %></td>
-        <td><%= link_to '<i class="fa fa-pencil"></i>   Editar'.html_safe, edit_service_path(service), :class => "btn btn-warning" %>
-        <%= link_to '<i class="fa fa-times"></i>   Eliminar'.html_safe, service, :class => "btn btn-danger", method: :delete, data: { confirm: '¿Estás seguro?' } %></td>
+        <td><%= link_to '<i class="fa fa-pencil"></i> Editar'.html_safe, edit_service_path(service), :class => "btn btn-warning" %>
+        <%= link_to '<i class="fa fa-trash-o"></i> Eliminar'.html_safe, service, :class => "btn btn-danger", method: :delete, data: { confirm: '¿Estás seguro?' } %></td>
       </tr>
     <% end %>
   </tbody>

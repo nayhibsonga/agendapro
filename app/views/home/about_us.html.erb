@@ -1,39 +1,34 @@
-<div class="full_page_photo" style="background-image: url(<%= asset_path "home/about_us.jpg" %>);">
-     <div class="container">
-          <section class="call_to_action">
-               <h3 class="animated bounceInDown">Conoce al equipo detrás de <strong>AgendaPro</strong></h3>
-               <h4 class="animated bounceInUp">No dudes <strong>en contactarnos</strong> si necesitas ayuda</h4>
-          </section>
-     </div>
-</div>
-
 <div class="main">
     <section class="hgroup">
         <div class="container">
             <h1>Sobre Nosotros</h1>
             <h2>Conoce más sobre <strong><span class="agendapro">AgendaPro</span></strong> y el equipo que esta detrás, que trabaja constantemente para ofrecerte un mejor servicio.</h2>
-            <ul class="breadcrumb pull-right">
-                <li><%= link_to "Inicio", home_path %> </li>
-                <li class="active">Sobre Nosotros</li>
-            </ul>
+            <div class="line-breadcrumb">
+                <ul class="breadcrumb pull-right">
+                    <li><%= link_to "Inicio", home_path %> </li>
+                    <li class="active">Sobre Nosotros</li>
+                </ul>
+            </div>
         </div>
     </section>
+    
     <section class="article-text">
         <div class="container">
             <div class="columns_2">
                 <p><strong>AgendaPro nace de la necesidad de solucionar uno de los problemas más comunes y molestos que existen, pedir una hora.</strong> Es muy común que un cliente llame y nadie le conteste el teléfono. <strong>Para TU cliente el no poder reservar es una pésima señal, quizás no vuelva nunca más.</strong> Para tí como dueño de un local, cada una de estas llamadas no recibidas significa una venta menos, generando un importante efecto en tus resultados. AgendaPro es el mejor sistema para evitar este tipo de problemas, <strong>¡las reservas se hacen de forma automática!</strong></p>
                 <p><strong>AgendaPro está formado por un equipo joven</strong>, pero con experiencia, tanto en el rubro tecnológico como en el financiero. Además, por medio de un directorio, gente con basta experiencia nos aconseja y guía para dar el mejor servicio posible a nuestros clientes. <strong>AgendaPro busca ser un puente de conexión directo entre proveedores y clientes</strong>, para que estos últimos puedan obtener de manera más simple lo que necesitan. Todo esto por medio de tecnología de punta y un equipo 100% dedicado.</p>
+                <br />
             </div>
         </div>
     </section>
-    <section class="call_to_action"></section>
+    
     <section class="team_members">
         <div class="container">
             <h2 class="section_header">Conoce a nuestro equipo, <small>trabajando para ofrecerte el mejor servicio.</small></h2>
             <div class="row">
                 <div class="col-sm-6 col-md-3">
                     <div class="team_member img-responsive">
-                        <figure style="background-image: url(<%= asset_path "home/nico_r.png" %>)">
+                        <figure>
                         	<%= image_tag "home/nico_r.png", :atl => "nico_r" %>
                         </figure>
                         <h5>Nicolás Rossi</h5>
@@ -51,7 +46,7 @@
                 <div class="col-sm-1 visible-lg"></div><!-- Separador -->
                 <div class="col-sm-6 col-md-3">
                     <div class="team_member img-responsive">
-                        <figure style="background-image: url(<%= asset_path "home/matias.png" %>)">
+                        <figure>
                         	<%= image_tag "home/matias.png", :alt => "matias" %>
                         </figure>
                         <h5>Matías Ulloa</h5>
@@ -69,7 +64,7 @@
                 <div class="col-sm-1 visible-lg"></div><!-- Separador -->
                 <div class="col-sm-6 col-md-3">
                     <div class="team_member img-responsive">
-                        <figure style="background-image: url(<%= asset_path "home/julio.png" %>)">
+                        <figure>
                         	<%= image_tag "home/julio.png", :alt => "julio" %>
                         </figure>
                         <h5>Julio Guzmán</h5>
@@ -86,7 +81,7 @@
                 </div>
                 <div class="col-sm-6 col-md-3">
                     <div class="team_member">
-                        <figure style="background-image: url(<%= asset_path "home/seba.png" %>)">
+                        <figure>
                         	<%= image_tag "home/seba.png" %>
                         </figure>
                         <h5>Sebastián Hevia</h5>
@@ -104,7 +99,7 @@
                 <div class="col-sm-1 visible-lg"></div><!-- Separador -->
                 <div class="col-sm-6 col-md-3">
                     <div class="team_member">
-                        <figure style="background-image: url(<%= asset_path "home/nico_f.png" %>)">
+                        <figure>
                         	<%= image_tag "home/nico_f.png", :alt => "nico_f" %>
                         </figure>
                         <h5>Nicolás Flores</h5>
@@ -116,13 +111,13 @@
                             <a href="#pinterest"><i class="fa fa-linkedin"></i></a>
                             <a href="#googleplus"><i class="fa fa-google-plus"></i></a>
                         </div> -->
-                        <p class="short_bio">Estudiante de Ingeniería Civil Industrial, mención Computación, Universidad de Los Andes.</p>
+                        <p class="short_bio">Estudiante de Ingeniería Civil, mención Computación, Universidad de Los Andes.</p>
                     </div>
                 </div>
                 <div class="col-sm-1 visible-lg"></div><!-- Separador -->
                 <div class="col-sm-6 col-md-3">
                     <div class="team_member">
-                        <figure style="background-image: url(<%= asset_path "home/oscar.png" %>)">
+                        <figure>
                             <%= image_tag "home/oscar.png", :alt => "oscar" %>
                         </figure>
                         <h5>Óscar Monje</h5>
@@ -142,12 +137,3 @@
         </div>
     </section>
 </div>
-
-<% content_for :scripts do %>
-<script type="text/javascript">
-    $(function() {
-        $("#c_aboutus").addClass("active")
-        $("body").addClass("collapsing_header")
-    });
-</script>
-<% end %>

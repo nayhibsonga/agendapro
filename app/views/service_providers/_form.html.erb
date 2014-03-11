@@ -1,32 +1,89 @@
-<%= form_for @service_provider, html: {class: "form-horizontal" } do |f| %>
-  <% if @service_provider.errors.any? %>
-    <div id="error_explanation">
-      <h2><%= pluralize(@service_provider.errors.count, "error") %> no permitió que el local sea creado:</h2>
-
-      <ul>
-      <% @service_provider.errors.full_messages.each do |msg| %>
-        <li><%= msg %></li>
-      <% end %>
-      </ul>
+<div class="col-md-5">
+    <%= form_for @service_provider, html: {class: "form-horizontal" } do |f| %>
+      <div class="form-group">
+        <%= f.label :public_name, "Nombre Público:", class: "col-sm-3 control-label" %>
+        <div class="col-sm-9">
+          <%= f.text_field :public_name, :autofocus => true, class: "form-control" %>
+        </div>
+      </div>
+      <div class="form-group">
+        <%= f.label :notification_email, "Email de Notificación:", class: "col-sm-3 control-label" %>
+        <div class="col-sm-9">
+          <%= f.text_field :notification_email, class: "form-control" %>
+        </div>
+      </div>
+      <div class="form-group">
+        <%= f.label :location_id, "Local:", class: "col-sm-3 control-label" %>
+        <div class="col-sm-9">
+          <%= f.collection_select :location_id, Location.where(company_id: current_user.company_id), :id, :name, {}, {class: "form-control"} %>
+        </div>
+      </div>
+      <div class="form-group">
+    <%= f.label :user_id, "Usuario:", class: "col-sm-3 control-label" %>
+    <div class="col-sm-9">
+      <%= f.collection_select :user_id, User.where(company_id: current_user.company_id), :id, :email, {:include_blank => ""}, {class: "form-control"} %>
     </div>
-  <% end %>
-
-  <div class="form-inputs">
-    <%= f.collection_select :service_provider, :user_id, User.where(company_id: current_user.company_id), :id, :name, {class: "form-control"} %>
-
-    <%= f.collection_select :service_provider, :location_id, Location.where(company_id: current_user.company_id), :id, :name, {class: "form-control"} %>
-    
-    <%= f.collection_check_boxes :service_provider, :services_id, Service.where(company_id: current_user.company_id), :id, :name, {class: "form-control"} %>
-
   </div>
 
-  <%= f.fields_for :provider_times do |provider_time| %>
-    <%= render 'provider_time_fields', :f => provider_time %>
-  <% end %>
-  <div class="links">
-      <%= link_to_add_association 'Agregar Bloque Horario', f, :provider_times %>
+<% if @service_provider.user.nil? then @service_provider.build_user end %>
+  <div class="form-group">
+    <div class="col-sm-3 control-label"></div>
+    <div class="col-sm-9">
+      <input type="checkbox" name="userCheck" id="userCheckboxId" value="0" onchange="userChange()" class="userCheckbox"> Crear nuevo Usuario
     </div>
-  <div class="form-actions">
-    <%= f.button :submit %>
   </div>
+  <%= f.fields_for :user do |builder| %>
+  <div class="form-group">
+    <%= f.label :email, "Email nuevo usuario:", class: "col-sm-3 control-label" %>
+    <div class="col-sm-9">
+      <%= builder.text_field :email, :label => "Email Nuevo Usuario", :input_html => { :value => "" } %>
+    </div>
+  </div>
+
+
+  <div class="form-group">
+    <%= f.label :service_ids, "Selecciona el servicio: ", class: "col-sm-3 control-label" %>
+    <div class="col-sm-9"> 
+      <%= f.collection_check_boxes :service_ids, Service.where(company_id: current_user.company_id), :id, :name, {}, {class: "check_boxes"} %>
+    </div>
+  </div>
+    <% end %>
+  </div>
+  <div class="col-md-7">
+    <div class="panel panel-info">
+      <div class="panel-heading">
+        <h3 class="panel-title">Horario Proveeder de Servicios</h3>
+      </div>
+      <div class="panel-body">
+        <div class="row">
+    <label>Lunes:</label><div id="div1"></div>
+  </div>
+  <div class="row">
+    <label>Martes:</label><div id="div2"></div>
+  </div>
+  <div class="row">
+    <label>Miércoles:</label><div id="div3"></div>
+  </div>
+  <div class="row">
+    <label>Jueves:</label><div id="div4"></div>
+  </div>
+  <div class="row">
+    <label>Viernes:</label><div id="div5"></div>
+  </div>
+  <div class="row">
+    <label>Sábado:</label><div id="div6"></div>
+  </div>
+  <div class="row">
+    <label>Domingo:</label><div id="div7"></div>
+  </div>
+      </div>
+    </div>
+  </div>
+  <div class="form-group">
+  <div class="actions col-sm-offset-2 col-sm-4">
+    <%= f.submit 'Guardar', :class => "btn btn-primary buttonProvider"%>
+    <%= link_to 'Cancelar'.html_safe, service_providers_path, :class => "btn btn-danger" %>    
+  </div>
+</div>
+
 <% end %>
