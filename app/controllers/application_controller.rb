@@ -14,6 +14,10 @@ class ApplicationController < ActionController::Base
     params[resource] &&= send(method) if respond_to?(method, true)
   end
 
+  rescue_from CanCan::AccessDenied do |exception|
+    redirect_to "/403"
+  end
+
   protected
 
   def configure_permitted_parameters
