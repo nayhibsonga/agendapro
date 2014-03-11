@@ -249,4 +249,13 @@ $(function() {
 	$('#service_provider_user_attributes_email').val('');
 	$('#service_provider_user_attributes_email').prop('disabled', true);
   initialize();
+  $('.buttonProvider').click(function() {
+  	if ( $('#title').length > 0 ) {
+    	updateProvider();
+    }
+    else {
+    	createProvider();
+    }
+	    return false;
+	});
 });
