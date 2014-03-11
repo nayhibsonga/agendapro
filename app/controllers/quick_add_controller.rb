@@ -4,6 +4,8 @@ class QuickAddController < ApplicationController
 	layout "quick_add", only: [:quick_add]
 
 	def quick_add
+		@service_category = ServiceCategory.new(name: "Sin Categoría", company_id: current_user.company_id)
+		@service_category.save
 		@location = Location.new
 		@service = Service.new
 		@service_provider = ServiceProvider.new
