@@ -1,10 +1,10 @@
 class CompaniesController < ApplicationController
   before_action :set_company, only: [:show, :edit, :update, :destroy]
   before_action :authenticate_user!, except: [:new, :overview, :workflow]
-  before_action :quick_add, except: [:new, :overview, :workflow]
-  before_action :verify_is_super_admin, except: [:new, :overview, :workflow, :edit, :update]
+  before_action :quick_add, except: [:new, :overview, :workflow, :add_company]
+  before_action :verify_is_super_admin, only: [:index]
 
-  layout "admin", except: [:show, :overview, :workflow]
+  layout "admin", except: [:show, :overview, :workflow, :add_company]
   load_and_authorize_resource
 
 
@@ -34,17 +34,19 @@ class CompaniesController < ApplicationController
   # POST /companies.json
   def create
     @company = Company.new(company_params)
-    @user = User.new(user_params)
-
-    @user.role = Role.find_by_name("Admin")
-    @user.company = @company
-
+    @company.payment_status_id = PaymentStatus.find_by_name("Período de Prueba").id
+    @company.plan_id = Plan.find_by_name("Trial").id
+    @user = User.find(current_user.id)
+    
     respond_to do |format|
-      if @company.save && @user.save
-        format.html { redirect_to @company, notice: 'La empresa fue creada exitosamente.' }
+      if @company.save 
+        @user.company_id = @company.id
+        @user.role_id = Role.find_by_name("Admin").id
+        @user.save
+        format.html { redirect_to dashboard_path, notice: 'La empresa fue creada exitosamente.' }
         format.json { render action: 'show', status: :created, location: @company }
       else
-        format.html { render action: 'new' }
+        format.html { render action: 'add_company', layout: "search" }
         format.json { render json: @company.errors, status: :unprocessable_entity }
       end
     end
@@ -107,6 +109,14 @@ class CompaniesController < ApplicationController
     
     render layout: 'workflow'
   end
+
+  def add_company
+    if current_user.company_id
+      redirect_to dashboard_path
+    end
+    @company = Company.new
+    render :layout => 'search'
+  end  
 
   private
     # Use callbacks to share common setup or constraints between actions.
