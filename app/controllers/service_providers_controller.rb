@@ -8,7 +8,7 @@ class ServiceProvidersController < ApplicationController
   # GET /service_providers
   # GET /service_providers.json
   def index
-    @service_providers = ServiceProvider.where(location_id: Location.where(company_id: current_user.company_id))
+    @service_providers = ServiceProvider.where(company_id: current_user.company_id)
   end
 
   # GET /service_providers/1

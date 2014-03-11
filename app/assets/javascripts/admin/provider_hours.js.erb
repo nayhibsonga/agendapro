@@ -53,7 +53,7 @@ function addBreak(value,divId,openTime,closeTime) {
 	else {
 		breakCount = 1
 	}
-	$('#'+divId).append('<div class="row break'+value+'">  Inicio: '+
+	$('#div'+value).append('<div class="row break'+value+'">  Inicio: '+
 	'<select id="'+value+'openHourId'+ breakCount+'" name="'+value+'openHour'+ breakCount+'" class="openHourBreak">'+
 		hourOptions+
 	'</select>'+
@@ -114,10 +114,8 @@ function initialize() {
 				var value = providerTimesData[arrayCounter].day_id;
 				$('#dayStatusId'+ value).prop('checked', true);
 				$('#dayStatusId'+ value).val(1);
-				$('#dayStatusId'+value).parent().append(' <a id="addBreakdiv'+value+'" class="btn-xs btn-success">Agregar Descanso</a>');
-				$('#addBreakdiv'+value).click(function() {
-					addBreak(value,'div'+value);
-				});
+				$('#dayStatusId'+value).parent().append(' <a id="addBreakdiv'+value+'" onclick="addBreak('+value+')" class="btn-xs btn-primary">Agregar Descanso</a>');
+				
 				$('#openHourId'+ value).prop('disabled', false);
 				$('#openMinuteId'+ value).prop('disabled', false);
 				$('#closeHourId'+ value).prop('disabled', false);
@@ -234,14 +232,18 @@ function userChange() {
 	if ($('#userCheckboxId').val() == 1) {
 		$('#userCheckboxId').val(0);
 		$('#service_provider_user_id').prop('disabled', false);
+		$('#service_provider_user_id').closest('.form-group').removeClass('hidden');
 		$('#service_provider_user_attributes_email').val('');
 		$('#service_provider_user_attributes_email').prop('disabled', true);
+		$('#service_provider_user_attributes_email').closest('.form-group').addClass('hidden');
 	}
 	else if ($('#userCheckboxId').val() == 0) {
 		$('#userCheckboxId').val(1);
 		$('#service_provider_user_attributes_email').prop('disabled', false);
+		$('#service_provider_user_attributes_email').closest('.form-group').removeClass('hidden');
 		$('#service_provider_user_id').val('');
 		$('#service_provider_user_id').prop('disabled', true);
+		$('#service_provider_user_id').closest('.form-group').addClass('hidden');
 	}
 }
 

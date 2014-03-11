@@ -91,7 +91,7 @@
         <div class="form-group">
           <%= f.label :service_provider, "Proveedor de Servicios: ", class: "col-sm-5 control-label" %>
           <div class="col-sm-5">
-            <%= f.collection_select :service_provider_id, ServiceProvider.where(company_id: current_user.company_id), :id, :public_name, {}, { class: "form-control" }%>
+            <%= f.collection_select :service_provider_id, ServiceProvider.where(location_id: Location.where(company_id: current_user.company_id)), :id, :public_name, {}, { class: "form-control" }%>
           </div>
         </div>
         <div class="form-group">
