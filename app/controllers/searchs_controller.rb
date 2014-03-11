@@ -31,6 +31,13 @@ class SearchsController < ApplicationController
 			@results.push(location_tag)
 		end
 
+		# => Optener los locales pertenecientes a las compañias cuyo rubro se parece a la busqueda
+		locations_companies_economic_sector = Location.where(district_id: params[:district]).where(company_id: Company.where(economic_sector_id: EconomicSector.where('name ILIKE ?', search)))
+		puts locations_companies_economic_sector
+		locations_companies_economic_sector.each do |location_company_economic_sector|
+			@results.push(location_company_economic_sector)
+		end
+
 		# => optener de los locales los servicios cuyo nombre coincide con la busqueda
 		services_tags = Service.where('name ILIKE ?', search)
 		service_providers = ServiceProvider.joins(:services, :service_staffs).where('service_staffs.service_id' => services_tags).select('location_id')
