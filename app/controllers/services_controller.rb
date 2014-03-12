@@ -8,8 +8,8 @@ class ServicesController < ApplicationController
   # GET /services
   # GET /services.json
   def index
-    @services = Service.where(company_id: current_user.company_id)
-    @service_categories = ServiceCategory.where(company_id: current_user.company_id)
+    @services = Service.where(company_id: current_user.company_id).order(name: :asc)
+    @service_categories = ServiceCategory.where(company_id: current_user.company_id).order(name: :asc)
   end
 
   # GET /services/1
@@ -30,11 +30,12 @@ class ServicesController < ApplicationController
   # POST /services
   # POST /services.json
   def create
-
-    if service_params[:service_category_attributes] && service_params[:service_category_attributes][:name].nil?
-      new_params = service_params.except(:service_category_attributes)
-    else
-      new_params = service_params.except(:service_category_id)
+    if service_params[:service_category_attributes]
+      if service_params[:service_category_attributes][:name].nil?
+        new_params = service_params.except(:service_category_attributes)
+      else
+        new_params = service_params.except(:service_category_id)
+      end
     end
     @service = Service.new(new_params)
     @service.company_id = current_user.company_id
@@ -53,10 +54,12 @@ class ServicesController < ApplicationController
   # PATCH/PUT /services/1
   # PATCH/PUT /services/1.json
   def update
-    if service_params[:service_category_attributes] && service_params[:service_category_attributes][:name].nil?
-      new_params = service_params.except(:service_category_attributes)
-    else
-      new_params = service_params.except(:service_category_id)
+    if service_params[:service_category_attributes]
+      if service_params[:service_category_attributes][:name].nil?
+        new_params = service_params.except(:service_category_attributes)
+      else
+        new_params = service_params.except(:service_category_id)
+      end
     end
     respond_to do |format|
       if @service.update(new_params)

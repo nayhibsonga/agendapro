@@ -51,7 +51,7 @@
       </div>
     </div>
     <div class="col-md-6">
-
+      <% if @service.service_category.nil? then @service.build_service_category end %>
       <%= f.fields_for :service_category do |builder| %>
 
       <div class="form-group hidden">
