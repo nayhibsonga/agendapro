@@ -60,6 +60,7 @@ class Ability
     can :location_time, Location
     can :get_category_name, ServiceCategory
     can :get_available_time, Location
+    can :company_service_categories, ServiceCategory
 
     can :edit_booking, Booking
     can :edit_booking_post, Booking
