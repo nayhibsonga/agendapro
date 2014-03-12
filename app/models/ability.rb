@@ -127,6 +127,8 @@ class Ability
         can :create, Booking, :service_provider => { :company_id => user.company_id }
         can :update, Booking, :service_provider => { :company_id => user.company_id }
 
+        can :provider_service, ServiceProvider
+
     elsif user.role_id == Role.find_by_name("Administrador Local").id
 
         can :get_booking, Booking, :service_provider => { :location_id => user.location_id }
@@ -161,7 +163,9 @@ class Ability
         can :create, Booking, :service_provider => { :location_id => user.location_id }
         can :update, Booking, :service_provider => { :location_id => user.location_id }
 
-    elsif user.role_id == Role.find_by_name("Administrador Local").id
+        can :provider_service, ServiceProvider
+
+    elsif user.role_id == Role.find_by_name("Recepcionista").id
 
         can :get_booking, Booking, :service_provider => { :location_id => user.location_id }
 
@@ -176,6 +180,8 @@ class Ability
         can :destroy, Booking, :service_provider => { :user_id => user.id }
         can :create, Booking, :service_provider => { :user_id => user.id }
         can :update, Booking, :service_provider => { :user_id => user.id }
+
+        can :provider_service, ServiceProvider
 
     elsif user.role_id == Role.find_by_name("Staff").id
 
