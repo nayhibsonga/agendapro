@@ -35,7 +35,7 @@ class Ability
     #alias_action :workflow, :to => :update
     #alias_action :workflow, :to => :create
 
-    company_abilities = [User, Location, ServiceProvider, Service]
+    company_abilities = [User, Location, ServiceProvider, Service, CompanySetting, ServiceCategory]
 
 
     user ||= User.new # guest user (not logged in)
@@ -103,16 +103,6 @@ class Ability
             can :update, c, :company_id => user.company_id
         end
 
-        can :read, CompanySetting, :company_id => user.company_id
-        can :destroy, CompanySetting, :company_id => user.company_id
-        can :create, CompanySetting, :company_id => user.company_id
-        can :update, CompanySetting, :company_id => user.company_id
-
-        can :read, ServiceCategory, :company_id => user.company_id
-        can :destroy, ServiceCategory, :company_id => user.company_id
-        can :create, ServiceCategory, :company_id => user.company_id
-        can :update, ServiceCategory, :company_id => user.company_id
-
         can :read, LocationTime, :location => { :company_id => user.company_id }
         can :destroy, LocationTime, :location => { :company_id => user.company_id }
         can :create, LocationTime, :location => { :company_id => user.company_id }
@@ -170,17 +160,16 @@ class Ability
 
         can :get_booking, Booking, :service_provider => { :location_id => user.location_id }
 
-        can :read, ServiceProvider, :user_id => user.id
-        can :destroy, ServiceProvider, :user_id => user.id
-        can :create, ServiceProvider, :user_id => user.id
-        can :update, ServiceProvider, :user_id => user.id
+        can :read, Service, :company_id => user.company_id
 
-        can :read, ProviderTime, :service_provider => { :user_id => user.id }
+        can :read, ServiceProvider, :location_id => user.location_id
+        
+        can :read, ProviderTime, :service_provider => { :location_id => user.location_id }
 
-        can :read, Booking, :service_provider => { :user_id => user.id }
-        can :destroy, Booking, :service_provider => { :user_id => user.id }
-        can :create, Booking, :service_provider => { :user_id => user.id }
-        can :update, Booking, :service_provider => { :user_id => user.id }
+        can :read, Booking, :service_provider => { :location_id => user.location_id }
+        can :destroy, Booking, :service_provider => { :location_id => user.location_id }
+        can :create, Booking, :service_provider => { :location_id => user.location_id }
+        can :update, Booking, :service_provider => { :location_id => user.location_id }
 
         can :provider_service, ServiceProvider
 
@@ -188,19 +177,19 @@ class Ability
 
         can :get_booking, Booking, :service_provider => { :user_id => user.id }
 
-        can :read, ServiceProvider, :location_id => user.location_id
+        can :read, ServiceProvider, :user_id => user.id
 
         can :read, Location, :id => user.location_id
 
         can :read, LocationTime, :location_id => user.location_id
 
-        can :read, ProviderTime, :service_provider => { :location_id => user.location_id }
+        can :read, ProviderTime, :service_provider => { :user_id => user.id }
 
-        can :read, Booking, :service_provider => { :location_id => user.location_id }
-        can :destroy, Booking, :service_provider => { :location_id => user.location_id }
-        can :create, Booking, :service_provider => { :location_id => user.location_id }
-        can :update, Booking, :service_provider => { :location_id => user.location_id }
-        
+        can :read, Booking, :service_provider => { :user_id => user.id }
+        can :destroy, Booking, :service_provider => { :user_id => user.id }
+        can :create, Booking, :service_provider => { :user_id => user.id }
+        can :update, Booking, :service_provider => { :user_id => user.id }
+                
     end
 
   end
