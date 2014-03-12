@@ -1,160 +1,122 @@
 <div class="row">
 	<h2>Regístrate</h2>
-	<h4>Sólo necesitaremos un poco de información. ¡Es absolutamente gratis!</h4>
+	<h4>Sólo necesitaremos un poco de información. <%= "¡Es absolutamente gratis!" unless params[:plan] %></h4>
 
-	<% if params[:company] %>
-		<div class="col-sm-8 col-md-9">
-			<%= form_for resource, :as => resource_name, :url => registration_path(resource_name), :html => { :class => 'form-horizontal well', :multipart => true } do |f| %>
-				<!-- start: User -->
-				<%= f.hidden_field :role_id, :value => Role.where(:name => "Admin").first.id %>	
-				<div class="form-group">
-                    <%= f.label :first_name, 'Nombre', :class => 'col-sm-4 control-label' %>
-                    <div class="col-sm-8">
-                        <%= f.text_field :first_name, :autofocus => true, :required => true, :class => 'form-control' %>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <%= f.label :last_name, 'Apellido', :class => 'col-sm-4 control-label' %>
-                    <div class="col-sm-8">
-                        <%= f.text_field :last_name, :autofocus => true, :required => true, :class => 'form-control' %>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <%= f.label :phone, 'Teléfono', :class => 'col-sm-4 control-label' %>
-                    <div class="col-sm-8">
-                        <%= f.telephone_field :phone, :required => true, :class => 'form-control' %>
-                    </div>
-                </div>		
-				<div class="form-group">
-					<%= f.label :email, 'Email', :class => 'col-sm-4 control-label' %>
-					<div class="col-sm-8">
-						<%= f.email_field :email, :autofocus => true, :required => true, :class => 'form-control', placeholder: 'ejemplo@dominio.com' %>
-					</div>
-				</div>
-				<div class="form-group">
-					<%= f.label :password, 'Contraseña', :class => 'col-sm-4 control-label' %>
-					<div class="col-sm-8">
-						<%= f.password_field :password, :required => true, :class => 'form-control', placeholder: 'XXXXXXXX' %>
-					</div>
-				</div>
-				<div class="form-group">
-					<%= f.label :password_confirmation, 'Confirmar Contraseña', :class => 'col-sm-4 control-label' %>
-					<div class="col-sm-8">
-						<%= f.password_field :password_confirmation, :required => true, :class => 'form-control', placeholder: 'XXXXXXXX' %>
-					</div>
-				</div>
-				<!-- end: User -->
-				<!-- start: Company -->
-				<%= f.fields_for :company_attributes do |builder| %>
-					<%= builder.hidden_field :payment_status_id, :value => PaymentStatus.where(:name => "Al día").first.id %>
-					<%= builder.hidden_field :plan_id, :value => Plan.find(params[:plan]).id %>
-					<div class="form-group">
-						<%= builder.label :name, 'Nombre de la Compañia', :class => 'col-sm-4 control-label' %>
-						<div class="col-sm-8">
-							<%= builder.text_field :name, :required => true, :class => 'form-control', placeholder: 'AgendaPro SpA' %>
-						</div>
-					</div>
-					<div class="form-group">
-						<%= builder.label :web_address, 'Direccion web', :class => 'col-sm-4 control-label' %>
-						<div class="col-sm-8 input-group">
-							<%= builder.text_field :web_address, :required => true, :class => 'form-control', placeholder: 'misitio' %>
-							<span class="input-group-addon">.agendapro.cl</span>
-						</div>
-					</div>
-					<div class="form-group">
-						<%= builder.label :economic_sector_id, 'Sector Economico', :class => 'col-sm-4 control-label' %>
-						<div class="col-sm-8">
-							<%= builder.collection_select :economic_sector_id, EconomicSector.all, :id, :name, {}, {:class => 'form-control'} %>
-						</div>
-					</div>
-					<div class="form-group">
-						<%= builder.label :logo, 'Logo', :class => 'col-sm-4 control-label' %>
-						<div class="col-sm-8">
-							<%= builder.file_field :logo, :accept => 'image/png,image/gif,image/jpeg', :class => 'form-control' %>
-						</div>
-					</div>
-				<% end %>
-				<!-- end: Company -->
-				<div class="form-group">
-					<div class="col-sm-offset-4 col-sm-8">
-						<div class="checkbox">
-							<label>
-								<input type="checkbox" required> Acepto los <a href="http://www.agendapro.cl/public/TyC.pdf" target="_balnk">Términos y Condiciones</a>.
-							</label>
-						</div>
-					</div>
-				</div>
-				<div class="form-group">
-					<div class="col-sm-offset-4 col-sm-8">
-						<%= f.submit 'Regístrate', :class => 'btn btn-agendapro-claro' %>
-					</div>
-				</div>
+	<div class="col-sm-8 col-md-9">
+		<%= form_for resource, :as => resource_name, :url => registration_path(resource_name), :html => { :class => 'form-horizontal well', :multipart => true } do |f| %>
+			<% if params[:plan] %>
+			<!-- start: nav tabs -->
+			<ul class="nav nav-tabs nav-justified" style="margin-bottom: 10px;" id="data-tabs">
+				<li class="active"><a href="#user-data" data-toggle="tab">Datos Usuario</a></li>
+				<li><a href="#company-data" data-toggle="tab">Datos Compañia</a></li>
+			</ul>
+			<!-- end: nav tabs -->
 			<% end %>
-		</div>
-		<div class="col-sm-4 col-md-3">
-			<div class="well well-small">
-				<section class="pricing_wrapper">
-					<div class="pricing_plan">
-						<% @plan = Plan.find(params[:plan]) %>
-						<h3><strong><%= @plan.name %></strong></h3>
-						<div class="the_price">
-							<span>$</span><%= number_with_precision(@plan.price, precision: 0, separator: '', delimiter: '.') %><small>/Mes</small>
-						</div>
-						<div class="the_offerings">
-							<p><strong><%= @plan.locations %></strong> Local(es)</p>
-							<p><strong><%= @plan.service_providers %></strong> Staffs</p>
+			<!-- start: tab panes -->
+			<div class="tab-content">
+				<div class="tab-pane fade in active" id="user-data">
+					<!-- start: User -->
+					<%= f.hidden_field :role_id, :value => Role.where(:name => "Admin").first.id %>
+					<div class="form-group">
+						<%= f.label :first_name, 'Nombre', :class => 'col-sm-4 control-label' %>
+						<div class="col-sm-8">
+							<%= f.text_field :first_name, :autofocus => true, :required => true, :class => 'form-control' %>
 						</div>
 					</div>
-				</section>
-				<%= link_to "Cambiar plan", view_plans_path %>
-			</div>
-		</div>
-	<% else %>
-		<%= form_for resource, :as => resource_name, :url => registration_path(resource_name), :html => { class: 'form-horizontal' } do |f| %>
-		<!-- start: User -->
-			<%= f.hidden_field :role_id, :value => Role.where(:name => "Admin").first.id %>	
-			<div class="form-group">
-                <%= f.label :first_name, 'Nombre', :class => 'col-sm-4 control-label' %>
-                <div class="col-sm-8">
-                    <%= f.text_field :first_name, :autofocus => true, :required => true, :class => 'form-control' %>
-                </div>
-            </div>
-            <div class="form-group">
-                <%= f.label :last_name, 'Apellido', :class => 'col-sm-4 control-label' %>
-                <div class="col-sm-8">
-                    <%= f.text_field :last_name, :autofocus => true, :required => true, :class => 'form-control' %>
-                </div>
-            </div>
-            <div class="form-group">
-                <%= f.label :phone, 'Teléfono', :class => 'col-sm-4 control-label' %>
-                <div class="col-sm-8">
-                    <%= f.telephone_field :phone, :required => true, :class => 'form-control' %>
-                </div>
-            </div>		
-			<div class="form-group">
-				<%= f.label :email, 'Email', :class => 'col-sm-4 control-label' %>
-				<div class="col-sm-8">
-					<%= f.email_field :email, :autofocus => true, :required => true, :class => 'form-control', placeholder: 'ejemplo@dominio.com' %>
+					<div class="form-group">
+						<%= f.label :last_name, 'Apellido', :class => 'col-sm-4 control-label' %>
+						<div class="col-sm-8">
+							<%= f.text_field :last_name, :autofocus => true, :required => true, :class => 'form-control' %>
+						</div>
+					</div>
+					<div class="form-group">
+						<%= f.label :phone, 'Teléfono', :class => 'col-sm-4 control-label' %>
+						<div class="col-sm-8">
+							<%= f.telephone_field :phone, :required => true, :class => 'form-control' %>
+						</div>
+					</div>
+					<div class="form-group">
+						<%= f.label :email, 'Email', :class => 'col-sm-4 control-label' %>
+						<div class="col-sm-8">
+							<%= f.email_field :email, :autofocus => true, :required => true, :class => 'form-control', placeholder: 'ejemplo@dominio.com' %>
+						</div>
+					</div>
+					<div class="form-group">
+						<%= f.label :password, 'Contraseña', :class => 'col-sm-4 control-label' %>
+						<div class="col-sm-8">
+							<%= f.password_field :password, :required => true, :class => 'form-control', placeholder: 'XXXXXXXX' %>
+						</div>
+					</div>
+					<div class="form-group">
+						<%= f.label :password_confirmation, 'Confirmar Contraseña', :class => 'col-sm-4 control-label' %>
+						<div class="col-sm-8">
+							<%= f.password_field :password_confirmation, :required => true, :class => 'form-control', placeholder: 'XXXXXXXX' %>
+						</div>
+					</div>
+					<!-- end: User -->
 				</div>
-			</div>
-			<div class="form-group">
-				<%= f.label :password, 'Contraseña', :class => 'col-sm-4 control-label' %>
-				<div class="col-sm-8">
-					<%= f.password_field :password, :required => true, :class => 'form-control', placeholder: 'XXXXXXXX' %>
+				<% if params[:plan] %>
+				<div class="tab-pane fade" id="company-data">
+					<!-- start: Company -->
+					<%= f.fields_for :company_attributes do |builder| %>
+						<%= builder.hidden_field :payment_status_id, :value => PaymentStatus.where(:name => "Al día").first.id %>
+						<%= builder.hidden_field :plan_id, :value => Plan.find(params[:plan]).id %>
+						<div class="form-group">
+							<%= builder.label :name, 'Nombre de la Compañia', :class => 'col-sm-4 control-label' %>
+							<div class="col-sm-8">
+								<%= builder.text_field :name, :required => true, :class => 'form-control', placeholder: 'AgendaPro SpA' %>
+							</div>
+						</div>
+						<div class="form-group">
+							<%= builder.label :web_address, 'Direccion web', :class => 'col-sm-4 control-label' %>
+							<div class="col-sm-8 input-group">
+								<%= builder.text_field :web_address, :required => true, :class => 'form-control', placeholder: 'misitio' %>
+								<span class="input-group-addon">.agendapro.cl</span>
+							</div>
+						</div>
+						<div class="form-group">
+							<%= builder.label :economic_sector_id, 'Sector Economico', :class => 'col-sm-4 control-label' %>
+							<div class="col-sm-8">
+								<%= builder.collection_select :economic_sector_id, EconomicSector.all, :id, :name, {}, {:class => 'form-control'} %>
+							</div>
+						</div>
+						<div class="form-group">
+							<%= builder.label :logo, 'Logo', :class => 'col-sm-4 control-label' %>
+							<div class="col-sm-8">
+								<%= builder.file_field :logo, :accept => 'image/png,image/gif,image/jpeg', :class => 'form-control' %>
+							</div>
+						</div>
+					<% end %>
+					<!-- end: Company -->
 				</div>
+				<% end %>
 			</div>
-			<div class="form-group">
-				<%= f.label :password_confirmation, 'Confirmar Contraseña', :class => 'col-sm-4 control-label' %>
-				<div class="col-sm-8">
-					<%= f.password_field :password_confirmation, :required => true, :class => 'form-control', placeholder: 'XXXXXXXX' %>
-				</div>
-			</div>
-				<!-- end: User -->
+			<!-- end: tab panes -->
 			<div class="form-group">
 				<div class="col-sm-offset-4 col-sm-8">
-					<%= f.submit 'Regístrate', :class => 'btn btn-default' %>
+					<div class="checkbox">
+						<label>
+							<input type="checkbox" required> Acepto los <a href="http://www.agendapro.cl/public/TyC.pdf" target="_balnk">Términos y Condiciones</a>.
+						</label>
+					</div>
+				</div>
+			</div>
+			<div class="form-group">
+				<div class="col-sm-offset-4 col-sm-8">
+					<%= f.submit 'Regístrate', :class => 'btn btn-agendapro-claro' %>
 				</div>
 			</div>
 		<% end %>
-	<% end %>
+	</div>
 </div>
+
+<% content_for :scripts do %>
+<script type="text/javascript">
+	$(function () {
+		$('input').blur(function () {
+			var tab = $('input:required:invalid').first().closest('.tab-pane').attr('id');
+			$('#data-tabs a[href="#' + tab + '"]').tab('show');
+		});
+	});
+</script>
+<% end %>
