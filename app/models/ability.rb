@@ -41,6 +41,8 @@ class Ability
     user ||= User.new # guest user (not logged in)
 
     can :new, :all
+    can :add_company, Company
+    can :create, Company
 
     # Home
     can :view_plans, Plan
