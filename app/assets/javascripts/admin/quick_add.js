@@ -471,13 +471,27 @@ function createProvider () {
 	});
 }
 
+// Views
 function serviceGroup () {
 	if ($('#service_group_service').is(':checked')) {
 		$('#service_capacity').closest('.form-group').removeClass('hidden');
-		$('#foo5').trigger('updateSizes');
 	}
 	else {
 		$('#service_capacity').closest('.form-group').addClass('hidden');
+	}
+	$('#foo5').trigger('updateSizes');
+}
+
+function newCategory () {
+	if ($('#categoryCheckboxId').is(':checked')) {
+		$('#service_service_category_id').closest('.form-group').addClass('hidden');
+		$('#service_service_category_id').val('');
+		$('#service_service_category_attributes_name').closest('.form-group').removeClass('hidden');
+	}
+	else {
+		$('#service_service_category_id').closest('.form-group').removeClass('hidden');
+		$('#service_service_category_attributes_name').closest('.form-group').addClass('hidden');
+		$('#service_service_category_attributes_name').val('');
 	}
 }
 
