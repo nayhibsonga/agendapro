@@ -109,6 +109,12 @@ class ServiceProvidersController < ApplicationController
     render :json => provider_time
   end
 
+  def provider_service
+    provider = ServiceProvider.find(params[:id])
+    services = provider.services.order(:name)
+    render :json => services
+  end
+
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_service_provider

@@ -5,6 +5,7 @@ class User < ActiveRecord::Base
          :recoverable, :rememberable, :trackable, :validatable
 	belongs_to :role
 	belongs_to :company
+	belongs_to :user
 
 	has_many :bookings
 	has_many :service_providers
