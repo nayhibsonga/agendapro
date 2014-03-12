@@ -60,6 +60,16 @@ class ServiceCategoriesController < ApplicationController
   # DELETE /service_categories/1
   # DELETE /service_categories/1.json
   def destroy
+    @services = Service.where(service_category_id: @service_category)
+    @new_service_category = ServiceCategory.where(company_id: @service_category.company_id, name: "Sin Categoría").first
+    if @new_service_category.nil?
+      @new_service_category = ServiceCategory.create(name: "Sin Categoría", company_id: @service_category.company_id)
+      @new_service_category.save
+    end
+    @services.each do |service|
+      service.service_category = @new_service_category
+      service.save
+    end
     @service_category.destroy
     respond_to do |format|
       format.html { redirect_to service_categories_url }
