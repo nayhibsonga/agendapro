@@ -40,9 +40,7 @@ class Ability
 
     user ||= User.new # guest user (not logged in)
 
-    can :new, :all
-    can :add_company, Company
-    can :create, Company
+    #can :new, :all
 
     # Home
     can :view_plans, Plan
@@ -74,23 +72,23 @@ class Ability
 
     can :get_direction, District
 
-    can :read, Booking, :id => user.id
-    can :update, Booking, :id => user.id
-    can :destroy, Booking, :id => user.id
-    can :create, Booking, :id => user.id
-
     can :agenda, User, :id => user.id
 
 
     if user.role_id == Role.find_by_name("Super Admin").id
 
         can :manage, :all
+    
+    elsif user.role_id == Role.find_by_name("Usuario Registrado").id
+
+        can :add_company, Company
+        can :create, Company  
 
     elsif user.role_id == Role.find_by_name("Admin").id
 
         can :select_plan, Plan
 
-        can :get_booking, Booking
+        can :get_booking, :service_provider => { :company_id => user.company_id }
 
         can :read, Company, :id => user.company_id
         can :destroy, Company, :id => user.company_id
@@ -131,37 +129,70 @@ class Ability
 
     elsif user.role_id == Role.find_by_name("Administrador Local").id
 
-        can :get_booking, Booking, :service_provider => { :location_id => user.try(:service_providers).try(:location_id) }
+        can :get_booking, Booking, :service_provider => { :location_id => user.location_id }
 
         can :read, Service, :company_id => user.company_id
         can :destroy, Service, :company_id => user.company_id
         can :create, Service, :company_id => user.company_id
         can :update, Service, :company_id => user.company_id
 
-        can :read, ServiceProvider, :location_id => user.try(:service_providers).try(:location_id)
-        can :destroy, ServiceProvider, :location_id => user.try(:service_providers).try(:location_id)
-        can :create, ServiceProvider, :location_id => user.try(:service_providers).try(:location_id)
-        can :update, ServiceProvider, :location_id => user.try(:service_providers).try(:location_id)
+        can :read, ServiceProvider, :location_id => user.location_id
+        can :destroy, ServiceProvider, :location_id => user.location_id
+        can :create, ServiceProvider, :location_id => user.location_id
+        can :update, ServiceProvider, :location_id => user.location_id
 
-        can :read, Location, :id => user.try(:service_provider).try(:location_id)
-        can :destroy, Location, :id => user.try(:service_provider).try(:location_id)
-        can :create, Location, :id => user.try(:service_provider).try(:location_id)
-        can :update, Location, :id => user.try(:service_provider).try(:location_id)
+        can :read, Location, :id => user.location_id
+        can :destroy, Location, :id => user.location_id
+        can :create, Location, :id => user.location_id
+        can :update, Location, :id => user.location_id
 
-        can :read, LocationTime, :location_id => user.try(:service_providers).try(:location_id)
-        can :destroy, LocationTime, :location_id => user.try(:service_providers).try(:location_id)
-        can :create, LocationTime, :location_id => user.try(:service_providers).try(:location_id)
-        can :update, LocationTime, :location_id => user.try(:service_providers).try(:location_id)
+        can :read, LocationTime, :location_id => user.location_id
+        can :destroy, LocationTime, :location_id => user.location_id
+        can :create, LocationTime, :location_id => user.location_id
+        can :update, LocationTime, :location_id => user.location_id
 
-        can :read, ProviderTime, :service_provider => { :location_id => user.try(:service_providers).try(:location_id) }
-        can :destroy, ProviderTime, :service_provider => { :location_id => user.try(:service_providers).try(:location_id) }
-        can :create, ProviderTime, :service_provider => { :location_id => user.try(:service_providers).try(:location_id) }
-        can :update, ProviderTime, :service_provider => { :location_id => user.try(:service_providers).try(:location_id) }
+        can :read, ProviderTime, :service_provider => { :location_id => user.location_id }
+        can :destroy, ProviderTime, :service_provider => { :location_id => user.location_id }
+        can :create, ProviderTime, :service_provider => { :location_id => user.location_id }
+        can :update, ProviderTime, :service_provider => { :location_id => user.location_id }
 
-        can :read, Booking, :service_provider => { :location_id => user.try(:service_providers).try(:location_id) }
-        can :destroy, Booking, :service_provider => { :location_id => user.try(:service_providers).try(:location_id) }
-        can :create, Booking, :service_provider => { :location_id => user.try(:service_providers).try(:location_id) }
-        can :update, Booking, :service_provider => { :location_id => user.try(:service_providers).try(:location_id) }
+        can :read, Booking, :service_provider => { :location_id => user.location_id }
+        can :destroy, Booking, :service_provider => { :location_id => user.location_id }
+        can :create, Booking, :service_provider => { :location_id => user.location_id }
+        can :update, Booking, :service_provider => { :location_id => user.location_id }
+
+    elsif user.role_id == Role.find_by_name("Administrador Local").id
+
+        can :get_booking, Booking, :service_provider => { :location_id => user.location_id }
+
+        can :read, ServiceProvider, :user_id => user.id
+        can :destroy, ServiceProvider, :user_id => user.id
+        can :create, ServiceProvider, :user_id => user.id
+        can :update, ServiceProvider, :user_id => user.id
+
+        can :read, ProviderTime, :service_provider => { :user_id => user.id }
+
+        can :read, Booking, :service_provider => { :user_id => user.id }
+        can :destroy, Booking, :service_provider => { :user_id => user.id }
+        can :create, Booking, :service_provider => { :user_id => user.id }
+        can :update, Booking, :service_provider => { :user_id => user.id }
+
+    elsif user.role_id == Role.find_by_name("Staff").id
+
+        can :get_booking, Booking, :service_provider => { :user_id => user.id }
+
+        can :read, ServiceProvider, :location_id => user.location_id
+
+        can :read, Location, :id => user.location_id
+
+        can :read, LocationTime, :location_id => user.location_id
+
+        can :read, ProviderTime, :service_provider => { :location_id => user.location_id }
+
+        can :read, Booking, :service_provider => { :location_id => user.location_id }
+        can :destroy, Booking, :service_provider => { :location_id => user.location_id }
+        can :create, Booking, :service_provider => { :location_id => user.location_id }
+        can :update, Booking, :service_provider => { :location_id => user.location_id }
         
     end
 

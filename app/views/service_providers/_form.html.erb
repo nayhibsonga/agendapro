@@ -27,7 +27,7 @@
       <div class="form-group">
     <%= f.label :user_id, "Usuario:", class: "col-sm-4 control-label" %>
     <div class="col-sm-8">
-      <%= f.collection_select :user_id, User.where(company_id: current_user.company_id), :id, :email, {:include_blank => ""}, {class: "form-control"} %>
+      <%= f.collection_select :user_id, User.where(company_id: current_user.company_id, role_id: Role.find_by_name("Staff").id), :id, :email, {:include_blank => ""}, {class: "form-control"} %>
     </div>
   </div>
 

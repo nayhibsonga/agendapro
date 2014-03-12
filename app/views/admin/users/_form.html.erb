@@ -37,20 +37,6 @@
       <%= f.text_field :phone, class: "form-control" %>
     </div>
   </div>
-  
-  <div class="form-group">
-    <%= f.label :password, "Contraseña:", class: "col-sm-3 control-label"  %>
-    <div class="col-sm-4">
-      <%= f.text_field :password, class: "form-control" %>
-    </div>
-  </div>
-
-  <div class="form-group">
-    <%= f.label :password_confirmation, "Confirmar Contraseña:", class: "col-sm-3 control-label"  %>
-    <div class="col-sm-4">
-      <%= f.text_field :password_confirmation, class: "form-control" %>
-    </div>
-  </div>
 
   <% if !current_user.nil? %>
     <div class="form-group">
@@ -59,9 +45,24 @@
       <% if current_user.role_id == Role.find_by(name: 'Super Admin').id %>
         <%= f.collection_select :role_id, Role.where(:name => ["Admin","Administrador Local","Staff"]), :id, :name, {selected: @user.role_id}, {class: "form-control"} %>
       <% elsif current_user.role_id == Role.find_by(name: 'Admin').id %>
-        <%= f.collection_select :role_id, Role.where(:name => ["Administrador Local","Staff"]), :id, :name, {selected: @user.role_id}, {class: "form-control"} %>
+        <%= f.collection_select :role_id, Role.where(:name => ["Administrador Local","Recepcionista"]), :id, :name, {selected: @user.role_id}, {class: "form-control"} %>
       <% elsif current_user.role_id == Role.find_by(name: 'Administrador Local').id %>
-        <%= f.collection_select :role_id, Role.where(:name => ["Staff"]), :id, :name, {selected: @user.role_id}, {class: "form-control"} %>
+        <%= f.collection_select :role_id, Role.where(:name => ["Recepcionista"]), :id, :name, {selected: @user.role_id}, {class: "form-control"} %>
+      <% end %>
+      </div>  
+    </div>
+  <% end %>
+
+  <% if !current_user.nil? %>
+    <div class="form-group">
+      <%= f.label :location_id, "Local:", class: "col-sm-3 control-label"  %>
+      <div class="col-sm-4">
+      <% if current_user.role_id == Role.find_by(name: 'Super Admin').id %>
+        <%= f.collection_select :location_id, Location.all, :id, :name, {}, {class: "form-control"} %>
+      <% elsif current_user.role_id == Role.find_by(name: 'Admin').id %>
+        <%= f.collection_select :location_id, Location.where(:company_id => current_user.company_id), :id, :name, {}, {class: "form-control"} %>
+      <% elsif current_user.role_id == Role.find_by(name: 'Administrador Local').id %>
+        <%= f.collection_select :location_id, Location.where(:id => current_user.location_id), :id, :name, {}, {class: "form-control"} %>
       <% end %>
       </div>  
     </div>

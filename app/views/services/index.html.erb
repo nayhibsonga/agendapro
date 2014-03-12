@@ -4,7 +4,8 @@
   <thead>
     <tr>
       <th>Nombre</th>
-      <th>Descripción</th>
+      <th>Precio</th>
+      <th>Duración</th>
       <th>Opciones</th>
     </tr>
   </thead>
@@ -13,7 +14,8 @@
     <% @services.each do |service| %>
       <tr>
         <td><%= service.name %></td>
-        <td><%= service.description.html_safe if service.description %></td>
+        <td>$<%= service.price.to_i %></td>
+        <td><%= service.duration %> min</td>
         <td><%= link_to '<i class="fa fa-pencil"></i> Editar'.html_safe, edit_service_path(service), :class => "btn btn-warning" %>
         <%= link_to '<i class="fa fa-trash-o"></i> Eliminar'.html_safe, service, :class => "btn btn-danger", method: :delete, data: { confirm: '¿Estás seguro?' } %></td>
       </tr>

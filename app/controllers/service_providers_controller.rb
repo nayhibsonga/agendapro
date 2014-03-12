@@ -31,16 +31,12 @@ class ServiceProvidersController < ApplicationController
   # POST /service_providers
   # POST /service_providers.json
   def create
-    if service_provider_params[:user_attributes]
-      if service_provider_params[:user_attributes][:email].empty?
-        new_params = service_provider_params.except(:user_attributes)
-      else
-        new_params = service_provider_params.except(:user_id)
-        new_params[:user_attributes].merge!(:password =>'12345678').merge!(:role_id => 4).merge!(:company_id => current_user.company_id)
-      end
+    if service_provider_params[:user_attributes] && service_provider_params[:user_attributes][:email].empty?
+      new_params = service_provider_params.except(:user_attributes)
+    else
+      new_params = service_provider_params.except(:user_id)
+      new_params[:user_attributes].merge!(:password =>'12345678').merge!(:role_id => Role.find_by_name("Staff").id).merge!(:company_id => current_user.company_id)
     end
-
-    puts new_params
 
     @service_provider = ServiceProvider.new(new_params)
     @service_provider.services.clear
@@ -61,6 +57,13 @@ class ServiceProvidersController < ApplicationController
   # PATCH/PUT /service_providers/1
   # PATCH/PUT /service_providers/1.json
   def update
+    if service_provider_params[:user_attributes] && service_provider_params[:user_attributes][:email].empty?
+      new_params = service_provider_params.except(:user_attributes)
+    else
+      new_params = service_provider_params.except(:user_id)
+      new_params[:user_attributes].merge!(:password =>'12345678').merge!(:role_id =>  Role.find_by_name("Staff").id).merge!(:company_id => current_user.company_id)
+    end
+
     @service_provider.services.clear
     @service_provider.provider_times.destroy_all
     respond_to do |format|

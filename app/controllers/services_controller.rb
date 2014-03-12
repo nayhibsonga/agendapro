@@ -30,7 +30,7 @@ class ServicesController < ApplicationController
   # POST /services.json
   def create
 
-    if service_params[:service_category_attributes][:name].nil?
+    if service_params[:service_category_attributes] && service_params[:service_category_attributes][:name].nil?
       new_params = service_params.except(:service_category_attributes)
     else
       new_params = service_params.except(:service_category_id)
@@ -40,7 +40,7 @@ class ServicesController < ApplicationController
 
     respond_to do |format|
       if @service.save
-        format.html { redirect_to @service, notice: 'Servicio creado satisfactoriamente.' }
+        format.html { redirect_to services_path, notice: 'Servicio creado satisfactoriamente.' }
         format.json { render action: 'show', status: :created, location: @service }
       else
         format.html { render action: 'new' }
@@ -52,14 +52,14 @@ class ServicesController < ApplicationController
   # PATCH/PUT /services/1
   # PATCH/PUT /services/1.json
   def update
-    if service_params[:service_category_attributes][:name].nil?
+    if service_params[:service_category_attributes] && service_params[:service_category_attributes][:name].nil?
       new_params = service_params.except(:service_category_attributes)
     else
       new_params = service_params.except(:service_category_id)
     end
     respond_to do |format|
       if @service.update(new_params)
-        format.html { redirect_to @service, notice: 'Servicio actualizado satisfactoriamente.' }
+        format.html { redirect_to services_path, notice: 'Servicio actualizado satisfactoriamente.' }
         format.json { head :no_content }
       else
         format.html { render action: 'edit' }

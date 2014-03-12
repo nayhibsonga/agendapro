@@ -32,12 +32,11 @@ class  Admin::UsersController < ApplicationController
   def create
     @user = User.new(user_params)
     @user.company_id = current_user.company_id
-
-    UserMailer.welcome_email(@user)
+    @user.password = '12345678'
 
     respond_to do |format|
       if @user.save
-        format.html { redirect_to admin_user_path(:id => @user.id), notice: 'Usuario fue creado exitosamente.' }
+        format.html { redirect_to admin_users_path, notice: 'Usuario fue creado exitosamente.' }
         format.json { render action: 'show', status: :created, location: @user }
       else
         format.html { render action: 'new' }
