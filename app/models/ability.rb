@@ -40,7 +40,11 @@ class Ability
 
     user ||= User.new # guest user (not logged in)
 
-    #can :new, :all
+    can :new, :all
+
+    can :read, User, :id => user.id
+    can :update, User, :id => user.id
+    can :destroy, User, :id => user.id
 
     # Home
     can :view_plans, Plan
@@ -129,15 +133,19 @@ class Ability
         can :create, Service, :company_id => user.company_id
         can :update, Service, :company_id => user.company_id
 
+        @roles = Role.where(:name => ["Recepcionista","Staff"])
+
+        can :read, User, :location_id => user.location_id, :role_id => @roles
+        can :destroy, User, :location_id => user.location_id, :role_id => @roles
+        can :create, User, :location_id => user.location_id, :role_id => @roles
+        can :update, User, :location_id => user.location_id, :role_id => @roles
+
         can :read, ServiceProvider, :location_id => user.location_id
         can :destroy, ServiceProvider, :location_id => user.location_id
         can :create, ServiceProvider, :location_id => user.location_id
         can :update, ServiceProvider, :location_id => user.location_id
 
         can :read, Location, :id => user.location_id
-        can :destroy, Location, :id => user.location_id
-        can :create, Location, :id => user.location_id
-        can :update, Location, :id => user.location_id
 
         can :read, LocationTime, :location_id => user.location_id
         can :destroy, LocationTime, :location_id => user.location_id

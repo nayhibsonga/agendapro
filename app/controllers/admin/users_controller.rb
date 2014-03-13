@@ -8,7 +8,7 @@ class  Admin::UsersController < ApplicationController
   # GET /users
   # GET /users.json
   def index
-    @users = User.where(company_id: current_user.company_id)
+    @users = User.where(company_id: current_user.company_id).accessible_by(current_ability)
   end
 
   # GET /users/1
