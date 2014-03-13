@@ -426,6 +426,8 @@ function editBookingModal(eventId) {
 			});
 		}
 
+		modalChange();
+
 		$('#bookingModal').modal('show');
 	});	
 }
@@ -456,6 +458,7 @@ function createBookingModal(date) {
 			});
 			$('#booking_service_id').removeAttr('disabled');
 		});
+	modalChange();
 	}
 	else {
 		$('#booking_service_provider_id').val('');
@@ -505,8 +508,12 @@ function editDrag(event) {
 	}
 	var startString = startDate.getFullYear()+"-"+extraMonth+(startDate.getMonth()+1)+"-"+extraDate+startDate.getDate()+"T"+startDate.getHours()+":"+startDate.getMinutes()+":00Z";
 	var endString = endDate.getFullYear()+"-"+extraMonth+(endDate.getMonth()+1)+"-"+extraDate+endDate.getDate()+"T"+endDate.getHours()+":"+endDate.getMinutes()+":00Z";
-
-	var bookingJSON = {start: startString, end: endString};
+	if (event.resourceId) {
+		var bookingJSON = {start: startString, end: endString, service_provider_id: event.resourceId};
+	}
+	else {
+		var bookingJSON = {start: startString, end: endString};
+	}
 	$.ajax({
 	    type: 'PATCH',
 	    url: '/bookings/'+ event.id +'.json',

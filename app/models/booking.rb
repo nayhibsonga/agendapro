@@ -62,7 +62,7 @@ class Booking < ActiveRecord::Base
 			end
 		end
 		if !in_provider_time
-			errors.add(:booking, "El horario de la reserva no es posible para ese proveedor de servicio.")
+			errors.add(:booking, "El horario o día de la reserva no es posible para ese proveedor de servicio.")
 		end
   	end
 
