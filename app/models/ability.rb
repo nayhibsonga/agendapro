@@ -40,7 +40,11 @@ class Ability
 
     user ||= User.new # guest user (not logged in)
 
-    #can :new, :all
+    can :new, :all
+
+    can :read, User, :id => user.id
+    can :update, User, :id => user.id
+    can :destroy, User, :id => user.id
 
     # Home
     can :view_plans, Plan
@@ -74,6 +78,10 @@ class Ability
     can :get_direction, District
 
     can :agenda, User, :id => user.id
+
+    # Singup Validate
+    can :check_user_email, User
+    can :check_company_web_address, Company
 
 
     if user.role_id == Role.find_by_name("Super Admin").id
@@ -125,9 +133,15 @@ class Ability
         can :get_booking, Booking, :service_provider => { :location_id => user.location_id }
 
         can :read, Service, :company_id => user.company_id
-        can :destroy, Service, :company_id => user.company_id
         can :create, Service, :company_id => user.company_id
         can :update, Service, :company_id => user.company_id
+
+        @roles = Role.where(:name => ["Recepcionista","Staff"])
+
+        can :read, User, :location_id => user.location_id, :role_id => @roles
+        can :destroy, User, :location_id => user.location_id, :role_id => @roles
+        can :create, User, :location_id => user.location_id, :role_id => @roles
+        can :update, User, :location_id => user.location_id, :role_id => @roles
 
         can :read, ServiceProvider, :location_id => user.location_id
         can :destroy, ServiceProvider, :location_id => user.location_id
@@ -135,8 +149,6 @@ class Ability
         can :update, ServiceProvider, :location_id => user.location_id
 
         can :read, Location, :id => user.location_id
-        can :destroy, Location, :id => user.location_id
-        can :create, Location, :id => user.location_id
         can :update, Location, :id => user.location_id
 
         can :read, LocationTime, :location_id => user.location_id
@@ -163,6 +175,8 @@ class Ability
         can :read, Service, :company_id => user.company_id
 
         can :read, ServiceProvider, :location_id => user.location_id
+
+        can :read, Location, :id => user.location_id
         
         can :read, ProviderTime, :service_provider => { :location_id => user.location_id }
 

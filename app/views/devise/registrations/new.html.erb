@@ -21,36 +21,48 @@
 						<%= f.label :first_name, 'Nombre', :class => 'col-sm-4 control-label' %>
 						<div class="col-sm-8">
 							<%= f.text_field :first_name, :autofocus => true, :required => true, :class => 'form-control' %>
+							<span class="help-block"></span>
+							<span class="form-control-feedback"></span>
 						</div>
 					</div>
 					<div class="form-group">
 						<%= f.label :last_name, 'Apellido', :class => 'col-sm-4 control-label' %>
 						<div class="col-sm-8">
-							<%= f.text_field :last_name, :autofocus => true, :required => true, :class => 'form-control' %>
+							<%= f.text_field :last_name, :required => true, :class => 'form-control' %>
+							<span class="help-block"></span>
+							<span class="form-control-feedback"></span>
 						</div>
 					</div>
 					<div class="form-group">
 						<%= f.label :phone, 'Teléfono', :class => 'col-sm-4 control-label' %>
 						<div class="col-sm-8">
 							<%= f.telephone_field :phone, :required => true, :class => 'form-control' %>
+							<span class="help-block"></span>
+							<span class="form-control-feedback"></span>
 						</div>
 					</div>
 					<div class="form-group">
 						<%= f.label :email, 'Email', :class => 'col-sm-4 control-label' %>
 						<div class="col-sm-8">
-							<%= f.email_field :email, :autofocus => true, :required => true, :class => 'form-control', placeholder: 'ejemplo@dominio.com' %>
+							<%= f.email_field :email, :required => true, :class => 'form-control', placeholder: 'ejemplo@dominio.com' %>
+							<span class="help-block"></span>
+							<span class="form-control-feedback"></span>
 						</div>
 					</div>
 					<div class="form-group">
 						<%= f.label :password, 'Contraseña', :class => 'col-sm-4 control-label' %>
 						<div class="col-sm-8">
 							<%= f.password_field :password, :required => true, :class => 'form-control', placeholder: 'XXXXXXXX' %>
+							<span class="help-block"></span>
+							<span class="form-control-feedback"></span>
 						</div>
 					</div>
 					<div class="form-group">
 						<%= f.label :password_confirmation, 'Confirmar Contraseña', :class => 'col-sm-4 control-label' %>
 						<div class="col-sm-8">
 							<%= f.password_field :password_confirmation, :required => true, :class => 'form-control', placeholder: 'XXXXXXXX' %>
+							<span class="help-block"></span>
+							<span class="form-control-feedback"></span>
 						</div>
 					</div>
 					<!-- end: User -->
@@ -65,6 +77,8 @@
 							<%= builder.label :name, 'Nombre de la Compañia', :class => 'col-sm-4 control-label' %>
 							<div class="col-sm-8">
 								<%= builder.text_field :name, :required => true, :class => 'form-control', placeholder: 'AgendaPro SpA' %>
+							<span class="help-block"></span>
+							<span class="form-control-feedback"></span>
 							</div>
 						</div>
 						<div class="form-group">
@@ -73,17 +87,25 @@
 								<%= builder.text_field :web_address, :required => true, :class => 'form-control', placeholder: 'misitio' %>
 								<span class="input-group-addon">.agendapro.cl</span>
 							</div>
+							<div class="col-sm-offset-4 col-sm-8">
+								<span class="help-block"></span>
+								<span class="form-control-feedback"></span>
+							</div>
 						</div>
 						<div class="form-group">
 							<%= builder.label :economic_sector_id, 'Sector Economico', :class => 'col-sm-4 control-label' %>
 							<div class="col-sm-8">
 								<%= builder.collection_select :economic_sector_id, EconomicSector.all, :id, :name, {}, {:class => 'form-control'} %>
+							<span class="help-block"></span>
+							<span class="form-control-feedback"></span>
 							</div>
 						</div>
 						<div class="form-group">
 							<%= builder.label :logo, 'Logo', :class => 'col-sm-4 control-label' %>
 							<div class="col-sm-8">
 								<%= builder.file_field :logo, :accept => 'image/png,image/gif,image/jpeg', :class => 'form-control' %>
+							<span class="help-block"></span>
+							<span class="form-control-feedback"></span>
 							</div>
 						</div>
 					<% end %>
@@ -96,7 +118,8 @@
 				<div class="col-sm-offset-4 col-sm-8">
 					<div class="checkbox">
 						<label>
-							<input type="checkbox" required> Acepto los <a href="http://www.agendapro.cl/public/TyC.pdf" target="_balnk">Términos y Condiciones</a>.
+							<input type="checkbox" id="terms" name="terms" required> Acepto los <a href="http://www.agendapro.cl/public/TyC.pdf" target="_balnk">Términos y Condiciones</a>.
+							<span class="help-block"></span>
 						</label>
 					</div>
 				</div>
@@ -111,12 +134,18 @@
 </div>
 
 <% content_for :scripts do %>
+<%= javascript_include_tag 'login/jquery.validate.min' %>
+<%= javascript_include_tag 'login/signupValidate' %>
 <script type="text/javascript">
 	$(function () {
-		$('input').blur(function () {
-			var tab = $('input:required:invalid').first().closest('.tab-pane').attr('id');
-			$('#data-tabs a[href="#' + tab + '"]').tab('show');
+		$('input[name="commit"]').one("click", function (event) {
+			event.preventDefault();
+			$('#data-tabs a[href="#company-data"]').tab('show');
 		});
+		// $('input').blur(function () {
+		// 	var tab = $('input:required:invalid').first().closest('.tab-pane').attr('id');
+		// 	$('#data-tabs a[href="#' + tab + '"]').tab('show');
+		// });
 	});
 </script>
 <% end %>
