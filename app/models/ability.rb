@@ -167,6 +167,8 @@ class Ability
         can :read, Service, :company_id => user.company_id
 
         can :read, ServiceProvider, :location_id => user.location_id
+
+        can :read, Location, :id => user.location_id
         
         can :read, ProviderTime, :service_provider => { :location_id => user.location_id }
 
