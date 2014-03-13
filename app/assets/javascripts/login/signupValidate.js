@@ -27,8 +27,8 @@ $(function() {
 			},
 			'user[email]': {
 				required: true,
-				email: true//,
-				// remote: "index.php?task=company_checkwebaddress"
+				email: true,
+				remote: '/check_user'
 			},
 			'user[password]': {
 				required: true,
@@ -46,8 +46,8 @@ $(function() {
 			'user[company_attributes][web_address]': {
 				required: true,
 				minlength: 3,
-				alphaNumeric: $('#user_company_attributes_web_address').val()//,
-				// remote: ""
+				alphaNumeric: $('#user_company_attributes_web_address').val(),
+				remote: '/check_company'
 			},
 			'user[company_attributes][logo]': {
 				accept: "jpe?g|png|gif",
@@ -72,8 +72,8 @@ $(function() {
 			},
 			'user[email]': {
 				required: "Por favor ingrese un email v&aacute;lido",
-				email: "Por favor ingrese un email v&aacute;lido"//,
-				// remote: jQuery.validator.format("{0} ya fue utilizado")
+				email: "Por favor ingrese un email v&aacute;lido",
+				remote: jQuery.validator.format("{0} ya existe")
 			},
 			'user[password]': {
 				required: "Debe ingresar una contraseña",
@@ -90,8 +90,8 @@ $(function() {
 			},
 			'user[company_attributes][web_address]': {
 				required: "Debe ingresar una direccion web para su compañia",
-				minlength: "La direccion web debe tener al menor 3 caracteres"//,
-				// remote: ""
+				minlength: "La direccion web debe tener al menor 3 caracteres",
+				remote: jQuery.validator.format("{0} ya existe")
 			},
 			'user[company_attributes][logo]': {
 				accept: "La imagen no cumple con el formato (jpeg, png o gif)",
