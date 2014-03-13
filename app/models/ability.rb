@@ -133,7 +133,6 @@ class Ability
         can :get_booking, Booking, :service_provider => { :location_id => user.location_id }
 
         can :read, Service, :company_id => user.company_id
-        can :destroy, Service, :company_id => user.company_id
         can :create, Service, :company_id => user.company_id
         can :update, Service, :company_id => user.company_id
 
@@ -150,6 +149,7 @@ class Ability
         can :update, ServiceProvider, :location_id => user.location_id
 
         can :read, Location, :id => user.location_id
+        can :update, Location, :id => user.location_id
 
         can :read, LocationTime, :location_id => user.location_id
         can :destroy, LocationTime, :location_id => user.location_id
