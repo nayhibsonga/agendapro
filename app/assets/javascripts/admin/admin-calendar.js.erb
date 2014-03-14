@@ -232,8 +232,8 @@ function loadResourcesCalendar (startTime, endTime, hiddenDays, resourcesArray, 
 		    next:     '&rsaquo;', // >
 		    today:    'Hoy',
 		    week:     '<i class="fa fa-calendar"></i>  Semana',
-		    day:      '<i class="fa fa-calendar"></i>  DÃ­a',
-		    resourceDay: '<i class="fa fa-calendar"></i>  DÃ­a'
+		    day:      '<i class="fa fa-calendar"></i>  Día',
+		    resourceDay: '<i class="fa fa-calendar"></i>  Día'
 	    },
 	    monthNames: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
 	    monthNamesShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
@@ -300,7 +300,7 @@ function loadWeekCalendar (startTime, endTime, hiddenDays, resourcesArray, provi
 		    next:     '&rsaquo;', // >
 		    today:    'Hoy',
 		    week:     '<i class="fa fa-calendar"></i>  Semana',
-		    day:      '<i class="fa fa-calendar"></i>  DÃ­a'
+		    day:      '<i class="fa fa-calendar"></i>  Día'
 	    },
 	    monthNames: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
 	    monthNamesShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
@@ -436,7 +436,7 @@ function createBookingModal(date) {
 	var date = date || 0;
 	if (date != 0) {
 		dateArray = date.toString().split(' ');
-		//Falta revisar el tema de las fechas, deberÃ­an ser contantes en la app
+		//Falta revisar el tema de las fechas, deberían ser contantes en la app
 		$('#datePicker').val(dateArray[2]+'/'+dateArray[1]+'/'+dateArray[3]);
 		$('#bookingStartHour option[value="'+dateArray[4].split(':')[0]+'"]').attr("selected",true);
 		$('#bookingStartMinute option[value="'+dateArray[4].split(':')[1]+'"]').attr("selected",true);
