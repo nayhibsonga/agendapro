@@ -116,7 +116,7 @@ class BookingMailer < ActionMailer::Base
       ]
     }
 
-    if !book_info.notes.empty?
+    if !book_info.notes.nil?
       message[:global_merge_vars] << {:name => 'BNOTES', :content => book_info.notes}
     end
 
