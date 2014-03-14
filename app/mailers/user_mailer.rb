@@ -35,6 +35,10 @@ class UserMailer < ActionMailer::Base
         {
           :name => 'URL',
           :content => 'http://www.agendapro.cl/login'
+        },
+        {
+          :name => 'PASSWORD',
+          :content => 'contraseña a cambiar'
         }
       ],
       :tags => ['user', 'new_user']
