@@ -110,7 +110,7 @@ class BookingsController < ApplicationController
     if @booking.save
       flash[:notice] = "Servicio agendado"
 
-      BookingMailer.book_service_mail(@booking)
+      # BookingMailer.book_service_mail(@booking)
     else
       flash[:alert] = "Error guardando datos de agenda"
       @errors = @booking.errors
@@ -143,7 +143,7 @@ class BookingsController < ApplicationController
 
     if @booking.update(start: params[:start], end: params[:end])
       flash[:notice] = "Cita actualizada."
-      BookingMailer.update_booking(@booking)
+      # BookingMailer.update_booking(@booking)
     else
       flash[:alert] = "Error actualizando cita."
       @errors = @booking.errors
@@ -166,7 +166,7 @@ class BookingsController < ApplicationController
       status = Status.find_by(:name => 'Cancelado').id
       if @booking.update(status_id: status)
         flash[:notice] = "Cita cancelada."
-        BookingMailer.cancel_booking(@booking)
+        # BookingMailer.cancel_booking(@booking)
       else
         flash[:alert] = "Error cancelando cita."
         @errors = @booking.errors
