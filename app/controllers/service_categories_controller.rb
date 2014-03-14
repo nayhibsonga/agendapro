@@ -37,7 +37,7 @@ class ServiceCategoriesController < ApplicationController
 
     respond_to do |format|
       if @service_category.save
-        format.html { redirect_to @service_category, notice: 'La Categoría de Servicios ha sido creada exitosamente.' }
+        format.html { redirect_to , notice: service_categories_path'La Categoría de Servicios ha sido creada exitosamente.' }
         format.json { render action: 'show', status: :created, location: @service_category }
       else
         format.html { render action: 'new' }
@@ -54,7 +54,7 @@ class ServiceCategoriesController < ApplicationController
     end
     respond_to do |format|
       if @service_category.update(service_category_params)
-        format.html { redirect_to @service_category, notice: 'La Categoría de Servicios ha sido actualizada exitosamente.' }
+        format.html { redirect_to service_categories_path, notice: 'La Categoría de Servicios ha sido actualizada exitosamente.' }
         format.json { head :no_content }
       else
         format.html { render action: 'edit' }

@@ -32,7 +32,7 @@ class  Admin::UsersController < ApplicationController
   def create
     @user = User.new(user_params)
     @user.company_id = current_user.company_id
-    @user.password = '12345678'
+    @user.password = rand(36**length).to_s(36)
 
     respond_to do |format|
       if @user.save

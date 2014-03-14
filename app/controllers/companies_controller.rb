@@ -57,7 +57,7 @@ class CompaniesController < ApplicationController
   def update
     respond_to do |format|
       if @company.update(company_params)
-        format.html { redirect_to @company, notice: 'La empresa fue actualizada exitosamente.' }
+        format.html { redirect_to companies_path, notice: 'La empresa fue actualizada exitosamente.' }
         format.json { head :no_content }
       else
         format.html { render action: 'edit' }
