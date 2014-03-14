@@ -49,6 +49,13 @@
           </div>
         </div>
       </div>
+      
+      <div class="form-group">
+        <div class="col-sm-offset-3 col-sm-4">
+          <%= f.submit 'Guardar', :class => 'btn btn-primary' %>
+          <%= link_to 'Cancelar', services_path, class: "btn btn-danger" %>  
+        </div>
+      </div>
     </div>
     <div class="col-md-6">
       <% if @service.service_category.nil? then @service.build_service_category end %>
@@ -90,12 +97,6 @@
         </div>
       </div>
     </div>
-      <div class="form-group">
-        <div class="col-sm-offset-3 col-sm-4">
-          <%= f.submit 'Guardar', :class => 'btn btn-primary' %>
-          <%= link_to 'Cancelar', services_path, class: "btn btn-danger" %>  
-        </div>
-      </div>
   <% end %>
 
   <% content_for :scripts do %>
