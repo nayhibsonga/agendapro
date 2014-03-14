@@ -97,6 +97,8 @@ class Ability
 
         can :select_plan, Plan
 
+        can :add_company, Company
+
         can :get_booking, :service_provider => { :company_id => user.company_id }
 
         can :read, Company, :id => user.company_id

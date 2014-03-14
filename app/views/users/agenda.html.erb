@@ -27,9 +27,11 @@
 						</address>
 					</div>
 				</div>
+				<% if !current_user.company_id %>
 				<div class="crear-empresa">
-					<h6>¿Quiere agregar tu empresa? Haz click <%= link_to 'aquí', home_path %></h6>
+					<h6>¿Quiere agregar tu empresa? Haz click <%= link_to 'aquí', add_company_path %></h6>
 				</div>
+				<% end %>
 			</div>
 			<div class="col-md-9">
 				<div class="well well-sm">
