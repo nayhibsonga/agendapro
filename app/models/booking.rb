@@ -12,6 +12,9 @@ class Booking < ActiveRecord::Base
 
 	after_commit validate :bookings_overlap
 
+	after_create :send_booking_mail
+	after_update :send_update_mail
+
 	def booking_duration
     	if self.service.duration != ((self.end - self.start) / 1.minute ).round
     		errors.add(:booking, "La duración de la reserva no coincide con la duración del servicio.")
@@ -74,4 +77,12 @@ class Booking < ActiveRecord::Base
   		provider_id = self.service_provider_id.to_s
   		return id + local_id + service_id + provider_id + '-' + id_length
   	end
+
+  	def send_booking_mail
+		BookingMailer.book_service_mail(self)
+	end
+
+	def send_update_mail
+		BookingMailer.update_booking(self)
+	end
 end
