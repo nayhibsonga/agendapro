@@ -489,8 +489,54 @@ h2.section_header {
 	padding: 0 0 16px 0;
 }
 
+/* ------------------------ */
+#menu-display{
+	display: none;
+}
+
+
+/* Small devices (tablets, 768px and up) */
+@media (max-width: 995px) { 
+	#barra-superior{
+		height: auto;
+	}
+	#menu-display{
+		display: inline-block;
+		border-radius: 5px;
+		border: 1px solid #fff;
+		float: right;
+		color: #fff;
+		padding: 5px 15px;
+		margin-top: 5px;
+	}
+	#menu-display:hover{
+		background: rgba(255,255,255,0.2);
+		text-decoration: none;
+	}
+	.nav-pills{
+		display: none;
+		width: 100%;
+	}
+	.nav-pills>li{
+		float: none;
+	}
+	.nav-pills>li+li{
+		margin-left: 0px;
+	}
+	.nav-pills>li>a {
+		display: block;
+	}
+
+}
+
 /* Small devices (tablets, 768px and up) */
 @media (max-width: 768px) { 
+	#logo{
+		margin-left: 20px;
+	}
+	#menu-display{
+		margin-right: 20px;
+	}
 	 .carousel-inner{
 		height: 400px;
 	}
