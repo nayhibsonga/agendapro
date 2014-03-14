@@ -1,7 +1,7 @@
 class CompaniesController < ApplicationController
   before_action :set_company, only: [:show, :edit, :update, :destroy]
-  before_action :authenticate_user!, except: [:new, :overview, :workflow]
-  before_action :quick_add, except: [:new, :overview, :workflow, :add_company]
+  before_action :authenticate_user!, except: [:new, :overview, :workflow, :check_company_web_address]
+  before_action :quick_add, except: [:new, :overview, :workflow, :add_company, :check_company_web_address]
   before_action :verify_is_super_admin, only: [:index]
 
   layout "admin", except: [:show, :overview, :workflow, :add_company]
@@ -116,7 +116,12 @@ class CompaniesController < ApplicationController
     end
     @company = Company.new
     render :layout => 'search'
-  end  
+  end
+
+  def check_company_web_address
+    @company = Company.find_by(:web_address => params[:user][:company_attributes][:web_address])
+    render :json => @company.nil?
+  end
 
   private
     # Use callbacks to share common setup or constraints between actions.

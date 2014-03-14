@@ -102,7 +102,7 @@ function loadLocationTime (locationId, resources) {
 				if (!schedule.Martes.length) {
 					hiddenDays.push(2);
 				}
-				if (!schedule.Miércoles.length) {
+				if (!schedule.MiÃ©rcoles.length) {
 					hiddenDays.push(3);
 				}
 				if (!schedule.Jueves.length) {
@@ -111,7 +111,7 @@ function loadLocationTime (locationId, resources) {
 				if (!schedule.Viernes.length) {
 					hiddenDays.push(5);
 				}
-				if (!schedule.Sábado.length) {
+				if (!schedule.SÃ¡bado.length) {
 					hiddenDays.push(6);
 				}
 				loadResourcesCalendar(minHour + ':' + minMinuts, maxHour + ':' + maxMinuts, hiddenDays,resources,0);
@@ -165,7 +165,7 @@ function loadProviderTime (providerId) {
 			if (!schedule.Martes.length) {
 				hiddenDays.push(2);
 			}
-			if (!schedule.Miércoles.length) {
+			if (!schedule.MiÃ©rcoles.length) {
 				hiddenDays.push(3);
 			}
 			if (!schedule.Jueves.length) {
@@ -174,7 +174,7 @@ function loadProviderTime (providerId) {
 			if (!schedule.Viernes.length) {
 				hiddenDays.push(5);
 			}
-			if (!schedule.Sábado.length) {
+			if (!schedule.SÃ¡bado.length) {
 				hiddenDays.push(6);
 			}
 			loadWeekCalendar(minHour + ':' + minMinuts, maxHour + ':' + maxMinuts, hiddenDays,[],providerId);
@@ -232,13 +232,13 @@ function loadResourcesCalendar (startTime, endTime, hiddenDays, resourcesArray, 
 		    next:     '&rsaquo;', // >
 		    today:    'Hoy',
 		    week:     '<i class="fa fa-calendar"></i>  Semana',
-		    day:      '<i class="fa fa-calendar"></i>  Día',
-		    resourceDay: '<i class="fa fa-calendar"></i>  Día'
+		    day:      '<i class="fa fa-calendar"></i>  DÃ­a',
+		    resourceDay: '<i class="fa fa-calendar"></i>  DÃ­a'
 	    },
 	    monthNames: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
 	    monthNamesShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
-	    dayNames: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'],
-	    dayNamesShort: ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'],
+	    dayNames: ['Domingo', 'Lunes', 'Martes', 'MiÃ©rcoles', 'Jueves', 'Viernes', 'SÃ¡bado'],
+	    dayNamesShort: ['Dom', 'Lun', 'Mar', 'MiÃ©', 'Jue', 'Vie', 'SÃ¡b'],
 	    minTime: startTime,
 	    maxTime: endTime,
 	    defaultEventMinutes: duration,
@@ -300,12 +300,12 @@ function loadWeekCalendar (startTime, endTime, hiddenDays, resourcesArray, provi
 		    next:     '&rsaquo;', // >
 		    today:    'Hoy',
 		    week:     '<i class="fa fa-calendar"></i>  Semana',
-		    day:      '<i class="fa fa-calendar"></i>  Día'
+		    day:      '<i class="fa fa-calendar"></i>  DÃ­a'
 	    },
 	    monthNames: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
 	    monthNamesShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
-	    dayNames: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'],
-	    dayNamesShort: ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'],
+	    dayNames: ['Domingo', 'Lunes', 'Martes', 'MiÃ©rcoles', 'Jueves', 'Viernes', 'SÃ¡bado'],
+	    dayNamesShort: ['Dom', 'Lun', 'Mar', 'MiÃ©', 'Jue', 'Vie', 'SÃ¡b'],
 	    minTime: startTime,
 	    maxTime: endTime,
 	    defaultEventMinutes: duration,
@@ -436,7 +436,7 @@ function createBookingModal(date) {
 	var date = date || 0;
 	if (date != 0) {
 		dateArray = date.toString().split(' ');
-		//Falta revisar el tema de las fechas, deberían ser contantes en la app
+		//Falta revisar el tema de las fechas, deberÃ­an ser contantes en la app
 		$('#datePicker').val(dateArray[2]+'/'+dateArray[1]+'/'+dateArray[3]);
 		$('#bookingStartHour option[value="'+dateArray[4].split(':')[0]+'"]').attr("selected",true);
 		$('#bookingStartMinute option[value="'+dateArray[4].split(':')[1]+'"]').attr("selected",true);

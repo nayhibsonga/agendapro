@@ -240,7 +240,7 @@ function serviceValid () {
 		my_alert.showAlert('Debe elegir una duracion.');
 		hideLoad();
 	}
-	else if (!$('#service_service_category_attributes_name').val()) {
+	else if (!$('#service_service_category_attributes_name').val() && !$('#service_service_category_id').val()) {
 		my_alert.showAlert('Debe elegir una categoria.');
 		hideLoad();
 	}
