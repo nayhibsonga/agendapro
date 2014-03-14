@@ -102,7 +102,7 @@ function loadLocationTime (locationId, resources) {
 				if (!schedule.Martes.length) {
 					hiddenDays.push(2);
 				}
-				if (!schedule.MiÃ©rcoles.length) {
+				if (!schedule.Miércoles.length) {
 					hiddenDays.push(3);
 				}
 				if (!schedule.Jueves.length) {
@@ -111,7 +111,7 @@ function loadLocationTime (locationId, resources) {
 				if (!schedule.Viernes.length) {
 					hiddenDays.push(5);
 				}
-				if (!schedule.SÃ¡bado.length) {
+				if (!schedule.Sábado.length) {
 					hiddenDays.push(6);
 				}
 				loadResourcesCalendar(minHour + ':' + minMinuts, maxHour + ':' + maxMinuts, hiddenDays,resources,0);
@@ -165,7 +165,7 @@ function loadProviderTime (providerId) {
 			if (!schedule.Martes.length) {
 				hiddenDays.push(2);
 			}
-			if (!schedule.MiÃ©rcoles.length) {
+			if (!schedule.Miércoles.length) {
 				hiddenDays.push(3);
 			}
 			if (!schedule.Jueves.length) {
@@ -174,7 +174,7 @@ function loadProviderTime (providerId) {
 			if (!schedule.Viernes.length) {
 				hiddenDays.push(5);
 			}
-			if (!schedule.SÃ¡bado.length) {
+			if (!schedule.Sábado.length) {
 				hiddenDays.push(6);
 			}
 			loadWeekCalendar(minHour + ':' + minMinuts, maxHour + ':' + maxMinuts, hiddenDays,[],providerId);
@@ -237,8 +237,8 @@ function loadResourcesCalendar (startTime, endTime, hiddenDays, resourcesArray, 
 	    },
 	    monthNames: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
 	    monthNamesShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
-	    dayNames: ['Domingo', 'Lunes', 'Martes', 'MiÃ©rcoles', 'Jueves', 'Viernes', 'SÃ¡bado'],
-	    dayNamesShort: ['Dom', 'Lun', 'Mar', 'MiÃ©', 'Jue', 'Vie', 'SÃ¡b'],
+	    dayNames: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'],
+	    dayNamesShort: ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'],
 	    minTime: startTime,
 	    maxTime: endTime,
 	    defaultEventMinutes: duration,
@@ -304,8 +304,8 @@ function loadWeekCalendar (startTime, endTime, hiddenDays, resourcesArray, provi
 	    },
 	    monthNames: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
 	    monthNamesShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
-	    dayNames: ['Domingo', 'Lunes', 'Martes', 'MiÃ©rcoles', 'Jueves', 'Viernes', 'SÃ¡bado'],
-	    dayNamesShort: ['Dom', 'Lun', 'Mar', 'MiÃ©', 'Jue', 'Vie', 'SÃ¡b'],
+	    dayNames: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'],
+	    dayNamesShort: ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'],
 	    minTime: startTime,
 	    maxTime: endTime,
 	    defaultEventMinutes: duration,
