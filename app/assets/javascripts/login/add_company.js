@@ -52,13 +52,13 @@ $(function() {
 			}
 		},
 		highlight: function(element) {
-			$(element).closest('.form-group').removeClass('has-success').addClass('has-error');
-			// $(element).parent().children('.form-control-feedback').removeClass('fa fa-check').addClass('fa fa-times');
+			$(element).closest('.form-group').removeClass('has-success has-feedback').addClass('has-error has-feedback');
+			$(element).parent().children('.form-control-feedback').removeClass('fa fa-check').addClass('fa fa-times');
 		},
 		success: function(element) {
-			$(element).closest('.form-group').removeClass('has-error').addClass('has-success');
+			$(element).closest('.form-group').removeClass('has-error has-feedback').addClass('has-success has-feedback');
+			$(element).parent().parent().children('.form-control-feedback').removeClass('fa fa-times').addClass('fa fa-check');
 			$(element).parent().empty()
-			// $(element).parent().parent().children('.form-control-feedback').removeClass('fa fa-times').addClass('fa fa-check');
 		},
 		submitHandler: function(form) {
 			form.submit();

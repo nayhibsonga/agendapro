@@ -38,7 +38,7 @@ class UserMailer < ActionMailer::Base
         },
         {
           :name => 'PASSWORD',
-          :content => 'contraseña a cambiar'
+          :content => user.password
         }
       ],
       :tags => ['user', 'new_user']
