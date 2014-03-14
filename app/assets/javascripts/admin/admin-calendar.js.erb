@@ -414,17 +414,7 @@ function editBookingModal(eventId) {
 		$('.booking-modal-title').append('Editando Reserva id: '+eventId);
 		$('.booking-modal-footer').append('<button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button><button type="button" class="btn btn-primary" onclick="editBooking('+eventId+')">Guardar</button><button type="button" class="btn btn-danger" onclick="deleteBooking('+eventId+')">Eliminar</button>');
 
-		if ( booking.service_provider_id > 0) {
-			$.getJSON('/provider_services', {id: booking.service_provider_id}, function (services) {
-				$('#booking_service_id').empty();
-				$.each(services, function (key, service) {
-					$('#booking_service_id').append(
-						'<option value="' + service.id + '">' + service.name + '</option>'
-					);
-				});
-				$('#booking_service_id').removeAttr('disabled');
-			});
-		}
+
 
 		$('#bookingModal').modal('show');
 	});	
@@ -447,15 +437,6 @@ function createBookingModal(date) {
 	}
 	if (parseInt($('input[name=providerRadio]:checked').val()) > 0) {
 		$('#booking_service_provider_id option[value="'+$('input[name=providerRadio]:checked').val()+'"]').attr("selected",true);
-		$.getJSON('/provider_services', {id: parseInt($('input[name=providerRadio]:checked').val())}, function (services) {
-			$('#booking_service_id').empty();
-			$.each(services, function (key, service) {
-				$('#booking_service_id').append(
-					'<option value="' + service.id + '">' + service.name + '</option>'
-				);
-			});
-			$('#booking_service_id').removeAttr('disabled');
-		});
 	}
 	else {
 		$('#booking_service_provider_id').val('');
@@ -471,6 +452,8 @@ function createBookingModal(date) {
 	$('.booking-modal-footer').empty();
 	$('.booking-modal-title').append('Nueva Reserva');
 	$('.booking-modal-footer').append('<button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button><button type="button" class="btn btn-primary" onclick="createBooking()">Guardar</button>');
+
+
 	$('#bookingModal').modal('show');	
 }
 
@@ -604,49 +587,4 @@ $(function() {
 			modalChange();
 		});
 	});
-	$('[name="localRadio"]').first().parent().addClass("active")
-	$('[name="localRadio"]').click(function (e) {
-		$('[name="localRadio"]').parent().removeClass('active');
-		e.target.parentNode.className += 'active';
-	});
-
-	$("#dp").datepicker({
-		buttonText: "Ir a Fecha",
-		changeMonth: true,
-		changeYear: true,
-		showOn: 'both',
-
-		onSelect: function(dateText, inst) {
-				var d = new Date(dateText);
-				$('#calendar').fullCalendar('gotoDate', d);
-		}
-	});
-
-	$("#booking_email").autocomplete({
-		source: '/clients_suggestion',
-		appendTo: '#suggestions',
-		autoFocus: true,
-		minLength: 1,
-		select: function( event, ui ) {
-			event.preventDefault();
-			$('#booking_first_name').val(ui.item.value[0]);
-			$('#booking_last_name').val(ui.item.value[1]);
-			$('#booking_phone').val(ui.item.value[3]);
-			$('#booking_email').val(ui.item.value[2]);
-		}
-	});
-
-	$('#booking_service_provider_id').change(function (event) {
-		$.getJSON('/provider_services', {id: event.target.value}, function (services) {
-			$('#booking_service_id').empty();
-			$.each(services, function (key, service) {
-				$('#booking_service_id').append(
-					'<option value="' + service.id + '">' + service.name + '</option>'
-				);
-			});
-			$('#booking_service_id').removeAttr('disabled');
-		});
-	});
-
-	$(".ui-datepicker-trigger").addClass("btn btn-primary pull-right")
 });

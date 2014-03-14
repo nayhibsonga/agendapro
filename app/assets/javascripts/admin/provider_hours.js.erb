@@ -145,7 +145,7 @@ function changeDayStatus(value) {
 		$('#closeHourId'+ value).prop('disabled', false);
 		$('#closeMinuteId'+ value).prop('disabled', false);
 		$('#dayStatusId'+ value).val(1);
-		$('#dayStatusId'+value).parent().append(' <a id="addBreakdiv'+value+'" class="btn-xs btn-primary">Agregar Descanso</a>');
+		$('#dayStatusId'+value).parent().append(' <a id="addBreakdiv'+value+'" class="btn-xs btn-success">Agregar Descanso</a>');
 		$('#addBreakdiv'+value).click(function() {
 			addBreak(value,'div'+value);
 		});
@@ -219,9 +219,9 @@ function saveProvider(method,extraURL) {
 	    	document.location.href = '/service_providers/';
 		},
 		error: function(xhr){
-		    var errores = $.parseJSON(xhr.responseText).errors;
-		    for (i in errores) {
-		    	alertId.showAlert(errores);
+		    var errors = $.parseJSON(xhr.responseText).errors;
+		    for (i in errors) {
+		    	alert(errors[i]);
 		    }
 		    // do something with errors
 		}
@@ -247,9 +247,7 @@ function userChange() {
 	}
 }
 
-var alertId;
 $(function() {
-	alertId = new Alert();
 	$('#service_provider_user_attributes_email').val('');
 	$('#service_provider_user_attributes_email').prop('disabled', true);
   initialize();

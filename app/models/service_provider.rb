@@ -18,12 +18,6 @@ class ServiceProvider < ActiveRecord::Base
 	validate :time_empty_or_negative, :time_in_location_time, :times_overlap
 	validate :plan_service_providers, :on => :create
 
-	def staff_user
-		if self.user && self.user.role_id != Role.find_by_name("Staff")
-			errors.add(:service_provider, "El usuario asociado debe ser de tipo staff.")
-		end
-	end
-
 	def plan_service_providers
 		@company = self.company
 		if company.service_providers.count >= company.plan.service_providers

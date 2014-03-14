@@ -11,5 +11,5 @@ class Service < ActiveRecord::Base
 
 	accepts_nested_attributes_for :service_category, :reject_if => :all_blank, :allow_destroy => true
 
-	validates :name, :duration, :company, :service_category, :presence => true
+	validates :name, :duration, :company, :presence => true
 end

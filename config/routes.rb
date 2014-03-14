@@ -58,10 +58,6 @@ Agendapro::Application.routes.draw do
   get '/clients_suggestion', :to => 'clients#suggestion'
   get '/provider_services', :to => 'service_providers#provider_service'
 
-  # Singup Validations
-  get '/check_user', :to => 'users#check_user_email'
-  get '/check_company', :to => 'companies#check_company_web_address'
-
   # My Agenda
   get '/my_agenda', :to => 'users#agenda', :as => 'my_agenda'
 

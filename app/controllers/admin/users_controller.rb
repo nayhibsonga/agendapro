@@ -8,7 +8,7 @@ class  Admin::UsersController < ApplicationController
   # GET /users
   # GET /users.json
   def index
-    @users = User.where(company_id: current_user.company_id).accessible_by(current_ability)
+    @users = User.where(company_id: current_user.company_id)
   end
 
   # GET /users/1
@@ -50,7 +50,7 @@ class  Admin::UsersController < ApplicationController
   def update
     respond_to do |format|
       if @user.update(user_params)
-        format.html { redirect_to admin_users_path, notice: 'Usuario fue actualizado exitosamente.' }
+        format.html { redirect_to admin_user_path(:id => @user.id), notice: 'Usuario fue actualizado exitosamente.' }
         format.json { head :no_content }
       else
         format.html { render action: 'edit' }

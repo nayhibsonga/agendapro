@@ -4,10 +4,8 @@ class QuickAddController < ApplicationController
 	layout "quick_add", only: [:quick_add]
 
 	def quick_add
-		if ServiceCategory.where(company_id: current_user.company_id).count < 1
-	        @service_category = ServiceCategory.new(name: "Sin Categoría", company_id: current_user.company_id)
-	        @service_category.save
-    	end
+		@service_category = ServiceCategory.new(name: "Sin Categoría", company_id: current_user.company_id)
+		@service_category.save
 		@location = Location.new
 		@service = Service.new
 		@service_provider = ServiceProvider.new
@@ -75,13 +73,10 @@ class QuickAddController < ApplicationController
 	end
 
   	def create_services
-  		puts service_params
-	    if service_params[:service_category_attributes]
-	      if service_params[:service_category_attributes][:name] == ""
-	        new_params = service_params.except(:service_category_attributes)
-	      else
-	        new_params = service_params.except(:service_category_id)
-	      end
+	    if service_params[:service_category_attributes][:name].nil?
+	      new_params = service_params.except(:service_category_attributes)
+	    else
+	      new_params = service_params
 	    end
 	    @service = Service.new(new_params)
 	    @service.company_id = current_user.company_id
@@ -122,6 +117,6 @@ class QuickAddController < ApplicationController
     end
 
     def service_params
-      params.require(:service).permit(:name, :price, :duration, :description, :group_service, :capacity, :waiting_list, :company_id, :service_category_id, service_category_attributes: [:name, :company_id],  :tag_ids => [] )
+      params.require(:service).permit(:name, :price, :duration, :description, :group_service, :capacity, :waiting_list, :company_id, service_category_attributes: [:name, :company_id],  :tag_ids => [] )
     end
 end

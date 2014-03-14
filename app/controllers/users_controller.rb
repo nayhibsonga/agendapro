@@ -1,8 +1,8 @@
 class UsersController < ApplicationController
   #before_action :set_user, only: [:show, :edit, :update, :destroy]
   before_action :set_user, only: [:agenda]
-  before_action :authenticate_user!, except: [:check_user_email]
-  before_action :verify_is_super_admin, except: [:new, :agenda, :add_company, :check_user_email]
+  before_action :authenticate_user!
+  before_action :verify_is_super_admin, except: [:new, :agenda, :add_company]
   layout "admin", except: [:agenda, :add_company]
   load_and_authorize_resource
 
@@ -74,11 +74,6 @@ class UsersController < ApplicationController
     @lastBookings = Booking.where(:user_id => params[:id]).order(updated_at: :desc).limit(10)
 
     render :layout => 'search'
-  end
-
-  def check_user_email
-    @user = User.find_by(:email => params[:user][:email])
-    render :json => @user.nil?
   end
 
   private

@@ -8,7 +8,7 @@ class ServiceProvidersController < ApplicationController
   # GET /service_providers
   # GET /service_providers.json
   def index
-    @service_providers = ServiceProvider.where(company_id: current_user.company_id).accessible_by(current_ability)
+    @service_providers = ServiceProvider.where(company_id: current_user.company_id)
   end
 
   # GET /service_providers/1
@@ -36,7 +36,7 @@ class ServiceProvidersController < ApplicationController
         new_params = service_provider_params.except(:user_attributes)
       else
         new_params = service_provider_params.except(:user_id)
-        new_params[:user_attributes].merge!(:password =>'12345678').merge!(:role_id => Role.find_by_name("Staff").id).merge!(:company_id => current_user.company_id).merge(:location_id => service_provider_params[:location_id])
+        new_params[:user_attributes].merge!(:password =>'12345678').merge!(:role_id => Role.find_by_name("Staff").id).merge!(:company_id => current_user.company_id)
       end
     end
 
