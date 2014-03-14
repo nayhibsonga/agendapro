@@ -34,7 +34,7 @@ class LocationsController < ApplicationController
 
     respond_to do |format|
       if @location.save
-        format.html { redirect_to @location, notice: 'Local creado satisfactoriamente.' }
+        format.html { redirect_to locations_path, notice: 'Local creado satisfactoriamente.' }
         format.json { render :json => @location }
       else
         format.html { render action: 'new' }
@@ -50,7 +50,7 @@ class LocationsController < ApplicationController
     @location.location_times.destroy_all
     respond_to do |format|
       if @location.update(location_params)
-        format.html { redirect_to @location, notice: 'Local actualizado satisfactoriamente.' }
+        format.html { redirect_to locations_path, notice: 'Local actualizado satisfactoriamente.' }
         format.json { render :json => @location }
       else
         format.html { render action: 'edit' }

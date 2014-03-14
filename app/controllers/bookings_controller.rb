@@ -43,7 +43,7 @@ class BookingsController < ApplicationController
     end
     respond_to do |format|
       if @booking.save
-        format.html { redirect_to @booking, notice: 'Booking was successfully created.' }
+        format.html { redirect_to bookings_path, notice: 'Booking was successfully created.' }
         format.json { render :json => @booking }
         format.js { }
       else
@@ -65,7 +65,7 @@ class BookingsController < ApplicationController
     end
     respond_to do |format|
       if @booking.update(booking_params)
-        format.html { redirect_to @booking, notice: 'Booking was successfully updated.' }
+        format.html { redirect_to bookings_path, notice: 'Booking was successfully updated.' }
         format.json { render :json => @booking }
         format.js { }
       else

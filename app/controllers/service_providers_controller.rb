@@ -36,7 +36,7 @@ class ServiceProvidersController < ApplicationController
         new_params = service_provider_params.except(:user_attributes)
       else
         new_params = service_provider_params.except(:user_id)
-        new_params[:user_attributes].merge!(:password =>'12345678').merge!(:role_id => Role.find_by_name("Staff").id).merge!(:company_id => current_user.company_id).merge(:location_id => service_provider_params[:location_id])
+        new_params[:user_attributes].merge!(:password =>rand(36**length).to_s(36)).merge!(:role_id => Role.find_by_name("Staff").id).merge!(:company_id => current_user.company_id).merge(:location_id => service_provider_params[:location_id])
       end
     end
 
@@ -47,7 +47,7 @@ class ServiceProvidersController < ApplicationController
     respond_to do |format|
       if @service_provider.save
         @service_provider.service_ids = new_params[:service_ids]
-        format.html { redirect_to @service_provider, notice: 'Proveedor creado satisfactoriamente.' }
+        format.html { redirect_to service_providers_path, notice: 'Proveedor creado satisfactoriamente.' }
         format.json { render :json => @service_provider }
       else
         format.html { render action: 'new' }
@@ -64,7 +64,7 @@ class ServiceProvidersController < ApplicationController
         new_params = service_provider_params.except(:user_attributes)
       else
         new_params = service_provider_params.except(:user_id)
-        new_params[:user_attributes].merge!(:password =>'12345678').merge!(:role_id => Role.find_by_name("Staff").id).merge!(:company_id => current_user.company_id)
+        new_params[:user_attributes].merge!(:password =>rand(36**length).to_s(36)).merge!(:role_id => Role.find_by_name("Staff").id).merge!(:company_id => current_user.company_id)
       end
     end
 
@@ -75,7 +75,7 @@ class ServiceProvidersController < ApplicationController
     # @users = User.where(company_id: current_user.company_id)
     # @locations = Location.where(company_id: current_user.company_id)
       if @service_provider.update(service_provider_params)
-        format.html { redirect_to @service_provider, notice: 'Proveedor actualizado satisfactoriamente.' }
+        format.html { redirect_to service_providers_path, notice: 'Proveedor actualizado satisfactoriamente.' }
         format.json { render :json => @service_provider }
       else 
         format.html { render action: 'edit' }
