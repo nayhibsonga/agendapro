@@ -8,6 +8,13 @@ class UserMailer < ActionMailer::Base
     template_name = 'User'
     template_content = []
 
+    @user_fname = user.email
+    @user_name = user.email
+    if (!user.last_name.nil? && !user.first_name.nil?)
+      @user_name =  user.last_name + ', ' + user.first_name
+      @user_fname = user.first_name
+    end
+
     # => Message
     message = {
       :from_email => 'no-reply@agendapro.cl',
@@ -15,7 +22,7 @@ class UserMailer < ActionMailer::Base
       :to => [
         {
           :email => user.email,
-          :name => user.last_name + ', ' + user.first_name,
+          :name => @user_name,
           :type => 'to'
         }
       ],
@@ -26,7 +33,7 @@ class UserMailer < ActionMailer::Base
         },
         {
           :name => 'FNAME',
-          :content => user.first_name
+          :content => @user_fname
         },
         {
           :name => 'user',

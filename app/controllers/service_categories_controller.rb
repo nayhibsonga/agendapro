@@ -37,7 +37,7 @@ class ServiceCategoriesController < ApplicationController
 
     respond_to do |format|
       if @service_category.save
-        format.html { redirect_to , notice: service_categories_path'La Categoría de Servicios ha sido creada exitosamente.' }
+        format.html { redirect_to service_categories_path, notice: 'La Categoría de Servicios ha sido creada exitosamente.' }
         format.json { render action: 'show', status: :created, location: @service_category }
       else
         format.html { render action: 'new' }
