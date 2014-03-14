@@ -5,7 +5,7 @@ class User < ActiveRecord::Base
          :recoverable, :rememberable, :trackable, :validatable
 	belongs_to :role
 	belongs_to :company
-	belongs_to :user
+	belongs_to :location
 
 	has_many :bookings
 	has_many :service_providers
@@ -27,9 +27,13 @@ class User < ActiveRecord::Base
 		end
 	end
 	def location_company_users
-		if (self.role_id == Role.find_by_name("Administrador Local")) || (self.role_id == Role.find_by_name("Recepcionista"))
-			if !self.location_id
+		if Role.where(:name => ["Administrador Local","Recepcionista","Staff"]).include? self.role
+			if !self.location
 				errors.add(:user, "Este tipo de usuario debe tener un local asociado.")
+			end
+		else
+			if self.location
+				errors.add(:user, "Este tipo de usuario no debe tener un local asociado.")
 			end
 		end
 	end

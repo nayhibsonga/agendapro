@@ -29,13 +29,6 @@
 
   <%= f.hidden_field :latitude %>
   <%= f.hidden_field :longitude %>
-
-<div class="form-group">
-  <div class="actions col-sm-offset-3 col-sm-9">
-    <%= f.submit 'Guardar', :class => "btn btn-primary buttonLocation"%>
-    <%= link_to 'Cancelar'.html_safe, locations_path, :class => "btn btn-danger" %>    
-  </div>
-</div>
 </div>
 <div class="col-md-7">
   <div class="panel panel-info">
@@ -55,6 +48,12 @@
         </tbody>
       </table>
     </div>
+  </div>
+</div>
+<div class="form-group">
+  <div class="actions col-sm-offset-2 col-sm-4">
+    <%= f.submit 'Guardar', :class => "btn btn-primary buttonLocation"%>
+    <%= link_to 'Cancelar'.html_safe, locations_path, :class => "btn btn-danger" %>    
   </div>
 </div>
 <% end %>

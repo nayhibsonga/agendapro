@@ -415,18 +415,16 @@ function editBookingModal(eventId) {
 		$('.booking-modal-footer').append('<button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button><button type="button" class="btn btn-primary" onclick="editBooking('+eventId+')">Guardar</button><button type="button" class="btn btn-danger" onclick="deleteBooking('+eventId+')">Eliminar</button>');
 
 		if ( booking.service_provider_id > 0) {
- 			$.getJSON('/provider_services', {id: booking.service_provider_id}, function (services) {
- 				$('#booking_service_id').empty();
- 				$.each(services, function (key, service) {
- 					$('#booking_service_id').append(
- 						'<option value="' + service.id + '">' + service.name + '</option>'
- 					);
- 				});
- 				$('#booking_service_id').removeAttr('disabled');
- 			});
- 		}
-
-		modalChange();
+			$.getJSON('/provider_services', {id: booking.service_provider_id}, function (services) {
+				$('#booking_service_id').empty();
+				$.each(services, function (key, service) {
+					$('#booking_service_id').append(
+						'<option value="' + service.id + '">' + service.name + '</option>'
+					);
+				});
+				$('#booking_service_id').removeAttr('disabled');
+			});
+		}
 
 		$('#bookingModal').modal('show');
 	});	
@@ -450,15 +448,14 @@ function createBookingModal(date) {
 	if (parseInt($('input[name=providerRadio]:checked').val()) > 0) {
 		$('#booking_service_provider_id option[value="'+$('input[name=providerRadio]:checked').val()+'"]').attr("selected",true);
 		$.getJSON('/provider_services', {id: parseInt($('input[name=providerRadio]:checked').val())}, function (services) {
- 			$('#booking_service_id').empty();
- 			$.each(services, function (key, service) {
- 				$('#booking_service_id').append(
- 					'<option value="' + service.id + '">' + service.name + '</option>'
- 				);
- 			});
- 			$('#booking_service_id').removeAttr('disabled');
- 			modalChange();
- 		});
+			$('#booking_service_id').empty();
+			$.each(services, function (key, service) {
+				$('#booking_service_id').append(
+					'<option value="' + service.id + '">' + service.name + '</option>'
+				);
+			});
+			$('#booking_service_id').removeAttr('disabled');
+		});
 	}
 	else {
 		$('#booking_service_provider_id').val('');
@@ -474,7 +471,6 @@ function createBookingModal(date) {
 	$('.booking-modal-footer').empty();
 	$('.booking-modal-title').append('Nueva Reserva');
 	$('.booking-modal-footer').append('<button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button><button type="button" class="btn btn-primary" onclick="createBooking()">Guardar</button>');
-
 	$('#bookingModal').modal('show');	
 }
 
@@ -510,12 +506,7 @@ function editDrag(event) {
 	var startString = startDate.getFullYear()+"-"+extraMonth+(startDate.getMonth()+1)+"-"+extraDate+startDate.getDate()+"T"+startDate.getHours()+":"+startDate.getMinutes()+":00Z";
 	var endString = endDate.getFullYear()+"-"+extraMonth+(endDate.getMonth()+1)+"-"+extraDate+endDate.getDate()+"T"+endDate.getHours()+":"+endDate.getMinutes()+":00Z";
 
-	if (event.resourceId) {
-		var bookingJSON = {start: startString, end: endString, service_provider_id: event.resourceId};
-	}
-	else {
-		var bookingJSON = {start: startString, end: endString};
-	}
+	var bookingJSON = {start: startString, end: endString};
 	$.ajax({
 	    type: 'PATCH',
 	    url: '/bookings/'+ event.id +'.json',
@@ -654,7 +645,6 @@ $(function() {
 				);
 			});
 			$('#booking_service_id').removeAttr('disabled');
-			modalChange();
 		});
 	});
 

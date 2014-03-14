@@ -8,7 +8,7 @@ class LocationsController < ApplicationController
   # GET /locations
   # GET /locations.json
   def index
-    @locations = Location.where(company_id: current_user.company_id)
+    @locations = Location.where(company_id: current_user.company_id).accessible_by(current_ability)
   end
 
   # GET /locations/1

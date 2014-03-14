@@ -9,7 +9,7 @@ class BookingsController < ApplicationController
   # GET /bookings.json
   def index
     @company = Company.where(id: current_user.company_id)
-    @locations = Location.where(company_id: @company)
+    @locations = Location.all.accessible_by(current_ability)
     @service_providers = ServiceProvider.where(location_id: @locations)
     @bookings = Booking.where(service_provider_id: @service_providers)
     @booking = Booking.new
