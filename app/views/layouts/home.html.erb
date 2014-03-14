@@ -34,20 +34,23 @@
     <body>
         <!-- start: Header -->
         <header>
+
             <div id="barra-superior">
-                <div class="container">
-                    <div class="row">
-                        <a href="<%= root_url(:host => request.domain + request.port_string) %>" id="logo"></a>
-                        <ul class="nav nav-pills pull-right">
-                            <li id="c_home"><%= link_to "Inicio", home_path %></li>
-                            <li id="c_feature"><%= link_to "Características", features_path %></li>
-                            <li id="c_pricing"><%= link_to "Planes", view_plans_path %></li>
-                            <li id="c_contact"><%= link_to "Contacto", contact_path %></li>
-                            <li id="c_register"><%= link_to "Regístrate", new_user_registration_path(:plan => Plan.find_by_name("Trial").id, :company => true) %></li>
-                        </ul>
-                    </div>
+              <div class="container">
+                <div class="row">
+                  <a href="<%= root_url(:host => request.domain + request.port_string) %>" id="logo"></a>
+                  <a href="#" id="menu-display"><span class="fa fa-align-justify"></span> MENU</a>
+                    <ul class="nav nav-pills pull-right">
+                        <li id="c_home"><%= link_to "Inicio", home_path %></li>
+                        <li id="c_feature"><%= link_to "Características", features_path %></li>
+                        <li id="c_pricing"><%= link_to "Planes", view_plans_path %></li>
+                        <li id="c_contact"><%= link_to "Contacto", contact_path %></li>
+                        <li id="c_register"><%= link_to "Regístrate", new_user_registration_path(:plan => Plan.find_by_name("Trial").id, :company => true) %></li>
+                    </ul>
                 </div>
-            </div>
+              </div>
+            </div>   
+
             <!-- start: Alerts -->
             <% if notice %>
                 <div class="alert alert-info alert-dismissable">
@@ -100,6 +103,12 @@
         <!-- start: JavaScript-->
         <%= yield :scripts %>
         <%= javascript_include_tag "home" %>
+
+        <script>
+          $( "#menu-display" ).click(function() {
+            $( ".nav-pills" ).toggle( "slow" );
+          });
+        </script>
         <!-- end: JavaScript-->
         
         <!------ Originales ------->

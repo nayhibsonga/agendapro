@@ -38,6 +38,7 @@
 				<div class="container">
 					<div class="row">
 						<a href="<%= root_url(:host => request.domain + request.port_string) %>" id="logo"></a>
+						<a href="#" id="menu-display"><span class="fa fa-align-justify"></span> MENU</a>
 						<ul class="nav nav-pills pull-right">
 						<% if user_signed_in? %>
 						<li class="dropdown">
@@ -119,6 +120,12 @@
 		<%= yield :scripts %>
 		<%= javascript_include_tag "search" %>
 		<%= javascript_include_tag "http://maps.google.com/maps/api/js?sensor=false" %>
+
+		<script>
+          $( "#menu-display" ).click(function() {
+            $( ".nav-pills" ).toggle( "slow" );
+          });
+        </script>
 		<!-- end: JavaScript-->
 		
 		<!------ Originales ------->
