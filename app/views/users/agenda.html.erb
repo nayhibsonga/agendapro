@@ -38,6 +38,7 @@
 						<thead>
 							<tr>
 								<th>Inicio</th>
+								<th>Empresa</th>
 								<th>Local</th>
 								<th>Servicio</th>
 								<th>Staff</th>
@@ -48,14 +49,15 @@
 						<tbody>
 							<% @activeBookings.each do |booking| %>
 							<tr>
-								<td><%= l booking.start %></td>
+								<td><%= l booking.start, format: :short %></td>
+								<td><%= Company.find(booking.service_provider.company_id).name %></td>
 								<td><%= booking.location.name %></td>
 								<td><%= booking.service.name %></td>
 								<td><%= booking.service_provider.public_name %></td>
 								<td>$<%= number_with_precision(booking.service.price, precision: 0, separator: '', delimiter: '.') %></td>
 								<td>
-									<%= link_to '<i class="fa fa-pencil"></i> Editar'.html_safe, booking_edit_url(:confirmation_code => booking.confirmation_code), :class => 'btn btn-warning' %>
-									<%= link_to '<i class="fa fa-trash-o"></i> Cancelar'.html_safe, booking_cancel_url(:confirmation_code => booking.confirmation_code), :class => 'btn btn-danger' %>
+									<%= link_to '<i class="fa fa-pencil"></i> Editar'.html_safe, booking_edit_url(:confirmation_code => booking.confirmation_code), :class => 'btn btn-warning btn-xs' %>
+									<%= link_to '<i class="fa fa-trash-o"></i> Cancelar'.html_safe, booking_cancel_url(:confirmation_code => booking.confirmation_code), :class => 'btn btn-danger btn-xs' %>
 								</td>
 							</tr>
 							<% end %>
@@ -68,6 +70,7 @@
 						<thead>
 							<tr>
 								<th>Inicio</th>
+								<th>Empresa</th>
 								<th>Local</th>
 								<th>Servicio</th>
 								<th>Staff</th>
@@ -77,7 +80,8 @@
 						<tbody>
 							<% @lastBookings.each do |booking| %>
 							<tr>
-								<td><%= l booking.start %></td>
+								<td><%= l booking.start, format: :short %></td>
+								<td><%= Company.find(booking.service_provider.company_id).name %></td>
 								<td><%= booking.location.name %></td>
 								<td><%= booking.service.name %></td>
 								<td><%= booking.service_provider.public_name %></td>
