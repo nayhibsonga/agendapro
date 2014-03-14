@@ -1,10 +1,10 @@
 <div class="row">
 	<h2>Regístrate</h2>
-	<h4>Sólo necesitaremos un poco de información. <%= "¡Es absolutamente gratis!" unless params[:plan] %></h4>
+	<h4>Sólo necesitaremos un poco de información. <%= "¡Es absolutamente gratis!" unless params[:plan] || params[:user][:company_attributes][:plan_id] %></h4>
 
 	<div class="col-sm-8 col-md-9">
 		<%= form_for resource, :as => resource_name, :url => registration_path(resource_name), :html => { :class => 'form-horizontal well', :multipart => true } do |f| %>
-			<% if params[:plan] %>
+			<% if params[:plan] || params[:user][:company_attributes][:plan_id] %>
 			<!-- start: nav tabs -->
 			<ul class="nav nav-tabs nav-justified" style="margin-bottom: 10px;" id="data-tabs">
 				<li class="active"><a href="#user-data" data-toggle="tab">Datos Usuario</a></li>
@@ -67,7 +67,7 @@
 					</div>
 					<!-- end: User -->
 				</div>
-				<% if params[:plan] %>
+				<% if params[:plan] || params[:user][:company_attributes][:plan_id] %>
 				<div class="tab-pane fade" id="company-data">
 					<!-- start: Company -->
 					<%= f.fields_for :company_attributes do |builder| %>
@@ -89,7 +89,7 @@
 							</div>
 							<div class="col-sm-offset-4 col-sm-8">
 								<span class="help-block"></span>
-								<span class="form-control-feedback"></span>
+								<!-- <span class="form-control-feedback"></span> -->
 							</div>
 						</div>
 						<div class="form-group">
@@ -133,19 +133,8 @@
 	</div>
 </div>
 
+<%= stylesheet_link_tag "login/form-state" %>
 <% content_for :scripts do %>
 <%= javascript_include_tag 'login/jquery.validate.min' %>
 <%= javascript_include_tag 'login/signupValidate' %>
-<script type="text/javascript">
-	$(function () {
-		$('input[name="commit"]').one("click", function (event) {
-			event.preventDefault();
-			$('#data-tabs a[href="#company-data"]').tab('show');
-		});
-		// $('input').blur(function () {
-		// 	var tab = $('input:required:invalid').first().closest('.tab-pane').attr('id');
-		// 	$('#data-tabs a[href="#' + tab + '"]').tab('show');
-		// });
-	});
-</script>
 <% end %>

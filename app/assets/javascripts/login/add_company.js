@@ -1,12 +1,12 @@
 $(function() {
 	var myAlert = new Alert();
 
-	$('#new_user').validate({
+	$('#new_company').validate({
 		errorPlacement: function(error, element) {
 			if (element.attr("id") == 'terms') {
 				error.appendTo(element.next().next());
 			}
-			else if (element.attr('id') == 'user_company_attributes_web_address') {
+			else if (element.attr('id') == 'company_web_address') {
 				error.appendTo(element.parent().next().children('.help-block'));
 			}
 			else {
@@ -15,43 +15,17 @@ $(function() {
 		},
 		onkeyup: false,
 		rules: {
-			'user[first_name]': {
-				required: true,
-				minlength: 3
-			},
-			'user[last_name]': {
-				required: true,
-				minlength: 3
-			},
-			'user[phone]': {
-				required: true,
-				rangelength: [7, 12]
-			},
-			'user[email]': {
-				required: true,
-				email: true,
-				remote: '/check_user'
-			},
-			'user[password]': {
-				required: true,
-				rangelength: [8, 128]
-			},
-			'user[password_confirmation]': {
-				required: true,
-				rangelength: [8, 128],
-				equalTo: "#user_password"
-			},
-			'user[company_attributes][name]': {
+			'company[name]': {
 				required: true,
 				minlength: 3,
 			},
-			'user[company_attributes][web_address]': {
+			'company[web_address]': {
 				required: true,
 				minlength: 3,
-				alphaNumeric: $('#user_company_attributes_web_address').val(),
+				alphaNumeric: $('#company_web_address').val(),
 				remote: '/check_company'
 			},
-			'user[company_attributes][logo]': {
+			'company[logo]': {
 				accept: "jpe?g|png|gif",
 				filesize: 5242880
 			},
@@ -60,42 +34,16 @@ $(function() {
 			}
 		},
 		messages: {
-			'user[first_name]': {
-				required: "Es requerido un nombre de usuario",
-				minlength: "El nombre debe tener al menos 3 caract&eacute;res"
-			},
-			'user[last_name]': {
-				required: "Es requerido su apellido",
-				minlength: "El apellido debe tener al menos 3 caract&eacute;res"
-			},
-			'user[phone]': {
-				required: "Es necesario ingresar un tel&eacute;fono",
-				rangelength: "El largo del teléfono debe estar en el rango de 7 a 12 numeros"
-			},
-			'user[email]': {
-				required: "Por favor ingrese un email v&aacute;lido",
-				email: "Por favor ingrese un email v&aacute;lido",
-				remote: jQuery.validator.format('{0} ya existe, puedes crear tu compañia <a href="/add_company">aquí</a>.')
-			},
-			'user[password]': {
-				required: "Debe ingresar una contraseña",
-				rangelength: "La contraseña debe tener un largo entre 8 y 128 caracteres"
-			},
-			'user[password_confirmation]': {
-				required: "Debe ingresar una contraseña",
-				rangelength: "La contraseña debe tener un largo entre 8 y 128 caracteres",
-				equalTo: "La contraseña no coincide"
-			},
-			'user[company_attributes][name]': {
+			'company[name]': {
 				required: "Debe ingresar un nombre para la compañia",
 				minlength: "El nombre debe tener al menos 3 caracteres",
 			},
-			'user[company_attributes][web_address]': {
+			'company[web_address]': {
 				required: "Debe ingresar una direccion web para su compañia",
 				minlength: "La direccion web debe tener al menor 3 caracteres",
 				remote: jQuery.validator.format("{0} ya existe")
 			},
-			'user[company_attributes][logo]': {
+			'company[logo]': {
 				accept: "La imagen no cumple con el formato (jpeg, png o gif)",
 				filesize: "La imagen supera el tamaño maximo de 5 MB"
 			},
@@ -128,19 +76,17 @@ $(function() {
 		return this.optional(element) || (element.files[0].size <= param) 
 	});
 
-	$('#user_company_attributes_name').one('change', function() {
-		var tmp = $('#user_company_attributes_name').val();
+	$('#company_name').one('change', function() {
+		var tmp = $('#company_name').val();
 		tmp = tmp.replace(/ /g, '');
 		tmp = tmp.toLowerCase();
-		$('#user_company_attributes_web_address').val(tmp);
+		$('#company_web_address').val(tmp);
 	});
 
 	$('input[name="commit"]').click(function (event) {
 		if ($('input:required:invalid').length) {
 			if ($('input:required:invalid').first().attr('id') != 'terms') {
 				event.preventDefault();
-				var tab = $('input:required:invalid').first().closest('.tab-pane').attr('id');
-				$('#data-tabs a[href="#' + tab + '"]').tab('show');
 				myAlert.showAlert('Debe completar los campos');
 			}
 			else {

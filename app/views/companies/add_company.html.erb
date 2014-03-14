@@ -1,74 +1,83 @@
 <div class="container">
-  <div class="row">
-    <h2>Agrega tu compañía a AgendaPro</h2>
-    <h4>¡Podrás tener el sistema AgendaPro para tu propio negocio!</h4>
+	<div class="row">
+		<h2>Agrega tu compañía a AgendaPro</h2>
+		<h4>¡Podrás tener el sistema AgendaPro para tu propio negocio!</h4>
 
-    <%= form_for @company, :html => {:class => 'form-horizontal', :multipart => true} do |f| %>
-      <% if @company.errors.any? %>
-        <div id="error_explanation">
-          <h2><%= pluralize(@company.errors.count, "error") %> no permitió que la empresa sea creada:</h2>
+		<div class="col-sm-8 col-md-9">
+			<%= form_for @company, :html => { :class => 'form-horizontal well', :multipart => true } do |f| %>
+				<% if @company.errors.any? %>
+					<div id="error_explanation">
+						<h2><%= pluralize(@company.errors.count, "error") %> no permitió que la empresa sea creada:</h2>
 
-          <ul>
-          <% @company.errors.full_messages.each do |msg| %>
-            <li><%= msg %></li>
-          <% end %>
-          </ul>
-        </div>
-      <% end %>
-
-      <div class="form-group">
-        <%= f.label :name, 'Nombre Empresa: ', :class => 'col-sm-3 control-label' %>
-        <div class="col-sm-4">
-          <%= f.text_field :name, :autofocus => true, :class => 'form-control' %>
-        </div>
-      </div>
-      <div class="form-group">
-        <%= f.label :description, 'Descripción: ', :class => 'col-sm-3 control-label' %>
-        <div class="col-sm-5">
-          <%= f.text_area :description, :class => 'form-control', :rows => "7" %>
-        </div>
-      </div>
-      <div class="form-group">
-        <%= f.label :web_address, 'Dirección Web:', :class => 'col-sm-3 control-label' %>
-        <div class="col-sm-4">
-          <%= f.text_field :web_address, :required => true, :class => 'form-control' %>
-        </div>
-      </div>
-      <div class="form-group">
-        <%= f.label :logo, 'Logo Compañía: ', :class => 'col-sm-3 control-label' %>
-        <div class="col-sm-4">
-          <%= f.file_field :logo, :accept => 'image/png,image/gif,image/jpeg', :class => 'form-control' %>
-        </div>
-      </div>
-      <div class="form-group">
-        <div class="col-sm-offset-3 col-sm-4">
-          <div class="checkbox">
-            <label>
-              <%= f.check_box :remove_logo %> Quitar Logo
-            </label>
-          </div>
-        </div>
-      </div>
-      <div class="form-group">
-        <%= f.label :economic_sector_id, 'Sector Económico:', :class => 'col-sm-3 control-label' %>
-        <div class="col-sm-4">
-          <%= f.collection_select :economic_sector_id, EconomicSector.all, :id, :name, {}, {:class => 'form-control'} %>
-        </div>
-      </div>
-      <div class="form-group">
-        <%= f.label :cancellation_policy, 'Política de Cancelación: ', :class => 'col-sm-3 control-label' %>
-        <div class="col-sm-5">
-          <%= f.text_area :cancellation_policy, :class => 'form-control', :rows => "7" %>
-        </div>
-      </div>
-
-      <div class="form-group">
-        <div class="col-sm-offset-3 col-sm-4">
-         <%= f.submit 'Guardar', :class => 'btn btn-agendapro-oscuro' %>
-         <%= link_to 'Cancelar', root_path, :class => "btn btn-danger" %>
-        </div> 
-      </div>
-
-    <% end %>
-  </div>
+						<ul>
+						<% @company.errors.full_messages.each do |msg| %>
+							<li><%= msg %></li>
+						<% end %>
+						</ul>
+					</div>
+				<% end %>
+				<!-- start: Company -->
+				<%= f.hidden_field :payment_status_id, :value => PaymentStatus.where(:name => "Al día").first.id %>
+				<%= f.hidden_field :plan_id, :value => Plan.find_by(:name => 'Trial').id %>
+				<div class="form-group">
+					<%= f.label :name, 'Nombre de la Compañia', :class => 'col-sm-4 control-label' %>
+					<div class="col-sm-8">
+						<%= f.text_field :name, :required => true, :class => 'form-control', placeholder: 'AgendaPro SpA' %>
+						<span class="help-block"></span>
+					<span class="form-control-feedback"></span>
+					</div>
+				</div>
+				<div class="form-group">
+					<%= f.label :web_address, 'Direccion web', :class => 'col-sm-4 control-label' %>
+					<div class="col-sm-8 input-group">
+						<%= f.text_field :web_address, :required => true, :class => 'form-control', placeholder: 'misitio' %>
+						<span class="input-group-addon">.agendapro.cl</span>
+					</div>
+					<div class="col-sm-offset-4 col-sm-8">
+						<span class="help-block"></span>
+						<!-- <span class="form-control-feedback"></span> -->
+					</div>
+				</div>
+				<div class="form-group">
+					<%= f.label :economic_sector_id, 'Sector Economico', :class => 'col-sm-4 control-label' %>
+					<div class="col-sm-8">
+						<%= f.collection_select :economic_sector_id, EconomicSector.all, :id, :name, {}, {:class => 'form-control'} %>
+						<span class="help-block"></span>
+					<span class="form-control-feedback"></span>
+					</div>
+				</div>
+				<div class="form-group">
+					<%= f.label :logo, 'Logo', :class => 'col-sm-4 control-label' %>
+					<div class="col-sm-8">
+						<%= f.file_field :logo, :accept => 'image/png,image/gif,image/jpeg', :class => 'form-control' %>
+						<span class="help-block"></span>
+					<span class="form-control-feedback"></span>
+					</div>
+				</div>
+				<!-- end: Company -->
+				<div class="form-group">
+					<div class="col-sm-offset-4 col-sm-8">
+						<div class="checkbox">
+							<label>
+								<input type="checkbox" id="terms" name="terms" required> Acepto los <a href="http://www.agendapro.cl/public/TyC.pdf" target="_balnk">Términos y Condiciones</a>.
+								<span class="help-block"></span>
+							</label>
+						</div>
+					</div>
+				</div>
+				<div class="form-group">
+					<div class="col-sm-offset-4 col-sm-8">
+						<%= f.submit 'Regístrate', :class => 'btn btn-agendapro-claro' %>
+						<%= link_to 'Cancelar', root_path, :class => "btn btn-danger" %>
+					</div>
+				</div>
+			<% end %>
+		</div>
+	</div>
 </div>
+
+<%= stylesheet_link_tag "login/form-state" %>
+<% content_for :scripts do %>
+<%= javascript_include_tag 'login/jquery.validate.min' %>
+<%= javascript_include_tag 'login/add_company' %>
+<% end %>

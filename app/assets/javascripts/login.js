@@ -3,6 +3,7 @@
 //= require home/jquery.ui.totop.js
 //= require jquery-uitop
 //= require home/easing.js
+//= require Alert
 
 //por defecto:
 //= require jquery_ujs

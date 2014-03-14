@@ -119,8 +119,12 @@ class CompaniesController < ApplicationController
   end
 
   def check_company_web_address
-    @company = Company.find_by(:web_address => params[:user][:company_attributes][:web_address])
-    render :json => @company.nil?
+    begin
+		@company = Company.find_by(:web_address => params[:user][:company_attributes][:web_address])
+	rescue
+		@company = Company.find_by(:web_address => params[:company][:web_address])
+	end
+	render :json => @company.nil?
   end
 
   private
