@@ -75,7 +75,7 @@ $(function() {
 			'user[email]': {
 				required: "Por favor ingrese un email v&aacute;lido",
 				email: "Por favor ingrese un email v&aacute;lido",
-				remote: jQuery.validator.format("{0} ya existe")
+				remote: jQuery.validator.format('{0} ya existe, puedes crear tu compañia <a href="/add_company">aquí</a>.')
 			},
 			'user[password]': {
 				required: "Debe ingresar una contraseña",
