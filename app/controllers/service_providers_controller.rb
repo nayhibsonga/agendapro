@@ -44,9 +44,6 @@ class ServiceProvidersController < ApplicationController
     @service_provider.services.clear
     @service_provider.company_id = current_user.company_id
 
-    puts new_params
-    raise ""
-
     respond_to do |format|
       if @service_provider.save
         @service_provider.service_ids = new_params[:service_ids]
