@@ -59,8 +59,8 @@ class ServiceProvidersController < ApplicationController
   # PATCH/PUT /service_providers/1
   # PATCH/PUT /service_providers/1.json
   def update
-    if !service_provider_params[:user_attributes].nil?
-      if service_provider_params[:user_attributes][:email].nil?
+    if !service_provider_params[:user_attributes].empty?
+      if service_provider_params[:user_attributes][:email].empty?
         new_params = service_provider_params.except(:user_attributes)
       else
         new_params = service_provider_params.except(:user_id)
