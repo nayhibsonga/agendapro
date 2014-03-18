@@ -49,7 +49,7 @@ class CompanySettingsController < ApplicationController
   def update
     respond_to do |format|
       if @company_setting.update(company_setting_params)
-        format.html { redirect_to @company_setting, notice: 'Company setting was successfully updated.' }
+        format.html { redirect_to dashboard_path, notice: 'Recordatorio actualizado.' }
         format.json { head :no_content }
       else
         format.html { render action: 'edit' }
