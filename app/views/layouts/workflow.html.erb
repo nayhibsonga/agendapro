@@ -133,6 +133,8 @@
         <!-- start: JavaScript-->
         <%= yield :scripts %>
         <%= javascript_include_tag "workflow" %>
+        <%= javascript_include_tag "jquery.browser.min" %>
+        <%= javascript_include_tag "browser-detect" %>
 
         <script>
           $( "#menu-display" ).click(function() {

@@ -78,8 +78,9 @@
 		<div class="main">
 			<div class="container">
 				<%= yield %>
-			</div>
-		</div>
+            </div>
+        </div>
+        <%= render 'layouts/modals' %>
 
         <footer>
             <section id="footer_teasers_wrapper">
@@ -111,6 +112,8 @@
 		<!-- start: JavaScript-->
         <%= yield :scripts %>
         <%= javascript_include_tag "login" %>
+        <%= javascript_include_tag "jquery.browser.min" %>
+        <%= javascript_include_tag "browser-detect" %>
 
         <script>
           $( "#menu-display" ).click(function() {
