@@ -113,6 +113,7 @@ class CompaniesController < ApplicationController
   def add_company
     if current_user.company_id
       redirect_to dashboard_path
+      return
     end
     @company = Company.new
     render :layout => 'search'
