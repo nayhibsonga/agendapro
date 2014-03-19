@@ -1,93 +1,87 @@
-<div class="col-md-5">
-    <%= form_for @service_provider, html: {class: "form-horizontal" } do |f| %>
-      <div class="form-group">
-        <%= f.label :public_name, "Nombre Público:", class: "col-sm-4 control-label" %>
-        <div class="col-sm-8">
-          <%= f.text_field :public_name, :autofocus => true, class: "form-control" %>
-        </div>
-      </div>
-      <div class="form-group">
-        <%= f.label :notification_email, "Email de Notificación:", class: "col-sm-4 control-label" %>
-        <div class="col-sm-8">
-          <%= f.text_field :notification_email, class: "form-control" %>
-        </div>
-      </div>
-      <div class="form-group">
-        <%= f.label :location_id, "Local:", class: "col-sm-4 control-label" %>
-        <div class="col-sm-8">
-          <%= f.collection_select :location_id, Location.where(company_id: current_user.company_id), :id, :name, {}, {class: "form-control"} %>
-        </div>
-      </div>
-      <div class="form-group">
-    <div class="col-sm-4 control-label"></div>
-    <div class="col-sm-8">
-      <input type="checkbox" name="userCheck" id="userCheckboxId" value="0" onchange="userChange()" class="userCheckbox"> Crear nuevo Usuario
-    </div>
-  </div>
-      <div class="form-group">
-    <%= f.label :user_id, "Usuario:", class: "col-sm-4 control-label" %>
-    <div class="col-sm-8">
-      <%= f.collection_select :user_id, User.where(company_id: current_user.company_id, role_id: Role.find_by_name("Staff").id), :id, :email, {:include_blank => ""}, {class: "form-control"} %>
-    </div>
-  </div>
+<div class="row">
+	<div class="col-md-5">
+		<%= form_for @service_provider, html: {class: "form-horizontal" } do |f| %>
+			<div class="form-group">
+				<%= f.label :public_name, "Nombre Público:", class: "col-sm-4 control-label" %>
+				<div class="col-sm-8">
+					<%= f.text_field :public_name, :autofocus => true, class: "form-control" %>
+				</div>
+			</div>
+			<div class="form-group">
+				<%= f.label :notification_email, "Email de Notificación:", class: "col-sm-4 control-label" %>
+				<div class="col-sm-8">
+					<%= f.text_field :notification_email, class: "form-control" %>
+				</div>
+			</div>
+			<div class="form-group">
+				<%= f.label :location_id, "Local:", class: "col-sm-4 control-label" %>
+				<div class="col-sm-8">
+					<%= f.collection_select :location_id, Location.where(company_id: current_user.company_id), :id, :name, {}, {class: "form-control"} %>
+				</div>
+			</div>
+			<div class="form-group">
+				<div class="col-sm-offset-4 col-sm-8">
+					<div class="checkbox">
+						<label>
+							<input type="checkbox" name="userCheck" id="userCheckboxId" value="0" onchange="userChange()" class="userCheckbox"> Crear nuevo Usuario
+						</label>
+					</div>
+				</div>
+			</div>
+			<div class="form-group">
+				<%= f.label :user_id, "Usuario:", class: "col-sm-4 control-label" %>
+				<div class="col-sm-8">
+					<%= f.collection_select :user_id, User.where(company_id: current_user.company_id, role_id: Role.find_by_name("Staff").id), :id, :email, {:include_blank => ""}, {class: "form-control"} %>
+				</div>
+			</div>
 
-<% if @service_provider.user.nil? then @service_provider.build_user end %>
-  <%= f.fields_for :user do |builder| %>
-  <div class="form-group hidden">
-    <%= f.label :email, "Email nuevo usuario:", class: "col-sm-4 control-label" %>
-    <div class="col-sm-8">
-      <%= builder.text_field :email, :label => "Email Nuevo Usuario", :input_html => { :value => "" }, class: "form-control" %>
-    </div>
-  </div>
+			<% if @service_provider.user.nil? then @service_provider.build_user end %>
+			<%= f.fields_for :user do |builder| %>
+				<div class="form-group hidden">
+					<%= f.label :email, "Email nuevo usuario:", class: "col-sm-4 control-label" %>
+					<div class="col-sm-8">
+						<%= builder.text_field :email, :label => "Email Nuevo Usuario", :input_html => { :value => "" }, class: "form-control" %>
+					</div>
+				</div>
+			<% end %>
 
+			<div class="form-group">
+				<%= f.label :service_ids, "Selecciona los servicios: ", class: "col-sm-4 control-label" %>
+				<div class="col-sm-8"> 
+					<%= f.collection_check_boxes :service_ids, Service.where(company_id: current_user.company_id), :id, :name, {}, {class: "check_boxes"} do |b|%>
+								<div class="checkbox">
+									<%= b.label %> <%= b.check_box %>
+								</div>
+					<% end %>
+				</div>
+			</div>
 
-  <div class="form-group">
-    <%= f.label :service_ids, "Selecciona los servicios: ", class: "col-sm-4 control-label" %>
-    <div class="col-sm-8"> 
-      <%= f.collection_check_boxes :service_ids, Service.where(company_id: current_user.company_id), :id, :name, {}, {class: "check_boxes"} do |b|%>
-            <div class="checkbox">
-              <%= b.label %> <%= b.check_box %>
-            </div>
-          <% end %>
-    </div>
-  </div>
-    <% end %>
-  </div>
-  <div class="col-md-7">
-    <div class="panel panel-info">
-      <div class="panel-heading">
-        <h3 class="panel-title">Horario Proveeder de Servicios</h3>
-      </div>
-      <div class="panel-body">
-        <div class="row">
-          <label>Lunes:</label><div id="div1"></div>
-        </div>
-        <div class="row">
-          <label>Martes:</label><div id="div2"></div>
-        </div>
-        <div class="row">
-          <label>Miércoles:</label><div id="div3"></div>
-        </div>
-        <div class="row">
-          <label>Jueves:</label><div id="div4"></div>
-        </div>
-        <div class="row">
-          <label>Viernes:</label><div id="div5"></div>
-        </div>
-        <div class="row">
-          <label>Sábado:</label><div id="div6"></div>
-        </div>
-        <div class="row">
-          <label>Domingo:</label><div id="div7"></div>
-        </div>
-      </div>
-    </div>
-  </div>
-  <div class="form-group">
-  <div class="actions col-sm-offset-2 col-sm-4">
-    <%= f.submit 'Guardar', :class => "btn btn-primary buttonProvider"%>
-    <%= link_to 'Cancelar'.html_safe, service_providers_path, :class => "btn btn-danger" %>    
-  </div>
+			<div class="form-group">
+				<div class="actions col-sm-offset-4 col-sm-8">
+					<%= f.submit 'Guardar', :class => "btn btn-primary buttonProvider"%>
+					<%= link_to 'Cancelar'.html_safe, service_providers_path, :class => "btn btn-danger" %>    
+				</div>
+			</div>
+		<% end %>
+	</div>
+
+	<div class="col-md-7">
+		<div class="panel panel-info">
+			<div class="panel-heading">
+				<h3 class="panel-title">Horario Proveeder de Servicios</h3>
+			</div>
+			<div class="panel-body">
+				<table class="table">
+					<tbody id="providerTable">
+						<tr>
+							<th>Día</th>
+							<th>Apertura</th>
+							<th>Cierre</th>
+							<th>Descanso</th>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</div>
+	</div>
 </div>
-
-<% end %>
