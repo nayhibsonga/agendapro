@@ -22,12 +22,12 @@
 
 		<!-- The HTML5 shim, for IE6-8 support of HTML5 elements -->
 		<!--[if lt IE 9]>
-		  	<script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+			<script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
 			<script src="assets/stylesheets/admin/ie6-8.css"></script>
 		<![endif]-->
 		
 		<!-- start: Favicon and Touch Icons -->
-	    <%= favicon_link_tag "Iso_Pro_Color.png", :rel => "shortcut icon" %>
+		<%= favicon_link_tag "Iso_Pro_Color.png", :rel => "shortcut icon" %>
 		<!-- end: Favicon and Touch Icons -->
 	</head>
 
@@ -48,20 +48,20 @@
 			</div>
 		</header>
 
-	    <!-- start: Alerts -->
-	    <% if notice %>
-	      <div class="alert alert-info alert-dismissable">
-	          <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-	      <%= notice %>
-	      </div>
-	    <% end %>
-	    <% if alert %>
-	      <div class="alert alert-warning alert-dismissable">
-	          <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-	      <%= alert %>
-	      </div>
-	    <% end %>
-	    <!-- end: Alerts -->
+		<!-- start: Alerts -->
+		<% if notice %>
+		  <div class="alert alert-info alert-dismissable">
+			  <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+		  <%= notice %>
+		  </div>
+		<% end %>
+		<% if alert %>
+		  <div class="alert alert-warning alert-dismissable">
+			  <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+		  <%= alert %>
+		  </div>
+		<% end %>
+		<!-- end: Alerts -->
 		<!-- end: Header -->
 		<div class="container">
 			<div class="row">
@@ -76,15 +76,15 @@
 
 		<div class="container">
 			<div class="row" id="navegacion-workflow">
-		  		<div class="col-md-2"><a id="prev2" class="btn btn-agendapro-claro disabled"><i class="fa fa-chevron-left"></i> Anterior</a></div>
-		  		<div class="col-md-8">
-			        <ul id="control-slide">
+				<div class="col-md-2"><a id="prev2" class="btn btn-agendapro-claro disabled"><i class="fa fa-chevron-left"></i> Anterior</a></div>
+				<div class="col-md-8">
+					<ul id="control-slide">
 						<li class="col-sm-4"><div class="control-box">Nuevo Local</div></li>
 						<li class="col-sm-4"><div class="control-box">Nuevo Servicio</div></li>
 						<li class="col-sm-4"><div class="control-box">Nuevo Proveedor</div></li>
-			        </ul>
-		      	</div>
-		      	<div class="col-md-2"><a id="next2" class="btn btn-agendapro-claro pull-right">Siguiente <i class="fa fa-chevron-right"></i></a></div>
+					</ul>
+				</div>
+				<div class="col-md-2"><a id="next2" class="btn btn-agendapro-claro pull-right">Siguiente <i class="fa fa-chevron-right"></i></a></div>
 			</div>
 		</div>
 
@@ -100,7 +100,7 @@
 							</p>
 							<%= image_tag 'ajax-loader.gif', :alt => 'Loader' %>
 						</div>
-			        </div>
+					</div>
 					<div id="foo5" style="visibility: collapse;">
 						<%= yield %>
 					</div>
@@ -139,8 +139,8 @@
 					auto: false,
 					width: '100%',
 					direction: "left",
-	        		circular: false,
-	        		infinite: false,
+					circular: false,
+					infinite: false,
 					pagination: {
 						container: '#control-slide',
 						anchorBuilder: false,
@@ -149,10 +149,9 @@
 						}
 					},
 					onCreate: function () {
-	          			hideLoad();
-	          			$('#foo5').trigger('updateSizes');
-	        		},
-			        scroll: {
+						hideLoad();
+					},
+					scroll: {
 						conditions: function (direction) {
 							if (direction == 'next') {
 								return true;
@@ -161,7 +160,7 @@
 								return false;
 							}
 						}
-			        }
+					}
 				});
 
 				$('#next2').click(function () {

@@ -58,42 +58,54 @@
       <div class="modal-body">
         <div class="row">
             <div class="col-sm-12">
-                <%= form_for :user, :url => user_registration_path, :html => { class: 'form-horizontal' } do |f| %>
+                <%= form_for :user, :url => user_registration_path, :html => { class: 'form-horizontal', id: 'signup-form' } do |f| %>
                     <%= f.hidden_field :role_id, :value => Role.where(:name => "Usuario Registrado").first.id %>
                     <div class="form-group">
                         <%= f.label :first_name, 'Nombre', :class => 'col-sm-4 control-label' %>
                         <div class="col-sm-8">
                             <%= f.text_field :first_name, :autofocus => true, :required => true, :class => 'form-control' %>
+                            <span class="help-block"></span>
+                            <span class="form-control-feedback"></span>
                         </div>
                     </div>
                     <div class="form-group">
                         <%= f.label :last_name, 'Apellido', :class => 'col-sm-4 control-label' %>
                         <div class="col-sm-8">
-                            <%= f.text_field :last_name, :autofocus => true, :required => true, :class => 'form-control' %>
+                            <%= f.text_field :last_name, :required => true, :class => 'form-control' %>
+                            <span class="help-block"></span>
+                            <span class="form-control-feedback"></span>
                         </div>
                     </div>
                     <div class="form-group">
                         <%= f.label :phone, 'Teléfono', :class => 'col-sm-4 control-label' %>
                         <div class="col-sm-8">
                             <%= f.telephone_field :phone, :required => true, :class => 'form-control' %>
+                            <span class="help-block"></span>
+                            <span class="form-control-feedback"></span>
                         </div>
                     </div>
                     <div class="form-group">
                         <%= f.label :email, 'Email', :class => 'col-sm-4 control-label' %>
                         <div class="col-sm-8">
                             <%= f.email_field :email, :required => true, :class => 'form-control' %>
+                            <span class="help-block"></span>
+                            <span class="form-control-feedback"></span>
                         </div>
                     </div>
                     <div class="form-group">
                         <%= f.label :password, 'Contraseña', :class => 'col-sm-4 control-label' %>
                         <div class="col-sm-8">
                             <%= f.password_field :password, :required => true, :class => 'form-control' %>
+                            <span class="help-block"></span>
+                            <span class="form-control-feedback"></span>
                         </div>
                     </div>
                     <div class="form-group">
                         <%= f.label :password_confirmation, 'Confirmar Contraseña', :class => 'col-sm-4 control-label' %>
                         <div class="col-sm-8">
                             <%= f.password_field :password_confirmation, :required => true, :class => 'form-control' %>
+                            <span class="help-block"></span>
+                            <span class="form-control-feedback"></span>
                         </div>
                     </div>
                     <div class="form-group">
@@ -114,6 +126,7 @@
 </div><!-- /.modal -->
 <!-- end: Modals -->
 
+<%= stylesheet_link_tag "login/form-state" %>
 <script type="text/javascript">
     function changeModal () {
         $('#signin-modal').modal('toggle');
@@ -129,3 +142,5 @@
         });
     });
 </script>
+<%= javascript_include_tag 'login/jquery.validate.min' %>
+<%= javascript_include_tag 'login/signupModal' %>

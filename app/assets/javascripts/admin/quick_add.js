@@ -506,6 +506,7 @@ function hideLoad () {
 	$('.center-block').parent().addClass('hidden');
   	$('#foo5').css('visibility', 'visible');
 	$('#next2').removeClass('disabled');
+	$('#foo5').trigger('updateSizes');
 }
 
 function scrollEvents () {

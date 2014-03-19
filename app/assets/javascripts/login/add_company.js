@@ -4,7 +4,7 @@ $(function() {
 	});
 
 	$.validator.addMethod("alphaNumeric", function(value, element) {
-		return this.optional(element) || /^\S*[a-z0-9_-\S]+\S*$/i.test(value); // letters, digits,_,-
+		return this.optional(element) || /^\S*[a-z0-9_-]+\S*$/i.test(value); // letters, digits,_,-
 	}, "No se pueden usar caractéres especiales");
 
 	$.validator.addMethod('filesize', function(value, element, param) {
