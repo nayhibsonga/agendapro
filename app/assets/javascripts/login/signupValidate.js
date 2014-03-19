@@ -1,5 +1,18 @@
 $(function() {
-	var myAlert = new Alert();
+	$.validator.setDefaults({
+		ignore: ""
+	});
+
+	$.validator.addMethod("alphaNumeric", function(value, element) {
+		return this.optional(element) || /^\S*[a-z0-9_-\S]+\S*$/i.test(value); // letters, digits,_,-
+	}, "No se pueden usar caractéres especiales");
+
+	$.validator.addMethod('filesize', function(value, element, param) {
+		// param = size (en bytes) 
+		// element = element to validate (<input>)
+		// value = value of the element (file name)
+		return this.optional(element) || (element.files[0].size <= param) 
+	});
 
 	$('#new_user').validate({
 		errorPlacement: function(error, element) {
@@ -13,7 +26,6 @@ $(function() {
 				error.appendTo(element.next());
 			}
 		},
-		onkeyup: false,
 		rules: {
 			'user[first_name]': {
 				required: true,
@@ -52,8 +64,7 @@ $(function() {
 				remote: '/check_company'
 			},
 			'user[company_attributes][logo]': {
-				accept: "jpe?g|png|gif",
-				filesize: 5242880
+				filesize: 3145728
 			},
 			terms: {
 				required: true
@@ -96,8 +107,7 @@ $(function() {
 				remote: jQuery.validator.format("{0} ya existe")
 			},
 			'user[company_attributes][logo]': {
-				accept: "La imagen no cumple con el formato (jpeg, png o gif)",
-				filesize: "La imagen supera el tamaño maximo de 5 MB"
+				filesize: "La imagen supera el tamaño maximo de 3 MB"
 			},
 			terms: {
 				required: "Debe aceptar los terminos y condiciones"
@@ -117,36 +127,10 @@ $(function() {
 		}
 	});
 
-	$.validator.addMethod("alphaNumeric", function(value, element) {
-		return this.optional(element) || /^\S*[a-z0-9-_\S]+\S*$/i.test(value); // letters, digits,_,-
-	}, "No se pueden usar caract&eacute;res especiales");
-
-	$.validator.addMethod('filesize', function(value, element, param) {
-		// param = size (en bytes) 
-		// element = element to validate (<input>)
-		// value = value of the element (file name)
-		return this.optional(element) || (element.files[0].size <= param) 
-	});
-
 	$('#user_company_attributes_name').one('change', function() {
 		var tmp = $('#user_company_attributes_name').val();
 		tmp = tmp.replace(/ /g, '');
 		tmp = tmp.toLowerCase();
 		$('#user_company_attributes_web_address').val(tmp);
-	});
-
-	$('input[name="commit"]').click(function (event) {
-		if ($('input:required:invalid').length) {
-			if ($('input:required:invalid').first().attr('id') != 'terms') {
-				event.preventDefault();
-				var tab = $('input:required:invalid').first().closest('.tab-pane').attr('id');
-				$('#data-tabs a[href="#' + tab + '"]').tab('show');
-				myAlert.showAlert('Debe completar los campos');
-			}
-			else {
-				event.preventDefault();
-				myAlert.showAlert('Debe aceptar los terminos y condiciones');
-			}
-		}
 	});
 });

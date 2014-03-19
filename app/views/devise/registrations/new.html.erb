@@ -65,6 +65,11 @@
 							<span class="form-control-feedback"></span>
 						</div>
 					</div>
+					<div class="form-group">
+						<div class="col-sm-offset-4 col-sm-8">
+				    		<button class="btn btn-agendapro-claro" id="btnǸext" type="button">Siguiente</button>
+						</div>
+					</div>	
 					<!-- end: User -->
 				</div>
 				<% if params[:plan] || params[:user][:company_attributes][:plan_id] %>
@@ -72,7 +77,7 @@
 					<!-- start: Company -->
 					<%= f.fields_for :company_attributes do |builder| %>
 						<%= builder.hidden_field :payment_status_id, :value => PaymentStatus.where(:name => "Al día").first.id %>
-						<%= builder.hidden_field :plan_id, :value => Plan.find(params[:plan]).id %>
+						<%= builder.hidden_field :plan_id, :value => Plan.find_by(:name => 'Trial').id %>
 						<div class="form-group">
 							<%= builder.label :name, 'Nombre de la Compañia', :class => 'col-sm-4 control-label' %>
 							<div class="col-sm-8">
@@ -108,33 +113,34 @@
 							<span class="form-control-feedback"></span>
 							</div>
 						</div>
+						<div class="form-group">
+							<div class="col-sm-offset-4 col-sm-8">
+								<div class="checkbox">
+									<label>
+										<input type="checkbox" id="terms" name="terms" required> Acepto los <a href="http://www.agendapro.cl/public/TyC.pdf" target="_balnk">Términos y Condiciones</a>.
+										<span class="help-block"></span>
+									</label>
+								</div>
+							</div>
+						</div>
+						<div class="form-group">
+							<div class="col-sm-offset-4 col-sm-8">
+								<%= f.submit 'Regístrate', :class => 'btn btn-agendapro-claro' %>
+							</div>
+						</div>
 					<% end %>
 					<!-- end: Company -->
 				</div>
 				<% end %>
 			</div>
 			<!-- end: tab panes -->
-			<div class="form-group">
-				<div class="col-sm-offset-4 col-sm-8">
-					<div class="checkbox">
-						<label>
-							<input type="checkbox" id="terms" name="terms" required> Acepto los <a href="http://www.agendapro.cl/public/TyC.pdf" target="_balnk">Términos y Condiciones</a>.
-							<span class="help-block"></span>
-						</label>
-					</div>
-				</div>
-			</div>
-			<div class="form-group">
-				<div class="col-sm-offset-4 col-sm-8">
-					<%= f.submit 'Regístrate', :class => 'btn btn-agendapro-claro' %>
-				</div>
-			</div>
 		<% end %>
 	</div>
 </div>
 
 <%= stylesheet_link_tag "login/form-state" %>
 <% content_for :scripts do %>
+<%= javascript_include_tag 'login/move_signup_form' %>
 <%= javascript_include_tag 'login/jquery.validate.min' %>
 <%= javascript_include_tag 'login/signupValidate' %>
 <% end %>
