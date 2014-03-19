@@ -1,3 +1,4 @@
+var days = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'];
 var hourOptions = '<option value="00">00</option>'+
 		'<option value="01">01</option>'+
 		'<option value="02">02</option>'+
@@ -27,49 +28,126 @@ var minuteOptions = '<option value="00">00</option>'+
 		'<option value="30">30</option>'+
 		'<option value="45">45</option>';
 
-
-function buildDay (divId, value) {
-	$('#'+divId).empty();
-	$('#'+divId).append('<div class="row"><input type="checkbox" name="dayStatus'+ value +'" id="dayStatusId'+ value +'" value="0" onchange="changeDayStatus('+ value +')" class="dayCheckbox">  Apertura: '+
-	'<select id="openHourId'+ value +'" name="openHour'+ value +'" disabled="disabled">'+
-		hourOptions+
-	'</select>'+
-	 ': <select id="openMinuteId'+ value +'" name="openMinute'+ value +'" disabled="disabled">'+
-		minuteOptions+
-	'</select>'+
-	' - Cierre: <select id="closeHourId'+ value +'" name="closeHour'+ value +'" disabled="disabled">'+
-		hourOptions+
-	'</select>'+
-	' : <select id="closeMinuteId'+ value +'" name="closeMinute'+ value +'" disabled="disabled">'+
-		minuteOptions+
-	'</select>'+
-  '</div>');
+function buildDay (value) {
+	$('#providerTable').append(
+		'<tr>' +
+			'<th>' +
+				'<div class="checkbox">' +
+					'<label>' +
+						'<input type="checkbox" name="dayStatus'+ value +'" id="dayStatusId'+ value +'" value="0" onchange="changeDayStatus('+ value +')" class="dayCheckbox"> ' + days[value - 1] + ':' +
+					'</label>' +
+				'</div>' +
+			'</th>' +
+			'<th>' +
+				'<form class="form-inline" role="form">' +
+					'<div class="form-group">' +
+						'<select class="form-control" id="openHourId'+ value +'" name="openHour'+ value +'" disabled="disabled">' +
+							hourOptions +
+						'</select>' +
+					'</div> : ' +
+					'<div class="form-group">' +
+						'<select class="form-control" id="openMinuteId'+ value +'" name="openMinute'+ value +'" disabled="disabled">' +
+							minuteOptions +
+						'</select>' +
+					'</div>' +
+				'</form>' +
+			'</th>' +
+			'<th>' +
+				'<form class="form-inline" role="form">' +
+					'<div class="form-group">' +
+						'<select class="form-control" id="closeHourId'+ value +'" name="closeHour'+ value +'" disabled="disabled">' +
+							hourOptions +
+						'</select>' +
+					'</div> : ' +
+					'<div class="form-group">' +
+						'<select class="form-control" id="closeMinuteId'+ value +'" name="closeMinute'+ value +'" disabled="disabled">' +
+							minuteOptions +
+						'</select>' +
+					'</div>' +
+				'</form>' +
+			'</th>' +
+		'</tr>'
+	);
 }
 
-function addBreak(value,divId,openTime,closeTime) {
-	if ($('div.break'+value).length > 0) {
-		breakCount =  +$('div.break'+value).last().children('a').first().attr('id').replace(value+'removeBreak','') + 1;
+// function buildDay (divId, value) {
+// 	$('#'+divId).empty();
+// 	$('#'+divId).append('<div class="row"><input type="checkbox" name="dayStatus'+ value +'" id="dayStatusId'+ value +'" value="0" onchange="changeDayStatus('+ value +')" class="dayCheckbox">  Apertura: '+
+// 	'<select id="openHourId'+ value +'" name="openHour'+ value +'" disabled="disabled">'+
+// 		hourOptions+
+// 	'</select>'+
+// 	 ': <select id="openMinuteId'+ value +'" name="openMinute'+ value +'" disabled="disabled">'+
+// 		minuteOptions+
+// 	'</select>'+
+// 	' - Cierre: <select id="closeHourId'+ value +'" name="closeHour'+ value +'" disabled="disabled">'+
+// 		hourOptions+
+// 	'</select>'+
+// 	' : <select id="closeMinuteId'+ value +'" name="closeMinute'+ value +'" disabled="disabled">'+
+// 		minuteOptions+
+// 	'</select>'+
+//   '</div>');
+// }
+// var breakCount = 1;
+function addBreak (value, openTime, closeTime) {
+	if ($('tr.break'+value).length > 0) {
+		breakCount =  +$('tr.break'+value).find('a').attr('id').replace(value+'removeBreak','') + 1;
 	}
 	else {
 		breakCount = 1
 	}
-	$('#div'+value).append('<div class="row break'+value+'">  Inicio: '+
-	'<select id="'+value+'openHourId'+ breakCount+'" name="'+value+'openHour'+ breakCount+'" class="openHourBreak">'+
-		hourOptions+
-	'</select>'+
-	 ': <select id="'+value+'openMinuteId'+breakCount+'" name="'+value+'openMinute'+breakCount+'" class="openMinuteBreak">'+
-		minuteOptions+
-	'</select>'+
-	' - Fin: <select id="'+value+'closeHourId'+breakCount+'" name="'+value+'closeHour'+breakCount+'" class="closeHourBreak">'+
-		hourOptions+
-	'</select>'+
-	' : <select id="'+value+'closeMinuteId'+breakCount+'" name="'+value+'closeMinute'+breakCount+'" class="closeMinuteBreak">'+
-		minuteOptions+
-	'</select>'+
-	' <a id="'+value+'removeBreak'+breakCount+'" class="btn-xs btn-danger">Quitar Descanso</a>'+
-  '</div>');
+	$('#dayStatusId' + value).closest('tr').after(
+		'<tr class="break' + value + '">' +
+			'<th>Descanso:</th>' +
+			'<th>' +
+				'<form class="form-inline" role="form">' +
+					'<div class="form-group">' +
+						'<select class="form-control" id="'+value+'openHourId'+ breakCount+'" name="'+value+'openHour'+ breakCount+'">' +
+							hourOptions +
+						'</select>' +
+					'</div> : ' +
+					'<div class="form-group">' +
+						'<select class="form-control" id="'+value+'openMinuteId'+breakCount+'" name="'+value+'openMinute'+breakCount+'">' +
+							minuteOptions +
+						'</select>' +
+					'</div>' +
+				'</form>' +
+			'</th>' +
+			'<th>' +
+				'<form class="form-inline" role="form">' +
+					'<div class="form-group">' +
+						'<select class="form-control" id="'+value+'closeHourId'+breakCount+'" name="'+value+'closeHour'+breakCount+'">' +
+							hourOptions +
+						'</select>' +
+					'</div> : ' +
+					'<div class="form-group">' +
+						'<select class="form-control" id="'+value+'closeMinuteId'+breakCount+'" name="'+value+'closeMinute'+breakCount+'">' +
+							minuteOptions +
+						'</select>' +
+					'</div>' +
+				'</form>' +
+			'</th>' +
+			'<th>' +
+				'<a id="'+value+'removeBreak'+breakCount+'" class="btn btn-danger"><i class="fa fa-trash-o"></i></a>' +
+			'</th>' +
+		'</tr>'
+	);
+	// $('#div'+value).append('<div class="row break'+value+'">  Inicio: '+
+	// '<select id="'+value+'openHourId'+ breakCount+'" name="'+value+'openHour'+ breakCount+'" class="openHourBreak">'+
+	// 	hourOptions+
+	// '</select>'+
+	//  ': <select id="'+value+'openMinuteId'+breakCount+'" name="'+value+'openMinute'+breakCount+'" class="openMinuteBreak">'+
+	// 	minuteOptions+
+	// '</select>'+
+	// ' - Fin: <select id="'+value+'closeHourId'+breakCount+'" name="'+value+'closeHour'+breakCount+'" class="closeHourBreak">'+
+	// 	hourOptions+
+	// '</select>'+
+	// ' : <select id="'+value+'closeMinuteId'+breakCount+'" name="'+value+'closeMinute'+breakCount+'" class="closeMinuteBreak">'+
+	// 	minuteOptions+
+	// '</select>'+
+	// ' <a id="'+value+'removeBreak'+breakCount+'" class="btn-xs btn-danger">Quitar Descanso</a>'+
+ //  '</div>');
 	$('#'+value+'removeBreak'+breakCount).click(function(event) {
-		$(event.target).parent().remove();
+		$(event.target).closest('tr').remove();
 	});
 	if (openTime != null){
 		$('#'+value+'openHourId'+breakCount+' option[value="'+openTime[0]+'"]').attr("selected",true);
@@ -82,20 +160,23 @@ function addBreak(value,divId,openTime,closeTime) {
 }
 
 function sortByKey(array, key) {
-    return array.sort(function(a, b) {
-        var x = a[key]; var y = b[key];
-        return ((x < y) ? -1 : ((x > y) ? 1 : 0));
-    });
+	return array.sort(function(a, b) {
+		var x = a[key]; var y = b[key];
+		return ((x < y) ? -1 : ((x > y) ? 1 : 0));
+	});
 }
 
 function initialize() {
-	buildDay('div1',1);
-	buildDay('div2',2);
-	buildDay('div3',3);
-	buildDay('div4',4);
-	buildDay('div5',5);
-	buildDay('div6',6);
-	buildDay('div7',7);
+	for(var i = 1; i < 8; ++i) {
+		buildDay(i);
+	}
+	// buildDay('div1',1);
+	// buildDay('div2',2);
+	// buildDay('div3',3);
+	// buildDay('div4',4);
+	// buildDay('div5',5);
+	// buildDay('div6',6);
+	// buildDay('div7',7);
 
 	if ( $('#title').length > 0 ) {
 		var providerTimesData = $('#provider_times_data').data('provider-times');
@@ -114,7 +195,7 @@ function initialize() {
 				var value = providerTimesData[arrayCounter].day_id;
 				$('#dayStatusId'+ value).prop('checked', true);
 				$('#dayStatusId'+ value).val(1);
-				$('#dayStatusId'+value).parent().append(' <a id="addBreakdiv'+value+'" onclick="addBreak('+value+')" class="btn-xs btn-primary">Agregar Descanso</a>');
+				$('#dayStatusId'+value).closest('tr').append('<th><a id="addBreakdiv'+value+'" onclick="addBreak('+value+')" class="btn btn-primary"><i class="fa fa-plus"></i></a></th>');
 				
 				$('#openHourId'+ value).prop('disabled', false);
 				$('#openMinuteId'+ value).prop('disabled', false);
@@ -126,7 +207,7 @@ function initialize() {
 				for (var j=arrayCounter;j<arrayCounter+breaksArray[i] - 1;j++) {
 					var openTime = new Date(Date.parse(providerTimesData[j].close)).toUTCString().split(" ")[4].split(":");
 					var closeTime = new Date(Date.parse(providerTimesData[j+1].open)).toUTCString().split(" ")[4].split(":");
-					addBreak(value,'div'+value,openTime,closeTime);
+					addBreak(value, openTime, closeTime);
 				}
 				var closeTime = new Date(Date.parse(providerTimesData[arrayCounter+breaksArray[i]-1].close)).toUTCString().split(" ")[4].split(":");
 				$('#closeHourId'+ value +' option[value="'+closeTime[0]+'"]').attr("selected",true);
@@ -145,9 +226,9 @@ function changeDayStatus(value) {
 		$('#closeHourId'+ value).prop('disabled', false);
 		$('#closeMinuteId'+ value).prop('disabled', false);
 		$('#dayStatusId'+ value).val(1);
-		$('#dayStatusId'+value).parent().append(' <a id="addBreakdiv'+value+'" class="btn-xs btn-primary">Agregar Descanso</a>');
+		$('#dayStatusId'+value).closest('tr').append('<th><a id="addBreakdiv'+value+'" class="btn btn-primary"><i class="fa fa-plus"></i></a></th>');
 		$('#addBreakdiv'+value).click(function() {
-			addBreak(value,'div'+value);
+			addBreak(value);
 		});
 	}
 	else if ($('#dayStatusId'+ value).val() == 1) {
@@ -156,8 +237,8 @@ function changeDayStatus(value) {
 		$('#closeHourId'+ value).prop('disabled', true);
 		$('#closeMinuteId'+ value).prop('disabled', true);
 		$('#dayStatusId'+ value).val(0);
-		$('div.break'+value).remove();
-		$('#addBreakdiv'+value).remove();
+		$('tr.break'+value).remove();
+		$('#addBreakdiv'+value).parent().remove();
 	}
 }
 
@@ -186,17 +267,17 @@ function saveProvider(method,extraURL) {
 	var provider_times = [];
 	for (i in enabledDays) {
 		day = enabledDays[i];
-		if ($('div.break'+day).length > 0) {
+		if ($('tr.break'+day).length > 0) {
 			breaks = [];
-			$('div.break'+day).each( function() {
-				breaks.push([$(this).children(".openHourBreak").val()+":"+$(this).children(".openMinuteBreak").val(),$(this).children(".closeHourBreak").val()+":"+$(this).children(".closeMinuteBreak").val()]);
+			$('tr.break'+day).each( function() {
+				breaks.push([$(this).find('.form-control')[0].value+":"+$(this).find('.form-control')[1].value, $(this).find('.form-control')[2].value+":"+$(this).find('.form-control')[3].value]);
 			});
 			breaks = breaks.sort();
 			var provider_time = {"open":"2000-01-01T"+ $('#openHourId'+day).val() +":"+ $('#openMinuteId'+day).val() +":00Z","close":"2000-01-01T"+ breaks[0][0] +":00Z","day_id":parseInt(day)};
 			provider_times.push(provider_time);
 			for (j in breaks) {
 				if (j < breaks.length - 1) {
-					var provider_time = {"open":"2000-01-01T"+ breaks[j][1] +":00Z","close":"2000-01-01T"+ breaks[+j+1][0] +":00Z","day_id":parseInt(day)};
+					var provider_time = {"open":"2000-01-01T"+ breaks[+j][1] +":00Z","close":"2000-01-01T"+ breaks[+j+1][0] +":00Z","day_id":parseInt(day)};
 					provider_times.push(provider_time);
 				}
 			}
@@ -208,22 +289,32 @@ function saveProvider(method,extraURL) {
 			provider_times.push(provider_time);
 		}
 	}
-	var providerJSON  = { "public_name": $('#service_provider_public_name').val(), "notification_email": $('#service_provider_notification_email').val(),"location_id": parseInt($('#service_provider_location_id').val()), "user_id": parseInt($('#service_provider_user_id').val()), "service_ids": enabledServices, "provider_times_attributes": provider_times, "user_attributes": { "email": $('#service_provider_user_attributes_email').val() } };
+	var providerJSON  = {
+		"public_name": $('#service_provider_public_name').val(),
+		"notification_email": $('#service_provider_notification_email').val(),
+		"location_id": parseInt($('#service_provider_location_id').val()),
+		"user_id": parseInt($('#service_provider_user_id').val()),
+		"service_ids": enabledServices,
+		"provider_times_attributes": provider_times,
+		"user_attributes": {
+			"email": $('#service_provider_user_attributes_email').val()
+		}
+	};
 	
 	$.ajax({
-	    type: method,
-	    url: ' /service_providers'+ extraURL +'.json',
-	    data: { "service_provider": providerJSON },
-	    dataType: 'json',
-	    success: function(){
-	    	document.location.href = '/service_providers/';
+		type: method,
+		url: ' /service_providers'+ extraURL +'.json',
+		data: { "service_provider": providerJSON },
+		dataType: 'json',
+		success: function(){
+			document.location.href = '/service_providers/';
 		},
 		error: function(xhr){
-		    var errores = $.parseJSON(xhr.responseText).errors;
-		    for (i in errores) {
-		    	alertId.showAlert(errores);
-		    }
-		    // do something with errors
+			var errores = $.parseJSON(xhr.responseText).errors;
+			for (i in errores) {
+				alertId.showAlert(errores);
+			}
+			// do something with errors
 		}
 	});
 }
@@ -254,12 +345,12 @@ $(function() {
 	$('#service_provider_user_attributes_email').prop('disabled', true);
   initialize();
   $('.buttonProvider').click(function() {
-  	if ( $('#title').length > 0 ) {
-    	updateProvider();
-    }
-    else {
-    	createProvider();
-    }
-	    return false;
+	if ( $('#title').length > 0 ) {
+		updateProvider();
+	}
+	else {
+		createProvider();
+	}
+		return false;
 	});
 });
