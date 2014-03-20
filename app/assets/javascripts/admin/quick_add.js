@@ -17,7 +17,7 @@ function buildDay (value, ctrl) {
 			'<th>' +
 				'<form class="form-inline" role="form">' +
 					'<div class="form-group">' +
-						'<select class="form-control" id="' + ctrl + 'openHourId'+ value +'" name="' + ctrl + 'openHour'+ value +'" disabled="disabled">' +
+						'<select class="form-control time-select" id="' + ctrl + 'openHourId'+ value +'" name="' + ctrl + 'openHour'+ value +'" disabled="disabled">' +
 							'<option value="00">00</option>' +
 							'<option value="01">01</option>' +
 							'<option value="02">02</option>' +
@@ -45,7 +45,7 @@ function buildDay (value, ctrl) {
 						'</select>' +
 					'</div> : ' +
 					'<div class="form-group">' +
-						'<select class="form-control" id="' + ctrl + 'openMinuteId'+ value +'" name="' + ctrl + 'openMinute'+ value +'" disabled="disabled">' +
+						'<select class="form-control time-select" id="' + ctrl + 'openMinuteId'+ value +'" name="' + ctrl + 'openMinute'+ value +'" disabled="disabled">' +
 							'<option value="00">00</option>' +
 							'<option value="15">15</option>' +
 							'<option value="30">30</option>' +
@@ -57,7 +57,7 @@ function buildDay (value, ctrl) {
 			'<th>' +
 				'<form class="form-inline" role="form">' +
 					'<div class="form-group">' +
-						'<select class="form-control" id="' + ctrl + 'closeHourId'+ value +'" name="' + ctrl + 'closeHour'+ value +'" disabled="disabled">' +
+						'<select class="form-control time-select" id="' + ctrl + 'closeHourId'+ value +'" name="' + ctrl + 'closeHour'+ value +'" disabled="disabled">' +
 							'<option value="00">00</option>' +
 							'<option value="01">01</option>' +
 							'<option value="02">02</option>' +
@@ -85,7 +85,7 @@ function buildDay (value, ctrl) {
 						'</select>' +
 					'</div> : ' +
 					'<div class="form-group">' +
-						'<select class="form-control" id="' + ctrl + 'closeMinuteId'+ value +'" name="' + ctrl + 'closeMinute'+ value +'" disabled="disabled">' +
+						'<select class="form-control time-select" id="' + ctrl + 'closeMinuteId'+ value +'" name="' + ctrl + 'closeMinute'+ value +'" disabled="disabled">' +
 							'<option value="00">00</option>' +
 							'<option value="15">15</option>' +
 							'<option value="30">30</option>' +

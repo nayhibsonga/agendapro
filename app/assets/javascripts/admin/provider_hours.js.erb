@@ -41,12 +41,12 @@ function buildDay (value) {
 			'<th>' +
 				'<form class="form-inline" role="form">' +
 					'<div class="form-group">' +
-						'<select class="form-control" id="openHourId'+ value +'" name="openHour'+ value +'" disabled="disabled">' +
+						'<select class="form-control time-select" id="openHourId'+ value +'" name="openHour'+ value +'" disabled="disabled">' +
 							hourOptions +
 						'</select>' +
 					'</div> : ' +
 					'<div class="form-group">' +
-						'<select class="form-control" id="openMinuteId'+ value +'" name="openMinute'+ value +'" disabled="disabled">' +
+						'<select class="form-control time-select" id="openMinuteId'+ value +'" name="openMinute'+ value +'" disabled="disabled">' +
 							minuteOptions +
 						'</select>' +
 					'</div>' +
@@ -55,12 +55,12 @@ function buildDay (value) {
 			'<th>' +
 				'<form class="form-inline" role="form">' +
 					'<div class="form-group">' +
-						'<select class="form-control" id="closeHourId'+ value +'" name="closeHour'+ value +'" disabled="disabled">' +
+						'<select class="form-control time-select" id="closeHourId'+ value +'" name="closeHour'+ value +'" disabled="disabled">' +
 							hourOptions +
 						'</select>' +
 					'</div> : ' +
 					'<div class="form-group">' +
-						'<select class="form-control" id="closeMinuteId'+ value +'" name="closeMinute'+ value +'" disabled="disabled">' +
+						'<select class="form-control time-select" id="closeMinuteId'+ value +'" name="closeMinute'+ value +'" disabled="disabled">' +
 							minuteOptions +
 						'</select>' +
 					'</div>' +
@@ -101,12 +101,12 @@ function addBreak (value, openTime, closeTime) {
 			'<th>' +
 				'<form class="form-inline" role="form">' +
 					'<div class="form-group">' +
-						'<select class="form-control" id="'+value+'openHourId'+ breakCount+'" name="'+value+'openHour'+ breakCount+'">' +
+						'<select class="form-control time-select" id="'+value+'openHourId'+ breakCount+'" name="'+value+'openHour'+ breakCount+'">' +
 							hourOptions +
 						'</select>' +
 					'</div> : ' +
 					'<div class="form-group">' +
-						'<select class="form-control" id="'+value+'openMinuteId'+breakCount+'" name="'+value+'openMinute'+breakCount+'">' +
+						'<select class="form-control time-select" id="'+value+'openMinuteId'+breakCount+'" name="'+value+'openMinute'+breakCount+'">' +
 							minuteOptions +
 						'</select>' +
 					'</div>' +
@@ -115,12 +115,12 @@ function addBreak (value, openTime, closeTime) {
 			'<th>' +
 				'<form class="form-inline" role="form">' +
 					'<div class="form-group">' +
-						'<select class="form-control" id="'+value+'closeHourId'+breakCount+'" name="'+value+'closeHour'+breakCount+'">' +
+						'<select class="form-control time-select" id="'+value+'closeHourId'+breakCount+'" name="'+value+'closeHour'+breakCount+'">' +
 							hourOptions +
 						'</select>' +
 					'</div> : ' +
 					'<div class="form-group">' +
-						'<select class="form-control" id="'+value+'closeMinuteId'+breakCount+'" name="'+value+'closeMinute'+breakCount+'">' +
+						'<select class="form-control time-select" id="'+value+'closeMinuteId'+breakCount+'" name="'+value+'closeMinute'+breakCount+'">' +
 							minuteOptions +
 						'</select>' +
 					'</div>' +
