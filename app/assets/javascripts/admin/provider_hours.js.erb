@@ -328,4 +328,12 @@ $(function() {
 			}
 		});
 	});
+
+	$('input.check_boxes').change(function (event) {
+		var prop = true;
+		$(event.target).parents('.panel-body').find('input.check_boxes').each( function () {
+			prop = prop && $(this).prop('checked');
+		});
+		$(event.target).parents('.panel').find('input[name="selectCategory"]').prop('checked', prop);
+	});
 });
