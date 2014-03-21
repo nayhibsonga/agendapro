@@ -1,6 +1,6 @@
 $(function () {
 	if ($.browser.msie) {
-		if ($.browser.versionNumber < 8) {
+		if ($.browser.versionNumber <= 9) {
 			msieMessage();
 		}
 	}
@@ -19,6 +19,9 @@ $(function () {
 			if ($.browser.versionNumber <= 12) {
 				webkitMessage();
 			}
+		}
+		else {
+			otherMessage();
 		}
 	}
 	else if ($.browser.mozilla) {
@@ -67,7 +70,8 @@ function mobileMessage () {
 
 function otherMessage () {
 	var message =	'<p>' +
-						'La página puede no ser compatible con este explorador.'
+						'La página puede no ser compatible con este explorador. ' +
+						'Le recomendamos instalar <a href="https://www.google.com/intl/es/chrome/browser/" target="_blank">Google Chrome</a> o <a href="https://www.mozilla.org/es-CL/firefox/new/" target="_blank">Mozilla Firefox</a>' +
 					'</p>';
 	showNotice(message);
 }
