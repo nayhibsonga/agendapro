@@ -97,6 +97,8 @@ function loadStep2 () {
 				);
 			});
 
+			var calendar = new Calendar('/get_available_time.json');
+
 			$('[name="staffRadio"]').on('click', function(event) {
 				$('.horario').show();
 
@@ -105,7 +107,8 @@ function loadStep2 () {
 					local: $('#selectedLocal').data('local').id,
 					service: $('input[name="serviceRadio"]:checked').val()
 				}
-				var calendar = new Calendar('/get_available_time.json', data);
+
+				calendar.rebuild('/get_available_time.json', data);
 				
 				$(document).on('hourClick', function (e) {
 					addBooking(e);
@@ -116,9 +119,6 @@ function loadStep2 () {
 						selected = false;
 					});
 					$('#next').click(function () {
-						selected = false;
-					});
-					$('#today').click(function () {
 						selected = false;
 					});
 				});
