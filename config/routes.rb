@@ -17,6 +17,7 @@ Agendapro::Application.routes.draw do
   resources :tags
   resources :statuses
   resources :economic_sectors
+  resources :economic_sectors_dictionaries
   resources :company_settings
   resources :payment_statuses
   resources :roles

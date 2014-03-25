@@ -1,25 +1,45 @@
-<h1>Etiquetas</h1>
+<h1>Tags</h1>
 
-<table>
-  <thead>
-    <tr>
-      <th></th>
-      <th></th>
-      <th></th>
-    </tr>
-  </thead>
+<div class="panel-group" id="accordion">
+  <% @economic_sectors.each do |economic_sector| %> 
+  <div class="panel panel-default">
+    <div class="panel-heading">
+      <h4 class="panel-title">
+        <a data-toggle="collapse" data-parent="#accordion" href="#collapse<%= economic_sector.id %>">
+          <%= economic_sector.name %>
+        </a>
+      </h4>
+    </div>
+    <div id="collapse<%= economic_sector.id %>" class="panel-collapse collapse<% if economic_sector == @economic_sectors.first%> in<% end %>">
+      <div class="panel-body">
+        <table class="table table-bordered">
+          <thead>
+            <tr>
+              <th>Nombre</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
 
-  <tbody>
-    <% @tags.each do |tag| %>
-      <tr>
-        <td><%= link_to tag.name, tag %></td>
-        <td><%= link_to 'Editar', edit_tag_path(tag) %></td>
-        <td><%= link_to 'Eliminar', tag, method: :delete, data: { confirm: '¿Estás seguro?' } %></td>
-      </tr>
-    <% end %>
-  </tbody>
-</table>
+          <tbody>
+            <% @tags.each do |tag| %>
+            <% if tag.economic_sector_id == economic_sector.id %>
+              <tr>
+                <td><%= tag.name %></td>
+                <td>
+                  <%= link_to '<i class="fa fa-pencil"></i> Editar'.html_safe, edit_tag_path(tag), :class => "btn btn-warning" %>
+                  <%= link_to '<i class="fa fa-trash-o"></i> Eliminar'.html_safe, tag, :class => "btn btn-danger", method: :delete, data: { confirm: '¿Estás seguro?' } %>
+                </td>
+              </tr>
+            <% end %>
+            <% end %>
+          </tbody>
+        </table> 
+      </div>
+    </div>
+  </div>
+  <% end %>
+</div>
 
-<br>
+<br />
 
-<%= link_to 'Nueva Etiqueta', new_tag_path %>
+<%= link_to '<i class="fa fa-plus"></i> Nuevo Tag'.html_safe, new_tag_path, :class => "btn btn-primary" %>

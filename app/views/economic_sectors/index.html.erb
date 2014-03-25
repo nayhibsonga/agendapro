@@ -1,25 +1,26 @@
-<h1>Listing economic_sectors</h1>
+<h1>Sector Ecónomico</h1>
 
-<table>
-  <thead>
-    <tr>
-      <th></th>
-      <th></th>
-      <th></th>
-    </tr>
-  </thead>
+<table class="table table-bordered">
+	<thead>
+		<tr>
+			<th>Nombre</th>
+			<th>Acciones</th>
+		</tr>
+	</thead>
 
-  <tbody>
-    <% @economic_sectors.each do |economic_sector| %>
-      <tr>
-        <td><%= link_to economic_sector.name, economic_sector %></td>
-        <td><%= link_to 'Editar', edit_economic_sector_path(economic_sector) %></td>
-        <td><%= link_to 'Eliminar', economic_sector, method: :delete, data: { confirm: 'Estás Seguro?' } %></td>
-      </tr>
-    <% end %>
-  </tbody>
+	<tbody>
+		<% @economic_sectors.each do |economic_sector| %>
+			<tr>
+				<td><%= economic_sector.name %></td>
+				<td>
+					<%= link_to '<i class="fa fa-pencil"></i> Editar'.html_safe, edit_economic_sector_path(economic_sector), :class => "btn btn-warning" %>
+					<%= link_to '<i class="fa fa-trash-o"></i> Eliminar'.html_safe, economic_sector, :class => "btn btn-danger", method: :delete, data: { confirm: '¿Estás Seguro?' } %>
+				</td>
+			</tr>
+		<% end %>
+	</tbody>
 </table>
 
-<br>
+<%= link_to '<i class="fa fa-plus"></i> Nuevo Sector Económico'.html_safe, new_economic_sector_path, :class => "btn btn-primary" %>
 
-<%= link_to 'Nuevo Sector Económico', new_economic_sector_path %>
+</table>

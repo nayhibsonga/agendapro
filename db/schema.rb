@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140312131933) do
+ActiveRecord::Schema.define(version: 20140325135431) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -127,6 +127,15 @@ ActiveRecord::Schema.define(version: 20140312131933) do
     t.datetime "created_at"
     t.datetime "updated_at"
   end
+
+  create_table "economic_sectors_dictionaries", force: true do |t|
+    t.string   "name"
+    t.integer  "economic_sector_id", null: false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "economic_sectors_dictionaries", ["economic_sector_id"], name: "index_economic_sectors_dictionaries_on_economic_sector_id", using: :btree
 
   create_table "location_times", force: true do |t|
     t.time     "open",        null: false

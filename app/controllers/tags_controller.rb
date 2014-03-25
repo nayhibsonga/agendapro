@@ -10,6 +10,7 @@ class TagsController < ApplicationController
   # GET /tags.json
   def index
     @tags = Tag.all
+    @economic_sectors = EconomicSector.all
   end
 
   # GET /tags/1

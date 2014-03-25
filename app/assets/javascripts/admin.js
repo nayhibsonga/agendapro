@@ -2,3 +2,4 @@
 //= require bootstrap.min
 //= require jquery_ujs
 //= require Alert
+//= requiere cocoon
