@@ -198,20 +198,20 @@ kinesioterapia_kinesiologia_dic = Dictionary.create([
 	{name: "Lesión", tag_id: kinesioterapia_kinesiologia.id},
 	{name: "Lesion", tag_id: kinesioterapia_kinesiologia.id}
 ])
-reabilitacion_kinesiologia_dic = new Dictionary.create([
+reabilitacion_kinesiologia_dic = Dictionary.create([
 	{name: "Terapia", tag_id: reabilitacion_kinesiologia.id},
 	{name: "Desgarro", tag_id: reabilitacion_kinesiologia.id},
 	{name: "Lesión", tag_id: reabilitacion_kinesiologia.id},
 	{name: "Lesion", tag_id: reabilitacion_kinesiologia.id}
 ])
-masaje_kinesiologia_dic = new Dictionary.create(name: "Relajacion", tag_id: masaje_kinesiologia.id)
-rehabilitacion_psicologia_dic = new Dictionary.create(name: "Terapia", tag_id: rehabilitacion_psicologia.id)
-psicoanalisis_psicologia_dic = new Dictionary.create(name: "Psico", tag_id: psicoanalisis_psicologia.id)
-karate_artes_marciales_dic = new Dictionary.create(name: "carate", tag_id: karate_artes_marciales.id)
-kungfu_artes_marciales_dic = new Dictionary.create(name: "Kungfu", tag_id: kungfu_artes_marciales.id)
-jiujitzu_artes_marciales_dic = new Dictionary.create(name: "Jujitzu", tag_id: jiujitzu_artes_marciales.id)
-relajacion_spa_dic = new Dictionary.create(name: "Relajacion", tag_id: relajacion_spa.id)
-reduccion_spa_dic = new Dictionary.create(name: "Reduccion", tag_id: reduccion_spa.id)
+masaje_kinesiologia_dic = Dictionary.create(name: "Relajacion", tag_id: masaje_kinesiologia.id)
+rehabilitacion_psicologia_dic = Dictionary.create(name: "Terapia", tag_id: rehabilitacion_psicologia.id)
+psicoanalisis_psicologia_dic = Dictionary.create(name: "Psico", tag_id: psicoanalisis_psicologia.id)
+karate_artes_marciales_dic = Dictionary.create(name: "carate", tag_id: karate_artes_marciales.id)
+kungfu_artes_marciales_dic = Dictionary.create(name: "Kungfu", tag_id: kungfu_artes_marciales.id)
+jiujitzu_artes_marciales_dic = Dictionary.create(name: "Jujitzu", tag_id: jiujitzu_artes_marciales.id)
+relajacion_spa_dic = Dictionary.create(name: "Relajacion", tag_id: relajacion_spa.id)
+reduccion_spa_dic = Dictionary.create(name: "Reduccion", tag_id: reduccion_spa.id)
 
 
 # Países Activos
