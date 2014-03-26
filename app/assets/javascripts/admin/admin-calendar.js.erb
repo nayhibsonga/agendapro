@@ -400,7 +400,6 @@ function editBookingModal(eventId) {
 			$('#bookingStartMinute').val('');
 		}
 		$('#booking_service_provider_id option[value="'+booking.service_provider_id+'"]').attr("selected",true);
-		$('#booking_service_id option[value="'+booking.service_id+'"]').attr("selected",true);
 		$('#booking_status_id option[value="'+booking.status_id+'"]').attr("selected",true);
 		$('#booking_first_name').val(booking.first_name);
 		$('#booking_last_name').val(booking.last_name);
@@ -422,6 +421,7 @@ function editBookingModal(eventId) {
  						'<option value="' + service.id + '">' + service.name + '</option>'
  					);
  				});
+ 				$('#booking_service_id option[value="'+booking.service_id+'"]').attr("selected",true);
  				$('#booking_service_id').removeAttr('disabled');
  			});
  		}
@@ -667,4 +667,8 @@ $(function() {
 	});
 
 	$(".ui-datepicker-trigger").addClass("btn btn-primary pull-right")
+
+	$('#bookingModal').on('hidden.bs.modal', function (e) {
+		$('#booking_service_id').attr('disabled', true);
+	});
 });
