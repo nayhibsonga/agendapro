@@ -37,7 +37,7 @@
             <div id="barra-superior">
                 <div class="container">
                     <div class="row">
-                        <a href="<%= root_path %>" id="logo"></a>
+                        <a href="<%= root_url(:host => request.domain) %>" id="logo"></a>
                         <a href="#" id="menu-display"><span class="fa fa-align-justify"></span> MENU</a>
                         <ul class="nav nav-pills pull-right">
                             <% if user_signed_in? %>
@@ -75,8 +75,8 @@
                             <div class="info-empresa">
                                 <%= @company.description %>
                             </div>
-                            <a href="http://<%= @url %>" class="btn btn-info">Descripción</a>
-                            <a href="#" class="btn btn-info" id="boton-servicio">Servicio</a>
+                            <a href="http://<%= @url %>" class="btn btn-info">Locales</a>
+                            <a href="#" class="btn btn-info" id="boton-servicio">Servicios</a>
                         </div>
                     </div>
                 </div>

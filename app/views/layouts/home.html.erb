@@ -38,7 +38,7 @@
             <div id="barra-superior">
               <div class="container">
                 <div class="row">
-                  <a href="<%= root_path %>" id="logo"></a>
+                  <a href="<%= root_url(:host => request.domain) %>" id="logo"></a>
                   <a href="#" id="menu-display"><span class="fa fa-align-justify"></span> MENU</a>
                     <ul class="nav nav-pills pull-right">
                         <li id="c_home"><%= link_to "Inicio", home_path %></li>
