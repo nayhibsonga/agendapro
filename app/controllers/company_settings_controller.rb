@@ -49,7 +49,7 @@ class CompanySettingsController < ApplicationController
   def update
     respond_to do |format|
       if @company_setting.update(company_setting_params)
-        format.html { redirect_to dashboard_path, notice: 'Recordatorio actualizado.' }
+        format.html { redirect_to dashboard_path, notice: 'Configuracion actualizada.' }
         format.json { head :no_content }
       else
         format.html { render action: 'edit' }
@@ -68,6 +68,10 @@ class CompanySettingsController < ApplicationController
     end
   end
 
+  def time_booking_edit
+    @company_setting = CompanySetting.find_by(:company_id => params[:company])
+  end
+
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_company_setting
@@ -76,6 +80,6 @@ class CompanySettingsController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def company_setting_params
-      params.require(:company_setting).permit(:email, :sms, :signature, :company_id)
+      params.require(:company_setting).permit(:email, :sms, :signature, :company_id, :before_booking, :after_booking)
     end
 end
