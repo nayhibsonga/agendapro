@@ -110,7 +110,7 @@ class BookingMailer < ActionMailer::Base
       :images => [
         {
           :type => 'image/png',
-          :name => 'logo.png',
+          :name => 'AgendaPro.png',
           :content => Base64.encode64(File.read('app/assets/images/logos/logo_mail.png'))
         }
       ]

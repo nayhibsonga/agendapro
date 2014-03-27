@@ -48,7 +48,14 @@ class UserMailer < ActionMailer::Base
           :content => user.password
         }
       ],
-      :tags => ['user', 'new_user']
+      :tags => ['user', 'new_user'],
+      :images => [
+        {
+          :type => 'image/png',
+          :name => 'AgendaPro.png',
+          :content => Base64.encode64(File.read('app/assets/images/logos/logo_mail.png'))
+        }
+      ]
     }
 
     # => Metadata
