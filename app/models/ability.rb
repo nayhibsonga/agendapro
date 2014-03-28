@@ -130,6 +130,8 @@ class Ability
 
         can :provider_service, ServiceProvider
 
+        can :time_booking_edit, CompanySetting, :company => user.company_id
+
     elsif user.role_id == Role.find_by_name("Administrador Local").id
 
         can :get_booking, Booking, :service_provider => { :location_id => user.location_id }

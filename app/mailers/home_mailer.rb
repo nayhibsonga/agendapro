@@ -28,6 +28,7 @@ class HomeMailer < ActionMailer::Base
           :type => 'to'
         }
       ],
+      :headers => { 'Reply-To' => "contacto@agendapro.cl" },
       :global_merge_vars => [
         {
           :name => 'LNAME',
@@ -46,8 +47,8 @@ class HomeMailer < ActionMailer::Base
       :images => [
         {
           :type => 'image/png',
-          :name => 'logo.png',
-          :content => Base64.encode64(File.read('app/assets/images/logos/logo20.png'))
+          :name => 'AgendaPro.png',
+          :content => Base64.encode64(File.read('app/assets/images/logos/logo_mail.png'))
         }
       ]
     }

@@ -1,212 +1,202 @@
 <!DOCTYPE html>
 <html lang="es">
-<head>
-	
-	<!-- start: Meta -->
-	<meta charset="utf-8" />
-	<title>Administrador - AgendaPro</title>
-	<meta name="description" content="AgendaPro - Sistema de agendamiento OnLine para empresas y usuarios.">
-	<meta name="author" content="AgendaPro">
-	<meta name="keyword" content="agendapro, agenda, agenda online, reserva, reserva online">
+	<head>
+		<!-- start: Meta -->
+		<meta charset="utf-8" />
+		<title>Administrador - AgendaPro</title>
+		<meta name="description" content="AgendaPro - Sistema de agendamiento OnLine para empresas y usuarios.">
+		<meta name="author" content="AgendaPro">
+		<meta name="keyword" content="agendapro, agenda, agenda online, reserva, reserva online">
 
-	<%= csrf_meta_tags %>
-	<!-- end: Meta -->
-	
-	<!-- start: Mobile Specific -->
-	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<!-- end: Mobile Specific -->
-	
-	<!-- start: CSS -->
-	<%= stylesheet_link_tag "admin" %>
-	<%= stylesheet_link_tag "fullcalendar_css" if params[:controller] == "bookings" %>
-	<!-- end: CSS -->
-	
-
-	<!-- The HTML5 shim, for IE6-8 support of HTML5 elements -->
-	<!--[if lt IE 9]>
-	
-	  <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
-		<script src="assets/stylesheets/admin/ie6-8.css"></script>
+		<%= csrf_meta_tags %>
+		<!-- end: Meta -->
 		
-	<![endif]-->
-	
-	<!-- start: Favicon and Touch Icons -->
-    <%= favicon_link_tag "Iso_Pro_Color.png", :rel => "shortcut icon" %>
-	<!-- end: Favicon and Touch Icons -->	
+		<!-- start: Mobile Specific -->
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<!-- end: Mobile Specific -->
 		
-</head>
+		<!-- start: CSS -->
+		<%= stylesheet_link_tag "admin" %>
+		<%= stylesheet_link_tag "fullcalendar_css" if params[:controller] == "bookings" %>
+		<!-- end: CSS -->
+		
 
-<body>
-	<!-- start: Header -->
-	<header>
+		<!-- The HTML5 shim, for IE6-8 support of HTML5 elements -->
+		<!--[if lt IE 9]>
+		
+			<script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+			<script src="assets/stylesheets/admin/ie6-8.css"></script>
+			
+		<![endif]-->
+		
+		<!-- start: Favicon and Touch Icons -->
+			<%= favicon_link_tag "Iso_Pro_Color.png", :rel => "shortcut icon" %>
+		<!-- end: Favicon and Touch Icons -->	
+	</head>
+
+	<body>
+		<!-- start: Header -->
+		<header>
 			<a href="<%= root_url(:host => request.domain) %>" id="logo"></a>
-        <ul class="pull-right" id="menu-usuario">
-          <li><a href="#" id="open-usuario"><%= current_user.email %><span class="fa fa-chevron-down"></span></a>
-            <ul id="sub-menu-usuario" class="close-menu-usuario">
-              <li><%= link_to '<i class="fa fa-calendar"></i> Mi Agenda'.html_safe, my_agenda_path(:id => current_user.id) %></li>
-              <li><%= link_to '<i class="fa fa-user"></i> Perfil'.html_safe, edit_user_registration_path %></li>
-              <li><%= link_to '<i class="fa fa-power-off"></i> Cerrar Sesión'.html_safe, destroy_user_session_path, method: :delete %></li>
-            </ul>
-          </li>
-        </ul>
-      </div>
-	</header>
-	<!-- end: Header -->
-	
-  <div id="sidebar" class="">
-    <!-- MENU LATERAL -->
-    <ul class="menu-lateral">
-      <li><%= link_to '<i class="fa fa-dashboard"></i><span class="colapse-hidden"> Resumen</span>'.html_safe, dashboard_path %></li>
-      <li><%= link_to '<i class="fa fa-calendar"></i><span class="colapse-hidden"> Calendario</span>'.html_safe, bookings_path %></li>
-      <% if current_user.role_id == Role.find_by_name("Recepcionista").id %>
-      <li><%= link_to '<i class="fa fa-group"></i><span class="remove-txt"> Clientes</span>'.html_safe, clients_path %></li>
-      <% end %>
+	        <ul class="pull-right" id="menu-usuario">
+	          <li><a href="#" id="open-usuario"><%= current_user.email %><span class="fa fa-chevron-down"></span></a>
+	            <ul id="sub-menu-usuario" class="close-menu-usuario">
+	              <li><%= link_to '<i class="fa fa-calendar"></i> Mi Agenda'.html_safe, my_agenda_path(:id => current_user.id) %></li>
+	              <li><%= link_to '<i class="fa fa-user"></i> Perfil'.html_safe, edit_user_registration_path %></li>
+	              <li><%= link_to '<i class="fa fa-power-off"></i> Cerrar Sesión'.html_safe, destroy_user_session_path, method: :delete %></li>
+	            </ul>
+	          </li>
+	        </ul>
+		</header>
+		<!-- end: Header -->
+		
+		<div id="sidebar" class="">
+			<!-- MENU LATERAL -->
+			<ul class="menu-lateral">
+				<li><%= link_to '<i class="fa fa-dashboard"></i><span class="colapse-hidden"> Resumen</span>'.html_safe, dashboard_path %></li>
+				<li><%= link_to '<i class="fa fa-calendar"></i><span class="colapse-hidden"> Calendario</span>'.html_safe, bookings_path %></li>
+				<% if current_user.role_id == Role.find_by_name("Recepcionista").id %>
+				<li><%= link_to '<i class="fa fa-group"></i><span class="remove-txt"> Clientes</span>'.html_safe, clients_path %></li>
+				<% end %>
 
-      <% if current_user.role_id == Role.find_by_name("Super Admin").id %>
-        <li>
-          <a id="open-submenu"><i class="fa fa-check"></i><span class="colapse-hidden"> General <span class="fa fa-caret-down caret-especial"></span></span></a>
-            <ul id="submenu" class="submenu-close">
-              <li><%= link_to '<i class="fa fa-user"></i><span class="remove-txt"> Usuarios</span>'.html_safe, admin_users_path, { :class => "submenu" } %></li>
-              <li><%= link_to '<i class="fa fa-lock"></i><span class="remove-txt"> Roles</span>'.html_safe, roles_path, { :class => "submenu" }  %></li>
-              <li><%= link_to '<i class="fa fa-usd"></i><span class="remove-txt"> Estados de Pago</span>'.html_safe, payment_statuses_path, { :class => "submenu" }  %></li>
-              <li><%= link_to '<i class="fa fa-check-square-o"></i><span class="remove-txt"> Estados de Reserva</span>'.html_safe, statuses_path, { :class => "submenu" }  %></li>
-              <li><%= link_to '<i class="fa fa-cloud"></i><span class="remove-txt"> Gestión Planes</span>'.html_safe, plans_path, { :class => "submenu" }  %></li>
-            </ul>
-        </li>
+				<% if current_user.role_id == Role.find_by_name("Super Admin").id %>
+					<li>
+						<a class="open-submenu"><i class="fa fa-check"></i><span class="colapse-hidden"> General <span class="fa fa-caret-down caret-especial"></span></span></a>
+						<ul id="submenu" class="submenu-close">
+							<li><%= link_to '<i class="fa fa-user"></i><span class="remove-txt"> Usuarios</span>'.html_safe, admin_users_path, { :class => "submenu" } %></li>
+							<li><%= link_to '<i class="fa fa-lock"></i><span class="remove-txt"> Roles</span>'.html_safe, roles_path, { :class => "submenu" }  %></li>
+							<li><%= link_to '<i class="fa fa-usd"></i><span class="remove-txt"> Estados de Pago</span>'.html_safe, payment_statuses_path, { :class => "submenu" }  %></li>
+							<li><%= link_to '<i class="fa fa-check-square-o"></i><span class="remove-txt"> Estados de Reserva</span>'.html_safe, statuses_path, { :class => "submenu" }  %></li>
+							<li><%= link_to '<i class="fa fa-cloud"></i><span class="remove-txt"> Gestión Planes</span>'.html_safe, plans_path, { :class => "submenu" }  %></li>
+						</ul>
+					</li>
 
-        <li>
-          <a id="open-submenu2"><i class="fa fa-map-marker"></i><span class="colapse-hidden"> Lugares <span class="fa fa-caret-down caret-especial"></span></span></a>
-          <ul id="submenu2" class="submenu-close">
-            <li><%= link_to '<i class="fa fa-globe"></i><span class="remove-txt"> Países</span>'.html_safe, countries_path, { :class => "submenu" } %></li>
-            <li><%= link_to '<i class="fa fa-picture-o"></i><span class="remove-txt"> Regiones</span>'.html_safe, regions_path, { :class => "submenu" } %></li>
-            <li><%= link_to '<i class="fa fa-building"></i><span class="remove-txt"> Ciudades</span>'.html_safe, cities_path, { :class => "submenu" } %></li>
-            <li><%= link_to '<i class="fa fa-home"></i><span class="remove-txt"> Comunas</span>'.html_safe, districts_path, { :class => "submenu" } %></li>
-          </ul>
-        </li>
-      <% end %>
+					<li>
+						<a class="open-submenu"><i class="fa fa-map-marker"></i><span class="colapse-hidden"> Lugares <span class="fa fa-caret-down caret-especial"></span></span></a>
+						<ul id="submenu2" class="submenu-close">
+							<li><%= link_to '<i class="fa fa-globe"></i><span class="remove-txt"> Países</span>'.html_safe, countries_path, { :class => "submenu" } %></li>
+							<li><%= link_to '<i class="fa fa-picture-o"></i><span class="remove-txt"> Regiones</span>'.html_safe, regions_path, { :class => "submenu" } %></li>
+							<li><%= link_to '<i class="fa fa-building"></i><span class="remove-txt"> Ciudades</span>'.html_safe, cities_path, { :class => "submenu" } %></li>
+							<li><%= link_to '<i class="fa fa-home"></i><span class="remove-txt"> Comunas</span>'.html_safe, districts_path, { :class => "submenu" } %></li>
+						</ul>
+					</li>
 
-      <% if (current_user.role_id == Role.find_by_name("Super Admin").id) || (current_user.role_id == Role.find_by_name("Admin").id) || (current_user.role_id == Role.find_by_name("Administrador Local").id) %>
-        <li>
-          <a id="open-submenu3"><i class="fa fa-briefcase"></i><span class="colapse-hidden"> Administración <span class="fa fa-caret-down caret-especial"></span></span></a>
-          <ul id="submenu3" class="submenu-close">
-            <li><%= link_to '<i class="fa fa-sitemap"></i><span class="remove-txt"> Usuarios</span>'.html_safe, admin_users_path, { :class => "submenu" } %></li>
-            <li><%= link_to '<i class="fa fa-home"></i><span class="remove-txt"> Locales</span>'.html_safe, locations_path, { :class => "submenu" } %></li>
-            <li><%= link_to '<i class="fa fa-book"></i><span class="remove-txt"> Servicios</span>'.html_safe, services_path, { :class => "submenu" } %></li>
-            <li><%= link_to '<i class="fa fa-user"></i><span class="remove-txt"> Proveedores de Servicios</span>'.html_safe, service_providers_path, { :class => "submenu" } %></li>
-            <li><%= link_to '<i class="fa fa-group"></i><span class="remove-txt"> Clientes</span>'.html_safe, clients_path, { :class => "submenu" } %></li>
-          </ul>
-        </li>
-      <% end %>
+					<li>
+						<a class="open-submenu"><i class="fa fa-search"></i><span class="colapse-hidden"> Buscador <span class="fa fa-caret-down caret-especial"></span></span></a>
+						<ul id="submenu5" class="submenu-close">
+							<li><%= link_to '<i class="fa fa-usd"></i><span class="remove-txt"> Sector Ecónomico</span>'.html_safe, economic_sectors_path, { :class => "submenu" } %></li>
+							<li><%= link_to '<i class="fa fa-tags"></i><span class="remove-txt"> Tags</span>'.html_safe, tags_path, { :class => "submenu" } %></li>
+						</ul>
+					</li>
+				<% end %>
 
-      <% if (current_user.role_id == Role.find_by_name("Admin").id) %>
-        <li>
-          <a id="open-submenu4"><i class="fa fa-wrench"></i><span class="colapse-hidden"> Configuración <span class="fa fa-caret-down caret-especial"></span></span></a>
-          <ul id="submenu4" class="submenu-close">
-            <li><%= link_to '<i class="fa fa-briefcase"></i><span class="remove-txt"> Empresa</span>'.html_safe, edit_company_path(Company.find(current_user.company_id)), { :class => "submenu" } %></li>
-              <li><% if Company.find(current_user.company_id).company_setting %>
-                <%= link_to '<i class="fa fa-phone"></i><span class="remove-txt"> Recordatorios</span>'.html_safe, edit_company_setting_path(Company.find(current_user.company_id).company_setting), { :class => "submenu" } %>
-                <% else %>
-                <%= link_to '<i class="fa fa-phone"></i><span class="remove-txt"> Recordatorios</span>'.html_safe, new_company_setting_path, { :class => "submenu" } %>
-              <% end %>
-              </li>
-            <li><%= link_to '<i class="fa fa-dollar"></i><span class="remove-txt"> Planes</span>'.html_safe, select_plan_path, { :class => "submenu" } %></li>
-            <li><%= link_to '<i class="fa fa-list"></i><span class="remove-txt"> Categorías de Servicios</span>'.html_safe, service_categories_path, { :class => "submenu" } %></li>
-          </ul>
-        </li>
-      <% end %>
+				<% if (current_user.role_id == Role.find_by_name("Super Admin").id) || (current_user.role_id == Role.find_by_name("Admin").id) || (current_user.role_id == Role.find_by_name("Administrador Local").id) %>
+					<li>
+						<a class="open-submenu"><i class="fa fa-briefcase"></i><span class="colapse-hidden"> Administración <span class="fa fa-caret-down caret-especial"></span></span></a>
+						<ul id="submenu3" class="submenu-close">
+							<li><%= link_to '<i class="fa fa-sitemap"></i><span class="remove-txt"> Usuarios</span>'.html_safe, admin_users_path, { :class => "submenu" } %></li>
+							<li><%= link_to '<i class="fa fa-home"></i><span class="remove-txt"> Locales</span>'.html_safe, locations_path, { :class => "submenu" } %></li>
+							<li><%= link_to '<i class="fa fa-book"></i><span class="remove-txt"> Servicios</span>'.html_safe, services_path, { :class => "submenu" } %></li>
+							<li><%= link_to '<i class="fa fa-user"></i><span class="remove-txt"> Proveedores de Servicios</span>'.html_safe, service_providers_path, { :class => "submenu" } %></li>
+							<li><%= link_to '<i class="fa fa-group"></i><span class="remove-txt"> Clientes</span>'.html_safe, clients_path, { :class => "submenu" } %></li>
+						</ul>
+					</li>
+				<% end %>
 
-      <li><a id="closetab"><span class="fa fa-chevron-left"></span> <span class="colapse-hidden"> Colapsar Menú </span></a></li>
-    </ul>
-  </div>
+				<% if (current_user.role_id == Role.find_by_name("Admin").id) %>
+					<li>
+						<a class="open-submenu"><i class="fa fa-wrench"></i><span class="colapse-hidden"> Configuración <span class="fa fa-caret-down caret-especial"></span></span></a>
+						<ul id="submenu4" class="submenu-close">
+							<li><%= link_to '<i class="fa fa-briefcase"></i><span class="remove-txt"> Empresa</span>'.html_safe, edit_company_path(Company.find(current_user.company_id)), { :class => "submenu" } %></li>
+							<li><%= link_to '<i class="fa fa-phone"></i><span class="remove-txt"> Recordatorios</span>'.html_safe, edit_company_setting_path(Company.find(current_user.company_id).company_setting), { :class => "submenu" } %></li>
+							<li><%= link_to '<i class="fa fa-clock-o"></i><span class="remove-txt"> Periodo Agenda</span>'.html_safe, time_booking_path(:company => Company.find(current_user.company_id).id), { :class => "submenu" } %></li>
+							<li><%= link_to '<i class="fa fa-dollar"></i><span class="remove-txt"> Planes</span>'.html_safe, select_plan_path, { :class => "submenu" } %></li>
+							<li><%= link_to '<i class="fa fa-list"></i><span class="remove-txt"> Categorías de Servicios</span>'.html_safe, service_categories_path, { :class => "submenu" } %></li>
+						</ul>
+					</li>
+				<% end %>
 
-  <div id="admin-content" class="fix-height">
-    <div class="content-fix">
-      <!-- start: Alerts -->
-      <% if notice %>
-        <div class="alert alert-info alert-dismissable">
-          <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-          <%= notice %>
-        </div>
-      <% end %>
-      <% if alert %>
-        <div class="alert alert-warning alert-dismissable">
-          <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-          <%= alert %>
-        </div>
-      <% end %>
-      <!-- end: Alerts -->
-      <%= yield %>
-    </div>
-  </div>
-	
-  <!-- start: JavaScript-->
-    <!--[if !IE]>-->
-        <%= javascript_include_tag "adminNIE" %>
-    <!--<![endif]-->
-    <!--[if IE]>
-      <%= javascript_include_tag "adminIE" %>
-    <!--<![endif]-->
-    <%= javascript_include_tag "admin" %>
-    <!--[if !IE]>-->
-        <script type="text/javascript">
-        window.jQuery || document.write("<script src='vendor/jquery-2.1.0.min.js'>"+"<"+"/script>");
-        </script>
-    <!--<![endif]-->
-    <!--[if IE]>
-      <script type="text/javascript">
-      window.jQuery || document.write("<script src='vendor/jquery-1.11.0.min.js'>"+"<"+"/script>");
-      </script>
-    <![endif]-->
-	<%= yield :scripts %>
-    <%= javascript_include_tag "jquery.browser.min" %>
-    <%= javascript_include_tag "browser-detect" %>
-	
-	<!-- end: JavaScript-->
-	
-  <script type="text/javascript">
-    $(document).ready(function(){
-      $('#closetab').toggle(function () {
-          $("#sidebar").addClass("colapsar");
-          $("#admin-content").addClass("expandir");
-          $(".menu-lateral li").addClass("colapsado-ok");
-          $(".remove-txt").addClass("kill-txt");
-          $('#closetab > span:first').removeClass('fa-chevron-left');
-          $('#closetab > span:first').addClass('fa-chevron-right');
-      }, function () {
-          $("#sidebar").removeClass("colapsar");
-          $("#admin-content").removeClass("expandir");
-          $(".menu-lateral li").removeClass("colapsado-ok");
-          $(".remove-txt").removeClass("kill-txt");
-          $('#closetab > span:first').removeClass('fa-chevron-right');
-          $('#closetab > span:first').addClass('fa-chevron-left');
-      });
-      $('#open-submenu').toggle(function () {
-          $("#submenu").removeClass("submenu-close");
-      }, function () {
-          $("#submenu").addClass("submenu-close");
-      });
-      $('#open-submenu2').toggle(function () {
-          $("#submenu2").removeClass("submenu-close");
-      }, function () {
-          $("#submenu2").addClass("submenu-close");
-      });
-      $('#open-submenu3').toggle(function () {
-          $("#submenu3").removeClass("submenu-close");
-      }, function () {
-          $("#submenu3").addClass("submenu-close");
-      });
-      $('#open-submenu4').toggle(function () {
-          $("#submenu4").removeClass("submenu-close");
-      }, function () {
-          $("#submenu4").addClass("submenu-close");
-      });
-      $('#open-usuario').toggle(function () {
-            $("#sub-menu-usuario").removeClass("close-menu-usuario");
-      }, function () {
-            $("#sub-menu-usuario").addClass("close-menu-usuario");
-      });
-    });
-  </script>
+				<li><a id="closetab"><span class="fa fa-chevron-left"></span> <span class="colapse-hidden"> Colapsar Menú </span></a></li>
+			</ul>
+		</div>
 
-</body>
+		<div id="admin-content" class="fix-height">
+			<div class="content-fix">
+				<!-- start: Alerts -->
+				<% if notice %>
+					<div class="alert alert-info alert-dismissable">
+						<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+						<%= notice %>
+					</div>
+				<% end %>
+				<% if alert %>
+					<div class="alert alert-warning alert-dismissable">
+						<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+						<%= alert %>
+					</div>
+				<% end %>
+				<!-- end: Alerts -->
+				<%= yield %>
+			</div>
+		</div>
+		
+		<!-- start: JavaScript-->
+		<!--[if !IE]>-->
+				<%= javascript_include_tag "adminNIE" %>
+		<!--<![endif]-->
+		<!--[if IE]>
+			<%= javascript_include_tag "adminIE" %>
+		<!--<![endif]-->
+		<%= javascript_include_tag "admin" %>
+		<!--[if !IE]>-->
+				<script type="text/javascript">
+				window.jQuery || document.write("<script src='vendor/jquery-2.1.0.min.js'>"+"<"+"/script>");
+				</script>
+		<!--<![endif]-->
+		<!--[if IE]>
+			<script type="text/javascript">
+			window.jQuery || document.write("<script src='vendor/jquery-1.11.0.min.js'>"+"<"+"/script>");
+			</script>
+		<![endif]-->
+		<%= yield :scripts %>
+		<%= javascript_include_tag "jquery.browser.min" %>
+		<%= javascript_include_tag "browser-detect" %>
+		
+		<!-- end: JavaScript-->
+		
+		<script type="text/javascript">
+			$(document).ready(function(){
+				$('#closetab').toggle(function () {
+						$("#sidebar").addClass("colapsar");
+						$("#admin-content").addClass("expandir");
+						$(".menu-lateral li").addClass("colapsado-ok");
+						$(".remove-txt").addClass("kill-txt");
+						$('#closetab > span:first').removeClass('fa-chevron-left');
+						$('#closetab > span:first').addClass('fa-chevron-right');
+				}, function () {
+						$("#sidebar").removeClass("colapsar");
+						$("#admin-content").removeClass("expandir");
+						$(".menu-lateral li").removeClass("colapsado-ok");
+						$(".remove-txt").removeClass("kill-txt");
+						$('#closetab > span:first').removeClass('fa-chevron-right');
+						$('#closetab > span:first').addClass('fa-chevron-left');
+				});
+
+				$('.open-submenu').click( function (event) {
+					var submenu = $(event.target).closest('a').next();
+					if (submenu.hasClass('submenu-close')) {
+						submenu.removeClass('submenu-close');
+					}
+					else {
+						submenu.addClass('submenu-close');
+					}
+				});
+				$('#open-usuario').toggle(function () {
+							$("#sub-menu-usuario").removeClass("close-menu-usuario");
+				}, function () {
+							$("#sub-menu-usuario").addClass("close-menu-usuario");
+				});
+			});
+		</script>
+	</body>
 </html>

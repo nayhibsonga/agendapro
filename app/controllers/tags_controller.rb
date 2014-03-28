@@ -10,6 +10,7 @@ class TagsController < ApplicationController
   # GET /tags.json
   def index
     @tags = Tag.all
+    @economic_sectors = EconomicSector.all
   end
 
   # GET /tags/1
@@ -33,7 +34,7 @@ class TagsController < ApplicationController
 
     respond_to do |format|
       if @tag.save
-        format.html { redirect_to @tag, notice: 'El tag fue creado exitosamente.' }
+        format.html { redirect_to tag_path, notice: 'El tag fue creado exitosamente.' }
         format.json { render action: 'show', status: :created, location: @tag }
       else
         format.html { render action: 'new' }
@@ -47,7 +48,7 @@ class TagsController < ApplicationController
   def update
     respond_to do |format|
       if @tag.update(tag_params)
-        format.html { redirect_to @tag, notice: 'El tag fue actualizado exitosamente.' }
+        format.html { redirect_to tag_path, notice: 'El tag fue actualizado exitosamente.' }
         format.json { head :no_content }
       else
         format.html { render action: 'edit' }
@@ -74,6 +75,6 @@ class TagsController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def tag_params
-      params.require(:tag).permit(:name, :economic_sector_id)
+      params.require(:tag).permit(:name, :economic_sector_id, dictionaries_attributes: [:id, :name, :_destroy])
     end
 end

@@ -1,0 +1,43 @@
+<h1>Periodo Agenda</h1>
+<h4>Acá podrás definir cual es el tiempo minimo para agendar, y que tan a futuro se puede reservar una hora.</h4>
+
+<%= form_for @company_setting, :html => {:class => 'form-horizontal'} do |f| %>
+	<% if @company_setting.errors.any? %>
+		<div id="error_explanation">
+			<h2><%= pluralize(@company_setting.errors.count, "error") %> prohibited this company_setting from being saved:</h2>
+
+			<ul>
+			<% @company_setting.errors.full_messages.each do |msg| %>
+				<li><%= msg %></li>
+			<% end %>
+			</ul>
+		</div>
+	<% end %>
+
+	<div class="form-group">
+		<%= f.label :before_booking, 'Tiempo Minimo', :class => 'col-sm-3 control-label' %>
+		<div class="col-sm-4">
+			<div class="input-group">
+				<%= f.number_field :before_booking, :in => 1...25, :required => true, :class => 'form-control' %>
+				<span class="input-group-addon">Horas</span>
+			</div>
+			<span class="help-block">Esta configuración indica cuanto tiempo antes se puede agendar el servicio.</span>
+		</div>
+	</div>
+	<div class="form-group">
+		<%= f.label :after_booking, 'Tiempo Futuro', :class => 'col-sm-3 control-label' %>
+		<div class="col-sm-4">
+			<div class="input-group">
+				<%= f.number_field :after_booking, :in => 1...13, :required => true, :class => 'form-control' %>
+				<span class="input-group-addon">Meses</span>
+			</div>
+			<span class="help-block">Esta configuracion indica con cuantos meses de anticipacion se puede agendar un servicio</span>
+		</div>
+	</div>
+	<div class="form-group">
+		<div class="col-sm-offset-3 col-sm-4">
+			<%= f.submit 'Guardar', :class => 'btn btn-primary' %>
+			<%= link_to 'Cancelar', dashboard_path, :class => "btn btn-danger" %>    
+		</div>
+	</div>
+<% end %>

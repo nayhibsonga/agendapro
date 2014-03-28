@@ -85,6 +85,7 @@ class LocationsController < ApplicationController
     # Data
     service_duration = Service.find(params[:service]).duration
     weekDate = Date.strptime(params[:date], '%Y-%m-%d')
+    company_setting = CompanySetting.find(Location.find(params[:local]).company_id)
 
     @week_blocks = Hash.new
     # Week Blocks
@@ -173,8 +174,13 @@ class LocationsController < ApplicationController
           end_time_block = DateTime.new(date.year, date.mon, date.mday, next_open_hour, next_open_min)
           
           # Past hours
-          today = Date.today
-          if (date <=> today) < 1
+          now = DateTime.new(DateTime.now.year, DateTime.now.mon, DateTime.now.mday, DateTime.now.hour, DateTime.now.min)
+          before_now = start_time_block - company_setting.before_booking / 24.0
+          after_now = now + company_setting.after_booking * 30
+
+          if (before_now <=> now) < 1
+            status = 'past'
+          elsif (after_now <=> end_time_block) < 1
             status = 'past'
           else
             bookings.each do |booking|

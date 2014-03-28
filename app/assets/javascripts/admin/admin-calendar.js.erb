@@ -274,14 +274,6 @@ function loadWeekCalendar (startTime, endTime, hiddenDays, resourcesArray, provi
 	    dayClick: function(date, allDay, jsEvent, view) {
 	        createBookingModal(date);
 	    },
-		// eventMouseover: function(calEvent, domEvent) {
-		// 	var layer =	"<div id='events-layer' class='fc-transparent' style='position:absolute; width:100%; height:100%; top:-1px; text-align:right; z-index:100'>asdfff</div>";
-		// 	$(this).append(layer);
-		// }, 
- 
-		// eventMouseout: function(calEvent, domEvent) {
-		// 	$(this).find('div[id*=events-layer]').remove();
-		// },
 	    firstDay: 1,	//Lunes
 	    defaultView: 'agendaWeek',
 	    allDaySlot: false,
@@ -400,7 +392,6 @@ function editBookingModal(eventId) {
 			$('#bookingStartMinute').val('');
 		}
 		$('#booking_service_provider_id option[value="'+booking.service_provider_id+'"]').attr("selected",true);
-		$('#booking_service_id option[value="'+booking.service_id+'"]').attr("selected",true);
 		$('#booking_status_id option[value="'+booking.status_id+'"]').attr("selected",true);
 		$('#booking_first_name').val(booking.first_name);
 		$('#booking_last_name').val(booking.last_name);
@@ -422,6 +413,7 @@ function editBookingModal(eventId) {
  						'<option value="' + service.id + '">' + service.name + '</option>'
  					);
  				});
+ 				$('#booking_service_id option[value="'+booking.service_id+'"]').attr("selected",true);
  				$('#booking_service_id').removeAttr('disabled');
  			});
  		}
@@ -667,4 +659,8 @@ $(function() {
 	});
 
 	$(".ui-datepicker-trigger").addClass("btn btn-primary pull-right")
+
+	$('#bookingModal').on('hidden.bs.modal', function (e) {
+		$('#booking_service_id').attr('disabled', true);
+	});
 });

@@ -66,18 +66,26 @@ function buildDay (value) {
 					'</div>' +
 				'</form>' +
 			'</th>' +
+			'<th></th>' +
 		'</tr>'
 	);
 }
 
 function addBreak (value, openTime, closeTime) {
 	if ($('tr.break'+value).length > 0) {
-		breakCount =  +$('tr.break'+value).find('a').attr('id').replace(value+'removeBreak','') + 1;
+		breakCount =  +$('tr.break' + value + ':last').find('a').attr('id').replace(value+'removeBreak','') + 1;
 	}
 	else {
 		breakCount = 1
 	}
-	$('#dayStatusId' + value).closest('tr').after(
+	var position;
+	if ($('.break' + value).length > 0) {
+		position = $('.break' + value + ':last');
+	}
+	else {
+		position = $('#dayStatusId' + value).closest('tr');
+	}
+	position.after(
 		'<tr class="break' + value + '">' +
 			'<th>Descanso:</th>' +
 			'<th>' +
@@ -156,7 +164,7 @@ function initialize() {
 				var value = providerTimesData[arrayCounter].day_id;
 				$('#dayStatusId'+ value).prop('checked', true);
 				$('#dayStatusId'+ value).val(1);
-				$('#dayStatusId'+value).closest('tr').append('<th><a id="addBreakdiv'+value+'" onclick="addBreak('+value+')" class="btn btn-primary"><i class="fa fa-plus"></i></a></th>');
+				$('#dayStatusId'+value).closest('tr').children().last().append('<a id="addBreakdiv'+value+'" onclick="addBreak('+value+')" class="btn btn-primary"><i class="fa fa-plus"></i></a>');
 				
 				$('#openHourId'+ value).prop('disabled', false);
 				$('#openMinuteId'+ value).prop('disabled', false);
@@ -187,7 +195,7 @@ function changeDayStatus(value) {
 		$('#closeHourId'+ value).prop('disabled', false);
 		$('#closeMinuteId'+ value).prop('disabled', false);
 		$('#dayStatusId'+ value).val(1);
-		$('#dayStatusId'+value).closest('tr').append('<th><a id="addBreakdiv'+value+'" class="btn btn-primary"><i class="fa fa-plus"></i></a></th>');
+		$('#dayStatusId'+value).closest('tr').children().last().append('<a id="addBreakdiv'+value+'" class="btn btn-primary"><i class="fa fa-plus"></i></a>');
 		$('#addBreakdiv'+value).click(function() {
 			addBreak(value);
 		});
@@ -199,7 +207,7 @@ function changeDayStatus(value) {
 		$('#closeMinuteId'+ value).prop('disabled', true);
 		$('#dayStatusId'+ value).val(0);
 		$('tr.break'+value).remove();
-		$('#addBreakdiv'+value).parent().remove();
+		$('#addBreakdiv'+value).remove();
 	}
 }
 

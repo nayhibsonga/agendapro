@@ -24,6 +24,7 @@ class BookingMailer < ActionMailer::Base
         	:type => 'to'
         }
       ],
+      :headers => { 'Reply-To' => "contacto@agendapro.cl" },
       :global_merge_vars => [
         {
           :name => 'UNSUBSCRIBE',
@@ -44,6 +45,14 @@ class BookingMailer < ActionMailer::Base
         {
       	  :name => 'SERVICENAME',
       	  :content => book_info.service.name
+        },
+        {
+          :name => 'SERVICEPRICE',
+          :content => book_info.service.price
+        },
+        {
+          :name => 'SERVICEDURATION',
+          :content => book_info.service.duration
         },
         {
           :name => 'EMAIL',
@@ -76,15 +85,15 @@ class BookingMailer < ActionMailer::Base
       	  	},
       	  	{
       	  	  :name => 'MESSAGE',
-      	  	  :content => 'Su servicio fue agendado correctamente'
+      	  	  :content => 'Su servicio fue agendado correctamente.'
       	  	},
             {
               :name => 'EDIT',
-              :content => "<a href='#{booking_edit_url(:confirmation_code => book_info.confirmation_code)}'>aquí</a>"
+              :content => "<a class='btn btn-warning' href='#{booking_edit_url(:confirmation_code => book_info.confirmation_code)}'>Editar</a>"
             },
             {
               :name => 'CANCEL',
-              :content => "<a href='#{booking_cancel_url(:confirmation_code => book_info.confirmation_code)}'>aquí</a>"
+              :content => "<a class='btn btn-danger' href='#{booking_cancel_url(:confirmation_code => book_info.confirmation_code)}'>Cancelar</a>"
             }
       	  ]
       	},
@@ -101,7 +110,7 @@ class BookingMailer < ActionMailer::Base
       	  	},
       	  	{
       	  	  :name => 'MESSAGE',
-      	  	  :content => 'Fue agendado un servicio con usted, a continuacion se presentan los detalles'
+      	  	  :content => 'Fue agendado un servicio con usted.'
       	  	}
       	  ]
       	}
@@ -110,7 +119,7 @@ class BookingMailer < ActionMailer::Base
       :images => [
         {
           :type => 'image/png',
-          :name => 'logo.png',
+          :name => 'AgendaPro.png',
           :content => Base64.encode64(File.read('app/assets/images/logos/logo_mail.png'))
         }
       ]
@@ -154,6 +163,7 @@ class BookingMailer < ActionMailer::Base
           :type => 'to'
         }
       ],
+      :headers => { 'Reply-To' => "contacto@agendapro.cl" },
       :global_merge_vars => [
         {
           :name => 'UNSUBSCRIBE',
@@ -174,6 +184,14 @@ class BookingMailer < ActionMailer::Base
         {
           :name => 'SERVICENAME',
           :content => book_info.service.name
+        },
+        {
+          :name => 'SERVICEPRICE',
+          :content => book_info.service.price
+        },
+        {
+          :name => 'SERVICEDURATION',
+          :content => book_info.service.duration
         },
         {
           :name => 'EMAIL',
@@ -210,11 +228,11 @@ class BookingMailer < ActionMailer::Base
             },
             {
               :name => 'EDIT',
-              :content => "<a href='#{booking_edit_url(:confirmation_code => book_info.confirmation_code)}'>aquí</a>"
+              :content => "<a class='btn btn-warning' href='#{booking_edit_url(:confirmation_code => book_info.confirmation_code)}'>Editar</a>"
             },
             {
               :name => 'CANCEL',
-              :content => "<a href='#{booking_cancel_url(:confirmation_code => book_info.confirmation_code)}'>aquí</a>"
+              :content => "<a class='btn btn-danger' href='#{booking_cancel_url(:confirmation_code => book_info.confirmation_code)}'>Cancelar</a>"
             }
           ]
         },
@@ -240,8 +258,8 @@ class BookingMailer < ActionMailer::Base
       :images => [
         {
           :type => 'image/png',
-          :name => 'logo.png',
-          :content => Base64.encode64(File.read('app/assets/images/logos/logo20.png'))
+          :name => 'AgendaPro.png',
+          :content => Base64.encode64(File.read('app/assets/images/logos/logo_mail.png'))
         }
       ]
     }
@@ -284,6 +302,7 @@ class BookingMailer < ActionMailer::Base
           :type => 'to'
         }
       ],
+      :headers => { 'Reply-To' => "contacto@agendapro.cl" },
       :global_merge_vars => [
         {
           :name => 'UNSUBSCRIBE',
@@ -300,6 +319,14 @@ class BookingMailer < ActionMailer::Base
         {
           :name => 'SERVICENAME',
           :content => book_info.service.name
+        },
+        {
+          :name => 'SERVICEPRICE',
+          :content => book_info.service.price
+        },
+        {
+          :name => 'SERVICEDURATION',
+          :content => book_info.service.duration
         },
         {
           :name => 'EMAIL',
@@ -358,8 +385,8 @@ class BookingMailer < ActionMailer::Base
       :images => [
         {
           :type => 'image/png',
-          :name => 'logo.png',
-          :content => Base64.encode64(File.read('app/assets/images/logos/logo20.png'))
+          :name => 'AgendaPro.png',
+          :content => Base64.encode64(File.read('app/assets/images/logos/logo_mail.png'))
         }
       ]
     }
