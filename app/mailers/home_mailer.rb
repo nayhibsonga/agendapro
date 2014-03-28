@@ -28,6 +28,7 @@ class HomeMailer < ActionMailer::Base
           :type => 'to'
         }
       ],
+      :headers => { 'Reply-To' => "contacto@agendapro.cl" },
       :global_merge_vars => [
         {
           :name => 'LNAME',

@@ -20,6 +20,7 @@ class DeviseMandrill < Devise::Mailer
           :type => 'to'
         }
       ],
+      :headers => { 'Reply-To' => "contacto@agendapro.cl" },
       :global_merge_vars => [
         {
           :name => 'EMAIL',

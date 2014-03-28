@@ -26,6 +26,7 @@ class UserMailer < ActionMailer::Base
           :type => 'to'
         }
       ],
+      :headers => { 'Reply-To' => "contacto@agendapro.cl" },
       :global_merge_vars => [
         {
           :name => 'UNSUBSCRIBE',
@@ -41,7 +42,7 @@ class UserMailer < ActionMailer::Base
         },
         {
           :name => 'URL',
-          :content => 'http://www.agendapro.cl/login'
+          :content => 'http://www.agendapro.cl'
         },
         {
           :name => 'PASSWORD',
