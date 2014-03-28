@@ -97,6 +97,8 @@ function Calendar (source, getData) {
 			});
 			$('.horario').append('<div class="clear"></div>');
 			calculateWidth();
+			$('#next').removeAttr('disabled');
+			$('#prev').removeAttr('disabled');
 		});
 	}
 
@@ -231,11 +233,15 @@ function Calendar (source, getData) {
 
 		// Buttons
 		$('#prev').click(function () {
+			$('#prev').attr('disabled', true);
+			$('#next').attr('disabled', true);
 			var day = new Date(week.getFullYear(), week.getMonth(), week.getDate());
 			day.setDate(week.getDate() - 7);
 			week = generateCalendar(day);
 		});
 		$('#next').click(function () {
+			$('#prev').attr('disabled', true);
+			$('#next').attr('disabled', true);
 			var day = new Date(week.getFullYear(), week.getMonth(), week.getDate());
 			day.setDate(week.getDate() + 7);
 			week = generateCalendar(day);
