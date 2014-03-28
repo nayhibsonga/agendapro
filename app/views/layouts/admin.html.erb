@@ -38,35 +38,35 @@
 		<!-- start: Header -->
 		<header>
 			<a href="<%= root_url(:host => request.domain) %>" id="logo"></a>
-	        <ul class="pull-right" id="menu-usuario">
-	          <li><a href="#" id="open-usuario"><%= current_user.email %><span class="fa fa-chevron-down"></span></a>
-	            <ul id="sub-menu-usuario" class="close-menu-usuario">
-	              <li><%= link_to '<i class="fa fa-calendar"></i> Mi Agenda'.html_safe, my_agenda_path(:id => current_user.id) %></li>
-	              <li><%= link_to '<i class="fa fa-user"></i> Perfil'.html_safe, edit_user_registration_path %></li>
-	              <li><%= link_to '<i class="fa fa-power-off"></i> Cerrar Sesión'.html_safe, destroy_user_session_path, method: :delete %></li>
-	            </ul>
-	          </li>
-	        </ul>
+			<ul class="pull-right" id="menu-usuario">
+			  <li><a href="#" id="open-usuario"><%= current_user.email %><span class="fa fa-chevron-down"></span></a>
+				<ul id="sub-menu-usuario" class="close-menu-usuario">
+				  <li><%= link_to '<i class="fa fa-calendar"></i> Mi Agenda'.html_safe, my_agenda_path(:id => current_user.id) %></li>
+				  <li><%= link_to '<i class="fa fa-user"></i> Perfil'.html_safe, edit_user_registration_path %></li>
+				  <li><%= link_to '<i class="fa fa-power-off"></i> Cerrar Sesión'.html_safe, destroy_user_session_path, method: :delete %></li>
+				</ul>
+			  </li>
+			</ul>
 		</header>
 		<!-- end: Header -->
 		
 		<div id="sidebar" class="">
 			<!-- MENU LATERAL -->
 			<ul class="menu-lateral">
-				<li><%= link_to '<i class="fa fa-dashboard"></i><span class="colapse-hidden"> Resumen</span>'.html_safe, dashboard_path %></li>
-				<li><%= link_to '<i class="fa fa-calendar"></i><span class="colapse-hidden"> Calendario</span>'.html_safe, bookings_path %></li>
+				<li><%= link_to '<i class="fa fa-dashboard"></i><span class="colapse-hidden"> Resumen</span>'.html_safe, dashboard_path, { :class => if controller.controller_name == "dashboard" then "active" end } %></li>
+				<li><%= link_to '<i class="fa fa-calendar"></i><span class="colapse-hidden"> Calendario</span>'.html_safe, bookings_path, { :class => if controller.controller_name == "bookings" then "active" end } %></li>
 				<% if current_user.role_id == Role.find_by_name("Recepcionista").id %>
-				<li><%= link_to '<i class="fa fa-group"></i><span class="remove-txt"> Clientes</span>'.html_safe, clients_path %></li>
+				<li><%= link_to '<i class="fa fa-group"></i><span class="remove-txt"> Clientes</span>'.html_safe, clients_path, { :class => if controller.controller_name == "clients" then "active" end } %></li>
 				<% end %>
 
 				<% if current_user.role_id == Role.find_by_name("Super Admin").id %>
 					<li>
 						<a class="open-submenu"><i class="fa fa-check"></i><span class="colapse-hidden"> General <span class="fa fa-caret-down caret-especial"></span></span></a>
 						<ul id="submenu" class="submenu-close">
-							<li><%= link_to '<i class="fa fa-user"></i><span class="remove-txt"> Usuarios</span>'.html_safe, admin_users_path, { :class => "submenu" } %></li>
-							<li><%= link_to '<i class="fa fa-lock"></i><span class="remove-txt"> Roles</span>'.html_safe, roles_path, { :class => "submenu" }  %></li>
-							<li><%= link_to '<i class="fa fa-usd"></i><span class="remove-txt"> Estados de Pago</span>'.html_safe, payment_statuses_path, { :class => "submenu" }  %></li>
-							<li><%= link_to '<i class="fa fa-check-square-o"></i><span class="remove-txt"> Estados de Reserva</span>'.html_safe, statuses_path, { :class => "submenu" }  %></li>
+							<li><%= link_to '<i class="fa fa-user"></i><span class="remove-txt"> Usuarios</span>'.html_safe, admin_users_path, { :class => if controller.controller_name == "users" then "submenu active" else "submenu" end } %></li>
+							<li><%= link_to '<i class="fa fa-lock"></i><span class="remove-txt"> Roles</span>'.html_safe, roles_path, { :class => if controller.controller_name == "roles" then "submenu active" else "submenu" end }  %></li>
+							<li><%= link_to '<i class="fa fa-usd"></i><span class="remove-txt"> Estados de Pago</span>'.html_safe, payment_statuses_path, { :class => if controller.controller_name == "payment_statuses" then "submenu active" else "submenu" end }  %></li>
+							<li><%= link_to '<i class="fa fa-check-square-o"></i><span class="remove-txt"> Estados de Reserva</span>'.html_safe, statuses_path, { :class => if controller.controller_name == "statuses" then "submenu active" else "submenu" end }  %></li>
 							<li><%= link_to '<i class="fa fa-cloud"></i><span class="remove-txt"> Gestión Planes</span>'.html_safe, plans_path, { :class => "submenu" }  %></li>
 						</ul>
 					</li>
@@ -74,18 +74,18 @@
 					<li>
 						<a class="open-submenu"><i class="fa fa-map-marker"></i><span class="colapse-hidden"> Lugares <span class="fa fa-caret-down caret-especial"></span></span></a>
 						<ul id="submenu2" class="submenu-close">
-							<li><%= link_to '<i class="fa fa-globe"></i><span class="remove-txt"> Países</span>'.html_safe, countries_path, { :class => "submenu" } %></li>
-							<li><%= link_to '<i class="fa fa-picture-o"></i><span class="remove-txt"> Regiones</span>'.html_safe, regions_path, { :class => "submenu" } %></li>
-							<li><%= link_to '<i class="fa fa-building"></i><span class="remove-txt"> Ciudades</span>'.html_safe, cities_path, { :class => "submenu" } %></li>
-							<li><%= link_to '<i class="fa fa-home"></i><span class="remove-txt"> Comunas</span>'.html_safe, districts_path, { :class => "submenu" } %></li>
+							<li><%= link_to '<i class="fa fa-globe"></i><span class="remove-txt"> Países</span>'.html_safe, countries_path, { :class => if controller.controller_name == "countries" then "submenu active" else "submenu" end } %></li>
+							<li><%= link_to '<i class="fa fa-picture-o"></i><span class="remove-txt"> Regiones</span>'.html_safe, regions_path, { :class => if controller.controller_name == "regions" then "submenu active" else "submenu" end } %></li>
+							<li><%= link_to '<i class="fa fa-building"></i><span class="remove-txt"> Ciudades</span>'.html_safe, cities_path, { :class => if controller.controller_name == "cities" then "submenu active" else "submenu" end } %></li>
+							<li><%= link_to '<i class="fa fa-home"></i><span class="remove-txt"> Comunas</span>'.html_safe, districts_path, { :class => if controller.controller_name == "districts" then "submenu active" else "submenu" end } %></li>
 						</ul>
 					</li>
 
 					<li>
 						<a class="open-submenu"><i class="fa fa-search"></i><span class="colapse-hidden"> Buscador <span class="fa fa-caret-down caret-especial"></span></span></a>
 						<ul id="submenu5" class="submenu-close">
-							<li><%= link_to '<i class="fa fa-usd"></i><span class="remove-txt"> Sector Ecónomico</span>'.html_safe, economic_sectors_path, { :class => "submenu" } %></li>
-							<li><%= link_to '<i class="fa fa-tags"></i><span class="remove-txt"> Tags</span>'.html_safe, tags_path, { :class => "submenu" } %></li>
+							<li><%= link_to '<i class="fa fa-usd"></i><span class="remove-txt"> Sector Ecónomico</span>'.html_safe, economic_sectors_path, { :class => if controller.controller_name == "economic_sectors" then "submenu active" else "submenu" end } %></li>
+							<li><%= link_to '<i class="fa fa-tags"></i><span class="remove-txt"> Tags</span>'.html_safe, tags_path, { :class => if controller.controller_name == "tags" then "submenu active" else "submenu" end } %></li>
 						</ul>
 					</li>
 				<% end %>
@@ -94,11 +94,11 @@
 					<li>
 						<a class="open-submenu"><i class="fa fa-briefcase"></i><span class="colapse-hidden"> Administración <span class="fa fa-caret-down caret-especial"></span></span></a>
 						<ul id="submenu3" class="submenu-close">
-							<li><%= link_to '<i class="fa fa-sitemap"></i><span class="remove-txt"> Usuarios</span>'.html_safe, admin_users_path, { :class => "submenu" } %></li>
-							<li><%= link_to '<i class="fa fa-home"></i><span class="remove-txt"> Locales</span>'.html_safe, locations_path, { :class => "submenu" } %></li>
-							<li><%= link_to '<i class="fa fa-book"></i><span class="remove-txt"> Servicios</span>'.html_safe, services_path, { :class => "submenu" } %></li>
-							<li><%= link_to '<i class="fa fa-user"></i><span class="remove-txt"> Proveedores de Servicios</span>'.html_safe, service_providers_path, { :class => "submenu" } %></li>
-							<li><%= link_to '<i class="fa fa-group"></i><span class="remove-txt"> Clientes</span>'.html_safe, clients_path, { :class => "submenu" } %></li>
+							<li><%= link_to '<i class="fa fa-sitemap"></i><span class="remove-txt"> Usuarios</span>'.html_safe, admin_users_path, { :class => if controller.controller_name == "users" then "submenu active" else "submenu" end } %></li>
+							<li><%= link_to '<i class="fa fa-home"></i><span class="remove-txt"> Locales</span>'.html_safe, locations_path, { :class => if controller.controller_name == "locations" then "submenu active" else "submenu" end } %></li>
+							<li><%= link_to '<i class="fa fa-book"></i><span class="remove-txt"> Servicios</span>'.html_safe, services_path, { :class => if controller.controller_name == "services" then "submenu active" else "submenu" end } %></li>
+							<li><%= link_to '<i class="fa fa-user"></i><span class="remove-txt"> Proveedores de Servicios</span>'.html_safe, service_providers_path, { :class => if controller.controller_name == "service_providers" then "submenu active" else "submenu" end } %></li>
+							<li><%= link_to '<i class="fa fa-group"></i><span class="remove-txt"> Clientes</span>'.html_safe, clients_path, { :class => if controller.controller_name == "clients" then "submenu active" else "submenu" end } %></li>
 						</ul>
 					</li>
 				<% end %>
@@ -107,11 +107,11 @@
 					<li>
 						<a class="open-submenu"><i class="fa fa-wrench"></i><span class="colapse-hidden"> Configuración <span class="fa fa-caret-down caret-especial"></span></span></a>
 						<ul id="submenu4" class="submenu-close">
-							<li><%= link_to '<i class="fa fa-briefcase"></i><span class="remove-txt"> Empresa</span>'.html_safe, edit_company_path(Company.find(current_user.company_id)), { :class => "submenu" } %></li>
-							<li><%= link_to '<i class="fa fa-phone"></i><span class="remove-txt"> Recordatorios</span>'.html_safe, edit_company_setting_path(Company.find(current_user.company_id).company_setting), { :class => "submenu" } %></li>
-							<li><%= link_to '<i class="fa fa-clock-o"></i><span class="remove-txt"> Periodo Agenda</span>'.html_safe, time_booking_path(:company => Company.find(current_user.company_id).id), { :class => "submenu" } %></li>
-							<li><%= link_to '<i class="fa fa-dollar"></i><span class="remove-txt"> Planes</span>'.html_safe, select_plan_path, { :class => "submenu" } %></li>
-							<li><%= link_to '<i class="fa fa-list"></i><span class="remove-txt"> Categorías de Servicios</span>'.html_safe, service_categories_path, { :class => "submenu" } %></li>
+							<li><%= link_to '<i class="fa fa-briefcase"></i><span class="remove-txt"> Empresa</span>'.html_safe, edit_company_path(Company.find(current_user.company_id)), { :class => if controller.controller_name == "companies" then "submenu active" else "submenu" end } %></li>
+							<li><%= link_to '<i class="fa fa-phone"></i><span class="remove-txt"> Recordatorios</span>'.html_safe, edit_company_setting_path(Company.find(current_user.company_id).company_setting), { :class => if controller.action_name == "edit" && controller.controller_name == "company_settings" then "submenu active" else "submenu" end } %></li>
+							<li><%= link_to '<i class="fa fa-clock-o"></i><span class="remove-txt"> Periodo Agenda</span>'.html_safe, time_booking_path(:company => Company.find(current_user.company_id).id), { :class => if controller.action_name == "time_booking_edit" then "submenu active" else "submenu" end } %></li>
+							<li><%= link_to '<i class="fa fa-dollar"></i><span class="remove-txt"> Planes</span>'.html_safe, select_plan_path, { :class => if controller.controller_name == "plans" then "submenu active" else "submenu" end } %></li>
+							<li><%= link_to '<i class="fa fa-list"></i><span class="remove-txt"> Categorías de Servicios</span>'.html_safe, service_categories_path, { :class => if controller.controller_name == "service_categories" then "submenu active" else "submenu" end } %></li>
 						</ul>
 					</li>
 				<% end %>
@@ -173,6 +173,9 @@
 						$(".remove-txt").addClass("kill-txt");
 						$('#closetab > span:first').removeClass('fa-chevron-left');
 						$('#closetab > span:first').addClass('fa-chevron-right');
+						if (typeof(Storage) !== "undefined") {
+							sessionStorage.menu = "close";
+						}
 				}, function () {
 						$("#sidebar").removeClass("colapsar");
 						$("#admin-content").removeClass("expandir");
@@ -180,6 +183,9 @@
 						$(".remove-txt").removeClass("kill-txt");
 						$('#closetab > span:first').removeClass('fa-chevron-right');
 						$('#closetab > span:first').addClass('fa-chevron-left');
+						if (typeof(Storage) !== "undefined") {
+							sessionStorage.menu = "open";
+						}
 				});
 
 				$('.open-submenu').click( function (event) {
@@ -196,6 +202,21 @@
 				}, function () {
 							$("#sub-menu-usuario").addClass("close-menu-usuario");
 				});
+
+				if ($('.active').hasClass('submenu')) {
+					$('.active').closest('ul').removeClass('submenu-close');
+				}
+
+				if (typeof(Storage) !== "undefined") {
+					if (sessionStorage.menu == "close") {
+						$("#sidebar").addClass("colapsar");
+						$("#admin-content").addClass("expandir");
+						$(".menu-lateral li").addClass("colapsado-ok");
+						$(".remove-txt").addClass("kill-txt");
+						$('#closetab > span:first').removeClass('fa-chevron-left');
+						$('#closetab > span:first').addClass('fa-chevron-right');
+					}
+				}
 			});
 		</script>
 	</body>
