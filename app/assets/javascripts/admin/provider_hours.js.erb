@@ -41,12 +41,12 @@ function buildDay (value) {
 			'<th>' +
 				'<form class="form-inline" role="form">' +
 					'<div class="form-group">' +
-						'<select class="form-control" id="openHourId'+ value +'" name="openHour'+ value +'" disabled="disabled">' +
+						'<select class="form-control time-select" id="openHourId'+ value +'" name="openHour'+ value +'" disabled="disabled">' +
 							hourOptions +
 						'</select>' +
 					'</div> : ' +
 					'<div class="form-group">' +
-						'<select class="form-control" id="openMinuteId'+ value +'" name="openMinute'+ value +'" disabled="disabled">' +
+						'<select class="form-control time-select" id="openMinuteId'+ value +'" name="openMinute'+ value +'" disabled="disabled">' +
 							minuteOptions +
 						'</select>' +
 					'</div>' +
@@ -55,58 +55,48 @@ function buildDay (value) {
 			'<th>' +
 				'<form class="form-inline" role="form">' +
 					'<div class="form-group">' +
-						'<select class="form-control" id="closeHourId'+ value +'" name="closeHour'+ value +'" disabled="disabled">' +
+						'<select class="form-control time-select" id="closeHourId'+ value +'" name="closeHour'+ value +'" disabled="disabled">' +
 							hourOptions +
 						'</select>' +
 					'</div> : ' +
 					'<div class="form-group">' +
-						'<select class="form-control" id="closeMinuteId'+ value +'" name="closeMinute'+ value +'" disabled="disabled">' +
+						'<select class="form-control time-select" id="closeMinuteId'+ value +'" name="closeMinute'+ value +'" disabled="disabled">' +
 							minuteOptions +
 						'</select>' +
 					'</div>' +
 				'</form>' +
 			'</th>' +
+			'<th></th>' +
 		'</tr>'
 	);
 }
 
-// function buildDay (divId, value) {
-// 	$('#'+divId).empty();
-// 	$('#'+divId).append('<div class="row"><input type="checkbox" name="dayStatus'+ value +'" id="dayStatusId'+ value +'" value="0" onchange="changeDayStatus('+ value +')" class="dayCheckbox">  Apertura: '+
-// 	'<select id="openHourId'+ value +'" name="openHour'+ value +'" disabled="disabled">'+
-// 		hourOptions+
-// 	'</select>'+
-// 	 ': <select id="openMinuteId'+ value +'" name="openMinute'+ value +'" disabled="disabled">'+
-// 		minuteOptions+
-// 	'</select>'+
-// 	' - Cierre: <select id="closeHourId'+ value +'" name="closeHour'+ value +'" disabled="disabled">'+
-// 		hourOptions+
-// 	'</select>'+
-// 	' : <select id="closeMinuteId'+ value +'" name="closeMinute'+ value +'" disabled="disabled">'+
-// 		minuteOptions+
-// 	'</select>'+
-//   '</div>');
-// }
-// var breakCount = 1;
 function addBreak (value, openTime, closeTime) {
 	if ($('tr.break'+value).length > 0) {
-		breakCount =  +$('tr.break'+value).find('a').attr('id').replace(value+'removeBreak','') + 1;
+		breakCount =  +$('tr.break' + value + ':last').find('a').attr('id').replace(value+'removeBreak','') + 1;
 	}
 	else {
 		breakCount = 1
 	}
-	$('#dayStatusId' + value).closest('tr').after(
+	var position;
+	if ($('.break' + value).length > 0) {
+		position = $('.break' + value + ':last');
+	}
+	else {
+		position = $('#dayStatusId' + value).closest('tr');
+	}
+	position.after(
 		'<tr class="break' + value + '">' +
 			'<th>Descanso:</th>' +
 			'<th>' +
 				'<form class="form-inline" role="form">' +
 					'<div class="form-group">' +
-						'<select class="form-control" id="'+value+'openHourId'+ breakCount+'" name="'+value+'openHour'+ breakCount+'">' +
+						'<select class="form-control time-select" id="'+value+'openHourId'+ breakCount+'" name="'+value+'openHour'+ breakCount+'">' +
 							hourOptions +
 						'</select>' +
 					'</div> : ' +
 					'<div class="form-group">' +
-						'<select class="form-control" id="'+value+'openMinuteId'+breakCount+'" name="'+value+'openMinute'+breakCount+'">' +
+						'<select class="form-control time-select" id="'+value+'openMinuteId'+breakCount+'" name="'+value+'openMinute'+breakCount+'">' +
 							minuteOptions +
 						'</select>' +
 					'</div>' +
@@ -115,12 +105,12 @@ function addBreak (value, openTime, closeTime) {
 			'<th>' +
 				'<form class="form-inline" role="form">' +
 					'<div class="form-group">' +
-						'<select class="form-control" id="'+value+'closeHourId'+breakCount+'" name="'+value+'closeHour'+breakCount+'">' +
+						'<select class="form-control time-select" id="'+value+'closeHourId'+breakCount+'" name="'+value+'closeHour'+breakCount+'">' +
 							hourOptions +
 						'</select>' +
 					'</div> : ' +
 					'<div class="form-group">' +
-						'<select class="form-control" id="'+value+'closeMinuteId'+breakCount+'" name="'+value+'closeMinute'+breakCount+'">' +
+						'<select class="form-control time-select" id="'+value+'closeMinuteId'+breakCount+'" name="'+value+'closeMinute'+breakCount+'">' +
 							minuteOptions +
 						'</select>' +
 					'</div>' +
@@ -131,21 +121,7 @@ function addBreak (value, openTime, closeTime) {
 			'</th>' +
 		'</tr>'
 	);
-	// $('#div'+value).append('<div class="row break'+value+'">  Inicio: '+
-	// '<select id="'+value+'openHourId'+ breakCount+'" name="'+value+'openHour'+ breakCount+'" class="openHourBreak">'+
-	// 	hourOptions+
-	// '</select>'+
-	//  ': <select id="'+value+'openMinuteId'+breakCount+'" name="'+value+'openMinute'+breakCount+'" class="openMinuteBreak">'+
-	// 	minuteOptions+
-	// '</select>'+
-	// ' - Fin: <select id="'+value+'closeHourId'+breakCount+'" name="'+value+'closeHour'+breakCount+'" class="closeHourBreak">'+
-	// 	hourOptions+
-	// '</select>'+
-	// ' : <select id="'+value+'closeMinuteId'+breakCount+'" name="'+value+'closeMinute'+breakCount+'" class="closeMinuteBreak">'+
-	// 	minuteOptions+
-	// '</select>'+
-	// ' <a id="'+value+'removeBreak'+breakCount+'" class="btn-xs btn-danger">Quitar Descanso</a>'+
- //  '</div>');
+
 	$('#'+value+'removeBreak'+breakCount).click(function(event) {
 		$(event.target).closest('tr').remove();
 	});
@@ -170,13 +146,6 @@ function initialize() {
 	for(var i = 1; i < 8; ++i) {
 		buildDay(i);
 	}
-	// buildDay('div1',1);
-	// buildDay('div2',2);
-	// buildDay('div3',3);
-	// buildDay('div4',4);
-	// buildDay('div5',5);
-	// buildDay('div6',6);
-	// buildDay('div7',7);
 
 	if ( $('#title').length > 0 ) {
 		var providerTimesData = $('#provider_times_data').data('provider-times');
@@ -195,7 +164,7 @@ function initialize() {
 				var value = providerTimesData[arrayCounter].day_id;
 				$('#dayStatusId'+ value).prop('checked', true);
 				$('#dayStatusId'+ value).val(1);
-				$('#dayStatusId'+value).closest('tr').append('<th><a id="addBreakdiv'+value+'" onclick="addBreak('+value+')" class="btn btn-primary"><i class="fa fa-plus"></i></a></th>');
+				$('#dayStatusId'+value).closest('tr').children().last().append('<a id="addBreakdiv'+value+'" onclick="addBreak('+value+')" class="btn btn-primary"><i class="fa fa-plus"></i></a>');
 				
 				$('#openHourId'+ value).prop('disabled', false);
 				$('#openMinuteId'+ value).prop('disabled', false);
@@ -226,7 +195,7 @@ function changeDayStatus(value) {
 		$('#closeHourId'+ value).prop('disabled', false);
 		$('#closeMinuteId'+ value).prop('disabled', false);
 		$('#dayStatusId'+ value).val(1);
-		$('#dayStatusId'+value).closest('tr').append('<th><a id="addBreakdiv'+value+'" class="btn btn-primary"><i class="fa fa-plus"></i></a></th>');
+		$('#dayStatusId'+value).closest('tr').children().last().append('<a id="addBreakdiv'+value+'" class="btn btn-primary"><i class="fa fa-plus"></i></a>');
 		$('#addBreakdiv'+value).click(function() {
 			addBreak(value);
 		});
@@ -238,7 +207,7 @@ function changeDayStatus(value) {
 		$('#closeMinuteId'+ value).prop('disabled', true);
 		$('#dayStatusId'+ value).val(0);
 		$('tr.break'+value).remove();
-		$('#addBreakdiv'+value).parent().remove();
+		$('#addBreakdiv'+value).remove();
 	}
 }
 
@@ -343,14 +312,36 @@ $(function() {
 	alertId = new Alert();
 	$('#service_provider_user_attributes_email').val('');
 	$('#service_provider_user_attributes_email').prop('disabled', true);
-  initialize();
-  $('.buttonProvider').click(function() {
-	if ( $('#title').length > 0 ) {
-		updateProvider();
-	}
-	else {
-		createProvider();
-	}
+
+  	initialize();
+
+  	$('.buttonProvider').click(function() {
+		if ( $('#title').length > 0 ) {
+			updateProvider();
+		}
+		else {
+			createProvider();
+		}
 		return false;
+	});
+
+	$('input[name="selectCategory"]').change(function (event) {
+		var id = $(event.target).attr('id').replace('selectCategory', '');
+		$('#service-category' + id).find('input.check_boxes').each( function () {
+			if ($(event.target).prop('checked')) {
+				$(this).prop('checked', true);
+			}
+			else {
+				$(this).prop('checked', false);
+			}
+		});
+	});
+
+	$('input.check_boxes').change(function (event) {
+		var prop = true;
+		$(event.target).parents('.panel-body').find('input.check_boxes').each( function () {
+			prop = prop && $(this).prop('checked');
+		});
+		$(event.target).parents('.panel').find('input[name="selectCategory"]').prop('checked', prop);
 	});
 });

@@ -32,8 +32,8 @@ class SearchsController < ApplicationController
 		end
 
 		# => Optener los locales pertenecientes a las compañias cuyo rubro se parece a la busqueda
-		locations_companies_economic_sector = Location.where(district_id: params[:district]).where(company_id: Company.where(economic_sector_id: EconomicSector.where('name ILIKE ?', search)))
-		puts locations_companies_economic_sector
+		economic_sector = EconomicSector.includes(:economic_sectors_dictionaries).where('economic_sectors.name ILIKE ? OR economic_sectors_dictionaries.name ILIKE ?', search, search)
+		locations_companies_economic_sector = Location.where(district_id: params[:district]).where(company_id: Company.where(economic_sector_id: economic_sector.pluck(:id)))
 		locations_companies_economic_sector.each do |location_company_economic_sector|
 			@results.push(location_company_economic_sector)
 		end

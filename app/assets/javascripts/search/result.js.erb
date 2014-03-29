@@ -59,8 +59,8 @@ function decode (position) {
           }
           else {
             myAlert.showAlert(
-              '<h3>Hubo un error localizandolo</h3>' +
-              '<p>No se pudo hubicar geograficamente.</p>'
+              '<h3>Hubo un error en la localización.</h3>' +
+              '<p>No te pudimos ubicar. Revisa que tengas señal GPS o que hayas dado permiso en el navegador.</p>'
             );
           }
         });
@@ -68,8 +68,8 @@ function decode (position) {
     }
     else {
       myAlert.showAlert(
-        '<h3>Hubo un error localizandolo</h3>' +
-        '<p>No se pudo hubicar geograficamente.</p>'
+        '<h3>Hubo un error en la localización.</h3>' +
+        '<p>No te pudimos ubicar. Revisa que tengas señal GPS o que hayas dado permiso en el navegador.</p>'
       );
     }
     $('#search-bar').removeAttr('disabled');
@@ -80,14 +80,14 @@ function locationError (error) {
   if (typeof(Storage) !== "undefined") {
     changeLocation(sessionStorage.district)
     myAlert.showAlert(
-      '<h3>Hubo un error localizandolo</h3>' +
-      '<p>Se utilizo la ultima ubicacion disponible.</p>'
+      '<h3>Hubo un error en la localización.</h3>' +
+      '<p>Se utilizó la última ubicación disponible.</p>'
     );
   }
   else {
     myAlert.showAlert(
-      '<h3>Hubo un error localizandolo</h3>' +
-      '<p>Se utilizo Las Condes por defecto</p>'
+      '<h3>Hubo un error en la localización.</h3>' +
+      '<p>Se utilizará la comuna de Las Condes por defecto.</p>'
     );
     changeLocation(1);
   }
@@ -106,8 +106,8 @@ $(function() {
       }
       else {
         myAlert.showAlert(
-          '<h3>Hubo un error localizandolo</h3>' +
-          '<p>No se encontro su comuna</p>',
+          '<h3>Hubo un error en la localización.</h3>' +
+          '<p>No fue posible encontrar la comuna.</p>',
           function () {
             $('#modalLocation').modal('show');
           },
@@ -131,8 +131,8 @@ $(function() {
     }
     else {
       myAlert.showAlert(
-        '<h3>Hubo un error localizandolo</h3>' +
-        '<p>Su navegador no soporta geolocalizacion</p>'
+        '<h3>Hubo un error en la localización.</h3>' +
+        '<p>Tu navegador no soporta geolocalización. Por favor actualízalo e intenta nuevamente.</p>'
       );
     }
 

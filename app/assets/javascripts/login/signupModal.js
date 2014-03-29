@@ -1,8 +1,4 @@
 $(function() {
-	$.validator.setDefaults({
-		ignore: ""
-	});
-
 	$('#signup-form').validate({
 		errorPlacement: function(error, element) {
 			error.appendTo(element.next());
@@ -32,7 +28,7 @@ $(function() {
 			'user[password_confirmation]': {
 				required: true,
 				rangelength: [8, 128],
-				equalTo: "#user_password"
+				equalTo: $('input[name="user[password]"]:last')
 			}
 		},
 		messages: {
@@ -61,10 +57,6 @@ $(function() {
 				required: "Debe ingresar una contraseña",
 				rangelength: "La contraseña debe tener un largo entre 8 y 128 caracteres",
 				equalTo: "La contraseña no coincide"
-			},
-			'user[company_attributes][name]': {
-				required: "Debe ingresar un nombre para la compañia",
-				minlength: "El nombre debe tener al menos 3 caracteres",
 			}
 		},
 		highlight: function(element) {

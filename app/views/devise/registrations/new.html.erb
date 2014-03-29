@@ -76,6 +76,12 @@
 				<div class="tab-pane fade" id="company-data">
 					<!-- start: Company -->
 					<%= f.fields_for :company_attributes do |builder| %>
+						<!-- start: Companny Settings -->
+						<%= builder.fields_for :company_setting_attributes do |settings| %>
+							<%= settings.hidden_field :before_booking, :value => 24 %>
+							<%= settings.hidden_field :after_booking, :value => 6 %>
+						<% end %>
+						<!-- end: Company Settings -->
 						<%= builder.hidden_field :payment_status_id, :value => PaymentStatus.where(:name => "Al día").first.id %>
 						<%= builder.hidden_field :plan_id, :value => Plan.find_by(:name => 'Trial').id %>
 						<div class="form-group">

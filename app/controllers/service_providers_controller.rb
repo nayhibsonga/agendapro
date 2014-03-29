@@ -22,10 +22,12 @@ class ServiceProvidersController < ApplicationController
     @service_provider.company_id = current_user.company_id
     # @users = User.where(company_id: current_user.company_id)
     # @locations = Location.where(company_id: current_user.company_id)
+    @service_categories = ServiceCategory.where(company_id: current_user.company_id).order(name: :asc)
   end
 
   # GET /service_providers/1/edit
   def edit
+    @service_categories = ServiceCategory.where(company_id: current_user.company_id).order(name: :asc)
   end
 
   # POST /service_providers

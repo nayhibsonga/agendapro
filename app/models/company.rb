@@ -17,4 +17,6 @@ class Company < ActiveRecord::Base
 	validates_uniqueness_of :web_address
 
 	mount_uploader :logo, LogoUploader
+
+	accepts_nested_attributes_for :company_setting
 end

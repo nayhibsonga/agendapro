@@ -1,4 +1,4 @@
-<div class="box-step">
+<div class="box-step step-workflow">
 	<div class="col-md-12">
 		<h4>Nuevo Local</h4>
 	</div>
@@ -54,7 +54,7 @@
 		</div>
 	</div>
 </div>
-<div class="box-step">
+<div class="box-step step-workflow-min">
 	<div class="col-md-12">
 		<h4>Nuevo Servicio</h4>
 		<%= form_for @service, html: {class: "form-horizontal" } do |f| %>
@@ -97,7 +97,7 @@
 					<div class="col-sm-8">
 						<%= f.collection_select :service_category_id, ServiceCategory.where(company_id: current_user.company_id), :id, :name, {}, { class: "form-control" }%>
 					</div>
-        </div>
+        		</div>
 				<% if @service.service_category.nil? then @service.build_service_category end %>
 				<%= f.fields_for :service_category do |builder| %>
 				<div class="form-group hidden">
@@ -149,7 +149,7 @@
 		<% end %>
 	</div>
 </div>
-<div class="box-step">
+<div class="box-step step-workflow">
 	<div class="col-md-12">
 		<h4>Nuevo Proveedor de Servicios</h4>
 	</div>
