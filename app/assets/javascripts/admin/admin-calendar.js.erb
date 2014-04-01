@@ -249,6 +249,15 @@ function loadResourcesCalendar (startTime, endTime, hiddenDays, resourcesArray, 
 		slotMinutes: duration
 	});
 	loadProviderBooking(providerId);
+	$('.fc-button').click(function (event) {
+		if (!$(event.target).closest('.fc-button').hasClass('fc-button-agendaWeek')) {
+			$('input[name="providerRadio"]').each(function () {
+				if ($(this).val() > 0) {
+					loadProviderBreaks ($(this).val());
+				};
+			});
+		};
+	});
 }
 
 function loadWeekCalendar (startTime, endTime, hiddenDays, resourcesArray, providerId) {
@@ -407,6 +416,7 @@ function loadProviderBreaks (providerId) {
 					start: start_date,
 					end: end_date,
 					editable: false,
+					resourceId: times[i].service_provider_id,
 					color: '#585858'
 				};
 				$('#calendar').fullCalendar('renderEvent', events, false);
