@@ -30,7 +30,7 @@ function loadProviders () {
 				});
 				$('[name="providerRadio"]').on('click', function(event) {
 					$('[name="providerRadio"]').parent().removeClass('active');
-            		event.target.parentNode.className += 'active';
+					event.target.parentNode.className += 'active';
 					$('[name="providerRadio"]').attr('checked',false);
 					$(this).attr('checked',true);
 					var providerId = event.target.getAttribute('value');
@@ -178,10 +178,9 @@ function loadProviderTime (providerId) {
 				hiddenDays.push(6);
 			}
 			loadWeekCalendar(minHour + ':' + minMinuts, maxHour + ':' + maxMinuts, hiddenDays,[],providerId);
-		  });
+		});
 	});
 }
-
 
 var duration = 15;
 function loadResourcesCalendar (startTime, endTime, hiddenDays, resourcesArray, providerId) {
@@ -193,19 +192,19 @@ function loadResourcesCalendar (startTime, endTime, hiddenDays, resourcesArray, 
 	$('#calendar').fullCalendar('removeEvents');
 	$('#calendar').empty();
 	$('#calendar').fullCalendar({
-	    header: {
-	    	left: 'agendaWeek,resourceDay',
-	    	center: 'prev,today,next',
-	    	right: 'title'
-	    },
-	    hiddenDays: hiddenDays,
-	    resources: resourcesArray,
-	    eventClick: function(event) {
-	    	editBookingModal(event.id);
-	    },
-	    dayClick: function(date, allDay, jsEvent, view) {
-	        createBookingModal(date);
-	    },
+		header: {
+			left: 'agendaWeek,resourceDay',
+			center: 'prev,today,next',
+			right: 'title'
+		},
+		hiddenDays: hiddenDays,
+		resources: resourcesArray,
+		eventClick: function(event) {
+			editBookingModal(event.id);
+		},
+		dayClick: function(date, allDay, jsEvent, view) {
+			createBookingModal(date);
+		},
 		//eventMouseover: function(calEvent, domEvent) {
 		// 	var layer =	"<div id='events-layer' class='fc-transparent' style='position:absolute; width:100%; height:100%; top:-1px; text-align:right; z-index:100'>asdfff</div>";
 		// 	$(this).append(layer);
@@ -214,40 +213,40 @@ function loadResourcesCalendar (startTime, endTime, hiddenDays, resourcesArray, 
 		// eventMouseout: function(calEvent, domEvent) {
 		// 	$(this).find('div[id*=events-layer]').remove();
 		// },
-	    firstDay: 1,	//Lunes
-	    defaultView: 'agendaWeek',
-	    allDaySlot: false,
-	    axisFormat: 'HH:mm',
-	    timeFormat: 'HH:mm{ - HH:mm}',
-	    columnFormat: {
-	    	week: 'ddd d/M',
-	    	day: 'dddd d/M' 
-	    },
-	    titleFormat: {
-	    	week: 'MMM d[ yyyy]{ &#8212;[ MMM] d yyyy}',
-	    	day: 'dddd, d MMM yyyy'  
-	    },
-	    buttonText: {
-		    prev:     '&lsaquo;', // <
-		    next:     '&rsaquo;', // >
-		    today:    'Hoy',
-		    week:     '<i class="fa fa-calendar"></i>  Semana',
-		    day:      '<i class="fa fa-calendar"></i>  Día',
-		    resourceDay: '<i class="fa fa-calendar"></i>  Día'
-	    },
-	    monthNames: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
-	    monthNamesShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
-	    dayNames: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'],
-	    dayNamesShort: ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'],
-	    minTime: startTime,
-	    maxTime: endTime,
-	    defaultEventMinutes: duration,
-	    editable: true,
-	    disableResizing: true,
-	    eventDrop: function (event) {
-	    	editDrag(event);
-	    },
-	    slotMinutes: duration
+		firstDay: 1,	//Lunes
+		defaultView: 'agendaWeek',
+		allDaySlot: false,
+		axisFormat: 'HH:mm',
+		timeFormat: 'HH:mm{ - HH:mm}',
+		columnFormat: {
+			week: 'ddd d/M',
+			day: 'dddd d/M' 
+		},
+		titleFormat: {
+			week: 'MMM d[ yyyy]{ &#8212;[ MMM] d yyyy}',
+			day: 'dddd, d MMM yyyy'  
+		},
+		buttonText: {
+			prev:     '&lsaquo;', // <
+			next:     '&rsaquo;', // >
+			today:    'Hoy',
+			week:     '<i class="fa fa-calendar"></i>  Semana',
+			day:      '<i class="fa fa-calendar"></i>  Día',
+			resourceDay: '<i class="fa fa-calendar"></i>  Día'
+		},
+		monthNames: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+		monthNamesShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
+		dayNames: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'],
+		dayNamesShort: ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'],
+		minTime: startTime,
+		maxTime: endTime,
+		defaultEventMinutes: duration,
+		editable: true,
+		disableResizing: true,
+		eventDrop: function (event) {
+			editDrag(event);
+		},
+		slotMinutes: duration
 	});
 	loadProviderBooking(providerId);
 }
@@ -261,54 +260,58 @@ function loadWeekCalendar (startTime, endTime, hiddenDays, resourcesArray, provi
 	$('#calendar').fullCalendar('removeEvents');
 	$('#calendar').empty();
 	$('#calendar').fullCalendar({
-	    header: {
-	    	left: '',
-	    	center: 'prev,today,next',
-	    	right: 'title'
-	    },
-	    hiddenDays: hiddenDays,
-	    resources: resourcesArray,
-	    eventClick: function(event) {
-	    	editBookingModal(event.id);
-	    },
-	    dayClick: function(date, allDay, jsEvent, view) {
-	        createBookingModal(date);
-	    },
-	    firstDay: 1,	//Lunes
-	    defaultView: 'agendaWeek',
-	    allDaySlot: false,
-	    axisFormat: 'HH:mm',
-	    timeFormat: 'HH:mm{ - HH:mm}',
-	    columnFormat: {
-	    	week: 'ddd d/M',
-	    	day: 'dddd d/M' 
-	    },
-	    titleFormat: {
-	    	week: 'MMM d[ yyyy]{ &#8212;[ MMM] d yyyy}',
-	    	day: 'dddd, d MMM yyyy'  
-	    },
-	    buttonText: {
-		    prev:     '&lsaquo;', // <
-		    next:     '&rsaquo;', // >
-		    today:    'Hoy',
-		    week:     '<i class="fa fa-calendar"></i>  Semana',
-		    day:      '<i class="fa fa-calendar"></i>  Día'
-	    },
-	    monthNames: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
-	    monthNamesShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
-	    dayNames: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'],
-	    dayNamesShort: ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'],
-	    minTime: startTime,
-	    maxTime: endTime,
-	    defaultEventMinutes: duration,
-	    editable: true,
-	    disableResizing: true,
-	    eventDrop: function (event) {
-	    	editDrag(event);
-	    },
-	    slotMinutes: duration
+		header: {
+			left: '',
+			center: 'prev,today,next',
+			right: 'title'
+		},
+		hiddenDays: hiddenDays,
+		resources: resourcesArray,
+		eventClick: function(event) {
+			editBookingModal(event.id);
+		},
+		dayClick: function(date, allDay, jsEvent, view) {
+			createBookingModal(date);
+		},
+		firstDay: 1,	//Lunes
+		defaultView: 'agendaWeek',
+		allDaySlot: false,
+		axisFormat: 'HH:mm',
+		timeFormat: 'HH:mm{ - HH:mm}',
+		columnFormat: {
+			week: 'ddd d/M',
+			day: 'dddd d/M' 
+		},
+		titleFormat: {
+			week: 'MMM d[ yyyy]{ &#8212;[ MMM] d yyyy}',
+			day: 'dddd, d MMM yyyy'  
+		},
+		buttonText: {
+			prev:     '&lsaquo;', // <
+			next:     '&rsaquo;', // >
+			today:    'Hoy',
+			week:     '<i class="fa fa-calendar"></i>  Semana',
+			day:      '<i class="fa fa-calendar"></i>  Día'
+		},
+		monthNames: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+		monthNamesShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
+		dayNames: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'],
+		dayNamesShort: ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'],
+		minTime: startTime,
+		maxTime: endTime,
+		defaultEventMinutes: duration,
+		editable: true,
+		disableResizing: true,
+		eventDrop: function (event) {
+			editDrag(event);
+		},
+		slotMinutes: duration
 	});
 	loadProviderBooking(providerId);
+	$('.fc-button').click(function () {
+		var providerId = $('input[name="providerRadio"]:checked').val();
+		loadProviderBreaks (providerId);
+	});
 }
 
 function loadProviderBooking (providerId) {
@@ -345,6 +348,7 @@ function loadProviderBooking (providerId) {
 		});
 	}
 	else {
+		loadProviderBreaks(providerId);
 		$.getJSON('/booking', {location: localId, provider: providerId}, function (bookings) {
 			if (bookings.length > 0) {
 				$.each(bookings, function (key, booking) {
@@ -377,6 +381,40 @@ function loadProviderBooking (providerId) {
 	return false;
 }
 
+function loadProviderBreaks (providerId) {
+	$.getJSON('/provider_time', {id: providerId}, function (times) {
+		$('#calendar').fullCalendar('removeEvents', 0);
+		for (var i = 0; i < times.length - 1; i++) {
+			if (times[i].day_id == times[i + 1].day_id) {
+				var now = $('#calendar').fullCalendar('getDate');
+				var start_booking = times[i].close.substring(times[i].close.indexOf('T') + 1).split(':');
+				var end_booking = times[i + 1].open.substring(times[i + 1].open.indexOf('T') + 1).split(':');
+				
+				var today = now.getDay() - times[i].day_id;
+				var offset = 0 - today;
+				var start_date = new Date(now.getFullYear(), now.getMonth(), now.getDate(), start_booking[0], start_booking[1]);
+				start_date.setDate(now.getDate() + offset);
+
+				today = now.getDay() - times[i].day_id;
+				offset = 0 - today;
+				var end_date = new Date(now.getFullYear(), now.getMonth(), now.getDate(), end_booking[0], end_booking[1]);
+				end_date.setDate(now.getDate() + offset);
+
+				var events = {
+					id: 0,
+					title: 'Descanso',
+					allDay: false,
+					start: start_date,
+					end: end_date,
+					editable: false,
+					color: '#585858'
+				};
+				$('#calendar').fullCalendar('renderEvent', events, false);
+			};
+		};
+	});
+}
+
 function editBookingModal(eventId) {
 	$.getJSON('/bookings/'+eventId, function (booking) {
 		var start = booking.start || 0;
@@ -406,17 +444,17 @@ function editBookingModal(eventId) {
 		$('.booking-modal-footer').append('<button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button><button type="button" class="btn btn-primary" onclick="editBooking('+eventId+')">Guardar</button><button type="button" class="btn btn-danger" onclick="deleteBooking('+eventId+')">Eliminar</button>');
 
 		if ( booking.service_provider_id > 0) {
- 			$.getJSON('/provider_services', {id: booking.service_provider_id}, function (services) {
- 				$('#booking_service_id').empty();
- 				$.each(services, function (key, service) {
- 					$('#booking_service_id').append(
- 						'<option value="' + service.id + '">' + service.name + '</option>'
- 					);
- 				});
- 				$('#booking_service_id option[value="'+booking.service_id+'"]').attr("selected",true);
- 				$('#booking_service_id').removeAttr('disabled');
- 			});
- 		}
+			$.getJSON('/provider_services', {id: booking.service_provider_id}, function (services) {
+				$('#booking_service_id').empty();
+				$.each(services, function (key, service) {
+					$('#booking_service_id').append(
+						'<option value="' + service.id + '">' + service.name + '</option>'
+					);
+				});
+				$('#booking_service_id option[value="'+booking.service_id+'"]').attr("selected",true);
+				$('#booking_service_id').removeAttr('disabled');
+			});
+		}
 
 		modalChange();
 
@@ -445,15 +483,15 @@ function createBookingModal(date) {
 			if (parseInt($('input[name=providerRadio]:checked').val()) > 0) {
 				$('#booking_service_provider_id option[value="'+$('input[name=providerRadio]:checked').val()+'"]').attr("selected",true);
 				$.getJSON('/provider_services', {id: parseInt($('input[name=providerRadio]:checked').val())}, function (services) {
-		 			$('#booking_service_id').empty();
-		 			$.each(services, function (key, service) {
-		 				$('#booking_service_id').append(
-		 					'<option value="' + service.id + '">' + service.name + '</option>'
-		 				);
-		 			});
-		 			$('#booking_service_id').removeAttr('disabled');
-		 			modalChange();
-		 		});
+					$('#booking_service_id').empty();
+					$.each(services, function (key, service) {
+						$('#booking_service_id').append(
+							'<option value="' + service.id + '">' + service.name + '</option>'
+						);
+					});
+					$('#booking_service_id').removeAttr('disabled');
+					modalChange();
+				});
 			}
 			else {
 				$('#booking_service_provider_id').val('');
@@ -517,25 +555,25 @@ function editDrag(event) {
 		var bookingJSON = {start: startString, end: endString};
 	}
 	$.ajax({
-	    type: 'PATCH',
-	    url: '/bookings/'+ event.id +'.json',
-	    data: { "booking": bookingJSON },
-	    dataType: 'json',
-	    success: function(){
-	    	alertId.showAlert("Horario de la reserva cambiado exitosamente.");
+		type: 'PATCH',
+		url: '/bookings/'+ event.id +'.json',
+		data: { "booking": bookingJSON },
+		dataType: 'json',
+		success: function(){
+			alertId.showAlert("Horario de la reserva cambiado exitosamente.");
 		},
 		error: function(xhr){
-		    var errors = $.parseJSON(xhr.responseText).errors;
-		    var errores = '';
-		    for (i in errors) {
-		    	errores += errors[i];
-		    }
-		    alertId.showAlert(errores);
-		    $.getJSON('/bookings/'+event.id, function (booking) {
-		    	event.start = booking.start;
-		    	event.end = booking.end;
-		        $('#calendar').fullCalendar('updateEvent', event);
-		    });
+			var errors = $.parseJSON(xhr.responseText).errors;
+			var errores = '';
+			for (i in errors) {
+				errores += errors[i];
+			}
+			alertId.showAlert(errores);
+			$.getJSON('/bookings/'+event.id, function (booking) {
+				event.start = booking.start;
+				event.end = booking.end;
+				$('#calendar').fullCalendar('updateEvent', event);
+			});
 		}
 	});
 }
@@ -543,20 +581,20 @@ function editDrag(event) {
 function saveBooking(typeURL, extraURL) {
 	var bookingJSON = jsonBooking();
 	$.ajax({
-	    type: typeURL,
-	    url: '/bookings'+ extraURL +'.json',
-	    data: { "booking": bookingJSON },
-	    dataType: 'json',
-	    success: function(){
-	    	document.location.href = '/bookings/';
+		type: typeURL,
+		url: '/bookings'+ extraURL +'.json',
+		data: { "booking": bookingJSON },
+		dataType: 'json',
+		success: function(){
+			document.location.href = '/bookings/';
 		},
 		error: function(xhr){
-		    var errors = $.parseJSON(xhr.responseText).errors;
-		    var errores = '';
-		    for (i in errors) {
-		    	errores += errors[i];
-		    }
-		    alertId.showAlert(errores);
+			var errors = $.parseJSON(xhr.responseText).errors;
+			var errores = '';
+			for (i in errors) {
+				errores += errors[i];
+			}
+			alertId.showAlert(errores);
 		}
 	});
 }
@@ -596,8 +634,8 @@ var alertId;
 $(function() {
 	alertId = new Alert();
 	$('.createBooking').click(function() {
-    	createBookingModal();
-	    return false;
+		createBookingModal();
+		return false;
 	});
 	$.getJSON('/services', function (services) {
 		servicesJSON = services;
