@@ -87,12 +87,11 @@ class Booking < ActiveRecord::Base
 	end
 
 	def self.booking_reminder
-		puts "lista"
-		Booking.all.each do |booking|
-			if (1...2).include?((Time.new.getutc - booking.start)/1.day)
-				BookingMailer.book_service_mail(booking)
-				puts "mail"
-			end
+		@time1 = Time.new.getutc + 1.day
+		@time2 = Time.new.getutc + 2.day
+		where(:start => @time1...@time2).each do |booking|
+			puts "asd"
+			BookingMailer.book_service_mail(booking)
 		end
 	end
 end
