@@ -66,7 +66,7 @@ class ServiceProvidersController < ApplicationController
         new_params = service_provider_params.except(:user_attributes)
       else
         new_params = service_provider_params.except(:user_id)
-        new_params[:user_attributes].merge!(:password => rand(36**15).to_s(36)).merge!(:role_id => Role.find_by_name("Staff").id).merge!(:company_id => current_user.company_id).merge!(:location_id => service_provider_params[:location_id])
+        new_params[:user_attributes].merge!(:password =>rand(36**15).to_s(36)).merge!(:role_id => Role.find_by_name("Staff").id).merge!(:company_id => current_user.company_id).merge!(:location_id => service_provider_params[:location_id])
       end
     end
 
