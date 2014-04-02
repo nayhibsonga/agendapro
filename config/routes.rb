@@ -92,16 +92,18 @@ Agendapro::Application.routes.draw do
   get '/workflow', :to => 'companies#workflow', :as => 'workflow'
   get '/local_services', :to => 'service_providers#location_services'
   get '/local_providers', :to => 'service_providers#location_providers'
-  get '/service', :to => 'services#service_data'  # Fullcalendar
-  get '/services_list', :to => 'services#services_data'  # Fullcalendar
   get '/providers_services', :to => 'services#get_providers'
   get '/location_time', :to => 'locations#location_time'
-  get '/provider_time', :to => 'service_providers#provider_time'  # Fullcalendar
-  get '/booking', :to => 'bookings#provider_booking'  # Fullcalendar
   get '/get_booking', :to => 'bookings#get_booking'
   post "/book", :to => 'bookings#book_service'
   get '/category_name', :to => 'service_categories#get_category_name'
   get '/get_available_time', :to => 'locations#get_available_time'
+
+  # Fullcalendar
+  get '/service', :to => 'services#service_data'  # Fullcalendar
+  get '/services_list', :to => 'services#services_data'  # Fullcalendar
+  get '/provider_time', :to => 'service_providers#provider_time'  # Fullcalendar
+  get '/booking', :to => 'bookings#provider_booking'  # Fullcalendar
 
   get '/edit_booking', :to => 'bookings#edit_booking', :as => 'booking_edit'
   post '/edited_booking', :to => 'bookings#edit_booking_post'

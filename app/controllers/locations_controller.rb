@@ -85,7 +85,7 @@ class LocationsController < ApplicationController
     # Data
     service_duration = Service.find(params[:service]).duration
     weekDate = Date.strptime(params[:date], '%Y-%m-%d')
-    company_setting = CompanySetting.find(Location.find(params[:local]).company_id)
+    company_setting = CompanySetting.find(Company.find(Location.find(params[:local]).company_id).company_setting)
 
     @week_blocks = Hash.new
     # Week Blocks

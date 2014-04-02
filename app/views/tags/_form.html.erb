@@ -12,6 +12,13 @@
 	<% end %>
 
 	<div class="form-group">
+		<%= f.label :economic_sector_id, 'Sector Economico: ', :class => 'col-sm-3 control-label' %>
+		<div class="col-sm-4">
+			<%= f.collection_select :economic_sector_id, EconomicSector.all, :id, :name, {}, { :class => 'form-control'} %>
+		</div>
+	</div>
+
+	<div class="form-group">
 		<%= f.label :name, 'Nombre: ', :class => 'col-sm-3 control-label' %>
 		<div class="col-sm-4">
 			<%= f.text_field :name, :autofocus => true, :class => 'form-control' %>
@@ -35,4 +42,20 @@
 			<%= link_to 'Cancelar', tags_path, class: "btn btn-danger" %>    
 		</div>
 	</div>
+<% end %>
+
+<% content_for :scripts do %>
+<%= javascript_include_tag :cocoon %> 
+<script type="text/javascript">
+	$(function() {
+		$('.remove_fields').click( function (event) {
+			$(event.target).closest('.form-group').hide();
+		});
+	});
+	$('form').on('cocoon:after-insert', function(e, insertedItem) {
+		$('.remove_fields').click( function (event) {
+			$(event.target).closest('.form-group').hide();
+		});
+	});
+</script>
 <% end %>

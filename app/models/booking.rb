@@ -85,4 +85,13 @@ class Booking < ActiveRecord::Base
 	def send_update_mail
 		BookingMailer.update_booking(self)
 	end
+
+	def self.booking_reminder
+		@time1 = Time.new.getutc + 1.day
+		@time2 = Time.new.getutc + 2.day
+		where(:start => @time1...@time2).each do |booking|
+			puts "asd"
+			BookingMailer.book_reminder_mail(booking)
+		end
+	end
 end
