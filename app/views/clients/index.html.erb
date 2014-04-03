@@ -42,33 +42,46 @@
 				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
 				<h4 class="modal-title" id="mailModalLabel">Enviar Email</h4>
 			</div>
-				<%= form_tag '/send_mail_client' do %>
-			<div class="modal-body">
-					<div class="form-group">
-						<%= label_tag :to, 'Para' %>
-						<%= text_field_tag :to, nil, :class => 'form-control', :required => true %>
-					</div>
-					<div class="form-group">
-						<%= label_tag :subject, 'Asunto' %>
-						<%= text_field_tag :subject, nil, :class => 'form-control', :required => true, :autofocus => true %>
-					</div>
-					<div class="form-group">
-						<%= label_tag :message, 'Mensaje' %>
-						<%= text_area_tag :message, nil, :class => 'form-control', :rows => 10, :required => true %>
-					</div>
-			</div>
-			<div class="modal-footer">
-				<button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
-				<%= submit_tag "Enviar", class: "btn btn-agendapro-claro" %>
-			</div>
-				<% end %>
+			<%= form_tag '/send_mail_client' do %>
+				<div class="modal-body">
+						<div class="center-block" style="display: table;">
+							<p>
+								<h3>Enviando Email</h3>
+								<span>Por favor espere</span>
+							</p>
+							<%= image_tag 'ajax-loader.gif', :alt => 'Loader' %>
+						</div>
+						<div class="form-group">
+							<%= label_tag :to, 'Para' %>
+							<%= text_field_tag :to, nil, :class => 'form-control', :required => true %>
+	            <span class="help-block"></span>
+						</div>
+						<div class="form-group">
+							<%= label_tag :subject, 'Asunto' %>
+							<%= text_field_tag :subject, nil, :class => 'form-control', :required => true, :autofocus => true %>
+	            <span class="help-block"></span>
+						</div>
+						<div class="form-group">
+							<%= label_tag :message, 'Mensaje' %>
+							<%= text_area_tag :message, nil, :class => 'form-control', :rows => 10, :required => true %>
+	            <span class="help-block"></span>
+						</div>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+					<%= submit_tag "Enviar", class: "btn btn-agendapro-claro" %>
+				</div>
+			<% end %>
 		</div>
 	</div>
 </div>
 
 <% content_for :scripts do %>
+<%= javascript_include_tag 'login/jquery.validate.min' %>
 <script type="text/javascript">
 	$(function () {
+		$('.modal-body div:first').toggle()
+
 		$('input[name="mail"]').change(function (event) {
 			$('input[name="client_mail"]').each( function () {
 				if ($(event.target).prop('checked')) {
@@ -101,6 +114,52 @@
 				};
 			});
 			$('#to').val(emails);
+		});
+
+		$('form').validate({
+			errorPlacement: function(error, element) {
+				error.appendTo(element.next());
+			},
+			rules: {
+				'to': {
+					required: true
+				},
+				'subject': {
+					required: true
+				},
+				'message': {
+					required: true
+				}
+			},
+			messages: {
+				'to': {
+					required: "Debe elegir al menos un destinatario"
+				},
+				'subject': {
+					required: "Debe escribir un asusnto"
+				},
+				'message': {
+					required: "No puede dejar el cuerpo vacío"
+				}
+			},
+			highlight: function(element) {
+				$(element).closest('.form-group').removeClass('has-success').addClass('has-error');
+			},
+			success: function(element) {
+				$(element).closest('.form-group').removeClass('has-error').addClass('has-success');
+				$(element).parent().empty()
+			},
+			submitHandler: function(form) {
+				form.submit();
+			}
+		});
+
+		$('input[name="commit"]').click( function () {
+			if($('form').valid()) {
+				$('.form-group').toggle();
+				$('.modal-footer .btn').toggle();
+				$('.modal-body div:first').toggle()
+			}
 		});
 	});
 </script>

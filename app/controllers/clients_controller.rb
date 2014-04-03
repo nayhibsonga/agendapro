@@ -50,6 +50,6 @@ class ClientsController < ApplicationController
 
 		ClientMailer.send_client_mail(current_user, clients, params[:subject], params[:message], company_img)
 
-		redirect_to '/clients', notice: 'Enviando email.'
+		redirect_to '/clients', notice: 'Email enviado.'
 	end
 end
