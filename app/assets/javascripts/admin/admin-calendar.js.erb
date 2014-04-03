@@ -666,7 +666,13 @@ $(function() {
 	$.getJSON('/services', function (services) {
 		servicesJSON = services;
 		loadProviders();
-		$('#datePicker').datepicker({dateFormat: 'yy-mm-dd'});
+		$('#datePicker').datepicker({
+			dateFormat: 'dd/M/yy',
+			firstDay: 1,
+			dayNames: [ "Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado" ],
+			dayNamesMin: [ "Do", "Lu", "Ma", "Mi", "Ju", "Vi", "Sá" ],
+			dayNamesShort: [ "Dom", "Lun", "Mar", "Mié", "Jue", "Vie", "Sáb" ]
+		});
 		$("#bookingStartHour").on("change", function() { 
 			modalChange();
 		});
@@ -684,11 +690,15 @@ $(function() {
 	});
 
 	$("#dp").datepicker({
+		dateFormat: 'dd/M/yy',
 		buttonText: "Ir a Fecha",
 		changeMonth: true,
 		changeYear: true,
 		showOn: 'both',
-
+		firstDay: 1,
+		dayNames: [ "Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado" ],
+		dayNamesMin: [ "Do", "Lu", "Ma", "Mi", "Ju", "Vi", "Sá" ],
+		dayNamesShort: [ "Dom", "Lun", "Mar", "Mié", "Jue", "Vie", "Sáb" ],
 		onSelect: function(dateText, inst) {
 				var d = new Date(dateText);
 				$('#calendar').fullCalendar('gotoDate', d);
