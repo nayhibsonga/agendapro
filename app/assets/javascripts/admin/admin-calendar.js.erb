@@ -16,6 +16,11 @@ function loadProviders () {
 		var count = 0;
 		$.getJSON('/local_providers', {location: localId}, function (providersArray) {
 			if (providersArray.length > 0) {
+				$('#booking_service_provider_id')
+				    .find('option')
+				    .remove()
+				    .end()
+				;
 				$.each(providersArray, function (key, provider) {
 					$('#providers-selector').append('<label id="' + provider.id + '">' +
 							'<input type="radio" name="providerRadio" value="' + provider.id + '">' +
@@ -27,6 +32,9 @@ function loadProviders () {
 						resourcesColors.push({id: provider.id, color: colors[count]});
 					}
 					count += 1;
+					$('#booking_service_provider_id')
+					    .append('<option value="'+ provider.id +'">'+ provider.public_name +'</option>')
+					;
 				});
 				$('[name="providerRadio"]').on('click', function(event) {
 					$('[name="providerRadio"]').parent().removeClass('active');
@@ -436,7 +444,9 @@ function editBookingModal(eventId) {
 		var start = booking.start || 0;
 		if (start != 0) {
 			dateArray = start.toString().split('T');
-			$('#datePicker').val(dateArray[0]);
+			date = new Date(dateArray);
+			dateS = date.toString().split(' ');
+			$('#datePicker').val(dateS[2]+'/'+dateS[1]+'/'+dateS[3]);
 			$('#bookingStartHour option[value="'+dateArray[1].split(':')[0]+'"]').attr("selected",true);
 			$('#bookingStartMinute option[value="'+dateArray[1].split(':')[1]+'"]').attr("selected",true);
 		}
@@ -456,7 +466,7 @@ function editBookingModal(eventId) {
 		$('#bookingModal').modal('hide');
 		$('.booking-modal-title').empty();
 		$('.booking-modal-footer').empty();
-		$('.booking-modal-title').append('Editando Reserva id: '+eventId);
+		$('.booking-modal-title').append('Editando Reserva');
 		$('.booking-modal-footer').append('<button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button><button type="button" class="btn btn-primary" onclick="editBooking('+eventId+')">Guardar</button><button type="button" class="btn btn-danger" onclick="deleteBooking('+eventId+')">Eliminar</button>');
 
 		if ( booking.service_provider_id > 0) {

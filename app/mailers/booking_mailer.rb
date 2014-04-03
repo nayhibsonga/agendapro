@@ -406,7 +406,6 @@ class BookingMailer < ActionMailer::Base
 			puts "A mandrill error occurred: #{e.class} - #{e.message}"
 			raise
 	end
-  end
 
   def book_reminder_mail (book_info)
     mandrill = Mandrill::API.new 'HL4ERbuZZO6rrM2nlVjzZg'
