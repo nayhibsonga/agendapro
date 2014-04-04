@@ -166,4 +166,11 @@ $(function() {
     }
     changeLocation(sessionStorage.district);
   }
+
+  $('a.overlay').click( function () {
+    if ($(this).data('search')) {
+      $('#inputSearch').val($(this).data('search'));
+      $('button[type="submit"]').trigger('click');
+    };
+  });
 });
