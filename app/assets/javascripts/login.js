@@ -4,6 +4,7 @@
 //= require jquery-uitop
 //= require home/easing.js
 //= require Alert
+//= require ga
 
 //por defecto:
 //= require jquery_ujs
