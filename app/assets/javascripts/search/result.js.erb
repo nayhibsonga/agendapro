@@ -30,10 +30,24 @@ function changeLocation (district_id) {
     $('#district').val(district.id);
     $('#search-bar').removeAttr('disabled');
 
+    changeLatLong(district.id);
+
     //====== Session Storage
     if (typeof(Storage) !== "undefined") {
       sessionStorage.district = district.id;
     }
+  });
+}
+
+function changeLatLong (district_id) {
+  $.getJSON('/get_direction', {id: district_id}, function (address) {
+    var geocoder = new google.maps.Geocoder();
+    geocoder.geocode( { 'address' : address[0] }, function (results, status) {
+      if (status == google.maps.GeocoderStatus.OK) {
+        $('#latitude').val(results[0].geometry.location.lat());
+        $('#longitude').val(results[0].geometry.location.lng());
+      }
+    });
   });
 }
 
@@ -51,6 +65,9 @@ function decode (position) {
           if (district) {
             $('#span-location').html(district.name + ' <i class="fa fa-chevron-right"></i>');
             $('#district').val(district.id);
+
+            $('#latitude').val(position.coords.latitude);
+            $('#longitude').val(position.coords.longitude);
 
             //====== Session Storage
             if (typeof(Storage) !== "undefined") {
