@@ -110,6 +110,18 @@ Agendapro::Application.routes.draw do
   post '/edited_booking', :to => 'bookings#edit_booking_post'
   get '/cancel_booking', :to => 'bookings#cancel_booking', :as => 'booking_cancel'
   post '/cancel_booking', :to => 'bookings#cancel_booking'
+
+  get '/inactive_locations', :to => 'locations#inactive_index', :as => 'inactive_locations'
+  get '/inactive_services', :to => 'services#inactive_index', :as => 'inactive_services'
+  get '/inactive_service_providers', :to => 'service_providers#inactive_index', :as => 'inactive_service_providers'
+
+  get '/locations/:id/activate', :to => 'locations#activate', :as => 'activate_location'
+  get '/services/:id/activate', :to => 'services#activate', :as => 'activate_service'
+  get '/service_providers/:id/activate', :to => 'service_providers#activate', :as => 'activate_service_provider'
+  
+  get '/locations/:id/deactivate', :to => 'locations#deactivate', :as => 'deactivate_location'
+  get '/services/:id/deactivate', :to => 'services#deactivate', :as => 'deactivate_service'
+  get '/service_providers/:id/deactivate', :to => 'service_providers#deactivate', :as => 'deactivate_service_provider'
   
   # Root
   get '/' => 'searchs#index', :constraints => { :subdomain => 'www' }

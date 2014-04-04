@@ -1,4 +1,4 @@
-<h1>Servicios</h1>
+<h1>Servicios Inactivos</h1>
 
 <div class="panel-group" id="accordion">
   <% @service_categories.each do |service_category| %> 
@@ -30,7 +30,7 @@
                 <td>$<%= service.price.to_i %></td>
                 <td><%= service.duration %> min</td>
                 <td><%= link_to '<i class="fa fa-pencil"></i> Editar'.html_safe, edit_service_path(service), :class => "btn btn-warning" %>
-                <%= link_to '<i class="fa fa-trash-o"></i> Eliminar'.html_safe, deactivate_service_path(:id => service.id), :class => "btn btn-danger", data: { confirm: '¿Estás seguro?' } unless cannot? :destroy, service %></td>
+                <%= link_to '<i class="fa fa-trash-o"></i> Eliminar'.html_safe, activate_service_path(:id => service.id), :class => "btn btn-danger", data: { confirm: '¿Estás seguro?' } unless cannot? :destroy, service %></td>
               </tr>
             <% end %>
             <% end %>
@@ -43,4 +43,4 @@
 </div>
 <br />
 <%= link_to '<i class="fa fa-plus"></i> Nuevo Servicio'.html_safe, new_service_path, :class => "btn btn-primary" %>
-<%= link_to 'Servicios Inactivos', inactive_services_path %>
+<%= link_to 'Servicios Activos', services_path %>

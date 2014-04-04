@@ -1,5 +1,5 @@
 class ServiceProvidersController < ApplicationController
-  before_action :set_service_provider, only: [:show, :edit, :update, :destroy]
+  before_action :set_service_provider, only: [:show, :edit, :update, :destroy, :activate, :deactivate]
   before_action :authenticate_user!, except: [:location_services, :location_providers, :provider_time]
   before_action :quick_add, except: [:location_services, :location_providers, :provider_time]
   load_and_authorize_resource
@@ -8,7 +8,23 @@ class ServiceProvidersController < ApplicationController
   # GET /service_providers
   # GET /service_providers.json
   def index
-    @service_providers = ServiceProvider.where(company_id: current_user.company_id).accessible_by(current_ability)
+    @service_providers = ServiceProvider.where(company_id: current_user.company_id, :active => true).accessible_by(current_ability)
+  end
+
+  def inactive_index
+    @service_providers = ServiceProvider.where(company_id: current_user.company_id, :active => false).accessible_by(current_ability)
+  end
+
+  def activate
+    @service_provider.active = true
+    @service_provider.save
+    redirect_to inactive_service_providers_path
+  end
+
+  def deactivate
+    @service_provider.active = false
+    @service_provider.save
+    redirect_to service_providers_path
   end
 
   # GET /service_providers/1
@@ -97,13 +113,12 @@ class ServiceProvidersController < ApplicationController
   end
 
   def location_services
-    services = Service.includes(:service_providers).where('service_providers.location_id = ?', params[:location]).order(:service_category_id)
+    services = Service.includes(:service_providers).where('service_providers.location_id = ?', params[:location]).where(:active => true).order(:service_category_id)
     render :json => services
   end
 
   def location_providers
-    ServiceProvider.where('location_id = ?', params[:location])
-    render :json => ServiceProvider.where('location_id = ?', params[:location])
+    render :json => ServiceProvider.where('location_id = ?', params[:location]).where(:active => true)
   end
 
   def provider_time

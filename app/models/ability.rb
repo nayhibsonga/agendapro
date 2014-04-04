@@ -113,6 +113,18 @@ class Ability
             can :update, c, :company_id => user.company_id
         end
 
+        can :inactive_index, Location, :company_id => user.company_id
+        can :activate, Location, :company_id => user.company_id
+        can :deactivate, Location, :company_id => user.company_id
+
+        can :inactive_index, Service, :company_id => user.company_id
+        can :activate, Service, :company_id => user.company_id
+        can :deactivate, Service, :company_id => user.company_id
+
+        can :inactive_index, ServiceProvider, :company_id => user.company_id
+        can :activate, ServiceProvider, :company_id => user.company_id
+        can :deactivate, ServiceProvider, :company_id => user.company_id
+
         can :read, LocationTime, :location => { :company_id => user.company_id }
         can :destroy, LocationTime, :location => { :company_id => user.company_id }
         can :create, LocationTime, :location => { :company_id => user.company_id }
@@ -151,6 +163,14 @@ class Ability
         can :destroy, ServiceProvider, :location_id => user.location_id
         can :create, ServiceProvider, :location_id => user.location_id
         can :update, ServiceProvider, :location_id => user.location_id
+
+        can :inactive_index, Service, :company_id => user.company_id
+        can :activate, Service, :company_id => user.company_id
+        can :deactivate, Service, :company_id => user.company_id
+
+        can :inactive_index, ServiceProvider, :location_id => user.location_id
+        can :activate, ServiceProvider, :location_id =>  user.location_id
+        can :deactivate, ServiceProvider, :location_id => user.location_id
 
         can :read, Location, :id => user.location_id
         can :update, Location, :id => user.location_id

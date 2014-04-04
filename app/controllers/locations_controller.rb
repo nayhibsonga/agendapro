@@ -1,5 +1,5 @@
 class LocationsController < ApplicationController
-  before_action :set_location, only: [:show, :edit, :update, :destroy]
+  before_action :set_location, only: [:show, :edit, :update, :destroy, :activate, :deactivate]
   before_action :authenticate_user!, except: [:location_data, :location_time, :get_available_time]
   before_action :quick_add, except: [:location_data, :location_time, :get_available_time]
   load_and_authorize_resource
@@ -8,7 +8,11 @@ class LocationsController < ApplicationController
   # GET /locations
   # GET /locations.json
   def index
-    @locations = Location.where(company_id: current_user.company_id).accessible_by(current_ability)
+    @locations = Location.where(company_id: current_user.company_id, :active => true).accessible_by(current_ability)
+  end
+
+  def inactive_index
+    @locations = Location.where(company_id: current_user.company_id, :active => false).accessible_by(current_ability)
   end
 
   # GET /locations/1
@@ -57,6 +61,18 @@ class LocationsController < ApplicationController
         format.json { render :json => { :errors => @location.errors.full_messages }, :status => 422 }
       end
     end
+  end
+
+  def activate
+    @location.active = true
+    @location.save
+    redirect_to inactive_locations_path
+  end
+
+  def deactivate
+    @location.active = false
+    @location.save
+    redirect_to locations_path
   end
 
   # DELETE /locations/1
