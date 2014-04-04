@@ -64,8 +64,11 @@ Agendapro::Application.configure do
   # Ignore bad email addresses and do not raise email delivery errors.
   # Set this to true and configure the email server for immediate delivery to raise delivery errors.
 
-  config.action_mailer.default_url_options = { :host => 'bambucalendar.cl' }
+  config.action_mailer.default_url_options = { :host => 'agendapro.cl' }
   config.action_mailer.delivery_method = :smtp
+  config.action_mailer.perform_deliveries = true
+  config.action_mailer.raise_delivery_errors = true
+  config.action_mailer.default :charset => "utf-8"
   
   config.action_mailer.smtp_settings = {
     :address   => "smtp.mandrillapp.com",
@@ -74,7 +77,7 @@ Agendapro::Application.configure do
     :user_name => "nrossi@agendapro.cl",
     :password  => "HL4ERbuZZO6rrM2nlVjzZg", # SMTP password is any valid API key
     :authentication => 'login', # Mandrill supports 'plain' or 'login'
-    :domain => 'bambucalendar.cl', # your domain to identify your server when connecting
+    :domain => 'agendapro.cl', # your domain to identify your server when connecting
   }
 
   config.action_mailer.perform_deliveries = true
