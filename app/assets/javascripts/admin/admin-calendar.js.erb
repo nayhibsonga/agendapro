@@ -16,6 +16,11 @@ function loadProviders () {
 		var count = 0;
 		$.getJSON('/local_providers', {location: localId}, function (providersArray) {
 			if (providersArray.length > 0) {
+				$('#booking_service_provider_id')
+				    .find('option')
+				    .remove()
+				    .end()
+				;
 				$.each(providersArray, function (key, provider) {
 					$('#providers-selector').append('<label id="' + provider.id + '">' +
 							'<input type="radio" name="providerRadio" value="' + provider.id + '">' +
@@ -27,6 +32,9 @@ function loadProviders () {
 						resourcesColors.push({id: provider.id, color: colors[count]});
 					}
 					count += 1;
+					$('#booking_service_provider_id')
+					    .append('<option value="'+ provider.id +'">'+ provider.public_name +'</option>')
+					;
 				});
 				$('[name="providerRadio"]').on('click', function(event) {
 					$('[name="providerRadio"]').parent().removeClass('active');
@@ -250,7 +258,12 @@ function loadResourcesCalendar (startTime, endTime, hiddenDays, resourcesArray, 
 	});
 	loadProviderBooking(providerId);
 	$('.fc-button').click(function (event) {
-		if (!$(event.target).closest('.fc-button').hasClass('fc-button-agendaWeek')) {
+		if ($('.fc-button-agendaWeek.fc-state-active')[0]) {
+			$('input[name="providerRadio"]').each(function () {
+				$('#calendar').fullCalendar('removeEvents', 'break'+$(this).val());
+			});
+		}
+		else {
 			$('input[name="providerRadio"]').each(function () {
 				if ($(this).val() > 0) {
 					loadProviderBreaks ($(this).val());
@@ -320,6 +333,7 @@ function loadWeekCalendar (startTime, endTime, hiddenDays, resourcesArray, provi
 	$('.fc-button').click(function () {
 		var providerId = $('input[name="providerRadio"]:checked').val();
 		loadProviderBreaks (providerId);
+		loadProviderBooking(providerId);
 	});
 }
 
@@ -392,7 +406,7 @@ function loadProviderBooking (providerId) {
 
 function loadProviderBreaks (providerId) {
 	$.getJSON('/provider_time', {id: providerId}, function (times) {
-		$('#calendar').fullCalendar('removeEvents', 0);
+		$('#calendar').fullCalendar('removeEvents', 'break'+providerId);
 		for (var i = 0; i < times.length - 1; i++) {
 			if (times[i].day_id == times[i + 1].day_id) {
 				var now = $('#calendar').fullCalendar('getDate');
@@ -410,7 +424,7 @@ function loadProviderBreaks (providerId) {
 				end_date.setDate(now.getDate() + offset);
 
 				var events = {
-					id: 0,
+					id: 'break'+providerId,
 					title: 'Descanso',
 					allDay: false,
 					start: start_date,
@@ -419,7 +433,7 @@ function loadProviderBreaks (providerId) {
 					resourceId: times[i].service_provider_id,
 					color: '#585858'
 				};
-				$('#calendar').fullCalendar('renderEvent', events, false);
+				$('#calendar').fullCalendar('renderEvent', events, true);
 			};
 		};
 	});
@@ -430,7 +444,9 @@ function editBookingModal(eventId) {
 		var start = booking.start || 0;
 		if (start != 0) {
 			dateArray = start.toString().split('T');
-			$('#datePicker').val(dateArray[0]);
+			date = new Date(dateArray);
+			dateS = date.toString().split(' ');
+			$('#datePicker').val(dateS[2]+'/'+dateS[1]+'/'+dateS[3]);
 			$('#bookingStartHour option[value="'+dateArray[1].split(':')[0]+'"]').attr("selected",true);
 			$('#bookingStartMinute option[value="'+dateArray[1].split(':')[1]+'"]').attr("selected",true);
 		}
@@ -450,7 +466,7 @@ function editBookingModal(eventId) {
 		$('#bookingModal').modal('hide');
 		$('.booking-modal-title').empty();
 		$('.booking-modal-footer').empty();
-		$('.booking-modal-title').append('Editando Reserva id: '+eventId);
+		$('.booking-modal-title').append('Editando Reserva');
 		$('.booking-modal-footer').append('<button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button><button type="button" class="btn btn-primary" onclick="editBooking('+eventId+')">Guardar</button><button type="button" class="btn btn-danger" onclick="deleteBooking('+eventId+')">Eliminar</button>');
 
 		if ( booking.service_provider_id > 0) {
@@ -650,7 +666,13 @@ $(function() {
 	$.getJSON('/services', function (services) {
 		servicesJSON = services;
 		loadProviders();
-		$('#datePicker').datepicker({dateFormat: 'yy-mm-dd'});
+		$('#datePicker').datepicker({
+			dateFormat: 'dd/M/yy',
+			firstDay: 1,
+			dayNames: [ "Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado" ],
+			dayNamesMin: [ "Do", "Lu", "Ma", "Mi", "Ju", "Vi", "Sá" ],
+			dayNamesShort: [ "Dom", "Lun", "Mar", "Mié", "Jue", "Vie", "Sáb" ]
+		});
 		$("#bookingStartHour").on("change", function() { 
 			modalChange();
 		});
@@ -668,11 +690,15 @@ $(function() {
 	});
 
 	$("#dp").datepicker({
+		dateFormat: 'dd/M/yy',
 		buttonText: "Ir a Fecha",
 		changeMonth: true,
 		changeYear: true,
 		showOn: 'both',
-
+		firstDay: 1,
+		dayNames: [ "Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado" ],
+		dayNamesMin: [ "Do", "Lu", "Ma", "Mi", "Ju", "Vi", "Sá" ],
+		dayNamesShort: [ "Dom", "Lun", "Mar", "Mié", "Jue", "Vie", "Sáb" ],
 		onSelect: function(dateText, inst) {
 				var d = new Date(dateText);
 				$('#calendar').fullCalendar('gotoDate', d);

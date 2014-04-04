@@ -1,22 +1,166 @@
-<h1>Clientes de la Empresa</h1>
+<h1>
+	Clientes de la Empresa
+	<button id="sendMail" type="button" class="btn btn-agendapro-claro pull-right" data-toggle="modal" data-target="#mailModal" disabled>Enviar Email</button>
+</h1>
 
 <table class="table table-bordered">
-  <thead>
-    <tr>
-      <th>Nombre</th>
-      <th>Apellido</th>
-      <th>Email</th>
-      <th>Teléfono</th>
-    </tr>
-  </thead>
-  <tbody>
-  	<% @clients.each do |client| %>
-      <tr>
-        <td><%= client[0] %></td>
-        <td><%= client[1] %></td>
-        <td><%= client[2] %></td>
-        <td><%= client[3] %></td>
-      </tr>
-     <% end %>
-  </tbody>
+	<thead>
+		<tr>
+			<th>Nombre</th>
+			<th>Apellido</th>
+			<th>Email</th>
+			<th>Teléfono</th>
+			<th>
+				Email
+				<input name="mail" class="pull-right" type="checkbox" value="">
+			</th>
+		</tr>
+	</thead>
+	<tbody>
+		<% @clients.each do |client| %>
+			<tr>
+				<td><%= client[0] %></td>
+				<td><%= client[1] %></td>
+				<td><%= client[2] %></td>
+				<td><%= client[3] %></td>
+				<td>
+					<div class="checkbox" style="margin-top: 0; margin-bottom: 0;">
+						<label>
+							<input type="checkbox" name="client_mail" value="<%= client[2] %>">Enviar Email
+						</label>
+					</div>
+				</td>
+			</tr>
+		 <% end %>
+	</tbody>
 </table>
+
+<div class="modal fade" id="mailModal" tabindex="-1" role="dialog" aria-labelledby="mailModalLabel" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+				<h4 class="modal-title" id="mailModalLabel">Enviar Email</h4>
+			</div>
+			<%= form_tag '/send_mail_client' do %>
+				<div class="modal-body">
+						<div class="center-block" style="display: table;">
+							<p>
+								<h3>Enviando Email</h3>
+								<span>Por favor espere</span>
+							</p>
+							<%= image_tag 'ajax-loader.gif', :alt => 'Loader' %>
+						</div>
+						<div class="form-group">
+							<%= label_tag :to, 'Para' %>
+							<%= text_field_tag :to, nil, :class => 'form-control', :required => true %>
+	            <span class="help-block"></span>
+						</div>
+						<div class="form-group">
+							<%= label_tag :subject, 'Asunto' %>
+							<%= text_field_tag :subject, nil, :class => 'form-control', :required => true, :autofocus => true %>
+	            <span class="help-block"></span>
+						</div>
+						<div class="form-group">
+							<%= label_tag :message, 'Mensaje' %>
+							<%= text_area_tag :message, nil, :class => 'form-control', :rows => 10, :required => true %>
+	            <span class="help-block"></span>
+						</div>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+					<%= submit_tag "Enviar", class: "btn btn-agendapro-claro" %>
+				</div>
+			<% end %>
+		</div>
+	</div>
+</div>
+
+<% content_for :scripts do %>
+<%= javascript_include_tag 'login/jquery.validate.min' %>
+<script type="text/javascript">
+	$(function () {
+		$('.modal-body div:first').toggle()
+
+		$('input[name="mail"]').change(function (event) {
+			$('input[name="client_mail"]').each( function () {
+				if ($(event.target).prop('checked')) {
+					$(this).prop('checked', true);
+					$('#sendMail').prop('disabled', false);
+				}
+				else {
+					$(this).prop('checked', false);
+					$('#sendMail').prop('disabled', true);
+				}
+			});
+		});
+
+		$('input[name="client_mail"]').change(function (event) {
+			var prop = true;
+			var disabled = false;
+			$('input[name="client_mail"]').each( function () {
+				prop = prop && $(this).prop('checked');
+				disabled = disabled || $(this).prop('checked');
+			});
+			$('input[name="mail"]').prop('checked', prop);
+			$('#sendMail').prop('disabled', !disabled);
+		});
+
+		$('#mailModal').on('show.bs.modal', function (e) {
+			var emails = [];
+			$('input[name="client_mail"]').each( function () {
+				if ($(this).prop('checked')) {
+					emails.push($(this).val());
+				};
+			});
+			$('#to').val(emails);
+		});
+
+		$('form').validate({
+			errorPlacement: function(error, element) {
+				error.appendTo(element.next());
+			},
+			rules: {
+				'to': {
+					required: true
+				},
+				'subject': {
+					required: true
+				},
+				'message': {
+					required: true
+				}
+			},
+			messages: {
+				'to': {
+					required: "Debe elegir al menos un destinatario"
+				},
+				'subject': {
+					required: "Debe escribir un asusnto"
+				},
+				'message': {
+					required: "No puede dejar el cuerpo vacío"
+				}
+			},
+			highlight: function(element) {
+				$(element).closest('.form-group').removeClass('has-success').addClass('has-error');
+			},
+			success: function(element) {
+				$(element).closest('.form-group').removeClass('has-error').addClass('has-success');
+				$(element).parent().empty()
+			},
+			submitHandler: function(form) {
+				form.submit();
+			}
+		});
+
+		$('input[name="commit"]').click( function () {
+			if($('form').valid()) {
+				$('.form-group').toggle();
+				$('.modal-footer .btn').toggle();
+				$('.modal-body div:first').toggle()
+			}
+		});
+	});
+</script>
+<% end %>

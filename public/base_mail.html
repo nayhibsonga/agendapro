@@ -111,9 +111,20 @@
 						 box-sizing: content-box;
 			}
 			.img-responsive {
-				display: block;
+				display: inline-block;
 				max-width: 100%;
 				height: auto;
+			}
+			.logo-empresa{
+				width:140px;
+				height: 140px;
+				border-radius: 70px;
+				background: #fff;
+				overflow: hidden;
+			}
+			.logo-empresa img{
+				width: auto;
+				max-height: 140px;
 			}
 			hr {
 				margin-top: 20px;
@@ -360,7 +371,10 @@
 		<div class="container">
 			<div class="panel panel-info">
 				<div class="panel-heading">
-					<a href="http://agendapro.cl" align="center"><img src="cid:logo.png" alt="AgendPro" class="img-responsive img-rounded"></a>
+					<a href="http://agendapro.cl" align="center" class="pull-right"><img src="cid:logo.png" alt="AgendPro" class="img-responsive"></a>
+					<div class="logo-empresa">
+						<img src="/home/nicoflores/Documents/agendapro-railsweb/public/uploads/logos/P1040181.JPG" alt="AgendPro">
+					</div>
 				</div>
 				<div class="panel-body">
 					Contenido del cuerpo	
