@@ -254,21 +254,9 @@ function loadDescription (serviceId) {
 var selected = false;
 
 function addBooking (booking) {
-	// var today = new Date();
-	// today.setHours(23, 59, 59, 999);
-	// if (today < booking.objectDate) {
-		selected = true;
-		$('#start').val(generateDate(booking.date, booking.start));
-		$('#end').val(generateDate(booking.date, booking.end));
-	// }
-	// else {
-	// 	selected = false;
-	// 	$('.hora-activo').addClass('hora-disponible').removeClass('hora-activo');
-	// 	myAlert.showAlert(
-	//       '<h3>Horario Invalido</h3>' +
-	//       '<p>La fecha/hora elegida es anterior a la fecha/hora actual o no cumple el tiempo minimo requerido para agendar.</p>'
-	//     );
-	// }
+	selected = true;
+	$('#start').val(generateDate(booking.date, booking.start));
+	$('#end').val(generateDate(booking.date, booking.end));
 }
 
 function generateDate(date, time) {
