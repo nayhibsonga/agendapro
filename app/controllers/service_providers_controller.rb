@@ -128,7 +128,7 @@ class ServiceProvidersController < ApplicationController
 
   def provider_service
     provider = ServiceProvider.find(params[:id])
-    services = provider.services.order(:name)
+    services = provider.services.where(:active => true).order(:name)
     render :json => services
   end
 
