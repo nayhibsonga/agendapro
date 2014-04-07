@@ -13,11 +13,11 @@
       <tr>
         <td><%= service_provider.public_name %></td>
         <td><%= link_to '<i class="fa fa-pencil"></i> Editar'.html_safe, edit_service_provider_path(service_provider), :class => "btn btn-warning" %>
-        <%= link_to '<i class="fa fa-trash-o"></i> Eliminar'.html_safe, deactivate_service_provider_path(:id => service_provider.id), :class => "btn btn-danger", data: { confirm: 'Estás Seguro?' } %></td>
+        <%= link_to '<i class="fa fa-trash-o"></i> Eliminar'.html_safe, deactivate_service_provider_path(:id => service_provider.id), :class => "btn btn-danger", data: { confirm: '¿Estás seguro de desactivar el Proveedor seleccionado?' } %></td>
       </tr>
     <% end %>
   </tbody>
 </table>
 
-<%= link_to '<i class="fa fa-plus"></i>   Nuevo Proveedor de Servicios'.html_safe, new_service_provider_path, :class => "btn btn-primary" %>
-<%= link_to 'Proveedores de Servicios Inactivos', inactive_service_providers_path %>
+<%= link_to '<i class="fa fa-plus"></i> Nuevo Proveedor de Servicios'.html_safe, new_service_provider_path, :class => "btn btn-primary" %>
+<%= link_to '<i class="fa fa-minus"></i> Proveedores de Servicios Inactivos'.html_safe, inactive_service_providers_path, :class => "btn btn-primary pull-right" %>

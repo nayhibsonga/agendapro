@@ -29,8 +29,9 @@
                 <td><%= service.name %></td>
                 <td>$<%= service.price.to_i %></td>
                 <td><%= service.duration %> min</td>
-                <td><%= link_to '<i class="fa fa-pencil"></i> Editar'.html_safe, edit_service_path(service), :class => "btn btn-warning" %>
-                <%= link_to '<i class="fa fa-trash-o"></i> Eliminar'.html_safe, activate_service_path(:id => service.id), :class => "btn btn-danger", data: { confirm: '¿Estás seguro?' } unless cannot? :destroy, service %></td>
+                <td><%= link_to '<i class="fa fa-check"></i> Re-activar'.html_safe, activate_service_path(:id => service.id), :class => "btn btn-primary", data: { confirm: '¿Estás seguro de re-activar el Servicio seleccionado?' } %>
+                    <%= link_to '<i class="fa fa-pencil"></i> Editar'.html_safe, edit_service_path(service), :class => "btn btn-warning" %>
+                </td>
               </tr>
             <% end %>
             <% end %>
@@ -42,5 +43,5 @@
   <% end %>
 </div>
 <br />
-<%= link_to '<i class="fa fa-plus"></i> Nuevo Servicio'.html_safe, new_service_path, :class => "btn btn-primary" %>
-<%= link_to 'Servicios Activos', services_path %>
+
+<%= link_to 'Servicios Activos', services_path, :class => "btn btn-primary" %>
