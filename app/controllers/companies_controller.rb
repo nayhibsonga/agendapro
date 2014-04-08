@@ -88,7 +88,7 @@ class CompaniesController < ApplicationController
       redirect_to root_url(:host => domain)
       return
     end
-    @locations = Location.where('company_id = ?', @company.id)
+    @locations = Location.where(:active => true).where('company_id = ?', @company.id)
 
     # => Domain parser
     host = request.host_with_port
