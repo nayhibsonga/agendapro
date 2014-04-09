@@ -113,7 +113,7 @@ class ServiceProvidersController < ApplicationController
   end
 
   def location_services
-    services = Service.where(:active => true).includes(:service_providers).where('service_providers.location_id = ?', params[:location]).order(:service_category_id)
+    services = Service.where(:active => true).includes(:service_providers).where('service_providers.active = ?', true).where('service_providers.location_id = ?', params[:location]).order(:service_category_id)
     render :json => services
   end
 
