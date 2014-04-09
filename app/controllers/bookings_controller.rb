@@ -87,9 +87,13 @@ class BookingsController < ApplicationController
   end
 
   def get_booking
-    @booking = Booking.find(params[:id])
     booking = Booking.find(params[:id])
     render :json => booking
+  end
+
+  def get_booking_info
+    booking = Booking.find(params[:id])
+    render :json => {service_provider_active: booking.service_provider.active, service_active: booking.service.active, service_provider_name: booking.service_provider.public_name, service_name: booking.service.name}
   end
 
   def provider_booking
@@ -98,7 +102,13 @@ class BookingsController < ApplicationController
       @provider = ServiceProvider.where(:location_id => params[:location])
     end
     @bookings = Booking.where(:service_provider_id => @provider, :location_id => params[:location]).order(:start)
-    render :json => @bookings
+    @booklist = @bookings.map do |u|
+      { :id => u.id, :start => u.start, :end => u.end, :service_id => u.service_id, :service_provider_id => u.service_provider_id, :user_id => u.user_id, :status_id => u.user_id, :first_name => u.first_name, :last_name => u.last_name, :email => u.email, :phone => u.phone, :notes => u.notes, service_provider_active: u.service_provider.active, service_active: u.service.active, service_provider_name: u.service_provider.public_name, service_name: u.service.name}
+    end
+
+    json = @booklist.to_json
+    puts json
+    render :json => json
   end
 
   def book_service

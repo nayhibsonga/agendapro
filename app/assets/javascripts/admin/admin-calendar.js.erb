@@ -344,12 +344,6 @@ function loadProviderBooking (providerId) {
 		$.getJSON('/booking', {location: localId}, function (bookings) {
 			if (bookings.length > 0) {
 				$.each(bookings, function (key, booking) {
-					var serviceName = 'Ocupado';
-					for (i in servicesJSON) {
-						if (servicesJSON[i].id == booking.service_id) {
-							serviceName = servicesJSON[i].name;
-						}
-					}
 					var eventColor = "#1e8584";
 					for (i in resourcesColors) {
 						if (resourcesColors[i].id == booking.service_provider_id) {
@@ -358,7 +352,7 @@ function loadProviderBooking (providerId) {
 					}
 					var events = {
 						id: booking.id,
-						title: serviceName,
+						title: booking.service_name,
 						allDay: false,
 						start: booking.start,
 						end: booking.end,
@@ -375,12 +369,6 @@ function loadProviderBooking (providerId) {
 		$.getJSON('/booking', {location: localId, provider: providerId}, function (bookings) {
 			if (bookings.length > 0) {
 				$.each(bookings, function (key, booking) {
-					var serviceName = 'Ocupado';
-					for (i in servicesJSON) {
-						if (servicesJSON[i].id == booking.service_id) {
-							serviceName = servicesJSON[i].name;
-						}
-					}
 					var eventColor = "#1e8584";
 					for (i in resourcesColors) {
 						if (resourcesColors[i].id == booking.service_provider_id) {
@@ -389,7 +377,7 @@ function loadProviderBooking (providerId) {
 					}
 					var events = {
 						id: booking.id,
-						title: serviceName,
+						title: booking.service_name,
 						allDay: false,
 						start: booking.start,
 						end: booking.end,
@@ -482,9 +470,23 @@ function editBookingModal(eventId) {
 			});
 		}
 
-		modalChange();
+		$.getJSON('/get_booking_info', {id: eventId}, function (booking_info) {
+			if (!booking_info.service_provider_active) {
+				if ($('#booking_service_provider_id option[value="' + booking.service_provider_id + '"]').length == 0) {
+					$('#booking_service_provider_id').append('<option value="' + booking.service_provider_id + '">' + booking_info.service_provider_name + '</option>');
+				}
+				$('#booking_service_provider_id option[value="'+booking.service_provider_id+'"]').attr("selected",true);
+			}
+			if (!booking_info.service_active) {
+				if ($('#booking_service_id option[value="' + booking.service_id + '"]').length == 0) {
+					$('#booking_service_id').append('<option value="' + booking.service_id + '">' + booking_info.service_name + '</option>');
+				}
+				$('#booking_service_id option[value="'+booking.service__id+'"]').attr("selected",true);
+			}
+			modalChange();
 
-		$('#bookingModal').modal('show');
+			$('#bookingModal').modal('show');
+		});
 	});	
 }
 
