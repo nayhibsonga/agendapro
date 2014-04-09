@@ -19,10 +19,10 @@
 	<tbody>
 		<% @clients.each do |client| %>
 			<tr>
-				<td><%= client[0] %></td>
-				<td><%= client[1] %></td>
-				<td><%= client[2] %></td>
-				<td><%= client[3] %></td>
+				<td><%= client.first_name %></td>
+				<td><%= client.last_name %></td>
+				<td><%= client.email %></td>
+				<td><%= client.phone %></td>
 				<td>
 					<div class="checkbox" style="margin-top: 0; margin-bottom: 0;">
 						<label>
@@ -34,6 +34,7 @@
 		 <% end %>
 	</tbody>
 </table>
+<%= link_to '<i class="fa fa-plus"></i> Nuevo Cliente'.html_safe, new_client_path, :class => "btn btn-primary" %>
 
 <div class="modal fade" id="mailModal" tabindex="-1" role="dialog" aria-labelledby="mailModalLabel" aria-hidden="true">
 	<div class="modal-dialog">

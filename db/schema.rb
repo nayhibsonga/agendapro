@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140404162844) do
+ActiveRecord::Schema.define(version: 20140408154640) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -65,6 +65,24 @@ ActiveRecord::Schema.define(version: 20140404162844) do
 
   add_index "cities", ["region_id"], name: "index_cities_on_region_id", using: :btree
 
+  create_table "clients", force: true do |t|
+    t.integer  "company_id"
+    t.string   "email"
+    t.string   "first_name"
+    t.string   "last_name"
+    t.string   "phone"
+    t.string   "address"
+    t.string   "district"
+    t.string   "city"
+    t.integer  "age"
+    t.integer  "gender"
+    t.date     "birth_date"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "clients", ["company_id"], name: "index_clients_on_company_id", using: :btree
+
   create_table "companies", force: true do |t|
     t.string   "name",                               null: false
     t.string   "web_address",                        null: false
@@ -91,8 +109,8 @@ ActiveRecord::Schema.define(version: 20140404162844) do
     t.integer  "company_id",                     null: false
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.integer  "before_booking",                 null: false
-    t.integer  "after_booking",                  null: false
+    t.integer  "before_booking", default: 24,    null: false
+    t.integer  "after_booking",  default: 6,     null: false
   end
 
   add_index "company_settings", ["company_id"], name: "index_company_settings_on_company_id", using: :btree
