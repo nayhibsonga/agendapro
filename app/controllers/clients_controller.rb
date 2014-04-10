@@ -8,7 +8,7 @@ class ClientsController < ApplicationController
   # GET /clients
   # GET /clients.json
   def index
-    @clients = Client.accesible_by(current_ability)
+    @clients = Client.accessible_by(current_ability)
   end
 
   # GET /clients/1
