@@ -1,5 +1,7 @@
 Agendapro::Application.routes.draw do
 
+  resources :clients
+
   get "users/index"
   require 'subdomain'
 
@@ -32,6 +34,7 @@ Agendapro::Application.routes.draw do
   resources :bookings
   resources :service_providers
   resources :service_categories
+  resources :clients
 
   namespace :admin do 
     get '', :to => 'dashboard#index', :as => '/'
@@ -52,7 +55,6 @@ Agendapro::Application.routes.draw do
 
   get '/dashboard', :to => 'dashboard#index', :as => 'dashboard'
   get '/reports', :to => 'reports#index', :as => 'reports'
-  get '/clients', :to => 'clients#index', :as => 'clients'
   get '/select_plan', :to => 'plans#select_plan', :as => 'select_plan'
   get '/get_direction', :to => 'districts#get_direction'
   get '/time_booking_edit', :to => 'company_settings#time_booking_edit', :as => 'time_booking'

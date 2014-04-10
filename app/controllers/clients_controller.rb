@@ -1,55 +1,79 @@
 class ClientsController < ApplicationController
-	
-	before_action :authenticate_user!
-	before_action :quick_add
-	layout "admin"
+  before_action :set_client, only: [:show, :edit, :update, :destroy]
+  before_action :authenticate_user!
+  before_action :quick_add
+  load_and_authorize_resource
+  layout "admin"
 
-	def index
-		@company = Company.where(id: current_user.company_id)
-		@locations = Location.where(company_id: @company).accessible_by(current_ability)
-		@service_providers = ServiceProvider.where(location_id: @locations)
-		@bookings = Booking.where(service_provider_id: @service_providers)
-		@clients = @bookings.pluck(:first_name, :last_name, :email, :phone).uniq
-	end
+  # GET /clients
+  # GET /clients.json
+  def index
+    @clients = Client.accesible_by(current_ability)
+  end
 
-	def suggestion
-		@company = Company.where(id: current_user.company_id)
-		@locations = Location.where(company_id: @company)
-		@service_providers = ServiceProvider.where(location_id: @locations)
-		@bookings = Booking.where(service_provider_id: @service_providers).where('email ~* ?', params[:term])
-		@clients = @bookings.pluck(:first_name, :last_name, :email, :phone).uniq
+  # GET /clients/1
+  # GET /clients/1.json
+  def show
+  end
 
-		@clients_arr = Array.new
-		@clients.each do |client|
-			label = client[2] + ' - ' + client[1] + ', ' + client[0]
-			@clients_arr.push({:label => label, :value => client})
-		end
+  # GET /clients/new
+  def new
+    @client = Client.new
+  end
 
-		render :json => @clients_arr
-	end
+  # GET /clients/1/edit
+  def edit
+  end
 
-	def send_mail
-		clients = Array.new
-		params[:to].split(',').each do |client_mail|
-			client_info = {
-				:email => client_mail,
-				:type => 'bcc'
-			}
-			clients.push(client_info)
-		end
+  # POST /clients
+  # POST /clients.json
+  def create
+    @client = Client.new(client_params)
+    @client.company = current_user.company_id
 
-		if current_user.company.logo_url
-			company_img = {
-				:type => 'image/' +  File.extname(current_user.company.logo_url),
-				:name => 'company_img.jpg',
-				:content => Base64.encode64(File.read('public' + current_user.company.logo_url.to_s))
-			}
-		else
-			company_img = {}
-		end
+    respond_to do |format|
+      if @client.save
+        format.html { redirect_to @client, notice: 'Client was successfully created.' }
+        format.json { render action: 'show', status: :created, location: @client }
+      else
+        format.html { render action: 'new' }
+        format.json { render json: @client.errors, status: :unprocessable_entity }
+      end
+    end
+  end
 
-		ClientMailer.send_client_mail(current_user, clients, params[:subject], params[:message], company_img)
+  # PATCH/PUT /clients/1
+  # PATCH/PUT /clients/1.json
+  def update
+    respond_to do |format|
+      if @client.update(client_params)
+        format.html { redirect_to @client, notice: 'Client was successfully updated.' }
+        format.json { head :no_content }
+      else
+        format.html { render action: 'edit' }
+        format.json { render json: @client.errors, status: :unprocessable_entity }
+      end
+    end
+  end
 
-		redirect_to '/clients', notice: 'Email enviado.'
-	end
+  # DELETE /clients/1
+  # DELETE /clients/1.json
+  def destroy
+    @client.destroy
+    respond_to do |format|
+      format.html { redirect_to clients_url }
+      format.json { head :no_content }
+    end
+  end
+
+  private
+    # Use callbacks to share common setup or constraints between actions.
+    def set_client
+      @client = Client.find(params[:id])
+    end
+
+    # Never trust parameters from the scary internet, only allow the white list through.
+    def client_params
+      params.require(:client).permit(:company_id, :email, :first_name, :last_name, :address, :district, :city, :age, :gender, :birth_date)
+    end
 end
