@@ -14,7 +14,11 @@
       <tr>
         <td><%= link_to company.name, root_url(:subdomain => company.web_address) %></td>
         <td><%= link_to '<i class="fa fa-pencil"></i> Editar'.html_safe, edit_company_path(company) %></td>
-        <td><%= link_to '<i class="fa fa-trash-o"></i> Eliminar'.html_safe, company, method: :delete, data: { confirm: '¿Estás seguro?' } %></td>
+        <% if company.active %>
+        <td><%= link_to '<i class="fa fa-trash-o"></i> Desactivar'.html_safe, deactivate_company_path(:id => company.id), data: { confirm: '¿Estás seguro?' } %></td>
+        <% else %>
+        <td><%= link_to '<i class="fa fa-check"></i> Re-Activar'.html_safe, activate_company_path(:id => company.id), data: { confirm: '¿Estás seguro?' } %></td>
+        <% end %>
       </tr>
     <% end %>
   </tbody>

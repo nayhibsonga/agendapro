@@ -32,6 +32,10 @@ class ApplicationController < ActionController::Base
     end
   end
 
+  def verify_is_active
+    redirect_to "/307" unless current_user && (current_user.role_id == Role.find_by_name("Super Admin").id)
+  end
+
   def verify_is_super_admin
     redirect_to "/403" unless (current_user.role_id == Role.find_by_name("Super Admin").id)
   end

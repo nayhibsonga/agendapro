@@ -1,8 +1,9 @@
 class CompaniesController < ApplicationController
-  before_action :set_company, only: [:show, :edit, :update, :destroy]
+  before_action :verify_is_active, only: [:overview, :workflow]
+  before_action :set_company, only: [:show, :edit, :update, :destroy, :activate, :deactivate]
   before_action :authenticate_user!, except: [:new, :overview, :workflow, :check_company_web_address]
   before_action :quick_add, except: [:new, :overview, :workflow, :add_company, :check_company_web_address]
-  before_action :verify_is_super_admin, only: [:index]
+  before_action :verify_is_super_admin, only: [:index, :activate, :deactivate]
 
   layout "admin", except: [:show, :overview, :workflow, :add_company]
   load_and_authorize_resource
@@ -12,6 +13,42 @@ class CompaniesController < ApplicationController
   # GET /companies.json
   def index
     @companies = Company.all
+  end
+
+  def activate
+    Location.where(company_id: @company).each do |location|
+      location.active = true
+      location.save
+    end
+    Service.where(company_id: @company).each do |service|
+      service.active = true
+      service.save
+    end
+    ServiceProvider.where(company_id: @company).each do |service_provider|
+      service_provider.active = true
+      service_provider.save
+    end
+    @company.active = true
+    @company.save
+    redirect_to companies_path
+  end
+
+  def deactivate
+    Location.where(company_id: @company).each do |location|
+      location.active = false
+      location.save
+    end
+    Service.where(company_id: @company).each do |service|
+      service.active = false
+      service.save
+    end
+    ServiceProvider.where(company_id: @company).each do |service_provider|
+      service_provider.active = false
+      service_provider.save
+    end
+    @company.active = false
+    @company.save
+    redirect_to companies_path
   end
 
   # GET /companies/1

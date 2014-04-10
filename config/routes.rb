@@ -116,10 +116,12 @@ Agendapro::Application.routes.draw do
   get '/inactive_services', :to => 'services#inactive_index', :as => 'inactive_services'
   get '/inactive_service_providers', :to => 'service_providers#inactive_index', :as => 'inactive_service_providers'
 
+  get '/companies/:id/activate', :to => 'companies#activate', :as => 'activate_company'
   get '/locations/:id/activate', :to => 'locations#activate', :as => 'activate_location'
   get '/services/:id/activate', :to => 'services#activate', :as => 'activate_service'
   get '/service_providers/:id/activate', :to => 'service_providers#activate', :as => 'activate_service_provider'
   
+  get '/companies/:id/deactivate', :to => 'companies#deactivate', :as => 'deactivate_company'
   get '/locations/:id/deactivate', :to => 'locations#deactivate', :as => 'deactivate_location'
   get '/services/:id/deactivate', :to => 'services#deactivate', :as => 'deactivate_service'
   get '/service_providers/:id/deactivate', :to => 'service_providers#deactivate', :as => 'deactivate_service_provider'
