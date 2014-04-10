@@ -432,9 +432,16 @@ function editBookingModal(eventId) {
 		var start = booking.start || 0;
 		if (start != 0) {
 			dateArray = start.toString().split('T');
-			date = new Date(dateArray);
-			dateS = date.toString().split(' ');
-			$('#datePicker').val(dateS[2]+'/'+dateS[1]+'/'+dateS[3]);
+			date = new Date(start)
+
+			month = date.getMonth()+1;
+			day = date.getDate();
+
+			output = (day<10 ? '0' : '') + day + '/' + (month<10 ? '0' : '') + month + '/' + date.getFullYear();
+
+			// date = new Date(dateArray);
+			// dateS = date.toString().split(' ');
+			$('#datePicker').val(output);
 			$('#bookingStartHour option[value="'+dateArray[1].split(':')[0]+'"]').attr("selected",true);
 			$('#bookingStartMinute option[value="'+dateArray[1].split(':')[1]+'"]').attr("selected",true);
 		}
@@ -669,7 +676,7 @@ $(function() {
 		servicesJSON = services;
 		loadProviders();
 		$('#datePicker').datepicker({
-			dateFormat: 'dd/M/yy',
+			dateFormat: 'dd/mm/yy',
 			firstDay: 1,
 			dayNames: [ "Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado" ],
 			dayNamesMin: [ "Do", "Lu", "Ma", "Mi", "Ju", "Vi", "Sá" ],
