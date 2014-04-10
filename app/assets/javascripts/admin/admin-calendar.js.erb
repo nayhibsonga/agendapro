@@ -29,7 +29,7 @@ function loadProviders () {
 					);
 					resources.push({id: provider.id, name: provider.public_name});
 					resourcesColors.push({id: provider.id, color: colors[count%30]});
-					$('#providers-selector').children('#' + provider.id).css('background-color', colors[count%30]);
+					$('#providers-selector').children('#' + provider.id).children('p').css({'border-bottom-color': colors[count%30], 'border-bottom-style': 'solid'});
 					count += 1;
 					$('#booking_service_provider_id')
 					    .append('<option value="'+ provider.id +'">'+ provider.public_name +'</option>')
