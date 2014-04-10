@@ -172,7 +172,7 @@ function initialize() {
 				$('#closeMinuteId'+ value).prop('disabled', false);
 				var openTime = new Date(Date.parse(providerTimesData[arrayCounter].open)).toUTCString().split(" ")[4].split(":");
 				$('#openHourId'+ value +' option[value="'+openTime[0]+'"]').attr("selected",true);
-					$('#openMinuteId'+ value +' option[value="'+openTime[1]+'"]').attr("selected",true);
+				$('#openMinuteId'+ value +' option[value="'+openTime[1]+'"]').attr("selected",true);
 				for (var j=arrayCounter;j<arrayCounter+breaksArray[i] - 1;j++) {
 					var openTime = new Date(Date.parse(providerTimesData[j].close)).toUTCString().split(" ")[4].split(":");
 					var closeTime = new Date(Date.parse(providerTimesData[j+1].open)).toUTCString().split(" ")[4].split(":");
@@ -183,9 +183,32 @@ function initialize() {
 				$('#closeMinuteId'+ value +' option[value="'+closeTime[1]+'"]').attr("selected",true);
 			}
 		}
-	}
+	};
+}
 
+function loadLocalTime (times) {
+	var header_table = $('#providerTable tr:first');
+	$('#providerTable').empty();
+	$('#providerTable').append(header_table);
+	for(var i = 1; i < 8; ++i) {
+		buildDay(i);
+	};
+	$.each(times, function (key, time) {
+		$('#openHourId'+ time.day_id).prop('disabled', false);
+		$('#openMinuteId'+ time.day_id).prop('disabled', false);
+		$('#closeHourId'+ time.day_id).prop('disabled', false);
+		$('#closeMinuteId'+ time.day_id).prop('disabled', false);
 
+		var openTime = new Date(Date.parse(time.open)).toUTCString().split(" ")[4].split(":");
+		$('#openHourId'+ time.day_id +' option[value="'+openTime[0]+'"]').attr("selected",true);
+		$('#openMinuteId'+ time.day_id +' option[value="'+openTime[1]+'"]').attr("selected",true);
+		var closeTime = new Date(Date.parse(time.close)).toUTCString().split(" ")[4].split(":");
+		$('#closeHourId'+ time.day_id +' option[value="'+closeTime[0]+'"]').attr("selected",true);
+		$('#closeMinuteId'+ time.day_id +' option[value="'+closeTime[1]+'"]').attr("selected",true);
+
+		$('#dayStatusId' + time.day_id).prop('checked', true);
+		changeDayStatus(time.day_id);
+	});
 }
 
 function changeDayStatus(value) {
@@ -343,5 +366,14 @@ $(function() {
 			prop = prop && $(this).prop('checked');
 		});
 		$(event.target).parents('.panel').find('input[name="selectCategory"]').prop('checked', prop);
+	});
+
+	$('#service_provider_location_id').change(function (event) {
+		var locationId = event.target.value;
+		if (locationId) {
+			$.getJSON('/location_time', {id: locationId}, function (times) {
+				loadLocalTime(times);
+			});
+		}
 	});
 });
