@@ -28,9 +28,8 @@ function loadProviders () {
 						'</label>'
 					);
 					resources.push({id: provider.id, name: provider.public_name});
-					if (count < 30){
-						resourcesColors.push({id: provider.id, color: colors[count]});
-					}
+					resourcesColors.push({id: provider.id, color: colors[count%30]});
+					$('#providers-selector').children('#' + provider.id).css('background-color', colors[count%30]);
 					count += 1;
 					$('#booking_service_provider_id')
 					    .append('<option value="'+ provider.id +'">'+ provider.public_name +'</option>')
