@@ -35,7 +35,7 @@ class Ability
     #alias_action :workflow, :to => :update
     #alias_action :workflow, :to => :create
 
-    company_abilities = [User, Location, ServiceProvider, Service, CompanySetting, ServiceCategory]
+    company_abilities = [User, Location, ServiceProvider, Service, CompanySetting, ServiceCategory, Client]
 
 
     user ||= User.new # guest user (not logged in)
@@ -145,6 +145,8 @@ class Ability
 
         can :time_booking_edit, CompanySetting, :company => user.company_id
 
+        can :get_link, Company
+
     elsif user.role_id == Role.find_by_name("Administrador Local").id
 
         can :get_booking, Booking, :service_provider_id => { :location_id => user.location_id }
@@ -153,6 +155,11 @@ class Ability
         can :read, Service, :company_id => user.company_id
         can :create, Service, :company_id => user.company_id
         can :update, Service, :company_id => user.company_id
+
+        can :read, Client, :company_id => user.company_id
+        can :create, Client, :company_id => user.company_id
+        can :update, Client, :company_id => user.company_id
+        can :destroy, Client, :company_id => user.company_id
 
         @roles = Role.where(:name => ["Recepcionista","Staff"])
 
@@ -206,6 +213,10 @@ class Ability
         can :read, Location, :id => user.location_id
         
         can :read, ProviderTime, :service_provider => { :location_id => user.location_id }
+
+        can :read, Client, :company_id => user.company_id
+        can :create, Client, :company_id => user.company_id
+        can :update, Client, :company_id => user.company_id
 
         can :read, Booking, :service_provider => { :location_id => user.location_id }
         can :destroy, Booking, :service_provider => { :location_id => user.location_id }

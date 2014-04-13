@@ -1,5 +1,7 @@
 Agendapro::Application.routes.draw do
 
+  resources :clients
+
   get "users/index"
   require 'subdomain'
 
@@ -32,6 +34,7 @@ Agendapro::Application.routes.draw do
   resources :bookings
   resources :service_providers
   resources :service_categories
+  resources :clients
 
   namespace :admin do 
     get '', :to => 'dashboard#index', :as => '/'
@@ -50,13 +53,14 @@ Agendapro::Application.routes.draw do
   post '/quick_add/services', :to => 'quick_add#create_services'
   post '/quick_add/service_provider', :to => 'quick_add#create_service_provider'
 
+  post '/client_comments', :to => 'clients#create_comment', :as => 'client_comments'
   get '/dashboard', :to => 'dashboard#index', :as => 'dashboard'
   get '/reports', :to => 'reports#index', :as => 'reports'
-  get '/clients', :to => 'clients#index', :as => 'clients'
   get '/select_plan', :to => 'plans#select_plan', :as => 'select_plan'
   get '/get_direction', :to => 'districts#get_direction'
   get '/time_booking_edit', :to => 'company_settings#time_booking_edit', :as => 'time_booking'
   post '/send_mail_client', :to => 'clients#send_mail'
+  get '/get_link', :to => 'companies#get_link', :as => 'get_link'
 
   get '/clients_suggestion', :to => 'clients#suggestion'
   get '/provider_services', :to => 'service_providers#provider_service'
