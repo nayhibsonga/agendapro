@@ -60,6 +60,51 @@
             <%= f.text_field :birth_date, class: "form-control" %>
         </div>
       </div>
+    <div class="form-group">
+      <div class="col-sm-offset-4">
+        <%= f.submit 'Guardar', :class => 'btn btn-primary' %>
+        <%= link_to 'Cancelar', clients_path, class: "btn btn-danger" %>  
+      </div>
+    </div>
+      <% if @client.id %>
+    <div class="panel panel-info">
+      <div class="panel-heading">
+        <h3 class="panel-title">
+          Comentarios Internos del Cliente
+        </h3>
+      </div>
+      <div class="panel-body">
+        <table class="table">
+          <tbody id="localTable">
+            <%= form_for @client_comment, :url => client_comments_path, html: {class: "form-horizontal" } do |g| %>
+            <tr>
+              <th class="col-md-9">
+                <div class="form-group">
+                  <%= g.label :comment, "Comentario: ", class: "col-sm-4 control-label" %>
+                  <div class="col-sm-8">
+                    <%= g.text_area :comment, class: "form-control" %>
+                  </div>
+                </div>
+                <%= g.hidden_field :client_id, :value => @client.id %>
+              </th>
+              <th class="col-md-3">
+                <div class="form-group">
+                  <%= g.submit 'Guardar', :class => 'btn btn-primary' %>
+                </div>
+              </th>
+            </tr>
+            <% end %>
+            <% @client_comments.each do |client_comment| %>
+            <tr>
+              <td class="col-md-9"><%= client_comment.comment %></td>
+              <td class="col-md-3"><%= l client_comment.created_at, format: :short %></td>
+            </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <% end %>
     </div>
     <div class="col-md-6">
     <div class="panel panel-info">
@@ -76,6 +121,13 @@
 							<th>Local</th>
 							<th>Servicio</th>
 						</tr>
+            <% @lastBookings.each do |booking| %>
+            <tr>
+              <td><%= l booking.start, format: :short %></td>
+              <td><%= booking.location.name %></td>
+              <td><%= booking.service.name %></td>
+            </tr>
+            <% end %>
 					</tbody>
 				</table>
 			</div>
@@ -94,16 +146,17 @@
 							<th>Local</th>
 							<th>Servicio</th>
 						</tr>
+            <% @activeBookings.each do |booking| %>
+            <tr>
+              <td><%= l booking.start, format: :short %></td>
+              <td><%= booking.location.name %></td>
+              <td><%= booking.service.name %></td>
+            </tr>
+            <% end %>
 					</tbody>
 				</table>
 			</div>
 		</div>      
-    </div>
-    <div class="form-group">
-      <div class="col-sm-offset-3 col-sm-4">
-        <%= f.submit 'Guardar', :class => 'btn btn-primary' %>
-        <%= link_to 'Cancelar', clients_path, class: "btn btn-danger" %>  
-      </div>
     </div>
   <% end %>
 

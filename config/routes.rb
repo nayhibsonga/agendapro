@@ -53,6 +53,7 @@ Agendapro::Application.routes.draw do
   post '/quick_add/services', :to => 'quick_add#create_services'
   post '/quick_add/service_provider', :to => 'quick_add#create_service_provider'
 
+  post '/client_comments', :to => 'clients#create_comment', :as => 'client_comments'
   get '/dashboard', :to => 'dashboard#index', :as => 'dashboard'
   get '/reports', :to => 'reports#index', :as => 'reports'
   get '/select_plan', :to => 'plans#select_plan', :as => 'select_plan'

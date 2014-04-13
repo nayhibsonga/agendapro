@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140408154640) do
+ActiveRecord::Schema.define(version: 20140411170837) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -64,6 +64,15 @@ ActiveRecord::Schema.define(version: 20140408154640) do
   end
 
   add_index "cities", ["region_id"], name: "index_cities_on_region_id", using: :btree
+
+  create_table "client_comments", force: true do |t|
+    t.integer  "client_id"
+    t.text     "comment"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "client_comments", ["client_id"], name: "index_client_comments_on_client_id", using: :btree
 
   create_table "clients", force: true do |t|
     t.integer  "company_id"
