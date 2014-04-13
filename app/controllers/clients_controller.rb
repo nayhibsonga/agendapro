@@ -18,6 +18,8 @@ class ClientsController < ApplicationController
 
   # GET /clients/new
   def new
+    @activeBookings = Array.new
+    @lastBookings = Array.new
     @client = Client.new
     @client_comment = ClientComment.new
   end
