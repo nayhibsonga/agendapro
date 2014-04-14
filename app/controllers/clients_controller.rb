@@ -100,9 +100,9 @@ class ClientsController < ApplicationController
 
     ClientMailer.send_client_mail(current_user, clients, params[:subject], params[:message], company_img)
 
-    redirect_to '/clients', notice: 'Su E-mail ha sido enviado correctamente.'
+    redirect_to '/clients', notice: 'E-mail enviado correctamente.'
   end
-  
+
   def suggestion
     @company = Company.where(id: current_user.company_id)
     @clients = Client.where(company_id: @company).pluck(:first_name, :last_name, :email, :phone).uniq
