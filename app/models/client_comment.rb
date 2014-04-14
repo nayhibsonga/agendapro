@@ -1,3 +1,3 @@
 class ClientComment < ActiveRecord::Base
-  belongs_to :client_profile
+  belongs_to :client
 end

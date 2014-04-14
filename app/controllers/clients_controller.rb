@@ -41,7 +41,7 @@ class ClientsController < ApplicationController
 
     respond_to do |format|
       if @client.save
-        format.html { redirect_to edit_client_path(@client), notice: 'El cliente fue creado exitosamente.' }
+        format.html { redirect_to clients_path, notice: 'El cliente fue creado exitosamente.' }
         format.json { render action: 'edit', status: :created, location: @client }
       else
         format.html { render action: 'new' }
@@ -53,13 +53,9 @@ class ClientsController < ApplicationController
   # PATCH/PUT /clients/1
   # PATCH/PUT /clients/1.json
   def update
-    @client_comment = ClientComment.new(client_comment_params)
     respond_to do |format|
       if @client.update(client_params)
-        if !client_comment_params[:comment].empty?
-          @client_comment.save
-        end
-        format.html { redirect_to edit_client_path(@client), notice: 'El cliente fue actualizado exitosamente.' }
+        format.html { redirect_to clients_path, notice: 'El cliente fue actualizado exitosamente.' }
         format.json { head :no_content }
       else
         format.html { render action: 'edit' }
@@ -68,9 +64,43 @@ class ClientsController < ApplicationController
     end
   end
 
+  def create_comment
+    @client_comment = ClientComment.new(client_comment_params)
+    respond_to do |format|
+      if @client_comment.save
+        format.html { redirect_to edit_client_path(@client), notice: 'El cliente fue creado exitosamente.' }
+        format.json { render :json => @client_comment }
+      else
+        format.html { render action: 'new' }
+        format.json { render json: @client.errors, status: :unprocessable_entity }
+      end
+    end
+  end
+
+  def destroy_comment
+    @client_comment = ClientComment.find(params[:id])
+    @client = @client_comment.client
+    @client_comment.destroy
+    respond_to do |format|
+      format.html { render :json => @client_comment }
+      format.json { head :no_content }
+    end
+  end
+
+  def update_comment
+    @client_comment = ClientComment.find(params[:id])
+    @client = @client_comment.client
+    @client_comment.update(client_comment_params)
+    respond_to do |format|
+      format.html { render :json => @client_comment }
+      format.json { head :no_content }
+    end
+  end
+
   # DELETE /clients/1
   # DELETE /clients/1.json
   def destroy
+    @client.client_comments.destroy_all
     @client.destroy
     respond_to do |format|
       format.html { redirect_to clients_url }

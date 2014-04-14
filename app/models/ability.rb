@@ -148,6 +148,9 @@ class Ability
         can :get_link, Company
 
         can :suggestion, Client, :company_id => user.company_id
+        can :create_comment, Client, :company_id => user.company_id
+        can :update_comment, Client, :company_id => user.company_id
+        can :destroy_comment, Client, :company_id => user.company_id
 
     elsif user.role_id == Role.find_by_name("Administrador Local").id
 
@@ -204,6 +207,10 @@ class Ability
         can :provider_service, ServiceProvider
         can :suggestion, Client, :company_id => user.company_id
 
+        can :create_comment, Client, :company_id => user.company_id
+        can :update_comment, Client, :company_id => user.company_id
+        can :destroy_comment, Client, :company_id => user.company_id
+
     elsif user.role_id == Role.find_by_name("Recepcionista").id
 
         can :get_booking, Booking, :service_provider_id => { :location_id => user.location_id }
@@ -228,6 +235,10 @@ class Ability
 
         can :provider_service, ServiceProvider
         can :suggestion, Client, :company_id => user.company_id
+        
+        can :create_comment, Client, :company_id => user.company_id
+        can :update_comment, Client, :company_id => user.company_id
+        can :destroy_comment, Client, :company_id => user.company_id
 
     elsif user.role_id == Role.find_by_name("Staff").id
 
