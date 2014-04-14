@@ -26,11 +26,11 @@ class ClientsController < ApplicationController
 
   # GET /clients/1/edit
   def edit
-    @activeBookings = Booking.where(:email => @client.email, :service_provider_id => ServiceProvider.where(:company_id => @client.company_id), :status_id => Status.find_by(:name => ['Reservado', 'Pagado'])).where("start > ?", DateTime.now).order(:start) 
-    @lastBookings = Booking.where(:email => @client.email, :service_provider_id => ServiceProvider.where(:company_id => @client.company_id)).order(updated_at: :desc).limit(10)
+    @activeBookings = Booking.where(:email => @client.email, :service_provider_id => ServiceProvider.where(:company_id => @client.company_id), :status_id => Status.find_by(:name => ['Reservado', 'Pagado'])).where("start > ?", DateTime.now).order(:start).limit(5)
+    @lastBookings = Booking.where(:email => @client.email, :service_provider_id => ServiceProvider.where(:company_id => @client.company_id)).order(updated_at: :desc).limit(5)
     @next_bookings = Booking
     @client_comment = ClientComment.new
-    @client_comments = ClientComment.where(client_id: @client.id)
+    @client_comments = ClientComment.where(client_id: @client.id).order(created_at: :desc)
   end
 
   # POST /clients
@@ -76,6 +76,19 @@ class ClientsController < ApplicationController
       format.html { redirect_to clients_url }
       format.json { head :no_content }
     end
+  end
+
+  def suggestion
+    @company = Company.where(id: current_user.company_id)
+    @clients = Client.where(company_id: @company).pluck(:first_name, :last_name, :email, :phone).uniq
+
+    @clients_arr = Array.new
+    @clients.each do |client|
+      label = client[2] + ' - ' + client[1] + ', ' + client[0]
+      @clients_arr.push({:label => label, :value => client})
+    end
+
+    render :json => @clients_arr
   end
 
   private

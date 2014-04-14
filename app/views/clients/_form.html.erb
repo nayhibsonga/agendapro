@@ -57,7 +57,7 @@
     <div class="form-group">
         <%= f.label :birth_date, "Cumpleaños: ", class: "col-sm-4 control-label" %>
         <div class="col-sm-8">
-            <%= f.text_field :birth_date, class: "form-control" %>
+            <%= f.text_field :birth_date, class: "form-control", :value => (@client.birth_date.blank? ? '' : @client.birth_date.strftime('%d/%m/%Y')) %>
         </div>
       </div>
     <div class="form-group">
@@ -96,7 +96,7 @@
             <% end %>
             <% @client_comments.each do |client_comment| %>
             <tr>
-              <td class="col-md-9"><%= client_comment.comment %></td>
+              <td class="col-md-9"><%= client_comment.comment.gsub("\n", "<br />").html_safe %></td>
               <td class="col-md-3"><%= l client_comment.created_at, format: :short %></td>
             </tr>
             <% end %>
@@ -159,4 +159,10 @@
 		</div>      
     </div>
   <% end %>
+
+  <% content_for :scripts do %>
+  <%= javascript_include_tag "clients" %>
+  <%= stylesheet_link_tag "jquery-ui-1.10.4" %>
+  <%= javascript_include_tag "jquery-ui-1.10.4.min.js" %>
+<% end %>
 
