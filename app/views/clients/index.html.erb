@@ -29,7 +29,7 @@
 				<td>
 					<div class="checkbox" style="margin-top: 0; margin-bottom: 0;">
 						<label>
-							<input type="checkbox" name="client_mail" value="<%= client[2] %>">Enviar Email
+							<input type="checkbox" name="client_mail" value="<%= client.email %>">Enviar Email
 						</label>
 					</div>
 				</td>
@@ -140,10 +140,10 @@
 					required: "Debe elegir al menos un destinatario"
 				},
 				'subject': {
-					required: "Debe escribir un asusnto"
+					required: "Debe escribir un asunto para su e-mail"
 				},
 				'message': {
-					required: "No puede dejar el cuerpo vacío"
+					required: "No se puede dejar el cuerpo vacío"
 				}
 			},
 			highlight: function(element) {

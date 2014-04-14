@@ -108,6 +108,31 @@ class ClientsController < ApplicationController
     end
   end
 
+  def send_mail
+    clients = Array.new
+    params[:to].split(',').each do |client_mail|
+      client_info = {
+        :email => client_mail,
+        :type => 'bcc'
+      }
+      clients.push(client_info)
+    end
+
+    if current_user.company.logo_url
+      company_img = {
+        :type => 'image/' +  File.extname(current_user.company.logo_url),
+        :name => 'company_img.jpg',
+        :content => Base64.encode64(File.read('public' + current_user.company.logo_url.to_s))
+      }
+    else
+      company_img = {}
+    end
+
+    ClientMailer.send_client_mail(current_user, clients, params[:subject], params[:message], company_img)
+
+    redirect_to '/clients', notice: 'E-mail enviado correctamente.'
+  end
+
   def suggestion
     @company = Company.where(id: current_user.company_id)
     @clients = Client.where(company_id: @company).pluck(:first_name, :last_name, :email, :phone).uniq
