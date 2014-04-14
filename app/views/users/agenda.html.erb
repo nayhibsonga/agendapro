@@ -49,7 +49,7 @@
 								<th>Servicio</th>
 								<th>Staff</th>
 								<th>Precio</th>
-								<th></th>
+								<th class="fixed-column">Opciones</th>
 							</tr>
 						</thead>
 						<tbody>
@@ -61,7 +61,7 @@
 								<td><%= booking.service.name %></td>
 								<td><%= booking.service_provider.public_name %></td>
 								<td>$<%= number_with_precision(booking.service.price, precision: 0, separator: '', delimiter: '.') %></td>
-								<td>
+								<td class="fixed-column">
 									<%= link_to '<i class="fa fa-pencil"></i> Editar'.html_safe, booking_edit_url(:confirmation_code => booking.confirmation_code), :class => 'btn btn-warning btn-xs' %>
 									<%= link_to '<i class="fa fa-trash-o"></i> Cancelar'.html_safe, booking_cancel_url(:confirmation_code => booking.confirmation_code), :class => 'btn btn-danger btn-xs' %>
 								</td>
