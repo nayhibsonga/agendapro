@@ -4,7 +4,7 @@ function createdComment() {
 }
 
 function startEditComment(id) {
-	var comment = $('#comment'+id).html().replace(/<br\s*[\/]?>/gi, "");
+	var comment = $('#comment'+id).html().replace(/<br\s*[\/]?>/gi, "\n");
 	$('#comment'+id).html('<textarea class="form-control" id="client_comment_comment'+id+'" rows="5">' + comment+ '</textarea>');
 	$('#edit_button'+id).html('<i class="fa fa-check"></i> Guardar').removeClass('btn-warning').addClass('btn-primary');
 	$('#destroy_button'+id).html('<i class="fa fa-times"></i> Cancelar');
