@@ -84,22 +84,16 @@ function saveComment(typeURL, clientId, json) {
 }
 
 function setAge(dateText) {
-	dateText.split('/');
-	alert(dateText);
-	var date1 = new Date(dateText[2]+'-'+dateText[1]+'-'+dateText[0]);
+	var dd = dateText.split('/');
+	var date1 = new Date(dd[2]+'-'+dd[1]+'-'+dd[0]);
 	var date2 = new Date();
 
-	alert(date1);
-	alert(date2);
 
 	var milli=date2-date1;
-	alert(milli);
 	var milliPerYear=1000*60*60*24*365.26;
-	alert(milliPerYear);
 
 	var yearsApart=milli/milliPerYear;
-	alert(yearsApart);
-	$('#client_age').val(yearsApart);
+	$('#client_age').val(yearsApart | 0);
 	return false;
 }
 
@@ -115,8 +109,8 @@ $(function() {
 		dayNamesMin: [ "Do", "Lu", "Ma", "Mi", "Ju", "Vi", "Sá" ],
 		dayNamesShort: [ "Dom", "Lun", "Mar", "Mié", "Jue", "Vie", "Sáb" ],
 		onSelect: function(dateText, inst) {
-			// setAge(dateText);
-		};
+			setAge(dateText);
+		}
 	});
 	$('#new_comment_button').click(function() {
 		createComment();
@@ -130,4 +124,7 @@ $(function() {
 		startEditComment(event.target.id.split('edit_button')[1]);
 		return false;
 	});
+	if ($('#client_birth_date').val() != '') {
+		setAge($('#client_birth_date').val());
+	};
 });
