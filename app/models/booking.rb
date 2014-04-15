@@ -90,7 +90,6 @@ class Booking < ActiveRecord::Base
 		@time1 = Time.new.getutc + 1.day
 		@time2 = Time.new.getutc + 2.day
 		where(:start => @time1...@time2).each do |booking|
-			puts "asd"
 			BookingMailer.book_reminder_mail(booking)
 		end
 	end

@@ -1,6 +1,51 @@
 
 function createdComment() {
+	return false;
+}
 
+function startEditComment(id) {
+	var comment = $('#comment'+id).html().replace(/<br\s*[\/]?>/gi, "");
+	$('#comment'+id).html('<textarea class="form-control" id="client_comment_comment'+id+'" rows="5">' + comment+ '</textarea>');
+	$('#edit_button'+id).html('<i class="fa fa-check"></i> Guardar').removeClass('btn-warning').addClass('btn-primary');
+	$('#destroy_button'+id).html('<i class="fa fa-times"></i> Cancelar');
+	$('#edit_button'+id).unbind('click');
+	$('#destroy_button'+id).unbind('click');
+	$('#edit_button'+id).click( function() {
+		saveEditComment(id);
+		return false;
+	});
+	$('#destroy_button'+id).click( function() {
+		cancelEditComment(id);
+		return false;
+	});
+}
+
+function saveEditComment(id) {
+	saveComment("PATCH",$('#client_comment_client_id').val(),{"id": id, "client_id": $('#client_comment_client_id').val(), "comment": $('#client_comment_comment'+id).val() });
+}
+
+function cancelEditComment(id) {
+	var comment = $('#client_comment_comment'+id).html().replace(/\n/g, "<br />");
+	$('#comment'+id).html(comment);
+	$('#edit_button'+id).html('<i class="fa fa-pencil"></i> Editar').removeClass('btn-primary').addClass('btn-warning');;
+	$('#destroy_button'+id).html('<i class="fa fa-trash-o"></i> Eliminar');
+	$('#edit_button'+id).unbind('click');
+	$('#destroy_button'+id).unbind('click');
+	$('#edit_button'+id).click( function() {
+		startEditComment(id);
+		return false;
+	});
+	$('#destroy_button'+id).click( function() {
+		deleteComment(id);
+		return false;
+	});
+}
+
+function deleteComment(id) {
+    if (confirm("Estás seguro?")) {
+        saveComment("DELETE",$('#client_comment_client_id').val(),{"id": id });
+    }
+    return false;
 }
 
 function getNewClientComment() {
@@ -8,19 +53,24 @@ function getNewClientComment() {
 	return json;
 }
 
-function createComment() {
-	commentJSON = getNewClientComment();
-	saveComment('POST','',commentJSON);
+function getEditClientComment() {
+	var json = { "client_id": $('#client_comment_client_id').val(), "comment": $('#client_comment_comment').val() };
+	return json;
 }
 
-function saveComment(typeURL, extraURL, json) {
+function createComment() {
+	commentJSON = getNewClientComment();
+	saveComment('POST',$('#client_comment_client_id').val(),commentJSON);
+}
+
+function saveComment(typeURL, clientId, json) {
 	$.ajax({
 		type: typeURL,
-		url: '/comments'+ extraURL +'.json',
+		url: '/clients/'+ clientId +'/comments.json',
 		data: { "client_comment": json },
 		dataType: 'json',
 		success: function(){
-			document.location.href = '/clients/'+json.client_id+'/edit/';
+			document.location.href = '/clients/'+clientId+'/edit/';
 		},
 		error: function(xhr){
 			var errors = $.parseJSON(xhr.responseText).errors;
@@ -33,6 +83,26 @@ function saveComment(typeURL, extraURL, json) {
 	});
 }
 
+function setAge(dateText) {
+	dateText.split('/');
+	alert(dateText);
+	var date1 = new Date(dateText[2]+'-'+dateText[1]+'-'+dateText[0]);
+	var date2 = new Date();
+
+	alert(date1);
+	alert(date2);
+
+	var milli=date2-date1;
+	alert(milli);
+	var milliPerYear=1000*60*60*24*365.26;
+	alert(milliPerYear);
+
+	var yearsApart=milli/milliPerYear;
+	alert(yearsApart);
+	$('#client_age').val(yearsApart);
+	return false;
+}
+
 
 $(function() {
 	$("#client_birth_date").datepicker({
@@ -40,20 +110,24 @@ $(function() {
 		changeMonth: true,
 		changeYear: true,
 		firstDay: 1,
+		yearRange: "-100:+0",
 		dayNames: [ "Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado" ],
 		dayNamesMin: [ "Do", "Lu", "Ma", "Mi", "Ju", "Vi", "Sá" ],
-		dayNamesShort: [ "Dom", "Lun", "Mar", "Mié", "Jue", "Vie", "Sáb" ]
+		dayNamesShort: [ "Dom", "Lun", "Mar", "Mié", "Jue", "Vie", "Sáb" ],
+		onSelect: function(dateText, inst) {
+			// setAge(dateText);
+		};
 	});
 	$('#new_comment_button').click(function() {
 		createComment();
 		return false;
 	});
-	$("[id^='destroy_button']").click(function() {
-		alert($(this).attr('id'));
+	$("[id^='destroy_button']").click(function(event) {
+		deleteComment(event.target.id.split('destroy_button')[1]);
 		return false;
 	});
-	$("[id^='edit_button']").click(function() {
-		alert($(this).attr('id'));
+	$("[id^='edit_button']").click(function(event) {
+		startEditComment(event.target.id.split('edit_button')[1]);
 		return false;
 	});
 });

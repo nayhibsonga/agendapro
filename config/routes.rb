@@ -116,9 +116,9 @@ Agendapro::Application.routes.draw do
   get '/cancel_booking', :to => 'bookings#cancel_booking', :as => 'booking_cancel'
   post '/cancel_booking', :to => 'bookings#cancel_booking'
 
-  post '/comments', :to => 'clients#create_comment'
-  put '/comments/:id', :to => 'clients#update_comment'
-  delete '/comments/:id', :to => 'clients#destroy_comment'
+  post '/clients/:id/comments', :to => 'clients#create_comment'
+  patch '/clients/:id/comments', :to => 'clients#update_comment'
+  delete '/clients/:id/comments', :to => 'clients#destroy_comment'
 
   get '/inactive_locations', :to => 'locations#inactive_index', :as => 'inactive_locations'
   get '/inactive_services', :to => 'services#inactive_index', :as => 'inactive_services'

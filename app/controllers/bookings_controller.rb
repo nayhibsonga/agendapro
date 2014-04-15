@@ -107,7 +107,6 @@ class BookingsController < ApplicationController
     end
 
     json = @booklist.to_json
-    puts json
     render :json => json
   end
 

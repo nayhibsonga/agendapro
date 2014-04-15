@@ -75,7 +75,6 @@ class QuickAddController < ApplicationController
 	end
 
   	def create_services
-  		puts service_params
 	    if service_params[:service_category_attributes]
 	      if service_params[:service_category_attributes][:name] == ""
 	        new_params = service_params.except(:service_category_attributes)

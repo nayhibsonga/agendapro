@@ -78,8 +78,7 @@ class ClientsController < ApplicationController
   end
 
   def destroy_comment
-    @client_comment = ClientComment.find(params[:id])
-    @client = @client_comment.client
+    @client_comment = ClientComment.find(client_comment_params[:id])
     @client_comment.destroy
     respond_to do |format|
       format.html { render :json => @client_comment }
@@ -88,7 +87,7 @@ class ClientsController < ApplicationController
   end
 
   def update_comment
-    @client_comment = ClientComment.find(params[:id])
+    @client_comment = ClientComment.find(client_comment_params[:id])
     @client = @client_comment.client
     @client_comment.update(client_comment_params)
     respond_to do |format|
@@ -158,6 +157,6 @@ class ClientsController < ApplicationController
     end
 
     def client_comment_params
-      params.require(:client_comment).permit(:client_id, :comment)
+      params.require(:client_comment).permit(:id, :client_id, :comment)
     end
 end
