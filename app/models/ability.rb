@@ -130,6 +130,8 @@ class Ability
         can :destroy, LocationTime, :location => { :company_id => user.company_id }
         can :create, LocationTime, :location => { :company_id => user.company_id }
         can :update, LocationTime, :location => { :company_id => user.company_id }
+        
+        can :schedule_local, LocationTime, :location_id => user.location_id
 
         can :read, ProviderTime, :service_provider => { :company_id => user.company_id }
         can :destroy, ProviderTime, :service_provider => { :company_id => user.company_id }
