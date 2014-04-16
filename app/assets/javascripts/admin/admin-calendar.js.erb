@@ -1,4 +1,4 @@
-var colors = ["#1e8584","#006D68","#EE5858","#EEE458","#1F6185","#3E4A8D","#E0D20B","#62718B","#C14949","#53565A","#DFD1A7","#7A6855","#FA4616","#628B75","#6B8B62","#8B6286","#6C9FB5","#A4D899","#99D8D7","#727D7D","#99ABD8","#A2E18B","#E18B8B","#108190","#106990","#56918E","#8A9F9E","#0C660E","#294852","#08769A","#1e8584","#006D68"]
+var colors = ["#1e8584","#006D68","#1F6185","#3E4A8D","#EE5858","#EEE458","#E0D20B","#62718B","#C14949","#53565A","#DFD1A7","#7A6855","#FA4616","#628B75","#6B8B62","#8B6286","#6C9FB5","#A4D899","#99D8D7","#727D7D","#99ABD8","#A2E18B","#E18B8B","#108190","#106990","#56918E","#8A9F9E","#0C660E","#294852","#08769A","#1e8584","#006D68"]
 var resourcesColors = [];
 
 function loadProviders () {
@@ -647,8 +647,8 @@ function modalChange() {
 		var hours = parseInt($("#bookingStartHour").val());
 		var minutes = parseInt($("#bookingStartMinute").val()) + duration;
 		if (minutes >= 60) {
-			hours += 1;
-			minutes -= 60;
+			hours += Math.floor(minutes/60);
+			minutes = minutes%60;
 		}
 		if (hours < 10) {
 			extraCharH = '0';
