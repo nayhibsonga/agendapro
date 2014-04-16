@@ -107,11 +107,11 @@
 					<li>
 						<a class="open-submenu"><i class="fa fa-wrench"></i><span class="colapse-hidden"> Configuración <span class="fa fa-caret-down caret-especial"></span></span></a>
 						<ul id="submenu4" class="submenu-close">
-							<li><%= link_to '<i class="fa fa-briefcase"></i><span class="remove-txt"> Empresa</span>'.html_safe, edit_company_path(Company.find(current_user.company_id)), { :class => if controller.controller_name == "companies" then "submenu active" else "submenu" end } %></li>
-							<li><%= link_to '<i class="fa fa-phone"></i><span class="remove-txt"> Recordatorios</span>'.html_safe, edit_company_setting_path(Company.find(current_user.company_id).company_setting), { :class => if controller.action_name == "edit" && controller.controller_name == "company_settings" then "submenu active" else "submenu" end } %></li>
+							<li><%= link_to '<i class="fa fa-briefcase"></i><span class="remove-txt"> Empresa</span>'.html_safe, edit_company_path(Company.find(current_user.company_id)), { :class => if controller.action_name == "edit" && controller.controller_name == "companies" then "submenu active" else "submenu" end } %></li>
 							<li><%= link_to '<i class="fa fa-clock-o"></i><span class="remove-txt"> Periodo Agenda</span>'.html_safe, time_booking_path(:company => Company.find(current_user.company_id).id), { :class => if controller.action_name == "time_booking_edit" then "submenu active" else "submenu" end } %></li>
 							<li><%= link_to '<i class="fa fa-dollar"></i><span class="remove-txt"> Planes</span>'.html_safe, select_plan_path, { :class => if controller.controller_name == "plans" then "submenu active" else "submenu" end } %></li>
 							<li><%= link_to '<i class="fa fa-list"></i><span class="remove-txt"> Categorías de Servicios</span>'.html_safe, service_categories_path, { :class => if controller.controller_name == "service_categories" then "submenu active" else "submenu" end } %></li>
+							<li><%= link_to '<i class="fa fa-share-square-o"></i><span class="remove-txt"> Link AgendaPro</span>'.html_safe, get_link_path, { :class => if controller.action_name == "get_link" then "submenu active" else "submenu" end } %></li>
 						</ul>
 					</li>
 				<% end %>

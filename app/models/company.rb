@@ -10,6 +10,7 @@ class Company < ActiveRecord::Base
 	has_many :service_providers
 	has_many :locations
 	has_many :service_categories
+	has_many :clients
 	has_one :company_setting
 
 	validates :name, :web_address, :economic_sector, :plan, :payment_status, :presence => true

@@ -15,10 +15,11 @@
       <tr>
         <td><%= location.name %></td>
         <td><%= link_to '<i class="fa fa-pencil"></i> Editar'.html_safe, edit_location_path(location), :class => "btn btn-warning" %>
-            <%= link_to '<i class="fa fa-trash-o"></i> Eliminar'.html_safe, location, :class => "btn btn-danger",  method: :delete, data: { confirm: '¿Estás seguro de eliminar el local seleccionado?' } unless cannot? :destroy, location %></td>
+            <%= link_to '<i class="fa fa-trash-o"></i> Eliminar'.html_safe, deactivate_location_path(:id => location.id), :class => "btn btn-danger", data: { confirm: '¿Estás seguro de desactivar el Local seleccionado?' } unless cannot? :destroy, location %></td>
       </tr>
     <% end %>
   </tbody>
 </table>
 
 <%= link_to '<i class="fa fa-plus"></i> Nuevo Local'.html_safe, new_location_path, :class => "btn btn-primary" %>
+<%= link_to '<i class="fa fa-minus"></i> Locales Inactivos'.html_safe, inactive_locations_path, :class => "btn btn-primary pull-right" %>

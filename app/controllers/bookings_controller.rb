@@ -9,7 +9,7 @@ class BookingsController < ApplicationController
   # GET /bookings.json
   def index
     @company = Company.where(id: current_user.company_id)
-    @locations = Location.all.accessible_by(current_ability)
+    @locations = Location.where(:active => true).accessible_by(current_ability)
     @service_providers = ServiceProvider.where(location_id: @locations)
     @bookings = Booking.where(service_provider_id: @service_providers)
     @booking = Booking.new
@@ -57,7 +57,9 @@ class BookingsController < ApplicationController
   # PATCH/PUT /bookings/1
   # PATCH/PUT /bookings/1.json
   def update
-    @booking.location = @booking.service_provider.location
+    if ServiceProvider.where(:id => booking_params[:service_provider_id])
+      booking_params[:location_id] = ServiceProvider.find(booking_params[:service_provider_id]).location.id
+    end
     if !booking_params[:user_id]
       if User.find_by_email(booking_params[:email])
         @booking.user_id = User.find_by_email(booking_params[:email]).id
@@ -87,9 +89,13 @@ class BookingsController < ApplicationController
   end
 
   def get_booking
-    @booking = Booking.find(params[:id])
     booking = Booking.find(params[:id])
     render :json => booking
+  end
+
+  def get_booking_info
+    booking = Booking.find(params[:id])
+    render :json => {service_provider_active: booking.service_provider.active, service_active: booking.service.active, service_provider_name: booking.service_provider.public_name, service_name: booking.service.name}
   end
 
   def provider_booking
@@ -98,7 +104,12 @@ class BookingsController < ApplicationController
       @provider = ServiceProvider.where(:location_id => params[:location])
     end
     @bookings = Booking.where(:service_provider_id => @provider, :location_id => params[:location]).order(:start)
-    render :json => @bookings
+    @booklist = @bookings.map do |u|
+      { :id => u.id, :start => u.start, :end => u.end, :service_id => u.service_id, :service_provider_id => u.service_provider_id, :user_id => u.user_id, :status_id => u.user_id, :first_name => u.first_name, :last_name => u.last_name, :email => u.email, :phone => u.phone, :notes => u.notes, service_provider_active: u.service_provider.active, service_active: u.service.active, service_provider_name: u.service_provider.public_name, service_name: u.service.name}
+    end
+
+    json = @booklist.to_json
+    render :json => json
   end
 
   def book_service

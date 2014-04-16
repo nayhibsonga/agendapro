@@ -1,5 +1,5 @@
 class ServicesController < ApplicationController
-  before_action :set_service, only: [:show, :edit, :update, :destroy]
+  before_action :set_service, only: [:show, :edit, :update, :destroy, :activate, :deactivate]
   before_action :authenticate_user!, except: [:services_data, :service_data, :get_providers]
   before_action :quick_add, except: [:services_data, :service_data, :get_providers]
   layout "admin", except: [:get_providers, :services_data, :service_data]
@@ -8,8 +8,25 @@ class ServicesController < ApplicationController
   # GET /services
   # GET /services.json
   def index
-    @services = Service.where(company_id: current_user.company_id).order(name: :asc)
+    @services = Service.where(company_id: current_user.company_id, :active => true).order(name: :asc)
     @service_categories = ServiceCategory.where(company_id: current_user.company_id).order(name: :asc)
+  end
+
+  def inactive_index
+    @services = Service.where(company_id: current_user.company_id, :active => false).order(name: :asc)
+    @service_categories = ServiceCategory.where(company_id: current_user.company_id).order(name: :asc)
+  end
+
+  def activate
+    @service.active = true
+    @service.save
+    redirect_to inactive_services_path
+  end
+
+  def deactivate
+    @service.active = false
+    @service.save
+    redirect_to services_path
   end
 
   # GET /services/1
@@ -84,7 +101,7 @@ class ServicesController < ApplicationController
 
   def get_providers
     service = Service.find(params[:id])
-    providers = service.service_providers.where('location_id = ?', params[:local])
+    providers = service.service_providers.where(:active => true).where('location_id = ?', params[:local]).where(:active => true)
     render :json => providers
   end
 

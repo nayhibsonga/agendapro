@@ -12,7 +12,7 @@ class Booking < ActiveRecord::Base
 
 	after_commit validate :bookings_overlap
 
-	after_create :send_booking_mail
+	after_create :send_booking_mail, :check_company_client
 	after_update :send_update_mail
 
 	def booking_duration
@@ -90,8 +90,13 @@ class Booking < ActiveRecord::Base
 		@time1 = Time.new.getutc + 1.day
 		@time2 = Time.new.getutc + 2.day
 		where(:start => @time1...@time2).each do |booking|
-			puts "asd"
 			BookingMailer.book_reminder_mail(booking)
 		end
 	end
+
+	def check_company_client
+		if Client.where(:company_id => self.location.company.id, :email => self.email).empty?
+        	Client.create(:company_id => self.location.company.id, :email => self.email, :first_name => self.first_name, :last_name => self.last_name, :phone => self.phone)
+        end
+    end
 end

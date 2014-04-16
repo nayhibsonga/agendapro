@@ -1,0 +1,24 @@
+<h1>Locales Inactivos</h1>
+
+<h4>Acá puedes re-activar y editar los locales previamente desactivados.</h4>
+
+<table class="table table-bordered">
+  <thead>
+    <tr>
+      <th>Nombre</th>
+      <th>Opciones</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @locations.each do |location| %>
+      <tr>
+        <td><%= location.name %></td>
+        <td><%= link_to '<i class="fa fa-check"></i> Re-activar'.html_safe, activate_location_path(:id => location.id), :class => "btn btn-primary", data: { confirm: '¿Estás seguro de re-activar el Local seleccionado?' } %>
+            <%= link_to '<i class="fa fa-pencil"></i> Editar'.html_safe, edit_location_path(location), :class => "btn btn-warning" %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<%= link_to 'Locales Activos', locations_path, :class => "btn btn-primary" %>

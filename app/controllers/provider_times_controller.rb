@@ -1,4 +1,4 @@
-class StaffTimesController < ApplicationController
+class ProviderTimesController < ApplicationController
   before_action :set_staff_time, only: [:show, :edit, :update, :destroy]
   before_action :authenticate_user!
   before_action :quick_add

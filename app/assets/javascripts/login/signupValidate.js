@@ -4,7 +4,7 @@ $(function() {
 	});
 
 	$.validator.addMethod("alphaNumeric", function(value, element) {
-		return this.optional(element) || /^\S*[a-z0-9_-]+\S*$/i.test(value); // letters, digits,_,-
+		return this.optional(element) || /^\S*[a-z0-9_-]+\S*$/i.test(value) && !value.match(/[áäâàéëêèíïîìóöôòúüûùñ]/gi); // letters, digits,_,-
 	}, "No se pueden usar caractéres especiales");
 
 	$.validator.addMethod('filesize', function(value, element, param) {
@@ -129,7 +129,13 @@ $(function() {
 
 	$('#user_company_attributes_name').one('change', function() {
 		var tmp = $('#user_company_attributes_name').val();
-		tmp = tmp.replace(/ /g, '');
+		tmp = tmp.replace(/ /g, '');	//Space
+		tmp = tmp.replace(/[áäâà]/gi, 'a');	//special a
+		tmp = tmp.replace(/[éëêè]/gi, 'e');	//Special e
+		tmp = tmp.replace(/[íïîì]/gi, 'i');	//Special i
+		tmp = tmp.replace(/[óöôò]/gi, 'o');	//Special o
+		tmp = tmp.replace(/[úüûù]/gi, 'u');	//Special u
+		tmp = tmp.replace(/ñ/gi, 'n');	//Special ñ
 		tmp = tmp.toLowerCase();
 		$('#user_company_attributes_web_address').val(tmp);
 	});

@@ -10,6 +10,7 @@
 			<th>Apellido</th>
 			<th>Email</th>
 			<th>Teléfono</th>
+			<th>Opciones</th>
 			<th>
 				Email
 				<input name="mail" class="pull-right" type="checkbox" value="">
@@ -19,14 +20,16 @@
 	<tbody>
 		<% @clients.each do |client| %>
 			<tr>
-				<td><%= client[0] %></td>
-				<td><%= client[1] %></td>
-				<td><%= client[2] %></td>
-				<td><%= client[3] %></td>
+				<td><%= client.first_name %></td>
+				<td><%= client.last_name %></td>
+				<td><%= client.email %></td>
+				<td><%= client.phone %></td>
+				<td><%= link_to '<i class="fa fa-pencil"></i> Ver / Editar'.html_safe, edit_client_path(client), :class => "btn btn-warning" %>
+            		<%= link_to '<i class="fa fa-trash-o"></i> Eliminar'.html_safe, client, :class => "btn btn-danger", method: :delete, data: { confirm: '¿Estás seguro de eliminar el Cliente seleccionado?' } unless cannot? :destroy, client %></td>
 				<td>
 					<div class="checkbox" style="margin-top: 0; margin-bottom: 0;">
 						<label>
-							<input type="checkbox" name="client_mail" value="<%= client[2] %>">Enviar Email
+							<input type="checkbox" name="client_mail" value="<%= client.email %>">Enviar Email
 						</label>
 					</div>
 				</td>
@@ -34,6 +37,7 @@
 		 <% end %>
 	</tbody>
 </table>
+<%= link_to '<i class="fa fa-plus"></i> Nuevo Cliente'.html_safe, new_client_path, :class => "btn btn-primary" %>
 
 <div class="modal fade" id="mailModal" tabindex="-1" role="dialog" aria-labelledby="mailModalLabel" aria-hidden="true">
 	<div class="modal-dialog">
@@ -136,10 +140,10 @@
 					required: "Debe elegir al menos un destinatario"
 				},
 				'subject': {
-					required: "Debe escribir un asusnto"
+					required: "Debe escribir un asunto para su e-mail"
 				},
 				'message': {
-					required: "No puede dejar el cuerpo vacío"
+					required: "No se puede dejar el cuerpo vacío"
 				}
 			},
 			highlight: function(element) {

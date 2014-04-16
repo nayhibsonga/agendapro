@@ -1,4 +1,4 @@
-var colors = ["#1e8584","#006D68","#EE5858","#EEE458","#1F6185","#3E4A8D","#E0D20B","#62718B","#C14949","#53565A","#DFD1A7","#7A6855","#FA4616","#628B75","#6B8B62","#8B6286","#6C9FB5","#A4D899","#99D8D7","#727D7D","#99ABD8","#A2E18B","#E18B8B","#108190","#106990","#56918E","#8A9F9E","#0C660E","#294852","#08769A"]
+var colors = ["#1e8584","#006D68","#1F6185","#3E4A8D","#EE5858","#EEE458","#E0D20B","#62718B","#C14949","#53565A","#DFD1A7","#7A6855","#FA4616","#628B75","#6B8B62","#8B6286","#6C9FB5","#A4D899","#99D8D7","#727D7D","#99ABD8","#A2E18B","#E18B8B","#108190","#106990","#56918E","#8A9F9E","#0C660E","#294852","#08769A","#1e8584","#006D68"]
 var resourcesColors = [];
 
 function loadProviders () {
@@ -28,9 +28,8 @@ function loadProviders () {
 						'</label>'
 					);
 					resources.push({id: provider.id, name: provider.public_name});
-					if (count < 30){
-						resourcesColors.push({id: provider.id, color: colors[count]});
-					}
+					resourcesColors.push({id: provider.id, color: colors[count%30]});
+					$('#providers-selector').children('#' + provider.id).children('p').css({'border-bottom-color': colors[count%30], 'border-bottom-style': 'solid'});
 					count += 1;
 					$('#booking_service_provider_id')
 					    .append('<option value="'+ provider.id +'">'+ provider.public_name +'</option>')
@@ -344,13 +343,7 @@ function loadProviderBooking (providerId) {
 		$.getJSON('/booking', {location: localId}, function (bookings) {
 			if (bookings.length > 0) {
 				$.each(bookings, function (key, booking) {
-					var serviceName = 'Ocupado';
-					for (i in servicesJSON) {
-						if (servicesJSON[i].id == booking.service_id) {
-							serviceName = servicesJSON[i].name;
-						}
-					}
-					var eventColor = "#1e8584";
+					var eventColor = "#585858";
 					for (i in resourcesColors) {
 						if (resourcesColors[i].id == booking.service_provider_id) {
 							eventColor = resourcesColors[i].color
@@ -358,7 +351,7 @@ function loadProviderBooking (providerId) {
 					}
 					var events = {
 						id: booking.id,
-						title: serviceName,
+						title: booking.service_name,
 						allDay: false,
 						start: booking.start,
 						end: booking.end,
@@ -375,13 +368,7 @@ function loadProviderBooking (providerId) {
 		$.getJSON('/booking', {location: localId, provider: providerId}, function (bookings) {
 			if (bookings.length > 0) {
 				$.each(bookings, function (key, booking) {
-					var serviceName = 'Ocupado';
-					for (i in servicesJSON) {
-						if (servicesJSON[i].id == booking.service_id) {
-							serviceName = servicesJSON[i].name;
-						}
-					}
-					var eventColor = "#1e8584";
+					var eventColor = "#585858";
 					for (i in resourcesColors) {
 						if (resourcesColors[i].id == booking.service_provider_id) {
 							eventColor = resourcesColors[i].color
@@ -389,7 +376,7 @@ function loadProviderBooking (providerId) {
 					}
 					var events = {
 						id: booking.id,
-						title: serviceName,
+						title: booking.service_name,
 						allDay: false,
 						start: booking.start,
 						end: booking.end,
@@ -444,9 +431,16 @@ function editBookingModal(eventId) {
 		var start = booking.start || 0;
 		if (start != 0) {
 			dateArray = start.toString().split('T');
-			date = new Date(dateArray);
-			dateS = date.toString().split(' ');
-			$('#datePicker').val(dateS[2]+'/'+dateS[1]+'/'+dateS[3]);
+			date = new Date(start)
+
+			month = date.getMonth()+1;
+			day = date.getDate();
+
+			output = (day<10 ? '0' : '') + day + '/' + (month<10 ? '0' : '') + month + '/' + date.getFullYear();
+
+			// date = new Date(dateArray);
+			// dateS = date.toString().split(' ');
+			$('#datePicker').val(output);
 			$('#bookingStartHour option[value="'+dateArray[1].split(':')[0]+'"]').attr("selected",true);
 			$('#bookingStartMinute option[value="'+dateArray[1].split(':')[1]+'"]').attr("selected",true);
 		}
@@ -482,9 +476,23 @@ function editBookingModal(eventId) {
 			});
 		}
 
-		modalChange();
+		$.getJSON('/get_booking_info', {id: eventId}, function (booking_info) {
+			if (!booking_info.service_provider_active) {
+				if ($('#booking_service_provider_id option[value="' + booking.service_provider_id + '"]').length == 0) {
+					$('#booking_service_provider_id').append('<option value="' + booking.service_provider_id + '">' + booking_info.service_provider_name + '</option>');
+				}
+				$('#booking_service_provider_id option[value="'+booking.service_provider_id+'"]').attr("selected",true);
+			}
+			if (!booking_info.service_active) {
+				if ($('#booking_service_id option[value="' + booking.service_id + '"]').length == 0) {
+					$('#booking_service_id').append('<option value="' + booking.service_id + '">' + booking_info.service_name + '</option>');
+				}
+				$('#booking_service_id option[value="'+booking.service__id+'"]').attr("selected",true);
+			}
+			modalChange();
 
-		$('#bookingModal').modal('show');
+			$('#bookingModal').modal('show');
+		});
 	});	
 }
 
@@ -639,8 +647,8 @@ function modalChange() {
 		var hours = parseInt($("#bookingStartHour").val());
 		var minutes = parseInt($("#bookingStartMinute").val()) + duration;
 		if (minutes >= 60) {
-			hours += 1;
-			minutes -= 60;
+			hours += Math.floor(minutes/60);
+			minutes = minutes%60;
 		}
 		if (hours < 10) {
 			extraCharH = '0';
@@ -667,7 +675,7 @@ $(function() {
 		servicesJSON = services;
 		loadProviders();
 		$('#datePicker').datepicker({
-			dateFormat: 'dd/M/yy',
+			dateFormat: 'dd/mm/yy',
 			firstDay: 1,
 			dayNames: [ "Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado" ],
 			dayNamesMin: [ "Do", "Lu", "Ma", "Mi", "Ju", "Vi", "Sá" ],

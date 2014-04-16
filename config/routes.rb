@@ -1,5 +1,7 @@
 Agendapro::Application.routes.draw do
 
+  resources :clients
+
   get "users/index"
   require 'subdomain'
 
@@ -32,6 +34,7 @@ Agendapro::Application.routes.draw do
   resources :bookings
   resources :service_providers
   resources :service_categories
+  resources :clients
 
   namespace :admin do 
     get '', :to => 'dashboard#index', :as => '/'
@@ -50,13 +53,14 @@ Agendapro::Application.routes.draw do
   post '/quick_add/services', :to => 'quick_add#create_services'
   post '/quick_add/service_provider', :to => 'quick_add#create_service_provider'
 
+  post '/client_comments', :to => 'clients#create_comment', :as => 'client_comments'
   get '/dashboard', :to => 'dashboard#index', :as => 'dashboard'
   get '/reports', :to => 'reports#index', :as => 'reports'
-  get '/clients', :to => 'clients#index', :as => 'clients'
   get '/select_plan', :to => 'plans#select_plan', :as => 'select_plan'
   get '/get_direction', :to => 'districts#get_direction'
   get '/time_booking_edit', :to => 'company_settings#time_booking_edit', :as => 'time_booking'
   post '/send_mail_client', :to => 'clients#send_mail'
+  get '/get_link', :to => 'companies#get_link', :as => 'get_link'
 
   get '/clients_suggestion', :to => 'clients#suggestion'
   get '/provider_services', :to => 'service_providers#provider_service'
@@ -96,6 +100,7 @@ Agendapro::Application.routes.draw do
   get '/providers_services', :to => 'services#get_providers'
   get '/location_time', :to => 'locations#location_time'
   get '/get_booking', :to => 'bookings#get_booking'
+  get '/get_booking_info', :to => 'bookings#get_booking_info'
   post "/book", :to => 'bookings#book_service'
   get '/category_name', :to => 'service_categories#get_category_name'
   get '/get_available_time', :to => 'locations#get_available_time'
@@ -110,6 +115,24 @@ Agendapro::Application.routes.draw do
   post '/edited_booking', :to => 'bookings#edit_booking_post'
   get '/cancel_booking', :to => 'bookings#cancel_booking', :as => 'booking_cancel'
   post '/cancel_booking', :to => 'bookings#cancel_booking'
+
+  post '/clients/:id/comments', :to => 'clients#create_comment'
+  patch '/clients/:id/comments', :to => 'clients#update_comment'
+  delete '/clients/:id/comments', :to => 'clients#destroy_comment'
+
+  get '/inactive_locations', :to => 'locations#inactive_index', :as => 'inactive_locations'
+  get '/inactive_services', :to => 'services#inactive_index', :as => 'inactive_services'
+  get '/inactive_service_providers', :to => 'service_providers#inactive_index', :as => 'inactive_service_providers'
+
+  get '/companies/:id/activate', :to => 'companies#activate', :as => 'activate_company'
+  get '/locations/:id/activate', :to => 'locations#activate', :as => 'activate_location'
+  get '/services/:id/activate', :to => 'services#activate', :as => 'activate_service'
+  get '/service_providers/:id/activate', :to => 'service_providers#activate', :as => 'activate_service_provider'
+  
+  get '/companies/:id/deactivate', :to => 'companies#deactivate', :as => 'deactivate_company'
+  get '/locations/:id/deactivate', :to => 'locations#deactivate', :as => 'deactivate_location'
+  get '/services/:id/deactivate', :to => 'services#deactivate', :as => 'deactivate_service'
+  get '/service_providers/:id/deactivate', :to => 'service_providers#deactivate', :as => 'deactivate_service_provider'
   
   # Root
   get '/' => 'searchs#index', :constraints => { :subdomain => 'www' }

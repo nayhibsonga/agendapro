@@ -3,6 +3,7 @@ class LocationTimesController < ApplicationController
   before_action :authenticate_user!, except: [:schedule_local]
   before_action :quick_add, except: [:schedule_local]
   layout "admin", except: [:schedule_local]
+  load_and_authorize_resource
 
   # GET /location_times
   # GET /location_times.json

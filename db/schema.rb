@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140326170601) do
+ActiveRecord::Schema.define(version: 20140411170837) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -65,18 +65,46 @@ ActiveRecord::Schema.define(version: 20140326170601) do
 
   add_index "cities", ["region_id"], name: "index_cities_on_region_id", using: :btree
 
+  create_table "client_comments", force: true do |t|
+    t.integer  "client_id"
+    t.text     "comment"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "client_comments", ["client_id"], name: "index_client_comments_on_client_id", using: :btree
+
+  create_table "clients", force: true do |t|
+    t.integer  "company_id"
+    t.string   "email"
+    t.string   "first_name"
+    t.string   "last_name"
+    t.string   "phone"
+    t.string   "address"
+    t.string   "district"
+    t.string   "city"
+    t.integer  "age"
+    t.integer  "gender"
+    t.date     "birth_date"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "clients", ["company_id"], name: "index_clients_on_company_id", using: :btree
+
   create_table "companies", force: true do |t|
-    t.string   "name",                              null: false
-    t.string   "web_address",                       null: false
+    t.string   "name",                               null: false
+    t.string   "web_address",                        null: false
     t.string   "logo"
     t.float    "pay_due",             default: 0.0
-    t.integer  "economic_sector_id",                null: false
-    t.integer  "plan_id",                           null: false
-    t.integer  "payment_status_id",                 null: false
+    t.integer  "economic_sector_id",                 null: false
+    t.integer  "plan_id",                            null: false
+    t.integer  "payment_status_id",                  null: false
     t.datetime "created_at"
     t.datetime "updated_at"
     t.text     "description"
     t.text     "cancellation_policy"
+    t.boolean  "active",              default: true
   end
 
   add_index "companies", ["economic_sector_id"], name: "index_companies_on_economic_sector_id", using: :btree
@@ -152,15 +180,16 @@ ActiveRecord::Schema.define(version: 20140326170601) do
   add_index "location_times", ["location_id"], name: "index_location_times_on_location_id", using: :btree
 
   create_table "locations", force: true do |t|
-    t.string   "name",        null: false
-    t.string   "address",     null: false
-    t.string   "phone",       null: false
+    t.string   "name",                       null: false
+    t.string   "address",                    null: false
+    t.string   "phone",                      null: false
     t.float    "latitude"
     t.float    "longitude"
-    t.integer  "district_id", null: false
-    t.integer  "company_id",  null: false
+    t.integer  "district_id",                null: false
+    t.integer  "company_id",                 null: false
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.boolean  "active",      default: true
   end
 
   add_index "locations", ["company_id"], name: "index_locations_on_company_id", using: :btree
@@ -244,11 +273,12 @@ ActiveRecord::Schema.define(version: 20140326170601) do
   create_table "service_providers", force: true do |t|
     t.integer  "location_id"
     t.integer  "user_id"
-    t.integer  "company_id",         null: false
+    t.integer  "company_id",                        null: false
     t.string   "notification_email"
     t.string   "public_name"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.boolean  "active",             default: true
   end
 
   add_index "service_providers", ["company_id"], name: "index_service_providers_on_company_id", using: :btree
@@ -287,6 +317,7 @@ ActiveRecord::Schema.define(version: 20140326170601) do
     t.integer  "service_category_id"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.boolean  "active",              default: true
   end
 
   add_index "services", ["company_id"], name: "index_services_on_company_id", using: :btree

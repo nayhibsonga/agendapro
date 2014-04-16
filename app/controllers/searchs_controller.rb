@@ -16,6 +16,9 @@ class SearchsController < ApplicationController
 		country = region.country
 		@geolocation = district.name + ', ' + city.name + ', ' + region.name + ', ' + country.name
 
+		lat = params[:latitude]
+		long = params[:longitude]
+
 		@results = Array.new
 
 		# => filtrar pronombres y articulos
@@ -23,9 +26,9 @@ class SearchsController < ApplicationController
 
 		# => optener de los locales los servicios cuyo tag coincide con la busqueda
 		tags = Tag.includes(:dictionaries).where('dictionaries.name ILIKE ? OR tags.name ILIKE ?', search, search)
-		services_tags = Service.includes(:tags).where(:tags => {:id => tags.pluck(:id)})
-		service_providers = ServiceProvider.includes(:services).where(:services => {:id => services_tags.pluck(:id)}).pluck(:location_id)
-		locations_tags = Location.where(district_id: params[:district], id: service_providers)
+		services_tags = Service.where(:active => true).includes(:tags).where(:tags => {:id => tags.pluck(:id)})
+		service_providers = ServiceProvider.where(:active => true).includes(:services).where(:services => {:id => services_tags.pluck(:id)}).pluck(:location_id)
+		locations_tags = Location.where(:active => true).where('sqrt((latitude - ' + lat + ')^2 + (longitude - ' + long + ')^2) <= 0.1').where(id: service_providers).order('sqrt((latitude - ' + lat + ')^2 + (longitude - ' + long + ')^2)')
 
 		locations_tags.each do |location_tag|
 			@results.push(location_tag)
@@ -33,36 +36,37 @@ class SearchsController < ApplicationController
 
 		# => Optener los locales pertenecientes a las compañias cuyo rubro se parece a la busqueda
 		economic_sector = EconomicSector.includes(:economic_sectors_dictionaries).where('economic_sectors.name ILIKE ? OR economic_sectors_dictionaries.name ILIKE ?', search, search)
-		locations_companies_economic_sector = Location.where(district_id: params[:district]).where(company_id: Company.where(economic_sector_id: economic_sector.pluck(:id)))
+		locations_companies_economic_sector = Location.where(:active => true).where('sqrt((latitude - ' + lat + ')^2 + (longitude - ' + long + ')^2) <= 0.1').where(company_id: Company.where(:active => true).where(economic_sector_id: economic_sector.pluck(:id))).order('sqrt((latitude - ' + lat + ')^2 + (longitude - ' + long + ')^2)')
+
 		locations_companies_economic_sector.each do |location_company_economic_sector|
 			@results.push(location_company_economic_sector)
 		end
 
 		# => optener de los locales los servicios cuyo nombre coincide con la busqueda
-		services_tags = Service.where('name ILIKE ?', search)
-		service_providers = ServiceProvider.joins(:services, :service_staffs).where('service_staffs.service_id' => services_tags).select('location_id')
-		locations_services = Location.where(district_id: params[:district], id: service_providers)
+		services_tags = Service.where(:active => true).where('name ILIKE ?', search)
+		service_providers = ServiceProvider.where(:active => true).joins(:services, :service_staffs).where('service_staffs.service_id' => services_tags).select('location_id')
+		locations_services = Location.where(:active => true).where('sqrt((latitude - ' + lat + ')^2 + (longitude - ' + long + ')^2) <= 0.1').where(id: service_providers).order('sqrt((latitude - ' + lat + ')^2 + (longitude - ' + long + ')^2)')
 
 		locations_services.each do |location_service|
 			@results.push(location_service)
 		end
 
 		# => optener los locales cuyo nombre se parece a la busqueda
-		locations = Location.where(district_id: params[:district]).where('name ILIKE ?', search).order(:name)
+		locations = Location.where(:active => true).where('sqrt((latitude - ' + lat + ')^2 + (longitude - ' + long + ')^2) <= 0.1').where('name ILIKE ?', search).order('sqrt((latitude - ' + lat + ')^2 + (longitude - ' + long + ')^2)')
 
 		locations.each do |location|
 			@results.push(location)
 		end
 
 		# => optener los locales de las compañias cuyo nombre se parece a la busqueda
-		locations_companies = Location.where(district_id: params[:district]).where(company_id: Company.where('name ILIKE ?', search).order(:name))
+		locations_companies = Location.where(:active => true).where('sqrt((latitude - ' + lat + ')^2 + (longitude - ' + long + ')^2) <= 0.1').where(company_id: Company.where(:active => true).where('name ILIKE ?', search).order(:name)).order('sqrt((latitude - ' + lat + ')^2 + (longitude - ' + long + ')^2)')
 
 		locations_companies.each do |location_company|
 			@results.push(location_company)
 		end
 
 		# => optener los locales de las compañias cuya url se parece a la busqueda
-		locations_companies_url = Location.where(district_id: params[:district]).where(company_id: Company.where('web_address ILIKE ?', search).order(:web_address))
+		locations_companies_url = Location.where(:active => true).where('sqrt((latitude - ' + lat + ')^2 + (longitude - ' + long + ')^2) <= 0.1').where(company_id: Company.where(:active => true).where('web_address ILIKE ?', search).order(:web_address)).order('sqrt((latitude - ' + lat + ')^2 + (longitude - ' + long + ')^2)')
 
 		locations_companies_url.each do |locations_company|
 			@results.push(locations_company)

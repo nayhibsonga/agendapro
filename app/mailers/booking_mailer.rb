@@ -418,7 +418,7 @@ class BookingMailer < ActionMailer::Base
     message = {
       :from_email => 'no-reply@agendapro.cl',
       :from_name => 'AgendaPro',
-      :subject => 'Recuerda tu Reserva',
+      :subject => 'Recuerda tu Reserva en ' + book_info.service_provider.company.name,
       :to => [
         {
           :email => book_info.email,
@@ -491,7 +491,7 @@ class BookingMailer < ActionMailer::Base
             },
             {
               :name => 'MESSAGE',
-              :content => 'Su servicio fue agendado correctamente.'
+              :content => 'Recuerda tu Reserva para mañana.'
             },
             {
               :name => 'EDIT',
@@ -516,7 +516,7 @@ class BookingMailer < ActionMailer::Base
             },
             {
               :name => 'MESSAGE',
-              :content => 'Fue agendado un servicio con usted.'
+              :content => 'Recuerda que mañana tienen una hora agendada contigo.'  
             }
           ]
         }
