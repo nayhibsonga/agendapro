@@ -139,7 +139,7 @@ class Ability
         can :read, Booking, :service_provider => { :company_id => user.company_id }
         can :destroy, Booking, :service_provider => { :company_id => user.company_id }
         can :create, Booking, :service_provider => { :company_id => user.company_id }
-        can :update, Booking, :service_provider => { :company_id => user.company_i5d }
+        can :update, Booking, :service_provider => { :company_id => user.company_id }
 
         can :provider_service, ServiceProvider
 
