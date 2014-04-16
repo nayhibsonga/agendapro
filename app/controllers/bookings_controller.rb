@@ -57,7 +57,9 @@ class BookingsController < ApplicationController
   # PATCH/PUT /bookings/1
   # PATCH/PUT /bookings/1.json
   def update
-    @booking.location = @booking.service_provider.location
+    if ServiceProvider.where(:id => booking_params[:service_provider_id])
+      booking_params[:location_id] = ServiceProvider.find(booking_params[:service_provider_id]).location.id
+    end
     if !booking_params[:user_id]
       if User.find_by_email(booking_params[:email])
         @booking.user_id = User.find_by_email(booking_params[:email]).id

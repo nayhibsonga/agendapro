@@ -1,8 +1,24 @@
 <h1>
 	Clientes de la Empresa
-	<button id="sendMail" type="button" class="btn btn-agendapro-claro pull-right" data-toggle="modal" data-target="#mailModal" disabled>Enviar Email</button>
 </h1>
 
+<h4>Acá podrás agregar nuevos clientes a tu empresa. Los clientes generados son válidos para todos los locales de tu compañía y, luego, estos se identifican con su email al crear reservas. </h4>
+
+<div class="row">
+	<div class="col-md-8">
+		<div class="form-group">
+			<input id="client_serach" class="form-control" placeholder="Buscar clientes por nombre, apellido y/o email..." />
+		</div>
+	</div>
+	<div class="col-md-2">
+		<button type="button" class="btn btn-primary pull-left">Buscar</button>
+	</div>
+	<div class="col-md-2">
+		<button id="sendMail" type="button" class="btn btn-agendapro-claro pull-right" data-toggle="modal" data-target="#mailModal" disabled>Enviar Email</button>
+	</div>
+</div>
+<br />
+<div class="row">
 <table class="table table-bordered">
 	<thead>
 		<tr>
@@ -37,6 +53,7 @@
 		 <% end %>
 	</tbody>
 </table>
+</div>
 <%= link_to '<i class="fa fa-plus"></i> Nuevo Cliente'.html_safe, new_client_path, :class => "btn btn-primary" %>
 
 <div class="modal fade" id="mailModal" tabindex="-1" role="dialog" aria-labelledby="mailModalLabel" aria-hidden="true">

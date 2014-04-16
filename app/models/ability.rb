@@ -139,7 +139,7 @@ class Ability
         can :read, Booking, :service_provider => { :company_id => user.company_id }
         can :destroy, Booking, :service_provider => { :company_id => user.company_id }
         can :create, Booking, :service_provider => { :company_id => user.company_id }
-        can :update, Booking, :service_provider => { :company_id => user.company_id }
+        can :update, Booking, :service_provider => { :company_id => user.company_i5d }
 
         can :provider_service, ServiceProvider
 
@@ -195,16 +195,17 @@ class Ability
         can :destroy, LocationTime, :location_id => user.location_id
         can :create, LocationTime, :location_id => user.location_id
         can :update, LocationTime, :location_id => user.location_id
+        can :schedule_local, LocationTime, :location_id => user.location_id
 
         can :read, ProviderTime, :service_provider => { :location_id => user.location_id }
         can :destroy, ProviderTime, :service_provider => { :location_id => user.location_id }
         can :create, ProviderTime, :service_provider => { :location_id => user.location_id }
         can :update, ProviderTime, :service_provider => { :location_id => user.location_id }
 
-        can :read, Booking, :service_provider_id => { :location_id => user.location_id }
-        can :destroy, Booking, :service_provider_id => { :location_id => user.location_id }
-        can :create, Booking, :service_provider_id => { :location_id => user.location_id }
-        can :update, Booking, :service_provider_id => { :location_id => user.location_id }
+        can :read, Booking, :location_id => user.location_id
+        can :destroy, Booking, :location_id => user.location_id 
+        can :create, Booking, :location_id => user.location_id 
+        can :update, Booking, :location_id => user.location_id 
 
         can :provider_service, ServiceProvider
         can :suggestion, Client, :company_id => user.company_id
@@ -232,10 +233,10 @@ class Ability
         can :create, Client, :company_id => user.company_id
         can :update, Client, :company_id => user.company_id
 
-        can :read, Booking, :service_provider => { :location_id => user.location_id }
-        can :destroy, Booking, :service_provider => { :location_id => user.location_id }
-        can :create, Booking, :service_provider => { :location_id => user.location_id }
-        can :update, Booking, :service_provider => { :location_id => user.location_id }
+        can :read, Booking, :location_id => user.location_id
+        can :destroy, Booking, :location_id => user.location_id 
+        can :create, Booking, :location_id => user.location_id 
+        can :update, Booking, :location_id => user.location_id 
 
         can :provider_service, ServiceProvider
         can :suggestion, Client, :company_id => user.company_id
