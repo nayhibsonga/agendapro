@@ -118,8 +118,8 @@ ActiveRecord::Schema.define(version: 20140411170837) do
     t.integer  "company_id",                     null: false
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.integer  "before_booking", default: 24,    null: false
-    t.integer  "after_booking",  default: 6,     null: false
+    t.integer  "before_booking",                 null: false
+    t.integer  "after_booking",                  null: false
   end
 
   add_index "company_settings", ["company_id"], name: "index_company_settings_on_company_id", using: :btree

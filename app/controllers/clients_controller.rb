@@ -127,7 +127,17 @@ class ClientsController < ApplicationController
       company_img = {}
     end
 
-    ClientMailer.send_client_mail(current_user, clients, params[:subject], params[:message], company_img)
+    if params[:attachment]
+      attachment = {
+        :type => params[:attachment].content_type,
+        :name => params[:attachment].original_filename,
+        :content => Base64.encode64(File.read(params[:attachment].tempfile))
+      }
+    else
+      attachment = {}
+    end
+
+    ClientMailer.send_client_mail(current_user, clients, params[:subject], params[:message], company_img, attachment)
 
     redirect_to '/clients', notice: 'E-mail enviado correctamente.'
   end
