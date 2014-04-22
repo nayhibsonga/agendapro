@@ -2,8 +2,8 @@ class ClientMailer < ActionMailer::Base
   require 'mandrill'
   require 'base64'
 
-  def send_client_mail (current_user, clients, subject, message, company_img)
-	mandrill = Mandrill::API.new 'HL4ERbuZZO6rrM2nlVjzZg'
+  def send_client_mail (current_user, clients, subject, message, company_img, attachment)
+	mandrill = Mandrill::API.new Agendapro::Application.config.api_key
 	
 	# => Template
 	template_name = 'clientmail'
@@ -32,11 +32,16 @@ class ClientMailer < ActionMailer::Base
 				:name => 'AgendaPro.png',
 				:content => Base64.encode64(File.read('app/assets/images/logos/logo_mail.png'))
 			}
-		]
+		],
+		:attachments => []
 	}
 
 	if company_img.length > 0
 		message[:images] << (company_img)
+	end
+
+	if attachment.length > 0
+		message[:attachments] << (attachment)
 	end
 
 	# => Metadata

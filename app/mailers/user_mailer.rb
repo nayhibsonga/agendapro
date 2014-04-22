@@ -2,7 +2,7 @@ class UserMailer < ActionMailer::Base
   require 'mandrill'
 
   def welcome_email(user)
-  	mandrill = Mandrill::API.new 'HL4ERbuZZO6rrM2nlVjzZg'
+  	mandrill = Mandrill::API.new Agendapro::Application.config.api_key
 
     # => Template
     template_name = 'User'
