@@ -8,7 +8,9 @@ class ClientsController < ApplicationController
   # GET /clients
   # GET /clients.json
   def index
-    @clients = Client.accessible_by(current_ability)
+    @locations = Location.where(company_id: current_user.company_id, active: true)
+    @service_providers = ServiceProvider.where(company_id: current_user.company_id, active: true)
+    @clients = Client.accessible_by(current_ability).search(params[:search]).filter_location(params[:location]).filter_provider(params[:provider]).filter_gender(params[:gender]).paginate(:page => params[:page], :per_page => 25)
   end
 
   # GET /clients/1
