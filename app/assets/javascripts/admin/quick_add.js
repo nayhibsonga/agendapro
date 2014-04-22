@@ -124,7 +124,7 @@ function changeDayStatus (value, ctrl) {
 function startLocation () {
 	var district = $('#location_district_id').val();
 	var address = $('#location_address').val();
-	if ((address != '')&&(district != '')) {
+	if ((address != '') && (district != '')) {
 		$.getJSON('/get_direction', {id: district}, function (direction) {
 			var geolocation = address + ', ' + direction;
 			var geoString = JSON.stringify(geolocation);
