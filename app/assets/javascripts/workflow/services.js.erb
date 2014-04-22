@@ -231,7 +231,7 @@ function loadDescription (serviceId) {
 				'<th>' + service.name + '</th>' +
 			'</tr>'
 		);
-		if (service.price && service.price > 0) {
+		if (service.show_price && service.price && service.price > 0) {
 			$('#services-description').append(
 				'<tr>' +
 					'<th>Precio:</th>' +
