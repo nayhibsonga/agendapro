@@ -1,7 +1,45 @@
+<div class="container">
+	<div class="row">
 <h1>
 	Clientes de la Empresa
-	<button id="sendMail" type="button" class="btn btn-agendapro-claro pull-right" data-toggle="modal" data-target="#mailModal" disabled>Enviar Email</button>
 </h1>
+
+<h4>Acá podrás agregar nuevos clientes a tu empresa. Los clientes generados son válidos para todos los locales de tu compañía y, luego, estos se identifican con su email al crear reservas. </h4>
+</div>
+<div class="row">
+	<%= form_tag clients_path, method: "get" do %>
+	<div class="form-group">
+		<div class="col-sm-1">
+			<label class="pull-right">Filtrar:</label>
+		</div>
+		<div class="col-sm-3">
+			<%= select_tag :location, options_from_collection_for_select(@locations, "id", "name", params[:location]), prompt: "Elige un Local...", class: "form-control" %>
+		</div>
+		<div class="col-sm-3">
+			<%= select_tag :provider, options_from_collection_for_select(@service_providers, "id", "public_name", params[:provider]), prompt: "Elige un Proveedor...", class: "form-control" %>
+		</div>
+		<div class="col-sm-3">
+			<%= select_tag :gender, options_for_select([['No Especificado', 0], ['Femenino', 1], ['Masculino', 2]], params[:gender]), prompt: "Elige un Género...", class: "form-control" %>
+		</div>
+		<div class="col-sm-2">
+		</div>
+	</div>
+</div>
+<div class="row">
+	<div class="col-md-10">
+		<div class="input-group">
+			<%= text_field_tag :search, nil, :class => "form-control", :placeholder => "Buscar por nombre, apellido o email...", :value => params[:search] %>
+			<span class="input-group-btn">
+				<button class="btn btn-default" type="submit"><i class="fa fa-search"><span> Buscar</span></i></button>
+			</span>
+		</div>
+		<% end %>
+	</div>
+	<div class="col-md-2">
+		<button id="sendMail" type="button" class="btn btn-agendapro-claro pull-right" data-toggle="modal" data-target="#mailModal" disabled>Enviar Email</button>
+	</div>
+	</div>
+</div>
 
 <table class="table table-bordered">
 	<thead>
@@ -37,7 +75,12 @@
 		 <% end %>
 	</tbody>
 </table>
+<div class="row">
+<div class="pagination pull-right">
+	<%= will_paginate @players, renderer: BootstrapPagination::Rails %>
+</div>
 <%= link_to '<i class="fa fa-plus"></i> Nuevo Cliente'.html_safe, new_client_path, :class => "btn btn-primary" %>
+</div>
 
 <div class="modal fade" id="mailModal" tabindex="-1" role="dialog" aria-labelledby="mailModalLabel" aria-hidden="true">
 	<div class="modal-dialog">
@@ -163,6 +206,27 @@
 				$('.form-group').toggle();
 				$('.modal-footer .btn').toggle();
 				$('.modal-body div:first').toggle()
+			}
+		});
+		$('#location').change( function () {
+			var localId = $('#location').val();
+			if ($('#location').val() > 0) {
+				$.getJSON('/local_providers', {location: localId }, function (providersArray) {
+					$('#provider').empty();
+					$('#provider').append('<option value="">Elige un Proveedor...</option>');
+					$.each(providersArray, function (key, provider) { 
+						$('#provider').append('<option value="' + provider.id + '">' + provider.public_name + '</option>');
+					});
+				});
+			}
+			else {
+				$.getJSON('/service_providers.json', function (providersArray) {
+					$('#provider').empty();
+					$('#provider').append('<option value="">Elige un Proveedor...</option>');
+					$.each(providersArray, function (key, provider) { 
+						$('#provider').append('<option value="' + provider.id + '">' + provider.public_name + '</option>');
+					});
+				});
 			}
 		});
 	});

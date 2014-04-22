@@ -69,7 +69,7 @@ gem 'mandrill-api'
 #gem "breadcrumbs_on_rails"
 
 #Por si queremos paginación fácil
-#gem 'will_paginate-bootstrap'
+gem 'will_paginate-bootstrap'
 
 #Por si queremos gráficos
 #gem 'lazy_high_charts'
