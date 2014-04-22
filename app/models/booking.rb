@@ -34,7 +34,7 @@ class Booking < ActiveRecord::Base
 					if (provider_booking.start - self.end) * (self.start - provider_booking.end) > 0
 						if !self.service.group_service || self.service_id != provider_booking.service_id
 			      			errors.add(:booking, "Esa hora ya está agendada para ese proveedor de servicios.")
-			      		elsif self.service_id == provider_booking.service_id && self.service_provider.bookings.where(:service_id => self.service_id).count >= self.service.capacity
+			      		elsif self.service.group_service && self.service_id == provider_booking.service_id && self.service_provider.bookings.where(:service_id => self.service_id, :start => self.start).count >= self.service.capacity
 			      			errors.add(:booking, "Esa hora ya está agendada para ese proveedor de servicios.")
 			      		end
 			    	end
