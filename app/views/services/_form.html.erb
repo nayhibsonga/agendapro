@@ -14,6 +14,11 @@
             <%= f.number_field :price, class: "form-control", :min => 0 %>
             <span class="input-group-addon">Pesos</span>
           </div>
+          <div class="checkbox">
+            <label>
+              <%= f.check_box :show_price %> Mostrar el precio
+            </label>
+          </div>
         </div>
       </div>
       <div class="form-group">
@@ -61,9 +66,9 @@
           <%= builder.hidden_field :company_id, class: "form-control", :value => current_user.company_id %>
         </div>
       </div>
+      <% end %>
 
-    <% end %>
-       <div class="form-group">
+      <div class="form-group">
         <%= f.label :service_category_id, "Categoría de Servicio: ", class: "col-sm-4 control-label" %>
         <div class="col-sm-8">
           <%= f.collection_select :service_category_id, ServiceCategory.where(company_id: current_user.company_id), :id, :name, {}, { class: "form-control" }%>
