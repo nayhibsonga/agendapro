@@ -42,7 +42,7 @@ function cancelEditComment(id) {
 }
 
 function deleteComment(id) {
-    if (confirm("Estás seguro?")) {
+    if (confirm("¿Estás seguro de eliminar el Comentario seleccionado?")) {
         saveComment("DELETE",$('#client_comment_client_id').val(),{"id": id });
     }
     return false;

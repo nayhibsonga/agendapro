@@ -1,77 +1,81 @@
-<%= form_for [:admin, @user], html: {class: "form-horizontal" } do |f| %>
-  <% if @user.errors.any? %>
-    <div id="error_explanation">
-      <h2><%= pluralize(@user.errors.count, "error") %> no permitió que el usuario fuera creado:</h2>
-      <ul>
-      <% @user.errors.full_messages.each do |msg| %>
-        <li><%= msg %></li>
+<div class="container">
+  <div class="row well">
+    <%= form_for [:admin, @user], html: {class: "form-horizontal" } do |f| %>
+      <% if @user.errors.any? %>
+        <div id="error_explanation">
+          <h3><%= pluralize(@user.errors.count, "error") %> no permitió que el usuario fuera creado:</h3>
+          <ul>
+          <% @user.errors.full_messages.each do |msg| %>
+            <li><%= msg %></li>
+          <% end %>
+          </ul>
+        </div>
       <% end %>
-      </ul>
-    </div>
-  <% end %>
 
-  <div class="form-group">
-    <%= f.label :first_name, "Nombre:", class: "col-sm-3 control-label" %>
-    <div class="col-sm-4">
-      <%= f.text_field :first_name, :autofocus => true, class: "form-control" %>
-    </div>
-  </div>
-  
-  <div class="form-group">
-    <%= f.label :last_name, "Apellido:", class: "col-sm-3 control-label"  %>
-    <div class="col-sm-4">
-      <%= f.text_field :last_name, class: "form-control" %>
-    </div>
-  </div>
-  
-  <div class="form-group">
-    <%= f.label :email, "Email:", class: "col-sm-3 control-label"  %>
-    <div class="col-sm-4">
-      <%= f.text_field :email, class: "form-control" %>
-    </div>
-  </div>
-  
-  <div class="form-group">
-    <%= f.label :phone, "Teléfono:", class: "col-sm-3 control-label"  %>
-    <div class="col-sm-4">
-      <%= f.text_field :phone, class: "form-control" %>
-    </div>
-  </div>
+      <div class="form-group">
+        <%= f.label :first_name, "Nombre:", class: "col-sm-3 control-label" %>
+        <div class="col-sm-4">
+          <%= f.text_field :first_name, :autofocus => true, class: "form-control" %>
+        </div>
+      </div>
+      
+      <div class="form-group">
+        <%= f.label :last_name, "Apellido:", class: "col-sm-3 control-label"  %>
+        <div class="col-sm-4">
+          <%= f.text_field :last_name, class: "form-control" %>
+        </div>
+      </div>
+      
+      <div class="form-group">
+        <%= f.label :email, "Email:", class: "col-sm-3 control-label"  %>
+        <div class="col-sm-4">
+          <%= f.text_field :email, class: "form-control" %>
+        </div>
+      </div>
+      
+      <div class="form-group">
+        <%= f.label :phone, "Teléfono:", class: "col-sm-3 control-label"  %>
+        <div class="col-sm-4">
+          <%= f.text_field :phone, class: "form-control" %>
+        </div>
+      </div>
 
-  <% if !current_user.nil? %>
-    <div class="form-group">
-      <%= f.label :role_id, "Rol:", class: "col-sm-3 control-label"  %>
-      <div class="col-sm-4">
-      <% if current_user.role_id == Role.find_by(name: 'Super Admin').id %>
-        <%= f.collection_select :role_id, Role.where(:name => ["Admin","Administrador Local","Staff"]), :id, :name, {include_blank: true}, {class: "form-control"} %>
-      <% elsif current_user.role_id == Role.find_by(name: 'Admin').id %>
-        <%= f.collection_select :role_id, Role.where(:name => ["Administrador Local","Recepcionista","Staff"]), :id, :name, {include_blank: true}, {class: "form-control"} %>
-      <% elsif current_user.role_id == Role.find_by(name: 'Administrador Local').id %>
-        <%= f.collection_select :role_id, Role.where(:name => ["Recepcionista","Staff"]), :id, :name, {include_blank: true}, {class: "form-control"} %>
+      <% if !current_user.nil? %>
+        <div class="form-group">
+          <%= f.label :role_id, "Rol:", class: "col-sm-3 control-label"  %>
+          <div class="col-sm-4">
+          <% if current_user.role_id == Role.find_by(name: 'Super Admin').id %>
+            <%= f.collection_select :role_id, Role.where(:name => ["Admin","Administrador Local","Staff"]), :id, :name, {include_blank: true}, {class: "form-control"} %>
+          <% elsif current_user.role_id == Role.find_by(name: 'Admin').id %>
+            <%= f.collection_select :role_id, Role.where(:name => ["Administrador Local","Recepcionista","Staff"]), :id, :name, {include_blank: true}, {class: "form-control"} %>
+          <% elsif current_user.role_id == Role.find_by(name: 'Administrador Local').id %>
+            <%= f.collection_select :role_id, Role.where(:name => ["Recepcionista","Staff"]), :id, :name, {include_blank: true}, {class: "form-control"} %>
+          <% end %>
+          </div>  
+        </div>
       <% end %>
-      </div>  
-    </div>
-  <% end %>
 
-  <% if !current_user.nil? %>
-    <div class="form-group">
-      <%= f.label :location_id, "Local:", class: "col-sm-3 control-label"  %>
-      <div class="col-sm-4">
-      <% if current_user.role_id == Role.find_by(name: 'Super Admin').id %>
-        <%= f.collection_select :location_id, Location.all, :id, :name, {include_blank: true}, {class: "form-control"} %>
-      <% elsif current_user.role_id == Role.find_by(name: 'Admin').id %>
-        <%= f.collection_select :location_id, Location.where(:company_id => current_user.company_id, :active => true), :id, :name, {include_blank: true}, {class: "form-control"} %>
-      <% elsif current_user.role_id == Role.find_by(name: 'Administrador Local').id %>
-        <%= f.collection_select :location_id, Location.where(:id => current_user.location_id, :active => true), :id, :name, {include_blank: true}, {class: "form-control"} %>
+      <% if !current_user.nil? %>
+        <div class="form-group">
+          <%= f.label :location_id, "Local:", class: "col-sm-3 control-label"  %>
+          <div class="col-sm-4">
+          <% if current_user.role_id == Role.find_by(name: 'Super Admin').id %>
+            <%= f.collection_select :location_id, Location.all, :id, :name, {include_blank: true}, {class: "form-control"} %>
+          <% elsif current_user.role_id == Role.find_by(name: 'Admin').id %>
+            <%= f.collection_select :location_id, Location.where(:company_id => current_user.company_id, :active => true), :id, :name, {include_blank: true}, {class: "form-control"} %>
+          <% elsif current_user.role_id == Role.find_by(name: 'Administrador Local').id %>
+            <%= f.collection_select :location_id, Location.where(:id => current_user.location_id, :active => true), :id, :name, {include_blank: true}, {class: "form-control"} %>
+          <% end %>
+          </div>  
+        </div>
       <% end %>
-      </div>  
-    </div>
-  <% end %>
-  
-  <div class="form-group">
-    <div class="actions col-sm-offset-3 col-sm-4">
-      <%= f.submit 'Guardar', :class => 'btn btn-primary' %>
-      <%= link_to 'Cancelar', admin_users_path, :class => "btn btn-danger" %> 
-    </div>
+      
+      <div class="form-group">
+        <div class="actions col-sm-offset-3 col-sm-4">
+          <%= f.submit 'Guardar', :class => 'btn btn-primary' %>
+          <%= link_to 'Cancelar', admin_users_path, :class => "btn btn-danger" %> 
+        </div>
+      </div>
+    <% end %>
   </div>
-<% end %>
+</div>

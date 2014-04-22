@@ -1,43 +1,46 @@
 <div class="container">
-	<div class="row">
-<h1>
-	Clientes de la Empresa
-</h1>
+  <div class="row">
+    <section class="hgroup">
+      <h2>Clientes de la Empresa</h2>
+      <h2 class="section_header">Acá podrás agregar y editar clientes de tu empresa. Los clientes generados son válidos para todos los locales de tu compañía. Las personas que reserven en tu portal AgendaPro serán agregadas automáticamente.</h2>
+      <div class="line-breadcrumb">
+        <ul class="breadcrumb pull-right">
+            <li><%= link_to "Resumen", dashboard_path %> </li>
+            <li class="active">Clientes</li>
+        </ul>
+    </div>
+    </section>
+  </div>
+</div>
 
-<h4>Acá podrás agregar nuevos clientes a tu empresa. Los clientes generados son válidos para todos los locales de tu compañía y, luego, estos se identifican con su email al crear reservas. </h4>
-</div>
-<div class="row">
+<div class="container">
+	<div class="row well">
 	<%= form_tag clients_path, method: "get" do %>
-	<div class="form-group">
-		<div class="col-sm-1">
-			<label class="pull-right">Filtrar:</label>
+		<div class="row">
+			<div class="form-group">
+				<div class="col-sm-1">
+					<label class="pull-right">Filtrar:</label>
+				</div>
+				<div class="col-sm-3">
+					<%= select_tag :location, options_from_collection_for_select(@locations, "id", "name", params[:location]), prompt: "Elige un Local...", class: "form-control" %>
+				</div>
+				<div class="col-sm-3">
+					<%= select_tag :provider, options_from_collection_for_select(@service_providers, "id", "public_name", params[:provider]), prompt: "Elige un Proveedor...", class: "form-control" %>
+				</div>
+				<div class="col-sm-3">
+					<%= select_tag :gender, options_for_select([['No Especificado', 0], ['Femenino', 1], ['Masculino', 2]], params[:gender]), prompt: "Elige un Género...", class: "form-control" %>
+				</div>
+			</div>
 		</div>
-		<div class="col-sm-3">
-			<%= select_tag :location, options_from_collection_for_select(@locations, "id", "name", params[:location]), prompt: "Elige un Local...", class: "form-control" %>
+		<div class="row top-buffer">
+			<div class="form-group">
+				<div class="col-sm-9 col-sm-offset-1">
+					<%= text_field_tag :search, nil, :class => "form-control", :placeholder => "Filtrar por nombre, apellido o email...", :value => params[:search] %>
+				</div>
+			<button class="btn btn-primary" type="submit"><i class="fa fa-filter"><span> Filtrar</span></i></button>
+			</div>
 		</div>
-		<div class="col-sm-3">
-			<%= select_tag :provider, options_from_collection_for_select(@service_providers, "id", "public_name", params[:provider]), prompt: "Elige un Proveedor...", class: "form-control" %>
-		</div>
-		<div class="col-sm-3">
-			<%= select_tag :gender, options_for_select([['No Especificado', 0], ['Femenino', 1], ['Masculino', 2]], params[:gender]), prompt: "Elige un Género...", class: "form-control" %>
-		</div>
-		<div class="col-sm-2">
-		</div>
-	</div>
-</div>
-<div class="row">
-	<div class="col-md-10">
-		<div class="input-group">
-			<%= text_field_tag :search, nil, :class => "form-control", :placeholder => "Buscar por nombre, apellido o email...", :value => params[:search] %>
-			<span class="input-group-btn">
-				<button class="btn btn-default" type="submit"><i class="fa fa-search"><span> Buscar</span></i></button>
-			</span>
-		</div>
-		<% end %>
-	</div>
-	<div class="col-md-2">
-		<button id="sendMail" type="button" class="btn btn-agendapro-claro pull-right" data-toggle="modal" data-target="#mailModal" disabled>Enviar Email</button>
-	</div>
+	<% end %>
 	</div>
 </div>
 
@@ -75,13 +78,19 @@
 		 <% end %>
 	</tbody>
 </table>
-<div class="row">
-<div class="pagination pull-right">
-	<%= will_paginate @players, renderer: BootstrapPagination::Rails %>
+<div class="container">
+	<div class="row">
+		<div class="col-md-4">
+			<%= link_to '<i class="fa fa-plus"></i> Nuevo Cliente'.html_safe, new_client_path, :class => "btn btn-primary" %>
+		</div>
+		<div class="col-md-4 pagination">
+			<%= will_paginate @players, renderer: BootstrapPagination::Rails %>
+		</div>
+		<div class="col-md-4">
+			<button id="sendMail" type="button" class="btn btn-agendapro-claro pull-right" data-toggle="modal" data-target="#mailModal" disabled>Enviar Email</button>
+		</div>
+	</div>
 </div>
-<%= link_to '<i class="fa fa-plus"></i> Nuevo Cliente'.html_safe, new_client_path, :class => "btn btn-primary" %>
-</div>
-
 <div class="modal fade" id="mailModal" tabindex="-1" role="dialog" aria-labelledby="mailModalLabel" aria-hidden="true">
 	<div class="modal-dialog">
 		<div class="modal-content">

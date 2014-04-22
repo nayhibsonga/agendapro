@@ -1,4 +1,18 @@
-<h1>Nuevo Local</h1>
+<div class="container">
+	<div class="row">
+		<section class="hgroup">
+		  <h2>Nuevo Local</h2>
+		  <h2 class="section_header">Completa los datos para agregar un nuevo local a tu negocio.</h2>
+		  <div class="line-breadcrumb">
+		    <ul class="breadcrumb pull-right">
+		        <li><%= link_to "Resumen", dashboard_path %> </li>
+		        <li><%= link_to "Locales", locations_path %> </li>
+		        <li class="active">Nuevo</li>
+		    </ul>
+		</div>
+		</section>
+	</div>
+</div>
 
 <%= render 'form' %>
 

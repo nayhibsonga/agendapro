@@ -1,6 +1,17 @@
-<h1>Edición de Usuarios</h1>
-
-<h4>Acá podrás editar la información de los usuarios registrados en tu compañía.</h4>
+<div class="container">
+	<div class="row">
+		<section class="hgroup">
+		  <h2>Edición de Usuario</h2>
+		  <h2 class="section_header">Edita los datos del usuario seleccionado.</h2>
+		  <div class="line-breadcrumb">
+		    <ul class="breadcrumb pull-right">
+		        <li><%= link_to "Resumen", dashboard_path %> </li>
+		        <li><%= link_to "Usuarios", admin_users_path %> </li>
+		        <li class="active">Editar</li>
+		    </ul>
+		</div>
+		</section>
+	</div>
+</div>
 
 <%= render 'form' %>
-

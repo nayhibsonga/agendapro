@@ -1,9 +1,22 @@
-<h1>Categorías de Servicios</h1>
+<div class="container">
+  <div class="row">
+    <section class="hgroup">
+      <h2>Categorías de Servicios</h2>
+      <h2 class="section_header">Estas son las Categorías creadas para clasificar y facilitar la búsqueda de tus servicios. Acá puedes editarlas y crear nuevas.</h2>
+      <div class="line-breadcrumb">
+        <ul class="breadcrumb pull-right">
+            <li><%= link_to "Resumen", dashboard_path %> </li>
+            <li class="active">Categorías de Servicios</li>
+        </ul>
+    </div>
+    </section>
+  </div>
+</div>
 
 <table class="table table-bordered">
   <thead>
     <tr>
-      <th>Name</th>
+      <th>Nombre</th>
       <th>Opciones</th>
     </tr>
   </thead>
@@ -15,7 +28,7 @@
         <td>
           <% if service_category.name != "Sin Categoría" %>
           <%= link_to '<i class="fa fa-pencil"></i> Editar'.html_safe, edit_service_category_path(service_category), :class => "btn btn-warning" %>
-          <%= link_to '<i class="fa fa-trash-o"></i> Eliminar'.html_safe, service_category, :class => "btn btn-danger", method: :delete, data: { confirm: '¿Estás seguro?' } %>
+          <%= link_to '<i class="fa fa-trash-o"></i> Eliminar'.html_safe, service_category, :class => "btn btn-danger", method: :delete, data: { confirm: '¿Estás seguro de eliminar la Categoría seleccionada?' } %>
           <% end %>
         </td>
       </tr>
