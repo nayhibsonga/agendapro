@@ -7,8 +7,6 @@ function loadStep1 () {
 
 	$.getJSON('/local_services', {location: localId}, function (servicesArray) {
 		var categories = [];	//Todos los servicios ordenados por categoria
-		// var services = new Array();		//Los servicios de una categoria especifica
-		// var category = 0;				//La categoria actual
 
 		//====== Separacion de servicios por categoria
 		$.each(servicesArray, function (key, service) {
@@ -70,11 +68,11 @@ function loadStep1 () {
 			loadDescription(serviceId);
 		});
 
-		// $('.collapse').collapse();
 		$('#foo4').trigger('updateSizes');
 	});
 }
 
+var calendar;
 function loadStep2 () {
 	if($('[name="serviceRadio"]').is(':checked')){
 		$('#staff-selector').html('<%= image_tag "ajax-loader.gif", :alt => "Loader" %>');
@@ -97,8 +95,6 @@ function loadStep2 () {
 				);
 			});
 
-			var calendar = new Calendar('/get_available_time.json');
-
 			$('[name="staffRadio"]').on('click', function(event) {
 				$('.horario').show();
 
@@ -108,7 +104,12 @@ function loadStep2 () {
 					service: $('input[name="serviceRadio"]:checked').val()
 				}
 
-				calendar.rebuild('/get_available_time.json', data);
+				if (calendar) {
+					calendar.rebuild('/get_available_time.json', data);
+				}
+				else {
+					calendar = new Calendar('/get_available_time.json', data);
+				}
 				
 				$(document).on('hourClick', function (e) {
 					addBooking(e);
@@ -228,11 +229,24 @@ function loadDescription (serviceId) {
 			'<tr>' +
 				'<th>Nombre:</th>' +
 				'<th>' + service.name + '</th>' +
-			'</tr>' +
-			'<tr>' +
-				'<th>Precio:</th>' +
-				'<th>$' + service.price + '</th>' +
-			'</tr>' +
+			'</tr>'
+		);
+		if (service.price && service.price > 0) {
+			$('#services-description').append(
+				'<tr>' +
+					'<th>Precio:</th>' +
+					'<th>$' + service.price + '</th>' +
+				'</tr>'
+			);
+		} else{
+			$('#services-description').append(
+				'<tr>' +
+					'<th>Precio:</th>' +
+					'<th>Consultar en Local</th>' +
+				'</tr>'
+			);
+		};
+		$('#services-description').append(
 			'<tr>' +
 				'<th>Duración:</th>' +
 				'<th>' + service.duration + '</th>' +
