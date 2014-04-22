@@ -229,11 +229,24 @@ function loadDescription (serviceId) {
 			'<tr>' +
 				'<th>Nombre:</th>' +
 				'<th>' + service.name + '</th>' +
-			'</tr>' +
-			'<tr>' +
-				'<th>Precio:</th>' +
-				'<th>$' + service.price + '</th>' +
-			'</tr>' +
+			'</tr>'
+		);
+		if (service.price && service.price > 0) {
+			$('#services-description').append(
+				'<tr>' +
+					'<th>Precio:</th>' +
+					'<th>$' + service.price + '</th>' +
+				'</tr>'
+			);
+		} else{
+			$('#services-description').append(
+				'<tr>' +
+					'<th>Precio:</th>' +
+					'<th>Consultar en Local</th>' +
+				'</tr>'
+			);
+		};
+		$('#services-description').append(
 			'<tr>' +
 				'<th>Duración:</th>' +
 				'<th>' + service.duration + '</th>' +
