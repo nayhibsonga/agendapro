@@ -539,7 +539,32 @@ li.selected> div.control-box{
 	margin-left: 5px;
 }
 
+/* Agregar margen a las filas, usado en vista cliente */
+.top-buffer { 
+	margin-top:20px; 
+}
 
+/* Paginación */
+
+.pagination {
+	display: inline-block;
+	padding-left: 0;
+	margin-top: 0px;
+	margin-right: auto;
+	margin-bottom: 0px;
+	margin-left: auto;
+	border-radius: 4px;
+}
+.panel-body div.row{
+	margin-left: 0px;
+}
+.pagination>.active>a, .pagination>.active>span, .pagination>.active>a:hover, .pagination>.active>span:hover, .pagination>.active>a:focus, .pagination>.active>span:focus {
+background-color: #1b7370;
+border-color: #1b7370;
+}
+.pagination>li>a, .pagination>li>span {
+	color: #1b7370;
+}
 /* Menu responsivo */
 @media (max-width: 992px) { 
 	#admin-content{
@@ -564,17 +589,4 @@ li.selected> div.control-box{
 	.content-fix{
 		margin: 0px 30px;
 	}
-}
-
-.panel-body div.row{
-	margin-left: 0px;
-}
-
-.pagination>.active>a, .pagination>.active>span, .pagination>.active>a:hover, .pagination>.active>span:hover, .pagination>.active>a:focus, .pagination>.active>span:focus {
-background-color: #1b7370;
-border-color: #1b7370;
-}
-
-.pagination>li>a, .pagination>li>span {
-	color: #1b7370;
 }
