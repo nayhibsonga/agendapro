@@ -85,6 +85,9 @@
 	</div>
 </div>
 
+<%= content_tag "div", id: "mails_left", data: {mails_left: @mails_left} do %>
+<% end %>
+
 <% content_for :scripts do %>
 <%= javascript_include_tag 'login/jquery.validate.min' %>
 <%= javascript_include_tag 'admin/clients_mail' %>

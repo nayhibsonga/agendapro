@@ -1,11 +1,18 @@
+var mails_left;
 $(function () {
+	mails_left = $('#mails_left').data('mails-left');
+
 	$('.modal-body div:first').toggle()
 
 	$('input[name="mail"]').change(function (event) {
+		var selected = mails_left;
 		$('input[name="client_mail"]').each( function () {
 			if ($(event.target).prop('checked')) {
-				$(this).prop('checked', true);
-				$('#sendMail').prop('disabled', false);
+				if (selected > 0) {
+					$(this).prop('checked', true);
+					$('#sendMail').prop('disabled', false);
+					selected -= 1;
+				};
 			}
 			else {
 				$(this).prop('checked', false);
@@ -15,9 +22,16 @@ $(function () {
 	});
 
 	$('input[name="client_mail"]').change(function (event) {
+		var selected = mails_left;
 		var prop = true;
 		var disabled = false;
 		$('input[name="client_mail"]').each( function () {
+			if ($(this).prop('checked')) {
+				if (selected <= 0) {
+					$(event.target).prop('checked', false);
+				};
+				selected -= 1;
+			};
 			prop = prop && $(this).prop('checked');
 			disabled = disabled || $(this).prop('checked');
 		});

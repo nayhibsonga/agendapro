@@ -9,6 +9,8 @@ class ClientsController < ApplicationController
   # GET /clients.json
   def index
     @clients = Client.accessible_by(current_ability)
+
+    @mails_left = current_user.company.company_setting.daily_mails - current_user.company.company_setting.sent_mails
   end
 
   # GET /clients/1
@@ -108,6 +110,9 @@ class ClientsController < ApplicationController
   end
 
   def send_mail
+    # Restar mails eviados
+    current_user.company.company_setting.update_attributes :sent_mails => params[:to].split(',').length
+
     clients = Array.new
     params[:to].split(',').each do |client_mail|
       client_info = {
