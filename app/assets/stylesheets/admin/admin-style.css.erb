@@ -7,6 +7,64 @@ body{
 	background: rgba(163,199,198,1); 
 	background: url(<%= asset_path 'backgrounds/wild_oliva_light_head.png' %>);
 }
+a {
+	color: rgba(61,154,150,1);
+	text-decoration: none;
+}
+a:hover {
+	color: rgba(27,115,112,1);
+}
+
+/* Se agrega estilo de títulos y textos varios */
+.hgroup {
+	padding-top: 26px;
+	/*padding-bottom: 26px;*/
+}
+.hgroup .container h1 {
+	color: #006D68;
+}
+.hgroup .container h1 {
+	font-size: 50px;
+	font-weight: 500;
+	line-height: 1em;
+	margin: 0;
+	padding: 0;
+}
+.hgroup h2 {
+	font-size: 35px;
+	font-weight: 300;
+	line-height: 1.5em;
+	margin: 0 20% 0 0;
+	padding: 0;
+	color: #505050;
+}
+h2.section_header {
+	font-size: 18px;
+	line-height: 22px;
+	font-weight: 400;
+}
+h3.link_section_header {
+	font-size: 24px;
+	line-height: 22px;
+	font-weight: 400;
+	margin-top: 5px;
+	color: #505050;
+}
+.hgroup .breadcrumb {
+	font-size: 12px;
+	background-color: #f3f3f3;
+	padding: 6px 15px;
+	border: solid 1px #cccccc;
+}
+.line-breadcrumb{
+	height: 30px;
+	width: 100%;
+	background-image: url(<%= asset_path 'home/features/line.png' %>);
+	margin-top: 5px;
+}
+.breadcrumb>.active {
+	color: #999;
+}
 
 /* Se agrega para cada paso del QuickAdd */
 .step-workflow{

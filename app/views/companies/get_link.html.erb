@@ -1,94 +1,112 @@
 <div class="container">
+  <div class="row">
+    <section class="hgroup">
+      <h2>Obten el link AgendaPro para tu página</h2>
+      <h2 class="section_header">¡Elige la opción que más te guste! Logo AgendaPro, botón o link, todos personalizables por ti. El texto de los botones y el link es: <strong>Reserva Online</strong></h2>
+      <div class="line-breadcrumb">
+        <ul class="breadcrumb pull-right">
+            <li><%= link_to "Resumen", dashboard_path %> </li>
+            <li class="active">Link AgendaPro</li>
+        </ul>
+    </div>
+    </section>
+  </div>
+</div>
+
+<div class="container">
 	<div class="row">
-		<h2>Obten el link AgendaPro para tu página</h2>
 		<div class="col-md-6">
-			<div class="row">
-				<h3>1.- Elije el formato</h3>
-				<div class="col-md-12">
-					<div class="radio">
-						<label>
-							<input type="radio" name="formatRadio" style="float: none;" value="sizeImageRadio">
-							<%= image_tag 'logos/logo_mail.png', :alt => 'AgendaPro' %>
-						</label>
+			<div class="col-md-11 well">
+				<div class="row">
+					<h3 class="link_section_header">1. Elige el formato:</h3>
+					<div class="col-md-12">
+						<div class="radio">
+							<label>
+								<input type="radio" name="formatRadio" style="float: none;" value="sizeImageRadio">
+								<%= image_tag 'logos/logo_mail.png', :alt => 'AgendaPro' %>
+							</label>
+						</div>
 					</div>
-				</div>
-				<div class="col-md-12">
-					<div class="radio">
-						<label>
-							<input type="radio" name="formatRadio" style="float: none;" value="sizeButtonRadio">
-							<span class="btn btn-agendapro-oscuro">AgendaPro</span>
-						</label>
+					<div class="col-md-12">
+						<div class="radio">
+							<label>
+								<input type="radio" name="formatRadio" style="float: none;" value="sizeButtonRadio">
+								<span class="btn btn-agendapro-oscuro">Reserva Online</span>
+							</label>
+						</div>
 					</div>
-				</div>
-				<div class="col-md-12">
-					<div class="radio">
-						<label>
-							<input type="radio" name="formatRadio" value="sizeLinkRadio">
-							<a>AgendaPro</a>
-						</label>
+					<div class="col-md-12">
+						<div class="radio">
+							<label>
+								<input type="radio" name="formatRadio" value="sizeLinkRadio">
+								<a>¡Reserva acá!</a>
+							</label>
+						</div>
 					</div>
 				</div>
 			</div>
 		</div>
 		<div class="col-md-6">
-			<div class="row">
-				<h3>2.- Elije el tamaño</h3>
-				<div class="col-md-12">
-					<div class="row">
-						<div class="col-md-12">
-							<div class="radio hidden">
-								<label>
-									<input type="radio" name="sizeImageRadio" style="float: none;" value="202x74">
-									<%= image_tag 'logos/logo_mail.png', :alt => 'AgendaPro', :size => '202x74' %>
-								</label>
+			<div class="col-md-11 well">
+				<div class="row">
+					<h3 class="link_section_header">2. Elige el tamaño:</h3>
+					<div class="col-md-12">
+						<div class="row">
+							<div class="col-md-12">
+								<div class="radio hidden">
+									<label>
+										<input type="radio" name="sizeImageRadio" style="float: none;" value="202x74">
+										<%= image_tag 'logos/logo_mail.png', :alt => 'AgendaPro', :size => '202x74' %>
+									</label>
+								</div>
 							</div>
-						</div>
-						<div class="col-md-12">
-							<div class="radio hidden">
-								<label>
-									<input type="radio" name="sizeImageRadio" style="float: none;" value="101x37">
-									<%= image_tag 'logos/logo_mail.png', :alt => 'AgendaPro', :size => '101x37' %>
-								</label>
-							</div>
-						</div>
-					</div>
-				</div>
-				<div class="col-md-12">
-					<div class="row">
-						<div class="col-md-12">
-							<div class="radio hidden">
-								<label>
-									<input type="radio" name="sizeButtonRadio" style="float: none;" value="btn-lg">
-									<span class="btn btn-agendapro-oscuro btn-lg">AgendaPro</span>
-								</label>
-							</div>
-						</div>
-						<div class="col-md-12">
-							<div class="radio hidden">
-								<label>
-									<input type="radio" name="sizeButtonRadio" style="float: none;" value="">
-									<span class="btn btn-agendapro-oscuro">AgendaPro</span>
-								</label>
-							</div>
-						</div>
-						<div class="col-md-12">
-							<div class="radio hidden">
-								<label>
-									<input type="radio" name="sizeButtonRadio" style="float: none;" value="btn-sm">
-									<span class="btn btn-agendapro-oscuro btn-sm">AgendaPro</span>
-								</label>
+							<div class="col-md-12">
+								<div class="radio hidden">
+									<label>
+										<input type="radio" name="sizeImageRadio" style="float: none;" value="101x37">
+										<%= image_tag 'logos/logo_mail.png', :alt => 'AgendaPro', :size => '101x37' %>
+									</label>
+								</div>
 							</div>
 						</div>
 					</div>
-				</div>
-				<div class="col-md-12">
-					<div class="row">
-						<div class="col-md-12">
-							<div class="radio hidden">
-								<label>
-									<input type="radio" name="sizeLinkRadio" value="">
-									<a>AgendaPro</a>
-								</label>
+					<div class="col-md-12">
+						<div class="row">
+							<div class="col-md-12">
+								<div class="radio hidden">
+									<label>
+										<input type="radio" name="sizeButtonRadio" style="float: none;" value="btn-lg">
+										<span class="btn btn-agendapro-oscuro btn-lg">Grande</span>
+									</label>
+								</div>
+							</div>
+							<div class="col-md-12">
+								<div class="radio hidden">
+									<label>
+										<input type="radio" name="sizeButtonRadio" style="float: none;" value="">
+										<span class="btn btn-agendapro-oscuro">Mediano</span>
+									</label>
+								</div>
+							</div>
+							<div class="col-md-12">
+								<div class="radio hidden">
+									<label>
+										<input type="radio" name="sizeButtonRadio" style="float: none;" value="btn-sm">
+										<span class="btn btn-agendapro-oscuro btn-sm">Chico</span>
+									</label>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="col-md-12">
+						<div class="row">
+							<div class="col-md-12">
+								<div class="radio hidden">
+									<label>
+										<input type="radio" name="sizeLinkRadio" value="">
+										<a>Link a AgendaPro</a>
+									</label>
+								</div>
 							</div>
 						</div>
 					</div>
@@ -98,7 +116,7 @@
 	</div>
 	<div class="row">
 		<div class="col-md-12">
-			<h3>Copia tu codigo</h3>
+			<h3>Copia tu código</h3>
 			<pre class="pre-scrollable"></pre>
 		</div>
 	</div>
