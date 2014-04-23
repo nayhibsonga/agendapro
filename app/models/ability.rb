@@ -220,8 +220,8 @@ class Ability
 
     elsif user.role_id == Role.find_by_name("Recepcionista").id
 
-        can :get_booking, Booking, :service_provider_id => { :location_id => user.location_id }
-        can :get_booking_info, Booking, :service_provider_id => { :location_id => user.location_id }
+        can :get_booking, Booking, :location_id => user.location_id
+        can :get_booking_info, Booking, :location_id => user.location_id
 
         can :read, Service, :company_id => user.company_id
 
