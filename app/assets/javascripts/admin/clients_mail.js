@@ -100,11 +100,32 @@ $(function () {
 		}
 	});
 
-	$('input[name="commit"]').click( function () {
+	$('#send_mail_button').click( function () {
 		if($('form').valid()) {
 			$('.form-group').toggle();
 			$('.modal-footer .btn').toggle();
 			$('.modal-body div:first').toggle()
+		}
+	});
+	$('#location').change( function () {
+		var localId = $('#location').val();
+		if ($('#location').val() > 0) {
+			$.getJSON('/local_providers', {location: localId }, function (providersArray) {
+				$('#provider').empty();
+				$('#provider').append('<option value="">Elige un Proveedor...</option>');
+				$.each(providersArray, function (key, provider) { 
+					$('#provider').append('<option value="' + provider.id + '">' + provider.public_name + '</option>');
+				});
+			});
+		}
+		else {
+			$.getJSON('/service_providers.json', function (providersArray) {
+				$('#provider').empty();
+				$('#provider').append('<option value="">Elige un Proveedor...</option>');
+				$.each(providersArray, function (key, provider) { 
+					$('#provider').append('<option value="' + provider.id + '">' + provider.public_name + '</option>');
+				});
+			});
 		}
 	});
 });
