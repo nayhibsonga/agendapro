@@ -147,7 +147,7 @@ class ClientsController < ApplicationController
       attachment = {}
     end
 
-    # ClientMailer.send_client_mail(current_user, clients, params[:subject], params[:message], company_img, attachment)
+    ClientMailer.send_client_mail(current_user, clients, params[:subject], params[:message], company_img, attachment)
 
     redirect_to '/clients', notice: 'E-mail enviado correctamente.'
   end

@@ -487,6 +487,7 @@ function newCategory () {
 		$('#service_service_category_id').closest('.form-group').addClass('hidden');
 		$('#service_service_category_id').val('');
 		$('#service_service_category_attributes_name').closest('.form-group').removeClass('hidden');
+		$('#service_service_category_attributes_name').focus();
 	}
 	else {
 		$('#service_service_category_id').closest('.form-group').removeClass('hidden');
