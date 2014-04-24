@@ -671,6 +671,10 @@ $(function() {
 		createBookingModal();
 		return false;
 	});
+	$('.createBreak').click(function() {
+		$('#breakModal').modal('show');
+		return false;
+	});
 	$.getJSON('/services', function (services) {
 		servicesJSON = services;
 		loadProviders();

@@ -236,8 +236,8 @@ ActiveRecord::Schema.define(version: 20140423131137) do
   end
 
   create_table "provider_breaks", force: true do |t|
-    t.date     "start"
-    t.date     "end"
+    t.datetime "start"
+    t.datetime "end"
     t.integer  "service_provider_id"
     t.datetime "created_at"
     t.datetime "updated_at"

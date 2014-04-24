@@ -27,8 +27,11 @@
 	</div>
 	<div class="row">
 		<input type="hidden" id="dp" class="pull-right"/>
+		<div>
+			<%= link_to '<i class="fa fa-times"></i>  Bloquear Horas'.html_safe, '#', :class => "btn btn-primary btn-md createBreak pull-right modal-trigger" %>
+		</div>
 		<div id="add_booking">
-			<%= link_to '<i class="fa fa-calendar"></i>  Agregar Reserva'.html_safe, '#', :class => "btn btn-primary btn-md createBooking pull-right" %>
+			<%= link_to '<i class="fa fa-calendar"></i>  Agregar Reserva'.html_safe, '#', :class => "btn btn-primary btn-md createBooking pull-right modal-trigger" %>
 		</div>
 	</div>
 	<div class="row">
@@ -150,6 +153,42 @@
 				<% end %>
 			</div>
 			<div class="modal-footer booking-modal-footer">
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="modal fade" id="breakModal" tabindex="-1" role="dialog" aria-labelledby="breakModalLabel" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+				<h4 class="modal-title break-modal-title" id="breakModalLabel">Bloquear Horas o Agregar Vacaciones</h4>
+			</div>
+			<div class="modal-body break-modal-body">
+				<%= form_for @provider_break, html: {class: "form-horizontal"} do |f| %>
+					<div class="form-group">
+						<%= f.label :service_provider_id, "Proveedor de Servicios: ", class: "col-sm-3 control-label" %>
+						<div class="col-sm-9">
+							<%= f.collection_select :service_provider_id, ServiceProvider.where(location_id: Location.where(company_id: current_user.company_id, :active => true).accessible_by(current_ability)), :id, :public_name, {}, { class: "form-control" }%>
+						</div>
+					</div>
+					<div class="form-group">
+						<%= f.label :start, "Inicio: ", class: "col-sm-3 control-label" %>
+						<div class="col-sm-9">
+							<%= f.datetime_select :start, {}, {class: "form-control date-select"} %>
+						</div>
+					</div>
+					<div class="form-group">
+						<%= f.label :end, "Fin: ", class: "col-sm-3 control-label" %>
+						<div class="col-sm-9">
+							<%= f.datetime_select :end, {}, {class: "form-control date-select"} %>
+						</div>
+					</div>
+				<% end %>
+			</div>
+			<div class="modal-footer break-modal-footer">
+				<button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button><button type="button" class="btn btn-primary" onclick="#">Guardar</button>
 			</div>
 		</div>
 	</div>

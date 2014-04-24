@@ -110,6 +110,7 @@ Agendapro::Application.routes.draw do
   get '/services_list', :to => 'services#services_data'  # Fullcalendar
   get '/provider_time', :to => 'service_providers#provider_time'  # Fullcalendar
   get '/booking', :to => 'bookings#provider_booking'  # Fullcalendar
+  post '/provider_break', :to => 'bookings#create_provider_break', :as => 'provider_breaks'
 
   get '/edit_booking', :to => 'bookings#edit_booking', :as => 'booking_edit'
   post '/edited_booking', :to => 'bookings#edit_booking_post'

@@ -3,7 +3,8 @@
 <table class="table table-bordered">
   <thead>
     <tr>
-      <th></th>
+      <th>Nombre</th>
+      <th>Fecha de Creación</th>
       <th></th>
       <th></th>
     </tr>
@@ -13,6 +14,7 @@
     <% @companies.each do |company| %>
       <tr>
         <td><%= link_to company.name, root_url(:subdomain => company.web_address) %></td>
+        <td><%= link_to l company.created_at, format: :short %></td>
         <td><%= link_to '<i class="fa fa-pencil"></i> Editar'.html_safe, edit_company_path(company) %></td>
         <% if company.active %>
         <td><%= link_to '<i class="fa fa-trash-o"></i> Desactivar'.html_safe, deactivate_company_path(:id => company.id), data: { confirm: '¿Estás seguro?' } %></td>
