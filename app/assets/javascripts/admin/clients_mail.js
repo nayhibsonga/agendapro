@@ -1,6 +1,9 @@
+var my_alert;
 var mails_left;
 $(function () {
-	mails_left = $('#mails_left').data('mails-left');
+	my_alert = new Alert();
+
+	mails_left = $('#mails').data('mails-left');
 
 	$('.modal-body div:first').toggle()
 
@@ -29,6 +32,14 @@ $(function () {
 			if ($(this).prop('checked')) {
 				if (selected <= 0) {
 					$(event.target).prop('checked', false);
+					if (selected <= 0) {
+						my_alert.showAlert(
+							'<h3>Lo sentimos</h3>' +
+							'No puede seleccionar más de ' + mails_left + ' clientes.' +
+							'<br>' +
+							'Solo puede mandar un máximo de ' + $('#mails').data('max-mails') + ' emails por día.'
+						);
+					};
 				};
 				selected -= 1;
 			};
@@ -56,7 +67,7 @@ $(function () {
 		return this.optional(element) || (element.files[0].size <= param) 
 	});
 	
-	$('form').validate({
+	$('#client_mailer').validate({
 		errorPlacement: function(error, element) {
 			error.appendTo(element.next());
 		},
@@ -101,12 +112,13 @@ $(function () {
 	});
 
 	$('#send_mail_button').click( function () {
-		if($('form').valid()) {
+		if($('#client_mailer').valid()) {
 			$('.form-group').toggle();
 			$('.modal-footer .btn').toggle();
 			$('.modal-body div:first').toggle()
 		}
 	});
+
 	$('#location').change( function () {
 		var localId = $('#location').val();
 		if ($('#location').val() > 0) {

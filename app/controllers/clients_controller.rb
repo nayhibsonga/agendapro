@@ -12,6 +12,7 @@ class ClientsController < ApplicationController
     @service_providers = ServiceProvider.where(company_id: current_user.company_id, active: true)
     @clients = Client.accessible_by(current_ability).search(params[:search]).filter_location(params[:location]).filter_provider(params[:provider]).filter_gender(params[:gender]).paginate(:page => params[:page], :per_page => 25)
 
+    @max_mails = current_user.company.company_setting.daily_mails
     @mails_left = current_user.company.company_setting.daily_mails - current_user.company.company_setting.sent_mails
   end
 
@@ -112,8 +113,10 @@ class ClientsController < ApplicationController
   end
 
   def send_mail
-    # Restar mails eviados
-    current_user.company.company_setting.update_attributes :sent_mails => params[:to].split(',').length
+    # Sumar mails eviados
+    current_sent = current_user.company.company_setting.sent_mails
+    sent_now = params[:to].split(',').length
+    current_user.company.company_setting.update_attributes :sent_mails => (current_sent + sent_now)
 
     clients = Array.new
     params[:to].split(',').each do |client_mail|
@@ -144,7 +147,7 @@ class ClientsController < ApplicationController
       attachment = {}
     end
 
-    ClientMailer.send_client_mail(current_user, clients, params[:subject], params[:message], company_img, attachment)
+    # ClientMailer.send_client_mail(current_user, clients, params[:subject], params[:message], company_img, attachment)
 
     redirect_to '/clients', notice: 'E-mail enviado correctamente.'
   end

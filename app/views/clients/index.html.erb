@@ -137,7 +137,7 @@
 	</div>
 </div>
 
-<%= content_tag "div", id: "mails_left", data: {mails_left: @mails_left} do %>
+<%= content_tag "div", id: "mails", data: {mails_left: @mails_left, max_mails: @max_mails} do %>
 <% end %>
 
 <% content_for :scripts do %>
