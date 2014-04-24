@@ -113,6 +113,15 @@ function locationError (error) {
 //====== Load ======//
 var myAlert;
 $(function() {
+  $('.title-local').each(function () {
+    var characters = $(this).text().length;
+    if (characters > 50) {
+      var porcentage = 0.25 * characters / 50.0;
+      var size = parseFloat($(this).css('font-size')) * (1 - porcentage);
+      $(this).css('font-size', (size < 14.0 ? 14 : size));
+    };
+  });
+
   myAlert = new Alert('.main');
 
   $('#save').on('click', function () {
