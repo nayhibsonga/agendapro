@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140422191801) do
+ActiveRecord::Schema.define(version: 20140423131137) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -234,6 +234,16 @@ ActiveRecord::Schema.define(version: 20140422191801) do
     t.datetime "created_at"
     t.datetime "updated_at"
   end
+
+  create_table "provider_breaks", force: true do |t|
+    t.datetime "start"
+    t.datetime "end"
+    t.integer  "service_provider_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "provider_breaks", ["service_provider_id"], name: "index_provider_breaks_on_service_provider_id", using: :btree
 
   create_table "provider_times", force: true do |t|
     t.time     "open",                null: false

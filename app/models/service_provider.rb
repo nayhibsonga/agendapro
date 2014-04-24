@@ -7,6 +7,7 @@ class ServiceProvider < ActiveRecord::Base
 	has_many :services, :through => :service_staffs
 	has_many :provider_times, :inverse_of => :service_provider
 	has_many :bookings
+	has_many :provider_breaks
 
 	attr_accessor :_destroy
 

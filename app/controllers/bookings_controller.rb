@@ -13,6 +13,7 @@ class BookingsController < ApplicationController
     @service_providers = ServiceProvider.where(location_id: @locations)
     @bookings = Booking.where(service_provider_id: @service_providers)
     @booking = Booking.new
+    @provider_break = ProviderBreak.new
   end
 
   # GET /bookings/1
@@ -49,6 +50,21 @@ class BookingsController < ApplicationController
       else
         format.html { render action: 'new' }
         format.json { render :json => { :errors => @booking.errors.full_messages }, :status => 422 }
+        format.js { }
+      end
+    end
+  end
+
+  def create_provider_break
+    @provider_break = ProviderBreak.new(provider_break_params)
+    respond_to do |format|
+      if @provider_break.save
+        format.html { redirect_to bookings_path, notice: 'Booking was successfully created.' }
+        format.json { render :json => @provider_break }
+        format.js { }
+      else
+        format.html { render action: 'index' }
+        format.json { render :json => { :errors => @provider_break.errors.full_messages }, :status => 422 }
         format.js { }
       end
     end
@@ -202,5 +218,9 @@ class BookingsController < ApplicationController
     # Never trust parameters from the scary internet, only allow the white list through.
     def booking_params
       params.require(:booking).permit(:start, :end, :notes, :service_provider_id, :service_id, :user_id, :status_id, :promotion_id, :first_name, :last_name, :email, :phone, :confirmation_code)
+    end
+
+    def provider_break_params
+      params.require(:provider_break).permit(:start, :end, :service_provider_id)
     end
 end

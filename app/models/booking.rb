@@ -10,10 +10,18 @@ class Booking < ActiveRecord::Base
 
 	validate :time_empty_or_negative, :time_in_provider_time, :booking_duration, :service_staff
 
-	after_commit validate :bookings_overlap
+	after_commit validate :bookings_overlap, :provider_in_break
 
 	after_create :send_booking_mail, :check_company_client
 	after_update :send_update_mail
+
+	def provider_in_break
+		self.service_provider.provider_breaks.each do |provider_break|
+	    	if (provider_break.start - self.end) * (self.start - provider_break.end) > 0
+	    		errors.add(:booking, "El proveedor seleccionado ha bloqueado ese horario.")
+	    	end
+    	end
+  	end
 
 	def booking_duration
     	if self.service.duration != ((self.end - self.start) / 1.minute ).round
