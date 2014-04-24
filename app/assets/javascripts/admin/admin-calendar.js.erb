@@ -633,6 +633,27 @@ function saveBooking(typeURL, extraURL) {
 	});
 }
 
+function saveBreak () {
+	var breakJSON = { "service_provider_id": $('#provider_break_service_provider_id').val(), "start": $('#provider_break_start_1i').val() +"-"+ $('#provider_break_start_2i').val() +"-"+ $('#provider_break_start_3i').val() +"T"+ $('#provider_break_start_4i').val() +":"+ $('#provider_break_start_5i').val() +":00Z", "end": $('#provider_break_end_1i').val() +"-"+ $('#provider_break_end_2i').val() +"-"+ $('#provider_break_end_3i').val() +"T"+ $('#provider_break_end_4i').val() +":"+ $('#provider_break_end_5i').val() +":00Z" };
+	$.ajax({
+		type: 'POST',
+		url: '/provider_breaks.json',
+		data: { "provider_break": breakJSON },
+		dataType: 'json',
+		success: function(){
+			document.location.href = '/bookings/';
+		},
+		error: function(xhr){
+			var errors = $.parseJSON(xhr.responseText).errors;
+			var errores = '';
+			for (i in errors) {
+				errores += errors[i];
+			}
+			alertId.showAlert(errores);
+		}
+	});
+}
+
 function modalChange() {
 	$('#bookingEnd').empty()
 	if ($("#bookingStartHour").val() != '' && $("#bookingStartMinute").val() != '' && $("#booking_service_id").val() != '') {
@@ -673,6 +694,10 @@ $(function() {
 	});
 	$('.createBreak').click(function() {
 		$('#breakModal').modal('show');
+		return false;
+	});
+	$('#save_break').click(function() {
+		saveBreak();
 		return false;
 	});
 	$.getJSON('/services', function (services) {

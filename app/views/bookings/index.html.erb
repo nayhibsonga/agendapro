@@ -28,7 +28,7 @@
 	<div class="row">
 		<input type="hidden" id="dp" class="pull-right"/>
 		<div>
-			<%= link_to '<i class="fa fa-times"></i>  Bloquear Horas'.html_safe, '#', :class => "btn btn-primary btn-md createBreak pull-right modal-trigger" %>
+			<%= link_to '<i class="fa fa-times"></i>  Bloquear Horas / Vacaciones'.html_safe, '#', :class => "btn btn-primary btn-md createBreak pull-right modal-trigger" %>
 		</div>
 		<div id="add_booking">
 			<%= link_to '<i class="fa fa-calendar"></i>  Agregar Reserva'.html_safe, '#', :class => "btn btn-primary btn-md createBooking pull-right modal-trigger" %>
@@ -188,7 +188,7 @@
 				<% end %>
 			</div>
 			<div class="modal-footer break-modal-footer">
-				<button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button><button type="button" class="btn btn-primary" onclick="#">Guardar</button>
+				<button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button><button type="button" class="btn btn-primary" id="save_break" onclick="#">Guardar</button>
 			</div>
 		</div>
 	</div>
