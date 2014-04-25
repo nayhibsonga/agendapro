@@ -4,7 +4,7 @@ $(function() {
 	});
 
 	$.validator.addMethod("alphaNumeric", function(value, element) {
-		return this.optional(element) || /^\S*[a-z0-9_-]+\S*$/i.test(value) && !value.match(/[áäâàéëêèíïîìóöôòúüûùñ]/gi); // letters, digits,_,-
+		return this.optional(element) || /^\S*[a-z0-9_-]+\S*$/i.test(value) && !value.match(/[áäâàéëêèíïîìóöôòúüûùñ.]/gi); // letters, digits,_,-
 	}, "No se pueden usar caractéres especiales");
 
 	$.validator.addMethod('filesize', function(value, element, param) {
@@ -56,10 +56,12 @@ $(function() {
 			'user[company_attributes][name]': {
 				required: true,
 				minlength: 3,
+				maxlength: 200
 			},
 			'user[company_attributes][web_address]': {
 				required: true,
 				minlength: 3,
+				maxlength: 200,
 				alphaNumeric: $('#user_company_attributes_web_address').val(),
 				remote: '/check_company'
 			},
@@ -99,12 +101,14 @@ $(function() {
 			},
 			'user[company_attributes][name]': {
 				required: "Debe ingresar un nombre para la compañia",
-				minlength: "El nombre debe tener al menos 3 caracteres",
+				minlength: "El nombre debe tener al menos 3 caractéres",
+				maxlength: "El nombre no puede ser más largo de 200 caractéres"
 			},
 			'user[company_attributes][web_address]': {
 				required: "Debe ingresar una direccion web para su compañia",
-				minlength: "La direccion web debe tener al menor 3 caracteres",
-				remote: jQuery.validator.format("{0} ya existe")
+				minlength: "La direccion web debe tener al menor 3 caractéres",
+				maxlength: "La direccion no puede ser más larga de 200 caractéres",
+				remote: jQuery.validator.format('{0} ya existe')
 			},
 			'user[company_attributes][logo]': {
 				filesize: "La imagen supera el tamaño maximo de 3 MB"
@@ -130,6 +134,7 @@ $(function() {
 	$('#user_company_attributes_name').one('change', function() {
 		var tmp = $('#user_company_attributes_name').val();
 		tmp = tmp.replace(/ /g, '');	//Space
+		tmp = tmp.replace(/\./g, '');	//Dots
 		tmp = tmp.replace(/[áäâà]/gi, 'a');	//special a
 		tmp = tmp.replace(/[éëêè]/gi, 'e');	//Special e
 		tmp = tmp.replace(/[íïîì]/gi, 'i');	//Special i
