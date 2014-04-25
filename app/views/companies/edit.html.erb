@@ -1,16 +1,21 @@
 <div class="container">
-  <div class="row">
-    <section class="hgroup">
-      <h2>Edición de Compañía</h2>
-      <h2 class="section_header">Acá podrás editar los datos de tu compañía.</h2>
-      <div class="line-breadcrumb">
-        <ul class="breadcrumb pull-right">
-            <li><%= link_to "Resumen", dashboard_path %> </li>
-            <li class="active">Empresa</li>
-        </ul>
-    </div>
-    </section>
-  </div>
+	<div class="row">
+		<section class="hgroup">
+			<h2>Edición de Compañía</h2>
+			<h2 class="section_header">Acá podrás editar los datos de tu compañía.</h2>
+			<div class="line-breadcrumb">
+				<ul class="breadcrumb pull-right">
+						<li><%= link_to "Resumen", dashboard_path %> </li>
+						<li class="active">Empresa</li>
+				</ul>
+		</div>
+		</section>
+	</div>
 </div>
 
 <%= render 'form' %>
+
+<% content_for :scripts do %>
+<%= javascript_include_tag 'login/jquery.validate.min' %>
+<%= javascript_include_tag 'admin/company_validate' %>
+<% end %>
