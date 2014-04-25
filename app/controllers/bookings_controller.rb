@@ -70,6 +70,11 @@ class BookingsController < ApplicationController
     end
   end
 
+  def provider_breaks
+    provider_breaks = ProviderBreak.where(service_provider_id: params[:service_provider_id])
+    render :json => provider_breaks
+  end
+
   # PATCH/PUT /bookings/1
   # PATCH/PUT /bookings/1.json
   def update
