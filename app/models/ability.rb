@@ -102,10 +102,13 @@ class Ability
 
         can :add_company, Company
 
-        can :get_booking, Booking, :service_provider_id => { :company_id => user.company_id }
+        can :get_booking, Booking, :service_provider => { :company_id => user.company_id }
         can :get_booking_info, Booking, :service_provider => { :company_id => user.company_id }
-        can :create_provider_break, Booking, :service_provider => { :company_id => user.company_id }
-        can :provider_breaks, Booking, :service_provider => { :company_id => user.company_id }
+        can :provider_breaks, Booking
+        can :get_provider_break, Booking
+        can :create_provider_break, Booking
+        can :update_provider_break, Booking
+        can :destroy_provider_break, Booking
 
         can :read, Company, :id => user.company_id
         can :destroy, Company, :id => user.company_id

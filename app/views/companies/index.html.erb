@@ -5,7 +5,7 @@
     <tr>
       <th>Nombre</th>
       <th>Fecha de Creación</th>
-      <th></th>
+      <th>Administrador</th>
       <th></th>
     </tr>
   </thead>
@@ -14,12 +14,13 @@
     <% @companies.each do |company| %>
       <tr>
         <td><%= link_to company.name, root_url(:subdomain => company.web_address) %></td>
-        <td><%= link_to l company.created_at, format: :short %></td>
-        <td><%= link_to '<i class="fa fa-pencil"></i> Editar'.html_safe, edit_company_path(company) %></td>
+        <td><%= l company.created_at, format: :short %></td>
+        <td><%= company.users.where(role_id: Role.find_by_name("Admin")).first.email %></td>
+        <td><%= link_to '<i class="fa fa-pencil"></i> Editar'.html_safe, edit_company_path(company) %>
         <% if company.active %>
-        <td><%= link_to '<i class="fa fa-trash-o"></i> Desactivar'.html_safe, deactivate_company_path(:id => company.id), data: { confirm: '¿Estás seguro?' } %></td>
+        <%= link_to '<i class="fa fa-trash-o"></i> Desactivar'.html_safe, deactivate_company_path(:id => company.id), data: { confirm: '¿Estás seguro?' } %></td>
         <% else %>
-        <td><%= link_to '<i class="fa fa-check"></i> Re-Activar'.html_safe, activate_company_path(:id => company.id), data: { confirm: '¿Estás seguro?' } %></td>
+        <%= link_to '<i class="fa fa-check"></i> Re-Activar'.html_safe, activate_company_path(:id => company.id), data: { confirm: '¿Estás seguro?' } %></td>
         <% end %>
       </tr>
     <% end %>
