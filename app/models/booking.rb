@@ -10,10 +10,18 @@ class Booking < ActiveRecord::Base
 
 	validate :time_empty_or_negative, :time_in_provider_time, :booking_duration, :service_staff
 
-	after_commit validate :bookings_overlap
+	after_commit validate :bookings_overlap, :provider_in_break
 
 	after_create :send_booking_mail, :check_company_client
 	after_update :send_update_mail
+
+	def provider_in_break
+		self.service_provider.provider_breaks.each do |provider_break|
+	    	if (provider_break.start - self.end) * (self.start - provider_break.end) > 0
+	    		errors.add(:booking, "El proveedor seleccionado ha bloqueado ese horario.")
+	    	end
+    	end
+  	end
 
 	def booking_duration
     	if self.service.duration != ((self.end - self.start) / 1.minute ).round
@@ -34,7 +42,7 @@ class Booking < ActiveRecord::Base
 					if (provider_booking.start - self.end) * (self.start - provider_booking.end) > 0
 						if !self.service.group_service || self.service_id != provider_booking.service_id
 			      			errors.add(:booking, "Esa hora ya está agendada para ese proveedor de servicios.")
-			      		elsif self.service_id == provider_booking.service_id && self.service_provider.bookings.where(:service_id => self.service_id).count >= self.service.capacity
+			      		elsif self.service.group_service && self.service_id == provider_booking.service_id && self.service_provider.bookings.where(:service_id => self.service_id, :start => self.start).count >= self.service.capacity
 			      			errors.add(:booking, "Esa hora ya está agendada para ese proveedor de servicios.")
 			      		end
 			    	end
@@ -83,14 +91,21 @@ class Booking < ActiveRecord::Base
 	end
 
 	def send_update_mail
-		BookingMailer.update_booking(self)
+		if self.status == Status.find_by(:name => "Cancelado")
+			BookingMailer.cancel_booking(self)
+		else
+			BookingMailer.update_booking(self)
+		end
 	end
 
 	def self.booking_reminder
 		@time1 = Time.new.getutc + 1.day
 		@time2 = Time.new.getutc + 2.day
 		where(:start => @time1...@time2).each do |booking|
-			BookingMailer.book_reminder_mail(booking)
+			unless booking.status == Status.find_by(:name => "Cancelado")
+				booking.update_column(:status_id, Status.find_by(:name => "Confirmado")) unless booking.status == Status.find_by(:name => "Pagado")
+				BookingMailer.book_reminder_mail(booking)
+			end
 		end
 	end
 

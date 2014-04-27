@@ -4,7 +4,7 @@ class DeviseMandrill < Devise::Mailer
   def reset_password_instructions(record, token, opts={})
   	require 'base64'
 
-  	mandrill = Mandrill::API.new 'HL4ERbuZZO6rrM2nlVjzZg'
+  	mandrill = Mandrill::API.new Agendapro::Application.config.api_key
 
     # => Template
     template_name = 'Password'

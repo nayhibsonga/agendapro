@@ -124,7 +124,7 @@ function changeDayStatus (value, ctrl) {
 function startLocation () {
 	var district = $('#location_district_id').val();
 	var address = $('#location_address').val();
-	if ((address != '')&&(district != '')) {
+	if ((address != '') && (district != '')) {
 		$.getJSON('/get_direction', {id: district}, function (direction) {
 			var geolocation = address + ', ' + direction;
 			var geoString = JSON.stringify(geolocation);
@@ -487,6 +487,7 @@ function newCategory () {
 		$('#service_service_category_id').closest('.form-group').addClass('hidden');
 		$('#service_service_category_id').val('');
 		$('#service_service_category_attributes_name').closest('.form-group').removeClass('hidden');
+		$('#service_service_category_attributes_name').focus();
 	}
 	else {
 		$('#service_service_category_id').closest('.form-group').removeClass('hidden');

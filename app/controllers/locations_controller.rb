@@ -99,9 +99,11 @@ class LocationsController < ApplicationController
     require 'date'
 
     # Data
-    service_duration = Service.find(params[:service]).duration
+    service = Service.find(params[:service])
+    service_duration = service.duration
     weekDate = Date.strptime(params[:date], '%Y-%m-%d')
     company_setting = CompanySetting.find(Company.find(Location.find(params[:local]).company_id).company_setting)
+    provider_breaks = ProviderBreak.where(:service_provider_id => params[:provider])
 
     @week_blocks = Hash.new
     # Week Blocks
@@ -194,6 +196,16 @@ class LocationsController < ApplicationController
           before_now = start_time_block - company_setting.before_booking / 24.0
           after_now = now + company_setting.after_booking * 30
 
+          provider_breaks.each do |provider_break|
+            # puts "Booking " + booking_start.to_s + " - " + booking_end.to_s
+            # puts "Break" + provider_break.start.to_s + " - " + provider_break.end.to_s
+            break_start = DateTime.parse(provider_break.start.to_s)
+            break_end = DateTime.parse(provider_break.end.to_s)
+            if  (break_start - end_time_block) * (start_time_block - break_end) > 0
+              status = 'occupied'
+            end
+          end
+
           if (before_now <=> now) < 1
             status = 'past'
           elsif (after_now <=> end_time_block) < 1
@@ -204,7 +216,11 @@ class LocationsController < ApplicationController
               booking_end = DateTime.parse(booking.end.to_s)
 
               if (booking_start - end_time_block) * (start_time_block - booking_end) > 0 && booking.status_id != Status.find_by(name: 'Cancelado').id
-                status = 'occupied'
+                if !service.group_service || service.id != booking.service_id
+                  status = 'occupied'
+                elsif service.group_service && service.id == booking.service_id && ServiceProvider.find(params[:provider]).bookings.where(:service_id => service.id, :start => booking.start).count >= service.capacity
+                  status = 'occupied'
+                end
               end
             end
           end

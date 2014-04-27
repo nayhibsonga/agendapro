@@ -12,7 +12,7 @@ class User < ActiveRecord::Base
 
 	accepts_nested_attributes_for :company
 
-	validates :email, :presence => true
+	validates :email, :role, :presence => true
 	validate :location_company_users
 
 	after_create :send_welcome_mail, :get_past_bookings

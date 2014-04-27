@@ -1,7 +1,48 @@
-<h1>
-	Clientes de la Empresa
-	<button id="sendMail" type="button" class="btn btn-agendapro-claro pull-right" data-toggle="modal" data-target="#mailModal" disabled>Enviar Email</button>
-</h1>
+<div class="container">
+  <div class="row">
+    <section class="hgroup">
+      <h2>Clientes de la Empresa</h2>
+      <h2 class="section_header">Acá podrás agregar y editar clientes de tu empresa. Los clientes generados son válidos para todos los locales de tu compañía. Las personas que reserven en tu portal AgendaPro serán agregadas automáticamente.</h2>
+      <div class="line-breadcrumb">
+        <ul class="breadcrumb pull-right">
+            <li><%= link_to "Resumen", dashboard_path %> </li>
+            <li class="active">Clientes</li>
+        </ul>
+    </div>
+    </section>
+  </div>
+</div>
+
+<div class="container">
+	<div class="row well">
+		<%= form_tag clients_path, name: "client_filter", id: "client_filter", method: "get" do %>
+		<div class="row">
+			<div class="form-group">
+				<div class="col-sm-1">
+					<label class="pull-right">Filtrar:</label>
+				</div>
+				<div class="col-sm-3">
+					<%= select_tag :location, options_from_collection_for_select(@locations, "id", "name", params[:location]), prompt: "Elige un Local...", class: "form-control" %>
+				</div>
+				<div class="col-sm-3">
+					<%= select_tag :provider, options_from_collection_for_select(@service_providers, "id", "public_name", params[:provider]), prompt: "Elige un Proveedor...", class: "form-control" %>
+				</div>
+				<div class="col-sm-3">
+					<%= select_tag :gender, options_for_select([['No Especificado', 0], ['Femenino', 1], ['Masculino', 2]], params[:gender]), prompt: "Elige un Género...", class: "form-control" %>
+				</div>
+			</div>
+		</div>
+		<div class="row top-buffer">
+			<div class="form-group">
+				<div class="col-sm-9 col-sm-offset-1">
+					<%= text_field_tag :search, nil, :class => "form-control", :placeholder => "Filtrar por nombre, apellido o email...", :value => params[:search] %>
+				</div>
+				<button class="btn btn-primary" type="submit" action="/clients" value="client_filter"><i class="fa fa-filter"><span> Filtrar</span></i></button>
+			</div>
+		</div>
+	<% end %>
+	</div>
+</div>
 
 <table class="table table-bordered">
 	<thead>
@@ -37,8 +78,19 @@
 		 <% end %>
 	</tbody>
 </table>
-<%= link_to '<i class="fa fa-plus"></i> Nuevo Cliente'.html_safe, new_client_path, :class => "btn btn-primary" %>
-
+<div class="container">
+	<div class="row">
+		<div class="col-md-4">
+			<%= link_to '<i class="fa fa-plus"></i> Nuevo Cliente'.html_safe, new_client_path, :class => "btn btn-primary" %>
+		</div>
+		<div class="col-md-4 pagination">
+			<%= will_paginate @players, renderer: BootstrapPagination::Rails %>
+		</div>
+		<div class="col-md-4">
+			<button id="sendMail" type="button" class="btn btn-agendapro-claro pull-right" data-toggle="modal" data-target="#mailModal" disabled>Enviar Email</button>
+		</div>
+	</div>
+</div>
 <div class="modal fade" id="mailModal" tabindex="-1" role="dialog" aria-labelledby="mailModalLabel" aria-hidden="true">
 	<div class="modal-dialog">
 		<div class="modal-content">
@@ -46,125 +98,49 @@
 				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
 				<h4 class="modal-title" id="mailModalLabel">Enviar Email</h4>
 			</div>
-			<%= form_tag '/send_mail_client' do %>
+			<%= form_tag '/send_mail_client', name: "client_mailer", id: "client_mailer", multipart: true do %>
 				<div class="modal-body">
-						<div class="center-block" style="display: table;">
-							<p>
-								<h3>Enviando Email</h3>
-								<span>Por favor espere</span>
-							</p>
-							<%= image_tag 'ajax-loader.gif', :alt => 'Loader' %>
-						</div>
-						<div class="form-group">
-							<%= label_tag :to, 'Para' %>
-							<%= text_field_tag :to, nil, :class => 'form-control', :required => true %>
-	            <span class="help-block"></span>
-						</div>
-						<div class="form-group">
-							<%= label_tag :subject, 'Asunto' %>
-							<%= text_field_tag :subject, nil, :class => 'form-control', :required => true, :autofocus => true %>
-	            <span class="help-block"></span>
-						</div>
-						<div class="form-group">
-							<%= label_tag :message, 'Mensaje' %>
-							<%= text_area_tag :message, nil, :class => 'form-control', :rows => 10, :required => true %>
-	            <span class="help-block"></span>
-						</div>
+					<div class="center-block" style="display: table;">
+						<p>
+							<h3>Enviando Email</h3>
+							<span>Por favor espere</span>
+						</p>
+						<%= image_tag 'ajax-loader.gif', :alt => 'Loader' %>
+					</div>
+					<div class="form-group">
+						<%= label_tag :to, 'Para' %>
+						<%= text_field_tag :to, nil, :class => 'form-control', :required => true %>
+            			<span class="help-block"></span>
+					</div>
+					<div class="form-group">
+						<%= label_tag :subject, 'Asunto' %>
+						<%= text_field_tag :subject, nil, :class => 'form-control', :required => true, :autofocus => true %>
+            			<span class="help-block"></span>
+					</div>
+					<div class="form-group">
+						<%= label_tag :message, 'Mensaje' %>
+						<%= text_area_tag :message, nil, :class => 'form-control', :rows => 10, :required => true %>
+            			<span class="help-block"></span>
+					</div>
+					<div class="form-group">
+						<%= label_tag :attachment, 'Archivo Adjunto' %>
+						<%= file_field_tag :attachment, :class => 'form-control' %>
+						<span class="help-block"></span>
+					</div>
 				</div>
 				<div class="modal-footer">
 					<button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
-					<%= submit_tag "Enviar", class: "btn btn-agendapro-claro" %>
+					<button class="btn btn-agendapro-claro" type="submit" action="/send_mail_client" value="client_mailer"><i class="fa fa-envelope-o"><span> Enviar</span></i></button>
 				</div>
 			<% end %>
 		</div>
 	</div>
 </div>
 
+<%= content_tag "div", id: "mails", data: {mails_left: @mails_left, max_mails: @max_mails} do %>
+<% end %>
+
 <% content_for :scripts do %>
 <%= javascript_include_tag 'login/jquery.validate.min' %>
-<script type="text/javascript">
-	$(function () {
-		$('.modal-body div:first').toggle()
-
-		$('input[name="mail"]').change(function (event) {
-			$('input[name="client_mail"]').each( function () {
-				if ($(event.target).prop('checked')) {
-					$(this).prop('checked', true);
-					$('#sendMail').prop('disabled', false);
-				}
-				else {
-					$(this).prop('checked', false);
-					$('#sendMail').prop('disabled', true);
-				}
-			});
-		});
-
-		$('input[name="client_mail"]').change(function (event) {
-			var prop = true;
-			var disabled = false;
-			$('input[name="client_mail"]').each( function () {
-				prop = prop && $(this).prop('checked');
-				disabled = disabled || $(this).prop('checked');
-			});
-			$('input[name="mail"]').prop('checked', prop);
-			$('#sendMail').prop('disabled', !disabled);
-		});
-
-		$('#mailModal').on('show.bs.modal', function (e) {
-			var emails = [];
-			$('input[name="client_mail"]').each( function () {
-				if ($(this).prop('checked')) {
-					emails.push($(this).val());
-				};
-			});
-			$('#to').val(emails);
-		});
-
-		$('form').validate({
-			errorPlacement: function(error, element) {
-				error.appendTo(element.next());
-			},
-			rules: {
-				'to': {
-					required: true
-				},
-				'subject': {
-					required: true
-				},
-				'message': {
-					required: true
-				}
-			},
-			messages: {
-				'to': {
-					required: "Debe elegir al menos un destinatario"
-				},
-				'subject': {
-					required: "Debe escribir un asunto para su e-mail"
-				},
-				'message': {
-					required: "No se puede dejar el cuerpo vacío"
-				}
-			},
-			highlight: function(element) {
-				$(element).closest('.form-group').removeClass('has-success').addClass('has-error');
-			},
-			success: function(element) {
-				$(element).closest('.form-group').removeClass('has-error').addClass('has-success');
-				$(element).parent().empty()
-			},
-			submitHandler: function(form) {
-				form.submit();
-			}
-		});
-
-		$('input[name="commit"]').click( function () {
-			if($('form').valid()) {
-				$('.form-group').toggle();
-				$('.modal-footer .btn').toggle();
-				$('.modal-body div:first').toggle()
-			}
-		});
-	});
-</script>
+<%= javascript_include_tag 'admin/clients_mail' %>
 <% end %>

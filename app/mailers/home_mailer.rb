@@ -10,7 +10,7 @@ class HomeMailer < ActionMailer::Base
   def contact_mail (contact_info)
     require 'base64'
 
-    mandrill = Mandrill::API.new 'HL4ERbuZZO6rrM2nlVjzZg'
+    mandrill = Mandrill::API.new Agendapro::Application.config.api_key
 
     # => Template
     template_name = 'Contact'

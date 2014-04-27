@@ -11,18 +11,21 @@
 				<%= f.label :name, "Nombre: ", class: "col-sm-3 control-label" %>
 				<div class="col-sm-9">
 					<%= f.text_field :name, :autofocus => true, class: "form-control" %>
+					<span class="help-block"></span>
 				</div>
 			</div>
 			<div class="form-group">
 				<%= f.label :address, "Dirección: ", class: "col-sm-3 control-label" %>
 				<div class="col-sm-9">
 					<%= f.text_field :address, class: "form-control" %>
+					<span class="help-block"></span>
 				</div>
 			</div>
 			<div class="form-group">
 				<%= f.label :phone, "Teléfono: ", class: "col-sm-3 control-label" %>
 				<div class="col-sm-9">
 					<%= f.text_field :phone, class: "form-control" %>
+					<span class="help-block"></span>
 				</div>
 			</div>
 			<div class="form-group">
@@ -63,6 +66,7 @@
 					<%= f.label :name, "Nombre: ", class: "col-sm-3 control-label" %>
 					<div class="col-sm-9">
 						<%= f.text_field :name, :autofocus => true, class: "form-control" %>
+						<span class="help-block"></span>
 					</div>
 				</div>
 				<div class="form-group">
@@ -73,6 +77,12 @@
 							<%= f.number_field :price, class: "form-control", :min => 0 %>
 							<span class="input-group-addon">Pesos</span>
 						</div>
+						<span class="help-block"></span>
+						<div class="checkbox">
+							<label>
+								<%= f.check_box :show_price %> Mostrar el precio en tu mini-sitio AgendaPro
+							</label>
+						</div>
 					</div>
 				</div>
 				<div class="form-group">
@@ -82,12 +92,14 @@
 							<%= f.number_field :duration, class: "form-control", :in => 5...1440, :step => 5 %>
 							<span class="input-group-addon">Minutos</span>
 						</div>
+						<span class="help-block"></span>
 					</div>
 				</div>
 				<div class="form-group">
 					<%= f.label :description, "Descripción: ", class: "col-sm-3 control-label" %>
 					<div class="col-sm-9">
 						<%= f.text_area :description, class: "form-control" %>
+						<span class="help-block"></span>
 					</div>
 				</div>
 			</div>
@@ -104,6 +116,7 @@
 					<%= builder.label :name, "Categoría de Servicio:", class: "col-sm-4 control-label" %>
 					<div class="col-sm-8">
 						<%= builder.text_field :name, class: "form-control", :value => '' %>
+						<span class="help-block"></span>
 						<%= builder.hidden_field :company_id, class: "form-control", :value => current_user.company_id %>
 					</div>
 				</div>
@@ -133,6 +146,7 @@
 							<%= f.number_field :capacity, class: "form-control", :min => 2 %>
 							<span class="input-group-addon">Personas</span>
 						</div>
+						<span class="help-block"></span>
 					</div>
 				</div>
 				<div class="form-group">
@@ -159,12 +173,14 @@
 				<%= f.label :public_name, "Nombre Público:", class: "col-sm-3 control-label" %>
 				<div class="col-sm-9">
 					<%= f.text_field :public_name, :autofocus => true, class: "form-control" %>
+					<span class="help-block"></span>
 				</div>
 			</div>
 			<div class="form-group">
 				<%= f.label :notification_email, "Email de Notificación:", class: "col-sm-3 control-label" %>
 				<div class="col-sm-9">
 					<%= f.text_field :notification_email, class: "form-control" %>
+					<span class="help-block"></span>
 				</div>
 			</div>
 			<div class="form-group">
@@ -199,8 +215,11 @@
 		</div>
 	</div>
 </div>
+
 <% content_for :scripts do %>
 	<%= javascript_include_tag "http://maps.google.com/maps/api/js?sensor=false" %>
 	<%= javascript_include_tag "admin/quick_add" %>
+	<%= javascript_include_tag "login/jquery.validate.min" %>
+	<%= javascript_include_tag "admin/quick_add_validate" %>
 <% end %>
 

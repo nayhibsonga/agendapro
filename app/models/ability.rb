@@ -102,8 +102,13 @@ class Ability
 
         can :add_company, Company
 
-        can :get_booking, Booking, :service_provider_id => { :company_id => user.company_id }
+        can :get_booking, Booking, :service_provider => { :company_id => user.company_id }
         can :get_booking_info, Booking, :service_provider => { :company_id => user.company_id }
+        can :provider_breaks, Booking
+        can :get_provider_break, Booking
+        can :create_provider_break, Booking
+        can :update_provider_break, Booking
+        can :destroy_provider_break, Booking
 
         can :read, Company, :id => user.company_id
         can :destroy, Company, :id => user.company_id
@@ -159,8 +164,13 @@ class Ability
 
     elsif user.role_id == Role.find_by_name("Administrador Local").id
 
-        can :get_booking, Booking, :service_provider_id => { :location_id => user.location_id }
-        can :get_booking_info, Booking, :service_provider_id => { :location_id => user.location_id }
+        can :get_booking, Booking, :location_id => user.location_id 
+        can :get_booking_info, Booking, :location_id => user.location_id
+        can :provider_breaks, Booking
+        can :get_provider_break, Booking
+        can :create_provider_break, Booking
+        can :update_provider_break, Booking
+        can :destroy_provider_break, Booking
 
         can :read, Service, :company_id => user.company_id
         can :create, Service, :company_id => user.company_id
@@ -220,8 +230,13 @@ class Ability
 
     elsif user.role_id == Role.find_by_name("Recepcionista").id
 
-        can :get_booking, Booking, :service_provider_id => { :location_id => user.location_id }
-        can :get_booking_info, Booking, :service_provider_id => { :location_id => user.location_id }
+        can :get_booking, Booking, :location_id => user.location_id
+        can :get_booking_info, Booking, :location_id => user.location_id
+        can :provider_breaks, Booking
+        can :get_provider_break, Booking
+        can :create_provider_break, Booking
+        can :update_provider_break, Booking
+        can :destroy_provider_break, Booking
 
         can :read, Service, :company_id => user.company_id
 
@@ -260,6 +275,8 @@ class Ability
         can :read, LocationTime, :location_id => user.location_id
 
         can :read, ProviderTime, :service_provider => { :user_id => user.id }
+
+        can :read, Service, :company_id => user.company_id
 
         can :read, Booking, :service_provider => { :user_id => user.id }
         can :destroy, Booking, :service_provider => { :user_id => user.id }
