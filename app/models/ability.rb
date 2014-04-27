@@ -165,7 +165,12 @@ class Ability
     elsif user.role_id == Role.find_by_name("Administrador Local").id
 
         can :get_booking, Booking, :location_id => user.location_id 
-        can :get_booking_info, Booking, :location_id => user.location_id 
+        can :get_booking_info, Booking, :location_id => user.location_id
+        can :provider_breaks, Booking
+        can :get_provider_break, Booking
+        can :create_provider_break, Booking
+        can :update_provider_break, Booking
+        can :destroy_provider_break, Booking
 
         can :read, Service, :company_id => user.company_id
         can :create, Service, :company_id => user.company_id
@@ -227,6 +232,11 @@ class Ability
 
         can :get_booking, Booking, :location_id => user.location_id
         can :get_booking_info, Booking, :location_id => user.location_id
+        can :provider_breaks, Booking
+        can :get_provider_break, Booking
+        can :create_provider_break, Booking
+        can :update_provider_break, Booking
+        can :destroy_provider_break, Booking
 
         can :read, Service, :company_id => user.company_id
 
