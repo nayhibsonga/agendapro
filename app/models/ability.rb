@@ -276,6 +276,8 @@ class Ability
 
         can :read, ProviderTime, :service_provider => { :user_id => user.id }
 
+        can :read, Service, :company_id => user.compnay_id
+
         can :read, Booking, :service_provider => { :user_id => user.id }
         can :destroy, Booking, :service_provider => { :user_id => user.id }
         can :create, Booking, :service_provider => { :user_id => user.id }
