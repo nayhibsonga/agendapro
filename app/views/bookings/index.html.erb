@@ -116,7 +116,7 @@
 				<div class="form-group">
 					<%= f.label :status, "Estado de la Reserva: ", class: "col-sm-5 control-label" %>
 					<div class="col-sm-5">
-						<%= f.collection_select :status_id, Status.all, :id, :name, {selected: Status.find_by(:name => 'Reservado').id}, { class: "form-control" }%>
+						<%= f.collection_select :status_id, Status.all, :id, :name, {selected: Status.find_by_name( 'Reservado').id}, { class: "form-control" }%>
 					</div>
 				</div>
 				<div class="form-group">

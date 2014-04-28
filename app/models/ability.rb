@@ -181,7 +181,7 @@ class Ability
         can :update, Client, :company_id => user.company_id
         can :destroy, Client, :company_id => user.company_id
 
-        @roles = Role.where(:name => ["Recepcionista","Staff"])
+        @roles = Role.where(:name => ["Recepcionista","Staff"]).pluck(:id)
 
         can :read, User, :location_id => user.location_id, :role_id => @roles
         can :destroy, User, :location_id => user.location_id, :role_id => @roles
