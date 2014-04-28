@@ -132,6 +132,23 @@ class ServiceProvidersController < ApplicationController
     render :json => services
   end
 
+  def available_providers
+    location = Location.find(params[:location_id])
+    service_providers = []
+    ServiceProvider.where(location_id: location.id).each do |service_provider|
+      available = true
+      service_provider.bookings.each do |booking|
+        if (booking.start - Date(params[:end])) * (Date(params[:start]) - booking.end) > 0
+          available = false
+        end
+      end
+      if available
+        service_providers.push(service_provider.id)
+      end
+    end
+    render :json => service_providers
+  end
+
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_service_provider

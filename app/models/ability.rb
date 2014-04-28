@@ -104,6 +104,7 @@ class Ability
 
         can :get_booking, Booking, :service_provider => { :company_id => user.company_id }
         can :get_booking_info, Booking, :service_provider => { :company_id => user.company_id }
+        can :available_providers, ServiceProvider
         can :provider_breaks, Booking
         can :get_provider_break, Booking
         can :create_provider_break, Booking
@@ -166,6 +167,7 @@ class Ability
 
         can :get_booking, Booking, :location_id => user.location_id 
         can :get_booking_info, Booking, :location_id => user.location_id
+        can :available_providers, ServiceProvider, :location_id => user.location_id
         can :provider_breaks, Booking
         can :get_provider_break, Booking
         can :create_provider_break, Booking
@@ -232,6 +234,7 @@ class Ability
 
         can :get_booking, Booking, :location_id => user.location_id
         can :get_booking_info, Booking, :location_id => user.location_id
+        can :available_providers, ServiceProvider, :location_id => user.location_id
         can :provider_breaks, Booking
         can :get_provider_break, Booking
         can :create_provider_break, Booking

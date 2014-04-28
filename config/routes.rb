@@ -115,6 +115,7 @@ Agendapro::Application.routes.draw do
   post '/provider_breaks', :to => 'bookings#create_provider_break', :as => 'create_provider_breaks'
   patch '/provider_breaks/:id', :to => 'bookings#update_provider_break', :as => 'edit_provider_break'
   delete '/provider_breaks/:id', :to => 'bookings#destroy_provider_break', :as => 'delete_provider_break'
+  get '/available_providers', :to => 'service_providers#available_providers', :as => 'available_service_providers'
 
   get '/edit_booking', :to => 'bookings#edit_booking', :as => 'booking_edit'
   post '/edited_booking', :to => 'bookings#edit_booking_post'

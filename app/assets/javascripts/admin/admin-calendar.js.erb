@@ -690,6 +690,21 @@ function saveBreak (typeURL, extraURL) {
 	});
 }
 
+function getAvailableProviders() {
+	if ($('[name="localRadio"]').is(':checked')) {
+		if (parseInt($('input[name=providerRadio]:checked').val()) == 0) {
+			queryJSON = { "start": $('#datePicker').val() +"T"+ $('#bookingStartHour').val() +":"+ $('#bookingStartMinute').val() +":00Z","end":$('#datePicker').val() +"T"+ $('#bookingEnd').text() +":00Z", "location_id": $('input[name=localRadio]:checked').val() }
+			$.getJSON('/available_providers', queryJSON, function (providersArray) { 
+				$(function(){
+				    $('#booking_service_provider_id option').filter(function () {
+				       return $.inArray(this.value(), providersArray) == -1;
+				    }).remove();
+				});
+			});
+		}
+	}
+}
+
 function modalChange() {
 	$('#bookingEnd').empty()
 	if ($("#bookingStartHour").val() != '' && $("#bookingStartMinute").val() != '' && $("#booking_service_id").val() != '') {
