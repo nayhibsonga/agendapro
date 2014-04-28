@@ -145,9 +145,15 @@
 					</div>
 				</div>
 				<div class="form-group">
-					<%= f.label :notes, "Notas: ", class: "col-sm-5 control-label" %>
+					<%= f.label :notes, "Notas desde el cliente: ", class: "col-sm-5 control-label" %>
 					<div class="col-sm-5">
 						<%= f.text_area :notes, class: "form-control" %>
+					</div>
+				</div>
+				<div class="form-group">
+					<%= f.label :company_comment, "Comentario Interno: ", class: "col-sm-5 control-label" %>
+					<div class="col-sm-5">
+						<%= f.text_area :company_comment, class: "form-control" %>
 					</div>
 				</div>
 				<% end %>

@@ -94,7 +94,9 @@ class Booking < ActiveRecord::Base
 		if self.status == Status.find_by(:name => "Cancelado")
 			BookingMailer.cancel_booking(self)
 		else
-			BookingMailer.update_booking(self)
+			if changed_attributes[:start]
+				BookingMailer.update_booking(self)
+			end
 		end
 	end
 
