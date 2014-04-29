@@ -14,9 +14,21 @@ class PuntoPagosController < ApplicationController
   	end
   end
 
-  def recive_results
+  def recieve_results
   	notification = PuntoPagos::Notification.new
     # This methods requires the headers as a hash and the params object as a hash
     notification.valid? headers, params
+  end
+
+  def success
+    
+  end
+
+  def failure
+
+  end
+
+  def notification
+
   end
 end
