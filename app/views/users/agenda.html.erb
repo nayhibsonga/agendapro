@@ -15,7 +15,7 @@
 			<div class="col-md-3">
 				<div class="panel panel-info">
 					<div class="panel-heading">
-						<% if @user.first_name.nil? || @user.last_name.nil? %>
+						<% if @user.first_name.blank? || @user.last_name.blank? %>
 						<h4><%= @user.email %></h4>
 						<% else %>
 						<h4><%= @user.first_name + " " + @user.last_name %></h4>
