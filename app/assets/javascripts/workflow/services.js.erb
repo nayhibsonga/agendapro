@@ -131,6 +131,8 @@ function loadStep2 () {
 function loadStep3 () {
 	if ($('[name="staffRadio"]').is(':checked')){
 		if (selected) {
+			checkOtherBookings();
+			
 			$('#provider').val($('input[name=staffRadio]:checked').val());
 			$('#service').val($('input[name=serviceRadio]:checked').val());
 
@@ -171,6 +173,18 @@ function loadStep3 () {
       '<p>Debe elegir un staff para poder agendar un horario.</p>'
     );
 	return false;
+}
+
+function checkOtherBookings () {
+	var user = $('#user').val();
+	var warning = '<div class="alert alert-warning alert-dismissable fade in">' +
+                '<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>' +
+                '<strong>Warning!</strong> Better check yourself, youre not looking too good.' +
+            	'</div>';
+    $('.box-step > .col-md-12').prepend(warning);
+	// Revisar si el usuario tiene otro booking
+	// que calce a la misma hora o que se crucen.
+	// Alertar al usuario
 }
 
 var step = 1;
