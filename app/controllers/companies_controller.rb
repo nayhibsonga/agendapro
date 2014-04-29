@@ -153,7 +153,7 @@ class CompaniesController < ApplicationController
 			return
 		end
 		@company = Company.new
-		render :layout => 'search'
+		render :layout => 'login'
 	end
 
 	def check_company_web_address
