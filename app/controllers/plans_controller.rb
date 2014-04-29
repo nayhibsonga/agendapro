@@ -1,9 +1,9 @@
 class PlansController < ApplicationController
   before_action :set_plan, only: [:show, :edit, :update, :destroy]
-  before_action :authenticate_user!, except: [:viewplans]
-  before_action :quick_add, except: [:viewplans]
-  before_action :verify_is_super_admin, except: [:index, :viewplans, :selectplan]
-  layout "admin"
+  before_action :authenticate_user!, except: [:view_plans]
+  before_action :quick_add, except: [:view_plans]
+  before_action :verify_is_super_admin, except: [:index, :view_plans, :select_plan]
+  layout "admin", except: [:view_plans]
   load_and_authorize_resource
 
   # GET /plans
@@ -66,7 +66,7 @@ class PlansController < ApplicationController
     end
   end
 
-  def selectplan
+  def select_plan
     @plans = Plan.where(:custom => false)
     @company = Company.find(current_user.company_id)
 
@@ -78,7 +78,7 @@ class PlansController < ApplicationController
 
   end
 
-  def viewplans
+  def view_plans
     @plans = Plan.where(custom: false)
     render layout: "home"
   end
@@ -91,6 +91,6 @@ class PlansController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def plan_params
-      params.require(:plan).permit(:name, :locations, :staffs, :custom)
+      params.require(:plan).permit(:name, :locations, :service_providers, :custom)
     end
 end

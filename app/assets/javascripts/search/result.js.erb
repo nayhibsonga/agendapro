@@ -1,18 +1,18 @@
 //====== Result ======//
-
 function loadSchedule(id) {
   $('#schedule-body' + id).html('<%= image_tag "ajax-loader.gif", :alt => "Loader" %>');
   $.getJSON('/schedule', {local: id}, function (schedule) {
     $('#schedule-body' + id).empty();
-    $('#schedule-body' + id).append('<ul class="list-unstyled" id="list' + id + '"></ul>');
-    $.each(schedule, function (day, hours) {
-      if (hours.length) {
-        $('#list' + id).append('<li id="' + day + '-' + id + '"><b>' + day + ' </b></li>');
-        $.each(hours, function (pos, hour) {
-          $('#' + day + '-' + id).append(getHour(hour.open) + '-' + getHour(hour.close) + ' ');
-        })
+    $.each(schedule, function (day, hour) {
+      if (hour.open) {
+        $('#schedule-body' + id).append(
+          '<tr>' +
+            '<th>' + day + '</th>' +
+            '<th>' + getHour(hour.open) + '-' + getHour(hour.close) + '</th>' +
+          '</tr>'
+        );
       }
-    })
+    });
   });
 }
 
@@ -24,73 +24,162 @@ function getHour(str) {
 
 //====== Search ======//
 function changeLocation (district_id) {
+  $('#search-bar').attr('disabled', true);
   $.getJSON('/get_district', {id: district_id}, function (district) {
-    $('#span-location').html(district.name + '<i class="glyphicon glyphicon-chevron-right"></i>');
+    $('#span-location').html(district.name + ' <i class="fa fa-chevron-right"></i>');
     $('#district').val(district.id);
+    $('#search-bar').removeAttr('disabled');
+
+    changeLatLong(district.id);
+
+    //====== Session Storage
+    if (typeof(Storage) !== "undefined") {
+      sessionStorage.district = district.id;
+    }
   });
 }
 
+function changeLatLong (district_id) {
+  $.getJSON('/get_direction', {id: district_id}, function (address) {
+    var geocoder = new google.maps.Geocoder();
+    geocoder.geocode( { 'address' : address[0] }, function (results, status) {
+      if (status == google.maps.GeocoderStatus.OK) {
+        $('#latitude').val(results[0].geometry.location.lat());
+        $('#longitude').val(results[0].geometry.location.lng());
+      }
+    });
+  });
+}
+
+//====== Geolocation ======//
+function decode (position) {
+  var geocoder = new google.maps.Geocoder();
+  var latlng = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
+  geocoder.geocode({'latLng': latlng}, function (results, status) {
+    if (status == google.maps.GeocoderStatus.OK) {
+      if (results[1]) {
+        var address = results[1].formatted_address;
+        var district = address.substring(0, address.indexOf(','));
+        $('#search-bar').attr('disabled', true);
+        $.getJSON('/district_by_name', {name: district}, function (district) {
+          if (district) {
+            $('#span-location').html(district.name + ' <i class="fa fa-chevron-right"></i>');
+            $('#district').val(district.id);
+
+            $('#latitude').val(position.coords.latitude);
+            $('#longitude').val(position.coords.longitude);
+
+            //====== Session Storage
+            if (typeof(Storage) !== "undefined") {
+              sessionStorage.district = district.id;
+            }
+          }
+          else {
+            myAlert.showAlert(
+              '<h3>Hubo un error en la localización.</h3>' +
+              '<p>No te pudimos ubicar. Revisa que tengas señal GPS o que hayas dado permiso en el navegador.</p>'
+            );
+          }
+        });
+      }
+    }
+    else {
+      myAlert.showAlert(
+        '<h3>Hubo un error en la localización.</h3>' +
+        '<p>No te pudimos ubicar. Revisa que tengas señal GPS o que hayas dado permiso en el navegador.</p>'
+      );
+    }
+    $('#search-bar').removeAttr('disabled');
+  });
+}
+
+function locationError (error) {
+  if (typeof(Storage) !== "undefined") {
+    changeLocation(sessionStorage.district)
+    myAlert.showAlert(
+      '<h3>Hubo un error en la localización.</h3>' +
+      '<p>Se utilizó la última ubicación disponible.</p>'
+    );
+  }
+  else {
+    myAlert.showAlert(
+      '<h3>Hubo un error en la localización.</h3>' +
+      '<p>Se utilizará la comuna de Las Condes por defecto.</p>'
+    );
+    changeLocation(1);
+  }
+}
+
 //====== Load ======//
-
+var myAlert;
 $(function() {
-  $('#form-location').hide();
-  changeLocation(1);
-
-  $('#modalLocation').on('show.bs.modal', function (e) {
-    $('#form-location').hide();
-    $('#loader').show();
-    $('#regions').prop('disabled','disabled');
-    $('#cities').prop('disabled','disabled');
-    $('#districts').prop('disabled','disabled');
-    $.getJSON('get_countries', function (countries) {
-      $('#countries').empty();
-      $.each(countries, function (key, country) {
-        $('#countries').append('<option value="' + country.id + '">' + country.name + '</option>');
-      });
-      $('#form-location').show();
-      $('#loader').hide();
-    });
+  $('.title-local').each(function () {
+    var characters = $(this).text().length;
+    if (characters > 50) {
+      var porcentage = 0.25 * characters / 50.0;
+      var size = parseFloat($(this).css('font-size')) * (1 - porcentage);
+      $(this).css('font-size', (size < 14.0 ? 14 : size));
+    };
   });
 
-  $('#countries').change(function (e) {
-    $('#regions').prop('disabled','disabled');
-    $('#cities').prop('disabled','disabled');
-    $('#districts').prop('disabled','disabled');
-    $.getJSON('/get_regions', {country: $('#countries').val()}, function (regionss) {
-      $('#regions').empty();
-      $.each(regionss, function (key, region) {
-        $('#regions').append('<option value="' + region.id + '">' + region.name + '</option>');
-      });
-      $('#regions').removeAttr("disabled");
-    });
-  });
-
-  $('#regions').change(function (e) {
-    $('#cities').prop('disabled','disabled');
-    $('#districts').prop('disabled','disabled');
-    $.getJSON('/get_cities', {region: $('#regions').val()}, function (cities) {
-      $('#cities').empty();
-      $.each(cities, function (key, city) {
-        $('#cities').append('<option value="' + city.id + '">' + city.name + '</option>');
-      });
-      $('#cities').removeAttr("disabled");
-    });
-  });
-
-  $('#cities').change(function (e) {
-    $('#districts').prop('disabled','disabled');
-    $.getJSON('/get_districts', {city: $('#cities').val()}, function (districts) {
-      $('#districts').empty();
-      $.each(districts, function (key, district) {
-        $('#districts').append('<option value="' + district.id + '">' + district.name + '</option>');
-      });
-      $('#districts').removeAttr("disabled");
-    });
-  });
+  myAlert = new Alert('.main');
 
   $('#save').on('click', function () {
-    var district = $('#districts').val();
-    changeLocation(district);
+    var district = $('#location_autocomplete').val();
+    $.getJSON('/district_by_name', {name: district}, function (district) {
+      if (district) {
+        changeLocation(district.id);
+      }
+      else {
+        myAlert.showAlert(
+          '<h3>Hubo un error en la localización.</h3>' +
+          '<p>No fue posible encontrar la comuna.</p>',
+          function () {
+            $('#modalLocation').modal('show');
+          },
+          'Buscar de nuevo'
+        );
+      }
+    });
     $('#modalLocation').modal('hide');
+
+    //====== Session Storage
+    if (typeof(Storage) !== "undefined") {
+      sessionStorage.manual = true;
+    }
+  });
+
+  $('#geo').on('click', function() {
+    $('#modalLocation').modal('hide');
+
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(decode, locationError);
+    }
+    else {
+      myAlert.showAlert(
+        '<h3>Hubo un error en la localización.</h3>' +
+        '<p>Tu navegador no soporta geolocalización. Por favor actualízalo e intenta nuevamente.</p>'
+      );
+    }
+
+    //====== Session Storage
+    if (typeof(Storage) !== "undefined") {
+      sessionStorage.manual = null;
+    }
+  });
+
+  //Valor por defecto
+  if (typeof(Storage) !== "undefined") {
+    if (!sessionStorage.manual) {
+      sessionStorage.district = 1;
+    }
+    changeLocation(sessionStorage.district);
+  }
+
+  $('a.overlay').click( function () {
+    if ($(this).data('search')) {
+      $('#inputSearch').val($(this).data('search'));
+      $('button[type="submit"]').trigger('click');
+    };
   });
 });

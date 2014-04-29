@@ -1,19 +1,61 @@
-<%= simple_form_for(@tag) do |f| %>
-  <% if @tag.errors.any? %>
-    <div id="error_explanation">
-      <h2><%= pluralize(@tag.errors.count, "error") %> no permitió que la etiqueta sea creado:</h2>
+<%= form_for @tag, :html => {:class => 'form-horizontal'} do |f| %>
+	<% if @tag.errors.any? %>
+		<div id="error_explanation">
+			<h2><%= pluralize(@tag.errors.count, "error") %> no permitió que la etiqueta sea creado:</h2>
 
-      <ul>
-      <% @tag.errors.full_messages.each do |msg| %>
-        <li><%= msg %></li>
-      <% end %>
-      </ul>
-    </div>
-  <% end %>
+			<ul>
+			<% @tag.errors.full_messages.each do |msg| %>
+				<li><%= msg %></li>
+			<% end %>
+			</ul>
+		</div>
+	<% end %>
 
-  Nombre: <%= f.input :name, :label => false %><br />
+	<div class="form-group">
+		<%= f.label :economic_sector_id, 'Sector Economico: ', :class => 'col-sm-3 control-label' %>
+		<div class="col-sm-4">
+			<%= f.collection_select :economic_sector_id, EconomicSector.all, :id, :name, {}, { :class => 'form-control'} %>
+		</div>
+	</div>
 
-  <div class="actions">
-    <%= f.submit %>
-  </div>
+	<div class="form-group">
+		<%= f.label :name, 'Nombre: ', :class => 'col-sm-3 control-label' %>
+		<div class="col-sm-4">
+			<%= f.text_field :name, :autofocus => true, :class => 'form-control' %>
+		</div>
+	</div>
+
+	<h3>Diccionario</h3>
+	<% @tag.dictionaries.build %>
+	<%= f.fields_for :dictionaries do |dictionary| %>
+		<%= render 'dictionary_fields', :f => dictionary %>
+	<% end %>
+	<div class="form-group">
+		<div class="actions col-sm-offset-3 col-sm-4">   
+			<%= link_to_add_association 'Agregar Diccionario', f, :dictionaries, :class => "btn btn-primary btn-sm" %>
+		</div>
+	</div>
+
+	<div class="form-group">
+		<div class="actions col-sm-offset-3 col-sm-4">
+			<%= f.submit 'Guardar', :class => 'btn btn-primary' %>
+			<%= link_to 'Cancelar', tags_path, class: "btn btn-danger" %>    
+		</div>
+	</div>
+<% end %>
+
+<% content_for :scripts do %>
+<%= javascript_include_tag :cocoon %> 
+<script type="text/javascript">
+	$(function() {
+		$('.remove_fields').click( function (event) {
+			$(event.target).closest('.form-group').hide();
+		});
+	});
+	$('form').on('cocoon:after-insert', function(e, insertedItem) {
+		$('.remove_fields').click( function (event) {
+			$(event.target).closest('.form-group').hide();
+		});
+	});
+</script>
 <% end %>

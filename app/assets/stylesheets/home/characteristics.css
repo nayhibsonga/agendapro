@@ -25,7 +25,7 @@
 ------------------------- */
 
 .featurette-divider {
-  margin: 80px 0; /* Space out the Bootstrap <hr> more */
+  margin: 30px 0; /* Space out the Bootstrap <hr> more */
   border-color: #53565A;
 }
 
@@ -54,7 +54,7 @@
   }
 
   .featurette-heading {
-    font-size: 50px;
+    font-size: 40px;
   }
 
 }

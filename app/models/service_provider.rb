@@ -7,18 +7,27 @@ class ServiceProvider < ActiveRecord::Base
 	has_many :services, :through => :service_staffs
 	has_many :provider_times, :inverse_of => :service_provider
 	has_many :bookings
+	has_many :provider_breaks
 
 	attr_accessor :_destroy
 
+	accepts_nested_attributes_for :user, :reject_if => :all_blank, :allow_destroy => true
 	accepts_nested_attributes_for :provider_times, :reject_if => :all_blank, :allow_destroy => true
 	
-	validates :company, :user, :location, :presence => true
+	validates :company, :public_name, :notification_email, :presence => true
 
-	validate :time_empty_or_negative, :time_in_location_time, :times_overlap, :plan_service_providers
+	validate :time_empty_or_negative, :time_in_location_time, :times_overlap
+	validate :plan_service_providers, :on => :create
+
+	def staff_user
+		if self.user && self.user.role_id != Role.find_by_name("Staff")
+			errors.add(:service_provider, "El usuario asociado debe ser de tipo staff.")
+		end
+	end
 
 	def plan_service_providers
 		@company = self.company
-		if company.service_providers.count >= company.plan.staffs
+		if company.service_providers.count >= company.plan.service_providers
 			errors.add(:service_provider, "No se pueden agregar más proveedores de servicios con el plan actual, ¡mejóralo!.")
 		end
 	end

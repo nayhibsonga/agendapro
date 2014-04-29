@@ -1,25 +1,71 @@
-<%= simple_form_for(@company) do |f| %>
-  <% if @company.errors.any? %>
-    <div id="error_explanation">
-      <h2><%= pluralize(@company.errors.count, "error") %> no permitió que la empresa sea creada:</h2>
+<div class="container">
+	<div class="row well">
+		<%= form_for @company, :html => {:class => 'form-horizontal', :multipart => true} do |f| %>
+			<% if @company.errors.any? %>
+				<div id="error_explanation">
+					<h2><%= pluralize(@company.errors.count, "error") %> no permitió que la empresa sea creada:</h2>
 
-      <ul>
-      <% @company.errors.full_messages.each do |msg| %>
-        <li><%= msg %></li>
-      <% end %>
-      </ul>
-    </div>
-  <% end %>
+					<ul>
+					<% @company.errors.full_messages.each do |msg| %>
+						<li><%= msg %></li>
+					<% end %>
+					</ul>
+				</div>
+			<% end %>
 
-  Nombre: <%= f.input :name, :label => false %><br />
-  URL: <%= f.input :web_address, :label => false %><br />
-  Sector Económico: <%= f.association :economic_sector, :label => false %><br />
-  Estado de Pago: <%= f.association :payment_status, :label => false %><br />
-  Plan: <%= f.association :plan, :label => false %><br />
-  Logo: <%= f.input :logo, :label => false %><br />
+			<div class="form-group">
+				<%= f.label :name, 'Nombre: ', :class => 'col-sm-3 control-label' %>
+				<div class="col-sm-5">
+					<%= f.text_field :name, :autofocus => true, :class => 'form-control' %>
+					<span class="help-block"></span>
+				</div>
+			</div>
+			<div class="form-group">
+				<%= f.label :description, 'Descripción: ', :class => 'col-sm-3 control-label' %>
+				<div class="col-sm-5">
+					<%= f.text_area :description, :class => 'form-control', :rows => "7" %>
+				</div>
+			</div>
+			<div class="form-group">
+				<%= f.label :web_address, 'Dirección Sitio AgendaPro:', :class => 'col-sm-3 control-label' %>
+				<div class="col-sm-5 input-group">
+					<%= f.text_field :web_address, :required => true, :class => 'form-control' %>
+					<span class="input-group-addon">.agendapro.cl</span>
+				</div>
+				<div class="col-sm-offset-3 col-sm-5">
+					<span class="help-block"></span>
+				</div>
+				<span class="help-block">Esta es la página del sitio en AgendaPro. <strong>NO recomendamos editarla.</strong></span>
+			</div>
+			<div class="form-group">
+				<%= f.label :logo, 'Logo Compañía: ', :class => 'col-sm-3 control-label' %>
+				<div class="col-sm-5">
+					<%= f.file_field :logo, :accept => 'image/png,image/gif,image/jpeg', :class => 'form-control' %>
+					<span class="help-block"></span>
+				</div>
+			</div>
+			<div class="form-group">
+				<div class="col-sm-offset-3 col-sm-4">
+					<div class="checkbox">
+						<label>
+							<%= f.check_box :remove_logo %> Quitar Logo
+						</label>
+					</div>
+				</div>
+			</div>
+			<div class="form-group">
+				<%= f.label :cancellation_policy, 'Política de Cancelación: ', :class => 'col-sm-3 control-label' %>
+				<div class="col-sm-5">
+					<%= f.text_area :cancellation_policy, :class => 'form-control', :rows => "7" %>
+				</div>
+			</div>
 
-
-  <div class="actions">
-    <%= f.submit %>
-  </div>
-<% end %>
+			<div class="form-group">
+				<div class="col-sm-offset-3 col-sm-4">
+				 <%= f.submit 'Guardar', :class => 'btn btn-primary' %>
+				 <%= link_to 'Cancelar', dashboard_path, :class => "btn btn-danger" %>
+				</div> 
+			</div>
+		<% end %>
+	</div>
+</div>

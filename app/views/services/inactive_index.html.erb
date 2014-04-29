@@ -1,0 +1,61 @@
+<div class="container">
+  <div class="row">
+    <section class="hgroup">
+      <h2>Servicios Inactivos</h2>
+      <h2 class="section_header">Crea y edita los servicios asociados a tu compañía.</h2>
+      <div class="line-breadcrumb">
+        <ul class="breadcrumb pull-right">
+            <li><%= link_to "Resumen", dashboard_path %> </li>
+            <li><%= link_to "Servicios", services_path %> </li>
+            <li class="active">Servicios Inactivos</li>
+        </ul>
+      </div>
+    </section>
+  </div>
+</div>
+
+<div class="panel-group" id="accordion">
+  <% @service_categories.each do |service_category| %> 
+  <div class="panel panel-default">
+    <div class="panel-heading">
+      <h4 class="panel-title">
+        <a data-toggle="collapse" data-parent="#accordion" href="#collapse<%= service_category.id %>">
+          <%= service_category.name %>
+        </a>
+      </h4>
+    </div>
+    <div id="collapse<%= service_category.id %>" class="panel-collapse collapse<% if service_category == @service_categories.first%> in<% end %>">
+      <div class="panel-body">
+        <table class="table table-bordered">
+          <thead>
+            <tr>
+              <th>Nombre</th>
+              <th>Precio</th>
+              <th>Duración</th>
+              <th>Opciones</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            <% @services.each do |service| %>
+            <% if service.service_category_id == service_category.id %>
+              <tr>
+                <td><%= service.name %></td>
+                <td>$<%= service.price.to_i %></td>
+                <td><%= service.duration %> min</td>
+                <td><%= link_to '<i class="fa fa-check"></i> Re-activar'.html_safe, activate_service_path(:id => service.id), :class => "btn btn-primary", data: { confirm: '¿Estás seguro de re-activar el Servicio seleccionado?' } %>
+                    <%= link_to '<i class="fa fa-pencil"></i> Editar'.html_safe, edit_service_path(service), :class => "btn btn-warning" %>
+                </td>
+              </tr>
+            <% end %>
+            <% end %>
+          </tbody>
+        </table> 
+      </div>
+    </div>
+  </div>
+  <% end %>
+</div>
+<br />
+
+<%= link_to 'Servicios Activos', services_path, :class => "btn btn-primary" %>

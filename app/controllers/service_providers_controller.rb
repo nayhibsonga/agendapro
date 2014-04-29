@@ -1,13 +1,30 @@
 class ServiceProvidersController < ApplicationController
-  before_action :set_service_provider, only: [:show, :edit, :update, :destroy]
-  before_action :authenticate_user!, except: [:locationServices, :providerTime]
-  before_action :quick_add, except: [:locationServices, :providerTime]
-  layout "admin", except: [:locationServices, :providerTime]
+  before_action :set_service_provider, only: [:show, :edit, :update, :destroy, :activate, :deactivate]
+  before_action :authenticate_user!, except: [:location_services, :location_providers, :provider_time]
+  before_action :quick_add, except: [:location_services, :location_providers, :provider_time]
+  load_and_authorize_resource
+  layout "admin", except: [:location_services, :location_providers, :provider_time]
 
   # GET /service_providers
   # GET /service_providers.json
   def index
-    @service_providers = ServiceProvider.where(location_id: Location.where(company_id: current_user.company_id))
+    @service_providers = ServiceProvider.where(company_id: current_user.company_id, :active => true).accessible_by(current_ability)
+  end
+
+  def inactive_index
+    @service_providers = ServiceProvider.where(company_id: current_user.company_id, :active => false).accessible_by(current_ability)
+  end
+
+  def activate
+    @service_provider.active = true
+    @service_provider.save
+    redirect_to inactive_service_providers_path
+  end
+
+  def deactivate
+    @service_provider.active = false
+    @service_provider.save
+    redirect_to service_providers_path
   end
 
   # GET /service_providers/1
@@ -19,27 +36,40 @@ class ServiceProvidersController < ApplicationController
   def new
     @service_provider = ServiceProvider.new
     @service_provider.company_id = current_user.company_id
-    #@users = User.where(company_id: current_user.company_id)
-    #@locations = Location.where(company_id: current_user.company_id)
+    # @users = User.where(company_id: current_user.company_id)
+    # @locations = Location.where(company_id: current_user.company_id)
+    @service_categories = ServiceCategory.where(company_id: current_user.company_id).order(name: :asc)
   end
 
   # GET /service_providers/1/edit
   def edit
+    @service_categories = ServiceCategory.where(company_id: current_user.company_id).order(name: :asc)
   end
 
   # POST /service_providers
   # POST /service_providers.json
   def create
-    @service_provider = ServiceProvider.new(service_provider_params)
+    if !service_provider_params[:user_attributes].empty?
+      if service_provider_params[:user_attributes][:email].empty?
+        new_params = service_provider_params.except(:user_attributes)
+      else
+        new_params = service_provider_params.except(:user_id)
+        new_params[:user_attributes].merge!(:password =>rand(36**15).to_s(36)).merge!(:role_id => Role.find_by_name("Staff").id).merge!(:company_id => current_user.company_id).merge!(:location_id => service_provider_params[:location_id])
+      end
+    end
+
+    @service_provider = ServiceProvider.new(new_params)
+    @service_provider.services.clear
     @service_provider.company_id = current_user.company_id
 
     respond_to do |format|
       if @service_provider.save
-        format.html { redirect_to @service_provider, notice: 'Proveedor creado satisfactoriamente.' }
-        format.json { render action: 'show', status: :created, location: @service_provider }
+        @service_provider.service_ids = new_params[:service_ids]
+        format.html { redirect_to service_providers_path, notice: 'Proveedor creado satisfactoriamente.' }
+        format.json { render :json => @service_provider }
       else
         format.html { render action: 'new' }
-        format.json { render json: @service_provider.errors, status: :unprocessable_entity }
+        format.json { render :json => { :errors => @service_provider.errors.full_messages }, :status => 422 }
       end
     end
   end
@@ -47,16 +77,27 @@ class ServiceProvidersController < ApplicationController
   # PATCH/PUT /service_providers/1
   # PATCH/PUT /service_providers/1.json
   def update
+    if !service_provider_params[:user_attributes].empty?
+      if service_provider_params[:user_attributes][:email].empty?
+        new_params = service_provider_params.except(:user_attributes)
+      else
+        new_params = service_provider_params.except(:user_id)
+        new_params[:user_attributes].merge!(:password =>rand(36**15).to_s(36)).merge!(:role_id => Role.find_by_name("Staff").id).merge!(:company_id => current_user.company_id).merge!(:location_id => service_provider_params[:location_id])
+      end
+    end
+
+    @service_provider.services.clear
+    @service_provider.provider_times.destroy_all
     respond_to do |format|
 
-    @users = User.where(company_id: current_user.company_id)
-    @locations = Location.where(company_id: current_user.company_id)
-      if @service_provider.update(service_provider_params)
-        format.html { redirect_to @service_provider, notice: 'Proveedor actualizado satisfactoriamente.' }
-        format.json { head :no_content }
-      else
+    # @users = User.where(company_id: current_user.company_id)
+    # @locations = Location.where(company_id: current_user.company_id)
+      if @service_provider.update(new_params)
+        format.html { redirect_to service_providers_path, notice: 'Proveedor actualizado satisfactoriamente.' }
+        format.json { render :json => @service_provider }
+      else 
         format.html { render action: 'edit' }
-        format.json { render json: @service_provider.errors, status: :unprocessable_entity }
+        format.json { render :json => { :errors => @service_provider.errors.full_messages }, :status => 422 }
       end
     end
   end
@@ -71,14 +112,41 @@ class ServiceProvidersController < ApplicationController
     end
   end
 
-  def locationServices
-    services = Service.includes(:service_providers).where('service_providers.location_id = ?', 1).order(:service_category_id)
+  def location_services
+    services = Service.where(:active => true).includes(:service_providers).where('service_providers.active = ?', true).where('service_providers.location_id = ?', params[:location]).order(:service_category_id)
     render :json => services
   end
 
-  def providerTime
+  def location_providers
+    render :json => ServiceProvider.where(:active => true).where('location_id = ?', params[:location]).order(:id)
+  end
+
+  def provider_time
     provider_time = ServiceProvider.find(params[:id]).provider_times
     render :json => provider_time
+  end
+
+  def provider_service
+    provider = ServiceProvider.find(params[:id])
+    services = provider.services.where(:active => true).order(:name)
+    render :json => services
+  end
+
+  def available_providers
+    location = Location.find(params[:location_id])
+    service_providers = []
+    ServiceProvider.where(location_id: location.id).each do |service_provider|
+      available = true
+      service_provider.bookings.each do |booking|
+        if (booking.start - Date(params[:end])) * (Date(params[:start]) - booking.end) > 0
+          available = false
+        end
+      end
+      if available
+        service_providers.push(service_provider.id)
+      end
+    end
+    render :json => service_providers
   end
 
   private
@@ -89,6 +157,6 @@ class ServiceProvidersController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def service_provider_params
-      params.require(:service_provider).permit(:user_id, :location_id, :public_name, :notification_email, :service_ids => [], provider_times_attributes: [:id, :open, :close, :day_id, :service_provider_id, :_destroy])
+      params.require(:service_provider).permit(:user_id, :location_id, :public_name, :notification_email, :service_ids => [], provider_times_attributes: [:id, :open, :close, :day_id, :service_provider_id, :_destroy], user_attributes: [:email, :password, :confirm_password, :role_id, :company_id, :location_id])
     end
 end

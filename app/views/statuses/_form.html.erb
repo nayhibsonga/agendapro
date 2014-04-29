@@ -1,4 +1,4 @@
-<%= simple_form_for(@status) do |f| %>
+<%= form_for @status, :html => {:class => 'form-horizontal'} do |f| %>
   <% if @status.errors.any? %>
     <div id="error_explanation">
       <h2><%= pluralize(@status.errors.count, "error") %> no permitió que el estado sea creado:</h2>
@@ -11,13 +11,22 @@
     </div>
   <% end %>
 
-  
-  Nombre: <%= f.input :name, :label => false %><br />
-
-  
-  Descripción: <%= f.input :description, :label => false %><br />
-
-  <div class="actions">
-    <%= f.submit %>
+  <div class="form-group">
+    <%= f.label :name, 'Nombre', :class => 'col-sm-3 control-label' %>
+    <div class="col-sm-4">
+      <%= f.text_field :name, :autofocus => true, :class => 'form-control' %>
+    </div>
+  </div>
+  <div class="form-group">
+    <%= f.label :description, 'Descripcion', :class => 'col-sm-3 control-label' %>
+    <div class="col-sm-4">
+      <%= f.text_area :description, :class => 'form-control' %>
+    </div>
+  </div>
+  <div class="form-group">
+    <div class="actions col-sm-offset-3 col-sm-4">
+      <%= f.submit 'Guardar', :class => 'btn btn-primary' %>
+      <%= link_to 'Cancelar', statuses_path, class: "btn btn-danger" %>    
+    </div>
   </div>
 <% end %>

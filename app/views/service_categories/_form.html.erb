@@ -1,12 +1,30 @@
-<%= simple_form_for(@service_category) do |f| %>
-  <%= f.error_notification %>
+<div class="container">
+  <div class="row well">
+    <%= form_for @service_category, :html => {:class => 'form-horizontal'} do |f| %>
+      <% if @service_category.errors.any? %>
+        <div id="error_explanation">
+          <h2><%= pluralize(@service_category.errors.count, "error") %> no permitió que la empresa sea creada:</h2>
 
-  <div class="form-inputs">
-    <%= f.input :name, :label => "Nombre" %>
-    <%= f.association :company, :label => "Empresa" %>
-  </div>
+          <ul>
+          <% @service_category.errors.full_messages.each do |msg| %>
+            <li><%= msg %></li>
+          <% end %>
+          </ul>
+        </div>
+      <% end %>
 
-  <div class="form-actions">
-    <%= f.button :submit %>
+      <div class="form-group">
+        <%= f.label :name, 'Nombre de la Categoría:', :class => 'col-sm-3 control-label' %>
+        <div class="col-sm-4">
+          <%= f.text_field :name, :autofocus => true, :required => true, :class => 'form-control' %>
+        </div>
+      </div>
+      <div class="form-group">
+        <div class="col-sm-offset-3 col-sm-4">
+          <%= f.submit 'Guardar', :class => 'btn btn-primary' %>
+          <%= link_to 'Cancelar', service_categories_path, class: "btn btn-danger" %>  
+        </div>
+      </div>
+    <% end %>
   </div>
-<% end %>
+</div>

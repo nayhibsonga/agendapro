@@ -3,7 +3,7 @@ class CreatePlans < ActiveRecord::Migration
     create_table :plans do |t|
       t.string :name, :null => false
       t.integer :locations, :null => false
-      t.integer :staffs, :null => false
+      t.integer :service_providers, :null => false
       t.boolean :custom, :default => false
 
       t.timestamps

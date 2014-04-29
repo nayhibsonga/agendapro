@@ -1,88 +1,100 @@
 <div class="main">
-    <section class="call_to_action">
-        <div class="container">
+	<!-- Barra superior y Buscador -->
+	<section class="call_to_action">
+		<div class="container">
 			<%= render 'form' %>
-        </div>
-    </section>
-    <section class="portfolio_teasers_wrapper">
-        <div class="container">
-            <div class="row">
-                <div class="col-md-6">
-                    <div id="map"></div>
-                </div>
-                <div class="col-md-6">
-                    <% i = 1
-                     @results.each do |location| %>
-                    <div class="row">
-                        <div class="col-md-12">
-                            <div class="row header">
-                                <div class="pin">
-                                    <%= image_tag "pin.png", :size => "22x22" %>
-                                    <span><%= i %></span>
-                                </div>
-                                <%= location.name %>
-                                <%= link_to 'Reservar', url_for(:host => location.company.web_address + '.' + request.domain + request.port_string, :local => location.id, :controller => 'companies', :action => 'workflow'), :class => "btn btn-info pull-right", :role => "button" %>
-                            </div>
-                            <div class="row">
-                                <div class="col-md-12">
-                                    <div class="col-md-10">
-                                        <address>
-                                            <%= location.address %>, <%= location.district.name %>.<br>
-                                            <abbr title="Telefono">Tel:</abbr> <%= location.phone %>
-                                        </address>
-                                    </div>
-                                    <div class="col-md-2">
-                                        <% if !location.company.logo.nil? %>
-                                        <%= image_tag location.company.logo, :class => "img-rounded" %>
-                                        <% else %>
-                                        <%= image_tag "Iso_Pro_Color.png", :class => "img-rounded", :size => "90x90" %>
-                                        <% end %>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-md-12">
-                                    <div class="panel-group" id="accordion<%= location.id %>">
-                                        <div class="panel panel-default">
-                                            <div class="panel-heading">
-                                                <h4 class="panel-title"><a data-toggle="collapse" data-parent="#accordion<%= location.id %>" href="#collapseOne<%= location.id %>">Resumen</a></h4>
-                                            </div>
-                                            <div id="collapseOne<%= location.id %>" class="panel-collapse collapse in">
-                                                <div class="panel-body">
-                                                    <p><%= location.company.description %></p>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="panel panel-default">
-                                            <div class="panel-heading">
-                                                <h4 class="panel-title"><a data-toggle="collapse" data-parent="#accordion<%= location.id %>" href="#collapseTwo<%= location.id %>">Horario</a></h4>
-                                            </div>
-                                            <div id="collapseTwo<%= location.id %>" class="panel-collapse collapse">
-                                                <div class="panel-body">
-                                                    <div id="schedule-body<%= location.id %>">
-                                                      No hay un local seleccionado
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                        <% i = i + 1
-                    end %>
-                    <% if @results.empty? %>
-                    <h4>No se encontraron resultados para <strong><%= params[:inputSearch] %></strong>.</h4>
-                    <% end %>
-                </div>
-            </div>
-        </div>
-    </section>
+		</div>
+	</section>
+	
+	<!-- Resultado Buscador -->
+	<div class="container">
+		<div class="row">
+			<div class="well">
+				<!-- mapa -->
+				<div class="col-md-6">
+					<div id="map"></div>
+				</div>
+
+				<div class="col-md-6">
+					<% i = 1
+						@results.each do |location| %>
+					<div class="panel panel-info"> 
+						<div class="panel-heading">
+							<div class="head-local-search row">
+								<div class="col-sm-1">
+									<div class="number-pin">
+										<span><%= i %></span>
+									</div>
+								</div>
+								<div class="col-sm-9">
+									<h3 class="panel-title title-local"><%= location.company.name %></h3> 
+								</div>
+								<div class="col-sm-2">
+									<%= link_to 'Reservar', url_for(:host => location.company.web_address + '.' + @domain, :local => location.id, :controller => 'companies', :action => 'overview'), :class => "btn btn-success pull-right", :role => "button" %>
+								</div>
+							</div>
+						</div>
+
+						<div class="panel-body">
+							<div class="box-tabs">
+								<!-- Nav tabs -->
+								<ul class="nav nav-tabs" id="myTab">
+									<li class="active"><a href="#home<%=i%>" data-toggle="tab"><i class="fa fa-home"></i></a></li>
+									<li><a href="#profile<%=i%>" data-toggle="tab">Descripción</a></li>
+									<li><a href="#messages<%=i%>" data-toggle="tab">Horario</a></li>
+								</ul>
+
+								<!-- Tab panes -->
+								<div class="tab-content">
+									<div class="tab-pane active" id="home<%=i%>">
+										<div class="data-local-search">
+											<p><%= location.address %>, <%= location.district.name %>.</p>
+											<p>Tel: <%= location.phone %></p>
+										</div>
+									</div>
+									<div class="tab-pane" id="profile<%=i%>">
+										<p class="fix-position-search">                                                    
+											<% if location.company.description.nil? %>
+											<p>No hay descripción para esta empresa.</p>
+											<% else %>
+											<p><%= location.company.description %></p>
+											<% end %>
+										</p>
+									</div>
+									<div class="tab-pane" id="messages<%=i%>">
+										<table class="table fix-position-search">
+											<tbody id="schedule-body<%= location.id %>">
+											</tbody>
+										</table>
+									</div>
+								</div>
+							</div>
+							<div class="img-local-search">
+								<% if location.company.logo_url %>
+								<%= image_tag location.company.logo_url.to_s, :size => "80x80", :alt => location.company.name %>
+								<% else %>
+								<%= image_tag 'Iso_Pro_Color.png', :alt => 'AgendaPro', :size => "80x80" %>
+								<% end %>
+							</div>
+						</div>
+					</div>
+					
+					<% i = i + 1 end %>
+					<% if @results.empty? %>
+						<h4>No se encontraron resultados para <strong><%= params[:inputSearch] %></strong>.</h4>
+					<% end %>
+
+				</div>
+				<div class="clear"></div>
+			</div>
+		</div>
+	</div>
 </div>
+
+
 <%= content_tag "div", id: "results", data: {results: @results} do %>
 <% end %>
 
-<% content_for :map do %>
-    <%= javascript_include_tag "search/map" %>
+<% content_for :scripts do %>
+	<%= javascript_include_tag "search/map" %>
 <% end %>

@@ -23,7 +23,7 @@ class HomeController < ApplicationController
 		@contact_info['subject'] = params[:inputSubject]
 		@contact_info['message'] = params[:inputMessage]
 
-		HomeMailer.contact_mail(@contact_info).deliver
+		HomeMailer.contact_mail(@contact_info)
 
 		render :contact
 	end

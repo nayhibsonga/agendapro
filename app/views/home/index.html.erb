@@ -1,114 +1,96 @@
-<section id="slider_wrapper">
-    <div id="main_flexslider" class="flexslider">
-        <ul class="slides">
-            <li class="item"  style="background-image: url(<%= asset_path 'home/carousel1.png' %>)">
-                <div class="container">
-                    <div class="carousel-caption">
-                        <h1>Reservas Online</h1>
-                        <p class="lead inverse">Tus clientes podrán reservar tus servicios a cualquier hora del día, desde cualquier lugar</p>
-                    </div>
-                </div>
-            </li>
-            <li class="item" style="background-image: url(<%= asset_path 'home/carousel2.jpg' %>)">
-                <div class="container">
-                    <div class="carousel-caption">
-                        <h1>Gestiona tu negocio</h1>
-                        <p class="lead inverse">Ahorra tiempo y recursos, organizando las reservas para tu staff y revisa el desempeño de cada uno de tus locales</p>
-                    </div>
-                </div>
-            </li>
-            <li class="item" style="background-image: url(<%= asset_path 'home/carousel3.jpg' %>)">
-                <div class="container">
-                    <div class="carousel-caption">
-                        <h1>Simple y Amigable</h1>
-                        <p class="lead inverse">Con una interfaz intuitiva y fácil de usar, AgendaPro te permite gestionar tu negocio de manera rápida y eficiente</p>
-                    </div>
-                </div>
-            </li>
-        </ul>
+<section id="slider-home">
+  <div id="carousel-example-generic" class="carousel slide" data-ride="carousel">
+    <!-- Indicators -->
+    <ol class="carousel-indicators">
+      <li data-target="#carousel-example-generic" data-slide-to="0" class="active"></li>
+      <li data-target="#carousel-example-generic" data-slide-to="1"></li>
+      <li data-target="#carousel-example-generic" data-slide-to="2"></li>
+    </ol>
+
+    <!-- Wrapper for slides -->
+    <div class="carousel-inner">
+      <div class="item active">
+        <div class="caja-slider-home" id="slide1">
+        </div>
+        <div class="carousel-caption">
+          <div class="green-caption">
+            <h2>Reservas Online</h2>
+            <p>Tus clientes podrán reservar tus servicios a cualquier hora del día, desde cualquier lugar</p>
+            <div class="clear"></div>
+          </div>
+        </div>
+      </div>
+      <div class="item">
+        <div class="caja-slider-home" id="slide2">
+        </div>
+        <div class="carousel-caption">
+          <div class="green-caption">
+            <h2>Gestiona tu negocio</h2>
+            <p>Ahorra tiempo y recursos, organizando las reservas para tu staff y revisa el desempeño de cada uno de tus locales</p>
+            <div class="clear"></div>
+          </div>
+        </div>
+      </div>
+      <div class="item">
+        <div class="caja-slider-home" id="slide3">
+        </div>
+        <div class="carousel-caption">
+          <div class="green-caption">
+            <h2>Simple y Amigable</h2>
+            <p>Con una interfaz intuitiva y fácil de usar, AgendaPro te permite gestionar tu negocio de manera rápida y eficiente</p>
+            <div class="clear"></div>
+          </div>
+        </div>
+      </div>
     </div>
+
+    <!-- Controls -->
+    <a class="left carousel-control" href="#carousel-example-generic" data-slide="prev">
+      <span class="fa fa-chevron-left"></span>
+    </a>
+    <a class="right carousel-control" href="#carousel-example-generic" data-slide="next">
+      <span class="fa fa-chevron-right"></span>
+    </a>
+  </div>
 </section>
 
 <div class="main">
-    <section class="call_to_action">
-        <div class="container">
-            <h4>AgendaPro, el mejor sistema de Reservas Online</h4>
-            <h4>Gestiona tu negocio desde cualquier lugar del mundo y aumenta tus ventas</h4>
-            <!-- Por medio de recordatorios automáticos, tus clientes nunca más olvidaran una cita. sincronización con google calendar y outlook, compatible con iPad y celulares, soporte, gestión de clientes, reportes, reservas grupales e individuales, minisitio web (no necesitas tener página web!), concetado a redes sociales -->
-            <%= link_to "Pruébalo gratis ahora", view_plans_path, :class => "btn btn-success btn-lg" %>
-            <p>No se requiere tarjeta de crédito</p>
+  <section id="mensaje-principal">
+    <div class="container">
+      <div class="row">
+        <div class="col-sm-12">
+          <h3>AgendaPro, el mejor sistema de Reservas Online</h3>
+          <h3>Gestiona tu negocio desde cualquier lugar del mundo y aumenta tus ventas</h3>
+          <%= link_to "Pruébalo gratis ahora", new_user_registration_path(:plan => Plan.find_by_name("Trial").id, :company => true), :class => "btn btn-success btn-lg" %>
+          <p>No se requiere tarjeta de crédito</p>
         </div>
-    </section>
-    <section class="features_teasers_wrapper">
-        <div class="container">
-            <div class="row">
-                <div class="feature_teaser col-sm-4 col-md-4">
-                	<%= image_tag "home/24_7.png", :alt => "Agenda Online", :size => "200x200" %>
-                    <h3>Agenda Online</h3>
-                    <p>Tus clientes pueden reservar una hora online en cualquier momento y lugar, sin la necesidad de llamar por tel&eacute;fono.</p>
-                </div>
-                <div class="feature_teaser col-sm-4 col-md-4">
-                	<%= image_tag "home/admin_agenda.png", :alt => "Administra tu Agenda", :size => "200x200" %>
-                    <h3>Administra tu agenda</h3>
-                    <p>AgendaPro te permite administrar todos tus locales y staff en un mismo lugar.</p>
-                    <p>Confirmaci&oacute;n, edici&oacute;n y cancelaci&oacute;n de reservas online.</p>
-                </div>
-                <div class="feature_teaser col-sm-4 col-md-4">
-                	<%= image_tag "home/mail_reminder.png", :alt => "Recordatorios de hora", :size => "200x200" %>
-                    <h3>Recordatorios Automáticos</h3>
-                    <p>Tus clientes nunca m&aacute;s olvidar&aacute;n sus citas.</p>
-                    <p>AgendaPro env&iacute;a autom&aacute;ticamente recordatorios por mail y mensajes de texto a tus clientes.</p>
-                </div>
-            </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="caracteristicas-home">
+    <div class="container">
+      <div class="row">
+        <div class="col-xs-4 icono">
+          <%= image_tag "home/agenda_online.png", :atl => "agenda_online" %>
+          <h3>Agenda Online</h3>
+          <p>Tus clientes pueden reservar una hora online en cualquier momento y lugar, sin la necesidad de llamar por teléfono.</p>
         </div>
-    </section>
-    <section class="portfolio_teasers_wrapper">
-        <div class="container">
-            <h2 class="section_header">¿Quién usa AgendaPro?</h2>
-            <div class="portfolio_strict row">
-                <div class="col-sm-3 col-md-3">
-                    <div class="portfolio_item">
-                        <div class="portfolio_photo" style="background-image: url(<%= asset_path 'home/peluqueria.jpg' %>)">
-                            <a><p></p></a> 
-                        </div>
-                        <div class="portfolio_description">
-                            <h3><a>Peluquerías y Centros de Estética</a></h3>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-sm-3 col-md-3">
-                    <div class="portfolio_item">
-                        <div class="portfolio_photo" style="background-image: url(<%= asset_path 'home/centro_medico.jpg' %>)"> 
-                            <a><p></p></a>
-                        </div>
-                        <div class="portfolio_description">
-                            <h3><a>Dentistas, Kinesiólogos y Centros Médicos</a></h3>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-sm-3 col-md-3">
-                    <div class="portfolio_item">
-                        <div class="portfolio_photo" style="background-image: url(<%= asset_path 'home/taller.jpg' %>)"> 
-                            <a><p></p></a> 
-                        </div>
-                        <div class="portfolio_description">
-                            <h3><a>Talleres Mecánicos</a></h3>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-sm-3 col-md-3">
-                    <div class="portfolio_item">
-                        <div class="portfolio_photo" style="background-image: url(<%= asset_path 'home/servicios.jpg' %>)"> 
-                            <a><p></p></a> 
-                        </div>
-                        <div class="portfolio_description">
-                            <h3><a>Servicios a domicilio</a></h3>
-                        </div>
-                    </div>
-                </div>
-            </div>
+        <div class="col-xs-4 icono">
+          <%= image_tag "home/administra_tu_agenda.png", :atl => "administra_tu_agenda" %>
+          <h3>Administra tu agenda</h3>
+          <p>AgendaPro te permite administrar todos tus locales y staff en un mismo lugar.</p>
+          <p>Confirmación, edición y cancelación de reservas online.</p>
         </div>
-    </section>
+        <div class="col-xs-4 icono">
+          <%= image_tag "home/recordatorios_automaticos.png", :atl => "recordatorios_automaticos" %>
+          <h3>Recordatorios Automáticos</h3>
+          <p>Tus clientes nunca más olvidarán sus citas.</p>
+          <p>AgendaPro envía automáticamente recordatorios por mail y mensajes de texto a tus clientes.</p>
+        </div>
+      </div>
+    </div>
+  </section>
 </div>
 
 <% content_for :scripts do %>

@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]> <html class="no-js lt-ie9 lt-ie8 lt-ie7" lang="es"> <![endif]-->
+<!--[if IE 7]>    <html class="no-js lt-ie9 lt-ie8" lang="es"> <![endif]-->
+<!--[if IE 8]>    <html class="no-js lt-ie9" lang="es"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="es"> <!--<![endif]-->
+	<head>
+		<!-- start: Meta -->
+		<meta charset="utf-8">
+		<title>AgendaPro</title>
+		<meta name="description" content="AgendaPro - Sistema de agendamiento OnLine para empresas y usuarios.">
+		<meta name="author" content="AgendaPro">
+		<meta name="keyword" content="agendapro, agenda, agenda online, reserva, reserva online">
+		<%= csrf_meta_tags %>
+		<!-- end: Meta -->
+
+		<!-- start: Mobile Specific -->
+		<meta name="apple-mobile-web-app-capable" content="yes" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<!-- end: Mobile Specific -->
+
+        <!-- start: CSS -->
+        <%= stylesheet_link_tag "search" %>
+        <%= stylesheet_link_tag "http://fonts.googleapis.com/css?family=Open+Sans:400,300,400italic,600,600italic,700,700italic,300italic" %>
+        <!-- end: CSS -->
+
+		<!-- start: JavaScript-->
+		<%= javascript_include_tag "home-head" %>
+		<!-- end: JavaScript-->
+
+		<!-- Fav and touch icons -->
+		<%= favicon_link_tag "Iso_Pro_Color.png", :rel => "shortcut icon" %>
+	</head>
+
+	<body>
+		<!-- start: Header -->
+		<header>
+			<div id="barra-superior">
+				<div class="container">
+					<div class="row">
+						<a href="<%= root_path %>" id="logo"></a>
+						<a href="#" id="menu-display"><span class="fa fa-align-justify"></span> MENU</a>
+						<ul class="nav nav-pills pull-right">
+							<% if user_signed_in? %>
+							<li class="dropdown">
+								<a href="#" class="dropdown-toggle" data-toggle="dropdown"><%= current_user.email %><i class="fa fa-chevron-down"></i></a>
+								<ul class="dropdown-menu">
+									<li><%= link_to '<i class="fa fa-calendar"></i> Mi Agenda'.html_safe, my_agenda_path(:id => current_user.id) %></li>
+									<li>
+									<% if current_user.company_id || current_user.role_id == Role.find_by(:name => 'Super Admin').id %>
+									<%= link_to '<i class="fa fa-dashboard"></i> Dashboard'.html_safe, dashboard_path %>
+									<% else %>
+									<%= link_to '<i class="fa fa-building"></i> Agregar mi Compañía'.html_safe, add_company_path %>
+									<% end %>
+									</li>
+									<li><%= link_to '<i class="fa fa-user"></i> Editar Perfil'.html_safe, edit_user_registration_path %></li>
+									<li><%= link_to '<i class="fa fa-power-off"></i> Salir'.html_safe, destroy_user_session_path, method: :delete %></li>
+								</ul>
+							</li>
+							<% else %>
+							<li><a href="#" data-toggle="modal" data-target="#signin-modal"><i class="fa fa-user"></i> Inicia Sesión</a></li>
+							<li><a href="#" data-toggle="modal" data-target="#signup-modal"><i class="fa fa-pencil-square-o"></i> Regístrate</a></li>
+							<li><%= link_to '<i class="fa fa-home"></i> Agrega tu empresa'.html_safe, home_path %></li>
+							<% end %>
+						</ul>
+					</div>
+				</div>
+			</div>
+			<!-- start: Alerts -->
+			<% if notice %>
+				<div class="alert alert-info alert-dismissable">
+					<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+				<%= notice %>
+				</div>
+			<% end %>
+			<% if alert %>
+				<div class="alert alert-warning alert-dismissable">
+					<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+				<%= alert %>
+				</div>
+			<% end %>
+			<!-- end: Alerts -->
+		</header>
+		<!-- end: Header -->
+
+		<!-- start: content -->
+		<%= yield %>
+		<!-- start: Modal -->
+		<%= render 'layouts/modals' %>
+		<!-- end: Modal -->
+		<!-- end: content -->
+
+		<footer>
+			<section id="footer_teasers_wrapper">
+				<div class="container">
+					<div class="row">
+						<div class="footer_teaser col-sm-12 col-md-12">
+							<h3>AgendaPro - Sistema de Reservas Online</h3>
+							<p>
+								<span class="txt-footer"><i class="fa fa-map-marker"></i> Nuestra Se&ntilde;ora de los Angeles 185, Oficina D, Las Condes, Santiago </span>
+								<span class="txt-footer"><i class="fa fa-phone"></i> (+56 9) 5178 5898 </span>
+								<span><i class="fa fa-envelope"></i> contacto@agendapro.cl </span>
+							</p>
+						</div>
+					</div>
+				</div>
+			</section>
+			<section class="copyright">
+				<div class="container">
+					<div class="row">
+						<div class="col-sm-6 col-md-6"> &copy; Copyright 2013 | Gunei Investment SpA | Todos los derechos reservados</div>
+						<div class="text-right col-sm-6 col-md-6">
+							<%= link_to 'Sobre Nosotros', '/about_us', :target => :blank %> | <%= link_to 'Términos y Condiciones', '/TyC.pdf', :target => :blank %>
+						</div>
+					</div>
+				</div>
+			</section>
+		</footer>
+
+		<!-- start: JavaScript-->
+		<%= yield :scripts %>
+		<%= javascript_include_tag "search" %>
+		<%= javascript_include_tag "http://maps.google.com/maps/api/js?sensor=false" %>
+		<%= javascript_include_tag "jquery.browser.min" %>
+		<%= javascript_include_tag "browser-detect" %>
+
+		<script>
+          $( "#menu-display" ).click(function() {
+            $( ".nav-pills" ).toggle( "slow" );
+          });
+        </script>
+		<!-- end: JavaScript-->
+		
+		<!------ Originales ------->
+		<!-- Los JS -->
+		<!--<script src='http://connect.facebook.net/en_US/all.js'></script>-->
+	</body>
+</html>

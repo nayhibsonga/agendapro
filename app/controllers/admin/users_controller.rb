@@ -2,11 +2,13 @@ class  Admin::UsersController < ApplicationController
   before_action :set_user, only: [:show, :edit, :update, :destroy]
   before_action :authenticate_user!
   before_action :quick_add
-  #load_and_authorize_resource
+  layout "admin"
+  load_and_authorize_resource
+  
   # GET /users
   # GET /users.json
   def index
-    @users = User.where(company_id: current_user.company_id)
+    @users = User.where(company_id: current_user.company_id).accessible_by(current_ability)
   end
 
   # GET /users/1
@@ -30,12 +32,11 @@ class  Admin::UsersController < ApplicationController
   def create
     @user = User.new(user_params)
     @user.company_id = current_user.company_id
-
-    UserMailer.welcome_email(@user).deliver
+    @user.password = rand(36**15).to_s(36)
 
     respond_to do |format|
       if @user.save
-        format.html { redirect_to admin_user_path(:id => @user.id), notice: 'Usuario fue creado exitosamente.' }
+        format.html { redirect_to admin_users_path, notice: 'Usuario fue creado exitosamente.' }
         format.json { render action: 'show', status: :created, location: @user }
       else
         format.html { render action: 'new' }
@@ -49,7 +50,7 @@ class  Admin::UsersController < ApplicationController
   def update
     respond_to do |format|
       if @user.update(user_params)
-        format.html { redirect_to admin_user_path(:id => @user.id), notice: 'Usuario fue actualizado exitosamente.' }
+        format.html { redirect_to admin_users_path, notice: 'Usuario fue actualizado exitosamente.' }
         format.json { head :no_content }
       else
         format.html { render action: 'edit' }
@@ -76,6 +77,6 @@ class  Admin::UsersController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def user_params
-      params.require(:user).permit(:id, :first_name, :last_name, :email, :phone, :user_name, :password, :role_id, :company_id)
+      params.require(:user).permit(:id, :first_name, :last_name, :email, :phone, :password, :role_id, :company_id, :location_id)
     end
 end

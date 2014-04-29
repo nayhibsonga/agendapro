@@ -1,25 +1,36 @@
-<h1>Listing service_providers</h1>
+<div class="container">
+  <div class="row">
+    <section class="hgroup">
+      <h2>Proveedores de Servicios</h2>
+      <h2 class="section_header">Los Proveedores de Servicios son las personas, máquinas o salas necesarias para realizar un servicio. Acá los podrás crear y editar.</h2>
+      <div class="line-breadcrumb">
+        <ul class="breadcrumb pull-right">
+            <li><%= link_to "Resumen", dashboard_path %> </li>
+            <li class="active">Proveedores de Servicios</li>
+        </ul>
+    </div>
+    </section>
+  </div>
+</div>
 
-<table>
+<table class="table table-bordered">
   <thead>
     <tr>
-      <th></th>
-      <th></th>
-      <th></th>
+      <th>Nombre</th>
+      <th>Opciones</th>
     </tr>
   </thead>
 
   <tbody>
     <% @service_providers.each do |service_provider| %>
       <tr>
-        <td><%= link_to 'Show', service_provider %></td>
-        <td><%= link_to 'Edit', edit_service_provider_path(service_provider) %></td>
-        <td><%= link_to 'Destroy', service_provider, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+        <td><%= service_provider.public_name %></td>
+        <td><%= link_to '<i class="fa fa-pencil"></i> Editar'.html_safe, edit_service_provider_path(service_provider), :class => "btn btn-warning" %>
+        <%= link_to '<i class="fa fa-trash-o"></i> Eliminar'.html_safe, deactivate_service_provider_path(:id => service_provider.id), :class => "btn btn-danger", data: { confirm: '¿Estás seguro de desactivar el Proveedor seleccionado?' } %></td>
       </tr>
     <% end %>
   </tbody>
 </table>
 
-<br>
-
-<%= link_to 'New Service provider', new_service_provider_path %>
+<%= link_to '<i class="fa fa-plus"></i> Nuevo Proveedor de Servicios'.html_safe, new_service_provider_path, :class => "btn btn-primary" %>
+<%= link_to '<i class="fa fa-minus"></i> Proveedores de Servicios Inactivos'.html_safe, inactive_service_providers_path, :class => "btn btn-primary pull-right" %>

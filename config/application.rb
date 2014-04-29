@@ -10,7 +10,48 @@ module Agendapro
   class Application < Rails::Application
 
     config.assets.enabled = true
-    config.assets.paths << Rails.root.join("app", "assets", "fonts")
+    
+    # config.assets.precompile << Proc.new do |path|
+    #     if path =~ /\.(css|js|gif|png|jpg|otf|eot|svg|ttf|woff)\z/
+    #         full_path = Rails.application.assets.resolve(path).to_path
+    #         app_assets_path = Rails.root.join('app', 'assets').to_path
+    #         vendor_assets_path = Rails.root.join('vendor').to_path
+    #         lib_assets_path = Rails.root.join('lib').to_path
+    #             if (full_path.starts_with? app_assets_path) || vendor_assets_path || lib_assets_path
+    #                 puts "including asset: " + full_path
+    #                 true
+    #             else
+    #                 puts "excluding asset: " + full_path
+    #                 false
+    #             end
+    #     else
+    #         false
+    #     end
+    # end
+
+    config.assets.precompile << Proc.new { |path|
+      if path =~ /\.(css|js|gif|png|jpg|otf|eot|svg|ttf|woff)\z/
+        full_path = Rails.application.assets.resolve(path).to_path
+        asset_paths = %w( app/assets vendor/assets lib/assets)
+        if ((asset_paths.any? {|ap| full_path.include? ap}) && !path.starts_with?('_'))
+          puts "\tIncluding: " + full_path
+          true
+        else
+          puts "\tExcluding: " + full_path
+          false
+        end
+      else
+        false
+      end
+    }
+
+    config.before_configuration do
+      env_file = File.join(Rails.root, 'config', 'local_env.yml')
+      YAML.load(File.open(env_file)).each do |key, value|
+        ENV[key.to_s] = value
+      end if File.exists?(env_file)
+    end
+
     # Settings in config/environments/* take precedence over those specified here.
     # Application configuration should go into files in config/initializers
     # -- all .rb files in that directory are automatically loaded.
@@ -20,7 +61,7 @@ module Agendapro
     # config.time_zone = 'Central Time (US & Canada)'
 
     # The default locale is :en and all translations from config/locales/*.rb,yml are auto loaded.
-    # config.i18n.load_path += Dir[Rails.root.join('my', 'locales', '*.{rb,yml}').to_s]
-    # config.i18n.default_locale = :de
+    # config.i18n.load_path += Dir[Rails.root.join('locales', '*.{rb,yml}').to_s]
+    config.i18n.default_locale = :"es"
   end
 end

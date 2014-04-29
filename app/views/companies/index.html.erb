@@ -1,10 +1,11 @@
 <h1>Empresas</h1>
 
-<table>
+<table class="table table-bordered">
   <thead>
     <tr>
-      <th></th>
-      <th></th>
+      <th>Nombre</th>
+      <th>Fecha de Creación</th>
+      <th>Administrador</th>
       <th></th>
     </tr>
   </thead>
@@ -13,8 +14,14 @@
     <% @companies.each do |company| %>
       <tr>
         <td><%= link_to company.name, root_url(:subdomain => company.web_address) %></td>
-        <td><%= link_to 'Editar', edit_company_path(company) %></td>
-        <td><%= link_to 'Eliminar', company, method: :delete, data: { confirm: '¿Estás seguro?' } %></td>
+        <td><%= l company.created_at, format: :short %></td>
+        <td><%= company.users.where(role_id: Role.find_by_name("Admin")).first.email %></td>
+        <td><%= link_to '<i class="fa fa-pencil"></i> Editar'.html_safe, edit_company_path(company) %>
+        <% if company.active %>
+        <%= link_to '<i class="fa fa-trash-o"></i> Desactivar'.html_safe, deactivate_company_path(:id => company.id), data: { confirm: '¿Estás seguro?' } %></td>
+        <% else %>
+        <%= link_to '<i class="fa fa-check"></i> Re-Activar'.html_safe, activate_company_path(:id => company.id), data: { confirm: '¿Estás seguro?' } %></td>
+        <% end %>
       </tr>
     <% end %>
   </tbody>
@@ -22,4 +29,4 @@
 
 <br>
 
-<%= link_to 'Crear Empresa', new_company_path %>
+<%= link_to '<i class="fa fa-plus"></i> Crear Empresa'.html_safe, new_company_path %>

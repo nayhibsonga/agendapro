@@ -1,36 +1,63 @@
-<%= simple_form_for(@location) do |f| %>
-  <% if @location.errors.any? %>
-    <div id="error_explanation">
-      <h2><%= pluralize(@location.errors.count, "error") %> no permitió que el local sea creado:</h2>
+<div class="container">
+	<div class="row"> 
+		<div class="col-md-6 well">
+			<%= form_for @location, html: {class: "form-horizontal"} do |f| %>
+				<div class="form-group">
+					<%= f.label :name, "Nombre: ", class: "col-sm-3 control-label" %>
+					<div class="col-sm-9">
+						<%= f.text_field :name, :autofocus => true, class: "form-control" %>
+					</div>
+				</div>
+				<div class="form-group">
+					<%= f.label :address, "Dirección: ", class: "col-sm-3 control-label" %>
+					<div class="col-sm-9">
+						<%= f.text_field :address, class: "form-control" %>
+					</div>
+				</div>
+				<div class="form-group">
+					<%= f.label :phone, "Teléfono: ", class: "col-sm-3 control-label" %>
+					<div class="col-sm-9">
+						<%= f.text_field :phone, class: "form-control" %>
+					</div>
+				</div>
 
-      <ul>
-      <% @location.errors.full_messages.each do |msg| %>
-        <li><%= msg %></li>
-      <% end %>
-      </ul>
-    </div>
-  <% end %>
+				<div class="form-group">
+					<%= f.label :district, "Comuna: ", class: "col-sm-3 control-label" %>
+					<div class="col-sm-9">
+						<%= f.collection_select :district_id, District.all, :id, :name, {}, { class: "form-control" }%>
+					</div>
+				</div>
 
-  Nombre: <%= f.input :name, :label => false %><br />
-  Dirección: <%= f.input :address, :label => false %><br />
-  Teléfono: <%= f.input :phone, :label => false %><br />
-  Comuna: <%= f.association :district, :label => false %><br />
-  <%= f.input :latitude, :as => :hidden %><br />
-  <%= f.input :longitude, :as => :hidden %><br />
+				<%= f.hidden_field :latitude %>
+				<%= f.hidden_field :longitude %>
+				<div class="form-group">
+					<div class="actions col-sm-offset-3 col-sm-9">
+						<%= f.submit 'Guardar', :class => "btn btn-primary buttonLocation"%>   
+						<%= link_to 'Cancelar'.html_safe, locations_path, :class => "btn btn-danger" %>    
+					</div>
+				</div>
+			<% end %>
+		</div>
 
-  <%= f.simple_fields_for :location_times do |location_time| %>
-    <%= render 'location_time_fields', :f => location_time %>
-  <% end %>
-  <div class="links">
-      <%= link_to_add_association 'Agregar Bloque Horario', f, :location_times %>
-    </div>
-
-  <div class="actions">
-    <%= f.submit %>
-  </div>
-<% end %>
-
-<% content_for :scripts do %>
-  <%= javascript_include_tag "http://maps.google.com/maps/api/js?sensor=false" %>
-  <%= javascript_include_tag "admin/geocoder.js" %>
-<% end %>
+		<div class="col-md-6">
+			<div class="panel panel-info">
+				<div class="panel-heading">
+					<h3 class="panel-title">
+						Horario Local
+					</h3>
+				</div>
+				<div class="panel-body">
+					<table class="table">
+						<tbody id="localTable">
+							<tr>
+								<th>Día</th>
+								<th>Apertura</th>
+								<th>Cierre</th>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

@@ -1,5 +1,16 @@
-<h1>New service</h1>
+<div class="container">
+  <div class="row">
+    <section class="hgroup">
+      <h2>Nuevo Servicio</h2>
+      <h2 class="section_header">Acá podrás agregar nuevos servicios a tu empresa. Los servicios generados son válidos para todos los locales de tu compañía.</h2>
+      <div class="line-breadcrumb">
+        <ul class="breadcrumb pull-right">
+            <li><%= link_to "Resumen", dashboard_path %> </li>
+            <li class="active">Servicios</li>
+        </ul>
+      </div>
+    </section>
+  </div>
+</div>
 
 <%= render 'form' %>
-
-<%= link_to 'Back', services_path %>

@@ -22,4 +22,9 @@
 /Gemfile.lock
 
 # Archivos compilados
+public/uploads/
+public/assets/
+/public/assets/
 /public/assets
+public/assets/
+/public/assets/**

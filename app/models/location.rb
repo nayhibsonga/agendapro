@@ -6,18 +6,20 @@ class Location < ActiveRecord::Base
 	has_many :location_times
 	has_many :service_providers
 	has_many :bookings
+	has_many :users
 
 	accepts_nested_attributes_for :location_times, :reject_if => :all_blank, :allow_destroy => true
 
 	validates :name, :address, :phone, :company, :district, :presence => true
 
 
-	validate :times_overlap, :time_empty_or_negative, :plan_locations
+	validate :times_overlap, :time_empty_or_negative
+	validate :plan_locations, :on => :create
 
 	def plan_locations
 		@company = self.company
 		if company.locations.count >= company.plan.locations
-			errors.add(:service_provider, "No se pueden agregar más locales con el plan actual, ¡mejóralo!.")
+			errors.add(:location, "No se pueden agregar más locales con el plan actual, ¡mejóralo!.")
 		end
 	end
 

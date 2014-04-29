@@ -1,0 +1,59 @@
+<div class="container">
+  <div class="row">
+    <section class="hgroup">
+      <h2>Periodo Agenda</h2>
+      <h2 class="section_header">Acá podrás definir cual es el tiempo mínimo requerido para agendar, y que tan a futuro se puede reservar una hora.</h2>
+      <div class="line-breadcrumb">
+        <ul class="breadcrumb pull-right">
+            <li><%= link_to "Resumen", dashboard_path %> </li>
+            <li class="active">Periodo Agenda</li>
+        </ul>
+    </div>
+    </section>
+  </div>
+</div>
+
+<div class="container">
+  	<div class="row well">
+		<%= form_for @company_setting, :html => {:class => 'form-horizontal'} do |f| %>
+			<% if @company_setting.errors.any? %>
+				<div id="error_explanation">
+					<h2><%= pluralize(@company_setting.errors.count, "error") %> prohibited this company_setting from being saved:</h2>
+
+					<ul>
+					<% @company_setting.errors.full_messages.each do |msg| %>
+						<li><%= msg %></li>
+					<% end %>
+					</ul>
+				</div>
+			<% end %>
+
+			<div class="form-group">
+				<%= f.label :before_booking, 'Tiempo Mínimo de Reserva:', :class => 'col-sm-3 control-label' %>
+				<div class="col-sm-4">
+					<div class="input-group">
+						<%= f.number_field :before_booking, :in => 1...25, :required => true, :class => 'form-control' %>
+						<span class="input-group-addon">Horas</span>
+					</div>
+					<span class="help-block">Horas mínimas requeridas para que un cliente reserve. No se podrá reservar con menos anticipación.</span>
+				</div>
+			</div>
+			<div class="form-group">
+				<%= f.label :after_booking, 'Tiempo Máximo a Futuro:', :class => 'col-sm-3 control-label' %>
+				<div class="col-sm-4">
+					<div class="input-group">
+						<%= f.number_field :after_booking, :in => 1...13, :required => true, :class => 'form-control' %>
+						<span class="input-group-addon">Meses</span>
+					</div>
+					<span class="help-block">Tiempo máximo que una persona puede reservar a futuro. No se permiten reservas para más de X meses a futuro.</span>
+				</div>
+			</div>
+			<div class="form-group">
+				<div class="col-sm-offset-3 col-sm-4">
+					<%= f.submit 'Guardar', :class => 'btn btn-primary' %>
+					<%= link_to 'Cancelar', dashboard_path, :class => "btn btn-danger" %>    
+				</div>
+			</div>
+		<% end %>
+	</div>
+</div>

@@ -1,30 +1,83 @@
-<h2>Edit <%= resource_name.to_s.humanize %></h2>
+<h2>Editar Perfil</h2>
 
-<%= simple_form_for(resource, :as => resource_name, :url => registration_path(resource_name), :html => { :method => :put }) do |f| %>
-  <%= f.error_notification %>
-
-  <div class="form-inputs">
-    <%= f.input :first_name, :label => "Nombre: ", :autofocus => true %>
-    <%= f.input :last_name, :label => "Apellido: ", :autofocus => true %>
-    <%= f.input :email, :label => "Email: ", :required => true, :autofocus => true %>
-    <%= f.input :phone, :label => "Teléfono: ", :autofocus => true %>
-
-    <% if devise_mapping.confirmable? && resource.pending_reconfirmation? %>
-      <p>Currently waiting confirmation for: <%= resource.unconfirmed_email %></p>
+<%= form_for resource, :as => resource_name, :url => registration_path(resource_name), :html => { :method => :put, :class => 'form-horizontal' } do |f| %>
+  <% if resource.errors.any? %>
+  <h3>Errores</h3>
+  <ul>
+    <% resource.errors.full_messages.each do |msg| %>
+    <li><%= msg %></li>
     <% end %>
+  </ul>
+  <% end %>
 
-    <%= f.input :password, :autocomplete => "off", :hint => "leave it blank if you don't want to change it", :required => false %>
-    <%= f.input :password_confirmation, :required => false %>
-    <%= f.input :current_password, :hint => "we need your current password to confirm your changes", :required => true %>
+  <div class="form-group">
+    <%= f.label :first_name, 'Nombre', :class => "col-sm-3 control-label" %>
+    <div class="col-sm-4">
+      <%= f.text_field :first_name, :autofocus => true, :class => 'form-control' %>
+    </div>
   </div>
-
-  <div class="form-actions">
-    <%= f.button :submit, "Update" %>
+  <div class="form-group">
+    <%= f.label :last_name, 'Apellido', :class => 'col-sm-3 control-label' %>
+    <div class="col-sm-4">
+      <%= f.text_field :last_name, :autofocus => true, :class => 'form-control' %>
+    </div>
+  </div>
+  <div class="form-group">
+    <%= f.label :email, 'Email', :class => 'col-sm-3 control-label' %>
+    <div class="col-sm-4">
+      <%= f.email_field :email, :autofocus => true, :required => true, :class => 'form-control' %>
+    </div>
+  </div>
+  <div class="form-group">
+    <%= f.label :phone, 'Telefono', :class => 'col-sm-3 control-label' %>
+    <div class="col-sm-4">
+      <%= f.phone_field :phone, :autofocus => true, :class => 'form-control' %>
+    </div>
+  </div>
+  <p class="col-sm-offset-3 col-sm-7">Para cambiar tu contraseña haz click <a href="#">aquí</a>.</p>
+  <fieldset  class="hidden">
+    <div class="form-group">
+      <%= f.label :password, 'Contraseña', :class => 'col-sm-3 control-label' %>
+      <div class="col-sm-4">
+        <%= f.password_field :password, :autocomplete => 'off', :class => 'form-control' %>
+      </div>
+    </div>
+    <div class="form-group">
+      <%= f.label :password_confirmation, 'Confirmar Contraseña', :class => 'col-sm-3 control-label' %>
+      <div class="col-sm-4">
+        <%= f.password_field :password_confirmation, :class => 'form-control' %>
+      </div>
+    </div>
+  </fieldset>
+  <hr>
+  <div class="form-group">
+    <%= f.label :current_password, 'Contraseña', :class => 'col-sm-3 control-label' %>
+    <div class="col-sm-4">
+      <%= f.password_field :current_password, :required => true, :class => 'form-control' %>
+      <span class="help-block">Por favor ingresa tu contraseña actual</span>
+    </div>
+  </div>
+  <div class="form-group">
+    <div class="col-sm-offset-3 col-sm-4">
+      <%= f.submit 'Actualizar', :class => 'btn btn-agendapro-oscuro' %>
+    </div>
   </div>
 <% end %>
 
-<h3>Cancel my account</h3>
+<h3>Cancelar mi cuenta</h3>
 
-<p>Unhappy? <%= link_to "Cancel my account", registration_path(resource_name), :data => { :confirm => "Are you sure?" }, :method => :delete %></p>
+<p><%= link_to "Cancelar mi cuenta", registration_path(resource_name), :data => { :confirm => "¿Estás seguro que deseas cancelar tu cuenta?" }, :method => :delete %></p>
 
-<%= link_to "Back", :back %>
+<%= link_to "Atrás", :back %>
+
+<% content_for :scripts do %>
+<script type="text/javascript">
+  $(function () {
+    $('p > a').click(function (event) {
+      event.preventDefault();
+      $('fieldset').removeClass('hidden');
+      $(this).parent().addClass('hidden');
+    });
+  });
+</script>
+<% end %>

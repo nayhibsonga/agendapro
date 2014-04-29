@@ -1,20 +1,23 @@
 <h1>Estados de pago</h1>
 
-<table>
+<table class="table table-bordered">
   <thead>
     <tr>
-      <th></th>
-      <th></th>
-      <th></th>
+      <th>Estado</th>
+      <th>Descripción</th>
+      <th>Opciones</th>
     </tr>
   </thead>
 
   <tbody>
     <% @payment_statuses.each do |payment_status| %>
       <tr>
-        <td><%= link_to payment_status.name, payment_status %></td>
-        <td><%= link_to 'Editar', edit_payment_status_path(payment_status) %></td>
-        <td><%= link_to 'Eliminar', payment_status, method: :delete, data: { confirm: '¿Estás seguro?' } %></td>
+        <td><%= payment_status.name %></td>
+        <td><%= payment_status.description if payment_status.description %></td>
+        <td>
+          <%= link_to '<i class="fa fa-pencil"></i> Editar'.html_safe, edit_payment_status_path(payment_status), :class => "btn btn-warning" %>
+          <%= link_to '<i class="fa fa-trash-o"></i> Eliminar'.html_safe, payment_status, :class => "btn btn-danger", method: :delete, data: { confirm: '¿Estás seguro?' } %>
+        </td>
       </tr>
     <% end %>
   </tbody>
@@ -22,4 +25,4 @@
 
 <br>
 
-<%= link_to 'Nuevo Estado de Pago', new_payment_status_path %>
+<%= link_to '<i class="fa fa-plus"></i> Nuevo Estado de Pago'.html_safe, new_payment_status_path, :class => "btn btn-primary" %>

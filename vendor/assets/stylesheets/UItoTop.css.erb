@@ -1,0 +1,32 @@
+/* =UItoTop jQuery Plugin 1.2
+-------------------------------------------------------------- */
+#toTop {
+  display: none;
+  text-decoration: none;
+  position: fixed;
+  bottom: 20px;
+  right: 10px;
+  overflow: hidden;
+  width: 51px;
+  height: 51px;
+  border: none;
+  text-indent: 100%;
+  background: url(<%= asset_path 'home/ui.totop.png' %>) no-repeat left top;
+  opacity: 50;
+  filter: alpha(opacity=5000);
+  z-index: 2;
+}
+#toTopHover {
+  background: url(<%= asset_path 'home/ui.totop.png' %>) no-repeat left -51px;
+  width: 51px;
+  height: 51px;
+  display: block;
+  overflow: hidden;
+  float: left;
+  opacity: 0;
+  filter: alpha(opacity=0);
+}
+#toTop:active,
+#toTop:focus {
+  outline: none;
+}

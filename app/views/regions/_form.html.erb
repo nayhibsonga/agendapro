@@ -1,4 +1,4 @@
-<%= simple_form_for(@region) do |f| %>
+<%= form_for @region, html: {class: "form-horizontal" } do |f| %>
   <% if @region.errors.any? %>
     <div id="error_explanation">
       <h2><%= pluralize(@region.errors.count, "error") %> no permitió que la región se creara:</h2>
@@ -11,12 +11,25 @@
     </div>
   <% end %>
 
-  
-  Nombre: <%= f.input :name, :label => false %><br />
-
-  País: <%= f.association :country, :label => false %><br />
-
-  <div class="actions">
-    <%= f.submit %>
+  <div class="form-group">
+    <%= f.label :name, "Nombre:", class: "col-sm-3 control-label" %>
+    <div class="col-sm-4">
+      <%= f.text_field :name, :autofocus => true, class: "form-control" %>
+    </div>
   </div>
+
+  <div class="form-group">
+    <%= f.label :country_id, "País:", class: "col-sm-3 control-label" %>
+    <div class="col-sm-4">
+      <%= f.collection_select :country_id, Country.all, :id, :name, {selected: @region.country_id}, {class: "form-control"} %>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <div class="actions col-sm-offset-3 col-sm-4">
+      <%= f.submit 'Guardar', :class => 'btn btn-primary' %>
+      <%= link_to 'Cancelar', regions_path, class: "btn btn-danger" %>    
+    </div>
+  </div>
+
 <% end %>

@@ -3,5 +3,5 @@ class Plan < ActiveRecord::Base
 	
 	belongs_to :plan_log
 
-	validates :name, :locations, :staffs, :presence => true
+	validates :name, :locations, :service_providers, :presence => true
 end

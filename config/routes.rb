@@ -1,7 +1,14 @@
 Agendapro::Application.routes.draw do
 
+  resources :clients
+
   get "users/index"
   require 'subdomain'
+
+  # Mandrill
+  get 'mandrill/confirm_unsubscribe', :as => 'unsubscribe'
+  post "mandrill/unsubscribe"
+  get "mandrill/resuscribe"
 
   devise_for :users, controllers: {registrations: 'registrations'}
   resources :countries
@@ -12,6 +19,7 @@ Agendapro::Application.routes.draw do
   resources :tags
   resources :statuses
   resources :economic_sectors
+  resources :economic_sectors_dictionaries
   resources :company_settings
   resources :payment_statuses
   resources :roles
@@ -26,28 +34,50 @@ Agendapro::Application.routes.draw do
   resources :bookings
   resources :service_providers
   resources :service_categories
+  resources :clients
 
   namespace :admin do 
     get '', :to => 'dashboard#index', :as => '/'
     resources :users 
   end
 
-  get '/quick_add/location', :to => 'quick_add#location', :as => 'quick_add_location'
-  get '/quick_add/services', :to => 'quick_add#services', :as => 'quick_add_services'
+  # Quick Add
+  get '/quick_add', :to => 'quick_add#quick_add', :as => 'quick_add'
   get '/quick_add/service_provider', :to => 'quick_add#service_provider', :as => 'quick_add_service_provider'
-  put '/quick_add/location', :to => 'quick_add#create_location', :as => 'quick_add_create_location'
-  put '/quick_add/services', :to => 'quick_add#create_services', :as => 'quick_add_create_services'
-  put '/quick_add/service_provider', :to => 'quick_add#create_service_provider', :as => 'quick_add_create_service_provider'
+    # Validation
+  post '/quick_add/location_valid', :to => 'quick_add#location_valid'
+  post '/quick_add/services_valid', :to => 'quick_add#services_valid'
+  post '/quick_add/service_provider_valid', :to => 'quick_add#service_provider_valid'
+    # POST
+  post '/quick_add/location', :to => 'quick_add#create_location'
+  post '/quick_add/services', :to => 'quick_add#create_services'
+  post '/quick_add/service_provider', :to => 'quick_add#create_service_provider'
 
+  post '/client_comments', :to => 'clients#create_comment', :as => 'client_comments'
   get '/dashboard', :to => 'dashboard#index', :as => 'dashboard'
   get '/reports', :to => 'reports#index', :as => 'reports'
-  get '/clients', :to => 'clients#index', :as => 'clients'
-  get '/select_plan', :to => 'plans#selectplan', :as => 'select_plan'
-  get '/get_direction', :to => 'districts#getDirection'
+  get '/select_plan', :to => 'plans#select_plan', :as => 'select_plan'
+  get '/get_direction', :to => 'districts#get_direction'
+  get '/time_booking_edit', :to => 'company_settings#time_booking_edit', :as => 'time_booking'
+  post '/send_mail_client', :to => 'clients#send_mail'
+  get '/get_link', :to => 'companies#get_link', :as => 'get_link'
+
+  get '/clients_suggestion', :to => 'clients#suggestion'
+  get '/provider_services', :to => 'service_providers#provider_service'
+
+  # Singup Validations
+  get '/check_user', :to => 'users#check_user_email'
+  get '/check_company', :to => 'companies#check_company_web_address'
+
+  # My Agenda
+  get '/my_agenda', :to => 'users#agenda', :as => 'my_agenda'
+
+  # Add Company from Usuario Registrado
+  get '/add_company', :to => 'companies#add_company', :as => 'add_company'
 
   get "/home", :to => 'home#index', :as => 'home'
   get "/features", :to => 'home#features', :as => 'features'
-  get "/view_plans", :to => 'plans#viewplans', :as => 'view_plans'
+  get "/view_plans", :to => 'plans#view_plans', :as => 'view_plans'
   get "/about_us", :to => 'home#about_us',  :as => 'aboutus'
   get "/contact", :to => 'home#contact', :as => 'contact'
   post "/pcontact", :to => 'home#post_contact'
@@ -59,28 +89,64 @@ Agendapro::Application.routes.draw do
   # Search
   get "searchs/index"
   get '/search', :to => "searchs#search"
-  get 'get_countries', :to => 'countries#getCountries'
-  get '/get_regions', :to => 'regions#getRegions'
-  get '/get_cities', :to => 'cities#getCities'
-  get '/get_districts', :to => 'districts#getDistricts'
-  get '/get_district', :to => 'districts#getDistrict'
+  get '/get_districts', :to => 'districts#get_districts'
+  get '/get_district', :to => 'districts#get_district'
+  get '/district_by_name', :to => 'districts#get_district_by_name'
 
   # Workflow
   # Workflow - overview
-  get '/schedule', :to => 'location_times#scheduleLocal'
-  get '/local', :to => 'locations#locationData'
+  get '/schedule', :to => 'location_times#schedule_local'
+  get '/local', :to => 'locations#location_data'
   # wrokflow - wizard
-  get '/local_services', :to => 'service_providers#locationServices'
-  get '/service', :to => 'services#serviceData'
-  get '/providers_services', :to => 'services#getProviders'
-  get '/provider_time', :to => 'service_providers#providerTime'
-  get '/booking', :to => 'bookings#providerBooking'
-  post "/book", :to => 'bookings#bookService'
+  get '/workflow', :to => 'companies#workflow', :as => 'workflow'
+  get '/local_services', :to => 'service_providers#location_services'
+  get '/local_providers', :to => 'service_providers#location_providers'
+  get '/providers_services', :to => 'services#get_providers'
+  get '/location_time', :to => 'locations#location_time'
+  get '/get_booking', :to => 'bookings#get_booking'
+  get '/get_booking_info', :to => 'bookings#get_booking_info'
+  post "/book", :to => 'bookings#book_service'
   get '/category_name', :to => 'service_categories#get_category_name'
+  get '/get_available_time', :to => 'locations#get_available_time'
+
+  # Fullcalendar
+  get '/service', :to => 'services#service_data'  # Fullcalendar
+  get '/services_list', :to => 'services#services_data'  # Fullcalendar
+  get '/provider_time', :to => 'service_providers#provider_time'  # Fullcalendar
+  get '/booking', :to => 'bookings#provider_booking'  # Fullcalendar
+  get '/provider_breaks', :to => 'bookings#provider_breaks', :as => 'provider_breaks'
+  get '/provider_breaks/:id', :to => 'bookings#get_provider_break', :as => 'get_provider_break'
+  post '/provider_breaks', :to => 'bookings#create_provider_break', :as => 'create_provider_breaks'
+  patch '/provider_breaks/:id', :to => 'bookings#update_provider_break', :as => 'edit_provider_break'
+  delete '/provider_breaks/:id', :to => 'bookings#destroy_provider_break', :as => 'delete_provider_break'
+  get '/available_providers', :to => 'service_providers#available_providers', :as => 'available_service_providers'
+
+  get '/edit_booking', :to => 'bookings#edit_booking', :as => 'booking_edit'
+  post '/edited_booking', :to => 'bookings#edit_booking_post'
+  get '/cancel_booking', :to => 'bookings#cancel_booking', :as => 'booking_cancel'
+  post '/cancel_booking', :to => 'bookings#cancel_booking'
+
+  post '/clients/:id/comments', :to => 'clients#create_comment'
+  patch '/clients/:id/comments', :to => 'clients#update_comment'
+  delete '/clients/:id/comments', :to => 'clients#destroy_comment'
+
+  get '/inactive_locations', :to => 'locations#inactive_index', :as => 'inactive_locations'
+  get '/inactive_services', :to => 'services#inactive_index', :as => 'inactive_services'
+  get '/inactive_service_providers', :to => 'service_providers#inactive_index', :as => 'inactive_service_providers'
+
+  get '/companies/:id/activate', :to => 'companies#activate', :as => 'activate_company'
+  get '/locations/:id/activate', :to => 'locations#activate', :as => 'activate_location'
+  get '/services/:id/activate', :to => 'services#activate', :as => 'activate_service'
+  get '/service_providers/:id/activate', :to => 'service_providers#activate', :as => 'activate_service_provider'
+  
+  get '/companies/:id/deactivate', :to => 'companies#deactivate', :as => 'deactivate_company'
+  get '/locations/:id/deactivate', :to => 'locations#deactivate', :as => 'deactivate_location'
+  get '/services/:id/deactivate', :to => 'services#deactivate', :as => 'deactivate_service'
+  get '/service_providers/:id/deactivate', :to => 'service_providers#deactivate', :as => 'deactivate_service_provider'
   
   # Root
   get '/' => 'searchs#index', :constraints => { :subdomain => 'www' }
-  get '/' => 'companies#workflow', :constraints => { :subdomain => /.+/ }
+  get '/' => 'companies#overview', :constraints => { :subdomain => /.+/ }
 
   root :to => 'searchs#index'
   

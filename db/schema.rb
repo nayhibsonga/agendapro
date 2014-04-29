@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140109135803) do
+ActiveRecord::Schema.define(version: 20140428144346) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -47,6 +47,7 @@ ActiveRecord::Schema.define(version: 20140109135803) do
     t.string   "last_name",           null: false
     t.string   "email",               null: false
     t.string   "phone",               null: false
+    t.text     "company_comment"
   end
 
   add_index "bookings", ["location_id"], name: "index_bookings_on_location_id", using: :btree
@@ -65,18 +66,46 @@ ActiveRecord::Schema.define(version: 20140109135803) do
 
   add_index "cities", ["region_id"], name: "index_cities_on_region_id", using: :btree
 
+  create_table "client_comments", force: true do |t|
+    t.integer  "client_id"
+    t.text     "comment"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "client_comments", ["client_id"], name: "index_client_comments_on_client_id", using: :btree
+
+  create_table "clients", force: true do |t|
+    t.integer  "company_id"
+    t.string   "email"
+    t.string   "first_name"
+    t.string   "last_name"
+    t.string   "phone"
+    t.string   "address"
+    t.string   "district"
+    t.string   "city"
+    t.integer  "age"
+    t.integer  "gender"
+    t.date     "birth_date"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "clients", ["company_id"], name: "index_clients_on_company_id", using: :btree
+
   create_table "companies", force: true do |t|
-    t.string   "name",                              null: false
-    t.string   "web_address",                       null: false
+    t.string   "name",                               null: false
+    t.string   "web_address",                        null: false
     t.string   "logo"
     t.float    "pay_due",             default: 0.0
-    t.integer  "economic_sector_id",                null: false
-    t.integer  "plan_id",                           null: false
-    t.integer  "payment_status_id",                 null: false
+    t.integer  "economic_sector_id",                 null: false
+    t.integer  "plan_id",                            null: false
+    t.integer  "payment_status_id",                  null: false
     t.datetime "created_at"
     t.datetime "updated_at"
     t.text     "description"
     t.text     "cancellation_policy"
+    t.boolean  "active",              default: true
   end
 
   add_index "companies", ["economic_sector_id"], name: "index_companies_on_economic_sector_id", using: :btree
@@ -85,11 +114,15 @@ ActiveRecord::Schema.define(version: 20140109135803) do
 
   create_table "company_settings", force: true do |t|
     t.text     "signature"
-    t.boolean  "email",      default: false
-    t.boolean  "sms",        default: false
-    t.integer  "company_id",                 null: false
+    t.boolean  "email",          default: false
+    t.boolean  "sms",            default: false
+    t.integer  "company_id",                     null: false
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "before_booking", default: 24,    null: false
+    t.integer  "after_booking",  default: 6,     null: false
+    t.integer  "daily_mails",    default: 50
+    t.integer  "sent_mails",     default: 0
   end
 
   add_index "company_settings", ["company_id"], name: "index_company_settings_on_company_id", using: :btree
@@ -128,6 +161,15 @@ ActiveRecord::Schema.define(version: 20140109135803) do
     t.datetime "updated_at"
   end
 
+  create_table "economic_sectors_dictionaries", force: true do |t|
+    t.string   "name"
+    t.integer  "economic_sector_id", null: false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "economic_sectors_dictionaries", ["economic_sector_id"], name: "index_economic_sectors_dictionaries_on_economic_sector_id", using: :btree
+
   create_table "location_times", force: true do |t|
     t.time     "open",        null: false
     t.time     "close",       null: false
@@ -141,15 +183,16 @@ ActiveRecord::Schema.define(version: 20140109135803) do
   add_index "location_times", ["location_id"], name: "index_location_times_on_location_id", using: :btree
 
   create_table "locations", force: true do |t|
-    t.string   "name",        null: false
-    t.string   "address",     null: false
-    t.string   "phone",       null: false
+    t.string   "name",                       null: false
+    t.string   "address",                    null: false
+    t.string   "phone",                      null: false
     t.float    "latitude"
     t.float    "longitude"
-    t.integer  "district_id", null: false
-    t.integer  "company_id",  null: false
+    t.integer  "district_id",                null: false
+    t.integer  "company_id",                 null: false
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.boolean  "active",      default: true
   end
 
   add_index "locations", ["company_id"], name: "index_locations_on_company_id", using: :btree
@@ -173,14 +216,14 @@ ActiveRecord::Schema.define(version: 20140109135803) do
   add_index "plan_logs", ["company_id"], name: "index_plan_logs_on_company_id", using: :btree
 
   create_table "plans", force: true do |t|
-    t.string   "name",                       null: false
-    t.integer  "locations",                  null: false
-    t.integer  "staffs",                     null: false
-    t.boolean  "custom",     default: false
+    t.string   "name",                              null: false
+    t.integer  "locations",                         null: false
+    t.integer  "service_providers",                 null: false
+    t.boolean  "custom",            default: false
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.float    "price",      default: 0.0,   null: false
-    t.boolean  "special",    default: false
+    t.float    "price",             default: 0.0,   null: false
+    t.boolean  "special",           default: false
   end
 
   create_table "promotions", force: true do |t|
@@ -193,10 +236,20 @@ ActiveRecord::Schema.define(version: 20140109135803) do
     t.datetime "updated_at"
   end
 
+  create_table "provider_breaks", force: true do |t|
+    t.datetime "start"
+    t.datetime "end"
+    t.integer  "service_provider_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "provider_breaks", ["service_provider_id"], name: "index_provider_breaks_on_service_provider_id", using: :btree
+
   create_table "provider_times", force: true do |t|
     t.time     "open",                null: false
     t.time     "close",               null: false
-    t.integer  "service_provider_id", null: false
+    t.integer  "service_provider_id"
     t.integer  "day_id",              null: false
     t.datetime "created_at"
     t.datetime "updated_at"
@@ -233,11 +286,12 @@ ActiveRecord::Schema.define(version: 20140109135803) do
   create_table "service_providers", force: true do |t|
     t.integer  "location_id"
     t.integer  "user_id"
-    t.integer  "company_id",         null: false
+    t.integer  "company_id",                        null: false
     t.string   "notification_email"
     t.string   "public_name"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.boolean  "active",             default: true
   end
 
   add_index "service_providers", ["company_id"], name: "index_service_providers_on_company_id", using: :btree
@@ -276,6 +330,8 @@ ActiveRecord::Schema.define(version: 20140109135803) do
     t.integer  "service_category_id"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.boolean  "active",              default: true
+    t.boolean  "show_price",          default: true
   end
 
   add_index "services", ["company_id"], name: "index_services_on_company_id", using: :btree
@@ -305,16 +361,15 @@ ActiveRecord::Schema.define(version: 20140109135803) do
   end
 
   create_table "users", force: true do |t|
-    t.string   "first_name",                          null: false
-    t.string   "last_name",                           null: false
-    t.string   "phone",                               null: false
+    t.string   "first_name"
+    t.string   "last_name"
+    t.string   "phone"
     t.integer  "role_id",                             null: false
     t.integer  "company_id"
     t.datetime "created_at"
     t.datetime "updated_at"
     t.string   "email",                  default: "", null: false
     t.string   "encrypted_password",     default: "", null: false
-    t.string   "user_name",              default: "", null: false
     t.string   "reset_password_token"
     t.datetime "reset_password_sent_at"
     t.datetime "remember_created_at"
@@ -323,11 +378,13 @@ ActiveRecord::Schema.define(version: 20140109135803) do
     t.datetime "last_sign_in_at"
     t.string   "current_sign_in_ip"
     t.string   "last_sign_in_ip"
+    t.integer  "location_id"
   end
 
   add_index "users", ["company_id"], name: "index_users_on_company_id", using: :btree
+  add_index "users", ["email"], name: "index_users_on_email", unique: true, using: :btree
+  add_index "users", ["location_id"], name: "index_users_on_location_id", using: :btree
   add_index "users", ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true, using: :btree
   add_index "users", ["role_id"], name: "index_users_on_role_id", using: :btree
-  add_index "users", ["user_name"], name: "index_users_on_user_name", unique: true, using: :btree
 
 end

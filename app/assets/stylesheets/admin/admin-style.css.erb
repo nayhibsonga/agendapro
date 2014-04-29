@@ -1,0 +1,603 @@
+@charset "UTF-8";
+
+html, body{
+	height: 100%;
+}
+body{
+	background: rgba(163,199,198,1); 
+	background: url(<%= asset_path 'backgrounds/wild_oliva_light_head.png' %>);
+}
+a {
+	color: rgba(61,154,150,1);
+	text-decoration: none;
+}
+a:hover {
+	color: rgba(27,115,112,1);
+}
+
+/* Se agrega estilo de títulos y textos varios */
+.hgroup {
+	padding-top: 26px;
+	/*padding-bottom: 26px;*/
+}
+.hgroup .container h1 {
+	color: #006D68;
+}
+.hgroup .container h1 {
+	font-size: 50px;
+	font-weight: 500;
+	line-height: 1em;
+	margin: 0;
+	padding: 0;
+}
+.hgroup h2 {
+	font-size: 35px;
+	font-weight: 300;
+	line-height: 1.5em;
+	margin: 0 20% 0 0;
+	padding: 0;
+	color: #505050;
+}
+h2.section_header {
+	font-size: 18px;
+	line-height: 22px;
+	font-weight: 400;
+}
+h3.link_section_header {
+	font-size: 24px;
+	line-height: 22px;
+	font-weight: 400;
+	margin-top: 5px;
+	color: #505050;
+}
+.hgroup .breadcrumb {
+	font-size: 12px;
+	background-color: #f3f3f3;
+	padding: 6px 15px;
+	border: solid 1px #cccccc;
+}
+.line-breadcrumb{
+	height: 30px;
+	width: 100%;
+	background-image: url(<%= asset_path 'home/features/line.png' %>);
+	margin-top: 5px;
+}
+.breadcrumb>.active {
+	color: #999;
+}
+
+/* Se agrega para cada paso del QuickAdd */
+.step-workflow{
+	min-height: 590px;
+}
+
+.step-workflow-min{
+	min-height: 280px;
+}
+
+/* Se agrega para achicar los selectores de las horas que estaban muy grandes */
+.time-select{
+	padding-left: 6px;
+	padding-right: 6px;
+}
+
+.date-select{
+	padding-left: 6px;
+	padding-right: 6px;
+	width: auto;
+	display: inline;
+}
+
+#wrap-admin{
+	min-height: 100%;
+	height: auto;
+	margin: 0 auto -40px;
+	padding: 0 0 40px;
+}
+footer{
+	height: 40px;
+	background-color: #383e4b;
+	color: #ffffff;
+}
+.footer-data{
+	margin-top: 10px;
+}
+.fix-height{
+	min-height: 100%;
+}
+header{
+	height: 44px;
+	width: 100%;
+	background: rgba(27,115,112,1);
+}
+#logo{
+	width:127px;
+	height:39px;
+	margin: 2px 0px 0px 20px;
+	background: url(<%= asset_path 'logos/logo_agendaproVerde.png' %>);
+	float: left;
+}
+#menu-usuario{
+	list-style: none;
+	padding: 0px;
+	margin: 0px;
+	position: absolute;
+	right: 20px;
+	top: 0px;
+	z-index: 9999;
+}
+#menu-usuario li a{
+	display: block;
+	height: 44px;
+	line-height: 2.8;
+	padding: 0px 10px;
+	color: #333;
+	font-weight: bold;
+	text-decoration: none;
+}
+#menu-usuario li a:hover{
+	background: rgba(27,115,112,1);
+	color: #fff;
+}
+#menu-usuario ul{
+	list-style: none;
+	padding: 0px;
+	margin: 2px 0px;
+}
+.close-menu-usuario{
+	display: none;
+}
+#menu-usuario ul li a{
+	height: 35px;
+	line-height: 2.3;
+	border-bottom: 0px;
+	background: #fff;
+}
+#sub-menu-usuario{
+	background: #fff;
+	border: 1px solid #ccc;
+	border: 1px solid rgba(0,0,0,0.15);
+	border-radius: 4px;
+	-webkit-box-shadow: 0 6px 12px rgba(0,0,0,0.175);
+	box-shadow: 0 6px 12px rgba(0,0,0,0.175);
+	padding: 5px 1px !important;
+}
+#open-usuario{
+	color:#fff !important;
+}
+.container{
+	width:100% !important;
+}
+
+#admin-content{
+	background: #ffffff;
+	background: url(<%= asset_path 'backgrounds/wild_oliva_light.png' %>);
+	min-height: 100%;
+	width: 83.33333333333334%;
+	float:left;
+	padding-bottom: 50px;
+}
+#sidebar{
+	padding: 0px;
+	min-width: 50px;
+	width:16.666666666666664%;
+	float: left;
+}
+.colapsar{
+	width:50px !important;
+}
+.expandir{
+	width: calc(100% - 50px) !important;
+}
+.submenu-close{
+	overflow: hidden;
+	height: 0px;
+}
+.menu-lateral, .menu-lateral ul{
+	padding: 0px;
+	margin:0px;
+	list-style: none;
+	font-size: 16px;
+}
+.menu-lateral{
+	margin-top: 50px;
+	border-top: 1px solid #ccc;
+}
+.menu-lateral li{
+	border-bottom: 1px solid #ccc;
+}
+.menu-lateral ul li{
+	border-bottom: none;
+}
+.menu-lateral li a{
+	color: rgba(27,115,112,1);
+	padding: 15px 0px 15px 15px;
+	display: block;
+}
+.menu-lateral ul li a{
+	color: rgba(27,115,112,1);
+	padding: 10px 0px 10px 25px;
+	display: block;
+	font-size: 15px;
+}
+.menu-lateral li a:hover, .menu-lateral ul li a:hover{
+	text-decoration: none;
+	background: rgba(27,115,112,1);
+	color: #fff;
+}
+.menu-lateral li a.active, .menu-lateral ul li a.active{
+	text-decoration: none;
+	background: rgba(27,115,112,1);
+	color: #fff;
+}
+.content-fix{
+	margin: 0px 70px;
+}
+.menu-lateral li:last-child{
+	border-bottom: 0px;
+}
+#closetab{
+	margin-top:40px;
+}
+li.colapsado-ok{
+	font-size: 21px;
+}
+li.colapsado-ok> a> span.colapse-hidden{
+	display:none;
+}
+.kill-txt{
+	display: none;
+}
+
+.center-block {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Agregado 18 Febrero */
+.caret-especial{
+	float: right;
+	margin-right: 10px;
+	font-size: 21px;
+}
+.panel {
+  margin-bottom: 20px;
+  background-color: #ffffff;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  -webkit-box-shadow: 0 1px 1px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.05);
+}
+.panel-body {
+  padding: 15px;
+}
+.panel-body:before,
+.panel-body:after {
+  content: " ";
+  /* 1 */
+
+  display: table;
+  /* 2 */
+
+}
+.panel-body:after {
+  clear: both;
+}
+.panel-body:before,
+.panel-body:after {
+  content: " ";
+  /* 1 */
+
+  display: table;
+  /* 2 */
+
+}
+.panel-body:after {
+  clear: both;
+}
+.panel > .list-group {
+  margin-bottom: 0;
+  max-height: 300px;
+  overflow: auto;
+}
+.panel > .list-group .list-group-item {
+  border-width: 1px 0;
+}
+.panel > .list-group .list-group-item:first-child {
+  border-top-right-radius: 0;
+  border-top-left-radius: 0;
+}
+.panel > .list-group .list-group-item:last-child {
+  border-bottom: 0;
+}
+.panel-heading + .list-group .list-group-item:first-child {
+  border-top-width: 0;
+}
+.panel > .table {
+  margin-bottom: 0;
+}
+.panel > .panel-body + .table {
+  border-top: 1px solid #dddddd;
+}
+.panel-heading {
+  padding: 10px 15px;
+  border-bottom: 1px solid transparent;
+  border-top-right-radius: 3px;
+  border-top-left-radius: 3px;
+}
+.panel-title {
+  margin-top: 0;
+  margin-bottom: 0;
+  font-size: 16px;
+}
+.panel-title > a {
+  color: inherit;
+}
+.panel-footer {
+  padding: 10px 15px;
+  background-color: #f5f5f5;
+  border-top: 1px solid #dddddd;
+  border-bottom-right-radius: 3px;
+  border-bottom-left-radius: 3px;
+}
+.panel-info {
+	border-color: rgba(27,115,112,0.6);
+}
+.panel-info>.panel-heading {
+	color: rgba(27,115,112,1);
+	background-color: rgba(27,115,112,0.4);
+	border-color: rgba(27,115,112,0.67);
+}
+.btn-primary {
+	color: #fff;
+	background-color: rgba(27,115,112,0.9);
+	border-color: rgba(27,115,112,1);
+}
+.btn-primary:hover{
+	background-color: rgba(27,115,112,1);
+}
+#providers-selector{
+	width:100%;
+	border: 1px solid rgba(27,115,112,1);
+	background: #ccc;
+	padding: 0px;
+	border-radius: 5px;
+	overflow: hidden;
+}
+#providers-selector label{
+	display: inline-block;
+	background: #ccc;
+	padding: 0px 25px;
+	margin-bottom: -3px;
+}
+#providers-selector label:hover{
+	background: rgba(27,115,112,1);
+	color: #fff;
+}
+#providers-selector label.active{
+	background: rgba(27,115,112,1);
+	color: #fff;
+}
+#providers-selector input[type="radio"]{
+	display: none;
+}
+#providers-selector p{
+	margin: 10px 0 10px;
+}
+#locals-selector{
+	width:100%;
+	border: 1px solid rgba(27,115,112,1);
+	background: #ccc;
+	padding: 0px;
+	border-radius: 5px;
+	overflow: hidden;
+}
+#locals-selector label{
+	display: inline-block;
+	background: #ccc;
+	padding: 0px 25px;
+	margin-bottom: 0px;
+}
+#locals-selector label:hover{
+	background: rgba(27,115,112,1);
+	color: #fff;
+}
+#locals-selector label.active{
+	background: rgba(27,115,112,1);
+	color: #fff;
+}
+#locals-selector input[type="radio"]{
+	display: none;
+}
+#locals-selector p{
+	margin: 10px 0 10px;
+}
+#calendar{
+	margin-top: 15px;
+}
+thead{
+	background: rgba(27,115,112,0.6);
+	color: #fff;
+}
+tbody{
+	background: rgba(255, 255, 255, 0.76);
+}
+.table-bordered{
+	border: 1px solid rgba(27,115,112,0.6);
+}
+
+/* Jquery UI Datepicker */
+.ui-datepicker {
+    background-color: #FFF;
+    z-index: 99999 !important;
+}
+
+/* Quick Add */
+#navegacion-workflow{
+	margin:10px 0px 0px 0px;
+	background: #F3F3F3;
+	border: 1px solid #ccc;
+	border-radius: 5px;
+	padding:5px 0px;
+}
+.pasos-reserva a{
+	height:33px;
+	width: 30%;
+	margin:0px 1.5%;
+	float:left;
+	text-align: center;
+	background: #D1D1D1;
+	bordert:1px solid #999;
+	color: #fff;
+	line-height: 2.4;
+	border-radius: 5px;
+	border:1px solid #585656;
+}
+.pasos-reserva a:hover, .pasos-reserva a.selected{
+	background-color: rgba(250, 70, 22, 0.45);
+	border:1px solid #FA4616;
+}
+#espacio-workflow{
+	margin-top:10px;
+}
+
+.box-step{
+	/*min-height:350px;*/
+	background:#F3F3F3;
+	border: 1px solid #C0C0C0;
+	border-radius: 5px;
+	float:left;
+}
+#control-slide li{
+	display: inline-block;
+}
+.control-box{
+	background-color: #ccc;
+	display: block;
+	padding: 6px 0px;
+	margin-bottom: 0;
+	font-size: 14px;
+	font-weight: normal;
+	line-height: 1.428571429;
+	text-align: center;
+	white-space: nowrap;
+	vertical-align: middle;
+	cursor: pointer;
+	background-image: none;
+	border: 1px solid transparent;
+	border-radius: 4px;
+	-webkit-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	-o-user-select: none;
+	user-select: none;
+}
+li.selected> div.control-box{
+	background: rgba(27,115,112,0.4);
+}
+
+/* Botones Modificados AgendaPro */
+.btn-success{
+	color: #ffffff;
+	background-color: #D55330;
+	border-color: #E64215;
+}
+.btn-success:hover{
+	background-color: #EB4114;
+	border-color: #EB4114;
+}
+
+.btn-agendapro-oscuro{
+    color: #ffffff;
+    background-color: rgba(27,115,112,1);
+    border-color: rgba(24, 101, 99, 1);
+}
+
+.btn-agendapro-oscuro:hover{
+    background-color: rgba(24, 101, 99, 1);
+}
+
+.btn-agendapro-claro{
+    color: #ffffff;
+    background-color: rgba(61,154,150,1);
+    border-color: rgba(55, 133, 129, 1);
+}
+
+.btn-agendapro-claro:hover{
+    background-color: rgba(55, 133, 129, 1);
+}
+
+
+/* Estilo de los Modales */
+.modal-content{
+	background: url(<%= asset_path 'backgrounds/wild_oliva_light.png' %>);
+}
+
+.modal-header{
+    background: url(<%= asset_path 'backgrounds/wild_oliva_light_head.png' %>);
+}
+
+.modal-footer{
+	background: url(<%= asset_path 'backgrounds/wild_oliva_light_head.png' %>);
+}
+
+.ui-datepicker-trigger {
+	margin-left: 5px;
+}
+
+.modal-trigger {
+	margin-left: 5px;
+}
+
+/* Agregar margen a las filas, usado en vista cliente */
+.top-buffer { 
+	margin-top:20px; 
+}
+
+/* Paginación */
+
+.pagination {
+	display: inline-block;
+	padding-left: 0;
+	margin-top: 0px;
+	margin-right: auto;
+	margin-bottom: 0px;
+	margin-left: auto;
+	border-radius: 4px;
+}
+.panel-body div.row{
+	margin-left: 0px;
+}
+.pagination>.active>a, .pagination>.active>span, .pagination>.active>a:hover, .pagination>.active>span:hover, .pagination>.active>a:focus, .pagination>.active>span:focus {
+background-color: #1b7370;
+border-color: #1b7370;
+}
+.pagination>li>a, .pagination>li>span {
+	color: #1b7370;
+}
+/* Menu responsivo */
+@media (max-width: 992px) { 
+	#admin-content{
+		width: calc(100% - 50px) !important;
+	}
+	#sidebar{
+		width: 50px !important;
+	}
+	.colapse-hidden{
+		display: none;
+	}
+	.remove-txt{
+		display: none;
+	}
+	.menu-lateral{
+		font-size: 21px;
+	}
+	#submenu>li>a, #submenu2>li>a, #submenu3>li>a{
+		font-size: 18px;
+		padding-left: 20px;
+	}
+	.content-fix{
+		margin: 0px 30px;
+	}
+}

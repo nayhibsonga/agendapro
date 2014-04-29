@@ -1,0 +1,147 @@
+<section class="call_to_action">
+	<div class="container">
+		<%= render "searchs/form"  %> 
+	</div>
+</section>
+
+
+<div class="main">
+	<div class="container">
+		<div class="row">
+			<div class="col-md-12">
+				<h2>Bienvenido a tu agenda</h2>
+				
+			</div>
+			<div class="col-md-3">
+				<div class="panel panel-info">
+					<div class="panel-heading">
+						<% if @user.first_name.nil? || @user.last_name.nil? %>
+						<h4><%= @user.email %></h4>
+						<% else %>
+						<h4><%= @user.first_name + " " + @user.last_name %></h4>
+						<% end %>
+					</div>
+					<div class="panel-body">
+						<address>
+							<strong>Email:</strong> <%= @user.email %>
+							<strong>Telefono:</strong> <%= @user.phone %>
+						</address>
+						<address>
+							<p>Puedes editar tus datos <%= link_to 'aquí', edit_user_registration_path %>.</p>
+						</address>
+					</div>
+				</div>
+				<% if !current_user.company_id %>
+				<div class="crear-empresa">
+					<h6>¿Quiere agregar tu empresa? Haz click <%= link_to 'aquí', add_company_path %></h6>
+				</div>
+				<% end %>
+			</div>
+			<div class="col-md-9">
+				<div class="well well-sm">
+					<h3>Reservas Activas</h3>
+					<table class="table table-striped">
+						<thead>
+							<tr>
+								<th>Inicio</th>
+								<th>Empresa</th>
+								<th>Local</th>
+								<th>Servicio</th>
+								<th>Staff</th>
+								<th>Precio</th>
+								<th class="fixed-column">Opciones</th>
+							</tr>
+						</thead>
+						<tbody>
+							<% @activeBookings.each do |booking| %>
+							<tr>
+								<td><%= l booking.start, format: :short %></td>
+								<td><%= Company.find(booking.service_provider.company_id).name %></td>
+								<td><%= booking.location.name %></td>
+								<td><%= booking.service.name %></td>
+								<td><%= booking.service_provider.public_name %></td>
+								<td>$<%= number_with_precision(booking.service.price, precision: 0, separator: '', delimiter: '.') %></td>
+								<td class="fixed-column">
+									<%= link_to '<i class="fa fa-pencil"></i> Editar'.html_safe, booking_edit_url(:confirmation_code => booking.confirmation_code), :class => 'btn btn-warning btn-xs' %>
+									<%= link_to '<i class="fa fa-trash-o"></i> Cancelar'.html_safe, booking_cancel_url(:confirmation_code => booking.confirmation_code), :class => 'btn btn-danger btn-xs' %>
+								</td>
+							</tr>
+							<% end %>
+						</tbody>
+					</table>
+				</div>
+				<div class="well well-sm">
+					<h3>Ultimas Reservas</h3>
+					<table class="table table-striped">
+						<thead>
+							<tr>
+								<th>Inicio</th>
+								<th>Empresa</th>
+								<th>Local</th>
+								<th>Servicio</th>
+								<th>Staff</th>
+								<th>Estado</th>
+							</tr>
+						</thead>
+						<tbody>
+							<% @lastBookings.each do |booking| %>
+							<tr>
+								<td><%= l booking.start, format: :short %></td>
+								<td><%= Company.find(booking.service_provider.company_id).name %></td>
+								<td><%= booking.location.name %></td>
+								<td><%= booking.service.name %></td>
+								<td><%= booking.service_provider.public_name %></td>
+								<td><%= booking.status.name %></td>
+							</tr>
+							<% end %>
+						</tbody>
+					</table>
+				</div>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-md-2 col-sm-4 col-xs-6">
+				<div class="publicidad-agenda" style="background-image: url(<%= asset_path 'home/peluqueria.jpg' %>)">
+					<a href="#" class="overlay" data-search="Salón de Belleza">
+						<span class="nombre-publicidad">Salón de Belleza</span>
+					</a>
+				</div>
+			</div>
+			<div class="col-md-2 col-sm-4 col-xs-6">
+				<div class="publicidad-agenda" style="background-image: url(<%= asset_path 'home/kinesiologo.jpg' %>)">
+					<a href="#" class="overlay">
+						<span class="nombre-publicidad">Kinesiólogos</span>
+					</a>
+				</div>
+			</div>
+			<div class="col-md-2 col-sm-4 col-xs-6">
+				<div class="publicidad-agenda" style="background-image: url(<%= asset_path 'home/centro_estetica.jpg' %>)">
+					<a href="#" class="overlay" data-search="Centros de Estética">
+						<span class="nombre-publicidad">Centros de Estética</span>
+					</a>
+				</div>
+			</div>
+			<div class="col-md-2 col-sm-4 col-xs-6">
+				<div class="publicidad-agenda" style="background-image: url(<%= asset_path 'home/psicologia.jpg' %>)">
+					<a href="#" class="overlay">
+						<span class="nombre-publicidad">Psicólogos</span>
+					</a>
+				</div>
+			</div>
+			<div class="col-md-2 col-sm-4 col-xs-6">
+				<div class="publicidad-agenda" style="background-image: url(<%= asset_path 'home/spa.jpg' %>)">
+					<a href="#" class="overlay" data-search="SPA">
+						<span class="nombre-publicidad">SPA</span>
+					</a>
+				</div>
+			</div>
+			<div class="col-md-2 col-sm-4 col-xs-6">
+				<div class="publicidad-agenda" style="background-image: url(<%= asset_path 'home/medicina_alternativa.jpg' %>)">
+					<a href="#" class="overlay" >
+						<span class="nombre-publicidad">Medicina Alternativa</span>
+					</a>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

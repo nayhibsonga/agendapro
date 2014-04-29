@@ -1,0 +1,3 @@
+# API Keys for Mandrill separetes in enviroments
+MANDRILL_API_KEY_PROD: 'HL4ERbuZZO6rrM2nlVjzZg'
+MANDRILL_API_KEY_DEV: 'UhM-Y7RNxHZJeJa4ajil6Q'

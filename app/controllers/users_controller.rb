@@ -1,8 +1,10 @@
 class UsersController < ApplicationController
   #before_action :set_user, only: [:show, :edit, :update, :destroy]
-  before_action :authenticate_user!
-  before_action :verify_is_super_admin, except: [:new]
-  layout "admin"
+  before_action :set_user, only: [:agenda]
+  before_action :authenticate_user!, except: [:check_user_email]
+  before_action :verify_is_super_admin, except: [:new, :agenda, :add_company, :check_user_email]
+  layout "admin", except: [:agenda, :add_company]
+  load_and_authorize_resource
 
   # GET /users
   # GET /users.json
@@ -67,6 +69,18 @@ class UsersController < ApplicationController
     end
   end
 
+  def agenda
+    @activeBookings = Booking.where(:user_id => params[:id], :status_id => Status.find_by(:name => ['Reservado', 'Pagado'])).where("start > ?", DateTime.now).order(:start) 
+    @lastBookings = Booking.where(:user_id => params[:id]).order(updated_at: :desc).limit(10)
+
+    render :layout => 'search'
+  end
+
+  def check_user_email
+    @user = User.find_by(:email => params[:user][:email])
+    render :json => @user.nil?
+  end
+
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_user
@@ -75,6 +89,6 @@ class UsersController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def user_params
-      params.require(:user).permit(:id, :first_name, :last_name, :email, :phone, :user_name, :password, :role_id, :company_id)
+      params.require(:user).permit(:id, :first_name, :last_name, :email, :phone, :password, :role_id, :company_id)
     end
 end

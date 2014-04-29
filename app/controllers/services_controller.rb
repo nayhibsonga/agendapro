@@ -1,14 +1,32 @@
 class ServicesController < ApplicationController
-  before_action :set_service, only: [:show, :edit, :update, :destroy]
-  before_action :authenticate_user!, except: [:serviceData, :getProviders]
-  before_action :quick_add, except: [:serviceData, :getProviders]
-  layout "admin", except: [:getProviders, :serviceData]
+  before_action :set_service, only: [:show, :edit, :update, :destroy, :activate, :deactivate]
+  before_action :authenticate_user!, except: [:services_data, :service_data, :get_providers]
+  before_action :quick_add, except: [:services_data, :service_data, :get_providers]
+  layout "admin", except: [:get_providers, :services_data, :service_data]
   load_and_authorize_resource
 
   # GET /services
   # GET /services.json
   def index
-    @services = Service.where(company_id: current_user.company_id)
+    @services = Service.where(company_id: current_user.company_id, :active => true).order(name: :asc)
+    @service_categories = ServiceCategory.where(company_id: current_user.company_id).order(name: :asc)
+  end
+
+  def inactive_index
+    @services = Service.where(company_id: current_user.company_id, :active => false).order(name: :asc)
+    @service_categories = ServiceCategory.where(company_id: current_user.company_id).order(name: :asc)
+  end
+
+  def activate
+    @service.active = true
+    @service.save
+    redirect_to inactive_services_path
+  end
+
+  def deactivate
+    @service.active = false
+    @service.save
+    redirect_to services_path
   end
 
   # GET /services/1
@@ -29,12 +47,19 @@ class ServicesController < ApplicationController
   # POST /services
   # POST /services.json
   def create
-    @service = Service.new(service_params)
+    if service_params[:service_category_attributes]
+      if service_params[:service_category_attributes][:name].nil?
+        new_params = service_params.except(:service_category_attributes)
+      else
+        new_params = service_params.except(:service_category_id)
+      end
+    end
+    @service = Service.new(new_params)
     @service.company_id = current_user.company_id
 
     respond_to do |format|
       if @service.save
-        format.html { redirect_to @service, notice: 'Servicio creado satisfactoriamente.' }
+        format.html { redirect_to services_path, notice: 'Servicio creado satisfactoriamente.' }
         format.json { render action: 'show', status: :created, location: @service }
       else
         format.html { render action: 'new' }
@@ -46,9 +71,16 @@ class ServicesController < ApplicationController
   # PATCH/PUT /services/1
   # PATCH/PUT /services/1.json
   def update
+    if service_params[:service_category_attributes]
+      if service_params[:service_category_attributes][:name].nil?
+        new_params = service_params.except(:service_category_attributes)
+      else
+        new_params = service_params.except(:service_category_id)
+      end
+    end
     respond_to do |format|
-      if @service.update(service_params)
-        format.html { redirect_to @service, notice: 'Servicio actualizado satisfactoriamente.' }
+      if @service.update(new_params)
+        format.html { redirect_to services_path, notice: 'Servicio actualizado satisfactoriamente.' }
         format.json { head :no_content }
       else
         format.html { render action: 'edit' }
@@ -67,15 +99,20 @@ class ServicesController < ApplicationController
     end
   end
 
-  def getProviders
+  def get_providers
     service = Service.find(params[:id])
-    providers = service.service_providers
+    providers = service.service_providers.where(:active => true).where('location_id = ?', params[:local]).where(:active => true)
     render :json => providers
   end
 
-  def serviceData
+  def service_data
     service = Service.find(params[:id])
     render :json => service
+  end
+
+  def services_data
+    services = Service.where(:company_id => current_user.company_id)
+    render :json => services
   end
 
   private
@@ -86,6 +123,6 @@ class ServicesController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def service_params
-      params.require(:service).permit(:name, :price, :duration, :description, :group_service, :capacity, :waiting_list, :company_id, :tag_id, :service_category_id)
+      params.require(:service).permit(:name, :price, :show_price, :duration, :description, :group_service, :capacity, :waiting_list, :company_id, :service_category_id, service_category_attributes: [:name, :company_id, :id],  :tag_ids => [] )
     end
 end
