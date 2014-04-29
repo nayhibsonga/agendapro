@@ -8,6 +8,7 @@ class ServiceProvidersController < ApplicationController
   # GET /service_providers
   # GET /service_providers.json
   def index
+    @locations = Location.where(company_id: current_user.company_id, :active => true).accessible_by(current_ability)
     @service_providers = ServiceProvider.where(company_id: current_user.company_id, :active => true).accessible_by(current_ability)
   end
 

@@ -178,6 +178,7 @@
 					nextFn = serviceValid;
 					<% elsif params[:step] == '2' %>
 					nextFn = providerValid;
+					loadProvider();
 					<% end %>
 				<% end %>
 			});
