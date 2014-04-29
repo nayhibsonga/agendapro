@@ -16,40 +16,40 @@ class CompaniesController < ApplicationController
 	end
 
 	def activate
-    Location.where(company_id: @company).each do |location|
-      location.active = true
-      location.save
-    end
-    Service.where(company_id: @company).each do |service|
-      service.active = true
-      service.save
-    end
-    ServiceProvider.where(company_id: @company).each do |service_provider|
-      service_provider.active = true
-      service_provider.save
-    end
-    @company.active = true
-    @company.save
-    redirect_to companies_path
-  end
+	    Location.where(company_id: @company).each do |location|
+	      location.active = true
+	      location.save
+	    end
+	    Service.where(company_id: @company).each do |service|
+	      service.active = true
+	      service.save
+	    end
+	    ServiceProvider.where(company_id: @company).each do |service_provider|
+	      service_provider.active = true
+	      service_provider.save
+	    end
+	    @company.active = true
+	    @company.save
+	    redirect_to companies_path
+	end
 
-  def deactivate
-    Location.where(company_id: @company).each do |location|
-      location.active = false
-      location.save
-    end
-    Service.where(company_id: @company).each do |service|
-      service.active = false
-      service.save
-    end
-    ServiceProvider.where(company_id: @company).each do |service_provider|
-      service_provider.active = false
-      service_provider.save
-    end
-    @company.active = false
-    @company.save
-    redirect_to companies_path
-  end
+	def deactivate
+	    Location.where(company_id: @company).each do |location|
+	      location.active = false
+	      location.save
+	    end
+	    Service.where(company_id: @company).each do |service|
+	      service.active = false
+	      service.save
+	    end
+	    ServiceProvider.where(company_id: @company).each do |service_provider|
+	      service_provider.active = false
+	      service_provider.save
+	    end
+	    @company.active = false
+	    @company.save
+	    redirect_to companies_path
+	end
   
 	# GET /companies/1
 	# GET /companies/1.json
@@ -117,13 +117,16 @@ class CompaniesController < ApplicationController
 	def overview
 		@company = Company.find_by(web_address: request.subdomain)
 		if @company.nil?
-			flash[:alert] = "No existe la compañia"
+			@company = Company.find_by(web_address: request.subdomain.gsub(/www\./i, ''))
+			if @company.nil?
+				flash[:alert] = "No existe la compañia"
 
-			host = request.host_with_port
-			domain = host[host.index(request.domain)..host.length]
+				host = request.host_with_port
+				domain = host[host.index(request.domain)..host.length]
 
-			redirect_to root_url(:host => domain)
-			return
+				redirect_to root_url(:host => domain)
+				return
+			end
 		end
 		@locations = Location.where(:active => true).where('company_id = ?', @company.id)
 
