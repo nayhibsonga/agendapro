@@ -14,6 +14,12 @@ class ClientsController < ApplicationController
 
     @max_mails = current_user.company.company_setting.daily_mails
     @mails_left = current_user.company.company_setting.daily_mails - current_user.company.company_setting.sent_mails
+
+    respond_to do |format|
+      format.html
+      format.csv { send_data @clients.to_csv }
+      format.xls  { send_data @clients.to_csv(col_sep: "\t") }
+    end
   end
 
   # GET /clients/1
