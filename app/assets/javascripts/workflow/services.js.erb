@@ -136,26 +136,28 @@ function loadStep3 () {
 
 			// Summary
 			$('#summary').empty();
+			
+			alert($('#start').val());
+
+			var formattedStart = $('#start').val().substring(11,16) + " - " + new Date($('#start').val()).toDateString();
+			// var formattedEnd = new Date($('#end').val()).toDateString() + " - " + new Date($('#end').val()).getHours() + ":" + new Date($('#end').val()).getMinutes();
+
 			$('#summary').append(
 				'<tr>' +
-					'<th>Local:</th>' +
-					'<th>' + $('#selectedLocal').data('local').name + '</th>' +
-				'</tr>' +
-				'<tr>' +
-					'<th>Servicio:</th>' +
+					'<th>¿Qué estoy reservando?</th>' +
 					'<th>' + $('input[name=serviceRadio]:checked').next().html() + '</th>' +
 				'</tr>' +
 				'<tr>' +
-					'<th>Staff:</th>' +
+					'<th>¿Dónde?</th>' +
+					'<th>' + $('#selectedLocal').data('local').name + '</th>' +
+				'</tr>' +
+				'<tr>' +
+					'<th>¿Con quién?</th>' +
 					'<th>' + $('input[name="staffRadio"]:checked').next().html() + '</th>' +
 				'</tr>' +
 				'<tr>' +
-					'<th>Inicio:</th>' +
-					'<th>' + $('#start').val() + '</th>' +
-				'</tr>' +
-				'<tr>' +
-					'<th>Fin:</th>' +
-					'<th>' + $('#end').val() + '</th>' +
+					'<th>¿Cuándo?</th>' +
+					'<th>' + formattedStart + '</th>' +
 				'</tr>'
 			);
 			return true;
