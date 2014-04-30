@@ -7,7 +7,7 @@ class ProviderBreak < ActiveRecord::Base
 
 	def time_empty_or_negative
 		if self.start >= self.end
-			errors.add(:provider_break, "Existen horarios vacíos o negativos.")
+			errors.add(:base, "Existen horarios vacíos o negativos.")
 		end
 	end
 end

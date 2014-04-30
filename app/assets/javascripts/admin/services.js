@@ -25,6 +25,10 @@ $(function() {
 	$('#categoryCheckboxId').click(function (e) {
 		categoryChange();
 	});
+	if ($('#service_group_service').val() > 0) {
+		$('#service_capacity').closest('.form-group').removeClass('hidden');
+		$('#foo5').trigger('updateSizes');
+	}
 });
 
 function serviceGroup () {
