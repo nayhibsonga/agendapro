@@ -137,7 +137,35 @@ function loadStep3 () {
 			// Summary
 			$('#summary').empty();
 
-			var formattedStart = $('#start').val().substring(11,16) + " - " + new Date($('#start').val()).toDateString();
+			var s = new Date($('#start').val());
+
+			var weekday = new Array(7);
+			weekday[0]=  "Dom";
+			weekday[1] = "Lun";
+			weekday[2] = "Mar";
+			weekday[3] = "Mie";
+			weekday[4] = "Jue";
+			weekday[5] = "Vie";
+			weekday[6] = "Sab";
+
+			var monthname = new Array(12);
+			monthname[0]=  "Enero";
+			monthname[1] = "Febrero";
+			monthname[2] = "Marzo";
+			monthname[3] = "Abril";
+			monthname[4] = "Mayo";
+			monthname[5] = "Junio";
+			monthname[6] = "Julio";
+			monthname[7] = "Agosto";
+			monthname[8] = "Septiembre";
+			monthname[9] = "Octubre";
+			monthname[10] = "Noviembre";
+			monthname[11] = "Diciembre";
+			
+			var day = weekday[s.getDay()];
+			var month = monthname[s.getMonth()];
+
+			var formattedStart = $('#start').val().substring(11,16) + " - " + day + " " + s.getDate() + " de " + month;
 			// var formattedEnd = new Date($('#end').val()).toDateString() + " - " + new Date($('#end').val()).getHours() + ":" + new Date($('#end').val()).getMinutes();
 
 			$('#summary').append(
