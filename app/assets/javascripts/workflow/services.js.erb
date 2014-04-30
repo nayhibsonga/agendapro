@@ -136,8 +136,6 @@ function loadStep3 () {
 
 			// Summary
 			$('#summary').empty();
-			
-			alert($('#start').val());
 
 			var formattedStart = $('#start').val().substring(11,16) + " - " + new Date($('#start').val()).toDateString();
 			// var formattedEnd = new Date($('#end').val()).toDateString() + " - " + new Date($('#end').val()).getHours() + ":" + new Date($('#end').val()).getMinutes();
@@ -251,7 +249,7 @@ function loadDescription (serviceId) {
 		$('#services-description').append(
 			'<tr>' +
 				'<th>Duración:</th>' +
-				'<th>' + service.duration + '</th>' +
+				'<th>' + service.duration + ' minutos </th>' +
 			'</tr>'
 		);
 		if(service.description) {
