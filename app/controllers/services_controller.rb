@@ -55,10 +55,12 @@ class ServicesController < ApplicationController
       end
     end
     @service = Service.new(new_params)
+    @service.service_providers.clear
     @service.company_id = current_user.company_id
 
     respond_to do |format|
       if @service.save
+        @service.service_provider_ids = new_params[:service_provider_ids]
         format.html { redirect_to services_path, notice: 'Servicio creado satisfactoriamente.' }
         format.json { render action: 'show', status: :created, location: @service }
       else
@@ -78,6 +80,7 @@ class ServicesController < ApplicationController
         new_params = service_params.except(:service_category_id)
       end
     end
+    @service.service_providers.clear
     respond_to do |format|
       if @service.update(new_params)
         format.html { redirect_to services_path, notice: 'Servicio actualizado satisfactoriamente.' }
@@ -123,6 +126,6 @@ class ServicesController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def service_params
-      params.require(:service).permit(:name, :price, :show_price, :duration, :description, :group_service, :capacity, :waiting_list, :company_id, :service_category_id, service_category_attributes: [:name, :company_id, :id],  :tag_ids => [] )
+      params.require(:service).permit(:name, :price, :show_price, :duration, :description, :group_service, :capacity, :waiting_list, :company_id, :service_category_id, service_category_attributes: [:name, :company_id, :id],  :tag_ids => [], :service_provider_ids => [] )
     end
 end
