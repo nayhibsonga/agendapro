@@ -10,7 +10,7 @@ class UserMailer < ActionMailer::Base
 
     @user_fname = user.email
     @user_name = user.email
-    if (!user.last_name.nil? && !user.first_name.nil?)
+    if (!user.last_name.blank? && !user.first_name.blank?)
       @user_name =  user.last_name + ', ' + user.first_name
       @user_fname = user.first_name
     end

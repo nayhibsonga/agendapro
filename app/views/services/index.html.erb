@@ -23,7 +23,7 @@
         </a>
       </h4>
     </div>
-    <div id="collapse<%= service_category.id %>" class="panel-collapse collapse<% if service_category == @service_categories.first%> in<% end %>">
+    <div id="collapse<%= service_category.id %>" class="panel-collapse collapse<% if @service_categories.count == 1%> in<% end %>">
       <div class="panel-body">
         <table class="table table-bordered">
           <thead>

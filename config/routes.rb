@@ -43,7 +43,6 @@ Agendapro::Application.routes.draw do
 
   # Quick Add
   get '/quick_add', :to => 'quick_add#quick_add', :as => 'quick_add'
-  get '/quick_add/service_provider', :to => 'quick_add#service_provider', :as => 'quick_add_service_provider'
     # Validation
   post '/quick_add/location_valid', :to => 'quick_add#location_valid'
   post '/quick_add/services_valid', :to => 'quick_add#services_valid'
@@ -115,6 +114,7 @@ Agendapro::Application.routes.draw do
   post '/provider_breaks', :to => 'bookings#create_provider_break', :as => 'create_provider_breaks'
   patch '/provider_breaks/:id', :to => 'bookings#update_provider_break', :as => 'edit_provider_break'
   delete '/provider_breaks/:id', :to => 'bookings#destroy_provider_break', :as => 'delete_provider_break'
+  get '/available_providers', :to => 'service_providers#available_providers', :as => 'available_service_providers'
 
   get '/edit_booking', :to => 'bookings#edit_booking', :as => 'booking_edit'
   post '/edited_booking', :to => 'bookings#edit_booking_post'

@@ -6,7 +6,7 @@ class Booking < ActiveRecord::Base
 	belongs_to :location
 	belongs_to :promotion
 
-	validates :start, :end, :service_provider_id, :service_id, :status_id, :location_id, :first_name, :last_name, :email, :phone, :presence => true
+	validates :start, :end, :service_provider_id, :service_id, :status_id, :location_id, :first_name, :last_name, :email, :presence => true
 
 	validate :time_empty_or_negative, :time_in_provider_time, :booking_duration, :service_staff
 
@@ -18,20 +18,20 @@ class Booking < ActiveRecord::Base
 	def provider_in_break
 		self.service_provider.provider_breaks.each do |provider_break|
 	    	if (provider_break.start - self.end) * (self.start - provider_break.end) > 0
-	    		errors.add(:booking, "El proveedor seleccionado ha bloqueado ese horario.")
+	    		errors.add(:base, "El proveedor seleccionado ha bloqueado ese horario.")
 	    	end
     	end
   	end
 
 	def booking_duration
     	if self.service.duration != ((self.end - self.start) / 1.minute ).round
-    		errors.add(:booking, "La duración de la reserva no coincide con la duración del servicio.")
+    		errors.add(:base, "La duración de la reserva no coincide con la duración del servicio.")
     	end
   	end
 
   	def service_staff
     	if !self.service_provider.services.include?(self.service)
-    		errors.add(:booking, "El proveedor de servicios no puede realizar este servicio.")
+    		errors.add(:base, "El proveedor de servicios no puede realizar este servicio.")
     	end
   	end
 
@@ -41,9 +41,9 @@ class Booking < ActiveRecord::Base
 	  			unless provider_booking.status_id == Status.find_by(name: 'Cancelado').id
 					if (provider_booking.start - self.end) * (self.start - provider_booking.end) > 0
 						if !self.service.group_service || self.service_id != provider_booking.service_id
-			      			errors.add(:booking, "Esa hora ya está agendada para ese proveedor de servicios.")
+			      			errors.add(:base, "Esa hora ya está agendada para ese proveedor de servicios.")
 			      		elsif self.service.group_service && self.service_id == provider_booking.service_id && self.service_provider.bookings.where(:service_id => self.service_id, :start => self.start).count >= self.service.capacity
-			      			errors.add(:booking, "Esa hora ya está agendada para ese proveedor de servicios.")
+			      			errors.add(:base, "Esa hora ya está agendada para ese proveedor de servicios.")
 			      		end
 			    	end
 				end	
@@ -53,7 +53,7 @@ class Booking < ActiveRecord::Base
 
   	def time_empty_or_negative
 		if self.start >= self.end
-			errors.add(:booking, "Existen horarios vacíos o negativos.")
+			errors.add(:base, "Existen horarios vacíos o negativos.")
   		end
   	end
 
@@ -73,7 +73,7 @@ class Booking < ActiveRecord::Base
 			end
 		end
 		if !in_provider_time
-			errors.add(:booking, "El horario o día de la reserva no es posible para ese proveedor de servicio.")
+			errors.add(:base, "El horario o día de la reserva no es posible para ese proveedor de servicio.")
 		end
   	end
 
@@ -94,7 +94,9 @@ class Booking < ActiveRecord::Base
 		if self.status == Status.find_by(:name => "Cancelado")
 			BookingMailer.cancel_booking(self)
 		else
-			BookingMailer.update_booking(self)
+			if changed_attributes[:start]
+				BookingMailer.update_booking(self)
+			end
 		end
 	end
 

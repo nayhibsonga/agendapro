@@ -12,4 +12,16 @@ class Service < ActiveRecord::Base
 	accepts_nested_attributes_for :service_category, :reject_if => :all_blank, :allow_destroy => true
 
 	validates :name, :duration, :company, :service_category, :presence => true
+	validates :duration, numericality: { greater_than: 5 }
+	validates :price, numericality: { greater_than: -1 }
+
+	validate :group_service_capacity
+
+	def group_service_capacity
+		if self.group_service
+			if !self.capacity || self.capacity < 1
+				errors.add(:base, "Un servicio de grupo debe tener capacidad.")
+			end
+		end
+	end
 end

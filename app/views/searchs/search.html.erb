@@ -54,7 +54,7 @@
 									</div>
 									<div class="tab-pane" id="profile<%=i%>">
 										<p class="fix-position-search">                                                    
-											<% if location.company.description.nil? %>
+											<% if location.company.description.blank? %>
 											<p>No hay descripción para esta empresa.</p>
 											<% else %>
 											<p><%= location.company.description %></p>

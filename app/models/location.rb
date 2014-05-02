@@ -19,7 +19,7 @@ class Location < ActiveRecord::Base
 	def plan_locations
 		@company = self.company
 		if company.locations.count >= company.plan.locations
-			errors.add(:location, "No se pueden agregar más locales con el plan actual, ¡mejóralo!.")
+			errors.add(:base, "No se pueden agregar más locales con el plan actual, ¡mejóralo!.")
 		end
 	end
 
@@ -29,7 +29,7 @@ class Location < ActiveRecord::Base
 				if (location_time1 != location_time2)
 					if(location_time1.day_id == location_time2.day_id)
 						if (location_time1.open - location_time2.close) * (location_time2.open - location_time1.close) >= 0
-				      		errors.add(:location, "Existen bloques horarios sobrepuestos.")
+				      		errors.add(:base, "Existen bloques horarios sobrepuestos.")
 				    	end
 			    	end
 			    end
@@ -40,7 +40,7 @@ class Location < ActiveRecord::Base
   	def time_empty_or_negative
   		self.location_times.each do |location_time|
   			if location_time.open >= location_time.close
-  				errors.add(:location, "Existen horarios vacíos o negativos.")
+  				errors.add(:base, "Existen horarios vacíos o negativos.")
 			end
   		end
   	end

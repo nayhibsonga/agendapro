@@ -8,6 +8,7 @@ class ServiceProvidersController < ApplicationController
   # GET /service_providers
   # GET /service_providers.json
   def index
+    @locations = Location.where(company_id: current_user.company_id, :active => true).accessible_by(current_ability)
     @service_providers = ServiceProvider.where(company_id: current_user.company_id, :active => true).accessible_by(current_ability)
   end
 
@@ -130,6 +131,23 @@ class ServiceProvidersController < ApplicationController
     provider = ServiceProvider.find(params[:id])
     services = provider.services.where(:active => true).order(:name)
     render :json => services
+  end
+
+  def available_providers
+    location = Location.find(params[:location_id])
+    service_providers = []
+    ServiceProvider.where(location_id: location.id).each do |service_provider|
+      available = true
+      service_provider.bookings.each do |booking|
+        if (booking.start - Date(params[:end])) * (Date(params[:start]) - booking.end) > 0
+          available = false
+        end
+      end
+      if available
+        service_providers.push(service_provider.id)
+      end
+    end
+    render :json => service_providers
   end
 
   private

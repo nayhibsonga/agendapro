@@ -1,33 +1,56 @@
-<h2>Cambiar mi contraseña</h2>
+<div class="container">
+  <div class="row">
+    <section class="hgroup">
+      <h2>Cambiar mi Contraseña</h2>
+      <h2 class="section_header">Por favor ingresa tu nueva contraseña.</h2>
+      <div class="line-breadcrumb">
+        <ul class="breadcrumb pull-right">
+            <li><%= link_to "Inicio", root_path %> </li>
+            <li class="active">Cambiar Contraseña</li>
+        </ul>
+    </div>
+    </section>
+  </div>
+</div>
 
-<%= form_for resource, :as => resource_name, :url => password_path(resource_name), :html => { :method => :put, :class => 'form-horizontal' } do |f| %>
-  <% if resource.errors.any? %>
-  <h3>Errores</h3>
-  <ul>
-    <% resource.errors.full_messages.each do |msg| %>
-    <li><%= msg %></li>
+<div class="container">
+  <div class="row well">
+    <%= form_for resource, :as => resource_name, :url => password_path(resource_name), :html => { :method => :put, :class => 'form-horizontal' } do |f| %>
+      <% if resource.errors.any? %>
+      <h3>Errores</h3>
+      <ul>
+        <% resource.errors.full_messages.each do |msg| %>
+        <li><%= msg %></li>
+        <% end %>
+      </ul>
+      <% end %>
+
+      <%= f.hidden_field :reset_password_token %>
+      <div class="form-group">
+        <%= f.label :password, 'Nueva contraseña', :class => 'col-sm-3 control-lable' %>
+        <div class="col-sm-4">
+          <%= f.password_field :password, :required => true, :autofocus => true, :class => 'form-control' %>
+        </div>
+      </div>
+      <div class="form-group">
+        <%= f.label :password_confirmation, 'Confirma tu Nueva Contraseña', :class => 'col-sm-3 control-lable' %>
+        <div class="col-sm-4">
+          <%= f.password_field :password_confirmation, :required => true, :class => 'form-control' %>
+        </div>
+      </div>
+      <div class="form-group">
+        <div class="col-sm-offset-3 col-sm-4">
+          <%= f.submit 'Actualizar', :class => 'btn btn-agendapro-claro' %>
+        </div>
+      </div>
     <% end %>
-  </ul>
-  <% end %>
+  </div>
+</div>
 
-  <%= f.hidden_field :reset_password_token %>
-  <div class="form-group">
-    <%= f.label :password, 'Nueva contraseña', :class => 'col-sm-4 control-lable' %>
-    <div class="col-sm-8">
-      <%= f.password_field :password, :required => true, :autofocus => true, :class => 'form-control' %>
-    </div>
+<div class="container">
+  <div class="row well">
+    <p> ¿No quieres seguir con nosotros?
+        <%= link_to "Cancelar mi cuenta", registration_path(resource_name), :data => { :confirm => "¿Estás seguro que deseas cancelar tu cuenta?" }, :method => :delete %>
+    </p>
   </div>
-  <div class="form-group">
-    <%= f.label :password_confirmation, 'Confirma tu nueva contraseña', :class => 'col-sm-4 control-lable' %>
-    <div class="col-sm-8">
-      <%= f.password_field :password_confirmation, :required => true, :class => 'form-control' %>
-    </div>
-  </div>
-  <div class="form-group">
-    <div class="col-sm-offset-4 col-sm-8">
-      <%= f.submit 'Actualizar', :class => 'btn btn-default' %>
-    </div>
-  </div>
-<% end %>
-
-<%= render "devise/shared/links" %>
+</div>

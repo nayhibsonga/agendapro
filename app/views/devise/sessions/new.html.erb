@@ -1,32 +1,61 @@
-<h2>Iniciar Sesión</h2>
+<div class="container">
+  <div class="row">
+    <section class="hgroup">
+      <h2>Inicia Sesión</h2>
+      <h2 class="section_header">Por favor ingresa tu e-mail y tu contraseña.</h2>
+      <div class="line-breadcrumb">
+        <ul class="breadcrumb pull-right">
+            <li><%= link_to "Inicio", root_path %> </li>
+            <li class="active">Iniciar Sesión</li>
+        </ul>
+    </div>
+    </section>
+  </div>
+</div>
 
-<%= form_for resource, :as => resource_name, :url => session_path(resource_name), :html => { class: 'form-horizontal' } do |f| %>
-    <div class="form-group">
-        <%= f.label :email, 'Email', :class => 'col-sm-4 control-label' %>
-        <div class="col-sm-8">
-            <%= f.email_field :email, :autofocus => true, :required => true, :class => 'form-control' %>
-        </div>
-    </div>
-    <div class="form-group">
-        <%= f.label :password, 'Contraseña', :class => 'col-sm-4 control-label' %>
-        <div class="col-sm-8">
-            <%= f.password_field :password, :required => true, :class => 'form-control' %>
-        </div>
-    </div>
-    <div class="form-group">
-        <div class="col-sm-offset-4 col-sm-8">
-            <div class="checkbox">
-                <label>
-                    <%= f.check_box :remember_me %> Recordarme
-                </label>
+<div class="container">
+  <div class="row well">
+    <%= form_for resource, :as => resource_name, :url => session_path(resource_name), :html => { class: 'form-horizontal' } do |f| %>
+        <div class="form-group">
+            <%= f.label :email, 'Email', :class => 'col-sm-2 control-label' %>
+            <div class="col-sm-4">
+                <%= f.email_field :email, :autofocus => true, :required => true, :class => 'form-control' %>
             </div>
         </div>
-    </div>
-    <div class="form-group">
-        <div class="col-sm-offset-4 col-sm-8">
-            <%= f.submit 'Ingresar', :class => 'btn btn-agendapro-claro' %>
+        <div class="form-group">
+            <%= f.label :password, 'Contraseña', :class => 'col-sm-2 control-label' %>
+            <div class="col-sm-4">
+                <%= f.password_field :password, :required => true, :class => 'form-control' %>
+            </div>
         </div>
-    </div>
-<% end %>
+        <div class="form-group">
+            <div class="col-sm-offset-2 col-sm-4">
+                <div class="checkbox">
+                    <label>
+                        <%= f.check_box :remember_me %> Recordarme
+                    </label>
+                </div>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-sm-offset-2 col-sm-4">
+                <%= f.submit 'Ingresar', :class => 'btn btn-agendapro-claro' %>
+                <%= link_to "Cancelar", :back, :class => 'btn btn-danger' %>
+            </div>
+        </div>
+    <% end %>
+  </div>
+</div>
 
-<%= render "devise/shared/links" %>
+<div class="container">
+  <div class="row well">
+    <p> ¿No recuerdas tu contraseña?
+        <%= link_to "Recuperar Contraseña", new_password_path(resource_name) %><br />
+    </p>
+    <p> ¿No quieres seguir con nosotros?
+        <%= link_to "Cancelar mi cuenta", registration_path(resource_name), :data => { :confirm => "¿Estás seguro que deseas cancelar tu cuenta?" }, :method => :delete %>
+    </p>
+  </div>
+</div>
+
+
