@@ -93,8 +93,8 @@
 </div>
 <p>
   Dercargar listado de todos los clientes:
-  <%= link_to "CSV", clients_path(format: "csv") %> |
-  <%= link_to "Excel", clients_path(format: "xls") %>
+  <%= link_to "CSV", clients_path(format: "csv", location: params[:location], provider: params[:provider], gender: params[:gender]) %> |
+  <%= link_to "Excel", clients_path(format: "xls", location: params[:location], provider: params[:provider], gender: params[:gender]) %>
 </p>
 <div class="modal fade" id="mailModal" tabindex="-1" role="dialog" aria-labelledby="mailModalLabel" aria-hidden="true">
 	<div class="modal-dialog">

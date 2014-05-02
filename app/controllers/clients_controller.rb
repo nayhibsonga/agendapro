@@ -15,10 +15,13 @@ class ClientsController < ApplicationController
     @max_mails = current_user.company.company_setting.daily_mails
     @mails_left = current_user.company.company_setting.daily_mails - current_user.company.company_setting.sent_mails
 
+    @clients_export = Client.accessible_by(current_ability).search(params[:search]).filter_location(params[:location]).filter_provider(params[:provider]).filter_gender(params[:gender])
+
     respond_to do |format|
       format.html
-      format.csv { send_data @clients.to_csv }
-      format.xls  { send_data @clients.to_csv(col_sep: "\t") }
+      format.csv { 
+        send_data @clients_export.to_csv }
+      format.xls 
     end
   end
 
