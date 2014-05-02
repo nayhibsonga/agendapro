@@ -104,6 +104,7 @@ Agendapro::Application.routes.draw do
   post "/book", :to => 'bookings#book_service'
   get '/category_name', :to => 'service_categories#get_category_name'
   get '/get_available_time', :to => 'locations#get_available_time'
+  get '/check_user_cross_bookings', :to => 'bookings#check_user_cross_bookings'
 
   # Fullcalendar
   get '/service', :to => 'services#service_data'  # Fullcalendar

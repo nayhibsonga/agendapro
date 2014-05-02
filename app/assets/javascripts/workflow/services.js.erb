@@ -86,12 +86,12 @@ function loadStep2 () {
 				$('#staff-selector').append(
 					'<li class="list-group-item">' +
 						'<div class="radio">' +
-                        	'<label>' +
-                        		'<input type="radio" name="staffRadio" value="' + provider.id + '">' +
-                        		'<p>' + provider.public_name + '</p>' +
-                        	'</label>' +
+							'<label>' +
+								'<input type="radio" name="staffRadio" value="' + provider.id + '">' +
+								'<p>' + provider.public_name + '</p>' +
+							'</label>' +
 						'</div>' +
-                    '</li>'
+					'</li>'
 				);
 			});
 
@@ -131,8 +131,6 @@ function loadStep2 () {
 function loadStep3 () {
 	if ($('[name="staffRadio"]').is(':checked')){
 		if (selected) {
-			checkOtherBookings();
-			
 			$('#provider').val($('input[name=staffRadio]:checked').val());
 			$('#service').val($('input[name=serviceRadio]:checked').val());
 
@@ -163,28 +161,34 @@ function loadStep3 () {
 			return true;
 		}
 		myAlert.showAlert(
-	      '<h3>Seleccione un Horario</h3>' +
-	      '<p>Debe elegir un horario antes de poder continuar.</p>'
-	    );
+		  '<h3>Seleccione un Horario</h3>' +
+		  '<p>Debe elegir un horario antes de poder continuar.</p>'
+		);
 		return false;
 	}
 	myAlert.showAlert(
-      '<h3>Seleccione un Staff</h3>' +
-      '<p>Debe elegir un staff para poder agendar un horario.</p>'
-    );
+	  '<h3>Seleccione un Staff</h3>' +
+	  '<p>Debe elegir un staff para poder agendar un horario.</p>'
+	);
 	return false;
 }
 
-function checkOtherBookings () {
-	var user = $('#user').val();
-	var warning = '<div class="alert alert-warning alert-dismissable fade in">' +
-                '<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>' +
-                '<strong>Warning!</strong> Better check yourself, youre not looking too good.' +
-            	'</div>';
-    $('.box-step > .col-md-12').prepend(warning);
-	// Revisar si el usuario tiene otro booking
-	// que calce a la misma hora o que se crucen.
-	// Alertar al usuario
+function checkUserCrossBookings (booking) {
+	$('#warning').empty();
+	if (booking.status == 'available') {
+		var user = $('#user').val();
+		var booking_start = generateDate(booking.date, booking.start);
+		var booking_end = generateDate(booking.date, booking.end);
+		$.getJSON('/check_user_cross_bookings', {user: user, booking_start: booking_start, booking_end: booking_end}, function (result) {
+			if (result.crossover) {
+				var warning = '<div class="alert alert-warning alert-dismissable fade in" style="margin-bottom: 0px;">' +
+									'<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>' +
+									'<strong>¡Advertencia!</strong> Tienes agendado <em>' + result.booking.service + '</em> con <em>' + result.booking.service_provider + '</em> de <em>' + result.booking.start + '</em> a <em>' + result.booking.end + '</em>.' +
+								'</div>';
+				$('#warning').append(warning);
+			};
+		});
+	};
 }
 
 var step = 1;
@@ -193,10 +197,10 @@ function scrollEvents (direction) {
 		if (step == 1) {
 			if(!$('[name="serviceRadio"]').is(':checked')) {
 				myAlert.showAlert(
-			      '<h3>Seleccione un Servicio</h3>' +
-			      '<p>Debe elegir un servicio antes de poder continuar.</p>'
-			    );
-			    return false;
+				  '<h3>Seleccione un Servicio</h3>' +
+				  '<p>Debe elegir un servicio antes de poder continuar.</p>'
+				);
+				return false;
 			}
 			else {
 				loadStep2();
@@ -207,18 +211,18 @@ function scrollEvents (direction) {
 		else {
 			if(!$('[name="staffRadio"]').is(':checked')) {
 				myAlert.showAlert(
-			      '<h3>Seleccione un Staff</h3>' +
-			      '<p>Debe elegir un staff para poder agendar un horario.</p>'
-			    );
-			    return false;
+				  '<h3>Seleccione un Staff</h3>' +
+				  '<p>Debe elegir un staff para poder agendar un horario.</p>'
+				);
+				return false;
 			}
 			else {
 				if(!selected) {
 					myAlert.showAlert(
-				      '<h3>Seleccione un Horario</h3>' +
-				      '<p>Debe elegir un horario antes de poder continuar.</p>'
-				    );
-			    	return false;
+					  '<h3>Seleccione un Horario</h3>' +
+					  '<p>Debe elegir un horario antes de poder continuar.</p>'
+					);
+					return false;
 				}
 				else {
 					loadStep3();
@@ -285,6 +289,7 @@ function addBooking (booking) {
 	selected = true;
 	$('#start').val(generateDate(booking.date, booking.start));
 	$('#end').val(generateDate(booking.date, booking.end));
+	checkUserCrossBookings(booking);
 }
 
 function generateDate(date, time) {

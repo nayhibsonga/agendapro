@@ -1,8 +1,8 @@
 class BookingsController < ApplicationController
   before_action :set_booking, only: [:show, :edit, :update, :destroy]
-  before_action :authenticate_user!, except: [:create, :provider_booking, :book_service, :edit_booking, :edit_booking_post, :cancel_booking]
-  before_action :quick_add, except: [:create, :provider_booking, :book_service, :edit_booking, :edit_booking_post, :cancel_booking]
-  layout "admin", except: [:book_service, :provider_booking, :edit_booking, :edit_booking_post, :cancel_booking]
+  before_action :authenticate_user!, except: [:create, :provider_booking, :book_service, :edit_booking, :edit_booking_post, :cancel_booking, :check_user_cross_bookings]
+  before_action :quick_add, except: [:create, :provider_booking, :book_service, :edit_booking, :edit_booking_post, :cancel_booking, :check_user_cross_bookings]
+  layout "admin", except: [:book_service, :provider_booking, :edit_booking, :edit_booking_post, :cancel_booking, :check_user_cross_bookings]
   load_and_authorize_resource
 
   # GET /bookings
@@ -243,6 +243,32 @@ class BookingsController < ApplicationController
     @url = @company.web_address + '.' + host[host.index(request.domain)..host.length]
 
     render layout: 'workflow'
+  end
+
+  def check_user_cross_bookings
+    require 'date'
+    if !params[:user].blank?
+      bookings = Booking.where(:user_id => params[:user], :status_id => [Status.find_by(:name => 'Reservado'), Status.find_by(:name => 'Pagado'), Status.find_by(:name => 'Confirmado')])
+      booking_start = DateTime.parse(params[:booking_start])
+      booking_end = DateTime.parse(params[:booking_end])
+      bookings.each do |booking|
+        book_start = DateTime.parse(booking.start.to_s)
+        book_end = DateTime.parse(booking.end.to_s)
+        if (book_start - booking_end) * (booking_start - book_end) > 0
+          render :json => {
+            :crossover => true,
+            :booking => {
+              :service => booking.service.name,
+              :service_provider => booking.service_provider.public_name,
+              :start => booking.start,
+              :end => booking.end
+            }
+          }
+          return
+        end
+      end
+    end
+    render :json => {:crossover => false}
   end
 
   private
