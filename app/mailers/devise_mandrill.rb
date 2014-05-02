@@ -48,7 +48,10 @@ class DeviseMandrill < Devise::Mailer
     # => Send mail
     result = mandrill.messages.send_template template_name, template_content, message, async, send_at
 
-    super
+    # Se comentó para no mandar 2 veces el mail.
+    # Igual queda pendiente de revisión exhaustiva por falta de información.
+
+    # super
 
   rescue Mandrill::Error => e
     puts "A mandrill error occurred: #{e.class} - #{e.message}"
