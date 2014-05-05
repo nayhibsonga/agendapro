@@ -7,8 +7,8 @@ function loadSchedule(id) {
       if (hour.open) {
         $('#schedule-body').append(
           '<tr>' +
-            '<th>' + day + '</th>' +
-            '<th>' + getHour(hour.open) + '-' + getHour(hour.close) + '</th>' +
+            '<th>' + day + ':</th>' +
+            '<th>' + getHour(hour.open) + ' - ' + getHour(hour.close) + '</th>' +
           '</tr>'
         );
       }

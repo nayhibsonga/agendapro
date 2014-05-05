@@ -28,7 +28,7 @@ class DeviseMandrill < Devise::Mailer
         },
         {
           :name => 'RESET_PASSWORD',
-          :content => "<a href='#{edit_user_password_url(:reset_password_token => record.reset_password_token)}'>Cambiar mi contraseña</a>"
+          :content => "<a href='#{edit_user_password_url(:reset_password_token => token)}'>Cambiar mi contraseña</a>"
         }
       ],
       :tags => ['devise', 'password'],
@@ -48,7 +48,10 @@ class DeviseMandrill < Devise::Mailer
     # => Send mail
     result = mandrill.messages.send_template template_name, template_content, message, async, send_at
 
-    super
+    # Se comentó para no mandar 2 veces el mail.
+    # Igual queda pendiente de revisión exhaustiva por falta de información.
+
+    # super
 
   rescue Mandrill::Error => e
     puts "A mandrill error occurred: #{e.class} - #{e.message}"
