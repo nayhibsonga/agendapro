@@ -28,7 +28,7 @@ class DeviseMandrill < Devise::Mailer
         },
         {
           :name => 'RESET_PASSWORD',
-          :content => "<a href='#{edit_user_password_url(:reset_password_token => record.reset_password_token)}'>Cambiar mi contraseña</a>"
+          :content => "<a href='#{edit_user_password_url(:reset_password_token => token)}'>Cambiar mi contraseña</a>"
         }
       ],
       :tags => ['devise', 'password'],
