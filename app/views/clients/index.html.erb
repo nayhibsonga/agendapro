@@ -96,6 +96,10 @@
   <%= link_to "CSV", clients_path(format: "csv", location: params[:location], provider: params[:provider], gender: params[:gender]) %> |
   <%= link_to "Excel", clients_path(format: "xls", location: params[:location], provider: params[:provider], gender: params[:gender]) %>
 </p>
+<%= form_tag import_clients_path, multipart: true do %>
+  <%= file_field_tag :file %>
+  <%= submit_tag "Import" %>
+<% end %>
 <div class="modal fade" id="mailModal" tabindex="-1" role="dialog" aria-labelledby="mailModalLabel" aria-hidden="true">
 	<div class="modal-dialog">
 		<div class="modal-content">

@@ -174,6 +174,11 @@ class ClientsController < ApplicationController
     render :json => @clients_arr
   end
 
+  def import
+    Client.import(params[:file], current_user.company_id)
+    redirect_to clients_path, notice: "Clientes importados."
+  end
+
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_client
