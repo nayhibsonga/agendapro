@@ -71,6 +71,7 @@ $(function() {
 			else {
 				error.appendTo(element.next());
 			}
+			$('#foo5').trigger('updateSizes');
 		},
 		rules: {
 			'service[name]': {
