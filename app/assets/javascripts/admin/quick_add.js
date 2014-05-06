@@ -183,6 +183,28 @@ function locJSON (ctrl) {
 	return locationJSON;
 }
 
+function loadProvider () {
+	var location_id = $('#service_provider_location_id').val();
+	$.getJSON('/location_time', {id: location_id}, function (times) {
+		$.each(times, function (key, time) {
+			$('#' + prov + 'openHourId'+ time.day_id).prop('disabled', false);
+			$('#' + prov + 'openMinuteId'+ time.day_id).prop('disabled', false);
+			$('#' + prov + 'closeHourId'+ time.day_id).prop('disabled', false);
+			$('#' + prov + 'closeMinuteId'+ time.day_id).prop('disabled', false);
+
+			var openTime = new Date(Date.parse(time.open)).toUTCString().split(" ")[4].split(":");
+			$('#' + prov + 'openHourId'+ time.day_id +' option[value="'+openTime[0]+'"]').attr("selected",true);
+			$('#' + prov + 'openMinuteId'+ time.day_id +' option[value="'+openTime[1]+'"]').attr("selected",true);
+			var closeTime = new Date(Date.parse(time.close)).toUTCString().split(" ")[4].split(":");
+			$('#' + prov + 'closeHourId'+ time.day_id +' option[value="'+closeTime[0]+'"]').attr("selected",true);
+			$('#' + prov + 'closeMinuteId'+ time.day_id +' option[value="'+closeTime[1]+'"]').attr("selected",true);
+
+			$('#' + prov + 'dayStatusId' + time.day_id).prop('checked', true);
+			changeDayStatus(time.day_id, prov);
+		});
+	});
+}
+
 // Validations
 function locationValid (ctrl) {
 	var locationJSON = locJSON(ctrl);
@@ -404,6 +426,7 @@ function createService () {
 		url: '/quick_add/services',
 		data: $('#new_service').serialize(),
 		success: function (result) {
+			loadProvider();
 			nextFn = providerValid;
 			$('#foo5').trigger('nextPage');
     		hideLoad();

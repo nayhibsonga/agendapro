@@ -96,12 +96,14 @@
                       <th>Fecha</th>
                       <th>Local</th>
                       <th>Servicio</th>
+                      <th>Estado</th>
                     </tr>
                     <% @lastBookings.each do |booking| %>
                     <tr>
                       <td><%= l booking.start, format: :short %></td>
                       <td><%= booking.location.name %></td>
                       <td><%= booking.service.name %></td>
+                      <td><%= booking.status.name %></td>
                     </tr>
                     <% end %>
                   </tbody>
@@ -121,12 +123,14 @@
                       <th>Fecha</th>
                       <th>Local</th>
                       <th>Servicio</th>
+                      <th>Estado</th>
                     </tr>
                     <% @activeBookings.each do |booking| %>
                     <tr>
                       <td><%= l booking.start, format: :short %></td>
                       <td><%= booking.location.name %></td>
                       <td><%= booking.service.name %></td>
+                      <td><%= booking.status.name %></td>
                     </tr>
                     <% end %>
                   </tbody>

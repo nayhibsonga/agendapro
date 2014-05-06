@@ -1,10 +1,22 @@
 <div class="container">
-	<div class="row">
-		<h2>Agrega tu compañía a AgendaPro</h2>
-		<h4>¡Podrás tener el sistema AgendaPro para tu propio negocio!</h4>
+  <div class="row">
+    <section class="hgroup">
+      <h2>Agrega tu compañía a AgendaPro</h2>
+      <h2 class="section_header">¡Podrás tener el sistema AgendaPro para tu propio negocio!</h2>
+      <div class="line-breadcrumb">
+        <ul class="breadcrumb pull-right">
+            <li><%= link_to "Inicio", root_path %> </li>
+            <li class="active">Agregar Compañía</li>
+        </ul>
+    </div>
+    </section>
+  </div>
+</div>
 
+<div class="container">
+	<div class="row well">
 		<div class="col-sm-8 col-md-9">
-			<%= form_for @company, :html => { :class => 'form-horizontal well', :multipart => true } do |f| %>
+			<%= form_for @company, :html => { :class => 'form-horizontal', :multipart => true } do |f| %>
 				<% if @company.errors.any? %>
 					<div id="error_explanation">
 						<h2><%= pluralize(@company.errors.count, "error") %> no permitió que la empresa sea creada:</h2>

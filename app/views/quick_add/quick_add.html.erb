@@ -74,7 +74,7 @@
 					<div class="col-sm-9">
 						<div class="input-group">
 							<span class="input-group-addon">$</span>
-							<%= f.number_field :price, class: "form-control", :min => 0 %>
+							<%= f.text_field :price, class: "form-control" %>
 							<span class="input-group-addon">Pesos</span>
 						</div>
 						<span class="help-block"></span>
@@ -89,7 +89,7 @@
 					<%= f.label :duration, "Duración: ", class: "col-sm-3 control-label" %>
 					<div class="col-sm-9">
 						<div class="input-group">
-							<%= f.number_field :duration, class: "form-control", :in => 5...1440, :step => 5 %>
+							<%= f.text_field :duration, class: "form-control" %>
 							<span class="input-group-addon">Minutos</span>
 						</div>
 						<span class="help-block"></span>
@@ -143,7 +143,7 @@
 					<%= f.label :capacity, "Capacidad: ", class: "col-sm-4 control-label" %>
 					<div class="col-sm-8">
 						<div class="input-group">
-							<%= f.number_field :capacity, class: "form-control", :min => 2 %>
+							<%= f.text_field :capacity, class: "form-control" %>
 							<span class="input-group-addon">Personas</span>
 						</div>
 						<span class="help-block"></span>

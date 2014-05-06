@@ -1,6 +1,16 @@
 <div class="container">
   <div class="row"> 
     <%= form_for @service, html: {class: "form-horizontal" } do |f| %>
+      <% if @service.errors.any? %>
+        <div id="error_explanation">
+          <h3><%= pluralize(@service.errors.count, "error") %> no permitió que el servicio fuera creado:</h3>
+          <ul>
+          <% @service.errors.full_messages.each do |msg| %>
+            <li><%= msg %></li>
+          <% end %>
+          </ul>
+        </div>
+      <% end %>
       <div class="col-md-6">
         <div class="col-md-12 well">
           <div class="form-group">
@@ -102,6 +112,35 @@
               <% end %>
             </div>
           </div>
+          <div class="form-group">
+          <%= f.label :service_provider_ids, "Proveedores de Servicios: ", class: "col-sm-4 control-label" %>
+          <div class="col-sm-8">
+            <div class="panel-group" id="service-provider-accordion">
+              <% Location.accessible_by(current_ability).each do |location| %>
+              <% @service_providers = ServiceProvider.where(company_id: current_user.company_id, location_id: location.id, :active => true) %>
+              <% if @service_providers.length > 0 %>
+              <div class="panel panel-default">
+                <div class="panel-heading">
+                  <h4 class="panel-title">
+                    <a data-toggle="collapse" data-parent="#service-provider-accordion" href="#location<%= location.id %>"><%= location.name %></a>
+                    <input type="checkbox" name="selectLocation" id="selectLocation<%= location.id %>" value="0" class="pull-right">
+                  </h4>
+                </div>
+                <div id="location<%= location.id %>" class="panel-collapse collapse<% if location == Location.accessible_by(current_ability).first%> in<% end %>">
+                  <div class="panel-body">
+                    <%= f.collection_check_boxes :service_provider_ids, @service_providers, :id, :public_name, {}, {class: "check_boxes"} do |b|%>
+                      <div class="checkbox">
+                        <%= b.label %> <%= b.check_box %>
+                      </div>
+                    <% end %>
+                  </div>
+                </div>
+              </div>
+              <% end %>
+              <% end %>
+            </div>
+          </div>
+        </div>
         </div>
       </div>
     <% end %>

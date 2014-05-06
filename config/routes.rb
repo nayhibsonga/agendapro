@@ -43,7 +43,6 @@ Agendapro::Application.routes.draw do
 
   # Quick Add
   get '/quick_add', :to => 'quick_add#quick_add', :as => 'quick_add'
-  get '/quick_add/service_provider', :to => 'quick_add#service_provider', :as => 'quick_add_service_provider'
     # Validation
   post '/quick_add/location_valid', :to => 'quick_add#location_valid'
   post '/quick_add/services_valid', :to => 'quick_add#services_valid'
