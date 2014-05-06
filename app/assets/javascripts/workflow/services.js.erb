@@ -131,6 +131,8 @@ function loadStep2 () {
 function loadStep3 () {
 	if ($('[name="staffRadio"]').is(':checked')){
 		if (selected) {
+			checkUserCrossBookings();
+
 			$('#provider').val($('input[name=staffRadio]:checked').val());
 			$('#service').val($('input[name=serviceRadio]:checked').val());
 
@@ -173,22 +175,20 @@ function loadStep3 () {
 	return false;
 }
 
-function checkUserCrossBookings (booking) {
-	$('#warning').empty();
-	if (booking.status == 'available') {
-		var user = $('#user').val();
-		var booking_start = generateDate(booking.date, booking.start);
-		var booking_end = generateDate(booking.date, booking.end);
-		$.getJSON('/check_user_cross_bookings', {user: user, booking_start: booking_start, booking_end: booking_end}, function (result) {
-			if (result.crossover) {
-				var warning = '<div class="alert alert-warning alert-dismissable fade in" style="margin-bottom: 0px;">' +
-									'<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>' +
-									'<strong>¡Advertencia!</strong> Tienes agendado <em>' + result.booking.service + '</em> con <em>' + result.booking.service_provider + '</em> de <em>' + result.booking.start + '</em> a <em>' + result.booking.end + '</em>.' +
-								'</div>';
-				$('#warning').append(warning);
-			};
-		});
-	};
+function checkUserCrossBookings () {
+	$(".alert").alert('close');
+	var user = $('#user').val();
+	var booking_start = $('#start').val();
+	var booking_end = $('#end').val();
+	$.getJSON('/check_user_cross_bookings', {user: user, booking_start: booking_start, booking_end: booking_end}, function (result) {
+		if (result.crossover) {
+			var warning = '<div class="alert alert-warning alert-dismissable fade in" style="margin-bottom: 0px;">' +
+								'<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>' +
+								'<strong>¡Advertencia!</strong> Tienes agendado <em>' + result.booking.service + '</em> con <em>' + result.booking.service_provider + '</em> de <em>' + result.booking.start + '</em> a <em>' + result.booking.end + '</em>.' +
+							'</div>';
+			$('#warning').append(warning);
+		};
+	});
 }
 
 var step = 1;
@@ -289,7 +289,6 @@ function addBooking (booking) {
 	selected = true;
 	$('#start').val(generateDate(booking.date, booking.start));
 	$('#end').val(generateDate(booking.date, booking.end));
-	checkUserCrossBookings(booking);
 }
 
 function generateDate(date, time) {
