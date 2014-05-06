@@ -6,7 +6,7 @@ class PuntoPagosController < ApplicationController
   	req = PuntoPagos::Request.new()
   	resp = req.create(trx_id, amount, payment_method)
 
-    puts resp
+    puts resp.inspect
 
   	if resp.success?
   		redirect_to resp.payment_process_url
