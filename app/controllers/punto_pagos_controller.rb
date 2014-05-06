@@ -1,8 +1,6 @@
 class PuntoPagosController < ApplicationController
   def generate_transaction
-  	@booking = Booking.find(params[:booking])
-
-  	trx_id = DateTime.now.to_s.gsub(/[-:T]/i, '') + @booking.id.to_s
+  	trx_id = DateTime.now.to_s.gsub(/[-:T]/i, '')
   	amount = @booking.service.price.to_s + '.00'
     payment_method = '1'
   	req = PuntoPagos::Request.new()

@@ -83,10 +83,10 @@ Agendapro::Application.routes.draw do
   post "/pcontact", :to => 'home#post_contact'
 
   # Punto Pagos
-  get "punto_pagos/generate_transaction", :to => 'punto_pagos#generate_transaction'
-  post "punto_pagos/notification", :to => 'punto_pagos#notification'
-  get "punto_pagos/success", :to => 'punto_pagos#success'
-  get "punto_pagos/failure", :to => 'punto_pagos#failure'
+  get "/punto_pagos/generate_transaction", :to => 'punto_pagos#generate_transaction'
+  post "/punto_pagos/notification", :to => 'punto_pagos#notification'
+  get "/punto_pagos/success", :to => 'punto_pagos#success'
+  get "/punto_pagos/failure", :to => 'punto_pagos#failure'
 
   # Search
   get "searchs/index"
