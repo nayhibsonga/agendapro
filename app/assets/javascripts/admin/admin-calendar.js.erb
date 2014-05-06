@@ -358,9 +358,11 @@ function loadProviderBooking (providerId) {
 						}
 					}
 					if (booking.status_id != 5) {
-						// Realizar migracion para conocer origen
-						// crear clase segun el origen
-						// pegar la clase
+						var originClass = 'origin-manual';
+						if (booking.web_origin) {
+							originClass = 'origin-web';
+						};
+
 						var events = {
 							id: booking.id,
 							title: booking.service_name+' - '+booking.last_name+', '+booking.first_name,
@@ -369,7 +371,7 @@ function loadProviderBooking (providerId) {
 							end: booking.end,
 							resourceId: booking.service_provider_id,
 							color: eventColor,
-							className: 'origin-manual'
+							className: originClass
 						};
 						$('#calendar').fullCalendar('renderEvent', events, true);
 					}
@@ -389,7 +391,11 @@ function loadProviderBooking (providerId) {
 						}
 					}
 					if (booking.status_id != 5) {
-						// Copiar lo de arriba
+						var originClass = 'origin-manual';
+						if (booking.web_origin) {
+							originClass = 'origin-web';
+						};
+
 						var events = {
 							id: booking.id,
 							title: booking.service_name+' - '+booking.last_name+', '+booking.first_name,
@@ -397,7 +403,8 @@ function loadProviderBooking (providerId) {
 							start: booking.start,
 							end: booking.end,
 							resourceId: booking.service_provider_id,
-							color: eventColor
+							color: eventColor,
+							className: originClass
 						};
 						$('#calendar').fullCalendar('renderEvent', events, true);
 					}
