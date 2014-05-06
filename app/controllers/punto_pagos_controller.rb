@@ -8,6 +8,8 @@ class PuntoPagosController < ApplicationController
 
   	if resp.success?
   		redirect_to resp.payment_process_url
+    else
+      redirect_to punto_pagos_failure_path
   	end
   end
 
