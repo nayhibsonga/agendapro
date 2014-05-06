@@ -1,7 +1,7 @@
 development:
   environment:        'sandbox'
-  puntopagos_key:     '0PN5J17HBGZHT7ZZ3X82'
-  puntopagos_secret:  'uV3F4YluFJax1cKnvbcGwgjvx4QpvB+leU8dUj2o'
+  puntopagos_key:     '90JFT2LuxJ3p1T82Vedx'
+  puntopagos_secret:  'eSKq9aKX9fS3cPVWNWvfZfiqvCNd7FrdVT1OxUUL'
 test:
   environment:        'sandbox'
   puntopagos_key:     'YOUR-API-KEY'

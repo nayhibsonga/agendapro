@@ -84,8 +84,7 @@ Agendapro::Application.routes.draw do
 
   # Punto Pagos
   get "punto_pagos/generate_transaction", :to => 'punto_pagos#generate_transaction'
-  get "punto_pagos/recieve_results", :to => 'punto_pagos#recieve_results'
-  get "punto_pagos/notification", :to => 'punto_pagos#notification'
+  post "punto_pagos/notification", :to => 'punto_pagos#notification'
   get "punto_pagos/success", :to => 'punto_pagos#success'
   get "punto_pagos/failure", :to => 'punto_pagos#failure'
 
