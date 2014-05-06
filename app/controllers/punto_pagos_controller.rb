@@ -1,7 +1,7 @@
 class PuntoPagosController < ApplicationController
   def generate_transaction
   	trx_id = DateTime.now.to_s.gsub(/[-:T]/i, '')
-  	amount = @booking.service.price.to_s + '.00'
+  	amount = '10000.00'
     payment_method = '1'
   	req = PuntoPagos::Request.new()
   	resp = req.create(trx_id, amount, payment_method)
