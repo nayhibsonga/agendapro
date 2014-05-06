@@ -1,8 +1,8 @@
 class BookingsController < ApplicationController
   before_action :set_booking, only: [:show, :edit, :update, :destroy]
-  before_action :authenticate_user!, except: [:create, :provider_booking, :book_service, :edit_booking, :edit_booking_post, :cancel_booking]
-  before_action :quick_add, except: [:create, :provider_booking, :book_service, :edit_booking, :edit_booking_post, :cancel_booking]
-  layout "admin", except: [:book_service, :provider_booking, :edit_booking, :edit_booking_post, :cancel_booking]
+  before_action :authenticate_user!, except: [:create, :provider_booking, :book_service, :edit_booking, :edit_booking_post, :cancel_booking, :confirm_booking]
+  before_action :quick_add, except: [:create, :provider_booking, :book_service, :edit_booking, :edit_booking_post, :cancel_booking, :confirm_booking]
+  layout "admin", except: [:book_service, :provider_booking, :edit_booking, :edit_booking_post, :cancel_booking, :confirm_booking]
   load_and_authorize_resource
 
   # GET /bookings
@@ -188,8 +188,8 @@ class BookingsController < ApplicationController
   end
 
   def edit_booking
-    code = params[:confirmation_code].split('-')
-    id = code[0][0,code[1].to_i].to_i
+    crypt = ActiveSupport::MessageEncryptor.new(Agendapro::Application.config.secret_key_base)
+    id = crypt.decrypt_and_verify(params[:confirmation_code])
     @booking = Booking.find(id)
     @company = Location.find(@booking.location_id).company
 
@@ -219,10 +219,21 @@ class BookingsController < ApplicationController
     render layout: "workflow"
   end
 
+  def confirm_booking
+    crypt = ActiveSupport::MessageEncryptor.new(Agendapro::Application.config.secret_key_base)
+    id = crypt.decrypt_and_verify(params[:confirmation_code])
+    @booking = Booking.find(id)
+    @company = Location.find(@booking.location_id).company
+
+    @booking.update(:status => Status.find_by(:name => 'Confirmado'))
+
+    render layout: 'workflow'
+  end
+
   def cancel_booking
     unless params[:id]
-      code = params[:confirmation_code].split('-')
-      id = code[0][0,code[1].to_i].to_i
+      crypt = ActiveSupport::MessageEncryptor.new(Agendapro::Application.config.secret_key_base)
+      id = crypt.decrypt_and_verify(params[:confirmation_code])
       @booking = Booking.find(id)
     else
       @booking = Booking.find(params[:id])

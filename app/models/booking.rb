@@ -78,12 +78,9 @@ class Booking < ActiveRecord::Base
   	end
 
   	def confirmation_code
-  		id = self.id.to_s
-  		id_length = id.length.to_s
-  		local_id = self.location_id.to_s
-  		service_id = self.service_id.to_s
-  		provider_id = self.service_provider_id.to_s
-  		return id + local_id + service_id + provider_id + '-' + id_length
+  		crypt = ActiveSupport::MessageEncryptor.new(Agendapro::Application.config.secret_key_base)
+    	encrypted_data = crypt.encrypt_and_sign(self.id.to_s)
+  		return encrypted_data
   	end
 
   	def send_booking_mail
@@ -105,7 +102,6 @@ class Booking < ActiveRecord::Base
 		@time2 = Time.new.getutc + 2.day
 		where(:start => @time1...@time2).each do |booking|
 			unless booking.status == Status.find_by(:name => "Cancelado")
-				booking.update_column(:status_id, Status.find_by(:name => "Confirmado")) unless booking.status == Status.find_by(:name => "Pagado")
 				BookingMailer.book_reminder_mail(booking)
 			end
 		end
