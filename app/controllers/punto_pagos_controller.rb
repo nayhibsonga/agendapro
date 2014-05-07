@@ -10,7 +10,6 @@ class PuntoPagosController < ApplicationController
   		redirect_to resp.payment_process_url
     else
       puts resp.get_error
-      puts resp[:error]
       redirect_to punto_pagos_failure_path
   	end
   end
