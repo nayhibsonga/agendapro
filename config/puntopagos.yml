@@ -4,9 +4,9 @@ development:
   puntopagos_secret:  'eSKq9aKX9fS3cPVWNWvfZfiqvCNd7FrdVT1OxUUL'
 test:
   environment:        'sandbox'
-  puntopagos_key:     'YOUR-API-KEY'
-  puntopagos_secret:  'YOUR-APP-SECRET'
+  puntopagos_key:     '90JFT2LuxJ3p1T82Vedx'
+  puntopagos_secret:  'eSKq9aKX9fS3cPVWNWvfZfiqvCNd7FrdVT1OxUUL'
 production:
   environment:        'production'
-  puntopagos_key:     'YOUR-API-KEY'
-  puntopagos_secret:  'YOUR-APP-SECRET'
+  puntopagos_key:     '90JFT2LuxJ3p1T82Vedx'
+  puntopagos_secret:  'eSKq9aKX9fS3cPVWNWvfZfiqvCNd7FrdVT1OxUUL'
