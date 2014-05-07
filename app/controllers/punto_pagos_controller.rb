@@ -24,6 +24,9 @@ class PuntoPagosController < ApplicationController
 
   def notification
     puts "Entra a notificacion"
+    if params[:trx]
+      puts params[:trx]
+    end
     notification = PuntoPagos::Notification.new
     puts notification.valid?
     notification.valid? headers.to_hash, params.to_hash
