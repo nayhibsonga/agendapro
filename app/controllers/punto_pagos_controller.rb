@@ -3,7 +3,7 @@ class PuntoPagosController < ApplicationController
   	trx_id = DateTime.now.to_s.gsub(/[-:T]/i, '')
     puts trx_id
   	amount = '10000.00'
-    payment_method = '999'
+    payment_method = '3'
   	req = PuntoPagos::Request.new()
   	resp = req.create(trx_id, amount, payment_method)
 
