@@ -1,6 +1,7 @@
 class PuntoPagosController < ApplicationController
   def generate_transaction
   	trx_id = DateTime.now.to_s.gsub(/[-:T]/i, '')
+    puts trx_id
   	amount = '10000.00'
     payment_method = '999'
   	req = PuntoPagos::Request.new()
