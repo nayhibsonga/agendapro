@@ -1,7 +1,6 @@
 class PuntoPagosController < ApplicationController
   def generate_transaction
   	trx_id = DateTime.now.to_s.gsub(/[-:T]/i, '')
-    puts trx_id
   	amount = '10000.00'
     payment_method = '3'
   	req = PuntoPagos::Request.new()
@@ -24,7 +23,9 @@ class PuntoPagosController < ApplicationController
   end
 
   def notification
+    puts "Entra a notificacion"
     notification = PuntoPagos::Notification.new
-    notification.valid? headers, params
+    puts notification.valid?
+    notification.valid? headers.to_hash, params.to_hash
   end
 end
