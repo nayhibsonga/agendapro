@@ -7,10 +7,10 @@ class PuntoPagosController < ApplicationController
   	resp = req.create(trx_id, amount, payment_method)
 
   	if resp.success?
-      puts resp.get_error
-      puts resp[:error]
   		redirect_to resp.payment_process_url
     else
+      puts resp.get_error
+      puts resp[:error]
       redirect_to punto_pagos_failure_path
   	end
   end
