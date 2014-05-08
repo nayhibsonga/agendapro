@@ -19,9 +19,8 @@ class ClientsController < ApplicationController
 
     respond_to do |format|
       format.html
-      format.csv { 
-        send_data @clients_export.to_csv }
-      format.xls 
+      format.csv
+      format.xls
     end
   end
 

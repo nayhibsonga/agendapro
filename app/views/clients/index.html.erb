@@ -47,9 +47,9 @@
 <table class="table table-bordered">
 	<thead>
 		<tr>
+			<th>Email</th>
 			<th>Nombre</th>
 			<th>Apellido</th>
-			<th>Email</th>
 			<th>Teléfono</th>
 			<th>Opciones</th>
 			<th>
@@ -61,9 +61,9 @@
 	<tbody>
 		<% @clients.each do |client| %>
 			<tr>
+				<td><%= client.email %></td>
 				<td><%= client.first_name %></td>
 				<td><%= client.last_name %></td>
-				<td><%= client.email %></td>
 				<td><%= client.phone %></td>
 				<td><%= link_to '<i class="fa fa-pencil"></i> Ver / Editar'.html_safe, edit_client_path(client), :class => "btn btn-warning" %>
             		<%= link_to '<i class="fa fa-trash-o"></i> Eliminar'.html_safe, client, :class => "btn btn-danger", method: :delete, data: { confirm: '¿Estás seguro de eliminar el Cliente seleccionado?' } unless cannot? :destroy, client %></td>
@@ -92,14 +92,30 @@
 	</div>
 </div>
 <p>
-  Dercargar listado de todos los clientes:
+  Dercargar este listado de clientes:
   <%= link_to "CSV", clients_path(format: "csv", location: params[:location], provider: params[:provider], gender: params[:gender]) %> |
   <%= link_to "Excel", clients_path(format: "xls", location: params[:location], provider: params[:provider], gender: params[:gender]) %>
 </p>
 <%= form_tag import_clients_path, multipart: true do %>
-  <%= file_field_tag :file %>
-  <%= submit_tag "Import" %>
+  <div class="form-group">
+	<%= file_field_tag "Elegir Archivo", :class => 'form-control'  %>
+	<span class="help-block"></span>
+		
+	</div>
+  <%= submit_tag "Importar", class: "btn btn-primary" %>
 <% end %>
+
+
+<%= link_to 'Ejemplo plantilla Excel', '/clients_base.xls', :target => :blank %> | 
+<%= link_to 'Ejemplo plantilla CSV', '/clients_base.csv', :target => :blank %><br />
+
+Instrucciones:<br />
+- El identificador único para los clientes desde archivos es el email, por lo que si se sube un cliente con un mail existente, los valores cambian si alguno cambia en la planilla. Si no existe, se crea un registro nuevo. Para editar el mail de un cliente o eliminar al cliente de la base de datos de la empresa, se debe hacer manualmente a través de la página.<br />
+- Las fechas de cumpleaños ingresadas deben ser en formato aaaa-mm-dd (ej: 1980-02-24).
+- Para ingresar el género de los clientes, se debe ingresar 0 si no se desea especificar, 1 si es Femenino o 2 si es Masculino.<br />
+- No se pueden cambiar los nombres de las columnas para que funcione la importación de datos.<br />
+- etc.<br />
+
 <div class="modal fade" id="mailModal" tabindex="-1" role="dialog" aria-labelledby="mailModalLabel" aria-hidden="true">
 	<div class="modal-dialog">
 		<div class="modal-content">

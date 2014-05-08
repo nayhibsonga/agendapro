@@ -18,7 +18,7 @@
         <Cell><Data ss:Type="String">Género</Data></Cell>
         <Cell><Data ss:Type="String">Fecha Creación</Data></Cell>
       </Row>
-    <% @clients.each do |client| %>
+    <% @clients_export.each do |client| %>
       <Row>
         <Cell><Data ss:Type="String"><%= client.email %></Data></Cell>
         <Cell><Data ss:Type="String"><%= client.first_name %></Data></Cell>
