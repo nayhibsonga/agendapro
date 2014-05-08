@@ -98,11 +98,11 @@
 </p>
 <%= form_tag import_clients_path, multipart: true do %>
   <div class="form-group">
-	<%= file_field_tag "Elegir Archivo", :class => 'form-control'  %>
+	<%= file_field_tag :file, :class => 'form-control'  %>
 	<span class="help-block"></span>
 		
 	</div>
-  <%= submit_tag "Importar", class: "btn btn-primary" %>
+  <%= submit_tag "Importar", class: "btn btn-primary", disabled: true, id: "import_button" %>
 <% end %>
 
 
