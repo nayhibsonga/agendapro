@@ -103,6 +103,7 @@ Agendapro::Application.routes.draw do
   post "/book", :to => 'bookings#book_service'
   get '/category_name', :to => 'service_categories#get_category_name'
   get '/get_available_time', :to => 'locations#get_available_time'
+  get '/check_user_cross_bookings', :to => 'bookings#check_user_cross_bookings'
 
   # Fullcalendar
   get '/service', :to => 'services#service_data'  # Fullcalendar
@@ -120,6 +121,7 @@ Agendapro::Application.routes.draw do
   post '/edited_booking', :to => 'bookings#edit_booking_post'
   get '/cancel_booking', :to => 'bookings#cancel_booking', :as => 'booking_cancel'
   post '/cancel_booking', :to => 'bookings#cancel_booking'
+  get '/confirm_booking', :to => 'bookings#confirm_booking', :as => 'confirm_booking'
 
   post '/clients/:id/comments', :to => 'clients#create_comment'
   patch '/clients/:id/comments', :to => 'clients#update_comment'
