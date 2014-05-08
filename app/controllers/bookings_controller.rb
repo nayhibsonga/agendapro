@@ -157,7 +157,7 @@ class BookingsController < ApplicationController
     end
     @bookings = Booking.where(:service_provider_id => @provider, :location_id => params[:location]).order(:start)
     @booklist = @bookings.map do |u|
-      { :id => u.id, :start => u.start, :end => u.end, :service_id => u.service_id, :service_provider_id => u.service_provider_id, :user_id => u.user_id, :status_id => u.status_id, :first_name => u.first_name, :last_name => u.last_name, :email => u.email, :phone => u.phone, :notes => u.notes, service_provider_active: u.service_provider.active, service_active: u.service.active, service_provider_name: u.service_provider.public_name, service_name: u.service.name}
+      { :id => u.id, :start => u.start, :end => u.end, :service_id => u.service_id, :service_provider_id => u.service_provider_id, :user_id => u.user_id, :status_id => u.status_id, :first_name => u.first_name, :last_name => u.last_name, :email => u.email, :phone => u.phone, :notes => u.notes, service_provider_active: u.service_provider.active, service_active: u.service.active, service_provider_name: u.service_provider.public_name, service_name: u.service.name, web_origin: u.web_origin}
     end
 
     json = @booklist.to_json
@@ -166,9 +166,9 @@ class BookingsController < ApplicationController
 
   def book_service
     if user_signed_in?
-      @booking = Booking.new(start: params[:start], end: params[:end], notes: params[:comment], service_provider_id: params[:provider], service_id: params[:service], location_id: params[:location], status_id: Status.find_by(name: 'Reservado').id, first_name: params[:firstName], last_name: params[:lastName], email: params[:email], phone: params[:phone], user_id: current_user.id)
+      @booking = Booking.new(start: params[:start], end: params[:end], notes: params[:comment], service_provider_id: params[:provider], service_id: params[:service], location_id: params[:location], status_id: Status.find_by(name: 'Reservado').id, first_name: params[:firstName], last_name: params[:lastName], email: params[:email], phone: params[:phone], user_id: current_user.id, web_origin: params[:origin])
     else
-      @booking = Booking.new(start: params[:start], end: params[:end], notes: params[:comment], service_provider_id: params[:provider], service_id: params[:service], location_id: params[:location], status_id: Status.find_by(name: 'Reservado').id, first_name: params[:firstName], last_name: params[:lastName], email: params[:email], phone: params[:phone])
+      @booking = Booking.new(start: params[:start], end: params[:end], notes: params[:comment], service_provider_id: params[:provider], service_id: params[:service], location_id: params[:location], status_id: Status.find_by(name: 'Reservado').id, first_name: params[:firstName], last_name: params[:lastName], email: params[:email], phone: params[:phone], web_origin: params[:origin])
     end
     if @booking.save
       flash[:notice] = "Servicio agendado"

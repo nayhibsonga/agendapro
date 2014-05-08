@@ -358,6 +358,11 @@ function loadProviderBooking (providerId) {
 						}
 					}
 					if (booking.status_id != 5) {
+						var originClass = 'origin-manual';
+						if (booking.web_origin) {
+							originClass = 'origin-web';
+						};
+
 						var events = {
 							id: booking.id,
 							title: booking.service_name+' - '+booking.last_name+', '+booking.first_name,
@@ -365,7 +370,8 @@ function loadProviderBooking (providerId) {
 							start: booking.start,
 							end: booking.end,
 							resourceId: booking.service_provider_id,
-							color: eventColor
+							color: eventColor,
+							className: originClass
 						};
 						$('#calendar').fullCalendar('renderEvent', events, true);
 					}
@@ -385,6 +391,11 @@ function loadProviderBooking (providerId) {
 						}
 					}
 					if (booking.status_id != 5) {
+						var originClass = 'origin-manual';
+						if (booking.web_origin) {
+							originClass = 'origin-web';
+						};
+
 						var events = {
 							id: booking.id,
 							title: booking.service_name+' - '+booking.last_name+', '+booking.first_name,
@@ -392,7 +403,8 @@ function loadProviderBooking (providerId) {
 							start: booking.start,
 							end: booking.end,
 							resourceId: booking.service_provider_id,
-							color: eventColor
+							color: eventColor,
+							className: originClass
 						};
 						$('#calendar').fullCalendar('renderEvent', events, true);
 					}
