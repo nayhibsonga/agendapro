@@ -8,7 +8,7 @@
 
 # => Status de las Reservas
 	reservado = Status.create(name: "Reservado", description: "Reserva asignada")
-	bloqueado = Status.create(name: "Bloqueado", description: "Hora no disponible bloqueada porel local")
+	bloqueado = Status.create(name: "Confirmado", description: "Reserva confirmada por el Usuario")
 	completado = Status.create(name: "Completado", description: "Reserva sólo ha sido agendada")
 	pagado = Status.create(name: "Pagado", description: "Cliente pre-pago la cita")
 	cancelado = Status.create(name: "Cancelado", description: "Reserva sólo ha sido agendada")
