@@ -90,6 +90,8 @@ Agendapro::Application.routes.draw do
   post "/punto_pagos/notification/:trx", :to => 'punto_pagos#notification', :as => 'punto_pagos_notification_trx'
   get "/punto_pagos/success/:trx", :to => 'punto_pagos#success', :as => 'punto_pagos_success_trx'
   get "/punto_pagos/failure/:trx", :to => 'punto_pagos#failure', :as => 'punto_pagos_failure_trx'
+  get "/punto_pagos/notification", :to => 'punto_pagos#notification', :as => 'punto_pagos_notification_get'
+  get "/punto_pagos/notification/:trx", :to => 'punto_pagos#notification', :as => 'punto_pagos_notification_trx_get'
 
 
   # Search
