@@ -15,12 +15,15 @@
 
 <div class="panel-group" id="accordion">
   <% @service_categories.each do |service_category| %> 
-  <div class="panel panel-default">
+  <div class="panel panel-default" draggable="true">
     <div class="panel-heading">
       <h4 class="panel-title">
         <a data-toggle="collapse" data-parent="#accordion" href="#collapse<%= service_category.id %>">
           <%= service_category.name %>
         </a>
+        <span class="pull-right move">
+          <i class="fa fa-bars"></i>
+        </span>
       </h4>
     </div>
     <div id="collapse<%= service_category.id %>" class="panel-collapse collapse<% if @service_categories.count == 1%> in<% end %>">
@@ -57,3 +60,8 @@
 <br />
 <%= link_to '<i class="fa fa-plus"></i> Nuevo Servicio'.html_safe, new_service_path, :class => "btn btn-primary" %>
 <%= link_to '<i class="fa fa-minus"></i> Servicios Inactivos'.html_safe, inactive_services_path, :class => "btn btn-primary pull-right" %>
+
+<%= stylesheet_link_tag "admin/draggable" %>
+<% content_for :scripts do %>
+  <%= javascript_include_tag 'admin/draggable' %>
+<% end %>
