@@ -63,7 +63,7 @@ class Client < ActiveRecord::Base
     when ".csv" then Roo::Csv.new(file.path, file_warning: :ignore)
     when ".xls" then Roo::Excel.new(file.path, file_warning: :ignore)
     when ".xlsx" then Roo::Excelx.new(file.path, file_warning: :ignore)
-    else raise "Unknown file type: #{file.original_filename}"
+    else redirect_to clients_path, notice: "Archivo inválido o con errores"
     end
   end
 end
