@@ -29,7 +29,6 @@ class PuntoPagosController < ApplicationController
       puts params[:trx]
     end
     notification = PuntoPagos::Notification.new
-    puts notification.valid?
     notification.valid? headers.to_hash, params.to_hash
   end
 end
