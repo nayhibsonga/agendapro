@@ -1,4 +1,5 @@
 class PuntoPagosController < ApplicationController
+  skip_before_action :verify_authenticity_token
   def generate_transaction
   	trx_id = DateTime.now.to_s.gsub(/[-:T]/i, '')
   	amount = '10000.00'
