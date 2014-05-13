@@ -174,8 +174,8 @@ class ClientsController < ApplicationController
   end
 
   def import
-    Client.import(params[:file], current_user.company_id)
-    redirect_to clients_path, notice: "Clientes importados."
+    message = Client.import(params[:file], current_user.company_id)
+    redirect_to clients_path, notice: message
   end
 
   private
