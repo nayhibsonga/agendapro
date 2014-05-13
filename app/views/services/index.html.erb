@@ -16,7 +16,7 @@
 <div class="panel-group" id="accordion">
   <% @service_categories.each do |service_category| %> 
   <div class="panel panel-default" draggable="true">
-    <div class="panel-heading">
+    <div class="panel-heading" data-category="<%= service_category.id %>">
       <h4 class="panel-title">
         <a data-toggle="collapse" data-parent="#accordion" href="#collapse<%= service_category.id %>">
           <%= service_category.name %>
