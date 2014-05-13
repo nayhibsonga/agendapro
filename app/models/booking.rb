@@ -95,7 +95,7 @@ class Booking < ActiveRecord::Base
 				BookingMailer.cancel_booking(self)
 			end
 		else
-			if changed_attributes[:start] and self.send_mail
+			if changed_attributes['start'] and self.send_mail
 				BookingMailer.update_booking(self)
 			end
 		end
