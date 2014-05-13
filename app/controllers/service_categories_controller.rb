@@ -2,7 +2,7 @@ class ServiceCategoriesController < ApplicationController
   before_action :set_service_category, only: [:show, :edit, :update, :destroy]
   before_action :authenticate_user!, except: [:get_category_name]
   before_action :quick_add, except: [:get_category_name]
-  layout "admin", except: [:get_category_name]
+  layout "admin", except: [:get_category_name, :change_categories_order]
   load_and_authorize_resource
 
   # GET /service_categories
@@ -89,6 +89,26 @@ class ServiceCategoriesController < ApplicationController
   def get_category_name
     @service_category = ServiceCategory.find(params[:id])
     render :json => @service_category
+  end
+
+  def change_categories_order
+    array_result = Array.new
+    params[:category_order].each do |pos, category_hash|
+      category = ServiceCategory.find(category_hash[:service_category])
+      if category.update(:order => category_hash[:order])
+        array_result.push({
+          service_category: category.name,
+          status: 'Ok'
+        })
+      else
+        array_result.push({
+          service_category: category.name,
+          status: 'Error',
+          errors: category.errors
+        })
+      end
+    end
+    render :json => array_result
   end
 
   private

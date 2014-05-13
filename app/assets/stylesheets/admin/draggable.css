@@ -13,6 +13,6 @@
 	cursor: move;
 }
 
-.panel.over {
+tr.over {
 	border: 2px dashed #000;
 }

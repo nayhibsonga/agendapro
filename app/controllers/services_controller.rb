@@ -8,8 +8,8 @@ class ServicesController < ApplicationController
   # GET /services
   # GET /services.json
   def index
-    @services = Service.where(company_id: current_user.company_id, :active => true).order(name: :asc)
-    @service_categories = ServiceCategory.where(company_id: current_user.company_id).order(name: :asc)
+    @services = Service.where(company_id: current_user.company_id, :active => true).order(order: :asc, name: :asc)
+    @service_categories = ServiceCategory.where(company_id: current_user.company_id).order(order: :asc, name: :asc)
   end
 
   def inactive_index
@@ -116,6 +116,26 @@ class ServicesController < ApplicationController
   def services_data
     services = Service.where(:company_id => current_user.company_id)
     render :json => services
+  end
+
+  def change_services_order
+    array_result = Array.new
+    params[:services_order].each do |pos, service_hash|
+      service = Service.find(service_hash[:service])
+      if service.update(:order => service_hash[:order])
+        array_result.push({
+          service: service.name,
+          status: 'Ok'
+        })
+      else
+        array_result.push({
+          service: service.name,
+          status: 'Error',
+          errors: service.errors
+        })
+      end
+    end
+    render :json => array_result
   end
 
   private

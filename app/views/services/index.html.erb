@@ -15,15 +15,12 @@
 
 <div class="panel-group" id="accordion">
   <% @service_categories.each do |service_category| %> 
-  <div class="panel panel-default" draggable="true">
-    <div class="panel-heading" data-category="<%= service_category.id %>">
+  <div class="panel panel-default">
+    <div class="panel-heading">
       <h4 class="panel-title">
         <a data-toggle="collapse" data-parent="#accordion" href="#collapse<%= service_category.id %>">
           <%= service_category.name %>
         </a>
-        <span class="pull-right move">
-          <i class="fa fa-bars"></i>
-        </span>
       </h4>
     </div>
     <div id="collapse<%= service_category.id %>" class="panel-collapse collapse<% if @service_categories.count == 1%> in<% end %>">
@@ -35,18 +32,20 @@
               <th>Precio</th>
               <th>Duración</th>
               <th>Opciones</th>
+              <th></th>
             </tr>
           </thead>
 
           <tbody>
             <% @services.each do |service| %>
             <% if service.service_category_id == service_category.id %>
-              <tr>
-                <td><%= service.name %></td>
+              <tr draggable="true">
+                <td data-service="<%= service.id %>"><%= service.name %></td>
                 <td>$<%= service.price.to_i %></td>
                 <td><%= service.duration %> min</td>
                 <td><%= link_to '<i class="fa fa-pencil"></i> Editar'.html_safe, edit_service_path(service), :class => "btn btn-warning" %>
                 <%= link_to '<i class="fa fa-trash-o"></i> Eliminar'.html_safe, deactivate_service_path(:id => service.id), :class => "btn btn-danger", data: { confirm: '¿Estás seguro de desactivar el Servicio seleccionado?' } unless cannot? :destroy, service %></td>
+                <td><i class="fa fa-bars"></i></td>
               </tr>
             <% end %>
             <% end %>
