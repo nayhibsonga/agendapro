@@ -64,7 +64,7 @@
           <% elsif current_user.role_id == Role.find_by(name: 'Admin').id %>
             <%= f.collection_select :location_id, Location.where(:company_id => current_user.company_id, :active => true), :id, :name, {include_blank: true}, {class: "form-control"} %>
           <% elsif current_user.role_id == Role.find_by(name: 'Administrador Local').id %>
-            <%= f.collection_select :location_id, Location.where(:id => current_user.location_id, :active => true), :id, :name, {include_blank: true}, {class: "form-control"} %>
+            <%= f.collection_select :location_id, Location.where(:id => current_user.location_id, :active => true), :id, :name, { selected: current_user.location_id}, {class: "form-control"} %>
           <% end %>
           </div>  
         </div>
