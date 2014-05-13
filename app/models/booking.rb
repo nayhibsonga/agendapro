@@ -84,14 +84,18 @@ class Booking < ActiveRecord::Base
   	end
 
   	def send_booking_mail
-		BookingMailer.book_service_mail(self)
+  		if self.send_mail
+  			BookingMailer.book_service_mail(self)
+  		end
 	end
 
 	def send_update_mail
 		if self.status == Status.find_by(:name => "Cancelado")
-			BookingMailer.cancel_booking(self)
+			if self.send_mail
+				BookingMailer.cancel_booking(self)
+			end
 		else
-			if changed_attributes[:start]
+			if changed_attributes[:start] and self.send_mail
 				BookingMailer.update_booking(self)
 			end
 		end
@@ -101,7 +105,8 @@ class Booking < ActiveRecord::Base
 		@time1 = Time.new.getutc + 1.day
 		@time2 = Time.new.getutc + 2.day
 		where(:start => @time1...@time2).each do |booking|
-			unless booking.status == Status.find_by(:name => "Cancelado")
+			unless booking.status == Status.find_by(:name => "Cancelado") or !booking.send_mail
+				booking.update_column(:status_id, Status.find_by(:name => "Confirmado")) unless booking.status == Status.find_by(:name => "Pagado")
 				BookingMailer.book_reminder_mail(booking)
 			end
 		end

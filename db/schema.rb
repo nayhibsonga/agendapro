@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140428144346) do
+ActiveRecord::Schema.define(version: 20140508142731) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -32,22 +32,24 @@ ActiveRecord::Schema.define(version: 20140428144346) do
   add_index "billing_logs", ["transaction_type_id"], name: "index_billing_logs_on_transaction_type_id", using: :btree
 
   create_table "bookings", force: true do |t|
-    t.datetime "start",               null: false
-    t.datetime "end",                 null: false
+    t.datetime "start",                               null: false
+    t.datetime "end",                                 null: false
     t.text     "notes"
-    t.integer  "service_provider_id", null: false
+    t.integer  "service_provider_id",                 null: false
     t.integer  "user_id"
-    t.integer  "service_id",          null: false
-    t.integer  "location_id",         null: false
-    t.integer  "status_id",           null: false
+    t.integer  "service_id",                          null: false
+    t.integer  "location_id",                         null: false
+    t.integer  "status_id",                           null: false
     t.integer  "promotion_id"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.string   "first_name",          null: false
-    t.string   "last_name",           null: false
-    t.string   "email",               null: false
-    t.string   "phone",               null: false
+    t.string   "first_name",                          null: false
+    t.string   "last_name",                           null: false
+    t.string   "email",                               null: false
+    t.string   "phone",                               null: false
     t.text     "company_comment"
+    t.boolean  "web_origin",          default: false
+    t.boolean  "send_mail",           default: true
   end
 
   add_index "bookings", ["location_id"], name: "index_bookings_on_location_id", using: :btree
