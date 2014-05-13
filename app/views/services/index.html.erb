@@ -32,20 +32,23 @@
               <th>Precio</th>
               <th>Duración</th>
               <th>Opciones</th>
-              <th></th>
             </tr>
           </thead>
 
           <tbody>
             <% @services.each do |service| %>
             <% if service.service_category_id == service_category.id %>
-              <tr draggable="true">
+              <tr draggable="true" data-resource="services">
                 <td data-service="<%= service.id %>"><%= service.name %></td>
                 <td>$<%= service.price.to_i %></td>
                 <td><%= service.duration %> min</td>
-                <td><%= link_to '<i class="fa fa-pencil"></i> Editar'.html_safe, edit_service_path(service), :class => "btn btn-warning" %>
-                <%= link_to '<i class="fa fa-trash-o"></i> Eliminar'.html_safe, deactivate_service_path(:id => service.id), :class => "btn btn-danger", data: { confirm: '¿Estás seguro de desactivar el Servicio seleccionado?' } unless cannot? :destroy, service %></td>
-                <td><i class="fa fa-bars"></i></td>
+                <td>
+                  <%= link_to '<i class="fa fa-pencil"></i> Editar'.html_safe, edit_service_path(service), :class => "btn btn-warning" %>
+                  <%= link_to '<i class="fa fa-trash-o"></i> Eliminar'.html_safe, deactivate_service_path(:id => service.id), :class => "btn btn-danger", data: { confirm: '¿Estás seguro de desactivar el Servicio seleccionado?' } unless cannot? :destroy, service %>
+                  <span class="pull-right">
+                    <i class="fa fa-bars"></i>
+                  </span>
+                </td>
               </tr>
             <% end %>
             <% end %>

@@ -8,7 +8,7 @@ class ServiceCategoriesController < ApplicationController
   # GET /service_categories
   # GET /service_categories.json
   def index
-    @service_categories = ServiceCategory.where(:company_id => current_user.company_id)
+    @service_categories = ServiceCategory.where(:company_id => current_user.company_id).order(order: :asc)
   end
 
   # GET /service_categories/1
