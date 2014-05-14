@@ -695,8 +695,57 @@ function saveBooking(typeURL, extraURL) {
 		url: '/bookings'+ extraURL +'.json',
 		data: { "booking": bookingJSON },
 		dataType: 'json',
-		success: function(){
-			document.location.href = '/bookings/';
+		success: function(booking){
+			switch(typeURL) {
+			case 'POST':
+				var eventColor = "#585858";
+				for (i in resourcesColors) {
+					if (resourcesColors[i].id == booking[0].service_provider_id) {
+						eventColor = resourcesColors[i].color
+					}
+				}
+				if (booking[0].status_id != 5) {
+					var originClass = 'origin-manual';
+					var events = {
+						id: booking[0].id,
+						title: booking[1]+' - '+booking[0].last_name+', '+booking[0].first_name,
+						allDay: false,
+						start: booking[0].start,
+						end: booking[0].end,
+						resourceId: booking[0].service_provider_id,
+						color: eventColor,
+						className: originClass
+					};
+					$('#calendar').fullCalendar('renderEvent', events, true);
+				}
+				$('#bookingModal').modal('hide');
+				break;
+			case 'PATCH':
+				event = $('#calendar').fullCalendar('clientEvents', booking[0].id)[0];
+				var eventColor = "#585858";
+				for (i in resourcesColors) {
+					if (resourcesColors[i].id == booking[0].service_provider_id) {
+						eventColor = resourcesColors[i].color
+					}
+				}
+				if (booking[0].status_id != 5) {
+					event.title = booking[1]+' - '+booking[0].last_name+', '+booking[0].first_name,
+					event.start = booking[0].start,
+					event.end = booking[0].end,
+					event.resourceId = booking[0].service_provider_id,
+					event.color = eventColor
+					$('#calendar').fullCalendar('updateEvent', event);
+				}
+				else {
+					$('#calendar').fullCalendar('removeEvents',booking[0].id);
+				}
+				$('#bookingModal').modal('hide');
+				break;
+			case 'DELETE':
+				$('#calendar').fullCalendar('removeEvents',booking.id);
+				$('#bookingModal').modal('hide');
+				break;
+			}
 		},
 		error: function(xhr){
 			var errors = $.parseJSON(xhr.responseText).errors;
