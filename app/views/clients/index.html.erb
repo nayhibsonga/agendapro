@@ -91,11 +91,12 @@
 		</div>
 	</div>
 </div>
-<p>
-  Dercargar este listado de clientes:
+<br />
+<h4>
+  Descargar este listado de clientes:
   <%= link_to "CSV", clients_path(format: "csv", location: params[:location], provider: params[:provider], gender: params[:gender]) %> |
   <%= link_to "Excel", clients_path(format: "xls", location: params[:location], provider: params[:provider], gender: params[:gender]) %>
-</p>
+</h4>
 
 <div class="modal fade" id="mailModal" tabindex="-1" role="dialog" aria-labelledby="mailModalLabel" aria-hidden="true">
 	<div class="modal-dialog">
@@ -150,24 +151,28 @@
 				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
 				<h4 class="modal-title" id="importModalLabel">Importar Clientes</h4>
 			</div>
-
-			Instrucciones:<br />
-			- Usar las platillas de ejemplo como base para la importación. Los campos son opcionales, excepto por el email de cada cliente.
-			- El identificador único para los clientes desde archivos es el email, por lo que si se sube un cliente con un mail existente, los valores cambian si alguno cambia en la planilla. Si no existe, se crea un registro nuevo. Para editar el mail de un cliente o eliminar al cliente de la base de datos de la empresa, se debe hacer manualmente a través de la página.<br />
-			- Las fechas de cumpleaños ingresadas deben ser en formato aaaa-mm-dd (ej: 1980-02-24).
-			- Para ingresar el género de los clientes, se debe ingresar 0 si no se desea especificar, 1 si es Femenino o 2 si es Masculino.<br />
-			- No se pueden cambiar los nombres de las columnas para que funcione la importación de datos.<br />
-			- etc.<br />
-
-			<%= link_to 'Ejemplo plantilla Excel', '/clients_base.xls', :target => :blank %> | 
-			<%= link_to 'Ejemplo plantilla CSV', '/clients_base.csv', :target => :blank %><br />
+			<ul>
+				<h4>Instrucciones:</h4>
+				<li>Usar las plantillas de ejemplo como base para la importación. Los campos son opcionales, <strong>excepto el email de cada cliente</strong>.</li><br />
+				<li><strong>No se pueden cambiar los nombres de las columnas</strong> de las plantillas bases.</li><br />
+				<li>El identificador único para los clientes es el email, por lo que si se sube un cliente con un email existente, se reemplazaran los valores guardados anteriormente.<br />
+				Si no existe el email, se crea un cliente nuevo.<br />
+				Para editar el email de un cliente o eliminar un cliente de la base de datos, se debe realizar a través de la página.</li><br />
+				<li>Las fechas de cumpleaños deben ser en formato aaaa-mm-dd (ej: 1980-02-24)</li><br />
+				<li>Para ingresar el género de los clientes, se debe utilizar 0 si no se desea especificar, 1 si es Femenino o 2 si es Masculino.</li><br />
+				<h4>Plantillas para importación:</h4>
+				<%= link_to 'Plantilla Excel', '/clients_base.xls', :target => :blank %> | 
+				<%= link_to 'Plantilla CSV', '/clients_base.csv', :target => :blank %><br />
+			</ul>
 			<%= form_tag import_clients_path, multipart: true do %>
 			  <div class="form-group">
+				<label for="file">Seleccionar Archivo:</label>
 				<%= file_field_tag :file, :class => 'form-control'  %>
-				<span class="help-block"></span>
-					
+				<span class="help-block"></span>		
+			  </div>
+			  	<div class="modal-footer">
+					<%= submit_tag "Importar", class: "btn btn-agendapro-oscuro", disabled: true, id: "import_button" %>
 				</div>
-			  <%= submit_tag "Importar", class: "btn btn-primary", disabled: true, id: "import_button" %>
 			<% end %>
 		</div>
 	</div>
