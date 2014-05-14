@@ -35,4 +35,39 @@ class Client < ActiveRecord::Base
       all
     end
   end
+  def self.to_csv(options = {})
+    CSV.generate(options) do |csv|
+      csv << column_names
+      all.each do |product|
+        csv << product.attributes.values_at(*column_names)
+      end
+    end
+  end
+  def self.import(file, company_id)
+    allowed_attributes = ["email", "first_name", "last_name", "phone", "address", "district", "city", "age", "gender", "birth_date"]
+    spreadsheet = open_spreadsheet(file)
+    if !spreadsheet.nil?
+      header = spreadsheet.row(1)
+      (2..spreadsheet.last_row).each do |i|
+        row = Hash[[header, spreadsheet.row(i)].transpose]
+        puts row
+        client = Client.find_by_email(row["email"]) || Client.new
+        client.attributes = row.to_hash.select { |k,v| allowed_attributes.include? k }
+        if company_id
+          client.company_id = company_id
+        end
+        client.save!
+      end
+      message = "Clientes importados correctamente."
+    else
+      message = "Error en el archivo de importación, archivo inválido o lista vacía."
+    end
+  end
+  def self.open_spreadsheet(file)
+    case File.extname(file.original_filename)
+    when ".csv" then Roo::Csv.new(file.path, file_warning: :ignore)
+    when ".xls" then Roo::Excel.new(file.path, file_warning: :ignore)
+    when ".xlsx" then Roo::Excelx.new(file.path, file_warning: :ignore)
+    end
+  end
 end

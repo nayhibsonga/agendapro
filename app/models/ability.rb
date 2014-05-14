@@ -164,6 +164,7 @@ class Ability
         can :destroy_comment, Client
 
         can :send_mail, Client, :company_id => user.company_id
+        can :import, Client
 
     elsif user.role_id == Role.find_by_name("Administrador Local").id
 
@@ -231,6 +232,7 @@ class Ability
         can :destroy_comment, Client, :company_id => user.company_id
         
         can :send_mail, Client, :company_id => user.company_id
+        can :import, Client
 
     elsif user.role_id == Role.find_by_name("Recepcionista").id
 
@@ -268,6 +270,7 @@ class Ability
         can :destroy_comment, Client, :company_id => user.company_id
 
         can :send_mail, Client, :company_id => user.company_id
+        can :import, Client
 
     elsif user.role_id == Role.find_by_name("Staff").id
 
