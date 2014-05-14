@@ -60,6 +60,8 @@ Agendapro::Application.routes.draw do
   get '/time_booking_edit', :to => 'company_settings#time_booking_edit', :as => 'time_booking'
   post '/send_mail_client', :to => 'clients#send_mail'
   get '/get_link', :to => 'companies#get_link', :as => 'get_link'
+  post '/change_categories_order', :to => 'service_categories#change_categories_order'
+  post '/change_services_order', :to => 'services#change_services_order'
 
   get '/clients_suggestion', :to => 'clients#suggestion'
   get '/provider_services', :to => 'service_providers#provider_service'

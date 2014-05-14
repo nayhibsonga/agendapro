@@ -38,12 +38,17 @@
           <tbody>
             <% @services.each do |service| %>
             <% if service.service_category_id == service_category.id %>
-              <tr>
-                <td><%= service.name %></td>
+              <tr draggable="true" data-resource="services">
+                <td data-service="<%= service.id %>"><%= service.name %></td>
                 <td>$<%= service.price.to_i %></td>
                 <td><%= service.duration %> min</td>
-                <td><%= link_to '<i class="fa fa-pencil"></i> Editar'.html_safe, edit_service_path(service), :class => "btn btn-warning" %>
-                <%= link_to '<i class="fa fa-trash-o"></i> Eliminar'.html_safe, deactivate_service_path(:id => service.id), :class => "btn btn-danger", data: { confirm: '¿Estás seguro de desactivar el Servicio seleccionado?' } unless cannot? :destroy, service %></td>
+                <td>
+                  <%= link_to '<i class="fa fa-pencil"></i> Editar'.html_safe, edit_service_path(service), :class => "btn btn-warning" %>
+                  <%= link_to '<i class="fa fa-trash-o"></i> Eliminar'.html_safe, deactivate_service_path(:id => service.id), :class => "btn btn-danger", data: { confirm: '¿Estás seguro de desactivar el Servicio seleccionado?' } unless cannot? :destroy, service %>
+                  <span class="pull-right">
+                    <i class="fa fa-bars"></i>
+                  </span>
+                </td>
               </tr>
             <% end %>
             <% end %>
@@ -57,3 +62,8 @@
 <br />
 <%= link_to '<i class="fa fa-plus"></i> Nuevo Servicio'.html_safe, new_service_path, :class => "btn btn-primary" %>
 <%= link_to '<i class="fa fa-minus"></i> Servicios Inactivos'.html_safe, inactive_services_path, :class => "btn btn-primary pull-right" %>
+
+<%= stylesheet_link_tag "admin/draggable" %>
+<% content_for :scripts do %>
+  <%= javascript_include_tag 'admin/draggable' %>
+<% end %>

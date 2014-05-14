@@ -166,6 +166,9 @@ class Ability
         can :send_mail, Client, :company_id => user.company_id
         can :import, Client
 
+        can :change_categories_order, ServiceCategory
+        can :change_services_order, Service
+
     elsif user.role_id == Role.find_by_name("Administrador Local").id
 
         can :get_booking, Booking, :location_id => user.location_id 
@@ -233,6 +236,9 @@ class Ability
         
         can :send_mail, Client, :company_id => user.company_id
         can :import, Client
+
+        can :change_categories_order, ServiceCategory
+        can :change_services_order, Service
 
     elsif user.role_id == Role.find_by_name("Recepcionista").id
 
