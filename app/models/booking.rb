@@ -105,9 +105,11 @@ class Booking < ActiveRecord::Base
 		@time1 = Time.new.getutc + 1.day
 		@time2 = Time.new.getutc + 2.day
 		where(:start => @time1...@time2).each do |booking|
-			unless booking.status == Status.find_by(:name => "Cancelado") or !booking.send_mail
-				booking.update_column(:status_id, Status.find_by(:name => "Confirmado")) unless booking.status == Status.find_by(:name => "Pagado")
-				BookingMailer.book_reminder_mail(booking)
+			unless booking.status == Status.find_by(:name => "Cancelado") 
+				if booking.send_mail
+					booking.update_column(:status_id, Status.find_by(:name => "Confirmado")) unless booking.status == Status.find_by(:name => "Pagado")
+					BookingMailer.book_reminder_mail(booking)
+				end
 			end
 		end
 	end
