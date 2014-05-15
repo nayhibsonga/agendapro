@@ -362,6 +362,9 @@ function loadProviderBooking (providerId) {
 						if (booking.web_origin) {
 							originClass = 'origin-web';
 						};
+						if (booking.status_id == 2) {
+							originClass += ' confirmed';
+						}
 
 						var events = {
 							id: booking.id,
@@ -706,6 +709,9 @@ function saveBooking(typeURL, extraURL) {
 				}
 				if (booking[0].status_id != 5) {
 					var originClass = 'origin-manual';
+					if (booking[0].status_id == 2) {
+						originClass += ' confirmed';
+					}
 					var events = {
 						id: booking[0].id,
 						title: booking[1]+' - '+booking[0].last_name+', '+booking[0].first_name,
@@ -729,11 +735,19 @@ function saveBooking(typeURL, extraURL) {
 					}
 				}
 				if (booking[0].status_id != 5) {
-					event.title = booking[1]+' - '+booking[0].last_name+', '+booking[0].first_name,
-					event.start = booking[0].start,
-					event.end = booking[0].end,
-					event.resourceId = booking[0].service_provider_id,
-					event.color = eventColor
+					var originClass = 'origin-manual';
+						if (booking.web_origin) {
+							originClass = 'origin-web';
+						};
+					if (booking[0].status_id == 2) {
+						originClass += ' confirmed';
+					}
+					event.title = booking[1]+' - '+booking[0].last_name+', '+booking[0].first_name;
+					event.start = booking[0].start;
+					event.end = booking[0].end;
+					event.resourceId = booking[0].service_provider_id;
+					event.color = eventColor;
+					event.className = originClass;
 					$('#calendar').fullCalendar('updateEvent', event);
 				}
 				else {

@@ -619,3 +619,18 @@ table.fc-border-separate {
 	line-height:.75em;
 	vertical-align:-15%
 }
+.confirmed > .fc-event-inner > .fc-event-head > .fc-event-time:after{
+	display:inline-block;
+	font-family:FontAwesome;
+	font-style:normal;
+	font-weight:normal;
+	line-height:1;
+		-webkit-font-smoothing:antialiased;
+		-moz-osx-font-smoothing:grayscale;
+	content:"\f00c";
+	margin-left: 3px;
+	margin-right: 3px;
+	font-size:1.3333333333333333em;
+	line-height:.75em;
+	vertical-align:-15%
+}
