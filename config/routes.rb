@@ -60,6 +60,8 @@ Agendapro::Application.routes.draw do
   get '/time_booking_edit', :to => 'company_settings#time_booking_edit', :as => 'time_booking'
   post '/send_mail_client', :to => 'clients#send_mail'
   get '/get_link', :to => 'companies#get_link', :as => 'get_link'
+  post '/change_categories_order', :to => 'service_categories#change_categories_order'
+  post '/change_services_order', :to => 'services#change_services_order'
 
   get '/clients_suggestion', :to => 'clients#suggestion'
   get '/provider_services', :to => 'service_providers#provider_service'
@@ -78,6 +80,7 @@ Agendapro::Application.routes.draw do
   get "/features", :to => 'home#features', :as => 'features'
   get "/view_plans", :to => 'plans#view_plans', :as => 'view_plans'
   get "/about_us", :to => 'home#about_us',  :as => 'aboutus'
+  get "/tutorials", :to => 'home#tutorials',  :as => 'tutorials'
   get "/contact", :to => 'home#contact', :as => 'contact'
   post "/pcontact", :to => 'home#post_contact'
 
@@ -103,6 +106,7 @@ Agendapro::Application.routes.draw do
   post "/book", :to => 'bookings#book_service'
   get '/category_name', :to => 'service_categories#get_category_name'
   get '/get_available_time', :to => 'locations#get_available_time'
+  get '/check_user_cross_bookings', :to => 'bookings#check_user_cross_bookings'
 
   # Fullcalendar
   get '/service', :to => 'services#service_data'  # Fullcalendar
@@ -120,6 +124,7 @@ Agendapro::Application.routes.draw do
   post '/edited_booking', :to => 'bookings#edit_booking_post'
   get '/cancel_booking', :to => 'bookings#cancel_booking', :as => 'booking_cancel'
   post '/cancel_booking', :to => 'bookings#cancel_booking'
+  get '/confirm_booking', :to => 'bookings#confirm_booking', :as => 'confirm_booking'
 
   post '/clients/:id/comments', :to => 'clients#create_comment'
   patch '/clients/:id/comments', :to => 'clients#update_comment'
@@ -138,6 +143,7 @@ Agendapro::Application.routes.draw do
   get '/locations/:id/deactivate', :to => 'locations#deactivate', :as => 'deactivate_location'
   get '/services/:id/deactivate', :to => 'services#deactivate', :as => 'deactivate_service'
   get '/service_providers/:id/deactivate', :to => 'service_providers#deactivate', :as => 'deactivate_service_provider'
+  post '/clients/import', :to => 'clients#import', :as => 'import_clients'
   
   # Root
   get '/' => 'searchs#index', :constraints => { :subdomain => 'www' }

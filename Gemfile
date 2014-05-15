@@ -94,6 +94,9 @@ gem 'bcrypt-ruby', '~> 3.1.2'
 # Pago en linea: Punto Pagos
 gem 'puntopagos'
 
+# Importacion de datos desde excel
+gem 'roo'
+
 # File Upload
 # gem 'rmagick'
 gem 'carrierwave'

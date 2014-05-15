@@ -1,0 +1,37 @@
+<?xml version="1.0"?>
+<Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet"
+  xmlns:o="urn:schemas-microsoft-com:office:office"
+  xmlns:x="urn:schemas-microsoft-com:office:excel"
+  xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet"
+  xmlns:html="http://www.w3.org/TR/REC-html40">
+  <Worksheet ss:Name="Clientes">
+    <Table>
+      <Row>
+        <Cell><Data ss:Type="String">Email</Data></Cell>
+        <Cell><Data ss:Type="String">Nombre</Data></Cell>
+        <Cell><Data ss:Type="String">Apellido</Data></Cell>
+        <Cell><Data ss:Type="String">Teléfono</Data></Cell>
+        <Cell><Data ss:Type="String">Dirección</Data></Cell>
+        <Cell><Data ss:Type="String">Comuna</Data></Cell>
+        <Cell><Data ss:Type="String">Fecha Nacimiento</Data></Cell>
+        <Cell><Data ss:Type="String">Edad</Data></Cell>
+        <Cell><Data ss:Type="String">Género</Data></Cell>
+        <Cell><Data ss:Type="String">Fecha Creación</Data></Cell>
+      </Row>
+    <% @clients_export.each do |client| %>
+      <Row>
+        <Cell><Data ss:Type="String"><%= client.email %></Data></Cell>
+        <Cell><Data ss:Type="String"><%= client.first_name %></Data></Cell>
+        <Cell><Data ss:Type="String"><%= client.last_name %></Data></Cell>
+        <Cell><Data ss:Type="String"><%= client.phone %></Data></Cell>
+        <Cell><Data ss:Type="String"><%= client.address %></Data></Cell>
+        <Cell><Data ss:Type="String"><%= client.district %></Data></Cell>
+        <Cell><Data ss:Type="String"><%= if client.birth_date then l client.birth_date, format: :short end %></Data></Cell>
+        <Cell><Data ss:Type="String"><%= client.age %></Data></Cell>
+        <Cell><Data ss:Type="String"><%= if client.gender == 1 then "Femenino" elsif client.gender == 2 then "Masculino" end %></Data></Cell>
+        <Cell><Data ss:Type="String"><%= l client.created_at, format: :short %></Data></Cell>
+      </Row>
+    <% end %>
+    </Table>
+  </Worksheet>
+</Workbook>

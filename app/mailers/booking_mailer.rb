@@ -89,11 +89,11 @@ class BookingMailer < ActionMailer::Base
 						},
 						{
 							:name => 'EDIT',
-							:content => "<a class='btn btn-warning' href='#{booking_edit_url(:confirmation_code => book_info.confirmation_code)}'>Editar</a>"
+							:content => "<a class='btn btn-warning' href='#{booking_edit_url(:confirmation_code => book_info.confirmation_code)}' style='display: inline-block;padding: 6px 12px;margin-bottom: 0;font-size: 14px;font-weight: normal;line-height: 1.428571429;text-align: center;white-space: nowrap;vertical-align: middle;cursor: pointer;background-image: none;border: 1px solid transparent;border-radius: 4px;-webkit-user-select: none;-moz-user-select: none;-ms-user-select: none;-o-user-select: none;user-select: none;color: #ffffff;background-color: #f0ad4e;border-color: #eea236;text-decoration:none;'>Editar Reserva</a>"
 						},
 						{
 							:name => 'CANCEL',
-							:content => "<a class='btn btn-danger' href='#{booking_cancel_url(:confirmation_code => book_info.confirmation_code)}'>Cancelar</a>"
+							:content => "<a class='btn btn-danger' href='#{booking_cancel_url(:confirmation_code => book_info.confirmation_code)}' style='display: inline-block;padding: 6px 12px;margin-bottom: 0;font-size: 14px;font-weight: normal;line-height: 1.428571429;text-align: center;white-space: nowrap;vertical-align: middle;cursor: pointer;background-image: none;border: 1px solid transparent;border-radius: 4px;-webkit-user-select: none;-moz-user-select: none;-ms-user-select: none;-o-user-select: none;user-select: none;color: #ffffff;background-color: #d9534f;border-color: #d43f3a;text-decoration:none;'>Cancelar Reserva</a>"
 						}
 					]
 				},
@@ -129,6 +129,22 @@ class BookingMailer < ActionMailer::Base
 			message[:global_merge_vars] << {:name => 'BNOTES', :content => book_info.notes}
 		end
 
+		# => Logo empresa
+		if book_info.location.company.logo_url
+			company_img = {
+				:type => 'image/' +  File.extname(book_info.location.company.logo_url),
+				:name => 'company_img.jpg',
+				:content => Base64.encode64(File.read('public' + book_info.location.company.logo_url.to_s))
+			}
+		else
+			company_img = {
+				:type => 'image/png',
+				:name => 'company_img.jpg',
+				:content => Base64.encode64(File.read('app/assets/ico/Iso_Pro_Color.png'))
+			}
+		end
+		message[:images] << (company_img)
+
 		# => Metadata
 		async = false
 		send_at = DateTime.now
@@ -142,7 +158,7 @@ class BookingMailer < ActionMailer::Base
 	end
 
 	def update_booking (book_info)
-		mandrill = Mandrill::API.new 'HL4ERbuZZO6rrM2nlVjzZg'
+		mandrill = Mandrill::API.new Agendapro::Application.config.api_key
 
 		# => Template
 		template_name = 'Booking'
@@ -228,11 +244,11 @@ class BookingMailer < ActionMailer::Base
 						},
 						{
 							:name => 'EDIT',
-							:content => "<a class='btn btn-warning' href='#{booking_edit_url(:confirmation_code => book_info.confirmation_code)}'>Editar</a>"
+							:content => "<a class='btn btn-warning' href='#{booking_edit_url(:confirmation_code => book_info.confirmation_code)}' style='display: inline-block;padding: 6px 12px;margin-bottom: 0;font-size: 14px;font-weight: normal;line-height: 1.428571429;text-align: center;white-space: nowrap;vertical-align: middle;cursor: pointer;background-image: none;border: 1px solid transparent;border-radius: 4px;-webkit-user-select: none;-moz-user-select: none;-ms-user-select: none;-o-user-select: none;user-select: none;color: #ffffff;background-color: #f0ad4e;border-color: #eea236;text-decoration:none;'>Editar Reserva</a>"
 						},
 						{
 							:name => 'CANCEL',
-							:content => "<a class='btn btn-danger' href='#{booking_cancel_url(:confirmation_code => book_info.confirmation_code)}'>Cancelar</a>"
+							:content => "<a class='btn btn-danger' href='#{booking_cancel_url(:confirmation_code => book_info.confirmation_code)}' style='display: inline-block;padding: 6px 12px;margin-bottom: 0;font-size: 14px;font-weight: normal;line-height: 1.428571429;text-align: center;white-space: nowrap;vertical-align: middle;cursor: pointer;background-image: none;border: 1px solid transparent;border-radius: 4px;-webkit-user-select: none;-moz-user-select: none;-ms-user-select: none;-o-user-select: none;user-select: none;color: #ffffff;background-color: #d9534f;border-color: #d43f3a;text-decoration:none;'>Cancelar Reserva</a>"
 						}
 					]
 				},
@@ -268,6 +284,22 @@ class BookingMailer < ActionMailer::Base
 			message[:global_merge_vars] << {:name => 'BNOTES', :content => book_info.notes}
 		end
 
+		# => Logo empresa
+		if book_info.location.company.logo_url
+			company_img = {
+				:type => 'image/' +  File.extname(book_info.location.company.logo_url),
+				:name => 'company_img.jpg',
+				:content => Base64.encode64(File.read('public' + book_info.location.company.logo_url.to_s))
+			}
+		else
+			company_img = {
+				:type => 'image/png',
+				:name => 'company_img.jpg',
+				:content => Base64.encode64(File.read('app/assets/ico/Iso_Pro_Color.png'))
+			}
+		end
+		message[:images] << (company_img)
+
 		# => Metadata
 		async = false
 		send_at = DateTime.now
@@ -281,7 +313,7 @@ class BookingMailer < ActionMailer::Base
 	end
 
 	def cancel_booking (book_info)
-		mandrill = Mandrill::API.new 'HL4ERbuZZO6rrM2nlVjzZg'
+		mandrill = Mandrill::API.new Agendapro::Application.config.api_key
 
 		# => Template
 		template_name = 'Booking'
@@ -303,6 +335,7 @@ class BookingMailer < ActionMailer::Base
 				}
 			],
 			:headers => { 'Reply-To' => "contacto@agendapro.cl" },
+			:subject => 'Reserva Cancelada',
 			:global_merge_vars => [
 				{
 					:name => 'UNSUBSCRIBE',
@@ -395,6 +428,22 @@ class BookingMailer < ActionMailer::Base
 			message[:global_merge_vars] << {:name => 'BNOTES', :content => book_info.notes}
 		end
 
+		# => Logo empresa
+		if book_info.location.company.logo_url
+			company_img = {
+				:type => 'image/' +  File.extname(book_info.location.company.logo_url),
+				:name => 'company_img.jpg',
+				:content => Base64.encode64(File.read('public' + book_info.location.company.logo_url.to_s))
+			}
+		else
+			company_img = {
+				:type => 'image/png',
+				:name => 'company_img.jpg',
+				:content => Base64.encode64(File.read('app/assets/ico/Iso_Pro_Color.png'))
+			}
+		end
+		message[:images] << (company_img)
+
 		# => Metadata
 		async = false
 		send_at = DateTime.now
@@ -408,7 +457,7 @@ class BookingMailer < ActionMailer::Base
 	end
 
 	def book_reminder_mail (book_info)
-		mandrill = Mandrill::API.new 'HL4ERbuZZO6rrM2nlVjzZg'
+		mandrill = Mandrill::API.new Agendapro::Application.config.api_key
 
 		# => Template
 		template_name = 'Booking'
@@ -494,12 +543,16 @@ class BookingMailer < ActionMailer::Base
 					  :content => 'Recuerda tu Reserva para mañana.'
 					},
 					{
-					  :name => 'EDIT',
-					  :content => "<a class='btn btn-warning' href='#{booking_edit_url(:confirmation_code => book_info.confirmation_code)}'>Editar</a>"
+						:name => 'EDIT',
+						:content => "<a class='btn btn-warning' href='#{booking_edit_url(:confirmation_code => book_info.confirmation_code)}' style='display: inline-block;padding: 6px 12px;margin-bottom: 0;font-size: 14px;font-weight: normal;line-height: 1.428571429;text-align: center;white-space: nowrap;vertical-align: middle;cursor: pointer;background-image: none;border: 1px solid transparent;border-radius: 4px;-webkit-user-select: none;-moz-user-select: none;-ms-user-select: none;-o-user-select: none;user-select: none;color: #ffffff;background-color: #f0ad4e;border-color: #eea236;text-decoration:none;'>Editar Reserva</a>"
 					},
 					{
-					  :name => 'CANCEL',
-					  :content => "<a class='btn btn-danger' href='#{booking_cancel_url(:confirmation_code => book_info.confirmation_code)}'>Cancelar</a>"
+						:name => 'CANCEL',
+						:content => "<a class='btn btn-danger' href='#{booking_cancel_url(:confirmation_code => book_info.confirmation_code)}' style='display: inline-block;padding: 6px 12px;margin-bottom: 0;font-size: 14px;font-weight: normal;line-height: 1.428571429;text-align: center;white-space: nowrap;vertical-align: middle;cursor: pointer;background-image: none;border: 1px solid transparent;border-radius: 4px;-webkit-user-select: none;-moz-user-select: none;-ms-user-select: none;-o-user-select: none;user-select: none;color: #ffffff;background-color: #d9534f;border-color: #d43f3a;text-decoration:none;'>Cancelar Reserva</a>"
+					},
+					{
+						:name => 'CONFIRM',
+						:content => "<a class='btn btn-agendapro-claro btn-lg' href='#{confirm_booking_url(:confirmation_code => book_info.confirmation_code)}' style='display: inline-block;padding: 10px 16px;margin-bottom: 0;font-size: 18px;font-weight: normal;line-height: 1.33;text-align: center;white-space: nowrap;vertical-align: middle;cursor: pointer;background-image: none;border: 1px solid transparent;border-radius: 6px;-webkit-user-select: none;-moz-user-select: none;-ms-user-select: none;-o-user-select: none;user-select: none;color: #ffffff;background-color: rgba(61,154,150,1);border-color: rgba(55, 133, 129, 1);text-decoration:none;'>Confirmar Reserva</a>"
 					}
 				  ]
 				},
@@ -534,6 +587,22 @@ class BookingMailer < ActionMailer::Base
 		if !book_info.notes.blank?
 			message[:global_merge_vars] << {:name => 'BNOTES', :content => book_info.notes}
 		end
+
+		# => Logo empresa
+		if book_info.location.company.logo_url
+			company_img = {
+				:type => 'image/' +  File.extname(book_info.location.company.logo_url),
+				:name => 'company_img.jpg',
+				:content => Base64.encode64(File.read('public' + book_info.location.company.logo_url.to_s))
+			}
+		else
+			company_img = {
+				:type => 'image/png',
+				:name => 'company_img.jpg',
+				:content => Base64.encode64(File.read('app/assets/ico/Iso_Pro_Color.png'))
+			}
+		end
+		message[:images] << (company_img)
 
 		# => Metadata
 		async = false

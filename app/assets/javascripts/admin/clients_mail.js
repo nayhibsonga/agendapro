@@ -140,4 +140,12 @@ $(function () {
 			});
 		}
 	});
+	$('#file').change( function () {
+		if ($('#file').val()) {
+			$('#import_button').removeAttr("disabled");
+		}
+		else {
+			$('#import_button').attr("disabled", "disabled");
+		}
+	});
 });

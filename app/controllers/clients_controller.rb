@@ -14,6 +14,14 @@ class ClientsController < ApplicationController
 
     @max_mails = current_user.company.company_setting.daily_mails
     @mails_left = current_user.company.company_setting.daily_mails - current_user.company.company_setting.sent_mails
+
+    @clients_export = Client.accessible_by(current_ability).search(params[:search]).filter_location(params[:location]).filter_provider(params[:provider]).filter_gender(params[:gender])
+
+    respond_to do |format|
+      format.html
+      format.csv
+      format.xls
+    end
   end
 
   # GET /clients/1
@@ -163,6 +171,11 @@ class ClientsController < ApplicationController
     end
 
     render :json => @clients_arr
+  end
+
+  def import
+    message = Client.import(params[:file], current_user.company_id)
+    redirect_to clients_path, notice: message
   end
 
   private
