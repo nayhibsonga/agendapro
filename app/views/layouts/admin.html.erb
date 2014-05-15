@@ -46,7 +46,7 @@
 					<% if current_user.company_id || current_user.role_id == Role.find_by(:name => 'Super Admin').id %>
 					<%= link_to '<i class="fa fa-dashboard"></i> Dashboard'.html_safe, dashboard_path %>
 					<% else %>
-					<%= link_to '<i class="fa fa-building"></i> Agregar mi Compañía'.html_safe, add_company_path %>
+					<%= link_to '<i class="fa fa-building-o"></i> Agregar mi Compañía'.html_safe, add_company_path %>
 					<% end %>
 					</li>
 				  <li><%= link_to '<i class="fa fa-user"></i> Perfil'.html_safe, edit_user_registration_path %></li>
@@ -84,7 +84,7 @@
 						<ul id="submenu2" class="submenu-close">
 							<li><%= link_to '<i class="fa fa-globe"></i><span class="remove-txt"> Países</span>'.html_safe, countries_path, { :class => if controller.controller_name == "countries" then "submenu active" else "submenu" end } %></li>
 							<li><%= link_to '<i class="fa fa-picture-o"></i><span class="remove-txt"> Regiones</span>'.html_safe, regions_path, { :class => if controller.controller_name == "regions" then "submenu active" else "submenu" end } %></li>
-							<li><%= link_to '<i class="fa fa-building"></i><span class="remove-txt"> Ciudades</span>'.html_safe, cities_path, { :class => if controller.controller_name == "cities" then "submenu active" else "submenu" end } %></li>
+							<li><%= link_to '<i class="fa fa-building-o"></i><span class="remove-txt"> Ciudades</span>'.html_safe, cities_path, { :class => if controller.controller_name == "cities" then "submenu active" else "submenu" end } %></li>
 							<li><%= link_to '<i class="fa fa-home"></i><span class="remove-txt"> Comunas</span>'.html_safe, districts_path, { :class => if controller.controller_name == "districts" then "submenu active" else "submenu" end } %></li>
 						</ul>
 					</li>

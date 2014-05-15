@@ -49,7 +49,7 @@
 									<% if current_user.company_id || current_user.role_id == Role.find_by(:name => 'Super Admin').id %>
 									<%= link_to '<i class="fa fa-dashboard"></i> Dashboard'.html_safe, dashboard_path %>
 									<% else %>
-									<%= link_to '<i class="fa fa-building"></i> Agregar mi Compañía'.html_safe, add_company_path %>
+									<%= link_to '<i class="fa fa-building-o"></i> Agregar mi Compañía'.html_safe, add_company_path %>
 									<% end %>
 									</li>
 									<li><%= link_to '<i class="fa fa-user"></i> Editar Perfil'.html_safe, edit_user_registration_path %></li>
