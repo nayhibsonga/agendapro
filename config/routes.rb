@@ -80,6 +80,7 @@ Agendapro::Application.routes.draw do
   get "/features", :to => 'home#features', :as => 'features'
   get "/view_plans", :to => 'plans#view_plans', :as => 'view_plans'
   get "/about_us", :to => 'home#about_us',  :as => 'aboutus'
+  get "/tutorials", :to => 'home#tutorials',  :as => 'tutorials'
   get "/contact", :to => 'home#contact', :as => 'contact'
   post "/pcontact", :to => 'home#post_contact'
 
