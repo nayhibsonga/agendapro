@@ -6,8 +6,8 @@ function drop (e) {
 		e.preventDefault();
 	};
 
-	var tbody = e.target.parentNode.parentNode;
-	var resource = $(e.target.parentNode).data('resource')
+	var tbody = $(e.target).closest('tbody');
+	/*var resource = $(e.target.parentNode).data('resource')*/
 	if (dragElemente != this) {
 		dragElemente.innerHTML = this.innerHTML;
     	this.innerHTML = e.dataTransfer.getData('text/html');
