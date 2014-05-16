@@ -28,6 +28,13 @@ class Client < ActiveRecord::Base
       all
     end
   end
+  def self.filter_service(service)
+    if service && (service != '')
+      where(email: Booking.where(service_id: service).pluck(:email))
+    else
+      all
+    end
+  end
   def self.filter_gender(gender)
     if gender && (gender != '')
       where(:gender => gender)
