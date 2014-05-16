@@ -10,12 +10,13 @@ class ClientsController < ApplicationController
   def index
     @locations = Location.where(company_id: current_user.company_id, active: true)
     @service_providers = ServiceProvider.where(company_id: current_user.company_id, active: true)
-    @clients = Client.accessible_by(current_ability).search(params[:search]).filter_location(params[:location]).filter_provider(params[:provider]).filter_gender(params[:gender]).paginate(:page => params[:page], :per_page => 25)
+    @services = Service.where(company_id: current_user.company_id, active: true)
+    @clients = Client.accessible_by(current_ability).search(params[:search]).filter_location(params[:location]).filter_provider(params[:provider]).filter_service(params[:service]).filter_gender(params[:gender]).paginate(:page => params[:page], :per_page => 25)
 
     @max_mails = current_user.company.company_setting.daily_mails
     @mails_left = current_user.company.company_setting.daily_mails - current_user.company.company_setting.sent_mails
 
-    @clients_export = Client.accessible_by(current_ability).search(params[:search]).filter_location(params[:location]).filter_provider(params[:provider]).filter_gender(params[:gender])
+    @clients_export = Client.accessible_by(current_ability).search(params[:search]).filter_location(params[:location]).filter_provider(params[:provider]).filter_service(params[:service]).filter_gender(params[:gender])
 
     respond_to do |format|
       format.html
