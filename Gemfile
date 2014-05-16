@@ -100,3 +100,6 @@ gem 'roo'
 # File Upload
 # gem 'rmagick'
 gem 'carrierwave'
+
+# Version Movil
+gem 'mobu'

@@ -128,14 +128,26 @@ class CompaniesController < ApplicationController
 				return
 			end
 		end
-		@locations = Location.where(:active => true).where('company_id = ?', @company.id)
-
 		# => Domain parser
 		host = request.host_with_port
 		@url = @company.web_address + '.' + host[host.index(request.domain)..host.length]
 
+		@locations = Location.where(:active => true).where('company_id = ?', @company.id)
+
 		#Selected local from fase II
 		@selectedLocal = params[:local]
+
+		if mobile_request? 
+			if params[:local]
+				redirect_to workflow_path(:local => params[:local])
+				return
+			else
+				if @locations.length == 1
+					redirect_to workflow_path(:local => @locations[0].id)
+					return
+				end
+			end
+		end
 		render layout: "workflow"
 	end
 
@@ -146,6 +158,10 @@ class CompaniesController < ApplicationController
 		# => Domain parser
 		host = request.host_with_port
 		@url = @company.web_address + '.' + host[host.index(request.domain)..host.length]
+
+		if mobile_request?
+			@services = Service.where(:active => true).order(order: :asc).includes(:service_providers).where('service_providers.active = ?', true).where('service_providers.location_id = ?', params[:local]).order(order: :asc)
+		end
 		
 		render layout: 'workflow'
 	end
