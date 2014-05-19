@@ -277,6 +277,8 @@ function loadResourcesCalendar (startTime, endTime, hiddenDays, resourcesArray, 
 				};
 			});
 		};
+		var providerId = $('input[name="providerRadio"]:checked').val();
+		loadProviderBooking(providerId);
 	});
 }
 
@@ -346,9 +348,13 @@ function loadWeekCalendar (startTime, endTime, hiddenDays, resourcesArray, provi
 
 function loadProviderBooking (providerId) {
 	var localId = $('input[name=localRadio]:checked').val();
+	var start = $('#calendar').fullCalendar('getView').visStart;
+	var end = $('#calendar').fullCalendar('getView').visEnd;
+	var startParam = start.getFullYear()+'-'+(start.getMonth()+1)+'-'+start.getDate();
+	var endParam = end.getFullYear()+'-'+(end.getMonth()+1)+'-'+end.getDate();
 	$('#calendar').fullCalendar('removeEvents');
 	if (providerId == 0) {
-		$.getJSON('/booking', {location: localId}, function (bookings) {
+		$.getJSON('/booking', {location: localId, start: startParam, end: endParam}, function (bookings) {
 			if (bookings.length > 0) {
 				$.each(bookings, function (key, booking) {
 					var eventColor = "#585858";
@@ -384,7 +390,7 @@ function loadProviderBooking (providerId) {
 	}
 	else {
 		loadProviderBreaks(providerId);
-		$.getJSON('/booking', {location: localId, provider: providerId}, function (bookings) {
+		$.getJSON('/booking', {location: localId, provider: providerId, start: startParam, end: endParam}, function (bookings) {
 			if (bookings.length > 0) {
 				$.each(bookings, function (key, booking) {
 					var eventColor = "#585858";
