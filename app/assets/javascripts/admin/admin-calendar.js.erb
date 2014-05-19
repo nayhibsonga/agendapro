@@ -956,6 +956,34 @@ $(function() {
 		}
 	});
 
+	$("#booking_first_name").autocomplete({
+		source: '/clients_name_suggestion',
+		appendTo: '#name_suggestions',
+		autoFocus: true,
+		minLength: 3,
+		select: function( event, ui ) {
+			event.preventDefault();
+			$('#booking_first_name').val(ui.item.value[0]);
+			$('#booking_last_name').val(ui.item.value[1]);
+			$('#booking_phone').val(ui.item.value[3]);
+			$('#booking_email').val(ui.item.value[2]);
+		}
+	});
+
+	$("#booking_last_name").autocomplete({
+		source: '/clients_last_name_suggestion',
+		appendTo: '#last_name_suggestions',
+		autoFocus: true,
+		minLength: 3,
+		select: function( event, ui ) {
+			event.preventDefault();
+			$('#booking_first_name').val(ui.item.value[0]);
+			$('#booking_last_name').val(ui.item.value[1]);
+			$('#booking_phone').val(ui.item.value[3]);
+			$('#booking_email').val(ui.item.value[2]);
+		}
+	});
+
 	$('#booking_service_provider_id').change(function (event) {
 		$.getJSON('/provider_services', {id: event.target.value}, function (services) {
 			$('#booking_service_id').empty();

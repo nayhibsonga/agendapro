@@ -63,7 +63,11 @@ Agendapro::Application.routes.draw do
   post '/change_categories_order', :to => 'service_categories#change_categories_order'
   post '/change_services_order', :to => 'services#change_services_order'
 
+  # Autocompletar del Booking
   get '/clients_suggestion', :to => 'clients#suggestion'
+  get '/clients_name_suggestion', :to => 'clients#name_suggestion'
+  get '/clients_last_name_suggestion', :to => 'clients#last_name_suggestion'
+
   get '/provider_services', :to => 'service_providers#provider_service'
 
   # Singup Validations

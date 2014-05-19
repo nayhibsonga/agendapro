@@ -174,6 +174,32 @@ class ClientsController < ApplicationController
     render :json => @clients_arr
   end
 
+  def name_suggestion
+    @company = Company.where(id: current_user.company_id)
+    @clients = Client.where(company_id: @company).where('first_name ~* ?', params[:term]).pluck(:first_name, :last_name, :email, :phone).uniq
+
+    @clients_arr = Array.new
+    @clients.each do |client|
+      label = client[2] + ' - ' + client[1] + ', ' + client[0]
+      @clients_arr.push({:label => label, :value => client})
+    end
+
+    render :json => @clients_arr
+  end
+
+  def last_name_suggestion
+    @company = Company.where(id: current_user.company_id)
+    @clients = Client.where(company_id: @company).where('last_name ~* ?', params[:term]).pluck(:first_name, :last_name, :email, :phone).uniq
+
+    @clients_arr = Array.new
+    @clients.each do |client|
+      label = client[2] + ' - ' + client[1] + ', ' + client[0]
+      @clients_arr.push({:label => label, :value => client})
+    end
+
+    render :json => @clients_arr
+  end
+
   def import
     message = Client.import(params[:file], current_user.company_id)
     redirect_to clients_path, notice: message
