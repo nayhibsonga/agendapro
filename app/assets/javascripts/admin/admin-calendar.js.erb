@@ -946,7 +946,7 @@ $(function() {
 		source: '/clients_suggestion',
 		appendTo: '#suggestions',
 		autoFocus: true,
-		minLength: 1,
+		minLength: 3,
 		select: function( event, ui ) {
 			event.preventDefault();
 			$('#booking_first_name').val(ui.item.value[0]);
