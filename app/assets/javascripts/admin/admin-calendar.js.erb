@@ -387,6 +387,29 @@ function loadProviderBooking (providerId) {
 				});
 			}
 		});
+		$('input[name="providerRadio"]').each(function () {
+			var providerId = $(this).val();
+			if (providerId > 0) {
+				$.getJSON('/provider_breaks', {service_provider_id: providerId }, function (breaksArray) {
+					if (breaksArray.length > 0) {
+						$.each(breaksArray, function (key, providerBreak) {
+							var eventColor = "#373737";
+							var events = {
+								id: 'b'+providerBreak.id,
+								title: 'Hora Bloqueada',
+								allDay: false,
+								start: providerBreak.start,
+								end: providerBreak.end,
+								editable: false,
+								resourceId: parseInt(providerId),
+								color: eventColor
+							};
+							$('#calendar').fullCalendar('renderEvent', events, true);
+						});
+					}
+				});
+			};
+		});
 	}
 	else {
 		loadProviderBreaks(providerId);
