@@ -208,7 +208,7 @@ function loadResourcesCalendar (startTime, endTime, hiddenDays, resourcesArray, 
 	$('#calendar').empty();
 	$('#calendar').fullCalendar({
 		header: {
-			left: 'agendaWeek,resourceDay',
+			left: '',
 			center: 'prev,today,next',
 			right: 'title'
 		},
@@ -229,7 +229,7 @@ function loadResourcesCalendar (startTime, endTime, hiddenDays, resourcesArray, 
 		// 	$(this).find('div[id*=events-layer]').remove();
 		// },
 		firstDay: 1,	//Lunes
-		defaultView: 'agendaWeek',
+		defaultView: 'resourceDay',
 		allDaySlot: false,
 		axisFormat: 'HH:mm',
 		timeFormat: 'HH:mm{ - HH:mm}',
