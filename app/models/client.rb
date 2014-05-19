@@ -9,7 +9,7 @@ class Client < ActiveRecord::Base
 
   def self.search(search)
     if search
-      where(['lower(email) LIKE lower(?) or lower(last_name) LIKE lower(?) or lower(first_name) LIKE lower(?)', "%#{search}%","%#{search}%","%#{search}%"])
+      where ["CONCAT(first_name, ' ', last_name) ILIKE :s OR email ILIKE :s OR first_name ILIKE :s OR last_name ILIKE :s", :s => "%#{search}%"]
     else
       all
     end
