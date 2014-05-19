@@ -113,11 +113,11 @@ Agendapro::Application.routes.draw do
   get '/services_list', :to => 'services#services_data'  # Fullcalendar
   get '/provider_time', :to => 'service_providers#provider_time'  # Fullcalendar
   get '/booking', :to => 'bookings#provider_booking'  # Fullcalendar
-  get '/provider_breaks', :to => 'bookings#provider_breaks', :as => 'provider_breaks'
-  get '/provider_breaks/:id', :to => 'bookings#get_provider_break', :as => 'get_provider_break'
-  post '/provider_breaks', :to => 'bookings#create_provider_break', :as => 'create_provider_breaks'
-  patch '/provider_breaks/:id', :to => 'bookings#update_provider_break', :as => 'edit_provider_break'
-  delete '/provider_breaks/:id', :to => 'bookings#destroy_provider_break', :as => 'delete_provider_break'
+  get '/provider_breaks', :to => 'provider_breaks#provider_breaks', :as => 'provider_breaks'
+  get '/provider_breaks/:id', :to => 'provider_breaks#get_provider_break', :as => 'get_provider_break'
+  post '/provider_breaks', :to => 'provider_breaks#create_provider_break', :as => 'create_provider_breaks'
+  patch '/provider_breaks/:id', :to => 'provider_breaks#update_provider_break', :as => 'edit_provider_break'
+  delete '/provider_breaks/:id', :to => 'provider_breaks#destroy_provider_break', :as => 'delete_provider_break'
   get '/available_providers', :to => 'service_providers#available_providers', :as => 'available_service_providers'
 
   get '/edit_booking', :to => 'bookings#edit_booking', :as => 'booking_edit'
