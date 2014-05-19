@@ -163,7 +163,7 @@ class ClientsController < ApplicationController
 
   def suggestion
     @company = Company.where(id: current_user.company_id)
-    @clients = Client.where(company_id: @company).pluck(:first_name, :last_name, :email, :phone).uniq
+    @clients = Client.where(company_id: @company).where('email ~* ?', params[:term]).pluck(:first_name, :last_name, :email, :phone).uniq
 
     @clients_arr = Array.new
     @clients.each do |client|
