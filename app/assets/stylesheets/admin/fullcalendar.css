@@ -519,7 +519,7 @@ table.fc-border-separate {
 ------------------------------------------------------------------------*/
 
 .fc-event-vert {
-	border-width: 0 1px;
+	border-width: 1px 1px;
 	}
 
 .fc-event-vert.fc-event-start {
