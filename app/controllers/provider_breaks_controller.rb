@@ -4,7 +4,7 @@ class ProviderBreaksController < ApplicationController
   load_and_authorize_resource
 
   def provider_breaks
-    provider_breaks = ProviderBreak.where(service_provider_id: params[:service_provider_id])
+    provider_breaks = ProviderBreak.where(service_provider_id: params[:service_provider_id]).where(:start => params[:start]..params[:end]).order(:start)
     render :json => provider_breaks
   end
 
@@ -48,7 +48,7 @@ class ProviderBreaksController < ApplicationController
     @provider_break.destroy
     respond_to do |format|
       format.html { redirect_to bookings_url }
-      format.json { head :no_content }
+      format.json { render :json => @provider_break }
     end
   end
   

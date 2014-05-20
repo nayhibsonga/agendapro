@@ -390,7 +390,7 @@ function loadProviderBooking (providerId) {
 		$('input[name="providerRadio"]').each(function () {
 			var providerId = $(this).val();
 			if (providerId > 0) {
-				$.getJSON('/provider_breaks', {service_provider_id: providerId }, function (breaksArray) {
+				$.getJSON('/provider_breaks', {service_provider_id: providerId, start: startParam, end: endParam }, function (breaksArray) {
 					if (breaksArray.length > 0) {
 						$.each(breaksArray, function (key, providerBreak) {
 							var eventColor = "#373737";
@@ -443,7 +443,7 @@ function loadProviderBooking (providerId) {
 				});
 			}
 		});
-		$.getJSON('/provider_breaks', {service_provider_id: providerId}, function (breaksArray) {
+		$.getJSON('/provider_breaks', {service_provider_id: providerId, start: startParam, end: endParam}, function (breaksArray) {
 			if (breaksArray.length > 0) {
 				$.each(breaksArray, function (key, providerBreak) {
 					var eventColor = "#373737";
@@ -808,8 +808,36 @@ function saveBreak (typeURL, extraURL) {
 		url: '/provider_breaks'+extraURL+'.json',
 		data: { "provider_break": breakJSON },
 		dataType: 'json',
-		success: function(){
-			document.location.href = '/bookings/';
+		success: function(provider_break){
+			switch(typeURL) {
+			case 'POST':
+				var eventColor = "#373737";
+				var events = {
+					id: 'b'+provider_break.id,
+					title: 'Hora Bloqueada',
+					allDay: false,
+					start: provider_break.start,
+					end: provider_break.end,
+					editable: false,
+					resourceId: parseInt(provider_break.service_provider_id),
+					color: eventColor
+				};
+				$('#calendar').fullCalendar('renderEvent', events, true);
+				$('#breakModal').modal('hide');
+				break;
+			case 'PATCH':
+				event = $('#calendar').fullCalendar('clientEvents', 'b'+provider_break.id)[0];
+				event.start = provider_break.start;
+				event.end = provider_break.end;
+				event.resourceId = parseInt(provider_break.service_provider_id);
+				$('#calendar').fullCalendar('updateEvent', event);
+				$('#breakModal').modal('hide');
+				break;
+			case 'DELETE':
+				$('#calendar').fullCalendar('removeEvents','b'+provider_break.id);
+				$('#breakModal').modal('hide');
+				break;
+			}
 		},
 		error: function(xhr){
 			var errors = $.parseJSON(xhr.responseText).errors;
@@ -905,6 +933,7 @@ function editBreakModal(breakId) {
 			$('#provider_break_end_4i option[value="'+dateArray[1].split(':')[0]+'"]').attr("selected",true);
 			$('#provider_break_end_5i option[value="'+dateArray[1].split(':')[1]+'"]').attr("selected",true);
 		}
+		$('#provider_break_service_provider_id option[value="'+provider_break.service_provider_id+'"]').attr("selected",true);;
 		$('.break-modal-footer').empty();
 		$('.break-modal-footer').append('<button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button><button type="button" class="btn btn-primary" id="edit_break">Guardar</button><button type="button" class="btn btn-danger" id="destroy_break">Eliminar</button>');
 		$('#edit_break').click(function() {
@@ -966,8 +995,10 @@ $(function() {
 		dayNamesMin: [ "Do", "Lu", "Ma", "Mi", "Ju", "Vi", "Sá" ],
 		dayNamesShort: [ "Dom", "Lun", "Mar", "Mié", "Jue", "Vie", "Sáb" ],
 		onSelect: function(dateText, inst) {
-				var d = new Date(dateText);
-				$('#calendar').fullCalendar('gotoDate', d);
+			var d = new Date(dateText);
+			$('#calendar').fullCalendar('gotoDate', d);
+			var providerId = $('input[name="providerRadio"]:checked').val();
+			loadProviderBooking(providerId);
 		}
 	});
 
