@@ -8,7 +8,7 @@ class ServiceProvidersController < ApplicationController
   # GET /service_providers
   # GET /service_providers.json
   def index
-    @locations = Location.where(company_id: current_user.company_id, :active => true).accessible_by(current_ability)
+    @locations = Location.where(company_id: current_user.company_id, :active => true).order(order: :asc).accessible_by(current_ability)
     @service_providers = ServiceProvider.where(company_id: current_user.company_id, :active => true).accessible_by(current_ability)
   end
 
@@ -114,8 +114,26 @@ class ServiceProvidersController < ApplicationController
   end
 
   def location_services
+    categories = ServiceCategory.where(:company_id => Location.find(params[:location]).company_id).order(order: :asc)
     services = Service.where(:active => true).order(order: :asc).includes(:service_providers).where('service_providers.active = ?', true).where('service_providers.location_id = ?', params[:location]).order(order: :asc)
-    render :json => services
+
+    categorized_services = Array.new
+    categories.each do |category|
+      services_array = Array.new
+      services.each do |service|
+        if service.service_category_id == category.id
+          services_array.push(service)
+        end
+      end
+      service_hash = {
+        :id => category.id,
+        :category => category.name,
+        :services => services_array
+      }
+      categorized_services.push(service_hash)
+    end
+
+    render :json => categorized_services
   end
 
   def location_providers
@@ -148,6 +166,26 @@ class ServiceProvidersController < ApplicationController
       end
     end
     render :json => service_providers
+  end
+
+  def change_providers_order
+    array_result = Array.new
+    params[:providers_order].each do |pos, provider_hash|
+      provider = ServiceProvider.find(provider_hash[:provider])
+      if provider.update(:order => provider_hash[:order])
+        array_result.push({
+          provider: provider.public_name,
+          status: 'Ok'
+        })
+      else
+        array_result.push({
+          provider: provider.public_name,
+          status: 'Error',
+          errors: provider.errors
+        })
+      end
+    end
+    render :json => array_result
   end
 
   private

@@ -13,30 +13,30 @@ function drop (e) {
     	this.innerHTML = e.dataTransfer.getData('text/html');
 	};
 
-	serviceNewOrder(tbody);
+	providerNewOrder(tbody);
 	return false;
 }
 
 // Service Drag & Drop
-function serviceNewOrder (tbody) {
-	var services = new Array();
+function providerNewOrder (tbody) {
+	var providers = new Array();
 	$.each($(tbody).children(), function (key, tr) {
 		var row_hash = {
-			service: $(tr).children().first().data('service'),
+			provider: $(tr).children().first().data('provider'),
 			order: key
 		};
-		services.push(row_hash);
+		providers.push(row_hash);
 	});
 	$.post(
-		'/change_services_order',
-		{services_order: services},
+		'/change_providers_order',
+		{providers_order: providers},
 		function (data) {
 			$.each(data, function (key, result) {
 				if (result.status != 'Ok') {
 					$('.content-fix').prepend(
 						'<div class="alert alert-danger alert-dismissable">' +
 							'<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>' +
-							'<strong>Error!</strong> No se pudo guardar el cambio de: ' + result.service +
+							'<strong>Error!</strong> No se pudo guardar el cambio de: ' + result.provider +
 						'</div>'
 					);
 				};
