@@ -314,6 +314,132 @@ class BookingMailer < ActionMailer::Base
 			raise
 	end
 
+	def confirm_booking (book_info)
+		mandrill = Mandrill::API.new Agendapro::Application.config.api_key
+
+		# => Template
+		template_name = 'Booking'
+		template_content = []
+
+		# => Message
+		message = {
+			:from_email => 'no-reply@agendapro.cl',
+			:from_name => 'AgendaPro',
+			:subject => 'Reserva Confirmada',
+			:to => [
+				{
+					:email => book_info.service_provider.notification_email,
+					:type => 'to'
+				}
+			],
+			:headers => { 'Reply-To' => "contacto@agendapro.cl" },
+			:global_merge_vars => [
+				{
+					:name => 'UNSUBSCRIBE',
+					:content => "Si desea dejar de recibir email puede dar click <a href='#{unsubscribe_url(:user => Base64.encode64(book_info.email))}'>aquí</a>."
+				},
+				{
+					:name => 'LNAME',
+					:content => book_info.last_name
+				},
+				{
+					:name => 'FNAME',
+					:content => book_info.first_name
+				},
+				{
+					:name => 'LOCALNAME',
+					:content => book_info.location.name
+				},
+				{
+					:name => 'SERVICENAME',
+					:content => book_info.service.name
+				},
+				{
+					:name => 'SERVICEPRICE',
+					:content => if book_info.service.show_price && book_info.service.price && book_info.service.price > 0 then '$' + book_info.service.price.to_s else 'Consultar en Local' end
+				},
+				{
+					:name => 'SERVICEDURATION',
+					:content => book_info.service.duration
+				},
+				{
+					:name => 'EMAIL',
+					:content => book_info.email
+				},
+				{
+					:name => 'PHONE',
+					:content => book_info.phone
+				},
+				{
+					:name => 'BSTART',
+					:content => l(book_info.start)
+				},
+				{
+					:name => 'BEND',
+					:content => l(book_info.end)
+				}
+			],
+			:merge_vars => [
+				{
+					:rcpt => book_info.service_provider.notification_email,
+					:vars => [
+						{
+							:name => 'RMESSAGE',
+							:content => 'Estimado,'
+						},
+						{
+							:name => 'NAME',
+							:content => ''
+						},
+						{
+							:name => 'MESSAGE',
+							:content => 'EL cliente ha confirmado el servicio'
+						}
+					]
+				}
+			],
+			:tags => ['booking', 'edit_booking'],
+			:images => [
+				{
+					:type => 'image/png',
+					:name => 'AgendaPro.png',
+					:content => Base64.encode64(File.read('app/assets/images/logos/logo_mail.png'))
+				}
+			]
+		}
+
+		if !book_info.notes.blank?
+			message[:global_merge_vars] << {:name => 'BNOTES', :content => book_info.notes}
+		end
+
+		# => Logo empresa
+		if book_info.location.company.logo_url
+			company_img = {
+				:type => 'image/' +  File.extname(book_info.location.company.logo_url),
+				:name => 'company_img.jpg',
+				:content => Base64.encode64(File.read('public' + book_info.location.company.logo_url.to_s))
+			}
+		else
+			company_img = {
+				:type => 'image/png',
+				:name => 'company_img.jpg',
+				:content => Base64.encode64(File.read('app/assets/ico/Iso_Pro_Color.png'))
+			}
+		end
+		message[:images] << (company_img)
+
+		# => Metadata
+		async = false
+		send_at = DateTime.now
+
+		# => Send mail
+		result = mandrill.messages.send_template template_name, template_content, message, async, send_at
+
+		rescue Mandrill::Error => e
+			puts "A mandrill error occurred: #{e.class} - #{e.message}"
+			raise
+	end
+
 	def cancel_booking (book_info)
 		mandrill = Mandrill::API.new Agendapro::Application.config.api_key
 
