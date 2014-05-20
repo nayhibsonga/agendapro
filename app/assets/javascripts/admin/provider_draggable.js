@@ -1,3 +1,4 @@
+
 function drop (e) {
 	if (e.stopPropagation) {
 		e.stopPropagation();
@@ -12,31 +13,30 @@ function drop (e) {
     	this.innerHTML = e.dataTransfer.getData('text/html');
 	};
 
-	locationNewOrder(tbody);
-
+	providerNewOrder(tbody);
 	return false;
 }
 
-// Category Drag & Drop
-function locationNewOrder (tbody) {
-	var locations = new Array();
+// Service Drag & Drop
+function providerNewOrder (tbody) {
+	var providers = new Array();
 	$.each($(tbody).children(), function (key, tr) {
 		var row_hash = {
-			location: $(tr).children().first().data('location'),
+			provider: $(tr).children().first().data('provider'),
 			order: key
 		};
-		locations.push(row_hash);
+		providers.push(row_hash);
 	});
 	$.post(
-		'/change_location_order',
-		{location_order: locations},
+		'/change_providers_order',
+		{providers_order: providers},
 		function (data) {
 			$.each(data, function (key, result) {
 				if (result.status != 'Ok') {
 					$('.content-fix').prepend(
 						'<div class="alert alert-danger alert-dismissable">' +
 							'<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>' +
-							'<strong>Error!</strong> No se pudo guardar el cambio de: ' + result.location +
+							'<strong>Error!</strong> No se pudo guardar el cambio de: ' + result.provider +
 						'</div>'
 					);
 				};

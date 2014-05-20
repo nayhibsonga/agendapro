@@ -168,6 +168,26 @@ class ServiceProvidersController < ApplicationController
     render :json => service_providers
   end
 
+  def change_providers_order
+    array_result = Array.new
+    params[:providers_order].each do |pos, provider_hash|
+      provider = ServiceProvider.find(provider_hash[:provider])
+      if provider.update(:order => provider_hash[:order])
+        array_result.push({
+          provider: provider.public_name,
+          status: 'Ok'
+        })
+      else
+        array_result.push({
+          provider: provider.public_name,
+          status: 'Error',
+          errors: provider.errors
+        })
+      end
+    end
+    render :json => array_result
+  end
+
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_service_provider

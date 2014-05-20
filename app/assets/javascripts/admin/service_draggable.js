@@ -8,7 +8,6 @@ function drop (e) {
 	};
 
 	var tbody = $(e.target).closest('tbody');
-	/*var resource = $(e.target.parentNode).data('resource')*/
 	if (dragElemente != this) {
 		dragElemente.innerHTML = this.innerHTML;
     	this.innerHTML = e.dataTransfer.getData('text/html');
@@ -43,5 +42,5 @@ function serviceNewOrder (tbody) {
 				};
 			});
 		}
-	).fail(function () {window.console.log($(tbody).children())});
+	);
 }

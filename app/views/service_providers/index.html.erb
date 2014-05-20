@@ -36,11 +36,14 @@
 					<tbody>
 						<% @service_providers.each do |service_provider| %>
 						<% if service_provider.location_id == location.id %>
-							<tr>
-								<td><%= service_provider.public_name %></td>
+							<tr draggable="true">
+								<td data-provider="<%= service_provider.id %>"><%= service_provider.public_name %></td>
 								<td>
 									<%= link_to '<i class="fa fa-pencil"></i> Editar'.html_safe, edit_service_provider_path(service_provider), :class => "btn btn-warning" %>
 									<%= link_to '<i class="fa fa-trash-o"></i> Eliminar'.html_safe, deactivate_service_provider_path(:id => service_provider.id), :class => "btn btn-danger", data: { confirm: '¿Estás seguro de desactivar el Proveedor seleccionado?' } %>
+									<span class="pull-right">
+										<i class="fa fa-bars"></i>
+									</span>
 								</td>
 							</tr>
 						<% end %>
@@ -57,3 +60,9 @@
 
 <%= link_to '<i class="fa fa-plus"></i> Nuevo Proveedor de Servicios'.html_safe, new_service_provider_path, :class => "btn btn-primary" %>
 <%= link_to '<i class="fa fa-minus"></i> Proveedores de Servicios Inactivos'.html_safe, inactive_service_providers_path, :class => "btn btn-primary pull-right" %>
+
+<%= stylesheet_link_tag "admin/draggable" %>
+<% content_for :scripts do %>
+  <%= javascript_include_tag 'admin/draggable' %>
+  <%= javascript_include_tag 'admin/provider_draggable' %>
+<% end %>
