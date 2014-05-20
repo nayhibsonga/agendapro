@@ -13,6 +13,7 @@ class BookingMailer < ActionMailer::Base
 		message = {
 			:from_email => 'no-reply@agendapro.cl',
 			:from_name => 'AgendaPro',
+			:subject => 'Nueva Reserva en ' + book_info.service_provider.company.name,
 			:to => [
 				{
 					:email => book_info.email,
@@ -168,6 +169,7 @@ class BookingMailer < ActionMailer::Base
 		message = {
 			:from_email => 'no-reply@agendapro.cl',
 			:from_name => 'AgendaPro',
+			:subject => 'Se Actualizo tu Reserva en ' + book_info.service_provider.company.name,
 			:to => [
 				{
 					:email => book_info.email,
@@ -335,7 +337,7 @@ class BookingMailer < ActionMailer::Base
 				}
 			],
 			:headers => { 'Reply-To' => "contacto@agendapro.cl" },
-			:subject => 'Reserva Cancelada',
+			:subject => 'Reserva Cancelada en ' + book_info.service_provider.company.name,
 			:global_merge_vars => [
 				{
 					:name => 'UNSUBSCRIBE',
