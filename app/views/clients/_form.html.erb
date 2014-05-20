@@ -55,7 +55,7 @@
             </div>
           </div>
           <div class="form-group">
-            <%= f.label :birth_date, "Cumpleaños: ", class: "col-sm-4 control-label" %>
+            <%= f.label :birth_date, "Fecha Nacimiento: ", class: "col-sm-4 control-label" %>
             <div class="col-sm-8">
                 <%= f.text_field :birth_date, class: "form-control", :value => (@client.birth_date.blank? ? '' : @client.birth_date.strftime('%d/%m/%Y')) %>
             </div>
@@ -86,10 +86,10 @@
             <div class="panel panel-info">
               <div class="panel-heading">
                 <h3 class="panel-title">
-                  Últimas 5 reservas agendadas
+                  Reservas Pasadas
                 </h3>
               </div>
-              <div class="panel-body">
+              <div class="panel-body fixed-panel">
                 <table class="table">
                   <tbody>
                     <tr>
@@ -113,10 +113,10 @@
             <div class="panel panel-info">
               <div class="panel-heading">
                 <h3 class="panel-title">
-                  Próximas 5 reservas
+                  Próximas Reservas
                 </h3>
               </div>
-              <div class="panel-body">
+              <div class="panel-body fixed-panel">
                 <table class="table">
                   <tbody>
                     <tr>

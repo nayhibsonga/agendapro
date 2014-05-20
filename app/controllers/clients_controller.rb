@@ -40,8 +40,8 @@ class ClientsController < ApplicationController
 
   # GET /clients/1/edit
   def edit
-    @activeBookings = Booking.where(:email => @client.email, :service_provider_id => ServiceProvider.where(:company_id => @client.company_id), :status_id => Status.find_by(:name => ['Reservado', 'Pagado'])).where("start > ?", DateTime.now).order(:start).limit(5)
-    @lastBookings = Booking.where(:email => @client.email, :service_provider_id => ServiceProvider.where(:company_id => @client.company_id)).order(updated_at: :desc).limit(5)
+    @activeBookings = Booking.where(:email => @client.email, :service_provider_id => ServiceProvider.where(:company_id => @client.company_id)).where("start > ?", DateTime.now).order(start: :asc)
+    @lastBookings = Booking.where(:email => @client.email, :service_provider_id => ServiceProvider.where(:company_id => @client.company_id)).where("start <= ?", DateTime.now).order(start: :desc)
     @next_bookings = Booking
     @client_comment = ClientComment.new
     @client_comments = ClientComment.where(client_id: @client.id).order(created_at: :desc)
