@@ -120,6 +120,20 @@
 					</div>
 				</div>
 				<div class="form-group">
+					<%= f.label :first_name, "Nombre: ", class: "col-sm-5 control-label" %>
+					<div class="col-sm-5">
+						<%= f.text_field :first_name, class: "form-control" %>
+						<ul id="name_suggestions"></ul>
+					</div>
+				</div>
+				<div class="form-group">
+					<%= f.label :last_name, "Apellidos: ", class: "col-sm-5 control-label" %>
+					<div class="col-sm-5">
+						<%= f.text_field :last_name, class: "form-control" %>
+						<ul id="last_name_suggestions"></ul>
+					</div>
+				</div>
+				<div class="form-group">
 					<%= f.label :email, "Email: ", class: "col-sm-5 control-label" %>
 					<div class="col-sm-5">
 						<%= f.text_field :email, class: "form-control" %>
@@ -129,18 +143,6 @@
 								<%= f.check_box :send_mail %> Enviar email
 							</label>
 						</div>
-					</div>
-				</div>
-				<div class="form-group">
-					<%= f.label :first_name, "Nombre: ", class: "col-sm-5 control-label" %>
-					<div class="col-sm-5">
-						<%= f.text_field :first_name, class: "form-control" %>
-					</div>
-				</div>
-				<div class="form-group">
-					<%= f.label :last_name, "Apellidos: ", class: "col-sm-5 control-label" %>
-					<div class="col-sm-5">
-						<%= f.text_field :last_name, class: "form-control" %>
 					</div>
 				</div>
 				<div class="form-group">

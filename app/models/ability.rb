@@ -159,6 +159,9 @@ class Ability
         can :get_link, Company
 
         can :suggestion, Client, :company_id => user.company_id
+        can :name_suggestion, Client, :company_id => user.company_id
+        can :last_name_suggestion, Client, :company_id => user.company_id
+
         can :create_comment, Client
         can :update_comment, Client
         can :destroy_comment, Client
@@ -229,7 +232,9 @@ class Ability
 
         can :provider_service, ServiceProvider
         can :suggestion, Client, :company_id => user.company_id
-
+        can :name_suggestion, Client, :company_id => user.company_id
+        can :last_name_suggestion, Client, :company_id => user.company_id
+        
         can :create_comment, Client, :company_id => user.company_id
         can :update_comment, Client, :company_id => user.company_id
         can :destroy_comment, Client, :company_id => user.company_id
@@ -270,6 +275,8 @@ class Ability
 
         can :provider_service, ServiceProvider
         can :suggestion, Client, :company_id => user.company_id
+        can :name_suggestion, Client, :company_id => user.company_id
+        can :last_name_suggestion, Client, :company_id => user.company_id
         
         can :create_comment, Client, :company_id => user.company_id
         can :update_comment, Client, :company_id => user.company_id
