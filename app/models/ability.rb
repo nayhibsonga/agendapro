@@ -65,7 +65,6 @@ class Ability
     can :location_providers, ServiceProvider
     can :provider_time, ServiceProvider
     can :location_time, Location
-    can :get_category_name, ServiceCategory
     can :get_available_time, Location
     can :company_service_categories, ServiceCategory
     can :check_user_cross_bookings, Booking

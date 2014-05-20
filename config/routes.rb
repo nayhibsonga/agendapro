@@ -108,7 +108,6 @@ Agendapro::Application.routes.draw do
   get '/get_booking', :to => 'bookings#get_booking'
   get '/get_booking_info', :to => 'bookings#get_booking_info'
   post "/book", :to => 'bookings#book_service'
-  get '/category_name', :to => 'service_categories#get_category_name'
   get '/get_available_time', :to => 'locations#get_available_time'
   get '/check_user_cross_bookings', :to => 'bookings#check_user_cross_bookings'
 
