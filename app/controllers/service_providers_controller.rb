@@ -114,8 +114,26 @@ class ServiceProvidersController < ApplicationController
   end
 
   def location_services
+    categories = ServiceCategory.where(:company_id => Location.find(params[:location]).company_id).order(order: :asc)
     services = Service.where(:active => true).order(order: :asc).includes(:service_providers).where('service_providers.active = ?', true).where('service_providers.location_id = ?', params[:location]).order(order: :asc)
-    render :json => services
+
+    categorized_services = Array.new
+    categories.each do |category|
+      services_array = Array.new
+      services.each do |service|
+        if service.service_category_id == category.id
+          services_array.push(service)
+        end
+      end
+      service_hash = {
+        :id => category.id,
+        :category => category.name,
+        :services => services_array
+      }
+      categorized_services.push(service_hash)
+    end
+
+    render :json => categorized_services
   end
 
   def location_providers
