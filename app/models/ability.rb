@@ -170,6 +170,7 @@ class Ability
 
         can :change_categories_order, ServiceCategory
         can :change_services_order, Service
+        can :change_location_order, Location
 
     elsif user.role_id == Role.find_by_name("Administrador Local").id
 
@@ -243,6 +244,7 @@ class Ability
 
         can :change_categories_order, ServiceCategory
         can :change_services_order, Service
+        can :change_location_order, Location
 
     elsif user.role_id == Role.find_by_name("Recepcionista").id
 

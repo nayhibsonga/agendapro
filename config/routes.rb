@@ -62,6 +62,7 @@ Agendapro::Application.routes.draw do
   get '/get_link', :to => 'companies#get_link', :as => 'get_link'
   post '/change_categories_order', :to => 'service_categories#change_categories_order'
   post '/change_services_order', :to => 'services#change_services_order'
+  post '/change_location_order', :to => 'locations#change_location_order'
 
   # Autocompletar del Booking
   get '/clients_suggestion', :to => 'clients#suggestion'
