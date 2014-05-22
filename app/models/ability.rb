@@ -65,7 +65,6 @@ class Ability
     can :location_providers, ServiceProvider
     can :provider_time, ServiceProvider
     can :location_time, Location
-    can :get_category_name, ServiceCategory
     can :get_available_time, Location
     can :company_service_categories, ServiceCategory
     can :check_user_cross_bookings, Booking
@@ -171,6 +170,8 @@ class Ability
 
         can :change_categories_order, ServiceCategory
         can :change_services_order, Service
+        can :change_location_order, Location
+        can :change_providers_order, ServiceProvider
 
     elsif user.role_id == Role.find_by_name("Administrador Local").id
 
@@ -244,6 +245,8 @@ class Ability
 
         can :change_categories_order, ServiceCategory
         can :change_services_order, Service
+        can :change_location_order, Location
+        can :change_providers_order, ServiceProvider
 
     elsif user.role_id == Role.find_by_name("Recepcionista").id
 

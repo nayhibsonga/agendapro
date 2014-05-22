@@ -128,7 +128,7 @@ class CompaniesController < ApplicationController
 				return
 			end
 		end
-		@locations = Location.where(:active => true).where('company_id = ?', @company.id)
+		@locations = Location.where(:active => true).where('company_id = ?', @company.id).order(order: :asc)
 
 		# => Domain parser
 		host = request.host_with_port

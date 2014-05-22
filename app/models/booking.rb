@@ -98,6 +98,9 @@ class Booking < ActiveRecord::Base
 			if changed_attributes['start'] and self.send_mail
 				BookingMailer.update_booking(self)
 			end
+			if self.status == Status.find_by(:name => "Confirmado")
+				BookingMailer.confirm_booking(self)
+			end
 		end
 	end
 
@@ -107,7 +110,6 @@ class Booking < ActiveRecord::Base
 		where(:start => @time1...@time2).each do |booking|
 			unless booking.status == Status.find_by(:name => "Cancelado") 
 				if booking.send_mail
-					booking.update_column(:status_id, Status.find_by(:name => "Confirmado")) unless booking.status == Status.find_by(:name => "Pagado")
 					BookingMailer.book_reminder_mail(booking)
 				end
 			end

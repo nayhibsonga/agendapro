@@ -3,12 +3,12 @@ class LocationsController < ApplicationController
   before_action :authenticate_user!, except: [:location_data, :location_time, :get_available_time]
   before_action :quick_add, except: [:location_data, :location_time, :get_available_time]
   load_and_authorize_resource
-  layout "admin"
+  layout "admin", except: [:change_location_order]
 
   # GET /locations
   # GET /locations.json
   def index
-    @locations = Location.where(company_id: current_user.company_id, :active => true).accessible_by(current_ability)
+    @locations = Location.where(company_id: current_user.company_id, :active => true).order(order: :asc).accessible_by(current_ability)
   end
 
   def inactive_index
@@ -286,6 +286,26 @@ class LocationsController < ApplicationController
       format.html
       format.json { render :json => @week_blocks }
     end
+  end
+
+  def change_location_order
+    array_result = Array.new
+    params[:location_order].each do |pos, location_hash|
+      location = Location.find(location_hash[:location])
+      if location.update(:order => location_hash[:order])
+        array_result.push({
+          location: location.name,
+          status: 'Ok'
+        })
+      else
+        array_result.push({
+          location: location.name,
+          status: 'Error',
+          errors: location.errors
+        })
+      end
+    end
+    render :json => array_result
   end
 
   private

@@ -62,6 +62,8 @@ Agendapro::Application.routes.draw do
   get '/get_link', :to => 'companies#get_link', :as => 'get_link'
   post '/change_categories_order', :to => 'service_categories#change_categories_order'
   post '/change_services_order', :to => 'services#change_services_order'
+  post '/change_location_order', :to => 'locations#change_location_order'
+  post '/change_providers_order', :to => 'service_providers#change_providers_order'
 
   # Autocompletar del Booking
   get '/clients_suggestion', :to => 'clients#suggestion'
@@ -108,7 +110,6 @@ Agendapro::Application.routes.draw do
   get '/get_booking', :to => 'bookings#get_booking'
   get '/get_booking_info', :to => 'bookings#get_booking_info'
   post "/book", :to => 'bookings#book_service'
-  get '/category_name', :to => 'service_categories#get_category_name'
   get '/get_available_time', :to => 'locations#get_available_time'
   get '/check_user_cross_bookings', :to => 'bookings#check_user_cross_bookings'
 

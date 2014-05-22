@@ -1,8 +1,8 @@
 class ServiceCategoriesController < ApplicationController
   before_action :set_service_category, only: [:show, :edit, :update, :destroy]
-  before_action :authenticate_user!, except: [:get_category_name]
-  before_action :quick_add, except: [:get_category_name]
-  layout "admin", except: [:get_category_name, :change_categories_order]
+  before_action :authenticate_user!
+  before_action :quick_add
+  layout "admin", except: [:change_categories_order]
   load_and_authorize_resource
 
   # GET /service_categories
@@ -84,11 +84,6 @@ class ServiceCategoriesController < ApplicationController
       format.html { redirect_to service_categories_url }
       format.json { head :no_content }
     end
-  end
-
-  def get_category_name
-    @service_category = ServiceCategory.find(params[:id])
-    render :json => @service_category
   end
 
   def change_categories_order
