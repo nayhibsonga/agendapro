@@ -38,7 +38,7 @@ class Booking < ActiveRecord::Base
   	def bookings_overlap
 		self.service_provider.bookings.each do |provider_booking|
 			if provider_booking != self
-	  			unless provider_booking.status_id == Status.find_by(name: 'Cancelado').id
+	  			unless provider_booking.status_id == Status.find_by(name: 'Cancelado').id || self.status_id == Status.find_by(name: 'Cancelado').id
 					if (provider_booking.start - self.end) * (self.start - provider_booking.end) > 0
 						if !self.service.group_service || self.service_id != provider_booking.service_id
 			      			errors.add(:base, "Esa hora ya está agendada para ese proveedor de servicios.")
