@@ -270,15 +270,11 @@ function loadResourcesCalendar (startTime, endTime, hiddenDays, resourcesArray, 
 		},
 		slotMinutes: duration
 	});
-
-	
-	loadProviderBooking(providerId);
-
-	
 	$('.fc-button').click(function (event) {
 		var providerId = $('input[name="providerRadio"]:checked').val();
 		loadProviderBooking(providerId);
 	});
+	loadProviderBooking(providerId);
 }
 
 function loadWeekCalendar (startTime, endTime, hiddenDays, resourcesArray, providerId) {
@@ -343,13 +339,11 @@ function loadWeekCalendar (startTime, endTime, hiddenDays, resourcesArray, provi
 		},
 		slotMinutes: duration
 	});
-	
-	loadProviderBooking(providerId);
-	
 	$('.fc-button').click(function () {
 		var providerId = $('input[name="providerRadio"]:checked').val();
 		loadProviderBooking(providerId);
 	});
+	loadProviderBooking(providerId);
 }
 
 function loadProviderBooking (providerId) {
