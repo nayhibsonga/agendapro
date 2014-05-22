@@ -276,24 +276,8 @@ function loadResourcesCalendar (startTime, endTime, hiddenDays, resourcesArray, 
 
 	
 	$('.fc-button').click(function (event) {
-
-	
-		if ($('.fc-button-agendaWeek.fc-state-active')[0]) {
-			$('input[name="providerRadio"]').each(function () {
-				$('#calendar').fullCalendar('removeEvents', 'break'+$(this).val());
-			});
-		}
-		else {
-			$('input[name="providerRadio"]').each(function () {
-				if ($(this).val() > 0) {
-					loadProviderBreaks($(this).val());
-				};
-			});
-		};
 		var providerId = $('input[name="providerRadio"]:checked').val();
 		loadProviderBooking(providerId);
-		
-	
 	});
 }
 
@@ -364,7 +348,6 @@ function loadWeekCalendar (startTime, endTime, hiddenDays, resourcesArray, provi
 	
 	$('.fc-button').click(function () {
 		var providerId = $('input[name="providerRadio"]:checked').val();
-		loadProviderBreaks (providerId);
 		loadProviderBooking(providerId);
 	});
 }
@@ -416,6 +399,7 @@ function loadProviderBooking (providerId) {
 	
 		$('input[name="providerRadio"]').each(function () {
 			var providerId = $(this).val();
+			loadProviderBreaks(providerId);
 			if (providerId > 0) {
 				$.getJSON('/provider_breaks', {service_provider_id: providerId, start: startParam, end: endParam }, function (breaksArray) {
 					if (breaksArray.length > 0) {

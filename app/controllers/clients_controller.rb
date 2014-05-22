@@ -78,6 +78,11 @@ class ClientsController < ApplicationController
     end
   end
 
+  def history
+    @client = Client.find(params[:id])
+    @bookings = Booking.where(email: @client.email, service_provider_id: ServiceProvider.where(company_id: current_user.company_id)).order(:start)
+  end
+
   def create_comment
     @client_comment = ClientComment.new(client_comment_params)
     respond_to do |format|
