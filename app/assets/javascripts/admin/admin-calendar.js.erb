@@ -270,7 +270,6 @@ function loadResourcesCalendar (startTime, endTime, hiddenDays, resourcesArray, 
 		},
 		slotMinutes: duration
 	});
-	loadProviderBooking(providerId);
 	$('.fc-button').click(function (event) {
 		if ($('.fc-button-agendaWeek.fc-state-active')[0]) {
 			$('input[name="providerRadio"]').each(function () {
@@ -287,6 +286,7 @@ function loadResourcesCalendar (startTime, endTime, hiddenDays, resourcesArray, 
 		var providerId = $('input[name="providerRadio"]:checked').val();
 		loadProviderBooking(providerId);
 	});
+	loadProviderBooking(providerId);
 }
 
 function loadWeekCalendar (startTime, endTime, hiddenDays, resourcesArray, providerId) {
@@ -351,12 +351,12 @@ function loadWeekCalendar (startTime, endTime, hiddenDays, resourcesArray, provi
 		},
 		slotMinutes: duration
 	});
-	loadProviderBooking(providerId);
 	$('.fc-button').click(function () {
 		var providerId = $('input[name="providerRadio"]:checked').val();
 		loadProviderBreaks (providerId);
 		loadProviderBooking(providerId);
 	});
+	loadProviderBooking(providerId);
 }
 
 function loadProviderBooking (providerId) {

@@ -70,6 +70,10 @@ class BookingMailer < ActionMailer::Base
 				{
 					:name => 'BEND',
 					:content => l(book_info.end)
+				},
+				{
+					:name => 'SIGNATURE',
+					:content => book_info.location.company.company_setting.signature
 				}
 			],
 			:merge_vars => [
@@ -226,6 +230,10 @@ class BookingMailer < ActionMailer::Base
 				{
 					:name => 'BEND',
 					:content => l(book_info.end)
+				},
+				{
+					:name => 'SIGNATURE',
+					:content => book_info.location.company.company_setting.signature
 				}
 			],
 			:merge_vars => [
@@ -504,6 +512,10 @@ class BookingMailer < ActionMailer::Base
 				{
 					:name => 'BEND',
 					:content => l(book_info.end)
+				},
+				{
+					:name => 'SIGNATURE',
+					:content => book_info.location.company.company_setting.signature
 				}
 			],
 			:merge_vars => [
@@ -652,6 +664,10 @@ class BookingMailer < ActionMailer::Base
 				{
 				  :name => 'BEND',
 				  :content => l(book_info.end)
+				},
+				{
+					:name => 'SIGNATURE',
+					:content => book_info.location.company.company_setting.signature
 				}
 			],
 			:merge_vars => [
