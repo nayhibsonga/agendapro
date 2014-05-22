@@ -233,7 +233,7 @@ class BookingMailer < ActionMailer::Base
 				},
 				{
 					:name => 'SIGNATURE',
-					:content => book_info.location.company.company_setting.signature
+					:content => if !book_info.location.company.company_setting.signature.blank? then book_info.location.company.company_setting.signature.gsub('\r\n', '<br>') end
 				}
 			],
 			:merge_vars => [
@@ -515,7 +515,7 @@ class BookingMailer < ActionMailer::Base
 				},
 				{
 					:name => 'SIGNATURE',
-					:content => book_info.location.company.company_setting.signature
+					:content => if !book_info.location.company.company_setting.signature.blank? then book_info.location.company.company_setting.signature.gsub('\r\n', '<br>') end
 				}
 			],
 			:merge_vars => [
@@ -667,7 +667,7 @@ class BookingMailer < ActionMailer::Base
 				},
 				{
 					:name => 'SIGNATURE',
-					:content => book_info.location.company.company_setting.signature
+					:content => if !book_info.location.company.company_setting.signature.blank? then book_info.location.company.company_setting.signature.gsub('\r\n', '<br>') end
 				}
 			],
 			:merge_vars => [

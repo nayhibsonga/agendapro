@@ -49,18 +49,6 @@
 					</div>
 				</div>
 			</div>
-			<!-- start: Company Setting -->
-			<%= f.fields_for :company_setting_attributes do |builder| %>
-				<%= builder.hidden_field :company_id, :value => @company.id %>
-				<div class="form-group">
-					<%= builder.label :signature, 'Firma:', :class => 'col-sm-3 control-label' %>
-					<div class="col-sm-5">
-						<%= builder.text_area :signature, :class => 'form-control', :rows => "7" %>
-					</div>
-					<span class="help-block">Esta es la firma que irá en los emails que se le envien a los clientes.</span>
-				</div>
-			<% end %>
-			<!-- end: Company Setting -->
 			<div class="form-group">
 				<%= f.label :cancellation_policy, 'Política de Cancelación: ', :class => 'col-sm-3 control-label' %>
 				<div class="col-sm-5">
