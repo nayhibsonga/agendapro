@@ -1,0 +1,103 @@
+.content-fix {
+	margin: 0 20px;
+	margin-top: 44px;
+}
+#admin-content{
+	margin-top: 0;
+	padding-bottom: 0;
+}
+#locals-selector {
+	margin-top: 5px;
+	margin-bottom: 0;
+}
+#providers-selector {
+	margin-top: 5px;
+	margin-bottom: 0;
+}
+.hasDatepicker {
+	font-size: 0.725em;
+	width: 100%;
+}
+.fc-header-title h2 {
+	color: rgb(51, 51, 51);
+	direction: ltr;
+	display: block;
+	font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+	font-size: 21px;
+	font-weight: 500;
+	line-height: 23.100000381469727px;
+	margin-left: 20px;
+	margin-bottom: 0px;
+	margin-top: 10px;
+	text-align: left;
+	white-space: nowrap;
+}
+.dpCollapse {
+	display: none;
+}
+.createBreak {
+	position: absolute;
+	top: 14px;
+	right: 5px;
+	z-index: 1;
+}
+.createBooking {
+	position: absolute;
+	top: 14px;
+	right: 235px;
+	z-index: 1;
+}
+/* Menu responsivo */
+@media (max-width: 1280px) { 
+	.hasDatepicker {
+		font-size: 0.65em;
+	}
+}
+@media (width: 1280px) { 
+	.hasDatepicker {
+		font-size: 0.7em;
+	}
+}
+@media (max-width: 1124px) { 
+	.hasDatepicker {
+		font-size: 0.585em;
+	}
+	.createBreak {
+		position: absolute;
+		top: 14px;
+		right: 5px;
+		z-index: 1;
+		padding: 6px 12px;
+		font-size: 12px;
+	}
+	.createBooking {
+		position: absolute;
+		top: 14px;
+		right: 205px;
+		z-index: 1;
+		padding: 6px 12px;
+		font-size: 12px;
+	}
+}
+@media (max-width: 1024px) { 
+	#dp {
+		display: none;
+	}
+	.createBreak {
+		position: absolute;
+		top: 14px;
+		right: 5px;
+		z-index: 1;
+		padding: 4px 8px;
+		font-size: 12px;
+	}
+	.createBooking {
+		position: absolute;
+		top: 14px;
+		right: 235px;
+		z-index: 1;
+		padding: 4px 8px;
+		font-size: 12px;
+		right: 200px;
+	}
+}

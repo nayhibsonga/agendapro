@@ -209,9 +209,9 @@ function loadResourcesCalendar (startTime, endTime, hiddenDays, resourcesArray, 
 	$('#calendar').empty();
 	$('#calendar').fullCalendar({
 		header: {
-			left: '',
+			left: 'title',
 			center: 'prev,today,next',
-			right: 'title'
+			right: ''
 		},
 		hiddenDays: hiddenDays,
 		resources: resourcesArray,
@@ -268,7 +268,11 @@ function loadResourcesCalendar (startTime, endTime, hiddenDays, resourcesArray, 
 		eventDrop: function (event) {
 			editDrag(event);
 		},
-		slotMinutes: duration
+		slotMinutes: duration,
+		height : window.innerHeight-145,
+		windowResize: function(view) {
+			$('#calendar').fullCalendar('option', 'height', window.innerHeight-20);
+		}
 	});
 	$('.fc-button').click(function (event) {
 		var providerId = $('input[name="providerRadio"]:checked').val();
@@ -287,9 +291,9 @@ function loadWeekCalendar (startTime, endTime, hiddenDays, resourcesArray, provi
 	$('#calendar').empty();
 	$('#calendar').fullCalendar({
 		header: {
-			left: '',
+			left: 'title',
 			center: 'prev,today,next',
-			right: 'title'
+			right: ''
 		},
 		hiddenDays: hiddenDays,
 		resources: resourcesArray,
@@ -337,7 +341,11 @@ function loadWeekCalendar (startTime, endTime, hiddenDays, resourcesArray, provi
 		eventDrop: function (event) {
 			editDrag(event);
 		},
-		slotMinutes: duration
+		slotMinutes: duration,
+		height : window.innerHeight-145,
+		windowResize: function(view) {
+			$('#calendar').fullCalendar('option', 'height', window.innerHeight-20);
+		}
 	});
 	$('.fc-button').click(function () {
 		var providerId = $('input[name="providerRadio"]:checked').val();
@@ -995,12 +1003,14 @@ $(function() {
 		e.target.parentNode.className += 'active';
 	});
 
-	$("#dp").datepicker({
+	$("#dp").datepicker(
+	{
 		dateFormat: 'dd/M/yy',
-		buttonText: "Ir a Fecha",
+		autoSize: true,
+		// buttonText: "Ir a Fecha",
 		changeMonth: true,
 		changeYear: true,
-		showOn: 'both',
+		// showOn: 'both',
 		firstDay: 1,
 		dayNames: [ "Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado" ],
 		dayNamesMin: [ "Do", "Lu", "Ma", "Mi", "Ju", "Vi", "Sá" ],
@@ -1011,7 +1021,8 @@ $(function() {
 			var providerId = $('input[name="providerRadio"]:checked').val();
 			loadProviderBooking(providerId);
 		}
-	});
+	}
+	);
 
 	$("#booking_email").autocomplete({
 		source: '/clients_suggestion',

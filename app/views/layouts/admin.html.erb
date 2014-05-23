@@ -63,6 +63,9 @@
 			<ul class="menu-lateral">
 				<li><%= link_to '<i class="fa fa-dashboard"></i><span class="colapse-hidden"> Resumen</span>'.html_safe, dashboard_path, { :class => if controller.controller_name == "dashboard" then "active" end } %></li>
 				<li><%= link_to '<i class="fa fa-calendar"></i><span class="colapse-hidden"> Calendario</span>'.html_safe, bookings_path, { :class => if controller.controller_name == "bookings" then "active" end } %></li>
+				<% if controller.controller_name == "bookings" %>
+				<li><div id="dp"></div></li>
+				<% end %>
 				<% if current_user.role_id == Role.find_by_name("Recepcionista").id %>
 				<li><%= link_to '<i class="fa fa-group"></i><span class="remove-txt"> Clientes</span>'.html_safe, clients_path, { :class => if controller.controller_name == "clients" then "active" end } %></li>
 				<% end %>
@@ -147,6 +150,7 @@
 				<!-- end: Alerts -->
 				<%= yield %>
 			</div>
+			<%= yield :calendar %>
 		</div>
 		
 		<!-- start: JavaScript-->
@@ -182,6 +186,7 @@
 						$(".remove-txt").addClass("kill-txt");
 						$('#closetab > span:first').removeClass('fa-chevron-left');
 						$('#closetab > span:first').addClass('fa-chevron-right');
+						$('#dp').addClass('dpCollapse');
 						if (typeof(Storage) !== "undefined") {
 							sessionStorage.menu = "close";
 						}
@@ -192,6 +197,7 @@
 						$(".remove-txt").removeClass("kill-txt");
 						$('#closetab > span:first').removeClass('fa-chevron-right');
 						$('#closetab > span:first').addClass('fa-chevron-left');
+						$('#dp').removeClass('dpCollapse');
 						if (typeof(Storage) !== "undefined") {
 							sessionStorage.menu = "open";
 						}
@@ -224,6 +230,7 @@
 						$(".remove-txt").addClass("kill-txt");
 						$('#closetab > span:first').removeClass('fa-chevron-left');
 						$('#closetab > span:first').addClass('fa-chevron-right');
+						$('#dp').addClass('dpCollapse');
 					}
 				}
 			});
