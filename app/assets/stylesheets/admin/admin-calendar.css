@@ -9,10 +9,12 @@
 #locals-selector {
 	margin-top: 5px;
 	margin-bottom: 0;
+	line-height: 1;
 }
 #providers-selector {
 	margin-top: 5px;
 	margin-bottom: 0;
+	line-height: 1;
 }
 .hasDatepicker {
 	font-size: 0.725em;
@@ -48,6 +50,11 @@
 	z-index: 1;
 }
 /* Menu responsivo */
+@media (min-width: 1800px) { 
+	.hasDatepicker {
+		font-size: 1em;
+	}
+}
 @media (max-width: 1280px) { 
 	.hasDatepicker {
 		font-size: 0.65em;
@@ -100,4 +107,57 @@
 		font-size: 12px;
 		right: 200px;
 	}
+}
+
+/*****************************************************
+ * generic styling for ALS elements: outer container
+ ******************************************************/
+
+/*.als-container {
+	position: relative;
+	width: 100%;
+	margin: 0px auto;
+	z-index: 0;
+}*/
+
+/****************************************
+ * viewport styling
+ ***************************************/
+
+/*.als-viewport {
+	position: relative;
+	overflow: hidden;
+	margin: 0px auto;
+}*/
+
+/***************************************************
+ * wrapper styling
+ **************************************************/
+
+.als-wrapper {
+	position: relative;
+	/* if you are using a list with <ul> <li> */
+	list-style: none;
+}
+
+/*************************************
+ * item: single list element
+ ************************************/
+
+.als-item {
+	position: relative;
+	display: block;
+	text-align: center;
+	cursor: pointer;
+	float: left;
+}
+
+/***********************************************
+ * prev, next: buttons styling
+ **********************************************/
+ 
+.als-prev, .als-next {
+	position: absolute;
+	cursor: pointer;
+	clear: both;
 }
