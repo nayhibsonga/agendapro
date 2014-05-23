@@ -58,8 +58,8 @@
 						<div class="form-group">
 							<label class="col-sm-5 control-label">Horario de la Reserva: </label>
 							<div class="col-sm-7">
-								<div class="input datetime required booking_start">       
-									<select class="datetime required" id="bookingStartHour" name="booking[start_hours]">
+								<div class="input datetime required booking_start ">       
+									<select class="form-control date-select datetime required" id="bookingStartHour" name="booking[start_hours]">
 										<option value="00">00</option>
 										<option value="01">01</option>
 										<option value="02">02</option>
@@ -85,7 +85,7 @@
 										<option value="22">22</option>
 										<option value="23">23</option>
 									</select>
-									 : <select class="datetime required" id="bookingStartMinute" name="booking[start_minutes]">
+									 : <select class="form-control date-select datetime required" id="bookingStartMinute" name="booking[start_minutes]">
 										<option value="00">00</option>
 										<option value="05">05</option>
 										<option value="10">10</option>
@@ -129,14 +129,14 @@
 							<label for="full_name" class="col-sm-5 control-label">Nombre Cliente: </label>
 							<div class="col-sm-7">
 								<input type="text" id="full_name" class="form-control">
-								<ul id="name_suggestions"></ul>
+								<ul id="full_name_suggestions"></ul>
 							</div>
 						</div>
 						<div class="form-group">
 							<%= f.label :email, "Email: ", class: "col-sm-5 control-label" %>
 							<div class="col-sm-7">
 								<%= f.text_field :email, class: "form-control" %>
-								<ul id="suggestions"></ul>
+								<ul id="email_suggestions"></ul>
 								<div class="checkbox">
 									<%= f.check_box :send_mail, :disabled => true %>
 									<%= f.label :send_mail, "Enviar email" %>

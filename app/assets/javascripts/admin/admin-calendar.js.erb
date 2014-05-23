@@ -1061,7 +1061,7 @@ $(function() {
 
 	$("#booking_email").autocomplete({
 		source: '/clients_suggestion',
-		appendTo: '#suggestions',
+		appendTo: '#email_suggestions',
 		autoFocus: true,
 		minLength: 3,
 		select: function( event, ui ) {
@@ -1070,6 +1070,7 @@ $(function() {
 			$('#booking_last_name').val(ui.item.value[1]);
 			$('#booking_phone').val(ui.item.value[3]);
 			$('#booking_email').val(ui.item.value[2]);
+			$("#full_name").val(ui.item.value[0]+' '+ui.item.value[1])
 		}
 	});
 
@@ -1086,9 +1087,9 @@ $(function() {
 		}
 	});
 
-	$("#booking_first_name").autocomplete({
+	$("#full_name").autocomplete({
 		source: '/clients_name_suggestion',
-		appendTo: '#name_suggestions',
+		appendTo: '#full_name_suggestions',
 		autoFocus: true,
 		minLength: 3,
 		select: function( event, ui ) {
@@ -1097,20 +1098,7 @@ $(function() {
 			$('#booking_last_name').val(ui.item.value[1]);
 			$('#booking_phone').val(ui.item.value[3]);
 			$('#booking_email').val(ui.item.value[2]);
-		}
-	});
-
-	$("#booking_last_name").autocomplete({
-		source: '/clients_last_name_suggestion',
-		appendTo: '#last_name_suggestions',
-		autoFocus: true,
-		minLength: 3,
-		select: function( event, ui ) {
-			event.preventDefault();
-			$('#booking_first_name').val(ui.item.value[0]);
-			$('#booking_last_name').val(ui.item.value[1]);
-			$('#booking_phone').val(ui.item.value[3]);
-			$('#booking_email').val(ui.item.value[2]);
+			$("#full_name").val(ui.item.value[0]+' '+ui.item.value[1])
 		}
 	});
 
