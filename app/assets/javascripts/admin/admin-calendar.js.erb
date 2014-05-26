@@ -1080,6 +1080,16 @@ $(function() {
 			$('#booking_phone').val(ui.item.value[3]);
 			$('#booking_email').val(ui.item.value[2]);
 			$("#full_name").val(ui.item.value[0]+' '+ui.item.value[1])
+			if (validEmail($("#booking_email").val())) {
+				$('#booking_send_mail').prop('disabled', false);
+				$('label[for=booking_send_mail]').removeClass('disabled');
+			}
+			else {
+				$('#booking_send_mail').val(0);
+				$('#booking_send_mail').prop('checked', false);
+				$('#booking_send_mail').prop('disabled', true);
+				$('label[for=booking_send_mail]').addClass('disabled');
+			}
 		}
 	});
 

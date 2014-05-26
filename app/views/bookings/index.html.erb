@@ -104,7 +104,7 @@
 						<div class="form-group">
 							<%= f.label :company_comment, "Comentario Interno: ", class: "col-sm-5 control-label" %>
 							<div class="col-sm-7">
-								<%= f.text_area :company_comment, :rows => "7", class: "form-control" %>
+								<%= f.text_area :company_comment, :rows => "7", class: "form-control modal-textarea" %>
 							</div>
 						</div>
 					</div>
@@ -125,7 +125,7 @@
 								<ul id="email_suggestions"></ul>
 								<div class="checkbox">
 									<%= f.check_box :send_mail, :disabled => true %>
-									<%= f.label :send_mail, "Enviar email" %>
+									<%= f.label :send_mail, "Notificar por e-mail" %>
 								</div>
 							</div>
 						</div>
@@ -144,7 +144,7 @@
 						<div class="form-group">
 							<%= f.label :notes, "Notas desde el cliente: ", class: "col-sm-5 control-label" %>
 							<div class="col-sm-7">
-								<%= f.text_area :notes, :rows => "6", class: "form-control" %>
+								<%= f.text_area :notes, :rows => "6", class: "form-control modal-textarea" %>
 							</div>
 						</div>
 					</div>
