@@ -769,6 +769,7 @@ function editDrag(event) {
 			$.getJSON('/bookings/'+event.id, function (booking) {
 				event.start = booking.start;
 				event.end = booking.end;
+				event.resourceId = booking.service_provider_id;
 				$('#calendar').fullCalendar('updateEvent', event);
 			});
 		}
