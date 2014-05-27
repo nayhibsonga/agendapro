@@ -1,3 +1,6 @@
+header{
+	position: absolute;
+}
 .content-fix {
 	margin: 0 20px;
 	margin-top: 44px;
@@ -5,6 +8,9 @@
 #admin-content{
 	margin-top: 0;
 	padding-bottom: 0;
+}
+#sidebar{
+	margin-top: 44px;
 }
 #locals-selector {
 	margin-top: 5px;
@@ -48,6 +54,9 @@
 	top: 14px;
 	right: 235px;
 	z-index: 1;
+}
+#calendar{
+	margin-top: 10px;
 }
 /* Menu responsivo */
 @media (min-width: 1800px) { 
@@ -107,57 +116,4 @@
 		font-size: 12px;
 		right: 200px;
 	}
-}
-
-/*****************************************************
- * generic styling for ALS elements: outer container
- ******************************************************/
-
-/*.als-container {
-	position: relative;
-	width: 100%;
-	margin: 0px auto;
-	z-index: 0;
-}*/
-
-/****************************************
- * viewport styling
- ***************************************/
-
-/*.als-viewport {
-	position: relative;
-	overflow: hidden;
-	margin: 0px auto;
-}*/
-
-/***************************************************
- * wrapper styling
- **************************************************/
-
-.als-wrapper {
-	position: relative;
-	/* if you are using a list with <ul> <li> */
-	list-style: none;
-}
-
-/*************************************
- * item: single list element
- ************************************/
-
-.als-item {
-	position: relative;
-	display: block;
-	text-align: center;
-	cursor: pointer;
-	float: left;
-}
-
-/***********************************************
- * prev, next: buttons styling
- **********************************************/
- 
-.als-prev, .als-next {
-	position: absolute;
-	cursor: pointer;
-	clear: both;
 }
