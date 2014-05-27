@@ -109,8 +109,10 @@
 						</div>
 					</div>
 					<div class="col-md-6">
-						<%= f.hidden_field :last_name %>
-						<%= f.hidden_field :first_name %>
+						<% if @booking.client.nil? then @booking.build_client end %>
+						<%= f.fields_for :client do |builder| %>
+						<%= builder.hidden_field :last_name %>
+						<%= builder.hidden_field :first_name %>
 						<div class="form-group">
 							<label for="full_name" class="col-sm-5 control-label">Nombre Cliente: </label>
 							<div class="col-sm-7">
@@ -119,9 +121,9 @@
 							</div>
 						</div>
 						<div class="form-group">
-							<%= f.label :email, "Email: ", class: "col-sm-5 control-label" %>
+							<%= builder.label :email, "Email: ", class: "col-sm-5 control-label" %>
 							<div class="col-sm-7">
-								<%= f.text_field :email, class: "form-control" %>
+								<%= builder.text_field :email, class: "form-control" %>
 								<ul id="email_suggestions"></ul>
 								<div class="checkbox">
 									<%= f.check_box :send_mail, :disabled => true %>
@@ -130,11 +132,12 @@
 							</div>
 						</div>
 						<div class="form-group">
-							<%= f.label :phone, "Teléfono: ", class: "col-sm-5 control-label" %>
+							<%= builder.label :phone, "Teléfono: ", class: "col-sm-5 control-label" %>
 							<div class="col-sm-7">
-								<%= f.text_field :phone, class: "form-control" %>
+								<%= builder.text_field :phone, class: "form-control" %>
 							</div>
 						</div>
+						<% end %>
 						<div class="form-group">
 							<%= f.label :status, "Estado de la Reserva: ", class: "col-sm-5 control-label" %>
 							<div class="col-sm-7">
