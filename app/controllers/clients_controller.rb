@@ -171,20 +171,22 @@ class ClientsController < ApplicationController
 
     @clients_arr = Array.new
     @clients.each do |client|
-      label = client[2] + ' - ' + client[1] + ', ' + client[0]
-      @clients_arr.push({:label => label, :value => client})
+      label = client[0] + ' ' + client[1]
+      desc = client[2] + ' - ' + client[3]
+      @clients_arr.push({:label => label, :desc => desc, :value => client})
     end
 
     render :json => @clients_arr
   end
 
   def name_suggestion
-    @clients = Client.where(company_id: current_user.company_id).where("first_name ilike :s or last_name ilike :s", :s => "%#{params[:term]}%").pluck(:first_name, :last_name, :email, :phone).uniq
+    @clients = Client.where(company_id: current_user.company_id).where("CONCAT(first_name, ' ', last_name) ILIKE :s OR email ILIKE :s OR first_name ILIKE :s OR last_name ILIKE :s", :s => "%#{params[:term]}%").pluck(:first_name, :last_name, :email, :phone).uniq
 
     @clients_arr = Array.new
     @clients.each do |client|
-      label = client[2] + ' - ' + client[1] + ', ' + client[0]
-      @clients_arr.push({:label => label, :value => client})
+      label = client[0] + ' ' + client[1]
+      desc = client[2] + ' - ' + client[3]
+      @clients_arr.push({:label => label, :desc => desc, :value => client})
     end
 
     render :json => @clients_arr
@@ -195,8 +197,9 @@ class ClientsController < ApplicationController
 
     @clients_arr = Array.new
     @clients.each do |client|
-      label = client[2] + ' - ' + client[1] + ', ' + client[0]
-      @clients_arr.push({:label => label, :value => client})
+      label = client[0] + ' ' + client[1]
+      desc = client[2] + ' - ' + client[3]
+      @clients_arr.push({:label => label, :desc => desc, :value => client})
     end
 
     render :json => @clients_arr

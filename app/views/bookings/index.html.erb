@@ -32,9 +32,9 @@
 				<h4 class="modal-title booking-modal-title" id="bookingModalLabel"></h4>
 			</div>
 			<div class="modal-body booking-modal-body">
-				<div class="row">
+				<div class="row well">
 					<%= form_for @booking, html: {class: "form-horizontal"} do |f| %>
-					<div class="col-md-6 well">
+					<div class="col-md-6">
 						<div class="form-group">
 							<label for="datePicker" class="col-sm-5 control-label">Fecha: </label>
 							<div class="col-sm-7">
@@ -108,7 +108,7 @@
 							</div>
 						</div>
 					</div>
-					<div class="col-md-6 well">
+					<div class="col-md-6">
 						<%= f.hidden_field :last_name %>
 						<%= f.hidden_field :first_name %>
 						<div class="form-group">

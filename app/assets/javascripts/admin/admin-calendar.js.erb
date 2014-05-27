@@ -1001,6 +1001,7 @@ function editBreakModal(breakId) {
 		$('#breakModal').modal('show');
 	});
 }
+
 function validEmail(email) {
 	var atpos = email.indexOf("@");
 	var dotpos = email.lastIndexOf(".");
@@ -1048,8 +1049,7 @@ $(function() {
 		e.target.parentNode.className += 'active';
 	});
 
-	$("#dp").datepicker(
-	{
+	$("#dp").datepicker({
 		dateFormat: 'dd/M/yy',
 		autoSize: true,
 		// buttonText: "Ir a Fecha",
@@ -1066,14 +1066,13 @@ $(function() {
 			var providerId = $('input[name="providerRadio"]:checked').val();
 			loadProviderBooking(providerId);
 		}
-	}
-	);
+	});
 
 	$("#booking_email").autocomplete({
 		source: '/clients_suggestion',
 		appendTo: '#email_suggestions',
 		autoFocus: true,
-		minLength: 3,
+		minLength: 2,
 		select: function( event, ui ) {
 			event.preventDefault();
 			$('#booking_first_name').val(ui.item.value[0]);
@@ -1111,7 +1110,7 @@ $(function() {
 		source: '/clients_name_suggestion',
 		appendTo: '#full_name_suggestions',
 		autoFocus: true,
-		minLength: 3,
+		minLength: 2,
 		select: function( event, ui ) {
 			event.preventDefault();
 			$('#booking_first_name').val(ui.item.value[0]);
@@ -1119,8 +1118,20 @@ $(function() {
 			$('#booking_phone').val(ui.item.value[3]);
 			$('#booking_email').val(ui.item.value[2]);
 			$("#full_name").val(ui.item.value[0]+' '+ui.item.value[1])
+			if (validEmail($("#booking_email").val())) {
+				$('#booking_send_mail').prop('disabled', false);
+				$('label[for=booking_send_mail]').removeClass('disabled');
+			}
+			else {
+				$('#booking_send_mail').val(0);
+				$('#booking_send_mail').prop('checked', false);
+				$('#booking_send_mail').prop('disabled', true);
+				$('label[for=booking_send_mail]').addClass('disabled');
+			}
 		}
-	});
+	}).data( "ui-autocomplete" )._renderItem = function( ul, item ) {
+    	return $( "<li>" ).append( "<a>" + item.label + "<br>" + item.desc + "</a>" ).appendTo( ul );
+    };
 
 	$('#booking_service_provider_id').change(function (event) {
 		$.getJSON('/provider_services', {id: event.target.value}, function (services) {
