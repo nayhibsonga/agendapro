@@ -1,5 +1,36 @@
 <div class="col-md-12">
 	<div class="row">
+		<div id="locals-selector" class="radio">
+			<div id="lista1" class="als-container">
+				<span class="als-prev"><i class="fa fa-chevron-left"></i></span>
+				<div class="als-viewport">
+					<ul class="als-wrapper">
+						<% @locations.each do |local| %>
+							<li class="als-item">
+								<label id="<%= local.id %>" >
+									<input type="radio" name="localRadio" id="localOption<%= local.id %>" onchange="loadProviders()" value="<%= local.id %>" <%= 'checked' if ((!@selectedLocal) && (local.id == @locations.first.id)) || (@selectedLocal.to_i == local.id) %>>
+									<p><%= local.name %></p>
+								</label>
+							</li>
+						<% end %>
+						<li class="als-item"></li>
+						<li class="als-item">television</li>
+						<li class="als-item">television</li>
+						<li class="als-item">television</li>
+						<li class="als-item">television</li>
+						<li class="als-item">television</li>
+						<li class="als-item">television</li>
+						<li class="als-item">television</li>
+					</ul>
+				</div>
+				<span class="als-next"><i class="fa fa-chevron-right"></i></span>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="col-md-12">
+	<div class="row">
 		<div  id="locals-selector" class="radio">
 			<% @locations.each do |local| %>
 				<label id="<%= local.id %>" >
@@ -197,4 +228,74 @@
 	<%= javascript_include_tag "bookings" %>
 	<%= stylesheet_link_tag "jquery-ui-1.10.4" %>
 	<%= javascript_include_tag "jquery-ui-1.10.4.min.js" %>
+	<%= javascript_include_tag "jquery.alsEN-1.5" %>
+	<script type="text/javascript">
+		$(function () {
+			$("#lista1").als({
+				visible_items: 6,
+				scrolling_items: 6,
+				orientation: "horizontal",
+				speed: 500,
+				easing: "linear",
+				direction: "left",
+				start_from: 0
+			});
+		});
+	</script>
 <% end %>
+
+<style type="text/css">
+	/********************************
+	 * generic als elements styling
+	 ********************************/
+	.als-container {
+		position: relative;
+		width: 100%;
+		margin: 0px auto;
+	}
+	.als-viewport {
+		position: relative;
+		overflow: hidden;
+		margin: 0px 25px;
+	}
+	.als-wrapper {
+		position: relative;
+		list-style: none;
+	}
+	.als-item {
+		position: relative;
+		display: block;
+		text-align: center;
+		cursor: pointer;
+		float: left;
+	}
+	.als-prev, .als-next {
+		position: absolute;
+		cursor: pointer;
+		clear: both;
+	}
+
+	/**************************
+	 * specific als elements
+	 * styling for #lista1
+	 **************************/
+	#lista1 {
+		margin: 0 auto 0 auto;
+	}
+	#lista1 .als-item {
+		margin: 0px 0px;
+		min-height: 30px;
+		min-width: 128px;
+	}
+	#lista1 .als-prev, #lista1 .als-next {
+		top: 10px;
+		width: 15px;
+		height: 22px;
+	}
+	#lista1 .als-prev {
+		left: 10px;
+	}
+	#lista1 .als-next {
+		right: 0px;
+	}
+</style>
