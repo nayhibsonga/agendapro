@@ -38,6 +38,20 @@
 		<!-- start: Header -->
 		<header>
 			<a href="<%= root_path %>" id="logo"></a>
+			<% if (current_user.role_id == Role.find_by_name("Admin").id) %>
+			<ul id="menu-config">
+				<li><a href="#" id="open-config"><div class="pull-right"><i class="fa fa-wrench"></i></div></a>
+					<ul id="sub-menu-config" class="close-menu-config">
+						<li><%= link_to '<i class="fa fa-briefcase"></i> Empresa'.html_safe, edit_company_path(Company.find(current_user.company_id)) %></li>
+						<li><%= link_to '<i class="fa fa-sitemap"></i> Usuarios'.html_safe, admin_users_path %></li>
+						<li><%= link_to '<i class="fa fa-envelope"></i> Firma Email'.html_safe, edit_company_setting_path(Company.find(current_user.company_id).company_setting.id) %></li>
+						<li><%= link_to '<i class="fa fa-clock-o"></i> Periodo Agenda'.html_safe, time_booking_path(:company => Company.find(current_user.company_id).id) %></li>
+						<li><%= link_to '<i class="fa fa-dollar"></i> Planes'.html_safe, select_plan_path %></li>
+						<li><%= link_to '<i class="fa fa-share-square-o"></i> Link AgendaPro'.html_safe, get_link_path %></li>
+					</ul>
+				</li>
+			</ul>
+			<% end %>
 			<ul id="menu-usuario">
 			  <li><a href="#" id="open-usuario"><%= current_user.email %> <span class="fa fa-chevron-down"></span></a>
 				<ul id="sub-menu-usuario" class="close-menu-usuario">
@@ -54,20 +68,6 @@
 				  <li><%= link_to '<i class="fa fa-power-off"></i> Cerrar Sesión'.html_safe, destroy_user_session_path, method: :delete %></li>
 				</ul>
 			  </li>
-			</ul>
-			<ul id="menu-config">
-			  <% if (current_user.role_id == Role.find_by_name("Admin").id) %>
-				<li><a class="pull-right" href="#" id="open-config"><i class="fa fa-wrench"></i></a>
-					<ul id="sub-menu-config" class="close-menu-config">
-						<li><%= link_to '<i class="fa fa-briefcase"></i><span class="remove-txt"> Empresa</span>'.html_safe, edit_company_path(Company.find(current_user.company_id)) %></li>
-						<li><%= link_to '<i class="fa fa-sitemap"></i><span class="remove-txt"> Usuarios</span>'.html_safe, admin_users_path %></li>
-						<li><%= link_to '<i class="fa fa-envelope"></i><span class="remove-txt"> Firma Email</span>'.html_safe, edit_company_setting_path(Company.find(current_user.company_id).company_setting.id) %></li>
-						<li><%= link_to '<i class="fa fa-clock-o"></i><span class="remove-txt"> Periodo Agenda</span>'.html_safe, time_booking_path(:company => Company.find(current_user.company_id).id) %></li>
-						<li><%= link_to '<i class="fa fa-dollar"></i><span class="remove-txt"> Planes</span>'.html_safe, select_plan_path %></li>
-						<li><%= link_to '<i class="fa fa-share-square-o"></i><span class="remove-txt"> Link AgendaPro</span>'.html_safe, get_link_path %></li>
-					</ul>
-				</li>
-				<% end %>
 			</ul>
 		</header>
 		<!-- end: Header -->
@@ -201,7 +201,6 @@
 							sessionStorage.menu = "open";
 						}
 				});
-
 				$('.open-submenu').click( function (event) {
 					var submenu = $(event.target).closest('a').next();
 					if (submenu.hasClass('submenu-close')) {
