@@ -269,7 +269,7 @@ function loadResourcesCalendar (startTime, endTime, hiddenDays, resourcesArray, 
 			editDrag(event);
 		},
 		slotMinutes: duration,
-		height : window.innerHeight-145,
+		height : window.innerHeight-148,
 		windowResize: function(view) {
 			$('#calendar').fullCalendar('option', 'height', window.innerHeight-20);
 		}
@@ -342,7 +342,7 @@ function loadWeekCalendar (startTime, endTime, hiddenDays, resourcesArray, provi
 			editDrag(event);
 		},
 		slotMinutes: duration,
-		height : window.innerHeight-145,
+		height : window.innerHeight-148,
 		windowResize: function(view) {
 			$('#calendar').fullCalendar('option', 'height', window.innerHeight-20);
 		}
@@ -1052,11 +1052,9 @@ $(function() {
 	$("#dp").datepicker({
 		dateFormat: 'dd/M/yy',
 		autoSize: true,
-		// buttonText: "Ir a Fecha",
 		changeMonth: true,
 		changeYear: true,
-		// showOn: 'both',
-		firstDay: 1,
+		// showOn: 'both',		firstDay: 1,
 		dayNames: [ "Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado" ],
 		dayNamesMin: [ "Do", "Lu", "Ma", "Mi", "Ju", "Vi", "Sá" ],
 		dayNamesShort: [ "Dom", "Lun", "Mar", "Mié", "Jue", "Vie", "Sáb" ],
