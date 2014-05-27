@@ -77,6 +77,8 @@ GEM
       excon (>= 0.16.0, < 1.0)
       json (>= 1.7.7, < 2.0)
     mime-types (1.25.1)
+    mini_magick (3.7.0)
+      subexec (~> 0.2.1)
     mini_portile (0.5.1)
     minitest (4.7.5)
     multi_json (1.8.2)
@@ -131,6 +133,7 @@ GEM
       actionpack (>= 3.0)
       activesupport (>= 3.0)
       sprockets (~> 2.8)
+    subexec (0.2.3)
     therubyracer (0.12.0)
       libv8 (~> 3.16.14.0)
       ref
@@ -171,6 +174,7 @@ DEPENDENCIES
   jbuilder (~> 1.2)
   jquery-rails
   mandrill-api
+  mini_magick
   pg
   puntopagos
   quiet_assets

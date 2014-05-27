@@ -12,7 +12,7 @@
 	<% end %>
 
 	<%= f.hidden_field :company %>
-	<div class="form-group">
+	<!-- <div class="form-group">
 		<%= f.label :email, 'Email', :class => 'col-sm-3 control-label' %>
 		<div class="col-sm-4">
 			<div class="checkbox">
@@ -21,12 +21,13 @@
 				</label>
 			</div>
 		</div>
-	</div>
+	</div> -->
 	<div class="form-group">
 		<%= f.label :signature, 'Firma', :class => 'col-sm-3 control-label' %>
 		<div class="col-sm-4">
-			<%= f.text_area :signature, :class => 'form-control', :disabled  => true %>
+			<%= f.text_area :signature, :class => 'form-control', :rows => "7" %>
 		</div>
+		<span class="help-block">Esta es la firma que irá en los emails que se le envien a los clientes.</span>
 	</div>
 	<div class="form-group">
 		<div class="col-sm-offset-3 col-sm-4">
@@ -35,27 +36,4 @@
 		</div>
 	</div>
 
-<% end %>
-
-<% content_for :scripts do %>
-<script type="text/javascript">
-$(function () {
-	$('#company_setting_email').click(function () {
-		cbEmail();
-	});
-
-	if ($('#company_setting_email').is(':checked')) {
-		$('#company_setting_signature').removeAttr('disabled');
-	}
-});
-
-function cbEmail () {
-	if ($('#company_setting_email').is(':checked')) {
-		$('#company_setting_signature').removeAttr('disabled');
-	}
-	else {
-		$('#company_setting_signature').attr('disabled', true);
-		}
-}
-</script>
 <% end %>

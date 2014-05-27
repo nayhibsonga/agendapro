@@ -157,6 +157,7 @@ class Ability
 
         can :get_link, Company
 
+        can :history, Client, :company_id => user.company_id
         can :suggestion, Client, :company_id => user.company_id
         can :name_suggestion, Client, :company_id => user.company_id
         can :last_name_suggestion, Client, :company_id => user.company_id
@@ -188,6 +189,7 @@ class Ability
         can :create, Service, :company_id => user.company_id
         can :update, Service, :company_id => user.company_id
 
+        can :history, Client, :company_id => user.company_id
         can :read, Client, :company_id => user.company_id
         can :create, Client, :company_id => user.company_id
         can :update, Client, :company_id => user.company_id

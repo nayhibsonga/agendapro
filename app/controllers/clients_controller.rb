@@ -11,12 +11,12 @@ class ClientsController < ApplicationController
     @locations = Location.where(company_id: current_user.company_id, active: true)
     @service_providers = ServiceProvider.where(company_id: current_user.company_id, active: true)
     @services = Service.where(company_id: current_user.company_id, active: true)
-    @clients = Client.accessible_by(current_ability).search(params[:search]).filter_location(params[:location]).filter_provider(params[:provider]).filter_service(params[:service]).filter_gender(params[:gender]).paginate(:page => params[:page], :per_page => 25)
+    @clients = Client.accessible_by(current_ability).search(params[:search]).filter_location(params[:location]).filter_provider(params[:provider]).filter_service(params[:service]).filter_gender(params[:gender]).order(:email).paginate(:page => params[:page], :per_page => 25)
 
     @max_mails = current_user.company.company_setting.daily_mails
     @mails_left = current_user.company.company_setting.daily_mails - current_user.company.company_setting.sent_mails
 
-    @clients_export = Client.accessible_by(current_ability).search(params[:search]).filter_location(params[:location]).filter_provider(params[:provider]).filter_service(params[:service]).filter_gender(params[:gender])
+    @clients_export = Client.accessible_by(current_ability).search(params[:search]).filter_location(params[:location]).filter_provider(params[:provider]).filter_service(params[:service]).filter_gender(params[:gender]).order(:email)
 
     respond_to do |format|
       format.html
@@ -76,6 +76,11 @@ class ClientsController < ApplicationController
         format.json { render json: @client.errors, status: :unprocessable_entity }
       end
     end
+  end
+
+  def history
+    @client = Client.find(params[:id])
+    @bookings = Booking.where(email: @client.email, service_provider_id: ServiceProvider.where(company_id: current_user.company_id)).order(:start)
   end
 
   def create_comment
@@ -162,8 +167,7 @@ class ClientsController < ApplicationController
   end
 
   def suggestion
-    @company = Company.where(id: current_user.company_id)
-    @clients = Client.where(company_id: @company).where('email ~* ?', params[:term]).pluck(:first_name, :last_name, :email, :phone).uniq
+    @clients = Client.where(company_id: current_user.company_id).where('email ~* ?', params[:term]).pluck(:first_name, :last_name, :email, :phone).uniq
 
     @clients_arr = Array.new
     @clients.each do |client|
@@ -175,8 +179,7 @@ class ClientsController < ApplicationController
   end
 
   def name_suggestion
-    @company = Company.where(id: current_user.company_id)
-    @clients = Client.where(company_id: @company).where('first_name ~* ?', params[:term]).pluck(:first_name, :last_name, :email, :phone).uniq
+    @clients = Client.where(company_id: current_user.company_id).where("first_name ilike :s or last_name ilike :s", :s => "%#{params[:term]}%").pluck(:first_name, :last_name, :email, :phone).uniq
 
     @clients_arr = Array.new
     @clients.each do |client|
@@ -188,8 +191,7 @@ class ClientsController < ApplicationController
   end
 
   def last_name_suggestion
-    @company = Company.where(id: current_user.company_id)
-    @clients = Client.where(company_id: @company).where('last_name ~* ?', params[:term]).pluck(:first_name, :last_name, :email, :phone).uniq
+    @clients = Client.where(company_id: current_user.company_id).where('last_name ~* ?', params[:term]).pluck(:first_name, :last_name, :email, :phone).uniq
 
     @clients_arr = Array.new
     @clients.each do |client|
