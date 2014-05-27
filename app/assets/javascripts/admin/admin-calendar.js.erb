@@ -362,8 +362,6 @@ function loadProviderBooking (providerId) {
 	var endParam = end.getFullYear()+'-'+(end.getMonth()+1)+'-'+end.getDate();
 	$('#calendar').fullCalendar('removeEvents');
 	if (providerId == 0) {
-
-	
 		$.getJSON('/booking', {location: localId, start: startParam, end: endParam}, function (bookings) {
 			if (bookings.length > 0) {
 				$.each(bookings, function (key, booking) {
@@ -397,12 +395,10 @@ function loadProviderBooking (providerId) {
 				});
 			}
 		});
-
-	
 		$('input[name="providerRadio"]').each(function () {
 			var providerId = $(this).val();
-			loadProviderBreaks(providerId);
 			if (providerId > 0) {
+				loadProviderBreaks(providerId);
 				$.getJSON('/provider_breaks', {service_provider_id: providerId, start: startParam, end: endParam }, function (breaksArray) {
 					if (breaksArray.length > 0) {
 						$.each(breaksArray, function (key, providerBreak) {
@@ -425,8 +421,6 @@ function loadProviderBooking (providerId) {
 		});
 	}
 	else {
-
-	
 		loadProviderBreaks(providerId);
 		$.getJSON('/booking', {location: localId, provider: providerId, start: startParam, end: endParam}, function (bookings) {
 			if (bookings.length > 0) {
@@ -554,6 +548,7 @@ function editBookingModal(eventId) {
 			$('#booking_status_id option[value="'+booking.status_id+'"]').attr("selected",true);
 			$('#booking_first_name').val(booking.first_name);
 			$('#booking_last_name').val(booking.last_name);
+			$('#full_name').val(booking.first_name+' '+booking.last_name);
 			$('#booking_email').val(booking.email);
 			$('#booking_phone').val(booking.phone);
 			$('#booking_notes').val(booking.notes);
@@ -567,6 +562,14 @@ function editBookingModal(eventId) {
 				$('#booking_send_mail').prop('checked', false);
 				$('input[name="booking[send_mail]"]:first').val(0);
 			};
+			if (validEmail(booking.email)) {
+				$('#booking_send_mail').prop('disabled', false);
+				$('label[for=booking_send_mail]').removeClass('disabled');
+			}
+			else {
+				$('#booking_send_mail').prop('disabled', true);
+				$('label[for=booking_send_mail]').addClass('disabled');
+			}
 			modalChange();
 			$('.booking-modal-title').empty();
 			$('.booking-modal-footer').empty();
@@ -644,12 +647,17 @@ function createBookingModal(date) {
 			$('#booking_status_id').val('1');
 			$('#booking_first_name').val('');
 			$('#booking_last_name').val('');
+			$('#full_name').val('');
 			$('#booking_email').val('');
 			$('#booking_phone').val('');
 			$('#booking_notes').val('');
 			$('#booking_company_comment').val('');
-			$('#booking_send_mail').val(1);
-			$('#booking_send_mail').prop('checked', true);
+			$('#booking_send_mail').val(0);
+			$('#booking_send_mail').prop('checked', false);
+			$('#booking_send_mail').prop('disabled', true);
+			if (!$('label[for=booking_send_mail]').hasClass('disabled')) {
+				$('label[for=booking_send_mail]').addClass('disabled');
+			}
 			$('.booking-modal-title').empty();
 			$('.booking-modal-footer').empty();
 			$('.booking-modal-title').append('Nueva Reserva');
@@ -664,11 +672,39 @@ function createBookingModal(date) {
 	});
 }
 
+function splitFullName() {
+	var nameArray = $('#full_name').val().split(' ');
+	if (nameArray.length == 0) {
+
+	}
+	else if (nameArray.length == 1) {
+		$('#booking_first_name').val(nameArray[0]);
+	}
+	else if (nameArray.length == 2) {
+		$('#booking_first_name').val(nameArray[0]);
+		$('#booking_last_name').val(nameArray[1]);	
+	}
+	else if (nameArray.length == 3) {
+		$('#booking_first_name').val(nameArray[0]);
+		$('#booking_last_name').val(nameArray[1]+' '+nameArray[2]);
+	}
+	else {
+		$('#booking_first_name').val(nameArray[0]+' '+nameArray[1]);
+		var last_name = '';
+		for (var i = 2; i < nameArray.length; i++) {
+			last_name += nameArray[i]+' ';
+		}
+		$('#booking_last_name').val(last_name);
+	}
+}
+
 function editBooking(eventId) {
+	splitFullName();
 	saveBooking('PATCH','/'+eventId);
 }
 
 function createBooking() {
+	splitFullName();
 	saveBooking('POST','');
 }
 
@@ -733,6 +769,7 @@ function editDrag(event) {
 			$.getJSON('/bookings/'+event.id, function (booking) {
 				event.start = booking.start;
 				event.end = booking.end;
+				event.resourceId = booking.service_provider_id;
 				$('#calendar').fullCalendar('updateEvent', event);
 			});
 		}
@@ -965,6 +1002,15 @@ function editBreakModal(breakId) {
 	});
 }
 
+function validEmail(email) {
+	var atpos = email.indexOf("@");
+	var dotpos = email.lastIndexOf(".");
+	if (atpos < 1 || dotpos < atpos+2 || dotpos+2 >= email.length) {
+	  return false;
+	}
+	return true;
+}
+
 var servicesJSON;
 var alertId;
 $(function() {
@@ -1003,8 +1049,7 @@ $(function() {
 		e.target.parentNode.className += 'active';
 	});
 
-	$("#dp").datepicker(
-	{
+	$("#dp").datepicker({
 		dateFormat: 'dd/M/yy',
 		autoSize: true,
 		// buttonText: "Ir a Fecha",
@@ -1021,50 +1066,72 @@ $(function() {
 			var providerId = $('input[name="providerRadio"]:checked').val();
 			loadProviderBooking(providerId);
 		}
-	}
-	);
+	});
 
 	$("#booking_email").autocomplete({
 		source: '/clients_suggestion',
-		appendTo: '#suggestions',
+		appendTo: '#email_suggestions',
 		autoFocus: true,
-		minLength: 3,
+		minLength: 2,
 		select: function( event, ui ) {
 			event.preventDefault();
 			$('#booking_first_name').val(ui.item.value[0]);
 			$('#booking_last_name').val(ui.item.value[1]);
 			$('#booking_phone').val(ui.item.value[3]);
 			$('#booking_email').val(ui.item.value[2]);
+			$("#full_name").val(ui.item.value[0]+' '+ui.item.value[1])
+			if (validEmail($("#booking_email").val())) {
+				$('#booking_send_mail').prop('disabled', false);
+				$('label[for=booking_send_mail]').removeClass('disabled');
+			}
+			else {
+				$('#booking_send_mail').val(0);
+				$('#booking_send_mail').prop('checked', false);
+				$('#booking_send_mail').prop('disabled', true);
+				$('label[for=booking_send_mail]').addClass('disabled');
+			}
 		}
 	});
 
-	$("#booking_first_name").autocomplete({
+	$("#booking_email").on('input',function(e){
+		if (validEmail($("#booking_email").val())) {
+			$('#booking_send_mail').prop('disabled', false);
+			$('label[for=booking_send_mail]').removeClass('disabled');
+		}
+		else {
+			$('#booking_send_mail').val(0);
+			$('#booking_send_mail').prop('checked', false);
+			$('#booking_send_mail').prop('disabled', true);
+			$('label[for=booking_send_mail]').addClass('disabled');
+		}
+	});
+
+	$("#full_name").autocomplete({
 		source: '/clients_name_suggestion',
-		appendTo: '#name_suggestions',
+		appendTo: '#full_name_suggestions',
 		autoFocus: true,
-		minLength: 3,
+		minLength: 2,
 		select: function( event, ui ) {
 			event.preventDefault();
 			$('#booking_first_name').val(ui.item.value[0]);
 			$('#booking_last_name').val(ui.item.value[1]);
 			$('#booking_phone').val(ui.item.value[3]);
 			$('#booking_email').val(ui.item.value[2]);
+			$("#full_name").val(ui.item.value[0]+' '+ui.item.value[1])
+			if (validEmail($("#booking_email").val())) {
+				$('#booking_send_mail').prop('disabled', false);
+				$('label[for=booking_send_mail]').removeClass('disabled');
+			}
+			else {
+				$('#booking_send_mail').val(0);
+				$('#booking_send_mail').prop('checked', false);
+				$('#booking_send_mail').prop('disabled', true);
+				$('label[for=booking_send_mail]').addClass('disabled');
+			}
 		}
-	});
-
-	$("#booking_last_name").autocomplete({
-		source: '/clients_last_name_suggestion',
-		appendTo: '#last_name_suggestions',
-		autoFocus: true,
-		minLength: 3,
-		select: function( event, ui ) {
-			event.preventDefault();
-			$('#booking_first_name').val(ui.item.value[0]);
-			$('#booking_last_name').val(ui.item.value[1]);
-			$('#booking_phone').val(ui.item.value[3]);
-			$('#booking_email').val(ui.item.value[2]);
-		}
-	});
+	}).data( "ui-autocomplete" )._renderItem = function( ul, item ) {
+    	return $( "<li>" ).append( "<a>" + item.label + "<br>" + item.desc + "</a>" ).appendTo( ul );
+    };
 
 	$('#booking_service_provider_id').change(function (event) {
 		$.getJSON('/provider_services', {id: event.target.value}, function (services) {

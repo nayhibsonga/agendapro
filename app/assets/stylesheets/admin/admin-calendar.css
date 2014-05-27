@@ -47,6 +47,9 @@
 	right: 235px;
 	z-index: 1;
 }
+.modal-textarea {
+	resize: vertical;
+}
 /* Menu responsivo */
 @media (max-width: 1280px) { 
 	.hasDatepicker {
