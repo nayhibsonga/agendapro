@@ -1,8 +1,12 @@
 class Client < ActiveRecord::Base
   belongs_to :company
 
-  has_many :client_comments
-  has_many :bookings
+  has_many :client_comments, dependent: :destroy
+  has_many :bookings, dependent: :destroy
+
+  def full_name
+    "#{self.first_name} #{self.last_name}"
+  end
 
   def self.search(search)
     if search

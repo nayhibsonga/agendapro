@@ -7,7 +7,7 @@ class Booking < ActiveRecord::Base
 	belongs_to :promotion
 	belongs_to :client
 
-	validates :start, :end, :service_provider_id, :service_id, :status_id, :location_id, :presence => true
+	validates :start, :end, :service_provider_id, :service_id, :status_id, :location_id, :client_id, :presence => true
 
 	validate :time_empty_or_negative, :time_in_provider_time, :booking_duration, :service_staff
 
@@ -25,8 +25,8 @@ class Booking < ActiveRecord::Base
   	end
 
 	def booking_duration
-    	if self.service.duration != ((self.end - self.start) / 1.minute ).round
-    		errors.add(:base, "La duración de la reserva no coincide con la duración del servicio.")
+    	if ((self.end - self.start) / 1.minute ).round < 5
+    		errors.add(:base, "La duración de la reserva no puede ser menor a 5 minutos.")
     	end
   	end
 
