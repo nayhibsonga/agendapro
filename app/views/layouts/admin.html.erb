@@ -18,6 +18,7 @@
 		<!-- start: CSS -->
 		<%= stylesheet_link_tag "admin" %>
 		<%= stylesheet_link_tag "fullcalendar_css" if params[:controller] == "bookings" %>
+		<%= yield :stylesheets %>
 		<!-- end: CSS -->
 		
 

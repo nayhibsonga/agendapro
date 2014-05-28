@@ -1096,7 +1096,9 @@ $(function() {
 				$('label[for=booking_send_mail]').addClass('disabled');
 			}
 		}
-	});
+	}).data( "ui-autocomplete" )._renderItem = function( ul, item ) {
+    	return $( '<li>' ).append( '<a>' + item.label + '<br><span class="auto-desc">' + item.desc + '</span></a>' ).appendTo( ul );
+    };
 
 	$("#booking_client_email").on('input',function(e){
 		if (validEmail($("#booking_client_email").val())) {
@@ -1139,7 +1141,7 @@ $(function() {
 			}
 		}
 	}).data( "ui-autocomplete" )._renderItem = function( ul, item ) {
-    	return $( "<li>" ).append( "<a>" + item.label + "<br>" + item.desc + "</a>" ).appendTo( ul );
+    	return $( '<li>' ).append( '<a>' + item.label + '<br><span class="auto-desc">' + item.desc + '</span></a>' ).appendTo( ul );
     };
 
 	$('#booking_service_provider_id').change(function (event) {

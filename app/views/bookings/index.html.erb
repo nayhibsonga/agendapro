@@ -35,7 +35,7 @@
 			</div>
 			<div class="modal-body booking-modal-body">
 				<%= form_for @booking, html: {class: "form-horizontal"} do |f| %>
-				<div class="row well">	
+				<div class="row well well-sm">	
 					<div class="row">
 						<div class="col-md-6">
 							<div class="form-group">
@@ -74,7 +74,7 @@
 											<option value="22">22</option>
 											<option value="23">23</option>
 										</select>
-										 : <select class="form-control date-select datetime required" id="bookingStartMinute" name="booking[start_minutes]">
+										:<select class="form-control date-select datetime required" id="bookingStartMinute" name="booking[start_minutes]">
 											<option value="00">00</option>
 											<option value="05">05</option>
 											<option value="10">10</option>
@@ -114,7 +114,7 @@
 											<option value="22">22</option>
 											<option value="23">23</option>
 										</select>
-										 : <select class="form-control date-select datetime required" id="bookingEndMinute" name="booking[end_minutes]">
+										:<select class="form-control date-select datetime required" id="bookingEndMinute" name="booking[end_minutes]">
 											<option value="00">00</option>
 											<option value="05">05</option>
 											<option value="10">10</option>
@@ -243,9 +243,12 @@
 	</div>
 </div>
 
-<%= stylesheet_link_tag "admin/admin-calendar" %>
+
 <% content_for :scripts do %>
 	<%= javascript_include_tag "bookings" %>
-	<%= stylesheet_link_tag "jquery-ui-1.10.4" %>
 	<%= javascript_include_tag "jquery-ui-1.10.4.min.js" %>
+<% end %>
+<% content_for :stylesheets do %>
+	<%= stylesheet_link_tag "jquery-ui-1.10.4" %>
+	<%= stylesheet_link_tag "admin/admin-calendar" %>
 <% end %>

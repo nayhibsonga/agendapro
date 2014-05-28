@@ -74,6 +74,25 @@ header{
 	padding-left: 0px;
 	padding-right: 0px;
 }
+.booking-modal-body .well-sm {
+	margin-bottom: 0px;
+}
+.booking-modal-body {
+	padding-top: 0px;
+	padding-bottom: 0px;
+}
+.booking-modal-footer {
+	margin-top: 0px;
+}
+/*.ui-autocomplete {
+	max-height: 50px;
+}*/
+/*.ui-autocomplete .ui-menu-item {
+	overflow-x: hidden;
+}*/
+.auto-desc {
+	font-size: 0.75em; 
+}
 body .modal-admin {
     width: 750px;
 }
