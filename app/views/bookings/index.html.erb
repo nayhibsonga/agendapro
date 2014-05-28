@@ -47,7 +47,7 @@
 							<div class="form-group">
 								<label class="col-sm-4 control-label">Hora: </label>
 								<div class="col-sm-8">
-									<div class="input datetime required booking_start ">       
+									<div class="input datetime required booking_start_end ">       
 										<select class="form-control date-select datetime required" id="bookingStartHour" name="booking[start_hours]">
 											<option value="00">00</option>
 											<option value="01">01</option>
@@ -87,7 +87,47 @@
 											<option value="45">45</option>
 											<option value="50">50</option>
 											<option value="55">55</option>
-										</select> - <span id="bookingEnd">00:00</span>
+										</select> - 
+										<select class="form-control date-select datetime required" id="bookingEndHour" name="booking[end_hours]">
+											<option value="00">00</option>
+											<option value="01">01</option>
+											<option value="02">02</option>
+											<option value="03">03</option>
+											<option value="04">04</option>
+											<option value="05">05</option>
+											<option value="06">06</option>
+											<option value="07">07</option>
+											<option value="08">08</option>
+											<option value="09">09</option>
+											<option value="10">10</option>
+											<option value="11">11</option>
+											<option value="12">12</option>
+											<option value="13">13</option>
+											<option value="14">14</option>
+											<option value="15">15</option>
+											<option value="16">16</option>
+											<option value="17">17</option>
+											<option value="18">18</option>
+											<option value="19">19</option>
+											<option value="20">20</option>
+											<option value="21">21</option>
+											<option value="22">22</option>
+											<option value="23">23</option>
+										</select>
+										 : <select class="form-control date-select datetime required" id="bookingEndMinute" name="booking[end_minutes]">
+											<option value="00">00</option>
+											<option value="05">05</option>
+											<option value="10">10</option>
+											<option value="15">15</option>
+											<option value="20">20</option>
+											<option value="25">25</option>
+											<option value="30">30</option>
+											<option value="35">35</option>
+											<option value="40">40</option>
+											<option value="45">45</option>
+											<option value="50">50</option>
+											<option value="55">55</option>
+										</select>
 									</div>
 								</div>
 							</div>
@@ -106,8 +146,10 @@
 							</div>
 						</div>
 						<div class="col-md-6">
-							<%= f.hidden_field :last_name %>
-							<%= f.hidden_field :first_name %>
+							<% if @booking.client.nil? then @booking.build_client end %>
+							<%= f.fields_for :client do |builder| %>
+							<%= builder.hidden_field :last_name %>
+							<%= builder.hidden_field :first_name %>
 							<div class="form-group">
 								<label for="full_name" class="col-sm-4 control-label">Nombre Cliente: </label>
 								<div class="col-sm-8">
@@ -116,9 +158,9 @@
 								</div>
 							</div>
 							<div class="form-group">
-								<%= f.label :email, "Email: ", class: "col-sm-4 control-label" %>
+								<%= builder.label :email, "Email: ", class: "col-sm-4 control-label" %>
 								<div class="col-sm-8">
-									<%= f.text_field :email, class: "form-control" %>
+									<%= builder.text_field :email, class: "form-control" %>
 									<ul id="email_suggestions"></ul>
 									<div class="checkbox">
 										<%= f.check_box :send_mail, :disabled => true %>
@@ -127,11 +169,12 @@
 								</div>
 							</div>
 							<div class="form-group">
-								<%= f.label :phone, "Teléfono: ", class: "col-sm-4 control-label" %>
+								<%= builder.label :phone, "Teléfono: ", class: "col-sm-4 control-label" %>
 								<div class="col-sm-8">
-									<%= f.text_field :phone, class: "form-control" %>
+									<%= builder.text_field :phone, class: "form-control" %>
 								</div>
 							</div>
+							<% end %>
 							<div class="form-group">
 								<%= f.label :status, "Estado: ", class: "col-sm-4 control-label" %>
 								<div class="col-sm-8">
@@ -143,7 +186,7 @@
 					<div class="row">
 						<div class="col-md-12">
 							<div class="form-group">
-								<%= f.label :notes, "Notas desde el cliente: ", class: "col-sm-2 control-label" %>
+								<%= f.label :notes, "Notas compartidas con cliente: ", class: "col-sm-2 control-label" %>
 								<div class="col-sm-10">
 									<%= f.text_area :notes, :rows => "4", class: "form-control modal-textarea" %>
 								</div>

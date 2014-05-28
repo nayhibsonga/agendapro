@@ -14,13 +14,13 @@
 					<dt>Servicio</dt>
 					<dd><%= @booking.service.name %></dd>
 					<dt>Nombre</dt>
-					<dd><%= @booking.first_name %></dd>
+					<dd><%= @booking.client.first_name %></dd>
 					<dt>Apellido</dt>
-					<dd><%= @booking.last_name %></dd>
+					<dd><%= @booking.client.last_name %></dd>
 					<dt>Email</dt>
-					<dd><%= @booking.email %></dd>
+					<dd><%= @booking.client.email %></dd>
 					<dt>Teléfono</dt>
-					<dd><%= @booking.phone %></dd>
+					<dd><%= @booking.client.phone %></dd>
 					<dt>Fecha</dt>
 					<dd><%= l @booking.start %></dd>
 					<% if !@booking.notes.blank? %>

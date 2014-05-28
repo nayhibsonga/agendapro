@@ -16,8 +16,8 @@ class BookingMailer < ActionMailer::Base
 			:subject => 'Nueva Reserva en ' + book_info.service_provider.company.name,
 			:to => [
 				{
-					:email => book_info.email,
-					:name => book_info.last_name + ', ' + book_info.first_name,
+					:email => book_info.client.email,
+					:name => book_info.client.last_name + ', ' + book_info.client.first_name,
 					:type => 'to'
 				},
 				{
@@ -29,15 +29,15 @@ class BookingMailer < ActionMailer::Base
 			:global_merge_vars => [
 				{
 					:name => 'UNSUBSCRIBE',
-					:content => "Si desea dejar de recibir email puede dar click <a href='#{unsubscribe_url(:user => Base64.encode64(book_info.email))}'>aquí</a>."
+					:content => "Si desea dejar de recibir email puede dar click <a href='#{unsubscribe_url(:user => Base64.encode64(book_info.client.email))}'>aquí</a>."
 				},
 				{
 					:name => 'LNAME',
-					:content => book_info.last_name
+					:content => book_info.client.last_name
 				},
 				{
 					:name => 'FNAME',
-					:content => book_info.first_name
+					:content => book_info.client.first_name
 				},
 				{
 					:name => 'LOCALNAME',
@@ -57,11 +57,11 @@ class BookingMailer < ActionMailer::Base
 				},
 				{
 					:name => 'EMAIL',
-					:content => book_info.email
+					:content => book_info.client.email
 				},
 				{
 					:name => 'PHONE',
-					:content => book_info.phone
+					:content => book_info.client.phone
 				},
 				{
 					:name => 'BSTART',
@@ -78,7 +78,7 @@ class BookingMailer < ActionMailer::Base
 			],
 			:merge_vars => [
 				{
-					:rcpt => book_info.email,
+					:rcpt => book_info.client.email,
 					:vars => [
 						{
 							:name => 'RMESSAGE',
@@ -86,7 +86,7 @@ class BookingMailer < ActionMailer::Base
 						},
 						{
 							:name => 'NAME',
-							:content => book_info.first_name
+							:content => book_info.client.first_name
 						},
 						{
 							:name => 'MESSAGE',
@@ -176,8 +176,8 @@ class BookingMailer < ActionMailer::Base
 			:subject => 'Se Actualizo tu Reserva en ' + book_info.service_provider.company.name,
 			:to => [
 				{
-					:email => book_info.email,
-					:name => book_info.last_name + ', ' + book_info.first_name,
+					:email => book_info.client.email,
+					:name => book_info.client.last_name + ', ' + book_info.client.first_name,
 					:type => 'to'
 				},
 				{
@@ -189,15 +189,15 @@ class BookingMailer < ActionMailer::Base
 			:global_merge_vars => [
 				{
 					:name => 'UNSUBSCRIBE',
-					:content => "Si desea dejar de recibir email puede dar click <a href='#{unsubscribe_url(:user => Base64.encode64(book_info.email))}'>aquí</a>."
+					:content => "Si desea dejar de recibir email puede dar click <a href='#{unsubscribe_url(:user => Base64.encode64(book_info.client.email))}'>aquí</a>."
 				},
 				{
 					:name => 'LNAME',
-					:content => book_info.last_name
+					:content => book_info.client.last_name
 				},
 				{
 					:name => 'FNAME',
-					:content => book_info.first_name
+					:content => book_info.client.first_name
 				},
 				{
 					:name => 'LOCALNAME',
@@ -217,11 +217,11 @@ class BookingMailer < ActionMailer::Base
 				},
 				{
 					:name => 'EMAIL',
-					:content => book_info.email
+					:content => book_info.client.email
 				},
 				{
 					:name => 'PHONE',
-					:content => book_info.phone
+					:content => book_info.client.phone
 				},
 				{
 					:name => 'BSTART',
@@ -238,7 +238,7 @@ class BookingMailer < ActionMailer::Base
 			],
 			:merge_vars => [
 				{
-					:rcpt => book_info.email,
+					:rcpt => book_info.client.email,
 					:vars => [
 						{
 							:name => 'RMESSAGE',
@@ -246,7 +246,7 @@ class BookingMailer < ActionMailer::Base
 						},
 						{
 							:name => 'NAME',
-							:content => book_info.first_name
+							:content => book_info.client.first_name
 						},
 						{
 							:name => 'MESSAGE',
@@ -344,15 +344,15 @@ class BookingMailer < ActionMailer::Base
 			:global_merge_vars => [
 				{
 					:name => 'UNSUBSCRIBE',
-					:content => "Si desea dejar de recibir email puede dar click <a href='#{unsubscribe_url(:user => Base64.encode64(book_info.email))}'>aquí</a>."
+					:content => "Si desea dejar de recibir email puede dar click <a href='#{unsubscribe_url(:user => Base64.encode64(book_info.client.email))}'>aquí</a>."
 				},
 				{
 					:name => 'LNAME',
-					:content => book_info.last_name
+					:content => book_info.client.last_name
 				},
 				{
 					:name => 'FNAME',
-					:content => book_info.first_name
+					:content => book_info.client.first_name
 				},
 				{
 					:name => 'LOCALNAME',
@@ -372,11 +372,11 @@ class BookingMailer < ActionMailer::Base
 				},
 				{
 					:name => 'EMAIL',
-					:content => book_info.email
+					:content => book_info.client.email
 				},
 				{
 					:name => 'PHONE',
-					:content => book_info.phone
+					:content => book_info.client.phone
 				},
 				{
 					:name => 'BSTART',
@@ -461,8 +461,8 @@ class BookingMailer < ActionMailer::Base
 			:from_name => 'AgendaPro',
 			:to => [
 				{
-					:email => book_info.email,
-					:name => book_info.last_name + ', ' + book_info.first_name,
+					:email => book_info.client.email,
+					:name => book_info.client.last_name + ', ' + book_info.client.first_name,
 					:type => 'to'
 				},
 				{
@@ -475,11 +475,11 @@ class BookingMailer < ActionMailer::Base
 			:global_merge_vars => [
 				{
 					:name => 'UNSUBSCRIBE',
-					:content => "Si desea dejar de recibir email puede dar click <a href='#{unsubscribe_url(:user => Base64.encode64(book_info.email))}'>aquí</a>."
+					:content => "Si desea dejar de recibir email puede dar click <a href='#{unsubscribe_url(:user => Base64.encode64(book_info.client.email))}'>aquí</a>."
 				},
 				{
 					:name => 'FNAME',
-					:content => book_info.first_name
+					:content => book_info.client.first_name
 				},
 				{
 					:name => 'LOCALNAME',
@@ -499,11 +499,11 @@ class BookingMailer < ActionMailer::Base
 				},
 				{
 					:name => 'EMAIL',
-					:content => book_info.email
+					:content => book_info.client.email
 				},
 				{
 					:name => 'PHONE',
-					:content => book_info.phone
+					:content => book_info.client.phone
 				},
 				{
 					:name => 'BSTART',
@@ -520,7 +520,7 @@ class BookingMailer < ActionMailer::Base
 			],
 			:merge_vars => [
 				{
-					:rcpt => book_info.email,
+					:rcpt => book_info.client.email,
 					:vars => [
 						{
 							:name => 'RMESSAGE',
@@ -528,7 +528,7 @@ class BookingMailer < ActionMailer::Base
 						},
 						{
 							:name => 'NAME',
-							:content => book_info.first_name
+							:content => book_info.client.first_name
 						},
 						{
 							:name => 'MESSAGE',
@@ -610,8 +610,8 @@ class BookingMailer < ActionMailer::Base
 			:subject => 'Recuerda tu Reserva en ' + book_info.service_provider.company.name,
 			:to => [
 				{
-				  :email => book_info.email,
-				  :name => book_info.last_name + ', ' + book_info.first_name,
+				  :email => book_info.client.email,
+				  :name => book_info.client.last_name + ', ' + book_info.client.first_name,
 				  :type => 'to'
 				},
 				{
@@ -623,15 +623,15 @@ class BookingMailer < ActionMailer::Base
 			:global_merge_vars => [
 				{
 				  :name => 'UNSUBSCRIBE',
-				  :content => "Si desea dejar de recibir email puede dar click <a href='#{unsubscribe_url(:user => Base64.encode64(book_info.email))}'>aquí</a>."
+				  :content => "Si desea dejar de recibir email puede dar click <a href='#{unsubscribe_url(:user => Base64.encode64(book_info.client.email))}'>aquí</a>."
 				},
 				{
 				  :name => 'LNAME',
-				  :content => book_info.last_name
+				  :content => book_info.client.last_name
 				},
 				{
 				  :name => 'FNAME',
-				  :content => book_info.first_name
+				  :content => book_info.client.first_name
 				},
 				{
 				  :name => 'LOCALNAME',
@@ -651,11 +651,11 @@ class BookingMailer < ActionMailer::Base
 				},
 				{
 				  :name => 'EMAIL',
-				  :content => book_info.email
+				  :content => book_info.client.email
 				},
 				{
 				  :name => 'PHONE',
-				  :content => book_info.phone
+				  :content => book_info.client.phone
 				},
 				{
 				  :name => 'BSTART',
@@ -672,7 +672,7 @@ class BookingMailer < ActionMailer::Base
 			],
 			:merge_vars => [
 				{
-				  :rcpt => book_info.email,
+				  :rcpt => book_info.client.email,
 				  :vars => [
 					{
 					  :name => 'RMESSAGE',
@@ -680,7 +680,7 @@ class BookingMailer < ActionMailer::Base
 					},
 					{
 					  :name => 'NAME',
-					  :content => book_info.first_name
+					  :content => book_info.client.first_name
 					},
 					{
 					  :name => 'MESSAGE',

@@ -70,6 +70,10 @@ header{
 .modal-admin .checkbox {
 	padding-top: 0px;
 }
+.booking-modal-body .date-select {
+	padding-left: 0px;
+	padding-right: 0px;
+}
 body .modal-admin {
     width: 750px;
 }
