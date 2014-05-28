@@ -22,7 +22,7 @@ header{
 	margin-bottom: 0;
 	line-height: 1;
 }
-.hasDatepicker {
+.lateralDatepicker {
 	font-size: 0.725em;
 	width: 100%;
 }
@@ -61,6 +61,18 @@ header{
 #calendar{
 	margin-top: 10px;
 }
+.disabled {
+   color: #777777;
+}
+.modal-admin label {
+	font-size: 12px;
+}
+.modal-admin .checkbox {
+	padding-top: 0px;
+}
+body .modal-admin {
+    width: 750px;
+}
 /* Menu responsivo */
 @media (min-width: 1800px) { 
 	.hasDatepicker {
@@ -68,17 +80,17 @@ header{
 	}
 }
 @media (max-width: 1280px) { 
-	.hasDatepicker {
+	.lateralDatepicker {
 		font-size: 0.65em;
 	}
 }
 @media (width: 1280px) { 
-	.hasDatepicker {
+	.lateralDatepicker {
 		font-size: 0.7em;
 	}
 }
 @media (max-width: 1124px) { 
-	.hasDatepicker {
+	.lateralDatepicker {
 		font-size: 0.585em;
 	}
 	.createBreak {
