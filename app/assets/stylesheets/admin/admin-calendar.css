@@ -14,7 +14,7 @@
 	margin-top: 5px;
 	margin-bottom: 0;
 }
-.hasDatepicker {
+.lateralDatepicker {
 	font-size: 0.725em;
 	width: 100%;
 }
@@ -50,19 +50,35 @@
 .modal-textarea {
 	resize: vertical;
 }
+.disabled {
+   color: #777777;
+}
+
+.modal-admin label {
+	font-size: 12px;
+}
+
+.modal-admin .checkbox {
+	padding-top: 0px;
+}
+
+body .modal-admin {
+    width: 750px;
+}
+
 /* Menu responsivo */
 @media (max-width: 1280px) { 
-	.hasDatepicker {
+	.lateralDatepicker {
 		font-size: 0.65em;
 	}
 }
 @media (width: 1280px) { 
-	.hasDatepicker {
+	.lateralDatepicker {
 		font-size: 0.7em;
 	}
 }
 @media (max-width: 1124px) { 
-	.hasDatepicker {
+	.lateralDatepicker {
 		font-size: 0.585em;
 	}
 	.createBreak {
