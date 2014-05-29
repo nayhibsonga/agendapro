@@ -36,7 +36,7 @@ header{
 	line-height: 23.100000381469727px;
 	margin-left: 20px;
 	margin-bottom: 0px;
-	margin-top: 0px;
+	margin-top: 10px;
 	text-align: left;
 	white-space: nowrap;
 }
@@ -45,13 +45,13 @@ header{
 }
 .createBreak {
 	position: absolute;
-	top: 10px;
+	top: 14px;
 	right: 5px;
 	z-index: 1;
 }
 .createBooking {
 	position: absolute;
-	top: 10px;
+	top: 14px;
 	right: 235px;
 	z-index: 1;
 }
@@ -96,88 +96,9 @@ header{
 body .modal-admin {
     width: 750px;
 }
-
-/* Slider */
-#local_slider {
-	position: relative;
-	overflow: hidden;
-	margin: 0 0;
-	border-radius: 4px;
-}
-
-#local_slider ul {
-	position: relative;
-	margin: 0;
-	padding: 0;
-	list-style: none;
-}
-
-#local_slider ul li {
-	position: relative;
-	display: block;
-	float: left;
-	margin: 0;
-	padding: 0;
-	width: 200px;
-	text-align: center;
-}
-
-#provider_slider {
-	position: relative;
-	overflow: hidden;
-	margin: 0 0;
-	border-radius: 4px;
-}
-
-#provider_slider ul {
-	position: relative;
-	margin: 0;
-	padding: 0;
-	list-style: none;
-}
-
-#provider_slider ul li {
-	position: relative;
-	display: block;
-	float: left;
-	margin: 0;
-	padding: 0;
-	width: 200px;
-	text-align: center;
-}
-
-a.control_prev, a.control_next {
-	position: absolute;
-	top: 0%;
-	z-index: 999;
-	display: block;
-	padding: 10px 10px;
-	width: auto;
-	height: 40px;
-	background: rgba(27,115,112,1);;
-	color: #fff;
-	font-size: 18px;
-	opacity: 0.8;
-	cursor: pointer;
-}
-
-a.control_prev:hover, a.control_next:hover {
-	opacity: 1;
-	-webkit-transition: all 0.2s ease;
-}
-
-a.control_prev {
-	border-radius: 0 2px 2px 0;
-}
-
-a.control_next {
-	border-radius: 2px 0 0 2px;
-	right: 0;
-}
-
 /* Menu responsivo */
 @media (min-width: 1800px) { 
-	.lateralDatepicker {
+	.hasDatepicker {
 		font-size: 1em;
 	}
 }

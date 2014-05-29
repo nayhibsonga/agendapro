@@ -1,28 +1,11 @@
 <div class="col-md-12">
 	<div class="row">
 		<div  id="locals-selector" class="radio">
-			<% if @locations.length > 5 %>
-			<div id="local_slider">
-				<a href="#" class="control_next"><i class="fa fa-chevron-right"></i></a>
-				<a href="#" class="control_prev"><i class="fa fa-chevron-left"></i></a>
-				<ul>
-					<% @locations.each do |local| %>
-					<li>
-						<label id="<%= local.id %>" >
-							<input type="radio" name="localRadio" id="localOption<%= local.id %>" onchange="loadProviders()" value="<%= local.id %>" <%= 'checked' if ((!@selectedLocal) && (local.id == @locations.first.id)) || (@selectedLocal.to_i == local.id) %>>
-							<p><%= local.name %></p>
-						</label>
-					</li>
-					<% end %>
-				</ul>
-			</div>
-			<% else %>
 			<% @locations.each do |local| %>
 				<label id="<%= local.id %>" >
 					<input type="radio" name="localRadio" id="localOption<%= local.id %>" onchange="loadProviders()" value="<%= local.id %>" <%= 'checked' if ((!@selectedLocal) && (local.id == @locations.first.id)) || (@selectedLocal.to_i == local.id) %>>
 					<p><%= local.name %></p>
 				</label>
-			<% end %>
 			<% end %>
 		</div>
 	</div>
@@ -264,9 +247,6 @@
 <% content_for :scripts do %>
 	<%= javascript_include_tag "bookings" %>
 	<%= javascript_include_tag "jquery-ui-1.10.4.min.js" %>
-	<% if @locations.length > 5 %>
-		<%= javascript_include_tag "admin/local_slider" %>
-	<% end %>
 <% end %>
 <% content_for :stylesheets do %>
 	<%= stylesheet_link_tag "jquery-ui-1.10.4" %>
