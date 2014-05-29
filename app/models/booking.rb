@@ -9,7 +9,7 @@ class Booking < ActiveRecord::Base
 
 	validates :start, :end, :service_provider_id, :service_id, :status_id, :location_id, :presence => true
 
-	validate :time_empty_or_negative, :time_in_provider_time, :booking_duration
+	validate :time_empty_or_negative, :booking_duration
 
 	after_commit validate :bookings_overlap
 
