@@ -4,7 +4,7 @@ class AddClientToBookings < ActiveRecord::Migration
     Booking.all.order(:updated_at).each do |booking|
       if booking.email == ''
       	if Client.where(email: '', first_name: booking.first_name, last_name: booking.last_name, company_id: booking.service_provider.company_id).count > 0
-      		booking.client = Client.where(first_name: booking.first_name, last_name: booking.last_name, company_id: booking.service_provider.company_id).first
+      		booking.client = Client.where(email: '', first_name: booking.first_name, last_name: booking.last_name, company_id: booking.service_provider.company_id).first
       		booking.save
       	else
       		c = Client.create(email: '', first_name: booking.first_name, last_name: booking.last_name, phone: booking.phone, company_id: booking.service_provider.company_id)
