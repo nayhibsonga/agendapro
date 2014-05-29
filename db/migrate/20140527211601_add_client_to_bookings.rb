@@ -5,25 +5,25 @@ class AddClientToBookings < ActiveRecord::Migration
       if booking.email == ''
       	if Client.where(email: '', first_name: booking.first_name, last_name: booking.last_name, company_id: booking.service_provider.company_id).count > 0
       		booking.client = Client.where(email: '', first_name: booking.first_name, last_name: booking.last_name, company_id: booking.service_provider.company_id).first
-          puts booking.id + ' encuentra cliente vacio ' + booking.client.id
+          puts booking.id.to_s + ' encuentra cliente vacio ' + booking.client.id.to_s
       		booking.save
       	else
       		c = Client.create(email: '', first_name: booking.first_name, last_name: booking.last_name, phone: booking.phone, company_id: booking.service_provider.company_id)
       		c.save
       		booking.client = c
-          puts booking.id + ' crea cliente vacio ' + booking.client.id
+          puts booking.id.to_s + ' crea cliente vacio ' + booking.client.id.to_s
       		booking.save
       	end
       else
       	if Client.where(email: booking.email, company_id: booking.service_provider.company_id).count > 0
       		booking.client = Client.where(email: booking.email, company_id: booking.service_provider.company_id).first
-          puts booking.id + ' encuentra cliente lleno ' + booking.client.id
+          puts booking.id.to_s + ' encuentra cliente lleno ' + booking.client.id.to_s
       		booking.save
       	else
       		c = Client.create(email: booking.email, first_name: booking.first_name, last_name: booking.last_name, phone: booking.phone, company_id: booking.service_provider.company_id)
       		c.save
       		booking.client = c
-          puts booking.id + ' crea cliente lleno ' + booking.client.id
+          puts booking.id.to_s + ' crea cliente lleno ' + booking.client.id.to_s
       		booking.save
       	end
       end
