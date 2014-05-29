@@ -9,11 +9,13 @@ class CorrectEmailToBookings < ActiveRecord::Migration
 				booking.email = ''
 				booking.send_mail = false
 				booking.save
+				puts booking.id.to_s + ' booking corregido'
 			end
 		else
 			booking.email = ''
 			booking.send_mail = false
 			booking.save
+			puts booking.id.to_s + ' booking corregido'
 		end
 	end
 	Client.all.each do |client|
@@ -24,10 +26,12 @@ class CorrectEmailToBookings < ActiveRecord::Migration
 			if (atpos < 1) || (dotpos < atpos+2) || (dotpos+2 >= email.length)
 				client.email = ''
 				client.save
+				puts client.id.to_s + ' client corregido'
 			end
 		else
 			client.email = ''
 			client.save
+			puts client.id.to_s + ' client corregido'
 		end
 	end
   end
