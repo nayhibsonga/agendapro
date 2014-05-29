@@ -3,5 +3,5 @@ if Rails.env.development?
 end
 
 if Rails.env.production?
-  Agendapro::Application.config.api_key = ENV["MANDRILL_API_KEY_PROD"]
+  Agendapro::Application.config.api_key = ENV["MANDRILL_API_KEY_DEV"]
 end
