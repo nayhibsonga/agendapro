@@ -2,6 +2,12 @@ class CorrectEmailToBookings < ActiveRecord::Migration
   def change
   	cancelled_id = Status.find_by(name: 'Cancelado').id
   	Booking.all.order(:id).each do |booking|
+  		booking.service_provider.bookings.where(start: booking.start, end: booking.end, service_provider_id: booking.service_provider, service: booking.service).each do |booking2|
+			if booking != booking2 && booking2.status.id != cancelled_id && booking.status.id != cancelled_id
+				puts booking2.id.to_s + ' eliminado duplicado'
+  				booking2.destroy
+  			end
+  		end
 		email = booking.email
 		atpos = email.index('@');
 		dotpos = email.rindex('.');
