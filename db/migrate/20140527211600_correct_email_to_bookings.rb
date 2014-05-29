@@ -5,7 +5,7 @@ class CorrectEmailToBookings < ActiveRecord::Migration
   		booking.service_provider.bookings.where(start: booking.start, end: booking.end).each do |booking2|
 			if booking != booking2 && booking2.status.id != cancelled_id && booking.status.id != cancelled_id
 				puts booking2.id.to_s + ' eliminado duplicado de ' + booking.id.to_s
-  				booking2.destroy
+  				booking2.delete
   			end
   		end
 		email = booking.email
