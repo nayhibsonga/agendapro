@@ -11,7 +11,7 @@ class Booking < ActiveRecord::Base
 
 	validate :time_empty_or_negative, :time_in_provider_time, :booking_duration, :service_staff
 
-	after_commit validate :bookings_overlap, :provider_in_break
+	after_commit validate :bookings_overlap
 
 	# after_create :send_booking_mail
 	# after_update :send_update_mail
