@@ -7,14 +7,14 @@ class Booking < ActiveRecord::Base
 	belongs_to :promotion
 	belongs_to :client
 
-	validates :start, :end, :service_provider_id, :service_id, :status_id, :location_id, :client_id, :presence => true
+	validates :start, :end, :service_provider_id, :service_id, :status_id, :location_id, :presence => true
 
 	validate :time_empty_or_negative, :time_in_provider_time, :booking_duration, :service_staff
 
 	after_commit validate :bookings_overlap, :provider_in_break
 
-	after_create :send_booking_mail
-	after_update :send_update_mail
+	# after_create :send_booking_mail
+	# after_update :send_update_mail
 
 	def provider_in_break
 		self.service_provider.provider_breaks.each do |provider_break|
