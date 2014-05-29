@@ -1,5 +1,6 @@
 class CorrectEmailToBookings < ActiveRecord::Migration
   def change
+  	Booking.where(id: [615, 1562, 1835, 2015, 2060, 2259, 2356]).delete
   	cancelled_id = Status.find_by(name: 'Cancelado').id
   	Booking.all.order(:id).each do |booking|
   		booking.service_provider.bookings.where(start: booking.start, end: booking.end).each do |booking2|
