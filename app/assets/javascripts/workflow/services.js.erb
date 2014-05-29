@@ -12,35 +12,37 @@ function loadStep1 () {
 		}
 		$('#services-selector').empty();
 		$.each(categorized_services, function (key, service_hash) {
-			var servicesHTML = '';
-			$.each(service_hash.services, function (key, service) {
-				//====== Generando Radios
-				servicesHTML += 
-					'<li class="list-group-item">' +
-						'<div class="radio">' +
-							'<label>' +
-								'<input type="radio" name="serviceRadio" value="' + service.id + '">' +
-								'<p>' + service.name + '</p>' +
-							'</label>' +
-						'</div>' +
-					'</li>';
-			});
+			if (service_hash.services.length > 0) {
+				var servicesHTML = '';
+				$.each(service_hash.services, function (key, service) {
+					//====== Generando Radios
+					servicesHTML += 
+						'<li class="list-group-item">' +
+							'<div class="radio">' +
+								'<label>' +
+									'<input type="radio" name="serviceRadio" value="' + service.id + '">' +
+									'<p>' + service.name + '</p>' +
+								'</label>' +
+							'</div>' +
+						'</li>';
+				});
 
-			//====== Insertando acordeon
-			$('#services-selector').append(
-				'<div class="panel panel-default">' +
-					'<div class="panel-heading">' +
-						'<h3 class="panel-title">' +
-							'<a data-toggle="collapse" data-parent="#services-selector" href="#body' + service_hash.id + '">' + service_hash.category + '</a>' +
-						'</h3>' +
-					'</div>' +
-					'<div id="body' + service_hash.id + '" class="panel-collapse collapse'+ extraClass +'">' +
-						'<ul class="list-group" id="services-selector' + service_hash.id + '">' +
-							servicesHTML +
-						'</ul>' +
-					'</div>' +
-				'</div>'
-			);
+				//====== Insertando acordeon
+				$('#services-selector').append(
+					'<div class="panel panel-default">' +
+						'<div class="panel-heading">' +
+							'<h3 class="panel-title">' +
+								'<a data-toggle="collapse" data-parent="#services-selector" href="#body' + service_hash.id + '">' + service_hash.category + '</a>' +
+							'</h3>' +
+						'</div>' +
+						'<div id="body' + service_hash.id + '" class="panel-collapse collapse'+ extraClass +'">' +
+							'<ul class="list-group" id="services-selector' + service_hash.id + '">' +
+								servicesHTML +
+							'</ul>' +
+						'</div>' +
+					'</div>'
+				);
+			};
 		});
 
 		$('[name="serviceRadio"]').on('click', function(event) {

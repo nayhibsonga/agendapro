@@ -99,4 +99,5 @@ gem 'roo'
 
 # File Upload
 # gem 'rmagick'
+gem "mini_magick"
 gem 'carrierwave'

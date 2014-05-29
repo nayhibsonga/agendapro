@@ -72,7 +72,7 @@
 				<td><%= client.last_name %></td>
 				<td><%= client.phone %></td>
 				<td><%= link_to '<i class="fa fa-pencil"></i> Ver / Editar'.html_safe, edit_client_path(client), :class => "btn btn-warning" %>
-            		<%= link_to '<i class="fa fa-trash-o"></i> Eliminar'.html_safe, client, :class => "btn btn-danger", method: :delete, data: { confirm: '¿Estás seguro de eliminar el Cliente seleccionado?' } unless cannot? :destroy, client %></td>
+            		<%= link_to '<i class="fa fa-trash-o"></i> Eliminar'.html_safe, client, :class => "btn btn-danger", method: :delete, data: { confirm: '¿Estás seguro de eliminar el Cliente seleccionado? Este cliente tiene '+client.bookings.count.to_s+' reserva(s) asociada(s), que será(n) eliminada(s) también.' } unless cannot? :destroy, client %></td>
 				<td>
 					<div class="checkbox" style="margin-top: 0; margin-bottom: 0;">
 						<label>
@@ -90,7 +90,7 @@
 			<%= link_to '<i class="fa fa-plus"></i> Nuevo Cliente'.html_safe, new_client_path, :class => "btn btn-primary" %> 
 		</div>
 		<div class="col-md-4 pagination">
-			<%= will_paginate @players, renderer: BootstrapPagination::Rails %>
+			<%= will_paginate @clients, renderer: BootstrapPagination::Rails %>
 		</div>
 		<div class="col-md-4">
 			<button id="sendMail" type="button" class="btn btn-agendapro-claro pull-right" data-toggle="modal" data-target="#mailModal" disabled>Enviar Email</button>

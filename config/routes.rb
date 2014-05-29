@@ -103,7 +103,8 @@ Agendapro::Application.routes.draw do
   get '/local', :to => 'locations#location_data'
   # wrokflow - wizard
   get '/workflow', :to => 'companies#workflow', :as => 'workflow'
-  get '/local_services', :to => 'service_providers#location_services'
+  get '/local_services', :to => 'services#location_categorized_services'
+  get '/location_services', :to => 'services#location_services'
   get '/local_providers', :to => 'service_providers#location_providers'
   get '/providers_services', :to => 'services#get_providers'
   get '/location_time', :to => 'locations#location_time'
@@ -149,6 +150,7 @@ Agendapro::Application.routes.draw do
   get '/services/:id/deactivate', :to => 'services#deactivate', :as => 'deactivate_service'
   get '/service_providers/:id/deactivate', :to => 'service_providers#deactivate', :as => 'deactivate_service_provider'
   post '/clients/import', :to => 'clients#import', :as => 'import_clients'
+  get '/clients/:id/history', :to => 'clients#history', :as => 'client_history'
   
   # Root
   get '/' => 'searchs#index', :constraints => { :subdomain => 'www' }
