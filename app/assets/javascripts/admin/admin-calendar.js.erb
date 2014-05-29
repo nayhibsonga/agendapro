@@ -6,11 +6,6 @@ function loadProviders () {
 		$('#providers-selector').html('<%= image_tag "ajax-loader.gif", :alt => "Loader" %>');
 		var localId = $('input[name=localRadio]:checked').val();
 		$('#providers-selector').empty();
-		$('#providers-selector').append('<label class="active" id="l_todos">' +
-				'<input type="radio" name="providerRadio" value="0" checked>' +
-				'<p>Todos</p>' +
-			'</label>'
-		);
 		var resources = [];
 		resourcesColors = [];
 		var count = 0;
@@ -26,15 +21,50 @@ function loadProviders () {
 				    .remove()
 				    .end()
 				;
-				$.each(providersArray, function (key, provider) {
-					$('#providers-selector').append('<label id="' + provider.id + '">' +
-							'<input type="radio" name="providerRadio" value="' + provider.id + '">' +
-							'<p>' + provider.public_name + '</p>' +
+				if (providersArray.length > 5) {
+					$('#providers-selector').append(
+						'<div id="provider_slider">' +
+							'<a href="#" class="control_next"><i class="fa fa-chevron-right"></i></a>' +
+							'<a href="#" class="control_prev"><i class="fa fa-chevron-left"></i></a>' +
+							'<ul>' +
+								'<li>' +
+									'<label class="active" id="l_todos">' +
+										'<input type="radio" name="providerRadio" value="0" checked>' +
+										'<p>Todos</p>' +
+									'</label>' +
+								'</li>' +
+							'</ul>' +
+						'</div>'
+					);
+				}
+				else {
+					$('#providers-selector').append('<label class="active" id="l_todos">' +
+							'<input type="radio" name="providerRadio" value="0" checked>' +
+							'<p>Todos</p>' +
 						'</label>'
 					);
+				};
+				$.each(providersArray, function (key, provider) {
+					if (providersArray.length > 5) {
+						$('#providers-selector #provider_slider ul').append(
+							'<li>' +
+								'<label id="' + provider.id + '">' +
+									'<input type="radio" name="providerRadio" value="' + provider.id + '">' +
+									'<p>' + provider.public_name + '</p>' +
+								'</label>' +
+							'</li>'
+						);
+						$('#providers-selector #provider_slider ul li #' + provider.id).children('p').css({'border-bottom-color': colors[count%30], 'border-bottom-style': 'solid'});
+					} else{
+						$('#providers-selector').append('<label id="' + provider.id + '">' +
+								'<input type="radio" name="providerRadio" value="' + provider.id + '">' +
+								'<p>' + provider.public_name + '</p>' +
+							'</label>'
+						);
+						$('#providers-selector').children('#' + provider.id).children('p').css({'border-bottom-color': colors[count%30], 'border-bottom-style': 'solid'});
+					};
 					resources.push({id: provider.id, name: provider.public_name});
 					resourcesColors.push({id: provider.id, color: colors[count%30]});
-					$('#providers-selector').children('#' + provider.id).children('p').css({'border-bottom-color': colors[count%30], 'border-bottom-style': 'solid'});
 					count += 1;
 					$('#booking_service_provider_id')
 					    .append('<option value="'+ provider.id +'">'+ provider.public_name +'</option>')
@@ -57,8 +87,16 @@ function loadProviders () {
 					}
 					
 				});
+				generateSlider();
 				loadLocationTime (localId, resources);
 				return true;
+			}
+			else {
+				$('#providers-selector').append('<label class="active" id="l_todos">' +
+						'<input type="radio" name="providerRadio" value="0" checked>' +
+						'<p>Todos</p>' +
+					'</label>'
+				);
 			}
 			loadWeekCalendar(0,24,[],[],0);
 			return true;
@@ -1008,6 +1046,45 @@ function validEmail(email) {
 	  return false;
 	}
 	return true;
+}
+
+function generateSlider () {
+	var slideCount = $('#provider_slider ul li').length;
+	var slideWidth = $('#provider_slider ul li').width();
+	var slideHeight = $('#provider_slider ul li').height();
+	var sliderUlWidth = slideCount * slideWidth;
+
+	$('#provider_slider').css({ width: '100%', height: slideHeight });
+
+	$('#provider_slider ul').css({ width: sliderUlWidth, marginLeft: - slideWidth });
+
+	$('#provider_slider ul li:last-child').prependTo('#provider_slider ul');
+
+	function providrMoveLeft() {
+	    $('#provider_slider ul').animate({
+	        left: + slideWidth
+	    }, 200, function () {
+	        $('#provider_slider ul li:last-child').prependTo('#provider_slider ul');
+	        $('#provider_slider ul').css('left', '');
+	    });
+	};
+
+	function providerMoveRight() {
+	    $('#provider_slider ul').animate({
+	        left: - slideWidth
+	    }, 200, function () {
+	        $('#provider_slider ul li:first-child').appendTo('#provider_slider ul');
+	        $('#provider_slider ul').css('left', '');
+	    });
+	};
+
+	$('a.control_prev').click(function () {
+	    providrMoveLeft();
+	});
+
+	$('a.control_next').click(function () {
+	    providerMoveRight();
+	});
 }
 
 var servicesJSON;
