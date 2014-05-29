@@ -1,9 +1,12 @@
 class CorrectEmailToBookings < ActiveRecord::Migration
   def change
+  	cancelled_id = Status.find_by(name: 'Cancelado').id
   	Booking.all.each do |booking|
   		booking.service_provider.bookings.each do |booking2|
   			if booking != booking2 && booking.start == booking2.start && booking.end == booking2.end && booking.location == booking2.location && booking.service == booking2.service && booking.status == booking2.status
-  				booking2.destroy
+  				if booking2.status.id != cancelled_id
+	  				booking2.destroy
+	  			end	
   			end
   		end
 		email = booking.email
