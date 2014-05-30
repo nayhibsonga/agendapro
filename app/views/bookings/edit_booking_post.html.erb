@@ -21,7 +21,7 @@
 					</div>
 				</div>
 				<% else %>
-				<h3>Gracias <%= @booking.first_name %>!</h3>
+				<h3>Gracias <%= @booking.client.first_name %>!</h3>
 				<p>
 					Su cita fue actualizada correctamente.<br>
 					Si desea agendar una nueva cita pinche <a href="<%= root_url(:host => @url) %>">aquí</a>.

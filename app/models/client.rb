@@ -17,21 +17,21 @@ class Client < ActiveRecord::Base
   end
   def self.filter_location(location)
     if location && (location != '')
-      where(email: Booking.where(location_id: location).pluck(:email))
+      where(id: Booking.where(location_id: location).pluck(:client_id))
     else
       all
     end
   end
   def self.filter_provider(provider)
     if provider && (provider != '')
-      where(email: Booking.where(service_provider_id: provider).pluck(:email))
+      where(id: Booking.where(service_provider_id: provider).pluck(:client_id))
     else
       all
     end
   end
   def self.filter_service(service)
     if service && (service != '')
-      where(email: Booking.where(service_id: service).pluck(:email))
+      where(id: Booking.where(service_id: service).pluck(:client_id))
     else
       all
     end
