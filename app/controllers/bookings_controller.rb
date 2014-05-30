@@ -60,10 +60,8 @@ class BookingsController < ApplicationController
           @booking.client = client
         end
       end
-    end
-    if !booking_params[:user_id]
-      if User.find_by_email(booking_params[:email])
-        @booking.user_id = User.find_by_email(booking_params[:email]).id
+      if User.find_by_email(booking_params[:client_email])
+        new_booking_params[:user_id] = User.find_by_email(booking_params[:client_email]).id
       end
     end
     if @booking && @booking.service_provider
@@ -113,14 +111,12 @@ class BookingsController < ApplicationController
           end
         end
       end
+      if User.find_by_email(booking_params[:client_email])
+        new_booking_params[:user_id] = User.find_by_email(booking_params[:client_email]).id
+      end
     end
     if ServiceProvider.where(:id => booking_params[:service_provider_id])
       new_booking_params[:location_id] = ServiceProvider.find(booking_params[:service_provider_id]).location.id
-    end
-    if !booking_params[:email].nil?
-      if User.find_by_email(booking_params[:email])
-        new_booking_params[:user_id] = User.find_by_email(booking_params[:email]).id
-      end
     end
     respond_to do |format|
       if @booking.update(new_booking_params)
@@ -184,7 +180,11 @@ class BookingsController < ApplicationController
     if user_signed_in?
       @booking = Booking.new(start: params[:start], end: params[:end], notes: params[:comment], service_provider_id: params[:provider], service_id: params[:service], location_id: params[:location], status_id: Status.find_by(name: 'Reservado').id, client_id: client.id, user_id: current_user.id, web_origin: params[:origin])
     else
-      @booking = Booking.new(start: params[:start], end: params[:end], notes: params[:comment], service_provider_id: params[:provider], service_id: params[:service], location_id: params[:location], status_id: Status.find_by(name: 'Reservado').id, client_id: client.id, web_origin: params[:origin])
+      @user = nil
+      if User.find_by_email(params[:email])
+        @user = User.find_by_email(params[:email])
+      end
+      @booking = Booking.new(start: params[:start], end: params[:end], notes: params[:comment], service_provider_id: params[:provider], service_id: params[:service], location_id: params[:location], status_id: Status.find_by(name: 'Reservado').id, client_id: client.id, user_id: @user, web_origin: params[:origin])
     end
     if @booking.save
       flash[:notice] = "Servicio agendado"
