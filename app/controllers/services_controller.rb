@@ -1,6 +1,6 @@
 class ServicesController < ApplicationController
   before_action :set_service, only: [:show, :edit, :update, :destroy, :activate, :deactivate]
-  before_action :authenticate_user!, except: [:services_data, :service_data, :get_providers]
+  before_action :authenticate_user!, except: [:services_data, :service_data, :get_providers, :location_services, :location_categorized_services]
   before_action :quick_add, except: [:services_data, :service_data, :get_providers]
   layout "admin", except: [:get_providers, :services_data, :service_data]
   load_and_authorize_resource
