@@ -206,7 +206,7 @@ class ClientsController < ApplicationController
         client[2] = ''
       end
       if client[3].nil?
-        client[4] = ''
+        client[3] = ''
       end
       label = client[0] + ' ' + client[1]
       desc = client[2] + ' - ' + client[3]
