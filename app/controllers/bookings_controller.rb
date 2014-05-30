@@ -91,24 +91,26 @@ class BookingsController < ApplicationController
   # PATCH/PUT /bookings/1.json
   def update
     new_booking_params = booking_params.except(:client_first_name, :client_last_name, :client_phone, :client_email)
-    if booking_params[:client_email].empty?
-      if Client.where(email: '', company_id: ServiceProvider.find(booking_params[:service_provider_id]).company_id).where("CONCAT(first_name, ' ', last_name) = :s", :s => booking_params[:client_first_name]+' '+booking_params[:client_last_name]).count > 0
-        client = Client.where(email: '', company_id: ServiceProvider.find(booking_params[:service_provider_id]).company_id).where("CONCAT(first_name, ' ', last_name) = :s", :s => booking_params[:client_first_name]+' '+booking_params[:client_last_name]).first
-        new_booking_params[:client_id] = client.id
-      else
-        client = Client.new(email: booking_params[:client_email], first_name: booking_params[:client_first_name], last_name: booking_params[:client_last_name], phone: booking_params[:client_phone], company_id: ServiceProvider.find(booking_params[:service_provider_id]).company_id)
-        if client.save
+    if !booking_params[:client_email].nil?
+      if booking_params[:client_email].empty?
+        if Client.where(email: '', company_id: ServiceProvider.find(booking_params[:service_provider_id]).company_id).where("CONCAT(first_name, ' ', last_name) = :s", :s => booking_params[:client_first_name]+' '+booking_params[:client_last_name]).count > 0
+          client = Client.where(email: '', company_id: ServiceProvider.find(booking_params[:service_provider_id]).company_id).where("CONCAT(first_name, ' ', last_name) = :s", :s => booking_params[:client_first_name]+' '+booking_params[:client_last_name]).first
           new_booking_params[:client_id] = client.id
+        else
+          client = Client.new(email: booking_params[:client_email], first_name: booking_params[:client_first_name], last_name: booking_params[:client_last_name], phone: booking_params[:client_phone], company_id: ServiceProvider.find(booking_params[:service_provider_id]).company_id)
+          if client.save
+            new_booking_params[:client_id] = client.id
+          end
         end
-      end
-    else
-      if Client.where(email: booking_params[:client_email], company_id: ServiceProvider.find(booking_params[:service_provider_id]).company_id).count > 0
-        client = Client.where(email: booking_params[:client_email], company_id: ServiceProvider.find(booking_params[:service_provider_id]).company_id).first
-        new_booking_params[:client_id] = client.id
       else
-        client = Client.new(email: booking_params[:client_email], first_name: booking_params[:client_first_name], last_name: booking_params[:client_last_name], phone: booking_params[:client_phone], company_id: ServiceProvider.find(booking_params[:service_provider_id]).company_id)
-        if client.save
+        if Client.where(email: booking_params[:client_email], company_id: ServiceProvider.find(booking_params[:service_provider_id]).company_id).count > 0
+          client = Client.where(email: booking_params[:client_email], company_id: ServiceProvider.find(booking_params[:service_provider_id]).company_id).first
           new_booking_params[:client_id] = client.id
+        else
+          client = Client.new(email: booking_params[:client_email], first_name: booking_params[:client_first_name], last_name: booking_params[:client_last_name], phone: booking_params[:client_phone], company_id: ServiceProvider.find(booking_params[:service_provider_id]).company_id)
+          if client.save
+            new_booking_params[:client_id] = client.id
+          end
         end
       end
     end
