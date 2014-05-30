@@ -22,7 +22,7 @@ class User < ActiveRecord::Base
 	end
 
 	def get_past_bookings
-		Booking.where(client_id: Client.where(self.email)).each do |booking|
+		Booking.where(client_id: Client.where(email: self.email)).each do |booking|
 			booking.update(user_id: self.id)
 		end
 	end
