@@ -80,7 +80,7 @@ class ClientsController < ApplicationController
 
   def history
     @client = Client.find(params[:id])
-    @bookings = Booking.where(email: @client.email, service_provider_id: ServiceProvider.where(company_id: current_user.company_id)).order(:start)
+    @bookings = @client.bookings
   end
 
   def create_comment

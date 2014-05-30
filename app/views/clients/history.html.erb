@@ -18,9 +18,6 @@
 <table class="table">
 	<thead>
 		<tr>
-			<th>Nombre</th>
-			<th>Apellido</th>
-			<th>Teléfono</th>
 			<th>Fecha</th>
 			<th>Servicio</th>
 			<th>Proveedor</th>
@@ -32,9 +29,6 @@
 	<tbody>
 		<% @bookings.each do |booking| %>
 			<tr>
-				<td><%= booking.first_name %></td>
-				<td><%= booking.last_name %></td>
-				<td><%= booking.phone %></td>
 				<td><%= l booking.start, format: :short %></td>
 				<td><%= booking.service.name %></td>
 				<td><%= booking.service_provider.public_name %></td>
