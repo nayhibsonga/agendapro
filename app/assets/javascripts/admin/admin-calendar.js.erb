@@ -704,6 +704,8 @@ function splitFullName() {
 		for (var i = 2; i < nameArray.length; i++) {
 			last_name += nameArray[i]+' ';
 		}
+		var strLen = last_name.length;
+		last_name = last_name.slice(0,strLen-1)
 		$('#booking_client_last_name').val(last_name);
 	}
 }
@@ -1077,7 +1079,7 @@ $(function() {
 		source: '/clients_suggestion',
 		appendTo: '#email_suggestions',
 		autoFocus: true,
-		minLength: 2,
+		minLength: 3,
 		select: function( event, ui ) {
 			event.preventDefault();
 			$('#booking_client_first_name').val(ui.item.value[0]);
@@ -1087,6 +1089,7 @@ $(function() {
 			$("#full_name").val(ui.item.value[0]+' '+ui.item.value[1])
 			if (validEmail($("#booking_client_email").val())) {
 				$('#booking_send_mail').prop('disabled', false);
+				$('#booking_send_mail').val(1);
 				$('label[for=booking_send_mail]').removeClass('disabled');
 			}
 			else {
@@ -1103,6 +1106,7 @@ $(function() {
 	$("#booking_client_email").on('input',function(e){
 		if (validEmail($("#booking_client_email").val())) {
 			$('#booking_send_mail').prop('disabled', false);
+			$('#booking_send_mail').val(1);
 			$('label[for=booking_send_mail]').removeClass('disabled');
 		}
 		else {
@@ -1121,7 +1125,7 @@ $(function() {
 		source: '/clients_name_suggestion',
 		appendTo: '#full_name_suggestions',
 		autoFocus: true,
-		minLength: 2,
+		minLength: 3,
 		select: function( event, ui ) {
 			event.preventDefault();
 			$('#booking_client_first_name').val(ui.item.value[0]);
@@ -1131,6 +1135,7 @@ $(function() {
 			$("#full_name").val(ui.item.value[0]+' '+ui.item.value[1])
 			if (validEmail($("#booking_client_email").val())) {
 				$('#booking_send_mail').prop('disabled', false);
+				$('#booking_send_mail').val(1);
 				$('label[for=booking_send_mail]').removeClass('disabled');
 			}
 			else {
