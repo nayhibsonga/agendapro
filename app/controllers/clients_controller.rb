@@ -171,6 +171,18 @@ class ClientsController < ApplicationController
 
     @clients_arr = Array.new
     @clients.each do |client|
+      if client[0].nil?
+        client[0] = ''
+      end
+      if client[1].nil?
+        client[1] = ''
+      end
+      if client[2].nil?
+        client[2] = ''
+      end
+      if client[3].nil?
+        client[4] = ''
+      end
       label = client[0] + ' ' + client[1]
       desc = client[2] + ' - ' + client[3]
       @clients_arr.push({:label => label, :desc => desc, :value => client})
@@ -184,6 +196,18 @@ class ClientsController < ApplicationController
 
     @clients_arr = Array.new
     @clients.each do |client|
+      if client[0].nil?
+        client[0] = ''
+      end
+      if client[1].nil?
+        client[1] = ''
+      end
+      if client[2].nil?
+        client[2] = ''
+      end
+      if client[3].nil?
+        client[4] = ''
+      end
       label = client[0] + ' ' + client[1]
       desc = client[2] + ' - ' + client[3]
       @clients_arr.push({:label => label, :desc => desc, :value => client})
