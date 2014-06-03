@@ -1,86 +1,12 @@
 <div class="box-step step-workflow">
-	<div class="col-md-12">
-		<h4>Nuevo Local</h4>
-	</div>
-	<div class="col-md-6">
-		<%= form_for @location, html: {class: "form-horizontal"} do |f| %>
-			<%= f.hidden_field :latitude %>
-			<%= f.hidden_field :longitude %>
-
-			<div class="form-group">
-				<%= f.label :name, "Nombre: ", class: "col-sm-3 control-label" %>
-				<div class="col-sm-9">
-					<%= f.text_field :name, :autofocus => true, class: "form-control" %>
-					<span class="help-block"></span>
-				</div>
-			</div>
-			<div class="form-group">
-				<%= f.label :address, "Dirección: ", class: "col-sm-3 control-label" %>
-				<div class="col-sm-9">
-					<%= f.text_field :address, class: "form-control" %>
-					<span class="help-block"></span>
-				</div>
-			</div>
-			<div class="form-group">
-				<%= f.label :phone, "Teléfono: ", class: "col-sm-3 control-label" %>
-				<div class="col-sm-9">
-					<%= f.text_field :phone, class: "form-control" %>
-					<span class="help-block"></span>
-				</div>
-			</div>
-
-			<div class="form-group">
-				<%= label_tag :country, "País: ", class: "col-sm-3 control-label" %>
-				<div class="col-sm-9">
-					<%= select_tag :country, options_from_collection_for_select(Country.all.order(:name), :id, :name), class: "form-control", include_blank: true %>
-				</div>
-			</div>
-			<div class="form-group">
-				<%= label_tag :region, "Región: ", class: "col-sm-3 control-label" %>
-				<div class="col-sm-9">
-					<%= select_tag :region, options_from_collection_for_select(Region.all.order(:name), :id, :name), class: "form-control", :disabled => true %>
-				</div>
-			</div>
-			<div class="form-group">
-				<%= label_tag :city, "Ciudad: ", class: "col-sm-3 control-label" %>
-				<div class="col-sm-9">
-					<%= select_tag :city, options_from_collection_for_select(City.all.order(:name), :id, :name), class: "form-control", :disabled => true %>
-				</div>
-			</div>
-			<div class="form-group">
-				<%= f.label :district, "Comuna: ", class: "col-sm-3 control-label" %>
-				<div class="col-sm-9">
-					<%= f.collection_select :district_id, District.all, :id, :name, {}, { class: "form-control", :disabled => true }%>
-				</div>
-			</div>
-		<% end %>
-	</div>
-	<div class="col-md-6">
-		<div class="panel panel-info">
-			<div class="panel-heading">
-				<h3 class="panel-title">
-					Horario Local
-				</h3>
-			</div>
-			<div class="panel-body">
-				<table class="table">
-					<tbody id="localTable">
-						<tr>
-							<th>Día</th>
-							<th>Apertura</th>
-							<th>Cierre</th>
-						</tr>
-					</tbody>
-				</table>
-			</div>
+	<fieldset disabled>
+		<div class="col-md-12">
+			<h4>Nuevo Local</h4>
 		</div>
-	</div>
-</div>
-<div class="box-step step-workflow-min">
-	<div class="col-md-12">
-		<h4>Nuevo Servicio</h4>
-		<%= form_for @service, html: {class: "form-horizontal" } do |f| %>
-			<div class="col-md-6">
+		<div class="col-md-6">
+			<%= form_for @location, html: {class: "form-horizontal"} do |f| %>
+				<%= f.hidden_field :latitude %>
+				<%= f.hidden_field :longitude %>
 				<div class="form-group">
 					<%= f.label :name, "Nombre: ", class: "col-sm-3 control-label" %>
 					<div class="col-sm-9">
@@ -89,150 +15,229 @@
 					</div>
 				</div>
 				<div class="form-group">
-					<%= f.label :price, "Precio: ", class: "col-sm-3 control-label" %>
+					<%= f.label :address, "Dirección: ", class: "col-sm-3 control-label" %>
 					<div class="col-sm-9">
-						<div class="input-group">
-							<span class="input-group-addon">$</span>
-							<%= f.text_field :price, class: "form-control" %>
-							<span class="input-group-addon">Pesos</span>
-						</div>
-						<span class="help-block"></span>
-						<div class="checkbox">
-							<label>
-								<%= f.check_box :show_price %> Mostrar el precio en tu mini-sitio AgendaPro
-							</label>
-						</div>
-					</div>
-				</div>
-				<div class="form-group">
-					<%= f.label :duration, "Duración: ", class: "col-sm-3 control-label" %>
-					<div class="col-sm-9">
-						<div class="input-group">
-							<%= f.text_field :duration, class: "form-control" %>
-							<span class="input-group-addon">Minutos</span>
-						</div>
+						<%= f.text_field :address, class: "form-control" %>
 						<span class="help-block"></span>
 					</div>
 				</div>
 				<div class="form-group">
-					<%= f.label :description, "Descripción: ", class: "col-sm-3 control-label" %>
+					<%= f.label :phone, "Teléfono: ", class: "col-sm-3 control-label" %>
 					<div class="col-sm-9">
-						<%= f.text_area :description, class: "form-control" %>
+						<%= f.text_field :phone, class: "form-control" %>
 						<span class="help-block"></span>
 					</div>
+				</div>
+
+				<div class="form-group">
+					<%= label_tag :country, "País: ", class: "col-sm-3 control-label" %>
+					<div class="col-sm-9">
+						<%= select_tag :country, options_from_collection_for_select(Country.all.order(:name), :id, :name), class: "form-control", include_blank: true %>
+					</div>
+				</div>
+				<div class="form-group">
+					<%= label_tag :region, "Región: ", class: "col-sm-3 control-label" %>
+					<div class="col-sm-9">
+						<%= select_tag :region, options_from_collection_for_select(Region.all.order(:name), :id, :name), class: "form-control", :disabled => true %>
+					</div>
+				</div>
+				<div class="form-group">
+					<%= label_tag :city, "Ciudad: ", class: "col-sm-3 control-label" %>
+					<div class="col-sm-9">
+						<%= select_tag :city, options_from_collection_for_select(City.all.order(:name), :id, :name), class: "form-control", :disabled => true %>
+					</div>
+				</div>
+				<div class="form-group">
+					<%= f.label :district, "Comuna: ", class: "col-sm-3 control-label" %>
+					<div class="col-sm-9">
+						<%= f.collection_select :district_id, District.all, :id, :name, {}, { class: "form-control", :disabled => true }%>
+					</div>
+				</div>
+			<% end %>
+		</div>
+		<div class="col-md-6">
+			<div class="panel panel-info">
+				<div class="panel-heading">
+					<h3 class="panel-title">
+						Horario Local
+					</h3>
+				</div>
+				<div class="panel-body">
+					<table class="table">
+						<tbody id="localTable">
+							<tr>
+								<th>Día</th>
+								<th>Apertura</th>
+								<th>Cierre</th>
+							</tr>
+						</tbody>
+					</table>
 				</div>
 			</div>
-			<div class="col-md-6">
-				<div class="form-group">
-					<%= f.label :service_category_id, "Categoría de Servicio:", class: "col-sm-4 control-label" %>
-					<div class="col-sm-8">
-						<%= f.collection_select :service_category_id, ServiceCategory.where(company_id: current_user.company_id), :id, :name, {}, { class: "form-control" }%>
-					</div>
-        		</div>
-				<% if @service.service_category.nil? then @service.build_service_category end %>
-				<%= f.fields_for :service_category do |builder| %>
-				<div class="form-group hidden">
-					<%= builder.label :name, "Categoría de Servicio:", class: "col-sm-4 control-label" %>
-					<div class="col-sm-8">
-						<%= builder.text_field :name, class: "form-control", :value => '' %>
-						<span class="help-block"></span>
-						<%= builder.hidden_field :company_id, class: "form-control", :value => current_user.company_id %>
-					</div>
-				</div>
-				<% end %>
-				<div class="form-group">
-					<div class="col-sm-offset-4 col-sm-8">
-						<div class="checkbox">
-							<label>
-								<input type="checkbox" name="catCheck" id="categoryCheckboxId" value="0" onchange="newCategory()" class="checkbox"> Crear nueva Categoría de Servicio
-							</label>
+		</div>
+	</fieldset>
+</div>
+<div class="box-step step-workflow-min">
+	<fieldset disabled>
+		<div class="col-md-12">
+			<h4>Nuevo Servicio</h4>
+			<%= form_for @service, html: {class: "form-horizontal" } do |f| %>
+				<div class="col-md-6">
+					<div class="form-group">
+						<%= f.label :name, "Nombre: ", class: "col-sm-3 control-label" %>
+						<div class="col-sm-9">
+							<%= f.text_field :name, :autofocus => true, class: "form-control" %>
+							<span class="help-block"></span>
 						</div>
 					</div>
-				</div>
-				<div class="form-group">
-					<div class="col-sm-offset-4 col-sm-8">
-						<div class="checkbox">
-							<label>
-								<%= f.check_box :group_service %> Servicio Grupal
-							</label>
-						</div>
-					</div>
-				</div>
-				<div class="form-group hidden">
-					<%= f.label :capacity, "Capacidad: ", class: "col-sm-4 control-label" %>
-					<div class="col-sm-8">
-						<div class="input-group">
-							<%= f.text_field :capacity, class: "form-control" %>
-							<span class="input-group-addon">Personas</span>
-						</div>
-						<span class="help-block"></span>
-					</div>
-				</div>
-				<div class="form-group">
-					<%= f.label :tag, "Tags de Búsqueda: ", class: "col-sm-4 control-label" %>
-					<div class="col-sm-8"> 
-						<%= f.collection_check_boxes :tag_ids, Tag.where(economic_sector: Company.find(current_user.company_id).economic_sector), :id, :name, html: {class: "checkbox"} do |b|%>
-							<div class="checkbox">
-								<%= b.label %> <%= b.check_box %>
+					<div class="form-group">
+						<%= f.label :price, "Precio: ", class: "col-sm-3 control-label" %>
+						<div class="col-sm-9">
+							<div class="input-group">
+								<span class="input-group-addon">$</span>
+								<%= f.text_field :price, class: "form-control" %>
+								<span class="input-group-addon">Pesos</span>
 							</div>
+							<span class="help-block"></span>
+							<div class="checkbox">
+								<label>
+									<%= f.check_box :show_price %> Mostrar el precio en tu mini-sitio AgendaPro
+								</label>
+							</div>
+						</div>
+					</div>
+					<div class="form-group">
+						<%= f.label :duration, "Duración: ", class: "col-sm-3 control-label" %>
+						<div class="col-sm-9">
+							<div class="input-group">
+								<%= f.text_field :duration, class: "form-control" %>
+								<span class="input-group-addon">Minutos</span>
+							</div>
+							<span class="help-block"></span>
+						</div>
+					</div>
+					<div class="form-group">
+						<%= f.label :description, "Descripción: ", class: "col-sm-3 control-label" %>
+						<div class="col-sm-9">
+							<%= f.text_area :description, class: "form-control" %>
+							<span class="help-block"></span>
+						</div>
+					</div>
+				</div>
+				<div class="col-md-6">
+					<div class="form-group">
+						<%= f.label :service_category_id, "Categoría de Servicio:", class: "col-sm-4 control-label" %>
+						<div class="col-sm-8">
+							<%= f.collection_select :service_category_id, ServiceCategory.where(company_id: current_user.company_id), :id, :name, {}, { class: "form-control" }%>
+						</div>
+	        		</div>
+					<% if @service.service_category.nil? then @service.build_service_category end %>
+					<%= f.fields_for :service_category do |builder| %>
+					<div class="form-group hidden">
+						<%= builder.label :name, "Categoría de Servicio:", class: "col-sm-4 control-label" %>
+						<div class="col-sm-8">
+							<%= builder.text_field :name, class: "form-control", :value => '' %>
+							<span class="help-block"></span>
+							<%= builder.hidden_field :company_id, class: "form-control", :value => current_user.company_id %>
+						</div>
+					</div>
+					<% end %>
+					<div class="form-group">
+						<div class="col-sm-offset-4 col-sm-8">
+							<div class="checkbox">
+								<label>
+									<input type="checkbox" name="catCheck" id="categoryCheckboxId" value="0" onchange="newCategory()" class="checkbox"> Crear nueva Categoría de Servicio
+								</label>
+							</div>
+						</div>
+					</div>
+					<div class="form-group">
+						<div class="col-sm-offset-4 col-sm-8">
+							<div class="checkbox">
+								<label>
+									<%= f.check_box :group_service %> Servicio Grupal
+								</label>
+							</div>
+						</div>
+					</div>
+					<div class="form-group hidden">
+						<%= f.label :capacity, "Capacidad: ", class: "col-sm-4 control-label" %>
+						<div class="col-sm-8">
+							<div class="input-group">
+								<%= f.text_field :capacity, class: "form-control" %>
+								<span class="input-group-addon">Personas</span>
+							</div>
+							<span class="help-block"></span>
+						</div>
+					</div>
+					<div class="form-group">
+						<%= f.label :tag, "Tags de Búsqueda: ", class: "col-sm-4 control-label" %>
+						<div class="col-sm-8"> 
+							<%= f.collection_check_boxes :tag_ids, Tag.where(economic_sector: Company.find(current_user.company_id).economic_sector), :id, :name, html: {class: "checkbox"} do |b|%>
+								<div class="checkbox">
+									<%= b.label %> <%= b.check_box %>
+								</div>
+							<% end %>
+						</div>
+					</div>
+				</div>
+			<% end %>
+		</div>
+	</fieldset>
+</div>
+<div class="box-step step-workflow">
+	<fieldset disabled>
+		<div class="col-md-12">
+			<h4>Nuevo Proveedor de Servicios</h4>
+		</div>
+		<div class="col-md-6">
+			<%= form_for @service_provider, html: {class: "form-horizontal" } do |f| %>
+				<div class="form-group">
+					<%= f.label :public_name, "Nombre Público:", class: "col-sm-3 control-label" %>
+					<div class="col-sm-9">
+						<%= f.text_field :public_name, :autofocus => true, class: "form-control" %>
+						<span class="help-block"></span>
+					</div>
+				</div>
+				<div class="form-group">
+					<%= f.label :notification_email, "Email de Notificación:", class: "col-sm-3 control-label" %>
+					<div class="col-sm-9">
+						<%= f.text_field :notification_email, class: "form-control" %>
+						<span class="help-block"></span>
+					</div>
+				</div>
+				<div class="form-group">
+					<%= f.label :location_id, "Local:", class: "col-sm-3 control-label" %>
+					<div class="col-sm-9">
+						<% if params[:step] %>
+						<%= f.hidden_field :location_id, class: "form-control", :value => Company.find(current_user.company_id).locations.first.id if params[:step] %>
+						<p class="form-control-static"><%= Company.find(current_user.company_id).locations.first.name %></p>
+						<% else %>
+						<%= f.hidden_field :location_id, class: "form-control", :value => '' %>
 						<% end %>
 					</div>
 				</div>
-			</div>
-		<% end %>
-	</div>
-</div>
-<div class="box-step step-workflow">
-	<div class="col-md-12">
-		<h4>Nuevo Proveedor de Servicios</h4>
-	</div>
-	<div class="col-md-6">
-		<%= form_for @service_provider, html: {class: "form-horizontal" } do |f| %>
-			<div class="form-group">
-				<%= f.label :public_name, "Nombre Público:", class: "col-sm-3 control-label" %>
-				<div class="col-sm-9">
-					<%= f.text_field :public_name, :autofocus => true, class: "form-control" %>
-					<span class="help-block"></span>
+			<% end %>
+		</div>
+		<div class="col-md-6">
+			<div class="panel panel-info">
+				<div class="panel-heading">
+					<h3 class="panel-title">Horario Local</h3>
 				</div>
-			</div>
-			<div class="form-group">
-				<%= f.label :notification_email, "Email de Notificación:", class: "col-sm-3 control-label" %>
-				<div class="col-sm-9">
-					<%= f.text_field :notification_email, class: "form-control" %>
-					<span class="help-block"></span>
+				<div class="panel-body">
+					<table class="table">
+						<tbody id="provTable">
+							<tr>
+								<th>Día</th>
+								<th>Apertura</th>
+								<th>Cierre</th>
+							</tr>
+						</tbody>
+					</table>
 				</div>
-			</div>
-			<div class="form-group">
-				<%= f.label :location_id, "Local:", class: "col-sm-3 control-label" %>
-				<div class="col-sm-9">
-					<% if params[:step] %>
-					<%= f.hidden_field :location_id, class: "form-control", :value => Company.find(current_user.company_id).locations.first.id if params[:step] %>
-					<p class="form-control-static"><%= Company.find(current_user.company_id).locations.first.name %></p>
-					<% else %>
-					<%= f.hidden_field :location_id, class: "form-control", :value => '' %>
-					<% end %>
-				</div>
-			</div>
-		<% end %>
-	</div>
-	<div class="col-md-6">
-		<div class="panel panel-info">
-			<div class="panel-heading">
-				<h3 class="panel-title">Horario Local</h3>
-			</div>
-			<div class="panel-body">
-				<table class="table">
-					<tbody id="provTable">
-						<tr>
-							<th>Día</th>
-							<th>Apertura</th>
-							<th>Cierre</th>
-						</tr>
-					</tbody>
-				</table>
 			</div>
 		</div>
-	</div>
+	</fieldset>
 </div>
 
 <% content_for :scripts do %>
@@ -241,4 +246,3 @@
 	<%= javascript_include_tag "login/jquery.validate.min" %>
 	<%= javascript_include_tag "admin/quick_add_validate" %>
 <% end %>
-
