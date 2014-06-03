@@ -8,6 +8,18 @@ class Client < ActiveRecord::Base
     "#{self.first_name} #{self.last_name}"
   end
 
+  def valid_email
+    atpos = self.email.index("@")
+    dotpos = self.email.rindex(".");
+    if atpos && dotpos
+      if (atpos < 1) || (dotpos < atpos+2) || (dotpos+2 >= self.email.length)
+        return false
+      end
+      return true
+    end
+    return false
+  end
+
   def self.search(search)
     if search
       where ["CONCAT(first_name, ' ', last_name) ILIKE :s OR email ILIKE :s OR first_name ILIKE :s OR last_name ILIKE :s", :s => "%#{search}%"]
