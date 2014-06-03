@@ -538,6 +538,67 @@ function scrollEvents () {
 	nextFn();
 }
 
+function changeCountry (country_id) {
+	$.getJSON('/country_regions', {country_id: country_id}, function (regions) {
+		if (regions.length) {
+			$('#region').empty();
+			$.each(regions, function (key, region) {
+				$('#region').append(
+					'<option value="' + region.id + '">' + region.name + '</option>'
+				);
+			});
+			$('#region').prepend(
+				'<option></option>'
+			);
+
+			$('#region').change(function (event) {
+				$('#city').attr('disabled', true);
+				$('#location_district_id').attr('disabled', true);
+				var region_id = $(event.target).val();
+				changeRegion(region_id);
+			});
+			$('#region').attr('disabled', false);
+		};
+	});
+}
+
+function changeRegion (region_id) {
+	$.getJSON('/region_cities', {region_id: region_id}, function (cities) {
+		if (cities.length) {
+			$('#city').empty();
+			$.each(cities, function (key, city) {
+				$('#city').append(
+					'<option value="' + city.id + '">' + city.name + '</option>'
+				);
+			});
+			$('#city').prepend(
+				'<option></option>'
+			);
+
+			$('#city').change(function (event) {
+				$('#location_district_id').attr('disabled', true);
+				var city_id = $(event.target).val();
+				changeCity(city_id);
+			});
+			$('#city').attr('disabled', false);
+		};
+	});
+}
+
+function changeCity (city_id) {
+	$.getJSON('/city_districs', {city_id: city_id}, function (districts) {
+		if (districts.length) {
+			$('#location_district_id').empty();
+			$.each(districts, function (key, district) {
+				$('#location_district_id').append(
+					'<option value="' + district.id + '">' + district.name + '</option>'
+				);
+			});
+			$('#location_district_id').attr('disabled', false);
+		};
+	});
+}
+
 $(function() {
 	nextFn = startLocation;
 	initialize('local');
@@ -546,4 +607,11 @@ $(function() {
 		serviceGroup();
 	});
 	my_alert = new Alert();
+	$('#country').change(function (event) {
+		$('#region').attr('disabled', true);
+		$('#city').attr('disabled', true);
+		$('#location_district_id').attr('disabled', true);
+		var country_id = $(event.target).val();
+		changeCountry(country_id);
+	});
 });
