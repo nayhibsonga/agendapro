@@ -1,5 +1,4 @@
 class AddClientToBookings < ActiveRecord::Migration
-  raise ""
   add_reference :bookings, :client, index: true
   Booking.all.order(:id).limit(500).each do |booking|
     if booking.email == ''
