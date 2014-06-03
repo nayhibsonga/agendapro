@@ -72,10 +72,7 @@ class BookingsController < ApplicationController
         u = @booking
         @booking_json = { :id => u.id, :start => u.start, :end => u.end, :service_id => u.service_id, :service_provider_id => u.service_provider_id, :status_id => u.status_id, :first_name => u.client.first_name, :last_name => u.client.last_name, :email => u.client.email, :phone => u.client.phone, :notes => u.notes,  :company_comment => u.company_comment }
         format.html { redirect_to bookings_path, notice: 'Booking was successfully created.' }
-        format.json { 
-          flash[:notice] = "Servicio agendado" 
-          render :json => [@booking_json, @booking.service.name] 
-        }
+        format.json { render :json => [@booking_json, @booking.service.name] }
         format.js { }
       else
         format.html { render action: 'new' }
