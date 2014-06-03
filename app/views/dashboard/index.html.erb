@@ -13,7 +13,7 @@
 						<% @lastBookings.each do |booking| %>
 						<tr>
 							<td><%= l booking.created_at.to_date %></td>
-							<td><strong><%= booking.first_name %> <%= booking.last_name %> </strong> reservó <%= booking.service.name %> con <%= booking.service_provider.public_name %> el día <span class="badge"> <%= l booking.start %></span></td>
+							<td><strong><%= booking.client.first_name %> <%= booking.client.last_name %> </strong> reservó <%= booking.service.name %> con <%= booking.service_provider.public_name %> el día <span class="badge"> <%= l booking.start %></span></td>
 						</tr>
 						<% end %>
 					</tbody>
@@ -40,8 +40,8 @@
 						<% @todayBookings.each do |booking| %>
 						<tr>
 							<td><%= booking.start.strftime("%I:%M%p") %> - <%= booking.end.strftime("%I:%M%p") %></td>
-							<td><%= booking.first_name %> <%= booking.last_name %></td>
-							<td><%= booking.phone %></td>
+							<td><%= booking.client.first_name %> <%= booking.client.last_name %></td>
+							<td><%= booking.client.phone %></td>
 							<td><%= booking.service.name %></td>
 						</tr>
 						<% end %>

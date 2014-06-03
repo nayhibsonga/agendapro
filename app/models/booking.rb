@@ -5,14 +5,15 @@ class Booking < ActiveRecord::Base
 	belongs_to :status
 	belongs_to :location
 	belongs_to :promotion
+	belongs_to :client
 
-	validates :start, :end, :service_provider_id, :service_id, :status_id, :location_id, :first_name, :last_name, :email, :presence => true
+	validates :start, :end, :service_provider_id, :service_id, :status_id, :location_id, :presence => true
 
-	validate :time_empty_or_negative, :time_in_provider_time, :booking_duration, :service_staff
+	validate :time_empty_or_negative, :booking_duration, :service_staff, :time_in_provider_time
 
-	after_commit validate :bookings_overlap, :provider_in_break
+	after_commit validate :bookings_overlap
 
-	after_create :send_booking_mail, :check_company_client
+	after_create :send_booking_mail
 	after_update :send_update_mail
 
 	def provider_in_break
@@ -24,8 +25,8 @@ class Booking < ActiveRecord::Base
   	end
 
 	def booking_duration
-    	if self.service.duration != ((self.end - self.start) / 1.minute ).round
-    		errors.add(:base, "La duración de la reserva no coincide con la duración del servicio.")
+    	if ((self.end - self.start) / 1.minute ).round < 5
+    		errors.add(:base, "La duración de la reserva no puede ser menor a 5 minutos.")
     	end
   	end
 
@@ -36,18 +37,21 @@ class Booking < ActiveRecord::Base
   	end
 
   	def bookings_overlap
-		self.service_provider.bookings.each do |provider_booking|
-			if provider_booking != self
-	  			unless provider_booking.status_id == Status.find_by(name: 'Cancelado').id
-					if (provider_booking.start - self.end) * (self.start - provider_booking.end) > 0
-						if !self.service.group_service || self.service_id != provider_booking.service_id
-			      			errors.add(:base, "Esa hora ya está agendada para ese proveedor de servicios.")
-			      		elsif self.service.group_service && self.service_id == provider_booking.service_id && self.service_provider.bookings.where(:service_id => self.service_id, :start => self.start).count >= self.service.capacity
-			      			errors.add(:base, "Esa hora ya está agendada para ese proveedor de servicios.")
-			      		end
-			    	end
-				end	
-			end
+  		cancelled_id = Status.find_by(name: 'Cancelado').id
+  		unless self.status_id == cancelled_id
+			self.service_provider.bookings.each do |provider_booking|
+				if provider_booking != self
+		  			unless provider_booking.status_id == cancelled_id
+						if (provider_booking.start - self.end) * (self.start - provider_booking.end) > 0
+							if !self.service.group_service || self.service_id != provider_booking.service_id
+				      			errors.add(:base, "Esa hora ya está agendada para ese proveedor de servicios.")
+				      		elsif self.service.group_service && self.service_id == provider_booking.service_id && self.service_provider.bookings.where(:service_id => self.service_id, :start => self.start).count >= self.service.capacity
+				      			errors.add(:base, "Esa hora ya está agendada para ese proveedor de servicios.")
+				      		end
+				    	end
+					end	
+				end
+	  		end
   		end
   	end
 
@@ -115,10 +119,4 @@ class Booking < ActiveRecord::Base
 			end
 		end
 	end
-
-	def check_company_client
-		if Client.where(:company_id => self.location.company.id, :email => self.email).empty?
-        	Client.create(:company_id => self.location.company.id, :email => self.email, :first_name => self.first_name, :last_name => self.last_name, :phone => self.phone)
-        end
-    end
 end
