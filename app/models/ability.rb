@@ -175,6 +175,10 @@ class Ability
         can :change_location_order, Location
         can :change_providers_order, ServiceProvider
 
+        can :country_regions, Region
+        can :region_cities, City
+        can :city_districs, District
+
     elsif user.role_id == Role.find_by_name("Administrador Local").id
 
         can :get_booking, Booking, :location_id => user.location_id 
@@ -250,6 +254,10 @@ class Ability
         can :change_services_order, Service
         can :change_location_order, Location
         can :change_providers_order, ServiceProvider
+
+        can :country_regions, Region
+        can :region_cities, City
+        can :city_districs, District
 
     elsif user.role_id == Role.find_by_name("Recepcionista").id
 

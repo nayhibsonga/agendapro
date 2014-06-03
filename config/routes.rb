@@ -151,6 +151,10 @@ Agendapro::Application.routes.draw do
   get '/service_providers/:id/deactivate', :to => 'service_providers#deactivate', :as => 'deactivate_service_provider'
   post '/clients/import', :to => 'clients#import', :as => 'import_clients'
   get '/clients/:id/history', :to => 'clients#history', :as => 'client_history'
+
+  get '/country_regions', :to => 'regions#country_regions'
+  get '/region_cities', :to => 'cities#region_cities'
+  get '/city_districs', :to => 'districts#city_districs'
   
   # Root
   get '/' => 'searchs#index', :constraints => { :subdomain => 'www' }
