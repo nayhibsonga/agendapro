@@ -48,9 +48,9 @@
 						</label>
 					</div>
 				</div>
-					<% if @company.logo_url %>
-					<%= image_tag @company.logo_url.to_s, :size => "80x80", :alt => @company.name, :class => 'img-circle' %>
-					<% end %>
+				<% if @company.logo_url %>
+				<%= image_tag @company.logo_url.to_s, :size => "80x80", :alt => @company.name, :class => 'img-circle' %>
+				<% end %>
 			</div>
 			<div class="form-group">
 				<%= f.label :cancellation_policy, 'Política de Cancelación: ', :class => 'col-sm-3 control-label' %>
