@@ -4,6 +4,8 @@ class Client < ActiveRecord::Base
   has_many :client_comments, dependent: :destroy
   has_many :bookings, dependent: :destroy
 
+  validate :client_mail_uniqueness
+
   def full_name
     "#{self.first_name} #{self.last_name}"
   end
@@ -18,6 +20,14 @@ class Client < ActiveRecord::Base
       return true
     end
     return false
+  end
+
+  def client_mail_uniqueness
+    Client.where(company_id: self.company_id).each do |client|
+      if self.email != "" && client != self && client.email != "" && self.email == client.email
+        errors.add(:base, "No se pueden crean dos clientes con el mismo email.")
+      end
+    end
   end
 
   def self.search(search)
