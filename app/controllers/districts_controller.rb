@@ -99,7 +99,7 @@ class DistrictsController < ApplicationController
   end
 
   def city_districs
-    @districts = District.where(:city_id => params[:city_id])
+    @districts = District.where(:city_id => params[:city_id]).order(:name)
     render :json => @districts
   end
 
