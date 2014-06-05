@@ -149,6 +149,7 @@
 					},
 					onCreate: function () {
 						hideLoad();
+						$('fieldset:first').attr('disabled', false);
 					},
 					scroll: {
 						conditions: function (direction) {
@@ -158,6 +159,12 @@
 							else {
 								return false;
 							}
+						},
+						onBefore: function () {
+							$('fieldset:first').attr('disabled', true);
+						},
+						onAfter: function () {
+							$('fieldset:first').attr('disabled', false);
 						}
 					}
 				});
