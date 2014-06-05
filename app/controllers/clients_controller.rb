@@ -11,13 +11,12 @@ class ClientsController < ApplicationController
     @locations = Location.where(company_id: current_user.company_id, active: true)
     @service_providers = ServiceProvider.where(company_id: current_user.company_id, active: true)
     @services = Service.where(company_id: current_user.company_id, active: true)
-    @clients = Client.accessible_by(current_ability).search(params[:search]).filter_location(params[:location]).filter_provider(params[:provider]).filter_service(params[:service]).filter_gender(params[:gender]).order(:last_name).paginate(:page => params[:page], :per_page => 25)
+    @clients = Client.accessible_by(current_ability).search(params[:search]).filter_location(params[:location]).filter_provider(params[:provider]).filter_service(params[:service]).filter_gender(params[:gender]).order(:last_name, :first_name).paginate(:page => params[:page], :per_page => 25)
 
     @max_mails = current_user.company.company_setting.daily_mails
     @mails_left = current_user.company.company_setting.daily_mails - current_user.company.company_setting.sent_mails
 
-    @clients_export = Client.accessible_by(current_ability).search(params[:search]).filter_location(params[:location]).filter_provider(params[:provider]).filter_service(params[:service]).filter_gender(params[:gender]).order(:email)
-
+    @clients_export = Client.accessible_by(current_ability).search(params[:search]).filter_location(params[:location]).filter_provider(params[:provider]).filter_service(params[:service]).filter_gender(params[:gender]).order(:last_name, :first_name)
     respond_to do |format|
       format.html
       format.csv
@@ -167,7 +166,7 @@ class ClientsController < ApplicationController
   end
 
   def suggestion
-    @clients = Client.where(company_id: current_user.company_id).where('email ~* ?', params[:term]).pluck(:first_name, :last_name, :email, :phone).uniq
+    @clients = Client.where(company_id: current_user.company_id).where('email ~* ?', params[:term]).pluck(:first_name, :last_name, :email, :phone).order(:last_name, :first_name).uniq
 
     @clients_arr = Array.new
     @clients.each do |client|
@@ -192,7 +191,7 @@ class ClientsController < ApplicationController
   end
 
   def name_suggestion
-    @clients = Client.where(company_id: current_user.company_id).where("CONCAT(first_name, ' ', last_name) ILIKE :s OR first_name ILIKE :s OR last_name ILIKE :s", :s => "%#{params[:term]}%").pluck(:first_name, :last_name, :email, :phone).uniq
+    @clients = Client.where(company_id: current_user.company_id).where("CONCAT(first_name, ' ', last_name) ILIKE :s OR first_name ILIKE :s OR last_name ILIKE :s", :s => "%#{params[:term]}%").pluck(:first_name, :last_name, :email, :phone).order(:last_name, :first_name).uniq
 
     @clients_arr = Array.new
     @clients.each do |client|
@@ -208,19 +207,6 @@ class ClientsController < ApplicationController
       if client[3].nil?
         client[3] = ''
       end
-      label = client[0] + ' ' + client[1]
-      desc = client[2] + ' - ' + client[3]
-      @clients_arr.push({:label => label, :desc => desc, :value => client})
-    end
-
-    render :json => @clients_arr
-  end
-
-  def last_name_suggestion
-    @clients = Client.where(company_id: current_user.company_id).where('last_name ~* ?', params[:term]).pluck(:first_name, :last_name, :email, :phone).uniq
-
-    @clients_arr = Array.new
-    @clients.each do |client|
       label = client[0] + ' ' + client[1]
       desc = client[2] + ' - ' + client[3]
       @clients_arr.push({:label => label, :desc => desc, :value => client})

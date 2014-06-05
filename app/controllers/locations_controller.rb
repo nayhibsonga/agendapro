@@ -12,7 +12,7 @@ class LocationsController < ApplicationController
   end
 
   def inactive_index
-    @locations = Location.where(company_id: current_user.company_id, :active => false).accessible_by(current_ability)
+    @locations = Location.where(company_id: current_user.company_id, :active => false).order(:name).accessible_by(current_ability)
   end
 
   # GET /locations/1

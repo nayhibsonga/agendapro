@@ -12,7 +12,7 @@ class CompaniesController < ApplicationController
 	# GET /companies
 	# GET /companies.json
 	def index
-		@companies = Company.all
+		@companies = Company.all.order(:name)
 	end
 
 	def activate
@@ -128,7 +128,9 @@ class CompaniesController < ApplicationController
 				return
 			end
 		end
-		@locations = Location.where(:active => true).where('company_id = ?', @company.id).order(order: :asc)
+		@service_ids = Service.where(active: true, company_id: @company.id).pluck(:id)
+		@service_provider_ids = ServiceProvider.where(active: true, company_id: @company.id).joins(:provider_times).joins(:services).where("services.id = ?", @service_ids).pluck(:id).uniq
+		@locations = Location.where(:active => true).where('company_id = ?', @company.id).where(id: @service_provider_ids).joins(:location_times).uniq.order(order: :asc)
 
 		# => Domain parser
 		host = request.host_with_port
