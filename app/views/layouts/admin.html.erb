@@ -213,11 +213,13 @@
 				});
 				$('#open-usuario').toggle(function () {
 							$("#sub-menu-usuario").removeClass("close-menu-usuario");
+							$("#sub-menu-config").addClass("close-menu-config");
 				}, function () {
 							$("#sub-menu-usuario").addClass("close-menu-usuario");
 				});
 				$('#open-config').toggle(function () {
 							$("#sub-menu-config").removeClass("close-menu-config");
+							$("#sub-menu-usuario").addClass("close-menu-usuario");
 				}, function () {
 							$("#sub-menu-config").addClass("close-menu-config");
 				});

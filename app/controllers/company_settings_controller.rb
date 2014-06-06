@@ -80,6 +80,6 @@ class CompanySettingsController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def company_setting_params
-      params.require(:company_setting).permit(:email, :sms, :signature, :company_id, :before_booking, :after_booking)
+      params.require(:company_setting).permit(:email, :sms, :signature, :company_id, :before_booking, :after_booking, :before_edit_booking)
     end
 end

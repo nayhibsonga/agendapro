@@ -1,8 +1,8 @@
 class BookingsController < ApplicationController
   before_action :set_booking, only: [:show, :edit, :update, :destroy]
-  before_action :authenticate_user!, except: [:create, :provider_booking, :book_service, :edit_booking, :edit_booking_post, :cancel_booking, :confirm_booking, :check_user_cross_bookings]
-  before_action :quick_add, except: [:create, :provider_booking, :book_service, :edit_booking, :edit_booking_post, :cancel_booking, :confirm_booking, :check_user_cross_bookings]
-  layout "admin", except: [:book_service, :provider_booking, :edit_booking, :edit_booking_post, :cancel_booking, :confirm_booking, :check_user_cross_bookings]
+  before_action :authenticate_user!, except: [:create, :provider_booking, :book_service, :edit_booking, :edit_booking_post, :cancel_booking, :confirm_booking, :check_user_cross_bookings, :blocked_edit]
+  before_action :quick_add, except: [:create, :provider_booking, :book_service, :edit_booking, :edit_booking_post, :cancel_booking, :confirm_booking, :check_user_cross_bookings, :blocked_edit]
+  layout "admin", except: [:book_service, :provider_booking, :edit_booking, :edit_booking_post, :cancel_booking, :confirm_booking, :check_user_cross_bookings, :blocked_edit]
 
   # GET /bookings
   # GET /bookings.json
@@ -201,9 +201,29 @@ class BookingsController < ApplicationController
   end
 
   def edit_booking
+    require 'date'
+
     crypt = ActiveSupport::MessageEncryptor.new(Agendapro::Application.config.secret_key_base)
     id = crypt.decrypt_and_verify(params[:confirmation_code])
     @booking = Booking.find(id)
+    @company = Location.find(@booking.location_id).company
+
+    # => Domain parser
+    host = request.host_with_port
+    @url = @company.web_address + '.' + host[host.index(request.domain)..host.length]
+
+    now = DateTime.new(DateTime.now.year, DateTime.now.mon, DateTime.now.mday, DateTime.now.hour, DateTime.now.min)
+    booking_start = DateTime.parse(@booking.start.to_s) - @company.company_setting.before_edit_booking / 24.0
+    if (booking_start <=> now) < 1
+      redirect_to blocked_edit_path(:id => @booking.id)
+      return
+    end
+
+    render layout: "workflow"
+  end
+
+  def blocked_edit
+    @booking = Booking.find(params[:id])
     @company = Location.find(@booking.location_id).company
 
     # => Domain parser

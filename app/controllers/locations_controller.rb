@@ -197,8 +197,6 @@ class LocationsController < ApplicationController
           after_now = now + company_setting.after_booking * 30
 
           provider_breaks.each do |provider_break|
-            # puts "Booking " + booking_start.to_s + " - " + booking_end.to_s
-            # puts "Break" + provider_break.start.to_s + " - " + provider_break.end.to_s
             break_start = DateTime.parse(provider_break.start.to_s)
             break_end = DateTime.parse(provider_break.end.to_s)
             if  (break_start - end_time_block) * (start_time_block - break_end) > 0
