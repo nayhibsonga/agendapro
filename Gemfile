@@ -101,3 +101,6 @@ gem 'roo'
 # gem 'rmagick'
 gem "mini_magick"
 gem 'carrierwave'
+
+# Calendar
+gem 'ri_cal'
