@@ -120,6 +120,10 @@ html .fc,
 .fc-widget-content {  /* <td>, usually */
 	border: 1px solid #ddd;
 }
+
+.fc-widget-content:hover {  /* <td>, usually */
+	background: #BDBDBD;
+}
 	
 .fc-state-highlight { /* <td> today cell */ /* TODO: add .fc-today to <th> */
 	background: #fcf8e3;

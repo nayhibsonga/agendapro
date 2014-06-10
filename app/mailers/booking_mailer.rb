@@ -107,6 +107,13 @@ class BookingMailer < ActionMailer::Base
 					:name => 'AgendaPro.png',
 					:content => Base64.encode64(File.read('app/assets/images/logos/logo_mini_mail.png'))
 				}
+			],
+			:attachments => [
+				{
+					:type => 'text/calendar',
+					:name => 'event.ics',
+					:content => Base64.encode64(book_info.generate_ics.export())
+				}
 			]
 		}
 
@@ -260,6 +267,13 @@ class BookingMailer < ActionMailer::Base
 					:type => 'image/png',
 					:name => 'AgendaPro.png',
 					:content => Base64.encode64(File.read('app/assets/images/logos/logo_mail.png'))
+				}
+			],
+			:attachments => [
+				{
+					:type => 'text/calendar',
+					:name => 'event.ics',
+					:content => Base64.encode64(book_info.generate_ics.export())
 				}
 			]
 		}

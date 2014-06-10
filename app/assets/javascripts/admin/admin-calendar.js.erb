@@ -226,9 +226,14 @@ function loadResourcesCalendar (startTime, endTime, hiddenDays, resourcesArray, 
 			};
 		},
 		dayClick: function(date, allDay, jsEvent, view) {
+			window.console.log($(this).context.cellIndex)
+			window.console.log(view.resources[$(this).context.cellIndex - 1].id)
+			var column_click = $(this).context.cellIndex;
+			var resources_id = view.resources[column_click - 1].id
+
 			if (!bookingModalOpen) {
 				bookingModalOpen = true;
-				createBookingModal(date);
+				createBookingModal(date, resources_id);
 			};
 		},
 		//eventMouseover: function(calEvent, domEvent) {
@@ -622,9 +627,10 @@ function editBookingModal(eventId) {
 	}
 }
 
-function createBookingModal(date) {
+function createBookingModal(date, provider_id) {
 	var localId = $('input[name=localRadio]:checked').val();
 	var date = date || 0;
+	var provider_id = provider_id || 0;
 	$.getJSON('/local_providers', {location: localId}, function (providersArray) {
 		if (providersArray.length > 0) {
 			if (date != 0) {
@@ -675,6 +681,20 @@ function createBookingModal(date) {
 			$('.booking-modal-footer').empty();
 			$('.booking-modal-title').append('Nueva Reserva');
 			$('.booking-modal-footer').append('<button type="button" class="btn btn-default booking-button" data-dismiss="modal">Cerrar</button><button type="button" class="btn btn-primary booking-button" onclick="createBooking()">Guardar</button>');
+
+			if (provider_id) {
+				$('#booking_service_provider_id').val(provider_id);
+				$.getJSON('/provider_services', {id: provider_id}, function (services) {
+					$('#booking_service_id').empty();
+					$.each(services, function (key, service) {
+						$('#booking_service_id').append(
+							'<option value="' + service.id + '">' + service.name + '</option>'
+						);
+					});
+					$('#booking_service_id').removeAttr('disabled');
+					modalChange();
+				});
+			};
 
 			$('#bookingModal').modal('show');	
 		}
@@ -1076,7 +1096,6 @@ $(function() {
 		firstDay: 1,
 		changeMonth: true,
 		changeYear: true,
-		// showOn: 'both',		firstDay: 1,
 		dayNames: [ "Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado" ],
 		dayNamesMin: [ "Do", "Lu", "Ma", "Mi", "Ju", "Vi", "Sá" ],
 		dayNamesShort: [ "Dom", "Lun", "Mar", "Mié", "Jue", "Vie", "Sáb" ],
