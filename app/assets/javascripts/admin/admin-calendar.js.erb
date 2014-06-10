@@ -560,9 +560,11 @@ function editBookingModal(eventId) {
 			}
 			$('#booking_service_provider_id option[value="'+booking.service_provider_id+'"]').attr("selected",true);
 			$('#booking_status_id option[value="'+booking.status_id+'"]').attr("selected",true);
+			$('#booking_client_client_id').val(booking.client_id);
 			$('#booking_client_first_name').val(booking.first_name);
 			$('#booking_client_last_name').val(booking.last_name);
 			$('#full_name').val(booking.first_name+' '+booking.last_name);
+			$("#full_name").prop('disabled', true);
 			$('#booking_client_email').val(booking.email);
 			$('#booking_client_phone').val(booking.phone);
 			$('#booking_notes').val(booking.notes);
@@ -658,6 +660,7 @@ function createBookingModal(date) {
 			$('#booking_client_first_name').val('');
 			$('#booking_client_last_name').val('');
 			$('#full_name').val('');
+			$("#full_name").prop('disabled', false);
 			$('#booking_client_email').val('');
 			$('#booking_client_phone').val('');
 			$('#booking_notes').val('');
@@ -735,6 +738,7 @@ function jsonBooking() {
 		"service_provider_id": parseInt($('#booking_service_provider_id').val()),
 		"service_id": parseInt($('#booking_service_id').val()),
 		"status_id": parseInt($('#booking_status_id').val()),
+		"client_id": $('#booking_client_id').val(),
 		"client_first_name": $('#booking_client_first_name').val(),
 		"client_last_name": $('#booking_client_last_name').val(),
 		"client_email": $('#booking_client_email').val(),
@@ -1126,6 +1130,7 @@ $(function() {
 			$('#booking_send_mail').prop('disabled', true);
 			$('label[for=booking_send_mail]').addClass('disabled');
 		}
+		$("#full_name").prop('disabled', true);
 	});
 
 	$("#full_name").on('input',function(e){
@@ -1143,6 +1148,7 @@ $(function() {
 			$('#booking_client_last_name').val(ui.item.value[1]);
 			$('#booking_client_phone').val(ui.item.value[3]);
 			$('#booking_client_email').val(ui.item.value[2]);
+			$('#booking_client_id').val(ui.item.value[4]);
 			$("#full_name").val(ui.item.value[0]+' '+ui.item.value[1])
 			if (validEmail($("#booking_client_email").val())) {
 				$('#booking_send_mail').prop('disabled', false);
@@ -1156,6 +1162,7 @@ $(function() {
 				$('#booking_send_mail').prop('disabled', true);
 				$('label[for=booking_send_mail]').addClass('disabled');
 			}
+			$("#full_name").prop('disabled', true);
 		}
 	}).data( "ui-autocomplete" )._renderItem = function( ul, item ) {
     	return $( '<li>' ).append( '<a>' + item.label + '<br><span class="auto-desc">' + item.desc + '</span></a>' ).appendTo( ul );
@@ -1179,5 +1186,23 @@ $(function() {
 	$('#bookingModal').on('hidden.bs.modal', function (e) {
 		$('#booking_service_id').attr('disabled', true);
 		bookingModalOpen = false;
+	});
+
+	$('#xButton').click(function() {
+		$('#booking_client_first_name').val('');
+		$('#booking_client_last_name').val('');
+		$('#booking_client_phone').val('');
+		$('#booking_client_email').val('');
+		$('#booking_client_id').val('');
+		$("#full_name").val('');
+		$('#booking_client_first_name').prop('disabled', false);
+		$('#booking_client_last_name').prop('disabled', false);
+		$('#booking_client_phone').prop('disabled', false);
+		$('#booking_client_email').prop('disabled', false);
+		$("#full_name").prop('disabled', false);
+		$('#booking_send_mail').val(0);
+		$('#booking_send_mail').prop('checked', false);
+		$('#booking_send_mail').prop('disabled', true);
+		$('label[for=booking_send_mail]').addClass('disabled');
 	});
 });
