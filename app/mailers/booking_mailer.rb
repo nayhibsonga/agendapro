@@ -14,7 +14,7 @@ class BookingMailer < ActionMailer::Base
 		# => Message
 		message = {
 			:from_email => 'no-reply@agendapro.cl',
-			:from_name => 'AgendaPro',
+			:from_name => book_info.service_provider.company.name,
 			:subject => 'Nueva Reserva en ' + book_info.service_provider.company.name,
 			:to => [
 				{
@@ -27,7 +27,7 @@ class BookingMailer < ActionMailer::Base
 					:type => 'to'
 				}
 			],
-			:headers => { 'Reply-To' => "contacto@agendapro.cl" },
+			:headers => { 'Reply-To' => book_info.service_provider.notification_email },
 			:global_merge_vars => [
 				{
 					:name => 'UNSUBSCRIBE',
@@ -50,16 +50,16 @@ class BookingMailer < ActionMailer::Base
 					:content => l(book_info.start)
 				},
 				{
-					:name => 'SERVICEPRICE',
-					:content => if book_info.service.show_price && book_info.service.price && book_info.service.price > 0 then number_to_currency(book_info.service.price, precision: 0) else 'Consultar en Local' end
-				},
-				{
 					:name => 'SIGNATURE',
 					:content => book_info.location.company.company_setting.signature
 				},
 				{
 					:name => 'SERVICEPROVIDER',
 					:content => book_info.service_provider.public_name
+				},
+				{
+					:name => 'LOCATIONPHONE',
+					:content => number_to_phone(book_info.location.phone)
 				}
 			],
 			:merge_vars => [
@@ -77,11 +77,11 @@ class BookingMailer < ActionMailer::Base
 						},
 						{
 							:name => 'EDIT',
-							:content => "<a class='btn btn-warning' href='#{booking_edit_url(:confirmation_code => book_info.confirmation_code)}' style='display: inline-block;padding: 6px 12px;margin-bottom: 0;font-size: 14px;font-weight: normal;line-height: 1.428571429;text-align: center;white-space: nowrap;vertical-align: middle;cursor: pointer;background-image: none;border: 1px solid transparent;border-radius: 4px;-webkit-user-select: none;-moz-user-select: none;-ms-user-select: none;-o-user-select: none;user-select: none;color: #ffffff;background-color: #f0ad4e;border-color: #eea236;text-decoration:none;'>Editar Reserva</a>"
+							:content => "<a class='btn btn-warning' href='#{booking_edit_url(:confirmation_code => book_info.confirmation_code)}' style='display: inline-block;padding: 6px 12px;margin-bottom: 5px;font-size: 14px;font-weight: normal;line-height: 1.428571429;text-align: center;white-space: nowrap;vertical-align: middle;cursor: pointer;background-image: none;border: 1px solid transparent;border-radius: 4px;-webkit-user-select: none;-moz-user-select: none;-ms-user-select: none;-o-user-select: none;user-select: none;color: #ffffff;background-color: #f0ad4e;border-color: #eea236;text-decoration:none;'>Modificar Reserva</a>"
 						},
 						{
 							:name => 'CANCEL',
-							:content => "<a class='btn btn-danger' href='#{booking_cancel_url(:confirmation_code => book_info.confirmation_code)}' style='display: inline-block;padding: 6px 12px;margin-bottom: 0;font-size: 14px;font-weight: normal;line-height: 1.428571429;text-align: center;white-space: nowrap;vertical-align: middle;cursor: pointer;background-image: none;border: 1px solid transparent;border-radius: 4px;-webkit-user-select: none;-moz-user-select: none;-ms-user-select: none;-o-user-select: none;user-select: none;color: #ffffff;background-color: #d9534f;border-color: #d43f3a;text-decoration:none;'>Cancelar Reserva</a>"
+							:content => "<a class='btn btn-danger' href='#{booking_cancel_url(:confirmation_code => book_info.confirmation_code)}' style='display: inline-block;padding: 6px 12px;margin-bottom: 5px;font-size: 14px;font-weight: normal;line-height: 1.428571429;text-align: center;white-space: nowrap;vertical-align: middle;cursor: pointer;background-image: none;border: 1px solid transparent;border-radius: 4px;-webkit-user-select: none;-moz-user-select: none;-ms-user-select: none;-o-user-select: none;user-select: none;color: #ffffff;background-color: #d9534f;border-color: #d43f3a;text-decoration:none;'>Cancelar Reserva</a>"
 						}
 					]
 				},
@@ -91,11 +91,11 @@ class BookingMailer < ActionMailer::Base
 						
 						{
 							:name => 'NAME',
-							:content => ''
+							:content => book_info.service_provider.public_name
 						},
 						{
 							:name => 'MESSAGE',
-							:content => 'fue agendado un servicio contigo'
+							:content => 'fue reservado un servicio contigo'
 						}
 					]
 				}
@@ -104,8 +104,8 @@ class BookingMailer < ActionMailer::Base
 			:images => [
 				{
 					:type => 'image/png',
-					:name => 'AgendaPro.png',
-					:content => Base64.encode64(File.read('app/assets/images/logos/logo_mini_mail.png'))
+					:name => 'company_img.jpg',
+					:content => Base64.encode64(File.read('app/assets/ico/Iso_Pro_Color.png'))
 				}
 			],
 			:attachments => [
@@ -116,26 +116,19 @@ class BookingMailer < ActionMailer::Base
 				}
 			]
 		}
-
-		if !book_info.notes.blank?
-			message[:global_merge_vars] << {:name => 'BNOTES', :content => book_info.notes}
-		end
-
 		# => Logo empresa
 		if book_info.location.company.logo_url
-			company_img = {
+			company_logo = {
 				:type => 'image/' +  File.extname(book_info.location.company.logo_url),
 				:name => 'company_img.jpg',
 				:content => Base64.encode64(File.read('public' + book_info.location.company.logo_url.to_s))
 			}
-		else
-			company_img = {
-				:type => 'image/png',
-				:name => 'company_img.jpg',
-				:content => Base64.encode64(File.read('app/assets/ico/Iso_Pro_Color.png'))
-			}
+			message[:images] = [company_logo]
 		end
-		message[:images] << (company_img)
+
+		if !book_info.notes.blank?
+			message[:global_merge_vars] << {:name => 'BNOTES', :content => book_info.notes}
+		end
 
 		# => Metadata
 		async = false
@@ -172,7 +165,7 @@ class BookingMailer < ActionMailer::Base
 					:type => 'to'
 				}
 			],
-			:headers => { 'Reply-To' => "contacto@agendapro.cl" },
+			:headers => { 'Reply-To' => book_info.service_provider.notification_email },
 			:global_merge_vars => [
 				{
 					:name => 'UNSUBSCRIBE',
@@ -238,7 +231,7 @@ class BookingMailer < ActionMailer::Base
 						},
 						{
 							:name => 'EDIT',
-							:content => "<a class='btn btn-warning' href='#{booking_edit_url(:confirmation_code => book_info.confirmation_code)}' style='display: inline-block;padding: 6px 12px;margin-bottom: 0;font-size: 14px;font-weight: normal;line-height: 1.428571429;text-align: center;white-space: nowrap;vertical-align: middle;cursor: pointer;background-image: none;border: 1px solid transparent;border-radius: 4px;-webkit-user-select: none;-moz-user-select: none;-ms-user-select: none;-o-user-select: none;user-select: none;color: #ffffff;background-color: #f0ad4e;border-color: #eea236;text-decoration:none;'>Editar Reserva</a>"
+							:content => "<a class='btn btn-warning' href='#{booking_edit_url(:confirmation_code => book_info.confirmation_code)}' style='display: inline-block;padding: 6px 12px;margin-bottom: 0;font-size: 14px;font-weight: normal;line-height: 1.428571429;text-align: center;white-space: nowrap;vertical-align: middle;cursor: pointer;background-image: none;border: 1px solid transparent;border-radius: 4px;-webkit-user-select: none;-moz-user-select: none;-ms-user-select: none;-o-user-select: none;user-select: none;color: #ffffff;background-color: #f0ad4e;border-color: #eea236;text-decoration:none;'>Modificar Reserva</a>"
 						},
 						{
 							:name => 'CANCEL',
@@ -256,7 +249,7 @@ class BookingMailer < ActionMailer::Base
 						},
 						{
 							:name => 'MESSAGE',
-							:content => 'Fue re-agendado un servicio contigo, a continuación se presentan los detalles'
+							:content => 'Fue modificada una de tus reservas, a continuación se presentan los detalles'
 						}
 					]
 				}
@@ -328,7 +321,7 @@ class BookingMailer < ActionMailer::Base
 					:type => 'to'
 				}
 			],
-			:headers => { 'Reply-To' => "contacto@agendapro.cl" },
+			:headers => { 'Reply-To' => book_info.service_provider.notification_email },
 			:global_merge_vars => [
 				{
 					:name => 'UNSUBSCRIBE',
@@ -386,7 +379,7 @@ class BookingMailer < ActionMailer::Base
 						},
 						{
 							:name => 'MESSAGE',
-							:content => 'EL cliente ha confirmado el servicio'
+							:content => 'El cliente ha confirmado la reserva'
 						}
 					]
 				}
@@ -455,8 +448,8 @@ class BookingMailer < ActionMailer::Base
 					:type => 'to'
 				}
 			],
-			:headers => { 'Reply-To' => "contacto@agendapro.cl" },
-			:subject => 'Reserva Cancelada en ' + book_info.service_provider.company.name,
+			:headers => { 'Reply-To' => book_info.service_provider.notification_email },
+			:subject => 'Reserva cancelada en ' + book_info.service_provider.company.name,
 			:global_merge_vars => [
 				{
 					:name => 'UNSUBSCRIBE',
@@ -514,7 +507,7 @@ class BookingMailer < ActionMailer::Base
 						},
 						{
 							:name => 'MESSAGE',
-							:content => 'Fue cancelada su cita'
+							:content => 'Fue cancelada tu reserva'
 						}
 					]
 				},
@@ -528,7 +521,7 @@ class BookingMailer < ActionMailer::Base
 						},
 						{
 							:name => 'MESSAGE',
-							:content => 'Fue cancelado un servicio con usted, a continuacion se presentan los detalles'
+							:content => 'Fue cancelada una reserva contigo, a continuación se presentan los detalles'
 						}
 					]
 				}
@@ -598,7 +591,7 @@ class BookingMailer < ActionMailer::Base
 				  :type => 'to'
 				}
 			],
-			:headers => { 'Reply-To' => "contacto@agendapro.cl" },
+			:headers => { 'Reply-To' => book_info.service_provider.notification_email },
 			:global_merge_vars => [
 				{
 				  :name => 'UNSUBSCRIBE',
@@ -664,7 +657,7 @@ class BookingMailer < ActionMailer::Base
 					},
 					{
 						:name => 'EDIT',
-						:content => "<a class='btn btn-warning' href='#{booking_edit_url(:confirmation_code => book_info.confirmation_code)}' style='display: inline-block;padding: 6px 12px;margin-bottom: 0;font-size: 14px;font-weight: normal;line-height: 1.428571429;text-align: center;white-space: nowrap;vertical-align: middle;cursor: pointer;background-image: none;border: 1px solid transparent;border-radius: 4px;-webkit-user-select: none;-moz-user-select: none;-ms-user-select: none;-o-user-select: none;user-select: none;color: #ffffff;background-color: #f0ad4e;border-color: #eea236;text-decoration:none;'>Editar Reserva</a>"
+						:content => "<a class='btn btn-warning' href='#{booking_edit_url(:confirmation_code => book_info.confirmation_code)}' style='display: inline-block;padding: 6px 12px;margin-bottom: 0;font-size: 14px;font-weight: normal;line-height: 1.428571429;text-align: center;white-space: nowrap;vertical-align: middle;cursor: pointer;background-image: none;border: 1px solid transparent;border-radius: 4px;-webkit-user-select: none;-moz-user-select: none;-ms-user-select: none;-o-user-select: none;user-select: none;color: #ffffff;background-color: #f0ad4e;border-color: #eea236;text-decoration:none;'>Modificar Reserva</a>"
 					},
 					{
 						:name => 'CANCEL',
@@ -686,7 +679,7 @@ class BookingMailer < ActionMailer::Base
 					},
 					{
 					  :name => 'MESSAGE',
-					  :content => 'Recuerda que mañana tienen una hora agendada contigo.'  
+					  :content => 'Recuerda que mañana tienen una hora agendada contigo'  
 					}
 				  ]
 				}
