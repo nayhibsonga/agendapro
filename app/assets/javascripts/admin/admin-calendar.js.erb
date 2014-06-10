@@ -543,8 +543,6 @@ function editBookingModal(eventId) {
 
 				output = (day<10 ? '0' : '') + day + '/' + (month<10 ? '0' : '') + month + '/' + date.getFullYear();
 
-				// date = new Date(dateArray);
-				// dateS = date.toString().split(' ');
 				$('#datePicker').val(output);
 				$('#bookingStartHour option[value="'+dateArray[1].split(':')[0]+'"]').attr("selected",true);
 				$('#bookingStartMinute option[value="'+dateArray[1].split(':')[1]+'"]').attr("selected",true);
