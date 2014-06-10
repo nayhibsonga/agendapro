@@ -681,6 +681,16 @@ function createBookingModal(date, provider_id) {
 
 			if (provider_id) {
 				$('#booking_service_provider_id').val(provider_id);
+				$.getJSON('/provider_services', {id: provider_id}, function (services) {
+					$('#booking_service_id').empty();
+					$.each(services, function (key, service) {
+						$('#booking_service_id').append(
+							'<option value="' + service.id + '">' + service.name + '</option>'
+						);
+					});
+					$('#booking_service_id').removeAttr('disabled');
+					modalChange();
+				});
 			};
 
 			$('#bookingModal').modal('show');	
@@ -1082,7 +1092,6 @@ $(function() {
 		firstDay: 1,
 		changeMonth: true,
 		changeYear: true,
-		// showOn: 'both',		firstDay: 1,
 		dayNames: [ "Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado" ],
 		dayNamesMin: [ "Do", "Lu", "Ma", "Mi", "Ju", "Vi", "Sá" ],
 		dayNamesShort: [ "Dom", "Lun", "Mar", "Mié", "Jue", "Vie", "Sáb" ],
