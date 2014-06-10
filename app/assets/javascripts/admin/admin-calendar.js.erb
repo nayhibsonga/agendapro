@@ -1105,34 +1105,34 @@ $(function() {
 		}
 	});
 
-	$("#booking_client_email").autocomplete({
-		source: '/clients_suggestion',
-		appendTo: '#email_suggestions',
-		autoFocus: true,
-		minLength: 3,
-		select: function( event, ui ) {
-			event.preventDefault();
-			$('#booking_client_first_name').val(ui.item.value[0]);
-			$('#booking_client_last_name').val(ui.item.value[1]);
-			$('#booking_client_phone').val(ui.item.value[3]);
-			$('#booking_client_email').val(ui.item.value[2]);
-			$("#full_name").val(ui.item.value[0]+' '+ui.item.value[1])
-			if (validEmail($("#booking_client_email").val())) {
-				$('#booking_send_mail').prop('disabled', false);
-				$('#booking_send_mail').val(1);
-				$('#booking_send_mail').prop('checked', true);
-				$('label[for=booking_send_mail]').removeClass('disabled');
-			}
-			else {
-				$('#booking_send_mail').val(0);
-				$('#booking_send_mail').prop('checked', false);
-				$('#booking_send_mail').prop('disabled', true);
-				$('label[for=booking_send_mail]').addClass('disabled');
-			}
-		}
-	}).data( "ui-autocomplete" )._renderItem = function( ul, item ) {
-    	return $( '<li>' ).append( '<a>' + item.label + '<br><span class="auto-desc">' + item.desc + '</span></a>' ).appendTo( ul );
-    };
+	// $("#booking_client_email").autocomplete({
+	// 	source: '/clients_suggestion',
+	// 	appendTo: '#email_suggestions',
+	// 	autoFocus: true,
+	// 	minLength: 3,
+	// 	select: function( event, ui ) {
+	// 		event.preventDefault();
+	// 		$('#booking_client_first_name').val(ui.item.value[0]);
+	// 		$('#booking_client_last_name').val(ui.item.value[1]);
+	// 		$('#booking_client_phone').val(ui.item.value[3]);
+	// 		$('#booking_client_email').val(ui.item.value[2]);
+	// 		$("#full_name").val(ui.item.value[0]+' '+ui.item.value[1])
+	// 		if (validEmail($("#booking_client_email").val())) {
+	// 			$('#booking_send_mail').prop('disabled', false);
+	// 			$('#booking_send_mail').val(1);
+	// 			$('#booking_send_mail').prop('checked', true);
+	// 			$('label[for=booking_send_mail]').removeClass('disabled');
+	// 		}
+	// 		else {
+	// 			$('#booking_send_mail').val(0);
+	// 			$('#booking_send_mail').prop('checked', false);
+	// 			$('#booking_send_mail').prop('disabled', true);
+	// 			$('label[for=booking_send_mail]').addClass('disabled');
+	// 		}
+	// 	}
+	// }).data( "ui-autocomplete" )._renderItem = function( ul, item ) {
+ //    	return $( '<li>' ).append( '<a>' + item.label + '<br><span class="auto-desc">' + item.desc + '</span></a>' ).appendTo( ul );
+ //    };
 
 	$("#booking_client_email").on('input',function(e){
 		if (validEmail($("#booking_client_email").val())) {
