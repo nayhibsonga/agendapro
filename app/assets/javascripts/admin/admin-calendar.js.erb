@@ -572,7 +572,7 @@ function editBookingModal(eventId) {
 			$('#booking_service_provider_id option[value="'+booking.service_provider_id+'"]').attr("selected",true);
 			$('#booking_status_id option[value="'+booking.status_id+'"]').attr("selected",true);
 			$('#booking_price').val(booking.price);
-			$('#booking_client_client_id').val(booking.client_id);
+			$('#booking_client_id').val(booking.client_id);
 			$('#booking_client_first_name').val(booking.first_name);
 			$('#booking_client_last_name').val(booking.last_name);
 			$('#full_name').val(booking.first_name+' '+booking.last_name);
@@ -672,6 +672,7 @@ function createBookingModal(date, provider_id) {
 			}
 			$('#booking_status_id').val('1');
 			$('#booking_price').val('');
+			$('#booking_client_id').val('');
 			$('#booking_client_first_name').val('');
 			$('#booking_client_last_name').val('');
 			$('#full_name').val('');
