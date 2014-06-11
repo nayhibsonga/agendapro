@@ -1,4 +1,5 @@
-var colors = ["#FE2E2E", "#088A08", "#08298A", "#8A084B", "#DF7401", "#0080FF", "#FE2EC8", "#8258FA", "#FACC2E", "#10F610", "#610B21", "#0B173B", "#784433", "#F5A9D0", "#A9F5F2", "#1e8584", "#006D68", "#1F6185", "#3E4A8D", "#EE5858", "#EEE458", "#E0D20B", "#62718B", "#C14949", "#53565A", "#DFD1A7", "#7A6855", "#FA4616", "#628B75", "#6B8B62", "#8B6286", "#6C9FB5", "#A4D899", "#99D8D7", "#727D7D", "#99ABD8", "#A2E18B", "#E18B8B", "#108190", "#106990", "#56918E", "#8A9F9E", "#0C660E", "#294852", "#08769A", "#1e8584", "#006D68"]
+var backColors = ["#CCCCBB", "#B0C2F2", "#FFE1AE", "#E9B0F2", "#B0F2C2", "#FAFCAF", "#FFB6AE"];
+var textColors = ["#222211", "#102050", "#554004", "#401040", "#105020", "#505205", "#551004"];
 var resourcesColors = [];
 var servicesJSON;
 
@@ -15,7 +16,6 @@ function loadProviders () {
 				'</label>'
 			);
 			var resources = [];
-			resourcesColors = [];
 			var count = 0;
 			$.getJSON('/local_providers', {location: localId}, function (providersArray) {
 				if (providersArray.length > 0) {
@@ -36,8 +36,7 @@ function loadProviders () {
 							'</label>'
 						);
 						resources.push({id: provider.id, name: provider.public_name});
-						resourcesColors.push({id: provider.id, color: colors[count%30]});
-						$('#providers-selector').children('#' + provider.id).children('p').css({'border-bottom-color': colors[count%30], 'border-bottom-style': 'solid'});
+						// $('#providers-selector').children('#' + provider.id).children('p').css({'border-bottom-color': colors[count%30], 'border-bottom-style': 'solid'});
 						count += 1;
 						$('#booking_service_provider_id')
 						    .append('<option value="'+ provider.id +'">'+ provider.public_name +'</option>')
@@ -283,6 +282,12 @@ function loadResourcesCalendar (startTime, endTime, hiddenDays, resourcesArray, 
 			$('#calendar').fullCalendar('option', 'height', window.innerHeight-20);
 		}
 	});
+	// Posible acercamiento para pintar celdas la hacer hover (falta un for para cantidad de resources)
+	// $("table.fc-agenda-slots td.fc-widget-content").each(function () {
+	//     $(this).width(($("table.fc-agenda-days thead th.fc-col0").width()));
+	//     $(this).after("<td class=\"fc-widget-content\"><div style=\"position:relative\"></div></td>");
+	//     $(this).after("<td class=\"fc-widget-content\" style=\"width:" + $("table.fc-agenda-days thead th.fc-col1").width() + "px\"><div style=\"position:relative\"></div></td>");
+	// });
 	$('.fc-button').click(function (event) {
 		var providerId = $('input[name="providerRadio"]:checked').val();
 		loadProviderBooking(providerId);
@@ -356,6 +361,15 @@ function loadWeekCalendar (startTime, endTime, hiddenDays, resourcesArray, provi
 			$('#calendar').fullCalendar('option', 'height', window.innerHeight-20);
 		}
 	});
+	// $("table.fc-agenda-slots td.fc-widget-content").each(function () {
+	//     $(this).width(($("table.fc-agenda-days thead th.fc-col0").width()));
+	//     $(this).after("<td class=\"fc-widget-content\"><div style=\"position:relative\"></div></td>");
+	//     $(this).after("<td class=\"fc-widget-content\" style=\"width:" + $("table.fc-agenda-days thead th.fc-col5").width() + "px\"><div style=\"position:relative\"></div></td>");
+	//     $(this).after("<td class=\"fc-widget-content\" style=\"width:" + $("table.fc-agenda-days thead th.fc-col4").width() + "px\"><div style=\"position:relative\"></div></td>");
+	//     $(this).after("<td class=\"fc-widget-content\" style=\"width:" + $("table.fc-agenda-days thead th.fc-col3").width() + "px\"><div style=\"position:relative\"></div></td>");
+	//     $(this).after("<td class=\"fc-widget-content\" style=\"width:" + $("table.fc-agenda-days thead th.fc-col2").width() + "px\"><div style=\"position:relative\"></div></td>");
+	//     $(this).after("<td class=\"fc-widget-content\" style=\"width:" + $("table.fc-agenda-days thead th.fc-col1").width() + "px\"><div style=\"position:relative\"></div></td>");
+	// });
 	$('.fc-button').click(function () {
 		var providerId = $('input[name="providerRadio"]:checked').val();
 		loadProviderBooking(providerId);
@@ -374,12 +388,6 @@ function loadProviderBooking (providerId) {
 		$.getJSON('/booking', {location: localId, start: startParam, end: endParam}, function (bookings) {
 			if (bookings.length > 0) {
 				$.each(bookings, function (key, booking) {
-					var eventColor = "#585858";
-					for (i in resourcesColors) {
-						if (resourcesColors[i].id == booking.service_provider_id) {
-							eventColor = resourcesColors[i].color
-						}
-					}
 					if (booking.status_id != 5) {
 						var originClass = 'origin-manual';
 						if (booking.web_origin) {
@@ -396,7 +404,9 @@ function loadProviderBooking (providerId) {
 							start: booking.start,
 							end: booking.end,
 							resourceId: booking.service_provider_id,
-							color: eventColor,
+							textColor: textColors[booking.status_id],
+							borderColor: textColors[booking.status_id],
+							backgroundColor: backColors[booking.status_id],
 							className: originClass
 						};
 						$('#calendar').fullCalendar('renderEvent', events, true);
@@ -411,7 +421,6 @@ function loadProviderBooking (providerId) {
 				$.getJSON('/provider_breaks', {service_provider_id: providerId, start: startParam, end: endParam }, function (breaksArray) {
 					if (breaksArray.length > 0) {
 						$.each(breaksArray, function (key, providerBreak) {
-							var eventColor = "#373737";
 							var events = {
 								id: 'b'+providerBreak.id,
 								title: 'Hora Bloqueada',
@@ -420,7 +429,9 @@ function loadProviderBooking (providerId) {
 								end: providerBreak.end,
 								editable: false,
 								resourceId: parseInt(providerId),
-								color: eventColor
+								textColor: textColors[0],
+								borderColor: textColors[0],
+								backgroundColor: backColors[0]
 							};
 							$('#calendar').fullCalendar('renderEvent', events, true);
 						});
@@ -434,12 +445,6 @@ function loadProviderBooking (providerId) {
 		$.getJSON('/booking', {location: localId, provider: providerId, start: startParam, end: endParam}, function (bookings) {
 			if (bookings.length > 0) {
 				$.each(bookings, function (key, booking) {
-					var eventColor = "#585858";
-					for (i in resourcesColors) {
-						if (resourcesColors[i].id == booking.service_provider_id) {
-							eventColor = resourcesColors[i].color
-						}
-					}
 					if (booking.status_id != 5) {
 						var originClass = 'origin-manual';
 						if (booking.web_origin) {
@@ -450,12 +455,14 @@ function loadProviderBooking (providerId) {
 						}
 						var events = {
 							id: booking.id,
-							title: booking.service_name+' - '+booking.last_name+', '+booking.first_name,
+							title: booking.service_name+' - '+booking.first_name+' '+booking.last_name,
 							allDay: false,
 							start: booking.start,
 							end: booking.end,
 							resourceId: booking.service_provider_id,
-							color: eventColor,
+							textColor: textColors[booking.status_id],
+							borderColor: textColors[booking.status_id],
+							backgroundColor: backColors[booking.status_id],
 							className: originClass
 						};
 						$('#calendar').fullCalendar('renderEvent', events, true);
@@ -468,7 +475,6 @@ function loadProviderBooking (providerId) {
 		$.getJSON('/provider_breaks', {service_provider_id: providerId, start: startParam, end: endParam}, function (breaksArray) {
 			if (breaksArray.length > 0) {
 				$.each(breaksArray, function (key, providerBreak) {
-					var eventColor = "#373737";
 					var events = {
 						id: 'b'+providerBreak.id,
 						title: 'Hora Bloqueada',
@@ -477,7 +483,9 @@ function loadProviderBooking (providerId) {
 						end: providerBreak.end,
 						editable: false,
 						resourceId: providerId,
-						color: eventColor
+						textColor: textColors[0],
+						borderColor: textColors[0],
+						backgroundColor: backColors[0]
 					};
 					$('#calendar').fullCalendar('renderEvent', events, true);
 				});
@@ -569,6 +577,7 @@ function editBookingModal(eventId) {
 			$('#booking_client_last_name').val(booking.last_name);
 			$('#full_name').val(booking.first_name+' '+booking.last_name);
 			$("#full_name").prop('disabled', true);
+			$('#xButton').prop('disabled', false);
 			$('#booking_client_email').val(booking.email);
 			$('#booking_client_phone').val(booking.phone);
 			$('#booking_notes').val(booking.notes);
@@ -667,6 +676,7 @@ function createBookingModal(date, provider_id) {
 			$('#booking_client_last_name').val('');
 			$('#full_name').val('');
 			$("#full_name").prop('disabled', false);
+			$('#xButton').prop('disabled', true);
 			$('#booking_client_email').val('');
 			$('#booking_client_phone').val('');
 			$('#booking_notes').val('');
@@ -706,30 +716,36 @@ function createBookingModal(date, provider_id) {
 }
 
 function splitFullName() {
-	var nameArray = $('#full_name').val().split(' ');
-	if (nameArray.length == 0) {
-
-	}
-	else if (nameArray.length == 1) {
-		$('#booking_client_first_name').val(nameArray[0]);
-	}
-	else if (nameArray.length == 2) {
-		$('#booking_client_first_name').val(nameArray[0]);
-		$('#booking_client_last_name').val(nameArray[1]);	
-	}
-	else if (nameArray.length == 3) {
-		$('#booking_client_first_name').val(nameArray[0]);
-		$('#booking_client_last_name').val(nameArray[1]+' '+nameArray[2]);
+	if ($('#full_name').val() == '') {
+		$('#xButton').prop('disabled', true);
 	}
 	else {
-		$('#booking_client_first_name').val(nameArray[0]+' '+nameArray[1]);
-		var last_name = '';
-		for (var i = 2; i < nameArray.length; i++) {
-			last_name += nameArray[i]+' ';
+		$('#xButton').prop('disabled', false);
+		var nameArray = $('#full_name').val().split(' ');
+		if (nameArray.length == 0) {
+
 		}
-		var strLen = last_name.length;
-		last_name = last_name.slice(0,strLen-1)
-		$('#booking_client_last_name').val(last_name);
+		else if (nameArray.length == 1) {
+			$('#booking_client_first_name').val(nameArray[0]);
+		}
+		else if (nameArray.length == 2) {
+			$('#booking_client_first_name').val(nameArray[0]);
+			$('#booking_client_last_name').val(nameArray[1]);	
+		}
+		else if (nameArray.length == 3) {
+			$('#booking_client_first_name').val(nameArray[0]);
+			$('#booking_client_last_name').val(nameArray[1]+' '+nameArray[2]);
+		}
+		else {
+			$('#booking_client_first_name').val(nameArray[0]+' '+nameArray[1]);
+			var last_name = '';
+			for (var i = 2; i < nameArray.length; i++) {
+				last_name += nameArray[i]+' ';
+			}
+			var strLen = last_name.length;
+			last_name = last_name.slice(0,strLen-1)
+			$('#booking_client_last_name').val(last_name);
+		}
 	}
 }
 
@@ -827,12 +843,6 @@ function saveBooking(typeURL, extraURL) {
 		success: function(booking){
 			switch(typeURL) {
 			case 'POST':
-				var eventColor = "#585858";
-				for (i in resourcesColors) {
-					if (resourcesColors[i].id == booking[0].service_provider_id) {
-						eventColor = resourcesColors[i].color
-					}
-				}
 				if (booking[0].status_id != 5) {
 					var originClass = 'origin-manual';
 					if (booking[0].status_id == 2) {
@@ -840,12 +850,14 @@ function saveBooking(typeURL, extraURL) {
 					}
 					var events = {
 						id: booking[0].id,
-						title: booking[1]+' - '+booking[0].last_name+', '+booking[0].first_name,
+						title: booking[1]+' - '+booking[0].first_name+' '+booking[0].last_name,
 						allDay: false,
 						start: booking[0].start,
 						end: booking[0].end,
 						resourceId: booking[0].service_provider_id,
-						color: eventColor,
+						textColor: textColors[booking[1].status_id],
+						borderColor: textColors[booking[1].status_id],
+						backgroundColor: backColors[booking[1].status_id],
 						className: originClass
 					};
 					$('#calendar').fullCalendar('renderEvent', events, true);
@@ -854,12 +866,6 @@ function saveBooking(typeURL, extraURL) {
 				break;
 			case 'PATCH':
 				event = $('#calendar').fullCalendar('clientEvents', booking[0].id)[0];
-				var eventColor = "#585858";
-				for (i in resourcesColors) {
-					if (resourcesColors[i].id == booking[0].service_provider_id) {
-						eventColor = resourcesColors[i].color
-					}
-				}
 				if (booking[0].status_id != 5) {
 					var originClass = 'origin-manual';
 						if (booking.web_origin) {
@@ -872,7 +878,9 @@ function saveBooking(typeURL, extraURL) {
 					event.start = booking[0].start;
 					event.end = booking[0].end;
 					event.resourceId = booking[0].service_provider_id;
-					event.color = eventColor;
+					event.textColor = textColors[booking[1].status_id];
+					event.borderColor = textColors[booking[1].status_id];
+					event.backgroundColor = backColors[booking[1].status_id];
 					event.className = originClass;
 					$('#calendar').fullCalendar('updateEvent', event);
 				}
@@ -910,7 +918,6 @@ function saveBreak (typeURL, extraURL) {
 		success: function(provider_break){
 			switch(typeURL) {
 			case 'POST':
-				var eventColor = "#373737";
 				var events = {
 					id: 'b'+provider_break.id,
 					title: 'Hora Bloqueada',
@@ -919,7 +926,9 @@ function saveBreak (typeURL, extraURL) {
 					end: provider_break.end,
 					editable: false,
 					resourceId: parseInt(provider_break.service_provider_id),
-					color: eventColor
+					textColor: textColors[0],
+					borderColor: textColors[0],
+					backgroundColor: backColors[0]
 				};
 				$('#calendar').fullCalendar('renderEvent', events, true);
 				$('#breakModal').modal('hide');
@@ -1233,5 +1242,6 @@ $(function() {
 		$('#booking_send_mail').prop('checked', false);
 		$('#booking_send_mail').prop('disabled', true);
 		$('label[for=booking_send_mail]').addClass('disabled');
+		$('#xButton').prop('disabled', true);
 	});
 });
