@@ -56,10 +56,6 @@ class BookingMailer < ActionMailer::Base
 				{
 					:name => 'SERVICEPROVIDER',
 					:content => book_info.service_provider.public_name
-				},
-				{
-					:name => 'LOCATIONPHONE',
-					:content => number_to_phone(book_info.location.phone)
 				}
 			],
 			:merge_vars => [
@@ -82,6 +78,22 @@ class BookingMailer < ActionMailer::Base
 						{
 							:name => 'CANCEL',
 							:content => "<a class='btn btn-danger' href='#{booking_cancel_url(:confirmation_code => book_info.confirmation_code)}' style='display: inline-block;padding: 6px 12px;margin-bottom: 5px;font-size: 14px;font-weight: normal;line-height: 1.428571429;text-align: center;white-space: nowrap;vertical-align: middle;cursor: pointer;background-image: none;border: 1px solid transparent;border-radius: 4px;-webkit-user-select: none;-moz-user-select: none;-ms-user-select: none;-o-user-select: none;user-select: none;color: #ffffff;background-color: #d9534f;border-color: #d43f3a;text-decoration:none;'>Cancelar Reserva</a>"
+						},
+						{
+							:name => 'LOCATIONPHONE',
+							:content => number_to_phone(book_info.location.phone)
+						},
+						{
+							:name => 'WHAT',
+							:content => "¿Qué reservaste?"
+						},
+						{
+							:name => 'BOOKING',
+							:content => "Resumen de tu Reserva"
+						},
+						{
+							:name => 'HOURS',
+							:content => book_info.location.company.company_setting.before_edit_booking
 						}
 					]
 				},
@@ -96,6 +108,14 @@ class BookingMailer < ActionMailer::Base
 						{
 							:name => 'MESSAGE',
 							:content => 'fue reservado un servicio contigo'
+						},
+						{
+							:name => 'WHAT',
+							:content => "¿Qué reservaron?"
+						},
+						{
+							:name => 'BOOKING',
+							:content => "Resumen de la nueva Reserva"
 						}
 					]
 				}
