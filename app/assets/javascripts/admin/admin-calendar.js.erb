@@ -662,7 +662,7 @@ function createBookingModal(date, provider_id) {
 				$('#booking_service_provider_id').val('');
 			}
 			$('#booking_status_id').val('1');
-			$('#booking_price').val(booking.price);
+			$('#booking_price').val('');
 			$('#booking_client_first_name').val('');
 			$('#booking_client_last_name').val('');
 			$('#full_name').val('');
@@ -759,6 +759,7 @@ function jsonBooking() {
 		"service_id": parseInt($('#booking_service_id').val()),
 		"status_id": parseInt($('#booking_status_id').val()),
 		"client_id": $('#booking_client_id').val(),
+		"price": $('#booking_price').val(),
 		"client_first_name": $('#booking_client_first_name').val(),
 		"client_last_name": $('#booking_client_last_name').val(),
 		"client_email": $('#booking_client_email').val(),
@@ -867,7 +868,7 @@ function saveBooking(typeURL, extraURL) {
 					if (booking[0].status_id == 2) {
 						originClass += ' confirmed';
 					}
-					event.title = booking[1]+' - '+booking[0].last_name+', '+booking[0].first_name;
+					event.title = booking[1]+' - '+booking[0].first_name+' '+booking[0].last_name;
 					event.start = booking[0].start;
 					event.end = booking[0].end;
 					event.resourceId = booking[0].service_provider_id;
@@ -964,13 +965,20 @@ function getAvailableProviders() {
 }
 
 function modalChange() {
-	if $
+	if ($("#booking_service_id").val() != '') {
+		var price = 0;
+		for (i in servicesJSON) {
+			if ($("#booking_service_id").val() == servicesJSON[i].id) {
+				price = servicesJSON[i].price;
+			}
+		}
+		$('#booking_price').val(price);
+	}
 	if ($("#bookingStartHour").val() != '' && $("#bookingStartMinute").val() != '' && $("#booking_service_id").val() != '') {
 		var duration = 0;
 		for (i in servicesJSON) {
 			if ($("#booking_service_id").val() == servicesJSON[i].id) {
 				duration = servicesJSON[i].duration;
-				price = servicesJSON[i].price
 			}
 		}
 		var extraCharH = '';
