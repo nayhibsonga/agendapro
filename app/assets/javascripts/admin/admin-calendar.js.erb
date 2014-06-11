@@ -855,9 +855,9 @@ function saveBooking(typeURL, extraURL) {
 						start: booking[0].start,
 						end: booking[0].end,
 						resourceId: booking[0].service_provider_id,
-						textColor: textColors[booking[1].status_id],
-						borderColor: textColors[booking[1].status_id],
-						backgroundColor: backColors[booking[1].status_id],
+						textColor: textColors[booking[0].status_id],
+						borderColor: textColors[booking[0].status_id],
+						backgroundColor: backColors[booking[0].status_id],
 						className: originClass
 					};
 					$('#calendar').fullCalendar('renderEvent', events, true);
@@ -878,9 +878,9 @@ function saveBooking(typeURL, extraURL) {
 					event.start = booking[0].start;
 					event.end = booking[0].end;
 					event.resourceId = booking[0].service_provider_id;
-					event.textColor = textColors[booking[1].status_id];
-					event.borderColor = textColors[booking[1].status_id];
-					event.backgroundColor = backColors[booking[1].status_id];
+					event.textColor = textColors[booking[0].status_id];
+					event.borderColor = textColors[booking[0].status_id];
+					event.backgroundColor = backColors[booking[0].status_id];
 					event.className = originClass;
 					$('#calendar').fullCalendar('updateEvent', event);
 				}
