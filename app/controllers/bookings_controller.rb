@@ -46,7 +46,7 @@ class BookingsController < ApplicationController
       @client.phone = booking_params[:client_phone]
       @client.save
     else
-      if booking_params[:client_email].empty?
+      if !booking_params[:client_id].nil? && !booking_params[:client_id].empty?
         if Client.where(email: '', company_id: ServiceProvider.find(booking_params[:service_provider_id]).company.id).where("CONCAT(first_name, ' ', last_name) = :s", :s => booking_params[:client_first_name]+' '+booking_params[:client_last_name]).count > 0
           client = Client.where(email: '', company_id: ServiceProvider.find(booking_params[:service_provider_id]).company.id).where("CONCAT(first_name, ' ', last_name) = :s", :s => booking_params[:client_first_name]+' '+booking_params[:client_last_name]).first
           @booking.client = client
@@ -93,7 +93,7 @@ class BookingsController < ApplicationController
   # PATCH/PUT /bookings/1.json
   def update
     new_booking_params = booking_params.except(:client_first_name, :client_last_name, :client_phone, :client_email)
-    if !booking_params[:client_id].empty?
+    if !booking_params[:client_id].nil? && !booking_params[:client_id].empty?
       @client = Client.find(booking_params[:client_id])
       @client.email = booking_params[:client_email]
       @client.phone = booking_params[:client_phone]
