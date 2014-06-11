@@ -282,6 +282,12 @@ function loadResourcesCalendar (startTime, endTime, hiddenDays, resourcesArray, 
 			$('#calendar').fullCalendar('option', 'height', window.innerHeight-20);
 		}
 	});
+	// Posible acercamiento para pintar celdas la hacer hover (falta un for para cantidad de resources)
+	// $("table.fc-agenda-slots td.fc-widget-content").each(function () {
+	//     $(this).width(($("table.fc-agenda-days thead th.fc-col0").width()));
+	//     $(this).after("<td class=\"fc-widget-content\"><div style=\"position:relative\"></div></td>");
+	//     $(this).after("<td class=\"fc-widget-content\" style=\"width:" + $("table.fc-agenda-days thead th.fc-col1").width() + "px\"><div style=\"position:relative\"></div></td>");
+	// });
 	$('.fc-button').click(function (event) {
 		var providerId = $('input[name="providerRadio"]:checked').val();
 		loadProviderBooking(providerId);
@@ -355,6 +361,15 @@ function loadWeekCalendar (startTime, endTime, hiddenDays, resourcesArray, provi
 			$('#calendar').fullCalendar('option', 'height', window.innerHeight-20);
 		}
 	});
+	// $("table.fc-agenda-slots td.fc-widget-content").each(function () {
+	//     $(this).width(($("table.fc-agenda-days thead th.fc-col0").width()));
+	//     $(this).after("<td class=\"fc-widget-content\"><div style=\"position:relative\"></div></td>");
+	//     $(this).after("<td class=\"fc-widget-content\" style=\"width:" + $("table.fc-agenda-days thead th.fc-col5").width() + "px\"><div style=\"position:relative\"></div></td>");
+	//     $(this).after("<td class=\"fc-widget-content\" style=\"width:" + $("table.fc-agenda-days thead th.fc-col4").width() + "px\"><div style=\"position:relative\"></div></td>");
+	//     $(this).after("<td class=\"fc-widget-content\" style=\"width:" + $("table.fc-agenda-days thead th.fc-col3").width() + "px\"><div style=\"position:relative\"></div></td>");
+	//     $(this).after("<td class=\"fc-widget-content\" style=\"width:" + $("table.fc-agenda-days thead th.fc-col2").width() + "px\"><div style=\"position:relative\"></div></td>");
+	//     $(this).after("<td class=\"fc-widget-content\" style=\"width:" + $("table.fc-agenda-days thead th.fc-col1").width() + "px\"><div style=\"position:relative\"></div></td>");
+	// });
 	$('.fc-button').click(function () {
 		var providerId = $('input[name="providerRadio"]:checked').val();
 		loadProviderBooking(providerId);

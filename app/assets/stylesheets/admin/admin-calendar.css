@@ -99,6 +99,9 @@ header{
 .fc-event-inner {
 	border-radius: 4px;
 }
+/*.fc-widget-content:hover {
+	background: #E1E1E1;
+}*/
 body .modal-admin {
     width: 750px;
 }
