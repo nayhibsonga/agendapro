@@ -144,6 +144,12 @@
 									<!-- <%= f.collection_select :service_id, Service.where(company_id: current_user.company_id), :id, :name, {}, { class: "form-control" }%> -->
 								</div>
 							</div>
+							<div class="form-group">
+								<%= f.label :price, "Precio: ", class: "col-sm-4 control-label" %>
+								<div class="col-sm-8">
+									<%= f.number_field :price, class: "form-control" %>
+								</div>
+							</div>
 						</div>
 						<div class="col-md-6">
 							<% if @booking.client.nil? then @booking.build_client end %>
