@@ -106,24 +106,22 @@ body .modal-admin {
     width: 750px;
 }
 /* Menu responsivo */
-@media (min-width: 1800px) { 
-	.hasDatepicker {
-		font-size: 1em;
-	}
-}
 @media (max-width: 1280px) { 
-	.lateralDatepicker {
+	#dp {
 		font-size: 0.65em;
+		font-size: 0.9vw;
 	}
 }
 @media (width: 1280px) { 
-	.lateralDatepicker {
+	#dp {
 		font-size: 0.7em;
+		font-size: 0.9vw;
 	}
 }
-@media (max-width: 1124px) { 
-	.lateralDatepicker {
+@media (max-width: 1124px) {
+	#dp {
 		font-size: 0.585em;
+		font-size: 0.9vw;
 	}
 	.createBreak {
 		position: absolute;
@@ -143,6 +141,29 @@ body .modal-admin {
 	}
 }
 @media (max-width: 1024px) { 
+	#dp {
+		font-size: 0.6em;
+		/*font-size: 0.9vw;*/
+	}
+	.createBreak {
+		position: absolute;
+		top: 14px;
+		right: 5px;
+		z-index: 1;
+		padding: 4px 8px;
+		font-size: 12px;
+	}
+	.createBooking {
+		position: absolute;
+		top: 14px;
+		right: 235px;
+		z-index: 1;
+		padding: 4px 8px;
+		font-size: 12px;
+		right: 200px;
+	}
+}
+@media (max-width: 930px) { 
 	#dp {
 		display: none;
 	}

@@ -8,8 +8,8 @@ class BookingsController < ApplicationController
   # GET /bookings.json
   def index
     @company = Company.where(id: current_user.company_id)
-    @locations = Location.where(:active => true).accessible_by(current_ability).order(:name)
-    @service_providers = ServiceProvider.where(location_id: @locations).order(:public_name)
+    @locations = Location.where(:active => true).accessible_by(current_ability).order(:order)
+    @service_providers = ServiceProvider.where(location_id: @locations).order(:order)
     @bookings = Booking.where(service_provider_id: @service_providers)
     @booking = Booking.new
     @provider_break = ProviderBreak.new

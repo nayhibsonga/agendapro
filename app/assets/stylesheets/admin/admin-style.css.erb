@@ -634,7 +634,40 @@ li.selected> div.control-box{
     overflow-y:scroll; 
 }
 /* Menu responsivo */
+@media (min-width: 1324px) {
+	#sidebar {
+		max-width: 218px;
+	}
+	#admin-content{
+		width: calc(100% - 218px) !important;
+	}
+}
 @media (max-width: 1024px) { 
+	/*#admin-content{
+		width: calc(100% - 50px) !important;
+	}
+	#sidebar{
+		width: 50px !important;
+	}*/
+	/*.colapse-hidden{
+		display: none;
+	}*/
+	/*.remove-txt{
+		display: none;
+	}*/
+	.menu-lateral{
+		font-size: 14px;
+	}
+	#submenu>li>a, #submenu2>li>a, #submenu3>li>a{
+		font-size: 12px;
+		padding-left: 20px;
+	}
+	.content-fix{
+		margin: 0px 30px;
+	}
+}
+
+@media (max-width: 930px) { 
 	#admin-content{
 		width: calc(100% - 50px) !important;
 	}
