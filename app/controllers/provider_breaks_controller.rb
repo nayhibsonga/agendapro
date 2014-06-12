@@ -53,6 +53,6 @@ class ProviderBreaksController < ApplicationController
   end
   
   def provider_break_params
-    params.require(:provider_break).permit(:start, :end, :service_provider_id)
+    params.require(:provider_break).permit(:start, :end, :service_provider_id, :name)
   end
 end

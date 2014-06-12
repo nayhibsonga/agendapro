@@ -236,15 +236,21 @@
 						</div>
 					</div>
 					<div class="form-group">
+						<%= f.label :name, "Etiqueta: ", class: "col-sm-3 control-label" %>
+						<div class="col-sm-9">
+							<%= f.text_field :name,  class: "form-control" %>
+						</div>
+					</div>
+					<div class="form-group">
 						<%= f.label :start, "Inicio: ", class: "col-sm-3 control-label" %>
 						<div class="col-sm-9">
-							<%= f.datetime_select :start, {}, {class: "form-control date-select"} %>
+							<%= f.datetime_select :start, {default: 4.hours.ago}, {class: "form-control date-select"} %>
 						</div>
 					</div>
 					<div class="form-group">
 						<%= f.label :end, "Fin: ", class: "col-sm-3 control-label" %>
 						<div class="col-sm-9">
-							<%= f.datetime_select :end, {}, {class: "form-control date-select"} %>
+							<%= f.datetime_select :end, {default: 4.hours.ago}, {class: "form-control date-select"} %>
 						</div>
 					</div>
 				<% end %>

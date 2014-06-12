@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140610234359) do
+ActiveRecord::Schema.define(version: 20140612151739) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -47,7 +47,7 @@ ActiveRecord::Schema.define(version: 20140610234359) do
     t.boolean  "web_origin",          default: false
     t.boolean  "send_mail",           default: true
     t.integer  "client_id"
-    t.float    "price",               default: 0.0
+    t.float    "price"
   end
 
   add_index "bookings", ["client_id"], name: "index_bookings_on_client_id", using: :btree
@@ -245,6 +245,7 @@ ActiveRecord::Schema.define(version: 20140610234359) do
     t.integer  "service_provider_id"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.string   "name"
   end
 
   add_index "provider_breaks", ["service_provider_id"], name: "index_provider_breaks_on_service_provider_id", using: :btree
