@@ -2,32 +2,48 @@
 	<section class="pricing_wrapper">
 		<div class="container">
 			<div class="well well-lg">
-				<h3>Gracias <%= @booking.client.first_name %>!</h3>
+				<h3>Gracias <%= @booking.client.first_name %></h3>
 				<p>
-					Su cita fue confirmada correctamente.<br>
+					Tu reserva fue confirmada correctamente<br />
 				</p>
 				<hr>
-				<h4>Detalles de la Reserva</h4>
-				<dl class="dl-horizontal">
-					<dt>Local</dt>
-					<dd><%= @booking.location.name %></dd>
-					<dt>Servicio</dt>
-					<dd><%= @booking.service.name %></dd>
-					<dt>Nombre</dt>
-					<dd><%= @booking.client.first_name %></dd>
-					<dt>Apellido</dt>
-					<dd><%= @booking.client.last_name %></dd>
-					<dt>Email</dt>
-					<dd><%= @booking.client.email %></dd>
-					<dt>Teléfono</dt>
-					<dd><%= @booking.client.phone %></dd>
-					<dt>Fecha</dt>
-					<dd><%= l @booking.start %></dd>
-					<% if !@booking.notes.blank? %>
-					<dt>Notas</dt>
-					<dd><%= @booking.notes %></dd>
-					<% end %>
-				</dl>
+				<div class="row">
+					<div class="col-md-6">
+						<hr>
+						<h4>Resumen de tu Reserva</h4>
+						<dl class="dl-horizontal">
+							<dt>¿Qué reservaste?</dt>
+							<dd><%= @booking.service.name %></dd>
+							<dt>¿Dónde?</dt>
+							<dd><%= @booking.location.name %></dd>
+							<dt>¿Con quién?</dt>
+							<dd><%= @booking.service_provider.public_name %></dd>
+							<dt>¿Cuándo?</dt>
+							<dd><%= l @booking.start %></dd>
+							<% if !@booking.notes.empty? %>
+							<dt>Notas</dt>
+							<dd><%= @booking.notes %></dd>
+							<% end %>
+						</dl>
+						<hr>
+						<h4>Tus Datos</h4>
+						<dl class="dl-horizontal">
+							<dt>Nombre</dt>
+							<dd><%= @booking.client.first_name %> <%= @booking.client.last_name %></dd>
+							<% if !@booking.client.email.empty? %>
+							<dt>E-mail</dt>
+							<dd><%= @booking.client.email %></dd>
+							<% end %>
+							<% if !@booking.client.phone.empty? %>
+							<dt>Teléfono</dt>
+							<dd><%= @booking.client.phone %></dd>
+							<% end %>
+						</dl>
+					</div>
+					<div class="col-md-6">
+						<%= image_tag("backgrounds/check.png", :class => "center-block") %>
+					</div>
+				</div>
 			</div>
 		</div>
 	</section>

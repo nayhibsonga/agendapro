@@ -24,7 +24,7 @@ class HomeMailer < ActionMailer::Base
       :to => [
         {
           :email => contact_info['email'],
-          :name => contact_info['lastName'] + ', ' + contact_info['firstName'],
+          :name => contact_info['firstName'] + ' ' + contact_info['lastName'],
           :type => 'to'
         }
       ],

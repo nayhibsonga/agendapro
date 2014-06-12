@@ -29,10 +29,10 @@ class BookingMailer < ActionMailer::Base
 			],
 			:headers => { 'Reply-To' => book_info.service_provider.notification_email },
 			:global_merge_vars => [
-				{
-					:name => 'UNSUBSCRIBE',
-					:content => "Si deseas dejar de recibir emails de AgendaPro, puedes dar click <a href='#{unsubscribe_url(:user => Base64.encode64(book_info.client.email))}'>aquí</a>"
-				},
+				# {
+				# 	:name => 'UNSUBSCRIBE',
+				# 	:content => "Si deseas dejar de recibir emails de AgendaPro, puedes dar click <a href='#{unsubscribe_url(:user => Base64.encode64(book_info.client.email))}'>aquí</a>"
+				# },
 				{
 					:name => 'SERVICENAME',
 					:content => book_info.service.name
@@ -116,7 +116,20 @@ class BookingMailer < ActionMailer::Base
 						{
 							:name => 'BOOKING',
 							:content => "Resumen de la Nueva Reserva"
+						},
+						{
+							:name => 'CLIENTNAME',
+							:content => book_info.client.first_name + ' ' + book_info.client.last_name
+						},
+						{
+							:name => 'CLIENTPHONE',
+							:content => number_to_phone(book_info.client.phone)
+						},
+						{
+							:name => 'CLIENTEMAIL',
+							:content => book_info.client.email
 						}
+
 					]
 				}
 			],
@@ -173,7 +186,7 @@ class BookingMailer < ActionMailer::Base
 		message = {
 			:from_email => 'no-reply@agendapro.cl',
 			:from_name => book_info.service_provider.company.name,
-			:subject => 'Se actualizó tu reserva en ' + book_info.service_provider.company.name,
+			:subject => 'Reserva Actualizada en ' + book_info.service_provider.company.name,
 			:to => [
 				{
 					:email => book_info.client.email,
@@ -187,10 +200,10 @@ class BookingMailer < ActionMailer::Base
 			],
 			:headers => { 'Reply-To' => book_info.service_provider.notification_email },
 			:global_merge_vars => [
-				{
-					:name => 'UNSUBSCRIBE',
-					:content => "Si deseas dejar de recibir emails de AgendaPro, puedes dar click <a href='#{unsubscribe_url(:user => Base64.encode64(book_info.client.email))}'>aquí</a>"
-				},
+				# {
+				# 	:name => 'UNSUBSCRIBE',
+				# 	:content => "Si deseas dejar de recibir emails de AgendaPro, puedes dar click <a href='#{unsubscribe_url(:user => Base64.encode64(book_info.client.email))}'>aquí</a>"
+				# },
 				{
 					:name => 'LOCALNAME',
 					:content => book_info.location.name
@@ -274,6 +287,18 @@ class BookingMailer < ActionMailer::Base
 						{
 							:name => 'BOOKING',
 							:content => "Resumen de la Reserva"
+						},
+						{
+							:name => 'CLIENTNAME',
+							:content => book_info.client.first_name + ' ' + book_info.client.last_name
+						},
+						{
+							:name => 'CLIENTPHONE',
+							:content => number_to_phone(book_info.client.phone)
+						},
+						{
+							:name => 'CLIENTMAIL',
+							:content => book_info.client.email
 						}
 					]
 				}
@@ -332,7 +357,7 @@ class BookingMailer < ActionMailer::Base
 		message = {
 			:from_email => 'no-reply@agendapro.cl',
 			:from_name => 'AgendaPro',
-			:subject => 'Reserva Confirmada',
+			:subject => 'Reserva Confirmada de ' + book_info.client.first_name + ' ' + book_info.client.last_name,
 			:to => [
 				{
 					:email => book_info.service_provider.notification_email,
@@ -341,10 +366,10 @@ class BookingMailer < ActionMailer::Base
 			],
 			:headers => { 'Reply-To' => book_info.service_provider.notification_email },
 			:global_merge_vars => [
-				{
-					:name => 'UNSUBSCRIBE',
-					:content => "Si deseas dejar de recibir emails de AgendaPro, puedes dar click <a href='#{unsubscribe_url(:user => Base64.encode64(book_info.client.email))}'>aquí</a>"
-				},
+				# {
+				# 	:name => 'UNSUBSCRIBE',
+				# 	:content => "Si deseas dejar de recibir emails de AgendaPro, puedes dar click <a href='#{unsubscribe_url(:user => Base64.encode64(book_info.client.email))}'>aquí</a>"
+				# },
 				{
 					:name => 'SERVICENAME',
 					:content => book_info.service.name
@@ -389,6 +414,18 @@ class BookingMailer < ActionMailer::Base
 						{
 							:name => 'BOOKING',
 							:content => "Resumen de la Reserva Confirmada"
+						},
+						{
+							:name => 'CLIENTNAME',
+							:content => book_info.client.first_name + ' ' + book_info.client.last_name
+						},
+						{
+							:name => 'CLIENTPHONE',
+							:content => number_to_phone(book_info.client.phone)
+						},
+						{
+							:name => 'CLIENTMAIL',
+							:content => book_info.client.email
 						}
 					]
 				}
@@ -440,7 +477,7 @@ class BookingMailer < ActionMailer::Base
 		message = {
 			:from_email => 'no-reply@agendapro.cl',
 			:from_name => book_info.service_provider.company.name,
-			:subject => 'Reserva cancelada en ' + book_info.service_provider.company.name,
+			:subject => 'Reserva Cancelada en ' + book_info.service_provider.company.name,
 			:to => [
 				{
 					:email => book_info.client.email,
@@ -454,10 +491,10 @@ class BookingMailer < ActionMailer::Base
 			],
 			:headers => { 'Reply-To' => book_info.service_provider.notification_email },
 			:global_merge_vars => [
-				{
-					:name => 'UNSUBSCRIBE',
-					:content => "Si desea dejar de recibir email puede dar click <a href='#{unsubscribe_url(:user => Base64.encode64(book_info.client.email))}'>aquí</a>."
-				},
+				# {
+				# 	:name => 'UNSUBSCRIBE',
+				# 	:content => "Si desea dejar de recibir email puede dar click <a href='#{unsubscribe_url(:user => Base64.encode64(book_info.client.email))}'>aquí</a>."
+				# },
 				{
 					:name => 'SERVICENAME',
 					:content => book_info.service.name
@@ -533,6 +570,18 @@ class BookingMailer < ActionMailer::Base
 						{
 							:name => 'BOOKING',
 							:content => "Resumen de la Reserva Cancelada"
+						},
+						{
+							:name => 'CLIENTNAME',
+							:content => book_info.client.first_name + ' ' + book_info.client.last_name
+						},
+						{
+							:name => 'CLIENTPHONE',
+							:content => number_to_phone(book_info.client.phone)
+						},
+						{
+							:name => 'CLIENTMAIL',
+							:content => book_info.client.email
 						}
 					]
 				}
@@ -598,10 +647,10 @@ class BookingMailer < ActionMailer::Base
 			],
 			:headers => { 'Reply-To' => book_info.service_provider.notification_email },
 			:global_merge_vars => [
-				{
-					:name => 'UNSUBSCRIBE',
-					:content => "Si deseas dejar de recibir emails de AgendaPro, puedes dar click <a href='#{unsubscribe_url(:user => Base64.encode64(book_info.client.email))}'>aquí</a>"
-				},
+				# {
+				# 	:name => 'UNSUBSCRIBE',
+				# 	:content => "Si deseas dejar de recibir emails de AgendaPro, puedes dar click <a href='#{unsubscribe_url(:user => Base64.encode64(book_info.client.email))}'>aquí</a>"
+				# },
 				{
 					:name => 'SERVICENAME',
 					:content => book_info.service.name
@@ -638,7 +687,7 @@ class BookingMailer < ActionMailer::Base
 					},
 					{
 					  :name => 'MESSAGE',
-					  :content => 'Recuerda tu Reserva para mañana'
+					  :content => 'recuerda tu reserva para mañana'
 					},
 					{
 						:name => 'EDIT',
@@ -689,6 +738,18 @@ class BookingMailer < ActionMailer::Base
 					{
 						:name => 'BOOKING',
 						:content => "Resumen de la Reserva"
+					},
+					{
+						:name => 'CLIENTNAME',
+						:content => book_info.client.first_name + ' ' + book_info.client.last_name
+					},
+					{
+						:name => 'CLIENTPHONE',
+						:content => number_to_phone(book_info.client.phone)
+					},
+					{
+						:name => 'CLIENTMAIL',
+						:content => book_info.client.email
 					}
 				  ]
 				}

@@ -16,10 +16,10 @@ class ClientMailer < ActionMailer::Base
 		:subject => subject,
 		:to => clients,
 		:global_merge_vars => [
-			{
-				:name => 'UNSUBSCRIBE',
-				:content => "Si desea dejar de recibir email puede dar click <a href='#{unsubscribe_url(:user => Base64.encode64(current_user.email))}'>aquí</a>."
-			},
+			# {
+			# 	:name => 'UNSUBSCRIBE',
+			# 	:content => "Si desea dejar de recibir email puede dar click <a href='#{unsubscribe_url(:user => Base64.encode64(current_user.email))}'>aquí</a>."
+			# },
 			{
 				:name => 'MESSAGE',
 				:content => message
