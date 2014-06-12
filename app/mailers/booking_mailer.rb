@@ -476,7 +476,7 @@ class BookingMailer < ActionMailer::Base
 				},
 				{
 					:name => 'SIGNATURE',
-					:content => if !book_info.location.company.company_setting.signature.blank? then book_info.location.company.company_setting.signature.gsub('\r\n', '<br />') endsignature
+					:content => if !book_info.location.company.company_setting.signature.blank? then book_info.location.company.company_setting.signature.gsub('\r\n', '<br />') end
 				},
 				{
 					:name => 'SERVICEPROVIDER',
