@@ -782,7 +782,7 @@ function editDrag(event) {
 	}
 	else {
 		var eventJSON = {start: startString, end: endString};
-	}
+	} 
 	if (event.id.toString().charAt(0) === 'b') {
 		$.ajax({
 			type: 'PATCH',
@@ -990,10 +990,7 @@ function createBreakModal() {
 	}
 	$('#provider_break_name').val('');
 	$('.break-modal-footer').empty();
-	$('.break-modal-footer').append('<button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button><button type="button" class="btn btn-primary" id="save_break">Guardar</button>');
-	$('#save_break').click(function() {
-		saveBreak('POST','');
-	});
+	$('.break-modal-footer').append('<button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button><button type="button" class="btn btn-primary" id="save_break" onClick="saveBreak(\'POST\',\'\')">Guardar</button>');
 	$('#breakModal').modal('show');
 }
 
@@ -1026,13 +1023,7 @@ function editBreakModal(breakId) {
 		$('#provider_break_name').val(provider_break.name);
 		$('#provider_break_service_provider_id option[value="'+provider_break.service_provider_id+'"]').attr("selected",true);;
 		$('.break-modal-footer').empty();
-		$('.break-modal-footer').append('<button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button><button type="button" class="btn btn-primary" id="edit_break">Guardar</button><button type="button" class="btn btn-danger" id="destroy_break">Eliminar</button>');
-		$('#edit_break').click(function() {
-			saveBreak('PATCH','/'+breakId);
-		});
-		$('#destroy_break').click(function() {
-			saveBreak('DELETE','/'+breakId);
-		});
+		$('.break-modal-footer').append('<button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button><button type="button" class="btn btn-primary" id="edit_break" onClick="saveBreak(\'PATCH\',\'/'+breakId+'\')">Guardar</button><button type="button" class="btn btn-danger" id="destroy_break" onClick="saveBreak(\'DELETE\',\'/'+breakId+'\')">Eliminar</button>');
 		$('#breakModal').modal('show');
 	});
 }
@@ -1123,6 +1114,13 @@ function modalChange() {
 var alertId;
 $(function() {
 	alertId = new Alert();
+
+	$('#new_booking').keypress(function(e){
+    	if ( e.which == 13 ) return false;
+	});
+	$('#new_provider_break').keypress(function(e){
+    	if ( e.which == 13 ) return false;
+	});
 	$('.createBooking').click(function() {
 		createBookingModal();
 		return false;
@@ -1272,6 +1270,11 @@ $(function() {
 	$(".ui-datepicker-trigger").addClass("btn btn-primary pull-right")
 
 	$('#bookingModal').on('hidden.bs.modal', function (e) {
+		$('#booking_service_id').attr('disabled', true);
+		bookingModalOpen = false;
+	});
+
+	$('#breakModal').on('hidden.bs.modal', function (e) {
 		$('#booking_service_id').attr('disabled', true);
 		bookingModalOpen = false;
 	});
