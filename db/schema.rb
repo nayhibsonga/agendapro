@@ -120,8 +120,8 @@ ActiveRecord::Schema.define(version: 20140612151739) do
     t.integer  "company_id",                          null: false
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.integer  "before_booking",      default: 24,    null: false
-    t.integer  "after_booking",       default: 6,     null: false
+    t.integer  "before_booking",                      null: false
+    t.integer  "after_booking",                       null: false
     t.integer  "daily_mails",         default: 50
     t.integer  "sent_mails",          default: 0
     t.integer  "before_edit_booking", default: 12
