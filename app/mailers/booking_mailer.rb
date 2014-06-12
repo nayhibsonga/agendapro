@@ -131,7 +131,7 @@ class BookingMailer < ActionMailer::Base
 			:attachments => [
 				{
 					:type => 'text/calendar',
-					:name => 'event.ics',
+					:name => book_info.service.name + ' - ' + book_info.service_provider.company.name + '.ics',
 					:content => Base64.encode64(book_info.generate_ics.export())
 				}
 			]
@@ -285,7 +285,7 @@ class BookingMailer < ActionMailer::Base
 			:attachments => [
 				{
 					:type => 'text/calendar',
-					:name => 'event.ics',
+					:name => book_info.service.name + ' - ' + book_info.service_provider.company.name + '.ics',
 					:content => Base64.encode64(book_info.generate_ics.export())
 				}
 			]
