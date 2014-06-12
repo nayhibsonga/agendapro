@@ -40,30 +40,35 @@ class BookingsController < ApplicationController
   def create
     new_booking_params = booking_params.except(:client_first_name, :client_last_name, :client_phone, :client_email)
     @booking = Booking.new(new_booking_params)
-    if !booking_params[:client_id].empty?
+    if !booking_params[:client_id].nil? && !booking_params[:client_id].empty?
       @client = Client.find(booking_params[:client_id])
       @client.email = booking_params[:client_email]
       @client.phone = booking_params[:client_phone]
       @client.save
+      if User.find_by_email(@client.email)
+        new_booking_params[:user_id] = User.find_by_email(@client.email).id
+      end
     else
-      if !booking_params[:client_id].nil? && !booking_params[:client_id].empty?
-        if Client.where(email: '', company_id: ServiceProvider.find(booking_params[:service_provider_id]).company.id).where("CONCAT(first_name, ' ', last_name) = :s", :s => booking_params[:client_first_name]+' '+booking_params[:client_last_name]).count > 0
-          client = Client.where(email: '', company_id: ServiceProvider.find(booking_params[:service_provider_id]).company.id).where("CONCAT(first_name, ' ', last_name) = :s", :s => booking_params[:client_first_name]+' '+booking_params[:client_last_name]).first
-          @booking.client = client
-        else
-          client = Client.new(email: booking_params[:client_email], first_name: booking_params[:client_first_name], last_name: booking_params[:client_last_name], phone: booking_params[:client_phone], company_id: ServiceProvider.find(booking_params[:service_provider_id]).company.id)
-          if client.save
+      if !booking_params[:client_email].nil?
+        if booking_params[:client_email].empty?
+          if Client.where(email: '', company_id: ServiceProvider.find(booking_params[:service_provider_id]).company.id).where("CONCAT(first_name, ' ', last_name) = :s", :s => booking_params[:client_first_name]+' '+booking_params[:client_last_name]).count > 0
+            client = Client.where(email: '', company_id: ServiceProvider.find(booking_params[:service_provider_id]).company.id).where("CONCAT(first_name, ' ', last_name) = :s", :s => booking_params[:client_first_name]+' '+booking_params[:client_last_name]).first
             @booking.client = client
+          else
+            client = Client.new(email: booking_params[:client_email], first_name: booking_params[:client_first_name], last_name: booking_params[:client_last_name], phone: booking_params[:client_phone], company_id: ServiceProvider.find(booking_params[:service_provider_id]).company.id)
+            if client.save
+              @booking.client = client
+            end
           end
-        end
-      else
-        if Client.where(email: booking_params[:client_email], company_id: ServiceProvider.find(booking_params[:service_provider_id]).company.id).count > 0
-          client = Client.where(email: booking_params[:client_email], company_id: ServiceProvider.find(booking_params[:service_provider_id]).company.id).first
-          @booking.client = client
         else
-          client = Client.new(email: booking_params[:client_email], first_name: booking_params[:client_first_name], last_name: booking_params[:client_last_name], phone: booking_params[:client_phone], company_id: ServiceProvider.find(booking_params[:service_provider_id]).company.id)
-          if client.save
+          if Client.where(email: booking_params[:client_email], company_id: ServiceProvider.find(booking_params[:service_provider_id]).company.id).count > 0
+            client = Client.where(email: booking_params[:client_email], company_id: ServiceProvider.find(booking_params[:service_provider_id]).company.id).first
             @booking.client = client
+          else
+            client = Client.new(email: booking_params[:client_email], first_name: booking_params[:client_first_name], last_name: booking_params[:client_last_name], phone: booking_params[:client_phone], company_id: ServiceProvider.find(booking_params[:service_provider_id]).company.id)
+            if client.save
+              @booking.client = client
+            end
           end
         end
         if User.find_by_email(booking_params[:client_email])
@@ -98,6 +103,9 @@ class BookingsController < ApplicationController
       @client.email = booking_params[:client_email]
       @client.phone = booking_params[:client_phone]
       @client.save
+      if User.find_by_email(booking_params[:client_email])
+        new_booking_params[:user_id] = User.find_by_email(booking_params[:client_email]).id
+      end
     else
       if !booking_params[:client_email].nil?
         if booking_params[:client_email].empty?

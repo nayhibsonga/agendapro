@@ -191,7 +191,7 @@ class ClientsController < ApplicationController
   end
 
   def name_suggestion
-    @clients = Client.where(company_id: current_user.company_id).where("CONCAT(first_name, ' ', last_name) ILIKE :s OR first_name ILIKE :s OR last_name ILIKE :s OR email ILIKE :s", :s => "%#{params[:term]}%").order(:last_name, :first_name).pluck(:first_name, :last_name, :email, :phone, :id).uniq
+    @clients = Client.where(company_id: current_user.company_id).where("CONCAT(first_name, ' ', last_name) ILIKE :s OR first_name ILIKE :s OR last_name ILIKE :s", :s => "%#{params[:term]}%").order(:last_name, :first_name).pluck(:first_name, :last_name, :email, :phone, :id).uniq
 
     @clients_arr = Array.new
     @clients.each do |client|
