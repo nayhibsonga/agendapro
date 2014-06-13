@@ -72,7 +72,7 @@
 			</ul>
 		</header>
 		<!-- end: Header -->
-		
+		<div class="tmp">
 		<div id="sidebar" class="">
 			<!-- MENU LATERAL -->
 			<ul class="menu-lateral">
@@ -152,7 +152,7 @@
 			</div>
 			<%= yield :calendar %>
 		</div>
-		
+		</div>
 		<!-- start: JavaScript-->
 		<!--[if !IE]>-->
 				<%= javascript_include_tag "adminNIE" %>
@@ -182,6 +182,7 @@
 				$('#closetab').toggle(function () {
 						$("#sidebar").addClass("colapsar");
 						$("#admin-content").addClass("expandir");
+						$('#admin-content').addClass('admin-content-extend');
 						$(".menu-lateral li").addClass("colapsado-ok");
 						$(".remove-txt").addClass("kill-txt");
 						$('#closetab > span:first').removeClass('fa-chevron-left');
@@ -193,6 +194,7 @@
 				}, function () {
 						$("#sidebar").removeClass("colapsar");
 						$("#admin-content").removeClass("expandir");
+						$('#admin-content').removeClass('admin-content-extend');
 						$(".menu-lateral li").removeClass("colapsado-ok");
 						$(".remove-txt").removeClass("kill-txt");
 						$('#closetab > span:first').removeClass('fa-chevron-right');
