@@ -1170,6 +1170,23 @@ $(function() {
 			loadProviderBooking(providerId);
 		}
 	});
+	$("#set-date").datepicker({
+		dateFormat: 'dd/M/yy',
+		buttonText: '<i class="fa fa-clock-o"></i> Ir a',
+		changeMonth: true,
+		changeYear: true,
+		showOn: 'button',
+		firstDay: 1,
+		dayNames: [ "Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado" ],
+		dayNamesMin: [ "Do", "Lu", "Ma", "Mi", "Ju", "Vi", "Sá" ],
+		dayNamesShort: [ "Dom", "Lun", "Mar", "Mié", "Jue", "Vie", "Sáb" ],
+		onSelect: function(dateText, inst) {
+			var d = new Date(dateText);
+			$('#calendar').fullCalendar('gotoDate', d);
+			var providerId = $('input[name="providerRadio"]:checked').val();
+			loadProviderBooking(providerId);
+		}
+	});
 
 	$("#full_name").on('input',function(e){
 		splitFullName();

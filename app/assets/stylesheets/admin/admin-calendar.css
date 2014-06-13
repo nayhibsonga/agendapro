@@ -56,10 +56,10 @@ header{
 	right: 160px;
 	z-index: 1;
 }
-#set-date {
+.ui-datepicker-trigger {
 	position: absolute;
 	top: 14px;
-	right: 320px;
+	right: 317px;
 	z-index: 1;
 }
 .modal-textarea {
@@ -134,7 +134,7 @@ body .modal-admin {
 		padding: 6px 12px;
 		font-size: 12px;
 	}
-	#set-date {
+	.ui-datepicker-trigger {
 		right: 276px;
 		padding: 6px 12px;
 		font-size: 12px;
@@ -154,7 +154,7 @@ body .modal-admin {
 		padding: 4px 8px;
 		font-size: 12px;
 	}
-	#set-date {
+	.ui-datepicker-trigger {
 		right: 260px;
 		padding: 4px 8px;
 		font-size: 12px;
