@@ -18,50 +18,50 @@ class Booking < ActiveRecord::Base
 
 	def provider_in_break
 		self.service_provider.provider_breaks.each do |provider_break|
-	    	if (provider_break.start - self.end) * (self.start - provider_break.end) > 0
-	    		errors.add(:base, "El proveedor seleccionado ha bloqueado ese horario.")
-	    	end
-    	end
-  	end
+			if (provider_break.start - self.end) * (self.start - provider_break.end) > 0
+				errors.add(:base, "El proveedor seleccionado ha bloqueado ese horario.")
+			end
+		end
+	end
 
 	def booking_duration
-    	if ((self.end - self.start) / 1.minute ).round < 5
-    		errors.add(:base, "La duración de la reserva no puede ser menor a 5 minutos.")
-    	end
-  	end
+		if ((self.end - self.start) / 1.minute ).round < 5
+			errors.add(:base, "La duración de la reserva no puede ser menor a 5 minutos.")
+		end
+	end
 
-  	def service_staff
-    	if !self.service_provider.services.include?(self.service)
-    		errors.add(:base, "El proveedor de servicios no puede realizar este servicio.")
-    	end
-  	end
+	def service_staff
+		if !self.service_provider.services.include?(self.service)
+			errors.add(:base, "El proveedor de servicios no puede realizar este servicio.")
+		end
+	end
 
-  	def bookings_overlap
-  		cancelled_id = Status.find_by(name: 'Cancelado').id
-  		unless self.status_id == cancelled_id
+	def bookings_overlap
+		cancelled_id = Status.find_by(name: 'Cancelado').id
+		unless self.status_id == cancelled_id
 			self.service_provider.bookings.each do |provider_booking|
 				if provider_booking != self
-		  			unless provider_booking.status_id == cancelled_id
+					unless provider_booking.status_id == cancelled_id
 						if (provider_booking.start - self.end) * (self.start - provider_booking.end) > 0
 							if !self.service.group_service || self.service_id != provider_booking.service_id
-				      			errors.add(:base, "Esa hora ya está agendada para ese proveedor de servicios.")
-				      		elsif self.service.group_service && self.service_id == provider_booking.service_id && self.service_provider.bookings.where(:service_id => self.service_id, :start => self.start).count >= self.service.capacity
-				      			errors.add(:base, "Esa hora ya está agendada para ese proveedor de servicios.")
-				      		end
-				    	end
+								errors.add(:base, "Esa hora ya está agendada para ese proveedor de servicios.")
+							elsif self.service.group_service && self.service_id == provider_booking.service_id && self.service_provider.bookings.where(:service_id => self.service_id, :start => self.start).count >= self.service.capacity
+								errors.add(:base, "Esa hora ya está agendada para ese proveedor de servicios.")
+							end
+						end
 					end	
 				end
-	  		end
-  		end
-  	end
+			end
+		end
+	end
 
-  	def time_empty_or_negative
+	def time_empty_or_negative
 		if self.start >= self.end
 			errors.add(:base, "Existen horarios vacíos o negativos.")
-  		end
-  	end
+		end
+	end
 
-  	def time_in_provider_time
+	def time_in_provider_time
 		bstart = self.start.clone()
 		bend = self.end.clone()
 		bstart_wday = bstart.wday
@@ -79,18 +79,18 @@ class Booking < ActiveRecord::Base
 		if !in_provider_time
 			errors.add(:base, "El horario o día de la reserva no es posible para ese proveedor de servicio.")
 		end
-  	end
+	end
 
-  	def confirmation_code
-  		crypt = ActiveSupport::MessageEncryptor.new(Agendapro::Application.config.secret_key_base)
-    	encrypted_data = crypt.encrypt_and_sign(self.id.to_s)
-  		return encrypted_data
-  	end
+	def confirmation_code
+		crypt = ActiveSupport::MessageEncryptor.new(Agendapro::Application.config.secret_key_base)
+		encrypted_data = crypt.encrypt_and_sign(self.id.to_s)
+		return encrypted_data
+	end
 
-  	def send_booking_mail
-  		if self.send_mail
-  			BookingMailer.book_service_mail(self)
-  		end
+	def send_booking_mail
+		if self.send_mail
+			BookingMailer.book_service_mail(self)
+		end
 	end
 
 	def send_update_mail
@@ -118,5 +118,23 @@ class Booking < ActiveRecord::Base
 				end
 			end
 		end
+	end
+
+	def generate_ics
+		booking = self
+		event = RiCal.Calendar do |cal|
+		  cal.event do |event|
+			event.summary = booking.service.name + ' en ' + booking.location.name
+			event.description = "Se reservo " + booking.service.name + " en "  + booking.location.name + ", con una duracion de " + booking.service.duration.to_s
+			event.dtstart =  DateTime.parse(booking.start.to_s).new_offset('+04:00')
+			event.dtend = DateTime.parse(booking.end.to_s).new_offset('+04:00')
+			event.location = booking.location.address
+			event.add_attendee booking.client.email
+			event.alarm do
+			  description "Recuerda " + booking.service.name + " en "  + booking.location.name
+			end
+		  end
+		end
+		return event
 	end
 end

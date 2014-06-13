@@ -131,6 +131,7 @@ Agendapro::Application.routes.draw do
   get '/cancel_booking', :to => 'bookings#cancel_booking', :as => 'booking_cancel'
   post '/cancel_booking', :to => 'bookings#cancel_booking'
   get '/confirm_booking', :to => 'bookings#confirm_booking', :as => 'confirm_booking'
+  get '/blocked_edit', :to => 'bookings#blocked_edit', :as => 'blocked_edit'
 
   post '/clients/:id/comments', :to => 'clients#create_comment'
   patch '/clients/:id/comments', :to => 'clients#update_comment'
@@ -151,6 +152,10 @@ Agendapro::Application.routes.draw do
   get '/service_providers/:id/deactivate', :to => 'service_providers#deactivate', :as => 'deactivate_service_provider'
   post '/clients/import', :to => 'clients#import', :as => 'import_clients'
   get '/clients/:id/history', :to => 'clients#history', :as => 'client_history'
+
+  get '/country_regions', :to => 'regions#country_regions'
+  get '/region_cities', :to => 'cities#region_cities'
+  get '/city_districs', :to => 'districts#city_districs'
   
   # Root
   get '/' => 'searchs#index', :constraints => { :subdomain => 'www' }

@@ -144,16 +144,28 @@
 									<!-- <%= f.collection_select :service_id, Service.where(company_id: current_user.company_id), :id, :name, {}, { class: "form-control" }%> -->
 								</div>
 							</div>
+							<div class="form-group">
+								<%= f.label :price, "Precio: ", class: "col-sm-4 control-label" %>
+								<div class="col-sm-8">
+									<%= f.number_field :price, class: "form-control" %>
+								</div>
+							</div>
 						</div>
 						<div class="col-md-6">
 							<% if @booking.client.nil? then @booking.build_client end %>
 							<%= f.fields_for :client do |builder| %>
+							<%= builder.hidden_field :id %>
 							<%= builder.hidden_field :last_name %>
 							<%= builder.hidden_field :first_name %>
 							<div class="form-group">
 								<label for="full_name" class="col-sm-4 control-label">Nombre Cliente: </label>
 								<div class="col-sm-8">
-									<input type="text" id="full_name" class="form-control">
+									<div class="input-group">
+										<input type="text" id="full_name" class="form-control" placeholder="Buscar clientes..">
+										<span class="input-group-btn">
+									    	<button class="btn btn-danger" type="button" id="xButton"><i class="fa fa-times-circle"></i></button>
+									   	</span>
+									</div>
 									<ul id="full_name_suggestions"></ul>
 								</div>
 							</div>
@@ -178,7 +190,7 @@
 							<div class="form-group">
 								<%= f.label :status, "Estado: ", class: "col-sm-4 control-label" %>
 								<div class="col-sm-8">
-									<%= f.collection_select :status_id, Status.all, :id, :name, {selected: Status.find_by_name( 'Reservado').id}, { class: "form-control" }%>
+									<%= f.collection_select :status_id, Status.all.order(:name), :id, :name, {selected: Status.find_by_name( 'Reservado').id}, { class: "form-control" }%>
 								</div>
 							</div>
 						</div>
@@ -224,15 +236,21 @@
 						</div>
 					</div>
 					<div class="form-group">
+						<%= f.label :name, "Etiqueta: ", class: "col-sm-3 control-label" %>
+						<div class="col-sm-9">
+							<%= f.text_field :name,  class: "form-control" %>
+						</div>
+					</div>
+					<div class="form-group">
 						<%= f.label :start, "Inicio: ", class: "col-sm-3 control-label" %>
 						<div class="col-sm-9">
-							<%= f.datetime_select :start, {}, {class: "form-control date-select"} %>
+							<%= f.datetime_select :start, {default: 4.hours.ago, :minute_step => 5}, {class: "form-control date-select"} %>
 						</div>
 					</div>
 					<div class="form-group">
 						<%= f.label :end, "Fin: ", class: "col-sm-3 control-label" %>
 						<div class="col-sm-9">
-							<%= f.datetime_select :end, {}, {class: "form-control date-select"} %>
+							<%= f.datetime_select :end, {default: 4.hours.ago, :minute_step => 5}, {class: "form-control date-select"} %>
 						</div>
 					</div>
 				<% end %>

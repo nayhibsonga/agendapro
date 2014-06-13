@@ -113,6 +113,7 @@ GEM
     ref (1.0.5)
     rest-client (1.6.7)
       mime-types (>= 1.16)
+    ri_cal (0.8.8)
     roo (1.12.2)
       nokogiri
       rubyzip
@@ -179,6 +180,7 @@ DEPENDENCIES
   puntopagos
   quiet_assets
   rails (= 4.0.1)
+  ri_cal
   roo
   sdoc
   therubyracer

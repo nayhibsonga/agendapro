@@ -1,10 +1,10 @@
 <div class="main">
-	<section class="pricing_wrapper">
-		<div class="container">
+    <section class="pricing_wrapper">
+        <div class="container">
 			<div class="well well-lg">
-				<h3>Gracias <%= @booking.client.first_name %></h3>
+				<h3>Lo sentimos</h3>
 				<p>
-					Tu reserva fue confirmada correctamente<br />
+					La empresa <strong><%= @company.name %></strong> sólo permite modificar reservas hasta <strong><%= @company.company_setting.before_edit_booking %></strong> horas antes.
 				</p>
 				<hr>
 				<div class="row">
@@ -40,11 +40,8 @@
 							<% end %>
 						</dl>
 					</div>
-					<div class="col-md-6">
-						<%= image_tag("backgrounds/check.png", :class => "center-block") %>
-					</div>
 				</div>
 			</div>
-		</div>
-	</section>
+        </div>
+    </section>
 </div>

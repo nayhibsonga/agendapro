@@ -93,28 +93,41 @@ header{
 .auto-desc {
 	font-size: 0.75em; 
 }
+.fc-event {
+	border-radius: 4px;
+}
+.fc-event-inner {
+	border-radius: 4px;
+}
+/*.fc-widget-content:hover {
+	background: #E1E1E1;
+}*/
 body .modal-admin {
     width: 750px;
 }
 /* Menu responsivo */
-@media (min-width: 1800px) { 
-	.hasDatepicker {
-		font-size: 1em;
-	}
-}
-@media (max-width: 1280px) { 
-	.lateralDatepicker {
+/*@media (max-width: 1440px) { 
+	#dp {
 		font-size: 0.65em;
+		font-size: 0.845vw;
+	}
+}*/
+/*@media (max-width: 1366px) { 
+	#dp {
+		font-size: 0.65em;
+		font-size: 0.875vw;
+	}
+}*/
+@media (max-width: 1280px) { 
+	#dp {
+		/*font-size: 0.65em;*/
+		font-size: 0.875vw;
 	}
 }
-@media (width: 1280px) { 
-	.lateralDatepicker {
-		font-size: 0.7em;
-	}
-}
-@media (max-width: 1124px) { 
-	.lateralDatepicker {
-		font-size: 0.585em;
+@media (max-width: 1124px) {
+	#dp {
+		/*font-size: 0.585em;*/
+		font-size: 0.875vw;
 	}
 	.createBreak {
 		position: absolute;
@@ -134,6 +147,29 @@ body .modal-admin {
 	}
 }
 @media (max-width: 1024px) { 
+	#dp {
+		/*font-size: 0.6em;*/
+		font-size: 0.875vw;
+	}
+	.createBreak {
+		position: absolute;
+		top: 14px;
+		right: 5px;
+		z-index: 1;
+		padding: 4px 8px;
+		font-size: 12px;
+	}
+	.createBooking {
+		position: absolute;
+		top: 14px;
+		right: 235px;
+		z-index: 1;
+		padding: 4px 8px;
+		font-size: 12px;
+		right: 200px;
+	}
+}
+@media (max-width: 978px) { 
 	#dp {
 		display: none;
 	}

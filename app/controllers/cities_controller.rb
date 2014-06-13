@@ -1,14 +1,14 @@
 class CitiesController < ApplicationController
   before_action :set_city, only: [:show, :edit, :update, :destroy]
   before_action :authenticate_user!
-  before_action :verify_is_super_admin
+  before_action :verify_is_super_admin, except: [:region_cities]
   layout "admin"
   load_and_authorize_resource
 
   # GET /cities
   # GET /cities.json
   def index
-    @cities = City.all
+    @cities = City.all.order(:name)
   end
 
   # GET /cities/1
@@ -63,6 +63,11 @@ class CitiesController < ApplicationController
       format.html { redirect_to cities_url }
       format.json { head :no_content }
     end
+  end
+
+  def region_cities
+    @cities = City.where(:region_id => params[:region_id]).order(:name)
+    render :json => @cities
   end
 
   private

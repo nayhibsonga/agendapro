@@ -173,7 +173,7 @@
                 <% @client_comments.each do |client_comment| %>
                 <tr>
                   <td id="comment<%= client_comment.id %>"><%= client_comment.comment.gsub("\n", "<br />").html_safe %></td>
-                  <td><%= l client_comment.created_at.in_time_zone('Buenos Aires'), format: :short %><br />
+                  <td><%= l client_comment.created_at, format: :short %><br />
                     <%= link_to '<i class="fa fa-pencil"></i> Editar'.html_safe, '#', :class => 'btn btn-warning btn-xs', :id => 'edit_button'+client_comment.id.to_s %>
                     <%= link_to '<i class="fa fa-trash-o"></i> Eliminar'.html_safe, '#', :class => 'btn btn-danger btn-xs', :id => 'destroy_button'+client_comment.id.to_s %>
                   </td>
