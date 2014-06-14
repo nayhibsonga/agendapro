@@ -1,3 +1,4 @@
+var statusIcon = [" blocked", " reserved", " confirmed", " completed", " payed", " cancelled", " noshow", " break"]
 var backColors = ["#CCCCBB", "#B0C2F2", "#FFE1AE", "#E9B0F2", "#B0F2C2", "#FAFCAF", "#FFB6AE", "#999977"];
 var textColors = ["#222211", "#102050", "#554004", "#401040", "#105020", "#505205", "#551004", "#111100"];
 var resourcesColors = [];
@@ -393,9 +394,7 @@ function loadProviderBooking (providerId) {
 						if (booking.web_origin) {
 							originClass = 'origin-web';
 						};
-						if (booking.status_id == 2) {
-							originClass += ' confirmed';
-						}
+						originClass += statusIcon[booking.status_id];
 
 						var events = {
 							id: booking.id,
@@ -453,9 +452,7 @@ function loadProviderBooking (providerId) {
 						if (booking.web_origin) {
 							originClass = 'origin-web';
 						}
-						if (booking.status_id == 2) {
-							originClass += ' confirmed';
-						}
+						originClass += statusIcon[booking.status_id];
 						var events = {
 							id: booking.id,
 							title: booking.service_name+' - '+booking.first_name+' '+booking.last_name,
@@ -847,9 +844,7 @@ function saveBooking(typeURL, extraURL) {
 			case 'POST':
 				if (booking[0].status_id != 5) {
 					var originClass = 'origin-manual';
-					if (booking[0].status_id == 2) {
-						originClass += ' confirmed';
-					}
+					originClass += statusIcon[booking[0].status_id];
 					var events = {
 						id: booking[0].id,
 						title: booking[1]+' - '+booking[0].first_name+' '+booking[0].last_name,
@@ -870,12 +865,10 @@ function saveBooking(typeURL, extraURL) {
 				event = $('#calendar').fullCalendar('clientEvents', booking[0].id)[0];
 				if (booking[0].status_id != 5) {
 					var originClass = 'origin-manual';
-						if (booking.web_origin) {
-							originClass = 'origin-web';
-						};
-					if (booking[0].status_id == 2) {
-						originClass += ' confirmed';
-					}
+					if (booking.web_origin) {
+						originClass = 'origin-web';
+					};
+					originClass += statusIcon[booking[0].status_id];
 					event.title = booking[1]+' - '+booking[0].first_name+' '+booking[0].last_name;
 					event.start = booking[0].start;
 					event.end = booking[0].end;

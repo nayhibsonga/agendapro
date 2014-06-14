@@ -109,9 +109,7 @@ class Booking < ActiveRecord::Base
 	end
 
 	def self.booking_reminder
-		@time1 = Time.new.getutc + 1.day
-		@time2 = Time.new.getutc + 2.day
-		where(:start => @time1...@time2).each do |booking|
+		where(:start => 20.hours.from_now...44.hours.from_now).each do |booking|
 			unless booking.status == Status.find_by(:name => "Cancelado") 
 				if booking.send_mail
 					BookingMailer.book_reminder_mail(booking)
