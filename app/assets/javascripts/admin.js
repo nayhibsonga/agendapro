@@ -5,17 +5,17 @@
 //= require cocoon
 //= require ga
 
-$(window).load(function() {
-	var contentPercent = 99.95 - 100*$('#sidebar').width()/$('#sidebar').offsetParent().width();
-	$('#admin-content').width(contentPercent+'%');
+// $(window).load(function() {
+// 	var contentPercent = 99.95 - 100*$('#sidebar').width()/$('#sidebar').offsetParent().width();
+// 	$('#admin-content').width(contentPercent+'%');
 
-	$('a#closetab').click(function() {
-		var contentPercent = 99.95 - 100*$('#sidebar').width()/$('#sidebar').offsetParent().width();
-		$('#admin-content').width(contentPercent.toString()+'%');
-	});
-});
+// 	$('a#closetab').click(function() {
+// 		var contentPercent = 99.95 - 100*$('#sidebar').width()/$('#sidebar').offsetParent().width();
+// 		$('#admin-content').width(contentPercent.toString()+'%');
+// 	});
+// });
 
-window.onresize = function(event) {
-    var contentPercent = 99.9 - 100*$('#sidebar').width()/$('#sidebar').offsetParent().width();
-	$('#admin-content').width(contentPercent.toString()+'%');
-};
+// window.onresize = function(event) {
+//     var contentPercent = 99.9 - 100*$('#sidebar').width()/$('#sidebar').offsetParent().width();
+// 	$('#admin-content').width(contentPercent.toString()+'%');
+// };
