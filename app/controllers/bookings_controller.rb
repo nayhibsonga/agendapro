@@ -2,7 +2,7 @@ class BookingsController < ApplicationController
   before_action :set_booking, only: [:show, :edit, :update, :destroy]
   before_action :authenticate_user!, except: [:create, :provider_booking, :book_service, :edit_booking, :edit_booking_post, :cancel_booking, :confirm_booking, :check_user_cross_bookings, :blocked_edit]
   before_action :quick_add, except: [:create, :provider_booking, :book_service, :edit_booking, :edit_booking_post, :cancel_booking, :confirm_booking, :check_user_cross_bookings, :blocked_edit]
-  layout "admin", except: [:book_service, :provider_booking, :edit_booking, :edit_booking_post, :cancel_booking, :confirm_booking, :check_user_cross_bookings, :blocked_edit]
+  layout "admin", except: [:book_service, :provider_booking, :edit_booking, :edit_booking_post, :cancel_booking, :confirm_booking, :check_user_cross_bookings, :blocked_edit, :blocked_cancel]
 
   # GET /bookings
   # GET /bookings.json
@@ -260,10 +260,10 @@ class BookingsController < ApplicationController
     @company = Location.find(@booking.location_id).company
 
     if @booking.update(start: params[:start], end: params[:end])
-      flash[:notice] = "Cita actualizada."
+      flash[:notice] = "Reserva actualizada correctamente"
       # BookingMailer.update_booking(@booking)
     else
-      flash[:alert] = "Error actualizando cita."
+      flash[:alert] = "Hubo un error actualizando tu reserva"
       @errors = @booking.errors
     end
 
@@ -285,19 +285,43 @@ class BookingsController < ApplicationController
     render layout: 'workflow'
   end
 
+  def blocked_cancel
+    @booking = Booking.find(params[:id])
+    @company = Location.find(@booking.location_id).company
+
+    # => Domain parser
+    host = request.host_with_port
+    @url = @company.web_address + '.' + host[host.index(request.domain)..host.length]
+
+    render layout: "workflow"
+  end
+
   def cancel_booking
+    require 'date'
+
     unless params[:id]
       crypt = ActiveSupport::MessageEncryptor.new(Agendapro::Application.config.secret_key_base)
       id = crypt.decrypt_and_verify(params[:confirmation_code])
       @booking = Booking.find(id)
+      @company = Location.find(@booking.location_id).company
+      
+      now = DateTime.new(DateTime.now.year, DateTime.now.mon, DateTime.now.mday, DateTime.now.hour, DateTime.now.min)
+      booking_start = DateTime.parse(@booking.start.to_s) - @company.company_setting.before_edit_booking / 24.0
+      
+      if (booking_start <=> now) < 1
+        redirect_to blocked_cancel_path(:id => @booking.id)
+        return
+      end
+      
     else
       @booking = Booking.find(params[:id])
       status = Status.find_by(:name => 'Cancelado').id
+      
       if @booking.update(status_id: status)
-        flash[:notice] = "Cita cancelada."
+        flash[:notice] = "Reserva cancelada correctamente"
         # BookingMailer.cancel_booking(@booking)
       else
-        flash[:alert] = "Error cancelando cita."
+        flash[:alert] = "Hubo un error cancelando tu reserva"
         @errors = @booking.errors
       end
     end

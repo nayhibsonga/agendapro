@@ -132,6 +132,7 @@ Agendapro::Application.routes.draw do
   post '/cancel_booking', :to => 'bookings#cancel_booking'
   get '/confirm_booking', :to => 'bookings#confirm_booking', :as => 'confirm_booking'
   get '/blocked_edit', :to => 'bookings#blocked_edit', :as => 'blocked_edit'
+  get '/blocked_cancel', :to => 'bookings#blocked_cancel', :as => 'blocked_cancel'
 
   post '/clients/:id/comments', :to => 'clients#create_comment'
   patch '/clients/:id/comments', :to => 'clients#update_comment'
