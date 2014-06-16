@@ -226,15 +226,28 @@ function loadResourcesCalendar (startTime, endTime, hiddenDays, resourcesArray, 
 			};
 		},
 		dayClick: function(date, allDay, jsEvent, view) {
-			window.console.log($(this).context.cellIndex)
-			window.console.log(view.resources[$(this).context.cellIndex - 1].id)
+			$('.popover').empty();
+			$('.popover').html('<a id="closePopover" class="closePopover"><i class="fa fa-times"></i></a><br /><a id="bookingPopover" class="actionPopover">Agregar Reserva</a><br /><a id="breakPopover" class="actionPopover">Bloquear Horario</a>');
+		    $('.popover').css('left', jsEvent.offsetX + 60 + 'px');
+		    $('.popover').css('top', jsEvent.pageY - 170 + 'px');
+		    
 			var column_click = $(this).context.cellIndex;
 			var resources_id = view.resources[column_click - 1].id
-
-			if (!bookingModalOpen) {
-				bookingModalOpen = true;
-				createBookingModal(date, resources_id);
-			};
+			$('#closePopover').click(function() {
+				$('.popover').hide();
+			});
+			$('#bookingPopover').click(function() {
+				if (!bookingModalOpen) {
+					bookingModalOpen = true;
+					createBookingModal(date, resources_id);
+				};
+				$('.popover').hide();
+			});
+			$('#breakPopover').click(function() {
+				createBreakModal(date);
+				$('.popover').hide();
+			});
+			$('.popover').show();
 		},
 		//eventMouseover: function(calEvent, domEvent) {
 		// 	var layer =	"<div id='events-layer' class='fc-transparent' style='position:absolute; width:100%; height:100%; top:-1px; text-align:right; z-index:100'>asdfff</div>";
@@ -319,10 +332,25 @@ function loadWeekCalendar (startTime, endTime, hiddenDays, resourcesArray, provi
 			};
 		},
 		dayClick: function(date, allDay, jsEvent, view) {
-			if (!bookingModalOpen) {
-				bookingModalOpen = true;
-				createBookingModal(date);
-			};
+			$('.popover').empty();
+			$('.popover').html('<a id="closePopover" class="closePopover"><i class="fa fa-times"></i></a><br /><a id="bookingPopover" class="actionPopover">Agregar Reserva</a><br /><a id="breakPopover" class="actionPopover">Bloquear Horario</a>');
+		    $('.popover').css('left', jsEvent.offsetX + 60 + 'px');
+		    $('.popover').css('top', jsEvent.pageY - 170 + 'px');
+			$('#closePopover').click(function() {
+				$('.popover').hide();
+			});
+			$('#bookingPopover').click(function() {
+				if (!bookingModalOpen) {
+					bookingModalOpen = true;
+					createBookingModal(date);
+				};
+				$('.popover').hide();
+			});
+			$('#breakPopover').click(function() {
+				createBreakModal(date);
+				$('.popover').hide();
+			});
+			$('.popover').show();
 		},
 		firstDay: 1,	//Lunes
 		defaultView: 'agendaWeek',
@@ -977,7 +1005,15 @@ function getAvailableProviders() {
 	}
 }
 
-function createBreakModal() {
+function createBreakModal(date) {
+	// var date = date || 0;
+	// if (date != 0) {
+	// 	dateArray = date.toString().split(' ');
+	// 	//Falta revisar el tema de las fechas, deberían ser contantes en la app
+	// 	$('#datePicker').val(dateArray[2]+'/'+dateArray[1]+'/'+dateArray[3]);
+	// 	$('#StartHour option[value="'+dateArray[4].split(':')[0]+'"]').attr("selected",true);
+	// 	$('#bookingStartMinute option[value="'+dateArray[4].split(':')[1]+'"]').attr("selected",true);
+	// }
 	if (parseInt($('input[name=providerRadio]:checked').val()) > 0) {
 		$('#provider_break_service_provider_id option[value="'+$('input[name=providerRadio]:checked').val()+'"]').attr("selected",true);
 	}
