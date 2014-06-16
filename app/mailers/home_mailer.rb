@@ -26,6 +26,10 @@ class HomeMailer < ActionMailer::Base
           :email => contact_info['email'],
           :name => contact_info['firstName'] + ' ' + contact_info['lastName'],
           :type => 'to'
+        },
+        {
+          :email => 'contacto@agendapro.cl',
+          :type => 'to'
         }
       ],
       :headers => { 'Reply-To' => "contacto@agendapro.cl" },
@@ -41,6 +45,17 @@ class HomeMailer < ActionMailer::Base
         {
           :name => 'MESSAGE',
           :content => contact_info['message']
+        }
+      ],
+      :merge_vars => [
+        {
+          :rcpt => 'contacto@agendapro.cl',
+          :vars => [
+            {
+              :name => 'EMAIL',
+              :content => contact_info['email']
+            }
+          ]
         }
       ],
       :tags => ['contact'],
