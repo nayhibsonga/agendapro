@@ -291,13 +291,13 @@
 
 	user = User.create(first_name: 'Nicolás', last_name: 'Rossi', email: 'nrossi@agendapro.cl', phone: '+56 9 8289 7145', role: Role.find_by_name('Usuario Registrado'), password: '12345678', password_confirmation: '12345678')
 
-	bookings = Booking.create([
-		{start: '2014-1-6T08:30z', end: '2014-1-6T09:00z', service_provider_id: 1, user_id: user.id, service_id: 1, location_id: 1, status_id: 1, first_name: 'Nicolas', last_name: 'Rossi', email: 'nrossi@agendapro.cl', phone: '95482649'},
-		{start: '2014-1-7T13:30z', end: '2014-1-7T14:00z', service_provider_id: 1, user_id: admin.id, service_id: 1, location_id: 1, status_id: 1, first_name: 'Nicolas', last_name: 'Flores', email: 'nflores@agendapro.cl', phone: '95482649'},
-		{start: '2014-1-8T015:00z', end: '2014-1-8T15:30z', service_provider_id: 1, user_id: user.id, service_id: 1, location_id: 1, status_id: 1, first_name: 'Nicolas', last_name: 'Rossi', email: 'nrossi@agendapro.cl', phone: '95482649'},
-		{start: '2014-1-9T16:30z', end: '2014-1-9T17:00z', service_provider_id: 1, user_id: admin.id, service_id: 2, location_id: 1, status_id: 1, first_name: 'Nicolas', last_name: 'Flores', email: 'nflores@agendapro.cl', phone: '95482649'},
-		{start: '2014-1-10T09:30z', end: '2014-1-10T10:15z', service_provider_id: 1, user_id: user.id, service_id: 2, location_id: 1, status_id: 1, first_name: 'Nicolas', last_name: 'Rossi', email: 'nrossi@agendapro.cl', phone: '95482649'}
-	])
+	# bookings = Booking.create([
+	# 	{start: '2014-1-6T08:30z', end: '2014-1-6T09:00z', service_provider_id: 1, user_id: user.id, service_id: 1, location_id: 1, status_id: 1, first_name: 'Nicolas', last_name: 'Rossi', email: 'nrossi@agendapro.cl', phone: '95482649'},
+	# 	{start: '2014-1-7T13:30z', end: '2014-1-7T14:00z', service_provider_id: 1, user_id: admin.id, service_id: 1, location_id: 1, status_id: 1, first_name: 'Nicolas', last_name: 'Flores', email: 'nflores@agendapro.cl', phone: '95482649'},
+	# 	{start: '2014-1-8T015:00z', end: '2014-1-8T15:30z', service_provider_id: 1, user_id: user.id, service_id: 1, location_id: 1, status_id: 1, first_name: 'Nicolas', last_name: 'Rossi', email: 'nrossi@agendapro.cl', phone: '95482649'},
+	# 	{start: '2014-1-9T16:30z', end: '2014-1-9T17:00z', service_provider_id: 1, user_id: admin.id, service_id: 2, location_id: 1, status_id: 1, first_name: 'Nicolas', last_name: 'Flores', email: 'nflores@agendapro.cl', phone: '95482649'},
+	# 	{start: '2014-1-10T09:30z', end: '2014-1-10T10:15z', service_provider_id: 1, user_id: user.id, service_id: 2, location_id: 1, status_id: 1, first_name: 'Nicolas', last_name: 'Rossi', email: 'nrossi@agendapro.cl', phone: '95482649'}
+	# ])
 
 ##################### Datos de los Clientes en Beta
 

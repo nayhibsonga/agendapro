@@ -18,8 +18,10 @@
 
 <% content_for :calendar do %>
 	<div class="col-md-12">
-			<%= link_to '<i class="fa fa-times"></i>  Bloquear Horas / Vacaciones'.html_safe, '#', :class => "btn btn-primary btn-md createBreak modal-trigger" unless current_user.role_id == Role.find_by_name('Staff').id %>
+			<%= link_to '<i class="fa fa-times"></i>  Bloquear Horario'.html_safe, '#', :class => "btn btn-primary btn-md createBreak modal-trigger" unless current_user.role_id == Role.find_by_name('Staff').id %>
 			<%= link_to '<i class="fa fa-calendar"></i>  Agregar Reserva'.html_safe, '#', :class => "btn btn-primary btn-md createBooking modal-trigger" %>
+			<input type="hidden" id="set-date" />
+			<!-- <button id="set-date" class="btn btn-primary btn-md"><i class="fa fa-clock-o"></i> Ir a</button> -->
 		<div class="row">
 			<div id='calendar'></div>
 		</div>
@@ -200,13 +202,13 @@
 							<div class="form-group">
 								<%= f.label :notes, "Notas compartidas con cliente: ", class: "col-sm-2 control-label" %>
 								<div class="col-sm-10">
-									<%= f.text_area :notes, :rows => "4", class: "form-control modal-textarea" %>
+									<%= f.text_area :notes, :rows => "3", class: "form-control modal-textarea" %>
 								</div>
 							</div>
 							<div class="form-group">
 								<%= f.label :company_comment, "Comentario Interno: ", class: "col-sm-2 control-label" %>
 								<div class="col-sm-10">
-									<%= f.text_area :company_comment, :rows => "4", class: "form-control modal-textarea" %>
+									<%= f.text_area :company_comment, :rows => "3", class: "form-control modal-textarea" %>
 								</div>
 							</div>
 						</div>

@@ -24,6 +24,7 @@ header{
 }
 .lateralDatepicker {
 	font-size: 0.725em;
+	font-size: 0.875vw;
 	width: 100%;
 }
 .fc-header-title h2 {
@@ -52,7 +53,13 @@ header{
 .createBooking {
 	position: absolute;
 	top: 14px;
-	right: 235px;
+	right: 160px;
+	z-index: 1;
+}
+.ui-datepicker-trigger {
+	position: absolute;
+	top: 14px;
+	right: 317px;
 	z-index: 1;
 }
 .modal-textarea {
@@ -102,92 +109,145 @@ header{
 /*.fc-widget-content:hover {
 	background: #E1E1E1;
 }*/
+.origin-web > .fc-event-inner > .fc-event-head > .fc-event-time:before{
+	display:inline-block;
+	font-family:FontAwesome;
+	font-style:normal;
+	font-weight:normal;
+	line-height:1;
+		-webkit-font-smoothing:antialiased;
+		-moz-osx-font-smoothing:grayscale;
+	content:"\f0ac";
+	margin-right: 3px;
+	font-size:1.3333333333333333em;
+	line-height:.75em;
+	vertical-align:-15%
+}
+.origin-manual > .fc-event-inner > .fc-event-head > .fc-event-time:before{
+	display:inline-block;
+	font-family:FontAwesome;
+	font-style:normal;
+	font-weight:normal;
+	line-height:1;
+		-webkit-font-smoothing:antialiased;
+		-moz-osx-font-smoothing:grayscale;
+	content:"\f007";
+	margin-right: 3px;
+	font-size:1.3333333333333333em;
+	line-height:.75em;
+	vertical-align:-15%
+}
+.confirmed > .fc-event-inner > .fc-event-head > .fc-event-time:after{
+	display:inline-block;
+	font-family:FontAwesome;
+	font-style:normal;
+	font-weight:normal;
+	line-height:1;
+		-webkit-font-smoothing:antialiased;
+		-moz-osx-font-smoothing:grayscale;
+	content:"\f00c";
+	margin-left: 3px;
+	margin-right: 3px;
+	font-size:1.3333333333333333em;
+	line-height:.75em;
+	vertical-align:-15%
+}
+.completed > .fc-event-inner > .fc-event-head > .fc-event-time:after{
+	display:inline-block;
+	font-family:FontAwesome;
+	font-style:normal;
+	font-weight:normal;
+	line-height:1;
+		-webkit-font-smoothing:antialiased;
+		-moz-osx-font-smoothing:grayscale;
+	content:"\f046";
+	margin-left: 3px;
+	margin-right: 3px;
+	font-size:1.3333333333333333em;
+	line-height:.75em;
+	vertical-align:-15%
+}
+.noshow > .fc-event-inner > .fc-event-head > .fc-event-time:after{
+	display:inline-block;
+	font-family:FontAwesome;
+	font-style:normal;
+	font-weight:normal;
+	line-height:1;
+		-webkit-font-smoothing:antialiased;
+		-moz-osx-font-smoothing:grayscale;
+	content:"\f00d";
+	margin-left: 3px;
+	margin-right: 3px;
+	font-size:1.3333333333333333em;
+	line-height:.75em;
+	vertical-align:-15%
+}
+.payed > .fc-event-inner > .fc-event-head > .fc-event-time:after{
+	display:inline-block;
+	font-family:FontAwesome;
+	font-style:normal;
+	font-weight:normal;
+	line-height:1;
+		-webkit-font-smoothing:antialiased;
+		-moz-osx-font-smoothing:grayscale;
+	content:"\f155";
+	margin-left: 3px;
+	margin-right: 3px;
+	font-size:1.3333333333333333em;
+	line-height:.75em;
+	vertical-align:-15%
+}
 body .modal-admin {
     width: 750px;
 }
 /* Menu responsivo */
-/*@media (max-width: 1440px) { 
-	#dp {
-		font-size: 0.65em;
-		font-size: 0.845vw;
-	}
-}*/
-/*@media (max-width: 1366px) { 
-	#dp {
-		font-size: 0.65em;
-		font-size: 0.875vw;
-	}
-}*/
 @media (max-width: 1280px) { 
 	#dp {
-		/*font-size: 0.65em;*/
+		font-size: 0.65em;
 		font-size: 0.875vw;
 	}
 }
 @media (max-width: 1124px) {
 	#dp {
-		/*font-size: 0.585em;*/
+		font-size: 0.585em;
 		font-size: 0.875vw;
 	}
 	.createBreak {
-		position: absolute;
-		top: 14px;
 		right: 5px;
-		z-index: 1;
 		padding: 6px 12px;
 		font-size: 12px;
 	}
 	.createBooking {
-		position: absolute;
-		top: 14px;
-		right: 205px;
-		z-index: 1;
+		right: 140px;
+		padding: 6px 12px;
+		font-size: 12px;
+	}
+	.ui-datepicker-trigger {
+		right: 276px;
 		padding: 6px 12px;
 		font-size: 12px;
 	}
 }
-@media (max-width: 1024px) { 
-	#dp {
-		/*font-size: 0.6em;*/
-		font-size: 0.875vw;
-	}
-	.createBreak {
-		position: absolute;
-		top: 14px;
-		right: 5px;
-		z-index: 1;
-		padding: 4px 8px;
-		font-size: 12px;
-	}
-	.createBooking {
-		position: absolute;
-		top: 14px;
-		right: 235px;
-		z-index: 1;
-		padding: 4px 8px;
-		font-size: 12px;
-		right: 200px;
-	}
-}
-@media (max-width: 978px) { 
+@media (max-width: 1023px) { 
 	#dp {
 		display: none;
 	}
 	.createBreak {
-		position: absolute;
-		top: 14px;
 		right: 5px;
-		z-index: 1;
 		padding: 4px 8px;
 		font-size: 12px;
 	}
 	.createBooking {
-		position: absolute;
-		top: 14px;
-		right: 235px;
-		z-index: 1;
+		right: 132px;
 		padding: 4px 8px;
 		font-size: 12px;
-		right: 200px;
+	}
+	.ui-datepicker-trigger {
+		right: 260px;
+		padding: 4px 8px;
+		font-size: 12px;
+	}
+	.btn-text {
+		display: none;
 	}
 }
