@@ -49,13 +49,13 @@
 				</div>
 			</div>
 			<div class="form-group">
-				<%= f.label :before_edit_booking, 'Tiempo Mínimo de Edición:', :class => 'col-sm-3 control-label' %>
+				<%= f.label :before_edit_booking, 'Política de Edición de Reservas:', :class => 'col-sm-3 control-label' %>
 				<div class="col-sm-4">
 					<div class="input-group">
 						<%= f.number_field :before_edit_booking, :in => 1...25, :required => true, :class => 'form-control' %>
 						<span class="input-group-addon">Horas</span>
 					</div>
-					<span class="help-block">Horas mínimas requeridas para que un cliente edite su reserva. No se podrá editar con menos anticipación.</span>
+					<span class="help-block">Horas mínimas requeridas para que un cliente edite o cancele su reserva. No se podrá editar o cancelar reservas con menos anticipación.</span>
 				</div>
 			</div>
 			<div class="form-group">
