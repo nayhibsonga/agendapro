@@ -128,6 +128,15 @@ class CompaniesController < ApplicationController
 				return
 			end
 		end
+		unless @company.company_setting.activate_workflow
+			flash[:alert] = "Lo sentimos, el minisitio que estas buscando no se encuentra disponible"
+
+			host = request.host_with_port
+			domain = host[host.index(request.domain)..host.length]
+
+			redirect_to root_url(:host => domain)
+			return
+		end
 		@locations = Location.where(:active => true).where(company_id: @company.id).where(id: ServiceProvider.where(active: true, company_id: @company.id).joins(:provider_times).joins(:services).where("services.id" => Service.where(active: true, company_id: @company.id).pluck(:id)).pluck(:location_id).uniq).joins(:location_times).uniq.order(order: :asc)
 
 		# => Domain parser
@@ -141,6 +150,15 @@ class CompaniesController < ApplicationController
 
 	def workflow
 		@company = Company.find_by(web_address: request.subdomain)
+		unless @company.company_setting.activate_workflow
+			flash[:alert] = "Lo sentimos, el minisitio que estas buscando no se encuentra disponible"
+
+			host = request.host_with_port
+			domain = host[host.index(request.domain)..host.length]
+
+			redirect_to root_url(:host => domain)
+			return
+		end
 		@location = Location.find(params[:local])
 
 		# => Domain parser

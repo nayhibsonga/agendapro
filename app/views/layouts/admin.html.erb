@@ -44,6 +44,7 @@
 				<li><a href="#" id="open-config"><div class="pull-right"><i class="fa fa-wrench"></i></div></a>
 					<ul id="sub-menu-config" class="close-menu-config">
 						<li><%= link_to '<i class="fa fa-briefcase"></i> Empresa'.html_safe, edit_company_path(Company.find(current_user.company_id)) %></li>
+						<li><%= link_to '<i class="fa fa-laptop"></i> Minisitio</a>'.html_safe, minisite_path(Company.find(current_user.company_id).company_setting.id) %></li>
 						<li><%= link_to '<i class="fa fa-sitemap"></i> Usuarios'.html_safe, admin_users_path %></li>
 						<li><%= link_to '<i class="fa fa-envelope"></i> Firma Email'.html_safe, edit_company_setting_path(Company.find(current_user.company_id).company_setting.id) %></li>
 						<li><%= link_to '<i class="fa fa-clock-o"></i> Periodo Agenda'.html_safe, time_booking_path(:company => Company.find(current_user.company_id).id) %></li>

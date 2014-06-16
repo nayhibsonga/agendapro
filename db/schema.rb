@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140612151739) do
+ActiveRecord::Schema.define(version: 20140616180057) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -125,6 +125,8 @@ ActiveRecord::Schema.define(version: 20140612151739) do
     t.integer  "daily_mails",         default: 50
     t.integer  "sent_mails",          default: 0
     t.integer  "before_edit_booking", default: 12
+    t.boolean  "activate_search",     default: true
+    t.boolean  "activate_workflow",   default: true
   end
 
   add_index "company_settings", ["company_id"], name: "index_company_settings_on_company_id", using: :btree
