@@ -229,7 +229,7 @@ function loadResourcesCalendar (startTime, endTime, hiddenDays, resourcesArray, 
 			$('.popover').empty();
 			$('.popover').html('<a id="closePopover" class="closePopover"><i class="fa fa-times"></i></a><br /><a id="bookingPopover" class="actionPopover">Agregar Reserva</a><br /><a id="breakPopover" class="actionPopover">Bloquear Horario</a>');
 		    $('.popover').css('left', jsEvent.offsetX + 60 + 'px');
-		    $('.popover').css('top', jsEvent.pageY - 170 + 'px');
+		    $('.popover').css('top', jsEvent.pageY - 165 + 'px');
 		    
 			var column_click = $(this).context.cellIndex;
 			var resources_id = view.resources[column_click - 1].id
@@ -335,7 +335,7 @@ function loadWeekCalendar (startTime, endTime, hiddenDays, resourcesArray, provi
 			$('.popover').empty();
 			$('.popover').html('<a id="closePopover" class="closePopover"><i class="fa fa-times"></i></a><br /><a id="bookingPopover" class="actionPopover">Agregar Reserva</a><br /><a id="breakPopover" class="actionPopover">Bloquear Horario</a>');
 		    $('.popover').css('left', jsEvent.offsetX + 60 + 'px');
-		    $('.popover').css('top', jsEvent.pageY - 170 + 'px');
+		    $('.popover').css('top', jsEvent.pageY - 165 + 'px');
 			$('#closePopover').click(function() {
 				$('.popover').hide();
 			});
@@ -1006,14 +1006,25 @@ function getAvailableProviders() {
 }
 
 function createBreakModal(date) {
-	// var date = date || 0;
-	// if (date != 0) {
-	// 	dateArray = date.toString().split(' ');
-	// 	//Falta revisar el tema de las fechas, deberían ser contantes en la app
-	// 	$('#datePicker').val(dateArray[2]+'/'+dateArray[1]+'/'+dateArray[3]);
-	// 	$('#StartHour option[value="'+dateArray[4].split(':')[0]+'"]').attr("selected",true);
-	// 	$('#bookingStartMinute option[value="'+dateArray[4].split(':')[1]+'"]').attr("selected",true);
-	// }
+	var date = date || 0;
+	if (date != 0) {
+		dateArray = date.toString().split(' ');
+		window.console.log(dateArray);
+		$('#provider_break_start_3i option[value="'+parseInt(dateArray[2])+'"]').attr("selected",true);
+		$('#provider_break_start_2i option[value="'+(date.getMonth()+1)+'"]').attr("selected",true);
+		$('#provider_break_start_1i option[value="'+dateArray[3]+'"]').attr("selected",true);
+		$('#provider_break_start_4i option[value="'+dateArray[4].split(':')[0]+'"]').attr("selected",true);
+		$('#provider_break_start_5i option[value="'+dateArray[4].split(':')[1]+'"]').attr("selected",true);
+		$('#provider_break_end_3i option[value="'+parseInt(dateArray[2])+'"]').attr("selected",true);
+		$('#provider_break_end_2i option[value="'+dateArray[1]+'"]').attr("selected",true);
+		$('#provider_break_end_1i option[value="'+dateArray[3]+'"]').attr("selected",true);
+		$('#provider_break_end_4i option[value="'+dateArray[4].split(':')[0]+'"]').attr("selected",true);
+		$('#provider_break_end_5i option[value="'+dateArray[4].split(':')[1]+'"]').attr("selected",true);
+	}
+	else {
+		$('#provider_break_start_5i option[value="00"]').attr("selected",true);
+		$('#provider_break_end_5i option[value="00"]').attr("selected",true);
+	}
 	if (parseInt($('input[name=providerRadio]:checked').val()) > 0) {
 		$('#provider_break_service_provider_id option[value="'+$('input[name=providerRadio]:checked').val()+'"]').attr("selected",true);
 	}

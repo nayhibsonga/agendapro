@@ -3,6 +3,7 @@ class SearchsController < ApplicationController
 
 	def index
 	end
+	  
 
 	def search
 		# => Domain parser
@@ -19,61 +20,22 @@ class SearchsController < ApplicationController
 		lat = params[:latitude]
 		long = params[:longitude]
 
-		@results = Array.new
-
 		# => filtrar pronombres y articulos
 		search = '%' + params[:inputSearch].gsub(/\b([D|d]el?)+\b|\b([U|u]n(o|a)?s?)+\b|\b([E|e]l)+\b|\b([T|t]u)+\b|\b([L|l](o|a)s?)+\b|\b[AaYy]\b|["'.,;:-]|\b([E|e]n)+\b|\b([L|l]a)+\b|\b([C|c]on)+\b|\b([Q|q]ue)+\b|\b([S|s]us?)+\b|\b([E|e]s[o|a]?s?)+\b/i, '').gsub(/(\s)+/, '%') + '%'
 
-		# => optener de los locales los servicios cuyo tag coincide con la busqueda
+		# => obtener de los locales los servicios cuyo tag coincide con la busqueda
 		tags = Tag.includes(:dictionaries).where('dictionaries.name ILIKE ? OR tags.name ILIKE ?', search, search)
-		services_tags = Service.where(:active => true).includes(:tags).where(:tags => {:id => tags.pluck(:id)})
-		service_providers = ServiceProvider.where(:active => true).includes(:services).where(:services => {:id => services_tags.pluck(:id)}).pluck(:location_id)
-		locations_tags = Location.where(:active => true).where('sqrt((latitude - ' + lat + ')^2 + (longitude - ' + long + ')^2) <= 0.1').where(id: service_providers).order('sqrt((latitude - ' + lat + ')^2 + (longitude - ' + long + ')^2)')
+		services_tags = Service.where(:active => true).includes(:tags).where(:tags => {:id => tags.pluck(:id)}).pluck(:id)
+		service_providers_tags = ServiceProvider.where(active: true).joins(:provider_times).joins(:services).where("services.id" => Service.where(active: true, id: services_tags).pluck(:id) ).pluck(:location_id).uniq
 
-		locations_tags.each do |location_tag|
-			@results.push(location_tag)
-		end
+		# => obtener los locales pertenecientes a las compañias cuyo rubro se parece a la busqueda
+		economic_sector = EconomicSector.includes(:economic_sectors_dictionaries).where('economic_sectors.name ILIKE ? OR economic_sectors_dictionaries.name ILIKE ?', search, search).pluck(:id).uniq
 
-		# => Optener los locales pertenecientes a las compañias cuyo rubro se parece a la busqueda
-		economic_sector = EconomicSector.includes(:economic_sectors_dictionaries).where('economic_sectors.name ILIKE ? OR economic_sectors_dictionaries.name ILIKE ?', search, search)
-		locations_companies_economic_sector = Location.where(:active => true).where('sqrt((latitude - ' + lat + ')^2 + (longitude - ' + long + ')^2) <= 0.1').where(company_id: Company.where(:active => true).where(economic_sector_id: economic_sector.pluck(:id))).order('sqrt((latitude - ' + lat + ')^2 + (longitude - ' + long + ')^2)')
+		# => obtener de los locales los servicios cuyo nombre coincide con la busqueda
+		services = Service.where(:active => true).where('name ILIKE ?', search)
+		service_providers_services = ServiceProvider.where(:active => true).joins(:services, :service_staffs).where('service_staffs.service_id' => services).pluck(:location_id).uniq
 
-		locations_companies_economic_sector.each do |location_company_economic_sector|
-			@results.push(location_company_economic_sector)
-		end
-
-		# => optener de los locales los servicios cuyo nombre coincide con la busqueda
-		services_tags = Service.where(:active => true).where('name ILIKE ?', search)
-		service_providers = ServiceProvider.where(:active => true).joins(:services, :service_staffs).where('service_staffs.service_id' => services_tags).select('location_id')
-		locations_services = Location.where(:active => true).where('sqrt((latitude - ' + lat + ')^2 + (longitude - ' + long + ')^2) <= 0.1').where(id: service_providers).order('sqrt((latitude - ' + lat + ')^2 + (longitude - ' + long + ')^2)')
-
-		locations_services.each do |location_service|
-			@results.push(location_service)
-		end
-
-		# => optener los locales cuyo nombre se parece a la busqueda
-		locations = Location.where(:active => true).where('sqrt((latitude - ' + lat + ')^2 + (longitude - ' + long + ')^2) <= 0.1').where('name ILIKE ?', search).order('sqrt((latitude - ' + lat + ')^2 + (longitude - ' + long + ')^2)')
-
-		locations.each do |location|
-			@results.push(location)
-		end
-
-		# => optener los locales de las compañias cuyo nombre se parece a la busqueda
-		locations_companies = Location.where(:active => true).where('sqrt((latitude - ' + lat + ')^2 + (longitude - ' + long + ')^2) <= 0.1').where(company_id: Company.where(:active => true).where('name ILIKE ?', search).order(:name)).order('sqrt((latitude - ' + lat + ')^2 + (longitude - ' + long + ')^2)')
-
-		locations_companies.each do |location_company|
-			@results.push(location_company)
-		end
-
-		# => optener los locales de las compañias cuya url se parece a la busqueda
-		locations_companies_url = Location.where(:active => true).where('sqrt((latitude - ' + lat + ')^2 + (longitude - ' + long + ')^2) <= 0.1').where(company_id: Company.where(:active => true).where('web_address ILIKE ?', search).order(:web_address)).order('sqrt((latitude - ' + lat + ')^2 + (longitude - ' + long + ')^2)')
-
-		locations_companies_url.each do |locations_company|
-			@results.push(locations_company)
-		end
-
-		# => eliminamos los resultados repetidos
-		@results = @results.uniq
+		@results = Location.select('locations.*, sqrt((latitude - ' + lat + ')^2 + (longitude - ' + long + ')^2)').where(:active => true).where('name ILIKE ? OR id IN (?) OR id IN (?) OR company_id IN (?) OR company_id IN (?) OR company_id IN (?)', search, service_providers_tags, service_providers_services, Company.where(:active => true).where(economic_sector_id: economic_sector).pluck(:id), Company.where(:active => true).where('name ILIKE ?', search).pluck(:id), Company.where(:active => true).where('web_address ILIKE ?', search).pluck(:id)).uniq.order('sqrt((latitude - ' + lat + ')^2 + (longitude - ' + long + ')^2)').paginate(:page => params[:page], :per_page => 10)
 
 		respond_to do |format|
 			format.html

@@ -203,7 +203,7 @@ body .modal-admin {
 .popover {
     position:absolute;
     display:none;
-    background:#fff;
+    background:#ddd;
     border: 1px solid #999;
     padding: 0px 10px 10px 10px;
     width:auto;
@@ -221,7 +221,7 @@ body .modal-admin {
 }
 .popover:after {
     border-color: rgba(255, 255, 255, 0);
-    border-right-color: #ffffff;
+    border-right-color: #ddd;
     border-width: 10px;
     top: 50%;
     margin-top: -10px;
@@ -240,6 +240,10 @@ body .modal-admin {
 	font-size:1.2em;
 	margin-right: 10px;
 	margin-left: 10px;
+	cursor: pointer;
+}
+.closePopover {
+	cursor: pointer;
 }
 /* Menu responsivo */
 @media (max-width: 1280px) { 
