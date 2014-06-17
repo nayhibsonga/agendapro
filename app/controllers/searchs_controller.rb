@@ -35,7 +35,11 @@ class SearchsController < ApplicationController
 		services = Service.where(:active => true).where('name ILIKE ?', search)
 		service_providers_services = ServiceProvider.where(:active => true).joins(:services, :service_staffs).where('service_staffs.service_id' => services).pluck(:location_id).uniq
 
-		@results = Location.select('locations.*, sqrt((latitude - ' + lat + ')^2 + (longitude - ' + long + ')^2)').where(:active => true).where('name ILIKE ? OR id IN (?) OR id IN (?) OR company_id IN (?) OR company_id IN (?) OR company_id IN (?)', search, service_providers_tags, service_providers_services, Company.where(:active => true).where(economic_sector_id: economic_sector).pluck(:id), Company.where(:active => true).where('name ILIKE ?', search).pluck(:id), Company.where(:active => true).where('web_address ILIKE ?', search).pluck(:id)).uniq.order('sqrt((latitude - ' + lat + ')^2 + (longitude - ' + long + ')^2)').paginate(:page => params[:page], :per_page => 10)
+		companies = Company.where(active: true).where('name ILIKE ? OR web_address ILIKE ? OR economic_sector_id IN (?)', search, search, economic_sector).uniq.pluck(:id)
+
+		locations = Location.where(id: service_providers_tags).where(id: service_providers_services).uniq.pluck(:id)
+
+		@results = Location.select('locations.*, sqrt((latitude - ' + lat + ')^2 + (longitude - ' + long + ')^2)').where(:active => true, company_id: Company.where(id: CompanySetting.where(activate_search: true, activate_workflow: true).pluck(:company_id))).where(id: ServiceProvider.where(active: true).joins(:provider_times).pluck(:location_id)).where('name ILIKE ? OR id IN (?) OR company_id IN (?)', search, locations, companies).uniq.order('sqrt((latitude - ' + lat + ')^2 + (longitude - ' + long + ')^2)').paginate(:page => params[:page], :per_page => 10)
 
 		respond_to do |format|
 			format.html
