@@ -52,7 +52,7 @@ class HomeMailer < ActionMailer::Base
           :rcpt => 'contacto@agendapro.cl',
           :vars => [
             {
-              :name => 'EMAIL',
+              :name => 'CLIENTEMAIL',
               :content => contact_info['email']
             }
           ]
