@@ -17,7 +17,7 @@ class ApplicationController < ActionController::Base
     redirect_to "/403"
   end
 
-  before_filter :subdomain
+  # before_filter :subdomain
 
   protected
   
@@ -69,13 +69,13 @@ class ApplicationController < ActionController::Base
     root_path
   end
 
-  def subdomain
-    if send(:_layout) == 'admin' and user_signed_in?
-      if current_user.company
-        redirect_to subdomain: current_user.company.web_address unless request.subdomain == current_user.company.web_address
-      end
-    end
-  end
+  # def subdomain
+  #   if send(:_layout) == 'admin' and user_signed_in?
+  #     if current_user.company
+  #       redirect_to subdomain: current_user.company.web_address unless request.subdomain == current_user.company.web_address
+  #     end
+  #   end
+  # end
 
   # def layout
   #   if is_a?(Devise::SessionsController)
