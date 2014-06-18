@@ -232,19 +232,19 @@ function loadResourcesCalendar (startTime, endTime, hiddenDays, resourcesArray, 
 		    $('.popover').css('top', jsEvent.pageY - 165 + 'px');
 		    
 			var column_click = $(this).context.cellIndex;
-			var resources_id = view.resources[column_click - 1].id
+			var resourceId = view.resources[column_click - 1].id
 			$('#closePopover').click(function() {
 				$('.popover').hide();
 			});
 			$('#bookingPopover').click(function() {
 				if (!bookingModalOpen) {
 					bookingModalOpen = true;
-					createBookingModal(date, resources_id);
+					createBookingModal(date, resourceId);
 				};
 				$('.popover').hide();
 			});
 			$('#breakPopover').click(function() {
-				createBreakModal(date);
+				createBreakModal(date, resourceId);
 				$('.popover').hide();
 			});
 			$('.popover').show();
@@ -1005,7 +1005,8 @@ function getAvailableProviders() {
 	}
 }
 
-function createBreakModal(date) {
+function createBreakModal(date, providerId) {
+	var providerId = providerId || 0;
 	var date = date || 0;
 	if (date != 0) {
 		dateArray = date.toString().split(' ');
@@ -1027,6 +1028,9 @@ function createBreakModal(date) {
 	}
 	if (parseInt($('input[name=providerRadio]:checked').val()) > 0) {
 		$('#provider_break_service_provider_id option[value="'+$('input[name=providerRadio]:checked').val()+'"]').attr("selected",true);
+	}
+	if (providerId > 0) {
+		$('#provider_break_service_provider_id option[value="'+providerId+'"]').attr("selected",true);
 	}
 	$('#provider_break_name').val('');
 	$('.break-modal-footer').empty();
@@ -1195,7 +1199,7 @@ $(function() {
 	});
 
 	$("#dp").datepicker({
-		dateFormat: 'dd/M/yy',
+		dateFormat: 'dd-mm-yy',
 		autoSize: true,
 		firstDay: 1,
 		changeMonth: true,
@@ -1204,14 +1208,14 @@ $(function() {
 		dayNamesMin: [ "Do", "Lu", "Ma", "Mi", "Ju", "Vi", "Sá" ],
 		dayNamesShort: [ "Dom", "Lun", "Mar", "Mié", "Jue", "Vie", "Sáb" ],
 		onSelect: function(dateText, inst) {
-			var d = new Date(dateText);
+			var d = new Date(parseInt(dateText.split('-')[2]), parseInt(dateText.split('-')[1]) - 1, parseInt(dateText.split('-')[0]));
 			$('#calendar').fullCalendar('gotoDate', d);
 			var providerId = $('input[name="providerRadio"]:checked').val();
 			loadProviderBooking(providerId);
 		}
 	});
 	$("#set-date").datepicker({
-		dateFormat: 'dd/M/yy',
+		dateFormat: 'dd-mm-yy',
 		buttonText: '<i class="fa fa-clock-o"></i> Ir a',
 		changeMonth: true,
 		changeYear: true,
@@ -1221,7 +1225,7 @@ $(function() {
 		dayNamesMin: [ "Do", "Lu", "Ma", "Mi", "Ju", "Vi", "Sá" ],
 		dayNamesShort: [ "Dom", "Lun", "Mar", "Mié", "Jue", "Vie", "Sáb" ],
 		onSelect: function(dateText, inst) {
-			var d = new Date(dateText);
+			var d = new Date(parseInt(dateText.split('-')[2]), parseInt(dateText.split('-')[1]) - 1, parseInt(dateText.split('-')[0]));
 			$('#calendar').fullCalendar('gotoDate', d);
 			var providerId = $('input[name="providerRadio"]:checked').val();
 			loadProviderBooking(providerId);
