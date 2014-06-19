@@ -38,7 +38,7 @@
 	<body>
 		<!-- start: Header -->
 		<header>
-			<a href="<%= root_path %>" id="logo"></a>
+			<a href="<%= root_url(:host => request.domain) %>" id="logo"></a>
 			<% if (current_user.role_id == Role.find_by_name("Admin").id) %>
 			<ul id="menu-config">
 				<li><a href="#" id="open-config"><div class="pull-right"><i class="fa fa-wrench"></i></div></a>

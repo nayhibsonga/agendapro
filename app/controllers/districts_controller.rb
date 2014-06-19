@@ -2,7 +2,7 @@ class DistrictsController < ApplicationController
   before_action :set_district, only: [:show, :edit, :update, :destroy]
   before_action :authenticate_user!, except: [:get_districts, :get_district, :get_direction, :get_district_by_name]
   before_action :verify_is_super_admin, except: [:get_districts, :get_district, :get_direction, :get_district_by_name, :city_districs]
-  layout "admin"
+  layout "admin", except: [:get_district]
   load_and_authorize_resource
 
   # GET /districts
