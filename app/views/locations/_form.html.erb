@@ -1,3 +1,13 @@
+<% content_for :scripts do %>
+  <%= javascript_include_tag "http://maps.google.com/maps/api/js?sensor=false" %>
+  <%= javascript_include_tag "location" %>
+  <%= javascript_include_tag "bootstrap-tagsinput" %>
+<% end %>
+
+<% content_for :stylesheets do %>
+  <%= stylesheet_link_tag "bootstrap-tagsinput" %>
+<% end %>
+
 <div class="container">
 	<div class="row"> 
 		<div class="col-md-6 well">
@@ -8,19 +18,6 @@
 						<%= f.text_field :name, :autofocus => true, class: "form-control" %>
 					</div>
 				</div>
-				<div class="form-group">
-					<%= f.label :address, "Dirección: ", class: "col-sm-3 control-label" %>
-					<div class="col-sm-9">
-						<%= f.text_field :address, class: "form-control" %>
-					</div>
-				</div>
-				<div class="form-group">
-					<%= f.label :phone, "Teléfono: ", class: "col-sm-3 control-label" %>
-					<div class="col-sm-9">
-						<%= f.text_field :phone, class: "form-control" %>
-					</div>
-				</div>
-
 				<div class="form-group">
 					<%= label_tag :country, "País: ", class: "col-sm-3 control-label" %>
 					<div class="col-sm-9">
@@ -45,12 +42,29 @@
 						<%= f.collection_select :district_id, District.all.order(:name), :id, :name, {}, { class: "form-control", :disabled => true }%>
 					</div>
 				</div>
+				<div class="form-group">
+					<%= f.label :address, "Dirección: ", class: "col-sm-3 control-label" %>
+					<div class="col-sm-9">
+						<%= f.text_field :address, class: "form-control" %>
+						<div class="checkbox">
+			                <label>
+			                	<%= f.check_box :outcall %> Sin Dirección (sólo servicios a domicilio)
+			                </label>
+			            </div>
+					</div>
+				</div>
+				<div class="form-group">
+					<%= f.label :phone, "Teléfono: ", class: "col-sm-3 control-label" %>
+					<div class="col-sm-9">
+						<%= f.text_field :phone, class: "form-control" %>
+					</div>
+				</div>
 
 				<%= f.hidden_field :latitude %>
 				<%= f.hidden_field :longitude %>
 				<div class="form-group">
 					<div class="actions col-sm-offset-3 col-sm-9">
-						<%= f.submit 'Guardar', :class => "btn btn-primary buttonLocation"%>   
+						<button type="button" class="btn btn-primary" id="saveLocation">Guardar</button>
 						<%= link_to 'Cancelar'.html_safe, locations_path, :class => "btn btn-danger" %>    
 					</div>
 				</div>

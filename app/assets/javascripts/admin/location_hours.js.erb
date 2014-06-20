@@ -119,6 +119,9 @@ function initialize() {
 			$('#closeHourId'+ value +' option[value="'+closeTime[0]+'"]').attr("selected",true);
 			$('#closeMinuteId'+ value +' option[value="'+closeTime[1]+'"]').attr("selected",true);
 		});
+		if ($('#location_outcall').prop('checked')) {
+			$('#location_address').attr('disabled', true);
+		}
 		$('#country option[value="'+$('#geo_data').data('country-id')+'"]').attr("selected",true);
 		$.getJSON('/country_regions', {country_id: $('#geo_data').data('country-id')}, function (regions) {
 			if (regions.length) {
@@ -198,11 +201,23 @@ function changeDayStatus (value) {
 }
 
 function startLocation() {
-	var district = $('#location_district_id').val();
-	var address = $('#location_address').val();
-	if ((address != '')&&(district != '')) {
-		$.getJSON('/get_direction', {id: district}, function (direction) {
-			var geolocation = address + ', ' + direction;
+	if ((!$('#location_outcall').prop('checked')) && ($('#location_address').val() != '') && ($('#location_district_id').val() != '')) {
+		$.getJSON('/get_direction', {id: $('#location_district_id').val()}, function (direction) {
+			var geolocation = $('#location_address').val() + ', ' + direction;
+			var geoString = JSON.stringify(geolocation);
+			var geocoder = new google.maps.Geocoder();
+			geocoder.geocode( { "address" : geoString }, function (results, status) {
+				if (status == google.maps.GeocoderStatus.OK) {
+					$('#location_latitude').val(results[0].geometry.location.lat());
+					$('#location_longitude').val(results[0].geometry.location.lng());
+				}
+				saveLocation();
+			});
+		});
+	}
+	else if ($('#location_outcall').prop('checked') && $('#location_district_id').val() != '') {
+		$.getJSON('/get_direction', {id: $('#location_district_id').val()}, function (direction) {
+			var geolocation = direction;
 			var geoString = JSON.stringify(geolocation);
 			var geocoder = new google.maps.Geocoder();
 			geocoder.geocode( { "address" : geoString }, function (results, status) {
@@ -236,6 +251,7 @@ function locJSON() {
 		"address": $('#location_address').val(),
 		"phone": $('#location_phone').val(),
 		"district_id": $('#location_district_id').val(),
+		"outcall": $('#location_outcall').prop('checked'),
 		"latitude": parseFloat($('#location_latitude').val()),
 		"longitude": parseFloat($('#location_longitude').val()),
 		"location_times_attributes": location_times
@@ -356,7 +372,7 @@ var alertId;
 $(function() {
 	alertId = new Alert();
 	initialize();
-	$('.buttonLocation').click(function() {
+	$('#saveLocation').click(function() {
 		startLocation();
 		return false;
 	});
@@ -369,5 +385,14 @@ $(function() {
 		$('#location_district_id').val('');
 		var country_id = $(event.target).val();
 		changeCountry(country_id);
+	});
+	$('#location_outcall').change(function() {
+		if (!$('#location_outcall').prop('checked')) {
+			$('#location_address').attr('disabled', false);
+		}
+		else {
+			$('#location_address').attr('disabled', true);
+			$('#location_address').val('');
+		}
 	});
 });
