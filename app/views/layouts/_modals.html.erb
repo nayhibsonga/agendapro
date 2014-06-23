@@ -9,7 +9,7 @@
 	  <div class="modal-body">
 		<div class="row">
 			<div class="col-sm-12">
-				<%= form_for :user, :url => user_session_path, :html => { class: 'form-horizontal' } do |f| %>
+				<%= form_for :user, :url => user_session_url(:subdomain => false), :html => { class: 'form-horizontal' } do |f| %>
 					<div class="form-group">
 						<%= f.label :email, 'Email', :class => 'col-sm-4 control-label' %>
 						<div class="col-sm-8">
@@ -38,7 +38,7 @@
 					</div>
 					<div class="form-group">
 						<div class="col-sm-offset-4 col-sm-8">
-							<%= link_to "¿Olvidaste tu contraseña?", new_password_path(:user) %>
+							<%= link_to "¿Olvidaste tu contraseña?", new_password_url(:user, :subdomain => false) %>
 						</div>
 					</div>
 				<% end %>
@@ -63,7 +63,7 @@
 	  <div class="modal-body">
 		<div class="row">
 			<div class="col-sm-12">
-				<%= form_for :user, :url => user_registration_path, :html => { class: 'form-horizontal', id: 'signup-form' } do |f| %>
+				<%= form_for :user, :url => user_registration_url(:subdomain => false), :html => { class: 'form-horizontal', id: 'signup-form' } do |f| %>
 					<%= f.hidden_field :role_id, :value => Role.where(:name => "Usuario Registrado").first.id %>
 					<div class="form-group">
 						<%= f.label :first_name, 'Nombre', :class => 'col-sm-4 control-label' %>

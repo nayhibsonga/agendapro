@@ -31,8 +31,8 @@ function loadStep1 () {
 				$('#services-selector').append(
 					'<div class="panel panel-default">' +
 						'<div class="panel-heading">' +
-							'<h3 class="panel-title">' +
-								'<a data-toggle="collapse" data-parent="#services-selector" href="#body' + service_hash.id + '">' + service_hash.category + '</a>' +
+							'<h3 class="panel-title" data-toggle="collapse" data-parent="#services-selector" href="#body' + service_hash.id + '">' +
+								'<a >' + service_hash.category + '</a>' +
 							'</h3>' +
 						'</div>' +
 						'<div id="body' + service_hash.id + '" class="panel-collapse collapse'+ extraClass +'">' +

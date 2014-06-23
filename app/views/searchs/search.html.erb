@@ -80,6 +80,7 @@
 					</div>
 					
 					<% i = i + 1 end %>
+					<%= will_paginate @results, renderer: BootstrapPagination::Rails %>
 					<% if @results.empty? %>
 						<h4>No se encontraron resultados para <strong><%= params[:inputSearch] %></strong>.</h4>
 					<% end %>

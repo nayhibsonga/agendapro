@@ -4,7 +4,9 @@ class ProviderBreaksController < ApplicationController
   load_and_authorize_resource
 
   def provider_breaks
-    provider_breaks = ProviderBreak.where(service_provider_id: params[:service_provider_id]).where(:start => params[:start]..params[:end]).order(:start)
+    start_date = DateTime.parse(params[:start])
+    end_date = DateTime.parse(params[:end])
+    provider_breaks = ProviderBreak.where(service_provider_id: params[:service_provider_id]).where('(provider_breaks.start,provider_breaks.end) overlaps (date ?,date ?)', end_date, start_date).order(:start)
     render :json => provider_breaks
   end
 
