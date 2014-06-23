@@ -47,7 +47,7 @@ ActiveRecord::Schema.define(version: 20140616180057) do
     t.boolean  "web_origin",          default: false
     t.boolean  "send_mail",           default: true
     t.integer  "client_id"
-    t.float    "price"
+    t.float    "price",               default: 0.0
   end
 
   add_index "bookings", ["client_id"], name: "index_bookings_on_client_id", using: :btree

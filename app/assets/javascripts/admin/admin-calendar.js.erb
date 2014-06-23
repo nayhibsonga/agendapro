@@ -226,10 +226,13 @@ function loadResourcesCalendar (startTime, endTime, hiddenDays, resourcesArray, 
 			};
 		},
 		dayClick: function(date, allDay, jsEvent, view) {
+			var p = $('.popover').parent();
+			window.console.log(jsEvent);
+			window.console.log(p.offset());
 			$('.popover').empty();
 			$('.popover').html('<a id="closePopover" class="closePopover"><i class="fa fa-times"></i></a><br /><a id="bookingPopover" class="actionPopover">Agregar Reserva</a><br /><a id="breakPopover" class="actionPopover">Bloquear Horario</a>');
 		    $('.popover').css('left', jsEvent.offsetX + 60 + 'px');
-		    $('.popover').css('top', jsEvent.pageY - 165 + 'px');
+		    $('.popover').css('top', jsEvent.pageY - p.offset().top - 40 + 'px');
 		    
 			var column_click = $(this).context.cellIndex;
 			var resourceId = view.resources[column_click - 1].id
