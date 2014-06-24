@@ -209,6 +209,7 @@ class BookingsController < ApplicationController
         @booking = Booking.new(start: params[:start], end: params[:end], notes: params[:comment], service_provider_id: params[:provider], service_id: params[:service], location_id: params[:location], status_id: Status.find_by(name: 'Reservado').id, client_id: client.id, web_origin: params[:origin])
       end
     end
+    @booking.price = Service.find(params[:service]).price
     if @booking.save
       flash[:notice] = "Servicio agendado"
 

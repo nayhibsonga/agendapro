@@ -90,6 +90,7 @@ header{
 }
 .booking-modal-footer {
 	margin-top: 0px;
+	padding: 10px;
 }
 /*.ui-autocomplete {
 	max-height: 50px;
@@ -205,9 +206,9 @@ body .modal-admin {
     display:none;
     background:#ddd;
     border: 1px solid #999;
-    padding: 0px 10px 10px 10px;
+    padding: 0px 0px 10px 0px;
     width:auto;
-    box-shadow:0 0 10px rgba(0, 0, 0, .5);
+    box-shadow:0 0 5px rgba(0, 0, 0, .5);
     text-align: right;
 }
 .popover:after, .popover:before {
@@ -235,9 +236,11 @@ body .modal-admin {
 }
 .closePopover i {
 	font-size:0.7em;
+	margin-right: 10px;
+
 }
 .actionPopover {
-	font-size:1.2em;
+	font-size:1em;
 	margin-right: 10px;
 	margin-left: 10px;
 	cursor: pointer;
@@ -245,6 +248,12 @@ body .modal-admin {
 .closePopover {
 	cursor: pointer;
 }
+
+/*Cambios en modales*/
+.modal-header {
+	padding: 10px;
+}
+
 /* Menu responsivo */
 @media (max-width: 1280px) { 
 	#dp {

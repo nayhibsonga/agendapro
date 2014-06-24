@@ -40,6 +40,7 @@ GEM
       activemodel (>= 3.2.0)
       activesupport (>= 3.2.0)
       json (>= 1.7)
+    chartkick (1.2.5)
     chronic (0.10.2)
     cocoon (1.2.5)
     coderay (1.1.0)
@@ -60,6 +61,8 @@ GEM
     erubis (2.7.0)
     excon (0.31.0)
     execjs (2.0.2)
+    groupdate (2.2.0)
+      activesupport (>= 3)
     hike (1.2.3)
     i18n (0.6.9)
     jbuilder (1.5.3)
@@ -170,8 +173,10 @@ DEPENDENCIES
   binding_of_caller
   cancan
   carrierwave
+  chartkick
   cocoon
   devise
+  groupdate
   jbuilder (~> 1.2)
   jquery-rails
   mandrill-api
