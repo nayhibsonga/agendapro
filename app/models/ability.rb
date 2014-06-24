@@ -77,6 +77,7 @@ class Ability
 
     # Search
     can :get_districts, District
+    can :get_input_districts, District
     can :get_district, District
     can :get_district_by_name, District
 

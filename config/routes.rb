@@ -95,6 +95,7 @@ Agendapro::Application.routes.draw do
   get "searchs/index"
   get '/search', :to => "searchs#search"
   get '/get_districts', :to => 'districts#get_districts'
+  get '/get_input_districts', :to => 'districts#get_input_districts'
   get '/get_district', :to => 'districts#get_district'
   get '/district_by_name', :to => 'districts#get_district_by_name'
 

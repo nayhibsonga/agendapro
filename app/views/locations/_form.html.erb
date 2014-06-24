@@ -1,7 +1,6 @@
 <% content_for :scripts do %>
   <%= javascript_include_tag "http://maps.google.com/maps/api/js?sensor=false" %>
   <%= javascript_include_tag "location" %>
-  <%= javascript_include_tag "bootstrap-tagsinput" %>
 <% end %>
 
 <% content_for :stylesheets do %>
@@ -48,9 +47,12 @@
 						<%= f.text_field :address, class: "form-control" %>
 						<div class="checkbox">
 			                <label>
-			                	<%= f.check_box :outcall %> Sin Dirección (sólo servicios a domicilio)
+			                	<%= f.check_box :outcall %> Sin Dirección (sólo servicios a domicilio).
 			                </label>
 			            </div>
+			           	<div id="districtsCheckboxes" class='hidden'>
+			           		
+			           	</div>
 					</div>
 				</div>
 				<div class="form-group">

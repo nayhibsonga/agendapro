@@ -52,6 +52,7 @@ class LocationsController < ApplicationController
   def update
     @location = Location.find(params[:id])
     @location.location_times.destroy_all
+    @location.districts.destroy_all
     respond_to do |format|
       if @location.update(location_params)
         format.html { redirect_to locations_path, notice: 'Local actualizado satisfactoriamente.' }
@@ -314,6 +315,6 @@ class LocationsController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def location_params
-      params.require(:location).permit(:name, :address, :phone, :outcall, :longitude, :latitude, :company_id, :district_id, location_times_attributes: [:id, :open, :close, :day_id, :location_id])
+      params.require(:location).permit(:name, :address, :phone, :outcall, :longitude, :latitude, :company_id, :district_id, district_ids: [], location_times_attributes: [:id, :open, :close, :day_id, :location_id])
     end
 end

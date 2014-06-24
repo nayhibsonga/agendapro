@@ -20,5 +20,7 @@
 <% end %>
 <%= content_tag "div", id: "location_times_data", data: { location_times: @location.location_times.to_json } do %>
 <% end %>
+<%= content_tag "div", id: "location_districts_data", data: { location_districts: @location.districts.to_json } do %>
+<% end %>
 
 <%= render 'form' %>
