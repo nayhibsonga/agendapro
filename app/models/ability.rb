@@ -56,6 +56,7 @@ class Ability
     can :overview, Company
     can :workflow, Company
     can :location_data, Location
+    can :location_districts, Location
     can :service_data, Service
     can :services_data, Service
     can :get_providers, Service

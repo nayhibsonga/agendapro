@@ -114,7 +114,7 @@
                         <div class="form-group">
                           <%= label_tag(:phone, "Teléfono", class: "col-sm-3 control-label") %>
                           <div class="col-sm-9">
-                            <%= telephone_field_tag(:phone, current_user.phone, :class => "form-control", :placeholder => "97193440", :required => true) %>
+                            <%= telephone_field_tag(:phone, current_user.phone, :class => "form-control", :placeholder => "1122334455", :required => true) %>
                           </div>
                         </div>
                       </div>
@@ -123,13 +123,13 @@
                       <div class="form-group">
                         <%= label_tag(:firstName, "Nombre", class: "col-sm-3 control-label") %>
                         <div class="col-sm-9">
-                          <%= text_field_tag(:firstName, nil, :class => "form-control", :placeholder => "Matias", :required => true) %>
+                          <%= text_field_tag(:firstName, nil, :class => "form-control", :placeholder => "Nombre", :required => true) %>
                         </div>
                       </div>
                       <div class="form-group">
                         <%= label_tag(:lastName, "Apellido", class: "col-sm-3 control-label") %>
                         <div class="col-sm-9">
-                          <%= text_field_tag(:lastName, nil, :class => "form-control", :placeholder => "Rossi", :required => true) %>
+                          <%= text_field_tag(:lastName, nil, :class => "form-control", :placeholder => "Apellido", :required => true) %>
                         </div>
                       </div>
                       <div class="form-group">
@@ -141,14 +141,20 @@
                       <div class="form-group">
                         <%= label_tag(:phone, "Teléfono", class: "col-sm-3 control-label") %>
                         <div class="col-sm-9">
-                          <%= telephone_field_tag(:phone, nil, :class => "form-control", :placeholder => "97193440", :required => true) %>
+                          <%= telephone_field_tag(:phone, nil, :class => "form-control", :placeholder => "1122334455", :required => true) %>
                         </div>
                       </div>
                       <% end %>
+                      <div id="outcallAddress" class="form-group">
+                        <%= label_tag(:address, "Dirección", class: "col-sm-3 control-label") %>
+                        <div class="col-sm-9">
+                          <%= text_field_tag(:address, nil, :class => "form-control", :placeholder => "Escribe la dirección donde se debe realizar el servicio." ) %>
+                        </div>
+                      </div>
                       <div class="form-group">
                         <%= label_tag(:comment, "Comentario", class: "col-sm-3 control-label") %>
                         <div class="col-sm-9">
-                          <%= text_area_tag(:comment, nil, :class => "form-control", :placeholder => "Escribe tus comentarios para notificarlos por favor.", :rows => 4) %>
+                          <%= text_area_tag(:comment, nil, :class => "form-control", :placeholder => "Escribe tus comentarios para notificarlos, si los tienes.", :rows => 4) %>
                         </div>
                       </div>
                       <div class="form-group">

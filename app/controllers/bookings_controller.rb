@@ -192,6 +192,7 @@ class BookingsController < ApplicationController
 
   def book_service
     @company = Location.find(params[:location]).company
+    params[:comment] += ' - Dirección del cliente (donde se debe realizar el servicio): ' + params[:address]
     if Client.where(email: params[:email], company_id: @company).count > 0
       client = Client.where(email: params[:email], company_id: @company).first
     else

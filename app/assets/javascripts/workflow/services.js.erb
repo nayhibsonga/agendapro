@@ -20,8 +20,8 @@ function loadStep1 () {
 						'<li class="list-group-item">' +
 							'<div class="radio">' +
 								'<label>' +
-									'<input type="radio" name="serviceRadio" value="' + service.id + '">' +
-									'<p>' + service.name + '</p>' +
+									'<input type="radio" name="serviceRadio" value="' + service.id + '" data-outcall="'+service.outcall+'">' +
+									'<p>' + service.name_with_small_outcall + '</p>' +
 								'</label>' +
 							'</div>' +
 						'</li>';
@@ -47,6 +47,12 @@ function loadStep1 () {
 
 		$('[name="serviceRadio"]').on('click', function(event) {
 			var serviceId = event.target.getAttribute('value');
+			if ($(event.target).data('outcall') == true) {
+				$('#outcallAddress').show();
+			}
+			else {
+				$('#outcallAddress').hide();
+			}
 			loadDescription(serviceId);
 		});
 

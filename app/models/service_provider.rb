@@ -16,12 +16,26 @@ class ServiceProvider < ActiveRecord::Base
 	
 	validates :company, :public_name, :notification_email, :presence => true
 
-	validate :time_empty_or_negative, :time_in_location_time, :times_overlap
+	validate :time_empty_or_negative, :time_in_location_time, :times_overlap, :outcall_location_provider
 	validate :plan_service_providers, :on => :create
 
 	def staff_user
 		if self.user && self.user.role_id != Role.find_by_name("Staff")
 			errors.add(:base, "El usuario asociado debe ser de tipo staff.")
+		end
+	end
+
+	def outcall_location_provider
+		if self.location.outcall
+			notOutcall = false
+			self.services.each do |service|
+				if !service.outcall
+					notOutcall = true
+				end
+			end
+			if notOutcall
+				errors.add(:base, "Los servicios asociados a un proveedor de una sucursal a domicilio, deben ser exclusivamente servicios a domicilio.")
+			end
 		end
 	end
 

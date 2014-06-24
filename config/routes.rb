@@ -103,6 +103,7 @@ Agendapro::Application.routes.draw do
   # Workflow - overview
   get '/schedule', :to => 'location_times#schedule_local'
   get '/local', :to => 'locations#location_data'
+  get '/local_districts', :to => 'locations#location_districts'
   # wrokflow - wizard
   get '/workflow', :to => 'companies#workflow', :as => 'workflow'
   get '/local_services', :to => 'services#location_categorized_services'
