@@ -113,7 +113,7 @@ class QuickAddController < ApplicationController
   	end
 
   	def location_params
-      params.require(:location).permit(:name, :address, :phone, :longitude, :latitude, :company_id, :district_id, location_times_attributes: [:id, :open, :close, :day_id, :location_id, :_destroy])
+      params.require(:location).permit(:name, :address, :phone, :longitude, :latitude, :company_id, :district_id, :outcall, :district_ids => [], location_times_attributes: [:id, :open, :close, :day_id, :location_id, :_destroy])
     end
 
     def service_provider_params
@@ -121,6 +121,6 @@ class QuickAddController < ApplicationController
     end
 
     def service_params
-      params.require(:service).permit(:name, :price, :duration, :description, :group_service, :capacity, :waiting_list, :company_id, :service_category_id, service_category_attributes: [:name, :company_id],  :tag_ids => [] )
+      params.require(:service).permit(:name, :price, :duration, :description, :group_service, :capacity, :waiting_list, :company_id, :service_category_id, :outcall, service_category_attributes: [:name, :company_id],  :tag_ids => [] )
     end
 end
