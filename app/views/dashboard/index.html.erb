@@ -39,7 +39,7 @@
 	</div>
 </div>
 
-<% @companyBookings = Booking.where(location_id: Location.where(company_id: current_user.company_id)) %>
+<!-- <% @companyBookings = Booking.where(location_id: Location.where(company_id: current_user.company_id)) %> -->
 
 
 <!-- <% @companySPs = ServiceProvider.where(company_id: current_user.company_id) %> -->
@@ -48,11 +48,11 @@
 <%= line_chart @companySPs.map{|sp|
     {name: sp.public_name, data: sp.bookings.group_by_week(:created_at, range: 1.month.ago.midnight..Time.now).count}
 } %> -->
-<div class="row">
+<!-- <div class="row">
 	<div class="col-md-12 graphs">
 		<%= line_chart @companyBookings.group_by_week(:start, range: 2.month.ago.midnight..2.month.from_now.midnight).count, id: "bookings-chart", library: {hAxis: {title: "Semana", format: "MMM d, yy" }, vAxis: {title: "# Reservas", format: "#"}, title: "Cantidad de Reservas Semanales" } %>
 	</div>
-</div>
+</div> -->
 
 <div class="row">
 	<div class="col-md-8">

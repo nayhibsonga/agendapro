@@ -90,6 +90,7 @@ header{
 }
 .booking-modal-footer {
 	margin-top: 0px;
+	padding: 10px;
 }
 /*.ui-autocomplete {
 	max-height: 50px;
@@ -247,6 +248,12 @@ body .modal-admin {
 .closePopover {
 	cursor: pointer;
 }
+
+/*Cambios en modales*/
+.modal-header {
+	padding: 10px;
+}
+
 /* Menu responsivo */
 @media (max-width: 1280px) { 
 	#dp {

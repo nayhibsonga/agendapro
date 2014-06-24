@@ -637,7 +637,7 @@ function editBookingModal(eventId) {
 			$('.booking-modal-title').empty();
 			$('.booking-modal-footer').empty();
 			$('.booking-modal-title').append('Editando Reserva');
-			$('.booking-modal-footer').append('<button type="button" class="btn btn-default booking-button" data-dismiss="modal">Cerrar</button><button type="button" class="btn btn-primary booking-button" onclick="editBooking('+eventId+')">Guardar</button><button type="button" class="btn btn-danger booking-button" onclick="deleteBooking('+eventId+')">Eliminar</button>');
+			$('.booking-modal-footer').append('<button type="button" class="btn btn-default booking-button" data-dismiss="modal">Cancelar</button><button type="button" class="btn btn-primary booking-button" onclick="editBooking('+eventId+')">Guardar</button><button type="button" class="btn btn-danger booking-button" onclick="deleteBooking('+eventId+')">Eliminar</button>');
 
 			if ( booking.service_provider_id > 0) {
 				$.getJSON('/provider_services', {id: booking.service_provider_id}, function (services) {
@@ -726,7 +726,7 @@ function createBookingModal(date, provider_id) {
 			$('.booking-modal-title').empty();
 			$('.booking-modal-footer').empty();
 			$('.booking-modal-title').append('Nueva Reserva');
-			$('.booking-modal-footer').append('<button type="button" class="btn btn-default booking-button" data-dismiss="modal">Cerrar</button><button type="button" class="btn btn-primary booking-button" onclick="createBooking()">Guardar</button>');
+			$('.booking-modal-footer').append('<button type="button" class="btn btn-default booking-button" data-dismiss="modal">Cancelar</button><button type="button" class="btn btn-primary booking-button" onclick="createBooking()">Guardar</button>');
 
 			if (provider_id) {
 				$('#booking_service_provider_id').val(provider_id);
