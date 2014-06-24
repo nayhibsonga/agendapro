@@ -179,7 +179,9 @@ class BookingsController < ApplicationController
     if @provider.nil?
       @provider = ServiceProvider.where(:location_id => params[:location])
     end
-    @bookings = Booking.where(:service_provider_id => @provider, :location_id => params[:location]).where(:start => params[:start]..params[:end]).order(:start)
+    start_date = DateTime.parse(params[:start])
+    end_date = DateTime.parse(params[:end])
+    @bookings = Booking.where(:service_provider_id => @provider, :location_id => params[:location]).where('(bookings.start,bookings.end) overlaps (date ?,date ?)', end_date, start_date).order(:start)
     @booklist = @bookings.map do |u|
       { :id => u.id, :start => u.start, :end => u.end, :service_id => u.service_id, :service_provider_id => u.service_provider_id, :user_id => u.user_id, :status_id => u.status_id, :first_name => u.client.first_name, :last_name => u.client.last_name, :email => u.client.email, :phone => u.client.phone, :send_mail => u.send_mail, :notes => u.notes, service_provider_active: u.service_provider.active, service_active: u.service.active, service_provider_name: u.service_provider.public_name, service_name: u.service.name, web_origin: u.web_origin}
     end

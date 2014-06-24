@@ -198,7 +198,52 @@ header{
 	vertical-align:-15%
 }
 body .modal-admin {
-    width: 750px;
+    width: 790px;
+}
+.popover {
+    position:absolute;
+    display:none;
+    background:#ddd;
+    border: 1px solid #999;
+    padding: 0px 10px 10px 10px;
+    width:auto;
+    box-shadow:0 0 10px rgba(0, 0, 0, .5);
+    text-align: right;
+}
+.popover:after, .popover:before {
+    right: 100%;
+    border: solid transparent;
+    content:" ";
+    height: 0;
+    width: 0;
+    position: absolute;
+    pointer-events: none;
+}
+.popover:after {
+    border-color: rgba(255, 255, 255, 0);
+    border-right-color: #ddd;
+    border-width: 10px;
+    top: 50%;
+    margin-top: -10px;
+}
+.popover:before {
+    border-color: rgba(201, 201, 201, 0);
+    border-right-color: #c9c9c9;
+    border-width: 11px;
+    top: 50%;
+    margin-top: -11px;
+}
+.closePopover i {
+	font-size:0.7em;
+}
+.actionPopover {
+	font-size:1.2em;
+	margin-right: 10px;
+	margin-left: 10px;
+	cursor: pointer;
+}
+.closePopover {
+	cursor: pointer;
 }
 /* Menu responsivo */
 @media (max-width: 1280px) { 
