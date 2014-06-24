@@ -1,3 +1,9 @@
+<script type="text/javascript">
+  var Chartkick = {"language": "es"};
+</script>
+
+<%= javascript_include_tag "//www.google.com/jsapi", "chartkick" %>
+
 <div class="row">
 	<h3> </h3>
 </div>
@@ -10,10 +16,20 @@
 			<div class="panel-body">
 				<table class="table">
 					<tbody>
+						<tr>
+							<th>Estado</th>
+							<th>Cliente</th>
+							<th>Servicio</th>
+							<th>Personal</th>
+							<th>Horario</th>
+						</tr>
 						<% @lastBookings.each do |booking| %>
 						<tr>
-							<td><%= l booking.created_at.to_date %></td>
-							<td><strong><%= booking.client.first_name %> <%= booking.client.last_name %> </strong> reservó <%= booking.service.name %> con <%= booking.service_provider.public_name %> el día <span class="badge"> <%= l booking.start %></span></td>
+							<td><%= booking.status.name %></td>
+							<td><%= booking.client.first_name %> <%= booking.client.last_name %></td>
+							<td><%= booking.service.name %></td>
+							<td><%= booking.service_provider.public_name %></td>
+							<td><span class="badge"><%= l booking.start %></span></td>
 						</tr>
 						<% end %>
 					</tbody>
@@ -22,6 +38,22 @@
 		</div>		
 	</div>
 </div>
+
+<% @companyBookings = Booking.where(location_id: Location.where(company_id: current_user.company_id)) %>
+
+
+<!-- <% @companySPs = ServiceProvider.where(company_id: current_user.company_id) %> -->
+
+<!-- 
+<%= line_chart @companySPs.map{|sp|
+    {name: sp.public_name, data: sp.bookings.group_by_week(:created_at, range: 1.month.ago.midnight..Time.now).count}
+} %> -->
+<div class="row">
+	<div class="col-md-12 graphs">
+		<%= line_chart @companyBookings.group_by_week(:start, range: 2.month.ago.midnight..2.month.from_now.midnight).count, id: "bookings-chart", library: {hAxis: {title: "Semana", format: "MMM d, yy" }, vAxis: {title: "# Reservas", format: "#"}, title: "Cantidad de Reservas Semanales" } %>
+	</div>
+</div>
+
 <div class="row">
 	<div class="col-md-8">
 		<div class="panel panel-default">

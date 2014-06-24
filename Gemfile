@@ -104,3 +104,9 @@ gem 'carrierwave'
 
 # Calendar
 gem 'ri_cal'
+
+# Gráficos Reporting Javascript
+gem "chartkick"
+
+# Agrupación de elementos por fecha
+gem 'groupdate'
