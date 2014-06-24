@@ -10,6 +10,9 @@ class HomeController < ApplicationController
 	def about_us
 	end
 
+	def tutorials
+	end
+
 	def contact
 	end
 

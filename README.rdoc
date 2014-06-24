@@ -6,8 +6,13 @@ application up and running.
 Things you may want to cover:
 
 * Ruby version
+Install RVM: sudo apt-get instal rvm
+Install ruby: rvm install ruby-2.0.0
 
 * System dependencies
+Install ImageMagick: sudo apt-get ImageMagick libmagickwand-dev
+Test ImageMagick: convert
+Usin ImageMagick: convert zoolander.jpg -resize 200x200 -background white -gravity center -extent 200x200 zoolander.jpg
 
 * Configuration
 

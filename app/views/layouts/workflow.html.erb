@@ -44,16 +44,17 @@
                             <li class="dropdown">
                                 <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-user"></i> <%= current_user.email %><i class="fa fa-chevron-down"></i></a>
                                 <ul class="dropdown-menu">
-                                    <li><%= link_to '<i class="fa fa-calendar"></i> Mi Agenda'.html_safe, my_agenda_path(:id => current_user.id) %></li>
-                                    <li><%= link_to '<i class="fa fa-dashboard"></i> Dashboard'.html_safe, dashboard_path if current_user.role_id != Role.find_by(name: 'Usuario Registrado').id %></li>
-                                    <li><%= link_to '<i class="fa fa-user"></i> Editar Perfil'.html_safe, edit_user_registration_path %></li>
+                                    <li><%= link_to '<i class="fa fa-calendar"></i> Mi Agenda'.html_safe, my_agenda_url(:subdomain => false, :id => current_user.id) %></li>
+                                    <li><%= link_to '<i class="fa fa-dashboard"></i> Dashboard'.html_safe, dashboard_url(:subdomain => false) if current_user.role_id != Role.find_by(name: 'Usuario Registrado').id %></li>
+                                    <li><%= link_to '<i class="fa fa-user"></i> Editar Perfil'.html_safe, edit_user_registration_url(:subdomain => false) %></li>
                                     <li><%= link_to '<i class="fa fa-power-off"></i> Salir'.html_safe, destroy_user_session_path, method: :delete %></li>
                                 </ul>
                             </li>
+                            <li><%= link_to '<i class="fa fa-plus"></i> Info'.html_safe, home_url(:subdomain => false) %></li>
                             <% else %>
                             <li><a href="#" data-toggle="modal" data-target="#signin-modal"><i class="fa fa-user"></i> Inicia Sesión</a></li>
                             <li><a href="#" data-toggle="modal" data-target="#signup-modal"><i class="fa fa-pencil-square-o"></i> Regístrate</a></li>
-                            <li><%= link_to '<i class="fa fa-home"></i> Agrega tu empresa'.html_safe, home_path %></li>
+                            <li><%= link_to '<i class="fa fa-home"></i> Agrega tu empresa'.html_safe, home_url(:subdomain => false) %></li>
                             <% end %>
                         </ul>
                     </div>

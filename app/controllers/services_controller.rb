@@ -1,6 +1,6 @@
 class ServicesController < ApplicationController
   before_action :set_service, only: [:show, :edit, :update, :destroy, :activate, :deactivate]
-  before_action :authenticate_user!, except: [:services_data, :service_data, :get_providers]
+  before_action :authenticate_user!, except: [:services_data, :service_data, :get_providers, :location_services, :location_categorized_services]
   before_action :quick_add, except: [:services_data, :service_data, :get_providers]
   layout "admin", except: [:get_providers, :services_data, :service_data]
   load_and_authorize_resource
@@ -104,8 +104,37 @@ class ServicesController < ApplicationController
 
   def get_providers
     service = Service.find(params[:id])
-    providers = service.service_providers.where(:active => true).where('location_id = ?', params[:local]).where(:active => true)
+    providers = service.service_providers.where(:active => true).where('location_id = ?', params[:local]).where(:active => true).order(order: :asc)
     render :json => providers
+  end
+
+  def location_services
+    categories = ServiceCategory.where(:company_id => Location.find(params[:location]).company_id).order(order: :asc)
+    services = Service.where(:active => true).order(order: :asc).includes(:service_providers).where('service_providers.active = ?', true).where('service_providers.location_id = ?', params[:location]).order(order: :asc)
+    render :json => services
+  end
+
+  def location_categorized_services
+    categories = ServiceCategory.where(:company_id => Location.find(params[:location]).company_id).order(order: :asc)
+    services = Service.where(:active => true).order(order: :asc).includes(:service_providers).where('service_providers.active = ?', true).where('service_providers.location_id = ?', params[:location]).order(order: :asc)
+
+    categorized_services = Array.new
+    categories.each do |category|
+      services_array = Array.new
+      services.each do |service|
+        if service.service_category_id == category.id
+          services_array.push(service)
+        end
+      end
+      service_hash = {
+        :id => category.id,
+        :category => category.name,
+        :services => services_array
+      }
+      categorized_services.push(service_hash)
+    end
+
+    render :json => categorized_services
   end
 
   def service_data

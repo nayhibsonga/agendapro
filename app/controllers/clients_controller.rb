@@ -10,13 +10,13 @@ class ClientsController < ApplicationController
   def index
     @locations = Location.where(company_id: current_user.company_id, active: true)
     @service_providers = ServiceProvider.where(company_id: current_user.company_id, active: true)
-    @clients = Client.accessible_by(current_ability).search(params[:search]).filter_location(params[:location]).filter_provider(params[:provider]).filter_gender(params[:gender]).paginate(:page => params[:page], :per_page => 25)
+    @services = Service.where(company_id: current_user.company_id, active: true)
+    @clients = Client.accessible_by(current_ability).search(params[:search]).filter_location(params[:location]).filter_provider(params[:provider]).filter_service(params[:service]).filter_gender(params[:gender]).order(:last_name, :first_name).paginate(:page => params[:page], :per_page => 25)
 
     @max_mails = current_user.company.company_setting.daily_mails
     @mails_left = current_user.company.company_setting.daily_mails - current_user.company.company_setting.sent_mails
 
-    @clients_export = Client.accessible_by(current_ability).search(params[:search]).filter_location(params[:location]).filter_provider(params[:provider]).filter_gender(params[:gender])
-
+    @clients_export = Client.accessible_by(current_ability).search(params[:search]).filter_location(params[:location]).filter_provider(params[:provider]).filter_service(params[:service]).filter_gender(params[:gender]).order(:last_name, :first_name)
     respond_to do |format|
       format.html
       format.csv
@@ -39,11 +39,11 @@ class ClientsController < ApplicationController
 
   # GET /clients/1/edit
   def edit
-    @activeBookings = Booking.where(:email => @client.email, :service_provider_id => ServiceProvider.where(:company_id => @client.company_id), :status_id => Status.find_by(:name => ['Reservado', 'Pagado'])).where("start > ?", DateTime.now).order(:start).limit(5)
-    @lastBookings = Booking.where(:email => @client.email, :service_provider_id => ServiceProvider.where(:company_id => @client.company_id)).order(updated_at: :desc).limit(5)
+    @activeBookings = Booking.where(:client_id => @client).where("start > ?", DateTime.now).order(start: :asc)
+    @lastBookings = Booking.where(:client_id => @client).where("start <= ?", DateTime.now).order(start: :desc)
     @next_bookings = Booking
     @client_comment = ClientComment.new
-    @client_comments = ClientComment.where(client_id: @client.id).order(created_at: :desc)
+    @client_comments = ClientComment.where(client_id: @client).order(created_at: :desc)
   end
 
   # POST /clients
@@ -75,6 +75,11 @@ class ClientsController < ApplicationController
         format.json { render json: @client.errors, status: :unprocessable_entity }
       end
     end
+  end
+
+  def history
+    @client = Client.find(params[:id])
+    @bookings = @client.bookings
   end
 
   def create_comment
@@ -161,13 +166,50 @@ class ClientsController < ApplicationController
   end
 
   def suggestion
-    @company = Company.where(id: current_user.company_id)
-    @clients = Client.where(company_id: @company).pluck(:first_name, :last_name, :email, :phone).uniq
+    @clients = Client.where(company_id: current_user.company_id).where('email ~* ?', params[:term]).order(:last_name, :first_name).pluck(:first_name, :last_name, :email, :phone, :id).uniq
 
     @clients_arr = Array.new
     @clients.each do |client|
-      label = client[2] + ' - ' + client[1] + ', ' + client[0]
-      @clients_arr.push({:label => label, :value => client})
+      if client[0].nil?
+        client[0] = ''
+      end
+      if client[1].nil?
+        client[1] = ''
+      end
+      if client[2].nil?
+        client[2] = ''
+      end
+      if client[3].nil?
+        client[3] = ''
+      end
+      label = client[0] + ' ' + client[1]
+      desc = client[2] + ' - ' + client[3]
+      @clients_arr.push({:label => label, :desc => desc, :value => client})
+    end
+
+    render :json => @clients_arr
+  end
+
+  def name_suggestion
+    @clients = Client.where(company_id: current_user.company_id).where("CONCAT(first_name, ' ', last_name) ILIKE :s OR first_name ILIKE :s OR last_name ILIKE :s", :s => "%#{params[:term]}%").order(:last_name, :first_name).pluck(:first_name, :last_name, :email, :phone, :id).uniq
+
+    @clients_arr = Array.new
+    @clients.each do |client|
+      if client[0].nil?
+        client[0] = ''
+      end
+      if client[1].nil?
+        client[1] = ''
+      end
+      if client[2].nil?
+        client[2] = ''
+      end
+      if client[3].nil?
+        client[3] = ''
+      end
+      label = client[0] + ' ' + client[1]
+      desc = client[2] + ' - ' + client[3]
+      @clients_arr.push({:label => label, :desc => desc, :value => client})
     end
 
     render :json => @clients_arr

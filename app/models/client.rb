@@ -1,29 +1,59 @@
 class Client < ActiveRecord::Base
   belongs_to :company
 
-  has_many :client_comments
+  has_many :client_comments, dependent: :destroy
+  has_many :bookings, dependent: :destroy
 
-  validates_uniqueness_of :email, :scope => :company_id
+  validate :client_mail_uniqueness
 
-  validates :email, :first_name, :last_name, :presence => true
+  def full_name
+    "#{self.first_name} #{self.last_name}"
+  end
+
+  def valid_email
+    atpos = self.email.index("@")
+    dotpos = self.email.rindex(".");
+    if atpos && dotpos
+      if (atpos < 1) || (dotpos < atpos+2) || (dotpos+2 >= self.email.length)
+        return false
+      end
+      return true
+    end
+    return false
+  end
+
+  def client_mail_uniqueness
+    Client.where(company_id: self.company_id).each do |client|
+      if self.email != "" && client != self && client.email != "" && self.email == client.email
+        errors.add(:base, "No se pueden crean dos clientes con el mismo email.")
+      end
+    end
+  end
 
   def self.search(search)
     if search
-      where(['lower(email) LIKE lower(?) or lower(last_name) LIKE lower(?) or lower(first_name) LIKE lower(?)', "%#{search}%","%#{search}%","%#{search}%"])
+      where ["CONCAT(first_name, ' ', last_name) ILIKE :s OR email ILIKE :s OR first_name ILIKE :s OR last_name ILIKE :s", :s => "%#{search}%"]
     else
       all
     end
   end
   def self.filter_location(location)
     if location && (location != '')
-      where(email: Booking.where(location_id: location).pluck(:email))
+      where(id: Booking.where(location_id: location).pluck(:client_id))
     else
       all
     end
   end
   def self.filter_provider(provider)
     if provider && (provider != '')
-      where(email: Booking.where(service_provider_id: provider).pluck(:email))
+      where(id: Booking.where(service_provider_id: provider).pluck(:client_id))
+    else
+      all
+    end
+  end
+  def self.filter_service(service)
+    if service && (service != '')
+      where(id: Booking.where(service_id: service).pluck(:client_id))
     else
       all
     end

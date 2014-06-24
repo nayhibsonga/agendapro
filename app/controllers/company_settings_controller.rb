@@ -1,5 +1,5 @@
 class CompanySettingsController < ApplicationController
-  before_action :set_company_setting, only: [:show, :edit, :update, :destroy]
+  before_action :set_company_setting, only: [:show, :edit, :update, :destroy, :minisite]
   before_action :authenticate_user!
   before_action :quick_add
   load_and_authorize_resource
@@ -72,6 +72,9 @@ class CompanySettingsController < ApplicationController
     @company_setting = CompanySetting.find_by(:company_id => params[:company])
   end
 
+  def minisite
+  end
+
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_company_setting
@@ -80,6 +83,6 @@ class CompanySettingsController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def company_setting_params
-      params.require(:company_setting).permit(:email, :sms, :signature, :company_id, :before_booking, :after_booking)
+      params.require(:company_setting).permit(:email, :sms, :signature, :company_id, :before_booking, :after_booking, :before_edit_booking, :activate_workflow, :activate_search)
     end
 end

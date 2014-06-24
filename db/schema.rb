@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140513201249) do
+ActiveRecord::Schema.define(version: 20140616180057) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -25,8 +25,6 @@ ActiveRecord::Schema.define(version: 20140513201249) do
     t.integer  "transaction_type_id", null: false
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.string   "token"
-    t.string   "trx_id"
   end
 
   add_index "billing_logs", ["company_id"], name: "index_billing_logs_on_company_id", using: :btree
@@ -45,15 +43,14 @@ ActiveRecord::Schema.define(version: 20140513201249) do
     t.integer  "promotion_id"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.string   "first_name",                          null: false
-    t.string   "last_name",                           null: false
-    t.string   "email",                               null: false
-    t.string   "phone",                               null: false
     t.text     "company_comment"
     t.boolean  "web_origin",          default: false
     t.boolean  "send_mail",           default: true
+    t.integer  "client_id"
+    t.float    "price",               default: 0.0
   end
 
+  add_index "bookings", ["client_id"], name: "index_bookings_on_client_id", using: :btree
   add_index "bookings", ["location_id"], name: "index_bookings_on_location_id", using: :btree
   add_index "bookings", ["promotion_id"], name: "index_bookings_on_promotion_id", using: :btree
   add_index "bookings", ["service_id"], name: "index_bookings_on_service_id", using: :btree
@@ -118,15 +115,18 @@ ActiveRecord::Schema.define(version: 20140513201249) do
 
   create_table "company_settings", force: true do |t|
     t.text     "signature"
-    t.boolean  "email",          default: false
-    t.boolean  "sms",            default: false
-    t.integer  "company_id",                     null: false
+    t.boolean  "email",               default: false
+    t.boolean  "sms",                 default: false
+    t.integer  "company_id",                          null: false
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.integer  "before_booking", default: 24,    null: false
-    t.integer  "after_booking",  default: 6,     null: false
-    t.integer  "daily_mails",    default: 50
-    t.integer  "sent_mails",     default: 0
+    t.integer  "before_booking",                      null: false
+    t.integer  "after_booking",                       null: false
+    t.integer  "daily_mails",         default: 50
+    t.integer  "sent_mails",          default: 0
+    t.integer  "before_edit_booking", default: 12
+    t.boolean  "activate_search",     default: true
+    t.boolean  "activate_workflow",   default: true
   end
 
   add_index "company_settings", ["company_id"], name: "index_company_settings_on_company_id", using: :btree
@@ -197,6 +197,7 @@ ActiveRecord::Schema.define(version: 20140513201249) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.boolean  "active",      default: true
+    t.integer  "order",       default: 0
   end
 
   add_index "locations", ["company_id"], name: "index_locations_on_company_id", using: :btree
@@ -246,6 +247,7 @@ ActiveRecord::Schema.define(version: 20140513201249) do
     t.integer  "service_provider_id"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.string   "name"
   end
 
   add_index "provider_breaks", ["service_provider_id"], name: "index_provider_breaks_on_service_provider_id", using: :btree
@@ -261,32 +263,6 @@ ActiveRecord::Schema.define(version: 20140513201249) do
 
   add_index "provider_times", ["day_id"], name: "index_provider_times_on_day_id", using: :btree
   add_index "provider_times", ["service_provider_id"], name: "index_provider_times_on_service_provider_id", using: :btree
-
-  create_table "punto_pagos_confirmations", force: true do |t|
-    t.string   "token",              null: false
-    t.string   "trx_id",             null: false
-    t.string   "payment_method",     null: false
-    t.decimal  "amount",             null: false
-    t.date     "approvement_date",   null: false
-    t.string   "card_number"
-    t.string   "dues_number"
-    t.string   "dues_type"
-    t.string   "dues_amount"
-    t.date     "first_due_date"
-    t.string   "operation_number"
-    t.string   "authorization_code", null: false
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
-
-  create_table "punto_pagos_creations", force: true do |t|
-    t.string   "trx_id",         null: false
-    t.string   "payment_method", null: false
-    t.decimal  "amount",         null: false
-    t.text     "details"
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
 
   create_table "regions", force: true do |t|
     t.string   "name",       null: false
@@ -314,19 +290,6 @@ ActiveRecord::Schema.define(version: 20140513201249) do
 
   add_index "service_categories", ["company_id"], name: "index_service_categories_on_company_id", using: :btree
 
-  create_table "service_payment_logs", force: true do |t|
-    t.string   "token"
-    t.string   "trx_id"
-    t.integer  "service_id",          null: false
-    t.integer  "company_id",          null: false
-    t.decimal  "amount",              null: false
-    t.integer  "transaction_type_id", null: false
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
-
-  add_index "service_payment_logs", ["transaction_type_id"], name: "index_service_payment_logs_on_transaction_type_id", using: :btree
-
   create_table "service_providers", force: true do |t|
     t.integer  "location_id"
     t.integer  "user_id"
@@ -336,6 +299,7 @@ ActiveRecord::Schema.define(version: 20140513201249) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.boolean  "active",             default: true
+    t.integer  "order",              default: 0
   end
 
   add_index "service_providers", ["company_id"], name: "index_service_providers_on_company_id", using: :btree

@@ -1,0 +1,298 @@
+header{
+	position: absolute;
+}
+.content-fix {
+	margin: 0 20px;
+	margin-top: 44px;
+}
+#admin-content{
+	margin-top: 0;
+	padding-bottom: 0;
+}
+#sidebar{
+	margin-top: 44px;
+}
+#locals-selector {
+	margin-top: 5px;
+	margin-bottom: 0;
+	line-height: 1;
+}
+#providers-selector {
+	margin-top: 5px;
+	margin-bottom: 0;
+	line-height: 1;
+}
+.lateralDatepicker {
+	font-size: 0.725em;
+	font-size: 0.875vw;
+	width: 100%;
+}
+.fc-header-title h2 {
+	color: rgb(51, 51, 51);
+	direction: ltr;
+	display: block;
+	font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+	font-size: 21px;
+	font-weight: 500;
+	line-height: 23.100000381469727px;
+	margin-left: 20px;
+	margin-bottom: 0px;
+	margin-top: 10px;
+	text-align: left;
+	white-space: nowrap;
+}
+.dpCollapse {
+	display: none;
+}
+.createBreak {
+	position: absolute;
+	top: 14px;
+	right: 5px;
+	z-index: 1;
+}
+.createBooking {
+	position: absolute;
+	top: 14px;
+	right: 160px;
+	z-index: 1;
+}
+.ui-datepicker-trigger {
+	position: absolute;
+	top: 14px;
+	right: 317px;
+	z-index: 1;
+}
+.modal-textarea {
+	resize: vertical;
+}
+#calendar{
+	margin-top: 10px;
+}
+.disabled {
+   color: #777777;
+}
+.modal-admin label {
+	font-size: 12px;
+}
+.modal-admin .checkbox {
+	padding-top: 0px;
+}
+.booking-modal-body .date-select {
+	padding-left: 0px;
+	padding-right: 0px;
+}
+.booking-modal-body .well-sm {
+	margin-bottom: 0px;
+}
+.booking-modal-body {
+	padding-top: 0px;
+	padding-bottom: 0px;
+}
+.booking-modal-footer {
+	margin-top: 0px;
+}
+/*.ui-autocomplete {
+	max-height: 50px;
+}*/
+/*.ui-autocomplete .ui-menu-item {
+	overflow-x: hidden;
+}*/
+.auto-desc {
+	font-size: 0.75em; 
+}
+.fc-event {
+	border-radius: 4px;
+}
+.fc-event-inner {
+	border-radius: 4px;
+}
+/*.fc-widget-content:hover {
+	background: #E1E1E1;
+}*/
+.origin-web > .fc-event-inner > .fc-event-head > .fc-event-time:before{
+	display:inline-block;
+	font-family:FontAwesome;
+	font-style:normal;
+	font-weight:normal;
+	line-height:1;
+		-webkit-font-smoothing:antialiased;
+		-moz-osx-font-smoothing:grayscale;
+	content:"\f0ac";
+	margin-right: 3px;
+	font-size:1.3333333333333333em;
+	line-height:.75em;
+	vertical-align:-15%
+}
+.origin-manual > .fc-event-inner > .fc-event-head > .fc-event-time:before{
+	display:inline-block;
+	font-family:FontAwesome;
+	font-style:normal;
+	font-weight:normal;
+	line-height:1;
+		-webkit-font-smoothing:antialiased;
+		-moz-osx-font-smoothing:grayscale;
+	content:"\f007";
+	margin-right: 3px;
+	font-size:1.3333333333333333em;
+	line-height:.75em;
+	vertical-align:-15%
+}
+.confirmed > .fc-event-inner > .fc-event-head > .fc-event-time:after{
+	display:inline-block;
+	font-family:FontAwesome;
+	font-style:normal;
+	font-weight:normal;
+	line-height:1;
+		-webkit-font-smoothing:antialiased;
+		-moz-osx-font-smoothing:grayscale;
+	content:"\f00c";
+	margin-left: 3px;
+	margin-right: 3px;
+	font-size:1.3333333333333333em;
+	line-height:.75em;
+	vertical-align:-15%
+}
+.completed > .fc-event-inner > .fc-event-head > .fc-event-time:after{
+	display:inline-block;
+	font-family:FontAwesome;
+	font-style:normal;
+	font-weight:normal;
+	line-height:1;
+		-webkit-font-smoothing:antialiased;
+		-moz-osx-font-smoothing:grayscale;
+	content:"\f046";
+	margin-left: 3px;
+	margin-right: 3px;
+	font-size:1.3333333333333333em;
+	line-height:.75em;
+	vertical-align:-15%
+}
+.noshow > .fc-event-inner > .fc-event-head > .fc-event-time:after{
+	display:inline-block;
+	font-family:FontAwesome;
+	font-style:normal;
+	font-weight:normal;
+	line-height:1;
+		-webkit-font-smoothing:antialiased;
+		-moz-osx-font-smoothing:grayscale;
+	content:"\f00d";
+	margin-left: 3px;
+	margin-right: 3px;
+	font-size:1.3333333333333333em;
+	line-height:.75em;
+	vertical-align:-15%
+}
+.payed > .fc-event-inner > .fc-event-head > .fc-event-time:after{
+	display:inline-block;
+	font-family:FontAwesome;
+	font-style:normal;
+	font-weight:normal;
+	line-height:1;
+		-webkit-font-smoothing:antialiased;
+		-moz-osx-font-smoothing:grayscale;
+	content:"\f155";
+	margin-left: 3px;
+	margin-right: 3px;
+	font-size:1.3333333333333333em;
+	line-height:.75em;
+	vertical-align:-15%
+}
+body .modal-admin {
+    width: 790px;
+}
+.popover {
+    position:absolute;
+    display:none;
+    background:#ddd;
+    border: 1px solid #999;
+    padding: 0px 10px 10px 10px;
+    width:auto;
+    box-shadow:0 0 10px rgba(0, 0, 0, .5);
+    text-align: right;
+}
+.popover:after, .popover:before {
+    right: 100%;
+    border: solid transparent;
+    content:" ";
+    height: 0;
+    width: 0;
+    position: absolute;
+    pointer-events: none;
+}
+.popover:after {
+    border-color: rgba(255, 255, 255, 0);
+    border-right-color: #ddd;
+    border-width: 10px;
+    top: 50%;
+    margin-top: -10px;
+}
+.popover:before {
+    border-color: rgba(201, 201, 201, 0);
+    border-right-color: #c9c9c9;
+    border-width: 11px;
+    top: 50%;
+    margin-top: -11px;
+}
+.closePopover i {
+	font-size:0.7em;
+}
+.actionPopover {
+	font-size:1.2em;
+	margin-right: 10px;
+	margin-left: 10px;
+	cursor: pointer;
+}
+.closePopover {
+	cursor: pointer;
+}
+/* Menu responsivo */
+@media (max-width: 1280px) { 
+	#dp {
+		font-size: 0.65em;
+		font-size: 0.875vw;
+	}
+}
+@media (max-width: 1124px) {
+	#dp {
+		font-size: 0.585em;
+		font-size: 0.875vw;
+	}
+	.createBreak {
+		right: 5px;
+		padding: 6px 12px;
+		font-size: 12px;
+	}
+	.createBooking {
+		right: 140px;
+		padding: 6px 12px;
+		font-size: 12px;
+	}
+	.ui-datepicker-trigger {
+		right: 276px;
+		padding: 6px 12px;
+		font-size: 12px;
+	}
+}
+@media (max-width: 1023px) { 
+	#dp {
+		display: none;
+	}
+	.createBreak {
+		right: 5px;
+		padding: 4px 8px;
+		font-size: 12px;
+	}
+	.createBooking {
+		right: 132px;
+		padding: 4px 8px;
+		font-size: 12px;
+	}
+	.ui-datepicker-trigger {
+		right: 260px;
+		padding: 4px 8px;
+		font-size: 12px;
+	}
+	.btn-text {
+		display: none;
+	}
+}

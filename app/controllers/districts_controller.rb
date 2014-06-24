@@ -1,14 +1,14 @@
 class DistrictsController < ApplicationController
   before_action :set_district, only: [:show, :edit, :update, :destroy]
   before_action :authenticate_user!, except: [:get_districts, :get_district, :get_direction, :get_district_by_name]
-  before_action :verify_is_super_admin, except: [:get_districts, :get_district, :get_direction, :get_district_by_name]
-  layout "admin"
+  before_action :verify_is_super_admin, except: [:get_districts, :get_district, :get_direction, :get_district_by_name, :city_districs]
+  layout "admin", except: [:get_district]
   load_and_authorize_resource
 
   # GET /districts
   # GET /districts.json
   def index
-    @districts = District.all
+    @districts = District.all.order(:name)
   end
 
   # GET /districts/1
@@ -96,6 +96,11 @@ class DistrictsController < ApplicationController
   def get_district_by_name
     @district = District.find_by(name: params[:name])
     render :json => @district
+  end
+
+  def city_districs
+    @districts = District.where(:city_id => params[:city_id]).order(:name)
+    render :json => @districts
   end
 
   private

@@ -12,33 +12,51 @@ class ClientMailer < ActionMailer::Base
 	# => Message
 	message = {
 		:from_email => current_user.email,
-		:from_name => current_user.last_name + ', ' + current_user.first_name,
+		:from_name => current_user.company.name,
 		:subject => subject,
 		:to => clients,
 		:global_merge_vars => [
-			{
-				:name => 'UNSUBSCRIBE',
-				:content => "Si desea dejar de recibir email puede dar click <a href='#{unsubscribe_url(:user => Base64.encode64(current_user.email))}'>aquí</a>."
-			},
+			# {
+			# 	:name => 'UNSUBSCRIBE',
+			# 	:content => "Si desea dejar de recibir email puede dar click <a href='#{unsubscribe_url(:user => Base64.encode64(current_user.email))}'>aquí</a>."
+			# },
 			{
 				:name => 'MESSAGE',
 				:content => message
+			},
+			{
+				:name => 'SIGNATURE',
+				:content => Company.find(current_user.company_id).company_setting.signature
+			},
+			{
+				:name => 'COMPANYNAME',
+				:content => Company.find(current_user.company_id).name
 			}
 		],
 		:tags => ['client_mail', 'Client'],
 		:images => [
-			{
-				:type => 'image/png',
-				:name => 'AgendaPro.png',
-				:content => Base64.encode64(File.read('app/assets/images/logos/logo_mail.png'))
-			}
-		],
+				{
+					:type => 'image/png',
+					:name => 'company_img.jpg',
+					:content => Base64.encode64(File.read('app/assets/ico/Iso_Pro_Color.png'))
+				}
+			],
 		:attachments => []
 	}
 
-	if company_img.length > 0
-		message[:images] << (company_img)
+	# => Logo empresa
+	if Company.find(current_user.company_id).logo_url
+		company_logo = {
+			:type => 'image/' +  File.extname(Company.find(current_user.company_id).logo_url),
+			:name => 'company_img.jpg',
+			:content => Base64.encode64(File.read('public' + Company.find(current_user.company_id).logo_url.to_s))
+		}
+		message[:images] = [company_logo]
 	end
+
+	# if company_img.length > 0
+	# 	message[:images] << (company_img)
+	# end
 
 	if attachment.length > 0
 		message[:attachments] << (attachment)

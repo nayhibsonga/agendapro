@@ -3,14 +3,14 @@
     <div clas="row" id="espacio-workflow">
       <div class="col-md-12">
         <div class="well">
-          <h4>Cancelar Cita</h4>
+          <h4>Cancelar Reserva</h4>
           <% unless params[:id] %>
           <div class="panel panel-info">
             <div class="panel-heading">
-              <h3 class="panel-title">¿Seguro que desea cancelar?</h3>
+              <h3 class="panel-title">¿Estás seguro de cancelar tu reserva?</h3>
             </div>
             <div class="panel-body">
-              <p>Si cancela su cita otra persona podrá utilizar la hora elegida.</p>
+              <p>Si cancelas tu reserva, otra persona podrá utilizar la hora liberada</p>
               <%= form_tag("/cancel_booking", method: "post", role: "form", class: "form-horizontal", id: "edit_form" ) do %>
                 <input type="hidden" name="id" id="id" value="<%= @booking.id %>">
                 <div class="form-group">
@@ -24,10 +24,10 @@
           <% else %>
           <div class="panel panel-info">
             <div class="panel-heading">
-              <h3 class="panel-title">Cita cancelada</h3>
+              <h3 class="panel-title">Reserva cancelada</h3>
             </div>
             <div class="panel-body">
-              <p>Su cita fue cancelada.</p>
+              <p>Su reserva fue cancelada correctamente</p>
             </div>
           </div>
           <% end %>

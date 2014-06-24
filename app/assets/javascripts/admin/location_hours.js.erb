@@ -119,6 +119,63 @@ function initialize() {
 			$('#closeHourId'+ value +' option[value="'+closeTime[0]+'"]').attr("selected",true);
 			$('#closeMinuteId'+ value +' option[value="'+closeTime[1]+'"]').attr("selected",true);
 		});
+		$('#country option[value="'+$('#geo_data').data('country-id')+'"]').attr("selected",true);
+		$.getJSON('/country_regions', {country_id: $('#geo_data').data('country-id')}, function (regions) {
+			if (regions.length) {
+				$('#region').empty();
+				$.each(regions, function (key, region) {
+					$('#region').append(
+						'<option value="' + region.id + '">' + region.name + '</option>'
+					);
+				});
+				$('#region').prepend(
+					'<option></option>'
+				);
+				$('#region').attr('disabled', false);
+				$('#region option[value="'+$('#geo_data').data('region-id')+'"]').attr("selected",true);
+				$('#region').change(function (event) {
+					$('#city').attr('disabled', true);
+					$('#city').val('');
+					$('#location_district_id').attr('disabled', true);
+					$('#location_district_id').val('');
+					var region_id = $(event.target).val();
+					changeRegion(region_id);
+				});
+				$.getJSON('/region_cities', {region_id: $('#geo_data').data('region-id')}, function (cities) {
+					if (cities.length) {
+						$('#city').empty();
+						$.each(cities, function (key, city) {
+							$('#city').append(
+								'<option value="' + city.id + '">' + city.name + '</option>'
+							);
+						});
+						$('#city').prepend(
+							'<option></option>'
+						);
+						$('#city').attr('disabled', false);
+						$('#city option[value="'+$('#geo_data').data('city-id')+'"]').attr("selected",true);
+						$('#city').change(function (event) {
+							$('#location_district_id').attr('disabled', true);
+							$('#location_district_id').val('');
+							var city_id = $(event.target).val();
+							changeCity(city_id);
+						});
+						$.getJSON('/city_districs', {city_id: $('#geo_data').data('city-id')}, function (districts) {
+							if (districts.length) {
+								$('#location_district_id').empty();
+								$.each(districts, function (key, district) {
+									$('#location_district_id').append(
+										'<option value="' + district.id + '">' + district.name + '</option>'
+									);
+								});
+								$('#location_district_id').attr('disabled', false);
+								$('#location_district_id option[value="'+$('#geo_data').data('district-id')+'"]').attr("selected",true);
+							};
+						});
+					};
+				});
+			};
+		});
 	}
 }
 
@@ -230,12 +287,87 @@ function saveLocation() {
 	}
 }
 
+function changeCountry (country_id) {
+	$.getJSON('/country_regions', {country_id: country_id}, function (regions) {
+		if (regions.length) {
+			$('#region').empty();
+			$.each(regions, function (key, region) {
+				$('#region').append(
+					'<option value="' + region.id + '">' + region.name + '</option>'
+				);
+			});
+			$('#region').prepend(
+				'<option></option>'
+			);
+
+			$('#region').change(function (event) {
+				$('#city').attr('disabled', true);
+				$('#city').val('');
+				$('#location_district_id').attr('disabled', true);
+				$('#location_district_id').val('');
+				var region_id = $(event.target).val();
+				changeRegion(region_id);
+			});
+			$('#region').attr('disabled', false);
+		};
+	});
+}
+
+function changeRegion (region_id) {
+	$.getJSON('/region_cities', {region_id: region_id}, function (cities) {
+		if (cities.length) {
+			$('#city').empty();
+			$.each(cities, function (key, city) {
+				$('#city').append(
+					'<option value="' + city.id + '">' + city.name + '</option>'
+				);
+			});
+			$('#city').prepend(
+				'<option></option>'
+			);
+
+			$('#city').change(function (event) {
+				$('#location_district_id').attr('disabled', true);
+				$('#location_district_id').val('');
+				var city_id = $(event.target).val();
+				changeCity(city_id);
+			});
+			$('#city').attr('disabled', false);
+		};
+	});
+}
+
+function changeCity (city_id) {
+	$.getJSON('/city_districs', {city_id: city_id}, function (districts) {
+		if (districts.length) {
+			$('#location_district_id').empty();
+			$.each(districts, function (key, district) {
+				$('#location_district_id').append(
+					'<option value="' + district.id + '">' + district.name + '</option>'
+				);
+			});
+			$('#location_district_id').attr('disabled', false);
+			$('#location_district_id').val('');
+		};
+	});
+}
+
 var alertId;
 $(function() {
 	alertId = new Alert();
-  initialize();
-  $('.buttonLocation').click(function() {
+	initialize();
+	$('.buttonLocation').click(function() {
 		startLocation();
 		return false;
+	});
+	$('#country').change(function (event) {
+		$('#region').attr('disabled', true);
+		$('#region').val('');
+		$('#city').attr('disabled', true);
+		$('#city').val('');
+		$('#location_district_id').attr('disabled', true);
+		$('#location_district_id').val('');
+		var country_id = $(event.target).val();
+		changeCountry(country_id);
 	});
 });

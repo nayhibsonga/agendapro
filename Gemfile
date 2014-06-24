@@ -99,7 +99,11 @@ gem 'roo'
 
 # File Upload
 # gem 'rmagick'
+gem "mini_magick"
 gem 'carrierwave'
+
+# Calendar
+gem 'ri_cal'
 
 # Version Movil
 gem 'mobu'

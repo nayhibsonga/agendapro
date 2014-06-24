@@ -7,9 +7,9 @@
 				<div class="row">
 					<div class="col-md-8">
 						<p>
-							Lo sentimos, hubo un error agendando el servicio.<br>
-							Puedes ver mas detalles del error <a id="errorLink" href="#">acá</a><br>.
-							Puedes reintentar agendar nuevamente <a href="<%= root_url(:host => @url) %>">aquí</a>.
+							Lo sentimos, hubo un error agendando el servicio<br>
+							Puedes ver mas detalles del error <a id="errorLink" href="#">acá</a><br>
+							Puedes reintentar agendar nuevamente <a href="<%= root_url(:host => @url) %>">aquí</a>
 						</p>
 					</div>
 					<div class="col-md-4" id="errorDiv">
@@ -21,33 +21,47 @@
 					</div>
 				</div>
 				<% else %>
-				<h3>¡Gracias <%= @booking.first_name %>!</h3>
+				<h3><%= @booking.client.first_name %>, tu reserva fue recibida correctamente</h3>
 				<p>
-					El servicio fue agendado correctamente.<br>
-					Si deseas agendar nuevamente haz click <a href="<%= root_url(:host => @url) %>">aquí</a>.
+					Si deseas agendar nuevamente haz click <a href="<%= root_url(:host => @url) %>">aquí</a>
 				</p>
-				<hr>
-				<h4>Detalles de la Reserva</h4>
-				<dl class="dl-horizontal">
-					<dt>Local</dt>
-					<dd><%= @booking.location.name %></dd>
-					<dt>Servicio</dt>
-					<dd><%= @booking.service.name %></dd>
-					<dt>Nombre</dt>
-					<dd><%= @booking.first_name %></dd>
-					<dt>Apellido</dt>
-					<dd><%= @booking.last_name %></dd>
-					<dt>Email</dt>
-					<dd><%= @booking.email %></dd>
-					<dt>Teléfono</dt>
-					<dd><%= @booking.phone %></dd>
-					<dt>Fecha</dt>
-					<dd><%= l @booking.start %></dd>
-					<% if !@booking.notes.empty? %>
-					<dt>Notas</dt>
-					<dd><%= @booking.notes %></dd>
-					<% end %>
-				</dl>
+				<div class="row">
+					<div class="col-md-6">
+						<hr>
+						<h4>Resumen de tu Reserva</h4>
+						<dl class="dl-horizontal">
+							<dt>¿Qué reservaste?</dt>
+							<dd><%= @booking.service.name %></dd>
+							<dt>¿Dónde?</dt>
+							<dd><%= @booking.location.name %></dd>
+							<dt>¿Con quién?</dt>
+							<dd><%= @booking.service_provider.public_name %></dd>
+							<dt>¿Cuándo?</dt>
+							<dd><%= l @booking.start %></dd>
+							<% if !@booking.notes.empty? %>
+							<dt>Notas</dt>
+							<dd><%= @booking.notes %></dd>
+							<% end %>
+						</dl>
+						<hr>
+						<h4>Tus Datos</h4>
+						<dl class="dl-horizontal">
+							<dt>Nombre</dt>
+							<dd><%= @booking.client.first_name %> <%= @booking.client.last_name %></dd>
+							<% if !@booking.client.email.empty? %>
+							<dt>E-mail</dt>
+							<dd><%= @booking.client.email %></dd>
+							<% end %>
+							<% if !@booking.client.phone.empty? %>
+							<dt>Teléfono</dt>
+							<dd><%= @booking.client.phone %></dd>
+							<% end %>
+						</dl>
+					</div>
+					<div class="col-md-6">
+						<%= image_tag("backgrounds/check.png", :class => "center-block") %>
+					</div>
+				</div>
 				<% end %>
 			</div>
         </div>

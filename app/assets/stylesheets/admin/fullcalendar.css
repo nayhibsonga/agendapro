@@ -118,7 +118,7 @@ html .fc,
 
 .fc-widget-header,    /* <th>, usually */
 .fc-widget-content {  /* <td>, usually */
-	border: 1px solid #ddd;
+	border: 1px solid #ccc;
 }
 	
 .fc-state-highlight { /* <td> today cell */ /* TODO: add .fc-today to <th> */
@@ -519,7 +519,7 @@ table.fc-border-separate {
 ------------------------------------------------------------------------*/
 
 .fc-event-vert {
-	border-width: 0 1px;
+	border-width: 1px 1px;
 	}
 
 .fc-event-vert.fc-event-start {
@@ -590,32 +590,4 @@ table.fc-border-separate {
 	url(<%= font_path('fontawesome-webfont.svg?v=4.0.3#fontawesomeregular') %>) format('svg');
 	font-weight: normal;
 	font-style: normal;
-}
-.origin-web > .fc-event-inner > .fc-event-head > .fc-event-time:before{
-	display:inline-block;
-	font-family:FontAwesome;
-	font-style:normal;
-	font-weight:normal;
-	line-height:1;
-		-webkit-font-smoothing:antialiased;
-		-moz-osx-font-smoothing:grayscale;
-	content:"\f0ac";
-	margin-right: 3px;
-	font-size:1.3333333333333333em;
-	line-height:.75em;
-	vertical-align:-15%
-}
-.origin-manual > .fc-event-inner > .fc-event-head > .fc-event-time:before{
-	display:inline-block;
-	font-family:FontAwesome;
-	font-style:normal;
-	font-weight:normal;
-	line-height:1;
-		-webkit-font-smoothing:antialiased;
-		-moz-osx-font-smoothing:grayscale;
-	content:"\f007";
-	margin-right: 3px;
-	font-size:1.3333333333333333em;
-	line-height:.75em;
-	vertical-align:-15%
 }
