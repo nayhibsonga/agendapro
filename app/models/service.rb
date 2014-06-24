@@ -24,4 +24,13 @@ class Service < ActiveRecord::Base
 			end
 		end
 	end
+
+	def name_with_small_outcall
+		outcallString = ''
+		if self.outcall
+			outcallString = '<br /><small>(a domicilio)</small>'
+		end
+		self.name << outcallString
+		self.name.html_safe
+	end
 end

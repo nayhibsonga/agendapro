@@ -95,6 +95,7 @@ Agendapro::Application.routes.draw do
   get "searchs/index"
   get '/search', :to => "searchs#search"
   get '/get_districts', :to => 'districts#get_districts'
+  get '/get_input_districts', :to => 'districts#get_input_districts'
   get '/get_district', :to => 'districts#get_district'
   get '/district_by_name', :to => 'districts#get_district_by_name'
 
@@ -102,6 +103,7 @@ Agendapro::Application.routes.draw do
   # Workflow - overview
   get '/schedule', :to => 'location_times#schedule_local'
   get '/local', :to => 'locations#location_data'
+  get '/local_districts', :to => 'locations#location_districts'
   # wrokflow - wizard
   get '/workflow', :to => 'companies#workflow', :as => 'workflow'
   get '/local_services', :to => 'services#location_categorized_services'

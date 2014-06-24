@@ -1,7 +1,7 @@
 class LocationsController < ApplicationController
   before_action :set_location, only: [:show, :edit, :update, :destroy, :activate, :deactivate]
-  before_action :authenticate_user!, except: [:location_data, :location_time, :get_available_time]
-  before_action :quick_add, except: [:location_data, :location_time, :get_available_time]
+  before_action :authenticate_user!, except: [:location_data, :location_time, :get_available_time, :location_districts]
+  before_action :quick_add, except: [:location_data, :location_time, :get_available_time, :location_districts]
   load_and_authorize_resource
   layout "admin", except: [:change_location_order]
 
@@ -52,6 +52,7 @@ class LocationsController < ApplicationController
   def update
     @location = Location.find(params[:id])
     @location.location_times.destroy_all
+    @location.districts.destroy_all
     respond_to do |format|
       if @location.update(location_params)
         format.html { redirect_to locations_path, notice: 'Local actualizado satisfactoriamente.' }
@@ -88,6 +89,11 @@ class LocationsController < ApplicationController
   def location_data
     location = Location.find(params[:id])
     render :json => location
+  end
+
+  def location_districts
+    location = Location.find(params[:id])
+    render :json => { :districts => location.districts, :country => location.district.city.region.country.name, :region => location.district.city.region.name, :city => location.district.city.name }
   end
 
   def location_time
@@ -314,6 +320,6 @@ class LocationsController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def location_params
-      params.require(:location).permit(:name, :address, :phone, :longitude, :latitude, :company_id, :district_id, location_times_attributes: [:id, :open, :close, :day_id, :location_id])
+      params.require(:location).permit(:name, :address, :phone, :outcall, :longitude, :latitude, :company_id, :district_id, district_ids: [], location_times_attributes: [:id, :open, :close, :day_id, :location_id])
     end
 end
