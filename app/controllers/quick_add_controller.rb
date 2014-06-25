@@ -2,6 +2,20 @@ class QuickAddController < ApplicationController
 
 	before_action :authenticate_user!
 	layout "quick_add", only: [:quick_add]
+	before_action :quick_add_filter
+
+	def quick_add_filter
+		if current_user && (current_user.role_id != Role.find_by_name("Super Admin").id) && current_user.company_id
+			@company = Company.find(current_user.company_id)
+			if @company.locations.count == 0
+				params[:step] = 0
+			elsif @company.services.count == 0
+				params[:step] = 1
+			elsif @company.service_providers.count == 0
+				params[:step] = 2
+			end
+		end
+	end
 
 	def quick_add
 		if ServiceCategory.where(company_id: current_user.company_id).count < 1
