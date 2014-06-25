@@ -143,8 +143,6 @@ class CompaniesController < ApplicationController
 		host = request.host_with_port
 		@url = @company.web_address + '.' + host[host.index(request.domain)..host.length]
 
-		@locations = Location.where(:active => true).where('company_id = ?', @company.id)
-
 		#Selected local from fase II
 		@selectedLocal = params[:local]
 

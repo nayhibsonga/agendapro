@@ -1,0 +1,69 @@
+function loadSchedule (id) {
+  $('#schedule-body').html('<%= image_tag "ajax-loader.gif", :alt => "Loader" %>');
+  $.getJSON('/schedule', {local: id}, function (schedule) {
+    $('#schedule-body').empty();
+    $.each(schedule, function (day, hour) {
+      if (hour.open) {
+        $('#schedule-body').append(
+          '<tr>' +
+            '<th>' + day + ':</th>' +
+            '<th>' + getHour(hour.open) + ' - ' + getHour(hour.close) + '</th>' +
+          '</tr>'
+        );
+      }
+    })
+  });
+}
+
+function getHour (str) {
+  var index = str.indexOf('T'); //2000-1-1T08:00:00Z
+  str = str.substring(index + 1, index + 6); //08:00
+  return str;
+}
+
+function loadServices (localId) {
+  $.getJSON('/local_services', {location: localId}, function (categorized_services) {
+    $.each(categorized_services, function (key, service_hash) {
+      if (service_hash.services.length > 0) {
+        var servicesHTML = '';
+        $.each(service_hash.services, function (key, service) {
+          servicesHTML += '<option value="' + service.id + '">' + service.name + '</option>';
+        });
+        $('#services-selector').append(
+          '<optgroup label="' + service_hash.category + '">' + servicesHTML + '</optgroup>'
+        );
+      };
+    });
+
+    $('#services-selector').change(function (event) {
+      var serviceId = $(event.target).val();
+      loadStaffs(localId, serviceId);
+    });
+  });
+}
+
+function loadStaffs (localId, serviceId) {
+  $.getJSON('/providers_services', {id: serviceId, local: localId}, function (providers) {
+    $('#staff-selector').attr('disabled', true);
+    $('#staff-selector').empty();
+    $.each(providers, function (key, provider) {
+      $('#staff-selector').append(
+        '<option value="' + provider.id + '">' + provider.public_name + '</option>'
+      );
+    });
+    $('#staff-selector').attr('disabled', false);
+  });
+  $('#staff-selector').change(function (event) {
+    $('#datepicker').attr('disabled', false);
+    $('#datepicker').pickadate({
+      monthsFull: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+      monthsShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
+      weekdaysFull: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'],
+      weekdaysShort: ['Dom', 'Lun', 'Mar', 'Mier', 'Jue', 'vie', 'Sáb'],
+      today: 'Hoy',
+      clear: '',
+      firstDay: 1,
+      format: 'dddd d !de mmmm !de yyyy'
+    });
+  });
+}
