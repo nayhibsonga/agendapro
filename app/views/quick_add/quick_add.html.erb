@@ -123,7 +123,12 @@
 							<span class="help-block"></span>
 							<div class="checkbox">
 				                <label>
-				                  <%= f.check_box :outcall %> Servicio a domicilio <br /><small id="outcallTip" class="hidden">Si el servicio no pertenece a una sucursal exclusivamente a domicilio, recomendamos ingresar las comunas que se atienden en la descripción.</small>
+				                <% if params[:step] && Company.find(current_user.company_id).locations.first.outcall %>
+				                  <%= f.check_box :outcall, :checked => true, :disabled => true  %> 
+				                <% else %>
+				                	<%= f.check_box :outcall %>
+				                <% end %>
+				                  Servicio a domicilio <br /><small id="outcallTip" class="hidden">Si el servicio no pertenece a una sucursal exclusivamente a domicilio, recomendamos ingresar las comunas que se atienden en la descripción.</small>
 				                </label>
 				              </div>
 						</div>

@@ -8,7 +8,7 @@ class QuickAddController < ApplicationController
 		if current_user && (current_user.role_id != Role.find_by_name("Super Admin").id) && current_user.company_id
 			@company = Company.find(current_user.company_id)
 			if @company.locations.count == 0
-				params[:step] = 0
+				return
 			elsif @company.services.count == 0
 				params[:step] = 1
 			elsif @company.service_providers.count == 0

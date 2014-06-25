@@ -295,6 +295,7 @@ function serviceValid () {
 		my_alert.showAlert('Debe elegir una categoria.');
 		hideLoad();
 	}
+
 	else {
 		$.ajax({
 			type: 'POST',
@@ -427,6 +428,10 @@ function saveLocation (ctrl) {
 	    success: function (result){
 	    	$('#service_provider_location_id').val(result.id);
 	    	$('#service_provider_location_id').parent().append('<p class="form-control-static">' + result.name + '</p>');
+	    	if (result.outcall) {
+	    		$('#service_outcall').prop('checked', true);
+	    		$('#service_outcall').prop('disabled', true);	
+	    	}
 
 	    	nextFn = serviceValid;
     		$('#foo5').trigger('nextPage');
