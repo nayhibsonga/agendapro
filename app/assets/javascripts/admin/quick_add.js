@@ -173,7 +173,7 @@ function startLocation () {
 		});
 	}
 	else {
-		alertId.showAlert('Dirección y/o Comuna no pueden estar vacías.');
+		my_alert.showAlert('Dirección y/o Comuna no pueden estar vacías.');
 		hideLoad();
 	}
 }
