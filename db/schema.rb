@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140619213149) do
+ActiveRecord::Schema.define(version: 20140625205258) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -120,8 +120,8 @@ ActiveRecord::Schema.define(version: 20140619213149) do
     t.integer  "company_id",                          null: false
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.integer  "before_booking",                      null: false
-    t.integer  "after_booking",                       null: false
+    t.integer  "before_booking",      default: 24,    null: false
+    t.integer  "after_booking",       default: 6,     null: false
     t.integer  "daily_mails",         default: 50
     t.integer  "sent_mails",          default: 0
     t.integer  "before_edit_booking", default: 12
@@ -284,6 +284,16 @@ ActiveRecord::Schema.define(version: 20140619213149) do
 
   add_index "regions", ["country_id"], name: "index_regions_on_country_id", using: :btree
 
+  create_table "resources", force: true do |t|
+    t.string   "name"
+    t.integer  "quantity"
+    t.integer  "location_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "resources", ["location_id"], name: "index_resources_on_location_id", using: :btree
+
   create_table "roles", force: true do |t|
     t.string   "name",        null: false
     t.text     "description", null: false
@@ -316,6 +326,16 @@ ActiveRecord::Schema.define(version: 20140619213149) do
   add_index "service_providers", ["company_id"], name: "index_service_providers_on_company_id", using: :btree
   add_index "service_providers", ["location_id"], name: "index_service_providers_on_location_id", using: :btree
   add_index "service_providers", ["user_id"], name: "index_service_providers_on_user_id", using: :btree
+
+  create_table "service_resources", force: true do |t|
+    t.integer  "service_id"
+    t.integer  "resource_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "service_resources", ["resource_id"], name: "index_service_resources_on_resource_id", using: :btree
+  add_index "service_resources", ["service_id"], name: "index_service_resources_on_service_id", using: :btree
 
   create_table "service_staffs", force: true do |t|
     t.integer  "service_id",          null: false

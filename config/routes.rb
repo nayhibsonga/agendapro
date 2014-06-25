@@ -1,5 +1,7 @@
 Agendapro::Application.routes.draw do
 
+  resources :resources
+
   resources :clients
 
   get "users/index"
@@ -34,6 +36,7 @@ Agendapro::Application.routes.draw do
   resources :bookings
   resources :service_providers
   resources :service_categories
+  resources :resources
   resources :clients
 
   namespace :admin do 
