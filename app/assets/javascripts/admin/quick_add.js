@@ -629,6 +629,7 @@ function changeCity (city_id) {
 				);
 			});
 			$('#location_district_id').attr('disabled', false);
+			$('#foo5').trigger('updateSizes');
 		};
 	});
 }
