@@ -69,6 +69,8 @@ class Ability
     can :get_available_time, Location
     can :company_service_categories, ServiceCategory
     can :check_user_cross_bookings, Booking
+    can :select_hour, Company
+    can :user_data, Company
 
     can :edit_booking, Booking
     can :edit_booking_post, Booking

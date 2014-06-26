@@ -102,7 +102,7 @@ Agendapro::Application.routes.draw do
   # Workflow - overview
   get '/schedule', :to => 'location_times#schedule_local'
   get '/local', :to => 'locations#location_data'
-  # wrokflow - wizard
+  # Workflow - wizard
   get '/workflow', :to => 'companies#workflow', :as => 'workflow'
   get '/local_services', :to => 'services#location_categorized_services'
   get '/location_services', :to => 'services#location_services'
@@ -114,6 +114,9 @@ Agendapro::Application.routes.draw do
   post "/book", :to => 'bookings#book_service'
   get '/get_available_time', :to => 'locations#get_available_time'
   get '/check_user_cross_bookings', :to => 'bookings#check_user_cross_bookings'
+  # Workflow - Mobile
+  post '/select_hour', :to => 'companies#select_hour'
+  post '/user_data', :to => 'companies#user_data'
 
   # Fullcalendar
   get '/service', :to => 'services#service_data'  # Fullcalendar

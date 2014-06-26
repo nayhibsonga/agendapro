@@ -1,0 +1,68 @@
+<div class="container" style="margint-bottom: 45px;">
+	<div class="row">
+		<div class="col-xs-12">
+			<%= form_tag("book", method: "post", role: "form") do %>
+            	<%= hidden_field_tag :service, @service.id %>
+            	<%= hidden_field_tag :provider, @provider.id %>
+            	<%= hidden_field_tag :start, @start %>
+            	<%= hidden_field_tag :end, @end %>
+            	<%= hidden_field_tag :origin, @origin %>
+            	<%= hidden_field_tag :location, @location.id %>
+            	<div id="user-data">
+					<div class="form-group">
+						<%= label_tag(:firstName, "Nombre", class: "col-sm-3 control-label") %>
+						<div class="col-sm-9">
+							<%= text_field_tag(:firstName, if user_signed_in? then current_user.first_name else nil end, :class => "form-control", :placeholder => "Matias", :required => true) %>
+						</div>
+					</div>
+					<div class="form-group">
+						<%= label_tag(:lastName, "Apellido", class: "col-sm-3 control-label") %>
+						<div class="col-sm-9">
+							<%= text_field_tag(:lastName, if user_signed_in? then current_user.last_name else nil end, :class => "form-control", :placeholder => "Rossi", :required => true) %>
+						</div>
+					</div>
+					<div class="form-group">
+						<%= label_tag(:email, "E-mail", class: "col-sm-3 control-label") %>
+						<div class="col-sm-9">
+							<%= email_field_tag(:email, if user_signed_in? then current_user.email else nil end, :class => "form-control", :placeholder => "ejemplo@dominio.com", :required => true) %>
+						</div>
+					</div>
+					<div class="form-group">
+						<%= label_tag(:phone, "Teléfono", class: "col-sm-3 control-label") %>
+						<div class="col-sm-9">
+							<%= telephone_field_tag(:phone, if user_signed_in? then current_user.phone else nil end, :class => "form-control", :placeholder => "97193440", :required => true) %>
+						</div>
+					</div>
+            	</div>
+            	<p id="user-message">Estas agendando como <strong><%= if user_signed_in? then current_user.email else '' end %></strong>.<br /> Si no eres tu, haz click <a href="#" id="user-change">aquí</a><br /></p>
+				<div class="form-group">
+					<%= label_tag(:comment, "Comentario", class: "col-sm-3 control-label") %>
+					<div class="col-sm-9">
+						<%= text_area_tag(:comment, nil, :class => "form-control", :placeholder => "Escribe tus comentarios para notificarlos por favor.", :rows => 4) %>
+					</div>
+				</div>
+				<div class="form-group">
+					<div class="col-sm-offset-3 col-sm-9">
+						<button type="submit" class="btn btn-agendapro-oscuro" id="submitBtn">Agendar</button>
+					</div>
+				</div>
+			<% end %>
+		</div>
+	</div>
+</div>
+
+<% content_for :scripts do %>
+<script type="text/javascript">
+	$(function() {
+		<% if user_signed_in? %>
+		$('#user-data').hide();
+		$('#user-change').click(function () {
+			$('#user-data').show();
+			$('#user-message').hide();
+		});
+		<% else %>
+		$('#user-message').hide();
+		<% end %>
+	});
+</script>
+<% end %>

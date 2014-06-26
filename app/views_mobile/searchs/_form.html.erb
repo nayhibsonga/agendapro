@@ -6,7 +6,6 @@
 		<%= select_tag :district, options_from_collection_for_select(District.all, :id, :name), class: 'form-control input-lg' %>
 	</div>
 	<div class="col-sm-12 bottom-20" id="searchbar-result">
-			<!-- <input type="hidden" id="district" name="district"> -->
 			<input type="hidden" id="latitude" name="latitude" value="-33.412819">
 			<input type="hidden" id="longitude" name="longitude" value="-70.591945">
 			<div class="input-group">
@@ -17,33 +16,6 @@
 			</div>
 	</div>
 <% end %>
-
-<!-- <div class="modal fade" id="modalLocation" tabindex="-1" role="dialog" aria-labelledby="modalLocationLabel" aria-hidden="true">
-	<div class="modal-dialog">
-		<div class="modal-content">
-			<div class="modal-header">
-				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-				<h4 class="modal-title">Selecciona tu Comuna</h4>
-			</div>
-			<div class="modal-body">
-				<form class="form-horizontal" role="form" id="form-location">
-					<div class="form-group">
-						<%= label_tag :location_autocomplete, 'Comuna', :class => 'control-label col-md-2' %>
-						<div class="col-md-8">
-							<%= text_field_tag :location_autocomplete, nil, :placeholder => 'Las Condes', :class => 'form-control' %>
-							<ul id="suggestions"></ul>
-						</div>
-					</div>
-				</form>
-			</div>
-			<div class="modal-footer">
-				<button type="button" class="btn btn-agendapro-oscuro pull-left" id="geo">Encuéntrame</button>
-				<button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
-				<button type="button" class="btn btn-agendapro-claro" id="save">Guardar</button>
-			</div>
-		</div>
-	</div>
-</div> -->
 
 <%= content_tag "div", id: "geolocation", data: {geolocation: @geolocation} do %>
 <% end %>

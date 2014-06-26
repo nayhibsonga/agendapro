@@ -29,31 +29,34 @@ function loadServices (localId) {
         $.each(service_hash.services, function (key, service) {
           servicesHTML += '<option value="' + service.id + '">' + service.name + '</option>';
         });
-        $('#services-selector').append(
+        $('#services').append(
           '<optgroup label="' + service_hash.category + '">' + servicesHTML + '</optgroup>'
         );
       };
     });
 
-    $('#services-selector').change(function (event) {
+    $('#services').change(function (event) {
       var serviceId = $(event.target).val();
-      loadStaffs(localId, serviceId);
+      loadProviders(localId, serviceId);
     });
   });
 }
 
-function loadStaffs (localId, serviceId) {
+function loadProviders (localId, serviceId) {
   $.getJSON('/providers_services', {id: serviceId, local: localId}, function (providers) {
-    $('#staff-selector').attr('disabled', true);
-    $('#staff-selector').empty();
+    $('#providers').attr('disabled', true);
+    $('#providers').empty();
     $.each(providers, function (key, provider) {
-      $('#staff-selector').append(
+      $('#providers').append(
         '<option value="' + provider.id + '">' + provider.public_name + '</option>'
       );
     });
-    $('#staff-selector').attr('disabled', false);
+    $('#providers').attr('disabled', false);
   });
-  $('#staff-selector').change(function (event) {
+  $('#providers').change(function (event) {
+    var minDate = new Date($('#timeInterval').data('min'));
+    var maxDate = new Date($('#timeInterval').data('max'));
+
     $('#datepicker').attr('disabled', false);
     $('#datepicker').pickadate({
       monthsFull: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
@@ -63,7 +66,30 @@ function loadStaffs (localId, serviceId) {
       today: 'Hoy',
       clear: '',
       firstDay: 1,
-      format: 'dddd d !de mmmm !de yyyy'
+      format: 'dddd d !de mmmm !de yyyy',
+      formatSubmit: 'yyyy/mm/dd',
+      hiddenName: true,
+      min: minDate,
+      max: maxDate,
+      onSet: function (context) {
+        $('.cambiar-comuna').show();
+      }
     });
   });
+}
+
+function addBooking (date, start, end) {
+  selected = true;
+  $('#start').val(generateDate(date, start));
+  $('#end').val(generateDate(date, end));
+}
+
+function generateDate(date, time) {
+  var year = date.substring(0, date.indexOf('-'));
+  var month = date.substring(date.indexOf('-') + 1, date.lastIndexOf('-'));
+  var day = date.substring(date.lastIndexOf('-') + 1);
+
+  time += ':00';
+
+  return year + '-' + month + '-' + day + ' ' + time;
 }
