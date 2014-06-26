@@ -34,7 +34,12 @@ function loadServices (localId) {
         );
       };
     });
-
+    $('#services').prepend(
+      '<option value="0">Seleccione un servicio</option>'
+    );
+    $('#services').one('change', function (event) {
+      $('#services option:first').remove();
+    });
     $('#services').change(function (event) {
       var serviceId = $(event.target).val();
       loadProviders(localId, serviceId);
@@ -51,7 +56,14 @@ function loadProviders (localId, serviceId) {
         '<option value="' + provider.id + '">' + provider.public_name + '</option>'
       );
     });
+    $('#providers').prepend(
+      '<option value="0">Seleccione un staff</option>'
+    );
     $('#providers').attr('disabled', false);
+  });
+
+  $('#providers').one('change', function (event) {
+    $('#providers option:first').remove();
   });
   $('#providers').change(function (event) {
     var minDate = new Date($('#timeInterval').data('min'));

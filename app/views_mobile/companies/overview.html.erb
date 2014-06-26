@@ -2,7 +2,11 @@
 	<div class="row">
 		<div class="col-xs-12">
 			<div class="single-local">
-				<%= image_tag 'mobile/jonnhy.png' %>
+				<% if @company.logo_url %>
+		        <%= image_tag @company.logo_url.to_s, :alt => @company.name %>
+		        <% else %>
+		        <%= image_tag 'Iso_Pro_Color.png', :alt => 'AgendaPro' %>
+		        <% end %>
 				<% @locations.each do |location| %>
 				<a href="<%= url_for(:host => @url, :local => location.id, :controller => 'companies', :action => 'workflow') %>">
 					<div class="bloque-local" data-location="<%= location.id %>">
