@@ -33,7 +33,7 @@
 		<!-- start: Header -->
 		<header>
 			<h2>AGENDAPRO</h2>
-			<a id="btn-principal" href="#menu"><span>menu</span></a>
+			<a id="btn-principal" class="nav-toggler toggle-slide-right" href="#menu"><span>menu</span></a>
 			</div>
 		</header>
 		<!-- end: Header -->
@@ -41,10 +41,10 @@
 		<!-- start: menu -->
 		<nav class="menu slide-menu-right">
 			<ul>
-				<li><%= link_to 'AGENDAPRO', root_url(:subdomain => false) %></li>
-				<li><%= link_to 'INICIA SESION', new_user_session_url(:subdomain => false) %></li>
-				<li><%= link_to 'REGISTRATE', new_user_registration_url(:subdomain => false) %></li>
-				<li><%= link_to 'AGREGA TU EMPRESA', home_url(:subdomain => false) %></li>
+				<li><%= link_to 'AGENDAPRO', root_path %></li>
+				<li><%= link_to 'INICIA SESION', new_user_session_path %></li>
+				<li><%= link_to 'REGISTRATE', new_user_registration_path %></li>
+				<li><%= link_to 'AGREGA TU EMPRESA', home_path %></li>
 				<li><button class="close-menu">Cerrar &rarr;</button></li>
 			</ul>
 		</nav><!-- /slide menu right -->
