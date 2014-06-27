@@ -21,118 +21,6 @@
 		<!-- start: CSS -->
 		<%= stylesheet_link_tag "mobile" %>
 		<%= yield :stylesheets %>
-		<style type="text/css">
-			/* ------------------------------------------------------------ *\
-			|* ------------------------------------------------------------ *|
-			|* Template
-			|* ------------------------------------------------------------ *|
-			\* ------------------------------------------------------------ */
-			#wrapper {
-			    position: relative;
-			    z-index: 10;
-			    top: 0;
-			    left: 0;
-			    -webkit-transition: all 0.3s;
-			    -moz-transition: all 0.3s;
-			    -ms-transition: all 0.3s;
-			    -o-transition: all 0.3s;
-			    transition: all 0.3s;
-			}
-			.mask {
-			    position: fixed;
-			    top: 0;
-			    left: 0;
-			    z-index: 15;
-			    width: 100%;
-			    height: 100%;
-			    background: rgba(0, 0, 0, 0.8);
-			}
-			/* ------------------------------------------------------------ *\
-			|* ------------------------------------------------------------ *|
-			|* Menus
-			|* ------------------------------------------------------------ *|
-			\* ------------------------------------------------------------ */
-			/* general style for all menus */
-			nav.menu {
-			    position: fixed;
-			    z-index: 20;
-			    background-color: #67b5d1;
-			    overflow: hidden;
-			    -webkit-transition: all 0.3s;
-			    -moz-transition: all 0.3s;
-			    -ms-transition: all 0.3s;
-			    -o-transition: all 0.3s;
-			    transition: all 0.3s;
-			}
-			nav.menu ul {
-			    list-style-type: none;
-			    margin: 0;
-			    padding: 0;
-			}
-			nav.menu a {
-			    font-weight: 300;
-			    color: #fff;
-			}
-			button.close-menu {
-			    background-color: #3184a1;
-			    color: #fff;
-			}
-			button.close-menu:focus {
-			    outline: none
-			}
-			/* slide menu left and right, push menu left and right */
-			nav.slide-menu-left {
-			    top: 0;
-			    width: 300px;
-			    height: 100%;
-			}
-			nav.slide-menu-left li {
-			    display: block;
-			    text-align: center;
-			    border-bottom: solid 1px #3184a1;
-			    border-top: solid 1px #b5dbe9;
-			}
-			nav.slide-menu-left li:first-child {
-			    border-top: none
-			}
-			nav.slide-menu-left li:last-child {
-			    border-bottom: none
-			}
-			nav.slide-menu-left a {
-			    display: block;
-			    padding: 10px;
-			    font-size: 18px;
-			}
-			nav.slide-menu-left button.close-menu {
-			    margin: 10px 0;
-			    padding: 10px 30px;
-			    background-color: #3184a1;
-			    color: #fff;
-			}
-			nav.slide-menu-left {
-			    left: -300px
-			}
-			body.sml-open nav.slide-menu-left {
-			    left: 0
-			}
-			/* ------------------------------------------------------------ *\
-			|* ------------------------------------------------------------ *|
-			|* Media Queries
-			|* ------------------------------------------------------------ *|
-			\* ------------------------------------------------------------ */
-			@media all and (max-width: 330px) { 
-				nav.slide-menu-left {
-				  	top: 0;
-				  	width: 100%;
-				}
-				nav.slide-menu-leftt {
-				  	left: -100%
-				}
-				body.sml-open nav.slide-menu-left {
-				  	left: 0
-				}
-			}
-		</style>
 		<%= stylesheet_link_tag "http://fonts.googleapis.com/css?family=Open+Sans:400,300,400italic,600,600italic,700,700italic,300italic" %>
 		<!-- end: CSS -->
 
@@ -146,33 +34,24 @@
 
 	<body>
 		<!-- start: Header -->
-		<header style="z-index: 11;">
+		<header>
 			<%= link_to '', :back, :class => "volver" %>
 			<h2><%= @company.name %></h2>
-			<a id="btn-principal" class="nav-toggler toggle-slide-left" href="#menu"><span>menu</span></a>
+			<a id="btn-principal" class="nav-toggler toggle-slide-right" href="#menu"><span>menu</span></a>
 			</div>
 		</header>
 		<!-- end: Header -->
 
 		<!-- start: menu -->
-		<nav class="menu slide-menu-left">
+		<nav class="menu slide-menu-right">
 			<ul>
-				<li><button class="close-menu">&larr; Close</button></li>
-				<li><a href="#">Broccoli</a></li>
-				<li><a href="#">Tomato</a></li>
-				<li><a href="#">Cucumber</a></li>
-				<li><a href="#">Kale</a></li>
-				<li><a href="#">Celery</a></li>
+				<li><%= link_to 'AGENDAPRO', root_url(:subdomain => false) %></li>
+				<li><%= link_to 'INICIA SESION', new_user_session_url(:subdomain => false) %></li>
+				<li><%= link_to 'REGISTRATE', new_user_registration_url(:subdomain => false) %></li>
+				<li><%= link_to 'AGREGA TU EMPRESA', home_url(:subdomain => false) %></li>
+				<li><button class="close-menu">Cerrar &rarr;</button></li>
 			</ul>
-		</nav><!-- /slide menu left -->
-		<!-- <nav id="menu">
-			<ul>
-				<li class="Selected"><a href="<%= root_path %>">AGENDAPRO</a></li>
-				<li><a href="<%= new_user_session_path %>">INICIA SESION</a></li>
-				<li><a href="<%= new_user_registration_path %>">REGISTRATE</a></li>
-				<li><a href="<%= home_path %>">AGREGA TU EMPRESA</a></li>
-			</ul>
-		</nav> -->
+		</nav><!-- /slide menu right -->
 		<!-- end: menu -->
 
 		<!-- start: content -->
@@ -198,53 +77,6 @@
 		<!-- start: JavaScript-->
 		<%= yield :scripts %>
 		<%= javascript_include_tag "mobile-workflow" %>
-		<script type="text/javascript">
-			/**
-			 * The nav stuff
-			 */
-			(function( window ){
-				
-				'use strict';
-
-				var body = document.body,
-					mask = document.createElement("div"),
-					toggleSlideLeft = document.querySelector( ".toggle-slide-left" ),
-					slideMenuLeft = document.querySelector( ".slide-menu-left" ),
-					activeNav
-				;
-				mask.className = "mask";
-
-				/* slide menu left */
-				toggleSlideLeft.addEventListener( "click", function(){
-					$(body).addClass('sml-open');
-					document.body.appendChild(mask);
-					activeNav = "sml-open";
-				} );
-
-				/* hide active menu if mask is clicked */
-				mask.addEventListener( "click", function(){
-					$(body).removeClass(activeNav);
-					activeNav = "";
-					document.body.removeChild(mask);
-				} );
-
-				/* hide active menu if close menu button is clicked */
-				[].slice.call(document.querySelectorAll(".close-menu")).forEach(function(el,i){
-					el.addEventListener( "click", function(){
-						$(body).removeClass(activeNav);
-						activeNav = "";
-						document.body.removeChild(mask);
-					} );
-				});
-			})( window );
-		</script>
-		<!--<script>
-			$(function() {
-				$('nav#menu').mmenu({
-					classes: 'mm-light'
-				});
-			});
-		</script>-->
 		<!-- end: JavaScript-->
 	</body>
 </html>

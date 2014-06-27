@@ -39,14 +39,15 @@
 		<!-- end: Header -->
 
 		<!-- start: menu -->
-		<nav id="menu">
+		<nav class="menu slide-menu-right">
 			<ul>
-				<li class="Selected"><a href="<%= root_path %>">AGENDAPRO</a></li>
-				<li><a href="<%= new_user_session_path %>">INICIA SESION</a></li>
-				<li><a href="<%= new_user_registration_path %>">REGISTRATE</a></li>
-				<li><a href="<%= home_path %>">AGREGA TU EMPRESA</a></li>
+				<li><%= link_to 'AGENDAPRO', root_url(:subdomain => false) %></li>
+				<li><%= link_to 'INICIA SESION', new_user_session_url(:subdomain => false) %></li>
+				<li><%= link_to 'REGISTRATE', new_user_registration_url(:subdomain => false) %></li>
+				<li><%= link_to 'AGREGA TU EMPRESA', home_url(:subdomain => false) %></li>
+				<li><button class="close-menu">Cerrar &rarr;</button></li>
 			</ul>
-		</nav>
+		</nav><!-- /slide menu right -->
 		<!-- end: menu -->
 
 		<!-- start: content -->
@@ -75,14 +76,6 @@
 		<%= yield :scripts %>
 		<%= javascript_include_tag "mobile-search" %>
 		<%= javascript_include_tag "http://maps.google.com/maps/api/js?sensor=false" %>
-
-		<script>
-			$(function() {
-				$('nav#menu').mmenu({
-					classes: 'mm-light'
-				});
-			});
-		</script>
 		<!-- end: JavaScript-->
 	</body>
 </html>

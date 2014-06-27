@@ -1,5 +1,5 @@
 //= require bootstrap.min.js
-//= require mobile/jquery.mmenu.js
+//= require SlideMenu
 //= require Alert
 //= require ga
 
