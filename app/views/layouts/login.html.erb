@@ -106,6 +106,11 @@
                         <div class="text-right col-sm-6 col-md-6">
                             <%= link_to 'Sobre Nosotros', '/about_us', :target => :blank %> | <%= link_to 'Términos y Condiciones', '/TyC.pdf', :target => :blank %>
                         </div>
+                        <% if mobile_browser? %>
+                        <div class="col-xs-12">
+                            <%= link_to 'Sitio Movil', prefer_mobile_site_url %>
+                        </div>
+                        <% end %>
                     </div>
                 </div>
             </section>

@@ -19,7 +19,7 @@
         <!-- end: Mobile Specific -->
 
         <!-- start: CSS -->
-        <%= stylesheet_link_tag "login" %>
+        <%= stylesheet_link_tag "mobile" %>
         <%= stylesheet_link_tag "http://fonts.googleapis.com/css?family=Open+Sans:400,300,400italic,600,600italic,700,700italic,300italic" %>
         <!-- end: CSS -->
 
@@ -31,96 +31,57 @@
         <%= favicon_link_tag "Iso_Pro_Color.png", :rel => "shortcut icon" %>
 	</head>
 
-	<body>
-		<!-- start: Header -->
+	<body id="loading">
+        <!-- start: Header -->
         <header>
-            <div id="barra-superior">
-                <div class="container">
-                    <div class="row">
-                        <a href="<%= root_path %>" id="logo"></a>
-                        <a href="#" id="menu-display"><span class="fa fa-align-justify"></span> MENU</a>
-                        <ul class="nav nav-pills pull-right">                    
-                            <% if user_signed_in? %>
-                            <li class="dropdown">
-                                <a href="#" class="dropdown-toggle" data-toggle="dropdown"><%= current_user.email %> <i class="fa fa-chevron-down"></i></a>
-                                <ul class="dropdown-menu">
-                                    <li><%= link_to '<i class="fa fa-calendar"></i> Mi Agenda'.html_safe, my_agenda_path(:id => current_user.id) %></li>
-                                    <li><%= link_to '<i class="fa fa-dashboard"></i> Dashboard'.html_safe, dashboard_path if current_user.role_id != Role.find_by(name: 'Usuario Registrado').id %></li>
-                                    <li><%= link_to '<i class="fa fa-user"></i> Editar Perfil'.html_safe, edit_user_registration_path %></li>
-                                    <li><%= link_to '<i class="fa fa-power-off"></i> Salir'.html_safe, destroy_user_session_path, method: :delete %></li>
-                                </ul>
-                            </li>
-                            <% else %>
-                                <li><a href="#" data-toggle="modal" data-target="#signin-modal"><i class="fa fa-user"></i> Inicia Sesión</a></li>
-                                <li><a href="#" data-toggle="modal" data-target="#signup-modal"><i class="fa fa-pencil-square-o"></i> Regístrate</a></li>
-                                <li><%= link_to '<i class="fa fa-home"></i> Agrega tu empresa'.html_safe, home_path %></li>
-                            <% end %>
-                        </ul>
-                    </div>
-                </div>
+            <h2>AGENDAPRO</h2>
+            <a id="btn-principal" class="nav-toggler toggle-slide-right" href="#menu"><span>menu</span></a>
             </div>
-            <!-- start: Alerts -->
-            <% if notice %>
-            <div class="alert alert-info alert-dismissable">
-                <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-                <%= notice %>
-            </div>
-            <% end %>
-            <% if alert %>
-            <div class="alert alert-warning alert-dismissable">
-                <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-                <%= alert %>
-            </div>
-            <% end %>
-            <!-- end: Alerts -->
         </header>
         <!-- end: Header -->
-		
-		<div class="main">
-			<div class="container">
-				<%= yield %>
+
+        <!-- start: menu -->
+        <nav class="menu slide-menu-right">
+            <ul>
+                <li><%= link_to 'AGENDAPRO', root_path %></li>
+                <% if user_signed_in? %>
+                <li><%= link_to current_user.email.upcase, edit_user_registration_path %></li>
+                <li><%= link_to 'SALIR', destroy_user_session_path, method: :delete %></li>
+                <% else %>
+                <li><%= link_to 'INICIA SESION', new_user_session_path %></li>
+                <li><%= link_to 'REGISTRATE', new_user_registration_path %></li>
+                <!-- <li><%= link_to 'AGREGA TU EMPRESA', home_path %></li> -->
+                <% end %>
+                <li><button class="close-menu">Cerrar &rarr;</button></li>
+            </ul>
+            <span><%= link_to 'Sitio Completo', prefer_full_site_url %></span>
+        </nav><!-- /slide menu right -->
+
+        <!-- start: content -->
+        <div id="wrapper">
+            <!-- start: Alerts -->
+            <% if notice %>
+                <div class="alert alert-info alert-dismissable">
+                    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                    <%= notice %>
+                </div>
+            <% end %>
+            <% if alert %>
+                <div class="alert alert-warning alert-dismissable">
+                    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                    <%= alert %>
+                </div>
+            <% end %>
+            <!-- end: Alerts -->
+            <div class="container">
+                <%= yield %>
             </div>
         </div>
-        <%= render 'layouts/modals' %>
+        <!-- end: content -->
 
-        <footer>
-            <section id="footer_teasers_wrapper">
-                <div class="container">
-                    <div class="row">
-                        <div class="footer_teaser col-sm-12 col-md-12">
-                            <h3>AgendaPro - Sistema de Reservas Online</h3>
-                            <p>
-                                <span class="txt-footer"><i class="fa fa-map-marker"></i> Nuestra Se&ntilde;ora de los Angeles 185, Oficina D, Las Condes, Santiago </span>
-                                <span class="txt-footer"><i class="fa fa-phone"></i> (+56 9) 5178 5898 </span>
-                                <span><i class="fa fa-envelope"></i> contacto@agendapro.cl </span>
-                            </p>
-                        </div>
-                    </div>
-                </div>
-            </section>
-            <section class="copyright">
-                <div class="container">
-                    <div class="row">
-                        <div class="col-sm-6 col-md-6"> &copy; Copyright 2013 | Gunei Investment SpA | Todos los derechos reservados</div>
-                        <div class="text-right col-sm-6 col-md-6">
-                            <%= link_to 'Sobre Nosotros', '/about_us', :target => :blank %> | <%= link_to 'Términos y Condiciones', '/TyC.pdf', :target => :blank %>
-                        </div>
-                    </div>
-                </div>
-            </section>
-        </footer>
-        
-		<!-- start: JavaScript-->
+        <!-- start: JavaScript-->
         <%= yield :scripts %>
-        <%= javascript_include_tag "login" %>
-        <%= javascript_include_tag "jquery.browser.min" %>
-        <%= javascript_include_tag "browser-detect" %>
-
-        <script>
-          $( "#menu-display" ).click(function() {
-            $( ".nav-pills" ).toggle( "slow" );
-          });
-        </script>
+        <%= javascript_include_tag "mobile-login" %>
         <!-- end: JavaScript-->
 	</body>
 </html>
