@@ -34,7 +34,7 @@
 	<body>
 		<!-- start: Header -->
 		<header>
-			<a href="<%= root_url(:host => request.domain) %>" id="logo"></a>
+			<a href="<%= root_without_subdomain %>" id="logo"></a>
 			<ul class="pull-right" id ="menu-usuario">
 				<li><a href="#" id="open-usuario"><%= current_user.email %> <span class="fa fa-chevron-down"></span></a>
 					<ul id="sub-menu-usuario" class="close-menu-usuario">
@@ -180,10 +180,10 @@
 				});
 
 				<% if params[:step] %>
-				$('#foo5').trigger('slideToPage', <%= params[:step] %>);
-					<% if params[:step] == '1' %>
+					$('#foo5').trigger('slideToPage', <%= params[:step] %>);
+					<% if params[:step] == 1 %>
 					nextFn = serviceValid;
-					<% elsif params[:step] == '2' %>
+					<% elsif params[:step] == 2 %>
 					nextFn = providerValid;
 					loadProvider();
 					<% end %>

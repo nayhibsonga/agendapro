@@ -192,6 +192,7 @@ class BookingsController < ApplicationController
 
   def book_service
     @company = Location.find(params[:location]).company
+    params[:comment] += ' - Dirección del cliente (donde se debe realizar el servicio): ' + params[:address]
     if Client.where(email: params[:email], company_id: @company).count > 0
       client = Client.where(email: params[:email], company_id: @company).first
     else
@@ -208,6 +209,7 @@ class BookingsController < ApplicationController
         @booking = Booking.new(start: params[:start], end: params[:end], notes: params[:comment], service_provider_id: params[:provider], service_id: params[:service], location_id: params[:location], status_id: Status.find_by(name: 'Reservado').id, client_id: client.id, web_origin: params[:origin])
       end
     end
+    @booking.price = Service.find(params[:service]).price
     if @booking.save
       flash[:notice] = "Servicio agendado"
 

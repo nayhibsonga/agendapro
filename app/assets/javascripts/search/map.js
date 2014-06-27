@@ -78,7 +78,9 @@ $(function() {
     $.each($('#results').data('results'), function (key, local) {
         loadSchedule(local.id);
         var latLng = new google.maps.LatLng(local.latitude, local.longitude);
-        setMarker(latLng, local.name, i);
+        if (!local.outcall) {
+            setMarker(latLng, local.name, i);
+        }
         i++;
 
         fullBounds.extend(latLng);

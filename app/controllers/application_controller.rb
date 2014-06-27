@@ -19,8 +19,6 @@ class ApplicationController < ActionController::Base
     redirect_to "/403"
   end
 
-  # before_filter :subdomain
-
   protected
   
   def quick_add
@@ -70,21 +68,5 @@ class ApplicationController < ActionController::Base
   def after_sign_out_path_for(resource_or_scope)
     root_path
   end
-
-  # def subdomain
-  #   if send(:_layout) == 'admin' and user_signed_in?
-  #     if current_user.company
-  #       redirect_to subdomain: current_user.company.web_address unless request.subdomain == current_user.company.web_address
-  #     end
-  #   end
-  # end
-
-  # def layout
-  #   if is_a?(Devise::SessionsController)
-  #     return "login"
-  #   elsif is_a?(Devise::RegistrationsController)
-  #     return "login"
-  #   end
-  # end
 
 end

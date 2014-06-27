@@ -39,6 +39,9 @@ $(function() {
 		$('#service_capacity').closest('.form-group').removeClass('hidden');
 		$('#foo5').trigger('updateSizes');
 	}
+	if ($('#service_outcall').prop('checked')) {
+		$('#outcallTip').removeClass('hidden');
+	}
 	$('input[name="selectLocation"]').change(function (event) {
 		var id = $(event.target).attr('id').replace('selectLocation', '');
 		$('#location' + id).find('input.check_boxes').each( function () {
@@ -57,5 +60,13 @@ $(function() {
 			prop = prop && $(this).prop('checked');
 		});
 		$(event.target).parents('.panel').find('input[name="selectLocation"]').prop('checked', prop);
+	});
+	$('#service_outcall').change(function() {
+		if (!$('#service_outcall').prop('checked')) {
+			$('#outcallTip').addClass('hidden');
+		}
+		else {
+			$('#outcallTip').removeClass('hidden');
+		}
 	});
 });

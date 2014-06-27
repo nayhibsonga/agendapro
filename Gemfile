@@ -107,3 +107,9 @@ gem 'ri_cal'
 
 # Version Movil
 gem 'mobu'
+
+# Gráficos Reporting Javascript
+gem "chartkick"
+
+# Agrupación de elementos por fecha
+gem 'groupdate'

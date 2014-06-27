@@ -41,6 +41,11 @@
                 <%= f.number_field :duration, class: "form-control", :in => 5...1440, :step => 5 %>
                 <span class="input-group-addon">Minutos</span>
               </div>
+              <div class="checkbox">
+                <label>
+                  <%= f.check_box :outcall %> Servicio a domicilio <br /><small id="outcallTip" class="hidden">Si el servicio no pertenece a una sucursal exclusivamente a domicilio, recomendamos ingresar las comunas que se atienden en la descripción.</small>
+                </label>
+              </div>
             </div>
           </div>
           <div class="form-group">
