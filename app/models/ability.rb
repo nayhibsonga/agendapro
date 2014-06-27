@@ -154,10 +154,15 @@ class Ability
         can :create, Booking, :service_provider => { :company_id => user.company_id }
         can :update, Booking, :service_provider => { :company_id => user.company_id }
 
-        can :read, Resource, :location => { :company_id => user.company_id }
-        can :destroy, Resource, :location => { :company_id => user.company_id }
-        can :create, Resource, :location => { :company_id => user.company_id }
-        can :update, Resource, :location => { :company_id => user.company_id }
+        can :read, Resource, :company_id => user.company_id
+        can :destroy, Resource, :company_id => user.company_id
+        can :create, Resource, :company_id => user.company_id
+        can :update, Resource, :company_id => user.company_id
+
+        can :read, ResourceCategory, :company_id => user.company_id
+        can :destroy, ResourceCategory, :company_id => user.company_id
+        can :create, ResourceCategory, :company_id => user.company_id
+        can :update, ResourceCategory, :company_id => user.company_id
 
         can :provider_service, ServiceProvider
 
@@ -245,11 +250,6 @@ class Ability
         can :destroy, Booking, :location_id => user.location_id 
         can :create, Booking, :location_id => user.location_id 
         can :update, Booking, :location_id => user.location_id
-
-        can :read, Resource, :location_id => user.location_id
-        can :destroy, Resource, :location_id => user.location_id
-        can :create, Resource, :location_id => user.location_id
-        can :update, Resource, :location_id => user.location_id
 
         can :provider_service, ServiceProvider
         can :suggestion, Client, :company_id => user.company_id

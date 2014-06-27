@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140625205258) do
+ActiveRecord::Schema.define(version: 20140626211155) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -284,15 +284,36 @@ ActiveRecord::Schema.define(version: 20140625205258) do
 
   add_index "regions", ["country_id"], name: "index_regions_on_country_id", using: :btree
 
-  create_table "resources", force: true do |t|
+  create_table "resource_categories", force: true do |t|
     t.string   "name"
-    t.integer  "quantity"
-    t.integer  "location_id"
+    t.integer  "company_id"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
 
-  add_index "resources", ["location_id"], name: "index_resources_on_location_id", using: :btree
+  add_index "resource_categories", ["company_id"], name: "index_resource_categories_on_company_id", using: :btree
+
+  create_table "resource_locations", force: true do |t|
+    t.integer  "resource_id"
+    t.integer  "location_id"
+    t.integer  "quantity"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "resource_locations", ["location_id"], name: "index_resource_locations_on_location_id", using: :btree
+  add_index "resource_locations", ["resource_id"], name: "index_resource_locations_on_resource_id", using: :btree
+
+  create_table "resources", force: true do |t|
+    t.string   "name"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.integer  "resource_category_id"
+    t.integer  "company_id"
+  end
+
+  add_index "resources", ["company_id"], name: "index_resources_on_company_id", using: :btree
+  add_index "resources", ["resource_category_id"], name: "index_resources_on_resource_category_id", using: :btree
 
   create_table "roles", force: true do |t|
     t.string   "name",        null: false

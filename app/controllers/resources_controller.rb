@@ -8,7 +8,7 @@ class ResourcesController < ApplicationController
   # GET /resources
   # GET /resources.json
   def index
-    @resources = Resource.where(location_id: Location.where(company_id: current_user.company_id, active: true)).accessible_by(current_ability).order(:location_id, :name)
+    @resources = Resource.where(company_id: current_user.company_id).accessible_by(current_ability).order(:name)
   end
 
   # GET /resources/1
@@ -18,13 +18,17 @@ class ResourcesController < ApplicationController
 
   # GET /resources/new
   def new
+    @resource_category = ResourceCategory.new
     @resource = Resource.new
-    @locations = Location.where(company_id: current_user.company_id, active: true).accessible_by(current_ability)
+    @resource_categories = ResourceCategory.where(company_id: current_user.company_id)
+    @locations = Location.where(company_id: current_user.company_id, active: true).accessible_by(current_ability).order(:order)
   end
 
   # GET /resources/1/edit
   def edit
-    @locations = Location.where(company_id: current_user.company_id, active: true).accessible_by(current_ability)
+    @resource_category = ResourceCategory.new
+    @resource_categories = ResourceCategory.where(company_id: current_user.company_id)
+    @locations = Location.where(company_id: current_user.company_id, active: true).accessible_by(current_ability).order(:order)
   end
 
   # POST /resources
@@ -75,6 +79,6 @@ class ResourcesController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def resource_params
-      params.require(:resource).permit(:name, :quantity, :location_id)
+      params.require(:resource).permit(:name, :location_ids)
     end
 end
