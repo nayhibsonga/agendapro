@@ -12,13 +12,13 @@
 					<div class="form-group">
 						<%= label_tag(:firstName, "Nombre", class: "col-sm-3 control-label") %>
 						<div class="col-sm-9">
-							<%= text_field_tag(:firstName, if user_signed_in? then current_user.first_name else nil end, :class => "form-control", :placeholder => "Matias", :required => true) %>
+							<%= text_field_tag(:firstName, if user_signed_in? then current_user.first_name else nil end, :class => "form-control", :placeholder => "Nombre", :required => true) %>
 						</div>
 					</div>
 					<div class="form-group">
 						<%= label_tag(:lastName, "Apellido", class: "col-sm-3 control-label") %>
 						<div class="col-sm-9">
-							<%= text_field_tag(:lastName, if user_signed_in? then current_user.last_name else nil end, :class => "form-control", :placeholder => "Rossi", :required => true) %>
+							<%= text_field_tag(:lastName, if user_signed_in? then current_user.last_name else nil end, :class => "form-control", :placeholder => "Apellido", :required => true) %>
 						</div>
 					</div>
 					<div class="form-group">
@@ -30,13 +30,21 @@
 					<div class="form-group">
 						<%= label_tag(:phone, "Teléfono", class: "col-sm-3 control-label") %>
 						<div class="col-sm-9">
-							<%= telephone_field_tag(:phone, if user_signed_in? then current_user.phone else nil end, :class => "form-control", :placeholder => "97193440", :required => true) %>
+							<%= telephone_field_tag(:phone, if user_signed_in? then current_user.phone else nil end, :class => "form-control", :placeholder => "1122334455", :required => true) %>
 						</div>
 					</div>
             	</div>
             	<div class="form-group">
             		<p id="user-message">Estas agendando como <strong><%= if user_signed_in? then current_user.email else '' end %></strong>.<br /> Si no eres tu, haz click <a href="#" id="user-change">aquí</a><br /></p>
             	</div>
+            	<% if @service.outcall %>
+				<div id="outcallAddress" class="form-group">
+					<%= label_tag(:address, "Dirección", class: "col-sm-3 control-label") %>
+					<div class="col-sm-9">
+						<%= text_field_tag(:address, nil, :class => "form-control", :placeholder => "Escribe la dirección donde se debe realizar el servicio." ) %>
+					</div>
+				</div>
+				<% end %>
 				<div class="form-group">
 					<%= label_tag(:comment, "Comentario", class: "col-sm-3 control-label") %>
 					<div class="col-sm-9">

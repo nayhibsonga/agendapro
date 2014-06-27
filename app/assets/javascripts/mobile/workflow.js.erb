@@ -105,3 +105,16 @@ function generateDate(date, time) {
 
   return year + '-' + month + '-' + day + ' ' + time;
 }
+
+function loadOutcallDistricts(id) {
+  $.getJSON('/local_districts', {id: id}, function (local_districts) {
+    var districtsString = '';
+    $.each(local_districts.districts, function(index, district) {
+      $('#district-body').append(
+        '<tr>' +
+          '<th>' + district.name + '</th>' +
+        '</tr>'
+      );
+    });
+  });
+}

@@ -29,9 +29,23 @@
           <% end %>
         </div>
         <div id="informacion" class="oculto">
-          <p><%= @location.address %>, <%= @location.district.name %>.</p>
+          <p><%= if !@location.outcall then @location.address+', '+@location.district.name else "A Domicilio" end %>.</p>
           <p>Tel: <%= @location.phone %></p>
+          <% if !@location.outcall %>
           <a href="#" class="btn btn-block btn-default">Ver mapa</a>
+          <% else %>
+          <div class="panel panel-info">
+            <div class="panel-heading">
+              <h3 class="panel-title">Comunas que se Atienden <small>(comunas en <%= @location.district.city.name %>, <%= @location.district.city.region.name %> - <%= @location.district.city.region.country.name %>)</small></h3>
+            </div>
+            <div class="panel-body">
+              <table class="table">
+                <tbody id="district-body">
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <% end %>
           <div class="panel panel-info">
             <div class="panel-heading">
               <h3 class="panel-title">Horario</h3>
@@ -85,6 +99,9 @@
       $( "#informacion" ).addClass("visible");
     });
     loadServices(<%= @location.id %>);
+    <% if @location.outcall %>
+    loadOutcallDistricts(<%= @location.id %>);
+    <% end %>
     loadSchedule(<%= @location.id %>);
     $('.btn-fijo').click(function (event) {
       $('form').submit();
