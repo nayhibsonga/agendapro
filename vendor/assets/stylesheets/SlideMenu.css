@@ -51,9 +51,7 @@ nav.menu a {
     text-decoration: none;
 }
 nav.menu span {
-    position: fixed;
-    bottom: 0;
-    right: 0;
+    display: none;
 }
 button.close-menu {
     background-color: #006D68; /*#3184a1;*/
@@ -110,6 +108,12 @@ body.sml-open nav.slide-menu-left {
 }
 body.smr-open nav.slide-menu-right {
     right: 0
+}
+body.smr-open nav.menu span {
+    display: inline;
+    position: fixed;
+    bottom: 0;
+    right: 0;
 }
 /* ------------------------------------------------------------ *\
 |* ------------------------------------------------------------ *|
