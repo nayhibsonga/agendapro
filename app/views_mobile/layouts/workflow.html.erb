@@ -50,7 +50,7 @@
                 <li><%= link_to current_user.email.upcase, edit_user_registration_url(:subdomain => false) %></li>
                 <li><%= link_to 'SALIR', destroy_user_session_url(:subdomain => false), method: :delete %></li>
                 <% else %>
-				<li><%= link_to 'INICIA SESION', new_user_session_url(:subdomain => false) %></li>
+				<li><%= link_to 'INICIA SESION', new_user_session_path %></li>
 				<li><%= link_to 'REGISTRATE', new_user_registration_url(:subdomain => false) %></li>
 				<!-- <li><%= link_to 'AGREGA TU EMPRESA', home_url(:subdomain => false) %></li> -->
                 <% end %>

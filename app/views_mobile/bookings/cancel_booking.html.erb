@@ -1,0 +1,40 @@
+<% unless params[:id] %>
+<div class="container">
+  <div class="row">
+    <div class="col-xs-12">
+      <div class="panel panel-info">
+        <div class="panel-heading">
+          <h3 class="panel-title">¿Estás seguro de cancelar tu reserva?</h3>
+        </div>
+        <div class="panel-body">
+          <p>Si cancelas tu reserva, otra persona podrá utilizar la hora liberada</p><br />
+          <%= form_tag("/cancel_booking", method: "post", role: "form", id: "edit_form" ) do %>
+            <%= hidden_field_tag :id, @booking.id %>
+            <div class="form-group">
+              <button type="submit" class="btn btn-success">Cancelar Reserva</button>
+              <%= link_to 'Atras', root_url(:subdomain => false), :class => 'btn btn-default' %>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<% else %>
+<div class="center-load">
+  <h2><%= link_to 'AGENDAPRO', root_url(:subdomain => false) %></h2>
+  <%= image_tag 'mobile/check.png', :alt => 'Agendado' %>
+  <p>Su reserva fue cancelada correctamente</p>
+</div>
+
+<% content_for :scripts do %>
+<script type="text/javascript">
+  $(function() {
+    $('body').attr('id', 'loading');
+    window.setTimeout(function () {
+      location.href = "<%= root_url(:subdomain => false) %>";
+    }, 5000);
+  });
+</script>
+<% end %>
+<% end %>
