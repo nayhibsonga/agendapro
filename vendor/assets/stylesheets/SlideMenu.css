@@ -50,9 +50,6 @@ nav.menu a {
     color: #fff;
     text-decoration: none;
 }
-nav.menu span {
-    display: none;
-}
 button.close-menu {
     background-color: #006D68; /*#3184a1;*/
     color: #fff;
@@ -110,8 +107,9 @@ body.smr-open nav.slide-menu-right {
     right: 0
 }
 body.smr-open nav.menu span {
-    display: inline;
-    position: fixed;
+    position: absolute;
+    width: 100%;
+    text-align: center;
     bottom: 0;
     right: 0;
 }
