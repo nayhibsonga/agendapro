@@ -25,6 +25,7 @@
   <tbody>
     <% @resources.each do |resource| %>
       <tr>
+        <td><%= resource.name %></td>
         <td><%= resource.resource_category.name %></td>
         <td>
           <%= link_to '<i class="fa fa-pencil"></i> Editar'.html_safe, edit_resource_path(resource), :class => "btn btn-warning" %>

@@ -14,4 +14,9 @@
 	</div>
 </div>
 
+<%= content_tag "div", id: "id_data", data: { id: @resource.id } do %>
+<% end %>
+<%= content_tag "div", id: "resource_locations_data", data: { resource_locations: @resource.resource_locations.to_json } do %>
+<% end %>
+
 <%= render 'form' %>
