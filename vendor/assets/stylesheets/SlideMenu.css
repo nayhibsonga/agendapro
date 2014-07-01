@@ -62,7 +62,7 @@ nav.slide-menu-left,
 nav.slide-menu-right {
     top: 0;
     /*width: 300px;*/
-    width: 45%;
+    width: 60%;
     padding: 0 10px;
     height: 100%;
 }
@@ -106,11 +106,14 @@ body.sml-open nav.slide-menu-left {
 body.smr-open nav.slide-menu-right {
     right: 0
 }
+nav.menu span > a {
+    display: inline;
+}
 body.smr-open nav.menu span {
     position: absolute;
     width: 100%;
     text-align: center;
-    bottom: 0;
+    bottom: 5px;
     right: 0;
 }
 /* ------------------------------------------------------------ *\

@@ -55,9 +55,11 @@
 				<li><%= link_to 'REGISTRATE', new_user_registration_url(:subdomain => false) %></li>
 				<!-- <li><%= link_to 'AGREGA TU EMPRESA', home_url(:subdomain => false) %></li> -->
                 <% end %>
-                <li><button class="close-menu">Cerrar &rarr;</button></li>
 			</ul>
-			<span><%= link_to 'Sitio Completo', prefer_full_site_url %></span>
+			<span>
+                <%= link_to 'Sitio Completo', prefer_full_site_url %>
+                <a href="" class="close-menu">Cerrar &gt;&gt;</a>
+            </span>
 		</nav><!-- /slide menu right -->
 		<!-- end: menu -->
 
