@@ -48,6 +48,7 @@
 				<li><%= link_to 'AGENDAPRO', root_url(:subdomain => false) %></li>
                 <% if user_signed_in? %>
                 <li><%= link_to current_user.email.upcase, edit_user_registration_url(:subdomain => false) %></li>
+                <li><%= link_to 'MI AGENDA', my_agenda_url(:id => current_user.id, :subdomain => false) %></li>
                 <li><%= link_to 'SALIR', destroy_user_session_url(:subdomain => false), method: :delete %></li>
                 <% else %>
 				<li><%= link_to 'INICIA SESION', new_user_session_path %></li>

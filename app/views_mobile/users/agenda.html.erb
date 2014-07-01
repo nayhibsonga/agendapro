@@ -1,0 +1,50 @@
+<div class="container">
+	<div class="row">
+		<div class="col-xs-12">
+			<div class="single-local">
+				<div class="panel panel-info">
+					<div class="panel-heading">
+						<h3 class="panel-title">HOY</h3>
+					</div>
+					<div class="panel-body">
+						<table class="table">
+							<tbody>
+								<% @activeBookings.each do |booking| %>
+								<% if booking.start.to_date == DateTime.now.to_date %>
+								<tr>
+									<td><%= booking.start.strftime('%H:%M') %> <%= booking.service.name %> en <%= booking.location.name %>
+										<%= link_to 'Editar', booking_edit_url(:confirmation_code => booking.confirmation_code), :class => 'btn btn-success btn-xs' %>
+										<%= link_to 'Cancelar', booking_cancel_url(:confirmation_code => booking.confirmation_code), :class => 'btn btn-default btn-xs' %>
+									</td>
+								</tr>
+								<% end #end if%>
+								<% end #end each%>
+							</tbody>
+						</table>
+					</div>
+				</div>
+				<div class="panel panel-info">
+					<div class="panel-heading">
+						<h3 class="panel-title">SIGUIENTES</h3>
+					</div>
+					<div class="panel-body">
+						<table class="table">
+							<tbody>
+								<% @activeBookings.each do |booking| %>
+								<% if booking.start.to_date != DateTime.now.to_date %>
+								<tr>
+									<td><%= l booking.start, format: :short %> <%= booking.service.name %> en <%= booking.location.name %>
+										<%= link_to 'Editar', booking_edit_url(:confirmation_code => booking.confirmation_code), :class => 'btn btn-success btn-xs' %>
+										<%= link_to 'Cancelar', booking_cancel_url(:confirmation_code => booking.confirmation_code), :class => 'btn btn-default btn-xs' %>
+									</td>
+								</tr>
+								<% end #end if%>
+								<% end #end each%>
+							</tbody>
+						</table>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
