@@ -1,5 +1,7 @@
 Agendapro::Application.routes.draw do
 
+  resources :company_from_emails
+
   resources :clients
 
   get "users/index"

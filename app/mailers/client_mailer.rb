@@ -2,7 +2,7 @@ class ClientMailer < ActionMailer::Base
   require 'mandrill'
   require 'base64'
 
-  def send_client_mail (current_user, clients, subject, message, company_img, attachment)
+  def send_client_mail (current_user, clients, subject, message, company_img, attachment, from)
 	mandrill = Mandrill::API.new Agendapro::Application.config.api_key
 	
 	# => Template
@@ -11,15 +11,11 @@ class ClientMailer < ActionMailer::Base
 
 	# => Message
 	message = {
-		:from_email => current_user.email,
+		:from_email => from,
 		:from_name => current_user.company.name,
 		:subject => subject,
 		:to => clients,
 		:global_merge_vars => [
-			# {
-			# 	:name => 'UNSUBSCRIBE',
-			# 	:content => "Si desea dejar de recibir email puede dar click <a href='#{unsubscribe_url(:user => Base64.encode64(current_user.email))}'>aquí</a>."
-			# },
 			{
 				:name => 'MESSAGE',
 				:content => message
@@ -54,16 +50,12 @@ class ClientMailer < ActionMailer::Base
 		message[:images] = [company_logo]
 	end
 
-	# if company_img.length > 0
-	# 	message[:images] << (company_img)
-	# end
-
 	if attachment.length > 0
 		message[:attachments] << (attachment)
 	end
 
 	# => Metadata
-	async = false
+	async = true
 	send_at = DateTime.now
 
 	# => Send mail
