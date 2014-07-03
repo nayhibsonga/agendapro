@@ -11,6 +11,9 @@ class Location < ActiveRecord::Base
 	has_many :location_outcall_districts
 	has_many :districts, :through => :location_outcall_districts
 
+	  has_many :resource_locations
+	  has_many :resources, :through => :resource_locations
+
 	accepts_nested_attributes_for :location_times, :reject_if => :all_blank, :allow_destroy => true
 
 	validates :name, :phone, :company, :district, :presence => true

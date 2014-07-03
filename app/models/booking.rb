@@ -45,11 +45,43 @@ class Booking < ActiveRecord::Base
 						if (provider_booking.start - self.end) * (self.start - provider_booking.end) > 0
 							if !self.service.group_service || self.service_id != provider_booking.service_id
 								errors.add(:base, "Esa hora ya está agendada para ese proveedor de servicios.")
+								return
 							elsif self.service.group_service && self.service_id == provider_booking.service_id && self.service_provider.bookings.where(:service_id => self.service_id, :start => self.start).count >= self.service.capacity
-								errors.add(:base, "Esa hora ya está agendada para ese proveedor de servicios.")
+								errors.add(:base, "La capacidad del servicio grupal, de esa hora, ya llegó a su límite.")
+								return
 							end
 						end
 					end	
+				end
+			end
+			if self.service.resources.count > 0
+				self.service.resources.each do |resource|
+					if !self.location.resource_locations.pluck(:resource_id).include?(resource.id)
+						errors.add(:base, "Este Local no tiene el(los) recurso(s) necesario(s) para realizar este servicio.")
+						return
+					end
+					used_resource = 0
+					group_services = []
+					self.location.bookings.each do |location_booking|
+						if location_booking != self && location_booking != cancelled_id && (location_booking.start - self.end) * (self.start - location_booking.end) > 0
+							if location_booking.service.resources.include?(resource)
+								if !location_booking.service.group_service
+									used_resource += 1
+								else
+									if location_booking.service != self.service || location_booking.service_provider != self.service_provider
+										group_services.push(location_booking.service_provider.id)
+									end
+								end		
+							end
+						end
+					end
+					puts used_resource
+					puts group_services
+					puts group_services.uniq.count
+					if group_services.uniq.count + used_resource >= ResourceLocation.where(resource_id: resource.id, location_id: self.location.id).first.quantity
+						errors.add(:base, "Este Local ya tiene asignado(s) el(los) recurso(s) necesario(s) para realizar este servicio.")
+						return
+					end
 				end
 			end
 		end
