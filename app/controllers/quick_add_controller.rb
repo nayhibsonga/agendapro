@@ -18,9 +18,13 @@ class QuickAddController < ApplicationController
 	end
 
 	def quick_add
-		if ServiceCategory.where(company_id: current_user.company_id).count < 1
+		if ServiceCategory.where(company_id: current_user.company_id, name: "Sin Categoría").count < 1
 	        @service_category = ServiceCategory.new(name: "Sin Categoría", company_id: current_user.company_id)
 	        @service_category.save
+    	end
+    	if ResourceCategory.where(company_id: current_user.company_id, name: "Sin Categoría").count < 1
+	        @resource_category = ResourceCategory.new(name: "Sin Categoría", company_id: current_user.company_id)
+	        @resource_category.save
     	end
 		@location = Location.new
 		@service = Service.new

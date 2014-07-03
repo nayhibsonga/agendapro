@@ -1,5 +1,7 @@
 Agendapro::Application.routes.draw do
 
+  resources :resources
+
   resources :clients
 
   get "users/index"
@@ -34,7 +36,9 @@ Agendapro::Application.routes.draw do
   resources :bookings
   resources :service_providers
   resources :service_categories
+  resources :resources
   resources :clients
+  resources :resource_categories
 
   namespace :admin do 
     get '', :to => 'dashboard#index', :as => '/'

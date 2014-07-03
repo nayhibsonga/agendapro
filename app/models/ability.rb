@@ -156,6 +156,16 @@ class Ability
         can :create, Booking, :service_provider => { :company_id => user.company_id }
         can :update, Booking, :service_provider => { :company_id => user.company_id }
 
+        can :read, Resource, :company_id => user.company_id
+        can :destroy, Resource, :company_id => user.company_id
+        can :create, Resource, :company_id => user.company_id
+        can :update, Resource, :company_id => user.company_id
+
+        can :read, ResourceCategory, :company_id => user.company_id
+        can :destroy, ResourceCategory, :company_id => user.company_id
+        can :create, ResourceCategory, :company_id => user.company_id
+        can :update, ResourceCategory, :company_id => user.company_id
+
         can :provider_service, ServiceProvider
 
         can :time_booking_edit, CompanySetting, :company => user.company_id
@@ -241,7 +251,7 @@ class Ability
         can :read, Booking, :location_id => user.location_id
         can :destroy, Booking, :location_id => user.location_id 
         can :create, Booking, :location_id => user.location_id 
-        can :update, Booking, :location_id => user.location_id 
+        can :update, Booking, :location_id => user.location_id
 
         can :provider_service, ServiceProvider
         can :suggestion, Client, :company_id => user.company_id
