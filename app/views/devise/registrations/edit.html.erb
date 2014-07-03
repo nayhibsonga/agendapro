@@ -1,74 +1,93 @@
-<h2>Editar Perfil</h2>
+<div class="container">
+  <div class="row">
+    <section class="hgroup">
+      <h2>Edita tu Cuenta AgendaPro</h2>
+      <h2 class="section_header">Acá puedes cambiar tus datos personales y de contacto.</h2>
+      <div class="line-breadcrumb">
+        <ul class="breadcrumb pull-right">
+            <li><%= link_to "Resumen", dashboard_path %> </li>
+            <li class="active">Usuarios</li>
+        </ul>
+    </div>
+    </section>
+  </div>
+</div>
 
-<%= form_for resource, :as => resource_name, :url => registration_path(resource_name), :html => { :method => :put, :class => 'form-horizontal' } do |f| %>
-  <% if resource.errors.any? %>
-  <h3>Errores</h3>
-  <ul>
-    <% resource.errors.full_messages.each do |msg| %>
-    <li><%= msg %></li>
+
+<div class="container">
+  <div class="row well">
+    <%= form_for resource, :as => resource_name, :url => registration_path(resource_name), :html => { :method => :put, :class => 'form-horizontal' } do |f| %>
+      <% if resource.errors.any? %>
+      <h3>Errores</h3>
+      <ul>
+        <% resource.errors.full_messages.each do |msg| %>
+        <li><%= msg %></li>
+        <% end %>
+      </ul>
+      <% end %>
+      <div class="form-group">
+        <%= f.label :first_name, 'Nombre', :class => "col-sm-3 control-label" %>
+        <div class="col-sm-4">
+          <%= f.text_field :first_name, :autofocus => true, :class => 'form-control' %>
+        </div>
+      </div>
+      <div class="form-group">
+        <%= f.label :last_name, 'Apellido', :class => 'col-sm-3 control-label' %>
+        <div class="col-sm-4">
+          <%= f.text_field :last_name, :autofocus => true, :class => 'form-control' %>
+        </div>
+      </div>
+      <div class="form-group">
+        <%= f.label :email, 'Email', :class => 'col-sm-3 control-label' %>
+        <div class="col-sm-4">
+          <%= f.email_field :email, :autofocus => true, :required => true, :class => 'form-control' %>
+        </div>
+      </div>
+      <div class="form-group">
+        <%= f.label :phone, 'Telefono', :class => 'col-sm-3 control-label' %>
+        <div class="col-sm-4">
+          <%= f.phone_field :phone, :autofocus => true, :class => 'form-control' %>
+        </div>
+      </div>
+      <p class="col-sm-offset-3 col-sm-7">Para cambiar tu contraseña haz click <a href="#">aquí</a>.</p>
+      <fieldset  class="hidden">
+        <div class="form-group">
+          <%= f.label :password, 'Nueva Contraseña', :class => 'col-sm-3 control-label' %>
+          <div class="col-sm-4">
+            <%= f.password_field :password, :autocomplete => 'off', :class => 'form-control' %>
+          </div>
+        </div>
+        <div class="form-group">
+          <%= f.label :password_confirmation, 'Confirmar Nueva Contraseña', :class => 'col-sm-3 control-label' %>
+          <div class="col-sm-4">
+            <%= f.password_field :password_confirmation, :class => 'form-control' %>
+          </div>
+        </div>
+      </fieldset>
+      <hr>
+      <div class="form-group">
+        <%= f.label :current_password, 'Contraseña Actual', :class => 'col-sm-3 control-label' %>
+        <div class="col-sm-4">
+          <%= f.password_field :current_password, :required => true, :class => 'form-control' %>
+          <span class="help-block">Por favor ingresa tu contraseña actual</span>
+        </div>
+      </div>
+      <div class="form-group">
+        <div class="col-sm-offset-3 col-sm-4">
+          <%= f.submit 'Actualizar', :class => 'btn btn-agendapro-oscuro' %>
+          <%= link_to "Cancelar", :back, :class => 'btn btn-danger' %>
+        </div>
+      </div>
     <% end %>
-  </ul>
-  <% end %>
+  </div>
+</div>
 
-  <div class="form-group">
-    <%= f.label :first_name, 'Nombre', :class => "col-sm-3 control-label" %>
-    <div class="col-sm-4">
-      <%= f.text_field :first_name, :autofocus => true, :class => 'form-control' %>
-    </div>
+<div class="container">
+  <div class="row well">
+    <p> ¿No quieres seguir con nosotros?
+      <%= link_to "Cancelar mi cuenta", registration_path(resource_name), :data => { :confirm => "¿Estás seguro que deseas cancelar tu cuenta?" }, :method => :delete %></p>
   </div>
-  <div class="form-group">
-    <%= f.label :last_name, 'Apellido', :class => 'col-sm-3 control-label' %>
-    <div class="col-sm-4">
-      <%= f.text_field :last_name, :autofocus => true, :class => 'form-control' %>
-    </div>
-  </div>
-  <div class="form-group">
-    <%= f.label :email, 'Email', :class => 'col-sm-3 control-label' %>
-    <div class="col-sm-4">
-      <%= f.email_field :email, :autofocus => true, :required => true, :class => 'form-control' %>
-    </div>
-  </div>
-  <div class="form-group">
-    <%= f.label :phone, 'Telefono', :class => 'col-sm-3 control-label' %>
-    <div class="col-sm-4">
-      <%= f.phone_field :phone, :autofocus => true, :class => 'form-control' %>
-    </div>
-  </div>
-  <p class="col-sm-offset-3 col-sm-7">Para cambiar tu contraseña haz click <a href="#">aquí</a>.</p>
-  <fieldset  class="hidden">
-    <div class="form-group">
-      <%= f.label :password, 'Contraseña', :class => 'col-sm-3 control-label' %>
-      <div class="col-sm-4">
-        <%= f.password_field :password, :autocomplete => 'off', :class => 'form-control' %>
-      </div>
-    </div>
-    <div class="form-group">
-      <%= f.label :password_confirmation, 'Confirmar Contraseña', :class => 'col-sm-3 control-label' %>
-      <div class="col-sm-4">
-        <%= f.password_field :password_confirmation, :class => 'form-control' %>
-      </div>
-    </div>
-  </fieldset>
-  <hr>
-  <div class="form-group">
-    <%= f.label :current_password, 'Contraseña', :class => 'col-sm-3 control-label' %>
-    <div class="col-sm-4">
-      <%= f.password_field :current_password, :required => true, :class => 'form-control' %>
-      <span class="help-block">Por favor ingresa tu contraseña actual</span>
-    </div>
-  </div>
-  <div class="form-group">
-    <div class="col-sm-offset-3 col-sm-4">
-      <%= f.submit 'Actualizar', :class => 'btn btn-agendapro-oscuro' %>
-    </div>
-  </div>
-<% end %>
-
-<h3>Cancelar mi cuenta</h3>
-
-<p><%= link_to "Cancelar mi cuenta", registration_path(resource_name), :data => { :confirm => "¿Estás seguro que deseas cancelar tu cuenta?" }, :method => :delete %></p>
-
-<%= link_to "Atrás", :back %>
+</div>
 
 <% content_for :scripts do %>
 <script type="text/javascript">

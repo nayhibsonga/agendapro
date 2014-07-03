@@ -1,0 +1,20 @@
+<div class="center-load">
+	<h2><%= link_to 'AGENDAPRO', root_url(:subdomain => false) %></h2>
+	<%= image_tag 'mobile/check.png', :alt => 'Agendado' %>
+	<p>Fecha: <%= l @booking.start %></p>
+	<!-- <p>Horario: 12.30 hrs</p> -->
+	<p>Servicio: <%= @booking.service.name %></p>
+	<p>Staff: <%= @booking.service_provider.public_name %></p>
+	<p>Dirección: <%= @booking.location.name %></p>
+</div>
+
+<% content_for :scripts do %>
+<script type="text/javascript">
+	$(function() {
+		$('body').attr('id', 'loading');
+		window.setTimeout(function () {
+			location.href = "<%= root_url(:subdomain => false) %>";
+		}, 5000);
+	});
+</script>
+<% end %>

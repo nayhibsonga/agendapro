@@ -1,7 +1,5 @@
 Agendapro::Application.routes.draw do
 
-  resources :clients
-
   get "users/index"
   require 'subdomain'
 
@@ -34,6 +32,12 @@ Agendapro::Application.routes.draw do
   resources :bookings
   resources :service_providers
   resources :service_categories
+  resources :resources
+  resources :clients
+  resources :resource_categories
+  resources :resources
+  resources :company_from_emails
+
   resources :clients
 
   namespace :admin do 
@@ -43,7 +47,6 @@ Agendapro::Application.routes.draw do
 
   # Quick Add
   get '/quick_add', :to => 'quick_add#quick_add', :as => 'quick_add'
-  get '/quick_add/service_provider', :to => 'quick_add#service_provider', :as => 'quick_add_service_provider'
     # Validation
   post '/quick_add/location_valid', :to => 'quick_add#location_valid'
   post '/quick_add/services_valid', :to => 'quick_add#services_valid'
@@ -59,10 +62,19 @@ Agendapro::Application.routes.draw do
   get '/select_plan', :to => 'plans#select_plan', :as => 'select_plan'
   get '/get_direction', :to => 'districts#get_direction'
   get '/time_booking_edit', :to => 'company_settings#time_booking_edit', :as => 'time_booking'
+  get '/minisite/:id', :to => 'company_settings#minisite', :as => 'minisite'
   post '/send_mail_client', :to => 'clients#send_mail'
   get '/get_link', :to => 'companies#get_link', :as => 'get_link'
+  post '/change_categories_order', :to => 'service_categories#change_categories_order'
+  post '/change_services_order', :to => 'services#change_services_order'
+  post '/change_location_order', :to => 'locations#change_location_order'
+  post '/change_providers_order', :to => 'service_providers#change_providers_order'
 
+  # Autocompletar del Booking
   get '/clients_suggestion', :to => 'clients#suggestion'
+  get '/clients_name_suggestion', :to => 'clients#name_suggestion'
+  get '/clients_last_name_suggestion', :to => 'clients#last_name_suggestion'
+
   get '/provider_services', :to => 'service_providers#provider_service'
 
   # Singup Validations
@@ -79,6 +91,7 @@ Agendapro::Application.routes.draw do
   get "/features", :to => 'home#features', :as => 'features'
   get "/view_plans", :to => 'plans#view_plans', :as => 'view_plans'
   get "/about_us", :to => 'home#about_us',  :as => 'aboutus'
+  get "/tutorials", :to => 'home#tutorials',  :as => 'tutorials'
   get "/contact", :to => 'home#contact', :as => 'contact'
   post "/pcontact", :to => 'home#post_contact'
 
@@ -96,6 +109,7 @@ Agendapro::Application.routes.draw do
   get "searchs/index"
   get '/search', :to => "searchs#search"
   get '/get_districts', :to => 'districts#get_districts'
+  get '/get_input_districts', :to => 'districts#get_input_districts'
   get '/get_district', :to => 'districts#get_district'
   get '/district_by_name', :to => 'districts#get_district_by_name'
 
@@ -103,34 +117,42 @@ Agendapro::Application.routes.draw do
   # Workflow - overview
   get '/schedule', :to => 'location_times#schedule_local'
   get '/local', :to => 'locations#location_data'
-  # wrokflow - wizard
+  get '/local_districts', :to => 'locations#location_districts'
+  # Workflow - wizard
   get '/workflow', :to => 'companies#workflow', :as => 'workflow'
-  get '/local_services', :to => 'service_providers#location_services'
+  get '/local_services', :to => 'services#location_categorized_services'
+  get '/location_services', :to => 'services#location_services'
   get '/local_providers', :to => 'service_providers#location_providers'
   get '/providers_services', :to => 'services#get_providers'
   get '/location_time', :to => 'locations#location_time'
   get '/get_booking', :to => 'bookings#get_booking'
   get '/get_booking_info', :to => 'bookings#get_booking_info'
   post "/book", :to => 'bookings#book_service'
-  get '/category_name', :to => 'service_categories#get_category_name'
   get '/get_available_time', :to => 'locations#get_available_time'
+  get '/check_user_cross_bookings', :to => 'bookings#check_user_cross_bookings'
+  # Workflow - Mobile
+  post '/select_hour', :to => 'companies#select_hour'
+  post '/user_data', :to => 'companies#user_data'
 
   # Fullcalendar
   get '/service', :to => 'services#service_data'  # Fullcalendar
   get '/services_list', :to => 'services#services_data'  # Fullcalendar
   get '/provider_time', :to => 'service_providers#provider_time'  # Fullcalendar
   get '/booking', :to => 'bookings#provider_booking'  # Fullcalendar
-  get '/provider_breaks', :to => 'bookings#provider_breaks', :as => 'provider_breaks'
-  get '/provider_breaks/:id', :to => 'bookings#get_provider_break', :as => 'get_provider_break'
-  post '/provider_breaks', :to => 'bookings#create_provider_break', :as => 'create_provider_breaks'
-  patch '/provider_breaks/:id', :to => 'bookings#update_provider_break', :as => 'edit_provider_break'
-  delete '/provider_breaks/:id', :to => 'bookings#destroy_provider_break', :as => 'delete_provider_break'
+  get '/provider_breaks', :to => 'provider_breaks#provider_breaks', :as => 'provider_breaks'
+  get '/provider_breaks/:id', :to => 'provider_breaks#get_provider_break', :as => 'get_provider_break'
+  post '/provider_breaks', :to => 'provider_breaks#create_provider_break', :as => 'create_provider_breaks'
+  patch '/provider_breaks/:id', :to => 'provider_breaks#update_provider_break', :as => 'edit_provider_break'
+  delete '/provider_breaks/:id', :to => 'provider_breaks#destroy_provider_break', :as => 'delete_provider_break'
   get '/available_providers', :to => 'service_providers#available_providers', :as => 'available_service_providers'
 
   get '/edit_booking', :to => 'bookings#edit_booking', :as => 'booking_edit'
   post '/edited_booking', :to => 'bookings#edit_booking_post'
   get '/cancel_booking', :to => 'bookings#cancel_booking', :as => 'booking_cancel'
   post '/cancel_booking', :to => 'bookings#cancel_booking'
+  get '/confirm_booking', :to => 'bookings#confirm_booking', :as => 'confirm_booking'
+  get '/blocked_edit', :to => 'bookings#blocked_edit', :as => 'blocked_edit'
+  get '/blocked_cancel', :to => 'bookings#blocked_cancel', :as => 'blocked_cancel'
 
   post '/clients/:id/comments', :to => 'clients#create_comment'
   patch '/clients/:id/comments', :to => 'clients#update_comment'
@@ -149,6 +171,12 @@ Agendapro::Application.routes.draw do
   get '/locations/:id/deactivate', :to => 'locations#deactivate', :as => 'deactivate_location'
   get '/services/:id/deactivate', :to => 'services#deactivate', :as => 'deactivate_service'
   get '/service_providers/:id/deactivate', :to => 'service_providers#deactivate', :as => 'deactivate_service_provider'
+  post '/clients/import', :to => 'clients#import', :as => 'import_clients'
+  get '/clients/:id/history', :to => 'clients#history', :as => 'client_history'
+
+  get '/country_regions', :to => 'regions#country_regions'
+  get '/region_cities', :to => 'cities#region_cities'
+  get '/city_districs', :to => 'districts#city_districs'
   
   # Root
   get '/' => 'searchs#index', :constraints => { :subdomain => 'www' }

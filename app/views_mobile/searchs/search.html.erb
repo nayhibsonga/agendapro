@@ -1,0 +1,32 @@
+<div class="row">
+	<%= render 'form' %>
+</div>
+<div class="row">
+	<div class="col-xs-12">
+		<% @results.each do |location| %>
+		<a href="<%= url_for(:host => location.company.web_address + '.' + @domain, :local => location.id, :controller => 'companies', :action => 'overview') %>">
+			<div class="bloque-local" data-location="<%= location.id %>">
+				<div class="img-circulo">
+					<% if location.company.logo_url %>
+					<%= image_tag location.company.logo_url.to_s, :size => "80x80", :alt => location.company.name %>
+					<% else %>
+					<%= image_tag 'Iso_Pro_Color.png', :alt => 'AgendaPro', :size => "80x80" %>
+					<% end %>
+				</div>
+				<h3><%= location.company.name %></h3>
+				<p><%= if !location.outcall then location.address+', '+location.district.name else "A Domicilio" end %>.</p>
+				<p>Horario: </p>
+				<div class="clear"></div>
+			</div>
+		</a>
+		<% end %>
+		<% if @results.empty? %>
+			<a href="#">
+				<div class="bloque-local">
+					<h3>No se encontraron resultados para <em><%= params[:inputSearch] %></em>.</h3>
+					<div class="clear"></div>
+				</div>
+			</a>
+		<% end %>
+	</div>
+</div>

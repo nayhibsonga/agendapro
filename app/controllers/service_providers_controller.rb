@@ -8,7 +8,8 @@ class ServiceProvidersController < ApplicationController
   # GET /service_providers
   # GET /service_providers.json
   def index
-    @service_providers = ServiceProvider.where(company_id: current_user.company_id, :active => true).accessible_by(current_ability)
+    @locations = Location.where(company_id: current_user.company_id, :active => true).order(order: :asc).accessible_by(current_ability)
+    @service_providers = ServiceProvider.where(company_id: current_user.company_id, :active => true).accessible_by(current_ability).order(:order)
   end
 
   def inactive_index
@@ -112,13 +113,8 @@ class ServiceProvidersController < ApplicationController
     end
   end
 
-  def location_services
-    services = Service.where(:active => true).includes(:service_providers).where('service_providers.active = ?', true).where('service_providers.location_id = ?', params[:location]).order(:service_category_id)
-    render :json => services
-  end
-
   def location_providers
-    render :json => ServiceProvider.where(:active => true).where('location_id = ?', params[:location]).order(:id)
+    render :json => ServiceProvider.where(:active => true).where('location_id = ?', params[:location]).order(:order)
   end
 
   def provider_time
@@ -147,6 +143,26 @@ class ServiceProvidersController < ApplicationController
       end
     end
     render :json => service_providers
+  end
+
+  def change_providers_order
+    array_result = Array.new
+    params[:providers_order].each do |pos, provider_hash|
+      provider = ServiceProvider.find(provider_hash[:provider])
+      if provider.update(:order => provider_hash[:order])
+        array_result.push({
+          provider: provider.public_name,
+          status: 'Ok'
+        })
+      else
+        array_result.push({
+          provider: provider.public_name,
+          status: 'Error',
+          errors: provider.errors
+        })
+      end
+    end
+    render :json => array_result
   end
 
   private

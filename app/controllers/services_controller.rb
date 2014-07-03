@@ -1,6 +1,6 @@
 class ServicesController < ApplicationController
   before_action :set_service, only: [:show, :edit, :update, :destroy, :activate, :deactivate]
-  before_action :authenticate_user!, except: [:services_data, :service_data, :get_providers]
+  before_action :authenticate_user!, except: [:services_data, :service_data, :get_providers, :location_services, :location_categorized_services]
   before_action :quick_add, except: [:services_data, :service_data, :get_providers]
   layout "admin", except: [:get_providers, :services_data, :service_data]
   load_and_authorize_resource
@@ -8,8 +8,8 @@ class ServicesController < ApplicationController
   # GET /services
   # GET /services.json
   def index
-    @services = Service.where(company_id: current_user.company_id, :active => true).order(name: :asc)
-    @service_categories = ServiceCategory.where(company_id: current_user.company_id).order(name: :asc)
+    @services = Service.where(company_id: current_user.company_id, :active => true).order(order: :asc, name: :asc)
+    @service_categories = ServiceCategory.where(company_id: current_user.company_id).order(order: :asc, name: :asc)
   end
 
   def inactive_index
@@ -55,10 +55,12 @@ class ServicesController < ApplicationController
       end
     end
     @service = Service.new(new_params)
+    @service.service_providers.clear
     @service.company_id = current_user.company_id
 
     respond_to do |format|
       if @service.save
+        @service.service_provider_ids = new_params[:service_provider_ids]
         format.html { redirect_to services_path, notice: 'Servicio creado satisfactoriamente.' }
         format.json { render action: 'show', status: :created, location: @service }
       else
@@ -78,6 +80,7 @@ class ServicesController < ApplicationController
         new_params = service_params.except(:service_category_id)
       end
     end
+    @service.service_providers.clear
     respond_to do |format|
       if @service.update(new_params)
         format.html { redirect_to services_path, notice: 'Servicio actualizado satisfactoriamente.' }
@@ -101,8 +104,38 @@ class ServicesController < ApplicationController
 
   def get_providers
     service = Service.find(params[:id])
-    providers = service.service_providers.where(:active => true).where('location_id = ?', params[:local]).where(:active => true)
+    providers = service.service_providers.where(:active => true).where('location_id = ?', params[:local]).where(:active => true).order(order: :asc)
     render :json => providers
+  end
+
+  def location_services
+    categories = ServiceCategory.where(:company_id => Location.find(params[:location]).company_id).order(order: :asc)
+    services = Service.where(:active => true).order(order: :asc).includes(:service_providers).where('service_providers.active = ?', true).where('service_providers.location_id = ?', params[:location]).order(order: :asc)
+    render :json => services
+  end
+
+  def location_categorized_services
+    categories = ServiceCategory.where(:company_id => Location.find(params[:location]).company_id).order(order: :asc)
+    services = Service.where(:active => true).order(order: :asc).includes(:service_providers).where('service_providers.active = ?', true).where('service_providers.location_id = ?', params[:location]).order(order: :asc)
+
+    categorized_services = Array.new
+    categories.each do |category|
+      services_array = Array.new
+      services.each do |service|
+        if service.service_category_id == category.id
+          serviceJSON = service.attributes.merge({'name_with_small_outcall' => service.name_with_small_outcall })
+          services_array.push(serviceJSON)
+        end
+      end
+      service_hash = {
+        :id => category.id,
+        :category => category.name,
+        :services => services_array
+      }
+      categorized_services.push(service_hash)
+    end
+
+    render :json => categorized_services
   end
 
   def service_data
@@ -115,6 +148,26 @@ class ServicesController < ApplicationController
     render :json => services
   end
 
+  def change_services_order
+    array_result = Array.new
+    params[:services_order].each do |pos, service_hash|
+      service = Service.find(service_hash[:service])
+      if service.update(:order => service_hash[:order])
+        array_result.push({
+          service: service.name,
+          status: 'Ok'
+        })
+      else
+        array_result.push({
+          service: service.name,
+          status: 'Error',
+          errors: service.errors
+        })
+      end
+    end
+    render :json => array_result
+  end
+
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_service
@@ -123,6 +176,6 @@ class ServicesController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def service_params
-      params.require(:service).permit(:name, :price, :show_price, :duration, :description, :group_service, :capacity, :waiting_list, :company_id, :service_category_id, service_category_attributes: [:name, :company_id, :id],  :tag_ids => [] )
+      params.require(:service).permit(:name, :price, :show_price, :duration, :outcall, :description, :group_service, :capacity, :waiting_list, :outcall, :company_id, :service_category_id, service_category_attributes: [:name, :company_id, :id],  :tag_ids => [], :service_provider_ids => [], :resource_ids => [] )
     end
 end

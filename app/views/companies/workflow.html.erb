@@ -8,6 +8,7 @@
       <div class="col-md-2"><a id="next2" class="btn btn-agendapro-claro pull-right">Siguiente <i class="fa fa-chevron-right"></i></a></div>
     </div>
   </div>
+  <div class="container" id="warning"></div>
   <div class="container">
     <div clas="row" id="espacio-workflow">
       <div class="col-md-12">
@@ -23,7 +24,7 @@
         <div id="foo4" style="visibility: collapse;">
           <div class="box-step">
             <div class="col-md-12">
-              <h4>Servicios</h4>
+              <h4 class="subtitulos-workflow">Servicios</h4>
               <div class="col-md-6">
                 <div class="panel-group" id="services-selector">
                   <%= image_tag "ajax-loader.gif", :alt => "Loader" %>
@@ -32,7 +33,7 @@
               <div class="col-md-6">
                 <div class="panel panel-info">
                   <div class="panel-heading">
-                    <h3 class="panel-title">Descripción</h3>
+                    <h3 class="panel-title">Descripción del Servicio</h3>
                   </div>
                   <div class="panel-body">
                     <table class="table">
@@ -46,11 +47,11 @@
           </div>
           <div class="box-step">
             <div class="col-md-12">
-              <h4>Seleccione un Staff</h4>
+              <h4 class="subtitulos-workflow">Seleccione un Staff</h4>
               <div class="col-md-3">
                 <div class="panel panel-default">
                   <div class="panel-body">
-                    Seleccione un staff para ver el horario
+                    Seleccione un staff para ver su horario
                   </div>
                   <ul class="list-group" id="staff-selector">
                     <%= image_tag "ajax-loader.gif", :alt => "Loader" %>
@@ -75,11 +76,11 @@
           </div>
           <div class="box-step">
             <div class="col-md-12">
-              <h4>Ingresa tus Datos</h4>
+              <h4 class="subtitulos-workflow">Ingresa tus Datos</h4>
               <div class="col-md-6">
                 <div class="panel panel-default">
                   <div class="panel-heading">
-                    <h3 class="panel-title">Datos</h3>
+                    <h3 class="panel-title">Datos de la Reserva</h3>
                   </div>
                   <div class="panel-body">
                     <%= form_tag("book", method: "post", role: "form", class: "form-horizontal", id: "bookingForm" ) do %>
@@ -88,6 +89,7 @@
                       <input type="hidden" name="provider" id="provider" value="">
                       <input type="hidden" name="service" id="service" value="">
                       <input type="hidden" name="location" id="location" value="<%= @location.id %>">
+                      <input type="hidden" name="origin" id="origin" value="true">
                       <% if user_signed_in? %>
                       <div id="user-data">
                         <input type="hidden" name="user" id="user" value="<%= current_user.id %>">
@@ -112,22 +114,22 @@
                         <div class="form-group">
                           <%= label_tag(:phone, "Teléfono", class: "col-sm-3 control-label") %>
                           <div class="col-sm-9">
-                            <%= telephone_field_tag(:phone, current_user.phone, :class => "form-control", :placeholder => "97193440", :required => true) %>
+                            <%= telephone_field_tag(:phone, current_user.phone, :class => "form-control", :placeholder => "1122334455", :required => true) %>
                           </div>
                         </div>
                       </div>
-                      <p id="user-message">Estas agendando como <%= current_user.email %>. Si no es usted puede dar clik <a href="#" id="user-change">aquí</a>.</p>
+                      <p id="user-message">Estas agendando como <strong><%= current_user.email %></strong>.<br /> Si no eres tu, haz click <a href="#" id="user-change">aquí</a></p>
                       <% else %>
                       <div class="form-group">
                         <%= label_tag(:firstName, "Nombre", class: "col-sm-3 control-label") %>
                         <div class="col-sm-9">
-                          <%= text_field_tag(:firstName, nil, :class => "form-control", :placeholder => "Matias", :required => true) %>
+                          <%= text_field_tag(:firstName, nil, :class => "form-control", :placeholder => "Nombre", :required => true) %>
                         </div>
                       </div>
                       <div class="form-group">
                         <%= label_tag(:lastName, "Apellido", class: "col-sm-3 control-label") %>
                         <div class="col-sm-9">
-                          <%= text_field_tag(:lastName, nil, :class => "form-control", :placeholder => "Rossi", :required => true) %>
+                          <%= text_field_tag(:lastName, nil, :class => "form-control", :placeholder => "Apellido", :required => true) %>
                         </div>
                       </div>
                       <div class="form-group">
@@ -139,14 +141,20 @@
                       <div class="form-group">
                         <%= label_tag(:phone, "Teléfono", class: "col-sm-3 control-label") %>
                         <div class="col-sm-9">
-                          <%= telephone_field_tag(:phone, nil, :class => "form-control", :placeholder => "97193440", :required => true) %>
+                          <%= telephone_field_tag(:phone, nil, :class => "form-control", :placeholder => "1122334455", :required => true) %>
                         </div>
                       </div>
                       <% end %>
+                      <div id="outcallAddress" class="form-group">
+                        <%= label_tag(:address, "Dirección", class: "col-sm-3 control-label") %>
+                        <div class="col-sm-9">
+                          <%= text_field_tag(:address, nil, :class => "form-control", :placeholder => "Escribe la dirección donde se debe realizar el servicio." ) %>
+                        </div>
+                      </div>
                       <div class="form-group">
                         <%= label_tag(:comment, "Comentario", class: "col-sm-3 control-label") %>
                         <div class="col-sm-9">
-                          <%= text_area_tag(:comment, nil, :class => "form-control", :placeholder => "Escriba sus comentarios por favor.", :rows => 4) %>
+                          <%= text_area_tag(:comment, nil, :class => "form-control", :placeholder => "Escribe tus comentarios para notificarlos, si los tienes.", :rows => 4) %>
                         </div>
                       </div>
                       <div class="form-group">
@@ -161,7 +169,7 @@
               <div class="col-md-6">
                 <div class="panel panel-info">
                   <div class="panel-heading">
-                    <h3 class="panel-title">Resumen</h3>
+                    <h3 class="panel-title">Resumen de tu Reserva</h3>
                   </div>
                   <div class="panel-body">
                     <table class="table">

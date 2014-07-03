@@ -1,0 +1,44 @@
+<div class="container">
+	<div class="row">
+		<div class="col-xs-12">
+			<div class="single-local">
+				<% if @company.logo_url %>
+		        <%= image_tag @company.logo_url.to_s, :alt => @company.name %>
+		        <% else %>
+		        <%= image_tag 'Iso_Pro_Color.png', :alt => 'AgendaPro' %>
+		        <% end %>
+				<% @locations.each do |location| %>
+				<a href="<%= url_for(:host => @url, :local => location.id, :controller => 'companies', :action => 'workflow') %>">
+					<div class="bloque-local" data-location="<%= location.id %>">
+						<h3><%= location.name %></h3>
+						<p><%= if !location.outcall then location.address+', '+location.district.name else "A Domicilio" end %>.</p>
+						<p>Horario: </p>
+						<div class="clear"></div>
+					</div>
+				</a>
+				<% end %>
+			</div>
+		</div>
+	</div>
+</div>
+
+<% content_for :scripts do %>
+	<script type="text/javascript">
+		$(function() {
+			$.each($('.bloque-local'), function (key, local) {
+				if ($(local).data('location')) {
+					var id = $(local).data('location');
+					$.getJSON('/schedule', {local: id}, function (schedule) {
+						var schedule_text = $(local).children('p:last').text();
+						$.each(schedule, function (day, hour) {
+							if (hour.open) {
+								schedule_text += day.substring(0,2) + ' - ';
+							}
+						});
+						$(local).children('p:last').text(schedule_text.substr(0 , schedule_text.length - 2));
+					});
+				};
+			});
+		});
+	</script>
+<% end %>

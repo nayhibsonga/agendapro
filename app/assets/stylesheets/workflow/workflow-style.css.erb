@@ -1,5 +1,15 @@
 @charset "UTF-8";
 
+.subtitulos-workflow {
+	margin-left: 15px;
+	color: #505050;
+	font-size: 20px;
+	font-weight: bold;
+}
+.margen-workflow {
+	margin-bottom: 5px;
+}
+
 #navegacion-workflow{
 	margin:10px 0px 0px 0px;
 	background: #F3F3F3;
@@ -80,6 +90,11 @@
   max-height: 300px;
   overflow: auto;
 }
+.panel > .list-group {
+  margin-bottom: 0;
+  max-height: 300px;
+  overflow: auto;
+}
 .panel > .list-group .list-group-item {
   border-width: 1px 0;
 }
@@ -142,6 +157,9 @@
 	background-color: rgba(27,115,112,0.4);
 	border-color: rgba(27,115,112,0.67);
 }
+.panel-group > .panel > .panel-heading > h3 {
+	cursor: pointer;
+}
 
 /* PAGINA EMPRESA */
 .header-empresa{
@@ -160,6 +178,8 @@
 }
 .info-empresa{
 	min-height:70px;
+	margin-bottom: 10px;
+	color: #fff;
 }
 .main {
 	background: url(<%= asset_path 'backgrounds/wild_oliva_light.png' %>);

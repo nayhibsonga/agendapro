@@ -12,6 +12,12 @@
     Cantidad de reservas totales hechas este mes: <%= Booking.where(created_at: Time.now.beginning_of_month..Time.now.end_of_month).count %><br />
     Cantidad de empresas totales hechas este mes: <%= Company.where(created_at: Time.now.beginning_of_month..Time.now.end_of_month).count %><br />
   </div>
+  <div class="panel-body">
+    Cantidad de reservas totales hechas semana pasada: <%= Booking.where(created_at: 1.week.ago.beginning_of_week..1.week.ago.end_of_week).count %><br />
+    Cantidad de empresas totales hechas semana pasada: <%= Company.where(created_at: 1.week.ago.beginning_of_week..1.week.ago.end_of_week).count %><br /><br />
+    Cantidad de reservas totales hechas mes pasado: <%= Booking.where(created_at: 1.month.ago.beginning_of_month..1.month.ago.end_of_month).count %><br />
+    Cantidad de empresas totales hechas mes pasado: <%= Company.where(created_at: 1.month.ago.beginning_of_month..1.month.ago.end_of_month).count %><br />
+  </div>
 </div> 
 
 <table class="table table-bordered">
@@ -20,9 +26,6 @@
       <th>Nombre</th>
       <th>Fecha de Creación</th>
       <th>Administrador</th>
-      <th>Locales</th>
-      <th>Proveedores</th>
-      <th>Usuarios</th>
       <th>Última Reserva</th>
       <th></th>
     </tr>
@@ -32,12 +35,9 @@
     <% @companies.each do |company| %>
       <tr>
         <td><%= link_to company.name, root_url(:subdomain => company.web_address) %></td>
-        <td><%= l company.created_at, format: :short %></td>
+        <td><%= l company.created_at, format: :short %> (<%= ((Time.now - company.created_at) / 1.day).to_i %>)</td>
         <td><%= company.users.where(role_id: Role.find_by_name("Admin")).first.email %></td>
-        <td><%= company.locations.count %></td>
-        <td><%= company.service_providers.count %></td>
-        <td><%= company.users.count %></td>
-        <td><%= l Booking.where(:service_provider_id => ServiceProvider.where(:company_id => company.id)).last.created_at, format: :short %></td>
+        <td><%= l Booking.where(:service_provider_id => ServiceProvider.where(:company_id => company.id)).last.created_at, format: :short  if  Booking.where(:service_provider_id => ServiceProvider.where(:company_id => company.id)).last %></td>
         <td><%= link_to '<i class="fa fa-pencil"></i> Editar'.html_safe, edit_company_path(company) %>
         <% if company.active %>
         <%= link_to '<i class="fa fa-trash-o"></i> Desactivar'.html_safe, deactivate_company_path(:id => company.id), data: { confirm: '¿Estás seguro?' } %></td>

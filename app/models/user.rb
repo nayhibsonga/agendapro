@@ -22,18 +22,18 @@ class User < ActiveRecord::Base
 	end
 
 	def get_past_bookings
-		Booking.where(email: self.email).each do |booking|
+		Booking.where(client_id: Client.where(email: self.email)).each do |booking|
 			booking.update(user_id: self.id)
 		end
 	end
 	def location_company_users
 		if Role.where(:name => ["Administrador Local","Recepcionista","Staff"]).include? self.role
 			if !self.location
-				errors.add(:user, "Este tipo de usuario debe tener un local asociado.")
+				errors.add(:base, "Este tipo de usuario debe tener un local asociado.")
 			end
 		else
 			if self.location
-				errors.add(:user, "Este tipo de usuario no debe tener un local asociado.")
+				errors.add(:base, "Este tipo de usuario no debe tener un local asociado.")
 			end
 		end
 	end

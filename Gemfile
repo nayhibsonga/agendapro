@@ -94,6 +94,22 @@ gem 'bcrypt-ruby', '~> 3.1.2'
 # Pago en linea: Punto Pagos
 gem 'puntopagos'
 
+# Importacion de datos desde excel
+gem 'roo'
+
 # File Upload
 # gem 'rmagick'
+gem "mini_magick"
 gem 'carrierwave'
+
+# Calendar
+gem 'ri_cal'
+
+# Version Movil
+gem 'mobu'
+
+# Gráficos Reporting Javascript
+gem "chartkick"
+
+# Agrupación de elementos por fecha
+gem 'groupdate'

@@ -1,0 +1,4 @@
+email,first_name,last_name,phone,address,district,city,age,gender,birth_date
+ejemplo1@mujer.cl,Nombre1,Apellido1,12345678,Dirección1,Comuna1,Ciudad1,25,1,
+ejemplo2@hombre.cl,Nombre2,Apellido2,13245678,Dirección2,Comuna2,Ciudad2,40,2,
+ejemplo3@agendapro.cl,Soporte,Agendapro,+569 5178 5898,Nuestra Señora de los Ángeles 185 of. D,Las Condes,Santiago,100,0,2012-06-06

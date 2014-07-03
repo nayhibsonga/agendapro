@@ -5,66 +5,55 @@ function loadStep1 () {
 	$('#services-selector').html('<%= image_tag "ajax-loader.gif", :alt => "Loader" %>');
 	var localId = $('#selectedLocal').data('local').id;
 
-	$.getJSON('/local_services', {location: localId}, function (servicesArray) {
-		var categories = [];	//Todos los servicios ordenados por categoria
-
-		//====== Separacion de servicios por categoria
-		$.each(servicesArray, function (key, service) {
-			if (categories.indexOf(service.service_category_id) == -1) {
-				categories.push(service.service_category_id);
-			}
-		});
-
+	$.getJSON('/local_services', {location: localId}, function (categorized_services) {
+		var extraClass = ''
+		if (categorized_services.length == 1) {
+			extraClass = ' in';
+		}
 		$('#services-selector').empty();
+		$.each(categorized_services, function (key, service_hash) {
+			if (service_hash.services.length > 0) {
+				var servicesHTML = '';
+				$.each(service_hash.services, function (key, service) {
+					//====== Generando Radios
+					servicesHTML += 
+						'<li class="list-group-item">' +
+							'<div class="radio">' +
+								'<label>' +
+									'<input type="radio" name="serviceRadio" value="' + service.id + '" data-outcall="'+service.outcall+'">' +
+									'<p>' + service.name_with_small_outcall + '</p>' +
+								'</label>' +
+							'</div>' +
+						'</li>';
+				});
 
-		var extraClass = '';
-		
-		//====== Escribiendo los servicios
-		$.each(categories, function (key, service_category) {
-			var category_id = service_category;
-			servicesHTML = '';
-			$.each(servicesArray, function (key,service) {
-				if (service.service_category_id == category_id) {
-					servicesHTML += '<li class="list-group-item">' +
-						'<div class="radio">' +
-							'<label>' +
-								'<input type="radio" name="serviceRadio" value="' + service.id + '">' +
-								'<p>' + service.name + '</p>' +
-							'</label>' +
+				//====== Insertando acordeon
+				$('#services-selector').append(
+					'<div class="panel panel-default">' +
+						'<div class="panel-heading">' +
+							'<h3 class="panel-title" data-toggle="collapse" data-parent="#services-selector" href="#body' + service_hash.id + '">' +
+								'<a >' + service_hash.category + '</a>' +
+							'</h3>' +
 						'</div>' +
-					'</li>';
-				}
-			});
-
-			if (categories[0] === service_category) {
-				extraClass = ' in';
-			}
-
-			//====== Insertando acordeon
-			$('#services-selector').append(
-				'<div class="panel panel-default">' +
-					'<div class="panel-heading">' +
-						'<h3 class="panel-title">' +
-							'<a id="title' + category_id + '" data-toggle="collapse" data-parent="#services-selector" href="#body' + category_id + '">categoria</a>' +
-						'</h3>' +
-					'</div>' +
-					'<div id="body' + category_id + '" class="panel-collapse collapse'+ extraClass +'">' +
-						'<ul class="list-group" id="services-selector' + category_id + '">' +
-							servicesHTML +
-						'</ul>' +
-					'</div>' +
-				'</div>'
-			);
-			extraClass = '';
-
-			//====== Insertando nombre de la categoria
-			$.getJSON('/category_name', {id: category_id}, function (category_name) {
-				$('#title' + category_id).text(category_name.name);
-			});
+						'<div id="body' + service_hash.id + '" class="panel-collapse collapse'+ extraClass +'">' +
+							'<ul class="list-group" id="services-selector' + service_hash.id + '">' +
+								servicesHTML +
+							'</ul>' +
+						'</div>' +
+					'</div>'
+				);
+			};
 		});
 
 		$('[name="serviceRadio"]').on('click', function(event) {
 			var serviceId = event.target.getAttribute('value');
+			if ($(event.target).data('outcall') == true) {
+				$('#outcallAddress').show();
+			}
+			else {
+				$('#outcallAddress').hide();
+			}
+			$('#foo4').trigger('updateSizes');
 			loadDescription(serviceId);
 		});
 
@@ -86,12 +75,12 @@ function loadStep2 () {
 				$('#staff-selector').append(
 					'<li class="list-group-item">' +
 						'<div class="radio">' +
-                        	'<label>' +
-                        		'<input type="radio" name="staffRadio" value="' + provider.id + '">' +
-                        		'<p>' + provider.public_name + '</p>' +
-                        	'</label>' +
+							'<label>' +
+								'<input type="radio" name="staffRadio" value="' + provider.id + '">' +
+								'<p>' + provider.public_name + '</p>' +
+							'</label>' +
 						'</div>' +
-                    '</li>'
+					'</li>'
 				);
 			});
 
@@ -131,46 +120,61 @@ function loadStep2 () {
 function loadStep3 () {
 	if ($('[name="staffRadio"]').is(':checked')){
 		if (selected) {
+			checkUserCrossBookings();
+
 			$('#provider').val($('input[name=staffRadio]:checked').val());
 			$('#service').val($('input[name=serviceRadio]:checked').val());
 
 			// Summary
 			$('#summary').empty();
+
 			$('#summary').append(
 				'<tr>' +
-					'<th>Local:</th>' +
-					'<th>' + $('#selectedLocal').data('local').name + '</th>' +
-				'</tr>' +
-				'<tr>' +
-					'<th>Servicio:</th>' +
+					'<th>¿Qué estoy reservando?</th>' +
 					'<th>' + $('input[name=serviceRadio]:checked').next().html() + '</th>' +
 				'</tr>' +
 				'<tr>' +
-					'<th>Staff:</th>' +
+					'<th>¿Dónde?</th>' +
+					'<th>' + $('#selectedLocal').data('local').name + '</th>' +
+				'</tr>' +
+				'<tr>' +
+					'<th>¿Con quién?</th>' +
 					'<th>' + $('input[name="staffRadio"]:checked').next().html() + '</th>' +
 				'</tr>' +
 				'<tr>' +
-					'<th>Inicio:</th>' +
-					'<th>' + $('#start').val() + '</th>' +
-				'</tr>' +
-				'<tr>' +
-					'<th>Fin:</th>' +
-					'<th>' + $('#end').val() + '</th>' +
+					'<th>¿Cuándo?</th>' +
+					'<th>' + formattedTime($('#start').val()) + '</th>' +
 				'</tr>'
 			);
 			return true;
 		}
 		myAlert.showAlert(
-	      '<h3>Seleccione un Horario</h3>' +
-	      '<p>Debe elegir un horario antes de poder continuar.</p>'
-	    );
+		  '<h3>Seleccione un Horario</h3>' +
+		  '<p>Debe elegir un horario antes de poder continuar.</p>'
+		);
 		return false;
 	}
 	myAlert.showAlert(
-      '<h3>Seleccione un Staff</h3>' +
-      '<p>Debe elegir un staff para poder agendar un horario.</p>'
-    );
+	  '<h3>Seleccione un Staff</h3>' +
+	  '<p>Debe elegir un staff para poder agendar un horario.</p>'
+	);
 	return false;
+}
+
+function checkUserCrossBookings () {
+	$(".alert").alert('close');
+	var user = $('#user').val();
+	var booking_start = $('#start').val();
+	var booking_end = $('#end').val();
+	$.getJSON('/check_user_cross_bookings', {user: user, booking_start: booking_start, booking_end: booking_end}, function (result) {
+		if (result.crossover) {
+			var warning = '<div class="alert alert-warning alert-dismissable fade in" style="margin-bottom: 0px;">' +
+								'<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>' +
+								'<strong>¡Advertencia!</strong> Tienes agendado <em>' + result.booking.service + '</em> con <em>' + result.booking.service_provider + '</em> el <em>' + formattedTime(result.booking.start) + '</em>.' +
+							'</div>';
+			$('#warning').append(warning);
+		};
+	});
 }
 
 var step = 1;
@@ -179,10 +183,10 @@ function scrollEvents (direction) {
 		if (step == 1) {
 			if(!$('[name="serviceRadio"]').is(':checked')) {
 				myAlert.showAlert(
-			      '<h3>Seleccione un Servicio</h3>' +
-			      '<p>Debe elegir un servicio antes de poder continuar.</p>'
-			    );
-			    return false;
+				  '<h3>Seleccione un Servicio</h3>' +
+				  '<p>Debe elegir un servicio antes de poder continuar.</p>'
+				);
+				return false;
 			}
 			else {
 				loadStep2();
@@ -193,18 +197,18 @@ function scrollEvents (direction) {
 		else {
 			if(!$('[name="staffRadio"]').is(':checked')) {
 				myAlert.showAlert(
-			      '<h3>Seleccione un Staff</h3>' +
-			      '<p>Debe elegir un staff para poder agendar un horario.</p>'
-			    );
-			    return false;
+				  '<h3>Seleccione un Staff</h3>' +
+				  '<p>Debe elegir un staff para poder agendar un horario.</p>'
+				);
+				return false;
 			}
 			else {
 				if(!selected) {
 					myAlert.showAlert(
-				      '<h3>Seleccione un Horario</h3>' +
-				      '<p>Debe elegir un horario antes de poder continuar.</p>'
-				    );
-			    	return false;
+					  '<h3>Seleccione un Horario</h3>' +
+					  '<p>Debe elegir un horario antes de poder continuar.</p>'
+					);
+					return false;
 				}
 				else {
 					loadStep3();
@@ -249,7 +253,7 @@ function loadDescription (serviceId) {
 		$('#services-description').append(
 			'<tr>' +
 				'<th>Duración:</th>' +
-				'<th>' + service.duration + '</th>' +
+				'<th>' + service.duration + ' minutos </th>' +
 			'</tr>'
 		);
 		if(service.description) {
@@ -281,6 +285,23 @@ function generateDate(date, time) {
 	time += ':00';
 
 	return year + '-' + month + '-' + day + ' ' + time;
+}
+
+function formattedTime (timestamp) {
+	var dateString = timestamp;
+
+	var s = new Date(dateString.substring(0, 4), parseInt(dateString.substring(5, 7)) - 1, dateString.substring(8, 10), dateString.substring(11, 13), dateString.substring(14, 16), 0);
+	
+	var weekday = ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"]
+
+	var monthname = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"]
+
+	var day = weekday[s.getDay()];
+	var month = monthname[s.getMonth()];
+
+	var formattedStart = day + " " + parseInt(timestamp.substring(8,10)) + " de " + month + " a las " + timestamp.substring(11,16);
+
+	return formattedStart;
 }
 
 var myAlert;

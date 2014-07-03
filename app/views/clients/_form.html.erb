@@ -55,7 +55,7 @@
             </div>
           </div>
           <div class="form-group">
-            <%= f.label :birth_date, "Cumpleaños: ", class: "col-sm-4 control-label" %>
+            <%= f.label :birth_date, "Fecha Nacimiento: ", class: "col-sm-4 control-label" %>
             <div class="col-sm-8">
                 <%= f.text_field :birth_date, class: "form-control", :value => (@client.birth_date.blank? ? '' : @client.birth_date.strftime('%d/%m/%Y')) %>
             </div>
@@ -86,22 +86,24 @@
             <div class="panel panel-info">
               <div class="panel-heading">
                 <h3 class="panel-title">
-                  Últimas 5 reservas agendadas
+                  Reservas Pasadas
                 </h3>
               </div>
-              <div class="panel-body">
+              <div class="panel-body fixed-panel">
                 <table class="table">
                   <tbody>
                     <tr>
                       <th>Fecha</th>
                       <th>Local</th>
                       <th>Servicio</th>
+                      <th>Estado</th>
                     </tr>
                     <% @lastBookings.each do |booking| %>
                     <tr>
                       <td><%= l booking.start, format: :short %></td>
                       <td><%= booking.location.name %></td>
                       <td><%= booking.service.name %></td>
+                      <td><%= booking.status.name %></td>
                     </tr>
                     <% end %>
                   </tbody>
@@ -111,28 +113,31 @@
             <div class="panel panel-info">
               <div class="panel-heading">
                 <h3 class="panel-title">
-                  Próximas 5 reservas
+                  Próximas Reservas
                 </h3>
               </div>
-              <div class="panel-body">
+              <div class="panel-body fixed-panel">
                 <table class="table">
                   <tbody>
                     <tr>
                       <th>Fecha</th>
                       <th>Local</th>
                       <th>Servicio</th>
+                      <th>Estado</th>
                     </tr>
                     <% @activeBookings.each do |booking| %>
                     <tr>
                       <td><%= l booking.start, format: :short %></td>
                       <td><%= booking.location.name %></td>
                       <td><%= booking.service.name %></td>
+                      <td><%= booking.status.name %></td>
                     </tr>
                     <% end %>
                   </tbody>
                 </table>
               </div>
-            </div>      
+            </div>
+            <%= link_to "Ver Historial Completo", client_history_path(:id => @client.id) %>      
           </div>
         <% end %>
       </div>
@@ -168,7 +173,7 @@
                 <% @client_comments.each do |client_comment| %>
                 <tr>
                   <td id="comment<%= client_comment.id %>"><%= client_comment.comment.gsub("\n", "<br />").html_safe %></td>
-                  <td><%= l client_comment.created_at.in_time_zone('Buenos Aires'), format: :short %><br />
+                  <td><%= l client_comment.created_at, format: :short %><br />
                     <%= link_to '<i class="fa fa-pencil"></i> Editar'.html_safe, '#', :class => 'btn btn-warning btn-xs', :id => 'edit_button'+client_comment.id.to_s %>
                     <%= link_to '<i class="fa fa-trash-o"></i> Eliminar'.html_safe, '#', :class => 'btn btn-danger btn-xs', :id => 'destroy_button'+client_comment.id.to_s %>
                   </td>

@@ -7,6 +7,8 @@ class ApplicationController < ActionController::Base
   # For APIs, you may want to use :null_session instead.
   protect_from_forgery with: :exception
 
+  include Mobu::DetectMobile
+
   before_filter do
     resource = controller_name.singularize.to_sym
     method = "#{resource}_params"
@@ -66,13 +68,5 @@ class ApplicationController < ActionController::Base
   def after_sign_out_path_for(resource_or_scope)
     root_path
   end
-
-  # def layout
-  #   if is_a?(Devise::SessionsController)
-  #     return "login"
-  #   elsif is_a?(Devise::RegistrationsController)
-  #     return "login"
-  #   end
-  # end
 
 end

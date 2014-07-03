@@ -10,8 +10,8 @@ class UserMailer < ActionMailer::Base
 
     @user_fname = user.email
     @user_name = user.email
-    if (!user.last_name.nil? && !user.first_name.nil?)
-      @user_name =  user.last_name + ', ' + user.first_name
+    if (!user.last_name.blank? && !user.first_name.blank?)
+      @user_name = user.first_name + ' ' + user.last_name 
       @user_fname = user.first_name
     end
 
@@ -28,10 +28,10 @@ class UserMailer < ActionMailer::Base
       ],
       :headers => { 'Reply-To' => "contacto@agendapro.cl" },
       :global_merge_vars => [
-        {
-          :name => 'UNSUBSCRIBE',
-          :content => "Si desea dejar de recibir email puede dar click <a href='#{unsubscribe_url(:user => Base64.encode64(user.email))}'>aquí</a>."
-        },
+        # {
+        #   :name => 'UNSUBSCRIBE',
+        #   :content => "Si desea dejar de recibir email puede dar click <a href='#{unsubscribe_url(:user => Base64.encode64(user.email))}'>aquí</a>."
+        # },
         {
           :name => 'FNAME',
           :content => @user_fname

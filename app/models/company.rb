@@ -12,6 +12,7 @@ class Company < ActiveRecord::Base
 	has_many :service_categories
 	has_many :clients
 	has_one :company_setting
+	has_many :company_from_email
 
 	validates :name, :web_address, :economic_sector, :plan, :payment_status, :presence => true
 

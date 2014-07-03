@@ -48,13 +48,13 @@
 								<div class="tab-content">
 									<div class="tab-pane active" id="home<%=i%>">
 										<div class="data-local-search">
-											<p><%= location.address %>, <%= location.district.name %>.</p>
+											<p><%= if !location.outcall then location.address+', '+location.district.name else "A Domicilio" end %>.</p>
 											<p>Tel: <%= location.phone %></p>
 										</div>
 									</div>
 									<div class="tab-pane" id="profile<%=i%>">
 										<p class="fix-position-search">                                                    
-											<% if location.company.description.nil? %>
+											<% if location.company.description.blank? %>
 											<p>No hay descripción para esta empresa.</p>
 											<% else %>
 											<p><%= location.company.description %></p>
@@ -80,6 +80,7 @@
 					</div>
 					
 					<% i = i + 1 end %>
+					<%= will_paginate @results, renderer: BootstrapPagination::Rails %>
 					<% if @results.empty? %>
 						<h4>No se encontraron resultados para <strong><%= params[:inputSearch] %></strong>.</h4>
 					<% end %>

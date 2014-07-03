@@ -7,8 +7,8 @@ function loadSchedule(id) {
       if (hour.open) {
         $('#schedule-body').append(
           '<tr>' +
-            '<th>' + day + '</th>' +
-            '<th>' + getHour(hour.open) + '-' + getHour(hour.close) + '</th>' +
+            '<th>' + day + ':</th>' +
+            '<th>' + getHour(hour.open) + ' - ' + getHour(hour.close) + '</th>' +
           '</tr>'
         );
       }
@@ -66,14 +66,39 @@ function localMap(id) {
   });
 }
 
+function loadOutcallDistricts(id) {
+  $.getJSON('/local_districts', {id: id}, function (local_districts) {
+    var districtsString = '';
+    $.each(local_districts.districts, function(index, district) {
+      districtsString += district.name + '<br />';
+    });
+    $('#outcallDistricts').html('<h3>Comunas que se atienden desde esta sucursal:<br /><small>(comunas en '+local_districts.city+', '+local_districts.region+' - '+local_districts.country+')</small></h3><p>'+districtsString+'</p>');
+  });
+}
+
 var myAlert;
 $(function() {
   myAlert = new Alert('.main');
+
+  $('#outcallDistricts').hide();
+  $('#outcallDistricts').empty();
 
   $('[name="localRadio"]').on('click', function(event) {
     var id = event.target.getAttribute('value');
     loadSchedule(id);
     localMap(id);
+
+    if ($('#localOption' + id).data('outcall') == true) {
+      $('#outcallDistricts').empty();
+      loadOutcallDistricts(id);
+      $('.google-maps-empresa').hide();
+      $('#outcallDistricts').show();
+    }
+    else {
+      $('.google-maps-empresa').show();
+      $('#outcallDistricts').hide();
+      $('#outcallDistricts').empty();
+    }
 
     $('.local-seleccionado').removeClass('local-seleccionado');
     $('#localOption' + id).parents('tr').addClass('local-seleccionado');

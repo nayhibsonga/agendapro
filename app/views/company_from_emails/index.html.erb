@@ -1,0 +1,29 @@
+<h1>Listing company_from_emails</h1>
+
+<table>
+  <thead>
+    <tr>
+      <th>Email</th>
+      <th>Company</th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @company_from_emails.each do |company_from_email| %>
+      <tr>
+        <td><%= company_from_email.email %></td>
+        <td><%= company_from_email.company %></td>
+        <td><%= link_to 'Show', company_from_email %></td>
+        <td><%= link_to 'Edit', edit_company_from_email_path(company_from_email) %></td>
+        <td><%= link_to 'Destroy', company_from_email, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<br>
+
+<%= link_to 'New Company from email', new_company_from_email_path %>

@@ -1,0 +1,50 @@
+<div class="container" style="margin-bottom: 45px;">
+  <div class="row">
+    <div class="col-xs-12">
+      <%= form_tag("/edited_booking", method: "post", role: "form") do %>
+        <%= hidden_field_tag :id, @booking.id %>
+        <%= hidden_field_tag :start, nil %>
+        <%= hidden_field_tag :end, nil %>
+        <div class="form-group">
+          <% unless @available_time.length == 0 %>
+          <label for="">Selecciona un horario</label>
+          <% @available_time.each do |time| %>
+          <button type="submit" class="btn btn-block btn-default btn-lg" data-date="<%= time[:date] %>" data-start="<%= time[:hour][:start] %>" data-end="<%= time[:hour][:end] %>"><%= time[:hour][:start] %></button>
+          <% end %>
+          <% else %>
+          <p>No hay horarios disponibles para este día.</p>
+          <% end %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>
+
+<div class="cambiar-comuna">
+  <div class="btn-group btn-group-justified btn-group-justified-fix">
+    <a type="button" class="btn btn-success" disabled>Editar</a>
+    <%= link_to 'Cancelar', root_url(:subdomain => false), :class => 'btn btn-default' %>
+  </div>
+</div>
+
+<% content_for :scripts do %>
+<%= javascript_include_tag "mobile/workflow" %>
+<script type="text/javascript">
+  $(document).ready(function(){
+    $('button[type="submit"]').click(function (event) {
+      event.preventDefault();
+      $('.btn-block.btn-success').addClass('btn-default').removeClass('btn-success');
+      $(event.target).addClass('btn-success').removeClass('btn-default');
+      $('a.btn-success').attr('disabled', false);
+
+      var date = $(event.target).data('date');
+      var start = $(event.target).data('start');
+      var end = $(event.target).data('end');
+      addBooking(date, start, end);
+    });
+    $('a.btn-success').click(function (event) {
+      $('form').submit();
+    });
+  });
+</script>
+<% end %>

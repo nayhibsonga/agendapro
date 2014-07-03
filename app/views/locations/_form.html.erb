@@ -1,3 +1,12 @@
+<% content_for :scripts do %>
+  <%= javascript_include_tag "http://maps.google.com/maps/api/js?sensor=false" %>
+  <%= javascript_include_tag "location" %>
+<% end %>
+
+<% content_for :stylesheets do %>
+  <%= stylesheet_link_tag "bootstrap-tagsinput" %>
+<% end %>
+
 <div class="container">
 	<div class="row"> 
 		<div class="col-md-6 well">
@@ -9,9 +18,41 @@
 					</div>
 				</div>
 				<div class="form-group">
+					<%= label_tag :country, "País: ", class: "col-sm-3 control-label" %>
+					<div class="col-sm-9">
+						<%= select_tag :country, options_from_collection_for_select(Country.all.order(:name), :id, :name), class: "form-control", include_blank: true %>
+					</div>
+				</div>
+				<div class="form-group">
+					<%= label_tag :region, "Región: ", class: "col-sm-3 control-label" %>
+					<div class="col-sm-9">
+						<%= select_tag :region, options_from_collection_for_select(Region.all.order(:name), :id, :name), class: "form-control", :disabled => true %>
+					</div>
+				</div>
+				<div class="form-group">
+					<%= label_tag :city, "Ciudad: ", class: "col-sm-3 control-label" %>
+					<div class="col-sm-9">
+						<%= select_tag :city, options_from_collection_for_select(City.all.order(:name), :id, :name), class: "form-control", :disabled => true %>
+					</div>
+				</div>
+				<div class="form-group">
+					<%= f.label :district_id, "Comuna: ", class: "col-sm-3 control-label" %>
+					<div class="col-sm-9">
+						<%= f.collection_select :district_id, District.all.order(:name), :id, :name, {}, { class: "form-control", :disabled => true }%>
+					</div>
+				</div>
+				<div class="form-group">
 					<%= f.label :address, "Dirección: ", class: "col-sm-3 control-label" %>
 					<div class="col-sm-9">
 						<%= f.text_field :address, class: "form-control" %>
+						<div class="checkbox">
+			                <label>
+			                	<%= f.check_box :outcall %> Sin Dirección (sólo servicios a domicilio).
+			                </label>
+			            </div>
+			           	<div id="districtsCheckboxes" class='hidden'>
+			           		
+			           	</div>
 					</div>
 				</div>
 				<div class="form-group">
@@ -21,18 +62,11 @@
 					</div>
 				</div>
 
-				<div class="form-group">
-					<%= f.label :district, "Comuna: ", class: "col-sm-3 control-label" %>
-					<div class="col-sm-9">
-						<%= f.collection_select :district_id, District.all, :id, :name, {}, { class: "form-control" }%>
-					</div>
-				</div>
-
 				<%= f.hidden_field :latitude %>
 				<%= f.hidden_field :longitude %>
 				<div class="form-group">
 					<div class="actions col-sm-offset-3 col-sm-9">
-						<%= f.submit 'Guardar', :class => "btn btn-primary buttonLocation"%>   
+						<button type="button" class="btn btn-primary" id="saveLocation">Guardar</button>
 						<%= link_to 'Cancelar'.html_safe, locations_path, :class => "btn btn-danger" %>    
 					</div>
 				</div>

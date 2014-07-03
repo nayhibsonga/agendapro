@@ -7,9 +7,9 @@
 #   Mayor.create(name: 'Emanuel', city: cities.first)
 
 # => Status de las Reservas
-	reservado = Status.create(name: "Reservado", description: "Reserva asignada")
-	bloqueado = Status.create(name: "Bloqueado", description: "Hora no disponible bloqueada porel local")
-	completado = Status.create(name: "Completado", description: "Reserva sólo ha sido agendada")
+	reservado = Status.create(name: "Reservado", description: "Reserva agendada")
+	bloqueado = Status.create(name: "Confirmado", description: "Reserva confirmada por el Usuario")
+	asiste = Status.create(name: "Asiste", description: "Reserva completada con el cliente")
 	pagado = Status.create(name: "Pagado", description: "Cliente pre-pago la cita")
 	cancelado = Status.create(name: "Cancelado", description: "Reserva sólo ha sido agendada")
 	no_asiste = Status.create(name: "No Asiste", description: "Cliente no llego a la cita")
@@ -291,13 +291,13 @@
 
 	user = User.create(first_name: 'Nicolás', last_name: 'Rossi', email: 'nrossi@agendapro.cl', phone: '+56 9 8289 7145', role: Role.find_by_name('Usuario Registrado'), password: '12345678', password_confirmation: '12345678')
 
-	bookings = Booking.create([
-		{start: '2014-1-6T08:30z', end: '2014-1-6T09:00z', service_provider_id: 1, user_id: user.id, service_id: 1, location_id: 1, status_id: 1, first_name: 'Nicolas', last_name: 'Rossi', email: 'nrossi@agendapro.cl', phone: '95482649'},
-		{start: '2014-1-7T13:30z', end: '2014-1-7T14:00z', service_provider_id: 1, user_id: admin.id, service_id: 1, location_id: 1, status_id: 1, first_name: 'Nicolas', last_name: 'Flores', email: 'nflores@agendapro.cl', phone: '95482649'},
-		{start: '2014-1-8T015:00z', end: '2014-1-8T15:30z', service_provider_id: 1, user_id: user.id, service_id: 1, location_id: 1, status_id: 1, first_name: 'Nicolas', last_name: 'Rossi', email: 'nrossi@agendapro.cl', phone: '95482649'},
-		{start: '2014-1-9T16:30z', end: '2014-1-9T17:00z', service_provider_id: 1, user_id: admin.id, service_id: 2, location_id: 1, status_id: 1, first_name: 'Nicolas', last_name: 'Flores', email: 'nflores@agendapro.cl', phone: '95482649'},
-		{start: '2014-1-10T09:30z', end: '2014-1-10T10:15z', service_provider_id: 1, user_id: user.id, service_id: 2, location_id: 1, status_id: 1, first_name: 'Nicolas', last_name: 'Rossi', email: 'nrossi@agendapro.cl', phone: '95482649'}
-	])
+	# bookings = Booking.create([
+	# 	{start: '2014-1-6T08:30z', end: '2014-1-6T09:00z', service_provider_id: 1, user_id: user.id, service_id: 1, location_id: 1, status_id: 1, first_name: 'Nicolas', last_name: 'Rossi', email: 'nrossi@agendapro.cl', phone: '95482649'},
+	# 	{start: '2014-1-7T13:30z', end: '2014-1-7T14:00z', service_provider_id: 1, user_id: admin.id, service_id: 1, location_id: 1, status_id: 1, first_name: 'Nicolas', last_name: 'Flores', email: 'nflores@agendapro.cl', phone: '95482649'},
+	# 	{start: '2014-1-8T015:00z', end: '2014-1-8T15:30z', service_provider_id: 1, user_id: user.id, service_id: 1, location_id: 1, status_id: 1, first_name: 'Nicolas', last_name: 'Rossi', email: 'nrossi@agendapro.cl', phone: '95482649'},
+	# 	{start: '2014-1-9T16:30z', end: '2014-1-9T17:00z', service_provider_id: 1, user_id: admin.id, service_id: 2, location_id: 1, status_id: 1, first_name: 'Nicolas', last_name: 'Flores', email: 'nflores@agendapro.cl', phone: '95482649'},
+	# 	{start: '2014-1-10T09:30z', end: '2014-1-10T10:15z', service_provider_id: 1, user_id: user.id, service_id: 2, location_id: 1, status_id: 1, first_name: 'Nicolas', last_name: 'Rossi', email: 'nrossi@agendapro.cl', phone: '95482649'}
+	# ])
 
 ##################### Datos de los Clientes en Beta
 

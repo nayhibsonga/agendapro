@@ -119,6 +119,75 @@ function initialize() {
 			$('#closeHourId'+ value +' option[value="'+closeTime[0]+'"]').attr("selected",true);
 			$('#closeMinuteId'+ value +' option[value="'+closeTime[1]+'"]').attr("selected",true);
 		});
+		$('#country option[value="'+$('#geo_data').data('country-id')+'"]').attr("selected",true);
+		$.getJSON('/country_regions', {country_id: $('#geo_data').data('country-id')}, function (regions) {
+			if (regions.length) {
+				$('#region').empty();
+				$.each(regions, function (key, region) {
+					$('#region').append(
+						'<option value="' + region.id + '">' + region.name + '</option>'
+					);
+				});
+				$('#region').prepend(
+					'<option></option>'
+				);
+				$('#region').attr('disabled', false);
+				$('#region option[value="'+$('#geo_data').data('region-id')+'"]').attr("selected",true);
+				$('#region').change(function (event) {
+					$('#city').attr('disabled', true);
+					$('#city').val('');
+					$('#location_district_id').attr('disabled', true);
+					$('#location_district_id').val('');
+					var region_id = $(event.target).val();
+					changeRegion(region_id);
+				});
+				$.getJSON('/region_cities', {region_id: $('#geo_data').data('region-id')}, function (cities) {
+					if (cities.length) {
+						$('#city').empty();
+						$.each(cities, function (key, city) {
+							$('#city').append(
+								'<option value="' + city.id + '">' + city.name + '</option>'
+							);
+						});
+						$('#city').prepend(
+							'<option></option>'
+						);
+						$('#city').attr('disabled', false);
+						$('#city option[value="'+$('#geo_data').data('city-id')+'"]').attr("selected",true);
+						$('#city').change(function (event) {
+							$('#location_district_id').attr('disabled', true);
+							$('#location_district_id').val('');
+							var city_id = $(event.target).val();
+							changeCity(city_id);
+						});
+						$.getJSON('/city_districs', {city_id: $('#geo_data').data('city-id')}, function (districts) {
+							if (districts.length) {
+								$('#location_district_id').empty();
+								$('#districtsCheckboxes').html('<div class="panel panel-info"><div class="panel-heading"><h3 class="panel-title">Comunas que atiendes</h3></div><div id="districtsPanel" class="panel-body"></div></div>');
+								$.each(districts, function (key, district) {
+									$('#location_district_id').append(
+										'<option value="' + district.id + '">' + district.name + '</option>'
+									);
+									$('#districtsPanel').append(
+										'<input type="checkbox" value="' + district.id + '" class="districtActive"/> ' + district.name + '<br />'
+									);
+								});
+								$('#location_district_id').attr('disabled', false);
+								$('#location_district_id option[value="'+$('#geo_data').data('district-id')+'"]').attr("selected",true);
+								if ($('#location_outcall').prop('checked')) {
+									$('#location_address').attr('disabled', true);
+									$('#districtsCheckboxes').removeClass('hidden');
+									var locationDistrictsData = $('#location_districts_data').data('location-districts');
+									$.each(locationDistrictsData, function(index,locationDistrict) {
+										$('.districtActive[value="'+locationDistrict.id+'"]').prop('checked',true);
+									});
+								}
+							};
+						});
+					};
+				});
+			};
+		});
 	}
 }
 
@@ -141,11 +210,23 @@ function changeDayStatus (value) {
 }
 
 function startLocation() {
-	var district = $('#location_district_id').val();
-	var address = $('#location_address').val();
-	if ((address != '')&&(district != '')) {
-		$.getJSON('/get_direction', {id: district}, function (direction) {
-			var geolocation = address + ', ' + direction;
+	if ((!$('#location_outcall').prop('checked')) && ($('#location_address').val() != '') && ($('#location_district_id').val() != '')) {
+		$.getJSON('/get_direction', {id: $('#location_district_id').val()}, function (direction) {
+			var geolocation = $('#location_address').val() + ', ' + direction;
+			var geoString = JSON.stringify(geolocation);
+			var geocoder = new google.maps.Geocoder();
+			geocoder.geocode( { "address" : geoString }, function (results, status) {
+				if (status == google.maps.GeocoderStatus.OK) {
+					$('#location_latitude').val(results[0].geometry.location.lat());
+					$('#location_longitude').val(results[0].geometry.location.lng());
+				}
+				saveLocation();
+			});
+		});
+	}
+	else if ($('#location_outcall').prop('checked') && $('#location_district_id').val() != '') {
+		$.getJSON('/get_direction', {id: $('#location_district_id').val()}, function (direction) {
+			var geolocation = direction;
 			var geoString = JSON.stringify(geolocation);
 			var geocoder = new google.maps.Geocoder();
 			geocoder.geocode( { "address" : geoString }, function (results, status) {
@@ -174,11 +255,21 @@ function locJSON() {
 		var location_time = {"open":"2000-01-01T"+ $('#openHourId'+enabledDays[i]).val() +":"+ $('#openMinuteId'+enabledDays[i]).val() +":00Z","close":"2000-01-01T"+ $('#closeHourId'+enabledDays[i]).val() +":"+ $('#closeMinuteId'+enabledDays[i]).val() +":00Z","day_id":parseInt(enabledDays[i])};
 		location_times.push(location_time);
 	}
+	var districtIds = [];
+	if ($('#location_outcall').prop('checked')) {
+		$(".districtActive:checked").each(
+		    function() {
+		    	districtIds.push($(this).val());
+		    }
+		);
+	}
 	var locationJSON  = {
 		"name": $('#location_name').val(),
 		"address": $('#location_address').val(),
 		"phone": $('#location_phone').val(),
 		"district_id": $('#location_district_id').val(),
+		"outcall": $('#location_outcall').prop('checked'),
+		"district_ids": districtIds,
 		"latitude": parseFloat($('#location_latitude').val()),
 		"longitude": parseFloat($('#location_longitude').val()),
 		"location_times_attributes": location_times
@@ -230,12 +321,105 @@ function saveLocation() {
 	}
 }
 
+function changeCountry (country_id) {
+	$.getJSON('/country_regions', {country_id: country_id}, function (regions) {
+		if (regions.length) {
+			$('#region').empty();
+			$.each(regions, function (key, region) {
+				$('#region').append(
+					'<option value="' + region.id + '">' + region.name + '</option>'
+				);
+			});
+			$('#region').prepend(
+				'<option></option>'
+			);
+
+			$('#region').change(function (event) {
+				$('#city').attr('disabled', true);
+				$('#city').val('');
+				$('#location_district_id').attr('disabled', true);
+				$('#location_district_id').val('');
+				var region_id = $(event.target).val();
+				changeRegion(region_id);
+			});
+			$('#region').attr('disabled', false);
+		};
+	});
+}
+
+function changeRegion (region_id) {
+	$.getJSON('/region_cities', {region_id: region_id}, function (cities) {
+		if (cities.length) {
+			$('#city').empty();
+			$.each(cities, function (key, city) {
+				$('#city').append(
+					'<option value="' + city.id + '">' + city.name + '</option>'
+				);
+			});
+			$('#city').prepend(
+				'<option></option>'
+			);
+
+			$('#city').change(function (event) {
+				$('#location_district_id').attr('disabled', true);
+				$('#location_district_id').val('');
+				var city_id = $(event.target).val();
+				changeCity(city_id);
+			});
+			$('#city').attr('disabled', false);
+		};
+	});
+}
+
+function changeCity (city_id) {
+	$.getJSON('/city_districs', {city_id: city_id}, function (districts) {
+		if (districts.length) {
+			$('#districtsCheckboxes').empty();
+			$('#districtsCheckboxes').html('<div class="panel panel-info"><div class="panel-heading"><h3 class="panel-title">Comunas que atiendes</h3></div><div id="districtsPanel" class="panel-body"></div></div>');
+			$('#location_district_id').empty();
+			$.each(districts, function (key, district) {
+				$('#location_district_id').append(
+					'<option value="' + district.id + '">' + district.name + '</option>'
+				);
+				$('#districtsPanel').append(
+					'<input type="checkbox" value="' + district.id + '" class="districtActive"/> ' + district.name + '<br />'
+				);
+			});
+			$('#location_district_id').attr('disabled', false);
+			$('#location_district_id').val('');
+		};
+	});
+}
+
 var alertId;
 $(function() {
 	alertId = new Alert();
-  initialize();
-  $('.buttonLocation').click(function() {
+	initialize();
+	$('#saveLocation').click(function() {
 		startLocation();
 		return false;
+	});
+	
+	$('#country').change(function (event) {
+		$('#region').attr('disabled', true);
+		$('#region').val('');
+		$('#city').attr('disabled', true);
+		$('#city').val('');
+		$('#location_district_id').attr('disabled', true);
+		$('#location_district_id').val('');
+		var country_id = $(event.target).val();
+		changeCountry(country_id);
+	});
+	$('#location_outcall').change(function() {
+		if (!$('#location_outcall').prop('checked')) {
+			$('#location_address').attr('disabled', false);
+			$('#location_district_ids').val('');
+			$('#districtsCheckboxes').addClass('hidden');
+		}
+		else {
+			$('#location_address').attr('disabled', true);
+			$('#location_address').val('');
+			$('#districtsCheckboxes').removeClass('hidden');
+		}
 	});
 });

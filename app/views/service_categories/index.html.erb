@@ -23,13 +23,16 @@
 
   <tbody>
     <% @service_categories.each do |service_category| %>
-      <tr>
-        <td><%= service_category.name %></td>
+      <tr draggable="true" data-resource="categories">
+        <td data-category="<%= service_category.id %>"><%= service_category.name %></td>
         <td>
           <% if service_category.name != "Sin Categoría" %>
           <%= link_to '<i class="fa fa-pencil"></i> Editar'.html_safe, edit_service_category_path(service_category), :class => "btn btn-warning" %>
           <%= link_to '<i class="fa fa-trash-o"></i> Eliminar'.html_safe, service_category, :class => "btn btn-danger", method: :delete, data: { confirm: '¿Estás seguro de eliminar la Categoría seleccionada?' } %>
           <% end %>
+          <span class="pull-right">
+            <i class="fa fa-bars"></i>
+          </span>
         </td>
       </tr>
     <% end %>
@@ -37,3 +40,9 @@
 </table>
 
 <%= link_to '<i class="fa fa-plus"></i> Nueva Categoría de Servicios'.html_safe, new_service_category_path, :class => "btn btn-primary" %>
+
+<%= stylesheet_link_tag "admin/draggable" %>
+<% content_for :scripts do %>
+  <%= javascript_include_tag 'admin/draggable' %>
+  <%= javascript_include_tag 'admin/category_draggable' %>
+<% end %>

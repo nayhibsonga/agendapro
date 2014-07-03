@@ -1,0 +1,113 @@
+<div class="container">
+  <div class="row">
+    <div class="col-xs-12">
+      <div class="single-local">
+        <% if @company.logo_url %>
+        <%= image_tag @company.logo_url.to_s, :alt => @company.name %>
+        <% else %>
+        <%= image_tag 'Iso_Pro_Color.png', :alt => 'AgendaPro' %>
+        <% end %>
+        <div class="btn-group btn-group-justified">
+          <a type="button" class="btn btn-success" id="reservar-btn">Reservar</a>
+          <a type="button" class="btn btn-default" id="informacion-btn">Información</a>
+        </div>
+        <div id="reservar" class="visible">
+          <%= form_tag("select_hour", method: "post", role: "form") do %>
+            <%= hidden_field_tag :local, @location.id %>
+            <div class="form-group">
+              <%= label_tag :services, 'Selecciona servicio' %>
+              <%= select_tag :services, nil, :class => 'form-control' %>
+            </div>
+            <div class="form-group">
+              <%= label_tag :providers, 'Selecciona staff' %>
+              <%= select_tag :providers, nil, :disabled => true, :class => 'form-control' %>
+            </div>
+            <div class="form-group">
+              <%= label_tag :datepicker, 'Selecciona una fecha' %>
+              <%= text_field_tag :datepicker, nil, :disabled => true, :placeholder => 'seleccione fecha...', :class => 'form-control' %>
+            </div>
+          <% end %>
+        </div>
+        <div id="informacion" class="oculto">
+          <p><%= if !@location.outcall then @location.address+', '+@location.district.name else "A Domicilio" end %>.</p>
+          <p>Tel: <%= @location.phone %></p>
+          <% if !@location.outcall %>
+          <button id="mapButton" class="btn btn-block btn-default" data-local="<%= @location.id %>">Ver mapa</button>
+          <div id="map"></div>
+          <% else %><%= javascript_include_tag "http://maps.google.com/maps/api/js?sensor=false" %>
+          <div class="panel panel-info">
+            <div class="panel-heading">
+              <h3 class="panel-title">Comunas que se Atienden <small>(comunas en <%= @location.district.city.name %>, <%= @location.district.city.region.name %> - <%= @location.district.city.region.country.name %>)</small></h3>
+            </div>
+            <div class="panel-body">
+              <table class="table">
+                <tbody id="district-body">
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <% end %>
+          <div class="panel panel-info">
+            <div class="panel-heading">
+              <h3 class="panel-title">Horario</h3>
+            </div>
+            <div class="panel-body">
+              <table class="table">
+                <tbody id="schedule-body">
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <div class="clear"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="cambiar-comuna">
+  <div class="container">
+    <div class="row">
+      <div class="col-xs-12">
+        <a href="#" class="btn btn-block btn-success btn-fijo">Reservar</a>
+      </div>
+    </div>  
+  </div>            
+</div>
+
+<%= content_tag "div", id: "timeInterval", data: {min: @before_now, max: @after_now} do %>
+<% end %>
+
+<% content_for :stylesheets do %>
+<%= stylesheet_link_tag "default" %>
+<%= stylesheet_link_tag "default.date" %>
+<% end %>
+
+<% content_for :scripts do %>
+<%= javascript_include_tag "http://maps.google.com/maps/api/js?sensor=false" %>
+<%= javascript_include_tag "mobile/workflow" %>
+<%= javascript_include_tag "picker" %>
+<%= javascript_include_tag "picker.date" %>
+<script type="text/javascript">
+  $(document).ready(function(){
+    $('.cambiar-comuna').hide();
+    $( "#reservar-btn" ).click(function() {
+      $( "#reservar" ).addClass("visible");
+      $( "#reservar" ).removeClass("oculto");
+      $( "#informacion" ).addClass("oculto");
+    });
+    $( "#informacion-btn" ).click(function() {
+      $( "#reservar" ).addClass("oculto");
+      $( "#informacion" ).removeClass("oculto");
+      $( "#informacion" ).addClass("visible");
+    });
+    loadServices(<%= @location.id %>);
+    <% if @location.outcall %>
+    loadOutcallDistricts(<%= @location.id %>);
+    <% end %>
+    loadSchedule(<%= @location.id %>);
+    $('.btn-fijo').click(function (event) {
+      $('form').submit();
+    });
+  });
+</script>
+<% end %>
