@@ -1,9 +1,5 @@
 Agendapro::Application.routes.draw do
 
-  resources :resources
-
-  resources :clients
-
   get "users/index"
   require 'subdomain'
 
@@ -39,6 +35,10 @@ Agendapro::Application.routes.draw do
   resources :resources
   resources :clients
   resources :resource_categories
+  resources :resources
+  resources :company_from_emails
+
+  resources :clients
 
   namespace :admin do 
     get '', :to => 'dashboard#index', :as => '/'

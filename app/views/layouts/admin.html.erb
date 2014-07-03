@@ -50,6 +50,7 @@
 						<li><%= link_to '<i class="fa fa-clock-o"></i> Periodo Agenda'.html_safe, time_booking_path(:company => Company.find(current_user.company_id).id) %></li>
 						<li><%= link_to '<i class="fa fa-dollar"></i> Planes'.html_safe, select_plan_path %></li>
 						<li><%= link_to '<i class="fa fa-share-square-o"></i> Link AgendaPro'.html_safe, get_link_path %></li>
+						<li><%= link_to 'emails', company_from_emails_path %></li>
 					</ul>
 				</li>
 			</ul>
