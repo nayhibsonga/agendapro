@@ -50,11 +50,6 @@ nav.menu a {
     color: #fff;
     text-decoration: none;
 }
-nav.menu span {
-    position: fixed;
-    bottom: 0;
-    right: 0;
-}
 button.close-menu {
     background-color: #006D68; /*#3184a1;*/
     color: #fff;
@@ -67,7 +62,7 @@ nav.slide-menu-left,
 nav.slide-menu-right {
     top: 0;
     /*width: 300px;*/
-    width: 45%;
+    width: 60%;
     padding: 0 10px;
     height: 100%;
 }
@@ -110,6 +105,16 @@ body.sml-open nav.slide-menu-left {
 }
 body.smr-open nav.slide-menu-right {
     right: 0
+}
+nav.menu span > a {
+    display: inline;
+}
+body.smr-open nav.menu span {
+    position: absolute;
+    width: 100%;
+    text-align: center;
+    bottom: 5px;
+    right: 0;
 }
 /* ------------------------------------------------------------ *\
 |* ------------------------------------------------------------ *|

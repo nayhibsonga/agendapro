@@ -1,0 +1,25 @@
+<div class="center-load">
+	<h2><%= link_to 'AGENDAPRO', root_url(:subdomain => false) %></h2>
+	<%= image_tag 'mobile/cross.png', :alt => 'Agendado' %>
+	<div class="container">
+		<div class="well well-sm">
+			<h3>Lo sentimos</h3>
+			La empresa <strong><%= @company.name %></strong> sólo permite modificar reservas hasta <strong><%= @company.company_setting.before_edit_booking %></strong> horas antes.
+		</div>
+	</div>
+	<p>Fecha: <%= l @booking.start %></p>
+	<p>Servicio: <%= @booking.service.name %></p>
+	<p>Staff: <%= @booking.service_provider.public_name %></p>
+	<p>Dirección: <%= @booking.location.name %></p>
+</div>
+
+<% content_for :scripts do %>
+<script type="text/javascript">
+	$(function() {
+		$('body').attr('id', 'loading');
+		window.setTimeout(function () {
+			location.href = "<%= root_url(:subdomain => false) %>";
+		}, 5000);
+	});
+</script>
+<% end %>

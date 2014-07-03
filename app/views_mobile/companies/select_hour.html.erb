@@ -2,12 +2,12 @@
 	<div class="row">
 		<div class="col-xs-12">
 			<%= form_tag("user_data", method: "post", role: "form") do %>
-            	<%= hidden_field_tag :service, @service.id %>
-            	<%= hidden_field_tag :provider, @provider.id %>
-            	<%= hidden_field_tag :start, nil %>
-            	<%= hidden_field_tag :end, nil %>
-            	<%= hidden_field_tag :origin, true %>
-            	<%= hidden_field_tag :location, @location.id %>
+				<%= hidden_field_tag :service, @service.id %>
+				<%= hidden_field_tag :provider, @provider.id %>
+				<%= hidden_field_tag :start, nil %>
+				<%= hidden_field_tag :end, nil %>
+				<%= hidden_field_tag :origin, true %>
+				<%= hidden_field_tag :location, @location.id %>
 				<div class="form-group">
 					<% unless @available_time.length == 0 %>
 					<label for="">Selecciona un horario</label>
@@ -33,21 +33,21 @@
 <% content_for :scripts do %>
 <%= javascript_include_tag "mobile/workflow" %>
 <script type="text/javascript">
-  $(document).ready(function(){
-    $('button[type="submit"]').click(function (event) {
-    	event.preventDefault();
-    	$('.btn-block.btn-success').addClass('btn-default').removeClass('btn-success');
-    	$(event.target).addClass('btn-success').removeClass('btn-default');
-    	$('a.btn-success').attr('disabled', false);
+	$(document).ready(function(){
+		$('button[type="submit"]').click(function (event) {
+			event.preventDefault();
+			$('.btn-block.btn-success').addClass('btn-default').removeClass('btn-success');
+			$(event.target).addClass('btn-success').removeClass('btn-default');
+			$('a.btn-success').attr('disabled', false);
 
-    	var date = $(event.target).data('date');
-    	var start = $(event.target).data('start');
-    	var end = $(event.target).data('end');
-    	addBooking(date, start, end);
-    });
-    $('a.btn-success').click(function (event) {
-    	$('form').submit();
-    });
-  });
+			var date = $(event.target).data('date');
+			var start = $(event.target).data('start');
+			var end = $(event.target).data('end');
+			addBooking(date, start, end);
+		});
+		$('a.btn-success').click(function (event) {
+			$('form').submit();
+		});
+	});
 </script>
 <% end %>

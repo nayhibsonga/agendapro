@@ -192,7 +192,7 @@ class BookingsController < ApplicationController
 
   def book_service
     @company = Location.find(params[:location]).company
-    params[:comment] += ' - Dirección del cliente (donde se debe realizar el servicio): ' + params[:address]
+    params[:comment] += ' - Dirección del cliente (donde se debe realizar el servicio): ' + params[:address] if params[:address]
     if Client.where(email: params[:email], company_id: @company).count > 0
       client = Client.where(email: params[:email], company_id: @company).first
     else
@@ -243,6 +243,103 @@ class BookingsController < ApplicationController
     if (booking_start <=> now) < 1
       redirect_to blocked_edit_path(:id => @booking.id)
       return
+    end
+
+    if mobile_request?
+      @service = @booking.service
+      @provider = @booking.service_provider
+
+      # Data
+      date = Date.parse(@booking.start.to_s)
+      service_duration = @service.duration
+      company_setting = @company.company_setting
+      provider_breaks = ProviderBreak.where(:service_provider_id => @provider.id)
+
+      @available_time = Array.new
+
+      # Variable Data
+      provider_times = @provider.provider_times.where(day_id: date.cwday).order(:open)
+      bookings = @provider.bookings.where(:start => date.to_time.beginning_of_day..date.to_time.end_of_day).order(:start)
+
+      # Hour Blocks
+      $i = 0
+      $length = provider_times.length
+      while $i < $length do
+        provider_time = provider_times[$i]
+        provider_time_open = provider_time.open
+        provider_time_close = provider_time.close
+
+        # => Available/Occupied Blocks
+        while (provider_time_open <=> provider_time_close) < 0 do
+        block_hour = Hash.new
+
+        # Tmp data
+        open_hour = provider_time_open.hour
+        open_min = provider_time_open.min
+
+        start_block = (open_hour < 10 ? '0' : '') + open_hour.to_s + ':' + (open_min < 10 ? '0' : '') + open_min.to_s
+
+        provider_time_open += service_duration.minutes
+
+        # Tmp data
+        next_open_hour = provider_time_open.hour
+        next_open_min = provider_time_open.min
+
+        end_block = (next_open_hour < 10 ? '0' : '') + next_open_hour.to_s + ':' + (next_open_min < 10 ? '0' : '') + next_open_min.to_s
+
+        # Block Hour
+        hour = {
+          :start => start_block,
+          :end => end_block
+        }
+
+        # Status
+        status = 'available'
+        start_time_block = DateTime.new(date.year, date.mon, date.mday, open_hour, open_min)
+        end_time_block = DateTime.new(date.year, date.mon, date.mday, next_open_hour, next_open_min)
+        
+        # Past hours
+        now = DateTime.new(DateTime.now.year, DateTime.now.mon, DateTime.now.mday, DateTime.now.hour, DateTime.now.min)
+        before_now = start_time_block - company_setting.before_booking / 24.0
+        after_now = now + company_setting.after_booking * 30
+
+        provider_breaks.each do |provider_break|
+          break_start = DateTime.parse(provider_break.start.to_s)
+          break_end = DateTime.parse(provider_break.end.to_s)
+          if  (break_start - end_time_block) * (start_time_block - break_end) > 0
+          status = 'occupied'
+          end
+        end
+
+        if (before_now <=> now) < 1
+          status = 'past'
+        elsif (after_now <=> end_time_block) < 1
+          status = 'past'
+        else
+          bookings.each do |booking|
+          booking_start = DateTime.parse(booking.start.to_s)
+          booking_end = DateTime.parse(booking.end.to_s)
+
+          if (booking_start - end_time_block) * (start_time_block - booking_end) > 0 && booking.status_id != Status.find_by(name: 'Cancelado').id
+            if !@service.group_service || @service.id != booking.service_id
+            status = 'occupied'
+            elsif @service.group_service && @service.id == booking.service_id && @provider.bookings.where(:service_id => @service.id, :start => booking.start).count >= @service.capacity
+            status = 'occupied'
+            end
+          end
+          end
+        end
+
+        block_hour[:date] = date
+        block_hour[:hour] = hour
+
+        @available_time << block_hour if status == 'available'
+        end
+
+        $i += 1
+      end
+
+      @available_time
     end
 
     render layout: "workflow"
