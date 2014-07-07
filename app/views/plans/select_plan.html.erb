@@ -1,8 +1,12 @@
+<% content_for :scripts do %>
+  <%= javascript_include_tag "admin/select_plan" %>
+<% end %>
+
 <div class="container">
   <div class="row">
     <section class="hgroup">
-      <h2>Seleccionar Plan</h2>
-      <h2 class="section_header">Acá puedes cambiar el plan seleccionado. En caso de existir diferencias, estas se cobrarán o abonarán inmediatamente.</h2>
+      <h2>Mi Plan AgendaPro</h2>
+      <h2 class="section_header">Acá puedes cambiar el plan seleccionado, configurar la facturación y pagar tu plan. En caso de existir diferencias, estas se cobrarán o abonarán inmediatamente.</h2>
       <div class="line-breadcrumb">
         <ul class="breadcrumb pull-right">
             <li><%= link_to "Resumen", dashboard_path %> </li>
@@ -40,3 +44,76 @@
     <% end %>
   </tbody>
 </table>
+
+<div class="row well">
+  <div class="col-md-4 col-md-offset-1">
+    <h3>¡Paga tu cuenta AgendaPro aquí!</h3>
+    <p>Puedes pagar tu cuenta directamente a través de la página, a través WebPay o transferencias bancarias de los principales bancos. Si no te acomoda ninguna de estas opciones, te invitamos a ponerte en contacto con nosotros enviando un correo a <a href="mailto:contacto@agendapro.cl" target="_top">contacto@agendapro.cl</a>, para recibir las instrucciones a seguir. </p>
+    <p>
+      <img src="https://www.puntopagos.com/content/mp1.gif" alt="Botón de Pago Banco Santander">
+      <img src="https://www.puntopagos.com/content/mp2.gif" alt="Tarjeta Presto">
+      <img src="https://www.puntopagos.com/content/mp3.gif" alt="Webpay Transbank">
+      <img src="https://www.puntopagos.com/content/mp4.gif" alt="Botón de Pago Banco de Chile">
+      <img src="https://www.puntopagos.com/content/mp5.gif" alt="Botón de Pago BCI">
+      <img src="https://www.puntopagos.com/content/mp6.gif" alt="Botón de Pago TBanc">
+      <img src="https://www.puntopagos.com/content/mp7.gif" alt="Botón de Pago Banco Estado">
+      <img src="https://www.puntopagos.com/content/mp10.gif" alt="Tarjeta Ripley">
+      <img src="https://www.puntopagos.com/content/mp15.gif" alt="Paypal">
+    </p>
+  </div>
+  <div class="col-md-6">
+  <%= form_for @billing_info, html: {class: "form-horizontal" } do |f| %>
+    <div class="row">
+      <div class="form-group">
+        <div class="col-sm-8 col-sm-offset-4">
+           <%= f.check_box :active %> <%= f.label :active, "Solicitar Factura", class: "control-label" %><br /><small>La factura se generará automáticamente al confirmarse el pago y los datos de facturación, si no ingresa información de facturación o no se solicita esta, se generará una boleta a nombre del administrador de la cuenta.</small>
+        </div>
+      </div>
+    </div>
+    <div class="form-group">
+      <%= f.label :rut, "RUT Empresa:", class: "col-sm-4 control-label" %>
+      <div class="col-sm-8">
+        <%= f.text_field :rut, required: true, class: "form-control" %>
+      </div>
+    </div>
+    <div class="form-group">
+      <%= f.label :name, "Razón Social:", class: "col-sm-4 control-label" %>
+      <div class="col-sm-8">
+        <%= f.text_field :name, required: true, class: "form-control" %>
+      </div>
+    </div>
+    <div class="form-group">
+      <%= f.label :sector, "Giro:", class: "col-sm-4 control-label" %>
+      <div class="col-sm-8">
+        <%= f.text_field :sector, required: true, class: "form-control" %>
+      </div>
+    </div>
+    <div class="form-group">
+      <%= f.label :address, "Dirección:", class: "col-sm-4 control-label" %>
+      <div class="col-sm-8">
+        <%= f.text_field :address, required: true, class: "form-control" %>
+      </div>
+    </div>
+    <div class="form-group">
+      <%= f.label :phone, "Teléfono:", class: "col-sm-4 control-label" %>
+      <div class="col-sm-8">
+        <%= f.text_field :phone, class: "form-control" %>
+      </div>
+    </div>
+    <div class="form-group">
+      <%= f.label :email, "E-Mail:", class: "col-sm-4 control-label" %>
+      <div class="col-sm-8">
+        <%= f.text_field :email, class: "form-control" %>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <div class="actions col-sm-offset-4 col-sm-8">
+        <%= f.submit 'Guardar', :class => 'btn btn-primary' %>
+        <%= link_to 'Eliminar', @billing_info, method: :delete, data: { confirm: 'Are you sure?' }, class: "btn btn-danger" %>
+      </div>
+    </div>
+      
+  <% end %>
+  </div>
+</div>

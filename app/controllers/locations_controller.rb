@@ -66,14 +66,20 @@ class LocationsController < ApplicationController
 
   def activate
     @location.active = true
-    @location.save
-    redirect_to inactive_locations_path
+    if @location.save
+      redirect_to inactive_locations_path, notice: "Local activado exitosamente."
+    else
+      redirect_to inactive_locations_path, notice: "No se pudo activar el local ya que el plan actual no lo permite, ¡mejóralo!"
+    end
   end
 
   def deactivate
     @location.active = false
-    @location.save
-    redirect_to locations_path
+    if @location.save
+      redirect_to locations_path, notice: "Local desactivado exitosamente."
+    else
+      redirect_to locations_path, notice: "No se pudo desactivar el local."
+    end
   end
 
   # DELETE /locations/1

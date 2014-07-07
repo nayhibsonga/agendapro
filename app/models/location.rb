@@ -19,12 +19,24 @@ class Location < ActiveRecord::Base
 	validates :name, :phone, :company, :district, :presence => true
 
 
-	validate :times_overlap, :time_empty_or_negative, :provider_time_in_location_time
-	validate :plan_locations, :on => :create
+	validate :times_overlap, :time_empty_or_negative, :provider_time_in_location_time, :plan_locations
+
+	validate :new_plan_locations, :on => :create
 
 	def plan_locations
-		@company = self.company
-		if company.locations.count >= company.plan.locations
+		if self.active_changed? && self.active
+			if self.company.locations.where(active:true).count >= self.company.plan.locations
+				errors.add(:base, "No se pueden agregar más locales con el plan actual, ¡mejóralo!.")
+			end
+		else
+			if self.company.locations.where(active:true).count > self.company.plan.locations
+				errors.add(:base, "No se pueden agregar más locales con el plan actual, ¡mejóralo!.")
+			end
+		end
+	end
+
+	def new_plan_locations
+		if self.company.locations.where(active:true).count >= self.company.plan.locations
 			errors.add(:base, "No se pueden agregar más locales con el plan actual, ¡mejóralo!.")
 		end
 	end

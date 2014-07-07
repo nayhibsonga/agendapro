@@ -11,14 +11,25 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-<<<<<<< HEAD
-ActiveRecord::Schema.define(version: 20140512210112) do
-=======
-ActiveRecord::Schema.define(version: 20140702153031) do
->>>>>>> development
+ActiveRecord::Schema.define(version: 20140707225323) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "billing_infos", force: true do |t|
+    t.string   "name"
+    t.string   "rut"
+    t.string   "address"
+    t.string   "sector"
+    t.string   "email"
+    t.string   "phone"
+    t.integer  "company_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.boolean  "active",     default: false
+  end
+
+  add_index "billing_infos", ["company_id"], name: "index_billing_infos_on_company_id", using: :btree
 
   create_table "billing_logs", force: true do |t|
     t.float    "payment",             null: false

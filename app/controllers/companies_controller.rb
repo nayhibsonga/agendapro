@@ -16,36 +16,12 @@ class CompaniesController < ApplicationController
 	end
 
 	def activate
-		Location.where(company_id: @company).each do |location|
-		  location.active = true
-		  location.save
-		end
-		Service.where(company_id: @company).each do |service|
-		  service.active = true
-		  service.save
-		end
-		ServiceProvider.where(company_id: @company).each do |service_provider|
-		  service_provider.active = true
-		  service_provider.save
-		end
 		@company.active = true
 		@company.save
 		redirect_to companies_path
 	end
 
-	def deactivate
-		Location.where(company_id: @company).each do |location|
-		  location.active = false
-		  location.save
-		end
-		Service.where(company_id: @company).each do |service|
-		  service.active = false
-		  service.save
-		end
-		ServiceProvider.where(company_id: @company).each do |service_provider|
-		  service_provider.active = false
-		  service_provider.save
-		end
+	def deactivate  
 		@company.active = false
 		@company.save
 		redirect_to companies_path
@@ -128,7 +104,7 @@ class CompaniesController < ApplicationController
 				return
 			end
 		end
-		unless @company.company_setting.activate_workflow
+		unless @company.company_setting.activate_workflow && @company.active
 			flash[:alert] = "Lo sentimos, el minisitio que estas buscando no se encuentra disponible"
 
 			host = request.host_with_port
@@ -162,7 +138,7 @@ class CompaniesController < ApplicationController
 
 	def workflow
 		@company = Company.find_by(web_address: request.subdomain)
-		unless @company.company_setting.activate_workflow
+		unless @company.company_setting.activate_workflow && @company.active
 			flash[:alert] = "Lo sentimos, el minisitio que estas buscando no se encuentra disponible"
 
 			host = request.host_with_port

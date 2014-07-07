@@ -12,6 +12,7 @@ class Company < ActiveRecord::Base
 	has_many :service_categories
 	has_many :clients
 	has_one :company_setting
+	has_one :billing_info
 	has_many :company_from_email
 
 	validates :name, :web_address, :economic_sector, :plan, :payment_status, :presence => true
@@ -21,4 +22,12 @@ class Company < ActiveRecord::Base
 	mount_uploader :logo, LogoUploader
 
 	accepts_nested_attributes_for :company_setting
+
+	validate :plan_settings
+
+	def plan_settings
+		if self.locations.where(active: true).count > self.plan.locations || self.service_providers.where(active: true).count > self.plan.service_providers
+			errors.add(:base, "El plan no pudo ser cambiado. Tienes más locales/proveedores activos que lo que permite el plan.")
+		end
+	end
 end

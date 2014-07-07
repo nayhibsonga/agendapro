@@ -69,11 +69,17 @@ class PlansController < ApplicationController
   def select_plan
     @plans = Plan.where(:custom => false)
     @company = Company.find(current_user.company_id)
+    @company.billing_info ? @billing_info = @company.billing_info : @billing_info = BillingInfo.new
+    puts params[:plan_id]
+    puts @plans.pluck(:id).include?(params[:plan_id].to_i)
 
-    if params[:plan_id]
-      
+    if params[:plan_id] && @plans.pluck(:id).include?(params[:plan_id].to_i)
       @company.plan_id = params[:plan_id]
-      @company.save
+      if @company.save
+        redirect_to select_plan_path, notice: "El plan nuevo plan fue seleccionado exitosamente."
+      else
+        redirect_to select_plan_path, notice: "El plan no pudo ser cambiado. Tienes más locales/proveedores activos que lo que permite el plan, o no tienes los permisos necesarios para hacer este cambio."
+      end
     end
 
   end
