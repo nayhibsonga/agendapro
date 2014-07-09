@@ -70,6 +70,12 @@ class PlansController < ApplicationController
     @plans = Plan.where(:custom => false)
     @company = Company.find(current_user.company_id)
     @company.billing_info ? @billing_info = @company.billing_info : @billing_info = BillingInfo.new
+    @price = @company.plan.price
+    @sales_tax = NumericParameter.find_by_name("sales_tax").value
+    @month_discount_4 = NumericParameter.find_by_name("4_month_discount").value
+    @month_discount_6 = NumericParameter.find_by_name("6_month_discount").value
+    @month_discount_9 = NumericParameter.find_by_name("9_month_discount").value
+    @month_discount_12 = NumericParameter.find_by_name("12_month_discount").value
     puts params[:plan_id]
     puts @plans.pluck(:id).include?(params[:plan_id].to_i)
 

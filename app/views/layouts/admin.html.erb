@@ -96,6 +96,7 @@
 							<li><%= link_to '<i class="fa fa-usd"></i><span class="remove-txt"> Estados de Pago</span>'.html_safe, payment_statuses_path, { :class => if controller.controller_name == "payment_statuses" then "submenu active" else "submenu" end }  %></li>
 							<li><%= link_to '<i class="fa fa-check-square-o"></i><span class="remove-txt"> Estados de Reserva</span>'.html_safe, statuses_path, { :class => if controller.controller_name == "statuses" then "submenu active" else "submenu" end }  %></li>
 							<li><%= link_to '<i class="fa fa-cloud"></i><span class="remove-txt"> Gestión Planes</span>'.html_safe, plans_path, { :class => "submenu" }  %></li>
+							<li><%= link_to '<i class="fa fa-cloud"></i><span class="remove-txt"> Parámetros Numéricos</span>'.html_safe, numeric_parameters_path, { :class => if controller.controller_name == "numeric_parameters" then "submenu active" else "submenu" end }  %></li>
 						</ul>
 					</li>
 

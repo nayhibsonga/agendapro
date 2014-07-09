@@ -23,7 +23,7 @@
       <th>Nombre</th>
       <th>Locales</th>
       <th>Proveedores de Servicio</th>
-      <th>Precio</th>
+      <th>Precio (sin IVA)</th>
       <th></th>
     </tr>
   </thead>
@@ -34,7 +34,7 @@
         <td><%= plan.name %></td>
         <td><%= plan.locations %></td>
         <td><%= plan.service_providers %></td>
-        <td><%= plan.price %></td>
+        <td>$<%= number_with_precision(plan.price, :precision => 0, :delimiter => '.') %> CLP</td>
         <% if @company.plan_id != plan.id %>
         <td><%= link_to '<i class="fa fa-check"></i> Elegir este Plan'.html_safe, select_plan_path(:plan_id => plan.id), :class => "btn btn-primary" %></td>
         <% else %>
@@ -48,25 +48,53 @@
 <div class="row well">
   <div class="col-md-4 col-md-offset-1">
     <h3>¡Paga tu cuenta AgendaPro aquí!</h3>
-    <p>Puedes pagar tu cuenta directamente a través de la página, a través WebPay o transferencias bancarias de los principales bancos. Si no te acomoda ninguna de estas opciones, te invitamos a ponerte en contacto con nosotros enviando un correo a <a href="mailto:contacto@agendapro.cl" target="_top">contacto@agendapro.cl</a>, para recibir las instrucciones a seguir. </p>
-    <p>
-      <img src="https://www.puntopagos.com/content/mp1.gif" alt="Botón de Pago Banco Santander">
-      <img src="https://www.puntopagos.com/content/mp2.gif" alt="Tarjeta Presto">
-      <img src="https://www.puntopagos.com/content/mp3.gif" alt="Webpay Transbank">
-      <img src="https://www.puntopagos.com/content/mp4.gif" alt="Botón de Pago Banco de Chile">
-      <img src="https://www.puntopagos.com/content/mp5.gif" alt="Botón de Pago BCI">
-      <img src="https://www.puntopagos.com/content/mp6.gif" alt="Botón de Pago TBanc">
-      <img src="https://www.puntopagos.com/content/mp7.gif" alt="Botón de Pago Banco Estado">
-      <img src="https://www.puntopagos.com/content/mp10.gif" alt="Tarjeta Ripley">
-      <img src="https://www.puntopagos.com/content/mp15.gif" alt="Paypal">
+    <p class="justified">Puedes pagar tu cuenta directamente a través de la página, por medio de WebPay o transferencias bancarias de los principales bancos. Si no te acomoda ninguna de estas opciones o tienes alguna duda respecto a tu plan actual, te invitamos a ponerte en contacto con nosotros enviando un correo a <%= link_to 'contacto@agendapro.cl', contact_path, :target => "_blank" %>, para recibir las instrucciones a seguir. </p>
+    <p><label>Pagar (IVA incluido):</label>
+      <select class="form-control" id="amount_select">
+        <option value="0">Elige una opción...</option>
+        <option value="1">1 Mes - $<%= number_with_precision(@company.plan.price*(1+@sales_tax), :precision => 0, :delimiter => '.') %> CLP</option>
+        <option value="2">2 Meses - $<%= number_with_precision(@company.plan.price*2*(1+@sales_tax), :precision => 0, :delimiter => '.') %> CLP</option>
+        <option value="3">3 Meses - $<%= number_with_precision(@company.plan.price*3*(1+@sales_tax), :precision => 0, :delimiter => '.') %> CLP</option>
+        <option value="4">4 Meses - $<%= number_with_precision(@company.plan.price*4*(1-@month_discount_4)*(1+@sales_tax), :precision => 0, :delimiter => '.') %> CLP (<%= number_with_precision(@month_discount_4*100, :precision => 0) %>% dcto.)</option>
+        <option value="6">6 Meses - $<%= number_with_precision(@company.plan.price*6*(1-@month_discount_6)*(1+@sales_tax), :precision => 0, :delimiter => '.') %> CLP (<%= number_with_precision(@month_discount_6*100, :precision => 0) %>% dcto.)</option>
+        <option value="9">9 Meses - $<%= number_with_precision(@company.plan.price*9*(1-@month_discount_9)*(1+@sales_tax), :precision => 0, :delimiter => '.') %> CLP (<%= number_with_precision(@month_discount_9*100, :precision => 0) %>% dcto.)</option>
+        <option value="12">12 Meses - $<%= number_with_precision(@company.plan.price*12*(1-@month_discount_12)*(1+@sales_tax), :precision => 0, :delimiter => '.') %> CLP (<%= number_with_precision(@month_discount_12*100, :precision => 0) %>% dcto.)</option>
+      </select> 
     </p>
+    <p>Y, luego, selecciona el medio de pago haciendo click sobre su imagen:</p>
+    <table class="table">
+      <tr>
+        <td>
+          <%= link_to image_tag("https://www.puntopagos.com/content/mp1.gif"), generate_company_transaction_path(:md => "01", :amount => 0), alt: "Botón de Pago Banco Santander", class: "md_link" %>
+        </td>
+        <td>
+          <%= link_to image_tag("https://www.puntopagos.com/content/mp4.gif"), generate_company_transaction_path(:md => "04", :amount => 0), alt: "Botón de Pago Banco de Chile", class: "md_link" %>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <%= link_to image_tag("https://www.puntopagos.com/content/mp5.gif"), generate_company_transaction_path(:md => "05", :amount => 0), alt: "Botón de Pago BCI", class: "md_link" %>
+        </td>
+        <td>
+          <%= link_to image_tag("https://www.puntopagos.com/content/mp6.gif"), generate_company_transaction_path(:md => "06", :amount => 0), alt: "Botón de Pago TBanc", class: "md_link" %>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <%= link_to image_tag("https://www.puntopagos.com/content/mp7.gif"), generate_company_transaction_path(:md => "07", :amount => 0), alt: "Botón de Pago Banco Estado", class: "md_link" %>
+        </td>
+        <td>
+          <%= link_to image_tag("https://www.puntopagos.com/content/mp3.gif"), generate_company_transaction_path(:md => "03", :amount => 0), alt: "Webpay Transbank", class: "md_link" %>
+        </td>
+      </tr>
+    </table>
   </div>
   <div class="col-md-6">
   <%= form_for @billing_info, html: {class: "form-horizontal" } do |f| %>
     <div class="row">
       <div class="form-group">
         <div class="col-sm-8 col-sm-offset-4">
-           <%= f.check_box :active %> <%= f.label :active, "Solicitar Factura", class: "control-label" %><br /><small>La factura se generará automáticamente al confirmarse el pago y los datos de facturación, si no ingresa información de facturación o no se solicita esta, se generará una boleta a nombre del administrador de la cuenta.</small>
+           <%= f.check_box :active %> <%= f.label :active, "Solicitar Factura", class: "control-label" %><br /><p class="justified"><small>La factura se generará automáticamente al confirmarse el pago y los datos de facturación, si no ingresa información de facturación o no se solicita esta, se generará una boleta a nombre del administrador de la cuenta.</small></p>
         </div>
       </div>
     </div>
