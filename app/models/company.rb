@@ -30,4 +30,32 @@ class Company < ActiveRecord::Base
 			errors.add(:base, "El plan no pudo ser cambiado. Tienes más locales/proveedores activos que lo que permite el plan.")
 		end
 	end
+
+	def self.substract_month
+		where(payment_status_id: PaymentStatus.find_by_name("Pagado")).each do |company|
+			company.months_active_left -= 1.0
+			if company.months_active_left <= 0
+				company.payment_status_id = PaymentStatus.find_by_name("Emitido").id
+			end
+			company.save
+		end
+	end
+
+	def self.payment_expiry
+		where(payment_status_id: PaymentStatus.find_by_name("Emitido")).each do |company|
+			if company.months_active_left <= 0
+				company.payment_status_id = PaymentStatus.find_by_name("Vencido").id
+			end
+			company.save
+		end
+	end
+
+	def self.payment_shut
+		where(payment_status_id: PaymentStatus.find_by_name("Vencido")).each do |company|
+			if company.months_active_left <= 0
+				company.payment_status_id = PaymentStatus.find_by_name("Bloqueado").id
+			end
+			company.save
+		end
+	end
 end

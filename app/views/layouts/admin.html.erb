@@ -153,6 +153,32 @@
 				<% end %>
 				<!-- end: Alerts -->
 				<%= yield %>
+				<%= content_tag "div", id: "payment_data", data: { due_payment: @due_payment } do %>
+				<% end %>
+				<div class="modal fade" id="paymentModal" tabindex="-1" role="dialog" aria-labelledby="paymentModalLabel" aria-hidden="true">
+					<div class="modal-dialog">
+						<div class="modal-content">
+							<div class="modal-header">
+								<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+								<h4 class="modal-title" id="paymentModalLabel">Cuenta AgendaPro</h4>
+							</div>
+							<div class="modal-body break-modal-body">
+								<p class="justified">¡Recuerda activar tu cuenta AgendaPro! No te pierdas un segundo el acceso a las oportunidades que te da tu cuenta AgendaPro. Si no eres el(la) administrador(a), ponte en contacto con él(ella) para que active la cuenta.</p>
+								<p class="justified">¡Aprovecha las facilidades de pago que ofrecemos y descuentos por pagar en adelantado! Puedes pagar tu cuenta directamente a través de la página, por medio de WebPay o transferencias bancarias de los principales bancos. Si no te acomoda ninguna de estas opciones o tienes alguna duda respecto a tu plan actual, te invitamos a ponerte en contacto con nosotros enviando un correo a <%= link_to 'contacto@agendapro.cl', contact_path, :target => "_blank" %>, para recibir las instrucciones a seguir.</p>
+								<p>Medios de pago disponibles:</p>
+								<table class="table">
+									<tr><td><%= image_tag("https://www.puntopagos.com/content/mp1.gif") %></td><td><%= image_tag("https://www.puntopagos.com/content/mp4.gif") %></td><td><%= image_tag("https://www.puntopagos.com/content/mp5.gif") %></td></tr>
+									<tr><td><%= image_tag("https://www.puntopagos.com/content/mp6.gif") %></td><td><%= image_tag("https://www.puntopagos.com/content/mp7.gif") %></td><td><%= image_tag("https://www.puntopagos.com/content/mp3.gif") %></td></tr>
+								</table>
+								<% if current_user.role_id == Role.find_by_name("Admin").id %>
+								<p>Ir a <%= link_to "PLANES", select_plan_path %> para proceder.</p>
+								<% end %>
+							</div>
+							<div class="modal-footer break-modal-footer">
+							</div>
+						</div>
+					</div>
+				</div>
 			</div>
 			<%= yield :calendar %>
 		</div>

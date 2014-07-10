@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140708192240) do
+ActiveRecord::Schema.define(version: 20140710000844) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -115,7 +115,7 @@ ActiveRecord::Schema.define(version: 20140708192240) do
     t.string   "name",                               null: false
     t.string   "web_address",                        null: false
     t.string   "logo"
-    t.float    "pay_due",             default: 0.0
+    t.float    "months_active_left",  default: 0.0
     t.integer  "economic_sector_id",                 null: false
     t.integer  "plan_id",                            null: false
     t.integer  "payment_status_id",                  null: false

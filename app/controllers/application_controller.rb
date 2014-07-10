@@ -22,14 +22,23 @@ class ApplicationController < ActionController::Base
   protected
   
   def quick_add
+    @due_payment = false
     if current_user && (current_user.role_id != Role.find_by_name("Super Admin").id) && current_user.company_id
-      @company = Company.find(current_user.company_id)
-      if @company.locations.count == 0
+      company = Company.find(current_user.company_id)
+      if company.payment_status == PaymentStatus.find_by_name("Bloqueado")
+        if current_user.role_id == Role.find_by_name("Admin").id
+          redirect_to select_plan_path, notice: "¡Activa tu cuenta AgendaPro! No te pierdas un segundo más el acceso a las increíbles oportunidades que te da tu cuenta AgendaPro."
+        else
+          redirect_to dashboard_path, notice: "¡Activa tu cuenta AgendaPro! No te pierdas un segundo más el acceso a las oportunidades que te da tu cuenta AgendaPro. Si no eres el administrador, ponte en contacto con él para activar la cuenta."
+        end
+      elsif company.locations.count == 0
         redirect_to(quick_add_path)
-      elsif @company.services.count == 0
+      elsif company.services.count == 0
         redirect_to(quick_add_path(:step => 1))
-      elsif @company.service_providers.count == 0
+      elsif company.service_providers.count == 0
         redirect_to(quick_add_path(:step => 2))
+      elsif company.payment_status == PaymentStatus.find_by_name("Vencido")
+        @due_payment = true
       end
     end
   end

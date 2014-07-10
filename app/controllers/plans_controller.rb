@@ -1,7 +1,7 @@
 class PlansController < ApplicationController
   before_action :set_plan, only: [:show, :edit, :update, :destroy]
   before_action :authenticate_user!, except: [:view_plans]
-  before_action :quick_add, except: [:view_plans]
+  before_action :quick_add, except: [:view_plans, :select_plan]
   before_action :verify_is_super_admin, except: [:index, :view_plans, :select_plan]
   layout "admin", except: [:view_plans]
   load_and_authorize_resource
@@ -67,6 +67,7 @@ class PlansController < ApplicationController
   end
 
   def select_plan
+    @due_payment = false
     @plans = Plan.where(:custom => false)
     @company = Company.find(current_user.company_id)
     @company.billing_info ? @billing_info = @company.billing_info : @billing_info = BillingInfo.new
