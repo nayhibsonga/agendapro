@@ -1,3 +1,5 @@
+// Líneas comentadas para que no moleste en versión móvil, dado que el desarrollo hizo compatibles móviles.
+// Revisar el tema de Blink y Webkit en detalle para ver futuras alertas.
 $(function () {
 	if ($.browser.msie) {
 		if ($.browser.versionNumber <= 9) {
@@ -20,21 +22,21 @@ $(function () {
 				webkitMessage();
 			}
 		}
-		else {
-			otherMessage();
-		}
+		// else {
+		// 	otherMessage();
+		// }
 	}
 	else if ($.browser.mozilla) {
 		if ($.browser.versionNumber <= 15) {
 			mozillaMessage();
 		}
 	}
-	else if ($.browser.ipad || $.browser.iphone || $.browser["windows phone"] || $.browser.android) {
-		mobileMessage();
-	}
-	else {
-		otherMessage();
-	}
+	// else if ($.browser.ipad || $.browser.iphone || $.browser["windows phone"] || $.browser.android) {
+	// 	mobileMessage();
+	// }
+	// else {
+	// 	otherMessage();
+	// }
 });
 
 function msieMessage () {
