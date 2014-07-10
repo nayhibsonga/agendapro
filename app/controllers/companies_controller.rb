@@ -303,15 +303,11 @@ class CompaniesController < ApplicationController
 	def user_data
 		@location = Location.find(params[:location])
 		@company = @location.company
-	@service = Service.find(params[:service])
-	@provider = ServiceProvider.find(params[:provider])
-	@start = params[:start]
-	@end = params[:end]
-	@origin = params[:origin]
-
-	if user_signed_in?
-		# redirect_to booking
-	end
+		@service = Service.find(params[:service])
+		@provider = ServiceProvider.find(params[:provider])
+		@start = params[:start]
+		@end = params[:end]
+		@origin = params[:origin]
 
 		render layout: 'workflow'
 	end
