@@ -132,7 +132,7 @@ class Booking < ActiveRecord::Base
 			end
 		else
 			if changed_attributes['start'] and self.send_mail
-				BookingMailer.update_booking(self)
+				BookingMailer.update_booking(self, changed_attributes['start'])
 			end
 			if self.status == Status.find_by(:name => "Confirmado")
 				BookingMailer.confirm_booking(self)
