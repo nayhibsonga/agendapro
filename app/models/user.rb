@@ -27,7 +27,7 @@ class User < ActiveRecord::Base
 		end
 	end
 	def location_company_users
-		if Role.where(:name => ["Administrador Local","Recepcionista","Staff"]).include? self.role
+		if Role.where(:name => ["Administrador Local","Recepcionista"]).include? self.role
 			if !self.location
 				errors.add(:base, "Este tipo de usuario debe tener un local asociado.")
 			end

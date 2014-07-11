@@ -285,12 +285,8 @@ function saveProvider(method,extraURL) {
 		"public_name": $('#service_provider_public_name').val(),
 		"notification_email": $('#service_provider_notification_email').val(),
 		"location_id": parseInt($('#service_provider_location_id').val()),
-		"user_id": parseInt($('#service_provider_user_id').val()),
 		"service_ids": enabledServices,
 		"provider_times_attributes": provider_times,
-		"user_attributes": {
-			"email": $('#service_provider_user_attributes_email').val()
-		}
 	};
 	
 	$.ajax({
@@ -311,30 +307,9 @@ function saveProvider(method,extraURL) {
 	});
 }
 
-function userChange() {
-	if ($('#userCheckboxId').val() == 1) {
-		$('#userCheckboxId').val(0);
-		$('#service_provider_user_id').prop('disabled', false);
-		$('#service_provider_user_id').closest('.form-group').removeClass('hidden');
-		$('#service_provider_user_attributes_email').val('');
-		$('#service_provider_user_attributes_email').prop('disabled', true);
-		$('#service_provider_user_attributes_email').closest('.form-group').addClass('hidden');
-	}
-	else if ($('#userCheckboxId').val() == 0) {
-		$('#userCheckboxId').val(1);
-		$('#service_provider_user_attributes_email').prop('disabled', false);
-		$('#service_provider_user_attributes_email').closest('.form-group').removeClass('hidden');
-		$('#service_provider_user_id').val('');
-		$('#service_provider_user_id').prop('disabled', true);
-		$('#service_provider_user_id').closest('.form-group').addClass('hidden');
-	}
-}
-
 var alertId;
 $(function() {
 	alertId = new Alert();
-	$('#service_provider_user_attributes_email').val('');
-	$('#service_provider_user_attributes_email').prop('disabled', true);
 
   	initialize();
 
@@ -346,6 +321,14 @@ $(function() {
 			createProvider();
 		}
 		return false;
+	});
+
+	$('input.check_boxes').each(function () {
+		var prop = true;
+		$(this).parents('.panel-body').find('input.check_boxes').each( function () {
+			prop = prop && $(this).prop('checked');
+		});
+		$(this).parents('.panel').find('input[name="selectCategory"]').prop('checked', prop);
 	});
 
 	$('input[name="selectCategory"]').change(function (event) {
