@@ -52,10 +52,12 @@ class ServiceProvidersController < ApplicationController
   def create
 
     @service_provider = ServiceProvider.new(service_provider_params)
+    @service_provider.services.clear
     @service_provider.company_id = current_user.company_id
 
     respond_to do |format|
       if @service_provider.save
+        @service_provider.service_ids = service_provider_params[:service_ids]
         format.html { redirect_to service_providers_path, notice: 'Proveedor creado satisfactoriamente.' }
         format.json { render :json => @service_provider }
       else
