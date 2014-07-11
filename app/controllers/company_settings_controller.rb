@@ -25,6 +25,8 @@ class CompanySettingsController < ApplicationController
 
   # GET /company_settings/1/edit
   def edit
+    @emails = current_user.company.company_from_email
+    @company_from_email = CompanyFromEmail.new
   end
 
   # POST /company_settings
