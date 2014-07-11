@@ -1,0 +1,24 @@
+<div class="row">
+    <div class="col-xs-12">
+        <div class="center">
+            <h2>Elije el plan que más te acomode</h2>
+            <p>¡El primer mes es absolutamente gratis!</p>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <% @plans.each do |plan| %>
+    <div class="col-xs-12">
+        <div class="single-local">
+            <div class="box-shadow">
+                <div class="center-load">
+                    <h3 class="plan-title"><%= plan.name %></h3>
+                    <span>$</span><%= number_with_precision(plan.price, precision: 0, separator: '', delimiter: '.') %><small>/Mes (+ IVA)</small>
+                </div>
+                <p align="center"><%= plan.locations %> Local(es)</p>
+                <p align="center"><%= plan.service_providers %> Staffs</p>
+            </div>
+        </div>
+    </div>
+    <% end %>
+</div>

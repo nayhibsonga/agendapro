@@ -8,7 +8,7 @@ class MandrillController < ApplicationController
   end
 
   def unsubscribe
-  	mandrill = Mandrill::API.new 'HL4ERbuZZO6rrM2nlVjzZg'
+  	mandrill = Mandrill::API.new Agendapro::Application.config.api_key
 
   	# => Decodificando el email del usuario
   	email = Base64.decode64(params[:user])

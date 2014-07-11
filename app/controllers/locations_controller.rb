@@ -108,8 +108,10 @@ class LocationsController < ApplicationController
     service = Service.find(params[:service])
     service_duration = service.duration
     weekDate = Date.strptime(params[:date], '%Y-%m-%d')
-    company_setting = CompanySetting.find(Company.find(Location.find(params[:local]).company_id).company_setting)
+    local = Location.find(params[:local])
+    company_setting = CompanySetting.find(Company.find(local.company_id).company_setting)
     provider_breaks = ProviderBreak.where(:service_provider_id => params[:provider])
+    cancelled_id = Status.find_by(name: 'Cancelado').id
 
     @week_blocks = Hash.new
     # Week Blocks
@@ -133,10 +135,10 @@ class LocationsController < ApplicationController
 
       # Variable Data
       day = date.cwday
-      provider_times = Location.find(params[:local]).service_providers.find(params[:provider]).provider_times.where(day_id: day).order(:open)
-      bookings = Location.find(params[:local]).service_providers.find(params[:provider]).bookings.where(:start => date.to_time.beginning_of_day..date.to_time.end_of_day).order(:start)
-      provider_times_first = Location.find(params[:local]).service_providers.find(params[:provider]).provider_times.order(:open).first
-      provider_times_final = Location.find(params[:local]).service_providers.find(params[:provider]).provider_times.order(close: :desc).first
+      provider_times = local.service_providers.find(params[:provider]).provider_times.where(day_id: day).order(:open)
+      bookings = local.service_providers.find(params[:provider]).bookings.where(:start => date.to_time.beginning_of_day..date.to_time.end_of_day).order(:start)
+      provider_times_first = local.service_providers.find(params[:provider]).provider_times.order(:open).first
+      provider_times_final = local.service_providers.find(params[:provider]).provider_times.order(close: :desc).first
 
       # Empty Blocks before
       if provider_times.length > 0
@@ -223,6 +225,33 @@ class LocationsController < ApplicationController
                 if !service.group_service || service.id != booking.service_id
                   status = 'occupied'
                 elsif service.group_service && service.id == booking.service_id && ServiceProvider.find(params[:provider]).bookings.where(:service_id => service.id, :start => booking.start).count >= service.capacity
+                  status = 'occupied'
+                end
+              end
+            end
+            if service.resources.count > 0
+              service.resources.each do |resource|
+                if !local.resource_locations.pluck(:resource_id).include?(resource.id)
+                  status = 'occupied'
+                end
+                used_resource = 0
+                group_services = []
+                local.bookings.each do |location_booking|
+                  booking_start = DateTime.parse(location_booking.start.to_s)
+                  booking_end = DateTime.parse(location_booking.end.to_s)
+                  if location_booking != cancelled_id && (booking_start - end_time_block) * (start_time_block - booking_end) > 0
+                    if location_booking.service.resources.include?(resource)
+                      if !location_booking.service.group_service
+                        used_resource += 1
+                      else
+                        if location_booking.service != service || location_booking.service_provider != booking.service_provider
+                          group_services.push(location_booking.service_provider.id)
+                        end
+                      end   
+                    end
+                  end
+                end
+                if group_services.uniq.count + used_resource >= ResourceLocation.where(resource_id: resource.id, location_id: local.id).first.quantity
                   status = 'occupied'
                 end
               end

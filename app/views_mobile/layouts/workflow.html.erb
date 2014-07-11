@@ -46,6 +46,9 @@
 		<nav class="menu slide-menu-right">
 			<ul>
 				<li><%= link_to 'AGENDAPRO', root_url(:subdomain => false) %></li>
+				<li><%= link_to 'ACERCA DE', home_url(:subdomain => false) %></li>
+                <li><%= link_to 'CONTACTO', contact_url(:subdomain => false) %></li>
+                <li><%= link_to 'PLANES', view_plans_url(:subdomain => false) %></li>
                 <% if user_signed_in? %>
                 <li><%= link_to current_user.email.upcase, edit_user_registration_url(:subdomain => false) %></li>
                 <li><%= link_to 'MI AGENDA', my_agenda_url(:id => current_user.id, :subdomain => false) %></li>
@@ -53,12 +56,11 @@
                 <% else %>
 				<li><%= link_to 'INICIA SESION', new_user_session_path %></li>
 				<li><%= link_to 'REGISTRATE', new_user_registration_url(:subdomain => false) %></li>
-				<!-- <li><%= link_to 'AGREGA TU EMPRESA', home_url(:subdomain => false) %></li> -->
                 <% end %>
 			</ul>
 			<span>
-                <%= link_to 'Sitio Completo', prefer_full_site_url %>
-                <a href="" class="close-menu">Cerrar &gt;&gt;</a>
+                <%= link_to 'Sitio Completo', prefer_full_site_url %>|
+                <a href="#" class="close-menu">&gt;&gt;</a>
             </span>
 		</nav><!-- /slide menu right -->
 		<!-- end: menu -->
@@ -85,7 +87,7 @@
 
 		<!-- start: JavaScript-->
 		<%= yield :scripts %>
-		<%= javascript_include_tag "mobile-workflow" %>
+		<%= javascript_include_tag "mobile" %>
 		<!-- end: JavaScript-->
 	</body>
 </html>

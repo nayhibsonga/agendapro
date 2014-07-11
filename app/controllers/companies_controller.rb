@@ -217,6 +217,8 @@ class CompaniesController < ApplicationController
 		provider_times = @provider.provider_times.where(day_id: date.cwday).order(:open)
 		bookings = @provider.bookings.where(:start => date.to_time.beginning_of_day..date.to_time.end_of_day).order(:start)
 
+		cancelled_id = Status.find_by(name: 'Cancelado').id
+
 		# Hour Blocks
 		$i = 0
 		$length = provider_times.length
@@ -266,6 +268,33 @@ class CompaniesController < ApplicationController
 				status = 'occupied'
 			  end
 			end
+			if @service.resources.count > 0
+              @service.resources.each do |resource|
+                if !@location.resource_locations.pluck(:resource_id).include?(resource.id)
+                  status = 'occupied'
+                end
+                used_resource = 0
+                group_services = []
+                @location.bookings.each do |location_booking|
+                  booking_start = DateTime.parse(location_booking.start.to_s)
+                  booking_end = DateTime.parse(location_booking.end.to_s)
+                  if location_booking != cancelled_id && (booking_start - end_time_block) * (start_time_block - booking_end) > 0
+                    if location_booking.service.resources.include?(resource)
+                      if !location_booking.service.group_service
+                        used_resource += 1
+                      else
+                        if location_booking.service != @service || location_booking.service_provider != booking.service_provider
+                          group_services.push(location_booking.service_provider.id)
+                        end
+                      end   
+                    end
+                  end
+                end
+                if group_services.uniq.count + used_resource >= ResourceLocation.where(resource_id: resource.id, location_id: @location.id).first.quantity
+                  status = 'occupied'
+                end
+              end
+            end
 
 			if (before_now <=> now) < 1
 			  status = 'past'
@@ -303,15 +332,11 @@ class CompaniesController < ApplicationController
 	def user_data
 		@location = Location.find(params[:location])
 		@company = @location.company
-	@service = Service.find(params[:service])
-	@provider = ServiceProvider.find(params[:provider])
-	@start = params[:start]
-	@end = params[:end]
-	@origin = params[:origin]
-
-	if user_signed_in?
-		# redirect_to booking
-	end
+		@service = Service.find(params[:service])
+		@provider = ServiceProvider.find(params[:provider])
+		@start = params[:start]
+		@end = params[:end]
+		@origin = params[:origin]
 
 		render layout: 'workflow'
 	end
