@@ -251,7 +251,7 @@ class LocationsController < ApplicationController
                     end
                   end
                 end
-                if group_services.uniq.count + used_resource >= ResourceLocation.where(resource_id: resource.id, location_id: local.id).first.quantity
+                if ResourceLocation.where(resource_id: resource.id, location_id: local.id).first && group_services.uniq.count + used_resource >= ResourceLocation.where(resource_id: resource.id, location_id: local.id).first.quantity
                   status = 'occupied'
                 end
               end
