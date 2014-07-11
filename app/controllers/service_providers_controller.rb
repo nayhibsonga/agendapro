@@ -114,7 +114,7 @@ class ServiceProvidersController < ApplicationController
   end
 
   def location_providers
-    render :json => ServiceProvider.where(:active => true).where('location_id = ?', params[:location]).order(:order)
+    render :json => ServiceProvider.where(:active => true).where('location_id = ?', params[:location]).accessible_by(current_ability).order(:order)
   end
 
   def provider_time

@@ -35,7 +35,7 @@
 
 <% content_for :calendar do %>
 	<div class="col-md-12">
-			<%= link_to '<i class="fa fa-times"></i>  Bloquear Horario'.html_safe, '#', :class => "btn btn-primary btn-md createBreak modal-trigger" unless current_user.role_id == Role.find_by_name('Staff').id %>
+			<%= link_to '<i class="fa fa-times"></i>  Bloquear Horario'.html_safe, '#', :class => "btn btn-primary btn-md createBreak modal-trigger" %>
 			<%= link_to '<i class="fa fa-calendar"></i>  Agregar Reserva'.html_safe, '#', :class => "btn btn-primary btn-md createBooking modal-trigger" %>
 			<input type="hidden" id="set-date" />
 			<!-- <button id="set-date" class="btn btn-primary btn-md"><i class="fa fa-clock-o"></i> Ir a</button> -->
@@ -155,7 +155,7 @@
 							<div class="form-group">
 								<%= f.label :service_provider_id, "Proveedor de Servicios: ", class: "col-sm-4 control-label" %>
 								<div class="col-sm-8">
-									<%= f.collection_select :service_provider_id, ServiceProvider.where(location_id: Location.where(company_id: current_user.company_id, :active => true).accessible_by(current_ability)), :id, :public_name, {}, { class: "form-control" }%>
+									<%= f.collection_select :service_provider_id, ServiceProvider.where(location_id: Location.where(company_id: current_user.company_id, :active => true)).accessible_by(current_ability), :id, :public_name, {}, { class: "form-control" }%>
 								</div>
 							</div>
 							<div class="form-group">
@@ -253,7 +253,7 @@
 					<div class="form-group">
 						<%= f.label :service_provider_id, "Proveedor de Servicios: ", class: "col-sm-3 control-label" %>
 						<div class="col-sm-9">
-							<%= f.collection_select :service_provider_id, ServiceProvider.where(location_id: Location.where(company_id: current_user.company_id, :active => true).accessible_by(current_ability)), :id, :public_name, {}, { class: "form-control" }%>
+							<%= f.collection_select :service_provider_id, ServiceProvider.where(location_id: Location.where(company_id: current_user.company_id, :active => true)).accessible_by(current_ability), :id, :public_name, {}, { class: "form-control" }%>
 						</div>
 					</div>
 					<div class="form-group">
