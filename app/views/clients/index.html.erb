@@ -130,6 +130,11 @@
 						<%= image_tag 'ajax-loader.gif', :alt => 'Loader' %>
 					</div>
 					<div class="form-group">
+						<%= label_tag :from, 'De' %>
+						<%= select_tag :from, options_from_collection_for_select(@from_collection, :email, :email), :class => 'form-control', :required => true %>
+            			<span class="help-block"></span>
+					</div>
+					<div class="form-group">
 						<%= label_tag :to, 'Para' %>
 						<%= text_field_tag :to, nil, :class => 'form-control', :required => true %>
             			<span class="help-block"></span>
@@ -141,7 +146,7 @@
 					</div>
 					<div class="form-group">
 						<%= label_tag :message, 'Mensaje' %>
-						<%= text_area_tag :message, nil, :class => 'form-control', :rows => 10, :required => true %>
+						<%= text_area_tag :message, nil, :class => 'form-control', :rows => 8, :required => true %>
             			<span class="help-block"></span>
 					</div>
 					<div class="form-group">

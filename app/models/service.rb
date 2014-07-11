@@ -5,6 +5,9 @@ class Service < ActiveRecord::Base
 	has_many :service_tags
 	has_many :tags, :through => :service_tags
 
+	has_many :service_resources
+  	has_many :resources, :through => :service_resources
+
 	has_many :bookings
 	has_many :service_staffs
 	has_many :service_providers, :through => :service_staffs
