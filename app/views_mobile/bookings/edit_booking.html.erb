@@ -27,6 +27,10 @@
   </div>
 </div>
 
+<%= content_tag "div", id: "timeInterval", data: {min: @before_now, max: @after_now} do %>
+<% end %>
+
+
 <% content_for :scripts do %>
 <%= javascript_include_tag "mobile/workflow" %>
 <script type="text/javascript">
@@ -42,6 +46,7 @@
       var end = $(event.target).data('end');
       addBooking(date, start, end);
     });
+
     $('a.btn-success').click(function (event) {
       $('form').submit();
     });
