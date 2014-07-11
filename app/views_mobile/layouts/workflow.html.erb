@@ -48,6 +48,7 @@
 				<li><%= link_to 'AGENDAPRO', root_url(:subdomain => false) %></li>
 				<li><%= link_to 'ACERCA DE', home_url(:subdomain => false) %></li>
                 <li><%= link_to 'CONTACTO', contact_url(:subdomain => false) %></li>
+                <li><%= link_to 'PLANES', view_plans_url(:subdomain => false) %></li>
                 <% if user_signed_in? %>
                 <li><%= link_to current_user.email.upcase, edit_user_registration_url(:subdomain => false) %></li>
                 <li><%= link_to 'MI AGENDA', my_agenda_url(:id => current_user.id, :subdomain => false) %></li>

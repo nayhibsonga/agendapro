@@ -46,6 +46,7 @@
                 <li><%= link_to 'AGENDAPRO', root_path %></li>
                 <li><%= link_to 'ACERCA DE', home_path %></li>
                 <li><%= link_to 'CONTACTO', contact_path %></li>
+                <li><%= link_to 'PLANES', view_plans_path %></li>
                 <% if user_signed_in? %>
                 <li><%= link_to current_user.email.upcase, edit_user_registration_path %></li>
                 <li><%= link_to 'MI AGENDA', my_agenda_path(:id => current_user.id) %></li>
