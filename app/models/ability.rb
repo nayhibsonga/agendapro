@@ -174,8 +174,8 @@ class Ability
         can :get_link, Company
 
         can :history, Client, :company_id => user.company_id
-        can :clients_name_suggestion, Client
-        can :clients_suggestion, Client
+        can :name_suggestion, Client
+        can :suggestion, Client
 
         can :create_comment, Client
         can :update_comment, Client
@@ -253,8 +253,8 @@ class Ability
         can :update, Booking, :location_id => user.location_id
 
         can :provider_service, ServiceProvider
-        can :clients_name_suggestion, Client
-        can :clients_suggestion, Client
+        can :name_suggestion, Client
+        can :suggestion, Client
         
         can :create_comment, Client, :company_id => user.company_id
         can :update_comment, Client, :company_id => user.company_id
@@ -300,8 +300,8 @@ class Ability
         can :create, Booking, :location_id => user.location_id 
         can :update, Booking, :location_id => user.location_id 
 
-        can :clients_name_suggestion, Client
-        can :clients_suggestion, Client
+        can :name_suggestion, Client
+        can :suggestion, Client
         can :provider_service, ServiceProvider
         
         can :create_comment, Client, :company_id => user.company_id

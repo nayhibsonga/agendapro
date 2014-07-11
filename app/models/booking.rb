@@ -75,9 +75,6 @@ class Booking < ActiveRecord::Base
 							end
 						end
 					end
-					puts used_resource
-					puts group_services
-					puts group_services.uniq.count
 					if group_services.uniq.count + used_resource >= ResourceLocation.where(resource_id: resource.id, location_id: self.location.id).first.quantity
 						errors.add(:base, "Este Local ya tiene asignado(s) el(los) recurso(s) necesario(s) para realizar este servicio.")
 						return
