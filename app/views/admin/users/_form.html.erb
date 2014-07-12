@@ -60,7 +60,7 @@
       <% end %>
 
       <% if !current_user.nil? %>
-        <div class="form-group">
+        <div class="form-group hidden" id="locationGroup">
           <%= f.label :location_id, "Local:", class: "col-sm-3 control-label"  %>
           <div class="col-sm-4">
           <% if current_user.role_id == Role.find_by(name: 'Super Admin').id %>
@@ -75,7 +75,7 @@
       <% end %>
 
       <% if !current_user.nil? %>
-      <div class="form-group">
+      <div class="form-group hidden" id="providerGroup">
         <%= f.label :service_provider_ids, "Proveedores de Servicios: ", class: "col-sm-3 control-label" %>
         <div class="col-sm-4">
           <div class="panel-group" id="service-provider-accordion">
