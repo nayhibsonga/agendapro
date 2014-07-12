@@ -76,7 +76,7 @@ $(function() {
 		$(this).parents('.panel').find('input[name="selectResourceCategory"]').prop('checked', prop);
 	});
 	$('input[name="selectResourceCategory"]').change(function (event) {
-		var id = $(event.target).attr('id').replace('selectLocation', '');
+		var id = $(event.target).attr('id').replace('selectResourceCategory', '');
 		$('#resource_category' + id).find('input.check_boxes').each( function () {
 			if ($(event.target).prop('checked')) {
 				$(this).prop('checked', true);
