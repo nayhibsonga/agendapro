@@ -19,13 +19,27 @@ class Location < ActiveRecord::Base
 	validates :name, :phone, :company, :district, :presence => true
 
 
-	validate :times_overlap, :time_empty_or_negative, :provider_time_in_location_time
+	validate :times_overlap, :time_empty_or_negative, :provider_time_in_location_time, :outcall_services
 	validate :plan_locations, :on => :create
 
 	def plan_locations
 		@company = self.company
 		if company.locations.count >= company.plan.locations
 			errors.add(:base, "No se pueden agregar más locales con el plan actual, ¡mejóralo!.")
+		end
+	end
+
+	def outcall_services
+		if self.outcall
+			notOutcall = false
+			self.service_providers.where(:active => true).each do |service_provider|
+				if service_provider.services.where(outcall: false).count > 0
+					notOutcall = true
+				end
+			end
+			if notOutcall
+				errors.add(:base, "El local a domicilio no puede tener proveedores que realizan servicios no a domicilio.")
+			end
 		end
 	end
 

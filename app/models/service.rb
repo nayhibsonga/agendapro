@@ -18,12 +18,26 @@ class Service < ActiveRecord::Base
 	validates :duration, numericality: { greater_than_or_equal_to: 5 }
 	validates :price, numericality: { greater_than_or_equal_to: 0 }
 
-	validate :group_service_capacity
+	validate :group_service_capacity, :outcall_providers
 
 	def group_service_capacity
 		if self.group_service
 			if !self.capacity || self.capacity < 1
 				errors.add(:base, "Un servicio de grupo debe tener capacidad.")
+			end
+		end
+	end
+
+	def outcall_providers
+		if !self.outcall
+			outcall = false
+			self.service_providers.where(:active => true).each do |service_provider|
+				if service_provider.location.outcall
+					outcall = true
+				end
+			end
+			if outcall
+				errors.add(:base, "Un servicio no a domicilio no puede tener estar asociado a un local a domicilio.")
 			end
 		end
 	end
