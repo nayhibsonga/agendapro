@@ -6,11 +6,11 @@ var servicesJSON;
 
 function loadProviders () {
 	if ($('[name="localRadio"]').is(':checked')) {
-		$('#providers-selector').html('<%= image_tag "ajax-loader.gif", :alt => "Loader" %>');
+		$('#providers-selector .slider-selector').html('<%= image_tag "ajax-loader.gif", :alt => "Loader" %>');
 		var localId = $('input[name=localRadio]:checked').val();
 		$.getJSON('/location_services', {location: localId}, function (services) {
 			servicesJSON = services;
-			$('#providers-selector').empty();
+			$('#providers-selector .slider-selector').empty();
 			var resources = [];
 			var count = 0;
 			$.getJSON('/local_providers', {location: localId}, function (providersArray) {
@@ -25,45 +25,19 @@ function loadProviders () {
 					    .remove()
 					    .end()
 					;
-					if (providersArray.length > 5) {
-						$('#providers-selector').append(
-							'<div id="provider_slider">' +
-								'<a href="#" class="control_next"><i class="fa fa-chevron-right"></i></a>' +
-								'<a href="#" class="control_prev"><i class="fa fa-chevron-left"></i></a>' +
-								'<ul>' +
-									'<li>' +
-										'<label class="active" id="l_todos">' +
-											'<input type="radio" name="providerRadio" value="0" checked>' +
-											'<p>Todos</p>' +
-										'</label>' +
-									'</li>' +
-								'</ul>' +
-							'</div>'
-						);
-					} else {
-						$('#providers-selector').append('<label class="active" id="l_todos">' +
-								'<input type="radio" name="providerRadio" value="0" checked>' +
-								'<p>Todos</p>' +
+					$('#providers-selector .slider-selector').append(
+						'<label class="active" id="l_todos">' +
+							'<input type="radio" name="providerRadio" value="0" checked>' +
+							'<p>Todos</p>' +
+						'</label>'
+					);
+					$.each(providersArray, function (key, provider) {
+						$('#providers-selector .slider-selector').append(
+							'<label id="' + provider.id + '">' +
+								'<input type="radio" name="providerRadio" value="' + provider.id + '">' +
+								'<p>' + provider.public_name + '</p>' +
 							'</label>'
 						);
-					};
-					$.each(providersArray, function (key, provider) {
-						if (providersArray.length > 5) {
-							$('#providers-selector #provider_slider ul').append(
-								'<li>' +
-									'<label id="' + provider.id + '">' +
-										'<input type="radio" name="providerRadio" value="' + provider.id + '">' +
-										'<p>' + provider.public_name + '</p>' +
-									'</label>' +
-								'</li>'
-							);
-						} else{
-							$('#providers-selector').append('<label id="' + provider.id + '">' +
-									'<input type="radio" name="providerRadio" value="' + provider.id + '">' +
-									'<p>' + provider.public_name + '</p>' +
-								'</label>'
-							);
-						};
 						resources.push({id: provider.id, name: provider.public_name});
 						count += 1;
 						$('#booking_service_provider_id')
@@ -87,12 +61,12 @@ function loadProviders () {
 						}
 						
 					});
-					generateSlider();
 					loadLocationTime (localId, resources);
 					return true;
 				}
 				else {
-					$('#providers-selector').append('<label class="active" id="l_todos">' +
+					$('#providers-selector .slider-selector').append(
+						'<label class="active" id="l_todos">' +
 							'<input type="radio" name="providerRadio" value="0" checked>' +
 							'<p>Todos</p>' +
 						'</label>'
@@ -1192,43 +1166,72 @@ function modalChange() {
 	}
 }
 
-function generateSlider () {
-	var slideCount = $('#provider_slider ul li').length;
-	var slideWidth = $('#provider_slider ul li').width();
-	var slideHeight = $('#provider_slider ul li').height();
-	var sliderUlWidth = slideCount * slideWidth;
+///////////////////////////////////
+//			Slider	Animation	 //
+///////////////////////////////////
+function animateLeft (selector) {
+	var sliderSelector = ' .slider-selector label';
+	var selectorWidth = $(selector + sliderSelector + ':first-child').css('width');
+	var once = true;
 
-	$('#provider_slider').css({ width: '100%', height: slideHeight });
-
-	$('#provider_slider ul').css({ width: sliderUlWidth, marginLeft: - slideWidth });
-
-	$('#provider_slider ul li:last-child').prependTo('#provider_slider ul');
-
-	function providrMoveLeft() {
-	    $('#provider_slider ul').animate({
-	        left: + slideWidth
-	    }, 200, function () {
-	        $('#provider_slider ul li:last-child').prependTo('#provider_slider ul');
-	        $('#provider_slider ul').css('left', '');
-	    });
-	};
-
-	function providerMoveRight() {
-	    $('#provider_slider ul').animate({
-	        left: - slideWidth
-	    }, 200, function () {
-	        $('#provider_slider ul li:first-child').appendTo('#provider_slider ul');
-	        $('#provider_slider ul').css('left', '');
-	    });
-	};
-
-	$('a.control_prev').click(function () {
-	    providrMoveLeft();
+	//Reset right property
+	$.each($(selector + sliderSelector), function (key, label) {
+		$(label).prop('style').removeProperty('right');
 	});
 
-	$('a.control_next').click(function () {
-	    providerMoveRight();
+	function resetState () {
+		if (once) {
+			once = false;
+			$(selector + ' .slider-selector').append(
+				$(selector + sliderSelector + ':first-child')
+			);
+			$(selector + sliderSelector).animate(
+				{left: ''},
+				0
+			);
+		};
+	}
+	
+	//Animation
+	$(selector + sliderSelector).animate(
+		{left: '-' + selectorWidth},
+		{
+			duration: 500,
+			complete: resetState
+		}
+	);
+}
+function animateRight (selector) {
+	var sliderSelector = ' .slider-selector label';
+	var selectorWidth = $(selector + sliderSelector + ':first-child').css('width');
+	var once = true;
+
+	//Reset left property
+	$.each($(selector + sliderSelector), function (key, label) {
+		$(label).prop('style').removeProperty('left');
 	});
+
+	function resetState () {
+		if (once) {
+			once = false;
+			$(selector + ' .slider-selector').prepend(
+				$(selector + sliderSelector + ':last-child')
+			);
+			$(selector + sliderSelector).animate(
+				{right: ''},
+				0
+			);
+		};
+	}
+	
+	//Animation
+	$(selector + sliderSelector).animate(
+		{right: '-' + selectorWidth},
+		{
+			duration: 500,
+			complete: resetState
+		}
+	);
 }
 
 var alertId;
@@ -1433,5 +1436,20 @@ $(function() {
 		$('#booking_send_mail').prop('disabled', true);
 		$('label[for=booking_send_mail]').addClass('disabled');
 		$('#xButton').prop('disabled', true);
+	});
+
+	var localsSelector = '#locals-selector'
+	var providersSelector = '#providers-selector'
+	$(localsSelector + ' .control_prev').click(function () {
+		animateLeft(localsSelector);
+	});
+	$(localsSelector + ' .control_next').click(function () {
+		animateRight(localsSelector);
+	});
+	$(providersSelector + ' .control_prev').click(function () {
+		animateLeft(providersSelector);
+	});
+	$(providersSelector + ' .control_next').click(function () {
+		animateRight(providersSelector);
 	});
 });
