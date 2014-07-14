@@ -2,7 +2,7 @@ jQuery(document).ready(function ($) {
 
 	var slideCount = $('#local_slider ul li').length;
 	var slideWidth = $('#local_slider ul li').width();
-	var slideHeight = $('#local_slider ul li').height();
+	var slideHeight = $('#local_slider ul li').height() - 2;
 	var sliderUlWidth = slideCount * slideWidth;
 	
 	$('#local_slider').css({ width: '100%', height: slideHeight });
@@ -21,6 +21,7 @@ jQuery(document).ready(function ($) {
 	};
 
 	function moveRight() {
+		window.console.log('move')
 		$('#local_slider ul').animate({
 			left: - slideWidth
 		}, 200, function () {
@@ -29,11 +30,12 @@ jQuery(document).ready(function ($) {
 		});
 	};
 
-	$('a.control_prev').click(function () {
+	$('#local_slider a.control_prev').click(function () {
 		moveLeft();
 	});
 
-	$('a.control_next').click(function () {
+	$('#local_slider a.control_next').click(function () {
+		window.console.log('move')
 		moveRight();
 	});
 });

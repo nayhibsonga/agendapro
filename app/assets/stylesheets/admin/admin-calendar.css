@@ -16,11 +16,13 @@ header{
 	margin-top: 5px;
 	margin-bottom: 0;
 	line-height: 1;
+	height: 36px;
 }
 #providers-selector {
 	margin-top: 5px;
 	margin-bottom: 0;
 	line-height: 1;
+	height: 36px;
 }
 .lateralDatepicker {
 	font-size: 0.725em;
