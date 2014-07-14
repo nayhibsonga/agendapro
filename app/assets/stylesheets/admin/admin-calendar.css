@@ -36,13 +36,13 @@ header{
 }
 .createBreak {
 	position: absolute;
-	top: 10px;
+	top: 14px;
 	right: 5px;
 	z-index: 1;
 }
 .createBooking {
 	position: absolute;
-	top: 10px;
+	top: 14px;
 	right: 160px;
 	z-index: 1;
 }
@@ -283,7 +283,9 @@ body .modal-admin {
 .slider p{
 	margin: 10px 0 10px;
 	height: 14px;
+	min-width: 140px;
 	overflow: hidden;
+	text-overflow: ellipsis;
 }
 .slider-selector {
 	position: relative;
@@ -315,134 +317,6 @@ a.control_next {
 	border-radius: 0 2px 2px 0;
 	right: 0;
 }
-
-/*#provider_slider {
-	position: relative;
-	overflow: hidden;
-	margin: 0 0;
-	border-radius: 4px;
-}
-
-#provider_slider ul {
-	position: relative;
-	margin: 0;
-	padding: 0;
-	list-style: none;
-}
-
-#provider_slider ul li {
-	position: relative;
-	display: block;
-	float: left;
-	margin: 0;
-	padding: 0;
-	width: 140px;
-	text-align: center;
-}
-#providers-selector #provider_slider label{
-	width: 140px;
-}*/
-
-/*#providers-selector{
-	width:100%;
-	border: 1px solid rgba(27,115,112,1);
-	background: #ccc;
-	padding: 0px;
-	border-radius: 5px;
-	overflow: hidden;
-	margin-top: 5px;
-	margin-bottom: 0;
-	line-height: 1;
-	height: 36px;
-}
-#providers-selector label{
-	display: inline-block;
-	background: #ccc;
-	padding: 0px 25px;
-	margin-bottom: -3px;
-	width: 20%;
-	min-width: 140px;
-	text-align: center;
-}
-#providers-selector label:hover{
-	background: rgba(27,115,112,0.7);
-	color: #fff;
-}
-#providers-selector label.active{
-	background: rgba(27,115,112,1);
-	color: #fff;
-}
-#providers-selector input[type="radio"]{
-	display: none;
-}
-#providers-selector p{
-	margin: 10px 0 10px;
-	height: 14px;
-	overflow: hidden;
-}
-#locals-selector{
-	width:100%;
-	border: 1px solid rgba(27,115,112,1);
-	background: #ccc;
-	padding: 0px;
-	border-radius: 5px;
-	overflow: hidden;
-	margin-top: 5px;
-	margin-bottom: 0;
-	line-height: 1;
-	height: 36px;
-}
-#locals-selector label{
-	display: inline-block;
-	background: #ccc;
-	padding: 0px 25px;
-	margin-bottom: 0px;
-	width: 20%;
-	min-width: 140px;
-	text-align: center;
-}
-#locals-selector label:hover{
-	background: rgba(27,115,112,1);
-	color: #fff;
-}
-#locals-selector label.active{
-	background: rgba(27,115,112,1);
-	color: #fff;
-}
-#locals-selector input[type="radio"]{
-	display: none;
-}
-#locals-selector p{
-	margin: 10px 0 10px;
-	height: 14px;
-	overflow: hidden;
-}*/
-/*#local_slider {
-	position: relative;
-	overflow: hidden;
-	margin: 0 0;
-	border-radius: 4px;
-}
-
-#local_slider ul {
-	position: relative;
-	margin: 0;
-	padding: 0;
-	list-style: none;
-}
-
-#local_slider ul li {
-	position: relative;
-	display: block;
-	float: left;
-	margin: 0;
-	padding: 0;
-	width: 140px;
-	text-align: center;
-}
-#locals-selector #local_slider label{
-	width: 140px;
-}*/
 
 /* Menu responsivo */
 @media (max-width: 1280px) { 
