@@ -31,13 +31,15 @@ class Service < ActiveRecord::Base
 	def outcall_providers
 		if !self.outcall
 			outcall = false
-			self.service_providers.where(:active => true).each do |service_provider|
-				if service_provider.location.outcall
-					outcall = true
+			self.service_providers.each do |service_provider|
+				if service_provider.active
+					if service_provider.location.outcall
+						outcall = true
+					end
 				end
 			end
 			if outcall
-				errors.add(:base, "Un servicio no a domicilio no puede tener estar asociado a un local a domicilio.")
+				errors.add(:base, "Un servicio no a domicilio no puede estar asociado a un local a domicilio.")
 			end
 		end
 	end

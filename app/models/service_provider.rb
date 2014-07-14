@@ -28,9 +28,11 @@ class ServiceProvider < ActiveRecord::Base
 	def outcall_location_provider
 		if self.location.outcall
 			notOutcall = false
-			self.services.where(active: true).each do |service|
-				if !service.outcall
-					notOutcall = true
+			self.services.each do |service|
+				if service.active
+					if !service.outcall
+						notOutcall = true
+					end
 				end
 			end
 			if notOutcall

@@ -52,7 +52,6 @@ class LocationsController < ApplicationController
   def update
     @location = Location.find(params[:id])
     @location.location_times.destroy_all
-    @location.districts.destroy_all
     respond_to do |format|
       if @location.update(location_params)
         format.html { redirect_to locations_path, notice: 'Local actualizado satisfactoriamente.' }

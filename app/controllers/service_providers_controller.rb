@@ -52,12 +52,10 @@ class ServiceProvidersController < ApplicationController
   def create
 
     @service_provider = ServiceProvider.new(service_provider_params)
-    @service_provider.services.clear
     @service_provider.company_id = current_user.company_id
 
     respond_to do |format|
       if @service_provider.save
-        @service_provider.service_ids = service_provider_params[:service_ids]
         format.html { redirect_to service_providers_path, notice: 'Proveedor creado satisfactoriamente.' }
         format.json { render :json => @service_provider }
       else
@@ -70,13 +68,8 @@ class ServiceProvidersController < ApplicationController
   # PATCH/PUT /service_providers/1
   # PATCH/PUT /service_providers/1.json
   def update
-
-    @service_provider.services.clear
     @service_provider.provider_times.destroy_all
     respond_to do |format|
-
-    # @users = User.where(company_id: current_user.company_id)
-    # @locations = Location.where(company_id: current_user.company_id)
       if @service_provider.update(service_provider_params)
         format.html { redirect_to service_providers_path, notice: 'Proveedor actualizado satisfactoriamente.' }
         format.json { render :json => @service_provider }
