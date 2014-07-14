@@ -190,7 +190,7 @@
 			</div>
 			<ul>
 				<h4>Por favor confirme como mínimo una dirección de correo válida</h4>
-				<p>Para lo anterior, valide en <%= link_to "Configuración Emails", edit_company_setting_path(id: current_user.company_id) %> algún correo.</p>
+				<p>Para lo anterior, valide en <%= link_to "Configuración Emails", edit_company_setting_path(id: Company.find(current_user.company_id).company_setting.id) %> algún correo.</p>
 			</ul>
 			<div class="modal-footer">
 				<button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
