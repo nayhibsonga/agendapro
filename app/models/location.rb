@@ -33,7 +33,7 @@ class Location < ActiveRecord::Base
 		if self.outcall
 			notOutcall = false
 			self.service_providers.where(:active => true).each do |service_provider|
-				if service_provider.services.where(outcall: false).count > 0
+				if service_provider.services.where(active: true, outcall: false).count > 0
 					notOutcall = true
 				end
 			end
