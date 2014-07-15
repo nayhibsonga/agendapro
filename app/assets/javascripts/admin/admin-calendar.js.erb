@@ -1441,15 +1441,15 @@ $(function() {
 	var localsSelector = '#locals-selector'
 	var providersSelector = '#providers-selector'
 	$(localsSelector + ' .control_prev').click(function () {
-		animateLeft(localsSelector);
-	});
-	$(localsSelector + ' .control_next').click(function () {
 		animateRight(localsSelector);
 	});
+	$(localsSelector + ' .control_next').click(function () {
+		animateLeft(localsSelector);
+	});
 	$(providersSelector + ' .control_prev').click(function () {
-		animateLeft(providersSelector);
+		animateRight(providersSelector);
 	});
 	$(providersSelector + ' .control_next').click(function () {
-		animateRight(providersSelector);
+		animateLeft(providersSelector);
 	});
 });
