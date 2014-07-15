@@ -32,6 +32,7 @@
 	</head>
 
 	<body>
+        <%= render 'layouts/modals' %>
 		<!-- start: Header -->
 		<header>
 			<div id="barra-superior">
@@ -85,9 +86,6 @@
 
 		<!-- start: content -->
 		<%= yield %>
-		<!-- start: Modal -->
-		<%= render 'layouts/modals' %>
-		<!-- end: Modal -->
 		<!-- end: content -->
 
 		<footer>

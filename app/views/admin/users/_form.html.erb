@@ -16,36 +16,44 @@
         </div>
       <% end %>
 
-      <div class="form-group">
+      <div class="form-group has-feedback">
         <%= f.label :first_name, "Nombre:", class: "col-sm-3 control-label" %>
         <div class="col-sm-4">
           <%= f.text_field :first_name, :autofocus => true, class: "form-control" %>
+          <span class="help-block"></span>
+          <span class="form-control-feedback"></span>
         </div>
       </div>
       
-      <div class="form-group">
+      <div class="form-group has-feedback">
         <%= f.label :last_name, "Apellido:", class: "col-sm-3 control-label"  %>
         <div class="col-sm-4">
           <%= f.text_field :last_name, class: "form-control" %>
+          <span class="help-block"></span>
+          <span class="form-control-feedback"></span>
         </div>
       </div>
       
-      <div class="form-group">
+      <div class="form-group has-feedback">
         <%= f.label :email, "Email:", class: "col-sm-3 control-label"  %>
         <div class="col-sm-4">
           <%= f.text_field :email, class: "form-control" %>
+          <span class="help-block"></span>
+          <span class="form-control-feedback"></span>
         </div>
       </div>
       
-      <div class="form-group">
+      <div class="form-group has-feedback">
         <%= f.label :phone, "Teléfono:", class: "col-sm-3 control-label"  %>
         <div class="col-sm-4">
           <%= f.text_field :phone, class: "form-control" %>
+          <span class="help-block"></span>
+          <span class="form-control-feedback"></span>
         </div>
       </div>
 
       <% if !current_user.nil? %>
-        <div class="form-group">
+        <div class="form-group has-feedback">
           <%= f.label :role_id, "Rol:", class: "col-sm-3 control-label"  %>
           <div class="col-sm-4">
           <% if current_user.role_id == Role.find_by(name: 'Super Admin').id %>
@@ -55,12 +63,14 @@
           <% elsif current_user.role_id == Role.find_by(name: 'Administrador Local').id %>
             <%= f.collection_select :role_id, Role.where(:name => ["Recepcionista","Staff"]), :id, :name, {include_blank: true}, {class: "form-control"} %>
           <% end %>
+          <span class="help-block"></span>
+          <span class="form-control-feedback"></span>
           </div>  
         </div>
       <% end %>
 
       <% if !current_user.nil? %>
-        <div class="form-group hidden" id="locationGroup">
+        <div class="form-group has-feedback hidden" id="locationGroup">
           <%= f.label :location_id, "Local:", class: "col-sm-3 control-label"  %>
           <div class="col-sm-4">
           <% if current_user.role_id == Role.find_by(name: 'Super Admin').id %>
@@ -70,6 +80,8 @@
           <% elsif current_user.role_id == Role.find_by(name: 'Administrador Local').id %>
             <%= f.collection_select :location_id, Location.where(:id => current_user.location_id, :active => true), :id, :name, { selected: current_user.location_id}, {class: "form-control"} %>
           <% end %>
+          <span class="help-block"></span>
+          <span class="form-control-feedback"></span>
           </div>  
         </div>
       <% end %>

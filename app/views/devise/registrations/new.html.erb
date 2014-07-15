@@ -84,7 +84,7 @@
 						<!-- end: Company Settings -->
 						<%= builder.hidden_field :payment_status_id, :value => PaymentStatus.where(:name => "Al día").first.id %>
 						<%= builder.hidden_field :plan_id, :value => Plan.find_by(:name => 'Trial').id %>
-						<div class="form-group">
+						<div class="form-group has-feedback">
 							<%= builder.label :name, 'Nombre de la Compañia', :class => 'col-sm-4 control-label' %>
 							<div class="col-sm-8">
 								<%= builder.text_field :name, :required => true, :class => 'form-control', placeholder: 'AgendaPro SpA' %>
@@ -92,18 +92,19 @@
 							<span class="form-control-feedback"></span>
 							</div>
 						</div>
-						<div class="form-group">
+						<div class="form-group has-feedback">
 							<%= builder.label :web_address, 'Direccion web', :class => 'col-sm-4 control-label' %>
-							<div class="col-sm-8 input-group">
-								<%= builder.text_field :web_address, :required => true, :class => 'form-control', placeholder: 'misitio' %>
-								<span class="input-group-addon">.agendapro.cl</span>
+							<div class="col-sm-8">
+								<div class="input-group">
+									<%= builder.text_field :web_address, :required => true, :class => 'form-control', placeholder: 'misitio' %>
+									<span class="input-group-addon">.agendapro.cl</span>
+								</div>
 							</div>
 							<div class="col-sm-offset-4 col-sm-8">
 								<span class="help-block"></span>
-								<!-- <span class="form-control-feedback"></span> -->
 							</div>
 						</div>
-						<div class="form-group">
+						<div class="form-group has-feedback">
 							<%= builder.label :economic_sector_id, 'Sector Economico', :class => 'col-sm-4 control-label' %>
 							<div class="col-sm-8">
 								<%= builder.collection_select :economic_sector_id, EconomicSector.all, :id, :name, {}, {:class => 'form-control'} %>
@@ -111,7 +112,7 @@
 							<span class="form-control-feedback"></span>
 							</div>
 						</div>
-						<div class="form-group">
+						<div class="form-group has-feedback">
 							<%= builder.label :logo, 'Logo', :class => 'col-sm-4 control-label' %>
 							<div class="col-sm-8">
 								<%= builder.file_field :logo, :accept => 'image/png,image/gif,image/jpeg', :class => 'form-control' %>
@@ -119,13 +120,13 @@
 							<span class="form-control-feedback"></span>
 							</div>
 						</div>
-						<div class="form-group">
+						<div class="form-group has-feedback">
 							<div class="col-sm-offset-4 col-sm-8">
 								<div class="checkbox">
 									<label>
 										<input type="checkbox" id="terms" name="terms" required> Acepto los <a href="http://www.agendapro.cl/TyC.pdf" target="_balnk">Términos y Condiciones</a>.
-										<span class="help-block"></span>
 									</label>
+									<span class="help-block"></span>
 								</div>
 							</div>
 						</div>
@@ -144,9 +145,7 @@
 	</div>
 </div>
 
-<%= stylesheet_link_tag "login/form-state" %>
 <% content_for :scripts do %>
 <%= javascript_include_tag 'login/move_signup_form' %>
-<%= javascript_include_tag 'login/jquery.validate.min' %>
-<%= javascript_include_tag 'login/signupValidate' %>
+<%= javascript_include_tag 'validations/home/new-user' %>
 <% end %>

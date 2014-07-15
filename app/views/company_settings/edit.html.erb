@@ -23,6 +23,8 @@
 					<div class="form-group">
 						<%= f.label :email, 'E-mail', :class => 'control-label' %>
 						<%= f.text_field :email, :class => 'form-control', :placeholder => 'email@dominio.cl' %>
+						<span class="help-block"></span>
+          				<span class="form-control-feedback"></span>
 						<span class="help-block">Este es el email desde el cual se enviaran los correos.</span>
 					</div>
 				</div>
@@ -81,3 +83,8 @@
 
 <h2>Firma Email</h2>
 <%= render 'form' %>
+
+<% content_for :scripts do %>
+  <%= javascript_include_tag 'validations/validate' %>
+  <%= javascript_include_tag 'validations/admin/company-email' %>
+<% end %>

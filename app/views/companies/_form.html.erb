@@ -13,11 +13,12 @@
 				</div>
 			<% end %>
 
-			<div class="form-group">
+			<div class="form-group has-feedback">
 				<%= f.label :name, 'Nombre: ', :class => 'col-sm-3 control-label' %>
 				<div class="col-sm-5">
 					<%= f.text_field :name, :autofocus => true, :class => 'form-control' %>
 					<span class="help-block"></span>
+					<span class="form-control-feedback"></span>
 				</div>
 			</div>
 			<div class="form-group">
@@ -26,22 +27,25 @@
 					<%= f.text_area :description, :class => 'form-control', :rows => "7" %>
 				</div>
 			</div>
-			<div class="form-group">
+			<div class="form-group has-feedback">
 				<%= f.label :web_address, 'Dirección Sitio AgendaPro:', :class => 'col-sm-3 control-label' %>
-				<div class="col-sm-5 input-group">
-					<%= f.text_field :web_address, :required => true, :class => 'form-control' %>
-					<span class="input-group-addon">.agendapro.cl</span>
+				<div class="col-sm-5">
+					<div class="input-group">
+						<%= f.text_field :web_address, :required => true, :class => 'form-control' %>
+						<span class="input-group-addon">.agendapro.cl</span>
+					</div>
 				</div>
 				<div class="col-sm-offset-3 col-sm-5">
 					<span class="help-block"></span>
 				</div>
 				<span class="help-block">Esta es la página del sitio en AgendaPro. <strong>NO recomendamos editarla.</strong></span>
 			</div>
-			<div class="form-group">
+			<div class="form-group has-feedback">
 				<%= f.label :logo, 'Logo Compañía: ', :class => 'col-sm-3 control-label' %>
 				<div class="col-sm-5">
 					<%= f.file_field :logo, :accept => 'image/png,image/gif,image/jpeg', :class => 'form-control' %>
 					<span class="help-block"></span>
+					<span class="form-control-feedback"></span>
 					<div class="checkbox">
 						<label>
 							<%= f.check_box :remove_logo %> Quitar Logo
