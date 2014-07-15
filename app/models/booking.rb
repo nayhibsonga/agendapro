@@ -75,9 +75,6 @@ class Booking < ActiveRecord::Base
 							end
 						end
 					end
-					puts used_resource
-					puts group_services
-					puts group_services.uniq.count
 					if group_services.uniq.count + used_resource >= ResourceLocation.where(resource_id: resource.id, location_id: self.location.id).first.quantity
 						errors.add(:base, "Este Local ya tiene asignado(s) el(los) recurso(s) necesario(s) para realizar este servicio.")
 						return
@@ -132,7 +129,7 @@ class Booking < ActiveRecord::Base
 			end
 		else
 			if changed_attributes['start'] and self.send_mail
-				BookingMailer.update_booking(self)
+				BookingMailer.update_booking(self, changed_attributes['start'])
 			end
 			if self.status == Status.find_by(:name => "Confirmado")
 				BookingMailer.confirm_booking(self)

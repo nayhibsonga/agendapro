@@ -55,12 +55,10 @@ class ServicesController < ApplicationController
       end
     end
     @service = Service.new(new_params)
-    @service.service_providers.clear
     @service.company_id = current_user.company_id
 
     respond_to do |format|
       if @service.save
-        @service.service_provider_ids = new_params[:service_provider_ids]
         format.html { redirect_to services_path, notice: 'Servicio creado satisfactoriamente.' }
         format.json { render action: 'show', status: :created, location: @service }
       else
@@ -80,7 +78,6 @@ class ServicesController < ApplicationController
         new_params = service_params.except(:service_category_id)
       end
     end
-    @service.service_providers.clear
     respond_to do |format|
       if @service.update(new_params)
         format.html { redirect_to services_path, notice: 'Servicio actualizado satisfactoriamente.' }
@@ -115,8 +112,26 @@ class ServicesController < ApplicationController
   end
 
   def location_categorized_services
+    location_resources = Location.find(params[:location]).resource_locations.pluck(:resource_id)
+    service_providers = ServiceProvider.where(location_id: params[:location])
+
     categories = ServiceCategory.where(:company_id => Location.find(params[:location]).company_id).order(order: :asc)
-    services = Service.where(:active => true).order(order: :asc).includes(:service_providers).where('service_providers.active = ?', true).where('service_providers.location_id = ?', params[:location]).order(order: :asc)
+    services = Service.where(:active => true, :id => ServiceStaff.where(service_provider_id: service_providers.pluck(:id)).pluck(:service_id)).order(order: :asc)
+    service_resources_unavailable = ServiceResource.where(service_id: services)
+    if location_resources.any?
+      if location_resources.length > 1
+        service_resources_unavailable = service_resources_unavailable.where('resource_id NOT IN (?)', location_resources)
+      else
+        service_resources_unavailable = service_resources_unavailable.where('resource_id <> ?', location_resources)
+      end
+    end
+    if service_resources_unavailable.any?
+      if service_resources_unavailable.length > 1
+        services = services.where('services.id NOT IN (?)', service_resources_unavailable.pluck(:service_id))
+      else
+        services = services.where('id <> ?', service_resources_unavailable.pluck(:service_id))
+      end
+    end
 
     categorized_services = Array.new
     categories.each do |category|

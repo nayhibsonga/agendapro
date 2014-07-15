@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140710000844) do
+ActiveRecord::Schema.define(version: 20140714211518) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -131,10 +131,11 @@ ActiveRecord::Schema.define(version: 20140710000844) do
   add_index "companies", ["plan_id"], name: "index_companies_on_plan_id", using: :btree
 
   create_table "company_from_emails", force: true do |t|
-    t.string   "email",      null: false
+    t.string   "email",                      null: false
     t.integer  "company_id"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.boolean  "confirmed",  default: false
   end
 
   add_index "company_from_emails", ["company_id"], name: "index_company_from_emails_on_company_id", using: :btree
@@ -146,8 +147,8 @@ ActiveRecord::Schema.define(version: 20140710000844) do
     t.integer  "company_id",                          null: false
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.integer  "before_booking",      default: 24,    null: false
-    t.integer  "after_booking",       default: 6,     null: false
+    t.integer  "before_booking",                      null: false
+    t.integer  "after_booking",                       null: false
     t.integer  "daily_mails",         default: 50
     t.integer  "sent_mails",          default: 0
     t.integer  "before_edit_booking", default: 12
@@ -213,7 +214,7 @@ ActiveRecord::Schema.define(version: 20140710000844) do
   create_table "location_times", force: true do |t|
     t.time     "open",        null: false
     t.time     "close",       null: false
-    t.integer  "location_id", null: false
+    t.integer  "location_id"
     t.integer  "day_id",      null: false
     t.datetime "created_at"
     t.datetime "updated_at"

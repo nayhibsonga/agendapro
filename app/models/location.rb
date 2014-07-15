@@ -3,24 +3,22 @@ class Location < ActiveRecord::Base
 	belongs_to :district
 	belongs_to :company
 
-	has_many :location_times
-	has_many :service_providers
-	has_many :bookings
-	has_many :users
+	has_many :location_times, dependent: :destroy
+	has_many :service_providers, dependent: :destroy
+	has_many :bookings, dependent: :destroy
+	has_many :users, dependent: :nullify
 
-	has_many :location_outcall_districts
+	has_many :location_outcall_districts, dependent: :destroy
 	has_many :districts, :through => :location_outcall_districts
 
-	  has_many :resource_locations
-	  has_many :resources, :through => :resource_locations
+	has_many :resource_locations, dependent: :destroy
+	has_many :resources, :through => :resource_locations
 
 	accepts_nested_attributes_for :location_times, :reject_if => :all_blank, :allow_destroy => true
 
 	validates :name, :phone, :company, :district, :presence => true
 
-
-	validate :times_overlap, :time_empty_or_negative, :provider_time_in_location_time, :plan_locations
-
+	validate :times_overlap, :time_empty_or_negative, :provider_time_in_location_time, :plan_locations, :outcall_services
 	validate :new_plan_locations, :on => :create
 
 	def plan_locations
@@ -38,6 +36,24 @@ class Location < ActiveRecord::Base
 	def new_plan_locations
 		if self.company.locations.where(active:true).count >= self.company.plan.locations
 			errors.add(:base, "No se pueden agregar más locales con el plan actual, ¡mejóralo!.")
+		end
+	end
+
+	def outcall_services
+		if self.outcall
+			notOutcall = false
+			self.service_providers.each do |service_provider|
+				if service_provider.active
+					service_provider.services.each do |service|
+						if service.active && !service.outcall
+							notOutcall = true
+						end
+					end
+				end
+			end
+			if notOutcall
+				errors.add(:base, "El local a domicilio no puede tener proveedores que realizan servicios no a domicilio.")
+			end
 		end
 	end
 

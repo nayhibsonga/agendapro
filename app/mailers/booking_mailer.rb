@@ -34,16 +34,16 @@ class BookingMailer < ActionMailer::Base
 				# 	:content => "Si deseas dejar de recibir emails de AgendaPro, puedes dar click <a href='#{unsubscribe_url(:user => Base64.encode64(book_info.client.email))}'>aquí</a>"
 				# },
 				{
+					:name => 'COMPANYNAME',
+					:content => book_info.service_provider.company.name
+				},
+				{
 					:name => 'SERVICENAME',
 					:content => book_info.service.name
 				},
 				{
-					:name => 'LOCALNAME',
-					:content => book_info.location.name
-				},
-				{
-					:name => 'COMPANYNAME',
-					:content => book_info.service_provider.company.name
+					:name => 'LOCALADDRESS',
+					:content => book_info.location.address + " - " + District.find(book_info.location.district_id).name
 				},
 				{
 					:name => 'BSTART',
@@ -175,7 +175,7 @@ class BookingMailer < ActionMailer::Base
 			raise
 	end
 
-	def update_booking (book_info)
+	def update_booking (book_info, old_start)
 		mandrill = Mandrill::API.new Agendapro::Application.config.api_key
 
 		# => Template
@@ -205,8 +205,12 @@ class BookingMailer < ActionMailer::Base
 				# 	:content => "Si deseas dejar de recibir emails de AgendaPro, puedes dar click <a href='#{unsubscribe_url(:user => Base64.encode64(book_info.client.email))}'>aquí</a>"
 				# },
 				{
-					:name => 'LOCALNAME',
-					:content => book_info.location.name
+					:name => 'OLD_START',
+					:content => l(old_start)
+				},
+				{
+					:name => 'LOCALADDRESS',
+					:content => book_info.location.address + " - " + District.find(book_info.location.district_id).name
 				},
 				{
 					:name => 'SERVICENAME',
@@ -375,8 +379,8 @@ class BookingMailer < ActionMailer::Base
 					:content => book_info.service.name
 				},
 				{
-					:name => 'LOCALNAME',
-					:content => book_info.location.name
+					:name => 'LOCALADDRESS',
+					:content => book_info.location.address + " - " + District.find(book_info.location.district_id).name
 				},
 				{
 					:name => 'COMPANYNAME',
@@ -500,8 +504,8 @@ class BookingMailer < ActionMailer::Base
 					:content => book_info.service.name
 				},
 				{
-					:name => 'LOCALNAME',
-					:content => book_info.location.name
+					:name => 'LOCALADDRESS',
+					:content => book_info.location.address + " - " + District.find(book_info.location.district_id).name
 				},
 				{
 					:name => 'COMPANYNAME',
@@ -656,8 +660,8 @@ class BookingMailer < ActionMailer::Base
 					:content => book_info.service.name
 				},
 				{
-					:name => 'LOCALNAME',
-					:content => book_info.location.name
+					:name => 'LOCALADDRESS',
+					:content => book_info.location.address + " - " + District.find(book_info.location.district_id).name
 				},
 				{
 					:name => 'COMPANYNAME',

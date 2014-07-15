@@ -7,8 +7,8 @@ class User < ActiveRecord::Base
 	belongs_to :company
 	belongs_to :location
 
-	has_many :bookings
-	has_many :service_providers
+	has_many :bookings, dependent: :nullify
+	has_many :service_providers, dependent: :nullify
 
 	accepts_nested_attributes_for :company
 
@@ -27,7 +27,7 @@ class User < ActiveRecord::Base
 		end
 	end
 	def location_company_users
-		if Role.where(:name => ["Administrador Local","Recepcionista","Staff"]).include? self.role
+		if Role.where(:name => ["Administrador Local","Recepcionista"]).include? self.role
 			if !self.location
 				errors.add(:base, "Este tipo de usuario debe tener un local asociado.")
 			end

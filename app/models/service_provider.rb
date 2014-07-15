@@ -3,11 +3,11 @@ class ServiceProvider < ActiveRecord::Base
 	belongs_to :user
 	belongs_to :company
 
-	has_many :service_staffs
+	has_many :service_staffs, dependent: :destroy
 	has_many :services, :through => :service_staffs
-	has_many :provider_times, :inverse_of => :service_provider
-	has_many :bookings
-	has_many :provider_breaks
+	has_many :provider_times, :inverse_of => :service_provider, dependent: :destroy
+	has_many :bookings, dependent: :destroy
+	has_many :provider_breaks, dependent: :destroy
 
 	attr_accessor :_destroy
 
@@ -48,8 +48,10 @@ class ServiceProvider < ActiveRecord::Base
 		if self.location.outcall
 			notOutcall = false
 			self.services.each do |service|
-				if !service.outcall
-					notOutcall = true
+				if service.active
+					if !service.outcall
+						notOutcall = true
+					end
 				end
 			end
 			if notOutcall

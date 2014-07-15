@@ -113,6 +113,7 @@
 	</div>
 </div>
 
+<% if @from_collection.first %>
 <div class="modal fade" id="mailModal" tabindex="-1" role="dialog" aria-labelledby="mailModalLabel" aria-hidden="true">
 	<div class="modal-dialog">
 		<div class="modal-content">
@@ -120,7 +121,7 @@
 				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
 				<h4 class="modal-title" id="mailModalLabel">Enviar Email</h4>
 			</div>
-			<%= form_tag '/send_mail_client', name: "client_mailer", id: "client_mailer", multipart: true do %>
+			<%= form_tag('/send_mail_client', name: "client_mailer", id: "client_mailer", multipart: true, class: "form-horizontal") do %>
 				<div class="modal-body">
 					<div class="center-block" style="display: table;">
 						<p>
@@ -130,18 +131,30 @@
 						<%= image_tag 'ajax-loader.gif', :alt => 'Loader' %>
 					</div>
 					<div class="form-group">
-						<%= label_tag :from, 'De' %>
-						<%= select_tag :from, options_from_collection_for_select(@from_collection, :email, :email), :class => 'form-control', :required => true %>
+						<div class="col-md-2">
+							<%= label_tag :from, 'De: ' %>
+						</div>
+						<div class="col-md-10">
+							<%= select_tag :from, options_from_collection_for_select(@from_collection, :email, :email), :class => 'form-control', :required => true %>
+						</div>
             			<span class="help-block"></span>
 					</div>
 					<div class="form-group">
-						<%= label_tag :to, 'Para' %>
-						<%= text_field_tag :to, nil, :class => 'form-control', :required => true %>
+						<div class="col-md-2">
+							<%= label_tag :to, 'Para: ' %>
+						</div>
+						<div class="col-md-10">
+							<%= text_field_tag :to, nil, :class => 'form-control', :required => true %>
+            			</div>
             			<span class="help-block"></span>
 					</div>
 					<div class="form-group">
-						<%= label_tag :subject, 'Asunto' %>
+						<div class="col-md-2">
+							<%= label_tag :subject, 'Asunto: ' %>
+						</div>
+						<div class="col-md-10">
 						<%= text_field_tag :subject, nil, :class => 'form-control', :required => true, :autofocus => true %>
+						</div>
             			<span class="help-block"></span>
 					</div>
 					<div class="form-group">
@@ -154,15 +167,38 @@
 						<%= file_field_tag :attachment, :class => 'form-control' %>
 						<span class="help-block"></span>
 					</div>
+					<div>
+						<p>NOTA: Todos los emails son enviados como copia oculta</p>
+					</div>
 				</div>
 				<div class="modal-footer">
-					<button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+					<button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
 					<button class="btn btn-agendapro-claro" type="submit" action="/send_mail_client" value="client_mailer"><i class="fa fa-envelope-o"><span> Enviar</span></i></button>
 				</div>
 			<% end %>
 		</div>
 	</div>
 </div>
+
+<% else %>
+<div class="modal fade" id="mailModal" tabindex="-1" role="dialog" aria-labelledby="mailModalLabel" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+				<h4 class="modal-title" id="mailModalLabel">No es posible Enviar Emails</h4>
+			</div>
+			<ul>
+				<h4>Por favor confirme como mínimo una dirección de correo válida</h4>
+				<p>Para lo anterior, valide en <%= link_to "Configuración Emails", edit_company_setting_path(id: Company.find(current_user.company_id).company_setting.id) %> algún correo.</p>
+			</ul>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+			</div>
+		</div>
+	</div>
+</div>
+<% end %>
 
 <div class="modal fade" id="importModal" tabindex="-1" role="dialog" aria-labelledby="importModalLabel" aria-hidden="true">
 	<div class="modal-dialog">
@@ -192,6 +228,7 @@
 			  </div>
 			  	<div class="modal-footer">
 					<%= submit_tag "Importar", class: "btn btn-agendapro-oscuro", disabled: true, id: "import_button" %>
+					<button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
 				</div>
 			<% end %>
 		</div>
