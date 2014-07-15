@@ -299,8 +299,8 @@ a.control_prev, a.control_next {
 	/*z-index: 999;*/
 	/*display: block;*/
 	padding: 10px 10px;
-	wi/*dth: auto;
-	he*/ight: 40px;
+	/*width: auto;
+	height: 40px;*/
 	background: rgba(27,115,112,1);;
 	color: #fff;
 	font-size: 18px;
