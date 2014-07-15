@@ -1,8 +1,2 @@
-//= require bootstrap.min.js
+//= require application
 //= require SlideMenu
-//= require Alert
-//= require ga
-
-//por defecto:
-//= require jquery_ujs
-// require turbolinks
