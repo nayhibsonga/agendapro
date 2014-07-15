@@ -7,8 +7,8 @@ class User < ActiveRecord::Base
 	belongs_to :company
 	belongs_to :location
 
-	has_many :bookings
-	has_many :service_providers
+	has_many :bookings, dependent: :nullify
+	has_many :service_providers, dependent: :nullify
 
 	accepts_nested_attributes_for :company
 

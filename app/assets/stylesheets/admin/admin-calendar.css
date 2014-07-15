@@ -286,6 +286,7 @@ body .modal-admin {
 	min-width: 140px;
 	overflow: hidden;
 	text-overflow: ellipsis;
+    white-space: nowrap;
 }
 .slider-selector {
 	position: relative;
@@ -316,6 +317,16 @@ a.control_prev {
 a.control_next {
 	border-radius: 0 2px 2px 0;
 	right: 0;
+}
+
+table.fc-agenda-days {
+	table-layout: fixed;
+}
+
+th.fc-tue {
+	overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 /* Menu responsivo */

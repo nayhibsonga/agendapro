@@ -3,16 +3,16 @@ class Location < ActiveRecord::Base
 	belongs_to :district
 	belongs_to :company
 
-	has_many :location_times
-	has_many :service_providers
-	has_many :bookings
-	has_many :users
+	has_many :location_times, dependent: :destroy
+	has_many :service_providers, dependent: :destroy
+	has_many :bookings, dependent: :destroy
+	has_many :users, dependent: :nullify
 
-	has_many :location_outcall_districts
+	has_many :location_outcall_districts, dependent: :destroy
 	has_many :districts, :through => :location_outcall_districts
 
-	  has_many :resource_locations
-	  has_many :resources, :through => :resource_locations
+	has_many :resource_locations, dependent: :destroy
+	has_many :resources, :through => :resource_locations
 
 	accepts_nested_attributes_for :location_times, :reject_if => :all_blank, :allow_destroy => true
 
