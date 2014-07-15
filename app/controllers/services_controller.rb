@@ -120,14 +120,14 @@ class ServicesController < ApplicationController
     service_resources_unavailable = ServiceResource.where(service_id: services)
     if location_resources.any?
       if location_resources.length > 1
-        service_resources_unavailable = service_resources_unavailable.where('resource_id NOT IN ?', location_resources)
+        service_resources_unavailable = service_resources_unavailable.where('resource_id NOT IN (?)', location_resources)
       else
         service_resources_unavailable = service_resources_unavailable.where('resource_id <> ?', location_resources)
       end
     end
     if service_resources_unavailable.any?
       if service_resources_unavailable.length > 1
-        services = services.where('id NOT IN ?', service_resources_unavailable.pluck(:service_id))
+        services = services.where('services.id NOT IN (?)', service_resources_unavailable.pluck(:service_id))
       else
         services = services.where('id <> ?', service_resources_unavailable.pluck(:service_id))
       end
