@@ -68,6 +68,9 @@ class ServiceProvidersController < ApplicationController
   # PATCH/PUT /service_providers/1
   # PATCH/PUT /service_providers/1.json
   def update
+    if !service_provider_params[:service_ids].present?
+      @service_provider.services.delete_all
+    end
     @service_provider.provider_times.destroy_all
     respond_to do |format|
       if @service_provider.update(service_provider_params)
