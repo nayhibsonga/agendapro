@@ -60,18 +60,6 @@ function saveResource (typeURL, extraURL) {
 	if (validator.numberOfInvalids()) {
 		return false;
 	};
-	if($('#resource_name').val() == '' && $('#resource_resource_category_id').val() == '') {
- 		alertId.showAlert("Se debe ingresar un nombre y una categoría para el recurso.");
- 		return false;
-	}
-	if($('#resource_name').val() == '') {
- 		alertId.showAlert("Se debe ingresar un nombre para el recurso.");
- 		return false;
-	}
-	if($('#resource_resource_category_id').val() == '') {
- 		alertId.showAlert("Se debe ingresar una categoría para el recurso.");
- 		return false;
-	}
 
 	var resource_locations = []
 	$('input.resourceLocationCheck').each(function(i, obj) {

@@ -176,10 +176,6 @@ function startLocation () {
 			});
 		});
 	}
-	else {
-		my_alert.showAlert('Dirección y/o Comuna no pueden estar vacías.');
-		hideLoad();
-	}
 }
 
 function locJSON (ctrl) {
@@ -285,25 +281,7 @@ function locationValid (ctrl) {
 function serviceValid () {
 	if (!$('#new_service').valid()) {
 		hideLoad();
-		return false;
-	};
-	if (!$('#service_name').val()) {
-		my_alert.showAlert('Debe escribir un nombre.');
-		hideLoad();
 	}
-	else if (!$('#service_price').val()) {
-		my_alert.showAlert('Debe elegir un precio.');
-		hideLoad();
-	}
-	else if (!$('#service_duration').val()) {
-		my_alert.showAlert('Debe elegir una duracion.');
-		hideLoad();
-	}
-	else if (!$('#service_service_category_attributes_name').val() && !$('#service_service_category_id').val()) {
-		my_alert.showAlert('Debe elegir una categoria.');
-		hideLoad();
-	}
-
 	else {
 		$.ajax({
 			type: 'POST',
@@ -355,15 +333,7 @@ function providerValid () {
 	for(var i = 1; i < 8; ++i) {
 		bool = bool || $('#provdayStatusId'+ i).is(':checked');
 	}
-	if (!$('#service_provider_public_name').val()) {
-		my_alert.showAlert('Debe elegir un nombre público.');
-		hideLoad();
-	}
-	else if (!$('#service_provider_notification_email').val()) {
-		my_alert.showAlert('Debe elegir un email de notificación.');
-		hideLoad();
-	}
-	else if (!bool) {
+	if (!bool) {
 		my_alert.showAlert('Debe elegir al menos un día.');
 		hideLoad();
 	}
