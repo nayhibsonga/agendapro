@@ -77,8 +77,6 @@ class PlansController < ApplicationController
     @month_discount_6 = NumericParameter.find_by_name("6_month_discount").value
     @month_discount_9 = NumericParameter.find_by_name("9_month_discount").value
     @month_discount_12 = NumericParameter.find_by_name("12_month_discount").value
-    puts params[:plan_id]
-    puts @plans.pluck(:id).include?(params[:plan_id].to_i)
 
     if params[:plan_id] && @plans.pluck(:id).include?(params[:plan_id].to_i)
       @company.plan_id = params[:plan_id]

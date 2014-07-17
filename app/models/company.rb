@@ -23,11 +23,17 @@ class Company < ActiveRecord::Base
 
 	accepts_nested_attributes_for :company_setting
 
-	validate :plan_settings
+	validate :plan_settings, :due_payment
 
 	def plan_settings
 		if self.locations.where(active: true).count > self.plan.locations || self.service_providers.where(active: true).count > self.plan.service_providers
 			errors.add(:base, "El plan no pudo ser cambiado. Tienes más locales/proveedores activos que lo que permite el plan.")
+		end
+	end
+
+	def due_payment
+		if self.due_amount != 0 && self.due_date != nil
+			errors.add(:base, "La empresa no puede tener deuda activa sin una fecha de cobro, comunícate con el administrador (contacto@agendapro.cl).")
 		end
 	end
 
