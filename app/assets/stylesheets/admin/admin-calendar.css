@@ -323,7 +323,7 @@ table.fc-agenda-days {
 	table-layout: fixed;
 }
 
-th.fc-tue {
+th.fc-widget-header {
 	overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
