@@ -49,13 +49,15 @@
 				<div class="row well well-sm">	
 					<div class="row">
 						<div class="col-md-6">
-							<div class="form-group">
+							<div class="form-group has-feedback">
 								<label for="datePicker" class="col-sm-4 control-label">Fecha: </label>
 								<div class="col-sm-8">
-									<input type="text" id="datePicker" class="form-control">
+									<input type="text" id="datePicker" class="form-control" name="datePicker">
+									<span class="help-block"></span>
+									<span class="form-control-feedback"></span>
 								</div>
 							</div>
-							<div class="form-group">
+							<div class="form-group has-feedback">
 								<label class="col-sm-4 control-label">Hora: </label>
 								<div class="col-sm-8">
 									<div class="input datetime required booking_start_end ">       
@@ -142,23 +144,29 @@
 									</div>
 								</div>
 							</div>
-							<div class="form-group">
+							<div class="form-group has-feedback">
 								<%= f.label :service_provider_id, "Proveedor de Servicios: ", class: "col-sm-4 control-label" %>
 								<div class="col-sm-8">
 									<%= f.collection_select :service_provider_id, ServiceProvider.where(location_id: Location.where(company_id: current_user.company_id, :active => true)).accessible_by(current_ability), :id, :public_name, {}, { class: "form-control" }%>
+									<span class="help-block"></span>
+									<span class="form-control-feedback"></span>
 								</div>
 							</div>
-							<div class="form-group">
+							<div class="form-group has-feedback">
 								<%= f.label :service, "Servicio: ", class: "col-sm-4 control-label" %>
 								<div class="col-sm-8">
 									<select class="form-control" id="booking_service_id" name="booking[service_id]" disabled></select>
+									<span class="help-block"></span>
+									<span class="form-control-feedback"></span>
 									<!-- <%= f.collection_select :service_id, Service.where(company_id: current_user.company_id), :id, :name, {}, { class: "form-control" }%> -->
 								</div>
 							</div>
-							<div class="form-group">
+							<div class="form-group has-feedback">
 								<%= f.label :price, "Precio: ", class: "col-sm-4 control-label" %>
 								<div class="col-sm-8">
-									<%= f.number_field :price, class: "form-control" %>
+									<%= f.number_field :price, min: 0, class: "form-control" %>
+									<span class="help-block"></span>
+									<span class="form-control-feedback"></span>
 								</div>
 							</div>
 						</div>
@@ -168,15 +176,17 @@
 							<%= builder.hidden_field :id %>
 							<%= builder.hidden_field :last_name %>
 							<%= builder.hidden_field :first_name %>
-							<div class="form-group">
+							<div class="form-group has-feedback">
 								<label for="full_name" class="col-sm-4 control-label">Nombre Cliente: </label>
 								<div class="col-sm-8">
 									<div class="input-group">
-										<input type="text" id="full_name" class="form-control" placeholder="Buscar clientes..">
+										<input type="text" id="full_name" class="form-control" placeholder="Buscar clientes.." name="full_name">
 										<span class="input-group-btn">
 									    	<button class="btn btn-danger" type="button" id="xButton"><i class="fa fa-times-circle"></i></button>
 									   	</span>
 									</div>
+									<span class="help-block"></span>
+									<!-- <span class="form-control-feedback"></span> -->
 									<ul id="full_name_suggestions"></ul>
 								</div>
 							</div>
@@ -276,6 +286,8 @@
 <% content_for :scripts do %>
 	<%= javascript_include_tag "bookings" %>
 	<%= javascript_include_tag "jquery-ui-1.10.4.min.js" %>
+	<%= javascript_include_tag 'validations/validate' %>
+	<%= javascript_include_tag 'validations/admin/booking' %>
 <% end %>
 <% content_for :stylesheets do %>
 	<%= stylesheet_link_tag "jquery-ui-1.10.4" %>

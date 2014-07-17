@@ -210,6 +210,9 @@ function changeDayStatus (value) {
 }
 
 function startLocation() {
+	if (!$('form:first').valid()) {
+		return false;
+	};
 	if ((!$('#location_outcall').prop('checked')) && ($('#location_address').val() != '') && ($('#location_district_id').val() != '')) {
 		$.getJSON('/get_direction', {id: $('#location_district_id').val()}, function (direction) {
 			var geolocation = $('#location_address').val() + ', ' + direction;
@@ -411,6 +414,10 @@ $(function() {
 		changeCountry(country_id);
 	});
 	$('#location_outcall').change(function() {
+		$('#location_outcall').parents('.form-group').removeClass('has-error has-success');
+		$('#location_outcall').parents('.form-group').find('.help-block').empty();
+		$('#location_outcall').parents('.form-group').find('.form-control-feedback').removeClass('fa fa-times fa-check')
+		window.console.log($(this).parent('form-group'))
 		if (!$('#location_outcall').prop('checked')) {
 			$('#location_address').attr('disabled', false);
 			$('#location_district_ids').val('');

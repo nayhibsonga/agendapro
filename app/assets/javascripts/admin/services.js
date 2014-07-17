@@ -21,9 +21,11 @@ function serviceGroup () {
 	if ($('#service_group_service').is(':checked')) {
 		$('#service_capacity').closest('.form-group').removeClass('hidden');
 		$('#foo5').trigger('updateSizes');
+		$('#service_capacity').attr('disabled', false);
 	}
 	else {
 		$('#service_capacity').closest('.form-group').addClass('hidden');
+		$('#service_capacity').attr('disabled', true);
 	}
 }
 

@@ -19,11 +19,6 @@ $(function() {
 				required: true
 			}
 		},
-		messages: {
-			'company[logo]': {
-				filesize: "La imagen supera el tamaño maximo de 3 MB"
-			}
-		},
 		highlight: function(element) {
 			$(element).closest('.form-group').removeClass('has-success').addClass('has-error');
 			$(element).parent().children('.form-control-feedback').removeClass('fa fa-check').addClass('fa fa-times');

@@ -1,22 +1,32 @@
 $(function() {
-	$('#new_user').validate({
+	$('form').validate({
 		errorPlacement: function(error, element) {
 			error.appendTo(element.next());
 		},
 		rules: {
-			'user[first_nae]': {
-				required: true
+			'client[email]': {
+				email: true
 			},
-			'user[last_name]': {
-				required: true
+			'client[first_name]': {
+				minlength: 2
 			},
-			'user[email]': {
-				required: true,
-				email: true,
-				remote: '/check_user'
+			'client[last_name]': {
+				minlength: 2
 			},
-			'user[role_id]': {
-				required: true
+			'client[phone]': {
+				rangelength: [8, 15]
+			},
+			'client[address]': {
+				minlength: 2 
+			},
+			'client[district]': {
+				minlength: 2 
+			},
+			'client[city]': {
+				minlength: 2 
+			},
+			'client[age]': {
+				min: 0
 			}
 		},
 		highlight: function(element) {

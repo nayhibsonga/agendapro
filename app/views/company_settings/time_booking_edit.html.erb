@@ -28,33 +28,39 @@
 				</div>
 			<% end %>
 
-			<div class="form-group">
+			<div class="form-group has-feedback">
 				<%= f.label :before_booking, 'Tiempo Mínimo de Reserva:', :class => 'col-sm-3 control-label' %>
 				<div class="col-sm-4">
 					<div class="input-group">
 						<%= f.number_field :before_booking, :in => 1...25, :required => true, :class => 'form-control' %>
 						<span class="input-group-addon">Horas</span>
 					</div>
+					<span class="help-block"></span>
+					<!-- <span class="form-control-feedback"></span> -->
 					<span class="help-block">Horas mínimas requeridas para que un cliente reserve. No se podrá reservar con menos anticipación.</span>
 				</div>
 			</div>
-			<div class="form-group">
+			<div class="form-group has-feedback">
 				<%= f.label :after_booking, 'Tiempo Máximo a Futuro:', :class => 'col-sm-3 control-label' %>
 				<div class="col-sm-4">
 					<div class="input-group">
 						<%= f.number_field :after_booking, :in => 1...13, :required => true, :class => 'form-control' %>
 						<span class="input-group-addon">Meses</span>
 					</div>
+					<span class="help-block"></span>
+					<!-- <span class="form-control-feedback"></span> -->
 					<span class="help-block">Tiempo máximo que una persona puede reservar a futuro. No se permiten reservas para más de X meses a futuro.</span>
 				</div>
 			</div>
-			<div class="form-group">
+			<div class="form-group has-feedback">
 				<%= f.label :before_edit_booking, 'Política de Edición de Reservas:', :class => 'col-sm-3 control-label' %>
 				<div class="col-sm-4">
 					<div class="input-group">
 						<%= f.number_field :before_edit_booking, :in => 1...25, :required => true, :class => 'form-control' %>
 						<span class="input-group-addon">Horas</span>
 					</div>
+					<span class="help-block"></span>
+					<!-- <span class="form-control-feedback"></span> -->
 					<span class="help-block">Horas mínimas requeridas para que un cliente edite o cancele su reserva. No se podrá editar o cancelar reservas con menos anticipación.</span>
 				</div>
 			</div>
@@ -67,3 +73,8 @@
 		<% end %>
 	</div>
 </div>
+
+<% content_for :scripts do %>
+  <%= javascript_include_tag 'validations/validate' %>
+  <%= javascript_include_tag 'validations/admin/time-booking' %>
+<% end %>

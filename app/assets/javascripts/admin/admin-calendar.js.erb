@@ -761,15 +761,19 @@ function createBookingModal(date, provider_id) {
 }
 
 function editBooking(eventId) {
-	$('.booking-button').attr("disabled", "disabled");
-	$('.booking-modal-footer').prepend('<%= image_tag "small-loader.gif", :alt => "Loader", :id => "small_loader" %>');
-	saveBooking('PATCH','/'+eventId);
+	if ($('#new_booking').valid()) {
+		$('.booking-button').attr("disabled", "disabled");
+		$('.booking-modal-footer').prepend('<%= image_tag "small-loader.gif", :alt => "Loader", :id => "small_loader" %>');
+		saveBooking('PATCH','/'+eventId);
+	};
 }
 
 function createBooking() {
-	$('.booking-button').attr("disabled", "disabled");
-	$('.booking-modal-footer').prepend('<%= image_tag "small-loader.gif", :alt => "Loader", :id => "small_loader" %>');
-	saveBooking('POST','');
+	if ($('#new_booking').valid()) {
+		$('.booking-button').attr("disabled", "disabled");
+		$('.booking-modal-footer').prepend('<%= image_tag "small-loader.gif", :alt => "Loader", :id => "small_loader" %>');
+		saveBooking('POST','');
+	};
 }
 
 function deleteBooking(eventId) {

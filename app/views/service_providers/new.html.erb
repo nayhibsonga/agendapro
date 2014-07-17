@@ -17,5 +17,7 @@
 <%= render "form" %>
 
 <% content_for :scripts do %>
-  <%= javascript_include_tag "provider" %>
+	<%= javascript_include_tag "provider" %>
+	<%= javascript_include_tag 'validations/validate' %>
+	<%= javascript_include_tag 'validations/admin/provider' %>
 <% end %>

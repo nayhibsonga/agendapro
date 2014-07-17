@@ -1,21 +1,33 @@
 $(function() {
-	$('#new_user').validate({
+	$('form').validate({
 		errorPlacement: function(error, element) {
-			error.appendTo(element.next());
+			if (element.attr('id') == 'service_price' || element.attr('id') == 'service_duration' || element.attr('id') == 'service_capacity') {
+				error.appendTo(element.parent().next());
+			}
+			else {
+				error.appendTo(element.next());
+			};
 		},
 		rules: {
-			'user[first_nae]': {
-				required: true
-			},
-			'user[last_name]': {
-				required: true
-			},
-			'user[email]': {
+			'service[name]': {
 				required: true,
-				email: true,
-				remote: '/check_user'
+				minlength: 3
 			},
-			'user[role_id]': {
+			'service[price]': {
+				min: 0
+			},
+			'service[duration]': {
+				required: true,
+				min: 0
+			},
+			'service[capacity]': {
+				required: true,
+				min: 2
+			},
+			'service[service_category_id]': {
+				required: true
+			},
+			'service[service_category_attributes][name]': {
 				required: true
 			}
 		},

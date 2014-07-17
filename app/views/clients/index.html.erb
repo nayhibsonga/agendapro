@@ -130,42 +130,55 @@
 						</p>
 						<%= image_tag 'ajax-loader.gif', :alt => 'Loader' %>
 					</div>
-					<div class="form-group">
+					<div class="form-group has-feedback">
 						<div class="col-md-2">
 							<%= label_tag :from, 'De: ' %>
 						</div>
 						<div class="col-md-10">
 							<%= select_tag :from, options_from_collection_for_select(@from_collection, :email, :email), :class => 'form-control', :required => true %>
+            				<span class="help-block"></span>
+            				<span class="form-control-feedback"></span>
 						</div>
-            			<span class="help-block"></span>
 					</div>
-					<div class="form-group">
+					<div class="form-group has-feedback">
 						<div class="col-md-2">
 							<%= label_tag :to, 'Para: ' %>
 						</div>
 						<div class="col-md-10">
 							<%= text_field_tag :to, nil, :class => 'form-control', :required => true %>
+            				<span class="help-block"></span>
+            				<span class="form-control-feedback"></span>
             			</div>
-            			<span class="help-block"></span>
 					</div>
-					<div class="form-group">
+					<div class="form-group has-feedback">
 						<div class="col-md-2">
 							<%= label_tag :subject, 'Asunto: ' %>
 						</div>
 						<div class="col-md-10">
 						<%= text_field_tag :subject, nil, :class => 'form-control', :required => true, :autofocus => true %>
+            				<span class="help-block"></span>
+            				<span class="form-control-feedback"></span>
 						</div>
-            			<span class="help-block"></span>
 					</div>
-					<div class="form-group">
-						<%= label_tag :message, 'Mensaje' %>
-						<%= text_area_tag :message, nil, :class => 'form-control', :rows => 8, :required => true %>
-            			<span class="help-block"></span>
+					<div class="form-group has-feedback">
+						<div class="col-md-12">
+							<%= label_tag :message, 'Mensaje' %>
+						</div>
+						<div class="col-md-12">
+							<%= text_area_tag :message, nil, :class => 'form-control', :rows => 8, :required => true %>
+            				<span class="help-block"></span>
+            				<span class="form-control-feedback"></span>
+						</div>
 					</div>
-					<div class="form-group">
-						<%= label_tag :attachment, 'Archivo Adjunto' %>
-						<%= file_field_tag :attachment, :class => 'form-control' %>
-						<span class="help-block"></span>
+					<div class="form-group has-feedback">
+						<div class="col-md-12">
+							<%= label_tag :attachment, 'Archivo Adjunto' %>
+						</div>
+						<div class="col-md-12">
+							<%= file_field_tag :attachment, :class => 'form-control' %>
+							<span class="help-block"></span>
+							<span class="form-control-feedback"></span>
+						</div>
 					</div>
 					<div>
 						<p>NOTA: Todos los emails son enviados como copia oculta</p>
@@ -239,6 +252,7 @@
 <% end %>
 
 <% content_for :scripts do %>
-<%= javascript_include_tag 'login/jquery.validate.min' %>
-<%= javascript_include_tag 'admin/clients_mail' %>
+	<%= javascript_include_tag 'validations/validate' %>
+	<%= javascript_include_tag 'validations/admin/client-email' %>
+	<%= javascript_include_tag 'admin/clients_mail' %>
 <% end %>

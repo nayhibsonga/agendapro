@@ -1,22 +1,29 @@
 $(function() {
-	$('#new_user').validate({
+	$('#client_mailer').validate({
 		errorPlacement: function(error, element) {
 			error.appendTo(element.next());
 		},
 		rules: {
-			'user[first_nae]': {
+			'from': {
 				required: true
 			},
-			'user[last_name]': {
+			'to': {
 				required: true
 			},
-			'user[email]': {
+			'subject': {
 				required: true,
-				email: true,
-				remote: '/check_user'
+				minlength: 3
 			},
-			'user[role_id]': {
+			'message': {
 				required: true
+			},
+			'attachment': {
+				filesize: 5242880
+			}
+		},
+		messages: {
+			'attachment': {
+				filesize: "El archivo supera el tamaño maximo de 5 MB"
 			}
 		},
 		highlight: function(element) {

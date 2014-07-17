@@ -314,6 +314,9 @@ $(function() {
   	initialize();
 
   	$('.buttonProvider').click(function() {
+  		if (!$('form').valid()) {
+  			return false;
+  		};
 		if ( $('#title').length > 0 ) {
 			updateProvider();
 		}

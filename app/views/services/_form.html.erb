@@ -13,13 +13,15 @@
       <% end %>
       <div class="col-md-6">
         <div class="col-md-12 well">
-          <div class="form-group">
+          <div class="form-group has-feedback">
             <%= f.label :name, "Nombre: ", class: "col-sm-4 control-label" %>
             <div class="col-sm-8">
               <%= f.text_field :name, :autofocus => true, class: "form-control" %>
+              <span class="help-block"></span>
+              <span class="form-control-feedback"></span>
             </div>
           </div>
-          <div class="form-group">
+          <div class="form-group has-feedback">
             <%= f.label :price, "Precio: ", class: "col-sm-4 control-label" %>
             <div class="col-sm-8">
               <div class="input-group">
@@ -27,6 +29,8 @@
                 <%= f.number_field :price, class: "form-control", :min => 0 %>
                 <span class="input-group-addon">Pesos</span>
               </div>
+              <span class="help-block"></span>
+              <span class="form-control-feedback"></span>
               <div class="checkbox">
                 <label>
                   <%= f.check_box :show_price %> Mostrar el precio en tu mini-sitio AgendaPro
@@ -34,13 +38,15 @@
               </div>
             </div>
           </div>
-          <div class="form-group">
+          <div class="form-group has-feedback">
             <%= f.label :duration, "Duración: ", class: "col-sm-4 control-label" %>
             <div class="col-sm-8">
               <div class="input-group">
                 <%= f.number_field :duration, class: "form-control", :in => 5...1440, :step => 5 %>
                 <span class="input-group-addon">Minutos</span>
               </div>
+              <span class="help-block"></span>
+              <span class="form-control-feedback"></span>
               <div class="checkbox">
                 <label>
                   <%= f.check_box :outcall %> Servicio a domicilio <br /><small id="outcallTip" class="hidden">Si el servicio no pertenece a una sucursal exclusivamente a domicilio, recomendamos ingresar las comunas que se atienden en la descripción.</small>
@@ -67,9 +73,11 @@
             <%= f.label :capacity, "Capacidad: ", class: "col-sm-4 control-label" %>
             <div class="col-sm-8">
               <div class="input-group">
-                <%= f.number_field :capacity, class: "form-control", :min => 2 %>
+                <%= f.number_field :capacity, class: "form-control", :min => 2, disabled: true %>
                 <span class="input-group-addon">Personas</span>
               </div>
+              <span class="help-block"></span>
+              <span class="form-control-feedback"></span>
             </div>
           </div>
           <div class="form-group">
@@ -88,6 +96,8 @@
             <%= builder.label :name, "Nueva Categoría de Servicio", class: "col-sm-4 control-label" %>
             <div class="col-sm-8">
               <%= builder.text_field :name, class: "form-control", :value => '' %>
+              <span class="help-block"></span>
+              <span class="form-control-feedback"></span>
               <%= builder.hidden_field :company_id, class: "form-control", :value => current_user.company_id %>
             </div>
           </div>
@@ -96,6 +106,8 @@
             <%= f.label :service_category_id, "Categoría de Servicio: ", class: "col-sm-4 control-label" %>
             <div class="col-sm-8">
               <%= f.collection_select :service_category_id, ServiceCategory.where(company_id: current_user.company_id), :id, :name, {}, { class: "form-control" }%>
+              <span class="help-block"></span>
+              <span class="form-control-feedback"></span>
             </div>
           </div>
           <div class="form-group">

@@ -49,6 +49,17 @@ function saveCategory (typeURL, extraURL) {
 }
 
 function saveResource (typeURL, extraURL) {
+	if (!$('form').valid()) {
+		return false;
+	};
+	$.each($('input[name="resource[location_ids_quantity][]"]'), function (key, resource) {
+		if (!$(resource).attr('disabled')) {
+			$(resource).valid();
+		};
+	});
+	if (validator.numberOfInvalids()) {
+		return false;
+	};
 	if($('#resource_name').val() == '' && $('#resource_resource_category_id').val() == '') {
  		alertId.showAlert("Se debe ingresar un nombre y una categoría para el recurso.");
  		return false;

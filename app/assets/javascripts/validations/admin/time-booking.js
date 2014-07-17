@@ -1,22 +1,20 @@
 $(function() {
-	$('#new_user').validate({
+	$('[id^="edit_company_setting_"]').validate({
 		errorPlacement: function(error, element) {
-			error.appendTo(element.next());
+			error.appendTo(element.parent().next());
 		},
 		rules: {
-			'user[first_nae]': {
-				required: true
-			},
-			'user[last_name]': {
-				required: true
-			},
-			'user[email]': {
+			'company_setting[before_booking]': {
 				required: true,
-				email: true,
-				remote: '/check_user'
+				range: [1, 24]
 			},
-			'user[role_id]': {
-				required: true
+			'company_setting[after_booking]': {
+				required: true,
+				range: [1, 12]
+			},
+			'company_setting[before_edit_booking]': {
+				required: true,
+				range: [1, 24]
 			}
 		},
 		highlight: function(element) {

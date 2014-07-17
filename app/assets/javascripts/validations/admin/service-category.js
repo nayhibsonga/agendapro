@@ -1,22 +1,12 @@
 $(function() {
-	$('#new_user').validate({
+	$('form').validate({
 		errorPlacement: function(error, element) {
 			error.appendTo(element.next());
 		},
 		rules: {
-			'user[first_nae]': {
-				required: true
-			},
-			'user[last_name]': {
-				required: true
-			},
-			'user[email]': {
+			'service_category[name]': {
 				required: true,
-				email: true,
-				remote: '/check_user'
-			},
-			'user[role_id]': {
-				required: true
+				minlength: 3
 			}
 		},
 		highlight: function(element) {
