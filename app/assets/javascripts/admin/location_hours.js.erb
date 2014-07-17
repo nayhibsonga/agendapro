@@ -417,7 +417,6 @@ $(function() {
 		$('#location_outcall').parents('.form-group').removeClass('has-error has-success');
 		$('#location_outcall').parents('.form-group').find('.help-block').empty();
 		$('#location_outcall').parents('.form-group').find('.form-control-feedback').removeClass('fa fa-times fa-check')
-		window.console.log($(this).parent('form-group'))
 		if (!$('#location_outcall').prop('checked')) {
 			$('#location_address').attr('disabled', false);
 			$('#location_district_ids').val('');
