@@ -16,6 +16,8 @@ class ClientsController < ApplicationController
     @max_mails = current_user.company.company_setting.daily_mails
     @mails_left = current_user.company.company_setting.daily_mails - current_user.company.company_setting.sent_mails
 
+    @from_collection = current_user.company.company_from_email.where(confirmed: true)
+
     @clients_export = Client.accessible_by(current_ability).search(params[:search]).filter_location(params[:location]).filter_provider(params[:provider]).filter_service(params[:service]).filter_gender(params[:gender]).order(:last_name, :first_name)
     respond_to do |format|
       format.html
@@ -160,7 +162,7 @@ class ClientsController < ApplicationController
       attachment = {}
     end
 
-    ClientMailer.send_client_mail(current_user, clients, params[:subject], params[:message], company_img, attachment)
+    ClientMailer.send_client_mail(current_user, clients, params[:subject], params[:message], company_img, attachment, params[:from])
 
     redirect_to '/clients', notice: 'E-mail enviado correctamente.'
   end

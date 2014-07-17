@@ -12,16 +12,6 @@ header{
 #sidebar{
 	margin-top: 44px;
 }
-#locals-selector {
-	margin-top: 5px;
-	margin-bottom: 0;
-	line-height: 1;
-}
-#providers-selector {
-	margin-top: 5px;
-	margin-bottom: 0;
-	line-height: 1;
-}
 .lateralDatepicker {
 	font-size: 0.725em;
 	font-size: 0.875vw;
@@ -37,7 +27,7 @@ header{
 	line-height: 23.100000381469727px;
 	margin-left: 20px;
 	margin-bottom: 0px;
-	margin-top: 10px;
+	margin-top: 0px;
 	text-align: left;
 	white-space: nowrap;
 }
@@ -90,6 +80,7 @@ header{
 }
 .booking-modal-footer {
 	margin-top: 0px;
+	padding: 10px;
 }
 /*.ui-autocomplete {
 	max-height: 50px;
@@ -205,9 +196,9 @@ body .modal-admin {
     display:none;
     background:#ddd;
     border: 1px solid #999;
-    padding: 0px 10px 10px 10px;
+    padding: 0px 0px 10px 0px;
     width:auto;
-    box-shadow:0 0 10px rgba(0, 0, 0, .5);
+    box-shadow:0 0 5px rgba(0, 0, 0, .5);
     text-align: right;
 }
 .popover:after, .popover:before {
@@ -235,9 +226,10 @@ body .modal-admin {
 }
 .closePopover i {
 	font-size:0.7em;
+	margin-right: 10px;
 }
 .actionPopover {
-	font-size:1.2em;
+	font-size:1em;
 	margin-right: 10px;
 	margin-left: 10px;
 	cursor: pointer;
@@ -245,6 +237,98 @@ body .modal-admin {
 .closePopover {
 	cursor: pointer;
 }
+
+/*Cambios en modales*/
+.modal-header {
+	padding: 10px;
+}
+
+/************************************************************ 
+ *							Slider							*
+ ************************************************************/
+.slider {
+	position: relative;
+	width:100%;
+	border: 1px solid rgba(27, 115, 112, 1);
+	background: #ccc;
+	padding: 0px;
+	border-radius: 5px;
+	overflow: hidden;
+	margin-top: 5px;
+	margin-bottom: 0;
+	line-height: 1;
+	height: 36px;
+}
+.slider label {
+	position: relative;
+	display: inline-block;
+	background: #ccc;
+	padding: 0px 25px;
+	margin-bottom: -3px;
+	width: 20%;
+	min-width: 140px;
+	text-align: center;
+}
+.slider label:hover{
+	background: rgba(27, 115, 112, 1);
+	color: #fff;
+}
+.slider label.active{
+	background: rgba(27, 115, 112, 1);
+	color: #fff;
+}
+.slider input[type="radio"]{
+	display: none;
+}
+.slider p{
+	margin: 10px 0 10px;
+	height: 14px;
+	min-width: 140px;
+	overflow: hidden;
+	text-overflow: ellipsis;
+    white-space: nowrap;
+}
+.slider-selector {
+	position: relative;
+	overflow: hidden;
+	margin: 0 33px;
+}
+a.control_prev, a.control_next {
+	position: absolute;
+	/*top: 0px;*/
+	/*z-index: 999;*/
+	/*display: block;*/
+	padding: 10px 10px;
+	/*width: auto;
+	height: 40px;*/
+	background: rgba(27,115,112,1);;
+	color: #fff;
+	font-size: 18px;
+	opacity: 0.8;
+	cursor: pointer;
+}
+a.control_prev:hover, a.control_next:hover {
+	opacity: 1;
+	-webkit-transition: all 0.2s ease;
+}
+a.control_prev {
+	border-radius: 2px 0 0 2px;
+}
+a.control_next {
+	border-radius: 0 2px 2px 0;
+	right: 0;
+}
+
+table.fc-agenda-days {
+	table-layout: fixed;
+}
+
+th.fc-tue {
+	overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
 /* Menu responsivo */
 @media (max-width: 1280px) { 
 	#dp {

@@ -1,27 +1,34 @@
 <div class="col-md-12">
 	<div class="row">
-		<div  id="locals-selector" class="radio">
-			<% @locations.each do |local| %>
+		<div  id="locals-selector" class="radio slider">
+			<a href="#" class="control_prev"><i class="fa fa-chevron-left"></i></a>
+			<a href="#" class="control_next"><i class="fa fa-chevron-right"></i></a>
+			<div class="slider-selector">
+				<% @locations.each do |local| %>
 				<label id="<%= local.id %>" >
 					<input type="radio" name="localRadio" id="localOption<%= local.id %>" onchange="loadProviders()" value="<%= local.id %>" <%= 'checked' if ((!@selectedLocal) && (local.id == @locations.first.id)) || (@selectedLocal.to_i == local.id) %>>
 					<p><%= local.name %></p>
 				</label>
-			<% end %>
+				<% end #each%>
+			</div>
 		</div>
 	</div>
 	<div class="row">
-		<div id="providers-selector" class="radio">
-			<%= image_tag "ajax-loader.gif", :alt => "Loader" %>
+		<div id="providers-selector" class="radio slider">
+			<a href="#" class="control_prev"><i class="fa fa-chevron-left"></i></a>
+			<a href="#" class="control_next"><i class="fa fa-chevron-right"></i></a>
+			<div class="slider-selector">
+				<%= image_tag "ajax-loader.gif", :alt => "Loader" %>
+			</div>
 		</div>
 	</div>
 </div>
 
 <% content_for :calendar do %>
 	<div class="col-md-12">
-			<%= link_to '<i class="fa fa-times"></i>  Bloquear Horario'.html_safe, '#', :class => "btn btn-primary btn-md createBreak modal-trigger" unless current_user.role_id == Role.find_by_name('Staff').id %>
+			<%= link_to '<i class="fa fa-times"></i>  Bloquear Horario'.html_safe, '#', :class => "btn btn-primary btn-md createBreak modal-trigger" %>
 			<%= link_to '<i class="fa fa-calendar"></i>  Agregar Reserva'.html_safe, '#', :class => "btn btn-primary btn-md createBooking modal-trigger" %>
 			<input type="hidden" id="set-date" />
-			<!-- <button id="set-date" class="btn btn-primary btn-md"><i class="fa fa-clock-o"></i> Ir a</button> -->
 		<div class="row">
 			<div id="popover" class="popover">
 			</div>
@@ -138,7 +145,7 @@
 							<div class="form-group">
 								<%= f.label :service_provider_id, "Proveedor de Servicios: ", class: "col-sm-4 control-label" %>
 								<div class="col-sm-8">
-									<%= f.collection_select :service_provider_id, ServiceProvider.where(location_id: Location.where(company_id: current_user.company_id, :active => true).accessible_by(current_ability)), :id, :public_name, {}, { class: "form-control" }%>
+									<%= f.collection_select :service_provider_id, ServiceProvider.where(location_id: Location.where(company_id: current_user.company_id, :active => true)).accessible_by(current_ability), :id, :public_name, {}, { class: "form-control" }%>
 								</div>
 							</div>
 							<div class="form-group">
@@ -204,13 +211,13 @@
 							<div class="form-group">
 								<%= f.label :notes, "Notas compartidas con cliente: ", class: "col-sm-2 control-label" %>
 								<div class="col-sm-10">
-									<%= f.text_area :notes, :rows => "3", class: "form-control modal-textarea" %>
+									<%= f.text_area :notes, :rows => "2", class: "form-control modal-textarea" %>
 								</div>
 							</div>
 							<div class="form-group">
 								<%= f.label :company_comment, "Comentario Interno: ", class: "col-sm-2 control-label" %>
 								<div class="col-sm-10">
-									<%= f.text_area :company_comment, :rows => "3", class: "form-control modal-textarea" %>
+									<%= f.text_area :company_comment, :rows => "2", class: "form-control modal-textarea" %>
 								</div>
 							</div>
 						</div>
@@ -236,7 +243,7 @@
 					<div class="form-group">
 						<%= f.label :service_provider_id, "Proveedor de Servicios: ", class: "col-sm-3 control-label" %>
 						<div class="col-sm-9">
-							<%= f.collection_select :service_provider_id, ServiceProvider.where(location_id: Location.where(company_id: current_user.company_id, :active => true).accessible_by(current_ability)), :id, :public_name, {}, { class: "form-control" }%>
+							<%= f.collection_select :service_provider_id, ServiceProvider.where(location_id: Location.where(company_id: current_user.company_id, :active => true)).accessible_by(current_ability), :id, :public_name, {}, { class: "form-control" }%>
 						</div>
 					</div>
 					<div class="form-group">

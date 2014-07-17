@@ -1,0 +1,2 @@
+module CompanyFromEmailsHelper
+end

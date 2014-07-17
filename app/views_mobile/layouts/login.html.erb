@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]> <html class="no-js lt-ie9 lt-ie8 lt-ie7" lang="es"> <![endif]-->
+<!--[if IE 7]>    <html class="no-js lt-ie9 lt-ie8" lang="es"> <![endif]-->
+<!--[if IE 8]>    <html class="no-js lt-ie9" lang="es"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="es"> <!--<![endif]-->
+	<head>
+		<!-- start: Meta -->
+        <meta charset="utf-8">
+        <title>AgendaPro</title>
+        <meta name="description" content="AgendaPro - Sistema de agendamiento OnLine para empresas y usuarios.">
+        <meta name="author" content="AgendaPro">
+        <meta name="keyword" content="agendapro, agenda, agenda online, reserva, reserva online">
+        <%= csrf_meta_tags %>
+        <!-- end: Meta -->
+
+        <!-- start: Mobile Specific -->
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <!-- end: Mobile Specific -->
+
+        <!-- start: CSS -->
+        <%= stylesheet_link_tag "mobile" %>
+        <%= stylesheet_link_tag "http://fonts.googleapis.com/css?family=Open+Sans:400,300,400italic,600,600italic,700,700italic,300italic" %>
+        <!-- end: CSS -->
+
+        <!-- start: JavaScript-->
+        <%= javascript_include_tag "home-head" %>
+        <!-- end: JavaScript-->
+
+        <!-- Fav and touch icons -->
+        <%= favicon_link_tag "Iso_Pro_Color.png", :rel => "shortcut icon" %>
+	</head>
+
+	<body id="loading">
+        <!-- start: Header -->
+        <header>
+            <h2>AGENDAPRO</h2>
+            <a id="btn-principal" class="nav-toggler toggle-slide-right" href="#menu"><span>menu</span></a>
+            </div>
+        </header>
+        <!-- end: Header -->
+
+        <!-- start: menu -->
+        <nav class="menu slide-menu-right">
+            <ul>
+                <li><%= link_to 'AGENDAPRO', root_path %></li>
+                <li><%= link_to 'ACERCA DE', home_path %></li>
+                <li><%= link_to 'CONTACTO', contact_path %></li>
+                <li><%= link_to 'PLANES', view_plans_path %></li>
+                <% if user_signed_in? %>
+                <li><%= link_to current_user.email.upcase, edit_user_registration_path %></li>
+                <li><%= link_to 'MI AGENDA', my_agenda_path(:id => current_user.id) %></li>
+                <li><%= link_to 'SALIR', destroy_user_session_path, method: :delete %></li>
+                <% else %>
+                <li><%= link_to 'INICIA SESION', new_user_session_path %></li>
+                <li><%= link_to 'REGISTRATE', new_user_registration_path %></li>
+                <% end %>
+            </ul>
+            <span>
+                <%= link_to 'Sitio Completo', prefer_full_site_url %>|
+                <a href="#" class="close-menu">&gt;&gt;</a>
+            </span>
+        </nav><!-- /slide menu right -->
+
+        <!-- start: content -->
+        <div id="wrapper">
+            <!-- start: Alerts -->
+            <% if notice %>
+                <div class="alert alert-info alert-dismissable">
+                    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                    <%= notice %>
+                </div>
+            <% end %>
+            <% if alert %>
+                <div class="alert alert-warning alert-dismissable">
+                    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                    <%= alert %>
+                </div>
+            <% end %>
+            <!-- end: Alerts -->
+            <div class="container">
+                <%= yield %>
+            </div>
+        </div>
+        <!-- end: content -->
+
+        <!-- start: JavaScript-->
+        <%= yield :scripts %>
+        <%= javascript_include_tag "mobile" %>
+        <!-- end: JavaScript-->
+	</body>
+</html>

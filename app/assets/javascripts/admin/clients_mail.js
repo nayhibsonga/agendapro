@@ -72,6 +72,9 @@ $(function () {
 			error.appendTo(element.next());
 		},
 		rules: {
+			'from': {
+				required: true
+			},
 			'to': {
 				required: true
 			},
@@ -86,6 +89,9 @@ $(function () {
 			}
 		},
 		messages: {
+			'from': {
+				required: "Debe elegir una dirección de correo válida"
+			},
 			'to': {
 				required: "Debe elegir al menos un destinatario"
 			},

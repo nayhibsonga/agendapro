@@ -1,0 +1,276 @@
+/* RESET CSS */
+html, body, div, span, applet, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+a, abbr, acronym, address, big, cite, code,
+del, dfn, em, img, ins, kbd, q, s, samp,
+small, strike, strong, sub, sup, tt, var,
+b, u, i, center,
+dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td,
+article, aside, canvas, details, embed, 
+figure, figcaption, footer, header, hgroup, 
+menu, nav, output, ruby, section, summary,
+time, mark, audio, video {
+	margin: 0;
+	padding: 0;
+	border: 0;
+	font-size: 100%;
+	font: inherit;
+	vertical-align: baseline;
+}
+/* HTML5 display-role reset for older browsers */
+article, aside, details, figcaption, figure, 
+footer, header, hgroup, menu, nav, section {
+	display: block;
+}
+body {
+	line-height: 1;
+}
+ol, ul {
+	list-style: none;
+}
+blockquote, q {
+	quotes: none;
+}
+blockquote:before, blockquote:after,
+q:before, q:after {
+	content: '';
+	content: none;
+}
+table {
+	border-collapse: collapse;
+	border-spacing: 0;
+}
+
+/* Estilo general*/
+html{
+	width: 100%;
+}
+body{
+	width: 100%;
+	max-width: 600px;
+}
+
+body{
+	background: #FFF;
+	font-family: 'Open Sans', 'sans-serif';
+}
+#loading{
+	background: rgba(27,115,112,1);
+}
+#wrapper{
+	margin-top: 50px;
+}
+header{
+	background: rgba(27,115,112,1);
+	font-size: 16px;
+	font-weight: bold;
+	color: #fff;
+	text-align: center;
+	line-height: 40px;
+	height: 40px;
+	padding: 0 50px;
+	position: fixed;
+	top: 0px;
+	width: 100%;
+	z-index: 14;
+}
+header h2{
+	font-weight: 400;
+	font-weight: bold;
+	height: 40px;
+	overflow-y: hidden;
+}
+h2 {
+	font-weight: bold;
+}
+#btn-principal{
+	display: block;
+	width: 40px;
+	height: 40px;
+	background-image: url(<%= asset_path 'mobile/menu-bg.png' %>);
+	background-repeat: no-repeat;
+	background-position: center;
+	position: absolute;
+	top: 0px;
+	right: 0px;
+}
+#btn-principal span{
+	display: none;
+}
+.top-10{
+	margin-top: 10px;
+}
+.top-20{
+	margin-top: 20px;
+}
+.bottom-20{
+	margin-bottom: 20px;
+}
+.btn-success {
+	color: #ffffff;
+	background-color: #D55330;
+	border-color: #E64215;
+}
+.btn-success:hover{
+	background-color: #E64215;
+	border-color: #E64215;
+}
+.bloque-local{
+	width: 100%;
+	padding: 5px 0px;
+	border: 1px solid #ddd;
+	margin: 10px 0px 5px;
+	font-size: 14px;
+	color: #808080;
+}
+.bloque-local img{
+	width: 66px;
+	height: 66px;
+	float: left;
+}
+.bloque-local h3{
+	font-weight: bold;
+	margin-bottom: 3px;
+}
+.bloque-local p{
+	margin-bottom: 5px;
+}
+.clear{
+	clear: both;
+}
+.img-circulo{
+	width: 66px;
+	height: 66px;
+	border-radius: 33px;
+	overflow: hidden;
+	margin: 0px 5px; 
+	float: left;
+}
+.cambiar-comuna{
+	position: fixed;
+	bottom: 0px;
+	width: 100%;
+	height: 44px;
+	background: rgba(140,140,140,0.8);
+}
+.btn-fijo{
+	margin: 5px auto;
+}
+
+
+/* Single */
+.single-local {
+	margin-bottom: 45px;
+}
+.single-local img{
+	width: 100%;
+	height: auto;
+	/*margin: 15px 0px 0px;*/
+}
+.single-local h3{
+	font-weight: bold;
+	font-size: 18px;
+}
+.volver{
+	display: block;
+	width: 40px;
+	height: 40px;
+	background-image: url(<%= asset_path 'mobile/volver.png' %>);
+	background-repeat: no-repeat;
+	background-position: center;
+	position: absolute;
+	top: 0px;
+	left: 0px;
+}
+.visible{
+	display: block;
+}
+.oculto{
+	display: none;
+}
+#reservar{
+	margin: 10px 0px 45px;
+}
+#informacion{
+	margin: 10px 0px 30px;
+}
+#informacion > button {
+	margin: 5px 0 10px 0;
+}
+.center-load{
+	/*width: 350px;*/
+	margin: 0 auto;
+	text-align: center;
+}
+.center-load h2 a{
+	font-size: 30px;
+	color: #fff;
+	margin:100px 0px 20px;
+	font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+	font-weight: 500;
+	line-height: 1.1;
+}
+.center-load h2 a:hover {
+	text-decoration: none;
+}
+.center-load img{
+	width: 150px;
+	height: auto;
+}
+.center-load p{
+	color: #fff;
+	margin-bottom: 10px;
+}
+.btn-group-justified-fix{
+	max-width: 90%;
+	margin: 5px 5%;
+}
+.loginform label{
+	color: #fff;
+	margin-bottom: 5px;
+}
+
+#loading p.col-xs-12 > a {
+	color: #ffffff;
+}
+
+#loading .help-block {
+	color: #53565A;
+}
+
+#map {
+	width: 100% !important;
+	margin-bottom: 10px;
+}
+.center {
+	margin: 0 auto;
+	text-align: center;
+}
+.center .img-responsive {
+	margin: 0 auto;
+}
+.box-shadow {
+	background-color: rgba(27,115,112,0.3);
+	padding: 2px 2px 5px 2px;
+  	border-radius: 12px; /* Android 2.1+, Chrome, Firefox 4+, IE 9+, iOS 4+, Opera 10.50+, Safari 5+ */
+  	/* useful if you don't want a bg color from leaking outside the border: */
+  	background-clip: padding-box; /* Android 2.2+, Chrome, Firefox 4+, IE 9+, iOS 4+, Opera 10.50+, Safari 4+ */
+  	-webkit-box-shadow: 2px 3px 4px 0px #000000; /* Android 2.3+, iOS 4.0.2-4.2, Safari 3-4 */
+        	box-shadow: 2px 3px 4px 0px #000000; /* Chrome 6+, Firefox 4+, IE 9+, iOS 5+, Opera 10.50+ */
+}
+.box-shadow .plan-title {
+	margin-bottom: 5px;
+}
+.box-shadow small {
+	font-size: 60%;
+}
+
+/* Medium devices (desktops, 992px and up) */
+@media (max-width: 992px) { 
+	#logo-home img{
+		width:40%;
+		height:auto;
+	}
+}

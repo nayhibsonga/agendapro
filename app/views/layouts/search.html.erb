@@ -37,7 +37,7 @@
 			<div id="barra-superior">
 				<div class="container">
 					<div class="row">
-						<a href="<%= root_url(:host => request.domain) %>" id="logo"></a>
+						<a href="<%= root_without_subdomain %>" id="logo"></a>
 						<a href="#" id="menu-display"><span class="fa fa-align-justify"></span> MENU</a>
 						<ul class="nav nav-pills pull-right">
 							<% if user_signed_in? %>
@@ -112,6 +112,11 @@
 						<div class="text-right col-sm-6 col-md-6">
 							<%= link_to 'Sobre Nosotros', '/about_us', :target => :blank %> | <%= link_to 'Términos y Condiciones', '/TyC.pdf', :target => :blank %>
 						</div>
+                        <% if mobile_browser? %>
+                        <div class="col-xs-12">
+                        	<%= link_to 'Sitio Movil', prefer_mobile_site_url %>
+                        </div>
+                        <% end %>
 					</div>
 				</div>
 			</section>

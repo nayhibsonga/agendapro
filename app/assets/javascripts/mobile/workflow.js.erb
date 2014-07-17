@@ -1,0 +1,182 @@
+function loadSchedule (id) {
+  $('#schedule-body').html('<%= image_tag "ajax-loader.gif", :alt => "Loader" %>');
+  $.getJSON('/schedule', {local: id}, function (schedule) {
+    $('#schedule-body').empty();
+    $.each(schedule, function (day, hour) {
+      if (hour.open) {
+        $('#schedule-body').append(
+          '<tr>' +
+            '<th>' + day + ':</th>' +
+            '<th>' + getHour(hour.open) + ' - ' + getHour(hour.close) + '</th>' +
+          '</tr>'
+        );
+      }
+    })
+  });
+}
+
+function getHour (str) {
+  var index = str.indexOf('T'); //2000-1-1T08:00:00Z
+  str = str.substring(index + 1, index + 6); //08:00
+  return str;
+}
+
+function loadServices (localId) {
+  $.getJSON('/local_services', {location: localId}, function (categorized_services) {
+    $.each(categorized_services, function (key, service_hash) {
+      if (service_hash.services.length > 0) {
+        var servicesHTML = '';
+        $.each(service_hash.services, function (key, service) {
+          servicesHTML += '<option value="' + service.id + '">' + service.name + '</option>';
+        });
+        $('#services').append(
+          '<optgroup label="' + service_hash.category + '">' + servicesHTML + '</optgroup>'
+        );
+      };
+    });
+    $('#services').prepend(
+      '<option value="0">Seleccione un servicio</option>'
+    );
+    $('#services').one('change', function (event) {
+      $('#services option:first').remove();
+    });
+    $('#services').change(function (event) {
+      var serviceId = $(event.target).val();
+      loadProviders(localId, serviceId);
+    });
+  });
+}
+
+function loadProviders (localId, serviceId) {
+  $.getJSON('/providers_services', {id: serviceId, local: localId}, function (providers) {
+    $('#providers').attr('disabled', true);
+    $('#providers').empty();
+    $.each(providers, function (key, provider) {
+      $('#providers').append(
+        '<option value="' + provider.id + '">' + provider.public_name + '</option>'
+      );
+    });
+    $('#providers').prepend(
+      '<option value="0">Seleccione un staff</option>'
+    );
+    $('#providers').attr('disabled', false);
+  });
+
+  $('#providers').one('change', function (event) {
+    $('#providers option:first').remove();
+  });
+  $('#providers').change(function (event) {
+    var minDate = new Date($('#timeInterval').data('min'));
+    var maxDate = new Date($('#timeInterval').data('max'));
+
+    $('#datepicker').attr('disabled', false);
+    $('#datepicker').pickadate({
+      monthsFull: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+      monthsShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
+      weekdaysFull: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'],
+      weekdaysShort: ['Dom', 'Lun', 'Mar', 'Mier', 'Jue', 'vie', 'Sáb'],
+      today: 'Hoy',
+      clear: '',
+      firstDay: 1,
+      format: 'dddd d !de mmmm !de yyyy',
+      formatSubmit: 'yyyy/mm/dd',
+      hiddenName: true,
+      min: minDate,
+      max: maxDate,
+      onSet: function (context) {
+        $('.cambiar-comuna').show();
+      }
+    });
+  });
+}
+
+function addBooking (date, start, end) {
+  selected = true;
+  $('#start').val(generateDate(date, start));
+  $('#end').val(generateDate(date, end));
+}
+
+function generateDate(date, time) {
+  var year = date.substring(0, date.indexOf('-'));
+  var month = date.substring(date.indexOf('-') + 1, date.lastIndexOf('-'));
+  var day = date.substring(date.lastIndexOf('-') + 1);
+
+  time += ':00';
+
+  return year + '-' + month + '-' + day + ' ' + time;
+}
+
+function loadOutcallDistricts(id) {
+  $.getJSON('/local_districts', {id: id}, function (local_districts) {
+    var districtsString = '';
+    $.each(local_districts.districts, function(index, district) {
+      $('#district-body').append(
+        '<tr>' +
+          '<th>' + district.name + '</th>' +
+        '</tr>'
+      );
+    });
+  });
+}
+
+function openMap (event) {
+  var localId = $(event.target).data('local');
+  $('#map').css('height', 200);
+  $(event.target).text('Cerrar Mapa');
+  if (!first) {
+    localMap(localId);
+    first = true;
+  };
+}
+
+function closeMap (event) {
+  $('#map').css('height', 0);
+  $(event.target).text('Ver Mapa');
+}
+
+//====== Google Map ======//
+function initializeMap(latLng, mapDiv) {
+    var properties = {
+        center: latLng,
+        zoom:   15,
+        panControl: false,
+        zoomControl: true,
+        zoomControlOptions: {
+            style: google.maps.ZoomControlStyle.SMALL
+        },
+        mapTypeControl: true,
+        mapTypeControlOptions: {
+            style: google.maps.MapTypeControlStyle.DROPDOWN_MENU
+        },
+        scaleControl: false,
+        streetViewControl: false,
+        overviewMapControl: false,
+        mapTypeId:  google.maps.MapTypeId.ROADMAP
+    };
+    var map = new google.maps.Map(document.getElementById(mapDiv), properties);
+    var marker = new google.maps.Marker({
+                position: latLng
+              });
+    marker.setMap(map);
+    return map
+}
+
+function localMap(id) {
+  $.getJSON('/local', {id: id}, function (local) {
+    var latLng = new google.maps.LatLng(local.latitude, local.longitude);
+    initializeMap(latLng, 'map');
+  });
+}
+
+var open = false, first = false;
+$(document).ready(function(){
+  $('#mapButton').click(function (event) {
+    if (open) {
+      closeMap(event);
+      open = false;
+    } else{
+      openMap(event);
+      open = true;
+    };
+  });
+});

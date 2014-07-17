@@ -2,11 +2,29 @@ class QuickAddController < ApplicationController
 
 	before_action :authenticate_user!
 	layout "quick_add", only: [:quick_add]
+	before_action :quick_add_filter
+
+	def quick_add_filter
+		if current_user && (current_user.role_id != Role.find_by_name("Super Admin").id) && current_user.company_id
+			@company = Company.find(current_user.company_id)
+			if @company.locations.count == 0
+				return
+			elsif @company.services.count == 0
+				params[:step] = 1
+			elsif @company.service_providers.count == 0
+				params[:step] = 2
+			end
+		end
+	end
 
 	def quick_add
-		if ServiceCategory.where(company_id: current_user.company_id).count < 1
+		if ServiceCategory.where(company_id: current_user.company_id, name: "Sin Categoría").count < 1
 	        @service_category = ServiceCategory.new(name: "Sin Categoría", company_id: current_user.company_id)
 	        @service_category.save
+    	end
+    	if ResourceCategory.where(company_id: current_user.company_id, name: "Sin Categoría").count < 1
+	        @resource_category = ResourceCategory.new(name: "Sin Categoría", company_id: current_user.company_id)
+	        @resource_category.save
     	end
 		@location = Location.new
 		@service = Service.new
@@ -113,7 +131,7 @@ class QuickAddController < ApplicationController
   	end
 
   	def location_params
-      params.require(:location).permit(:name, :address, :phone, :longitude, :latitude, :company_id, :district_id, location_times_attributes: [:id, :open, :close, :day_id, :location_id, :_destroy])
+      params.require(:location).permit(:name, :address, :phone, :longitude, :latitude, :company_id, :district_id, :outcall, :district_ids => [], location_times_attributes: [:id, :open, :close, :day_id, :location_id, :_destroy])
     end
 
     def service_provider_params
@@ -121,6 +139,6 @@ class QuickAddController < ApplicationController
     end
 
     def service_params
-      params.require(:service).permit(:name, :price, :duration, :description, :group_service, :capacity, :waiting_list, :company_id, :service_category_id, service_category_attributes: [:name, :company_id],  :tag_ids => [] )
+      params.require(:service).permit(:name, :price, :duration, :description, :group_service, :capacity, :waiting_list, :company_id, :service_category_id, :outcall, service_category_attributes: [:name, :company_id],  :tag_ids => [] )
     end
 end

@@ -7,6 +7,8 @@ class ApplicationController < ActionController::Base
   # For APIs, you may want to use :null_session instead.
   protect_from_forgery with: :exception
 
+  include Mobu::DetectMobile
+
   before_filter do
     resource = controller_name.singularize.to_sym
     method = "#{resource}_params"
@@ -16,8 +18,6 @@ class ApplicationController < ActionController::Base
   rescue_from CanCan::AccessDenied do |exception|
     redirect_to "/403"
   end
-
-  # before_filter :subdomain
 
   protected
   
@@ -68,21 +68,5 @@ class ApplicationController < ActionController::Base
   def after_sign_out_path_for(resource_or_scope)
     root_path
   end
-
-  # def subdomain
-  #   if send(:_layout) == 'admin' and user_signed_in?
-  #     if current_user.company
-  #       redirect_to subdomain: current_user.company.web_address unless request.subdomain == current_user.company.web_address
-  #     end
-  #   end
-  # end
-
-  # def layout
-  #   if is_a?(Devise::SessionsController)
-  #     return "login"
-  #   elsif is_a?(Devise::RegistrationsController)
-  #     return "login"
-  #   end
-  # end
 
 end

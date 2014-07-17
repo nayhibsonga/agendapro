@@ -11,11 +11,12 @@
                 <td>
                   <div class="radio">
                     <label>
-                      <input type="radio" name="localRadio" id="localOption<%= local.id %>" value="<%= local.id %>" <%= "checked" if @selectedLocal.to_i == local.id %>>
+                      <input type="radio" name="localRadio" id="localOption<%= local.id %>" value="<%= local.id %>" data-outcall="<%= local.outcall %>" <%= "checked" if @selectedLocal.to_i == local.id %> >
                       <p>
                         <strong><%= local.name %></strong> <br/>
-                        <%= local.address %>, <%= local.district.name %>
+                        <%= if !local.outcall then local.address+', '+local.district.name else "A Domicilio" end %>
                       </p>
+
                     </label>
                   </div>
                 </td>
@@ -27,6 +28,8 @@
         <div class="col-md-6">
           <div class="google-maps-empresa">
             <div id="map"></div>
+          </div>
+          <div id="outcallDistricts" class="well">
           </div>
         </div>
         <div class="col-md-3">

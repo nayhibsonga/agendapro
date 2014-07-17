@@ -1,3 +1,7 @@
+<% content_for :scripts do %>
+  <%= javascript_include_tag "admin/user" %>
+<% end %>
+
 <div class="container">
   <div class="row well">
     <%= form_for [:admin, @user], html: {class: "form-horizontal" } do |f| %>
@@ -56,7 +60,7 @@
       <% end %>
 
       <% if !current_user.nil? %>
-        <div class="form-group">
+        <div class="form-group hidden" id="locationGroup">
           <%= f.label :location_id, "Local:", class: "col-sm-3 control-label"  %>
           <div class="col-sm-4">
           <% if current_user.role_id == Role.find_by(name: 'Super Admin').id %>
@@ -68,6 +72,38 @@
           <% end %>
           </div>  
         </div>
+      <% end %>
+
+      <% if !current_user.nil? %>
+      <div class="form-group hidden" id="providerGroup">
+        <%= f.label :service_provider_ids, "Proveedores de Servicios: ", class: "col-sm-3 control-label" %>
+        <div class="col-sm-4">
+          <div class="panel-group" id="service-provider-accordion">
+            <% Location.accessible_by(current_ability).each do |location| %>
+            <% @service_providers = ServiceProvider.where(company_id: current_user.company_id, location_id: location.id, :active => true) %>
+            <% if @service_providers.length > 0 %>
+            <div class="panel panel-default">
+              <div class="panel-heading">
+                <h4 class="panel-title">
+                  <a data-toggle="collapse" data-parent="#service-provider-accordion" href="#location<%= location.id %>"><%= location.name %></a>
+                  <input type="checkbox" name="selectLocation" id="selectLocation<%= location.id %>" value="0" class="pull-right">
+                </h4>
+              </div>
+              <div id="location<%= location.id %>" class="panel-collapse collapse<% if location == Location.accessible_by(current_ability).first%> in<% end %>">
+                <div class="panel-body">
+                  <%= f.collection_check_boxes :service_provider_ids, @service_providers, :id, :public_name, {}, {class: "check_boxes"} do |b|%>
+                    <div class="checkbox">
+                      <%= b.label %> <%= b.check_box %>
+                    </div>
+                  <% end %>
+                </div>
+              </div>
+            </div>
+            <% end %>
+            <% end %>
+          </div>
+        </div>
+      </div>
       <% end %>
       
       <div class="form-group">

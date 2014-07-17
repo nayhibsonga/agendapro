@@ -1,7 +1,5 @@
 Agendapro::Application.routes.draw do
 
-  resources :clients
-
   get "users/index"
   require 'subdomain'
 
@@ -34,6 +32,12 @@ Agendapro::Application.routes.draw do
   resources :bookings
   resources :service_providers
   resources :service_categories
+  resources :resources
+  resources :clients
+  resources :resource_categories
+  resources :resources
+  resources :company_from_emails
+
   resources :clients
 
   namespace :admin do 
@@ -65,6 +69,7 @@ Agendapro::Application.routes.draw do
   post '/change_services_order', :to => 'services#change_services_order'
   post '/change_location_order', :to => 'locations#change_location_order'
   post '/change_providers_order', :to => 'service_providers#change_providers_order'
+  get '/confirm_email', :to => 'company_from_emails#confirm_email', :as => 'confirm_email'
 
   # Autocompletar del Booking
   get '/clients_suggestion', :to => 'clients#suggestion'
@@ -95,6 +100,7 @@ Agendapro::Application.routes.draw do
   get "searchs/index"
   get '/search', :to => "searchs#search"
   get '/get_districts', :to => 'districts#get_districts'
+  get '/get_input_districts', :to => 'districts#get_input_districts'
   get '/get_district', :to => 'districts#get_district'
   get '/district_by_name', :to => 'districts#get_district_by_name'
 
@@ -102,7 +108,8 @@ Agendapro::Application.routes.draw do
   # Workflow - overview
   get '/schedule', :to => 'location_times#schedule_local'
   get '/local', :to => 'locations#location_data'
-  # wrokflow - wizard
+  get '/local_districts', :to => 'locations#location_districts'
+  # Workflow - wizard
   get '/workflow', :to => 'companies#workflow', :as => 'workflow'
   get '/local_services', :to => 'services#location_categorized_services'
   get '/location_services', :to => 'services#location_services'
@@ -114,6 +121,9 @@ Agendapro::Application.routes.draw do
   post "/book", :to => 'bookings#book_service'
   get '/get_available_time', :to => 'locations#get_available_time'
   get '/check_user_cross_bookings', :to => 'bookings#check_user_cross_bookings'
+  # Workflow - Mobile
+  post '/select_hour', :to => 'companies#select_hour'
+  post '/user_data', :to => 'companies#user_data'
 
   # Fullcalendar
   get '/service', :to => 'services#service_data'  # Fullcalendar
