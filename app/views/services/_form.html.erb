@@ -14,7 +14,7 @@
       <div class="col-md-6">
         <div class="col-md-12 well">
           <div class="form-group has-feedback">
-            <%= f.label :name, "Nombre: ", class: "col-sm-4 control-label" %>
+            <%= f.label :name, "Nombre", class: "col-sm-4 control-label" %>
             <div class="col-sm-8">
               <%= f.text_field :name, :autofocus => true, class: "form-control" %>
               <span class="help-block"></span>
@@ -22,7 +22,7 @@
             </div>
           </div>
           <div class="form-group has-feedback">
-            <%= f.label :price, "Precio: ", class: "col-sm-4 control-label" %>
+            <%= f.label :price, "Precio", class: "col-sm-4 control-label" %>
             <div class="col-sm-8">
               <div class="input-group">
                 <span class="input-group-addon">$</span>
@@ -39,7 +39,7 @@
             </div>
           </div>
           <div class="form-group has-feedback">
-            <%= f.label :duration, "Duración: ", class: "col-sm-4 control-label" %>
+            <%= f.label :duration, "Duración", class: "col-sm-4 control-label" %>
             <div class="col-sm-8">
               <div class="input-group">
                 <%= f.number_field :duration, class: "form-control", :in => 5...1440, :step => 5 %>
@@ -55,7 +55,7 @@
             </div>
           </div>
           <div class="form-group">
-            <%= f.label :description, "Descripción: ", class: "col-sm-4 control-label" %>
+            <%= f.label :description, "Descripción", class: "col-sm-4 control-label" %>
             <div class="col-sm-8">
               <%= f.text_area :description, class: "form-control" %>
             </div>
@@ -70,7 +70,7 @@
             </div>
           </div>
           <div class="form-group hidden">
-            <%= f.label :capacity, "Capacidad: ", class: "col-sm-4 control-label" %>
+            <%= f.label :capacity, "Capacidad", class: "col-sm-4 control-label" %>
             <div class="col-sm-8">
               <div class="input-group">
                 <%= f.number_field :capacity, class: "form-control", :min => 2, disabled: true %>
@@ -83,7 +83,7 @@
           <div class="form-group">
             <div class="col-sm-8 col-sm-offset-4">
               <%= f.submit 'Guardar', :class => 'btn btn-primary' %>
-              <%= link_to 'Cancelar', services_path, class: "btn btn-danger" %>  
+              <%= link_to 'Cancelar', services_path, class: "btn btn-default" %>  
             </div>
           </div>
         </div>
@@ -103,7 +103,7 @@
           </div>
           <% end %> 
           <div class="form-group">
-            <%= f.label :service_category_id, "Categoría de Servicio: ", class: "col-sm-4 control-label" %>
+            <%= f.label :service_category_id, "Categoría de Servicio", class: "col-sm-4 control-label" %>
             <div class="col-sm-8">
               <%= f.collection_select :service_category_id, ServiceCategory.where(company_id: current_user.company_id), :id, :name, {}, { class: "form-control" }%>
               <span class="help-block"></span>
@@ -120,17 +120,19 @@
             </div>
           </div>
           <div class="form-group">
-            <%= f.label :tag, "Tags de Búsqueda: ", class: "col-sm-4 control-label" %>
+            <%= f.label :tag, "Tags de Búsqueda", class: "col-sm-4 control-label" %>
             <div class="col-sm-8"> 
               <%= f.collection_check_boxes :tag_ids, Tag.where(economic_sector: Company.find(current_user.company_id).economic_sector), :id, :name, html: {class: "checkbox"} do |b|%>
                 <div class="checkbox">
-                  <%= b.label %> <%= b.check_box %>
+                  <label>
+                    <%= b.check_box %> <%= b.object.name %>
+                  </label>
                 </div>
               <% end %>
             </div>
           </div>
           <div class="form-group">
-          <%= f.label :service_provider_ids, "Proveedores de Servicios: ", class: "col-sm-4 control-label" %>
+          <%= f.label :service_provider_ids, "Proveedores de Servicios", class: "col-sm-4 control-label" %>
           <div class="col-sm-8">
             <div class="panel-group" id="service-provider-accordion">
               <% Location.accessible_by(current_ability).each do |location| %>
@@ -147,7 +149,9 @@
                   <div class="panel-body">
                     <%= f.collection_check_boxes :service_provider_ids, @service_providers, :id, :public_name, {}, {class: "check_boxes"} do |b|%>
                       <div class="checkbox">
-                        <%= b.label %> <%= b.check_box %>
+                        <label>
+                        <%= b.check_box %> <%= b.object.public_name %>
+                        </label>
                       </div>
                     <% end %>
                   </div>
@@ -159,7 +163,7 @@
           </div>
         </div>
         <div class="form-group">
-          <%= f.label :resource_ids, "Recursos: ", class: "col-sm-4 control-label" %>
+          <%= f.label :resource_ids, "Recursos", class: "col-sm-4 control-label" %>
           <div class="col-sm-8">
             <div class="panel-group" id="service-provider-accordion">
               <% ResourceCategory.where(company_id: current_user.company_id).each do |resource_category| %>
@@ -176,7 +180,9 @@
                   <div class="panel-body">
                     <%= f.collection_check_boxes :resource_ids, @resources, :id, :name, {}, {class: "check_boxes"} do |b|%>
                       <div class="checkbox">
-                        <%= b.label %> <%= b.check_box %>
+                        <label>
+                          <%= b.check_box %> <%= b.object.name %>
+                        </label>
                       </div>
                     <% end %>
                   </div>

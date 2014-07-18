@@ -3,7 +3,7 @@
 		<div class="col-md-5 well">
 			<%= form_for @service_provider, html: {class: "form-horizontal" } do |f| %>
 				<div class="form-group has-feedback">
-					<%= f.label :public_name, "Nombre Público:", class: "col-sm-4 control-label" %>
+					<%= f.label :public_name, "Nombre Público", class: "col-sm-4 control-label" %>
 					<div class="col-sm-8">
 						<%= f.text_field :public_name, :autofocus => true, class: "form-control" %>
 						<span class="help-block"></span>
@@ -11,7 +11,7 @@
 					</div>
 				</div>
 				<div class="form-group has-feedback">
-					<%= f.label :notification_email, "Email de Notificación:", class: "col-sm-4 control-label" %>
+					<%= f.label :notification_email, "Email de Notificación", class: "col-sm-4 control-label" %>
 					<div class="col-sm-8">
 						<%= f.text_field :notification_email, class: "form-control" %>
 						<span class="help-block"></span>
@@ -19,7 +19,7 @@
 					</div>
 				</div>
 				<div class="form-group has-feedback">
-					<%= f.label :location_id, "Local:", class: "col-sm-4 control-label" %>
+					<%= f.label :location_id, "Local", class: "col-sm-4 control-label" %>
 					<div class="col-sm-8">
 						<%= f.collection_select :location_id, Location.where(company_id: current_user.company_id, :active => true), :id, :name, {:include_blank => true}, {class: "form-control"} %>
 						<span class="help-block"></span>
@@ -28,7 +28,7 @@
 				</div>
 
 				<div class="form-group">
-					<%= f.label :service_ids, "Selecciona los servicios: ", class: "col-sm-4 control-label" %>
+					<%= f.label :service_ids, "Selecciona los servicios", class: "col-sm-4 control-label" %>
 					<div class="col-sm-8">
 						<div class="panel-group" id="service-accordion">
 							<% @service_categories.each do |service_category| %>
@@ -45,7 +45,9 @@
 									<div class="panel-body">
 										<%= f.collection_check_boxes :service_ids, @service, :id, :name_with_small_outcall, {}, {class: "check_boxes"} do |b|%>
 											<div class="checkbox">
-												<%= b.label %> <%= b.check_box %>
+												<label>
+													<%= b.check_box %> <%= b.object.name %> 
+												</label>
 											</div>
 										<% end %>
 									</div>
@@ -60,7 +62,7 @@
 				<div class="form-group">
 					<div class="actions col-sm-offset-4 col-sm-8">
 						<%= f.submit 'Guardar', :class => "btn btn-primary buttonProvider"%>
-						<%= link_to 'Cancelar'.html_safe, service_providers_path, :class => "btn btn-danger" %>    
+						<%= link_to 'Cancelar'.html_safe, service_providers_path, :class => "btn btn-default" %>    
 					</div>
 				</div>
 			<% end %>

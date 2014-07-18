@@ -17,7 +17,7 @@
       <% end %>
 
       <div class="form-group has-feedback">
-        <%= f.label :first_name, "Nombre:", class: "col-sm-3 control-label" %>
+        <%= f.label :first_name, "Nombre", class: "col-sm-3 control-label" %>
         <div class="col-sm-4">
           <%= f.text_field :first_name, :autofocus => true, class: "form-control" %>
           <span class="help-block"></span>
@@ -26,7 +26,7 @@
       </div>
       
       <div class="form-group has-feedback">
-        <%= f.label :last_name, "Apellido:", class: "col-sm-3 control-label"  %>
+        <%= f.label :last_name, "Apellido", class: "col-sm-3 control-label"  %>
         <div class="col-sm-4">
           <%= f.text_field :last_name, class: "form-control" %>
           <span class="help-block"></span>
@@ -35,7 +35,7 @@
       </div>
       
       <div class="form-group has-feedback">
-        <%= f.label :email, "Email:", class: "col-sm-3 control-label"  %>
+        <%= f.label :email, "Email", class: "col-sm-3 control-label"  %>
         <div class="col-sm-4">
           <%= f.text_field :email, class: "form-control" %>
           <span class="help-block"></span>
@@ -44,7 +44,7 @@
       </div>
       
       <div class="form-group has-feedback">
-        <%= f.label :phone, "Teléfono:", class: "col-sm-3 control-label"  %>
+        <%= f.label :phone, "Teléfono", class: "col-sm-3 control-label"  %>
         <div class="col-sm-4">
           <%= f.text_field :phone, class: "form-control" %>
           <span class="help-block"></span>
@@ -54,7 +54,7 @@
 
       <% if !current_user.nil? %>
         <div class="form-group has-feedback">
-          <%= f.label :role_id, "Rol:", class: "col-sm-3 control-label"  %>
+          <%= f.label :role_id, "Rol", class: "col-sm-3 control-label"  %>
           <div class="col-sm-4">
           <% if current_user.role_id == Role.find_by(name: 'Super Admin').id %>
             <%= f.collection_select :role_id, Role.where(:name => ["Admin","Administrador Local","Staff"]), :id, :name, {include_blank: true}, {class: "form-control"} %>
@@ -71,7 +71,7 @@
 
       <% if !current_user.nil? %>
         <div class="form-group has-feedback hidden" id="locationGroup">
-          <%= f.label :location_id, "Local:", class: "col-sm-3 control-label"  %>
+          <%= f.label :location_id, "Local", class: "col-sm-3 control-label"  %>
           <div class="col-sm-4">
           <% if current_user.role_id == Role.find_by(name: 'Super Admin').id %>
             <%= f.collection_select :location_id, Location.all, :id, :name, {include_blank: true}, {class: "form-control"} %>
@@ -88,7 +88,7 @@
 
       <% if !current_user.nil? %>
       <div class="form-group hidden" id="providerGroup">
-        <%= f.label :service_provider_ids, "Proveedores de Servicios: ", class: "col-sm-3 control-label" %>
+        <%= f.label :service_provider_ids, "Proveedores de Servicios", class: "col-sm-3 control-label" %>
         <div class="col-sm-4">
           <div class="panel-group" id="service-provider-accordion">
             <% Location.accessible_by(current_ability).each do |location| %>
@@ -105,7 +105,9 @@
                 <div class="panel-body">
                   <%= f.collection_check_boxes :service_provider_ids, @service_providers, :id, :public_name, {}, {class: "check_boxes"} do |b|%>
                     <div class="checkbox">
-                      <%= b.label %> <%= b.check_box %>
+                      <label>
+                        <%= b.check_box %> <%= b.object.public_name %> 
+                      </label>
                     </div>
                   <% end %>
                 </div>
@@ -121,7 +123,7 @@
       <div class="form-group">
         <div class="actions col-sm-offset-3 col-sm-4">
           <%= f.submit 'Guardar', :class => 'btn btn-primary' %>
-          <%= link_to 'Cancelar', admin_users_path, :class => "btn btn-danger" %> 
+          <%= link_to 'Cancelar', admin_users_path, :class => "btn btn-default" %> 
         </div>
       </div>
     <% end %>

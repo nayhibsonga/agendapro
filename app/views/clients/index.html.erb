@@ -42,7 +42,7 @@
 					<%= text_field_tag :search, nil, :class => "form-control", :placeholder => "Filtrar por nombre, apellido o email...", :value => params[:search] %>
 				</div>
 				<div class="col-md-2">
-					<button class="btn btn-primary pull-right" type="submit" action="/clients" value="client_filter"><i class="fa fa-filter"><span> Filtrar</span></i></button>
+					<button class="btn btn-agendapro-claro pull-right" type="submit" action="/clients" value="client_filter"><i class="fa fa-filter"><span> Filtrar</span></i></button>
 				</div>
 			</div>
 		</div>
@@ -89,19 +89,19 @@
 <div class="container">
 	<div class="row">
 		<div class="col-md-4">
-			<%= link_to '<i class="fa fa-plus"></i> Nuevo Cliente'.html_safe, new_client_path, :class => "btn btn-primary" %> 
+			<%= link_to '<i class="fa fa-plus"></i> Nuevo Cliente'.html_safe, new_client_path, :class => "btn btn-agendapro-claro" %> 
 		</div>
 		<div class="col-md-4 pagination">
 			<%= will_paginate @clients, renderer: BootstrapPagination::Rails %>
 		</div>
 		<div class="col-md-4">
-			<button id="sendMail" type="button" class="btn btn-agendapro-claro pull-right" data-toggle="modal" data-target="#mailModal" disabled>Enviar Email</button>
+			<button id="sendMail" type="button" class="btn btn-agendapro-oscuro pull-right" data-toggle="modal" data-target="#mailModal" disabled>Enviar Email</button>
 		</div>
 	</div>
 	<br />
 	<div class="row">
 		<div class="col-md-6">
-			<button id="import_clients" type="button" class="btn btn-primary" data-toggle="modal" data-target="#importModal"><i class="fa fa-group"></i> Importar Clientes</button>
+			<button id="import_clients" type="button" class="btn btn-agendapro-oscuro" data-toggle="modal" data-target="#importModal"><i class="fa fa-group"></i> Importar Clientes</button>
 		</div>
 		<div class="col-md-6">
 			<h4 class="pull-right">
@@ -220,29 +220,33 @@
 				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
 				<h4 class="modal-title" id="importModalLabel">Importar Clientes</h4>
 			</div>
-			<ul>
-				<h4>Instrucciones:</h4>
-				<li>Usar las plantillas de ejemplo como base para la importación. Los campos son opcionales, <strong>excepto el email de cada cliente</strong>.</li><br />
-				<li><strong>No se pueden cambiar los nombres de las columnas</strong> de las plantillas bases.</li><br />
-				<li>El identificador único para los clientes es el email, por lo que si se sube un cliente con un email existente, se reemplazaran los valores guardados anteriormente.<br />
-				Si no existe el email, se crea un cliente nuevo.<br />
-				Para editar el email de un cliente o eliminar un cliente de la base de datos, se debe realizar a través de la página.</li><br />
-				<li>Las fechas de cumpleaños deben ser en formato aaaa-mm-dd (ej: 1980-02-24)</li><br />
-				<li>Para ingresar el género de los clientes, se debe utilizar 0 si no se desea especificar, 1 si es Femenino o 2 si es Masculino.</li><br />
-				<h4>Plantillas para importación:</h4>
-				<%= link_to 'Plantilla Excel', '/clients_base.xls', :target => :blank %> | 
-				<%= link_to 'Plantilla CSV', '/clients_base.csv', :target => :blank %><br />
-			</ul>
-			<%= form_tag import_clients_path, multipart: true do %>
-			  <div class="form-group">
-				<label for="file">Seleccionar Archivo:</label>
-				<%= file_field_tag :file, :class => 'form-control'  %>
-				<span class="help-block"></span>		
-			  </div>
-			  	<div class="modal-footer">
-					<%= submit_tag "Importar", class: "btn btn-agendapro-oscuro", disabled: true, id: "import_button" %>
-					<button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+			<%= form_tag import_clients_path, multipart: true, class: 'form-horizontal' do %>
+			<div class="modal-body">
+				<ul>
+					<h4>Instrucciones:</h4>
+					<li>Usar las plantillas de ejemplo como base para la importación. Los campos son opcionales, <strong>excepto el email de cada cliente</strong>.</li><br />
+					<li><strong>No se pueden cambiar los nombres de las columnas</strong> de las plantillas bases.</li><br />
+					<li>El identificador único para los clientes es el email, por lo que si se sube un cliente con un email existente, se reemplazaran los valores guardados anteriormente.<br />
+					Si no existe el email, se crea un cliente nuevo.<br />
+					Para editar el email de un cliente o eliminar un cliente de la base de datos, se debe realizar a través de la página.</li><br />
+					<li>Las fechas de cumpleaños deben ser en formato aaaa-mm-dd (ej: 1980-02-24)</li><br />
+					<li>Para ingresar el género de los clientes, se debe utilizar 0 si no se desea especificar, 1 si es Femenino o 2 si es Masculino.</li><br />
+					<h4>Plantillas para importación:</h4>
+					<%= link_to 'Plantilla Excel', '/clients_base.xls', :target => :blank %> | 
+					<%= link_to 'Plantilla CSV', '/clients_base.csv', :target => :blank %><br />
+				</ul>
+				<div class="form-group">
+					<label for="file" class="control-lable col-md-3">Seleccionar Archivo</label>
+					<div class="col-md-9">
+						<%= file_field_tag :file, :class => 'form-control'  %>
+						<span class="help-block"></span>		
+					</div>
 				</div>
+			</div>
+		  	<div class="modal-footer">
+				<button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+				<%= submit_tag "Importar", class: "btn btn-agendapro-oscuro", disabled: true, id: "import_button" %>
+			</div>
 			<% end %>
 		</div>
 	</div>

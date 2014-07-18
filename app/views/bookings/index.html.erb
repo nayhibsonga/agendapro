@@ -50,7 +50,7 @@
 					<div class="row">
 						<div class="col-md-6">
 							<div class="form-group has-feedback">
-								<label for="datePicker" class="col-sm-4 control-label">Fecha: </label>
+								<label for="datePicker" class="col-sm-4 control-label">Fecha</label>
 								<div class="col-sm-8">
 									<input type="text" id="datePicker" class="form-control" name="datePicker">
 									<span class="help-block"></span>
@@ -58,7 +58,7 @@
 								</div>
 							</div>
 							<div class="form-group has-feedback">
-								<label class="col-sm-4 control-label">Hora: </label>
+								<label class="col-sm-4 control-label">Hora</label>
 								<div class="col-sm-8">
 									<div class="input datetime required booking_start_end ">       
 										<select class="form-control date-select datetime required" id="bookingStartHour" name="booking[start_hours]">
@@ -145,7 +145,7 @@
 								</div>
 							</div>
 							<div class="form-group has-feedback">
-								<%= f.label :service_provider_id, "Proveedor de Servicios: ", class: "col-sm-4 control-label" %>
+								<%= f.label :service_provider_id, "Proveedor de Servicios", class: "col-sm-4 control-label" %>
 								<div class="col-sm-8">
 									<%= f.collection_select :service_provider_id, ServiceProvider.where(location_id: Location.where(company_id: current_user.company_id, :active => true)).accessible_by(current_ability), :id, :public_name, {}, { class: "form-control" }%>
 									<span class="help-block"></span>
@@ -153,7 +153,7 @@
 								</div>
 							</div>
 							<div class="form-group has-feedback">
-								<%= f.label :service, "Servicio: ", class: "col-sm-4 control-label" %>
+								<%= f.label :service, "Servicio", class: "col-sm-4 control-label" %>
 								<div class="col-sm-8">
 									<select class="form-control" id="booking_service_id" name="booking[service_id]" disabled></select>
 									<span class="help-block"></span>
@@ -162,7 +162,7 @@
 								</div>
 							</div>
 							<div class="form-group has-feedback">
-								<%= f.label :price, "Precio: ", class: "col-sm-4 control-label" %>
+								<%= f.label :price, "Precio", class: "col-sm-4 control-label" %>
 								<div class="col-sm-8">
 									<%= f.number_field :price, min: 0, class: "form-control" %>
 									<span class="help-block"></span>
@@ -177,7 +177,7 @@
 							<%= builder.hidden_field :last_name %>
 							<%= builder.hidden_field :first_name %>
 							<div class="form-group has-feedback">
-								<label for="full_name" class="col-sm-4 control-label">Nombre Cliente: </label>
+								<label for="full_name" class="col-sm-4 control-label">Nombre Cliente</label>
 								<div class="col-sm-8">
 									<div class="input-group">
 										<input type="text" id="full_name" class="form-control" placeholder="Buscar clientes.." name="full_name">
@@ -191,25 +191,26 @@
 								</div>
 							</div>
 							<div class="form-group">
-								<%= builder.label :email, "Email: ", class: "col-sm-4 control-label" %>
+								<%= builder.label :email, "Email", class: "col-sm-4 control-label" %>
 								<div class="col-sm-8">
 									<%= builder.text_field :email, class: "form-control" %>
 									<ul id="email_suggestions"></ul>
 									<div class="checkbox">
-										<%= f.check_box :send_mail, :disabled => true %>
-										<%= f.label :send_mail, "Notificar por e-mail" %>
+										<label>
+											<%= f.check_box :send_mail, :disabled => true %>Notificar por e-mail
+										</label>
 									</div>
 								</div>
 							</div>
 							<div class="form-group">
-								<%= builder.label :phone, "Teléfono: ", class: "col-sm-4 control-label" %>
+								<%= builder.label :phone, "Teléfono", class: "col-sm-4 control-label" %>
 								<div class="col-sm-8">
 									<%= builder.text_field :phone, class: "form-control" %>
 								</div>
 							</div>
 							<% end %>
 							<div class="form-group">
-								<%= f.label :status, "Estado: ", class: "col-sm-4 control-label" %>
+								<%= f.label :status, "Estado", class: "col-sm-4 control-label" %>
 								<div class="col-sm-8">
 									<%= f.collection_select :status_id, Status.all.order(:name), :id, :name, {selected: Status.find_by_name( 'Reservado').id}, { class: "form-control" }%>
 								</div>
@@ -219,13 +220,13 @@
 					<div class="row">
 						<div class="col-md-12">
 							<div class="form-group">
-								<%= f.label :notes, "Notas compartidas con cliente: ", class: "col-sm-2 control-label" %>
+								<%= f.label :notes, "Notas compartidas con cliente", class: "col-sm-2 control-label" %>
 								<div class="col-sm-10">
 									<%= f.text_area :notes, :rows => "2", class: "form-control modal-textarea" %>
 								</div>
 							</div>
 							<div class="form-group">
-								<%= f.label :company_comment, "Comentario Interno: ", class: "col-sm-2 control-label" %>
+								<%= f.label :company_comment, "Comentario Interno", class: "col-sm-2 control-label" %>
 								<div class="col-sm-10">
 									<%= f.text_area :company_comment, :rows => "2", class: "form-control modal-textarea" %>
 								</div>
@@ -251,25 +252,25 @@
 			<div class="modal-body break-modal-body">
 				<%= form_for @provider_break, html: {class: "form-horizontal"} do |f| %>
 					<div class="form-group">
-						<%= f.label :service_provider_id, "Proveedor de Servicios: ", class: "col-sm-3 control-label" %>
+						<%= f.label :service_provider_id, "Proveedor de Servicios", class: "col-sm-3 control-label" %>
 						<div class="col-sm-9">
 							<%= f.collection_select :service_provider_id, ServiceProvider.where(location_id: Location.where(company_id: current_user.company_id, :active => true)).accessible_by(current_ability), :id, :public_name, {}, { class: "form-control" }%>
 						</div>
 					</div>
 					<div class="form-group">
-						<%= f.label :name, "Etiqueta: ", class: "col-sm-3 control-label" %>
+						<%= f.label :name, "Etiqueta", class: "col-sm-3 control-label" %>
 						<div class="col-sm-9">
 							<%= f.text_field :name,  class: "form-control" %>
 						</div>
 					</div>
 					<div class="form-group">
-						<%= f.label :start, "Inicio: ", class: "col-sm-3 control-label" %>
+						<%= f.label :start, "Inicio", class: "col-sm-3 control-label" %>
 						<div class="col-sm-9">
 							<%= f.datetime_select :start, {default: 4.hours.ago, :minute_step => 5}, {class: "form-control date-select"} %>
 						</div>
 					</div>
 					<div class="form-group">
-						<%= f.label :end, "Fin: ", class: "col-sm-3 control-label" %>
+						<%= f.label :end, "Fin", class: "col-sm-3 control-label" %>
 						<div class="col-sm-9">
 							<%= f.datetime_select :end, {default: 4.hours.ago, :minute_step => 5}, {class: "form-control date-select"} %>
 						</div>

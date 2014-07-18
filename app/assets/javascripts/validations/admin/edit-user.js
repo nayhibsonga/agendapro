@@ -12,8 +12,7 @@ $(function() {
 			},
 			'user[email]': {
 				required: true,
-				email: true,
-				remote: '/check_user'
+				email: true
 			},
 			'user[role_id]': {
 				required: true
