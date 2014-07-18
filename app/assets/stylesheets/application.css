@@ -3,3 +3,215 @@
  *= require bootstrap-theme
  *= require font-awesome.min
  */
+
+/*****************************
+**	Seteo de Bootstrap		**
+*****************************/
+
+/**			Panels			**/
+	.panel > .list-group {
+	  max-height: 300px;
+	  overflow: auto;
+	}
+	.panel > div > .list-group {
+	  max-height: 300px;
+	  overflow: auto;
+	}
+	.panel-info {
+		border-color: rgba(27, 115, 112, 0.6);
+	}
+	.panel-info>.panel-heading {
+		color: rgba(27, 115, 112, 1);
+		background-color: rgba(27, 115, 112, 0.4);
+		border-color: rgba(27, 115, 112, 0.67);
+	}
+	.panel-group > .panel > .panel-heading > h3,
+	.panel-group > .panel > .panel-heading > h4 {
+		cursor: pointer;
+	}
+/**			End Panels			**/
+
+/**			Button			**/
+	/*.btn-primary {
+		color: #fff;
+		background-color: rgba(27,115,112,0.9);
+		border-color: rgba(27,115,112,1);
+	}
+	.btn-primary:hover{
+		background-color: rgba(27,115,112,1);
+	}
+	.btn-success{
+		color: #ffffff;
+		background-color: #D55330;
+		border-color: #E64215;
+	}
+	.btn-success:hover{
+		background-color: #EB4114;
+		border-color: #EB4114;
+	}
+	.btn-info {
+		background-color: rgba(27,115,112,0.4);
+		border-color: rgba(27,115,112,0.67);
+		font-weight: bold;
+	}*/
+/**			End Button			**/
+
+/**			AdendaPro Button			**/
+	.btn-agendapro-oscuro {
+	  color: #fff;
+	  background-color: #1B7370;
+	  border-color: #186563;
+	}
+	.btn-agendapro-oscuro:hover,
+	.btn-agendapro-oscuro:focus,
+	.btn-agendapro-oscuro:active,
+	.btn-agendapro-oscuro.active,
+	.open > .dropdown-toggle.btn-agendapro-oscuro {
+	  color: #fff;
+	  background-color: #0F5250;
+	  border-color: #104341;
+	}
+	.btn-agendapro-oscuro:active,
+	.btn-agendapro-oscuro.active,
+	.open > .dropdown-toggle.btn-agendapro-oscuro {
+	  background-image: none;
+	}
+	.btn-agendapro-oscuro.disabled,
+	.btn-agendapro-oscuro[disabled],
+	fieldset[disabled] .btn-agendapro-oscuro,
+	.btn-agendapro-oscuro.disabled:hover,
+	.btn-agendapro-oscuro[disabled]:hover,
+	fieldset[disabled] .btn-agendapro-oscuro:hover,
+	.btn-agendapro-oscuro.disabled:focus,
+	.btn-agendapro-oscuro[disabled]:focus,
+	fieldset[disabled] .btn-agendapro-oscuro:focus,
+	.btn-agendapro-oscuro.disabled:active,
+	.btn-agendapro-oscuro[disabled]:active,
+	fieldset[disabled] .btn-agendapro-oscuro:active,
+	.btn-agendapro-oscuro.disabled.active,
+	.btn-agendapro-oscuro[disabled].active,
+	fieldset[disabled] .btn-agendapro-oscuro.active {
+	  background-color: #1B7370;
+	  border-color: #186563;
+	}
+	.btn-agendapro-oscuro {
+	  text-shadow: 0 -1px 0 rgba(0, 0, 0, .2);
+	  -webkit-box-shadow: inset 0 1px 0 rgba(255, 255, 255, .15), 0 1px 1px rgba(0, 0, 0, .075);
+	          box-shadow: inset 0 1px 0 rgba(255, 255, 255, .15), 0 1px 1px rgba(0, 0, 0, .075);
+	}
+	.btn-agendapro-oscuro:active,
+	.btn-agendapro-oscuro.active {
+	  -webkit-box-shadow: inset 0 3px 5px rgba(0, 0, 0, .125);
+	          box-shadow: inset 0 3px 5px rgba(0, 0, 0, .125);
+	}
+	.btn-agendapro-oscuro {
+	  background-image: -webkit-linear-gradient(top, #1B7370 0%, #0E4D4B 100%);
+	  background-image:      -o-linear-gradient(top, #1B7370 0%, #0E4D4B 100%);
+	  background-image: -webkit-gradient(linear, left top, left bottom, from(#1B7370), to(#0E4D4B));
+	  background-image:         linear-gradient(to bottom, #1B7370 0%, #0E4D4B 100%);
+	  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ff428bca', endColorstr='#ff2d6ca2', GradientType=0);
+	  filter: progid:DXImageTransform.Microsoft.gradient(enabled = false);
+	  background-repeat: repeat-x;
+	  border-color: #2b669a;
+	}
+	.btn-agendapro-oscuro:hover,
+	.btn-agendapro-oscuro:focus {
+	  background-color: #0E4D4B;
+	  background-position: 0 -15px;
+	}
+	.btn-agendapro-oscuro:active,
+	.btn-agendapro-oscuro.active {
+	  background-color: #0E4D4B;
+	  border-color: #2b669a;
+	}
+	.btn-agendapro-oscuro:disabled,
+	.btn-agendapro-oscuro[disabled] {
+	  background-color: #0E4D4B;
+	  background-image: none;
+	}
+
+	.btn-agendapro-claro {
+	  color: #fff;
+	  background-color: #3D9A96;
+	  border-color: #378581;
+	}
+	.btn-agendapro-claro:hover,
+	.btn-agendapro-claro:focus,
+	.btn-agendapro-claro:active,
+	.btn-agendapro-claro.active,
+	.open > .dropdown-toggle.btn-agendapro-claro {
+	  color: #fff;
+	  background-color: #2A7874;
+	  border-color: #28615E;
+	}
+	.btn-agendapro-claro:active,
+	.btn-agendapro-claro.active,
+	.open > .dropdown-toggle.btn-agendapro-claro {
+	  background-image: none;
+	}
+	.btn-agendapro-claro.disabled,
+	.btn-agendapro-claro[disabled],
+	fieldset[disabled] .btn-agendapro-claro,
+	.btn-agendapro-claro.disabled:hover,
+	.btn-agendapro-claro[disabled]:hover,
+	fieldset[disabled] .btn-agendapro-claro:hover,
+	.btn-agendapro-claro.disabled:focus,
+	.btn-agendapro-claro[disabled]:focus,
+	fieldset[disabled] .btn-agendapro-claro:focus,
+	.btn-agendapro-claro.disabled:active,
+	.btn-agendapro-claro[disabled]:active,
+	fieldset[disabled] .btn-agendapro-claro:active,
+	.btn-agendapro-claro.disabled.active,
+	.btn-agendapro-claro[disabled].active,
+	fieldset[disabled] .btn-agendapro-claro.active {
+	  background-color: #3D9A96;
+	  border-color: #378581;
+	}
+	.btn-agendapro-claro {
+	  text-shadow: 0 -1px 0 rgba(0, 0, 0, .2);
+	  -webkit-box-shadow: inset 0 1px 0 rgba(255, 255, 255, .15), 0 1px 1px rgba(0, 0, 0, .075);
+	          box-shadow: inset 0 1px 0 rgba(255, 255, 255, .15), 0 1px 1px rgba(0, 0, 0, .075);
+	}
+	.btn-agendapro-claro:active,
+	.btn-agendapro-claro.active {
+	  -webkit-box-shadow: inset 0 3px 5px rgba(0, 0, 0, .125);
+	          box-shadow: inset 0 3px 5px rgba(0, 0, 0, .125);
+	}
+	.btn-agendapro-claro {
+	  background-image: -webkit-linear-gradient(top, #3D9A96 0%, #28736F 100%);
+	  background-image:      -o-linear-gradient(top, #3D9A96 0%, #28736F 100%);
+	  background-image: -webkit-gradient(linear, left top, left bottom, from(#3D9A96), to(#28736F));
+	  background-image:         linear-gradient(to bottom, #3D9A96 0%, #28736F 100%);
+	  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ff428bca', endColorstr='#ff2d6ca2', GradientType=0);
+	  filter: progid:DXImageTransform.Microsoft.gradient(enabled = false);
+	  background-repeat: repeat-x;
+	  border-color: #2b669a;
+	}
+	.btn-agendapro-claro:hover,
+	.btn-agendapro-claro:focus {
+	  background-color: #28736F;
+	  background-position: 0 -15px;
+	}
+	.btn-agendapro-claro:active,
+	.btn-agendapro-claro.active {
+	  background-color: #28736F;
+	  border-color: #2b669a;
+	}
+	.btn-agendapro-claro:disabled,
+	.btn-agendapro-claro[disabled] {
+	  background-color: #28736F;
+	  background-image: none;
+	}
+/**			End AgendaPro Button			**/
+
+/**			Modals			**/
+	.modal-content{
+		background: url(<%= asset_path 'backgrounds/wild_oliva_light.png' %>);
+	}
+	.modal-header{
+	    background: url(<%= asset_path 'backgrounds/wild_oliva_light_head.png' %>);
+	}
+	.modal-footer{
+		background: url(<%= asset_path 'backgrounds/wild_oliva_light_head.png' %>);
+	}
+/**			End Modals			**/

@@ -16,6 +16,9 @@ function saveCategory (typeURL, extraURL) {
 		    return false;
 		}
 	}
+	else if (!$('#new_resource_category').valid()) {
+		return false;
+	};
 	$.ajax({
 		type: typeURL,
 		url: '/resource_categories'+extraURL+'.json',
