@@ -27,7 +27,7 @@
       <tr>
         <td><%= service_provider.public_name %></td>
         <td>
-          <%= link_to '<i class="fa fa-check"></i> Re-activar'.html_safe, activate_service_provider_path(:id => service_provider.id), :class => "btn btn-primary", data: { confirm: '¿Estás seguro de re-activar el Proveedor seleccionado?' } %>
+          <%= link_to '<i class="fa fa-check"></i> Re-activar'.html_safe, activate_service_provider_path(:id => service_provider.id), :class => "btn btn-agendapro-claro", data: { confirm: '¿Estás seguro de re-activar el Proveedor seleccionado?' } %>
           <%= link_to '<i class="fa fa-pencil"></i> Editar'.html_safe, edit_service_provider_path(service_provider), :class => "btn btn-warning" %>
         </td>
       </tr>
@@ -35,4 +35,4 @@
   </tbody>
 </table>
 
-<%= link_to 'Proveedores de Servicios Activos', service_providers_path, :class => "btn btn-primary" %>
+<%= link_to 'Proveedores de Servicios Activos', service_providers_path, :class => "btn btn-agendapro-oscuro" %>

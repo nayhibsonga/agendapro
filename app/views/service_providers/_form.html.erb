@@ -46,7 +46,7 @@
 										<%= f.collection_check_boxes :service_ids, @service, :id, :name_with_small_outcall, {}, {class: "check_boxes"} do |b|%>
 											<div class="checkbox">
 												<label>
-													<%= b.check_box %> <%= b.object.name %> 
+													<%= b.check_box %> <%= b.object.name.html_safe %> 
 												</label>
 											</div>
 										<% end %>
@@ -61,7 +61,7 @@
 
 				<div class="form-group">
 					<div class="actions col-sm-offset-4 col-sm-8">
-						<%= f.submit 'Guardar', :class => "btn btn-primary buttonProvider"%>
+						<%= f.submit 'Guardar', :class => "btn btn-agendapro-claro buttonProvider"%>
 						<%= link_to 'Cancelar'.html_safe, service_providers_path, :class => "btn btn-default" %>    
 					</div>
 				</div>
