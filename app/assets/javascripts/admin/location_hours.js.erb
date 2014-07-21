@@ -272,7 +272,9 @@ function locJSON() {
 		"district_ids": districtIds,
 		"latitude": parseFloat($('#location_latitude').val()),
 		"longitude": parseFloat($('#location_longitude').val()),
-		"location_times_attributes": location_times
+		"location_times_attributes": location_times,
+		"email": $('input[name="location[email]"]').val(),
+		"notification": $('#location_notification').prop('checked')
 	};
 	return locationJSON;
 }

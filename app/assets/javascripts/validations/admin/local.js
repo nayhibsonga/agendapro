@@ -26,6 +26,9 @@ $(function() {
 			'location[phone]': {
 				required: true,
 				rangelength: [8, 15]
+			},
+			'location[email]': {
+				email: true
 			}
 		},
 		highlight: function(element) {
@@ -40,5 +43,19 @@ $(function() {
 		// submitHandler: function(form) {
 		// 	form.submit();
 		// }
+	});
+
+	$('input[name="location[notification]"]').change(function (event) {
+		var value = $(event.target).prop('checked')
+		if (value) {
+			$('input[name="location[email]"]').rules('add', {
+				required: true
+			});
+		} else{
+			$('input[name="location[email]"]').rules('remove', 'required');
+			$('input[name="location[email]"]').closest('.form-group').removeClass('has-error').removeClass('has-success');
+			$('input[name="location[email]"]').parent().children('.form-control-feedback').removeClass('fa fa-times').removeClass('fa fa-check');
+			$('input[name="location[email]"]').next().empty()
+		};
 	});
 });
