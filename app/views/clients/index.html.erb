@@ -131,9 +131,7 @@
 						<%= image_tag 'ajax-loader.gif', :alt => 'Loader' %>
 					</div>
 					<div class="form-group has-feedback">
-						<div class="col-md-2">
-							<%= label_tag :from, 'De: ' %>
-						</div>
+						<%= label_tag :from, 'De', :class => 'control-label col-md-2' %>
 						<div class="col-md-10">
 							<%= select_tag :from, options_from_collection_for_select(@from_collection, :email, :email), :class => 'form-control', :required => true %>
             				<span class="help-block"></span>
@@ -141,21 +139,17 @@
 						</div>
 					</div>
 					<div class="form-group has-feedback">
-						<div class="col-md-2">
-							<%= label_tag :to, 'Para: ' %>
-						</div>
+						<%= label_tag :to, 'Para', class: 'control-label col-md-2' %>
 						<div class="col-md-10">
-							<%= text_field_tag :to, nil, :class => 'form-control', :required => true %>
+							<%= text_field_tag :to, nil, :class => 'form-control', :required => true, :placeholder => 'ejemplo@dominio.com (requerido)' %>
             				<span class="help-block"></span>
             				<span class="form-control-feedback"></span>
             			</div>
 					</div>
 					<div class="form-group has-feedback">
-						<div class="col-md-2">
-							<%= label_tag :subject, 'Asunto: ' %>
-						</div>
+						<%= label_tag :subject, 'Asunto', class: 'control-label col-md-2' %>
 						<div class="col-md-10">
-						<%= text_field_tag :subject, nil, :class => 'form-control', :required => true, :autofocus => true %>
+							<%= text_field_tag :subject, nil, :class => 'form-control', :required => true, :autofocus => true, :placeholder => 'Asunto (requerido)' %>
             				<span class="help-block"></span>
             				<span class="form-control-feedback"></span>
 						</div>
@@ -165,16 +159,14 @@
 							<%= label_tag :message, 'Mensaje' %>
 						</div>
 						<div class="col-md-12">
-							<%= text_area_tag :message, nil, :class => 'form-control', :rows => 8, :required => true %>
+							<%= text_area_tag :message, nil, :class => 'form-control', :rows => 8, :required => true, :placeholder => 'Mensaje (requerido)' %>
             				<span class="help-block"></span>
             				<span class="form-control-feedback"></span>
 						</div>
 					</div>
 					<div class="form-group has-feedback">
-						<div class="col-md-12">
-							<%= label_tag :attachment, 'Archivo Adjunto' %>
-						</div>
-						<div class="col-md-12">
+						<%= label_tag :attachment, 'Archivo Adjunto', class: 'control-label col-md-3' %>
+						<div class="col-md-9">
 							<%= file_field_tag :attachment, :class => 'form-control' %>
 							<span class="help-block"></span>
 							<span class="form-control-feedback"></span>

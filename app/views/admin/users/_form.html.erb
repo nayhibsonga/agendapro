@@ -19,7 +19,7 @@
       <div class="form-group has-feedback">
         <%= f.label :first_name, "Nombre", class: "col-sm-3 control-label" %>
         <div class="col-sm-4">
-          <%= f.text_field :first_name, :autofocus => true, class: "form-control" %>
+          <%= f.text_field :first_name, :autofocus => true, class: "form-control", placeholder: 'Nombre (requerido)' %>
           <span class="help-block"></span>
           <span class="form-control-feedback"></span>
         </div>
@@ -28,7 +28,7 @@
       <div class="form-group has-feedback">
         <%= f.label :last_name, "Apellido", class: "col-sm-3 control-label"  %>
         <div class="col-sm-4">
-          <%= f.text_field :last_name, class: "form-control" %>
+          <%= f.text_field :last_name, class: "form-control", placeholder: 'Apellido (requerido)' %>
           <span class="help-block"></span>
           <span class="form-control-feedback"></span>
         </div>
@@ -37,7 +37,7 @@
       <div class="form-group has-feedback">
         <%= f.label :email, "Email", class: "col-sm-3 control-label"  %>
         <div class="col-sm-4">
-          <%= f.text_field :email, class: "form-control" %>
+          <%= f.text_field :email, class: "form-control", placeholder: 'ejemplo@dominio.com (requerido)' %>
           <span class="help-block"></span>
           <span class="form-control-feedback"></span>
         </div>

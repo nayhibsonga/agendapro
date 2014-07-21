@@ -4,7 +4,7 @@ $(function() {
 			error.appendTo(element.next());
 		},
 		rules: {
-			'user[first_nae]': {
+			'user[first_name]': {
 				required: true
 			},
 			'user[last_name]': {

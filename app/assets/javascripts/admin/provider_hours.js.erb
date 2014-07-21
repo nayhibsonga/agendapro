@@ -218,7 +218,7 @@ function changeDayStatus(value) {
 		$('#closeHourId'+ value).prop('disabled', false);
 		$('#closeMinuteId'+ value).prop('disabled', false);
 		$('#dayStatusId'+ value).val(1);
-		$('#dayStatusId'+value).closest('tr').children().last().append('<a id="addBreakdiv'+value+'" class="btn btn-primary"><i class="fa fa-plus"></i></a>');
+		$('#dayStatusId'+value).closest('tr').children().last().append('<a id="addBreakdiv'+value+'" class="btn btn-agendapro-claro"><i class="fa fa-plus"></i></a>');
 		$('#addBreakdiv'+value).click(function() {
 			addBreak(value);
 		});

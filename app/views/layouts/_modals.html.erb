@@ -68,7 +68,7 @@
 							<div class="form-group has-feedback">
 								<%= f.label :first_name, 'Nombre', :class => 'col-sm-4 control-label' %>
 								<div class="col-sm-8">
-									<%= f.text_field :first_name, :autofocus => true, :required => true, :class => 'form-control' %>
+									<%= f.text_field :first_name, :autofocus => true, :required => true, :class => 'form-control', :placeholder => 'Nombre (requerido)' %>
 									<span class="help-block"></span>
 									<span class="form-control-feedback"></span>
 								</div>
@@ -76,7 +76,7 @@
 							<div class="form-group has-feedback">
 								<%= f.label :last_name, 'Apellido', :class => 'col-sm-4 control-label' %>
 								<div class="col-sm-8">
-									<%= f.text_field :last_name, :required => true, :class => 'form-control' %>
+									<%= f.text_field :last_name, :required => true, :class => 'form-control', :placeholder => 'Apellido (requerido)' %>
 									<span class="help-block"></span>
 									<span class="form-control-feedback"></span>
 								</div>
@@ -84,7 +84,7 @@
 							<div class="form-group has-feedback">
 								<%= f.label :phone, 'Teléfono', :class => 'col-sm-4 control-label' %>
 								<div class="col-sm-8">
-									<%= f.telephone_field :phone, :required => true, :class => 'form-control' %>
+									<%= f.telephone_field :phone, :required => true, :class => 'form-control', :placeholder => 'Teléfono (requerido)' %>
 									<span class="help-block"></span>
 									<span class="form-control-feedback"></span>
 								</div>
@@ -92,7 +92,7 @@
 							<div class="form-group has-feedback">
 								<%= f.label :email, 'Email', :class => 'col-sm-4 control-label' %>
 								<div class="col-sm-8">
-									<%= f.email_field :email, :required => true, :class => 'form-control' %>
+									<%= f.email_field :email, :required => true, :class => 'form-control', :placeholder => 'Email (requerido)' %>
 									<span class="help-block"></span>
 									<span class="form-control-feedback"></span>
 								</div>
@@ -100,7 +100,7 @@
 							<div class="form-group has-feedback">
 								<%= f.label :password, 'Contraseña', :class => 'col-sm-4 control-label' %>
 								<div class="col-sm-8">
-									<%= f.password_field :password, :required => true, :class => 'form-control' %>
+									<%= f.password_field :password, :required => true, :class => 'form-control', :placeholder => 'Contraseña (requerido)' %>
 									<span class="help-block"></span>
 									<span class="form-control-feedback"></span>
 								</div>
@@ -108,7 +108,7 @@
 							<div class="form-group has-feedback">
 								<%= f.label :password_confirmation, 'Confirmar Contraseña', :class => 'col-sm-4 control-label' %>
 								<div class="col-sm-8">
-									<%= f.password_field :password_confirmation, :required => true, :class => 'form-control' %>
+									<%= f.password_field :password_confirmation, :required => true, :class => 'form-control', :placeholder => 'Contraseña (requerido)' %>
 									<span class="help-block"></span>
 									<span class="form-control-feedback"></span>
 								</div>

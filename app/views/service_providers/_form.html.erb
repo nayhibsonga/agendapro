@@ -5,7 +5,7 @@
 				<div class="form-group has-feedback">
 					<%= f.label :public_name, "Nombre Público", class: "col-sm-4 control-label" %>
 					<div class="col-sm-8">
-						<%= f.text_field :public_name, :autofocus => true, class: "form-control" %>
+						<%= f.text_field :public_name, :autofocus => true, class: "form-control", placeholder: 'Nombre (requerido)' %>
 						<span class="help-block"></span>
               			<span class="form-control-feedback"></span>
 					</div>
@@ -13,7 +13,7 @@
 				<div class="form-group has-feedback">
 					<%= f.label :notification_email, "Email de Notificación", class: "col-sm-4 control-label" %>
 					<div class="col-sm-8">
-						<%= f.text_field :notification_email, class: "form-control" %>
+						<%= f.text_field :notification_email, class: "form-control", placeholder: 'ejemplo@dominio.com (requerido)' %>
 						<span class="help-block"></span>
               			<span class="form-control-feedback"></span>
 					</div>
@@ -61,7 +61,7 @@
 
 				<div class="form-group">
 					<div class="actions col-sm-offset-4 col-sm-8">
-						<%= f.submit 'Guardar', :class => "btn btn-agendapro-claro buttonProvider"%>
+						<%= f.submit 'Guardar', :class => "btn btn-agendapro-oscuro buttonProvider"%>
 						<%= link_to 'Cancelar'.html_safe, service_providers_path, :class => "btn btn-default" %>    
 					</div>
 				</div>
