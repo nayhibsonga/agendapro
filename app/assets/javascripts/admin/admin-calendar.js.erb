@@ -648,8 +648,14 @@ function editBookingModal(eventId) {
 			$('.booking-modal-title').append('Editando Reserva');
 			$('.booking-modal-footer').append(
 				'<button type="button" class="btn btn-default booking-button" data-dismiss="modal">Cerrar</button>' +
-				'<button type="button" class="btn btn-danger booking-button" onclick="deleteBooking('+eventId+')">Eliminar</button>' +
 				'<button type="button" class="btn btn-agendapro-claro booking-button" onclick="editBooking('+eventId+')">Guardar</button>'
+			);
+			$('#booking_status_id').closest('.col-md-6').append(
+				'<div class="form-group">' +
+					'<div class="col-sm-offset-4 col-sm-8">' +
+						'<button type="button" class="btn btn-danger btn-ss btn-block booking-button" onclick="deleteBooking('+eventId+')">Cancelar Reserva</button>' +
+					'</div>' +
+				'</div>'
 			);
 
 			if ( booking.service_provider_id > 0) {
@@ -784,9 +790,11 @@ function createBooking() {
 }
 
 function deleteBooking(eventId) {
-	$('.booking-button').attr("disabled", "disabled");
-	$('.booking-modal-footer').prepend('<%= image_tag "small-loader.gif", :alt => "Loader", :id => "small_loader" %>');
-	saveBooking('DELETE','/'+eventId);
+	if (confirm('¿Estás seguro que quiere cancelar esta reserva?\nEsta acción no se puede revertir.')) {
+		$('.booking-button').attr("disabled", "disabled");
+		$('.booking-modal-footer').prepend('<%= image_tag "small-loader.gif", :alt => "Loader", :id => "small_loader" %>');
+		saveBooking('DELETE','/'+eventId);
+	};
 }
 
 function jsonBooking() {
@@ -1429,6 +1437,7 @@ $(function() {
 
 	$('#bookingModal').on('hidden.bs.modal', function (e) {
 		$('#booking_service_id').attr('disabled', true);
+		$('#booking_status_id').parent().parent().next().remove();
 		bookingModalOpen = false;
 	});
 
