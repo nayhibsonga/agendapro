@@ -17,74 +17,90 @@
   </div>
 </div>
 
-<table class="table table-bordered">
-  <thead>
-    <tr>
-      <th>Nombre</th>
-      <th>Locales</th>
-      <th>Proveedores de Servicio</th>
-      <th>Precio (sin IVA)</th>
-      <th></th>
-    </tr>
-  </thead>
-
-  <tbody>
-    <% @plans.each do |plan| %>
+<div class="row well">
+  <table class="table table-bordered">
+    <thead>
       <tr>
-        <td><%= plan.name %></td>
-        <td><%= plan.locations %></td>
-        <td><%= plan.service_providers %></td>
-        <td>$<%= number_with_precision(plan.price, :precision => 0, :delimiter => '.') %> CLP</td>
-        <% if @company.plan_id != plan.id %>
-        <td><%= link_to '<i class="fa fa-check"></i> Elegir este Plan'.html_safe, select_plan_path(:plan_id => plan.id), :class => "btn btn-primary" %></td>
-        <% else %>
-        <td class="success">Plan Elegido</td>
-        <% end %>
+        <th>Nombre</th>
+        <th>Locales</th>
+        <th>Proveedores de Servicio</th>
+        <th>Precio (sin IVA)</th>
+        <th></th>
       </tr>
-    <% end %>
-  </tbody>
-</table>
+    </thead>
+
+    <tbody>
+      <% @plans.each do |plan| %>
+        <tr class="<%= "success" if @company.plan_id == plan.id %>">
+          <td><%= plan.name %></td>
+          <td><%= plan.locations %></td>
+          <td><%= plan.service_providers %></td>
+          <td>$<%= number_with_precision(plan.price, :precision => 0, :delimiter => '.') %> CLP</td>
+          <% if @company.plan_id != plan.id %>
+          <td><%= link_to '<i class="fa fa-check"></i> Elegir este Plan'.html_safe, "#", :class => "btn btn-primary change_plan", id: "change_plan_"+plan.id.to_s %></td>
+          <% elsif @company.plan == Plan.find_by_name("Trial") && @company.locations.where(active: true).count == plan.locations && @company.service_providers.where(active: true).count <= plan.service_providers %>
+          <td>¡Este sería tu Plan!</td>
+          <% else %>
+          <td>¡Plan Elegido!</td>
+          <% end %>
+
+          <%= content_tag "div", id: "plan_difference_"+plan.id.to_s, data: { months_active_left: @company.months_active_left, plan_difference: (@company.due_amount + (@month_days - @day_number)*(plan.price - @price)/@month_days)*(1+@sales_tax), due_difference: ((@company.due_amount + (@month_days - @day_number)*(plan.price - @price)/@month_days)*(1+@sales_tax) + (plan.price - @price)*(@company.months_active_left - 1)) } do %><%end%>
+          
+        </tr>
+      <% end %>
+      <% if @company.plan.custom %>
+        <tr class="success">
+          <td><%= @company.plan.name %></td>
+          <td><%= @company.plan.locations %></td>
+          <td><%= @company.plan.service_providers %></td>
+          <td>$<%= number_with_precision(@company.plan.price, :precision => 0, :delimiter => '.') %> CLP</td>
+          <td>¡Plan Elegido!</td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+</div>
 
 <div class="row well">
-  <div class="col-md-4 col-md-offset-1">
-    <h3>¡Paga tu cuenta AgendaPro aquí!</h3>
+  <div class="col-md-6">
+    <h3><%= @company.months_active_left > 0 ? "¡Agrega más tiempo de uso a tu cuenta AgendaPro aquí!" : "¡Paga tu cuenta AgendaPro aquí!" %></h3>
     <p class="justified">Puedes pagar tu cuenta directamente a través de la página, por medio de WebPay o transferencias bancarias de los principales bancos. Si no te acomoda ninguna de estas opciones o tienes alguna duda respecto a tu plan actual, te invitamos a ponerte en contacto con nosotros enviando un correo a <%= link_to 'contacto@agendapro.cl', contact_path, :target => "_blank" %>, para recibir las instrucciones a seguir. </p>
     <p><label>Pagar (IVA incluido):</label>
       <select class="form-control" id="amount_select">
         <option value="0">Elige una opción...</option>
-        <option value="1">1 Mes - $<%= number_with_precision(@company.plan.price*(1+@sales_tax), :precision => 0, :delimiter => '.') %> CLP</option>
-        <option value="2">2 Meses - $<%= number_with_precision(@company.plan.price*2*(1+@sales_tax), :precision => 0, :delimiter => '.') %> CLP</option>
-        <option value="3">3 Meses - $<%= number_with_precision(@company.plan.price*3*(1+@sales_tax), :precision => 0, :delimiter => '.') %> CLP</option>
-        <option value="4">4 Meses - $<%= number_with_precision(@company.plan.price*4*(1-@month_discount_4)*(1+@sales_tax), :precision => 0, :delimiter => '.') %> CLP (<%= number_with_precision(@month_discount_4*100, :precision => 0) %>% dcto.)</option>
-        <option value="6">6 Meses - $<%= number_with_precision(@company.plan.price*6*(1-@month_discount_6)*(1+@sales_tax), :precision => 0, :delimiter => '.') %> CLP (<%= number_with_precision(@month_discount_6*100, :precision => 0) %>% dcto.)</option>
-        <option value="9">9 Meses - $<%= number_with_precision(@company.plan.price*9*(1-@month_discount_9)*(1+@sales_tax), :precision => 0, :delimiter => '.') %> CLP (<%= number_with_precision(@month_discount_9*100, :precision => 0) %>% dcto.)</option>
-        <option value="12">12 Meses - $<%= number_with_precision(@company.plan.price*12*(1-@month_discount_12)*(1+@sales_tax), :precision => 0, :delimiter => '.') %> CLP (<%= number_with_precision(@month_discount_12*100, :precision => 0) %>% dcto.)</option>
+        <option value="1"><%= @company.months_active_left > 0 ? "1 Mes" : "Restante de este Mes" %> - <%= number_to_currency(@plan_1, {:unit => '$', :separator => ',', :delimiter => '.', :precision => 0})%> CLP</option>
+        <option value="2">2 Meses - <%= number_to_currency(@plan_2, {:unit => '$', :separator => ',', :delimiter => '.', :precision => 0})%> CLP</option>
+        <option value="3">3 Meses - <%= number_to_currency(@plan_3, {:unit => '$', :separator => ',', :delimiter => '.', :precision => 0})%> CLP</option>
+        <option value="4">4 Meses - <%= number_to_currency(@plan_4, {:unit => '$', :separator => ',', :delimiter => '.', :precision => 0})%> CLP (<%= number_with_precision(@month_discount_4*100, :precision => 0) %>% dcto.)</option>
+        <option value="6">6 Meses - <%= number_to_currency(@plan_6, {:unit => '$', :separator => ',', :delimiter => '.', :precision => 0})%> CLP (<%= number_with_precision(@month_discount_6*100, :precision => 0) %>% dcto.)</option>
+        <option value="9">9 Meses - <%= number_to_currency(@plan_9, {:unit => '$', :separator => ',', :delimiter => '.', :precision => 0})%> CLP (<%= number_with_precision(@month_discount_9*100, :precision => 0) %>% dcto.)</option>
+        <option value="12">12 Meses - <%= number_to_currency(@plan_12, {:unit => '$', :separator => ',', :delimiter => '.', :precision => 0})%> CLP (<%= number_with_precision(@month_discount_12*100, :precision => 0) %>% dcto.)</option>
       </select> 
     </p>
     <p>Y, luego, selecciona el medio de pago haciendo click sobre su imagen:</p>
-    <table class="table">
+    <table class="table" id="mp_table">
       <tr>
         <td>
-          <%= link_to image_tag("https://www.puntopagos.com/content/mp1.gif"), generate_company_transaction_path(:md => "01", :amount => 0), alt: "Botón de Pago Banco Santander", class: "md_link" %>
+          <%= link_to image_tag("https://www.puntopagos.com/content/mp1.gif"), generate_company_transaction_path(:md => "01", :amount => 0), alt: "Botón de Pago Banco Santander", class: "mp_link", disabled: true %>
         </td>
         <td>
-          <%= link_to image_tag("https://www.puntopagos.com/content/mp4.gif"), generate_company_transaction_path(:md => "04", :amount => 0), alt: "Botón de Pago Banco de Chile", class: "md_link" %>
+          <%= link_to image_tag("https://www.puntopagos.com/content/mp4.gif"), generate_company_transaction_path(:md => "04", :amount => 0), alt: "Botón de Pago Banco de Chile", class: "mp_link", disabled: true %>
         </td>
       </tr>
       <tr>
         <td>
-          <%= link_to image_tag("https://www.puntopagos.com/content/mp5.gif"), generate_company_transaction_path(:md => "05", :amount => 0), alt: "Botón de Pago BCI", class: "md_link" %>
+          <%= link_to image_tag("https://www.puntopagos.com/content/mp5.gif"), generate_company_transaction_path(:md => "05", :amount => 0), alt: "Botón de Pago BCI", class: "mp_link", disabled: true %>
         </td>
         <td>
-          <%= link_to image_tag("https://www.puntopagos.com/content/mp6.gif"), generate_company_transaction_path(:md => "06", :amount => 0), alt: "Botón de Pago TBanc", class: "md_link" %>
+          <%= link_to image_tag("https://www.puntopagos.com/content/mp6.gif"), generate_company_transaction_path(:md => "06", :amount => 0), alt: "Botón de Pago TBanc", class: "mp_link", disabled: true %>
         </td>
       </tr>
       <tr>
         <td>
-          <%= link_to image_tag("https://www.puntopagos.com/content/mp7.gif"), generate_company_transaction_path(:md => "07", :amount => 0), alt: "Botón de Pago Banco Estado", class: "md_link" %>
+          <%= link_to image_tag("https://www.puntopagos.com/content/mp7.gif"), generate_company_transaction_path(:md => "07", :amount => 0), alt: "Botón de Pago Banco Estado", class: "mp_link", disabled: true %>
         </td>
         <td>
-          <%= link_to image_tag("https://www.puntopagos.com/content/mp3.gif"), generate_company_transaction_path(:md => "03", :amount => 0), alt: "Webpay Transbank", class: "md_link" %>
+          <%= link_to image_tag("https://www.puntopagos.com/content/mp3.gif"), generate_company_transaction_path(:md => "03", :amount => 0), alt: "Webpay Transbank", class: "mp_link", disabled: true %>
         </td>
       </tr>
     </table>
@@ -93,8 +109,8 @@
   <%= form_for @billing_info, html: {class: "form-horizontal" } do |f| %>
     <div class="row">
       <div class="form-group">
-        <div class="col-sm-8 col-sm-offset-4">
-           <%= f.check_box :active %> <%= f.label :active, "Solicitar Factura", class: "control-label" %><br /><p class="justified"><small>La factura se generará automáticamente al confirmarse el pago y los datos de facturación, si no ingresa información de facturación o no se solicita esta, se generará una boleta a nombre del administrador de la cuenta.</small></p>
+        <div class="col-sm-10 col-sm-offset-1">
+           <%= f.check_box :active %> <%= f.label :active, "Solicitar Factura", class: "control-label" %><br /><p class="justified"><small><bold>Nota:</bold> La factura se generará automáticamente al confirmarse el pago y los datos de facturación. Si no ingresas información de facturación o no se solicita esta, se generará una boleta a nombre del administrador de la cuenta.</small></p>
         </div>
       </div>
     </div>
@@ -143,5 +159,100 @@
     </div>
       
   <% end %>
+  </div>
+</div>
+
+<div class="row well">
+  <h3>Información de la Cuenta:</h3>
+  <p>
+    <div class="col-md-5 col-md-offset-1">
+      <div class="row">
+        <label class="col-sm-5">Administrador</label>
+        <div class="col-sm-7">
+          <%= current_user.first_name + " " + current_user.last_name %>
+        </div>
+      </div>
+      <div class="row">
+        <label class="col-sm-5">Email</label>
+        <div class="col-sm-7">
+          <%= current_user.email %>
+        </div>
+      </div>
+      <div class="row">
+        <label class="col-sm-5">Teléfono</label>
+        <div class="col-sm-7">
+          <%= current_user.phone %>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-5">
+      <div class="row">
+        <label class="col-sm-5">Estado de Cuenta</label>
+        <div class="col-sm-7">
+          <%= PaymentStatus.find(@company.payment_status_id).name %>
+        </div>
+      </div>
+      <div class="row">
+        <label class="col-sm-5">Meses Restantes</label>
+        <div class="col-sm-7">
+          <%= @company.months_active_left.to_i %> (Inclyendo este)
+        </div>
+      </div>
+      <div class="row">
+        <% if @company.due_amount >= 0 %>
+        <label class="col-sm-5">Deuda Actual</label>
+        <div class="col-sm-7">
+          <%= number_to_currency(@company.due_amount, {:unit => '$', :separator => ',', :delimiter => '.', :precision => 0})%> CLP
+        </div>
+        <% else %>
+        <label class="col-sm-5">Saldo a Favor</label>
+        <div class="col-sm-7">
+          <%= number_to_currency(-1*@company.due_amount, {:unit => '$', :separator => ',', :delimiter => '.', :precision => 0})%> CLP
+        </div>
+        <% end %>
+      </div>
+    </div>
+  </p>
+</div>
+
+<div class="modal fade" id="changePlanModal" tabindex="-1" role="dialog" aria-labelledby="changePlanModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h4 class="modal-title" id="changePlanModalLabel">Cambio de Plan AgendaPro</h4>
+      </div>
+      <div class="modal-body">
+        <p class="justified">Estás cambiando tu cuenta AgendaPro a un nuevo plan mensual. Es importante que para cada cambio de plan se considera el tiempo de activación o deuda actual de la cuenta, y se habilita para el nuevo plan, por un tiempo equivalente al valor del nuevo plan</p>
+        <p class="justified" id="plan_explanation"></p>
+        <p>Medios de pago disponibles:</p>
+        <table class="table" id="plan_mp_table">
+      <tr>
+        <td>
+          <%= link_to image_tag("https://www.puntopagos.com/content/mp1.gif"), generate_company_transaction_path(:md => "01", :amount => 0), alt: "Botón de Pago Banco Santander", class: "mp_link", disabled: true %>
+        </td>
+        <td>
+          <%= link_to image_tag("https://www.puntopagos.com/content/mp4.gif"), generate_company_transaction_path(:md => "04", :amount => 0), alt: "Botón de Pago Banco de Chile", class: "mp_link", disabled: true %>
+        </td>
+        <td>
+          <%= link_to image_tag("https://www.puntopagos.com/content/mp5.gif"), generate_company_transaction_path(:md => "05", :amount => 0), alt: "Botón de Pago BCI", class: "mp_link", disabled: true %>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <%= link_to image_tag("https://www.puntopagos.com/content/mp6.gif"), generate_company_transaction_path(:md => "06", :amount => 0), alt: "Botón de Pago TBanc", class: "mp_link", disabled: true %>
+        </td>
+        <td>
+          <%= link_to image_tag("https://www.puntopagos.com/content/mp7.gif"), generate_company_transaction_path(:md => "07", :amount => 0), alt: "Botón de Pago Banco Estado", class: "mp_link", disabled: true %>
+        </td>
+        <td>
+          <%= link_to image_tag("https://www.puntopagos.com/content/mp3.gif"), generate_company_transaction_path(:md => "03", :amount => 0), alt: "Webpay Transbank", class: "mp_link", disabled: true %>
+        </td>
+      </tr>
+    </table>
+      </div>
+      <div class="modal-footer">
+      </div>
+    </div>
   </div>
 </div>

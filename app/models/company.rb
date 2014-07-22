@@ -38,7 +38,7 @@ class Company < ActiveRecord::Base
 	end
 
 	def self.substract_month
-		where(payment_status_id: PaymentStatus.find_by_name("Pagado")).each do |company|
+		where(payment_status_id: PaymentStatus.find_by_name("Pagado").id).each do |company|
 			company.months_active_left -= 1.0
 			if company.months_active_left <= 0
 				company.payment_status_id = PaymentStatus.find_by_name("Emitido").id
@@ -48,7 +48,7 @@ class Company < ActiveRecord::Base
 	end
 
 	def self.payment_expiry
-		where(payment_status_id: PaymentStatus.find_by_name("Emitido")).each do |company|
+		where(payment_status_id: PaymentStatus.find_by_name("Emitido").id).each do |company|
 			if company.months_active_left <= 0
 				company.payment_status_id = PaymentStatus.find_by_name("Vencido").id
 			end
@@ -57,7 +57,7 @@ class Company < ActiveRecord::Base
 	end
 
 	def self.payment_shut
-		where(payment_status_id: PaymentStatus.find_by_name("Vencido")).each do |company|
+		where(payment_status_id: PaymentStatus.find_by_name("Vencido").id).each do |company|
 			if company.months_active_left <= 0
 				company.payment_status_id = PaymentStatus.find_by_name("Bloqueado").id
 			end
