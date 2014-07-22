@@ -23,7 +23,7 @@ function buildDay (value) {
 							'<option value="06">06</option>' +
 							'<option value="07">07</option>' +
 							'<option value="08">08</option>' +
-							'<option value="09">09</option>' +
+							'<option value="09" selected>09</option>' +
 							'<option value="10">10</option>' +
 							'<option value="11">11</option>' +
 							'<option value="12">12</option>' +
@@ -42,7 +42,7 @@ function buildDay (value) {
 					'</div> : ' +
 					'<div class="form-group">' +
 						'<select class="form-control time-select" id="openMinuteId'+ value +'" name="openMinute'+ value +'" disabled="disabled">' +
-							'<option value="00">00</option>' +
+							'<option value="00" selected>00</option>' +
 							'<option value="15">15</option>' +
 							'<option value="30">30</option>' +
 							'<option value="45">45</option>' +
@@ -72,7 +72,7 @@ function buildDay (value) {
 							'<option value="15">15</option>' +
 							'<option value="16">16</option>' +
 							'<option value="17">17</option>' +
-							'<option value="18">18</option>' +
+							'<option value="18" selected>18</option>' +
 							'<option value="19">19</option>' +
 							'<option value="20">20</option>' +
 							'<option value="21">21</option>' +
@@ -82,7 +82,7 @@ function buildDay (value) {
 					'</div> : ' +
 					'<div class="form-group">' +
 						'<select class="form-control time-select" id="closeMinuteId'+ value +'" name="closeMinute'+ value +'" disabled="disabled">' +
-							'<option value="00">00</option>' +
+							'<option value="00" selected>00</option>' +
 							'<option value="15">15</option>' +
 							'<option value="30">30</option>' +
 							'<option value="45">45</option>' +
@@ -110,6 +110,12 @@ function initialize() {
 			$('#openMinuteId'+ value).prop('disabled', false);
 			$('#closeHourId'+ value).prop('disabled', false);
 			$('#closeMinuteId'+ value).prop('disabled', false);
+			// Deseleccionar por defecto
+			window.console.log('#openHourId' + value + ' > option:selected')
+			$('#openHourId' + value + ' > option:selected').removeAttr('selected');
+			$('#openMinuteId' + value + ' > option:selected').removeAttr('selected');
+			$('#closeHourId' + value + ' > option:selected').removeAttr('selected');
+			$('#closeMinuteId' + value + ' > option:selected').removeAttr('selected');
 
 			var openTime = new Date(Date.parse(locationTime.open)).toUTCString().split(" ")[4].split(":");
 			var closeTime = new Date(Date.parse(locationTime.close)).toUTCString().split(" ")[4].split(":");
@@ -189,6 +195,12 @@ function initialize() {
 			};
 		});
 	}
+	else {
+		for (var i = 0; i < 6; i++) {
+			changeDayStatus(i);
+			$('#dayStatusId' + i).prop('checked', true).val(1);
+		};
+	};
 }
 
 

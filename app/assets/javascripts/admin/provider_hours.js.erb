@@ -164,7 +164,7 @@ function initialize() {
 				var value = providerTimesData[arrayCounter].day_id;
 				$('#dayStatusId'+ value).prop('checked', true);
 				$('#dayStatusId'+ value).val(1);
-				$('#dayStatusId'+value).closest('tr').children().last().append('<a id="addBreakdiv'+value+'" onclick="addBreak('+value+')" class="btn btn-primary"><i class="fa fa-plus"></i></a>');
+				$('#dayStatusId'+value).closest('tr').children().last().append('<a id="addBreakdiv'+value+'" onclick="addBreak('+value+')" class="btn btn-agendapro-claro"><i class="fa fa-plus"></i></a>');
 				
 				$('#openHourId'+ value).prop('disabled', false);
 				$('#openMinuteId'+ value).prop('disabled', false);
