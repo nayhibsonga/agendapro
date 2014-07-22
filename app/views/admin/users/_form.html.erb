@@ -88,7 +88,7 @@
 
       <% if !current_user.nil? %>
       <div class="form-group hidden" id="providerGroup">
-        <%= f.label :service_provider_ids, "Proveedores de Servicios", class: "col-sm-3 control-label" %>
+        <%= f.label :service_provider_ids, "Prestadores de Servicios", class: "col-sm-3 control-label" %>
         <div class="col-sm-4">
           <div class="panel-group" id="service-provider-accordion">
             <% Location.accessible_by(current_ability).each do |location| %>

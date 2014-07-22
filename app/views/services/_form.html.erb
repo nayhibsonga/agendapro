@@ -14,7 +14,7 @@
       <div class="col-md-12">
         <div class="row">
           <div class="col-md-6">
-            <h3>Detalles del Servicio</h3>
+            <h3>Servicio</h3>
             <div class="well">
               <div class="form-group has-feedback">
                 <%= f.label :name, "Nombre", class: "col-sm-3 control-label" %>
@@ -55,6 +55,17 @@
                   </div>
                 </div>
               </div>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <h3>Detalles del Servicio</h3>
+            <div class="well">
+              <div class="form-group">
+                <%= f.label :description, "Descripción", class: "col-sm-3 control-label" %>
+                <div class="col-sm-9">
+                  <%= f.text_area :description, class: "form-control" %>
+                </div>
+              </div>
               <div class="form-group">
                 <div class="col-sm-offset-3 col-sm-9">
                   <div class="checkbox">
@@ -75,22 +86,11 @@
                   <span class="form-control-feedback"></span>
                 </div>
               </div>
-              <div class="form-group">
-                <%= f.label :description, "Descripción", class: "col-sm-3 control-label" %>
-                <div class="col-sm-9">
-                  <%= f.text_area :description, class: "form-control" %>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="col-md-6">
-            <h3>Busqueda</h3>
-            <div class="well">
               <% if @service.service_category.nil? then @service.build_service_category end %>
               <%= f.fields_for :service_category do |builder| %>
               <div class="form-group has-feedback hidden">
-                <%= builder.label :name, "Nueva Categoría de Servicio", class: "col-sm-4 control-label" %>
-                <div class="col-sm-8">
+                <%= builder.label :name, "Nueva Categoría de Servicio", class: "col-sm-3 control-label" %>
+                <div class="col-sm-9">
                   <%= builder.text_field :name, class: "form-control", :value => '', placeholder: 'Categoría (requerido)' %>
                   <span class="help-block"></span>
                   <span class="form-control-feedback"></span>
@@ -99,32 +99,20 @@
               </div>
               <% end %> 
               <div class="form-group has-feedback">
-                <%= f.label :service_category_id, "Categoría de Servicio", class: "col-sm-4 control-label" %>
-                <div class="col-sm-8">
+                <%= f.label :service_category_id, "Categoría de Servicio", class: "col-sm-3 control-label" %>
+                <div class="col-sm-9">
                   <%= f.collection_select :service_category_id, ServiceCategory.where(company_id: current_user.company_id), :id, :name, {}, { class: "form-control" }%>
                   <span class="help-block"></span>
                   <span class="form-control-feedback"></span>
                 </div>
               </div>
               <div class="form-group">
-                <div class="col-sm-offset-4 col-sm-8">
+                <div class="col-sm-offset-3 col-sm-9">
                   <div class="checkbox">
                     <label>
                       <input type="checkbox" name="catCheck" id="categoryCheckboxId" value="0" class="checkbox"> Crear nueva categoría de servicios
                     </label>
                   </div>
-                </div>
-              </div>
-              <div class="form-group">
-                <%= f.label :tag, "Tags de Búsqueda", class: "col-sm-4 control-label" %>
-                <div class="col-sm-8"> 
-                  <%= f.collection_check_boxes :tag_ids, Tag.where(economic_sector: Company.find(current_user.company_id).economic_sector), :id, :name, html: {class: "checkbox"} do |b|%>
-                    <div class="checkbox">
-                      <label>
-                        <%= b.check_box %> <%= b.object.name %>
-                      </label>
-                    </div>
-                  <% end %>
                 </div>
               </div>
             </div>
@@ -134,10 +122,10 @@
       <div class="col-md-12">
         <div class="row">
           <div class="col-md-6">
-            <h3>Proveedores</h3>
+            <h3>Prestadores y Recursos</h3>
             <div class="well">
               <div class="form-group">
-                <%= f.label :service_provider_ids, "Proveedores de Servicios", class: "col-sm-4 control-label" %>
+                <%= f.label :service_provider_ids, "Prestadores de Servicios", class: "col-sm-4 control-label" %>
                 <div class="col-sm-8">
                   <div class="panel-group" id="service-provider-accordion">
                     <% Location.accessible_by(current_ability).each do |location| %>
@@ -167,11 +155,6 @@
                   </div>
                 </div>
               </div>
-            </div>
-          </div>
-          <div class="col-md-6">
-            <h3>Recursos</h3>
-            <div class="well">
               <div class="form-group">
                 <%= f.label :resource_ids, "Recursos", class: "col-sm-4 control-label" %>
                 <div class="col-sm-8">
@@ -205,15 +188,36 @@
               </div>
             </div>
           </div>
+          <div class="col-md-6">
+            <h3>Busqueda</h3>
+            <div class="well">
+              <div class="form-group">
+                <%= f.label :tag, "Tags de Búsqueda", class: "col-sm-4 control-label" %>
+                <div class="col-sm-8"> 
+                  <%= f.collection_check_boxes :tag_ids, Tag.where(economic_sector: Company.find(current_user.company_id).economic_sector), :id, :name, html: {class: "checkbox"} do |b|%>
+                    <div class="checkbox">
+                      <label>
+                        <%= b.check_box %> <%= b.object.name %>
+                      </label>
+                    </div>
+                  <% end %>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
 
       <div class="col-md-12">
         <div class="well">
-          <div class="form-group">
-            <div class="col-sm-9 col-sm-offset-3">
-              <%= f.submit 'Guardar', :class => 'btn btn-agendapro-claro' %>
-              <%= link_to 'Cancelar', services_path, class: "btn btn-default" %>  
+          <div class="row">
+            <div class="col-md-6">
+              <div class="form-group">
+                <div class="col-md-8 col-md-offset-4">
+                  <%= f.submit 'Guardar', :class => 'btn btn-agendapro-claro' %>
+                  <%= link_to 'Cancelar', services_path, class: "btn btn-default" %>  
+                </div>
+              </div>
             </div>
           </div>
         </div>

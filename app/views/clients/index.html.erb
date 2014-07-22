@@ -23,7 +23,7 @@
 					<%= select_tag :location, options_from_collection_for_select(@locations, "id", "name", params[:location]), prompt: "Elige un Local...", class: "form-control" %>
 				</div>
 				<div class="col-md-3">
-					<%= select_tag :provider, options_from_collection_for_select(@service_providers, "id", "public_name", params[:provider]), prompt: "Elige un Proveedor...", class: "form-control" %>
+					<%= select_tag :provider, options_from_collection_for_select(@service_providers, "id", "public_name", params[:provider]), prompt: "Elige un Prestador...", class: "form-control" %>
 				</div>
 				<div class="col-md-3">
 					<%= select_tag :service, options_from_collection_for_select(@services, "id", "name", params[:service]), prompt: "Elige un Servicio...", class: "form-control" %>
