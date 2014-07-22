@@ -104,4 +104,33 @@ $(function() {
 			$('#outcallTip').removeClass('hidden');
 		}
 	});
+
+	$('#saveServiceCategryButton').click(function () {
+		if ($('#new_service_category').valid()) {
+			var btn = $(this)
+			btn.button('loading')
+			$.ajax({
+				type: 'POST',
+				url: '/service_categories.json',
+				data: { "service_category": { "name": $('#service_category_name').val() } },
+				dataType: 'json',
+				success: function(service_category){
+					$('#service_service_category_id').append('<option value="'+service_category.id+'">'+service_category.name+'</option>');
+					$('#service_service_category_id option[value="'+service_category.id+'"]').prop('selected', true);
+					$('#serviceCategoryModal').modal('hide');
+				},
+				error: function(xhr){
+					var errors = $.parseJSON(xhr.responseText).errors;
+					var errores = '';
+					for (i in errors) {
+						errores += errors[i];
+					}
+					alert(errores);
+				},
+			}).always(function () {
+				btn.button('reset');
+				$('#service_category_name').val('');
+			});
+		};
+	});
 });

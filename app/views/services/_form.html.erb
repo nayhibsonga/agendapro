@@ -88,15 +88,7 @@
               </div>
               <% if @service.service_category.nil? then @service.build_service_category end %>
               <%= f.fields_for :service_category do |builder| %>
-              <div class="form-group has-feedback hidden">
-                <%= builder.label :name, "Nueva Categoría de Servicio", class: "col-sm-3 control-label" %>
-                <div class="col-sm-9">
-                  <%= builder.text_field :name, class: "form-control", :value => '', placeholder: 'Categoría (requerido)' %>
-                  <span class="help-block"></span>
-                  <span class="form-control-feedback"></span>
-                  <%= builder.hidden_field :company_id, class: "form-control", :value => current_user.company_id %>
-                </div>
-              </div>
+                <%= builder.hidden_field :company_id, class: "form-control", :value => current_user.company_id %>
               <% end %> 
               <div class="form-group has-feedback">
                 <%= f.label :service_category_id, "Categoría de Servicio", class: "col-sm-3 control-label" %>
@@ -108,11 +100,7 @@
               </div>
               <div class="form-group">
                 <div class="col-sm-offset-3 col-sm-9">
-                  <div class="checkbox">
-                    <label>
-                      <input type="checkbox" name="catCheck" id="categoryCheckboxId" value="0" class="checkbox"> Crear nueva categoría de servicios
-                    </label>
-                  </div>
+                  <button type="button" class="btn btn-sm btn-agendapro-claro" data-toggle="modal" data-target="#serviceCategoryModal"><i class="fa fa-plus"></i> Nueva Categoría de Servicio</button>
                 </div>
               </div>
             </div>
@@ -207,14 +195,13 @@
           </div>
         </div>
       </div>
-
       <div class="col-md-12">
         <div class="well">
           <div class="row">
             <div class="col-md-6">
               <div class="form-group">
                 <div class="col-md-8 col-md-offset-4">
-                  <%= f.submit 'Guardar', :class => 'btn btn-agendapro-claro' %>
+                  <%= f.submit 'Guardar', :class => 'btn btn-agendapro-oscuro' %>
                   <%= link_to 'Cancelar', services_path, class: "btn btn-default" %>  
                 </div>
               </div>
@@ -223,6 +210,35 @@
         </div>
       </div>
     <% end %>
+  </div>
+</div>
+
+<div class="modal fade" id="serviceCategoryModal" tabindex="-1" role="dialog" aria-labelledby="serviceCategoryModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h4 class="modal-title serviceCategory-modal-title" id="serviceCategoryModalLabel">Crear Categorías de Servicios</h4>
+      </div>
+      <div class="modal-body break-modal-body">
+        <%= form_for ServiceCategory.new, html: {class: "form-horizontal"} do |sc| %>
+          <div class="form-group has-feedback">
+            <%= sc.label :name, "Nueva Categoría", class: "col-sm-3 control-label" %>
+            <div class="col-sm-6">
+              <%= sc.text_field :name, :class => 'form-control', :placeholder => 'Categoría (requerido)'%>
+              <span class="help-block"></span>
+              <span class="form-control-feedback"></span>
+            </div>
+            <div class="col-sm-3">
+              <input class="btn btn-agendapro-claro" id="saveServiceCategryButton" type="button" value="Guardar" data-loading-text="Guardando...">
+            </div>
+          </div>
+        <% end %>
+      </div>
+      <div class="modal-footer break-modal-footer">
+        <button type="button" class="btn btn-default booking-button" data-dismiss="modal">Cerrar</button>
+      </div>
+    </div>
   </div>
 </div>
 
