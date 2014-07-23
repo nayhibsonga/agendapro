@@ -19,4 +19,10 @@
 <% content_for :scripts do %>
   <%= javascript_include_tag 'validations/validate' %>
   <%= javascript_include_tag 'validations/admin/new-user' %>
+  <%= javascript_include_tag 'split-name' %>
+  <script type="text/javascript">
+  	$(function () {
+  		split_name('#user_full_name', '#user_first_name', '#user_last_name');
+  	});
+  </script>
 <% end %>

@@ -4,10 +4,7 @@ $(function() {
 			error.appendTo(element.next());
 		},
 		rules: {
-			inputName: {
-				required: true
-			},
-			inputLastName: {
+			'user[full_name]': {
 				required: true
 			},
 			inputEmail: {

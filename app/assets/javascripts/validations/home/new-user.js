@@ -12,10 +12,7 @@ $(function() {
 			}
 		},
 		rules: {
-			'user[first_name]': {
-				required: true
-			},
-			'user[last_name]': {
+			'user[full_name]': {
 				required: true
 			},
 			'user[phone]': {

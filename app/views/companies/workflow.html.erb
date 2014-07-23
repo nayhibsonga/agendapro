@@ -93,16 +93,12 @@
                       <% if user_signed_in? %>
                       <div id="user-data">
                         <input type="hidden" name="user" id="user" value="<%= current_user.id %>">
+                        <%= hidden_field_tag :firstName, current_user.first_name %>
+                        <%= hidden_field_tag :lastName, current_user.last_name %>
                         <div class="form-group">
-                          <%= label_tag(:firstName, "Nombre", class: "col-sm-3 control-label") %>
+                          <label for="full_name" class="col-sm-3 control-label">Nombre</label>
                           <div class="col-sm-9">
-                            <%= text_field_tag(:firstName, current_user.first_name, :class => "form-control", :placeholder => "Nombre", :required => true) %>
-                          </div>
-                        </div>
-                        <div class="form-group">
-                          <%= label_tag(:lastName, "Apellido", class: "col-sm-3 control-label") %>
-                          <div class="col-sm-9">
-                            <%= text_field_tag(:lastName, current_user.last_name, :class => "form-control", :placeholder => "Apellido", :required => true) %>
+                            <input type="text" id="full_name" name="user[full_name]" class="form-control" placeholder="Nombre Completo (requerido)">
                           </div>
                         </div>
                         <div class="form-group">
@@ -120,16 +116,12 @@
                       </div>
                       <p id="user-message">Estas agendando como <strong><%= current_user.email %></strong>.<br /> Si no eres tu, haz click <a href="#" id="user-change">aquí</a></p>
                       <% else %>
+                      <%= hidden_field_tag :firstName %>
+                      <%= hidden_field_tag :lastName %>
                       <div class="form-group">
-                        <%= label_tag(:firstName, "Nombre", class: "col-sm-3 control-label") %>
+                        <label for="full_name" class="col-sm-3 control-label">Nombre</label>
                         <div class="col-sm-9">
-                          <%= text_field_tag(:firstName, nil, :class => "form-control", :placeholder => "Nombre", :required => true) %>
-                        </div>
-                      </div>
-                      <div class="form-group">
-                        <%= label_tag(:lastName, "Apellido", class: "col-sm-3 control-label") %>
-                        <div class="col-sm-9">
-                          <%= text_field_tag(:lastName, nil, :class => "form-control", :placeholder => "Apellido", :required => true) %>
+                          <input type="text" id="full_name" name="user[full_name]" class="form-control" placeholder="Nombre Completo (requerido)">
                         </div>
                       </div>
                       <div class="form-group">
@@ -193,8 +185,11 @@
 <% content_for :scripts do %>
   <%= javascript_include_tag 'workflow/services' %>
   <%= javascript_include_tag 'jquery.carouFredSel-6.2.1.js' %>
+  <%= javascript_include_tag 'split-name' %>
   <script type="text/javascript">
     $(function() {
+      compose_name('#full_name', '#firstName', '#lastName');
+      split_name('#full_name', '#firstName', '#lastName');
       $('#user-data').hide();
       $('#user-change').click(function () {
         $('#user-data').show();

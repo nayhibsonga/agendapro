@@ -29,19 +29,13 @@
                 </div>
                 <div class="contact_form col-sm-offset-1 col-md-offset-1 col-sm-6 col-md-6 well">
                 	<%= form_tag("pcontact", method: "post", id: 'contact' ) do %>
+                        <%= hidden_field_tag :inputName %>
+                        <%= hidden_field_tag :inputLastname %>
                         <div class="row">
-                            <div class="col-sm-6 col-md-6">
+                            <div class="col-sm-12 col-md-12">
                                 <div class="form-group has-feedback">
-                                    <%= label_tag(:inputName, "Nombre", :class => "label-contacto") %>
-                                    <%= text_field_tag(:inputName, nil, :class => "form-control", :placeholder => "Nombre (requerido)", :required => true) %>
-                                    <span class="help-block"></span>
-                                    <span class="form-control-feedback"></span>
-                                </div>
-                            </div>
-                            <div class="col-sm-6 col-md-6">
-                                <div class="form-group has-feedback">
-                                    <%= label_tag(:inputLastname, "Apellido", :class => "label-contacto") %>
-                                    <%= text_field_tag(:inputLastname, nil, :class => "form-control", :placeholder => "Apellido (requerido)", :required => true) %>
+                                    <label for="full_name" class="label-contacto">Nombre</label>
+                                    <input type="text" id="full_name" name="user[full_name]" class="form-control" placeholder="Nombre Completo (requerido)">
                                     <span class="help-block"></span>
                                     <span class="form-control-feedback"></span>
                                 </div>
@@ -81,8 +75,10 @@
 
 <% content_for :scripts do %>
 <%= javascript_include_tag 'validations/home/contact' %>
+<%= javascript_include_tag 'split-name' %>
 <script>
     $(function() {
+        split_name('#full_name', '#inputName', '#inputLastname');
         $("#c_contact").addClass("active")
         $("body").addClass("collapsing_header")
     });
