@@ -127,8 +127,11 @@ class BookingMailer < ActionMailer::Base
 						{
 							:name => 'CLIENTEMAIL',
 							:content => book_info.client.email
+						},
+						{
+							:name => 'COMPANYCOMMENT',
+							:content => book_info.company_comment
 						}
-
 					]
 				}
 			],
@@ -198,6 +201,10 @@ class BookingMailer < ActionMailer::Base
 					{
 						:name => 'CLIENTEMAIL',
 						:content => book_info.client.email
+					},
+					{
+						:name => 'COMPANYCOMMENT',
+						:content => book_info.company_comment
 					}
 				]
 			}
@@ -343,6 +350,10 @@ class BookingMailer < ActionMailer::Base
 						{
 							:name => 'CLIENTMAIL',
 							:content => book_info.client.email
+						},
+						{
+							:name => 'COMPANYCOMMENT',
+							:content => book_info.company_comment
 						}
 					]
 				}
@@ -414,6 +425,10 @@ class BookingMailer < ActionMailer::Base
 					{
 						:name => 'CLIENTEMAIL',
 						:content => book_info.client.email
+					},
+					{
+						:name => 'COMPANYCOMMENT',
+						:content => book_info.company_comment
 					}
 				]
 			}
@@ -511,6 +526,10 @@ class BookingMailer < ActionMailer::Base
 						{
 							:name => 'CLIENTMAIL',
 							:content => book_info.client.email
+						},
+						{
+							:name => 'COMPANYCOMMENT',
+							:content => book_info.company_comment
 						}
 					]
 				}
@@ -575,6 +594,10 @@ class BookingMailer < ActionMailer::Base
 					{
 						:name => 'CLIENTEMAIL',
 						:content => book_info.client.email
+					},
+					{
+						:name => 'COMPANYCOMMENT',
+						:content => book_info.company_comment
 					}
 				]
 			}
@@ -708,6 +731,10 @@ class BookingMailer < ActionMailer::Base
 						{
 							:name => 'CLIENTMAIL',
 							:content => book_info.client.email
+						},
+						{
+							:name => 'COMPANYCOMMENT',
+							:content => book_info.company_comment
 						}
 					]
 				}
@@ -772,6 +799,10 @@ class BookingMailer < ActionMailer::Base
 					{
 						:name => 'CLIENTEMAIL',
 						:content => book_info.client.email
+					},
+					{
+						:name => 'COMPANYCOMMENT',
+						:content => book_info.company_comment
 					}
 				]
 			}
@@ -917,6 +948,10 @@ class BookingMailer < ActionMailer::Base
 					{
 						:name => 'CLIENTMAIL',
 						:content => book_info.client.email
+					},
+					{
+						:name => 'COMPANYCOMMENT',
+						:content => book_info.company_comment
 					}
 				  ]
 				}
@@ -981,6 +1016,10 @@ class BookingMailer < ActionMailer::Base
 					{
 						:name => 'CLIENTEMAIL',
 						:content => book_info.client.email
+					},
+					{
+						:name => 'COMPANYCOMMENT',
+						:content => book_info.company_comment
 					}
 				]
 			}
