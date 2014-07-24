@@ -23,7 +23,12 @@
 		<% if @results.empty? %>
 			<a href="#">
 				<div class="bloque-local">
-					<h3>No se encontraron resultados para <em><%= params[:inputSearch] %></em>.</h3>
+					<div class="img-circulo">
+						<%= image_tag 'mobile/sad_ap.png', :alt => 'AgendaPro', :size => "80x80" %>
+					</div>
+					<h3>Lo sentimos</h3>
+					<p>No encontramos resultados para:</p>
+					<p><%= params[:inputSearch] %></p>
 					<div class="clear"></div>
 				</div>
 			</a>

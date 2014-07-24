@@ -78,11 +78,36 @@
 							</div>
 						</div>
 					</div>
-					
 					<% i = i + 1 end %>
 					<%= will_paginate @results, renderer: BootstrapPagination::Rails %>
+
 					<% if @results.empty? %>
-						<h4>No se encontraron resultados para <strong><%= params[:inputSearch] %></strong>.</h4>
+					<div class="panel panel-info"> 
+						<div class="panel-heading">
+							<div class="head-local-search row">
+								<div class="col-sm-1">
+									<div class="number-pin">
+										<span>:(</span>
+									</div>
+								</div>
+								<div class="col-sm-9">
+									<h3 class="panel-title title-local">Lo sentimos</h3> 
+								</div>
+							</div>
+						</div>
+
+						<div class="panel-body">
+							<div class="box-tabs">
+								<div class="data-local-search">
+									<p>No se encontraron resultados para:</p>
+									<p><strong><%= params[:inputSearch] %></strong></p>
+								</div>
+							</div>
+							<div class="img-local-search">
+								<%= image_tag 'mobile/sad_ap.png', :alt => 'AgendaPro', :size => "80x80" %>
+							</div>
+						</div>
+					</div>
 					<% end %>
 
 				</div>
