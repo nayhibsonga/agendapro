@@ -6,6 +6,14 @@ html, body{
 body{
 	background: rgba(163,199,198,1); 
 	background: url(<%= asset_path 'backgrounds/wild_oliva_light_head.png' %>);
+	/*background: #cbcdcc;
+	background: -moz-linear-gradient(left,  #cbcdcc 0%, #dddfde 100%);
+	background: -webkit-gradient(linear, left top, right top, color-stop(0%,#cbcdcc), color-stop(100%,#dddfde));
+	background: -webkit-linear-gradient(left,  #cbcdcc 0%,#dddfde 100%);
+	background: -o-linear-gradient(left,  #cbcdcc 0%,#dddfde 100%);
+	background: -ms-linear-gradient(left,  #cbcdcc 0%,#dddfde 100%);
+	background: linear-gradient(to right,  #cbcdcc 0%,#dddfde 100%);
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#cbcdcc', endColorstr='#dddfde',GradientType=1 );*/
 }
 a {
 	color: rgba(61,154,150,1);
@@ -225,6 +233,14 @@ header{
 #admin-content{
 	background: #ffffff;
 	background: url(<%= asset_path 'backgrounds/wild_oliva_light.png' %>);
+	/*background: #ececec;
+	background: -moz-linear-gradient(top,  #ececec 0%, #f0f6f6 100%);
+	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#ececec), color-stop(100%,#f0f6f6));
+	background: -webkit-linear-gradient(top,  #ececec 0%,#f0f6f6 100%);
+	background: -o-linear-gradient(top,  #ececec 0%,#f0f6f6 100%);
+	background: -ms-linear-gradient(top,  #ececec 0%,#f0f6f6 100%);
+	background: linear-gradient(to bottom,  #ececec 0%,#f0f6f6 100%);
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ececec', endColorstr='#f0f6f6',GradientType=0 );*/
 	min-height: 100%;
 	width: 83.33333333333334%;
 	float:left;
@@ -258,6 +274,7 @@ header{
 }
 .menu-lateral li{
 	border-bottom: 1px solid #ccc;
+	cursor: pointer;
 }
 .menu-lateral ul li{
 	border-bottom: none;
@@ -319,105 +336,7 @@ li.colapsado-ok> a> span.colapse-hidden{
 	margin-right: 10px;
 	font-size: 21px;
 }
-.panel {
-  margin-bottom: 20px;
-  background-color: #ffffff;
-  border: 1px solid transparent;
-  border-radius: 4px;
-  -webkit-box-shadow: 0 1px 1px rgba(0, 0, 0, 0.05);
-  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.05);
-}
-.panel-body {
-  padding: 15px;
-}
-.panel-body:before,
-.panel-body:after {
-  content: " ";
-  /* 1 */
 
-  display: table;
-  /* 2 */
-
-}
-.panel-body:after {
-  clear: both;
-}
-.panel-body:before,
-.panel-body:after {
-  content: " ";
-  /* 1 */
-
-  display: table;
-  /* 2 */
-
-}
-.panel-body:after {
-  clear: both;
-}
-.panel > .list-group {
-  margin-bottom: 0;
-  max-height: 300px;
-  overflow: auto;
-}
-.panel > .list-group .list-group-item {
-  border-width: 1px 0;
-}
-.panel > .list-group .list-group-item:first-child {
-  border-top-right-radius: 0;
-  border-top-left-radius: 0;
-}
-.panel > .list-group .list-group-item:last-child {
-  border-bottom: 0;
-}
-.panel-heading + .list-group .list-group-item:first-child {
-  border-top-width: 0;
-}
-.panel > .table {
-  margin-bottom: 0;
-}
-.panel > .panel-body + .table {
-  border-top: 1px solid #dddddd;
-}
-.panel-heading {
-  padding: 10px 15px;
-  border-bottom: 1px solid transparent;
-  border-top-right-radius: 3px;
-  border-top-left-radius: 3px;
-}
-.panel-title {
-  margin-top: 0;
-  margin-bottom: 0;
-  font-size: 16px;
-}
-.panel-title > a {
-  color: inherit;
-}
-.panel-footer {
-  padding: 10px 15px;
-  background-color: #f5f5f5;
-  border-top: 1px solid #dddddd;
-  border-bottom-right-radius: 3px;
-  border-bottom-left-radius: 3px;
-}
-.panel-info {
-	border-color: rgba(27,115,112,0.6);
-}
-.panel-info>.panel-heading {
-	color: rgba(27,115,112,1);
-	background-color: rgba(27,115,112,0.4);
-	border-color: rgba(27,115,112,0.67);
-}
-.panel-group > .panel > .panel-heading > h4 {
-	cursor: pointer;
-}
-.btn-primary {
-	color: #fff;
-	background-color: rgba(27,115,112,0.9);
-	border-color: rgba(27,115,112,1);
-}
-.btn-primary:hover{
-	background-color: rgba(27,115,112,1);
-}
 #calendar{
 	margin-top: 15px;
 }
@@ -502,51 +421,6 @@ li.selected> div.control-box{
 	background: rgba(27,115,112,0.4);
 }
 
-/* Botones Modificados AgendaPro */
-.btn-success{
-	color: #ffffff;
-	background-color: #D55330;
-	border-color: #E64215;
-}
-.btn-success:hover{
-	background-color: #EB4114;
-	border-color: #EB4114;
-}
-
-.btn-agendapro-oscuro{
-    color: #ffffff;
-    background-color: rgba(27,115,112,1);
-    border-color: rgba(24, 101, 99, 1);
-}
-
-.btn-agendapro-oscuro:hover{
-    background-color: rgba(24, 101, 99, 1);
-}
-
-.btn-agendapro-claro{
-    color: #ffffff;
-    background-color: rgba(61,154,150,1);
-    border-color: rgba(55, 133, 129, 1);
-}
-
-.btn-agendapro-claro:hover{
-    background-color: rgba(55, 133, 129, 1);
-}
-
-
-/* Estilo de los Modales */
-.modal-content{
-	background: url(<%= asset_path 'backgrounds/wild_oliva_light.png' %>);
-}
-
-.modal-header{
-    background: url(<%= asset_path 'backgrounds/wild_oliva_light_head.png' %>);
-}
-
-.modal-footer{
-	background: url(<%= asset_path 'backgrounds/wild_oliva_light_head.png' %>);
-}
-
 .ui-datepicker-trigger {
 	margin-left: 5px;
 }
@@ -562,25 +436,6 @@ li.selected> div.control-box{
 
 /* Paginación */
 
-.pagination {
-	display: inline-block;
-	padding-left: 0;
-	margin-top: 0px;
-	margin-right: auto;
-	margin-bottom: 0px;
-	margin-left: auto;
-	border-radius: 4px;
-}
-.panel-body div.row{
-	margin-left: 0px;
-}
-.pagination>.active>a, .pagination>.active>span, .pagination>.active>a:hover, .pagination>.active>span:hover, .pagination>.active>a:focus, .pagination>.active>span:focus {
-	background-color: #1b7370;
-	border-color: #1b7370;
-}
-.pagination>li>a, .pagination>li>span {
-	color: #1b7370;
-}
 .fixed-panel{
     max-height: 250px;
     overflow-y:scroll; 

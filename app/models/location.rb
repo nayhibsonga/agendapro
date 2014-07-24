@@ -42,7 +42,7 @@ class Location < ActiveRecord::Base
 				end
 			end
 			if notOutcall
-				errors.add(:base, "El local a domicilio no puede tener proveedores que realizan servicios no a domicilio.")
+				errors.add(:base, "El local a domicilio no puede tener prestadores que realizan servicios no a domicilio.")
 			end
 		end
 	end

@@ -9,42 +9,54 @@
 
 <div class="container">
 	<div class="row"> 
-		<div class="col-md-6 well">
+		<div class="col-md-5 well">
 			<%= form_for @location, html: {class: "form-horizontal"} do |f| %>
-				<div class="form-group">
-					<%= f.label :name, "Nombre: ", class: "col-sm-3 control-label" %>
+				<div class="form-group has-feedback">
+					<%= f.label :name, "Nombre", class: "col-sm-3 control-label" %>
 					<div class="col-sm-9">
-						<%= f.text_field :name, :autofocus => true, class: "form-control" %>
+						<%= f.text_field :name, :autofocus => true, class: "form-control", placeholder: 'Nombre (requerido)' %>
+						<span class="help-block"></span>
+              			<span class="form-control-feedback"></span>
 					</div>
 				</div>
-				<div class="form-group">
-					<%= label_tag :country, "País: ", class: "col-sm-3 control-label" %>
+				<div class="form-group has-feedback">
+					<%= label_tag :country, "País", class: "col-sm-3 control-label" %>
 					<div class="col-sm-9">
 						<%= select_tag :country, options_from_collection_for_select(Country.all.order(:name), :id, :name), class: "form-control", include_blank: true %>
+						<span class="help-block"></span>
+              			<span class="form-control-feedback"></span>
 					</div>
 				</div>
-				<div class="form-group">
-					<%= label_tag :region, "Región: ", class: "col-sm-3 control-label" %>
+				<div class="form-group has-feedback">
+					<%= label_tag :region, "Región", class: "col-sm-3 control-label" %>
 					<div class="col-sm-9">
 						<%= select_tag :region, options_from_collection_for_select(Region.all.order(:name), :id, :name), class: "form-control", :disabled => true %>
+						<span class="help-block"></span>
+              			<span class="form-control-feedback"></span>
 					</div>
 				</div>
-				<div class="form-group">
-					<%= label_tag :city, "Ciudad: ", class: "col-sm-3 control-label" %>
+				<div class="form-group has-feedback">
+					<%= label_tag :city, "Ciudad", class: "col-sm-3 control-label" %>
 					<div class="col-sm-9">
 						<%= select_tag :city, options_from_collection_for_select(City.all.order(:name), :id, :name), class: "form-control", :disabled => true %>
+						<span class="help-block"></span>
+              			<span class="form-control-feedback"></span>
 					</div>
 				</div>
-				<div class="form-group">
-					<%= f.label :district_id, "Comuna: ", class: "col-sm-3 control-label" %>
+				<div class="form-group has-feedback">
+					<%= f.label :district_id, "Comuna", class: "col-sm-3 control-label" %>
 					<div class="col-sm-9">
 						<%= f.collection_select :district_id, District.all.order(:name), :id, :name, {}, { class: "form-control", :disabled => true }%>
+						<span class="help-block"></span>
+              			<span class="form-control-feedback"></span>
 					</div>
 				</div>
-				<div class="form-group">
-					<%= f.label :address, "Dirección: ", class: "col-sm-3 control-label" %>
+				<div class="form-group has-feedback">
+					<%= f.label :address, "Dirección", class: "col-sm-3 control-label" %>
 					<div class="col-sm-9">
-						<%= f.text_field :address, class: "form-control" %>
+						<%= f.text_field :address, class: "form-control", placeholder: 'Dirección (requerido)' %>
+						<span class="help-block"></span>
+              			<span class="form-control-feedback"></span>
 						<div class="checkbox">
 			                <label>
 			                	<%= f.check_box :outcall %> Sin Dirección (sólo servicios a domicilio).
@@ -55,10 +67,25 @@
 			           	</div>
 					</div>
 				</div>
-				<div class="form-group">
-					<%= f.label :phone, "Teléfono: ", class: "col-sm-3 control-label" %>
+				<div class="form-group has-feedback">
+					<%= f.label :phone, "Teléfono", class: "col-sm-3 control-label" %>
 					<div class="col-sm-9">
-						<%= f.text_field :phone, class: "form-control" %>
+						<%= f.text_field :phone, class: "form-control", placeholder: 'Teléfono (requerido)' %>
+						<span class="help-block"></span>
+              			<span class="form-control-feedback"></span>
+					</div>
+				</div>
+				<div class="form-group has-feedback">
+					<%= f.label :email, 'Email', class: 'control-label col-sm-3' %>
+					<div class="col-sm-9">
+						<%= f.email_field :email, class: 'form-control', placeholder: 'ejemplo@dominio.com' %>
+						<span class="help-block"></span>
+						<span class="form-control-feedback"></span>
+						<div class="checkbox">
+							<label>
+								<%= f.check_box :notification %> Recibir notificaciones.
+							</label>
+						</div>
 					</div>
 				</div>
 
@@ -66,14 +93,14 @@
 				<%= f.hidden_field :longitude %>
 				<div class="form-group">
 					<div class="actions col-sm-offset-3 col-sm-9">
-						<button type="button" class="btn btn-primary" id="saveLocation">Guardar</button>
-						<%= link_to 'Cancelar'.html_safe, locations_path, :class => "btn btn-danger" %>    
+						<button type="button" class="btn btn-agendapro-claro" id="saveLocation">Guardar</button>
+						<%= link_to 'Cancelar'.html_safe, locations_path, :class => "btn btn-default" %>
 					</div>
 				</div>
 			<% end %>
 		</div>
 
-		<div class="col-md-6">
+		<div class="col-md-7">
 			<div class="panel panel-info">
 				<div class="panel-heading">
 					<h3 class="panel-title">

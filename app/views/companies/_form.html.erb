@@ -13,35 +13,39 @@
 				</div>
 			<% end %>
 
-			<div class="form-group">
-				<%= f.label :name, 'Nombre: ', :class => 'col-sm-3 control-label' %>
+			<div class="form-group has-feedback">
+				<%= f.label :name, 'Nombre', :class => 'col-sm-3 control-label' %>
 				<div class="col-sm-5">
-					<%= f.text_field :name, :autofocus => true, :class => 'form-control' %>
+					<%= f.text_field :name, :autofocus => true, :class => 'form-control', :placeholder => 'Nombre Compañía (requerido)' %>
 					<span class="help-block"></span>
+					<span class="form-control-feedback"></span>
 				</div>
 			</div>
 			<div class="form-group">
-				<%= f.label :description, 'Descripción: ', :class => 'col-sm-3 control-label' %>
+				<%= f.label :description, 'Descripción', :class => 'col-sm-3 control-label' %>
 				<div class="col-sm-5">
 					<%= f.text_area :description, :class => 'form-control', :rows => "7" %>
 				</div>
 			</div>
-			<div class="form-group">
-				<%= f.label :web_address, 'Dirección Sitio AgendaPro:', :class => 'col-sm-3 control-label' %>
-				<div class="col-sm-5 input-group">
-					<%= f.text_field :web_address, :required => true, :class => 'form-control' %>
-					<span class="input-group-addon">.agendapro.cl</span>
+			<div class="form-group has-feedback">
+				<%= f.label :web_address, 'Dirección Sitio AgendaPro', :class => 'col-sm-3 control-label' %>
+				<div class="col-sm-5">
+					<div class="input-group">
+						<%= f.text_field :web_address, :required => true, :class => 'form-control', :placeholder => 'Empresa (requerido)' %>
+						<span class="input-group-addon">.agendapro.cl</span>
+					</div>
 				</div>
 				<div class="col-sm-offset-3 col-sm-5">
 					<span class="help-block"></span>
 				</div>
 				<span class="help-block">Esta es la página del sitio en AgendaPro. <strong>NO recomendamos editarla.</strong></span>
 			</div>
-			<div class="form-group">
-				<%= f.label :logo, 'Logo Compañía: ', :class => 'col-sm-3 control-label' %>
+			<div class="form-group has-feedback">
+				<%= f.label :logo, 'Logo Compañía', :class => 'col-sm-3 control-label' %>
 				<div class="col-sm-5">
 					<%= f.file_field :logo, :accept => 'image/png,image/gif,image/jpeg', :class => 'form-control' %>
 					<span class="help-block"></span>
+					<span class="form-control-feedback"></span>
 					<div class="checkbox">
 						<label>
 							<%= f.check_box :remove_logo %> Quitar Logo
@@ -53,7 +57,7 @@
 				<% end %>
 			</div>
 			<div class="form-group">
-				<%= f.label :cancellation_policy, 'Política de Cancelación: ', :class => 'col-sm-3 control-label' %>
+				<%= f.label :cancellation_policy, 'Política de Cancelación', :class => 'col-sm-3 control-label' %>
 				<div class="col-sm-5">
 					<%= f.text_area :cancellation_policy, :class => 'form-control', :rows => "7" %>
 				</div>
@@ -61,8 +65,8 @@
 
 			<div class="form-group">
 				<div class="col-sm-offset-3 col-sm-4">
-				 <%= f.submit 'Guardar', :class => 'btn btn-primary' %>
-				 <%= link_to 'Cancelar', dashboard_path, :class => "btn btn-danger" %>
+				 <%= f.submit 'Guardar', :class => 'btn btn-agendapro-claro' %>
+				 <%= link_to 'Cancelar', dashboard_path, :class => "btn btn-default" %>
 				</div> 
 			</div>
 		<% end %>

@@ -646,7 +646,17 @@ function editBookingModal(eventId) {
 			$('.booking-modal-title').empty();
 			$('.booking-modal-footer').empty();
 			$('.booking-modal-title').append('Editando Reserva');
-			$('.booking-modal-footer').append('<button type="button" class="btn btn-default booking-button" data-dismiss="modal">Cancelar</button><button type="button" class="btn btn-primary booking-button" onclick="editBooking('+eventId+')">Guardar</button><button type="button" class="btn btn-danger booking-button" onclick="deleteBooking('+eventId+')">Eliminar</button>');
+			$('.booking-modal-footer').append(
+				'<button type="button" class="btn btn-default booking-button" data-dismiss="modal">Cerrar</button>' +
+				'<button type="button" class="btn btn-agendapro-claro booking-button" onclick="editBooking('+eventId+')">Guardar</button>'
+			);
+			$('#booking_status_id').closest('.col-md-6').append(
+				'<div class="form-group">' +
+					'<div class="col-sm-offset-4 col-sm-8">' +
+						'<button type="button" class="btn btn-danger btn-ss btn-block booking-button" onclick="deleteBooking('+eventId+')">Cancelar Reserva</button>' +
+					'</div>' +
+				'</div>'
+			);
 
 			if ( booking.service_provider_id > 0) {
 				$.getJSON('/provider_services', {id: booking.service_provider_id}, function (services) {
@@ -735,7 +745,10 @@ function createBookingModal(date, provider_id) {
 			$('.booking-modal-title').empty();
 			$('.booking-modal-footer').empty();
 			$('.booking-modal-title').append('Nueva Reserva');
-			$('.booking-modal-footer').append('<button type="button" class="btn btn-default booking-button" data-dismiss="modal">Cancelar</button><button type="button" class="btn btn-primary booking-button" onclick="createBooking()">Guardar</button>');
+			$('.booking-modal-footer').append(
+				'<button type="button" class="btn btn-default booking-button" data-dismiss="modal">Cerrar</button>' +
+				'<button type="button" class="btn btn-agendapro-claro booking-button" onclick="createBooking()">Guardar</button>'
+			);
 
 			if (provider_id) {
 				$('#booking_service_provider_id').val(provider_id);
@@ -754,28 +767,34 @@ function createBookingModal(date, provider_id) {
 			$('#bookingModal').modal('show');	
 		}
 		else {
-			alertId.showAlert('<h3>Este local no tiene proveedores o servicios</h3>Por favor complete los datos antes de reservar.');
+			alertId.showAlert('<h3>Este local no tiene prestadores o servicios</h3>Por favor complete los datos antes de reservar.');
 			bookingModalOpen = false;
 		}
 	});
 }
 
 function editBooking(eventId) {
-	$('.booking-button').attr("disabled", "disabled");
-	$('.booking-modal-footer').prepend('<%= image_tag "small-loader.gif", :alt => "Loader", :id => "small_loader" %>');
-	saveBooking('PATCH','/'+eventId);
+	if ($('#new_booking').valid()) {
+		$('.booking-button').attr("disabled", "disabled");
+		$('.booking-modal-footer').prepend('<%= image_tag "small-loader.gif", :alt => "Loader", :id => "small_loader" %>');
+		saveBooking('PATCH','/'+eventId);
+	};
 }
 
 function createBooking() {
-	$('.booking-button').attr("disabled", "disabled");
-	$('.booking-modal-footer').prepend('<%= image_tag "small-loader.gif", :alt => "Loader", :id => "small_loader" %>');
-	saveBooking('POST','');
+	if ($('#new_booking').valid()) {
+		$('.booking-button').attr("disabled", "disabled");
+		$('.booking-modal-footer').prepend('<%= image_tag "small-loader.gif", :alt => "Loader", :id => "small_loader" %>');
+		saveBooking('POST','');
+	};
 }
 
 function deleteBooking(eventId) {
-	$('.booking-button').attr("disabled", "disabled");
-	$('.booking-modal-footer').prepend('<%= image_tag "small-loader.gif", :alt => "Loader", :id => "small_loader" %>');
-	saveBooking('DELETE','/'+eventId);
+	if (confirm('¿Estás seguro que quiere cancelar esta reserva?\nEsta acción no se puede revertir.')) {
+		$('.booking-button').attr("disabled", "disabled");
+		$('.booking-modal-footer').prepend('<%= image_tag "small-loader.gif", :alt => "Loader", :id => "small_loader" %>');
+		saveBooking('DELETE','/'+eventId);
+	};
 }
 
 function jsonBooking() {
@@ -1045,7 +1064,10 @@ function createBreakModal(date, providerId) {
 	}
 	$('#provider_break_name').val('');
 	$('.break-modal-footer').empty();
-	$('.break-modal-footer').append('<button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button><button type="button" class="btn btn-primary" id="save_break" onClick="saveBreak(\'POST\',\'\')">Guardar</button>');
+	$('.break-modal-footer').append(
+		'<button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>' +
+		'<button type="button" class="btn btn-agendapro-claro" id="save_break" onClick="saveBreak(\'POST\',\'\')">Guardar</button>'
+	);
 	$('#breakModal').modal('show');
 }
 
@@ -1078,7 +1100,11 @@ function editBreakModal(breakId) {
 		$('#provider_break_name').val(provider_break.name);
 		$('#provider_break_service_provider_id option[value="'+provider_break.service_provider_id+'"]').attr("selected",true);;
 		$('.break-modal-footer').empty();
-		$('.break-modal-footer').append('<button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button><button type="button" class="btn btn-primary" id="edit_break" onClick="saveBreak(\'PATCH\',\'/'+breakId+'\')">Guardar</button><button type="button" class="btn btn-danger" id="destroy_break" onClick="saveBreak(\'DELETE\',\'/'+breakId+'\')">Eliminar</button>');
+		$('.break-modal-footer').append(
+			'<button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>' +
+			'<button type="button" class="btn btn-danger" id="destroy_break" onClick="saveBreak(\'DELETE\',\'/'+breakId+'\')">Eliminar</button>' +
+			'<button type="button" class="btn btn-agendapro-claro" id="edit_break" onClick="saveBreak(\'PATCH\',\'/'+breakId+'\')">Guardar</button>'
+		);
 		$('#breakModal').modal('show');
 	});
 }
@@ -1407,10 +1433,11 @@ $(function() {
 		});
 	});
 
-	$(".ui-datepicker-trigger").addClass("btn btn-primary pull-right")
+	$(".ui-datepicker-trigger").addClass("btn btn-agendapro-claro pull-right")
 
 	$('#bookingModal').on('hidden.bs.modal', function (e) {
 		$('#booking_service_id').attr('disabled', true);
+		$('#booking_status_id').parent().parent().next().remove();
 		bookingModalOpen = false;
 	});
 

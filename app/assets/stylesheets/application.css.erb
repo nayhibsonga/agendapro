@@ -1,0 +1,374 @@
+ /*
+ *= require bootstrap
+ *= require bootstrap-theme
+ *= require font-awesome.min
+ */
+
+/*****************************
+**	Seteo de Bootstrap		**
+*****************************/
+
+/**			Panels			**/
+	.panel > .list-group {
+	  max-height: 300px;
+	  overflow: auto;
+	}
+	.panel > div > .list-group {
+	  max-height: 300px;
+	  overflow: auto;
+	}
+	.panel-info {
+		border-color: rgba(27, 115, 112, 0.6);
+	}
+	.panel-info>.panel-heading {
+		color: #ffffff;/*rgba(27, 115, 112, 1);*/
+		border-color: rgba(27, 115, 112, 0.67);
+		background-image: -webkit-linear-gradient(top, #259F9D 0%, #008881 100%);
+		background-image:      -o-linear-gradient(top, #259F9D 0%, #008881 100%);
+		background-image: -webkit-gradient(linear, left top, left bottom, from(#259F9D), to(#008881));
+		background-image:         linear-gradient(to bottom, #259F9D 0%, #008881 100%);
+		filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ff259F9D', endColorstr='#ff008881', GradientType=0);
+		background-repeat: repeat-x;
+	}
+	.panel-title {
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+	}
+	.panel-title > input[type="checkbox"] {
+		margin-right: 5px;
+	}
+	.panel-group > .panel > .panel-heading > .panel-title {
+		cursor: pointer;
+	}
+	.panel-group > .panel > .panel-heading > .panel-title > a:after,
+	.panel-group > .panel > .panel-heading > .panel-title.collapsed > a:after,
+	.panel-group > .panel > .panel-heading > .panel-title > a.collapsed:after {
+		float: right !important;
+		/* Font awesome style */
+		font-family: 'FontAwesome';
+		src: url(<%= font_path('fontawesome-webfont.eot?v=4.1.0') %>);
+		src: url(<%= font_path('fontawesome-webfont.eot?#iefix&v=4.1.0') %>) format('embedded-opentype'), url(<%= font_path('fontawesome-webfont.woff?v=4.1.0') %>) format('woff'), url(<%= font_path('fontawesome-webfont.ttf?v=4.1.0') %>) format('truetype'), url(<%= font_path('fontawesome-webfont.svg?v=4.1.0#fontawesomeregular') %>) format('svg');
+		font-weight: normal;
+		font-style: normal;
+		display: inline-block;
+		font-family: FontAwesome;
+		font-style: normal;
+		font-weight: normal;
+		line-height: 1;
+		-webkit-font-smoothing: antialiased;
+		-moz-osx-font-smoothing: grayscale;
+	}
+	.panel-group > .panel > .panel-heading > .panel-title > a:after {
+		/* Font symbol */
+		content: "\f0d7";
+	}
+	.panel-group > .panel > .panel-heading > .panel-title.collapsed > a:after,
+	.panel-group > .panel > .panel-heading > .panel-title > a.collapsed:after {
+		/* Font symbol */
+		content: "\f0d9";
+	}
+/**			End Panels			**/
+
+/**			AdendaPro Button			**/
+	.btn-agendapro-oscuro {
+	  color: #fff;
+	  background-color: #1B7370;
+	  border-color: #186563;
+	}
+	.btn-agendapro-oscuro:hover,
+	.btn-agendapro-oscuro:focus,
+	.btn-agendapro-oscuro:active,
+	.btn-agendapro-oscuro.active,
+	.open > .dropdown-toggle.btn-agendapro-oscuro {
+	  color: #fff;
+	  background-color: #0F5250;
+	  border-color: #104341;
+	}
+	.btn-agendapro-oscuro:active,
+	.btn-agendapro-oscuro.active,
+	.open > .dropdown-toggle.btn-agendapro-oscuro {
+	  background-image: none;
+	}
+	.btn-agendapro-oscuro.disabled,
+	.btn-agendapro-oscuro[disabled],
+	fieldset[disabled] .btn-agendapro-oscuro,
+	.btn-agendapro-oscuro.disabled:hover,
+	.btn-agendapro-oscuro[disabled]:hover,
+	fieldset[disabled] .btn-agendapro-oscuro:hover,
+	.btn-agendapro-oscuro.disabled:focus,
+	.btn-agendapro-oscuro[disabled]:focus,
+	fieldset[disabled] .btn-agendapro-oscuro:focus,
+	.btn-agendapro-oscuro.disabled:active,
+	.btn-agendapro-oscuro[disabled]:active,
+	fieldset[disabled] .btn-agendapro-oscuro:active,
+	.btn-agendapro-oscuro.disabled.active,
+	.btn-agendapro-oscuro[disabled].active,
+	fieldset[disabled] .btn-agendapro-oscuro.active {
+	  background-color: #1B7370;
+	  border-color: #186563;
+	}
+	.btn-agendapro-oscuro {
+	  text-shadow: 0 -1px 0 rgba(0, 0, 0, .2);
+	  -webkit-box-shadow: inset 0 1px 0 rgba(255, 255, 255, .15), 0 1px 1px rgba(0, 0, 0, .075);
+	          box-shadow: inset 0 1px 0 rgba(255, 255, 255, .15), 0 1px 1px rgba(0, 0, 0, .075);
+	}
+	.btn-agendapro-oscuro:active,
+	.btn-agendapro-oscuro.active {
+	  -webkit-box-shadow: inset 0 3px 5px rgba(0, 0, 0, .125);
+	          box-shadow: inset 0 3px 5px rgba(0, 0, 0, .125);
+	}
+	.btn-agendapro-oscuro {
+	  background-image: -webkit-linear-gradient(top, #1B7370 0%, #0E4D4B 100%);
+	  background-image:      -o-linear-gradient(top, #1B7370 0%, #0E4D4B 100%);
+	  background-image: -webkit-gradient(linear, left top, left bottom, from(#1B7370), to(#0E4D4B));
+	  background-image:         linear-gradient(to bottom, #1B7370 0%, #0E4D4B 100%);
+	  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ff1B7370', endColorstr='#ff0E4D4B', GradientType=0);
+	  filter: progid:DXImageTransform.Microsoft.gradient(enabled = false);
+	  background-repeat: repeat-x;
+	  border-color: #186563;
+	}
+	.btn-agendapro-oscuro:hover,
+	.btn-agendapro-oscuro:focus {
+	  background-color: #0E4D4B;
+	  background-position: 0 -15px;
+	}
+	.btn-agendapro-oscuro:active,
+	.btn-agendapro-oscuro.active {
+	  background-color: #0E4D4B;
+	  border-color: #186563;
+	}
+	.btn-agendapro-oscuro:disabled,
+	.btn-agendapro-oscuro[disabled] {
+	  background-color: #0E4D4B;
+	  background-image: none;
+	}
+
+	.btn-agendapro-claro {
+	  color: #fff;
+	  background-color: #3D9A96;
+	  border-color: #378581;
+	}
+	.btn-agendapro-claro:hover,
+	.btn-agendapro-claro:focus,
+	.btn-agendapro-claro:active,
+	.btn-agendapro-claro.active,
+	.open > .dropdown-toggle.btn-agendapro-claro {
+	  color: #fff;
+	  background-color: #2A7874;
+	  border-color: #28615E;
+	}
+	.btn-agendapro-claro:active,
+	.btn-agendapro-claro.active,
+	.open > .dropdown-toggle.btn-agendapro-claro {
+	  background-image: none;
+	}
+	.btn-agendapro-claro.disabled,
+	.btn-agendapro-claro[disabled],
+	fieldset[disabled] .btn-agendapro-claro,
+	.btn-agendapro-claro.disabled:hover,
+	.btn-agendapro-claro[disabled]:hover,
+	fieldset[disabled] .btn-agendapro-claro:hover,
+	.btn-agendapro-claro.disabled:focus,
+	.btn-agendapro-claro[disabled]:focus,
+	fieldset[disabled] .btn-agendapro-claro:focus,
+	.btn-agendapro-claro.disabled:active,
+	.btn-agendapro-claro[disabled]:active,
+	fieldset[disabled] .btn-agendapro-claro:active,
+	.btn-agendapro-claro.disabled.active,
+	.btn-agendapro-claro[disabled].active,
+	fieldset[disabled] .btn-agendapro-claro.active {
+	  background-color: #3D9A96;
+	  border-color: #378581;
+	}
+	.btn-agendapro-claro {
+	  text-shadow: 0 -1px 0 rgba(0, 0, 0, .2);
+	  -webkit-box-shadow: inset 0 1px 0 rgba(255, 255, 255, .15), 0 1px 1px rgba(0, 0, 0, .075);
+	          box-shadow: inset 0 1px 0 rgba(255, 255, 255, .15), 0 1px 1px rgba(0, 0, 0, .075);
+	}
+	.btn-agendapro-claro:active,
+	.btn-agendapro-claro.active {
+	  -webkit-box-shadow: inset 0 3px 5px rgba(0, 0, 0, .125);
+	          box-shadow: inset 0 3px 5px rgba(0, 0, 0, .125);
+	}
+	.btn-agendapro-claro {
+	  background-image: -webkit-linear-gradient(top, #3D9A96 0%, #28736F 100%);
+	  background-image:      -o-linear-gradient(top, #3D9A96 0%, #28736F 100%);
+	  background-image: -webkit-gradient(linear, left top, left bottom, from(#3D9A96), to(#28736F));
+	  background-image:         linear-gradient(to bottom, #3D9A96 0%, #28736F 100%);
+	  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ff3D9A96', endColorstr='#ff28736F', GradientType=0);
+	  filter: progid:DXImageTransform.Microsoft.gradient(enabled = false);
+	  background-repeat: repeat-x;
+	  border-color: #378581;
+	}
+	.btn-agendapro-claro:hover,
+	.btn-agendapro-claro:focus {
+	  background-color: #28736F;
+	  background-position: 0 -15px;
+	}
+	.btn-agendapro-claro:active,
+	.btn-agendapro-claro.active {
+	  background-color: #28736F;
+	  border-color: #378581;
+	}
+	.btn-agendapro-claro:disabled,
+	.btn-agendapro-claro[disabled] {
+	  background-color: #28736F;
+	  background-image: none;
+	}
+
+	.btn-agendapro-orange {
+		color: #fff;
+		background-color: #D55330;
+		border-color: #CA4824;
+	}
+	.btn-agendapro-orange:hover,
+	.btn-agendapro-orange:focus,
+	.btn-agendapro-orange:active,
+	.btn-agendapro-orange.active,
+	.open > .dropdown-toggle.btn-agendapro-orange {
+		color: #fff;
+		background-color: #B64121;
+		border-color: #A63C1E;
+	}
+	.btn-agendapro-orange:active,
+	.btn-agendapro-orange.active,
+	.open > .dropdown-toggle.btn-agendapro-orange {
+		background-image: none;
+	}
+	.btn-agendapro-orange.disabled,
+	.btn-agendapro-orange[disabled],
+	fieldset[disabled] .btn-agendapro-orange,
+	.btn-agendapro-orange.disabled:hover,
+	.btn-agendapro-orange[disabled]:hover,
+	fieldset[disabled] .btn-agendapro-orange:hover,
+	.btn-agendapro-orange.disabled:focus,
+	.btn-agendapro-orange[disabled]:focus,
+	fieldset[disabled] .btn-agendapro-orange:focus,
+	.btn-agendapro-orange.disabled:active,
+	.btn-agendapro-orange[disabled]:active,
+	fieldset[disabled] .btn-agendapro-orange:active,
+	.btn-agendapro-orange.disabled.active,
+	.btn-agendapro-orange[disabled].active,
+	fieldset[disabled] .btn-agendapro-orange.active {
+		background-color: #D55330;
+		border-color: #CA4824;
+	}
+	.btn-agendapro-orange {
+		text-shadow: 0 -1px 0 rgba(0, 0, 0, .2);
+		-webkit-box-shadow: inset 0 1px 0 rgba(255, 255, 255, .15), 0 1px 1px rgba(0, 0, 0, .075);
+		box-shadow: inset 0 1px 0 rgba(255, 255, 255, .15), 0 1px 1px rgba(0, 0, 0, .075);
+	}
+	.btn-agendapro-orange:active,
+	.btn-agendapro-orange.active {
+		-webkit-box-shadow: inset 0 3px 5px rgba(0, 0, 0, .125);
+		box-shadow: inset 0 3px 5px rgba(0, 0, 0, .125);
+	}
+	.btn-agendapro-orange {
+		background-image: -webkit-linear-gradient(top, #D55330 0%, #B13F20 100%);
+		background-image:      -o-linear-gradient(top, #D55330 0%, #B13F20 100%);
+		background-image: -webkit-gradient(linear, left top, left bottom, from(#D55330), to(#B13F20));
+		background-image:         linear-gradient(to bottom, #D55330 0%, #B13F20 100%);
+		filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffD55330', endColorstr='#ffB13F20', GradientType=0);
+		filter: progid:DXImageTransform.Microsoft.gradient(enabled = false);
+		background-repeat: repeat-x;
+		border-color: #A63C1E;
+	}
+	.btn-agendapro-orange:hover,
+	.btn-agendapro-orange:focus {
+		background-color: #B13F20;
+		background-position: 0 -15px;
+	}
+	.btn-agendapro-orange:active,
+	.btn-agendapro-orange.active {
+		background-color: #B13F20;
+		border-color: #A63C1E;
+	}
+	.btn-agendapro-orange:disabled,
+	.btn-agendapro-orange[disabled] {
+		background-color: #B13F20;
+		background-image: none;
+	}
+/**			End AgendaPro Button			**/
+
+/**			Modals			**/
+	.modal-content{
+		background: url(<%= asset_path 'backgrounds/wild_oliva_light.png' %>);
+		/*background: #ececec;
+		background: -moz-linear-gradient(top,  #ececec 0%, #f0f6f6 100%);
+		background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#ececec), color-stop(100%,#f0f6f6));
+		background: -webkit-linear-gradient(top,  #ececec 0%,#f0f6f6 100%);
+		background: -o-linear-gradient(top,  #ececec 0%,#f0f6f6 100%);
+		background: -ms-linear-gradient(top,  #ececec 0%,#f0f6f6 100%);
+		background: linear-gradient(to bottom,  #ececec 0%,#f0f6f6 100%);
+		filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ececec', endColorstr='#f0f6f6',GradientType=0 );*/
+	}
+	.modal-header{
+		background: url(<%= asset_path 'backgrounds/wild_oliva_light_head.png' %>);
+	    /*background: #dddfde;
+		background: -moz-linear-gradient(top,  #dddfde 0%, #cbcdcc 100%);
+		background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#dddfde), color-stop(100%,#cbcdcc));
+		background: -webkit-linear-gradient(top,  #dddfde 0%,#cbcdcc 100%);
+		background: -o-linear-gradient(top,  #dddfde 0%,#cbcdcc 100%);
+		background: -ms-linear-gradient(top,  #dddfde 0%,#cbcdcc 100%);
+		background: linear-gradient(to bottom,  #dddfde 0%,#cbcdcc 100%);
+		filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#dddfde', endColorstr='#cbcdcc',GradientType=0 );*/
+	}
+	.modal-footer{
+		background: url(<%= asset_path 'backgrounds/wild_oliva_light_head.png' %>);
+		/*background: #cbcdcc;
+		background: -moz-linear-gradient(top,  #cbcdcc 0%, #dddfde 100%);
+		background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#cbcdcc), color-stop(100%,#dddfde));
+		background: -webkit-linear-gradient(top,  #cbcdcc 0%,#dddfde 100%);
+		background: -o-linear-gradient(top,  #cbcdcc 0%,#dddfde 100%);
+		background: -ms-linear-gradient(top,  #cbcdcc 0%,#dddfde 100%);
+		background: linear-gradient(to bottom,  #cbcdcc 0%,#dddfde 100%);
+		filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#cbcdcc', endColorstr='#dddfde',GradientType=0 );*/
+	}
+/**			End Modals			**/
+
+/**			Form Feedback			**/
+	.form-control-feedback {
+		top: 50px;
+	}
+	.form-horizontal .has-feedback .form-control-feedback {
+		top: 10px;
+		right: 27px;
+	}
+	.has-feedback input[type="number"].form-control {
+		padding-right: 2px;
+	}
+/**			End Form Feedback			**/
+
+/**			Pagination			**/
+	.pagination > li > a,
+	.pagination > li > span {
+		color: #1e8584;
+	}
+	.pagination > li > a:hover,
+	.pagination > li > span:hover,
+	.pagination > li > a:focus,
+	.pagination > li > span:focus {
+		color: #006D68;
+	}
+	.pagination > .active > a,
+	.pagination > .active > span,
+	.pagination > .active > a:hover,
+	.pagination > .active > span:hover,
+	.pagination > .active > a:focus,
+	.pagination > .active > span:focus {
+		background-color: #1e8584;
+		border-color: #1e8584;
+	}
+/**			End Pagination			**/
+
+/**			Alert			**/
+	.alert {
+		padding: 10px 15px;
+		margin-bottom: 0px;
+	}
+	.alert-dismissable,
+	.alert-dismissible {
+		padding-right: 35px;
+	}
+/**			End Alert			**/

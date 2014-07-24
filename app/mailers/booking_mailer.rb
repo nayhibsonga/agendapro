@@ -100,7 +100,6 @@ class BookingMailer < ActionMailer::Base
 				{
 					:rcpt => book_info.service_provider.notification_email,
 					:vars => [
-						
 						{
 							:name => 'NAME',
 							:content => book_info.service_provider.public_name
@@ -161,6 +160,47 @@ class BookingMailer < ActionMailer::Base
 
 		if !book_info.notes.blank?
 			message[:global_merge_vars] << {:name => 'BNOTES', :content => book_info.notes}
+		end
+
+		# Email notificacion local
+		if book_info.location.notification and !book_info.location.email.blank?
+			message[:to] << {
+				:email => book_info.location.email,
+				:type => 'to'
+			}
+			message[:merge_vars] << {
+				:rcpt => book_info.location.email,
+				:vars => [
+					{
+						:name => 'NAME',
+						:content => book_info.location.name
+					},
+					{
+						:name => 'MESSAGE',
+						:content => 'fue reservado un servicio en el Local'
+					},
+					{
+						:name => 'WHAT',
+						:content => "¿Qué reservaron?"
+					},
+					{
+						:name => 'BOOKING',
+						:content => "Resumen de la Nueva Reserva"
+					},
+					{
+						:name => 'CLIENTNAME',
+						:content => book_info.client.first_name + ' ' + book_info.client.last_name
+					},
+					{
+						:name => 'CLIENTPHONE',
+						:content => number_to_phone(book_info.client.phone)
+					},
+					{
+						:name => 'CLIENTEMAIL',
+						:content => book_info.client.email
+					}
+				]
+			}
 		end
 
 		# => Metadata
@@ -338,6 +378,47 @@ class BookingMailer < ActionMailer::Base
 			message[:images] = [company_logo]
 		end
 
+		# Email notificacion local
+		if book_info.location.notification and !book_info.location.email.blank?
+			message[:to] << {
+				:email => book_info.location.email,
+				:type => 'to'
+			}
+			message[:merge_vars] << {
+				:rcpt => book_info.location.email,
+				:vars => [
+					{
+						:name => 'NAME',
+						:content => book_info.location.name
+					},
+					{
+						:name => 'MESSAGE',
+						:content => 'fue modificada una reserva, a continuación se presentan los detalles actualizados'
+					},
+					{
+						:name => 'WHAT',
+						:content => "¿Qué reservaron?"
+					},
+					{
+						:name => 'BOOKING',
+						:content => "Resumen de la Reserva"
+					},
+					{
+						:name => 'CLIENTNAME',
+						:content => book_info.client.first_name + ' ' + book_info.client.last_name
+					},
+					{
+						:name => 'CLIENTPHONE',
+						:content => number_to_phone(book_info.client.phone)
+					},
+					{
+						:name => 'CLIENTEMAIL',
+						:content => book_info.client.email
+					}
+				]
+			}
+		end
+
 		# => Metadata
 		async = false
 		send_at = DateTime.now
@@ -456,6 +537,47 @@ class BookingMailer < ActionMailer::Base
 				:content => Base64.encode64(File.read('public' + book_info.location.company.logo_url.to_s))
 			}
 			message[:images] = [company_logo]
+		end
+
+		# Email notificacion local
+		if book_info.location.notification and !book_info.location.email.blank?
+			message[:to] << {
+				:email => book_info.location.email,
+				:type => 'to'
+			}
+			message[:merge_vars] << {
+				:rcpt => book_info.location.email,
+				:vars => [
+					{
+						:name => 'NAME',
+						:content => book_info.location.name
+					},
+					{
+						:name => 'MESSAGE',
+						:content => 'el cliente ha confirmado la siguiente reserva'
+					},
+					{
+						:name => 'WHAT',
+						:content => "¿Qué reservaron?"
+					},
+					{
+						:name => 'BOOKING',
+						:content => "Resumen de la Reserva Confirmada"
+					},
+					{
+						:name => 'CLIENTNAME',
+						:content => book_info.client.first_name + ' ' + book_info.client.last_name
+					},
+					{
+						:name => 'CLIENTPHONE',
+						:content => number_to_phone(book_info.client.phone)
+					},
+					{
+						:name => 'CLIENTEMAIL',
+						:content => book_info.client.email
+					}
+				]
+			}
 		end
 
 		# => Metadata
@@ -612,6 +734,47 @@ class BookingMailer < ActionMailer::Base
 				:content => Base64.encode64(File.read('public' + book_info.location.company.logo_url.to_s))
 			}
 			message[:images] = [company_logo]
+		end
+
+		# Email notificacion local
+		if book_info.location.notification and !book_info.location.email.blank?
+			message[:to] << {
+				:email => book_info.location.email,
+				:type => 'to'
+			}
+			message[:merge_vars] << {
+				:rcpt => book_info.location.email,
+				:vars => [
+					{
+						:name => 'NAME',
+						:content => book_info.location.name
+					},
+					{
+						:name => 'MESSAGE',
+						:content => 'fue cancelada una reserva, a continuación se presentan los detalles'
+					},
+					{
+						:name => 'WHAT',
+						:content => "¿Qué reservaron?"
+					},
+					{
+						:name => 'BOOKING',
+						:content => "Resumen de la Reserva Cancelada"
+					},
+					{
+						:name => 'CLIENTNAME',
+						:content => book_info.client.first_name + ' ' + book_info.client.last_name
+					},
+					{
+						:name => 'CLIENTPHONE',
+						:content => number_to_phone(book_info.client.phone)
+					},
+					{
+						:name => 'CLIENTEMAIL',
+						:content => book_info.client.email
+					}
+				]
+			}
 		end
 
 		# => Metadata
@@ -780,6 +943,47 @@ class BookingMailer < ActionMailer::Base
 				:content => Base64.encode64(File.read('public' + book_info.location.company.logo_url.to_s))
 			}
 			message[:images] = [company_logo]
+		end
+
+		# Email notificacion local
+		if book_info.location.notification and !book_info.location.email.blank?
+			message[:to] << {
+				:email => book_info.location.email,
+				:type => 'to'
+			}
+			message[:merge_vars] << {
+				:rcpt => book_info.location.email,
+				:vars => [
+					{
+						:name => 'NAME',
+						:content => book_info.location.name
+					},
+					{
+						:name => 'MESSAGE',
+						:content => 'Recuerda que mañana tienen una hora agendada'
+					},
+					{
+						:name => 'WHAT',
+						:content => "¿Qué reservaron?"
+					},
+					{
+						:name => 'BOOKING',
+						:content => "Resumen de la Reserva"
+					},
+					{
+						:name => 'CLIENTNAME',
+						:content => book_info.client.first_name + ' ' + book_info.client.last_name
+					},
+					{
+						:name => 'CLIENTPHONE',
+						:content => number_to_phone(book_info.client.phone)
+					},
+					{
+						:name => 'CLIENTEMAIL',
+						:content => book_info.client.email
+					}
+				]
+			}
 		end
 
 		# => Metadata

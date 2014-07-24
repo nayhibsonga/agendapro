@@ -1,13 +1,13 @@
 <div class="container">
   <div class="row">
     <section class="hgroup">
-      <h2>Proveedores de Servicios Inactivos</h2>
-      <h2 class="section_header">Acá puedes re-activar y editar los Proveedores de Servicios previamente desactivados.</h2>
+      <h2>Prestadores de Servicios Inactivos</h2>
+      <h2 class="section_header">Acá puedes re-activar y editar los Prestadores de Servicios previamente desactivados.</h2>
       <div class="line-breadcrumb">
         <ul class="breadcrumb pull-right">
             <li><%= link_to "Resumen", dashboard_path %> </li>
-            <li><%= link_to "Proveedores de Servicios", service_providers_path %> </li>
-            <li class="active">Proveedores de Servicios Inactivos</li>
+            <li><%= link_to "Prestadores de Servicios", service_providers_path %> </li>
+            <li class="active">Prestadores de Servicios Inactivos</li>
         </ul>
       </div>
     </section>
@@ -27,7 +27,7 @@
       <tr>
         <td><%= service_provider.public_name %></td>
         <td>
-          <%= link_to '<i class="fa fa-check"></i> Re-activar'.html_safe, activate_service_provider_path(:id => service_provider.id), :class => "btn btn-primary", data: { confirm: '¿Estás seguro de re-activar el Proveedor seleccionado?' } %>
+          <%= link_to '<i class="fa fa-check"></i> Re-activar'.html_safe, activate_service_provider_path(:id => service_provider.id), :class => "btn btn-agendapro-claro", data: { confirm: '¿Estás seguro de re-activar el Prestador seleccionado?' } %>
           <%= link_to '<i class="fa fa-pencil"></i> Editar'.html_safe, edit_service_provider_path(service_provider), :class => "btn btn-warning" %>
         </td>
       </tr>
@@ -35,4 +35,4 @@
   </tbody>
 </table>
 
-<%= link_to 'Proveedores de Servicios Activos', service_providers_path, :class => "btn btn-primary" %>
+<%= link_to 'Prestadores de Servicios Activos', service_providers_path, :class => "btn btn-agendapro-oscuro" %>

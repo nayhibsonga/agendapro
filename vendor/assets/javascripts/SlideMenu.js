@@ -7,9 +7,9 @@
 
 	var body = document.body,
 		mask = document.createElement("div"),
-		toggleSlideLeft = document.querySelector( ".toggle-slide-left" ),
+		// toggleSlideLeft = document.querySelector( ".toggle-slide-left" ),
 		toggleSlideRight = document.querySelector( ".toggle-slide-right" ),
-		slideMenuLeft = document.querySelector( ".slide-menu-left" ),
+		// slideMenuLeft = document.querySelector( ".slide-menu-left" ),
 		slideMenuRight = document.querySelector( ".slide-menu-right" ),
 		activeNav
 	;

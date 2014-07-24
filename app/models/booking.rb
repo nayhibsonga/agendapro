@@ -19,7 +19,7 @@ class Booking < ActiveRecord::Base
 	def provider_in_break
 		self.service_provider.provider_breaks.each do |provider_break|
 			if (provider_break.start - self.end) * (self.start - provider_break.end) > 0
-				errors.add(:base, "El proveedor seleccionado ha bloqueado ese horario.")
+				errors.add(:base, "El prestador seleccionado ha bloqueado ese horario.")
 			end
 		end
 	end
@@ -32,7 +32,7 @@ class Booking < ActiveRecord::Base
 
 	def service_staff
 		if !self.service_provider.services.include?(self.service)
-			errors.add(:base, "El proveedor de servicios no puede realizar este servicio.")
+			errors.add(:base, "El prestador de servicios no puede realizar este servicio.")
 		end
 	end
 
@@ -44,7 +44,7 @@ class Booking < ActiveRecord::Base
 					unless provider_booking.status_id == cancelled_id
 						if (provider_booking.start - self.end) * (self.start - provider_booking.end) > 0
 							if !self.service.group_service || self.service_id != provider_booking.service_id
-								errors.add(:base, "Esa hora ya está agendada para ese proveedor de servicios.")
+								errors.add(:base, "Esa hora ya está agendada para ese prestador de servicios.")
 								return
 							elsif self.service.group_service && self.service_id == provider_booking.service_id && self.service_provider.bookings.where(:service_id => self.service_id, :start => self.start).count >= self.service.capacity
 								errors.add(:base, "La capacidad del servicio grupal, de esa hora, ya llegó a su límite.")
@@ -106,7 +106,7 @@ class Booking < ActiveRecord::Base
 			end
 		end
 		if !in_provider_time
-			errors.add(:base, "El horario o día de la reserva no es posible para ese proveedor de servicio.")
+			errors.add(:base, "El horario o día de la reserva no es posible para ese prestador de servicio.")
 		end
 	end
 

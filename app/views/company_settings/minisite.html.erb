@@ -29,14 +29,14 @@
 			<% end %>
 
 			<div class="form-group">
-				<%= f.label :activate_workflow, 'Habilitar Minisitio:', :class => 'col-sm-3 control-label' %>
+				<%= f.label :activate_workflow, 'Habilitar Minisitio', :class => 'col-sm-3 control-label' %>
 				<div class="col-sm-4">
 					<%= f.check_box :activate_workflow %>
 					<span class="help-block">Esta opcion permite a los clientes poder agendar a traves del sistema web, sin la necesidad de que lo esten llamando.</span>
 				</div>
 			</div>
 			<div class="form-group">
-				<%= f.label :activate_search, 'Aparecer en el Buscador:', :class => 'col-sm-3 control-label' %>
+				<%= f.label :activate_search, 'Aparecer en el Buscador', :class => 'col-sm-3 control-label' %>
 				<div class="col-sm-4">
 					<%= f.check_box :activate_search %>
 					<span class="help-block">Esta opcion permite a los clientes poder encontrar el minisitio a traves del buscador.</span>
@@ -64,8 +64,8 @@
 			</div> -->
 			<div class="form-group">
 				<div class="col-sm-offset-3 col-sm-4">
-					<%= f.submit 'Guardar', :class => 'btn btn-primary' %>
-					<%= link_to 'Cancelar', dashboard_path, :class => "btn btn-danger" %>    
+					<%= f.submit 'Guardar', :class => 'btn btn-agendapro-claro' %>
+					<%= link_to 'Cancelar', dashboard_path, :class => "btn btn-default" %>    
 				</div>
 			</div>
 		<% end %>
