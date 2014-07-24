@@ -1,25 +1,27 @@
 <div class="row">
     <div class="col-xs-12">
-        <%= form_tag("pcontact", method: "post", role: 'form' ) do %>
+        <%= form_tag("pcontact", method: "post", role: 'form', id: 'contact' ) do %>
+            <%= hidden_field_tag :inputName %>
+            <%= hidden_field_tag :inputLastname %>
             <div class="form-group">
-                <%= label_tag(:inputName, "Nombre:") %>
-                <%= text_field_tag(:inputName, nil, :class => "form-control", :placeholder => "Nombre", :required => true) %>
-            </div>
-            <div class="form-group">
-                <%= label_tag(:inputLastname, "Apellido:") %>
-                <%= text_field_tag(:inputLastname, nil, :class => "form-control", :placeholder => "Apellido", :required => true) %>
+                <label for="full_name" class="label-contacto">Nombre</label>
+                <input type="text" id="full_name" name="user[full_name]" class="form-control" placeholder="Nombre Completo (requerido)">
+                <span class="help-block"></span>
             </div>
             <div class="form-group">
                 <%= label_tag(:inputEmail, "Email:") %>
                 <%= email_field_tag(:inputEmail, nil, :class => "form-control", :placeholder => "mail@dominio.com", :required => true) %>
+                <span class="help-block"></span>
             </div>
             <div class="form-group">
                 <%= label_tag(:inputSubject, "Asunto:") %>
-                <%= select_tag(:inputSubject, options_for_select(["Participar en la Beta", "Servicio Técnico", "Consulta por plan especial", "Reclamos", "Otros"]), :class => "form-control") %>
+                <%= select_tag(:inputSubject, options_for_select(["Servicio Técnico", "Consulta por plan especial", "Reclamos", "Otros"]), :class => "form-control") %>
+                <span class="help-block"></span>
             </div>
             <div class="form-group">
                 <%= label_tag(:inputMessage, "Mensaje:") %>
                 <%= text_area_tag(:inputMessage, nil, :class => "form-control", :placeholder => "Escriba sus comentarios por favor.", :required => true, :rows => 6) %>
+                <span class="help-block"></span>
             </div>
             <div class="form-group">
                 <%= submit_tag "Enviar", :class => "btn btn-success btn-lg" %>
@@ -36,3 +38,14 @@
         </div>
     </div>
 </div>
+
+<% content_for :scripts do %>
+<%= javascript_include_tag 'validations/validate' %>
+<%= javascript_include_tag 'validations/home/contact' %>
+<%= javascript_include_tag 'split-name' %>
+<script>
+    $(function() {
+        split_name('#full_name', '#inputName', '#inputLastname');
+    });
+</script>
+<% end %>
