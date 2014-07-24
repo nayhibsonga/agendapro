@@ -1,53 +1,27 @@
-<div class="col-xs-12 top-20">
+<div class="col-xs-12 top-20" style="text-align: center;">
 	Busca, encuentra y reserva servicios en
 </div>
 <div class="col-xs-12">
 	<%= form_tag({controller: "searchs", action: "search"}, method: "GET", class: "form-horizontal") do %>
-		<div class="col-xs-12 top-10 bottom-20">
-			<%= select_tag :district, options_from_collection_for_select(District.all, :id, :name), class: 'form-control input-lg' %>
+		<div class="row">
+			<div class="col-xs-12 top-10 bottom-20">
+				<%= select_tag :district, options_from_collection_for_select(District.all, :id, :name), class: 'form-control' %>
+			</div>
 		</div>
-		<div class="col-sm-12 bottom-20" id="searchbar-result">
-				<input type="hidden" id="latitude" name="latitude" value="-33.412819">
-				<input type="hidden" id="longitude" name="longitude" value="-70.591945">
-				<div class="input-group">
-					<%= search_field_tag :inputSearch, params[:inputSearch], class: "form-control", placeholder: "Ejemplo: Corte de Pelo, Masaje, Terapia, Peluquería", :required => "true", :autofocus => "autofocus" %>
-					<span class="input-group-btn">
-						<button class="btn btn-default">Buscar</button>
-					</span>
-				</div>
+		<div class="row">
+			<div class="col-sm-12 bottom-20" id="searchbar-result">
+					<input type="hidden" id="latitude" name="latitude" value="-33.412819">
+					<input type="hidden" id="longitude" name="longitude" value="-70.591945">
+					<div class="input-group input-group-lg">
+						<%= search_field_tag :inputSearch, params[:inputSearch], class: "form-control", placeholder: "Ejemplo: Corte de Pelo, Masaje, Terapia, Peluquería", :required => "true", :autofocus => "autofocus" %>
+						<span class="input-group-btn">
+							<button class="btn btn-agendapro-claro">Buscar</button>
+						</span>
+					</div>
+			</div>
 		</div>
 	<% end %>
 </div>
 
 <%= content_tag "div", id: "geolocation", data: {geolocation: @geolocation} do %>
-<% end %>
-
-<% content_for :scripts do %>
-	<%= stylesheet_link_tag "jquery-ui-1.10.4" %>
-	<%= javascript_include_tag "jquery-ui-1.10.4.min.js" %>
-	<script type="text/javascript">
-		$(function () {
-			$('#span-location').tooltip({
-				placement: 'auto top',
-				title: 'Elige donde quieres buscar'
-			});
-			$("#location_autocomplete").autocomplete({
-				source: '/get_districts',
-				appendTo: '#suggestions',
-				autoFocus: true,
-				minLength: 3,
-				change: function( event, ui ) {
-					var district_name = event.target.value;
-					$.getJSON('/district_by_name', {name: district_name}, function (district) {
-						changeLocation(district.id);
-					});
-				}
-			});
-
-			$('#form-location').submit(function (event) {
-				event.preventDefault();
-				$('#save').trigger('click');
-			});
-		});
-	</script>
 <% end %>

@@ -3,10 +3,10 @@ html, body, div, span, applet, object, iframe,
 h1, h2, h3, h4, h5, h6, p, blockquote, pre,
 a, abbr, acronym, address, big, cite, code,
 del, dfn, em, img, ins, kbd, q, s, samp,
-small, strike, strong, sub, sup, tt, var,
+small, strike, /*strong,*/ sub, sup, tt, var,
 b, u, i, center,
 dl, dt, dd, ol, ul, li,
-fieldset, form, label, legend,
+fieldset, form, /*label,*/ legend,
 table, caption, tbody, tfoot, thead, tr, th, td,
 article, aside, canvas, details, embed, 
 figure, figcaption, footer, header, hgroup, 
@@ -108,6 +108,52 @@ h2 {
 .bottom-20{
 	margin-bottom: 20px;
 }
+/**			AdendaPro Button			**/
+	.btn-agendapro-oscuro {
+	  color: #fff;
+	  background-color: #1B7370;
+	  border-color: #186563;
+	}
+	.btn-agendapro-oscuro:hover,
+	.btn-agendapro-oscuro:focus,
+	.btn-agendapro-oscuro:active,
+	.btn-agendapro-oscuro.active,
+	.open > .dropdown-toggle.btn-agendapro-oscuro {
+	  color: #fff;
+	  background-color: #0F5250;
+	  border-color: #104341;
+	}
+
+	.btn-agendapro-claro {
+	  color: #fff;
+	  background-color: #3D9A96;
+	  border-color: #378581;
+	}
+	.btn-agendapro-claro:hover,
+	.btn-agendapro-claro:focus,
+	.btn-agendapro-claro:active,
+	.btn-agendapro-claro.active,
+	.open > .dropdown-toggle.btn-agendapro-claro {
+	  color: #fff;
+	  background-color: #2A7874;
+	  border-color: #28615E;
+	}
+
+	.btn-agendapro-orange {
+		color: #fff;
+		background-color: #D55330;
+		border-color: #CA4824;
+	}
+	.btn-agendapro-orange:hover,
+	.btn-agendapro-orange:focus,
+	.btn-agendapro-orange:active,
+	.btn-agendapro-orange.active,
+	.open > .dropdown-toggle.btn-agendapro-orange {
+		color: #fff;
+		background-color: #B64121;
+		border-color: #A63C1E;
+	}
+/**			End AgendaPro Button			**/
 .btn-success {
 	color: #ffffff;
 	background-color: #D55330;
@@ -166,10 +212,14 @@ h2 {
 .single-local {
 	margin-bottom: 45px;
 }
+.center-image{
+	margin: 0 auto;
+	text-align: center;
+}
 .single-local img{
-	width: 100%;
+	width: 70%;
 	height: auto;
-	/*margin: 15px 0px 0px;*/
+	margin-bottom: 10px;
 }
 .single-local h3{
 	font-weight: bold;
@@ -282,8 +332,15 @@ h2 {
 	text-overflow: ellipsis;
 	white-space: nowrap;
 }
+.panel-title > small {
+	color: inherit;
+}
 .well-blanco {
 	background: #FFFFFF;
+}
+.table > tbody > tr.border > td {
+	border-bottom: 1px solid #006D68;
+	text-align: center;
 }
 
 /* Medium devices (desktops, 992px and up) */

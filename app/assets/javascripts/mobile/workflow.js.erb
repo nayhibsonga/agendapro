@@ -1,7 +1,7 @@
 function loadSchedule (id) {
-  $('#schedule-body').html('<%= image_tag "ajax-loader.gif", :alt => "Loader" %>');
+  // $('#schedule-body').html('<%= image_tag "ajax-loader.gif", :alt => "Loader" %>');
   $.getJSON('/schedule', {local: id}, function (schedule) {
-    $('#schedule-body').empty();
+    // $('#schedule-body').empty();
     $.each(schedule, function (day, hour) {
       if (hour.open) {
         $('#schedule-body').append(
