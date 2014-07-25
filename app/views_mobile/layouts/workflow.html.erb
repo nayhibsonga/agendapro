@@ -31,7 +31,7 @@
 	<body>
 		<!-- start: Header -->
 		<header>
-			<%= link_to '', :back, :class => "volver" %>
+			<%= link_to '', '/', :class => "volver" %>
 			<h2><%= @company.name %></h2>
 			<a id="btn-principal" class="nav-toggler toggle-slide-right" href="#menu"><span>menu</span></a>
 			</div>
@@ -85,6 +85,14 @@
 		<%= javascript_include_tag "jquery-1.11.1.min" %>
 		<%= yield :scripts %>
 		<%= javascript_include_tag "mobile" %>
+		<script type="text/javascript">
+			$(function () {
+				$('a.volver').click(function (event) {
+					event.preventDefault();
+					window.history.back();
+				});
+			});
+		</script>
 		<!-- end: JavaScript-->
 	</body>
 </html>

@@ -2,39 +2,61 @@
   <div class="row">
     <div class="col-xs-12">
       <div class="single-local">
-        <% if @company.logo_url %>
-        <%= image_tag @company.logo_url.to_s, :alt => @company.name %>
-        <% else %>
-        <%= image_tag 'Iso_Pro_Color.png', :alt => 'AgendaPro' %>
-        <% end %>
+        <div class="center-image">
+          <% if @company.logo_url %>
+          <%= image_tag @company.logo_url.to_s, :alt => @company.name %>
+          <% else %>
+          <%= image_tag 'Iso_Pro_Color.png', :alt => 'AgendaPro' %>
+          <% end %>
+        </div>
         <div class="btn-group btn-group-justified">
-          <a href="#" type="button" class="btn btn-success" id="reservar-btn">Reservar</a>
+          <a href="#" type="button" class="btn btn-agendapro-orange" id="reservar-btn">Reservar</a>
           <a href="#" type="button" class="btn btn-default" id="informacion-btn">Información</a>
         </div>
         <div id="reservar" class="visible">
           <%= form_tag("select_hour", method: "post", role: "form") do %>
             <%= hidden_field_tag :local, @location.id %>
             <div class="form-group">
-              <%= label_tag :services, 'Selecciona servicio' %>
+              <%= label_tag :services, 'Selecciona el servicio que quieres' %>
               <%= select_tag :services, nil, :class => 'form-control' %>
             </div>
             <div class="form-group">
-              <%= label_tag :providers, 'Selecciona staff' %>
+              <%= label_tag :providers, 'Selecciona al staff' %>
               <%= select_tag :providers, nil, :disabled => true, :class => 'form-control' %>
             </div>
             <div class="form-group">
               <%= label_tag :datepicker, 'Selecciona una fecha' %>
-              <%= text_field_tag :datepicker, nil, :disabled => true, :placeholder => 'seleccione fecha...', :class => 'form-control' %>
+              <%= text_field_tag :datepicker, nil, :disabled => true, :placeholder => 'Selecciona fecha...', :class => 'form-control' %>
             </div>
           <% end %>
         </div>
         <div id="informacion" class="oculto">
-          <p><%= if !@location.outcall then @location.address+', '+@location.district.name else "A Domicilio" end %>.</p>
-          <p>Tel: <%= @location.phone %></p>
+          <div class="panel panel-info">
+            <div class="panel-heading">
+              <h3 class="panel-title">Información</h3>
+            </div>
+            <div class="panel-body">
+              <table class="table">
+                <tbody id="schedule-body">
+                  <tr>
+                    <td><strong>Dirección</strong></td>
+                    <td><%= if !@location.outcall then @location.address+', '+@location.district.name else "A Domicilio" end %></td>
+                  </tr>
+                  <tr>
+                    <td><strong>Teléfono</strong></td>
+                    <td><%= @location.phone %></td>
+                  </tr>
+                  <tr class="border">
+                    <td colspan="2"><strong>Horario</strong></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
           <% if !@location.outcall %>
           <button id="mapButton" class="btn btn-block btn-default" data-local="<%= @location.id %>">Ver mapa</button>
           <div id="map"></div>
-          <% else %><%= javascript_include_tag "http://maps.google.com/maps/api/js?sensor=false" %>
+          <% else %>
           <div class="panel panel-info">
             <div class="panel-heading">
               <h3 class="panel-title">Comunas que se Atienden <small>(comunas en <%= @location.district.city.name %>, <%= @location.district.city.region.name %> - <%= @location.district.city.region.country.name %>)</small></h3>
@@ -47,17 +69,6 @@
             </div>
           </div>
           <% end %>
-          <div class="panel panel-info">
-            <div class="panel-heading">
-              <h3 class="panel-title">Horario</h3>
-            </div>
-            <div class="panel-body">
-              <table class="table">
-                <tbody id="schedule-body">
-                </tbody>
-              </table>
-            </div>
-          </div>
           <div class="clear"></div>
         </div>
       </div>
@@ -68,7 +79,7 @@
   <div class="container">
     <div class="row">
       <div class="col-xs-12">
-        <a href="#" class="btn btn-block btn-success btn-fijo">Reservar</a>
+        <a href="#" class="btn btn-block btn-agendapro-orange btn-fijo">Siguiente</a>
       </div>
     </div>  
   </div>            
@@ -94,11 +105,15 @@
       $( "#reservar" ).addClass("visible");
       $( "#reservar" ).removeClass("oculto");
       $( "#informacion" ).addClass("oculto");
+      $( "#reservar-btn" ).removeClass('btn-default').addClass('btn-agendapro-orange');
+      $( "#informacion-btn" ).addClass('btn-default').removeClass('btn-agendapro-orange');
     });
     $( "#informacion-btn" ).click(function() {
       $( "#reservar" ).addClass("oculto");
       $( "#informacion" ).removeClass("oculto");
       $( "#informacion" ).addClass("visible");
+      $( "#reservar-btn" ).addClass('btn-default').removeClass('btn-agendapro-orange');
+      $( "#informacion-btn" ).removeClass('btn-default').addClass('btn-agendapro-orange');
     });
     loadServices(<%= @location.id %>);
     <% if @location.outcall %>
