@@ -22,7 +22,7 @@
 
 <div class="cambiar-comuna">
   <div class="btn-group btn-group-justified btn-group-justified-fix">
-    <a type="button" class="btn btn-success" disabled>Editar</a>
+    <a type="button" class="btn btn-agendapro-orange" disabled>Editar</a>
     <%= link_to 'Cancelar', root_url(:subdomain => false), :class => 'btn btn-default' %>
   </div>
 </div>
@@ -37,9 +37,9 @@
   $(document).ready(function(){
     $('button[type="submit"]').click(function (event) {
       event.preventDefault();
-      $('.btn-block.btn-success').addClass('btn-default').removeClass('btn-success');
-      $(event.target).addClass('btn-success').removeClass('btn-default');
-      $('a.btn-success').attr('disabled', false);
+      $('.btn-block.btn-agendapro-claro').addClass('btn-default').removeClass('btn-agendapro-claro');
+      $(event.target).addClass('btn-agendapro-claro').removeClass('btn-default');
+      $('a.btn-agendapro-orange').attr('disabled', false);
 
       var date = $(event.target).data('date');
       var start = $(event.target).data('start');
@@ -47,7 +47,7 @@
       addBooking(date, start, end);
     });
 
-    $('a.btn-success').click(function (event) {
+    $('a.btn-agendapro-orange').click(function (event) {
       $('form').submit();
     });
   });
