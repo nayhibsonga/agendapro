@@ -25,7 +25,7 @@ class Client < ActiveRecord::Base
   def client_mail_uniqueness
     Client.where(company_id: self.company_id).each do |client|
       if self.email != "" && client != self && client.email != "" && self.email == client.email
-        errors.add(:base, "No se pueden crean dos clientes con el mismo email.")
+        errors.add(:base, "No se pueden crear dos clientes con el mismo email.")
       end
     end
   end
@@ -87,7 +87,7 @@ class Client < ActiveRecord::Base
         end
         client.save!
       end
-      message = "Clientes importados correctamente."
+      message = "Clientes importados exitosamente."
     else
       message = "Error en el archivo de importación, archivo inválido o lista vacía."
     end

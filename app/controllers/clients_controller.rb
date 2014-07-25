@@ -56,7 +56,7 @@ class ClientsController < ApplicationController
 
     respond_to do |format|
       if @client.save
-        format.html { redirect_to clients_path, notice: 'Cliente creado correctamente.' }
+        format.html { redirect_to clients_path, notice: 'Cliente creado exitosamente.' }
         format.json { render action: 'edit', status: :created, location: @client }
       else
         format.html { render action: 'new' }
@@ -70,7 +70,7 @@ class ClientsController < ApplicationController
   def update
     respond_to do |format|
       if @client.update(client_params)
-        format.html { redirect_to clients_path, notice: 'Cliente actualizado correctamente.' }
+        format.html { redirect_to clients_path, notice: 'Cliente actualizado exitosamente.' }
         format.json { head :no_content }
       else
         format.html { render action: 'edit' }
@@ -88,7 +88,7 @@ class ClientsController < ApplicationController
     @client_comment = ClientComment.new(client_comment_params)
     respond_to do |format|
       if @client_comment.save
-        format.html { redirect_to edit_client_path(@client), notice: 'El cliente fue creado exitosamente.' }
+        format.html { redirect_to edit_client_path(@client), notice: 'Cliente creado exitosamente.' }
         format.json { render :json => @client_comment }
       else
         format.html { render action: 'new' }
@@ -164,7 +164,7 @@ class ClientsController < ApplicationController
 
     ClientMailer.send_client_mail(current_user, clients, params[:subject], params[:message], company_img, attachment, params[:from])
 
-    redirect_to '/clients', notice: 'E-mail enviado correctamente.'
+    redirect_to '/clients', notice: 'E-mail enviado exitosamente.'
   end
 
   def suggestion

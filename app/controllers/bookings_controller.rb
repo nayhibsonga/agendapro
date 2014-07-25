@@ -367,10 +367,10 @@ class BookingsController < ApplicationController
     @company = Location.find(@booking.location_id).company
 
     if @booking.update(start: params[:start], end: params[:end])
-      flash[:notice] = "Reserva actualizada correctamente"
+      flash[:notice] = "Reserva actualizada exitosamente."
       # BookingMailer.update_booking(@booking)
     else
-      flash[:alert] = "Hubo un error actualizando tu reserva"
+      flash[:alert] = "Hubo un error actualizando tu reserva."
       @errors = @booking.errors
     end
 
@@ -425,10 +425,10 @@ class BookingsController < ApplicationController
       status = Status.find_by(:name => 'Cancelado').id
       
       if @booking.update(status_id: status)
-        flash[:notice] = "Reserva cancelada correctamente"
+        flash[:notice] = "Reserva cancelada exitosamente."
         # BookingMailer.cancel_booking(@booking)
       else
-        flash[:alert] = "Hubo un error cancelando tu reserva"
+        flash[:alert] = "Hubo un error cancelando tu reserva."
         @errors = @booking.errors
       end
     end

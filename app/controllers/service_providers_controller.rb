@@ -56,7 +56,7 @@ class ServiceProvidersController < ApplicationController
 
     respond_to do |format|
       if @service_provider.save
-        format.html { redirect_to service_providers_path, notice: 'Prestador creado correctamente.' }
+        format.html { redirect_to service_providers_path, notice: 'Prestador creado exitosamente.' }
         format.json { render :json => @service_provider }
       else
         format.html { render action: 'new' }
@@ -74,7 +74,7 @@ class ServiceProvidersController < ApplicationController
     @service_provider.provider_times.destroy_all
     respond_to do |format|
       if @service_provider.update(service_provider_params)
-        format.html { redirect_to service_providers_path, notice: 'Prestador actualizado correctamente.' }
+        format.html { redirect_to service_providers_path, notice: 'Prestador actualizado exitosamente.' }
         format.json { render :json => @service_provider }
       else 
         format.html { render action: 'edit' }
