@@ -34,7 +34,7 @@ class ResourceCategoriesController < ApplicationController
 
     respond_to do |format|
       if @resource_category.save
-        format.html { redirect_to resource_categories_path, notice: 'La categoría de recursos fue creada exitosamente.' }
+        format.html { redirect_to resource_categories_path, notice: 'Categoría de Recursos creada exitosamente.' }
         format.json { render :json => @resource_category }
       else
         format.html { render action: 'new' }
@@ -48,7 +48,7 @@ class ResourceCategoriesController < ApplicationController
   def update
     respond_to do |format|
       if @resource_category.update(resource_category_params)
-        format.html { redirect_to resource_categories_path, notice: 'La categoría recursos fue editada exitosamente.' }
+        format.html { redirect_to resource_categories_path, notice: 'Categoría de Recursos actualizada exitosamente.' }
         format.json { render :json => @resource_category }
       else
         format.html { render action: 'edit' }

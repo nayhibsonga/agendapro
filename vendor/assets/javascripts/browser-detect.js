@@ -65,7 +65,7 @@ function mozillaMessage () {
 
 function mobileMessage () {
 	var message =	'<p>' +
-						'La página puede no ser compatible con una version movil.'
+						'La página puede no ser compatible con su dispositivo móvil.'
 					'</p>';
 	showNotice(message);
 }
