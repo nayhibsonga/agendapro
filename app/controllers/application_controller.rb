@@ -25,7 +25,7 @@ class ApplicationController < ActionController::Base
     @due_payment = false
     if current_user && (current_user.role_id != Role.find_by_name("Super Admin").id) && current_user.company_id
       company = Company.find(current_user.company_id)
-      if company.payment_status == PaymentStatus.find_by_name("Bloqueado")
+      if company.payment_status == PaymentStatus.find_by_name("Bloqueado") || !company.active
         if current_user.role_id == Role.find_by_name("Admin").id
           redirect_to select_plan_path, notice: "¡Activa tu cuenta AgendaPro! No te pierdas un segundo más el acceso a las increíbles oportunidades que te da tu cuenta AgendaPro."
         else

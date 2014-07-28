@@ -22,7 +22,7 @@ $(function() {
 	$('#amount_select').change(function(o) {
 		$('.mp_link').each(function(i, obj) { 
 			$(this).attr('href', function(i,a){
-				return a.replace( /(amount=)[0-9]+/ig, '$1'+o.target.value );
+				return a.replace( /\/[^\/]+$/, '/'+o.target.value );
 			});
 			if($('#amount_select').val() != 0) {
 				$('#mp_table').show();
@@ -33,25 +33,41 @@ $(function() {
 		});
 	});
 	$('a.change_plan').click(function(event){
+		$('#plan_mp_button').hide();
+		$('#plan_mp_table').hide();
 		var plan_id = event.target.id.split('change_plan_')[1];
-		window.console.log($('#plan_difference_'+plan_id).data('months-active-left'));
-		window.console.log($('#plan_difference_'+plan_id).data('due-difference'));
-		window.console.log($('#plan_difference_'+plan_id).data('plan-difference'));
+		var months_active_left = parseFloat($('#plan_info').data('months-active-left'));
+		var plan_value_left = parseFloat($('#plan_info').data('plan-value-left'));
+		var due_amount = parseFloat($('#plan_info').data('due-amount'));
+		var plan_price = parseFloat($('#plan_'+plan_id).data('plan-price'));
+		var plan_month_value = parseFloat($('#plan_'+plan_id).data('plan-month-value'));
 		$('#plan_explanation').empty();
-
+		if (months_active_left > 0) {
+			if (plan_value_left > (plan_month_value + due_amount)) {
+				var new_active_months_left = Math.floor((plan_value_left - plan_month_value - due_amount)/plan_price);
+				var new_amount_due = -1*(((plan_value_left - plan_month_value - due_amount)/plan_price)%1)*plan_price;
+				if (new_active_months_left > 0) {
+					$('#plan_explanation').html('Si te cambias a este nuevo Plan, tu cuenta quedará activa por este y '+new_active_months_left+' mes(es) más sin pagar más y, además, quedaran abonados $ '+Math.round((-1*new_amount_due))+' CLP en tu cuenta, para tu próximo pago.');
+				}
+				else {
+					$('#plan_explanation').html('Si te cambias a este nuevo Plan, tu cuenta activa por este mes sin pagar más y, además, quedaran abonados $ '+Math.round((-1*new_amount_due))+' CLP en tu cuenta, para tu próximo pago.');
+				}
+				$('#plan_mp_button').show();
+			}
+			else {
+				$('#plan_explanation').html('Debes pagar $ '+Math.round(plan_month_value + due_amount - plan_value_left)+' CLP + IVA, para cambiarte a este plan.');
+				$('#plan_mp_table').show();
+			}
+		}
+		else {
+			$('#plan_explanation').html('Debes pagar $ '+Math.round(plan_month_value + due_amount)+' CLP + IVA, para cambiarte a este plan.');
+			$('#plan_mp_table').show();
+		}
+		$('.plan_mp_link').each(function(i, obj) { 
+			$(this).attr('href', function(i,a){
+				return a.replace( /\/[^\/]+$/, '/'+plan_id );
+			});
+		});
 		$('#changePlanModal').modal('show');
 	});
-	// <td>
- //          <% @plan_difference = (@company.due_amount + (@month_days - @day_number)*(plan.price - @price)/@month_days)*(1+@sales_tax) %>
- //          <% if @company.months_active_left > 0 %>
- //            <% if @plan_difference > 0 %>
- //              Debes pagar <%= number_to_currency((@plan_difference + (plan.price - @price)*(@company.months_active_left - 1)), {:unit => '$', :separator => ',', :delimiter => '.', :precision => 0}) %> CLP, para cambiarte a este plan.
- //            <% else %>
- //              Se te abonarán <%= number_to_currency(-1*(@plan_difference + (plan.price - @price)*(@company.months_active_left - 1)), {:unit => '$', :separator => ',', :delimiter => '.', :precision => 0}) %> CLP para tu cuenta AgendaPro, si te cambias a este plan.
- //            <% end %>
- //          <% else %>
- //            Diferencia de <%= number_to_currency(@plan_difference, {:unit => '$', :separator => ',', :delimiter => '.', :precision => 0}) %> CLP, al pagar tu plan para este mes.
- //          <% end %>
-            
- //        </td>
 });

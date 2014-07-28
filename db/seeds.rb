@@ -19,7 +19,7 @@
 	transferencia = TransactionType.create(name: "Transferencia", description: "El usuario paga por trasferencia bancaria")
 
 # => Estado de Pago de las Empresas
-	al_dia = PaymentStatus.create(name: "Pagado", description: "La empresa tiene todos los pagos al día")
+	al_dia = PaymentStatus.create(name: "Activo", description: "La empresa tiene todos los pagos al día")
 	prueba = PaymentStatus.create(name: "Trial", description: "La empresa está en período de prueba")
 	atrasada = PaymentStatus.create(name: "Vencido", description: "La empresa está atrasada en el pago del mes en curso")
 	bloqueada = PaymentStatus.create(name: "Bloqueado", description: "La empresa está bloqueada por no pago del plan")

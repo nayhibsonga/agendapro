@@ -328,6 +328,11 @@ th.fc-widget-header {
     text-overflow: ellipsis;
     white-space: nowrap;
 }
+/*Intento de marcar líneas de columna*/
+/*table.fc-agenda-days > tbody > tr >td.fc-widget-content {
+	border: 1px solid #000000;
+	border-width: 1px 1px 1px 1px;
+}*/
 
 /* Menu responsivo */
 @media (max-width: 1280px) { 

@@ -18,6 +18,7 @@
 </div>
 
 <div class="row well">
+  <%= content_tag "div", id: "plan_info", data: { months_active_left: @company.months_active_left, plan_value_left: (@month_days - @day_number)*@price/@month_days + @price*(@company.months_active_left - 1), due_amount: @company.due_amount } do %><%end%>
   <table class="table table-bordered">
     <thead>
       <tr>
@@ -35,28 +36,28 @@
           <td><%= plan.name %></td>
           <td><%= plan.locations %></td>
           <td><%= plan.service_providers %></td>
-          <td>$<%= number_with_precision(plan.price, :precision => 0, :delimiter => '.') %> CLP</td>
-          <% if @company.plan_id != plan.id %>
-          <td><%= link_to '<i class="fa fa-check"></i> Elegir este Plan'.html_safe, "#", :class => "btn btn-primary change_plan", id: "change_plan_"+plan.id.to_s %></td>
-          <% elsif @company.plan == Plan.find_by_name("Trial") && @company.locations.where(active: true).count == plan.locations && @company.service_providers.where(active: true).count <= plan.service_providers %>
+          <td><%= number_to_currency(plan.price, {:unit => '$', :separator => ',', :delimiter => '.', :precision => 0})%> CLP</td>
+          <% if @company.plan == Plan.find_by_name("Trial") && plan.price == @price %>
           <td>¡Este sería tu Plan!</td>
+          <% elsif @company.plan_id != plan.id %>
+          <td><%= link_to '<i class="fa fa-check"></i> Elegir este Plan'.html_safe, "#", :class => "btn btn-primary change_plan", id: "change_plan_"+plan.id.to_s %></td>
           <% else %>
           <td>¡Plan Elegido!</td>
           <% end %>
 
-          <%= content_tag "div", id: "plan_difference_"+plan.id.to_s, data: { months_active_left: @company.months_active_left, plan_difference: (@company.due_amount + (@month_days - @day_number)*(plan.price - @price)/@month_days)*(1+@sales_tax), due_difference: ((@company.due_amount + (@month_days - @day_number)*(plan.price - @price)/@month_days)*(1+@sales_tax) + (plan.price - @price)*(@company.months_active_left - 1)) } do %><%end%>
+          <%= content_tag "div", id: "plan_"+plan.id.to_s, data: { plan_price: plan.price, plan_month_value: (@month_days - @day_number)*plan.price/@month_days } do %><%end%>
           
         </tr>
       <% end %>
-      <% if @company.plan.custom %>
+      <% if @company.plan.custom && @company.plan != Plan.find_by_name("Trial") %>
         <tr class="success">
           <td><%= @company.plan.name %></td>
           <td><%= @company.plan.locations %></td>
           <td><%= @company.plan.service_providers %></td>
-          <td>$<%= number_with_precision(@company.plan.price, :precision => 0, :delimiter => '.') %> CLP</td>
+          <td><%= number_to_currency(@price, {:unit => '$', :separator => ',', :delimiter => '.', :precision => 0})%> CLP</td>
           <td>¡Plan Elegido!</td>
         </tr>
-      <% end %>
+      <%  end %>
     </tbody>
   </table>
 </div>
@@ -68,39 +69,39 @@
     <p><label>Pagar (IVA incluido):</label>
       <select class="form-control" id="amount_select">
         <option value="0">Elige una opción...</option>
-        <option value="1"><%= @company.months_active_left > 0 ? "1 Mes" : "Restante de este Mes" %> - <%= number_to_currency(@plan_1, {:unit => '$', :separator => ',', :delimiter => '.', :precision => 0})%> CLP</option>
-        <option value="2">2 Meses - <%= number_to_currency(@plan_2, {:unit => '$', :separator => ',', :delimiter => '.', :precision => 0})%> CLP</option>
-        <option value="3">3 Meses - <%= number_to_currency(@plan_3, {:unit => '$', :separator => ',', :delimiter => '.', :precision => 0})%> CLP</option>
-        <option value="4">4 Meses - <%= number_to_currency(@plan_4, {:unit => '$', :separator => ',', :delimiter => '.', :precision => 0})%> CLP (<%= number_with_precision(@month_discount_4*100, :precision => 0) %>% dcto.)</option>
-        <option value="6">6 Meses - <%= number_to_currency(@plan_6, {:unit => '$', :separator => ',', :delimiter => '.', :precision => 0})%> CLP (<%= number_with_precision(@month_discount_6*100, :precision => 0) %>% dcto.)</option>
-        <option value="9">9 Meses - <%= number_to_currency(@plan_9, {:unit => '$', :separator => ',', :delimiter => '.', :precision => 0})%> CLP (<%= number_with_precision(@month_discount_9*100, :precision => 0) %>% dcto.)</option>
-        <option value="12">12 Meses - <%= number_to_currency(@plan_12, {:unit => '$', :separator => ',', :delimiter => '.', :precision => 0})%> CLP (<%= number_with_precision(@month_discount_12*100, :precision => 0) %>% dcto.)</option>
+        <option value="1"><%= @company.months_active_left > 0 ? "1 Mes" : "Restante de este Mes" %> - <%= number_to_currency(@plan_1*(1+@sales_tax), {:unit => '$', :separator => ',', :delimiter => '.', :precision => 0})%> CLP</option>
+        <option value="2">2 Meses - <%= number_to_currency(@plan_2*(1+@sales_tax), {:unit => '$', :separator => ',', :delimiter => '.', :precision => 0})%> CLP</option>
+        <option value="3">3 Meses - <%= number_to_currency(@plan_3*(1+@sales_tax), {:unit => '$', :separator => ',', :delimiter => '.', :precision => 0})%> CLP</option>
+        <option value="4">4 Meses - <%= number_to_currency(@plan_4*(1+@sales_tax), {:unit => '$', :separator => ',', :delimiter => '.', :precision => 0})%> CLP (<%= number_with_precision(@month_discount_4*100, :precision => 0) %>% dcto.)</option>
+        <option value="6">6 Meses - <%= number_to_currency(@plan_6*(1+@sales_tax), {:unit => '$', :separator => ',', :delimiter => '.', :precision => 0})%> CLP (<%= number_with_precision(@month_discount_6*100, :precision => 0) %>% dcto.)</option>
+        <option value="9">9 Meses - <%= number_to_currency(@plan_9*(1+@sales_tax), {:unit => '$', :separator => ',', :delimiter => '.', :precision => 0})%> CLP (<%= number_with_precision(@month_discount_9*100, :precision => 0) %>% dcto.)</option>
+        <option value="12">12 Meses - <%= number_to_currency(@plan_12*(1+@sales_tax), {:unit => '$', :separator => ',', :delimiter => '.', :precision => 0})%> CLP (<%= number_with_precision(@month_discount_12*100, :precision => 0) %>% dcto.)</option>
       </select> 
     </p>
     <p>Y, luego, selecciona el medio de pago haciendo click sobre su imagen:</p>
     <table class="table" id="mp_table">
       <tr>
         <td>
-          <%= link_to image_tag("https://www.puntopagos.com/content/mp1.gif"), generate_company_transaction_path(:md => "01", :amount => 0), alt: "Botón de Pago Banco Santander", class: "mp_link", disabled: true %>
+          <%= link_to image_tag("https://www.puntopagos.com/content/mp1.gif"), generate_company_transaction_path(:mp => "01", :amount => 0), alt: "Botón de Pago Banco Santander", class: "mp_link" %>
         </td>
         <td>
-          <%= link_to image_tag("https://www.puntopagos.com/content/mp4.gif"), generate_company_transaction_path(:md => "04", :amount => 0), alt: "Botón de Pago Banco de Chile", class: "mp_link", disabled: true %>
-        </td>
-      </tr>
-      <tr>
-        <td>
-          <%= link_to image_tag("https://www.puntopagos.com/content/mp5.gif"), generate_company_transaction_path(:md => "05", :amount => 0), alt: "Botón de Pago BCI", class: "mp_link", disabled: true %>
-        </td>
-        <td>
-          <%= link_to image_tag("https://www.puntopagos.com/content/mp6.gif"), generate_company_transaction_path(:md => "06", :amount => 0), alt: "Botón de Pago TBanc", class: "mp_link", disabled: true %>
+          <%= link_to image_tag("https://www.puntopagos.com/content/mp4.gif"), generate_company_transaction_path(:mp => "04", :amount => 0), alt: "Botón de Pago Banco de Chile", class: "mp_link" %>
         </td>
       </tr>
       <tr>
         <td>
-          <%= link_to image_tag("https://www.puntopagos.com/content/mp7.gif"), generate_company_transaction_path(:md => "07", :amount => 0), alt: "Botón de Pago Banco Estado", class: "mp_link", disabled: true %>
+          <%= link_to image_tag("https://www.puntopagos.com/content/mp5.gif"), generate_company_transaction_path(:mp => "05", :amount => 0), alt: "Botón de Pago BCI", class: "mp_link" %>
         </td>
         <td>
-          <%= link_to image_tag("https://www.puntopagos.com/content/mp3.gif"), generate_company_transaction_path(:md => "03", :amount => 0), alt: "Webpay Transbank", class: "mp_link", disabled: true %>
+          <%= link_to image_tag("https://www.puntopagos.com/content/mp6.gif"), generate_company_transaction_path(:mp => "06", :amount => 0), alt: "Botón de Pago TBanc", class: "mp_link" %>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <%= link_to image_tag("https://www.puntopagos.com/content/mp7.gif"), generate_company_transaction_path(:mp => "07", :amount => 0), alt: "Botón de Pago Banco Estado", class: "mp_link" %>
+        </td>
+        <td>
+          <%= link_to image_tag("https://www.puntopagos.com/content/mp3.gif"), generate_company_transaction_path(:mp => "03", :amount => 0), alt: "Webpay Transbank", class: "mp_link" %>
         </td>
       </tr>
     </table>
@@ -225,31 +226,36 @@
       <div class="modal-body">
         <p class="justified">Estás cambiando tu cuenta AgendaPro a un nuevo plan mensual. Es importante que para cada cambio de plan se considera el tiempo de activación o deuda actual de la cuenta, y se habilita para el nuevo plan, por un tiempo equivalente al valor del nuevo plan</p>
         <p class="justified" id="plan_explanation"></p>
-        <p>Medios de pago disponibles:</p>
-        <table class="table" id="plan_mp_table">
-      <tr>
-        <td>
-          <%= link_to image_tag("https://www.puntopagos.com/content/mp1.gif"), generate_company_transaction_path(:md => "01", :amount => 0), alt: "Botón de Pago Banco Santander", class: "mp_link", disabled: true %>
-        </td>
-        <td>
-          <%= link_to image_tag("https://www.puntopagos.com/content/mp4.gif"), generate_company_transaction_path(:md => "04", :amount => 0), alt: "Botón de Pago Banco de Chile", class: "mp_link", disabled: true %>
-        </td>
-        <td>
-          <%= link_to image_tag("https://www.puntopagos.com/content/mp5.gif"), generate_company_transaction_path(:md => "05", :amount => 0), alt: "Botón de Pago BCI", class: "mp_link", disabled: true %>
-        </td>
-      </tr>
-      <tr>
-        <td>
-          <%= link_to image_tag("https://www.puntopagos.com/content/mp6.gif"), generate_company_transaction_path(:md => "06", :amount => 0), alt: "Botón de Pago TBanc", class: "mp_link", disabled: true %>
-        </td>
-        <td>
-          <%= link_to image_tag("https://www.puntopagos.com/content/mp7.gif"), generate_company_transaction_path(:md => "07", :amount => 0), alt: "Botón de Pago Banco Estado", class: "mp_link", disabled: true %>
-        </td>
-        <td>
-          <%= link_to image_tag("https://www.puntopagos.com/content/mp3.gif"), generate_company_transaction_path(:md => "03", :amount => 0), alt: "Webpay Transbank", class: "mp_link", disabled: true %>
-        </td>
-      </tr>
-    </table>
+        <div  id="plan_mp_button">
+          <%= link_to "Confirmar Cambio", generate_plan_transaction_path(:mp => "00", :plan_id => 0), class: "btn btn-primary plan_mp_link" %>
+        </div>
+        <div  id="plan_mp_table">
+          <p>Medios de pago disponibles:</p>
+          <table class="table">
+            <tr>
+              <td>
+                <%= link_to image_tag("https://www.puntopagos.com/content/mp1.gif"), generate_plan_transaction_path(:mp => "01", :plan_id => 0), alt: "Botón de Pago Banco Santander", class: "plan_mp_link" %>
+              </td>
+              <td>
+                <%= link_to image_tag("https://www.puntopagos.com/content/mp4.gif"), generate_plan_transaction_path(:mp => "04", :plan_id => 0), alt: "Botón de Pago Banco de Chile", class: "plan_mp_link" %>
+              </td>
+              <td>
+                <%= link_to image_tag("https://www.puntopagos.com/content/mp5.gif"), generate_plan_transaction_path(:mp => "05", :plan_id => 0), alt: "Botón de Pago BCI", class: "plan_mp_link" %>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <%= link_to image_tag("https://www.puntopagos.com/content/mp6.gif"), generate_plan_transaction_path(:mp => "06", :plan_id => 0), alt: "Botón de Pago TBanc", class: "plan_mp_link" %>
+              </td>
+              <td>
+                <%= link_to image_tag("https://www.puntopagos.com/content/mp7.gif"), generate_plan_transaction_path(:mp => "07", :plan_id => 0), alt: "Botón de Pago Banco Estado", class: "plan_mp_link" %>
+              </td>
+              <td>
+                <%= link_to image_tag("https://www.puntopagos.com/content/mp3.gif"), generate_plan_transaction_path(:mp => "03", :plan_id => 0), alt: "Webpay Transbank", class: "plan_mp_link" %>
+              </td>
+            </tr>
+          </table>
+        </div>
       </div>
       <div class="modal-footer">
       </div>
