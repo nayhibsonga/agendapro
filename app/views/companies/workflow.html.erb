@@ -106,7 +106,7 @@
                         <div class="form-group has-feedback">
                           <%= label_tag(:email, "E-mail", class: "col-sm-3 control-label") %>
                           <div class="col-sm-9">
-                            <%= email_field_tag(:email, current_user.email, :class => "form-control", :placeholder => "ejemplo@dominio.com", :required => true) %>
+                            <%= email_field_tag(:email, current_user.email, :class => "form-control", :placeholder => "ejemplo@dominio.com (requerido)", :required => true) %>
                             <span class="help-block"></span>
                             <span class="form-control-feedback"></span>
                           </div>
@@ -114,13 +114,13 @@
                         <div class="form-group has-feedback">
                           <%= label_tag(:phone, "Teléfono", class: "col-sm-3 control-label") %>
                           <div class="col-sm-9">
-                            <%= telephone_field_tag(:phone, current_user.phone, :class => "form-control", :placeholder => "1122334455", :required => true) %>
+                            <%= telephone_field_tag(:phone, current_user.phone, :class => "form-control", :placeholder => "1122334455 (requerido)", :required => true) %>
                             <span class="help-block"></span>
                             <span class="form-control-feedback"></span>
                           </div>
                         </div>
                       </div>
-                      <p id="user-message">Estas agendando como <strong><%= current_user.email %></strong>.<br /> Si no eres tu, haz click <a href="#" id="user-change">aquí</a></p>
+                      <p id="user-message">Estas agendando como <strong><%= current_user.email %></strong><br /> Si no eres tu, haz click <a href="#" id="user-change">aquí</a></p>
                       <% else %>
                       <%= hidden_field_tag :firstName %>
                       <%= hidden_field_tag :lastName %>
@@ -133,7 +133,7 @@
                         </div>
                       </div>
                       <div class="form-group has-feedback">
-                        <%= label_tag(:email, "E-mail", class: "col-sm-3 control-label") %>
+                        <%= label_tag(:email, "E-mail (requerido)", class: "col-sm-3 control-label") %>
                         <div class="col-sm-9">
                           <%= email_field_tag(:email, nil, :class => "form-control", :placeholder => "ejemplo@dominio.com", :required => true) %>
                           <span class="help-block"></span>
@@ -143,7 +143,7 @@
                       <div class="form-group has-feedback">
                         <%= label_tag(:phone, "Teléfono", class: "col-sm-3 control-label") %>
                         <div class="col-sm-9">
-                          <%= telephone_field_tag(:phone, nil, :class => "form-control", :placeholder => "1122334455", :required => true) %>
+                          <%= telephone_field_tag(:phone, nil, :class => "form-control", :placeholder => "1122334455 (requerido)", :required => true) %>
                           <span class="help-block"></span>
                           <span class="form-control-feedback"></span>
                         </div>
@@ -152,7 +152,7 @@
                       <div id="outcallAddress" class="form-group has-feedback">
                         <%= label_tag(:address, "Dirección", class: "col-sm-3 control-label") %>
                         <div class="col-sm-9">
-                          <%= text_field_tag(:address, nil, :class => "form-control", :placeholder => "Escribe la dirección donde se debe realizar el servicio." ) %>
+                          <%= text_field_tag(:address, nil, :class => "form-control", :placeholder => "Escribe la dirección donde se debe realizar el servicio" ) %>
                           <span class="help-block"></span>
                           <span class="form-control-feedback"></span>
                         </div>
@@ -160,7 +160,7 @@
                       <div class="form-group">
                         <%= label_tag(:comment, "Comentario", class: "col-sm-3 control-label") %>
                         <div class="col-sm-9">
-                          <%= text_area_tag(:comment, nil, :class => "form-control", :placeholder => "Escribe tus comentarios para notificarlos, si los tienes.", :rows => 4) %>
+                          <%= text_area_tag(:comment, nil, :class => "form-control", :placeholder => "Agrega algún comentario a tu reserva en caso de ser necesario", :rows => 4) %>
                         </div>
                       </div>
                       <div class="form-group">
