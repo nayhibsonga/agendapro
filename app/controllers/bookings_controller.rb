@@ -444,8 +444,8 @@ class BookingsController < ApplicationController
 
   def check_user_cross_bookings
     require 'date'
-    if !params[:user].blank?
-      bookings = Booking.where(:user_id => params[:user], :status_id => [Status.find_by(:name => 'Reservado'), Status.find_by(:name => 'Pagado'), Status.find_by(:name => 'Confirmado')])
+    if !params[:user_id].blank?
+      bookings = Booking.where(:user_id => params[:user_id], :status_id => [Status.find_by(:name => 'Reservado'), Status.find_by(:name => 'Pagado'), Status.find_by(:name => 'Confirmado')])
       booking_start = DateTime.parse(params[:booking_start])
       booking_end = DateTime.parse(params[:booking_end])
       bookings.each do |booking|
