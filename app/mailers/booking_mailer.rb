@@ -69,7 +69,7 @@ class BookingMailer < ActionMailer::Base
 						},
 						{
 							:name => 'MESSAGE',
-							:content => 'tu reserva fue recibida correctamente'
+							:content => 'tu reserva fue recibida exitosamente'
 						},
 						{
 							:name => 'EDIT',
@@ -291,7 +291,7 @@ class BookingMailer < ActionMailer::Base
 						},
 						{
 							:name => 'MESSAGE',
-							:content => 'tu reserva fue actualizada correctamente'
+							:content => 'tu reserva fue actualizada exitosamente'
 						},
 						{
 							:name => 'EDIT',
@@ -680,7 +680,7 @@ class BookingMailer < ActionMailer::Base
 						},
 						{
 							:name => 'MESSAGE',
-							:content => 'tu reserva fue cancelada correctamente'
+							:content => 'tu reserva fue cancelada exitosamente'
 						},
 						{
 							:name => 'LOCATIONPHONE',
