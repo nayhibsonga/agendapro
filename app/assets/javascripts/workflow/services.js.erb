@@ -163,10 +163,10 @@ function loadStep3 () {
 
 function checkUserCrossBookings () {
 	$(".alert").alert('close');
-	var user = $('#user').val();
+	var user = $('#user_id').val();
 	var booking_start = $('#start').val();
 	var booking_end = $('#end').val();
-	$.getJSON('/check_user_cross_bookings', {user: user, booking_start: booking_start, booking_end: booking_end}, function (result) {
+	$.getJSON('/check_user_cross_bookings', {user_id: user, booking_start: booking_start, booking_end: booking_end}, function (result) {
 		if (result.crossover) {
 			var warning = '<div class="alert alert-warning alert-dismissable fade in" style="margin-bottom: 0px;">' +
 								'<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>' +

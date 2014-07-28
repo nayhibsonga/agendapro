@@ -32,7 +32,7 @@ class DistrictsController < ApplicationController
 
     respond_to do |format|
       if @district.save
-        format.html { redirect_to @district, notice: 'La comuna fue creada exitosamente.' }
+        format.html { redirect_to @district, notice: 'Comuna creada exitosamente.' }
         format.json { render action: 'show', status: :created, location: @district }
       else
         format.html { render action: 'new' }
@@ -46,7 +46,7 @@ class DistrictsController < ApplicationController
   def update
     respond_to do |format|
       if @district.update(district_params)
-        format.html { redirect_to @district, notice: 'La comuna fue actualizada exitosamente.' }
+        format.html { redirect_to @district, notice: 'Comuna actualizada exitosamente.' }
         format.json { head :no_content }
       else
         format.html { render action: 'edit' }

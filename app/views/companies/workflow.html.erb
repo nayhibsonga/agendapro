@@ -92,7 +92,7 @@
                       <input type="hidden" name="origin" id="origin" value="true">
                       <% if user_signed_in? %>
                       <div id="user-data">
-                        <input type="hidden" name="user" id="user" value="<%= current_user.id %>">
+                        <%= hidden_field_tag :user_id, current_user.id %>
                         <%= hidden_field_tag :firstName, current_user.first_name %>
                         <%= hidden_field_tag :lastName, current_user.last_name %>
                         <div class="form-group has-feedback">
