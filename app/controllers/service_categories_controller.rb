@@ -25,7 +25,7 @@ class ServiceCategoriesController < ApplicationController
   # GET /service_categories/1/edit
   def edit
     if @service_category.name == "Sin Categoría"
-      redirect_to service_categories_path, notice: 'No es posible editar la categoría "Sin Categoría".'
+      redirect_to service_categories_path, notice: 'No es posible modificar la categoría "Sin Categoría".'
     end
   end
 
@@ -37,7 +37,7 @@ class ServiceCategoriesController < ApplicationController
 
     respond_to do |format|
       if @service_category.save
-        format.html { redirect_to service_categories_path, notice: 'La Categoría de Servicios ha sido creada exitosamente.' }
+        format.html { redirect_to service_categories_path, notice: 'Categoría de Servicios creada exitosamente.' }
         format.json { render action: 'show', status: :created, location: @service_category }
       else
         format.html { render action: 'new' }
@@ -54,7 +54,7 @@ class ServiceCategoriesController < ApplicationController
     end
     respond_to do |format|
       if @service_category.update(service_category_params)
-        format.html { redirect_to service_categories_path, notice: 'La Categoría de Servicios ha sido actualizada exitosamente.' }
+        format.html { redirect_to service_categories_path, notice: 'Categoría de Servicios actualizada exitosamente.' }
         format.json { head :no_content }
       else
         format.html { render action: 'edit' }

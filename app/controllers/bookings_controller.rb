@@ -217,11 +217,11 @@ class BookingsController < ApplicationController
     end
     @booking.price = Service.find(params[:service]).price
     if @booking.save
-      flash[:notice] = "Servicio agendado"
+      flash[:notice] = "Reserva realizada exitosamente."
 
       # BookingMailer.book_service_mail(@booking)
     else
-      flash[:alert] = "Error guardando datos de agenda"
+      flash[:alert] = "Hubo un error guardando los datos de tu reserva. Inténtalo nuevamente."
       @errors = @booking.errors
     end
 
