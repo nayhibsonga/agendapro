@@ -767,7 +767,8 @@ function createBookingModal(date, provider_id) {
 			$('#bookingModal').modal('show');	
 		}
 		else {
-			alertId.showAlert('<h3>Este local no tiene prestadores o servicios</h3>Por favor complete los datos antes de reservar.');
+			alert('Este local no tiene prestadores o servicios\nPor favor complete los datos antes de reservar');
+			// alertId.showAlert('<h3>Este local no tiene prestadores o servicios</h3>Por favor complete los datos antes de reservar.');
 			bookingModalOpen = false;
 		}
 	});
@@ -845,15 +846,17 @@ function editDrag(event) {
 			data: { "provider_break": eventJSON },
 			dataType: 'json',
 			success: function(){
-				alertId.showAlert("Horario del bloqueo cambiado exitosamente.");
+				alert("Horario del bloqueo cambiado exitosamente");
+				// alertId.showAlert("Horario del bloqueo cambiado exitosamente.");
 			},
 			error: function(xhr){
 				var errors = $.parseJSON(xhr.responseText).errors;
 				var errores = '';
 				for (i in errors) {
-					errores += errors[i];
+					errores += errors[i] + '\n';
 				}
-				alertId.showAlert(errores);
+				alert(errores);
+				// alertId.showAlert(errores);
 				$.getJSON('/provider_breaks/'+event.id.substring(1), function (provider_break) {
 					event.start = provider_break.start;
 					event.end = provider_break.end;
@@ -870,15 +873,17 @@ function editDrag(event) {
 			data: { "booking": eventJSON },
 			dataType: 'json',
 			success: function(){
-				alertId.showAlert("Horario de la reserva cambiado exitosamente.");
+				alert("Horario de la reserva cambiado exitosamente");
+				// alertId.showAlert("Horario de la reserva cambiado exitosamente.");
 			},
 			error: function(xhr){
 				var errors = $.parseJSON(xhr.responseText).errors;
 				var errores = '';
 				for (i in errors) {
-					errores += errors[i];
+					errores += errors[i] + '\n';
 				}
-				alertId.showAlert(errores);
+				alert(errores);
+				// alertId.showAlert(errores);
 				$.getJSON('/bookings/'+event.id, function (booking) {
 					event.start = booking.start;
 					event.end = booking.end;
@@ -952,11 +957,12 @@ function saveBooking(typeURL, extraURL) {
 			var errors = $.parseJSON(xhr.responseText).errors;
 			var errores = '';
 			for (i in errors) {
-				errores += ' ' + errors[i];
+				errores += ' ' + errors[i] + '\n';
 			}
 			$('.booking-button').removeAttr("disabled");
 			$('#small_loader').remove();
-			alertId.showAlert(errores);
+			alert(errores);
+			// alertId.showAlert(errores);
 		}
 	});
 }
@@ -1013,9 +1019,10 @@ function saveBreak (typeURL, extraURL) {
 			var errors = $.parseJSON(xhr.responseText).errors;
 			var errores = '';
 			for (i in errors) {
-				errores += errors[i];
+				errores += errors[i] + '\n';
 			}
-			alertId.showAlert(errores);
+			alert(errores);
+			// alertId.showAlert(errores);
 		}
 	});
 }
@@ -1260,9 +1267,9 @@ function animateRight (selector) {
 	);
 }
 
-var alertId;
+// var alertId;
 $(function() {
-	alertId = new Alert();
+	// alertId = new Alert();
 
 	$('#new_booking').keypress(function(e){
     	if ( e.which == 13 ) return false;
