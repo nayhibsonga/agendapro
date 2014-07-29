@@ -1,4 +1,7 @@
 Agendapro::Application.configure do
+  # Se setea el host por defecto en production. Ojo de cambiarlo a mano en bambucalendar
+  Rails.application.routes.default_url_options[:host] = 'agendapro.cl'
+  
   # Settings specified here will take precedence over those in config/application.rb.
 
   # Code is not reloaded between requests.
@@ -97,6 +100,4 @@ Agendapro::Application.configure do
   # Use default logging formatter so that PID and timestamp are not suppressed.
   config.log_formatter = ::Logger::Formatter.new
 
-  # Se setea el host por defecto en production. Ojo de cambiarlo a mano en bambucalendar
-  Rails.application.routes.default_url_options = { :host => 'agendapro.cl' }
 end
