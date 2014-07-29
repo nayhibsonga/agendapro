@@ -28,5 +28,7 @@ Agendapro::Application.configure do
   config.assets.debug = true
 
   config.action_mailer.default_url_options = { :host => 'lvh.me:3000' }
+
+  Rails.application.routes.default_url_options[:host] = 'lvh.me:3000'
   
 end
