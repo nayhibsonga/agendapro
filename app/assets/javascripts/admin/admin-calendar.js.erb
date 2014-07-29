@@ -767,7 +767,7 @@ function createBookingModal(date, provider_id) {
 			$('#bookingModal').modal('show');	
 		}
 		else {
-			alert('Este local no tiene prestadores o servicios\nPor favor complete los datos antes de reservar');
+			alert('Este local no tiene prestadores o servicios\nPor favor completa los datos necesarios para poder generar reservas en este local.');
 			// alertId.showAlert('<h3>Este local no tiene prestadores o servicios</h3>Por favor complete los datos antes de reservar.');
 			bookingModalOpen = false;
 		}
@@ -846,7 +846,7 @@ function editDrag(event) {
 			data: { "provider_break": eventJSON },
 			dataType: 'json',
 			success: function(){
-				alert("Horario del bloqueo cambiado exitosamente");
+				alert("Bloqueo actualizado exitosamente.");
 				// alertId.showAlert("Horario del bloqueo cambiado exitosamente.");
 			},
 			error: function(xhr){
@@ -873,7 +873,7 @@ function editDrag(event) {
 			data: { "booking": eventJSON },
 			dataType: 'json',
 			success: function(){
-				alert("Horario de la reserva cambiado exitosamente");
+				alert("Reserva actualizada exitosamente.");
 				// alertId.showAlert("Horario de la reserva cambiado exitosamente.");
 			},
 			error: function(xhr){

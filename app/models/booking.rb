@@ -32,7 +32,7 @@ class Booking < ActiveRecord::Base
 
 	def service_staff
 		if !self.service_provider.services.include?(self.service)
-			errors.add(:base, "El prestador de servicios no puede realizar este servicio.")
+			errors.add(:base, "El prestador no puede realizar este servicio.")
 		end
 	end
 
@@ -44,10 +44,10 @@ class Booking < ActiveRecord::Base
 					unless provider_booking.status_id == cancelled_id
 						if (provider_booking.start - self.end) * (self.start - provider_booking.end) > 0
 							if !self.service.group_service || self.service_id != provider_booking.service_id
-								errors.add(:base, "Esa hora ya está agendada para ese prestador de servicios.")
+								errors.add(:base, "La hora ya está agendada para ese prestador. Por favor selecciona otra hora disponible.")
 								return
 							elsif self.service.group_service && self.service_id == provider_booking.service_id && self.service_provider.bookings.where(:service_id => self.service_id, :start => self.start).count >= self.service.capacity
-								errors.add(:base, "La capacidad del servicio grupal, de esa hora, ya llegó a su límite.")
+								errors.add(:base, "La capacidad del servicio grupal ya llegó a su límite. Por favor selecciona otra hora disponible.")
 								return
 							end
 						end
@@ -57,7 +57,7 @@ class Booking < ActiveRecord::Base
 			if self.service.resources.count > 0
 				self.service.resources.each do |resource|
 					if !self.location.resource_locations.pluck(:resource_id).include?(resource.id)
-						errors.add(:base, "Este Local no tiene el(los) recurso(s) necesario(s) para realizar este servicio.")
+						errors.add(:base, "Este local no tiene el(los) recurso(s) necesario(s) para realizar este servicio.")
 						return
 					end
 					used_resource = 0
@@ -76,7 +76,7 @@ class Booking < ActiveRecord::Base
 						end
 					end
 					if group_services.uniq.count + used_resource >= ResourceLocation.where(resource_id: resource.id, location_id: self.location.id).first.quantity
-						errors.add(:base, "Este Local ya tiene asignado(s) el(los) recurso(s) necesario(s) para realizar este servicio.")
+						errors.add(:base, "Este local ya tiene asignado(s) el(los) recurso(s) necesario(s) para realizar este servicio.")
 						return
 					end
 				end
@@ -86,7 +86,7 @@ class Booking < ActiveRecord::Base
 
 	def time_empty_or_negative
 		if self.start >= self.end
-			errors.add(:base, "Existen horarios vacíos o negativos.")
+			errors.add(:base, "La hora de fin es menor a la hora de inicio. Por favor revisa la hora asignada.")
 		end
 	end
 
@@ -106,7 +106,7 @@ class Booking < ActiveRecord::Base
 			end
 		end
 		if !in_provider_time
-			errors.add(:base, "El horario o día de la reserva no es posible para ese prestador de servicio.")
+			errors.add(:base, "El horario o día de la reserva no está disponible para este prestador.")
 		end
 	end
 
@@ -152,7 +152,7 @@ class Booking < ActiveRecord::Base
 		event = RiCal.Calendar do |cal|
 		  cal.event do |event|
 			event.summary = booking.service.name + ' en ' + booking.location.name
-			event.description = "Se reservo " + booking.service.name + " en "  + booking.location.name + ", con una duracion de " + booking.service.duration.to_s
+			event.description = "Se reservó " + booking.service.name + " en "  + booking.location.name + ", con una duración de " + booking.service.duration.to_s
 			event.dtstart =  DateTime.parse(booking.start.to_s).new_offset('+04:00')
 			event.dtend = DateTime.parse(booking.end.to_s).new_offset('+04:00')
 			event.location = booking.location.address
