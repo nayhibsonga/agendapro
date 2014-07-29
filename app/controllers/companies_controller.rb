@@ -119,7 +119,7 @@ class CompaniesController < ApplicationController
 		if @company.nil?
 			@company = Company.find_by(web_address: request.subdomain.gsub(/www\./i, ''))
 			if @company.nil?
-				flash[:alert] = "No existe la compañia."
+				flash[:alert] = "No existe la compañia buscada."
 
 				host = request.host_with_port
 				domain = host[host.index(request.domain)..host.length]

@@ -35,9 +35,9 @@ $(function () {
 					if (selected <= 0) {
 						my_alert.showAlert(
 							'<h3>Lo sentimos</h3>' +
-							'No puede seleccionar más de ' + mails_left + ' clientes.' +
+							'No puedes seleccionar más de ' + mails_left + ' clientes.' +
 							'<br>' +
-							'Solo puede mandar un máximo de ' + $('#mails').data('max-mails') + ' emails por día.'
+							'Solo puedes mandar un máximo de ' + $('#mails').data('max-mails') + ' emails por día.'
 						);
 					};
 				};
