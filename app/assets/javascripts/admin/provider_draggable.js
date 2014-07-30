@@ -36,7 +36,7 @@ function providerNewOrder (tbody) {
 					$('.content-fix').prepend(
 						'<div class="alert alert-danger alert-dismissable">' +
 							'<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>' +
-							'<strong>Error!</strong> No se pudo guardar el cambio de: ' + result.provider +
+							'No se pudo guardar el cambio de orden de: ' + result.provider +
 						'</div>'
 					);
 				};

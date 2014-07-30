@@ -370,7 +370,7 @@ class BookingsController < ApplicationController
       flash[:notice] = "Reserva actualizada exitosamente."
       # BookingMailer.update_booking(@booking)
     else
-      flash[:alert] = "Hubo un error actualizando tu reserva."
+      flash[:alert] = "Hubo un error actualizando tu reserva. Inténtalo nuevamente."
       @errors = @booking.errors
     end
 
@@ -428,7 +428,7 @@ class BookingsController < ApplicationController
         flash[:notice] = "Reserva cancelada exitosamente."
         # BookingMailer.cancel_booking(@booking)
       else
-        flash[:alert] = "Hubo un error cancelando tu reserva."
+        flash[:alert] = "Hubo un error cancelando tu reserva. Inténtalo nuevamente."
         @errors = @booking.errors
       end
     end

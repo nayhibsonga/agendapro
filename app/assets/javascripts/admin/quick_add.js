@@ -145,7 +145,7 @@ function startLocation () {
 					locationValid(local);
 				}
 				else {
-					my_alert.showAlert('Tiene que seleccionar al menos un día.');
+					my_alert.showAlert('Tienes que seleccionar al menos un día.');
 					hideLoad();
 				}
 			});
@@ -170,7 +170,7 @@ function startLocation () {
 					locationValid(local);
 				}
 				else {
-					my_alert.showAlert('Tiene que seleccionar al menos un día.');
+					my_alert.showAlert('Tienes que seleccionar al menos un día.');
 					hideLoad();
 				}
 			});
@@ -334,7 +334,7 @@ function providerValid () {
 		bool = bool || $('#provdayStatusId'+ i).is(':checked');
 	}
 	if (!bool) {
-		my_alert.showAlert('Debe elegir al menos un día.');
+		my_alert.showAlert('Debes elegir al menos un día.');
 		hideLoad();
 	}
 	else {

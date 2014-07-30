@@ -37,8 +37,8 @@ function addBooking (booking) {
 		selected = false;
 		$('.hora-activo').addClass('hora-disponible').removeClass('hora-activo');
 		myAlert.showAlert(
-	      '<h3>Horario Invalido</h3>' +
-	      '<p>La fecha/hora elegida es anterior a la fecha/hora actual o no cumple el tiempo minimo requerido para agendar.</p>'
+	      '<h3>Horario Inválido</h3>' +
+	      '<p>La fecha/hora elegida es anterior a la fecha/hora actual o no cumple el tiempo mínimo requerido para agendar.</p>'
 	    );
 	}
 }
@@ -62,8 +62,8 @@ $(function () {
 		if (!selected) {
 	    	event.preventDefault();
 			myAlert.showAlert(
-		      '<h3>Seleccione un Horario</h3>' +
-		      '<p>Debe elegir un horario antes de poder continuar.</p>'
+		      '<h3>Selecciona un Horario</h3>' +
+		      '<p>Debes elegir un horario antes de poder continuar.</p>'
 		    );
 		}
   	});
