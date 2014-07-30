@@ -83,7 +83,7 @@ class ServiceProvider < ActiveRecord::Base
 				end
 			end
 			if !in_location_time
-				errors.add(:base, "El horario del día "+provider_time.day.name+" no es posible para ese local.")
+				errors.add(:base, "El horario del día "+provider_time.day.name+" no es factible para el local seleccionado.")
 			end
 		end
 	end
