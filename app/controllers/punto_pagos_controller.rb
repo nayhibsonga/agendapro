@@ -145,6 +145,6 @@ class PuntoPagosController < ApplicationController
     notification = PuntoPagos::Notification.new
     if headers.nil? then headers = {"headers"=>""} end
     if params.nil? then params = {"params"=>""} end
-    notification.valid? headers.to_hash, params.to_hash
+    notification.valid? headers, params.to_hash
   end
 end
