@@ -58,6 +58,11 @@ function loadStep1 () {
 		});
 
 		$('#foo4').trigger('updateSizes');
+
+		$('.panel-group .panel-default').on('shown.bs.collapse', function (event) {
+			window.console.log('trigger')
+			$('#foo4').trigger('updateSizes');
+		});
 	});
 }
 
