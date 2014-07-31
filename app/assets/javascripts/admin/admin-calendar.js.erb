@@ -840,7 +840,7 @@ function editDrag(event) {
 		var eventJSON = {start: startString, end: endString};
 	} 
 	if (event.id.toString().charAt(0) === 'b') {
-		if (confirm('¿Mover el bloque a la posicion señalada?')) {
+		if (confirm('¿Estás seguro que deseas modificar el bloqueo de horario?')) {
 			$.ajax({
 				type: 'PATCH',
 				url: '/provider_breaks/'+ event.id.substring(1) +'.json',
@@ -852,9 +852,9 @@ function editDrag(event) {
 				},
 				error: function(xhr){
 					var errors = $.parseJSON(xhr.responseText).errors;
-					var errores = '';
+					var errores = 'Error\n';
 					for (i in errors) {
-						errores += errors[i] + '\n';
+						errores += '*' + errors[i] + '\n';
 					}
 					alert(errores);
 					// alertId.showAlert(errores);
@@ -876,7 +876,7 @@ function editDrag(event) {
 		};
 	}
 	else {
-		if (confirm('¿Mover la reserva a la posicion señalada?')) {
+		if (confirm('¿Estás seguro que deseas modificar la reserva?')) {
 			$.ajax({
 				type: 'PATCH',
 				url: '/bookings/'+ event.id +'.json',
@@ -888,9 +888,9 @@ function editDrag(event) {
 				},
 				error: function(xhr){
 					var errors = $.parseJSON(xhr.responseText).errors;
-					var errores = '';
+					var errores = 'Error\n';
 					for (i in errors) {
-						errores += errors[i] + '\n';
+						errores += '*' + errors[i] + '\n';
 					}
 					alert(errores);
 					// alertId.showAlert(errores);
@@ -973,9 +973,9 @@ function saveBooking(typeURL, extraURL) {
 		},
 		error: function(xhr){
 			var errors = $.parseJSON(xhr.responseText).errors;
-			var errores = '';
+			var errores = 'Error\n';
 			for (i in errors) {
-				errores += ' ' + errors[i] + '\n';
+				errores += '*' + errors[i] + '\n';
 			}
 			$('.booking-button').removeAttr("disabled");
 			$('#small_loader').remove();
@@ -1005,7 +1005,6 @@ function saveBreak (typeURL, extraURL) {
 					allDay: false,
 					start: provider_break.start,
 					end: provider_break.end,
-					editable: false,
 					resourceId: parseInt(provider_break.service_provider_id),
 					textColor: textColors[0],
 					borderColor: textColors[0],
@@ -1035,9 +1034,9 @@ function saveBreak (typeURL, extraURL) {
 		},
 		error: function(xhr){
 			var errors = $.parseJSON(xhr.responseText).errors;
-			var errores = '';
+			var errores = 'Error\n';
 			for (i in errors) {
-				errores += errors[i] + '\n';
+				errores += '*' + errors[i] + '\n';
 			}
 			alert(errores);
 			// alertId.showAlert(errores);
@@ -1468,7 +1467,7 @@ $(function() {
 		$('.has-success').removeClass('has-success');
 		$('.fa.fa-check').removeClass('fa fa-check');
 		$('.has-error').removeClass('has-error');
-		$('.fa.fa-times').removeClass('fa fa-times');
+		$('#bookingModal').find('.fa.fa-times').removeClass('fa fa-times');
 	});
 
 	$('#breakModal').on('hidden.bs.modal', function (e) {

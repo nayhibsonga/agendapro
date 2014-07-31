@@ -121,9 +121,9 @@ $(function() {
 				},
 				error: function(xhr){
 					var errors = $.parseJSON(xhr.responseText).errors;
-					var errores = '';
+					var errores = 'Error\n';
 					for (i in errors) {
-						errores += errors[i];
+						errores += '*' + errors[i] + '\n';
 					}
 					alert(errores);
 				},

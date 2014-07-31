@@ -42,9 +42,9 @@ function saveCategory (typeURL, extraURL) {
 		},
 		error: function(xhr){
 			var errors = $.parseJSON(xhr.responseText).errors;
-			var errores = '';
+			var errores = 'Error\n';
 			for (i in errors) {
-				errores += errors[i];
+				errores += '*' + errors[i] + '\n';
 			}
 			alert(errores);
 		}
@@ -78,15 +78,18 @@ function saveResource (typeURL, extraURL) {
 		data: { "resource": resourceJSON },
 		dataType: 'json',
 		success: function() {
-				document.location.href = '/resources/';
-			},
+			document.location.href = '/resources/';
+		},
 		error: function(xhr){
 			var errors = $.parseJSON(xhr.responseText).errors;
-			var errores = '';
+			var errorList = document.createElement('ul');
 			for (i in errors) {
-				errores += errors[i];
+				$(errorList).append('<li>' + errors[i] + '</li>');
 			}
-			alertId.showAlert(errores);
+			alertId.showAlert(
+				'<h2>Error</h2>'
+				errorList
+			);
 		}
 	});
 }

@@ -305,11 +305,14 @@ function saveLocation() {
 			},
 			error: function(xhr){
 				var errors = $.parseJSON(xhr.responseText).errors;
-				var errores = '';
-				for (i in errors) {
-					errores += errors[i];
-				}
-				alertId.showAlert(errores);
+				var errorList = document.createElement('ul');
+			for (i in errors) {
+				$(errorList).append('<li>' + errors[i] + '</li>');
+			}
+				alertId.showAlert(
+					'<h2>Error</h2>'
+					errorList
+				);
 			}
 		});
 	}
@@ -325,11 +328,14 @@ function saveLocation() {
 			},
 			error: function(xhr){
 				var errors = $.parseJSON(xhr.responseText).errors;
-				var errores = '';
+				var errorList = document.createElement('ul');
 				for (i in errors) {
-					errores += errors[i];
+					$(errorList).append('<li>' + errors[i] + '</li>');
 				}
-				alertId.showAlert(errores);
+				alertId.showAlert(
+					'<h2>Error</h2>'
+					errorList
+				);
 			}
 		});
 	}
