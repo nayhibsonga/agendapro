@@ -24,10 +24,6 @@
 		<%= stylesheet_link_tag "http://fonts.googleapis.com/css?family=Open+Sans:400,300,400italic,600,600italic,700,700italic,300italic" %>
 		<!-- end: CSS -->
 
-		<!-- start: JavaScript-->
-		<%= javascript_include_tag "jquery-1.11.0.min" %>
-		<!-- end: JavaScript-->
-
 		<!-- Fav and touch icons -->
 		<%= favicon_link_tag "Iso_Pro_Color.png", :rel => "shortcut icon" %>
 	</head>
@@ -35,7 +31,7 @@
 	<body>
 		<!-- start: Header -->
 		<header>
-			<%= link_to '', :back, :class => "volver" %>
+			<%= link_to '', '/', :class => "volver" %>
 			<h2><%= @company.name %></h2>
 			<a id="btn-principal" class="nav-toggler toggle-slide-right" href="#menu"><span>menu</span></a>
 			</div>
@@ -86,8 +82,17 @@
 		<!-- end: content -->
 
 		<!-- start: JavaScript-->
+		<%= javascript_include_tag "jquery-1.11.1.min" %>
 		<%= yield :scripts %>
 		<%= javascript_include_tag "mobile" %>
+		<script type="text/javascript">
+			$(function () {
+				$('a.volver').click(function (event) {
+					event.preventDefault();
+					window.history.back();
+				});
+			});
+		</script>
 		<!-- end: JavaScript-->
 	</body>
 </html>

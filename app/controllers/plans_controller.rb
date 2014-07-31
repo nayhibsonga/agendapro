@@ -33,7 +33,7 @@ class PlansController < ApplicationController
 
     respond_to do |format|
       if @plan.save
-        format.html { redirect_to @plan, notice: 'El plan fue creado exitosamente.' }
+        format.html { redirect_to @plan, notice: 'Plan creado exitosamente.' }
         format.json { render action: 'show', status: :created, location: @plan }
       else
         format.html { render action: 'new' }
@@ -47,7 +47,7 @@ class PlansController < ApplicationController
   def update
     respond_to do |format|
       if @plan.update(plan_params)
-        format.html { redirect_to @plan, notice: 'El plan fue actualizado exitosamente.' }
+        format.html { redirect_to @plan, notice: 'Plan actualizado exitosamente.' }
         format.json { head :no_content }
       else
         format.html { render action: 'edit' }

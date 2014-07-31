@@ -52,7 +52,7 @@ class Location < ActiveRecord::Base
 				end
 			end
 			if notOutcall
-				errors.add(:base, "El local a domicilio no puede tener proveedores que realizan servicios no a domicilio.")
+				errors.add(:base, "El local a domicilio no puede tener prestadores que realizan servicios que no son a domicilio.")
 			end
 		end
 	end
@@ -93,7 +93,7 @@ class Location < ActiveRecord::Base
 					end
 				end
 				if !in_location_time
-					errors.add(:base, "El horario del staff "+service_provider.public_name+" no es posible para este local, debes cambiarlo antes de poder cambiar el horario de este local.")
+					errors.add(:base, "El horario del staff "+service_provider.public_name+" no es factible para este local, debes cambiarlo antes de poder cambiar el horario del local.")
 				end
 			end
 		end

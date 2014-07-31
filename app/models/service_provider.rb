@@ -23,18 +23,18 @@ class ServiceProvider < ActiveRecord::Base
 	def plan_service_providers
 		if self.active_changed? && self.active
 			if self.company.service_providers.where(active:true).count >= self.company.plan.service_providers
-				errors.add(:base, "No se pueden agregar más proveedores con el plan actual, ¡mejóralo!.")
+				errors.add(:base, "No se pueden agregar más prestadores con el plan actual, ¡mejóralo!.")
 			end
 		else
 			if self.company.locations.where(active:true).count > self.company.plan.locations
-				errors.add(:base, "No se pueden agregar más proveedores con el plan actual, ¡mejóralo!.")
+				errors.add(:base, "No se pueden agregar más prestadores con el plan actual, ¡mejóralo!.")
 			end
 		end
 	end
 
 	def new_plan_service_providers
 		if self.company.service_providers.where(active:true).count >= self.company.plan.service_providers
-			errors.add(:base, "No se pueden agregar más proveedores con el plan actual, ¡mejóralo!.")
+			errors.add(:base, "No se pueden agregar más prestadores con el plan actual, ¡mejóralo!.")
 		end
 	end
 
@@ -55,7 +55,7 @@ class ServiceProvider < ActiveRecord::Base
 				end
 			end
 			if notOutcall
-				errors.add(:base, "Los servicios asociados a un proveedor de una sucursal a domicilio, deben ser exclusivamente servicios a domicilio.")
+				errors.add(:base, "Los servicios asociados a un prestador de una sucursal a domicilio, deben ser exclusivamente servicios a domicilio.")
 			end
 		end
 	end
@@ -95,7 +95,7 @@ class ServiceProvider < ActiveRecord::Base
 				end
 			end
 			if !in_location_time
-				errors.add(:base, "El horario del día "+provider_time.day.name+" no es posible para ese local.")
+				errors.add(:base, "El horario del día "+provider_time.day.name+" no es factible para el local seleccionado.")
 			end
 		end
 	end

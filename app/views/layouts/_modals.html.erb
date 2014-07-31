@@ -1,137 +1,131 @@
 <!-- start: Modals -->
 <div class="modal fade" id="signin-modal" tabindex="-1" role="dialog" aria-labelledby="siginLabel" aria-hidden="true">
-  <div class="modal-dialog">
-	<div class="modal-content">
-	  <div class="modal-header">
-		<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-		<h4 class="modal-title">Inicia Sesión</h4>
-	  </div>
-	  <div class="modal-body">
-		<div class="row">
-			<div class="col-sm-12">
-				<%= form_for :user, :url => user_session_url(:subdomain => false), :html => { class: 'form-horizontal' } do |f| %>
-					<div class="form-group">
-						<%= f.label :email, 'Email', :class => 'col-sm-4 control-label' %>
-						<div class="col-sm-8">
-							<%= f.email_field :email, :autofocus => true, :required => true, :class => 'form-control' %>
-						</div>
-					</div>
-					<div class="form-group">
-						<%= f.label :password, 'Contraseña', :class => 'col-sm-4 control-label' %>
-						<div class="col-sm-8">
-							<%= f.password_field :password, :required => true, :class => 'form-control' %>
-						</div>
-					</div>
-					<div class="form-group">
-						<div class="col-sm-offset-4 col-sm-8">
-							<div class="checkbox">
-								<label>
-									<%= f.check_box :remember_me %> Recordarme
-								</label>
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+				<h4 class="modal-title">Inicia Sesión</h4>
+			</div>
+			<div class="modal-body">
+				<div class="row">
+					<div class="col-sm-12">
+						<%= form_for :user, :url => user_session_url(:subdomain => false), :html => { class: 'form-horizontal' } do |f| %>
+						<div class="form-group">
+							<%= f.label :email, 'Email', :class => 'col-sm-4 control-label' %>
+							<div class="col-sm-8">
+								<%= f.email_field :email, :autofocus => true, :required => true, :class => 'form-control' %>
 							</div>
 						</div>
-					</div>
-					<div class="form-group">
-						<div class="col-sm-offset-4 col-sm-8">
-							<%= f.submit 'Ingresar', :class => 'btn btn-agendapro-claro' %>
+						<div class="form-group">
+							<%= f.label :password, 'Contraseña', :class => 'col-sm-4 control-label' %>
+							<div class="col-sm-8">
+								<%= f.password_field :password, :required => true, :class => 'form-control' %>
+							</div>
 						</div>
-					</div>
-					<div class="form-group">
-						<div class="col-sm-offset-4 col-sm-8">
-							<%= link_to "¿Olvidaste tu contraseña?", new_password_url(:user, :subdomain => false) %>
+						<div class="form-group">
+							<div class="col-sm-offset-4 col-sm-8">
+								<div class="checkbox">
+									<label>
+										<%= f.check_box :remember_me %> Recordarme
+									</label>
+								</div>
+							</div>
 						</div>
+						<div class="form-group">
+							<div class="col-sm-offset-4 col-sm-8">
+								<%= f.submit 'Ingresar', :class => 'btn btn-agendapro-claro' %>
+							</div>
+						</div>
+						<div class="form-group">
+							<div class="col-sm-offset-4 col-sm-8">
+								<%= link_to "¿Olvidaste tu contraseña?", new_password_url(:user, :subdomain => false) %>
+							</div>
+						</div>
+						<% end %>
 					</div>
-				<% end %>
+				</div>
 			</div>
-		</div>
-	  </div>
-	  <div class="modal-footer">
-		<h4 class="pull-left">¿Aún no tienes cuenta?</h4>
-		<button type="button" class="btn btn-agendapro-oscuro">Regístrate</button>
-	  </div>
-	</div><!-- /.modal-content -->
-  </div><!-- /.modal-dialog -->
+			<div class="modal-footer">
+				<h4 class="pull-left">¿Aún no tienes cuenta?</h4>
+				<button type="button" class="btn btn-agendapro-oscuro">Regístrate</button>
+			</div>
+		</div><!-- /.modal-content -->
+	</div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
 
 <div class="modal fade" id="signup-modal" tabindex="-1" role="dialog" aria-labelledby="sigupLabel" aria-hidden="true">
-  <div class="modal-dialog">
-	<div class="modal-content">
-	  <div class="modal-header">
-		<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-		<h4 class="modal-title">Regístrate</h4>
-	  </div>
-	  <div class="modal-body">
-		<div class="row">
-			<div class="col-sm-12">
-				<%= form_for :user, :url => user_registration_url(:subdomain => false), :html => { class: 'form-horizontal', id: 'signup-form' } do |f| %>
-					<%= f.hidden_field :role_id, :value => Role.where(:name => "Usuario Registrado").first.id %>
-					<div class="form-group">
-						<%= f.label :first_name, 'Nombre', :class => 'col-sm-4 control-label' %>
-						<div class="col-sm-8">
-							<%= f.text_field :first_name, :autofocus => true, :required => true, :class => 'form-control' %>
-							<span class="help-block"></span>
-							<span class="form-control-feedback"></span>
-						</div>
-					</div>
-					<div class="form-group">
-						<%= f.label :last_name, 'Apellido', :class => 'col-sm-4 control-label' %>
-						<div class="col-sm-8">
-							<%= f.text_field :last_name, :required => true, :class => 'form-control' %>
-							<span class="help-block"></span>
-							<span class="form-control-feedback"></span>
-						</div>
-					</div>
-					<div class="form-group">
-						<%= f.label :phone, 'Teléfono', :class => 'col-sm-4 control-label' %>
-						<div class="col-sm-8">
-							<%= f.telephone_field :phone, :required => true, :class => 'form-control' %>
-							<span class="help-block"></span>
-							<span class="form-control-feedback"></span>
-						</div>
-					</div>
-					<div class="form-group">
-						<%= f.label :email, 'Email', :class => 'col-sm-4 control-label' %>
-						<div class="col-sm-8">
-							<%= f.email_field :email, :required => true, :class => 'form-control' %>
-							<span class="help-block"></span>
-							<span class="form-control-feedback"></span>
-						</div>
-					</div>
-					<div class="form-group">
-						<%= f.label :password, 'Contraseña', :class => 'col-sm-4 control-label' %>
-						<div class="col-sm-8">
-							<%= f.password_field :password, :required => true, :class => 'form-control' %>
-							<span class="help-block"></span>
-							<span class="form-control-feedback"></span>
-						</div>
-					</div>
-					<div class="form-group">
-						<%= f.label :password_confirmation, 'Confirmar Contraseña', :class => 'col-sm-4 control-label' %>
-						<div class="col-sm-8">
-							<%= f.password_field :password_confirmation, :required => true, :class => 'form-control' %>
-							<span class="help-block"></span>
-							<span class="form-control-feedback"></span>
-						</div>
-					</div>
-					<div class="form-group">
-						<div class="col-sm-offset-4 col-sm-8">
-							<%= f.submit 'Regístrate', :class => 'btn btn-agendapro-claro' %>
-						</div>
-					</div>
-				<% end %>
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+				<h4 class="modal-title">Regístrate</h4>
 			</div>
-		</div>
-	  </div>
-	  <div class="modal-footer">
-		<h4 class="pull-left">¿Ya tienes cuenta?</h4>
-		<button type="button" class="btn btn-agendapro-oscuro">Inicia Sesión</button>
-	  </div>
-	</div><!-- /.modal-content -->
-  </div><!-- /.modal-dialog -->
+			<div class="modal-body">
+				<div class="row">
+					<div class="col-sm-12">
+						<%= form_for :user, :url => user_registration_url(:subdomain => false), :html => { class: 'form-horizontal', id: 'signup-form' } do |f| %>
+							<%= f.hidden_field :role_id, :value => Role.where(:name => "Usuario Registrado").first.id %>
+							<%= f.hidden_field :first_name %>
+							<%= f.hidden_field :last_name %>
+							<div class="form-group has-feedback">
+								<label for="user_full_name" class="col-sm-4 control-label">Nombre</label>
+								<div class="col-sm-8">
+									<input type="text" id="user_full_name" name="user[full_name]" class="form-control" placeholder="Nombre completo (requerido)">
+									<span class="help-block"></span>
+									<span class="form-control-feedback"></span>
+								</div>
+							</div>
+							<div class="form-group has-feedback">
+								<%= f.label :phone, 'Teléfono', :class => 'col-sm-4 control-label' %>
+								<div class="col-sm-8">
+									<%= f.telephone_field :phone, :required => true, :class => 'form-control', :placeholder => '11223344 (requerido)' %>
+									<span class="help-block"></span>
+									<span class="form-control-feedback"></span>
+								</div>
+							</div>
+							<div class="form-group has-feedback">
+								<%= f.label :email, 'Email', :class => 'col-sm-4 control-label' %>
+								<div class="col-sm-8">
+									<%= f.email_field :email, :required => true, :class => 'form-control', :placeholder => 'ejemplo@dominio.com (requerido)' %>
+									<span class="help-block"></span>
+									<span class="form-control-feedback"></span>
+								</div>
+							</div>
+							<div class="form-group has-feedback">
+								<%= f.label :password, 'Contraseña', :class => 'col-sm-4 control-label' %>
+								<div class="col-sm-8">
+									<%= f.password_field :password, :required => true, :class => 'form-control', :placeholder => 'xxxxxxxx (requerido)' %>
+									<span class="help-block"></span>
+									<span class="form-control-feedback"></span>
+								</div>
+							</div>
+							<div class="form-group has-feedback">
+								<%= f.label :password_confirmation, 'Confirmar Contraseña', :class => 'col-sm-4 control-label' %>
+								<div class="col-sm-8">
+									<%= f.password_field :password_confirmation, :required => true, :class => 'form-control', :placeholder => 'xxxxxxxx (requerido)' %>
+									<span class="help-block"></span>
+									<span class="form-control-feedback"></span>
+								</div>
+							</div>
+							<div class="form-group">
+								<div class="col-sm-offset-4 col-sm-8">
+									<%= f.submit 'Regístrate', :class => 'btn btn-agendapro-claro' %>
+								</div>
+							</div>
+						<% end %>
+					</div>
+				</div>
+			</div>
+			<div class="modal-footer">
+				<h4 class="pull-left">¿Ya tienes cuenta?</h4>
+				<button type="button" class="btn btn-agendapro-oscuro">Inicia Sesión</button>
+			</div>
+		</div><!-- /.modal-content -->
+	</div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
 <!-- end: Modals -->
 
-<%= stylesheet_link_tag "login/form-state" %>
+<%= javascript_include_tag 'split-name' %>
 <script type="text/javascript">
 	function changeModal () {
 		$('#signin-modal').modal('toggle');
@@ -145,7 +139,8 @@
 		$('#signup-modal .modal-footer button').click(function () {
 			changeModal();
 		});
+		split_name('#user_full_name', '#user_first_name', '#user_last_name', '#signup-form');
 	});
 </script>
-<%= javascript_include_tag 'login/jquery.validate.min' %>
-<%= javascript_include_tag 'login/signupModal' %>
+<%= javascript_include_tag 'validations/validate' %>
+<%= javascript_include_tag 'validations/home/signup' %>

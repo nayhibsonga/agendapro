@@ -16,7 +16,6 @@
     </section>
   </div>
 </div>
-
 <div class="row well">
   <%= content_tag "div", id: "plan_info", data: { months_active_left: @company.months_active_left, plan_value_left: (@month_days - @day_number)*@price/@month_days + @price*(@company.months_active_left - 1), due_amount: @company.due_amount } do %><%end%>
   <table class="table table-bordered">
@@ -24,7 +23,7 @@
       <tr>
         <th>Nombre</th>
         <th>Locales</th>
-        <th>Proveedores de Servicio</th>
+        <th>Prestadores de Servicio</th>
         <th>Precio (sin IVA)</th>
         <th>Opciones</th>
       </tr>

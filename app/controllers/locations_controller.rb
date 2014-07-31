@@ -38,7 +38,7 @@ class LocationsController < ApplicationController
 
     respond_to do |format|
       if @location.save
-        format.html { redirect_to locations_path, notice: 'Local creado satisfactoriamente.' }
+        format.html { redirect_to locations_path, notice: 'Local creado exitosamente.' }
         format.json { render :json => @location }
       else
         format.html { render action: 'new' }
@@ -54,7 +54,7 @@ class LocationsController < ApplicationController
     @location.location_times.destroy_all
     respond_to do |format|
       if @location.update(location_params)
-        format.html { redirect_to locations_path, notice: 'Local actualizado satisfactoriamente.' }
+        format.html { redirect_to locations_path, notice: 'Local actualizado exitosamente.' }
         format.json { render :json => @location }
       else
         format.html { render action: 'edit' }
@@ -354,6 +354,6 @@ class LocationsController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def location_params
-      params.require(:location).permit(:name, :address, :phone, :outcall, :longitude, :latitude, :company_id, :district_id, district_ids: [], location_times_attributes: [:id, :open, :close, :day_id, :location_id])
+      params.require(:location).permit(:name, :address, :phone, :outcall, :longitude, :latitude, :company_id, :email, :notification, :district_id, district_ids: [], location_times_attributes: [:id, :open, :close, :day_id, :location_id])
     end
 end

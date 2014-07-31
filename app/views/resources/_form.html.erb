@@ -5,24 +5,28 @@
   <div class="row well">
     <%= form_for @resource, :html => {:class => 'form-horizontal'} do |f| %>
 
-      <div class="form-group">
-        <%= f.label :name, 'Nombre del Recurso:', :class => 'col-sm-3 control-label' %>
+      <div class="form-group has-feedback">
+        <%= f.label :name, 'Nombre del Recurso', :class => 'col-sm-3 control-label' %>
         <div class="col-sm-5">
-          <%= f.text_field :name, :autofocus => true, :required => true, :class => 'form-control' %>
+          <%= f.text_field :name, :autofocus => true, :required => true, :class => 'form-control', :placeholder => 'Nombre (requerido)' %>
+          <span class="help-block"></span>
+          <span class="form-control-feedback"></span>
         </div>
       </div>
-      <div class="form-group">
-        <%= f.label :resource_category, 'Categoría del Recurso:', :class => 'col-sm-3 control-label' %>
+      <div class="form-group has-feedback">
+        <%= f.label :resource_category, 'Categoría del Recurso', :class => 'col-sm-3 control-label' %>
         <div class="col-sm-5">
           <%= f.collection_select :resource_category_id, @resource_categories, :id, :name, { include_blank: true }, {class: "form-control"} %>
+          <span class="help-block"></span>
+          <span class="form-control-feedback"></span>
         </div>
         <div class="col-sm-4">
-          <button type="button" class="btn btn-sm btn-primary" id="newResourceCategoryButton"><i class="fa fa-plus"></i> Nueva Categoría de Recursos</button>
+          <button type="button" class="btn btn-sm btn-agendapro-claro" id="newResourceCategoryButton"><i class="fa fa-plus"></i> Nueva Categoría de Recursos</button>
         </div>
       </div>
       <div class="form-group">
-        <%= f.label :location_ids, 'Locales:', :class => 'col-sm-3 control-label' %>
-        <div class="col-sm-5">
+        <!-- <%= f.label :location_ids, 'Locales', :class => 'col-sm-3 control-label' %> -->
+        <div class="col-sm-12">
           <div class="panel panel-info">
             <div class="panel-heading">
               <h3 class="panel-title">
@@ -42,7 +46,9 @@
                       <input type="checkbox" class="check_boxes pull-left resourceLocationCheck" id="resource_location_ids_<%= location.id %>" value="<%= location.id %>" name="resource[location_ids][]" onchange="changeLocationStatus(<%= location.id %>)"><label class="check_boxes" for="resource_location_ids_<%= location.id %>">&nbsp; <%= location.name %></label>
                     </td>
                     <td class="location-quantities">
-                      <input type="number" class="form-control" id="resource_location_ids_quantity_<%= location.id %>" name="resource[location_ids_quantity][]" disabled>
+                      <input type="number" class="form-control" id="resource_location_ids_quantity_<%= location.id %>" name="resource[location_ids_quantity][]" placeholder="1 (requerido)" disabled>
+                      <span class="help-block"></span>
+                      <!-- <span class="form-control-feedback"></span> -->
                     </td>
                   </tr>
                   <% end %>
@@ -55,8 +61,8 @@
 
       <div class="form-group">
         <div class="col-sm-offset-3 col-sm-4">
-          <button type="button" class="btn btn-primary" id="saveResourceButton">Guardar</button>
-          <%= link_to 'Cancelar', resources_path, class: "btn btn-danger" %>  
+          <button type="button" class="btn btn-agendapro-oscuro" id="saveResourceButton">Guardar</button>
+          <%= link_to 'Cancelar', resources_path, class: "btn btn-default" %>  
         </div>
       </div>
     <% end %>
@@ -68,17 +74,19 @@
     <div class="modal-content">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-        <h4 class="modal-title resourceCategory-modal-title" id="resourceCategoryModalLabel">Crear o Borrar Categorías de Servicios</h4>
+        <h4 class="modal-title resourceCategory-modal-title" id="resourceCategoryModalLabel">Crear o Borrar Categorías de Recurso</h4>
       </div>
       <div class="modal-body break-modal-body">
         <%= form_for @resource_category, html: {class: "form-horizontal"} do |f| %>
-          <div class="form-group">
-            <%= f.label :name, "Nueva Categoría: ", class: "col-sm-3 control-label" %>
+          <div class="form-group has-feedback">
+            <%= f.label :name, "Nueva Categoría", class: "col-sm-3 control-label" %>
             <div class="col-sm-6">
-              <%= f.text_field :name, :class => 'form-control' %>
+              <%= f.text_field :name, :class => 'form-control', :placeholder => 'Categoría (requerido)' %>
+              <span class="help-block"></span>
+              <span class="form-control-feedback"></span>
             </div>
             <div class="col-sm-3">
-              <input class="btn btn-primary" id="saveResourceCategryButton" type="button" value="Guardar">
+              <input class="btn btn-agendapro-claro" id="saveResourceCategryButton" type="button" value="Guardar">
             </div>
           </div>
         <% end %>

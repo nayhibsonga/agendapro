@@ -29,9 +29,13 @@
 
 		<!-- Fav and touch icons -->
 		<%= favicon_link_tag "Iso_Pro_Color.png", :rel => "shortcut icon" %>
+		<style type="text/css">
+
+		</style>
 	</head>
 
 	<body>
+        <%= render 'layouts/modals' %>
 		<!-- start: Header -->
 		<header>
 			<div id="barra-superior">
@@ -44,14 +48,14 @@
 							<li class="dropdown">
 								<a href="#" class="dropdown-toggle" data-toggle="dropdown"><%= current_user.email %> <i class="fa fa-chevron-down"></i></a>
 								<ul class="dropdown-menu">
-									<li><%= link_to '<i class="fa fa-calendar"></i> Mi Agenda'.html_safe, my_agenda_path(:id => current_user.id) %></li>
 									<li>
 									<% if current_user.company_id || current_user.role_id == Role.find_by(:name => 'Super Admin').id %>
-									<%= link_to '<i class="fa fa-dashboard"></i> Dashboard'.html_safe, dashboard_path %>
+									<%= link_to '<i class="fa fa-dashboard"></i> Panel Empresa'.html_safe, dashboard_path %>
 									<% else %>
 									<%= link_to '<i class="fa fa-building-o"></i> Agregar mi Compañía'.html_safe, add_company_path %>
 									<% end %>
 									</li>
+									<li><%= link_to '<i class="fa fa-calendar"></i> Mi Agenda'.html_safe, my_agenda_path(:id => current_user.id) %></li>
 									<li><%= link_to '<i class="fa fa-user"></i> Editar Perfil'.html_safe, edit_user_registration_path %></li>
 									<li><%= link_to '<i class="fa fa-power-off"></i> Salir'.html_safe, destroy_user_session_path, method: :delete %></li>
 								</ul>
@@ -85,9 +89,6 @@
 
 		<!-- start: content -->
 		<%= yield %>
-		<!-- start: Modal -->
-		<%= render 'layouts/modals' %>
-		<!-- end: Modal -->
 		<!-- end: content -->
 
 		<footer>
@@ -95,6 +96,7 @@
 				<div class="container">
 					<div class="row">
 						<div class="footer_teaser col-sm-12 col-md-12">
+							<%= render 'layouts/facebook' %>
 							<h3>AgendaPro - Sistema de Reservas Online</h3>
 							<p>
 								<span class="txt-footer"><i class="fa fa-map-marker"></i> Nuestra Se&ntilde;ora de los Angeles 185, Oficina D, Las Condes, Santiago </span>

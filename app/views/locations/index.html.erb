@@ -37,8 +37,8 @@
   </tbody>
 </table>
 
-<%= link_to '<i class="fa fa-plus"></i> Nuevo Local'.html_safe, new_location_path, :class => "btn btn-primary" unless cannot? :create, Location %>
-<%= link_to '<i class="fa fa-minus"></i> Locales Inactivos'.html_safe, inactive_locations_path, :class => "btn btn-primary pull-right" unless cannot? :destroy, Location %>
+<%= link_to '<i class="fa fa-plus"></i> Nuevo Local'.html_safe, new_location_path, :class => "btn btn-agendapro-claro" unless cannot? :create, Location %>
+<%= link_to '<i class="fa fa-minus"></i> Locales Inactivos'.html_safe, inactive_locations_path, :class => "btn btn-agendapro-claro pull-right" unless cannot? :destroy, Location %>
 
 <%= stylesheet_link_tag "admin/draggable" %>
 <% content_for :scripts do %>

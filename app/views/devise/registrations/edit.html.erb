@@ -25,57 +25,68 @@
         <% end %>
       </ul>
       <% end %>
-      <div class="form-group">
-        <%= f.label :first_name, 'Nombre', :class => "col-sm-3 control-label" %>
+      <%= f.hidden_field :first_name %>
+      <%= f.hidden_field :last_name %>
+      <div class="form-group has-feedback">
+        <label for="user_full_name" class="col-sm-3 control-label">Nombre</label>
         <div class="col-sm-4">
-          <%= f.text_field :first_name, :autofocus => true, :class => 'form-control' %>
+          <input type="text" id="full_name" name="user[full_name]" class="form-control" placeholder="Nombre completo (requerido)">
+          <span class="help-block"></span>
+          <span class="form-control-feedback"></span>
         </div>
       </div>
-      <div class="form-group">
-        <%= f.label :last_name, 'Apellido', :class => 'col-sm-3 control-label' %>
-        <div class="col-sm-4">
-          <%= f.text_field :last_name, :autofocus => true, :class => 'form-control' %>
-        </div>
-      </div>
-      <div class="form-group">
+      <div class="form-group has-feedback">
         <%= f.label :email, 'Email', :class => 'col-sm-3 control-label' %>
         <div class="col-sm-4">
-          <%= f.email_field :email, :autofocus => true, :required => true, :class => 'form-control' %>
+          <%= f.email_field :email, :autofocus => true, :required => true, :class => 'form-control', :placeholder => 'ejemplo@dominio.com (requerido)' %>
+          <span class="help-block"></span>
+          <span class="form-control-feedback"></span>
+        </div>
+      </div>
+      <div class="form-group has-feedback">
+        <%= f.label :phone, 'Telefono', :class => 'col-sm-3 control-label' %>
+        <div class="col-sm-4">
+          <%= f.phone_field :phone, :autofocus => true, :class => 'form-control', :placeholder => 'Telefono (requerido)' %>
+          <span class="help-block"></span>
+          <span class="form-control-feedback"></span>
         </div>
       </div>
       <div class="form-group">
-        <%= f.label :phone, 'Telefono', :class => 'col-sm-3 control-label' %>
-        <div class="col-sm-4">
-          <%= f.phone_field :phone, :autofocus => true, :class => 'form-control' %>
+        <div class="col-sm-offset-3 col-sm-4">
+          <a href="#" id="change-password">Cambiar tu contraseña</a>
         </div>
       </div>
-      <p class="col-sm-offset-3 col-sm-7">Para cambiar tu contraseña haz click <a href="#">aquí</a>.</p>
       <fieldset  class="hidden">
-        <div class="form-group">
+        <div class="form-group has-feedback">
           <%= f.label :password, 'Nueva Contraseña', :class => 'col-sm-3 control-label' %>
           <div class="col-sm-4">
-            <%= f.password_field :password, :autocomplete => 'off', :class => 'form-control' %>
+            <%= f.password_field :password, :autocomplete => 'off', :class => 'form-control', :placeholder => 'Nueva Contraseña (requerido)' %>
+            <span class="help-block"></span>
+            <span class="form-control-feedback"></span>
           </div>
         </div>
-        <div class="form-group">
+        <div class="form-group has-feedback">
           <%= f.label :password_confirmation, 'Confirmar Nueva Contraseña', :class => 'col-sm-3 control-label' %>
           <div class="col-sm-4">
-            <%= f.password_field :password_confirmation, :class => 'form-control' %>
+            <%= f.password_field :password_confirmation, :class => 'form-control', :placeholder => 'Nueva Contraseña (requerido)' %>
+            <span class="help-block"></span>
+            <span class="form-control-feedback"></span>
           </div>
         </div>
       </fieldset>
-      <hr>
-      <div class="form-group">
+      <div class="form-group has-feedback">
         <%= f.label :current_password, 'Contraseña Actual', :class => 'col-sm-3 control-label' %>
         <div class="col-sm-4">
-          <%= f.password_field :current_password, :required => true, :class => 'form-control' %>
+          <%= f.password_field :current_password, :required => true, :class => 'form-control', :placeholder => 'Contraseña (requerido)' %>
+          <span class="help-block"></span>
+          <span class="form-control-feedback"></span>
           <span class="help-block">Por favor ingresa tu contraseña actual</span>
         </div>
       </div>
       <div class="form-group">
         <div class="col-sm-offset-3 col-sm-4">
-          <%= f.submit 'Actualizar', :class => 'btn btn-agendapro-oscuro' %>
-          <%= link_to "Cancelar", :back, :class => 'btn btn-danger' %>
+          <%= f.submit 'Actualizar', :class => 'btn btn-agendapro-claro' %>
+          <%= link_to "Cancelar", :back, :class => 'btn btn-default' %>
         </div>
       </div>
     <% end %>
@@ -90,13 +101,17 @@
 </div>
 
 <% content_for :scripts do %>
+<%= javascript_include_tag 'validations/home/edit-user' %>
+<%= javascript_include_tag 'split-name' %>
 <script type="text/javascript">
   $(function () {
-    $('p > a').click(function (event) {
+    compose_name('#full_name', '#user_first_name', '#user_last_name', '#edit_user');
+    $('#change-password').click(function (event) {
       event.preventDefault();
       $('fieldset').removeClass('hidden');
-      $(this).parent().addClass('hidden');
+      $(this).parent().parent().addClass('hidden');
     });
+    split_name('#full_name', '#user_first_name', '#user_last_name', '#edit_user');
   });
 </script>
 <% end %>

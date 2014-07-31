@@ -188,6 +188,15 @@ header{
 	line-height:.75em;
 	vertical-align:-15%
 }
+.fc-border-separate tbody tr.fc-first td,
+.fc-border-separate tbody tr.fc-first th {
+	border-left-width: 1px;
+	border-right-width: 1px;
+	border-color: #53565A;
+}
+.fc-widget-content:hover {  /* <td>, usually */
+	background: #E6E3CF;
+}
 body .modal-admin {
     width: 790px;
 }

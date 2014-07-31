@@ -11,6 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
+
 ActiveRecord::Schema.define(version: 20140730211222) do
 
   # These are extensions that must be enabled in order to support this database
@@ -226,18 +227,20 @@ ActiveRecord::Schema.define(version: 20140730211222) do
   add_index "location_times", ["location_id"], name: "index_location_times_on_location_id", using: :btree
 
   create_table "locations", force: true do |t|
-    t.string   "name",                        null: false
-    t.string   "address",                     null: false
-    t.string   "phone",                       null: false
+    t.string   "name",                         null: false
+    t.string   "address",                      null: false
+    t.string   "phone",                        null: false
     t.float    "latitude"
     t.float    "longitude"
-    t.integer  "district_id",                 null: false
-    t.integer  "company_id",                  null: false
+    t.integer  "district_id",                  null: false
+    t.integer  "company_id",                   null: false
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.boolean  "active",      default: true
-    t.integer  "order",       default: 0
-    t.boolean  "outcall",     default: false
+    t.boolean  "active",       default: true
+    t.integer  "order",        default: 0
+    t.boolean  "outcall",      default: false
+    t.string   "email",        default: ""
+    t.boolean  "notification", default: false
   end
 
   add_index "locations", ["company_id"], name: "index_locations_on_company_id", using: :btree

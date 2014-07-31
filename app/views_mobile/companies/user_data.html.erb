@@ -1,36 +1,35 @@
 <div class="container" style="margint-bottom: 45px;">
 	<div class="row">
 		<div class="col-xs-12">
-			<%= form_tag("book", method: "post", role: "form") do %>
+			<%= form_tag("book", method: "post", role: "form", id: "bookingForm") do %>
             	<%= hidden_field_tag :service, @service.id %>
             	<%= hidden_field_tag :provider, @provider.id %>
             	<%= hidden_field_tag :start, @start %>
             	<%= hidden_field_tag :end, @end %>
             	<%= hidden_field_tag :origin, @origin %>
             	<%= hidden_field_tag :location, @location.id %>
+            	<%= hidden_field_tag :firstName, if user_signed_in? then current_user.first_name else nil end %>
+                <%= hidden_field_tag :lastName, if user_signed_in? then current_user.last_name else nil end %>
             	<div id="user-data">
 					<div class="form-group">
-						<%= label_tag(:firstName, "Nombre", class: "col-sm-3 control-label") %>
+						<label for="full_name" class="col-sm-3 control-label">Nombre</label>
 						<div class="col-sm-9">
-							<%= text_field_tag(:firstName, if user_signed_in? then current_user.first_name else nil end, :class => "form-control", :placeholder => "Nombre", :required => true) %>
-						</div>
-					</div>
-					<div class="form-group">
-						<%= label_tag(:lastName, "Apellido", class: "col-sm-3 control-label") %>
-						<div class="col-sm-9">
-							<%= text_field_tag(:lastName, if user_signed_in? then current_user.last_name else nil end, :class => "form-control", :placeholder => "Apellido", :required => true) %>
+							<input type="text" id="full_name" name="user[full_name]" class="form-control" placeholder="Nombre completo (requerido)" required>
+                            <span class="help-block"></span>
 						</div>
 					</div>
 					<div class="form-group">
 						<%= label_tag(:email, "E-mail", class: "col-sm-3 control-label") %>
 						<div class="col-sm-9">
-							<%= email_field_tag(:email, if user_signed_in? then current_user.email else nil end, :class => "form-control", :placeholder => "ejemplo@dominio.com", :required => true) %>
+							<%= email_field_tag(:email, if user_signed_in? then current_user.email else nil end, :class => "form-control", :placeholder => "ejemplo@dominio.com (requerido)", :required => true) %>
+							<span class="help-block"></span>
 						</div>
 					</div>
 					<div class="form-group">
 						<%= label_tag(:phone, "Teléfono", class: "col-sm-3 control-label") %>
 						<div class="col-sm-9">
-							<%= telephone_field_tag(:phone, if user_signed_in? then current_user.phone else nil end, :class => "form-control", :placeholder => "1122334455", :required => true) %>
+							<%= telephone_field_tag(:phone, if user_signed_in? then current_user.phone else nil end, :class => "form-control", :placeholder => "1122334455 (requerido)", :required => true) %>
+							<span class="help-block"></span>
 						</div>
 					</div>
             	</div>
@@ -41,19 +40,20 @@
 				<div id="outcallAddress" class="form-group">
 					<%= label_tag(:address, "Dirección", class: "col-sm-3 control-label") %>
 					<div class="col-sm-9">
-						<%= text_field_tag(:address, nil, :class => "form-control", :placeholder => "Escribe la dirección donde se debe realizar el servicio." ) %>
+						<%= text_field_tag(:address, nil, :class => "form-control", :placeholder => "Escribe la dirección donde se debe realizar el servicio" ) %>
+						<span class="help-block"></span>
 					</div>
 				</div>
 				<% end %>
 				<div class="form-group">
 					<%= label_tag(:comment, "Comentario", class: "col-sm-3 control-label") %>
 					<div class="col-sm-9">
-						<%= text_area_tag(:comment, nil, :class => "form-control", :placeholder => "Escribe tus comentarios para notificarlos por favor.", :rows => 4) %>
+						<%= text_area_tag(:comment, nil, :class => "form-control", :placeholder => "Agrega algún comentario a tu reserva en caso de ser necesario", :rows => 4) %>
 					</div>
 				</div>
 				<div class="form-group">
 					<div class="col-sm-offset-3 col-sm-9">
-						<button type="submit" class="btn btn-success">Agendar</button>
+						<button type="submit" class="btn btn-agendapro-orange btn-block">Agendar</button>
 					</div>
 				</div>
 			<% end %>
@@ -62,8 +62,13 @@
 </div>
 
 <% content_for :scripts do %>
+<%= javascript_include_tag 'split-name' %>
+<%= javascript_include_tag 'validations/validate' %>
+<%= javascript_include_tag 'validations/home/workflow' %>
 <script type="text/javascript">
 	$(function() {
+		compose_name('#full_name', '#firstName', '#lastName');
+		split_name('#full_name', '#firstName', '#lastName');
 		<% if user_signed_in? %>
 		$('#user-data').hide();
 		$('#user-change').click(function () {

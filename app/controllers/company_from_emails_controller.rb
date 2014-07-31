@@ -32,10 +32,10 @@ class CompanyFromEmailsController < ApplicationController
     respond_to do |format|
       if @company_from_email.save
         CompanyFromEmailMailer.confirm_email(@company_from_email, current_user)
-        format.html { redirect_to edit_company_setting_path(current_user.company.company_setting), notice: 'Email agregado, se le envió un email para confirmar' }
+        format.html { redirect_to edit_company_setting_path(current_user.company.company_setting), notice: 'E-mail agregado exitosamente. Se ha enviado un correo para verificar la nueva dirección.' }
         format.json { render action: 'show', status: :created, location: @company_from_email }
       else
-        format.html { redirect_to edit_company_setting_path, notice: 'No se puedo agregar el email' }
+        format.html { redirect_to edit_company_setting_path, notice: 'No se pudo agregar el email. Por favor inténtalo nuevamente.' }
         format.json { render json: @company_from_email.errors, status: :unprocessable_entity }
       end
     end

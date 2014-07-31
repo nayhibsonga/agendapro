@@ -2,27 +2,33 @@
 	<div class="row">
 		<div class="col-md-5 well">
 			<%= form_for @service_provider, html: {class: "form-horizontal" } do |f| %>
-				<div class="form-group">
-					<%= f.label :public_name, "Nombre Público:", class: "col-sm-4 control-label" %>
+				<div class="form-group has-feedback">
+					<%= f.label :public_name, "Nombre Público", class: "col-sm-4 control-label" %>
 					<div class="col-sm-8">
-						<%= f.text_field :public_name, :autofocus => true, class: "form-control" %>
+						<%= f.text_field :public_name, :autofocus => true, class: "form-control", placeholder: 'Nombre (requerido)' %>
+						<span class="help-block"></span>
+              			<span class="form-control-feedback"></span>
 					</div>
 				</div>
-				<div class="form-group">
-					<%= f.label :notification_email, "Email de Notificación:", class: "col-sm-4 control-label" %>
+				<div class="form-group has-feedback">
+					<%= f.label :notification_email, "Email de Notificación", class: "col-sm-4 control-label" %>
 					<div class="col-sm-8">
-						<%= f.text_field :notification_email, class: "form-control" %>
+						<%= f.text_field :notification_email, class: "form-control", placeholder: 'ejemplo@dominio.com (requerido)' %>
+						<span class="help-block"></span>
+              			<span class="form-control-feedback"></span>
 					</div>
 				</div>
-				<div class="form-group">
-					<%= f.label :location_id, "Local:", class: "col-sm-4 control-label" %>
+				<div class="form-group has-feedback">
+					<%= f.label :location_id, "Local", class: "col-sm-4 control-label" %>
 					<div class="col-sm-8">
 						<%= f.collection_select :location_id, Location.where(company_id: current_user.company_id, :active => true), :id, :name, {:include_blank => true}, {class: "form-control"} %>
+						<span class="help-block"></span>
+              			<span class="form-control-feedback"></span>
 					</div>
 				</div>
 
 				<div class="form-group">
-					<%= f.label :service_ids, "Selecciona los servicios: ", class: "col-sm-4 control-label" %>
+					<%= f.label :service_ids, "Selecciona los servicios", class: "col-sm-4 control-label" %>
 					<div class="col-sm-8">
 						<div class="panel-group" id="service-accordion">
 							<% @service_categories.each do |service_category| %>
@@ -31,15 +37,17 @@
 							<div class="panel panel-default">
 								<div class="panel-heading">
 									<h4 class="panel-title">
+										<input type="checkbox" name="selectCategory" id="selectCategory<%= service_category.id %>" value="0">
 										<a data-toggle="collapse" data-parent="#service-accordion" href="#service-category<%= service_category.id %>"><%= service_category.name %></a>
-										<input type="checkbox" name="selectCategory" id="selectCategory<%= service_category.id %>" value="0" class="pull-right">
 									</h4>
 								</div>
 								<div id="service-category<%= service_category.id %>" class="panel-collapse collapse<% if service_category == @service_categories.first%> in<% end %>">
 									<div class="panel-body">
 										<%= f.collection_check_boxes :service_ids, @service, :id, :name_with_small_outcall, {}, {class: "check_boxes"} do |b|%>
 											<div class="checkbox">
-												<%= b.label %> <%= b.check_box %>
+												<label>
+													<%= b.check_box %> <%= b.object.name.html_safe %> 
+												</label>
 											</div>
 										<% end %>
 									</div>
@@ -53,8 +61,8 @@
 
 				<div class="form-group">
 					<div class="actions col-sm-offset-4 col-sm-8">
-						<%= f.submit 'Guardar', :class => "btn btn-primary buttonProvider"%>
-						<%= link_to 'Cancelar'.html_safe, service_providers_path, :class => "btn btn-danger" %>    
+						<%= f.submit 'Guardar', :class => "btn btn-agendapro-oscuro buttonProvider"%>
+						<%= link_to 'Cancelar'.html_safe, service_providers_path, :class => "btn btn-default" %>    
 					</div>
 				</div>
 			<% end %>
@@ -63,7 +71,7 @@
 		<div class="col-md-7">
 			<div class="panel panel-info">
 				<div class="panel-heading">
-					<h3 class="panel-title">Horario Proveedor de Servicios</h3>
+					<h3 class="panel-title">Horario Prestador de Servicios</h3>
 				</div>
 				<div class="panel-body">
 					<table class="table">

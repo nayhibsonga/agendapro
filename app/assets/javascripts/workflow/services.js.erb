@@ -149,24 +149,24 @@ function loadStep3 () {
 			return true;
 		}
 		myAlert.showAlert(
-		  '<h3>Seleccione un Horario</h3>' +
-		  '<p>Debe elegir un horario antes de poder continuar.</p>'
+		  '<h3>Selecciona un Horario</h3>' +
+		  '<p>Debes elegir un horario antes de poder continuar.</p>'
 		);
 		return false;
 	}
 	myAlert.showAlert(
-	  '<h3>Seleccione un Staff</h3>' +
-	  '<p>Debe elegir un staff para poder agendar un horario.</p>'
+	  '<h3>Selecciona un Staff</h3>' +
+	  '<p>Debes elegir un staff para poder reservar.</p>'
 	);
 	return false;
 }
 
 function checkUserCrossBookings () {
 	$(".alert").alert('close');
-	var user = $('#user').val();
+	var user = $('#user_id').val();
 	var booking_start = $('#start').val();
 	var booking_end = $('#end').val();
-	$.getJSON('/check_user_cross_bookings', {user: user, booking_start: booking_start, booking_end: booking_end}, function (result) {
+	$.getJSON('/check_user_cross_bookings', {user_id: user, booking_start: booking_start, booking_end: booking_end}, function (result) {
 		if (result.crossover) {
 			var warning = '<div class="alert alert-warning alert-dismissable fade in" style="margin-bottom: 0px;">' +
 								'<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>' +
@@ -183,8 +183,8 @@ function scrollEvents (direction) {
 		if (step == 1) {
 			if(!$('[name="serviceRadio"]').is(':checked')) {
 				myAlert.showAlert(
-				  '<h3>Seleccione un Servicio</h3>' +
-				  '<p>Debe elegir un servicio antes de poder continuar.</p>'
+				  '<h3>Selecciona un Servicio</h3>' +
+				  '<p>Debes elegir un servicio antes de poder continuar.</p>'
 				);
 				return false;
 			}
@@ -197,16 +197,16 @@ function scrollEvents (direction) {
 		else {
 			if(!$('[name="staffRadio"]').is(':checked')) {
 				myAlert.showAlert(
-				  '<h3>Seleccione un Staff</h3>' +
-				  '<p>Debe elegir un staff para poder agendar un horario.</p>'
+				  '<h3>Selecciona un Staff</h3>' +
+				  '<p>Debes elegir un staff para poder reservar.</p>'
 				);
 				return false;
 			}
 			else {
 				if(!selected) {
 					myAlert.showAlert(
-					  '<h3>Seleccione un Horario</h3>' +
-					  '<p>Debe elegir un horario antes de poder continuar.</p>'
+					  '<h3>Selecciona un Horario</h3>' +
+					  '<p>Debes elegir un horario antes de poder continuar.</p>'
 					);
 					return false;
 				}
