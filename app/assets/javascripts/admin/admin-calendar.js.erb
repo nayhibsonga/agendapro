@@ -840,58 +840,76 @@ function editDrag(event) {
 		var eventJSON = {start: startString, end: endString};
 	} 
 	if (event.id.toString().charAt(0) === 'b') {
-		$.ajax({
-			type: 'PATCH',
-			url: '/provider_breaks/'+ event.id.substring(1) +'.json',
-			data: { "provider_break": eventJSON },
-			dataType: 'json',
-			success: function(){
-				alert("Bloqueo actualizado exitosamente.");
-				// alertId.showAlert("Horario del bloqueo cambiado exitosamente.");
-			},
-			error: function(xhr){
-				var errors = $.parseJSON(xhr.responseText).errors;
-				var errores = '';
-				for (i in errors) {
-					errores += errors[i] + '\n';
+		if (confirm('¿Mover el bloque a la posicion señalada?')) {
+			$.ajax({
+				type: 'PATCH',
+				url: '/provider_breaks/'+ event.id.substring(1) +'.json',
+				data: { "provider_break": eventJSON },
+				dataType: 'json',
+				success: function(){
+					alert("Bloqueo actualizado exitosamente.");
+					// alertId.showAlert("Horario del bloqueo cambiado exitosamente.");
+				},
+				error: function(xhr){
+					var errors = $.parseJSON(xhr.responseText).errors;
+					var errores = '';
+					for (i in errors) {
+						errores += errors[i] + '\n';
+					}
+					alert(errores);
+					// alertId.showAlert(errores);
+					$.getJSON('/provider_breaks/'+event.id.substring(1), function (provider_break) {
+						event.start = provider_break.start;
+						event.end = provider_break.end;
+						event.resourceId = provider_break.service_provider_id;
+						$('#calendar').fullCalendar('updateEvent', event);
+					});
 				}
-				alert(errores);
-				// alertId.showAlert(errores);
-				$.getJSON('/provider_breaks/'+event.id.substring(1), function (provider_break) {
-					event.start = provider_break.start;
-					event.end = provider_break.end;
-					event.resourceId = provider_break.service_provider_id;
-					$('#calendar').fullCalendar('updateEvent', event);
-				});
-			}
-		});
+			});
+		} else {
+			$.getJSON('/provider_breaks/'+event.id.substring(1), function (provider_break) {
+				event.start = provider_break.start;
+				event.end = provider_break.end;
+				event.resourceId = provider_break.service_provider_id;
+				$('#calendar').fullCalendar('updateEvent', event);
+			});
+		};
 	}
 	else {
-		$.ajax({
-			type: 'PATCH',
-			url: '/bookings/'+ event.id +'.json',
-			data: { "booking": eventJSON },
-			dataType: 'json',
-			success: function(){
-				alert("Reserva actualizada exitosamente.");
-				// alertId.showAlert("Horario de la reserva cambiado exitosamente.");
-			},
-			error: function(xhr){
-				var errors = $.parseJSON(xhr.responseText).errors;
-				var errores = '';
-				for (i in errors) {
-					errores += errors[i] + '\n';
+		if (confirm('¿Mover la reserva a la posicion señalada?')) {
+			$.ajax({
+				type: 'PATCH',
+				url: '/bookings/'+ event.id +'.json',
+				data: { "booking": eventJSON },
+				dataType: 'json',
+				success: function(){
+					alert("Reserva actualizada exitosamente.");
+					// alertId.showAlert("Horario de la reserva cambiado exitosamente.");
+				},
+				error: function(xhr){
+					var errors = $.parseJSON(xhr.responseText).errors;
+					var errores = '';
+					for (i in errors) {
+						errores += errors[i] + '\n';
+					}
+					alert(errores);
+					// alertId.showAlert(errores);
+					$.getJSON('/bookings/'+event.id, function (booking) {
+						event.start = booking.start;
+						event.end = booking.end;
+						event.resourceId = booking.service_provider_id;
+						$('#calendar').fullCalendar('updateEvent', event);
+					});
 				}
-				alert(errores);
-				// alertId.showAlert(errores);
-				$.getJSON('/bookings/'+event.id, function (booking) {
-					event.start = booking.start;
-					event.end = booking.end;
-					event.resourceId = booking.service_provider_id;
-					$('#calendar').fullCalendar('updateEvent', event);
-				});
-			}
-		});
+			});
+		} else {
+			$.getJSON('/bookings/'+event.id, function (booking) {
+				event.start = booking.start;
+				event.end = booking.end;
+				event.resourceId = booking.service_provider_id;
+				$('#calendar').fullCalendar('updateEvent', event);
+			});
+		};
 	}
 }
 
