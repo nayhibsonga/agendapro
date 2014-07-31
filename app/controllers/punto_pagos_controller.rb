@@ -21,6 +21,7 @@ class PuntoPagosController < ApplicationController
     amount = params[:amount].to_i
     payment_method = params[:mp]
     company = Company.find(current_user.company_id)
+    company.payment_status == PaymentStatus.find_by_name("Trial") ? price = Plan.where(locations: company.locations.where(active: true).count).where('service_providers >= ?', company.service_providers.where(active: true).count).first.price : price = company.plan.price
     sales_tax = NumericParameter.find_by_name("sales_tax").value
     day_number = Time.now.day
     month_number = Time.now.month
@@ -32,8 +33,8 @@ class PuntoPagosController < ApplicationController
       # trx_id = DateTime.now.to_s.gsub(/[-:T]/i, '') + "c" + company.id.to_s + "p" + company.plan.id.to_s
       trx_id = DateTime.now.to_s.gsub(/[-:T]/i, '')
       # due = '10000.00'
-      company.months_active_left > 0 ? plan_1 = (company.due_amount + company.plan.price*(1+sales_tax)).round(0) : plan_1 = ((company.due_amount + (month_days - day_number)*company.plan.price/month_days)*(1+sales_tax)).round(0)
-      due = sprintf('%.2f', ((plan_1 + company.plan.price*(amount-1)*(1+sales_tax))*(1-month_discount)).round(0))
+      company.months_active_left > 0 ? plan_1 = (company.due_amount + price*(1+sales_tax)).round(0) : plan_1 = ((company.due_amount + (month_days - day_number + 1)*price/month_days)*(1+sales_tax)).round(0)
+      due = sprintf('%.2f', ((plan_1 + price*(amount-1)*(1+sales_tax))*(1-month_discount)).round(0))
       req = PuntoPagos::Request.new()
       resp = req.create(trx_id, due, payment_method)
       if resp.success?
@@ -54,7 +55,7 @@ class PuntoPagosController < ApplicationController
     puts params[:plan_id]
     puts payment_method
     company = Company.find(current_user.company_id)
-    price = company.plan.price
+    company.payment_status == PaymentStatus.find_by_name("Trial") ? price = Plan.where(locations: company.locations.where(active: true).count).where('service_providers >= ?', company.service_providers.where(active: true).count).first.price : price = company.plan.price
     new_plan = Plan.find(plan_id)
     sales_tax = NumericParameter.find_by_name("sales_tax").value
     day_number = Time.now.day
@@ -67,10 +68,10 @@ class PuntoPagosController < ApplicationController
       
         previous_plan_id = company.plan.id
         months_active_left = company.months_active_left
-        plan_value_left = (month_days - day_number)*price/month_days + price*(months_active_left - 1)
+        plan_value_left = (month_days - day_number + 1)*price/month_days + price*(months_active_left - 1)
         due_amount = company.due_amount
         plan_price = Plan.find(plan_id).price
-        plan_month_value = (month_days - day_number)*plan_price/month_days
+        plan_month_value = (month_days - day_number + 1)*plan_price/month_days
         trx_id = DateTime.now.to_s.gsub(/[-:T]/i, '')
 
         if months_active_left > 0

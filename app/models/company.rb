@@ -38,7 +38,6 @@ class Company < ActiveRecord::Base
 			payment_status = "Activo"
 			if company.months_active_left <= 0
 				payment_status = "Emitido"
-				company.due_amount += company.plan.price/month_days
 				company.due_date = Time.now
 				company.payment_status_id = PaymentStatus.find_by_name("Emitido").id
 			end
@@ -91,7 +90,6 @@ class Company < ActiveRecord::Base
 			plan_id = Plan.where(locations: company.locations.where(active: true).count).where('service_providers >= ?', company.service_providers.where(active: true).count).first.id
 			company.plan_id = plan_id
 			company.due_date = Time.now
-			company.due_amount = company.plan.price/month_days
 			company.payment_status_id = PaymentStatus.find_by_name("Emitido").id
 			if company.save
 				puts "Company id "+company.id.to_s+" OK end_trial"

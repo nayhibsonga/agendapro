@@ -17,7 +17,7 @@
   </div>
 </div>
 <div class="row well">
-  <%= content_tag "div", id: "plan_info", data: { months_active_left: @company.months_active_left, plan_value_left: (@month_days - @day_number)*@price/@month_days + @price*(@company.months_active_left - 1), due_amount: @company.due_amount } do %><%end%>
+  <%= content_tag "div", id: "plan_info", data: { months_active_left: @company.months_active_left, plan_value_left: (@month_days - @day_number + 1)*@price/@month_days + @price*(@company.months_active_left - 1), due_amount: @company.due_amount } do %><%end%>
   <table class="table table-bordered">
     <thead>
       <tr>
@@ -41,12 +41,12 @@
           <% elsif @company.service_providers.where(active: true).count > plan.service_providers || @company.locations.where(active: true).count > plan.locations %>
           <td>Tienes más sucursales o prestadores de lo que este plan permite.</td>
           <% elsif @company.plan_id != plan.id %>
-          <td><%= link_to '<i class="fa fa-check"></i> Elegir este Plan'.html_safe, "#", :class => "btn btn-primary change_plan", id: "change_plan_"+plan.id.to_s %></td>
+          <td><%= link_to '<i class="fa fa-check"></i> Elegir este Plan'.html_safe, "#", :class => "btn btn-agendapro-claro change_plan", id: "change_plan_"+plan.id.to_s %></td>
           <% else %>
           <td>¡Plan Elegido!</td>
           <% end %>
 
-          <%= content_tag "div", id: "plan_"+plan.id.to_s, data: { plan_price: plan.price, plan_month_value: (@month_days - @day_number)*plan.price/@month_days } do %><%end%>
+          <%= content_tag "div", id: "plan_"+plan.id.to_s, data: { plan_price: plan.price, plan_month_value: (@month_days - @day_number + 1)*plan.price/@month_days } do %><%end%>
           
         </tr>
       <% end %>
@@ -155,7 +155,7 @@
 
     <div class="form-group">
       <div class="actions col-sm-offset-4 col-sm-8">
-        <%= f.submit 'Guardar', :class => 'btn btn-primary' %>
+        <%= f.submit 'Guardar', :class => 'btn btn-agendapro-claro' %>
         <%= link_to 'Eliminar', @billing_info, method: :delete, data: { confirm: 'Are you sure?' }, class: "btn btn-danger" %>
       </div>
     </div>

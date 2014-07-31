@@ -82,7 +82,7 @@ class PlansController < ApplicationController
     @month_number = Time.now.month
     @month_days = Time.now.days_in_month
 
-    @company.months_active_left > 0 ? @plan_1 = (@company.due_amount + @price).round(0) : @plan_1 = ((@company.due_amount + (@month_days - @day_number)*@price/@month_days)).round(0)
+    @company.months_active_left > 0 ? @plan_1 = (@company.due_amount + @price).round(0) : @plan_1 = ((@company.due_amount + (@month_days - @day_number + 1)*@price/@month_days)).round(0)
     @plan_2 = (@plan_1 + @price*1).round(0)
     @plan_3 = (@plan_1 + @price*2).round(0)
     @plan_4 = ((@plan_1 + @price*3)*(1-@month_discount_4)).round(0)
