@@ -7,6 +7,6 @@ test:
   puntopagos_key:     'rxAeXTifyHgrUAZCeS9i'
   puntopagos_secret:  'QcklPFRnwbJA262I1prThkdx6kkGTH2bBeUu5q6w'
 production:
-  environment:        'production'
+  environment:        'sandbox'
   puntopagos_key:     'rxAeXTifyHgrUAZCeS9i'
   puntopagos_secret:  'QcklPFRnwbJA262I1prThkdx6kkGTH2bBeUu5q6w'
