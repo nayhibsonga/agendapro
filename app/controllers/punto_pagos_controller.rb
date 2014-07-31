@@ -143,8 +143,6 @@ class PuntoPagosController < ApplicationController
       puts params[:trx]
     end
     notification = PuntoPagos::Notification.new
-    if headers.nil? then headers = {"headers"=>""} end
-    if params.nil? then params = {"params"=>""} end
     if notification.valid? headers, params
       puts params[:trx]
     end
