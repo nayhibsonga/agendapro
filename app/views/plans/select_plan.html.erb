@@ -26,7 +26,7 @@
         <th>Locales</th>
         <th>Proveedores de Servicio</th>
         <th>Precio (sin IVA)</th>
-        <th></th>
+        <th>Opciones</th>
       </tr>
     </thead>
 
@@ -39,6 +39,8 @@
           <td><%= number_to_currency(plan.price, {:unit => '$', :separator => ',', :delimiter => '.', :precision => 0})%> CLP</td>
           <% if @company.plan == Plan.find_by_name("Trial") && plan.price == @price %>
           <td>¡Este sería tu Plan!</td>
+          <% elsif @company.service_providers.where(active: true).count > plan.service_providers || @company.locations.where(active: true).count > plan.locations %>
+          <td>Tienes más sucursales o prestadores de lo que este plan permite.</td>
           <% elsif @company.plan_id != plan.id %>
           <td><%= link_to '<i class="fa fa-check"></i> Elegir este Plan'.html_safe, "#", :class => "btn btn-primary change_plan", id: "change_plan_"+plan.id.to_s %></td>
           <% else %>

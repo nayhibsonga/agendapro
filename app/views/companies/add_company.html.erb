@@ -35,7 +35,7 @@
 					<%= builder.hidden_field :after_booking, :value => 6 %>
 				<% end %>
 				<!-- end: Company Setting -->
-				<%= f.hidden_field :payment_status_id, :value => PaymentStatus.where(:name => "Al día").first.id %>
+				<%= f.hidden_field :payment_status_id, :value => PaymentStatus.where(:name => 'Trial').first.id %>
 				<%= f.hidden_field :plan_id, :value => Plan.find_by(:name => 'Trial').id %>
 				<div class="form-group">
 					<%= f.label :name, 'Nombre de la Compañia', :class => 'col-sm-4 control-label' %>

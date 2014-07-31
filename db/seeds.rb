@@ -27,10 +27,10 @@
 
 # => Configuraciones Globales de la Aplicación
 	iva = NumericParameter.create(name: "sales_tax", value: 0.19)
-	4meses = NumericParameter.create(name: "4_month_discount", value: 0.05)
-	6meses = NumericParameter.create(name: "6_month_discount", value: 0.1)
-	9meses = NumericParameter.create(name: "9_month_discount", value: 0.15)
-	12meses = NumericParameter.create(name: "12_month_discount", value: 0.2)
+	cuatro_meses = NumericParameter.create(name: "4_month_discount", value: 0.05)
+	seis_meses = NumericParameter.create(name: "6_month_discount", value: 0.1)
+	nueve_meses = NumericParameter.create(name: "9_month_discount", value: 0.15)
+	doce_meses = NumericParameter.create(name: "12_month_discount", value: 0.2)
 
 # => Sectores Eonómicos de las Empresas
 	estetica = EconomicSector.create(name: "Centros de Estética")
