@@ -1,6 +1,6 @@
 var validator;
 $(function() {
-	validator = $('form').validate({
+	validator = $('#new_resource, [id^="edit_resource_"]').validate({
 		errorPlacement: function(error, element) {
 			error.appendTo(element.next());
 		},
