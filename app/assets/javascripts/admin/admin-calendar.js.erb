@@ -1464,6 +1464,11 @@ $(function() {
 		$('#booking_service_id').attr('disabled', true);
 		$('#booking_status_id').parent().parent().next().remove();
 		bookingModalOpen = false;
+		validator.resetForm();
+		$('.has-success').removeClass('has-success');
+		$('.fa.fa-check').removeClass('fa fa-check');
+		$('.has-error').removeClass('has-error');
+		$('.fa.fa-times').removeClass('fa fa-times');
 	});
 
 	$('#breakModal').on('hidden.bs.modal', function (e) {

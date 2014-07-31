@@ -60,7 +60,7 @@ function saveResource (typeURL, extraURL) {
 			$(resource).valid();
 		};
 	});
-	if (validator.numberOfInvalids()) {
+	if (validator_resource.numberOfInvalids()) {
 		return false;
 	};
 
@@ -134,6 +134,13 @@ $(function() {
 	});
 	$('#saveResourceCategryButton').click(function() {
 		saveCategory('POST','');
+	});
+	$('#resourceCategoryModal').on('hidden.bs.modal', function (e) {
+		validator_resource_category.resetForm();
+		$('.has-success').removeClass('has-success');
+		$('.fa.fa-check').removeClass('fa fa-check');
+		$('.has-error').removeClass('has-error');
+		$('.fa.fa-times').removeClass('fa fa-times');
 	});
 	initialize();
 });

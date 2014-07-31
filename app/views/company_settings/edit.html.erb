@@ -89,4 +89,15 @@
 <% content_for :scripts do %>
   <%= javascript_include_tag 'validations/validate' %>
   <%= javascript_include_tag 'validations/admin/company-email' %>
+  <script type="text/javascript">
+  	$(function () {
+  		$('#fromEmail').on('hidden.bs.modal', function (e) {
+			validator.resetForm();
+			$('.has-success').removeClass('has-success');
+			$('.fa.fa-check').removeClass('fa fa-check');
+			$('.has-error').removeClass('has-error');
+			$('.fa.fa-times').removeClass('fa fa-times');
+		});
+  	});
+  </script>
 <% end %>

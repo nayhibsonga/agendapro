@@ -133,4 +133,12 @@ $(function() {
 			});
 		};
 	});
+
+	$('#serviceCategoryModal').on('hidden.bs.modal', function (e) {
+		validator.resetForm();
+		$('.has-success').removeClass('has-success');
+		$('.fa.fa-check').removeClass('fa fa-check');
+		$('.has-error').removeClass('has-error');
+		$('.fa.fa-times').removeClass('fa fa-times');
+	});
 });

@@ -59,6 +59,13 @@ $(function () {
 		});
 		$('#to').val(emails);
 	});
+	$('#mailModal').on('hidden.bs.modal', function (e) {
+		validator.resetForm();
+		$('.has-success').removeClass('has-success');
+		$('.fa.fa-check').removeClass('fa fa-check');
+		$('.has-error').removeClass('has-error');
+		$('.fa.fa-times').removeClass('fa fa-times');
+	});
 
 	$('#send_mail_button').click( function () {
 		if($('#client_mailer').valid()) {
