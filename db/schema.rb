@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140731224925) do
+ActiveRecord::Schema.define(version: 20140801163246) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -317,7 +317,7 @@ ActiveRecord::Schema.define(version: 20140731224925) do
     t.string   "token",              null: false
     t.string   "trx_id",             null: false
     t.string   "payment_method",     null: false
-    t.decimal  "amount",             null: false
+    t.float    "amount",             null: false
     t.date     "approvement_date",   null: false
     t.string   "card_number"
     t.string   "dues_number"
@@ -328,7 +328,7 @@ ActiveRecord::Schema.define(version: 20140731224925) do
     t.string   "authorization_code", null: false
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.string   "respuesta"
+    t.string   "response"
   end
 
   create_table "punto_pagos_creations", force: true do |t|
