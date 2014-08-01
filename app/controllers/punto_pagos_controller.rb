@@ -171,7 +171,7 @@ class PuntoPagosController < ApplicationController
         company.months_active_left += billing_log.amount
         company.due_amount = 0.0
         company.due_date = nil
-        company.payment_status_id = PaymentStatus.find_by_name("Activo")
+        company.payment_status_id = PaymentStatus.find_by_name("Activo").id
         if company.save
           puts "OK"
         else
@@ -184,7 +184,7 @@ class PuntoPagosController < ApplicationController
         company.months_active_left = 1.0
         company.due_amount = 0.0
         company.due_date = nil
-        company.payment_status_id = PaymentStatus.find_by_name("Activo")
+        company.payment_status_id = PaymentStatus.find_by_name("Activo").id
         if company.save
           puts "OK"
         else
