@@ -31,13 +31,13 @@ class PuntoPagosController < ApplicationController
     if accepted_amounts.include?(amount) && accepted_payments.include?(payment_method) && company
       NumericParameter.find_by_name(amount.to_s+"_month_discount") ? month_discount = NumericParameter.find_by_name(amount.to_s+"_month_discount").value : month_discount = 0
       # trx_id = DateTime.now.to_s.gsub(/[-:T]/i, '') + "c" + company.id.to_s + "p" + company.plan.id.to_s
-      trx_id = DateTime.now.to_s.gsub(/[-:T]/i, '')
-      # due = '10000.00'
+      trx_id = (company.id.to_s + company.plan_id.to_s + DateTime.now.to_s.gsub(/[-:T]/i, ''))[0..-5]
       company.months_active_left > 0 ? plan_1 = (company.due_amount + price*(1+sales_tax)).round(0) : plan_1 = ((company.due_amount + (month_days - day_number + 1)*price/month_days)*(1+sales_tax)).round(0)
       due = sprintf('%.2f', ((plan_1 + price*(amount-1)*(1+sales_tax))*(1-month_discount)).round(0))
       req = PuntoPagos::Request.new()
       resp = req.create(trx_id, due, payment_method)
       if resp.success?
+        BillingLog.create(payment: due, amount: amount, company_id: company.id, plan_id: company.plan.id, transaction_type_id: TransactionType.find_by_name("Webpay").id, trx_id: trx_id)
         PuntoPagosCreation.create(trx_id: trx_id, payment_method: payment_method, amount: due, details: "Creación de pago empresa id "+company.id.to_s+", nombre "+company.name+". Paga plan "+company.plan.name+"("+company.plan.id.to_s+") "+amount.to_s+" veces, por un costo de "+due+". trx_id: "+trx_id+" - mp: "+company.id.to_s+". Resultado: Se procesa")
         redirect_to resp.payment_process_url
       else
@@ -72,7 +72,7 @@ class PuntoPagosController < ApplicationController
         due_amount = company.due_amount
         plan_price = Plan.find(plan_id).price
         plan_month_value = (month_days - day_number + 1)*plan_price/month_days
-        trx_id = DateTime.now.to_s.gsub(/[-:T]/i, '')
+        trx_id = (company.id.to_s + company.plan_id.to_s + DateTime.now.to_s.gsub(/[-:T]/i, ''))[0..-5]
 
         if months_active_left > 0
           if plan_value_left > (plan_month_value + due_amount) && payment_method == "00"
@@ -138,13 +138,6 @@ class PuntoPagosController < ApplicationController
   end
 
   def notification
-    puts "Entra a notificacion"
-    if params[:trx]
-      puts params[:trx]
-    end
-    notification = PuntoPagos::Notification.new
-    if notification.valid? headers, params
-      puts params[:trx]
-    end
+    PuntoPagosConfirmation.create(response: params[:respuesta], token: params[:token], trx_id: params[:trx_id],payment_method: params[:medio_pago], amount: params[:monto], approvement_date: params[:fecha_aprobacion], card_number: params[:numero_tarjeta], dues_number: params[:num_cuotas], dues_type: params[:tipo_cuotas], dues_amount:params[:valor_cuota], first_due_date: params[:primer_vencimiento], operation_number: params[:numero_operacion], authorization_code: params[:codigo_autorizacion])
   end
 end
