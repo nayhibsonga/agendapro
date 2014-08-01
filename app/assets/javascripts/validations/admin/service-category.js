@@ -1,5 +1,6 @@
+var validator;
 $(function() {
-	$('form').validate({
+	validator = $('#new_service_category').validate({
 		errorPlacement: function(error, element) {
 			error.appendTo(element.next());
 		},

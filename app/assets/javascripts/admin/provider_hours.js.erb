@@ -299,10 +299,14 @@ function saveProvider(method,extraURL) {
 		},
 		error: function(xhr){
 			var errores = $.parseJSON(xhr.responseText).errors;
+			var errorList = document.createElement('ul');
 			for (i in errores) {
-				alertId.showAlert(errores);
+				$(errorList).append('<li>' + errores[i] + '</li>');
 			}
-			// do something with errors
+			alertId.showAlert(
+				'<h2>Error</h2>'
+				errorList
+			);
 		}
 	});
 }

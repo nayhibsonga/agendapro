@@ -1,6 +1,7 @@
-var validator;
+var validator_resource;
+var validator_resource_category;
 $(function() {
-	validator = $('form').validate({
+	validator_resource = $('#new_resource, [id^="edit_resource_"]').validate({
 		errorPlacement: function(error, element) {
 			error.appendTo(element.next());
 		},
@@ -31,7 +32,7 @@ $(function() {
 		}
 	});
 
-	$('#new_resource_category').validate({
+	validator_resource_category = $('#new_resource_category').validate({
 		errorPlacement: function(error, element) {
 			error.appendTo(element.next());
 		},

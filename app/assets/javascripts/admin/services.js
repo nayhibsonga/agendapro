@@ -121,9 +121,9 @@ $(function() {
 				},
 				error: function(xhr){
 					var errors = $.parseJSON(xhr.responseText).errors;
-					var errores = '';
+					var errores = 'Error\n';
 					for (i in errors) {
-						errores += errors[i];
+						errores += '*' + errors[i] + '\n';
 					}
 					alert(errores);
 				},
@@ -132,5 +132,13 @@ $(function() {
 				$('#service_category_name').val('');
 			});
 		};
+	});
+
+	$('#serviceCategoryModal').on('hidden.bs.modal', function (e) {
+		validator.resetForm();
+		$('.has-success').removeClass('has-success');
+		$('.fa.fa-check').removeClass('fa fa-check');
+		$('.has-error').removeClass('has-error');
+		$('.fa.fa-times').removeClass('fa fa-times');
 	});
 });
