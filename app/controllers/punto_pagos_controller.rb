@@ -172,7 +172,11 @@ class PuntoPagosController < ApplicationController
         company.due_amount = 0.0
         company.due_date = nil
         company.payment_status_id = PaymentStatus.find_by_name("Activo")
-        company.save
+        if company.save
+          puts "OK"
+        else
+          puts company.errors.full_messages.inspect
+        end
       elsif PlanLog.find_by_trx_id(params[:trx_id])
         plan_log = PlanLog.find_by_trx_id(params[:trx_id])
         company = Company.find(plan_log.company_id)
@@ -181,7 +185,11 @@ class PuntoPagosController < ApplicationController
         company.due_amount = 0.0
         company.due_date = nil
         company.payment_status_id = PaymentStatus.find_by_name("Activo")
-        company.save
+        if company.save
+          puts "OK"
+        else
+          puts company.errors.full_messages.inspect
+        end
       end
     end
   end
