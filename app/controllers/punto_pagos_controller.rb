@@ -31,7 +31,7 @@ class PuntoPagosController < ApplicationController
     if accepted_amounts.include?(amount) && accepted_payments.include?(payment_method) && company
       mockCompany = Company.find(current_user.company_id)
       mockCompany.months_active_left += amount
-      mockCompany.due_payment = 0.0
+      mockCompany.due_amount = 0.0
       mockCompany.due_date = nil
       mockCompany.payment_status_id = PaymentStatus.find_by_name("Activo")
       if !mockCompany.valid?
@@ -100,7 +100,7 @@ class PuntoPagosController < ApplicationController
             mockCompany = Company.find(current_user.company_id)
             mockCompany.plan_id = plan_id
             mockCompany.months_active_left = 1.0
-            mockCompany.due_payment = 0.0
+            mockCompany.due_amount = 0.0
             mockCompany.due_date = nil
             mockCompany.payment_status_id = PaymentStatus.find_by_name("Activo")
             if !mockCompany.valid?
@@ -125,7 +125,7 @@ class PuntoPagosController < ApplicationController
           mockCompany = Company.find(current_user.company_id)
           mockCompany.plan_id = plan_id
           mockCompany.months_active_left = 1.0
-          mockCompany.due_payment = 0.0
+          mockCompany.due_amount = 0.0
           mockCompany.due_date = nil
           mockCompany.payment_status_id = PaymentStatus.find_by_name("Activo")
           if !mockCompany.valid?
@@ -168,7 +168,7 @@ class PuntoPagosController < ApplicationController
       billing_log = BillingLog.find_by_trx_id(params[:trx_id])
       company = Company.find(current_user.company_id)
       company.months_active_left += billing_log.amount
-      company.due_payment = 0.0
+      company.due_amount = 0.0
       company.due_date = nil
       company.payment_status_id = PaymentStatus.find_by_name("Activo")
       company.save
@@ -177,7 +177,7 @@ class PuntoPagosController < ApplicationController
       company = Company.find(current_user.company_id)
       company.plan_id = plan_log.new_plan_id
       company.months_active_left = 1.0
-      company.due_payment = 0.0
+      company.due_amount = 0.0
       company.due_date = nil
       company.payment_status_id = PaymentStatus.find_by_name("Activo")
       company.save
