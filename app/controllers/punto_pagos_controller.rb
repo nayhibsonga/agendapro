@@ -29,20 +29,29 @@ class PuntoPagosController < ApplicationController
     accepted_amounts = [1,2,3,4,6,9,12]
     accepted_payments = ["01","03","04","05","06","07"]
     if accepted_amounts.include?(amount) && accepted_payments.include?(payment_method) && company
-      NumericParameter.find_by_name(amount.to_s+"_month_discount") ? month_discount = NumericParameter.find_by_name(amount.to_s+"_month_discount").value : month_discount = 0
-      # trx_id = DateTime.now.to_s.gsub(/[-:T]/i, '') + "c" + company.id.to_s + "p" + company.plan.id.to_s
-      trx_id = (company.id.to_s + company.plan_id.to_s + DateTime.now.to_s.gsub(/[-:T]/i, ''))[0..-5]
-      company.months_active_left > 0 ? plan_1 = (company.due_amount + price*(1+sales_tax)).round(0) : plan_1 = ((company.due_amount + (month_days - day_number + 1)*price/month_days)*(1+sales_tax)).round(0)
-      due = sprintf('%.2f', ((plan_1 + price*(amount-1)*(1+sales_tax))*(1-month_discount)).round(0))
-      req = PuntoPagos::Request.new()
-      resp = req.create(trx_id, due, payment_method)
-      if resp.success?
-        BillingLog.create(payment: due, amount: amount, company_id: company.id, plan_id: company.plan.id, transaction_type_id: TransactionType.find_by_name("Webpay").id, trx_id: trx_id)
-        PuntoPagosCreation.create(trx_id: trx_id, payment_method: payment_method, amount: due, details: "Creación de pago empresa id "+company.id.to_s+", nombre "+company.name+". Paga plan "+company.plan.name+"("+company.plan.id.to_s+") "+amount.to_s+" veces, por un costo de "+due+". trx_id: "+trx_id+" - mp: "+company.id.to_s+". Resultado: Se procesa")
-        redirect_to resp.payment_process_url
+      mockCompany = Company.find(current_user.company_id)
+      mockCompany.months_active_left += amount
+      mockCompany.due_payment = 0.0
+      mockCompany.due_date = nil
+      mockCompany.payment_status_id = PaymentStatus.find_by_name("Activo")
+      if !mockCompany.valid?
+        redirect_to select_plan_path, notice: "No se pudo completar la operación ya que hubo un error en la solicitud de pago. Porfavor ponte en contacto con contacto@agendapro.cl si el problema persiste. (10)"
       else
-        PuntoPagosCreation.create(trx_id: trx_id, payment_method: payment_method, amount: due, details: "Error creación de pago empresa id "+company.id.to_s+", nombre "+company.name+". Paga plan "+company.plan.name+"("+company.plan.id.to_s+") "+amount.to_s+" veces, por un costo de "+due+". trx_id: "+trx_id+" - mp: "+company.id.to_s+". Resultado: "+resp.get_error+".")
-        redirect_to select_plan_path, notice: "No se pudo completar la operación ya que hubo un error en la solicitud de pago. Porfavor ponte en contacto con contacto@agendapro.cl si el problema persiste. (6)"
+        NumericParameter.find_by_name(amount.to_s+"_month_discount") ? month_discount = NumericParameter.find_by_name(amount.to_s+"_month_discount").value : month_discount = 0
+        # trx_id = DateTime.now.to_s.gsub(/[-:T]/i, '') + "c" + company.id.to_s + "p" + company.plan.id.to_s
+        trx_id = (company.id.to_s + company.plan_id.to_s + DateTime.now.to_s.gsub(/[-:T]/i, ''))[0..-5]
+        company.months_active_left > 0 ? plan_1 = (company.due_amount + price*(1+sales_tax)).round(0) : plan_1 = ((company.due_amount + (month_days - day_number + 1)*price/month_days)*(1+sales_tax)).round(0)
+        due = sprintf('%.2f', ((plan_1 + price*(amount-1)*(1+sales_tax))*(1-month_discount)).round(0))
+        req = PuntoPagos::Request.new()
+        resp = req.create(trx_id, due, payment_method)
+        if resp.success?
+          BillingLog.create(payment: due, amount: amount, company_id: company.id, plan_id: company.plan.id, transaction_type_id: TransactionType.find_by_name("Webpay").id, trx_id: trx_id)
+          PuntoPagosCreation.create(trx_id: trx_id, payment_method: payment_method, amount: due, details: "Creación de pago empresa id "+company.id.to_s+", nombre "+company.name+". Paga plan "+company.plan.name+"("+company.plan.id.to_s+") "+amount.to_s+" veces, por un costo de "+due+". trx_id: "+trx_id+" - mp: "+company.id.to_s+". Resultado: Se procesa")
+          redirect_to resp.payment_process_url
+        else
+          PuntoPagosCreation.create(trx_id: trx_id, payment_method: payment_method, amount: due, details: "Error creación de pago empresa id "+company.id.to_s+", nombre "+company.name+". Paga plan "+company.plan.name+"("+company.plan.id.to_s+") "+amount.to_s+" veces, por un costo de "+due+". trx_id: "+trx_id+" - mp: "+company.id.to_s+". Resultado: "+resp.get_error+".")
+          redirect_to select_plan_path, notice: "No se pudo completar la operación ya que hubo un error en la solicitud de pago. Porfavor ponte en contacto con contacto@agendapro.cl si el problema persiste. (6)"
+        end
       end
     else
       redirect_to select_plan_path, notice: "No se pudo completar la operación ya que hubo un error en la solicitud de pago. Porfavor ponte en contacto con contacto@agendapro.cl si el problema persiste. (7)"
@@ -88,7 +97,15 @@ class PuntoPagosController < ApplicationController
               redirect_to select_plan_path, notice: "El plan no pudo ser cambiado. Tienes más locales/proveedores activos que lo que permite el plan, o no tienes los permisos necesarios para hacer este cambio."
             end
           else
-            if payment_method != "00"
+            mockCompany = Company.find(current_user.company_id)
+            mockCompany.plan_id = plan_id
+            mockCompany.months_active_left = 1.0
+            mockCompany.due_payment = 0.0
+            mockCompany.due_date = nil
+            mockCompany.payment_status_id = PaymentStatus.find_by_name("Activo")
+            if !mockCompany.valid?
+              redirect_to select_plan_path, notice: "No se pudo completar la operación ya que hubo un error en la solicitud de pago. Porfavor ponte en contacto con contacto@agendapro.cl si el problema persiste. (8)"
+            elsif payment_method != "00"
               due = sprintf('%.2f', ((plan_month_value + due_amount - plan_value_left)*(1+sales_tax)).round(0))
               req = PuntoPagos::Request.new()
               resp = req.create(trx_id, due, payment_method)
@@ -105,7 +122,15 @@ class PuntoPagosController < ApplicationController
             end
           end
         else
-          if payment_method != "00"
+          mockCompany = Company.find(current_user.company_id)
+          mockCompany.plan_id = plan_id
+          mockCompany.months_active_left = 1.0
+          mockCompany.due_payment = 0.0
+          mockCompany.due_date = nil
+          mockCompany.payment_status_id = PaymentStatus.find_by_name("Activo")
+          if !mockCompany.valid?
+            redirect_to select_plan_path, notice: "No se pudo completar la operación ya que hubo un error en la solicitud de pago. Porfavor ponte en contacto con contacto@agendapro.cl si el problema persiste. (9)"
+          elsif payment_method != "00"
             due = sprintf('%.2f', ((plan_month_value + due_amount)*(1+sales_tax)).round(0))
             req = PuntoPagos::Request.new()
             resp = req.create(trx_id, due, payment_method)
@@ -138,6 +163,24 @@ class PuntoPagosController < ApplicationController
   end
 
   def notification
-    PuntoPagosConfirmation.create(response: params[:respuesta], token: params[:token], trx_id: params[:trx_id],payment_method: params[:medio_pago], amount: params[:monto], approvement_date: params[:fecha_aprobacion], card_number: params[:numero_tarjeta], dues_number: params[:num_cuotas], dues_type: params[:tipo_cuotas], dues_amount:params[:valor_cuota], first_due_date: params[:primer_vencimiento], operation_number: params[:numero_operacion], authorization_code: params[:codigo_autorizacion])
+    PuntoPagosConfirmation.create(response: params[:respuesta], token: params[:token], trx_id: params[:trx_id], payment_method: params[:medio_pago], amount: params[:monto], approvement_date: params[:fecha_aprobacion], card_number: params[:numero_tarjeta], dues_number: params[:num_cuotas], dues_type: params[:tipo_cuotas], dues_amount:params[:valor_cuota], first_due_date: params[:primer_vencimiento], operation_number: params[:numero_operacion], authorization_code: params[:codigo_autorizacion])
+    if BillingLog.find_by_trx_id(params[:trx_id]).exists?
+      billing_log = BillingLog.find_by_trx_id(params[:trx_id])
+      company = Company.find(current_user.company_id)
+      company.months_active_left += billing_log.amount
+      company.due_payment = 0.0
+      company.due_date = nil
+      company.payment_status_id = PaymentStatus.find_by_name("Activo")
+      company.save
+    elsif PlanLog.find_by_trx_id(params[:trx_id]).exists?
+      plan_log = PlanLog.find_by_trx_id(params[:trx_id])
+      company = Company.find(current_user.company_id)
+      company.plan_id = plan_log.new_plan_id
+      company.months_active_left = 1.0
+      company.due_payment = 0.0
+      company.due_date = nil
+      company.payment_status_id = PaymentStatus.find_by_name("Activo")
+      company.save
+    end
   end
 end
