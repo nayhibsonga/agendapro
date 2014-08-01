@@ -35,6 +35,7 @@ class PuntoPagosController < ApplicationController
       mockCompany.due_date = nil
       mockCompany.payment_status_id = PaymentStatus.find_by_name("Activo")
       if !mockCompany.valid?
+        puts company.errors
         redirect_to select_plan_path, notice: "No se pudo completar la operación ya que hubo un error en la solicitud de pago. Porfavor ponte en contacto con contacto@agendapro.cl si el problema persiste. (10)"
       else
         NumericParameter.find_by_name(amount.to_s+"_month_discount") ? month_discount = NumericParameter.find_by_name(amount.to_s+"_month_discount").value : month_discount = 0
@@ -104,6 +105,7 @@ class PuntoPagosController < ApplicationController
             mockCompany.due_date = nil
             mockCompany.payment_status_id = PaymentStatus.find_by_name("Activo")
             if !mockCompany.valid?
+              puts company.errors
               redirect_to select_plan_path, notice: "No se pudo completar la operación ya que hubo un error en la solicitud de pago. Porfavor ponte en contacto con contacto@agendapro.cl si el problema persiste. (8)"
             elsif payment_method != "00"
               due = sprintf('%.2f', ((plan_month_value + due_amount - plan_value_left)*(1+sales_tax)).round(0))
@@ -129,6 +131,7 @@ class PuntoPagosController < ApplicationController
           mockCompany.due_date = nil
           mockCompany.payment_status_id = PaymentStatus.find_by_name("Activo")
           if !mockCompany.valid?
+            puts company.errors
             redirect_to select_plan_path, notice: "No se pudo completar la operación ya que hubo un error en la solicitud de pago. Porfavor ponte en contacto con contacto@agendapro.cl si el problema persiste. (9)"
           elsif payment_method != "00"
             due = sprintf('%.2f', ((plan_month_value + due_amount)*(1+sales_tax)).round(0))
