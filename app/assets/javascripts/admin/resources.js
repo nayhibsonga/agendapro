@@ -42,9 +42,9 @@ function saveCategory (typeURL, extraURL) {
 		},
 		error: function(xhr){
 			var errors = $.parseJSON(xhr.responseText).errors;
-			var errores = '';
+			var errores = 'Error\n';
 			for (i in errors) {
-				errores += errors[i];
+				errores += '*' + errors[i] + '\n';
 			}
 			alert(errores);
 		}
@@ -60,7 +60,7 @@ function saveResource (typeURL, extraURL) {
 			$(resource).valid();
 		};
 	});
-	if (validator.numberOfInvalids()) {
+	if (validator_resource.numberOfInvalids()) {
 		return false;
 	};
 
@@ -78,15 +78,18 @@ function saveResource (typeURL, extraURL) {
 		data: { "resource": resourceJSON },
 		dataType: 'json',
 		success: function() {
-				document.location.href = '/resources/';
-			},
+			document.location.href = '/resources/';
+		},
 		error: function(xhr){
 			var errors = $.parseJSON(xhr.responseText).errors;
-			var errores = '';
+			var errorList = document.createElement('ul');
 			for (i in errors) {
-				errores += errors[i];
+				$(errorList).append('<li>' + errors[i] + '</li>');
 			}
-			alertId.showAlert(errores);
+			alertId.showAlert(
+				'<h2>Error</h2>'
+				errorList
+			);
 		}
 	});
 }
@@ -134,6 +137,13 @@ $(function() {
 	});
 	$('#saveResourceCategryButton').click(function() {
 		saveCategory('POST','');
+	});
+	$('#resourceCategoryModal').on('hidden.bs.modal', function (e) {
+		validator_resource_category.resetForm();
+		$('.has-success').removeClass('has-success');
+		$('.fa.fa-check').removeClass('fa fa-check');
+		$('.has-error').removeClass('has-error');
+		$('.fa.fa-times').removeClass('fa fa-times');
 	});
 	initialize();
 });

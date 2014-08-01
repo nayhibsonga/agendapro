@@ -1,5 +1,6 @@
+var validator;
 $(function() {
-	$('#new_booking').validate({
+	validator = $('#new_booking').validate({
 		errorPlacement: function(error, element) {
 			var id = element.attr('id');
 			if (element.attr('id') == 'full_name') {

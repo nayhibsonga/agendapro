@@ -7,7 +7,7 @@
           <table class="table table-bordered" id="locales-empresa">
             <tbody>
               <% @locations.each do |local| %>
-              <tr <%= 'class="local-seleccionado"' if @selectedLocal.to_i == local.id %>>
+              <tr class="<%= 'local-seleccionado' if @selectedLocal.to_i == local.id %>">
                 <td>
                   <div class="radio">
                     <label>

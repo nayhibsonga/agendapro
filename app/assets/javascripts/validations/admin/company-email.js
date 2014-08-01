@@ -1,5 +1,6 @@
+var validator;
 $(function() {
-	$('#new_company_from_email').validate({
+	validator = $('#new_company_from_email').validate({
 		errorPlacement: function(error, element) {
 			error.appendTo(element.next());
 		},

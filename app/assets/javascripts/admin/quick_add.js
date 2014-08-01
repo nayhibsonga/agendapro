@@ -248,30 +248,26 @@ function locationValid (ctrl) {
 	    	}
 	    	else {
 	    		var errors = result.errors;
-	    		var error_text = '';
-			    for (i in errors) {
-			    	error_text += '<li>' + errors[i] + '</li>';
-			    }
+	    		var errorList = document.createElement('ul');
+				for (i in errors) {
+					$(errorList).append('<li>' + errors[i] + '</li>');
+				}
 			    my_alert.showAlert(
 			    	'<h4>Error</h4>' +
-			    	'<ul>' +
-			    		error_text +
-			    	'</ul>'
+			    	errorList
 			    );
 				hideLoad();
 	    	}
 		},
 		error: function (xhr){
 		    var errors = $.parseJSON(xhr.responseText).errors;
-		    var error_text = '';
-		    for (i in errors) {
-		    	error_text += '<li>' + errors[i] + '</li>';
-		    }
+		    var errorList = document.createElement('ul');
+			for (i in errors) {
+				$(errorList).append('<li>' + errors[i] + '</li>');
+			}
 		    my_alert.showAlert(
 		    	'<h4>Error</h4>' +
-		    	'<ul>' +
-		    		error_text +
-		    	'</ul>'
+		    	errorList
 		    );
 			hideLoad();
 		}
@@ -293,30 +289,26 @@ function serviceValid () {
 		    	}
 		    	else {
 		    		var errors = result.errors;
-		    		var error_text = '';
-				    for (i in errors) {
-				    	error_text += '<li>' + errors[i] + '</li>';
-				    }
+		    		var errorList = document.createElement('ul');
+					for (i in errors) {
+						$(errorList).append('<li>' + errors[i] + '</li>');
+					}
 				    my_alert.showAlert(
 				    	'<h4>Error</h4>' +
-				    	'<ul>' +
-				    		error_text +
-				    	'</ul>'
+				    	errorList
 				    );
 				    hideLoad()
 		    	}
 			},
 			error: function (xhr) {
 				var errors = $.parseJSON(xhr.responseText).errors;
-			    var error_text = '';
-			    for (i in errors) {
-			    	error_text += '<li>' + errors[i] + '</li>';
-			    }
+			    var errorList = document.createElement('ul');
+				for (i in errors) {
+					$(errorList).append('<li>' + errors[i] + '</li>');
+				}
 			    my_alert.showAlert(
 			    	'<h4>Error</h4>' +
-			    	'<ul>' +
-			    		error_text +
-			    	'</ul>'
+			    	errorList
 			    );
 			    hideLoad()
 			}
@@ -368,30 +360,26 @@ function providerValid () {
 		    	}
 		    	else {
 		    		var errors = result.errors;
-		    		var error_text = '';
-				    for (i in errors) {
-				    	error_text += '<li>' + errors[i] + '</li>';
-				    }
+		    		var errorList = document.createElement('ul');
+					for (i in errors) {
+						$(errorList).append('<li>' + errors[i] + '</li>');
+					}
 				    my_alert.showAlert(
 				    	'<h4>Error</h4>' +
-				    	'<ul>' +
-				    		error_text +
-				    	'</ul>'
+				    	errorList
 				    );
 				    hideLoad();
 		    	}
 			},
 			error: function(xhr){
 			    var errors = $.parseJSON(xhr.responseText).errors;
-			    var error_text = '';
-			    for (i in errors) {
-			    	error_text += '<li>' + errors[i] + '</li>';
-			    }
+			    var errorList = document.createElement('ul');
+				for (i in errors) {
+					$(errorList).append('<li>' + errors[i] + '</li>');
+				}
 			    my_alert.showAlert(
 			    	'<h4>Error</h4>' +
-			    	'<ul>' +
-			    		error_text +
-			    	'</ul>'
+			    	errorList
 			    );
 			    hideLoad();
 			}
@@ -421,15 +409,13 @@ function saveLocation (ctrl) {
 		},
 		error: function (xhr){
 		    var errors = $.parseJSON(xhr.responseText).errors;
-		    var error_text = '';
-		    for (i in errors) {
-		    	error_text += '<li>' + errors[i] + '</li>';
-		    }
+		    var errorList = document.createElement('ul');
+			for (i in errors) {
+				$(errorList).append('<li>' + errors[i] + '</li>');
+			}
 		    my_alert.showAlert(
 		    	'<h4>Error</h4>' +
-		    	'<ul>' +
-		    		error_text +
-		    	'</ul>'
+		    	errorList
 		    );
 			hideLoad();
 		}
@@ -449,15 +435,13 @@ function createService () {
 		},
 		error: function (xhr) {
 			var errors = $.parseJSON(xhr.responseText).errors;
-		    var error_text = '';
-		    for (i in errors) {
-		    	error_text += '<li>' + errors[i] + '</li>';
-		    }
+		    var errorList = document.createElement('ul');
+			for (i in errors) {
+				$(errorList).append('<li>' + errors[i] + '</li>');
+			}
 		    my_alert.showAlert(
 		    	'<h4>Error</h4>' +
-		    	'<ul>' +
-		    		error_text +
-		    	'</ul>'
+		    	errorList
 		    );
 			hideLoad();
 		}
@@ -495,15 +479,13 @@ function createProvider () {
 		},
 		error: function(xhr){
 		    var errors = $.parseJSON(xhr.responseText).errors;
-		    var error_text = '';
-		    for (i in errors) {
-		    	error_text += '<li>' + errors[i] + '</li>';
-		    }
+		    var errorList = document.createElement('ul');
+			for (i in errors) {
+				$(errorList).append('<li>' + errors[i] + '</li>');
+			}
 		    my_alert.showAlert(
 		    	'<h4>Error</h4>' +
-		    	'<ul>' +
-		    		error_text +
-		    	'</ul>'
+		    	errorList
 		    );
 		    hideLoad();
 		}
