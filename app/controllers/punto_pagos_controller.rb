@@ -165,7 +165,7 @@ class PuntoPagosController < ApplicationController
   def notification
     PuntoPagosConfirmation.create(response: params[:respuesta], token: params[:token], trx_id: params[:trx_id], payment_method: params[:medio_pago], amount: params[:monto], approvement_date: params[:fecha_aprobacion], card_number: params[:numero_tarjeta], dues_number: params[:num_cuotas], dues_type: params[:tipo_cuotas], dues_amount:params[:valor_cuota], first_due_date: params[:primer_vencimiento], operation_number: params[:numero_operacion], authorization_code: params[:codigo_autorizacion])
     if params[:respuesta] == "00"
-      if BillingLog.find_by_trx_id(params[:trx_id]).exists?
+      if BillingLog.find_by_trx_id(params[:trx_id])
         billing_log = BillingLog.find_by_trx_id(params[:trx_id])
         company = Company.find(current_user.company_id)
         company.months_active_left += billing_log.amount
@@ -173,7 +173,7 @@ class PuntoPagosController < ApplicationController
         company.due_date = nil
         company.payment_status_id = PaymentStatus.find_by_name("Activo")
         company.save
-      elsif PlanLog.find_by_trx_id(params[:trx_id]).exists?
+      elsif PlanLog.find_by_trx_id(params[:trx_id])
         plan_log = PlanLog.find_by_trx_id(params[:trx_id])
         company = Company.find(current_user.company_id)
         company.plan_id = plan_log.new_plan_id
