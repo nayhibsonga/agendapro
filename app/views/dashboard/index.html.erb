@@ -13,9 +13,9 @@
 			<div class="panel-heading">
 				<h3 class="panel-title">Últimas Reservas</h3>
 			</div>
-			<div class="panel-body">
+			<div class="panel-body scrollable">
 				<table class="table">
-					<tbody>
+					<thead class="head-white">
 						<tr>
 							<th>Estado</th>
 							<th>Cliente</th>
@@ -23,6 +23,8 @@
 							<th>Personal</th>
 							<th>Horario</th>
 						</tr>
+					</thead>
+					<tbody>
 						<% @lastBookings.each do |booking| %>
 						<tr>
 							<td>
@@ -68,13 +70,13 @@
 
 <div class="row">
 	<div class="col-md-8">
-		<div class="panel panel-default">
+		<div class="panel panel-info">
 			<div class="panel-heading">
 				<h3 class="panel-title">Horario de Hoy</h3>
 			</div>
-			<div class="panel-body">
+			<div class="panel-body scrollable">
 				<table class="table">
-					<thead>
+					<thead class="head-white">
 						<th>Hora</th>
 						<th>Cliente</th>
 						<th>Teléfono</th>
