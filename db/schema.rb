@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140714211518) do
+ActiveRecord::Schema.define(version: 20140721200535) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -130,8 +130,8 @@ ActiveRecord::Schema.define(version: 20140714211518) do
     t.integer  "company_id",                          null: false
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.integer  "before_booking",                      null: false
-    t.integer  "after_booking",                       null: false
+    t.integer  "before_booking",      default: 24,    null: false
+    t.integer  "after_booking",       default: 6,     null: false
     t.integer  "daily_mails",         default: 50
     t.integer  "sent_mails",          default: 0
     t.integer  "before_edit_booking", default: 12
@@ -207,18 +207,20 @@ ActiveRecord::Schema.define(version: 20140714211518) do
   add_index "location_times", ["location_id"], name: "index_location_times_on_location_id", using: :btree
 
   create_table "locations", force: true do |t|
-    t.string   "name",                        null: false
-    t.string   "address",                     null: false
-    t.string   "phone",                       null: false
+    t.string   "name",                         null: false
+    t.string   "address",                      null: false
+    t.string   "phone",                        null: false
     t.float    "latitude"
     t.float    "longitude"
-    t.integer  "district_id",                 null: false
-    t.integer  "company_id",                  null: false
+    t.integer  "district_id",                  null: false
+    t.integer  "company_id",                   null: false
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.boolean  "active",      default: true
-    t.integer  "order",       default: 0
-    t.boolean  "outcall",     default: false
+    t.boolean  "active",       default: true
+    t.integer  "order",        default: 0
+    t.boolean  "outcall",      default: false
+    t.string   "email",        default: ""
+    t.boolean  "notification", default: false
   end
 
   add_index "locations", ["company_id"], name: "index_locations_on_company_id", using: :btree

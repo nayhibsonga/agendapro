@@ -80,7 +80,7 @@ class CompaniesController < ApplicationController
 				@user.company_id = @company.id
 				@user.role_id = Role.find_by_name("Admin").id
 				@user.save
-				format.html { redirect_to dashboard_path, notice: 'La empresa fue creada exitosamente.' }
+				format.html { redirect_to dashboard_path, notice: 'Empresa creada exitosamente.' }
 				format.json { render action: 'show', status: :created, location: @company }
 			else
 				format.html { render action: 'add_company', layout: "search" }
@@ -94,7 +94,7 @@ class CompaniesController < ApplicationController
 	def update
 		respond_to do |format|
 			if @company.update(company_params)
-				format.html { redirect_to dashboard_path, notice: 'La empresa fue actualizada exitosamente.' }
+				format.html { redirect_to dashboard_path, notice: 'Empresa actualizada exitosamente.' }
 				format.json { head :no_content }
 			else
 				format.html { render action: 'edit' }
@@ -119,7 +119,7 @@ class CompaniesController < ApplicationController
 		if @company.nil?
 			@company = Company.find_by(web_address: request.subdomain.gsub(/www\./i, ''))
 			if @company.nil?
-				flash[:alert] = "No existe la compañia"
+				flash[:alert] = "No existe la compañia buscada."
 
 				host = request.host_with_port
 				domain = host[host.index(request.domain)..host.length]
@@ -129,7 +129,7 @@ class CompaniesController < ApplicationController
 			end
 		end
 		unless @company.company_setting.activate_workflow
-			flash[:alert] = "Lo sentimos, el minisitio que estas buscando no se encuentra disponible"
+			flash[:alert] = "Lo sentimos, el mini-sitio que estás buscando no se encuentra disponible."
 
 			host = request.host_with_port
 			domain = host[host.index(request.domain)..host.length]
@@ -163,7 +163,7 @@ class CompaniesController < ApplicationController
 	def workflow
 		@company = Company.find_by(web_address: request.subdomain)
 		unless @company.company_setting.activate_workflow
-			flash[:alert] = "Lo sentimos, el minisitio que estas buscando no se encuentra disponible"
+			flash[:alert] = "Lo sentimos, el mini-sitio que estás buscando no se encuentra disponible."
 
 			host = request.host_with_port
 			domain = host[host.index(request.domain)..host.length]

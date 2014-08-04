@@ -1,12 +1,12 @@
 <div class="container">
 	<div class="row">
 		<section class="hgroup">
-			<h2>Proveedores de Servicios</h2>
-			<h2 class="section_header">Los Proveedores de Servicios son las personas, máquinas o salas necesarias para realizar un servicio. Acá los podrás crear y editar.</h2>
+			<h2>Prestadores de Servicios</h2>
+			<h2 class="section_header">Los Prestadores de Servicios son las personas, máquinas o salas necesarias para realizar un servicio. Acá los podrás crear y editar.</h2>
 			<div class="line-breadcrumb">
 				<ul class="breadcrumb pull-right">
 						<li><%= link_to "Resumen", dashboard_path %> </li>
-						<li class="active">Proveedores de Servicios</li>
+						<li class="active">Prestadores de Servicios</li>
 				</ul>
 		</div>
 		</section>
@@ -40,7 +40,7 @@
 								<td data-provider="<%= service_provider.id %>"><%= service_provider.public_name %></td>
 								<td>
 									<%= link_to '<i class="fa fa-pencil"></i> Editar'.html_safe, edit_service_provider_path(service_provider), :class => "btn btn-warning" %>
-									<%= link_to '<i class="fa fa-trash-o"></i> Eliminar'.html_safe, deactivate_service_provider_path(:id => service_provider.id), :class => "btn btn-danger", data: { confirm: '¿Estás seguro de desactivar el Proveedor seleccionado? Este proveedor tiene ' + Booking.where(:service_provider_id => service_provider.id).where.not(:status => Status.find_by(:name => 'Cancelado')).where('start >= ?', DateTime.now).length.to_s + ' reserva(s) asociada(s), que será(n) eliminada(s).' } %>
+									<%= link_to '<i class="fa fa-trash-o"></i> Eliminar'.html_safe, deactivate_service_provider_path(:id => service_provider.id), :class => "btn btn-danger", data: { confirm: '¿Estás seguro de desactivar el Prestador seleccionado? Este prestador tiene ' + Booking.where(:service_provider_id => service_provider.id).where.not(:status => Status.find_by(:name => 'Cancelado')).where('start >= ?', DateTime.now).length.to_s + ' reserva(s) asociada(s), que será(n) eliminada(s).' } %>
 									<span class="pull-right">
 										<i class="fa fa-bars"></i>
 									</span>
@@ -58,8 +58,8 @@
 
 <br/>
 
-<%= link_to '<i class="fa fa-plus"></i> Nuevo Proveedor de Servicios'.html_safe, new_service_provider_path, :class => "btn btn-primary" %>
-<%= link_to '<i class="fa fa-minus"></i> Proveedores de Servicios Inactivos'.html_safe, inactive_service_providers_path, :class => "btn btn-primary pull-right" %>
+<%= link_to '<i class="fa fa-plus"></i> Nuevo Prestador de Servicios'.html_safe, new_service_provider_path, :class => "btn btn-agendapro-claro" %>
+<%= link_to '<i class="fa fa-minus"></i> Prestadores de Servicios Inactivos'.html_safe, inactive_service_providers_path, :class => "btn btn-agendapro-claro pull-right" %>
 
 <%= stylesheet_link_tag "admin/draggable" %>
 <% content_for :scripts do %>

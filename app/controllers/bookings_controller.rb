@@ -217,11 +217,11 @@ class BookingsController < ApplicationController
     end
     @booking.price = Service.find(params[:service]).price
     if @booking.save
-      flash[:notice] = "Servicio agendado"
+      flash[:notice] = "Reserva realizada exitosamente."
 
       # BookingMailer.book_service_mail(@booking)
     else
-      flash[:alert] = "Error guardando datos de agenda"
+      flash[:alert] = "Hubo un error guardando los datos de tu reserva. Inténtalo nuevamente."
       @errors = @booking.errors
     end
 
@@ -367,10 +367,10 @@ class BookingsController < ApplicationController
     @company = Location.find(@booking.location_id).company
 
     if @booking.update(start: params[:start], end: params[:end])
-      flash[:notice] = "Reserva actualizada correctamente"
+      flash[:notice] = "Reserva actualizada exitosamente."
       # BookingMailer.update_booking(@booking)
     else
-      flash[:alert] = "Hubo un error actualizando tu reserva"
+      flash[:alert] = "Hubo un error actualizando tu reserva. Inténtalo nuevamente."
       @errors = @booking.errors
     end
 
@@ -425,10 +425,10 @@ class BookingsController < ApplicationController
       status = Status.find_by(:name => 'Cancelado').id
       
       if @booking.update(status_id: status)
-        flash[:notice] = "Reserva cancelada correctamente"
+        flash[:notice] = "Reserva cancelada exitosamente."
         # BookingMailer.cancel_booking(@booking)
       else
-        flash[:alert] = "Hubo un error cancelando tu reserva"
+        flash[:alert] = "Hubo un error cancelando tu reserva. Inténtalo nuevamente."
         @errors = @booking.errors
       end
     end
@@ -444,8 +444,8 @@ class BookingsController < ApplicationController
 
   def check_user_cross_bookings
     require 'date'
-    if !params[:user].blank?
-      bookings = Booking.where(:user_id => params[:user], :status_id => [Status.find_by(:name => 'Reservado'), Status.find_by(:name => 'Pagado'), Status.find_by(:name => 'Confirmado')])
+    if !params[:user_id].blank?
+      bookings = Booking.where(:user_id => params[:user_id], :status_id => [Status.find_by(:name => 'Reservado'), Status.find_by(:name => 'Pagado'), Status.find_by(:name => 'Confirmado')])
       booking_start = DateTime.parse(params[:booking_start])
       booking_end = DateTime.parse(params[:booking_end])
       bookings.each do |booking|

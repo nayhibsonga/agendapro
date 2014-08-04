@@ -23,10 +23,6 @@
         <%= stylesheet_link_tag "http://fonts.googleapis.com/css?family=Open+Sans:400,300,400italic,600,600italic,700,700italic,300italic" %>
         <!-- end: CSS -->
 
-        <!-- start: JavaScript-->
-        <%= javascript_include_tag "home-head" %>
-        <!-- end: JavaScript-->
-
         <!-- Fav and touch icons -->
         <%= favicon_link_tag "Iso_Pro_Color.png", :rel => "shortcut icon" %>
 	</head>
@@ -85,6 +81,8 @@
         <!-- end: content -->
 
         <!-- start: JavaScript-->
+        <%= javascript_include_tag "jquery-1.11.1.min" %>
+        <%= javascript_include_tag 'validations/validate' %>
         <%= yield :scripts %>
         <%= javascript_include_tag "mobile" %>
         <!-- end: JavaScript-->

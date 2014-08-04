@@ -16,6 +16,9 @@ function saveCategory (typeURL, extraURL) {
 		    return false;
 		}
 	}
+	else if (!$('#new_resource_category').valid()) {
+		return false;
+	};
 	$.ajax({
 		type: typeURL,
 		url: '/resource_categories'+extraURL+'.json',
@@ -39,9 +42,9 @@ function saveCategory (typeURL, extraURL) {
 		},
 		error: function(xhr){
 			var errors = $.parseJSON(xhr.responseText).errors;
-			var errores = '';
+			var errores = 'Error\n';
 			for (i in errors) {
-				errores += errors[i];
+				errores += '*' + errors[i] + '\n';
 			}
 			alert(errores);
 		}
@@ -49,18 +52,17 @@ function saveCategory (typeURL, extraURL) {
 }
 
 function saveResource (typeURL, extraURL) {
-	if($('#resource_name').val() == '' && $('#resource_resource_category_id').val() == '') {
- 		alertId.showAlert("Se debe ingresar un nombre y una categoría para el recurso.");
- 		return false;
-	}
-	if($('#resource_name').val() == '') {
- 		alertId.showAlert("Se debe ingresar un nombre para el recurso.");
- 		return false;
-	}
-	if($('#resource_resource_category_id').val() == '') {
- 		alertId.showAlert("Se debe ingresar una categoría para el recurso.");
- 		return false;
-	}
+	if (!$('form').valid()) {
+		return false;
+	};
+	$.each($('input[name="resource[location_ids_quantity][]"]'), function (key, resource) {
+		if (!$(resource).attr('disabled')) {
+			$(resource).valid();
+		};
+	});
+	if (validator_resource.numberOfInvalids()) {
+		return false;
+	};
 
 	var resource_locations = []
 	$('input.resourceLocationCheck').each(function(i, obj) {
@@ -76,15 +78,18 @@ function saveResource (typeURL, extraURL) {
 		data: { "resource": resourceJSON },
 		dataType: 'json',
 		success: function() {
-				document.location.href = '/resources/';
-			},
+			document.location.href = '/resources/';
+		},
 		error: function(xhr){
 			var errors = $.parseJSON(xhr.responseText).errors;
-			var errores = '';
+			var errorList = document.createElement('ul');
 			for (i in errors) {
-				errores += errors[i];
+				$(errorList).append('<li>' + errors[i] + '</li>');
 			}
-			alertId.showAlert(errores);
+			alertId.showAlert(
+				'<h2>Error</h2>'+
+				errorList
+			);
 		}
 	});
 }
@@ -132,6 +137,13 @@ $(function() {
 	});
 	$('#saveResourceCategryButton').click(function() {
 		saveCategory('POST','');
+	});
+	$('#resourceCategoryModal').on('hidden.bs.modal', function (e) {
+		validator_resource_category.resetForm();
+		$('.has-success').removeClass('has-success');
+		$('.fa.fa-check').removeClass('fa fa-check');
+		$('.has-error').removeClass('has-error');
+		$('.fa.fa-times').removeClass('fa fa-times');
 	});
 	initialize();
 });

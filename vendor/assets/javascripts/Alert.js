@@ -33,7 +33,7 @@ function Alert (appendTo) {
 		var instance = $('#alertModal');
 		if (instance.length == 0) {
 			// Insert the Alert
-			$(appendTo).append(
+			$(appendTo).prepend(
 				'<div class="modal fade"  id="alertModal" tabindex="-1" role="dialog" aria-labelledby="alertLabel" aria-hidden="true">' +
 				  '<div class="modal-dialog">' +
 				    '<div class="modal-content">' +

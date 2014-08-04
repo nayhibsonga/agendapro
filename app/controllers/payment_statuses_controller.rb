@@ -32,7 +32,7 @@ class PaymentStatusesController < ApplicationController
 
     respond_to do |format|
       if @payment_status.save
-        format.html { redirect_to @payment_status, notice: 'Estado de pago fue creado exitosamente.' }
+        format.html { redirect_to @payment_status, notice: 'Estado de Pago creado exitosamente.' }
         format.json { render action: 'show', status: :created, location: @payment_status }
       else
         format.html { render action: 'new' }
@@ -46,7 +46,7 @@ class PaymentStatusesController < ApplicationController
   def update
     respond_to do |format|
       if @payment_status.update(payment_status_params)
-        format.html { redirect_to @payment_status, notice: 'Estado de pago fue actualizado exitosamente.' }
+        format.html { redirect_to @payment_status, notice: 'Estado de Pago actualizado exitosamente.' }
         format.json { head :no_content }
       else
         format.html { render action: 'edit' }

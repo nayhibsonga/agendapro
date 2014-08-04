@@ -17,7 +17,7 @@ class HomeController < ApplicationController
 	end
 
 	def post_contact
-		flash[:notice] = "Gracias por contactarnos"
+		flash[:notice] = "Gracias por contactarnos."
 
 		@contact_info = Hash.new
 		@contact_info['firstName'] = params[:inputName]

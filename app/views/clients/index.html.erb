@@ -20,29 +20,29 @@
 			<div class="form-group">
 				
 				<div class="col-md-3">
-					<%= select_tag :location, options_from_collection_for_select(@locations, "id", "name", params[:location]), prompt: "Elige un Local...", class: "form-control" %>
+					<%= select_tag :location, options_from_collection_for_select(@locations, "id", "name", params[:location]), prompt: "Elige un Local...", class: "form-control", :onchange => "this.form.submit();" %>
 				</div>
 				<div class="col-md-3">
-					<%= select_tag :provider, options_from_collection_for_select(@service_providers, "id", "public_name", params[:provider]), prompt: "Elige un Proveedor...", class: "form-control" %>
+					<%= select_tag :provider, options_from_collection_for_select(@service_providers, "id", "public_name", params[:provider]), prompt: "Elige un Prestador...", class: "form-control", :onchange => "this.form.submit();" %>
 				</div>
 				<div class="col-md-3">
-					<%= select_tag :service, options_from_collection_for_select(@services, "id", "name", params[:service]), prompt: "Elige un Servicio...", class: "form-control" %>
+					<%= select_tag :service, options_from_collection_for_select(@services, "id", "name", params[:service]), prompt: "Elige un Servicio...", class: "form-control", :onchange => "this.form.submit();" %>
 				</div>
 				<div class="col-md-3">
-					<%= select_tag :gender, options_for_select([['No Especificado', 0], ['Femenino', 1], ['Masculino', 2]], params[:gender]), prompt: "Elige un Género...", class: "form-control" %>
+					<%= select_tag :gender, options_for_select([['No Especificado', 0], ['Femenino', 1], ['Masculino', 2]], params[:gender]), prompt: "Elige un Género...", class: "form-control", :onchange => "this.form.submit();" %>
 				</div>
 			</div>
 		</div>
 		<div class="row top-buffer">
 			<div class="form-group">
 				<div class="col-md-1">
-					<label class="pull-right">Filtrar:</label>
+					<label class="pull-right">Buscar:</label>
 				</div>
 				<div class="col-md-9">
-					<%= text_field_tag :search, nil, :class => "form-control", :placeholder => "Filtrar por nombre, apellido o email...", :value => params[:search] %>
+					<%= text_field_tag :search, nil, :class => "form-control", :placeholder => "Buscar por nombre, apellido o email...", :value => params[:search] %>
 				</div>
 				<div class="col-md-2">
-					<button class="btn btn-primary pull-right" type="submit" action="/clients" value="client_filter"><i class="fa fa-filter"><span> Filtrar</span></i></button>
+					<button class="btn btn-agendapro-claro pull-right" type="submit" action="/clients" value="client_filter"><i class="fa fa-search"><span> Buscar</span></i></button>
 				</div>
 			</div>
 		</div>
@@ -71,7 +71,7 @@
 				<td><%= client.last_name %></td>
 				<td><%= client.email %></td>
 				<td><%= client.phone %></td>
-				<td><%= link_to '<i class="fa fa-pencil"></i> Ver / Editar'.html_safe, edit_client_path(client), :class => "btn btn-warning" %>
+				<td><%= link_to '<i class="fa fa-pencil"></i> Editar'.html_safe, edit_client_path(client), :class => "btn btn-warning" %>
             		<%= link_to '<i class="fa fa-trash-o"></i> Eliminar'.html_safe, client, :class => "btn btn-danger", method: :delete, data: { confirm: '¿Estás seguro de eliminar el Cliente seleccionado? Este cliente tiene '+client.bookings.count.to_s+' reserva(s) asociada(s), que será(n) eliminada(s) también.' } unless cannot? :destroy, client %></td>
 				<td>
 					<% if client.valid_email %>
@@ -88,20 +88,20 @@
 </table>
 <div class="container">
 	<div class="row">
-		<div class="col-md-4">
-			<%= link_to '<i class="fa fa-plus"></i> Nuevo Cliente'.html_safe, new_client_path, :class => "btn btn-primary" %> 
+		<div class="col-md-2">
+			<%= link_to '<i class="fa fa-plus"></i> Nuevo Cliente'.html_safe, new_client_path, :class => "btn btn-agendapro-claro" %> 
 		</div>
-		<div class="col-md-4 pagination">
+		<div class="col-md-8 pagination">
 			<%= will_paginate @clients, renderer: BootstrapPagination::Rails %>
 		</div>
-		<div class="col-md-4">
+		<div class="col-md-2">
 			<button id="sendMail" type="button" class="btn btn-agendapro-claro pull-right" data-toggle="modal" data-target="#mailModal" disabled>Enviar Email</button>
 		</div>
 	</div>
 	<br />
 	<div class="row">
 		<div class="col-md-6">
-			<button id="import_clients" type="button" class="btn btn-primary" data-toggle="modal" data-target="#importModal"><i class="fa fa-group"></i> Importar Clientes</button>
+			<button id="import_clients" type="button" class="btn btn-agendapro-oscuro" data-toggle="modal" data-target="#importModal"><i class="fa fa-group"></i> Importar Clientes</button>
 		</div>
 		<div class="col-md-6">
 			<h4 class="pull-right">
@@ -130,42 +130,47 @@
 						</p>
 						<%= image_tag 'ajax-loader.gif', :alt => 'Loader' %>
 					</div>
-					<div class="form-group">
-						<div class="col-md-2">
-							<%= label_tag :from, 'De: ' %>
-						</div>
+					<div class="form-group has-feedback">
+						<%= label_tag :from, 'De', :class => 'control-label col-md-2' %>
 						<div class="col-md-10">
 							<%= select_tag :from, options_from_collection_for_select(@from_collection, :email, :email), :class => 'form-control', :required => true %>
+            				<span class="help-block"></span>
+            				<span class="form-control-feedback"></span>
 						</div>
-            			<span class="help-block"></span>
 					</div>
-					<div class="form-group">
-						<div class="col-md-2">
-							<%= label_tag :to, 'Para: ' %>
-						</div>
+					<div class="form-group has-feedback">
+						<%= label_tag :to, 'Para', class: 'control-label col-md-2' %>
 						<div class="col-md-10">
-							<%= text_field_tag :to, nil, :class => 'form-control', :required => true %>
+							<%= text_field_tag :to, nil, :class => 'form-control', :required => true, :placeholder => 'ejemplo@dominio.com (requerido)' %>
+            				<span class="help-block"></span>
+            				<span class="form-control-feedback"></span>
             			</div>
-            			<span class="help-block"></span>
 					</div>
-					<div class="form-group">
-						<div class="col-md-2">
-							<%= label_tag :subject, 'Asunto: ' %>
-						</div>
+					<div class="form-group has-feedback">
+						<%= label_tag :subject, 'Asunto', class: 'control-label col-md-2' %>
 						<div class="col-md-10">
-						<%= text_field_tag :subject, nil, :class => 'form-control', :required => true, :autofocus => true %>
+							<%= text_field_tag :subject, nil, :class => 'form-control', :required => true, :autofocus => true, :placeholder => 'Asunto (requerido)' %>
+            				<span class="help-block"></span>
+            				<span class="form-control-feedback"></span>
 						</div>
-            			<span class="help-block"></span>
 					</div>
-					<div class="form-group">
-						<%= label_tag :message, 'Mensaje' %>
-						<%= text_area_tag :message, nil, :class => 'form-control', :rows => 8, :required => true %>
-            			<span class="help-block"></span>
+					<div class="form-group has-feedback">
+						<div class="col-md-12">
+							<%= label_tag :message, 'Mensaje' %>
+						</div>
+						<div class="col-md-12">
+							<%= text_area_tag :message, nil, :class => 'form-control', :rows => 8, :required => true, :placeholder => 'Mensaje (requerido)' %>
+            				<span class="help-block"></span>
+            				<span class="form-control-feedback"></span>
+						</div>
 					</div>
-					<div class="form-group">
-						<%= label_tag :attachment, 'Archivo Adjunto' %>
-						<%= file_field_tag :attachment, :class => 'form-control' %>
-						<span class="help-block"></span>
+					<div class="form-group has-feedback">
+						<%= label_tag :attachment, 'Archivo Adjunto', class: 'control-label col-md-3' %>
+						<div class="col-md-9">
+							<%= file_field_tag :attachment, :class => 'form-control' %>
+							<span class="help-block"></span>
+							<span class="form-control-feedback"></span>
+						</div>
 					</div>
 					<div>
 						<p>NOTA: Todos los emails son enviados como copia oculta</p>
@@ -207,29 +212,33 @@
 				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
 				<h4 class="modal-title" id="importModalLabel">Importar Clientes</h4>
 			</div>
-			<ul>
-				<h4>Instrucciones:</h4>
-				<li>Usar las plantillas de ejemplo como base para la importación. Los campos son opcionales, <strong>excepto el email de cada cliente</strong>.</li><br />
-				<li><strong>No se pueden cambiar los nombres de las columnas</strong> de las plantillas bases.</li><br />
-				<li>El identificador único para los clientes es el email, por lo que si se sube un cliente con un email existente, se reemplazaran los valores guardados anteriormente.<br />
-				Si no existe el email, se crea un cliente nuevo.<br />
-				Para editar el email de un cliente o eliminar un cliente de la base de datos, se debe realizar a través de la página.</li><br />
-				<li>Las fechas de cumpleaños deben ser en formato aaaa-mm-dd (ej: 1980-02-24)</li><br />
-				<li>Para ingresar el género de los clientes, se debe utilizar 0 si no se desea especificar, 1 si es Femenino o 2 si es Masculino.</li><br />
-				<h4>Plantillas para importación:</h4>
-				<%= link_to 'Plantilla Excel', '/clients_base.xls', :target => :blank %> | 
-				<%= link_to 'Plantilla CSV', '/clients_base.csv', :target => :blank %><br />
-			</ul>
-			<%= form_tag import_clients_path, multipart: true do %>
-			  <div class="form-group">
-				<label for="file">Seleccionar Archivo:</label>
-				<%= file_field_tag :file, :class => 'form-control'  %>
-				<span class="help-block"></span>		
-			  </div>
-			  	<div class="modal-footer">
-					<%= submit_tag "Importar", class: "btn btn-agendapro-oscuro", disabled: true, id: "import_button" %>
-					<button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+			<%= form_tag import_clients_path, multipart: true, class: 'form-horizontal' do %>
+			<div class="modal-body">
+				<ul>
+					<h4>Instrucciones:</h4>
+					<li>Usar las plantillas de ejemplo como base para la importación. Los campos son opcionales, <strong>excepto el email de cada cliente</strong>.</li><br />
+					<li><strong>No se pueden cambiar los nombres de las columnas</strong> de las plantillas bases.</li><br />
+					<li>El identificador único para los clientes es el email, por lo que si se sube un cliente con un email existente, se reemplazaran los valores guardados anteriormente.<br />
+					Si no existe el email, se crea un cliente nuevo.<br />
+					Para editar el email de un cliente o eliminar un cliente de la base de datos, se debe realizar a través de la página.</li><br />
+					<li>Las fechas de cumpleaños deben ser en formato aaaa-mm-dd (ej: 1980-02-24)</li><br />
+					<li>Para ingresar el género de los clientes, se debe utilizar 0 si no se desea especificar, 1 si es Femenino o 2 si es Masculino.</li><br />
+					<h4>Plantillas para importación:</h4>
+					<%= link_to 'Plantilla Excel', '/clients_base.xls', :target => :blank %> | 
+					<%= link_to 'Plantilla CSV', '/clients_base.csv', :target => :blank %><br />
+				</ul>
+				<div class="form-group">
+					<label for="file" class="control-lable col-md-3">Seleccionar Archivo</label>
+					<div class="col-md-9">
+						<%= file_field_tag :file, :class => 'form-control'  %>
+						<span class="help-block"></span>		
+					</div>
 				</div>
+			</div>
+		  	<div class="modal-footer">
+				<button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+				<%= submit_tag "Importar", class: "btn btn-agendapro-oscuro", disabled: true, id: "import_button" %>
+			</div>
 			<% end %>
 		</div>
 	</div>
@@ -239,6 +248,7 @@
 <% end %>
 
 <% content_for :scripts do %>
-<%= javascript_include_tag 'login/jquery.validate.min' %>
-<%= javascript_include_tag 'admin/clients_mail' %>
+	<%= javascript_include_tag 'validations/validate' %>
+	<%= javascript_include_tag 'validations/admin/client-email' %>
+	<%= javascript_include_tag 'admin/clients_mail' %>
 <% end %>

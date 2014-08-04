@@ -16,41 +16,45 @@
             </ul>
           </div>
           <% end %>
+          <%= f.hidden_field :first_name %>
+          <%= f.hidden_field :last_name %>
           <div class="form-group">
-            <%= f.label :first_name, 'Nombre' %>
-            <%= f.text_field :first_name, :autofocus => true, :class => 'form-control' %>
-          </div>
-          <div class="form-group">
-            <%= f.label :last_name, 'Apellido' %>
-            <%= f.text_field :last_name, :autofocus => true, :class => 'form-control' %>
+            <label for="user_full_name">Nombre</label>
+            <input type="text" id="full_name" name="user[full_name]" class="form-control" placeholder="Nombre completo (requerido)">
+            <span class="help-block"></span>
           </div>
           <div class="form-group">
             <%= f.label :email, 'Email' %>
             <%= f.email_field :email, :autofocus => true, :required => true, :class => 'form-control' %>
+            <span class="help-block"></span>
           </div>
           <div class="form-group">
             <%= f.label :phone, 'Telefono' %>
             <%= f.phone_field :phone, :autofocus => true, :class => 'form-control' %>
+            <span class="help-block"></span>
           </div>
           <p class="col-xs-12"><a href="#">Haz click aquí para cambiar tu contraseña.</a></p>
           <fieldset  class="hidden">
             <div class="form-group">
               <%= f.label :password, 'Nueva Contraseña' %>
               <%= f.password_field :password, :autocomplete => 'off', :class => 'form-control' %>
+              <span class="help-block"></span>
             </div>
             <div class="form-group">
               <%= f.label :password_confirmation, 'Confirmar Nueva Contraseña' %>
               <%= f.password_field :password_confirmation, :class => 'form-control' %>
+              <span class="help-block"></span>
             </div>
           </fieldset>
           <hr>
           <div class="form-group">
             <%= f.label :current_password, 'Contraseña Actual' %>
             <%= f.password_field :current_password, :required => true, :class => 'form-control' %>
+            <span class="help-block"></span>
             <span class="help-block">Por favor ingresa tu contraseña actual</span>
           </div>
           <div class="form-group">
-            <%= f.submit 'Actualizar', :class => 'btn btn-success btn-lg btn-block' %>
+            <%= f.submit 'Actualizar', :class => 'btn btn-agendapro-orange btn-lg btn-block' %>
             <%= link_to "Cancelar", :back, :class => 'btn btn-default btn-lg btn-block' %>
           </div>
         <% end %>
@@ -66,13 +70,17 @@
 </div>
 
 <% content_for :scripts do %>
+<%= javascript_include_tag 'validations/home/edit-user' %>
+<%= javascript_include_tag 'split-name' %>
 <script type="text/javascript">
   $(function () {
+    compose_name('#full_name', '#user_first_name', '#user_last_name', '#edit_user');
     $('p > a').click(function (event) {
       event.preventDefault();
       $('fieldset').removeClass('hidden');
       $(this).parent().addClass('hidden');
     });
+    split_name('#full_name', '#user_first_name', '#user_last_name', '#edit_user');
   });
 </script>
 <% end %>

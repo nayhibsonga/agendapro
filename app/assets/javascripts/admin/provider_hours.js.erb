@@ -164,7 +164,7 @@ function initialize() {
 				var value = providerTimesData[arrayCounter].day_id;
 				$('#dayStatusId'+ value).prop('checked', true);
 				$('#dayStatusId'+ value).val(1);
-				$('#dayStatusId'+value).closest('tr').children().last().append('<a id="addBreakdiv'+value+'" onclick="addBreak('+value+')" class="btn btn-primary"><i class="fa fa-plus"></i></a>');
+				$('#dayStatusId'+value).closest('tr').children().last().append('<a id="addBreakdiv'+value+'" onclick="addBreak('+value+')" class="btn btn-agendapro-claro"><i class="fa fa-plus"></i></a>');
 				
 				$('#openHourId'+ value).prop('disabled', false);
 				$('#openMinuteId'+ value).prop('disabled', false);
@@ -218,7 +218,7 @@ function changeDayStatus(value) {
 		$('#closeHourId'+ value).prop('disabled', false);
 		$('#closeMinuteId'+ value).prop('disabled', false);
 		$('#dayStatusId'+ value).val(1);
-		$('#dayStatusId'+value).closest('tr').children().last().append('<a id="addBreakdiv'+value+'" class="btn btn-primary"><i class="fa fa-plus"></i></a>');
+		$('#dayStatusId'+value).closest('tr').children().last().append('<a id="addBreakdiv'+value+'" class="btn btn-agendapro-claro"><i class="fa fa-plus"></i></a>');
 		$('#addBreakdiv'+value).click(function() {
 			addBreak(value);
 		});
@@ -299,10 +299,13 @@ function saveProvider(method,extraURL) {
 		},
 		error: function(xhr){
 			var errores = $.parseJSON(xhr.responseText).errors;
+			var errorList = document.createElement('ul');
 			for (i in errores) {
-				alertId.showAlert(errores);
+				$(errorList).append('<li>' + errores[i] + '</li>');
 			}
-			// do something with errors
+			alertId.showAlert(
+				'<h2>Error</h2>'+errorList
+			);
 		}
 	});
 }
@@ -314,6 +317,9 @@ $(function() {
   	initialize();
 
   	$('.buttonProvider').click(function() {
+  		if (!$('form').valid()) {
+  			return false;
+  		};
 		if ( $('#title').length > 0 ) {
 			updateProvider();
 		}

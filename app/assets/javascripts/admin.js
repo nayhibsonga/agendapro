@@ -1,9 +1,6 @@
 //= require jquery-migrate-1.2.1
-//= require bootstrap.min
-//= require jquery_ujs
-//= require Alert
+//= require application
 //= require cocoon
-//= require ga
 
 // $(window).load(function() {
 // 	var contentPercent = 99.95 - 100*$('#sidebar').width()/$('#sidebar').offsetParent().width();

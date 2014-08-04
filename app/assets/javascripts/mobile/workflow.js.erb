@@ -1,7 +1,7 @@
 function loadSchedule (id) {
-  $('#schedule-body').html('<%= image_tag "ajax-loader.gif", :alt => "Loader" %>');
+  // $('#schedule-body').html('<%= image_tag "ajax-loader.gif", :alt => "Loader" %>');
   $.getJSON('/schedule', {local: id}, function (schedule) {
-    $('#schedule-body').empty();
+    // $('#schedule-body').empty();
     $.each(schedule, function (day, hour) {
       if (hour.open) {
         $('#schedule-body').append(
@@ -35,7 +35,7 @@ function loadServices (localId) {
       };
     });
     $('#services').prepend(
-      '<option value="0">Seleccione un servicio</option>'
+      '<option value="0">Selecciona un servicio</option>'
     );
     $('#services').one('change', function (event) {
       $('#services option:first').remove();
@@ -57,7 +57,7 @@ function loadProviders (localId, serviceId) {
       );
     });
     $('#providers').prepend(
-      '<option value="0">Seleccione un staff</option>'
+      '<option value="0">Selecciona un staff</option>'
     );
     $('#providers').attr('disabled', false);
   });
@@ -83,6 +83,9 @@ function loadProviders (localId, serviceId) {
       hiddenName: true,
       min: minDate,
       max: maxDate,
+      klass: {
+        input: 'datepicker'
+      },
       onSet: function (context) {
         $('.cambiar-comuna').show();
       }

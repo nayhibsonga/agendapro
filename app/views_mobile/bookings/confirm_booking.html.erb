@@ -1,0 +1,66 @@
+<div class="container">
+	<div class="row">
+		<div class="col-xs-12">
+			<%= image_tag("backgrounds/check.png", :class => "center-block", :width => 200) %>
+			<div class="single-local">
+				<div id="informacion">
+					<h2>Gracias <%= @booking.client.first_name %></h2>
+					<p>Tu reserva fue confirmada correctamente</p>
+					<br />
+					<div class="panel panel-info">
+						<div class="panel-heading">
+							<h3 class="panel-title">Reserva</h3>
+						</div>
+						<div class="panel-body">
+							<table class="table">
+								<tbody>
+									<tr>
+										<td>¿Qué reservaste?</td>
+										<td><%= @booking.service.name %></td>
+									</tr>
+									<tr>
+										<td>¿Dónde?</td>
+										<td><%= @booking.location.name %></td>
+									</tr>
+									<tr>
+										<td>¿Con quién?</td>
+										<td><%= @booking.service_provider.public_name %></td>
+									</tr>
+									<tr>
+										<td>¿Cuándo?</td>
+										<td><%= l @booking.start %></td>
+									</tr>
+									<% if !@booking.notes.empty? %>
+									<tr>
+										<td>Notas</td>
+										<td><%= @booking.notes %></td>
+									</tr>
+									<% end %>
+									<tr class="border">
+										<td colspan="2"><strong>Tus datos</strong></td>
+									</tr>
+									<tr>
+										<td>Nombre</td>
+										<td><%= @booking.client.first_name %> <%= @booking.client.last_name %></td>
+									</tr>
+									<% if !@booking.client.email.empty? %>
+									<tr>
+										<td>E-mail</td>
+										<td><%= @booking.client.email %></td>
+									</tr>
+									<% end %>
+									<% if !@booking.client.phone.empty? %>
+									<tr>
+										<td>Teléfono</td>
+										<td><%= @booking.client.phone %></td>
+									</tr>
+									<% end %>
+								</tbody>
+							</table>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

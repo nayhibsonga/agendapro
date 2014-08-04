@@ -24,7 +24,7 @@
 <div class="center-load">
   <h2><%= link_to 'AGENDAPRO', root_url(:subdomain => false) %></h2>
   <%= image_tag 'mobile/check.png', :alt => 'Agendado' %>
-  <p>Su reserva fue cancelada correctamente</p>
+  <p>Tu reserva fue cancelada exitosamente</p>
 </div>
 
 <% content_for :scripts do %>
@@ -33,7 +33,7 @@
     $('body').attr('id', 'loading');
     window.setTimeout(function () {
       location.href = "<%= root_url(:subdomain => false) %>";
-    }, 5000);
+    }, 10000);
   });
 </script>
 <% end %>
