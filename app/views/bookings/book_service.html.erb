@@ -33,7 +33,7 @@
 							<dt>¿Qué reservaste?</dt>
 							<dd><%= @booking.service.name %></dd>
 							<dt>¿Dónde?</dt>
-							<dd><%= @booking.location.name %></dd>
+							<dd><%= @booking.location.address %>, <%= @booking.location.district.name %></dd>
 							<dt>¿Con quién?</dt>
 							<dd><%= @booking.service_provider.public_name %></dd>
 							<dt>¿Cuándo?</dt>
