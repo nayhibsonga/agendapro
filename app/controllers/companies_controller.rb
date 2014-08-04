@@ -1,9 +1,9 @@
 class CompaniesController < ApplicationController
   before_action :verify_is_active, only: [:overview, :workflow]
-	before_action :set_company, only: [:show, :edit, :update, :destroy]
+	before_action :set_company, only: [:show, :edit, :update, :destroy, :edit_payment]
 	before_action :authenticate_user!, except: [:new, :overview, :workflow, :check_company_web_address, :select_hour, :user_data]
 	before_action :quick_add, except: [:new, :overview, :workflow, :add_company, :check_company_web_address, :select_hour, :user_data]
-	before_action :verify_is_super_admin, only: [:index]
+	before_action :verify_is_super_admin, only: [:index, :edit_payment]
 
 	layout "admin", except: [:show, :overview, :workflow, :add_company, :select_hour, :user_data]
 	load_and_authorize_resource
@@ -43,11 +43,14 @@ class CompaniesController < ApplicationController
 	def edit
 	end
 
+	def edit_payment
+	end
+
 	# POST /companies
 	# POST /companies.json
 	def create
 		@company = Company.new(company_params)
-		@company.payment_status_id = PaymentStatus.find_by_name("Período de Prueba").id
+		@company.payment_status_id = PaymentStatus.find_by_name("Trial").id
 		@company.plan_id = Plan.find_by_name("Trial").id
 		@user = User.find(current_user.id)
 		
@@ -348,7 +351,7 @@ class CompaniesController < ApplicationController
 
 		# Never trust parameters from the scary internet, only allow the white list through.
 		def company_params
-			params.require(:company).permit(:name, :economic_sector_id, :plan_id, :logo, :remove_logo, :payment_status_id, :pay_due, :web_address, :description, :cancellation_policy, company_setting_attributes: [:before_booking, :after_booking])
+			params.require(:company).permit(:name, :economic_sector_id, :plan_id, :logo, :remove_logo, :payment_status_id, :pay_due, :web_address, :description, :cancellation_policy, :months_active_left, :due_amount, :due_date, :active, company_setting_attributes: [:before_booking, :after_booking])
 			#params.require(:company).permit(:name, :economic_sector_id, :plan_id, :logo, :payment_status_id, :pay_due, :web_address, :users_attributes[:id, :first_name, :last_name, :email, :phone, :user_name, :password, :role_id, :company_id])
 		end
 end
