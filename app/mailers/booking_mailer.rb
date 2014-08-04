@@ -180,7 +180,7 @@ class BookingMailer < ActionMailer::Base
 					},
 					{
 						:name => 'MESSAGE',
-						:content => 'fue reservado un servicio en el Local'
+						:content => 'fue reservado un servicio en el local'
 					},
 					{
 						:name => 'WHAT',
