@@ -208,6 +208,10 @@ class Ability
         can :create, Service, :company_id => user.company_id
         can :update, Service, :company_id => user.company_id
 
+        can :read, ServiceCategory, :company_id => user.company_id
+        can :create, ServiceCategory, :company_id => user.company_id
+        can :update, ServiceCategory, :company_id => user.company_id
+
         can :history, Client, :company_id => user.company_id
         can :read, Client, :company_id => user.company_id
         can :create, Client, :company_id => user.company_id
