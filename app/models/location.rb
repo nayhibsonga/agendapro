@@ -21,6 +21,30 @@ class Location < ActiveRecord::Base
 	validate :times_overlap, :time_empty_or_negative, :provider_time_in_location_time, :plan_locations, :outcall_services
 	validate :new_plan_locations, :on => :create
 
+	def week_bookings(offset)
+		Booking.where(location: self, start: (1+offset).weeks.ago..offset.weeks.ago).count
+	end
+
+	def month_bookings(offset)
+		Booking.where(location: self, start: (1+offset).months.ago..offset.months.ago).count
+	end
+
+	def week_occupation(offset)
+		occupation_sum = 0
+		self.service_providers.each do |service_provider|
+			occupation_sum += service_provider.week_occupation(offset)
+		end
+		return occupation_sum/self.service_providers.count
+	end
+
+	def month_occupation(offset)
+		occupation_sum = 0
+		self.service_providers.each do |service_provider|
+			occupation_sum += service_provider.month_occupation(offset)
+		end
+		return occupation_sum/self.service_providers.count
+	end
+
 	def plan_locations
 		if self.active_changed? && self.active
 			if self.company.locations.where(active:true).count >= self.company.plan.locations

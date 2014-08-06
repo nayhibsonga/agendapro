@@ -18,10 +18,8 @@ class Client < ActiveRecord::Base
       end
       valid = true
     end
-    valid = false
-    puts valid
     if !valid
-      Booking.where('bookings.start >= ?', Time.now - 5.hours).where(client_id: self.id).each do |booking|
+      Booking.where('bookings.start >= ?', Time.now - 4.hours).where(client_id: self.id).each do |booking|
         booking.send_mail = false
         booking.save
       end

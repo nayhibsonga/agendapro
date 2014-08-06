@@ -1,0 +1,13 @@
+$(function() {
+	$('.tab_index').click(function(event) {
+		$('#render_content').html('<br /><%= image_tag "ajax-loader.gif", :alt => "Loader" %>');
+		var report = event.target.id.replace(/[0-9]/g, '');
+		$.ajax({
+		    url: "/report_"+report+"/"+event.target.id.replace( /^\D+/g, ''),
+		    cache: false,
+		    success: function(html){
+		      $('#render_content').html(html);
+		    }
+		});
+	});
+});

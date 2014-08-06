@@ -1,0 +1,47 @@
+<div class="row well">
+	<div class="col-md-12">
+		<div class="panel panel-info">
+			<div class="panel-heading">
+				<h3 class="panel-title">Reservas <%= @location.name %> por Prestador</h3>
+			</div>
+			<div class="panel-body scrollable">
+				<table class="table">
+					<thead class="head-white">
+						<th>Prestador</th>
+						<th>Reservas Últimos 7 días</th>
+						<th>Reservas Últimos 30 días</th>
+						<th>Ocupación Últimos 7 días</th>
+						<th>Ocupación Últimos 30 días</th>
+					</thead>
+					<tbody>
+						<% @location.service_providers.where(active: true).each do |service_provider| %>
+						<tr>
+							<td>
+							<%= service_provider.public_name %>
+							</td>
+							<td>
+							<%= service_provider.week_bookings(0) %> ( <%= 100*(service_provider.week_bookings(0) - service_provider.week_bookings(1))/service_provider.week_bookings(1).to_f if service_provider.week_bookings(1) > 0 %> %)
+							</td>
+							<td>
+							<%= service_provider.month_bookings(0) %> ( <%= 100*(service_provider.month_bookings(0) - service_provider.month_bookings(1))/service_provider.month_bookings(1).to_f if service_provider.month_bookings(1) > 0 %> %)
+							</td>
+							<td>
+							<%= service_provider.week_occupation(0) %> ( <%= 100*(service_provider.week_occupation(0) - service_provider.week_occupation(1))/service_provider.week_occupation(1).to_f if service_provider.week_occupation(1) > 0 %> %)
+							</td>
+							<td>
+							<%= service_provider.month_occupation(0) %> ( <%= 100*(service_provider.month_occupation(0) - service_provider.month_occupation(1))/service_provider.month_occupation(1).to_f if service_provider.month_occupation(1) > 0 %> %)
+							</td>
+						</tr>
+						<% end %>
+					</tbody>
+				</table>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="row">
+	<div class="col-md-12 graphs">
+		<%= line_chart ServiceProvider.where(location: @location).map{|sp| {name: sp.public_name, data: sp.bookings.group_by_week(:start, range: 2.months.ago.midnight..2.months.from_now).count} }, id: "bookings-chart", library: {hAxis: {title: "Semana", format: "MMM d, yy" }, vAxis: {title: "# Reservas", format: "#"}, title: "Cantidad de Reservas Semanales" } %>
+	</div>
+</div>
