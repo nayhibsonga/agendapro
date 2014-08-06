@@ -6,22 +6,26 @@ class Client < ActiveRecord::Base
 
   validate :client_mail_uniqueness
 
-  after_save :client_notification
+  after_update :client_notification
 
   def client_notification
-    valid = false
-    atpos = self.email.index("@")
-    dotpos = self.email.rindex(".")
-    if atpos && dotpos
-      if (atpos < 1) || (dotpos < atpos+2) || (dotpos+2 >= self.email.length)
-        valid = false
+    if changed_attributes['email']
+      valid = false
+      atpos = self.email.index("@")
+      dotpos = self.email.rindex(".")
+      if atpos && dotpos
+        if (atpos < 1) || (dotpos < atpos+2) || (dotpos+2 >= self.email.length)
+          valid = false
+        end
+        valid = true
       end
-      valid = true
-    end
-    if !valid
-      Booking.where('bookings.start >= ?', Time.now - 4.hours).where(client_id: self.id).each do |booking|
-        booking.send_mail = false
-        booking.save
+      if !valid
+        Booking.where('bookings.start >= ?', Time.now - 4.hours).where(client_id: self.id).each do |booking|
+          if booking.send_mail
+            booking.send_mail = false
+            booking.save
+          end
+        end
       end
     end
   end

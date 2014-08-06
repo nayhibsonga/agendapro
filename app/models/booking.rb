@@ -117,21 +117,18 @@ class Booking < ActiveRecord::Base
 	end
 
 	def send_booking_mail
-		if self.send_mail
+		if self.status != Status.find_by(:name => "Cancelado")
 			BookingMailer.book_service_mail(self)
 		end
 	end
 
 	def send_update_mail
 		if self.status == Status.find_by(:name => "Cancelado")
-			if self.send_mail
-				BookingMailer.cancel_booking(self)
-			end
+			BookingMailer.cancel_booking(self)
 		else
-			if changed_attributes['start'] and self.send_mail
+			if changed_attributes['start']
 				BookingMailer.update_booking(self, changed_attributes['start'])
-			end
-			if self.status == Status.find_by(:name => "Confirmado")
+			elsif changed_attributes['status_id'] and self.status == Status.find_by(:name => "Confirmado")
 				BookingMailer.confirm_booking(self)
 			end
 		end
