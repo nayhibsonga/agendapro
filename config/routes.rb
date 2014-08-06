@@ -56,9 +56,17 @@ Agendapro::Application.routes.draw do
   post '/quick_add/services', :to => 'quick_add#create_services'
   post '/quick_add/service_provider', :to => 'quick_add#create_service_provider'
 
-  post '/client_comments', :to => 'clients#create_comment', :as => 'client_comments'
+  # Reporting
   get '/dashboard', :to => 'dashboard#index', :as => 'dashboard'
   get '/reports', :to => 'reports#index', :as => 'reports'
+  get '/report_locations', :to => 'reports#locations'
+  get '/report_services', :to => 'reports#services'
+  get '/report_location_services/:id', :to => 'reports#location_services'
+  get '/report_location_providers/:id', :to => 'reports#location_providers'
+  get '/report_provider_services/:id', :to => 'reports#provider_services'
+
+  # 
+  post '/client_comments', :to => 'clients#create_comment', :as => 'client_comments'
   get '/select_plan', :to => 'plans#select_plan', :as => 'select_plan'
   get '/get_direction', :to => 'districts#get_direction'
   get '/time_booking_edit', :to => 'company_settings#time_booking_edit', :as => 'time_booking'

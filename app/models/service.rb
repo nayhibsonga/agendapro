@@ -20,6 +20,22 @@ class Service < ActiveRecord::Base
 
 	validate :group_service_capacity, :outcall_providers
 
+	def week_bookings(offset)
+		Booking.where(service: self, start: (1+offset).weeks.ago..offset.weeks.ago).count
+	end
+
+	def month_bookings(offset)
+		Booking.where(service: self, start: (1+offset).months.ago..offset.months.ago).count
+	end
+
+	def week_sp_bookings(offset, service_provider)
+		Booking.where(service_provider: service_provider, service: self, start: (1+offset).weeks.ago..offset.weeks.ago).count
+	end
+
+	def month_sp_bookings(offset, service_provider)
+		Booking.where(service_provider: service_provider, service: self, start: (1+offset).months.ago..offset.months.ago).count
+	end
+
 	def group_service_capacity
 		if self.group_service
 			if !self.capacity || self.capacity < 1
