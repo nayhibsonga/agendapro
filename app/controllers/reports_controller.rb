@@ -5,7 +5,7 @@ class ReportsController < ApplicationController
 	layout "admin"
 
 	def index
-		@locations = Location.accessible_by(current_ability).order(:name)
+		@locations = Location.accessible_by(current_ability).where(active: true).order(:name)
 	end
 
 	def locations
