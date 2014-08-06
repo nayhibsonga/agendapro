@@ -42,6 +42,6 @@
 
 <div class="row">
 	<div class="col-md-12">
-		<%= line_chart Location.where(company_id: current_user.company_id).map{|sp| {name: sp.name, data: sp.bookings.group_by_week(:start, range: 2.months.ago.midnight..2.months.from_now).count} }, id: "bookings-chart", library: {hAxis: {title: "Semana", format: "MMM d, yy" }, vAxis: {title: "# Reservas", format: "#"}, title: "Cantidad de Reservas Semanales" } %>
+		<%= line_chart Location.where(company_id: current_user.company_id, active: true).map{|sp| {name: sp.name, data: sp.bookings.group_by_week(:start, range: 2.months.ago.midnight..2.months.from_now).count} }, id: "bookings-chart", library: {hAxis: {title: "Semana", format: "MMM d, yy" }, vAxis: {title: "# Reservas", format: "#"}, title: "Cantidad de Reservas Semanales" } %>
 	</div>
 </div>
