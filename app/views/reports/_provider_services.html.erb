@@ -18,10 +18,10 @@
 							<%= service.name %>
 							</td>
 							<td>
-							<%= service.week_sp_bookings(0, @service_provider) %> ( <%= 100*(service.week_sp_bookings(0, @service_provider) - service.week_sp_bookings(1, @service_provider))/service.week_sp_bookings(1, @service_provider).to_f if service.week_sp_bookings(1, @service_provider) > 0 %> %)
+								<%= int_with_variation(service.week_sp_bookings(0, @service_provider), service.week_sp_bookings(1, @service_provider)) %>
 							</td>
 							<td>
-							<%= service.month_sp_bookings(0, @service_provider) %> ( <%= 100*(service.month_sp_bookings(0, @service_provider) - service.month_sp_bookings(1, @service_provider))/service.month_sp_bookings(1, @service_provider).to_f if service.month_sp_bookings(1, @service_provider) > 0 %> %)
+								<%= int_with_variation(service.month_sp_bookings(0, @service_provider), service.month_sp_bookings(1, @service_provider)) %>
 							</td>
 						</tr>
 						<% end %>
@@ -29,10 +29,10 @@
 							<td><strong>Total</strong>
 							</td>
 							<td><strong>
-							<%= @service_provider.week_bookings(0) %> ( <%= 100*(@service_provider.week_bookings(0) - @service_provider.week_bookings(1))/@service_provider.week_bookings(1).to_f if @service_provider.week_bookings(1) > 0 %> %)
+								<%= int_with_variation(@service_provider.week_bookings(0), @service_provider.week_bookings(1)) %>
 							</strong></td>
 							<td><strong>
-							<%= @service_provider.month_bookings(0) %> ( <%= 100*(@service_provider.month_bookings(0) - @service_provider.month_bookings(1))/@service_provider.month_bookings(1).to_f if @service_provider.month_bookings(1) > 0 %> %)
+								<%= int_with_variation(@service_provider.month_bookings(0), @service_provider.month_bookings(1)) %>
 							</strong></td>
 						</tr>
 					</tbody>

@@ -20,16 +20,16 @@
 							<%= service_provider.public_name %>
 							</td>
 							<td>
-							<%= service_provider.week_bookings(0) %> ( <%= 100*(service_provider.week_bookings(0) - service_provider.week_bookings(1))/service_provider.week_bookings(1).to_f if service_provider.week_bookings(1) > 0 %> %)
+								<%= int_with_variation(service_provider.week_bookings(0), service_provider.week_bookings(1)) %>
 							</td>
 							<td>
-							<%= service_provider.month_bookings(0) %> ( <%= 100*(service_provider.month_bookings(0) - service_provider.month_bookings(1))/service_provider.month_bookings(1).to_f if service_provider.month_bookings(1) > 0 %> %)
+								<%= int_with_variation(service_provider.month_bookings(0), service_provider.month_bookings(1)) %>
 							</td>
 							<td>
-							<%= service_provider.week_occupation(0) %> ( <%= 100*(service_provider.week_occupation(0) - service_provider.week_occupation(1))/service_provider.week_occupation(1).to_f if service_provider.week_occupation(1) > 0 %> %)
+								<%= float_with_variation(service_provider.week_occupation(0), service_provider.week_occupation(1)) %>
 							</td>
 							<td>
-							<%= service_provider.month_occupation(0) %> ( <%= 100*(service_provider.month_occupation(0) - service_provider.month_occupation(1))/service_provider.month_occupation(1).to_f if service_provider.month_occupation(1) > 0 %> %)
+								<%= float_with_variation(service_provider.month_occupation(0), service_provider.month_occupation(1)) %>
 							</td>
 						</tr>
 						<% end %>
@@ -37,16 +37,16 @@
 							<td><strong>Total</strong>
 							</td>
 							<td><strong>
-							<%= @location.week_bookings(0) %> ( <%= 100*(@location.week_bookings(0) - @location.week_bookings(1))/@location.week_bookings(1).to_f if @location.week_bookings(1) > 0 %> %)
+								<%= int_with_variation(@location.week_bookings(0), @location.week_bookings(1)) %>
 							</strong></td>
 							<td><strong>
-							<%= @location.month_bookings(0) %> ( <%= 100*(@location.month_bookings(0) - @location.month_bookings(1))/@location.month_bookings(1).to_f if @location.month_bookings(1) > 0 %> %)
+								<%= int_with_variation(@location.month_bookings(0), @location.month_bookings(1)) %>
 							</strong></td>
 							<td><strong>
-							<%= @location.week_occupation(0) %> ( <%= 100*(@location.week_occupation(0) - @location.week_occupation(1))/@location.week_occupation(1).to_f if @location.week_occupation(1) > 0 %> %)
+								<%= float_with_variation(@location.week_occupation(0), @location.week_occupation(1)) %>
 							</strong></td>
 							<td><strong>
-							<%= @location.month_occupation(0) %> ( <%= 100*(@location.month_occupation(0) - @location.month_occupation(1))/@location.month_occupation(1).to_f if @location.month_occupation(1) > 0 %> %)
+								<%= float_with_variation(@location.month_occupation(0), @location.month_occupation(1)) %>
 							</strong></td>
 						</tr>
 					</tbody>
