@@ -12,7 +12,8 @@
 						<th>Reservas Últimos 30 días</th>
 					</thead>
 					<tbody>
-						<% Service.where(company_id: current_user.company_id, active: true).each do |service| %>
+						<% total_week = 0, total_month = 0, month_var = 0.0 %>
+						<% @services.each do |service| %>
 						<tr>
 							<td>
 							<%= service.name %>
@@ -25,6 +26,16 @@
 							</td>
 						</tr>
 						<% end %>
+						<tr>
+							<td><strong>Total</strong>
+							</td>
+							<td><strong>
+							<%= Service.week_bookings(0, current_user.company_id) %> ( <%= 100*(Service.week_bookings(0, current_user.company_id) - Service.week_bookings(1, current_user.company_id))/Service.week_bookings(1, current_user.company_id).to_f if Service.week_bookings(1, current_user.company_id) > 0 %> %)
+							</strong></td>
+							<td><strong>
+							<%= Service.month_bookings(0, current_user.company_id) %> ( <%= 100*(Service.month_bookings(0, current_user.company_id) - Service.month_bookings(1, current_user.company_id))/Service.month_bookings(1, current_user.company_id).to_f if Service.month_bookings(1, current_user.company_id) > 0 %> %)
+							</strong></td>
+						</tr>
 					</tbody>
 				</table>
 			</div>

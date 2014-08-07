@@ -25,6 +25,16 @@
 							</td>
 						</tr>
 						<% end %>
+						<tr>
+							<td><strong>Total</strong>
+							</td>
+							<td><strong>
+							<%= @service_provider.week_bookings(0) %> ( <%= 100*(@service_provider.week_bookings(0) - @service_provider.week_bookings(1))/@service_provider.week_bookings(1).to_f if @service_provider.week_bookings(1) > 0 %> %)
+							</strong></td>
+							<td><strong>
+							<%= @service_provider.month_bookings(0) %> ( <%= 100*(@service_provider.month_bookings(0) - @service_provider.month_bookings(1))/@service_provider.month_bookings(1).to_f if @service_provider.month_bookings(1) > 0 %> %)
+							</strong></td>
+						</tr>
 					</tbody>
 				</table>
 			</div>
