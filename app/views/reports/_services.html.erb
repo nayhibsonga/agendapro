@@ -19,10 +19,10 @@
 							<%= service.name %>
 							</td>
 							<td>
-							<%= service.week_bookings(0) %> ( <%= 100*(service.week_bookings(0) - service.week_bookings(1))/service.week_bookings(1).to_f if service.week_bookings(1) > 0 %> %)
+								<%= int_with_variation(service.week_bookings(0), service.week_bookings(1)) %>
 							</td>
 							<td>
-							<%= service.month_bookings(0) %> ( <%= 100*(service.month_bookings(0) - service.month_bookings(1))/service.month_bookings(1).to_f if service.month_bookings(1) > 0 %> %)
+								<%= int_with_variation(service.month_bookings(0), service.month_bookings(1)) %>
 							</td>
 						</tr>
 						<% end %>
@@ -30,10 +30,10 @@
 							<td><strong>Total</strong>
 							</td>
 							<td><strong>
-							<%= Service.week_bookings(0, current_user.company_id) %> ( <%= 100*(Service.week_bookings(0, current_user.company_id) - Service.week_bookings(1, current_user.company_id))/Service.week_bookings(1, current_user.company_id).to_f if Service.week_bookings(1, current_user.company_id) > 0 %> %)
+								<%= int_with_variation(Service.week_bookings(0, current_user.company_id), Service.week_bookings(1, current_user.company_id)) %>
 							</strong></td>
 							<td><strong>
-							<%= Service.month_bookings(0, current_user.company_id) %> ( <%= 100*(Service.month_bookings(0, current_user.company_id) - Service.month_bookings(1, current_user.company_id))/Service.month_bookings(1, current_user.company_id).to_f if Service.month_bookings(1, current_user.company_id) > 0 %> %)
+								<%= int_with_variation(Service.month_bookings(0, current_user.company_id), Service.month_bookings(1, current_user.company_id)) %>
 							</strong></td>
 						</tr>
 					</tbody>

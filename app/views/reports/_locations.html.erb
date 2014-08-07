@@ -20,16 +20,16 @@
 							<%= location.name %>
 							</td>
 							<td>
-							<%= location.week_bookings(0) %> ( <%= 100*(location.week_bookings(0) - location.week_bookings(1))/location.week_bookings(1).to_f if location.week_bookings(1) > 0 %> %)
+								<%= int_with_variation(location.week_bookings(0), location.week_bookings(1)) %>
 							</td>
 							<td>
-							<%= location.month_bookings(0) %> ( <%= 100*(location.month_bookings(0) - location.month_bookings(1))/location.month_bookings(1).to_f if location.month_bookings(1) > 0 %> %)
+								<%= int_with_variation(location.month_bookings(0), location.month_bookings(1)) %>
 							</td>
 							<td>
-							<%= location.week_occupation(0) %> ( <%= 100*(location.week_occupation(0) - location.week_occupation(1))/location.week_occupation(1).to_f if location.week_occupation(1) > 0 %> %)
+								<%= float_with_variation(location.week_occupation(0), location.week_occupation(1)) %>
 							</td>
 							<td>
-							<%= location.month_occupation(0) %> ( <%= 100*(location.month_occupation(0) - location.month_occupation(1))/location.month_occupation(1).to_f if location.month_occupation(1) > 0 %> %)
+								<%= float_with_variation(location.month_occupation(0), location.month_occupation(1)) %>
 							</td>
 						</tr>
 						<% end %>
@@ -37,16 +37,16 @@
 							<td><strong>Total</strong>
 							</td>
 							<td><strong>
-							<%= Location.week_bookings(0, current_user.company_id) %> ( <%= 100*(Location.week_bookings(0, current_user.company_id) - Location.week_bookings(1, current_user.company_id))/Location.week_bookings(1, current_user.company_id).to_f if Location.week_bookings(1, current_user.company_id) > 0 %> %)
+								<%= int_with_variation(Location.week_bookings(0, current_user.company_id), Location.week_bookings(1, current_user.company_id)) %>
 							</strong></td>
 							<td><strong>
-							<%= Location.month_bookings(0, current_user.company_id) %> ( <%= 100*(Location.month_bookings(0, current_user.company_id) - Location.month_bookings(1, current_user.company_id))/Location.month_bookings(1, current_user.company_id).to_f if Location.month_bookings(1, current_user.company_id) > 0 %> %)
+								<%= int_with_variation(Location.month_bookings(0, current_user.company_id), Location.month_bookings(1, current_user.company_id)) %>
 							</strong></td>
 							<td><strong>
-							<%= Location.week_occupation(0, current_user.company_id) %> ( <%= 100*(Location.week_occupation(0, current_user.company_id) - Location.week_occupation(1, current_user.company_id))/Location.week_occupation(1, current_user.company_id).to_f if Location.week_occupation(1, current_user.company_id) > 0 %> %)
+								<%= float_with_variation(Location.week_occupation(0, current_user.company_id), Location.week_occupation(1, current_user.company_id)) %>
 							</strong></td>
 							<td><strong>
-							<%= Location.month_occupation(0, current_user.company_id) %> ( <%= 100*(Location.month_occupation(0, current_user.company_id) - Location.month_occupation(1, current_user.company_id))/Location.month_occupation(1, current_user.company_id).to_f if Location.month_occupation(1, current_user.company_id) > 0 %> %)
+								<%= float_with_variation(Location.month_occupation(0, current_user.company_id), Location.month_occupation(1, current_user.company_id)) %>
 							</strong></td>
 						</tr>
 					</tbody>
