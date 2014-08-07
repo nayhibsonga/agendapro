@@ -1,0 +1,43 @@
+<div class="row">
+	<div class="col-md-12">
+		<div class="panel panel-info">
+			<div class="panel-heading">
+				<h3 class="panel-title">Reservas de <%= @location.name %> por Servicio</h3>
+			</div>
+			<div class="panel-body scrollable">
+				<table class="table">
+					<thead class="head-white">
+						<th>Servicio</th>
+						<th>Reservas Últimos 7 días</th>
+						<th>Reservas Últimos 30 días</th>
+					</thead>
+					<tbody>
+						<% @services.each do |service| %>
+						<tr>
+							<td>
+							<%= service.name %>
+							</td>
+							<td>
+							<%= service.week_location_bookings(0, @location) %> ( <%= 100*(service.week_location_bookings(0, @location) - service.week_location_bookings(1, @location))/service.week_location_bookings(1, @location).to_f if service.week_location_bookings(1, @location) > 0 %> %)
+							</td>
+							<td>
+							<%= service.month_location_bookings(0, @location) %> ( <%= 100*(service.month_location_bookings(0, @location) - service.month_location_bookings(1, @location))/service.month_location_bookings(1, @location).to_f if service.month_location_bookings(1, @location) > 0 %> %)
+							</td>
+						</tr>
+						<% end %>
+						<tr>
+							<td><strong>Total</strong>
+							</td>
+							<td><strong>
+							<%= @location.week_bookings(0) %> ( <%= 100*(@location.week_bookings(0) - @location.week_bookings(1))/@location.week_bookings(1).to_f if @location.week_bookings(1) > 0 %> %)
+							</strong></td>
+							<td><strong>
+							<%= @location.month_bookings(0) %> ( <%= 100*(@location.month_bookings(0) - @location.month_bookings(1))/@location.month_bookings(1).to_f if @location.month_bookings(1) > 0 %> %)
+							</strong></td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</div>
+	</div>
+</div>

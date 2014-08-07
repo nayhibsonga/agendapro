@@ -13,33 +13,23 @@ class ReportsController < ApplicationController
 	end
 
 	def services
+		@services = Service.where(company_id: current_user.company_id, active: true)
 	  	render "_services", layout: false
 	end
 
 	def location_providers
-		if params[:id] != 0
-			@location = Location.find(params[:id])
-		else
-			@location = Location.where(company_id: current_user.company_id).order(:name).first
-		end
+		@location = Location.find(params[:id])
 	  	render "_location_providers", layout: false
 	end
 
 	def location_services
-		if params[:id] != 0
-			@location = Location.find(params[:id])
-		else
-			@location = Location.where(company_id: current_user.company_id).order(:name).first
-		end
+		@location = Location.find(params[:id])
+		@services = Service.where(id: ServiceStaff.where(service_provider_id: @location.service_providers.where(active: true).pluck(:id)).pluck(:service_id), active: true)
 	  	render "_location_services", layout: false
 	end
 	
 	def provider_services
-		if params[:id] != 0
-			@service_provider = ServiceProvider.find(params[:id])
-		else
-			@service_provider = ServiceProvider.where(company_id: current_user.company_id).order(:public_name).first
-		end
+		@service_provider = ServiceProvider.find(params[:id])
 	  	render "_provider_services", layout: false
 	end
 end

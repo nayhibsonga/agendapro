@@ -33,6 +33,22 @@
 							</td>
 						</tr>
 						<% end %>
+						<tr>
+							<td><strong>Total</strong>
+							</td>
+							<td><strong>
+							<%= @location.week_bookings(0) %> ( <%= 100*(@location.week_bookings(0) - @location.week_bookings(1))/@location.week_bookings(1).to_f if @location.week_bookings(1) > 0 %> %)
+							</strong></td>
+							<td><strong>
+							<%= @location.month_bookings(0) %> ( <%= 100*(@location.month_bookings(0) - @location.month_bookings(1))/@location.month_bookings(1).to_f if @location.month_bookings(1) > 0 %> %)
+							</strong></td>
+							<td><strong>
+							<%= @location.week_occupation(0) %> ( <%= 100*(@location.week_occupation(0) - @location.week_occupation(1))/@location.week_occupation(1).to_f if @location.week_occupation(1) > 0 %> %)
+							</strong></td>
+							<td><strong>
+							<%= @location.month_occupation(0) %> ( <%= 100*(@location.month_occupation(0) - @location.month_occupation(1))/@location.month_occupation(1).to_f if @location.month_occupation(1) > 0 %> %)
+							</strong></td>
+						</tr>
 					</tbody>
 				</table>
 			</div>

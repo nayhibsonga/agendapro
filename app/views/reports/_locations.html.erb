@@ -33,6 +33,22 @@
 							</td>
 						</tr>
 						<% end %>
+						<tr>
+							<td><strong>Total</strong>
+							</td>
+							<td><strong>
+							<%= Location.week_bookings(0, current_user.company_id) %> ( <%= 100*(Location.week_bookings(0, current_user.company_id) - Location.week_bookings(1, current_user.company_id))/Location.week_bookings(1, current_user.company_id).to_f if Location.week_bookings(1, current_user.company_id) > 0 %> %)
+							</strong></td>
+							<td><strong>
+							<%= Location.month_bookings(0, current_user.company_id) %> ( <%= 100*(Location.month_bookings(0, current_user.company_id) - Location.month_bookings(1, current_user.company_id))/Location.month_bookings(1, current_user.company_id).to_f if Location.month_bookings(1, current_user.company_id) > 0 %> %)
+							</strong></td>
+							<td><strong>
+							<%= Location.week_occupation(0, current_user.company_id) %> ( <%= 100*(Location.week_occupation(0, current_user.company_id) - Location.week_occupation(1, current_user.company_id))/Location.week_occupation(1, current_user.company_id).to_f if Location.week_occupation(1, current_user.company_id) > 0 %> %)
+							</strong></td>
+							<td><strong>
+							<%= Location.month_occupation(0, current_user.company_id) %> ( <%= 100*(Location.month_occupation(0, current_user.company_id) - Location.month_occupation(1, current_user.company_id))/Location.month_occupation(1, current_user.company_id).to_f if Location.month_occupation(1, current_user.company_id) > 0 %> %)
+							</strong></td>
+						</tr>
 					</tbody>
 				</table>
 			</div>
