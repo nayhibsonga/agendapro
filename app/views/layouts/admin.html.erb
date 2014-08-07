@@ -85,7 +85,7 @@
 				<% if current_user.role_id != Role.find_by_name("Staff").id %>
 				<li><%= link_to '<i class="fa fa-group fa-fw"></i><span class="remove-txt"> Clientes</span>'.html_safe, clients_path, { :class => if controller.controller_name == "clients" then "active" end } %></li>
 				<% end %>
-
+				<li><%= link_to '<i class="fa fa-bar-chart-o fa-fw"></i><span class="remove-txt"> Reportes</span>'.html_safe, reports_path, { :class => if controller.controller_name == "reports" then "active" end } %></li>
 				<% if current_user.role_id == Role.find_by_name("Super Admin").id %>
 					<li>
 						<a class="open-submenu"><i class="fa fa-check fa-fw"></i><span class="colapse-hidden"> General <span class="fa fa-caret-down caret-especial"></span></span></a>

@@ -791,7 +791,7 @@ function createBooking() {
 }
 
 function deleteBooking(eventId) {
-	if (confirm('¿Estás seguro que quiere cancelar esta reserva?\nEsta acción no se puede revertir.')) {
+	if (confirm('¿Estás seguro que quieres cancelar esta reserva?\nEsta acción no se puede revertir.')) {
 		$('.booking-button').attr("disabled", "disabled");
 		$('.booking-modal-footer').prepend('<%= image_tag "small-loader.gif", :alt => "Loader", :id => "small_loader" %>');
 		saveBooking('DELETE','/'+eventId);

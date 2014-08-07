@@ -87,7 +87,7 @@ function saveResource (typeURL, extraURL) {
 				$(errorList).append('<li>' + errors[i] + '</li>');
 			}
 			alertId.showAlert(
-				'<h2>Error</h2>'
+				'<h2>Error</h2>'+
 				errorList
 			);
 		}

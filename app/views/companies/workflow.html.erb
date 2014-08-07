@@ -165,7 +165,7 @@
                       </div>
                       <div class="form-group">
                         <div class="col-sm-offset-3 col-sm-9">
-                          <button type="submit" class="btn btn-agendapro-oscuro" id="submitBtn">Agendar</button>
+                          <button type="submit" class="btn btn-agendapro-oscuro" id="submitBtn">Reservar</button>
                         </div>
                       </div>
                     <% end %>
@@ -193,7 +193,7 @@
   </div>
 </div>
 
-<%= content_tag "div", id: "selectedLocal", data: {local: @location} do %>
+<%= content_tag "div", id: "selectedLocal", data: {local: @location, district: @location.district.name} do %>
 <% end %>
 
 <% content_for :scripts do %>

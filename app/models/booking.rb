@@ -19,7 +19,7 @@ class Booking < ActiveRecord::Base
 	def provider_in_break
 		self.service_provider.provider_breaks.each do |provider_break|
 			if (provider_break.start - self.end) * (self.start - provider_break.end) > 0
-				errors.add(:base, "El prestador seleccionado ha bloqueado ese horario.")
+				errors.add(:base, "El prestador seleccionado tiene bloqueado el horario elegido. Por favor elige otro horario o selecciona otro prestador.")
 			end
 		end
 	end
@@ -32,7 +32,7 @@ class Booking < ActiveRecord::Base
 
 	def service_staff
 		if !self.service_provider.services.include?(self.service)
-			errors.add(:base, "El prestador no puede realizar este servicio.")
+			errors.add(:base, "El prestador seleccionado no realiza el servicio elegido en la reserva. Por favor agrega el servicio al prestador o elige otro prestador.")
 		end
 	end
 
@@ -44,7 +44,7 @@ class Booking < ActiveRecord::Base
 					unless provider_booking.status_id == cancelled_id
 						if (provider_booking.start - self.end) * (self.start - provider_booking.end) > 0
 							if !self.service.group_service || self.service_id != provider_booking.service_id
-								errors.add(:base, "La hora ya está agendada para ese prestador. Por favor selecciona otra hora disponible.")
+								errors.add(:base, "La hora seleccionada ya está reservada para el prestador elegido. Por favor selecciona otra hora disponible.")
 								return
 							elsif self.service.group_service && self.service_id == provider_booking.service_id && self.service_provider.bookings.where(:service_id => self.service_id, :start => self.start).count >= self.service.capacity
 								errors.add(:base, "La capacidad del servicio grupal ya llegó a su límite. Por favor selecciona otra hora disponible.")
@@ -117,21 +117,18 @@ class Booking < ActiveRecord::Base
 	end
 
 	def send_booking_mail
-		if self.send_mail
+		if self.status != Status.find_by(:name => "Cancelado")
 			BookingMailer.book_service_mail(self)
 		end
 	end
 
 	def send_update_mail
 		if self.status == Status.find_by(:name => "Cancelado")
-			if self.send_mail
-				BookingMailer.cancel_booking(self)
-			end
+			BookingMailer.cancel_booking(self)
 		else
-			if changed_attributes['start'] and self.send_mail
+			if changed_attributes['start']
 				BookingMailer.update_booking(self, changed_attributes['start'])
-			end
-			if self.status == Status.find_by(:name => "Confirmado")
+			elsif changed_attributes['status_id'] and self.status == Status.find_by(:name => "Confirmado")
 				BookingMailer.confirm_booking(self)
 			end
 		end

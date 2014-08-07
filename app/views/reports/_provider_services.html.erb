@@ -1,0 +1,43 @@
+<div class="row">
+	<div class="col-md-12">
+		<div class="panel panel-info">
+			<div class="panel-heading">
+				<h3 class="panel-title">Reservas de <%= @service_provider.public_name %> por Servicio</h3>
+			</div>
+			<div class="panel-body scrollable">
+				<table class="table">
+					<thead class="head-white">
+						<th>Servicio</th>
+						<th>Reservas Últimos 7 días</th>
+						<th>Reservas Últimos 30 días</th>
+					</thead>
+					<tbody>
+						<% @service_provider.services.where(company_id: current_user.company_id, active: true).each do |service| %>
+						<tr>
+							<td>
+							<%= service.name %>
+							</td>
+							<td>
+								<%= int_with_variation(service.week_sp_bookings(0, @service_provider), service.week_sp_bookings(1, @service_provider)) %>
+							</td>
+							<td>
+								<%= int_with_variation(service.month_sp_bookings(0, @service_provider), service.month_sp_bookings(1, @service_provider)) %>
+							</td>
+						</tr>
+						<% end %>
+						<tr>
+							<td><strong>Total</strong>
+							</td>
+							<td><strong>
+								<%= int_with_variation(@service_provider.week_bookings(0), @service_provider.week_bookings(1)) %>
+							</strong></td>
+							<td><strong>
+								<%= int_with_variation(@service_provider.month_bookings(0), @service_provider.month_bookings(1)) %>
+							</strong></td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</div>
+	</div>
+</div>

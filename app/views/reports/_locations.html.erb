@@ -1,0 +1,63 @@
+<div class="row">
+	<div class="col-md-12">
+		<div class="panel panel-info">
+			<div class="panel-heading">
+				<h3 class="panel-title">Reservas por Local</h3>
+			</div>
+			<div class="panel-body scrollable">
+				<table class="table">
+					<thead class="head-white">
+						<th>Local</th>
+						<th>Reservas Últimos 7 días</th>
+						<th>Reservas Últimos 30 días</th>
+						<th>Ocupación Últimos 7 días</th>
+						<th>Ocupación Últimos 30 días</th>
+					</thead>
+					<tbody>
+						<% Location.where(company_id: current_user.company_id, active: true).each do |location| %>
+						<tr>
+							<td>
+							<%= location.name %>
+							</td>
+							<td>
+								<%= int_with_variation(location.week_bookings(0), location.week_bookings(1)) %>
+							</td>
+							<td>
+								<%= int_with_variation(location.month_bookings(0), location.month_bookings(1)) %>
+							</td>
+							<td>
+								<%= float_with_variation(location.week_occupation(0), location.week_occupation(1)) %>
+							</td>
+							<td>
+								<%= float_with_variation(location.month_occupation(0), location.month_occupation(1)) %>
+							</td>
+						</tr>
+						<% end %>
+						<tr>
+							<td><strong>Total</strong>
+							</td>
+							<td><strong>
+								<%= int_with_variation(Location.week_bookings(0, current_user.company_id), Location.week_bookings(1, current_user.company_id)) %>
+							</strong></td>
+							<td><strong>
+								<%= int_with_variation(Location.month_bookings(0, current_user.company_id), Location.month_bookings(1, current_user.company_id)) %>
+							</strong></td>
+							<td><strong>
+								<%= float_with_variation(Location.week_occupation(0, current_user.company_id), Location.week_occupation(1, current_user.company_id)) %>
+							</strong></td>
+							<td><strong>
+								<%= float_with_variation(Location.month_occupation(0, current_user.company_id), Location.month_occupation(1, current_user.company_id)) %>
+							</strong></td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="row">
+	<div class="col-md-12">
+		<%= line_chart Location.where(company_id: current_user.company_id, active: true).map{|sp| {name: sp.name, data: sp.bookings.group_by_week(:start, range: 2.months.ago.midnight..2.months.from_now).count} }, id: "bookings-chart", library: {hAxis: {title: "Semana", format: "MMM d, yy" }, vAxis: {title: "# Reservas", format: "#"}, title: "Cantidad de Reservas Semanales" } %>
+	</div>
+</div>
