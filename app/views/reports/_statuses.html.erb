@@ -1,0 +1,32 @@
+<div class="row">
+	<div class="col-md-6">
+		<div class="form-group">
+			<label class="col-sm-5 control-label">Estado de la Reserva</label>
+			<div class="col-sm-7">
+				<select class="form-control report_select" id="status_id">
+					<option value="0">Todos</option>
+					<% Status.all.order(:name).each do |status| %>
+						<option value="<%= status.id %>"><%= status.name %></option>
+					<% end %>
+				</select>
+			</div>
+		</div>
+	</div>
+	<div class="col-md-6">
+		<div class="form-group">
+			<label class="col-sm-5 control-label">Rango de Tiempo</label>
+			<div class="col-sm-7">
+				<select class="form-control report_select" id="time_range_id">
+					<option value="0">Última Semana</option>
+					<option value="1">Último Mes</option>
+					<option value="2">Últimos 2 Meses</option>
+					<option value="3">2 Meses +/-</option>
+				</select>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div id="status_details">
+	<%= render "status_details" %>
+</div>
