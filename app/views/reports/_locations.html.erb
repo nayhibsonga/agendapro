@@ -7,29 +7,29 @@
 			<div class="panel-body scrollable">
 				<table class="table">
 					<thead class="head-white">
-						<th>Local</th>
-						<th>Reservas Últimos 7 días</th>
-						<th>Reservas Últimos 30 días</th>
-						<th>Ocupación Últimos 7 días</th>
-						<th>Ocupación Últimos 30 días</th>
+						<th>Sucursal</th>
+						<th>Reservas Última Semana</th>
+						<th>Reservas Último Mes</th>
+						<th>Ocupación Última Semana</th>
+						<th>Ocupación Último Mes</th>
 					</thead>
 					<tbody>
-						<% Location.where(company_id: current_user.company_id, active: true).each do |location| %>
+						<% Location.where(company_id: current_user.company_id, active: true).order(:name).each do |location| %>
 						<tr>
 							<td>
 							<%= location.name %>
 							</td>
 							<td>
-								<%= int_with_variation(location.week_bookings(0), location.week_bookings(1)) %>
+								<%= int_with_variation(location_booking_count(0, 0, location.id), location_booking_count(0, 1, location.id)) %>
 							</td>
 							<td>
-								<%= int_with_variation(location.month_bookings(0), location.month_bookings(1)) %>
+								<%= int_with_variation(location_booking_count(1, 0, location.id), location_booking_count(1, 1, location.id)) %>
 							</td>
 							<td>
-								<%= float_with_variation(location.week_occupation(0), location.week_occupation(1)) %>
+								<%= percentage_with_variation(location_booking_occupation(0, 0, location.id), location_booking_occupation(0, 1, location.id)) %>
 							</td>
 							<td>
-								<%= float_with_variation(location.month_occupation(0), location.month_occupation(1)) %>
+								<%= percentage_with_variation(location_booking_occupation(1, 0, location.id), location_booking_occupation(1, 1, location.id)) %>
 							</td>
 						</tr>
 						<% end %>
@@ -37,16 +37,16 @@
 							<td><strong>Total</strong>
 							</td>
 							<td><strong>
-								<%= int_with_variation(Location.week_bookings(0, current_user.company_id), Location.week_bookings(1, current_user.company_id)) %>
+								<%= int_with_variation(booking_count(0, 0, current_user.company_id), booking_count(0, 1, current_user.company_id)) %>
 							</strong></td>
 							<td><strong>
-								<%= int_with_variation(Location.month_bookings(0, current_user.company_id), Location.month_bookings(1, current_user.company_id)) %>
+								<%= int_with_variation(booking_count(1, 0, current_user.company_id), booking_count(1, 1, current_user.company_id)) %>
 							</strong></td>
 							<td><strong>
-								<%= float_with_variation(Location.week_occupation(0, current_user.company_id), Location.week_occupation(1, current_user.company_id)) %>
+								<%= percentage_with_variation(booking_occupation(0, 0, current_user.company_id), booking_occupation(0, 1, current_user.company_id)) %>
 							</strong></td>
 							<td><strong>
-								<%= float_with_variation(Location.month_occupation(0, current_user.company_id), Location.month_occupation(1, current_user.company_id)) %>
+								<%= percentage_with_variation(booking_occupation(1, 0, current_user.company_id), booking_occupation(1, 1, current_user.company_id)) %>
 							</strong></td>
 						</tr>
 					</tbody>

@@ -8,8 +8,8 @@
 				<table class="table">
 					<thead class="head-white">
 						<th>Servicio</th>
-						<th>Reservas Últimos 7 días</th>
-						<th>Reservas Últimos 30 días</th>
+						<th>Reservas Última Semana</th>
+						<th>Reservas Último Mes</th>
 					</thead>
 					<tbody>
 						<% @service_provider.services.where(company_id: current_user.company_id, active: true).each do |service| %>
@@ -18,10 +18,10 @@
 							<%= service.name %>
 							</td>
 							<td>
-								<%= int_with_variation(service.week_sp_bookings(0, @service_provider), service.week_sp_bookings(1, @service_provider)) %>
+								<%= int_with_variation(provider_service_booking_count(0, 0, service.id, @service_provider.id), provider_service_booking_count(0, 1, service.id, @service_provider.id)) %>
 							</td>
 							<td>
-								<%= int_with_variation(service.month_sp_bookings(0, @service_provider), service.month_sp_bookings(1, @service_provider)) %>
+								<%= int_with_variation(provider_service_booking_count(1, 0, service.id, @service_provider.id), provider_service_booking_count(1, 1, service.id, @service_provider.id)) %>
 							</td>
 						</tr>
 						<% end %>
@@ -29,10 +29,10 @@
 							<td><strong>Total</strong>
 							</td>
 							<td><strong>
-								<%= int_with_variation(@service_provider.week_bookings(0), @service_provider.week_bookings(1)) %>
+								<%= int_with_variation(provider_booking_count(0, 0, @service_provider.id), provider_booking_count(0, 1, @service_provider.id)) %>
 							</strong></td>
 							<td><strong>
-								<%= int_with_variation(@service_provider.month_bookings(0), @service_provider.month_bookings(1)) %>
+								<%= int_with_variation(provider_booking_count(1, 0, @service_provider.id), provider_booking_count(1, 1, @service_provider.id)) %>
 							</strong></td>
 						</tr>
 					</tbody>

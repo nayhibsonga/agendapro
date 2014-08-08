@@ -12,7 +12,7 @@
 	<div class="row">
 		<section class="hgroup">
 		  <h2 id='title'>Reportes</h2>
-		  <h2 class="section_header">Modifica la información del local seleccionado.</h2>
+		  <h2 class="section_header">Acá podrás visualizar toda la información almacenada en el sistema. Puedes ver el detalle de tu negocio y compararlo con el periodo anterior de forma sencilla.</h2>
 		  <div class="line-breadcrumb">
 		    <ul class="breadcrumb pull-right">
 		        <li><%= link_to "Resumen", dashboard_path %> </li>
@@ -25,7 +25,8 @@
 
 <div class="row well well-reports">
 	<ul id="myTab" class="nav nav-tabs" role="tablist">
-	  <li class="active"><a href="#render_content" role="tab" data-toggle="tab" class="tab_index" id="locations">Sucursales</a></li>
+		<li class="active"><a href="#render_content" role="tab" data-toggle="tab" class="tab_index" id="statuses">General</a></li>
+	  <li class=""><a href="#render_content" role="tab" data-toggle="tab" class="tab_index" id="locations">Sucursales</a></li>
 	  <li class=""><a href="#render_content" role="tab" data-toggle="tab" class="tab_index" id="services">Servicios</a></li>
 	  <li class="dropdown">
 	    <a href="#" id="myTabDrop1" class="dropdown-toggle" data-toggle="dropdown">Servicios por Sucursal <span class="caret"></span></a>
@@ -58,7 +59,7 @@
 	<div id="myTabContent" class="tab-content">
 	<br />	
 	  <div class="tab-pane active" id="render_content">
-	    <%= render 'locations' %>
+	    <%= render 'statuses' %>
 	  </div>
 	</div>
 </div>
