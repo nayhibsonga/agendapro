@@ -41,3 +41,19 @@
 		</div>
 	</div>
 </div>
+<div class="row">
+	<div class="col-md-6">
+		<%= pie_chart provider_booking_ranking3(0, 0, @service_provider.id), library: { title: "Ranking Servicio Utilizados Última Semana" }  %>
+	</div>
+	<div class="col-md-6">
+		<%= pie_chart provider_booking_ranking3(1, 0, @service_provider.id), library: { title: "Ranking Servicio Utilizados Último Mes" }  %>
+	</div>
+</div>
+<div class="row">
+	<div class="col-md-6">
+		<%= pie_chart provider_booking_ranking3(0, 1, @service_provider.id), library: { title: "Ranking Servicio Utilizados Semana Anterior" }  %>
+	</div>
+	<div class="col-md-6">
+		<%= pie_chart provider_booking_ranking3(1, 1, @service_provider.id), library: { title: "Ranking Servicio Utilizados Mes Anterior" }  %>
+	</div>
+</div>
