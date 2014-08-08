@@ -58,12 +58,12 @@
 
 <div class="row">
 	<div class="col-md-12 graphs">
-		<%= line_chart ServiceProvider.where(location: @location, active: true).map{|sp| {name: sp.public_name, data: sp.bookings.group_by_week(:start, range: 2.months.ago.midnight..2.months.from_now).count} }, id: "bookings-chart", library: {hAxis: {title: "Semana", format: "MMM d, yy" }, vAxis: {title: "# Reservas", format: "#"}, title: "Cantidad de Reservas Semanales" } %>
+		<%= line_chart ServiceProvider.where(location: @location, active: true).map{|sp| {name: sp.public_name, data: sp.bookings.group_by_week(:start, range: 2.months.ago.midnight..2.months.from_now).count} }, library: {hAxis: {title: "Semana", format: "MMM d, yy" }, vAxis: {title: "# Reservas", format: "#"}, title: "Cantidad de Reservas Semanales" } %>
 	</div>
 </div>
 
 <div class="row">
 	<div class="col-md-12 graphs">
-		<%= line_chart ServiceProvider.where(location: @location, active: true).map{|sp| {name: sp.public_name, data: sp.bookings.group_by_week(:start, range: 2.months.ago.midnight..2.months.from_now).count} }, id: "bookings-chart", library: {hAxis: {title: "Semana", format: "MMM d, yy" }, vAxis: {title: "# Reservas", format: "#"}, title: "Cantidad de Reservas Semanales" } %>
+		<%= line_chart location_booking_by_hour(1, 0, @location.id), discrete: true, library: {hAxis: {title: "Hora del Día" }, vAxis: {title: "# Reservas", format: "#"}, title: "Reservas por Hora por Día de  "+@location.name } %>
 	</div>
 </div>
