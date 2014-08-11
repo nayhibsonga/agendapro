@@ -71,7 +71,7 @@ class CompaniesController < ApplicationController
 	# POST /companies.json
 	def create
 		@company = Company.new(company_params)
-		@company.payment_status_id = PaymentStatus.find_by_name("Período de Prueba").id
+		@company.payment_status_id = PaymentStatus.find_by_name("Trial").id
 		@company.plan_id = Plan.find_by_name("Trial").id
 		@user = User.find(current_user.id)
 		
