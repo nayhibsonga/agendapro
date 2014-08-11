@@ -216,7 +216,7 @@
 			<div class="modal-body">
 				<ul>
 					<h4>Instrucciones:</h4>
-					<li>Usar las plantillas de ejemplo como base para la importación. Los campos son opcionales, <strong>excepto el email de cada cliente</strong>.</li><br />
+					<li>Usar las plantillas de ejemplo como base para la importación. Todos los campos son opcionales.</li><br />
 					<li><strong>No se pueden cambiar los nombres de las columnas</strong> de las plantillas bases.</li><br />
 					<li>El identificador único para los clientes es el email, por lo que si se sube un cliente con un email existente, se reemplazaran los valores guardados anteriormente.<br />
 					Si no existe el email, se crea un cliente nuevo.<br />
@@ -227,11 +227,10 @@
 					<%= link_to 'Plantilla Excel', '/clients_base.xls', :target => :blank %> | 
 					<%= link_to 'Plantilla CSV', '/clients_base.csv', :target => :blank %><br />
 				</ul>
-				<div class="form-group">
-					<label for="file" class="control-lable col-md-3">Seleccionar Archivo</label>
+				<div class="form-group" id="file-group">
+					<label for="file" class="control-label col-md-3">Seleccionar Archivo</label>
 					<div class="col-md-9">
 						<%= file_field_tag :file, :class => 'form-control'  %>
-						<span class="help-block"></span>		
 					</div>
 				</div>
 			</div>
