@@ -31,7 +31,7 @@ $(function() {
 			'user[password_confirmation]': {
 				required: true,
 				rangelength: [8, 128],
-				equalTo: "#user_password"
+				equalTo: $('input[name="user[password]"]:last')
 			},
 			'user[company_attributes][name]': {
 				required: true,
