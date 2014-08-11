@@ -1,0 +1,59 @@
+<div class="row">
+	<div class="col-md-12">
+		<div class="panel panel-info">
+			<div class="panel-heading">
+				<h3 class="panel-title">Reservas de <%= @location.name %> por Servicio</h3>
+			</div>
+			<div class="panel-body scrollable">
+				<table class="table">
+					<thead class="head-white">
+						<th>Servicio</th>
+						<th>Reservas Última Semana</th>
+						<th>Reservas Último Mes</th>
+					</thead>
+					<tbody>
+						<% @services.each do |service| %>
+						<tr>
+							<td>
+							<%= service.name %>
+							</td>
+							<td>
+								<%= int_with_variation(location_service_booking_count(0, 0, service.id, @location.id), location_service_booking_count(0, 1, service.id, @location.id)) %>
+							</td>
+							<td>
+								<%= int_with_variation(location_service_booking_count(1, 0, service.id, @location.id), location_service_booking_count(1, 1, service.id, @location.id)) %>
+							</td>
+						</tr>
+						<% end %>
+						<tr>
+							<td><strong>Total</strong>
+							</td>
+							<td><strong>
+								<%= int_with_variation(location_booking_count(0, 0, @location.id), location_booking_count(0, 1, @location.id)) %>
+							</strong></td>
+							<td><strong>
+								<%= int_with_variation(location_booking_count(1, 0, @location.id), location_booking_count(1, 1, @location.id)) %>
+							</strong></td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</div>
+	</div>
+</div>
+<div class="row">
+	<div class="col-md-6">
+		<%= pie_chart location_booking_ranking3(0, 0, @location.id), library: { title: "Ranking Servicio Utilizados Última Semana" }  %>
+	</div>
+	<div class="col-md-6">
+		<%= pie_chart location_booking_ranking3(1, 0, @location.id), library: { title: "Ranking Servicio Utilizados Último Mes" }  %>
+	</div>
+</div>
+<div class="row">
+	<div class="col-md-6">
+		<%= pie_chart location_booking_ranking3(0, 1, @location.id), library: { title: "Ranking Servicio Utilizados Semana Anterior" }  %>
+	</div>
+	<div class="col-md-6">
+		<%= pie_chart location_booking_ranking3(1, 1, @location.id), library: { title: "Ranking Servicio Utilizados Mes Anterior" }  %>
+	</div>
+</div>

@@ -1,0 +1,65 @@
+<script type="text/javascript">
+  var Chartkick = {"language": "es"};
+</script>
+
+<%= javascript_include_tag "//www.google.com/jsapi", "chartkick" %>
+<% content_for :scripts do %>
+  <%= javascript_include_tag "admin/reports" %>
+<% end %>
+
+
+<div class="container">
+	<div class="row">
+		<section class="hgroup">
+		  <h2 id='title'>Reportes</h2>
+		  <h2 class="section_header">Acá podrás visualizar toda la información almacenada en el sistema. Puedes ver el detalle de tu negocio y compararlo con el periodo anterior de forma sencilla.</h2>
+		  <div class="line-breadcrumb">
+		    <ul class="breadcrumb pull-right">
+		        <li><%= link_to "Resumen", dashboard_path %> </li>
+		        <li class="active">Reportes</li>
+		    </ul>
+		  </div>
+		</section>
+	</div>
+</div>
+
+<div class="row well well-reports">
+	<ul id="myTab" class="nav nav-tabs" role="tablist">
+		<li class="active"><a href="#render_content" role="tab" data-toggle="tab" class="tab_index" id="statuses">General</a></li>
+	  <li class=""><a href="#render_content" role="tab" data-toggle="tab" class="tab_index" id="locations">Sucursales</a></li>
+	  <li class=""><a href="#render_content" role="tab" data-toggle="tab" class="tab_index" id="services">Servicios</a></li>
+	  <li class="dropdown">
+	    <a href="#" id="myTabDrop1" class="dropdown-toggle" data-toggle="dropdown">Servicios por Sucursal <span class="caret"></span></a>
+	    <ul class="dropdown-menu" role="menu" aria-labelledby="myTabDrop1">
+	    <% @locations.each do |location| %>
+	      <li><a href="#render_content" tabindex="-1" role="tab" data-toggle="tab" class="tab_index" id="location_services<%=location.id%>"><%= location.name %></a></li>
+	    <% end %>
+	    </ul>
+	  </li>
+	  <li class="dropdown">
+	    <a href="#" id="myTabDrop1" class="dropdown-toggle" data-toggle="dropdown">Prestadores por Sucursal <span class="caret"></span></a>
+	    <ul class="dropdown-menu" role="menu" aria-labelledby="myTabDrop1">
+	      <% @locations.each do |location| %>
+	      <li><a href="#render_content" tabindex="-1" role="tab" data-toggle="tab" class="tab_index" id="location_providers<%=location.id%>"><%= location.name %></a></li>
+	    <% end %>
+	    </ul>
+	  </li>
+	  <li class="dropdown">
+	    <a href="#" id="myTabDrop1" class="dropdown-toggle" data-toggle="dropdown">Servicios por Prestador <span class="caret"></span></a>
+	    <ul class="dropdown-menu" role="menu" aria-labelledby="myTabDrop1">
+	      <% @locations.each do |location| %>
+	      <li class="location-listed"> <strong><%= location.name %></strong></li>
+	      <% location.service_providers.where(active: true).order(:public_name).each do |service_provider| %>
+	      <li><a href="#render_content" tabindex="-1" role="tab" data-toggle="tab" class="tab_index" id="provider_services<%=service_provider.id%>"><%= service_provider.public_name %></a></li>
+	      <% end %>
+	    <% end %>
+	    </ul>
+	  </li>
+	</ul>
+	<div id="myTabContent" class="tab-content">
+	<br />	
+	  <div class="tab-pane active" id="render_content">
+	    <%= render 'statuses' %>
+	  </div>
+	</div>
+</div>
