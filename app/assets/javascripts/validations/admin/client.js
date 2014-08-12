@@ -13,6 +13,10 @@ $(function() {
 			'client[last_name]': {
 				minlength: 2
 			},
+			'client[identification_number]': {
+				rut: true,
+				minlength: 2
+			},
 			'client[phone]': {
 				rangelength: [8, 15]
 			},
@@ -41,5 +45,9 @@ $(function() {
 		submitHandler: function(form) {
 			form.submit();
 		}
+	});
+	$('#client_identification_number').change(function() {
+		var rut_string = $('#client_identification_number').val()
+		$('#client_identification_number').val(rut_format(rut_string));
 	});
 });
