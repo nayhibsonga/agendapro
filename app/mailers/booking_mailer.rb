@@ -636,11 +636,6 @@ class BookingMailer < ActionMailer::Base
 			:subject => 'Reserva Cancelada en ' + book_info.service_provider.company.name,
 			:to => [
 				{
-					:email => book_info.client.email,
-					:name => book_info.client.first_name + ' ' + book_info.client.last_name,
-					:type => 'to'
-				},
-				{
 					:email => book_info.service_provider.notification_email,
 					:type => 'to'
 				}
@@ -677,36 +672,6 @@ class BookingMailer < ActionMailer::Base
 				}
 			],
 			:merge_vars => [
-				{
-					:rcpt => book_info.client.email,
-					:vars => [
-						
-						{
-							:name => 'NAME',
-							:content => book_info.client.first_name
-						},
-						{
-							:name => 'MESSAGE',
-							:content => 'tu reserva fue cancelada exitosamente'
-						},
-						{
-							:name => 'LOCATIONPHONE',
-							:content => number_to_phone(book_info.location.phone)
-						},
-						{
-							:name => 'WHAT',
-							:content => "¿Qué cancelaste?"
-						},
-						{
-							:name => 'BOOKING',
-							:content => "Resumen de tu Reserva Cancelada"
-						},
-						{
-							:name => 'HOURS',
-							:content => book_info.location.company.company_setting.before_edit_booking
-						}
-					]
-				},
 				{
 					:rcpt => book_info.service_provider.notification_email,
 					:vars => [
@@ -815,6 +780,44 @@ class BookingMailer < ActionMailer::Base
 			}
 		end
 
+		if book_info.send_mail
+			message[:to] << {
+				:email => book_info.client.email,
+				:name => book_info.client.first_name + ' ' + book_info.client.last_name,
+				:type => 'to'
+			}
+			message[:merge_vars] << {
+				:rcpt => book_info.client.email,
+				:vars => [
+					
+					{
+						:name => 'NAME',
+						:content => book_info.client.first_name
+					},
+					{
+						:name => 'MESSAGE',
+						:content => 'tu reserva fue cancelada exitosamente'
+					},
+					{
+						:name => 'LOCATIONPHONE',
+						:content => number_to_phone(book_info.location.phone)
+					},
+					{
+						:name => 'WHAT',
+						:content => "¿Qué cancelaste?"
+					},
+					{
+						:name => 'BOOKING',
+						:content => "Resumen de tu Reserva Cancelada"
+					},
+					{
+						:name => 'HOURS',
+						:content => book_info.location.company.company_setting.before_edit_booking
+					}
+				]
+			}
+		end
+
 		# => Metadata
 		async = false
 		send_at = DateTime.now
@@ -840,11 +843,6 @@ class BookingMailer < ActionMailer::Base
 			:from_name => book_info.service_provider.company.name,
 			:subject => 'Recuerda tu Reserva en ' + book_info.service_provider.company.name,
 			:to => [
-				{
-				  :email => book_info.client.email,
-				  :name => book_info.client.first_name + ' ' + book_info.client.last_name,
-				  :type => 'to'
-				},
 				{
 				  :email => book_info.service_provider.notification_email,
 				  :type => 'to'
@@ -882,48 +880,6 @@ class BookingMailer < ActionMailer::Base
 				}
 			],
 			:merge_vars => [
-				{
-				  :rcpt => book_info.client.email,
-				  :vars => [
-					
-					{
-					  :name => 'NAME',
-					  :content => book_info.client.first_name
-					},
-					{
-					  :name => 'MESSAGE',
-					  :content => 'recuerda tu reserva para mañana'
-					},
-					{
-						:name => 'EDIT',
-						:content => "<a class='btn btn-warning' href='#{booking_edit_url(:confirmation_code => book_info.confirmation_code)}' style='display: inline-block;padding: 6px 12px;margin-bottom: 0;font-size: 14px;font-weight: normal;line-height: 1.428571429;text-align: center;white-space: nowrap;vertical-align: middle;cursor: pointer;background-image: none;border: 1px solid transparent;border-radius: 4px;-webkit-user-select: none;-moz-user-select: none;-ms-user-select: none;-o-user-select: none;user-select: none;color: #ffffff;background-color: #f0ad4e;border-color: #eea236;text-decoration:none;'>Modificar Reserva</a>"
-					},
-					{
-						:name => 'CANCEL',
-						:content => "<a class='btn btn-danger' href='#{booking_cancel_url(:confirmation_code => book_info.confirmation_code)}' style='display: inline-block;padding: 6px 12px;margin-bottom: 0;font-size: 14px;font-weight: normal;line-height: 1.428571429;text-align: center;white-space: nowrap;vertical-align: middle;cursor: pointer;background-image: none;border: 1px solid transparent;border-radius: 4px;-webkit-user-select: none;-moz-user-select: none;-ms-user-select: none;-o-user-select: none;user-select: none;color: #ffffff;background-color: #d9534f;border-color: #d43f3a;text-decoration:none;'>Cancelar Reserva</a>"
-					},
-					{
-						:name => 'CONFIRM',
-						:content => "<a class='btn btn-agendapro-claro btn-lg' href='#{confirm_booking_url(:confirmation_code => book_info.confirmation_code)}' style='display: inline-block;padding: 10px 16px;margin-bottom: 0;font-size: 18px;font-weight: normal;line-height: 1.33;text-align: center;white-space: nowrap;vertical-align: middle;cursor: pointer;background-image: none;border: 1px solid transparent;border-radius: 6px;-webkit-user-select: none;-moz-user-select: none;-ms-user-select: none;-o-user-select: none;user-select: none;color: #ffffff;background-color: rgba(61,154,150,1);border-color: rgba(55, 133, 129, 1);text-decoration:none;'>Confirmar Reserva</a>"
-					},
-					{
-						:name => 'LOCATIONPHONE',
-						:content => number_to_phone(book_info.location.phone)
-					},
-					{
-						:name => 'WHAT',
-						:content => "¿Qué reservaste?"
-					},
-					{
-						:name => 'BOOKING',
-						:content => "Resumen de tu Reserva"
-					},
-					{
-						:name => 'HOURS',
-						:content => book_info.location.company.company_setting.before_edit_booking
-					}
-				  ]
-				},
 				{
 				  :rcpt => book_info.service_provider.notification_email,
 				  :vars => [
@@ -1029,6 +985,56 @@ class BookingMailer < ActionMailer::Base
 						:content => book_info.company_comment
 					}
 				]
+			}
+		end
+
+		if book_info.send_mail
+			message[:to] << {
+			  :email => book_info.client.email,
+			  :name => book_info.client.first_name + ' ' + book_info.client.last_name,
+			  :type => 'to'
+			}
+			message[:merge_vars] << {
+			  :rcpt => book_info.client.email,
+			  :vars => [
+				
+				{
+				  :name => 'NAME',
+				  :content => book_info.client.first_name
+				},
+				{
+				  :name => 'MESSAGE',
+				  :content => 'recuerda tu reserva para mañana'
+				},
+				{
+					:name => 'EDIT',
+					:content => "<a class='btn btn-warning' href='#{booking_edit_url(:confirmation_code => book_info.confirmation_code)}' style='display: inline-block;padding: 6px 12px;margin-bottom: 0;font-size: 14px;font-weight: normal;line-height: 1.428571429;text-align: center;white-space: nowrap;vertical-align: middle;cursor: pointer;background-image: none;border: 1px solid transparent;border-radius: 4px;-webkit-user-select: none;-moz-user-select: none;-ms-user-select: none;-o-user-select: none;user-select: none;color: #ffffff;background-color: #f0ad4e;border-color: #eea236;text-decoration:none;'>Modificar Reserva</a>"
+				},
+				{
+					:name => 'CANCEL',
+					:content => "<a class='btn btn-danger' href='#{booking_cancel_url(:confirmation_code => book_info.confirmation_code)}' style='display: inline-block;padding: 6px 12px;margin-bottom: 0;font-size: 14px;font-weight: normal;line-height: 1.428571429;text-align: center;white-space: nowrap;vertical-align: middle;cursor: pointer;background-image: none;border: 1px solid transparent;border-radius: 4px;-webkit-user-select: none;-moz-user-select: none;-ms-user-select: none;-o-user-select: none;user-select: none;color: #ffffff;background-color: #d9534f;border-color: #d43f3a;text-decoration:none;'>Cancelar Reserva</a>"
+				},
+				{
+					:name => 'CONFIRM',
+					:content => "<a class='btn btn-agendapro-claro btn-lg' href='#{confirm_booking_url(:confirmation_code => book_info.confirmation_code)}' style='display: inline-block;padding: 10px 16px;margin-bottom: 0;font-size: 18px;font-weight: normal;line-height: 1.33;text-align: center;white-space: nowrap;vertical-align: middle;cursor: pointer;background-image: none;border: 1px solid transparent;border-radius: 6px;-webkit-user-select: none;-moz-user-select: none;-ms-user-select: none;-o-user-select: none;user-select: none;color: #ffffff;background-color: rgba(61,154,150,1);border-color: rgba(55, 133, 129, 1);text-decoration:none;'>Confirmar Reserva</a>"
+				},
+				{
+					:name => 'LOCATIONPHONE',
+					:content => number_to_phone(book_info.location.phone)
+				},
+				{
+					:name => 'WHAT',
+					:content => "¿Qué reservaste?"
+				},
+				{
+					:name => 'BOOKING',
+					:content => "Resumen de tu Reserva"
+				},
+				{
+					:name => 'HOURS',
+					:content => book_info.location.company.company_setting.before_edit_booking
+				}
+			  ]
 			}
 		end
 
