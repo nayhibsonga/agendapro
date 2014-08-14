@@ -58,6 +58,9 @@
 			<th>Email</th>
 			<th>Teléfono</th>
 			<th>Opciones</th>
+			<% if Company.find(current_user.company_id).company_setting.client_exclusive %>
+	    	<th>¿Puede Reservar?</th>
+         	<% end %>
 			<th>
 				Email
 				<input name="mail" class="pull-right" type="checkbox" value="">
@@ -73,6 +76,9 @@
 				<td><%= client.phone %></td>
 				<td><%= link_to '<i class="fa fa-pencil"></i> Editar'.html_safe, edit_client_path(client), :class => "btn btn-warning" %>
             		<%= link_to '<i class="fa fa-trash-o"></i> Eliminar'.html_safe, client, :class => "btn btn-danger", method: :delete, data: { confirm: '¿Estás seguro de eliminar el Cliente seleccionado? Este cliente tiene '+client.bookings.count.to_s+' reserva(s) asociada(s), que será(n) eliminada(s) también.' } unless cannot? :destroy, client %></td>
+            	<% if Company.find(current_user.company_id).company_setting.client_exclusive %>
+	    		<td class="centered"><%= check_box_tag 'client_can_book'+client.id.to_s, client.id, client.can_book, class: 'client_can_book' %><%= image_tag "small-loader.gif", :alt => "Loader", :id => "loader"+client.id.to_s, hidden: true %></td>
+         		<% end %>
 				<td>
 					<% if client.valid_email %>
 					<div class="checkbox" style="margin-top: 0; margin-bottom: 0;">

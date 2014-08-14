@@ -619,6 +619,7 @@ function editBookingModal(eventId) {
 			$('#booking_client_id').val(booking.client_id);
 			$('#booking_client_first_name').val(booking.first_name);
 			$('#booking_client_last_name').val(booking.last_name);
+			$('#booking_client_identification_number').val(booking.identification_number);
 			$('#full_name').val(booking.first_name+' '+booking.last_name);
 			$("#full_name").prop('disabled', true);
 			$('#xButton').prop('disabled', false);
@@ -732,6 +733,7 @@ function createBookingModal(date, provider_id) {
 			$('#full_name').val('');
 			$("#full_name").prop('disabled', false);
 			$('#xButton').prop('disabled', true);
+			$('#booking_client_identification_number').val('');
 			$('#booking_client_email').val('');
 			$('#booking_client_phone').val('');
 			$('#booking_notes').val('');
@@ -811,6 +813,7 @@ function jsonBooking() {
 		"client_last_name": $('#booking_client_last_name').val(),
 		"client_email": $('#booking_client_email').val(),
 		"client_phone": $('#booking_client_phone').val(),
+		"client_identification_number": $('#booking_client_identification_number').val(),
 		"notes": $('#booking_notes').val(),
 		"company_comment": $('#booking_company_comment').val(),
 		"send_mail": $('#booking_send_mail').prop('checked')
@@ -1377,6 +1380,7 @@ $(function() {
 			$('#booking_client_phone').val(ui.item.value[3]);
 			$('#booking_client_email').val(ui.item.value[2]);
 			$('#booking_client_id').val(ui.item.value[4]);
+			$('#booking_client_identification_number').val(ui.item.value[5]);
 			$("#full_name").val(ui.item.value[0]+' '+ui.item.value[1])
 			if (validEmail($("#booking_client_email").val())) {
 				$('#booking_send_mail').prop('disabled', false);
@@ -1408,6 +1412,7 @@ $(function() {
 			$('#booking_client_last_name').val(ui.item.value[1]);
 			$('#booking_client_phone').val(ui.item.value[3]);
 			$('#booking_client_email').val(ui.item.value[2]);
+			$('#booking_client_identification_number').val(ui.item.value[5]);
 			$('#booking_client_id').val(ui.item.value[4]);
 			$("#full_name").val(ui.item.value[0]+' '+ui.item.value[1])
 			if (validEmail($("#booking_client_email").val())) {
@@ -1481,6 +1486,7 @@ $(function() {
 		$('#booking_client_phone').val('');
 		$('#booking_client_email').val('');
 		$('#booking_client_id').val('');
+		$('#booking_client_identification_number').val('');
 		$("#full_name").val('');
 		$('#booking_client_first_name').prop('disabled', false);
 		$('#booking_client_last_name').prop('disabled', false);

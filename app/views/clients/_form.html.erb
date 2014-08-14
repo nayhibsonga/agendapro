@@ -12,6 +12,14 @@
     <% end %>
       <div class="row">
         <div class="col-md-6 well">
+          <% if Company.find(current_user.company_id).company_setting.client_exclusive %>
+          <div class="form-group">
+            <%= f.label :can_book, "¿Puede reservar?", class: "col-sm-4 control-label" %>
+            <div class="col-sm-8">
+                <%= f.check_box :can_book, class: "check_box" %>
+            </div>
+          </div>
+          <% end %>
           <div class="form-group has-feedback">
             <%= f.label :email, "Email", class: "col-sm-4 control-label" %>
             <div class="col-sm-8">

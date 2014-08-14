@@ -7,9 +7,9 @@ class Booking < ActiveRecord::Base
 	belongs_to :promotion
 	belongs_to :client
 
-	validates :start, :end, :service_provider_id, :service_id, :status_id, :location_id, :presence => true
+	validates :start, :end, :service_provider_id, :service_id, :status_id, :location_id, :client_id, :presence => true
 
-	validate :time_empty_or_negative, :booking_duration, :service_staff, :time_in_provider_time
+	validate :time_empty_or_negative, :booking_duration, :service_staff, :time_in_provider_time, :client_exclusive
 
 	after_commit validate :bookings_overlap
 
@@ -107,6 +107,14 @@ class Booking < ActiveRecord::Base
 		end
 		if !in_provider_time
 			errors.add(:base, "El horario o día de la reserva no está disponible para este prestador.")
+		end
+	end
+
+	def client_exclusive
+		if self.service_provider.company.company_setting.client_exclusive
+			if !self.client.can_book || self.client.identification_number.nil?
+				errors.add(:base, "El cliente ingresado no figura en los registros o no puede reservar.")
+			end
 		end
 	end
 
