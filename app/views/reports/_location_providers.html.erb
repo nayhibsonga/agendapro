@@ -8,28 +8,28 @@
 				<table class="table">
 					<thead class="head-white">
 						<th>Prestador</th>
-						<th>Reservas Últimos 7 días</th>
-						<th>Reservas Últimos 30 días</th>
-						<th>Ocupación Últimos 7 días</th>
-						<th>Ocupación Últimos 30 días</th>
+						<th>Reservas Última Semana</th>
+						<th>Reservas Último Mes</th>
+						<th>Ocupación Última Semana</th>
+						<th>Ocupación Último Mes</th>
 					</thead>
 					<tbody>
-						<% @location.service_providers.where(active: true).each do |service_provider| %>
+						<% @location.service_providers.where(active: true).order(:public_name).each do |provider| %>
 						<tr>
 							<td>
-							<%= service_provider.public_name %>
+							<%= provider.public_name %>
 							</td>
 							<td>
-								<%= int_with_variation(service_provider.week_bookings(0), service_provider.week_bookings(1)) %>
+								<%= int_with_variation(provider_booking_count(0, 0, provider.id), provider_booking_count(0, 1, provider.id)) %>
 							</td>
 							<td>
-								<%= int_with_variation(service_provider.month_bookings(0), service_provider.month_bookings(1)) %>
+								<%= int_with_variation(provider_booking_count(1, 0, provider.id), provider_booking_count(1, 1, provider.id)) %>
 							</td>
 							<td>
-								<%= float_with_variation(service_provider.week_occupation(0), service_provider.week_occupation(1)) %>
+								<%= percentage_with_variation(provider_booking_occupation(0, 0, provider.id), provider_booking_occupation(0, 1, provider.id)) %>
 							</td>
 							<td>
-								<%= float_with_variation(service_provider.month_occupation(0), service_provider.month_occupation(1)) %>
+								<%= percentage_with_variation(provider_booking_occupation(1, 0, provider.id), provider_booking_occupation(1, 1, provider.id)) %>
 							</td>
 						</tr>
 						<% end %>
@@ -37,16 +37,16 @@
 							<td><strong>Total</strong>
 							</td>
 							<td><strong>
-								<%= int_with_variation(@location.week_bookings(0), @location.week_bookings(1)) %>
+								<%= int_with_variation(location_booking_count(0, 0, @location.id), location_booking_count(0, 1, @location.id)) %>
 							</strong></td>
 							<td><strong>
-								<%= int_with_variation(@location.month_bookings(0), @location.month_bookings(1)) %>
+								<%= int_with_variation(location_booking_count(1, 0, @location.id), location_booking_count(1, 1, @location.id)) %>
 							</strong></td>
 							<td><strong>
-								<%= float_with_variation(@location.week_occupation(0), @location.week_occupation(1)) %>
+								<%= percentage_with_variation(location_booking_occupation(0, 0, @location.id), location_booking_occupation(0, 1, @location.id)) %>
 							</strong></td>
 							<td><strong>
-								<%= float_with_variation(@location.month_occupation(0), @location.month_occupation(1)) %>
+								<%= percentage_with_variation(location_booking_occupation(1, 0, @location.id), location_booking_occupation(1, 1, @location.id)) %>
 							</strong></td>
 						</tr>
 					</tbody>
@@ -58,12 +58,12 @@
 
 <div class="row">
 	<div class="col-md-12 graphs">
-		<%= line_chart ServiceProvider.where(location: @location, active: true).map{|sp| {name: sp.public_name, data: sp.bookings.group_by_week(:start, range: 2.months.ago.midnight..2.months.from_now).count} }, id: "bookings-chart", library: {hAxis: {title: "Semana", format: "MMM d, yy" }, vAxis: {title: "# Reservas", format: "#"}, title: "Cantidad de Reservas Semanales" } %>
+		<%= line_chart ServiceProvider.where(location: @location, active: true).map{|sp| {name: sp.public_name, data: sp.bookings.group_by_week(:start, range: 2.months.ago.midnight..2.months.from_now).count} }, library: {hAxis: {title: "Semana", format: "MMM d, yy" }, vAxis: {title: "# Reservas", format: "#"}, title: "Cantidad de Reservas Semanales" } %>
 	</div>
 </div>
 
 <div class="row">
 	<div class="col-md-12 graphs">
-		<%= line_chart ServiceProvider.where(location: @location, active: true).map{|sp| {name: sp.public_name, data: sp.bookings.group_by_week(:start, range: 2.months.ago.midnight..2.months.from_now).count} }, id: "bookings-chart", library: {hAxis: {title: "Semana", format: "MMM d, yy" }, vAxis: {title: "# Reservas", format: "#"}, title: "Cantidad de Reservas Semanales" } %>
+		<%= line_chart location_booking_by_hour(3, 0, @location.id), discrete: true, library: {hAxis: {title: "Hora del Día" }, vAxis: {title: "# Reservas", format: "#"}, title: "Reservas por Hora por Día de  "+@location.name } %>
 	</div>
 </div>

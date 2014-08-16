@@ -19,38 +19,6 @@ class ServiceProvider < ActiveRecord::Base
 	validate :time_empty_or_negative, :time_in_location_time, :times_overlap, :outcall_location_provider
 	validate :plan_service_providers, :on => :create
 
-	def week_bookings(offset)
-		Booking.where(service_provider: self, start: (1+offset).weeks.ago..offset.weeks.ago).count
-	end
-
-	def month_bookings(offset)
-		Booking.where(service_provider: self, start: (1+offset).months.ago..offset.months.ago).count
-	end
-
-	def week_occupation(offset)
-		available_time = 0.0
-		used_time = 0.0
-		self.provider_times.each do |provider_time|
-			available_time += provider_time.close - provider_time.open
-		end
-		Booking.where(service_provider: self, start: (1+offset).weeks.ago..offset.weeks.ago).each do |booking|
-			used_time += booking.end - booking.start
-		end
-		return used_time/available_time
-	end
-
-	def month_occupation(offset)
-		available_time = 0.0
-		used_time = 0.0
-		self.provider_times.each do |provider_time|
-			available_time += provider_time.close - provider_time.open
-		end
-		Booking.where(service_provider: self, start: (1+offset).months.ago..offset.months.ago).each do |booking|
-			used_time += booking.end - booking.start
-		end
-		return used_time/(available_time*(Time.now.days_in_month/7))
-	end
-
 	def staff_user
 		if self.user && self.user.role_id != Role.find_by_name("Staff")
 			errors.add(:base, "El usuario asociado debe ser de tipo staff.")

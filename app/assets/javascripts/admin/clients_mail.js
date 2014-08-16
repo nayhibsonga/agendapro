@@ -104,4 +104,5 @@ $(function () {
 			$('#import_button').attr("disabled", "disabled");
 		}
 	});
+	$('#file-group').show();
 });
