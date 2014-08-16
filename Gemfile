@@ -113,3 +113,7 @@ gem "chartkick"
 
 # Agrupación de elementos por fecha
 gem 'groupdate'
+
+# PDF
+gem 'prawn'
+gem 'prawn-table'

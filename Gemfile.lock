@@ -92,8 +92,13 @@ GEM
     nokogiri (1.6.0)
       mini_portile (~> 0.5.0)
     orm_adapter (0.5.0)
+    pdf-core (0.2.5)
     pg (0.17.0)
     polyglot (0.3.3)
+    prawn (1.2.1)
+      pdf-core (~> 0.2.5)
+      ttfunk (~> 1.2.0)
+    prawn-table (0.1.0)
     puntopagos (0.2)
       rest-client (~> 1.6.7)
     quiet_assets (1.0.2)
@@ -152,6 +157,7 @@ GEM
     treetop (1.4.15)
       polyglot
       polyglot (>= 0.3.1)
+    ttfunk (1.2.0)
     turbolinks (2.0.0)
       coffee-rails
     tzinfo (0.3.38)
@@ -187,6 +193,8 @@ DEPENDENCIES
   mini_magick
   mobu
   pg
+  prawn
+  prawn-table
   puntopagos
   quiet_assets
   rails (= 4.0.1)
