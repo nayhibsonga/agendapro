@@ -55,6 +55,7 @@ class BookingsController < ApplicationController
         end
       else
         render :json => { :errors => ["El cliente no está registrado o no puede reservar."] }, :status => 422
+        return
       end
     else
       if !booking_params[:client_id].nil? && !booking_params[:client_id].empty?
@@ -128,6 +129,7 @@ class BookingsController < ApplicationController
         end
       else
         render :json => { :errors => ["El cliente no está registrado o no puede reservar."] }, :status => 422
+        return
       end
     else
       if !booking_params[:client_id].nil? && !booking_params[:client_id].empty?
@@ -229,10 +231,33 @@ class BookingsController < ApplicationController
       params[:comment] += ' - Dirección del cliente (donde se debe realizar el servicio): ' + params[:address]
     end
     if Client.where(email: params[:email], company_id: @company).count > 0
-      client = Client.where(email: params[:email], company_id: @company).first
+      if @company.company_setting.client_exclusive
+        client = Client.where(email: params[:email], company_id: @company).first
+        if client.identification_number == params[:identification_number]
+          client = Client.where(email: params[:email], company_id: @company).first
+        else
+          flash[:alert] = "No estás ingresado como cliente o no puedes reservas. Porfavor comunícate con la empresa proveedora del servicio."
+          @errors = ["No estás ingresado como cliente"]
+          render layout: "workflow"
+          return
+        end
+      else
+        client = Client.where(email: params[:email], company_id: @company).first
+      end
     else
-      client = Client.new(email: params[:email], first_name: params[:firstName], last_name: params[:lastName], phone: params[:phone], company_id: @company.id)
-      client.save
+      if @company.company_setting.client_exclusive
+        if Client.where(identification_number: params[:identification_number], company_id: @company).count > 0
+          client = Client.where(identification_number: params[:identification_number], company_id: @company).first
+        else
+          flash[:alert] = "No estás ingresado como cliente o no puedes reservas. Porfavor comunícate con la empresa proveedora del servicio."
+          @errors = ["No estás ingresado como cliente"]
+          render layout: "workflow"
+          return
+        end
+      else
+        client = Client.new(email: params[:email], first_name: params[:firstName], last_name: params[:lastName], phone: params[:phone], company_id: @company.id)
+        client.save
+      end
     end
     if user_signed_in?
       @booking = Booking.new(start: params[:start], end: params[:end], notes: params[:comment], service_provider_id: params[:provider], service_id: params[:service], location_id: params[:location], status_id: Status.find_by(name: 'Reservado').id, client_id: client.id, user_id: current_user.id, web_origin: params[:origin])

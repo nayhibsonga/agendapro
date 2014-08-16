@@ -2,7 +2,7 @@
     <section class="pricing_wrapper">
         <div class="container">
 			<div class="well well-lg">
-				<% if @booking.errors.any? %>
+				<% if @errors %>
 				<h3>Tuvimos un error</h3>
 				<div class="row">
 					<div class="col-md-8">
@@ -14,7 +14,7 @@
 					</div>
 					<div class="col-md-4" id="errorDiv">
 						<ol>
-      						<% @booking.errors.full_messages.each do |msg| %>
+      						<% @errors.each do |msg| %>
         					<li><%= msg %></li>
       						<% end %>
       					</ol>

@@ -123,6 +123,12 @@ function loadStep2 () {
 }
 
 function loadStep3 () {
+	if ($('#clientExclusive').data('client-exclusive')) {
+		$('#identificationNumber').show();
+	}
+	else {
+		$('#identificationNumber').hide();
+	}
 	if ($('[name="staffRadio"]').is(':checked')){
 		if (selected) {
 			checkUserCrossBookings();
