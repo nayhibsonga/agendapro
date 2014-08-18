@@ -42,9 +42,9 @@ class Company < ActiveRecord::Base
 				company.payment_status_id = PaymentStatus.find_by_name("Emitido").id
 			end
 			if company.save
-				puts "Company id "+company.id+" OK substract_month payment_status_id "+payment_status
+				puts "Company id "+company.id.to_s+" OK substract_month payment_status_id "+payment_status
 			else
-				puts "Company id "+company.id+" ERROR substract_month payment_status_id "+payment_status+" "+company.errors
+				puts "Company id "+company.id.to_s+" ERROR substract_month payment_status_id "+payment_status+" "+company.errors
 			end
 		end
 	end
@@ -53,9 +53,9 @@ class Company < ActiveRecord::Base
 		where(payment_status_id: PaymentStatus.find_by_name("Emitido").id).where('due_date < ?', 9.days.ago).each do |company|
 			company.payment_status_id = PaymentStatus.find_by_name("Vencido").id
 			if company.save
-				puts "Company id "+company.id+" OK payment_expiry"
+				puts "Company id "+company.id.to_s+" OK payment_expiry"
 			else
-				puts "Company id "+company.id+" ERROR payment_expiry "+company.errors
+				puts "Company id "+company.id.to_s+" ERROR payment_expiry "+company.errors
 			end
 		end
 	end
@@ -64,9 +64,9 @@ class Company < ActiveRecord::Base
 		where(payment_status_id: PaymentStatus.find_by_name("Vencido").id).where('due_date < ?', 19.days.ago).each do |company|
 			company.payment_status_id = PaymentStatus.find_by_name("Bloqueado").id
 			if company.save
-				puts "Company id "+company.id+" OK payment_shut"
+				puts "Company id "+company.id.to_s+" OK payment_shut"
 			else
-				puts "Company id "+company.id+" ERROR payment_shut "+company.errors
+				puts "Company id "+company.id.to_s+" ERROR payment_shut "+company.errors
 			end
 		end
 	end
@@ -77,9 +77,9 @@ class Company < ActiveRecord::Base
 			comapny.due_amount = 0.0
 			company.active = false
 			if company.save
-				puts "Company id "+company.id+" OK payment_inactive"
+				puts "Company id "+company.id.to_s+" OK payment_inactive"
 			else
-				puts "Company id "+company.id+" ERROR payment_inactive "+company.errors
+				puts "Company id "+company.id.to_s+" ERROR payment_inactive "+company.errors
 			end
 		end
 	end
@@ -108,9 +108,9 @@ class Company < ActiveRecord::Base
 		where(payment_status_id: PaymentStatus.where(name: ["Emitido", "Vencido"]).pluck(:id)).where('due_date IS NOT NULL').each do |company|
 			company.due_amount += company.plan.price/month_days
 			if company.save
-				puts "Company id "+company.id+" OK add_due_amount"
+				puts "Company id "+company.id.to_s+" OK add_due_amount"
 			else
-				puts "Company id "+company.id+" ERROR add_due_amount "+company.errors
+				puts "Company id "+company.id.to_s+" ERROR add_due_amount "+company.errors
 			end
 		end
 	end
