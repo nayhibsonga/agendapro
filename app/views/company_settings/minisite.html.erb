@@ -30,16 +30,23 @@
 
 			<div class="form-group">
 				<%= f.label :activate_workflow, 'Habilitar Minisitio', :class => 'col-sm-3 control-label' %>
-				<div class="col-sm-4">
+				<div class="col-sm-5">
 					<%= f.check_box :activate_workflow %>
 					<span class="help-block">Esta opcion permite a los clientes poder agendar a traves del sistema web, sin la necesidad de que lo esten llamando.</span>
 				</div>
 			</div>
 			<div class="form-group">
 				<%= f.label :activate_search, 'Aparecer en el Buscador', :class => 'col-sm-3 control-label' %>
-				<div class="col-sm-4">
+				<div class="col-sm-5">
 					<%= f.check_box :activate_search %>
 					<span class="help-block">Esta opcion permite a los clientes poder encontrar el minisitio a traves del buscador.</span>
+				</div>
+			</div>
+			<div class="form-group">
+				<%= f.label :client_exclusive, 'Exclusivo para Clientes', :class => 'col-sm-3 control-label' %>
+				<div class="col-sm-5">
+					<%= f.check_box :client_exclusive %>
+					<span class="help-block">Esta opcion limita que sólo puedan reservar clientes ingresados en la sección <%= link_to "Clientes", clients_path %>, usando el RUT.</span>
 				</div>
 			</div>
 			<!-- <div class="form-group">
@@ -71,16 +78,3 @@
 		<% end %>
 	</div>
 </div>
-
-<% content_for :scripts do %>
-	<%= stylesheet_link_tag "bootstrap-switch" %>
-	<%= javascript_include_tag "bootstrap-switch" %>
-	<script type="text/javascript">
-		$(function () {
-			$('input[type="checkbox"]').bootstrapSwitch({
-				onText: 'Si',
-				offText: 'No'
-			});
-		});
-	</script>
-<% end %>

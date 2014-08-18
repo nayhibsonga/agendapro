@@ -248,27 +248,30 @@ function locationValid (ctrl) {
 	    	}
 	    	else {
 	    		var errors = result.errors;
-	    		var errorList = document.createElement('ul');
+	    		var errorList = '';
 				for (i in errors) {
-					$(errorList).append('<li>' + errors[i] + '</li>');
+					errorList += '<li>' + errores[i] + '</li>'
 				}
-			    my_alert.showAlert(
-			    	'<h4>Error</h4>' +
-			    	errorList
-			    );
-				hideLoad();
+				alertId.showAlert(
+					'<h3>Error</h3>' +
+					'<ul>' +
+						errorList +
+					'</ul>'
+				);
 	    	}
 		},
 		error: function (xhr){
 		    var errors = $.parseJSON(xhr.responseText).errors;
-		    var errorList = document.createElement('ul');
+		    var errorList = '';
 			for (i in errors) {
-				$(errorList).append('<li>' + errors[i] + '</li>');
+				errorList += '<li>' + errores[i] + '</li>'
 			}
-		    my_alert.showAlert(
-		    	'<h4>Error</h4>' +
-		    	errorList
-		    );
+			alertId.showAlert(
+				'<h3>Error</h3>' +
+				'<ul>' +
+					errorList +
+				'</ul>'
+			);
 			hideLoad();
 		}
 	});
@@ -289,27 +292,31 @@ function serviceValid () {
 		    	}
 		    	else {
 		    		var errors = result.errors;
-		    		var errorList = document.createElement('ul');
+		    		var errorList = '';
 					for (i in errors) {
-						$(errorList).append('<li>' + errors[i] + '</li>');
+						errorList += '<li>' + errores[i] + '</li>'
 					}
-				    my_alert.showAlert(
-				    	'<h4>Error</h4>' +
-				    	errorList
-				    );
+					alertId.showAlert(
+						'<h3>Error</h3>' +
+						'<ul>' +
+							errorList +
+						'</ul>'
+					);
 				    hideLoad()
 		    	}
 			},
 			error: function (xhr) {
 				var errors = $.parseJSON(xhr.responseText).errors;
-			    var errorList = document.createElement('ul');
+			    var errorList = '';
 				for (i in errors) {
-					$(errorList).append('<li>' + errors[i] + '</li>');
+					errorList += '<li>' + errores[i] + '</li>'
 				}
-			    my_alert.showAlert(
-			    	'<h4>Error</h4>' +
-			    	errorList
-			    );
+				alertId.showAlert(
+					'<h3>Error</h3>' +
+					'<ul>' +
+						errorList +
+					'</ul>'
+				);
 			    hideLoad()
 			}
 		});
@@ -360,27 +367,31 @@ function providerValid () {
 		    	}
 		    	else {
 		    		var errors = result.errors;
-		    		var errorList = document.createElement('ul');
+		    		var errorList = '';
 					for (i in errors) {
-						$(errorList).append('<li>' + errors[i] + '</li>');
+						errorList += '<li>' + errores[i] + '</li>'
 					}
-				    my_alert.showAlert(
-				    	'<h4>Error</h4>' +
-				    	errorList
-				    );
+					alertId.showAlert(
+						'<h3>Error</h3>' +
+						'<ul>' +
+							errorList +
+						'</ul>'
+					);
 				    hideLoad();
 		    	}
 			},
 			error: function(xhr){
 			    var errors = $.parseJSON(xhr.responseText).errors;
-			    var errorList = document.createElement('ul');
+			    var errorList = '';
 				for (i in errors) {
-					$(errorList).append('<li>' + errors[i] + '</li>');
+					errorList += '<li>' + errores[i] + '</li>'
 				}
-			    my_alert.showAlert(
-			    	'<h4>Error</h4>' +
-			    	errorList
-			    );
+				alertId.showAlert(
+					'<h3>Error</h3>' +
+					'<ul>' +
+						errorList +
+					'</ul>'
+				);
 			    hideLoad();
 			}
 		});
@@ -409,14 +420,16 @@ function saveLocation (ctrl) {
 		},
 		error: function (xhr){
 		    var errors = $.parseJSON(xhr.responseText).errors;
-		    var errorList = document.createElement('ul');
+		    var errorList = '';
 			for (i in errors) {
-				$(errorList).append('<li>' + errors[i] + '</li>');
+				errorList += '<li>' + errores[i] + '</li>'
 			}
-		    my_alert.showAlert(
-		    	'<h4>Error</h4>' +
-		    	errorList
-		    );
+			alertId.showAlert(
+				'<h3>Error</h3>' +
+				'<ul>' +
+					errorList +
+				'</ul>'
+			);
 			hideLoad();
 		}
 	});
@@ -435,14 +448,16 @@ function createService () {
 		},
 		error: function (xhr) {
 			var errors = $.parseJSON(xhr.responseText).errors;
-		    var errorList = document.createElement('ul');
+		    var errorList = '';
 			for (i in errors) {
-				$(errorList).append('<li>' + errors[i] + '</li>');
+				errorList += '<li>' + errores[i] + '</li>'
 			}
-		    my_alert.showAlert(
-		    	'<h4>Error</h4>' +
-		    	errorList
-		    );
+			alertId.showAlert(
+				'<h3>Error</h3>' +
+				'<ul>' +
+					errorList +
+				'</ul>'
+			);
 			hideLoad();
 		}
 	});
@@ -479,14 +494,16 @@ function createProvider () {
 		},
 		error: function(xhr){
 		    var errors = $.parseJSON(xhr.responseText).errors;
-		    var errorList = document.createElement('ul');
+		    var errorList = '';
 			for (i in errors) {
-				$(errorList).append('<li>' + errors[i] + '</li>');
+				errorList += '<li>' + errores[i] + '</li>'
 			}
-		    my_alert.showAlert(
-		    	'<h4>Error</h4>' +
-		    	errorList
-		    );
+			alertId.showAlert(
+				'<h3>Error</h3>' +
+				'<ul>' +
+					errorList +
+				'</ul>'
+			);
 		    hideLoad();
 		}
 	});

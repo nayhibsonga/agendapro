@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140801163246) do
+ActiveRecord::Schema.define(version: 20140812193029) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -106,6 +106,8 @@ ActiveRecord::Schema.define(version: 20140801163246) do
     t.date     "birth_date"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.string   "identification_number"
+    t.boolean  "can_book",              default: true
   end
 
   add_index "clients", ["company_id"], name: "index_clients_on_company_id", using: :btree
@@ -155,6 +157,7 @@ ActiveRecord::Schema.define(version: 20140801163246) do
     t.integer  "before_edit_booking", default: 12
     t.boolean  "activate_search",     default: true
     t.boolean  "activate_workflow",   default: true
+    t.boolean  "client_exclusive",    default: false
   end
 
   add_index "company_settings", ["company_id"], name: "index_company_settings_on_company_id", using: :btree

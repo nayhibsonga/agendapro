@@ -168,7 +168,7 @@ class ClientsController < ApplicationController
   end
 
   def suggestion
-    @clients = Client.where(company_id: current_user.company_id).where('email ~* ?', params[:term]).order(:last_name, :first_name).pluck(:first_name, :last_name, :email, :phone, :id).uniq
+    @clients = Client.where(company_id: current_user.company_id).where('email ~* ?', params[:term]).order(:last_name, :first_name).pluck(:first_name, :last_name, :email, :phone, :id, :identification_number).uniq
 
     @clients_arr = Array.new
     @clients.each do |client|
@@ -183,6 +183,9 @@ class ClientsController < ApplicationController
       end
       if client[3].nil?
         client[3] = ''
+      end
+      if client[5].nil?
+        client[5] = ''
       end
       label = client[0] + ' ' + client[1]
       desc = client[2] + ' - ' + client[3]
@@ -193,7 +196,7 @@ class ClientsController < ApplicationController
   end
 
   def name_suggestion
-    @clients = Client.where(company_id: current_user.company_id).where("CONCAT(first_name, ' ', last_name) ILIKE :s OR first_name ILIKE :s OR last_name ILIKE :s", :s => "%#{params[:term]}%").order(:last_name, :first_name).pluck(:first_name, :last_name, :email, :phone, :id).uniq
+    @clients = Client.where(company_id: current_user.company_id).where("CONCAT(first_name, ' ', last_name) ILIKE :s OR first_name ILIKE :s OR last_name ILIKE :s", :s => "%#{params[:term]}%").order(:last_name, :first_name).pluck(:first_name, :last_name, :email, :phone, :id, :identification_number).uniq
 
     @clients_arr = Array.new
     @clients.each do |client|
@@ -208,6 +211,9 @@ class ClientsController < ApplicationController
       end
       if client[3].nil?
         client[3] = ''
+      end
+      if client[5].nil?
+        client[5] = ''
       end
       label = client[0] + ' ' + client[1]
       desc = client[2] + ' - ' + client[3]
@@ -230,7 +236,7 @@ class ClientsController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def client_params
-      params.require(:client).permit(:company_id, :email, :first_name, :last_name, :phone, :address, :district, :city, :age, :gender, :birth_date)
+      params.require(:client).permit(:company_id, :email, :first_name, :last_name, :identification_number, :phone, :address, :district, :city, :age, :gender, :birth_date, :can_book)
     end
 
     def client_comment_params

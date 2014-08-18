@@ -176,6 +176,16 @@
 							<%= builder.hidden_field :id %>
 							<%= builder.hidden_field :last_name %>
 							<%= builder.hidden_field :first_name %>
+							<%= content_tag "div", id: "client_exclusive_data", data: { client_exclusive: Company.find(current_user.company_id).company_setting.client_exclusive } do %>
+							<% end %>
+							<% if Company.find(current_user.company_id).company_setting.client_exclusive %>
+					          <div class="form-group">
+								<%= builder.label :identification_number, "RUT", class: "col-sm-4 control-label" %>
+								<div class="col-sm-8">
+									<%= builder.text_field :identification_number, class: "form-control", disabled: true %>
+								</div>
+							</div>
+					          <% end %>
 							<div class="form-group has-feedback">
 								<label for="full_name" class="col-sm-4 control-label">Nombre Cliente</label>
 								<div class="col-sm-8">

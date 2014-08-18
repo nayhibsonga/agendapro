@@ -60,7 +60,6 @@ function loadStep1 () {
 		$('#foo4').trigger('updateSizes');
 
 		$('.panel-group .panel-default').on('shown.bs.collapse', function (event) {
-			window.console.log('trigger')
 			$('#foo4').trigger('updateSizes');
 		});
 	});
@@ -123,6 +122,12 @@ function loadStep2 () {
 }
 
 function loadStep3 () {
+	if ($('#clientExclusive').data('client-exclusive')) {
+		$('#identificationNumber').show();
+	}
+	else {
+		$('#identificationNumber').hide();
+	}
 	if ($('[name="staffRadio"]').is(':checked')){
 		if (selected) {
 			checkUserCrossBookings();
@@ -312,4 +317,7 @@ function formattedTime (timestamp) {
 var myAlert;
 $(function () {
 	myAlert  = new Alert('.main');
+	$( document ).ajaxComplete(function() {
+		$('#foo4').trigger('updateSizes');
+	});
 });

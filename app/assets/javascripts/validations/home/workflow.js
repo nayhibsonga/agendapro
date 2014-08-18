@@ -14,6 +14,10 @@ $(function() {
 				required: true,
 				email: true
 			},
+			identification_number: {
+				rut:true,
+				minlength: 2
+			},
 			address: {
 				minlength: 3
 			}
@@ -30,5 +34,9 @@ $(function() {
 		submitHandler: function(form) {
 			form.submit();
 		}
+	});
+	$('#identification_number').change(function() {
+		var rut_string = $('#identification_number').val()
+		$('#identification_number').val(rut_format(rut_string));
 	});
 });
