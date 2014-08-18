@@ -42,9 +42,9 @@ class Company < ActiveRecord::Base
 				company.payment_status_id = PaymentStatus.find_by_name("Emitido").id
 			end
 			if company.save
-				puts "Company id "+company.id.to_s+" OK substract_month payment_status_id "+payment_status.id.to_s
+				puts "Company id "+company.id.to_s+" OK substract_month payment_status_id "+payment_status
 			else
-				puts "Company id "+company.id.to_s+" ERROR substract_month payment_status_id "+payment_status.id.to_s
+				puts "Company id "+company.id.to_s+" ERROR substract_month payment_status_id "+payment_status
 			end
 		end
 	end
