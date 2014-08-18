@@ -39,6 +39,7 @@
 							<tr draggable="true">
 								<td data-provider="<%= service_provider.id %>"><%= service_provider.public_name %></td>
 								<td>
+									<%= link_to '<i class="fa fa-print"></i> Horario'.html_safe, service_provider_path(service_provider, format: :pdf), :class => "btn btn-primary" %>
 									<%= link_to '<i class="fa fa-pencil"></i> Editar'.html_safe, edit_service_provider_path(service_provider), :class => "btn btn-warning" %>
 									<%= link_to '<i class="fa fa-trash-o"></i> Eliminar'.html_safe, deactivate_service_provider_path(:id => service_provider.id), :class => "btn btn-danger", data: { confirm: '¿Estás seguro de desactivar el Prestador seleccionado? Este prestador tiene ' + Booking.where(:service_provider_id => service_provider.id).where.not(:status => Status.find_by(:name => 'Cancelado')).where('start >= ?', DateTime.now).length.to_s + ' reserva(s) asociada(s), que será(n) eliminada(s).' } %>
 									<span class="pull-right">
