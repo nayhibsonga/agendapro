@@ -42,9 +42,9 @@ class Company < ActiveRecord::Base
 				company.payment_status_id = PaymentStatus.find_by_name("Emitido").id
 			end
 			if company.save
-				puts "Company id "+company.id.to_s+" OK substract_month payment_status_id "+payment_status
+				puts "Company id "+company.id.to_s+" OK substract_month payment_status_id "+payment_status.id.to_s
 			else
-				puts "Company id "+company.id.to_s+" ERROR substract_month payment_status_id "+payment_status+" "+company.errors
+				puts "Company id "+company.id.to_s+" ERROR substract_month payment_status_id "+payment_status.id.to_s
 			end
 		end
 	end
@@ -55,7 +55,7 @@ class Company < ActiveRecord::Base
 			if company.save
 				puts "Company id "+company.id.to_s+" OK payment_expiry"
 			else
-				puts "Company id "+company.id.to_s+" ERROR payment_expiry "+company.errors
+				puts "Company id "+company.id.to_s+" ERROR payment_expiry "
 			end
 		end
 	end
@@ -66,7 +66,7 @@ class Company < ActiveRecord::Base
 			if company.save
 				puts "Company id "+company.id.to_s+" OK payment_shut"
 			else
-				puts "Company id "+company.id.to_s+" ERROR payment_shut "+company.errors
+				puts "Company id "+company.id.to_s+" ERROR payment_shut "
 			end
 		end
 	end
@@ -79,7 +79,7 @@ class Company < ActiveRecord::Base
 			if company.save
 				puts "Company id "+company.id.to_s+" OK payment_inactive"
 			else
-				puts "Company id "+company.id.to_s+" ERROR payment_inactive "+company.errors
+				puts "Company id "+company.id.to_s+" ERROR payment_inactive "
 			end
 		end
 	end
@@ -110,7 +110,7 @@ class Company < ActiveRecord::Base
 			if company.save
 				puts "Company id "+company.id.to_s+" OK add_due_amount"
 			else
-				puts "Company id "+company.id.to_s+" ERROR add_due_amount "+company.errors
+				puts "Company id "+company.id.to_s+" ERROR add_due_amount "
 			end
 		end
 	end
