@@ -1,4 +1,4 @@
-Xclass Company < ActiveRecord::Base
+class Company < ActiveRecord::Base
 	belongs_to :economic_sector
 	belongs_to :plan
 	belongs_to :payment_status
