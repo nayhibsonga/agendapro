@@ -1,4 +1,4 @@
-class Company < ActiveRecord::Base
+Xclass Company < ActiveRecord::Base
 	belongs_to :economic_sector
 	belongs_to :plan
 	belongs_to :payment_status
@@ -50,7 +50,7 @@ class Company < ActiveRecord::Base
 	end
 
 	def self.payment_expiry
-		where(payment_status_id: PaymentStatus.find_by_name("Emitido").id).where('due_date > ?', 9.days.ago).each do |company|
+		where(payment_status_id: PaymentStatus.find_by_name("Emitido").id).where('due_date < ?', 9.days.ago).each do |company|
 			company.payment_status_id = PaymentStatus.find_by_name("Vencido").id
 			if company.save
 				puts "Company id "+company.id+" OK payment_expiry"
@@ -61,7 +61,7 @@ class Company < ActiveRecord::Base
 	end
 
 	def self.payment_shut
-		where(payment_status_id: PaymentStatus.find_by_name("Vencido").id).where('due_date > ?', 19.days.ago).each do |company|
+		where(payment_status_id: PaymentStatus.find_by_name("Vencido").id).where('due_date < ?', 19.days.ago).each do |company|
 			company.payment_status_id = PaymentStatus.find_by_name("Bloqueado").id
 			if company.save
 				puts "Company id "+company.id+" OK payment_shut"
@@ -72,7 +72,7 @@ class Company < ActiveRecord::Base
 	end
 
 	def self.payment_inactive
-		where(payment_status_id: PaymentStatus.find_by_name("Bloqueado").id).where('due_date > ?', 1.months.ago).each do |company|
+		where(payment_status_id: PaymentStatus.find_by_name("Bloqueado").id).where('due_date < ?', 1.months.ago).each do |company|
 			company.payment_status_id = PaymentStatus.find_by_name("Inactivo").id
 			comapny.due_amount = 0.0
 			company.active = false
@@ -86,7 +86,7 @@ class Company < ActiveRecord::Base
 
 	def self.end_trial
 		month_days = Time.now.days_in_month
-		where(payment_status_id: PaymentStatus.find_by_name("Trial").id).where('created_at >= ?', 1.months.ago).each do |company|
+		where(payment_status_id: PaymentStatus.find_by_name("Trial").id).where('created_at <= ?', 1.months.ago).each do |company|
 			plan_id = Plan.where(locations: company.locations.where(active: true).count).where('service_providers >= ?', company.service_providers.where(active: true).count).first.id
 			company.plan_id = plan_id
 			company.due_date = Time.now
