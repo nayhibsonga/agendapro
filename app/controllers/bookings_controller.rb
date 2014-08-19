@@ -242,6 +242,8 @@ class BookingsController < ApplicationController
         else
           flash[:alert] = "No estás ingresado como cliente o no puedes reservas. Porfavor comunícate con la empresa proveedora del servicio."
           @errors = ["No estás ingresado como cliente"]
+          host = request.host_with_port
+          @url = @company.web_address + '.' + host[host.index(request.domain)..host.length]
           render layout: "workflow"
           return
         end
@@ -255,6 +257,8 @@ class BookingsController < ApplicationController
         else
           flash[:alert] = "No estás ingresado como cliente o no puedes reservas. Porfavor comunícate con la empresa proveedora del servicio."
           @errors = ["No estás ingresado como cliente"]
+          host = request.host_with_port
+          @url = @company.web_address + '.' + host[host.index(request.domain)..host.length]
           render layout: "workflow"
           return
         end
