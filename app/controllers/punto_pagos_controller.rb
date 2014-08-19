@@ -155,11 +155,23 @@ class PuntoPagosController < ApplicationController
   end
 
   def success
-    
+    if params[:trx_id]
+      if BillingLog.find_by_trx_id(params[:trx_id])
+        
+      elsif PlanLog.find_by_trx_id(params[:trx_id])
+        
+      end
+    end
   end
 
   def failure
-
+    if params[:trx_id]
+      if BillingLog.find_by_trx_id(params[:trx_id])
+        
+      elsif PlanLog.find_by_trx_id(params[:trx_id])
+        
+      end
+    end
   end
 
   def notification
