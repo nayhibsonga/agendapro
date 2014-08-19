@@ -31,6 +31,13 @@ class ServiceProvidersController < ApplicationController
   # GET /service_providers/1
   # GET /service_providers/1.json
   def show
+    respond_to do |format|
+      format.html
+      format.pdf do
+        pdf = ServiceProvidersPdf.new(@service_provider)
+        send_data pdf.render, filename: 'Proveedor ' + DateTime.now.to_s + '.pdf', type: 'application/pdf'
+      end
+    end
   end
 
   # GET /service_providers/new

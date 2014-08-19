@@ -82,13 +82,15 @@ function saveResource (typeURL, extraURL) {
 		},
 		error: function(xhr){
 			var errors = $.parseJSON(xhr.responseText).errors;
-			var errorList = document.createElement('ul');
+			var errorList = '';
 			for (i in errors) {
-				$(errorList).append('<li>' + errors[i] + '</li>');
+				errorList += '<li>' + errores[i] + '</li>'
 			}
 			alertId.showAlert(
-				'<h2>Error</h2>'+
-				errorList
+				'<h3>Error</h3>' +
+				'<ul>' +
+					errorList +
+				'</ul>'
 			);
 		}
 	});
