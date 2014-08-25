@@ -1,0 +1,39 @@
+<h1>Listing billing_infos</h1>
+
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Rut</th>
+      <th>Address</th>
+      <th>Sector</th>
+      <th>Email</th>
+      <th>Phone</th>
+      <th>Company</th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @billing_infos.each do |billing_info| %>
+      <tr>
+        <td><%= billing_info.name %></td>
+        <td><%= billing_info.rut %></td>
+        <td><%= billing_info.address %></td>
+        <td><%= billing_info.sector %></td>
+        <td><%= billing_info.email %></td>
+        <td><%= billing_info.phone %></td>
+        <td><%= billing_info.company %></td>
+        <td><%= link_to 'Show', billing_info %></td>
+        <td><%= link_to 'Edit', edit_billing_info_path(billing_info) %></td>
+        <td><%= link_to 'Destroy', billing_info, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<br>
+
+<%= link_to 'New Billing info', new_billing_info_path %>

@@ -1,0 +1,12 @@
+development:
+  environment:        'sandbox'
+  puntopagos_key:     'rxAeXTifyHgrUAZCeS9i'
+  puntopagos_secret:  'QcklPFRnwbJA262I1prThkdx6kkGTH2bBeUu5q6w'
+test:
+  environment:        'sandbox'
+  puntopagos_key:     'rxAeXTifyHgrUAZCeS9i'
+  puntopagos_secret:  'QcklPFRnwbJA262I1prThkdx6kkGTH2bBeUu5q6w'
+production:
+  environment:        'sandbox'
+  puntopagos_key:     'rxAeXTifyHgrUAZCeS9i'
+  puntopagos_secret:  'QcklPFRnwbJA262I1prThkdx6kkGTH2bBeUu5q6w'

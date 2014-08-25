@@ -1,0 +1,17 @@
+<%= simple_form_for(@billing_info) do |f| %>
+  <%= f.error_notification %>
+
+  <div class="form-inputs">
+    <%= f.input :name %>
+    <%= f.input :rut %>
+    <%= f.input :address %>
+    <%= f.input :sector %>
+    <%= f.input :email %>
+    <%= f.input :phone %>
+    <%= f.association :company %>
+  </div>
+
+  <div class="form-actions">
+    <%= f.button :submit %>
+  </div>
+<% end %>

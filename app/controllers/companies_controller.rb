@@ -1,9 +1,9 @@
 class CompaniesController < ApplicationController
   before_action :verify_is_active, only: [:overview, :workflow]
-	before_action :set_company, only: [:show, :edit, :update, :destroy]
+	before_action :set_company, only: [:show, :edit, :update, :destroy, :edit_payment]
 	before_action :authenticate_user!, except: [:new, :overview, :workflow, :check_company_web_address, :select_hour, :user_data]
 	before_action :quick_add, except: [:new, :overview, :workflow, :add_company, :check_company_web_address, :select_hour, :user_data]
-	before_action :verify_is_super_admin, only: [:index]
+	before_action :verify_is_super_admin, only: [:index, :edit_payment]
 
 	layout "admin", except: [:show, :overview, :workflow, :add_company, :select_hour, :user_data]
 	load_and_authorize_resource
@@ -16,36 +16,12 @@ class CompaniesController < ApplicationController
 	end
 
 	def activate
-		Location.where(company_id: @company).each do |location|
-		  location.active = true
-		  location.save
-		end
-		Service.where(company_id: @company).each do |service|
-		  service.active = true
-		  service.save
-		end
-		ServiceProvider.where(company_id: @company).each do |service_provider|
-		  service_provider.active = true
-		  service_provider.save
-		end
 		@company.active = true
 		@company.save
 		redirect_to companies_path
 	end
 
-	def deactivate
-		Location.where(company_id: @company).each do |location|
-		  location.active = false
-		  location.save
-		end
-		Service.where(company_id: @company).each do |service|
-		  service.active = false
-		  service.save
-		end
-		ServiceProvider.where(company_id: @company).each do |service_provider|
-		  service_provider.active = false
-		  service_provider.save
-		end
+	def deactivate  
 		@company.active = false
 		@company.save
 		redirect_to companies_path
@@ -65,6 +41,9 @@ class CompaniesController < ApplicationController
 
 	# GET /companies/1/edit
 	def edit
+	end
+
+	def edit_payment
 	end
 
 	# POST /companies
@@ -128,7 +107,8 @@ class CompaniesController < ApplicationController
 				return
 			end
 		end
-		unless @company.company_setting.activate_workflow
+
+		unless @company.company_setting.activate_workflow && @company.active
 			flash[:alert] = "Lo sentimos, el mini-sitio que estás buscando no se encuentra disponible."
 
 			host = request.host_with_port
@@ -162,7 +142,7 @@ class CompaniesController < ApplicationController
 
 	def workflow
 		@company = Company.find_by(web_address: request.subdomain)
-		unless @company.company_setting.activate_workflow
+		unless @company.company_setting.activate_workflow && @company.active
 			flash[:alert] = "Lo sentimos, el mini-sitio que estás buscando no se encuentra disponible."
 
 			host = request.host_with_port
@@ -371,7 +351,7 @@ class CompaniesController < ApplicationController
 
 		# Never trust parameters from the scary internet, only allow the white list through.
 		def company_params
-			params.require(:company).permit(:name, :economic_sector_id, :plan_id, :logo, :remove_logo, :payment_status_id, :pay_due, :web_address, :description, :cancellation_policy, company_setting_attributes: [:before_booking, :after_booking])
+			params.require(:company).permit(:name, :economic_sector_id, :plan_id, :logo, :remove_logo, :payment_status_id, :pay_due, :web_address, :description, :cancellation_policy, :months_active_left, :due_amount, :due_date, :active, company_setting_attributes: [:before_booking, :after_booking])
 			#params.require(:company).permit(:name, :economic_sector_id, :plan_id, :logo, :payment_status_id, :pay_due, :web_address, :users_attributes[:id, :first_name, :last_name, :email, :phone, :user_name, :password, :role_id, :company_id])
 		end
 end

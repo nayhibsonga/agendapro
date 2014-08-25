@@ -26,6 +26,13 @@
 	trial = PaymentStatus.create(name: "Trial", description: "La empresa está en período de prueba")
 	vencido = PaymentStatus.create(name: "Vencido", description: "La empresa está atrasada en el pago del mes en curso")
 
+# => Configuraciones Globales de la Aplicación
+	iva = NumericParameter.create(name: "sales_tax", value: 0.19)
+	cuatro_meses = NumericParameter.create(name: "4_month_discount", value: 0.05)
+	seis_meses = NumericParameter.create(name: "6_month_discount", value: 0.1)
+	nueve_meses = NumericParameter.create(name: "9_month_discount", value: 0.15)
+	doce_meses = NumericParameter.create(name: "12_month_discount", value: 0.2)
+
 # => Sectores Eonómicos de las Empresas
 	estetica = EconomicSector.create(name: "Centros de Estética")
 	med_alt = EconomicSector.create(name: "Medicina Alternativa")

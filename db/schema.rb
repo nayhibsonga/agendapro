@@ -11,20 +11,37 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140821161352) do
+ActiveRecord::Schema.define(version: 20140822210004) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
+  create_table "billing_infos", force: true do |t|
+    t.string   "name"
+    t.string   "rut"
+    t.string   "address"
+    t.string   "sector"
+    t.string   "email"
+    t.string   "phone"
+    t.integer  "company_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.boolean  "active",     default: false
+    t.string   "contact"
+  end
+
+  add_index "billing_infos", ["company_id"], name: "index_billing_infos_on_company_id", using: :btree
+
   create_table "billing_logs", force: true do |t|
     t.float    "payment",             null: false
     t.float    "amount",              null: false
-    t.date     "next_payment",        null: false
     t.integer  "company_id",          null: false
     t.integer  "plan_id",             null: false
     t.integer  "transaction_type_id", null: false
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.string   "token"
+    t.string   "trx_id"
   end
 
   add_index "billing_logs", ["company_id"], name: "index_billing_logs_on_company_id", using: :btree
@@ -101,7 +118,7 @@ ActiveRecord::Schema.define(version: 20140821161352) do
     t.string   "name",                               null: false
     t.string   "web_address",                        null: false
     t.string   "logo"
-    t.float    "pay_due",             default: 0.0
+    t.float    "months_active_left",  default: 0.0
     t.integer  "economic_sector_id",                 null: false
     t.integer  "plan_id",                            null: false
     t.integer  "payment_status_id",                  null: false
@@ -110,6 +127,8 @@ ActiveRecord::Schema.define(version: 20140821161352) do
     t.text     "description"
     t.text     "cancellation_policy"
     t.boolean  "active",              default: true
+    t.float    "due_amount",          default: 0.0
+    t.date     "due_date"
   end
 
   add_index "companies", ["economic_sector_id"], name: "index_companies_on_economic_sector_id", using: :btree
@@ -230,6 +249,13 @@ ActiveRecord::Schema.define(version: 20140821161352) do
   add_index "locations", ["company_id"], name: "index_locations_on_company_id", using: :btree
   add_index "locations", ["district_id"], name: "index_locations_on_district_id", using: :btree
 
+  create_table "numeric_parameters", force: true do |t|
+    t.string   "name"
+    t.float    "value"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
   create_table "payment_statuses", force: true do |t|
     t.string   "name",        null: false
     t.text     "description", null: false
@@ -243,6 +269,7 @@ ActiveRecord::Schema.define(version: 20140821161352) do
     t.integer  "company_id",   null: false
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.string   "trx_id"
   end
 
   add_index "plan_logs", ["company_id"], name: "index_plan_logs_on_company_id", using: :btree
@@ -290,6 +317,33 @@ ActiveRecord::Schema.define(version: 20140821161352) do
 
   add_index "provider_times", ["day_id"], name: "index_provider_times_on_day_id", using: :btree
   add_index "provider_times", ["service_provider_id"], name: "index_provider_times_on_service_provider_id", using: :btree
+
+  create_table "punto_pagos_confirmations", force: true do |t|
+    t.string   "token",              null: false
+    t.string   "trx_id",             null: false
+    t.string   "payment_method",     null: false
+    t.float    "amount",             null: false
+    t.date     "approvement_date",   null: false
+    t.string   "card_number"
+    t.string   "dues_number"
+    t.string   "dues_type"
+    t.string   "dues_amount"
+    t.date     "first_due_date"
+    t.string   "operation_number"
+    t.string   "authorization_code", null: false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.string   "response"
+  end
+
+  create_table "punto_pagos_creations", force: true do |t|
+    t.string   "trx_id",         null: false
+    t.string   "payment_method", null: false
+    t.float    "amount",         null: false
+    t.text     "details"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
 
   create_table "regions", force: true do |t|
     t.string   "name",       null: false
@@ -347,6 +401,19 @@ ActiveRecord::Schema.define(version: 20140821161352) do
   end
 
   add_index "service_categories", ["company_id"], name: "index_service_categories_on_company_id", using: :btree
+
+  create_table "service_payment_logs", force: true do |t|
+    t.string   "token"
+    t.string   "trx_id"
+    t.integer  "service_id",          null: false
+    t.integer  "company_id",          null: false
+    t.decimal  "amount",              null: false
+    t.integer  "transaction_type_id", null: false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "service_payment_logs", ["transaction_type_id"], name: "index_service_payment_logs_on_transaction_type_id", using: :btree
 
   create_table "service_providers", force: true do |t|
     t.integer  "location_id"

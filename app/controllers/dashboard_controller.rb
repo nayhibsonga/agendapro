@@ -6,6 +6,7 @@ class DashboardController < ApplicationController
 
 	def index
 		# @lastBookings = Booking.all.order("id desc").limit(5).reverse
+		@due_payment = true if Company.find(current_user.company_id).payment_status == PaymentStatus.find_by_name("Emitido") unless current_user.role_id == Role.find_by_name("Super Admin").id
 		@service_providers = ServiceProvider.where(location_id: Location.where(company_id: current_user.company_id).accessible_by(current_ability))
 		@lastBookings = Booking.where(service_provider_id: @service_providers).where('start >= ?', Time.now).order(updated_at: :desc).limit(50)
 		@todayBookings = Booking.where(service_provider_id: @service_providers).where("DATE(start) = DATE(?)", Time.now).order(:start)

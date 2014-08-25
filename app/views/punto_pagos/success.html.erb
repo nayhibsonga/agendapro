@@ -1,0 +1,72 @@
+<% if ["billing","plan"].include? @success_page %>
+<div class="main">
+    <section class="pricing_wrapper">
+        <div class="container">
+			<div class="well well-lg">
+				<div class="row">
+					<div class="col-md-6">
+						<hr>
+						<% if @success_page == "billing" %>
+						<h4>Resumen de tu Pago</h4>
+						<dl class="dl-horizontal">
+							<dt>¿Qué pagaste?</dt>
+							<dd><%= @booking.service.name %></dd>
+							<dt>¿Cuántos Meses?</dt>
+							<dd><%= @booking.location.address %>, <%= @booking.location.district.name %></dd>
+							<dt>¿Con quién?</dt>
+							<dd><%= @booking.service_provider.public_name %></dd>
+							<dt>¿Cuándo?</dt>
+							<dd><%= l @booking.start %></dd>
+							<% if !@booking.notes.empty? %>
+							<dt>Notas</dt>
+							<dd><%= @booking.notes %></dd>
+							<% end %>
+						</dl>
+						<% elsif @success_page == "plan" %>
+						<h4>Resumen de tu Pago</h4>
+						<dl class="dl-horizontal">
+							<dt>¿Qué reservaste?</dt>
+							<dd><%= @booking.service.name %></dd>
+							<dt>¿Dónde?</dt>
+							<dd><%= @booking.location.address %>, <%= @booking.location.district.name %></dd>
+							<dt>¿Con quién?</dt>
+							<dd><%= @booking.service_provider.public_name %></dd>
+							<dt>¿Cuándo?</dt>
+							<dd><%= l @booking.start %></dd>
+							<% if !@booking.notes.empty? %>
+							<dt>Notas</dt>
+							<dd><%= @booking.notes %></dd>
+							<% end %>
+						</dl>
+						<% end %>
+						<hr>
+						<h4>Información de la Cuenta</h4>
+						<dl class="dl-horizontal">
+							<dt>Administrador</dt>
+							<dd><%= current_user.first_name + " " + current_user.last_name %></dd>
+							<dt>Email</dt>
+							<dd><%= current_user.email %></dd>
+							<dt>Teléfono</dt>
+							<dd><%= current_user.phone %></dd>
+							<dt>Estado de Cuenta</dt>
+							<dd><%= PaymentStatus.find(@company.payment_status_id).name %></dd>
+							<dt>Meses Restantes</dt>
+							<dd><%= @company.months_active_left.to_i %> (Inclyendo este)</dd>
+							<% if @company.due_amount >= 0 %>
+					        <dt>Deuda Actual</dt>
+					        <dd><%= number_to_currency(@company.due_amount, {:unit => '$', :separator => ',', :delimiter => '.', :precision => 0})%> CLP</dd>
+					        <% else %>
+					        <dt>Saldo a Favor</dt>
+					        <dd><%= number_to_currency(-1*@company.due_amount, {:unit => '$', :separator => ',', :delimiter => '.', :precision => 0})%> CLP</dd>
+					        <% end %>
+						</dl>
+					</div>
+					<div class="col-md-6">
+						<%= image_tag("backgrounds/check.png", :class => "center-block") %>
+					</div>
+				</div>
+       		</div>
+        </div>
+    </section>
+</div>
+<% end %>

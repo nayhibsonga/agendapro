@@ -1,0 +1,39 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <strong>Name:</strong>
+  <%= @billing_info.name %>
+</p>
+
+<p>
+  <strong>Rut:</strong>
+  <%= @billing_info.rut %>
+</p>
+
+<p>
+  <strong>Address:</strong>
+  <%= @billing_info.address %>
+</p>
+
+<p>
+  <strong>Sector:</strong>
+  <%= @billing_info.sector %>
+</p>
+
+<p>
+  <strong>Email:</strong>
+  <%= @billing_info.email %>
+</p>
+
+<p>
+  <strong>Phone:</strong>
+  <%= @billing_info.phone %>
+</p>
+
+<p>
+  <strong>Company:</strong>
+  <%= @billing_info.company %>
+</p>
+
+<%= link_to 'Edit', edit_billing_info_path(@billing_info) %> |
+<%= link_to 'Back', billing_infos_path %>

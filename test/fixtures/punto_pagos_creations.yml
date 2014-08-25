@@ -1,0 +1,15 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  trx_id: 
+  payment_method: 
+  amount: 
+  details: 
+  status: MyString
+
+two:
+  trx_id: 
+  payment_method: 
+  amount: 
+  details: 
+  status: MyString

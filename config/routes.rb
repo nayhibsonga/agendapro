@@ -37,6 +37,9 @@ Agendapro::Application.routes.draw do
   resources :resource_categories
   resources :resources
   resources :company_from_emails
+  resources :billing_infos
+
+  resources :numeric_parameters
 
   resources :clients
 
@@ -105,6 +108,19 @@ Agendapro::Application.routes.draw do
   get "/tutorials", :to => 'home#tutorials',  :as => 'tutorials'
   get "/contact", :to => 'home#contact', :as => 'contact'
   post "/pcontact", :to => 'home#post_contact'
+
+  # Punto Pagos
+  get "/punto_pagos/generate_transaction/:mp/:amount", :to => 'punto_pagos#generate_transaction', :as => 'punto_pagos_generate'
+  get "/punto_pagos/generate_company_transaction/:mp/:amount", :to => 'punto_pagos#generate_company_transaction', :as => 'generate_company_transaction'
+  get "/punto_pagos/generate_plan_transaction/:mp/:plan_id", :to => 'punto_pagos#generate_plan_transaction', :as => 'generate_plan_transaction'
+  post "/punto_pagos/notification", :to => 'punto_pagos#notification', :as => 'punto_pagos_notification'
+  get "/punto_pagos/success", :to => 'punto_pagos#success', :as => 'punto_pagos_success'
+  get "/punto_pagos/failure", :to => 'punto_pagos#failure', :as => 'punto_pagos_failure'
+  post "/punto_pagos/notification/:trx", :to => 'punto_pagos#notification', :as => 'punto_pagos_notification_trx'
+  get "/punto_pagos/success/:trx", :to => 'punto_pagos#success', :as => 'punto_pagos_success_trx'
+  get "/punto_pagos/failure/:trx", :to => 'punto_pagos#failure', :as => 'punto_pagos_failure_trx'
+  get "/companies/:id/edit_payment", :to => 'companies#edit_payment', :as => 'edit_payment_company'
+
 
   # Search
   get "searchs/index"
