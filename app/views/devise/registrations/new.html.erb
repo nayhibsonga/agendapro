@@ -87,7 +87,7 @@
 							</div>
 						</div>
 						<div class="form-group has-feedback">
-							<%= builder.label :web_address, 'Direccion web', :class => 'col-sm-4 control-label' %>
+							<%= builder.label :web_address, 'Dirección Web', :class => 'col-sm-4 control-label' %>
 							<div class="col-sm-8">
 								<div class="input-group">
 									<%= builder.text_field :web_address, :required => true, :class => 'form-control', placeholder: 'misitio (requerido)' %>
@@ -99,7 +99,7 @@
 							</div>
 						</div>
 						<div class="form-group has-feedback">
-							<%= builder.label :economic_sector_id, 'Sector Economico', :class => 'col-sm-4 control-label' %>
+							<%= builder.label :economic_sector_id, 'Sector Económico', :class => 'col-sm-4 control-label' %>
 							<div class="col-sm-8">
 								<%= builder.collection_select :economic_sector_id, EconomicSector.all, :id, :name, {}, {:class => 'form-control'} %>
 							<span class="help-block"></span>
