@@ -64,9 +64,11 @@
 </div>
 
 <div class="row well">
-  <div class="col-md-5">
-    <h3><%= @company.months_active_left > 0 ? "¡Agrega más tiempo de uso a tu cuenta AgendaPro aquí!" : "¡Paga tu cuenta AgendaPro aquí!" %></h3>
+  <h3><%= @company.months_active_left > 0 ? "¡Agrega más tiempo de uso a tu cuenta AgendaPro aquí!" : "¡Paga tu cuenta AgendaPro aquí!" %></h3>
+  <div class="col-md-6">
     <p class="justified">Puedes pagar tu cuenta directamente a través de la página, por medio de WebPay o transferencias bancarias de los principales bancos. Si no te acomoda ninguna de estas opciones o tienes alguna duda respecto a tu plan actual, te invitamos a ponerte en contacto con nosotros enviando un correo a <%= link_to 'contacto@agendapro.cl', contact_path, :target => "_blank" %>, para recibir las instrucciones a seguir. </p>
+  </div>
+  <div class="col-md-6">
     <p><label>Pagar (IVA incluido):</label>
       <select class="form-control" id="amount_select">
         <option value="0">Elige una opción...</option>
@@ -107,12 +109,17 @@
       </tr>
     </table>
   </div>
-  <div class="col-md-7">
+  
+</div>
+
+<div class="row well">
+  <h3>Datos de Facturación</h3>
   <%= form_for @billing_info, html: {class: "form-horizontal" } do |f| %>
+  <div class="col-md-6">
     <div class="row">
       <div class="form-group">
-        <div class="col-sm-12">
-           <%= f.check_box :active %> <%= f.label :active, "Solicitar Factura", class: "control-label" %><br /><p class="justified"><small><bold>Nota:</bold> La factura se generará automáticamente al confirmarse el pago y los datos de facturación. Si no ingresas información de facturación o no se solicita esta, se generará una boleta a nombre del administrador de la cuenta.</small></p>
+        <div class="col-sm-7 col-sm-offset-5">
+           <%= f.check_box :active %> <%= f.label :active, "Solicitar Factura", class: "control-label" %>
         </div>
       </div>
     </div>
@@ -135,13 +142,13 @@
       </div>
     </div>
     <div class="form-group">
-      <%= f.label :contact, "Responsable Facturación:", class: "col-sm-5 control-label" %>
+      <%= f.label :contact, "Nombre Responsable:", class: "col-sm-5 control-label" %>
       <div class="col-sm-7">
-        <%= f.text_field :contact, required: true, placeholder: "Nombre", class: "form-control" %>
+        <%= f.text_field :contact, required: true, class: "form-control" %>
       </div>
     </div>
     <div class="form-group">
-      <%= f.label :address, "Dirección:", class: "col-sm-5 control-label" %>
+      <%= f.label :address, "Dirección Completa:", class: "col-sm-5 control-label" %>
       <div class="col-sm-7">
         <%= f.text_field :address, required: true, class: "form-control" %>
       </div>
@@ -149,78 +156,93 @@
     <div class="form-group">
       <%= f.label :phone, "Teléfono:", class: "col-sm-5 control-label" %>
       <div class="col-sm-7">
-        <%= f.text_field :phone, class: "form-control" %>
+        <%= f.text_field :phone, required: true, class: "form-control" %>
       </div>
     </div>
     <div class="form-group">
       <%= f.label :email, "E-Mail:", class: "col-sm-5 control-label" %>
       <div class="col-sm-7">
-        <%= f.text_field :email, class: "form-control" %>
+        <%= f.text_field :email, required: true, class: "form-control" %>
       </div>
     </div>
-
+  </div>
+  <div class="col-md-6">
     <div class="form-group">
-      <div class="actions col-sm-offset-5 col-sm-7">
+      <%= f.check_box :accept, required: true, class: "form-accept" %> <%= f.label :accept, "Autorización voluntaria de envío de DTEs por Email", class: "control-label" %>
+      <p>Acepto el envío electrónico de factura o boleta por mail a: <%= if @billing_info.email then @billing_info.email else "E-MAIL" end %></p>
+      <div class="well well-scrollable">
+        <p class="justified"><small>Yo, <%= if @billing_info.contact then @billing_info.contact else "NOMBRE RESPONSABLE" end %>, con domicilio en <%= if @billing_info.address then @billing_info.address else "DIRECCIÓN" end %>, Chile, en mi calidad de receptor manual de documentos electrónicos, de conformidad con la Resolución Exenta No. 11/ de fecha 14 de febrero de 2003 del Servicio de Impuestos Internos (agregar link a la información) , que estableció el procedimiento para que contribuyentes autorizados para emitir documentos electrónicos puedan también enviarlos por estos medios a receptores manuales, declaro lo siguiente:<br />
+        Por el presente instrumento autorizo a la empresa GUNEI INVESTMENT SPA, RUT 76.233.336-8, para que la factura correspondiente al uso de la plataforma web AgendaPro, me sea entregada solamente por un medio electrónico, mediante envío a la dirección de correo <%= if @billing_info.email then @billing_info.email else "E-MAIL" end %>.<br />
+        Me comprometo a cumplir las siguientes condiciones, en relación a los documentos tributarios, en caso de requerirlo para respaldar la información contable:
+        </small></p>
+        <ol>
+          <li><small>Imprimir los documentos recibidos en forma electrónica, para cada período tributario, en forma inmediata a su recepción desde el emisor.</small></li>
+          <li><small>Imprimir el documento en el tamaño y forma que fue generado.</small></li>
+          <li><small>Utilizar papel blanco tipo original de tamaño mínimo 21,5 cms. x 14 cms. (1/2 carta) y de tamaño máximo 21,5 x 33 cms. (oficio).</small></li>
+          <li><small>Imprimir en una calidad que asegure la permanencia de la legibilidad del documento durante un periodo mínimo de seis años, conforme lo establece la legislación vigente sobre la materia. Esta impresión se hará hecha usando impresión láser o de inyección de tinta, excepto que se establezca una autorización o norma distinta al respecto.</small></li>
+        </ol>
+        <p class="justified">Nota: <small>La factura se generará automáticamente al confirmarse el pago y los datos de facturación. Si no ingresas información de facturación o no se solicita esta, se generará una boleta a nombre del administrador de la cuenta.</small></p>
+      </div>
+    </div>
+    <div class="form-group">
+      <div class="actions col-sm-12">
         <%= f.submit 'Guardar', :class => 'btn btn-agendapro-claro' %>
         <%= link_to 'Eliminar', @billing_info, method: :delete, data: { confirm: 'Are you sure?' }, class: "btn btn-danger" %>
       </div>
     </div>
-      
-  <% end %>
   </div>
+  <% end %>
 </div>
 
 <div class="row well">
   <h3>Información de la Cuenta:</h3>
-  <p>
-    <div class="col-md-5 col-md-offset-1">
-      <div class="row">
-        <label class="col-sm-5">Administrador</label>
-        <div class="col-sm-7">
-          <%= current_user.first_name + " " + current_user.last_name %>
-        </div>
-      </div>
-      <div class="row">
-        <label class="col-sm-5">Email</label>
-        <div class="col-sm-7">
-          <%= current_user.email %>
-        </div>
-      </div>
-      <div class="row">
-        <label class="col-sm-5">Teléfono</label>
-        <div class="col-sm-7">
-          <%= current_user.phone %>
-        </div>
+  <div class="col-md-5 col-md-offset-1">
+    <div class="row">
+      <label class="col-sm-5">Administrador</label>
+      <div class="col-sm-7">
+        <%= current_user.first_name + " " + current_user.last_name %>
       </div>
     </div>
-    <div class="col-md-5">
-      <div class="row">
-        <label class="col-sm-5">Estado de Cuenta</label>
-        <div class="col-sm-7">
-          <%= PaymentStatus.find(@company.payment_status_id).name %>
-        </div>
-      </div>
-      <div class="row">
-        <label class="col-sm-5">Meses Restantes</label>
-        <div class="col-sm-7">
-          <%= @company.months_active_left.to_i %> (Inclyendo este)
-        </div>
-      </div>
-      <div class="row">
-        <% if @company.due_amount >= 0 %>
-        <label class="col-sm-5">Deuda Actual</label>
-        <div class="col-sm-7">
-          <%= number_to_currency(@company.due_amount, {:unit => '$', :separator => ',', :delimiter => '.', :precision => 0})%> CLP
-        </div>
-        <% else %>
-        <label class="col-sm-5">Saldo a Favor</label>
-        <div class="col-sm-7">
-          <%= number_to_currency(-1*@company.due_amount, {:unit => '$', :separator => ',', :delimiter => '.', :precision => 0})%> CLP
-        </div>
-        <% end %>
+    <div class="row">
+      <label class="col-sm-5">Email</label>
+      <div class="col-sm-7">
+        <%= current_user.email %>
       </div>
     </div>
-  </p>
+    <div class="row">
+      <label class="col-sm-5">Teléfono</label>
+      <div class="col-sm-7">
+        <%= current_user.phone %>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-5">
+    <div class="row">
+      <label class="col-sm-5">Estado de Cuenta</label>
+      <div class="col-sm-7">
+        <%= PaymentStatus.find(@company.payment_status_id).name %>
+      </div>
+    </div>
+    <div class="row">
+      <label class="col-sm-5">Meses Restantes</label>
+      <div class="col-sm-7">
+        <%= @company.months_active_left.to_i %> (Inclyendo este)
+      </div>
+    </div>
+    <div class="row">
+      <% if @company.due_amount >= 0 %>
+      <label class="col-sm-5">Deuda Actual</label>
+      <div class="col-sm-7">
+        <%= number_to_currency(@company.due_amount, {:unit => '$', :separator => ',', :delimiter => '.', :precision => 0})%> CLP
+      </div>
+      <% else %>
+      <label class="col-sm-5">Saldo a Favor</label>
+      <div class="col-sm-7">
+        <%= number_to_currency(-1*@company.due_amount, {:unit => '$', :separator => ',', :delimiter => '.', :precision => 0})%> CLP
+      </div>
+      <% end %>
+    </div>
+  </div>
 </div>
 
 <div class="modal fade" id="changePlanModal" tabindex="-1" role="dialog" aria-labelledby="changePlanModalLabel" aria-hidden="true">

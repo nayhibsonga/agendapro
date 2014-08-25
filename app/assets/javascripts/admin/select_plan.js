@@ -7,16 +7,20 @@ $(function() {
 	}
 	if (!$('#billing_info_active').prop('checked')) {
 		$('input.form-control').attr('disabled', true);
+		$('input.form-accept').attr('disabled', true);
 	}
 	else {
 		$('input.form-control').attr('disabled', false);
+		$('input.form-accept').attr('disabled', false);
 	}
 	$('#billing_info_active').change(function() {
 		if (!$('#billing_info_active').prop('checked')) {
 			$('input.form-control').attr('disabled', true);
+			$('input.form-accept').attr('disabled', true);
 		}
 		else {
 			$('input.form-control').attr('disabled', false);
+			$('input.form-accept').attr('disabled', false);
 		}
 	});
 	$('#amount_select').change(function(o) {
