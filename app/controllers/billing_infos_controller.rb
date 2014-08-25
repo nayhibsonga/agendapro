@@ -74,6 +74,6 @@ class BillingInfosController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def billing_info_params
-      params.require(:billing_info).permit(:active, :name, :rut, :address, :sector, :email, :phone)
+      params.require(:billing_info).permit(:active, :contact, :name, :rut, :address, :sector, :email, :phone)
     end
 end
