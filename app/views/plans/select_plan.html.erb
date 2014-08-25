@@ -64,7 +64,7 @@
 </div>
 
 <div class="row well">
-  <div class="col-md-6">
+  <div class="col-md-5">
     <h3><%= @company.months_active_left > 0 ? "¡Agrega más tiempo de uso a tu cuenta AgendaPro aquí!" : "¡Paga tu cuenta AgendaPro aquí!" %></h3>
     <p class="justified">Puedes pagar tu cuenta directamente a través de la página, por medio de WebPay o transferencias bancarias de los principales bancos. Si no te acomoda ninguna de estas opciones o tienes alguna duda respecto a tu plan actual, te invitamos a ponerte en contacto con nosotros enviando un correo a <%= link_to 'contacto@agendapro.cl', contact_path, :target => "_blank" %>, para recibir las instrucciones a seguir. </p>
     <p><label>Pagar (IVA incluido):</label>
@@ -107,54 +107,60 @@
       </tr>
     </table>
   </div>
-  <div class="col-md-6">
+  <div class="col-md-7">
   <%= form_for @billing_info, html: {class: "form-horizontal" } do |f| %>
     <div class="row">
       <div class="form-group">
-        <div class="col-sm-10 col-sm-offset-1">
+        <div class="col-sm-12">
            <%= f.check_box :active %> <%= f.label :active, "Solicitar Factura", class: "control-label" %><br /><p class="justified"><small><bold>Nota:</bold> La factura se generará automáticamente al confirmarse el pago y los datos de facturación. Si no ingresas información de facturación o no se solicita esta, se generará una boleta a nombre del administrador de la cuenta.</small></p>
         </div>
       </div>
     </div>
     <div class="form-group">
-      <%= f.label :rut, "RUT Empresa:", class: "col-sm-4 control-label" %>
-      <div class="col-sm-8">
+      <%= f.label :rut, "RUT Empresa:", class: "col-sm-5 control-label" %>
+      <div class="col-sm-7">
         <%= f.text_field :rut, required: true, class: "form-control" %>
       </div>
     </div>
     <div class="form-group">
-      <%= f.label :name, "Razón Social:", class: "col-sm-4 control-label" %>
-      <div class="col-sm-8">
+      <%= f.label :name, "Razón Social:", class: "col-sm-5 control-label" %>
+      <div class="col-sm-7">
         <%= f.text_field :name, required: true, class: "form-control" %>
       </div>
     </div>
     <div class="form-group">
-      <%= f.label :sector, "Giro:", class: "col-sm-4 control-label" %>
-      <div class="col-sm-8">
+      <%= f.label :sector, "Giro:", class: "col-sm-5 control-label" %>
+      <div class="col-sm-7">
         <%= f.text_field :sector, required: true, class: "form-control" %>
       </div>
     </div>
     <div class="form-group">
-      <%= f.label :address, "Dirección:", class: "col-sm-4 control-label" %>
-      <div class="col-sm-8">
+      <%= f.label :contact, "Responsable Facturación:", class: "col-sm-5 control-label" %>
+      <div class="col-sm-7">
+        <%= f.text_field :contact, required: true, placeholder: "Nombre", class: "form-control" %>
+      </div>
+    </div>
+    <div class="form-group">
+      <%= f.label :address, "Dirección:", class: "col-sm-5 control-label" %>
+      <div class="col-sm-7">
         <%= f.text_field :address, required: true, class: "form-control" %>
       </div>
     </div>
     <div class="form-group">
-      <%= f.label :phone, "Teléfono:", class: "col-sm-4 control-label" %>
-      <div class="col-sm-8">
+      <%= f.label :phone, "Teléfono:", class: "col-sm-5 control-label" %>
+      <div class="col-sm-7">
         <%= f.text_field :phone, class: "form-control" %>
       </div>
     </div>
     <div class="form-group">
-      <%= f.label :email, "E-Mail:", class: "col-sm-4 control-label" %>
-      <div class="col-sm-8">
+      <%= f.label :email, "E-Mail:", class: "col-sm-5 control-label" %>
+      <div class="col-sm-7">
         <%= f.text_field :email, class: "form-control" %>
       </div>
     </div>
 
     <div class="form-group">
-      <div class="actions col-sm-offset-4 col-sm-8">
+      <div class="actions col-sm-offset-5 col-sm-7">
         <%= f.submit 'Guardar', :class => 'btn btn-agendapro-claro' %>
         <%= link_to 'Eliminar', @billing_info, method: :delete, data: { confirm: 'Are you sure?' }, class: "btn btn-danger" %>
       </div>
