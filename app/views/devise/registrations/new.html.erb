@@ -1,7 +1,14 @@
 <div class="row">
-	<h2>Regístrate</h2>
-	<h4>Sólo necesitaremos un poco de información. <%= "¡Es absolutamente gratis!" unless params[:plan] || params[:user][:company_attributes][:plan_id] %></h4>
-
+	<section class="hgroup">
+		<h2>Regístrate</h2>
+		<h2 class="section_header">Sólo necesitaremos un poco de información. <%= "¡Es absolutamente gratis!" unless params[:plan] || params[:user][:company_attributes][:plan_id] %></h2>
+		<div class="line-breadcrumb">
+	        <ul class="breadcrumb pull-right">
+	            <li><%= link_to "Inicio", root_path %> </li>
+	            <li class="active">Registro Empresa</li>
+	        </ul>
+    	</div>
+	</section>
 	<div class="col-sm-8 col-md-9">
 		<%= form_for resource, :as => resource_name, :url => registration_path(resource_name), :html => { :class => 'form-horizontal well', :multipart => true } do |f| %>
 			<% if params[:plan] || params[:user][:company_attributes][:plan_id] %>
