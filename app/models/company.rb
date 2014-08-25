@@ -42,52 +42,52 @@ class Company < ActiveRecord::Base
 				company.payment_status_id = PaymentStatus.find_by_name("Emitido").id
 			end
 			if company.save
-				puts "Company id "+company.id+" OK substract_month payment_status_id "+payment_status
+				puts "Company id "+company.id.to_s+" OK substract_month payment_status_id "+payment_status
 			else
-				puts "Company id "+company.id+" ERROR substract_month payment_status_id "+payment_status+" "+company.errors
+				puts "Company id "+company.id.to_s+" ERROR substract_month payment_status_id "+payment_status
 			end
 		end
 	end
 
 	def self.payment_expiry
-		where(payment_status_id: PaymentStatus.find_by_name("Emitido").id).where('due_date > ?', 9.days.ago).each do |company|
+		where(payment_status_id: PaymentStatus.find_by_name("Emitido").id).where('due_date < ?', 9.days.ago).each do |company|
 			company.payment_status_id = PaymentStatus.find_by_name("Vencido").id
 			if company.save
-				puts "Company id "+company.id+" OK payment_expiry"
+				puts "Company id "+company.id.to_s+" OK payment_expiry"
 			else
-				puts "Company id "+company.id+" ERROR payment_expiry "+company.errors
+				puts "Company id "+company.id.to_s+" ERROR payment_expiry "
 			end
 		end
 	end
 
 	def self.payment_shut
-		where(payment_status_id: PaymentStatus.find_by_name("Vencido").id).where('due_date > ?', 19.days.ago).each do |company|
+		where(payment_status_id: PaymentStatus.find_by_name("Vencido").id).where('due_date < ?', 19.days.ago).each do |company|
 			company.payment_status_id = PaymentStatus.find_by_name("Bloqueado").id
 			if company.save
-				puts "Company id "+company.id+" OK payment_shut"
+				puts "Company id "+company.id.to_s+" OK payment_shut"
 			else
-				puts "Company id "+company.id+" ERROR payment_shut "+company.errors
+				puts "Company id "+company.id.to_s+" ERROR payment_shut "
 			end
 		end
 	end
 
 	def self.payment_inactive
-		where(payment_status_id: PaymentStatus.find_by_name("Bloqueado").id).where('due_date > ?', 1.months.ago).each do |company|
+		where(payment_status_id: PaymentStatus.find_by_name("Bloqueado").id).where('due_date < ?', 1.months.ago).each do |company|
 			company.payment_status_id = PaymentStatus.find_by_name("Inactivo").id
 			comapny.due_amount = 0.0
 			company.active = false
 			if company.save
-				puts "Company id "+company.id+" OK payment_inactive"
+				puts "Company id "+company.id.to_s+" OK payment_inactive"
 			else
-				puts "Company id "+company.id+" ERROR payment_inactive "+company.errors
+				puts "Company id "+company.id.to_s+" ERROR payment_inactive "
 			end
 		end
 	end
 
 	def self.end_trial
 		month_days = Time.now.days_in_month
-		where(payment_status_id: PaymentStatus.find_by_name("Trial").id).where('created_at >= ?', 1.months.ago).each do |company|
-			plan_id = Plan.where(locations: company.locations.where(active: true).count).where('service_providers >= ?', company.service_providers.where(active: true).count).first.id
+		where(payment_status_id: PaymentStatus.find_by_name("Trial").id).where('created_at <= ?', 1.months.ago).each do |company|
+			plan_id = Plan.where('locations >= ?', company.locations.where(active: true).count).where('service_providers >= ?', company.service_providers.where(active: true).count).first.id
 			company.plan_id = plan_id
 			company.due_date = Time.now
 			company.payment_status_id = PaymentStatus.find_by_name("Emitido").id
@@ -108,9 +108,9 @@ class Company < ActiveRecord::Base
 		where(payment_status_id: PaymentStatus.where(name: ["Emitido", "Vencido"]).pluck(:id)).where('due_date IS NOT NULL').each do |company|
 			company.due_amount += company.plan.price/month_days
 			if company.save
-				puts "Company id "+company.id+" OK add_due_amount"
+				puts "Company id "+company.id.to_s+" OK add_due_amount"
 			else
-				puts "Company id "+company.id+" ERROR add_due_amount "+company.errors
+				puts "Company id "+company.id.to_s+" ERROR add_due_amount "
 			end
 		end
 	end

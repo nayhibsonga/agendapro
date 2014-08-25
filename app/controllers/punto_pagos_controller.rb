@@ -155,11 +155,20 @@ class PuntoPagosController < ApplicationController
   end
 
   def success
-    
+    if params[:trx_id]
+      if BillingLog.find_by_trx_id(params[:trx_id])
+        billing_log = BillingLog.find_by_trx_id(params[:trx_id])
+        @message = "Muchas gracias, has agregado "+billing_log.amount+" meses a tu cuenta AgendaPro."
+      elsif PlanLog.find_by_trx_id(params[:trx_id])
+        plan_log = PlanLog.find_by_trx_id(params[:trx_id])
+        @message = "Muchas gracias, has cambiado tu cuenta al plan "+Plan.find(plan_log.new_plan_id).name+" de AgendaPro."
+      else
+        @message = ""
+      end
+    end
   end
 
   def failure
-
   end
 
   def notification
