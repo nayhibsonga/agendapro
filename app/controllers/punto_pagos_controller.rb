@@ -39,7 +39,7 @@ class PuntoPagosController < ApplicationController
       else
         NumericParameter.find_by_name(amount.to_s+"_month_discount") ? month_discount = NumericParameter.find_by_name(amount.to_s+"_month_discount").value : month_discount = 0
         # trx_id = DateTime.now.to_s.gsub(/[-:T]/i, '') + "c" + company.id.to_s + "p" + company.plan.id.to_s
-        trx_id = (company.id.to_s + "0" + plan_id + "0" +  DateTime.now.to_s.gsub(/[-:T]/i, ''))[0..20]
+        trx_id = (company.id.to_s + "0" + company.plan.id.to_s + "0" +  DateTime.now.to_s.gsub(/[-:T]/i, ''))[0..20]
         company.months_active_left > 0 ? plan_1 = (company.due_amount + price*(1+sales_tax)).round(0) : plan_1 = ((company.due_amount + (month_days - day_number + 1)*price/month_days)*(1+sales_tax)).round(0)
         due = sprintf('%.2f', ((plan_1 + price*(amount-1)*(1+sales_tax))*(1-month_discount)).round(0))
         req = PuntoPagos::Request.new()
