@@ -10,7 +10,7 @@ Install RVM: sudo apt-get instal rvm
 Install ruby: rvm install ruby-2.0.0
 
 * System dependencies
-Install ImageMagick: sudo apt-get ImageMagick libmagickwand-dev
+Install ImageMagick: sudo apt-get install ImageMagick libmagickwand-dev
 Test ImageMagick: convert
 Usin ImageMagick: convert zoolander.jpg -resize 200x200 -background transparent -gravity center -extent 200x200 zoolander.jpg
 
