@@ -19,10 +19,19 @@
 	transferencia = TransactionType.create(name: "Transferencia", description: "El usuario paga por trasferencia bancaria")
 
 # => Estado de Pago de las Empresas
-	al_dia = PaymentStatus.create(name: "Al día", description: "La empresa tiene todos los pagos al día")
-	prueba = PaymentStatus.create(name: "Período de Prueba", description: "La empresa está en período de prueba")
-	atrasada = PaymentStatus.create(name: "Atrasada", description: "La empresa está atrasada en el pago del mes en curso")
-	bloqueada = PaymentStatus.create(name: "Bloqueada", description: "La empresa está bloqueada por no pago del plan")
+	activo = PaymentStatus.create(name: "Activo", description: "La empresa tiene todos los pagos al día")
+	inactivo = PaymentStatus.create(name: "Inactivo", description: "Empresa inactivada por no pago/uso")
+	emitido = PaymentStatus.create(name: "Emitido", description: "La empresa tiene un pago emitido vigente, aún no vencido")
+	bloqueado = PaymentStatus.create(name: "Bloqueado", description: "La empresa está bloqueada por no pago del plan")
+	trial = PaymentStatus.create(name: "Trial", description: "La empresa está en período de prueba")
+	vencido = PaymentStatus.create(name: "Vencido", description: "La empresa está atrasada en el pago del mes en curso")
+
+# => Configuraciones Globales de la Aplicación
+	iva = NumericParameter.create(name: "sales_tax", value: 0.19)
+	cuatro_meses = NumericParameter.create(name: "4_month_discount", value: 0.05)
+	seis_meses = NumericParameter.create(name: "6_month_discount", value: 0.1)
+	nueve_meses = NumericParameter.create(name: "9_month_discount", value: 0.15)
+	doce_meses = NumericParameter.create(name: "12_month_discount", value: 0.2)
 
 # => Sectores Eonómicos de las Empresas
 	estetica = EconomicSector.create(name: "Centros de Estética")

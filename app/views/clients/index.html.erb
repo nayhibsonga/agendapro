@@ -42,7 +42,7 @@
 					<%= text_field_tag :search, nil, :class => "form-control", :placeholder => "Buscar por nombre, apellido o email...", :value => params[:search] %>
 				</div>
 				<div class="col-md-2">
-					<button class="btn btn-agendapro-claro pull-right" type="submit" action="/clients" value="client_filter"><i class="fa fa-search"><span> Buscar</span></i></button>
+					<button class="btn btn-agendapro-claro pull-right" type="submit" action="/clients" value="client_filter"><i class="fa fa-search"></i><span> Buscar</span></button>
 				</div>
 			</div>
 		</div>
@@ -184,7 +184,7 @@
 				</div>
 				<div class="modal-footer">
 					<button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
-					<button class="btn btn-agendapro-claro" type="submit" action="/send_mail_client" value="client_mailer"><i class="fa fa-envelope-o"><span> Enviar</span></i></button>
+					<button class="btn btn-agendapro-claro" type="submit" action="/send_mail_client" value="client_mailer"><i class="fa fa-envelope-o"></i><span> Enviar</span></button>
 				</div>
 			<% end %>
 		</div>

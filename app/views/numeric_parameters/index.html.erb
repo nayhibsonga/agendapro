@@ -1,0 +1,29 @@
+<h1>Listing numeric_parameters</h1>
+
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Value</th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @numeric_parameters.each do |numeric_parameter| %>
+      <tr>
+        <td><%= numeric_parameter.name %></td>
+        <td><%= numeric_parameter.value %></td>
+        <td><%= link_to 'Show', numeric_parameter %></td>
+        <td><%= link_to 'Edit', edit_numeric_parameter_path(numeric_parameter) %></td>
+        <td><%= link_to 'Destroy', numeric_parameter, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<br>
+
+<%= link_to 'New Numeric parameter', new_numeric_parameter_path %>

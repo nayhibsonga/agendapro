@@ -1,27 +1,78 @@
-<%= form_for @company_setting, :html => {:class => 'form-horizontal'} do |f| %>
-	<% if @company_setting.errors.any? %>
-		<div id="error_explanation">
-			<h2><%= pluralize(@company_setting.errors.count, "error") %> prohibited this company_setting from being saved:</h2>
-
-			<ul>
-			<% @company_setting.errors.full_messages.each do |msg| %>
-				<li><%= msg %></li>
-			<% end %>
-			</ul>
-		</div>
-	<% end %>
-
-	<%= f.hidden_field :company %>
-	<!-- <div class="form-group">
-		<%= f.label :email, 'Email', :class => 'col-sm-3 control-label' %>
-		<div class="col-sm-4">
-			<div class="checkbox">
-				<label>
-					<%= f.check_box :email %>
-				</label>
+<div class="modal fade" id="fromEmail" tabindex="-1" role="dialog" aria-labelledby="fromEmailLabel" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+				<h4 class="modal-title" id="myModalLabel">Agregar Remitente</h4>
 			</div>
+			<%= form_for @company_from_email, :html => {:class => 'form-horizontal'} do |f| %>
+				<div class="modal-body">
+
+					<%= f.hidden_field :company_id, :value => current_user.company.id %>
+					<div class="form-group has-feedback">
+						<%= f.label :email, 'E-mail', :class => 'control-label col-xs-2' %>
+						<div class="col-xs-10">
+							<%= f.text_field :email, :class => 'form-control', :placeholder => 'email@dominio.cl (requerido)' %>
+							<span class="help-block"></span>
+							<span class="form-control-feedback"></span>
+							<span class="help-block">Este es el email desde el cual se enviaran los correos.</span>
+						</div>
+					</div>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+					<%= f.submit 'Guardar', :class => 'btn btn-agendapro-claro' %>
+				</div>
+			<% end %>
 		</div>
-	</div> -->
+	</div>
+</div>
+
+<div class="row well well-reports">
+	<ul id="myTab" class="nav nav-tabs" role="tablist">
+	  <li class="active"><a href="#render_content" role="tab" data-toggle="tab" class="tab_index" id="statuses">General</a></li>
+	  <li class=""><a href="#render_content" role="tab" data-toggle="tab" class="tab_index" id="locations">Sucursales</a></li>
+	  <li class=""><a href="#render_content" role="tab" data-toggle="tab" class="tab_index" id="services">Servicios</a></li>
+	</ul>
+	<div id="myTabContent" class="tab-content">
+	<br />	
+	  <div class="tab-pane active" id="render_content">
+	    <%= render 'statuses' %>
+	  </div>
+	</div>
+</div>
+
+<div class="container">
+	<div class="row">
+		<h2>
+			Remitentes
+			<button class="btn btn-agendapro-claro pull-right" data-toggle="modal" data-target="#fromEmail">
+				Agregar Email
+			</button>
+		</h2>
+		<table class="table table-hover">
+			<thead>
+				<tr>
+					<th>Remitente</th>
+					<th>Confirmado</th>
+					<th>Eliminar</th>
+				</tr>
+			</thead>
+			<tbody>
+				<% @emails.each do |email| %>
+					<tr>
+						<td><%= email.email %></td>
+						<td><%= unless email.confirmed then 'Falta confirmación' else 'Si' end %></td>
+						<td><%= link_to '<i class="fa fa-trash-o"></i>'.html_safe, email, method: :delete, data: { confirm: 'Are you sure?' }, class: 'btn btn-danger' %></td>
+					</tr>
+					<% end %>
+			</tbody>
+		</table>
+	</div>
+</div>
+
+<h2>Firma Email</h2>
+<%= form_for @company_setting, :html => {:class => 'form-horizontal'} do |f| %>
 	<div class="well">
 		<div class="form-group">
 			<%= f.label :signature, 'Firma', :class => 'col-sm-1 control-label' %>
@@ -37,4 +88,20 @@
 			</div>
 		</div>
 	</div>
+<% end %>
+
+<% content_for :scripts do %>
+  <%= javascript_include_tag 'validations/validate' %>
+  <%= javascript_include_tag 'validations/admin/company-email' %>
+  <script type="text/javascript">
+  	$(function () {
+  		$('#fromEmail').on('hidden.bs.modal', function (e) {
+			validator.resetForm();
+			$('.has-success').removeClass('has-success');
+			$('.fa.fa-check').removeClass('fa fa-check');
+			$('.has-error').removeClass('has-error');
+			$('.fa.fa-times').removeClass('fa fa-times');
+		});
+  	});
+  </script>
 <% end %>

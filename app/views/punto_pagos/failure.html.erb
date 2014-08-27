@@ -1,0 +1,23 @@
+<div class="main">
+    <section class="pricing_wrapper">
+        <div class="container">
+			<div class="well well-lg">
+				<div class="row">
+					<div class="col-md-6">
+						<hr>
+						<h4>¡Lo sentimos, la transacción falló! Inténtalo nuevamente y si el problema persiste, ponte en contacto con nosotros.</h4>
+						<dl class="dl-horizontal">
+							<dt>Código de la Transacción</dt>
+							<dd><%= params[:token] %></dd>
+							<dt>¿Dudas o consultas?</dt>
+							<dd>Por favor envíanos un correo a <i class="fa fa-envelope-square"></i> contacto@agendapro.cl o llamanos al <i class="fa fa-phone-square"></i> 9-5178 5898</dd>
+						</dl>
+					</div>
+					<div class="col-md-6">
+						<%= image_tag("backgrounds/cross.png", :class => "center-block") %>
+					</div>
+				</div>
+       		</div>
+        </div>
+    </section>
+</div>

@@ -14,10 +14,29 @@ class ServiceProvider < ActiveRecord::Base
 	accepts_nested_attributes_for :user, :reject_if => :all_blank, :allow_destroy => true
 	accepts_nested_attributes_for :provider_times, :reject_if => :all_blank, :allow_destroy => true
 	
-	validates :company, :public_name, :notification_email, :presence => true
+	validates :company, :public_name, :notification_email, :location, :presence => true
 
-	validate :time_empty_or_negative, :time_in_location_time, :times_overlap, :outcall_location_provider
-	validate :plan_service_providers, :on => :create
+	validate :time_empty_or_negative, :time_in_location_time, :times_overlap, :outcall_location_provider, :plan_service_providers
+
+	validate :new_plan_service_providers, :on => :create
+
+	def plan_service_providers
+		if self.active_changed? && self.active
+			if self.company.service_providers.where(active:true).count >= self.company.plan.service_providers
+				errors.add(:base, "No se pueden agregar más prestadores con el plan actual, ¡mejóralo!.")
+			end
+		else
+			if self.company.locations.where(active:true).count > self.company.plan.locations
+				errors.add(:base, "No se pueden agregar más prestadores con el plan actual, ¡mejóralo!.")
+			end
+		end
+	end
+
+	def new_plan_service_providers
+		if self.company.service_providers.where(active:true).count >= self.company.plan.service_providers
+			errors.add(:base, "No se pueden agregar más prestadores con el plan actual, ¡mejóralo!.")
+		end
+	end
 
 	def staff_user
 		if self.user && self.user.role_id != Role.find_by_name("Staff")
@@ -38,13 +57,6 @@ class ServiceProvider < ActiveRecord::Base
 			if notOutcall
 				errors.add(:base, "Los servicios asociados a un prestador de una sucursal a domicilio, deben ser exclusivamente servicios a domicilio.")
 			end
-		end
-	end
-
-	def plan_service_providers
-		@company = self.company
-		if company.service_providers.count >= company.plan.service_providers
-			errors.add(:base, "No se pueden agregar más prestadores de servicios con el plan actual, ¡mejóralo!.")
 		end
 	end
 

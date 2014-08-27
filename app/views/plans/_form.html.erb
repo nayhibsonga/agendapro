@@ -31,6 +31,12 @@
       <%= f.number_field :service_providers, :in => 1...1000, :required => true, :class => 'form-control' %>
     </div>
   </div>
+  <div class="form-group">
+    <%= f.label :price, 'Precio CLP:', :class => 'col-sm-3 control-label' %>
+    <div class="col-sm-4">
+      <%= f.number_field :price, :required => true, :class => 'form-control' %>
+    </div>
+  </div>
   
   <div class="form-group">
     <div class="col-sm-offset-3 col-sm-4">

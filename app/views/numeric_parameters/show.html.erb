@@ -1,0 +1,14 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <strong>Name:</strong>
+  <%= @numeric_parameter.name %>
+</p>
+
+<p>
+  <strong>Value:</strong>
+  <%= @numeric_parameter.value %>
+</p>
+
+<%= link_to 'Edit', edit_numeric_parameter_path(@numeric_parameter) %> |
+<%= link_to 'Back', numeric_parameters_path %>
