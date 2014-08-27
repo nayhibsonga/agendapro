@@ -155,17 +155,20 @@ class PuntoPagosController < ApplicationController
   end
 
   def success
-    if params[:trx_id]
-      if BillingLog.find_by_trx_id(params[:trx_id])
-        billing_log = BillingLog.find_by_trx_id(params[:trx_id])
-        @comapny = Company.find(billing_log.company_id)
-        @success_page = "billing"
-      elsif PlanLog.find_by_trx_id(params[:trx_id])
-        plan_log = PlanLog.find_by_trx_id(params[:trx_id])
-        @comapny = Company.find(plan_log.company_id)
-        @success_page = "plan"
-      else
-        @success_page = ""
+    if params[:token]
+      if PuntoPagosConfirmation.find_by_token(params[:token])
+        trx_id = PuntoPagosConfirmation.find_by_token(params[:token]).trx_id
+        if BillingLog.find_by_trx_id(trx_id)
+          billing_log = BillingLog.find_by_trx_id(trx_id)
+          @comapny = Company.find(billing_log.company_id)
+          @success_page = "billing"
+        elsif PlanLog.find_by_trx_id(trx_id)
+          plan_log = PlanLog.find_by_trx_id(trx_id)
+          @comapny = Company.find(plan_log.company_id)
+          @success_page = "plan"
+        else
+          @success_page = ""
+        end
       end
     end
   end
