@@ -28,8 +28,8 @@
         <td><%= resource.name %></td>
         <td><%= resource.resource_category.name %></td>
         <td>
-          <%= link_to '<i class="fa fa-pencil"></i> Editar'.html_safe, edit_resource_path(resource), :class => "btn btn-warning" %>
-          <%= link_to '<i class="fa fa-trash-o"></i> Eliminar'.html_safe, resource, :class => "btn btn-danger", method: :delete, data: { confirm: '¿Estás seguro de eliminar el Recurso seleccionado?' } %>
+          <%= link_to '<i class="fa fa-pencil"></i> Editar'.html_safe, edit_resource_path(resource), :class => "btn btn-sm btn-warning" %>
+          <%= link_to '<i class="fa fa-trash-o"></i> Eliminar'.html_safe, resource, :class => "btn btn-sm btn-danger", method: :delete, data: { confirm: '¿Estás seguro de eliminar el Recurso seleccionado?' } %>
         </td>
       </tr>
     <% end %>
