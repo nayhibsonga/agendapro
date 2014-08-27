@@ -10,7 +10,7 @@
 		</li>
 		<li><%= link_to '<i class="fa fa-calendar"></i> Mi Agenda'.html_safe, my_agenda_path(:id => current_user.id) %></li>
 		<li><%= link_to '<i class="fa fa-user"></i> Editar Perfil'.html_safe, edit_user_registration_path %></li>
+		<li><%= link_to '<i class="fa fa-question"></i> Tutoriales'.html_safe, tutorials_path %></li>
 		<li><%= link_to '<i class="fa fa-power-off"></i> Salir'.html_safe, destroy_user_session_path, method: :delete %></li>
 	</ul>
 </li>
-
