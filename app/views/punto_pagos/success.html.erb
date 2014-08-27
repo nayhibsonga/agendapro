@@ -10,13 +10,13 @@
 						<h4>Resumen de tu Pago</h4>
 						<dl class="dl-horizontal">
 							<dt>¿Qué pagaste?</dt>
-							<dd><%= Plan.find(billing_log.plan_id).name %></dd>
+							<dd><%= Plan.find(@billing_log.plan_id).name %></dd>
 							<dt>¿Cuántos Meses?</dt>
-							<dd><%= billing_log.amount %></dd>
+							<dd><%= @billing_log.amount %></dd>
 							<dt>¿Cuánto costó?</dt>
-							<dd><%= billing_log.due %></dd>
+							<dd><%= @billing_log.due %></dd>
 							<dt>Código de la Transacción</dt>
-							<dd><%= billing_log.trx_id %></dd>
+							<dd><%= @billing_log.trx_id %></dd>
 							<dt>¿Dudas o consultas?</dt>
 							<dd>Por favor envíanos un correo a <i class="fa fa-envelope-square"></i> contacto@agendapro.cl o llamanos al <i class="fa fa-phone-square"></i> 9-5178 5898</dd>
 						</dl>
@@ -24,13 +24,13 @@
 						<h4>Resumen de tu Pago</h4>
 						<dl class="dl-horizontal">
 							<dt>Plan anterior</dt>
-							<dd><%= Plan.find(plan_log.prev_plan_id).name %></dd>
+							<dd><%= Plan.find(@plan_log.prev_plan_id).name %></dd>
 							<dt>Nuevo Plan</dt>
-							<dd><%= Plan.find(plan_log.new_plan_id).name %></dd>
+							<dd><%= Plan.find(@plan_log.new_plan_id).name %></dd>
 							<dt>¿Cuánto costó?</dt>
-							<dd><%= PuntoPagosConfirmation.find_by_trx_id(plan_log.trx_id).amount %></dd>
+							<dd><%= PuntoPagosConfirmation.find_by_trx_id(@plan_log.trx_id).amount %></dd>
 							<dt>Código de la Transacción</dt>
-							<dd><%= plan_log.trx_id %></dd>
+							<dd><%= @plan_log.trx_id %></dd>
 							<dt>¿Dudas o consultas?</dt>
 							<dd>Por favor envíanos un correo a <i class="fa fa-envelope-square"></i> contacto@agendapro.cl o llamanos al <i class="fa fa-phone-square"></i> 9-5178 5898</dd>
 						</dl>
