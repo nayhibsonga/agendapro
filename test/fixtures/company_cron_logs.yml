@@ -1,0 +1,11 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  company_id: 
+  action_ref: 
+  details: MyText
+
+two:
+  company_id: 
+  action_ref: 
+  details: MyText

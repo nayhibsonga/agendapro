@@ -184,9 +184,9 @@ class PuntoPagosController < ApplicationController
         company.due_date = nil
         company.payment_status_id = PaymentStatus.find_by_name("Activo").id
         if company.save
-          puts "OK"
+          CompanyCronLog.create(company_id: company.id, action_ref: 7, details: "OK notification_billing")
         else
-          puts company.errors.full_messages.inspect
+          CompanyCronLog.create(company_id: company.id, action_ref: 7, details: "ERROR notification_billing "+company.errors.full_messages.inspect)
         end
       elsif PlanLog.find_by_trx_id(params[:trx_id])
         plan_log = PlanLog.find_by_trx_id(params[:trx_id])
@@ -197,9 +197,9 @@ class PuntoPagosController < ApplicationController
         company.due_date = nil
         company.payment_status_id = PaymentStatus.find_by_name("Activo").id
         if company.save
-          puts "OK"
+          CompanyCronLog.create(company_id: company.id, action_ref: 8, details: "OK notification_plan")
         else
-          puts company.errors.full_messages.inspect
+          CompanyCronLog.create(company_id: company.id, action_ref: 8, details: "ERROR notification_plan "+company.errors.full_messages.inspect)
         end
       end
     end

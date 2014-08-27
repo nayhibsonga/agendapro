@@ -42,9 +42,13 @@ class Company < ActiveRecord::Base
 				company.payment_status_id = PaymentStatus.find_by_name("Emitido").id
 			end
 			if company.save
-				puts "Company id "+company.id.to_s+" OK substract_month payment_status_id "+payment_status
+				CompanyCronLog.create(company_id: company.id, action_ref: 1, details: "OK substract_month")
 			else
-				puts "Company id "+company.id.to_s+" ERROR substract_month payment_status_id "+payment_status
+				errors = ""
+				company.errors.full_messages.each do |error|
+					errors += error
+				end
+				CompanyCronLog.create(company_id: company.id, action_ref: 1, details: "ERROR substract_month "+errors)
 			end
 		end
 	end
@@ -53,9 +57,13 @@ class Company < ActiveRecord::Base
 		where(payment_status_id: PaymentStatus.find_by_name("Emitido").id).where('due_date < ?', 9.days.ago).each do |company|
 			company.payment_status_id = PaymentStatus.find_by_name("Vencido").id
 			if company.save
-				puts "Company id "+company.id.to_s+" OK payment_expiry"
+				CompanyCronLog.create(company_id: company.id, action_ref: 2, details: "OK payment_expiry")
 			else
-				puts "Company id "+company.id.to_s+" ERROR payment_expiry "
+				errors = ""
+				company.errors.full_messages.each do |error|
+					errors += error
+				end
+				CompanyCronLog.create(company_id: company.id, action_ref: 2, details: "ERROR payment_expiry "+errors)
 			end
 		end
 	end
@@ -64,9 +72,13 @@ class Company < ActiveRecord::Base
 		where(payment_status_id: PaymentStatus.find_by_name("Vencido").id).where('due_date < ?', 19.days.ago).each do |company|
 			company.payment_status_id = PaymentStatus.find_by_name("Bloqueado").id
 			if company.save
-				puts "Company id "+company.id.to_s+" OK payment_shut"
+				CompanyCronLog.create(company_id: company.id, action_ref: 3, details: "OK payment_shut")
 			else
-				puts "Company id "+company.id.to_s+" ERROR payment_shut "
+				errors = ""
+				company.errors.full_messages.each do |error|
+					errors += error
+				end
+				CompanyCronLog.create(company_id: company.id, action_ref: 3, details: "ERROR payment_shut "+errors)
 			end
 		end
 	end
@@ -77,9 +89,13 @@ class Company < ActiveRecord::Base
 			comapny.due_amount = 0.0
 			company.active = false
 			if company.save
-				puts "Company id "+company.id.to_s+" OK payment_inactive"
+				CompanyCronLog.create(company_id: company.id, action_ref: 4, details: "OK payment_inactive")
 			else
-				puts "Company id "+company.id.to_s+" ERROR payment_inactive "
+				errors = ""
+				company.errors.full_messages.each do |error|
+					errors += error
+				end
+				CompanyCronLog.create(company_id: company.id, action_ref: 4, details: "ERROR payment_inactive "+errors)
 			end
 		end
 	end
@@ -92,13 +108,13 @@ class Company < ActiveRecord::Base
 			company.due_date = Time.now
 			company.payment_status_id = PaymentStatus.find_by_name("Emitido").id
 			if company.save
-				puts "Company id "+company.id.to_s+" OK end_trial"
+				CompanyCronLog.create(company_id: company.id, action_ref: 5, details: "OK end_trial")
 			else
 				errors = ""
 				company.errors.full_messages.each do |error|
 					errors += error
 				end
-				puts "Company id "+company.id.to_s+" ERROR end_trial "+errors
+				CompanyCronLog.create(company_id: company.id, action_ref: 5, details: "ERROR end_trial "+errors)
 			end
 		end
 	end
@@ -108,9 +124,13 @@ class Company < ActiveRecord::Base
 		where(payment_status_id: PaymentStatus.where(name: ["Emitido", "Vencido"]).pluck(:id)).where('due_date IS NOT NULL').each do |company|
 			company.due_amount += company.plan.price/month_days
 			if company.save
-				puts "Company id "+company.id.to_s+" OK add_due_amount"
+				CompanyCronLog.create(company_id: company.id, action_ref: 6, details: "OK add_due_amount")
 			else
-				puts "Company id "+company.id.to_s+" ERROR add_due_amount "
+				errors = ""
+				company.errors.full_messages.each do |error|
+					errors += error
+				end
+				CompanyCronLog.create(company_id: company.id, action_ref: 6, details: "ERROR add_due_amount "+errors)
 			end
 		end
 	end
