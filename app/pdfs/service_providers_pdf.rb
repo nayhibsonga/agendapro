@@ -10,7 +10,7 @@ class ServiceProvidersPdf < Prawn::Document
 	def header
 		y_position = cursor
 		bounding_box([0, y_position], width: 260, height: 70) do
-			if @service_provider.company.logo
+			if @service_provider.company.logo.to_s != ""
 				image "#{Rails.root}/public"+@service_provider.company.logo.to_s, width: 70, height: 70
 			else
 				image "#{Rails.root}/app/assets/images/logos/logo_mail.png", width: 100, height: 37
