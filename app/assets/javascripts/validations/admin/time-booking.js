@@ -1,5 +1,5 @@
 $(function() {
-	$('[id^="edit_company_setting_"]').validate({
+	$('.times-form').validate({
 		errorPlacement: function(error, element) {
 			error.appendTo(element.parent().next());
 		},

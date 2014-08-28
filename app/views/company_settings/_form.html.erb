@@ -51,19 +51,7 @@
 	  </div>
 	  <div class="tab-pane" id="company">
 	    <div class="row">
-			<%= form_for @company, :html => {:class => 'form-horizontal', :multipart => true} do |f| %>
-				<% if @company.errors.any? %>
-					<div id="error_explanation">
-						<h2><%= pluralize(@company.errors.count, "error") %> no permitió que la empresa sea creada:</h2>
-
-						<ul>
-						<% @company.errors.full_messages.each do |msg| %>
-							<li><%= msg %></li>
-						<% end %>
-						</ul>
-					</div>
-				<% end %>
-
+			<%= form_for @company, :html => {:class => 'form-horizontal company-form', :multipart => true} do |f| %>
 				<div class="form-group has-feedback">
 					<%= f.label :name, 'Nombre', :class => 'col-sm-3 control-label' %>
 					<div class="col-sm-5">
@@ -173,18 +161,6 @@
 	  <div class="tab-pane" id="minisite">
 	    <div class="row">
 			<%= form_for @company_setting, :html => {:class => 'form-horizontal'} do |f| %>
-				<% if @company_setting.errors.any? %>
-					<div id="error_explanation">
-						<h2><%= pluralize(@company_setting.errors.count, "error") %> prohibited this company_setting from being saved:</h2>
-
-						<ul>
-						<% @company_setting.errors.full_messages.each do |msg| %>
-							<li><%= msg %></li>
-						<% end %>
-						</ul>
-					</div>
-				<% end %>
-
 				<div class="form-group">
 					<%= f.label :activate_workflow, 'Habilitar Minisitio', :class => 'col-sm-3 control-label' %>
 					<div class="col-sm-5">
@@ -217,20 +193,8 @@
 	  </div>
 	  <div class="tab-pane" id="times">
 	    <div class="row">
-			<%= form_for @company_setting, :html => {:class => 'form-horizontal'} do |f| %>
-				<% if @company_setting.errors.any? %>
-					<div id="error_explanation">
-						<h2><%= pluralize(@company_setting.errors.count, "error") %> prohibited this company_setting from being saved:</h2>
-
-						<ul>
-						<% @company_setting.errors.full_messages.each do |msg| %>
-							<li><%= msg %></li>
-						<% end %>
-						</ul>
-					</div>
-				<% end %>
-
-				<div class="form-group">
+			<%= form_for @company_setting, :html => {:class => 'form-horizontal times-form'} do |f| %>
+				<div class="form-group has-feedback">
 					<%= f.label :before_booking, 'Tiempo Mínimo de Reserva:', :class => 'col-sm-3 control-label' %>
 					<div class="col-sm-4">
 						<div class="input-group">
@@ -388,7 +352,9 @@
 
 <% content_for :scripts do %>
   <%= javascript_include_tag 'validations/validate' %>
+  <%= javascript_include_tag 'validations/admin/company-edit' %>
   <%= javascript_include_tag 'validations/admin/company-email' %>
+  <%= javascript_include_tag 'validations/admin/time-booking' %>
   <script type="text/javascript">
   	$(function () {
   		$('#fromEmail').on('hidden.bs.modal', function (e) {
