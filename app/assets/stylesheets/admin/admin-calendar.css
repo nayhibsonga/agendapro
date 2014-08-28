@@ -337,6 +337,17 @@ th.fc-widget-header {
     text-overflow: ellipsis;
     white-space: nowrap;
 }
+
+td.fc-header-left {
+	padding-top: 5px;
+}
+td.fc-header-center {
+	padding-top: 5px;
+}
+a.print-schedule {
+	margin-left: 5px;
+}
+
 /*Intento de marcar líneas de columna*/
 /*table.fc-agenda-days > tbody > tr >td.fc-widget-content {
 	border: 1px solid #000000;
