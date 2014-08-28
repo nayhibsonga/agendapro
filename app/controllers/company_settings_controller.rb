@@ -25,8 +25,12 @@ class CompanySettingsController < ApplicationController
 
   # GET /company_settings/1/edit
   def edit
+    @company = Company.find(current_user.company_id)
     @emails = current_user.company.company_from_email
     @company_from_email = CompanyFromEmail.new
+    @company_setting = @company.company_setting
+    @web_address = Company.find(current_user.company_id).web_address
+
   end
 
   # POST /company_settings
@@ -51,7 +55,7 @@ class CompanySettingsController < ApplicationController
   def update
     respond_to do |format|
       if @company_setting.update(company_setting_params)
-        format.html { redirect_to dashboard_path, notice: 'Configuración actualizada exitosamente.' }
+        format.html { redirect_to edit_company_setting_path(@company_setting), notice: 'Configuración actualizada exitosamente.' }
         format.json { head :no_content }
       else
         format.html { render action: 'edit' }
