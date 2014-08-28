@@ -100,7 +100,7 @@ header{
 /*.fc-widget-content:hover {
 	background: #E1E1E1;
 }*/
-.origin-web > .fc-event-inner > .fc-event-head > .fc-event-time:before{
+.origin-web-lock > .fc-event-inner > .fc-event-head > .fc-event-time:before{
 	display:inline-block;
 	font-family:FontAwesome;
 	font-style:normal;
@@ -108,13 +108,13 @@ header{
 	line-height:1;
 		-webkit-font-smoothing:antialiased;
 		-moz-osx-font-smoothing:grayscale;
-	content:"\f0ac";
+	content:"\f0ac   \f023";
 	margin-right: 3px;
 	font-size:1.3333333333333333em;
 	line-height:.75em;
 	vertical-align:-15%
 }
-.origin-manual > .fc-event-inner > .fc-event-head > .fc-event-time:before{
+.origin-web-unlock > .fc-event-inner > .fc-event-head > .fc-event-time:before{
 	display:inline-block;
 	font-family:FontAwesome;
 	font-style:normal;
@@ -122,7 +122,35 @@ header{
 	line-height:1;
 		-webkit-font-smoothing:antialiased;
 		-moz-osx-font-smoothing:grayscale;
-	content:"\f007";
+	content:"\f0ac   \f09c";
+	margin-right: 3px;
+	font-size:1.3333333333333333em;
+	line-height:.75em;
+	vertical-align:-15%
+}
+.origin-manual-lock > .fc-event-inner > .fc-event-head > .fc-event-time:before{
+	display:inline-block;
+	font-family:FontAwesome;
+	font-style:normal;
+	font-weight:normal;
+	line-height:1;
+		-webkit-font-smoothing:antialiased;
+		-moz-osx-font-smoothing:grayscale;
+	content:"\f007   \f023";
+	margin-right: 3px;
+	font-size:1.3333333333333333em;
+	line-height:.75em;
+	vertical-align:-15%
+}
+.origin-manual-unlock > .fc-event-inner > .fc-event-head > .fc-event-time:before{
+	display:inline-block;
+	font-family:FontAwesome;
+	font-style:normal;
+	font-weight:normal;
+	line-height:1;
+		-webkit-font-smoothing:antialiased;
+		-moz-osx-font-smoothing:grayscale;
+	content:"\f007   \f09c";
 	margin-right: 3px;
 	font-size:1.3333333333333333em;
 	line-height:.75em;
