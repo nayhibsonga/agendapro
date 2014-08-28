@@ -28,3 +28,6 @@ public/assets/
 /public/assets
 public/assets/
 /public/assets/**
+
+# Archivos de Mac OS X
+*.DS*

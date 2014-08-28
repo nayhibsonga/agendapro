@@ -67,12 +67,13 @@
   <h3><%= @company.months_active_left > 0 ? "¡Agrega más tiempo de uso a tu cuenta AgendaPro aquí!" : "¡Paga tu cuenta AgendaPro aquí!" %></h3>
   <div class="col-md-6">
     <p class="justified">Puedes pagar tu cuenta directamente a través de la página, por medio de WebPay o transferencias bancarias de los principales bancos. Si no te acomoda ninguna de estas opciones o tienes alguna duda respecto a tu plan actual, te invitamos a ponerte en contacto con nosotros enviando un correo a <%= link_to 'contacto@agendapro.cl', contact_path, :target => "_blank" %>, para recibir las instrucciones a seguir. </p>
+    <p class="justified">En caso de que estés en el período de prueba (Trial) de la herramienta no es necesario pagar. Si quieres agregar de inmediato meses, de todas formas puedes hacerlo y automáticamente se activará tu cuenta y vendrá con los meses pre-cargados.</p>
   </div>
   <div class="col-md-6">
     <p><label>Pagar (IVA incluido):</label>
       <select class="form-control" id="amount_select">
         <option value="0">Elige una opción...</option>
-        <option value="1"><%= @company.months_active_left > 0 ? "1 Mes" : "Restante de este Mes" %> - <%= number_to_currency(@plan_1*(1+@sales_tax), {:unit => '$', :separator => ',', :delimiter => '.', :precision => 0})%> CLP</option>
+        <option value="1"><%= @company.months_active_left > 0 ? "1 Mes" : "Mes Actual" %> - <%= number_to_currency(@plan_1*(1+@sales_tax), {:unit => '$', :separator => ',', :delimiter => '.', :precision => 0})%> CLP</option>
         <option value="2">2 Meses - <%= number_to_currency(@plan_2*(1+@sales_tax), {:unit => '$', :separator => ',', :delimiter => '.', :precision => 0})%> CLP</option>
         <option value="3">3 Meses - <%= number_to_currency(@plan_3*(1+@sales_tax), {:unit => '$', :separator => ',', :delimiter => '.', :precision => 0})%> CLP</option>
         <option value="4">4 Meses - <%= number_to_currency(@plan_4*(1+@sales_tax), {:unit => '$', :separator => ',', :delimiter => '.', :precision => 0})%> CLP (<%= number_with_precision(@month_discount_4*100, :precision => 0) %>% dcto.)</option>
@@ -226,7 +227,7 @@
     <div class="row">
       <label class="col-sm-5">Meses Restantes</label>
       <div class="col-sm-7">
-        <%= @company.months_active_left.to_i %> (Inclyendo este)
+        <%= @company.months_active_left.to_i %> (Incluyendo mes actual)
       </div>
     </div>
     <div class="row">
@@ -253,7 +254,7 @@
         <h4 class="modal-title" id="changePlanModalLabel">Cambio de Plan AgendaPro</h4>
       </div>
       <div class="modal-body">
-        <p class="justified">Estás cambiando tu cuenta AgendaPro a un nuevo plan mensual. Es importante que para cada cambio de plan se considera el tiempo de activación o deuda actual de la cuenta, y se habilita para el nuevo plan, por un tiempo equivalente al valor del nuevo plan</p>
+        <p class="justified">Estás cambiando tu cuenta AgendaPro a un nuevo plan mensual. Es importante que para cada cambio de plan se considera el tiempo de activación restante (o deuda actual de la cuenta en el caso correspondiente) y se ajusta para el nuevo plan. Es decir, se abonará o cobrará el proporcional correspondiente de acuerdo al nuevo plan elegido. Si tienes dudas, por favor <%= link_to 'comunícate con nosotros', contact_path, :target => "_blank" %>.</p>
         <p class="justified" id="plan_explanation"></p>
         <div  id="plan_mp_button">
           <%= link_to "Confirmar Cambio", generate_plan_transaction_path(:mp => "00", :plan_id => 0), class: "btn btn-primary plan_mp_link" %>
