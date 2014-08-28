@@ -28,67 +28,363 @@
 	</div>
 </div>
 
-<div class="row well well-reports">
+<div class="row well well-white">
 	<ul id="myTab" class="nav nav-tabs" role="tablist">
-	  <li class="active"><a href="#render_content" role="tab" data-toggle="tab" class="tab_index" id="statuses">General</a></li>
-	  <li class=""><a href="#render_content" role="tab" data-toggle="tab" class="tab_index" id="locations">Sucursales</a></li>
-	  <li class=""><a href="#render_content" role="tab" data-toggle="tab" class="tab_index" id="services">Servicios</a></li>
+	  <li class=""><a href="#company" role="tab" data-toggle="tab" class="tab_index" id="statuses">Empresa</a></li>
+	  <li class=""><a href="#emails" role="tab" data-toggle="tab" class="tab_index" id="locations">Emails</a></li>
+	  <li class=""><a href="#minisite" role="tab" data-toggle="tab" class="tab_index" id="locations">Minisitio</a></li>
+	  <li class=""><a href="#times" role="tab" data-toggle="tab" class="tab_index" id="locations">Periodo Agenda</a></li>
+	  <li class=""><a href="#link" role="tab" data-toggle="tab" class="tab_index" id="locations">Link AgendaPro</a></li>
 	</ul>
 	<div id="myTabContent" class="tab-content">
-	<br />	
-	  <div class="tab-pane active" id="render_content">
-	    <%= render 'statuses' %>
+	<br />
+	<div class="tab-pane active" id="landing">
+	    <div class="row">
+	    	<ol>
+				<li><strong>Empresa: </strong>En esta pestaña puedes configurar tu empresa, url de tu minisitio, descripción, políticas de cancelación etc.</li>
+				<li><strong>Emails: </strong>En esta pestaña puedes configurar tu empresa, url de tu minisitio, descripción, políticas de cancelación etc.</li>
+				<li><strong>Minisitio: </strong>En esta pestaña puedes configurar tu empresa, url de tu minisitio, descripción, políticas de cancelación etc.</li>
+				<li><strong>Periodo AgendaPro: </strong>En esta pestaña puedes configurar tu empresa, url de tu minisitio, descripción, políticas de cancelación etc.</li>
+				<li><strong>Link AgendaPro: </strong>En esta pestaña puedes configurar tu empresa, url de tu minisitio, descripción, políticas de cancelación etc.</li>
+			</ol>
+		</div>
+	  </div>
+	  <div class="tab-pane" id="company">
+	    <div class="row">
+			<%= form_for @company, :html => {:class => 'form-horizontal', :multipart => true} do |f| %>
+				<% if @company.errors.any? %>
+					<div id="error_explanation">
+						<h2><%= pluralize(@company.errors.count, "error") %> no permitió que la empresa sea creada:</h2>
+
+						<ul>
+						<% @company.errors.full_messages.each do |msg| %>
+							<li><%= msg %></li>
+						<% end %>
+						</ul>
+					</div>
+				<% end %>
+
+				<div class="form-group has-feedback">
+					<%= f.label :name, 'Nombre', :class => 'col-sm-3 control-label' %>
+					<div class="col-sm-5">
+						<%= f.text_field :name, :autofocus => true, :class => 'form-control', :placeholder => 'Nombre Compañía (requerido)' %>
+						<span class="help-block"></span>
+						<span class="form-control-feedback"></span>
+					</div>
+				</div>
+				<div class="form-group">
+					<%= f.label :description, 'Descripción', :class => 'col-sm-3 control-label' %>
+					<div class="col-sm-5">
+						<%= f.text_area :description, :class => 'form-control', :rows => "7" %>
+					</div>
+				</div>
+				<div class="form-group has-feedback">
+					<%= f.label :web_address, 'Dirección Sitio AgendaPro', :class => 'col-sm-3 control-label' %>
+					<div class="col-sm-5">
+						<div class="input-group">
+							<%= f.text_field :web_address, :required => true, :class => 'form-control', :placeholder => 'Empresa (requerido)' %>
+							<span class="input-group-addon">.agendapro.cl</span>
+						</div>
+					</div>
+					<div class="col-sm-offset-3 col-sm-5">
+						<span class="help-block"></span>
+					</div>
+					<span class="help-block">Esta es la página del sitio en AgendaPro. <strong>NO recomendamos editarla.</strong></span>
+				</div>
+				<div class="form-group has-feedback">
+					<%= f.label :logo, 'Logo Compañía', :class => 'col-sm-3 control-label' %>
+					<div class="col-sm-5">
+						<%= f.file_field :logo, :accept => 'image/png,image/gif,image/jpeg', :class => 'form-control' %>
+						<span class="help-block"></span>
+						<span class="form-control-feedback"></span>
+						<div class="checkbox">
+							<label>
+								<%= f.check_box :remove_logo %> Quitar Logo
+							</label>
+						</div>
+					</div>
+					<% if @company.logo_url %>
+					<%= image_tag @company.logo_url.to_s, :size => "80x80", :alt => @company.name, :class => 'img-circle' %>
+					<% end %>
+				</div>
+				<div class="form-group">
+					<%= f.label :cancellation_policy, 'Política de Cancelación', :class => 'col-sm-3 control-label' %>
+					<div class="col-sm-5">
+						<%= f.text_area :cancellation_policy, :class => 'form-control', :rows => "7" %>
+					</div>
+				</div>
+
+				<div class="form-group">
+					<div class="col-sm-offset-3 col-sm-4">
+					 <%= f.submit 'Guardar', :class => 'btn btn-agendapro-claro' %>
+					 <%= link_to 'Cancelar', dashboard_path, :class => "btn btn-default" %>
+					</div> 
+				</div>
+			<% end %>
+		</div>
+	  </div>
+	  <div class="tab-pane" id="emails">
+		<div class="container">
+			<div class="row">
+				<h2>
+					Remitentes
+					<button class="btn btn-agendapro-claro pull-right" data-toggle="modal" data-target="#fromEmail">
+						Agregar Email
+					</button>
+				</h2>
+				<table class="table table-hover">
+					<thead>
+						<tr>
+							<th>Remitente</th>
+							<th>Confirmado</th>
+							<th>Eliminar</th>
+						</tr>
+					</thead>
+					<tbody>
+						<% @emails.each do |email| %>
+							<tr>
+								<td><%= email.email %></td>
+								<td><%= unless email.confirmed then 'Falta confirmación' else 'Si' end %></td>
+								<td><%= link_to '<i class="fa fa-trash-o"></i>'.html_safe, email, method: :delete, data: { confirm: 'Are you sure?' }, class: 'btn btn-danger' %></td>
+							</tr>
+							<% end %>
+					</tbody>
+				</table>
+			</div>
+		</div>
+
+		<h2>Firma Email</h2>
+		<%= form_for @company_setting, :html => {:class => 'form-horizontal'} do |f| %>
+			<div class="form-group">
+				<%= f.label :signature, 'Firma', :class => 'col-sm-1 control-label' %>
+				<div class="col-sm-11">
+					<%= f.text_area :signature, :class => 'form-control', :rows => "7" %>
+					<span class="help-block">Esta es la firma que irá en los emails que se le envien a tus clientes.</span>
+				</div>
+			</div>
+			<div class="form-group">
+				<div class="col-sm-offset-1 col-sm-4">
+					<%= f.submit 'Guardar', :class => 'btn btn-agendapro-oscuro' %>
+					<%= link_to 'Cancelar', dashboard_path, :class => "btn btn-default" %>    
+				</div>
+			</div>
+		<% end %>
+	  </div>
+	  <div class="tab-pane" id="minisite">
+	    <div class="row">
+			<%= form_for @company_setting, :html => {:class => 'form-horizontal'} do |f| %>
+				<% if @company_setting.errors.any? %>
+					<div id="error_explanation">
+						<h2><%= pluralize(@company_setting.errors.count, "error") %> prohibited this company_setting from being saved:</h2>
+
+						<ul>
+						<% @company_setting.errors.full_messages.each do |msg| %>
+							<li><%= msg %></li>
+						<% end %>
+						</ul>
+					</div>
+				<% end %>
+
+				<div class="form-group">
+					<%= f.label :activate_workflow, 'Habilitar Minisitio', :class => 'col-sm-3 control-label' %>
+					<div class="col-sm-5">
+						<%= f.check_box :activate_workflow %>
+						<span class="help-block">Esta opcion permite a los clientes poder agendar a traves del sistema web, sin la necesidad de que lo esten llamando.</span>
+					</div>
+				</div>
+				<div class="form-group">
+					<%= f.label :activate_search, 'Aparecer en el Buscador', :class => 'col-sm-3 control-label' %>
+					<div class="col-sm-5">
+						<%= f.check_box :activate_search %>
+						<span class="help-block">Esta opcion permite a los clientes poder encontrar el minisitio a traves del buscador.</span>
+					</div>
+				</div>
+				<div class="form-group">
+					<%= f.label :client_exclusive, 'Exclusivo para Clientes', :class => 'col-sm-3 control-label' %>
+					<div class="col-sm-5">
+						<%= f.check_box :client_exclusive %>
+						<span class="help-block">Esta opcion limita que sólo puedan reservar clientes ingresados en la sección <%= link_to "Clientes", clients_path %>, usando el RUT.</span>
+					</div>
+				</div>
+				<div class="form-group">
+					<div class="col-sm-offset-3 col-sm-4">
+						<%= f.submit 'Guardar', :class => 'btn btn-agendapro-claro' %>
+						<%= link_to 'Cancelar', dashboard_path, :class => "btn btn-default" %>    
+					</div>
+				</div>
+			<% end %>
+		</div>
+	  </div>
+	  <div class="tab-pane" id="times">
+	    <div class="row">
+			<%= form_for @company_setting, :html => {:class => 'form-horizontal'} do |f| %>
+				<% if @company_setting.errors.any? %>
+					<div id="error_explanation">
+						<h2><%= pluralize(@company_setting.errors.count, "error") %> prohibited this company_setting from being saved:</h2>
+
+						<ul>
+						<% @company_setting.errors.full_messages.each do |msg| %>
+							<li><%= msg %></li>
+						<% end %>
+						</ul>
+					</div>
+				<% end %>
+
+				<div class="form-group">
+					<%= f.label :before_booking, 'Tiempo Mínimo de Reserva:', :class => 'col-sm-3 control-label' %>
+					<div class="col-sm-4">
+						<div class="input-group">
+							<%= f.number_field :before_booking, :in => 1...25, :required => true, :class => 'form-control' %>
+							<span class="input-group-addon">Horas</span>
+						</div>
+						<span class="help-block"></span>
+						<!-- <span class="form-control-feedback"></span> -->
+						<span class="help-block">Horas mínimas requeridas para que un cliente reserve. No se podrá reservar con menos anticipación.</span>
+					</div>
+				</div>
+				<div class="form-group">
+					<%= f.label :after_booking, 'Tiempo Máximo a Futuro:', :class => 'col-sm-3 control-label' %>
+					<div class="col-sm-4">
+						<div class="input-group">
+							<%= f.number_field :after_booking, :in => 1...13, :required => true, :class => 'form-control' %>
+							<span class="input-group-addon">Meses</span>
+						</div>
+						<span class="help-block"></span>
+						<!-- <span class="form-control-feedback"></span> -->
+						<span class="help-block">Tiempo máximo que una persona puede reservar a futuro. No se permiten reservas para más de X meses a futuro.</span>
+					</div>
+				</div>
+				<div class="form-group">
+					<%= f.label :before_edit_booking, 'Política de Edición de Reservas:', :class => 'col-sm-3 control-label' %>
+					<div class="col-sm-4">
+						<div class="input-group">
+							<%= f.number_field :before_edit_booking, :in => 1...25, :required => true, :class => 'form-control' %>
+							<span class="input-group-addon">Horas</span>
+						</div>
+						<span class="help-block"></span>
+						<!-- <span class="form-control-feedback"></span> -->
+						<span class="help-block">Horas mínimas requeridas para que un cliente edite o cancele su reserva. No se podrá editar o cancelar reservas con menos anticipación.</span>
+					</div>
+				</div>
+				<div class="form-group">
+					<div class="col-sm-offset-3 col-sm-4">
+						<%= f.submit 'Guardar', :class => 'btn btn-agendapro-claro' %>
+						<%= link_to 'Cancelar', dashboard_path, :class => "btn btn-default" %>    
+					</div>
+				</div>
+			<% end %>
+		</div>
+	  </div>
+	  <div class="tab-pane" id="link">
+	    <div class="row">
+			<div class="col-md-6">
+				<div class="col-md-11 well well-white">
+					<div class="row">
+						<h3 class="link_section_header">1. Elige el formato:</h3>
+						<div class="col-md-12">
+							<div class="radio">
+								<label>
+									<input type="radio" name="formatRadio" style="float: none;" value="sizeImageRadio">
+									<%= image_tag 'logos/logo_mail.png', :alt => 'AgendaPro' %>
+								</label>
+							</div>
+						</div>
+						<div class="col-md-12">
+							<div class="radio">
+								<label>
+									<input type="radio" name="formatRadio" style="float: none;" value="sizeButtonRadio">
+									<span class="btn btn-agendapro-oscuro">Reserva Online</span>
+								</label>
+							</div>
+						</div>
+						<div class="col-md-12">
+							<div class="radio">
+								<label>
+									<input type="radio" name="formatRadio" value="sizeLinkRadio">
+									<a>¡Reserva acá!</a>
+								</label>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="col-md-6">
+				<div class="col-md-11 well well-white">
+					<div class="row">
+						<h3 class="link_section_header">2. Elige el tamaño:</h3>
+						<div class="col-md-12">
+							<div class="row">
+								<div class="col-md-12">
+									<div class="radio hidden">
+										<label>
+											<input type="radio" name="sizeImageRadio" style="float: none;" value="202x74">
+											<%= image_tag 'logos/logo_mail.png', :alt => 'AgendaPro', :size => '202x74' %>
+										</label>
+									</div>
+								</div>
+								<div class="col-md-12">
+									<div class="radio hidden">
+										<label>
+											<input type="radio" name="sizeImageRadio" style="float: none;" value="101x37">
+											<%= image_tag 'logos/logo_mail.png', :alt => 'AgendaPro', :size => '101x37' %>
+										</label>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="col-md-12">
+							<div class="row">
+								<div class="col-md-12">
+									<div class="radio hidden">
+										<label>
+											<input type="radio" name="sizeButtonRadio" style="float: none;" value="btn-lg">
+											<span class="btn btn-agendapro-oscuro btn-lg">Grande</span>
+										</label>
+									</div>
+								</div>
+								<div class="col-md-12">
+									<div class="radio hidden">
+										<label>
+											<input type="radio" name="sizeButtonRadio" style="float: none;" value="">
+											<span class="btn btn-agendapro-oscuro">Mediano</span>
+										</label>
+									</div>
+								</div>
+								<div class="col-md-12">
+									<div class="radio hidden">
+										<label>
+											<input type="radio" name="sizeButtonRadio" style="float: none;" value="btn-sm">
+											<span class="btn btn-agendapro-oscuro btn-sm">Chico</span>
+										</label>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="col-md-12">
+							<div class="row">
+								<div class="col-md-12">
+									<div class="radio hidden">
+										<label>
+											<input type="radio" name="sizeLinkRadio" value="">
+											<a>Link a AgendaPro</a>
+										</label>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-md-12">
+				<h3>Copia tu código</h3>
+				<pre class="pre-scrollable well-white"></pre>
+			</div>
+		</div>
 	  </div>
 	</div>
 </div>
-
-<div class="container">
-	<div class="row">
-		<h2>
-			Remitentes
-			<button class="btn btn-agendapro-claro pull-right" data-toggle="modal" data-target="#fromEmail">
-				Agregar Email
-			</button>
-		</h2>
-		<table class="table table-hover">
-			<thead>
-				<tr>
-					<th>Remitente</th>
-					<th>Confirmado</th>
-					<th>Eliminar</th>
-				</tr>
-			</thead>
-			<tbody>
-				<% @emails.each do |email| %>
-					<tr>
-						<td><%= email.email %></td>
-						<td><%= unless email.confirmed then 'Falta confirmación' else 'Si' end %></td>
-						<td><%= link_to '<i class="fa fa-trash-o"></i>'.html_safe, email, method: :delete, data: { confirm: 'Are you sure?' }, class: 'btn btn-danger' %></td>
-					</tr>
-					<% end %>
-			</tbody>
-		</table>
-	</div>
-</div>
-
-<h2>Firma Email</h2>
-<%= form_for @company_setting, :html => {:class => 'form-horizontal'} do |f| %>
-	<div class="well">
-		<div class="form-group">
-			<%= f.label :signature, 'Firma', :class => 'col-sm-1 control-label' %>
-			<div class="col-sm-11">
-				<%= f.text_area :signature, :class => 'form-control', :rows => "7" %>
-				<span class="help-block">Esta es la firma que irá en los emails que se le envien a tus clientes.</span>
-			</div>
-		</div>
-		<div class="form-group">
-			<div class="col-sm-offset-1 col-sm-4">
-				<%= f.submit 'Guardar', :class => 'btn btn-agendapro-oscuro' %>
-				<%= link_to 'Cancelar', dashboard_path, :class => "btn btn-default" %>    
-			</div>
-		</div>
-	</div>
-<% end %>
 
 <% content_for :scripts do %>
   <%= javascript_include_tag 'validations/validate' %>
@@ -104,4 +400,8 @@
 		});
   	});
   </script>
+  <script type="text/javascript">
+	var web_address = '<%= @web_address %>';
+	</script>
+	<%= javascript_include_tag "admin/link_agendapro" %>
 <% end %>
