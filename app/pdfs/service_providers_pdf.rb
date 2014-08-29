@@ -9,11 +9,15 @@ class ServiceProvidersPdf < Prawn::Document
 	
 	def header
 		y_position = cursor
-		bounding_box([0, y_position], width: 260, height: 40) do
-			image "#{Rails.root}/app/assets/images/logos/logo_mail.png", width: 100, height: 37
+		bounding_box([0, y_position], width: 260, height: 70) do
+			if @service_provider.company.logo.to_s != ""
+				image "#{Rails.root}/public"+@service_provider.company.logo.to_s, width: 70, height: 70
+			else
+				image "#{Rails.root}/app/assets/images/logos/logo_mail.png", width: 100, height: 37
+			end
 		end
-		bounding_box([380, y_position], width: 260, height: 40) do
-			text DateTime.now.to_date.strftime('%d de %B de %Y')
+		bounding_box([480, y_position], width: 260, height: 70) do
+			text  I18n.l DateTime.now.to_date
 		end
 	end
 
@@ -27,11 +31,12 @@ class ServiceProvidersPdf < Prawn::Document
 	def table_content
 		move_down 20
 
-		table(provider_hours, header: true, position: :center, row_colors: ['DFD1A7', 'FFFFFF'], width: 540) do
+		table(provider_hours, header: true, position: :center, row_colors: ['E6E3CF', 'FFFFFF'], width: 540) do
 			cells.borders = []
 
 			row(0).borders = [:bottom]
 			row(0).font_style = :bold
+			row(0).text_color = 'FFFFFF'
 			row(0).background_color = '1E8584'
 
 			columns(0..2).borders = [:right]
@@ -41,7 +46,7 @@ class ServiceProvidersPdf < Prawn::Document
 
 	def provider_hours
 		now = DateTime.now
-		block_length = 15 * 60
+		block_length = 30 * 60
 
 		provider_times = @service_provider.provider_times.where(day_id: now.cwday)
 		bookings = Booking.where(service_provider: @service_provider, status: Status.find_by(name: ['Reservado', 'Confirmado','Pagado'])).order(:start)
@@ -76,13 +81,17 @@ class ServiceProvidersPdf < Prawn::Document
 						table_row.compact!
 
 						table_rows.append(table_row)
-						table_row = ['', nil, nil, nil]
+						# table_row = ['', nil, nil, nil]
 					end
+
 				end
 				table_rows.append(table_row)
 			end
 		end
-		return [['Hora', 'Servicio', 'Cliente', 'Telefono']] + table_rows
+
+		table_header = [['Hora', 'Servicio', 'Cliente', 'Teléfono']]
+
+		return table_header + table_rows
 	end
 
 end

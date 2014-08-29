@@ -47,7 +47,7 @@
 							<dt>Estado de Cuenta</dt>
 							<dd><%= PaymentStatus.find(@company.payment_status_id).name %></dd>
 							<dt>Meses Restantes</dt>
-							<dd><%= @company.months_active_left.to_i %> (Inclyendo este)</dd>
+							<dd><%= @company.months_active_left.to_i %> (Incluyendo mes actual)</dd>
 							<% if @company.due_amount >= 0 %>
 					        <dt>Deuda Actual</dt>
 					        <dd><%= number_to_currency(@company.due_amount, {:unit => '$', :separator => ',', :delimiter => '.', :precision => 0})%> CLP</dd>

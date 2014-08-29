@@ -45,6 +45,14 @@ function loadStep1 () {
 			};
 		});
 
+		var radios = $('input[name=serviceRadio]');
+		radios.on('change', function() {
+			radios.each(function() {
+				var radio = $(this);
+				radio.closest('.list-group-item')[radio.is(':checked') ? 'addClass' : 'removeClass']('selected-wf-option');
+			});
+		});
+
 		$('[name="serviceRadio"]').on('click', function(event) {
 			var serviceId = event.target.getAttribute('value');
 			if ($(event.target).data('outcall') == true) {
@@ -115,6 +123,14 @@ function loadStep2 () {
 					$('#next').click(function () {
 						selected = false;
 					});
+				});
+			});
+
+			var radios = $('input[name=staffRadio]');
+			radios.on('change', function() {
+				radios.each(function() {
+					var radio = $(this);
+					radio.closest('.list-group-item')[radio.is(':checked') ? 'addClass' : 'removeClass']('selected-wf-option');
 				});
 			});
 		});
@@ -320,4 +336,5 @@ $(function () {
 	$( document ).ajaxComplete(function() {
 		$('#foo4').trigger('updateSizes');
 	});
+
 });

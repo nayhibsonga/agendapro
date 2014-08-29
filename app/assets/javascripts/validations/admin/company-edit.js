@@ -1,5 +1,5 @@
 $(function() {
-	$('[id^="edit_company_"]').validate({
+	$('.company-form').validate({
 		errorPlacement: function(error, element) {
 			if (element.attr('id') == 'company_web_address') {
 				error.appendTo(element.parent().parent().next().children('.help-block'));
