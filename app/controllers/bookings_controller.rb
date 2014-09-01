@@ -121,7 +121,7 @@ class BookingsController < ApplicationController
   # PATCH/PUT /bookings/1
   # PATCH/PUT /bookings/1.json
   def update
-    new_booking_params = booking_params.except(:client_first_name, :client_last_name, :client_phone, :client_email)
+    new_booking_params = booking_params.except(:client_first_name, :client_last_name, :client_phone, :client_email, :client_identification_number)
     if Company.find(current_user.company_id).company_setting.client_exclusive
       if !booking_params[:client_id].nil? && !booking_params[:client_id].empty?
         @client = Client.find(booking_params[:client_id])
@@ -131,7 +131,7 @@ class BookingsController < ApplicationController
         if User.find_by_email(@client.email)
           new_booking_params[:user_id] = User.find_by_email(@client.email).id
         end
-      else
+      elsif !booking_params[:client_id].nil? && booking_params[:client_id].empty?
         render :json => { :errors => ["El cliente no está registrado o no puede reservar."] }, :status => 422
         return
       end

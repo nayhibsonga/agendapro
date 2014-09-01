@@ -6,7 +6,7 @@ $(function() {
 		rules: {
 			'company_setting[before_booking]': {
 				required: true,
-				range: [1, 24]
+				range: [1, 72]
 			},
 			'company_setting[after_booking]': {
 				required: true,
@@ -14,7 +14,7 @@ $(function() {
 			},
 			'company_setting[before_edit_booking]': {
 				required: true,
-				range: [1, 24]
+				range: [1, 72]
 			}
 		},
 		highlight: function(element) {
