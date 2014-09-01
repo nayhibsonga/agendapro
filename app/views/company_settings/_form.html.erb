@@ -42,7 +42,7 @@
 	    <div class="row">
 	    	<ol>
 				<li><strong>Empresa: </strong>En esta sección puedes configurar el nombre de empresa, la descripción, la url de tu mini-sitio, el logo que quieres mostrar y la política de cancelación.</li><br />
-				<li><strong>Mini-sitio: </strong>En esta sección puedes habilitar el mini-sitio AgendaPro, la opción de aparecer en el Buscador AgendaPro y limitar que sólo las personas en tu base de datos puedan reservar.</li><br />
+				<li><strong>Reservas: </strong>En esta sección puedes habilitar el mini-sitio AgendaPro, la opción de aparecer en el Buscador AgendaPro y limitar que sólo las personas en tu base de datos puedan reservar.</li><br />
 				<li><strong>E-mails: </strong>En esta sección puedes configurar la dirección desde donde se envían los correos masivos (Remitentes) y la firma que se adjuntará en tus e-mails.</li><br />
 				<li><strong>Periodo AgendaPro: </strong>En esta sección puedes configurar el Tiempo Mínimo de Reserva y el Tiempo Máximo a futuro, además de la cantidad de horas mínimas necesarias para que tus clientes puedan modificar o cancelar una reserva.</li><br />
 				<li><strong>Link AgendaPro: </strong>En esta sección puedes obtener el Link AgendaPro, el cual te permitirá insertar el link a tu mini-sitio en cualquier otro sitio web que tengas. Hay varias opciones para que elijas la que más te acomoda.</li>
@@ -198,7 +198,7 @@
 					<%= f.label :before_booking, 'Tiempo Mínimo de Reserva:', :class => 'col-sm-3 control-label' %>
 					<div class="col-sm-4">
 						<div class="input-group">
-							<%= f.number_field :before_booking, :in => 1...73, :required => true, :class => 'form-control' %>
+							<%= f.number_field :before_booking, :in => 1...169, :required => true, :class => 'form-control' %>
 							<span class="input-group-addon">Horas</span>
 						</div>
 						<span class="help-block"></span>
@@ -222,7 +222,7 @@
 					<%= f.label :before_edit_booking, 'Política de Edición de Reservas:', :class => 'col-sm-3 control-label' %>
 					<div class="col-sm-4">
 						<div class="input-group">
-							<%= f.number_field :before_edit_booking, :in => 1...73, :required => true, :class => 'form-control' %>
+							<%= f.number_field :before_edit_booking, :in => 1...169, :required => true, :class => 'form-control' %>
 							<span class="input-group-addon">Horas</span>
 						</div>
 						<span class="help-block"></span>
