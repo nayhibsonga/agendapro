@@ -24,7 +24,7 @@ class CompanyFromEmailMailer < ActionMailer::Base
 			:global_merge_vars => [
 				{
 					:name => 'CONFIRM',
-					:content => "<a class='btn btn-agendapro-claro btn-lg' href='#{confirm_email_url(:confirmation_code => email.confirmation_code)}' style='display: inline-block;padding: 10px 16px;margin-bottom: 0;font-size: 18px;font-weight: normal;line-height: 1.33;text-align: center;white-space: nowrap;vertical-align: middle;cursor: pointer;background-image: none;border: 1px solid transparent;border-radius: 6px;-webkit-user-select: none;-moz-user-select: none;-ms-user-select: none;-o-user-select: none;user-select: none;color: #ffffff;background-color: rgba(61,154,150,1);border-color: rgba(55, 133, 129, 1);text-decoration:none;'>Confirmar Email</a>"
+					:content => "<a class='btn btn-agendapro-claro btn-lg' href='#{confirm_email_url(:confirmation_code => email.confirmation_code)}' style='display: inline-block;padding: 10px 16px;margin-bottom: 0;font-size: 18px;font-weight: normal;line-height: 1.33;text-align: center;white-space: nowrap;vertical-align: middle;cursor: pointer;background-image: none;border: 1px solid transparent;border-radius: 6px;-webkit-user-select: none;-moz-user-select: none;-ms-user-select: none;-o-user-select: none;user-select: none;color: #ffffff;background-color: rgba(61,154,150,1);border-color: rgba(55, 133, 129, 1);text-decoration:none;'>Confirmar E-mail</a>"
 				}
 			],
 			:tags => ['booking', 'new_booking'],

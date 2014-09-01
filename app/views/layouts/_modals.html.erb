@@ -11,7 +11,7 @@
 					<div class="col-sm-12">
 						<%= form_for :user, :url => user_session_url(:subdomain => false), :html => { class: 'form-horizontal' } do |f| %>
 						<div class="form-group">
-							<%= f.label :email, 'Email', :class => 'col-sm-4 control-label' %>
+							<%= f.label :email, 'E-mail', :class => 'col-sm-4 control-label' %>
 							<div class="col-sm-8">
 								<%= f.email_field :email, :autofocus => true, :required => true, :class => 'form-control' %>
 							</div>
@@ -84,7 +84,7 @@
 								</div>
 							</div>
 							<div class="form-group has-feedback">
-								<%= f.label :email, 'Email', :class => 'col-sm-4 control-label' %>
+								<%= f.label :email, 'E-mail', :class => 'col-sm-4 control-label' %>
 								<div class="col-sm-8">
 									<%= f.email_field :email, :required => true, :class => 'form-control', :placeholder => 'ejemplo@dominio.com (requerido)' %>
 									<span class="help-block"></span>

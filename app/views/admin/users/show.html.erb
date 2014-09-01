@@ -4,7 +4,7 @@
 <p>Apellido: <%= @user.last_name %></p>
 <p>Teléfono: <%= @user.phone %></p>
 <p>Tipo: <%= @user.role.name %></p>
-<p>Email: <%= @user.email %></p>
+<p>E-mail: <%= @user.email %></p>
 
 <%= link_to 'Editar', edit_admin_user_path(:id => @user.id) %> |
 <%= link_to 'Atrás', admin_users_path %>

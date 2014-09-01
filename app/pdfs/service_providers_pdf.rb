@@ -56,17 +56,34 @@ class ServiceProvidersPdf < Prawn::Document
 		provider_times.each do |provider_time|
 			provider_open = provider_time.open
 			while (provider_open <=> provider_time.close) < 0 do
+				# Se hace la nueva fila de la tabla
 				table_row = [provider_open.strftime('%R'), nil, nil, nil]
 
-				provider_open += block_length
+				# Se arma el inicio y fin del bloque
 				block_open = DateTime.new(now.year, now.mon, now.mday, provider_open.hour, provider_open.min)
+				provider_open += block_length
 				block_close = DateTime.new(now.year, now.mon, now.mday, provider_open.hour, provider_open.min)
 
 				bookings.each do |book|
 					book_start = DateTime.parse(book.start.to_s)
-              		book_end = DateTime.parse(book.end.to_s)
+					book_end = DateTime.parse(book.end.to_s)
 
 					if (block_close - book_start) * (book_end - block_open) > 0
+
+						if book.service.name == (table_rows.last[1]) && (book.client.first_name + ' ' + book.client.last_name == (table_rows.last[2])) 
+							
+							service_name = 'Continuación anterior...'
+							client_name = '...'
+							client_phone = '...'
+
+							table_row << service_name
+							table_row << client_name
+							table_row << client_phone
+							table_row.compact!
+
+							break
+						end
+
 						service_name = book.service.name
 						client_name = ''
 						client_phone = ''
@@ -79,11 +96,7 @@ class ServiceProvidersPdf < Prawn::Document
 						table_row << client_name
 						table_row << client_phone
 						table_row.compact!
-
-						table_rows.append(table_row)
-						# table_row = ['', nil, nil, nil]
 					end
-
 				end
 				table_rows.append(table_row)
 			end
