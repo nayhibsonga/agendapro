@@ -81,7 +81,7 @@ class PuntoPagosController < ApplicationController
         due_amount = company.due_amount
         plan_price = Plan.find(plan_id).price
         plan_month_value = (month_days - day_number + 1)*plan_price/month_days
-        trx_id = (company.id.to_s + "0" + plan_id + "0" +  DateTime.now.to_s.gsub(/[-:T]/i, ''))[0..17]
+        trx_id = (company.id.to_s + "0" + plan_id.to_s + "0" +  DateTime.now.to_s.gsub(/[-:T]/i, ''))[0..17]
 
         if months_active_left > 0
           if plan_value_left > (plan_month_value + due_amount) && payment_method == "00"
