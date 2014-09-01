@@ -31,7 +31,7 @@ class ServiceProvidersPdf < Prawn::Document
 	def table_content
 		move_down 20
 
-		table(provider_hours, header: true, position: :center, row_colors: ['E6E3CF', 'FFFFFF'], width: 540) do
+		table(provider_hours, header: true, position: :center, row_colors: ['E6E3CF', 'FFFFFF'], width: 540, :column_widths => [60,190,190,100]) do
 			cells.borders = []
 
 			row(0).borders = [:bottom]
@@ -67,21 +67,29 @@ class ServiceProvidersPdf < Prawn::Document
 				bookings.each do |book|
 					book_start = DateTime.parse(book.start.to_s)
 					book_end = DateTime.parse(book.end.to_s)
+					last_row = table_rows.length - 1
 
 					if (block_close - book_start) * (book_end - block_open) > 0
 
-						if book.service.name == (table_rows.last[1]) && (book.client.first_name + ' ' + book.client.last_name == (table_rows.last[2])) 
-							
-							service_name = 'Continuación anterior...'
-							client_name = '...'
-							client_phone = '...'
+						if !last_row.zero? 
+							while table_rows[last_row][1] == 'Continuación...'  do
+								# Subir un nivel para ver si es el mismo servicio o no	
+							   	last_row -=1
+							end
 
-							table_row << service_name
-							table_row << client_name
-							table_row << client_phone
-							table_row.compact!
+							if book.service.name == (table_rows[last_row][1]) && (book.client.first_name + ' ' + book.client.last_name == (table_rows[last_row][2])) 
+								
+								service_name = 'Continuación...'
+								client_name = '...'
+								client_phone = '...'
 
-							break
+								table_row << service_name
+								table_row << client_name
+								table_row << client_phone
+								table_row.compact!
+
+								next
+							end
 						end
 
 						service_name = book.service.name

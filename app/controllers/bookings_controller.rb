@@ -29,7 +29,7 @@ class BookingsController < ApplicationController
       format.json { render :json => @booking_json }
       format.pdf do
         pdf = BookingsPdf.new(@booking)
-        send_data pdf.render, filename: 'Reserva ' + DateTime.now.to_s + '.pdf', type: 'application/pdf'
+        send_data pdf.render, filename: 'Reserva ' + @booking.client.first_name + '_' + @booking.client.last_name + '_' + DateTime.now.to_date.to_s + '.pdf', type: 'application/pdf'
       end
     end
   end
