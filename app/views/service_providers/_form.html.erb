@@ -21,7 +21,7 @@
 				<div class="form-group has-feedback">
 					<%= f.label :location_id, "Local", class: "col-sm-4 control-label" %>
 					<div class="col-sm-8">
-						<%= f.collection_select :location_id, Location.where(company_id: current_user.company_id, :active => true), :id, :name, {:include_blank => true}, {class: "form-control"} %>
+						<%= f.collection_select :location_id, Location.where(company_id: current_user.company_id, :active => true).accessible_by(current_ability), :id, :name, {:include_blank => true}, {class: "form-control"} %>
 						<span class="help-block"></span>
               			<span class="form-control-feedback"></span>
 					</div>

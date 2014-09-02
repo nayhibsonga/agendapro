@@ -75,15 +75,24 @@ class ServiceProvidersController < ApplicationController
   # PATCH/PUT /service_providers/1
   # PATCH/PUT /service_providers/1.json
   def update
+    @provider_times = ServiceProvider.find(params[:id]).provider_times
+    @provider_times.each do |provider_time|
+      provider_time.service_provider_id = nil
+      provider_time.save
+    end
     if !service_provider_params[:service_ids].present?
       @service_provider.services.delete_all
     end
-    @service_provider.provider_times.destroy_all
     respond_to do |format|
       if @service_provider.update(service_provider_params)
+        @provider_times.destroy_all
         format.html { redirect_to service_providers_path, notice: 'Prestador actualizado exitosamente.' }
         format.json { render :json => @service_provider }
       else 
+        @provider_times.each do |provider_time|
+          provider_time.service_provider_id = @service_provider.id
+          provider_time.save
+        end
         format.html { render action: 'edit' }
         format.json { render :json => { :errors => @service_provider.errors.full_messages }, :status => 422 }
       end

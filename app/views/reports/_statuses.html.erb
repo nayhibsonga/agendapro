@@ -30,3 +30,17 @@
 <div id="status_details">
 	<%= render "status_details" %>
 </div>
+
+
+<script>
+	$('select.report_select').change(function() {
+		$('#status_details').html('<br /><%= image_tag "ajax-loader.gif", :alt => "Loader" %>');
+		$.ajax({
+		    url: "/report_status_details/"+$('#status_id').val()+"/"+$('#time_range_id').val(),
+		    cache: false,
+		    success: function(html){
+		      $('#status_details').html(html);
+		    }
+		});
+	});
+</script>

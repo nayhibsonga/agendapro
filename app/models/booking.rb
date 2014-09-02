@@ -125,19 +125,23 @@ class Booking < ActiveRecord::Base
 	end
 
 	def send_booking_mail
-		if self.status != Status.find_by(:name => "Cancelado")
-			BookingMailer.book_service_mail(self)
+		if self.start > Time.now - 4.hours
+			if self.status != Status.find_by(:name => "Cancelado")
+				BookingMailer.book_service_mail(self)
+			end
 		end
 	end
 
 	def send_update_mail
-		if self.status == Status.find_by(:name => "Cancelado")
-			BookingMailer.cancel_booking(self)
-		else
-			if changed_attributes['start']
-				BookingMailer.update_booking(self, changed_attributes['start'])
-			elsif changed_attributes['status_id'] and self.status == Status.find_by(:name => "Confirmado")
-				BookingMailer.confirm_booking(self)
+		if self.start > Time.now - 4.hours
+			if self.status == Status.find_by(:name => "Cancelado")
+				BookingMailer.cancel_booking(self)
+			else
+				if changed_attributes['start']
+					BookingMailer.update_booking(self, changed_attributes['start'])
+				elsif changed_attributes['status_id'] and self.status == Status.find_by(:name => "Confirmado")
+					BookingMailer.confirm_booking(self)
+				end
 			end
 		end
 	end

@@ -218,6 +218,15 @@ class Ability
         can :update, Client, :company_id => user.company_id
         can :destroy, Client, :company_id => user.company_id
 
+        can :read, Resource, :company_id => user.company_id
+        can :create, Resource, :company_id => user.company_id
+        can :update, Resource, :company_id => user.company_id
+
+        can :read, ResourceCategory, :company_id => user.company_id
+        can :destroy, ResourceCategory, :company_id => user.company_id
+        can :create, ResourceCategory, :company_id => user.company_id
+        can :update, ResourceCategory, :company_id => user.company_id
+
         @roles = Role.where(:name => ["Recepcionista","Staff"]).pluck(:id)
 
         can :read, User, :location_id => user.location_id, :role_id => @roles

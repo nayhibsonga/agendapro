@@ -25,41 +25,53 @@
 
 <div class="row well well-white">
 	<ul id="myTab" class="nav nav-tabs" role="tablist">
-		<li class="active"><a href="#render_content" role="tab" data-toggle="tab" class="tab_index" id="statuses">General</a></li>
-	  <li class=""><a href="#render_content" role="tab" data-toggle="tab" class="tab_index" id="locations">Sucursales</a></li>
-	  <li class=""><a href="#render_content" role="tab" data-toggle="tab" class="tab_index" id="services">Servicios</a></li>
-	  <li class="dropdown">
-	    <a href="#" id="myTabDrop1" class="dropdown-toggle" data-toggle="dropdown">Servicios por Sucursal <span class="caret"></span></a>
-	    <ul class="dropdown-menu" role="menu" aria-labelledby="myTabDrop1">
-	    <% @locations.each do |location| %>
-	      <li><a href="#render_content" tabindex="-1" role="tab" data-toggle="tab" class="tab_index" id="location_services<%=location.id%>"><%= location.name %></a></li>
-	    <% end %>
-	    </ul>
-	  </li>
-	  <li class="dropdown">
-	    <a href="#" id="myTabDrop1" class="dropdown-toggle" data-toggle="dropdown">Prestadores por Sucursal <span class="caret"></span></a>
-	    <ul class="dropdown-menu" role="menu" aria-labelledby="myTabDrop1">
-	      <% @locations.each do |location| %>
-	      <li><a href="#render_content" tabindex="-1" role="tab" data-toggle="tab" class="tab_index" id="location_providers<%=location.id%>"><%= location.name %></a></li>
-	    <% end %>
-	    </ul>
-	  </li>
-	  <li class="dropdown">
-	    <a href="#" id="myTabDrop1" class="dropdown-toggle" data-toggle="dropdown">Servicios por Prestador <span class="caret"></span></a>
-	    <ul class="dropdown-menu" role="menu" aria-labelledby="myTabDrop1">
-	      <% @locations.each do |location| %>
-	      <li class="location-listed"> <strong><%= location.name %></strong></li>
-	      <% location.service_providers.where(active: true).order(:public_name).each do |service_provider| %>
-	      <li><a href="#render_content" tabindex="-1" role="tab" data-toggle="tab" class="tab_index" id="provider_services<%=service_provider.id%>"><%= service_provider.public_name %></a></li>
-	      <% end %>
-	    <% end %>
-	    </ul>
-	  </li>
+		<li class="active"><a href="#render_content" role="tab" data-toggle="tab" class="tab_index render" id="statuses">General</a></li>
+		<li class=""><a href="#render_content" role="tab" data-toggle="tab" class="tab_index render" id="locations">Sucursales</a></li>
+		<li class=""><a href="#render_content" role="tab" data-toggle="tab" class="tab_index render" id="services">Servicios</a></li>
+		<li class="dropdown">
+			<a href="#" id="myTabDrop1" class="dropdown-toggle" data-toggle="dropdown">Servicios por Sucursal <span class="caret"></span></a>
+			<ul class="dropdown-menu" role="menu" aria-labelledby="myTabDrop1">
+				<% @locations.each do |location| %>
+				<li><a href="#render_content" tabindex="-1" role="tab" data-toggle="tab" class="tab_index render" id="location_services<%=location.id%>"><%= location.name %></a></li>
+				<% end %>
+			</ul>
+		</li>
+		<li class="dropdown">
+			<a href="#" id="myTabDrop1" class="dropdown-toggle" data-toggle="dropdown">Prestadores por Sucursal <span class="caret"></span></a>
+			<ul class="dropdown-menu" role="menu" aria-labelledby="myTabDrop1">
+				<% @locations.each do |location| %>
+				<li><a href="#render_content" tabindex="-1" role="tab" data-toggle="tab" class="tab_index render" id="location_providers<%=location.id%>"><%= location.name %></a></li>
+				<% end %>
+			</ul>
+		</li>
+		<li class="dropdown">
+			<a href="#" id="myTabDrop1" class="dropdown-toggle" data-toggle="dropdown">Servicios por Prestador <span class="caret"></span></a>
+			<ul class="dropdown-menu" role="menu" aria-labelledby="myTabDrop1">
+				<% @locations.each do |location| %>
+				<li class="location-listed"> <strong><%= location.name %></strong></li>
+				<% location.service_providers.where(active: true).order(:public_name).each do |service_provider| %>
+				<li><a href="#render_content" tabindex="-1" role="tab" data-toggle="tab" class="tab_index render" id="provider_services<%=service_provider.id%>"><%= service_provider.public_name %></a></li>
+				<% end %>
+				<% end %>
+			</ul>
+		</li>
+		<li class=""><a href="#help" role="tab" data-toggle="tab" class="tab_index">Ayuda</a></li>
 	</ul>
 	<div id="myTabContent" class="tab-content">
 	<br />	
 	  <div class="tab-pane active" id="render_content">
 	    <%= render 'statuses' %>
+	  </div>
+	  <div class="tab-pane" id="help">
+	    <div class="row">
+	    	<ol>
+				<li><strong>Empresa: </strong>En esta sección puedes configurar el nombre de empresa, la descripción, la url de tu mini-sitio, el logo que quieres mostrar y la política de cancelación.</li><br />
+				<li><strong>Reservas: </strong>En esta sección puedes habilitar el mini-sitio AgendaPro, la opción de aparecer en el Buscador AgendaPro y limitar que sólo las personas en tu base de datos puedan reservar.</li><br />
+				<li><strong>E-mails: </strong>En esta sección puedes configurar la dirección desde donde se envían los correos masivos (Remitentes) y la firma que se adjuntará en tus e-mails.</li><br />
+				<li><strong>Periodo AgendaPro: </strong>En esta sección puedes configurar el Tiempo Mínimo de Reserva y el Tiempo Máximo a futuro, además de la cantidad de horas mínimas necesarias para que tus clientes puedan modificar o cancelar una reserva.</li><br />
+				<li><strong>Link AgendaPro: </strong>En esta sección puedes obtener el Link AgendaPro, el cual te permitirá insertar el link a tu mini-sitio en cualquier otro sitio web que tengas. Hay varias opciones para que elijas la que más te acomoda.</li>
+			</ol>
+		</div>
 	  </div>
 	</div>
 </div>
