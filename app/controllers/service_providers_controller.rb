@@ -60,7 +60,7 @@ class ServiceProvidersController < ApplicationController
 
     @service_provider = ServiceProvider.new(service_provider_params)
     @service_provider.company_id = current_user.company_id
-    @service_provider = ServiceProvider.find(params[:id])
+    
     respond_to do |format|
       if @service_provider.save
         format.html { redirect_to service_providers_path, notice: 'Prestador creado exitosamente.' }
