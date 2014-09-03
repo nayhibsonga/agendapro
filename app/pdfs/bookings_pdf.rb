@@ -54,7 +54,7 @@ class BookingsPdf < Prawn::Document
 		table_rows = []
 
 		table_rows << ['Nombre', @booking.client.first_name + ' ' + @booking.client.last_name]
-		table_rows << ['Email', @booking.client.email]
+		table_rows << ['E-mail', @booking.client.email]
 		table_rows << ['Teléfono', @booking.client.phone]
 
 		return table_rows

@@ -68,6 +68,9 @@
     </section>
 </div>
 
+<%= content_tag "div", id: "workflow_url", data: {url: @url, location_id: @location_id} do %>
+<% end %>
+
 <% if @errors %>
 <% content_for :scripts do %>
 <script type="text/javascript">
@@ -76,7 +79,20 @@
 		$('#errorLink').on('click', function () {
 			$('#errorDiv').show();
 		});
-	});
+		$('#boton-servicio').click(function () {
+      		window.location.href = 'http://' + $('#workflow_url').data('url') + '/workflow?local=' + $('#workflow_url').data('location-id').toString();
+  		});
+  	});
+</script>
+<% end %>
+<% else %>
+<% content_for :scripts do %>
+<script type="text/javascript">
+   $(function() {
+	$('#boton-servicio').click(function () {
+      window.location.href = 'http://' + $('#workflow_url').data('url') + '/workflow?local=' + $('#workflow_url').data('location-id').toString();
+  	});
+  });
 </script>
 <% end %>
 <% end %>

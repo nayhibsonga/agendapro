@@ -22,7 +22,7 @@ function categoryNewOrder (tbody) {
 	var categories = new Array();
 	$.each($(tbody).children(), function (key, tr) {
 		var row_hash = {
-			service_category: $(tr).children().first().data('category'),
+			service_category: $(tr).children("td:first").data('category'),
 			order: key
 		};
 		categories.push(row_hash);

@@ -39,7 +39,7 @@
 					<label class="pull-right">Buscar:</label>
 				</div>
 				<div class="col-md-9">
-					<%= text_field_tag :search, nil, :class => "form-control", :placeholder => "Buscar por nombre, apellido o email...", :value => params[:search] %>
+					<%= text_field_tag :search, nil, :class => "form-control", :placeholder => "Buscar por nombre, apellido o e-mail...", :value => params[:search] %>
 				</div>
 				<div class="col-md-2">
 					<button class="btn btn-agendapro-claro pull-right" type="submit" action="/clients" value="client_filter"><i class="fa fa-search"></i><span> Buscar</span></button>
@@ -55,14 +55,14 @@
 		<tr>
 			<th>Nombre</th>
 			<th>Apellido</th>
-			<th>Email</th>
+			<th>E-mail</th>
 			<th>Teléfono</th>
 			<th>Opciones</th>
 			<% if Company.find(current_user.company_id).company_setting.client_exclusive %>
 	    	<th>¿Puede Reservar?</th>
          	<% end %>
 			<th>
-				Email
+				E-mail
 				<input name="mail" class="pull-right" type="checkbox" value="">
 			</th>
 		</tr>
@@ -83,7 +83,7 @@
 					<% if client.valid_email %>
 					<div class="checkbox" style="margin-top: 0; margin-bottom: 0;">
 						<label>
-							<input type="checkbox" name="client_mail" value="<%= client.email %>">Enviar Email
+							<input type="checkbox" name="client_mail" value="<%= client.email %>">Enviar E-mail
 						</label>
 					</div>
 					<% end %>
@@ -101,7 +101,7 @@
 			<%= will_paginate @clients, renderer: BootstrapPagination::Rails %>
 		</div>
 		<div class="col-md-2">
-			<button id="sendMail" type="button" class="btn btn-agendapro-claro pull-right" data-toggle="modal" data-target="#mailModal" disabled>Enviar Email</button>
+			<button id="sendMail" type="button" class="btn btn-agendapro-claro pull-right" data-toggle="modal" data-target="#mailModal" disabled>Enviar E-mail</button>
 		</div>
 	</div>
 	<br />
@@ -125,13 +125,13 @@
 		<div class="modal-content">
 			<div class="modal-header">
 				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-				<h4 class="modal-title" id="mailModalLabel">Enviar Email</h4>
+				<h4 class="modal-title" id="mailModalLabel">Enviar E-mail</h4>
 			</div>
 			<%= form_tag('/send_mail_client', name: "client_mailer", id: "client_mailer", multipart: true, class: "form-horizontal") do %>
 				<div class="modal-body">
 					<div class="center-block" style="display: table;">
 						<p>
-							<h3>Enviando Email</h3>
+							<h3>Enviando E-mail</h3>
 							<span>Por favor espere</span>
 						</p>
 						<%= image_tag 'ajax-loader.gif', :alt => 'Loader' %>
@@ -179,7 +179,7 @@
 						</div>
 					</div>
 					<div>
-						<p>NOTA: Todos los emails son enviados como copia oculta</p>
+						<p>NOTA: Todos los e-mails son enviados como copia oculta</p>
 					</div>
 				</div>
 				<div class="modal-footer">
@@ -197,11 +197,11 @@
 		<div class="modal-content">
 			<div class="modal-header">
 				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-				<h4 class="modal-title" id="mailModalLabel">No es posible Enviar Emails</h4>
+				<h4 class="modal-title" id="mailModalLabel">No es posible Enviar E-mails</h4>
 			</div>
 			<ul>
-				<h4>Por favor confirme como mínimo una dirección de correo válida</h4>
-				<p>Para lo anterior, valide en <%= link_to "Configuración Emails", edit_company_setting_path(id: Company.find(current_user.company_id).company_setting.id) %> algún correo.</p>
+				<h4>Por favor confirme como mínimo una dirección de e-mail válida</h4>
+				<p>Para lo anterior, valide en <%= link_to "Configuración E-mails", edit_company_setting_path(id: Company.find(current_user.company_id).company_setting.id) %> algún e-mail.</p>
 			</ul>
 			<div class="modal-footer">
 				<button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
@@ -224,9 +224,9 @@
 					<h4>Instrucciones:</h4>
 					<li>Usar las plantillas de ejemplo como base para la importación. Todos los campos son opcionales.</li><br />
 					<li><strong>No se pueden cambiar los nombres de las columnas</strong> de las plantillas bases.</li><br />
-					<li>El identificador único para los clientes es el email, por lo que si se sube un cliente con un email existente, se reemplazaran los valores guardados anteriormente.<br />
-					Si no existe el email, se crea un cliente nuevo.<br />
-					Para editar el email de un cliente o eliminar un cliente de la base de datos, se debe realizar a través de la página.</li><br />
+					<li>El identificador único para los clientes es el e-mail, por lo que si se sube un cliente con un email existente, se reemplazaran los valores guardados anteriormente.<br />
+					Si no existe el e-mail, se crea un cliente nuevo.<br />
+					Para editar el e-mail de un cliente o eliminar un cliente de la base de datos, se debe realizar a través de la página.</li><br />
 					<li>Las fechas de cumpleaños deben ser en formato aaaa-mm-dd (ej: 1980-02-24)</li><br />
 					<li>Para ingresar el género de los clientes, se debe utilizar 0 si no se desea especificar, 1 si es Femenino o 2 si es Masculino.</li><br />
 					<h4>Plantillas para importación:</h4>

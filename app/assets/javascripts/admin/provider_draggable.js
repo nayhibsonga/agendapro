@@ -22,7 +22,7 @@ function providerNewOrder (tbody) {
 	var providers = new Array();
 	$.each($(tbody).children(), function (key, tr) {
 		var row_hash = {
-			provider: $(tr).children().first().data('provider'),
+			provider: $(tr).children("td:first").data('provider'),
 			order: key
 		};
 		providers.push(row_hash);

@@ -22,7 +22,7 @@ function serviceNewOrder (tbody) {
 	var services = new Array();
 	$.each($(tbody).children(), function (key, tr) {
 		var row_hash = {
-			service: $(tr).children().first().data('service'),
+			service: $(tr).children("td:first").data('service'),
 			order: key
 		};
 		services.push(row_hash);

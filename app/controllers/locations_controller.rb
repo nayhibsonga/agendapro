@@ -50,13 +50,22 @@ class LocationsController < ApplicationController
   # PATCH/PUT /locations/1
   # PATCH/PUT /locations/1.json
   def update
+    @location_times = Location.find(params[:id]).location_times
+    @location_times.each do |location_time|
+      location_time.location_id = nil
+      location_time.save
+    end
     @location = Location.find(params[:id])
-    @location.location_times.destroy_all
     respond_to do |format|
       if @location.update(location_params)
+        @location_times.destroy_all
         format.html { redirect_to locations_path, notice: 'Local actualizado exitosamente.' }
         format.json { render :json => @location }
       else
+        @location_times.each do |location_time|
+          location_time.location_id = @location.id
+          location_time.save
+        end
         format.html { render action: 'edit' }
         format.json { render :json => { :errors => @location.errors.full_messages }, :status => 422 }
       end

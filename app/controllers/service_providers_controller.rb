@@ -35,7 +35,7 @@ class ServiceProvidersController < ApplicationController
       format.html
       format.pdf do
         pdf = ServiceProvidersPdf.new(@service_provider)
-        send_data pdf.render, filename: 'Proveedor ' + DateTime.now.to_s + '.pdf', type: 'application/pdf'
+        send_data pdf.render, filename: @service_provider.public_name + "_" + DateTime.now.to_date.to_s + '.pdf', type: 'application/pdf'
       end
     end
   end
@@ -60,7 +60,7 @@ class ServiceProvidersController < ApplicationController
 
     @service_provider = ServiceProvider.new(service_provider_params)
     @service_provider.company_id = current_user.company_id
-
+    
     respond_to do |format|
       if @service_provider.save
         format.html { redirect_to service_providers_path, notice: 'Prestador creado exitosamente.' }
@@ -75,15 +75,25 @@ class ServiceProvidersController < ApplicationController
   # PATCH/PUT /service_providers/1
   # PATCH/PUT /service_providers/1.json
   def update
+    @provider_times = ServiceProvider.find(params[:id]).provider_times
+    @provider_times.each do |provider_time|
+      provider_time.service_provider_id = nil
+      provider_time.save
+    end
+    @service_provider = ServiceProvider.find(params[:id])
     if !service_provider_params[:service_ids].present?
       @service_provider.services.delete_all
     end
-    @service_provider.provider_times.destroy_all
     respond_to do |format|
       if @service_provider.update(service_provider_params)
+        @provider_times.destroy_all
         format.html { redirect_to service_providers_path, notice: 'Prestador actualizado exitosamente.' }
         format.json { render :json => @service_provider }
       else 
+        @provider_times.each do |provider_time|
+          provider_time.service_provider_id = @service_provider.id
+          provider_time.save
+        end
         format.html { render action: 'edit' }
         format.json { render :json => { :errors => @service_provider.errors.full_messages }, :status => 422 }
       end

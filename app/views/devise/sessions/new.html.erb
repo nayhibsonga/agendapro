@@ -17,7 +17,7 @@
   <div class="row well">
     <%= form_for resource, :as => resource_name, :url => session_path(resource_name), :html => { class: 'form-horizontal' } do |f| %>
         <div class="form-group">
-            <%= f.label :email, 'Email', :class => 'col-sm-2 control-label' %>
+            <%= f.label :email, 'E-mail', :class => 'col-sm-2 control-label' %>
             <div class="col-sm-4">
                 <%= f.email_field :email, :autofocus => true, :required => true, :class => 'form-control' %>
             </div>

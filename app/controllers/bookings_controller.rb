@@ -29,7 +29,7 @@ class BookingsController < ApplicationController
       format.json { render :json => @booking_json }
       format.pdf do
         pdf = BookingsPdf.new(@booking)
-        send_data pdf.render, filename: 'Reserva ' + DateTime.now.to_s + '.pdf', type: 'application/pdf'
+        send_data pdf.render, filename: 'Reserva ' + @booking.client.first_name + '_' + @booking.client.last_name + '_' + DateTime.now.to_date.to_s + '.pdf', type: 'application/pdf'
       end
     end
   end
@@ -131,7 +131,7 @@ class BookingsController < ApplicationController
         if User.find_by_email(@client.email)
           new_booking_params[:user_id] = User.find_by_email(@client.email).id
         end
-      else
+      elsif !booking_params[:client_id].nil? && booking_params[:client_id].empty?
         render :json => { :errors => ["El cliente no está registrado o no puede reservar."] }, :status => 422
         return
       end
@@ -230,6 +230,7 @@ class BookingsController < ApplicationController
   end
 
   def book_service
+    @location_id = params[:location]
     @company = Location.find(params[:location]).company
     if params[:address] && !params[:address].empty?
       params[:comment] += ' - Dirección del cliente (donde se debe realizar el servicio): ' + params[:address]

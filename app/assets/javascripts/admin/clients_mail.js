@@ -41,7 +41,7 @@ $(function () {
 							'<h3>Lo sentimos</h3>' +
 							'No puedes seleccionar más de ' + mails_left + ' clientes.' +
 							'<br>' +
-							'Solo puedes mandar un máximo de ' + $('#mails').data('max-mails') + ' emails por día.'
+							'Solo puedes mandar un máximo de ' + $('#mails').data('max-mails') + ' e-mails por día.'
 						);
 					};
 				};

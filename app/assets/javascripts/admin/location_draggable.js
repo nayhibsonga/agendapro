@@ -22,7 +22,7 @@ function locationNewOrder (tbody) {
 	var locations = new Array();
 	$.each($(tbody).children(), function (key, tr) {
 		var row_hash = {
-			location: $(tr).children().first().data('location'),
+			location: $(tr).children("td:first").data('location'),
 			order: key
 		};
 		locations.push(row_hash);
