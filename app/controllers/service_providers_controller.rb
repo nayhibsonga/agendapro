@@ -80,6 +80,7 @@ class ServiceProvidersController < ApplicationController
       provider_time.service_provider_id = nil
       provider_time.save
     end
+    @service_provider = ServiceProvider.find(params[:id])
     if !service_provider_params[:service_ids].present?
       @service_provider.services.delete_all
     end
