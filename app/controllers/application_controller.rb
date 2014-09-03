@@ -26,7 +26,7 @@ class ApplicationController < ActionController::Base
     if current_user && (current_user.role_id != Role.find_by_name("Super Admin").id) && current_user.company_id
       company = Company.find(current_user.company_id)
       if company.payment_status == PaymentStatus.find_by_name("Bloqueado") || !company.active
-        if current_user.role_id == Role.find_by_name("Admin").id
+        if current_user.role_id == Role.find_by_name("Administrador General").id
           redirect_to select_plan_path, notice: "¡Activa tu cuenta AgendaPro! No te pierdas un segundo más el acceso a las increíbles oportunidades que te da tu cuenta AgendaPro."
         else
           redirect_to dashboard_path, notice: "¡Activa tu cuenta AgendaPro! No te pierdas un segundo más el acceso a las oportunidades que te da tu cuenta AgendaPro. Si no eres el administrador, ponte en contacto con él para activar la cuenta."
@@ -55,7 +55,7 @@ class ApplicationController < ActionController::Base
   end
 
   def verify_is_admin
-    redirect_to "/403" unless (current_user.role_id == Role.find_by_name("Admin").id)
+    redirect_to "/403" unless (current_user.role_id == Role.find_by_name("Administrador General").id)
   end
 
   def verify_is_local_admin

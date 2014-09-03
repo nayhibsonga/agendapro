@@ -102,7 +102,7 @@ class Ability
         can :add_company, Company
         can :create, Company  
 
-    elsif user.role_id == Role.find_by_name("Admin").id
+    elsif user.role_id == Role.find_by_name("Administrador General").id
 
         can :select_plan, Plan
 

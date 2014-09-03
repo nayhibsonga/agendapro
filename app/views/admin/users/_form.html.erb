@@ -50,8 +50,8 @@
           <%= f.label :role_id, "Rol", class: "col-sm-3 control-label"  %>
           <div class="col-sm-4">
           <% if current_user.role_id == Role.find_by(name: 'Super Admin').id %>
-            <%= f.collection_select :role_id, Role.where(:name => ["Admin","Administrador Local","Staff"]), :id, :name, {include_blank: true}, {class: "form-control"} %>
-          <% elsif current_user.role_id == Role.find_by(name: 'Admin').id %>
+            <%= f.collection_select :role_id, Role.where(:name => ["Administrador General","Administrador Local","Staff"]), :id, :name, {include_blank: true}, {class: "form-control"} %>
+          <% elsif current_user.role_id == Role.find_by(name: 'Administrador General').id %>
             <%= f.collection_select :role_id, Role.where(:name => ["Administrador Local","Recepcionista","Staff"]), :id, :name, {include_blank: true}, {class: "form-control"} %>
           <% elsif current_user.role_id == Role.find_by(name: 'Administrador Local').id %>
             <%= f.collection_select :role_id, Role.where(:name => ["Recepcionista","Staff"]), :id, :name, {include_blank: true}, {class: "form-control"} %>
@@ -68,7 +68,7 @@
           <div class="col-sm-4">
           <% if current_user.role_id == Role.find_by(name: 'Super Admin').id %>
             <%= f.collection_select :location_id, Location.all, :id, :name, {include_blank: true}, {class: "form-control"} %>
-          <% elsif current_user.role_id == Role.find_by(name: 'Admin').id %>
+          <% elsif current_user.role_id == Role.find_by(name: 'Administrador General').id %>
             <%= f.collection_select :location_id, Location.where(:company_id => current_user.company_id, :active => true), :id, :name, {include_blank: true}, {class: "form-control"} %>
           <% elsif current_user.role_id == Role.find_by(name: 'Administrador Local').id %>
             <%= f.collection_select :location_id, Location.where(:id => current_user.location_id, :active => true), :id, :name, { selected: current_user.location_id}, {class: "form-control"} %>

@@ -41,7 +41,7 @@
                     <th>Cantidad</th>
                   </tr>
                   <% @locations.each do |location| %>
-                  <tr <%= if current_user.role_id != Role.find_by_name("Admin").id && current_user.location_id != location.id then 'style=display:none;' end %>>
+                  <tr <%= if current_user.role_id != Role.find_by_name("Administrador General").id && current_user.location_id != location.id then 'style=display:none;' end %>>
                     <td class="location-checkboxes">
                       <input type="checkbox" class="check_boxes pull-left resourceLocationCheck" id="resource_location_ids_<%= location.id %>" value="<%= location.id %>" name="resource[location_ids][]" onchange="changeLocationStatus(<%= location.id %>)"><label class="check_boxes" for="resource_location_ids_<%= location.id %>">&nbsp; <%= location.name %></label>
                     </td>

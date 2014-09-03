@@ -57,7 +57,7 @@ class CompaniesController < ApplicationController
 		respond_to do |format|
 			if @company.save 
 				@user.company_id = @company.id
-				@user.role_id = Role.find_by_name("Admin").id
+				@user.role_id = Role.find_by_name("Administrador General").id
 				@user.save
 				format.html { redirect_to dashboard_path, notice: 'Empresa creada exitosamente.' }
 				format.json { render action: 'show', status: :created, location: @company }

@@ -6,6 +6,28 @@
 #   cities = City.create([{ name: 'Chicago' }, { name: 'Copenhagen' }])
 #   Mayor.create(name: 'Emanuel', city: cities.first)
 
+# => Roles de la Aplicación 
+	roles = Role.create([
+		{name: "Super Admin", description: "Administrador de la aplicaión AgendaPro"},
+		{name: "Administrador General", description: "Administrador de empresa inscrita en AgendaPro"},
+		{name: "Administrador Local", description: "Administrador de local"},
+		{name: "Staff", description: "Usuario con atribuciones de atención en su local"},
+		{name: "Usuario Registrado", description: "Usuario con cuenta registrada y accesible"},
+		{name: "Recepcionista", description: "Usuario frontdesk de una empresa"}
+	])
+
+	super_admin = User.create(first_name: 'Sebastián', last_name: 'Hevia', email: 'shevia@agendapro.cl', phone: '+56 9 9477 5641', role: Role.find_by_name('Super Admin'), password: '12345678', password_confirmation: '12345678')
+
+# => Configuraciones Globales de la Aplicación
+	iva = NumericParameter.create(name: "sales_tax", value: 0.19)
+	cuatro_meses = NumericParameter.create(name: "4_month_discount", value: 0.05)
+	seis_meses = NumericParameter.create(name: "6_month_discount", value: 0.1)
+	nueve_meses = NumericParameter.create(name: "9_month_discount", value: 0.15)
+	doce_meses = NumericParameter.create(name: "12_month_discount", value: 0.2)
+
+# => Dias
+	days = Day.create([{name: "Lunes"}, {name: "Martes"}, {name: "Miércoles"}, {name: "Jueves"}, {name: "Viernes"}, {name: "Sábado"}, {name: "Domingo"}])
+
 # => Status de las Reservas
 	reservado = Status.create(name: "Reservado", description: "Reserva agendada")
 	bloqueado = Status.create(name: "Confirmado", description: "Reserva confirmada por el Usuario")
@@ -25,13 +47,6 @@
 	bloqueado = PaymentStatus.create(name: "Bloqueado", description: "La empresa está bloqueada por no pago del plan")
 	trial = PaymentStatus.create(name: "Trial", description: "La empresa está en período de prueba")
 	vencido = PaymentStatus.create(name: "Vencido", description: "La empresa está atrasada en el pago del mes en curso")
-
-# => Configuraciones Globales de la Aplicación
-	iva = NumericParameter.create(name: "sales_tax", value: 0.19)
-	cuatro_meses = NumericParameter.create(name: "4_month_discount", value: 0.05)
-	seis_meses = NumericParameter.create(name: "6_month_discount", value: 0.1)
-	nueve_meses = NumericParameter.create(name: "9_month_discount", value: 0.15)
-	doce_meses = NumericParameter.create(name: "12_month_discount", value: 0.2)
 
 # => Sectores Eonómicos de las Empresas
 	estetica = EconomicSector.create(name: "Centros de Estética")
@@ -242,9 +257,6 @@
 	la_florida = District.create(name: "La Florida", city: cities)
 	la_reina = District.create(name: "La Reina", city: cities)
 
-# => Dias
-	days = Day.create([{name: "Lunes"}, {name: "Martes"}, {name: "Miércoles"}, {name: "Jueves"}, {name: "Viernes"}, {name: "Sábado"}, {name: "Domingo"}])
-
 # => Planes Disponibles
 	plan_personal = Plan.create(name: "Personal", locations: 1, service_providers: 1, custom: false, price: 14900, special: false)
 	plan_basico = Plan.create(name: "Básico", locations: 1, service_providers: 30, custom: false, price: 24900, special: false)
@@ -253,20 +265,6 @@
 	plan_trial = Plan.create(name: "Trial", locations: 5, service_providers: 90, custom: true, price: 0, special: false)
 	# Plan para las personas que partieron con nosotros antes en la Beta y no se han querido cambiar...
 	plan_beta = Plan.create(name: "Beta", locations: 1, service_providers: 2, custom: true, price: 14900, special: false)
-
-# => Roles de la Aplicación 
-	# ARREGLAR POR SEBA
-	roles = Role.create([
-		{name: "Super Admin", description: "Administrador de la aplicaión AgendaPro"},
-		{name: "Admin", description: "Administrador de empresa inscrita en AgendaPro"},
-		{name: "Administrador Local", description: "Administrador de local"},
-		{name: "Staff", description: "Usuario con atribuciones de atención en su local"},
-		{name: "Usuario Registrado", description: "Usuario con cuenta registrada y accesible"},
-		{name: "Usuario No Registrado", description: "Usuario con cuenta no registrada"},
-		{name: "Recepcionista", description: "Usuario frontdesk de una empresa"}
-	])
-
-	super_admin = User.create(first_name: 'Sebastián', last_name: 'Hevia', email: 'shevia@agendapro.cl', phone: '+56 9 9477 5641', role: Role.find_by_name('Super Admin'), password: '12345678', password_confirmation: '12345678')
 
 # => Test Company
 	test_company = Company.create(name: 'Test Company', web_address: 'test', economic_sector_id: 1, plan_id: 2, payment_status_id: 1, description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus pharetra quam neque, eget condimentum purus semper id. In porta ut mauris id congue. Quisque accumsan mauris nec turpis tincidunt, quis rhoncus augue porttitor. Mauris quis malesuada sem. Donec nisi metus.", cancellation_policy: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam tincidunt rutrum sapien vel ultricies. Sed.")
@@ -284,9 +282,9 @@
 	Service.find(1).tags << Tag.find(1)
 	Service.find(2).tags << Tag.find(2)
 
-	admin = User.create(first_name: 'Nicolás', last_name: 'Flores', email: 'nflores@agendapro.cl', phone: '+56 9 9719 8689', role: Role.find_by_name('Admin'), password: '12345678', password_confirmation: '12345678', company_id: test_company.id)
+	admin = User.create(first_name: 'Nicolás', last_name: 'Flores', email: 'nflores@agendapro.cl', phone: '+56 9 9719 8689', role: Role.find_by_name('Administrador General'), password: '12345678', password_confirmation: '12345678', company_id: test_company.id)
 
-	service_provider = ServiceProvider.create(location_id: local_test.id, user_id: admin.id, company_id: test_company.id, notification_email: 'contacto@agendapro.cl', public_name: 'Provider Test')
+	service_provider = ServiceProvider.create(location_id: local_test.id, user_id: admin.id, company_id: test_company.id, notification_email: 'nflores@agendapro.cl', public_name: 'Provider Test')
 
 	service_provider.services << service
 
@@ -340,11 +338,11 @@
 
 	# # Usuarios de la app anterior
 
-	# lizet = User.create(first_name: 'Lizet', last_name: 'Riquelme', email: 'atencion@geavital.cl', phone: '', role: Role.find_by_name('Admin'), password: 'atenciongeavital', password_confirmation: 'atenciongeavital', company_id: geavital.id)
+	# lizet = User.create(first_name: 'Lizet', last_name: 'Riquelme', email: 'atencion@geavital.cl', phone: '', role: Role.find_by_name('Administrador General'), password: 'atenciongeavital', password_confirmation: 'atenciongeavital', company_id: geavital.id)
 
-	# odette = User.create(first_name: 'Odette', last_name: 'Sandoval', email: 'tophairpeluquerias@gmail.com', phone: '', role: Role.find_by_name('Admin'), password: '12345678', password_confirmation: '12345678', company_id: geavital.id)
+	# odette = User.create(first_name: 'Odette', last_name: 'Sandoval', email: 'tophairpeluquerias@gmail.com', phone: '', role: Role.find_by_name('Administrador General'), password: '12345678', password_confirmation: '12345678', company_id: geavital.id)
 
-	# kathy = User.create(first_name: 'Kathy', last_name: 'Valdes', email: 'mandarinabeauty@gmail.com', phone: '', role: Role.find_by_name('Admin'), password: 'agendapro', password_confirmation: 'agendapro', company_id: mandarina.id)
+	# kathy = User.create(first_name: 'Kathy', last_name: 'Valdes', email: 'mandarinabeauty@gmail.com', phone: '', role: Role.find_by_name('Administrador General'), password: 'agendapro', password_confirmation: 'agendapro', company_id: mandarina.id)
 
 	# #gabriel = User.create(first_name: 'Gabriel', last_name: 'Morales', email: 'mandarinabeauty@gmail.com', phone: '', role: Role.find_by_name('Staff'), password: 'agendapro', password_confirmation: 'agendapro')
 
@@ -354,33 +352,33 @@
 
 	# #vicky = User.create(first_name: 'Vicky', last_name: 'Cancino', email: 'mandarinabeauty@gmail.com', phone: '', role: Role.find_by_name('Staff'), password: 'agendapro', password_confirmation: 'agendapro')
 
-	# silvia = User.create(first_name: 'Silvia', last_name: 'Sepúlveda', email: 'silviagatitagat@hotmail.com', phone: '', role: Role.find_by_name('Admin'), password: 'perlita', password_confirmation: 'perlita', company_id: silviapodologiaclinica.id)
+	# silvia = User.create(first_name: 'Silvia', last_name: 'Sepúlveda', email: 'silviagatitagat@hotmail.com', phone: '', role: Role.find_by_name('Administrador General'), password: 'perlita', password_confirmation: 'perlita', company_id: silviapodologiaclinica.id)
 
-	# guillermo = User.create(first_name: 'José Guillermo', last_name: 'Donoso Palma', email: 'donosura.guillermo@gmail.com', phone: '', role: Role.find_by_name('Admin'), password: 'peluqueria', password_confirmation: 'peluqueria', company_id: donosura.id)
+	# guillermo = User.create(first_name: 'José Guillermo', last_name: 'Donoso Palma', email: 'donosura.guillermo@gmail.com', phone: '', role: Role.find_by_name('Administrador General'), password: 'peluqueria', password_confirmation: 'peluqueria', company_id: donosura.id)
 
 	# #aida = User.create(first_name: 'aida', last_name: 'sepulveda', email: 'aidy_sep@hotmail.com', phone: '', role: Role.find_by_name('Staff'), password: 'cachito', password_confirmation: 'cachito')
 
 	# # admin = User.create(first_name: 'silvia', last_name: 'sepulveda', email: 'silviagatitagat@hotmail.com', phone: '', role: Role.find_by_name('Staff'), password: '', password_confirmation: '')
 
-	# lucia = User.create(first_name: 'Lucía', last_name: 'Albarracin', email: 'albarracinl@gmail.com', phone: '', role: Role.find_by_name('Admin'), password: 'lucy2014', password_confirmation: 'lucy2014', company_id: lucy.id)
+	# lucia = User.create(first_name: 'Lucía', last_name: 'Albarracin', email: 'albarracinl@gmail.com', phone: '', role: Role.find_by_name('Administrador General'), password: 'lucy2014', password_confirmation: 'lucy2014', company_id: lucy.id)
 
-	# juan = User.create(first_name: 'Juan', last_name: 'Sanchez', email: 'frommysofa@gmail.com', phone: '', role: Role.find_by_name('Admin'), password: 'larrinaga', password_confirmation: 'larrinaga', company_id: la_cesta.id)
+	# juan = User.create(first_name: 'Juan', last_name: 'Sanchez', email: 'frommysofa@gmail.com', phone: '', role: Role.find_by_name('Administrador General'), password: 'larrinaga', password_confirmation: 'larrinaga', company_id: la_cesta.id)
 
-	# maria = User.create(first_name: 'María Amelia', last_name: 'Barrera', email: 'mariamelia.barrera@gmail.com', phone: '', role: Role.find_by_name('Admin'), password: 'mamelia', password_confirmation: 'mamelia', company_id: cambio_dos.id)
+	# maria = User.create(first_name: 'María Amelia', last_name: 'Barrera', email: 'mariamelia.barrera@gmail.com', phone: '', role: Role.find_by_name('Administrador General'), password: 'mamelia', password_confirmation: 'mamelia', company_id: cambio_dos.id)
 
-	# pabla = User.create(first_name: 'Pabla', last_name: 'Henriquez', email: 'pabli80@hotmail.it', phone: '', role: Role.find_by_name('Admin'), password: 'amore', password_confirmation: 'amore', company_id: benestetica.id)
+	# pabla = User.create(first_name: 'Pabla', last_name: 'Henriquez', email: 'pabli80@hotmail.it', phone: '', role: Role.find_by_name('Administrador General'), password: 'amore', password_confirmation: 'amore', company_id: benestetica.id)
 
-	# rose = User.create(first_name: 'Rose Mary', last_name: 'Arce', email: 'proterapias@gmail.com', phone: '', role: Role.find_by_name('Admin'), password: 'provi', password_confirmation: 'provi', company_id: proterapias.id)
+	# rose = User.create(first_name: 'Rose Mary', last_name: 'Arce', email: 'proterapias@gmail.com', phone: '', role: Role.find_by_name('Administrador General'), password: 'provi', password_confirmation: 'provi', company_id: proterapias.id)
 
 	# #jose = User.create(first_name: 'José', last_name: 'León', email: 'Josemiel98@yahoo.es', phone: '', role: Role.find_by_name('Staff'), password: '75085153', password_confirmation: '75085153')
 
-	# natalia = User.create(first_name: 'Natalia', last_name: 'Campos', email: 'nataliacamposv@gmail.com', phone: '', role: Role.find_by_name('Admin'), password: 'natinati', password_confirmation: 'natinati', company_id: ps_natalia_campos.id)
+	# natalia = User.create(first_name: 'Natalia', last_name: 'Campos', email: 'nataliacamposv@gmail.com', phone: '', role: Role.find_by_name('Administrador General'), password: 'natinati', password_confirmation: 'natinati', company_id: ps_natalia_campos.id)
 
 	# #sandra = User.create(first_name: 'Sandra', last_name: 'Pacheco Luengo', email: 'sandra.p.luengo@gmail.com', phone: '', role: Role.find_by_name('Staff'), password: 'EFT', password_confirmation: 'EFT')
 
 	# #carolina = User.create(first_name: 'Carolina', last_name: 'Ulloa', email: 'Moscar_m@hotmail.com', phone: '', role: Role.find_by_name('Staff'), password: '1234', password_confirmation: '1234')
 
-	# daniella = User.create(first_name: 'Daniella', last_name: 'Leiva', email: 'la.perpetua@gmail.com', phone: '', role: Role.find_by_name('Admin'), password: 'eternos2481', password_confirmation: 'eternos2481', company_id: chely.id)
+	# daniella = User.create(first_name: 'Daniella', last_name: 'Leiva', email: 'la.perpetua@gmail.com', phone: '', role: Role.find_by_name('Administrador General'), password: 'eternos2481', password_confirmation: 'eternos2481', company_id: chely.id)
 
 	# #monica = User.create(first_name: 'Monica', last_name: 'Pascual', email: 'la.perpetua@gmail.com', phone: '', role: Role.find_by_name('Staff'), password: 'peluqueria', password_confirmation: 'peluqueria')
 

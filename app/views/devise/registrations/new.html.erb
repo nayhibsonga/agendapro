@@ -23,7 +23,7 @@
 			<div class="tab-content">
 				<div class="tab-pane fade in active" id="user-data">
 					<!-- start: User -->
-					<%= f.hidden_field :role_id, :value => Role.where(:name => "Admin").first.id %>
+					<%= f.hidden_field :role_id, :value => Role.where(:name => "Administrador General").first.id %>
 					<%= f.hidden_field :first_name %>
 					<%= f.hidden_field :last_name %>
 					<div class="form-group has-feedback">

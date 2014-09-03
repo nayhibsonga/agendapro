@@ -36,7 +36,7 @@
       <tr>
         <td><%= link_to company.name, root_url(:subdomain => company.web_address) %></td>
         <td><%= l company.created_at, format: :short %> (<%= ((Time.now - company.created_at) / 1.day).to_i %>)</td>
-        <td><%= company.users.where(role_id: Role.find_by_name("Admin")).first.email %></td>
+        <td><%= company.users.where(role_id: Role.find_by_name("Administrador General")).first.email %></td>
         <td><%= l Booking.where(:service_provider_id => ServiceProvider.where(:company_id => company.id)).last.created_at, format: :short  if  Booking.where(:service_provider_id => ServiceProvider.where(:company_id => company.id)).last %></td>
         <td><%= link_to '<i class="fa fa-pencil"></i> Editar'.html_safe, edit_company_path(company) %>
           <%= link_to '<i class="fa fa-pencil"></i> Pagos'.html_safe, edit_payment_company_path(company) %>
