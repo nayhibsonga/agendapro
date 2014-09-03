@@ -41,6 +41,9 @@ class ServiceProvidersPdf < Prawn::Document
 
 			columns(0..2).borders = [:right]
 			row(0).columns(0..2).borders = [:bottom, :right]
+
+			cells.row(0).align = :center
+			cells.column(0).align = :center
 		end
 	end
 
@@ -49,7 +52,7 @@ class ServiceProvidersPdf < Prawn::Document
 		block_length = 30 * 60
 
 		provider_times = @service_provider.provider_times.where(day_id: now.cwday)
-		bookings = Booking.where(service_provider: @service_provider, status: Status.find_by(name: ['Reservado', 'Confirmado','Pagado'])).order(:start)
+		bookings = Booking.where(service_provider: @service_provider, status_id: Status.where(name: ['Reservado', 'Confirmado','Pagado','Asiste']).pluck(:id)).order(:start)
 
 		table_rows = []
 
@@ -69,7 +72,8 @@ class ServiceProvidersPdf < Prawn::Document
 					book_end = DateTime.parse(book.end.to_s)
 					last_row = table_rows.length - 1
 
-					if (block_close - book_start) * (book_end - block_open) > 0
+					# Mejorar el tema de que la fila está vacía, pensar que es mejor, poner todas las reservas o dejar la primera y la otra no mostrarla...
+					if (block_close - book_start) * (book_end - block_open) > 0 && table_row[1].nil?
 
 						if !last_row.zero? 
 							while table_rows[last_row][1] == 'Continuación...'  do

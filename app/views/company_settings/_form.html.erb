@@ -114,12 +114,13 @@
 	  <div class="tab-pane" id="emails">
 		<div class="container">
 			<div class="row">
-				<h3>
+				<h4>
 					Remitentes
-					<button class="btn btn-agendapro-claro pull-right" data-toggle="modal" data-target="#fromEmail">
+					<button class="btn btn-agendapro-oscuro pull-right" data-toggle="modal" data-target="#fromEmail">
 						Agregar E-mail
 					</button>
-				</h3>
+				</h4>
+				<br />
 				<table class="table table-hover">
 					<thead>
 						<tr>
@@ -141,7 +142,7 @@
 			</div>
 		</div>
 
-		<h3>Firma E-mail</h3>
+		<h4>Firma E-mail</h4>
 		<%= form_for @company_setting, :html => {:class => 'form-horizontal'} do |f| %>
 			<div class="form-group">
 				<%= f.label :signature, 'Firma', :class => 'col-sm-1 control-label' %>
@@ -152,7 +153,7 @@
 			</div>
 			<div class="form-group">
 				<div class="col-sm-offset-1 col-sm-4">
-					<%= f.submit 'Guardar', :class => 'btn btn-agendapro-oscuro' %>
+					<%= f.submit 'Guardar', :class => 'btn btn-agendapro-claro' %>
 					<%= link_to 'Cancelar', dashboard_path, :class => "btn btn-default" %>    
 				</div>
 			</div>

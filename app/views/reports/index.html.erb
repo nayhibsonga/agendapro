@@ -26,10 +26,10 @@
 <div class="row well well-white">
 	<ul id="myTab" class="nav nav-tabs" role="tablist">
 		<li class="active"><a href="#render_content" role="tab" data-toggle="tab" class="tab_index render" id="statuses">General</a></li>
-		<li class=""><a href="#render_content" role="tab" data-toggle="tab" class="tab_index render" id="locations">Sucursales</a></li>
+		<li class=""><a href="#render_content" role="tab" data-toggle="tab" class="tab_index render" id="locations">Locales</a></li>
 		<li class=""><a href="#render_content" role="tab" data-toggle="tab" class="tab_index render" id="services">Servicios</a></li>
 		<li class="dropdown">
-			<a href="#" id="myTabDrop1" class="dropdown-toggle" data-toggle="dropdown">Servicios por Sucursal <span class="caret"></span></a>
+			<a href="#" id="myTabDrop1" class="dropdown-toggle" data-toggle="dropdown">Servicios por Local <span class="caret"></span></a>
 			<ul class="dropdown-menu" role="menu" aria-labelledby="myTabDrop1">
 				<% @locations.each do |location| %>
 				<li><a href="#render_content" tabindex="-1" role="tab" data-toggle="tab" class="tab_index render" id="location_services<%=location.id%>"><%= location.name %></a></li>
@@ -37,7 +37,7 @@
 			</ul>
 		</li>
 		<li class="dropdown">
-			<a href="#" id="myTabDrop1" class="dropdown-toggle" data-toggle="dropdown">Prestadores por Sucursal <span class="caret"></span></a>
+			<a href="#" id="myTabDrop1" class="dropdown-toggle" data-toggle="dropdown">Prestadores por Local <span class="caret"></span></a>
 			<ul class="dropdown-menu" role="menu" aria-labelledby="myTabDrop1">
 				<% @locations.each do |location| %>
 				<li><a href="#render_content" tabindex="-1" role="tab" data-toggle="tab" class="tab_index render" id="location_providers<%=location.id%>"><%= location.name %></a></li>
@@ -65,11 +65,12 @@
 	  <div class="tab-pane" id="help">
 	    <div class="row">
 	    	<ol>
-				<li><strong>Empresa: </strong>En esta sección puedes configurar el nombre de empresa, la descripción, la url de tu mini-sitio, el logo que quieres mostrar y la política de cancelación.</li><br />
-				<li><strong>Reservas: </strong>En esta sección puedes habilitar el mini-sitio AgendaPro, la opción de aparecer en el Buscador AgendaPro y limitar que sólo las personas en tu base de datos puedan reservar.</li><br />
-				<li><strong>E-mails: </strong>En esta sección puedes configurar la dirección desde donde se envían los correos masivos (Remitentes) y la firma que se adjuntará en tus e-mails.</li><br />
-				<li><strong>Periodo AgendaPro: </strong>En esta sección puedes configurar el Tiempo Mínimo de Reserva y el Tiempo Máximo a futuro, además de la cantidad de horas mínimas necesarias para que tus clientes puedan modificar o cancelar una reserva.</li><br />
-				<li><strong>Link AgendaPro: </strong>En esta sección puedes obtener el Link AgendaPro, el cual te permitirá insertar el link a tu mini-sitio en cualquier otro sitio web que tengas. Hay varias opciones para que elijas la que más te acomoda.</li>
+				<li><strong>General: </strong>En esta sección puedes ver todas las reservas por estado, según cuándo fueron o serán realizadas y, además, ver el ranking de los servicios más utilizados y las horas del día más demandadas.</li><br />
+				<li><strong>Locales: </strong>En esta sección puedes ver las reservas realizadas en cada uno de tus locales.</li><br />
+				<li><strong>Servicios: </strong>En esta sección puedes ver las reservas realizadas dividas por los respectivos servicios.</li><br />
+				<li><strong>Servicios por Local: </strong>En esta sección puedes ver las reservas realizadas dividas por los respectivos servicios para cada uno de tus locales.</li><br />
+				<li><strong>Prestadores por Local: </strong>En esta sección puedes ver las reservas realizadas a cada uno de tus prestadores.</li><br />
+				<li><strong>Servicios por Prestador: </strong>En esta sección puedes ver las reservas realizadas a cada uno de tus prestadores, divididas por los respectivos servicios.</li>
 			</ol>
 		</div>
 	  </div>
