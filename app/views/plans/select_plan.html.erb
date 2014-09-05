@@ -85,7 +85,7 @@
     <p>Y, luego, selecciona el medio de pago haciendo click sobre su imagen:</p>
     <table class="table" id="mp_table">
       <tr>
-        <td>
+        <td style="display:none;">
           <%= link_to image_tag("https://www.puntopagos.com/content/mp1.gif"), generate_company_transaction_path(:mp => "01", :amount => 0), alt: "Botón de Pago Banco Santander", class: "mp_link" %>
         </td>
         <td>
@@ -263,7 +263,7 @@
           <p>Medios de pago disponibles:</p>
           <table class="table">
             <tr>
-              <td>
+              <td style="display:none;">
                 <%= link_to image_tag("https://www.puntopagos.com/content/mp1.gif"), generate_plan_transaction_path(:mp => "01", :plan_id => 0), alt: "Botón de Pago Banco Santander", class: "plan_mp_link" %>
               </td>
               <td>
