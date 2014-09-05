@@ -99,4 +99,16 @@ class ServiceProvider < ActiveRecord::Base
 			end
 		end
 	end
+
+	def provider_booking_day_occupation(date)
+		available_time = 0.0
+		used_time = 0.0
+		self.provider_times.each do |provider_time|
+			available_time += provider_time.close - provider_time.open
+		end
+		Booking.where(service_provider_id: self.id, start: date.to_time.beginning_of_day..date.to_time.end_of_day).each do |booking|
+			used_time += booking.end - booking.start
+		end
+		return used_time/available_time			
+	end
 end

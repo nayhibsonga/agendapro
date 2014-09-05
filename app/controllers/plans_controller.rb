@@ -2,7 +2,7 @@ class PlansController < ApplicationController
   before_action :set_plan, only: [:show, :edit, :update, :destroy]
   before_action :authenticate_user!, except: [:view_plans]
   before_action :quick_add, except: [:view_plans, :select_plan]
-  before_action :verify_is_super_admin, except: [:index, :view_plans, :select_plan]
+  before_action :verify_is_super_admin, except: [:view_plans, :select_plan]
   layout "admin", except: [:view_plans]
   load_and_authorize_resource
 
@@ -94,6 +94,22 @@ class PlansController < ApplicationController
   def view_plans
     @plans = Plan.where(custom: false)
     render layout: "home"
+  end
+
+  def puntopagos_creations
+    @puntopagos_creations = PuntoPagosCreation.all.order(:desc)
+  end
+
+  def company_cron_logs
+    @puntopagos_creations = CompanyCronLog.all.order(:desc)
+  end
+
+  def plan_logs
+    @puntopagos_creations = PlanLog.all.order(:desc)
+  end
+
+  def billing_logs
+    @puntopagos_creations = BillingLog.all.order(:desc)
   end
 
   private

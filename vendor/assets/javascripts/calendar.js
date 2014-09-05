@@ -108,7 +108,8 @@ function Calendar (source, getData) {
 			var div = $('<div>', {
 				'class': 'bloque-hora',
 				'data-start': hours.hour.start,
-				'data-end': hours.hour.end
+				'data-end': hours.hour.end,
+				'data-provider': hours.hour.provider
 			});
 			switch (hours.status) {
 				case 'past':
@@ -150,6 +151,7 @@ function Calendar (source, getData) {
 						date: element.parent().data('date'),
 						start: element.data('start'),
 						end: element.data('end'),
+						provider: element.data('provider'),
 						objectDate: parseDate(element.parent().data('date'), element.data('start')),
 						status: hours.status
 					};
@@ -160,6 +162,7 @@ function Calendar (source, getData) {
 						date: details.date,
 						start: details.start,
 						end: details.end,
+						provider: details.provider,
 						status: details.status,
 						objectDate: details.objectDate
 					});

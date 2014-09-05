@@ -1,4 +1,4 @@
-//====== Load Steps ======//
+ //====== Load Steps ======//
 
 function loadStep1 () {
 	$('#services-description').empty();
@@ -83,6 +83,16 @@ function loadStep2 () {
 
 		$.getJSON('/providers_services', {id: serviceId, local: $('#selectedLocal').data('local').id}, function (providers) {
 			$('#staff-selector').empty();
+			$('#staff-selector').append(
+				'<li class="list-group-item">' +
+					'<div class="radio">' +
+						'<label>' +
+							'<input type="radio" name="staffRadio" value="0">' +
+							'<p>Sin Preferencia</p>' +
+						'</label>' +
+					'</div>' +
+				'</li>'
+			);
 			$.each(providers, function (key, provider) {
 				$('#staff-selector').append(
 					'<li class="list-group-item">' +
@@ -148,7 +158,7 @@ function loadStep3 () {
 		if (selected) {
 			checkUserCrossBookings();
 
-			$('#provider').val($('input[name=staffRadio]:checked').val());
+			// $('#provider').val($('input[name=staffRadio]:checked').val());
 			$('#service').val($('input[name=serviceRadio]:checked').val());
 
 			// Summary
@@ -298,9 +308,11 @@ function loadDescription (serviceId) {
 var selected = false;
 
 function addBooking (booking) {
+	window.console.log(booking);
 	selected = true;
 	$('#start').val(generateDate(booking.date, booking.start));
 	$('#end').val(generateDate(booking.date, booking.end));
+	$('#provider').val(booking.provider);
 }
 
 function generateDate(date, time) {
