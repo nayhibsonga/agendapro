@@ -248,7 +248,7 @@ class LocationsController < ApplicationController
                       end
                     end
                   end
-                  ProviderBreak.where(:service_provider_id => provider.id).each do |provder_break|
+                  ProviderBreak.where(:service_provider_id => provider.id).each do |provider_break|
                     if (provider_break.start.to_datetime - end_time_block)*(start_time_block - provider_break.end.to_datetime) > 0
                       provider_free = false
                     end
