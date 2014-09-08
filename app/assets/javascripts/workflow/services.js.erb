@@ -83,31 +83,42 @@ function loadStep2 () {
 
 		$.getJSON('/providers_services', {id: serviceId, local: $('#selectedLocal').data('local').id}, function (providers) {
 			$('#staff-selector').empty();
-			$('#staff-selector').append(
-				'<li class="list-group-item">' +
-					'<div class="radio">' +
-						'<label>' +
-							'<input type="radio" name="staffRadio" value="0">' +
-							'<p>Sin Preferencia</p>' +
-						'</label>' +
-					'</div>' +
-				'</li>'
-			);
-			$.each(providers, function (key, provider) {
+			if ($('#providerPreference').data('provider-preference') != 1) {
 				$('#staff-selector').append(
 					'<li class="list-group-item">' +
 						'<div class="radio">' +
 							'<label>' +
-								'<input type="radio" name="staffRadio" value="' + provider.id + '">' +
-								'<p>' + provider.public_name + '</p>' +
+								'<input type="radio" name="staffRadio" value="0">' +
+								'<p>Sin Preferencia</p>' +
 							'</label>' +
 						'</div>' +
 					'</li>'
-				);
-			});
+				);	
+			}
+			if ($('#providerPreference').data('provider-preference') != 2) {
+				$.each(providers, function (key, provider) {
+					$('#staff-selector').append(
+						'<li class="list-group-item">' +
+							'<div class="radio">' +
+								'<label>' +
+									'<input type="radio" name="staffRadio" value="' + provider.id + '">' +
+									'<p>' + provider.public_name + '</p>' +
+								'</label>' +
+							'</div>' +
+						'</li>'
+					);
+				});
+			}
 
 			$('[name="staffRadio"]').on('click', function(event) {
 				$('.horario').show();
+
+				if (event.target.getAttribute('value') == 0) {
+					$('#provider_lock').val(false);
+				}
+				else {
+					$('#provider_lock').val(true);
+				}
 
 				var data = {
 					provider: event.target.getAttribute('value'),
