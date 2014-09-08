@@ -93,7 +93,7 @@ function loadStep2 () {
 							'</label>' +
 						'</div>' +
 					'</li>'
-				);	
+				);
 			}
 			if ($('#providerPreference').data('provider-preference') != 2) {
 				$.each(providers, function (key, provider) {
@@ -146,6 +146,25 @@ function loadStep2 () {
 					});
 				});
 			});
+
+			if ($('#providerPreference').data('provider-preference') != 1) {
+				$('[name="staffRadio"][value="0"]').prop("checked", true);
+				$('[name="staffRadio"][value="0"]').closest('.list-group-item').addClass('selected-wf-option');
+				$('.horario').show();
+				$('#provider_lock').val(false);
+				var data = {
+					provider: "0",
+					local: $('#selectedLocal').data('local').id,
+					service: $('input[name="serviceRadio"]:checked').val()
+				}
+
+				if (calendar) {
+					calendar.rebuild('/get_available_time.json', data);
+				}
+				else {
+					calendar = new Calendar('/get_available_time.json', data);
+				}
+			}
 
 			var radios = $('input[name=staffRadio]');
 			radios.on('change', function() {
