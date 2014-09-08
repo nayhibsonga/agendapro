@@ -49,7 +49,7 @@ class BookingsController < ApplicationController
     new_booking_params = booking_params.except(:client_first_name, :client_last_name, :client_phone, :client_email, :client_identification_number)
     @booking = Booking.new(new_booking_params)
     if Company.find(current_user.company_id).company_setting.client_exclusive
-      if !booking_params[:client_id].nil? && !booking_params[:client_id].empty?
+      if !booking_params[:client_id].nil? && !booking_params[:client_id].empty? && !booking_params[:client_identification_number].empty?
         @client = Client.find(booking_params[:client_id])
         @client.email = booking_params[:client_email]
         @client.phone = booking_params[:client_phone]
@@ -123,7 +123,7 @@ class BookingsController < ApplicationController
   def update
     new_booking_params = booking_params.except(:client_first_name, :client_last_name, :client_phone, :client_email, :client_identification_number)
     if Company.find(current_user.company_id).company_setting.client_exclusive
-      if !booking_params[:client_id].nil? && !booking_params[:client_id].empty?
+      if !booking_params[:client_id].nil? && !booking_params[:client_id].empty? && !booking_params[:client_identification_number].empty?
         @client = Client.find(booking_params[:client_id])
         @client.email = booking_params[:client_email]
         @client.phone = booking_params[:client_phone]
@@ -235,34 +235,29 @@ class BookingsController < ApplicationController
     if params[:address] && !params[:address].empty?
       params[:comment] += ' - Dirección del cliente (donde se debe realizar el servicio): ' + params[:address]
     end
-    if Client.where(email: params[:email], company_id: @company).count > 0
-      if @company.company_setting.client_exclusive
-        client = Client.where(email: params[:email], company_id: @company).first
-        if client.identification_number == params[:identification_number]
-          client = Client.where(email: params[:email], company_id: @company).first
-        else
-          flash[:alert] = "No estás ingresado como cliente o no puedes reservas. Porfavor comunícate con la empresa proveedora del servicio."
-          @errors = ["No estás ingresado como cliente"]
-          host = request.host_with_port
-          @url = @company.web_address + '.' + host[host.index(request.domain)..host.length]
-          render layout: "workflow"
-          return
-        end
+    if @company.company_setting.client_exclusive
+      if Client.where(identification_number: params[:identification_number], company_id: @company).count > 0
+        client = Client.where(identification_number: params[:identification_number], company_id: @company).first
+        client.first_name = params[:firstName]
+        client.last_name = params[:lastName]
+        client.email = params[:email]
+        client.phone = params[:phone]
+        client.save
       else
-        client = Client.where(email: params[:email], company_id: @company).first
+        flash[:alert] = "No estás ingresado como cliente o no puedes reservas. Porfavor comunícate con la empresa proveedora del servicio."
+        @errors = ["No estás ingresado como cliente"]
+        host = request.host_with_port
+        @url = @company.web_address + '.' + host[host.index(request.domain)..host.length]
+        render layout: "workflow"
+        return
       end
     else
-      if @company.company_setting.client_exclusive
-        if Client.where(identification_number: params[:identification_number], company_id: @company).count > 0
-          client = Client.where(identification_number: params[:identification_number], company_id: @company).first
-        else
-          flash[:alert] = "No estás ingresado como cliente o no puedes reservas. Porfavor comunícate con la empresa proveedora del servicio."
-          @errors = ["No estás ingresado como cliente"]
-          host = request.host_with_port
-          @url = @company.web_address + '.' + host[host.index(request.domain)..host.length]
-          render layout: "workflow"
-          return
-        end
+      if Client.where(email: params[:email], company_id: @company).count > 0
+        client = Client.where(email: params[:email], company_id: @company).first
+        client.first_name = params[:firstName]
+        client.last_name = params[:lastName]
+        client.phone = params[:phone]
+        client.save
       else
         client = Client.new(email: params[:email], first_name: params[:firstName], last_name: params[:lastName], phone: params[:phone], company_id: @company.id)
         client.save
@@ -285,7 +280,7 @@ class BookingsController < ApplicationController
       # BookingMailer.book_service_mail(@booking)
     else
       flash[:alert] = "Hubo un error guardando los datos de tu reserva. Inténtalo nuevamente."
-      @errors = @booking.errors
+      @errors = @booking.errors.full_messages
     end
 
     # => Domain parser
