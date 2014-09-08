@@ -1,0 +1,48 @@
+<div class="container">
+  <div class="row">
+    <section class="hgroup">
+      <h2>Log de Pago de Cuenta</h2>
+      <h2 class="section_header">Intentos de agregar mes, la explicación en los detalles.</h2>
+      <div class="line-breadcrumb">
+        <ul class="breadcrumb pull-right">
+            <li><%= link_to "Resumen", dashboard_path %> </li>
+            <li><%= link_to "Empresas", companies_path %> </li>
+            <li class="active">Log Pago Mensualidad</li>
+        </ul>
+    </div>
+    </section>
+  </div>
+</div>
+
+<table class="table">
+	<thead>
+		<tr>
+			<th>Empresa</th>
+			<th>Pago</th>
+			<th>Cantidad</th>
+			<th>Plan</th>
+			<th>Transacción</th>
+			<th>Token PP</th>
+			<th>TRX ID</th>
+			<th>Creación</th>
+		</tr>
+	</thead>
+	<tbody>
+		<% @billing_logs.each do |billing_log| %>
+			<tr>
+				<td><%= Company.find(billing_log.company_id).name %></td>
+				<td><%= billing_log.payment %></td>
+				<td><%= billing_log.amount %></td>
+				<td><%= Plan.find(billing_log.plan_id).name %></td>
+				<td><%= TransactionType.find(billing_log.transaction_type_id).name %></td>
+				<td><%= billing_log.token %></td>
+				<td><%= billing_log.trx_id %></td>
+				<td><%= l billing_log.created_at, format: :short %></td>
+			</tr>
+		 <% end %>
+	</tbody>
+</table>
+
+<div class="row">
+	<%= will_paginate @billing_logs, renderer: BootstrapPagination::Rails %>
+</div>

@@ -18,7 +18,11 @@
     Cantidad de reservas totales hechas mes pasado: <%= Booking.where(created_at: 1.month.ago.beginning_of_month..1.month.ago.end_of_month).count %><br />
     Cantidad de empresas totales hechas mes pasado: <%= Company.where(created_at: 1.month.ago.beginning_of_month..1.month.ago.end_of_month).count %><br />
   </div>
-</div> 
+</div>
+
+<div class="row">
+  <%= link_to "Creaciones PuntoPagos", puntopagos_creations_path %> | <%= link_to "Confirmaciones PuntoPagos", puntopagos_confirmations_path %> | 
+<%= link_to "Log Empresas", company_cron_logs_path %> | <%= link_to "Log Mensualidad", billing_logs_path %> | <%= link_to "Log Planes", plan_logs_path %></div>
 
 <table class="table table-bordered">
   <thead>

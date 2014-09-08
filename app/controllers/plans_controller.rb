@@ -97,19 +97,23 @@ class PlansController < ApplicationController
   end
 
   def puntopagos_creations
-    @puntopagos_creations = PuntoPagosCreation.all.order(:desc)
+    @puntopagos_creations = PuntoPagosCreation.all.order(id: :desc).paginate(:page => params[:page], :per_page => 100)
+  end
+
+  def puntopagos_confirmations
+    @puntopagos_confirmations = PuntoPagosConfirmation.all.order(id: :desc).paginate(:page => params[:page], :per_page => 100)
   end
 
   def company_cron_logs
-    @puntopagos_creations = CompanyCronLog.all.order(:desc)
+    @company_cron_logs = CompanyCronLog.all.order(id: :desc).paginate(:page => params[:page], :per_page => 100)
   end
 
   def plan_logs
-    @puntopagos_creations = PlanLog.all.order(:desc)
+    @plan_logs = PlanLog.all.order(id: :desc).paginate(:page => params[:page], :per_page => 100)
   end
 
   def billing_logs
-    @puntopagos_creations = BillingLog.all.order(:desc)
+    @billing_logs = BillingLog.all.order(id: :desc).paginate(:page => params[:page], :per_page => 100)
   end
 
   private
