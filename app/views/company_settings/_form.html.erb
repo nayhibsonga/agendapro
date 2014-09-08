@@ -134,7 +134,7 @@
 							<tr>
 								<td><%= email.email %></td>
 								<td><%= unless email.confirmed then 'Falta confirmación' else 'Si' end %></td>
-								<td><%= link_to '<i class="fa fa-trash-o"></i>'.html_safe, email, method: :delete, data: { confirm: 'Are you sure?' }, class: 'btn btn-danger' %></td>
+								<td><%= link_to '<i class="fa fa-trash-o"></i>'.html_safe, email, method: :delete, data: { confirm: '¿Estás seguro de eliminar el remitente seleccionado?' }, class: 'btn btn-danger' %></td>
 							</tr>
 							<% end %>
 					</tbody>
