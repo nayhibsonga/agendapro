@@ -7,6 +7,7 @@
 				<%= hidden_field_tag :start, nil %>
 				<%= hidden_field_tag :end, nil %>
 				<%= hidden_field_tag :origin, true %>
+            	<%= hidden_field_tag :provider_lock, @lock %>
 				<%= hidden_field_tag :location, @location.id %>
 				<div class="form-group">
 					<% unless @available_time.length == 0 %>

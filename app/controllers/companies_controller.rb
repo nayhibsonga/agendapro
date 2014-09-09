@@ -502,6 +502,7 @@ class CompaniesController < ApplicationController
 		@start = params[:start]
 		@end = params[:end]
 		@origin = params[:origin]
+		@lock = params[:provider_lock]
 
 		render layout: 'workflow'
 	end
