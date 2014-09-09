@@ -480,6 +480,12 @@ class CompaniesController < ApplicationController
 			end
 			end
 	    end
+	    
+	    if params[:providers] == "0"
+	    	@lock = false
+	    else
+	    	@lock = true
+	    end
 	    @company = @location.company
 	    @service
 	    @location
