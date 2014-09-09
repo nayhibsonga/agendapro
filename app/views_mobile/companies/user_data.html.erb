@@ -36,7 +36,16 @@
             	<div class="form-group">
             		<p id="user-message">Estas agendando como <strong><%= if user_signed_in? then current_user.email else '' end %></strong>.<br /> Si no eres tu, haz click <a href="#" id="user-change">aquí</a><br /></p>
             	</div>
-            	<% if @service.outcall %>
+            	<% if @location.company.company_setting.client_exclusive %>
+				<div class="form-group">
+					<%= label_tag(:identification_number, "RUT", class: "col-sm-3 control-label") %>
+					<div class="col-sm-9">
+						<%= text_field_tag(:identification_number, nil, :class => "form-control", :placeholder => "11.111.111-1" ) %>
+						<span class="help-block"></span>
+					</div>
+				</div>
+				<% end %>
+				<% if @service.outcall %>
 				<div id="outcallAddress" class="form-group">
 					<%= label_tag(:address, "Dirección", class: "col-sm-3 control-label") %>
 					<div class="col-sm-9">

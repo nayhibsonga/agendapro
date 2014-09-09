@@ -164,6 +164,18 @@ function loadStep2 () {
 				else {
 					calendar = new Calendar('/get_available_time.json', data);
 				}
+				$(document).on('hourClick', function (e) {
+					addBooking(e);
+				});
+
+				$(function () {
+					$('#prev').click(function () {
+						selected = false;
+					});
+					$('#next').click(function () {
+						selected = false;
+					});
+				});
 			}
 
 			var radios = $('input[name=staffRadio]');

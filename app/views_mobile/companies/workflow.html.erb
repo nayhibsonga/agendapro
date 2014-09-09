@@ -20,7 +20,7 @@
               <%= label_tag :services, 'Selecciona el servicio que quieres' %>
               <%= select_tag :services, nil, :class => 'form-control' %>
             </div>
-            <div class="form-group">
+            <div class="form-group" <%= 'style="display:none;"'.html_safe if @company.company_setting.provider_preference == 2 %>>
               <%= label_tag :providers, 'Selecciona al staff' %>
               <%= select_tag :providers, nil, :disabled => true, :class => 'form-control' %>
             </div>
@@ -86,6 +86,8 @@
 </div>
 
 <%= content_tag "div", id: "timeInterval", data: {min: @before_now, max: @after_now} do %>
+<% end %>
+<%= content_tag "div", id: "providerPreference", data: {provider_preference: @company.company_setting.provider_preference } do %>
 <% end %>
 
 <% content_for :stylesheets do %>
