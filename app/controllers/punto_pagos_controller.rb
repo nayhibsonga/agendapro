@@ -35,7 +35,7 @@ class PuntoPagosController < ApplicationController
       mockCompany.due_date = nil
       mockCompany.payment_status_id = PaymentStatus.find_by_name("Activo").id
       if !mockCompany.valid?
-        redirect_to select_plan_path, notice: "No se pudo completar la operación ya que hubo un error en la solicitud de pago. Porfavor ponte en contacto con contacto@agendapro.cl si el problema persiste. (10)"
+        redirect_to select_plan_path, notice: "No se pudo completar la operación ya que hubo un error en la solicitud de pago. Por favor escríbenos a contacto@agendapro.cl si el problema persiste. (10)"
       else
         NumericParameter.find_by_name(amount.to_s+"_month_discount") ? month_discount = NumericParameter.find_by_name(amount.to_s+"_month_discount").value : month_discount = 0
         # trx_id = DateTime.now.to_s.gsub(/[-:T]/i, '') + "c" + company.id.to_s + "p" + company.plan.id.to_s
@@ -50,11 +50,11 @@ class PuntoPagosController < ApplicationController
           redirect_to resp.payment_process_url
         else
           PuntoPagosCreation.create(trx_id: trx_id, payment_method: payment_method, amount: due, details: "Error creación de pago empresa id "+company.id.to_s+", nombre "+company.name+". Paga plan "+company.plan.name+"("+company.plan.id.to_s+") "+amount.to_s+" veces, por un costo de "+due+". trx_id: "+trx_id+" - mp: "+company.id.to_s+". Resultado: "+resp.get_error+".")
-          redirect_to select_plan_path, notice: "No se pudo completar la operación ya que hubo un error en la solicitud de pago. Porfavor ponte en contacto con contacto@agendapro.cl si el problema persiste. (6)"
+          redirect_to select_plan_path, notice: "No se pudo completar la operación ya que hubo un error en la solicitud de pago. Por favor escríbenos a contacto@agendapro.cl si el problema persiste. (6)"
         end
       end
     else
-      redirect_to select_plan_path, notice: "No se pudo completar la operación ya que hubo un error en la solicitud de pago. Porfavor ponte en contacto con contacto@agendapro.cl si el problema persiste. (7)"
+      redirect_to select_plan_path, notice: "No se pudo completar la operación ya que hubo un error en la solicitud de pago. Por favor escríbenos a contacto@agendapro.cl si el problema persiste. (7)"
     end
   end
 
@@ -94,7 +94,7 @@ class PuntoPagosController < ApplicationController
               PlanLog.create(trx_id: trx_id, new_plan_id: plan_id, prev_plan_id: previous_plan_id, company_id: company.id)
               redirect_to select_plan_path, notice: "El plan nuevo plan fue seleccionado exitosamente."
             else
-              redirect_to select_plan_path, notice: "El plan no pudo ser cambiado. Tienes más locales/proveedores activos que lo que permite el plan, o no tienes los permisos necesarios para hacer este cambio."
+              redirect_to select_plan_path, notice: "El plan no pudo ser cambiado. Tienes más locales y/o prestadores activos que lo que permite el plan, o no tienes los permisos necesarios para hacer este cambio."
             end
           else
             mockCompany = Company.find(current_user.company_id)
@@ -104,7 +104,7 @@ class PuntoPagosController < ApplicationController
             mockCompany.due_date = nil
             mockCompany.payment_status_id = PaymentStatus.find_by_name("Activo").id
             if !mockCompany.valid?
-              redirect_to select_plan_path, notice: "No se pudo completar la operación ya que hubo un error en la solicitud de pago. Porfavor ponte en contacto con contacto@agendapro.cl si el problema persiste. (8)"
+              redirect_to select_plan_path, notice: "No se pudo completar la operación ya que hubo un error en la solicitud de pago. Por favor escríbenos a contacto@agendapro.cl si el problema persiste. (8)"
             elsif payment_method != "00"
               due = sprintf('%.2f', ((plan_month_value + due_amount - plan_value_left)*(1+sales_tax)).round(0))
               req = PuntoPagos::Request.new()
@@ -115,10 +115,10 @@ class PuntoPagosController < ApplicationController
                 redirect_to resp.payment_process_url
               else
                 PuntoPagosCreation.create(trx_id: trx_id, payment_method: payment_method, amount: due, details: "Error creación de cambio de plan empresa id "+company.id.to_s+", nombre "+company.name+". Cambia de plan "+company.plan.name+"("+company.plan.id.to_s+"), por un costo de "+due+". trx_id: "+trx_id+" - mp: "+company.id.to_s+". Resultado: "+resp.get_error+".")
-                redirect_to select_plan_path, notice: "No se pudo completar la operación ya que hubo un error en la solicitud de pago. Porfavor ponte en contacto con contacto@agendapro.cl si el problema persiste. (1)"
+                redirect_to select_plan_path, notice: "No se pudo completar la operación ya que hubo un error en la solicitud de pago. Por favor escríbenos a contacto@agendapro.cl si el problema persiste. (1)"
               end
             else
-              redirect_to select_plan_path, notice: "No se pudo completar la operación ya que hubo un error en la solicitud de pago. Porfavor ponte en contacto con contacto@agendapro.cl si el problema persiste. (2)"
+              redirect_to select_plan_path, notice: "No se pudo completar la operación ya que hubo un error en la solicitud de pago. Por favor escríbenos a contacto@agendapro.cl si el problema persiste. (2)"
             end
           end
         else
@@ -129,7 +129,7 @@ class PuntoPagosController < ApplicationController
           mockCompany.due_date = nil
           mockCompany.payment_status_id = PaymentStatus.find_by_name("Activo").id
           if !mockCompany.valid?
-            redirect_to select_plan_path, notice: "No se pudo completar la operación ya que hubo un error en la solicitud de pago. Porfavor ponte en contacto con contacto@agendapro.cl si el problema persiste. (9)"
+            redirect_to select_plan_path, notice: "No se pudo completar la operación ya que hubo un error en la solicitud de pago. Por favor escríbenos a contacto@agendapro.cl si el problema persiste. (9)"
           elsif payment_method != "00"
             due = sprintf('%.2f', ((plan_month_value + due_amount)*(1+sales_tax)).round(0))
             req = PuntoPagos::Request.new()
@@ -140,17 +140,17 @@ class PuntoPagosController < ApplicationController
               redirect_to resp.payment_process_url
             else
               PuntoPagosCreation.create(trx_id: trx_id, payment_method: payment_method, amount: due, details: "Error creación de cambio de plan empresa id "+company.id.to_s+", nombre "+company.name+". Cambia de plan "+company.plan.name+"("+company.plan.id.to_s+"), por un costo de "+due+". trx_id: "+trx_id+" - mp: "+company.id.to_s+". Resultado: "+resp.get_error+".")
-              redirect_to select_plan_path, notice: "No se pudo completar la operación ya que hubo un error en la solicitud de pago. Porfavor ponte en contacto con contacto@agendapro.cl si el problema persiste. (3)"
+              redirect_to select_plan_path, notice: "No se pudo completar la operación ya que hubo un error en la solicitud de pago. Por favor escríbenos a contacto@agendapro.cl si el problema persiste. (3)"
             end
           else
-            redirect_to select_plan_path, notice: "No se pudo completar la operación ya que hubo un error en la solicitud de pago. Porfavor ponte en contacto con contacto@agendapro.cl si el problema persiste. (4)"
+            redirect_to select_plan_path, notice: "No se pudo completar la operación ya que hubo un error en la solicitud de pago. Por favor escríbenos a contacto@agendapro.cl si el problema persiste. (4)"
           end
         end
       else
-        redirect_to select_plan_path, notice: "El plan no pudo ser cambiado. Tienes más locales/proveedores activos que lo que permite el plan, o no tienes los permisos necesarios para hacer este cambio."
+        redirect_to select_plan_path, notice: "El plan no pudo ser cambiado. Tienes más locales y/o prestadores activos que lo que permite el plan, o no tienes los permisos necesarios para hacer este cambio."
       end
     else
-      redirect_to select_plan_path, notice: "No se pudo completar la operación ya que hubo un error en la solicitud de pago. Porfavor ponte en contacto con contacto@agendapro.cl si el problema persiste. (5)"
+      redirect_to select_plan_path, notice: "No se pudo completar la operación ya que hubo un error en la solicitud de pago. Por favor escríbenos a contacto@agendapro.cl si el problema persiste. (5)"
     end
   end
 
