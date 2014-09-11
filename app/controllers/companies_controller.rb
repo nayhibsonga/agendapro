@@ -197,7 +197,7 @@ class CompaniesController < ApplicationController
 
 			# Variable Data
 			day = date.cwday
-			ordered_providers = ServiceProvider.where(id: service.service_providers.pluck(:id), location_id: local.id, active: true).order(:order).sort_by {|service_provider| service_provider.provider_booking_day_occupation(date) }
+			ordered_providers = ServiceProvider.where(id: service.service_providers.pluck(:id), location_id: local.id, active: true).order(order: :desc).sort_by {|service_provider| service_provider.provider_booking_day_occupation(date) }
 			location_times = local.location_times.where(day_id: day).order(:open)
 
 			if location_times.length > 0

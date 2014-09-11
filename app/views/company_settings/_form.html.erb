@@ -186,7 +186,7 @@
 				<div class="form-group">
 					<%= f.label :provider_preference, 'Preferencia Prestador', :class => 'col-sm-3 control-label' %>
 					<div class="col-sm-5">
-						<%= f.select :provider_preference, options_for_select([["Puede elegir preferencia", 0], ["Debe elegir prestador", 1], ["No puede elegir prestador", 2]], selected: @company_setting.provider_preference ), {}, {class: "form-control" } %>
+						<%= f.select :provider_preference, options_for_select([["Cliente puede elegir prestador", 0], ["Cliente debe elegir prestador", 1], ["Cliente no puede elegir prestador", 2]], selected: @company_setting.provider_preference ), {}, {class: "form-control" } %>
 						<span class="help-block">Aquí configuras si el cliente puede o debe elegir el prestador con el que se atenderá. Si no se elige, se seleccionará automáticamente al prestador con menos ocupación ese día.</span>
 					</div>
 				</div>
