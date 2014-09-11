@@ -1,38 +1,39 @@
 <% if ["billing","plan"].include? @success_page %>
 <div class="main">
+	<br />
     <section class="pricing_wrapper">
         <div class="container">
 			<div class="well well-lg">
 				<div class="row">
-					<div class="col-md-6">
+					<div class="col-md-7">
 						<hr>
 						<% if @success_page == "billing" %>
 						<h4>Resumen de tu Pago</h4>
 						<dl class="dl-horizontal">
-							<dt>¿Qué pagaste?</dt>
-							<dd><%= Plan.find(@billing_log.plan_id).name %></dd>
-							<dt>¿Cuántos Meses pagaste?</dt>
-							<dd><%= @billing_log.amount %></dd>
+							<dt>¿Qué plan pagaste?</dt>
+							<dd>Plan <%= Plan.find(@billing_log.plan_id).name %></dd>
+							<dt>¿Cuántos meses pagaste?</dt>
+							<dd><%= number_with_precision(@billing_log.amount, precision: 0) %></dd>
 							<dt>¿Cuánto costó?</dt>
-							<dd><%= @billing_log.payment %></dd>
+							<dd><%= number_to_currency(@billing_log.payment, unit: "CLP $", delimiter: ".")%></dd>
 							<dt>Código de la Transacción</dt>
 							<dd><%= @billing_log.trx_id %></dd>
 							<dt>¿Dudas o consultas?</dt>
-							<dd>Por favor envíanos un e-mail a <i class="fa fa-envelope-square"></i> contacto@agendapro.cl o llamanos al <i class="fa fa-phone-square"></i> (+56 9) 5178 5898</dd>
+							<dd>Por favor envíanos un e-mail a contacto@agendapro.cl o llamanos al (+56 9) 5178 5898</dd>
 						</dl>
 						<% elsif @success_page == "plan" %>
 						<h4>Resumen de tu Pago</h4>
 						<dl class="dl-horizontal">
 							<dt>Plan anterior</dt>
-							<dd><%= Plan.find(@plan_log.prev_plan_id).name %></dd>
-							<dt>Nuevo Plan</dt>
-							<dd><%= Plan.find(@plan_log.new_plan_id).name %></dd>
+							<dd>Plan <%= Plan.find(@plan_log.prev_plan_id).name %></dd>
+							<dt>Plan Nuevo</dt>
+							<dd>Plan <%= Plan.find(@plan_log.new_plan_id).name %></dd>
 							<dt>¿Cuánto costó?</dt>
-							<dd><%= PuntoPagosConfirmation.find_by_trx_id(@plan_log.trx_id).amount %></dd>
+							<dd><%= number_to_currency(PuntoPagosConfirmation.find_by_trx_id(@plan_log.trx_id).amount, unit: "CLP $", delimiter: ".")%></dd>
 							<dt>Código de la Transacción</dt>
 							<dd><%= @plan_log.trx_id %></dd>
 							<dt>¿Dudas o consultas?</dt>
-							<dd>Por favor envíanos un e-mail a <i class="fa fa-envelope-square"></i> contacto@agendapro.cl o llamanos al <i class="fa fa-phone-square"></i> (+56 9) 5178 5898</dd>
+							<dd>Por favor envíanos un e-mail a contacto@agendapro.cl o llamanos al (+56 9) 5178 5898</dd>
 						</dl>
 						<% end %>
 						<hr>
@@ -57,7 +58,7 @@
 					        <% end %>
 						</dl>
 					</div>
-					<div class="col-md-6">
+					<div class="col-md-5">
 						<%= image_tag("backgrounds/check.png", :class => "center-block") %>
 					</div>
 				</div>

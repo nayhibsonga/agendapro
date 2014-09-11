@@ -52,8 +52,8 @@ class ServiceProvidersPdf < Prawn::Document
 		block_length = 30 * 60
 
 		provider_times = @service_provider.provider_times.where(day_id: now.cwday)
-		bookings = Booking.where(service_provider: @service_provider, status_id: Status.where(name: ['Reservado', 'Confirmado','Pagado','Asiste']).pluck(:id)).order(:start)
-
+		bookings = Booking.where(service_provider: @service_provider, status_id: Status.where(name: ['Reservado', 'Confirmado','Pagado','Asiste']).pluck(:id), start: now.beginning_of_day..now.end_of_day).order(:start)
+		breaks = ProviderBreaks.where(service_provider: @service_provider, start: now.beginning_of_day..now.end_of_day)
 		table_rows = []
 
 		provider_times.each do |provider_time|
@@ -110,6 +110,7 @@ class ServiceProvidersPdf < Prawn::Document
 						table_row.compact!
 					end
 				end
+
 				table_rows.append(table_row)
 			end
 		end
