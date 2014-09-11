@@ -63,19 +63,24 @@
       <% end %>
 
       <% if !current_user.nil? %>
-        <div class="form-group has-feedback hidden" id="locationGroup">
-          <%= f.label :location_id, "Local", class: "col-sm-3 control-label"  %>
+        <div class="form-group hidden" id="locationGroup">
+          <%= f.label :location_ids, "Locales", class: "col-sm-3 control-label" %>
           <div class="col-sm-4">
-          <% if current_user.role_id == Role.find_by(name: 'Super Admin').id %>
-            <%= f.collection_select :location_id, Location.all, :id, :name, {include_blank: true}, {class: "form-control"} %>
-          <% elsif current_user.role_id == Role.find_by(name: 'Administrador General').id %>
-            <%= f.collection_select :location_id, Location.where(:company_id => current_user.company_id, :active => true), :id, :name, {include_blank: true}, {class: "form-control"} %>
-          <% elsif current_user.role_id == Role.find_by(name: 'Administrador Local').id %>
-            <%= f.collection_select :location_id, Location.where(:id => current_user.location_id, :active => true), :id, :name, { selected: current_user.location_id}, {class: "form-control"} %>
-          <% end %>
-          <span class="help-block"></span>
-          <span class="form-control-feedback"></span>
-          </div>  
+            <div class="panel panel-default">
+          <div class="panel-heading">
+            <h3 class="panel-title">Locales</h3>
+              </div>
+              <div class="panel-body">
+                <%= f.collection_check_boxes :location_ids, Location.where(active: true).accessible_by(current_ability), :id, :name, {}, {class: "check_boxes"} do |b|%>
+                    <div class="checkbox">
+                      <label>
+                      <%= b.check_box %> <%= b.object.name %>
+                      </label>
+                    </div>
+                  <% end %>
+              </div>
+            </div>
+          </div>
         </div>
       <% end %>
 
@@ -99,7 +104,7 @@
                   <%= f.collection_check_boxes :service_provider_ids, @service_providers, :id, :public_name, {}, {class: "check_boxes"} do |b|%>
                     <div class="checkbox">
                       <label>
-                        <%= b.check_box %> <%= b.object.public_name %> 
+                      <%= b.check_box %> <%= b.object.public_name %>
                       </label>
                     </div>
                   <% end %>

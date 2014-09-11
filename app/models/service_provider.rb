@@ -1,17 +1,19 @@
 class ServiceProvider < ActiveRecord::Base
 	belongs_to :location
-	belongs_to :user
 	belongs_to :company
 
 	has_many :service_staffs, dependent: :destroy
 	has_many :services, :through => :service_staffs
+
+	has_many :user_providers, dependent: :destroy
+	has_many :users, :through => :user_providers
+
 	has_many :provider_times, :inverse_of => :service_provider, dependent: :destroy
 	has_many :bookings, dependent: :destroy
 	has_many :provider_breaks, dependent: :destroy
 
 	attr_accessor :_destroy
-
-	accepts_nested_attributes_for :user, :reject_if => :all_blank, :allow_destroy => true
+	
 	accepts_nested_attributes_for :provider_times, :reject_if => :all_blank, :allow_destroy => true
 	
 	validates :company, :public_name, :notification_email, :location, :presence => true
