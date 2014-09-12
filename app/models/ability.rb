@@ -195,9 +195,9 @@ class Ability
 
     elsif user.role_id == Role.find_by_name("Administrador Local").id
 
-        can :get_booking, Booking, :location_id => user.locations
-        can :get_booking_info, Booking, :location_id => user.locations
-        can :available_providers, ServiceProvider, :location_id => user.locations
+        can :get_booking, Booking, :location_id => user.locations.pluck(:id)
+        can :get_booking_info, Booking, :location_id => user.locations.pluck(:id)
+        can :available_providers, ServiceProvider, :location_id => user.locations.pluck(:id)
         can :provider_breaks, ProviderBreak
         can :get_provider_break, ProviderBreak
         can :create_provider_break, ProviderBreak
@@ -234,36 +234,36 @@ class Ability
         can :create, User, :location_id => user.locations, :role_id => @roles
         can :update, User, :location_id => user.locations, :role_id => @roles
 
-        can :read, ServiceProvider, :location_id => user.locations
-        can :destroy, ServiceProvider, :location_id => user.locations
-        can :create, ServiceProvider, :location_id => user.locations
-        can :update, ServiceProvider, :location_id => user.locations
+        can :read, ServiceProvider, :location_id => user.locations.pluck(:id)
+        can :destroy, ServiceProvider, :location_id => user.locations.pluck(:id)
+        can :create, ServiceProvider, :location_id => user.locations.pluck(:id)
+        can :update, ServiceProvider, :location_id => user.locations.pluck(:id)
 
         can :inactive_index, Service, :company_id => user.company_id
         can :activate, Service, :company_id => user.company_id
         can :deactivate, Service, :company_id => user.company_id
 
-        can :inactive_index, ServiceProvider, :location_id => user.locations
-        can :activate, ServiceProvider, :location_id =>  user.locations
-        can :deactivate, ServiceProvider, :location_id => user.locations
+        can :inactive_index, ServiceProvider, :location_id => user.locations.pluck(:id)
+        can :activate, ServiceProvider, :location_id =>  user.locations.pluck(:id)
+        can :deactivate, ServiceProvider, :location_id => user.locations.pluck(:id)
 
-        can :read, Location, :id => user.locations
-        can :update, Location, :id => user.locations
+        can :read, Location, :id => user.locations.pluck(:id)
+        can :update, Location, :id => user.locations.pluck(:id)
 
-        can :read, LocationTime, :location_id => user.locations
-        can :destroy, LocationTime, :location_id => user.locations
-        can :create, LocationTime, :location_id => user.locations
-        can :update, LocationTime, :location_id => user.locations
+        can :read, LocationTime, :location_id => user.locations.pluck(:id)
+        can :destroy, LocationTime, :location_id => user.locations.pluck(:id)
+        can :create, LocationTime, :location_id => user.locations.pluck(:id)
+        can :update, LocationTime, :location_id => user.locations.pluck(:id)
 
-        can :read, ProviderTime, :service_provider => { :location_id => user.locations }
-        can :destroy, ProviderTime, :service_provider => { :location_id => user.locations }
-        can :create, ProviderTime, :service_provider => { :location_id => user.locations }
-        can :update, ProviderTime, :service_provider => { :location_id => user.locations }
+        can :read, ProviderTime, :service_provider => { :location_id => user.locations.pluck(:id) }
+        can :destroy, ProviderTime, :service_provider => { :location_id => user.locations.pluck(:id) }
+        can :create, ProviderTime, :service_provider => { :location_id => user.locations.pluck(:id) }
+        can :update, ProviderTime, :service_provider => { :location_id => user.locations.pluck(:id) }
 
-        can :read, Booking, :location_id => user.locations
-        can :destroy, Booking, :location_id => user.locations 
-        can :create, Booking, :location_id => user.locations 
-        can :update, Booking, :location_id => user.locations
+        can :read, Booking, :location_id => user.locations.pluck(:id)
+        can :destroy, Booking, :location_id => user.locations.pluck(:id) 
+        can :create, Booking, :location_id => user.locations.pluck(:id)
+        can :update, Booking, :location_id => user.locations.pluck(:id)
 
         can :provider_service, ServiceProvider
         can :name_suggestion, Client
@@ -287,9 +287,9 @@ class Ability
 
     elsif user.role_id == Role.find_by_name("Recepcionista").id
 
-        can :get_booking, Booking, :location_id => user.locations
-        can :get_booking_info, Booking, :location_id => user.locations
-        can :available_providers, ServiceProvider, :location_id => user.locations
+        can :get_booking, Booking, :location_id => user.locations.pluck(:id)
+        can :get_booking_info, Booking, :location_id => user.locations.pluck(:id)
+        can :available_providers, ServiceProvider, :location_id => user.locations.pluck(:id)
         can :provider_breaks, ProviderBreak
         can :get_provider_break, ProviderBreak
         can :create_provider_break, ProviderBreak
@@ -302,16 +302,16 @@ class Ability
 
         can :read, Location, :id => user.locations
         
-        can :read, ProviderTime, :service_provider => { :location_id => user.locations }
+        can :read, ProviderTime, :service_provider => { :location_id => user.locations.pluck(:id) }
 
         can :read, Client, :company_id => user.company_id
         can :create, Client, :company_id => user.company_id
         can :update, Client, :company_id => user.company_id
 
-        can :read, Booking, :location_id => user.locations
-        can :destroy, Booking, :location_id => user.locations 
-        can :create, Booking, :location_id => user.locations 
-        can :update, Booking, :location_id => user.locations 
+        can :read, Booking, :location_id => user.locations.pluck(:id)
+        can :destroy, Booking, :location_id => user.locations.pluck(:id)
+        can :create, Booking, :location_id => user.locations.pluck(:id)
+        can :update, Booking, :location_id => user.locations.pluck(:id)
 
         can :name_suggestion, Client
         can :suggestion, Client
@@ -329,7 +329,7 @@ class Ability
         can :name_suggestion, Client
         can :suggestion, Client
         can :provider_service, ServiceProvider
-        can :get_booking, Booking, :service_provider_id => user.service_providers
+        can :get_booking, Booking, :service_provider_id => user.service_providers.pluck(:id)
 
         can :read, ServiceProvider, :user_id => user.id
 
@@ -337,20 +337,20 @@ class Ability
 
         can :read, LocationTime, :location => {:company_id => user.company_id }
 
-        can :read, ProviderTime, :service_provider => user.service_providers
+        can :read, ProviderTime, :service_provider => user.service_providers.pluck(:id)
 
         can :read, Service, :company_id => user.company_id
 
-        can :read, Booking, :service_provider_id => user.service_providers
-        can :destroy, Booking, :service_provider_id => user.service_providers
-        can :create, Booking, :service_provider_id => user.service_providers
-        can :update, Booking, :service_provider_id => user.service_providers
+        can :read, Booking, :service_provider_id => user.service_providers.pluck(:id)
+        can :destroy, Booking, :service_provider_id => user.service_providers.pluck(:id)
+        can :create, Booking, :service_provider_id => user.service_providers.pluck(:id)
+        can :update, Booking, :service_provider_id => user.service_providers.pluck(:id)
 
-        can :provider_breaks, ProviderBreak, :service_provider_id => user.service_providers
-        can :get_provider_break, ProviderBreak, :service_provider_id => user.service_providers
-        can :create_provider_break, ProviderBreak, :service_provider_id => user.service_providers
-        can :update_provider_break, ProviderBreak, :service_provider_id => user.service_providers
-        can :destroy_provider_break, ProviderBreak, :service_provider_id => user.service_providers
+        can :provider_breaks, ProviderBreak, :service_provider_id => user.service_providers.pluck(:id)
+        can :get_provider_break, ProviderBreak, :service_provider_id => user.service_providers.pluck(:id)
+        can :create_provider_break, ProviderBreak, :service_provider_id => user.service_providers.pluck(:id)
+        can :update_provider_break, ProviderBreak, :service_provider_id => user.service_providers.pluck(:id)
+        can :destroy_provider_break, ProviderBreak, :service_provider_id => user.service_providers.pluck(:id)
                 
     end
 
