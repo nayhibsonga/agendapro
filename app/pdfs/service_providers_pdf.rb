@@ -69,9 +69,6 @@ class ServiceProvidersPdf < Prawn::Document
 				block_open = DateTime.new(now.year, now.mon, now.mday, provider_open.hour, provider_open.min)
 				block_close = DateTime.new(now.year, now.mon, now.mday, provider_close.hour, provider_close.min)
 
-				target_booking = nil
-				target_break = nil
-
 				service_name = 'Descanso por Horario'
 				client_name = '...'
 				client_phone = '...'
@@ -104,6 +101,8 @@ class ServiceProvidersPdf < Prawn::Document
 						if (provider_break.start.to_datetime - block_close)*(block_open - provider_break.end.to_datetime) > 0
 							in_provider_booking = true
 							service_name = "Bloqueo: "+provider_break.name
+							client_name = '...'
+							client_phone = '...'
 							break
 						end
 					end
