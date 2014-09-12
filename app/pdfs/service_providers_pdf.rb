@@ -50,74 +50,97 @@ class ServiceProvidersPdf < Prawn::Document
 	def provider_hours
 		now = DateTime.now
 		block_length = 30 * 60
-
-		provider_times = @service_provider.provider_times.where(day_id: now.cwday)
-		bookings = Booking.where(service_provider: @service_provider, status_id: Status.where(name: ['Reservado', 'Confirmado','Pagado','Asiste']).pluck(:id), start: now.beginning_of_day..now.end_of_day).order(:start)
-		breaks = ProviderBreaks.where(service_provider: @service_provider, start: now.beginning_of_day..now.end_of_day)
 		table_rows = []
 
-		provider_times.each do |provider_time|
-			provider_open = provider_time.open
-			while (provider_open <=> provider_time.close) < 0 do
-				# Se hace la nueva fila de la tabla
+		provider_times = @service_provider.provider_times.where(day_id: now.cwday).order(:open)
+
+		if provider_times.length > 0
+
+			open_provider_time = provider_times.first.open
+			close_provider_time = provider_times.last.close
+
+			provider_open = provider_times.first.open
+			while (provider_open <=> close_provider_time) < 0 do
+				provider_close = provider_open + block_length
+
 				table_row = [provider_open.strftime('%R'), nil, nil, nil]
+				last_row = table_rows.length - 1
 
-				# Se arma el inicio y fin del bloque
 				block_open = DateTime.new(now.year, now.mon, now.mday, provider_open.hour, provider_open.min)
-				provider_open += block_length
-				block_close = DateTime.new(now.year, now.mon, now.mday, provider_open.hour, provider_open.min)
+				block_close = DateTime.new(now.year, now.mon, now.mday, provider_close.hour, provider_close.min)
 
-				bookings.each do |book|
-					book_start = DateTime.parse(book.start.to_s)
-					book_end = DateTime.parse(book.end.to_s)
-					last_row = table_rows.length - 1
+				target_booking = nil
+				target_break = nil
 
-					# Mejorar el tema de que la fila está vacía, pensar que es mejor, poner todas las reservas o dejar la primera y la otra no mostrarla...
-					if (block_close - book_start) * (book_end - block_open) > 0 && table_row[1].nil?
+				service_name = 'Descanso por Horario'
+				client_name = '...'
+				client_phone = '...'
 
-						if !last_row.zero? 
-							while table_rows[last_row][1] == 'Continuación...'  do
-								# Subir un nivel para ver si es el mismo servicio o no	
-							   	last_row -=1
-							end
-
-							if book.service.name == (table_rows[last_row][1]) && (book.client.first_name + ' ' + book.client.last_name == (table_rows[last_row][2])) 
-								
-								service_name = 'Continuación...'
-								client_name = '...'
-								client_phone = '...'
-
-								table_row << service_name
-								table_row << client_name
-								table_row << client_phone
-								table_row.compact!
-
-								next
-							end
-						end
-
-						service_name = book.service.name
+				in_provider_time = false
+				provider_times.each do |provider_time|
+					if (provider_time.open - provider_close)*(provider_open - provider_time.close) > 0
+						in_provider_time = true
+						service_name = ''
 						client_name = ''
 						client_phone = ''
-						if !book.client_id.blank?
-							client_name = book.client.first_name + ' ' + book.client.last_name
-							client_phone = book.client.phone
+						break
+					end
+				end
+				in_provider_booking = false
+				if in_provider_time
+					Booking.where(service_provider: @service_provider, status_id: Status.where(name: ['Reservado', 'Confirmado','Pagado','Asiste']).pluck(:id), start: now.beginning_of_day..now.end_of_day).order(:start).each do |booking|
+						if (booking.start.to_datetime - block_close)*(block_open - booking.end.to_datetime) > 0
+							in_provider_booking = true
+							service_name = booking.service.name
+							client_name = booking.client.first_name + ' ' + booking.client.last_name
+							client_phone = booking.client.phone
+							break
 						end
-
-						table_row << service_name
-						table_row << client_name
-						table_row << client_phone
-						table_row.compact!
+					end
+				end
+				in_provider_break = false
+				if in_provider_time && !in_provider_booking
+					ProviderBreak.where(service_provider: @service_provider, start: now.beginning_of_day..now.end_of_day).each do |provider_break|
+						if (provider_break.start.to_datetime - block_close)*(block_open - provider_break.end.to_datetime) > 0
+							in_provider_booking = true
+							service_name = "Bloqueo: "+provider_break.name
+							break
+						end
 					end
 				end
 
+				if in_provider_time
+
+					if last_row >= 0
+						while table_rows[last_row][1] == 'Continuación...'  do
+							# Subir un nivel para ver si es el mismo servicio o no	
+						   	last_row -=1
+						end
+
+						if (service_name != '') && (service_name == table_rows[last_row][1]) && (client_name == (table_rows[last_row][2])) 
+							
+							service_name = 'Continuación...'
+							client_name = '...'
+							client_phone = '...'
+						end
+					end
+				end
+
+				table_row << service_name
+				table_row << client_name
+				table_row << client_phone
+				table_row.compact!
+
 				table_rows.append(table_row)
+
+				provider_open += block_length
 			end
 		end
 
 		table_header = [['Hora', 'Servicio', 'Cliente', 'Teléfono']]
 
 		return table_header + table_rows
+
 	end
 
 end
