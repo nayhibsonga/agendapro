@@ -298,7 +298,7 @@ class Ability
 
         can :read, Service, :company_id => user.company_id
 
-        can :read, ServiceProvider, :location_id => user.locations
+        can :read, ServiceProvider, :location_id => user.locations.pluck(:id)
 
         can :read, Location, :id => user.locations
         
@@ -331,7 +331,7 @@ class Ability
         can :provider_service, ServiceProvider
         can :get_booking, Booking, :service_provider_id => user.service_providers.pluck(:id)
 
-        can :read, ServiceProvider, :user_id => user.id
+        can :read, ServiceProvider, :id => user.service_providers.pluck(:id)
 
         can :read, Location, :company_id => user.company_id
 

@@ -188,7 +188,6 @@
     <div class="form-group">
       <div class="actions col-sm-12">
         <%= f.submit 'Guardar', :class => 'btn btn-agendapro-claro' %>
-        <%= link_to 'Eliminar', @billing_info, method: :delete, data: { confirm: 'Are you sure?' }, class: "btn btn-danger" %>
       </div>
     </div>
   </div>
@@ -256,9 +255,6 @@
       <div class="modal-body">
         <p class="justified">Estás cambiando tu cuenta AgendaPro a un nuevo plan mensual. Es importante que para cada cambio de plan se considera el tiempo de activación restante (o deuda actual de la cuenta en el caso correspondiente) y se ajusta para el nuevo plan. Es decir, se abonará o cobrará el proporcional correspondiente de acuerdo al nuevo plan elegido. Si tienes dudas, por favor <%= link_to 'comunícate con nosotros', contact_path, :target => "_blank" %>.</p>
         <p class="justified" id="plan_explanation"></p>
-        <div  id="plan_mp_button">
-          <%= link_to "Confirmar Cambio", generate_plan_transaction_path(:mp => "00", :plan_id => 0), class: "btn btn-primary plan_mp_link" %>
-        </div>
         <div  id="plan_mp_table">
           <p>Medios de pago disponibles:</p>
           <table class="table">
@@ -288,6 +284,10 @@
         </div>
       </div>
       <div class="modal-footer">
+        <div  id="plan_mp_button">
+          <button type="button" class="btn btn-default pull-right button-plan" data-dismiss="modal">Cerrar</button>
+          <%= link_to "Confirmar Cambio", generate_plan_transaction_path(:mp => "00", :plan_id => 0), class: "btn btn-agendapro-claro plan_mp_link pull-right" %>
+        </div>
       </div>
     </div>
   </div>

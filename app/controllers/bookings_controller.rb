@@ -9,7 +9,7 @@ class BookingsController < ApplicationController
   def index
     @company = Company.where(id: current_user.company_id)
     if current_user.role_id == Role.find_by_name("Staff").id
-      @locations = Location.where(:active => true, :id => ServiceProvider.where(active: true, user_id: current_user.id).pluck(:location_id)).accessible_by(current_ability).order(:order)
+      @locations = Location.where(:active => true, :id => ServiceProvider.where(active: true).pluck(:location_id)).accessible_by(current_ability).order(:order)
     else
       @locations = Location.where(:active => true).accessible_by(current_ability).order(:order)
     end

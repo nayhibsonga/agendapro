@@ -16,6 +16,11 @@ $(function() {
 				required: true
 			}
 		},
+		messages: {
+			'user[email]': {
+				remote: jQuery.validator.format('{0} incorrecto o ya existe.')
+			}
+		},
 		highlight: function(element) {
 			$(element).closest('.form-group').removeClass('has-success').addClass('has-error');
 			$(element).parent().children('.form-control-feedback').removeClass('fa fa-check').addClass('fa fa-times');
