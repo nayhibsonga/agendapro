@@ -29,7 +29,7 @@
         <td><%= resource.resource_category.name %></td>
         <td>
           <%= link_to '<i class="fa fa-pencil"></i> Editar'.html_safe, edit_resource_path(resource), :class => "btn btn-sm btn-warning" %>
-          <% if current_user.role_id == Role.find_by_name("Admin").id %>
+          <% if current_user.role_id == Role.find_by_name("Administrador General").id %>
           <%= link_to '<i class="fa fa-trash-o"></i> Eliminar'.html_safe, resource, :class => "btn btn-sm btn-danger", method: :delete, data: { confirm: '¿Estás seguro de eliminar el Recurso seleccionado?' } %>
           <% end %>
         </td>

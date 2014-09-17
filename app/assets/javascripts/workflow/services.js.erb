@@ -1,4 +1,4 @@
-//====== Load Steps ======//
+ //====== Load Steps ======//
 
 function loadStep1 () {
 	$('#services-description').empty();
@@ -83,21 +83,42 @@ function loadStep2 () {
 
 		$.getJSON('/providers_services', {id: serviceId, local: $('#selectedLocal').data('local').id}, function (providers) {
 			$('#staff-selector').empty();
-			$.each(providers, function (key, provider) {
+			if ($('#providerPreference').data('provider-preference') != 1) {
 				$('#staff-selector').append(
 					'<li class="list-group-item">' +
 						'<div class="radio">' +
 							'<label>' +
-								'<input type="radio" name="staffRadio" value="' + provider.id + '">' +
-								'<p>' + provider.public_name + '</p>' +
+								'<input type="radio" name="staffRadio" value="0">' +
+								'<p>Sin Preferencia</p>' +
 							'</label>' +
 						'</div>' +
 					'</li>'
 				);
-			});
+			}
+			if ($('#providerPreference').data('provider-preference') != 2) {
+				$.each(providers, function (key, provider) {
+					$('#staff-selector').append(
+						'<li class="list-group-item">' +
+							'<div class="radio">' +
+								'<label>' +
+									'<input type="radio" name="staffRadio" value="' + provider.id + '">' +
+									'<p>' + provider.public_name + '</p>' +
+								'</label>' +
+							'</div>' +
+						'</li>'
+					);
+				});
+			}
 
 			$('[name="staffRadio"]').on('click', function(event) {
 				$('.horario').show();
+
+				if (event.target.getAttribute('value') == 0) {
+					$('#provider_lock').val(false);
+				}
+				else {
+					$('#provider_lock').val(true);
+				}
 
 				var data = {
 					provider: event.target.getAttribute('value'),
@@ -126,6 +147,37 @@ function loadStep2 () {
 				});
 			});
 
+			if ($('#providerPreference').data('provider-preference') != 1) {
+				$('[name="staffRadio"][value="0"]').prop("checked", true);
+				$('[name="staffRadio"][value="0"]').closest('.list-group-item').addClass('selected-wf-option');
+				$('.horario').show();
+				$('#provider_lock').val(false);
+				var data = {
+					provider: "0",
+					local: $('#selectedLocal').data('local').id,
+					service: $('input[name="serviceRadio"]:checked').val()
+				}
+
+				if (calendar) {
+					calendar.rebuild('/get_available_time.json', data);
+				}
+				else {
+					calendar = new Calendar('/get_available_time.json', data);
+				}
+				$(document).on('hourClick', function (e) {
+					addBooking(e);
+				});
+
+				$(function () {
+					$('#prev').click(function () {
+						selected = false;
+					});
+					$('#next').click(function () {
+						selected = false;
+					});
+				});
+			}
+
 			var radios = $('input[name=staffRadio]');
 			radios.on('change', function() {
 				radios.each(function() {
@@ -148,7 +200,7 @@ function loadStep3 () {
 		if (selected) {
 			checkUserCrossBookings();
 
-			$('#provider').val($('input[name=staffRadio]:checked').val());
+			// $('#provider').val($('input[name=staffRadio]:checked').val());
 			$('#service').val($('input[name=serviceRadio]:checked').val());
 
 			// Summary
@@ -298,9 +350,11 @@ function loadDescription (serviceId) {
 var selected = false;
 
 function addBooking (booking) {
+	window.console.log(booking);
 	selected = true;
 	$('#start').val(generateDate(booking.date, booking.start));
 	$('#end').val(generateDate(booking.date, booking.end));
+	$('#provider').val(booking.provider);
 }
 
 function generateDate(date, time) {

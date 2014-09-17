@@ -1,17 +1,19 @@
 class ServiceProvider < ActiveRecord::Base
 	belongs_to :location
-	belongs_to :user
 	belongs_to :company
 
 	has_many :service_staffs, dependent: :destroy
 	has_many :services, :through => :service_staffs
+
+	has_many :user_providers, dependent: :destroy
+	has_many :users, :through => :user_providers
+
 	has_many :provider_times, :inverse_of => :service_provider, dependent: :destroy
 	has_many :bookings, dependent: :destroy
 	has_many :provider_breaks, dependent: :destroy
 
 	attr_accessor :_destroy
-
-	accepts_nested_attributes_for :user, :reject_if => :all_blank, :allow_destroy => true
+	
 	accepts_nested_attributes_for :provider_times, :reject_if => :all_blank, :allow_destroy => true
 	
 	validates :company, :public_name, :notification_email, :location, :presence => true
@@ -98,5 +100,17 @@ class ServiceProvider < ActiveRecord::Base
 				errors.add(:base, "El horario del día "+provider_time.day.name+" no es factible para el local seleccionado.")
 			end
 		end
+	end
+
+	def provider_booking_day_occupation(date)
+		available_time = 0.0
+		used_time = 0.0
+		self.provider_times.each do |provider_time|
+			available_time += provider_time.close - provider_time.open
+		end
+		Booking.where(service_provider_id: self.id, start: date.to_time.beginning_of_day..date.to_time.end_of_day).each do |booking|
+			used_time += booking.end - booking.start
+		end
+		return used_time/available_time			
 	end
 end

@@ -134,7 +134,7 @@
 							<tr>
 								<td><%= email.email %></td>
 								<td><%= unless email.confirmed then 'Falta confirmación' else 'Si' end %></td>
-								<td><%= link_to '<i class="fa fa-trash-o"></i>'.html_safe, email, method: :delete, data: { confirm: 'Are you sure?' }, class: 'btn btn-danger' %></td>
+								<td><%= link_to '<i class="fa fa-trash-o"></i>'.html_safe, email, method: :delete, data: { confirm: '¿Estás seguro de eliminar el remitente seleccionado?' }, class: 'btn btn-danger' %></td>
 							</tr>
 							<% end %>
 					</tbody>
@@ -181,6 +181,13 @@
 					<div class="col-sm-5">
 						<%= f.check_box :client_exclusive %>
 						<span class="help-block">Habilita esta opción para que sólo puedan reservar clientes ingresados en la sección Clientes, usando el RUT.</span>
+					</div>
+				</div>
+				<div class="form-group">
+					<%= f.label :provider_preference, 'Preferencia Prestador', :class => 'col-sm-3 control-label' %>
+					<div class="col-sm-5">
+						<%= f.select :provider_preference, options_for_select([["Cliente puede elegir prestador", 0], ["Cliente debe elegir prestador", 1], ["Cliente no puede elegir prestador", 2]], selected: @company_setting.provider_preference ), {}, {class: "form-control" } %>
+						<span class="help-block">Aquí configuras si el cliente puede o debe elegir el prestador con el que se atenderá. Si no se elige, se seleccionará automáticamente al prestador con menos ocupación ese día.</span>
 					</div>
 				</div>
 				<div class="form-group">

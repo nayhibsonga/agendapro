@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140903064453) do
+ActiveRecord::Schema.define(version: 20140911145328) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -66,6 +66,7 @@ ActiveRecord::Schema.define(version: 20140903064453) do
     t.boolean  "send_mail",           default: true
     t.integer  "client_id"
     t.float    "price",               default: 0.0
+    t.boolean  "provider_lock",       default: false
   end
 
   add_index "bookings", ["client_id"], name: "index_bookings_on_client_id", using: :btree
@@ -168,6 +169,7 @@ ActiveRecord::Schema.define(version: 20140903064453) do
     t.boolean  "activate_search",     default: true
     t.boolean  "activate_workflow",   default: true
     t.boolean  "client_exclusive",    default: false
+    t.integer  "provider_preference"
   end
 
   add_index "company_settings", ["company_id"], name: "index_company_settings_on_company_id", using: :btree
@@ -425,7 +427,6 @@ ActiveRecord::Schema.define(version: 20140903064453) do
 
   create_table "service_providers", force: true do |t|
     t.integer  "location_id"
-    t.integer  "user_id"
     t.integer  "company_id",                        null: false
     t.string   "notification_email"
     t.string   "public_name"
@@ -437,7 +438,6 @@ ActiveRecord::Schema.define(version: 20140903064453) do
 
   add_index "service_providers", ["company_id"], name: "index_service_providers_on_company_id", using: :btree
   add_index "service_providers", ["location_id"], name: "index_service_providers_on_location_id", using: :btree
-  add_index "service_providers", ["user_id"], name: "index_service_providers_on_user_id", using: :btree
 
   create_table "service_resources", force: true do |t|
     t.integer  "service_id"
@@ -513,6 +513,26 @@ ActiveRecord::Schema.define(version: 20140903064453) do
     t.datetime "updated_at"
   end
 
+  create_table "user_locations", force: true do |t|
+    t.integer  "user_id"
+    t.integer  "location_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "user_locations", ["location_id"], name: "index_user_locations_on_location_id", using: :btree
+  add_index "user_locations", ["user_id"], name: "index_user_locations_on_user_id", using: :btree
+
+  create_table "user_providers", force: true do |t|
+    t.integer  "user_id"
+    t.integer  "service_provider_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "user_providers", ["service_provider_id"], name: "index_user_providers_on_service_provider_id", using: :btree
+  add_index "user_providers", ["user_id"], name: "index_user_providers_on_user_id", using: :btree
+
   create_table "users", force: true do |t|
     t.string   "first_name"
     t.string   "last_name"
@@ -531,12 +551,10 @@ ActiveRecord::Schema.define(version: 20140903064453) do
     t.datetime "last_sign_in_at"
     t.string   "current_sign_in_ip"
     t.string   "last_sign_in_ip"
-    t.integer  "location_id"
   end
 
   add_index "users", ["company_id"], name: "index_users_on_company_id", using: :btree
   add_index "users", ["email"], name: "index_users_on_email", unique: true, using: :btree
-  add_index "users", ["location_id"], name: "index_users_on_location_id", using: :btree
   add_index "users", ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true, using: :btree
   add_index "users", ["role_id"], name: "index_users_on_role_id", using: :btree
 

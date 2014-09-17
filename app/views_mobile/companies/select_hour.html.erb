@@ -3,16 +3,17 @@
 		<div class="col-xs-12">
 			<%= form_tag("user_data", method: "post", role: "form") do %>
 				<%= hidden_field_tag :service, @service.id %>
-				<%= hidden_field_tag :provider, @provider.id %>
+				<%= hidden_field_tag :provider, nil %>
 				<%= hidden_field_tag :start, nil %>
 				<%= hidden_field_tag :end, nil %>
 				<%= hidden_field_tag :origin, true %>
+            	<%= hidden_field_tag :provider_lock, @lock %>
 				<%= hidden_field_tag :location, @location.id %>
 				<div class="form-group">
 					<% unless @available_time.length == 0 %>
 					<label for="">Selecciona un horario</label>
 					<% @available_time.each do |time| %>
-					<button type="submit" class="btn btn-block btn-default btn-lg" data-date="<%= time[:date] %>" data-start="<%= time[:hour][:start] %>" data-end="<%= time[:hour][:end] %>"><%= time[:hour][:start] %></button>
+					<button type="submit" class="btn btn-block btn-default btn-lg" data-date="<%= time[:date] %>" data-start="<%= time[:hour][:start] %>" data-end="<%= time[:hour][:end] %>" data-provider="<%= time[:provider] %>"><%= time[:hour][:start]  %></button>
 					<% end %>
 					<% else %>
 					<p>No hay horarios disponibles para este día.</p>
@@ -43,7 +44,8 @@
 			var date = $(event.target).data('date');
 			var start = $(event.target).data('start');
 			var end = $(event.target).data('end');
-			addBooking(date, start, end);
+			var provider = $(event.target).data('provider');
+			addBooking(date, start, end, provider);
 		});
 		$('a.btn-agendapro-orange').click(function (event) {
 			$('form').submit();

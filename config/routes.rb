@@ -120,7 +120,11 @@ Agendapro::Application.routes.draw do
   get "/punto_pagos/success/:token", :to => 'punto_pagos#success', :as => 'punto_pagos_success_trx'
   get "/punto_pagos/failure/:token", :to => 'punto_pagos#failure', :as => 'punto_pagos_failure_trx'
   get "/companies/:id/edit_payment", :to => 'companies#edit_payment', :as => 'edit_payment_company'
-
+  get "/logs/puntopagos_creations", :to => 'plans#puntopagos_creations', :as => 'puntopagos_creations'
+  get "/logs/puntopagos_confirmations", :to => 'plans#puntopagos_confirmations', :as => 'puntopagos_confirmations'
+  get "/logs/company_cron_logs", :to => 'plans#company_cron_logs', :as => 'company_cron_logs'
+  get "/logs/plan_logs", :to => 'plans#plan_logs', :as => 'plan_logs'
+  get "/logs/billing_logs", :to => 'plans#billing_logs', :as => 'billing_logs'
 
   # Search
   get "searchs/index"

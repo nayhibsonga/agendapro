@@ -5,7 +5,7 @@
       <h2 class="section_header">A continuación se presentan los usuarios que tienen cuenta asociada a tu empresa.</h2>
       <h4>Tipos de Usuarios: </h4>
       <ul>
-        <li><strong>Admin: </strong>La cuenta Admin es la cuenta con todos los permisos posibles.</li><br />
+        <li><strong>Administrador General: </strong>La cuenta Administrador General es la cuenta con todos los permisos posibles.</li><br />
         <li><strong>Administrador Local: </strong>El Administrador Local es una cuenta que tiene el manejo completo de un local, además puede crear servicios y prestadores de servicios.</li><br />
         <li><strong>Recepcionista: </strong>La cuenta Recepcionista puede reservar horas a todos los prestadores del local asignado.</li><br />
         <li><strong>Staff: </strong>La cuenta Staff es la cuenta que puede manejar las reservas de los prestadores seleccionados.</li><br />
@@ -25,7 +25,6 @@
     <tr>
       <th>E-mail</th>
       <th>Tipo</th>
-      <th>Local</th>
       <th>Acciones</th>
     </tr>
   </thead>
@@ -35,9 +34,6 @@
       <tr>
         <td><%= user.email %></td>
         <td><%= user.role.name %></td>
-        <td><% if user.location %>
-          <%= user.location.name %>
-          <% end %></td>
         <td><%= link_to '<i class="fa fa-pencil"></i> Editar'.html_safe, edit_admin_user_path(:id => user.id), :class => "btn btn-warning" unless user.id == current_user.id %>
           <%= link_to '<i class="fa fa-trash-o"></i> Eliminar'.html_safe, admin_user_path(user), :class => "btn btn-danger",  method: :delete, data: { confirm: '¿Estás seguro de eliminar al Usuario seleccionado?' } unless user.id == current_user.id %></td>
       </tr>

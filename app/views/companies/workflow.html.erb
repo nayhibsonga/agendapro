@@ -47,8 +47,12 @@
           </div>
           <div class="box-step">
             <div class="col-md-12">
-              <h4 class="subtitulos-workflow">Seleccione un Staff</h4>
-              <div class="col-md-3">
+              <% if @location.company.company_setting.provider_preference == 2 %>
+              <h4 class="subtitulos-workflow">Seleccione un Horario</h4>
+              <% else %>
+              <h4 class="subtitulos-workflow">Seleccione un Staff y Horario</h4>
+              <% end %>
+              <div class="col-md-3" <%= 'style="display:none;"'.html_safe if @location.company.company_setting.provider_preference == 2 %>>
                 <div class="panel panel-default">
                   <div class="panel-body">
                     Seleccione un staff para ver su horario
@@ -58,8 +62,12 @@
                   </ul>
                 </div>
               </div>
+              <% if @location.company.company_setting.provider_preference == 2 %>
+              <div class="col-md-12">
+              <% else %>
               <div class="col-md-9">
-                <div class="panel panel-info">
+              <% end %>
+                <div class="panel panel-info <%= 'full-margin' if @location.company.company_setting.provider_preference == 2 %>">
                   <div class="panel-heading">
                     <h3 class="panel-title">
                       <button type="button" class="btn btn-default" id="prev"><i class="fa fa-chevron-left"></i></button>
@@ -86,6 +94,7 @@
                     <%= form_tag("book", method: "post", role: "form", class: "form-horizontal", id: "bookingForm" ) do %>
                       <input type="hidden" name="start" id="start" value="">
                       <input type="hidden" name="end" id="end" value="">
+                      <input type="hidden" name="provider_lock" id="provider_lock" value="">
                       <input type="hidden" name="provider" id="provider" value="">
                       <input type="hidden" name="service" id="service" value="">
                       <input type="hidden" name="location" id="location" value="<%= @location.id %>">
@@ -204,6 +213,8 @@
 <%= content_tag "div", id: "selectedLocal", data: {local: @location, district: @location.district.name} do %>
 <% end %>
 <%= content_tag "div", id: "clientExclusive", data: {client_exclusive: @location.company.company_setting.client_exclusive} do %>
+<% end %>
+<%= content_tag "div", id: "providerPreference", data: {provider_preference: @location.company.company_setting.provider_preference } do %>
 <% end %>
 
 <% content_for :scripts do %>

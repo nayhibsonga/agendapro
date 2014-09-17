@@ -32,14 +32,24 @@
 		
 		<!-- start: Favicon and Touch Icons -->
 			<%= favicon_link_tag "Iso_Pro_Color.png", :rel => "shortcut icon" %>
-		<!-- end: Favicon and Touch Icons -->	
+		<!-- end: Favicon and Touch Icons -->
+		
+		<!--Start of Zopim Live Chat Script-->
+		<script type="text/javascript">
+		window.$zopim||(function(d,s){var z=$zopim=function(c){z._.push(c)},$=z.s=
+		d.createElement(s),e=d.getElementsByTagName(s)[0];z.set=function(o){z.set.
+		_.push(o)};z._=[];z.set._=[];$.async=!0;$.setAttribute('charset','utf-8');
+		$.src='//v2.zopim.com/?2PvkM64HzukqpnkqZn4SzQNPC6ujVyoE';z.t=+new Date;$.
+		type='text/javascript';e.parentNode.insertBefore($,e)})(document,'script');
+		</script>
+		<!--End of Zopim Live Chat Script-->
 	</head>
 
 	<body>
 		<!-- start: Header -->
 		<header>
 			<a href="<%= root_without_subdomain %>" id="logo"></a>
-			<% if (current_user.role_id == Role.find_by_name("Admin").id) %>
+			<% if (current_user.role_id == Role.find_by_name("Administrador General").id) %>
 			<ul id="menu-config">
 				<li><a href="#" id="open-config"><div class="pull-right"><i class="fa fa-cog fa-lg"></i></div></a>
 					<ul id="sub-menu-config" class="close-menu-config">
@@ -84,7 +94,7 @@
 				<% if current_user.role_id != Role.find_by_name("Staff").id %>
 				<li><%= link_to '<i class="fa fa-group fa-fw"></i><span class="remove-txt"> Clientes</span>'.html_safe, clients_path, { :class => if controller.controller_name == "clients" then "active" end } %></li>
 				<% end %>
-				<% if current_user.role_id == Role.find_by_name("Admin").id %>
+				<% if current_user.role_id == Role.find_by_name("Administrador General").id %>
 				<li><%= link_to '<i class="fa fa-bar-chart-o fa-fw"></i><span class="remove-txt"> Reportes</span>'.html_safe, reports_path, { :class => if controller.controller_name == "reports" then "active" end } %></li>
 				<% end %>
 				<% if current_user.role_id == Role.find_by_name("Super Admin").id %>
@@ -119,7 +129,7 @@
 					</li>
 				<% end %>
 
-				<% if (current_user.role_id == Role.find_by_name("Super Admin").id) || (current_user.role_id == Role.find_by_name("Admin").id) || (current_user.role_id == Role.find_by_name("Administrador Local").id) %>
+				<% if (current_user.role_id == Role.find_by_name("Super Admin").id) || (current_user.role_id == Role.find_by_name("Administrador General").id) || (current_user.role_id == Role.find_by_name("Administrador Local").id) %>
 					<li>
 						<a class="open-submenu"><i class="fa fa-briefcase fa-fw"></i><span class="colapse-hidden"> Administración <span class="fa fa-caret-down caret-especial"></span></span></a>
 						<ul id="submenu3" class="submenu-close">
@@ -170,7 +180,7 @@
 									<tr><td><%= image_tag("https://www.puntopagos.com/content/mp1.gif") %></td><td><%= image_tag("https://www.puntopagos.com/content/mp4.gif") %></td><td><%= image_tag("https://www.puntopagos.com/content/mp5.gif") %></td></tr>
 									<tr><td><%= image_tag("https://www.puntopagos.com/content/mp6.gif") %></td><td><%= image_tag("https://www.puntopagos.com/content/mp7.gif") %></td><td><%= image_tag("https://www.puntopagos.com/content/mp3.gif") %></td></tr>
 								</table>
-								<% if current_user.role_id == Role.find_by_name("Admin").id %>
+								<% if current_user.role_id == Role.find_by_name("Administrador General").id %>
 								<p>Ir a <%= link_to "PLANES", select_plan_path %> para proceder.</p>
 								<% end %>
 							</div>

@@ -5,10 +5,14 @@ class User < ActiveRecord::Base
          :recoverable, :rememberable, :trackable, :validatable
 	belongs_to :role
 	belongs_to :company
-	belongs_to :location
 
 	has_many :bookings, dependent: :nullify
-	has_many :service_providers, dependent: :nullify
+
+	has_many :user_locations, dependent: :destroy
+	has_many :locations, :through => :user_locations
+
+	has_many :user_providers, dependent: :destroy
+	has_many :service_providers, :through => :user_providers
 
 	accepts_nested_attributes_for :company
 
@@ -28,12 +32,23 @@ class User < ActiveRecord::Base
 	end
 	def location_company_users
 		if Role.where(:name => ["Administrador Local","Recepcionista"]).include? self.role
-			if !self.location
-				errors.add(:base, "Este tipo de usuario debe tener un local asociado.")
+			if self.locations.empty?
+				errors.add(:base, "Este tipo de usuario debe tener al menos un local asociado.")
 			end
 		else
-			if self.location
-				errors.add(:base, "Este tipo de usuario no debe tener un local asociado.")
+			if !self.locations.empty?
+				errors.add(:base, "Este tipo de usuario no debe tener ningún local asociado.")
+			end
+		end
+	end
+	def provider_company_users
+		if Role.where(:name => ["Staff"]).include? self.role
+			if self.service_providers.empty?
+				errors.add(:base, "Este tipo de usuario debe tener al menos un prestador asociado.")
+			end
+		else
+			if !self.service_providers.empty?
+				errors.add(:base, "Este tipo de usuario no debe tener ningún prestador asociado.")
 			end
 		end
 	end

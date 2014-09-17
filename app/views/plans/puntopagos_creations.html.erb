@@ -1,0 +1,42 @@
+<div class="container">
+  <div class="row">
+    <section class="hgroup">
+      <h2>Log de PuntoPagos</h2>
+      <h2 class="section_header">Intentos de pago, la explicación en los detalles. 1 Botón de Pago Banco Santander, 2 Tarjeta Presto, 3 Webpay Transbank, 4 Botón de Pago Banco de Chile, 5 Botón de Pago BCI, 6 Botón de Pago TBanc, 7 Botón de Pago Banco Estado, 10 Tarjeta Ripley, 15 Paypal</h2>
+      <div class="line-breadcrumb">
+        <ul class="breadcrumb pull-right">
+            <li><%= link_to "Resumen", dashboard_path %> </li>
+            <li><%= link_to "Empresas", companies_path %> </li>
+            <li class="active">Log PuntoPagos</li>
+        </ul>
+    </div>
+    </section>
+  </div>
+</div>
+
+<table class="table">
+	<thead>
+		<tr>
+			<th>TRX ID</th>
+			<th>Método pago</th>
+			<th>Cantidad</th>
+			<th>Detalles</th>
+			<th>Creación</th>
+		</tr>
+	</thead>
+	<tbody>
+		<% @puntopagos_creations.each do |puntopagos_creation| %>
+			<tr>
+				<td><%= puntopagos_creation.trx_id %></td>
+				<td><%= puntopagos_creation.payment_method %></td>
+				<td><%= puntopagos_creation.amount %></td>
+				<td><%= puntopagos_creation.details %></td>
+				<td><%= l puntopagos_creation.created_at, format: :short %></td>
+			</tr>
+		 <% end %>
+	</tbody>
+</table>
+
+<div class="row">
+	<%= will_paginate @puntopagos_creations, renderer: BootstrapPagination::Rails %>
+</div>

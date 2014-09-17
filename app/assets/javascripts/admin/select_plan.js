@@ -5,6 +5,17 @@ $(function() {
 	else {
 		$('#mp_table').hide();
 	}
+	$('.mp_link').each(function(i, obj) { 
+		$(this).attr('href', function(i,a){
+			return a.replace( /\/[^\/]+$/, '/'+$('#amount_select').val() );
+		});
+		if($('#amount_select').val() != 0) {
+			$('#mp_table').show();
+		}
+		else {
+			$('#mp_table').hide();
+		}
+	});
 	if (!$('#billing_info_active').prop('checked')) {
 		$('input.form-control').attr('disabled', true);
 		$('input.form-accept').attr('disabled', true);

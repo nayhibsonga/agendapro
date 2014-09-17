@@ -51,52 +51,86 @@ function loadProviders (localId, serviceId) {
   $.getJSON('/providers_services', {id: serviceId, local: localId}, function (providers) {
     $('#providers').attr('disabled', true);
     $('#providers').empty();
-    $.each(providers, function (key, provider) {
-      $('#providers').append(
-        '<option value="' + provider.id + '">' + provider.public_name + '</option>'
+    if ($('#providerPreference').data('provider-preference') != 2) {
+      $.each(providers, function (key, provider) {
+        $('#providers').append(
+          '<option value="' + provider.id + '">' + provider.public_name + '</option>'
+        );
+      });
+    }
+
+    if ($('#providerPreference').data('provider-preference') != 1) {
+      $('#providers').prepend(
+        '<option value="0">Sin Preferencia</option>'
       );
-    });
-    $('#providers').prepend(
-      '<option value="0">Selecciona un staff</option>'
-    );
+      var minDate = new Date($('#timeInterval').data('min'));
+      var maxDate = new Date($('#timeInterval').data('max'));
+
+      $('#datepicker').attr('disabled', false);
+      $('#datepicker').pickadate({
+        monthsFull: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+        monthsShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
+        weekdaysFull: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'],
+        weekdaysShort: ['Dom', 'Lun', 'Mar', 'Mier', 'Jue', 'vie', 'Sáb'],
+        today: 'Hoy',
+        clear: '',
+        firstDay: 1,
+        format: 'dddd d !de mmmm !de yyyy',
+        formatSubmit: 'yyyy/mm/dd',
+        hiddenName: true,
+        min: minDate,
+        max: maxDate,
+        klass: {
+          input: 'datepicker'
+        },
+        onSet: function (context) {
+          $('.cambiar-comuna').show();
+        }
+      });
+    }
+    else {
+      $('#providers').prepend(
+        '<option value="0">Selecciona un prestador</option>'
+      );
+      $('#providers').one('change', function (event) {
+        $('#providers option:first').remove();
+      });
+      $('#providers').change(function (event) {
+        var minDate = new Date($('#timeInterval').data('min'));
+        var maxDate = new Date($('#timeInterval').data('max'));
+
+        $('#datepicker').attr('disabled', false);
+        $('#datepicker').pickadate({
+          monthsFull: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+          monthsShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
+          weekdaysFull: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'],
+          weekdaysShort: ['Dom', 'Lun', 'Mar', 'Mier', 'Jue', 'vie', 'Sáb'],
+          today: 'Hoy',
+          clear: '',
+          firstDay: 1,
+          format: 'dddd d !de mmmm !de yyyy',
+          formatSubmit: 'yyyy/mm/dd',
+          hiddenName: true,
+          min: minDate,
+          max: maxDate,
+          klass: {
+            input: 'datepicker'
+          },
+          onSet: function (context) {
+            $('.cambiar-comuna').show();
+          }
+        });
+      });
+    }
     $('#providers').attr('disabled', false);
-  });
-
-  $('#providers').one('change', function (event) {
-    $('#providers option:first').remove();
-  });
-  $('#providers').change(function (event) {
-    var minDate = new Date($('#timeInterval').data('min'));
-    var maxDate = new Date($('#timeInterval').data('max'));
-
-    $('#datepicker').attr('disabled', false);
-    $('#datepicker').pickadate({
-      monthsFull: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
-      monthsShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
-      weekdaysFull: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'],
-      weekdaysShort: ['Dom', 'Lun', 'Mar', 'Mier', 'Jue', 'vie', 'Sáb'],
-      today: 'Hoy',
-      clear: '',
-      firstDay: 1,
-      format: 'dddd d !de mmmm !de yyyy',
-      formatSubmit: 'yyyy/mm/dd',
-      hiddenName: true,
-      min: minDate,
-      max: maxDate,
-      klass: {
-        input: 'datepicker'
-      },
-      onSet: function (context) {
-        $('.cambiar-comuna').show();
-      }
-    });
   });
 }
 
-function addBooking (date, start, end) {
+function addBooking (date, start, end, provider) {
   selected = true;
   $('#start').val(generateDate(date, start));
   $('#end').val(generateDate(date, end));
+  $('#provider').val(provider);
 }
 
 function generateDate(date, time) {
@@ -158,8 +192,8 @@ function initializeMap(latLng, mapDiv) {
     };
     var map = new google.maps.Map(document.getElementById(mapDiv), properties);
     var marker = new google.maps.Marker({
-                position: latLng
-              });
+      position: latLng
+    });
     marker.setMap(map);
     return map
 }

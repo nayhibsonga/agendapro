@@ -6,13 +6,15 @@ class Location < ActiveRecord::Base
 	has_many :location_times, dependent: :destroy
 	has_many :service_providers, dependent: :destroy
 	has_many :bookings, dependent: :destroy
-	has_many :users, dependent: :nullify
 
 	has_many :location_outcall_districts, dependent: :destroy
 	has_many :districts, :through => :location_outcall_districts
 
 	has_many :resource_locations, dependent: :destroy
 	has_many :resources, :through => :resource_locations
+
+	has_many :user_locations, dependent: :destroy
+	has_many :users, :through => :user_locations
 
 	accepts_nested_attributes_for :location_times, :reject_if => :all_blank, :allow_destroy => true
 

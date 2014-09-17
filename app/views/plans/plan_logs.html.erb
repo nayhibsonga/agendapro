@@ -1,0 +1,42 @@
+<div class="container">
+  <div class="row">
+    <section class="hgroup">
+      <h2>Log de Cambio de Plan</h2>
+      <h2 class="section_header">Intentos de agregar mes, la explicación en los detalles.</h2>
+      <div class="line-breadcrumb">
+        <ul class="breadcrumb pull-right">
+            <li><%= link_to "Resumen", dashboard_path %> </li>
+            <li><%= link_to "Empresas", companies_path %> </li>
+            <li class="active">Log Cambio de Plan</li>
+        </ul>
+    </div>
+    </section>
+  </div>
+</div>
+
+<table class="table">
+	<thead>
+		<tr>
+			<th>Empresa</th>
+			<th>Plan Previo</th>
+			<th>Plan Nuevo</th>
+			<th>TRX ID</th>
+			<th>Creación</th>
+		</tr>
+	</thead>
+	<tbody>
+		<% @plan_logs.each do |plan_log| %>
+			<tr>
+				<td><%= Company.find(plan_log.company_id).name %></td>
+				<td><%= Plan.find(billing_log.prev_plan_id).name %></td>
+				<td><%= Plan.find(billing_log.new_plan_id).name %></td>
+				<td><%= billing_log.trx_id %></td>
+				<td><%= l billing_log.created_at, format: :short %></td>
+			</tr>
+		 <% end %>
+	</tbody>
+</table>
+
+<div class="row">
+	<%= will_paginate @plan_logs, renderer: BootstrapPagination::Rails %>
+</div>
