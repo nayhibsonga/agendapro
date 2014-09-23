@@ -1,17 +1,82 @@
-<%= simple_form_for(@billing_info) do |f| %>
-  <%= f.error_notification %>
-
-  <div class="form-inputs">
-    <%= f.input :name %>
-    <%= f.input :rut %>
-    <%= f.input :address %>
-    <%= f.input :sector %>
-    <%= f.input :email %>
-    <%= f.input :phone %>
-    <%= f.association :company %>
+<div class="container">
+  <div class="row">
+    <section class="hgroup">
+      <h2>Edición de Compañía</h2>
+      <div class="line-breadcrumb">
+        <ul class="breadcrumb pull-right">
+            <li><%= link_to "Resumen", companies_path %> </li>
+            <li class="active">Empresa</li>
+        </ul>
+      </div>
+    </section>
   </div>
+</div>
 
-  <div class="form-actions">
-    <%= f.button :submit %>
+<div class="container">
+  <div class="row well">
+    <%= form_for @billing_info, :html => {:class => 'form-horizontal', :multipart => true} do |f| %>
+      <% if @billing_info.errors.any? %>
+        <div id="error_explanation">
+          <h2><%= pluralize(@billing_info.errors.count, "error") %> no permitió que sea creada:</h2>
+
+          <ul>
+          <% @billing_info.errors.full_messages.each do |msg| %>
+            <li><%= msg %></li>
+          <% end %>
+          </ul>
+        </div>
+      <% end %>
+
+      <div class="form-group">
+        <%= f.label :name, 'Razón Social', :class => 'col-sm-4 control-label' %>
+        <div class="col-sm-8">
+          <%= f.number_field :name, :class => 'form-control' %>
+        </div>
+      </div>
+      <div class="form-group">
+        <%= f.label :rut, 'RUT Empresa', :class => 'col-sm-4 control-label' %>
+        <div class="col-sm-8">
+          <%= f.number_field :rut, :class => 'form-control' %>
+        </div>
+      </div>
+      <div class="form-group">
+        <%= f.label :sector, 'Giro', :class => 'col-sm-4 control-label' %>
+        <div class="col-sm-8">
+          <%= f.number_field :sector, :class => 'form-control' %>
+        </div>
+      </div>
+      <div class="form-group">
+        <%= f.label :contact, 'Nombre Responsable', :class => 'col-sm-4 control-label' %>
+        <div class="col-sm-8">
+          <%= f.number_field :contact, :class => 'form-control' %>
+        </div>
+      </div>
+      <div class="form-group">
+        <%= f.label :address, 'Dirección', :class => 'col-sm-4 control-label' %>
+        <div class="col-sm-8">
+          <%= f.number_field :address, :class => 'form-control' %>
+        </div>
+      </div>
+      <div class="form-group">
+        <%= f.label :phone, 'Teléfono', :class => 'col-sm-4 control-label' %>
+        <div class="col-sm-8">
+          <%= f.number_field :phone, :class => 'form-control' %>
+        </div>
+      </div>
+      <div class="form-group">
+        <%= f.label :email, 'E-Mail', :class => 'col-sm-4 control-label' %>
+        <div class="col-sm-8">
+          <%= f.number_field :email, :class => 'form-control' %>
+        </div>
+      </div>
+
+
+      <div class="form-group">
+        <div class="col-sm-offset-4 col-sm-8">
+         <%= f.submit 'Guardar', :class => 'btn btn-agendapro-claro' %>
+         <%= link_to 'Cancelar', companies_path, :class => "btn btn-default" %>
+        </div> 
+      </div>
+    <% end %>
   </div>
-<% end %>
+</div>

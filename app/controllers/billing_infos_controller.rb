@@ -1,7 +1,7 @@
 class BillingInfosController < ApplicationController
   before_action :set_billing_info, only: [:show, :edit, :update, :destroy]
   before_action :authenticate_user!
-  before_action :quick_add
+  before_action :verify_is_super_admin, only: [:show, :index]
   load_and_authorize_resource
   layout "admin"
 

@@ -22,7 +22,7 @@
 
 <div class="row">
   <%= link_to "Creaciones PuntoPagos", puntopagos_creations_path %> | <%= link_to "Confirmaciones PuntoPagos", puntopagos_confirmations_path %> | 
-<%= link_to "Log Empresas", company_cron_logs_path %> | <%= link_to "Log Mensualidad", billing_logs_path %> | <%= link_to "Log Planes", plan_logs_path %></div>
+<%= link_to "Log Empresas", company_cron_logs_path %> | <%= link_to "Log Mensualidad", billing_logs_path %> | <%= link_to "Log Planes", plan_logs_path %> | <%= link_to "Datos de Facturación", billing_infos_path %></div>
 
 <table class="table table-bordered">
   <thead>
@@ -44,6 +44,9 @@
         <td><%= l Booking.where(:service_provider_id => ServiceProvider.where(:company_id => company.id)).last.created_at, format: :short  if  Booking.where(:service_provider_id => ServiceProvider.where(:company_id => company.id)).last %></td>
         <td><%= link_to '<i class="fa fa-pencil"></i> Editar'.html_safe, edit_company_path(company) %>
           <%= link_to '<i class="fa fa-pencil"></i> Pagos'.html_safe, edit_payment_company_path(company) %>
+          <% if company.billing_info %>
+          <%= link_to '<i class="fa fa-pencil"></i> Factura'.html_safe, edit_billing_info_path(company.billing_info) %>
+          <% end %>
         <% if company.active %>
         <%= link_to '<i class="fa fa-trash-o"></i> Desactivar'.html_safe, deactivate_company_path(:id => company.id), data: { confirm: '¿Estás seguro?' } %></td>
         <% else %>

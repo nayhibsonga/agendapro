@@ -125,6 +125,7 @@ Agendapro::Application.routes.draw do
   get "/logs/company_cron_logs", :to => 'plans#company_cron_logs', :as => 'company_cron_logs'
   get "/logs/plan_logs", :to => 'plans#plan_logs', :as => 'plan_logs'
   get "/logs/billing_logs", :to => 'plans#billing_logs', :as => 'billing_logs'
+  get "/company/:id/add_month", :to => 'companies#add_month', :as => 'add_month'
 
   # Search
   get "searchs/index"
