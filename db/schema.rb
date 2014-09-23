@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140911145328) do
+ActiveRecord::Schema.define(version: 20140923152738) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -329,18 +329,18 @@ ActiveRecord::Schema.define(version: 20140911145328) do
   add_index "provider_times", ["service_provider_id"], name: "index_provider_times_on_service_provider_id", using: :btree
 
   create_table "punto_pagos_confirmations", force: true do |t|
-    t.string   "token",              null: false
-    t.string   "trx_id",             null: false
-    t.string   "payment_method",     null: false
-    t.float    "amount",             null: false
-    t.date     "approvement_date",   null: false
+    t.string   "token"
+    t.string   "trx_id"
+    t.string   "payment_method"
+    t.float    "amount"
+    t.date     "approvement_date"
     t.string   "card_number"
     t.string   "dues_number"
     t.string   "dues_type"
     t.string   "dues_amount"
     t.date     "first_due_date"
     t.string   "operation_number"
-    t.string   "authorization_code", null: false
+    t.string   "authorization_code"
     t.datetime "created_at"
     t.datetime "updated_at"
     t.string   "response"

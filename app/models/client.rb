@@ -54,6 +54,14 @@ class Client < ActiveRecord::Base
     end
   end
 
+  def client_identification_uniqueness
+    Client.where(company_id: self.company_id).each do |client|
+      if self.identification_number != "" && client != self && client.identification_number != "" && self.identification_number == client.identification_number
+        errors.add(:base, "No se pueden crear dos clientes con el mismo RUT.")
+      end
+    end
+  end
+
   def self.search(search)
     if search
       where ["CONCAT(first_name, ' ', last_name) ILIKE :s OR email ILIKE :s OR first_name ILIKE :s OR last_name ILIKE :s", :s => "%#{search}%"]
