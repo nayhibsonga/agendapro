@@ -68,6 +68,7 @@
 			<div class="form-group">
 				<div class="col-sm-offset-4 col-sm-8">
 				 <%= f.submit 'Guardar', :class => 'btn btn-agendapro-claro' %>
+				 <%= link_to 'Agregar Mes', add_month_path(@company), :class => "btn btn-agendapro-oscuro" %>
 				 <%= link_to 'Cancelar', dashboard_path, :class => "btn btn-default" %>
 				</div> 
 			</div>

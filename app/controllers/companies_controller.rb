@@ -26,6 +26,24 @@ class CompaniesController < ApplicationController
 		@company.save
 		redirect_to companies_path
 	end
+
+	def add_month
+		company = Company.find(params[:id])
+		if company.payment_status == PaymentStatus.find_by_name("Trial")
+			company.plan = Plan.where(custom: false, locations: company.locations.where(active: true).count).where('service_providers >= ?', company.service_providers.where(active: true).count).order(:price).first
+		end
+        company.months_active_left += 1
+        company.due_amount = 0.0
+        company.due_date = nil
+        company.payment_status_id = PaymentStatus.find_by_name("Activo").id
+        if company.save
+          CompanyCronLog.create(company_id: company.id, action_ref: 9, details: "OK add_admin_month")
+          redirect_to edit_payment_company_path(company), notice: 'Mes agregado exitosamente.'
+        else
+          CompanyCronLog.create(company_id: company.id, action_ref: 9, details: "ERROR add_admin_month "+company.errors.full_messages.inspect)
+          redirect_to edit_payment_company_path(company), notice: 'Error al agregar mes.'
+        end
+	end
   
 	# GET /companies/1
 	# GET /companies/1.json
@@ -448,7 +466,7 @@ class CompaniesController < ApplicationController
 			        end
 			      end
 			    end
-			    ProviderBreak.where(:service_provider_id => provider.id).order(:start).each do |provder_break|
+			    ProviderBreak.where(:service_provider_id => provider.id).order(:start).each do |provider_break|
 			      if (provider_break.start.to_datetime - end_time_block)*(start_time_block - provider_break.end.to_datetime) > 0
 			        provider_free = false
 			      end

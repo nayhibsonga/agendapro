@@ -71,7 +71,7 @@ class PlansController < ApplicationController
     @plans = Plan.where(:custom => false)
     @company = Company.find(current_user.company_id)
     @company.billing_info ? @billing_info = @company.billing_info : @billing_info = BillingInfo.new
-    @company.payment_status == PaymentStatus.find_by_name("Trial") ? @price = Plan.where('locations >= ?', @company.locations.where(active: true).count).where('service_providers >= ?', @company.service_providers.where(active: true).count).first.price : @price = @company.plan.price
+    @company.payment_status == PaymentStatus.find_by_name("Trial") ? @price = Plan.where(custom: false).where('locations >= ?', @company.locations.where(active: true).count).where('service_providers >= ?', @company.service_providers.where(active: true).count).order(:price).first.price : @price = @company.plan.price
     @sales_tax = NumericParameter.find_by_name("sales_tax").value
     @month_discount_4 = NumericParameter.find_by_name("4_month_discount").value
     @month_discount_6 = NumericParameter.find_by_name("6_month_discount").value

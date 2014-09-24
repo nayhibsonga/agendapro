@@ -112,7 +112,7 @@ class Booking < ActiveRecord::Base
 
 	def client_exclusive
 		if self.service_provider.company.company_setting.client_exclusive
-			if !self.client.can_book
+			if !self.client.can_book || self.client.identification_number.nil? || self.client.identification_number.empty? 
 				errors.add(:base, "El cliente ingresado no figura en los registros o no puede reservar.")
 			end
 		end

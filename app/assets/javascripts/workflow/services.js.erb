@@ -317,7 +317,7 @@ function loadDescription (serviceId) {
 			$('#services-description').append(
 				'<tr>' +
 					'<th>Precio:</th>' +
-					'<th>$' + service.price + '</th>' +
+					'<th>$ ' + service.price.toLocaleString() + '</th>' +
 				'</tr>'
 			);
 		} else{
