@@ -1271,10 +1271,16 @@ function modalChange() {
 ///////////////////////////////////
 //			Slider	Animation	 //
 ///////////////////////////////////
-function animateLeft (selector) {
+function animateLeft (selector, n) {
 	var sliderSelector = ' .slider-selector label';
 	var selectorWidth = $(selector + sliderSelector + ':first-child').css('width');
 	var once = true;
+
+	//Math calc
+	var sliderWidthValue = $(selector).width();
+	var selectorWidthValue = $(selector + sliderSelector + ':first-child').width();
+	var displayedElements = Math.floor(sliderWidthValue / selectorWidthValue) - 1;
+	var rowElements = $(selector + sliderSelector).length;
 
 	//Reset right property
 	$.each($(selector + sliderSelector), function (key, label) {
@@ -1291,22 +1297,31 @@ function animateLeft (selector) {
 				{left: ''},
 				0
 			);
+			animateLeft(selector, n + 1);
 		};
 	}
 	
-	//Animation
-	$(selector + sliderSelector).animate(
-		{left: '-' + selectorWidth},
-		{
-			duration: 500,
-			complete: resetState
-		}
-	);
+	if (rowElements > displayedElements && n < displayedElements) {
+		//Animation
+		$(selector + sliderSelector).animate(
+			{left: '-' + selectorWidth},
+			{
+				duration: 500,
+				complete: resetState
+			}
+		);
+	};
 }
-function animateRight (selector) {
+function animateRight (selector, n) {
 	var sliderSelector = ' .slider-selector label';
 	var selectorWidth = $(selector + sliderSelector + ':first-child').css('width');
 	var once = true;
+
+	//Math calc
+	var sliderWidthValue = $(selector).width();
+	var selectorWidthValue = $(selector + sliderSelector + ':first-child').width();
+	var displayedElements = Math.floor(sliderWidthValue / selectorWidthValue) - 1;
+	var rowElements = $(selector + sliderSelector).length;
 
 	//Reset left property
 	$.each($(selector + sliderSelector), function (key, label) {
@@ -1323,17 +1338,20 @@ function animateRight (selector) {
 				{right: ''},
 				0
 			);
+			animateRight(selector, n + 1);
 		};
 	}
 	
-	//Animation
-	$(selector + sliderSelector).animate(
-		{right: '-' + selectorWidth},
-		{
-			duration: 500,
-			complete: resetState
-		}
-	);
+	if (rowElements > displayedElements && n < displayedElements) {
+		//Animation
+		$(selector + sliderSelector).animate(
+			{right: '-' + selectorWidth},
+			{
+				duration: 500,
+				complete: resetState
+			}
+		);
+	};
 }
 
 // var alertId;
@@ -1572,15 +1590,15 @@ $(function() {
 	var localsSelector = '#locals-selector'
 	var providersSelector = '#providers-selector'
 	$(localsSelector + ' .control_prev').click(function () {
-		animateRight(localsSelector);
+		animateRight(localsSelector, 0);
 	});
 	$(localsSelector + ' .control_next').click(function () {
-		animateLeft(localsSelector);
+		animateLeft(localsSelector, 0);
 	});
 	$(providersSelector + ' .control_prev').click(function () {
-		animateRight(providersSelector);
+		animateRight(providersSelector, 0);
 	});
 	$(providersSelector + ' .control_next').click(function () {
-		animateLeft(providersSelector);
+		animateLeft(providersSelector, 0);
 	});
 });
