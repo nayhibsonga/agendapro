@@ -115,7 +115,7 @@ class ServiceProvidersController < ApplicationController
   end
 
   def provider_time
-    provider_time = ServiceProvider.find(params[:id]).provider_times
+    provider_time = ServiceProvider.find(params[:id]).provider_times.order(:day_id, :open)
     render :json => provider_time
   end
 

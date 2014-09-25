@@ -376,6 +376,8 @@ a.print-schedule {
 	margin-left: 5px;
 }
 
+.datepicker {z-index: 1151 !important;}
+
 /*Intento de marcar líneas de columna*/
 /*table.fc-agenda-days > tbody > tr >td.fc-widget-content {
 	border: 1px solid #000000;

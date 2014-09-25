@@ -23,7 +23,8 @@ class BookingsController < ApplicationController
   # GET /bookings/1.json
   def show
     u = @booking
-    @booking_json = { :id => u.id, :start => u.start, :end => u.end, :service_id => u.service_id, :service_provider_id => u.service_provider_id, :price => u.price, :status_id => u.status_id, :client_id => u.client.id, :first_name => u.client.first_name, :last_name => u.client.last_name, :email => u.client.email, :phone => u.client.phone, :identification_number => u.client.identification_number, :send_mail => u.send_mail, :provider_lock => u.provider_lock, :notes => u.notes,  :company_comment => u.company_comment, :service_provider_active => u.service_provider.active, :service_active => u.service.active, :service_provider_name => u.service_provider.public_name, :service_name => u.service.name }
+    u.client.birth_date.nil? ? birth_date = "" : birth_date = u.client.birth_date.strftime("%d/%m/%Y")
+    @booking_json = { :id => u.id, :start => u.start, :end => u.end, :service_id => u.service_id, :service_provider_id => u.service_provider_id, :price => u.price, :status_id => u.status_id, :client_id => u.client.id, :first_name => u.client.first_name, :last_name => u.client.last_name, :email => u.client.email, :phone => u.client.phone, :identification_number => u.client.identification_number, :send_mail => u.send_mail, :provider_lock => u.provider_lock, :notes => u.notes,  :company_comment => u.company_comment, :service_provider_active => u.service_provider.active, :service_active => u.service.active, :service_provider_name => u.service_provider.public_name, :service_name => u.service.name, :address => u.client.address, :district => u.client.district, :city => u.client.city, :birth_date => birth_date, :age => u.client.age, :gender => u.client.gender }
     respond_to do |format|
       format.html { }
       format.json { render :json => @booking_json }
@@ -46,13 +47,21 @@ class BookingsController < ApplicationController
   # POST /bookings
   # POST /bookings.json
   def create
-    new_booking_params = booking_params.except(:client_first_name, :client_last_name, :client_phone, :client_email, :client_identification_number)
+    new_booking_params = booking_params.except(:client_first_name, :client_last_name, :client_phone, :client_email, :client_identification_number, :client_address, :client_district, :client_city, :client_birth_date, :client_age, :client_gender)
     @booking = Booking.new(new_booking_params)
     if Company.find(current_user.company_id).company_setting.client_exclusive
       if !booking_params[:client_id].nil? && !booking_params[:client_id].empty? && !booking_params[:client_identification_number].empty?
         @client = Client.find(booking_params[:client_id])
+        @client.first_name = booking_params[:client_first_name]
+        @client.last_name = booking_params[:client_last_name]
         @client.email = booking_params[:client_email]
         @client.phone = booking_params[:client_phone]
+        @client.address = booking_params[:client_address]
+        @client.district = booking_params[:client_district]
+        @client.city = booking_params[:client_city]
+        @client.birth_date = booking_params[:client_birth_date]
+        @client.age = booking_params[:client_age]
+        @client.gender = booking_params[:client_gender]
         @client.save
         if User.find_by_email(@client.email)
           new_booking_params[:user_id] = User.find_by_email(@client.email).id
@@ -64,8 +73,16 @@ class BookingsController < ApplicationController
     else
       if !booking_params[:client_id].nil? && !booking_params[:client_id].empty?
         @client = Client.find(booking_params[:client_id])
+        @client.first_name = booking_params[:client_first_name]
+        @client.last_name = booking_params[:client_last_name]
         @client.email = booking_params[:client_email]
         @client.phone = booking_params[:client_phone]
+        @client.address = booking_params[:client_address]
+        @client.district = booking_params[:client_district]
+        @client.city = booking_params[:client_city]
+        @client.birth_date = booking_params[:client_birth_date]
+        @client.age = booking_params[:client_age]
+        @client.gender = booking_params[:client_gender]
         @client.save
         if User.find_by_email(@client.email)
           new_booking_params[:user_id] = User.find_by_email(@client.email).id
@@ -77,7 +94,7 @@ class BookingsController < ApplicationController
               client = Client.where(email: '', company_id: ServiceProvider.find(booking_params[:service_provider_id]).company.id).where("CONCAT(first_name, ' ', last_name) = :s", :s => booking_params[:client_first_name]+' '+booking_params[:client_last_name]).first
               @booking.client = client
             else
-              client = Client.new(email: booking_params[:client_email], first_name: booking_params[:client_first_name], last_name: booking_params[:client_last_name], phone: booking_params[:client_phone], company_id: ServiceProvider.find(booking_params[:service_provider_id]).company.id)
+              client = Client.new(email: booking_params[:client_email], first_name: booking_params[:client_first_name], last_name: booking_params[:client_last_name], phone: booking_params[:client_phone], address: booking_params[:client_address], district: booking_params[:client_district], city: booking_params[:client_city], birth_date: booking_params[:client_birth_date], age: booking_params[:client_age], gender: booking_params[:client_gender], company_id: ServiceProvider.find(booking_params[:service_provider_id]).company.id)
               if client.save
                 @booking.client = client
               end
@@ -87,7 +104,7 @@ class BookingsController < ApplicationController
               client = Client.where(email: booking_params[:client_email], company_id: ServiceProvider.find(booking_params[:service_provider_id]).company.id).first
               @booking.client = client
             else
-              client = Client.new(email: booking_params[:client_email], first_name: booking_params[:client_first_name], last_name: booking_params[:client_last_name], phone: booking_params[:client_phone], company_id: ServiceProvider.find(booking_params[:service_provider_id]).company.id)
+              client = Client.new(email: booking_params[:client_email], first_name: booking_params[:client_first_name], last_name: booking_params[:client_last_name], phone: booking_params[:client_phone], address: booking_params[:client_address], district: booking_params[:client_district], city: booking_params[:client_city], birth_date: booking_params[:client_birth_date], age: booking_params[:client_age], gender: booking_params[:client_gender], company_id: ServiceProvider.find(booking_params[:service_provider_id]).company.id)
               if client.save
                 @booking.client = client
               end
@@ -121,12 +138,20 @@ class BookingsController < ApplicationController
   # PATCH/PUT /bookings/1
   # PATCH/PUT /bookings/1.json
   def update
-    new_booking_params = booking_params.except(:client_first_name, :client_last_name, :client_phone, :client_email, :client_identification_number)
+    new_booking_params = booking_params.except(:client_first_name, :client_last_name, :client_phone, :client_email, :client_identification_number, :client_address, :client_district, :client_city, :client_birth_date, :client_age, :client_gender)
     if Company.find(current_user.company_id).company_setting.client_exclusive
       if !booking_params[:client_id].nil? && !booking_params[:client_id].empty? && !booking_params[:client_identification_number].empty?
         @client = Client.find(booking_params[:client_id])
+        @client.first_name = booking_params[:client_first_name]
+        @client.last_name = booking_params[:client_last_name]
         @client.email = booking_params[:client_email]
         @client.phone = booking_params[:client_phone]
+        @client.address = booking_params[:client_address]
+        @client.district = booking_params[:client_district]
+        @client.city = booking_params[:client_city]
+        @client.birth_date = booking_params[:client_birth_date]
+        @client.age = booking_params[:client_age]
+        @client.gender = booking_params[:client_gender]
         @client.save
         if User.find_by_email(@client.email)
           new_booking_params[:user_id] = User.find_by_email(@client.email).id
@@ -138,8 +163,16 @@ class BookingsController < ApplicationController
     else
       if !booking_params[:client_id].nil? && !booking_params[:client_id].empty?
         @client = Client.find(booking_params[:client_id])
+        @client.first_name = booking_params[:client_first_name]
+        @client.last_name = booking_params[:client_last_name]
         @client.email = booking_params[:client_email]
         @client.phone = booking_params[:client_phone]
+        @client.address = booking_params[:client_address]
+        @client.district = booking_params[:client_district]
+        @client.city = booking_params[:client_city]
+        @client.birth_date = booking_params[:client_birth_date]
+        @client.age = booking_params[:client_age]
+        @client.gender = booking_params[:client_gender]
         @client.save
         if User.find_by_email(booking_params[:client_email])
           new_booking_params[:user_id] = User.find_by_email(booking_params[:client_email]).id
@@ -151,7 +184,7 @@ class BookingsController < ApplicationController
               client = Client.where(email: '', company_id: ServiceProvider.find(booking_params[:service_provider_id]).company.id).where("CONCAT(first_name, ' ', last_name) = :s", :s => booking_params[:client_first_name]+' '+booking_params[:client_last_name]).first
               new_booking_params[:client_id] = client.id
             else
-              client = Client.new(email: '', first_name: booking_params[:client_first_name], last_name: booking_params[:client_last_name], phone: booking_params[:client_phone], company_id: ServiceProvider.find(booking_params[:service_provider_id]).company.id)
+              client = Client.new(email: booking_params[:client_email], first_name: booking_params[:client_first_name], last_name: booking_params[:client_last_name], phone: booking_params[:client_phone], address: booking_params[:client_address], district: booking_params[:client_district], city: booking_params[:client_city], birth_date: booking_params[:client_birth_date], age: booking_params[:client_age], gender: booking_params[:client_gender], company_id: ServiceProvider.find(booking_params[:service_provider_id]).company.id)
               if client.save
                 new_booking_params[:client_id] = client.id
               end
@@ -161,7 +194,7 @@ class BookingsController < ApplicationController
               client = Client.where(email: booking_params[:client_email], company_id: ServiceProvider.find(booking_params[:service_provider_id]).company.id).first
               new_booking_params[:client_id] = client.id
             else
-              client = Client.new(email: booking_params[:client_email], first_name: booking_params[:client_first_name], last_name: booking_params[:client_last_name], phone: booking_params[:client_phone], company_id: ServiceProvider.find(booking_params[:service_provider_id]).company.id)
+              client = Client.new(email: booking_params[:client_email], first_name: booking_params[:client_first_name], last_name: booking_params[:client_last_name], phone: booking_params[:client_phone], address: booking_params[:client_address], district: booking_params[:client_district], city: booking_params[:client_city], birth_date: booking_params[:client_birth_date], age: booking_params[:client_age], gender: booking_params[:client_gender], company_id: ServiceProvider.find(booking_params[:service_provider_id]).company.id)
               if client.save
                 new_booking_params[:client_id] = client.id
               end
@@ -534,6 +567,6 @@ class BookingsController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def booking_params
-      params.require(:booking).permit(:start, :end, :notes, :service_provider_id, :service_id, :price, :user_id, :status_id, :promotion_id, :client_id, :client_first_name, :client_last_name, :client_email, :client_phone, :confirmation_code, :company_comment, :web_origin, :provider_lock, :send_mail, :client_identification_number)
+      params.require(:booking).permit(:start, :end, :notes, :service_provider_id, :service_id, :price, :user_id, :status_id, :promotion_id, :client_id, :client_first_name, :client_last_name, :client_email, :client_phone, :confirmation_code, :company_comment, :web_origin, :provider_lock, :send_mail, :client_identification_number, :client_address, :client_district, :client_city, :client_birth_date, :client_age, :client_gender)
     end
 end
