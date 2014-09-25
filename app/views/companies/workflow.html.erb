@@ -238,7 +238,20 @@
       $('#foo4').carouFredSel({
         responsive: true,
         auto: false,
-        pagination: "#pager2",
+        pagination: {
+            container: "#pager2",
+            anchorBuilder: function (nr) {
+              var title;
+              if (nr == 1) {
+                title = nr + ". Elegir el servicio";
+              } else if (nr == 2) {
+                title = nr + ". Elegir el staff";
+              } else{
+                title = nr + ". Ingresa tus datos";
+              };
+              return '<a href="#"><span>' + title + '</span></a>';
+            }
+          },
         width: '100%',
         height: 'variable',
         prev: '#prev2',
