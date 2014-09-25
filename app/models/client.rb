@@ -63,6 +63,7 @@ class Client < ActiveRecord::Base
   end
 
   def self.search(search)
+    search_rut = search.gsub(/[.-]/, "")
     if search
       where ["CONCAT(first_name, ' ', last_name) ILIKE :s OR email ILIKE :s OR first_name ILIKE :s OR last_name ILIKE :s", :s => "%#{search}%"]
     else
@@ -93,6 +94,19 @@ class Client < ActiveRecord::Base
   def self.filter_gender(gender)
     if gender && (gender != '')
       where(:gender => gender)
+    else
+      all
+    end
+  end
+  def self.filter_birthdate(option)
+    if option && ([0,1,2].include? option)
+      if option == 0
+        where(birth_day: time.now.day)
+      elsif option == 1
+
+      elsif option == 2
+        where(birth_month: time.now.month)
+      end
     else
       all
     end

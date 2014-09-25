@@ -19,17 +19,20 @@
 		<div class="row">
 			<div class="form-group">
 				
-				<div class="col-md-3">
+				<div class="col-md-2 col-md-offset-1">
 					<%= select_tag :location, options_from_collection_for_select(@locations, "id", "name", params[:location]), prompt: "Elige un Local...", class: "form-control", :onchange => "this.form.submit();" %>
 				</div>
-				<div class="col-md-3">
+				<div class="col-md-2">
 					<%= select_tag :provider, options_from_collection_for_select(@service_providers, "id", "public_name", params[:provider]), prompt: "Elige un Prestador...", class: "form-control", :onchange => "this.form.submit();" %>
 				</div>
-				<div class="col-md-3">
+				<div class="col-md-2">
 					<%= select_tag :service, options_from_collection_for_select(@services, "id", "name", params[:service]), prompt: "Elige un Servicio...", class: "form-control", :onchange => "this.form.submit();" %>
 				</div>
-				<div class="col-md-3">
+				<div class="col-md-2">
 					<%= select_tag :gender, options_for_select([['No Especificado', 0], ['Femenino', 1], ['Masculino', 2]], params[:gender]), prompt: "Elige un Género...", class: "form-control", :onchange => "this.form.submit();" %>
+				</div>
+				<div class="col-md-2">
+					<%= select_tag :option, options_for_select([['Hoy', 0], ['Esta Semana', 1], ['Este Mes', 2]], params[:option]), prompt: "Cumpleaños...", class: "form-control", :onchange => "this.form.submit();" %>
 				</div>
 			</div>
 		</div>
@@ -39,7 +42,7 @@
 					<label class="pull-right">Buscar:</label>
 				</div>
 				<div class="col-md-9">
-					<%= text_field_tag :search, nil, :class => "form-control", :placeholder => "Buscar por nombre, apellido o e-mail...", :value => params[:search] %>
+					<%= text_field_tag :search, nil, :class => "form-control", :placeholder => "Buscar por nombre, apellido, e-mail o RUT...", :value => params[:search] %>
 				</div>
 				<div class="col-md-2">
 					<button class="btn btn-agendapro-claro pull-right" type="submit" action="/clients" value="client_filter"><i class="fa fa-search"></i><span> Buscar</span></button>
@@ -56,7 +59,7 @@
 			<th>Nombre</th>
 			<th>Apellido</th>
 			<th>E-mail</th>
-			<th>Teléfono</th>
+			<th>RUT</th>
 			<th>Opciones</th>
 			<% if Company.find(current_user.company_id).company_setting.client_exclusive %>
 	    	<th>¿Puede Reservar?</th>
@@ -73,7 +76,7 @@
 				<td><%= client.first_name %></td>
 				<td><%= client.last_name %></td>
 				<td><%= client.email %></td>
-				<td><%= client.phone %></td>
+				<td><%= client.identification_number %></td>
 				<td><%= link_to '<i class="fa fa-pencil"></i> Editar'.html_safe, edit_client_path(client), :class => "btn btn-sm btn-margin-bottom btn-warning" %>
             		<%= link_to '<i class="fa fa-trash-o"></i> Eliminar'.html_safe, client, :class => "btn btn-sm btn-margin-bottom btn-danger", method: :delete, data: { confirm: '¿Estás seguro de eliminar el Cliente seleccionado? Este cliente tiene '+client.bookings.count.to_s+' reserva(s) asociada(s), que será(n) eliminada(s) también.' } unless cannot? :destroy, client %></td>
             	<% if Company.find(current_user.company_id).company_setting.client_exclusive %>
