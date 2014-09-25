@@ -22,14 +22,13 @@ class ServiceProvidersPdf < Prawn::Document
 	end
 
 	def text_content
-		move_down 20
+		move_down 5
 
 		text @service_provider.public_name, size: 15, style: :bold
-		text @service_provider.notification_email, size: 12, style: :bold
 	end
 
 	def table_content
-		move_down 20
+		move_down 10
 
 		table(provider_hours, header: true, position: :center, row_colors: ['E6E3CF', 'FFFFFF'], width: 540, :column_widths => [60,190,190,100]) do
 			cells.borders = []
