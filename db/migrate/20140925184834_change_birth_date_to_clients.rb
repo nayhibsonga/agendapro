@@ -1,6 +1,4 @@
 class ChangeBirthDateToClients < ActiveRecord::Migration
-	remove_column :clients, :birth_day
-	remove_column :clients, :birth_month
 	
 	add_column :clients, :birth_day, :integer
 	add_column :clients, :birth_month, :integer
