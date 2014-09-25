@@ -63,7 +63,6 @@ class Client < ActiveRecord::Base
   end
 
   def self.search(search)
-    search_rut = search.gsub(/[.-]/, "")
     if search
       where ["CONCAT(first_name, ' ', last_name) ILIKE :s OR email ILIKE :s OR first_name ILIKE :s OR last_name ILIKE :s", :s => "%#{search}%"]
     else
