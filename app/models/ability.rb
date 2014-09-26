@@ -304,6 +304,7 @@ class Ability
         
         can :read, ProviderTime, :service_provider => { :location_id => user.locations.pluck(:id) }
 
+        can :history, Client, :company_id => user.company_id
         can :read, Client, :company_id => user.company_id
         can :create, Client, :company_id => user.company_id
         can :update, Client, :company_id => user.company_id

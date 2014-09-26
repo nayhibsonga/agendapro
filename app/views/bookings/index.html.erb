@@ -248,8 +248,6 @@
 							</div>
 						</div>
 						<div class="tab-pane" id="client-pane">
-							<p><strong>Nota:</strong> Si modificas estos datos, al guardar la reserva, se actualizarán los datos del cliente.</p>
-							<br />
 							<%= f.fields_for :client do |builder| %>
 							<div class="row">
 								<div class="col-md-6">
@@ -316,6 +314,7 @@
 								</div>
 							</div>
 							<% end %>
+							<p><strong>Nota:</strong> Si modificas estos datos, al guardar la reserva, se actualizarán los datos del cliente.</p>
 						</div>
 					</div>
 					<% end %>

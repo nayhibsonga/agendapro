@@ -48,7 +48,7 @@ class ServiceProvidersPdf < Prawn::Document
 
 	def provider_hours
 		now = DateTime.now
-		block_length = 30 * 60
+		block_length = @service_provider.block_length * 60
 		table_rows = []
 
 		provider_times = @service_provider.provider_times.where(day_id: now.cwday).order(:open)
