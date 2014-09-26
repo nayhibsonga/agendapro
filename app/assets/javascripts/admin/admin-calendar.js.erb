@@ -762,10 +762,11 @@ function editBookingModal(eventId) {
 				'<button type="button" class="btn btn-default booking-button" data-dismiss="modal">Cerrar</button>' +
 				'<button type="button" class="btn btn-agendapro-claro booking-button" onclick="editBooking('+eventId+')">Guardar</button>'
 			);
+			$('#cancelBookingDiv').remove();
 			$('#booking_status_id').closest('.col-md-6').append(
-				'<div class="form-group">' +
+				'<div class="form-group" id="cancelBookingDiv">' +
 					'<div class="col-sm-offset-4 col-sm-8">' +
-						'<button type="button" class="btn btn-danger btn-ss btn-block booking-button" onclick="deleteBooking('+eventId+')">Cancelar Reserva</button>' +
+						'<button type="button" class="btn btn-danger btn-ss btn-block booking-button" onclick="deleteBooking('+eventId+') id="cancelBookingButton">Cancelar Reserva</button>' +
 					'</div>' +
 				'</div>'
 			);
