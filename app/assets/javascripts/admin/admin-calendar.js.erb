@@ -723,6 +723,7 @@ function editBookingModal(eventId) {
 			$('#booking_client_city').val(booking.city);
 			$('#booking_client_birth_day option[value="'+booking.birth_day+'"]').attr("selected",true);
 			$('#booking_client_birth_month option[value="'+booking.birth_month+'"]').attr("selected",true);
+			$('#booking_client_birth_year option[value="'+booking.birth_year+'"]').attr("selected",true);
 			$('#booking_client_age').val(booking.age);
 			$('#booking_client_gender option[value="'+booking.gender+'"]').attr("selected",true);
 			$('#booking_notes').val(booking.notes);
@@ -851,6 +852,7 @@ function createBookingModal(date, provider_id) {
 			$('#booking_client_city').val('');
 			$('#booking_client_birth_day option[value=""]').prop('selected', true);
 			$('#booking_client_birth_month option[value=""]').prop('selected', true);
+			$('#booking_client_birth_year option[value=""]').prop('selected', true);
 			$('#booking_client_age').val('');
 			$('#booking_client_gender option[value="0"]').prop('selected', true);
 			$('#booking_notes').val('');
@@ -937,6 +939,7 @@ function jsonBooking() {
 		"client_city": $('#booking_client_city').val(),
 		"client_birth_day": parseInt($('#booking_client_birth_day').val()),
 		"client_birth_month": parseInt($('#booking_client_birth_month').val()),
+		"client_birth_year": parseInt($('#booking_client_birth_year').val()),
 		"client_age": $('#booking_client_age').val(),
 		"client_gender": parseInt($('#booking_client_gender').val()),
 		"client_identification_number": $('#booking_client_identification_number').val(),
@@ -1557,6 +1560,7 @@ $(function() {
 			$('#booking_client_city').val(client.city);
 			$('#booking_client_birth_day option[value="'+client.birth_day+'"]').prop('selected', true);
 			$('#booking_client_birth_month option[value="'+client.birth_month+'"]').prop('selected', true);
+			$('#booking_client_birth_year option[value="'+client.birth_year+'"]').prop('selected', true);
 			$('#booking_client_age').val(client.age);
 			$('#booking_client_gender option[value="'+client.gender+'"]').attr("selected",true);
 			$("#full_name").val(client.first_name+' '+client.last_name)
@@ -1598,6 +1602,7 @@ $(function() {
 			$('#booking_client_city').val(client.city);
 			$('#booking_client_birth_day option[value="'+client.birth_day+'"]').prop('selected', true);
 			$('#booking_client_birth_month option[value="'+client.birth_month+'"]').prop('selected', true);
+			$('#booking_client_birth_year option[value="'+client.birth_year+'"]').prop('selected', true);
 			$('#booking_client_age').val(client.age);
 			$('#booking_client_gender option[value="'+client.gender+'"]').attr("selected",true);
 			$("#full_name").val(client.first_name+' '+client.last_name)
@@ -1684,6 +1689,7 @@ $(function() {
 		$('#booking_client_city').val('');
 		$('#booking_client_birth_day option[value=""]').prop('selected', true);
 		$('#booking_client_birth_month option[value=""]').prop('selected', true);
+		$('#booking_client_birth_year option[value=""]').prop('selected', true);
 		$('#booking_client_age').val('');
 		$('#booking_client_gender option[value="0"]').prop('selected', true);
 		$("#full_name").val('');

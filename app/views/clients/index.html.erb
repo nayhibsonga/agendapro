@@ -18,20 +18,22 @@
 		<%= form_tag clients_path, name: "client_filter", id: "client_filter", method: "get" do %>
 		<div class="row">
 			<div class="form-group">
-				
-				<div class="col-md-2 col-md-offset-1">
-					<%= select_tag :location, options_from_collection_for_select(@locations, "id", "name", params[:location]), prompt: "Elige un Local...", class: "form-control", :onchange => "this.form.submit();" %>
+				<div class="col-md-1">
+					<label class="pull-right">Filtrar por:</label>
 				</div>
 				<div class="col-md-2">
-					<%= select_tag :provider, options_from_collection_for_select(@service_providers, "id", "public_name", params[:provider]), prompt: "Elige un Prestador...", class: "form-control", :onchange => "this.form.submit();" %>
+					<%= select_tag :location, options_from_collection_for_select(@locations, "id", "name", params[:location]), prompt: "Local...", class: "form-control", :onchange => "this.form.submit();" %>
 				</div>
 				<div class="col-md-2">
-					<%= select_tag :service, options_from_collection_for_select(@services, "id", "name", params[:service]), prompt: "Elige un Servicio...", class: "form-control", :onchange => "this.form.submit();" %>
+					<%= select_tag :provider, options_from_collection_for_select(@service_providers, "id", "public_name", params[:provider]), prompt: "Prestador...", class: "form-control", :onchange => "this.form.submit();" %>
 				</div>
 				<div class="col-md-2">
-					<%= select_tag :gender, options_for_select([['No Especificado', 0], ['Femenino', 1], ['Masculino', 2]], params[:gender]), prompt: "Elige un Género...", class: "form-control", :onchange => "this.form.submit();" %>
+					<%= select_tag :service, options_from_collection_for_select(@services, "id", "name", params[:service]), prompt: "Servicio...", class: "form-control", :onchange => "this.form.submit();" %>
 				</div>
 				<div class="col-md-2">
+					<%= select_tag :gender, options_for_select([['No Especificado', 0], ['Femenino', 1], ['Masculino', 2]], params[:gender]), prompt: "Género...", class: "form-control", :onchange => "this.form.submit();" %>
+				</div>
+				<div class="col-md-3">
 					<%= select_tag :option, options_for_select([['Hoy', 0], ['Esta Semana', 1], ['Este Mes', 2]], params[:option]), prompt: "Cumpleaños...", class: "form-control", :onchange => "this.form.submit();" %>
 				</div>
 			</div>

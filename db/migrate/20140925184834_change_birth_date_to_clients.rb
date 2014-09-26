@@ -2,8 +2,10 @@ class ChangeBirthDateToClients < ActiveRecord::Migration
 	
 	add_column :clients, :birth_day, :integer
 	add_column :clients, :birth_month, :integer
+	add_column :clients, :birth_year, :integer
 	Client.all.each do |client|
 		if !client.birth_date.nil?
+			client.birth_year = client.birth_date.year
 			client.birth_month = client.birth_date.month
 			client.birth_day = client.birth_date.day
 			if client.save

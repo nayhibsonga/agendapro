@@ -112,6 +112,7 @@ ActiveRecord::Schema.define(version: 20140925184834) do
     t.boolean  "can_book",              default: true
     t.integer  "birth_day"
     t.integer  "birth_month"
+    t.integer  "birth_year"
   end
 
   add_index "clients", ["company_id"], name: "index_clients_on_company_id", using: :btree

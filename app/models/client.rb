@@ -64,7 +64,8 @@ class Client < ActiveRecord::Base
 
   def self.search(search)
     if search
-      where ["CONCAT(first_name, ' ', last_name) ILIKE :s OR email ILIKE :s OR first_name ILIKE :s OR last_name ILIKE :s", :s => "%#{search}%"]
+      search_rut = search.gsub(/[.-]/, "")
+      where ["CONCAT(first_name, ' ', last_name) ILIKE :s OR email ILIKE :s OR first_name ILIKE :s OR last_name ILIKE :s OR replace(replace(identification_number, '.', ''), '-', '') ILIKE :r", :s => "%#{search}%", :r => "%#{search_rut}%"]
     else
       all
     end
@@ -98,13 +99,20 @@ class Client < ActiveRecord::Base
     end
   end
   def self.filter_birthdate(option)
-    if option && ([0,1,2].include? option)
-      if option == 0
-        where(birth_day: time.now.day)
-      elsif option == 1
-
-      elsif option == 2
-        where(birth_month: time.now.month)
+    if option && (["0","1","2"].include? option)
+      if option == "0"
+        where(birth_day: Time.now.day, birth_month: Time.now.month)
+      elsif option == "1"
+        weekStart = Time.now.beginning_of_week
+        weekEnd = Time.now.end_of_week
+        if weekStart.month == weekEnd.month
+          where(birth_day: weekStart.day..weekEnd.day)
+        else
+          monthEnd = weekEnd.end_of_month.day
+          where('(birth_month = ? AND birth_day BETWEEN ? AND ?) OR (birth_month = ? AND birth_day BETWEEN ? AND ?)', weekStart.month, weekStart.day, monthEnd, weekStart.month, 1, weekEnd.day)
+        end
+      elsif option == "2"
+        where(birth_month: Time.now.month)
       end
     else
       all
@@ -119,7 +127,7 @@ class Client < ActiveRecord::Base
     end
   end
   def self.import(file, company_id)
-    allowed_attributes = ["email", "first_name", "last_name", "phone", "address", "district", "city", "age", "gender", "birth_date"]
+    allowed_attributes = ["email", "first_name", "last_name", "phone", "address", "district", "city", "age", "gender", "birth_day", "birth_month", "birth_year"]
     spreadsheet = open_spreadsheet(file)
     if !spreadsheet.nil?
       header = spreadsheet.row(1)
