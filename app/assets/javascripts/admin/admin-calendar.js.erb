@@ -478,7 +478,7 @@ function loadProviderEvents(providerId) {
 						allDay: false,
 						start: providerBreak.start,
 						end: providerBreak.end,
-						resourceId: parseInt(providerId),
+						resourceId: providerBreak.service_provider_id,
 						textColor: textColors[0],
 						borderColor: textColors[0],
 						backgroundColor: backColors[0]
@@ -676,7 +676,7 @@ function loadProviderEvents(providerId) {
 						allDay: false,
 						start: providerBreak.start,
 						end: providerBreak.end,
-						resourceId: parseInt(providerId),
+						resourceId: providerBreak.service_provider_id,
 						textColor: textColors[0],
 						borderColor: textColors[0],
 						backgroundColor: backColors[0]
@@ -1115,10 +1115,10 @@ function editDrag(event) {
 	var endDate = new Date(event.end);
 	var extraMonth = "";
 	var extraDate = "";
-	if (startDate.getMonth() < 10) {
+	if (startDate.getMonth() < 9) {
 		extraMonth = "0";
 	}
-	if (startDate.getDate() < 10) {
+	if (startDate.getDate() < 9) {
 		extraDate = "0";
 	}
 	var startString = startDate.getFullYear()+"-"+extraMonth+(startDate.getMonth()+1)+"-"+extraDate+startDate.getDate()+"T"+startDate.getHours()+":"+startDate.getMinutes()+":00Z";
@@ -1129,7 +1129,8 @@ function editDrag(event) {
 	}
 	else {
 		var eventJSON = {start: startString, end: endString};
-	} 
+	}
+	window.console.log(eventJSON);
 	if (event.id.toString().charAt(0) === 'b') {
 		if (confirm('¿Estás seguro que deseas modificar el bloqueo de horario?')) {
 			$.ajax({
