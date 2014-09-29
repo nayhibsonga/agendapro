@@ -1687,7 +1687,7 @@ $(function() {
 			var d = new Date(parseInt(dateText.split('-')[2]), parseInt(dateText.split('-')[1]) - 1, parseInt(dateText.split('-')[0]));
 			$('#calendar').fullCalendar('gotoDate', d);
 			var providerId = $('input[name="providerRadio"]:checked').val();
-			loadProviderBooking(providerId);
+			loadProviderEvents(providerId);
 		}
 	});
 	$("#set-date").datepicker({
@@ -1704,7 +1704,7 @@ $(function() {
 			var d = new Date(parseInt(dateText.split('-')[2]), parseInt(dateText.split('-')[1]) - 1, parseInt(dateText.split('-')[0]));
 			$('#calendar').fullCalendar('gotoDate', d);
 			var providerId = $('input[name="providerRadio"]:checked').val();
-			loadProviderBooking(providerId);
+			loadProviderEvents(providerId);
 		}
 	});
 

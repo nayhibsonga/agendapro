@@ -173,6 +173,14 @@
 											<!-- <%= f.collection_select :service_id, Service.where(company_id: current_user.company_id), :id, :name, {}, { class: "form-control" }%> -->
 										</div>
 									</div>
+									<div class="form-group has-feedback">
+										<%= f.label :price, "Precio", class: "col-sm-4 control-label" %>
+										<div class="col-sm-8">
+											<%= f.number_field :price, min: 0, class: "form-control" %>
+											<span class="help-block"></span>
+											<span class="form-control-feedback"></span>
+										</div>
+									</div>
 								</div>
 								<div class="col-md-6">
 									<% if @booking.client.nil? then @booking.build_client end %>
@@ -213,19 +221,17 @@
 											</div>
 										</div>
 									</div>
+									<div class="form-group">
+										<%= builder.label :phone, "Teléfono", class: "col-sm-4 control-label" %>
+										<div class="col-sm-8">
+											<%= builder.text_field :phone, class: "form-control" %>
+										</div>
+									</div>
 									<% end %>
 									<div class="form-group">
 										<%= f.label :status, "Estado", class: "col-sm-4 control-label" %>
 										<div class="col-sm-8">
 											<%= f.collection_select :status_id, Status.all.order(:name), :id, :name, {selected: Status.find_by_name( 'Reservado').id}, { class: "form-control" }%>
-										</div>
-									</div>
-									<div class="form-group has-feedback">
-										<%= f.label :price, "Precio", class: "col-sm-4 control-label" %>
-										<div class="col-sm-8">
-											<%= f.number_field :price, min: 0, class: "form-control" %>
-											<span class="help-block"></span>
-											<span class="form-control-feedback"></span>
 										</div>
 									</div>
 								</div>
@@ -290,12 +296,6 @@
 									</div>
 								</div>
 								<div class="col-md-6">
-									<div class="form-group">
-										<%= builder.label :phone, "Teléfono", class: "col-sm-4 control-label" %>
-										<div class="col-sm-8">
-											<%= builder.text_field :phone, class: "form-control" %>
-										</div>
-									</div>
 									<div class="form-group">
 										<%= builder.label :address, "Dirección", class: "col-sm-4 control-label" %>
 										<div class="col-sm-8">
