@@ -926,6 +926,7 @@ function editBookingModal(eventId) {
 					}
 				});
 			}
+			setAge();
 			$('#booking-tab').tab('show');
 			$('#bookingModal').modal('show');
 		});	
@@ -1542,7 +1543,7 @@ function animateLeft (selector, n) {
 		$(selector + sliderSelector).animate(
 			{left: '-' + selectorWidth},
 			{
-				duration: 500,
+				duration: 150,
 				complete: resetState
 			}
 		);
@@ -1583,11 +1584,33 @@ function animateRight (selector, n) {
 		$(selector + sliderSelector).animate(
 			{right: '-' + selectorWidth},
 			{
-				duration: 500,
+				duration: 150,
 				complete: resetState
 			}
 		);
 	};
+}
+
+function setAge() {
+	
+	if ($('#booking_client_birth_day').val() != '' && $('#booking_client_birth_month').val() != '' && $('#booking_client_birth_year').val() != '')
+	{
+		var day = $('#booking_client_birth_day').val();
+		var month = $('#booking_client_birth_month').val() - 1;
+		var year = $('#booking_client_birth_year').val();
+
+		var date1 = new Date(year,month,day);
+		//hoy
+		var date2 = new Date();
+
+		var milli = date2 - date1;
+		var milliPerYear = 1000 * 60 * 60 * 24 * 365.26;
+
+		var yearsApart = milli/milliPerYear;
+		$('#booking_client_age').val(yearsApart | 0);
+			
+	}
+	return false;
 }
 
 // var alertId;
@@ -1858,5 +1881,14 @@ $(function() {
 	});
 	$(providersSelector + ' .control_next').click(function () {
 		animateLeft(providersSelector, 0);
+	});
+	$('#booking_client_birth_day').change(function() {
+		setAge();
+	});
+	$('#booking_client_birth_month').change(function() {
+		setAge();
+	});
+	$('#booking_client_birth_year').change(function() {
+		setAge();
 	});
 });

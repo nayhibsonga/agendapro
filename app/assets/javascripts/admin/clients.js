@@ -83,6 +83,27 @@ function saveComment(typeURL, clientId, json) {
 	});
 }
 
+function setAge() {
+	
+	if ($('#client_birth_day').val() != '' && $('#client_birth_month').val() != '' && $('#client_birth_year').val() != '')
+	{
+		var day = $('#client_birth_day').val();
+		var month = $('#client_birth_month').val() - 1;
+		var year = $('#client_birth_year').val();
+
+		var date1 = new Date(year,month,day);
+		//hoy
+		var date2 = new Date();
+
+		var milli = date2 - date1;
+		var milliPerYear = 1000 * 60 * 60 * 24 * 365.26;
+
+		var yearsApart = milli/milliPerYear;
+		$('#client_age').val(yearsApart | 0);
+			
+	}
+	return false;
+}
 
 $(function() {
 	$('#new_comment_button').click(function() {
@@ -97,4 +118,15 @@ $(function() {
 		startEditComment(event.target.id.split('edit_button')[1]);
 		return false;
 	});
+	setAge();
+	$('#client_birth_day').change(function() {
+		setAge();
+	});
+	$('#client_birth_month').change(function() {
+		setAge();
+	});
+	$('#client_birth_year').change(function() {
+		setAge();
+	});
+
 });
