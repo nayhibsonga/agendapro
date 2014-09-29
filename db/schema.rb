@@ -436,7 +436,7 @@ ActiveRecord::Schema.define(version: 20140926155706) do
     t.datetime "updated_at"
     t.boolean  "active",             default: true
     t.integer  "order",              default: 0
-    t.integer  "block_length"
+    t.integer  "block_length",       default: 30
   end
 
   add_index "service_providers", ["company_id"], name: "index_service_providers_on_company_id", using: :btree

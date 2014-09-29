@@ -254,19 +254,26 @@ class BookingsController < ApplicationController
   end
 
   def provider_booking
-    @provider = params[:provider]
-    if @provider.nil?
-      @provider = ServiceProvider.where(:location_id => params[:location])
+    if params[:provider]
+      @provider_id = ServiceProvider.find(params[:provider])
+    else
+      @provider_id = ServiceProvider.where(:location_id => params[:location], active: true)
     end
     start_date = DateTime.parse(params[:start])
     end_date = DateTime.parse(params[:end])
-    @bookings = Booking.where(:service_provider_id => @provider, :location_id => params[:location]).where('(bookings.start,bookings.end) overlaps (date ?,date ?)', end_date, start_date).order(:start)
+    @bookings = Booking.where(:service_provider_id => @provider_id).where('(bookings.start,bookings.end) overlaps (date ?,date ?)', end_date, start_date).order(:start)
     @booklist = @bookings.map do |u|
       { :id => u.id, :start => u.start, :end => u.end, :service_id => u.service_id, :service_provider_id => u.service_provider_id, :user_id => u.user_id, :status_id => u.status_id, :first_name => u.client.first_name, :last_name => u.client.last_name, :email => u.client.email, :phone => u.client.phone, :send_mail => u.send_mail, :notes => u.notes, service_provider_active: u.service_provider.active, service_active: u.service.active, service_provider_name: u.service_provider.public_name, service_name: u.service.name, web_origin: u.web_origin, provider_lock: u.provider_lock }
     end
+    @breaks = ProviderBreak.where(:service_provider_id => @provider_id).where('(provider_breaks.start,provider_breaks.end) overlaps (date ?,date ?)', end_date, start_date).order(:start)
 
-    json = @booklist.to_json
-    render :json => json
+
+    @times = ProviderTime.where(:service_provider_id => @provider_id).order(:day_id, :open)
+
+    respond_to do |format|
+      msg = { :bookings => @booklist, :breaks => @breaks, :times => @times }
+      format.json  { render :json => msg } # don't do msg.to_json
+    end
   end
 
   def book_service
