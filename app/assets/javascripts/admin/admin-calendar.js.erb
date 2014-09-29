@@ -1386,7 +1386,7 @@ function createBreakModal(date, providerId) {
 		$('#provider_break_start_4i option[value="'+dateArray[4].split(':')[0]+'"]').attr("selected",true);
 		$('#provider_break_start_5i option[value="'+dateArray[4].split(':')[1]+'"]').attr("selected",true);
 		$('#provider_break_end_3i option[value="'+parseInt(dateArray[2])+'"]').attr("selected",true);
-		$('#provider_break_end_2i option[value="'+dateArray[1]+'"]').attr("selected",true);
+		$('#provider_break_end_2i option[value="'+(date.getMonth()+1)+'"]').attr("selected",true);
 		$('#provider_break_end_1i option[value="'+dateArray[3]+'"]').attr("selected",true);
 		$('#provider_break_end_4i option[value="'+dateArray[4].split(':')[0]+'"]').attr("selected",true);
 		$('#provider_break_end_5i option[value="'+dateArray[4].split(':')[1]+'"]').attr("selected",true);
