@@ -436,7 +436,6 @@ function loadProviderEvents(providerId) {
 	if (providerId == 0) {
 		$.getJSON('/booking', {location: localId, start: startParam, end: endParam}, function (events_list) {
 			if (events_list.bookings.length > 0) {
-				alert("sd");
 				var bookings = events_list.bookings;
 				$.each(bookings, function (key, booking) {
 					if (booking.status_id != 5) {
@@ -541,6 +540,19 @@ function loadProviderEvents(providerId) {
 							var end_date = new Date(now.getFullYear(), now.getMonth(), now.getDate(), end_time[0], end_time[1]);
 							end_date.setDate(now.getDate() + offset);
 						};
+						var events = {
+							id: 'p'+times[i],
+							title: 'Descanso por Horario',
+							allDay: false,
+							start: start_date,
+							end: end_date,
+							editable: false,
+							resourceId: times[i].service_provider_id,
+							textColor: textColors[7],
+							borderColor: textColors[7],
+							backgroundColor: backColors[7]
+						};
+						$('#calendar').fullCalendar('renderEvent', events, true);
 
 						var end_time = times[times.length - 1].close.substring(times[times.length - 1].close.indexOf('T') + 1).split(':');
 						var today = day_number - times[times.length - 1].day_id;
@@ -612,11 +624,11 @@ function loadProviderEvents(providerId) {
 							borderColor: textColors[7],
 							backgroundColor: backColors[7]
 						};
-						window.console.log(events);
 						$('#calendar').fullCalendar('renderEvent', events, true);
 					}
 				}
 			});
+			$(".fc-button").css("display", "inline-block");
 		});
 	}
 	else {
@@ -689,7 +701,7 @@ function loadProviderEvents(providerId) {
 				for (var i = 0; i < times.length - 1; i++) {
 
 					var events = {
-						id: 'p'+times[i],
+						id: 'p'+times[i].id,
 						title: 'Descanso por Horario',
 						allDay: false,
 						start: start_date,
@@ -719,6 +731,20 @@ function loadProviderEvents(providerId) {
 					end_date.setDate(now.getDate() + offset);
 				};
 
+				var events = {
+					id: 'p'+times[i].id,
+					title: 'Descanso por Horario',
+					allDay: false,
+					start: start_date,
+					end: end_date,
+					editable: false,
+					resourceId: times[i].service_provider_id,
+					textColor: textColors[7],
+					borderColor: textColors[7],
+					backgroundColor: backColors[7]
+				};
+				$('#calendar').fullCalendar('renderEvent', events, true);
+
 				var end_time = times[times.length - 1].close.substring(times[times.length - 1].close.indexOf('T') + 1).split(':');
 				var today = day_number - times[times.length - 1].day_id;
 				var offset = 0 - today;
@@ -726,13 +752,13 @@ function loadProviderEvents(providerId) {
 				start_date.setDate(now.getDate() + offset);
 
 				var events = {
-					id: 'p'+times[i],
+					id: 'p'+times[times.length-1].id,
 					title: 'Descanso por Horario',
 					allDay: false,
 					start: start_date,
 					end: weekEnd,
 					editable: false,
-					resourceId: times[i].service_provider_id,
+					resourceId: times[times.length-1].service_provider_id,
 					textColor: textColors[7],
 					borderColor: textColors[7],
 					backgroundColor: backColors[7]
@@ -791,9 +817,9 @@ function loadProviderEvents(providerId) {
 				};
 				$('#calendar').fullCalendar('renderEvent', events, true);
 			}
+			$(".fc-button").css("display", "inline-block");
 		});
 	}
-	$(".fc-button").css("display", "inline-block");
 	return false;
 }
 
