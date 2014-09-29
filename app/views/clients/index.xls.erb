@@ -26,7 +26,7 @@
         <Cell><Data ss:Type="String"><%= client.phone %></Data></Cell>
         <Cell><Data ss:Type="String"><%= client.address %></Data></Cell>
         <Cell><Data ss:Type="String"><%= client.district %></Data></Cell>
-        <Cell><Data ss:Type="String"><%= if client.birth_date then l client.birth_date, format: :short end %></Data></Cell>
+        <Cell><Data ss:Type="String"><%= client.birth_day %>-<%= client.birth_month %>-<%= client.birth_year %></Data></Cell>
         <Cell><Data ss:Type="String"><%= client.age %></Data></Cell>
         <Cell><Data ss:Type="String"><%= if client.gender == 1 then "Femenino" elsif client.gender == 2 then "Masculino" end %></Data></Cell>
         <Cell><Data ss:Type="String"><%= l client.created_at, format: :short %></Data></Cell>

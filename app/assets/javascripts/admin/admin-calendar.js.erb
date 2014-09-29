@@ -314,10 +314,11 @@ function loadResourcesCalendar (startTime, endTime, hiddenDays, resourcesArray, 
 	//     $(this).after("<td class=\"fc-widget-content\" style=\"width:" + $("table.fc-agenda-days thead th.fc-col1").width() + "px\"><div style=\"position:relative\"></div></td>");
 	// });
 	$('.fc-button').click(function (event) {
+        $(".fc-button").css("display", "none");
 		var providerId = $('input[name="providerRadio"]:checked').val();
-		loadProviderBooking(providerId);
+		loadProviderEvents(providerId);
 	});
-	loadProviderBooking(providerId);
+	loadProviderEvents(providerId);
 }
 
 function loadWeekCalendar (startTime, endTime, hiddenDays, resourcesArray, providerId) {
@@ -413,23 +414,29 @@ function loadWeekCalendar (startTime, endTime, hiddenDays, resourcesArray, provi
 	//     $(this).after("<td class=\"fc-widget-content\" style=\"width:" + $("table.fc-agenda-days thead th.fc-col1").width() + "px\"><div style=\"position:relative\"></div></td>");
 	// });
 	$('.fc-button').click(function () {
+        $(".fc-button").css("display", "none");
 		var providerId = $('input[name="providerRadio"]:checked').val();
-		loadProviderBooking(providerId);
+		loadProviderEvents(providerId);
 	});
-	loadProviderBooking(providerId);
+	loadProviderEvents(providerId);
 	$('td.fc-header-left').append('<span class="fc-header-title"><a class="btn btn-agendapro-claro print-schedule" href="/service_providers/' + providerId + '.pdf"><i class="fa fa-print"></i> Horario de Hoy</a></span>');
 }
 
-function loadProviderBooking (providerId) {
+function loadProviderEvents(providerId) {
 	var localId = $('input[name=localRadio]:checked').val();
 	var start = $('#calendar').fullCalendar('getView').visStart;
 	var end = $('#calendar').fullCalendar('getView').visEnd;
 	var startParam = start.getFullYear()+'-'+(start.getMonth()+1)+'-'+start.getDate();
 	var endParam = end.getFullYear()+'-'+(end.getMonth()+1)+'-'+end.getDate();
+	var today = $('#calendar').fullCalendar('getDate');
+	var startDay = 1;
+	var weekStart = new Date(today.getFullYear(), today.getMonth(), today.getDate() - (7 + today.getDay() - startDay) % 7);
+	var weekEnd = new Date(weekStart.getFullYear(), weekStart.getMonth(), weekStart.getDate() + 7);
 	$('#calendar').fullCalendar('removeEvents');
 	if (providerId == 0) {
-		$.getJSON('/booking', {location: localId, start: startParam, end: endParam}, function (bookings) {
-			if (bookings.length > 0) {
+		$.getJSON('/booking', {location: localId, start: startParam, end: endParam}, function (events_list) {
+			if (events_list.bookings.length > 0) {
+				var bookings = events_list.bookings;
 				$.each(bookings, function (key, booking) {
 					if (booking.status_id != 5) {
 						var providerLock = '-unlock';
@@ -458,72 +465,8 @@ function loadProviderBooking (providerId) {
 					}
 				});
 			}
-		});
-		$('input[name="providerRadio"]').each(function () {
-			var providerId = $(this).val();
-			if (providerId > 0) {
-				loadProviderBreaks(providerId);
-				$.getJSON('/provider_breaks', {service_provider_id: providerId, start: startParam, end: endParam }, function (breaksArray) {
-					if (breaksArray.length > 0) {
-						$.each(breaksArray, function (key, providerBreak) {
-							var label = providerBreak.name;
-							if (label == null) {
-								label = 'Hora Bloqueada';
-							}
-							var events = {
-								id: 'b'+providerBreak.id,
-								title: label,
-								allDay: false,
-								start: providerBreak.start,
-								end: providerBreak.end,
-								resourceId: parseInt(providerId),
-								textColor: textColors[0],
-								borderColor: textColors[0],
-								backgroundColor: backColors[0]
-							};
-							$('#calendar').fullCalendar('renderEvent', events, true);
-						});
-					}
-				});
-			};
-		});
-	}
-	else {
-		loadProviderBreaks(providerId);
-		$.getJSON('/booking', {location: localId, provider: providerId, start: startParam, end: endParam}, function (bookings) {
-			if (bookings.length > 0) {
-				$.each(bookings, function (key, booking) {
-					if (booking.status_id != 5) {
-						var providerLock = '-unlock';
-						if (booking.provider_lock) {
-							providerLock = '-lock';
-						};
-						var originClass = 'origin-manual';
-						if (booking.web_origin) {
-							originClass = 'origin-web';
-						}
-						originClass += providerLock + statusIcon[booking.status_id];
-						var events = {
-							id: booking.id,
-							title: booking.service_name+' - '+booking.first_name+' '+booking.last_name,
-							allDay: false,
-							start: booking.start,
-							end: booking.end,
-							resourceId: booking.service_provider_id,
-							textColor: textColors[booking.status_id],
-							borderColor: textColors[booking.status_id],
-							backgroundColor: backColors[booking.status_id],
-							className: originClass
-						};
-						$('#calendar').fullCalendar('renderEvent', events, true);
-					}
-				});
-			}
-		});
-
-	
-		$.getJSON('/provider_breaks', {service_provider_id: providerId, start: startParam, end: endParam}, function (breaksArray) {
-			if (breaksArray.length > 0) {
+			if (events_list.breaks.length > 0) {
+				var breaksArray = events_list.breaks;
 				$.each(breaksArray, function (key, providerBreak) {
 					var label = providerBreak.name;
 					if (label == null) {
@@ -535,7 +478,7 @@ function loadProviderBooking (providerId) {
 						allDay: false,
 						start: providerBreak.start,
 						end: providerBreak.end,
-						resourceId: providerId,
+						resourceId: providerBreak.service_provider_id,
 						textColor: textColors[0],
 						borderColor: textColors[0],
 						backgroundColor: backColors[0]
@@ -543,32 +486,253 @@ function loadProviderBooking (providerId) {
 					$('#calendar').fullCalendar('renderEvent', events, true);
 				});
 			}
+			var timesAll = events_list.times;
+			$('input[name="providerRadio"]').each(function () {
+				var times = [];
+				if ($(this).val() != 0) {
+					for (var j=0;j < timesAll.length;j++) {
+						if (timesAll[j].service_provider_id == parseInt($(this).val())) {
+							times.push(timesAll[j]);
+						}
+					}
+					if (times.length > 1) {
+						var now = $('#calendar').fullCalendar('getDate');
+						var start_time = times[0].open.substring(times[0].open.indexOf('T') + 1).split(':');
+						var day_number = now.getDay();
+						if (day_number == 0) {
+							day_number = 7;
+						}
+						var today = day_number - times[0].day_id;
+						var offset = 0 - today;
+						var start_date = weekStart;
+						var end_date = new Date(now.getFullYear(), now.getMonth(), now.getDate(), start_time[0], start_time[1]);
+						end_date.setDate(now.getDate() + offset);
+
+						for (var i = 0; i < times.length - 1; i++) {
+
+							var events = {
+								id: 'p'+times[i],
+								title: 'Descanso por Horario',
+								allDay: false,
+								start: start_date,
+								end: end_date,
+								editable: false,
+								resourceId: times[i].service_provider_id,
+								textColor: textColors[7],
+								borderColor: textColors[7],
+								backgroundColor: backColors[7]
+							};
+							$('#calendar').fullCalendar('renderEvent', events, true);
+
+							start_time = times[i].close.substring(times[i].close.indexOf('T') + 1).split(':');
+							end_time = times[i+1].open.substring(times[i+1].open.indexOf('T') + 1).split(':');
+							
+							var day_number = now.getDay();
+							if (day_number == 0) {
+								day_number = 7;
+							}
+							var today = day_number - times[i].day_id;
+							var offset = 0 - today;
+							var start_date = new Date(now.getFullYear(), now.getMonth(), now.getDate(), start_time[0], start_time[1]);
+							start_date.setDate(now.getDate() + offset);
+							var today = day_number - times[i+1].day_id;
+							var offset = 0 - today;
+							var end_date = new Date(now.getFullYear(), now.getMonth(), now.getDate(), end_time[0], end_time[1]);
+							end_date.setDate(now.getDate() + offset);
+						};
+						var events = {
+							id: 'p'+times[i],
+							title: 'Descanso por Horario',
+							allDay: false,
+							start: start_date,
+							end: end_date,
+							editable: false,
+							resourceId: times[i].service_provider_id,
+							textColor: textColors[7],
+							borderColor: textColors[7],
+							backgroundColor: backColors[7]
+						};
+						$('#calendar').fullCalendar('renderEvent', events, true);
+
+						var end_time = times[times.length - 1].close.substring(times[times.length - 1].close.indexOf('T') + 1).split(':');
+						var today = day_number - times[times.length - 1].day_id;
+						var offset = 0 - today;
+						var start_date = new Date(now.getFullYear(), now.getMonth(), now.getDate(), end_time[0], end_time[1]);
+						start_date.setDate(now.getDate() + offset);
+
+						var events = {
+							id: 'p'+times[i],
+							title: 'Descanso por Horario',
+							allDay: false,
+							start: start_date,
+							end: weekEnd,
+							editable: false,
+							resourceId: times[i].service_provider_id,
+							textColor: textColors[7],
+							borderColor: textColors[7],
+							backgroundColor: backColors[7]
+						};
+						$('#calendar').fullCalendar('renderEvent', events, true);
+					}
+					else if (times.length == 1) {
+						var now = $('#calendar').fullCalendar('getDate');
+						var start_time = times[0].open.substring(times[0].open.indexOf('T') + 1).split(':');
+						var end_time = times[0].close.substring(times[0].close.indexOf('T') + 1).split(':');
+						
+						var today = now.getDay() - times[0].day_id;
+						var offset = 0 - today;
+						var time_date = new Date(now.getFullYear(), now.getMonth(), now.getDate(), start_time[0], start_time[1]);
+						time_date.setDate(now.getDate() + offset);
+
+						var events = {
+							id: 'p'+times[0].id,
+							title: 'Descanso por Horario',
+							allDay: false,
+							start: weekStart,
+							end: new Date(time_date.getFullYear(), time_date.getMonth(), time_date.getDate(), start_time[0], start_time[1]),
+							editable: false,
+							resourceId: times[0].service_provider_id,
+							textColor: textColors[7],
+							borderColor: textColors[7],
+							backgroundColor: backColors[7]
+						};
+						$('#calendar').fullCalendar('renderEvent', events, true);
+						var events = {
+							id: 'pp'+providerId,
+							title: 'Descanso por Horario',
+							allDay: false,
+							start: new Date(time_date.getFullYear(), time_date.getMonth(), time_date.getDate(), end_time[0], end_time[1]),
+							end: weekEnd,
+							editable: false,
+							resourceId: times[0].service_provider_id,
+							textColor: textColors[7],
+							borderColor: textColors[7],
+							backgroundColor: backColors[7]
+						};
+						$('#calendar').fullCalendar('renderEvent', events, true);
+					}
+					else {
+						var events = {
+							id: 'p'+providerId,
+							title: 'Descanso por Horario',
+							allDay: false,
+							start: weekStart,
+							end: weekEnd,
+							editable: false,
+							resourceId: parseInt($(this).val()),
+							textColor: textColors[7],
+							borderColor: textColors[7],
+							backgroundColor: backColors[7]
+						};
+						$('#calendar').fullCalendar('renderEvent', events, true);
+					}
+				}
+			});
+			$(".fc-button").css("display", "inline-block");
 		});
 	}
-	return false;
-}
+	else {
+		$.getJSON('/booking', {provider: providerId, start: startParam, end: endParam}, function (events_list) {
+			if (events_list.bookings.length > 0) {
+				var bookings = events_list.bookings;
+				$.each(bookings, function (key, booking) {
+					if (booking.status_id != 5) {
+						var providerLock = '-unlock';
+						if (booking.provider_lock) {
+							providerLock = '-lock';
+						};
+						var originClass = 'origin-manual';
+						if (booking.web_origin) {
+							originClass = 'origin-web';
+						};
+						originClass += providerLock + statusIcon[booking.status_id];
 
-function loadProviderBreaks (providerId) {
-	$.getJSON('/provider_time', {id: providerId}, function (times) {
-		$('#calendar').fullCalendar('removeEvents', 'break'+providerId);
-		for (var i = 0; i < times.length - 1; i++) {
-			if (times[i].day_id == times[i + 1].day_id) {
+						var events = {
+							id: booking.id,
+							title: booking.service_name+' - '+booking.first_name+' '+booking.last_name,
+							allDay: false,
+							start: booking.start,
+							end: booking.end,
+							resourceId: booking.service_provider_id,
+							textColor: textColors[booking.status_id],
+							borderColor: textColors[booking.status_id],
+							backgroundColor: backColors[booking.status_id],
+							className: originClass
+						};
+						$('#calendar').fullCalendar('renderEvent', events, true);
+					}
+				});
+			}
+			if (events_list.breaks.length > 0) {
+				var breaksArray = events_list.breaks;
+				$.each(breaksArray, function (key, providerBreak) {
+					var label = providerBreak.name;
+					if (label == null) {
+						label = 'Hora Bloqueada';
+					}
+					var events = {
+						id: 'b'+providerBreak.id,
+						title: label,
+						allDay: false,
+						start: providerBreak.start,
+						end: providerBreak.end,
+						resourceId: providerBreak.service_provider_id,
+						textColor: textColors[0],
+						borderColor: textColors[0],
+						backgroundColor: backColors[0]
+					};
+					$('#calendar').fullCalendar('renderEvent', events, true);
+				});
+			}
+			var times = events_list.times;
+			if (times.length > 1) {
 				var now = $('#calendar').fullCalendar('getDate');
-				var start_booking = times[i].close.substring(times[i].close.indexOf('T') + 1).split(':');
-				var end_booking = times[i + 1].open.substring(times[i + 1].open.indexOf('T') + 1).split(':');
-				
-				var today = now.getDay() - times[i].day_id;
+				var start_time = times[0].open.substring(times[0].open.indexOf('T') + 1).split(':');
+				var day_number = now.getDay();
+				if (day_number == 0) {
+					day_number = 7;
+				}
+				var today = day_number - times[0].day_id;
 				var offset = 0 - today;
-				var start_date = new Date(now.getFullYear(), now.getMonth(), now.getDate(), start_booking[0], start_booking[1]);
-				start_date.setDate(now.getDate() + offset);
-
-				today = now.getDay() - times[i].day_id;
-				offset = 0 - today;
-				var end_date = new Date(now.getFullYear(), now.getMonth(), now.getDate(), end_booking[0], end_booking[1]);
+				var start_date = weekStart;
+				var end_date = new Date(now.getFullYear(), now.getMonth(), now.getDate(), start_time[0], start_time[1]);
 				end_date.setDate(now.getDate() + offset);
 
+				for (var i = 0; i < times.length - 1; i++) {
+
+					var events = {
+						id: 'p'+times[i].id,
+						title: 'Descanso por Horario',
+						allDay: false,
+						start: start_date,
+						end: end_date,
+						editable: false,
+						resourceId: times[i].service_provider_id,
+						textColor: textColors[7],
+						borderColor: textColors[7],
+						backgroundColor: backColors[7]
+					};
+					$('#calendar').fullCalendar('renderEvent', events, true);
+
+					start_time = times[i].close.substring(times[i].close.indexOf('T') + 1).split(':');
+					end_time = times[i+1].open.substring(times[i+1].open.indexOf('T') + 1).split(':');
+					
+					var day_number = now.getDay();
+					if (day_number == 0) {
+						day_number = 7;
+					}
+					var today = day_number - times[i].day_id;
+					var offset = 0 - today;
+					var start_date = new Date(now.getFullYear(), now.getMonth(), now.getDate(), start_time[0], start_time[1]);
+					start_date.setDate(now.getDate() + offset);
+					var today = day_number - times[i+1].day_id;
+					var offset = 0 - today;
+					var end_date = new Date(now.getFullYear(), now.getMonth(), now.getDate(), end_time[0], end_time[1]);
+					end_date.setDate(now.getDate() + offset);
+				};
+
 				var events = {
-					id: 'p'+providerId,
+					id: 'p'+times[i].id,
 					title: 'Descanso por Horario',
 					allDay: false,
 					start: start_date,
@@ -580,9 +744,83 @@ function loadProviderBreaks (providerId) {
 					backgroundColor: backColors[7]
 				};
 				$('#calendar').fullCalendar('renderEvent', events, true);
-			};
-		};
-	});
+
+				var end_time = times[times.length - 1].close.substring(times[times.length - 1].close.indexOf('T') + 1).split(':');
+				var today = day_number - times[times.length - 1].day_id;
+				var offset = 0 - today;
+				var start_date = new Date(now.getFullYear(), now.getMonth(), now.getDate(), end_time[0], end_time[1]);
+				start_date.setDate(now.getDate() + offset);
+
+				var events = {
+					id: 'p'+times[times.length-1].id,
+					title: 'Descanso por Horario',
+					allDay: false,
+					start: start_date,
+					end: weekEnd,
+					editable: false,
+					resourceId: times[times.length-1].service_provider_id,
+					textColor: textColors[7],
+					borderColor: textColors[7],
+					backgroundColor: backColors[7]
+				};
+				$('#calendar').fullCalendar('renderEvent', events, true);
+			}
+			else if (times.length == 1) {
+				var now = $('#calendar').fullCalendar('getDate');
+				var start_time = times[0].open.substring(times[0].open.indexOf('T') + 1).split(':');
+				var end_time = times[0].close.substring(times[0].close.indexOf('T') + 1).split(':');
+				
+				var today = now.getDay() - times[0].day_id;
+				var offset = 0 - today;
+				var time_date = new Date(now.getFullYear(), now.getMonth(), now.getDate(), start_time[0], start_time[1]);
+				time_date.setDate(now.getDate() + offset);
+
+				var events = {
+					id: 'p'+times[0].id,
+					title: 'Descanso por Horario',
+					allDay: false,
+					start: weekStart,
+					end: new Date(time_date.getFullYear(), time_date.getMonth(), time_date.getDate(), start_time[0], start_time[1]),
+					editable: false,
+					resourceId: times[0].service_provider_id,
+					textColor: textColors[7],
+					borderColor: textColors[7],
+					backgroundColor: backColors[7]
+				};
+				$('#calendar').fullCalendar('renderEvent', events, true);
+				var events = {
+					id: 'pp'+providerId,
+					title: 'Descanso por Horario',
+					allDay: false,
+					start: new Date(time_date.getFullYear(), time_date.getMonth(), time_date.getDate(), end_time[0], end_time[1]),
+					end: weekEnd,
+					editable: false,
+					resourceId: times[0].service_provider_id,
+					textColor: textColors[7],
+					borderColor: textColors[7],
+					backgroundColor: backColors[7]
+				};
+				$('#calendar').fullCalendar('renderEvent', events, true);
+			}
+			else {
+				var events = {
+					id: 'p'+providerId,
+					title: 'Descanso por Horario',
+					allDay: false,
+					start: weekStart,
+					end: weekEnd,
+					editable: false,
+					resourceId: providerId,
+					textColor: textColors[7],
+					borderColor: textColors[7],
+					backgroundColor: backColors[7]
+				};
+				$('#calendar').fullCalendar('renderEvent', events, true);
+			}
+			$(".fc-button").css("display", "inline-block");
+		});
+	}
+	return false;
 }
 
 function editBookingModal(eventId) {
@@ -636,6 +874,14 @@ function editBookingModal(eventId) {
 			$('#xButton').prop('disabled', false);
 			$('#booking_client_email').val(booking.email);
 			$('#booking_client_phone').val(booking.phone);
+			$('#booking_client_address').val(booking.address);
+			$('#booking_client_district').val(booking.district);
+			$('#booking_client_city').val(booking.city);
+			$('#booking_client_birth_day option[value="'+booking.birth_day+'"]').attr("selected",true);
+			$('#booking_client_birth_month option[value="'+booking.birth_month+'"]').attr("selected",true);
+			$('#booking_client_birth_year option[value="'+booking.birth_year+'"]').attr("selected",true);
+			$('#booking_client_age').val(booking.age);
+			$('#booking_client_gender option[value="'+booking.gender+'"]').attr("selected",true);
 			$('#booking_notes').val(booking.notes);
 			$('#booking_company_comment').val(booking.company_comment);
 			if (booking.provider_lock) {
@@ -672,10 +918,11 @@ function editBookingModal(eventId) {
 				'<button type="button" class="btn btn-default booking-button" data-dismiss="modal">Cerrar</button>' +
 				'<button type="button" class="btn btn-agendapro-claro booking-button" onclick="editBooking('+eventId+')">Guardar</button>'
 			);
+			$('#cancelBookingDiv').remove();
 			$('#booking_status_id').closest('.col-md-6').append(
-				'<div class="form-group">' +
+				'<div class="form-group" id="cancelBookingDiv">' +
 					'<div class="col-sm-offset-4 col-sm-8">' +
-						'<button type="button" class="btn btn-danger btn-ss btn-block booking-button" onclick="deleteBooking('+eventId+')">Cancelar Reserva</button>' +
+						'<button type="button" class="btn btn-danger btn-ss btn-block booking-button" onclick="deleteBooking('+eventId+') id="cancelBookingButton">Cancelar Reserva</button>' +
 					'</div>' +
 				'</div>'
 			);
@@ -705,7 +952,8 @@ function editBookingModal(eventId) {
 					}
 				});
 			}
-
+			setAge();
+			$('#booking-tab').tab('show');
 			$('#bookingModal').modal('show');
 		});	
 	}
@@ -757,6 +1005,14 @@ function createBookingModal(date, provider_id) {
 			$('#booking_client_identification_number').val('');
 			$('#booking_client_email').val('');
 			$('#booking_client_phone').val('');
+			$('#booking_client_addrress').val('');
+			$('#booking_client_district').val('');
+			$('#booking_client_city').val('');
+			$('#booking_client_birth_day option[value=""]').prop('selected', true);
+			$('#booking_client_birth_month option[value=""]').prop('selected', true);
+			$('#booking_client_birth_year option[value=""]').prop('selected', true);
+			$('#booking_client_age').val('');
+			$('#booking_client_gender option[value="0"]').prop('selected', true);
 			$('#booking_notes').val('');
 			$('#booking_company_comment').val('');
 			$('#booking_provider_lock').prop('checked', false);
@@ -788,7 +1044,7 @@ function createBookingModal(date, provider_id) {
 					modalChange();
 				});
 			};
-
+			$('#booking-tab').tab('show');
 			$('#bookingModal').modal('show');	
 		}
 		else {
@@ -836,6 +1092,14 @@ function jsonBooking() {
 		"client_last_name": $('#booking_client_last_name').val(),
 		"client_email": $('#booking_client_email').val(),
 		"client_phone": $('#booking_client_phone').val(),
+		"client_address": $('#booking_client_address').val(),
+		"client_district": $('#booking_client_district').val(),
+		"client_city": $('#booking_client_city').val(),
+		"client_birth_day": parseInt($('#booking_client_birth_day').val()),
+		"client_birth_month": parseInt($('#booking_client_birth_month').val()),
+		"client_birth_year": parseInt($('#booking_client_birth_year').val()),
+		"client_age": $('#booking_client_age').val(),
+		"client_gender": parseInt($('#booking_client_gender').val()),
 		"client_identification_number": $('#booking_client_identification_number').val(),
 		"notes": $('#booking_notes').val(),
 		"company_comment": $('#booking_company_comment').val(),
@@ -849,23 +1113,15 @@ function jsonBooking() {
 function editDrag(event) {
 	var startDate = new Date(event.start);
 	var endDate = new Date(event.end);
-	var extraMonth = "";
-	var extraDate = "";
-	if (startDate.getMonth() < 10) {
-		extraMonth = "0";
-	}
-	if (startDate.getDate() < 10) {
-		extraDate = "0";
-	}
-	var startString = startDate.getFullYear()+"-"+extraMonth+(startDate.getMonth()+1)+"-"+extraDate+startDate.getDate()+"T"+startDate.getHours()+":"+startDate.getMinutes()+":00Z";
-	var endString = endDate.getFullYear()+"-"+extraMonth+(endDate.getMonth()+1)+"-"+extraDate+endDate.getDate()+"T"+endDate.getHours()+":"+endDate.getMinutes()+":00Z";
+	var startString = startDate.getFullYear()+"-"+("0"+(startDate.getMonth()+1)).slice(-2)+"-"+("0"+startDate.getDate()).slice(-2)+"T"+startDate.getHours()+":"+startDate.getMinutes()+":00Z";
+	var endString = endDate.getFullYear()+"-"+("0"+(endDate.getMonth()+1)).slice(-2)+"-"+("0"+endDate.getDate()).slice(-2)+"T"+endDate.getHours()+":"+endDate.getMinutes()+":00Z";
 
 	if (event.resourceId) {
 		var eventJSON = {start: startString, end: endString, service_provider_id: event.resourceId, provider_lock: false};
 	}
 	else {
 		var eventJSON = {start: startString, end: endString};
-	} 
+	}
 	if (event.id.toString().charAt(0) === 'b') {
 		if (confirm('¿Estás seguro que deseas modificar el bloqueo de horario?')) {
 			$.ajax({
@@ -1116,14 +1372,13 @@ function createBreakModal(date, providerId) {
 	var date = date || 0;
 	if (date != 0) {
 		dateArray = date.toString().split(' ');
-		window.console.log(dateArray);
 		$('#provider_break_start_3i option[value="'+parseInt(dateArray[2])+'"]').attr("selected",true);
 		$('#provider_break_start_2i option[value="'+(date.getMonth()+1)+'"]').attr("selected",true);
 		$('#provider_break_start_1i option[value="'+dateArray[3]+'"]').attr("selected",true);
 		$('#provider_break_start_4i option[value="'+dateArray[4].split(':')[0]+'"]').attr("selected",true);
 		$('#provider_break_start_5i option[value="'+dateArray[4].split(':')[1]+'"]').attr("selected",true);
 		$('#provider_break_end_3i option[value="'+parseInt(dateArray[2])+'"]').attr("selected",true);
-		$('#provider_break_end_2i option[value="'+dateArray[1]+'"]').attr("selected",true);
+		$('#provider_break_end_2i option[value="'+(date.getMonth()+1)+'"]').attr("selected",true);
 		$('#provider_break_end_1i option[value="'+dateArray[3]+'"]').attr("selected",true);
 		$('#provider_break_end_4i option[value="'+dateArray[4].split(':')[0]+'"]').attr("selected",true);
 		$('#provider_break_end_5i option[value="'+dateArray[4].split(':')[1]+'"]').attr("selected",true);
@@ -1271,10 +1526,16 @@ function modalChange() {
 ///////////////////////////////////
 //			Slider	Animation	 //
 ///////////////////////////////////
-function animateLeft (selector) {
+function animateLeft (selector, n) {
 	var sliderSelector = ' .slider-selector label';
 	var selectorWidth = $(selector + sliderSelector + ':first-child').css('width');
 	var once = true;
+
+	//Math calc
+	var sliderWidthValue = $(selector).width();
+	var selectorWidthValue = $(selector + sliderSelector + ':first-child').width();
+	var displayedElements = Math.floor(sliderWidthValue / selectorWidthValue) - 1;
+	var rowElements = $(selector + sliderSelector).length;
 
 	//Reset right property
 	$.each($(selector + sliderSelector), function (key, label) {
@@ -1291,22 +1552,31 @@ function animateLeft (selector) {
 				{left: ''},
 				0
 			);
+			animateLeft(selector, n + 1);
 		};
 	}
 	
-	//Animation
-	$(selector + sliderSelector).animate(
-		{left: '-' + selectorWidth},
-		{
-			duration: 500,
-			complete: resetState
-		}
-	);
+	if (rowElements > displayedElements && n < displayedElements) {
+		//Animation
+		$(selector + sliderSelector).animate(
+			{left: '-' + selectorWidth},
+			{
+				duration: 150,
+				complete: resetState
+			}
+		);
+	};
 }
-function animateRight (selector) {
+function animateRight (selector, n) {
 	var sliderSelector = ' .slider-selector label';
 	var selectorWidth = $(selector + sliderSelector + ':first-child').css('width');
 	var once = true;
+
+	//Math calc
+	var sliderWidthValue = $(selector).width();
+	var selectorWidthValue = $(selector + sliderSelector + ':first-child').width();
+	var displayedElements = Math.floor(sliderWidthValue / selectorWidthValue) - 1;
+	var rowElements = $(selector + sliderSelector).length;
 
 	//Reset left property
 	$.each($(selector + sliderSelector), function (key, label) {
@@ -1323,17 +1593,42 @@ function animateRight (selector) {
 				{right: ''},
 				0
 			);
+			animateRight(selector, n + 1);
 		};
 	}
 	
-	//Animation
-	$(selector + sliderSelector).animate(
-		{right: '-' + selectorWidth},
-		{
-			duration: 500,
-			complete: resetState
-		}
-	);
+	if (rowElements > displayedElements && n < displayedElements) {
+		//Animation
+		$(selector + sliderSelector).animate(
+			{right: '-' + selectorWidth},
+			{
+				duration: 150,
+				complete: resetState
+			}
+		);
+	};
+}
+
+function setAge() {
+	
+	if ($('#booking_client_birth_day').val() != '' && $('#booking_client_birth_month').val() != '' && $('#booking_client_birth_year').val() != '')
+	{
+		var day = $('#booking_client_birth_day').val();
+		var month = $('#booking_client_birth_month').val() - 1;
+		var year = $('#booking_client_birth_year').val();
+
+		var date1 = new Date(year,month,day);
+		//hoy
+		var date2 = new Date();
+
+		var milli = date2 - date1;
+		var milliPerYear = 1000 * 60 * 60 * 24 * 365.26;
+
+		var yearsApart = milli/milliPerYear;
+		$('#booking_client_age').val(yearsApart | 0);
+			
+	}
+	return false;
 }
 
 // var alertId;
@@ -1424,13 +1719,22 @@ $(function() {
 		minLength: 3,
 		select: function( event, ui ) {
 			event.preventDefault();
-			$('#booking_client_first_name').val(ui.item.value[0]);
-			$('#booking_client_last_name').val(ui.item.value[1]);
-			$('#booking_client_phone').val(ui.item.value[3]);
-			$('#booking_client_email').val(ui.item.value[2]);
-			$('#booking_client_id').val(ui.item.value[4]);
-			$('#booking_client_identification_number').val(ui.item.value[5]);
-			$("#full_name").val(ui.item.value[0]+' '+ui.item.value[1])
+			var client = eval("(" + ui.item.value + ")");
+			$('#booking_client_first_name').val(client.first_name);
+			$('#booking_client_last_name').val(client.last_name);
+			$('#booking_client_phone').val(client.phone);
+			$('#booking_client_email').val(client.email);
+			$('#booking_client_id').val(client.id);
+			$('#booking_client_identification_number').val(client.identification_number);
+			$('#booking_client_address').val(client.address);
+			$('#booking_client_district').val(client.district);
+			$('#booking_client_city').val(client.city);
+			$('#booking_client_birth_day option[value="'+client.birth_day+'"]').prop('selected', true);
+			$('#booking_client_birth_month option[value="'+client.birth_month+'"]').prop('selected', true);
+			$('#booking_client_birth_year option[value="'+client.birth_year+'"]').prop('selected', true);
+			$('#booking_client_age').val(client.age);
+			$('#booking_client_gender option[value="'+client.gender+'"]').attr("selected",true);
+			$("#full_name").val(client.first_name+' '+client.last_name)
 			if (validEmail($("#booking_client_email").val())) {
 				$('#booking_send_mail').prop('disabled', false);
 				$('#booking_send_mail').val(1);
@@ -1457,13 +1761,22 @@ $(function() {
 		minLength: 3,
 		select: function( event, ui ) {
 			event.preventDefault();
-			$('#booking_client_first_name').val(ui.item.value[0]);
-			$('#booking_client_last_name').val(ui.item.value[1]);
-			$('#booking_client_phone').val(ui.item.value[3]);
-			$('#booking_client_email').val(ui.item.value[2]);
-			$('#booking_client_identification_number').val(ui.item.value[5]);
-			$('#booking_client_id').val(ui.item.value[4]);
-			$("#full_name").val(ui.item.value[0]+' '+ui.item.value[1])
+			var client = eval("(" + ui.item.value + ")");
+			$('#booking_client_first_name').val(client.first_name);
+			$('#booking_client_last_name').val(client.last_name);
+			$('#booking_client_phone').val(client.phone);
+			$('#booking_client_email').val(client.email);
+			$('#booking_client_id').val(client.id);
+			$('#booking_client_identification_number').val(client.identification_number);
+			$('#booking_client_address').val(client.address);
+			$('#booking_client_district').val(client.district);
+			$('#booking_client_city').val(client.city);
+			$('#booking_client_birth_day option[value="'+client.birth_day+'"]').prop('selected', true);
+			$('#booking_client_birth_month option[value="'+client.birth_month+'"]').prop('selected', true);
+			$('#booking_client_birth_year option[value="'+client.birth_year+'"]').prop('selected', true);
+			$('#booking_client_age').val(client.age);
+			$('#booking_client_gender option[value="'+client.gender+'"]').attr("selected",true);
+			$("#full_name").val(client.first_name+' '+client.last_name)
 			if (validEmail($("#booking_client_email").val())) {
 				$('#booking_send_mail').prop('disabled', false);
 				$('#booking_send_mail').val(1);
@@ -1542,11 +1855,15 @@ $(function() {
 		$('#booking_client_email').val('');
 		$('#booking_client_id').val('');
 		$('#booking_client_identification_number').val('');
+		$('#booking_client_address').val('');
+		$('#booking_client_district').val('');
+		$('#booking_client_city').val('');
+		$('#booking_client_birth_day option[value=""]').prop('selected', true);
+		$('#booking_client_birth_month option[value=""]').prop('selected', true);
+		$('#booking_client_birth_year option[value=""]').prop('selected', true);
+		$('#booking_client_age').val('');
+		$('#booking_client_gender option[value="0"]').prop('selected', true);
 		$("#full_name").val('');
-		$('#booking_client_first_name').prop('disabled', false);
-		$('#booking_client_last_name').prop('disabled', false);
-		$('#booking_client_phone').prop('disabled', false);
-		$('#booking_client_email').prop('disabled', false);
 		$("#full_name").prop('disabled', false);
 		$('#booking_send_mail').val(0);
 		$('#booking_send_mail').prop('checked', false);
@@ -1572,15 +1889,24 @@ $(function() {
 	var localsSelector = '#locals-selector'
 	var providersSelector = '#providers-selector'
 	$(localsSelector + ' .control_prev').click(function () {
-		animateRight(localsSelector);
+		animateRight(localsSelector, 0);
 	});
 	$(localsSelector + ' .control_next').click(function () {
-		animateLeft(localsSelector);
+		animateLeft(localsSelector, 0);
 	});
 	$(providersSelector + ' .control_prev').click(function () {
-		animateRight(providersSelector);
+		animateRight(providersSelector, 0);
 	});
 	$(providersSelector + ' .control_next').click(function () {
-		animateLeft(providersSelector);
+		animateLeft(providersSelector, 0);
+	});
+	$('#booking_client_birth_day').change(function() {
+		setAge();
+	});
+	$('#booking_client_birth_month').change(function() {
+		setAge();
+	});
+	$('#booking_client_birth_year').change(function() {
+		setAge();
 	});
 });

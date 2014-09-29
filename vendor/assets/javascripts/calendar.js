@@ -69,8 +69,15 @@ function Calendar (source, getData) {
 	var generateWeek = function (monday) {
 		sources.data.date = formatDate(monday);
 		$.getJSON(sources.source, sources.data, function (data, status) {
+			var pastDate;
 			var pos = 0;
 			$.each(data, function (day, day_blocks) {
+				if (pastDate != null) {
+					if (parseDate(day).getDate() - pastDate.getDate() > 1) {
+						pos += 1;
+					};
+				};
+				pastDate = parseDate(day);
 				// Generate Day
 				if(day_blocks.length) {
 					var columnDay = $('<div>', {

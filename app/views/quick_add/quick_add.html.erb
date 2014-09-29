@@ -113,7 +113,7 @@
 						<div class="col-sm-9">
 							<div class="input-group">
 								<span class="input-group-addon">$</span>
-								<%= f.number_field :price, class: "form-control", min: 0 %>
+								<%= f.number_field :price, class: "form-control", min: 0, placeholder: '0 (requerido)' %>
 								<span class="input-group-addon">Pesos</span>
 							</div>
 							<span class="help-block"></span>
@@ -129,7 +129,7 @@
 						<%= f.label :duration, "Duración: ", class: "col-sm-3 control-label" %>
 						<div class="col-sm-9">
 							<div class="input-group">
-								<%= f.number_field :duration, class: "form-control", min: 5 %>
+								<%= f.number_field :duration, class: "form-control", min: 5, placeholder: '5 (requerido)' %>
 								<span class="input-group-addon">Minutos</span>
 							</div>
 							<span class="help-block"></span>
@@ -205,7 +205,7 @@
 							<!-- <span class="form-control-feedback"></span> -->
 						</div>
 					</div>
-					<div class="form-group">
+					<div class="form-group hidden">
 						<%= f.label :tag, "Tags de Búsqueda: ", class: "col-sm-4 control-label" %>
 						<div class="col-sm-8"> 
 							<%= f.collection_check_boxes :tag_ids, Tag.where(economic_sector: Company.find(current_user.company_id).economic_sector), :id, :name, html: {class: "checkbox"} do |b|%>

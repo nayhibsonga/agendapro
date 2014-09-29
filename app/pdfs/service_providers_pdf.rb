@@ -22,14 +22,13 @@ class ServiceProvidersPdf < Prawn::Document
 	end
 
 	def text_content
-		move_down 20
+		move_down 5
 
 		text @service_provider.public_name, size: 15, style: :bold
-		text @service_provider.notification_email, size: 12, style: :bold
 	end
 
 	def table_content
-		move_down 20
+		move_down 10
 
 		table(provider_hours, header: true, position: :center, row_colors: ['E6E3CF', 'FFFFFF'], width: 540, :column_widths => [60,190,190,100]) do
 			cells.borders = []
@@ -49,7 +48,7 @@ class ServiceProvidersPdf < Prawn::Document
 
 	def provider_hours
 		now = DateTime.now
-		block_length = 30 * 60
+		block_length = @service_provider.block_length * 60
 		table_rows = []
 
 		provider_times = @service_provider.provider_times.where(day_id: now.cwday).order(:open)

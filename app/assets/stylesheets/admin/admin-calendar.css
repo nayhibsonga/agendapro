@@ -300,7 +300,7 @@ body .modal-admin {
 	position: relative;
 	display: inline-block;
 	background: #ccc;
-	padding: 0px 25px;
+	padding: 0px 15px;
 	margin-bottom: -3px;
 	width: 20%;
 	min-width: 140px;
@@ -375,6 +375,8 @@ td.fc-header-center {
 a.print-schedule {
 	margin-left: 5px;
 }
+
+.datepicker {z-index: 1151 !important;}
 
 /*Intento de marcar líneas de columna*/
 /*table.fc-agenda-days > tbody > tr >td.fc-widget-content {

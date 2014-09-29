@@ -320,7 +320,16 @@ function loadDescription (serviceId) {
 					'<th>$ ' + service.price.toLocaleString() + '</th>' +
 				'</tr>'
 			);
-		} else{
+		} 
+		else if (service.show_price && service.price == 0) {
+			$('#services-description').append(
+				'<tr>' +
+					'<th>Precio:</th>' +
+					'<th>¡Gratis! - Confirmar Promoción en Local</th>' +
+				'</tr>'
+			);
+		}
+		else{
 			$('#services-description').append(
 				'<tr>' +
 					'<th>Precio:</th>' +

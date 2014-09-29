@@ -11,7 +11,7 @@ class ClientsController < ApplicationController
     @locations = Location.where(company_id: current_user.company_id, active: true)
     @service_providers = ServiceProvider.where(company_id: current_user.company_id, active: true)
     @services = Service.where(company_id: current_user.company_id, active: true)
-    @clients = Client.accessible_by(current_ability).search(params[:search]).filter_location(params[:location]).filter_provider(params[:provider]).filter_service(params[:service]).filter_gender(params[:gender]).order(:last_name, :first_name).paginate(:page => params[:page], :per_page => 25)
+    @clients = Client.accessible_by(current_ability).search(params[:search]).filter_location(params[:location]).filter_provider(params[:provider]).filter_service(params[:service]).filter_gender(params[:gender]).filter_birthdate(params[:option]).order(:last_name, :first_name).paginate(:page => params[:page], :per_page => 25)
 
     @max_mails = current_user.company.company_setting.daily_mails
     @mails_left = current_user.company.company_setting.daily_mails - current_user.company.company_setting.sent_mails
@@ -168,56 +168,26 @@ class ClientsController < ApplicationController
   end
 
   def suggestion
-    @clients = Client.where(company_id: current_user.company_id).where('email ~* ?', params[:term]).order(:last_name, :first_name).pluck(:first_name, :last_name, :email, :phone, :id, :identification_number).uniq
+    @clients = Client.where(company_id: current_user.company_id).where('email ~* ?', params[:term]).order(:last_name, :first_name).uniq
 
     @clients_arr = Array.new
     @clients.each do |client|
-      if client[0].nil?
-        client[0] = ''
-      end
-      if client[1].nil?
-        client[1] = ''
-      end
-      if client[2].nil?
-        client[2] = ''
-      end
-      if client[3].nil?
-        client[3] = ''
-      end
-      if client[5].nil?
-        client[5] = ''
-      end
       label = client[0] + ' ' + client[1]
       desc = client[2] + ' - ' + client[3]
-      @clients_arr.push({:label => label, :desc => desc, :value => client})
+      @clients_arr.push({:label => label, :desc => desc, :value => client.to_json})
     end
 
     render :json => @clients_arr
   end
 
   def name_suggestion
-    @clients = Client.where(company_id: current_user.company_id).where("CONCAT(first_name, ' ', last_name) ILIKE :s OR first_name ILIKE :s OR last_name ILIKE :s", :s => "%#{params[:term]}%").order(:last_name, :first_name).pluck(:first_name, :last_name, :email, :phone, :id, :identification_number).uniq
+    @clients = Client.where(company_id: current_user.company_id).where("CONCAT(first_name, ' ', last_name) ILIKE :s OR first_name ILIKE :s OR last_name ILIKE :s", :s => "%#{params[:term]}%").order(:last_name, :first_name).uniq
 
     @clients_arr = Array.new
     @clients.each do |client|
-      if client[0].nil?
-        client[0] = ''
-      end
-      if client[1].nil?
-        client[1] = ''
-      end
-      if client[2].nil?
-        client[2] = ''
-      end
-      if client[3].nil?
-        client[3] = ''
-      end
-      if client[5].nil?
-        client[5] = ''
-      end
-      label = client[0] + ' ' + client[1]
-      desc = client[2] + ' - ' + client[3]
-      @clients_arr.push({:label => label, :desc => desc, :value => client})
+      label = client.first_name + ' ' + client.last_name
+      desc = client.email + ' - ' + client.phone
+      @clients_arr.push({:label => label, :desc => desc, :value => client.to_json})
     end
 
     render :json => @clients_arr
@@ -236,7 +206,7 @@ class ClientsController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def client_params
-      params.require(:client).permit(:company_id, :email, :first_name, :last_name, :identification_number, :phone, :address, :district, :city, :age, :gender, :birth_date, :can_book)
+      params.require(:client).permit(:company_id, :email, :first_name, :last_name, :identification_number, :phone, :address, :district, :city, :age, :gender, :birth_day, :birth_month, :birth_year, :can_book)
     end
 
     def client_comment_params

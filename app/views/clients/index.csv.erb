@@ -1,4 +1,4 @@
 E-mail,Nombre,Apellido,Teléfono,Dirección,Comuna,Fecha Nacimiento,Edad,Género,Fecha Creación
 <% @clients_export.each do |client| %>
-<%= client.email %>,<%= client.first_name %>,<%= client.last_name %>,<%= client.phone %>,<%= client.address %>,<%= client.district %>,<%= if client.birth_date then l client.birth_date, format: :short end %>,<%= client.age %>,<%= if client.gender == 1 then "Femenino" elsif client.gender == 2 then "Masculino" end %>,<%= l client.created_at, format: :short %>
+<%= client.email %>,<%= client.first_name %>,<%= client.last_name %>,<%= client.phone %>,<%= client.address %>,<%= client.district %>,<%= client.birth_day %>-<%= client.birth_month %>-<%= client.birth_year %>,<%= client.age %>,<%= if client.gender == 1 then "Femenino" elsif client.gender == 2 then "Masculino" end %>,<%= l client.created_at, format: :short %>
 <% end %>
