@@ -1113,16 +1113,8 @@ function jsonBooking() {
 function editDrag(event) {
 	var startDate = new Date(event.start);
 	var endDate = new Date(event.end);
-	var extraMonth = "";
-	var extraDate = "";
-	if (startDate.getMonth() < 9) {
-		extraMonth = "0";
-	}
-	if (startDate.getDate() < 9) {
-		extraDate = "0";
-	}
-	var startString = startDate.getFullYear()+"-"+extraMonth+(startDate.getMonth()+1)+"-"+extraDate+startDate.getDate()+"T"+startDate.getHours()+":"+startDate.getMinutes()+":00Z";
-	var endString = endDate.getFullYear()+"-"+extraMonth+(endDate.getMonth()+1)+"-"+extraDate+endDate.getDate()+"T"+endDate.getHours()+":"+endDate.getMinutes()+":00Z";
+	var startString = startDate.getFullYear()+"-"+("0"+(startDate.getMonth()+1)).slice(-2)+"-"+("0"+startDate.getDate()).slice(-2)+"T"+startDate.getHours()+":"+startDate.getMinutes()+":00Z";
+	var endString = endDate.getFullYear()+"-"+("0"+(endDate.getMonth()+1)).slice(-2)+"-"+("0"+endDate.getDate()).slice(-2)+"T"+endDate.getHours()+":"+endDate.getMinutes()+":00Z";
 
 	if (event.resourceId) {
 		var eventJSON = {start: startString, end: endString, service_provider_id: event.resourceId, provider_lock: false};
@@ -1130,7 +1122,6 @@ function editDrag(event) {
 	else {
 		var eventJSON = {start: startString, end: endString};
 	}
-	window.console.log(eventJSON);
 	if (event.id.toString().charAt(0) === 'b') {
 		if (confirm('¿Estás seguro que deseas modificar el bloqueo de horario?')) {
 			$.ajax({
