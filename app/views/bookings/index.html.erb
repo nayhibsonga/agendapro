@@ -1,25 +1,20 @@
-<div class="col-md-12">
-	<div class="row">
-		<div  id="locals-selector" class="radio slider">
-			<a href="#" class="control_prev"><i class="fa fa-chevron-left"></i></a>
-			<a href="#" class="control_next"><i class="fa fa-chevron-right"></i></a>
-			<div class="slider-selector">
-				<% @locations.each do |local| %>
-				<label id="<%= local.id %>" >
-					<input type="radio" name="localRadio" id="localOption<%= local.id %>" onchange="loadProviders()" value="<%= local.id %>" <%= 'checked' if ((!@selectedLocal) && (local.id == @locations.first.id)) || (@selectedLocal.to_i == local.id) %>>
-					<p><%= local.name %></p>
-				</label>
-				<% end #each%>
-			</div>
-		</div>
+<div class="row">
+	<br />
+	<div class="col-md-2">
+		<label class="control-label pull-right">Elige Local:</label>
 	</div>
-	<div class="row">
-		<div id="providers-selector" class="radio slider">
-			<a href="#" class="control_prev"><i class="fa fa-chevron-left"></i></a>
-			<a href="#" class="control_next"><i class="fa fa-chevron-right"></i></a>
-			<div class="slider-selector">
-				<%= image_tag "ajax-loader.gif", :alt => "Loader" %>
-			</div>
+	<div class="col-md-3">
+		<select class="form-control" id="locals-selector" name="localSelector">
+			<% @locations.each do |location| %>
+				<option value="<%= location.id %>"><%= location.name %></option>
+			<% end %>
+		</select>
+	</div>
+	<div class="col-md-2">
+		<label class="control-label pull-right">Elige Prestador:</label>
+	</div>
+	<div class="col-md-3">
+		<div id="providers-div">
 		</div>
 	</div>
 </div>
