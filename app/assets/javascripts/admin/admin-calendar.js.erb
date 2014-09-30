@@ -260,6 +260,27 @@ function loadResourcesCalendar (startTime, endTime, hiddenDays, resourcesArray, 
 			});
 			$('.popover').show();
 		},
+		 
+		eventRender: function(event, element) {
+			if ($.isNumeric(event.id)) {
+		       element.qtip({
+		           content: {
+		        	   	title: event.title_qtip,
+		        	   	text: 'Horario: ' + event.time_qtip + '<br/>' +
+		        	   	'Servicio: ' + event.service_qtip + '<br/>' +
+		        	   	'Teléfono: ' + event.phone_qtip + '<br/>' +
+		        	   	'E-mail: ' + event.email_qtip
+		           },
+		           position: {
+					   	my: 'bottom center',  // el triángulo sale de abajo al medio
+					   	at: 'top center' // se ubica arriba del elemento en cuestión
+				   },
+				   style: {
+				        classes: 'qtip-bootstrap'
+				   }
+		       });
+	       	}
+       	},
 		//eventMouseover: function(calEvent, domEvent) {
 		// 	var layer =	"<div id='events-layer' class='fc-transparent' style='position:absolute; width:100%; height:100%; top:-1px; text-align:right; z-index:100'>asdfff</div>";
 		// 	$(this).append(layer);
@@ -366,6 +387,27 @@ function loadWeekCalendar (startTime, endTime, hiddenDays, resourcesArray, provi
 			});
 			$('.popover').show();
 		},
+		
+		eventRender: function(event, element) {
+	       if ($.isNumeric(event.id)) {
+		       element.qtip({
+		           content: {
+		        	   	title: event.title_qtip,
+		        	   	text: 'Horario: ' + event.time_qtip + '<br/>' +
+		        	   	'Servicio: ' + event.service_qtip + '<br/>' +
+		        	   	'Teléfono: ' + event.phone_qtip + '<br/>' +
+		        	   	'E-mail: ' + event.email_qtip
+		           },
+		           position: {
+					   my: 'bottom center',  // el triángulo sale de abajo al medio
+					   at: 'top center' // se ubica arriba del elemento en cuestión
+				   },
+				   style: {
+				        classes: 'qtip-bootstrap'
+				   }
+		       });
+	       	}
+	    },
 		firstDay: 1,	//Lunes
 		defaultView: 'agendaWeek',
 		allDaySlot: false,
@@ -459,7 +501,13 @@ function loadProviderEvents(providerId) {
 							textColor: textColors[booking.status_id],
 							borderColor: textColors[booking.status_id],
 							backgroundColor: backColors[booking.status_id],
-							className: originClass
+							className: originClass,
+							// datos para tooltip
+							title_qtip: booking.first_name+' '+booking.last_name,
+							time_qtip: booking.start.substring(11,16) + ' - ' + booking.end.substring(11,16),
+							service_qtip: booking.service_name,
+							phone_qtip: booking.phone,
+							email_qtip: booking.email
 						};
 						$('#calendar').fullCalendar('renderEvent', events, true);
 					}
@@ -657,7 +705,13 @@ function loadProviderEvents(providerId) {
 							textColor: textColors[booking.status_id],
 							borderColor: textColors[booking.status_id],
 							backgroundColor: backColors[booking.status_id],
-							className: originClass
+							className: originClass,
+							// datos para tooltip
+							title_qtip: booking.first_name+' '+booking.last_name,
+							time_qtip: booking.start.substring(11,16) + ' - ' + booking.end.substring(11,16),
+							service_qtip: booking.service_name,
+							phone_qtip: booking.phone,
+							email_qtip: booking.email
 						};
 						$('#calendar').fullCalendar('renderEvent', events, true);
 					}
