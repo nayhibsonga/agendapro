@@ -329,7 +329,7 @@ class BookingsController < ApplicationController
     @providers.each do |provider|
       event = Hash.new
       event = {
-        id: 'b',
+        id: 'pp'+provider.id.to_s,
         title: 'Bloqueo por Horario',
         allDay: false,
         start: start_date,
@@ -349,7 +349,7 @@ class BookingsController < ApplicationController
         end
         event = Hash.new
         event = {
-          id: 'b',
+          id: 'p'+provider_time.id.to_s,
           title: 'Bloqueo por Horario',
           allDay: false,
           start: time_end,
