@@ -172,8 +172,22 @@ class ClientsController < ApplicationController
 
     @clients_arr = Array.new
     @clients.each do |client|
-      label = client.first_name + ' ' + client.last_name
-      desc = client.email + ' - ' + client.phone
+      label = ''
+      desc = ''
+      if client.first_name
+        label += client.first_name
+      end
+      label += ' '
+      if client.last_name
+        label += client.last_name
+      end
+      if client.email
+        desc += client.email
+      end
+      desc += ' '
+      if client.phone
+        desc += client.phone
+      end
       @clients_arr.push({:label => label, :desc => desc, :value => client.to_json})
     end
 
@@ -185,8 +199,22 @@ class ClientsController < ApplicationController
 
     @clients_arr = Array.new
     @clients.each do |client|
-      label = client.first_name + ' ' + client.last_name
-      desc = client.email + ' - ' + client.phone
+      label = ''
+      desc = ''
+      if client.first_name
+        label += client.first_name
+      end
+      label += ' '
+      if client.last_name
+        label += client.last_name
+      end
+      if client.email
+        desc += client.email
+      end
+      desc += ' '
+      if client.phone
+        desc += client.phone
+      end
       @clients_arr.push({:label => label, :desc => desc, :value => client.to_json})
     end
 
