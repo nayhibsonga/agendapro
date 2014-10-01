@@ -41,15 +41,15 @@
 				<td><%= puntopagos_confirmation.trx_id %></td>
 				<td><%= puntopagos_confirmation.payment_method %></td>
 				<td><%= puntopagos_confirmation.amount %></td>
-				<td><%= l puntopagos_confirmation.approvement_date, format: :short %></td>
+				<td><%= puntopagos_confirmation.approvement_date %></td>
 				<td><%= puntopagos_confirmation.card_number %></td>
 				<td><%= puntopagos_confirmation.dues_number %></td>
 				<td><%= puntopagos_confirmation.dues_type %></td>
 				<td><%= puntopagos_confirmation.dues_amount %></td>
-				<td><%= l puntopagos_confirmation.first_due_date, format: :short %></td>
+				<td><%= puntopagos_confirmation.first_due_date %></td>
 				<td><%= puntopagos_confirmation.operation_number %></td>
 				<td><%= puntopagos_confirmation.authorization_code %></td>
-				<td><%= l puntopagos_confirmation.created_at, format: :short %></td>
+				<td><%= puntopagos_confirmation.created_at %></td>
 			</tr>
 		 <% end %>
 	</tbody>
