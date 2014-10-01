@@ -254,18 +254,69 @@ class BookingsController < ApplicationController
   end
 
   def provider_booking
+    statusIcon = [" blocked", " reserved", " confirmed", " completed", " payed", " cancelled", " noshow", " break"]
+    backColors = ["#CCCCBB", "#B0C2F2", "#FFE1AE", "#E9B0F2", "#B0F2C2", "#FAFCAF", "#FFB6AE", "#999977"]
+    textColors = ["#222211", "#102050", "#554004", "#401040", "#105020", "#505205", "#551004", "#111100"]
     if params[:provider] != "0"
       @providers = ServiceProvider.where(:id => params[:provider])
     else
       @providers = ServiceProvider.where(:location_id => params[:location], active: true)
     end
+
     start_date = DateTime.parse(params[:start])
     end_date = DateTime.parse(params[:end])
+
+    events = Array.new
+
     @bookings = Booking.where(:service_provider_id => @providers).where('(bookings.start,bookings.end) overlaps (date ?,date ?)', end_date, start_date).order(:start)
-    @booklist = @bookings.map do |u|
-      { :id => u.id, :start => u.start, :end => u.end, :service_id => u.service_id, :service_provider_id => u.service_provider_id, :user_id => u.user_id, :status_id => u.status_id, :first_name => u.client.first_name, :last_name => u.client.last_name, :email => u.client.email, :phone => u.client.phone, :send_mail => u.send_mail, :notes => u.notes, service_provider_active: u.service_provider.active, service_active: u.service.active, service_provider_name: u.service_provider.public_name, service_name: u.service.name, web_origin: u.web_origin, provider_lock: u.provider_lock }
+    @bookings.each do |booking|
+      if booking.status_id != Status.find_by_name('Cancelado').id
+        event = Hash.new
+        booking.provider_lock ? providerLock = '-lock' : providerLock = '-unlock'
+        booking.web_origin ? originClass = 'origin-web' : originClass = 'origin-manual'
+        originClass += providerLock + statusIcon[booking.status_id]
+
+        event = {
+          id: booking.id,
+          title: booking.service.name+' - '+booking.client.first_name+' '+booking.client.last_name,
+          allDay: false,
+          start: booking.start,
+          end: booking.end,
+          resourceId: booking.service_provider_id,
+          textColor: textColors[booking.status_id],
+          borderColor: textColors[booking.status_id],
+          backgroundColor: backColors[booking.status_id],
+          className: originClass,
+          title_qtip: booking.first_name+' '+booking.last_name,
+          time_qtip: booking.start.substring(11,16) + ' - ' + booking.end.substring(11,16),
+          service_qtip: booking.service_name,
+          phone_qtip: booking.phone,
+          email_qtip: booking.email
+        }
+        events.push(event)
+      end
     end
     @breaks = ProviderBreak.where(:service_provider_id => @providers).where('(provider_breaks.start,provider_breaks.end) overlaps (date ?,date ?)', end_date, start_date).order(:start)
+    @breaks.each do |provider_break|
+      if provider_break.name && provider_break.name != ""
+        label = provider_break.name
+      else
+        label = 'Hora Bloqueada'
+      end
+
+      event = {
+        id: 'b'+provider_break.id.to_s,
+        title: label,
+        allDay: false,
+        start: provider_break.start,
+        end: provider_break.end,
+        resourceId: provider_break.service_provider_id,
+        textColor: textColors[0],
+        borderColor: textColors[0],
+        backgroundColor: backColors[0]
+      }
+      events.push(event)
+    end
 
     if start_date.wday == 0
       day_number = 7
@@ -274,27 +325,48 @@ class BookingsController < ApplicationController
     end
 
     times = Array.new
+
     @providers.each do |provider|
-      time = Hash.new
-      time = { :start => start_date, :end => end_date, :service_provider_id => provider.id }
+      event = Hash.new
+      event = {
+        id: 'b',
+        title: 'Bloqueo por Horario',
+        allDay: false,
+        start: start_date,
+        end: end_date,
+        resourceId: provider.id,
+        textColor: textColors[7],
+        borderColor: textColors[7],
+        backgroundColor: backColors[7]
+      }
       provider.provider_times.order(:day_id, :open).each do |provider_time|
         offset = (provider_time.day_id - day_number)
         time_start = start_date.change(hour: provider_time.open.hour, min: provider_time.open.min) + (provider_time.day_id - day_number).days
         time_end = start_date.change(hour: provider_time.close.hour, min: provider_time.close.min) + (provider_time.day_id - day_number).days
-        time[:end] = time_start
-        if time[:start] < time[:end] && time[:start] < end_date && time[:end] > start_date
-          times.push(time)
+        event[:end] = time_start
+        if event[:start] < event[:end] && event[:start] < end_date && event[:end] > start_date
+          events.push(event)
         end
-        time = Hash.new
-        time = { :start => time_end, :end => end_date, :service_provider_id => provider.id }
+        event = Hash.new
+        event = {
+          id: 'b',
+          title: 'Bloqueo por Horario',
+          allDay: false,
+          start: time_end,
+          end: time_start,
+          resourceId: provider.id,
+          textColor: textColors[7],
+          borderColor: textColors[7],
+          backgroundColor: backColors[7]
+        }
       end
-      time[:end] = end_date
-      times.push(time)
+      event[:end] = end_date
+      events.push(event)
     end
 
     respond_to do |format|
-      msg = { :bookings => @booklist, :breaks => @breaks, :times => times }
-      format.json  { render :json => msg } # don't do msg.to_json
+      msg = { events: events }
+      format.json { render :json => events }
     end
   end
 

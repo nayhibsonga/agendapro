@@ -1,4 +1,4 @@
-var statusIcon = [" blocked", " reserved", " confirmed", " completed", " payed", " cancelled", " noshow", " break"]
+var statusIcon = [" blocked", " reserved", " confirmed", " completed", " payed", " cancelled", " noshow", " break"];
 var backColors = ["#CCCCBB", "#B0C2F2", "#FFE1AE", "#E9B0F2", "#B0F2C2", "#FAFCAF", "#FFB6AE", "#999977"];
 var textColors = ["#222211", "#102050", "#554004", "#401040", "#105020", "#505205", "#551004", "#111100"];
 var resourcesColors = [];
@@ -442,80 +442,7 @@ function loadProviderEvents(providerId) {
 	var endParam = end.getFullYear()+'-'+(end.getMonth()+1)+'-'+end.getDate();
 	$('#calendar').fullCalendar('removeEvents');
 	$.getJSON('/booking', {location: localId, provider: providerId, start: startParam, end: endParam}, function (events_list) {
-		if (events_list.bookings.length > 0) {
-			var bookings = events_list.bookings;
-			$.each(bookings, function (key, booking) {
-				if (booking.status_id != 5) {
-					var providerLock = '-unlock';
-					if (booking.provider_lock) {
-						providerLock = '-lock';
-					};
-					var originClass = 'origin-manual';
-					if (booking.web_origin) {
-						originClass = 'origin-web';
-					};
-					originClass += providerLock + statusIcon[booking.status_id];
-
-					var events = {
-						id: booking.id,
-						title: booking.service_name+' - '+booking.first_name+' '+booking.last_name,
-						allDay: false,
-						start: booking.start,
-						end: booking.end,
-						resourceId: booking.service_provider_id,
-						textColor: textColors[booking.status_id],
-						borderColor: textColors[booking.status_id],
-						backgroundColor: backColors[booking.status_id],
-						className: originClass,
-						// datos para tooltip
-						title_qtip: booking.first_name+' '+booking.last_name,
-						time_qtip: booking.start.substring(11,16) + ' - ' + booking.end.substring(11,16),
-						service_qtip: booking.service_name,
-						phone_qtip: booking.phone,
-						email_qtip: booking.email
-					};
-					$('#calendar').fullCalendar('renderEvent', events, true);
-				}
-			});
-		}
-		if (events_list.breaks.length > 0) {
-			var breaks = events_list.breaks;
-			$.each(breaks, function (key, providerBreak) {
-				var label = providerBreak.name;
-				if (label == null) {
-					label = 'Hora Bloqueada';
-				}
-				var events = {
-					id: 'b'+providerBreak.id,
-					title: label,
-					allDay: false,
-					start: providerBreak.start,
-					end: providerBreak.end,
-					resourceId: providerBreak.service_provider_id,
-					textColor: textColors[0],
-					borderColor: textColors[0],
-					backgroundColor: backColors[0]
-				};
-				$('#calendar').fullCalendar('renderEvent', events, true);
-			});
-		}
-		if (events_list.times.length > 0) {
-			var times = events_list.times;
-			$.each(times, function (key, time) {
-				var events = {
-					id: 'b',
-					title: 'Bloqueo por Horario',
-					allDay: false,
-					start: time.start,
-					end: time.end,
-					resourceId: time.service_provider_id,
-					textColor: textColors[7],
-					borderColor: textColors[7],
-					backgroundColor: backColors[7]
-				};
-				$('#calendar').fullCalendar('renderEvent', events, true);
-			});
-		}
+		$('#calendar').fullCalendar('addEventSource', events_list);
 		$('#small_loader_header').remove();
 		$(".fc-button").css("display", "inline-block");
 	});
