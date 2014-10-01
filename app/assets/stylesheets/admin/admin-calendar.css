@@ -378,6 +378,11 @@ a.print-schedule {
 
 .datepicker {z-index: 1151 !important;}
 
+.small-loader-header {
+	margin-top: 5px;
+	margin-bottom: 17px;
+}
+
 /*Intento de marcar líneas de columna*/
 /*table.fc-agenda-days > tbody > tr >td.fc-widget-content {
 	border: 1px solid #000000;
