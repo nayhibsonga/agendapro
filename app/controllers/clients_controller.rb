@@ -172,8 +172,8 @@ class ClientsController < ApplicationController
 
     @clients_arr = Array.new
     @clients.each do |client|
-      label = client[0] + ' ' + client[1]
-      desc = client[2] + ' - ' + client[3]
+      label = client.first_name + ' ' + client.last_name
+      desc = client.email + ' - ' + client.phone
       @clients_arr.push({:label => label, :desc => desc, :value => client.to_json})
     end
 
