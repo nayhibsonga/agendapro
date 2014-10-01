@@ -288,7 +288,7 @@ class BookingsController < ApplicationController
           backgroundColor: backColors[booking.status_id],
           className: originClass,
           title_qtip: booking.client.first_name+' '+booking.client.last_name,
-          time_qtip: booking.start.substring(11,16) + ' - ' + booking.end.substring(11,16),
+          time_qtip: booking.start.strftime("%I:%M%p") + ' - ' + booking.end.strftime("%I:%M%p"),
           service_qtip: booking.service.name,
           phone_qtip: booking.client.phone,
           email_qtip: booking.client.email
