@@ -869,7 +869,12 @@ function saveBooking(typeURL, extraURL) {
 						textColor: textColors[booking.status_id],
 						borderColor: textColors[booking.status_id],
 						backgroundColor: backColors[booking.status_id],
-						className: originClass
+						className: originClass,
+						title_qtip: booking.first_name+' '+booking.last_name,
+						time_qtip: booking.start.substring(11,16) + ' - ' + booking.end.substring(11,16),
+						service_qtip: booking.service_name,
+						phone_qtip: booking.phone,
+						email_qtip: booking.email
 					};
 					$('#calendar').fullCalendar('renderEvent', events, true);
 				}
@@ -895,6 +900,11 @@ function saveBooking(typeURL, extraURL) {
 					event.borderColor = textColors[booking.status_id];
 					event.backgroundColor = backColors[booking.status_id];
 					event.className = originClass;
+					event.title_qtip = booking.first_name+' '+booking.last_name;
+					event.time_qtip = booking.start.substring(11,16) + ' - ' + booking.end.substring(11,16);
+					event.service_qtip = booking.service_name;
+					event.phone_qtip = booking.phone;
+					event.email_qtip = booking.email;
 					$('#calendar').fullCalendar('updateEvent', event);
 				}
 				else {
