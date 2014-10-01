@@ -1388,10 +1388,6 @@ $(function() {
 			}
 			$('#xButton').prop('disabled', false);
 			$("#full_name").prop('disabled', true);
-		},
-		focus: function (event, ui) {
-			this.value = ui.item.label+", "+ui.item.desc;
-			event.preventDefault(); // Prevent the default focus behavior.
 		}
 	}).data( "ui-autocomplete" )._renderItem = function( ul, item ) {
     	return $( '<li>' ).append( '<a>' + item.label + '<br><span class="auto-desc">' + item.desc + '</span></a>' ).appendTo( ul );
@@ -1434,10 +1430,6 @@ $(function() {
 			}
 			$('#xButton').prop('disabled', false);
 			$("#full_name").prop('disabled', true);
-		},
-		focus: function (event, ui) {
-			this.value = ui.item.desc+", "+ui.item.label;
-			event.preventDefault(); // Prevent the default focus behavior.
 		}
 	}).data( "ui-autocomplete" )._renderItem = function( ul, item ) {
     	return $( '<li>' ).append( '<a>' + item.label + '<br><span class="auto-desc">' + item.desc + '</span></a>' ).appendTo( ul );
