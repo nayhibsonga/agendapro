@@ -1,9 +1,8 @@
-<div class="row">
-	<br />
+<div class="row well well-sm well-calendar">
 	<div class="col-md-2">
-		<label class="control-label pull-right">Elige Local:</label>
+		<label class="control-label label-calendar">Elige Local:</label>
 	</div>
-	<div class="col-md-3">
+	<div class="col-md-4">
 		<select class="form-control" id="locals-selector" name="localSelector">
 			<% @locations.each do |location| %>
 				<option value="<%= location.id %>"><%= location.name %></option>
@@ -11,9 +10,9 @@
 		</select>
 	</div>
 	<div class="col-md-2">
-		<label class="control-label pull-right">Elige Prestador:</label>
+		<label class="control-label label-calendar">Elige Prestador:</label>
 	</div>
-	<div class="col-md-3">
+	<div class="col-md-4">
 		<div id="providers-div">
 		</div>
 	</div>
