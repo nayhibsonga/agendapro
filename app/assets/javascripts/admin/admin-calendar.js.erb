@@ -5,78 +5,50 @@ var resourcesColors = [];
 var servicesJSON;
 
 function loadProviders () {
-	if ($('[name="localRadio"]').is(':checked')) {
-		$('#providers-selector .slider-selector').html('<%= image_tag "ajax-loader.gif", :alt => "Loader" %>');
-		var localId = $('input[name=localRadio]:checked').val();
-		$.getJSON('/location_services', {location: localId}, function (services) {
-			servicesJSON = services;
-			$('#providers-selector .slider-selector').empty();
-			var resources = [];
-			var count = 0;
-			$.getJSON('/local_providers', {location: localId}, function (providersArray) {
-				if (providersArray.length > 0) {
-					$('#provider_break_service_provider_id')
-					    .find('option')
-					    .remove()
-					    .end()
-					;
+	window.console.log("hola");
+	if (parseInt($('#locals-selector').val()) > 0) {
+		var localId = parseInt($('#locals-selector').val());
+		$('#providers-div').empty();
+		var resources = [];
+		var count = 0;
+		$.getJSON('/local_providers', {location: localId}, function (providersArray) {
+
+			if (providersArray.length > 0) {
+				$('#provider_break_service_provider_id').find('option').remove().end();
+				$('#booking_service_provider_id').find('option').remove().end();
+				$('#providers-div').append('<select class="form-control" id="providers-selector"><option value="0">Todos</option></select>');
+				$.each(providersArray, function (key, provider) {
+					$('#providers-selector').append('<option name="providerRadio" value="'+provider.id+'">'+provider.public_name+'</option>');
+					resources.push({id: provider.id, name: provider.public_name});
+					count += 1;
 					$('#booking_service_provider_id')
-					    .find('option')
-					    .remove()
-					    .end()
+					    .append('<option value="'+ provider.id +'">'+ provider.public_name +'</option>')
 					;
-					$('#providers-selector .slider-selector').append(
-						'<label class="active" id="l_todos">' +
-							'<input type="radio" name="providerRadio" value="0" checked>' +
-							'<p>Todos</p>' +
-						'</label>'
-					);
-					$.each(providersArray, function (key, provider) {
-						$('#providers-selector .slider-selector').append(
-							'<label id="' + provider.id + '">' +
-								'<input type="radio" name="providerRadio" value="' + provider.id + '">' +
-								'<p>' + provider.public_name + '</p>' +
-							'</label>'
-						);
-						resources.push({id: provider.id, name: provider.public_name});
-						count += 1;
-						$('#booking_service_provider_id')
-						    .append('<option value="'+ provider.id +'">'+ provider.public_name +'</option>')
-						;
-						$('#provider_break_service_provider_id')
-						    .append('<option value="'+ provider.id +'">'+ provider.public_name +'</option>')
-						;
-					});
-					$('[name="providerRadio"]').on('click', function(event) {
-						$('[name="providerRadio"]').parent().removeClass('active');
-						event.target.parentNode.className += 'active';
-						$('[name="providerRadio"]').attr('checked',false);
-						$(this).attr('checked',true);
-						var providerId = event.target.getAttribute('value');
-						if (providerId == 0) {
-							loadLocationTime (localId, resources);
-						}
-						else {
-							loadProviderTime(providerId);
-						}
-						
-					});
-					loadLocationTime (localId, resources);
-					return true;
-				}
-				else {
-					$('#providers-selector .slider-selector').append(
-						'<label class="active" id="l_todos">' +
-							'<input type="radio" name="providerRadio" value="0" checked>' +
-							'<p>Todos</p>' +
-						'</label>'
-					);
-				}
-				loadWeekCalendar(0,24,[],[],0);
+					$('#provider_break_service_provider_id')
+					    .append('<option value="'+ provider.id +'">'+ provider.public_name +'</option>')
+					;
+				});
+				$('#providers-selector').change(function() {
+					providerId = parseInt($('#providers-selector').val())
+						window.console.log(providerId);
+					if (providerId == 0) {
+						loadLocationTime (localId, resources);
+					}
+					else {
+						loadProviderTime(providerId);
+					}
+					
+				});
+				loadLocationTime (localId, resources);
 				return true;
-			});
-			return false;
+			}
+			else {
+				$('#providers-selector').append('<option value="0">Todos</option>');
+			}
+			loadWeekCalendar(0,24,[],[],0);
+			return true;
 		});
+		return false;
 	}
 	return false;
 }
@@ -119,7 +91,7 @@ function loadLocationTime (locationId, resources) {
 						}
 					}
 			});
-			$.getJSON('/schedule', {local: $('input[name=localRadio]:checked').val()}, function (schedule) {
+			$.getJSON('/schedule', {local: parseInt($('#locals-selector').val())}, function (schedule) {
 				hiddenDays = new Array();
 				if (!schedule.Domingo.length) {
 					hiddenDays.push(0);
@@ -182,7 +154,7 @@ function loadProviderTime (providerId) {
 					}
 				}
 		});
-		$.getJSON('/schedule', {local: $('input[name=localRadio]:checked').val()}, function (schedule) {
+		$.getJSON('/schedule', {local: parseInt($('#locals-selector').val())}, function (schedule) {
 			hiddenDays = new Array();
 			if (!schedule.Domingo.length) {
 				hiddenDays.push(0);
@@ -336,7 +308,7 @@ function loadResourcesCalendar (startTime, endTime, hiddenDays, resourcesArray, 
 	// });
 	$('.fc-button').click(function (event) {
         $(".fc-button").css("display", "none");
-		var providerId = $('input[name="providerRadio"]:checked').val();
+		var providerId = parseInt($('#providers-selector').val());
 		loadProviderEvents(providerId);
 	});
 	loadProviderEvents(providerId);
@@ -457,7 +429,7 @@ function loadWeekCalendar (startTime, endTime, hiddenDays, resourcesArray, provi
 	// });
 	$('.fc-button').click(function () {
         $(".fc-button").css("display", "none");
-		var providerId = $('input[name="providerRadio"]:checked').val();
+		var providerId = parseInt($('#providers-selector').val());
 		loadProviderEvents(providerId);
 	});
 	loadProviderEvents(providerId);
@@ -465,7 +437,7 @@ function loadWeekCalendar (startTime, endTime, hiddenDays, resourcesArray, provi
 }
 
 function loadProviderEvents(providerId) {
-	var localId = $('input[name=localRadio]:checked').val();
+	var localId = parseInt($('#locals-selector').val());
 	var start = $('#calendar').fullCalendar('getView').visStart;
 	var end = $('#calendar').fullCalendar('getView').visEnd;
 	var startParam = start.getFullYear()+'-'+(start.getMonth()+1)+'-'+start.getDate();
@@ -535,7 +507,7 @@ function loadProviderEvents(providerId) {
 				});
 			}
 			var timesAll = events_list.times;
-			$('input[name="providerRadio"]').each(function () {
+			$('option[name="providerRadio"]').each(function () {
 				var times = [];
 				if ($(this).val() != 0) {
 					for (var j=0;j < timesAll.length;j++) {
@@ -1014,7 +986,7 @@ function editBookingModal(eventId) {
 }
 
 function createBookingModal(date, provider_id) {
-	var localId = $('input[name=localRadio]:checked').val();
+	var localId = parseInt($('#locals-selector').val());
 	var date = date || 0;
 	var provider_id = provider_id || 0;
 	$.getJSON('/local_providers', {location: localId}, function (providersArray) {
@@ -1032,9 +1004,9 @@ function createBookingModal(date, provider_id) {
 				$('#bookingStartHour').val('');
 				$('#bookingStartMinute').val('');
 			}
-			if (parseInt($('input[name=providerRadio]:checked').val()) > 0) {
-				$('#booking_service_provider_id option[value="'+$('input[name=providerRadio]:checked').val()+'"]').attr("selected",true);
-				$.getJSON('/provider_services', {id: parseInt($('input[name=providerRadio]:checked').val())}, function (services) {
+			if (parseInt($('#providers-selector').val()) > 0) {
+				$('#booking_service_provider_id option[value="'+parseInt($('#providers-selector').val())+'"]').attr("selected",true);
+				$.getJSON('/provider_services', {id: parseInt($('#providers-selector').val())}, function (services) {
 					$('#booking_service_id').empty();
 					$.each(services, function (key, service) {
 						$('#booking_service_id').append(
@@ -1407,9 +1379,9 @@ function saveBreak (typeURL, extraURL) {
 }
 
 function getAvailableProviders() {
-	if ($('[name="localRadio"]').is(':checked')) {
-		if (parseInt($('input[name=providerRadio]:checked').val()) == 0) {
-			queryJSON = { "start": $('#datePicker').val() +"T"+ $('#bookingStartHour').val() +":"+ $('#bookingStartMinute').val() +":00Z","end":$('#datePicker').val() +"T"+ $('#bookingEnd').text() +":00Z", "location_id": $('input[name=localRadio]:checked').val() }
+	if (parseInt($('#locals-selector').val()) > 0) {
+		if (parseInt($('#providers-selector').val()) == 0) {
+			queryJSON = { "start": $('#datePicker').val() +"T"+ $('#bookingStartHour').val() +":"+ $('#bookingStartMinute').val() +":00Z","end":$('#datePicker').val() +"T"+ $('#bookingEnd').text() +":00Z", "location_id": parseInt($('#locals-selector').val()) }
 			$.getJSON('/available_providers', queryJSON, function (providersArray) { 
 				$(function(){
 				    $('#booking_service_provider_id option').filter(function () {
@@ -1441,8 +1413,8 @@ function createBreakModal(date, providerId) {
 		$('#provider_break_start_5i option[value="00"]').attr("selected",true);
 		$('#provider_break_end_5i option[value="00"]').attr("selected",true);
 	}
-	if (parseInt($('input[name=providerRadio]:checked').val()) > 0) {
-		$('#provider_break_service_provider_id option[value="'+$('input[name=providerRadio]:checked').val()+'"]').attr("selected",true);
+	if (parseInt($('#providers-selector').val()) > 0) {
+		$('#provider_break_service_provider_id option[value="'+parseInt($('#providers-selector').val())+'"]').attr("selected",true);
 	}
 	if (providerId > 0) {
 		$('#provider_break_service_provider_id option[value="'+providerId+'"]').attr("selected",true);
@@ -1703,9 +1675,14 @@ $(function() {
 		createBreakModal();
 		return false;
 	});
-	if ($('[name="localRadio"]').is(':checked')) {
+	if (parseInt($('#locals-selector').val()) > 0) {
 		loadProviders();
 	}
+	$('#locals-selector').change(function() {
+		if (parseInt($('#locals-selector').val()) > 0) {
+			loadProviders();
+		}
+	});
 	$('#datePicker').datepicker({
 		dateFormat: 'dd/mm/yy',
 		firstDay: 1,
@@ -1722,11 +1699,6 @@ $(function() {
 	$("#booking_service_id").on("change", function() { 
 		modalChange();
 	});
-	$('[name="localRadio"]').first().parent().addClass("active")
-	$('[name="localRadio"]').click(function (e) {
-		$('[name="localRadio"]').parent().removeClass('active');
-		e.target.parentNode.className += 'active';
-	});
 
 	$("#dp").datepicker({
 		dateFormat: 'dd-mm-yy',
@@ -1740,7 +1712,7 @@ $(function() {
 		onSelect: function(dateText, inst) {
 			var d = new Date(parseInt(dateText.split('-')[2]), parseInt(dateText.split('-')[1]) - 1, parseInt(dateText.split('-')[0]));
 			$('#calendar').fullCalendar('gotoDate', d);
-			var providerId = $('input[name="providerRadio"]:checked').val();
+			var providerId = parseInt($('#providers-selector').val());
 			loadProviderEvents(providerId);
 		}
 	});
@@ -1757,7 +1729,7 @@ $(function() {
 		onSelect: function(dateText, inst) {
 			var d = new Date(parseInt(dateText.split('-')[2]), parseInt(dateText.split('-')[1]) - 1, parseInt(dateText.split('-')[0]));
 			$('#calendar').fullCalendar('gotoDate', d);
-			var providerId = $('input[name="providerRadio"]:checked').val();
+			var providerId = parseInt($('#providers-selector').val());
 			loadProviderEvents(providerId);
 		}
 	});
@@ -1946,21 +1918,6 @@ $(function() {
 		else {
 			$('#booking_service_provider_id').prop('disabled', false);
 		}
-	});
-
-	var localsSelector = '#locals-selector'
-	var providersSelector = '#providers-selector'
-	$(localsSelector + ' .control_prev').click(function () {
-		animateRight(localsSelector, 0);
-	});
-	$(localsSelector + ' .control_next').click(function () {
-		animateLeft(localsSelector, 0);
-	});
-	$(providersSelector + ' .control_prev').click(function () {
-		animateRight(providersSelector, 0);
-	});
-	$(providersSelector + ' .control_next').click(function () {
-		animateLeft(providersSelector, 0);
 	});
 	$('#booking_client_birth_day').change(function() {
 		setAge();
