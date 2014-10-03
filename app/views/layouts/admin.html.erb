@@ -196,7 +196,7 @@
 									<div class="form-group">
 										<%= label_tag "service_provider_id", "Prestador de Servicios", class: "col-sm-3 control-label" %>
 										<div class="col-sm-9">
-											<%= select_tag "people", options_from_collection_for_select(ServiceProvider.where(company_id: current_user.company_id, active: true).accessible_by(current_ability), "id", "public_name"), prompt: "Elige al prestador...", class: "form-control" %>
+											<%= select_tag "service_provider_id", options_from_collection_for_select(ServiceProvider.where(company_id: current_user.company_id, active: true).accessible_by(current_ability), "id", "public_name"), prompt: "Elige al prestador...", class: "form-control" %>
 										</div>
 									</div>
 								</div>
@@ -210,6 +210,8 @@
 								</div>
 							</div>
 							<div class="modal-footer">
+								<a class="btn btn-default" data-dismiss="modal">Cerrar</a>
+								<%= link_to "Imprimir Horario", service_providers_path, id: "printingButton", class: "btn btn-agendapro-claro", disabled: true %>
 							</div>
 						</div>
 					</div>
@@ -310,6 +312,44 @@
 						$('#dp').addClass('dpCollapse');
 					}
 				}
+
+				$('#provider_date').datepicker({
+					dateFormat: 'dd/mm/yy',
+					firstDay: 1,
+					dayNames: [ "Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado" ],
+					dayNamesMin: [ "Do", "Lu", "Ma", "Mi", "Ju", "Vi", "Sá" ],
+					dayNamesShort: [ "Dom", "Lun", "Mar", "Mié", "Jue", "Vie", "Sáb" ],
+					onSelect: function() {
+						if ($('#service_provider_id').val() != "" && $('#provider_date').val() != "") {
+							$('#printingButton').removeAttr("disabled");
+						}
+						else {
+							$('#printingButton').attr("disabled", "disabled");
+						}
+					}
+				});
+
+				$('#provider_date').change(function() {
+					if ($('#service_provider_id').val() != "" && $('#provider_date').val() != "") {
+						$('#printingButton').removeAttr("disabled");
+					}
+					else {
+						$('#printingButton').attr("disabled", "disabled");
+					}
+				});
+
+				$('#service_provider_id').change(function() {
+					if ($('#service_provider_id').val() != "" && $('#provider_date').val() != "") {
+						$('#printingButton').removeAttr("disabled");
+					}
+					else {
+						$('#printingButton').attr("disabled", "disabled");
+					}
+				});
+
+				$('#printingButton').click(function(){
+			        $(this).attr('href', $(this).attr('href') + '/'+$('#service_provider_id').val()+'?provider_date=' + $('#provider_date').val());
+			    });
 			});
 		</script>
 	</body>
