@@ -3188,7 +3188,7 @@ function ResourceView(element, calendar, viewName) {
         addMinutes(d, minMinute);
         slotCnt = 0;
         for (i=0; d < maxd; i++) {
-            minutes = d.getMinutes();
+            //minutes = d.getMinutes();
             s +=
             "<tr class='fc-slot" + i + ' ' + (!minutes ? '' : 'fc-minor') + "'>" +
             "<th class='fc-agenda-axis " + headerClass + "'>" +
@@ -4717,7 +4717,7 @@ function AgendaView(element, calendar, viewName) {
 		addMinutes(d, minMinute);
 		slotCnt = 0;
 		for (i=0; d < maxd; i++) {
-			minutes = d.getMinutes();
+			//minutes = d.getMinutes();
 			s +=
 				"<tr class='fc-slot" + i + ' ' + (!minutes ? '' : 'fc-minor') + "'>" +
 				"<th class='fc-agenda-axis " + headerClass + "'>" +

@@ -53,6 +53,7 @@
 					</ul>
 				</li>
 			</ul>
+			<a href="#" id="link-imprimir" data-toggle="modal" data-target="#printingModal"><div class="pull-right"><i class="fa fa-print fa-lg"></i></div></a>
 			<% end %>
 			<ul id="menu-usuario">
 			  <li><a href="#" id="open-usuario"><%= current_user.email %> <span class="fa fa-chevron-down"></span></a>
@@ -166,7 +167,7 @@
 								<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
 								<h4 class="modal-title" id="paymentModalLabel">Cuenta AgendaPro</h4>
 							</div>
-							<div class="modal-body break-modal-body">
+							<div class="modal-body">
 								<p class="justified">¡Recuerda activar tu cuenta AgendaPro! No te pierdas un segundo el acceso a las oportunidades que te da tu cuenta AgendaPro. Si no eres el(la) administrador(a), ponte en contacto con él(ella) para que active la cuenta.</p>
 								<p class="justified">¡Aprovecha las facilidades de pago que ofrecemos y descuentos al pagar por adelantado! Puedes pagar tu cuenta directamente a través de la página, por medio de WebPay o transferencias bancarias de los principales bancos. Si no te acomoda ninguna de estas opciones o tienes alguna duda respecto a tu plan actual, te invitamos a ponerte en contacto con nosotros enviando un e-mail a <%= link_to 'contacto@agendapro.cl', contact_path, :target => "_blank" %>, para recibir las instrucciones a seguir.</p>
 								<p>Medios de pago disponibles:</p>
@@ -178,7 +179,37 @@
 								<p>Ir a <%= link_to "PLANES", select_plan_path %> para proceder.</p>
 								<% end %>
 							</div>
-							<div class="modal-footer break-modal-footer">
+							<div class="modal-footer">
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="modal fade" id="printingModal" tabindex="-1" role="dialog" aria-labelledby="printingModalLabel" aria-hidden="true">
+					<div class="modal-dialog">
+						<div class="modal-content">
+							<div class="modal-header">
+								<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+								<h4 class="modal-title" id="printingModalLabel">Imprimir Horario de Prestador</h4>
+							</div>
+							<div class="modal-body">
+								<div class="row">
+									<div class="form-group">
+										<%= label_tag "service_provider_id", "Prestador de Servicios", class: "col-sm-3 control-label" %>
+										<div class="col-sm-9">
+											<%= select_tag "people", options_from_collection_for_select(ServiceProvider.where(company_id: current_user.company_id, active: true).accessible_by(current_ability), "id", "public_name"), prompt: "Elige al prestador...", class: "form-control" %>
+										</div>
+									</div>
+								</div>
+								<div class="row">
+									<div class="form-group">
+										<%= label_tag "provider_date", "Fecha", class: "col-sm-3 control-label" %>
+										<div class="col-sm-9">
+											<%= text_field_tag "provider_date", nil,  class: "form-control" %>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class="modal-footer">
 							</div>
 						</div>
 					</div>
@@ -252,6 +283,12 @@
 							$("#sub-menu-usuario").addClass("close-menu-usuario");
 				});
 				$('#open-config').toggle(function () {
+							$("#sub-menu-config").removeClass("close-menu-config");
+							$("#sub-menu-usuario").addClass("close-menu-usuario");
+				}, function () {
+							$("#sub-menu-config").addClass("close-menu-config");
+				});
+				$('#open-imprimir').toggle(function () {
 							$("#sub-menu-config").removeClass("close-menu-config");
 							$("#sub-menu-usuario").addClass("close-menu-usuario");
 				}, function () {

@@ -30,11 +30,12 @@
 
 <div class="row well well-white">
 	<ul id="myTab" class="nav nav-tabs" role="tablist">
-	  <li class=""><a href="#company" role="tab" data-toggle="tab" class="tab_index" id="statuses">Empresa</a></li>
-	  <li class=""><a href="#minisite" role="tab" data-toggle="tab" class="tab_index" id="locations">Reservas</a></li>
-	  <li class=""><a href="#emails" role="tab" data-toggle="tab" class="tab_index" id="locations">E-mails</a></li>
-	  <li class=""><a href="#times" role="tab" data-toggle="tab" class="tab_index" id="locations">Periodo Agenda</a></li>
-	  <li class=""><a href="#link" role="tab" data-toggle="tab" class="tab_index" id="locations">Link AgendaPro</a></li>
+	  <li class=""><a href="#company" role="tab" data-toggle="tab" class="tab_index">Empresa</a></li>
+	  <li class=""><a href="#minisite" role="tab" data-toggle="tab" class="tab_index">Reservas</a></li>
+	  <li class=""><a href="#calendar" role="tab" data-toggle="tab" class="tab_index">Calendario</a></li>
+	  <li class=""><a href="#emails" role="tab" data-toggle="tab" class="tab_index">E-mails</a></li>
+	  <li class=""><a href="#times" role="tab" data-toggle="tab" class="tab_index">Periodo Agenda</a></li>
+	  <li class=""><a href="#link" role="tab" data-toggle="tab" class="tab_index">Link AgendaPro</a></li>
 	</ul>
 	<div id="myTabContent" class="tab-content">
 	<br />
@@ -102,6 +103,28 @@
 					</div>
 				</div>
 
+				<div class="form-group">
+					<div class="col-sm-offset-3 col-sm-4">
+					 <%= f.submit 'Guardar', :class => 'btn btn-agendapro-claro' %>
+					 <%= link_to 'Cancelar', dashboard_path, :class => "btn btn-default" %>
+					</div> 
+				</div>
+			<% end %>
+		</div>
+	  </div>
+	  <div class="tab-pane" id="calendar">
+	    <div class="row">
+			<%= form_for @company_setting, :html => {:class => 'form-horizontal'} do |f| %>
+				<div class="form-group">
+					<%= f.label :calendar_duration, 'Bloque Calendario', :class => 'col-sm-3 control-label' %>
+					<div class="col-sm-5">
+						<div class="input-group">
+							<%= f.select :calendar_duration, options_for_select({ "5" => "5", "10" => "10", "15" => "15", "20" => "20", "30" => "30", "45" => "45", "60" => "60" }, @company_setting.calendar_duration), {}, {class: "form-control"} %>
+							<span class="input-group-addon">minutos</span>
+						</div>
+						<span class="help-block">Esta opción determina el largo de cada bloque en la sección <%= link_to '<i class="fa fa-calendar fa-fw"></i><span class="colapse-hidden"> Calendario</span>'.html_safe, bookings_path %>.</span>
+					</div>
+				</div>
 				<div class="form-group">
 					<div class="col-sm-offset-3 col-sm-4">
 					 <%= f.submit 'Guardar', :class => 'btn btn-agendapro-claro' %>
