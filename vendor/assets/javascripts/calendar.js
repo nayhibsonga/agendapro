@@ -2,7 +2,7 @@ function Calendar (source, getData) {
 
 	// Default Values
 	var months = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
-	var days = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'];
+	var days = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'];
 	var sources = {
 		source: '',
 		data: {
@@ -69,23 +69,18 @@ function Calendar (source, getData) {
 	var generateWeek = function (monday) {
 		sources.data.date = formatDate(monday);
 		$.getJSON(sources.source, sources.data, function (data, status) {
-			var pastDate;
 			var pos = 0;
 			$.each(data, function (day, day_blocks) {
-				if (pastDate != null) {
-					if (parseDate(day).getDate() - pastDate.getDate() > 1) {
-						pos += 1;
-					};
-				};
-				pastDate = parseDate(day);
+				var date = parseDate(day);
+				var dayNumber = date.getDay();
 				// Generate Day
 				if(day_blocks.length) {
 					var columnDay = $('<div>', {
 						'class': 'columna-dia',
 						'data-date': day
 					});
-					var weekNumber = day.substring(day.lastIndexOf('-') + 1);
-					columnDay.append('<div class="dia-semana">' + days[pos] + ' ' + weekNumber + '</div>');
+					var weekNumber = date.getDate();
+					columnDay.append('<div class="dia-semana">' + days[dayNumber] + ' ' + weekNumber + '</div>');
 
 					// Generate Hours
 					generateHours(columnDay, day_blocks);

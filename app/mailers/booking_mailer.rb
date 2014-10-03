@@ -6,7 +6,6 @@ class BookingMailer < ActionMailer::Base
 
 	def book_service_mail (book_info)
 		mandrill = Mandrill::API.new Agendapro::Application.config.api_key
-		puts "asdasd"
 		# => Template
 		template_name = 'Booking'
 		template_content = []
