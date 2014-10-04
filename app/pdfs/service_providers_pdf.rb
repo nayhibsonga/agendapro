@@ -1,7 +1,8 @@
 class ServiceProvidersPdf < Prawn::Document
-	def initialize(service_provider)
+	def initialize(service_provider, provider_date)
 		super()
 		@service_provider = service_provider
+		@provider_date = provider_date
 		header
 		text_content
 		table_content
@@ -17,7 +18,7 @@ class ServiceProvidersPdf < Prawn::Document
 			end
 		end
 		bounding_box([480, y_position], width: 260, height: 70) do
-			text  I18n.l DateTime.now.to_date
+			text  I18n.l DateTime.parse(@provider_date)
 		end
 	end
 
@@ -47,7 +48,7 @@ class ServiceProvidersPdf < Prawn::Document
 	end
 
 	def provider_hours
-		now = DateTime.now
+		now = DateTime.parse(@provider_date)
 		block_length = @service_provider.block_length * 60
 		table_rows = []
 

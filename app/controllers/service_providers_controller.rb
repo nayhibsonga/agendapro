@@ -34,8 +34,8 @@ class ServiceProvidersController < ApplicationController
     respond_to do |format|
       format.html
       format.pdf do
-        pdf = ServiceProvidersPdf.new(@service_provider)
-        send_data pdf.render, filename: @service_provider.public_name + "_" + DateTime.now.to_date.to_s + '.pdf', type: 'application/pdf'
+        pdf = ServiceProvidersPdf.new(@service_provider, params[:provider_date])
+        send_data pdf.render, filename: @service_provider.public_name + "_" + DateTime.parse(params[:provider_date]).to_s + '.pdf', type: 'application/pdf'
       end
     end
   end
