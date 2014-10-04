@@ -290,11 +290,8 @@ class CompaniesController < ApplicationController
 				          group_services = []
 				          local.bookings.where(:start => date.to_time.beginning_of_day..date.to_time.end_of_day).each do |location_booking|
 				            if location_booking.status_id != cancelled_id && (location_booking.start.to_datetime - end_time_block) * (start_time_block - location_booking.end.to_datetime) > 0
-				              puts "topa"
 				              if location_booking.service.resources.include?(resource)
-				                puts "incluye"
 				                if !location_booking.service.group_service
-				                  puts "recurso usado"
 				                  used_resource += 1
 				                else
 				                  if location_booking.service != service || location_booking.service_provider != provider
@@ -446,11 +443,8 @@ class CompaniesController < ApplicationController
 			        group_services = []
 			        local.bookings.where(:start => date.to_time.beginning_of_day..date.to_time.end_of_day).each do |location_booking|
 			          if location_booking.status_id != cancelled_id && (location_booking.start.to_datetime - end_time_block) * (start_time_block - location_booking.end.to_datetime) > 0
-			            puts "topa"
 			            if location_booking.service.resources.include?(resource)
-			              puts "incluye"
 			              if !location_booking.service.group_service
-			                puts "recurso usado"
 			                used_resource += 1
 			              else
 			                if location_booking.service != service || location_booking.service_provider != provider
