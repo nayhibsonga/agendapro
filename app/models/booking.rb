@@ -162,8 +162,8 @@ class Booking < ActiveRecord::Base
 		  cal.event do |event|
 			event.summary = booking.service.name + ' en ' + booking.location.name
 			event.description = "Se reservó " + booking.service.name + " en "  + booking.location.name + ", con una duración de " + booking.service.duration.to_s
-			event.dtstart =  DateTime.parse(booking.start.to_s).new_offset('+04:00')
-			event.dtend = DateTime.parse(booking.end.to_s).new_offset('+04:00')
+			event.dtstart =  booking.start.strftime('%Y%m%dT%H%M%S')
+			event.dtend = booking.end.strftime('%Y%m%dT%H%M%S')
 			event.location = booking.location.address
 			event.add_attendee booking.client.email
 			event.alarm do

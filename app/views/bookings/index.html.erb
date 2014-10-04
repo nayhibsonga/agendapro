@@ -364,6 +364,8 @@
 	</div>
 </div>
 
+<%= content_tag "div", id: "calendar-duration", data: { calendar_duration: Company.find(current_user.company_id).company_setting.calendar_duration } do %>
+<% end %>
 
 <% content_for :scripts do %>
 	<%= javascript_include_tag "bookings" %>
