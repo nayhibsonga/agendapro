@@ -183,8 +183,15 @@ function loadProviderTime (providerId) {
 	});
 }
 
+function setAspectRatio() {
+	var width = $('#admin-content').outerWidth();
+	var contentHeight = $('.content-fix').outerHeight();
+	var height = window.innerHeight - 50/*margin de content-fix*/ - 5/*margin entre calendar y content-fix*/ - 45/*Height del header del calendario*/ - contentHeight;
+	return width / height;
+}
+
 var bookingModalOpen = false;
-var duration = 15;
+var duration = $('#calendar-duration').data('calendar-duration');
 function loadResourcesCalendar (startTime, endTime, hiddenDays, resourcesArray, providerId) {
 	//Default values
 	startTime = startTime || 0;
@@ -296,9 +303,9 @@ function loadResourcesCalendar (startTime, endTime, hiddenDays, resourcesArray, 
 			editDrag(event);
 		},
 		slotMinutes: duration,
-		height : window.innerHeight-148,
+		aspectRatio: setAspectRatio(),
 		windowResize: function(view) {
-			$('#calendar').fullCalendar('option', 'height', window.innerHeight-20);
+			$('#calendar').fullCalendar('option', 'aspectRatio', setAspectRatio());
 		}
 	});
 	// Posible acercamiento para pintar celdas la hacer hover (falta un for para cantidad de resources)
@@ -413,9 +420,9 @@ function loadWeekCalendar (startTime, endTime, hiddenDays, resourcesArray, provi
 			editDrag(event);
 		},
 		slotMinutes: duration,
-		height : window.innerHeight-148,
+		aspectRatio: setAspectRatio(),
 		windowResize: function(view) {
-			$('#calendar').fullCalendar('option', 'height', window.innerHeight-20);
+			$('#calendar').fullCalendar('option', 'aspectRatio', setAspectRatio());
 		}
 	});
 	// $("table.fc-agenda-slots td.fc-widget-content").each(function () {
@@ -432,7 +439,7 @@ function loadWeekCalendar (startTime, endTime, hiddenDays, resourcesArray, provi
 		loadProviderEvents(providerId);
 	});
 	loadProviderEvents(providerId);
-	$('td.fc-header-left').append('<span class="fc-header-title"><a class="btn btn-agendapro-claro print-schedule" href="/service_providers/' + providerId + '.pdf"><i class="fa fa-print"></i> Horario de Hoy</a></span>');
+	$('td.fc-header-left').append('<span class="fc-header-title"><a class="btn btn-agendapro-claro print-schedule" href="/service_providers/' + providerId + '.pdf?provider_date='+$('#calendar').fullCalendar('getView').visStart+'"><i class="fa fa-print"></i> Horario de Hoy</a></span>');
 }
 
 function loadProviderEvents(providerId) {

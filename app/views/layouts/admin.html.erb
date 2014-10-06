@@ -53,6 +53,7 @@
 					</ul>
 				</li>
 			</ul>
+			<a href="#" id="link-imprimir" data-toggle="modal" data-target="#printingModal"><div class="pull-right"><i class="fa fa-print fa-lg"></i></div></a>
 			<% end %>
 			<ul id="menu-usuario">
 			  <li><a href="#" id="open-usuario"><%= current_user.email %> <span class="fa fa-chevron-down"></span></a>
@@ -166,19 +167,49 @@
 								<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
 								<h4 class="modal-title" id="paymentModalLabel">Cuenta AgendaPro</h4>
 							</div>
-							<div class="modal-body break-modal-body">
+							<div class="modal-body">
 								<p class="justified">¡Recuerda activar tu cuenta AgendaPro! No te pierdas un segundo el acceso a las oportunidades que te da tu cuenta AgendaPro. Si no eres el(la) administrador(a), ponte en contacto con él(ella) para que active la cuenta.</p>
 								<p class="justified">¡Aprovecha las facilidades de pago que ofrecemos y descuentos al pagar por adelantado! Puedes pagar tu cuenta directamente a través de la página, por medio de WebPay o transferencias bancarias de los principales bancos. Si no te acomoda ninguna de estas opciones o tienes alguna duda respecto a tu plan actual, te invitamos a ponerte en contacto con nosotros enviando un e-mail a <%= link_to 'contacto@agendapro.cl', contact_path, :target => "_blank" %>, para recibir las instrucciones a seguir.</p>
 								<p>Medios de pago disponibles:</p>
 								<table class="table">
-									<tr><td><%= image_tag("https://www.puntopagos.com/content/mp1.gif") %></td><td><%= image_tag("https://www.puntopagos.com/content/mp4.gif") %></td><td><%= image_tag("https://www.puntopagos.com/content/mp5.gif") %></td></tr>
+									<tr><td><%= image_tag("https://www.puntopagos.com/content/mp4.gif") %></td><td><%= image_tag("https://www.puntopagos.com/content/mp5.gif") %></td></tr>
 									<tr><td><%= image_tag("https://www.puntopagos.com/content/mp6.gif") %></td><td><%= image_tag("https://www.puntopagos.com/content/mp7.gif") %></td><td><%= image_tag("https://www.puntopagos.com/content/mp3.gif") %></td></tr>
 								</table>
 								<% if current_user.role_id == Role.find_by_name("Administrador General").id %>
 								<p>Ir a <%= link_to "PLANES", select_plan_path %> para proceder.</p>
 								<% end %>
 							</div>
-							<div class="modal-footer break-modal-footer">
+							<div class="modal-footer">
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="modal fade" id="printingModal" tabindex="-1" role="dialog" aria-labelledby="printingModalLabel" aria-hidden="true">
+					<div class="modal-dialog">
+						<div class="modal-content">
+							<div class="modal-header">
+								<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+								<h4 class="modal-title" id="printingModalLabel">Imprimir Horarios de Prestadores</h4>
+							</div>
+							<div class="modal-body">
+								<div class="form-horizontal">
+									<div class="form-group">
+										<%= label_tag "service_provider_id", "Prestador de Servicios", class: "col-sm-4 control-label" %>
+										<div class="col-sm-8">
+											<%= select_tag "service_provider_id", options_from_collection_for_select(ServiceProvider.where(company_id: current_user.company_id, active: true).accessible_by(current_ability), "id", "public_name"), prompt: "Elige al prestador...", class: "form-control" %>
+										</div>
+									</div>
+									<div class="form-group">
+										<%= label_tag "provider_date", "Fecha", class: "col-sm-4 control-label"%>
+										<div class="col-sm-8">
+											<%= text_field_tag "provider_date", nil, placeholder: '15/10/2014', class: "form-control" %>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class="modal-footer">
+								<a class="btn btn-default" data-dismiss="modal">Cerrar</a>
+								<%= link_to "Imprimir Horario", service_providers_path, id: "printingButton", class: "btn btn-agendapro-claro", disabled: true %>
 							</div>
 						</div>
 					</div>
@@ -189,12 +220,12 @@
 
 		<!-- start: JavaScript-->
 		<!--[if !IE]>-->
-				<%= javascript_include_tag "adminNIE" %>
+			<%= javascript_include_tag "adminNIE" %>
 		<!--<![endif]-->
 		<!--[if IE]>
 			<%= javascript_include_tag "adminIE" %>
 		<!--<![endif]-->
-		<%= javascript_include_tag "admin" %>
+			<%= javascript_include_tag "admin" %>
 		<!--[if !IE]>-->
 				<script type="text/javascript">
 				window.jQuery || document.write("<script src='vendor/jquery-2.1.0.min.js'>"+"<"+"/script>");
@@ -257,6 +288,12 @@
 				}, function () {
 							$("#sub-menu-config").addClass("close-menu-config");
 				});
+				$('#open-imprimir').toggle(function () {
+							$("#sub-menu-config").removeClass("close-menu-config");
+							$("#sub-menu-usuario").addClass("close-menu-usuario");
+				}, function () {
+							$("#sub-menu-config").addClass("close-menu-config");
+				});
 
 				if ($('.active').hasClass('submenu')) {
 					$('.active').closest('ul').removeClass('submenu-close');
@@ -273,6 +310,44 @@
 						$('#dp').addClass('dpCollapse');
 					}
 				}
+
+				$('#provider_date').datepicker({
+					dateFormat: 'dd/mm/yy',
+					firstDay: 1,
+					dayNames: [ "Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado" ],
+					dayNamesMin: [ "Do", "Lu", "Ma", "Mi", "Ju", "Vi", "Sá" ],
+					dayNamesShort: [ "Dom", "Lun", "Mar", "Mié", "Jue", "Vie", "Sáb" ],
+					onSelect: function() {
+						if ($('#service_provider_id').val() != "" && $('#provider_date').val() != "") {
+							$('#printingButton').removeAttr("disabled");
+						}
+						else {
+							$('#printingButton').attr("disabled", "disabled");
+						}
+					}
+				});
+
+				$('#provider_date').change(function() {
+					if ($('#service_provider_id').val() != "" && $('#provider_date').val() != "") {
+						$('#printingButton').removeAttr("disabled");
+					}
+					else {
+						$('#printingButton').attr("disabled", "disabled");
+					}
+				});
+
+				$('#service_provider_id').change(function() {
+					if ($('#service_provider_id').val() != "" && $('#provider_date').val() != "") {
+						$('#printingButton').removeAttr("disabled");
+					}
+					else {
+						$('#printingButton').attr("disabled", "disabled");
+					}
+				});
+
+				$('#printingButton').click(function(){
+			        $(this).attr('href', $(this).attr('href') + '/'+$('#service_provider_id').val()+'.pdf/?provider_date=' + $('#provider_date').val());
+			    });
 			});
 		</script>
 	</body>

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140926155706) do
+ActiveRecord::Schema.define(version: 20141002195313) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -172,6 +172,7 @@ ActiveRecord::Schema.define(version: 20140926155706) do
     t.boolean  "activate_workflow",   default: true
     t.boolean  "client_exclusive",    default: false
     t.integer  "provider_preference"
+    t.integer  "calendar_duration",   default: 15
   end
 
   add_index "company_settings", ["company_id"], name: "index_company_settings_on_company_id", using: :btree
