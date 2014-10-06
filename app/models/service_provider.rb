@@ -111,6 +111,11 @@ class ServiceProvider < ActiveRecord::Base
 		Booking.where(service_provider_id: self.id, start: date.to_time.beginning_of_day..date.to_time.end_of_day).each do |booking|
 			used_time += booking.end - booking.start
 		end
-		return used_time/available_time			
+		occupation = used_time/available_time
+		if occupation > 0
+			return occupation
+		else
+			return 0
+		end			
 	end
 end
