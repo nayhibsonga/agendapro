@@ -18,7 +18,7 @@ class ServiceProvidersPdf < Prawn::Document
 			end
 		end
 		bounding_box([480, y_position], width: 260, height: 70) do
-			text  I18n.l DateTime.parse(@provider_date)
+			text DateTime.parse(@provider_date).strftime('%d/%m/%Y')
 		end
 	end
 
