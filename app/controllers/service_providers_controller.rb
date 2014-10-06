@@ -31,6 +31,9 @@ class ServiceProvidersController < ApplicationController
   # GET /service_providers/1
   # GET /service_providers/1.json
   def show
+    unless params[:provider_date ] && params[:provider_date] != ""
+      DateTime.now
+    end
     respond_to do |format|
       format.html
       format.pdf do
