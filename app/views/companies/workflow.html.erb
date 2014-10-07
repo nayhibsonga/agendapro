@@ -216,6 +216,8 @@
 <% end %>
 <%= content_tag "div", id: "providerPreference", data: {provider_preference: @location.company.company_setting.provider_preference } do %>
 <% end %>
+<%= content_tag "div", id: "workflow_url", data: {url: @url, location_id: @location.id} do %>
+<% end %>
 
 <% content_for :scripts do %>
   <%= javascript_include_tag 'workflow/services' %>
@@ -232,6 +234,10 @@
         $('#user-data').show();
         $('#user-message').hide();
         $('#foo4').trigger('updateSizes');
+      });
+
+      $('#boton-servicio').click(function () {
+        window.location.href = 'http://' + $('#workflow_url').data('url') + '/workflow?local=' + $('#workflow_url').data('location-id').toString();
       });
 
       //  Responsive layout, resizing the items

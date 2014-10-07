@@ -63,7 +63,7 @@ class Booking < ActiveRecord::Base
 					used_resource = 0
 					group_services = []
 					self.location.bookings.each do |location_booking|
-						if location_booking != self && location_booking != cancelled_id && (location_booking.start - self.end) * (self.start - location_booking.end) > 0
+						if location_booking != self && location_booking.status_id != cancelled_id && (location_booking.start - self.end) * (self.start - location_booking.end) > 0
 							if location_booking.service.resources.include?(resource)
 								if !location_booking.service.group_service
 									used_resource += 1

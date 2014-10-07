@@ -104,9 +104,11 @@ class Client < ActiveRecord::Base
         where(birth_day: Time.now.day, birth_month: Time.now.month)
       elsif option == "1"
         weekStart = Time.now.beginning_of_week
+        puts weekStart.to_s
         weekEnd = Time.now.end_of_week
+        puts weekEnd.to_s
         if weekStart.month == weekEnd.month
-          where(birth_day: weekStart.day..weekEnd.day)
+          where(birth_day: weekStart.day..weekEnd.day, birth_month: weekStart.month)
         else
           monthEnd = weekEnd.end_of_month.day
           where('(birth_month = ? AND birth_day BETWEEN ? AND ?) OR (birth_month = ? AND birth_day BETWEEN ? AND ?)', weekStart.month, weekStart.day, monthEnd, weekEnd.month, 1, weekEnd.day)
