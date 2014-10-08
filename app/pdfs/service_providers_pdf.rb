@@ -1,11 +1,26 @@
 class ServiceProvidersPdf < Prawn::Document
-	def initialize(service_provider, provider_date)
-		super()
-		@service_provider = service_provider
-		@provider_date = provider_date
-		header
-		text_content
-		table_content
+	def initialize(service_provider, provider_date, location_id, current_ability)
+		if service_provider != 0
+			super()
+			@service_provider = ServiceProvider.find(service_provider)
+			@provider_date = provider_date
+			header
+			text_content
+			table_content
+		else
+			super()
+			@provider_date = provider_date
+			@providers = ServiceProvider.where(location_id: location_id, active: true).accessible_by(current_ability).order(:order)
+			@providers.each do |provider|
+				@service_provider = provider
+				header
+				text_content
+				table_content
+				if @service_provider != @providers.last
+					start_new_page
+				end
+			end
+		end
 	end
 	
 	def header

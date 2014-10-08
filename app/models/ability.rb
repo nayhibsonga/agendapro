@@ -88,6 +88,8 @@ class Ability
 
     can :agenda, User, :id => user.id
 
+    can :pdf, ServiceProvider
+
     # Singup Validate
     can :check_user_email, User
     can :check_company_web_address, Company

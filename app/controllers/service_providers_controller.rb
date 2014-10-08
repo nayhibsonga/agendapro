@@ -31,6 +31,14 @@ class ServiceProvidersController < ApplicationController
   # GET /service_providers/1
   # GET /service_providers/1.json
   def show
+  end
+
+  def pdf
+    if params[:service_provider_id] != "0"
+      @filename = ServiceProvider.find(params[:service_provider_id]).public_name
+    else
+      @filename = Location.find(params[:location_id]).name
+    end
     if params[:provider_date ] && params[:provider_date] != ""
       date = DateTime.parse(params[:provider_date])
     else
@@ -39,8 +47,8 @@ class ServiceProvidersController < ApplicationController
     respond_to do |format|
       format.html
       format.pdf do
-        pdf = ServiceProvidersPdf.new(@service_provider, date)
-        send_data pdf.render, filename: @service_provider.public_name + "_" + date.to_s + '.pdf', type: 'application/pdf'
+        pdf = ServiceProvidersPdf.new(params[:service_provider_id].to_i, date, params[:location_id].to_i, current_ability)
+        send_data pdf.render, filename: @filename + "_" + date.to_s[0,10] + '.pdf', type: 'application/pdf'
       end
     end
   end

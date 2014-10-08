@@ -194,15 +194,21 @@
 							<div class="modal-body">
 								<div class="form-horizontal">
 									<div class="form-group">
+										<%= label_tag "location_id", "Local", class: "col-sm-4 control-label" %>
+										<div class="col-sm-8">
+											<%= select_tag "location_id", options_from_collection_for_select(Location.where(company_id: current_user.company_id, active: true).accessible_by(current_ability).order(:order), "id", "name"), prompt: "Elige el local...", class: "form-control" %>
+										</div>
+									</div>
+									<div class="form-group">
 										<%= label_tag "service_provider_id", "Prestador de Servicios", class: "col-sm-4 control-label" %>
 										<div class="col-sm-8">
-											<%= select_tag "service_provider_id", options_from_collection_for_select(ServiceProvider.where(company_id: current_user.company_id, active: true).accessible_by(current_ability), "id", "public_name"), prompt: "Elige al prestador...", class: "form-control" %>
+											<%= select_tag "service_provider_id", "", prompt: "Elige al prestador...", class: "form-control", disabled: true %>
 										</div>
 									</div>
 									<div class="form-group">
 										<%= label_tag "provider_date", "Fecha", class: "col-sm-4 control-label"%>
 										<div class="col-sm-8">
-											<%= text_field_tag "provider_date", nil, placeholder: '15/10/2014', class: "form-control" %>
+											<%= text_field_tag "provider_date", nil, placeholder: 'ej: 15/10/2014', class: "form-control" %>
 										</div>
 									</div>
 								</div>
@@ -328,7 +334,7 @@
 				});
 
 				$('#provider_date').change(function() {
-					if ($('#service_provider_id').val() != "" && $('#provider_date').val() != "") {
+					if ($('#location_id').val() != "" && $('#service_provider_id').val() != "" && $('#provider_date').val() != "") {
 						$('#printingButton').removeAttr("disabled");
 					}
 					else {
@@ -337,7 +343,38 @@
 				});
 
 				$('#service_provider_id').change(function() {
-					if ($('#service_provider_id').val() != "" && $('#provider_date').val() != "") {
+					if ($('#location_id').val() != "" && $('#service_provider_id').val() != "" && $('#provider_date').val() != "") {
+						$('#printingButton').removeAttr("disabled");
+					}
+					else {
+						$('#printingButton').attr("disabled", "disabled");
+					}
+				});
+
+				$('#location_id').change(function (event) {
+					$('#service_provider_id').find('option').remove().end();
+					$('#service_provider_id').append(
+						'<option value="">Elige al prestador...</option>'
+					);
+					<% if current_user.role_id != Role.find_by_name("Staff").id %>
+						$('#service_provider_id').append(
+							'<option value="0">Todos</option>'
+						);
+					<% end %>
+					if ($('#location_id').val() != "") {
+						$.getJSON('/local_providers', {location: event.target.value}, function (providersArray) {
+							$.each(providersArray, function (key, provider) {
+								$('#service_provider_id').append(
+									'<option value="' + provider.id + '">' + provider.public_name + '</option>'
+								);
+							});
+							$('#service_provider_id').removeAttr('disabled');
+						});
+					}
+					else {
+						$('#service_provider_id').attr("disabled", "disabled");
+					}
+					if ($('#location_id').val() != "" && $('#service_provider_id').val() != "" && $('#provider_date').val() != "") {
 						$('#printingButton').removeAttr("disabled");
 					}
 					else {
@@ -346,7 +383,7 @@
 				});
 
 				$('#printingButton').click(function(){
-			        $(this).attr('href', '/service_providers/'+$('#service_provider_id').val()+'.pdf?provider_date=' + $('#provider_date').val());
+			        $(this).attr('href', '/service_provider/pdf.pdf?provider_date=' + $('#provider_date').val()+'&location_id=' + $('#location_id').val()+'&service_provider_id=' + $('#service_provider_id').val());
 			    });
 			});
 		</script>
