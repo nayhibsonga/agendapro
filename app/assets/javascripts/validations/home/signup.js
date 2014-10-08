@@ -28,7 +28,7 @@ $(function() {
 		},
 		messages: {
 			'user[email]': {
-				remote: jQuery.validator.format('{0} ya existe, puedes crear tu compañia <a href="/add_company">aquí</a>.')
+				remote: 'El e-mail ya existe, puedes crear tu compañia <a href="/add_company">aquí</a>.'
 			}
 		},
 		highlight: function(element) {

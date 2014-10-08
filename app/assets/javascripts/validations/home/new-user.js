@@ -54,10 +54,10 @@ $(function() {
 		},
 		messages: {
 			'user[email]': {
-				remote: jQuery.validator.format('{0} ya existe, puedes ingresar o agregar tu compañía <a href="/add_company">aquí</a>.')
+				remote: 'El e-mail ya existe, puedes ingresar o agregar tu compañía <a href="/add_company">aquí</a>.'
 			},
 			'user[company_attributes][web_address]': {
-				remote: jQuery.validator.format('{0} ya existe')
+				remote: 'La dirección web ya existe'
 			},
 			'user[company_attributes][logo]': {
 				filesize: "La imagen supera el tamaño maximo de 3 MB"
