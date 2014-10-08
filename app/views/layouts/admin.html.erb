@@ -346,7 +346,7 @@
 				});
 
 				$('#printingButton').click(function(){
-			        $(this).attr('href', $(this).attr('href') + '/'+$('#service_provider_id').val()+'.pdf/?provider_date=' + $('#provider_date').val());
+			        $(this).attr('href', '/service_providers/'+$('#service_provider_id').val()+'.pdf?provider_date=' + $('#provider_date').val());
 			    });
 			});
 		</script>

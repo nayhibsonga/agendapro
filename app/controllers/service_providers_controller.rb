@@ -31,14 +31,16 @@ class ServiceProvidersController < ApplicationController
   # GET /service_providers/1
   # GET /service_providers/1.json
   def show
-    unless params[:provider_date ] && params[:provider_date] != ""
-      DateTime.now
+    if params[:provider_date ] && params[:provider_date] != ""
+      date = DateTime.parse(params[:provider_date])
+    else
+      date = DateTime.now
     end
     respond_to do |format|
       format.html
       format.pdf do
-        pdf = ServiceProvidersPdf.new(@service_provider, params[:provider_date])
-        send_data pdf.render, filename: @service_provider.public_name + "_" + DateTime.parse(params[:provider_date]).to_s + '.pdf', type: 'application/pdf'
+        pdf = ServiceProvidersPdf.new(@service_provider, date)
+        send_data pdf.render, filename: @service_provider.public_name + "_" + date.to_s + '.pdf', type: 'application/pdf'
       end
     end
   end

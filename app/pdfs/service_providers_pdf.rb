@@ -18,7 +18,7 @@ class ServiceProvidersPdf < Prawn::Document
 			end
 		end
 		bounding_box([480, y_position], width: 260, height: 70) do
-			text DateTime.parse(@provider_date).strftime('%d/%m/%Y')
+			text @provider_date.strftime('%d/%m/%Y')
 		end
 	end
 
@@ -48,7 +48,7 @@ class ServiceProvidersPdf < Prawn::Document
 	end
 
 	def provider_hours
-		now = DateTime.parse(@provider_date)
+		now = @provider_date
 		block_length = @service_provider.block_length * 60
 		table_rows = []
 
