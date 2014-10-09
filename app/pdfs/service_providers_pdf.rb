@@ -25,22 +25,21 @@ class ServiceProvidersPdf < Prawn::Document
 	
 	def header
 		y_position = cursor
-		bounding_box([0, y_position], width: 260, height: 70) do
+		bounding_box([0, y_position], width: 260, height: 50) do
 			if @service_provider.company.logo.to_s != ""
-				image "#{Rails.root}/public"+@service_provider.company.logo.to_s, width: 70, height: 70
+				image "#{Rails.root}/public"+@service_provider.company.logo.to_s, width: 50, height: 50
 			else
 				image "#{Rails.root}/app/assets/images/logos/logo_mail.png", width: 100, height: 37
 			end
 		end
-		bounding_box([480, y_position], width: 260, height: 70) do
+		bounding_box([480, y_position], width: 260, height: 50) do
 			text @provider_date.strftime('%d/%m/%Y')
 		end
 	end
 
 	def text_content
-		move_down 5
 
-		text @service_provider.public_name, size: 15, style: :bold
+		text @service_provider.public_name, size: 11, style: :bold
 	end
 
 	def table_content
@@ -59,6 +58,7 @@ class ServiceProvidersPdf < Prawn::Document
 
 			cells.row(0).align = :center
 			cells.column(0).align = :center
+			cells.style.size = 9
 		end
 	end
 
