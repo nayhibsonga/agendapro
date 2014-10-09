@@ -199,6 +199,8 @@ Agendapro::Application.routes.draw do
   get '/country_regions', :to => 'regions#country_regions'
   get '/region_cities', :to => 'cities#region_cities'
   get '/city_districs', :to => 'districts#city_districs'
+
+  get '/service_provider/pdf', :to => 'service_providers#pdf'
   
   # Root
   get '/' => 'searchs#index', :constraints => { :subdomain => 'www' }

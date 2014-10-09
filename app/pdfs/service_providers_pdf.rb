@@ -1,31 +1,45 @@
 class ServiceProvidersPdf < Prawn::Document
-	def initialize(service_provider, provider_date)
-		super()
-		@service_provider = service_provider
-		@provider_date = provider_date
-		header
-		text_content
-		table_content
+	def initialize(service_provider, provider_date, location_id, current_ability)
+		if service_provider != 0
+			super()
+			@service_provider = ServiceProvider.find(service_provider)
+			@provider_date = provider_date
+			header
+			text_content
+			table_content
+		else
+			super()
+			@provider_date = provider_date
+			@providers = ServiceProvider.where(location_id: location_id, active: true).accessible_by(current_ability).order(:order)
+			@providers.each do |provider|
+				@service_provider = provider
+				header
+				text_content
+				table_content
+				if @service_provider != @providers.last
+					start_new_page
+				end
+			end
+		end
 	end
 	
 	def header
 		y_position = cursor
-		bounding_box([0, y_position], width: 260, height: 70) do
+		bounding_box([0, y_position], width: 260, height: 50) do
 			if @service_provider.company.logo.to_s != ""
-				image "#{Rails.root}/public"+@service_provider.company.logo.to_s, width: 70, height: 70
+				image "#{Rails.root}/public"+@service_provider.company.logo.to_s, width: 50, height: 50
 			else
 				image "#{Rails.root}/app/assets/images/logos/logo_mail.png", width: 100, height: 37
 			end
 		end
-		bounding_box([480, y_position], width: 260, height: 70) do
-			text DateTime.parse(@provider_date).strftime('%d/%m/%Y')
+		bounding_box([480, y_position], width: 260, height: 50) do
+			text @provider_date.strftime('%d/%m/%Y')
 		end
 	end
 
 	def text_content
-		move_down 5
 
-		text @service_provider.public_name, size: 15, style: :bold
+		text @service_provider.public_name, size: 11, style: :bold
 	end
 
 	def table_content
@@ -44,11 +58,12 @@ class ServiceProvidersPdf < Prawn::Document
 
 			cells.row(0).align = :center
 			cells.column(0).align = :center
+			cells.style.size = 9
 		end
 	end
 
 	def provider_hours
-		now = DateTime.parse(@provider_date)
+		now = @provider_date
 		block_length = @service_provider.block_length * 60
 		table_rows = []
 

@@ -439,7 +439,7 @@ function loadWeekCalendar (startTime, endTime, hiddenDays, resourcesArray, provi
 		loadProviderEvents(providerId);
 	});
 	loadProviderEvents(providerId);
-	$('td.fc-header-left').append('<span class="fc-header-title"><a class="btn btn-agendapro-claro print-schedule" href="/service_providers/' + providerId + '.pdf?provider_date='+$('#calendar').fullCalendar('getView').visStart+'"><i class="fa fa-print"></i> Horario de Hoy</a></span>');
+	$('td.fc-header-left').append('<span class="fc-header-title"><a class="btn btn-agendapro-claro print-schedule" href="/service_provider/pdf.pdf?service_provider_id='+providerId+'"><i class="fa fa-print"></i> Horario de Hoy</a></span>');
 }
 
 function loadProviderEvents(providerId) {
