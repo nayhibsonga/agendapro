@@ -201,6 +201,11 @@ Agendapro::Application.routes.draw do
   get '/city_districs', :to => 'districts#city_districs'
 
   get '/service_provider/pdf', :to => 'service_providers#pdf'
+
+  get '/iframe/sampler', :to => 'iframe#sampler'
+  get '/iframe/overview/:company_id', :to => 'iframe#overview'
+  get '/iframe/workflow/:location_id', :to => 'iframe#workflow'
+  post '/iframe/book_service', :to => 'iframe#book_service'
   
   # Root
   get '/' => 'searchs#index', :constraints => { :subdomain => 'www' }

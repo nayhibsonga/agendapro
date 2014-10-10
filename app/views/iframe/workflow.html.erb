@@ -1,0 +1,286 @@
+<%= stylesheet_link_tag "calendar" %>
+
+<div class="main">
+  <div class="container">
+    <div class="row" id="navegacion-workflow">
+      <div class="col-md-2"><a id="prev2" class="btn btn-agendapro-claro"><i class="fa fa-chevron-left"></i> Anterior</a></div>
+      <div class="col-md-8"><div id="pager2" class="pasos-reserva"></div></div>
+      <div class="col-md-2"><a id="next2" class="btn btn-agendapro-claro pull-right">Siguiente <i class="fa fa-chevron-right"></i></a></div>
+    </div>
+  </div>
+  <div class="container" id="warning"></div>
+  <div class="container">
+    <div clas="row" id="espacio-workflow">
+      <div class="col-md-12">
+        <div class ="well">
+          <div class="center-block" style="display: table;">
+            <p>
+              <h3>Cargando Contenido</h3>
+              <span>Por favor espere</span>
+            </p>
+            <%= image_tag 'ajax-loader.gif', :alt => 'Loader' %>
+          </div>
+        </div>
+        <div id="foo4" style="visibility: collapse;">
+          <div class="box-step">
+            <div class="col-md-12">
+              <h4 class="subtitulos-workflow">Servicios</h4>
+              <div class="col-md-6">
+                <div class="panel-group" id="services-selector">
+                  <%= image_tag "ajax-loader.gif", :alt => "Loader" %>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="panel panel-info">
+                  <div class="panel-heading">
+                    <h3 class="panel-title">Descripción del Servicio</h3>
+                  </div>
+                  <div class="panel-body">
+                    <table class="table">
+                      <tbody id="services-description">
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="box-step">
+            <div class="col-md-12">
+              <% if @location.company.company_setting.provider_preference == 2 %>
+              <h4 class="subtitulos-workflow">Seleccione un Horario</h4>
+              <% else %>
+              <h4 class="subtitulos-workflow">Seleccione un Staff y Horario</h4>
+              <% end %>
+              <div class="col-md-3" <%= 'style="display:none;"'.html_safe if @location.company.company_setting.provider_preference == 2 %>>
+                <div class="panel panel-default">
+                  <div class="panel-body">
+                    Seleccione un staff para ver su horario
+                  </div>
+                  <ul class="list-group" id="staff-selector">
+                    <%= image_tag "ajax-loader.gif", :alt => "Loader" %>
+                  </ul>
+                </div>
+              </div>
+              <% if @location.company.company_setting.provider_preference == 2 %>
+              <div class="col-md-12">
+              <% else %>
+              <div class="col-md-9">
+              <% end %>
+                <div class="panel panel-info <%= 'full-margin' if @location.company.company_setting.provider_preference == 2 %>">
+                  <div class="panel-heading">
+                    <h3 class="panel-title">
+                      <button type="button" class="btn btn-default" id="prev"><i class="fa fa-chevron-left"></i></button>
+                      <span class="tittle"></span>
+                      <button type="button" class="btn btn-default pull-right" id="next"><i class="fa fa-chevron-right"></i></button>
+                    </h3>
+                  </div>
+                  <div class="panel-body">
+                    <div class="horario"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="box-step">
+            <div class="col-md-12">
+              <h4 class="subtitulos-workflow">Ingresa tus Datos</h4>
+              <div class="col-md-6">
+                <div class="panel panel-default">
+                  <div class="panel-heading">
+                    <h3 class="panel-title">Datos de la Reserva</h3>
+                  </div>
+                  <div class="panel-body">
+                    <%= form_tag("/iframe/book_service", method: "post", role: "form", class: "form-horizontal", id: "bookingForm" ) do %>
+                      <input type="hidden" name="start" id="start" value="">
+                      <input type="hidden" name="end" id="end" value="">
+                      <input type="hidden" name="provider_lock" id="provider_lock" value="">
+                      <input type="hidden" name="provider" id="provider" value="">
+                      <input type="hidden" name="service" id="service" value="">
+                      <input type="hidden" name="location" id="location" value="<%= @location.id %>">
+                      <input type="hidden" name="origin" id="origin" value="true">
+                      <% if user_signed_in? %>
+                      <div id="user-data">
+                        <%= hidden_field_tag :user_id, current_user.id %>
+                        <%= hidden_field_tag :firstName, current_user.first_name %>
+                        <%= hidden_field_tag :lastName, current_user.last_name %>
+                        <div class="form-group has-feedback">
+                          <label for="full_name" class="col-sm-3 control-label">Nombre</label>
+                          <div class="col-sm-9">
+                            <input type="text" id="full_name" name="user[full_name]" class="form-control" placeholder="Nombre completo (requerido)">
+                            <span class="help-block"></span>
+                            <span class="form-control-feedback"></span>
+                          </div>
+                        </div>
+                        <div class="form-group has-feedback">
+                          <%= label_tag(:email, "E-mail", class: "col-sm-3 control-label") %>
+                          <div class="col-sm-9">
+                            <%= email_field_tag(:email, current_user.email, :class => "form-control", :placeholder => "ejemplo@dominio.com (requerido)", :required => true) %>
+                            <span class="help-block"></span>
+                            <span class="form-control-feedback"></span>
+                          </div>
+                        </div>
+                        <div class="form-group has-feedback">
+                          <%= label_tag(:phone, "Teléfono", class: "col-sm-3 control-label") %>
+                          <div class="col-sm-9">
+                            <%= telephone_field_tag(:phone, current_user.phone, :class => "form-control", :placeholder => "1122334455 (requerido)", :required => true) %>
+                            <span class="help-block"></span>
+                            <span class="form-control-feedback"></span>
+                          </div>
+                        </div>
+                      </div>
+                      <p id="user-message">Estas agendando como <strong><%= current_user.email %></strong><br /> Si no eres tu, haz click <a href="#" id="user-change">aquí</a></p>
+                      <% else %>
+                      <%= hidden_field_tag :firstName %>
+                      <%= hidden_field_tag :lastName %>
+                      <div class="form-group has-feedback">
+                        <label for="full_name" class="col-sm-3 control-label">Nombre</label>
+                        <div class="col-sm-9">
+                          <input type="text" id="full_name" name="user[full_name]" class="form-control" placeholder="Nombre completo (requerido)">
+                          <span class="help-block"></span>
+                          <span class="form-control-feedback"></span>
+                        </div>
+                      </div>
+                      <div class="form-group has-feedback">
+                        <%= label_tag(:email, "E-mail", class: "col-sm-3 control-label") %>
+                        <div class="col-sm-9">
+                          <%= email_field_tag(:email, nil, :class => "form-control", :placeholder => "ejemplo@dominio.com (requerido)", :required => true) %>
+                          <span class="help-block"></span>
+                          <span class="form-control-feedback"></span>
+                        </div>
+                      </div>
+                      <div class="form-group has-feedback">
+                        <%= label_tag(:phone, "Teléfono", class: "col-sm-3 control-label") %>
+                        <div class="col-sm-9">
+                          <%= telephone_field_tag(:phone, nil, :class => "form-control", :placeholder => "1122334455 (requerido)", :required => true) %>
+                          <span class="help-block"></span>
+                          <span class="form-control-feedback"></span>
+                        </div>
+                      </div>
+                      <% end %>
+                      <div id="identificationNumber" class="form-group has-feedback">
+                        <%= label_tag(:identification_number, "RUT", class: "col-sm-3 control-label") %>
+                        <div class="col-sm-9">
+                          <%= text_field_tag(:identification_number, nil, :class => "form-control", :placeholder => "Escribe su RUT, debe estar autorizado como cliente" ) %>
+                          <span class="help-block"></span>
+                          <span class="form-control-feedback"></span>
+                        </div>
+                      </div>
+                      <div id="outcallAddress" class="form-group has-feedback">
+                        <%= label_tag(:address, "Dirección", class: "col-sm-3 control-label") %>
+                        <div class="col-sm-9">
+                          <%= text_field_tag(:address, nil, :class => "form-control", :placeholder => "Escribe la dirección donde se debe realizar el servicio" ) %>
+                          <span class="help-block"></span>
+                          <span class="form-control-feedback"></span>
+                        </div>
+                      </div>
+                      <div class="form-group">
+                        <%= label_tag(:comment, "Comentario", class: "col-sm-3 control-label") %>
+                        <div class="col-sm-9">
+                          <%= text_area_tag(:comment, nil, :class => "form-control", :placeholder => "Agrega algún comentario a tu reserva en caso de ser necesario", :rows => 4) %>
+                        </div>
+                      </div>
+                      <div class="form-group">
+                        <div class="col-sm-offset-3 col-sm-9">
+                          <button type="submit" class="btn btn-agendapro-oscuro" id="submitBtn">Reservar</button>
+                        </div>
+                      </div>
+                    <% end %>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="panel panel-info">
+                  <div class="panel-heading">
+                    <h3 class="panel-title">Resumen de tu Reserva</h3>
+                  </div>
+                  <div class="panel-body">
+                    <table class="table">
+                      <tbody id="summary">
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<%= content_tag "div", id: "selectedLocal", data: {local: @location, district: @location.district.name} do %>
+<% end %>
+<%= content_tag "div", id: "clientExclusive", data: {client_exclusive: @location.company.company_setting.client_exclusive} do %>
+<% end %>
+<%= content_tag "div", id: "providerPreference", data: {provider_preference: @location.company.company_setting.provider_preference } do %>
+<% end %>
+<%= content_tag "div", id: "workflow_url", data: {url: @url, location_id: @location.id} do %>
+<% end %>
+
+<% content_for :scripts do %>
+  <%= javascript_include_tag 'iframe/services' %>
+  <%= javascript_include_tag 'jquery.carouFredSel-6.2.1.js' %>
+  <%= javascript_include_tag 'split-name' %>
+  <%= javascript_include_tag 'validations/validate' %>
+  <%= javascript_include_tag 'validations/home/workflow' %>
+  <script type="text/javascript">
+    $(function() {
+      compose_name('#full_name', '#firstName', '#lastName');
+      split_name('#full_name', '#firstName', '#lastName');
+      $('#user-data').hide();
+      $('#user-change').click(function () {
+        $('#user-data').show();
+        $('#user-message').hide();
+        $('#foo4').trigger('updateSizes');
+      });
+
+      $('#boton-servicio').click(function () {
+        window.location.href = 'http://' + $('#workflow_url').data('url') + '/workflow?local=' + $('#workflow_url').data('location-id').toString();
+      });
+
+      //  Responsive layout, resizing the items
+      $('#foo4').carouFredSel({
+        responsive: true,
+        auto: false,
+        pagination: {
+            container: "#pager2",
+            anchorBuilder: function (nr) {
+              var title;
+              if (nr == 1) {
+                title = nr + ". Elegir el servicio";
+              } else if (nr == 2) {
+                title = nr + ". Elegir el staff";
+              } else{
+                title = nr + ". Ingresa tus datos";
+              };
+              return '<a href="#"><span>' + title + '</span></a>';
+            }
+          },
+        width: '100%',
+        height: 'variable',
+        prev: '#prev2',
+        next: '#next2',
+        direction: "left",
+        circular: false,
+        infinite: false,
+        onCreate: function () {
+          $('.center-block').parent().remove();
+          $('#foo4').css('visibility', 'visible');
+          loadStep1();
+        },
+        scroll: {
+          conditions: function (direction) {
+            return scrollEvents(direction);
+          },
+          onEnd: function (direction) {
+            if (direction == 'prev') {
+              step = 1;
+            }
+          }
+        }
+      });
+    });
+  </script>
+<% end %>

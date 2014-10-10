@@ -1,0 +1,98 @@
+<div class="main">
+    <section class="pricing_wrapper">
+        <div class="container">
+			<div class="well well-lg">
+				<% if @errors %>
+				<h3>Tuvimos un error</h3>
+				<div class="row">
+					<div class="col-md-8">
+						<p>
+							Lo sentimos, hubo un error agendando el servicio<br>
+							Puedes ver mas detalles del error <a id="errorLink" href="#">acá</a><br>
+							Si deseas agendar nuevamente haz click <a href="<%= root_url(:host => @url) %>">aquí</a>
+						</p>
+					</div>
+					<div class="col-md-4" id="errorDiv">
+						<ol>
+      						<% @errors.each do |msg| %>
+        					<li><%= msg %></li>
+      						<% end %>
+      					</ol>
+					</div>
+				</div>
+				<% else %>
+				<h3><%= @booking.client.first_name %>, tu reserva fue recibida exitosamente</h3>
+				<p>
+					Si deseas agendar nuevamente haz click <a href="<%= root_url(:host => @url) %>">aquí</a>
+				</p>
+				<div class="row">
+					<div class="col-md-6">
+						<hr>
+						<h4>Resumen de tu Reserva</h4>
+						<dl class="dl-horizontal">
+							<dt>¿Qué reservaste?</dt>
+							<dd><%= @booking.service.name %></dd>
+							<dt>¿Dónde?</dt>
+							<dd><%= @booking.location.address %>, <%= @booking.location.district.name %></dd>
+							<dt>¿Con quién?</dt>
+							<dd><%= @booking.service_provider.public_name %></dd>
+							<dt>¿Cuándo?</dt>
+							<dd><%= l @booking.start %></dd>
+							<% if !@booking.notes.empty? %>
+							<dt>Notas</dt>
+							<dd><%= @booking.notes %></dd>
+							<% end %>
+						</dl>
+						<hr>
+						<h4>Tus Datos</h4>
+						<dl class="dl-horizontal">
+							<dt>Nombre</dt>
+							<dd><%= @booking.client.first_name %> <%= @booking.client.last_name %></dd>
+							<% if !@booking.client.email.empty? %>
+							<dt>E-mail</dt>
+							<dd><%= @booking.client.email %></dd>
+							<% end %>
+							<% if !@booking.client.phone.empty? %>
+							<dt>Teléfono</dt>
+							<dd><%= @booking.client.phone %></dd>
+							<% end %>
+						</dl>
+					</div>
+					<div class="col-md-6">
+						<%= image_tag("backgrounds/check.png", :class => "center-block") %>
+					</div>
+				</div>
+				<% end %>
+			</div>
+        </div>
+    </section>
+</div>
+
+<%= content_tag "div", id: "workflow_url", data: {url: @url, location_id: @location_id} do %>
+<% end %>
+
+<% if @errors %>
+<% content_for :scripts do %>
+<script type="text/javascript">
+	$(function() {
+		$('#errorDiv').hide();
+		$('#errorLink').on('click', function () {
+			$('#errorDiv').show();
+		});
+		$('#boton-servicio').click(function () {
+      		window.location.href = 'http://' + $('#workflow_url').data('url') + '/workflow?local=' + $('#workflow_url').data('location-id').toString();
+  		});
+  	});
+</script>
+<% end %>
+<% else %>
+<% content_for :scripts do %>
+<script type="text/javascript">
+   $(function() {
+	$('#boton-servicio').click(function () {
+      window.location.href = 'http://' + $('#workflow_url').data('url') + '/workflow?local=' + $('#workflow_url').data('location-id').toString();
+  	});
+  });
+</script>
+<% end %>
+<% end %>
