@@ -1,5 +1,6 @@
 class IframeController < ApplicationController
 	after_action :allow_iframe
+	skip_before_action :verify_authenticity_token
 
 	def sampler
 		render layout: false
