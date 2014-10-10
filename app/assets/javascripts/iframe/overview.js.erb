@@ -86,7 +86,7 @@ $(function() {
   $('[name="localRadio"]').on('click', function(event) {
     var id = event.target.getAttribute('value');
     loadSchedule(id);
-    localMap(id);
+    // localMap(id);
 
     if ($('#localOption' + id).data('outcall') == true) {
       $('#outcallDistricts').empty();
