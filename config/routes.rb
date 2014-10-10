@@ -203,6 +203,7 @@ Agendapro::Application.routes.draw do
   get '/service_provider/pdf', :to => 'service_providers#pdf'
 
   get '/iframe/sampler', :to => 'iframe#sampler'
+  post '/iframe/overview/:company_id', :to => 'iframe#overview'
   get '/iframe/overview/:company_id', :to => 'iframe#overview'
   get '/iframe/workflow/:location_id', :to => 'iframe#workflow'
   post '/iframe/book_service', :to => 'iframe#book_service'
