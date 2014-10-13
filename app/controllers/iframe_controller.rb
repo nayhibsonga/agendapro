@@ -7,6 +7,10 @@ class IframeController < ApplicationController
 	end
 
 	def overview
+		app_secret = "4f46d0f4f4c36a03ead5ced6c0f0ff87"
+		signed_request = FBGraph::Canvas.parse_signed_request(app_secret, params[:signed_request])
+		puts signed_request.inspect
+
 		@company = Company.find(params[:company_id])
 
 		unless @company.company_setting.activate_workflow && @company.active
@@ -24,20 +28,6 @@ class IframeController < ApplicationController
 		host = request.host_with_port
 		@url = @company.web_address + '.' + host[host.index(request.domain)..host.length]
 
-		#Selected local from fase II
-		@selectedLocal = params[:local]
-
-		if mobile_request? 
-			if params[:local]
-				redirect_to workflow_path(:local => params[:local])
-				return
-			else
-				if @locations.length == 1
-					redirect_to workflow_path(:local => @locations[0].id)
-					return
-				end
-			end
-		end
 		render layout: "iframe"
 	end
 

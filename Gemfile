@@ -117,3 +117,6 @@ gem 'groupdate'
 # PDF
 gem 'prawn'
 gem 'prawn-table'
+
+# Facebook
+gem "fbgraph"
