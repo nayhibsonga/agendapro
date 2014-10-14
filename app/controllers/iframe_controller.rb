@@ -6,20 +6,35 @@ class IframeController < ApplicationController
 		render layout: false
 	end
 
-	def overview
-		app_secret = "4f46d0f4f4c36a03ead5ced6c0f0ff87"
-		signed_request = FBGraph::Canvas.parse_signed_request(app_secret, params[:signed_request])
-		puts signed_request.inspect
+	def construction
+		render layout: false
+	end
 
-		@company = Company.find(params[:company_id])
+	def overview
+		if params[:signed_request]
+			puts "entra sr"
+			app_secret = "4f46d0f4f4c36a03ead5ced6c0f0ff87"
+			signed_request = FBGraph::Canvas.parse_signed_request(app_secret, params[:signed_request])
+			page_id = signed_request[:page][:id]
+			if CompanySetting.find_by_facebook_page_id(page_id)
+				puts "entra cs"
+				@company = CompanySetting.find_by_page_id(page_id).company
+			else
+				redirect_to '/iframe/construction'
+				return
+			end
+		elsif params[:company_id]
+			puts "entra ci"
+			crypt = ActiveSupport::MessageEncryptor.new(Agendapro::Application.config.secret_key_base)
+		    id = crypt.decrypt_and_verify(params[:company_id])
+		    @company = Company.find(id)
+		else
+			redirect_to '/iframe/construction'
+			return
+		end
 
 		unless @company.company_setting.activate_workflow && @company.active
-			flash[:alert] = "Lo sentimos, el mini-sitio que estás buscando no se encuentra disponible."
-
-			host = request.host_with_port
-			domain = host[host.index(request.domain)..host.length]
-
-			redirect_to root_url(:host => domain)
+			redirect_to '/iframe/construction'
 			return
 		end
 		@locations = Location.where(:active => true).where(company_id: @company.id).where(id: ServiceProvider.where(active: true, company_id: @company.id).joins(:provider_times).joins(:services).where("services.id" => Service.where(active: true, company_id: @company.id).pluck(:id)).pluck(:location_id).uniq).joins(:location_times).uniq.order(order: :asc)

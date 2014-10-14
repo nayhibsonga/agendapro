@@ -35,6 +35,7 @@
 	  <li class=""><a href="#calendar" role="tab" data-toggle="tab" class="tab_index">Calendario</a></li>
 	  <li class=""><a href="#emails" role="tab" data-toggle="tab" class="tab_index">E-mails</a></li>
 	  <li class=""><a href="#times" role="tab" data-toggle="tab" class="tab_index">Periodo Agenda</a></li>
+	  <li class=""><a href="#embedded" role="tab" data-toggle="tab" class="tab_index">Facebook</a></li>
 	  <li class=""><a href="#link" role="tab" data-toggle="tab" class="tab_index">Link AgendaPro</a></li>
 	</ul>
 	<div id="myTabContent" class="tab-content">
@@ -44,8 +45,10 @@
 	    	<ol>
 				<li><strong>Empresa: </strong>En esta sección puedes configurar el nombre de empresa, la descripción, la url de tu mini-sitio, el logo que quieres mostrar y la política de cancelación.</li><br />
 				<li><strong>Reservas: </strong>En esta sección puedes habilitar el mini-sitio AgendaPro, la opción de aparecer en el Buscador AgendaPro y limitar que sólo las personas en tu base de datos puedan reservar.</li><br />
+				<li><strong>Calendario: </strong>En esta sección puedes controlar el tamaño, en tiempo, de cada bloque del horario en la sección calendario.</li><br />
 				<li><strong>E-mails: </strong>En esta sección puedes configurar la dirección desde donde se envían los correos masivos (Remitentes) y la firma que se adjuntará en tus e-mails.</li><br />
 				<li><strong>Periodo AgendaPro: </strong>En esta sección puedes configurar el Tiempo Mínimo de Reserva y el Tiempo Máximo a futuro, además de la cantidad de horas mínimas necesarias para que tus clientes puedan modificar o cancelar una reserva.</li><br />
+				<li><strong>Facebook: </strong>En esta sección puedes seguir las instrucciones para permitir reservas por facebook, agregando una pestaña a la página de tu empresa.</li><br />
 				<li><strong>Link AgendaPro: </strong>En esta sección puedes obtener el Link AgendaPro, el cual te permitirá insertar el link a tu mini-sitio en cualquier otro sitio web que tengas. Hay varias opciones para que elijas la que más te acomoda.</li>
 			</ol>
 		</div>
@@ -123,6 +126,25 @@
 							<span class="input-group-addon">minutos</span>
 						</div>
 						<span class="help-block">Esta opción determina el largo de cada bloque en la sección <%= link_to '<i class="fa fa-calendar fa-fw"></i><span class="colapse-hidden"> Calendario</span>'.html_safe, bookings_path %>.</span>
+					</div>
+				</div>
+				<div class="form-group">
+					<div class="col-sm-offset-3 col-sm-4">
+					 <%= f.submit 'Guardar', :class => 'btn btn-agendapro-claro' %>
+					 <%= link_to 'Cancelar', dashboard_path, :class => "btn btn-default" %>
+					</div> 
+				</div>
+			<% end %>
+		</div>
+	  </div>
+	  <div class="tab-pane" id="embedded">
+	    <div class="row">
+			<%= form_for @company_setting, :html => {:class => 'form-horizontal'} do |f| %>
+				<div class="form-group">
+					<%= f.label :page_id, 'ID Página de Facebook', :class => 'col-sm-3 control-label' %>
+					<div class="col-sm-5">
+						<%= f.text_field :page_id, class: "form-control" %>
+						<span class="help-block">Aquí instrucciones para facebook.</span>
 					</div>
 				</div>
 				<div class="form-group">
