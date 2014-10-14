@@ -16,8 +16,8 @@ class IframeController < ApplicationController
 			app_secret = "4f46d0f4f4c36a03ead5ced6c0f0ff87"
 			signed_request = FBGraph::Canvas.parse_signed_request(app_secret, params[:signed_request])
 			puts signed_request.inspect
-			puts signed_request[:page].inspect
-			page_id = signed_request[:page][:id]
+			puts signed_request.page.inspect
+			page_id = signed_request.page.id
 			if CompanySetting.find_by_facebook_page_id(page_id)
 				puts "entra cs"
 				@company = CompanySetting.find_by_page_id(page_id).company
