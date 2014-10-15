@@ -54,7 +54,7 @@ class Company < ActiveRecord::Base
 	end
 
 	def self.payment_expiry
-		where(payment_status_id: PaymentStatus.find_by_name("Emitido").id).where('due_date < ?', 9.days.ago).each do |company|
+		where(payment_status_id: PaymentStatus.find_by_name("Emitido").id).where('due_date < ?', 19.days.ago).each do |company|
 			company.payment_status_id = PaymentStatus.find_by_name("Vencido").id
 			if company.save
 				CompanyCronLog.create(company_id: company.id, action_ref: 2, details: "OK payment_expiry")
@@ -69,7 +69,7 @@ class Company < ActiveRecord::Base
 	end
 
 	def self.payment_shut
-		where(payment_status_id: PaymentStatus.find_by_name("Vencido").id).where('due_date < ?', 19.days.ago).each do |company|
+		where(payment_status_id: PaymentStatus.find_by_name("Vencido").id).where('due_date < ?', (1.months + 5.days).ago).each do |company|
 			company.payment_status_id = PaymentStatus.find_by_name("Bloqueado").id
 			if company.save
 				CompanyCronLog.create(company_id: company.id, action_ref: 3, details: "OK payment_shut")
@@ -84,7 +84,7 @@ class Company < ActiveRecord::Base
 	end
 
 	def self.payment_inactive
-		where(payment_status_id: PaymentStatus.find_by_name("Bloqueado").id).where('due_date < ?', 1.months.ago).each do |company|
+		where(payment_status_id: PaymentStatus.find_by_name("Bloqueado").id).where('due_date < ?', (1.months+15.days).ago).each do |company|
 			company.payment_status_id = PaymentStatus.find_by_name("Inactivo").id
 			comapny.due_amount = 0.0
 			company.active = false
