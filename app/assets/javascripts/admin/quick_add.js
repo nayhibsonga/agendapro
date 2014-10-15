@@ -250,7 +250,7 @@ function locationValid (ctrl) {
 	    		var errors = result.errors;
 	    		var errorList = '';
 				for (i in errors) {
-					errorList += '<li>' + errores[i] + '</li>'
+					errorList += '<li>' + errors[i] + '</li>'
 				}
 				alertId.showAlert(
 					'<h3>Error</h3>' +
@@ -264,7 +264,7 @@ function locationValid (ctrl) {
 		    var errors = $.parseJSON(xhr.responseText).errors;
 		    var errorList = '';
 			for (i in errors) {
-				errorList += '<li>' + errores[i] + '</li>'
+				errorList += '<li>' + errors[i] + '</li>'
 			}
 			alertId.showAlert(
 				'<h3>Error</h3>' +
@@ -294,7 +294,7 @@ function serviceValid () {
 		    		var errors = result.errors;
 		    		var errorList = '';
 					for (i in errors) {
-						errorList += '<li>' + errores[i] + '</li>'
+						errorList += '<li>' + errors[i] + '</li>'
 					}
 					alertId.showAlert(
 						'<h3>Error</h3>' +
@@ -309,7 +309,7 @@ function serviceValid () {
 				var errors = $.parseJSON(xhr.responseText).errors;
 			    var errorList = '';
 				for (i in errors) {
-					errorList += '<li>' + errores[i] + '</li>'
+					errorList += '<li>' + errors[i] + '</li>'
 				}
 				alertId.showAlert(
 					'<h3>Error</h3>' +
@@ -369,7 +369,7 @@ function providerValid () {
 		    		var errors = result.errors;
 		    		var errorList = '';
 					for (i in errors) {
-						errorList += '<li>' + errores[i] + '</li>'
+						errorList += '<li>' + errors[i] + '</li>'
 					}
 					alertId.showAlert(
 						'<h3>Error</h3>' +
@@ -384,7 +384,7 @@ function providerValid () {
 			    var errors = $.parseJSON(xhr.responseText).errors;
 			    var errorList = '';
 				for (i in errors) {
-					errorList += '<li>' + errores[i] + '</li>'
+					errorList += '<li>' + errors[i] + '</li>'
 				}
 				alertId.showAlert(
 					'<h3>Error</h3>' +
@@ -422,7 +422,7 @@ function saveLocation (ctrl) {
 		    var errors = $.parseJSON(xhr.responseText).errors;
 		    var errorList = '';
 			for (i in errors) {
-				errorList += '<li>' + errores[i] + '</li>'
+				errorList += '<li>' + errors[i] + '</li>'
 			}
 			alertId.showAlert(
 				'<h3>Error</h3>' +
@@ -450,7 +450,7 @@ function createService () {
 			var errors = $.parseJSON(xhr.responseText).errors;
 		    var errorList = '';
 			for (i in errors) {
-				errorList += '<li>' + errores[i] + '</li>'
+				errorList += '<li>' + errors[i] + '</li>'
 			}
 			alertId.showAlert(
 				'<h3>Error</h3>' +
@@ -496,7 +496,7 @@ function createProvider () {
 		    var errors = $.parseJSON(xhr.responseText).errors;
 		    var errorList = '';
 			for (i in errors) {
-				errorList += '<li>' + errores[i] + '</li>'
+				errorList += '<li>' + errors[i] + '</li>'
 			}
 			alertId.showAlert(
 				'<h3>Error</h3>' +
