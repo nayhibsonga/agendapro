@@ -88,6 +88,8 @@ Agendapro::Application.routes.draw do
   get '/clients_suggestion', :to => 'clients#suggestion'
   get '/clients_name_suggestion', :to => 'clients#name_suggestion'
   get '/clients_last_name_suggestion', :to => 'clients#last_name_suggestion'
+  get '/clients_rut_suggestion', :to => 'clients#rut_suggestion'
+  get '/client_loader', :to => 'clients#client_loader'
 
   get '/provider_services', :to => 'service_providers#provider_service'
 

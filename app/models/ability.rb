@@ -72,6 +72,7 @@ class Ability
     can :check_user_cross_bookings, Booking
     can :select_hour, Company
     can :user_data, Company
+    can :client_loader, Client
 
     can :edit_booking, Booking
     can :edit_booking_post, Booking
@@ -178,6 +179,7 @@ class Ability
         can :history, Client, :company_id => user.company_id
         can :name_suggestion, Client
         can :suggestion, Client
+        can :rut_suggestion, Client
 
         can :create_comment, Client
         can :update_comment, Client
@@ -270,6 +272,7 @@ class Ability
         can :provider_service, ServiceProvider
         can :name_suggestion, Client
         can :suggestion, Client
+        can :rut_suggestion, Client
         
         can :create_comment, Client, :company_id => user.company_id
         can :update_comment, Client, :company_id => user.company_id
@@ -318,6 +321,7 @@ class Ability
 
         can :name_suggestion, Client
         can :suggestion, Client
+        can :rut_suggestion, Client
         can :provider_service, ServiceProvider
         
         can :create_comment, Client, :company_id => user.company_id
@@ -354,7 +358,11 @@ class Ability
         can :create_provider_break, ProviderBreak, :service_provider_id => user.service_providers.pluck(:id)
         can :update_provider_break, ProviderBreak, :service_provider_id => user.service_providers.pluck(:id)
         can :destroy_provider_break, ProviderBreak, :service_provider_id => user.service_providers.pluck(:id)
-                
+        
+        can :name_suggestion, Client
+        can :suggestion, Client
+        can :rut_suggestion, Client
+        can :provider_service, ServiceProvider
     end
 
   end

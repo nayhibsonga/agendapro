@@ -1,6 +1,6 @@
 class ClientsController < ApplicationController
   before_action :set_client, only: [:show, :edit, :update, :destroy]
-  before_action :authenticate_user!
+  before_action :authenticate_user!, except: [:client_loader]
   before_action :quick_add
   load_and_authorize_resource
   layout "admin"
@@ -219,6 +219,36 @@ class ClientsController < ApplicationController
     end
 
     render :json => @clients_arr
+  end
+
+  def rut_suggestion
+    search_rut = params[:term].gsub(/[.-]/, "")
+    @clients = Client.where(company_id: current_user.company_id).where("replace(replace(identification_number, '.', ''), '-', '') ILIKE ?", "%#{search_rut}%").uniq
+
+    @clients_arr = Array.new
+    @clients.each do |client|
+      label = ''
+      desc = ''
+      if client.first_name
+        desc += client.first_name
+      end
+      desc += ' '
+      if client.last_name
+        desc += client.last_name
+      end
+      if client.identification_number
+        label = client.identification_number
+      end
+      @clients_arr.push({:label => label, :desc => desc, :value => client.to_json})
+    end
+
+    render :json => @clients_arr
+  end
+
+  def client_loader
+    @client = Client.find_by_identification_number(params[:term])
+
+    render :json => @client
   end
 
   def import

@@ -4,7 +4,7 @@ class Client < ActiveRecord::Base
   has_many :client_comments, dependent: :destroy
   has_many :bookings, dependent: :destroy
 
-  validate :client_mail_uniqueness
+  validate :client_mail_uniqueness, :client_identification_uniqueness
 
   after_update :client_notification
 

@@ -192,9 +192,11 @@ function loadStep2 () {
 function loadStep3 () {
 	if ($('#clientExclusive').data('client-exclusive')) {
 		$('#identificationNumber').show();
+		$('#full_name').prop('disabled', true);
 	}
 	else {
 		$('#identificationNumber').hide();
+		$('#full_name').prop('disabled', false);
 	}
 	if ($('[name="staffRadio"]').is(':checked')){
 		if (selected) {
