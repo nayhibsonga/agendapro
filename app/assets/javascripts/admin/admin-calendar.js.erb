@@ -1039,6 +1039,20 @@ function createBreakModal(date, providerId) {
 	if (providerId > 0) {
 		$('#provider_break_service_provider_id option[value="'+providerId+'"]').attr("selected",true);
 	}
+
+	var end_minutes = parseInt($('#provider_break_end_5i').val()) + $('#calendar-duration').data('calendar-duration');
+	window.console.log(end_minutes);
+	if (end_minutes >= 60) {
+		$('#provider_break_end_4i option[value="'+(parseInt($('#provider_break_end_4i').val())+1)+'"]').attr("selected",true);
+		end_minutes = end_minutes - 60;
+	}
+	if (end_minutes < 10) {
+		$('#provider_break_end_5i option[value="0'+end_minutes+'"]').attr("selected",true);
+	}
+	else {
+		$('#provider_break_end_5i option[value="'+end_minutes+'"]').attr("selected",true);
+	}
+
 	$('#provider_break_name').val('');
 	$('.break-modal-footer').empty();
 	$('.break-modal-footer').append(
