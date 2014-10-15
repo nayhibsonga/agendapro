@@ -7,12 +7,14 @@ class QuickAddController < ApplicationController
 	def quick_add_filter
 		if current_user && (current_user.role_id != Role.find_by_name("Super Admin").id) && current_user.company_id
 			@company = Company.find(current_user.company_id)
-			if @company.locations.count == 0
+			if @company.economic_sector.nil?
 				return
-			elsif @company.services.count == 0
+			elsif @company.locations.count == 0
 				params[:step] = 1
-			elsif @company.service_providers.count == 0
+			elsif @company.services.count == 0
 				params[:step] = 2
+			elsif @company.service_providers.count == 0
+				params[:step] = 3
 			end
 		end
 	end
@@ -33,6 +35,8 @@ class QuickAddController < ApplicationController
 		@location.company_id = current_user.company_id
 		@service.company_id = current_user.company_id
 		@service_provider.company_id = current_user.company_id
+
+		@company = current_user.company
 	end
 
 	def location_valid

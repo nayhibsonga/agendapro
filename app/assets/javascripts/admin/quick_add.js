@@ -399,6 +399,38 @@ function providerValid () {
 }
 
 // Post
+function updateCompany () {
+	var formId = $('[id^=edit_company_]').prop('id');
+	var companyId = formId.substring(formId.lastIndexOf('_') + 1);
+	$.ajax({
+		type: 'POST',
+		url: '/companies/' + companyId,
+		data: new FormData(document.getElementById(formId)),
+		mimeType: 'multipart/form-data',
+		contentType: false,
+		processData: false,
+		success: function (result) {
+			nextFn = startLocation;
+    		$('#foo5').trigger('nextPage');
+			hideLoad();
+		},
+		error: function (xhr) {
+			var errors = $.parseJSON(xhr.responseText).errors;
+		    var errorList = '';
+			for (i in errors) {
+				errorList += '<li>' + errors[i] + '</li>'
+			}
+			alertId.showAlert(
+				'<h3>Error</h3>' +
+				'<ul>' +
+					errorList +
+				'</ul>'
+			);
+			hideLoad();
+		}, 
+	});
+}
+
 function saveLocation (ctrl) {
 	var locationJSON = locJSON(ctrl);
 	$.ajax({
@@ -627,7 +659,7 @@ function changeCity (city_id) {
 }
 
 $(function() {
-	nextFn = startLocation;
+	nextFn = updateCompany;
 	initialize('local');
 	initialize('prov');
 	$('#service_group_service').click(function (e) {

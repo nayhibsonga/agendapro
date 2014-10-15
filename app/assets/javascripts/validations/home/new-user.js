@@ -15,10 +15,6 @@ $(function() {
 			'user[full_name]': {
 				required: true
 			},
-			'user[phone]': {
-				required: true,
-				rangelength: [8, 15]
-			},
 			'user[email]': {
 				required: true,
 				email: true,
@@ -45,9 +41,6 @@ $(function() {
 				alphaNumeric: $('#user_company_attributes_web_address').val(),
 				remote: '/check_company'
 			},
-			'user[company_attributes][logo]': {
-				filesize: 3145728
-			},
 			terms: {
 				required: true
 			}
@@ -58,9 +51,6 @@ $(function() {
 			},
 			'user[company_attributes][web_address]': {
 				remote: 'La dirección web ya existe'
-			},
-			'user[company_attributes][logo]': {
-				filesize: "La imagen supera el tamaño maximo de 3 MB"
 			}
 		},
 		highlight: function(element) {

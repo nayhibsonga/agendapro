@@ -15,7 +15,7 @@ class Company < ActiveRecord::Base
 	has_one :billing_info, dependent: :destroy
 	has_many :company_from_email, dependent: :destroy
 
-	validates :name, :web_address, :economic_sector, :plan, :payment_status, :presence => true
+	validates :name, :web_address, :plan, :payment_status, :presence => true
 
 	validates_uniqueness_of :web_address
 

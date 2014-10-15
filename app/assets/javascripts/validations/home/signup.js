@@ -7,10 +7,10 @@ $(function() {
 			'user[full_name]': {
 				required: true
 			},
-			'user[phone]': {
-				required: true,
-				rangelength: [8, 15]
-			},
+			// 'user[phone]': {
+			// 	required: true,
+			// 	rangelength: [8, 15]
+			// },
 			'user[email]': {
 				required: true,
 				email: true,
