@@ -141,7 +141,7 @@
 	    <div class="row well well-white">
 	    	<h4>Instrucciones para Facebook:</h4>
 	    	<ol>
-	    		<li>Haz click en el siguiente link <a href="https://www.facebook.com/dialog/pagetab?app_id=739120539456506&next=<%= root_url %>iframe/overview/" target="_blank">App AgendaPro para Facebook</a>, asegurándote que hayas iniciado sesión en Facebook como administrador de la página a la que le quieres agregar reservas en línea.</li>
+	    		<li>Haz click en el siguiente link <a href="https://www.facebook.com/dialog/pagetab?app_id=739120539456506&next=<%= root_url(:secure => true) %>iframe/overview/" target="_blank">App AgendaPro para Facebook</a>, asegurándote que hayas iniciado sesión en Facebook como administrador de la página a la que le quieres agregar reservas en línea.</li>
 	    		<li>Elige agregar app a tu página y luego, en tu página elige administrar pestañas. Ahí puedes cambiar el orden y el nombre de tus pestañas, incluyéndo la pestaña de reservas de AgendaPro.</li>
 	    		<li>En la información de tu página, busca el item <strong>Identificador de página de Facebook</strong>, ingrésalo en el campo a continuación y haz click en guardar.</li>
 	    		<li>Tu pestaña AgendaPro debería estar lista para usar, si tienes cualquier problema no dudes en contactarte con nosotros a contacto@agendapro.cl.</li>
@@ -164,7 +164,7 @@
 		<div class="row well well-white">
 	    	<h4>Instrucciones para Página Web:</h4>
 	    	<p>Simplemente pega esto en el código de tu página (si necesitas apoyo, puede pedir ayuda al administrador de tu página web o webmaster, o escribirnos a contacto@agendapro.cl con tus dudas).</p>
-	    	<pre class="pre-scrollable well-white">&lt;iframe src="<%= root_url %>iframe/overview/<%= @company.secret_code %>" width="810" height="500" marginwidth="0" marginheight="0" frameborder="no" scrolling="yes" style="border-width:0px;" &gt;&lt;/iframe&gt;</pre>
+	    	<pre class="pre-scrollable well-white">&lt;iframe src="<%= root_url(:secure => true) %>iframe/overview/<%= @company.secret_code %>" width="810" height="500" marginwidth="0" marginheight="0" frameborder="no" scrolling="yes" style="border-width:0px;" &gt;&lt;/iframe&gt;</pre>
 		</div>
 	  </div>
 	  <div class="tab-pane" id="emails">
