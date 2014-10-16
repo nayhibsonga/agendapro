@@ -38,5 +38,17 @@ $(function() {
 	$('#identification_number').change(function() {
 		var rut_string = $('#identification_number').val()
 		$('#identification_number').val(rut_format(rut_string));
+		$.getJSON('/client_loader', {term: $('#identification_number').val()}, function (client) {
+			if (client != null){	
+				$('#full_name').val(client.first_name+' '+client.last_name);
+				$('#firstName').val(client.first_name);
+				$('#lastName').val(client.last_name);
+			}
+			else {
+				$('#full_name').val('');
+				$('#firstName').val('');
+				$('#lastName').val('');
+			}
+		});
 	});
 });
