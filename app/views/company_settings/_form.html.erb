@@ -35,7 +35,7 @@
 	  <li class=""><a href="#calendar" role="tab" data-toggle="tab" class="tab_index">Calendario</a></li>
 	  <li class=""><a href="#emails" role="tab" data-toggle="tab" class="tab_index">E-mails</a></li>
 	  <li class=""><a href="#times" role="tab" data-toggle="tab" class="tab_index">Periodo Agenda</a></li>
-	  <li class=""><a href="#embedded" role="tab" data-toggle="tab" class="tab_index">Facebook</a></li>
+	  <li class=""><a href="#embedded" role="tab" data-toggle="tab" class="tab_index">Facebook / Web</a></li>
 	  <li class=""><a href="#link" role="tab" data-toggle="tab" class="tab_index">Link AgendaPro</a></li>
 	</ul>
 	<div id="myTabContent" class="tab-content">
@@ -48,7 +48,7 @@
 				<li><strong>Calendario: </strong>En esta sección puedes controlar el tamaño, en tiempo, de cada bloque del horario en la sección calendario.</li><br />
 				<li><strong>E-mails: </strong>En esta sección puedes configurar la dirección desde donde se envían los correos masivos (Remitentes) y la firma que se adjuntará en tus e-mails.</li><br />
 				<li><strong>Periodo AgendaPro: </strong>En esta sección puedes configurar el Tiempo Mínimo de Reserva y el Tiempo Máximo a futuro, además de la cantidad de horas mínimas necesarias para que tus clientes puedan modificar o cancelar una reserva.</li><br />
-				<li><strong>Facebook: </strong>En esta sección puedes seguir las instrucciones para permitir reservas por facebook, agregando una pestaña a la página de tu empresa.</li><br />
+				<li><strong>Facebook: </strong>En esta sección puedes seguir las instrucciones para permitir reservas por Facebook, agregando una pestaña a la página de tu empresa.</li><br />
 				<li><strong>Link AgendaPro: </strong>En esta sección puedes obtener el Link AgendaPro, el cual te permitirá insertar el link a tu mini-sitio en cualquier otro sitio web que tengas. Hay varias opciones para que elijas la que más te acomoda.</li>
 			</ol>
 		</div>
@@ -138,13 +138,19 @@
 		</div>
 	  </div>
 	  <div class="tab-pane" id="embedded">
-	    <div class="row">
+	    <div class="row well well-white">
+	    	<h4>Instrucciones para Facebook:</h4>
+	    	<ol>
+	    		<li>Haz click en el siguiente link <a href="https://www.facebook.com/dialog/pagetab?app_id=739120539456506&next=<%= root_url %>iframe/overview/" target="_blank">App AgendaPro para Facebook</a>, asegurándote que hayas iniciado sesión en Facebook como administrador de la página a la que le quieres agregar reservas en línea.</li>
+	    		<li>Elige agregar app a tu página y luego, en tu página elige administrar pestañas. Ahí puedes cambiar el orden y el nombre de tus pestañas, incluyéndo la pestaña de reservas de AgendaPro.</li>
+	    		<li>En la información de tu página, busca el item <strong>Identificador de página de Facebook</strong>, ingrésalo en el campo a continuación y haz click en guardar.</li>
+	    		<li>Tu pestaña AgendaPro debería estar lista para usar, si tienes cualquier problema no dudes en contactarte con nosotros a contacto@agendapro.cl.</li>
+	    	</ol>
 			<%= form_for @company_setting, :html => {:class => 'form-horizontal'} do |f| %>
 				<div class="form-group">
 					<%= f.label :page_id, 'ID Página de Facebook', :class => 'col-sm-3 control-label' %>
 					<div class="col-sm-5">
 						<%= f.text_field :page_id, class: "form-control" %>
-						<span class="help-block">Aquí instrucciones para facebook.</span>
 					</div>
 				</div>
 				<div class="form-group">
@@ -154,6 +160,11 @@
 					</div> 
 				</div>
 			<% end %>
+		</div>
+		<div class="row well well-white">
+	    	<h4>Instrucciones para Página Web:</h4>
+	    	<p>Simplemente pega esto en el código de tu página (si necesitas apoyo, puede pedir ayuda al administrador de tu página web o webmaster, o escribirnos a contacto@agendapro.cl con tus dudas).</p>
+	    	<pre class="pre-scrollable well-white">&lt;iframe src="<%= root_url %>iframe/overview/<%= @company.secret_code %>" width="810" height="500" marginwidth="0" marginheight="0" frameborder="no" scrolling="yes" style="border-width:0px;" &gt;&lt;/iframe&gt;</pre>
 		</div>
 	  </div>
 	  <div class="tab-pane" id="emails">
