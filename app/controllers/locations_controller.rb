@@ -155,6 +155,8 @@ class LocationsController < ApplicationController
         ordered_providers = ServiceProvider.where(id: service.service_providers.pluck(:id), location_id: local.id, active: true).order(order: :desc).sort_by {|service_provider| service_provider.provider_booking_day_occupation(date) }
         location_times = local.location_times.where(day_id: day).order(:open)
 
+        # time_offset = 0
+
         if location_times.length > 0
 
           location_times_first_open = location_times_first.open
@@ -194,7 +196,25 @@ class LocationsController < ApplicationController
               provider_free = true
               provider.provider_times.where(day_id: day).each do |provider_time|
                 if (provider_time.open - location_times_first_open_end)*(location_times_first_open_start - provider_time.close) > 0
-                  provider_time_valid = true
+                  # if provider_time.open > location_times_first_open_start
+                  #   time_offset += (provider_time.open - location_times_first_open_start)/1.minutes
+                  #   if time_offset < service_duration
+                  #     location_times_first_open_start = provider_time.open
+                  #     location_times_first_open_end = location_times_first_open_start + service_duration.minutes
+                  #   end
+                  # end
+                  if provider_time.open <= location_times_first_open_start && provider_time.close >= location_times_first_open_end
+                    provider_time_valid = true
+                  # elsif provider_time.open <= location_times_first_open_start
+                  #   location_times_first_open_start -= time_offset.minutes
+                  #   location_times_first_open_end -= time_offset.minutes
+                  #   time_offset = 0
+                  # else
+                  #   time_offset = time_offset % service_duration
+                  #   location_times_first_open_start -= time_offset.minutes
+                  #   location_times_first_open_end -= time_offset.minutes
+                  #   time_offset = 0
+                  end
                 end
                 break if provider_time_valid
               end
@@ -325,6 +345,8 @@ class LocationsController < ApplicationController
 
           provider_times_first_open_start = provider_times_first_open
 
+          time_offset = 0
+
           while (provider_times_first_open_start <=> provider_times_final_close) < 0 do
 
             provider_times_first_open_end = provider_times_first_open_start + service_duration.minutes
@@ -336,6 +358,34 @@ class LocationsController < ApplicationController
               :provider => ''
             }
 
+            available_provider = ''
+            provider_time_valid = false
+            provider_free = true
+            provider_times.each do |provider_time|
+              if (provider_time.open - provider_times_first_open_end)*(provider_times_first_open_start - provider_time.close) > 0
+                if provider_time.open > provider_times_first_open_start
+                  time_offset += (provider_time.open - provider_times_first_open_start)/1.minutes
+                  if time_offset < service_duration
+                    provider_times_first_open_start = provider_time.open
+                    provider_times_first_open_end = provider_times_first_open_start + service_duration.minutes
+                  end
+                end
+                if provider_time.open <= provider_times_first_open_start && provider_time.close >= provider_times_first_open_end
+                  provider_time_valid = true
+                elsif provider_time.open <= provider_times_first_open_start
+                  time_offset = time_offset % service_duration
+                  provider_times_first_open_start -= time_offset.minutes
+                  provider_times_first_open_end -= time_offset.minutes
+                  time_offset = 0
+                else
+                  provider_times_first_open_start -= time_offset.minutes
+                  provider_times_first_open_end -= time_offset.minutes
+                  time_offset = 0
+                end
+              end
+              break if provider_time_valid
+            end
+
             open_hour = provider_times_first_open_start.hour
             open_min = provider_times_first_open_start.min
             start_block = (open_hour < 10 ? '0' : '') + open_hour.to_s + ':' + (open_min < 10 ? '0' : '') + open_min.to_s
@@ -344,22 +394,12 @@ class LocationsController < ApplicationController
             next_open_min = provider_times_first_open_end.min
             end_block = (next_open_hour < 10 ? '0' : '') + next_open_hour.to_s + ':' + (next_open_min < 10 ? '0' : '') + next_open_min.to_s
 
-
             start_time_block = DateTime.new(date.year, date.mon, date.mday, open_hour, open_min)
             end_time_block = DateTime.new(date.year, date.mon, date.mday, next_open_hour, next_open_min)
             now = DateTime.new(DateTime.now.year, DateTime.now.mon, DateTime.now.mday, DateTime.now.hour, DateTime.now.min)
             before_now = start_time_block - company_setting.before_booking / 24.0
             after_now = now + company_setting.after_booking * 30
 
-            available_provider = ''
-            provider_time_valid = false
-            provider_free = true
-            provider_times.each do |provider_time|
-              if (provider_time.open - provider_times_first_open_end)*(provider_times_first_open_start - provider_time.close) > 0
-                provider_time_valid = true
-              end
-              break if provider_time_valid
-            end
             if provider_time_valid
               if (before_now <=> now) < 1
                 status = 'past'
