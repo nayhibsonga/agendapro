@@ -31,7 +31,7 @@ class ApplicationController < ActionController::Base
         else
           redirect_to dashboard_path, notice: "¡Activa tu cuenta AgendaPro! No te pierdas un segundo más el acceso a las oportunidades que te da tu cuenta AgendaPro. Si no eres el administrador, ponte en contacto con él para activar la cuenta."
         end
-      elsif company.economic_sector.nil?
+      elsif company.economic_sectors.count == 0
         redirect_to(quick_add_path)
       elsif company.locations.count == 0
         redirect_to(quick_add_path(:step => 1))

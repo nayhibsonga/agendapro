@@ -401,10 +401,9 @@ function providerValid () {
 // Post
 function updateCompany () {
 	var formId = $('[id^=edit_company_]').prop('id');
-	var companyId = formId.substring(formId.lastIndexOf('_') + 1);
 	$.ajax({
 		type: 'POST',
-		url: '/companies/' + companyId,
+		url: '/quick_add/update_company',
 		data: new FormData(document.getElementById(formId)),
 		mimeType: 'multipart/form-data',
 		contentType: false,

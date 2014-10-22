@@ -549,7 +549,6 @@ class CompaniesController < ApplicationController
 
 		# Never trust parameters from the scary internet, only allow the white list through.
 		def company_params
-			params.require(:company).permit(:name, :economic_sector_id, :plan_id, :logo, :remove_logo, :payment_status_id, :pay_due, :web_address, :description, :cancellation_policy, :months_active_left, :due_amount, :due_date, :active, company_setting_attributes: [:before_booking, :after_booking])
-			#params.require(:company).permit(:name, :economic_sector_id, :plan_id, :logo, :payment_status_id, :pay_due, :web_address, :users_attributes[:id, :first_name, :last_name, :email, :phone, :user_name, :password, :role_id, :company_id])
+			params.require(:company).permit(:name, :economic_sector_ids, :plan_id, :logo, :remove_logo, :payment_status_id, :pay_due, :web_address, :description, :cancellation_policy, :months_active_left, :due_amount, :due_date, :active, company_setting_attributes: [:before_booking, :after_booking])
 		end
 end

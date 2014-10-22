@@ -58,6 +58,7 @@ Agendapro::Application.routes.draw do
   post '/quick_add/location', :to => 'quick_add#create_location'
   post '/quick_add/services', :to => 'quick_add#create_services'
   post '/quick_add/service_provider', :to => 'quick_add#create_service_provider'
+  patch '/quick_add/update_company', :to => 'quick_add#update_company'
 
   # Reporting
   get '/dashboard', :to => 'dashboard#index', :as => 'dashboard'
