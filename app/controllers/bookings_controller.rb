@@ -278,7 +278,7 @@ class BookingsController < ApplicationController
 
         event = {
           id: booking.id,
-          title: booking.service.name+' - '+booking.client.first_name+' '+booking.client.last_name,
+          title: booking.client.first_name+' '+booking.client.last_name+' - '+booking.service.name,
           allDay: false,
           start: booking.start,
           end: booking.end,
