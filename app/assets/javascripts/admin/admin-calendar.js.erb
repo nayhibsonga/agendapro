@@ -245,6 +245,7 @@ function loadResourcesCalendar (startTime, endTime, hiddenDays, resourcesArray, 
 			if ($.isNumeric(event.id)) {
 		       element.qtip({
 		           content: {
+		           		button: true,
 		        	   	title: event.title_qtip,
 		        	   	text: 'Horario: ' + event.time_qtip + '<br/>' +
 		        	   	'Servicio: ' + event.service_qtip + '<br/>' +
@@ -257,7 +258,12 @@ function loadResourcesCalendar (startTime, endTime, hiddenDays, resourcesArray, 
 				   },
 				   style: {
 				        classes: 'qtip-bootstrap'
-				   }
+				   },
+				   hide: {
+						event: 'click mouseleave unfocus',
+						leave: true,
+						fixed: true
+					}
 		       });
 	       	}
        	},
