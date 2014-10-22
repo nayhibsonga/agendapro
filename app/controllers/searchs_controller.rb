@@ -29,13 +29,14 @@ class SearchsController < ApplicationController
 		service_providers_tags = ServiceProvider.where(active: true).joins(:provider_times).joins(:services).where("services.id" => Service.where(active: true, id: services_tags).pluck(:id) ).pluck(:location_id).uniq
 
 		# => obtener los locales pertenecientes a las compañias cuyo rubro se parece a la busqueda
-		economic_sector = EconomicSector.includes(:economic_sectors_dictionaries).where('economic_sectors.name ILIKE ? OR economic_sectors_dictionaries.name ILIKE ?', search, search).pluck(:id).uniq
+		economic_sectors = EconomicSector.includes(:economic_sectors_dictionaries).where('economic_sectors.name ILIKE ? OR economic_sectors_dictionaries.name ILIKE ?', search, search).pluck(:id).uniq
+		company_economic_sector = Company.includes(:company_economic_sectors).where('company_economic_sectors.economic_sector_id IN (?)', economic_sectors).pluck(:id).uniq
 
 		# => obtener de los locales los servicios cuyo nombre coincide con la busqueda
 		services = Service.where(:active => true).where('name ILIKE ?', search)
 		service_providers_services = ServiceProvider.where(:active => true).joins(:services, :service_staffs).where('service_staffs.service_id' => services).pluck(:location_id).uniq
 
-		companies = Company.where(active: true).where('name ILIKE ? OR web_address ILIKE ? OR economic_sector_id IN (?)', search, search, economic_sector).uniq.pluck(:id)
+		companies = Company.where(active: true).where('name ILIKE ? OR web_address ILIKE ? OR id IN (?)', search, search, company_economic_sector).uniq.pluck(:id)
 
 		locations = Location.where(id: service_providers_tags).where(id: service_providers_services).uniq.pluck(:id)
 
