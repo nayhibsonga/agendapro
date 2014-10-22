@@ -267,33 +267,33 @@
 	plan_beta = Plan.create(name: "Beta", locations: 1, service_providers: 2, custom: true, price: 14900, special: false)
 
 # => Test Company
-	test_company = Company.create(name: 'Test Company', web_address: 'test', economic_sector_id: 1, plan_id: 2, payment_status_id: 1, description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus pharetra quam neque, eget condimentum purus semper id. In porta ut mauris id congue. Quisque accumsan mauris nec turpis tincidunt, quis rhoncus augue porttitor. Mauris quis malesuada sem. Donec nisi metus.", cancellation_policy: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam tincidunt rutrum sapien vel ultricies. Sed.")
+	# test_company = Company.create(name: 'Test Company', web_address: 'test', economic_sector_id: 1, plan_id: 2, payment_status_id: 1, description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus pharetra quam neque, eget condimentum purus semper id. In porta ut mauris id congue. Quisque accumsan mauris nec turpis tincidunt, quis rhoncus augue porttitor. Mauris quis malesuada sem. Donec nisi metus.", cancellation_policy: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam tincidunt rutrum sapien vel ultricies. Sed.")
 
-	test_setting = CompanySetting.create(before_booking: 24, after_booking: 6, company_id: test_company.id)
+	# test_setting = CompanySetting.create(before_booking: 24, after_booking: 6, company_id: test_company.id)
 
-	local_test = Location.create(name: 'Test Location', address: 'Nuestra Sra de Los Ángeles 185', phone: '+56 9 5178 5898', district_id: 1, company_id: 1, latitude: -33.4129192, longitude: -70.5921359)
+	# local_test = Location.create(name: 'Test Location', address: 'Nuestra Sra de Los Ángeles 185', phone: '+56 9 5178 5898', district_id: 1, company_id: 1, latitude: -33.4129192, longitude: -70.5921359)
 
-	service_categories_test = ServiceCategory.create(name: "Categoría de Prueba", company_id: test_company.id)
+	# service_categories_test = ServiceCategory.create(name: "Categoría de Prueba", company_id: test_company.id)
 
-	location_times = LocationTime.create([{open: '09:00', close: '18:30', location_id: local_test.id, day_id: 1}, {open: '09:00', close: '18:30', location_id: local_test.id, day_id: 2}, {open: '09:00', close: '18:30', location_id: local_test.id, day_id: 3}, {open: '09:00', close: '18:30', location_id: local_test.id, day_id: 4}, {open: '09:00', close: '18:30', location_id: local_test.id, day_id: 5}])
+	# location_times = LocationTime.create([{open: '09:00', close: '18:30', location_id: local_test.id, day_id: 1}, {open: '09:00', close: '18:30', location_id: local_test.id, day_id: 2}, {open: '09:00', close: '18:30', location_id: local_test.id, day_id: 3}, {open: '09:00', close: '18:30', location_id: local_test.id, day_id: 4}, {open: '09:00', close: '18:30', location_id: local_test.id, day_id: 5}])
 
-	service = Service.create([{name: "Corte de pelo", price: 5500, duration: 30, company_id: test_company.id, service_category_id: service_categories_test.id}, {name: "Visos", price: 12000, duration: 45, company_id: test_company.id, service_category_id: service_categories_test.id}])
+	# service = Service.create([{name: "Corte de pelo", price: 5500, duration: 30, company_id: test_company.id, service_category_id: service_categories_test.id}, {name: "Visos", price: 12000, duration: 45, company_id: test_company.id, service_category_id: service_categories_test.id}])
 
-	Service.find(1).tags << Tag.find(1)
-	Service.find(2).tags << Tag.find(2)
+	# Service.find(1).tags << Tag.find(1)
+	# Service.find(2).tags << Tag.find(2)
 
-	admin = User.create(first_name: 'Nicolás', last_name: 'Flores', email: 'nflores@agendapro.cl', phone: '+56 9 9719 8689', role: Role.find_by_name('Administrador General'), password: '12345678', password_confirmation: '12345678', company_id: test_company.id)
+	# admin = User.create(first_name: 'Nicolás', last_name: 'Flores', email: 'nflores@agendapro.cl', phone: '+56 9 9719 8689', role: Role.find_by_name('Administrador General'), password: '12345678', password_confirmation: '12345678', company_id: test_company.id)
 
-	service_provider = ServiceProvider.create(location_id: local_test.id, company_id: test_company.id, notification_email: 'nflores@agendapro.cl', public_name: 'Provider Test')
+	# service_provider = ServiceProvider.create(location_id: local_test.id, company_id: test_company.id, notification_email: 'nflores@agendapro.cl', public_name: 'Provider Test')
 
-	service_provider.services << service
+	# service_provider.services << service
 
-	provider_times = ProviderTime.create([
-		{open: '09:00', close: '18:00', service_provider_id: 1, day_id: 1},
-		{open: '09:00', close: '18:00', service_provider_id: 1, day_id: 2},
-		{open: '09:00', close: '18:00', service_provider_id: 1, day_id: 3},
-		{open: '09:00', close: '18:00', service_provider_id: 1, day_id: 4},
-		{open: '9:00', close: '18:00', service_provider_id: 1, day_id: 5}
-	])
+	# provider_times = ProviderTime.create([
+	# 	{open: '09:00', close: '18:00', service_provider_id: 1, day_id: 1},
+	# 	{open: '09:00', close: '18:00', service_provider_id: 1, day_id: 2},
+	# 	{open: '09:00', close: '18:00', service_provider_id: 1, day_id: 3},
+	# 	{open: '09:00', close: '18:00', service_provider_id: 1, day_id: 4},
+	# 	{open: '9:00', close: '18:00', service_provider_id: 1, day_id: 5}
+	# ])
 
-	user = User.create(first_name: 'Nicolás', last_name: 'Rossi', email: 'nrossi@agendapro.cl', phone: '+56 9 8289 7145', role: Role.find_by_name('Usuario Registrado'), password: '12345678', password_confirmation: '12345678')
+	# user = User.create(first_name: 'Nicolás', last_name: 'Rossi', email: 'nrossi@agendapro.cl', phone: '+56 9 8289 7145', role: Role.find_by_name('Usuario Registrado'), password: '12345678', password_confirmation: '12345678')

@@ -18,7 +18,7 @@ $(function() {
 		},
 		messages: {
 			'user[email]': {
-				remote: jQuery.validator.format('El e-mail es incorrecto o ya existe.')
+				remote: 'El e-mail ya existe.'
 			}
 		},
 		highlight: function(element) {

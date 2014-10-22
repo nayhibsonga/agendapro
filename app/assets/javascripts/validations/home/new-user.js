@@ -15,10 +15,6 @@ $(function() {
 			'user[full_name]': {
 				required: true
 			},
-			'user[phone]': {
-				required: true,
-				rangelength: [8, 15]
-			},
 			'user[email]': {
 				required: true,
 				email: true,
@@ -45,22 +41,16 @@ $(function() {
 				alphaNumeric: $('#user_company_attributes_web_address').val(),
 				remote: '/check_company'
 			},
-			'user[company_attributes][logo]': {
-				filesize: 3145728
-			},
 			terms: {
 				required: true
 			}
 		},
 		messages: {
 			'user[email]': {
-				remote: jQuery.validator.format('{0} ya existe, puedes ingresar o agregar tu compañía <a href="/add_company">aquí</a>.')
+				remote: 'El e-mail ya existe, puedes ingresar o agregar tu compañía <a href="/add_company">aquí</a>.'
 			},
 			'user[company_attributes][web_address]': {
-				remote: jQuery.validator.format('{0} ya existe')
-			},
-			'user[company_attributes][logo]': {
-				filesize: "La imagen supera el tamaño maximo de 3 MB"
+				remote: 'La dirección web ya existe'
 			}
 		},
 		highlight: function(element) {
