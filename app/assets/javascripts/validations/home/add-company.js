@@ -32,7 +32,7 @@ $(function() {
 		},
 		messages: {
 			'company[web_address]': {
-				remote: jQuery.validator.format("{0} ya existe")
+				remote: "La dirección web ya existe"
 			},
 			'company[logo]': {
 				filesize: "La imagen supera el tamaño maximo de 3 MB"

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20141013204307) do
+ActiveRecord::Schema.define(version: 20141021220610) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -122,7 +122,6 @@ ActiveRecord::Schema.define(version: 20141013204307) do
     t.string   "web_address",                        null: false
     t.string   "logo"
     t.float    "months_active_left",  default: 0.0
-    t.integer  "economic_sector_id",                 null: false
     t.integer  "plan_id",                            null: false
     t.integer  "payment_status_id",                  null: false
     t.datetime "created_at"
@@ -134,7 +133,6 @@ ActiveRecord::Schema.define(version: 20141013204307) do
     t.date     "due_date"
   end
 
-  add_index "companies", ["economic_sector_id"], name: "index_companies_on_economic_sector_id", using: :btree
   add_index "companies", ["payment_status_id"], name: "index_companies_on_payment_status_id", using: :btree
   add_index "companies", ["plan_id"], name: "index_companies_on_plan_id", using: :btree
 
@@ -145,6 +143,16 @@ ActiveRecord::Schema.define(version: 20141013204307) do
     t.datetime "created_at"
     t.datetime "updated_at"
   end
+
+  create_table "company_economic_sectors", force: true do |t|
+    t.integer  "company_id"
+    t.integer  "economic_sector_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "company_economic_sectors", ["company_id"], name: "index_company_economic_sectors_on_company_id", using: :btree
+  add_index "company_economic_sectors", ["economic_sector_id"], name: "index_company_economic_sectors_on_economic_sector_id", using: :btree
 
   create_table "company_from_emails", force: true do |t|
     t.string   "email",                      null: false

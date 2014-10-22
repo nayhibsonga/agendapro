@@ -1,5 +1,6 @@
 class EconomicSector < ActiveRecord::Base
-	has_many :companies, dependent: :restrict_with_error
+	has_many :company_economic_sectors
+	has_many :companies, :through => :company_economic_sectors
 	has_many :tags, dependent: :destroy
 	has_many :economic_sectors_dictionaries, dependent: :destroy
 

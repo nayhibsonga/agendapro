@@ -7,12 +7,14 @@ class QuickAddController < ApplicationController
 	def quick_add_filter
 		if current_user && (current_user.role_id != Role.find_by_name("Super Admin").id) && current_user.company_id
 			@company = Company.find(current_user.company_id)
-			if @company.locations.count == 0
+			if @company.economic_sectors.count == 0
 				return
-			elsif @company.services.count == 0
+			elsif @company.locations.count == 0
 				params[:step] = 1
-			elsif @company.service_providers.count == 0
+			elsif @company.services.count == 0
 				params[:step] = 2
+			elsif @company.service_providers.count == 0
+				params[:step] = 3
 			end
 		end
 	end
@@ -33,6 +35,8 @@ class QuickAddController < ApplicationController
 		@location.company_id = current_user.company_id
 		@service.company_id = current_user.company_id
 		@service_provider.company_id = current_user.company_id
+
+		@company = current_user.company
 	end
 
 	def location_valid
@@ -132,6 +136,16 @@ class QuickAddController < ApplicationController
 	    end
   	end
 
+  	def update_company
+  		respond_to do |format|
+			if @company.update(company_params)
+				format.json { head :no_content }
+			else
+				format.json { render :layout => false, :json => { :errors => @location.errors.full_messages }, :status => 422 }
+			end
+		end
+  	end
+
   	def location_params
       params.require(:location).permit(:name, :address, :phone, :longitude, :latitude, :company_id, :district_id, :outcall, :district_ids => [], location_times_attributes: [:id, :open, :close, :day_id, :location_id, :_destroy])
     end
@@ -142,5 +156,9 @@ class QuickAddController < ApplicationController
 
     def service_params
       params.require(:service).permit(:name, :price, :duration, :description, :group_service, :capacity, :waiting_list, :company_id, :service_category_id, :outcall, service_category_attributes: [:name, :company_id],  :tag_ids => [] )
+    end
+
+    def company_params
+    	params.require(:company).permit(:logo, economic_sector_ids: [])
     end
 end
