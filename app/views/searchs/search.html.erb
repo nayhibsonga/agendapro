@@ -30,7 +30,9 @@
 									<h3 class="panel-title title-local"><%= location.company.name %></h3> 
 								</div>
 								<div class="col-sm-2">
+									<% if location.company.owned %>
 									<%= link_to 'Reservar', url_for(:host => location.company.web_address + '.' + @domain, :local => location.id, :controller => 'companies', :action => 'overview'), :class => "btn btn-agendapro-orange pull-right", :role => "button" %>
+									<% end %>
 								</div>
 							</div>
 						</div>

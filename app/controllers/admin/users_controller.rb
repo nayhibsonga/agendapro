@@ -31,11 +31,17 @@ class  Admin::UsersController < ApplicationController
   # POST /users.json
   def create
     @user = User.new(user_params)
-    @user.company_id = current_user.company_id
+    if current_user.role_id != Role.find_by_name("Super Admin").id
+      @user.company_id = current_user.company_id
+    end
     @user.password = rand(36**15).to_s(36)
 
     respond_to do |format|
       if @user.save
+        if current_user.role_id == Role.find_by_name("Super Admin").id
+          @user.company.owned = true
+          @user.company.save
+        end
         format.html { redirect_to admin_users_path, notice: 'Usuario creado exitosamente.' }
         format.json { render action: 'show', status: :created, location: @user }
       else

@@ -55,7 +55,9 @@ class ServicesController < ApplicationController
       end
     end
     @service = Service.new(new_params)
-    @service.company_id = current_user.company_id
+    if current_user.role_id != Role.find_by_name("Super Admin").id
+      @service.company_id = current_user.company_id
+    end
 
     respond_to do |format|
       if @service.save
