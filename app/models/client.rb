@@ -56,7 +56,7 @@ class Client < ActiveRecord::Base
 
   def client_identification_uniqueness
     Client.where(company_id: self.company_id).each do |client|
-      if self.indentification_number && self.identification_number != "" && client != self && client.identification_number != "" && self.identification_number == client.identification_number
+      if self.identification_number && self.identification_number != "" && client != self && client.identification_number != "" && self.identification_number == client.identification_number
         errors.add(:base, "No se pueden crear dos clientes con el mismo RUT.")
       end
     end
