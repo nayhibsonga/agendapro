@@ -181,23 +181,6 @@
               </div>
             </div>
           </div>
-          <div class="col-md-6 hidden">
-            <h3>Búsqueda</h3>
-            <div class="well">
-              <div class="form-group">
-                <%= f.label :tag, "Tags de Búsqueda", class: "col-sm-4 control-label" %>
-                <div class="col-sm-8"> 
-                  <%= f.collection_check_boxes :tag_ids, Tag.where(economic_sector: Company.find(current_user.company_id).economic_sector), :id, :name, html: {class: "checkbox"} do |b|%>
-                    <div class="checkbox">
-                      <label>
-                        <%= b.check_box %> <%= b.object.name %>
-                      </label>
-                    </div>
-                  <% end %>
-                </div>
-              </div>
-            </div>
-          </div>
         </div>
       </div>
       <div class="col-md-12">
