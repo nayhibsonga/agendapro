@@ -385,7 +385,7 @@ class BookingsController < ApplicationController
         client.phone = params[:phone]
         client.save
       else
-        flash[:alert] = "No estás ingresado como cliente o no puedes reservar. Porfavor comunícate con la empresa proveedora del servicio."
+        flash[:alert] = "No estás ingresado como cliente o no puedes reservar. Por favor comunícate con la empresa proveedora del servicio."
         @errors = ["No estás ingresado como cliente"]
         host = request.host_with_port
         @url = @company.web_address + '.' + host[host.index(request.domain)..host.length]
@@ -402,6 +402,9 @@ class BookingsController < ApplicationController
       else
         client = Client.new(email: params[:email], first_name: params[:firstName], last_name: params[:lastName], phone: params[:phone], company_id: @company.id)
         client.save
+        if client.errors
+          puts client.errors.full_messages.inspect
+        end
       end
     end
     if user_signed_in?

@@ -174,7 +174,7 @@
 							<!-- <span class="form-control-feedback"></span> -->
 							<div class="checkbox">
 				                <label>
-				                <% if params[:step] && Company.find(current_user.company_id).locations.first.outcall %>
+				                <% if params[:step] > 1 && Company.find(current_user.company_id).locations.first.outcall %>
 				                  <%= f.check_box :outcall, :checked => true, :disabled => true  %> 
 				                <% else %>
 				                	<%= f.check_box :outcall %>
@@ -276,7 +276,7 @@
 					<%= f.label :location_id, "Local:", class: "col-sm-3 control-label" %>
 					<div class="col-sm-9">
 						<% if params[:step] %>
-						<%= f.hidden_field :location_id, class: "form-control", :value => Company.find(current_user.company_id).locations.first.id if params[:step] %>
+						<%= f.hidden_field :location_id, class: "form-control", :value => Company.find(current_user.company_id).locations.first.id if params[:step] > 1 %>
 						<p class="form-control-static"><%= Company.find(current_user.company_id).locations.first.name %></p>
 						<% else %>
 						<%= f.hidden_field :location_id, class: "form-control", :value => '' %>
