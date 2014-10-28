@@ -6,35 +6,35 @@
       <div class="well">
         <div class="col-sm-6">
           <h3>Selecciona el lugar</h3>
-          <table class="table table-bordered" id="locales-empresa">
-            <tbody>
-              <% @locations.each do |local| %>
-              <tr class="<%= 'local-seleccionado' if @selectedLocal.to_i == local.id %>">
-                <td>
-                  <div class="radio">
-                    <label>
-                      <input type="radio" name="localRadio" id="localOption<%= local.id %>" value="<%= local.id %>" data-outcall="<%= local.outcall %>" <%= "checked" if @selectedLocal.to_i == local.id %> >
-                      <p>
-                        <strong><%= local.name %></strong> <br/>
-                        <%= if !local.outcall then local.address+', '+local.district.name else "A Domicilio" end %>
-                      </p>
+          <div class="fixed-scroll">
+            <table class="table table-bordered table-scroll" id="locales-empresa">
+              <tbody>
+                <% @locations.each do |local| %>
+                <tr class="<%= 'local-seleccionado' if @selectedLocal.to_i == local.id %>">
+                  <td>
+                    <div class="radio">
+                      <label>
+                        <input type="radio" name="localRadio" id="localOption<%= local.id %>" value="<%= local.id %>" data-outcall="<%= local.outcall %>" <%= "checked" if @selectedLocal.to_i == local.id %> >
+                        <p>
+                          <strong><%= local.name %></strong> <br/>
+                          <%= if !local.outcall then local.address+', '+local.district.name else "A Domicilio" end %>
+                        </p>
 
-                    </label>
-                  </div>
-                </td>
-              </tr>
-              <% end %>
-            </tbody>
-          </table>
-        </div>
-        <div class="col-sm-6">
+                      </label>
+                    </div>
+                  </td>
+                </tr>
+                <% end %>
+              </tbody>
+            </table>
+          </div>
           <div class="google-maps-empresa">
             <div id="map"></div>
           </div>
           <div id="outcallDistricts" class="well">
           </div>
         </div>
-        <div class="col-sm-6 col-sm-offset-3">
+        <div class="col-sm-6">
           <br />
           <a href="#" class="btn btn-agendapro-orange btn-lg btn-block" id="boton-agendar"><i class="fa fa-calendar"></i> AGENDAR </a>
           <div class="panel panel-info">

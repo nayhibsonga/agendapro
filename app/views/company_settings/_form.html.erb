@@ -155,11 +155,11 @@
 	  </div>
 	  <div class="tab-pane" id="embedded">
 	    <div class="row well well-white">
-	    	<h4>AgendaPro para Facebook:</h4>
+	    	<h4>AgendaPro App (pestaña) para tu página de Facebook:</h4>
 	    	<ol>
-	    		<li>Haz click en el siguiente link: <a href="https://www.facebook.com/dialog/pagetab?app_id=739120539456506&next=<%= root_url %>iframe/overview/" target="_blank">App AgendaPro para Facebook</a><br /><small>(Asegurate que hayas iniciado sesión en Facebook como administrador de la página a la que le quieres agregar reservas en línea.)</small></li>
+	    		<li>Haz click en el siguiente link: <a href="https://www.facebook.com/dialog/pagetab?app_id=739120539456506&next=<%= root_url(subdomain: 'www') %>iframe/overview/" target="_blank">App AgendaPro para Facebook</a><br /><small>(Asegúrate que hayas iniciado sesión en Facebook como administrador de la página a la que le quieres agregar reservas en línea.)</small></li>
 	    		<li>Elige la página a la que quieres agregar reservas en línea</li>
-	    		<li>En tu pagina de facebook, busca el boton <strong>“Mas”</strong> y selecciona <strong>“Administrar Pestaña”</strong></li>
+	    		<li>En tu página de facebook, busca el boton <strong>“Mas”</strong> y selecciona <strong>“Administrar Pestaña”</strong></li>
 	    		<li>Arrastra la pestaña “¡Reserva online!” a la posición que deseas (recomendamos entre las primeras 4 posiciones)</li>
 	    		<li>En la misma pagina, selecciona <strong>“configuración”</strong> luego <strong>“Información de la página”</strong></li>
 	    		<li>Busca <strong>“identificador de la página de facebook”</strong> y copia el número Ej: 345667788</li>
@@ -181,9 +181,9 @@
 			<% end %>
 		</div>
 		<div class="row well well-white">
-	    	<h4>Instrucciones para Página Web:</h4>
+	    	<h4>Agendapro directamente en tu Página Web:</h4>
 	    	<p>Simplemente pega este código en el archivo de tu página a la que quieres agregar las reservas en línea (si necesitas apoyo, puede pedir ayuda al administrador de tu página web o webmaster, o escribirnos a contacto@agendapro.cl con tus dudas).</p>
-	    	<pre class="pre-scrollable well-white">&lt;iframe src="<%= root_url(:secure => true) %>iframe/overview/<%= @company.secret_code %>" width="810" height="500" marginwidth="0" marginheight="0" frameborder="no" scrolling="yes" style="border-width:0px;" &gt;&lt;/iframe&gt;</pre>
+	    	<pre class="pre-scrollable well-white">&lt;iframe src="<%= root_url(subdomain: 'www') %>iframe/overview/<%= @company.secret_code %>" width="810" marginwidth="0" marginheight="0" frameborder="no" scrolling="yes" style="border-width:0px;" &gt;&lt;/iframe&gt;</pre>
 		</div>
 	  </div>
 	  <div class="tab-pane" id="emails">
