@@ -277,11 +277,14 @@ class BookingsController < ApplicationController
         originClass += providerLock + statusIcon[booking.status_id]
 
         title = ''
+        qtip = ''
         if booking.client.first_name
           title += booking.client.first_name
+          qtip += booking.client.first_name
         end
         if booking.client.last_name
           title += ' ' + booking.client.last_name
+          qtip += ' ' + booking.client.last_name
         end
         if booking.service.name
           title += ' - ' + booking.service.name
@@ -299,7 +302,7 @@ class BookingsController < ApplicationController
           borderColor: textColors[booking.status_id],
           backgroundColor: backColors[booking.status_id],
           className: originClass,
-          title_qtip: booking.client.first_name+' '+booking.client.last_name,
+          title_qtip: qtip,
           time_qtip: booking.start.strftime("%I:%M%p") + ' - ' + booking.end.strftime("%I:%M%p"),
           service_qtip: booking.service.name,
           phone_qtip: booking.client.phone,
