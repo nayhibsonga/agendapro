@@ -12,21 +12,16 @@ class IframeController < ApplicationController
 
 	def overview
 		if params[:signed_request]
-			puts "entra sr"
 			app_secret = "4f46d0f4f4c36a03ead5ced6c0f0ff87"
 			signed_request = FBGraph::Canvas.parse_signed_request(app_secret, params[:signed_request])
-			puts signed_request.inspect
-			puts signed_request["page"]["id"].inspect
 			page_id = signed_request["page"]["id"]
 			if CompanySetting.find_by_page_id(page_id)
-				puts "entra cs"
 				@company = CompanySetting.find_by_page_id(page_id).company
 			else
 				redirect_to '/iframe/construction'
 				return
 			end
 		elsif params[:company_id]
-			puts "entra ci"
 			crypt = ActiveSupport::MessageEncryptor.new(Agendapro::Application.config.secret_key_base)
 		    id = crypt.decrypt_and_verify(params[:company_id])
 		    @company = Company.find(id)
