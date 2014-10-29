@@ -157,6 +157,7 @@
                         </div>
                       </div>
                       <% end %>
+                      <% if @location.company.company_setting.client_exclusive %>
                       <div id="identificationNumber" class="form-group has-feedback">
                         <%= label_tag(:identification_number, "RUT", class: "col-sm-3 control-label") %>
                         <div class="col-sm-9">
@@ -165,6 +166,7 @@
                           <span class="form-control-feedback"></span>
                         </div>
                       </div>
+                      <% end %>
                       <div id="outcallAddress" class="form-group has-feedback">
                         <%= label_tag(:address, "Dirección", class: "col-sm-3 control-label") %>
                         <div class="col-sm-9">
