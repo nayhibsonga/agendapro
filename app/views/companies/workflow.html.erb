@@ -129,7 +129,6 @@
                           </div>
                         </div>
                       </div>
-                      <p id="user-message">Estas agendando como <strong><%= current_user.email %></strong><br /> Si no eres tu, haz click <a href="#" id="user-change">aquí</a></p>
                       <% else %>
                       <%= hidden_field_tag :firstName %>
                       <%= hidden_field_tag :lastName %>
@@ -158,6 +157,7 @@
                         </div>
                       </div>
                       <% end %>
+                      <% if @location.company.company_setting.client_exclusive %>
                       <div id="identificationNumber" class="form-group has-feedback">
                         <%= label_tag(:identification_number, "RUT", class: "col-sm-3 control-label") %>
                         <div class="col-sm-9">
@@ -166,6 +166,7 @@
                           <span class="form-control-feedback"></span>
                         </div>
                       </div>
+                      <% end %>
                       <div id="outcallAddress" class="form-group has-feedback">
                         <%= label_tag(:address, "Dirección", class: "col-sm-3 control-label") %>
                         <div class="col-sm-9">
@@ -229,12 +230,6 @@
     $(function() {
       compose_name('#full_name', '#firstName', '#lastName');
       split_name('#full_name', '#firstName', '#lastName');
-      $('#user-data').hide();
-      $('#user-change').click(function () {
-        $('#user-data').show();
-        $('#user-message').hide();
-        $('#foo4').trigger('updateSizes');
-      });
 
       $('#boton-servicio').click(function () {
         window.location.href = 'http://' + $('#workflow_url').data('url') + '/workflow?local=' + $('#workflow_url').data('location-id').toString();

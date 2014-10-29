@@ -276,9 +276,24 @@ class BookingsController < ApplicationController
         booking.web_origin ? originClass = 'origin-web' : originClass = 'origin-manual'
         originClass += providerLock + statusIcon[booking.status_id]
 
+        title = ''
+        qtip = ''
+        if booking.client.first_name
+          title += booking.client.first_name
+          qtip += booking.client.first_name
+        end
+        if booking.client.last_name
+          title += ' ' + booking.client.last_name
+          qtip += ' ' + booking.client.last_name
+        end
+        if booking.service.name
+          title += ' - ' + booking.service.name
+        end
+        
+
         event = {
           id: booking.id,
-          title: booking.client.first_name+' '+booking.client.last_name+' - '+booking.service.name,
+          title: title,
           allDay: false,
           start: booking.start,
           end: booking.end,
@@ -287,7 +302,7 @@ class BookingsController < ApplicationController
           borderColor: textColors[booking.status_id],
           backgroundColor: backColors[booking.status_id],
           className: originClass,
-          title_qtip: booking.client.first_name+' '+booking.client.last_name,
+          title_qtip: qtip,
           time_qtip: booking.start.strftime("%I:%M%p") + ' - ' + booking.end.strftime("%I:%M%p"),
           service_qtip: booking.service.name,
           phone_qtip: booking.client.phone,
@@ -384,8 +399,11 @@ class BookingsController < ApplicationController
         client.email = params[:email]
         client.phone = params[:phone]
         client.save
+        if client.errors
+          puts client.errors.full_messages.inspect
+        end
       else
-        flash[:alert] = "No estás ingresado como cliente o no puedes reservar. Porfavor comunícate con la empresa proveedora del servicio."
+        flash[:alert] = "No estás ingresado como cliente o no puedes reservar. Por favor comunícate con la empresa proveedora del servicio."
         @errors = ["No estás ingresado como cliente"]
         host = request.host_with_port
         @url = @company.web_address + '.' + host[host.index(request.domain)..host.length]
@@ -399,9 +417,15 @@ class BookingsController < ApplicationController
         client.last_name = params[:lastName]
         client.phone = params[:phone]
         client.save
+        if client.errors
+          puts client.errors.full_messages.inspect
+        end
       else
         client = Client.new(email: params[:email], first_name: params[:firstName], last_name: params[:lastName], phone: params[:phone], company_id: @company.id)
         client.save
+        if client.errors
+          puts client.errors.full_messages.inspect
+        end
       end
     end
     if user_signed_in?

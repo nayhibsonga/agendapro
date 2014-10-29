@@ -182,7 +182,6 @@ ActiveRecord::Schema.define(version: 20141023203158) do
     t.boolean  "client_exclusive",    default: false
     t.integer  "provider_preference"
     t.integer  "calendar_duration",   default: 15
-    t.string   "page_id"
   end
 
   add_index "company_settings", ["company_id"], name: "index_company_settings_on_company_id", using: :btree
