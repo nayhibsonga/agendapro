@@ -276,9 +276,21 @@ class BookingsController < ApplicationController
         booking.web_origin ? originClass = 'origin-web' : originClass = 'origin-manual'
         originClass += providerLock + statusIcon[booking.status_id]
 
+        title = ''
+        if booking.client.first_name
+          title += booking.client.first_name
+        end
+        if booking.client.last_name
+          title += ' ' + booking.client.last_name
+        end
+        if booking.service.name
+          title += ' - ' + booking.service.name
+        end
+        
+
         event = {
           id: booking.id,
-          title: booking.client.first_name+' '+booking.client.last_name+' - '+booking.service.name,
+          title: title,
           allDay: false,
           start: booking.start,
           end: booking.end,
