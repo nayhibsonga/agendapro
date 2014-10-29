@@ -135,7 +135,11 @@ class Client < ActiveRecord::Base
       header = spreadsheet.row(1)
       (2..spreadsheet.last_row).each do |i|
         row = Hash[[header, spreadsheet.row(i)].transpose]
-        client = Client.find_by_email(row["email"]) || Client.new
+        if row["email"] && row["email"] != ""
+          client = Client.find_by_email(row["email"]) || Client.new
+        else
+          client = Client.new
+        end
         client.attributes = row.to_hash.select { |k,v| allowed_attributes.include? k }
         if company_id
           client.company_id = company_id
