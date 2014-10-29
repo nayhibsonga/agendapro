@@ -35,13 +35,16 @@ class Client < ActiveRecord::Base
   end
 
   def valid_email
-    atpos = self.email.index("@")
-    dotpos = self.email.rindex(".")
-    if atpos && dotpos
-      if (atpos < 1) || (dotpos < atpos+2) || (dotpos+2 >= self.email.length)
-        return false
+    if self.email
+      atpos = self.email.index("@")
+      dotpos = self.email.rindex(".")
+      if atpos && dotpos
+        if (atpos < 1) || (dotpos < atpos+2) || (dotpos+2 >= self.email.length)
+          return false
+        end
+        return true
       end
-      return true
+      return false
     end
     return false
   end
