@@ -10,20 +10,22 @@ class Client < ActiveRecord::Base
 
   def client_notification
     if changed_attributes['email']
-      valid = false
-      atpos = self.email.index("@")
-      dotpos = self.email.rindex(".")
-      if atpos && dotpos
-        if (atpos < 1) || (dotpos < atpos+2) || (dotpos+2 >= self.email.length)
-          valid = false
+      if self.email
+        valid = false
+        atpos = self.email.index("@")
+        dotpos = self.email.rindex(".")
+        if atpos && dotpos
+          if (atpos < 1) || (dotpos < atpos+2) || (dotpos+2 >= self.email.length)
+            valid = false
+          end
+          valid = true
         end
-        valid = true
-      end
-      if !valid
-        Booking.where('bookings.start >= ?', Time.now - 4.hours).where(client_id: self.id).each do |booking|
-          if booking.send_mail
-            booking.send_mail = false
-            booking.save
+        if !valid
+          Booking.where('bookings.start >= ?', Time.now - 4.hours).where(client_id: self.id).each do |booking|
+            if booking.send_mail
+              booking.send_mail = false
+              booking.save
+            end
           end
         end
       end
