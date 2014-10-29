@@ -15,6 +15,7 @@ $(function() {
 				email: true
 			},
 			identification_number: {
+				required: true,
 				rut:true,
 				minlength: 2
 			},
