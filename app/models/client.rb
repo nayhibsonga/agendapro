@@ -138,8 +138,10 @@ class Client < ActiveRecord::Base
       header = spreadsheet.row(1)
       (2..spreadsheet.last_row).each do |i|
         row = Hash[[header, spreadsheet.row(i)].transpose]
-        if row["email"] && row["email"] != ""
-          client = Client.find_by_email(row["email"]) || Client.new
+        if row["email"] && row["email"] != "" && Client.where(email: row["email"], company_id: company_id).count > 0
+          client = Client.where(email: row["email"], company_id: company_id).first
+        elsif row["first_name"] && row["first_name"] != "" && row["last_name"] && row["last_name"] != "" && Client.where(first_name: row["first_name"], last_name: row["last_name"], company_id: company_id).count > 0
+          client = Client.where(first_name: row["first_name"], last_name: row["last_name"], company_id: company_id).first
         else
           client = Client.new
         end
@@ -147,7 +149,7 @@ class Client < ActiveRecord::Base
         if company_id
           client.company_id = company_id
         end
-        client.save!
+        client.save
       end
       message = "Clientes importados exitosamente."
     else
