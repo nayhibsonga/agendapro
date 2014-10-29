@@ -4,7 +4,7 @@ class Client < ActiveRecord::Base
   has_many :client_comments, dependent: :destroy
   has_many :bookings, dependent: :destroy
 
-  validate :client_mail_uniqueness
+  validate :client_mail_uniqueness, :client_identification_uniqueness
 
   after_update :client_notification
 
@@ -35,20 +35,23 @@ class Client < ActiveRecord::Base
   end
 
   def valid_email
-    atpos = self.email.index("@")
-    dotpos = self.email.rindex(".")
-    if atpos && dotpos
-      if (atpos < 1) || (dotpos < atpos+2) || (dotpos+2 >= self.email.length)
-        return false
+    if self.email
+      atpos = self.email.index("@")
+      dotpos = self.email.rindex(".")
+      if atpos && dotpos
+        if (atpos < 1) || (dotpos < atpos+2) || (dotpos+2 >= self.email.length)
+          return false
+        end
+        return true
       end
-      return true
+      return false
     end
     return false
   end
 
   def client_mail_uniqueness
     Client.where(company_id: self.company_id).each do |client|
-      if self.email != "" && client != self && client.email != "" && self.email == client.email
+      if self.email && self.email != "" && client != self && client.email != "" && self.email == client.email
         errors.add(:base, "No se pueden crear dos clientes con el mismo email.")
       end
     end
@@ -56,7 +59,7 @@ class Client < ActiveRecord::Base
 
   def client_identification_uniqueness
     Client.where(company_id: self.company_id).each do |client|
-      if self.identification_number != "" && client != self && client.identification_number != "" && self.identification_number == client.identification_number
+      if self.identification_number && self.identification_number != "" && client != self && client.identification_number != "" && self.identification_number == client.identification_number
         errors.add(:base, "No se pueden crear dos clientes con el mismo RUT.")
       end
     end
@@ -135,7 +138,11 @@ class Client < ActiveRecord::Base
       header = spreadsheet.row(1)
       (2..spreadsheet.last_row).each do |i|
         row = Hash[[header, spreadsheet.row(i)].transpose]
-        client = Client.find_by_email(row["email"]) || Client.new
+        if row["email"] && row["email"] != ""
+          client = Client.find_by_email(row["email"]) || Client.new
+        else
+          client = Client.new
+        end
         client.attributes = row.to_hash.select { |k,v| allowed_attributes.include? k }
         if company_id
           client.company_id = company_id

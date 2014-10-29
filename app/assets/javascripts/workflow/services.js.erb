@@ -84,16 +84,18 @@ function loadStep2 () {
 		$.getJSON('/providers_services', {id: serviceId, local: $('#selectedLocal').data('local').id}, function (providers) {
 			$('#staff-selector').empty();
 			if ($('#providerPreference').data('provider-preference') != 1) {
-				$('#staff-selector').append(
-					'<li class="list-group-item">' +
-						'<div class="radio">' +
-							'<label>' +
-								'<input type="radio" name="staffRadio" value="0">' +
-								'<p>Sin Preferencia</p>' +
-							'</label>' +
-						'</div>' +
-					'</li>'
-				);
+				if (providers.length > 1) {
+					$('#staff-selector').append(
+						'<li class="list-group-item">' +
+							'<div class="radio">' +
+								'<label>' +
+									'<input type="radio" name="staffRadio" value="0">' +
+									'<p>Sin Preferencia</p>' +
+								'</label>' +
+							'</div>' +
+						'</li>'
+					);
+				}
 			}
 			if ($('#providerPreference').data('provider-preference') != 2) {
 				$.each(providers, function (key, provider) {
@@ -148,12 +150,12 @@ function loadStep2 () {
 			});
 
 			if ($('#providerPreference').data('provider-preference') != 1) {
-				$('[name="staffRadio"][value="0"]').prop("checked", true);
-				$('[name="staffRadio"][value="0"]').closest('.list-group-item').addClass('selected-wf-option');
+				$('[name="staffRadio"]').first().prop("checked", true);
+				$('[name="staffRadio"]').first().closest('.list-group-item').addClass('selected-wf-option');
 				$('.horario').show();
 				$('#provider_lock').val(false);
 				var data = {
-					provider: "0",
+					provider: $('[name="staffRadio"]').first().val(),
 					local: $('#selectedLocal').data('local').id,
 					service: $('input[name="serviceRadio"]:checked').val()
 				}
@@ -192,9 +194,11 @@ function loadStep2 () {
 function loadStep3 () {
 	if ($('#clientExclusive').data('client-exclusive')) {
 		$('#identificationNumber').show();
+		$('#full_name').prop('disabled', true);
 	}
 	else {
 		$('#identificationNumber').hide();
+		$('#full_name').prop('disabled', false);
 	}
 	if ($('[name="staffRadio"]').is(':checked')){
 		if (selected) {

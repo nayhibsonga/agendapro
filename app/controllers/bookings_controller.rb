@@ -278,7 +278,7 @@ class BookingsController < ApplicationController
 
         event = {
           id: booking.id,
-          title: booking.service.name+' - '+booking.client.first_name+' '+booking.client.last_name,
+          title: booking.client.first_name+' '+booking.client.last_name+' - '+booking.service.name,
           allDay: false,
           start: booking.start,
           end: booking.end,
@@ -384,8 +384,11 @@ class BookingsController < ApplicationController
         client.email = params[:email]
         client.phone = params[:phone]
         client.save
+        if client.errors
+          puts client.errors.full_messages.inspect
+        end
       else
-        flash[:alert] = "No estás ingresado como cliente o no puedes reservar. Porfavor comunícate con la empresa proveedora del servicio."
+        flash[:alert] = "No estás ingresado como cliente o no puedes reservar. Por favor comunícate con la empresa proveedora del servicio."
         @errors = ["No estás ingresado como cliente"]
         host = request.host_with_port
         @url = @company.web_address + '.' + host[host.index(request.domain)..host.length]
@@ -399,9 +402,15 @@ class BookingsController < ApplicationController
         client.last_name = params[:lastName]
         client.phone = params[:phone]
         client.save
+        if client.errors
+          puts client.errors.full_messages.inspect
+        end
       else
         client = Client.new(email: params[:email], first_name: params[:firstName], last_name: params[:lastName], phone: params[:phone], company_id: @company.id)
         client.save
+        if client.errors
+          puts client.errors.full_messages.inspect
+        end
       end
     end
     if user_signed_in?

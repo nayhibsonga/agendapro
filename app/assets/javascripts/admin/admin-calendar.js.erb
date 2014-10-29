@@ -245,6 +245,7 @@ function loadResourcesCalendar (startTime, endTime, hiddenDays, resourcesArray, 
 			if ($.isNumeric(event.id)) {
 		       element.qtip({
 		           content: {
+		           		button: true,
 		        	   	title: event.title_qtip,
 		        	   	text: 'Horario: ' + event.time_qtip + '<br/>' +
 		        	   	'Servicio: ' + event.service_qtip + '<br/>' +
@@ -257,7 +258,12 @@ function loadResourcesCalendar (startTime, endTime, hiddenDays, resourcesArray, 
 				   },
 				   style: {
 				        classes: 'qtip-bootstrap'
-				   }
+				   },
+				   hide: {
+						event: 'click mouseleave unfocus',
+						leave: true,
+						fixed: true
+					}
 		       });
 	       	}
        	},
@@ -868,7 +874,7 @@ function saveBooking(typeURL, extraURL) {
 					originClass += providerLock + statusIcon[booking.status_id];
 					var events = {
 						id: booking.id,
-						title: booking.service_name+' - '+booking.first_name+' '+booking.last_name,
+						title: booking.first_name+' '+booking.last_name+' - '+booking.service_name,
 						allDay: false,
 						start: booking.start,
 						end: booking.end,
@@ -899,7 +905,7 @@ function saveBooking(typeURL, extraURL) {
 						originClass = 'origin-web';
 					};
 					originClass += providerLock + statusIcon[booking.status_id];
-					event.title = booking.service_name+' - '+booking.first_name+' '+booking.last_name;
+					event.title = booking.first_name+' '+booking.last_name+' - '+booking.service_name;
 					event.start = booking.start;
 					event.end = booking.end;
 					event.resourceId = booking.service_provider_id;
