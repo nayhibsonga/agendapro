@@ -1,64 +1,87 @@
-<div class="main">
-    <section class="call_to_action">
-        <div class="container">
-			<%= render 'form' %>
-        </div>
-    </section>
-    <section class="portfolio_teasers_wrapper">
+<!-- search -->
+<div class="background" style="background-image: url(<%= asset_path 'home/spa.jpg' %>)">
+    <div class="below-navbar overlay">
         <div class="container">
             <div class="row">
-                <div class="col-lg-4">
-                    <div class="box-recomendacion-md position-background" style="background-image: url(<%= asset_path 'home/spa.jpg' %>)">
-                        <a href="#" class="box-recomendacion-md overlay" data-search="SPA">
-                            <h3>SPA</h3>
-                        </a>
-                    </div>
-                    <div class="box-recomendacion-lg position-background" style="background-image: url(<%= asset_path 'home/centro_estetica.jpg' %>)">
-                        <a href="#" class="box-recomendacion-lg overlay" data-search="Clinicas y Centros de Estética">
-                            <h3>Clínicas y Centros de Estética</h3>
-                        </a>
-                    </div>
-                    <div class="box-recomendacion-md position-background" style="background-image: url(<%= asset_path 'home/medicina_alternativa.jpg' %>)">
-                        <a href="#" class="box-recomendacion-md overlay" data-search="Medicina Alternativa">
-                            <h3>Medicina Alternativa</h3>
-                        </a>
-                    </div>
+                <div class="col-sm-8">
+                    <h1 class="search-text">Busca, Encuentra y <br> Reserva tus <span class="search-text-green">Servicios en</span></h1>
                 </div>
-                <div class="col-lg-4">
-                    <div class="box-recomendacion-lg position-background " style="background-image: url(<%= asset_path 'home/peluqueria.png' %>)">
-                        <a href="#" class="box-recomendacion-lg overlay" data-search="Peluquerías">
-                            <h3>Peluquerías</h3>
-                        </a>
-                    </div>
-                    <div class="box-recomendacion-md position-background" style="background-image: url(<%= asset_path 'home/kinesiologo.jpg' %>)">
-                        <a href="#" class="box-recomendacion-md overlay" data-search="Kinesiólogos">
-                            <h3>Kinesiólogos</h3>
-                        </a>
-                    </div>
-                    <div class="box-recomendacion-md position-background" style="background-image: url(<%= asset_path 'home/taller_auto.jpg' %>)">
-                        <a href="#" class="box-recomendacion-md overlay" data-search="Talleres y Lavado de Autos">
-                            <h3>Talleres y Lavado de Autos</h3>
-                        </a>
-                    </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-2">
+                    <%= image_tag 'search/pin-overlay.png', :alt => 'Pin' %>
                 </div>
-                <div class="col-lg-4">
-                    <div class="box-recomendacion-md position-background " style="background-image: url(<%= asset_path 'home/dentista.jpg' %>)">
-                        <a href="#" class="box-recomendacion-md overlay" data-search="Dentista">
-                            <h3>Dentistas</h3>
-                        </a>
-                    </div>
-                    <div class="box-recomendacion-md position-background " style="background-image: url(<%= asset_path 'home/veterinarios.jpg' %>)">
-                        <a href="#" class="box-recomendacion-md overlay" data-search="Veterinarios">
-                            <h3>Veterinarios</h3>
-                        </a>
-                    </div>
-                    <div class="box-recomendacion-lg position-background " style="background-image: url(<%= asset_path 'home/psicologia.jpg' %>)">
-                        <a href="#" class="box-recomendacion-lg overlay" data-search="Psicólogos">
-                            <h3>Psicólogos</h3>
-                        </a>
-                    </div>
+                <div class="col-sm-10">
+                    <%= form_tag({controller: "searchs", action: "search"}, method: "GET", class: "form-horizontal") do %>
+                        <input type="hidden" id="district" name="district">
+                        <input type="hidden" id="latitude" name="latitude" value="-33.412819">
+                        <input type="hidden" id="longitude" name="longitude" value="-70.591945">
+                        <div class="row">
+                            <div class="col-sm-7">
+                                <div class="form-group">
+                                    <div class="input-group input-group-lg">
+                                        <%= text_field_tag :inputLocalization, params[:inputLocalization], class: "form-control form-transparent", placeholder: "Escribe tu dirección ..", required: true %>
+                                        <span class="input-group-btn">
+                                            <button class="btn btn-default form-transparent" type="button">Encuentrame <i class="fa fa-crosshairs"></i></button>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <%= search_field_tag :inputSearch, params[:inputSearch], class: "form-control green-placeholder", placeholder: "Ejemplo: Corte de Pelo, Masajes", :required => "true", :autofocus => "autofocus" %>
+                                </div>
+                            </div>
+                            <div class="col-sm-1">
+                                <button class="btn btn-default form-transparent" type="submit"><i class="fa fa-search"><span> Buscar</span></i></button>
+                            </div>
+                        </div>
+                    <% end %>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-12">
+                    <h3 class="clients">Algunos de nuestros clientes..</h3>
                 </div>
             </div>
         </div>
-    </section>
+    </div>
+    <div class="dark-overlay">
+        <div class="container">
+            <div class="row">
+                <div class="col-sm-2">
+                    <%= image_tag "search/cliente1.png", alt: "La Guapa Simona" %>
+                </div>
+                <div class="col-sm-2">
+                    <%= image_tag "search/cliente2.png", alt: "The Boss" %>
+                </div>
+                <div class="col-sm-2">
+                    <%= image_tag "search/cliente3.png", alt: "Miranda" %>
+                </div>
+                <div class="col-sm-2">
+                    <%= image_tag "search/cliente4.png", alt: "Nutrición Cuerpo y Alma" %>
+                </div>
+                <div class="col-sm-2">
+                    <%= image_tag "search/cliente5.png", alt: "La Banqueta" %>
+                </div>
+                <div class="col-sm-2">
+                    <%= image_tag "search/cliente7.png", alt: "Solo para Muñecas" %>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Que Hacemos -->
+<div class="background" style="background-image: url(<%= asset_path 'backgrounds/gray-background.png' %>);">
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-12">
+                <h1><p class="text-center">Que Hacemos</p></h1>
+                <p class="text-center">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur consectetur dolor enim, id suscipit mi consequat non.<a href="#"><%= image_tag "search/play1.png", alt: "play" %> Ver Video</a></p>
+            </div>
+        </div>
+    </div>
 </div>

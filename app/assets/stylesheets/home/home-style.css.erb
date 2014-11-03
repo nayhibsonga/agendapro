@@ -1,5 +1,5 @@
 @charset "UTF-8";
-
+/*CSS anterior*/
 body {
 	-webkit-font-smoothing: antialiased;
 	background: url(<%= asset_path 'backgrounds/wild_oliva_light.png' %>);
@@ -33,8 +33,8 @@ a:hover {
 }
 #logo{
 	display: inline-block;
- 	width:127px;
-  	height:39px;
+	width:127px;
+	height:39px;
 	margin: 2px 0px 0px 0px;
 	background: url(<%= asset_path 'logos/logo_agendaproVerde.png' %>);
 }
@@ -195,12 +195,12 @@ footer a:active {
 }
 
 .footer_teaser p i {
-    color: #FA4616;
+	color: #FA4616;
 }
 
 .txt-footer{
-    display:inline-block;
-    margin-right: 165px;
+	display:inline-block;
+	margin-right: 165px;
 }
 
 .copyright {
@@ -223,10 +223,10 @@ footer a:active {
 /* Estilo del Buscador Principal */
 section.call_to_action {
 	margin-bottom: 10px;
-  	text-align: center;
-  	padding: 10px 0 5px 0;/*25px 0 20px 0;*/
-  	background: url(<%= asset_path 'backgrounds/wild_oliva_light_head.png' %>);
-  	/*background: #dddfde;
+	text-align: center;
+	padding: 10px 0 5px 0;/*25px 0 20px 0;*/
+	background: url(<%= asset_path 'backgrounds/wild_oliva_light_head.png' %>);
+	/*background: #dddfde;
 	background: -moz-linear-gradient(top,  #dddfde 0%, #cbcdcc 100%);
 	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#dddfde), color-stop(100%,#cbcdcc));
 	background: -webkit-linear-gradient(top,  #dddfde 0%,#cbcdcc 100%);
@@ -237,16 +237,16 @@ section.call_to_action {
 }
 
 section.call_to_action h3 {
-  	font-weight: 300;
-  	font-size: 50px;
-  	line-height: 55px;
+	font-weight: 300;
+	font-size: 50px;
+	line-height: 55px;
 }
 
 section.call_to_action h4 {
- 	font-weight: 300;
-  	font-size: 26px;
-  	line-height: 30px;
-  	margin: 0 0 20px 0;
+	font-weight: 300;
+	font-size: 26px;
+	line-height: 30px;
+	margin: 0 0 20px 0;
 }
 
 .texto-localizacion {
@@ -262,14 +262,7 @@ section.call_to_action h4 {
 	background-color: #D55330;
 }
 
-.overlay {
-	width: 100% !important;
-	display: block;
-	background-color: rgba(0,0,0,0.4);
-	color: #ffffff;
-}
-
-.overlay:hover {
+/*.overlay:hover {
 	background-color: rgba(0,0,0,0);
 	color: #ffffff;
 	text-shadow: 2px 2px 4px #000;
@@ -279,7 +272,7 @@ section.call_to_action h4 {
 .overlay h3 {
 	margin: 20px 10px;
 	font-weight: 700;
-}
+}*/
 
 .position-background {
 	background-size: cover;
@@ -544,5 +537,157 @@ h2.section_header {
 	.icono p{
 		display:none;
 	}
+}
+
+/*CSS Nuevo*/
+
+html,
+body {
+	font-family: TradeGothicLTStd-Cn18, TradeGothicLTStd;
+	background: #ffffff;
+}
+
+/*** navbar-agendapro ***/
+.navbar-agendapro {
+  background-color: rgba(255,255,255,0);
+  border-color: rgba(255,255,255,0);
+}
+.navbar-agendapro .navbar-text {
+  color: #ffffff;
+}
+.navbar-agendapro .navbar-nav > li > a {
+	color: #ffffff;
+	text-transform: uppercase;
+	font-family: TradeGothicLTStd-Light;
+	font-size: 13px;
+}
+.navbar-agendapro .navbar-nav > li > a:hover,
+.navbar-agendapro .navbar-nav > li > a:focus {
+  color: #777;
+  background-color: transparent;
+}
+.navbar-agendapro .navbar-nav > .active > a,
+.navbar-agendapro .navbar-nav > .active > a:hover,
+.navbar-agendapro .navbar-nav > .active > a:focus {
+  color: #555;
+  background-color: #e7e7e7;
+}
+.navbar-agendapro .navbar-toggle {
+  border-color: #777;
+}
+.navbar-agendapro .navbar-toggle:hover,
+.navbar-agendapro .navbar-toggle:focus {
+  background-color: #ddd;
+}
+.navbar-agendapro .navbar-nav > .open > a,
+.navbar-agendapro .navbar-nav > .open > a:hover,
+.navbar-agendapro .navbar-nav > .open > a:focus {
+  color: #555;
+  background-color: #e7e7e7;
+}
+.navbar-brand {
+	padding: 5px 5px;
+}
+.navbar-agendapro .navbar-nav > li > a.menu-green {
+	color: #00e99f;
+	font-size: 12px;
+}
+.navbar-agendapro .navbar-nav > li > a.menu-green:hover,
+.navbar-agendapro .navbar-nav > li > a.menu-green:focus {
+  color: #777;
+  background-color: transparent;
+}
+.navbar-agendapro .navbar-nav > li > a.menu-orange {
+	color: #fd9610;
+	font-size: 12px;
+	border: 2px solid #fd9610;
+	border-radius: 5px;
+	padding: 5px;
+	margin-top: 5px;
+}
+.navbar-agendapro .navbar-nav > li > a.menu-orange:hover,
+.navbar-agendapro .navbar-nav > li > a.menu-orange:focus {
+  color: #777;
+  background-color: transparent;
+}
+
+/*** alert ***/
+.alert {
+	position: absolute;
+	margin-top: 50px;
+	width: 100%;
+	z-index: 10;
+}
+
+/*background*/
+.background {
+	background-size: 100% auto;
+	background-repeat: no-repeat;
+	color: #ffffff;
+}
+.overlay {
+	background-color: rgba(0,0,0,0.6);
+}
+.dark-overlay {
+	background-color: rgba(0,0,0,0.8);
+	padding: 20px 0;
+}
+.below-navbar {
+	padding-top: 50px;
+}
+
+/*Search Text*/
+h1, h2, h3, h4, h5, h6,
+.h1, .h2, .h3, .h4, .h5, .h6 {
+  font-family: TradeGothicLTStd-Cn18;
+}
+h1.search-text {
+	margin-top: 15%;
+	margin-bottom: 20px;
+}
+.search-text {
+	color: #ffffff;
+	text-transform: uppercase;
+	font-size: 64px;
+	font-family: TradeGothicLTStd-Cn18;
+	font-weight: 300;
+}
+.search-text-green {
+	color: #00e99f;
+}
+
+/*Search Form*/
+.form-transparent {
+	background:rgba(255,255,255,0);
+    border-color: rgba(255,255,255,1);
+    color: #ffffff;
+}
+.form-transparent:-moz-placeholder {
+  color: #ffffff;
+}
+.form-transparent::-moz-placeholder {
+  color: #ffffff;
+}
+.form-transparent:-ms-input-placeholder {
+  color: #ffffff;
+}
+.form-transparent::-webkit-input-placeholder {
+  color: #ffffff;
+}
+.green-placeholder:-moz-placeholder {
+  color: #00e99f;
+}
+.green-placeholder::-moz-placeholder {
+  color: #00e99f;
+}
+.green-placeholder:-ms-input-placeholder {
+  color: #00e99f;
+}
+.green-placeholder::-webkit-input-placeholder {
+  color: #00e99f;
+}
+.clients {
+	color: #ffffff;
+	margin-top: 20px;
 }
 
