@@ -55,6 +55,7 @@
 											<p>Tel: <%= location.phone %></p>
 											<% if !location.company.owned %>
 											<p><strong>Nota:</strong> Esta empresa no recibe reservas a través de AgendaPro, para reservar debes contactarlos directamente.</p>
+											<p>¿Esta empresa es tuya? <%= link_to "¡Reclámala!", contact_path %></p>
 											<% end %>
 										</div>
 									</div>
@@ -70,7 +71,7 @@
 									<div class="tab-pane" id="services<%=i%>">
 										<br />
 										<div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
-										<% location.company.service_categories.each do |service_category| %>
+										<% location.company.service_categories.where('id IN (?)', location.company.services.pluck(:service_category_id).uniq).each do |service_category| %>
 											<div class="panel panel-default">
 											    <div class="panel-heading panel-heading-white" role="tab" id="heading<%= service_category.id %>">
 											      <h4 class="panel-title">
