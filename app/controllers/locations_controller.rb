@@ -8,7 +8,11 @@ class LocationsController < ApplicationController
   # GET /locations
   # GET /locations.json
   def index
-    @locations = Location.where(company_id: current_user.company_id, :active => true).order(order: :asc).accessible_by(current_ability)
+    if current_user.role_id == Role.find_by_name('Super Admin').id
+      @locations = Location.where(company_id: Company.where(owned: false).pluck(:id)).order(order: :asc)
+    else
+      @locations = Location.where(company_id: current_user.company_id, :active => true).order(order: :asc).accessible_by(current_ability)
+    end
   end
 
   def inactive_index

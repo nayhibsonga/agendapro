@@ -11,7 +11,11 @@ class ServiceCategoriesController < ApplicationController
     if params[:company_id]
       @service_categories = ServiceCategory.where(:company_id => params[:company_id]).order(order: :asc)
     else
-      @service_categories = ServiceCategory.where(:company_id => current_user.company_id).order(order: :asc)
+      if current_user.role_id == Role.find_by_name('Super Admin').id
+        @service_categories = ServiceCategory.where(company_id: Company.where(owned: false).pluck(:id))
+      else
+        @service_categories = ServiceCategory.where(:company_id => current_user.company_id).order(order: :asc)
+      end
     end
   end
 
