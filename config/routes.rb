@@ -213,6 +213,8 @@ Agendapro::Application.routes.draw do
   get '/iframe/workflow/:location_id', :to => 'iframe#workflow'
   post '/iframe/book_service', :to => 'iframe#book_service'
   get '/iframe/construction', :to => 'iframe#construction'
+  get '/iframe/facebook_setup', :to => 'iframe#facebook_setup'
+  post '/iframe/facebook_submit', :to => 'iframe#facebook_submit'
   
   # Root
   get '/' => 'searchs#index', :constraints => { :subdomain => 'www' }

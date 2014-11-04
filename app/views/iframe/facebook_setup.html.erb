@@ -2,7 +2,7 @@
   <div class="container">
     <div class="row">
       <div class="well">
-      <%= form_for @facebook_page, :html => {:class => 'form-horizontal'} do |f| %>
+      <%= form_for @facebook_page, :url => '/iframe/facebook_submit', :html => {:class => 'form-horizontal'} do |f| %>
         <div class="form-group">
           <%= f.label :company_id, 'ID Página de Facebook', :class => 'col-sm-3 control-label' %>
           <div class="col-sm-5">
