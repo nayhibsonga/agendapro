@@ -11,10 +11,8 @@ class IframeController < ApplicationController
 	end
 
 	def facebook_setup
-		if params[:signed_request]
-			app_secret = "4f46d0f4f4c36a03ead5ced6c0f0ff87"
-			signed_request = FBGraph::Canvas.parse_signed_request(app_secret, params[:signed_request])
-			page_id = signed_request["page"]["id"]
+		if params[:fb_page_id]
+			page_id = params[:fb_page_id]
 			@facebook_page = FacebookPage.find_by_facebook_page_id(page_id) || FacebookPage.new
 			if @facebook_page
 				@company = @facebook_page.company
