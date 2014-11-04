@@ -27,7 +27,7 @@ class IframeController < ApplicationController
 	end
 
 	def facebook_submit
-		@facebook_page = FacebookPage.find_by_facebook_page_id(page_id) || FacebookPage.new
+		@facebook_page = FacebookPage.find_by_facebook_page_id(params[:facebook_page_id]) || FacebookPage.new
 		@facebook_page.facebook_page_id = params[:facebook_page_id]
 		@facebook_page.company_id = params[:company_id].to_i
 		@facebook_page.save
