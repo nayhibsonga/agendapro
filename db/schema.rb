@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20141021220610) do
+ActiveRecord::Schema.define(version: 20141104151018) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -131,6 +131,7 @@ ActiveRecord::Schema.define(version: 20141021220610) do
     t.boolean  "active",              default: true
     t.float    "due_amount",          default: 0.0
     t.date     "due_date"
+    t.boolean  "owned",               default: true
   end
 
   add_index "companies", ["payment_status_id"], name: "index_companies_on_payment_status_id", using: :btree
@@ -181,7 +182,6 @@ ActiveRecord::Schema.define(version: 20141021220610) do
     t.boolean  "client_exclusive",    default: false
     t.integer  "provider_preference"
     t.integer  "calendar_duration",   default: 15
-    t.string   "page_id"
   end
 
   add_index "company_settings", ["company_id"], name: "index_company_settings_on_company_id", using: :btree
@@ -228,6 +228,15 @@ ActiveRecord::Schema.define(version: 20141021220610) do
   end
 
   add_index "economic_sectors_dictionaries", ["economic_sector_id"], name: "index_economic_sectors_dictionaries_on_economic_sector_id", using: :btree
+
+  create_table "facebook_pages", force: true do |t|
+    t.integer  "company_id"
+    t.string   "facebook_page_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "facebook_pages", ["company_id"], name: "index_facebook_pages_on_company_id", using: :btree
 
   create_table "location_outcall_districts", force: true do |t|
     t.integer  "location_id"

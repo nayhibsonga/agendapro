@@ -10,13 +10,39 @@ class IframeController < ApplicationController
 		render layout: false
 	end
 
+	def facebook_setup
+		if params[:signed_request]
+			app_secret = "4f46d0f4f4c36a03ead5ced6c0f0ff87"
+			signed_request = FBGraph::Canvas.parse_signed_request(app_secret, params[:signed_request])
+			page_id = signed_request["page"]["id"]
+			@facebook_page = FacebookPage.find_by_facebook_page_id(page_id) || FacebookPage.new
+			if @facebook_page
+				@company = @facebook_page.company
+			end
+		else
+			redirect_to '/iframe/construction'
+			return
+		end
+
+		unless @company && @company.company_setting.activate_workflow && @company.active
+			redirect_to '/iframe/construction'
+			return
+		end
+		render layout: false
+	end
+
+	def facebook_submit
+		raise ""
+		@facebook_page = FacebookPage.find_by_facebook_page_id(page_id) || FacebookPage.new
+	end
+
 	def overview
 		if params[:signed_request]
 			app_secret = "4f46d0f4f4c36a03ead5ced6c0f0ff87"
 			signed_request = FBGraph::Canvas.parse_signed_request(app_secret, params[:signed_request])
 			page_id = signed_request["page"]["id"]
-			if CompanySetting.find_by_page_id(page_id)
-				@company = CompanySetting.find_by_page_id(page_id).company
+			if FacebookPage.find_by_facebook_page_id(page_id)
+				@company = FacebookPage.find_by_facebook_page_id(page_id).company
 			else
 				redirect_to '/iframe/construction'
 				return

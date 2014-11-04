@@ -165,20 +165,6 @@
 	    		<li>Busca <strong>“identificador de la página de facebook”</strong> y copia el número Ej: 345667788</li>
 	    		<li>Pega ese número en el siguiente espacio de campo de texto, y haz click en <string>"Guardar"</strong></li>
 	    	</ol>
-			<%= form_for @company_setting, :html => {:class => 'form-horizontal'} do |f| %>
-				<div class="form-group">
-					<%= f.label :page_id, 'ID Página de Facebook', :class => 'col-sm-3 control-label' %>
-					<div class="col-sm-5">
-						<%= f.text_field :page_id, class: "form-control" %>
-					</div>
-				</div>
-				<div class="form-group">
-					<div class="col-sm-offset-3 col-sm-4">
-					 <%= f.submit 'Guardar', :class => 'btn btn-agendapro-claro' %>
-					 <%= link_to 'Cancelar', dashboard_path, :class => "btn btn-default" %>
-					</div> 
-				</div>
-			<% end %>
 		</div>
 		<div class="row well well-white">
 	    	<h4>Agendapro directamente en tu Página Web:</h4>
