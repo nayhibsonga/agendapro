@@ -15,17 +15,11 @@ class IframeController < ApplicationController
 			page_id = params[:fb_page_id]
 			if FacebookPage.find_by_facebook_page_id(page_id)
 				@facebook_page = FacebookPage.find_by_facebook_page_id(page_id)
-				@company = @facebook_page.company
 			else
 				@facebook_page = FacebookPage.new
 				@facebook_page.facebook_page_id = params[:fb_page_id]
 			end
 		else
-			redirect_to '/iframe/construction'
-			return
-		end
-
-		unless @company && @company.company_setting.activate_workflow && @company.active
 			redirect_to '/iframe/construction'
 			return
 		end
