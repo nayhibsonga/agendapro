@@ -23,7 +23,7 @@ class IframeController < ApplicationController
 			redirect_to '/iframe/construction'
 			return
 		end
-		render layout: false
+		render layout: "iframe"
 	end
 
 	def facebook_submit

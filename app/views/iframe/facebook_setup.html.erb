@@ -3,8 +3,9 @@
     <div class="row">
       <div class="well">
       <%= form_for @facebook_page, :url => '/iframe/facebook_submit', :html => {:class => 'form-horizontal'} do |f| %>
+       <%= f.hidden :facebook_page_id %>
         <div class="form-group">
-          <%= f.label :company_id, 'ID Página de Facebook', :class => 'col-sm-3 control-label' %>
+          <%= f.label :company_id, 'Código AgendaPro', :class => 'col-sm-3 control-label' %>
           <div class="col-sm-5">
             <%= f.text_field :company_id, class: "form-control" %>
           </div>
