@@ -20,7 +20,7 @@ class IframeController < ApplicationController
 				@facebook_page.facebook_page_id = params[:fb_page_id]
 			end
 		else
-			redirect_to '/iframe/construction'
+			redirect_to iframe_construction_path
 			return
 		end
 		render layout: "iframe"
@@ -53,7 +53,7 @@ class IframeController < ApplicationController
 			if FacebookPage.find_by_facebook_page_id(@page_id)
 				@company = FacebookPage.find_by_facebook_page_id(@page_id).company
 			else
-				redirect_to '/iframe/construction', admin: @admin, page_id: @page_id
+				redirect_to iframe_construction_path(admin: @admin, page_id: @page_id)
 				return
 			end
 		elsif params[:company_id]
@@ -62,12 +62,12 @@ class IframeController < ApplicationController
 		    id = crypt.decrypt_and_verify(params[:company_id])
 		    @company = Company.find(id)
 		else
-			redirect_to '/iframe/construction'
+			redirect_to iframe_construction_path
 			return
 		end
 
 		unless @company.company_setting.activate_workflow && @company.active
-			redirect_to '/iframe/construction'
+			redirect_to iframe_construction_path
 			return
 		end
 		@locations = Location.where(:active => true).where(company_id: @company.id).where(id: ServiceProvider.where(active: true, company_id: @company.id).joins(:provider_times).joins(:services).where("services.id" => Service.where(active: true, company_id: @company.id).pluck(:id)).pluck(:location_id).uniq).joins(:location_times).uniq.order(order: :asc)

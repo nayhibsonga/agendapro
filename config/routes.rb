@@ -212,7 +212,7 @@ Agendapro::Application.routes.draw do
   get '/iframe/overview', :to => 'iframe#overview'
   get '/iframe/workflow/:location_id', :to => 'iframe#workflow'
   post '/iframe/book_service', :to => 'iframe#book_service'
-  get '/iframe/construction', :to => 'iframe#construction'
+  get '/iframe/construction', :to => 'iframe#construction', as: => 'iframe_construction'
   get '/iframe/facebook_setup', :to => 'iframe#facebook_setup', :as => 'facebook_setup'
   post '/iframe/facebook_submit', :to => 'iframe#facebook_submit', :as => 'facebook_submit'
   patch '/iframe/facebook_submit', :to => 'iframe#facebook_submit', :as => 'facebook_submit_edit'
