@@ -30,13 +30,24 @@ class IframeController < ApplicationController
 		@facebook_page = FacebookPage.find_by_facebook_page_id(params[:facebook_page_id]) || FacebookPage.new
 		@facebook_page.facebook_page_id = params[:facebook_page_id]
 		@facebook_page.company_id = params[:company_id].to_i
-		@facebook_page.save
+		respond_to do |format|
+			if @facebook_page.save
+				format.html { redirect_to facebook_success_path, notice: 'Página configurada Correctamente.' }
+			else
+				format.html { render action: 'facebook_setup' }
+			end
+		end
+	end
+
+	def facebook_success
+		render layout: "iframe"
 	end
 
 	def overview
 		if params[:signed_request]
 			app_secret = "4f46d0f4f4c36a03ead5ced6c0f0ff87"
 			signed_request = FBGraph::Canvas.parse_signed_request(app_secret, params[:signed_request])
+			@admin = signed_request["page"]["admin"]
 			page_id = signed_request["page"]["id"]
 			if FacebookPage.find_by_facebook_page_id(page_id)
 				@company = FacebookPage.find_by_facebook_page_id(page_id).company

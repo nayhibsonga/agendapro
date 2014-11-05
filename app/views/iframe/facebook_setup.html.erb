@@ -3,6 +3,16 @@
     <div class="row">
       <div class="well">
       <%= form_for @facebook_page, :url => '/iframe/facebook_submit', :html => {:class => 'form-horizontal'} do |f| %>
+      <% if @facebook_page.errors.any? %>
+        <div id="error_explanation">
+          <h3><%= pluralize(@facebook_page.errors.count, "error") %> no permitió que la página fuera configurada:</h3>
+          <ul>
+          <% @facebook_page.errors.full_messages.each do |msg| %>
+            <li><%= msg %></li>
+          <% end %>
+          </ul>
+        </div>
+      <% end %>
        <%= f.hidden_field :facebook_page_id %>
         <div class="form-group">
           <%= f.label :company_id, 'Código AgendaPro', :class => 'col-sm-3 control-label' %>
