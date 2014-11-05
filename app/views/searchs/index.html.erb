@@ -11,31 +11,27 @@
                 <div class="col-sm-2">
                     <%= image_tag 'search/pin-overlay.png', :alt => 'Pin' %>
                 </div>
-                <div class="col-sm-10">
-                    <%= form_tag({controller: "searchs", action: "search"}, method: "GET", class: "form-horizontal") do %>
+                <div class="col-sm-10 form-container">
+                    <%= form_tag({controller: "searchs", action: "search"}, method: "GET", class: "form-horizontal", id: "search-form") do %>
                         <input type="hidden" id="district" name="district">
                         <input type="hidden" id="latitude" name="latitude" value="-33.412819">
                         <input type="hidden" id="longitude" name="longitude" value="-70.591945">
-                        <div class="row">
-                            <div class="col-sm-7">
-                                <div class="form-group">
-                                    <div class="input-group input-group-lg">
-                                        <%= text_field_tag :inputLocalization, params[:inputLocalization], class: "form-control form-transparent", placeholder: "Escribe tu dirección ..", required: true %>
-                                        <span class="input-group-btn">
-                                            <button class="btn btn-default form-transparent" type="button">Encuentrame <i class="fa fa-crosshairs"></i></button>
-                                        </span>
-                                    </div>
+                        <div class="form-group">
+                            <div class="col-sm-6">
+                                <div class="input-group input-group-lg">
+                                    <%= text_field_tag :inputLocalization, params[:inputLocalization], class: "form-control form-transparent", placeholder: "Escribe tu dirección ..", required: true %>
+                                    <span class="input-group-btn">
+                                        <button class="btn btn-search form-transparent" type="button">Encuentrame <i class="fa fa-crosshairs"></i></button>
+                                    </span>
                                 </div>
                             </div>
                         </div>
-                        <div class="row">
+                        <div class="form-group">
                             <div class="col-sm-6">
-                                <div class="form-group">
-                                    <%= search_field_tag :inputSearch, params[:inputSearch], class: "form-control green-placeholder", placeholder: "Ejemplo: Corte de Pelo, Masajes", :required => "true", :autofocus => "autofocus" %>
-                                </div>
+                                <%= search_field_tag :inputSearch, params[:inputSearch], class: "form-control input-lg green-placeholder", placeholder: "Ejemplo: Corte de Pelo, Masajes", :required => "true", :autofocus => "autofocus" %>
                             </div>
                             <div class="col-sm-1">
-                                <button class="btn btn-default form-transparent" type="submit"><i class="fa fa-search"><span> Buscar</span></i></button>
+                                <button class="btn btn-search form-transparent btn-lg" type="submit"><i class="fa fa-search"></i> Buscar</button>
                             </div>
                         </div>
                     <% end %>
@@ -43,7 +39,7 @@
             </div>
             <div class="row">
                 <div class="col-sm-12">
-                    <h3 class="clients">Algunos de nuestros clientes..</h3>
+                    <h4 class="clients">Algunos de nuestros clientes..</h4>
                 </div>
             </div>
         </div>
@@ -80,35 +76,31 @@
         <div class="row">
             <div class="col-sm-12">
                 <h1 class="text-center text-uppercase">Que Hacemos</h1>
-                <p class="text-center">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur consectetur dolor enim, id suscipit mi consequat non.<a href="#"><%= image_tag "search/play1.png", alt: "play" %> Ver Video</a></p>
+                <p class="text-center" style="margin-top:-15px;">Sistema de Reservas Online enfocado en ayudar a pequeñas y medianas empresas en el manejo y gestión de sus negocios.<a href="#"><%= image_tag "search/play1.png", alt: "play" %></a> Ver Video</p>
             </div>
-            <div class="col-sm-12">
-                <table class="table table-bordered">
-                    <tr>
-                        <td align="center">
-                            <%= image_tag "search/search.png", alt: "Busca" %>
-                            <p class="text-uppercase">Busca</p>
-                        </td>
-                        <td align="center">
-                            <%= image_tag "search/find.png", alt: "Encuentra" %>
-                            <p class="text-uppercase">Encuentra</p>
-                        </td>
-                        <td align="center">
-                            <%= image_tag "search/booking.png", alt: "Reserva" %>
-                            <p class="text-uppercase">Reserva</p>
-                        </td>
-                    </tr>
-                </table>
+            <div class="col-sm-12 pull-center">
+                <div class="square-border">
+                    <%= image_tag "search/search.png", alt: "Busca" %>
+                    <p class="text-uppercase">Busca</p>
+                </div>
+                <div class="square-border">
+                    <%= image_tag "search/find.png", alt: "Encuentra" %>
+                    <p class="text-uppercase">Encuentra</p>
+                </div>
+                <div class="square-border">
+                    <%= image_tag "search/booking.png", alt: "Reserva" %>
+                    <p class="text-uppercase">Reserva</p>
+                </div>
             </div>
         </div>
     </div>
 </div>
 <div class="container">
-    <div class="row">
+    <div class="row text-gray">
         <div class="col-sm-12">
             <h1 class="text-center text-uppercase">¿Qué puedes encontrar?</h1>
         </div>
-        <div class="col-sm-12">
+        <div class="col-sm-12 pull-center">
             <div class="border">
                 <%= image_tag "search/spa.png", alt: "Spa" %>
                 <p>Spa</p>
@@ -139,13 +131,13 @@
             </div>
         </div>
         <div class="col-sm-12">
-            <p class="text-center">Y mas! ..</p>
+            <p class="text-center" id="margin">Y mas! ..</p>
         </div>
     </div>
 </div>
 
 <!-- Clientes -->
-<div style="background: #D8D8D8; padding: 10px 0;">
+<div style="background: #eeeeee; padding: 10px 0;">
     <div class="container">
         <div class="row">
             <div class="col-sm-2">
@@ -171,8 +163,8 @@
 </div>
 <div class="container">
     <div class="row">
-        <div class="col-sm-12">
-            <h1 class="text-center search-text-green"><i class="fa fa-quote-left fa-lg"></i></h1>
+        <div class="col-sm-12 pull-center">
+            <%= image_tag "search/quotes.png", alt: "quote" %>
         </div>
         <div class="col-sm-4">
             <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc a neque ipsum. Ut nec metus id dui feugiat volutpat. Nullam gravida lacus vel hendrerit tristique. Vivamus non ex in orci viverra viverra in sit amet nisi. Morbi eu mollis sapien. Sed ut nulla accumsan, accumsan justo non, pellentesque libero.</p>
@@ -203,6 +195,16 @@
                     <p>AgendaPro</p>
                 </div>
             </div>
+        </div>
+    </div>
+</div>
+<div class="social">
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-9">Síguenos también en nuestras redes sociales</div>
+            <div class="col-sm-1"><i class="fa fa-facebook"></i></div>
+            <div class="col-sm-1"><i class="fa fa-twitter"></i></div>
+            <div class="col-sm-1"><i class="fa fa-vimeo-square"></i></div>
         </div>
     </div>
 </div>
