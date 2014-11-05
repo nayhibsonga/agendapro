@@ -249,7 +249,7 @@
   <div class="main">
     <% if params[:admin] %>
     <div class="row">
-    <%= link_to "Configurar Página", facebook_setup_path(fb_page_id: @page_id), class: "btn btn-agendapro-claro btn-block" %>
+    <%= link_to "Configurar Página", facebook_setup_path(fb_page_id: params[:fb_page_id]) %>
     </div>
     <% end %>
     <section class="hgroup">

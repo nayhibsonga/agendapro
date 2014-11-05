@@ -53,7 +53,7 @@ class IframeController < ApplicationController
 			if FacebookPage.find_by_facebook_page_id(@page_id)
 				@company = FacebookPage.find_by_facebook_page_id(@page_id).company
 			else
-				redirect_to iframe_construction_path(admin: @admin, page_id: @page_id)
+				redirect_to iframe_construction_path(admin: @admin, fb_page_id: @page_id)
 				return
 			end
 		elsif params[:company_id]
