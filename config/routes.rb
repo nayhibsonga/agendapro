@@ -215,6 +215,7 @@ Agendapro::Application.routes.draw do
   get '/iframe/construction', :to => 'iframe#construction'
   get '/iframe/facebook_setup', :to => 'iframe#facebook_setup', :as => 'facebook_setup'
   post '/iframe/facebook_submit', :to => 'iframe#facebook_submit', :as => 'facebook_submit'
+  patch '/iframe/facebook_submit', :to => 'iframe#facebook_submit', :as => 'facebook_submit'
   get '/iframe/facebook_success', :to => 'iframe#facebook_success', :as => 'facebook_success'
   
   # Root
