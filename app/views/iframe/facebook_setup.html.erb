@@ -15,7 +15,7 @@
       <% end %>
        <%= f.hidden_field :facebook_page_id %>
         <div class="form-group">
-        <% if @facebook_page then @facebook_page.company_id = (@facebook_page.company_id * 123456).to_s(30) end %>
+        <% if @facebook_page.company_id then @facebook_page.company_id = (@facebook_page.company_id * 123456).to_s(30) end %>
           <%= f.label :company_id, 'Código AgendaPro', :class => 'col-sm-3 control-label' %>
           <div class="col-sm-5">
             <%= f.text_field :company_id, class: "form-control" %>
