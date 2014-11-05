@@ -49,14 +49,15 @@ class IframeController < ApplicationController
 			app_secret = "4f46d0f4f4c36a03ead5ced6c0f0ff87"
 			signed_request = FBGraph::Canvas.parse_signed_request(app_secret, params[:signed_request])
 			@admin = signed_request["page"]["admin"]
-			page_id = signed_request["page"]["id"]
-			if FacebookPage.find_by_facebook_page_id(page_id)
-				@company = FacebookPage.find_by_facebook_page_id(page_id).company
+			@page_id = signed_request["page"]["id"]
+			if FacebookPage.find_by_facebook_page_id(@page_id)
+				@company = FacebookPage.find_by_facebook_page_id(@page_id).company
 			else
-				redirect_to '/iframe/construction'
+				redirect_to '/iframe/construction', admin: @admin, page_id: @page_id
 				return
 			end
 		elsif params[:company_id]
+			@admin = false
 			crypt = ActiveSupport::MessageEncryptor.new(Agendapro::Application.config.secret_key_base)
 		    id = crypt.decrypt_and_verify(params[:company_id])
 		    @company = Company.find(id)

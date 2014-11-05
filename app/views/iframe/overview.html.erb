@@ -2,6 +2,11 @@
 
 <div class="main">
   <div class="container">
+  <% if @admin %>
+    <div class="row">
+    <%= link_to "Configurar Página", facebook_setup_path(fb_page_id: @page_id), class: "btn btn-agendapro-claro btn-block" %>
+    </div>
+    <% end %>
     <div class="row">
       <div class="well">
         <div class="col-sm-6">
