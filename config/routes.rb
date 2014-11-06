@@ -217,6 +217,7 @@ Agendapro::Application.routes.draw do
   post '/iframe/facebook_submit', :to => 'iframe#facebook_submit', :as => 'facebook_submit'
   patch '/iframe/facebook_submit', :to => 'iframe#facebook_submit', :as => 'facebook_submit_edit'
   get '/iframe/facebook_success', :to => 'iframe#facebook_success', :as => 'facebook_success'
+  get '/iframe/facebook_addtab', :to => 'iframe#facebook_addtab', :as => 'facebook_addtab'
   
   # Root
   get '/' => 'searchs#index', :constraints => { :subdomain => 'www' }

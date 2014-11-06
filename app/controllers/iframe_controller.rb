@@ -10,6 +10,10 @@ class IframeController < ApplicationController
 		render layout: false
 	end
 
+	def facebook_addtab
+		render layout: "home"
+	end
+
 	def facebook_setup
 		if params[:fb_page_id]
 			page_id = params[:fb_page_id]
@@ -63,6 +67,9 @@ class IframeController < ApplicationController
 			crypt = ActiveSupport::MessageEncryptor.new(Agendapro::Application.config.secret_key_base)
 		    id = crypt.decrypt_and_verify(params[:company_id])
 		    @company = Company.find(id)
+		elsif params[:tabs_added]
+			redirect_to facebook_addtab_path
+			return
 		else
 			redirect_to iframe_construction_path
 			return
