@@ -53,6 +53,7 @@ class IframeController < ApplicationController
 				@company = FacebookPage.find_by_facebook_page_id(@page_id).company
 			elsif @admin
 				redirect_to facebook_setup_path(fb_page_id: @page_id)
+				return
 			else
 				redirect_to iframe_construction_path(admin: @admin, fb_page_id: @page_id)
 				return
