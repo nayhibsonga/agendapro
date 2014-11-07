@@ -194,9 +194,9 @@ var bookingModalOpen = false;
 var duration = $('#calendar-duration').data('calendar-duration');
 function loadResourcesCalendar (startTime, endTime, hiddenDays, resourcesArray, providerId) {
 	//Default values
-	startTime = startTime || 0;
-	endTime = endTime || 24;
-	hiddenDays = hiddenDays || [];
+	startTime = 0;
+	endTime = 24;
+	hiddenDays = [];
 
 	$('#calendar').fullCalendar('removeEvents');
 	$('#calendar').empty();
@@ -329,9 +329,9 @@ function loadResourcesCalendar (startTime, endTime, hiddenDays, resourcesArray, 
 
 function loadWeekCalendar (startTime, endTime, hiddenDays, resourcesArray, providerId) {
 	//Default values
-	startTime = startTime || 0;
-	endTime = endTime || 24;
-	hiddenDays = hiddenDays || [];
+	startTime = 0;
+	endTime = 24;
+	hiddenDays = [];
 
 	$('#calendar').fullCalendar('removeEvents');
 	$('#calendar').empty();
