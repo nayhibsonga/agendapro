@@ -240,7 +240,7 @@
      <div class="container">
         <div class="green-caption">
          <h2>Página en <strong>construcción</strong></h2>
-         <p>Perdón, la compañía que estás buscando aún no se encuentra configurada para esta aplicación</p>
+         <p>Perdón, la compañía aún no ha configurado esta aplicación</p>
          <div class="clear"></div>
         </div>
      </div>
@@ -249,11 +249,6 @@
   <div class="main">
     <section class="hgroup">
       <div class="container">
-        <% if params[:admin] %>
-        <div class="row">
-        <%= link_to "Configurar Página", facebook_setup_path(fb_page_id: params[:fb_page_id]) %>
-        </div>
-        <% end %>
         <h1>Página en construcción</h1>
         <ul class="breadcrumb pull-right">
           <li class="active">¡Problema!</li>
