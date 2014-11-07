@@ -109,9 +109,7 @@ class Client < ActiveRecord::Base
         where(birth_day: Time.now.day, birth_month: Time.now.month)
       elsif option == "1"
         weekStart = Time.now.beginning_of_week
-        puts weekStart.to_s
         weekEnd = Time.now.end_of_week
-        puts weekEnd.to_s
         if weekStart.month == weekEnd.month
           where(birth_day: weekStart.day..weekEnd.day, birth_month: weekStart.month)
         else
@@ -134,19 +132,127 @@ class Client < ActiveRecord::Base
     end
   end
   def self.import(file, company_id)
-    allowed_attributes = ["email", "first_name", "last_name", "phone", "address", "district", "city", "age", "gender", "birth_day", "birth_month", "birth_year"]
+    allowed_attributes = ["email", "first_name", "last_name", "identification_number", "phone", "address", "district", "city", "age", "gender", "birth_day", "birth_month", "birth_year"]
     spreadsheet = open_spreadsheet(file)
     if !spreadsheet.nil?
       header = spreadsheet.row(1)
       (2..spreadsheet.last_row).each do |i|
         row = Hash[[header, spreadsheet.row(i)].transpose]
-        if row["email"] && row["email"] != "" && Client.where(email: row["email"], company_id: company_id).count > 0
+
+        if row["email"] && row["email"] != ""
+          row["email"] = row["email"].to_s
+        end
+
+        if row["first_name"] && row["first_name"] != ""
+          row["first_name"] = row["first_name"].to_s
+        end
+
+        if row["last_name"] && row["last_name"] != ""
+          row["last_name"] = row["last_name"].to_s
+        end
+
+        if row["phone"] && row["phone"] != ""
+          row["phone"] = row["phone"].to_s
+        end
+
+        if row["address"] && row["address"] != ""
+          row["address"] = row["address"].to_s
+        end
+
+        if row["district"] && row["district"] != ""
+          row["district"] = row["district"].to_s
+        end
+
+        if row["city"] && row["city"] != ""
+          row["city"] = row["city"].to_s
+        end
+
+        if row["age"] && row["age"] != ""
+          row["age"] = row["age"].to_i
+        end
+
+        if row["gender"] && row["gender"] != ""
+          row["gender"] = row["gender"].to_i
+        end
+
+        if row["birth_day"] && row["birth_day"] != ""
+          row["birth_day"] = row["birth_day"].to_i
+        end
+
+        if row["birth_month"] && row["birth_month"] != ""
+          row["birth_month"] = row["birth_month"].to_i
+        end
+
+        if row["birth_year"] && row["birth_year"] != ""
+          row["birth_year"] = row["birth_year"].to_i
+        end
+
+        if row["identification_number"] && row["identification_number"] != ""
+
+          cRut = row["identification_number"].to_s.gsub(/[\.\-]/, "")
+          if cRut.length == 0
+            row["identification_number"] = ''
+          elsif cRut.length == 1
+            row["identification_number"] = ''
+          else
+            cDv = cRut.split('')[cRut.length - 1]
+            cRut = cRut[0..cRut.length - 2]
+            if cDv && cRut
+              rutF = ''
+              while cRut.length > 3 do
+                rutF = "." + cRut[(cRut.length - 3)..cRut.length] + rutF
+                cRut = cRut[0..cRut.length - 4]
+              end
+              row["identification_number"] = cRut + rutF + "-" + cDv
+            else
+              row["identification_number"] = ''
+            end
+          end
+        end
+
+        if row["identification_number"] && row["identification_number"] != ""
+          rut = row["identification_number"].to_s
+          if rut.length < 8
+            row["identification_number"] = ''
+          else
+            cRut = rut.gsub(/[\.\-]/, "")
+            suma = 0
+            cDv = cRut.split('')[cRut.length - 1]
+            cRut = cRut[0..cRut.length - 2]
+            mul = 2
+            for i  in (cRut.length - 1).downto(0) do
+              suma = suma + cRut.split('')[i].to_i * mul
+              if mul == 7
+                mul = 2
+              else
+                mul += 1
+              end
+            end
+            res = suma % 11
+            if res==1
+              dvr = 'k'
+            elsif res==0
+              dvr = '0'
+            else
+              dvi = 11-res
+              dvr = dvi.to_s
+            end
+            if dvr != cDv.downcase
+              row["identification_number"] = ''
+            end
+          end
+        end
+
+        if row["identification_number"] && row["identification_number"] != "" && Client.where(identification_number: row["identification_number"], company_id: company_id).count > 0
+          client = Client.where(identification_number: row["identification_number"], company_id: company_id).first
+        elsif row["email"] && row["email"] != "" && Client.where(email: row["email"], company_id: company_id).count > 0
           client = Client.where(email: row["email"], company_id: company_id).first
         elsif row["first_name"] && row["first_name"] != "" && row["last_name"] && row["last_name"] != "" && Client.where(first_name: row["first_name"], last_name: row["last_name"], company_id: company_id).count > 0
           client = Client.where(first_name: row["first_name"], last_name: row["last_name"], company_id: company_id).first
         else
           client = Client.new
         end
+
         client.attributes = row.to_hash.select { |k,v| allowed_attributes.include? k }
         if company_id
           client.company_id = company_id
