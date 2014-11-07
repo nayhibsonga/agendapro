@@ -81,6 +81,16 @@ class CompanySettingsController < ApplicationController
   def minisite
   end
 
+  def delete_facebook_pages
+    @facebook_pages = FacebookPage.where(company_id: current_user.company_id)
+    @facebook_pages.delete_all
+    @company_setting =  CompanySetting.find(params[:id])
+    respond_to do |format|
+      format.html { redirect_to edit_company_setting_path(@company_setting), notice: 'Configuración de Facebook desactivada exitosamente.' }
+      format.json { head :no_content }
+    end
+  end
+
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_company_setting

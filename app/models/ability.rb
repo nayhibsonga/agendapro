@@ -197,6 +197,8 @@ class Ability
         can :region_cities, City
         can :city_districs, District
 
+        can :delete_facebook_pages, CompanySetting
+
     elsif user.role_id == Role.find_by_name("Administrador Local").id
 
         can :get_booking, Booking, :location_id => user.locations.pluck(:id)

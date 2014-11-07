@@ -218,6 +218,7 @@ Agendapro::Application.routes.draw do
   patch '/iframe/facebook_submit', :to => 'iframe#facebook_submit', :as => 'facebook_submit_edit'
   get '/iframe/facebook_success', :to => 'iframe#facebook_success', :as => 'facebook_success'
   get '/iframe/facebook_addtab', :to => 'iframe#facebook_addtab', :as => 'facebook_addtab'
+  get '/company_settings/:id/delete_facebook_pages', :to => 'company_settings#delete_facebook_pages', :as => 'delete_facebook_pages'
   
   # Root
   get '/' => 'searchs#index', :constraints => { :subdomain => 'www' }
