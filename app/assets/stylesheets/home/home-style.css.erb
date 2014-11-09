@@ -556,6 +556,13 @@ body {
 	background: #ffffff;
 }
 
+.pull-center {
+	text-align: center;
+	display: block;
+	margin-left: auto;
+	margin-right: auto;
+}
+
 /*** navbar-agendapro ***/
 .navbar-agendapro {
   background-color: rgba(255,255,255,0);
@@ -649,6 +656,14 @@ body {
 	background-position: center center;
 	color: #ffffff;
 }
+.background-grey {
+	background-color: #eeeeee;
+	padding: 10px 0;
+}
+.background-green {
+	background-color: #00e99f;
+	padding: 20px 0 10px;
+}
 .overlay {
 	background-color: rgba(0,0,0,0.6);
 }
@@ -739,6 +754,7 @@ h1.search-text {
 	margin-top: 10%;
 }
 
+/*Waht we do*/
 .text-gray {
 	color: #767676;
 }
@@ -749,34 +765,28 @@ h1.search-text {
 	margin-top: 15px;
 	margin-bottom: 20px;
 }
-.pull-center {
-	text-align: center;
-	display: block;
-	margin-left: auto;
-	margin-right: auto;
-}
-.square-border:after,
-.square-border:before {
-	display: table;
-	content: "";
-}
-.square-border {
+.box-content {
 	padding: 20px 50px;
-	border: 1px solid #ddd;
 	text-align: center;
-	display: inline-table;
-	margin-bottom: 30px;
-	width: 25%;
+	display: inline-block;
+	width: 33.09%;
 }
-.square-border > p {
+.box-content > p {
 	padding-top: 9px;
 }
-.border:after,
-.border:before {
-	display: table;
-	content: "";
+.row-border {
+	border-bottom: 1px solid #ddd;
+	border-top: 1px solid #ddd;
+	margin-bottom: 30px;
+	width: 75.5%;
 }
-.border {
+.box-border-right {
+	border-right: 1px solid #ddd;
+}
+.box-border-left {
+	border-left: 1px solid #ddd;
+}
+.border-box {
 	padding: 5px;
 	margin: 5px 10px;
 	border: 1px solid #ddd;
@@ -784,19 +794,35 @@ h1.search-text {
 	text-align: center;
 	display: inline-table;
 }
-.border > p {
+.border-box > p {
 	padding-top: 9px;
 }
 
-.bigger {
-	font-family: Arial;
-	font-size: 164px;
-}
-
+/*clients*/
 .social {
 	font-size: 24px;
 	color: #ffffff;
-	background: #00e99f;
-	padding: 10px 0;
 }
+.fa-green {
+	color: #00e99f;
+}
+.social-facebook:hover {
+	color: #3b5998;
+}
+.social-twitter:hover {
+	color: #55acee;
+}
+.social-vimeo:hover {
+	color: #4bf;
+}
+/*.round {
+	border: 1px solid #ffffff;
+	border-radius: 100px;
+	display: inline-block;
+	padding: 12px 0 0 14px;
+	width: 50px;
+	height: 50px;
+	background-color: #ffffff;
+	color: #00e99f;
+}*/
 

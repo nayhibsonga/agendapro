@@ -78,18 +78,20 @@
                 <h1 class="text-center text-uppercase">Que Hacemos</h1>
                 <p class="text-center" style="margin-top:-15px;">Sistema de Reservas Online enfocado en ayudar a pequeñas y medianas empresas en el manejo y gestión de sus negocios.<a href="#"><%= image_tag "search/play1.png", alt: "play" %></a> Ver Video</p>
             </div>
-            <div class="col-sm-12 pull-center">
-                <div class="square-border">
-                    <%= image_tag "search/search.png", alt: "Busca" %>
-                    <p class="text-uppercase">Busca</p>
-                </div>
-                <div class="square-border">
-                    <%= image_tag "search/find.png", alt: "Encuentra" %>
-                    <p class="text-uppercase">Encuentra</p>
-                </div>
-                <div class="square-border">
-                    <%= image_tag "search/booking.png", alt: "Reserva" %>
-                    <p class="text-uppercase">Reserva</p>
+            <div class="col-sm-12">
+                <div class="row-border pull-center">
+                    <div class="box-content box-border-left">
+                        <%= image_tag "search/search.png", alt: "Busca" %>
+                        <p class="text-uppercase">Busca</p>
+                    </div>
+                    <div class="box-content box-border-left box-border-right">
+                        <%= image_tag "search/find.png", alt: "Encuentra" %>
+                        <p class="text-uppercase">Encuentra</p>
+                    </div>
+                    <div class="box-content box-border-right">
+                        <%= image_tag "search/booking.png", alt: "Reserva" %>
+                        <p class="text-uppercase">Reserva</p>
+                    </div>
                 </div>
             </div>
         </div>
@@ -101,31 +103,31 @@
             <h1 class="text-center text-uppercase">¿Qué puedes encontrar?</h1>
         </div>
         <div class="col-sm-12 pull-center">
-            <div class="border">
+            <div class="border-box">
                 <%= image_tag "search/spa.png", alt: "Spa" %>
                 <p>Spa</p>
             </div>
-            <div class="border">
+            <div class="border-box">
                 <%= image_tag "search/peluqueria.png", alt: "Peluquerías" %>
                 <p>Peluquerías</p>
             </div>
-            <div class="border">
+            <div class="border-box">
                 <%= image_tag "search/dentista.png", alt: "Dentistas" %>
                 <p>Dentistas</p>
             </div>
-            <div class="border">
+            <div class="border-box">
                 <%= image_tag "search/centros_estetica.png", alt: "Clinicas y Centros de Estetica" %>
                 <p>Clinicas y Centros de Estetica</p>
             </div>
-            <div class="border">
+            <div class="border-box">
                 <%= image_tag "search/veterinarios.png", alt: "Veterinarios" %>
                 <p>Veterinarios</p>
             </div>
-            <div class="border">
+            <div class="border-box">
                 <%= image_tag "search/medicina_alternativa.png", alt: "Medicina Alternativa" %>
                 <p>Medicina Alternativa</p>
             </div>
-            <div class="border">
+            <div class="border-box">
                 <%= image_tag "search/lavado_autos.png", alt: "Talleres y Lavado de Autos" %>
                 <p>Talleres y Lavado de Autos</p>
             </div>
@@ -137,7 +139,7 @@
 </div>
 
 <!-- Clientes -->
-<div style="background: #eeeeee; padding: 10px 0;">
+<div class="background background-grey">
     <div class="container">
         <div class="row">
             <div class="col-sm-2">
@@ -198,13 +200,40 @@
         </div>
     </div>
 </div>
-<div class="social">
+<div class="background background-green social">
     <div class="container">
         <div class="row">
             <div class="col-sm-9">Síguenos también en nuestras redes sociales</div>
-            <div class="col-sm-1"><i class="fa fa-facebook"></i></div>
-            <div class="col-sm-1"><i class="fa fa-twitter"></i></div>
-            <div class="col-sm-1"><i class="fa fa-vimeo-square"></i></div>
+            <div class="col-sm-1">
+                <span class="fa-stack fa-lg">
+                    <i class="fa fa-circle fa-stack-2x"></i>
+                    <i class="fa fa-facebook fa-stack-1x fa-green social-facebook"></i>
+                </span>
+            </div>
+            <div class="col-sm-1">
+                <span class="fa-stack fa-lg">
+                    <i class="fa fa-circle fa-stack-2x"></i>
+                    <i class="fa fa-twitter fa-stack-1x fa-green social-twitter"></i>
+                </span>
+            </div>
+            <div class="col-sm-1">
+                <span class="fa-stack fa-lg">
+                    <i class="fa fa-circle fa-stack-2x"></i>
+                    <i class="fa fa-vimeo-square fa-stack-1x fa-green social-vimeo"></i>
+                </span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- contact -->
+<div class="container">
+    <div class="row">
+        <div class="col-sm-12">
+            <h1 class="pull-center text-gray text-uppercase">Contáctanos</h1>
+        </div>
+        <div class="col-sm-12">
+            <iframe width="100%" height="350" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" src="https://www.google.cl/maps/ms?msa=0&amp;msid=203242437679709703522.0004eac6d6f055db0f016&amp;hl=es-419&amp;ie=UTF8&amp;t=m&amp;ll=-33.413013,-70.5919&amp;spn=0.003134,0.00457&amp;z=17&amp;output=embed"></iframe><br /><small>Ver <a href="https://www.google.cl/maps/ms?msa=0&amp;msid=203242437679709703522.0004eac6d6f055db0f016&amp;hl=es-419&amp;ie=UTF8&amp;t=m&amp;ll=-33.413013,-70.5919&amp;spn=0.003134,0.00457&amp;z=17&amp;source=embed" style="color:#0000FF;text-align:left">AgendaPro</a> en un mapa ampliado</small>
         </div>
     </div>
 </div>
