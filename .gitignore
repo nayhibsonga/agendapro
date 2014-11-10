@@ -31,3 +31,6 @@ public/assets/
 
 # Archivos de Mac OS X
 *.DS*
+
+# Archivos de RubyMine
+*.idea*
