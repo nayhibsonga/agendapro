@@ -107,11 +107,13 @@
                   <span class="form-control-feedback"></span>
                 </div>
               </div>
+              <% if current_user.role_id != Role.find_by_name("Super Admin").id %>
               <div class="form-group">
                 <div class="col-sm-offset-3 col-sm-9">
                   <button type="button" class="btn btn-sm btn-agendapro-claro" data-toggle="modal" data-target="#serviceCategoryModal"><i class="fa fa-plus"></i> Nueva Categoría de Servicio</button>
                 </div>
               </div>
+              <% end %>
             </div>
           </div>
         </div>
