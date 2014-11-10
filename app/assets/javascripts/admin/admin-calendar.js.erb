@@ -231,6 +231,7 @@ function loadResourcesCalendar (startTime, endTime, hiddenDays, resourcesArray, 
 				if (!bookingModalOpen) {
 					bookingModalOpen = true;
 					createBookingModal(date, resourceId);
+
 				};
 				$('.popover').hide();
 			});
@@ -567,7 +568,7 @@ function editBookingModal(eventId) {
 			$('.booking-modal-title').append('Editando Reserva');
 			$('.booking-modal-footer').append(
 				'<a class="btn btn-agendapro-oscuro pull-left" href="/bookings/' + eventId + '.pdf">Imprimir</a>' +
-				'<button type="button" class="btn btn-default booking-button" data-dismiss="modal">Cerrar</button>' +
+				'<button type="button" class="btn btn-default btn-close booking-button" data-dismiss="modal">Cerrar</button>' +
 				'<button type="button" class="btn btn-agendapro-claro booking-button" onclick="editBooking('+eventId+')">Guardar</button>'
 			);
 			$('#cancelBookingDiv').remove();
@@ -679,7 +680,7 @@ function createBookingModal(date, provider_id) {
 			$('.booking-modal-footer').empty();
 			$('.booking-modal-title').append('Nueva Reserva');
 			$('.booking-modal-footer').append(
-				'<button type="button" class="btn btn-default booking-button" data-dismiss="modal">Cerrar</button>' +
+				'<button type="button" class="btn btn-default btn-close booking-button" data-dismiss="modal">Cerrar</button>' +
 				'<button type="button" class="btn btn-agendapro-claro booking-button" onclick="createBooking()">Guardar</button>'
 			);
 
@@ -696,8 +697,8 @@ function createBookingModal(date, provider_id) {
 					modalChange();
 				});
 			};
-			$('#booking-tab').tab('show');
-			$('#bookingModal').modal('show');	
+            $('#booking-tab').tab('show');
+            $('#bookingModal').modal('show');
 		}
 		else {
 			alert('Este local no tiene prestadores o servicios\nPor favor completa los datos necesarios para poder generar reservas en este local.');
@@ -710,7 +711,7 @@ function createBookingModal(date, provider_id) {
 function editBooking(eventId) {
 	if ($('#new_booking').valid()) {
 		$('.booking-button').attr("disabled", "disabled");
-		$('.booking-modal-footer').prepend('<%= image_tag "small-loader.gif", :alt => "Loader", :id => "small_loader" %>');
+        $( '<%= image_tag "small-loader.gif", :alt => "Loader", :id => "small_loader" %>' ).insertBefore( $( ".btn-close" ) );
 		saveBooking('PATCH','/'+eventId);
 	};
 }
@@ -718,15 +719,15 @@ function editBooking(eventId) {
 function createBooking() {
 	if ($('#new_booking').valid()) {
 		$('.booking-button').attr("disabled", "disabled");
-		$('.booking-modal-footer').prepend('<%= image_tag "small-loader.gif", :alt => "Loader", :id => "small_loader" %>');
+        $( '<%= image_tag "small-loader.gif", :alt => "Loader", :id => "small_loader" %>' ).insertBefore( $( ".btn-close" ) );
 		saveBooking('POST','');
 	};
 }
 
 function deleteBooking(eventId) {
 	if (confirm('¿Estás seguro que quieres cancelar esta reserva?\nEsta acción no se puede revertir.')) {
-		$('.booking-button').attr("disabled", "disabled");
-		$('.booking-modal-footer').prepend('<%= image_tag "small-loader.gif", :alt => "Loader", :id => "small_loader" %>');
+        $('.booking-button').attr("disabled", "disabled");
+        $( '<%= image_tag "small-loader.gif", :alt => "Loader", :id => "small_loader" %>' ).insertBefore( $( ".btn-close" ) );
 		saveBooking('DELETE','/'+eventId);
 	};
 }
@@ -996,8 +997,10 @@ function saveBreak (typeURL, extraURL) {
 					borderColor: textColors[0],
 					backgroundColor: backColors[0]
 				};
-				$('#calendar').fullCalendar('renderEvent', events, true);
-				$('#breakModal').modal('hide');
+                $('.break-button').attr("disabled", "disabled");
+                $( '<%= image_tag "small-loader.gif", :alt => "Loader", :id => "small_loader" %>' ).insertBefore( $( ".btn-close" ) );
+                $('#calendar').fullCalendar('renderEvent', events, true);
+                $('#breakModal').modal('hide');
 				break;
 			case 'PATCH':
 				var label = provider_break.name;
@@ -1009,12 +1012,16 @@ function saveBreak (typeURL, extraURL) {
 				event.start = provider_break.start;
 				event.end = provider_break.end;
 				event.resourceId = parseInt(provider_break.service_provider_id);
-				$('#calendar').fullCalendar('updateEvent', event);
-				$('#breakModal').modal('hide');
+                $('.break-button').attr("disabled", "disabled");
+                $( '<%= image_tag "small-loader.gif", :alt => "Loader", :id => "small_loader" %>' ).insertBefore( $( ".btn-close" ) );
+                $('#calendar').fullCalendar('updateEvent', event);
+                $('#breakModal').modal('hide');
 				break;
 			case 'DELETE':
-				$('#calendar').fullCalendar('removeEvents','b'+provider_break.id);
-				$('#breakModal').modal('hide');
+                $('.break-button').attr("disabled", "disabled");
+                $( '<%= image_tag "small-loader.gif", :alt => "Loader", :id => "small_loader" %>' ).insertBefore( $( ".btn-close" ) );
+                $('#calendar').fullCalendar('removeEvents','b'+provider_break.id);
+                $('#breakModal').modal('hide');
 				break;
 			}
 		},
@@ -1088,8 +1095,8 @@ function createBreakModal(date, providerId) {
 	$('#provider_break_name').val('');
 	$('.break-modal-footer').empty();
 	$('.break-modal-footer').append(
-		'<button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>' +
-		'<button type="button" class="btn btn-agendapro-claro" id="save_break" onClick="saveBreak(\'POST\',\'\')">Guardar</button>'
+		'<button type="button" class="btn btn-default btn-close break-button" data-dismiss="modal">Cerrar</button>' +
+		'<button type="button" class="btn btn-agendapro-claro break-button" id="save_break" onClick="saveBreak(\'POST\',\'\')">Guardar</button>'
 	);
 	$('#breakModal').modal('show');
 }
@@ -1124,7 +1131,7 @@ function editBreakModal(breakId) {
 		$('#provider_break_service_provider_id option[value="'+provider_break.service_provider_id+'"]').attr("selected",true);;
 		$('.break-modal-footer').empty();
 		$('.break-modal-footer').append(
-			'<button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>' +
+			'<button type="button" class="btn btn-default btn-close" data-dismiss="modal">Cerrar</button>' +
 			'<button type="button" class="btn btn-danger" id="destroy_break" onClick="saveBreak(\'DELETE\',\'/'+breakId+'\')">Eliminar</button>' +
 			'<button type="button" class="btn btn-agendapro-claro" id="edit_break" onClick="saveBreak(\'PATCH\',\'/'+breakId+'\')">Guardar</button>'
 		);
