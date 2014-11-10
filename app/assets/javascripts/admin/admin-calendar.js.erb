@@ -250,7 +250,8 @@ function loadResourcesCalendar (startTime, endTime, hiddenDays, resourcesArray, 
 		        	   	text: 'Horario: ' + event.time_qtip + '<br/>' +
 		        	   	'Servicio: ' + event.service_qtip + '<br/>' +
 		        	   	'Teléfono: ' + event.phone_qtip + '<br/>' +
-		        	   	'E-mail: ' + event.email_qtip
+		        	   	'E-mail: ' + event.email_qtip + '<br/>' +
+		        	   	'Comentario: ' + event.comment_qtip
 		           },
 		           position: {
 					   	my: 'bottom center',  // el triángulo sale de abajo al medio
@@ -375,22 +376,31 @@ function loadWeekCalendar (startTime, endTime, hiddenDays, resourcesArray, provi
 		
 		eventRender: function(event, element) {
 	       if ($.isNumeric(event.id)) {
-		       element.qtip({
-		           content: {
-		        	   	title: event.title_qtip,
-		        	   	text: 'Horario: ' + event.time_qtip + '<br/>' +
-		        	   	'Servicio: ' + event.service_qtip + '<br/>' +
-		        	   	'Teléfono: ' + event.phone_qtip + '<br/>' +
-		        	   	'E-mail: ' + event.email_qtip
-		           },
-		           position: {
-					   my: 'bottom center',  // el triángulo sale de abajo al medio
-					   at: 'top center' // se ubica arriba del elemento en cuestión
-				   },
-				   style: {
-				        classes: 'qtip-bootstrap'
-				   }
-		       });
+               if ($.isNumeric(event.id)) {
+                   element.qtip({
+                       content: {
+                           button: true,
+                           title: event.title_qtip,
+                           text: 'Horario: ' + event.time_qtip + '<br/>' +
+                                   'Servicio: ' + event.service_qtip + '<br/>' +
+                                   'Teléfono: ' + event.phone_qtip + '<br/>' +
+                                   'E-mail: ' + event.email_qtip + '<br/>' +
+                                   'Comentario: ' + event.comment_qtip
+                       },
+                       position: {
+                           my: 'bottom center',  // el triángulo sale de abajo al medio
+                           at: 'top center' // se ubica arriba del elemento en cuestión
+                       },
+                       style: {
+                           classes: 'qtip-bootstrap'
+                       },
+                       hide: {
+                           event: 'click mouseleave unfocus',
+                           leave: true,
+                           fixed: true
+                       }
+                   });
+               }
 	       	}
 	    },
 		firstDay: 1,	//Lunes
@@ -751,7 +761,6 @@ function jsonBooking() {
 	return jsBooking;
 }
 
-
 function editDrag(event) {
 	var startDate = new Date(event.start);
 	var endDate = new Date(event.end);
@@ -824,9 +833,24 @@ function editDrag(event) {
 					};
 					originClass += providerLock + statusIcon[booking.status_id];
 					event.className = originClass;
+					event.title = booking.first_name+' '+booking.last_name+' - '+booking.service_name;
+					event.start = booking.start;
+					event.end = booking.end;
+					event.resourceId = booking.service_provider_id;
+					event.textColor = textColors[booking.status_id];
+					event.borderColor = textColors[booking.status_id];
+					event.backgroundColor = backColors[booking.status_id];
+					event.className = originClass;
+					event.title_qtip = booking.first_name+' '+booking.last_name;
+					event.time_qtip = booking.start.substring(11,16) + ' - ' + booking.end.substring(11,16);
+					event.service_qtip = booking.service_name;
+					event.phone_qtip = booking.phone;
+					event.email_qtip = booking.email;
+					event.comment_qtip = booking.company_comment;
 					$('#calendar').fullCalendar('updateEvent', event);
 					alert("Reserva actualizada exitosamente.");
 					// alertId.showAlert("Horario de la reserva cambiado exitosamente.");
+
 				},
 				error: function(xhr){
 					var errors = $.parseJSON(xhr.responseText).errors;
@@ -887,7 +911,8 @@ function saveBooking(typeURL, extraURL) {
 						time_qtip: booking.start.substring(11,16) + ' - ' + booking.end.substring(11,16),
 						service_qtip: booking.service_name,
 						phone_qtip: booking.phone,
-						email_qtip: booking.email
+						email_qtip: booking.email,
+						comment_qtip: booking.company_comment
 					};
 					$('#calendar').fullCalendar('renderEvent', events, true);
 				}
@@ -918,6 +943,7 @@ function saveBooking(typeURL, extraURL) {
 					event.service_qtip = booking.service_name;
 					event.phone_qtip = booking.phone;
 					event.email_qtip = booking.email;
+					event.comment_qtip = booking.company_comment;
 					$('#calendar').fullCalendar('updateEvent', event);
 				}
 				else {
