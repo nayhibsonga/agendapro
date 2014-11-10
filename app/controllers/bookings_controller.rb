@@ -278,6 +278,10 @@ class BookingsController < ApplicationController
 
         title = ''
         qtip = ''
+        phone = ''
+        email = ''
+        comment = ''
+
         if booking.client.first_name
           title += booking.client.first_name
           qtip += booking.client.first_name
@@ -289,7 +293,20 @@ class BookingsController < ApplicationController
         if booking.service.name
           title += ' - ' + booking.service.name
         end
-        
+
+        # Se verifica que existan los datos y en caso contrario, se deja como string vacío para evitar nulos en los Qtips
+
+        if booking.client.phone
+          phone = booking.client.phone
+        end
+
+        if booking.client.email
+          email = booking.client.email
+        end
+
+        if booking.company_comment
+          comment = booking.company_comment
+        end        
 
         event = {
           id: booking.id,
@@ -303,10 +320,11 @@ class BookingsController < ApplicationController
           backgroundColor: backColors[booking.status_id],
           className: originClass,
           title_qtip: qtip,
-          time_qtip: booking.start.strftime("%I:%M%p") + ' - ' + booking.end.strftime("%I:%M%p"),
+          time_qtip: booking.start.strftime("%H:%M") + ' - ' + booking.end.strftime("%H:%M"),
           service_qtip: booking.service.name,
-          phone_qtip: booking.client.phone,
-          email_qtip: booking.client.email
+          phone_qtip: phone,
+          email_qtip: email,
+          comment_qtip: comment
         }
         events.push(event)
       end
