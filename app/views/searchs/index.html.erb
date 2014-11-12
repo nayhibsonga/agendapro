@@ -48,22 +48,22 @@
         <div class="container">
             <div class="row">
                 <div class="col-sm-2">
-                    <%= image_tag "search/cliente1.png", alt: "La Guapa Simona" %>
+                    <%= image_tag "search/laguapasimona1.png", alt: "La Guapa Simona", size: "92x65" %>
                 </div>
                 <div class="col-sm-2">
-                    <%= image_tag "search/cliente2.png", alt: "The Boss" %>
+                    <%= image_tag "search/theboss1.png", alt: "The Boss", size: "92x65" %>
                 </div>
                 <div class="col-sm-2">
-                    <%= image_tag "search/cliente3.png", alt: "Miranda" %>
+                    <%= image_tag "search/miranda1.png", alt: "Miranda", size: "92x65" %>
                 </div>
                 <div class="col-sm-2">
-                    <%= image_tag "search/cliente4.png", alt: "Nutrición Cuerpo y Alma" %>
+                    <%= image_tag "search/nutricioncuerpoyalma1.png", alt: "Nutrición Cuerpo y Alma", size: "92x65" %>
                 </div>
                 <div class="col-sm-2">
-                    <%= image_tag "search/cliente5.png", alt: "La Banqueta" %>
+                    <%= image_tag "search/labanqueta1.png", alt: "La Banqueta", size: "92x65" %>
                 </div>
                 <div class="col-sm-2">
-                    <%= image_tag "search/cliente7.png", alt: "Solo para Muñecas" %>
+                    <%= image_tag "search/soloparamunecas1.png", alt: "Solo para Muñecas", size: "92x65" %>
                 </div>
             </div>
         </div>
@@ -143,22 +143,22 @@
     <div class="container">
         <div class="row">
             <div class="col-sm-2">
-                <%= image_tag "search/cliente1.png", alt: "La Guapa Simona" %>
+                <%= image_tag "search/laguapasimona1.png", alt: "La Guapa Simona" %>
             </div>
             <div class="col-sm-2">
-                <%= image_tag "search/cliente2.png", alt: "The Boss" %>
+                <%= image_tag "search/theboss1.png", alt: "The Boss" %>
             </div>
             <div class="col-sm-2">
-                <%= image_tag "search/cliente3.png", alt: "Miranda" %>
+                <%= image_tag "search/miranda1.png", alt: "Miranda" %>
             </div>
             <div class="col-sm-2">
-                <%= image_tag "search/cliente4.png", alt: "Nutrición Cuerpo y Alma" %>
+                <%= image_tag "search/nutricioncuerpoyalma1.png", alt: "Nutrición Cuerpo y Alma" %>
             </div>
             <div class="col-sm-2">
-                <%= image_tag "search/cliente5.png", alt: "La Banqueta" %>
+                <%= image_tag "search/labanqueta1.png", alt: "La Banqueta" %>
             </div>
             <div class="col-sm-2">
-                <%= image_tag "search/cliente7.png", alt: "Solo para Muñecas" %>
+                <%= image_tag "search/soloparamunecas1.png", alt: "Solo para Muñecas" %>
             </div>
         </div>
     </div>
@@ -233,7 +233,54 @@
             <h1 class="pull-center text-gray text-uppercase">Contáctanos</h1>
         </div>
         <div class="col-sm-12">
-            <iframe width="100%" height="350" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" src="https://www.google.cl/maps/ms?msa=0&amp;msid=203242437679709703522.0004eac6d6f055db0f016&amp;hl=es-419&amp;ie=UTF8&amp;t=m&amp;ll=-33.413013,-70.5919&amp;spn=0.003134,0.00457&amp;z=17&amp;output=embed"></iframe><br /><small>Ver <a href="https://www.google.cl/maps/ms?msa=0&amp;msid=203242437679709703522.0004eac6d6f055db0f016&amp;hl=es-419&amp;ie=UTF8&amp;t=m&amp;ll=-33.413013,-70.5919&amp;spn=0.003134,0.00457&amp;z=17&amp;source=embed" style="color:#0000FF;text-align:left">AgendaPro</a> en un mapa ampliado</small>
+            <iframe src="https://mapsengine.google.com/map/u/0/embed?mid=zxyVW9hDKDEg.kYaUAImoWzTg&amp;hl=es-419&amp;z=17" width="100%" height="350"></iframe>
+        </div>
+        <div class="col-sm-12">
+            <%= form_tag("pcontact", method: "post", id: 'contact' ) do %>
+                <%= hidden_field_tag :inputName %>
+                <%= hidden_field_tag :inputLastname %>
+                <div class="row">
+                    <div class="col-sm-6">
+                        <div class="form-group has-feedback">
+                            <label for="full_name" class="label-contacto">Nombre</label>
+                            <input type="text" id="full_name" name="user[full_name]" class="form-control" placeholder="Nombre completo" required>
+                            <span class="help-block"></span>
+                            <span class="form-control-feedback"></span>
+                        </div>
+                        <div class="form-group has-feedback">
+                            <%= label_tag(:inputEmail, 'E-mail', :class => "label-contacto") %>
+                            <%= email_field_tag(:inputEmail, nil, :class => "form-control", :placeholder => 'mail@dominio.com', :required => true) %>
+                            <span class="help-block"></span>
+                            <span class="form-control-feedback"></span>
+                        </div>
+                        <div class="form-group">
+                            <%= label_tag(:inputSubject, "Asunto", :class => "label-contacto") %>
+                            <%= text_field_tag(:inputSubject, nil, :class => "form-control", :required => true) %>
+                            <span class="help-block"></span>
+                            <span class="form-control-feedback"></span>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="form-group has-feedback">
+                            <%= label_tag(:inputMessage, "Mensaje", :class => "label-contacto") %>
+                            <%= text_area_tag(:inputMessage, nil, :class => "form-control", :placeholder => "Escriba sus comentarios por favor.", :required => true, :rows => 6) %>
+                            <span class="help-block"></span>
+                            <span class="form-control-feedback"></span>
+                        </div>
+                        <%= submit_tag "Enviar", :class => "btn btn-green form-transparent pull-right" %>
+                    </div>
+                </div>
+            <% end %>
         </div>
     </div>
 </div>
+
+<% content_for :scripts do %>
+<%= javascript_include_tag 'validations/home/contact' %>
+<%= javascript_include_tag 'split-name' %>
+<script>
+    $(function() {
+        split_name('#full_name', '#inputName', '#inputLastname');
+    });
+</script>
+<% end %>
