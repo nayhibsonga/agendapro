@@ -9,6 +9,9 @@ $(function() {
 			};
 		},
 		rules: {
+			'service[company_id]': {
+				required: true
+			},
 			'service[name]': {
 				required: true,
 				minlength: 3
