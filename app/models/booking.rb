@@ -11,7 +11,13 @@ class Booking < ActiveRecord::Base
 
 	validate :time_empty_or_negative, :booking_duration, :service_staff, :client_exclusive
 
-	after_commit validate :bookings_overlap
+	validation_scope :warnings do |s|
+    s.validate after_commit :time_in_provider_time
+    s.validate after_commit :bookings_overlap
+    s.validate after_commit :provider_in_break
+  end
+
+	# after_commit validate :bookings_overlap
 
 	after_create :send_booking_mail
 	after_update :send_update_mail
@@ -19,7 +25,8 @@ class Booking < ActiveRecord::Base
 	def provider_in_break
 		self.service_provider.provider_breaks.each do |provider_break|
 			if (provider_break.start - self.end) * (self.start - provider_break.end) > 0
-				errors.add(:base, "El prestador seleccionado tiene bloqueado el horario elegido. Por favor elige otro horario o selecciona otro prestador.")
+				warnings.add(:base, "El prestador seleccionado tiene bloqueado el horario elegido")
+        return
 			end
 		end
 	end
@@ -44,10 +51,10 @@ class Booking < ActiveRecord::Base
 					unless provider_booking.status_id == cancelled_id
 						if (provider_booking.start - self.end) * (self.start - provider_booking.end) > 0
 							if !self.service.group_service || self.service_id != provider_booking.service_id
-								errors.add(:base, "La hora seleccionada ya está reservada para el prestador elegido. Por favor selecciona otra hora disponible.")
+								warnings.add(:base, "La hora seleccionada ya está reservada para el prestador elegido")
 								return
 							elsif self.service.group_service && self.service_id == provider_booking.service_id && self.service_provider.bookings.where(:service_id => self.service_id, :start => self.start).count >= self.service.capacity
-								errors.add(:base, "La capacidad del servicio grupal ya llegó a su límite. Por favor selecciona otra hora disponible.")
+								warnings.add(:base, "La capacidad del servicio grupal llegó a su límite")
 								return
 							end
 						end
@@ -57,7 +64,7 @@ class Booking < ActiveRecord::Base
 			if self.service.resources.count > 0
 				self.service.resources.each do |resource|
 					if !self.location.resource_locations.pluck(:resource_id).include?(resource.id)
-						errors.add(:base, "Este local no tiene el(los) recurso(s) necesario(s) para realizar este servicio.")
+						warnings.add(:base, "Este local no tiene el(los) recurso(s) necesario(s) para realizar este servicio")
 						return
 					end
 					used_resource = 0
@@ -76,7 +83,7 @@ class Booking < ActiveRecord::Base
 						end
 					end
 					if group_services.uniq.count + used_resource >= ResourceLocation.where(resource_id: resource.id, location_id: self.location.id).first.quantity
-						errors.add(:base, "Este local ya tiene asignado(s) el(los) recurso(s) necesario(s) para realizar este servicio.")
+						warnings.add(:base, "Este local ya tiene asignado(s) el(los) recurso(s) necesario(s) para realizar este servicio")
 						return
 					end
 				end
@@ -86,7 +93,7 @@ class Booking < ActiveRecord::Base
 
 	def time_empty_or_negative
 		if self.start >= self.end
-			errors.add(:base, "La hora de fin es menor a la hora de inicio. Por favor revisa la hora asignada.")
+			errors.add(:base, "La hora de fin es menor o igual a la hora de inicio. Por favor revisa la hora asignada.")
 		end
 	end
 
@@ -106,7 +113,7 @@ class Booking < ActiveRecord::Base
 			end
 		end
 		if !in_provider_time
-			errors.add(:base, "El horario o día de la reserva no está disponible para este prestador.")
+			warnings.add(:base, "El horario o día de la reserva no está disponible para este prestador")
 		end
 	end
 

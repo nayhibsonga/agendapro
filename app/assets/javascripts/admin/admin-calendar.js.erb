@@ -851,6 +851,16 @@ function editDrag(event) {
 					$('#calendar').fullCalendar('updateEvent', event);
 					alert("Reserva actualizada exitosamente.");
 					// alertId.showAlert("Horario de la reserva cambiado exitosamente.");
+                    $('#bookingAlerts').hide();
+                    if (booking.warnings.length > 0) {
+                        $('#bookingWarnings').empty();
+                        var warnings = '';
+                        for (i in booking.warnings) {
+                            warnings += booking.warnings[i] + '. ';
+                        }
+                        $('#bookingWarnings').append(warnings);
+                        $('#bookingAlerts').show();
+                    }
 
 				},
 				error: function(xhr){
@@ -917,7 +927,6 @@ function saveBooking(typeURL, extraURL) {
 					};
 					$('#calendar').fullCalendar('renderEvent', events, true);
 				}
-				$('#bookingModal').modal('hide');
 				break;
 			case 'PATCH':
 				event = $('#calendar').fullCalendar('clientEvents', booking.id)[0];
@@ -950,13 +959,22 @@ function saveBooking(typeURL, extraURL) {
 				else {
 					$('#calendar').fullCalendar('removeEvents',booking.id);
 				}
-				$('#bookingModal').modal('hide');
 				break;
 			case 'DELETE':
 				$('#calendar').fullCalendar('removeEvents',booking.id);
-				$('#bookingModal').modal('hide');
 				break;
 			}
+			$('#bookingAlerts').hide();
+			if (booking.warnings.length > 0) {
+				$('#bookingWarnings').empty();
+				var warnings = '';
+				for (i in booking.warnings) {
+					warnings += booking.warnings[i] + '. ';
+				}
+				$('#bookingWarnings').append(warnings);
+				$('#bookingAlerts').show();
+			}
+			$('#bookingModal').modal('hide');
 		},
 		error: function(xhr){
 			var errors = $.parseJSON(xhr.responseText).errors;
@@ -1024,6 +1042,17 @@ function saveBreak (typeURL, extraURL) {
                 $('#breakModal').modal('hide');
 				break;
 			}
+            $('#bookingAlerts').hide();
+            window.console.log(provider_break);
+            if (provider_break.warnings.length > 0) {
+                $('#bookingWarnings').empty();
+                var warnings = '';
+                for (i in provider_break.warnings) {
+                    warnings += provider_break.warnings[i] + '. ';
+                }
+                $('#bookingWarnings').append(warnings);
+                $('#bookingAlerts').show();
+            }
 		},
 		error: function(xhr){
 			var errors = $.parseJSON(xhr.responseText).errors;
@@ -1592,5 +1621,9 @@ $(function() {
 	});
 	$('#booking_client_birth_year').change(function() {
 		setAge();
+	});
+
+	$('#bookingAlertsClose').click(function() {
+		$('#bookingAlerts').hide();
 	});
 });
