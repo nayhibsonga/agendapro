@@ -17,6 +17,9 @@
   <thead>
     <tr>
       <th>Nombre</th>
+      <% if current_user.role_id == Role.find_by_name('Super Admin').id %>
+      <th>Empresa</th>
+      <% end %>
       <th>Opciones</th>
     </tr>
   </thead>
@@ -24,7 +27,10 @@
   <tbody>
     <% @locations.each do |location| %>
       <tr draggable="true">
-        <td data-location="<%= location.id %>"><%= location.name %></td>
+      <td data-location="<%= location.id %>"><%= location.name %></td>
+      <% if current_user.role_id == Role.find_by_name('Super Admin').id %>
+      <td><%= location.company.name %></td>
+      <% end %>
         <td>
           <%= link_to '<i class="fa fa-pencil"></i> Editar'.html_safe, edit_location_path(location), :class => "btn btn-sm btn-warning" %>
           <%= link_to '<i class="fa fa-trash-o"></i> Eliminar'.html_safe, deactivate_location_path(:id => location.id), :class => "btn btn-sm btn-danger", data: { confirm: '¿Estás seguro de desactivar el Local seleccionado?' } unless cannot? :destroy, location %>

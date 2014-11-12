@@ -133,6 +133,21 @@ $(function() {
 			});
 		};
 	});
+	$('#service_company_id').change(function() {
+		$.getJSON('/service_categories', { company_id: $('#service_company_id').val() }, function (service_categories) {
+
+			$('#service_service_category_id').find('option').remove().end();
+			$.each(service_categories, function (key, service_category) {
+				window.console.log(service_category);
+				$('#service_service_category_id').append(
+					'<option value="' + service_category.id + '">' + service_category.name + '</option>'
+				);
+			});
+			$('#region').prepend(
+				'<option></option>'
+			);
+		});
+	});
 
 	$('#serviceCategoryModal').on('hidden.bs.modal', function (e) {
 		validator.resetForm();

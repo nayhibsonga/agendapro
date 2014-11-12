@@ -5,6 +5,9 @@ $(function() {
 			error.appendTo(element.next());
 		},
 		rules: {
+			'service_category[company_id]': {
+				required: true
+			},
 			'service_category[name]': {
 				required: true,
 				minlength: 3
