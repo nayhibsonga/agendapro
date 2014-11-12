@@ -815,9 +815,35 @@ h1.search-text {
 .social-vimeo:hover {
 	color: #4bf;
 }
+li.images {
+	position: relative;
+	overflow: hidden;
+}
+li.images img.hoverPhoto {
+  position: absolute;
+  left: 10px;
+  opacity: 0;
+}
+li.images:hover img { /* it's optional - for nicer transition effect */
+  opacity: 0;
+  -web-kit-transition:  opacity 1s ease;
+  -moz-transition:  opacity 1s ease;
+  -o-transition:    opacity 1s ease;
+  transition:   opacity 1s ease;
+}
+li.images:hover img.hoverPhoto { opacity: 1; }
 
 /*Contact*/
 .btn-green {
 	color: #00e99f;
 	border-color: #00e99f;
+}
+.contact-footer {
+	padding-top: 50px;
+	padding-bottom: 10px;
+}
+.contact-footer img,
+.contact-footer p {
+	margin: 5px;
+	white-space: pre-line;
 }

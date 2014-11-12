@@ -48,22 +48,22 @@
         <div class="container">
             <div class="row">
                 <div class="col-sm-2">
-                    <%= image_tag "search/laguapasimona1.png", alt: "La Guapa Simona", size: "92x65" %>
+                    <%= image_tag "search/laguapasimonablanco.png", alt: "La Guapa Simona", size: "92x65" %>
                 </div>
                 <div class="col-sm-2">
-                    <%= image_tag "search/theboss1.png", alt: "The Boss", size: "92x65" %>
+                    <%= image_tag "search/thebossblanco.png", alt: "The Boss", size: "92x65" %>
                 </div>
                 <div class="col-sm-2">
-                    <%= image_tag "search/miranda1.png", alt: "Miranda", size: "92x65" %>
+                    <%= image_tag "search/mirandablanco.png", alt: "Miranda", size: "92x65" %>
                 </div>
                 <div class="col-sm-2">
-                    <%= image_tag "search/nutricioncuerpoyalma1.png", alt: "Nutrición Cuerpo y Alma", size: "92x65" %>
+                    <%= image_tag "search/nutricioncuerpoyalmablanco.png", alt: "Nutrición Cuerpo y Alma", size: "92x65" %>
                 </div>
                 <div class="col-sm-2">
-                    <%= image_tag "search/labanqueta1.png", alt: "La Banqueta", size: "92x65" %>
+                    <%= image_tag "search/labanquetablanco.png", alt: "La Banqueta", size: "92x65" %>
                 </div>
                 <div class="col-sm-2">
-                    <%= image_tag "search/soloparamunecas1.png", alt: "Solo para Muñecas", size: "92x65" %>
+                    <%= image_tag "search/soloparamunecasblanco.png", alt: "Solo para Muñecas", size: "92x65" %>
                 </div>
             </div>
         </div>
@@ -143,22 +143,40 @@
     <div class="container">
         <div class="row">
             <div class="col-sm-2">
-                <%= image_tag "search/laguapasimona1.png", alt: "La Guapa Simona" %>
+                <li class="images">
+                    <%= image_tag "search/laguapasimonagris.png", alt: "La Guapa Simona" %>
+                    <%= image_tag "search/laguapasimonacolor.png", class: "hoverPhoto", alt: "La Guapa Simona" %>
+                </li>
             </div>
             <div class="col-sm-2">
-                <%= image_tag "search/theboss1.png", alt: "The Boss" %>
+                <li class="images">
+                    <%= image_tag "search/thebossgris.png", alt: "The Boss" %>
+                    <%= image_tag "search/thebosscolor.png", class: "hoverPhoto", alt: "The Boss" %>
+                </li>
             </div>
             <div class="col-sm-2">
-                <%= image_tag "search/miranda1.png", alt: "Miranda" %>
+                <li class="images">
+                    <%= image_tag "search/mirandagris.png", alt: "Miranda" %>
+                    <%= image_tag "search/mirandacolor.png", class: "hoverPhoto", alt: "Miranda" %>
+                </li>
             </div>
             <div class="col-sm-2">
-                <%= image_tag "search/nutricioncuerpoyalma1.png", alt: "Nutrición Cuerpo y Alma" %>
+                <li class="images">
+                    <%= image_tag "search/nutricioncuerpoyalmagris.png", alt: "Nutrición Cuerpo y Alma" %>
+                    <%= image_tag "search/nutricioncuerpoyalmacolor.png", class: "hoverPhoto", alt: "Nutrición Cuerpo y Alma" %>
+                </li>
             </div>
             <div class="col-sm-2">
-                <%= image_tag "search/labanqueta1.png", alt: "La Banqueta" %>
+                <li class="images">
+                    <%= image_tag "search/labanquetagris.png", alt: "La Banqueta" %>
+                    <%= image_tag "search/labanquetacolor.png", class: "hoverPhoto", alt: "La Banqueta" %>
+                </li>
             </div>
             <div class="col-sm-2">
-                <%= image_tag "search/soloparamunecas1.png", alt: "Solo para Muñecas" %>
+                <li class="images">
+                    <%= image_tag "search/soloparamunecasgris.png", alt: "Solo para Muñecas" %>
+                    <%= image_tag "search/soloparamunecascolor.png", class: "hoverPhoto", alt: "Solo para Muñecas" %>
+                </li>
             </div>
         </div>
     </div>
@@ -273,10 +291,38 @@
                             <span class="help-block"></span>
                             <span class="form-control-feedback"></span>
                         </div>
-                        <%= submit_tag "Enviar", :class => "btn btn-green form-transparent pull-right" %>
+                        <button type="submit" class="btn btn-green form-transparent pull-right"><i class="fa fa-envelope-o"></i> Enviar Mensaje</button>
                     </div>
                 </div>
             <% end %>
+        </div>
+    </div>
+</div>
+<div class="background contact-footer" style="background-image: url(<%= asset_path 'backgrounds/gray-background.png' %>);">
+    <div class="container">
+        <div class="row pull-center">
+            <div class="col-sm-4">
+                <%= image_tag "search/location.png" %>
+                <p>Nuestra Señora de los
+                 Angeles 185, Oficina D,
+                  Las Condes, Santiago</p>
+            </div>
+            <div class="col-sm-4">
+                <%= image_tag "search/email.png" %>
+                <p>contacto@agendapro.cl</p>
+            </div>
+            <div class="col-sm-4">
+                <%= image_tag "search/telephone.png" %>
+                <p>(+56 9) 5178 5898</p>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-6">
+                <p><i class="fa fa-copyright"></i> Copyright 2013 | Gunei Investment SpA | Todos los derechos reservados</p>
+            </div>
+            <div class="col-sm-6">
+                <p> <a href="#">Sobre Nosotros</a> | <a href="#">Tutoriales</a> | <a href="#">Terminos y condiciones</a> <%= image_tag 'logos/logo_agendaproVerde.png', :alt => 'AgendaPro', :size => "127x39" %></p>
+            </div>
         </div>
     </div>
 </div>
