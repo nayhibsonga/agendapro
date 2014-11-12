@@ -4,6 +4,9 @@ $(function() {
 			error.appendTo(element.next());
 		},
 		rules: {
+			'location[company_id]': {
+				required: true
+			},
 			'location[name]': {
 				required: true,
 				minlength: 3

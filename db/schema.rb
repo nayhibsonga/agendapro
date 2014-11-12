@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20141021220610) do
+ActiveRecord::Schema.define(version: 20141023203158) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -131,6 +131,7 @@ ActiveRecord::Schema.define(version: 20141021220610) do
     t.boolean  "active",              default: true
     t.float    "due_amount",          default: 0.0
     t.date     "due_date"
+    t.boolean  "owned",               default: true
   end
 
   add_index "companies", ["payment_status_id"], name: "index_companies_on_payment_status_id", using: :btree
@@ -181,6 +182,7 @@ ActiveRecord::Schema.define(version: 20141021220610) do
     t.boolean  "client_exclusive",    default: false
     t.integer  "provider_preference"
     t.integer  "calendar_duration",   default: 15
+    t.string   "page_id"
   end
 
   add_index "company_settings", ["company_id"], name: "index_company_settings_on_company_id", using: :btree
