@@ -16,6 +16,15 @@
         </div>
       <% end %>
 
+      <% if current_user.role_id == Role.find_by_name("Super Admin").id %>
+      <div class="form-group">
+        <%= f.label :company_id, "Empresa", class: "col-sm-3 control-label" %>
+        <div class="col-sm-4">
+          <%= f.collection_select :company_id, Company.where(owned: false).order(:name), :id, :name, {}, { class: "form-control", required: true} %>
+        </div>
+      </div>
+      <% end %>
+
       <%= f.hidden_field :first_name %>
       <%= f.hidden_field :last_name %>
       <div class="form-group has-feedback">

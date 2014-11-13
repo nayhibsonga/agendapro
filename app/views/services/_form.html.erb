@@ -16,6 +16,14 @@
           <div class="col-md-6">
             <h3>Servicio</h3>
             <div class="well">
+              <% if current_user.role_id == Role.find_by_name("Super Admin").id %>
+              <div class="form-group">
+                <%= f.label :company_id, "Empresa", class: "col-sm-3 control-label" %>
+                <div class="col-sm-9">
+                  <%= f.collection_select :company_id, Company.where(owned: false).order(:name), :id, :name, {}, { class: "form-control", required: true} %>
+                </div>
+              </div>
+              <% end %>
               <div class="form-group has-feedback">
                 <%= f.label :name, "Nombre", class: "col-sm-3 control-label" %>
                 <div class="col-sm-9">
@@ -99,11 +107,13 @@
                   <span class="form-control-feedback"></span>
                 </div>
               </div>
+              <% if current_user.role_id != Role.find_by_name("Super Admin").id %>
               <div class="form-group">
                 <div class="col-sm-offset-3 col-sm-9">
                   <button type="button" class="btn btn-sm btn-agendapro-claro" data-toggle="modal" data-target="#serviceCategoryModal"><i class="fa fa-plus"></i> Nueva Categoría de Servicio</button>
                 </div>
               </div>
+              <% end %>
             </div>
           </div>
         </div>

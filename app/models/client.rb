@@ -10,20 +10,22 @@ class Client < ActiveRecord::Base
 
   def client_notification
     if changed_attributes['email']
-      valid = false
-      atpos = self.email.index("@")
-      dotpos = self.email.rindex(".")
-      if atpos && dotpos
-        if (atpos < 1) || (dotpos < atpos+2) || (dotpos+2 >= self.email.length)
-          valid = false
+      if self.email
+        valid = false
+        atpos = self.email.index("@")
+        dotpos = self.email.rindex(".")
+        if atpos && dotpos
+          if (atpos < 1) || (dotpos < atpos+2) || (dotpos+2 >= self.email.length)
+            valid = false
+          end
+          valid = true
         end
-        valid = true
-      end
-      if !valid
-        Booking.where('bookings.start >= ?', Time.now - 4.hours).where(client_id: self.id).each do |booking|
-          if booking.send_mail
-            booking.send_mail = false
-            booking.save
+        if !valid
+          Booking.where('bookings.start >= ?', Time.now - 4.hours).where(client_id: self.id).each do |booking|
+            if booking.send_mail
+              booking.send_mail = false
+              booking.save
+            end
           end
         end
       end
@@ -241,10 +243,12 @@ class Client < ActiveRecord::Base
           end
         end
 
-        if row["identification_number"] && row["identification_number"] != ""
-          client = Client.find_by_identification_number(row["identification_number"]) || Client.new
-        elsif row["email"] && row["email"] != "" 
-          client = Client.find_by_email(row["email"]) || Client.new
+        if row["identification_number"] && row["identification_number"] != "" && Client.where(identification_number: row["identification_number"], company_id: company_id).count > 0
+          client = Client.where(identification_number: row["identification_number"], company_id: company_id).first
+        elsif row["email"] && row["email"] != "" && Client.where(email: row["email"], company_id: company_id).count > 0
+          client = Client.where(email: row["email"], company_id: company_id).first
+        elsif row["first_name"] && row["first_name"] != "" && row["last_name"] && row["last_name"] != "" && Client.where(first_name: row["first_name"], last_name: row["last_name"], company_id: company_id).count > 0
+          client = Client.where(first_name: row["first_name"], last_name: row["last_name"], company_id: company_id).first
         else
           client = Client.new
         end
