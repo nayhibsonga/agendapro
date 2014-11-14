@@ -1,0 +1,51 @@
+function loadProviders () {
+	if (parseInt($('#locals-selector').val()) > 0) {
+		var localId = parseInt($('#locals-selector').val());
+		$('#providers-div').empty();
+		$.getJSON('/local_providers', {location: localId}, function (providersArray) {
+			if (providersArray.length > 0) {
+				$('#providers-div').append('<select class="form-control" id="providers-selector">');
+				$.each(providersArray, function (key, provider) {
+					$('#providers-selector').append('<option name="providerRadio" value="'+provider.id+'">'+provider.public_name+'</option>');
+				});
+				$('#providers-selector').change(function() {
+					providerId = parseInt($('#providers-selector').val())
+					if (providerId > 0) {
+						loadTable();
+					}
+				});
+				loadTable();
+				return true;
+			}
+		});
+	}
+	return false;
+}
+
+function loadTable() {
+	$('#provider-table-body').empty();
+	$('#provider-table-body').append('<td colspan="4"><%= image_tag "small-loader.gif", :alt => "Loader", :id => "small_loader_header", :class => "small-loader-header" %></td>');
+	window.console.log($("#dp").datepicker("getDate"));
+}
+
+$(function() {
+	$("#dp").datepicker({
+		dateFormat: 'dd-mm-yy',
+		autoSize: true,
+		firstDay: 1,
+		changeMonth: true,
+		changeYear: true,
+		dayNames: [ "Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado" ],
+		dayNamesMin: [ "Do", "Lu", "Ma", "Mi", "Ju", "Vi", "Sá" ],
+		dayNamesShort: [ "Dom", "Lun", "Mar", "Mié", "Jue", "Vie", "Sáb" ],
+		onSelect: function(dateText, inst) {
+			window.console.log(dateText);
+			window.console.log(inst);
+		}
+	});
+
+	$('#locals-selector').change(function() {
+		loadProviders();
+	});
+	loadProviders();
+});
