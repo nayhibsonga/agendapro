@@ -196,6 +196,7 @@ function loadResourcesCalendar (startTime, endTime, hiddenDays, resourcesArray, 
 	//Default values
 	startTime = 0;
 	endTime = 24;
+	var startHour = startTime || 9;
 	hiddenDays = [];
 
 	$('#calendar').fullCalendar('removeEvents');
@@ -304,6 +305,7 @@ function loadResourcesCalendar (startTime, endTime, hiddenDays, resourcesArray, 
 		dayNamesShort: ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'],
 		minTime: startTime,
 		maxTime: endTime,
+		firstHour: startHour, 
 		defaultEventMinutes: duration,
 		editable: true,
 		disableResizing: true,
@@ -333,6 +335,7 @@ function loadWeekCalendar (startTime, endTime, hiddenDays, resourcesArray, provi
 	//Default values
 	startTime = 0;
 	endTime = 24;
+	var startHour = startTime || 9;
 	hiddenDays = [];
 
 	$('#calendar').fullCalendar('removeEvents');
@@ -430,6 +433,7 @@ function loadWeekCalendar (startTime, endTime, hiddenDays, resourcesArray, provi
 		dayNamesShort: ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'],
 		minTime: startTime,
 		maxTime: endTime,
+		firstHour: startHour, 
 		defaultEventMinutes: duration,
 		editable: true,
 		disableResizing: true,
@@ -456,7 +460,7 @@ function loadWeekCalendar (startTime, endTime, hiddenDays, resourcesArray, provi
 		loadProviderEvents(providerId);
 	});
 	loadProviderEvents(providerId);
-	$('td.fc-header-left').append('<span class="fc-header-title"><a class="btn btn-agendapro-claro print-schedule" href="/service_provider/pdf.pdf?service_provider_id='+providerId+'"><i class="fa fa-print"></i> Horario de Hoy</a></span>');
+	// $('td.fc-header-left').append('<span class="fc-header-title"><a class="btn btn-agendapro-claro print-schedule" href="/service_provider/pdf.pdf?service_provider_id='+providerId+'"><i class="fa fa-print"></i> Horario de Hoy</a></span>');
 }
 
 function loadProviderEvents(providerId) {
@@ -927,6 +931,16 @@ function saveBooking(typeURL, extraURL) {
 					};
 					$('#calendar').fullCalendar('renderEvent', events, true);
 				}
+				$('#bookingAlerts').hide();
+				if (booking.warnings.length > 0) {
+					$('#bookingWarnings').empty();
+					var warnings = '';
+					for (i in booking.warnings) {
+						warnings += booking.warnings[i] + '. ';
+					}
+					$('#bookingWarnings').append(warnings);
+					$('#bookingAlerts').show();
+				}
 				break;
 			case 'PATCH':
 				event = $('#calendar').fullCalendar('clientEvents', booking.id)[0];
@@ -959,20 +973,20 @@ function saveBooking(typeURL, extraURL) {
 				else {
 					$('#calendar').fullCalendar('removeEvents',booking.id);
 				}
+				$('#bookingAlerts').hide();
+				if (booking.warnings.length > 0) {
+					$('#bookingWarnings').empty();
+					var warnings = '';
+					for (i in booking.warnings) {
+						warnings += booking.warnings[i] + '. ';
+					}
+					$('#bookingWarnings').append(warnings);
+					$('#bookingAlerts').show();
+				}
 				break;
 			case 'DELETE':
 				$('#calendar').fullCalendar('removeEvents',booking.id);
 				break;
-			}
-			$('#bookingAlerts').hide();
-			if (booking.warnings.length > 0) {
-				$('#bookingWarnings').empty();
-				var warnings = '';
-				for (i in booking.warnings) {
-					warnings += booking.warnings[i] + '. ';
-				}
-				$('#bookingWarnings').append(warnings);
-				$('#bookingAlerts').show();
 			}
 			$('#bookingModal').modal('hide');
 		},
@@ -1019,6 +1033,17 @@ function saveBreak (typeURL, extraURL) {
                 $( '<%= image_tag "small-loader.gif", :alt => "Loader", :id => "small_loader" %>' ).insertBefore( $( ".btn-close" ) );
                 $('#calendar').fullCalendar('renderEvent', events, true);
                 $('#breakModal').modal('hide');
+
+	            $('#bookingAlerts').hide();
+	            if (provider_break.warnings.length > 0) {
+	                $('#bookingWarnings').empty();
+	                var warnings = '';
+	                for (i in provider_break.warnings) {
+	                    warnings += provider_break.warnings[i] + '. ';
+	                }
+	                $('#bookingWarnings').append(warnings);
+	                $('#bookingAlerts').show();
+	            }
 				break;
 			case 'PATCH':
 				var label = provider_break.name;
@@ -1034,25 +1059,24 @@ function saveBreak (typeURL, extraURL) {
                 $( '<%= image_tag "small-loader.gif", :alt => "Loader", :id => "small_loader" %>' ).insertBefore( $( ".btn-close" ) );
                 $('#calendar').fullCalendar('updateEvent', event);
                 $('#breakModal').modal('hide');
+                ('#bookingAlerts').hide();
+	            if (provider_break.warnings.length > 0) {
+	                $('#bookingWarnings').empty();
+	                var warnings = '';
+	                for (i in provider_break.warnings) {
+	                    warnings += provider_break.warnings[i] + '. ';
+	                }
+	                $('#bookingWarnings').append(warnings);
+	                $('#bookingAlerts').show();
+	            }
 				break;
 			case 'DELETE':
                 $('.break-button').attr("disabled", "disabled");
                 $( '<%= image_tag "small-loader.gif", :alt => "Loader", :id => "small_loader" %>' ).insertBefore( $( ".btn-close" ) );
                 $('#calendar').fullCalendar('removeEvents','b'+provider_break.id);
-                $('#breakModal').modal('hide');
 				break;
 			}
-            $('#bookingAlerts').hide();
-            window.console.log(provider_break);
-            if (provider_break.warnings.length > 0) {
-                $('#bookingWarnings').empty();
-                var warnings = '';
-                for (i in provider_break.warnings) {
-                    warnings += provider_break.warnings[i] + '. ';
-                }
-                $('#bookingWarnings').append(warnings);
-                $('#bookingAlerts').show();
-            }
+			$('#breakModal').modal('hide');
 		},
 		error: function(xhr){
 			var errors = $.parseJSON(xhr.responseText).errors;
