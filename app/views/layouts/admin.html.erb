@@ -79,14 +79,18 @@
 			<!-- MENU LATERAL -->
 			<ul class="menu-lateral">
 				<li><%= link_to '<i class="fa fa-dashboard fa-fw"></i><span class="colapse-hidden"> Resumen</span>'.html_safe, dashboard_path, { :class => if controller.controller_name == "dashboard" then "active" end } %></li>
+				<% if current_user.role_id == Role.find_by_name("Staff (sin edición)").id %>
+				<li><%= link_to '<i class="fa fa-calendar fa-fw"></i><span class="colapse-hidden"> Calendario</span>'.html_safe, fixed_bookings_path, { :class => if controller.controller_name == "bookings" then "active" end } %></li>
+				<% else %>
 				<li><%= link_to '<i class="fa fa-calendar fa-fw"></i><span class="colapse-hidden"> Calendario</span>'.html_safe, bookings_path, { :class => if controller.controller_name == "bookings" then "active" end } %></li>
+				<% end %>
 				<% if controller.controller_name == "bookings" %>
 				<li><div id="dp" class="lateralDatepicker"></div></li>
 				<% end %>
 				<% if current_user.role_id == Role.find_by_name("Super Admin").id %>
 				<li><%= link_to '<i class="fa fa-building fa-fw"></i><span class="remove-txt"> Empresas</span>'.html_safe, companies_path, { :class => if controller.controller_name == "companies" then "active" end } %></li>
 				<% end %>
-				<% if current_user.role_id != Role.find_by_name("Staff").id %>
+				<% if current_user.role_id != Role.find_by_name("Staff").id  && current_user.role_id != Role.find_by_name("Staff (sin edición)").id %>
 				<li><%= link_to '<i class="fa fa-group fa-fw"></i><span class="remove-txt"> Clientes</span>'.html_safe, clients_path, { :class => if controller.controller_name == "clients" then "active" end } %></li>
 				<% end %>
 				<% if current_user.role_id == Role.find_by_name("Administrador General").id %>
