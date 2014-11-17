@@ -24,8 +24,23 @@ function loadProviders () {
 
 function loadTable() {
 	$('#provider-table-body').empty();
-	$('#provider-table-body').append('<td colspan="4"><%= image_tag "small-loader.gif", :alt => "Loader", :id => "small_loader_header", :class => "small-loader-header" %></td>');
-	window.console.log($("#dp").datepicker("getDate"));
+	$('#provider-table-body').append('<tr><td colspan="4"><%= image_tag "small-loader.gif", :alt => "Loader", :id => "small_loader_header", :class => "small-loader-header" %></td></tr>');
+	var months = new Array ("Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre");
+	var days = new Array ("Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado");
+	var f = $("#dp").datepicker("getDate");
+	$('#date-label').empty();
+	$('#date-label').append(days[f.getDay()] + " " + f.getDate() + " de " + months[f.getMonth()] + ", " + f.getFullYear());
+	$.getJSON('/provider_hours', {service_provider_id: parseInt($('#providers-selector').val()), provider_date: $("#dp").datepicker("getDate")}, function (rows) {
+		$('#provider-table-body').empty();
+		if (rows.length > 0) {
+			$.each(rows, function (key, row) {
+				$('#provider-table-body').append('<tr><td>' + row[0] + '</td><td>' + row[1] + '</td><td>' + row[2] + '</td><td>' + row[3] + '</td></tr>');
+			});
+		}
+		else {
+			$('#provider-table-body').append('<tr><td colspan="4">El prestador seleccionado no trabaja este día...</td></tr>');
+		}
+	});
 }
 
 $(function() {
@@ -39,9 +54,22 @@ $(function() {
 		dayNamesMin: [ "Do", "Lu", "Ma", "Mi", "Ju", "Vi", "Sá" ],
 		dayNamesShort: [ "Dom", "Lun", "Mar", "Mié", "Jue", "Vie", "Sáb" ],
 		onSelect: function(dateText, inst) {
-			window.console.log(dateText);
-			window.console.log(inst);
+			loadTable();
 		}
+	});
+
+	$('#next-day').on("click", function () {
+	    var date = $('#dp').datepicker('getDate');
+	    date.setTime(date.getTime() + (1000*60*60*24))
+	    $('#dp').datepicker("setDate", date);
+	    loadTable();
+	});
+
+	$('#prev-day').on("click", function () {
+	    var date = $('#dp').datepicker('getDate');
+	    date.setTime(date.getTime() - (1000*60*60*24))
+	    $('#dp').datepicker("setDate", date);
+	    loadTable();
 	});
 
 	$('#locals-selector').change(function() {

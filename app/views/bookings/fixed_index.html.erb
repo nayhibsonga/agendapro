@@ -19,6 +19,17 @@
 </div>
 <br />
 <div class="row well well-sm">
+	<div class="col-md-3">
+		<%= link_to '<< Anterior', '#', class: 'pull-right', id: 'prev-day' %>
+	</div>
+	<div class="col-md-6 text-center">
+		<label id="date-label"></label>
+	</div>
+	<div class="col-md-3">
+		<%= link_to 'Siguiente >>', '#', class: 'pull-left', id: 'next-day' %>
+	</div>
+</div>
+<div class="row well well-sm">
 	<div id="provider-calendar" class="table-responsive">
 		<table class="table table-bordered" id="provider-table">
 			<thead id="provider-table-head">
