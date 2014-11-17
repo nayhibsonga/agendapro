@@ -19,6 +19,19 @@ class BookingsController < ApplicationController
     @provider_break = ProviderBreak.new
   end
 
+  def fixed_index
+    @company = Company.where(id: current_user.company_id)
+    if current_user.role_id == Role.find_by_name("Staff").id
+      @locations = Location.where(:active => true, :id => ServiceProvider.where(active: true).pluck(:location_id)).accessible_by(current_ability).order(:order)
+    else
+      @locations = Location.where(:active => true).accessible_by(current_ability).order(:order)
+    end
+    @service_providers = ServiceProvider.where(location_id: @locations).order(:order)
+    @bookings = Booking.where(service_provider_id: @service_providers)
+    @booking = Booking.new
+    @provider_break = ProviderBreak.new
+  end
+
   # GET /bookings/1
   # GET /bookings/1.json
   def show
@@ -709,6 +722,100 @@ class BookingsController < ApplicationController
       end
     end
     render :json => {:crossover => false}
+  end
+
+  def provider_hours
+    @service_provider = ServiceProvider.find(params[:service_provider_id])
+    block_length = @service_provider.block_length * 60
+    now = params[:provider_date].to_date
+    table_rows = []
+
+    provider_times = @service_provider.provider_times.where(day_id: now.cwday).order(:open)
+
+    if provider_times.length > 0
+
+      open_provider_time = provider_times.first.open
+      close_provider_time = provider_times.last.close
+
+      provider_open = provider_times.first.open
+      while (provider_open <=> close_provider_time) < 0 do
+        provider_close = provider_open + block_length
+
+        table_row = [provider_open.strftime('%R'), nil, nil, nil]
+        last_row = table_rows.length - 1
+
+        block_open = DateTime.new(now.year, now.mon, now.mday, provider_open.hour, provider_open.min)
+        block_close = DateTime.new(now.year, now.mon, now.mday, provider_close.hour, provider_close.min)
+
+        service_name = 'Descanso por Horario'
+        client_name = '...'
+        client_phone = '...'
+
+        in_provider_time = false
+        provider_times.each do |provider_time|
+          if (provider_time.open - provider_close)*(provider_open - provider_time.close) > 0
+            in_provider_time = true
+            service_name = ''
+            client_name = ''
+            client_phone = ''
+            break
+          end
+        end
+        in_provider_booking = false
+        if in_provider_time
+          Booking.where(service_provider: @service_provider, status_id: Status.where(name: ['Reservado', 'Confirmado','Pagado','Asiste']).pluck(:id), start: now.beginning_of_day..now.end_of_day).order(:start).each do |booking|
+            if (booking.start.to_datetime - block_close)*(block_open - booking.end.to_datetime) > 0
+              in_provider_booking = true
+              service_name = booking.service.name
+              client_name = booking.client.first_name + ' ' + booking.client.last_name
+              client_phone = booking.client.phone
+              break
+            end
+          end
+        end
+        in_provider_break = false
+        if in_provider_time && !in_provider_booking
+          ProviderBreak.where(service_provider: @service_provider, start: now.beginning_of_day..now.end_of_day).each do |provider_break|
+            if (provider_break.start.to_datetime - block_close)*(block_open - provider_break.end.to_datetime) > 0
+              in_provider_booking = true
+              service_name = "Bloqueo: "+provider_break.name
+              client_name = '...'
+              client_phone = '...'
+              break
+            end
+          end
+        end
+
+        if in_provider_time
+
+          if last_row >= 0
+            while table_rows[last_row][1] == 'Continuación...'  do
+              # Subir un nivel para ver si es el mismo servicio o no  
+                last_row -=1
+            end
+
+            if (service_name != '') && (service_name == table_rows[last_row][1]) && (client_name == (table_rows[last_row][2])) 
+              
+              service_name = 'Continuación...'
+              client_name = '...'
+              client_phone = '...'
+            end
+          end
+        end
+
+        table_row << service_name
+        table_row << client_name
+        table_row << client_phone
+        table_row.compact!
+
+        table_rows.append(table_row)
+
+        provider_open += block_length
+      end
+    end
+    respond_to do |format|
+      format.json { render :json => table_rows }
+    end
   end
 
   private

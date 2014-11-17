@@ -1,0 +1,57 @@
+<div class="row well well-sm well-calendar">
+	<div class="col-md-2">
+		<label class="control-label label-calendar">Elige Local:</label>
+	</div>
+	<div class="col-md-4">
+		<select class="form-control" id="locals-selector" name="localSelector">
+			<% @locations.each do |location| %>
+				<option value="<%= location.id %>"><%= location.name %></option>
+			<% end %>
+		</select>
+	</div>
+	<div class="col-md-2">
+		<label class="control-label label-calendar">Elige Prestador:</label>
+	</div>
+	<div class="col-md-4">
+		<div id="providers-div">
+		</div>
+	</div>
+</div>
+<br />
+<div class="row well well-sm">
+	<div class="col-md-3">
+		<%= link_to '<< Anterior', '#', class: 'pull-right', id: 'prev-day' %>
+	</div>
+	<div class="col-md-6 text-center">
+		<label id="date-label"></label>
+	</div>
+	<div class="col-md-3">
+		<%= link_to 'Siguiente >>', '#', class: 'pull-left', id: 'next-day' %>
+	</div>
+</div>
+<div class="row well well-sm">
+	<div id="provider-calendar" class="table-responsive">
+		<table class="table table-bordered" id="provider-table">
+			<thead id="provider-table-head">
+				<th>Hora</th>
+				<th>Servicio</th>
+				<th>Cliente</th>
+				<th>Teléfono</th>
+			</thead>
+			<tbody id="provider-table-body">
+				<td colspan="4"><%= image_tag "small-loader.gif", :alt => "Loader", :id => "small_loader_header", :class => "small-loader-header" %></td>
+			</tbody>
+		</table>
+	</div>
+</div>
+
+<%= content_tag "div", id: "calendar-duration", data: { calendar_duration: Company.find(current_user.company_id).company_setting.calendar_duration } do %>
+<% end %>
+
+<% content_for :scripts do %>
+	<%= javascript_include_tag "admin/fixed_bookings" %>
+	<%= javascript_include_tag "jquery-ui-1.10.4.min.js" %>
+<% end %>
+<% content_for :stylesheets do %>
+	<%= stylesheet_link_tag "admin/admin-calendar" %>
+<% end %>
