@@ -63,15 +63,19 @@ function saveResource (typeURL, extraURL) {
 	if (validator_resource.numberOfInvalids()) {
 		return false;
 	};
-
-	var resource_locations = []
-	$('input.resourceLocationCheck').each(function(i, obj) {
-		window.console.log(obj.value);
-		if ($('#resource_location_ids_'+obj.value).prop('checked')) {
-	    	resource_locations.push({ "location_id": obj.value, "quantity": $('#resource_location_ids_quantity_'+obj.value).val() });
+	var resource_services = []
+	$('input.resourceServiceCheck').each(function() {
+		if ($(this).prop('checked')) {
+	    	resource_services.push($(this).val());
 		}
 	});
-	var resourceJSON = { "name": $('#resource_name').val(), "resource_category_id": $('#resource_resource_category_id').val(), "resource_locations_attributes": resource_locations };
+	var resource_locations = []
+	$('input.resourceLocationCheck').each(function() {
+		if ($('#resource_location_ids_'+$(this).val()).prop('checked')) {
+	    	resource_locations.push({ "location_id": $(this).val(), "quantity": $('#resource_location_ids_quantity_'+$(this).val()).val() });
+		}
+	});
+	var resourceJSON = { "name": $('#resource_name').val(), "resource_category_id": $('#resource_resource_category_id').val(), "service_ids": resource_services, "resource_locations_attributes": resource_locations };
 	$.ajax({
 		type: typeURL,
 		url: '/resources'+extraURL+'.json',
@@ -146,6 +150,32 @@ $(function() {
 		$('.fa.fa-check').removeClass('fa fa-check');
 		$('.has-error').removeClass('has-error');
 		$('.fa.fa-times').removeClass('fa fa-times');
+	});
+	$('input.check_boxes').each(function () {
+		var prop = true;
+		$(this).parents('.panel-body').find('input.check_boxes').each( function () {
+			prop = prop && $(this).prop('checked');
+		});
+		$(this).parents('.panel').find('input[name="selectServiceCategory"]').prop('checked', prop);
+	});
+	$('input[name="selectServiceCategory"]').change(function (event) {
+		var id = $(event.target).attr('id').replace('selectServiceCategory', '');
+		$('#service_category' + id).find('input.check_boxes').each( function () {
+			if ($(event.target).prop('checked')) {
+				$(this).prop('checked', true);
+			}
+			else {
+				$(this).prop('checked', false);
+			}
+		});
+	});
+
+	$('input.check_boxes').change(function (event) {
+		var prop = true;
+		$(event.target).parents('.panel-body').find('input.check_boxes').each( function () {
+			prop = prop && $(this).prop('checked');
+		});
+		$(event.target).parents('.panel').find('input[name="selectServiceCategory"]').prop('checked', prop);
 	});
 	initialize();
 });

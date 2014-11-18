@@ -8,7 +8,7 @@ $(function() {
 		$('#providerGroup').addClass('hidden');
 	}
 	$('#user_role_id').change(function() {
-		if ($('#user_role_id').val() == 4 || $('#user_role_id').val() == 7) {
+		if ($("#user_role_id option:selected").text() == "Staff" || $("#user_role_id option:selected").text() == "Staff (sin edición)") {
 			$('#locationGroup').addClass('hidden');
 			$('#user_location_id').val('');
 			$('#providerGroup').removeClass('hidden');
