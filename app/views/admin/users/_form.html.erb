@@ -59,11 +59,11 @@
           <%= f.label :role_id, "Rol", class: "col-sm-3 control-label"  %>
           <div class="col-sm-4">
           <% if current_user.role_id == Role.find_by(name: 'Super Admin').id %>
-            <%= f.collection_select :role_id, Role.where(:name => ["Administrador General","Administrador Local","Staff"]), :id, :name, {include_blank: true}, {class: "form-control"} %>
+            <%= f.collection_select :role_id, Role.where(:name => ["Administrador General","Administrador Local","Recepcionista","Staff", "Staff (sin edición)"]).order(:name), :id, :name, {include_blank: true}, {class: "form-control"} %>
           <% elsif current_user.role_id == Role.find_by(name: 'Administrador General').id %>
-            <%= f.collection_select :role_id, Role.where(:name => ["Administrador Local","Recepcionista","Staff", "Staff (sin edición)"]), :id, :name, {include_blank: true}, {class: "form-control"} %>
+            <%= f.collection_select :role_id, Role.where(:name => ["Administrador Local","Recepcionista","Staff", "Staff (sin edición)"]).order(:name), :id, :name, {include_blank: true}, {class: "form-control"} %>
           <% elsif current_user.role_id == Role.find_by(name: 'Administrador Local').id %>
-            <%= f.collection_select :role_id, Role.where(:name => ["Recepcionista","Staff","Staff (sin edición)"]), :id, :name, {include_blank: true}, {class: "form-control"} %>
+            <%= f.collection_select :role_id, Role.where(:name => ["Recepcionista","Staff","Staff (sin edición)"]).order(:name), :id, :name, {include_blank: true}, {class: "form-control"} %>
           <% end %>
           <span class="help-block"></span>
           <span class="form-control-feedback"></span>
