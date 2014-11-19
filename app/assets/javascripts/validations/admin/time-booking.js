@@ -15,6 +15,12 @@ $(function() {
 			'company_setting[before_edit_booking]': {
 				required: true,
 				range: [1, 168]
+			},
+			'company_setting[extended_min_hour]': {
+				required: true
+			},
+			'company_setting[extended_max_hour]': {
+				required: true
 			}
 		},
 		highlight: function(element) {

@@ -12,6 +12,7 @@
 		{name: "Administrador General", description: "Administrador de empresa inscrita en AgendaPro"},
 		{name: "Administrador Local", description: "Administrador de local"},
 		{name: "Staff", description: "Usuario con atribuciones de atención en su local"},
+		{name: "Staff (sin edición)", description: "Usuario con atribuciones de ver sus reservas"},
 		{name: "Usuario Registrado", description: "Usuario con cuenta registrada y accesible"},
 		{name: "Recepcionista", description: "Usuario frontdesk de una empresa"}
 	])
@@ -47,6 +48,7 @@
 	bloqueado = PaymentStatus.create(name: "Bloqueado", description: "La empresa está bloqueada por no pago del plan")
 	trial = PaymentStatus.create(name: "Trial", description: "La empresa está en período de prueba")
 	vencido = PaymentStatus.create(name: "Vencido", description: "La empresa está atrasada en el pago del mes en curso")
+	vacia = PaymentStatus.create(name: "Admin", description: "Empresa Vacía")
 
 # => Sectores Eonómicos de las Empresas
 	estetica = EconomicSector.create(name: "Centros de Estética")
@@ -263,6 +265,7 @@
 	plan_normal = Plan.create(name: "Normal", locations: 2, service_providers: 60, custom: false, price: 39900, special: false)
 	plan_premium = Plan.create(name: "Premium", locations: 3, service_providers: 90, custom: false, price: 49900, special: false)
 	plan_trial = Plan.create(name: "Trial", locations: 5, service_providers: 90, custom: true, price: 0, special: false)
+	plan_admin = Plan.create(name: "Admin", locations: 30, service_providers: 1, custom: true, price: 0, special: false) 
 	# Plan para las personas que partieron con nosotros antes en la Beta y no se han querido cambiar...
 	plan_beta = Plan.create(name: "Beta", locations: 1, service_providers: 2, custom: true, price: 14900, special: false)
 

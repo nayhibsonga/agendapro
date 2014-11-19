@@ -10,7 +10,7 @@
 	<div class="col-md-4">
 		<select class="form-control" id="locals-selector" name="localSelector">
 			<% @locations.each do |location| %>
-				<option value="<%= location.id %>"><%= location.name %></option>
+				<option value="<%= location.id %>" data-minhour="<%= location.location_times.order(:open).first.open.beginning_of_hour.hour %>" data-maxhour="<%= location.location_times.order(:close).last.close.end_of_hour.hour %>"><%= location.name %></option>
 			<% end %>
 		</select>
 	</div>
@@ -369,9 +369,8 @@
 	</div>
 </div>
 
-<%= content_tag "div", id: "calendar-duration", data: { calendar_duration: Company.find(current_user.company_id).company_setting.calendar_duration } do %>
+<%= content_tag "div", id: "calendar-data", data: { calendar_duration: Company.find(current_user.company_id).company_setting.calendar_duration, extended_schedule: Company.find(current_user.company_id).company_setting.extended_schedule_bool, extended_min_hour: Company.find(current_user.company_id).company_setting.extended_min_hour.beginning_of_hour.hour, extended_max_hour: Company.find(current_user.company_id).company_setting.extended_max_hour.end_of_hour.hour } do %>
 <% end %>
-
 <% content_for :scripts do %>
 	<%= javascript_include_tag "bookings" %>
 	<%= javascript_include_tag "jquery-ui-1.10.4.min.js" %>

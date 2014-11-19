@@ -61,126 +61,31 @@ function getHour(str) {
 }
 
 function loadLocationTime (locationId, resources) {
-	$('#calendar').html('<%= image_tag "ajax-loader.gif", :alt => "Loader" %>');
-	$.getJSON('/location_time', {id: locationId}, function (times) {
-		if (times.length > 0) {
-			var minHour = 23;
-			var minMinuts = 59;
-			var maxHour = 00;
-			var maxMinuts = 00;
-			$.each(times, function (key, time) {
-					var openHour = parseInt(getHour(time.open).substr(0, getHour(time.open).indexOf(':')));
-					var openMinuts = parseInt(getHour(time.open).substr(getHour(time.open).indexOf(':') + 1));
-					var closeHour = parseInt(getHour(time.close).substr(0, getHour(time.close).indexOf(':')));
-					var closeMinuts = parseInt(getHour(time.close).substr(getHour(time.close).indexOf(':') + 1));
-					if(openHour < minHour) {
-						minHour = openHour;
-						minMinuts = openMinuts;
-					}
-					else if (openHour == minHour) {
-						if(openMinuts < minMinuts) {
-							minMinuts = openMinuts;
-						}
-					}
-					if(closeHour > maxHour) {
-						maxHour = closeHour;
-						maxMinuts = closeMinuts;
-					}
-					else if (closeHour == maxHour) {
-						if(closeMinuts > maxMinuts) {
-							maxMinuts = closeMinuts;
-						}
-					}
-			});
-			$.getJSON('/schedule', {local: parseInt($('#locals-selector').val())}, function (schedule) {
-				hiddenDays = new Array();
-				if (!schedule.Domingo.length) {
-					hiddenDays.push(0);
-				}
-				if (!schedule.Lunes.length) {
-					hiddenDays.push(1);
-				}
-				if (!schedule.Martes.length) {
-					hiddenDays.push(2);
-				}
-				if (!schedule.Miércoles.length) {
-					hiddenDays.push(3);
-				}
-				if (!schedule.Jueves.length) {
-					hiddenDays.push(4);
-				}
-				if (!schedule.Viernes.length) {
-					hiddenDays.push(5);
-				}
-				if (!schedule.Sábado.length) {
-					hiddenDays.push(6);
-				}
-				loadResourcesCalendar(minHour + ':' + minMinuts, maxHour + ':' + maxMinuts, hiddenDays,resources,0);
-			});	
-		}
-		else {
-			loadWeekCalendar(0, 24, [],resources,0);
-		}
-	});
+	var extended_schedule_bool = $('#calendar-data').data('extended-schedule');
+	if (extended_schedule_bool) {
+		var extended_min_hour = $('#calendar-data').data('extended-min-hour');
+		var extended_max_hour = $('#calendar-data').data('extended-max-hour');
+		loadResourcesCalendar(extended_min_hour, extended_max_hour, [], resources, 0);
+	}
+	else {
+		var min_hour = $('#locals-selector').find(':selected').data('minhour');
+		var max_hour = $('#locals-selector').find(':selected').data('maxhour');
+		loadResourcesCalendar(min_hour, max_hour, [], resources, 0);
+	}
 }
 
 function loadProviderTime (providerId) {
-	$('#calendar').html('<%= image_tag "ajax-loader.gif", :alt => "Loader" %>');
-	$.getJSON('/provider_time', {id: providerId}, function (times) {
-		var minHour = 23;
-		var minMinuts = 59;
-		var maxHour = 00;
-		var maxMinuts = 00;
-		$.each(times, function (key, time) {
-				var openHour = parseInt(getHour(time.open).substr(0, getHour(time.open).indexOf(':')));
-				var openMinuts = parseInt(getHour(time.open).substr(getHour(time.open).indexOf(':') + 1));
-				var closeHour = parseInt(getHour(time.close).substr(0, getHour(time.close).indexOf(':')));
-				var closeMinuts = parseInt(getHour(time.close).substr(getHour(time.close).indexOf(':') + 1));
-				if(openHour < minHour) {
-					minHour = openHour;
-					minMinuts = openMinuts;
-				}
-				else if (openHour == minHour) {
-					if(openMinuts < minMinuts) {
-						minMinuts = openMinuts;
-					}
-				}
-				if(closeHour > maxHour) {
-					maxHour = closeHour;
-					maxMinuts = closeMinuts;
-				}
-				else if (closeHour == maxHour) {
-					if(closeMinuts > maxMinuts) {
-						maxMinuts = closeMinuts;
-					}
-				}
-		});
-		$.getJSON('/schedule', {local: parseInt($('#locals-selector').val())}, function (schedule) {
-			hiddenDays = new Array();
-			if (!schedule.Domingo.length) {
-				hiddenDays.push(0);
-			}
-			if (!schedule.Lunes.length) {
-				hiddenDays.push(1);
-			}
-			if (!schedule.Martes.length) {
-				hiddenDays.push(2);
-			}
-			if (!schedule.Miércoles.length) {
-				hiddenDays.push(3);
-			}
-			if (!schedule.Jueves.length) {
-				hiddenDays.push(4);
-			}
-			if (!schedule.Viernes.length) {
-				hiddenDays.push(5);
-			}
-			if (!schedule.Sábado.length) {
-				hiddenDays.push(6);
-			}
-			loadWeekCalendar(minHour + ':' + minMinuts, maxHour + ':' + maxMinuts, hiddenDays,[],providerId);
-		});
-	});
+	var extended_schedule_bool = $('#calendar-data').data('extended-schedule');
+	if (extended_schedule_bool) {
+		var extended_min_hour = $('#calendar-data').data('extended-min-hour');
+		var extended_max_hour = $('#calendar-data').data('extended-max-hour');
+		loadWeekCalendar(extended_min_hour, extended_max_hour, [], [], providerId);
+	}
+	else {
+		var min_hour = $('#locals-selector').find(':selected').data('minhour');
+		var max_hour = $('#locals-selector').find(':selected').data('maxhour');
+		loadWeekCalendar(min_hour, max_hour, [], [], providerId);
+	}
 }
 
 function setAspectRatio() {
@@ -191,12 +96,12 @@ function setAspectRatio() {
 }
 
 var bookingModalOpen = false;
-var duration = $('#calendar-duration').data('calendar-duration');
+var duration = $('#calendar-data').data('calendar-duration');
 function loadResourcesCalendar (startTime, endTime, hiddenDays, resourcesArray, providerId) {
 	//Default values
-	startTime = 0;
-	endTime = 24;
-	var startHour = startTime || 9;
+	startTime = startTime || 0;
+	endTime = endTime || 24;
+	// var startHour = startTime || 9;
 	hiddenDays = [];
 
 	$('#calendar').fullCalendar('removeEvents');
@@ -305,7 +210,7 @@ function loadResourcesCalendar (startTime, endTime, hiddenDays, resourcesArray, 
 		dayNamesShort: ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'],
 		minTime: startTime,
 		maxTime: endTime,
-		firstHour: startHour, 
+		// firstHour: startHour, 
 		defaultEventMinutes: duration,
 		editable: true,
 		disableResizing: true,
@@ -333,9 +238,9 @@ function loadResourcesCalendar (startTime, endTime, hiddenDays, resourcesArray, 
 
 function loadWeekCalendar (startTime, endTime, hiddenDays, resourcesArray, providerId) {
 	//Default values
-	startTime = 0;
-	endTime = 24;
-	var startHour = startTime || 9;
+	startTime = startTime || 0;
+	endTime = endTime || 24;
+	// var startHour = startTime || 9;
 	hiddenDays = [];
 
 	$('#calendar').fullCalendar('removeEvents');
@@ -433,7 +338,7 @@ function loadWeekCalendar (startTime, endTime, hiddenDays, resourcesArray, provi
 		dayNamesShort: ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'],
 		minTime: startTime,
 		maxTime: endTime,
-		firstHour: startHour, 
+		// firstHour: startHour, 
 		defaultEventMinutes: duration,
 		editable: true,
 		disableResizing: true,
