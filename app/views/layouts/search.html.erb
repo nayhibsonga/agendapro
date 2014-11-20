@@ -56,7 +56,7 @@
 							<i class="fa fa-bars"></i>
 						</button>
 						<a href="<%= root_without_subdomain %>" class="navbar-brand">
-							<%= image_tag 'logos/logo_agendaproVerde.png', :alt => 'AgendaPro', :size => "127x39" %>
+							<%= image_tag 'logos/logo.png', :alt => 'AgendaPro' %>
 						</a>
 					</div>
 					<!-- Collect the nav links, forms, and other content for toggling -->
@@ -128,7 +128,7 @@
 		</footer> -->
 
 		<!-- start: JavaScript-->
-		<% yield :scripts %>
+		<%= yield :scripts %>
 		<%= javascript_include_tag "search" %>
 		<%= javascript_include_tag "http://maps.google.com/maps/api/js?sensor=false" %>
 		<% javascript_include_tag "jquery.browser.min" %><!-- Removido -->
