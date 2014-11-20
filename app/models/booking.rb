@@ -136,7 +136,7 @@ class Booking < ActiveRecord::Base
 					errors.add(:base, "La hora de fin debe ser menor o igual a la hora máxima que se despliega, puedes extender el horario en las configuraciones del calendario.")
 				end
 			else
-				location_ids = self.company.locations.pluck(:id)
+				location_ids = self.location.company.locations.pluck(:id)
 				first_open_time = LocationTime.where(location_id: location_ids).order(:open).first.open
 				last_close_time = LocationTime.where(location_id: location_ids).order(:close).last.close
 				if bstart.change(:month => 1, :day => 1, :year => 2000) < first_open_time
