@@ -180,6 +180,7 @@ class Ability
         can :name_suggestion, Client
         can :suggestion, Client
         can :rut_suggestion, Client
+        can :bookings_history, Client
 
         can :create_comment, Client
         can :update_comment, Client
@@ -273,6 +274,7 @@ class Ability
         can :name_suggestion, Client
         can :suggestion, Client
         can :rut_suggestion, Client
+        can :bookings_history, Client
         
         can :create_comment, Client, :company_id => user.company_id
         can :update_comment, Client, :company_id => user.company_id
@@ -323,6 +325,7 @@ class Ability
         can :suggestion, Client
         can :rut_suggestion, Client
         can :provider_service, ServiceProvider
+        can :bookings_history, Client
         
         can :create_comment, Client, :company_id => user.company_id
         can :update_comment, Client, :company_id => user.company_id
@@ -363,6 +366,7 @@ class Ability
         can :suggestion, Client
         can :rut_suggestion, Client
         can :provider_service, ServiceProvider
+        can :bookings_history, Client
 
     elsif user.role_id == Role.find_by_name("Staff (sin edición)").id
 

@@ -428,6 +428,7 @@ function editBookingModal(eventId) {
 			$('#booking_status_id option[value="'+booking.status_id+'"]').attr("selected",true);
 			$('#booking_price').val(booking.price);
 			$('#booking_client_id').val(booking.client_id);
+			loadClientHistory();
 			$('#booking_client_first_name').val(booking.first_name);
 			$('#booking_client_last_name').val(booking.last_name);
 			$('#booking_client_identification_number').val(booking.identification_number);
@@ -1288,6 +1289,32 @@ function setAge() {
 	return false;
 }
 
+function loadClientHistory() {
+	if (parseInt($('#booking_client_id').val()) > 0) {
+		$('#client-history-tbody').empty();
+		$.getJSON('/clients_bookings_history/', {id: parseInt($('#booking_client_id').val())}, function (bookings_history) {
+			if (bookings_history.length > 0) {
+				$.each(bookings_history, function (key, booking_history) {
+					var date = new Date(booking_history.start);
+					$('#client-history-tbody').append('<tr><td>'+dateToLocal(date)+'</td><td>'+booking_history.service+'</td><td>'+booking_history.provider+'</td><td>'+booking_history.status+'</td><td>'+booking_history.notes+'</td><td>'+booking_history.comment+'</td></tr>');
+				});
+			}
+			else {
+				$('#client-history-tbody').append('<tr><td colspan="6">El cliente no tiene historial...</td></tr>');
+			}
+		});
+	}
+	return false;
+}
+
+var meses = new Array ("Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre");
+var diasSemana = new Array("Domingo","Lunes","Martes","Miércoles","Jueves","Viernes","Sábado");
+function dateToLocal(date) {
+	var hours = date.getUTCHours() < 10 ? '0'+date.getUTCHours() : date.getUTCHours();
+	var minutes =  date.getUTCMinutes() < 10 ? '0'+date.getUTCMinutes() : date.getUTCMinutes();
+	return diasSemana[date.getUTCDay()] + ", " + date.getUTCDate() + " de " + meses[date.getUTCMonth()] + " de " + date.getUTCFullYear() + ' - ' + hours + ':' + minutes;
+}
+
 // var alertId;
 $(function() {
 	// alertId = new Alert();
@@ -1406,6 +1433,7 @@ $(function() {
 			}
 			$('#xButton').prop('disabled', false);
 			$("#full_name").prop('disabled', true);
+			loadClientHistory();
 		}
 	}).data( "ui-autocomplete" )._renderItem = function( ul, item ) {
     	return $( '<li>' ).append( '<a>' + item.label + '<br><span class="auto-desc">' + item.desc + '</span></a>' ).appendTo( ul );
@@ -1448,6 +1476,7 @@ $(function() {
 			}
 			$('#xButton').prop('disabled', false);
 			$("#full_name").prop('disabled', true);
+			loadClientHistory();
 		}
 	}).data( "ui-autocomplete" )._renderItem = function( ul, item ) {
     	return $( '<li>' ).append( '<a>' + item.label + '<br><span class="auto-desc">' + item.desc + '</span></a>' ).appendTo( ul );
@@ -1526,6 +1555,8 @@ $(function() {
 		$('#booking_send_mail').prop('checked', false);
 		$('#booking_send_mail').prop('disabled', true);
 		$('label[for=booking_send_mail]').addClass('disabled');
+		$('#client-history-tbody').empty();
+		$('#client-history-tbody').append('<tr><td colspan="6">No hay un cliente seleccionado...</td></tr>');
 		$('#xButton').prop('disabled', true);
 	});
 
