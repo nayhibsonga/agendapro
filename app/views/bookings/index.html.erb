@@ -43,7 +43,8 @@
 				<div class="row well well-sm">
 					<ul id="myTab" class="nav nav-tabs" role="tablist">
 						<li id="booking-li" class="active"><a href="#booking-pane" role="tab" data-toggle="tab" class="tab_index" id="booking-tab">Reserva</a></li>
-						<li id="client-li" class=""><a href="#client-pane" role="tab" data-toggle="tab" class="tab_index" id="client-tab">Cliente</a></li>
+						<li id="client-li" class=""><a href="#client-pane" role="tab" data-toggle="tab" class="tab_index" id="client-tab">Datos Cliente</a></li>
+						<li id="history-li" class=""><a href="#history-pane" role="tab" data-toggle="tab" class="tab_index" id="client-tab">Historial Cliente</a></li>
 					</ul>
 					<br />
 					<div id="myTabContent" class="tab-content">
@@ -312,6 +313,28 @@
 							</div>
 							<% end %>
 							<p><strong>Nota:</strong> Si modificas estos datos, al guardar la reserva, se actualizarán los datos del cliente.</p>
+						</div>
+						<div class="tab-pane" id="history-pane">
+							<div class="fixed-table">
+								<h4>Últimas reservas del cliente:</h4>
+								<table class="table">
+									<thead>
+										<tr>
+											<th>Fecha</th>
+											<th>Servicio</th>
+											<th>Prestador</th>
+											<th>Estado</th>
+											<th>Nota Cliente</th>
+											<th>Nota Interna</th>
+										</tr>
+									</thead>
+									<tbody id="client-history-tbody">
+										<tr>
+											<td colspan="6">No hay un cliente seleccionado...</td>
+										</tr>
+									</tbody>
+								</table>
+							</div>
 						</div>
 					</div>
 					<% end %>
