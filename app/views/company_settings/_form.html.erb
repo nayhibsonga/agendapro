@@ -133,7 +133,7 @@
 	  </div>
 	  <div class="tab-pane" id="calendar">
 	    <div class="row">
-			<%= form_for @company_setting, :html => {:class => 'form-horizontal'} do |f| %>
+			<%= form_for @company_setting, :html => {:class => 'form-horizontal calendar-form'} do |f| %>
 				<div class="form-group">
 					<%= f.label :calendar_duration, 'Bloque Calendario', :class => 'col-sm-3 control-label' %>
 					<div class="col-sm-5">
@@ -141,7 +141,41 @@
 							<%= f.select :calendar_duration, options_for_select({ "5" => "5", "10" => "10", "15" => "15", "20" => "20", "30" => "30", "45" => "45", "60" => "60" }, @company_setting.calendar_duration), {}, {class: "form-control"} %>
 							<span class="input-group-addon">minutos</span>
 						</div>
-						<span class="help-block">Esta opción determina el largo de cada bloque en la sección <%= link_to '<i class="fa fa-calendar fa-fw"></i><span class="colapse-hidden"> Calendario</span>'.html_safe, bookings_path %>.</span>
+						<span class="help-block">Esta opción determina el largo de cada bloque en la sección <strong>"Calendario"</strong>.</span>
+					</div>
+				</div>
+				<div class="form-group">
+					<%= f.label :provider_overcapacity, 'Permitir Reservas Sobrepuestas', :class => 'col-sm-3 control-label' %>
+					<div class="col-sm-5">
+						<%= f.check_box :provider_overcapacity %>
+						<span class="help-block">Si habilitas esta opción, los prestadores pueden tener dos reservas en un mismo horario. Esto es sólo válido para reservas ingresadas internamente, tus clientes que reservan desde el buscador y página personal no podrán reservar ellos mismos donde ya haya una reserva.</span>
+					</div>
+				</div>
+				<div class="form-group">
+					<%= f.label :resource_overcapacity, 'Permitir Sobrecarga de Recursos', :class => 'col-sm-3 control-label' %>
+					<div class="col-sm-5">
+						<%= f.check_box :resource_overcapacity %>
+						<span class="help-block">Al habilitar esta opción, podrás hacer reservas incluso cuando los recursos estén siendo utilizados o no disponibles. Esto es sólo válido para reservas ingresadas internamente, tus clientes que reservan desde el buscador y página personal no podrán reservar ellos mismos donde los resursos no estén disponibles.</span>
+					</div>
+				</div>
+				<div class="form-group">
+					<%= f.label :schedule_overcapacity, 'Permitir Reservas Fuera de Horario', :class => 'col-sm-3 control-label' %>
+					<div class="col-sm-5">
+						<%= f.check_box :schedule_overcapacity %>
+						<span class="help-block">Esta opción te permite poder tomar reservas fuera del horario del prestador, para reservas ingresadas internamente. Si habilitas esta opción podrás hacer reservas en todo el horario visible en la sección <strong>"Calendario"</strong>, puedes extender este habilitando la próxima opción.</span>
+					</div>
+				</div>
+				<div class="form-group">
+					<%= f.label :extended_schedule_bool, 'Extender Calendario', :class => 'col-sm-3 control-label' %>
+					<div class="col-sm-5">
+						<%= f.check_box :extended_schedule_bool %>
+						<span class="help-block">Habilita esta opción para extender el horario en la sección <strong>"Calendario"</strong>, y así poder tomar reservas antes y/o después de tu horario normal, si la opción anterior así lo permite.</span>
+					</div>
+				</div>
+				<div class="form-group ">
+					<%= f.label :extended_min_hour, 'Horario Calendario Extendido', :class => 'col-sm-3 control-label' %>
+					<div class="col-sm-5 form-inline">
+						<%= f.time_select :extended_min_hour, {minute_step: 15}, {:class => 'form-control date-select', required: true} %> - <%= f.time_select :extended_max_hour, {minute_step: 15}, {:class => 'form-control date-select', required: true} %>
 					</div>
 				</div>
 				<div class="form-group">

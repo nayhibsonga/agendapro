@@ -170,6 +170,7 @@ Agendapro::Application.routes.draw do
   patch '/provider_breaks/:id', :to => 'provider_breaks#update_provider_break', :as => 'edit_provider_break'
   delete '/provider_breaks/:id', :to => 'provider_breaks#destroy_provider_break', :as => 'delete_provider_break'
   get '/available_providers', :to => 'service_providers#available_providers', :as => 'available_service_providers'
+  get '/clients_bookings_history', :to => 'clients#bookings_history'
   get '/fixed_bookings', :to => 'bookings#fixed_index', :as => 'fixed_bookings'
 
   get '/edit_booking', :to => 'bookings#edit_booking', :as => 'booking_edit'

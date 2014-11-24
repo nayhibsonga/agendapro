@@ -1,3 +1,10 @@
+GIT
+  remote: https://github.com/ivalkeen/validation_scopes.git
+  revision: b809f232b385b3b774bb8486f27408c26c49c5fd
+  specs:
+    validation_scopes (0.6.0)
+      activerecord (>= 3, < 5)
+
 GEM
   remote: https://rubygems.org/
   specs:
@@ -225,5 +232,6 @@ DEPENDENCIES
   therubyracer
   turbolinks
   uglifier (>= 1.3.0)
+  validation_scopes!
   whenever
   will_paginate-bootstrap
