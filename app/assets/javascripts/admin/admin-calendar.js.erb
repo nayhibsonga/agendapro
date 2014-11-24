@@ -1354,6 +1354,11 @@ var diasSemana = new Array("Domingo","Lunes","Martes","Miércoles","Jueves","Vie
 function dateToLocal(date) {
 	var hours = date.getUTCHours() < 10 ? '0'+date.getUTCHours() : date.getUTCHours();
 	var minutes =  date.getUTCMinutes() < 10 ? '0'+date.getUTCMinutes() : date.getUTCMinutes();
+	return date.getUTCDate() + "/" + (date.getUTCMonth()+1) + "/" + date.getUTCFullYear() + ' - ' + hours + ':' + minutes;
+}
+function dateFullToLocal(date) {
+	var hours = date.getUTCHours() < 10 ? '0'+date.getUTCHours() : date.getUTCHours();
+	var minutes =  date.getUTCMinutes() < 10 ? '0'+date.getUTCMinutes() : date.getUTCMinutes();
 	return diasSemana[date.getUTCDay()] + ", " + date.getUTCDate() + " de " + meses[date.getUTCMonth()] + " de " + date.getUTCFullYear() + ' - ' + hours + ':' + minutes;
 }
 
