@@ -1038,8 +1038,7 @@ function createBreakModal(date, providerId) {
 		$('#provider_break_service_provider_id option[value="'+providerId+'"]').attr("selected",true);
 	}
 
-	var end_minutes = parseInt($('#provider_break_end_5i').val()) + $('#calendar-duration').data('calendar-duration');
-	window.console.log(end_minutes);
+	var end_minutes = parseInt($('#provider_break_end_5i').val()) + $('#calendar-data').data('calendar-duration');
 	if (end_minutes >= 60) {
 		$('#provider_break_end_4i option[value="'+(parseInt($('#provider_break_end_4i').val())+1)+'"]').attr("selected",true);
 		end_minutes = end_minutes - 60;

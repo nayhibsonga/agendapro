@@ -1,0 +1,3 @@
+
+Booking.create(start: "2014-12-05T12:00:00Z",end: '2014-12-05T12:00:00Z'.to_datetime + Service.find(1358).duration.minutes,service_provider_id:Pino Gomez,location_id: Andrea De Lourdes,service_id: 1358,client_id: 59831,status_id: 1, send_mail: TRUE)
+Booking.create(start: "2014-12-17T14:00:00Z",end: '2014-12-17T14:00:00Z'.to_datetime + Service.find(1360).duration.minutes,service_provider_id:Pino Gomez,location_id: Andrea De Lourdes,service_id: 1360,client_id: 59831,status_id: 1, send_mail: TRUE)
