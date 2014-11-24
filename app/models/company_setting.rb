@@ -2,7 +2,7 @@ class CompanySetting < ActiveRecord::Base
 	belongs_to :company
 
 	#validates :email, :sms, :presence => true
-	validate :extended_schedule
+	validate after_commit :extended_schedule
 
 	def extended_schedule
 		if self.extended_min_hour >= self.extended_max_hour
