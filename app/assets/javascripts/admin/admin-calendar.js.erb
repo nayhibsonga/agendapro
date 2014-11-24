@@ -1098,12 +1098,17 @@ function editBreakModal(breakId) {
 }
 
 function validEmail(email) {
-	var atpos = email.indexOf("@");
-	var dotpos = email.lastIndexOf(".");
-	if (atpos < 1 || dotpos < atpos+2 || dotpos+2 >= email.length) {
-	  return false;
+	if (email != null) {	
+		var atpos = email.indexOf("@");
+		var dotpos = email.lastIndexOf(".");
+		if (atpos < 1 || dotpos < atpos+2 || dotpos+2 >= email.length) {
+		  return false;
+		}
+		return true;
 	}
-	return true;
+	else {
+		return false;
+	}
 }
 
 function splitFullName() {
