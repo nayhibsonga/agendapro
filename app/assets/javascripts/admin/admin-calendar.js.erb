@@ -61,126 +61,31 @@ function getHour(str) {
 }
 
 function loadLocationTime (locationId, resources) {
-	$('#calendar').html('<%= image_tag "ajax-loader.gif", :alt => "Loader" %>');
-	$.getJSON('/location_time', {id: locationId}, function (times) {
-		if (times.length > 0) {
-			var minHour = 23;
-			var minMinuts = 59;
-			var maxHour = 00;
-			var maxMinuts = 00;
-			$.each(times, function (key, time) {
-					var openHour = parseInt(getHour(time.open).substr(0, getHour(time.open).indexOf(':')));
-					var openMinuts = parseInt(getHour(time.open).substr(getHour(time.open).indexOf(':') + 1));
-					var closeHour = parseInt(getHour(time.close).substr(0, getHour(time.close).indexOf(':')));
-					var closeMinuts = parseInt(getHour(time.close).substr(getHour(time.close).indexOf(':') + 1));
-					if(openHour < minHour) {
-						minHour = openHour;
-						minMinuts = openMinuts;
-					}
-					else if (openHour == minHour) {
-						if(openMinuts < minMinuts) {
-							minMinuts = openMinuts;
-						}
-					}
-					if(closeHour > maxHour) {
-						maxHour = closeHour;
-						maxMinuts = closeMinuts;
-					}
-					else if (closeHour == maxHour) {
-						if(closeMinuts > maxMinuts) {
-							maxMinuts = closeMinuts;
-						}
-					}
-			});
-			$.getJSON('/schedule', {local: parseInt($('#locals-selector').val())}, function (schedule) {
-				hiddenDays = new Array();
-				if (!schedule.Domingo.length) {
-					hiddenDays.push(0);
-				}
-				if (!schedule.Lunes.length) {
-					hiddenDays.push(1);
-				}
-				if (!schedule.Martes.length) {
-					hiddenDays.push(2);
-				}
-				if (!schedule.Miércoles.length) {
-					hiddenDays.push(3);
-				}
-				if (!schedule.Jueves.length) {
-					hiddenDays.push(4);
-				}
-				if (!schedule.Viernes.length) {
-					hiddenDays.push(5);
-				}
-				if (!schedule.Sábado.length) {
-					hiddenDays.push(6);
-				}
-				loadResourcesCalendar(minHour + ':' + minMinuts, maxHour + ':' + maxMinuts, hiddenDays,resources,0);
-			});	
-		}
-		else {
-			loadWeekCalendar(0, 24, [],resources,0);
-		}
-	});
+	var extended_schedule_bool = $('#calendar-data').data('extended-schedule');
+	if (extended_schedule_bool) {
+		var extended_min_hour = $('#calendar-data').data('extended-min-hour');
+		var extended_max_hour = $('#calendar-data').data('extended-max-hour');
+		loadResourcesCalendar(extended_min_hour, extended_max_hour, [], resources, 0);
+	}
+	else {
+		var min_hour = $('#locals-selector').find(':selected').data('minhour');
+		var max_hour = $('#locals-selector').find(':selected').data('maxhour');
+		loadResourcesCalendar(min_hour, max_hour, [], resources, 0);
+	}
 }
 
 function loadProviderTime (providerId) {
-	$('#calendar').html('<%= image_tag "ajax-loader.gif", :alt => "Loader" %>');
-	$.getJSON('/provider_time', {id: providerId}, function (times) {
-		var minHour = 23;
-		var minMinuts = 59;
-		var maxHour = 00;
-		var maxMinuts = 00;
-		$.each(times, function (key, time) {
-				var openHour = parseInt(getHour(time.open).substr(0, getHour(time.open).indexOf(':')));
-				var openMinuts = parseInt(getHour(time.open).substr(getHour(time.open).indexOf(':') + 1));
-				var closeHour = parseInt(getHour(time.close).substr(0, getHour(time.close).indexOf(':')));
-				var closeMinuts = parseInt(getHour(time.close).substr(getHour(time.close).indexOf(':') + 1));
-				if(openHour < minHour) {
-					minHour = openHour;
-					minMinuts = openMinuts;
-				}
-				else if (openHour == minHour) {
-					if(openMinuts < minMinuts) {
-						minMinuts = openMinuts;
-					}
-				}
-				if(closeHour > maxHour) {
-					maxHour = closeHour;
-					maxMinuts = closeMinuts;
-				}
-				else if (closeHour == maxHour) {
-					if(closeMinuts > maxMinuts) {
-						maxMinuts = closeMinuts;
-					}
-				}
-		});
-		$.getJSON('/schedule', {local: parseInt($('#locals-selector').val())}, function (schedule) {
-			hiddenDays = new Array();
-			if (!schedule.Domingo.length) {
-				hiddenDays.push(0);
-			}
-			if (!schedule.Lunes.length) {
-				hiddenDays.push(1);
-			}
-			if (!schedule.Martes.length) {
-				hiddenDays.push(2);
-			}
-			if (!schedule.Miércoles.length) {
-				hiddenDays.push(3);
-			}
-			if (!schedule.Jueves.length) {
-				hiddenDays.push(4);
-			}
-			if (!schedule.Viernes.length) {
-				hiddenDays.push(5);
-			}
-			if (!schedule.Sábado.length) {
-				hiddenDays.push(6);
-			}
-			loadWeekCalendar(minHour + ':' + minMinuts, maxHour + ':' + maxMinuts, hiddenDays,[],providerId);
-		});
-	});
+	var extended_schedule_bool = $('#calendar-data').data('extended-schedule');
+	if (extended_schedule_bool) {
+		var extended_min_hour = $('#calendar-data').data('extended-min-hour');
+		var extended_max_hour = $('#calendar-data').data('extended-max-hour');
+		loadWeekCalendar(extended_min_hour, extended_max_hour, [], [], providerId);
+	}
+	else {
+		var min_hour = $('#locals-selector').find(':selected').data('minhour');
+		var max_hour = $('#locals-selector').find(':selected').data('maxhour');
+		loadWeekCalendar(min_hour, max_hour, [], [], providerId);
+	}
 }
 
 function setAspectRatio() {
@@ -191,12 +96,13 @@ function setAspectRatio() {
 }
 
 var bookingModalOpen = false;
-var duration = $('#calendar-duration').data('calendar-duration');
+var duration = $('#calendar-data').data('calendar-duration');
 function loadResourcesCalendar (startTime, endTime, hiddenDays, resourcesArray, providerId) {
 	//Default values
 	startTime = startTime || 0;
 	endTime = endTime || 24;
-	hiddenDays = hiddenDays || [];
+	// var startHour = startTime || 9;
+	hiddenDays = [];
 
 	$('#calendar').fullCalendar('removeEvents');
 	$('#calendar').empty();
@@ -304,6 +210,7 @@ function loadResourcesCalendar (startTime, endTime, hiddenDays, resourcesArray, 
 		dayNamesShort: ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'],
 		minTime: startTime,
 		maxTime: endTime,
+		// firstHour: startHour, 
 		defaultEventMinutes: duration,
 		editable: true,
 		disableResizing: true,
@@ -333,7 +240,8 @@ function loadWeekCalendar (startTime, endTime, hiddenDays, resourcesArray, provi
 	//Default values
 	startTime = startTime || 0;
 	endTime = endTime || 24;
-	hiddenDays = hiddenDays || [];
+	// var startHour = startTime || 9;
+	hiddenDays = [];
 
 	$('#calendar').fullCalendar('removeEvents');
 	$('#calendar').empty();
@@ -430,6 +338,7 @@ function loadWeekCalendar (startTime, endTime, hiddenDays, resourcesArray, provi
 		dayNamesShort: ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'],
 		minTime: startTime,
 		maxTime: endTime,
+		// firstHour: startHour, 
 		defaultEventMinutes: duration,
 		editable: true,
 		disableResizing: true,
@@ -456,7 +365,7 @@ function loadWeekCalendar (startTime, endTime, hiddenDays, resourcesArray, provi
 		loadProviderEvents(providerId);
 	});
 	loadProviderEvents(providerId);
-	$('td.fc-header-left').append('<span class="fc-header-title"><a class="btn btn-agendapro-claro print-schedule" href="/service_provider/pdf.pdf?service_provider_id='+providerId+'"><i class="fa fa-print"></i> Horario de Hoy</a></span>');
+	// $('td.fc-header-left').append('<span class="fc-header-title"><a class="btn btn-agendapro-claro print-schedule" href="/service_provider/pdf.pdf?service_provider_id='+providerId+'"><i class="fa fa-print"></i> Horario de Hoy</a></span>');
 }
 
 function loadProviderEvents(providerId) {
@@ -519,6 +428,7 @@ function editBookingModal(eventId) {
 			$('#booking_status_id option[value="'+booking.status_id+'"]').attr("selected",true);
 			$('#booking_price').val(booking.price);
 			$('#booking_client_id').val(booking.client_id);
+			loadClientHistory();
 			$('#booking_client_first_name').val(booking.first_name);
 			$('#booking_client_last_name').val(booking.last_name);
 			$('#booking_client_identification_number').val(booking.identification_number);
@@ -851,6 +761,16 @@ function editDrag(event) {
 					$('#calendar').fullCalendar('updateEvent', event);
 					alert("Reserva actualizada exitosamente.");
 					// alertId.showAlert("Horario de la reserva cambiado exitosamente.");
+                    $('#bookingAlerts').hide();
+                    if (booking.warnings.length > 0) {
+                        $('#bookingWarnings').empty();
+                        var warnings = '';
+                        for (i in booking.warnings) {
+                            warnings += booking.warnings[i] + '. ';
+                        }
+                        $('#bookingWarnings').append(warnings);
+                        $('#bookingAlerts').show();
+                    }
 
 				},
 				error: function(xhr){
@@ -917,7 +837,16 @@ function saveBooking(typeURL, extraURL) {
 					};
 					$('#calendar').fullCalendar('renderEvent', events, true);
 				}
-				$('#bookingModal').modal('hide');
+				$('#bookingAlerts').hide();
+				if (booking.warnings.length > 0) {
+					$('#bookingWarnings').empty();
+					var warnings = '';
+					for (i in booking.warnings) {
+						warnings += booking.warnings[i] + '. ';
+					}
+					$('#bookingWarnings').append(warnings);
+					$('#bookingAlerts').show();
+				}
 				break;
 			case 'PATCH':
 				event = $('#calendar').fullCalendar('clientEvents', booking.id)[0];
@@ -950,13 +879,22 @@ function saveBooking(typeURL, extraURL) {
 				else {
 					$('#calendar').fullCalendar('removeEvents',booking.id);
 				}
-				$('#bookingModal').modal('hide');
+				$('#bookingAlerts').hide();
+				if (booking.warnings.length > 0) {
+					$('#bookingWarnings').empty();
+					var warnings = '';
+					for (i in booking.warnings) {
+						warnings += booking.warnings[i] + '. ';
+					}
+					$('#bookingWarnings').append(warnings);
+					$('#bookingAlerts').show();
+				}
 				break;
 			case 'DELETE':
 				$('#calendar').fullCalendar('removeEvents',booking.id);
-				$('#bookingModal').modal('hide');
 				break;
 			}
+			$('#bookingModal').modal('hide');
 		},
 		error: function(xhr){
 			var errors = $.parseJSON(xhr.responseText).errors;
@@ -1001,6 +939,17 @@ function saveBreak (typeURL, extraURL) {
                 $( '<%= image_tag "small-loader.gif", :alt => "Loader", :id => "small_loader" %>' ).insertBefore( $( ".btn-close" ) );
                 $('#calendar').fullCalendar('renderEvent', events, true);
                 $('#breakModal').modal('hide');
+
+	            $('#bookingAlerts').hide();
+	            if (provider_break.warnings.length > 0) {
+	                $('#bookingWarnings').empty();
+	                var warnings = '';
+	                for (i in provider_break.warnings) {
+	                    warnings += provider_break.warnings[i] + '. ';
+	                }
+	                $('#bookingWarnings').append(warnings);
+	                $('#bookingAlerts').show();
+	            }
 				break;
 			case 'PATCH':
 				var label = provider_break.name;
@@ -1016,14 +965,24 @@ function saveBreak (typeURL, extraURL) {
                 $( '<%= image_tag "small-loader.gif", :alt => "Loader", :id => "small_loader" %>' ).insertBefore( $( ".btn-close" ) );
                 $('#calendar').fullCalendar('updateEvent', event);
                 $('#breakModal').modal('hide');
+                ('#bookingAlerts').hide();
+	            if (provider_break.warnings.length > 0) {
+	                $('#bookingWarnings').empty();
+	                var warnings = '';
+	                for (i in provider_break.warnings) {
+	                    warnings += provider_break.warnings[i] + '. ';
+	                }
+	                $('#bookingWarnings').append(warnings);
+	                $('#bookingAlerts').show();
+	            }
 				break;
 			case 'DELETE':
                 $('.break-button').attr("disabled", "disabled");
                 $( '<%= image_tag "small-loader.gif", :alt => "Loader", :id => "small_loader" %>' ).insertBefore( $( ".btn-close" ) );
                 $('#calendar').fullCalendar('removeEvents','b'+provider_break.id);
-                $('#breakModal').modal('hide');
 				break;
 			}
+			$('#breakModal').modal('hide');
 		},
 		error: function(xhr){
 			var errors = $.parseJSON(xhr.responseText).errors;
@@ -1330,6 +1289,37 @@ function setAge() {
 	return false;
 }
 
+function loadClientHistory() {
+	if (parseInt($('#booking_client_id').val()) > 0) {
+		$('#client-history-tbody').empty();
+		$.getJSON('/clients_bookings_history/', {id: parseInt($('#booking_client_id').val())}, function (bookings_history) {
+			if (bookings_history.length > 0) {
+				$.each(bookings_history, function (key, booking_history) {
+					var date = new Date(booking_history.start);
+					$('#client-history-tbody').append('<tr><td>'+dateToLocal(date)+'</td><td>'+booking_history.service+'</td><td>'+booking_history.provider+'</td><td>'+booking_history.status+'</td><td>'+booking_history.notes+'</td><td>'+booking_history.comment+'</td></tr>');
+				});
+			}
+			else {
+				$('#client-history-tbody').append('<tr><td colspan="6">El cliente no tiene historial...</td></tr>');
+			}
+		});
+	}
+	return false;
+}
+
+var meses = new Array ("Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre");
+var diasSemana = new Array("Domingo","Lunes","Martes","Miércoles","Jueves","Viernes","Sábado");
+function dateToLocal(date) {
+	var hours = date.getUTCHours() < 10 ? '0'+date.getUTCHours() : date.getUTCHours();
+	var minutes =  date.getUTCMinutes() < 10 ? '0'+date.getUTCMinutes() : date.getUTCMinutes();
+	return date.getUTCDate() + "/" + (date.getUTCMonth()+1) + "/" + date.getUTCFullYear() + ' - ' + hours + ':' + minutes;
+}
+function dateFullToLocal(date) {
+	var hours = date.getUTCHours() < 10 ? '0'+date.getUTCHours() : date.getUTCHours();
+	var minutes =  date.getUTCMinutes() < 10 ? '0'+date.getUTCMinutes() : date.getUTCMinutes();
+	return diasSemana[date.getUTCDay()] + ", " + date.getUTCDate() + " de " + meses[date.getUTCMonth()] + " de " + date.getUTCFullYear() + ' - ' + hours + ':' + minutes;
+}
+
 // var alertId;
 $(function() {
 	// alertId = new Alert();
@@ -1448,6 +1438,7 @@ $(function() {
 			}
 			$('#xButton').prop('disabled', false);
 			$("#full_name").prop('disabled', true);
+			loadClientHistory();
 		}
 	}).data( "ui-autocomplete" )._renderItem = function( ul, item ) {
     	return $( '<li>' ).append( '<a>' + item.label + '<br><span class="auto-desc">' + item.desc + '</span></a>' ).appendTo( ul );
@@ -1490,6 +1481,7 @@ $(function() {
 			}
 			$('#xButton').prop('disabled', false);
 			$("#full_name").prop('disabled', true);
+			loadClientHistory();
 		}
 	}).data( "ui-autocomplete" )._renderItem = function( ul, item ) {
     	return $( '<li>' ).append( '<a>' + item.label + '<br><span class="auto-desc">' + item.desc + '</span></a>' ).appendTo( ul );
@@ -1568,6 +1560,8 @@ $(function() {
 		$('#booking_send_mail').prop('checked', false);
 		$('#booking_send_mail').prop('disabled', true);
 		$('label[for=booking_send_mail]').addClass('disabled');
+		$('#client-history-tbody').empty();
+		$('#client-history-tbody').append('<tr><td colspan="6">No hay un cliente seleccionado...</td></tr>');
 		$('#xButton').prop('disabled', true);
 	});
 
@@ -1592,5 +1586,9 @@ $(function() {
 	});
 	$('#booking_client_birth_year').change(function() {
 		setAge();
+	});
+
+	$('#bookingAlertsClose').click(function() {
+		$('#bookingAlerts').hide();
 	});
 });
