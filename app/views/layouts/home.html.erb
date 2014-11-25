@@ -56,17 +56,17 @@
                             <i class="fa fa-bars"></i>
                         </button>
                         <a href="<%= root_without_subdomain %>" class="navbar-brand">
-                            <%= image_tag 'logos/logo_agendaproVerde2.png', :alt => 'AgendaPro', :size => "127x39" %>
+                            <%= image_tag 'logos/logodoble2.png', :alt => 'AgendaPro', :size => "127x43" %>
                         </a>
                     </div>
                     <!-- Collect the nav links, forms, and other content for toggling -->
                     <div class="collapse navbar-collapse" id="navbar">
                         <ul class="nav navbar-nav navbar-right">
-                            <li class="active"><a href="#">Inicio</a></li>
-                            <li><a href="#">Características</a></li>
-                            <li><a href="#">Planes</a></li>
-                            <li><a href="#">Tutoriales</a></li>
-                            <li><a href="#">Contacto</a></li>
+                            <li class="<%= 'active' if current_page?(home_path) %>"><%= link_to "Inicio", home_path %></li>
+                            <li class="<%= 'active' if current_page?(features_path) %>"><%= link_to "Características", features_path %></li>
+                            <li class="<%= 'active' if current_page?(plans_path) %>"><%= link_to "Planes", plans_path %></li>
+                            <li class="<%= 'active' if current_page?(tutorials_path) %>"><%= link_to "Tutoriales", tutorials_path %></li>
+                            <li class="<%= 'active' if current_page?(contact_path) %>"><%= link_to "Contacto", contact_path %></li>
                             <li><a href="#" class="menu-green"><i class="fa fa-user"></i> Registrate</a></li>
                             <li><a href="#" class="menu-green"><i class="fa fa-calendar-o"></i> Iniciar Sesión</a></li>
                         </ul>
@@ -91,7 +91,7 @@
         <!-- end: Header -->
 
         <!-- start: content -->
-        <div class="main">
+        <div class="main main-home">
             <%= yield %>
         </div>
         <!-- end: content -->
@@ -100,29 +100,29 @@
             <div class="container">
                 <div class="row pull-center">
                     <div class="col-sm-4">
-                        <%= image_tag "search/location.png" %>
+                        <%= image_tag "footer/1.png", size: "22x29" %>
                         <p>Nuestra Señora de los
                          Angeles 185, Oficina D,
                           Las Condes, Santiago</p>
                     </div>
                     <div class="col-sm-4">
-                        <%= image_tag "search/email.png" %>
+                        <%= image_tag "footer/2.png", size: "24x19" %>
                         <p>contacto@agendapro.cl</p>
                     </div>
                     <div class="col-sm-4">
-                        <%= image_tag "search/telephone.png" %>
+                        <%= image_tag "footer/3.png", size: "22x29" %>
                         <p>(+56 9) 5178 5898</p>
                     </div>
                 </div>
                 <div class="row footer">
-                    <div class="col-sm-6">
+                    <div class="col-sm-5 copyright-footer">
                         <i class="fa fa-copyright"></i> Copyright 2013 | Gunei Investment SpA | Todos los derechos reservados
                     </div>
-                    <div class="col-sm-5 text-right">
-                        <a href="#">Sobre Nosotros</a> | <a href="#">Tutoriales</a> | <a href="#">Terminos y condiciones</a>
+                    <div class="col-sm-5 text-right links-footer">
+                        <%= link_to "Sobre Nosotros", aboutus_path %> | <%= link_to "Tutoriales", tutorials_path %> | <%= link_to "Términos y Condiciones", '#' %>
                     </div>
-                    <div class="col-sm-1">
-                        <%= image_tag 'logos/logo.png', :alt => 'AgendaPro', :size => "127x39" %>
+                    <div class="col-sm-2">
+                        <%= image_tag 'footer/logo_footer.png', :alt => 'AgendaPro', :size => "127x43", class: "pull-right" %>
                     </div>
                 </div>
             </div>
