@@ -136,6 +136,7 @@ a:hover {
 	text-align: center;
 }
 #mensaje-principal h3{
+	color: #646464;
 	font-weight: 400;
 }
 #mensaje-principal a{
@@ -309,22 +310,14 @@ a:hover, a:active, a:focus {
 	padding-bottom: 26px;
 }
 .hgroup .container h1 {
-	color: #006D68;
-}
-.hgroup .container h1 {
-	font-size: 50px;
-	font-weight: 500;
-	line-height: 1em;
-	margin: 0;
-	padding: 0;
+	color: #646464;
 }
 .hgroup .container h2 {
-	font-size: 25px;
-	font-weight: 300;
-	line-height: 1.5em;
-	margin: 0 20% 0 0;
-	padding: 0;
-	color: #7b7b7b;
+
+}
+.hgroup .container h3 {
+	margin-top: 0px;
+	color: #646464;
 }
 .hgroup .container .breadcrumb {
 	font-size: 12px;
@@ -333,15 +326,19 @@ a:hover, a:active, a:focus {
 	padding: 6px 15px;
 	border: solid 1px #cccccc;
 }
+.pricing_wrapper .container {
+	padding-top: 30px;
+	padding-bottom: 30px;
+}
 .pricing_wrapper .pricing_plan h3 {
-	background-color: #eeeeee;
+	background-color: transparent;
 	padding: 30px 5px;
-	margin: 0 0 10px 0;
-	color: #1e8584;
+	padding-bottom: 10px;
+	margin: 0 0 0 0;
+	color: #ffffff;
 	font-size: 30px;
 	border-top-right-radius: 6px;
 	border-top-left-radius: 6px;
-	border-bottom: solid 1px #cccccc;
 }
 .pricing_wrapper .pricing_plan a.btn {
 	margin: 30px;
@@ -356,26 +353,50 @@ a:hover, a:active, a:focus {
 	-webkit-box-sizing: border-box;
 	-moz-box-sizing: border-box;
 	box-sizing: border-box;
-	border-radius: 6px;
 	text-align: center;
-	border: solid 1px #1e8584;
-	background-color: #ffffff;
+	border: solid 1px #ffffff;
+	background-color: transparent;
+	color: #ffffff;
 }
 .pricing_wrapper .pricing_plan .the_price {
 	padding: 5px;
-	font-size: 40px;
+	font-size: 36px;
 	margin: 20px auto;
+	margin-top: 40px;
 	width: 80%;
-	color: #1e8584;
-	text-shadow: 1px 1px 0px #ffffff;
-	border-bottom: dotted 1px #cccccc;
+	color: #00e99f;
 	line-height: 1.1;
 }
 .pricing_wrapper .pricing_plan .the_price span {
-	font-size: 30px;
+	font-size: 36px;
 }
 .pricing_wrapper .pricing_plan .the_price small {
 	font-size: 18px;
+}
+.pricing_wrapper:before {
+    content: "";
+
+    /* Expand element */
+    position: absolute;
+    left: 0px;
+    top: 0px;
+    right: 0px;
+    bottom: 0px;
+
+    -moz-box-shadow: inset 0 30px 10px -20px rgba(0,0,0,1);
+    -webkit-box-shadow: inset 0 30px 10px -20px rgba(0,0,0,1);
+    box-shadow: inset 0 30px 10px -20px rgba(0,0,0,1);
+
+    /* Disable click events */
+    pointer-events: none;
+}
+.pricing-hr {
+	width: 30%;
+	border-top: 1px solid #ffffff;
+	margin: 0 auto;
+}
+.right-pricing {
+	text-align: right;
 }
 .line-breadcrumb{
 	height: 30px;
@@ -570,6 +591,12 @@ body {
 	margin-right: auto;
 }
 
+/*.pull-down {
+	display: inline-block;
+	vertical-align: bottom;
+	float: none;
+}*/
+
 /*** navbar-agendapro ***/
 .navbar-agendapro {
   background-color: rgba(255,255,255,0);
@@ -668,7 +695,7 @@ body {
 	margin-left: 5px;
 }
 .navbar-home .navbar-nav > li > a {
-	color: #5d5d5d;
+	color: #646464;
 	text-transform: uppercase;
 	font-family: TradeGothicCn18;
 	font-size: 16px;
@@ -740,9 +767,9 @@ body {
 
 /*background*/
 .background {
-	background-repeat: no-repeat;
+	/*background-repeat: no-repeat;
 	background-size: cover;
-	background-position: center center;
+	background-position: center center;*/
 	color: #ffffff;
 }
 .background-grey {
@@ -918,6 +945,24 @@ h1.search-text {
 .contact-footer {
 	padding-top: 50px;
 	padding-bottom: 10px;
+	position:relative;
+}
+.contact-footer:before {
+    content: "";
+
+    /* Expand element */
+    position: absolute;
+    left: 0px;
+    top: 0px;
+    right: 0px;
+    bottom: 0px;
+
+    -moz-box-shadow: inset 0 30px 10px -20px rgba(0,0,0,.15);
+    -webkit-box-shadow: inset 0 30px 10px -20px rgba(0,0,0,.15);
+    box-shadow: inset 0 30px 10px -20px rgba(0,0,0,.15);
+
+    /* Disable click events */
+    pointer-events: none;
 }
 .contact-footer img,
 .contact-footer p {
@@ -946,16 +991,17 @@ h1.search-text {
 /* Index */
 .home-hr {
 	width: 30%;
-	border-top: 1px solid #5d5d5d;
+	border-top: 1px solid #646464;
 }
 
 .boxed-feature {
-	border: 1px solid #5d5d5d;
+	border: 1px solid #646464;;
 	margin-top: 5px;
 	margin-bottom: 5px;
 }
 
 .boxed-feature > h3 {
+	color: #646464;
 	margin-bottom: 0px;
 }
 
@@ -964,6 +1010,7 @@ h1.search-text {
 }
 
 .boxed-feature > p {
+	color: #646464;
 	font-size: 15px;
 	line-height: 1.25;
 }
@@ -986,3 +1033,6 @@ h1.search-text {
 	border: 2px solid #db7400;
 }
 
+.trial-button-home {
+	color: #646464;
+}
