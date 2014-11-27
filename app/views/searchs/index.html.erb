@@ -1,6 +1,6 @@
 <!-- search -->
-<div class="background" style="background-image: url(<%= asset_path 'home/spa.jpg' %>)">
-    <div class="below-navbar overlay">
+<div class="background" style="background-image: url(<%= asset_path 'search/imagendefondo.png' %>)">
+    <div class="below-navbar">
         <div class="container">
             <div class="row">
                 <div class="col-sm-8">
@@ -100,40 +100,59 @@
 <div class="container">
     <div class="row text-gray">
         <div class="col-sm-12">
-            <h1 class="text-center text-uppercase">¿Qué puedes encontrar?</h1>
+            <h1 class="text-center text-uppercase" style="margin-top: 60px;">¿Qué puedes encontrar?</h1>
+            <h3 class="text-center search-text-green">¡Descubre las mejores alternativas de belleza en Chile!</h3>
+            <%= image_tag "search/caret-down.png", alt: "caret-down", class: "pull-center", width: "39px" %>
         </div>
-        <div class="col-sm-12 pull-center">
-            <div class="border-box">
-                <%= image_tag "search/spa.png", alt: "Spa" %>
-                <p>Spa</p>
+    </div>
+</div>
+<div class="background background-light-grey">
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-12 pull-center">
+                <button class="btn btn-img" style="width: 148px; height: 57px;">
+                    <%= image_tag "search/1spa.png", alt: "Spa" %>
+                    <p>Spa</p>
+                </button>
+                <button class="btn btn-img">
+                    <%= image_tag "search/2peluqueria.png", alt: "Peluquerías" %>
+                    <p>Peluquerías</p>
+                </button>
+                <button class="btn btn-img">
+                    <%= image_tag "search/3maquillaje.png", alt: "Maquillaje" %>
+                    <p>Maquillaje</p>
+                </button>
+                <button class="btn btn-img">
+                    <%= image_tag "search/4centrosdeestetica.png", alt: "Clinicas y Centros de Estetica" %>
+                    <p>Centros de Estetica</p>
+                </button>
+                <button class="btn btn-img">
+                    <%= image_tag "search/5masajes.png", alt: "Masajes" %>
+                    <p>Masajes</p>
+                </button>
             </div>
-            <div class="border-box">
-                <%= image_tag "search/peluqueria.png", alt: "Peluquerías" %>
-                <p>Peluquerías</p>
+            <div class="col-sm-12 pull-center">
+                <button class="btn btn-img">
+                    <%= image_tag "search/6manosypies.png", alt: "Manos y Pies" %>
+                    <p>Manos y Pies</p>
+                </button>
+                <button class="btn btn-img">
+                    <%= image_tag "search/7medicinaalternativa.png", alt: "Medicina Alternativa" %>
+                    <p>Medicina Alternativa</p>
+                </button>
+                <button class="btn btn-img">
+                    <%= image_tag "search/8bronceados.png", alt: "Bronceados" %>
+                    <p>Bronceados</p>
+                </button>
+                <button class="btn btn-img">
+                    <%= image_tag "search/9tratamientosfaciales.png", alt: "Tratamientos Faciales" %>
+                    <p>Tratamientos Faciales</p>
+                </button>
+                <button class="btn btn-img">
+                    <%= image_tag "search/10tratamientoscorporales.png", alt: "Tratamientos Corporales" %>
+                    <p>Tratamientos Corporales</p>
+                </button>
             </div>
-            <div class="border-box">
-                <%= image_tag "search/dentista.png", alt: "Dentistas" %>
-                <p>Dentistas</p>
-            </div>
-            <div class="border-box">
-                <%= image_tag "search/centros_estetica.png", alt: "Clinicas y Centros de Estetica" %>
-                <p>Clinicas y Centros de Estetica</p>
-            </div>
-            <div class="border-box">
-                <%= image_tag "search/veterinarios.png", alt: "Veterinarios" %>
-                <p>Veterinarios</p>
-            </div>
-            <div class="border-box">
-                <%= image_tag "search/medicina_alternativa.png", alt: "Medicina Alternativa" %>
-                <p>Medicina Alternativa</p>
-            </div>
-            <div class="border-box">
-                <%= image_tag "search/lavado_autos.png", alt: "Talleres y Lavado de Autos" %>
-                <p>Talleres y Lavado de Autos</p>
-            </div>
-        </div>
-        <div class="col-sm-12">
-            <p class="text-center" id="margin">Y mas! ..</p>
         </div>
     </div>
 </div>
@@ -142,7 +161,7 @@
 <div class="background background-grey">
     <div class="container">
         <div class="row">
-            <div class="col-sm-2">
+            <div class="col-sm-12">
                 <div id="carousel">
                     <%= image_tag "search/thebossblanco.png", alt: "The Boss" %>
                     <%= image_tag "search/mirandablanco.png", alt: "Miranda" %>
@@ -167,67 +186,71 @@
 <div class="container">
     <div class="row">
         <div class="col-sm-12 pull-center">
-            <%= image_tag "search/quotes.png", alt: "quote" %>
+            <h1 class="text-uppercase text-gray">¡Comentarios sobre nosotros!</h1>
+            <%= image_tag "search/quotes.png", alt: "quote", height: "115px" %>
         </div>
         <div class="col-sm-4">
-            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc a neque ipsum. Ut nec metus id dui feugiat volutpat. Nullam gravida lacus vel hendrerit tristique. Vivamus non ex in orci viverra viverra in sit amet nisi. Morbi eu mollis sapien. Sed ut nulla accumsan, accumsan justo non, pellentesque libero.</p>
             <div class="media">
                 <a href="#" class="media-left">
                     <%= image_tag "home/nico_f.png", class: "img-circle", size: "80x80" %>
                 </a>
                 <div class="media-body">
-                    <h3 class="media-heading search-text-green">Nicolas FLores</h3>
-                    <p>AgendaPro</p>
+                    <h4 class="media-heading">
+                        Nicolas FLores</br>
+                        <small>AgendaPro</small>
+                    </h4>
+                    <p align="justify">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc a neque ipsum. Ut nec metus id dui feugiat volutpat. Nullam gravida lacus vel hendrerit tristique. Vivamus non ex in orci viverra viverra in sit amet nisi. Morbi eu mollis sapien. Sed ut nulla accumsan, accumsan justo non, pellentesque libero.</p>
                 </div>
             </div>
         </div>
         <div class="col-sm-4">
-            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc a neque ipsum. Ut nec metus id dui feugiat volutpat. Nullam gravida lacus vel hendrerit tristique. Vivamus non ex in orci viverra viverra in sit amet nisi. Morbi eu mollis sapien. Sed ut nulla accumsan, accumsan justo non, pellentesque libero.</p>
             <div class="media">
                 <a href="#" class="media-left">
                     <%= image_tag "home/nico_f.png", class: "img-circle", size: "80x80" %>
                 </a>
                 <div class="media-body">
-                    <h3 class="media-heading search-text-green">Nicolas FLores</h3>
-                    <p>AgendaPro</p>
+                    <h4 class="media-heading">
+                        Nicolas FLores</br>
+                        <small>AgendaPro</small>
+                    </h4>
+                    <p align="justify">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc a neque ipsum. Ut nec metus id dui feugiat volutpat. Nullam gravida lacus vel hendrerit tristique. Vivamus non ex in orci viverra viverra in sit amet nisi. Morbi eu mollis sapien. Sed ut nulla accumsan, accumsan justo non, pellentesque libero.</p>
                 </div>
             </div>
         </div>
         <div class="col-sm-4">
-            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc a neque ipsum. Ut nec metus id dui feugiat volutpat. Nullam gravida lacus vel hendrerit tristique. Vivamus non ex in orci viverra viverra in sit amet nisi. Morbi eu mollis sapien. Sed ut nulla accumsan, accumsan justo non, pellentesque libero.</p>
             <div class="media">
                 <a href="#" class="media-left">
                     <%= image_tag "home/nico_f.png", class: "img-circle", size: "80x80" %>
                 </a>
                 <div class="media-body">
-                    <h3 class="media-heading search-text-green">Nicolas FLores</h3>
-                    <p>AgendaPro</p>
+                    <h4 class="media-heading">
+                        Nicolas FLores</br>
+                        <small>AgendaPro</small>
+                    </h4>
+                    <p align="justify">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc a neque ipsum. Ut nec metus id dui feugiat volutpat. Nullam gravida lacus vel hendrerit tristique. Vivamus non ex in orci viverra viverra in sit amet nisi. Morbi eu mollis sapien. Sed ut nulla accumsan, accumsan justo non, pellentesque libero.</p>
                 </div>
             </div>
         </div>
     </div>
 </div>
-<div class="background background-green social">
+<div class="background background-green">
     <div class="container">
         <div class="row">
-            <div class="col-sm-9" style="line-height: 3em;">Síguenos también en nuestras redes sociales</div>
-            <div class="col-sm-1">
-                <span class="fa-stack fa-lg">
-                    <i class="fa fa-circle fa-stack-2x"></i>
-                    <i class="fa fa-facebook fa-stack-1x fa-green social-facebook"></i>
-                </span>
-            </div>
-            <div class="col-sm-1">
-                <span class="fa-stack fa-lg">
-                    <i class="fa fa-circle fa-stack-2x"></i>
-                    <i class="fa fa-twitter fa-stack-1x fa-green social-twitter"></i>
-                </span>
-            </div>
-            <div class="col-sm-1">
-                <span class="fa-stack fa-lg">
-                    <i class="fa fa-circle fa-stack-2x"></i>
-                    <i class="fa fa-vimeo-square fa-stack-1x fa-green social-vimeo"></i>
-                </span>
+            <div class="col-sm-12">
+                <div class="pull-center">
+                    <div class="social">
+                        <%= image_tag "search/facebook.png", alt: "Facebook" %>
+                        <span class="text-uppercase">Facebook</span>
+                    </div>
+                    <div class="social">
+                        <%= image_tag "search/twitter.png", alt: "Twitter" %>
+                        <span class="text-uppercase">Twitter</span>
+                    </div>
+                    <div class="social">
+                        <%= image_tag "search/instagram.png", alt: "Instagram" %>
+                        <span class="text-uppercase">Instagram</span>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -322,7 +345,11 @@
         split_name('#full_name', '#inputName', '#inputLastname');
 
         $('#carousel').carouFredSel({
-            items               : 5,
+            items : 5,
+            circular : true,
+            infinity : true,
+            // responsive : true,
+            width : "100%",
             scroll : {
                 items           : 1,
                 duration        : 500,                         
