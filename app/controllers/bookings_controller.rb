@@ -8,8 +8,8 @@ class BookingsController < ApplicationController
   # GET /bookings.json
   def index
     @company = Company.where(id: current_user.company_id)
-    if current_user.role_id == Role.find_by_name("Staff").id
-      @locations = Location.where(:active => true, :id => ServiceProvider.where(active: true).pluck(:location_id)).accessible_by(current_ability).order(:order)
+    if current_user.role_id == Role.find_by_name("Staff").id || current_user.role_id == Role.find_by_name("Staff (sin edición)").id
+      @locations = Location.where(:active => true, id: ServiceProvider.where(active: true, id: UserProvider.where(user_id: current_user.id).pluck(:service_provider_id)).pluck(:location_id)).accessible_by(current_ability).order(:order)
     else
       @locations = Location.where(:active => true).accessible_by(current_ability).order(:order)
     end
@@ -21,7 +21,7 @@ class BookingsController < ApplicationController
 
   def fixed_index
     @company = Company.where(id: current_user.company_id)
-    if current_user.role_id == Role.find_by_name("Staff").id
+    if current_user.role_id == Role.find_by_name("Staff").id || current_user.role_id == Role.find_by_name("Staff (sin edición)").id
       @locations = Location.where(:active => true, :id => ServiceProvider.where(active: true).pluck(:location_id)).accessible_by(current_ability).order(:order)
     else
       @locations = Location.where(:active => true).accessible_by(current_ability).order(:order)
