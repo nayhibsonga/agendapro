@@ -92,14 +92,6 @@
 			history.back();
 			return false;
 		});
-		$('#bookingForm').submit(function(e) {
-			var self = this;
-			e.preventDefault();
-			$('#submitBtn').attr("disabled", "disabled");
-			$('#submitBtn').html('<%= image_tag "small-loader.gif", :alt => "Loader", :id => "small_loader_header", :class => "small-loader-header" %>');
-			self.submit();
-			return false; //is superfluous, but I put it here as a fallback
-		});
 	});
 </script>
 <% end %>

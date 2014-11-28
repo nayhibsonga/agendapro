@@ -408,13 +408,4 @@ $(function () {
 		$('#foo4').trigger('updateSizes');
 	});
 
-	$('#bookingForm').submit(function(e) {
-		var self = this;
-		e.preventDefault();
-		$('#submitBtn').attr("disabled", "disabled");
-		$('<%= image_tag "small-loader.gif", :alt => "Loader", :id => "small_loader_header", :class => "small-loader-header" %>').insertAfter('#submitBtn');
-		self.submit();
-		return false; //is superfluous, but I put it here as a fallback
-	});
-
 });
