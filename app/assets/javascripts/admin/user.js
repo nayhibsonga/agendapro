@@ -1,5 +1,5 @@
 $(function() {
-	if ($('#user_role_id').val() == 4) {
+	if ($("#user_role_id option:selected").text() == "Staff" || $("#user_role_id option:selected").text() == "Staff (sin edición)") {
 		$('#locationGroup').addClass('hidden');
 		$('#providerGroup').removeClass('hidden');
 	}
