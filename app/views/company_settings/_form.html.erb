@@ -128,6 +128,53 @@
 			<% end %>
 		</div>
 	  </div>
+	  <div class="tab-pane" id="minisite">
+	    <div class="row">
+			<%= form_for @company_setting, :html => {:class => 'form-horizontal'} do |f| %>
+				<div class="form-group">
+					<%= f.label :activate_workflow, 'Reservas en línea', :class => 'col-sm-3 control-label' %>
+					<div class="col-sm-5">
+						<%= f.check_box :activate_workflow %>
+						<span class="help-block">Habilita esta opción para que tus clientes puedan reservar por internet a través del sistema de AgendaPro, sin la necesidad de llamados a tu local para coordinar una hora.</span>
+					</div>
+				</div>
+				<div class="form-group">
+					<%= f.label :activate_search, 'Aparecer en el Buscador', :class => 'col-sm-3 control-label' %>
+					<div class="col-sm-5">
+						<%= f.check_box :activate_search %>
+						<span class="help-block">Habilita esta opción para que tus clientes encuentren tu negocio en el buscador de AgendaPro.</span>
+					</div>
+				</div>
+				<div class="form-group">
+					<%= f.label :client_exclusive, 'Exclusivo para Clientes', :class => 'col-sm-3 control-label' %>
+					<div class="col-sm-5">
+						<%= f.check_box :client_exclusive %>
+						<span class="help-block">Habilita esta opción para que sólo puedan reservar clientes ingresados en la sección Clientes, usando el RUT.</span>
+					</div>
+				</div>
+				<div class="form-group">
+					<%= f.label :provider_preference, 'Preferencia Prestador', :class => 'col-sm-3 control-label' %>
+					<div class="col-sm-5">
+						<%= f.select :provider_preference, options_for_select([["Cliente puede elegir prestador", 0], ["Cliente debe elegir prestador", 1], ["Cliente no puede elegir prestador", 2]], selected: @company_setting.provider_preference ), {}, {class: "form-control" } %>
+						<span class="help-block">Aquí configuras si el cliente puede o debe elegir el prestador con el que se atenderá. Si no se elige, se seleccionará automáticamente al prestador con menos ocupación ese día.</span>
+					</div>
+				</div>
+				<div class="form-group">
+					<%= f.label :booking_confirmation_time, 'Recordatorios', :class => 'col-sm-3 control-label' %>
+					<div class="col-sm-5">
+						<%= f.select :booking_confirmation_time, options_for_select([["El mismo día", 0], ["1 día antes", 1], ["2 días antes", 2], ["3 días antes", 3]], selected: @company_setting.booking_confirmation_time ), {}, {class: "form-control" } %>
+						<span class="help-block">En esta opción defines cuántos días antes de la reserva se envía el recordatorio al cliente..</span>
+					</div>
+				</div>
+				<div class="form-group">
+					<div class="col-sm-offset-3 col-sm-4">
+						<%= f.submit 'Guardar', :class => 'btn btn-agendapro-claro' %>
+						<%= link_to 'Cancelar', dashboard_path, :class => "btn btn-default" %>    
+					</div>
+				</div>
+			<% end %>
+		</div>
+	  </div>
 	  <div class="tab-pane" id="calendar">
 	    <div class="row">
 			<%= form_for @company_setting, :html => {:class => 'form-horizontal calendar-form'} do |f| %>
@@ -231,46 +278,6 @@
 				</div>
 			</div>
 		<% end %>
-	  </div>
-	  <div class="tab-pane" id="minisite">
-	    <div class="row">
-			<%= form_for @company_setting, :html => {:class => 'form-horizontal'} do |f| %>
-				<div class="form-group">
-					<%= f.label :activate_workflow, 'Reservas en línea', :class => 'col-sm-3 control-label' %>
-					<div class="col-sm-5">
-						<%= f.check_box :activate_workflow %>
-						<span class="help-block">Habilita esta opción para que tus clientes puedan reservar por internet a través del sistema de AgendaPro, sin la necesidad de llamados a tu local para coordinar una hora.</span>
-					</div>
-				</div>
-				<div class="form-group">
-					<%= f.label :activate_search, 'Aparecer en el Buscador', :class => 'col-sm-3 control-label' %>
-					<div class="col-sm-5">
-						<%= f.check_box :activate_search %>
-						<span class="help-block">Habilita esta opción para que tus clientes encuentren tu negocio en el buscador de AgendaPro.</span>
-					</div>
-				</div>
-				<div class="form-group">
-					<%= f.label :client_exclusive, 'Exclusivo para Clientes', :class => 'col-sm-3 control-label' %>
-					<div class="col-sm-5">
-						<%= f.check_box :client_exclusive %>
-						<span class="help-block">Habilita esta opción para que sólo puedan reservar clientes ingresados en la sección Clientes, usando el RUT.</span>
-					</div>
-				</div>
-				<div class="form-group">
-					<%= f.label :provider_preference, 'Preferencia Prestador', :class => 'col-sm-3 control-label' %>
-					<div class="col-sm-5">
-						<%= f.select :provider_preference, options_for_select([["Cliente puede elegir prestador", 0], ["Cliente debe elegir prestador", 1], ["Cliente no puede elegir prestador", 2]], selected: @company_setting.provider_preference ), {}, {class: "form-control" } %>
-						<span class="help-block">Aquí configuras si el cliente puede o debe elegir el prestador con el que se atenderá. Si no se elige, se seleccionará automáticamente al prestador con menos ocupación ese día.</span>
-					</div>
-				</div>
-				<div class="form-group">
-					<div class="col-sm-offset-3 col-sm-4">
-						<%= f.submit 'Guardar', :class => 'btn btn-agendapro-claro' %>
-						<%= link_to 'Cancelar', dashboard_path, :class => "btn btn-default" %>    
-					</div>
-				</div>
-			<% end %>
-		</div>
 	  </div>
 	  <div class="tab-pane" id="times">
 	    <div class="row">

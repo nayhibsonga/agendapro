@@ -262,10 +262,13 @@ class Booking < ActiveRecord::Base
 	end
 
 	def self.booking_reminder
-		where(:start => 20.hours.from_now...44.hours.from_now).each do |booking|
-			unless booking.status == Status.find_by(:name => "Cancelado") 
-				if booking.send_mail
-					BookingMailer.book_reminder_mail(booking)
+		where(:start => 4.hours.ago...92.hours.from_now).each do |booking|
+			unless booking.status == Status.find_by(:name => "Cancelado")
+				booking_confirmation_time = booking.location.company.company_setting.booking_confirmation_time
+				if ((booking_confirmation_time.days - 4.hours).from_now..(booking_confirmation_time.days + 1.days - 4.hours).from_now).cover?(booking.start)
+					if booking.send_mail
+						BookingMailer.book_reminder_mail(booking)
+					end
 				end
 			end
 		end
