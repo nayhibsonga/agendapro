@@ -19,8 +19,11 @@ class ProviderBreaksController < ApplicationController
     @provider_break = ProviderBreak.new(provider_break_params)
     respond_to do |format|
       if @provider_break.save
+        @provider_break.warnings ? warnings = @provider_break.warnings.full_messages : warnings = []
+        @break_json = {id: @provider_break.id, start: @provider_break.start, end: @provider_break.end, service_provider_id: @provider_break.service_provider_id, name: @provider_break.name, warnings: warnings}
+
         format.html { redirect_to bookings_path, notice: 'Booking was successfully created.' }
-        format.json { render :json => @provider_break }
+        format.json { render :json => @break_json }
         format.js { }
       else
         format.html { render action: 'index' }
@@ -34,8 +37,12 @@ class ProviderBreaksController < ApplicationController
     @provider_break = ProviderBreak.find(params[:id])
     respond_to do |format|
       if @provider_break.update(provider_break_params)
+
+        @provider_break.warnings ? warnings = @provider_break.warnings.full_messages : warnings = []
+        @break_json = {id: @provider_break.id, start: @provider_break.start, end: @provider_break.end, service_provider_id: @provider_break.service_provider_id, name: @provider_break.name, warnings: warnings}
+
         format.html { redirect_to bookings_path, notice: 'Booking was successfully created.' }
-        format.json { render :json => @provider_break }
+        format.json { render :json => @break_json }
         format.js { }
       else
         format.html { render action: 'index' }

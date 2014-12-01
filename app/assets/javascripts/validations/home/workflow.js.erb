@@ -33,6 +33,8 @@ $(function() {
 			$(element).parent().empty()
 		},
 		submitHandler: function(form) {
+			$('#submitBtn').attr("disabled", "disabled");
+			$('#submitBtn').html('Cargando...');
 			form.submit();
 		}
 	});

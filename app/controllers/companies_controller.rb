@@ -3,7 +3,7 @@ class CompaniesController < ApplicationController
 	before_action :set_company, only: [:show, :edit, :update, :destroy, :edit_payment]
 	before_action :authenticate_user!, except: [:new, :overview, :workflow, :check_company_web_address, :select_hour, :user_data]
 	before_action :quick_add, except: [:new, :overview, :workflow, :add_company, :check_company_web_address, :select_hour, :user_data]
-	before_action :verify_is_super_admin, only: [:index, :edit_payment]
+	before_action :verify_is_super_admin, only: [:index, :edit_payment, :new, :edit]
 
 	layout "admin", except: [:show, :overview, :workflow, :add_company, :select_hour, :user_data]
 	load_and_authorize_resource
@@ -68,15 +68,24 @@ class CompaniesController < ApplicationController
 	# POST /companies.json
 	def create
 		@company = Company.new(company_params)
-		@company.payment_status_id = PaymentStatus.find_by_name("Trial").id
-		@company.plan_id = Plan.find_by_name("Trial").id
 		@user = User.find(current_user.id)
+		if @user.role_id != Role.find_by_name("Super Admin").id
+			@company.payment_status_id = PaymentStatus.find_by_name("Trial").id
+			@company.plan_id = Plan.find_by_name("Trial").id
+		else
+			@company.payment_status_id = PaymentStatus.find_by_name("Admin").id
+			@company.plan_id = Plan.find_by_name("Admin").id
+			@company.build_company_setting
+			@company.owned = false
+		end
 		
 		respond_to do |format|
-			if @company.save 
-				@user.company_id = @company.id
-				@user.role_id = Role.find_by_name("Administrador General").id
-				@user.save
+			if @company.save
+				if @user.role_id != Role.find_by_name("Super Admin").id
+					@user.company_id = @company.id
+					@user.role_id = Role.find_by_name("Administrador General").id
+					@user.save
+				end
 				format.html { redirect_to dashboard_path, notice: 'Empresa creada exitosamente.' }
 				format.json { render action: 'show', status: :created, location: @company }
 			else

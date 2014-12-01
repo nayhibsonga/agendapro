@@ -36,11 +36,17 @@ class SearchsController < ApplicationController
 		services = Service.where(:active => true).where('name ILIKE ?', search)
 		service_providers_services = ServiceProvider.where(:active => true).joins(:services, :service_staffs).where('service_staffs.service_id' => services).pluck(:location_id).uniq
 
-		companies = Company.where(active: true).where('name ILIKE ? OR web_address ILIKE ? OR id IN (?)', search, search, company_economic_sector).uniq.pluck(:id)
+		companies = Company.where(active: true, owned: true).where('name ILIKE ? OR web_address ILIKE ? OR id IN (?)', search, search, company_economic_sector).uniq.pluck(:id)
 
 		locations = Location.where(id: service_providers_tags).where(id: service_providers_services).uniq.pluck(:id)
 
-		@results = Location.select('locations.*, sqrt((latitude - ' + lat + ')^2 + (longitude - ' + long + ')^2)').where(:active => true, company_id: Company.where(id: CompanySetting.where(activate_search: true, activate_workflow: true).pluck(:company_id), active: true)).where(id: ServiceProvider.where(active: true).joins(:provider_times).pluck(:location_id)).where('name ILIKE ? OR id IN (?) OR company_id IN (?)', search, locations, companies).uniq.order('sqrt((latitude - ' + lat + ')^2 + (longitude - ' + long + ')^2)').paginate(:page => params[:page], :per_page => 10)
+		@results1 = Location.select('locations.*, sqrt((latitude - ' + lat + ')^2 + (longitude - ' + long + ')^2)').where(:active => true, company_id: Company.where(id: CompanySetting.where(activate_search: true, activate_workflow: true).pluck(:company_id), active: true, owned: true)).where(id: ServiceProvider.where(active: true).joins(:provider_times).pluck(:location_id)).where('name ILIKE ? OR id IN (?) OR company_id IN (?)', search, locations, companies).uniq.order('sqrt((latitude - ' + lat + ')^2 + (longitude - ' + long + ')^2)')
+
+		companies2 = Company.where(active: true, owned: false).where('name ILIKE ? OR web_address ILIKE ? OR id IN (?)', search, search, company_economic_sector).uniq.pluck(:id)
+
+		@results2 = Location.select('locations.*, sqrt((latitude - ' + lat + ')^2 + (longitude - ' + long + ')^2)').where(:active => true, company_id: Company.where(id: CompanySetting.where(activate_search: true, activate_workflow: true).pluck(:company_id), active: true, owned: false)).where('name ILIKE ? OR company_id IN (?)', search, companies2).uniq.order('sqrt((latitude - ' + lat + ')^2 + (longitude - ' + long + ')^2)')
+
+		@results = (@results1 + @results2).paginate(:page => params[:page], :per_page => 10)
 
 		respond_to do |format|
 			format.html

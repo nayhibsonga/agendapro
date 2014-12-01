@@ -8,7 +8,11 @@ class LocationsController < ApplicationController
   # GET /locations
   # GET /locations.json
   def index
-    @locations = Location.where(company_id: current_user.company_id, :active => true).order(order: :asc).accessible_by(current_ability)
+    if current_user.role_id == Role.find_by_name('Super Admin').id
+      @locations = Location.where(company_id: Company.where(owned: false).pluck(:id)).order(order: :asc)
+    else
+      @locations = Location.where(company_id: current_user.company_id, :active => true).order(order: :asc).accessible_by(current_ability)
+    end
   end
 
   def inactive_index
@@ -34,7 +38,9 @@ class LocationsController < ApplicationController
   # POST /locations.json
   def create
     @location = Location.new(location_params)
-    @location.company_id = current_user.company_id
+    if current_user.role_id != Role.find_by_name("Super Admin").id
+      @location.company_id = current_user.company_id
+    end
 
     respond_to do |format|
       if @location.save
@@ -231,7 +237,7 @@ class LocationsController < ApplicationController
                         if !service.group_service || service.id != provider_booking.service_id
                           provider_free = false
                           break
-                        elsif service.group_service && service.id == provider_booking.service_id && service_provider.bookings.where(:service_id => service.id, :start => start_time_block).count >= service.capacity
+                        elsif service.group_service && service.id == provider_booking.service_id && provider.bookings.where(:service_id => service.id, :start => start_time_block).count >= service.capacity
                           provider_free = false
                           break
                         end
@@ -413,7 +419,7 @@ class LocationsController < ApplicationController
                       if !service.group_service || service.id != provider_booking.service_id
                         provider_free = false
                         break
-                      elsif service.group_service && service.id == provider_booking.service_id && service_provider.bookings.where(:service_id => service.id, :start => start_time_block).count >= service.capacity
+                      elsif service.group_service && service.id == provider_booking.service_id && provider.bookings.where(:service_id => service.id, :start => start_time_block).count >= service.capacity
                         provider_free = false
                         break
                       end

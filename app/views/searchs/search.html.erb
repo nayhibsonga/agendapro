@@ -30,7 +30,9 @@
 									<h3 class="panel-title title-local"><%= location.company.name %></h3> 
 								</div>
 								<div class="col-sm-2">
+									<% if location.company.owned %>
 									<%= link_to 'Reservar', url_for(:host => location.company.web_address + '.' + @domain, :local => location.id, :controller => 'companies', :action => 'overview'), :class => "btn btn-agendapro-orange pull-right", :role => "button" %>
+									<% end %>
 								</div>
 							</div>
 						</div>
@@ -41,6 +43,7 @@
 								<ul class="nav nav-tabs" id="myTab">
 									<li class="active"><a href="#home<%=i%>" data-toggle="tab"><i class="fa fa-home"></i></a></li>
 									<li><a href="#profile<%=i%>" data-toggle="tab">Descripción</a></li>
+									<li><a href="#services<%=i%>" data-toggle="tab">Servicios</a></li>
 									<li><a href="#messages<%=i%>" data-toggle="tab">Horario</a></li>
 								</ul>
 
@@ -50,6 +53,10 @@
 										<div class="data-local-search">
 											<p><%= if !location.outcall then location.address+', '+location.district.name else "A Domicilio" end %>.</p>
 											<p>Tel: <%= location.phone %></p>
+											<% if !location.company.owned %>
+											<p><strong>Nota:</strong> Esta empresa no recibe reservas a través de AgendaPro, para reservar debes contactarlos directamente.</p>
+											<p>¿Esta empresa es tuya? <%= link_to "¡Únete a AgendaPro!", contact_path %></p>
+											<% end %>
 										</div>
 									</div>
 									<div class="tab-pane" id="profile<%=i%>">
@@ -60,6 +67,33 @@
 											<p><%= location.company.description %></p>
 											<% end %>
 										</p>
+									</div>
+									<div class="tab-pane" id="services<%=i%>">
+										<br />
+										<div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+										<% location.company.service_categories.where('id IN (?)', location.company.services.pluck(:service_category_id).uniq).each do |service_category| %>
+											<div class="panel panel-default">
+											    <div class="panel-heading panel-heading-white" role="tab" id="heading<%= service_category.id %>">
+											      <h4 class="panel-title">
+											        <a data-toggle="collapse" data-parent="#accordion" href="#collapse<%= service_category.id %>" aria-expanded="false" aria-controls="collapse<%= service_category.id %>">
+											          <%= service_category.name %>
+											        </a>
+											      </h4>
+											    </div>
+											    <div id="collapse<%= service_category.id %>" class="panel-collapse collapse" role="tabpanel" aria-labelledby="heading<%= service_category.id %>">
+											      <div class="panel-body">
+											        <table class="table fix-position-search">
+														<tbody>
+															<% service_category.services.where(active: true).each do |service| %>
+															<p><%= service.name %></p>
+															<% end %>
+														</tbody>
+													</table>
+											      </div>
+											    </div>
+											</div>
+										<% end %>
+										</div>
 									</div>
 									<div class="tab-pane" id="messages<%=i%>">
 										<table class="table fix-position-search">
