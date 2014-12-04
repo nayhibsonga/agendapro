@@ -48,25 +48,25 @@
             <li><%= link_to '<i class="fa fa-home"></i> Agrega tu empresa'.html_safe, home_path %></li>
         <% end %> -->
 		<header>
-			<nav class="navbar navbar-default navbar-agendapro navbar-fixed-top" role="navigation">
+			<nav class="navbar navbar-default navbar-agendapro navbar-fixed-top" role="navigation" id="main-navbar">
 				<div class="container">
 					<!-- Brand and toggle get grouped for better mobile display -->
 					<div class="navbar-header">
 						<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
 							<i class="fa fa-bars"></i>
 						</button>
-						<a href="<%= root_without_subdomain %>" class="navbar-brand">
-							<%= image_tag 'logos/logo.png', :alt => 'AgendaPro' %>
+						<a href="<%= root_without_subdomain %>" class="navbar-brand" id="agendapro-brand">
+							<%= image_tag 'footer/logo_footer.png', :alt => 'AgendaPro', :size => '127x43' %>
 						</a>
 					</div>
 					<!-- Collect the nav links, forms, and other content for toggling -->
 					<div class="collapse navbar-collapse" id="navbar">
 						<ul class="nav navbar-nav navbar-right" id="menu">
-							<li data-menuanchor="firstPage"><a href="#firstPage">Buscador</a></li>
-							<li data-menuanchor="secondPage"><a href="#secondPage">Que Hacemos</a></li>
-							<li data-menuanchor="3rdPage"><a href="#3rdPage">Clientes</a></li>
-							<li data-menuanchor="4thPage"><a href="#4thPage">Contacto</a></li>
-							<li><a href="#" class="menu-green"><i class="fa fa-user"></i> Registrate</a></li>
+							<li><a href="#buscador">Buscador</a></li>
+							<li><a href="#quehacemos">Qué Hacemos</a></li>
+							<li><a href="#clientes">Clientes</a></li>
+							<li><a href="#contacto">Contacto</a></li>
+							<li><a href="#" class="menu-green"><i class="fa fa-user"></i> Regístrate</a></li>
 							<li><a href="#" class="menu-green"><i class="fa fa-calendar-o"></i> Iniciar Sesión</a></li>
 							<li><a href="#" class="menu-orange">Agrega tu Empresa</a></li>
 						</ul>
