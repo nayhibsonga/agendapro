@@ -1,77 +1,67 @@
 <div class="full_page_photo">
-    <iframe width="100%" height="400" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" src="https://maps.google.com/maps/ms?msa=0&amp;msid=203242437679709703522.0004eac6d6f055db0f016&amp;ie=UTF8&amp;t=h&amp;ll=-33.409377,-70.590591&amp;spn=0.01433,0.041585&amp;z=15&amp;iwloc=0004eac6d6f38a5f8f6eb&amp;output=embed"></iframe>
+    <iframe width="100%" height="400" frameborder="0" scrolling="yes" marginheight="0" marginwidth="0" src="https://maps.google.com/maps/ms?msa=0&amp;msid=203242437679709703522.0004eac6d6f055db0f016&amp;ie=UTF8&amp;t=h&amp;ll=-33.409377,-70.590591&amp;spn=0.01433,0.041585&amp;z=15&amp;iwloc=0004eac6d6f38a5f8f6eb&amp;output=embed"></iframe>
 </div>
-
-<div class="main">
-    <section class="hgroup">
-        <div class="container">
-            <h1>Contáctanos</h1>
-            <h2>S&oacute;lo necesitaremos un poco de informaci&oacute;n para poder responderte a la brevedad.</h2>
-            <div class="line-breadcrumb">
-                <ul class="breadcrumb pull-right">
-                    <li><%= link_to "Inicio", home_path %> </li>
-                    <li class="active">Contacto</li>
-                </ul>
+<section class="hgroup">
+    <div class="container text-center">
+        <h1>Contáctanos</h1>
+    </div>
+</section>
+<section>
+    <div class="container">
+        <div class="row">
+            <div class="office_address col-sm-5">
+                <address class="text-right">
+                    <strong>Agend@Pro</strong><br>
+                    Nuestra Señora de los Ángeles 185, Oficina D<br>
+                    Las Condes, Santiago.<br>
+                    <abbr title="Teléfono">Tel:</abbr> (+56 9) 5178 5898<br>
+                    <a href="mailto:contacto@agendapro.cl">contacto@agendapro.cl</a>
+                </address>
             </div>
-        </div>
-    </section>
-    <section>
-        <div class="container">
-            <div class="row">
-                <div class="office_address col-sm-4 col-md-4 well">
-                    <address>
-                        <strong>Agend@Pro</strong><br>
-                        Nuestra Señora de los Ángeles 185, Oficina D<br>
-                        Las Condes, Santiago.<br>
-                        <abbr title="Teléfono">Tel:</abbr> (+56 9) 5178 5898<br>
-                        <a href="mailto:contacto@agendapro.cl">contacto@agendapro.cl</a>
-                    </address>
-                </div>
-                <div class="contact_form col-sm-offset-1 col-md-offset-1 col-sm-6 col-md-6 well">
-                	<%= form_tag("pcontact", method: "post", id: 'contact' ) do %>
-                        <%= hidden_field_tag :inputName %>
-                        <%= hidden_field_tag :inputLastname %>
-                        <div class="row">
-                            <div class="col-sm-12 col-md-12">
-                                <div class="form-group has-feedback">
-                                    <label for="full_name" class="label-contacto">Nombre</label>
-                                    <input type="text" id="full_name" name="user[full_name]" class="form-control" placeholder="Nombre completo (requerido)">
-                                    <span class="help-block"></span>
-                                    <span class="form-control-feedback"></span>
-                                </div>
-                            </div>
-                            <div class="col-sm-12 col-md-12">
-                                <div class="form-group has-feedback">
-                                    <%= label_tag(:inputEmail, 'E-mail', :class => "label-contacto") %>
-                                    <%= email_field_tag(:inputEmail, nil, :class => "form-control", :placeholder => 'mail@dominio.com (requerido)', :required => true) %>
-                                    <span class="help-block"></span>
-                                    <span class="form-control-feedback"></span>
-                                </div>
-                            </div>
-                            <div class="col-sm-12 col-md-12">
-                                <div class="form-group">
-                                    <%= label_tag(:inputSubject, "Asunto", :class => "label-contacto") %>
-                                    <%= select_tag(:inputSubject, options_for_select(["Quiero agregar mi empresa a AgendaPro", "Servicio Técnico", "Consulta por plan especial", "Reclamos", "Otros"]), :class => "form-control") %>
-                                </div>
-                            </div>
-                            <div class="col-sm-12 col-md-12">
-                                <div class="form-group has-feedback">
-                                    <%= label_tag(:inputMessage, "Mensaje", :class => "label-contacto") %>
-                                    <%= text_area_tag(:inputMessage, nil, :class => "form-control", :placeholder => "Escriba sus comentarios por favor. (requerido)", :required => true, :rows => 6) %>
-                                    <span class="help-block"></span>
-                                    <span class="form-control-feedback"></span>
-                                </div>
-                            </div>
-                            <div class="col-sm-12 col-md-12">
-                                <%= submit_tag "Enviar", :class => "btn btn-agendapro-orange btn-lg" %>
+            <div class="contact_form col-md-6 col-md-offset-1">
+            	<%= form_tag("pcontact", method: "post", id: 'contact' ) do %>
+                    <%= hidden_field_tag :inputName %>
+                    <%= hidden_field_tag :inputLastname %>
+                    <div class="row">
+                        <div class="col-sm-12 col-md-12">
+                            <div class="form-group has-feedback">
+                                <label for="full_name" class="label-contacto">Nombre</label>
+                                <input type="text" id="full_name" name="user[full_name]" class="form-control" placeholder="Nombre completo (requerido)">
+                                <span class="help-block"></span>
+                                <span class="form-control-feedback"></span>
                             </div>
                         </div>
-                    <% end %>
-                </div>
+                        <div class="col-sm-12 col-md-12">
+                            <div class="form-group has-feedback">
+                                <%= label_tag(:inputEmail, 'E-mail', :class => "label-contacto") %>
+                                <%= email_field_tag(:inputEmail, nil, :class => "form-control", :placeholder => 'mail@dominio.com (requerido)', :required => true) %>
+                                <span class="help-block"></span>
+                                <span class="form-control-feedback"></span>
+                            </div>
+                        </div>
+                        <div class="col-sm-12 col-md-12">
+                            <div class="form-group">
+                                <%= label_tag(:inputSubject, "Asunto", :class => "label-contacto") %>
+                                <%= select_tag(:inputSubject, options_for_select(["Quiero agregar mi empresa a AgendaPro", "Servicio Técnico", "Consulta por plan especial", "Reclamos", "Otros"]), :class => "form-control") %>
+                            </div>
+                        </div>
+                        <div class="col-sm-12 col-md-12">
+                            <div class="form-group has-feedback">
+                                <%= label_tag(:inputMessage, "Mensaje", :class => "label-contacto") %>
+                                <%= text_area_tag(:inputMessage, nil, :class => "form-control", :placeholder => "Escriba sus comentarios por favor. (requerido)", :required => true, :rows => 3) %>
+                                <span class="help-block"></span>
+                                <span class="form-control-feedback"></span>
+                            </div>
+                        </div>
+                        <div class="col-sm-12 col-md-12">
+                            <%= submit_tag "Enviar", :class => "btn btn-orange btn-lg" %>
+                        </div>
+                    </div>
+                <% end %>
             </div>
         </div>
-    </section>
-</div>
+    </div>
+</section>
 
 <% content_for :scripts do %>
 <%= javascript_include_tag 'validations/home/contact' %>

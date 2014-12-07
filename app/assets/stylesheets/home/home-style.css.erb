@@ -14,7 +14,7 @@ body {
 }
 
 .main {
-	margin-top: 70px;
+	margin-top: 50px;
 	margin-bottom: 30px;
 }
 
@@ -48,7 +48,7 @@ a:hover {
 	display: none;
 }
 .nav li a{
-	padding: 12px 15px;
+	padding: 12px 10px;
 }
 .nav-pills>li>a {
 	color: #fff;
@@ -233,14 +233,14 @@ section.call_to_action {
 	text-align: center;
 	padding: 10px 0 5px 0;/*25px 0 20px 0;*/
 	background: url(<%= asset_path 'backgrounds/wild_oliva_light_head.png' %>);
-	/*background: #dddfde;
+	background: #dddfde;
 	background: -moz-linear-gradient(top,  #dddfde 0%, #cbcdcc 100%);
 	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#dddfde), color-stop(100%,#cbcdcc));
 	background: -webkit-linear-gradient(top,  #dddfde 0%,#cbcdcc 100%);
 	background: -o-linear-gradient(top,  #dddfde 0%,#cbcdcc 100%);
 	background: -ms-linear-gradient(top,  #dddfde 0%,#cbcdcc 100%);
 	background: linear-gradient(to bottom,  #dddfde 0%,#cbcdcc 100%);
-	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#dddfde', endColorstr='#cbcdcc',GradientType=0 );*/
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#dddfde', endColorstr='#cbcdcc',GradientType=0 );
 }
 
 section.call_to_action h3 {
@@ -364,7 +364,7 @@ a:hover, a:active, a:focus {
 	margin: 20px auto;
 	margin-top: 40px;
 	width: 80%;
-	color: #00e99f;
+	color: #646464;
 	line-height: 1.1;
 }
 .pricing_wrapper .pricing_plan .the_price span {
@@ -501,72 +501,6 @@ h2.section_header {
 /* ------------------------ */
 #menu-display{
 	display: none;
-}
-
-
-/* Small devices (tablets, 768px and up) */
-@media (max-width: 1024px) { 
-	#barra-superior{
-		height: auto;
-	}
-	#menu-display{
-		display: inline-block;
-		border-radius: 5px;
-		border: 1px solid #fff;
-		float: right;
-		color: #fff;
-		padding: 5px 15px;
-		margin-top: 5px;
-	}
-	#menu-display:hover{
-		background: rgba(255,255,255,0.2);
-		text-decoration: none;
-	}
-	.nav-pills{
-		display: none;
-		width: 100%;
-	}
-	.nav-pills>li{
-		float: none;
-	}
-	.nav-pills>li+li{
-		margin-left: 0px;
-	}
-	.nav-pills>li>a {
-		display: block;
-	}
-	.nav > li > a {
-		padding: 12px 10px;
-	}
-
-}
-
-/* Small devices (tablets, 768px and up) */
-@media (max-width: 768px) { 
-	#logo{
-		margin-left: 20px;
-	}
-	#menu-display{
-		margin-right: 20px;
-	}
-	.carousel-inner{
-		height: 400px;
-	}
-	.carousel-caption{
-		bottom: 120px;
-	}
-	.green-caption{
-		width: 80%;
-	}
-	.green-caption p{
-		font-size: 15px;
-	}
-}
-
-@media (max-width: 750px) { 
-	.icono p{
-		display:none;
-	}
 }
 
 /**************** CSS Nuevo ****************/
@@ -1106,7 +1040,6 @@ h1.search-text {
 	width: 30%;
 	border-top: 1px solid #646464;
 }
-
 .boxed-feature {
 	border: 1px solid #646464;;
 	margin-top: 5px;
@@ -1148,4 +1081,105 @@ h1.search-text {
 
 .trial-button-home {
 	color: #646464;
+}
+section.green-background {
+  background-color: #00e99f;
+}
+
+/* Small devices (tablets, 768px and up) */
+@media (max-width: 1023px) { 
+	#barra-superior{
+		height: auto;
+	}
+	#menu-display{
+		display: inline-block;
+		border-radius: 5px;
+		border: 1px solid #fff;
+		float: right;
+		color: #fff;
+		padding: 5px 15px;
+		margin-top: 5px;
+	}
+	#menu-display:hover{
+		background: rgba(255,255,255,0.2);
+		text-decoration: none;
+	}
+	.nav-pills{
+		display: none;
+		width: 100%;
+	}
+	.nav-pills>li{
+		float: none;
+	}
+	.nav-pills>li+li{
+		margin-left: 0px;
+	}
+	.nav-pills>li>a {
+		display: block;
+	}
+	.nav > li > a {
+		padding: 12px 9px;
+	}
+	.navbar-header {
+        float: none;
+    }
+    .navbar-toggle {
+        display: block;
+    }
+    .navbar-collapse {
+        border-top: 1px solid transparent;
+        box-shadow: inset 0 1px 0 rgba(255,255,255,0.1);
+    }
+    .navbar-collapse.collapse {
+        display: none!important;
+    }
+    .navbar-nav {
+        float: none!important;
+        margin: 7.5px -15px;
+    }
+    .navbar-nav>li {
+        float: none;
+    }
+    .navbar-nav>li>a {
+        padding-top: 10px;
+        padding-bottom: 10px;
+    }
+    /* since 3.1.0 */
+    .navbar-collapse.collapse.in { 
+        display: block!important;
+    }
+    .navbar-collapse.collapse.in { 
+        display: block!important;
+    }
+    .collapsing {
+        overflow: hidden!important;
+    }
+}
+
+/* Small devices (tablets, 768px and up) */
+@media (max-width: 767px) { 
+	#logo{
+		margin-left: 20px;
+	}
+	#menu-display{
+		margin-right: 20px;
+	}
+	.carousel-inner{
+		height: 400px;
+	}
+	.carousel-caption{
+		bottom: 120px;
+	}
+	.green-caption{
+		width: 80%;
+	}
+	.green-caption p{
+		font-size: 15px;
+	}
+}
+
+@media (max-width: 750px) { 
+	.icono p{
+		display:none;
+	}
 }

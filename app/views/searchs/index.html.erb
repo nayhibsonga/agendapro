@@ -45,43 +45,15 @@
     </div>
     <div class="row search-pull-up">
         <div class="col-sm-12 text-center">
-            <h1><a href="#quehacemos" class="btn btn-down form-transparent btn-lg"><i class="fa fa-chevron-down"></i></a></h1>
+            <h1><a href="#servicios" class="btn btn-down form-transparent btn-lg"><i class="fa fa-chevron-down"></i></a></h1>
         </div>
     </div>
 </div>
 
-<!-- Que Hacemos -->
-<div class="" id="quehacemos">
-    <div class="background-repeat" style="background-image: url(<%= asset_path 'backgrounds/gray-background.png' %>);">
-        <div class="container">
-            <div class="row below-navbar">
-                <div class="col-sm-12">
-                    <h1 class="text-center text-uppercase">Qué Hacemos</h1>
-                    <p class="text-center" style="margin-top:-15px;">Sistema de Reservas Online enfocado en ayudar a pequeñas y medianas empresas en el manejo y gestión de sus negocios.<a href="#"><%= image_tag "search/play1.png", alt: "play" %></a> Ver Video</p>
-                </div>
-                <div class="col-sm-12">
-                    <div class="row-border pull-center">
-                        <div class="box-content box-border-left">
-                            <%= image_tag "search/search.png", alt: "Busca" %>
-                            <p class="text-uppercase">Busca</p>
-                        </div>
-                        <div class="box-content box-border-left box-border-right">
-                            <%= image_tag "search/find.png", alt: "Encuentra" %>
-                            <p class="text-uppercase">Encuentra</p>
-                        </div>
-                        <div class="box-content box-border-right">
-                            <%= image_tag "search/booking.png", alt: "Reserva" %>
-                            <p class="text-uppercase">Reserva</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-<div class="">
+<!-- Servicios -->
+<div class="" id="servicios">
     <div class="container">
-        <div class="row text-gray">
+        <div class="row text-gray below-navbar">
             <div class="col-sm-12">
                 <h1 class="text-center text-uppercase" style="margin-top: 60px;">¿Qué puedes encontrar?</h1>
                 <h3 class="text-center search-text-green">¡Descubre las mejores alternativas de belleza en Chile!</h3>
@@ -140,12 +112,10 @@
         </div>
     </div>
 </div>
-
-<!-- Clientes -->
-<div class="" id="clientes">
+<div class="">
     <div class="background background-grey">
         <div class="container">
-            <div class="row below-navbar">
+            <div class="row">
                 <div class="col-sm-12">
                     <div id="carousel">
                         <%= image_tag "search/thebossgris.png", alt: "The Boss" %>
@@ -164,13 +134,45 @@
         </div>
     </div>
 </div>
+
+<!-- Qué Hacemos -->
+<div class="below-navbar" id="quehacemos">
+    <div class="background-repeat" style="background-image: url(<%= asset_path 'backgrounds/gray-background.png' %>);">
+        <div class="container">
+            <div class="row">
+                <div class="col-sm-12">
+                    <h1 class="text-center text-uppercase">Qué Hacemos</h1>
+                    <p class="text-center" style="margin-top:-15px;">Sistema de Reservas Online enfocado en ayudar a pequeñas y medianas empresas en el manejo y gestión de sus negocios.<a href="#"><%= image_tag "search/play1.png", alt: "play" %></a> Ver Video</p>
+                </div>
+                <div class="col-sm-12">
+                    <div class="row-border pull-center">
+                        <div class="box-content box-border-left">
+                            <%= image_tag "search/search.png", alt: "Busca" %>
+                            <p class="text-uppercase">Busca</p>
+                        </div>
+                        <div class="box-content box-border-left box-border-right">
+                            <%= image_tag "search/find.png", alt: "Encuentra" %>
+                            <p class="text-uppercase">Encuentra</p>
+                        </div>
+                        <div class="box-content box-border-right">
+                            <%= image_tag "search/booking.png", alt: "Reserva" %>
+                            <p class="text-uppercase">Reserva</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 <div class="">
     <div class="container">
         <div class="row">
             <div class="col-sm-12 pull-center">
                 <h1 class="text-uppercase text-gray">¡Comentarios sobre nosotros!</h1>
-                <%= image_tag "search/quotes.png", alt: "quote", height: "115px" %>
+                <%= image_tag "search/quotes.png", alt: "quote", height: "58px" %>
             </div>
+        </div>
+        <div class="row below-navbar">
             <div class="col-sm-4">
                 <div class="media">
                     <a href="#" class="media-left">

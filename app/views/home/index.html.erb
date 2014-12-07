@@ -2,7 +2,10 @@
   <div class="container">
     <div class="row">
       <div class="col-sm-12">
-        <h3>AgendaPro, el mejor sistema de Reservas Online<br />Gestiona tu negocio desde cualquier lugar del mundo y aumenta tus ventas</h3>
+      <div class="trial-button-home">
+          <p><%= link_to "Pruébalo Gratis Ahora!", new_user_registration_path(:plan => Plan.find_by_name("Trial").id, :company => true), :class => "btn btn-lg btn-orange" %>
+          <br />No se requiere tarjeta de crédito</p>
+        </div>
         <hr class="home-hr">
         <div class="row">
           <div class="col-md-3">
@@ -44,6 +47,94 @@
           </div>
         </div>
         <hr class="home-hr">
+        <h3>AgendaPro, el mejor sistema de Reservas Online<br />Gestiona tu negocio desde cualquier lugar del mundo y aumenta tus ventas</h3>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- <section id="mensaje-principal">
+  <div class="container">
+    <div class="row">
+      <div class="col-sm-12">
+        <h3>AgendaPro, el mejor sistema de Reservas Online<br />Gestiona tu negocio desde cualquier lugar del mundo y aumenta tus ventas</h3>
+        <hr class="home-hr">
+        <div class="row">
+          <div class="col-md-3">
+            <div class="col-md-12 boxed-feature">
+              <div class="col-md-5">
+                <%= image_tag "home/index/reservasonline2.png", :alt => "Caracteristica 1", :class => "img-responsive center-block" %>
+              </div>
+              <div class="col-md-7">
+                <h3>Reservas Online</h3>
+              </div>
+              <div class="col-md-12">
+                <p>Tus clientes podrán reservar a cualquier hora y desde cualquier lugar.</p>
+              </div>
+            </div>
+            <div class="col-md-12 boxed-feature">
+              <div class="col-md-7">
+                <h3>Gestiona tu Negocio</h3>
+              </div>
+              <div class="col-md-5">
+                <%= image_tag "home/index/reservasonline2.png", :alt => "Caracteristica 1", :class => "img-responsive center-block" %>
+              </div>
+              <div class="col-md-12">
+                <p>Tus clientes podrán reservar a cualquier hora y desde cualquier lugar.</p>
+              </div>
+            </div>
+            <div class="col-md-12 boxed-feature">
+              <div class="col-md-5">
+                <%= image_tag "home/index/reservasonline2.png", :alt => "Caracteristica 1", :class => "img-responsive center-block" %>
+              </div>
+              <div class="col-md-7">
+                <h3>Simple y Amigable</h3>
+              </div>
+              <div class="col-md-12">
+                <p>Tus clientes podrán reservar a cualquier hora y desde cualquier lugar.</p>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <%= image_tag "home/index/empresa-home.png", :alt => "Ejemplo Index Ipad", :class => "img-responsive center-block", size: "460x479" %>
+          </div>
+          <div class="col-md-3">
+            <div class="col-md-12 boxed-feature">
+              <div class="col-md-7">
+                <h3>Administra tu Agenda</h3>
+              </div>
+              <div class="col-md-5">
+                <%= image_tag "home/index/reservasonline2.png", :alt => "Caracteristica 1", :class => "img-responsive center-block" %>
+              </div>
+              <div class="col-md-12">
+                <p>Tus clientes podrán reservar a cualquier hora y desde cualquier lugar.</p>
+              </div>
+            </div>
+            <div class="col-md-12 boxed-feature">
+              <div class="col-md-5">
+                <%= image_tag "home/index/reservasonline2.png", :alt => "Caracteristica 1", :class => "img-responsive center-block" %>
+              </div>
+              <div class="col-md-7">
+                <h3>Fideliza tus Clientes</h3>
+              </div>
+              <div class="col-md-12">
+                <p>Tus clientes podrán reservar a cualquier hora y desde cualquier lugar.</p>
+              </div>
+            </div>
+            <div class="col-md-12 boxed-feature">
+              <div class="col-md-7">
+                <h3>Recordatorios Automáticos</h3>
+              </div>
+              <div class="col-md-5">
+                <%= image_tag "home/index/reservasonline2.png", :alt => "Caracteristica 1", :class => "img-responsive center-block" %>
+              </div>
+              <div class="col-md-12">
+                <p>Tus clientes podrán reservar a cualquier hora y desde cualquier lugar.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <hr class="home-hr">
         <div class="trial-button-home">
           <p><%= link_to "Pruébalo Gratis Ahora!", new_user_registration_path(:plan => Plan.find_by_name("Trial").id, :company => true), :class => "btn btn-lg btn-orange" %>
           <br />No se requiere tarjeta de crédito</p>
@@ -51,7 +142,7 @@
       </div>
     </div>
   </div>
-</section>
+</section> -->
 
 <% content_for :scripts do %>
 <script>

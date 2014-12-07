@@ -38,15 +38,6 @@
 
     <body>
         <%= render 'layouts/modals' %>
-        <!-- start: Header -->
-        <!-- <% if user_signed_in? %>
-            <%= render 'layouts/home_dropdown' %>
-            <li><%= link_to '<i class="fa fa-plus"></i> Info'.html_safe, home_path %></li>
-        <% else %>
-            <li><a href="#" data-toggle="modal" data-target="#signin-modal"><i class="fa fa-user"></i> Inicia Sesión</a></li>
-            <li><a href="#" data-toggle="modal" data-target="#signup-modal"><i class="fa fa-pencil-square-o"></i> Regístrate</a></li>
-            <li><%= link_to '<i class="fa fa-home"></i> Agrega tu empresa'.html_safe, home_path %></li>
-        <% end %> -->
         <header>
             <nav class="navbar navbar-default navbar-fixed-top navbar-home" role="navigation">
                 <div class="container">
@@ -67,8 +58,13 @@
                             <li class="<%= 'active' if current_page?(view_plans_path) %>"><%= link_to "Planes", view_plans_path %></li>
                             <li class="<%= 'active' if current_page?(tutorials_path) %>"><%= link_to "Tutoriales", tutorials_path %></li>
                             <li class="<%= 'active' if current_page?(contact_path) %>"><%= link_to "Contacto", contact_path %></li>
-                            <li><a href="#" class="menu-green"><i class="fa fa-user"></i> Regístrate</a></li>
-                            <li><a href="#" class="menu-green"><i class="fa fa-calendar-o"></i> Iniciar Sesión</a></li>
+                            <% if user_signed_in? %>
+                                <%= render 'layouts/home_dropdown' %>
+                                <li><%= link_to '<i class="fa fa-plus"></i> Info'.html_safe, home_path %></li>
+                            <% else %>
+                                <li><a href="#" data-toggle="modal" data-target="#signin-modal" class="menu-green"><i class="fa fa-user"></i> Inicia Sesión</a></li>
+                                <li><a href="#" data-toggle="modal" data-target="#signup-modal" class="menu-green"><i class="fa fa-pencil-square-o"></i> Regístrate</a></li>
+                            <% end %>
                         </ul>
                     </div>
                 </div>
@@ -119,7 +115,7 @@
                         <i class="fa fa-copyright"></i> Copyright 2013 | Gunei Investment SpA | Todos los derechos reservados
                     </div>
                     <div class="col-sm-5 text-right links-footer">
-                        <%= link_to "Sobre Nosotros", aboutus_path %> | <%= link_to "Tutoriales", tutorials_path %> | <%= link_to "Términos y Condiciones", '#' %>
+                        <%= link_to "Agrega tu Empresa", home_path %> | <%= link_to "Sobre Nosotros", aboutus_path %> | <%= link_to "Tutoriales", tutorials_path %> | <%= link_to "Términos y Condiciones", '#' %>
                     </div>
                     <div class="col-sm-2">
                         <%= image_tag 'footer/logo_footer.png', :alt => 'AgendaPro', :size => "127x43", class: "pull-right" %>
