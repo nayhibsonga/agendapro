@@ -1,117 +1,58 @@
 <div class="main">
 	<!-- Barra superior y Buscador -->
-	<section class="call_to_action">
-		<div class="container">
-			<%= render 'form' %>
-		</div>
-	</section>
+
 	
 	<!-- Resultado Buscador -->
 	<div class="container">
+	
 		<div class="row">
-			<div class="well">
-				<!-- mapa -->
-				<div class="col-md-6">
-					<div id="map"></div>
-				</div>
-
-				<div class="col-md-6">
-					<% i = 1
-						@results.each do |location| %>
-					<div class="panel panel-info"> 
-						<div class="panel-heading">
-							<div class="head-local-search row">
-								<div class="col-sm-1">
-									<div class="number-pin">
-										<span><%= i %></span>
-									</div>
-								</div>
-								<div class="col-sm-9">
-									<h3 class="panel-title title-local"><%= location.company.name %></h3> 
-								</div>
-								<div class="col-sm-2">
-									<%= link_to 'Reservar', url_for(:host => location.company.web_address + '.' + @domain, :local => location.id, :controller => 'companies', :action => 'overview'), :class => "btn btn-agendapro-orange pull-right", :role => "button" %>
-								</div>
-							</div>
-						</div>
-
-						<div class="panel-body">
-							<div class="box-tabs">
-								<!-- Nav tabs -->
-								<ul class="nav nav-tabs" id="myTab">
-									<li class="active"><a href="#home<%=i%>" data-toggle="tab"><i class="fa fa-home"></i></a></li>
-									<li><a href="#profile<%=i%>" data-toggle="tab">Descripción</a></li>
-									<li><a href="#messages<%=i%>" data-toggle="tab">Horario</a></li>
-								</ul>
-
-								<!-- Tab panes -->
-								<div class="tab-content">
-									<div class="tab-pane active" id="home<%=i%>">
-										<div class="data-local-search">
-											<p><%= if !location.outcall then location.address+', '+location.district.name else "A Domicilio" end %>.</p>
-											<p>Tel: <%= location.phone %></p>
-										</div>
-									</div>
-									<div class="tab-pane" id="profile<%=i%>">
-										<p class="fix-position-search">                                                    
-											<% if location.company.description.blank? %>
-											<p>No hay descripción para esta empresa.</p>
-											<% else %>
-											<p><%= location.company.description %></p>
-											<% end %>
-										</p>
-									</div>
-									<div class="tab-pane" id="messages<%=i%>">
-										<table class="table fix-position-search">
-											<tbody id="schedule-body<%= location.id %>">
-											</tbody>
-										</table>
-									</div>
-								</div>
-							</div>
-							<div class="img-local-search">
-								<% if location.company.logo_url %>
-								<%= image_tag location.company.logo_url.to_s, :size => "80x80", :alt => location.company.name %>
-								<% else %>
-								<%= image_tag 'Iso_Pro_Color.png', :alt => 'AgendaPro', :size => "80x80" %>
-								<% end %>
-							</div>
-						</div>
+			<!--<div class="col-md-12 col-sm-9" style="padding-left: 0px !important;">
+				<div class="map-row">-->
+					<div id="map">
+			
 					</div>
-					<% i = i + 1 end %>
-					<%= will_paginate @results, renderer: BootstrapPagination::Rails %>
-
-					<% if @results.empty? %>
-					<div class="panel panel-info"> 
-						<div class="panel-heading">
-							<div class="head-local-search row">
-								<div class="col-sm-1">
-									<div class="number-pin">
-										<span></span>
-									</div>
-								</div>
-								<div class="col-sm-9">
-									<h3 class="panel-title title-local">Lo sentimos</h3> 
-								</div>
-							</div>
+				<!--</div>
+			</div>-->
+		</div>
+			
+		<div class="row locations-panel">
+			<div class="col-md-6">
+				<% i = 1 %>
+				
+				<% @results.each do |location| %>
+					<% if i%2!=0 %>
+						<div style="float: left; padding: none !important; width: 95%;">
+						<%= render :partial => 'panel', :locals => { :location => location, :i => i} %>
 						</div>
-
-						<div class="panel-body">
-							<div class="box-tabs">
-								<div class="data-local-search">
-									<p>No se encontraron resultados para:</p>
-									<p><strong><%= params[:inputSearch] %></strong></p>
-								</div>
-							</div>
-							<div class="img-local-search">
-								<%= image_tag 'mobile/sad_ap.png', :alt => 'AgendaPro', :size => "80x80" %>
-							</div>
-						</div>
-					</div>
 					<% end %>
+					<% i = i + 1 %>
+					
+				<% end %>
+			</div>
+			<div class="col-md-6">				
+				<% i = 1 %>
+				<% @results.each do |location| %>
+					<% if i%2==0 %>
+						<div style="float: right; padding: none !important; width: 95%;">
+						<%= render :partial => 'panel', :locals => { :location => location, :i => i} %>
+						</div>
+					<% end %>
+					<% i = i + 1 %>
+				<% end %>
+			</div>
+		</div>
+		
+		<%= will_paginate @results, renderer: BootstrapPagination::Rails %>
+	
+		<div class="row">
+			<div>
+				<!-- mapa -->
+				<!--<div class="col-md-6">
+					<div id="map"></div>
+				</div>-->
 
-				</div>
-				<div class="clear"></div>
+				
+				
 			</div>
 		</div>
 	</div>

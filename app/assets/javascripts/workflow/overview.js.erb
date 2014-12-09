@@ -7,8 +7,8 @@ function loadSchedule(id) {
       if (hour.open) {
         $('#schedule-body').append(
           '<tr>' +
-            '<th>' + day + ':</th>' +
-            '<th>' + getHour(hour.open) + ' - ' + getHour(hour.close) + '</th>' +
+            '<td style="text-align: left;">' + day + ':</td>' +
+            '<td style="text-align: right;">' + getHour(hour.open) + ' - ' + getHour(hour.close) + '</td>' +
           '</tr>'
         );
       }
@@ -22,11 +22,13 @@ function getHour(str) {
   return str;
 }
 
+var currMarker = null;
+
 //====== Google Map ======//
 function initializeMap(lat, lng, mapDiv) {
     var properties = {
         center: new google.maps.LatLng(lat, lng),
-        zoom:   17,
+        zoom:   15,
         panControl: false,
         zoomControl: true,
         zoomControlOptions: {
@@ -45,9 +47,19 @@ function initializeMap(lat, lng, mapDiv) {
 }
 
 function setMarker(latlng, local) {
+
+  if(currMarker!=null)
+  {
+    currMarker.setMap(null);
+  }
+
   var marker = new google.maps.Marker({
-                position: latlng
+                position: latlng,
+                icon: new google.maps.MarkerImage(
+            "http://chart.googleapis.com/chart?chst=d_map_pin_letter_withshadow&chld=|01e19d|FFFFFF",
+            null, null, new google.maps.Point(0, 42))
               });
+  currMarker = marker;
   marker.setMap(map);
 
   var infowindow = new google.maps.InfoWindow({

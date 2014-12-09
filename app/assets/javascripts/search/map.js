@@ -28,11 +28,12 @@ function initializeMap (lat, lng, mapDiv) {
 
 function setMarker (latlng, local, n) {
     var marker;
+    var image = 'pin1';
     marker = new google.maps.Marker({
         position: latlng,
         map: map,
         icon: new google.maps.MarkerImage(
-            "http://chart.googleapis.com/chart?chst=d_map_pin_letter_withshadow&chld="+ n + "|da4f49|FFFFFF",
+            "http://chart.googleapis.com/chart?chst=d_map_pin_letter_withshadow&chld="+ n + "|01e19d|FFFFFF",
             null, null, new google.maps.Point(0, 42))
     });
     marker.setMap(map);
