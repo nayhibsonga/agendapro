@@ -24,12 +24,7 @@ div.main {
   margin-bottom: 0;
 }
 section {
-  padding-top: 30px;
-}
-.vcenter {
-    display: inline-block;
-    vertical-align: middle;
-    float: none;
+  padding-top: 50px;
 }
 
 /* Featurettes
@@ -72,14 +67,30 @@ section.green-background p.lead {
   /*max-height: 162px;*/
 }
 .row-padded {
-  padding-top: 80px;
-  padding-bottom: 80px;
+  padding-top: 0;
+  padding-bottom: 50px;
+}
+.tutorial-pointer {
+  margin-top: 20px;
+  display: none;
 }
 
 /* RESPONSIVE CSS
 -------------------------------------------------- */
+@media (max-width: 1199px) {
 
-@media (min-width: 768px) {
+}
+
+@media (max-width: 991px) {
+  .featurette-heading {
+    margin-top: 20px;
+  }
+  .tutorial-pointer {
+    display: none;
+  }
+}
+
+@media (max-width: 767px) {
 
   /* Remove the edge padding needed for mobile */
   .marketing {
@@ -91,10 +102,4 @@ section.green-background p.lead {
     font-size: 36px;
   }
 
-}
-
-@media (min-width: 992px) {
-  .featurette-heading {
-    margin-top: 20px;
-  }
 }

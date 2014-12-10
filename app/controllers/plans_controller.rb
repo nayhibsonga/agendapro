@@ -92,7 +92,7 @@ class PlansController < ApplicationController
   end
 
   def view_plans
-    @plans = Plan.where(custom: false)
+    @plans = Plan.where(custom: false).order(:price)
     render layout: "home"
   end
 
@@ -124,6 +124,6 @@ class PlansController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def plan_params
-      params.require(:plan).permit(:name, :locations, :service_providers, :custom, :price)
+      params.require(:plan).permit(:name, :locations, :service_providers, :custom, :price, :special)
     end
 end
