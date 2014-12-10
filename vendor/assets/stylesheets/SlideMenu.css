@@ -32,7 +32,7 @@
 nav.menu {
     position: fixed;
     z-index: 20;
-    background-color: #53565A; /*#67b5d1;*/
+    background-color: #272727; /*#67b5d1;*/
     overflow: hidden;
     -webkit-transition: all 0.3s;
     -moz-transition: all 0.3s;
@@ -91,7 +91,7 @@ body.sml-open nav.slide-menu-left {
     left: 0
 }
 body.smr-open nav.slide-menu-right {
-    right: 0
+    right: 0;
 }
 nav.menu span > a {
     display: inline;
