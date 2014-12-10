@@ -1,5 +1,5 @@
 <!-- search -->
-<div class="background" style="background-image: url(<%= asset_path 'search/imagendefondo.png' %>)">
+<div class="background" style="background-image: url(<%= asset_path 'search/fondo2.png' %>)">
     <div class="below-navbar">
         <div class="container">
             <div class="row">
@@ -185,7 +185,7 @@
 </div>
 
 <!-- Que Hacemos -->
-<div class="background" style="background-image: url(<%= asset_path 'backgrounds/gray-background.png' %>);">
+<div class="background background-repeat" style="background-image: url(<%= asset_path 'backgrounds/gray-background.png' %>);">
     <div class="container">
         <div class="row">
             <div class="col-sm-12">
@@ -215,7 +215,7 @@
 <div class="container">
     <div class="row">
         <div class="col-sm-12">
-            <div class="background-grey">
+            <div class="comments background-grey">
                 <div id="carousel-comments" class="carousel slide">
                     <!-- Indicators -->
                     <ol class="carousel-indicators">
@@ -299,3 +299,93 @@
         </div>
     </div>
 </div>
+
+<!-- Contacto -->
+<div class="container">
+    <div class="row">
+        <div class="col-sm-12">
+            <h3 class="pull-center text-gray">Contáctanos</h3>
+            <%= image_tag "search/mapa_celular.png", width: "100%" %>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-12">
+            <%= form_tag("pcontact", method: "post", id: 'contact' ) do %>
+                <%= hidden_field_tag :inputName %>
+                <%= hidden_field_tag :inputLastname %>
+                <div class="form-group has-feedback">
+                    <label for="full_name" class="label-contacto">Nombre</label>
+                    <input type="text" id="full_name" name="user[full_name]" class="form-control" required>
+                    <span class="help-block"></span>
+                    <span class="form-control-feedback"></span>
+                </div>
+                <div class="form-group has-feedback">
+                    <%= label_tag(:inputEmail, 'E-mail', :class => "label-contacto") %>
+                    <%= email_field_tag(:inputEmail, nil, :class => "form-control", :required => true) %>
+                    <span class="help-block"></span>
+                    <span class="form-control-feedback"></span>
+                </div>
+                <div class="form-group">
+                    <%= label_tag(:inputSubject, "Asunto", :class => "label-contacto") %>
+                    <%= text_field_tag(:inputSubject, nil, :class => "form-control", :required => true) %>
+                    <span class="help-block"></span>
+                    <span class="form-control-feedback"></span>
+                </div>
+                <div class="form-group has-feedback">
+                    <%= label_tag(:inputMessage, "Mensaje", :class => "label-contacto") %>
+                    <%= text_area_tag(:inputMessage, nil, :class => "form-control", :required => true, :rows => 6) %>
+                    <span class="help-block"></span>
+                    <span class="form-control-feedback"></span>
+                </div>
+                <button type="submit" class="btn btn-green form-transparent pull-right"><i class="fa fa-envelope-o"></i> Enviar Mensaje</button>
+            <% end %>
+        </div>
+    </div>
+</div>
+<div class="background-grey">
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-12 pull-center">
+                <div class="background-box">
+                    <%= image_tag "footer/3.png" %>
+                    <p>(+56 9) 5178 5898</p>
+                </div>
+                <div class="background-box">
+                    <%= image_tag "footer/1.png" %>
+                    <p>Nuestra Señora de los
+                     Angeles 185, Oficina D,
+                      Las Condes, Santiago</p>
+                </div>
+                <div class="background-box">
+                    <%= image_tag "footer/2.png" %>
+                    <p>contacto@agendapro.cl</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<% content_for :scripts do %>
+<%= javascript_include_tag 'validations/validate' %>
+<%= javascript_include_tag 'validations/home/contact' %>
+<%= javascript_include_tag 'split-name' %>
+<script>
+    $(function() {
+        split_name('#full_name', '#inputName', '#inputLastname');
+    });
+    $(document).scroll(function() {
+        if ( $(this).scrollTop()>0) {
+            if(!$('.navbar-agendapro').hasClass('navbar-agendapro-white')) {
+                $('.navbar-agendapro').addClass('navbar-agendapro-white');
+                $('.navbar-agendapro .navbar-brand').html('<%= image_tag 'logos/logodoble2.png', :alt => 'AgendaPro', :size => '127x43' %>');
+            }
+        }
+        else {
+            if ($('.navbar-agendapro').hasClass('navbar-agendapro-white')) {
+                $('.navbar-agendapro').removeClass('navbar-agendapro-white');
+                $('.navbar-agendapro .navbar-brand').html('<%= image_tag 'logos/logo.png', :alt => 'AgendaPro' %>');
+            }
+        }
+    });
+</script>
+<% end %>

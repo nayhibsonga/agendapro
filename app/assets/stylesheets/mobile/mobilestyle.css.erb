@@ -13,7 +13,7 @@
 
 html,
 body {
-	font-family: TradeGothicCn18, TradeGothic;
+	font-family: TradeGothicCn18, TradeGothic, TradeGothicLight;
 	background: #ffffff;
 	font-size: 17px;
 }
@@ -60,14 +60,23 @@ h6, .h6 {
 .navbar-agendapro .navbar-text {
 	color: #ffffff;
 }
+.navbar-agendapro .navbar-toggle {
+	border-color: #ffffff;
+	color: #ffffff;
+	padding: 5px 8px;
+}
+.navbar-agendapro-white {
+	background-color: rgba(255,255,255,1);
+	border-color: rgba(255,255,255,1);
+}
+.navbar-agendapro-white .navbar-toggle {
+	border-color: #ccc;
+	color: #ccc;
+}
 .close-menu i {
 	border: #ffffff solid;
 	border-radius: 100%;
 	padding: 2px 4px;
-}
-.navbar-agendapro .navbar-toggle {
-	border-color: #777;
-	color: #333;
 }
 nav.menu a.menu-green {
 	color: #00e99f;
@@ -157,6 +166,10 @@ nav.menu li.divider {
 	background-position: center center;
 	color: #ffffff;
 }
+.background-repeat {
+	background-repeat: repeat;
+	background-size: inherit;
+}
 .background-grey {
 	background-color: #eeeeee;
 }
@@ -168,7 +181,6 @@ nav.menu li.divider {
 .background-green {
 	background-color: #00e99f;
 	padding: 20px 0 10px;
-	margin-top: 30px;
 }
 .overlay {
 	background-color: rgba(87, 91, 104, 0.63);
@@ -180,12 +192,6 @@ nav.menu li.divider {
 .below-navbar {
 	padding-top: 50px;
 }
-
-/*Search Text*/
-/*h1.search-text {
-	margin-top: 10%;
-	margin-bottom: 20px;
-}*/
 .search-text {
 	color: #ffffff;
 	text-transform: uppercase;
@@ -211,9 +217,6 @@ nav.menu li.divider {
 #search-form input {
 	font-size: 14px;
 }
-/*.form-container {
-	left: -65px;
-}*/
 .btn-search {
   color: #333;
   background-color: #fff;
@@ -260,23 +263,6 @@ nav.menu li.divider {
 .green-placeholder::-webkit-input-placeholder {
   color: #818181;
 }
-
-/*.clients {
-	height: 68px;
-	overflow: hidden;
-}
-.clients img {
-	padding-left: 7px;
-	padding-left: 2vw;
-	padding-right: 7px;
-	padding-right: 2vw;
-}
-.clients img:first-child {
-	padding-left: 0;
-}
-.clients img:last-child {
-	padding-right: 0;
-}*/
 
 /*Waht we do*/
 .box-content {
@@ -351,7 +337,7 @@ nav.menu li.divider {
   z-index: 5;
   display: inline-block;
 }
-div.background-grey {
+.comments.background-grey {
 	font-family: TradeGothicLight;
 	padding: 25px 30px;
 	margin: 20px 0;
@@ -371,9 +357,24 @@ div.background-grey {
 }
 
 /*Contact*/
+#contact {
+	margin-bottom: 10px;
+}
 .btn-green {
 	color: #00e99f;
 	border-color: #00e99f;
+}
+.background-box {
+	text-align: center;
+	display: inline-block;
+	padding: 17px 30px;
+	width: 80%;
+	margin-bottom: 10px;
+	margin-top: 10px;
+	background-color: #ffffff;
+}
+.background-box > img {
+	margin-bottom: 10px;
 }
 .contact-footer {
 	padding-top: 50px;
