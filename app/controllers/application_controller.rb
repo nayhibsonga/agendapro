@@ -47,7 +47,7 @@ class ApplicationController < ActionController::Base
 
   def verify_is_active
     @company = Company.find_by(web_address: request.subdomain)
-    if @company && !@company.active
+    if @company && ( !@company.active || !@company.owned)
       redirect_to "/307" unless current_user && (current_user.role_id == Role.find_by_name("Super Admin").id)
     end
   end

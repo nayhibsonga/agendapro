@@ -23,6 +23,27 @@ class Location < ActiveRecord::Base
 	validate :times_overlap, :time_empty_or_negative, :provider_time_in_location_time, :plan_locations, :outcall_services
 	validate :new_plan_locations, :on => :create
 
+	after_commit :extended_schedule
+
+	def extended_schedule
+		company_setting = self.company.company_setting
+		location_ids = self.company.locations.pluck(:id)
+		changed = false
+		first_open_time = LocationTime.where(location_id: location_ids).order(:open).first.open
+		last_close_time = LocationTime.where(location_id: location_ids).order(:close).last.close
+		if company_setting.extended_min_hour > first_open_time
+			company_setting.extended_min_hour = first_open_time
+			changed = true
+		end
+		if company_setting.extended_max_hour < last_close_time
+			company_setting.extended_max_hour = last_close_time
+			changed = true
+		end
+		if changed
+			company_setting.save
+		end
+	end
+
 	def plan_locations
 		if self.active_changed? && self.active
 			if self.company.locations.where(active:true).count >= self.company.plan.locations

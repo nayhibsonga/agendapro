@@ -8,8 +8,13 @@ class ServicesController < ApplicationController
   # GET /services
   # GET /services.json
   def index
-    @services = Service.where(company_id: current_user.company_id, :active => true).order(order: :asc, name: :asc)
-    @service_categories = ServiceCategory.where(company_id: current_user.company_id).order(order: :asc, name: :asc)
+    if current_user.role_id == Role.find_by_name('Super Admin').id
+      @services = Service.where(company_id: Company.where(owned: false).pluck(:id)).order(order: :asc, name: :asc)
+      @service_categories = ServiceCategory.where(company_id: Company.where(owned: false).pluck(:id)).order(:company_id, :order)
+    else
+      @services = Service.where(company_id: current_user.company_id, :active => true).order(order: :asc, name: :asc)
+      @service_categories = ServiceCategory.where(company_id: current_user.company_id).order(order: :asc, name: :asc)
+    end
   end
 
   def inactive_index
@@ -55,7 +60,9 @@ class ServicesController < ApplicationController
       end
     end
     @service = Service.new(new_params)
-    @service.company_id = current_user.company_id
+    if current_user.role_id != Role.find_by_name("Super Admin").id
+      @service.company_id = current_user.company_id
+    end
 
     respond_to do |format|
       if @service.save

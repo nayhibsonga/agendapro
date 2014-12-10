@@ -1,5 +1,5 @@
 $(function() {
-	if ($('#user_role_id').val() == 4) {
+	if ($("#user_role_id option:selected").text() == "Staff" || $("#user_role_id option:selected").text() == "Staff (sin edición)") {
 		$('#locationGroup').addClass('hidden');
 		$('#providerGroup').removeClass('hidden');
 	}
@@ -8,9 +8,15 @@ $(function() {
 		$('#providerGroup').addClass('hidden');
 	}
 	$('#user_role_id').change(function() {
-		if ($('#user_role_id').val() == 4) {
+		if ($("#user_role_id option:selected").text() == "Staff" || $("#user_role_id option:selected").text() == "Staff (sin edición)") {
 			$('#locationGroup').addClass('hidden');
-			$('#user_location_id').val('');
+			$('input.check_boxes').each(function() {
+				$(this).prop('checked',false);
+				var prop = true;
+				$(this).parents('.panel-body').find('input.check_boxes').each( function () {
+					prop = prop && $(this).prop('checked');
+				});
+			});
 			$('#providerGroup').removeClass('hidden');
 		}
 		else {
@@ -21,7 +27,6 @@ $(function() {
 				$(this).parents('.panel-body').find('input.check_boxes').each( function () {
 					prop = prop && $(this).prop('checked');
 				});
-				$(this).parents('.panel').find('input[name="selectLocation"]').prop('checked', prop);
 			});
 			$('#providerGroup').addClass('hidden');
 		}

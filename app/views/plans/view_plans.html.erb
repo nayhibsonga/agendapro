@@ -1,54 +1,48 @@
-<div class="imagen_superior" id="foto_planes">
-     <div class="container">
-          <div class="green-caption">
-               <h2>Elige el <strong>plan</strong> que más te acomode</h2>
-               <p>¡El <strong> primer mes </strong> es <strong>absolutamente gratis!</strong> <br> Con sólo <strong> 2 clicks </strong> crea tu cuenta <strong>AgendaPro</strong></strong></p>
-               <div class="clear"></div>
-          </div>
-     </div>
-</div>
-
-<div class="main">
-    <section class="hgroup">
-        <div class="container">
-            <div class="row">
+<section class="hgroup">
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-5">
                 <h1>Planes</h1>
-                <h2>Elige el plan que mejor se acomode a tus necesidades o <strong>contáctanos si necesitas uno a tu medida.</strong></h2>
-                <div class="line-breadcrumb">
-                    <ul class="breadcrumb pull-right">
-                        <li><%= link_to "Inicio", home_path %> </li>
-                        <li class="active">Planes</li>
-                    </ul>
-                </div>
+                <h3>Elige el plan que mejor se acomode a tus necesidades o <strong>contáctanos si necesitas uno a tu medida.</strong></h3>
+            </div>
+            <div class="col-sm-2 text-center">
+                
+            </div>
+            <div class="col-sm-5">
+                <h1>&nbsp;</h1>
+                <h3 class="right-pricing">¡El <strong> primer mes </strong> es <strong>absolutamente gratis!</strong> Con sólo <strong> 2 clicks </strong> crea tu cuenta <strong>AgendaPro</strong></strong></h3>
             </div>
         </div>
-    </section>
-    <section class="pricing_wrapper">
+    </div>
+</section>
+<section class="green-background">
+    <div class="pricing_wrapper">
         <div class="container">
             <div class="row">
                 <% @plans.each do |plan| %>
                 <div class="col-sm-6 col-md-3">
                     <div class="pricing_plan <%= 'special' if plan.special %>">
                         <h3><strong><%= plan.name %></strong></h3>
+                        <hr class="pricing-hr">
                         <div class="the_price"><span>$</span><%= number_with_precision(plan.price, precision: 0, separator: '', delimiter: '.') %><small>/Mes<br>(+ IVA)</small></div>
                         <div class="the_offerings">
-                            <p> <strong>¡Primer mes GRATIS!</strong></p>
-                            <p> <strong><%= plan.locations %></strong> Local(es) </p>
-                            <p> <strong><%= plan.service_providers %></strong> Staffs </p>
+                            <p> <strong>¡Primer mes GRATIS!</strong><br /><strong><%= plan.locations %></strong> Local(es)<br /><strong><%= plan.service_providers %></strong> Staffs </p>
                             <br>
                         </div>
                     </div>
                 </div>
                 <% end %>
             </div>
-            <br>
-            <br>
-            <div class="row text-center">
-                <%= link_to "¡Pruébalo Gratis Ahora!", new_user_registration_path(:plan => Plan.find_by_name("Trial").id, :company => true), :class => "btn btn-agendapro-orange btn-lg" %>
-            </div>
         </div>
-    </section>
-</div>
+    </div>
+</section>
+<section>
+    <div class="container">
+        <div class="row text-center">
+            <h1><%= link_to "¡Pruébalo Gratis Ahora!", new_user_registration_path(:plan => Plan.find_by_name("Trial").id, :company => true), :class => "btn btn-orange btn-lg" %></h1>
+        </div>
+    </div>
+</section>
 
 <% content_for :scripts do %>
 <script>

@@ -889,7 +889,7 @@ class BookingMailer < ActionMailer::Base
 					},
 					{
 					  :name => 'MESSAGE',
-					  :content => 'Recuerda que mañana tienen una hora agendada contigo'  
+					  :content => 'Recuerda que tienen una hora agendada contigo'  
 					},
 					{
 						:name => 'WHAT',
@@ -957,7 +957,7 @@ class BookingMailer < ActionMailer::Base
 					},
 					{
 						:name => 'MESSAGE',
-						:content => 'Recuerda que mañana tienen una hora agendada'
+						:content => 'Recuerda que tienen una hora agendada'
 					},
 					{
 						:name => 'WHAT',
@@ -1003,7 +1003,7 @@ class BookingMailer < ActionMailer::Base
 				},
 				{
 				  :name => 'MESSAGE',
-				  :content => 'recuerda tu reserva para mañana'
+				  :content => 'recuerda tu reserva'
 				},
 				{
 					:name => 'EDIT',

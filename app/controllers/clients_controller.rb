@@ -84,6 +84,16 @@ class ClientsController < ApplicationController
     @bookings = @client.bookings
   end
 
+  def bookings_history
+    client = Client.find(params[:id])
+    bookings = []
+    client.bookings.where('start < ?', Time.now).order(start: :desc).limit(10).each do |booking|
+      bookings.push( { start: booking.start, service: booking.service.name, provider: booking.service_provider.public_name, status: booking.status.name, notes: booking.notes, comment: booking.company_comment } )
+    end
+
+    render :json => bookings
+  end
+
   def create_comment
     @client_comment = ClientComment.new(client_comment_params)
     respond_to do |format|

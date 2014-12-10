@@ -16,6 +16,15 @@
         </div>
       <% end %>
 
+      <% if current_user.role_id == Role.find_by_name("Super Admin").id %>
+      <div class="form-group">
+        <%= f.label :company_id, "Empresa", class: "col-sm-3 control-label" %>
+        <div class="col-sm-4">
+          <%= f.collection_select :company_id, Company.where(owned: false).order(:name), :id, :name, {}, { class: "form-control", required: true} %>
+        </div>
+      </div>
+      <% end %>
+
       <%= f.hidden_field :first_name %>
       <%= f.hidden_field :last_name %>
       <div class="form-group has-feedback">
@@ -45,46 +54,42 @@
         </div>
       </div>
 
-      <% if !current_user.nil? %>
-        <div class="form-group has-feedback">
-          <%= f.label :role_id, "Rol", class: "col-sm-3 control-label"  %>
-          <div class="col-sm-4">
-          <% if current_user.role_id == Role.find_by(name: 'Super Admin').id %>
-            <%= f.collection_select :role_id, Role.where(:name => ["Administrador General","Administrador Local","Staff"]), :id, :name, {include_blank: true}, {class: "form-control"} %>
-          <% elsif current_user.role_id == Role.find_by(name: 'Administrador General').id %>
-            <%= f.collection_select :role_id, Role.where(:name => ["Administrador Local","Recepcionista","Staff"]), :id, :name, {include_blank: true}, {class: "form-control"} %>
-          <% elsif current_user.role_id == Role.find_by(name: 'Administrador Local').id %>
-            <%= f.collection_select :role_id, Role.where(:name => ["Recepcionista","Staff"]), :id, :name, {include_blank: true}, {class: "form-control"} %>
-          <% end %>
-          <span class="help-block"></span>
-          <span class="form-control-feedback"></span>
-          </div>  
-        </div>
-      <% end %>
+      <% if current_user %>
+      <div class="form-group has-feedback">
+        <%= f.label :role_id, "Rol", class: "col-sm-3 control-label"  %>
+        <div class="col-sm-4">
+        <% if current_user.role_id == Role.find_by(name: 'Super Admin').id %>
+          <%= f.collection_select :role_id, Role.where(:name => ["Administrador General","Administrador Local","Recepcionista","Staff", "Staff (sin edición)"]).order(:name), :id, :name, {include_blank: true}, {class: "form-control"} %>
+        <% elsif current_user.role_id == Role.find_by(name: 'Administrador General').id %>
+          <%= f.collection_select :role_id, Role.where(:name => ["Administrador Local","Recepcionista","Staff", "Staff (sin edición)"]).order(:name), :id, :name, {include_blank: true}, {class: "form-control"} %>
+        <% elsif current_user.role_id == Role.find_by(name: 'Administrador Local').id %>
+          <%= f.collection_select :role_id, Role.where(:name => ["Recepcionista","Staff","Staff (sin edición)"]).order(:name), :id, :name, {include_blank: true}, {class: "form-control"} %>
+        <% end %>
+        <span class="help-block"></span>
+        <span class="form-control-feedback"></span>
+        </div>  
+      </div>
 
-      <% if !current_user.nil? %>
-        <div class="form-group hidden" id="locationGroup">
-          <%= f.label :location_ids, "Locales", class: "col-sm-3 control-label" %>
-          <div class="col-sm-4">
-            <div class="panel panel-default">
-          <div class="panel-heading">
-            <h3 class="panel-title">Locales</h3>
-              </div>
-              <div class="panel-body">
-                <%= f.collection_check_boxes :location_ids, Location.where(active: true).accessible_by(current_ability), :id, :name, {}, {class: "check_boxes"} do |b|%>
-                    <div class="checkbox">
-                      <label>
-                      <%= b.check_box %> <%= b.object.name %>
-                      </label>
-                    </div>
-                  <% end %>
-              </div>
+      <div class="form-group hidden" id="locationGroup">
+        <%= f.label :location_ids, "Locales", class: "col-sm-3 control-label" %>
+        <div class="col-sm-4">
+          <div class="panel panel-default">
+        <div class="panel-heading">
+          <h3 class="panel-title">Locales</h3>
+            </div>
+            <div class="panel-body">
+              <%= f.collection_check_boxes :location_ids, Location.where(active: true).accessible_by(current_ability), :id, :name, {}, {class: "check_boxes"} do |b|%>
+                  <div class="checkbox">
+                    <label>
+                    <%= b.check_box %> <%= b.object.name %>
+                    </label>
+                  </div>
+                <% end %>
             </div>
           </div>
         </div>
-      <% end %>
+      </div>
 
-      <% if !current_user.nil? %>
       <div class="form-group hidden" id="providerGroup">
         <%= f.label :service_provider_ids, "Prestadores de Servicios", class: "col-sm-3 control-label" %>
         <div class="col-sm-4">

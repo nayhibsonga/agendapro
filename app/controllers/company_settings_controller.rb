@@ -58,7 +58,18 @@ class CompanySettingsController < ApplicationController
         format.html { redirect_to edit_company_setting_path(@company_setting), notice: 'Configuración actualizada exitosamente.' }
         format.json { head :no_content }
       else
-        format.html { render action: 'edit' }
+        format.html {
+          errors = ''
+          @company_setting.errors.full_messages.each do |error|
+            errors += error + ' '
+          end
+          flash[:alert] = errors
+          @company = Company.find(current_user.company_id)
+          @emails = current_user.company.company_from_email
+          @company_from_email = CompanyFromEmail.new
+          @company_setting = @company.company_setting
+          @web_address = Company.find(current_user.company_id).web_address
+          render action: 'edit' }
         format.json { render json: @company_setting.errors, status: :unprocessable_entity }
       end
     end
@@ -89,6 +100,6 @@ class CompanySettingsController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def company_setting_params
-      params.require(:company_setting).permit(:email, :sms, :signature, :company_id, :before_booking, :after_booking, :before_edit_booking, :activate_workflow, :activate_search, :client_exclusive, :provider_preference, :calendar_duration)
+      params.require(:company_setting).permit(:email, :sms, :signature, :company_id, :before_booking, :after_booking, :before_edit_booking, :activate_workflow, :activate_search, :client_exclusive, :provider_preference, :calendar_duration, :extended_schedule_bool, :extended_min_hour, :extended_max_hour, :schedule_overcapacity, :provider_overcapacity, :resource_overcapacity, :booking_confirmation_time)
     end
 end
