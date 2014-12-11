@@ -9,6 +9,7 @@ function Calendar (source, getData) {
 			date: ''
 		}
 	}
+
 	var week;
 	var clickEvent;
 

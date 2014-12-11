@@ -42,9 +42,32 @@ class SearchsController < ApplicationController
 
 		@results = Location.select('locations.*, sqrt((latitude - ' + lat + ')^2 + (longitude - ' + long + ')^2)').where(:active => true, company_id: Company.where(id: CompanySetting.where(activate_search: true, activate_workflow: true).pluck(:company_id), active: true)).where(id: ServiceProvider.where(active: true).joins(:provider_times).pluck(:location_id)).where('name ILIKE ? OR id IN (?) OR company_id IN (?)', search, locations, companies).uniq.order('sqrt((latitude - ' + lat + ')^2 + (longitude - ' + long + ')^2)').paginate(:page => params[:page], :per_page => 10)
 
+		i = 1
+		@results.each do |location|
+			if !File.exist?("app/assets/images/search/pin_map#{i}.png")
+				img = MiniMagick::Image.from_file("app/assets/images/search/pin_map.png")
+				img.combine_options do |c|
+			    	c.draw "text 9,22 '#{i.to_s}'"
+					c.fill("#FFFFFF")
+					c.pointsize "17"
+				end
+				img.write("app/assets/images/search/pin_map#{i}.png")
+			end
+			i = i+1			
+		end
+
 		respond_to do |format|
 			format.html
 			format.json { render :json => @results }
 		end
 	end
+
+	def get_pin
+		num = params[:number]
+		respond_to do |format|
+			format.html
+			format.json { render :json => @results }
+		end
+	end
+
 end
