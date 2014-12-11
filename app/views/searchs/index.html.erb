@@ -1,3 +1,20 @@
+<!-- start: Modals -->
+<div class="modal fade" id="vimeo-modal" tabindex="-1" role="dialog" aria-labelledby="siginLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title">¿Qué es AgendaPro?</h4>
+            </div>
+            <div class="modal-body">
+                <div class="row text-center">
+                    <iframe src="//player.vimeo.com/video/104629013" width="600" height="338" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe> <p><a href="http://vimeo.com/104629013">¿Qué es AgendaPro?</a> from <a href="http://vimeo.com/user28070701">AgendaPro</a> on <a href="https://vimeo.com">Vimeo</a>.</p>
+                </div>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
 <!-- search -->
 <div class="background fill" style="background-image: url(<%= asset_path 'search/fondo2.png' %>)" id="buscador">
     <div class="fill">
@@ -51,11 +68,11 @@
 </div>
 
 <!-- Servicios -->
-<div class="" id="servicios">
+<div class="">
     <div class="container">
-        <div class="row text-gray below-navbar">
+        <div class="row text-gray below-navbar" id="servicios">
             <div class="col-sm-12">
-                <h1 class="text-center text-uppercase" style="margin-top: 60px;">¿Qué puedes encontrar?</h1>
+                <h1 class="text-center text-uppercase">¿Qué puedes encontrar?</h1>
                 <h3 class="text-center search-text-green">¡Descubre las mejores alternativas de belleza en Chile!</h3>
                 <%= image_tag "search/caret-down.png", alt: "caret-down", class: "pull-center", width: "39px" %>
             </div>
@@ -63,69 +80,77 @@
     </div>
     <div class="background background-light-grey">
         <div class="container">
-            <div class="row">
-                <div class="text-center sector-button col-xs-2 sector-button-offset">
+            <div class="row row-padded">
+                <div class="btn-toolbar" role="toolbar">
+                <div class="btn-group btn-group-lg btn-group-justified blocks btn-group-fill-height">
+                <a href="#" class="btn btn-default" role="button">
                         <%= image_tag "search/1.png", alt: "Spa", size: "48x37" %>
                         <p>Spa</p>
-                </div>
-                <div class="col-xs-2 text-center sector-button">
+                </a>
+                <a href="#" class="btn btn-default" role="button">
                         <%= image_tag "search/2.png", alt: "Peluquerías", size: "48x37" %>
                         <p>Peluquerías</p>
-                </div>
-                <div class="col-xs-2 text-center sector-button">
+                </a>
+                <a href="#" class="btn btn-default" role="button">
                         <%= image_tag "search/3.png", alt: "Maquillaje", size: "48x37" %>
                         <p>Maquillaje</p>
-                </div>
-                <div class="col-xs-2 text-center sector-button">
+                </a>
+                <a href="#" class="btn btn-default" role="button">
                         <%= image_tag "search/4.png", alt: "Clinicas y Centros de Estetica", size: "48x37" %>
                         <p>Centros de Estetica</p>
-                </div>
-                <div class="col-xs-2 text-center sector-button">
+                </a>
+                <a href="#" class="btn btn-default" role="button">
                         <%= image_tag "search/5.png", alt: "Masajes", size: "48x37" %>
                         <p>Masajes</p>
+                </a>
+                </div>
                 </div>
             </div>
-            <div class="row">
-                <div class="col-xs-2 text-center sector-button sector-button-offset">
+            <div class="row row-padded">
+                <div class="btn-toolbar" role="toolbar">
+                <div class="btn-group btn-group-lg btn-group-justified btn-group-fill-height">
+                <a href="#" class="btn btn-default" role="button">
                         <%= image_tag "search/6.png", alt: "Manos y Pies", size: "48x37" %>
                         <p>Manos y Pies</p>
-                </div>
-                <div class="col-xs-2 text-center sector-button">
+                </a>
+                <a href="#" class="btn btn-default" role="button">
                         <%= image_tag "search/7.png", alt: "Medicina Alternativa", size: "48x37" %>
                         <p>Medicina Alternativa</p>
-                </div>
-                <div class="col-xs-2 text-center sector-button">
+                </a>
+                <a href="#" class="btn btn-default" role="button">
                         <%= image_tag "search/8.png", alt: "Bronceados", size: "48x37" %>
                         <p>Bronceados</p>
-                </div>
-                <div class="col-xs-2 text-center sector-button">
+                </a>
+                <a href="#" class="btn btn-default" role="button">
                         <%= image_tag "search/9.png", alt: "Tratamientos Faciales", size: "48x37" %>
                         <p>Tratamientos Faciales</p>
-                </div>
-                <div class="col-xs-2 text-center sector-button">
+                </a>
+                <a href="#" class="btn btn-default" role="button">
                         <%= image_tag "search/10.png", alt: "Tratamientos Corporales", size: "48x37" %>
                         <p>Tratamientos Corporales</p>
+                </a>
+                </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
-<div class="">
+<div class="below-navbar">
     <div class="background">
         <div class="container">
             <div class="row text-gray">
                 <div class="col-xs-12">
-                    <h1 class="text-center text-uppercase">Nuestros Clientes</h1>
+                    <h1 class="text-center text-uppercase">Algunos de Nuestros Clientes</h1>
                 </div>
             </div>
             <div class="row">
                 <div class="col-xs-12">
                     <div id="carousel">
-                        <%= image_tag "search/thebosscolor.png", alt: "The Boss" %>
-                        <%= image_tag "search/mirandacolor.png", alt: "Miranda" %>
-                        <%= image_tag "search/nutricioncuerpoyalmacolor.png", alt: "Nutrición Cuerpo y Alma" %>
-                        <%= image_tag "search/labanquetacolor.png", alt: "La Banqueta" %>
-                        <%= image_tag "search/soloparamunecascolor.png", alt: "Solo para Muñecas" %>
+                        <a href="http://theboss.agendapro.cl/"><%= image_tag "search/thebosscolor.png", alt: "The Boss", size: "169x121" %></a>
+                        <a href="http://miranda.agendapro.cl/"><%= image_tag "search/mirandacolor.png", alt: "Miranda", size: "121x121" %></a>
+                        <a href="http://nutricioncuerpoyalma.agendapro.cl/"><%= image_tag "search/nutricioncuerpoyalmacolor.png", alt: "Nutrición Cuerpo y Alma", size: "135x121" %></a>
+                        <a href="http://labanqueta.agendapro.cl/"><%= image_tag "search/labanquetacolor.png", alt: "La Banqueta", size: "142x121" %></a>
+                        <a href="http://soloparamunecas.agendapro.cl/"><%= image_tag "search/soloparamunecascolor.png", alt: "Solo para Muñecas", size: "123x121" %></a>
                     </div>
                 </div>
             </div>
@@ -134,13 +159,13 @@
 </div>
 
 <!-- Qué Hacemos -->
-<div class="below-navbar" id="quehacemos">
-    <div class="background-repeat" style="background-image: url(<%= asset_path 'backgrounds/gray-background.png' %>);">
-        <div class="container">
+<div class="below-navbar">
+    <div class="background-repeat background-gray-pattern" style="background-image: url(<%= asset_path 'backgrounds/gray-background.png' %>);" id="quehacemos">
+        <div class="container below-navbar">
             <div class="row">
                 <div class="col-sm-12">
                     <h1 class="text-center text-uppercase">Qué Hacemos</h1>
-                    <p class="text-center" style="margin-top:-15px;">Sistema de Reservas Online enfocado en ayudar a pequeñas y medianas empresas en el manejo y gestión de sus negocios.<a href="#"><%= image_tag "search/play1.png", alt: "play" %></a> Ver Video</p>
+                    <p class="text-center" style="margin-top:-15px;">Sistema de Reservas Online enfocado en ayudar a pequeñas y medianas empresas en el manejo y gestión de sus negocios.<a href="#" data-toggle="modal" data-target="#vimeo-modal"><%= image_tag "search/play1.png", alt: "play" %> Ver Video</a></p>
                 </div>
             </div>
             <div class="row">
@@ -160,7 +185,7 @@
         </div>
     </div>
 </div>
-<div class="">
+<div class="below-navbar">
     <div class="container">
         <div class="row">
             <div class="col-xs-12 pull-center">
@@ -172,7 +197,7 @@
             <div class="col-xs-4">
                 <div class="media">
                     <a href="#" class="media-left">
-                        <%= image_tag "home/nico_f.png", class: "img-circle img-responsive", size: "80x80" %>
+                        <%= image_tag "home/nico_f.png", class: "img-circle", size: "80x80" %>
                     </a>
                     <div class="media-body">
                         <h4 class="media-heading">
@@ -186,7 +211,7 @@
             <div class="col-xs-4">
                 <div class="media">
                     <a href="#" class="media-left">
-                        <%= image_tag "home/nico_f.png", class: "img-circle img-responsive", size: "80x80" %>
+                        <%= image_tag "home/nico_f.png", class: "img-circle", size: "80x80" %>
                     </a>
                     <div class="media-body">
                         <h4 class="media-heading">
@@ -200,7 +225,7 @@
             <div class="col-xs-4">
                 <div class="media">
                     <a href="#" class="media-left">
-                        <%= image_tag "home/nico_f.png", class: "img-circle img-responsive", size: "80x80" %>
+                        <%= image_tag "home/nico_f.png", class: "img-circle", size: "80x80" %>
                     </a>
                     <div class="media-body">
                         <h4 class="media-heading">
@@ -213,22 +238,28 @@
             </div>
         </div>
     </div>
-    <div class="background background-green">
+    <div class="background background-green" id="contacto">
         <div class="container">
             <div class="row">
                 <div class="col-sm-12">
                     <div class="pull-center">
                         <div class="social">
+                            <a href="http://www.facebook.com/agendapro" target="blank">
                             <%= image_tag "search/facebook.png", alt: "Facebook" %>
                             <span class="text-uppercase">Facebook</span>
+                            </a>
                         </div>
                         <div class="social">
+                            <a href="http://twitter.com/AgendaPro_CL" target="blank">
                             <%= image_tag "search/twitter.png", alt: "Twitter" %>
                             <span class="text-uppercase">Twitter</span>
+                            </a>
                         </div>
                         <div class="social">
+                            <a href="http://instagram.com/agendapro/" target="blank">
                             <%= image_tag "search/instagram.png", alt: "Instagram" %>
-                            <span class="text-uppercase">Instagram</span>
+                            <span class="text-uppercase">Instagram</span>\
+                            </a>
                         </div>
                     </div>
                 </div>
@@ -238,7 +269,7 @@
 </div>
 
 <!-- contact -->
-<div class="" id="contacto">
+<div class="">
     <div class="container">
         <div class="row below-navbar">
             <div class="col-sm-12">
@@ -283,8 +314,8 @@
         </div>
     </div>
 </div>
-<div class="">
-    <div class="background-repeat contact-footer" style="background-image: url(<%= asset_path 'backgrounds/gray-background.png' %>);">
+<div class="below-navbar">
+    <div class="background-repeat contact-footer background-gray-pattern" style="background-image: url(<%= asset_path 'backgrounds/gray-background.png' %>);">
         <div class="container">
             <div class="row pull-center">
                 <div class="col-sm-4">
@@ -318,6 +349,7 @@
 </div>
 
 <% content_for :scripts do %>
+<%= javascript_include_tag 'validations/validate' %>
 <%= javascript_include_tag 'validations/home/contact' %>
 <%= javascript_include_tag 'split-name' %>
 <%= javascript_include_tag 'jquery.carouFredSel-6.2.1'  %>
@@ -327,10 +359,11 @@
         var windowheight = $(window).height();
         $("#buscador").height(windowheight);
         $("#buscador2").height(windowheight);
+
         split_name('#full_name', '#inputName', '#inputLastname');
 
         $('#carousel').carouFredSel({
-            items : 5,
+            items : 4,
             circular : true,
             infinity : true,
             // responsive : true,
@@ -341,6 +374,7 @@
                 pauseOnHover    : true
             }                   
         });
+
         $( window ).resize(function() {
             var windowheight = $(window).height();
             $("#buscador").height(windowheight);
@@ -348,7 +382,7 @@
         });
         $('a[href*=#]').click(function(){
             $('html, body').animate({
-                scrollTop: $( $.attr(this, 'href') ).offset().top - 20
+                scrollTop: $( $.attr(this, 'href') ).offset().top - 50
             }, 500);
             return false;
         });
@@ -359,6 +393,23 @@
             cursorChar: "_",
             backDelay: 2000
         });
+        var input = document.getElementById('inputLocalization');
+        var options = {
+          types: ['geocode'],
+          componentRestrictions: {country: 'cl'}
+        };
+
+        autocomplete = new google.maps.places.Autocomplete(input, options);
+        google.maps.event.addListener(autocomplete, 'place_changed', function() {
+            window.console.log(autocomplete.getPlace().geometry.location.k +' '+autocomplete.getPlace().geometry.location.D);
+        });
+        // function geolocate() {
+        //     if (navigator.geolocation) {
+        //         navigator.geolocation.getCurrentPosition(function(position) {
+        //             window.console.log(position.coords.latitude +' '+ position.coords.longitude);
+        //         });
+        //     }
+        // }
     });
     $(document).scroll(function() {
         if ( $(this).scrollTop()>0) {
