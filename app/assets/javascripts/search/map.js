@@ -1,5 +1,6 @@
 //====== Map ======//
 function initializeMap (lat, lng, mapDiv) {
+
     var properties = {
         center: new google.maps.LatLng(lat, lng),
         zoom:   15,
@@ -28,12 +29,12 @@ function initializeMap (lat, lng, mapDiv) {
 
 function setMarker (latlng, local, n) {
     var marker;
+    var image_url = 'assets/search/pin_map'+n+'.png';
+    //var image = <%= asset_path(image_url) %>;
     marker = new google.maps.Marker({
         position: latlng,
         map: map,
-        icon: new google.maps.MarkerImage(
-            "http://chart.googleapis.com/chart?chst=d_map_pin_letter_withshadow&chld="+ n + "|da4f49|FFFFFF",
-            null, null, new google.maps.Point(0, 42))
+        icon: image_url
     });
     marker.setMap(map);
     
@@ -44,6 +45,7 @@ function setMarker (latlng, local, n) {
         infowindow.open(map,marker);
     });
 }
+
 
 function centerMap (geolocation) {
 	var geocoder = new google.maps.Geocoder();

@@ -460,7 +460,7 @@ class BookingsController < ApplicationController
           puts client.errors.full_messages.inspect
         end
       else
-        flash[:alert] = "No estás ingresado como cliente o no puedes reservar. Por favor comunícate con la empresa proveedora del servicio."
+        #flash[:alert] = "No estás ingresado como cliente o no puedes reservar. Por favor comunícate con la empresa proveedora del servicio."
         @errors = ["No estás ingresado como cliente"]
         host = request.host_with_port
         @url = @company.web_address + '.' + host[host.index(request.domain)..host.length]
@@ -497,11 +497,11 @@ class BookingsController < ApplicationController
     end
     @booking.price = Service.find(params[:service]).price
     if @booking.save
-      flash[:notice] = "Reserva realizada exitosamente."
-
+      # flash[:notice] = "Reserva realizada exitosamente."
+      
       # BookingMailer.book_service_mail(@booking)
-    else
-      flash[:alert] = "Hubo un error guardando los datos de tu reserva. Inténtalo nuevamente."
+    else @booking.save
+      #flash[:alert] = "Hubo un error guardando los datos de tu reserva. Inténtalo nuevamente."
       @errors = @booking.errors.full_messages
     end
 
@@ -647,10 +647,10 @@ class BookingsController < ApplicationController
     @company = Location.find(@booking.location_id).company
 
     if @booking.update(start: params[:start], end: params[:end])
-      flash[:notice] = "Reserva actualizada exitosamente."
+      #flash[:notice] = "Reserva actualizada exitosamente."
       # BookingMailer.update_booking(@booking)
     else
-      flash[:alert] = "Hubo un error actualizando tu reserva. Inténtalo nuevamente."
+      #flash[:alert] = "Hubo un error actualizando tu reserva. Inténtalo nuevamente."
       @errors = @booking.errors
     end
 
@@ -705,7 +705,7 @@ class BookingsController < ApplicationController
       status = Status.find_by(:name => 'Cancelado').id
       
       if @booking.update(status_id: status)
-        flash[:notice] = "Reserva cancelada exitosamente."
+        #flash[:notice] = "Reserva cancelada exitosamente."
         # BookingMailer.cancel_booking(@booking)
       else
         flash[:alert] = "Hubo un error cancelando tu reserva. Inténtalo nuevamente."
