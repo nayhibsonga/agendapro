@@ -356,6 +356,12 @@
 <%= javascript_include_tag 'typed'  %>
 <script>
     $(function() {
+        if ($('#main-navbar').hasClass('navbar-home')) {
+            $('#main-navbar').addClass('navbar-agendapro');
+            $('#main-navbar').removeClass('navbar-home');
+            $('#agendapro-brand').html('<%= image_tag 'footer/logo_footer.png', :alt => 'AgendaPro', :size => '127x43' %>');
+        }
+        
         var windowheight = $(window).height();
         $("#buscador").height(windowheight);
         $("#buscador2").height(windowheight);
