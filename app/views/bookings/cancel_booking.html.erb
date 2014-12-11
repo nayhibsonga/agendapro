@@ -1,37 +1,42 @@
+<div class="row" id="navegacion-workflow">
+  <div class="col-md-12">
+  <div class="container">
+   <i class="fa fa-clock-o gray-icon"></i>&nbsp;Cancelar reserva
+   </div>
+  </div>
+</div>
+
 <div class="main">
   <div class="container">
     <div clas="row" id="espacio-workflow">
-      <div class="col-md-12">
-        <div class="well">
-          <h4>Cancelar Reserva</h4>
+      <div class="col-md-12" id="staff-calendar">
           <% unless params[:id] %>
-          <div class="panel panel-info">
-            <div class="panel-heading">
-              <h3 class="panel-title">¿Estás seguro de cancelar tu reserva?</h3>
-            </div>
-            <div class="panel-body">
-              <p>Si cancelas tu reserva, otra persona podrá utilizar la hora liberada</p>
-              <%= form_tag("/cancel_booking", method: "post", role: "form", class: "form-horizontal", id: "edit_form" ) do %>
-                <input type="hidden" name="id" id="id" value="<%= @booking.id %>">
-                <div class="form-group">
-                  <div class="col-sm-offset-10 col-sm-2">
-                    <button type="submit" class="btn btn-default">Cancelar</button>
-                  </div>
+            <div class="panel panel-info">
+              <div class="calendar-head">
+                <div class="panel-title" style="padding-left: 10px; font-size: 22px; font-weight: bold;">
+                      ¿Estás seguro de querer cancelar tu reserva?
                 </div>
-              <% end %>
+              </div>
+              <div class="panel-body" style="max-height: 350px; overflow-y: auto;">
+                <p style="padding-left: 10px; padding-top: 8px;">Si cancelas tu reserva, otra persona podrá utilizar la hora liberada.</p>
+              </div>
             </div>
-          </div>
+            <%= form_tag("/cancel_booking", method: "post", role: "form", class: "form-horizontal", id: "edit_form" ) do %>
+              <input type="hidden" name="id" id="id" value="<%= @booking.id %>">
+              <button type="submit" class="submitBtn">Cancelar</button>
+            <% end %>
           <% else %>
-          <div class="panel panel-info">
-            <div class="panel-heading">
-              <h3 class="panel-title">Reserva cancelada</h3>
+            <div class="panel panel-info">
+              <div class="calendar-head">
+                <div class="panel-title" style="padding-left: 10px; font-size: 22px; font-weight: bold;">
+                      Reserva cancelada
+                </div>
+              </div>
+              <div class="panel-body">
+                <p style="padding-left: 10px; padding-top: 8px;">Tu reserva fue cancelada exitosamente</p>
+              </div>
             </div>
-            <div class="panel-body">
-              <p>Tu reserva fue cancelada exitosamente</p>
-            </div>
-          </div>
           <% end %>
-        </div>
       </div>
     </div>
   </div>

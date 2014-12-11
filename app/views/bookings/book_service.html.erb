@@ -1,9 +1,26 @@
 
 <div class="workflow-header">
   <div class="container">
-    <div class="row">
-      <div class="col-md-12">
-        <p>
+    <% if @company.description.blank? %>
+      <div class="row">
+        <div class="col-md-12">
+          <p>
+            <span>
+              <% if @company.logo_url %>
+                <%= image_tag @company.logo_url.to_s, :size => "80x80", :alt => @company.name %>
+              <% else %>
+                <%= image_tag 'Iso_Pro_Color.png', :alt => 'AgendaPro', :size => "80x80" %>
+              <% end %>
+            </span>
+            <span>
+              <%= @company.name %>
+            </span>
+          </p>
+        </div>
+      </div>
+    <% else %>
+      <div class="col-md-6 company-header-left">
+        <div>
           <span>
             <% if @company.logo_url %>
               <%= image_tag @company.logo_url.to_s, :size => "80x80", :alt => @company.name %>
@@ -14,9 +31,14 @@
           <span>
             <%= @company.name %>
           </span>
-        </p>
+        </div>
       </div>
-    </div>
+      <div class="col-md-6 company-header-right">
+        <div class="header-description">
+          <%= @company.description %>
+        </div>
+      </div>
+    <% end %>
   </div>
 </div>
 <div class="main">

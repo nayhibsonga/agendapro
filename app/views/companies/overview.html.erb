@@ -1,6 +1,24 @@
 <div class="company-header">
   <div class="container">
     <div class="row">
+      <% if @company.description.blank? %>
+      <div class="row">
+        <div class="col-md-12">
+          <p>
+            <span>
+              <% if @company.logo_url %>
+                <%= image_tag @company.logo_url.to_s, :size => "80x80", :alt => @company.name %>
+              <% else %>
+                <%= image_tag 'Iso_Pro_Color.png', :alt => 'AgendaPro', :size => "80x80" %>
+              <% end %>
+            </span>
+            <span>
+              <%= @company.name %>
+            </span>
+          </p>
+        </div>
+      </div>
+    <% else %>
       <div class="col-md-6 company-header-left">
         <div>
           <span>
@@ -17,13 +35,10 @@
       </div>
       <div class="col-md-6 company-header-right">
         <div class="header-description">
-          <% if !@company.description.blank? %>
-            <%= @company.description %>
-          <% else %>
-            No hay descripción para esta empresa.
-          <% end %>
+          <%= @company.description %>
         </div>
       </div>
+    <% end %>
     </div>
   </div>
 </div>
@@ -42,7 +57,7 @@
       </div>
     </div>
 
-    <div class="row" style="margin-top: 20px;">
+    <div class="row" style="margin-top: 20px; color: #979797;">
       <div class="col-md-6">
       </div>
       <div class="col-md-3" style="font-size: 20px;">
@@ -70,7 +85,7 @@
                   <label>
                     <input type="radio" name="localRadio" id="localOption<%= local.id %>" value="<%= local.id %>" data-outcall="<%= local.outcall %>" <%= "checked" if @selectedLocal.to_i == local.id %> >
                     <p>
-                      <strong><%= local.name %></strong> <br/>
+                      <%= local.name %><br/>
                       <%= if !local.outcall then local.address+', '+local.district.name else "A Domicilio" end %>
                     </p>
 
