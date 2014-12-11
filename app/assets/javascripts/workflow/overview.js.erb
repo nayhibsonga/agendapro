@@ -53,11 +53,14 @@ function setMarker(latlng, local) {
     currMarker.setMap(null);
   }
 
+  var image = '<%= asset_path("pin_map.png") %>';
+
   var marker = new google.maps.Marker({
                 position: latlng,
-                icon: new google.maps.MarkerImage(
+                icon: image
+                /*new google.maps.MarkerImage(
             "http://chart.googleapis.com/chart?chst=d_map_pin_letter_withshadow&chld=|01e19d|FFFFFF",
-            null, null, new google.maps.Point(0, 42))
+            null, null, new google.maps.Point(0, 42))*/
               });
   currMarker = marker;
   marker.setMap(map);

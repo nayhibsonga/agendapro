@@ -6,12 +6,12 @@
 }
 
 .gray-icon{
-	color: #5c5c5c !important;
+	color: #acacac !important;
 	font-size: 30px !important;
 }
 
 .sub-workflow{
-	color: #5c5c5c !important;
+	color: #979797 !important;
 }
 
 .margen-workflow {
@@ -21,30 +21,99 @@
 .staff-wrapper{
 	padding-right: 25px;
 	border-right: 1px solid #01f2a1;
+	height: 346px;
+	overflow-y: auto; 
 }
+
+.staff-wrapper .panel-default{
+	
+	border-color: #acacac;
+	margin-top: 5px;
+}
+
+.staff-wrapper .list-group-item{
+	border: none !important;
+	padding-top: 0px;
+	padding-bottom: 0px;
+}
+
+.staff-wrapper .radio{
+	margin-bottom: 2px;
+	color: #acacac !important;
+}
+
+/*input[type=radio]:not(old){
+	width     : 2em;
+	margin    : 0;
+	padding   : 0;
+	font-size : 1em;
+	opacity   : 0;
+}
+
+input[type=radio   ]:not(old) + span{
+  display      : inline-block;
+  margin-left  : -2em;
+  line-height  : 1.5em;
+  background   : url(<%= asset_path 'images/radio_unchecked.png' %>) no-repeat 0 0;
+}
+
+input[type=radio   ]:not(old):checked + span{
+  display      : inline-block;
+  margin-left  : -2em;
+  line-height  : 1.5em;
+  background   : url(<%= asset_path 'images/radio_checked.png' %>) no-repeat 0 0;
+}*/
 
 #staff-selector .selected-wf-option{
 	background-color: #fff !important;
 }
 
+#staff-selector{
+	margin-top: 5px !important;
+	padding-top: 20px !important;
+	padding-bottom: 20px !important;
+}
+
 #navegacion-workflow{
 	margin:10px 0px 0px 0px;
-	background: #F3F3F3;
+	background: #F5F5F5;
 	padding:10px 0px;
 }
 
 .pasos-reserva a{
 	height:33px;
-	width: 30%;
+	width: 27%;
 	margin:0px 1.5%;
-	float:left;
+	float: left;
 	text-align: center;
-	color: #5c5c5c;
+	color: #acacac;
 	line-height: 2.4;
 }
+
+.pasos-reserva div{
+	text-align: center;
+}
+
 .pasos-reserva a:hover, .pasos-reserva a.selected{
 	color: #01f2a1;
 }
+
+.circle-number{
+	position: absolute; 
+	margin-left: -19px; 
+	margin-top: -5px; 
+	color: #fff; 
+	font-weight: bold; 
+	font-size: 20px;
+}
+
+.navigation-title{
+	position: absolute;
+	margin-top: -5px;
+	margin-left: 4px;
+	font-size: 20px;
+}
+
 #espacio-workflow{
 	margin-top:10px;
 }
@@ -90,6 +159,11 @@
 }
 #locales-empresa tr:hover{
 }
+
+#locales-empresa{
+	color: #979797;
+}
+
 .local-seleccionado{
 	border: 1px solid #ddd !important;
 }
@@ -195,41 +269,75 @@
 	text-align:center;
 	padding-top: 11px !important;
 	font-weight: normal !important;
-	border: 1px solid #ddd;
-	color: #676767;
+	border-bottom: 1px solid #d2d2d2;
+	border-top: none !important;
+	border-left: none !important;
+	border-right: none !important;
+	color: #979797 !important;
 }
 .bloque-hora{
+	background-color: transparent !important;
 	width:100%;
 	height:44px;
 	margin: 0px !important;
 	border-radius:0px !important;
+	border-bottom: 1px solid #d2d2d2 !important;
+	border-top: none !important;
+	border-left: none !important;
+	border-right: none !important;
 	text-align:center;
 	line-height: 2.7
 }
 
-.hora-activo{
-	background-color: #01f2a1 !important;
+.columna-hoy{
+	background-color: rgba(0, 109, 104, 0.1) !important;
 }
 
-.hora-disponible{
-	cursor:pointer;
-	background: #1e8584;
-	background-color: rgba(30, 133, 132, 0.8);
-	border: 1px solid #1e8584;
+.columna-dia:first{
+	border-left: 1px solid #d2d2d2 !important;
+}
+
+.columna-dia{
+	border-right: 1px solid #d2d2d2 !important;
+}
+
+.bloque-hora span{
+	display: inline-block;
+	width: 96%;
+	height: 37px;
+	margin-top: 2%;
+	padding-bottom: 2%;
+	padding-left: 2%;
+	padding-right: 2%;
+}
+
+.hora-activo span{
+	background-color: #01f2a1 !important;
 	color: #fff;
 }
-.hora-disponible:hover{
-	background-color: #01cc8e !important;
+
+.hora-disponible span{
+	cursor:pointer;
+	background-color: #fff;
+	color: #979797;
+}
+.hora-disponible span:hover{
+	background-color: #01f2a1;
+	color: #fff;
 	transition:1s;
 }
-.hora-ocupada{
-	background-color: #ddd !important;
-	border:1px solid #FAA9AA;
+
+.hora-pasada span{
+	background-color: #d2d2d2 !important;
+	color: #979797;
+}
+
+.hora-ocupada span{
+	background-color: #f2dede !important;
 	color: #FC5658;
 }
-.hora-vacia{
+.hora-vacia span{
 	background:rgba(216,216,216,0.5);
-	border:1px solid #ccc;
 }
 .clear{
 	clear:both;
@@ -315,7 +423,7 @@
 	border: 1px solid #01f2a1;
 	text-align: center;
 	width: 150px;
-	height: 60px;
+	height: 50px;
 	font-size: 22px;
 }
 
@@ -329,7 +437,7 @@
 }
 
 .header-btn a{
-	padding-top: 18px !important;
+	padding-top: 11px !important;
 	display: block;
 	height: 100%;
 	text-decoration: none !important;
@@ -343,24 +451,35 @@
 	color: #fff !important;
 }
 
+.active:hover{
+	background-color: #01cc8e;
+	border: 1px solid #01cc8e;
+}
+
+.active:focus{
+	background-color: #01cc8e;
+	border: 1px solid #01cc8e;
+}
+
+
 .active a:focus{
-	color: #eee;
+	color: #fff;
 	background-color: #01cc8e;
 }
 
 .active a:hover{
-	color: #eee;
+	color: #fff;
 	background-color: #01cc8e;
 }
 
 .inactive a:hover{
-	color: #01bb7d !important;
-	background-color: #eee;
+	background-color: #01f2a1;
+	color: #fff !important;
 }
 
 .inactive a:focus{
-	color: #eee;
-	background-color: #eee;
+	background-color: #01f2a1;
+	color: #fff !important;
 }
 
 #div-agendar{
@@ -420,6 +539,7 @@
 	border: 1px solid #ddd;
 	padding-right: 10px;
 	padding-left: 10px;
+	color: #979797;
 }
 
 .schedule-table table{
@@ -436,7 +556,9 @@
 }
 
 #services-selector div{
-	border: none !important;
+	border-top: none;
+	border-left: none;
+	border-right: none;
 	background-color: #fff; 
 }
 
@@ -450,27 +572,40 @@
 	background-color: #fff;
 	font-size: 16px;
 	padding: 0px !important;
+	color: #acacac !important;
 
 }
 
-#services-selector .panel-title-minus{
+#services-selector .panel-title{
 	border: none !important;
 	background-color: #fff;
 	font-size: 18px;
+	color: #979797 !important;
 }
 
+#services-selector .panel-title a:hover{
+	color: #979797 !important;
+	text-decoration: none !important;
+}
 
 
 .services-title{
 	font-size: 22px;
+	color: #acacac !important;
 }
 
 .services-subtitle{
 	font-size: 18px;
+	margin-bottom: 15px;
+	color: #979797 !important;
 }
 
 .panel-heading{
 	padding-left: 0px !important;
+}
+
+#services-selector .panel-default{
+	border-bottom: 1px solid #acacac !important;
 }
 
 .descripcion{
@@ -478,7 +613,8 @@
 }
 
 .descripcion-header{
-	padding: 5px;
+	padding-left: 12px;
+	padding-top: 6px;
 	font-size: 22px;
 	background-color: #01f2a1;
 	color: #fff;
@@ -486,6 +622,7 @@
 
 #services-description td{
 	border-color: #01f2a1 !important;
+	color: #979797 !important;
 }
 
 .panel-group > .panel > .panel-heading > .panel-title.minus > a:after {
@@ -527,7 +664,12 @@
 }
 
 #form-datos{
-	height: 435px;
+	height: 460px;
+	overflow-y: auto;
+}
+
+#form-datos .panel-body{
+	color: #979797;
 }
 
 .resumen-heading{
@@ -543,6 +685,7 @@
 	border-left: 1px solid #ddd;
 	border-right: 1px solid #ddd;
 	border-bottom: 1px solid #ddd;
+	color: #979797;
 }
 
 #resumen-reserva tr:first{
@@ -676,6 +819,14 @@
 	color: #e0861c;
 }
 
+.prev-arrow{
+	font-size: 16px !important;
+}
+
+.next-arrow{
+	font-size: 16px !important;
+}
+
 #submitBtn{
 	position: relative;
 	border: 1px solid #f1972d;
@@ -687,6 +838,7 @@
 	background-color: #f1972d;
 	color: #fff;
 	float: right;
+	padding-top: 4px;
 }
 
 
@@ -846,4 +998,8 @@
 .ui-datepicker-calendar tr:last-child .ui-state-active {  
     height: 29px;  
     margin-bottom: 0;  
+}
+
+.resumen-book{
+	color: #979797;
 }
