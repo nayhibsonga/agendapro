@@ -1,5 +1,109 @@
 <div class="container">
   <div class="row">
+    <div class="col-sm-2">
+      <% if @company.logo_url %>
+      <%= image_tag @company.logo_url.to_s, :alt => @company.name, class: 'company-logo' %>
+      <% else %>
+      <%= image_tag 'Iso_Pro_Color.png', :alt => 'AgendaPro', class: 'company-logo' %>
+      <% end %>
+      <button class="btn btn-wide btn-green"><i class="fa fa-caret-left"></i> Informacion</button>
+      <button class="btn btn-wide btn-orange hidden">Informacion <i class="fa fa-caret-right"></i></button>
+    </div>
+    <div class="col-sm-10">
+      <div id="reservar">
+        <%= form_tag("select_hour", method: "post", role: "form") do %>
+          <%= hidden_field_tag :local, @location.id %>
+          <div class="form-group">
+            <%= label_tag :services, 'Selecciona el servicio que quieres' %>
+            <%= select_tag :services, nil, :class => 'form-control' %>
+          </div>
+          <div class="form-group" <%= 'style="display:none;"'.html_safe if @company.company_setting.provider_preference == 2 %>>
+            <%= label_tag :providers, 'Selecciona al staff' %>
+            <%= select_tag :providers, nil, :disabled => true, :class => 'form-control' %>
+          </div>
+          <div class="form-group">
+            <%= label_tag :datepicker, 'Selecciona una fecha' %>
+            <%= text_field_tag :datepicker, nil, :disabled => true, :placeholder => 'Selecciona fecha...', :class => 'form-control' %>
+          </div>
+        <% end %>
+      </div>
+      <div id="informacion" class="hidden">
+        <div class="panel panel-agendapro">
+          <div class="panel-heading">
+            <h3 class="panel-title">Información</h3>
+          </div>
+          <div class="panel-body">
+            <div class="panel-group" id="information" role="tablist" aria-multiselectable="true">
+              <div class="panel panel-white">
+                <div class="panel-heading" role="tab" id="addressHeading">
+                    <a data-toggle="collapse" data-parent="#information" href="#address" aria-expanded="true" aria-controls="address">
+                      <h4 class="panel-title">
+                          Descripción
+                      </h4>
+                    </a>
+                </div>
+                <div id="address" class="panel-collapse collapse" role="tabpanel" aria-labelledby="addressHeading">
+                  <div class="panel-body">
+                    <%= @company.description %>
+                  </div>
+                </div>
+              </div>
+              <div class="panel panel-white">
+                <div class="panel-heading" role="tab" id="scheduleHeading">
+                  <a data-toggle="collapse" data-parent="#information" href="#schedule" aria-expanded="true" aria-controls="schedule">
+                    <h4 class="panel-title">
+                      Horario
+                    </h4>
+                  </a>
+                </div>
+                <div id="schedule" class="panel-collapse collapse" role="tabpanel" aria-labelledby="scheduleHeading">
+                  <div class="panel-body">
+                    horario
+                  </div>
+                </div>
+              </div>
+              <div class="panel panel-white">
+                <div class="panel-heading" role="tab" id="telefoneHeading">
+                  <a data-toggle="collapse" data-parent="#information" href="#telefone" aria-expanded="true" aria-controls="telefone">
+                    <h4 class="panel-title">
+                      Teléfono
+                    </h4>
+                  </a>
+                </div>
+                <div id="telefone" class="panel-collapse collapse" role="tabpanel" aria-labelledby="telefoneHeading">
+                  <div class="panel-body">
+                    <%= @location.phone %>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <table class="table">
+              <tbody id="schedule-body">
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div class="panel panel-agendapro">
+          <div class="panel-heading">
+            <h3 class="panel-title">Dirección</h3>
+          </div>
+          <div class="panel-body">
+            <table class="table">
+              <tbody>
+                <tr>
+                  <td><%= if !@location.outcall then @location.address+', '+@location.district.name else "A Domicilio" end %></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="container">
+  <div class="row">
     <div class="col-xs-12">
       <div class="single-local">
         <div class="center-image">
@@ -13,7 +117,7 @@
           <a href="#" type="button" class="btn btn-agendapro-orange" id="reservar-btn">Reservar</a>
           <a href="#" type="button" class="btn btn-default" id="informacion-btn">Información</a>
         </div>
-        <div id="reservar" class="visible">
+        <!-- <div id="reservar" class="visible">
           <%= form_tag("select_hour", method: "post", role: "form") do %>
             <%= hidden_field_tag :local, @location.id %>
             <div class="form-group">
@@ -29,7 +133,7 @@
               <%= text_field_tag :datepicker, nil, :disabled => true, :placeholder => 'Selecciona fecha...', :class => 'form-control' %>
             </div>
           <% end %>
-        </div>
+        </div> -->
         <div id="informacion" class="oculto">
           <div class="panel panel-info">
             <div class="panel-heading">

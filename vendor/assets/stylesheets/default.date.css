@@ -192,21 +192,21 @@
 .picker__day--outfocus:hover {
   cursor: pointer;
   color: #000000;
-  background: #b1dcfb;
+  background: #73FFD3;
 }
 .picker__day--highlighted {
-  border-color: #0089ec;
+  border-color: #00DA95;
 }
 .picker__day--highlighted:hover,
 .picker--focused .picker__day--highlighted {
   cursor: pointer;
   color: #000000;
-  background: #b1dcfb;
+  background: #00DA95;
 }
 .picker__day--selected,
 .picker__day--selected:hover,
 .picker--focused .picker__day--selected {
-  background: #0089ec;
+  background: #00E99F;
   color: #ffffff;
 }
 .picker__day--disabled,
@@ -261,7 +261,7 @@
   margin-right: .45em;
   top: -0.05em;
   width: 0;
-  border-top: 0.66em solid #0059bc;
+  border-top: 0.66em solid #00E99F;
   border-left: .66em solid transparent;
 }
 .picker__button--clear:before {
