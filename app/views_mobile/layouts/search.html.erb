@@ -44,15 +44,15 @@
 					<!-- Collect the nav links, forms, and other content for toggling -->
 					<nav class="menu slide-menu-right">
 						<p class="text-right">
-							<a href="#" class="close-menu">
+							<a class="close-menu">
 								<i class="fa fa-times"></i>
 							</a>
 						</p>
 						<ul>
 							<li class="active"><a href="#">Buscador</a></li>
-							<li><a href="#">Que Hacemos</a></li>
-							<li><a href="#">Clientes</a></li>
-							<li><a href="#">Contacto</a></li>
+							<li><a href="#clients-target">Clientes</a></li>
+							<li><a href="#what-we-do-target">Que Hacemos</a></li>
+							<li><a href="#contact-target">Contacto</a></li>
 							<li class="divider"></li>
 							<li><a href="#" class="menu-green"><i class="fa fa-user"></i> Registrate</a></li>
 							<li><a href="#" class="menu-green"><i class="fa fa-calendar-o"></i> Iniciar Sesión</a></li>
@@ -88,7 +88,7 @@
 		<%= javascript_include_tag "jquery-1.11.1.min" %>
 		<%= yield :scripts %>
 		<%= javascript_include_tag "mobile" %>
-		<% javascript_include_tag "mobile/result" %>
+		<%= javascript_include_tag "mobile/result" %>
 		<% javascript_include_tag "http://maps.google.com/maps/api/js?sensor=false" %>
 		<!-- end: JavaScript-->
 	</body>

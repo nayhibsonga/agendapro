@@ -52,6 +52,10 @@ h6, .h6 {
 .navbar-agendapro {
 	background-color: rgba(255,255,255,0);
 	border-color: rgba(255,255,255,0);
+	-webkit-transition: all 0.5s ease-in-out;
+	-moz-transition: all 0.5s ease-in-out;
+	-o-transition: all 0.5s ease-in-out;
+	transition: all 0.5s ease-in-out;
 }
 .navbar-agendapro > .container .navbar-brand {
 	margin-left: 0px;
@@ -66,8 +70,12 @@ h6, .h6 {
 	padding: 5px 8px;
 }
 .navbar-agendapro-white {
-	background-color: rgba(255,255,255,1);
-	border-color: rgba(255,255,255,1);
+	background-color: #ffffff;
+	border-color: #e7e7e7;
+	-webkit-transition: all 0.5s ease-in-out;
+	-moz-transition: all 0.5s ease-in-out;
+	-o-transition: all 0.5s ease-in-out;
+	transition: all 0.5s ease-in-out;
 }
 .navbar-agendapro-white .navbar-toggle {
 	border-color: #ccc;
@@ -93,63 +101,17 @@ nav.menu a.menu-orange:hover,
 nav.menu a.menu-orange:focus {
 	color: #ffffff;
 }
-body.smr-open {
+/*body.smr-open {
 	height: 100%;
 	height: 100vh;
 	overflow: hidden;
 	-webkit-overflow-scrolling: hidden;
 	width: 100%;
-	position: fixed;
-}
+	position: static;
+}*/
 nav.menu li.divider {
 	margin-top: 30px;
 }
-/*.navbar-agendapro .navbar-collapse {
-	width: 60%;
-	min-width: 150px;
-	float: right;
-	background-color: #000;
-}
-.navbar-agendapro .navbar-collapse.in .navbar-nav {
-	height: 100%;
-}
-.navbar-agendapro .navbar-nav > li {
-	margin-right: 5px;
-	margin-left: 5px;
-}
-.navbar-agendapro .navbar-nav > li > a {
-	color: #cfcdcd;
-	text-transform: uppercase;
-	font-family: TradeGothicCn18;
-	font-size: 16px;
-	margin-top: 5px;
-	margin-right: 5px;
-	margin-left: 5px;
-}
-.navbar-agendapro .navbar-nav > li > a:hover,
-.navbar-agendapro .navbar-nav > li > a:focus {
-	color: #ffffff;
-	background-color: transparent;
-}
-.navbar-agendapro .navbar-nav > .active > a {
-	color: #ffffff;
-	background-color: transparent;
-}
-.navbar-agendapro .navbar-nav > .active > a:hover,
-.navbar-agendapro .navbar-nav > .active > a:focus {
-	color: #ffffff;
-	background-color: transparent;
-}
-.navbar-agendapro .navbar-toggle:hover,
-.navbar-agendapro .navbar-toggle:focus {
-	background-color: #ffffff;
-}
-.navbar-agendapro .navbar-nav > .open > a,
-.navbar-agendapro .navbar-nav > .open > a:hover,
-.navbar-agendapro .navbar-nav > .open > a:focus {
-	color: #555;
-	background-color: #e7e7e7;
-}*/
 
 /*** alert ***/
 .alert {
@@ -190,7 +152,10 @@ nav.menu li.divider {
 	padding: 20px 0;
 }
 .below-navbar {
-	padding-top: 50px;
+	padding-top: 52px;
+	padding-top: -moz-calc(100% - 52px);
+	padding-top: -webkit-calc(100% - 52px);
+	padding-top: calc(100% - 52px);
 }
 .search-text {
 	color: #ffffff;
@@ -204,15 +169,27 @@ nav.menu li.divider {
 }
 
 /*Search Form*/
+.fill { 
+    min-height: 100%;
+    height: 100%;
+}
+.container-search {
+    display: table;
+    vertical-align: middle;
+}
+.vertical-center-row {
+    display: table-cell;
+    vertical-align: middle;
+}
 .image-pin {
 	width: 22.07%;
 	width:	20vw;
 	max-width: 99px;
 }
-#search-form {
+/*#search-form {
 	margin-top: 10px;
 	margin-bottom: 30px;
-}
+}*/
 #search-form button,
 #search-form input {
 	font-size: 14px;
@@ -393,4 +370,60 @@ nav.menu li.divider {
 }
 .footer img {
 	margin-top: -20px;
+}
+
+/***** Search Result *****/
+/*Search Form*/
+.btn-search-results {
+  color: #ffffff;
+  background-color: #808080;
+  border-color: #ccc;
+}
+
+/*Results*/
+.box-search {
+	display: inline-block;
+	padding: 3px 10px;
+	width: 100%;
+	border: 1px solid #bbbaba;
+	margin-bottom: 10px;
+}
+.box-search > a {
+	color: #767676;
+}
+.box-search img {
+	vertical-align: top;
+	display: inline;
+	width: 70px;
+	margin-right: 5px;
+}
+.description {
+	box-sizing: border-box;
+	display: inline-block;
+	width: 70%;
+	width: -moz-calc(100% - 70px - 20px);
+	width: -webkit-calc(100% - 70px - 20px);
+	width: calc(100% - 70px - 20px);
+}
+.description h3 {
+	border-bottom: 1px solid #767676;
+}
+.number-pin{
+	position: relative;
+    display: inline-block;
+    height: 30px;
+    width: 22px;
+    float: left;
+    background: url(<%= asset_path 'search/pin.png' %>);
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center top;
+}
+.number-pin span{
+    position: absolute;
+    left: 30%;
+    top: 15%;
+    font-size: 13px;
+    font-weight: bold;
+    color: #ffffff;
 }
