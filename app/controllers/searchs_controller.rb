@@ -48,9 +48,32 @@ class SearchsController < ApplicationController
 
 		@results = (@results1 + @results2).paginate(:page => params[:page], :per_page => 10)
 
+		i = 1
+		@results.each do |location|
+			if !File.exist?("app/assets/images/search/pin_map#{i}.png")
+				img = MiniMagick::Image.from_file("app/assets/images/search/pin_map.png")
+				img.combine_options do |c|
+			    	c.draw "text 9,22 '#{i.to_s}'"
+					c.fill("#FFFFFF")
+					c.pointsize "17"
+				end
+				img.write("app/assets/images/search/pin_map#{i}.png")
+			end
+			i = i+1			
+		end
+
 		respond_to do |format|
 			format.html
 			format.json { render :json => @results }
 		end
 	end
+
+	def get_pin
+		num = params[:number]
+		respond_to do |format|
+			format.html
+			format.json { render :json => @results }
+		end
+	end
+
 end

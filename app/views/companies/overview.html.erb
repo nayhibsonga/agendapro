@@ -1,54 +1,123 @@
-<div class="main">
+<div class="company-header">
   <div class="container">
     <div class="row">
-      <div class="well">
-        <div class="col-md-3">
-          <h3>Selecciona el lugar</h3>
-          <table class="table table-bordered" id="locales-empresa">
-            <tbody>
-              <% @locations.each do |local| %>
-              <tr class="<%= 'local-seleccionado' if @selectedLocal.to_i == local.id %>">
-                <td>
-                  <div class="radio">
-                    <label>
-                      <input type="radio" name="localRadio" id="localOption<%= local.id %>" value="<%= local.id %>" data-outcall="<%= local.outcall %>" <%= "checked" if @selectedLocal.to_i == local.id %> >
-                      <p>
-                        <strong><%= local.name %></strong> <br/>
-                        <%= if !local.outcall then local.address+', '+local.district.name else "A Domicilio" end %>
-                      </p>
-
-                    </label>
-                  </div>
-                </td>
-              </tr>
+      <% if @company.description.blank? %>
+      <div class="row">
+        <div class="col-md-12">
+          <p>
+            <span>
+              <% if @company.logo_url %>
+                <%= image_tag @company.logo_url.to_s, :size => "80x80", :alt => @company.name %>
+              <% else %>
+                <%= image_tag 'Iso_Pro_Color.png', :alt => 'AgendaPro', :size => "80x80" %>
               <% end %>
-            </tbody>
-          </table>
+            </span>
+            <span>
+              <%= @company.name %>
+            </span>
+          </p>
         </div>
-        <div class="col-md-6">
-          <div class="google-maps-empresa">
-            <div id="map"></div>
-          </div>
-          <div id="outcallDistricts" class="well">
-          </div>
+      </div>
+    <% else %>
+      <div class="col-md-6 company-header-left">
+        <div>
+          <span>
+            <% if @company.logo_url %>
+              <%= image_tag @company.logo_url.to_s, :size => "80x80", :alt => @company.name %>
+            <% else %>
+              <%= image_tag 'Iso_Pro_Color.png', :alt => 'AgendaPro', :size => "80x80" %>
+            <% end %>
+          </span>
+          <span>
+            <%= @company.name %>
+          </span>
         </div>
-        <div class="col-md-3">
-          <a href="#" class="btn btn-agendapro-orange btn-lg btn-block" id="boton-agendar"><i class="fa fa-calendar"></i> AGENDAR </a>
-          <div class="panel panel-info">
-            <div class="panel-heading">
-              <h3 class="panel-title">Horario</h3>
-            </div>
-            <div class="panel-body">
-              <table class="table">
-                <tbody id="schedule-body">
-                </tbody>
-              </table>
-            </div>
-          </div>
+      </div>
+      <div class="col-md-6 company-header-right">
+        <div class="header-description">
+          <%= @company.description %>
         </div>
-        <div class="clear"></div>
+      </div>
+    <% end %>
+    </div>
+  </div>
+</div>
+<div class="overview-main">
+  <div class="container">
+    <div class="row company-header-btns">
+      <div class="col-md-6">
+        <div class="header-btn active" style="float: right;">
+          <a href="#" id="boton-locales">Locales</a>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="header-btn inactive" style="float: left;">
+          <a href="#" id="boton-servicio">Servicios</a>
+        </div>
       </div>
     </div>
+
+    <div class="row" style="margin-top: 20px; color: #979797;">
+      <div class="col-md-6">
+      </div>
+      <div class="col-md-3" style="font-size: 20px;">
+        Selecciona el lugar
+      </div>
+      <div class="col-md-3">
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-md-6">
+        <div class="google-maps-empresa">
+          <div id="map"></div>
+        </div>
+        <div id="outcallDistricts" class="well">
+        </div>
+      </div>
+      <div class="col-md-3">
+        <table class="table table-locals" id="locales-empresa">
+          <tbody>
+            <% @locations.each do |local| %>
+            <tr class="<%= 'local-seleccionado' if @selectedLocal.to_i == local.id %>">
+              <td>
+                <div class="radio">
+                  <label>
+                    <input type="radio" name="localRadio" id="localOption<%= local.id %>" value="<%= local.id %>" data-outcall="<%= local.outcall %>" <%= "checked" if @selectedLocal.to_i == local.id %> >
+                    <p>
+                      <%= local.name %><br/>
+                      <%= if !local.outcall then local.address+', '+local.district.name else "A Domicilio" end %>
+                    </p>
+
+                  </label>
+                </div>
+              </td>
+            </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+      <div class="col-md-3">
+        <div id="div-agendar">
+          <a href="#" class="" id="boton-agendar">
+            <i class="fa fa-calendar-o"></i> Agendar 
+          </a>
+        </div>
+        <div class="schedule">
+          <div class="schedule-header">
+            Horario<br />
+            <i class="fa fa-clock-o"></i>
+          </div>
+          <div class="schedule-table">
+            <table class="table">
+              <tbody id="schedule-body">
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
   </div>
 </div>
 

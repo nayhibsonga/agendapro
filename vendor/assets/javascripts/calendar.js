@@ -9,6 +9,7 @@ function Calendar (source, getData) {
 			date: ''
 		}
 	}
+
 	var week;
 	var clickEvent;
 
@@ -178,6 +179,12 @@ function Calendar (source, getData) {
 	// Auxiliar methods
 	var parseDate = function (date, start) {
 		start = start || '00:00';
+
+		if(date===undefined)
+		{
+			return new Date();
+		}
+
 		var year = date.substring(0, date.indexOf('-'));
 		date = date.substring(date.indexOf('-') + 1);
 		var month = date.substring(0, date.indexOf('-')) - 1;
@@ -209,6 +216,10 @@ function Calendar (source, getData) {
 	}
 
 	this.rebuild = function (source, getData) {
+
+		console.log(getData['date']);
+		var day = parseDate(getData['date'], '00:00');
+
 		sources = {
 			source: '/jsontest',
 			data: {
@@ -220,8 +231,7 @@ function Calendar (source, getData) {
 		sources.source = source || sources.source;
 		getData = getData || {};
 		sources.data = $.extend(true, sources.data, getData);
-
-		week = generateCalendar();
+		week = generateCalendar(day);
 	}
 
 	this.getClickDetails = function () {

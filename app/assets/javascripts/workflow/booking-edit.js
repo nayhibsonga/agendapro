@@ -1,10 +1,11 @@
+var calendar;
 function loadCalendar () {
 	var data = {
 		provider: $('#booking').data('booking').service_provider_id,
 		local: $('#booking').data('booking').location_id,
 		service: $('#booking').data('booking').service_id
 	}
-	var calendar = new Calendar('/get_available_time.json', data);
+	calendar = new Calendar('/get_available_time.json', data);
 	
 	$(document).on('hourClick', function (e) {
 		addBooking(e);
