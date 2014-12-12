@@ -20,43 +20,50 @@
 
         <!-- start: CSS -->
         <%= stylesheet_link_tag "mobile" %>
-        <%= stylesheet_link_tag "http://fonts.googleapis.com/css?family=Open+Sans:400,300,400italic,600,600italic,700,700italic,300italic" %>
+        <%= stylesheet_link_tag "mobile/mobile-login" %>
+        <%= yield :stylesheets %>
         <!-- end: CSS -->
 
         <!-- Fav and touch icons -->
         <%= favicon_link_tag "Iso_Pro_Color.png", :rel => "shortcut icon" %>
 	</head>
 
-	<body id="loading">
+	<body>
         <!-- start: Header -->
         <header>
-            <h2>AGENDAPRO</h2>
-            <a id="btn-principal" class="nav-toggler toggle-slide-right" href="#menu"><span>menu</span></a>
-            </div>
+            <nav class="navbar navbar-default navbar-agendapro navbar-agendapro-white navbar-fixed-top" role="navigation">
+                <div class="container">
+                    <!-- Brand and toggle get grouped for better mobile display -->
+                    <div class="navbar-header">
+                        <a class="navbar-toggle toggle-slide-right" href="#menu">
+                            <i class="fa fa-bars"></i>
+                        </a>
+                        <a href="<%= root_without_subdomain %>" class="navbar-brand">
+                            <%= image_tag 'logos/logodoble2.png', :alt => 'AgendaPro', :size => '127x43' %>
+                        </a>
+                    </div>
+                    <!-- Collect the nav links, forms, and other content for toggling -->
+                    <nav class="menu slide-menu-right">
+                        <p class="text-right">
+                            <a class="close-menu">
+                                <i class="fa fa-times"></i>
+                            </a>
+                        </p>
+                        <ul>
+                            <li><%= link_to 'Buscador', root_path %></li>
+                            <li><a href="#clients-target">Clientes</a></li>
+                            <li><a href="#what-we-do-target">Que Hacemos</a></li>
+                            <li><a href="#contact-target">Contacto</a></li>
+                            <li class="divider"></li>
+                            <li><%= link_to '<i class="fa fa-user"></i> Registrate'.html_safe, new_user_registration_path, class: "menu-green" %></li>
+                            <li><%= link_to '<i class="fa fa-calendar-o"></i> Iniciar Sesión'.html_safe, new_user_session_path, class: "menu-green" %></li>
+                            <li><a href="#" class="menu-orange">Agrega tu Empresa</a></li>
+                        </ul>
+                    </nav><!-- /slide menu right -->
+                </div>
+            </nav>
         </header>
         <!-- end: Header -->
-
-        <!-- start: menu -->
-        <nav class="menu slide-menu-right">
-            <ul>
-                <li><%= link_to 'AGENDAPRO', root_path %></li>
-                <li><%= link_to 'ACERCA DE', home_path %></li>
-                <li><%= link_to 'CONTACTO', contact_path %></li>
-                <li><%= link_to 'PLANES', view_plans_path %></li>
-                <% if user_signed_in? %>
-                <li><%= link_to current_user.email.upcase, edit_user_registration_path %></li>
-                <li><%= link_to 'MI AGENDA', my_agenda_path(:id => current_user.id) %></li>
-                <li><%= link_to 'SALIR', destroy_user_session_path, method: :delete %></li>
-                <% else %>
-                <li><%= link_to 'INICIA SESION', new_user_session_path %></li>
-                <li><%= link_to 'REGISTRATE', new_user_registration_path %></li>
-                <% end %>
-            </ul>
-            <span>
-                <%= link_to 'Sitio Completo', prefer_full_site_url %>|
-                <a href="#" class="close-menu">&gt;&gt;</a>
-            </span>
-        </nav><!-- /slide menu right -->
 
         <!-- start: content -->
         <div id="wrapper">
@@ -74,17 +81,14 @@
                 </div>
             <% end %>
             <!-- end: Alerts -->
-            <div class="container">
-                <%= yield %>
-            </div>
+            <%= yield %>
         </div>
         <!-- end: content -->
 
         <!-- start: JavaScript-->
-        <%= javascript_include_tag "jquery-1.11.1.min" %>
-        <%= javascript_include_tag 'validations/validate' %>
-        <%= yield :scripts %>
         <%= javascript_include_tag "mobile" %>
+        <%= yield :scripts %>
+        <%= javascript_include_tag 'validations/validate' %>
         <!-- end: JavaScript-->
 	</body>
 </html>

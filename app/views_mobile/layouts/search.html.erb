@@ -50,13 +50,13 @@
 							</a>
 						</p>
 						<ul>
-							<li class="active"><a href="#">Buscador</a></li>
+							<li><%= link_to 'Buscador', root_path %></li>
 							<li><a href="#clients-target">Clientes</a></li>
 							<li><a href="#what-we-do-target">Que Hacemos</a></li>
 							<li><a href="#contact-target">Contacto</a></li>
 							<li class="divider"></li>
-							<li><a href="#" class="menu-green"><i class="fa fa-user"></i> Registrate</a></li>
-							<li><a href="#" class="menu-green"><i class="fa fa-calendar-o"></i> Iniciar Sesión</a></li>
+							<li><%= link_to '<i class="fa fa-user"></i> Registrate'.html_safe, new_user_registration_path, class: "menu-green" %></li>
+                            <li><%= link_to '<i class="fa fa-calendar-o"></i> Iniciar Sesión'.html_safe, new_user_session_path, class: "menu-green" %></li>
 							<li><a href="#" class="menu-orange">Agrega tu Empresa</a></li>
 						</ul>
 					</nav><!-- /slide menu right -->
