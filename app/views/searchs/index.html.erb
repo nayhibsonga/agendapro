@@ -1,253 +1,288 @@
+<!-- start: Modals -->
+<div class="modal fade" id="vimeo-modal" tabindex="-1" role="dialog" aria-labelledby="siginLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title">¿Qué es AgendaPro?</h4>
+            </div>
+            <div class="modal-body">
+                <div class="row text-center">
+                    <iframe src="//player.vimeo.com/video/104629013" width="600" height="338" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe> <p><a href="http://vimeo.com/104629013">¿Qué es AgendaPro?</a> from <a href="http://vimeo.com/user28070701">AgendaPro</a> on <a href="https://vimeo.com">Vimeo</a>.</p>
+                </div>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
 <!-- search -->
-<div class="background" style="background-image: url(<%= asset_path 'home/spa.jpg' %>)">
-    <div class="below-navbar overlay">
-        <div class="container">
-            <div class="row">
-                <div class="col-sm-8">
-                    <h1 class="search-text">Busca, Encuentra y <br> Reserva tus <span class="search-text-green">Servicios en</span></h1>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-sm-2">
-                    <%= image_tag 'search/pin-overlay.png', :alt => 'Pin' %>
-                </div>
-                <div class="col-sm-10 form-container">
-                    <%= form_tag({controller: "searchs", action: "search"}, method: "GET", class: "form-horizontal", id: "search-form") do %>
-                        <input type="hidden" id="district" name="district">
-                        <input type="hidden" id="latitude" name="latitude" value="-33.412819">
-                        <input type="hidden" id="longitude" name="longitude" value="-70.591945">
-                        <div class="form-group">
-                            <div class="col-sm-6">
-                                <div class="input-group input-group-lg">
-                                    <%= text_field_tag :inputLocalization, params[:inputLocalization], class: "form-control form-transparent", placeholder: "Escribe tu dirección ..", required: true %>
-                                    <span class="input-group-btn">
-                                        <button class="btn btn-search form-transparent" type="button">Encuentrame <i class="fa fa-crosshairs"></i></button>
-                                    </span>
+<div class="background fill" style="background-image: url(<%= asset_path 'search/fondo2.png' %>)" id="buscador">
+    <div class="fill">
+        <div class="container container-search fill" id="buscador2">
+            <div class="row vertical-center-row">
+                <div class="col-sm-12">
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <h1 class="search-text">Busca, Encuentra y <br> Reserva <span class="search-text-green" id="typed-text"></span></h1>
+                        </div>
+                    </div>
+                    <div class="row search-row">
+                        <div class="col-sm-2 auto-width">
+                            <%= image_tag 'search/pin-overlay.png', :alt => 'Pin', class: "img-responsive pull-left" %>
+                        </div>
+                        <div class="col-xs-10 col-sm-8 col-md-6">
+                            <%= form_tag({controller: "searchs", action: "search"}, method: "GET", class: "form-horizontal", id: "search-form") do %>
+                                <input type="hidden" id="district" name="district" value="1">
+                                <input type="hidden" id="latitude" name="latitude" value="-33.412819">
+                                <input type="hidden" id="longitude" name="longitude" value="-70.591945">
+                                <div class="form-group">
+                                    <div class="col-sm-12">
+                                        <div class="input-group input-group-lg">
+                                            <%= text_field_tag :inputLocalization, params[:inputLocalization], class: "form-control form-transparent", placeholder: "Escribe tu dirección ..", required: true %>
+                                            <span class="input-group-btn">
+                                                <button id="geolocate_btn" class="btn btn-search form-transparent" type="button">Encuéntrame&nbsp;&nbsp;<i class="fa fa-crosshairs"></i></button>
+                                            </span>
+                                        </div>
+                                    </div>
                                 </div>
-                            </div>
+                                <div class="form-group">
+                                    <div class="col-xs-8">
+                                        <%= search_field_tag :inputSearch, params[:inputSearch], class: "form-control input-lg green-placeholder", placeholder: "Ejemplo: Corte de Pelo, Masajes", :required => "true", :autofocus => "autofocus" %>
+                                    </div>
+                                    <div class="col-xs-4">
+                                        <button class="btn btn-search form-transparent btn-lg full-width" type="submit"><i class="fa fa-search"></i> Buscar</button>
+                                    </div>
+                                </div>
+                            <% end %>
                         </div>
-                        <div class="form-group">
-                            <div class="col-sm-6">
-                                <%= search_field_tag :inputSearch, params[:inputSearch], class: "form-control input-lg green-placeholder", placeholder: "Ejemplo: Corte de Pelo, Masajes", :required => "true", :autofocus => "autofocus" %>
-                            </div>
-                            <div class="col-sm-1">
-                                <button class="btn btn-search form-transparent btn-lg" type="submit"><i class="fa fa-search"></i> Buscar</button>
-                            </div>
-                        </div>
-                    <% end %>
+                    </div>
                 </div>
             </div>
+        </div>
+    </div>
+    <div class="row search-pull-up">
+        <div class="col-sm-12 text-center">
+            <h1><a href="#servicios" class="btn btn-down form-transparent btn-lg"><i class="fa fa-chevron-down"></i></a></h1>
+        </div>
+    </div>
+</div>
+
+<!-- Servicios -->
+<div class="">
+    <div class="container">
+        <div class="row text-gray below-navbar" id="servicios">
+            <div class="col-sm-12">
+                <h1 class="text-center text-uppercase">¿Qué puedes encontrar?</h1>
+                <h3 class="text-center search-text-green">¡Descubre las mejores alternativas de belleza en Chile!</h3>
+                <%= image_tag "search/caret-down.png", alt: "caret-down", class: "pull-center", width: "39px" %>
+            </div>
+        </div>
+    </div>
+    <div class="background background-light-grey">
+        <div class="container">
+            <div class="row row-padded">
+                <div class="btn-toolbar" role="toolbar">
+                <div class="btn-group btn-group-lg btn-group-justified blocks btn-group-fill-height">
+                <a href="#" class="btn btn-default" role="button">
+                        <%= image_tag "search/1.png", alt: "Spa", size: "48x37" %>
+                        <p>Spa</p>
+                </a>
+                <a href="#" class="btn btn-default" role="button">
+                        <%= image_tag "search/2.png", alt: "Peluquerías", size: "48x37" %>
+                        <p>Peluquerías</p>
+                </a>
+                <a href="#" class="btn btn-default" role="button">
+                        <%= image_tag "search/3.png", alt: "Maquillaje", size: "48x37" %>
+                        <p>Maquillaje</p>
+                </a>
+                <a href="#" class="btn btn-default" role="button">
+                        <%= image_tag "search/4.png", alt: "Clinicas y Centros de Estetica", size: "48x37" %>
+                        <p>Centros de Estetica</p>
+                </a>
+                <a href="#" class="btn btn-default" role="button">
+                        <%= image_tag "search/5.png", alt: "Masajes", size: "48x37" %>
+                        <p>Masajes</p>
+                </a>
+                </div>
+                </div>
+            </div>
+            <div class="row row-padded">
+                <div class="btn-toolbar" role="toolbar">
+                <div class="btn-group btn-group-lg btn-group-justified btn-group-fill-height">
+                <a href="#" class="btn btn-default" role="button">
+                        <%= image_tag "search/6.png", alt: "Manos y Pies", size: "48x37" %>
+                        <p>Manos y Pies</p>
+                </a>
+                <a href="#" class="btn btn-default" role="button">
+                        <%= image_tag "search/7.png", alt: "Medicina Alternativa", size: "48x37" %>
+                        <p>Medicina Alternativa</p>
+                </a>
+                <a href="#" class="btn btn-default" role="button">
+                        <%= image_tag "search/8.png", alt: "Bronceados", size: "48x37" %>
+                        <p>Bronceados</p>
+                </a>
+                <a href="#" class="btn btn-default" role="button">
+                        <%= image_tag "search/9.png", alt: "Tratamientos Faciales", size: "48x37" %>
+                        <p>Tratamientos Faciales</p>
+                </a>
+                <a href="#" class="btn btn-default" role="button">
+                        <%= image_tag "search/10.png", alt: "Tratamientos Corporales", size: "48x37" %>
+                        <p>Tratamientos Corporales</p>
+                </a>
+                </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="below-navbar">
+    <div class="background">
+        <div class="container">
+            <div class="row text-gray">
+                <div class="col-xs-12">
+                    <h1 class="text-center text-uppercase">Algunos de Nuestros Clientes</h1>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-xs-12">
+                    <div id="carousel">
+                        <a href="http://theboss.agendapro.cl/"><%= image_tag "search/thebosscolor.png", alt: "The Boss", size: "169x121" %></a>
+                        <a href="http://miranda.agendapro.cl/"><%= image_tag "search/mirandacolor.png", alt: "Miranda", size: "121x121" %></a>
+                        <a href="http://nutricioncuerpoyalma.agendapro.cl/"><%= image_tag "search/nutricioncuerpoyalmacolor.png", alt: "Nutrición Cuerpo y Alma", size: "135x121" %></a>
+                        <a href="http://labanqueta.agendapro.cl/"><%= image_tag "search/labanquetacolor.png", alt: "La Banqueta", size: "142x121" %></a>
+                        <a href="http://soloparamunecas.agendapro.cl/"><%= image_tag "search/soloparamunecascolor.png", alt: "Solo para Muñecas", size: "123x121" %></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Qué Hacemos -->
+<div class="below-navbar">
+    <div class="background-repeat background-gray-pattern" style="background-image: url(<%= asset_path 'backgrounds/gray-background.png' %>);" id="quehacemos">
+        <div class="container below-navbar">
             <div class="row">
                 <div class="col-sm-12">
-                    <h2 class="clients"><span class="search-text-green">Reserva</span><br>con nuestros clientes</h2>
+                    <h1 class="text-center text-uppercase">Qué Hacemos</h1>
+                    <p class="text-center" style="margin-top:-15px;">Sistema de Reservas Online enfocado en ayudar a pequeñas y medianas empresas en el manejo y gestión de sus negocios.<a href="#" data-toggle="modal" data-target="#vimeo-modal"><%= image_tag "search/play1.png", alt: "play" %> Ver Video</a></p>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-xs-4 row-border box-content box-border-left text-center">
+                    <%= image_tag "search/search.png", alt: "Busca", class: "img-responsive center-block", size: "42x42" %>
+                    <p class="text-uppercase">Busca</p>
+                </div>
+                <div class="col-xs-4 row-border box-content box-border-left box-border-right text-center">
+                    <%= image_tag "search/find.png", alt: "Encuentra", class: "img-responsive center-block", size: "15x42" %>
+                    <p class="text-uppercase">Encuentra</p>
+                </div>
+                <div class="col-xs-4 row-border box-content box-border-right text-center">
+                    <%= image_tag "search/booking.png", alt: "Reserva", class: "img-responsive center-block", size: "40x42" %>
+                    <p class="text-uppercase">Reserva</p>
                 </div>
             </div>
         </div>
     </div>
-    <div class="dark-overlay">
+</div>
+<div class="below-navbar">
+    <div class="container">
+        <div class="row">
+            <div class="col-xs-12 pull-center">
+                <h1 class="text-uppercase text-gray">¡Comentarios sobre nosotros!</h1>
+                <%= image_tag "search/quotes.png", alt: "quote", height: "58px" %>
+            </div>
+        </div>
+        <div class="row below-navbar">
+            <div class="col-xs-4">
+                <div class="media">
+                    <a href="#" class="media-left">
+                        <%= image_tag "home/nico_f.png", class: "img-circle", size: "80x80" %>
+                    </a>
+                    <div class="media-body">
+                        <h4 class="media-heading">
+                            Nicolas FLores</br>
+                            <small>AgendaPro</small>
+                        </h4>
+                        <p align="justify">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc a neque ipsum. Ut nec metus id dui feugiat volutpat. Nullam gravida lacus vel hendrerit tristique. Vivamus non ex in orci viverra viverra in sit amet nisi. Morbi eu mollis sapien. Sed ut nulla accumsan, accumsan justo non, pellentesque libero.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xs-4">
+                <div class="media">
+                    <a href="#" class="media-left">
+                        <%= image_tag "home/nico_f.png", class: "img-circle", size: "80x80" %>
+                    </a>
+                    <div class="media-body">
+                        <h4 class="media-heading">
+                            Nicolas FLores</br>
+                            <small>AgendaPro</small>
+                        </h4>
+                        <p align="justify">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc a neque ipsum. Ut nec metus id dui feugiat volutpat. Nullam gravida lacus vel hendrerit tristique. Vivamus non ex in orci viverra viverra in sit amet nisi. Morbi eu mollis sapien. Sed ut nulla accumsan, accumsan justo non, pellentesque libero.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xs-4">
+                <div class="media">
+                    <a href="#" class="media-left">
+                        <%= image_tag "home/nico_f.png", class: "img-circle", size: "80x80" %>
+                    </a>
+                    <div class="media-body">
+                        <h4 class="media-heading">
+                            Nicolas FLores</br>
+                            <small>AgendaPro</small>
+                        </h4>
+                        <p align="justify">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc a neque ipsum. Ut nec metus id dui feugiat volutpat. Nullam gravida lacus vel hendrerit tristique. Vivamus non ex in orci viverra viverra in sit amet nisi. Morbi eu mollis sapien. Sed ut nulla accumsan, accumsan justo non, pellentesque libero.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="background background-green" id="contacto">
         <div class="container">
             <div class="row">
-                <div class="col-sm-2">
-                    <%= image_tag "search/laguapasimonablanco.png", alt: "La Guapa Simona" %>
-                </div>
-                <div class="col-sm-2">
-                    <%= image_tag "search/thebossblanco.png", alt: "The Boss" %>
-                </div>
-                <div class="col-sm-2">
-                    <%= image_tag "search/mirandablanco.png", alt: "Miranda" %>
-                </div>
-                <div class="col-sm-2">
-                    <%= image_tag "search/nutricioncuerpoyalmablanco.png", alt: "Nutrición Cuerpo y Alma" %>
-                </div>
-                <div class="col-sm-2">
-                    <%= image_tag "search/labanquetablanco.png", alt: "La Banqueta" %>
-                </div>
-                <div class="col-sm-2">
-                    <%= image_tag "search/soloparamunecasblanco.png", alt: "Solo para Muñecas" %>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Que Hacemos -->
-<div class="background" style="background-image: url(<%= asset_path 'backgrounds/gray-background.png' %>);">
-    <div class="container">
-        <div class="row">
-            <div class="col-sm-12">
-                <h1 class="text-center text-uppercase">Que Hacemos</h1>
-                <p class="text-center" style="margin-top:-15px;">Sistema de Reservas Online enfocado en ayudar a pequeñas y medianas empresas en el manejo y gestión de sus negocios.<a href="#"><%= image_tag "search/play1.png", alt: "play" %></a> Ver Video</p>
-            </div>
-            <div class="col-sm-12">
-                <div class="row-border pull-center">
-                    <div class="box-content box-border-left">
-                        <%= image_tag "search/search.png", alt: "Busca" %>
-                        <p class="text-uppercase">Busca</p>
-                    </div>
-                    <div class="box-content box-border-left box-border-right">
-                        <%= image_tag "search/find.png", alt: "Encuentra" %>
-                        <p class="text-uppercase">Encuentra</p>
-                    </div>
-                    <div class="box-content box-border-right">
-                        <%= image_tag "search/booking.png", alt: "Reserva" %>
-                        <p class="text-uppercase">Reserva</p>
+                <div class="col-sm-12">
+                    <div class="pull-center">
+                        <div class="social">
+                            <a href="http://www.facebook.com/agendapro" target="blank">
+                            <%= image_tag "search/facebook.png", alt: "Facebook" %>
+                            <span class="text-uppercase">Facebook</span>
+                            </a>
+                        </div>
+                        <div class="social">
+                            <a href="http://twitter.com/AgendaPro_CL" target="blank">
+                            <%= image_tag "search/twitter.png", alt: "Twitter" %>
+                            <span class="text-uppercase">Twitter</span>
+                            </a>
+                        </div>
+                        <div class="social">
+                            <a href="http://instagram.com/agendapro/" target="blank">
+                            <%= image_tag "search/instagram.png", alt: "Instagram" %>
+                            <span class="text-uppercase">Instagram</span>\
+                            </a>
+                        </div>
                     </div>
                 </div>
-            </div>
-        </div>
-    </div>
-</div>
-<div class="container">
-    <div class="row text-gray">
-        <div class="col-sm-12">
-            <h1 class="text-center text-uppercase">¿Qué puedes encontrar?</h1>
-        </div>
-        <div class="col-sm-12 pull-center">
-            <div class="border-box">
-                <%= image_tag "search/spa.png", alt: "Spa" %>
-                <p>Spa</p>
-            </div>
-            <div class="border-box">
-                <%= image_tag "search/peluqueria.png", alt: "Peluquerías" %>
-                <p>Peluquerías</p>
-            </div>
-            <div class="border-box">
-                <%= image_tag "search/dentista.png", alt: "Dentistas" %>
-                <p>Dentistas</p>
-            </div>
-            <div class="border-box">
-                <%= image_tag "search/centros_estetica.png", alt: "Clinicas y Centros de Estetica" %>
-                <p>Clinicas y Centros de Estetica</p>
-            </div>
-            <div class="border-box">
-                <%= image_tag "search/veterinarios.png", alt: "Veterinarios" %>
-                <p>Veterinarios</p>
-            </div>
-            <div class="border-box">
-                <%= image_tag "search/medicina_alternativa.png", alt: "Medicina Alternativa" %>
-                <p>Medicina Alternativa</p>
-            </div>
-            <div class="border-box">
-                <%= image_tag "search/lavado_autos.png", alt: "Talleres y Lavado de Autos" %>
-                <p>Talleres y Lavado de Autos</p>
-            </div>
-        </div>
-        <div class="col-sm-12">
-            <p class="text-center" id="margin">Y mas! ..</p>
-        </div>
-    </div>
-</div>
-
-<!-- Clientes -->
-<div class="background background-grey">
-    <div class="container">
-        <div class="row">
-            <div class="col-sm-2">
-                <div id="carousel">
-                    <%= image_tag "search/thebossblanco.png", alt: "The Boss" %>
-                    <%= image_tag "search/mirandablanco.png", alt: "Miranda" %>
-                    <%= image_tag "search/nutricioncuerpoyalmablanco.png", alt: "Nutrición Cuerpo y Alma" %>
-                    <%= image_tag "search/labanquetablanco.png", alt: "La Banqueta" %>
-                    <%= image_tag "search/soloparamunecasblanco.png", alt: "Solo para Muñecas" %>
-                    <%= image_tag "search/thebossgris.png", alt: "The Boss" %>
-                    <%= image_tag "search/mirandagris.png", alt: "Miranda" %>
-                    <%= image_tag "search/nutricioncuerpoyalmagris.png", alt: "Nutrición Cuerpo y Alma" %>
-                    <%= image_tag "search/labanquetagris.png", alt: "La Banqueta" %>
-                    <%= image_tag "search/soloparamunecasgris.png", alt: "Solo para Muñecas" %>
-                    <%= image_tag "search/thebosscolor.png", alt: "The Boss" %>
-                    <%= image_tag "search/mirandacolor.png", alt: "Miranda" %>
-                    <%= image_tag "search/nutricioncuerpoyalmacolor.png", alt: "Nutrición Cuerpo y Alma" %>
-                    <%= image_tag "search/labanquetacolor.png", alt: "La Banqueta" %>
-                    <%= image_tag "search/soloparamunecascolor.png", alt: "Solo para Muñecas" %>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-<div class="container">
-    <div class="row">
-        <div class="col-sm-12 pull-center">
-            <%= image_tag "search/quotes.png", alt: "quote" %>
-        </div>
-        <div class="col-sm-4">
-            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc a neque ipsum. Ut nec metus id dui feugiat volutpat. Nullam gravida lacus vel hendrerit tristique. Vivamus non ex in orci viverra viverra in sit amet nisi. Morbi eu mollis sapien. Sed ut nulla accumsan, accumsan justo non, pellentesque libero.</p>
-            <div class="media">
-                <a href="#" class="media-left">
-                    <%= image_tag "home/nico_f.png", class: "img-circle", size: "80x80" %>
-                </a>
-                <div class="media-body">
-                    <h3 class="media-heading search-text-green">Nicolas FLores</h3>
-                    <p>AgendaPro</p>
-                </div>
-            </div>
-        </div>
-        <div class="col-sm-4">
-            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc a neque ipsum. Ut nec metus id dui feugiat volutpat. Nullam gravida lacus vel hendrerit tristique. Vivamus non ex in orci viverra viverra in sit amet nisi. Morbi eu mollis sapien. Sed ut nulla accumsan, accumsan justo non, pellentesque libero.</p>
-            <div class="media">
-                <a href="#" class="media-left">
-                    <%= image_tag "home/nico_f.png", class: "img-circle", size: "80x80" %>
-                </a>
-                <div class="media-body">
-                    <h3 class="media-heading search-text-green">Nicolas FLores</h3>
-                    <p>AgendaPro</p>
-                </div>
-            </div>
-        </div>
-        <div class="col-sm-4">
-            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc a neque ipsum. Ut nec metus id dui feugiat volutpat. Nullam gravida lacus vel hendrerit tristique. Vivamus non ex in orci viverra viverra in sit amet nisi. Morbi eu mollis sapien. Sed ut nulla accumsan, accumsan justo non, pellentesque libero.</p>
-            <div class="media">
-                <a href="#" class="media-left">
-                    <%= image_tag "home/nico_f.png", class: "img-circle", size: "80x80" %>
-                </a>
-                <div class="media-body">
-                    <h3 class="media-heading search-text-green">Nicolas FLores</h3>
-                    <p>AgendaPro</p>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-<div class="background background-green social">
-    <div class="container">
-        <div class="row">
-            <div class="col-sm-9" style="line-height: 3em;">Síguenos también en nuestras redes sociales</div>
-            <div class="col-sm-1">
-                <span class="fa-stack fa-lg">
-                    <i class="fa fa-circle fa-stack-2x"></i>
-                    <i class="fa fa-facebook fa-stack-1x fa-green social-facebook"></i>
-                </span>
-            </div>
-            <div class="col-sm-1">
-                <span class="fa-stack fa-lg">
-                    <i class="fa fa-circle fa-stack-2x"></i>
-                    <i class="fa fa-twitter fa-stack-1x fa-green social-twitter"></i>
-                </span>
-            </div>
-            <div class="col-sm-1">
-                <span class="fa-stack fa-lg">
-                    <i class="fa fa-circle fa-stack-2x"></i>
-                    <i class="fa fa-vimeo-square fa-stack-1x fa-green social-vimeo"></i>
-                </span>
             </div>
         </div>
     </div>
 </div>
 
 <!-- contact -->
-<div class="container">
-    <div class="row">
-        <div class="col-sm-12">
-            <h1 class="pull-center text-gray text-uppercase">Contáctanos</h1>
-        </div>
-        <div class="col-sm-12">
-            <iframe src="https://mapsengine.google.com/map/u/0/embed?mid=zxyVW9hDKDEg.kYaUAImoWzTg&amp;hl=es-419&amp;z=17" width="100%" height="350"></iframe>
-        </div>
-        <div class="col-sm-12">
-            <%= form_tag("pcontact", method: "post", id: 'contact' ) do %>
-                <%= hidden_field_tag :inputName %>
-                <%= hidden_field_tag :inputLastname %>
-                <div class="row">
-                    <div class="col-sm-6">
+<div class="">
+    <div class="container">
+        <div class="row below-navbar">
+            <div class="col-sm-12">
+                <h1 class="pull-center text-gray text-uppercase">Contáctanos</h1>
+            </div>
+            <div class="col-sm-6 office_address">
+                <iframe src="https://mapsengine.google.com/map/u/0/embed?mid=zxyVW9hDKDEg.kYaUAImoWzTg&amp;hl=es-419&amp;z=17" width="100%" height="400"></iframe>
+            </div>
+            <div class="col-sm-6">
+                <%= form_tag("pcontact", method: "post", id: 'contact' ) do %>
+                    <%= hidden_field_tag :inputName %>
+                    <%= hidden_field_tag :inputLastname %>
+                    <div class="row">
                         <div class="form-group has-feedback">
                             <label for="full_name" class="label-contacto">Nombre</label>
                             <input type="text" id="full_name" name="user[full_name]" class="form-control" required>
@@ -262,73 +297,164 @@
                         </div>
                         <div class="form-group">
                             <%= label_tag(:inputSubject, "Asunto", :class => "label-contacto") %>
-                            <%= text_field_tag(:inputSubject, nil, :class => "form-control", :required => true) %>
+                            <%= select_tag(:inputSubject, options_for_select(["Quiero agregar mi empresa a AgendaPro", "Servicio Técnico", "Consulta por plan especial", "Reclamos", "Otros"]), :class => "form-control") %>
                             <span class="help-block"></span>
                             <span class="form-control-feedback"></span>
                         </div>
-                    </div>
-                    <div class="col-sm-6">
                         <div class="form-group has-feedback">
                             <%= label_tag(:inputMessage, "Mensaje", :class => "label-contacto") %>
-                            <%= text_area_tag(:inputMessage, nil, :class => "form-control", :required => true, :rows => 6) %>
+                            <%= text_area_tag(:inputMessage, nil, :class => "form-control", :required => true, :rows => 4) %>
                             <span class="help-block"></span>
                             <span class="form-control-feedback"></span>
                         </div>
-                        <button type="submit" class="btn btn-green form-transparent pull-right"><i class="fa fa-envelope-o"></i> Enviar Mensaje</button>
+                        <button type="submit" class="btn btn-orange form-transparent"><i class="fa fa-envelope-o"></i> Enviar Mensaje</button>
                     </div>
-                </div>
-            <% end %>
+                <% end %>
+            </div>
         </div>
     </div>
 </div>
-<div class="background contact-footer" style="background-image: url(<%= asset_path 'backgrounds/gray-background.png' %>);">
-    <div class="container">
-        <div class="row pull-center">
-            <div class="col-sm-4">
-                <%= image_tag "search/location.png" %>
-                <p>Nuestra Señora de los
-                 Angeles 185, Oficina D,
-                  Las Condes, Santiago</p>
+<div class="below-navbar">
+    <div class="background-repeat contact-footer background-gray-pattern" style="background-image: url(<%= asset_path 'backgrounds/gray-background.png' %>);">
+        <div class="container">
+            <div class="row pull-center">
+                <div class="col-sm-4">
+                    <%= image_tag "footer/1.png", size: "22x29" %>
+                    <p>Nuestra Señora de los
+                     Angeles 185, Oficina D,
+                      Las Condes, Santiago</p>
+                </div>
+                <div class="col-sm-4">
+                    <%= image_tag "footer/2.png", size: "24x19" %>
+                    <p>contacto@agendapro.cl</p>
+                </div>
+                <div class="col-sm-4">
+                    <%= image_tag "footer/3.png", size: "22x29" %>
+                    <p>(+56 9) 5178 5898</p>
+                </div>
             </div>
-            <div class="col-sm-4">
-                <%= image_tag "search/email.png" %>
-                <p>contacto@agendapro.cl</p>
-            </div>
-            <div class="col-sm-4">
-                <%= image_tag "search/telephone.png" %>
-                <p>(+56 9) 5178 5898</p>
-            </div>
-        </div>
-        <div class="row footer">
-            <div class="col-sm-6">
-                <i class="fa fa-copyright"></i> Copyright 2013 | Gunei Investment SpA | Todos los derechos reservados
-            </div>
-            <div class="col-sm-5 text-right">
-                <a href="#">Sobre Nosotros</a> | <a href="#">Tutoriales</a> | <a href="#">Terminos y condiciones</a>
-            </div>
-            <div class="col-sm-1">
-                <%= image_tag 'logos/logo.png', :alt => 'AgendaPro', :size => "127x39" %>
+            <div class="row footer">
+                <div class="col-sm-5 copyright-footer">
+                    <i class="fa fa-copyright"></i> Copyright 2013 | Gunei Investment SpA | Todos los derechos reservados
+                </div>
+                <div class="col-sm-5 text-right links-footer">
+                    <%= link_to "Sobre Nosotros", aboutus_path %> | <%= link_to "Tutoriales", tutorials_path %> | <%= link_to "Términos y Condiciones", '#' %>
+                </div>
+                <div class="col-sm-2">
+                    <%= image_tag 'footer/logo_footer.png', :alt => 'AgendaPro', :size => "127x43", class: "pull-right" %>
+                </div>
             </div>
         </div>
     </div>
 </div>
 
 <% content_for :scripts do %>
+<%= javascript_include_tag 'validations/validate' %>
 <%= javascript_include_tag 'validations/home/contact' %>
 <%= javascript_include_tag 'split-name' %>
 <%= javascript_include_tag 'jquery.carouFredSel-6.2.1'  %>
+<%= javascript_include_tag 'typed'  %>
 <script>
     $(function() {
+        if ($('#main-navbar').hasClass('navbar-home')) {
+            $('#main-navbar').addClass('navbar-agendapro');
+            $('#main-navbar').removeClass('navbar-home');
+            $('#agendapro-brand').html('<%= image_tag 'footer/logo_footer.png', :alt => 'AgendaPro', :size => '127x43' %>');
+        }
+        
+        var windowheight = $(window).height();
+        $("#buscador").height(windowheight);
+        $("#buscador2").height(windowheight);
+
         split_name('#full_name', '#inputName', '#inputLastname');
 
         $('#carousel').carouFredSel({
-            items               : 5,
+            items : 4,
+            circular : true,
+            infinity : true,
+            // responsive : true,
+            width : "100%",
             scroll : {
                 items           : 1,
                 duration        : 500,                         
                 pauseOnHover    : true
             }                   
         });
+
+        $( window ).resize(function() {
+            var windowheight = $(window).height();
+            $("#buscador").height(windowheight);
+            $("#buscador2").height(windowheight);
+        });
+        $('a[href*=#]').click(function(){
+            $('html, body').animate({
+                scrollTop: $( $.attr(this, 'href') ).offset().top - 50
+            }, 500);
+            return false;
+        });
+        $("#typed-text").typed({
+            strings: ["Corte de Pelo", "Tratamientos Faciales", "SPA", "Maquillaje", "Centros de Estética", "Peluquerías", "Masajes", "Manicure", "Pedicure", "Tratamientos Corporales", "Bronceados", "Medicina Alternativa"],
+            loop: true,
+            typeSpeed: 0,
+            cursorChar: "_",
+            backDelay: 2000
+        });
+        var input = document.getElementById('inputLocalization');
+        var options = {
+          types: ['geocode'],
+          componentRestrictions: {country: 'cl'}
+        };
+        geocoder = new google.maps.Geocoder();
+        autocomplete = new google.maps.places.Autocomplete(input, options);
+        google.maps.event.addListener(autocomplete, 'place_changed', function() {
+            window.console.log(autocomplete.getPlace().geometry.location.k +' '+autocomplete.getPlace().geometry.location.D);
+        });
+        function geolocate() {
+            if (navigator.geolocation) {
+                $('#geolocate_btn').html('<%= image_tag "loaders/spiffygif_18x18.gif", :alt => "Loader", :id => "small_loader_header", :class => "small-loader-header" %>');
+                navigator.geolocation.getCurrentPosition(function(position) {
+                    $('#latitude').val(position.coords.latitude);
+                    $('#longitude').val(position.coords.longitude);
+                    var latlng = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
+                    geocoder.geocode({'latLng': latlng}, function(results, status) {
+                        if (status == google.maps.GeocoderStatus.OK) {
+                            window.console.log(results);
+                          if (results[0]) {
+                            $('#inputLocalization').val(results[0].formatted_address);
+                          } else {
+                            alert('No results found');
+                          }
+                        } else {
+                          alert('Geocoder failed due to: ' + status);
+                        }
+                        $('#geolocate_btn').html('Encuéntrame&nbsp;&nbsp;<i class="fa fa-crosshairs"></i>');
+                        return false;
+                    });
+                });
+            }
+            else {
+                alert('Este explorador no permite geolocalización, escribe tu ubicación.')
+            }
+        }
+        $('#geolocate_btn').click(function() {
+            geolocate();
+        });
+    });
+    $(document).scroll(function() {
+        if ( $(this).scrollTop()>0) {
+            if($('#main-navbar').hasClass('navbar-agendapro')) {
+                $('#main-navbar').addClass('navbar-home');
+                $('#main-navbar').removeClass('navbar-agendapro');
+                $('#agendapro-brand').html('<%= image_tag 'logos/logodoble2.png', :alt => 'AgendaPro', :size => '127x43' %>');
+            }
+        }
+        else {
+            if ($('#main-navbar').hasClass('navbar-home')) {
+                $('#main-navbar').addClass('navbar-agendapro');
+                $('#main-navbar').removeClass('navbar-home');
+                $('#agendapro-brand').html('<%= image_tag 'footer/logo_footer.png', :alt => 'AgendaPro', :size => '127x43' %>');
+            }
+        }
     });
 </script>
 <% end %>

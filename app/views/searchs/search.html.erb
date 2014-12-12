@@ -1,4 +1,4 @@
-<div class="main">
+<div class="main below-navbar">
 	<!-- Barra superior y Buscador -->
 
 	
@@ -9,7 +9,6 @@
 			<!--<div class="col-md-12 col-sm-9" style="padding-left: 0px !important;">
 				<div class="map-row">-->
 					<div id="map">
-			
 					</div>
 				<!--</div>
 			</div>-->
@@ -58,10 +57,51 @@
 	</div>
 </div>
 
+<div class="background-repeat contact-footer" style="background-image: url(<%= asset_path 'backgrounds/gray-background.png' %>);">
+    <div class="container">
+        <div class="row pull-center">
+            <div class="col-xs-4">
+                <%= image_tag "footer/1.png", size: "22x29" %>
+                <p>Nuestra Señora de los
+                 Angeles 185, Oficina D,
+                  Las Condes, Santiago</p>
+            </div>
+            <div class="col-xs-4">
+                <%= image_tag "footer/2.png", size: "24x19" %>
+                <p>contacto@agendapro.cl</p>
+            </div>
+            <div class="col-xs-4">
+                <%= image_tag "footer/3.png", size: "22x29" %>
+                <p>(+56 9) 5178 5898</p>
+            </div>
+        </div>
+        <div class="row footer">
+            <div class="col-xs-4 col-lg-2 pull-right">
+                <%= image_tag 'footer/logo_footer.png', :alt => 'AgendaPro', :size => "127x43", class: "img-responsive pull-right" %>
+            </div>
+            <div class="col-xs-8 col-lg-5 links-footer pull-right">
+                <%= link_to "Agrega tu Empresa", home_path %> | <%= link_to "Sobre Nosotros", aboutus_path %> | <%= link_to "Tutoriales", tutorials_path %> | <%= link_to "Términos y Condiciones", '#' %>
+            </div>
+            <div class="col-xs-12 col-lg-5 copyright-footer">
+                <i class="fa fa-copyright"></i> Copyright 2013 | Gunei Investment SpA | Todos los derechos reservados
+            </div>
+        </div>
+    </div>
+</div>
+
 
 <%= content_tag "div", id: "results", data: {results: @results} do %>
 <% end %>
 
 <% content_for :scripts do %>
 	<%= javascript_include_tag "search/map" %>
+	<script type="text/javascript">
+		$(function() {
+            if($('#main-navbar').hasClass('navbar-agendapro')) {
+                $('#main-navbar').addClass('navbar-home');
+                $('#main-navbar').removeClass('navbar-agendapro');
+                $('#agendapro-brand').html('<%= image_tag 'logos/logodoble2.png', :alt => 'AgendaPro', :size => '127x43' %>');
+            }
+	    });
+	</script>
 <% end %>

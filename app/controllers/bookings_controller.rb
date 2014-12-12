@@ -8,7 +8,20 @@ class BookingsController < ApplicationController
   # GET /bookings.json
   def index
     @company = Company.where(id: current_user.company_id)
-    if current_user.role_id == Role.find_by_name("Staff").id
+    if current_user.role_id == Role.find_by_name("Staff").id || current_user.role_id == Role.find_by_name("Staff (sin edición)").id
+      @locations = Location.where(:active => true, id: ServiceProvider.where(active: true, id: UserProvider.where(user_id: current_user.id).pluck(:service_provider_id)).pluck(:location_id)).accessible_by(current_ability).order(:order)
+    else
+      @locations = Location.where(:active => true).accessible_by(current_ability).order(:order)
+    end
+    @service_providers = ServiceProvider.where(location_id: @locations).order(:order)
+    @bookings = Booking.where(service_provider_id: @service_providers)
+    @booking = Booking.new
+    @provider_break = ProviderBreak.new
+  end
+
+  def fixed_index
+    @company = Company.where(id: current_user.company_id)
+    if current_user.role_id == Role.find_by_name("Staff").id || current_user.role_id == Role.find_by_name("Staff (sin edición)").id
       @locations = Location.where(:active => true, :id => ServiceProvider.where(active: true).pluck(:location_id)).accessible_by(current_ability).order(:order)
     else
       @locations = Location.where(:active => true).accessible_by(current_ability).order(:order)
@@ -126,7 +139,8 @@ class BookingsController < ApplicationController
     respond_to do |format|
       if @booking.save
         u = @booking
-        @booking_json = { :id => u.id, :start => u.start, :end => u.end, :service_id => u.service_id, :service_provider_id => u.service_provider_id, :status_id => u.status_id, :first_name => u.client.first_name, :last_name => u.client.last_name, :email => u.client.email, :phone => u.client.phone, :notes => u.notes,  :company_comment => u.company_comment, :provider_lock => u.provider_lock, :service_name => u.service.name }
+        if u.warnings then warnings = u.warnings.full_messages else warnings = [] end
+        @booking_json = { :id => u.id, :start => u.start, :end => u.end, :service_id => u.service_id, :service_provider_id => u.service_provider_id, :status_id => u.status_id, :first_name => u.client.first_name, :last_name => u.client.last_name, :email => u.client.email, :phone => u.client.phone, :notes => u.notes,  :company_comment => u.company_comment, :provider_lock => u.provider_lock, :service_name => u.service.name, :warnings => warnings }
         format.html { redirect_to bookings_path, notice: 'Booking was successfully created.' }
         format.json { render :json => @booking_json }
         format.js { }
@@ -219,7 +233,8 @@ class BookingsController < ApplicationController
     respond_to do |format|
       if @booking.update(new_booking_params)
         u = @booking
-        @booking_json = { :id => u.id, :start => u.start, :end => u.end, :service_id => u.service_id, :service_provider_id => u.service_provider_id, :status_id => u.status_id, :first_name => u.client.first_name, :last_name => u.client.last_name, :email => u.client.email, :phone => u.client.phone, :send_mail => u.send_mail, :notes => u.notes,  :company_comment => u.company_comment, :provider_lock => u.provider_lock, :service_name => u.service.name }
+        if u.warnings then warnings = u.warnings.full_messages else warnings = [] end
+        @booking_json = { :id => u.id, :start => u.start, :end => u.end, :service_id => u.service_id, :service_provider_id => u.service_provider_id, :status_id => u.status_id, :first_name => u.client.first_name, :last_name => u.client.last_name, :email => u.client.email, :phone => u.client.phone, :notes => u.notes,  :company_comment => u.company_comment, :provider_lock => u.provider_lock, :service_name => u.service.name, :warnings => warnings }
         format.html { redirect_to bookings_path, notice: 'Booking was successfully updated.' }
         format.json { render :json => @booking_json }
         format.js { }
@@ -278,6 +293,10 @@ class BookingsController < ApplicationController
 
         title = ''
         qtip = ''
+        phone = ''
+        email = ''
+        comment = ''
+
         if booking.client.first_name
           title += booking.client.first_name
           qtip += booking.client.first_name
@@ -289,7 +308,20 @@ class BookingsController < ApplicationController
         if booking.service.name
           title += ' - ' + booking.service.name
         end
-        
+
+        # Se verifica que existan los datos y en caso contrario, se deja como string vacío para evitar nulos en los Qtips
+
+        if booking.client.phone
+          phone = booking.client.phone
+        end
+
+        if booking.client.email
+          email = booking.client.email
+        end
+
+        if booking.company_comment
+          comment = booking.company_comment
+        end        
 
         event = {
           id: booking.id,
@@ -303,10 +335,11 @@ class BookingsController < ApplicationController
           backgroundColor: backColors[booking.status_id],
           className: originClass,
           title_qtip: qtip,
-          time_qtip: booking.start.strftime("%I:%M%p") + ' - ' + booking.end.strftime("%I:%M%p"),
+          time_qtip: booking.start.strftime("%H:%M") + ' - ' + booking.end.strftime("%H:%M"),
           service_qtip: booking.service.name,
-          phone_qtip: booking.client.phone,
-          email_qtip: booking.client.email
+          phone_qtip: phone,
+          email_qtip: email,
+          comment_qtip: comment
         }
         events.push(event)
       end
@@ -388,6 +421,30 @@ class BookingsController < ApplicationController
   def book_service
     @location_id = params[:location]
     @company = Location.find(params[:location]).company
+    cancelled_id = Status.find_by(name: 'Cancelado').id
+    service_provider = ServiceProvider.find(params[:provider])
+    service = Service.find(params[:service])
+    service_provider.bookings.each do |provider_booking|
+      unless provider_booking.status_id == cancelled_id
+        if (provider_booking.start.to_datetime - params[:end].to_datetime) * (params[:start].to_datetime - provider_booking.end.to_datetime) > 0
+          if !service.group_service || params[:service] != provider_booking.service_id
+            flash[:alert] = "Lo sentimos, la hora seleccionada ya está reservada para el prestador elegido."
+            @errors = ["Lo sentimos, la hora seleccionada ya está reservada para el prestador elegido"]
+            host = request.host_with_port
+            @url = @company.web_address + '.' + host[host.index(request.domain)..host.length]
+            render layout: "workflow"
+            return
+          elsif service.group_service && params[:service] == provider_booking.service_id && service_provider.bookings.where(:service_id =>service.id, :start => params[:start].to_datetime).count >= service.capacity
+            flash[:alert] = "La capacidad del servicio grupal llegó a su límite."
+            @errors = ["La capacidad del servicio grupal llegó a su límite"]
+            host = request.host_with_port
+            @url = @company.web_address + '.' + host[host.index(request.domain)..host.length]
+            render layout: "workflow"
+            return
+          end
+        end
+      end
+    end
     if params[:address] && !params[:address].empty?
       params[:comment] += ' - Dirección del cliente (donde se debe realizar el servicio): ' + params[:address]
     end
@@ -689,6 +746,100 @@ class BookingsController < ApplicationController
       end
     end
     render :json => {:crossover => false}
+  end
+
+  def provider_hours
+    @service_provider = ServiceProvider.find(params[:service_provider_id])
+    block_length = @service_provider.block_length * 60
+    now = params[:provider_date].to_date
+    table_rows = []
+
+    provider_times = @service_provider.provider_times.where(day_id: now.cwday).order(:open)
+
+    if provider_times.length > 0
+
+      open_provider_time = provider_times.first.open
+      close_provider_time = provider_times.last.close
+
+      provider_open = provider_times.first.open
+      while (provider_open <=> close_provider_time) < 0 do
+        provider_close = provider_open + block_length
+
+        table_row = [provider_open.strftime('%R'), nil, nil, nil]
+        last_row = table_rows.length - 1
+
+        block_open = DateTime.new(now.year, now.mon, now.mday, provider_open.hour, provider_open.min)
+        block_close = DateTime.new(now.year, now.mon, now.mday, provider_close.hour, provider_close.min)
+
+        service_name = 'Descanso por Horario'
+        client_name = '...'
+        client_phone = '...'
+
+        in_provider_time = false
+        provider_times.each do |provider_time|
+          if (provider_time.open - provider_close)*(provider_open - provider_time.close) > 0
+            in_provider_time = true
+            service_name = ''
+            client_name = ''
+            client_phone = ''
+            break
+          end
+        end
+        in_provider_booking = false
+        if in_provider_time
+          Booking.where(service_provider: @service_provider, status_id: Status.where(name: ['Reservado', 'Confirmado','Pagado','Asiste']).pluck(:id), start: now.beginning_of_day..now.end_of_day).order(:start).each do |booking|
+            if (booking.start.to_datetime - block_close)*(block_open - booking.end.to_datetime) > 0
+              in_provider_booking = true
+              service_name = booking.service.name
+              client_name = booking.client.first_name + ' ' + booking.client.last_name
+              client_phone = booking.client.phone
+              break
+            end
+          end
+        end
+        in_provider_break = false
+        if in_provider_time && !in_provider_booking
+          ProviderBreak.where(service_provider: @service_provider, start: now.beginning_of_day..now.end_of_day).each do |provider_break|
+            if (provider_break.start.to_datetime - block_close)*(block_open - provider_break.end.to_datetime) > 0
+              in_provider_booking = true
+              service_name = "Bloqueo: "+provider_break.name
+              client_name = '...'
+              client_phone = '...'
+              break
+            end
+          end
+        end
+
+        if in_provider_time
+
+          if last_row >= 0
+            while table_rows[last_row][1] == 'Continuación...'  do
+              # Subir un nivel para ver si es el mismo servicio o no  
+                last_row -=1
+            end
+
+            if (service_name != '') && (service_name == table_rows[last_row][1]) && (client_name == (table_rows[last_row][2])) 
+              
+              service_name = 'Continuación...'
+              client_name = '...'
+              client_phone = '...'
+            end
+          end
+        end
+
+        table_row << service_name
+        table_row << client_name
+        table_row << client_phone
+        table_row.compact!
+
+        table_rows.append(table_row)
+
+        provider_open += block_length
+      end
+    end
+    respond_to do |format|
+      format.json { render :json => table_rows }
+    end
   end
 
   private

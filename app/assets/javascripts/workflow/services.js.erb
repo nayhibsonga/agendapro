@@ -54,9 +54,13 @@ function loadStep1 () {
 			var serviceId = event.target.getAttribute('value');
 			if ($(event.target).data('outcall') == true) {
 				$('#outcallAddress').show();
+                var settings = $('#bookingForm').validate().settings;
+                settings.rules.address = {required: true}
 			}
 			else {
 				$('#outcallAddress').hide();
+                var settings = $('#bookingForm').validate().settings;
+                delete settings.rules.address;
 			}
 			$('#foo4').trigger('updateSizes');
 			loadDescription(serviceId);
@@ -152,7 +156,7 @@ function loadStep2 () {
 				else {
 					calendar = new Calendar('/get_available_time.json', data);
 				}
-				
+
 				$(document).on('hourClick', function (e) {
 					addBooking(e);
 				});

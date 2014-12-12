@@ -8,7 +8,15 @@ class ServiceCategoriesController < ApplicationController
   # GET /service_categories
   # GET /service_categories.json
   def index
-    @service_categories = ServiceCategory.where(:company_id => current_user.company_id).order(order: :asc)
+    if params[:company_id]
+      @service_categories = ServiceCategory.where(:company_id => params[:company_id]).order(order: :asc)
+    else
+      if current_user.role_id == Role.find_by_name('Super Admin').id
+        @service_categories = ServiceCategory.where(company_id: Company.where(owned: false).pluck(:id))
+      else
+        @service_categories = ServiceCategory.where(:company_id => current_user.company_id).order(order: :asc)
+      end
+    end
   end
 
   # GET /service_categories/1
@@ -33,7 +41,9 @@ class ServiceCategoriesController < ApplicationController
   # POST /service_categories.json
   def create
     @service_category = ServiceCategory.new(service_category_params)
-    @service_category.company_id = current_user.company_id
+    if current_user.role_id != Role.find_by_name("Super Admin").id
+      @service_category.company_id = current_user.company_id
+    end
 
     respond_to do |format|
       if @service_category.save

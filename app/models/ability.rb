@@ -180,6 +180,7 @@ class Ability
         can :name_suggestion, Client
         can :suggestion, Client
         can :rut_suggestion, Client
+        can :bookings_history, Client
 
         can :create_comment, Client
         can :update_comment, Client
@@ -273,6 +274,7 @@ class Ability
         can :name_suggestion, Client
         can :suggestion, Client
         can :rut_suggestion, Client
+        can :bookings_history, Client
         
         can :create_comment, Client, :company_id => user.company_id
         can :update_comment, Client, :company_id => user.company_id
@@ -323,6 +325,7 @@ class Ability
         can :suggestion, Client
         can :rut_suggestion, Client
         can :provider_service, ServiceProvider
+        can :bookings_history, Client
         
         can :create_comment, Client, :company_id => user.company_id
         can :update_comment, Client, :company_id => user.company_id
@@ -363,6 +366,35 @@ class Ability
         can :suggestion, Client
         can :rut_suggestion, Client
         can :provider_service, ServiceProvider
+        can :bookings_history, Client
+
+    elsif user.role_id == Role.find_by_name("Staff (sin edición)").id
+
+        can :read, ServiceProvider, :id => user.service_providers.pluck(:id)
+
+        can :read, Location, :company_id => user.company_id
+
+        can :read, LocationTime, :location => {:company_id => user.company_id }
+
+        can :read, ProviderTime, :service_provider => user.service_providers.pluck(:id)
+
+        can :read, Service, :company_id => user.company_id
+
+        # can :read, Booking, :service_provider_id => user.service_providers.pluck(:id)
+        # can :destroy, Booking, :service_provider_id => user.service_providers.pluck(:id)
+        # can :create, Booking, :service_provider_id => user.service_providers.pluck(:id)
+        # can :update, Booking, :service_provider_id => user.service_providers.pluck(:id)
+
+        # can :provider_breaks, ProviderBreak, :service_provider_id => user.service_providers.pluck(:id)
+        # can :get_provider_break, ProviderBreak, :service_provider_id => user.service_providers.pluck(:id)
+        # can :create_provider_break, ProviderBreak, :service_provider_id => user.service_providers.pluck(:id)
+        # can :update_provider_break, ProviderBreak, :service_provider_id => user.service_providers.pluck(:id)
+        # can :destroy_provider_break, ProviderBreak, :service_provider_id => user.service_providers.pluck(:id)
+        
+        # can :name_suggestion, Client
+        # can :suggestion, Client
+        # can :rut_suggestion, Client
+        # can :provider_service, ServiceProvider
     end
 
   end

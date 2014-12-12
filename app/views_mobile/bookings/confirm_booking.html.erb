@@ -30,7 +30,7 @@
 										<td>¿Cuándo?</td>
 										<td><%= l @booking.start %></td>
 									</tr>
-									<% if !@booking.notes.empty? %>
+									<% if @booking.notes && !@booking.notes.empty? %>
 									<tr>
 										<td>Notas</td>
 										<td><%= @booking.notes %></td>

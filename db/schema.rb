@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20141104151018) do
+ActiveRecord::Schema.define(version: 20141204141314) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -52,7 +52,7 @@ ActiveRecord::Schema.define(version: 20141104151018) do
   create_table "bookings", force: true do |t|
     t.datetime "start",                               null: false
     t.datetime "end",                                 null: false
-    t.text     "notes"
+    t.text     "notes",               default: ""
     t.integer  "service_provider_id",                 null: false
     t.integer  "user_id"
     t.integer  "service_id",                          null: false
@@ -61,7 +61,7 @@ ActiveRecord::Schema.define(version: 20141104151018) do
     t.integer  "promotion_id"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.text     "company_comment"
+    t.text     "company_comment",     default: ""
     t.boolean  "web_origin",          default: false
     t.boolean  "send_mail",           default: true
     t.integer  "client_id"
@@ -167,21 +167,28 @@ ActiveRecord::Schema.define(version: 20141104151018) do
 
   create_table "company_settings", force: true do |t|
     t.text     "signature"
-    t.boolean  "email",               default: false
-    t.boolean  "sms",                 default: false
-    t.integer  "company_id",                          null: false
+    t.boolean  "email",                     default: false
+    t.boolean  "sms",                       default: false
+    t.integer  "company_id",                                                null: false
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.integer  "before_booking",      default: 24,    null: false
-    t.integer  "after_booking",       default: 6,     null: false
-    t.integer  "daily_mails",         default: 50
-    t.integer  "sent_mails",          default: 0
-    t.integer  "before_edit_booking", default: 12
-    t.boolean  "activate_search",     default: true
-    t.boolean  "activate_workflow",   default: true
-    t.boolean  "client_exclusive",    default: false
+    t.integer  "before_booking",            default: 24,                    null: false
+    t.integer  "after_booking",             default: 6,                     null: false
+    t.integer  "daily_mails",               default: 50
+    t.integer  "sent_mails",                default: 0
+    t.integer  "before_edit_booking",       default: 12
+    t.boolean  "activate_search",           default: true
+    t.boolean  "activate_workflow",         default: true
+    t.boolean  "client_exclusive",          default: false
     t.integer  "provider_preference"
-    t.integer  "calendar_duration",   default: 15
+    t.integer  "calendar_duration",         default: 15
+    t.boolean  "extended_schedule_bool",    default: false,                 null: false
+    t.time     "extended_min_hour",         default: '2000-01-01 09:00:00', null: false
+    t.time     "extended_max_hour",         default: '2000-01-01 20:00:00', null: false
+    t.boolean  "schedule_overcapacity",     default: true,                  null: false
+    t.boolean  "provider_overcapacity",     default: true,                  null: false
+    t.boolean  "resource_overcapacity",     default: true,                  null: false
+    t.integer  "booking_confirmation_time", default: 1,                     null: false
   end
 
   add_index "company_settings", ["company_id"], name: "index_company_settings_on_company_id", using: :btree
