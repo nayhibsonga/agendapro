@@ -50,10 +50,10 @@
 							</a>
 						</p>
 						<ul>
-							<li><%= link_to 'Buscador', root_path %></li>
-							<li><a href="#clients-target">Clientes</a></li>
-							<li><a href="#what-we-do-target">Que Hacemos</a></li>
-							<li><a href="#contact-target">Contacto</a></li>
+							<li><a href="#">Buscador</a></li>
+							<li><%= link_to 'Clientes', root_path(anchor: 'clients-target') %></li>
+                            <li><%= link_to 'Que Hacemos', root_path(anchor: 'what-we-do-target') %></li>
+                            <li><%= link_to 'Contacto', root_path(anchor: 'contact-target') %></li>
 							<li class="divider"></li>
 							<li><%= link_to '<i class="fa fa-user"></i> Registrate'.html_safe, new_user_registration_path, class: "menu-green" %></li>
                             <li><%= link_to '<i class="fa fa-calendar-o"></i> Iniciar Sesión'.html_safe, new_user_session_path, class: "menu-green" %></li>
