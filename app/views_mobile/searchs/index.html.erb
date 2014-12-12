@@ -324,27 +324,23 @@
                     <label for="full_name" class="label-contacto">Nombre</label>
                     <input type="text" id="full_name" name="user[full_name]" class="form-control" required>
                     <span class="help-block"></span>
-                    <span class="form-control-feedback"></span>
                 </div>
                 <div class="form-group has-feedback">
                     <%= label_tag(:inputEmail, 'E-mail', :class => "label-contacto") %>
                     <%= email_field_tag(:inputEmail, nil, :class => "form-control", :required => true) %>
                     <span class="help-block"></span>
-                    <span class="form-control-feedback"></span>
                 </div>
                 <div class="form-group">
                     <%= label_tag(:inputSubject, "Asunto", :class => "label-contacto") %>
                     <%= text_field_tag(:inputSubject, nil, :class => "form-control", :required => true) %>
                     <span class="help-block"></span>
-                    <span class="form-control-feedback"></span>
                 </div>
                 <div class="form-group has-feedback">
                     <%= label_tag(:inputMessage, "Mensaje", :class => "label-contacto") %>
                     <%= text_area_tag(:inputMessage, nil, :class => "form-control", :required => true, :rows => 6) %>
                     <span class="help-block"></span>
-                    <span class="form-control-feedback"></span>
                 </div>
-                <button type="submit" class="btn btn-green form-transparent pull-right"><i class="fa fa-envelope-o"></i> Enviar Mensaje</button>
+                <button type="submit" class="btn btn-orange pull-right"><i class="fa fa-envelope-o"></i> Enviar</button>
             <% end %>
         </div>
     </div>

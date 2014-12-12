@@ -195,18 +195,18 @@
   background: #73FFD3;
 }
 .picker__day--highlighted {
-  border-color: #00DA95;
+  border-color: #00CA8A;
 }
 .picker__day--highlighted:hover,
 .picker--focused .picker__day--highlighted {
   cursor: pointer;
   color: #000000;
-  background: #00DA95;
+  background: #00CA8A;
 }
 .picker__day--selected,
 .picker__day--selected:hover,
 .picker--focused .picker__day--selected {
-  background: #00E99F;
+  background: #22c488;
   color: #ffffff;
 }
 .picker__day--disabled,
