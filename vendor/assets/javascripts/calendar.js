@@ -70,6 +70,20 @@ function Calendar (source, getData) {
 	var generateWeek = function (monday) {
 		sources.data.date = formatDate(monday);
 		$.getJSON(sources.source, sources.data, function (data, status) {
+
+			var rowDays = $('<div>');
+			$.each(data, function(day, day_blocks){
+				var date = parseDate(day);
+				var dayNumber = date.getDay();
+				if(day_blocks.length)
+				{
+					var weekNumber = date.getDate();
+					rowDays.append('<div class="dia-semana">' + days[dayNumber] + ' ' + weekNumber + '</div>');
+				}
+			});
+
+			$(".days-row").append(rowDays);
+
 			var pos = 0;
 			$.each(data, function (day, day_blocks) {
 				var date = parseDate(day);
@@ -98,6 +112,9 @@ function Calendar (source, getData) {
 				}
 				pos += 1;
 			});
+
+
+
 			$('.horario').append('<div class="clear"></div>');
 			calculateWidth();
 			$('#next').removeAttr('disabled');
@@ -198,7 +215,7 @@ function Calendar (source, getData) {
 
 	var calculateWidth = function () {
 		var count = $('.columna-dia').length;
-		var width = (100 / count) - 1.2;
+		var width = (100 / count);
 		$('.columna-dia').css('width', width + '%');
 	}
 

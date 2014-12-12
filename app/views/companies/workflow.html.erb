@@ -48,7 +48,7 @@
     <div class="row company-header-btns">
       <div class="col-md-6">
         <div class="header-btn inactive" style="float: right;">
-          <%= link_to 'Locales', url_for(:controller => 'companies', :action => 'overview', :local => @location.id, only_path: true) %>
+          <%= link_to 'Lugares', url_for(:controller => 'companies', :action => 'overview', :local => @location.id, only_path: true) %>
         </div>
       </div>
       <div class="col-md-6">
@@ -100,7 +100,7 @@
             </div>
             <div class="row">
               <div class="col-md-6">
-                <div class="panel-group" id="services-selector">
+                <div class="panel-group" id="services-selector" style="border-radius: 4px; border: 1px solid #acacac; margin-left: 10px !important;">
                   <%= image_tag "ajax-loader.gif", :alt => "Loader" %>
                 </div>
                 
@@ -154,7 +154,7 @@
                         </div>
                         <div class="col-md-2">
                           <span class="date-span">
-                            Ir a fecha
+                            Ir a fecha&nbsp;<i class="fa fa-calendar-o"></i>
                             <input type="text" id="datepicker" name="date" />
                           </span>
                         </div>
@@ -163,6 +163,9 @@
                         </div>
                       </div>
                     </div>
+                  </div>
+                  <div class="days-row">
+                    
                   </div>
                   <div class="panel-body">
                     <div class="horario"></div>
@@ -342,7 +345,7 @@
                         </div>
                       </div>
 
-                      <div class="row" style="margin-top: 10px;">
+                      <div class="row" style="margin-top: 20px;">
                         <div class="col-md-6">
                           <div class="btn-change btn-prev">
                             <a class="prev2"><i class="fa fa-chevron-left prev-arrow"></i> Anterior</a>
@@ -426,6 +429,8 @@
     $(function() {
 
 
+      
+
       compose_name('#full_name', '#firstName', '#lastName');
       split_name('#full_name', '#firstName', '#lastName');
 
@@ -485,8 +490,9 @@
           }
       });
 
-      $(document.body).on('click', '.date-span', function(e) { $(e.currentTarget).find('input').datepicker('show');
-});
+      $(document.body).on('click', '.date-span', function(e){ 
+        $(e.currentTarget).find('input').datepicker('show');
+      });
 
       //  Responsive layout, resizing the items
       $('#foo4').carouFredSel({
