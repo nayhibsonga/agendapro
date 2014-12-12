@@ -1,14 +1,11 @@
 function loadSchedule (id) {
-  // $('#schedule-body').html('<%= image_tag "ajax-loader.gif", :alt => "Loader" %>');
   $.getJSON('/schedule', {local: id}, function (schedule) {
-    // $('#schedule-body').empty();
     $.each(schedule, function (day, hour) {
       if (hour.open) {
         $('#schedule-body').append(
-          '<tr>' +
-            '<th>' + day + ':</th>' +
-            '<th>' + getHour(hour.open) + ' - ' + getHour(hour.close) + '</th>' +
-          '</tr>'
+          '<li class="list-group-item">' +
+            day + ': ' +  getHour(hour.open) + ' - ' + getHour(hour.close) +
+          '</li>'
         );
       }
     })
@@ -82,7 +79,7 @@ function loadProviders (localId, serviceId) {
           input: 'datepicker'
         },
         onSet: function (context) {
-          $('.cambiar-comuna').show();
+          $('.btn-block').attr('disabled', false);
         }
       });
     }
@@ -115,7 +112,7 @@ function loadProviders (localId, serviceId) {
             input: 'datepicker'
           },
           onSet: function (context) {
-            $('.cambiar-comuna').show();
+            $('.btn-block').attr('disabled', false);
           }
         });
       });
@@ -146,72 +143,10 @@ function loadOutcallDistricts(id) {
     var districtsString = '';
     $.each(local_districts.districts, function(index, district) {
       $('#district-body').append(
-        '<tr>' +
-          '<th>' + district.name + '</th>' +
-        '</tr>'
+        '<li class="list-group-item">' +
+          district.name +
+        '</li>'
       );
     });
   });
 }
-
-function openMap (event) {
-  var localId = $(event.target).data('local');
-  $('#map').css('height', 200);
-  $(event.target).text('Cerrar Mapa');
-  if (!first) {
-    localMap(localId);
-    first = true;
-  };
-}
-
-function closeMap (event) {
-  $('#map').css('height', 0);
-  $(event.target).text('Ver Mapa');
-}
-
-//====== Google Map ======//
-function initializeMap(latLng, mapDiv) {
-    var properties = {
-        center: latLng,
-        zoom:   15,
-        panControl: false,
-        zoomControl: true,
-        zoomControlOptions: {
-            style: google.maps.ZoomControlStyle.SMALL
-        },
-        mapTypeControl: true,
-        mapTypeControlOptions: {
-            style: google.maps.MapTypeControlStyle.DROPDOWN_MENU
-        },
-        scaleControl: false,
-        streetViewControl: false,
-        overviewMapControl: false,
-        mapTypeId:  google.maps.MapTypeId.ROADMAP
-    };
-    var map = new google.maps.Map(document.getElementById(mapDiv), properties);
-    var marker = new google.maps.Marker({
-      position: latLng
-    });
-    marker.setMap(map);
-    return map
-}
-
-function localMap(id) {
-  $.getJSON('/local', {id: id}, function (local) {
-    var latLng = new google.maps.LatLng(local.latitude, local.longitude);
-    initializeMap(latLng, 'map');
-  });
-}
-
-var open = false, first = false;
-$(document).ready(function(){
-  $('#mapButton').click(function (event) {
-    if (open) {
-      closeMap(event);
-      open = false;
-    } else{
-      openMap(event);
-      open = true;
-    };
-  });
-});

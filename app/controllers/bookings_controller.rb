@@ -445,66 +445,67 @@ class BookingsController < ApplicationController
         end
       end
     end
-    if params[:address] && !params[:address].empty?
-      params[:comment] += ' - Dirección del cliente (donde se debe realizar el servicio): ' + params[:address]
-    end
-    if @company.company_setting.client_exclusive
-      if Client.where(identification_number: params[:identification_number], company_id: @company).count > 0
-        client = Client.where(identification_number: params[:identification_number], company_id: @company).first
-        client.first_name = params[:firstName]
-        client.last_name = params[:lastName]
-        client.email = params[:email]
-        client.phone = params[:phone]
-        client.save
-        if client.errors
-          puts client.errors.full_messages.inspect
-        end
-      else
-        #flash[:alert] = "No estás ingresado como cliente o no puedes reservar. Por favor comunícate con la empresa proveedora del servicio."
-        @errors = ["No estás ingresado como cliente"]
-        host = request.host_with_port
-        @url = @company.web_address + '.' + host[host.index(request.domain)..host.length]
-        render layout: "workflow"
-        return
-      end
-    else
-      if Client.where(email: params[:email], company_id: @company).count > 0
-        client = Client.where(email: params[:email], company_id: @company).first
-        client.first_name = params[:firstName]
-        client.last_name = params[:lastName]
-        client.phone = params[:phone]
-        client.save
-        if client.errors
-          puts client.errors.full_messages.inspect
-        end
-      else
-        client = Client.new(email: params[:email], first_name: params[:firstName], last_name: params[:lastName], phone: params[:phone], company_id: @company.id)
-        client.save
-        if client.errors
-          puts client.errors.full_messages.inspect
-        end
-      end
-    end
-    if user_signed_in?
-      @booking = Booking.new(start: params[:start], end: params[:end], notes: params[:comment], service_provider_id: params[:provider], service_id: params[:service], location_id: params[:location], status_id: Status.find_by(name: 'Reservado').id, client_id: client.id, user_id: current_user.id, web_origin: params[:origin], provider_lock: params[:provider_lock])
-    else
-      if User.find_by_email(params[:email])
-        @user = User.find_by_email(params[:email])
-        @booking = Booking.new(start: params[:start], end: params[:end], notes: params[:comment], service_provider_id: params[:provider], service_id: params[:service], location_id: params[:location], status_id: Status.find_by(name: 'Reservado').id, client_id: client.id, user_id: @user.id, web_origin: params[:origin], provider_lock: params[:provider_lock])
-      else
-        @booking = Booking.new(start: params[:start], end: params[:end], notes: params[:comment], service_provider_id: params[:provider], service_id: params[:service], location_id: params[:location], status_id: Status.find_by(name: 'Reservado').id, client_id: client.id, web_origin: params[:origin], provider_lock: params[:provider_lock])
-      end
-    end
-    @booking.price = Service.find(params[:service]).price
-    if @booking.save
-      # flash[:notice] = "Reserva realizada exitosamente."
+    # if params[:address] && !params[:address].empty?
+    #   params[:comment] += ' - Dirección del cliente (donde se debe realizar el servicio): ' + params[:address]
+    # end
+    # if @company.company_setting.client_exclusive
+    #   if Client.where(identification_number: params[:identification_number], company_id: @company).count > 0
+    #     client = Client.where(identification_number: params[:identification_number], company_id: @company).first
+    #     client.first_name = params[:firstName]
+    #     client.last_name = params[:lastName]
+    #     client.email = params[:email]
+    #     client.phone = params[:phone]
+    #     client.save
+    #     if client.errors
+    #       puts client.errors.full_messages.inspect
+    #     end
+    #   else
+    #     #flash[:alert] = "No estás ingresado como cliente o no puedes reservar. Por favor comunícate con la empresa proveedora del servicio."
+    #     @errors = ["No estás ingresado como cliente"]
+    #     host = request.host_with_port
+    #     @url = @company.web_address + '.' + host[host.index(request.domain)..host.length]
+    #     render layout: "workflow"
+    #     return
+    #   end
+    # else
+    #   if Client.where(email: params[:email], company_id: @company).count > 0
+    #     client = Client.where(email: params[:email], company_id: @company).first
+    #     client.first_name = params[:firstName]
+    #     client.last_name = params[:lastName]
+    #     client.phone = params[:phone]
+    #     client.save
+    #     if client.errors
+    #       puts client.errors.full_messages.inspect
+    #     end
+    #   else
+    #     client = Client.new(email: params[:email], first_name: params[:firstName], last_name: params[:lastName], phone: params[:phone], company_id: @company.id)
+    #     client.save
+    #     if client.errors
+    #       puts client.errors.full_messages.inspect
+    #     end
+    #   end
+    # end
+    # if user_signed_in?
+    #   @booking = Booking.new(start: params[:start], end: params[:end], notes: params[:comment], service_provider_id: params[:provider], service_id: params[:service], location_id: params[:location], status_id: Status.find_by(name: 'Reservado').id, client_id: client.id, user_id: current_user.id, web_origin: params[:origin], provider_lock: params[:provider_lock])
+    # else
+    #   if User.find_by_email(params[:email])
+    #     @user = User.find_by_email(params[:email])
+    #     @booking = Booking.new(start: params[:start], end: params[:end], notes: params[:comment], service_provider_id: params[:provider], service_id: params[:service], location_id: params[:location], status_id: Status.find_by(name: 'Reservado').id, client_id: client.id, user_id: @user.id, web_origin: params[:origin], provider_lock: params[:provider_lock])
+    #   else
+    #     @booking = Booking.new(start: params[:start], end: params[:end], notes: params[:comment], service_provider_id: params[:provider], service_id: params[:service], location_id: params[:location], status_id: Status.find_by(name: 'Reservado').id, client_id: client.id, web_origin: params[:origin], provider_lock: params[:provider_lock])
+    #   end
+    # end
+    # @booking.price = Service.find(params[:service]).price
+    # if @booking.save
+    #   # flash[:notice] = "Reserva realizada exitosamente."
       
-      # BookingMailer.book_service_mail(@booking)
-    else @booking.save
-      #flash[:alert] = "Hubo un error guardando los datos de tu reserva. Inténtalo nuevamente."
-      @errors = @booking.errors.full_messages
-    end
+    #   # BookingMailer.book_service_mail(@booking)
+    # else @booking.save
+    #   #flash[:alert] = "Hubo un error guardando los datos de tu reserva. Inténtalo nuevamente."
+    #   @errors = @booking.errors.full_messages
+    # end
 
+    @booking = Booking.new(start: params[:start], end: params[:end], notes: params[:comment], service_provider_id: params[:provider], service_id: params[:service], location_id: params[:location], status_id: Status.find_by(name: 'Reservado').id, provider_lock: params[:provider_lock])
     # => Domain parser
     host = request.host_with_port
     @url = @company.web_address + '.' + host[host.index(request.domain)..host.length]
