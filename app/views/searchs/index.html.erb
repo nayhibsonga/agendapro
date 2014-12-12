@@ -16,7 +16,7 @@
 </div><!-- /.modal -->
 
 <!-- search -->
-<div class="background fill" style="background-image: url(<%= asset_path 'search/fondo2.png' %>)" id="buscador">
+<div class="background fill" style="background-image: url(<%= asset_path 'search/fondo'+rand(1..7).to_s+'.png' %>)" id="buscador">
     <div class="fill">
         <div class="container container-search fill" id="buscador2">
             <div class="row vertical-center-row">
@@ -30,7 +30,7 @@
                         <div class="col-sm-2 auto-width">
                             <%= image_tag 'search/pin-overlay.png', :alt => 'Pin', class: "img-responsive pull-left" %>
                         </div>
-                        <div class="col-xs-10 col-sm-8 col-md-6">
+                        <div class="col-xs-10 col-sm-9 col-md-7">
                             <%= form_tag({controller: "searchs", action: "search"}, method: "GET", class: "form-horizontal", id: "search-form") do %>
                                 <input type="hidden" id="district" name="district" value="1">
                                 <input type="hidden" id="latitude" name="latitude" value="-33.412819">
@@ -38,20 +38,28 @@
                                 <div class="form-group">
                                     <div class="col-sm-12">
                                         <div class="input-group input-group-lg">
-                                            <%= text_field_tag :inputLocalization, params[:inputLocalization], class: "form-control form-transparent", placeholder: "Escribe tu dirección ..", required: true %>
+                                            <%= text_field_tag :inputLocalization, params[:inputLocalization], class: "form-control form-transparent", placeholder: "Escribe tu dirección, sector o comuna...", required: true %>
                                             <span class="input-group-btn">
-                                                <button id="geolocate_btn" class="btn btn-search form-transparent" type="button">Encuéntrame&nbsp;&nbsp;<i class="fa fa-crosshairs"></i></button>
+                                                <button id="geolocate_btn" class="btn btn-down form-transparent" type="button"><i class="fa fa-crosshairs"></i> Encuéntrame</button>
                                             </span>
                                         </div>
                                     </div>
                                 </div>
                                 <div class="form-group">
-                                    <div class="col-xs-8">
+                                    <div class="col-sm-12">
+                                        <div class="input-group input-group-lg">
+                                            <%= search_field_tag :inputSearch, params[:inputSearch], class: "form-control input-lg green-placeholder", placeholder: "Ejemplo: Corte de Pelo, Masajes", :required => "true", :autofocus => "autofocus" %>
+                                            <span class="input-group-btn">
+                                                <button id="search_btn" class="btn btn-search form-transparent btn-lg full-width" type="submit" disabled>&nbsp;&nbsp;&nbsp;&nbsp;<i class="fa fa-search"></i> Buscar&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</button>
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <!-- <div class="col-xs-8">
                                         <%= search_field_tag :inputSearch, params[:inputSearch], class: "form-control input-lg green-placeholder", placeholder: "Ejemplo: Corte de Pelo, Masajes", :required => "true", :autofocus => "autofocus" %>
                                     </div>
                                     <div class="col-xs-4">
-                                        <button class="btn btn-search form-transparent btn-lg full-width" type="submit"><i class="fa fa-search"></i> Buscar</button>
-                                    </div>
+                                        <button id="search_btn" class="btn btn-search form-transparent btn-lg full-width" type="submit" disabled><i class="fa fa-search"></i> Buscar</button>
+                                    </div> -->
                                 </div>
                             <% end %>
                         </div>
@@ -70,10 +78,10 @@
 <!-- Servicios -->
 <div class="">
     <div class="container">
-        <div class="row text-gray below-navbar" id="servicios">
+        <div class="row text-gray title-row" id="servicios">
             <div class="col-sm-12">
                 <h1 class="text-center text-uppercase">¿Qué puedes encontrar?</h1>
-                <h3 class="text-center search-text-green">¡Descubre las mejores alternativas de belleza en Chile!</h3>
+                <h3 class="text-center search-text-green">¡Descubre los mejores servicios de salud y belleza en Chile!</h3>
                 <%= image_tag "search/caret-down.png", alt: "caret-down", class: "pull-center", width: "39px" %>
             </div>
         </div>
@@ -135,10 +143,10 @@
         </div>
     </div>
 </div>
-<div class="below-navbar">
+<div class="">
     <div class="background">
         <div class="container">
-            <div class="row text-gray">
+            <div class="row title-row text-gray">
                 <div class="col-xs-12">
                     <h1 class="text-center text-uppercase">Algunos de Nuestros Clientes</h1>
                 </div>
@@ -161,8 +169,8 @@
 <!-- Qué Hacemos -->
 <div class="below-navbar">
     <div class="background-repeat background-gray-pattern" style="background-image: url(<%= asset_path 'backgrounds/gray-background.png' %>);" id="quehacemos">
-        <div class="container below-navbar">
-            <div class="row">
+        <div class="container">
+            <div class="row title-row">
                 <div class="col-sm-12">
                     <h1 class="text-center text-uppercase">Qué Hacemos</h1>
                     <p class="text-center" style="margin-top:-15px;">Sistema de Reservas Online enfocado en ayudar a pequeñas y medianas empresas en el manejo y gestión de sus negocios.<a href="#" data-toggle="modal" data-target="#vimeo-modal"><%= image_tag "search/play1.png", alt: "play" %> Ver Video</a></p>
@@ -170,15 +178,15 @@
             </div>
             <div class="row">
                 <div class="col-xs-4 row-border box-content box-border-left text-center">
-                    <%= image_tag "search/search.png", alt: "Busca", class: "img-responsive center-block", size: "42x42" %>
+                    <%= image_tag "search/busca.png", alt: "Busca", class: "center-block", size: "84x84" %>
                     <p class="text-uppercase">Busca</p>
                 </div>
                 <div class="col-xs-4 row-border box-content box-border-left box-border-right text-center">
-                    <%= image_tag "search/find.png", alt: "Encuentra", class: "img-responsive center-block", size: "15x42" %>
+                    <%= image_tag "search/encuentra.png", alt: "Encuentra", class: "center-block", size: "30x84" %>
                     <p class="text-uppercase">Encuentra</p>
                 </div>
                 <div class="col-xs-4 row-border box-content box-border-right text-center">
-                    <%= image_tag "search/booking.png", alt: "Reserva", class: "img-responsive center-block", size: "40x42" %>
+                    <%= image_tag "search/reserva.png", alt: "Reserva", class: "center-block", size: "80x84" %>
                     <p class="text-uppercase">Reserva</p>
                 </div>
             </div>
@@ -238,9 +246,9 @@
             </div>
         </div>
     </div>
-    <div class="background background-green" id="contacto">
+    <div class="background background-green social-background" id="contacto">
         <div class="container">
-            <div class="row">
+            <div class="row social-row">
                 <div class="col-sm-12">
                     <div class="pull-center">
                         <div class="social">
@@ -258,7 +266,7 @@
                         <div class="social">
                             <a href="http://instagram.com/agendapro/" target="blank">
                             <%= image_tag "search/instagram.png", alt: "Instagram" %>
-                            <span class="text-uppercase">Instagram</span>\
+                            <span class="text-uppercase">Instagram</span>
                             </a>
                         </div>
                     </div>
@@ -271,15 +279,18 @@
 <!-- contact -->
 <div class="">
     <div class="container">
-        <div class="row below-navbar">
+        <div class="row title-row">
             <div class="col-sm-12">
                 <h1 class="pull-center text-gray text-uppercase">Contáctanos</h1>
             </div>
+        </div>
+        <div class="row">
             <div class="col-sm-6 office_address">
                 <iframe src="https://mapsengine.google.com/map/u/0/embed?mid=zxyVW9hDKDEg.kYaUAImoWzTg&amp;hl=es-419&amp;z=17" width="100%" height="400"></iframe>
             </div>
             <div class="col-sm-6">
                 <%= form_tag("pcontact", method: "post", id: 'contact' ) do %>
+                    <%= hidden_field_tag :source, "search" %>
                     <%= hidden_field_tag :inputName %>
                     <%= hidden_field_tag :inputLastname %>
                     <div class="row">
@@ -307,7 +318,7 @@
                             <span class="help-block"></span>
                             <span class="form-control-feedback"></span>
                         </div>
-                        <button type="submit" class="btn btn-orange form-transparent"><i class="fa fa-envelope-o"></i> Enviar Mensaje</button>
+                        <button type="submit" class="btn btn-orange btn-lg pull-right"><i class="fa fa-envelope-o"></i> Enviar</button>
                     </div>
                 <% end %>
             </div>
@@ -354,107 +365,6 @@
 <%= javascript_include_tag 'split-name' %>
 <%= javascript_include_tag 'jquery.carouFredSel-6.2.1'  %>
 <%= javascript_include_tag 'typed'  %>
-<script>
-    $(function() {
-        if ($('#main-navbar').hasClass('navbar-home')) {
-            $('#main-navbar').addClass('navbar-agendapro');
-            $('#main-navbar').removeClass('navbar-home');
-            $('#agendapro-brand').html('<%= image_tag 'footer/logo_footer.png', :alt => 'AgendaPro', :size => '127x43' %>');
-        }
-        
-        var windowheight = $(window).height();
-        $("#buscador").height(windowheight);
-        $("#buscador2").height(windowheight);
+<%= javascript_include_tag 'search/index'  %>
 
-        split_name('#full_name', '#inputName', '#inputLastname');
-
-        $('#carousel').carouFredSel({
-            items : 4,
-            circular : true,
-            infinity : true,
-            // responsive : true,
-            width : "100%",
-            scroll : {
-                items           : 1,
-                duration        : 500,                         
-                pauseOnHover    : true
-            }                   
-        });
-
-        $( window ).resize(function() {
-            var windowheight = $(window).height();
-            $("#buscador").height(windowheight);
-            $("#buscador2").height(windowheight);
-        });
-        $('a[href*=#]').click(function(){
-            $('html, body').animate({
-                scrollTop: $( $.attr(this, 'href') ).offset().top - 50
-            }, 500);
-            return false;
-        });
-        $("#typed-text").typed({
-            strings: ["Corte de Pelo", "Tratamientos Faciales", "SPA", "Maquillaje", "Centros de Estética", "Peluquerías", "Masajes", "Manicure", "Pedicure", "Tratamientos Corporales", "Bronceados", "Medicina Alternativa"],
-            loop: true,
-            typeSpeed: 0,
-            cursorChar: "_",
-            backDelay: 2000
-        });
-        var input = document.getElementById('inputLocalization');
-        var options = {
-          types: ['geocode'],
-          componentRestrictions: {country: 'cl'}
-        };
-        geocoder = new google.maps.Geocoder();
-        autocomplete = new google.maps.places.Autocomplete(input, options);
-        google.maps.event.addListener(autocomplete, 'place_changed', function() {
-            window.console.log(autocomplete.getPlace().geometry.location.k +' '+autocomplete.getPlace().geometry.location.D);
-        });
-        function geolocate() {
-            if (navigator.geolocation) {
-                $('#geolocate_btn').html('<%= image_tag "loaders/spiffygif_18x18.gif", :alt => "Loader", :id => "small_loader_header", :class => "small-loader-header" %>');
-                navigator.geolocation.getCurrentPosition(function(position) {
-                    $('#latitude').val(position.coords.latitude);
-                    $('#longitude').val(position.coords.longitude);
-                    var latlng = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
-                    geocoder.geocode({'latLng': latlng}, function(results, status) {
-                        if (status == google.maps.GeocoderStatus.OK) {
-                            window.console.log(results);
-                          if (results[0]) {
-                            $('#inputLocalization').val(results[0].formatted_address);
-                          } else {
-                            alert('No results found');
-                          }
-                        } else {
-                          alert('Geocoder failed due to: ' + status);
-                        }
-                        $('#geolocate_btn').html('Encuéntrame&nbsp;&nbsp;<i class="fa fa-crosshairs"></i>');
-                        return false;
-                    });
-                });
-            }
-            else {
-                alert('Este explorador no permite geolocalización, escribe tu ubicación.')
-            }
-        }
-        $('#geolocate_btn').click(function() {
-            geolocate();
-        });
-    });
-    $(document).scroll(function() {
-        if ( $(this).scrollTop()>0) {
-            if($('#main-navbar').hasClass('navbar-agendapro')) {
-                $('#main-navbar').addClass('navbar-home');
-                $('#main-navbar').removeClass('navbar-agendapro');
-                $('#agendapro-brand').html('<%= image_tag 'logos/logodoble2.png', :alt => 'AgendaPro', :size => '127x43' %>');
-            }
-        }
-        else {
-            if ($('#main-navbar').hasClass('navbar-home')) {
-                $('#main-navbar').addClass('navbar-agendapro');
-                $('#main-navbar').removeClass('navbar-home');
-                $('#agendapro-brand').html('<%= image_tag 'footer/logo_footer.png', :alt => 'AgendaPro', :size => '127x43' %>');
-            }
-        }
-    });
-</script>
 <% end %>
