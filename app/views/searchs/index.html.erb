@@ -32,7 +32,7 @@
                         </div>
                         <div class="col-xs-10 col-sm-8 col-md-6">
                             <%= form_tag({controller: "searchs", action: "search"}, method: "GET", class: "form-horizontal", id: "search-form") do %>
-                                <input type="hidden" id="district" name="district">
+                                <input type="hidden" id="district" name="district" value="1">
                                 <input type="hidden" id="latitude" name="latitude" value="-33.412819">
                                 <input type="hidden" id="longitude" name="longitude" value="-70.591945">
                                 <div class="form-group">
@@ -40,7 +40,7 @@
                                         <div class="input-group input-group-lg">
                                             <%= text_field_tag :inputLocalization, params[:inputLocalization], class: "form-control form-transparent", placeholder: "Escribe tu dirección ..", required: true %>
                                             <span class="input-group-btn">
-                                                <button class="btn btn-search form-transparent" type="button">Encuéntrame&nbsp;&nbsp;<i class="fa fa-crosshairs"></i></button>
+                                                <button id="geolocate_btn" class="btn btn-search form-transparent" type="button">Encuéntrame&nbsp;&nbsp;<i class="fa fa-crosshairs"></i></button>
                                             </span>
                                         </div>
                                     </div>
@@ -404,18 +404,41 @@
           types: ['geocode'],
           componentRestrictions: {country: 'cl'}
         };
-
+        geocoder = new google.maps.Geocoder();
         autocomplete = new google.maps.places.Autocomplete(input, options);
         google.maps.event.addListener(autocomplete, 'place_changed', function() {
             window.console.log(autocomplete.getPlace().geometry.location.k +' '+autocomplete.getPlace().geometry.location.D);
         });
-        // function geolocate() {
-        //     if (navigator.geolocation) {
-        //         navigator.geolocation.getCurrentPosition(function(position) {
-        //             window.console.log(position.coords.latitude +' '+ position.coords.longitude);
-        //         });
-        //     }
-        // }
+        function geolocate() {
+            if (navigator.geolocation) {
+                $('#geolocate_btn').html('<%= image_tag "loaders/spiffygif_18x18.gif", :alt => "Loader", :id => "small_loader_header", :class => "small-loader-header" %>');
+                navigator.geolocation.getCurrentPosition(function(position) {
+                    $('#latitude').val(position.coords.latitude);
+                    $('#longitude').val(position.coords.longitude);
+                    var latlng = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
+                    geocoder.geocode({'latLng': latlng}, function(results, status) {
+                        if (status == google.maps.GeocoderStatus.OK) {
+                            window.console.log(results);
+                          if (results[0]) {
+                            $('#inputLocalization').val(results[0].formatted_address);
+                          } else {
+                            alert('No results found');
+                          }
+                        } else {
+                          alert('Geocoder failed due to: ' + status);
+                        }
+                        $('#geolocate_btn').html('Encuéntrame&nbsp;&nbsp;<i class="fa fa-crosshairs"></i>');
+                        return false;
+                    });
+                });
+            }
+            else {
+                alert('Este explorador no permite geolocalización, escribe tu ubicación.')
+            }
+        }
+        $('#geolocate_btn').click(function() {
+            geolocate();
+        });
     });
     $(document).scroll(function() {
         if ( $(this).scrollTop()>0) {

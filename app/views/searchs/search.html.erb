@@ -1,4 +1,4 @@
-<div class="main">
+<div class="main below-navbar">
 	<!-- Barra superior y Buscador -->
 
 	
@@ -95,4 +95,13 @@
 
 <% content_for :scripts do %>
 	<%= javascript_include_tag "search/map" %>
+	<script type="text/javascript">
+		$(function() {
+            if($('#main-navbar').hasClass('navbar-agendapro')) {
+                $('#main-navbar').addClass('navbar-home');
+                $('#main-navbar').removeClass('navbar-agendapro');
+                $('#agendapro-brand').html('<%= image_tag 'logos/logodoble2.png', :alt => 'AgendaPro', :size => '127x43' %>');
+            }
+	    });
+	</script>
 <% end %>
