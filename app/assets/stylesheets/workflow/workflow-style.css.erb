@@ -1,7 +1,7 @@
 @charset "UTF-8";
 
 .subtitulos-workflow {
-	color: #01f2a1;
+	color: #22c488;
 	font-size: 30px;
 }
 
@@ -20,15 +20,16 @@
 
 .staff-wrapper{
 	padding-right: 25px;
-	border-right: 1px solid #01f2a1;
+	border-right: 1px solid #22c488;
 	height: 346px;
-	overflow-y: auto; 
+	
 }
 
 .staff-wrapper .panel-default{
 	
 	border-color: #acacac;
 	margin-top: 5px;
+	border-radius: 6px;
 }
 
 .staff-wrapper .list-group-item{
@@ -72,6 +73,8 @@ input[type=radio   ]:not(old):checked + span{
 	margin-top: 5px !important;
 	padding-top: 20px !important;
 	padding-bottom: 20px !important;
+	max-height: 225px;
+	overflow-y: auto; 
 }
 
 #navegacion-workflow{
@@ -95,7 +98,7 @@ input[type=radio   ]:not(old):checked + span{
 }
 
 .pasos-reserva a:hover, .pasos-reserva a.selected{
-	color: #01f2a1;
+	color: #22c488;
 }
 
 .circle-number{
@@ -217,15 +220,43 @@ input[type=radio   ]:not(old):checked + span{
 
 
 #prev{
-	background-color: transparent!important;
+	background-color: #22c488 !important;
 	border: none !important;
 	color: #fff !important;
+}
+
+#prev:hover{
+	background-color: #22c488 !important;
+	border: none !important;
+	color: #fff !important;
+	text-decoration: none !important;
+}
+
+#prev:focus{
+	background-color: #22c488 !important;
+	border: none !important;
+	color: #fff !important;
+	text-decoration: none !important;
 }
 
 #next{
 	background-color: transparent!important;
 	border: none !important;
 	color: #fff !important;
+}
+
+#next:hover{
+	background-color: #22c488 !important;
+	border: none !important;
+	color: #fff !important;
+	text-decoration: none !important;
+}
+
+#next:focus{
+	background-color: #22c488 !important;
+	border: none !important;
+	color: #fff !important;
+	text-decoration: none !important;
 }
 
 #staff-calendar .panel-body{
@@ -242,7 +273,7 @@ input[type=radio   ]:not(old):checked + span{
 #staff-calendar .calendar-head{
 	border: none !Important;
 	border-radius: 0p !important;
-	background-color: #01f2a1;
+	background-color: #22c488;
 	height: 44px;
 	font-size: 26px;
 	color: #fff;
@@ -255,14 +286,21 @@ input[type=radio   ]:not(old):checked + span{
 	font-size: 22px !important;
 }
 
+.days-row{
+	width: 90%;
+	display: inline;
+	height: 44px;
+}
+
 .horario{
 	width:100%;
+	max-height: 254px !important;
 }
 .columna-dia{
-	width:20% !important;
 	margin: 0px !important;
 	float:left;
 }
+
 .dia-semana{
 	width:100%;
 	height:44px !important;
@@ -272,8 +310,9 @@ input[type=radio   ]:not(old):checked + span{
 	border-bottom: 1px solid #d2d2d2;
 	border-top: none !important;
 	border-left: none !important;
-	border-right: none !important;
+	border-right: 1px solid #d2d2d2;
 	color: #979797 !important;
+	float: left;
 }
 .bloque-hora{
 	background-color: transparent !important;
@@ -312,7 +351,7 @@ input[type=radio   ]:not(old):checked + span{
 }
 
 .hora-activo span{
-	background-color: #01f2a1 !important;
+	background-color: #22c488 !important;
 	color: #fff;
 }
 
@@ -322,7 +361,7 @@ input[type=radio   ]:not(old):checked + span{
 	color: #979797;
 }
 .hora-disponible span:hover{
-	background-color: #01f2a1;
+	background-color: #22c488;
 	color: #fff;
 	transition:1s;
 }
@@ -422,7 +461,7 @@ input[type=radio   ]:not(old):checked + span{
 
 .header-btn{
 	position: relative;
-	border: 1px solid #01f2a1;
+	border: 1px solid #22c488;
 	text-align: center;
 	width: 150px;
 	height: 50px;
@@ -430,12 +469,14 @@ input[type=radio   ]:not(old):checked + span{
 }
 
 .active{
-	background-color: #01f2a1;
+	background-color: #22c488;
 	color: #fff !important;
+	border-radius: 6px;
 }
 
 .inactive{
-	color: #01f2a1 !important;
+	color: #22c488 !important;
+	border-radius: 6px;
 }
 
 .header-btn a{
@@ -443,10 +484,11 @@ input[type=radio   ]:not(old):checked + span{
 	display: block;
 	height: 100%;
 	text-decoration: none !important;
+	border-radius: 6px;
 }
 
 .inactive a{
-	color: #01f2a1 !important;
+	color: #22c488 !important;
 }
 
 .active a{
@@ -454,34 +496,50 @@ input[type=radio   ]:not(old):checked + span{
 }
 
 .active:hover{
-	background-color: #01cc8e;
-	border: 1px solid #01cc8e;
+	background-color: #1ba970;
+	border: 1px solid #1ba970;
+	border-radius: 6px;
 }
 
 .active:focus{
-	background-color: #01cc8e;
-	border: 1px solid #01cc8e;
+	background-color: #1ba970;
+	border: 1px solid #1ba970;
+	border-radius: 6px;
 }
 
+.inactive:hover{
+	background-color: #1ba970;
+	border: 1px solid #1ba970;
+	color: #fff !important;
+	border-radius: 6px;
+}
+
+.inactive:focus{
+	background-color: #1ba970;
+	border: 1px solid #1ba970;
+	color: #fff !important;
+	border-radius: 6px;
+}
 
 .active a:focus{
 	color: #fff;
-	background-color: #01cc8e;
+	background-color: #1ba970;
+	border-radius: 6px;
 }
 
 .active a:hover{
 	color: #fff;
-	background-color: #01cc8e;
+	background-color: #1ba970;
 }
 
 .inactive a:hover{
-	background-color: #01f2a1;
 	color: #fff !important;
+	background-color: #1ba970;
 }
 
 .inactive a:focus{
-	background-color: #01f2a1;
 	color: #fff !important;
+	background-color: #1ba970;
 }
 
 #div-agendar{
@@ -490,6 +548,7 @@ input[type=radio   ]:not(old):checked + span{
 	border-color: #fd9610;
 	width: 100%;
 	height: 60px;
+	border-radius: 6px;
 }
 
 #boton-agendar{
@@ -500,15 +559,18 @@ input[type=radio   ]:not(old):checked + span{
 	height: 100%;
 	color: #fff !important;
 	text-decoration: none !important;
+	border-radius: 6px;
 }
 
 #boton-agendar:focus{
 	color: #fff !important;
+	border-radius: 6px;
 }
 
 #boton-agendar:hover{
 	color: #fff !important;
 	background-color: #ec8500;
+	border-radius: 6px;
 }
 
 .table-locals tr td{
@@ -526,19 +588,24 @@ input[type=radio   ]:not(old):checked + span{
 
 .schedule{
 	margin-top: 20px;
+	border: 1px solid #ddd;
+	border-top: none;
+	border-radius: 6px;
 }
 
 .schedule-header{
-	padding-top: 5px;
-	font-size: 20px;
+	padding-top: 12px;
+	font-size: 24px;
 	text-align: center;
 	height: 60px;
 	background-color: #ccc;
 	color: #fff;
+	border-top-left-radius: 6px;
+	border-top-right-radius: 6px;
+
 }
 
 .schedule-table{
-	border: 1px solid #ddd;
 	padding-right: 10px;
 	padding-left: 10px;
 	color: #979797;
@@ -558,10 +625,16 @@ input[type=radio   ]:not(old):checked + span{
 }
 
 #services-selector div{
-	border-top: none;
-	border-left: none;
-	border-right: none;
-	background-color: #fff; 
+
+	background-color: #fff;
+}
+
+#services-selector{
+	border-radius: 6px;
+}
+
+#services-selector .panel{
+	padding-left: 10px;
 }
 
 #services-selector .list-group{
@@ -592,14 +665,16 @@ input[type=radio   ]:not(old):checked + span{
 
 
 .services-title{
-	font-size: 22px;
+	font-size: 26px;
 	color: #acacac !important;
+	padding-left: 10px;
 }
 
 .services-subtitle{
 	font-size: 18px;
-	margin-bottom: 15px;
+	margin-bottom: 20px;
 	color: #979797 !important;
+	padding-left: 10px;
 }
 
 .panel-heading{
@@ -608,34 +683,50 @@ input[type=radio   ]:not(old):checked + span{
 
 #services-selector .panel-default{
 	border-bottom: 1px solid #acacac !important;
+	border-top: none;
+	border-left: none;
+	border-right: none;
+	padding-left: 15px;
+}
+
+#services-selector:last-child{
+	border-bottom: 0px solid #acacac !important;
+}
+
+#services-selector .list-group{
+	padding-left: 5px;
 }
 
 .descripcion{
-	border: 1px solid #01f2a1;
+	border: 1px solid #22c488;
+	border-top: none;
+	border-radius: 6px;
 }
 
 .descripcion-header{
 	padding-left: 12px;
 	padding-top: 6px;
 	font-size: 22px;
-	background-color: #01f2a1;
+	background-color: #22c488;
 	color: #fff;
+	border-top-left-radius: 6px;
+	border-top-right-radius: 6px;
 }
 
 #services-description td{
-	border-color: #01f2a1 !important;
+	border-color: #22c488 !important;
 	color: #979797 !important;
 }
 
 .panel-group > .panel > .panel-heading > .panel-title.minus > a:after {
 	/* Font symbol */
-	color: #01f2a1;
+	color: #22c488;
 	content: "\f056";
 }
 .panel-group > .panel > .panel-heading > .panel-title.minus.collapsed > a:after,
 .panel-group > .panel > .panel-heading > .panel-title.minus > a.collapsed:after {
 	/* Font symbol */
-	color: #01f2a1;
+	color: #22c488;
 	content: "\f055";
 }
 
@@ -675,23 +766,33 @@ input[type=radio   ]:not(old):checked + span{
 }
 
 .resumen-heading{
-	background-color: #01f2a1;
+	background-color: #22c488;
 	height: 44px;
 	font-size: 22px;
 	padding-top: 10px;
 	padding-left: 15px;
 	color: #fff;
+	border-top-left-radius: 6px;
+	border-top-right-radius: 6px;
 }
 
 #resumen-reserva .panel-body{
+
+	color: #979797;
 	border-left: 1px solid #ddd;
 	border-right: 1px solid #ddd;
 	border-bottom: 1px solid #ddd;
-	color: #979797;
+	border-radius: 6px;
+	border-top-left-radius: 0px;
+	border-top-right-radius: 0px;
 }
 
 #resumen-reserva tr:first{
-	border-top: 0px !important;
+	border-left: 1px solid #ddd;
+	border-right: 1px solid #ddd;
+	border-bottom: 1px solid #ddd;
+	border-top: none;
+	border-radius: 6px;
 }
 
 
@@ -709,12 +810,12 @@ input[type=radio   ]:not(old):checked + span{
 
 .book-title{
 	font-size: 30px;
-	color: #01f2a1;
+	color: #22c488;
 	margin-top: 25px;
 }
 
 .light-green{
-	color: #01f2a1 !important;
+	color: #22c488 !important;
 }
 
 .book-subheader{
@@ -761,6 +862,7 @@ input[type=radio   ]:not(old):checked + span{
 	height: 40px;
 	font-size: 20px;
 	cursor: pointer;
+	border-radius: 6px;
 }
 
 .btn-change a{
@@ -783,50 +885,65 @@ input[type=radio   ]:not(old):checked + span{
 	background-color: #f1972d;
 	color: #fff;
 	float: right;
+	border-radius: 6px;
 }
 
 .btn-next a{
 	text-decoration: none;
 	color: #fff;
+	border-radius: 6px;
 }
 
 .btn-prev{
 	color: #f1972d;
 	border: 1px solid #f1972d;
+	border-radius: 6px;
 	float: left;
 }
 
 .btn-prev a{
 	text-decoration: none;
 	color: #f1972d;
+	border-radius: 6px;
 }
 
 .btn-next a:hover{
 	background-color: #e0861c;
 	color: #eee;
+	border-radius: 6px;
 }
 
 .btn-next a:focus{
 	background-color: #e0861c;
 	color: #eee;
+	border-radius: 6px;
 }
 
 .btn-prev a:hover{
-	background-color: #eee;
-	color: #e0861c;
+	background-color: #e0861c;
+	color: #eee;
+}
+
+.btn-prev:hover{
+	background-color: #e0861c;
+	color: #eee;
 }
 
 .btn-prev a:focus{
-	background-color: #eee;
-	color: #e0861c;
+	background-color: #e0861c;
+	color: #eee;
 }
 
 .prev-arrow{
-	font-size: 16px !important;
+	font-size: 14px !important;
+	margin-right: 2px;
+	margin-bottom: 2px;
 }
 
 .next-arrow{
-	font-size: 16px !important;
+	font-size: 14px !important;
+	margin-left: 2px;
+	margin-bottom: 2px;
 }
 
 #submitBtn{
@@ -841,6 +958,7 @@ input[type=radio   ]:not(old):checked + span{
 	color: #fff;
 	float: right;
 	padding-top: 4px;
+	border-radius: 6px;
 }
 
 .submitBtn{
@@ -855,6 +973,17 @@ input[type=radio   ]:not(old):checked + span{
 	color: #fff;
 	float: right;
 	padding-top: 4px;
+	border-radius: 6px;
+}
+
+.submitBtn:hover{
+	background-color: #e0861c;
+	color: #eee;
+}
+
+#submitBtn:hover{
+	background-color: #e0861c;
+	color: #eee;
 }
 
 /*
@@ -880,7 +1009,7 @@ input[type=radio   ]:not(old):checked + span{
 }  
 
 .ui-datepicker-header {  
-    background-color: #01f2a1;  
+    background-color: #22c488;  
     color: #fff;  
     font-weight: bold;  
     /*-webkit-box-shadow: inset 0px 1px 1px 0px rgba(250, 250, 250, 2);  

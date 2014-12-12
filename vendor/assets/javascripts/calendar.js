@@ -70,6 +70,20 @@ function Calendar (source, getData) {
 	var generateWeek = function (monday) {
 		sources.data.date = formatDate(monday);
 		$.getJSON(sources.source, sources.data, function (data, status) {
+
+			
+			$.each(data, function(day, day_blocks){
+				var date = parseDate(day);
+				var dayNumber = date.getDay();
+				if(day_blocks.length)
+				{
+					var weekNumber = date.getDate();
+					$(".days-row").append('<div class="dia-semana">' + days[dayNumber] + ' ' + weekNumber + '</div>');
+				}
+			});
+
+			
+
 			var pos = 0;
 			$.each(data, function (day, day_blocks) {
 				var date = parseDate(day);
@@ -81,7 +95,7 @@ function Calendar (source, getData) {
 						'data-date': day
 					});
 					var weekNumber = date.getDate();
-					columnDay.append('<div class="dia-semana">' + days[dayNumber] + ' ' + weekNumber + '</div>');
+					//columnDay.append('<div class="dia-semana">' + days[dayNumber] + ' ' + weekNumber + '</div>');
 
 					// Generate Hours
 					generateHours(columnDay, day_blocks);
@@ -98,6 +112,9 @@ function Calendar (source, getData) {
 				}
 				pos += 1;
 			});
+
+
+
 			$('.horario').append('<div class="clear"></div>');
 			calculateWidth();
 			$('#next').removeAttr('disabled');
@@ -198,8 +215,13 @@ function Calendar (source, getData) {
 
 	var calculateWidth = function () {
 		var count = $('.columna-dia').length;
-		var width = (100 / count) - 1.2;
+		var width = (100 / count);
 		$('.columna-dia').css('width', width + '%');
+		
+		var width2 = $(".horario")[0].clientWidth/count;
+		$('.dia-semana').css('width', width2);
+		$('.days-row:last-child').css('width', width2-1);
+		console.log($(".horario")[0].clientWidth);
 	}
 
 	var correctNumber = function (number) {
