@@ -132,11 +132,11 @@
 		</footer> -->
 
 		<!-- start: JavaScript-->
-		<%= yield :scripts %>
 		<%= javascript_include_tag "search" %>
 		<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?libraries=places"></script>
 		<% javascript_include_tag "jquery.browser.min" %><!-- Removido -->
 		<% javascript_include_tag "browser-detect" %><!-- Removido -->
+		<%= yield :scripts %>
 
 		<!--<script>
           // $( "#menu-display" ).click(function() {
