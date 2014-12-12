@@ -48,6 +48,9 @@ class SearchsController < ApplicationController
 
 		@results = (@results1 + @results2).paginate(:page => params[:page], :per_page => 10)
 
+		@lat = lat
+		@long = long
+
 		i = 1
 		@results.each do |location|
 			if !File.exist?("app/assets/images/search/pin_map#{i}.png")

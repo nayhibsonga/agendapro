@@ -4,7 +4,7 @@
 	
 	<!-- Resultado Buscador -->
 	<div class="container">
-	
+		<% if @results.count >0 %>
 		<div class="row">
 			<!--<div class="col-md-12 col-sm-9" style="padding-left: 0px !important;">
 				<div class="map-row">-->
@@ -54,6 +54,28 @@
 				
 			</div>
 		</div>
+		<% else %>
+			<div hidden>
+				<input type="hidden" id="lat" value="<%= @lat.to_s %>" />
+				<input type="hidden" id="long" value="<%= @long.to_s %>" />
+			</div>
+			<div class="row">
+			<!--<div class="col-md-12 col-sm-9" style="padding-left: 0px !important;">
+				<div class="map-row">-->
+					<div id="map">
+					</div>
+				<!--</div>
+			</div>-->
+			</div>
+			<div class="row">
+				<div class="col-md-12">
+					<p style="font-size: 22px; text-align: center; margin-top: 20px; color: #acacac;">
+						<i class="fa fa-frown-o fa-4x"></i><br />
+						Lo sentimos, no hemos encontrado resultados para tu búsqueda.
+					</p>
+				</div>
+			</div>
+		<% end %>
 	</div>
 </div>
 
