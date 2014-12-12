@@ -236,15 +236,6 @@ ActiveRecord::Schema.define(version: 20141204141314) do
 
   add_index "economic_sectors_dictionaries", ["economic_sector_id"], name: "index_economic_sectors_dictionaries_on_economic_sector_id", using: :btree
 
-  create_table "facebook_pages", force: true do |t|
-    t.integer  "company_id"
-    t.string   "facebook_page_id"
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
-
-  add_index "facebook_pages", ["company_id"], name: "index_facebook_pages_on_company_id", using: :btree
-
   create_table "location_outcall_districts", force: true do |t|
     t.integer  "location_id"
     t.integer  "district_id"
