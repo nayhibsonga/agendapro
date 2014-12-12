@@ -1,5 +1,5 @@
 <!-- search -->
-<div class="background fill" style="background-image: url(<%= asset_path 'search/fondo2.png' %>)" id="buscador">
+<div class="background fill" style="background-image: url(<%= asset_path 'search/fondo'+rand(1..7).to_s+'.png' %>)" id="buscador">
     <div class="fill">
         <div class="container container-search fill" id="buscador2">
             <div class="row vertical-center-row">
@@ -12,25 +12,27 @@
                     <div class="row">
                         <div class="col-sm-12">
                             <%= form_tag({controller: "searchs", action: "search"}, method: "GET", class: "form-horizontal", id: "search-form") do %>
-                                <input type="hidden" id="district" name="district">
+                                <input type="hidden" id="district" name="district" value="1">
                                 <input type="hidden" id="latitude" name="latitude" value="-33.412819">
                                 <input type="hidden" id="longitude" name="longitude" value="-70.591945">
                                 <div class="form-group">
                                     <div class="col-sm-12">
                                         <div class="input-group input-group-lg">
-                                            <%= text_field_tag :inputLocalization, params[:inputLocalization], class: "form-control form-transparent", placeholder: "Escribe tu dirección ..", required: true %>
+                                            <%= text_field_tag :inputLocalization, params[:inputLocalization], class: "form-control form-transparent", placeholder: "Escribe tu dirección, sector o comuna...", required: true %>
                                             <span class="input-group-btn">
-                                                <button class="btn btn-search form-transparent" type="button">Encuentrame <i class="fa fa-crosshairs"></i></button>
+                                                <button id="geolocate_btn" class="btn btn-down form-transparent" type="button"><i class="fa fa-crosshairs"></i> Encuéntrame</button>
                                             </span>
                                         </div>
                                     </div>
                                 </div>
                                 <div class="form-group">
-                                    <div class="col-sm-10">
-                                        <%= search_field_tag :inputSearch, params[:inputSearch], class: "form-control input-lg green-placeholder", placeholder: "Ejemplo: Corte de Pelo, Masajes", :required => "true", :autofocus => "autofocus" %>
-                                    </div>
-                                    <div class="col-sm-2">
-                                        <button class="btn btn-search form-transparent btn-lg" type="submit"><i class="fa fa-search"></i> Buscar</button>
+                                    <div class="col-sm-12">
+                                        <div class="input-group input-group-lg">
+                                            <%= search_field_tag :inputSearch, params[:inputSearch], class: "form-control input-lg green-placeholder", placeholder: "Ejemplo: Corte de Pelo, Masajes", :required => "true", :autofocus => "autofocus" %>
+                                            <span class="input-group-btn">
+                                                <button id="search_btn" class="btn btn-search form-transparent btn-lg full-width" type="submit" disabled>&nbsp;&nbsp;&nbsp;&nbsp;<i class="fa fa-search"></i> Buscar&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</button>
+                                            </span>
+                                        </div>
                                     </div>
                                 </div>
                             <% end %>
@@ -372,31 +374,5 @@
 <%= javascript_include_tag 'validations/validate' %>
 <%= javascript_include_tag 'validations/home/contact' %>
 <%= javascript_include_tag 'split-name' %>
-<script>
-    $(function() {
-        var windowheight = $(window).height();
-        $("#buscador").height(windowheight);
-        $("#buscador2").height(windowheight);
-        split_name('#full_name', '#inputName', '#inputLastname');
-    });
-    $( window ).resize(function() {
-        var windowheight = $(window).height();
-        $("#buscador").height(windowheight);
-        $("#buscador2").height(windowheight);
-    });
-    $(document).scroll(function() {
-        if ( $(this).scrollTop()>0) {
-            if(!$('.navbar-agendapro').hasClass('navbar-agendapro-white')) {
-                $('.navbar-agendapro').addClass('navbar-agendapro-white');
-                $('.navbar-agendapro .navbar-brand').html('<%= image_tag 'logos/logodoble2.png', :alt => 'AgendaPro', :size => '127x43' %>');
-            }
-        }
-        else {
-            if ($('.navbar-agendapro').hasClass('navbar-agendapro-white')) {
-                $('.navbar-agendapro').removeClass('navbar-agendapro-white');
-                $('.navbar-agendapro .navbar-brand').html('<%= image_tag 'footer/logo_footer.png', :alt => 'AgendaPro', :size => '127x43' %>');
-            }
-        }
-    });
-</script>
+<%= javascript_include_tag 'mobile/index'  %>
 <% end %>

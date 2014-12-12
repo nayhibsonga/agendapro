@@ -1,42 +1,9 @@
 $(function() {
-    
     var windowheight = $(window).height();
     $("#buscador").height(windowheight);
     $("#buscador2").height(windowheight);
-
     split_name('#full_name', '#inputName', '#inputLastname');
 
-    $('#carousel').carouFredSel({
-        items : 4,
-        circular : true,
-        infinity : true,
-        // responsive : true,
-        width : "100%",
-        scroll : {
-            items           : 1,
-            duration        : 500,                         
-            pauseOnHover    : true
-        }                   
-    });
-
-    $( window ).resize(function() {
-        var windowheight = $(window).height();
-        $("#buscador").height(windowheight);
-        $("#buscador2").height(windowheight);
-    });
-    $('a[href*=#]').click(function(){
-        $('html, body').animate({
-            scrollTop: $( $.attr(this, 'href') ).offset().top - 50
-        }, 500);
-        return false;
-    });
-    $("#typed-text").typed({
-        strings: ["Corte de Pelo", "Tratamientos Faciales", "SPA", "Maquillaje", "Centros de Estética", "Peluquerías", "Masajes", "Manicure", "Pedicure", "Tratamientos Corporales", "Bronceados", "Medicina Alternativa"],
-        loop: true,
-        typeSpeed: 0,
-        cursorChar: "_",
-        backDelay: 2000
-    });
     var input = document.getElementById('inputLocalization');
     var options = {
       types: ['geocode'],
@@ -116,19 +83,23 @@ $(function() {
         geolocate();
     });
 });
+
+$( window ).resize(function() {
+    var windowheight = $(window).height();
+    $("#buscador").height(windowheight);
+    $("#buscador2").height(windowheight);
+});
 $(document).scroll(function() {
     if ( $(this).scrollTop()>0) {
-        if($('#main-navbar').hasClass('navbar-agendapro')) {
-            $('#main-navbar').addClass('navbar-home');
-            $('#main-navbar').removeClass('navbar-agendapro');
-            $('#agendapro-brand').html('<%= image_tag 'logos/logodoble2.png', :alt => 'AgendaPro', :size => '127x43' %>');
+        if(!$('.navbar-agendapro').hasClass('navbar-agendapro-white')) {
+            $('.navbar-agendapro').addClass('navbar-agendapro-white');
+            $('.navbar-agendapro .navbar-brand').html('<%= image_tag 'logos/logodoble2.png', :alt => 'AgendaPro', :size => '127x43' %>');
         }
     }
     else {
-        if ($('#main-navbar').hasClass('navbar-home')) {
-            $('#main-navbar').addClass('navbar-agendapro');
-            $('#main-navbar').removeClass('navbar-home');
-            $('#agendapro-brand').html('<%= image_tag 'footer/logo_footer.png', :alt => 'AgendaPro', :size => '127x43' %>');
+        if ($('.navbar-agendapro').hasClass('navbar-agendapro-white')) {
+            $('.navbar-agendapro').removeClass('navbar-agendapro-white');
+            $('.navbar-agendapro .navbar-brand').html('<%= image_tag 'footer/logo_footer.png', :alt => 'AgendaPro', :size => '127x43' %>');
         }
     }
 });

@@ -55,9 +55,16 @@
                             <li><%= link_to 'Que Hacemos', root_path(anchor: 'what-we-do-target') %></li>
                             <li><%= link_to 'Contacto', root_path(anchor: 'contact-target') %></li>
 							<li class="divider"></li>
+							<% if user_signed_in? %>
+                            <!-- <li><%= link_to '<i class="fa fa-calendar"></i> Mi Agenda'.html_safe, my_agenda_path(:id => current_user.id) %></li> -->
+							<li><%= link_to '<i class="fa fa-user"></i> Editar Perfil'.html_safe, edit_user_registration_path %></li>
+							<li><%= link_to '<i class="fa fa-question"></i> Tutoriales'.html_safe, tutorials_path %></li>
+							<li><%= link_to '<i class="fa fa-power-off"></i> Salir'.html_safe, destroy_user_session_path, method: :delete %></li>
+                            <% else %>
 							<li><%= link_to '<i class="fa fa-user"></i> Registrate'.html_safe, new_user_registration_path, class: "menu-green" %></li>
                             <li><%= link_to '<i class="fa fa-calendar-o"></i> Iniciar Sesión'.html_safe, new_user_session_path, class: "menu-green" %></li>
-							<li><a href="#" class="menu-orange">Agrega tu Empresa</a></li>
+                            <% end %>
+							<li><%= link_to "Agrega tu Empresa", home_path, class: "menu-orange" %></li>
 						</ul>
 					</nav><!-- /slide menu right -->
 				</div>
@@ -86,10 +93,9 @@
 		<!-- end: content -->
 
 		<!-- start: JavaScript-->
+		<%= javascript_include_tag "https://maps.googleapis.com/maps/api/js?libraries=places" %>
 		<%= javascript_include_tag "mobile" %>
 		<%= yield :scripts %>
-		<%= javascript_include_tag "mobile/result" %>
-		<% javascript_include_tag "http://maps.google.com/maps/api/js?sensor=false" %>
 		<!-- end: JavaScript-->
 	</body>
 </html>
