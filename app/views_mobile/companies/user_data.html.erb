@@ -1,4 +1,4 @@
-<div class="container" style="margint-bottom: 45px;">
+<div class="container container-margin">
 	<div class="row">
 		<div class="col-xs-12">
 			<%= form_tag("book", method: "post", role: "form", id: "bookingForm") do %>
@@ -13,58 +13,60 @@
                 <%= hidden_field_tag :lastName, if user_signed_in? then current_user.last_name else nil end %>
             	<div id="user-data">
 					<div class="form-group">
-						<label for="full_name" class="col-sm-3 control-label">Nombre</label>
-						<div class="col-sm-9">
-							<input type="text" id="full_name" name="user[full_name]" class="form-control" placeholder="Nombre completo (requerido)" required>
+						<!-- <label for="full_name" class="col-sm-3 control-label">Nombre</label>
+						<div class="col-sm-9"> -->
+							<input type="text" id="full_name" name="user[full_name]" class="form-control" placeholder="Nombre completo" required>
                             <span class="help-block"></span>
-						</div>
+						<!-- </div> -->
 					</div>
 					<div class="form-group">
-						<%= label_tag(:email, "E-mail", class: "col-sm-3 control-label") %>
-						<div class="col-sm-9">
-							<%= email_field_tag(:email, if user_signed_in? then current_user.email else nil end, :class => "form-control", :placeholder => "ejemplo@dominio.com (requerido)", :required => true) %>
+						<!--<%= label_tag(:email, "E-mail", class: "col-sm-3 control-label") %>
+						<div class="col-sm-9">-->
+							<%= email_field_tag(:email, if user_signed_in? then current_user.email else nil end, :class => "form-control", :placeholder => "E-mail", :required => true) %>
 							<span class="help-block"></span>
-						</div>
+						<!-- </div> -->
 					</div>
 					<div class="form-group">
-						<%= label_tag(:phone, "Teléfono", class: "col-sm-3 control-label") %>
-						<div class="col-sm-9">
-							<%= telephone_field_tag(:phone, if user_signed_in? then current_user.phone else nil end, :class => "form-control", :placeholder => "1122334455 (requerido)", :required => true) %>
+						<!--<%= label_tag(:phone, "Teléfono", class: "col-sm-3 control-label") %>
+						<div class="col-sm-9">-->
+							<%= telephone_field_tag(:phone, if user_signed_in? then current_user.phone else nil end, :class => "form-control", :placeholder => "Teléfono", :required => true) %>
 							<span class="help-block"></span>
-						</div>
+						<!-- </div> -->
 					</div>
             	</div>
+            	<% if user_signed_in? %>
             	<div class="form-group">
-            		<p id="user-message">Estas agendando como <strong><%= if user_signed_in? then current_user.email else '' end %></strong>.<br /> Si no eres tu, haz click <a href="#" id="user-change">aquí</a><br /></p>
+            		<p id="user-message">Estas agendando como <strong><%= current_user.email %></strong>.<br /> Si no eres tu, haz click <a href="#" id="user-change">aquí</a><br /></p>
             	</div>
+            	<% end %>
             	<% if @location.company.company_setting.client_exclusive %>
 				<div class="form-group">
-					<%= label_tag(:identification_number, "RUT", class: "col-sm-3 control-label") %>
-					<div class="col-sm-9">
-						<%= text_field_tag(:identification_number, nil, :class => "form-control", :placeholder => "11.111.111-1" ) %>
+					<!--<%= label_tag(:identification_number, "RUT", class: "col-sm-3 control-label") %>
+					<div class="col-sm-9">-->
+						<%= text_field_tag(:identification_number, nil, :class => "form-control", :placeholder => "RUT" ) %>
 						<span class="help-block"></span>
-					</div>
+					<!-- </div> -->
 				</div>
 				<% end %>
 				<% if @service.outcall %>
 				<div id="outcallAddress" class="form-group">
-					<%= label_tag(:address, "Dirección", class: "col-sm-3 control-label") %>
-					<div class="col-sm-9">
+					<!--<%= label_tag(:address, "Dirección", class: "col-sm-3 control-label") %>
+					<div class="col-sm-9">-->
 						<%= text_field_tag(:address, nil, :class => "form-control", :placeholder => "Escribe la dirección donde se debe realizar el servicio" ) %>
 						<span class="help-block"></span>
-					</div>
+					<!-- </div> -->
 				</div>
 				<% end %>
 				<div class="form-group">
-					<%= label_tag(:comment, "Comentario", class: "col-sm-3 control-label") %>
-					<div class="col-sm-9">
-						<%= text_area_tag(:comment, nil, :class => "form-control", :placeholder => "Agrega algún comentario a tu reserva en caso de ser necesario", :rows => 4) %>
-					</div>
+					<!--<%= label_tag(:comment, "Comentario", class: "col-sm-3 control-label") %>
+					<div class="col-sm-9">-->
+						<%= text_area_tag(:comment, nil, :class => "form-control", :placeholder => "Agrega algún comentario a tu reserva en caso de ser necesario..", :rows => 4) %>
+					<!-- </div> -->
 				</div>
 				<div class="form-group">
-					<div class="col-sm-offset-3 col-sm-9">
-						<button type="submit" class="btn btn-agendapro-orange btn-block" id="submitBtn">Reservar</button>
-					</div>
+					<!-- <div class="col-sm-offset-3 col-sm-9"> -->
+						<button type="submit" class="btn btn-green btn-block" id="submitBtn">Reservar</button>
+					<!-- </div> -->
 				</div>
 			<% end %>
 		</div>
@@ -85,8 +87,6 @@
 			$('#user-data').show();
 			$('#user-message').hide();
 		});
-		<% else %>
-		$('#user-message').hide();
 		<% end %>
 		$('.volver').click(function () {
 			history.back();

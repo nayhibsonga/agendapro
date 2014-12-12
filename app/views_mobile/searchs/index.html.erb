@@ -1,72 +1,378 @@
-<div class="row">
-    <%= render 'form' %>
-</div>
-
-<div class="row">
-    <div id="carousel-agendapro-home" class="carousel slide" data-ride="carousel">
-        <ol class="carousel-indicators">
-            <li data-target="#carousel-agendapro-home" data-slide-to="0" class="active"></li>
-            <li data-target="#carousel-agendapro-home" data-slide-to="1"></li>
-            <li data-target="#carousel-agendapro-home" data-slide-to="2"></li>
-            <li data-target="#carousel-agendapro-home" data-slide-to="3"></li>
-            <li data-target="#carousel-agendapro-home" data-slide-to="4"></li>
-            <li data-target="#carousel-agendapro-home" data-slide-to="5"></li>
-            <li data-target="#carousel-agendapro-home" data-slide-to="6"></li>
-            <li data-target="#carousel-agendapro-home" data-slide-to="7"></li>
-            <li data-target="#carousel-agendapro-home" data-slide-to="8"></li>
-        </ol>
-        <div class="carousel-inner">
-            <div class="item active">
-                <a href="#" class="box-recomendacion-md overlay" data-search="SPA">
-                    <%= image_tag 'mobile/spa.png', :alt => 'SPA' %>
-                </a>
-            </div>
-            <div class="item">
-                <a href="#" class="box-recomendacion-lg overlay" data-search="Clinicas y Centros de Estética">
-                    <%= image_tag "mobile/centro_estetica.png", :alt => "Centro de Estética" %>
-                </a>
-            </div>
-            <div class="item">
-                <a href="#" class="box-recomendacion-md overlay" data-search="Medicina Alternativa">
-                    <%= image_tag "mobile/medicina_alternativa.png", :alt => "Medicina Alternativa" %>
-                </a>
-            </div>
-            <div class="item">
-                <a href="#" class="box-recomendacion-lg overlay" data-search="Peluquerías">
-                    <%= image_tag "mobile/peluqueria.png", :alt => "Peluqueria" %>
-                </a>
-            </div>
-            <div class="item">
-                <a href="#" class="box-recomendacion-md overlay" data-search="Kinesiólogos">
-                    <%= image_tag "mobile/kinesiologo.png", :alt => "kinesiologo" %>
-                </a>
-            </div>
-            <div class="item">
-                <a href="#" class="box-recomendacion-md overlay" data-search="Talleres y Lavado de Autos">
-                    <%= image_tag 'mobile/taller_auto.png', :alt => 'Talleres de Auto' %>
-                </a>
-            </div>
-            <div class="item">
-                <a href="#" class="box-recomendacion-md overlay" data-search="Dentista">
-                    <%= image_tag 'mobile/dentista.png', :alt => 'Dentistas' %>
-                </a>
-            </div>
-            <div class="item">
-                <a href="#" class="box-recomendacion-md overlay" data-search="Veterinarios">
-                    <%= image_tag 'mobile/veterinarios.png', :alt => 'Veterinarios' %>
-                </a>
-            </div>
-            <div class="item">
-                <a href="#" class="box-recomendacion-lg overlay" data-search="Psicólogos">
-                    <%= image_tag "mobile/psicologia.png", :alt => "Psicólogos" %>
-                </a>
+<!-- search -->
+<div class="background fill" style="background-image: url(<%= asset_path 'search/fondo'+rand(1..7).to_s+'.png' %>)" id="buscador">
+    <div class="fill">
+        <div class="container container-search fill" id="buscador2">
+            <div class="row vertical-center-row">
+                <div class="col-sm-12">
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <h1 class="search-text">Busca, Encuentra y Reserva tus <span class="search-text-green">Servicios en</span></h1>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <%= form_tag({controller: "searchs", action: "search"}, method: "GET", class: "form-horizontal", id: "search-form") do %>
+                                <input type="hidden" id="district" name="district" value="1">
+                                <input type="hidden" id="latitude" name="latitude" value="-33.412819">
+                                <input type="hidden" id="longitude" name="longitude" value="-70.591945">
+                                <div class="form-group">
+                                    <div class="col-sm-12">
+                                        <div class="input-group input-group-lg">
+                                            <%= text_field_tag :inputLocalization, params[:inputLocalization], class: "form-control form-transparent", placeholder: "Escribe tu dirección, sector o comuna...", required: true %>
+                                            <span class="input-group-btn">
+                                                <button id="geolocate_btn" class="btn btn-down form-transparent" type="button"><i class="fa fa-crosshairs"></i> Encuéntrame</button>
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="col-sm-12">
+                                        <div class="input-group input-group-lg">
+                                            <%= search_field_tag :inputSearch, params[:inputSearch], class: "form-control input-lg green-placeholder", placeholder: "Ejemplo: Corte de Pelo, Masajes", :required => "true", :autofocus => "autofocus" %>
+                                            <span class="input-group-btn">
+                                                <button id="search_btn" class="btn btn-search form-transparent btn-lg full-width" type="submit" disabled>&nbsp;&nbsp;&nbsp;&nbsp;<i class="fa fa-search"></i> Buscar&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</button>
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                            <% end %>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
-        <a class="left carousel-control" href="#carousel-agendapro-home" data-slide="prev">
-            <span class="<"></span>
-        </a>
-        <a class="right carousel-control" href="#carousel-agendapro-home" data-slide="next">
-            <span class=">"></span>
-        </a>
     </div>
 </div>
+
+<!-- Que puedes encontrar -->
+<div id="clients-target" />
+<div class="container">
+    <div class="row text-gray">
+        <div class="col-sm-12">
+            <h4 class="text-center text-uppercase">¿Qué puedes encontrar?</h4>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-12 pull-center">
+            <div class="border-box">
+                <div id="carousel-what-we-do" class="carousel slide" data-ride="carousel">
+                    <!-- Indicators -->
+                    <ol class="carousel-indicators">
+                        <li data-target="#carousel-what-we-do" data-slide-to="0" class="active"></li>
+                        <li data-target="#carousel-what-we-do" data-slide-to="1"></li>
+                        <li data-target="#carousel-what-we-do" data-slide-to="2"></li>
+                        <li data-target="#carousel-what-we-do" data-slide-to="3"></li>
+                        <li data-target="#carousel-what-we-do" data-slide-to="4"></li>
+                        <li data-target="#carousel-what-we-do" data-slide-to="5"></li>
+                        <li data-target="#carousel-what-we-do" data-slide-to="6"></li>
+                        <li data-target="#carousel-what-we-do" data-slide-to="7"></li>
+                        <li data-target="#carousel-what-we-do" data-slide-to="8"></li>
+                        <li data-target="#carousel-what-we-do" data-slide-to="9"></li>
+                    </ol>
+
+                    <!-- Wrapper for slides -->
+                    <div class="carousel-inner" role="listbox">
+                        <div class="item active">
+                            <div>
+                                <%= image_tag "search/1spa.png", alt: "Spa" %>
+                                <p>Spa</p>
+                            </div>
+                        </div>
+                        <div class="item">
+                            <div>
+                                <%= image_tag "search/2peluqueria.png", alt: "Peluquerías" %>
+                                <p>Peluquerías</p>
+                            </div>
+                        </div>
+                        <div class="item">
+                            <div>
+                                <%= image_tag "search/3maquillaje.png", alt: "Maquillaje" %>
+                                <p>Maquillaje</p>
+                            </div>
+                        </div>
+                        <div class="item">
+                            <div>
+                                <%= image_tag "search/4centrosdeestetica.png", alt: "Clinicas y Centros de Estetica" %>
+                                <p>Centros de Estetica</p>
+                            </div>
+                        </div>
+                        <div class="item">
+                            <div>
+                                <%= image_tag "search/5masajes.png", alt: "Masajes" %>
+                                <p>Masajes</p>
+                            </div>
+                        </div>
+                        <div class="item">
+                            <div>
+                                <%= image_tag "search/6manosypies.png", alt: "Manos y Pies" %>
+                                <p>Manos y Pies</p>
+                            </div>
+                        </div>
+                        <div class="item">
+                            <div>
+                                <%= image_tag "search/7medicinaalternativa.png", alt: "Medicina Alternativa" %>
+                                <p>Medicina Alternativa</p>
+                            </div>
+                        </div>
+                        <div class="item">
+                            <div>
+                                <%= image_tag "search/8bronceados.png", alt: "Bronceados" %>
+                                <p>Bronceados</p>
+                            </div>
+                        </div>
+                        <div class="item">
+                            <div>
+                                <%= image_tag "search/9tratamientosfaciales.png", alt: "Tratamientos Faciales" %>
+                                <p>Tratamientos Faciales</p>
+                            </div>
+                        </div>
+                        <div class="item">
+                            <div>
+                                <%= image_tag "search/10tratamientoscorporales.png", alt: "Tratamientos Corporales" %>
+                                <p>Tratamientos Corporales</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Clientes -->
+<div class="container">
+    <div class="row text-gray">
+        <div class="col-sm-12">
+            <h4 class="text-center text-uppercase" style="margin-top: 30px;">Nuestros Clientes</h4>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-12 pull-center">
+            <div id="carousel-clients" class="carousel slide" data-ride="carousel">
+                <!-- Indicators -->
+                <ol class="carousel-indicators">
+                    <li data-target="#carousel-clients" data-slide-to="0" class="active"></li>
+                    <li data-target="#carousel-clients" data-slide-to="1"></li>
+                    <li data-target="#carousel-clients" data-slide-to="2"></li>
+                    <li data-target="#carousel-clients" data-slide-to="3"></li>
+                    <li data-target="#carousel-clients" data-slide-to="4"></li>
+                </ol>
+
+                <!-- Wrapper for slides -->
+                <div class="carousel-inner" role="listbox">
+                    <div class="item active">
+                        <div>
+                            <%= image_tag "search/thebossgris.png", alt: "The Boss" %>
+                        </div>
+                    </div>
+                    <div class="item">
+                        <div>
+                            <%= image_tag "search/mirandagris.png", alt: "Miranda" %>
+                        </div>
+                    </div>
+                    <div class="item">
+                        <div>
+                            <%= image_tag "search/nutricioncuerpoyalmagris.png", alt: "Nutrición Cuerpo y Alma" %>
+                        </div>
+                    </div>
+                    <div class="item">
+                        <div>
+                            <%= image_tag "search/labanquetagris.png", alt: "La Banqueta" %>
+                        </div>
+                    </div>
+                    <div class="item">
+                        <div>
+                            <%= image_tag "search/soloparamunecasgris.png", alt: "Solo para Muñecas" %>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Que Hacemos -->
+<div id="what-we-do-target" />
+<div class="background background-repeat" style="background-image: url(<%= asset_path 'backgrounds/gray-background.png' %>);">
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-12">
+                <h3 class="text-center text-uppercase">¿Que Hacemos?</h3>
+            </div>
+            <div class="col-sm-12">
+                <div class="pull-center">
+                    <div class="box-content">
+                        <%= image_tag "search/search.png", alt: "Busca", height: '84' %>
+                        <p class="text-uppercase">Busca</p>
+                    </div>
+                    <div class="box-content">
+                        <%= image_tag "search/find.png", alt: "Encuentra" %>
+                        <p class="text-uppercase">Encuentra</p>
+                    </div>
+                    <div class="box-content">
+                        <%= image_tag "search/booking.png", alt: "Reserva" %>
+                        <p class="text-uppercase">Reserva</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Comentarios -->
+<div class="container">
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="comments background-grey">
+                <div id="carousel-comments" class="carousel slide">
+                    <!-- Indicators -->
+                    <ol class="carousel-indicators">
+                        <li data-target="#carousel-comments" data-slide-to="0" class="active"></li>
+                        <li data-target="#carousel-comments" data-slide-to="1"></li>
+                        <li data-target="#carousel-comments" data-slide-to="2"></li>
+                    </ol>
+
+                    <!-- Wrapper for slides -->
+                    <div class="carousel-inner" role="listbox">
+                        <div class="item active">
+                            <p align="justify">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc a neque ipsum. Ut nec metus id dui feugiat volutpat. Nullam gravida lacus vel hendrerit tristique. Vivamus non ex in orci viverra viverra in sit amet nisi. Morbi eu mollis sapien. Sed ut nulla accumsan, accumsan justo non, pellentesque libero.</p>
+                            <div class="media">
+                                <a href="#" class="media-left">
+                                    <%= image_tag "home/nico_f.png", class: "img-circle" %>
+                                </a>
+                                <div class="media-body media-middle">
+                                    <h4 class="media-heading">
+                                        Nicolas FLores</br>
+                                        <small>AgendaPro</small>
+                                    </h4>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="item">
+                            <p align="justify">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc a neque ipsum. Ut nec metus id dui feugiat volutpat. Nullam gravida lacus vel hendrerit tristique. Vivamus non ex in orci viverra viverra in sit amet nisi. Morbi eu mollis sapien. Sed ut nulla accumsan, accumsan justo non, pellentesque libero.</p>
+                            <div class="media">
+                                <a href="#" class="media-left">
+                                    <%= image_tag "home/nico_f.png", class: "img-circle" %>
+                                </a>
+                                <div class="media-body media-middle">
+                                    <h4 class="media-heading">
+                                        Nicolas FLores</br>
+                                        <small>AgendaPro</small>
+                                    </h4>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="item">
+                            <p align="justify">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc a neque ipsum. Ut nec metus id dui feugiat volutpat. Nullam gravida lacus vel hendrerit tristique. Vivamus non ex in orci viverra viverra in sit amet nisi. Morbi eu mollis sapien. Sed ut nulla accumsan, accumsan justo non, pellentesque libero.</p>
+                            <div class="media">
+                                <a href="#" class="media-left">
+                                    <%= image_tag "home/nico_f.png", class: "img-circle" %>
+                                </a>
+                                <div class="media-body media-middle">
+                                    <h4 class="media-heading">
+                                        Nicolas FLores</br>
+                                        <small>AgendaPro</small>
+                                    </h4>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Controls -->
+                    <a class="left carousel-control" href="#carousel-comments" role="button" data-slide="prev">
+                        <span class="fa fa-chevron-left" aria-hidden="true"></span>
+                        <span class="sr-only">Previous</span>
+                    </a>
+                    <a class="right carousel-control" href="#carousel-comments" role="button" data-slide="next">
+                        <span class="fa fa-chevron-right" aria-hidden="true"></span>
+                        <span class="sr-only">Next</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Social -->
+<div class="background background-green">
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="pull-center social">
+                    <%= image_tag "search/facebook.png", alt: "Facebook" %>
+                    <%= image_tag "search/twitter.png", alt: "Twitter" %>
+                    <%= image_tag "search/instagram.png", alt: "Instagram" %>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Contacto -->
+<div id="contact-target" />
+<div class="container">
+    <div class="row">
+        <div class="col-sm-12">
+            <h3 class="pull-center text-gray">Contáctanos</h3>
+            <%= image_tag "search/mapa_celular.png", width: "100%" %>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-12">
+            <%= form_tag("pcontact", method: "post", id: 'contact' ) do %>
+                <%= hidden_field_tag :inputName %>
+                <%= hidden_field_tag :inputLastname %>
+                <div class="form-group has-feedback">
+                    <label for="full_name" class="label-contacto">Nombre</label>
+                    <input type="text" id="full_name" name="user[full_name]" class="form-control" required>
+                    <span class="help-block"></span>
+                </div>
+                <div class="form-group has-feedback">
+                    <%= label_tag(:inputEmail, 'E-mail', :class => "label-contacto") %>
+                    <%= email_field_tag(:inputEmail, nil, :class => "form-control", :required => true) %>
+                    <span class="help-block"></span>
+                </div>
+                <div class="form-group">
+                    <%= label_tag(:inputSubject, "Asunto", :class => "label-contacto") %>
+                    <%= text_field_tag(:inputSubject, nil, :class => "form-control", :required => true) %>
+                    <span class="help-block"></span>
+                </div>
+                <div class="form-group has-feedback">
+                    <%= label_tag(:inputMessage, "Mensaje", :class => "label-contacto") %>
+                    <%= text_area_tag(:inputMessage, nil, :class => "form-control", :required => true, :rows => 6) %>
+                    <span class="help-block"></span>
+                </div>
+                <button type="submit" class="btn btn-orange pull-right"><i class="fa fa-envelope-o"></i> Enviar</button>
+            <% end %>
+        </div>
+    </div>
+</div>
+<div class="background-grey">
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-12 pull-center">
+                <div class="background-box">
+                    <%= image_tag "footer/3.png" %>
+                    <p>(+56 9) 5178 5898</p>
+                </div>
+                <div class="background-box">
+                    <%= image_tag "footer/1.png" %>
+                    <p>Nuestra Señora de los
+                     Angeles 185, Oficina D,
+                      Las Condes, Santiago</p>
+                </div>
+                <div class="background-box">
+                    <%= image_tag "footer/2.png" %>
+                    <p>contacto@agendapro.cl</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<% content_for :scripts do %>
+<%= javascript_include_tag 'validations/validate' %>
+<%= javascript_include_tag 'validations/home/contact' %>
+<%= javascript_include_tag 'split-name' %>
+<%= javascript_include_tag 'mobile/index'  %>
+<% end %>
