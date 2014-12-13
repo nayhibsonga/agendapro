@@ -62,10 +62,10 @@
 					<!-- Collect the nav links, forms, and other content for toggling -->
 					<div class="collapse navbar-collapse" id="navbar">
 						<ul class="nav navbar-nav navbar-right" id="menu">
-							<li><%= link_to "Buscador", "#buscador" %></li>
-							<li><%= link_to "Servicios", "#servicios" %></li>
-							<li><%= link_to "Qué Hacemos", "#quehacemos" %></li>
-							<li><%= link_to "Contacto", "#contacto" %></li>
+							<li><%= link_to "Buscador", "/#buscador" %></li>
+							<li><%= link_to "Servicios", "/#servicios" %></li>
+							<li><%= link_to "Qué Hacemos", "/#quehacemos" %></li>
+							<li><%= link_to "Contacto", "/#contacto" %></li>
 							<% if user_signed_in? %>
                                 <%= render 'layouts/home_dropdown' %>
                             <% else %>
