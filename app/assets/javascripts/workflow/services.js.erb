@@ -445,7 +445,9 @@ var myAlert;
 $(function () {
 	myAlert  = new Alert();
 	$( document ).ajaxComplete(function() {
+		var oldTop = $(document).scrollTop();
 		$('#foo4').trigger('updateSizes');
+		$(document).scrollTop(oldTop);
 	});
 
 });
