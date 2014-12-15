@@ -18,7 +18,7 @@
                                 <div class="form-group">
                                     <div class="col-sm-12">
                                         <div class="input-group input-group-lg">
-                                            <%= text_field_tag :inputLocalization, params[:inputLocalization], class: "form-control form-transparent", placeholder: "Escribe tu dirección, sector o comuna...", required: true %>
+                                            <%= text_field_tag :inputLocalization, params[:inputLocalization], class: "form-control form-transparent", placeholder: "Escribe tu dirección...", required: true %>
                                             <span class="input-group-btn">
                                                 <button id="geolocate_btn" class="btn btn-down form-transparent" type="button"><i class="fa fa-crosshairs"></i> Encuéntrame</button>
                                             </span>
@@ -28,7 +28,7 @@
                                 <div class="form-group">
                                     <div class="col-sm-12">
                                         <div class="input-group input-group-lg">
-                                            <%= search_field_tag :inputSearch, params[:inputSearch], class: "form-control input-lg green-placeholder", placeholder: "Ejemplo: Corte de Pelo, Masajes", :required => "true", :autofocus => "autofocus" %>
+                                            <%= search_field_tag :inputSearch, params[:inputSearch], class: "form-control input-lg green-placeholder", placeholder: "Ejemplo: Corte de Pelo", :required => "true", :autofocus => "autofocus" %>
                                             <span class="input-group-btn">
                                                 <button id="search_btn" class="btn btn-search form-transparent btn-lg full-width" type="submit" disabled>&nbsp;&nbsp;&nbsp;&nbsp;<i class="fa fa-search"></i> Buscar&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</button>
                                             </span>
@@ -45,8 +45,7 @@
 </div>
 
 <!-- Que puedes encontrar -->
-<div id="clients-target" />
-<div class="container">
+<div id="clients-target" class="container">
     <div class="row text-gray">
         <div class="col-sm-12">
             <h4 class="text-center text-uppercase">¿Qué puedes encontrar?</h4>
@@ -192,8 +191,7 @@
 </div>
 
 <!-- Que Hacemos -->
-<div id="what-we-do-target" />
-<div class="background background-repeat" style="background-image: url(<%= asset_path 'backgrounds/gray-background.png' %>);">
+<div id="what-we-do-target" class="background background-repeat" style="background-image: url(<%= asset_path 'backgrounds/gray-background.png' %>);">
     <div class="container">
         <div class="row">
             <div class="col-sm-12">
@@ -309,8 +307,7 @@
 </div>
 
 <!-- Contacto -->
-<div id="contact-target" />
-<div class="container">
+<div id="contact-target" class="container">
     <div class="row">
         <div class="col-sm-12">
             <h3 class="pull-center text-gray">Contáctanos</h3>
@@ -374,5 +371,33 @@
 <%= javascript_include_tag 'validations/validate' %>
 <%= javascript_include_tag 'validations/home/contact' %>
 <%= javascript_include_tag 'split-name' %>
-<%= javascript_include_tag 'mobile/index'  %>
+<script>
+    $(function() {
+        var windowheight = $(window).height();
+        $("#buscador").height(windowheight);
+        $("#buscador2").height(windowheight);
+        split_name('#full_name', '#inputName', '#inputLastname');
+    });
+
+    $( window ).resize(function() {
+        var windowheight = $(window).height();
+        $("#buscador").height(windowheight);
+        $("#buscador2").height(windowheight);
+    });
+
+    $(document).scroll(function() {
+        if ( $(this).scrollTop()>0) {
+            if(!$('.navbar-agendapro').hasClass('navbar-agendapro-white')) {
+                $('.navbar-agendapro').addClass('navbar-agendapro-white');
+                $('.navbar-agendapro .navbar-brand').html('<%= image_tag 'logos/logodoble2.png', :alt => 'AgendaPro', :size => '120x41' %>');
+            }
+        }
+        else {
+            if ($('.navbar-agendapro').hasClass('navbar-agendapro-white')) {
+                $('.navbar-agendapro').removeClass('navbar-agendapro-white');
+                $('.navbar-agendapro .navbar-brand').html('<%= image_tag 'footer/logo_footer.png', :alt => 'AgendaPro', :size => '120x41' %>');
+            }
+        }
+    });
+</script>
 <% end %>

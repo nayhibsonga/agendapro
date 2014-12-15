@@ -39,7 +39,7 @@
 							<i class="fa fa-bars"></i>
 						</a>
 						<a href="<%= root_without_subdomain %>" class="navbar-brand">
-							<%= image_tag 'footer/logo_footer.png', :alt => 'AgendaPro', :size => '127x43' %>
+							<%= image_tag 'footer/logo_footer.png', :alt => 'AgendaPro', :size => '120x41' %>
 						</a>
 					</div>
 					<!-- Collect the nav links, forms, and other content for toggling -->
@@ -50,7 +50,7 @@
 							</a>
 						</p>
 						<ul>
-							<li><a href="#">Buscador</a></li>
+							<li><%= link_to 'Buscador', root_path(anchor: 'buscador') %></li>
 							<li><%= link_to 'Clientes', root_path(anchor: 'clients-target') %></li>
                             <li><%= link_to 'Que Hacemos', root_path(anchor: 'what-we-do-target') %></li>
                             <li><%= link_to 'Contacto', root_path(anchor: 'contact-target') %></li>
@@ -95,6 +95,7 @@
 		<!-- start: JavaScript-->
 		<%= javascript_include_tag "https://maps.googleapis.com/maps/api/js?libraries=places" %>
 		<%= javascript_include_tag "mobile" %>
+		<%= javascript_include_tag "mobile/search" %>
 		<%= yield :scripts %>
 		<!-- end: JavaScript-->
 	</body>
