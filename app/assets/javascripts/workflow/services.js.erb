@@ -64,14 +64,20 @@ function loadStep1 () {
                 var settings = $('#bookingForm').validate().settings;
                 delete settings.rules.address;
 			}
-			//$('#foo4').trigger('updateSizes');
+			var oldTop = $(document).scrollTop();
+			$('#foo4').trigger('updateSizes');
+			$(document).scrollTop(oldTop);
 			loadDescription(serviceId);
 		});
 
-		//$('#foo4').trigger('updateSizes');
+		var oldTop = $(document).scrollTop();
+		$('#foo4').trigger('updateSizes');
+		$(document).scrollTop(oldTop);
 
 		$('.panel-group .panel-default').on('shown.bs.collapse', function (event) {
-			//$('#foo4').trigger('updateSizes');
+			var oldTop = $(document).scrollTop();
+			$('#foo4').trigger('updateSizes');
+			$(document).scrollTop(oldTop);
 		});
 	 	if (categoryCount == 1) {
 	 		$('.panel-collapse').addClass('in');
