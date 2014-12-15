@@ -1,26 +1,29 @@
 <div class="container">
 	<div class="row">
-		<div class="col-xs-12">
-			<div class="single-local">
-				<div class="center-image">
-					<% if @company.logo_url %>
-			        <%= image_tag @company.logo_url.to_s, :alt => @company.name %>
-			        <% else %>
-			        <%= image_tag 'Iso_Pro_Color.png', :alt => 'AgendaPro' %>
-			        <% end %>
-				</div>
-				<% @locations.each do |location| %>
+		<div class="col-sm-12">
+			<div class="pull-center">
+				<% if @company.logo_url %>
+		        <%= image_tag @company.logo_url.to_s, :alt => @company.name, class: 'company-logo' %>
+		        <% else %>
+		        <%= image_tag 'Iso_Pro_Color.png', :alt => 'AgendaPro', class: 'company-logo' %>
+		        <% end %>
+			</div>
+		</div>
+	</div>
+	<div class="row">
+		<% @locations.each do |location| %>
+		<div class="col-sm-12">
+			<div class="box-search">
 				<a href="<%= url_for(:host => @url, :local => location.id, :controller => 'companies', :action => 'workflow') %>">
 					<div class="bloque-local" data-location="<%= location.id %>">
 						<h3><%= location.name %></h3>
 						<p><%= if !location.outcall then location.address+', '+location.district.name else "A Domicilio" end %>.</p>
 						<p>Horario: </p>
-						<div class="clear"></div>
 					</div>
 				</a>
-				<% end %>
 			</div>
 		</div>
+		<% end %>
 	</div>
 </div>
 

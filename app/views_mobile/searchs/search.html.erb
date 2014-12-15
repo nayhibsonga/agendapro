@@ -59,6 +59,7 @@
 		</div>
 		<% i += 1
 		end %>
+        <%= will_paginate @results, renderer: BootstrapPagination::Rails %>
 		<% if @results.empty? %>
 		<div class="col-sm-12">
 			<div class="box-search">
