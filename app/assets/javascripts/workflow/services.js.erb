@@ -1,8 +1,9 @@
  //====== Load Steps ======//
 
 function loadStep1 () {
+
 	$('#services-description').empty();
-	$('#services-selector').html('<%= image_tag "ajax-loader.gif", :alt => "Loader" %>');
+	$('#services-selector').html('<%= image_tag "ajax-loader.gif", :alt => "Loader", :class => "loader-gif" %>');
 	var localId = $('#selectedLocal').data('local').id;
 	var categoryCount = 0;
 	$.getJSON('/local_services', {location: localId}, function (categorized_services) {
@@ -27,12 +28,12 @@ function loadStep1 () {
 				//====== Insertando acordeon
 				$('#services-selector').append(
 					'<div class="panel panel-default">' +
-						'<div class="panel-heading">' +
+						'<div class="panel-heading dark-gray">' +
 							'<h3 class="panel-title minus" data-toggle="collapse" data-parent="#services-selector" href="#body' + service_hash.id + '">' +
 								'<a >' + service_hash.category + '</a>' +
 							'</h3>' +
 						'</div>' +
-						'<div id="body' + service_hash.id + '" class="panel-collapse collapse">' +
+						'<div id="body' + service_hash.id + '" class="panel-collapse collapse light-gray">' +
 							'<ul class="list-group" id="services-selector' + service_hash.id + '">' +
 								servicesHTML +
 							'</ul>' +
@@ -43,7 +44,7 @@ function loadStep1 () {
 		});
 
 		var radios = $('input[name=serviceRadio]');
-		radios.on('change', function() {
+		radios.on('change', function(e) {
 			radios.each(function() {
 				var radio = $(this);
 				radio.closest('.list-group-item')[radio.is(':checked') ? 'addClass' : 'removeClass']('selected-wf-option');
@@ -51,8 +52,9 @@ function loadStep1 () {
 		});
 
 		$('[name="serviceRadio"]').on('click', function(event) {
+			//event.preventDefault();
 			var serviceId = event.target.getAttribute('value');
-			if ($(event.target).data('outcall') == true) {
+			if ($(event.target).data('outcall') == true) { 
 				$('#outcallAddress').show();
                 var settings = $('#bookingForm').validate().settings;
                 settings.rules.address = {required: true}
@@ -62,26 +64,26 @@ function loadStep1 () {
                 var settings = $('#bookingForm').validate().settings;
                 delete settings.rules.address;
 			}
-			$('#foo4').trigger('updateSizes');
+			//$('#foo4').trigger('updateSizes');
 			loadDescription(serviceId);
 		});
 
-		$('#foo4').trigger('updateSizes');
+		//$('#foo4').trigger('updateSizes');
 
 		$('.panel-group .panel-default').on('shown.bs.collapse', function (event) {
-			$('#foo4').trigger('updateSizes');
+			//$('#foo4').trigger('updateSizes');
 		});
 	 	if (categoryCount == 1) {
 	 		$('.panel-collapse').addClass('in');
 	 	}
 	});
 
-
+ 	
 }
 
 var calendar;
 function loadStep2 () {
-
+	
 	if($('[name="serviceRadio"]').is(':checked')){
 		$('#staff-selector').html('<%= image_tag "ajax-loader.gif", :alt => "Loader" %>');
 		$('.horario').hide();
@@ -227,11 +229,13 @@ function loadStep2 () {
 					radio.closest('.list-group-item')[radio.is(':checked') ? 'addClass' : 'removeClass']('selected-wf-option');
 				});
 			});
+
 		});
 	}
 }
 
 function loadStep3 () {
+
 	if ($('#clientExclusive').data('client-exclusive')) {
 		$('#identificationNumber').show();
 		$('#full_name').prop('disabled', true);
@@ -252,20 +256,20 @@ function loadStep3 () {
 
 			$('#summary').append(
 				'<tr style="border-top: 0px !important;">' +
-					'<td style="border-top: 0px !important;">¿Qué estoy reservando?</td>' +
-					'<td style="border-top: 0px !important;">' + $('input[name=serviceRadio]:checked').next().html() + '</td>' +
+					'<td style="border-top: 0px !important;" class="dark-gray">¿Qué estoy reservando?</td>' +
+					'<td style="border-top: 0px !important;" class="light-gray">' + $('input[name=serviceRadio]:checked').next().html() + '</td>' +
 				'</tr>' +
 				'<tr>' +
-					'<td>¿Dónde?</td>' +
-					'<td>' + $('#selectedLocal').data('local').address + ', ' + $('#selectedLocal').data('district') + '</td>' +
+					'<td class="dark-gray">¿Dónde?</td>' +
+					'<td class="light-gray">' + $('#selectedLocal').data('local').address + ', ' + $('#selectedLocal').data('district') + '</td>' +
 				'</tr>' +
 				'<tr>' +
-					'<td>¿Con quién?</td>' +
-					'<td>' + $('input[name="staffRadio"]:checked').next().html() + '</td>' +
+					'<td class="dark-gray">¿Con quién?</td>' +
+					'<td class="light-gray">' + $('input[name="staffRadio"]:checked').next().html() + '</td>' +
 				'</tr>' +
 				'<tr>' +
-					'<td>¿Cuándo?</th>' +
-					'<td>' + formattedTime($('#start').val()) + '</td>' +
+					'<td class="dark-gray">¿Cuándo?</th>' +
+					'<td class="light-gray">' + formattedTime($('#start').val()) + '</td>' +
 				'</tr>'
 			);
 			return true;
@@ -353,45 +357,45 @@ function loadDescription (serviceId) {
 		$('#services-description').empty();
 		$('#services-description').append(
 			'<tr>' +
-				'<td>Nombre:</td>' +
-				'<td>' + service.name + '</td>' +
+				'<td class="dark-gray">Nombre:</td>' +
+				'<td class="light-gray">' + service.name + '</td>' +
 			'</tr>'
 		);
 		if (service.show_price && service.price && service.price > 0) {
 			$('#services-description').append(
 				'<tr>' +
-					'<td>Precio:</td>' +
-					'<td>$ ' + service.price.toLocaleString() + '</td>' +
+					'<td class="dark-gray">Precio:</td>' +
+					'<td class="light-gray">$ ' + service.price.toLocaleString() + '</td>' +
 				'</tr>'
 			);
 		} 
 		else if (service.show_price && service.price == 0) {
 			$('#services-description').append(
 				'<tr>' +
-					'<td>Precio:</td>' +
-					'<td>¡Gratis! - Confirmar Promoción en Local</td>' +
+					'<td class="dark-gray">Precio:</td>' +
+					'<td class="light-gray">¡Gratis! - Confirmar Promoción en Local</td>' +
 				'</tr>'
 			);
 		}
 		else{
 			$('#services-description').append(
 				'<tr>' +
-					'<td>Precio:</td>' +
-					'<td>Consultar en Local</td>' +
+					'<td class="dark-gray">Precio:</td>' +
+					'<td class="light-gray">Consultar en Local</td>' +
 				'</tr>'
 			);
 		};
 		$('#services-description').append(
 			'<tr>' +
-				'<td>Duración:</td>' +
-				'<td>' + service.duration + ' minutos </td>' +
+				'<td class="dark-gray">Duración:</td>' +
+				'<td class="light-gray">' + service.duration + ' minutos </td>' +
 			'</tr>'
 		);
 		if(service.description) {
 			$('#services-description').append(
 				'<tr>' +
-					'<td>Descripción:</td>' +
-					'<td>' + service.description + '</td>' +
+					'<td class="dark-gray">Descripción:</td>' +
+					'<td class="light-gray">' + service.description + '</td>' +
 				'</tr>'
 			);
 		}

@@ -74,10 +74,10 @@
 								
 									<div class="book-title"><%= @booking.client.first_name %>, tu reserva fue recibida exitosamente</div>
 									<p style="margin-bottom: 20px;">
-										Agendar nuevamente &nbsp;<a href="<%= root_url(:host => @url) %>"><i class="fa fa-calendar-o fa-lg light-green"></i></a>
+										<span class="light-gray">Agendar nuevamente</span> &nbsp;<a href="<%= root_url(:host => @url) %>"><i class="fa fa-calendar-o fa-lg light-green"></i></a>
 									</p>
 									
-									<div class="book-subheader">Resumen de tu Reserva</div>
+									<div class="book-subheader dark-gray">Resumen de tu Reserva</div>
 
 									<!--
 									<div class="row">
@@ -129,21 +129,21 @@
 									-->
 
 									<dl class="dl-horizontal book-dl">
-										<dt>¿Qué reservaste?</dt>
-										<dd><%= @booking.service.name %></dd>
-										<dt>¿Dónde?</dt>
-										<dd><%= @booking.location.address %>, <%= @booking.location.district.name %></dd>
-										<dt>¿Con quién?</dt>
-										<dd><%= @booking.service_provider.public_name %></dd>
-										<dt>¿Cuándo?</dt>
-										<dd><%= l @booking.start %></dd>
+										<dt class="dark-gray">¿Qué reservaste?</dt>
+										<dd class="light-gray"><%= @booking.service.name %></dd>
+										<dt class="dark-gray">¿Dónde?</dt>
+										<dd class="light-gray"><%= @booking.location.address %>, <%= @booking.location.district.name %></dd>
+										<dt class="dark-gray">¿Con quién?</dt>
+										<dd class="light-gray"><%= @booking.service_provider.public_name %></dd>
+										<dt class="dark-gray">¿Cuándo?</dt>
+										<dd class="light-gray"><%= l @booking.start %></dd>
 										<% if !@booking.notes.empty? %>
-										<dt>Notas</dt>
-										<dd><%= @booking.notes %></dd>
+										<dt class="dark-gray">Notas</dt>
+										<dd class="light-gray"><%= @booking.notes %></dd>
 										<% end %>
 									</dl>
 									
-									<div class="book-subheader">Tus Datos</div>
+									<div class="book-subheader dark-gray">Tus Datos</div>
 
 									<!--<div class="row">
 										<div class="md-col-4">
@@ -179,15 +179,15 @@
 
 
 									<dl class="dl-horizontal book-dl">
-										<dt>Nombre</dt>
-										<dd><%= @booking.client.first_name %> <%= @booking.client.last_name %></dd>
+										<dt class="dark-gray">Nombre</dt>
+										<dd class="light-gray"><%= @booking.client.first_name %> <%= @booking.client.last_name %></dd>
 										<% if !@booking.client.email.empty? %>
-										<dt>E-mail</dt>
-										<dd><%= @booking.client.email %></dd>
+										<dt class="dark-gray">E-mail</dt>
+										<dd class="light-gray"><%= @booking.client.email %></dd>
 										<% end %>
 										<% if !@booking.client.phone.empty? %>
-										<dt>Teléfono</dt>
-										<dd><%= @booking.client.phone %></dd>
+										<dt class="dark-gray">Teléfono</dt>
+										<dd class="light-gray"><%= @booking.client.phone %></dd>
 										<% end %>
 									</dl>
 								
