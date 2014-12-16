@@ -16,7 +16,7 @@
 </div><!-- /.modal -->
 
 <!-- search -->
-<div class="background fill" style="background-image: url(<%= asset_path 'search/fondo'+rand(1..7).to_s+'.png' %>)" id="buscador">
+<div class="background fill" style="background-color: #646464; background-image: url(<%= asset_path 'search/fondo'+rand(1..7).to_s+'.png' %>);" id="buscador">
     <div class="fill">
         <div class="container container-search fill" id="buscador2">
             <div class="row vertical-center-row">
@@ -70,7 +70,7 @@
     </div>
     <div class="row search-pull-up">
         <div class="col-sm-12 text-center">
-            <h1><a href="#servicios" class="btn btn-down form-transparent btn-lg"><i class="fa fa-chevron-down"></i></a></h1>
+            <h1><a href="/#servicios" class="btn btn-down form-transparent btn-lg"><i class="fa fa-chevron-down"></i></a></h1>
         </div>
     </div>
 </div>
@@ -173,7 +173,7 @@
             <div class="row title-row">
                 <div class="col-sm-12">
                     <h1 class="text-center text-uppercase">Qué Hacemos</h1>
-                    <p class="text-center" style="margin-top:-15px;">Sistema de Reservas Online enfocado en ayudar a pequeñas y medianas empresas en el manejo y gestión de sus negocios.<a href="#" data-toggle="modal" data-target="#vimeo-modal"><%= image_tag "search/play1.png", alt: "play" %> Ver Video</a></p>
+                    <p class="text-center" style="margin-top:-15px;">Sistema de Reservas Online enfocado en ayudar a pequeñas y medianas empresas en el manejo y gestión de sus negocios.<a href="" data-toggle="modal" data-target="#vimeo-modal"><%= image_tag "search/play1.png", alt: "play" %> Ver Video</a></p>
                 </div>
             </div>
             <div class="row">
@@ -365,6 +365,7 @@
 <%= javascript_include_tag 'split-name' %>
 <%= javascript_include_tag 'jquery.carouFredSel-6.2.1'  %>
 <%= javascript_include_tag 'typed'  %>
+<%= javascript_include_tag 'Alert' %>
 <%= javascript_include_tag 'search/index'  %>
 
 <% end %>
