@@ -13,25 +13,16 @@
                 <%= hidden_field_tag :lastName, if user_signed_in? then current_user.last_name else nil end %>
             	<div id="user-data">
 					<div class="form-group">
-						<!-- <label for="full_name" class="col-sm-3 control-label">Nombre</label>
-						<div class="col-sm-9"> -->
-							<input type="text" id="full_name" name="user[full_name]" class="form-control" placeholder="Nombre completo" required>
-                            <span class="help-block"></span>
-						<!-- </div> -->
+						<input type="text" id="full_name" name="user[full_name]" class="form-control" placeholder="Nombre completo" required>
+                        <span class="help-block"></span>
 					</div>
 					<div class="form-group">
-						<!--<%= label_tag(:email, "E-mail", class: "col-sm-3 control-label") %>
-						<div class="col-sm-9">-->
-							<%= email_field_tag(:email, if user_signed_in? then current_user.email else nil end, :class => "form-control", :placeholder => "E-mail", :required => true) %>
-							<span class="help-block"></span>
-						<!-- </div> -->
+						<%= email_field_tag(:email, if user_signed_in? then current_user.email else nil end, :class => "form-control", :placeholder => "E-mail", :required => true) %>
+						<span class="help-block"></span>
 					</div>
 					<div class="form-group">
-						<!--<%= label_tag(:phone, "Teléfono", class: "col-sm-3 control-label") %>
-						<div class="col-sm-9">-->
-							<%= telephone_field_tag(:phone, if user_signed_in? then current_user.phone else nil end, :class => "form-control", :placeholder => "Teléfono", :required => true) %>
-							<span class="help-block"></span>
-						<!-- </div> -->
+						<%= telephone_field_tag(:phone, if user_signed_in? then current_user.phone else nil end, :class => "form-control", :placeholder => "Teléfono", :required => true) %>
+						<span class="help-block"></span>
 					</div>
             	</div>
             	<% if user_signed_in? %>
@@ -41,32 +32,21 @@
             	<% end %>
             	<% if @location.company.company_setting.client_exclusive %>
 				<div class="form-group">
-					<!--<%= label_tag(:identification_number, "RUT", class: "col-sm-3 control-label") %>
-					<div class="col-sm-9">-->
-						<%= text_field_tag(:identification_number, nil, :class => "form-control", :placeholder => "RUT" ) %>
-						<span class="help-block"></span>
-					<!-- </div> -->
+					<%= text_field_tag(:identification_number, nil, :class => "form-control", :placeholder => "RUT" ) %>
+					<span class="help-block"></span>
 				</div>
 				<% end %>
 				<% if @service.outcall %>
 				<div id="outcallAddress" class="form-group">
-					<!--<%= label_tag(:address, "Dirección", class: "col-sm-3 control-label") %>
-					<div class="col-sm-9">-->
-						<%= text_field_tag(:address, nil, :class => "form-control", :placeholder => "Escribe la dirección donde se debe realizar el servicio" ) %>
-						<span class="help-block"></span>
-					<!-- </div> -->
+					<%= text_field_tag(:address, nil, :class => "form-control", :placeholder => "Escribe la dirección donde se debe realizar el servicio" ) %>
+					<span class="help-block"></span>
 				</div>
 				<% end %>
 				<div class="form-group">
-					<!--<%= label_tag(:comment, "Comentario", class: "col-sm-3 control-label") %>
-					<div class="col-sm-9">-->
-						<%= text_area_tag(:comment, nil, :class => "form-control", :placeholder => "Agrega algún comentario a tu reserva en caso de ser necesario..", :rows => 4) %>
-					<!-- </div> -->
+					<%= text_area_tag(:comment, nil, :class => "form-control", :placeholder => "Agrega algún comentario a tu reserva en caso de ser necesario..", :rows => 4) %>
 				</div>
 				<div class="form-group">
-					<!-- <div class="col-sm-offset-3 col-sm-9"> -->
-						<button type="submit" class="btn btn-green btn-block" id="submitBtn">Reservar</button>
-					<!-- </div> -->
+					<button type="submit" class="btn btn-green btn-block" id="submitBtn">Reservar</button>
 				</div>
 			<% end %>
 		</div>

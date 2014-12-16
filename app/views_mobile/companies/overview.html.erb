@@ -1,6 +1,6 @@
 <div class="container">
 	<div class="row">
-		<div class="col-sm-12">
+		<div class="col-xs-12">
 			<div class="pull-center">
 				<% if @company.logo_url %>
 		        <%= image_tag @company.logo_url.to_s, :alt => @company.name, class: 'company-logo' %>
@@ -12,7 +12,7 @@
 	</div>
 	<div class="row">
 		<% @locations.each do |location| %>
-		<div class="col-sm-12">
+		<div class="col-xs-12">
 			<div class="box-search">
 				<a href="<%= url_for(:host => @url, :local => location.id, :controller => 'companies', :action => 'workflow') %>">
 					<div class="bloque-local" data-location="<%= location.id %>">
