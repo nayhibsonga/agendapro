@@ -352,7 +352,7 @@
                     <%= link_to "Sobre Nosotros", aboutus_path %> | <%= link_to "Tutoriales", tutorials_path %> | <%= link_to "Términos y Condiciones", '#' %>
                 </div>
                 <div class="col-sm-2">
-                    <%= image_tag 'footer/logo_footer.png', :alt => 'AgendaPro', :size => "127x43", class: "pull-right" %>
+                    <%= image_tag 'logos/logo1.png', :alt => 'AgendaPro', :size => "127x43", class: "pull-right" %>
                 </div>
             </div>
         </div>
@@ -367,5 +367,48 @@
 <%= javascript_include_tag 'typed'  %>
 <%= javascript_include_tag 'Alert' %>
 <%= javascript_include_tag 'search/index'  %>
+<script type="text/javascript">
+    // Cache selectors
+    var topMenu = $("#main-navbar"),
+        topMenuHeight = topMenu.outerHeight()+15,
+        // All list items
+        menuItems = topMenu.find('a[href*="#"]'),
+        // Anchors corresponding to menu items
+        scrollItems = menuItems.map(function(){
+          var item = $($(this).attr("href").substring(1));
+          if (item.length) { return item; }
+        });
+
+    // Bind to scroll
+    $(window).scroll(function(){
+        if ( $(this).scrollTop()>0) {
+            if($('#main-navbar').hasClass('navbar-agendapro')) {
+                $('#main-navbar').addClass('navbar-home');
+                $('#main-navbar').removeClass('navbar-agendapro');
+                $('#agendapro-brand').html('<%= image_tag 'logos/logo2.png', :alt => 'AgendaPro', :size => '127x43' %>');
+            }
+        }
+        else {
+            if ($('#main-navbar').hasClass('navbar-home')) {
+                $('#main-navbar').addClass('navbar-agendapro');
+                $('#main-navbar').removeClass('navbar-home');
+                $('#agendapro-brand').html('<%= image_tag 'logos/logo1.png', :alt => 'AgendaPro', :size => '127x43' %>');
+            }
+        }
+       // Get container scroll position
+       var fromTop = $(this).scrollTop()+topMenuHeight;
+
+       // Get id of current scroll item
+       var cur = scrollItems.map(function(){
+         if ($(this).offset().top < fromTop)
+           return this;
+       });
+       // Get the id of the current element
+       cur = cur[cur.length-1];
+       var id = cur && cur.length ? cur[0].id : "";
+       // Set/remove active class
+       menuItems.parent().removeClass("active").end().filter("[href*=#"+id+"]").parent().addClass("active");
+    });
+</script>
 
 <% end %>

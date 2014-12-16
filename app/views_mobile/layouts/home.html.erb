@@ -39,7 +39,7 @@
                             <i class="fa fa-bars"></i>
                         </a>
                         <a href="<%= root_without_subdomain %>" class="navbar-brand">
-                            <%= image_tag 'logos/logodoble2.png', :alt => 'AgendaPro', :size => '120x41' %>
+                            <%= image_tag 'logos/logo2.png', :alt => 'AgendaPro', :size => '120x41' %>
                         </a>
                     </div>
                     <!-- Collect the nav links, forms, and other content for toggling -->
@@ -55,7 +55,7 @@
                             <li><%= link_to "Características", features_path %></li>
                             <li><%= link_to "Planes", view_plans_path %></li>
                             <li><%= link_to "Tutoriales", tutorials_path %></li>
-                            <li><%= link_to 'Contacto', root_path(anchor: 'contact-target') %></li>
+                            <li><%= link_to "Contacto", contact_path %></li>
                             <li class="divider"></li>
                             <% if user_signed_in? %>
                             <!-- <li><%= link_to '<i class="fa fa-calendar"></i> Mi Agenda'.html_safe, my_agenda_path(:id => current_user.id) %></li> -->
