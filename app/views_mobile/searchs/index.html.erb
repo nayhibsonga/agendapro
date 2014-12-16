@@ -389,13 +389,13 @@
         if ( $(this).scrollTop()>0) {
             if(!$('.navbar-agendapro').hasClass('navbar-agendapro-white')) {
                 $('.navbar-agendapro').addClass('navbar-agendapro-white');
-                $('.navbar-agendapro .navbar-brand').html('<%= image_tag 'logos/logodoble2.png', :alt => 'AgendaPro', :size => '120x41' %>');
+                $('.navbar-agendapro .navbar-brand').html('<%= image_tag 'logos/logo2.png', :alt => 'AgendaPro', :size => '120x41' %>');
             }
         }
         else {
             if ($('.navbar-agendapro').hasClass('navbar-agendapro-white')) {
                 $('.navbar-agendapro').removeClass('navbar-agendapro-white');
-                $('.navbar-agendapro .navbar-brand').html('<%= image_tag 'footer/logo_footer.png', :alt => 'AgendaPro', :size => '120x41' %>');
+                $('.navbar-agendapro .navbar-brand').html('<%= image_tag 'logos/logo1.png', :alt => 'AgendaPro', :size => '120x41' %>');
             }
         }
     });

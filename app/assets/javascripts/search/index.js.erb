@@ -161,19 +161,3 @@ $(function() {
         geolocate();
     });
 });
-$(document).scroll(function() {
-    if ( $(this).scrollTop()>0) {
-        if($('#main-navbar').hasClass('navbar-agendapro')) {
-            $('#main-navbar').addClass('navbar-home');
-            $('#main-navbar').removeClass('navbar-agendapro');
-            $('#agendapro-brand').html('<%= image_tag 'logos/logodoble2.png', :alt => 'AgendaPro', :size => '127x43' %>');
-        }
-    }
-    else {
-        if ($('#main-navbar').hasClass('navbar-home')) {
-            $('#main-navbar').addClass('navbar-agendapro');
-            $('#main-navbar').removeClass('navbar-home');
-            $('#agendapro-brand').html('<%= image_tag 'footer/logo_footer.png', :alt => 'AgendaPro', :size => '127x43' %>');
-        }
-    }
-});
