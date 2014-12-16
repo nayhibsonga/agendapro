@@ -1,5 +1,6 @@
 body {
-	padding-top: 40px;
+	padding-top: 45px;
+	padding-bottom: 5px;
 }
 
 /*** navbar-agendapro ***/
@@ -32,6 +33,7 @@ body {
 	max-width: 200px;
 	display: inline;
 	vertical-align: bottom;
+	padding: 15px;
 }
 .btn-wide {
 	width: 49%;
@@ -97,6 +99,18 @@ body {
 .panel-group .panel-heading + .panel-collapse > .panel-body,
 .panel-group .panel-heading + .panel-collapse > .list-group {
   border-top: none;
+}
+.panel-title-caret:after {
+	font-family: 'FontAwesome';
+	content: "\f0d7";
+	float: right;
+	color: #22c488;
+}
+a.collapsed .panel-title-caret:after {
+	font-family: 'FontAwesome';
+	content: "\f0d9";
+	float: right;
+	color: #1ba970;
 }
 /*select_hour*/
 .container-margin {

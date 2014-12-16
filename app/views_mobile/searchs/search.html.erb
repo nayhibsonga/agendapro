@@ -8,7 +8,7 @@
     <div class="row">
         <div class="col-sm-12">
             <%= form_tag({controller: "searchs", action: "search"}, method: "GET", class: "form-horizontal", id: "search-form") do %>
-                <input type="hidden" id="district" name="district">
+                <input type="hidden" id="district" name="district" value="1">
                 <input type="hidden" id="latitude" name="latitude" value="-33.412819">
                 <input type="hidden" id="longitude" name="longitude" value="-70.591945">
                 <div class="form-group">
@@ -16,7 +16,7 @@
                         <div class="input-group">
                             <%= text_field_tag :inputLocalization, params[:inputLocalization], class: "form-control", placeholder: "Escribe tu dirección ..", required: true %>
                             <span class="input-group-btn">
-                                <button class="btn btn-search" type="button">Encuentrame <i class="fa fa-crosshairs"></i></button>
+                                <button id="geolocate_btn" class="btn btn-search" type="button">Encuentrame <i class="fa fa-crosshairs"></i></button>
                             </span>
                         </div>
                     </div>
@@ -26,7 +26,7 @@
                 		<div class="input-group">
                         	<%= search_field_tag :inputSearch, params[:inputSearch], class: "form-control", placeholder: "Ejemplo: Corte de Pelo, Masajes", :required => "true", :autofocus => "autofocus" %>
                         	<span class="input-group-btn">
-                        		<button class="btn btn-search-results" type="submit"><i class="fa fa-search"></i> Buscar</button>
+                        		<button id="search_btn" class="btn btn-search-results" type="submit"><i class="fa fa-search"></i> Buscar</button>
                         	</span>
                 		</div>
                 	</div>
