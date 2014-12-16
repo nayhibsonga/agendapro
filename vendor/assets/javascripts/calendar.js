@@ -72,6 +72,7 @@ function Calendar (source, getData) {
 		$.getJSON(sources.source, sources.data, function (data, status) {
 
 			$(".days-row").empty();
+			
 			$.each(data, function(day, day_blocks){
 				var date = parseDate(day);
 				var dayNumber = date.getDay();

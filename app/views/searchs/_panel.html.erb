@@ -2,7 +2,7 @@
 	<div class="box-tabs">
 		<!-- Nav tabs -->
 		<ul class="nav nav-tabs" id="myTab">
-			<li class="active"><a href="#home<%=i%>" data-toggle="tab" class="pin-link">
+			<li class="active"><a href="#home<%=i%>" data-toggle="tab" class="pin-link" tab_id="<%=i%>">
 				<div class="number-pin-green number-pin" tab_id="<%=i%>">
 					<span><%= i %></span>
 				</div>
@@ -12,13 +12,18 @@
 					<span class="center-number"><%= i %></span>
 				</div>-->
 			</a></li>
-			<li class="center-li"><a class="center-link" tab_id="<%=i%>" href="#profile<%=i%>" data-toggle="tab">Descripción</a></li>
-			<li class="center-li"><a class="center-link" tab_id="<%=i%>" href="#messages<%=i%>" data-toggle="tab">Horario</a></li>
+			<li class="center-li"><a class="center-link dark-gray" tab_id="<%=i%>" href="#profile<%=i%>" data-toggle="tab">Descripción</a></li>
+			<li class="center-li"><a class="center-link dark-gray" tab_id="<%=i%>" href="#messages<%=i%>" data-toggle="tab">Horario</a></li>
 			<li class="right-li"><%= link_to '<i class="fa fa-calendar-o"></i>&nbsp;&nbsp;Reservar'.html_safe, url_for(:host => location.company.web_address + '.' + @domain, :local => location.id, :controller => 'companies', :action => 'overview'), :class => "reservar-link", :role => "button" %></li>
 		</ul>
 
 		<!-- Tab panes -->
 		<div class="tab-content location">
+			<div class="row">
+				<div class="col-md-12 company-title">
+					<b><%= location.company.name %></b>
+				</div>
+			</div>
 			<div class="tab-pane active" id="home<%=i%>">
 				<div class="row">
 					<div class="img-local-search col-md-4 text-center">
