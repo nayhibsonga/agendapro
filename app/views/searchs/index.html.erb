@@ -50,7 +50,7 @@
                                         <div class="input-group input-group-lg">
                                             <%= search_field_tag :inputSearch, params[:inputSearch], class: "form-control input-lg green-placeholder", placeholder: "Ejemplo: Corte de Pelo, Masajes", :required => "true", :autofocus => "autofocus" %>
                                             <span class="input-group-btn">
-                                                <button id="search_btn" class="btn btn-search form-transparent btn-lg full-width" type="submit" disabled>&nbsp;&nbsp;&nbsp;&nbsp;<i class="fa fa-search"></i> Buscar&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</button>
+                                                <button id="search_btn" class="btn btn-search form-transparent btn-lg full-width" type="submit">&nbsp;&nbsp;&nbsp;&nbsp;<i class="fa fa-search"></i> Buscar&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</button>
                                             </span>
                                         </div>
                                     </div>
@@ -205,12 +205,12 @@
             <div class="col-xs-4">
                 <div class="media">
                     <a href="#" class="media-left">
-                        <%= image_tag "home/nico_f.png", class: "img-circle", size: "80x80" %>
+                        <%= image_tag "search/slopez.jpg", class: "img-circle", size: "80x80" %>
                     </a>
                     <div class="media-body">
                         <h4 class="media-heading">
-                            Nicolas FLores</br>
-                            <small>AgendaPro</small>
+                            Sebastián López</br>
+                            <small><a href="http://labanqueta.agendapro.cl">La Banqueta Peluquería</a></small>
                         </h4>
                         <p align="justify">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc a neque ipsum. Ut nec metus id dui feugiat volutpat. Nullam gravida lacus vel hendrerit tristique. Vivamus non ex in orci viverra viverra in sit amet nisi. Morbi eu mollis sapien. Sed ut nulla accumsan, accumsan justo non, pellentesque libero.</p>
                     </div>
@@ -219,12 +219,12 @@
             <div class="col-xs-4">
                 <div class="media">
                     <a href="#" class="media-left">
-                        <%= image_tag "home/nico_f.png", class: "img-circle", size: "80x80" %>
+                        <%= image_tag "search/minata.png", class: "img-circle", size: "80x80" %>
                     </a>
                     <div class="media-body">
                         <h4 class="media-heading">
-                            Nicolas FLores</br>
-                            <small>AgendaPro</small>
+                            Minata Rodríguez</br>
+                            <small><a href="http://minatarodriguez.blogspot.com/" target="blank">Blogger</a></small>
                         </h4>
                         <p align="justify">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc a neque ipsum. Ut nec metus id dui feugiat volutpat. Nullam gravida lacus vel hendrerit tristique. Vivamus non ex in orci viverra viverra in sit amet nisi. Morbi eu mollis sapien. Sed ut nulla accumsan, accumsan justo non, pellentesque libero.</p>
                     </div>
@@ -233,12 +233,12 @@
             <div class="col-xs-4">
                 <div class="media">
                     <a href="#" class="media-left">
-                        <%= image_tag "home/nico_f.png", class: "img-circle", size: "80x80" %>
+                        <%= image_tag "search/sferrer.png", class: "img-circle", size: "80x80" %>
                     </a>
                     <div class="media-body">
                         <h4 class="media-heading">
-                            Nicolas FLores</br>
-                            <small>AgendaPro</small>
+                            Sebastián Ferrer</br>
+                            <small><a href="http://theboss.agendapro.cl">The Boss Hair Club & Spa</a></small>
                         </h4>
                         <p align="justify">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc a neque ipsum. Ut nec metus id dui feugiat volutpat. Nullam gravida lacus vel hendrerit tristique. Vivamus non ex in orci viverra viverra in sit amet nisi. Morbi eu mollis sapien. Sed ut nulla accumsan, accumsan justo non, pellentesque libero.</p>
                     </div>
@@ -367,48 +367,4 @@
 <%= javascript_include_tag 'typed'  %>
 <%= javascript_include_tag 'Alert' %>
 <%= javascript_include_tag 'search/index'  %>
-<script type="text/javascript">
-    // Cache selectors
-    var topMenu = $("#main-navbar"),
-        topMenuHeight = topMenu.outerHeight()+15,
-        // All list items
-        menuItems = topMenu.find('a[href*="#"]'),
-        // Anchors corresponding to menu items
-        scrollItems = menuItems.map(function(){
-          var item = $($(this).attr("href").substring(1));
-          if (item.length) { return item; }
-        });
-
-    // Bind to scroll
-    $(window).scroll(function(){
-        if ( $(this).scrollTop()>0) {
-            if($('#main-navbar').hasClass('navbar-agendapro')) {
-                $('#main-navbar').addClass('navbar-home');
-                $('#main-navbar').removeClass('navbar-agendapro');
-                $('#agendapro-brand').html('<%= image_tag 'logos/logo2.png', :alt => 'AgendaPro', :size => '127x43' %>');
-            }
-        }
-        else {
-            if ($('#main-navbar').hasClass('navbar-home')) {
-                $('#main-navbar').addClass('navbar-agendapro');
-                $('#main-navbar').removeClass('navbar-home');
-                $('#agendapro-brand').html('<%= image_tag 'logos/logo1.png', :alt => 'AgendaPro', :size => '127x43' %>');
-            }
-        }
-       // Get container scroll position
-       var fromTop = $(this).scrollTop()+topMenuHeight;
-
-       // Get id of current scroll item
-       var cur = scrollItems.map(function(){
-         if ($(this).offset().top < fromTop)
-           return this;
-       });
-       // Get the id of the current element
-       cur = cur[cur.length-1];
-       var id = cur && cur.length ? cur[0].id : "";
-       // Set/remove active class
-       menuItems.parent().removeClass("active").end().filter("[href*=#"+id+"]").parent().addClass("active");
-    });
-</script>
-
 <% end %>
