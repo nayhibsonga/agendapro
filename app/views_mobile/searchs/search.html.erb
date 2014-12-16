@@ -1,37 +1,86 @@
-<div class="row">
-	<%= render 'form' %>
+<!-- search -->
+<div class="container below-navbar">
+    <div class="row">
+        <div class="col-sm-12">
+            Busca, Encuentra y Reserva en:
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-12">
+            <%= form_tag({controller: "searchs", action: "search"}, method: "GET", class: "form-horizontal", id: "search-form") do %>
+                <input type="hidden" id="district" name="district">
+                <input type="hidden" id="latitude" name="latitude" value="-33.412819">
+                <input type="hidden" id="longitude" name="longitude" value="-70.591945">
+                <div class="form-group">
+                    <div class="col-sm-12">
+                        <div class="input-group">
+                            <%= text_field_tag :inputLocalization, params[:inputLocalization], class: "form-control", placeholder: "Escribe tu dirección ..", required: true %>
+                            <span class="input-group-btn">
+                                <button class="btn btn-search" type="button">Encuentrame <i class="fa fa-crosshairs"></i></button>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                	<div class="col-sm-12">
+                		<div class="input-group">
+                        	<%= search_field_tag :inputSearch, params[:inputSearch], class: "form-control", placeholder: "Ejemplo: Corte de Pelo, Masajes", :required => "true", :autofocus => "autofocus" %>
+                        	<span class="input-group-btn">
+                        		<button class="btn btn-search-results" type="submit"><i class="fa fa-search"></i> Buscar</button>
+                        	</span>
+                		</div>
+                	</div>
+                </div>
+            <% end %>
+        </div>
+    </div>
 </div>
-<div class="row">
-	<div class="col-xs-12">
-		<% @results.each do |location| %>
-		<a href="<%= url_for(:host => location.company.web_address + '.' + @domain, :local => location.id, :controller => 'companies', :action => 'overview') %>">
-			<div class="bloque-local" data-location="<%= location.id %>">
-				<div class="img-circulo">
+<div class="container">
+	<div class="row">
+		<% i = 1
+		@results.each do |location| %>
+		<div class="col-sm-12">
+			<div class="box-search">
+				<a href="<%= url_for(:host => location.company.web_address + '.' + @domain, :local => location.id, :controller => 'companies', :action => 'overview') %>">
 					<% if location.company.logo_url %>
-					<%= image_tag location.company.logo_url.to_s, :size => "80x80", :alt => location.company.name %>
+					<%= image_tag location.company.logo_url.to_s, :alt => location.company.name %>
 					<% else %>
-					<%= image_tag 'Iso_Pro_Color.png', :alt => 'AgendaPro', :size => "80x80" %>
+					<%= image_tag 'Iso_Pro_Color.png', :alt => 'AgendaPro' %>
 					<% end %>
-				</div>
-				<h3><%= location.company.name %></h3>
-				<p><%= if !location.outcall then location.address+', '+location.district.name else "A Domicilio" end %>.</p>
-				<p>Horario: </p>
-				<div class="clear"></div>
-			</div>
-		</a>
-		<% end %>
-		<% if @results.empty? %>
-			<a href="#">
-				<div class="bloque-local">
-					<div class="img-circulo">
-						<%= image_tag 'mobile/sad_ap.png', :alt => 'AgendaPro', :size => "80x80" %>
+					<div class="description">
+						<h3><%= location.company.name %></h3>
+						<div class="number-pin">
+							<span><%= i %></span>
+						</div>
+						<p><%= if !location.outcall then location.address+', '+location.district.name else "A Domicilio" end %>.</p>
 					</div>
-					<h3>Lo sentimos</h3>
-					<p>No encontramos resultados para:</p>
-					<p><%= params[:inputSearch] %></p>
-					<div class="clear"></div>
-				</div>
-			</a>
+				</a>
+			</div>
+		</div>
+		<% i += 1
+		end %>
+		<% if @results.empty? %>
+		<div class="col-sm-12">
+			<div class="box-search">
+				<a href="#">
+					<%= image_tag 'mobile/sad_ap.png', :alt => 'AgendaPro' %>
+					<div class="description">
+						<h3>Lo sentimos</h3>
+						<p class="search-text-green">No encontramos resultados para: <%= params[:inputSearch] %></p>
+					</div>
+				</a>
+			</div>
+		</div>
 		<% end %>
 	</div>
 </div>
+
+<% content_for :scripts do %>
+<script>
+    $(function() {
+        $('.navbar-agendapro').addClass('navbar-agendapro-white');
+        $('.navbar-agendapro .navbar-brand').html('<%= image_tag 'logos/logodoble2.png', :alt => 'AgendaPro', :size => '127x43' %>');
+    });
+</script>
+<% end %>
+

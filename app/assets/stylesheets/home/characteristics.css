@@ -39,7 +39,7 @@ section {
   font-weight: 300;
   line-height: 1;
   letter-spacing: -1px;
-  color: #00e99f;
+  color: #22c488;
 }
 .featurette-heading span.text-muted {
     color: #646464;
@@ -72,13 +72,15 @@ section.green-background p.lead {
 }
 .tutorial-pointer {
   margin-top: 20px;
-  display: none;
 }
 
 /* RESPONSIVE CSS
 -------------------------------------------------- */
 @media (max-width: 1199px) {
-
+  iframe {
+    height: 314px;
+    width: 500px;
+  }
 }
 
 @media (max-width: 991px) {
@@ -87,6 +89,10 @@ section.green-background p.lead {
   }
   .tutorial-pointer {
     display: none;
+  }
+  iframe {
+    height: 376px;
+    width: 600px;
   }
 }
 
@@ -101,5 +107,15 @@ section.green-background p.lead {
   .featurette-heading {
     font-size: 36px;
   }
+  iframe {
+    height: 314px;
+    width: 500px;
+  }
+}
+@media (max-width: 549px) {
 
+  iframe {
+    height: 179px;
+    width: 290px;
+  }
 }

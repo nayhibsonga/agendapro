@@ -1,0 +1,134 @@
+$(function() {
+    
+    var windowheight = $(window).height();
+    $("#buscador").height(windowheight);
+    $("#buscador2").height(windowheight);
+
+    split_name('#full_name', '#inputName', '#inputLastname');
+
+    $('#carousel').carouFredSel({
+        items : 4,
+        circular : true,
+        infinity : true,
+        // responsive : true,
+        width : "100%",
+        scroll : {
+            items           : 1,
+            duration        : 500,                         
+            pauseOnHover    : true
+        }                   
+    });
+
+    $( window ).resize(function() {
+        var windowheight = $(window).height();
+        $("#buscador").height(windowheight);
+        $("#buscador2").height(windowheight);
+    });
+    $('a[href*=#]').click(function(){
+        $('html, body').animate({
+            scrollTop: $( $.attr(this, 'href').substring(1) ).offset().top - 50
+        }, 500);
+        return false;
+    });
+    $("#typed-text").typed({
+        strings: ["Corte de Pelo", "Tratamientos Faciales", "SPA", "Maquillaje", "Centros de Estética", "Peluquerías", "Masajes", "Manicure", "Pedicure", "Tratamientos Corporales", "Bronceados", "Medicina Alternativa"],
+        loop: true,
+        typeSpeed: 0,
+        cursorChar: "_",
+        backDelay: 2000
+    });
+    var input = document.getElementById('inputLocalization');
+    var options = {
+      types: ['geocode'],
+      componentRestrictions: {country: 'cl'}
+    };
+    var geocoder = new google.maps.Geocoder();
+    var autocomplete = new google.maps.places.Autocomplete(input, options);
+    var infowindow = new google.maps.InfoWindow();
+    google.maps.event.addListener(autocomplete, 'place_changed', function() {
+        if (autocomplete.getPlace().geometry) {
+            $('#latitude').val(autocomplete.getPlace().geometry.location.k);
+            $('#longitude').val(autocomplete.getPlace().geometry.location.D);
+            $('#search_btn').removeAttr("disabled");
+        }
+    });
+    $('#inputLocalization').on('input', function() {
+        $('#search_btn').attr("disabled", "disabled");
+    });
+    $("#inputLocalization").focusin(function () {
+        $(document).keypress(function (e) {
+            if (e.which == 13) {
+                 selectFirstResult();   
+            }
+        });
+    });
+    $("#inputLocalization").focusout(function () {
+        if(!$(".pac-container").is(":focus") && !$(".pac-container").is(":visible"))
+            selectFirstResult();
+    });
+     
+     function selectFirstResult() {
+        infowindow.close();
+        $(".pac-container").hide();
+        var firstResult = $(".pac-container .pac-item:first").text();
+        geocoder.geocode({"address":firstResult }, function(results, status) {
+            if (status == google.maps.GeocoderStatus.OK) {
+                var lat = results[0].geometry.location.lat(),
+                    lng = results[0].geometry.location.lng(),
+                    placeName = results[0].address_components[0].long_name,
+                    latlng = new google.maps.LatLng(lat, lng);
+                $('#latitude').val(lat);
+                $('#longitude').val(lng);
+                $("#inputLocalization").val(firstResult);
+                $('#search_btn').removeAttr("disabled");
+            }
+        });   
+     }
+    function geolocate() {
+        if (navigator.geolocation) {
+            $('#geolocate_btn').html('&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<%= image_tag "small-loader.gif", :alt => "Loader", :id => "small_loader_header", :class => "small-loader-header" %>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;');
+            navigator.geolocation.getCurrentPosition(function(position) {
+                $('#latitude').val(position.coords.latitude);
+                $('#longitude').val(position.coords.longitude);
+                $('#search_btn').removeAttr("disabled");
+                var latlng = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
+                geocoder.geocode({'latLng': latlng}, function(results, status) {
+                    if (status == google.maps.GeocoderStatus.OK) {
+                        window.console.log(results);
+                      if (results[0]) {
+                        $('#inputLocalization').val(results[0].formatted_address);
+                      } else {
+                        alert('No results found');
+                      }
+                    } else {
+                      alert('Geocoder failed due to: ' + status);
+                    }
+                    $('#geolocate_btn').html('<i class="fa fa-crosshairs"></i> Encuéntrame');
+                    return false;
+                });
+            });
+        }
+        else {
+            alert('Este explorador no permite geolocalización automática, por favor escribe tu ubicación.')
+        }
+    }
+    $('#geolocate_btn').click(function() {
+        geolocate();
+    });
+});
+$(document).scroll(function() {
+    if ( $(this).scrollTop()>0) {
+        if($('#main-navbar').hasClass('navbar-agendapro')) {
+            $('#main-navbar').addClass('navbar-home');
+            $('#main-navbar').removeClass('navbar-agendapro');
+            $('#agendapro-brand').html('<%= image_tag 'logos/logodoble2.png', :alt => 'AgendaPro', :size => '127x43' %>');
+        }
+    }
+    else {
+        if ($('#main-navbar').hasClass('navbar-home')) {
+            $('#main-navbar').addClass('navbar-agendapro');
+            $('#main-navbar').removeClass('navbar-home');
+            $('#agendapro-brand').html('<%= image_tag 'footer/logo_footer.png', :alt => 'AgendaPro', :size => '127x43' %>');
+        }
+    }
+});
