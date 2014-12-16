@@ -185,10 +185,9 @@ $(function() {
 	});
 	
 	$('a.center-link').click(function(){
-		var tab_id = $(this).attr('tab_id');
-		$('.number-pin[tab_id="'+tab_id+'"]').removeClass("number-pin-green");
-		$('.number-pin[tab_id="'+tab_id+'"]').addClass("number-pin-gray");
-    var tab_id = $(this).attr("tab_id");
+		var tab_id = $(this).attr("tab_id");
+		$('.number-pin[tab_id='+tab_id+']').removeClass("number-pin-green");
+		$('.number-pin[tab_id='+tab_id+']').addClass("number-pin-gray");
     $('a.pin-link').each(function(e){
       if($(this).attr("tab_id")!=tab_id)
       {
