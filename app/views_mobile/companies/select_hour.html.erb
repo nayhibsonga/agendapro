@@ -37,7 +37,7 @@
 			$('.btn-press').removeClass('btn-press').addClass('btn-default');
 			$(event.target).addClass('btn-press').removeClass('btn-default');
 			$('a.btn-green').attr('disabled', false);
-			$("html, body").animate({ scrollTop: $(document).height() }, 500);
+			$("html, body").delay(500).animate({ scrollTop: $(document).height() }, 1000, "swing");
 
 			var date = $(event.target).data('date');
 			var start = $(event.target).data('start');
