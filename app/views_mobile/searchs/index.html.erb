@@ -1,5 +1,5 @@
 <!-- search -->
-<div class="background fill" style="background-image: url(<%= asset_path 'search/fondo'+rand(1..7).to_s+'.png' %>)" id="buscador">
+<div class="background fill" style="background-color: #646464; background-image: url(<%= asset_path 'search/fondo'+rand(1..7).to_s+'.png' %>)" id="buscador">
     <div class="fill">
         <div class="container container-search fill" id="buscador2">
             <div class="row vertical-center-row">
@@ -297,9 +297,15 @@
         <div class="row">
             <div class="col-sm-12">
                 <div class="pull-center social">
-                    <%= image_tag "search/facebook.png", alt: "Facebook" %>
-                    <%= image_tag "search/twitter.png", alt: "Twitter" %>
-                    <%= image_tag "search/instagram.png", alt: "Instagram" %>
+                    <a href="https://fb.com/agendapro" target="_blank">
+                        <%= image_tag "search/facebook.png", alt: "Facebook" %>
+                    </a>
+                    <a href="https://twitter.com/AgendaPro_CL" target="_blank">
+                        <%= image_tag "search/twitter.png", alt: "Twitter" %>
+                    </a>
+                    <a href="https://instagram.com/agendapro" target="_blank">
+                        <%= image_tag "search/instagram.png", alt: "Instagram" %>
+                    </a>
                 </div>
             </div>
         </div>
