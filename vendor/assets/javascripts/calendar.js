@@ -71,6 +71,7 @@ function Calendar (source, getData) {
 		sources.data.date = formatDate(monday);
 		$.getJSON(sources.source, sources.data, function (data, status) {
 
+			$(".days-row").empty();
 			
 			$.each(data, function(day, day_blocks){
 				var date = parseDate(day);
@@ -220,8 +221,7 @@ function Calendar (source, getData) {
 		
 		var width2 = $(".horario")[0].clientWidth/count;
 		$('.dia-semana').css('width', width2);
-		$('.days-row:last-child').css('width', width2-1);
-		console.log($(".horario")[0].clientWidth);
+		$('.dia-semana:last').css('width', width2-1);
 	}
 
 	var correctNumber = function (number) {
