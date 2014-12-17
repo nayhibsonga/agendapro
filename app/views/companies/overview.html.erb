@@ -10,7 +10,7 @@
               <% if @company.logo_url %>
                 <%= image_tag @company.logo_url.to_s, :size => "80x80", :alt => @company.name, :class => "company-logo" %>
               <% else %>
-                <%= image_tag 'Iso_Pro_Color.png', :alt => 'AgendaPro', :size => "80x80" %>
+                <%= image_tag 'logo_vacio.png', :alt => 'AgendaPro', :size => "80x80", :class => "company-logo" %>
               <% end %>
             </div>
             <div class="col-md-6">
@@ -73,7 +73,7 @@
               <% if @company.logo_url %>
                 <%= image_tag @company.logo_url.to_s, :size => "80x80", :alt => @company.name, :class => "company-logo" %>
               <% else %>
-                <%= image_tag 'Iso_Pro_Color.png', :alt => 'AgendaPro', :size => "80x80" %>
+                <%= image_tag 'logo_vacio.png', :alt => 'AgendaPro', :size => "80x80", :class => "company-logo" %>
               <% end %>
             </div>
             <div class="col-md-6">
