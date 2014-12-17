@@ -15,15 +15,11 @@
 	;
 	mask.className = "mask";
 
-	/* slide menu left */
-	// toggleSlideLeft.addEventListener( "click", function(){
-	// 	$(body).addClass('sml-open');
-	// 	document.body.appendChild(mask);
-	// 	activeNav = "sml-open";
-	// } );
+	// var position;
 
 	/* slide menu right */
 	toggleSlideRight.addEventListener( "click", function(){
+		// position = $(window).scrollTop();
 		$(body).addClass('smr-open');
 		$('html').addClass('smr-open');
 		document.body.appendChild(mask);
@@ -36,6 +32,7 @@
 		$('html').removeClass(activeNav);
 		activeNav = "";
 		document.body.removeChild(mask);
+		// $(window).scrollTop(position);
 	} );
 
 	/* hide active menu if close menu button is clicked */
@@ -45,6 +42,7 @@
 			$('html').removeClass(activeNav);
 			activeNav = "";
 			document.body.removeChild(mask);
+			// $(window).scrollTop(position);
 		} );
 	});
 

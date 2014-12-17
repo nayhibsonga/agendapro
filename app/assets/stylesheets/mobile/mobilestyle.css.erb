@@ -69,11 +69,13 @@ nav.menu a.menu-orange:focus {
 	color: #ffffff;
 }
 html.smr-open,
-body.smr-open {
+body.smr-open,
+body.smr-open > #wrapper {
 	overflow: hidden;
 	-webkit-overflow-scrolling: hidden;
 	width: 100%;
-	position: static;
+	height: 100%;
+	position: absolute;
 }
 nav.menu li.divider {
 	margin-top: 30px;
@@ -87,6 +89,12 @@ nav.menu li.divider {
 	z-index: 10;
 }
 
+/*Forms*/
 .help-block > label.error {
 	font-weight: normal;
+}
+
+/*Modals*/
+.modal {
+	top: 50px;
 }
