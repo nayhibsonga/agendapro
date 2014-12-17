@@ -13,6 +13,7 @@
 				</div>-->
 			</a></li>
 			<li class="center-li"><a class="center-link dark-gray" tab_id="<%=i%>" href="#profile<%=i%>" data-toggle="tab">Descripción</a></li>
+			<li class="center-li"><a class="center-link dark-gray" tab_id="<%=i%>" href="#services<%=i%>" data-toggle="tab">Servicios</a></li>
 			<li class="center-li"><a class="center-link dark-gray" tab_id="<%=i%>" href="#messages<%=i%>" data-toggle="tab">Horario</a></li>
 			<li class="right-li"><%= link_to '<i class="fa fa-calendar-o"></i>&nbsp;&nbsp;Reservar'.html_safe, url_for(:host => location.company.web_address + '.' + @domain, :local => location.id, :controller => 'companies', :action => 'overview'), :class => "reservar-link", :role => "button" %></li>
 		</ul>
@@ -64,6 +65,49 @@
 					</div>
 				</div>
 			</div>
+			<div class="tab-pane" id="services<%=i%>">
+				<div class="row">
+					<div class="img-local-search col-md-4 text-center">
+						<% if location.company.logo_url %>
+						<%= image_tag location.company.logo_url.to_s, :size => "80x80", :alt => location.company.name %>
+						<% else %>
+						<%= image_tag 'Iso_Pro_Color.png', :alt => 'AgendaPro', :size => "80x80" %>
+						<% end %>
+					</div>
+					<div class="col-md-1">
+					</div>
+					<div class="data-local-search col-md-7">
+
+						<div class="panel-group" id="categories<%=location.id%>" style="margin-top: 20px;">
+							<% location.categories.each do |category| %>								
+								<% if category.services.count > 0 %>
+									<div class="panel panel-default">
+										<div class="panel-heading">
+									      <h4 class="panel-title minus">
+									        <a data-toggle="collapse" data-parent="#categories<%=location.id%>" href="#collapse<%= category.id %>">
+									          <%= category.name %>
+									        </a>
+									      </h4>
+									    </div>
+									    <div id="collapse<%= category.id %>" class="panel-collapse collapse">
+      										<div class="panel-body">
+												<div class="services">
+													<% category.services.each do |service| %>
+														<div class="service">
+															<%= service.name_with_small_outcall %>
+														</div>
+													<% end %>
+												</div>
+											</div>
+										</div>
+									</div>
+								<% end %>
+							<% end %>
+						</div>
+
+					</div>
+				</div>
+			</div>
 			<div class="tab-pane" id="messages<%=i%>">
 				<div class="row">
 					<div class="img-local-search col-md-4 text-center">
@@ -87,3 +131,4 @@
 	</div>
 	<!-- FIN CUERPO -->
 </div>
+
