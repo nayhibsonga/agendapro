@@ -48,11 +48,26 @@ class SearchsController < ApplicationController
 		@results.each do |location|
 			if !File.exist?("app/assets/images/search/pin_map#{i}.png")
 				img = MiniMagick::Image.from_file("app/assets/images/search/pin_map.png")
-				img.combine_options do |c|
-			    	c.draw "text 9,22 '#{i.to_s}'"
-					c.fill("#FFFFFF")
-					c.pointsize "17"
+				if i<10
+					img.combine_options do |c|
+				    	c.draw "text 9,22 '#{i.to_s}'"
+						c.fill("#FFFFFF")
+						c.pointsize "17"
+					end
+				elsif i<100
+					img.combine_options do |c|
+				    	c.draw "text 4,22 '#{i.to_s}'"
+						c.fill("#FFFFFF")
+						c.pointsize "17"
+					end
+				else
+					img.combine_options do |c|
+				    	c.draw "text 1,22 '#{i.to_s}'"
+						c.fill("#FFFFFF")
+						c.pointsize "17"
+					end
 				end
+					
 				img.write("app/assets/images/search/pin_map#{i}.png")
 			end
 			i = i+1			
