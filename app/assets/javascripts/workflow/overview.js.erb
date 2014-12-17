@@ -95,8 +95,17 @@ var myAlert;
 $(function() {
   myAlert = new Alert('.main');
 
-  $('#outcallDistricts').hide();
-  $('#outcallDistricts').empty();
+  if ($('input[name="localRadio"]:checked').data('outcall') == true) {
+    $('#outcallDistricts').empty();
+    loadOutcallDistricts($('input[name="localRadio"]:checked').val());
+    $('.google-maps-empresa').hide();
+    $('#outcallDistricts').show();
+  }
+  else {
+    $('.google-maps-empresa').show();
+    $('#outcallDistricts').hide();
+    $('#outcallDistricts').empty();
+  }
 
   $('[name="localRadio"]').on('click', function(event) {
     var id = event.target.getAttribute('value');
