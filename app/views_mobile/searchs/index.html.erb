@@ -1,3 +1,30 @@
+<div class="modal fade" id="geolocation-modal" tabindex="-1" role="dialog" aria-labelledby="siginLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title">Escribe la ubicación dónde buscar...</h4>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="form-group">
+                        <div class="col-xs-12">
+                            <div class="input-group input-group-lg">
+                                <%= text_field_tag :inputLocalization2, params[:inputLocalization], class: "form-control ", placeholder: "Escribe tu dirección, sector o comuna...", required: true %>
+                                <span class="input-group-btn">
+                                    <button id="geolocate_btn2" class="btn btn-default geolocate_btn" type="button"><i class="fa fa-crosshairs"></i> Encuéntrame</button>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-green" id="modal_search">Buscar</button>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
 <!-- search -->
 <div class="background fill" style="background-color: #646464; background-image: url(<%= asset_path 'search/fondo'+rand(1..7).to_s+'.png' %>)" id="buscador">
     <div class="fill">
@@ -72,64 +99,83 @@
                     <!-- Wrapper for slides -->
                     <div class="carousel-inner" role="listbox">
                         <div class="item active">
-                            <div>
-                                <%= image_tag "search/1spa.png", alt: "Spa" %>
-                                <p>Spa</p>
+                            <a data-search="spa">
+                                <div>
+                                    <%= image_tag "search/1spa.png", alt: "Spa" %>
+                                    <p>Spa</p>
+                                </div>
+                            </a>
+                        </div>
+                        <div class="item">
+                            <a data-search="peluquería">
+                                <div>
+                                    <%= image_tag "search/2peluqueria.png", alt: "Peluquerías" %>
+                                    <p>Peluquerías</p>
+                                </div>
+                            </a>
+                        </div>
+                        <div class="item">
+                            <a data-search="maquillaje">
+                                <div>
+                                    <%= image_tag "search/3maquillaje.png", alt: "Maquillaje" %>
+                                    <p>Maquillaje</p>
+                                </div>
+                            </a>
+                        </div>
+                        <div class="item">
+                            <a data-search="centro de estética">
+                                <div>
+                                    <%= image_tag "search/4centrosdeestetica.png", alt: "Clinicas y Centros de Estetica" %>
+                                    <p>Centros de Estetica</p>
+                                </div>
+                            </a>
+                        </div>
+                        <div class="item">
+                            <a data-search="masaje">
+                                <div>
+                                    <%= image_tag "search/5masajes.png", alt: "Masajes" %>
+                                    <p>Masajes</p>
+                                </div>
+                            </a>
+                        </div>
+                        <div class="item">
+                            <a data-search="manicure">
+                                <div>
+                                    <%= image_tag "search/6manosypies.png", alt: "Manos y Pies" %>
+                                    <p>Manos y Pies</p>
+                                </div>
+                            </a>
+                        </div>
+                        <div class="item">
+                            <a data-search="medicina alternativa">
+                                <div>
+                                    <%= image_tag "search/7medicinaalternativa.png", alt: "Medicina Alternativa" %>
+                                    <p>Medicina Alternativa</p>
+                                </div>
+                            </a>
+                        </div>
+                        <div class="item">
+                            <a data-search="bronceado">
+                                <div>
+                                    <%= image_tag "search/8bronceados.png", alt: "Bronceados" %>
+                                    <p>Bronceados</p>
                             </div>
                         </div>
                         <div class="item">
-                            <div>
-                                <%= image_tag "search/2peluqueria.png", alt: "Peluquerías" %>
-                                <p>Peluquerías</p>
-                            </div>
+                            <a data-search="tratamiento facial">
+                                <div>
+                                    <%= image_tag "search/9tratamientosfaciales.png", alt: "Tratamientos Faciales" %>
+                                    <p>Tratamientos Faciales</p>
+                                </div>
+                            </a>
                         </div>
                         <div class="item">
-                            <div>
-                                <%= image_tag "search/3maquillaje.png", alt: "Maquillaje" %>
-                                <p>Maquillaje</p>
-                            </div>
-                        </div>
-                        <div class="item">
-                            <div>
-                                <%= image_tag "search/4centrosdeestetica.png", alt: "Clinicas y Centros de Estetica" %>
-                                <p>Centros de Estetica</p>
-                            </div>
-                        </div>
-                        <div class="item">
-                            <div>
-                                <%= image_tag "search/5masajes.png", alt: "Masajes" %>
-                                <p>Masajes</p>
-                            </div>
-                        </div>
-                        <div class="item">
-                            <div>
-                                <%= image_tag "search/6manosypies.png", alt: "Manos y Pies" %>
-                                <p>Manos y Pies</p>
-                            </div>
-                        </div>
-                        <div class="item">
-                            <div>
-                                <%= image_tag "search/7medicinaalternativa.png", alt: "Medicina Alternativa" %>
-                                <p>Medicina Alternativa</p>
-                            </div>
-                        </div>
-                        <div class="item">
-                            <div>
-                                <%= image_tag "search/8bronceados.png", alt: "Bronceados" %>
-                                <p>Bronceados</p>
-                            </div>
-                        </div>
-                        <div class="item">
-                            <div>
-                                <%= image_tag "search/9tratamientosfaciales.png", alt: "Tratamientos Faciales" %>
-                                <p>Tratamientos Faciales</p>
-                            </div>
-                        </div>
-                        <div class="item">
-                            <div>
-                                <%= image_tag "search/10tratamientoscorporales.png", alt: "Tratamientos Corporales" %>
-                                <p>Tratamientos Corporales</p>
-                            </div>
+                            <a data-search="tratamiento corporal">
+                                <div>
+                                    <%= image_tag "search/10tratamientoscorporales.png", alt: "Tratamientos Corporales" %>
+                                    <p>Tratamientos Corporales</p>
+                                </div>
+                            </a>
                         </div>
                     </div>
                 </div>

@@ -1,110 +1,138 @@
-<div class="company-header">
+<div class="workflow-header">
   <div class="container">
-    <% if @company.description.blank? %>
-      <div class="row">
-        <div class="col-md-6 company-header-left">
-          <div>
-          <% if @company.logo_url %>
-            <%= image_tag @company.logo_url.to_s, :size => "80x80", :alt => @company.name, :class => "company-logo" %>
-          <% else %>
-            <%= image_tag 'Iso_Pro_Color.png', :alt => 'AgendaPro', :size => "80x80" %>
-          <% end %>
-          </div>
-        </div>
-        <% if @selectedLocation %>
-          <div class="col-md-6 company-header-right" id="phone-info">
-          
-            <%= image_tag 'white_phone.png', :alt => '', :size => "12x14", :class=>"loc-icon" %>:&nbsp;
-            <span id="phone-number">
-              <%= @selectedLocation.phone %>
-            </span><br />
-            <%= image_tag 'address_white.png', :alt => '', :size => "12x14", :class=>"loc-icon" %>:&nbsp;
-            <span id="phone-address">
-              <%= if !@selectedLocation.outcall then @selectedLocation.address+', '+@selectedLocation.district.name else "A Domicilio" end %>
-            </span>       
-          </div>
-        <% else %>
-          <div class="col-md-6 company-header-right" id="phone-info" hidden>
-            <%= image_tag 'white_phone.png', :alt => '', :size => "12x14", :class=>"loc-icon" %>:&nbsp;
-            <span id="phone-number"></span><br />
-            <%= image_tag 'address_white.png', :alt => '', :size => "12x14", :class=>"loc-icon" %>:&nbsp;
-            <span id="phone-address"></span>
-          </div>
-        <% end %>
-      </div>
-      <div class="row">
-        <div class="col-md-6 company-header-left">
-          <div>
-          <%= @company.name %>
-          </div>
-        </div>
-        <div class="col-md-6 company-header-right">
 
-        </div>
-      </div>
-    <% else %>
-      <div class="row">
-        <div class="col-md-6 company-header-left">
-          <div>
-          <% if @company.logo_url %>
-            <%= image_tag @company.logo_url.to_s, :size => "100x100", :alt => @company.name, :class => "company-logo" %>
-          <% else %>
-            <%= image_tag 'Iso_Pro_Color.png', :alt => 'AgendaPro', :size => "80x80" %>
-          <% end %>
+  
+    <div class="row">
+      <% if !@company.description.blank? %>
+        <div class="col-md-6 company-header-left company-header">
+          <div class="row">
+            <div class="col-md-3">
+              <% if @company.logo_url %>
+                <%= image_tag @company.logo_url.to_s, :size => "80x80", :alt => @company.name, :class => "company-logo" %>
+              <% else %>
+                <%= image_tag 'Iso_Pro_Color.png', :alt => 'AgendaPro', :size => "80x80" %>
+              <% end %>
+            </div>
+            <div class="col-md-6">
+              <div class="row">
+                <div class="col-md-12 company-name">
+                  <%= @company.name %>
+                </div>
+              </div>
+              <div class="row header-btns">
+                <div class="col-md-6">
+                  <div class="header-btn active">
+                    <a href="#" id="boton-locales">Lugares</a>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="header-btn inactive" style="float: left;">
+                    <a href="#" id="boton-servicio">Servicios</a>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-3">
+
+            </div>
           </div>
         </div>
-        <div class="col-md-6 company-header-right">
+        <div class="col-md-4 company-header-center company-header">
           <div class="header-description">
             <%= @company.description %>
           </div>
         </div>
-      </div>
-      <div class="row">
-        <div class="col-md-6 company-header-left">
-          <div>
-          <%= @company.name %>
+        <div class="col-md-2 company-header-right company-header">
+          
+          <% if @selectedLocation %>
+            <div id="phone-info">         
+              <%= image_tag 'telefono.png', :alt => '', :size => "12x14", :class=>"loc-icon" %>&nbsp;
+              <span id="phone-number">
+                <%= @selectedLocation.phone %>
+              </span><br />
+              <%= image_tag 'ubicacion.png', :alt => '', :size => "12x14", :class=>"loc-icon" %>&nbsp;
+              <span id="phone-address">
+                <%= if !@selectedLocation.outcall then @selectedLocation.address+', '+@selectedLocation.district.name else "A Domicilio" end %>
+              </span>       
+            </div>
+          <% else %>
+            <div id="phone-info" hidden>
+              <%= image_tag 'telefono.png', :alt => '', :size => "12x14", :class=>"loc-icon" %>&nbsp;
+              <span id="phone-number"></span><br />
+              <%= image_tag 'ubicacion.png', :alt => '', :size => "12x14", :class=>"loc-icon" %>&nbsp;
+              <span id="phone-address"></span>
+            </div>
+          <% end %>
+          <div style="clear: both;"></div>
+        </div>
+
+      <% else %>
+        <div class="col-md-6 company-header-left company-header" style="border-right: 1px solid #949292;">
+          <div class="row">
+            <div class="col-md-3">
+              <% if @company.logo_url %>
+                <%= image_tag @company.logo_url.to_s, :size => "80x80", :alt => @company.name, :class => "company-logo" %>
+              <% else %>
+                <%= image_tag 'Iso_Pro_Color.png', :alt => 'AgendaPro', :size => "80x80" %>
+              <% end %>
+            </div>
+            <div class="col-md-6">
+              <div class="row">
+                <div class="col-md-12 company-name">
+                  <%= @company.name %>
+                </div>
+              </div>
+              <div class="row header-btns">
+                <div class="col-md-6">
+                  <div class="header-btn active">
+                    <a href="#" id="boton-locales">Lugares</a>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="header-btn inactive" style="float: left;">
+                    <a href="#" id="boton-servicio">Servicios</a>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-3">
+
+            </div>
           </div>
         </div>
-        <% if @selectedLocation %>
-          <div class="col-md-6 company-header-right" id="phone-info">
+        <div class="col-md-6 company-header-center2 company-header">
           
-            <%= image_tag 'white_phone.png', :alt => '', :size => "12x14", :class=>"loc-icon" %>:&nbsp;
-            <span id="phone-number">
-              <%= @selectedLocation.phone %>
-            </span><br />
-            <%= image_tag 'address_white.png', :alt => '', :size => "12x14", :class=>"loc-icon" %>: &nbsp;
-            <span id="phone-address">
-              <%= if !@selectedLocation.outcall then @selectedLocation.address+', '+@selectedLocation.district.name else "A Domicilio" end %>
-            </span>       
-          </div>
-        <% else %>
-          <div class="col-md-6 company-header-right" id="phone-info" hidden>
-            <%= image_tag 'white_phone.png', :alt => '', :size => "12x14", :class=>"loc-icon" %>:&nbsp;
-            <span id="phone-number"></span><br />
-            <%= image_tag 'address_white.png', :alt => '', :size => "12x14", :class=>"loc-icon" %>:&nbsp;
-            <span id="phone-address"></span>
-          </div>
-        <% end %>
-      </div>
-    <% end %>
+          <% if @selectedLocation %>
+            <div id="phone-info">         
+              <%= image_tag 'telefono.png', :alt => '', :size => "12x14", :class=>"loc-icon" %>&nbsp;
+              <span id="phone-number">
+                <%= @selectedLocation.phone %>
+              </span><br />
+              <%= image_tag 'ubicacion.png', :alt => '', :size => "12x14", :class=>"loc-icon" %>&nbsp;
+              <span id="phone-address">
+                <%= if !@selectedLocation.outcall then @selectedLocation.address+', '+@selectedLocation.district.name else "A Domicilio" end %>
+              </span>       
+            </div>
+          <% else %>
+            <div id="phone-info" hidden>
+              <%= image_tag 'telefono.png', :alt => '', :size => "12x14", :class=>"loc-icon" %>&nbsp;
+              <span id="phone-number"></span><br />
+              <%= image_tag 'ubicacion.png', :alt => '', :size => "12x14", :class=>"loc-icon" %>&nbsp;
+              <span id="phone-address"></span>
+            </div>
+          <% end %>
+          <div style="clear: both;"></div>
+        </div>
+      <% end %>
+
+    </div>
   </div>
 </div>
+
 <div class="overview-main">
   <div class="container">
-    <div class="row company-header-btns">
-      <div class="col-md-6">
-        <div class="header-btn active" style="float: right;">
-          <a href="#" id="boton-locales">Lugares</a>
-        </div>
-      </div>
-      <div class="col-md-6">
-        <div class="header-btn inactive" style="float: left;">
-          <a href="#" id="boton-servicio">Servicios</a>
-        </div>
-      </div>
-    </div>
 
-    <div class="row" style="margin-top: 20px; color: #979797;">
+    <!--<div class="row" style="margin-top: 20px; color: #979797;">
       <div class="col-md-6">
       </div>
       <div class="col-md-3 dark-gray" style="font-size: 20px;">
@@ -112,7 +140,7 @@
       </div>
       <div class="col-md-3">
       </div>
-    </div>
+    </div>-->
 
     <div class="row">
       <div class="col-md-6">
@@ -123,6 +151,7 @@
         </div>
       </div>
       <div class="col-md-3">
+        <h3 style="color: #505050; padding-top: 0px !important; margin-top: 0px !important;">Selecciona el lugar</h3>
         <table class="table table-locals" id="locales-empresa">
           <tbody>
             <% @locations.each do |local| %>

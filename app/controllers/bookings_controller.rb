@@ -420,6 +420,7 @@ class BookingsController < ApplicationController
 
   def book_service
     @location_id = params[:location]
+    @selectedLocation = Location.find(@location_id)
     @company = Location.find(params[:location]).company
     cancelled_id = Status.find_by(name: 'Cancelado').id
     service_provider = ServiceProvider.find(params[:provider])
@@ -519,7 +520,7 @@ class BookingsController < ApplicationController
     id = crypt.decrypt_and_verify(params[:confirmation_code])
     @booking = Booking.find(id)
     @company = Location.find(@booking.location_id).company
-
+    @selectedLocation = Location.find(@booking.location_id)
     # => Domain parser
     host = request.host_with_port
     @url = @company.web_address + '.' + host[host.index(request.domain)..host.length]
@@ -645,7 +646,7 @@ class BookingsController < ApplicationController
   def edit_booking_post
     @booking = Booking.find(params[:id])
     @company = Location.find(@booking.location_id).company
-
+    @selectedLocation = Location.find(@booking.location_id)
     if @booking.update(start: params[:start], end: params[:end])
       #flash[:notice] = "Reserva actualizada exitosamente."
       # BookingMailer.update_booking(@booking)
@@ -666,7 +667,7 @@ class BookingsController < ApplicationController
     id = crypt.decrypt_and_verify(params[:confirmation_code])
     @booking = Booking.find(id)
     @company = Location.find(@booking.location_id).company
-
+    @selectedLocation = Location.find(@booking.location_id)
     @booking.update(:status => Status.find_by(:name => 'Confirmado'))
 
     render layout: 'workflow'
@@ -691,6 +692,7 @@ class BookingsController < ApplicationController
       id = crypt.decrypt_and_verify(params[:confirmation_code])
       @booking = Booking.find(id)
       @company = Location.find(@booking.location_id).company
+      @selectedLocation = Location.find(@booking.location_id)
       
       now = DateTime.new(DateTime.now.year, DateTime.now.mon, DateTime.now.mday, DateTime.now.hour, DateTime.now.min)
       booking_start = DateTime.parse(@booking.start.to_s) - @company.company_setting.before_edit_booking / 24.0

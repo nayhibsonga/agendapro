@@ -121,5 +121,46 @@ class Location < ActiveRecord::Base
 			end
 		end
 	end
+
+	def categories
+		location_resources = Location.find(self.id).resource_locations.pluck(:resource_id)
+	    service_providers = ServiceProvider.where(location_id: self.id)
+
+	    categories = ServiceCategory.where(:company_id => Location.find(self.id).company_id).order(order: :asc)
+	    services = Service.where(:active => true, :id => ServiceStaff.where(service_provider_id: service_providers.pluck(:id)).pluck(:service_id)).order(order: :asc)
+	    service_resources_unavailable = ServiceResource.where(service_id: services)
+	    if location_resources.any?
+	      if location_resources.length > 1
+	        service_resources_unavailable = service_resources_unavailable.where('resource_id NOT IN (?)', location_resources)
+	      else
+	        service_resources_unavailable = service_resources_unavailable.where('resource_id <> ?', location_resources)
+	      end
+	    end
+	    if service_resources_unavailable.any?
+	      if service_resources_unavailable.length > 1
+	        services = services.where('services.id NOT IN (?)', service_resources_unavailable.pluck(:service_id))
+	      else
+	        services = services.where('id <> ?', service_resources_unavailable.pluck(:service_id))
+	      end
+	    end
+
+	    categorized_services = Array.new
+	    categories.each do |category|
+	      services_array = Array.new
+	      services.each do |service|
+	        if service.service_category_id == category.id
+	          serviceJSON = service.attributes.merge({'name_with_small_outcall' => service.name_with_small_outcall })
+	          services_array.push(serviceJSON)
+	        end
+	      end
+	      service_hash = {
+	        :id => category.id,
+	        :category => category.name,
+	        :services => services_array
+	      }
+	      categorized_services.push(service_hash)
+	    end
+	end
+
 end
  

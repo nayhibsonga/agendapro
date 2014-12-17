@@ -1,8 +1,8 @@
 <div class="row" id="navegacion-workflow">
   <div class="col-md-12">
-  <div class="container">
-   <i class="fa fa-clock-o gray-icon"></i>&nbsp;Cancelar reserva
-   </div>
+    <div class="container" style="color: #505050 !important; padding-top: 5px;">
+     <i class="fa fa-clock-o gray-icon">&nbsp;&nbsp;<span style="font-size: 24px !important; margin-top: -5px;">Cancelar reserva</span></i>
+    </div>
   </div>
 </div>
 
@@ -18,7 +18,7 @@
                 </div>
               </div>
               <div class="panel-body" style="max-height: 350px; overflow-y: auto;">
-                <p style="padding-left: 10px; padding-top: 8px;">Si cancelas tu reserva, otra persona podrá utilizar la hora liberada.</p>
+                <p style="padding-left: 10px; padding-top: 8px; color: #505050;">Si cancelas tu reserva, otra persona podrá utilizar la hora liberada.</p>
               </div>
             </div>
             <%= form_tag("/cancel_booking", method: "post", role: "form", class: "form-horizontal", id: "edit_form" ) do %>
@@ -33,7 +33,7 @@
                 </div>
               </div>
               <div class="panel-body">
-                <p style="padding-left: 10px; padding-top: 8px;">Tu reserva fue cancelada exitosamente</p>
+                <p style="padding-left: 10px; padding-top: 8px; color: #505050;">Tu reserva fue cancelada exitosamente</p>
               </div>
             </div>
           <% end %>
