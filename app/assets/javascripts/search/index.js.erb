@@ -109,6 +109,9 @@ $(function() {
         if (autocomplete.getPlace().geometry) {
             $('#latitude').val(autocomplete.getPlace().geometry.location.k);
             $('#longitude').val(autocomplete.getPlace().geometry.location.D);
+            document.cookie = "lat=" + escape(autocomplete.getPlace().geometry.location.k);
+            document.cookie = "lng=" + escape(autocomplete.getPlace().geometry.location.D);
+            document.cookie = "formatted_address=" + escape(autocomplete.getPlace().formatted_address);
         }
     });
     google.maps.event.addListener(autocomplete2, 'place_changed', function() {
@@ -116,6 +119,9 @@ $(function() {
             $('#inputLocalization').val(autocomplete2.getPlace().formatted_address);
             $('#latitude').val(autocomplete2.getPlace().geometry.location.k);
             $('#longitude').val(autocomplete2.getPlace().geometry.location.D);
+            document.cookie = "lat=" + escape(autocomplete2.getPlace().geometry.location.k);
+            document.cookie = "lng=" + escape(autocomplete2.getPlace().geometry.location.D);
+            document.cookie = "formatted_address=" + escape(autocomplete2.getPlace().formatted_address);
         }
     });
     $("#inputLocalization").focusin(function () {
@@ -159,8 +165,11 @@ $(function() {
                     latlng = new google.maps.LatLng(lat, lng);
                 $('#latitude').val(lat);
                 $('#longitude').val(lng);
+                document.cookie = "lat=" + escape(lat);
+                document.cookie = "lng=" + escape(lng);
                 $("#inputLocalization").val(results[0].formatted_address);
                 $("#inputLocalization2").val(results[0].formatted_address);
+                document.cookie = "formatted_address=" + escape(results[0].formatted_address);
                 $('#inputSearch').focus();
                 $('#search-form').submit();
             }
@@ -179,19 +188,24 @@ $(function() {
                     positioned = true;
                     $('#latitude').val(position.coords.latitude);
                     $('#longitude').val(position.coords.longitude);
+                    document.cookie = "lat=" + escape(position.coords.latitude);
+                    document.cookie = "lng=" + escape(position.coords.longitude);
                     var latlng = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
                     geocoder.geocode({'latLng': latlng}, function(results, status) {
                         if (status == google.maps.GeocoderStatus.OK) {
                           if (results[0]) {
                             $('#inputLocalization').val(results[0].formatted_address);
                             $('#inputLocalization2').val(results[0].formatted_address);
+                            document.cookie = "formatted_address=" + escape(results[0].formatted_address);
                           } else {
                             $('#inputLocalization').val(position.coords.latitude+', '+position.coords.longitude);
                             $('#inputLocalization2').val(position.coords.latitude+', '+position.coords.longitude);
+                            document.cookie = "formatted_address=" + escape(position.coords.latitude+', '+position.coords.longitude);
                           }
                         } else {
                             $('#inputLocalization').val(position.coords.latitude+', '+position.coords.longitude);
                             $('#inputLocalization2').val(position.coords.latitude+', '+position.coords.longitude);
+                            document.cookie = "formatted_address=" + escape(position.coords.latitude+', '+position.coords.longitude);
                         }
                         $('#inputSearch').focus();
                         $('.geolocate_btn').html('<i class="fa fa-crosshairs"></i> Encuéntrame');
@@ -262,5 +276,4 @@ $(function() {
     $('#modal_search').click(function() {
         $('#search-form').submit();
     });
-    $('#inputLocalization').focus();
 });

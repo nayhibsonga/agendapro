@@ -58,7 +58,7 @@
                             <%= image_tag 'search/pin-overlay.png', :alt => 'Pin', class: "img-responsive pull-left" %>
                         </div>
                         <div class="col-xs-10 col-sm-9 col-md-7">
-                            <%= form_tag({controller: "searchs", action: "search"}, method: "GET", class: "form-horizontal", id: "search-form") do %>
+                            <%= form_tag({controller: "searchs", action: "search"}, method: "GET", class: "form-horizontal search-form", id: "search-form") do %>
                                 <input type="hidden" id="latitude" name="latitude" value="-33.412819">
                                 <input type="hidden" id="longitude" name="longitude" value="-70.591945">
                                 <div class="form-group">
@@ -386,11 +386,25 @@
 </div>
 
 <% content_for :scripts do %>
-<%= javascript_include_tag 'validations/validate' %>
-<%= javascript_include_tag 'validations/home/contact' %>
-<%= javascript_include_tag 'split-name' %>
-<%= javascript_include_tag 'jquery.carouFredSel-6.2.1'  %>
-<%= javascript_include_tag 'typed'  %>
-<%= javascript_include_tag 'Alert' %>
-<%= javascript_include_tag 'search/index'  %>
+    <%= javascript_include_tag 'validations/validate' %>
+    <%= javascript_include_tag 'validations/home/contact' %>
+    <%= javascript_include_tag 'split-name' %>
+    <%= javascript_include_tag 'jquery.carouFredSel-6.2.1'  %>
+    <%= javascript_include_tag 'typed'  %>
+    <%= javascript_include_tag 'Alert' %>
+    <%= javascript_include_tag 'search/index'  %>
+
+    <% if @lat && @lng && @formatted_address %>
+    <script type="text/javascript">
+        $('#latitude').val(<%= @lat %>);
+        $('#longitude').val(<%= @lng %>);
+        $('#inputLocalization').val('<%= @formatted_address %>');
+        $('#inputLocalization2').val('<%= @formatted_address %>');
+    </script>
+    <% else %>
+    <script type="text/javascript">
+        $('#inputLocalization').focus();
+    </script>
+    <% end %>
+
 <% end %>

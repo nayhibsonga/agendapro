@@ -28,11 +28,8 @@
         <!-- end: JavaScript-->
 
         <!-- Fav and touch icons -->
-        <%= favicon_link_tag "Iso_Pro_Color.png", :rel => "shortcut icon" %>
+        <%= favicon_link_tag "favicon.png", :rel => "shortcut icon" %>
 
-        <!--Start of Zopim Live Chat Script-->
-        <%= javascript_include_tag 'zopim' %>
-        <!--End of Zopim Live Chat Script-->
     </head>
 
     <body>
@@ -149,6 +146,9 @@
         <%= javascript_include_tag "workflow" %>
         <%= javascript_include_tag "jquery.browser.min" %>
         <%= javascript_include_tag "browser-detect" %>
+        <!--Start of Zopim Live Chat Script-->
+        <%= javascript_include_tag 'zopim' %>
+        <!--End of Zopim Live Chat Script-->
 
         <script>
           $( "#menu-display" ).click(function() {
