@@ -39,7 +39,7 @@
                             <i class="fa fa-bars"></i>
                         </a>
                         <a href="<%= root_without_subdomain %>" class="navbar-brand">
-                            <%= image_tag 'logos/logo2.png', :alt => 'AgendaPro', :size => '127x43' %>
+                            <%= image_tag 'logos/logo2.png', :alt => 'AgendaPro', :size => '120x41' %>
                         </a>
                     </div>
                     <!-- Collect the nav links, forms, and other content for toggling -->
@@ -51,20 +51,21 @@
                         </p>
                         <ul>
                             <li><%= link_to 'Buscador', root_path %></li>
-                            <li><%= link_to 'Clientes', root_path(anchor: 'clients-target') %></li>
-                            <li><%= link_to 'Que Hacemos', root_path(anchor: 'what-we-do-target') %></li>
-                            <li><%= link_to 'Contacto', root_path(anchor: 'contact-target') %></li>
+                            <li><%= link_to 'Inicio', home_path %></li>
+                            <li><%= link_to "Características", features_path %></li>
+                            <li><%= link_to "Planes", view_plans_path %></li>
+                            <li><%= link_to "Tutoriales", tutorials_path %></li>
+                            <li><%= link_to "Contacto", contact_path %></li>
                             <li class="divider"></li>
                             <% if user_signed_in? %>
                             <!-- <li><%= link_to '<i class="fa fa-calendar"></i> Mi Agenda'.html_safe, my_agenda_path(:id => current_user.id) %></li> -->
                             <li><%= link_to '<i class="fa fa-user"></i> Editar Perfil'.html_safe, edit_user_registration_path %></li>
-                            <li><%= link_to '<i class="fa fa-question"></i> Tutoriales'.html_safe, tutorials_path %></li>
                             <li><%= link_to '<i class="fa fa-power-off"></i> Salir'.html_safe, destroy_user_session_path, method: :delete %></li>
                             <% else %>
                             <li><%= link_to '<i class="fa fa-user"></i> Registrate'.html_safe, new_user_registration_path, class: "menu-green" %></li>
                             <li><%= link_to '<i class="fa fa-calendar-o"></i> Iniciar Sesión'.html_safe, new_user_session_path, class: "menu-green" %></li>
                             <% end %>
-                            <li><%= link_to "Agrega tu Empresa", home_path, class: "menu-orange" %></li>
+                            <!-- <li><%= link_to "Agrega tu Empresa", home_path, class: "menu-orange" %></li> -->
                         </ul>
                     </nav><!-- /slide menu right -->
                 </div>

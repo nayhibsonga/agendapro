@@ -24,6 +24,32 @@ body {
 	padding: 5px 8px;
 }
 
+/*Overview*/
+.box-search {
+	display: inline-block;
+	padding: 3px 10px;
+	width: 100%;
+	border: 1px solid #949292;
+	margin-bottom: 10px;
+}
+.box-search:active,
+.box-search:focus,
+.box-search:hover {
+	box-shadow: 2px 2px 2px #505050;
+}
+.box-search > a {
+	color: #505050;
+	outline: 0;
+}
+.box-search > a:active,
+.box-search > a:focus,
+.box-search > a:hover {
+	text-decoration: none;
+}
+.bloque-local h3 {
+	border-bottom: 1px solid #505050;
+}
+
 /*Workflow*/
 .hidden {
 	display: none;
@@ -58,8 +84,8 @@ body {
 }
 .btn-orange {
 	color: #ffffff;
-	background-color: #FD9622;
-	border-color: #EE8D0E;
+	background-color: #fd9610;
+	border-color: #db7400;
 }
 .btn-orange:hover,
 .btn-orange:focus,
@@ -67,27 +93,23 @@ body {
 .btn-orange:active,
 .btn-orange.active {
   color: #ffffff;
-  background-color: #EE8D0E;
+  background-color: #db7400;
   border-color: #DF840D;
 }
 .panel-agendapro {
-  border-color: #00CA8A;
+  border-color: #1ba970;
 }
 .panel-agendapro > .panel-heading {
   color: #ffffff;
   text-align: center;
   background-color: #22c488;
-  border-color: #00CA8A;
+  border-color: #1ba970;
 }
 .panel-agendapro > .panel-heading + .panel-collapse > .panel-body {
-  border-top-color: #00CA8A;
-}
-.panel-agendapro > .panel-heading .badge {
-  color: #22c488;
-  background-color: #31708f;
+  border-top-color: #1ba970;
 }
 .panel-agendapro > .panel-footer + .panel-collapse > .panel-body {
-  border-bottom-color: #00CA8A;
+  border-bottom-color: #1ba970;
 }
 .panel-white {
   border-bottom-color: #ddd;
@@ -122,7 +144,7 @@ a.collapsed .panel-title-caret:after {
 .btn-press:active,
 .btn-press:focus {
 	color: #ffffff;
-	background: #FD9622;
+	background: #fd9610;
 	outline: 0;
 	-webkit-box-shadow: inset 0 3px 5px rgba(0, 0, 0, .125);
 	box-shadow: inset 0 3px 5px rgba(0, 0, 0, .125);
@@ -133,15 +155,16 @@ a.collapsed .panel-title-caret:after {
 	max-width: 200px;
 }
 .vertical-divider {
-	border-right: 1px solid #bfbfbf;
+	border-right: 1px solid #949292;
 	height: 60px;
 	display: inline-block;
 	vertical-align: middle;
 	margin: 0 4px;
 }
 .background-grey {
-	background-color: #bfbfbf;
+	background-color: #949292;
 	color: #ffffff;
+	padding: 5px;
 }
 .background-grey h4 {
 	margin-top: 30px;
