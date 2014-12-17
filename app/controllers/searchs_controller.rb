@@ -10,13 +10,6 @@ class SearchsController < ApplicationController
 		host = request.host_with_port
 		@domain = host[host.index(request.domain)..host.length]
 
-		# => Geolocation
-		district = District.find(params[:district])
-		city = district.city
-		region = city.region
-		country = region.country
-		@geolocation = district.name + ', ' + city.name + ', ' + region.name + ', ' + country.name
-
 		lat = params[:latitude]
 		long = params[:longitude]
 

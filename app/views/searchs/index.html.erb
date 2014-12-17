@@ -14,6 +14,33 @@
         </div><!-- /.modal-content -->
     </div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
+<div class="modal fade" id="geolocation-modal" tabindex="-1" role="dialog" aria-labelledby="siginLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title">Escribe la ubicación dónde buscar...</h4>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="form-group">
+                        <div class="col-sm-12">
+                            <div class="input-group input-group-lg">
+                                <%= text_field_tag :inputLocalization2, params[:inputLocalization], class: "form-control ", placeholder: "Escribe tu dirección, sector o comuna...", required: true %>
+                                <span class="input-group-btn">
+                                    <button id="geolocate_btn2" class="btn btn-default geolocate_btn" type="button"><i class="fa fa-crosshairs"></i> Encuéntrame</button>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-green" id="modal_search">Buscar</button>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
 
 <!-- search -->
 <div class="background fill" style="background-color: #646464; background-image: url(<%= asset_path 'search/fondo'+rand(1..7).to_s+'.png' %>);" id="buscador">
@@ -32,7 +59,6 @@
                         </div>
                         <div class="col-xs-10 col-sm-9 col-md-7">
                             <%= form_tag({controller: "searchs", action: "search"}, method: "GET", class: "form-horizontal", id: "search-form") do %>
-                                <input type="hidden" id="district" name="district" value="1">
                                 <input type="hidden" id="latitude" name="latitude" value="-33.412819">
                                 <input type="hidden" id="longitude" name="longitude" value="-70.591945">
                                 <div class="form-group">
@@ -40,7 +66,7 @@
                                         <div class="input-group input-group-lg">
                                             <%= text_field_tag :inputLocalization, params[:inputLocalization], class: "form-control form-transparent", placeholder: "Escribe tu dirección, sector o comuna...", required: true %>
                                             <span class="input-group-btn">
-                                                <button id="geolocate_btn" class="btn btn-down form-transparent" type="button"><i class="fa fa-crosshairs"></i> Encuéntrame</button>
+                                                <button id="geolocate_btn" class="btn btn-down form-transparent geolocate_btn" type="button"><i class="fa fa-crosshairs"></i> Encuéntrame</button>
                                             </span>
                                         </div>
                                     </div>
@@ -91,23 +117,23 @@
             <div class="row row-padded">
                 <div class="btn-toolbar" role="toolbar">
                 <div class="btn-group btn-group-lg btn-group-justified blocks btn-group-fill-height">
-                <a href="#" class="btn btn-default" role="button">
+                <a class="btn btn-default sector_search" role="button" data-search="spa">
                         <%= image_tag "search/1.png", alt: "Spa", size: "48x37" %>
                         <p>Spa</p>
                 </a>
-                <a href="#" class="btn btn-default" role="button">
+                <a class="btn btn-default sector_search" role="button" data-search="peluquería">
                         <%= image_tag "search/2.png", alt: "Peluquerías", size: "48x37" %>
                         <p>Peluquerías</p>
                 </a>
-                <a href="#" class="btn btn-default" role="button">
+                <a class="btn btn-default sector_search" role="button" data-search="maquillaje">
                         <%= image_tag "search/3.png", alt: "Maquillaje", size: "48x37" %>
                         <p>Maquillaje</p>
                 </a>
-                <a href="#" class="btn btn-default" role="button">
+                <a class="btn btn-default sector_search" role="button" data-search="centro de estética">
                         <%= image_tag "search/4.png", alt: "Clinicas y Centros de Estetica", size: "48x37" %>
                         <p>Centros de Estetica</p>
                 </a>
-                <a href="#" class="btn btn-default" role="button">
+                <a class="btn btn-default sector_search" role="button" data-search="masaje">
                         <%= image_tag "search/5.png", alt: "Masajes", size: "48x37" %>
                         <p>Masajes</p>
                 </a>
@@ -117,23 +143,23 @@
             <div class="row row-padded">
                 <div class="btn-toolbar" role="toolbar">
                 <div class="btn-group btn-group-lg btn-group-justified btn-group-fill-height">
-                <a href="#" class="btn btn-default" role="button">
+                <a class="btn btn-default sector_search" role="button" data-search="manicure">
                         <%= image_tag "search/6.png", alt: "Manos y Pies", size: "48x37" %>
                         <p>Manos y Pies</p>
                 </a>
-                <a href="#" class="btn btn-default" role="button">
+                <a class="btn btn-default sector_search" role="button" data-search="medicina alternativa">
                         <%= image_tag "search/7.png", alt: "Medicina Alternativa", size: "48x37" %>
                         <p>Medicina Alternativa</p>
                 </a>
-                <a href="#" class="btn btn-default" role="button">
+                <a class="btn btn-default sector_search" role="button" data-search="bronceado">
                         <%= image_tag "search/8.png", alt: "Bronceados", size: "48x37" %>
                         <p>Bronceados</p>
                 </a>
-                <a href="#" class="btn btn-default" role="button">
+                <a class="btn btn-default sector_search" role="button" data-search="tratamiento facial">
                         <%= image_tag "search/9.png", alt: "Tratamientos Faciales", size: "48x37" %>
                         <p>Tratamientos Faciales</p>
                 </a>
-                <a href="#" class="btn btn-default" role="button">
+                <a class="btn btn-default sector_search" role="button" data-search="tratamiento corporal">
                         <%= image_tag "search/10.png", alt: "Tratamientos Corporales", size: "48x37" %>
                         <p>Tratamientos Corporales</p>
                 </a>

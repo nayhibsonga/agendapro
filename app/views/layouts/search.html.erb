@@ -38,33 +38,7 @@
 
 	<body>
         <%= render 'layouts/modals' %>
-        <div class="modal fade" id="geolocation-modal" tabindex="-1" role="dialog" aria-labelledby="siginLabel" aria-hidden="true">
-			<div class="modal-dialog">
-				<div class="modal-content">
-					<div class="modal-header">
-						<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-						<h4 class="modal-title">Escribe la ubicación dónde buscar...</h4>
-					</div>
-					<div class="modal-body">
-						<div class="row">
-							<div class="form-group">
-	                            <div class="col-sm-12">
-	                                <div class="input-group input-group-lg">
-	                                    <%= text_field_tag :inputLocalization2, params[:inputLocalization], class: "form-control form-transparent", placeholder: "Escribe tu dirección, sector o comuna...", required: true %>
-	                                    <span class="input-group-btn">
-	                                        <button id="geolocate_btn2" class="btn btn-down form-transparent" type="button"><i class="fa fa-crosshairs"></i> Encuéntrame</button>
-	                                    </span>
-	                                </div>
-	                            </div>
-	                        </div>
-	                    </div>
-					</div>
-					<div class="modal-footer">
-						<button type="button" class="btn btn-green">Regístrate</button>
-					</div>
-				</div><!-- /.modal-content -->
-			</div><!-- /.modal-dialog -->
-		</div><!-- /.modal -->
+        
 		<!-- start: Header -->
         <!-- <% if user_signed_in? %>
         	<%= render 'layouts/home_dropdown' %>
