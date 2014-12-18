@@ -35,38 +35,33 @@
 				<div class="container">
 					<!-- Brand and toggle get grouped for better mobile display -->
 					<div class="navbar-header">
-						<a class="navbar-toggle toggle-slide-right" href="#menu">
+						<button type="button" class="navbar-toggle collapsed toggle-menu menu-right push-body" data-toggle="collapse" data-target="#navbar-menu">
 							<i class="fa fa-bars"></i>
-						</a>
+						</button>
 						<a href="<%= root_without_subdomain %>" class="navbar-brand">
 							<%= image_tag 'logos/logo1.png', :alt => 'AgendaPro', :size => '120x41' %>
 						</a>
 					</div>
 					<!-- Collect the nav links, forms, and other content for toggling -->
-					<nav class="menu slide-menu-right">
-						<p class="text-right">
-							<a class="close-menu">
-								<i class="fa fa-times"></i>
-							</a>
-						</p>
-						<ul>
+					<div class="cbp-spmenu cbp-spmenu-vertical cbp-spmenu-right collapse navbar-collapse" id="navbar-menu">
+						<ul class="nav navbar-nav">
 							<li><%= link_to 'Buscador', root_path(anchor: 'buscador') %></li>
 							<li><%= link_to 'Clientes', root_path(anchor: 'clients-target') %></li>
-                            <li><%= link_to 'Que Hacemos', root_path(anchor: 'what-we-do-target') %></li>
-                            <li><%= link_to 'Contacto', root_path(anchor: 'contact-target') %></li>
+							<li><%= link_to 'Que Hacemos', root_path(anchor: 'what-we-do-target') %></li>
+							<li><%= link_to 'Contacto', root_path(anchor: 'contact-target') %></li>
 							<li class="divider"></li>
 							<% if user_signed_in? %>
-                            <li><%= link_to '<i class="fa fa-calendar"></i> Mi Agenda'.html_safe, my_agenda_path %></li>
+							<li><%= link_to '<i class="fa fa-calendar"></i> Mi Agenda'.html_safe, my_agenda_path %></li>
 							<li><%= link_to '<i class="fa fa-user"></i> Editar Perfil'.html_safe, edit_user_registration_path %></li>
 							<li><%= link_to '<i class="fa fa-question"></i> Tutoriales'.html_safe, tutorials_path %></li>
 							<li><%= link_to '<i class="fa fa-power-off"></i> Salir'.html_safe, destroy_user_session_path, method: :delete %></li>
-                            <% else %>
+							<% else %>
 							<li><%= link_to '<i class="fa fa-user"></i> Registrate'.html_safe, new_user_registration_path, class: "menu-green" %></li>
-                            <li><%= link_to '<i class="fa fa-calendar-o"></i> Iniciar Sesión'.html_safe, new_user_session_path, class: "menu-green" %></li>
-                            <% end %>
+							<li><%= link_to '<i class="fa fa-calendar-o"></i> Iniciar Sesión'.html_safe, new_user_session_path, class: "menu-green" %></li>
+							<% end %>
 							<li><%= link_to "Agrega tu Empresa", home_path, class: "menu-orange" %></li>
 						</ul>
-					</nav><!-- /slide menu right -->
+					</div>
 				</div>
 			</nav>
 		</header>
@@ -98,6 +93,17 @@
 		<%= javascript_include_tag 'Alert' %>
 		<%= javascript_include_tag "mobile/search" %>
 		<%= yield :scripts %>
+		<script type="text/javascript">
+			$('.navbar-agendapro .navbar-nav > li > a').click(function (event) {
+				var href = $.attr(this, 'href');
+				if (href.length > 0) {
+					var element = href.substring(1);
+					$('html, body').animate({
+						scrollTop: $( element ).offset().top - 50
+					}, 1000);
+				};
+			});
+		</script>
 		<!-- end: JavaScript-->
 	</body>
 </html>

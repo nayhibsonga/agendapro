@@ -3,14 +3,14 @@
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                <h4 class="modal-title">Escribe la ubicación dónde buscar...</h4>
+                <h3 class="modal-title">Escribe la ubicación dónde buscar...</h3>
             </div>
             <div class="modal-body">
                 <div class="row">
                     <div class="form-group">
                         <div class="col-xs-12">
                             <div class="input-group input-group-lg">
-                                <%= text_field_tag :inputLocalization2, params[:inputLocalization], class: "form-control ", placeholder: "Escribe tu dirección, sector o comuna...", required: true %>
+                                <%= text_field_tag :inputLocalization2, params[:inputLocalization], class: "form-control ", placeholder: "Escribe tu dirección...", required: true %>
                                 <span class="input-group-btn">
                                     <button id="geolocate_btn2" class="btn btn-default geolocate_btn" type="button"><i class="fa fa-crosshairs"></i> Encuéntrame</button>
                                 </span>
@@ -39,7 +39,6 @@
                     <div class="row">
                         <div class="col-xs-12">
                             <%= form_tag({controller: "searchs", action: "search"}, method: "GET", class: "form-horizontal", id: "search-form") do %>
-                                <input type="hidden" id="district" name="district" value="1">
                                 <input type="hidden" id="latitude" name="latitude" value="-33.412819">
                                 <input type="hidden" id="longitude" name="longitude" value="-70.591945">
                                 <div class="form-group">
@@ -47,7 +46,7 @@
                                         <div class="input-group input-group-lg">
                                             <%= text_field_tag :inputLocalization, params[:inputLocalization], class: "form-control form-transparent", placeholder: "Escribe tu dirección...", required: true %>
                                             <span class="input-group-btn">
-                                                <button id="geolocate_btn" class="btn btn-down form-transparent" type="button"><i class="fa fa-crosshairs"></i> Encuéntrame</button>
+                                                <button id="geolocate_btn" class="btn btn-down form-transparent geolocate_btn" type="button"><i class="fa fa-crosshairs"></i> Encuéntrame</button>
                                             </span>
                                         </div>
                                     </div>
@@ -393,7 +392,7 @@
                     <!-- Wrapper for slides -->
                     <div class="carousel-inner" role="listbox">
                         <div class="item active">
-                            <p align="justify">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc a neque ipsum. Ut nec metus id dui feugiat volutpat. Nullam gravida lacus vel hendrerit tristique. Vivamus non ex in orci viverra viverra in sit amet nisi. Morbi eu mollis sapien. Sed ut nulla accumsan, accumsan justo non, pellentesque libero.</p>
+                            <p align="justify">Estamos con AgendaPro desde sus inicios y la verdad es que no para de sorprendernos. Nuestros clientes reservan sus horas y llegan siempre sin la necesidad de que estemos pendientes. Además, la visibilidad de nuestra peluquería se ha visto aumentada por toda la gente que busca.</p>
                             <div class="media">
                                 <a href="#" class="media-left">
                                     <%= image_tag "search/slopez.jpg", class: "img-circle" %>
@@ -407,7 +406,7 @@
                             </div>
                         </div>
                         <div class="item">
-                            <p align="justify">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc a neque ipsum. Ut nec metus id dui feugiat volutpat. Nullam gravida lacus vel hendrerit tristique. Vivamus non ex in orci viverra viverra in sit amet nisi. Morbi eu mollis sapien. Sed ut nulla accumsan, accumsan justo non, pellentesque libero.</p>
+                            <p align="justify">Con AgendaPro reservo todas mis horas sin la necesidad de llamar. Ya no pierdo tiempo llamando y esperando que me contesten. Además, con los recordatorios que me envían, siempre me acuerdo de ir. ¡De esta forma no pierdo nunca mis horas!</p>
                             <div class="media">
                                 <a href="#" class="media-left">
                                     <%= image_tag "search/minata.png", class: "img-circle" %>
@@ -421,7 +420,7 @@
                             </div>
                         </div>
                         <div class="item">
-                            <p align="justify">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc a neque ipsum. Ut nec metus id dui feugiat volutpat. Nullam gravida lacus vel hendrerit tristique. Vivamus non ex in orci viverra viverra in sit amet nisi. Morbi eu mollis sapien. Sed ut nulla accumsan, accumsan justo non, pellentesque libero.</p>
+                            <p align="justify">De los muchos sistemas que he utilizado durante mi trayectoria, AgendaPro ha sido el único que ha logrado realmente ayudarnos como Peluquería a ofrecer un mejor servicio a nuestros clientes.<br />Además, el soporte que entregan y las mejoras constantes, hacen que su servicio sea realmente el mejor disponible.</p>
                             <div class="media">
                                 <a href="#" class="media-left">
                                     <%= image_tag "search/sferrer.png", class: "img-circle" %>
