@@ -171,6 +171,14 @@ $(function() {
   $('[name="localRadio"]').click(function(e){
 
     var localId = $('input[name=localRadio]:checked').val();
+    if($(".company-header-center2").length>0)
+    {
+      $(".company-header-left").css("border-right", "1px solid #949292");
+    }
+    else if($(".company-header-center").length>0)
+    {
+      $(".company-header-center").css("border-right", "1px solid #949292");
+    }
     $("#phone-number").empty();
     $("#phone-number").append($('.local-phone[localid="'+localId+'"]').text());
     $("#phone-address").empty();

@@ -90,13 +90,13 @@
 								<% if category.services.count > 0 %>
 									<div class="panel panel-default">
 										<div class="panel-heading">
-									      <h4 class="panel-title minus">
-									        <a data-toggle="collapse" data-parent="#categories<%=location.id%>" href="#collapse<%= category.id %>">
+									      <h3 class="panel-title minus" data-toggle="collapse" data-parent="#categories<%=location.id%>" href="#collapse-<%=location.id%>-<%= category.id %>">
+									        <a>
 									          <%= category.name %>
 									        </a>
-									      </h4>
+									      </h3>
 									    </div>
-									    <div id="collapse<%= category.id %>" class="panel-collapse collapse">
+									    <div id="collapse-<%=location.id%>-<%= category.id %>" class="panel-collapse collapse">
       										<div class="panel-body">
 												<div class="services">
 													<% category.services.each do |service| %>
