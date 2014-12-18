@@ -8,8 +8,8 @@ class BookingsController < ApplicationController
   # GET /bookings.json
   def index
     @company = Company.where(id: current_user.company_id)
-    if current_user.role_id == Role.find_by_name("Staff").id
-      @locations = Location.where(:active => true, :id => ServiceProvider.where(active: true).pluck(:location_id)).accessible_by(current_ability).order(:order)
+    if current_user.role_id == Role.find_by_name("Staff").id || current_user.role_id == Role.find_by_name("Staff (sin edición)").id
+      @locations = Location.where(:active => true, id: ServiceProvider.where(active: true, id: UserProvider.where(user_id: current_user.id).pluck(:service_provider_id)).pluck(:location_id)).accessible_by(current_ability).order(:order)
     else
       @locations = Location.where(:active => true).accessible_by(current_ability).order(:order)
     end
@@ -21,7 +21,7 @@ class BookingsController < ApplicationController
 
   def fixed_index
     @company = Company.where(id: current_user.company_id)
-    if current_user.role_id == Role.find_by_name("Staff").id
+    if current_user.role_id == Role.find_by_name("Staff").id || current_user.role_id == Role.find_by_name("Staff (sin edición)").id
       @locations = Location.where(:active => true, :id => ServiceProvider.where(active: true).pluck(:location_id)).accessible_by(current_ability).order(:order)
     else
       @locations = Location.where(:active => true).accessible_by(current_ability).order(:order)
@@ -421,6 +421,30 @@ class BookingsController < ApplicationController
   def book_service
     @location_id = params[:location]
     @company = Location.find(params[:location]).company
+    cancelled_id = Status.find_by(name: 'Cancelado').id
+    service_provider = ServiceProvider.find(params[:provider])
+    service = Service.find(params[:service])
+    service_provider.bookings.each do |provider_booking|
+      unless provider_booking.status_id == cancelled_id
+        if (provider_booking.start.to_datetime - params[:end].to_datetime) * (params[:start].to_datetime - provider_booking.end.to_datetime) > 0
+          if !service.group_service || params[:service] != provider_booking.service_id
+            flash[:alert] = "Lo sentimos, la hora seleccionada ya está reservada para el prestador elegido."
+            @errors = ["Lo sentimos, la hora seleccionada ya está reservada para el prestador elegido"]
+            host = request.host_with_port
+            @url = @company.web_address + '.' + host[host.index(request.domain)..host.length]
+            render layout: "workflow"
+            return
+          elsif service.group_service && params[:service] == provider_booking.service_id && service_provider.bookings.where(:service_id =>service.id, :start => params[:start].to_datetime).count >= service.capacity
+            flash[:alert] = "La capacidad del servicio grupal llegó a su límite."
+            @errors = ["La capacidad del servicio grupal llegó a su límite"]
+            host = request.host_with_port
+            @url = @company.web_address + '.' + host[host.index(request.domain)..host.length]
+            render layout: "workflow"
+            return
+          end
+        end
+      end
+    end
     if params[:address] && !params[:address].empty?
       params[:comment] += ' - Dirección del cliente (donde se debe realizar el servicio): ' + params[:address]
     end

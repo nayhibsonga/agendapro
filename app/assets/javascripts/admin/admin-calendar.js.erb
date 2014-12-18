@@ -440,6 +440,9 @@ function editBookingModal(eventId) {
 			$('#booking_client_address').val(booking.address);
 			$('#booking_client_district').val(booking.district);
 			$('#booking_client_city').val(booking.city);
+			$('#booking_client_birth_day option[value=""]').prop('selected', true);
+			$('#booking_client_birth_month option[value=""]').prop('selected', true);
+			$('#booking_client_birth_year option[value=""]').prop('selected', true);
 			$('#booking_client_birth_day option[value="'+booking.birth_day+'"]').attr("selected",true);
 			$('#booking_client_birth_month option[value="'+booking.birth_month+'"]').attr("selected",true);
 			$('#booking_client_birth_year option[value="'+booking.birth_year+'"]').attr("selected",true);
@@ -658,11 +661,11 @@ function jsonBooking() {
 		"client_address": $('#booking_client_address').val(),
 		"client_district": $('#booking_client_district').val(),
 		"client_city": $('#booking_client_city').val(),
-		"client_birth_day": parseInt($('#booking_client_birth_day').val()),
-		"client_birth_month": parseInt($('#booking_client_birth_month').val()),
-		"client_birth_year": parseInt($('#booking_client_birth_year').val()),
+		"client_birth_day": parseInt($('#booking_client_birth_day').val()) > 0 ? parseInt($('#booking_client_birth_day').val()) : "",
+		"client_birth_month": parseInt($('#booking_client_birth_month').val()) > 0 ? parseInt($('#booking_client_birth_month').val()) : "",
+		"client_birth_year": parseInt($('#booking_client_birth_year').val()) > 0 ? parseInt($('#booking_client_birth_year').val()) : "",
 		"client_age": $('#booking_client_age').val(),
-		"client_gender": parseInt($('#booking_client_gender').val()),
+		"client_gender": parseInt($('#booking_client_gender').val()) > 0 ? parseInt($('#booking_client_gender').val()) : "",
 		"client_identification_number": $('#booking_client_identification_number').val(),
 		"notes": $('#booking_notes').val(),
 		"company_comment": $('#booking_company_comment').val(),
