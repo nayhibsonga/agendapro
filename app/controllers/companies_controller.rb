@@ -151,7 +151,10 @@ class CompaniesController < ApplicationController
 		@url = @company.web_address + '.' + host[host.index(request.domain)..host.length]
 
 		#Selected local from fase II
-		@selectedLocal = params[:local]
+		if(params[:local])
+			@selectedLocal = params[:local]
+			@selectedLocation = Location.find(@selectedLocal)
+		end
 
 		if mobile_request? 
 			if params[:local]
@@ -179,6 +182,7 @@ class CompaniesController < ApplicationController
 			return
 		end
 		@location = Location.find(params[:local])
+		@selectedLocation = @location
 
 		# => Domain parser
 		host = request.host_with_port

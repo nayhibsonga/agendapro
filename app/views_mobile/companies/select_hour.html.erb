@@ -1,4 +1,4 @@
-<div class="container" style="margin-bottom: 45px;">
+<div class="container container-margin">
 	<div class="row">
 		<div class="col-xs-12">
 			<%= form_tag("user_data", method: "post", role: "form") do %>
@@ -16,19 +16,15 @@
 					<button type="submit" class="btn btn-block btn-default btn-lg" data-date="<%= time[:date] %>" data-start="<%= time[:hour][:start] %>" data-end="<%= time[:hour][:end] %>" data-provider="<%= time[:provider] %>"><%= time[:hour][:start]  %></button>
 					<% end %>
 				</div>
+				<a type="button" class="btn btn-green btn-block" disabled>Siguiente</a>
 				<% else %>
-				<h3>¡Lo sentimos!</h3><br />
-				<p>No hay horarios disponibles para este día o no se puede reservar con tan poca anticipación.<p/><br /><p>Por favor ponte en contacto con la empresa si requieres más información al teléfono <%= @location.phone %><%= if @location.email && @location.email != "" then 'o al email '+@location.email end %></p>
+				<h3>¡Lo sentimos!</h3>
+				<br />
+				<p>No hay horarios disponibles para este día o no se puede reservar con tan poca anticipación.<p/>
+				<p>Por favor ponte en contacto con la empresa si requieres más información al teléfono <%= @location.phone %><%= if @location.email && @location.email != "" then 'o al email '+@location.email end %></p>
 				<% end %>
 			<% end %>
 		</div>
-	</div>
-</div>
-
-<div class="cambiar-comuna">
-	<div class="btn-group btn-group-justified btn-group-justified-fix">
-		<a type="button" class="btn btn-agendapro-orange" disabled>Siguiente</a>
-		<%= link_to 'Modificar', :back, :class => "btn btn-default" %>
 	</div>
 </div>
 
@@ -38,9 +34,10 @@
 	$(document).ready(function(){
 		$('button[type="submit"]').click(function (event) {
 			event.preventDefault();
-			$('.btn-block.btn-agendapro-claro').addClass('btn-default').removeClass('btn-agendapro-claro');
-			$(event.target).addClass('btn-agendapro-claro').removeClass('btn-default');
-			$('a.btn-agendapro-orange').attr('disabled', false);
+			$('.btn-press').removeClass('btn-press').addClass('btn-default');
+			$(event.target).addClass('btn-press').removeClass('btn-default');
+			$('a.btn-green').attr('disabled', false);
+			$("html, body").delay(500).animate({ scrollTop: $(document).height() }, 1000, "swing");
 
 			var date = $(event.target).data('date');
 			var start = $(event.target).data('start');
@@ -48,7 +45,7 @@
 			var provider = $(event.target).data('provider');
 			addBooking(date, start, end, provider);
 		});
-		$('a.btn-agendapro-orange').click(function (event) {
+		$('a.btn-green').click(function (event) {
 			$('form').submit();
 		});
 	});

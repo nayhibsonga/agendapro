@@ -1,12 +1,147 @@
 <%= stylesheet_link_tag "calendar" %>
 
-<div class="main">
+<div class="workflow-header">
   <div class="container">
-    <div class="row" id="navegacion-workflow">
-      <div class="col-md-2"><a id="prev2" class="btn btn-agendapro-claro"><i class="fa fa-chevron-left"></i> Anterior</a></div>
-      <div class="col-md-8"><div id="pager2" class="pasos-reserva"></div></div>
-      <div class="col-md-2"><a id="next2" class="btn btn-agendapro-claro pull-right">Siguiente <i class="fa fa-chevron-right"></i></a></div>
+
+  
+    <div class="row">
+      <% if !@company.description.blank? %>
+        <div class="col-md-6 company-header-left company-header">
+          <div class="row">
+            <div class="col-md-3">
+              <% if @company.logo_url %>
+                <%= image_tag @company.logo_url.to_s, :size => "80x80", :alt => @company.name, :class => "company-logo" %>
+              <% else %>
+                <%= image_tag 'logo_vacio.png', :alt => 'AgendaPro', :size => "80x80", :class => "company-logo" %>
+              <% end %>
+            </div>
+            <div class="col-md-6">
+              <div class="row">
+                <div class="col-md-12 company-name">
+                  <%= @company.name %>
+                </div>
+              </div>
+              <div class="row header-btns">
+                <div class="col-md-6">
+                  <div class="header-btn active">
+                    <a href="#" id="boton-locales">Lugares</a>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="header-btn inactive" style="float: left;">
+                    <a href="#" id="boton-servicio">Servicios</a>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-3">
+
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4 company-header-center company-header">
+          <div class="header-description">
+            <%= @company.description %>
+          </div>
+        </div>
+        <div class="col-md-2 company-header-right company-header">
+          
+          <% if @selectedLocation %>
+            <div id="phone-info">         
+              <%= image_tag 'telefono.png', :alt => '', :size => "12x14", :class=>"loc-icon" %>&nbsp;
+              <span id="phone-number">
+                <%= @selectedLocation.phone %>
+              </span><br />
+              <%= image_tag 'ubicacion.png', :alt => '', :size => "12x14", :class=>"loc-icon" %>&nbsp;
+              <span id="phone-address">
+                <%= if !@selectedLocation.outcall then @selectedLocation.address+', '+@selectedLocation.district.name else "A Domicilio" end %>
+              </span>       
+            </div>
+          <% else %>
+            <div id="phone-info" hidden>
+              <%= image_tag 'telefono.png', :alt => '', :size => "12x14", :class=>"loc-icon" %>&nbsp;
+              <span id="phone-number"></span><br />
+              <%= image_tag 'ubicacion.png', :alt => '', :size => "12x14", :class=>"loc-icon" %>&nbsp;
+              <span id="phone-address"></span>
+            </div>
+          <% end %>
+          <div style="clear: both;"></div>
+        </div>
+
+      <% else %>
+        <div class="col-md-6 company-header-left company-header" style="border-right: 1px solid #949292;">
+          <div class="row">
+            <div class="col-md-3">
+              <% if @company.logo_url %>
+                <%= image_tag @company.logo_url.to_s, :size => "80x80", :alt => @company.name, :class => "company-logo" %>
+              <% else %>
+                <%= image_tag 'logo_vacio.png', :alt => 'AgendaPro', :size => "80x80", :class => "company-logo" %>
+              <% end %>
+            </div>
+            <div class="col-md-6">
+              <div class="row">
+                <div class="col-md-12 company-name">
+                  <%= @company.name %>
+                </div>
+              </div>
+              <div class="row header-btns">
+                <div class="col-md-6">
+                  <div class="header-btn active">
+                    <a href="#" id="boton-locales">Lugares</a>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="header-btn inactive" style="float: left;">
+                    <a href="#" id="boton-servicio">Servicios</a>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-3">
+
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6 company-header-center2 company-header">
+          
+          <% if @selectedLocation %>
+            <div id="phone-info">         
+              <%= image_tag 'telefono.png', :alt => '', :size => "12x14", :class=>"loc-icon" %>&nbsp;
+              <span id="phone-number">
+                <%= @selectedLocation.phone %>
+              </span><br />
+              <%= image_tag 'ubicacion.png', :alt => '', :size => "12x14", :class=>"loc-icon" %>&nbsp;
+              <span id="phone-address">
+                <%= if !@selectedLocation.outcall then @selectedLocation.address+', '+@selectedLocation.district.name else "A Domicilio" end %>
+              </span>       
+            </div>
+          <% else %>
+            <div id="phone-info" hidden>
+              <%= image_tag 'telefono.png', :alt => '', :size => "12x14", :class=>"loc-icon" %>&nbsp;
+              <span id="phone-number"></span><br />
+              <%= image_tag 'ubicacion.png', :alt => '', :size => "12x14", :class=>"loc-icon" %>&nbsp;
+              <span id="phone-address"></span>
+            </div>
+          <% end %>
+          <div style="clear: both;"></div>
+        </div>
+      <% end %>
+
     </div>
+  </div>
+</div>
+
+<div class="row" id="navegacion-workflow">
+  <div class="container">
+  <div class="col-md-1"><div id="prev3" class="prev-btn"><i class="fa fa-chevron-left fa-lg"></i></div></div>
+  <div class="col-md-10"><div id="pager2" class="pasos-reserva"></div></div>
+  <div class="col-md-1"><div id="next3" class="next-btn"><i class="fa fa-chevron-right fa-lg"></i></div></div>
+  </div>
+</div>
+
+<div>
+  <div class="container">
+    
   </div>
   <div class="container" id="warning"></div>
   <div class="container">
@@ -23,72 +158,127 @@
         </div>
         <div id="foo4" style="visibility: collapse;">
           <div class="box-step">
-            <div class="col-md-12">
-              <h4 class="subtitulos-workflow">Servicios</h4>
+            <div class="row">
               <div class="col-md-6">
-                <div class="panel-group" id="services-selector">
-                  <%= image_tag "ajax-loader.gif", :alt => "Loader" %>
+                <div class="services-title dark-gray">
+                  Servicios
+                </div>
+                <div class="services-subtitle light-gray">
+                  Seleccione un servicio
                 </div>
               </div>
+            </div>
+            <div class="row">
               <div class="col-md-6">
-                <div class="panel panel-info">
-                  <div class="panel-heading">
-                    <h3 class="panel-title">Descripción del Servicio</h3>
+                <div class="panel-group" id="services-selector" style="border-radius: 4px; border: 1px solid #acacac; margin-left: 10px !important;">
+                  <%= image_tag "ajax-loader.gif", :alt => "Loader" %>
+                </div>
+                
+              </div>
+              <div class="col-md-6">
+                <div class="descripcion">
+                  <div class="descripcion-header">
+                    Descripción del servicio
                   </div>
-                  <div class="panel-body">
+                  <div class="descripcion-body">
                     <table class="table">
                       <tbody id="services-description">
                       </tbody>
                     </table>
                   </div>
                 </div>
+                <div class="btn-change btn-next" style="margin-top: 10px;">
+                  <a class="next2 next-btn">Siguiente <i class="fa fa-chevron-right next-arrow"></i></a>
+                </div>
               </div>
             </div>
           </div>
           <div class="box-step">
-            <div class="col-md-12">
-              <% if @location.company.company_setting.provider_preference == 2 %>
-              <h4 class="subtitulos-workflow">Seleccione un Horario</h4>
-              <% else %>
-              <h4 class="subtitulos-workflow">Seleccione un Staff y Horario</h4>
-              <% end %>
-              <div class="col-md-3" <%= 'style="display:none;"'.html_safe if @location.company.company_setting.provider_preference == 2 %>>
-                <div class="panel panel-default">
-                  <div class="panel-body">
-                    Seleccione un staff para ver su horario
+            <div class="row">
+              <div class="col-md-3">
+                <div class="staff-wrapper">             
+                  <span class="subtitulos-workflow">Seleccione un Staff<br /> y Horario &nbsp;</span><span><i class="fa fa-clock-o gray-icon"></i>&nbsp;<i class="fa fa-user gray-icon"></i></span>
+                  <div class="sub-workflow dark-gray">Seleccione un staff para ver su horario</div>
+                  <div <%= 'style="display:none;"'.html_safe if @location.company.company_setting.provider_preference == 2 %>>
+                    <div class="panel panel-default light-gray">
+                      <ul class="list-group" id="staff-selector">
+                        <%= image_tag "ajax-loader.gif", :alt => "Loader" %>
+                      </ul>
+                    </div>
                   </div>
-                  <ul class="list-group" id="staff-selector">
-                    <%= image_tag "ajax-loader.gif", :alt => "Loader" %>
-                  </ul>
+                  
                 </div>
               </div>
-              <% if @location.company.company_setting.provider_preference == 2 %>
-              <div class="col-md-12">
-              <% else %>
-              <div class="col-md-9">
-              <% end %>
+
+              <div class="col-md-9" id="staff-calendar">
                 <div class="panel panel-info <%= 'full-margin' if @location.company.company_setting.provider_preference == 2 %>">
-                  <div class="panel-heading">
-                    <h3 class="panel-title">
-                      <button type="button" class="btn btn-default" id="prev"><i class="fa fa-chevron-left"></i></button>
-                      <span class="tittle"></span>
-                      <button type="button" class="btn btn-default pull-right" id="next"><i class="fa fa-chevron-right"></i></button>
-                    </h3>
+                  <div class="calendar-head">
+                    <div class="panel-title">
+                      <div class="row">
+                        <div class="col-md-1">
+                          <button type="button" class="btn btn-default" id="prev"><i class="fa fa-chevron-left"></i></button>
+                        </div>
+                        <div class="col-md-8">
+                          <span class="tittle"></span>
+                          
+                        </div>
+                        <div class="col-md-2">
+                          <span class="date-span">
+                            Ir a fecha&nbsp;<i class="fa fa-calendar-o"></i>
+                            <input type="text" id="datepicker" name="date" />
+                          </span>
+                        </div>
+                        <div class="col-md-1">
+                          <button type="button" class="btn btn-default pull-right" id="next"><i class="fa fa-chevron-right"></i></button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="days-row">
+                    
                   </div>
                   <div class="panel-body">
                     <div class="horario"></div>
                   </div>
                 </div>
+                
               </div>
             </div>
+
+            <div class="row">
+              <div class="col-md-3">
+                <div class="btn-change btn-prev">
+                  <a class="prev2 prev-btn"><i class="fa fa-chevron-left prev-arrow"></i> Anterior</a>
+                </div>  
+              </div>
+              <div class="col-md-9">
+                <div class="btn-change btn-next">
+                  <a class="next2 next-btn">Siguiente <i class="fa fa-chevron-right next-arrow"></i></a>
+                </div>
+              </div>
+            </div>
+            
           </div>
           <div class="box-step">
-            <div class="col-md-12">
-              <h4 class="subtitulos-workflow">Ingresa tus Datos</h4>
+
+            <div class="row" style="margin-left: 0px !important;">
               <div class="col-md-6">
-                <div class="panel panel-default">
-                  <div class="panel-heading">
-                    <h3 class="panel-title">Datos de la Reserva</h3>
+                <div class="subtitulos-workflow">Ingresa tus datos &nbsp;<i class="fa fa-file-text-o gray-icon"></i></div>
+              </div>
+              <div class="col-md-6">
+              </div>
+            </div>
+
+            <div class="row" style="margin-left: 0px !important;">
+
+              <div class="col-md-6">
+
+
+                <!-- INICIO FORM -->
+
+                <div id="form-datos">
+                  <div class="datos-heading">
+                    Datos de la reserva
                   </div>
                   <div class="panel-body">
                     <%= form_tag("book", method: "post", role: "form", class: "form-horizontal", id: "bookingForm" ) do %>
@@ -104,96 +294,153 @@
                         <%= hidden_field_tag :user_id, current_user.id %>
                         <%= hidden_field_tag :firstName, current_user.first_name %>
                         <%= hidden_field_tag :lastName, current_user.last_name %>
-                        <div class="form-group has-feedback">
-                          <label for="full_name" class="col-sm-3 control-label">Nombre</label>
-                          <div class="col-sm-9">
-                            <input type="text" id="full_name" name="user[full_name]" class="form-control" placeholder="Nombre completo (requerido)">
-                            <span class="help-block"></span>
-                            <span class="form-control-feedback"></span>
+
+                        <div class="row">
+                          <div class="col-md-12 dark-gray">
+                            Nombre
                           </div>
                         </div>
-                        <div class="form-group has-feedback">
-                          <%= label_tag(:email, "E-mail", class: "col-sm-3 control-label") %>
-                          <div class="col-sm-9">
-                            <%= email_field_tag(:email, current_user.email, :class => "form-control", :placeholder => "ejemplo@dominio.com (requerido)", :required => true) %>
-                            <span class="help-block"></span>
-                            <span class="form-control-feedback"></span>
+                        <div class="row">
+                          <div class="col-md-12">
+                            <div class="form-group has-feedback">
+                              <input type="text" id="full_name" name="user[full_name]" class="form-control light-gray" placeholder="Nombre completo (requerido)">
+                              <span class="help-block"></span>
+                              <span class="form-control-feedback"></span>
+                            </div>
                           </div>
                         </div>
-                        <div class="form-group has-feedback">
-                          <%= label_tag(:phone, "Teléfono", class: "col-sm-3 control-label") %>
-                          <div class="col-sm-9">
-                            <%= telephone_field_tag(:phone, current_user.phone, :class => "form-control", :placeholder => "1122334455 (requerido)", :required => true) %>
-                            <span class="help-block"></span>
-                            <span class="form-control-feedback"></span>
+
+                      
+                        <div class="row">
+                          <div class="col-md-6 dark-gray">
+                            Email
+                          </div>
+                          <div class="col-md-6 dark-gray">
+                            Teléfono
                           </div>
                         </div>
+                        <div class="row">
+                          <div class="col-md-6">
+                            <div class="form-group has-feedback">
+                              <%= email_field_tag(:email, current_user.email, :class => "form-control light-gray", :placeholder => "ejemplo@dominio.com (requerido)", :required => true) %>
+                              <span class="help-block"></span>
+                              <span class="form-control-feedback"></span>
+                            </div>
+                          </div>
+                          <div class="col-md-6">
+                            <div class="form-group has-feedback">
+                              <%= telephone_field_tag(:phone, current_user.phone, :class => "form-control light-gray", :placeholder => "1122334455 (requerido)", :required => true) %>
+                              <span class="help-block"></span>
+                              <span class="form-control-feedback"></span>
+                            </div>
+                          </div>
+                        </div>
+                        
                       </div>
                       <% else %>
-                      <%= hidden_field_tag :firstName %>
-                      <%= hidden_field_tag :lastName %>
-                      <div class="form-group has-feedback">
-                        <label for="full_name" class="col-sm-3 control-label">Nombre</label>
-                        <div class="col-sm-9">
-                          <input type="text" id="full_name" name="user[full_name]" class="form-control" placeholder="Nombre completo (requerido)">
-                          <span class="help-block"></span>
-                          <span class="form-control-feedback"></span>
+                        <%= hidden_field_tag :firstName %>
+                        <%= hidden_field_tag :lastName %>
+                        <div class="row">
+                          <div class="col-md-12 dark-gray">
+                            Nombre
+                          </div>
                         </div>
-                      </div>
-                      <div class="form-group has-feedback">
-                        <%= label_tag(:email, "E-mail", class: "col-sm-3 control-label") %>
-                        <div class="col-sm-9">
-                          <%= email_field_tag(:email, nil, :class => "form-control", :placeholder => "ejemplo@dominio.com (requerido)", :required => true) %>
-                          <span class="help-block"></span>
-                          <span class="form-control-feedback"></span>
+                        <div class="row">
+                          <div class="col-md-12">
+                            <div class="form-group has-feedback">
+                              <input type="text" id="full_name" name="user[full_name]" class="form-control light-gray" placeholder="Nombre completo (requerido)">
+                              <span class="help-block"></span>
+                              <span class="form-control-feedback"></span>
+                            </div>
+                          </div>
                         </div>
-                      </div>
-                      <div class="form-group has-feedback">
-                        <%= label_tag(:phone, "Teléfono", class: "col-sm-3 control-label") %>
-                        <div class="col-sm-9">
-                          <%= telephone_field_tag(:phone, nil, :class => "form-control", :placeholder => "1122334455 (requerido)", :required => true) %>
-                          <span class="help-block"></span>
-                          <span class="form-control-feedback"></span>
+
+                      
+                        <div class="row">
+                          <div class="col-md-6 dark-gray">
+                            Email
+                          </div>
+                          <div class="col-md-6 dark-gray">
+                            Teléfono
+                          </div>
                         </div>
-                      </div>
+                        <div class="row">
+                          <div class="col-md-6">
+                            <div class="form-group has-feedback">
+                              <%= email_field_tag(:email, nil, :class => "form-control light-gray", :placeholder => "ejemplo@dominio.com (requerido)", :required => true) %>
+                              <span class="help-block"></span>
+                              <span class="form-control-feedback"></span>
+                            </div>
+                          </div>
+                          <div class="col-md-6">
+                            <div class="form-group has-feedback">
+                              <%= telephone_field_tag(:phone, nil, :class => "form-control light-gray", :placeholder => "1122334455 (requerido)", :required => true) %>
+                              <span class="help-block"></span>
+                              <span class="form-control-feedback"></span>
+                            </div>
+                          </div>
+                        </div>
                       <% end %>
+
                       <% if @location.company.company_setting.client_exclusive %>
-                      <div id="identificationNumber" class="form-group has-feedback">
-                        <%= label_tag(:identification_number, "RUT", class: "col-sm-3 control-label") %>
-                        <div class="col-sm-9">
-                          <%= text_field_tag(:identification_number, nil, :class => "form-control", :placeholder => "Escribe su RUT, debe estar autorizado como cliente" ) %>
-                          <span class="help-block"></span>
-                          <span class="form-control-feedback"></span>
+                        <div id="identificationNumber" class="form-group has-feedback">
+                          <%= label_tag(:identification_number, "RUT", class: "col-sm-3 control-label") %>
+                          <div class="col-sm-9">
+                            <%= text_field_tag(:identification_number, nil, :class => "form-control light-gray", :placeholder => "Escriba su RUT, debe estar autorizado como cliente" ) %>
+                            <span class="help-block"></span>
+                            <span class="form-control-feedback"></span>
+                          </div>
                         </div>
-                      </div>
                       <% end %>
                       <div id="outcallAddress" class="form-group has-feedback">
                         <%= label_tag(:address, "Dirección", class: "col-sm-3 control-label") %>
                         <div class="col-sm-9">
-                          <%= text_field_tag(:address, nil, :class => "form-control", :placeholder => "Escribe la dirección donde se debe realizar el servicio" ) %>
+                          <%= text_field_tag(:address, nil, :class => "form-control light-gray", :placeholder => "Escribe la dirección donde se debe realizar el servicio" ) %>
                           <span class="help-block"></span>
                           <span class="form-control-feedback"></span>
                         </div>
                       </div>
-                      <div class="form-group">
-                        <%= label_tag(:comment, "Comentario", class: "col-sm-3 control-label") %>
-                        <div class="col-sm-9">
-                          <%= text_area_tag(:comment, nil, :class => "form-control", :placeholder => "Agrega algún comentario a tu reserva en caso de ser necesario", :rows => 4) %>
+
+
+                      <div class="row">
+                        <div class="col-md-12 dark-gray">
+                          Comentario
                         </div>
                       </div>
-                      <div class="form-group">
-                        <div class="col-sm-offset-3 col-sm-9">
-                          <button type="submit" class="btn btn-agendapro-oscuro" id="submitBtn" name="submitBtn">Reservar</button>
+                      <div class="row">
+                        <div class="col-md-12">
+                          <div class="form-group">
+                              <%= text_area_tag(:comment, nil, :class => "form-control light-gray", :placeholder => "Agrega algún comentario a tu reserva en caso de ser necesario", :rows => 4) %>
+                          </div>
                         </div>
                       </div>
+
+                      <div class="row" style="margin-top: 20px;">
+                        <div class="col-md-6">
+                          <div class="btn-change btn-prev">
+                            <a class="prev2 prev-btn"><i class="fa fa-chevron-left prev-arrow"></i> Anterior</a>
+                          </div>
+                        </div>
+                        <div class="col-md-6">
+                          <button type="submit" id="submitBtn">Reservar</button>
+                        </div>
+                      </div>
+
                     <% end %>
                   </div>
                 </div>
+
+                <!-- FIN FORM -->
+
+                
+
+
               </div>
               <div class="col-md-6">
-                <div class="panel panel-info">
-                  <div class="panel-heading">
-                    <h3 class="panel-title">Resumen de tu Reserva</h3>
+
+                <div id="resumen-reserva">
+                  <div class="resumen-heading">
+                    Resumen de tu Reserva
                   </div>
                   <div class="panel-body">
                     <table class="table">
@@ -202,10 +449,30 @@
                     </table>
                   </div>
                 </div>
+
               </div>
             </div>
+
           </div>
+
+
+
+
         </div>
+
+        <!--<div class="row">
+          <div class="col-md-6">
+            <div class="btn-change btn-prev">
+              <a id="prev2"><i class="fa fa-chevron-left"></i> Anterior</a>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="btn-change btn-next">
+              <a id="next2">Siguiente <i class="fa fa-chevron-right"></i></a>
+            </div>
+          </div>
+        </div>-->
+
       </div>
     </div>
   </div>
@@ -224,16 +491,74 @@
 <% content_for :scripts do %>
   <%= javascript_include_tag 'workflow/services' %>
   <%= javascript_include_tag 'jquery.carouFredSel-6.2.1.js' %>
+  <%= javascript_include_tag "jquery-ui-1.10.4.min.js" %>
   <%= javascript_include_tag 'split-name' %>
   <%= javascript_include_tag 'validations/validate' %>
   <%= javascript_include_tag 'validations/home/workflow' %>
   <script type="text/javascript">
     $(function() {
+
       compose_name('#full_name', '#firstName', '#lastName');
       split_name('#full_name', '#firstName', '#lastName');
 
       $('#boton-servicio').click(function () {
         window.location.href = 'http://' + $('#workflow_url').data('url') + '/workflow?local=' + $('#workflow_url').data('location-id').toString();
+      });
+
+      //$("#datepicker").formatDate('yyyy-mm-dd');
+      $("#datepicker").datepicker({
+          monthNames: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+          monthNamesShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
+          prevText: 'Atrás',
+          nextText: 'Adelante',
+          dayNames: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'],
+          dayNamesShort: ['Dom', 'Lun', 'Mar', 'Mier', 'Jue', 'vie', 'Sáb'],
+          dayNamesMin: ['Dom', 'Lun', 'Mar', 'Mier', 'Jue', 'vie', 'Sáb'],
+          today: 'Hoy',
+          clear: '',
+          firstDay: 1,
+          dateFormat: 'yy-mm-dd',
+          onSelect: function(newDate){
+            
+            var data = {
+              provider: $('[name="staffRadio"]:checked').val(),
+              local: $('#selectedLocal').data('local').id,
+              date: newDate,
+              service: $('input[name="serviceRadio"]:checked').val(),
+            }
+
+            console.log(data);
+
+            
+
+            if (calendar) {
+              calendar.rebuild('/get_available_time.json', data);
+              console.log("Rebuild calendar.");
+            }
+            else {
+              calendar = new Calendar('/get_available_time.json', data);
+              console.log("New calendar.");
+            }
+            
+            $(document).on('hourClick', function (e) {
+              addBooking(e);
+            });
+            
+
+            $(function () {
+              $('#prev').click(function () {
+                selected = false;
+              });
+              $('#next').click(function () {
+                selected = false;
+              });
+            });
+
+          }
+      });
+
+      $(document.body).on('click', '.date-span', function(e){ 
+        $(e.currentTarget).find('input').datepicker('show');
       });
 
       //  Responsive layout, resizing the items
@@ -245,19 +570,19 @@
             anchorBuilder: function (nr) {
               var title;
               if (nr == 1) {
-                title = nr + ". Elegir el servicio";
+                title = '<i class="fa fa-circle fa-2x"></i><span class="circle-number">'+nr+'</span><span class="navigation-title"> | Elegir el servicio</span>';
               } else if (nr == 2) {
-                title = nr + ". Elegir el staff";
+                title = '<i class="fa fa-circle fa-2x"></i><span class="circle-number">'+nr+'</span><span class="navigation-title"> | Elegir el staff</span>';
               } else{
-                title = nr + ". Ingresa tus datos";
+                title = '<i class="fa fa-circle fa-2x"></i><span class="circle-number">'+nr+'</span><span class="navigation-title"> | Ingresa tus datos</span>';
               };
               return '<a href="#"><span>' + title + '</span></a>';
             }
           },
         width: '100%',
         height: 'variable',
-        prev: '#prev2',
-        next: '#next2',
+        prev: '.prev-btn',
+        next: '.next-btn',
         direction: "left",
         circular: false,
         infinite: false,

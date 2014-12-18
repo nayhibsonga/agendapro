@@ -420,6 +420,7 @@ class BookingsController < ApplicationController
 
   def book_service
     @location_id = params[:location]
+    @selectedLocation = Location.find(@location_id)
     @company = Location.find(params[:location]).company
     cancelled_id = Status.find_by(name: 'Cancelado').id
     service_provider = ServiceProvider.find(params[:provider])
@@ -460,7 +461,7 @@ class BookingsController < ApplicationController
           puts client.errors.full_messages.inspect
         end
       else
-        flash[:alert] = "No estás ingresado como cliente o no puedes reservar. Por favor comunícate con la empresa proveedora del servicio."
+        #flash[:alert] = "No estás ingresado como cliente o no puedes reservar. Por favor comunícate con la empresa proveedora del servicio."
         @errors = ["No estás ingresado como cliente"]
         host = request.host_with_port
         @url = @company.web_address + '.' + host[host.index(request.domain)..host.length]
@@ -497,11 +498,11 @@ class BookingsController < ApplicationController
     end
     @booking.price = Service.find(params[:service]).price
     if @booking.save
-      flash[:notice] = "Reserva realizada exitosamente."
-
+      # flash[:notice] = "Reserva realizada exitosamente."
+      
       # BookingMailer.book_service_mail(@booking)
-    else
-      flash[:alert] = "Hubo un error guardando los datos de tu reserva. Inténtalo nuevamente."
+    else @booking.save
+      #flash[:alert] = "Hubo un error guardando los datos de tu reserva. Inténtalo nuevamente."
       @errors = @booking.errors.full_messages
     end
 
@@ -519,7 +520,7 @@ class BookingsController < ApplicationController
     id = crypt.decrypt_and_verify(params[:confirmation_code])
     @booking = Booking.find(id)
     @company = Location.find(@booking.location_id).company
-
+    @selectedLocation = Location.find(@booking.location_id)
     # => Domain parser
     host = request.host_with_port
     @url = @company.web_address + '.' + host[host.index(request.domain)..host.length]
@@ -645,12 +646,12 @@ class BookingsController < ApplicationController
   def edit_booking_post
     @booking = Booking.find(params[:id])
     @company = Location.find(@booking.location_id).company
-
+    @selectedLocation = Location.find(@booking.location_id)
     if @booking.update(start: params[:start], end: params[:end])
-      flash[:notice] = "Reserva actualizada exitosamente."
+      #flash[:notice] = "Reserva actualizada exitosamente."
       # BookingMailer.update_booking(@booking)
     else
-      flash[:alert] = "Hubo un error actualizando tu reserva. Inténtalo nuevamente."
+      #flash[:alert] = "Hubo un error actualizando tu reserva. Inténtalo nuevamente."
       @errors = @booking.errors
     end
 
@@ -666,7 +667,7 @@ class BookingsController < ApplicationController
     id = crypt.decrypt_and_verify(params[:confirmation_code])
     @booking = Booking.find(id)
     @company = Location.find(@booking.location_id).company
-
+    @selectedLocation = Location.find(@booking.location_id)
     @booking.update(:status => Status.find_by(:name => 'Confirmado'))
 
     render layout: 'workflow'
@@ -691,6 +692,7 @@ class BookingsController < ApplicationController
       id = crypt.decrypt_and_verify(params[:confirmation_code])
       @booking = Booking.find(id)
       @company = Location.find(@booking.location_id).company
+      @selectedLocation = Location.find(@booking.location_id)
       
       now = DateTime.new(DateTime.now.year, DateTime.now.mon, DateTime.now.mday, DateTime.now.hour, DateTime.now.min)
       booking_start = DateTime.parse(@booking.start.to_s) - @company.company_setting.before_edit_booking / 24.0
@@ -705,7 +707,7 @@ class BookingsController < ApplicationController
       status = Status.find_by(:name => 'Cancelado').id
       
       if @booking.update(status_id: status)
-        flash[:notice] = "Reserva cancelada exitosamente."
+        #flash[:notice] = "Reserva cancelada exitosamente."
         # BookingMailer.cancel_booking(@booking)
       else
         flash[:alert] = "Hubo un error cancelando tu reserva. Inténtalo nuevamente."

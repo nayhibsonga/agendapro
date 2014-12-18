@@ -1,35 +1,31 @@
-<div class="container" style="margin-bottom: 45px;">
+<div class="container container-margin">
   <div class="row">
     <div class="col-xs-12">
       <%= form_tag("/edited_booking", method: "post", role: "form") do %>
         <%= hidden_field_tag :id, @booking.id %>
         <%= hidden_field_tag :start, nil %>
         <%= hidden_field_tag :end, nil %>
+        <% unless @available_time.length == 0 %>
         <div class="form-group">
-          <% unless @available_time.length == 0 %>
           <label for="">Selecciona un horario</label>
           <% @available_time.each do |time| %>
           <button type="submit" class="btn btn-block btn-default btn-lg" data-date="<%= time[:date] %>" data-start="<%= time[:hour][:start] %>" data-end="<%= time[:hour][:end] %>"><%= time[:hour][:start] %></button>
           <% end %>
-          <% else %>
-          <p>No hay horarios disponibles para este día.</p>
-          <% end %>
         </div>
+        <a type="button" class="btn btn-green btn-block" disabled>Siguiente</a>
+        <% else %>
+        <h3>¡Lo sentimos!</h3>
+        <br />
+        <p>No hay horarios disponibles para este día o no se puede reservar con tan poca anticipación.<p/>
+        <p>Por favor ponte en contacto con la empresa si requieres más información al teléfono <%= @location.phone %><%= if @location.email && @location.email != "" then 'o al email '+@location.email end %></p>
+        <% end %>
       <% end %>
     </div>
   </div>
 </div>
 
-<div class="cambiar-comuna">
-  <div class="btn-group btn-group-justified btn-group-justified-fix">
-    <a type="button" class="btn btn-agendapro-orange" disabled>Editar</a>
-    <%= link_to 'Cancelar', root_url(:subdomain => false), :class => 'btn btn-default' %>
-  </div>
-</div>
-
 <%= content_tag "div", id: "timeInterval", data: {min: @before_now, max: @after_now} do %>
 <% end %>
-
 
 <% content_for :scripts do %>
 <%= javascript_include_tag "mobile/workflow" %>
@@ -37,9 +33,10 @@
   $(document).ready(function(){
     $('button[type="submit"]').click(function (event) {
       event.preventDefault();
-      $('.btn-block.btn-agendapro-claro').addClass('btn-default').removeClass('btn-agendapro-claro');
-      $(event.target).addClass('btn-agendapro-claro').removeClass('btn-default');
-      $('a.btn-agendapro-orange').attr('disabled', false);
+      $('.btn-press').removeClass('btn-press').addClass('btn-default');
+      $(event.target).addClass('btn-press').removeClass('btn-default');
+      $('a.btn-green').attr('disabled', false);
+      $("html, body").animate({ scrollTop: $(document).height() }, 500);
 
       var date = $(event.target).data('date');
       var start = $(event.target).data('start');
@@ -47,7 +44,7 @@
       addBooking(date, start, end);
     });
 
-    $('a.btn-agendapro-orange').click(function (event) {
+    $('a.btn-green').click(function (event) {
       $('form').submit();
     });
   });

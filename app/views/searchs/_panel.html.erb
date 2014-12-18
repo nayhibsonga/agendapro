@@ -1,0 +1,141 @@
+<div class="row panel-row">
+	<div class="box-tabs">
+		<!-- Nav tabs -->
+		<ul class="nav nav-tabs" id="myTab">
+			<li class="active"><a href="#home<%=i%>" data-toggle="tab" class="pin-link" tab_id="<%=i%>">
+				<div class="number-pin-green number-pin" tab_id="<%=i%>">
+					<span><%= i %></span>
+				</div>
+				<!--<div class="number-pin">
+					<i class="pin-icon">
+					</i>
+					<span class="center-number"><%= i %></span>
+				</div>-->
+			</a></li>
+			<li class="center-li"><a class="center-link dark-gray" tab_id="<%=i%>" href="#profile<%=i%>" data-toggle="tab">Descripción</a></li>
+			<li class="center-li"><a class="center-link dark-gray" tab_id="<%=i%>" href="#services<%=i%>" data-toggle="tab">Servicios</a></li>
+			<li class="center-li"><a class="center-link dark-gray" tab_id="<%=i%>" href="#messages<%=i%>" data-toggle="tab">Horario</a></li>
+			<% if location.company.owned %>
+			<li class="right-li"><%= link_to '<i class="fa fa-calendar-o"></i>&nbsp;&nbsp;Reservar'.html_safe, url_for(:host => location.company.web_address + '.' + @domain, :local => location.id, :controller => 'companies', :action => 'overview'), :class => "reservar-link", :role => "button" %></li>
+			<% end %>
+		</ul>
+
+		<!-- Tab panes -->
+		<div class="tab-content location">
+			<div class="row">
+				<div class="col-md-12 company-title">
+					<b><%= location.company.name %></b>
+				</div>
+			</div>
+			<div class="tab-pane active" id="home<%=i%>">
+				<div class="row">
+					<div class="img-local-search col-md-4 text-center">
+						<% if location.company.logo_url %>
+						<%= image_tag location.company.logo_url.to_s, :size => "100x100", :alt => location.company.name %>
+						<% else %>
+						<%= image_tag 'logo_vacio.png', :alt => 'AgendaPro', :size => "100x100" %>
+						<% end %>
+					</div>
+					<div class="col-md-1">
+					</div>
+					<div class="data-local-search col-md-7">
+						<div class="loc-div"><%= image_tag 'ubicacion.png', :alt => '', :size => "12x16", :class=>"loc-icon" %>&nbsp;<%= if !location.outcall then location.address+', '+location.district.name else "A Domicilio" end %>.<br /><br />
+						<%= image_tag 'telefono.png', :alt => '', :size => "12x14", :class=>"loc-icon" %>&nbsp;Tel: <%= location.phone %></div>
+						<% if !location.company.owned %>
+						<br />
+						<p><strong>Nota:</strong> Esta empresa no recibe reservas a través de AgendaPro, para reservar debes contactarlos directamente.</p>
+						<p>¿Esta empresa es tuya? <%= link_to "¡Únete a AgendaPro!", contact_path %></p>
+						<% end %>
+					</div>
+				</div>
+			</div>
+			<div class="tab-pane" id="profile<%=i%>">
+				<div class="row">
+					<div class="img-local-search col-md-4 text-center">
+						<% if location.company.logo_url %>
+						<%= image_tag location.company.logo_url.to_s, :size => "100x100", :alt => location.company.name %>
+						<% else %>
+						<%= image_tag 'logo_vacio.png', :alt => 'AgendaPro', :size => "100x100" %>
+						<% end %>
+					</div>
+					<div class="col-md-1">
+					</div>
+					<div class="data-local-search col-md-7">
+						<div>                                                    
+							<% if location.company.description.blank? %>
+							<div style="margin-top: 30px;">
+							<table><tr><td>&nbsp;</td></tr><tr><td style="vertical-align: middle; text-align: justify;">No hay descripción para esta empresa.</td></tr><tr><td>&nbsp;</td></tr></table></div>
+							<% else %>
+							<table><tr><td>&nbsp;</td></tr><tr><td style="vertical-align: middle; text-align: justify;"><%= location.company.description %></td></tr><tr><td>&nbsp;</td></tr></table>
+							<% end %>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="tab-pane" id="services<%=i%>">
+				<div class="row">
+					<div class="img-local-search col-md-4 text-center">
+						<% if location.company.logo_url %>
+						<%= image_tag location.company.logo_url.to_s, :size => "100x100", :alt => location.company.name %>
+						<% else %>
+						<%= image_tag 'logo_vacio.png', :alt => 'AgendaPro', :size => "100x100" %>
+						<% end %>
+					</div>
+					<div class="col-md-1">
+					</div>
+					<div class="data-local-search col-md-7">
+
+						<div class="panel-group" id="categories<%=location.id%>" style="margin-top: 20px;">
+							<% location.categories.each do |category| %>								
+								<% if category.services.count > 0 %>
+									<div class="panel panel-default">
+										<div class="panel-heading">
+									      <h3 class="panel-title minus collapsed" data-toggle="collapse" data-parent="#categories<%=location.id%>" href="#collapse-<%=location.id%>-<%= category.id %>">
+									        <a>
+									          <%= category.name %>
+									        </a>
+									      </h3>
+									    </div>
+									    <div id="collapse-<%=location.id%>-<%= category.id %>" class="panel-collapse collapse">
+      										<div class="panel-body">
+												<div class="services">
+													<% category.services.each do |service| %>
+														<div class="service">
+															<%= service.name_with_small_outcall %>
+														</div>
+													<% end %>
+												</div>
+											</div>
+										</div>
+									</div>
+								<% end %>
+							<% end %>
+						</div>
+
+					</div>
+				</div>
+			</div>
+			<div class="tab-pane" id="messages<%=i%>">
+				<div class="row">
+					<div class="img-local-search col-md-4 text-center">
+						<% if location.company.logo_url %>
+						<%= image_tag location.company.logo_url.to_s, :size => "100x100", :alt => location.company.name %>
+						<% else %>
+						<%= image_tag 'logo_vacio.png', :alt => 'AgendaPro', :size => "100x100" %>
+						<% end %>
+					</div>
+					<div class="col-md-1">
+					</div>
+					<div class="data-local-search col-md-7">
+						<table class="table" style="margin-top: 30px;">
+							<tbody id="schedule-body<%= location.id %>">
+							</tbody>
+						</table>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- FIN CUERPO -->
+</div>
+

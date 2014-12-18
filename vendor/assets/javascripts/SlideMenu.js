@@ -15,16 +15,13 @@
 	;
 	mask.className = "mask";
 
-	/* slide menu left */
-	// toggleSlideLeft.addEventListener( "click", function(){
-	// 	$(body).addClass('sml-open');
-	// 	document.body.appendChild(mask);
-	// 	activeNav = "sml-open";
-	// } );
+	// var position;
 
 	/* slide menu right */
 	toggleSlideRight.addEventListener( "click", function(){
+		// position = $(window).scrollTop();
 		$(body).addClass('smr-open');
+		$('html').addClass('smr-open');
 		document.body.appendChild(mask);
 		activeNav = "smr-open";
 	} );
@@ -32,16 +29,39 @@
 	/* hide active menu if mask is clicked */
 	mask.addEventListener( "click", function(){
 		$(body).removeClass(activeNav);
+		$('html').removeClass(activeNav);
 		activeNav = "";
 		document.body.removeChild(mask);
+		// $(window).scrollTop(position);
 	} );
 
 	/* hide active menu if close menu button is clicked */
 	[].slice.call(document.querySelectorAll(".close-menu")).forEach(function(el,i){
 		el.addEventListener( "click", function(){
 			$(body).removeClass(activeNav);
+			$('html').removeClass(activeNav);
 			activeNav = "";
 			document.body.removeChild(mask);
+			// $(window).scrollTop(position);
 		} );
+	});
+
+	/* hide active menu if links are clicked */
+	[].slice.call(document.querySelectorAll("nav.menu li a")).forEach(function(el,i){
+		if (!$(el).hasClass('divider')) {
+			el.addEventListener( "click", function(){
+				$(body).removeClass(activeNav);
+				$('html').removeClass(activeNav);
+				activeNav = "";
+				document.body.removeChild(mask);
+				var href = $.attr(this, 'href');
+				if (href.length > 0) {
+					var element = href.substring(1);
+					$('html, body').animate({
+						scrollTop: $( element ).offset().top - 50
+					}, 1000);
+				};
+			} );
+		};
 	});
 })( window );

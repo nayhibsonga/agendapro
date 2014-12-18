@@ -1,45 +1,217 @@
 <div class="container">
 	<div class="row">
 		<div class="col-xs-12">
-			<div class="single-local">
-				<div class="panel panel-info">
-					<div class="panel-heading">
-						<h3 class="panel-title">HOY</h3>
-					</div>
-					<div class="panel-body">
+			<h2 class="text-center text-uppercase">Bienvenido a tu Agenda</h2>
+		</div>
+	</div>
+</div>
+<div class="background-light-grey" style="margin-bottom: 15px;">
+	<div class="container">
+		<div class="row">
+			<div class="col-xs-12">
+				<h3 class="text-center">
+					<% if @user.first_name.blank? || @user.last_name.blank? %>
+						<%= @user.email %>
+					<% else %>
+						<%= @user.first_name + " " + @user.last_name %>
+					<% end %>
+				</h3>
+			</div>
+			<div class="col-xs-12">
+				<div class="pull-center">
+					<% if !@user.phone.blank? %>
+            			<%= image_tag "search/email.png", :size => "20x15" %>&nbsp;Email:&nbsp;<%= @user.email %>&nbsp;&nbsp;&nbsp;
+            			<%= image_tag "telefono.png", :size => "15x15" %>&nbsp;Teléfono:&nbsp;<%= @user.phone %>
+            		<% else %>
+            			<%= image_tag "search/email.png", :size => "20x15" %>&nbsp;Email:&nbsp;<%= @user.email %>
+            		<% end %>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<div class="container">
+	<div class="row">
+		<div class="col-xs-12 pull-center">
+			<div class="border-box">
+                <div id="carousel-what-we-do" class="carousel slide" data-ride="carousel">
+                    <!-- Indicators -->
+                    <ol class="carousel-indicators">
+                        <li data-target="#carousel-what-we-do" data-slide-to="0" class="active"></li>
+                        <li data-target="#carousel-what-we-do" data-slide-to="1"></li>
+                        <li data-target="#carousel-what-we-do" data-slide-to="2"></li>
+                        <li data-target="#carousel-what-we-do" data-slide-to="3"></li>
+                        <li data-target="#carousel-what-we-do" data-slide-to="4"></li>
+                        <li data-target="#carousel-what-we-do" data-slide-to="5"></li>
+                        <li data-target="#carousel-what-we-do" data-slide-to="6"></li>
+                        <li data-target="#carousel-what-we-do" data-slide-to="7"></li>
+                        <li data-target="#carousel-what-we-do" data-slide-to="8"></li>
+                        <li data-target="#carousel-what-we-do" data-slide-to="9"></li>
+                    </ol>
+
+                    <!-- Wrapper for slides -->
+                    <div class="carousel-inner" role="listbox">
+                        <div class="item active">
+                            <div>
+                                <%= image_tag "search/1spa.png", alt: "Spa" %>
+                                <p>Spa</p>
+                            </div>
+                        </div>
+                        <div class="item">
+                            <div>
+                                <%= image_tag "search/2peluqueria.png", alt: "Peluquerías" %>
+                                <p>Peluquerías</p>
+                            </div>
+                        </div>
+                        <div class="item">
+                            <div>
+                                <%= image_tag "search/3maquillaje.png", alt: "Maquillaje" %>
+                                <p>Maquillaje</p>
+                            </div>
+                        </div>
+                        <div class="item">
+                            <div>
+                                <%= image_tag "search/4centrosdeestetica.png", alt: "Clinicas y Centros de Estetica" %>
+                                <p>Centros de Estetica</p>
+                            </div>
+                        </div>
+                        <div class="item">
+                            <div>
+                                <%= image_tag "search/5masajes.png", alt: "Masajes" %>
+                                <p>Masajes</p>
+                            </div>
+                        </div>
+                        <div class="item">
+                            <div>
+                                <%= image_tag "search/6manosypies.png", alt: "Manos y Pies" %>
+                                <p>Manos y Pies</p>
+                            </div>
+                        </div>
+                        <div class="item">
+                            <div>
+                                <%= image_tag "search/7medicinaalternativa.png", alt: "Medicina Alternativa" %>
+                                <p>Medicina Alternativa</p>
+                            </div>
+                        </div>
+                        <div class="item">
+                            <div>
+                                <%= image_tag "search/8bronceados.png", alt: "Bronceados" %>
+                                <p>Bronceados</p>
+                            </div>
+                        </div>
+                        <div class="item">
+                            <div>
+                                <%= image_tag "search/9tratamientosfaciales.png", alt: "Tratamientos Faciales" %>
+                                <p>Tratamientos Faciales</p>
+                            </div>
+                        </div>
+                        <div class="item">
+                            <div>
+                                <%= image_tag "search/10tratamientoscorporales.png", alt: "Tratamientos Corporales" %>
+                                <p>Tratamientos Corporales</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-xs-12">
+			<div class="panel panel-agendapro">
+				<div class="panel-heading">
+					<h3 class="panel-title">Reservas Activas</h3>
+				</div>
+				<div class="panel-body">
+					<div class="table-responsive">
 						<table class="table">
+							<thead>
+								<tr>
+									<th>Inicio</th>
+									<th>Empresa</th>
+									<th>Local</th>
+									<th>Servicio</th>
+									<th>Staff</th>
+									<th>Precio</th>
+									<th>Opciones</th>
+								</tr>
+							</thead>
 							<tbody>
 								<% @activeBookings.each do |booking| %>
-								<% if booking.start.to_date == DateTime.now.to_date %>
 								<tr>
-									<td><%= booking.start.strftime('%H:%M') %> <%= booking.service.name %> en <%= booking.location.name %>
-										<%= link_to 'Editar', booking_edit_url(:confirmation_code => booking.confirmation_code), :class => 'btn btn-success btn-xs' %>
-										<%= link_to 'Cancelar', booking_cancel_url(:confirmation_code => booking.confirmation_code), :class => 'btn btn-default btn-xs' %>
-									</td>
+									<td>
+					    				<%= l booking.start, format: :short %>
+					    			</td>
+					    			<td>
+					    				<%= Company.find(booking.service_provider.company_id).name %>
+					    			</td>
+					    			<td>
+					    				<%= booking.location.name %>
+					    			</td>
+					    			<td>
+					    				<%= booking.service.name %>
+					    			</td>
+					    			<td>
+					    				<%= booking.service_provider.public_name %>
+					    			</td>
+					    			<td>
+					    				$<%= number_with_precision(booking.service.price, precision: 0, separator: '', delimiter: '.') %>
+					    			</td>
+					    			<td>
+					    				<%= link_to '<i class="fa fa-pencil"></i> Editar'.html_safe, booking_edit_url(:confirmation_code => booking.confirmation_code), :class => 'btn btn-warning btn-xs' %>
+										<%= link_to '<i class="fa fa-trash-o"></i> Cancelar'.html_safe, booking_cancel_url(:confirmation_code => booking.confirmation_code), :class => 'btn btn-danger btn-xs' %>
+					    			</td>
 								</tr>
-								<% end #end if%>
-								<% end #end each%>
+								<% end %>
 							</tbody>
 						</table>
 					</div>
 				</div>
-				<div class="panel panel-info">
-					<div class="panel-heading">
-						<h3 class="panel-title">SIGUIENTES</h3>
-					</div>
-					<div class="panel-body">
+			</div>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-xs-12">
+			<div class="panel panel-agendapro">
+				<div class="panel-heading">
+					<h3 class="panel-title">Últimas Reservas</h3>
+				</div>
+				<div class="panel-body">
+					<div class="table-responsive">
 						<table class="table">
-							<tbody>
-								<% @activeBookings.each do |booking| %>
-								<% if booking.start.to_date != DateTime.now.to_date %>
+							<thead>
 								<tr>
-									<td><%= l booking.start, format: :short %> <%= booking.service.name %> en <%= booking.location.name %>
-										<%= link_to 'Editar', booking_edit_url(:confirmation_code => booking.confirmation_code), :class => 'btn btn-success btn-xs' %>
-										<%= link_to 'Cancelar', booking_cancel_url(:confirmation_code => booking.confirmation_code), :class => 'btn btn-default btn-xs' %>
-									</td>
+									<th>Inicio</th>
+									<th>Empresa</th>
+									<th>Local</th>
+									<th>Servicio</th>
+									<th>Staff</th>
+									<th>Estado</th>
 								</tr>
-								<% end #end if%>
-								<% end #end each%>
+							</thead>
+							<tbody>
+								<% @lastBookings.each do |booking| %>
+								<tr>
+									<td>
+					    				<%= l booking.start, format: :short %>
+					    			</td>
+					    			<td>
+					    				<%= Company.find(booking.service_provider.company_id).name %>
+					    			</td>
+					    			<td>
+					    				<%= booking.location.name %>
+					    			</td>
+					    			<td>
+					    				<%= booking.service.name %>
+					    			</td>
+					    			<td>
+					    				<%= booking.service_provider.public_name %>
+					    			</td>
+					    			<td>
+					    				<%= booking.status.name %>
+					    			</td>
+								</tr>
+								<% end %>
 							</tbody>
 						</table>
 					</div>

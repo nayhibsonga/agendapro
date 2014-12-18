@@ -1,154 +1,116 @@
-<div class="main">
+<div class="main below-navbar">
 	<!-- Barra superior y Buscador -->
-	<section class="call_to_action">
-		<div class="container">
-			<%= render 'form' %>
-		</div>
-	</section>
+
 	
 	<!-- Resultado Buscador -->
 	<div class="container">
+		<% if @results.count >0 %>
 		<div class="row">
-			<div class="well">
-				<!-- mapa -->
-				<div class="col-md-6">
-					<div id="map"></div>
-				</div>
-
-				<div class="col-md-6">
-					<% i = 1
-						@results.each do |location| %>
-					<div class="panel panel-info"> 
-						<div class="panel-heading">
-							<div class="head-local-search row">
-								<div class="col-sm-1">
-									<div class="number-pin">
-										<span><%= i %></span>
-									</div>
-								</div>
-								<div class="col-sm-9">
-									<h3 class="panel-title title-local"><%= location.company.name %></h3> 
-								</div>
-								<div class="col-sm-2">
-									<% if location.company.owned %>
-									<%= link_to 'Reservar', url_for(:host => location.company.web_address + '.' + @domain, :local => location.id, :controller => 'companies', :action => 'overview'), :class => "btn btn-agendapro-orange pull-right", :role => "button" %>
-									<% end %>
-								</div>
-							</div>
-						</div>
-
-						<div class="panel-body">
-							<div class="box-tabs">
-								<!-- Nav tabs -->
-								<ul class="nav nav-tabs" id="myTab">
-									<li class="active"><a href="#home<%=i%>" data-toggle="tab"><i class="fa fa-home"></i></a></li>
-									<li><a href="#profile<%=i%>" data-toggle="tab">Descripción</a></li>
-									<li><a href="#services<%=i%>" data-toggle="tab">Servicios</a></li>
-									<li><a href="#messages<%=i%>" data-toggle="tab">Horario</a></li>
-								</ul>
-
-								<!-- Tab panes -->
-								<div class="tab-content">
-									<div class="tab-pane active" id="home<%=i%>">
-										<div class="data-local-search">
-											<p><%= if !location.outcall then location.address+', '+location.district.name else "A Domicilio" end %>.</p>
-											<p>Tel: <%= location.phone %></p>
-											<% if !location.company.owned %>
-											<p><strong>Nota:</strong> Esta empresa no recibe reservas a través de AgendaPro, para reservar debes contactarlos directamente.</p>
-											<p>¿Esta empresa es tuya? <%= link_to "¡Únete a AgendaPro!", contact_path %></p>
-											<% end %>
-										</div>
-									</div>
-									<div class="tab-pane" id="profile<%=i%>">
-										<p class="fix-position-search">                                                    
-											<% if location.company.description.blank? %>
-											<p>No hay descripción para esta empresa.</p>
-											<% else %>
-											<p><%= location.company.description %></p>
-											<% end %>
-										</p>
-									</div>
-									<div class="tab-pane" id="services<%=i%>">
-										<br />
-										<div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
-										<% location.company.service_categories.where('id IN (?)', location.company.services.pluck(:service_category_id).uniq).each do |service_category| %>
-											<div class="panel panel-default">
-											    <div class="panel-heading panel-heading-white" role="tab" id="heading<%= service_category.id %>">
-											      <h4 class="panel-title">
-											        <a data-toggle="collapse" data-parent="#accordion" href="#collapse<%= service_category.id %>" aria-expanded="false" aria-controls="collapse<%= service_category.id %>">
-											          <%= service_category.name %>
-											        </a>
-											      </h4>
-											    </div>
-											    <div id="collapse<%= service_category.id %>" class="panel-collapse collapse" role="tabpanel" aria-labelledby="heading<%= service_category.id %>">
-											      <div class="panel-body">
-											        <table class="table fix-position-search">
-														<tbody>
-															<% service_category.services.where(active: true).each do |service| %>
-															<p><%= service.name %></p>
-															<% end %>
-														</tbody>
-													</table>
-											      </div>
-											    </div>
-											</div>
-										<% end %>
-										</div>
-									</div>
-									<div class="tab-pane" id="messages<%=i%>">
-										<table class="table fix-position-search">
-											<tbody id="schedule-body<%= location.id %>">
-											</tbody>
-										</table>
-									</div>
-								</div>
-							</div>
-							<div class="img-local-search">
-								<% if location.company.logo_url %>
-								<%= image_tag location.company.logo_url.to_s, :size => "80x80", :alt => location.company.name %>
-								<% else %>
-								<%= image_tag 'Iso_Pro_Color.png', :alt => 'AgendaPro', :size => "80x80" %>
-								<% end %>
-							</div>
-						</div>
+			<!--<div class="col-md-12 col-sm-9" style="padding-left: 0px !important;">
+				<div class="map-row">-->
+					<div id="map">
 					</div>
-					<% i = i + 1 end %>
-					<%= will_paginate @results, renderer: BootstrapPagination::Rails %>
-
-					<% if @results.empty? %>
-					<div class="panel panel-info"> 
-						<div class="panel-heading">
-							<div class="head-local-search row">
-								<div class="col-sm-1">
-									<div class="number-pin">
-										<span></span>
-									</div>
-								</div>
-								<div class="col-sm-9">
-									<h3 class="panel-title title-local">Lo sentimos</h3> 
-								</div>
-							</div>
+				<!--</div>
+			</div>-->
+		</div>
+		<div class="row text-center">
+		<p><br />Estos son los resultados más cerca de "<%= params[:inputLocalization] %>". <a href="" data-toggle="modal" data-target="#geolocation-modal">Cambiar Ubicación</a></p>
+		</div>	
+		<div class="row locations-panel">
+			<div class="col-md-6">
+				<% i = 1 %>
+				
+				<% @results.each do |location| %>
+					<% if i%2!=0 %>
+						<div style="float: left; padding: none !important; width: 95%;">
+						<%= render :partial => 'panel', :locals => { :location => location, :i => i} %>
 						</div>
-
-						<div class="panel-body">
-							<div class="box-tabs">
-								<div class="data-local-search">
-									<p>No se encontraron resultados para:</p>
-									<p><strong><%= params[:inputSearch] %></strong></p>
-								</div>
-							</div>
-							<div class="img-local-search">
-								<%= image_tag 'mobile/sad_ap.png', :alt => 'AgendaPro', :size => "80x80" %>
-							</div>
-						</div>
-					</div>
 					<% end %>
-
-				</div>
-				<div class="clear"></div>
+					<% i = i + 1 %>
+					
+				<% end %>
+			</div>
+			<div class="col-md-6">				
+				<% i = 1 %>
+				<% @results.each do |location| %>
+					<% if i%2==0 %>
+						<div style="float: right; padding: none !important; width: 95%;">
+						<%= render :partial => 'panel', :locals => { :location => location, :i => i} %>
+						</div>
+					<% end %>
+					<% i = i + 1 %>
+				<% end %>
 			</div>
 		</div>
+		
+		<%= will_paginate @results, renderer: BootstrapPagination::Rails %>
+	
+		<div class="row">
+			<div>
+				<!-- mapa -->
+				<!--<div class="col-md-6">
+					<div id="map"></div>
+				</div>-->
+
+				
+				
+			</div>
+		</div>
+		<% else %>
+			<div hidden>
+				<input type="hidden" id="lat" value="<%= @lat.to_s %>" />
+				<input type="hidden" id="long" value="<%= @long.to_s %>" />
+			</div>
+			<div class="row">
+			<!--<div class="col-md-12 col-sm-9" style="padding-left: 0px !important;">
+				<div class="map-row">-->
+					<div id="map">
+					</div>
+				<!--</div>
+			</div>-->
+			</div>
+			<div class="row">
+				<div class="col-md-12">
+					<p style="font-size: 22px; text-align: center; margin-top: 20px; color: #acacac;">
+						<i class="fa fa-frown-o fa-4x"></i><br />
+						Lo sentimos, no hemos encontrado resultados para tu búsqueda.
+					</p>
+				</div>
+			</div>
+		<% end %>
 	</div>
+</div>
+
+<div class="background-repeat contact-footer" style="background-image: url(<%= asset_path 'backgrounds/gray-background.png' %>);">
+    <div class="container">
+        <div class="row pull-center">
+            <div class="col-xs-4">
+                <%= image_tag "footer/1.png", size: "22x29" %>
+                <p>Nuestra Señora de los
+                 Angeles 185, Oficina D,
+                  Las Condes, Santiago</p>
+            </div>
+            <div class="col-xs-4">
+                <%= image_tag "footer/2.png", size: "24x19" %>
+                <p>contacto@agendapro.cl</p>
+            </div>
+            <div class="col-xs-4">
+                <%= image_tag "footer/3.png", size: "22x29" %>
+                <p>(+56 9) 5178 5898</p>
+            </div>
+        </div>
+        <div class="row footer">
+            <div class="col-xs-4 col-lg-2 pull-right">
+                <%= image_tag 'logos/logo1.png', :alt => 'AgendaPro', :size => "127x43", class: "img-responsive pull-right" %>
+            </div>
+            <div class="col-xs-8 col-lg-5 links-footer pull-right">
+                <%= link_to "Agrega tu Empresa", home_path %> | <%= link_to "Sobre Nosotros", aboutus_path %> | <%= link_to "Tutoriales", tutorials_path %> | <%= link_to 'Términos y Condiciones', '/TyC.pdf', :target => :blank %>
+            </div>
+            <div class="col-xs-12 col-lg-5 copyright-footer">
+                <i class="fa fa-copyright"></i> Copyright 2013 | Gunei Investment SpA | Todos los derechos reservados
+            </div>
+        </div>
+    </div>
 </div>
 
 
@@ -156,5 +118,157 @@
 <% end %>
 
 <% content_for :scripts do %>
+	<%= javascript_include_tag "jquery-ui-1.10.4.min.js" %>
 	<%= javascript_include_tag "search/map" %>
+	<%= javascript_include_tag "Alert" %>
+	<script type="text/javascript">
+		myAlert = new Alert();
+
+	    var input2 = document.getElementById('inputLocalization2');
+	    var options = {
+	      types: ['geocode'],
+	      componentRestrictions: {country: 'cl'}
+	    };
+	    var geocoder = new google.maps.Geocoder();
+	    var autocomplete2 = new google.maps.places.Autocomplete(input2, options);
+	    var infowindow = new google.maps.InfoWindow();
+	    google.maps.event.addListener(autocomplete2, 'place_changed', function() {
+	        if (autocomplete2.getPlace().geometry) {
+	            $('#inputLocalization').val(autocomplete2.getPlace().formatted_address);
+	            $('#latitude').val(autocomplete2.getPlace().geometry.location.k);
+	            $('#longitude').val(autocomplete2.getPlace().geometry.location.D);
+	            document.cookie = "lat=" + escape(autocomplete2.getPlace().geometry.location.k);
+	            document.cookie = "lng=" + escape(autocomplete2.getPlace().geometry.location.D);
+	            document.cookie = "formatted_address=" + escape(autocomplete2.getPlace().formatted_address);
+	        }
+	    });
+	    $("#inputLocalization2").focusin(function () {
+	        $(document).bind("keypress.key2", function(e) {
+	            if (e.which == 13) {
+	                e.preventDefault();
+	                selectFirstResult();
+	            }
+	        });
+	    });
+	    $("#inputLocalization2").focusout(function () {
+	        if(!$(".pac-container").is(":focus") && !$(".pac-container").is(":visible")) {
+	            selectFirstResult();
+	        }
+	        $(document).unbind("keypress.key2");
+	    });
+	     
+	     function selectFirstResult() {
+	        infowindow.close();
+	        $(".pac-container").hide();
+	        var firstResult = $(".pac-container .pac-item:first").text();
+	        geocoder.geocode({"address":firstResult }, function(results, status) {
+	            if (status == google.maps.GeocoderStatus.OK) {
+	                var lat = results[0].geometry.location.lat(),
+	                    lng = results[0].geometry.location.lng(),
+	                    placeName = results[0].address_components[0].long_name,
+	                    latlng = new google.maps.LatLng(lat, lng);
+	                $('#latitude').val(lat);
+	                $('#longitude').val(lng);
+	                document.cookie = "lat=" + escape(lat);
+	                document.cookie = "lng=" + escape(lng);
+	                $("#inputLocalization").val(results[0].formatted_address);
+	                $("#inputLocalization2").val(results[0].formatted_address);
+	                document.cookie = "formatted_address=" + escape(results[0].formatted_address);
+	                $('#inputSearch').focus();
+	                $('#search-form').submit();
+	            }
+	            else {
+	                $("#inputLocalization").val('');
+	                $("#inputLocalization2").val('');
+	            }
+	        });
+	     }
+	    function geolocate() {
+	        if (navigator.geolocation) {
+	            $('.geolocate_btn').html('&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<%= image_tag "small-loader.gif", :alt => "Loader", :id => "small_loader_header", :class => "small-loader-header" %>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;');
+	            var positioned = false;
+	            navigator.geolocation.getCurrentPosition(
+	                function(position) {
+	                    positioned = true;
+	                    $('#latitude').val(position.coords.latitude);
+	                    $('#longitude').val(position.coords.longitude);
+	                    document.cookie = "lat=" + escape(position.coords.latitude);
+	                    document.cookie = "lng=" + escape(position.coords.longitude);
+	                    var latlng = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
+	                    geocoder.geocode({'latLng': latlng}, function(results, status) {
+	                        if (status == google.maps.GeocoderStatus.OK) {
+	                          if (results[0]) {
+	                            $('#inputLocalization').val(results[0].formatted_address);
+	                            $('#inputLocalization2').val(results[0].formatted_address);
+	                            document.cookie = "formatted_address=" + escape(results[0].formatted_address);
+	                          } else {
+	                            $('#inputLocalization').val(position.coords.latitude+', '+position.coords.longitude);
+	                            $('#inputLocalization2').val(position.coords.latitude+', '+position.coords.longitude);
+	                            document.cookie = "formatted_address=" + escape(position.coords.latitude+', '+position.coords.longitude);
+	                          }
+	                        } else {
+	                            $('#inputLocalization').val(position.coords.latitude+', '+position.coords.longitude);
+	                            $('#inputLocalization2').val(position.coords.latitude+', '+position.coords.longitude);
+	                            document.cookie = "formatted_address=" + escape(position.coords.latitude+', '+position.coords.longitude);
+	                        }
+	                        $('#inputSearch').focus();
+	                        $('.geolocate_btn').html('<i class="fa fa-crosshairs"></i> Encuéntrame');
+	                        return false;
+	                    });
+	                },
+	                function (error) {
+	                    positioned = true;
+	                    if (error.code == 1) {
+	                        myAlert.showAlert(
+	                            '<h3>Hubo un error en el proceso de localización.</h3>' +
+	                            '<p>No hay permiso, por favor asegúrate permitir la geolicalización automática en tu explorador.</p>'
+	                        );
+	                    }
+	                    else if (error.code == 2) {
+	                        myAlert.showAlert(
+	                            '<h3>Hubo un error en el proceso de localización.</h3>' +
+	                            '<p>Posición no disponible, por favor inténtalo nuevamente o escribe tu ubicación.</p>'
+	                        );
+	                    }
+	                    else if (error.code == 3) {
+	                        myAlert.showAlert(
+	                            '<h3>Hubo un error en el proceso de localización.</h3>' +
+	                            '<p>La consulta tardó mucho, por favor inténtalo nuevamente o escribe tu ubicación.</p>'
+	                        );
+	                    }
+	                    else {
+	                        myAlert.showAlert(
+	                            '<h3>Hubo un error en el proceso de localización.</h3>' +
+	                            '<p>Error desconocido, por favor inténtalo nuevamente o escribe tu ubicación.</p>'
+	                        );
+	                    }
+	                    $('.geolocate_btn').html('<i class="fa fa-crosshairs"></i> Encuéntrame');
+	                },
+	                {timeout: 10000}
+	            );
+	            setTimeout(function () {
+	                if (!positioned) {
+	                    myAlert.showAlert(
+	                      '<h3>Hubo un error en el proceso de localización.</h3>' +
+	                      '<p>No hubo respuesta, por favor asegúrate permitir la geolicalización automática en tu explorador.</p>'
+	                    );
+	                    $('.geolocate_btn').html('<i class="fa fa-crosshairs"></i> Encuéntrame');
+	                }
+	            }, 15000);
+	        }
+	        else {
+	            myAlert.showAlert(
+	              '<h3>Hubo un error en el proceso de localización.</h3>' +
+	              '<p>Este explorador no permite geolocalización automática, por favor escribe tu ubicación.</p>'
+	            );
+	        }
+	        return;
+	    }
+	    $('.geolocate_btn').click(function() {
+	        geolocate();
+	    });
+	    $('#modal_search').click(function() {
+	        $('#search-form').submit();
+	    });
+	</script>
 <% end %>

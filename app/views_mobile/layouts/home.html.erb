@@ -20,44 +20,53 @@
 
         <!-- start: CSS -->
         <%= stylesheet_link_tag "mobile" %>
-        <%= stylesheet_link_tag "http://fonts.googleapis.com/css?family=Open+Sans:400,300,400italic,600,600italic,700,700italic,300italic" %>
+        <%= stylesheet_link_tag "mobile/mobile-home" %>
+        <%= yield :stylesheets %>
         <!-- end: CSS -->
 
         <!-- Fav and touch icons -->
-        <%= favicon_link_tag "Iso_Pro_Color.png", :rel => "shortcut icon" %>
+        <%= favicon_link_tag "favicon.png", :rel => "shortcut icon" %>
     </head>
 
     <body>
         <!-- start: Header -->
         <header>
-            <h2>AGENDAPRO</h2>
-            <a id="btn-principal" class="nav-toggler toggle-slide-right" href="#menu"><span>menu</span></a>
-            </div>
+            <nav class="navbar navbar-default navbar-agendapro navbar-agendapro-white navbar-fixed-top" role="navigation">
+                <div class="container">
+                    <!-- Brand and toggle get grouped for better mobile display -->
+                    <div class="navbar-header">
+                        <button type="button" class="navbar-toggle collapsed toggle-menu menu-right push-body" data-toggle="collapse" data-target="#navbar-menu">
+                            <i class="fa fa-bars"></i>
+                        </button>
+                        <a href="<%= root_without_subdomain %>" class="navbar-brand">
+                            <%= image_tag 'logos/logo1.png', :alt => 'AgendaPro', :size => '120x41' %>
+                        </a>
+                    </div>
+                    <!-- Collect the nav links, forms, and other content for toggling -->
+                    <div class="cbp-spmenu cbp-spmenu-vertical cbp-spmenu-right collapse navbar-collapse" id="navbar-menu">
+                        <ul class="nav navbar-nav">
+                            <li><%= link_to 'Buscador', root_path %></li>
+                            <li><%= link_to 'Inicio', home_path %></li>
+                            <li><%= link_to "Características", features_path %></li>
+                            <li><%= link_to "Planes", view_plans_path %></li>
+                            <li><%= link_to "Tutoriales", tutorials_path %></li>
+                            <li><%= link_to "Contacto", contact_path %></li>
+                            <li class="divider"></li>
+                            <% if user_signed_in? %>
+                            <li><%= link_to '<i class="fa fa-calendar"></i> Mi Agenda'.html_safe, my_agenda_path %></li>
+                            <li><%= link_to '<i class="fa fa-user"></i> Editar Perfil'.html_safe, edit_user_registration_path %></li>
+                            <li><%= link_to '<i class="fa fa-power-off"></i> Salir'.html_safe, destroy_user_session_path, method: :delete %></li>
+                            <% else %>
+                            <li><%= link_to '<i class="fa fa-user"></i> Registrate'.html_safe, new_user_registration_path, class: "menu-green" %></li>
+                            <li><%= link_to '<i class="fa fa-calendar-o"></i> Iniciar Sesión'.html_safe, new_user_session_path, class: "menu-green" %></li>
+                            <% end %>
+                            <!-- <li><%= link_to "Agrega tu Empresa", home_path, class: "menu-orange" %></li> -->
+                        </ul>
+                    </div>
+                </div>
+            </nav>
         </header>
         <!-- end: Header -->
-
-        <!-- start: menu -->
-        <nav class="menu slide-menu-right">
-            <ul>
-                <li><%= link_to 'AGENDAPRO', root_path %></li>
-                <li><%= link_to 'ACERCA DE', home_path %></li>
-                <li><%= link_to 'CONTACTO', contact_path %></li>
-                <li><%= link_to 'PLANES', view_plans_path %></li>
-                <% if user_signed_in? %>
-                <li><%= link_to current_user.email.upcase, edit_user_registration_path %></li>
-                <li><%= link_to 'MI AGENDA', my_agenda_path(:id => current_user.id) %></li>
-                <li><%= link_to 'SALIR', destroy_user_session_path, method: :delete %></li>
-                <% else %>
-                <li><%= link_to 'INICIA SESION', new_user_session_path %></li>
-                <li><%= link_to 'REGISTRATE', new_user_registration_path %></li>
-                <% end %>
-            </ul>
-            <span>
-                <%= link_to 'Sitio Completo', prefer_full_site_url %>|
-                <a href="#" class="close-menu">&gt;&gt;</a>
-            </span>
-        </nav><!-- /slide menu right -->
-        <!-- end: menu -->
 
         <!-- start: content -->
         <div id="wrapper">
@@ -75,9 +84,7 @@
                 </div>
             <% end %>
             <!-- end: Alerts -->
-            <div class="container">
-                <%= yield %>
-            </div>
+            <%= yield %>
         </div>
         <!-- end: content -->
 

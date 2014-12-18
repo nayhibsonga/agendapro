@@ -1,121 +1,157 @@
+
 <div class="main">
-    <section class="hgroup">
-        <div class="container">
-            <h1>Sobre Nosotros</h1>
-            <h2>Conoce más sobre <strong><span class="agendapro">AgendaPro</span></strong> y el equipo que esta detrás, que trabaja constantemente para ofrecerte un mejor servicio.</h2>
-            <div class="line-breadcrumb">
-                <ul class="breadcrumb pull-right">
-                    <li><%= link_to "Inicio", home_path %> </li>
-                    <li class="active">Sobre Nosotros</li>
-                </ul>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="about-title">
+                    SOBRE NOSOTROS
+                </div>
             </div>
         </div>
-    </section>
-    
-    <section class="article-text">
-        <div class="container">
-            <div class="columns_2 well">
-                <p><strong>AgendaPro nace de la necesidad de solucionar uno de los problemas más comunes y molestos que existen, pedir una hora.</strong> Es muy común que un cliente llame y nadie le conteste el teléfono. <strong>Para TU cliente el no poder reservar es una pésima señal, quizás no vuelva nunca más.</strong> Para tí como dueño de un local, cada una de estas llamadas no recibidas significa una venta menos, generando un importante efecto en tus resultados. AgendaPro es el mejor sistema para evitar este tipo de problemas, <strong>¡las reservas se hacen de forma automática!</strong></p>
-                <p><strong>AgendaPro está formado por un equipo joven</strong>, pero con experiencia, tanto en el rubro tecnológico como en el financiero. Además, por medio de un directorio, gente con basta experiencia nos aconseja y guía para dar el mejor servicio posible a nuestros clientes. <strong>AgendaPro busca ser un puente de conexión directo entre prestadores y clientes</strong>, para que estos últimos puedan obtener de manera más simple lo que necesitan. Todo esto por medio de tecnología de punta y un equipo 100% dedicado.</p>
-                <br />
+        <div class="row">
+            <div class="col-md-8 col-md-offset-2">
+                <div class="about-subtitle">
+                    Conoce más sobre AgendaPro y el equipo que esta detrás, que trabaja constantemente para ofrecerte un mejor servicio.
+                </div>
             </div>
         </div>
-    </section>
-    
-    <section class="team_members">
-        <div class="container">
-            <h2 class="section_header">Conoce a nuestro equipo, <small>trabajando para ofrecerte el mejor servicio.</small></h2>
-            <div class="row">
-                <div class="col-sm-6 col-md-3">
-                    <div class="team_member img-responsive">
-                        <figure>
-                        	<%= image_tag "home/nico_r.png", :atl => "nico_r" %>
-                        </figure>
-                        <h5>Nicolás Rossi</h5>
-                        <small>CEO / Founder</small>
-                        <hr>
-                        <!-- <div class="team_social">
-                            <a href="#facebook"><i class="fa fa-facebook"></i></a>
-                            <a href="#twitter"><i class="fa fa-twitter"></i></a>
-                            <a href="#pinterest"><i class="fa fa-linkedin"></i></a>
-                            <a href="#googleplus"><i class="fa fa-google-plus"></i></a>
-                        </div> -->
-                        <p class="short_bio">Ingeniero Civil Industrial, Universidad Católica de Chile.</p>
-                    </div>
-                </div>
-                <div class="col-sm-1 visible-lg"></div><!-- Separador -->
-                <div class="col-sm-6 col-md-3">
-                    <div class="team_member img-responsive">
-                        <figure>
-                        	<%= image_tag "home/matias.png", :alt => "matias" %>
-                        </figure>
-                        <h5>Matías Ulloa</h5>
-                        <small>COO / Founder</small>
-                        <hr>
-                        <!-- <div class="team_social">
-                            <a href="#facebook"><i class="fa fa-facebook"></i></a>
-                            <a href="#twitter"><i class="fa fa-twitter"></i></a>
-                            <a href="#pinterest"><i class="fa fa-linkedin"></i></a>
-                            <a href="#googleplus"><i class="fa fa-google-plus"></i></a>
-                        </div> -->
-                        <p class="short_bio">Ingeniero Civil Industrial, Universidad Católica de Chile.</p>
-                    </div>
-                </div>
-                <div class="col-sm-1 visible-lg"></div><!-- Separador -->
-                <div class="col-sm-6 col-md-3">
-                    <div class="team_member img-responsive">
-                        <figure>
-                        	<%= image_tag "home/julio.png", :alt => "julio" %>
-                        </figure>
-                        <h5>Julio Guzmán</h5>
-                        <small>CFO / Founder</small>
-                        <hr>
-                        <!-- <div class="team_social">
-                            <a href="#facebook"><i class="fa fa-facebook"></i></a>
-                            <a href="#twitter"><i class="fa fa-twitter"></i></a>
-                            <a href="#pinterest"><i class="fa fa-linkedin"></i></a>
-                            <a href="#googleplus"><i class="fa fa-google-plus"></i></a>
-                        </div> -->
-                        <p class="short_bio">Ingeniero Civil Industrial, Universidad Católica de Chile.</p>
-                    </div>
-                </div>
-                <div class="col-sm-6 col-md-3">
-                    <div class="team_member">
-                        <figure>
-                        	<%= image_tag "home/seba.png" %>
-                        </figure>
-                        <h5>Sebastián Hevia</h5>
-                        <small>Web-Developer</small>
-                        <hr>
-                        <!-- <div class="team_social">
-                            <a href="#facebook"><i class="fa fa-facebook"></i></a>
-                            <a href="#twitter"><i class="fa fa-twitter"></i></a>
-                            <a href="#pinterest"><i class="fa fa-linkedin"></i></a>
-                            <a href="#googleplus"><i class="fa fa-google-plus"></i></a>
-                        </div> -->
-                        <p class="short_bio">Ingeniero Civil Industrial, mención TI, Universidad Católica de Chile.</p>
-                    </div>
-                </div>
-                <div class="col-sm-1 visible-lg"></div><!-- Separador -->
-                <div class="col-sm-6 col-md-3">
-                    <div class="team_member">
-                        <figure>
-                        	<%= image_tag "home/nico_f.png", :alt => "nico_f" %>
-                        </figure>
-                        <h5>Nicolás Flores</h5>
-                        <small>Web-Developer</small>
-                        <hr>
-                        <!-- <div class="team_social">
-                            <a href="#facebook"><i class="fa fa-facebook"></i></a>
-                            <a href="#twitter"><i class="fa fa-twitter"></i></a>
-                            <a href="#pinterest"><i class="fa fa-linkedin"></i></a>
-                            <a href="#googleplus"><i class="fa fa-google-plus"></i></a>
-                        </div> -->
-                        <p class="short_bio">Estudiante de Ingeniería Civil, mención Computación, Universidad de Los Andes.</p>
-                    </div>
-                </div>
-                <div class="col-sm-1 visible-lg"></div><!-- Separador -->
+    </div>
+
+<div class="about-section">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-6">
+                AgendaPro nace de la necesidad de solucionar uno de los problemas más comunes y molestos que existen, pedir una hora. Es muy común que un cliente llame y nadie le conteste el teléfono. Para TU cliente el no poder reservar es una pésima señal, quizás no vuelva nunca más. Para ti, como dueño de un local, cada una de estas llamadas no recibidas significa una venta menos, generando un importante efecto en tus resultados. AgendaPro es el mejor sistema para evitar este tipo de problemas, ¡las reservas se hacen de forma automática!
+            </div>
+            <div class="col-md-6">
+                AgendaPro está formado por un equipo joven, pero con experiencia, tanto en el rubro tecnológico como en el financiero. Además, por medio de un directorio, gente con vasta experiencia nos aconseja y guía para dar el mejor servicio posible a nuestros clientes. AgendaPro busca ser un puente de conexión directo entre prestadores y clientes, para que estos últimos puedan obtener de manera más simple lo que necesitan. Todo esto por medio de tecnología de punta y un equipo 100% dedicado.
             </div>
         </div>
-    </section>
+    </div>
+</div>
+
+    <div class="container">
+        <div class="row team-first">
+            <div class="col-md-3">
+                <%= image_tag "home/nico_r.png", :atl => "nico_r", :class => "img-responsive" %>
+                <div class="member">
+                    <div class="member-role">
+                        <span class="name">Nicolás Rossi</span>
+                        <span class="role">CEO / Founder</span>
+                    </div>
+                    <div class="member-studies">
+                        <span>Ingeniero Civil Industrial</span>
+                        <span>Universidad Católica de Chile</span>
+                        <span>&nbsp;</span>
+                    </div>
+                    <div style="clear: both;"></div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <%= image_tag "home/matias.png", :alt => "matias", :class => "img-responsive" %>
+                <div class="member">
+                    <div class="member-role">
+                        <span class="name">Matías Ulloa</span>
+                        <span class="role">COO / Founder</span>
+                    </div>
+                    <div class="member-studies">
+                        <span>Ingeniero Civil Industrial</span>
+                        <span>Universidad Católica de Chile</span>
+                        <span>&nbsp;</span>
+                    </div>
+                    <div style="clear: both;"></div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <%= image_tag "home/julio.png", :alt => "julio", :class => "img-responsive" %>
+                <div class="member">
+                    <div class="member-role">
+                        <span class="name">Julio Guzmán</span>
+                        <span class="role">CEO / Founder</span>
+                    </div>
+                    <div class="member-studies">
+                        <span>Ingeniero Civil Industrial</span>
+                        <span>Universidad Católica de Chile</span>
+                        <span>&nbsp;</span>
+                    </div>
+                    <div style="clear: both;"></div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <%= image_tag "home/seba.png", :atl => "seba", :class => "img-responsive" %>
+                <div class="member">
+                    <div class="member-role">
+                        <span class="name">Sebastián Hevia</span>
+                        <span class="role">Web Developer</span>
+                    </div>
+                    <div class="member-studies">
+                        <span>Ingeniero Civil Industrial</span>
+                        <span>Mención TI</span>
+                        <span>Universidad Católica de Chile</span>
+                    </div>
+                    <div style="clear: both;"></div>
+                </div>
+            </div>
+        </div>
+        <div class="row team-second">
+            <div class="col-md-4">
+                <div class="row">
+                    <div class="col-md-8 col-md-offset-4" style="padding: 0px 0px 0px 0px !important;">
+                        <%= image_tag "home/nico_f.png", :atl => "nico_f", :class => "img-responsive" %>
+                        <div class="member">
+                            <div class="member-role">
+                                <span class="name">Nicolás Flores</span>
+                                <span class="role">Web Developer</span>
+                            </div>
+                            <div class="member-studies">
+                                <span>Estudiante de Ingeniería Civil</span>
+                                <span>Mención Computación</span>
+                                <span>Universidad de Los Andes</span>
+                            </div>
+                            <div style="clear: both;"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="row">
+                    <div class="col-md-8 col-md-offset-2" style="padding: 0px 0px 0px 0px !important;">
+                        <%= image_tag "home/ignacio.png", :atl => "400x400", :class => "img-responsive" %>
+                        <div class="member">
+                            <div class="member-role">
+                                <span class="name">Ignacio Gómez</span>
+                                <span class="role">Web Developer</span>
+                            </div>
+                            <div class="member-studies">
+                                <span>Ingeniero Civil de Computación</span>
+                                <span>Universidad Católica de Chile</span>
+                                <span>&nbsp;</span>
+                            </div>
+                            <div style="clear: both;"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="row">
+                    <div class="col-md-8" style="padding: 0px 0px 0px 0px !important;">
+                        <%= image_tag "home/mariapaz.png", :atl => "400x400", :class => "img-responsive" %>
+                        <div class="member">
+                            <div class="member-role">
+                                <span class="name">María Paz del Pedregal</span>
+                                <span class="role">Designer</span>
+                            </div>
+                            <div class="member-studies">
+                                <span>Diseñadora Digital</span>
+                                <span>Universidad del Desarrollo</span>
+                                <span>&nbsp;</span>
+                            </div>
+                            <div style="clear: both;"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
 </div>
