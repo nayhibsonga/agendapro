@@ -1,13 +1,13 @@
 <section id="mensaje-principal">
   <div class="container">
-    <div class="row">
+    <div class="row below-navbar">
       <div class="col-xs-12">
         <div class="row">
-          <div class="col-sm-6">
-            <h3>AgendaPro, el mejor sistema de Reservas Online<br />Gestiona tu negocio desde cualquier lugar del mundo y aumenta tus ventas</h3>
+          <div class="col-sm-9">
+            <h3>AgendaPro, el mejor sistema de Reservas Online<br />Gestiona tu negocio desde cualquier lugar y aumenta tus ventas</h3>
           </div>
-          <div class="col-sm-6">
-            <div class="trial-button-home">
+          <div class="col-sm-3">
+            <div class="">
               <p><%= link_to "Pruébalo Gratis Ahora!", new_user_registration_path(:plan => Plan.find_by_name("Trial").id, :company => true), :class => "btn btn-lg btn-orange" %>
               <br />No se requiere tarjeta de crédito</p>
             </div>
