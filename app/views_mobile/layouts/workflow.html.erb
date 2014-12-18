@@ -36,20 +36,15 @@
 				<div class="container">
 					<!-- Brand and toggle get grouped for better mobile display -->
 					<div class="navbar-header">
-						<a class="navbar-toggle toggle-slide-right" href="#menu">
+						<button type="button" class="navbar-toggle collapsed toggle-menu menu-right push-body" data-toggle="collapse" data-target="#navbar-menu">
 							<i class="fa fa-bars"></i>
-						</a>
+						</button>
 						<%= link_to '<i class="fa fa-caret-left"></i>'.html_safe, '/', class: "navbar-brand" %>
 						<p class="navbar-text"><%= @company.name %></p>
 					</div>
 					<!-- Collect the nav links, forms, and other content for toggling -->
-					<nav class="menu slide-menu-right">
-						<p class="text-right">
-							<a class="close-menu">
-								<i class="fa fa-times"></i>
-							</a>
-						</p>
-						<ul>
+					<div class="cbp-spmenu cbp-spmenu-vertical cbp-spmenu-right collapse navbar-collapse" id="navbar-menu">
+						<ul class="nav navbar-nav">
 							<li><%= link_to 'Buscador', root_without_subdomain %></li>
 							<li><%= link_to 'Clientes', root_without_subdomain(anchor: 'clients-target') %></li>
                             <li><%= link_to 'Que Hacemos', root_without_subdomain(anchor: 'what-we-do-target') %></li>
@@ -66,7 +61,7 @@
                             <% end %>
 							<li><%= link_to "Agrega tu Empresa", home_path, class: "menu-orange" %></li>
 						</ul>
-					</nav><!-- /slide menu right -->
+					</div>
 				</div>
 			</nav>
 		</header>
