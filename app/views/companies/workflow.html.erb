@@ -24,12 +24,12 @@
               <div class="row header-btns">
                 <div class="col-md-6">
                   <div class="header-btn active">
-                    <a href="#" id="boton-locales">Lugares</a>
+                    <a href="#" id="boton-locales" class="btn btn-green">Lugares</a>
                   </div>
                 </div>
                 <div class="col-md-6">
                   <div class="header-btn inactive" style="float: left;">
-                    <a href="#" id="boton-servicio">Servicios</a>
+                    <a href="#" id="boton-servicio" class="btn btn-green">Servicios</a>
                   </div>
                 </div>
               </div>
@@ -503,6 +503,9 @@
 
       $('#boton-servicio').click(function () {
         window.location.href = 'http://' + $('#workflow_url').data('url') + '/workflow?local=' + $('#workflow_url').data('location-id').toString();
+      });
+      $('#boton-locales').click(function () {
+        window.location.href = 'http://' + $('#workflow_url').data('url') + '/?local=' + $('#workflow_url').data('location-id').toString();
       });
 
       //$("#datepicker").formatDate('yyyy-mm-dd');
