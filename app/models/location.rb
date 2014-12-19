@@ -134,7 +134,9 @@ class Location < ActiveRecord::Base
 	    	sp.services.each do |s|
 	    		services_ids.push(s.id)
 	    		services.push(s)
-	    		categories.push(s.service_category)
+	    		if(!categories.include?(s.service_category))
+	    			categories.push(s.service_category)
+	    		end
 	    	end
 	    end
 
