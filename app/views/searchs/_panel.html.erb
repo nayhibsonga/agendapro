@@ -90,20 +90,24 @@
 								<% if category.services.count > 0 %>
 									<div class="panel panel-default">
 										<div class="panel-heading">
-									      <h3 class="panel-title minus collapsed" data-toggle="collapse" data-parent="#categories<%=location.id%>" href="#collapse-<%=location.id%>-<%= category.id %>">
-									        <a>
-									          <%= category.name %>
-									        </a>
-									      </h3>
-									    </div>
-									    <div id="collapse-<%=location.id%>-<%= category.id %>" class="panel-collapse collapse">
-      										<div class="panel-body">
+								      <h3 class="panel-title minus collapsed" data-toggle="collapse" data-parent="#categories<%=location.id%>" href="#collapse-<%=location.id%>-<%= category.id %>">
+								        <a>
+								          <%= category.name %>
+								        </a>
+								      </h3>
+								    </div>
+								    <div id="collapse-<%=location.id%>-<%= category.id %>" class="panel-collapse collapse">
+  										<div class="panel-body">
 												<div class="services">
 													<% category.services.each do |service| %>
-														<div class="service">
-															<%= service.name_with_small_outcall %>
-														</div>
-													<% end %>
+													<div class="service">
+														<%= service.name_with_small_outcall %>
+														<% if service.show_price and service.price > 0 %>
+														<span>&nbsp;&nbsp;<%= number_to_currency(service.price, {:unit => '$', :separator => ',', :delimiter => '.', :precision => 0})%></span>
+														<% end %>
+														<%= link_to 'Reservar'.html_safe, url_for(:host => location.company.web_address + '.' + @domain, :local => location.id, service_id: service.id, :controller => 'companies', :action => 'workflow'), :class => "btn btn-xs btn-default btn-green pull-right", :role => "button" %>
+													</div>
+												<% end %>
 												</div>
 											</div>
 										</div>

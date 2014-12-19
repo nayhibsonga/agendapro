@@ -1,6 +1,6 @@
  //====== Load Steps ======//
 
-function loadStep1 () {
+function loadStep1 (service_id) {
 
 	$('#services-description').empty();
 	$('#services-selector').html('<%= image_tag "ajax-loader.gif", :alt => "Loader", :class => "loader-gif" %>');
@@ -82,6 +82,11 @@ function loadStep1 () {
 	 	if (categoryCount == 1) {
 	 		$('.panel-collapse').addClass('in');
 	 	}
+
+	 	if (service_id != 0) {
+	 		$('input[name="serviceRadio"][value="' + service_id + '"]').attr('checked', true)
+	 		$('#foo4').trigger('next');
+	 	};
 	});
 
  	
