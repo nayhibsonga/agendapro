@@ -525,7 +525,7 @@
         onCreate: function () {
           $('.center-block').parent().remove();
           $('#foo4').css('visibility', 'visible');
-          loadStep1(<%= if params[:service_id] then params[:service_id] else 0 end %>);
+          loadStep1(<%= if params[:service_id] and params[:service_id].to_i > 0 then params[:service_id] else 0 end %>);
         },
         scroll: {
           conditions: function (direction) {

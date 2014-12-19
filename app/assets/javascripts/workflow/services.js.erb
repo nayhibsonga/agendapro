@@ -84,8 +84,10 @@ function loadStep1 (service_id) {
 	 	}
 
 	 	if (service_id != 0) {
-	 		$('input[name="serviceRadio"][value="' + service_id + '"]').attr('checked', true)
+	 		$('input[name="serviceRadio"][value="' + service_id + '"]').click();
 	 		$('#foo4').trigger('next');
+	 		$('input[name="serviceRadio"][value="' + service_id + '"]').closest('.panel-collapse').addClass('in');
+	 		$('input[name="serviceRadio"][value="' + service_id + '"]').closest('.panel-collapse').prev().children('.panel-title').removeClass('collapsed');
 	 	};
 	});
 
