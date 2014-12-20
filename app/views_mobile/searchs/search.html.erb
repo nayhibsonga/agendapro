@@ -24,7 +24,7 @@
                 <div class="form-group">
                 	<div class="col-xs-12">
                 		<div class="input-group">
-                        	<%= search_field_tag :inputSearch, params[:inputSearch], class: "form-control", placeholder: "Ejemplo: Corte de Pelo", :required => "true", :autofocus => "autofocus" %>
+                        	<%= search_field_tag :inputSearch, params[:inputSearch], class: "form-control", placeholder: "Ejemplo: Corte de Pelo", :required => "true" %>
                         	<span class="input-group-btn">
                         		<button id="search_btn" class="btn btn-search-results" type="submit"><i class="fa fa-search"></i> Buscar</button>
                         	</span>
@@ -75,13 +75,4 @@
 		<% end %>
 	</div>
 </div>
-
-<% content_for :scripts do %>
-<script>
-    $(function() {
-        $('.navbar-agendapro').addClass('navbar-agendapro-white');
-        $('.navbar-agendapro .navbar-brand').html('<%= image_tag 'logos/logo2.png', :alt => 'AgendaPro', :size => '127x43' %>');
-    });
-</script>
-<% end %>
 
