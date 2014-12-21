@@ -9,6 +9,7 @@ function Calendar (source, getData) {
 			date: ''
 		}
 	}
+
 	var week;
 	var clickEvent;
 
@@ -69,6 +70,21 @@ function Calendar (source, getData) {
 	var generateWeek = function (monday) {
 		sources.data.date = formatDate(monday);
 		$.getJSON(sources.source, sources.data, function (data, status) {
+
+			$(".days-row").empty();
+			
+			$.each(data, function(day, day_blocks){
+				var date = parseDate(day);
+				var dayNumber = date.getDay();
+				if(day_blocks.length)
+				{
+					var weekNumber = date.getDate();
+					$(".days-row").append('<div class="dia-semana">' + days[dayNumber] + ' ' + weekNumber + '</div>');
+				}
+			});
+
+			
+
 			var pos = 0;
 			$.each(data, function (day, day_blocks) {
 				var date = parseDate(day);
@@ -80,7 +96,7 @@ function Calendar (source, getData) {
 						'data-date': day
 					});
 					var weekNumber = date.getDate();
-					columnDay.append('<div class="dia-semana">' + days[dayNumber] + ' ' + weekNumber + '</div>');
+					//columnDay.append('<div class="dia-semana">' + days[dayNumber] + ' ' + weekNumber + '</div>');
 
 					// Generate Hours
 					generateHours(columnDay, day_blocks);
@@ -97,6 +113,9 @@ function Calendar (source, getData) {
 				}
 				pos += 1;
 			});
+
+
+
 			$('.horario').append('<div class="clear"></div>');
 			calculateWidth();
 			$('#next').removeAttr('disabled');
@@ -178,6 +197,12 @@ function Calendar (source, getData) {
 	// Auxiliar methods
 	var parseDate = function (date, start) {
 		start = start || '00:00';
+
+		if(date===undefined)
+		{
+			return new Date();
+		}
+
 		var year = date.substring(0, date.indexOf('-'));
 		date = date.substring(date.indexOf('-') + 1);
 		var month = date.substring(0, date.indexOf('-')) - 1;
@@ -191,8 +216,12 @@ function Calendar (source, getData) {
 
 	var calculateWidth = function () {
 		var count = $('.columna-dia').length;
-		var width = (100 / count) - 1.2;
+		var width = (100 / count);
 		$('.columna-dia').css('width', width + '%');
+		
+		var width2 = $(".horario")[0].clientWidth/count;
+		$('.dia-semana').css('width', width2);
+		$('.dia-semana:last').css('width', width2-1);
 	}
 
 	var correctNumber = function (number) {
@@ -209,6 +238,10 @@ function Calendar (source, getData) {
 	}
 
 	this.rebuild = function (source, getData) {
+
+		console.log(getData['date']);
+		var day = parseDate(getData['date'], '00:00');
+
 		sources = {
 			source: '/jsontest',
 			data: {
@@ -220,8 +253,7 @@ function Calendar (source, getData) {
 		sources.source = source || sources.source;
 		getData = getData || {};
 		sources.data = $.extend(true, sources.data, getData);
-
-		week = generateCalendar();
+		week = generateCalendar(day);
 	}
 
 	this.getClickDetails = function () {

@@ -57,10 +57,6 @@ module ApplicationHelper
 		end
 	end
 
-	def root_without_subdomain
-		root_url(:subdomain => false)
-	end
-
 	# Reporting
 	# Count
 	def booking_count(time_range_id, offset, company_id)

@@ -1,6 +1,6 @@
 class UsersController < ApplicationController
   #before_action :set_user, only: [:show, :edit, :update, :destroy]
-  before_action :set_user, only: [:agenda]
+  #before_action :set_user, only: [:agenda]
   before_action :authenticate_user!, except: [:check_user_email]
   before_action :verify_is_super_admin, except: [:new, :agenda, :add_company, :check_user_email]
   layout "admin", except: [:agenda, :add_company]
@@ -70,10 +70,20 @@ class UsersController < ApplicationController
   end
 
   def agenda
-    @activeBookings = Booking.where(:user_id => params[:id], :status_id => Status.find_by(:name => ['Reservado', 'Pagado', 'Confirmado'])).where("start > ?", DateTime.now).order(:start) 
-    @lastBookings = Booking.where(:user_id => params[:id]).order(updated_at: :desc).limit(10)
+    @lat = cookies[:lat]
+    @lng = cookies[:lng]
+    if cookies[:formatted_address]
+      @formatted_address = cookies[:formatted_address].encode('UTF-8', 'binary', invalid: :replace, undef: :replace, replace: '')
+    end
 
-    render :layout => 'search'
+    #@activeBookings = Booking.where(:user_id => params[:id], :status_id => Status.find_by(:name => ['Reservado', 'Pagado', 'Confirmado'])).where("start > ?", DateTime.now).order(:start) 
+    #@lastBookings = Booking.where(:user_id => params[:id]).order(updated_at: :desc).limit(10)
+    @user = current_user
+    @activeBookings = Booking.where(:user_id => current_user.id, :status_id => Status.find_by(:name => ['Reservado', 'Pagado', 'Confirmado'])).where("start > ?", DateTime.now).order(:start) 
+    @lastBookings = Booking.where(:user_id => current_user.id).order(updated_at: :desc).limit(10)
+
+
+    render :layout => 'results'
   end
 
   def check_user_email

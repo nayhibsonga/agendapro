@@ -11,4 +11,13 @@ module UrlHelper
     end
     super
   end
+
+  def root_without_subdomain(options = nil)
+    if options.kind_of?(Hash) && !options.has_key?(:subdomain)
+      options[:subdomain] = false
+      root_url(options)
+    else
+      root_url(subdomain: false)
+    end
+  end
 end

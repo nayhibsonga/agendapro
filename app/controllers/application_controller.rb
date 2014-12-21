@@ -1,6 +1,6 @@
 class ApplicationController < ActionController::Base
 
-	layout "login" #:layout
+	layout "home" #:layout
 
 	include UrlHelper
   # Prevent CSRF attacks by raising an exception.

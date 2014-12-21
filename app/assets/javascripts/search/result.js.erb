@@ -7,8 +7,8 @@ function loadSchedule(id) {
       if (hour.open) {
         $('#schedule-body' + id).append(
           '<tr>' +
-            '<th>' + day + ':</th>' +
-            '<th>' + getHour(hour.open) + ' - ' + getHour(hour.close) + '</th>' +
+            '<td class="dark-gray">' + day + ':</td>' +
+            '<td class="light-gray">' + getHour(hour.open) + ' - ' + getHour(hour.close) + '</td>' +
           '</tr>'
         );
       }
@@ -175,6 +175,26 @@ $(function() {
     }
     changeLocation(sessionStorage.district);
   }
+
+	$('a.pin-link').click(function(){
+		if($(this).children(":first").hasClass("number-pin-gray"))
+		{
+			$(this).children(":first").removeClass("number-pin-gray");
+			$(this).children(":first").addClass("number-pin-green");
+		}
+	});
+	
+	$('a.center-link').click(function(){
+		var tab_id = $(this).attr("tab_id");
+		$('.number-pin[tab_id='+tab_id+']').removeClass("number-pin-green");
+		$('.number-pin[tab_id='+tab_id+']').addClass("number-pin-gray");
+    $('a.pin-link').each(function(e){
+      if($(this).attr("tab_id")!=tab_id)
+      {
+        $(this).trigger("click");
+      }
+    });
+	});
 
   $('a.overlay').click( function () {
     if ($(this).data('search')) {
