@@ -1,6 +1,6 @@
  //====== Load Steps ======//
 
-function loadStep1 () {
+function loadStep1 (service_id) {
 
 	$('#services-description').empty();
 	$('#services-selector').html('<%= image_tag "ajax-loader.gif", :alt => "Loader", :class => "loader-gif" %>');
@@ -82,6 +82,13 @@ function loadStep1 () {
 	 	if (categoryCount == 1) {
 	 		$('.panel-collapse').addClass('in');
 	 	}
+
+	 	if (service_id != 0) {
+	 		$('input[name="serviceRadio"][value="' + service_id + '"]').click();
+	 		$('#foo4').trigger('next');
+	 		$('input[name="serviceRadio"][value="' + service_id + '"]').closest('.panel-collapse').addClass('in');
+	 		$('input[name="serviceRadio"][value="' + service_id + '"]').closest('.panel-collapse').prev().children('.panel-title').removeClass('collapsed');
+	 	};
 	});
 
  	
@@ -170,10 +177,10 @@ function loadStep2 () {
 				});
 
 				$(function () {
-					$('#prev').click(function () {
+					$('.prev-btn').click(function () {
 						selected = false;
 					});
-					$('#next').click(function () {
+					$('.next-bn').click(function () {
 						selected = false;
 					});
 				});
@@ -214,15 +221,19 @@ function loadStep2 () {
 				else {
 					calendar = new Calendar('/get_available_time.json', data);
 				}
+
+
+				$('#foo4').trigger('updateSizes');
+
 				$(document).on('hourClick', function (e) {
 					addBooking(e);
 				});
 
 				$(function () {
-					$('#prev').click(function () {
+					$('.prev-btn').click(function () {
 						selected = false;
 					});
-					$('#next').click(function () {
+					$('.next-btn').click(function () {
 						selected = false;
 					});
 				});
@@ -238,6 +249,7 @@ function loadStep2 () {
 
 		});
 	}
+	$('#foo4').trigger('updateSizes');
 }
 
 function loadStep3 () {
@@ -322,6 +334,7 @@ function scrollEvents (direction) {
 			}
 			else {
 				loadStep2();
+				
 				step = 2;
 				return true;
 			}
@@ -410,7 +423,7 @@ function loadDescription (serviceId) {
 
 //====== Manage Booking ======//
 
-var selected = false;
+var pressed3 = false;
 
 function addBooking (booking) {
 	window.console.log(booking);

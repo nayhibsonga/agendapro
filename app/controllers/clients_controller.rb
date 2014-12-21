@@ -256,7 +256,7 @@ class ClientsController < ApplicationController
   end
 
   def client_loader
-    @client = Client.find_by_identification_number(params[:term])
+    @client = Client.where(identification_number: params[:term], company_id: params[:company_id]).first
 
     render :json => @client
   end
