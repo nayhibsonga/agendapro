@@ -31,7 +31,7 @@
 	<body>
 		<!-- start: Header -->
 		<header>
-			<nav class="navbar navbar-default navbar-agendapro navbar-fixed-top" role="navigation">
+			<nav class="navbar navbar-default navbar-agendapro navbar-agendapro-white navbar-fixed-top" role="navigation">
 				<div class="container">
 					<!-- Brand and toggle get grouped for better mobile display -->
 					<div class="navbar-header">
@@ -39,7 +39,7 @@
 							<i class="fa fa-bars"></i>
 						</button>
 						<a href="<%= root_without_subdomain %>" class="navbar-brand">
-							<%= image_tag 'logos/logo1.png', :alt => 'AgendaPro', :size => '120x41' %>
+							<%= image_tag 'logos/logo2.png', :alt => 'AgendaPro', :size => '120x41' %>
 						</a>
 					</div>
 					<!-- Collect the nav links, forms, and other content for toggling -->
@@ -90,7 +90,6 @@
 		<!-- start: JavaScript-->
 		<%= javascript_include_tag "https://maps.googleapis.com/maps/api/js?libraries=places" %>
 		<%= javascript_include_tag "mobile" %>
-		<%= javascript_include_tag 'Alert' %>
 		<%= javascript_include_tag "mobile/search" %>
 		<%= yield :scripts %>
 		<!-- end: JavaScript-->
