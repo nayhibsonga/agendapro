@@ -422,7 +422,7 @@
                           </div>
                         </div>
                         <div class="col-md-6">
-                          <button type="submit" id="submitBtn">Reservar</button>
+                          <button type="submit" data-loading-text="Cargando..." id="submitBtn">Reservar</button>
                         </div>
                       </div>
 
@@ -603,6 +603,9 @@
 
       $(document.body).on('click', '.date-span', function(e){ 
         $(e.currentTarget).find('input').datepicker('show');
+      });
+      $('#submitBtn').click(function() {
+        $(this).button('loading');
       });
     });
   </script>

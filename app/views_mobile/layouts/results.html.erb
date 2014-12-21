@@ -47,7 +47,7 @@
 						<ul class="nav navbar-nav">
 							<li><%= link_to 'Buscador', root_path(anchor: 'buscador') %></li>
 							<li><%= link_to 'Clientes', root_path(anchor: 'clients-target') %></li>
-                            <li><%= link_to 'Que Hacemos', root_path(anchor: 'what-we-do-target') %></li>
+                            <li><%= link_to 'Qué Hacemos', root_path(anchor: 'what-we-do-target') %></li>
                             <li><%= link_to 'Contacto', root_path(anchor: 'contact-target') %></li>
 							<li class="divider"></li>
 							<% if user_signed_in? %>
@@ -56,7 +56,7 @@
 							<li><%= link_to '<i class="fa fa-question"></i> Tutoriales'.html_safe, tutorials_path %></li>
 							<li><%= link_to '<i class="fa fa-power-off"></i> Salir'.html_safe, destroy_user_session_path, method: :delete %></li>
                             <% else %>
-							<li><%= link_to '<i class="fa fa-user"></i> Registrate'.html_safe, new_user_registration_path, class: "menu-green" %></li>
+							<li><%= link_to '<i class="fa fa-user"></i> Regístrate'.html_safe, new_user_registration_path, class: "menu-green" %></li>
                             <li><%= link_to '<i class="fa fa-calendar-o"></i> Iniciar Sesión'.html_safe, new_user_session_path, class: "menu-green" %></li>
                             <% end %>
 							<li><%= link_to "Agrega tu Empresa", home_path, class: "menu-orange" %></li>
