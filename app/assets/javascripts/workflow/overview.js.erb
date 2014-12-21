@@ -7,8 +7,8 @@ function loadSchedule(id) {
       if (hour.open) {
         $('#schedule-body').append(
           '<tr>' +
-            '<th>' + day + ':</th>' +
-            '<th>' + getHour(hour.open) + ' - ' + getHour(hour.close) + '</th>' +
+            '<td style="text-align: left;" class="dark-gray">' + day + ':</td>' +
+            '<td style="text-align: right;" class="light-gray">' + getHour(hour.open) + ' - ' + getHour(hour.close) + '</td>' +
           '</tr>'
         );
       }
@@ -22,11 +22,13 @@ function getHour(str) {
   return str;
 }
 
+var currMarker = null;
+
 //====== Google Map ======//
 function initializeMap(lat, lng, mapDiv) {
     var properties = {
         center: new google.maps.LatLng(lat, lng),
-        zoom:   17,
+        zoom:   15,
         panControl: false,
         zoomControl: true,
         zoomControlOptions: {
@@ -45,9 +47,22 @@ function initializeMap(lat, lng, mapDiv) {
 }
 
 function setMarker(latlng, local) {
+
+  if(currMarker!=null)
+  {
+    currMarker.setMap(null);
+  }
+
+  var image = '<%= asset_path("pin_googlemap.png") %>';
+
   var marker = new google.maps.Marker({
-                position: latlng
+                position: latlng,
+                icon: image
+                /*new google.maps.MarkerImage(
+            "http://chart.googleapis.com/chart?chst=d_map_pin_letter_withshadow&chld=|01e19d|FFFFFF",
+            null, null, new google.maps.Point(0, 42))*/
               });
+  currMarker = marker;
   marker.setMap(map);
 
   var infowindow = new google.maps.InfoWindow({
@@ -80,8 +95,17 @@ var myAlert;
 $(function() {
   myAlert = new Alert('.main');
 
-  $('#outcallDistricts').hide();
-  $('#outcallDistricts').empty();
+  if ($('input[name="localRadio"]:checked').data('outcall') == true) {
+    $('#outcallDistricts').empty();
+    loadOutcallDistricts($('input[name="localRadio"]:checked').val());
+    $('.google-maps-empresa').hide();
+    $('#outcallDistricts').show();
+  }
+  else {
+    $('.google-maps-empresa').show();
+    $('#outcallDistricts').hide();
+    $('#outcallDistricts').empty();
+  }
 
   $('[name="localRadio"]').on('click', function(event) {
     var id = event.target.getAttribute('value');
@@ -135,6 +159,7 @@ $(function() {
   
   if ($('[name="localRadio"]').is(':checked')) {
     var localId = $('input[name=localRadio]:checked').val();
+
     loadSchedule(localId);
     localMap(localId);
   }
@@ -142,4 +167,26 @@ $(function() {
   if ($('[name="localRadio"]').length == 1) {
     $('input[name=localRadio]').trigger('click');
   }
+
+  $('[name="localRadio"]').click(function(e){
+
+    var localId = $('input[name=localRadio]:checked').val();
+    if($(".company-header-center2").length>0)
+    {
+      $(".company-header-left").css("border-right", "1px solid #949292");
+    }
+    else if($(".company-header-center").length>0)
+    {
+      $(".company-header-center").css("border-right", "1px solid #949292");
+    }
+    $("#phone-number").empty();
+    $("#phone-number").append($('.local-phone[localid="'+localId+'"]').text());
+    $("#phone-address").empty();
+    $("#phone-address").append($('.local-address[localid="'+localId+'"]').text());
+    $("#phone-number").show();
+    $("#phone-address").show();
+    $("#phone-info").show();
+    console.log($('.local-phone[localid="'+localId+'"]').val());
+    console.log($('.local-address[localid="'+localId+'"]').val());
+  })
 });

@@ -1,317 +1,203 @@
 <!DOCTYPE html>
 <html>
-<head>
-  <!-- start: Meta -->
-        <meta charset="utf-8">
-        <title>AgendaPro</title>
-        <meta name="description" content="AgendaPro - Sistema de agendamiento OnLine para empresas y usuarios.">
-        <meta name="author" content="AgendaPro">
-        <meta name="keyword" content="agendapro, agenda, agenda online, reserva, reserva online">
-        <!-- end: Meta -->
+  <head>
+    <!-- start: Meta -->
+    <meta charset="utf-8">
+    <title>AgendaPro</title>
+    <meta name="description" content="AgendaPro - Sistema de agendamiento OnLine para empresas y usuarios.">
+    <meta name="author" content="AgendaPro">
+    <meta name="keyword" content="agendapro, agenda, agenda online, reserva, reserva online">
+    <!-- end: Meta -->
 
-        <!-- start: Mobile Specific -->
-        <meta name="apple-mobile-web-app-capable" content="yes" />
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <!-- end: Mobile Specific -->
-        
-        <!-- Latest compiled and minified CSS -->
-        <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
-
-        <script src="http://code.jquery.com/jquery-latest.min.js" type="text/javascript"></script>
-
-        <!-- Latest compiled and minified JavaScript -->
-        <script src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
-
-        <link href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">
-
-  <style>
-  #barra-superior {
-    background: rgba(27,115,112,1);
-    height: 44px;
-  }
-  #logo {
-    display: inline-block;
-    width: 127px;
-    height: 39px;
-    margin: 2px 0px 0px 0px;
-    background: url(/assets/logos/logo_agendaproVerde.png);
-  }
-  #logo span{
-    display: none;
-  }
-  .nav li a{
-    padding: 12px 15px;
-  }
-  .nav-pills>li>a {
-    color: #fff;
-    text-transform: uppercase;
-    font-weight: 300;
-  }
-  .nav-pills>li.active>a{
-    background: rgba(255,255,255,0.2);
-    border-radius: 0px;
-    font-weight: bold;
-  }
-  .nav-pills>li:hover>a, .nav>li>a:focus{
-    background: rgba(255,255,255,0.2);
-    border-radius: 0px;
-  }
-  .nav .open>a {
-    background: rgba(255,255,255,0.2) !important;
-    border-radius: 0px;
-    color: #fff;
-  }
-  .dropdown-menu>li>a {
-    padding: 8px 10px;
-  }
-  .dropdown-menu>li>a:hover {
-    background: rgba(27,115,112,1);
-  }
-  .imagen_superior {
-    height: 400px;
-    background-size: cover;
-    background-position: center center;
-    width: 100%;
-  }
-  .imagen_superior>div.container> div.green-caption {
-    margin-top: 170px;
-    color: #fff;
-  }
-  #foto_error {
-    background-image: url(/assets/home/404.jpg);
-  }
-  .green-caption{
-    background: rgba(27,115,112,0.5);
-    text-align: left;
-    width: 50%;
-  }
-  .green-caption h2{
-    font-weight: 200;
-    font-size: 28px;
-    margin: 20px 20px 10px;
-    float: left;
-  }
-  .green-caption p{
-    font-size: 21px;
-    margin: 0px 20px 20px;
-    float: left;
-  }
-  .clear{
-    clear: both;
-  }
-  /* Footer */
-  footer {
-    /* margin-top: 40px; */
-    /*color: #fff;*/
-    border-top: solid 2px #E2E3E4;/*solid 2px #fff;*/
-    background-color: #E2E3E4;/*#222222;*/
-    background: url(/assets/backgrounds/wild_oliva_light_head.png)
-  }
-
-  footer a:hover,
-  footer a:active {
-    color: #006D68;/*#2a6496;*/
-    text-decoration: none;
-  }
-
-  #footer_teasers_wrapper {
-    padding: 10px 0;
-  }
-
-  #footer_teasers_wrapper .footer_teaser h3 {
-    font-size: 18px;
-    font-weight: 700;
-    line-height: 18px;
-    padding: 0 0 10px 0;
-    margin: 10px 0 10px 0;
-    border-bottom: solid 1px #006D68;/*solid 1px #555555;*/
-    color: #006D68;
-  }
-
-  #footer_teasers_wrapper .footer_teaser p {
-    font-size: 15px;
-  }
-
-  .footer_teaser p i {
-      color: #FA4616;
-  }
-
-  .txt-footer{
-      display:inline-block;
-      margin-right: 165px;
-  }
-
-  .copyright {
-    border-top: solid 1px #CBCCCD;/*solid 1px #000;*/
-    padding: 15px 0;
-    background-color: rgba(203, 204, 205, 0.5);/*rgba(0, 0, 0, 0.5);*/
-    font-weight: 300;
-    font-size: 12px;
-    /*color: #999999;*/
-  }
-
-  .copyright a {
-    color: #1e8584;
-  }
-
-  .copyright a:hover {
-    color: #006D68;
-  }
-   
-  body {
-    font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
-    font-size: 14px;
-    line-height: 1.428571429;
-    color: #333333;
-  }
-
-  div {
-    display: block;
-  }
-
-  .main {
-    background: url(/assets/backgrounds/wild_oliva_light.png);
-  }
-  
-  .container {
-    margin-right: auto;
-    margin-left: auto;
-    padding-left: 15px;
-    padding-right: 15px;
-  }
-
-  .hgroup {
-    padding-top: 26px;
-    padding-bottom: 26px;
-  }
-
-  section, summary {
-    display: block;
-  }
-  .hgroup .container {
-    border-bottom: 1px solid #cccccc;
-    padding-top: 17px;
-    padding-bottom: 17px;
-    position: relative;
-  }
-  .hgroup .container h1 {
-    font-size: 30px;
-    font-weight: 300;
-    line-height: 1em;
-    margin: 0 0 0.3em 0;
-    padding: 0;
-  }
-  .hgroup .container .breadcrumb {
-    font-size: 12px;
-    background-color: #f3f3f3;
-    margin: 0 0 0px;
-    padding: 6px 15px;
-    border: solid 1px #cccccc;
-    position: absolute;
-    bottom: -15px;
-    right: 0px;
-  }
-  .four-o-four i {
-    font-size: 80px;
-  }
-  section.call_to_action {
-    text-align: center;
-    padding: 35px 0 45px 0;
-  }
-
-  section.call_to_action h3 {
-    font-weight: 300;
-    font-size: 50px;
-    line-height: 55px;
-  }
-  section.call_to_action h4 {
-    font-weight: 300;
-    font-size: 26px;
-    line-height: 30px;
-    margin: 0 0 20px 0;
-  }
-
-  </style>
-</head>
-
-<body>
-  <!-- This file lives in public/404.html -->
-  <!-- start: Header -->
-  <header>
-      <div id="barra-superior">
-          <div class="container">
-              <div class="row">
-                  <a href="/" id="logo"></a>
-                  <ul class="nav nav-pills pull-right">
-                      <li id="c_home"><a href="/home">Inicio</a></li>
-                      <li id="c_feature"><a href="/features">Características</a></li>
-                      <li id="c_pricing"><a href="/view_plans">Planes</a></li>
-                      <li id="c_contact"><a href="/contact">Contacto</a></li>
-                      <li id="c_register"><a href="/view_plans">Regístrate</a></li>
-                  </ul>
-              </div>
-          </div>
-      </div>
-  </header>
-  <!-- end: Header -->
-
-  <div class="imagen_superior" id="foto_error">
-     <div class="container">
-        <div class="green-caption">
-         <h2>Error <strong>404</strong></h2>
-         <p>Perdón, la página que estás buscando no se encuentra disponible</p>
-         <div class="clear"></div>
-        </div>
-     </div>
-  </div>
-
-  <div class="main">
-    <section class="hgroup">
-      <div class="container">
-        <h1>Página no encontrada</h1>
-        <ul class="breadcrumb pull-right">
-          <li class="active">¡Problema!</li>
-        </ul>
-      </div>
-    </section>
+    <!-- start: Mobile Specific -->
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <!-- end: Mobile Specific -->
     
-    <section class="call_to_action four-o-four">
+    <script src="http://code.jquery.com/jquery-latest.min.js" type="text/javascript"></script>
+
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
+    <!-- Latest compiled and minified JavaScript -->
+    <script src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
+
+    <link href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">
+
+    <style type="text/css">
+      @font-face {
+        font-family: TradeGothic;
+        src: url(/assets/TradeGothicLTStd.otf);
+      }
+      @font-face {
+        font-family: TradeGothicCn18;
+        src: url(/assets/TradeGothicLTStd-Cn18.otf);
+      }
+      @font-face {
+        font-family: TradeGothicLight;
+        src: url(/assets/TradeGothicLTStd-Light.otf);
+      }
+      html,
+      body {
+        font-family: TradeGothicCn18, TradeGothic, TradeGothicLight;
+        background: #ffffff;
+        font-size: 17px;
+      }
+      .pull-center {
+        text-align: center;
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+      }
+      body {
+        padding-top: 50px;
+        color: #505050;
+      }
+      .navbar-agendapro {
+        background-color: #ffffff;
+        border-color: #eeeeee;
+      }
+      .navbar-agendapro > .container .navbar-brand {
+        margin-left: 0px;
+        padding: 5px 5px;
+      }
+      .navbar-agendapro .navbar-text {
+        color: #ffffff;
+      }
+      .navbar-agendapro .navbar-toggle {
+        border-color: #505050;
+        color: #949292;
+        padding: 5px 8px;
+      }
+      .navbar-agendapro .navbar-nav > li > a {
+        color: #22c488;
+      }
+      .background-img {
+        height: 400px;
+        background-size: cover;
+        background-position: center center;
+        width: 100%;
+        background-image: url(/assets/home/404.jpg);
+      }
+      .message {
+        margin-top: 170px;
+        color: #fff;
+        background: #1ba970;
+        text-align: left;
+        padding: 20px;
+      }
+      .message > h1 {
+        margin-top: 0;
+      }
+      .message > p {
+        font-size: 24px;
+      }
+      .error {
+        padding-top: 50px;
+        padding-bottom: 25px;
+        font-size: 26px;
+      }
+      .error > i {
+        font-size: 80px;
+      }
+      .error > h2 {
+        font-size: 50px;
+      }
+      .footer {
+        color: #ffffff;
+        padding-top: 20px;
+        padding-bottom: 10px;
+        background-image: url(/assets/backgrounds/gray-background.png);
+      }
+    </style>
+  </head>
+
+  <body>
+    <!-- This file lives in public/404.html -->
+    <!-- start: Header -->
+    <header>
+      <nav class="navbar navbar-default navbar-agendapro navbar-fixed-top" role="navigation">
+        <div class="container">
+          <!-- Brand and toggle get grouped for better mobile display -->
+          <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+              <i class="fa fa-bars"></i>
+            </button>
+            <a href="/" class="navbar-brand">
+              <img src="/assets/logos/logo2.png", alt="AgendPro" width="127" height="43">
+            </a>
+          </div>
+
+          <!-- Collect the nav links, forms, and other content for toggling -->
+          <div class="collapse navbar-collapse" id="navbar">
+            <ul class="nav navbar-nav navbar-right">
+              <li><a href="/">Buscador</a></li>
+              <li><a href="/home">Inicio</a></li>
+              <li><a href="#">Volver</a></li>
+            </ul>
+          </div>
+        </div>
+      </nav>
+    </header>
+    <!-- end: Header -->
+
+    <div class="background-img">
       <div class="container">
-        <i class="fa fa-ambulance"></i>
-          <h3>error 404...</h3>
-          <h4>La página que buscas no se encuentra.</h4>
-          <h4>Por favor revisa la dirección web escrita.</h4>
+        <div class="row">
+          <div class="col-xs-12 col-sm-6">
+            <div class="message">
+              <h1>Error <strong>404</strong></h1>
+              <p>Perdón, la página que estás buscando no se encuentra disponible</p>
+            </div>
+          </div>
+        </div>
       </div>
-    </section>
-  
-  </div>  
-
-  <footer>
-    <section id="footer_teasers_wrapper">
-        <div class="container">
-            <div class="row">
-                <div class="footer_teaser col-sm-12 col-md-12">
-                    <h3>AgendaPro - Sistema de Reservas Online</h3>
-                    <p>
-                        <span class="txt-footer"><i class="fa fa-map-marker"></i> Nuestra Señora de los Ángeles 185, Oficina D, Las Condes, Santiago </span>
-                        <span class="txt-footer"><i class="fa fa-phone"></i> (+56 9) 5178 5898 </span>
-                        <span><i class="fa fa-envelope"></i> contacto@agendapro.cl </span>
-                    </p>
-                </div>
-            </div>
+    </div>
+    <div class="container">
+      <div class="row">
+        <div class="col-xs-12">
+          <div class="pull-center error">
+            <i class="fa fa-ambulance"></i>
+            <h2>error 404...</h2>
+            <p>La página que buscas no se encuentra.</p>
+            <p>Por favor revisa la dirección web escrita.</p>
+          </div>
         </div>
-    </section>
-    <section class="copyright">
-        <div class="container">
-            <div class="row">
-                <div class="col-sm-6 col-md-6"> © Copyright 2013 | Gunei Investment SpA | Todos los derechos reservados</div>
-                <div class="text-right col-sm-6 col-md-6">
-                    <a href="/about_us" target="blank">Sobre Nosotros</a> | <a href="/TyC.pdf" target="blank">Términos y Condiciones</a>
-                </div>
-            </div>
+      </div>
+    </div>
+    <div class="footer">
+      <div class="container">
+        <div class="row pull-center">
+          <div class="col-sm-4">
+            <img src="assets/footer/1.png" width="22" height="29">
+            <p>Nuestra Señora de los</br>
+            Angeles 185, Oficina D,</br>
+            Las Condes, Santiago</p>
+          </div>
+          <div class="col-sm-4">
+            <img src="assets/footer/2.png" width="22" height="19">
+            <p>contacto@agendapro.cl</p>
+          </div>
+          <div class="col-sm-4">
+            <img src="assets/footer/3.png" width="22" height="29">
+            <p>(+56 9) 5178 5898</p>
+          </div>
         </div>
-    </section>
-  </footer>
+        <div class="row" style="margin-top: 15px;">
+          <div class="col-xs-12">
+            <i class="fa fa-copyright"></i> Copyright 2013 | Gunei Investment SpA | Todos los derechos reservados
+          </div>
+        </div>
+      </div>
+    </div>
 
-</body>
+    <script type="text/javascript">
+      $(function () {
+        $('a[href=#]').click(function (event) {
+          event.preventDefault();
+          window.history.back();
+        });
+      });
+    </script>
+
+  </body>
 </html>

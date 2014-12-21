@@ -1,24 +1,39 @@
-<div class="row">
-    <div class="col-xs-12">
-        <div class="center">
-            <h2>Elige el plan que más te acomode</h2>
-            <p>¡El primer mes es absolutamente gratis!</p>
-        </div>
-    </div>
-</div>
-<div class="row">
-    <% @plans.each do |plan| %>
-    <div class="col-xs-12">
-        <div class="single-local">
-            <div class="box-shadow">
-                <div class="center-load">
-                    <h3 class="plan-title"><%= plan.name %></h3>
-                    <span>$</span><%= number_with_precision(plan.price, precision: 0, separator: '', delimiter: '.') %><small>/Mes (+ IVA)</small>
+<div class="background-light-grey">
+    <div class="container">
+        <div class="row">
+            <div class="col-xs-12">
+                <div class="pull-center">
+                    <h1 class="text-grey">Características</h1>
+                    <p>Elige el plan que mejor se acomode a tus necesidades o contáctanos si necesitas uno a tu medida.</p>
                 </div>
-                <p align="center"><%= plan.locations %> Local(es)</p>
-                <p align="center"><%= plan.service_providers %> Staffs</p>
             </div>
         </div>
     </div>
-    <% end %>
+</div>
+<div class="container">
+    <div class="row">
+        <% @plans.each do |plan| %>
+        <div class="col-xs-12">
+            <div class="pull-center">
+                <div class="filled-box plan <%= 'special' if plan.special %>">
+                    <% if plan.special %>
+                    <%= image_tag "home/elmaspopular.png", :alt => "Special Tag", :class => "img-responsive", size: "86x127" %>
+                    <% end %>
+                    <h2><%= plan.name %></h2>
+                    <hr class="pricing-hr">
+                    <div class="price">
+                        $<%= number_with_precision(plan.price, precision: 0, separator: '', delimiter: '.') %><small>/Mes</small>
+                        <span>(+ IVA)</span>
+                    </div>
+                    <p><%= plan.locations %> Local(es)<br /><%= plan.service_providers %> Staffs </p>
+                </div>
+            </div>
+        </div>
+        <% end %>
+    </div>
+    <div class="row">
+        <div class="col-xs-12" style="margin-bottom: 10px;">
+            <%= link_to 'Pruebalo Gratis ahora!', mobile_contact_url, class: 'btn btn-orange btn-lg btn-block' %>
+        </div>
+    </div>
 </div>

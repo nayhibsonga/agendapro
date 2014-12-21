@@ -20,6 +20,12 @@
   margin-right: 10px;
 }
 
+div.main {
+  margin-bottom: 0;
+}
+section {
+  padding-top: 50px;
+}
 
 /* Featurettes
 ------------------------- */
@@ -28,24 +34,69 @@
   margin: 30px 0; /* Space out the Bootstrap <hr> more */
   border-color: #53565A;
 }
-
 /* Thin out the marketing headings */
 .featurette-heading {
   font-weight: 300;
   line-height: 1;
   letter-spacing: -1px;
-  color: #006D68;
+  color: #22c488;
 }
-
 .featurette-heading span.text-muted {
-    color: #B3B3B3;
+    color: #646464;
 }
-
+.lead {
+  color: #646464;
+  letter-spacing: -1px;
+}
+section.green-background h2.featurette-heading {
+  color: #646464;
+}
+section.green-background h2.featurette-heading span.text-muted {
+  color: #ffffff;
+}
+section.green-background p.lead {
+  color: #ffffff;
+}
+.laptop-maxheight {
+  max-height: 458px;
+}
+.mobile-maxheight {
+  max-height: 312px;
+}
+.half-tablet-maxheight {
+  /*max-height: 162px;*/
+}
+.row-padded {
+  padding-top: 0;
+  padding-bottom: 50px;
+}
+.tutorial-pointer {
+  margin-top: 20px;
+}
 
 /* RESPONSIVE CSS
 -------------------------------------------------- */
+@media (max-width: 1199px) {
+  iframe {
+    height: 314px;
+    width: 500px;
+  }
+}
 
-@media (min-width: 768px) {
+@media (max-width: 991px) {
+  .featurette-heading {
+    margin-top: 20px;
+  }
+  .tutorial-pointer {
+    display: none;
+  }
+  iframe {
+    height: 376px;
+    width: 600px;
+  }
+}
+
+@media (max-width: 767px) {
 
   /* Remove the edge padding needed for mobile */
   .marketing {
@@ -54,13 +105,17 @@
   }
 
   .featurette-heading {
-    font-size: 40px;
+    font-size: 36px;
   }
-
+  iframe {
+    height: 314px;
+    width: 500px;
+  }
 }
+@media (max-width: 549px) {
 
-@media (min-width: 992px) {
-  .featurette-heading {
-    margin-top: 20px;
+  iframe {
+    height: 179px;
+    width: 290px;
   }
 }

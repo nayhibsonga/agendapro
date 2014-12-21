@@ -1,73 +1,273 @@
-<div class="main">
-    <section class="pricing_wrapper">
-        <div class="container">
-			<div class="well well-lg">
-				<% if @booking.errors.any? %>
-				<h3>Tuvimos un error</h3>
-				<div class="row">
-					<div class="col-md-8">
-						<p>
-							Lo sentimos, hubo un error actualizando tu reserva <br />
-							Puedes ver mas detalles del error haciendo click <a id="errorLink" href="#">aquí</a><br>
-							Puedes agendar una nueva reserva <a href="<%= root_url(:host => @url) %>">aquí</a>
-						</p>
-					</div>
-					<div class="col-md-4" id="errorDiv">
-						<ol>
-      						<% @booking.errors.full_messages.each do |msg| %>
-        					<li><%= msg %></li>
-      						<% end %>
-      					</ol>
-					</div>
-				</div>
+
+<div class="workflow-header">
+  <div class="container">
+
+  
+    <div class="row">
+      <% if !@company.description.blank? %>
+        <div class="col-md-6 company-header-left company-header">
+        	<div class="col-md-3">
+				<% if @company.logo_url %>
+					<%= image_tag @company.logo_url.to_s, :size => "80x80", :alt => @company.name, :class => "company-logo img-responsive" %>
 				<% else %>
-				<h3>Gracias <%= @booking.client.first_name %></h3>
-				<p>
-					Tu reserva fue actualizada exitosamente. <br />
-					Si deseas agendar una nueva reserva haz click <a href="<%= root_url(:host => @url) %>">aquí</a>
-				</p>
-				<hr>
-				<div class="row">
-					<div class="col-md-6">
-						<hr>
-						<h4>Resumen de tu Reserva</h4>
-						<dl class="dl-horizontal">
-							<dt>¿Qué reservaste?</dt>
-							<dd><%= @booking.service.name %></dd>
-							<dt>¿Dónde?</dt>
-							<dd><%= @booking.location.name %></dd>
-							<dt>¿Con quién?</dt>
-							<dd><%= @booking.service_provider.public_name %></dd>
-							<dt>¿Cuándo?</dt>
-							<dd><%= l @booking.start %></dd>
-							<% if !@booking.notes.empty? %>
-							<dt>Notas</dt>
-							<dd><%= @booking.notes %></dd>
-							<% end %>
-						</dl>
-						<hr>
-						<h4>Tus Datos</h4>
-						<dl class="dl-horizontal">
-							<dt>Nombre</dt>
-							<dd><%= @booking.client.first_name %> <%= @booking.client.last_name %></dd>
-							<% if !@booking.client.email.empty? %>
-							<dt>E-mail</dt>
-							<dd><%= @booking.client.email %></dd>
-							<% end %>
-							<% if !@booking.client.phone.empty? %>
-							<dt>Teléfono</dt>
-							<dd><%= @booking.client.phone %></dd>
-							<% end %>
-						</dl>
-					</div>
-					<div class="col-md-6">
-						<%= image_tag("backgrounds/check.png", :class => "center-block") %>
-					</div>
-				</div>
+					<%= image_tag 'Iso_Pro_Color.png', :alt => 'AgendaPro', :size => "80x80", :class => "img-responsive" %>
 				<% end %>
 			</div>
+			<div class="col-md-9" style="color: #949292; font-size: 30px; padding-top: 20px;">
+				<%= @company.name %>
+			</div>
         </div>
-    </section>
+        <div class="col-md-4 company-header-center company-header">
+          <div class="header-description">
+            <%= @company.description %>
+          </div>
+        </div>
+        <div class="col-md-2 company-header-right company-header">
+          
+          <% if @selectedLocation %>
+            <div id="phone-info">         
+              <%= image_tag 'telefono.png', :alt => '', :size => "12x14", :class=>"loc-icon" %>&nbsp;
+              <span id="phone-number">
+                <%= @selectedLocation.phone %>
+              </span><br />
+              <%= image_tag 'ubicacion.png', :alt => '', :size => "12x14", :class=>"loc-icon" %>&nbsp;
+              <span id="phone-address">
+                <%= if !@selectedLocation.outcall then @selectedLocation.address+', '+@selectedLocation.district.name else "A Domicilio" end %>
+              </span>       
+            </div>
+          <% else %>
+            <div id="phone-info" hidden>
+              <%= image_tag 'telefono.png', :alt => '', :size => "12x14", :class=>"loc-icon" %>&nbsp;
+              <span id="phone-number"></span><br />
+              <%= image_tag 'ubicacion.png', :alt => '', :size => "12x14", :class=>"loc-icon" %>&nbsp;
+              <span id="phone-address"></span>
+            </div>
+          <% end %>
+          <div style="clear: both;"></div>
+        </div>
+
+      <% else %>
+        <div class="col-md-6 company-header-left company-header" style="border-right: 1px solid #949292;">
+			<div class="col-md-3">
+				<% if @company.logo_url %>
+					<%= image_tag @company.logo_url.to_s, :size => "80x80", :alt => @company.name, :class => "company-logo img-responsive" %>
+				<% else %>
+					<%= image_tag 'Iso_Pro_Color.png', :alt => 'AgendaPro', :size => "80x80", :class => "img-responsive" %>
+				<% end %>
+			</div>
+			<div class="col-md-9" style="color: #949292; font-size: 30px; padding-top: 20px;">
+				<%= @company.name %>
+			</div>
+        </div>
+        <div class="col-md-6 company-header-center2 company-header">
+          
+          <% if @selectedLocation %>
+            <div id="phone-info">         
+              <%= image_tag 'telefono.png', :alt => '', :size => "12x14", :class=>"loc-icon" %>&nbsp;
+              <span id="phone-number">
+                <%= @selectedLocation.phone %>
+              </span><br />
+              <%= image_tag 'ubicacion.png', :alt => '', :size => "12x14", :class=>"loc-icon" %>&nbsp;
+              <span id="phone-address">
+                <%= if !@selectedLocation.outcall then @selectedLocation.address+', '+@selectedLocation.district.name else "A Domicilio" end %>
+              </span>       
+            </div>
+          <% else %>
+            <div id="phone-info" hidden>
+              <%= image_tag 'telefono.png', :alt => '', :size => "12x14", :class=>"loc-icon" %>&nbsp;
+              <span id="phone-number"></span><br />
+              <%= image_tag 'ubicacion.png', :alt => '', :size => "12x14", :class=>"loc-icon" %>&nbsp;
+              <span id="phone-address"></span>
+            </div>
+          <% end %>
+          <div style="clear: both;"></div>
+        </div>
+      <% end %>
+
+    </div>
+  </div>
+</div>
+
+<div class="main">
+	<section class="pricing_wrapper">
+        <div class="container">
+			<div class="row">
+				<div class="col-md-7">
+				<% if @errors %>
+					<h3>Tuvimos un error</h3>
+					<div class="row">
+						<div class="col-md-8">
+							<p>
+								Lo sentimos, hubo un error agendando el servicio<br>
+								Puedes ver mas detalles del error <a id="errorLink" href="#">acá</a><br>
+								Si deseas agendar nuevamente haz click <a href="<%= root_url(:host => @url) %>">aquí</a>
+							</p>
+						</div>
+						<div class="col-md-4" id="errorDiv">
+							<ol>
+	      						<% @errors.each do |msg| %>
+	        					<li><%= msg %></li>
+	      						<% end %>
+	      					</ol>
+						</div>
+					</div>
+				<% else %>
+					<div class="resumen-book">
+						<div class="row">
+							<div class="col-md-1">
+							</div>
+							<div class="col-md-10">
+							
+								
+									<div class="book-title"><%= @booking.client.first_name %>, tu reserva fue recibida exitosamente</div>
+									<p class="light-gray">
+										Tu reserva fue actualizada exitosamente.
+									</p>
+									<p style="margin-bottom: 20px;">
+										<span class="light-gray">Agendar nuevamente</span> &nbsp;<a href="<%= root_url(:host => @url) %>"><i class="fa fa-calendar-o fa-lg light-green"></i></a>
+									</p>
+									
+									<div class="book-subheader dark-gray">Resumen de tu Reserva</div>
+
+									<!--
+									<div class="row">
+										<div class="md-col-4">
+											¿Qué reservaste?
+										</div>
+										<div class="md-col-8">
+											<%= @booking.service.name %>
+										</div>
+									</div>
+
+									<div class="row">
+										<div class="md-col-4">
+											¿Dónde?
+										</div>
+										<div class="md-col-8">
+											<%= @booking.location.address %>, <%= @booking.location.district.name %>
+										</div>
+									</div>
+
+									<div class="row">
+										<div class="md-col-4">
+											¿Con quién?
+										</div>
+										<div class="md-col-8">
+											<%= @booking.service_provider.public_name %>
+										</div>
+									</div>
+
+									<div class="row">
+										<div class="md-col-4">
+											¿Cuándo?
+										</div>
+										<div class="md-col-8">
+											<%= l @booking.start %>
+										</div>
+									</div>
+
+									<% if !@booking.notes.empty? %>
+										<div class="row">
+											<div class="md-col-4">
+												Notas
+											</div>
+											<div class="md-col-8">
+												<%= @booking.notes %>
+											</div>
+										</div>
+									<% end %>
+									-->
+
+									<dl class="dl-horizontal book-dl">
+										<dt class="dark-gray">¿Qué reservaste?</dt>
+										<dd class="light-gray"><%= @booking.service.name %></dd>
+										<dt class="dark-gray">¿Dónde?</dt>
+										<dd class="light-gray"><%= @booking.location.address %>, <%= @booking.location.district.name %></dd>
+										<dt class="dark-gray">¿Con quién?</dt>
+										<dd class="light-gray"><%= @booking.service_provider.public_name %></dd>
+										<dt class="dark-gray">¿Cuándo?</dt>
+										<dd class="light-gray"><%= l @booking.start %></dd>
+										<% if !@booking.notes.empty? %>
+										<dt class="dark-gray">Notas</dt>
+										<dd class="light-gray"><%= @booking.notes %></dd>
+										<% end %>
+									</dl>
+									
+									<div class="book-subheader dark-gray">Tus Datos</div>
+
+									<!--<div class="row">
+										<div class="md-col-4">
+											Nombre
+										</div>
+										<div class="md-col-8">
+											<%= @booking.client.first_name %> <%= @booking.client.last_name %>
+										</div>
+									</div>
+
+									<% if !@booking.client.email.empty? %>
+										<div class="row">
+											<div class="md-col-4">
+												E-mail
+											</div>
+											<div class="md-col-8">
+												<%= @booking.client.email %>
+											</div>
+										</div>
+									<% end %>
+
+									<% if !@booking.client.phone.empty? %>
+										<div class="row">
+											<div class="md-col-4">
+												Teléfono
+											</div>
+											<div class="md-col-8">
+												<%= @booking.client.phone %>
+											</div>
+										</div>
+									<% end %>
+									-->
+
+
+									<dl class="dl-horizontal book-dl">
+										<dt class="dark-gray">Nombre</dt>
+										<dd class="light-gray"><%= @booking.client.first_name %> <%= @booking.client.last_name %></dd>
+										<% if !@booking.client.email.empty? %>
+										<dt class="dark-gray">E-mail</dt>
+										<dd class="light-gray"><%= @booking.client.email %></dd>
+										<% end %>
+										<% if !@booking.client.phone.empty? %>
+										<dt class="dark-gray">Teléfono</dt>
+										<dd class="light-gray"><%= @booking.client.phone %></dd>
+										<% end %>
+									</dl>
+								
+								<div>
+									<%= image_tag("logos/logo2.png", :class=> "bottom-logo") %>
+								</div>
+							</div>
+							<div class="col-md-1">
+							</div>
+						</div>
+					</div>
+				<% end %>
+				</div>
+				<% if @errors %>
+
+					<div class="col-md-5">
+						<%= image_tag("backgrounds/cross.png", :class => "book-center-error") %>
+					</div>
+
+				<% else %>
+
+					<div class="col-md-5">
+						<%= image_tag("backgrounds/icono_reserva2.png", :class => "book-center") %>
+					</div>
+
+				<% end %>
+				
+			</div>
+		</div>
+	</section>
 </div>
 
 <% if @booking.errors.any? %>

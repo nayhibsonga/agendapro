@@ -79,4 +79,65 @@ class HomeMailer < ActionMailer::Base
     puts "A mandrill error occurred: #{e.class} - #{e.message}"
     raise
   end
+
+  def mobile_contact (contact_info)
+    require 'base64'
+
+    mandrill = Mandrill::API.new Agendapro::Application.config.api_key
+
+    # => Template
+    template_name = 'mobile_contact'
+    template_content = []
+
+    # => Message
+    message = {
+      :subject => 'Nueva Empresa (Sitio Móvil)',
+      :from_email => contact_info['email'],
+      :from_name => contact_info['name'],
+      :to => [
+        {
+          :email => 'contacto@agendapro.cl',
+          :type => 'to'
+        }
+      ],
+      :headers => { 'Reply-To' => contact_info['email'] },
+      :global_merge_vars => [
+        {
+          :name => 'NAME',
+          :content => contact_info['name']
+        },
+        {
+          :name => 'PHONE',
+          :content => contact_info['phone']
+        },
+        {
+          :name => 'EMAIL',
+          :content => contact_info['email']
+        },
+        {
+          :name => 'MESSAGE',
+          :content => contact_info['message']
+        }
+      ],
+      :tags => ['contact'],
+      :images => [
+        {
+          :type => 'image/png',
+          :name => 'AgendaPro.png',
+          :content => Base64.encode64(File.read('app/assets/images/logos/logo_mail.png'))
+        }
+      ]
+    }
+
+    # => Metadata
+    async = false
+    send_at = DateTime.now
+
+    # => Send mail
+    result = mandrill.messages.send_template template_name, template_content, message, async, send_at
+
+    rescue Mandrill::Error => e
+      puts "A mandrill error occurred: #{e.class} - #{e.message}"
+      raise
+  end
 end

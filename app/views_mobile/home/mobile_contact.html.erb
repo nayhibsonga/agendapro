@@ -1,0 +1,58 @@
+<div class="container">
+    <div class="row">
+        <div class="col-xs-12">
+            <h3 class="pull-center text-gray">Agrega tu Empresa</h3>
+            <p>Dejanos tus datos para que nos pongamos en contacto contigo.</p>
+            <%= image_tag "search/mapa_celular.png", width: "100%" %>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xs-12">
+            <%= form_tag("mobile_contact", method: "post", id: 'contact' ) do %>
+                <div class="form-group has-feedback">
+                    <%= label_tag :inputName, 'Nombre' %>
+                    <%= text_field_tag(:inputName, nil, :class => "form-control", :required => true) %>
+                    <span class="help-block"></span>
+                </div>
+                <div class="form-group has-feedback">
+                    <%= label_tag(:inputEmail, 'E-mail') %>
+                    <%= email_field_tag(:inputEmail, nil, :class => "form-control", :required => true) %>
+                    <span class="help-block"></span>
+                </div>
+                <div class="form-group">
+                    <%= label_tag(:inputPhone, "Teléfono") %>
+                    <%= text_field_tag(:inputPhone, nil, :class => "form-control", :required => true) %>
+                    <span class="help-block"></span>
+                </div>
+                <div class="form-group has-feedback">
+                    <%= label_tag(:inputMessage, "Mensaje") %>
+                    <%= text_area_tag(:inputMessage, nil, :class => "form-control", :rows => 6) %>
+                    <span class="help-block"></span>
+                </div>
+                <button type="submit" class="btn btn-orange pull-right"><i class="fa fa-envelope-o"></i> Enviar</button>
+            <% end %>
+        </div>
+    </div>
+</div>
+<div class="background-light-grey">
+    <div class="container">
+        <div class="row">
+            <div class="col-xs-12 pull-center">
+                <div class="background-box">
+                    <%= image_tag "footer/3.png" %>
+                    <p>(+56 9) 5178 5898</p>
+                </div>
+                <div class="background-box">
+                    <%= image_tag "footer/1.png" %>
+                    <p>Nuestra Señora de los
+                     Angeles 185, Oficina D,
+                      Las Condes, Santiago</p>
+                </div>
+                <div class="background-box">
+                    <%= image_tag "footer/2.png" %>
+                    <p>contacto@agendapro.cl</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

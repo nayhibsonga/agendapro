@@ -111,6 +111,8 @@ Agendapro::Application.routes.draw do
   get "/tutorials", :to => 'home#tutorials',  :as => 'tutorials'
   get "/contact", :to => 'home#contact', :as => 'contact'
   post "/pcontact", :to => 'home#post_contact'
+  get '/mobile_contact', :to => 'home#mobile_contact'
+  post '/mobile_contact', :to => 'home#mobile_contact'
 
   # Punto Pagos
   get "/punto_pagos/generate_transaction/:mp/:amount", :to => 'punto_pagos#generate_transaction', :as => 'punto_pagos_generate'
