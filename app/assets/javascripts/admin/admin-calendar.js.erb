@@ -23,12 +23,15 @@ function loadProviders () {
 						resources.push({id: provider.id, name: provider.public_name});
 						count += 1;
 						$('#booking_service_provider_id')
-						    .append('<option value="'+ provider.id +'">'+ provider.public_name +'</option>')
+							.append('<option value="'+ provider.id +'">'+ provider.public_name +'</option>')
 						;
 						$('#provider_break_service_provider_id')
-						    .append('<option value="'+ provider.id +'">'+ provider.public_name +'</option>')
+							.append('<option value="'+ provider.id +'">'+ provider.public_name +'</option>')
 						;
 					});
+					$('#provider_break_service_provider_id').append(
+						'<option value="0">Todos</option>'
+					);
 					$('#providers-selector').change(function() {
 						providerId = parseInt($('#providers-selector').val())
 						if (providerId == 0) {
@@ -125,9 +128,9 @@ function loadResourcesCalendar (startTime, endTime, hiddenDays, resourcesArray, 
 			$('.popover').empty();
 			$('.popover').html('<a id="closePopover" class="closePopover"><i class="fa fa-times"></i></a><br /><a id="bookingPopover" class="actionPopover">Agregar Reserva</a><br /><a id="breakPopover" class="actionPopover">Bloquear Horario</a>');
 			var offX  = (jsEvent.offsetX || jsEvent.clientX - $(jsEvent.target).offset().left);
-		    $('.popover').css('left', offX + 60 + 'px');
-		    $('.popover').css('top', jsEvent.pageY - p.offset().top - 40 + 'px');
-		    
+			$('.popover').css('left', offX + 60 + 'px');
+			$('.popover').css('top', jsEvent.pageY - p.offset().top - 40 + 'px');
+			
 			var column_click = $(this).context.cellIndex;
 			var resourceId = view.resources[column_click - 1].id
 			$('#closePopover').click(function() {
@@ -150,31 +153,31 @@ function loadResourcesCalendar (startTime, endTime, hiddenDays, resourcesArray, 
 		 
 		eventRender: function(event, element) {
 			if ($.isNumeric(event.id)) {
-		       element.qtip({
-		           content: {
-		           		button: true,
-		        	   	title: event.title_qtip,
-		        	   	text: 'Horario: ' + event.time_qtip + '<br/>' +
-		        	   	'Servicio: ' + event.service_qtip + '<br/>' +
-		        	   	'Teléfono: ' + event.phone_qtip + '<br/>' +
-		        	   	'E-mail: ' + event.email_qtip + '<br/>' +
-		        	   	'Comentario: ' + event.comment_qtip
-		           },
-		           position: {
-					   	my: 'bottom center',  // el triángulo sale de abajo al medio
-					   	at: 'top center' // se ubica arriba del elemento en cuestión
+			   element.qtip({
+				   content: {
+						button: true,
+						title: event.title_qtip,
+						text: 'Horario: ' + event.time_qtip + '<br/>' +
+						'Servicio: ' + event.service_qtip + '<br/>' +
+						'Teléfono: ' + event.phone_qtip + '<br/>' +
+						'E-mail: ' + event.email_qtip + '<br/>' +
+						'Comentario: ' + event.comment_qtip
+				   },
+				   position: {
+						my: 'bottom center',  // el triángulo sale de abajo al medio
+						at: 'top center' // se ubica arriba del elemento en cuestión
 				   },
 				   style: {
-				        classes: 'qtip-bootstrap'
+						classes: 'qtip-bootstrap'
 				   },
 				   hide: {
 						event: 'click mouseleave unfocus',
 						leave: true,
 						fixed: true
 					}
-		       });
-	       	}
-       	},
+			   });
+			}
+		},
 		//eventMouseover: function(calEvent, domEvent) {
 		// 	var layer =	"<div id='events-layer' class='fc-transparent' style='position:absolute; width:100%; height:100%; top:-1px; text-align:right; z-index:100'>asdfff</div>";
 		// 	$(this).append(layer);
@@ -264,8 +267,8 @@ function loadWeekCalendar (startTime, endTime, hiddenDays, resourcesArray, provi
 			$('.popover').empty();
 			$('.popover').html('<a id="closePopover" class="closePopover"><i class="fa fa-times"></i></a><br /><a id="bookingPopover" class="actionPopover">Agregar Reserva</a><br /><a id="breakPopover" class="actionPopover">Bloquear Horario</a>');
 			var offX  = (jsEvent.offsetX || jsEvent.clientX - $(jsEvent.target).offset().left);
-		    $('.popover').css('left', offX + 60 + 'px');
-		    $('.popover').css('top', jsEvent.pageY - p.offset().top - 40 + 'px');
+			$('.popover').css('left', offX + 60 + 'px');
+			$('.popover').css('top', jsEvent.pageY - p.offset().top - 40 + 'px');
 			$('#closePopover').click(function() {
 				$('.popover').hide();
 			});
@@ -284,34 +287,34 @@ function loadWeekCalendar (startTime, endTime, hiddenDays, resourcesArray, provi
 		},
 		
 		eventRender: function(event, element) {
-	       if ($.isNumeric(event.id)) {
-               if ($.isNumeric(event.id)) {
-                   element.qtip({
-                       content: {
-                           button: true,
-                           title: event.title_qtip,
-                           text: 'Horario: ' + event.time_qtip + '<br/>' +
-                                   'Servicio: ' + event.service_qtip + '<br/>' +
-                                   'Teléfono: ' + event.phone_qtip + '<br/>' +
-                                   'E-mail: ' + event.email_qtip + '<br/>' +
-                                   'Comentario: ' + event.comment_qtip
-                       },
-                       position: {
-                           my: 'bottom center',  // el triángulo sale de abajo al medio
-                           at: 'top center' // se ubica arriba del elemento en cuestión
-                       },
-                       style: {
-                           classes: 'qtip-bootstrap'
-                       },
-                       hide: {
-                           event: 'click mouseleave unfocus',
-                           leave: true,
-                           fixed: true
-                       }
-                   });
-               }
-	       	}
-	    },
+		   if ($.isNumeric(event.id)) {
+			   if ($.isNumeric(event.id)) {
+				   element.qtip({
+					   content: {
+						   button: true,
+						   title: event.title_qtip,
+						   text: 'Horario: ' + event.time_qtip + '<br/>' +
+								   'Servicio: ' + event.service_qtip + '<br/>' +
+								   'Teléfono: ' + event.phone_qtip + '<br/>' +
+								   'E-mail: ' + event.email_qtip + '<br/>' +
+								   'Comentario: ' + event.comment_qtip
+					   },
+					   position: {
+						   my: 'bottom center',  // el triángulo sale de abajo al medio
+						   at: 'top center' // se ubica arriba del elemento en cuestión
+					   },
+					   style: {
+						   classes: 'qtip-bootstrap'
+					   },
+					   hide: {
+						   event: 'click mouseleave unfocus',
+						   leave: true,
+						   fixed: true
+					   }
+				   });
+			   }
+			}
+		},
 		firstDay: 1,	//Lunes
 		defaultView: 'agendaWeek',
 		allDaySlot: false,
@@ -369,8 +372,8 @@ function loadWeekCalendar (startTime, endTime, hiddenDays, resourcesArray, provi
 }
 
 function loadProviderEvents(providerId) {
-    $(".fc-button").css("display", "none");
-    $(".fc-header-center").append('<%= image_tag "small-loader.gif", :alt => "Loader", :id => "small_loader_header", :class => "small-loader-header" %>');
+	$(".fc-button").css("display", "none");
+	$(".fc-header-center").append('<%= image_tag "small-loader.gif", :alt => "Loader", :id => "small_loader_header", :class => "small-loader-header" %>');
 	var localId = parseInt($('#locals-selector').val());
 	var start = $('#calendar').fullCalendar('getView').visStart;
 	var end = $('#calendar').fullCalendar('getView').visEnd;
@@ -610,8 +613,8 @@ function createBookingModal(date, provider_id) {
 					modalChange();
 				});
 			};
-            $('#booking-tab').tab('show');
-            $('#bookingModal').modal('show');
+			$('#booking-tab').tab('show');
+			$('#bookingModal').modal('show');
 		}
 		else {
 			alert('Este local no tiene prestadores o servicios\nPor favor completa los datos necesarios para poder generar reservas en este local.');
@@ -624,7 +627,7 @@ function createBookingModal(date, provider_id) {
 function editBooking(eventId) {
 	if ($('#new_booking').valid()) {
 		$('.booking-button').attr("disabled", "disabled");
-        $( '<%= image_tag "small-loader.gif", :alt => "Loader", :id => "small_loader" %>' ).insertBefore( $( ".btn-close" ) );
+		$( '<%= image_tag "small-loader.gif", :alt => "Loader", :id => "small_loader" %>' ).insertBefore( $( ".btn-close" ) );
 		saveBooking('PATCH','/'+eventId);
 	};
 }
@@ -632,15 +635,15 @@ function editBooking(eventId) {
 function createBooking() {
 	if ($('#new_booking').valid()) {
 		$('.booking-button').attr("disabled", "disabled");
-        $( '<%= image_tag "small-loader.gif", :alt => "Loader", :id => "small_loader" %>' ).insertBefore( $( ".btn-close" ) );
+		$( '<%= image_tag "small-loader.gif", :alt => "Loader", :id => "small_loader" %>' ).insertBefore( $( ".btn-close" ) );
 		saveBooking('POST','');
 	};
 }
 
 function deleteBooking(eventId) {
 	if (confirm('¿Estás seguro que quieres cancelar esta reserva?\nEsta acción no se puede revertir.')) {
-        $('.booking-button').attr("disabled", "disabled");
-        $( '<%= image_tag "small-loader.gif", :alt => "Loader", :id => "small_loader" %>' ).insertBefore( $( ".btn-close" ) );
+		$('.booking-button').attr("disabled", "disabled");
+		$( '<%= image_tag "small-loader.gif", :alt => "Loader", :id => "small_loader" %>' ).insertBefore( $( ".btn-close" ) );
 		saveBooking('DELETE','/'+eventId);
 	};
 }
@@ -764,16 +767,16 @@ function editDrag(event) {
 					$('#calendar').fullCalendar('updateEvent', event);
 					alert("Reserva actualizada exitosamente.");
 					// alertId.showAlert("Horario de la reserva cambiado exitosamente.");
-                    $('#bookingAlerts').hide();
-                    if (booking.warnings.length > 0) {
-                        $('#bookingWarnings').empty();
-                        var warnings = '';
-                        for (i in booking.warnings) {
-                            warnings += booking.warnings[i] + '. ';
-                        }
-                        $('#bookingWarnings').append(warnings);
-                        $('#bookingAlerts').show();
-                    }
+					$('#bookingAlerts').hide();
+					if (booking.warnings.length > 0) {
+						$('#bookingWarnings').empty();
+						var warnings = '';
+						for (i in booking.warnings) {
+							warnings += booking.warnings[i] + '. ';
+						}
+						$('#bookingWarnings').append(warnings);
+						$('#bookingAlerts').show();
+					}
 
 				},
 				error: function(xhr){
@@ -914,7 +917,12 @@ function saveBooking(typeURL, extraURL) {
 }
 
 function saveBreak (typeURL, extraURL) {
-	var breakJSON = { "service_provider_id": $('#provider_break_service_provider_id').val(), "name": $('#provider_break_name').val(), "start": $('#provider_break_start_1i').val() +"-"+ $('#provider_break_start_2i').val() +"-"+ $('#provider_break_start_3i').val() +"T"+ $('#provider_break_start_4i').val() +":"+ $('#provider_break_start_5i').val() +":00Z", "end": $('#provider_break_end_1i').val() +"-"+ $('#provider_break_end_2i').val() +"-"+ $('#provider_break_end_3i').val() +"T"+ $('#provider_break_end_4i').val() +":"+ $('#provider_break_end_5i').val() +":00Z" };
+	var breakJSON = {
+		"service_provider_id": $('#provider_break_service_provider_id').val(),
+		"name": $('#provider_break_name').val(),
+		"start": $('#provider_break_start_1i').val() +"-"+ $('#provider_break_start_2i').val() +"-"+ $('#provider_break_start_3i').val() +"T"+ $('#provider_break_start_4i').val() +":"+ $('#provider_break_start_5i').val() +":00Z",
+		"end": $('#provider_break_end_1i').val() +"-"+ $('#provider_break_end_2i').val() +"-"+ $('#provider_break_end_3i').val() +"T"+ $('#provider_break_end_4i').val() +":"+ $('#provider_break_end_5i').val() +":00Z",
+		"local": $('#locals-selector').val() };
 	$.ajax({
 		type: typeURL,
 		url: '/provider_breaks'+extraURL+'.json',
@@ -922,68 +930,105 @@ function saveBreak (typeURL, extraURL) {
 		dataType: 'json',
 		success: function(provider_break){
 			switch(typeURL) {
-			case 'POST':
-				var label = provider_break.name;
-				if (label == null) {
-					label = 'Hora Bloqueada';
-				}
-				var events = {
-					id: 'b'+provider_break.id,
-					title: label,
-					allDay: false,
-					start: provider_break.start,
-					end: provider_break.end,
-					resourceId: parseInt(provider_break.service_provider_id),
-					textColor: textColors[0],
-					borderColor: textColors[0],
-					backgroundColor: backColors[0]
-				};
-                $('.break-button').attr("disabled", "disabled");
-                $( '<%= image_tag "small-loader.gif", :alt => "Loader", :id => "small_loader" %>' ).insertBefore( $( ".btn-close" ) );
-                $('#calendar').fullCalendar('renderEvent', events, true);
-                $('#breakModal').modal('hide');
+				case 'POST':
+					if ($('#provider_break_service_provider_id').val() != 0) {
+						var label = provider_break.name;
+						if (label == null) {
+							label = 'Hora Bloqueada';
+						}
+						var events = {
+							id: 'b'+provider_break.id,
+							title: label,
+							allDay: false,
+							start: provider_break.start,
+							end: provider_break.end,
+							resourceId: parseInt(provider_break.service_provider_id),
+							textColor: textColors[0],
+							borderColor: textColors[0],
+							backgroundColor: backColors[0]
+						};
+						// $('.break-button').attr("disabled", "disabled");
+						// $( '<%= image_tag "small-loader.gif", :alt => "Loader", :id => "small_loader" %>' ).insertBefore( $( ".btn-close" ) );
+						$('#calendar').fullCalendar('renderEvent', events, true);
+						// $('#breakModal').modal('hide');
 
-	            $('#bookingAlerts').hide();
-	            if (provider_break.warnings.length > 0) {
-	                $('#bookingWarnings').empty();
-	                var warnings = '';
-	                for (i in provider_break.warnings) {
-	                    warnings += provider_break.warnings[i] + '. ';
-	                }
-	                $('#bookingWarnings').append(warnings);
-	                $('#bookingAlerts').show();
-	            }
-				break;
-			case 'PATCH':
-				var label = provider_break.name;
-				if (label == null) {
-					label = 'Hora Bloqueada';
-				}
-				event = $('#calendar').fullCalendar('clientEvents', 'b'+provider_break.id)[0];
-				event.title = label;
-				event.start = provider_break.start;
-				event.end = provider_break.end;
-				event.resourceId = parseInt(provider_break.service_provider_id);
-                $('.break-button').attr("disabled", "disabled");
-                $( '<%= image_tag "small-loader.gif", :alt => "Loader", :id => "small_loader" %>' ).insertBefore( $( ".btn-close" ) );
-                $('#calendar').fullCalendar('updateEvent', event);
-                $('#breakModal').modal('hide');
-                ('#bookingAlerts').hide();
-	            if (provider_break.warnings.length > 0) {
-	                $('#bookingWarnings').empty();
-	                var warnings = '';
-	                for (i in provider_break.warnings) {
-	                    warnings += provider_break.warnings[i] + '. ';
-	                }
-	                $('#bookingWarnings').append(warnings);
-	                $('#bookingAlerts').show();
-	            }
-				break;
-			case 'DELETE':
-                $('.break-button').attr("disabled", "disabled");
-                $( '<%= image_tag "small-loader.gif", :alt => "Loader", :id => "small_loader" %>' ).insertBefore( $( ".btn-close" ) );
-                $('#calendar').fullCalendar('removeEvents','b'+provider_break.id);
-				break;
+						$('#bookingAlerts').hide();
+						if (provider_break.warnings && provider_break.warnings.length > 0) {
+							$('#bookingWarnings').empty();
+							var warnings = '';
+							for (i in provider_break.warnings) {
+								warnings += provider_break.warnings[i] + '. ';
+							}
+							$('#bookingWarnings').append(warnings);
+							$('#bookingAlerts').show();
+						}
+					} else{
+						var warnings = '';
+						$.each(provider_break, function (key, provider_break) {
+							var label = provider_break.name;
+							if (label == null) {
+								label = 'Hora Bloqueada';
+							};
+							var events = {
+								id: 'b'+provider_break.id,
+								title: label,
+								allDay: false,
+								start: provider_break.start,
+								end: provider_break.end,
+								resourceId: parseInt(provider_break.service_provider_id),
+								textColor: textColors[0],
+								borderColor: textColors[0],
+								backgroundColor: backColors[0]
+							};
+							if (provider_break.warnings.length > 0) {
+								for (i in provider_break.warnings) {
+									warnings += provider_break.warnings[i] + '. ';
+								}
+							}
+							$('#calendar').fullCalendar('renderEvent', events, true);
+						});
+					};
+					$('.break-button').attr("disabled", "disabled");
+					$( '<%= image_tag "small-loader.gif", :alt => "Loader", :id => "small_loader" %>' ).insertBefore( $( ".btn-close" ) );
+					$('#breakModal').modal('hide');
+
+					if (warnings.length > 0) {
+						$('#bookingAlerts').hide();
+						$('#bookingWarnings').empty();
+						$('#bookingWarnings').append(warnings);
+						$('#bookingAlerts').show();
+					};
+					break;
+				case 'PATCH':
+					var label = provider_break.name;
+					if (label == null) {
+						label = 'Hora Bloqueada';
+					}
+					event = $('#calendar').fullCalendar('clientEvents', 'b'+provider_break.id)[0];
+					event.title = label;
+					event.start = provider_break.start;
+					event.end = provider_break.end;
+					event.resourceId = parseInt(provider_break.service_provider_id);
+					$('.break-button').attr("disabled", "disabled");
+					$( '<%= image_tag "small-loader.gif", :alt => "Loader", :id => "small_loader" %>' ).insertBefore( $( ".btn-close" ) );
+					$('#calendar').fullCalendar('updateEvent', event);
+					$('#breakModal').modal('hide');
+					('#bookingAlerts').hide();
+					if (provider_break.warnings.length > 0) {
+						$('#bookingWarnings').empty();
+						var warnings = '';
+						for (i in provider_break.warnings) {
+							warnings += provider_break.warnings[i] + '. ';
+						}
+						$('#bookingWarnings').append(warnings);
+						$('#bookingAlerts').show();
+					}
+					break;
+				case 'DELETE':
+					$('.break-button').attr("disabled", "disabled");
+					$( '<%= image_tag "small-loader.gif", :alt => "Loader", :id => "small_loader" %>' ).insertBefore( $( ".btn-close" ) );
+					$('#calendar').fullCalendar('removeEvents','b'+provider_break.id);
+					break;
 			}
 			$('#breakModal').modal('hide');
 		},
@@ -1005,9 +1050,9 @@ function getAvailableProviders() {
 			queryJSON = { "start": $('#datePicker').val() +"T"+ $('#bookingStartHour').val() +":"+ $('#bookingStartMinute').val() +":00Z","end":$('#datePicker').val() +"T"+ $('#bookingEnd').text() +":00Z", "location_id": parseInt($('#locals-selector').val()) }
 			$.getJSON('/available_providers', queryJSON, function (providersArray) { 
 				$(function(){
-				    $('#booking_service_provider_id option').filter(function () {
-				       return $.inArray(this.value(), providersArray) == -1;
-				    }).remove();
+					$('#booking_service_provider_id option').filter(function () {
+					   return $.inArray(this.value(), providersArray) == -1;
+					}).remove();
 				});
 			});
 		}
@@ -1332,10 +1377,10 @@ $(function() {
 	// alertId = new Alert();
 
 	$('#new_booking').keypress(function(e){
-    	if ( e.which == 13 ) return false;
+		if ( e.which == 13 ) return false;
 	});
 	$('#new_provider_break').keypress(function(e){
-    	if ( e.which == 13 ) return false;
+		if ( e.which == 13 ) return false;
 	});
 	$('.createBooking').click(function() {
 		createBookingModal();
@@ -1448,8 +1493,8 @@ $(function() {
 			loadClientHistory();
 		}
 	}).data( "ui-autocomplete" )._renderItem = function( ul, item ) {
-    	return $( '<li>' ).append( '<a>' + item.label + '<br><span class="auto-desc">' + item.desc + '</span></a>' ).appendTo( ul );
-    };
+		return $( '<li>' ).append( '<a>' + item.label + '<br><span class="auto-desc">' + item.desc + '</span></a>' ).appendTo( ul );
+	};
 
 	$("#booking_client_email").autocomplete({
 		source: '/clients_suggestion',
@@ -1491,8 +1536,8 @@ $(function() {
 			loadClientHistory();
 		}
 	}).data( "ui-autocomplete" )._renderItem = function( ul, item ) {
-    	return $( '<li>' ).append( '<a>' + item.label + '<br><span class="auto-desc">' + item.desc + '</span></a>' ).appendTo( ul );
-    };
+		return $( '<li>' ).append( '<a>' + item.label + '<br><span class="auto-desc">' + item.desc + '</span></a>' ).appendTo( ul );
+	};
 
 	$("#booking_client_email").on('input',function(e){
 		if (validEmail($("#booking_client_email").val())) {
@@ -1598,4 +1643,8 @@ $(function() {
 	$('#bookingAlertsClose').click(function() {
 		$('#bookingAlerts').hide();
 	});
+	
+	$('#provider_break_service_provider_id').append(
+		'<option value="0">Todos</option>'
+	);
 });

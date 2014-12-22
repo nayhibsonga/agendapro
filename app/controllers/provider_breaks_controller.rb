@@ -16,19 +16,58 @@ class ProviderBreaksController < ApplicationController
   end
 
   def create_provider_break
-    @provider_break = ProviderBreak.new(provider_break_params)
-    respond_to do |format|
-      if @provider_break.save
-        @provider_break.warnings ? warnings = @provider_break.warnings.full_messages : warnings = []
-        @break_json = {id: @provider_break.id, start: @provider_break.start, end: @provider_break.end, service_provider_id: @provider_break.service_provider_id, name: @provider_break.name, warnings: warnings}
+    if params[:provider_break][:service_provider_id].to_i != 0
+      @provider_break = ProviderBreak.new(provider_break_params.except(:local))
+      respond_to do |format|
+        if @provider_break.save
+          @provider_break.warnings ? warnings = @provider_break.warnings.full_messages : warnings = []
+          @break_json = {id: @provider_break.id, start: @provider_break.start, end: @provider_break.end, service_provider_id: @provider_break.service_provider_id, name: @provider_break.name, warnings: warnings}
 
-        format.html { redirect_to bookings_path, notice: 'Booking was successfully created.' }
-        format.json { render :json => @break_json }
-        format.js { }
+          format.html { redirect_to bookings_path, notice: 'Booking was successfully created.' }
+          format.json { render :json => @break_json }
+          format.js { }
+        else
+          format.html { render action: 'index' }
+          format.json { render :json => { :errors => @provider_break.errors.full_messages }, :status => 422 }
+          format.js { }
+        end
+      end
+    else
+      service_providers = ServiceProvider.where(location_id: provider_break_params[:local])
+      break_group = ProviderBreak.where(service_provider_id: service_providers).where.not(break_group_id: nil).order(:break_group_id).last
+      if break_group.nil?
+        break_group = 0
       else
-        format.html { render action: 'index' }
-        format.json { render :json => { :errors => @provider_break.errors.full_messages }, :status => 422 }
-        format.js { }
+        break_group = break_group.break_group_id + 1
+      end
+      @break_json = Array.new
+      @break_erros = Array.new
+      status = true
+      service_providers.each do |provider|
+        break_params = provider_break_params.except(:local)
+        break_params[:service_provider_id] = provider.id
+        break_params[:break_group_id] = break_group
+        provider_break = ProviderBreak.new(break_params)
+        puts provider_break
+        if provider_break.save
+          provider_break.warnings ? warnings = provider_break.warnings.full_messages : warnings = []
+          @break_json.push({id: provider_break.id, start: provider_break.start, end: provider_break.end, service_provider_id: provider_break.service_provider_id, name: provider_break.name, warnings: warnings})
+          status = status && true
+        else
+          @break_erros.push(provider_break.errors.full_messages)
+          status = status && false
+        end
+      end
+      respond_to do |format|
+        if status
+          format.html { redirect_to bookings_path, notice: 'Booking was successfully created.' }
+          format.json { render :json => @break_json }
+          format.js { }
+        else
+          format.html { render action: 'index' }
+          format.json { render :json => { :errors => @break_erros }, :status => 422 }
+          format.js { }
+        end
       end
     end
   end
@@ -62,6 +101,6 @@ class ProviderBreaksController < ApplicationController
   end
   
   def provider_break_params
-    params.require(:provider_break).permit(:start, :end, :service_provider_id, :name)
+    params.require(:provider_break).permit(:start, :end, :service_provider_id, :name, :local)
   end
 end
