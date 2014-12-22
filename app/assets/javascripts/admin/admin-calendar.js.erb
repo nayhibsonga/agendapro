@@ -931,6 +931,7 @@ function saveBreak (typeURL, extraURL) {
 		success: function(provider_break){
 			switch(typeURL) {
 				case 'POST':
+					var warnings = '';
 					if ($('#provider_break_service_provider_id').val() != 0) {
 						var label = provider_break.name;
 						if (label == null) {
@@ -954,16 +955,15 @@ function saveBreak (typeURL, extraURL) {
 
 						$('#bookingAlerts').hide();
 						if (provider_break.warnings && provider_break.warnings.length > 0) {
-							$('#bookingWarnings').empty();
-							var warnings = '';
+							// $('#bookingWarnings').empty();
+							// var warnings = '';
 							for (i in provider_break.warnings) {
 								warnings += provider_break.warnings[i] + '. ';
 							}
-							$('#bookingWarnings').append(warnings);
-							$('#bookingAlerts').show();
+							// $('#bookingWarnings').append(warnings);
+							// $('#bookingAlerts').show();
 						}
 					} else{
-						var warnings = '';
 						$.each(provider_break, function (key, provider_break) {
 							var label = provider_break.name;
 							if (label == null) {
@@ -1000,26 +1000,54 @@ function saveBreak (typeURL, extraURL) {
 					};
 					break;
 				case 'PATCH':
-					var label = provider_break.name;
-					if (label == null) {
-						label = 'Hora Bloqueada';
-					}
-					event = $('#calendar').fullCalendar('clientEvents', 'b'+provider_break.id)[0];
-					event.title = label;
-					event.start = provider_break.start;
-					event.end = provider_break.end;
-					event.resourceId = parseInt(provider_break.service_provider_id);
+					var warnings = '';
+					if ($('#provider_break_service_provider_id').val() != 0) {
+						var label = provider_break.name;
+						if (label == null) {
+							label = 'Hora Bloqueada';
+						}
+						event = $('#calendar').fullCalendar('clientEvents', 'b'+provider_break.id)[0];
+						event.title = label;
+						event.start = provider_break.start;
+						event.end = provider_break.end;
+						event.resourceId = parseInt(provider_break.service_provider_id);
+						// $('.break-button').attr("disabled", "disabled");
+						// $( '<%= image_tag "small-loader.gif", :alt => "Loader", :id => "small_loader" %>' ).insertBefore( $( ".btn-close" ) );
+						$('#calendar').fullCalendar('updateEvent', event);
+						// $('#breakModal').modal('hide');
+						// $('#bookingAlerts').hide();
+						if (provider_break.warnings.length > 0) {
+							// $('#bookingWarnings').empty();
+							// var warnings = '';
+							for (i in provider_break.warnings) {
+								warnings += provider_break.warnings[i] + '. ';
+							}
+							// $('#bookingWarnings').append(warnings);
+							// $('#bookingAlerts').show();
+						}
+					} else{
+						$.each(provider_break, function (key, provider_break) {
+							var label = provider_break.name;
+							if (label == null) {
+								label = 'Hora Bloqueada';
+							}
+							event = $('#calendar').fullCalendar('clientEvents', 'b'+provider_break.id)[0];
+							event.title = label;
+							event.start = provider_break.start;
+							event.end = provider_break.end;
+							event.resourceId = parseInt(provider_break.service_provider_id);
+							$('#calendar').fullCalendar('updateEvent', event);
+							if (provider_break.warnings.length > 0) {
+								for (i in provider_break.warnings) {
+									warnings += provider_break.warnings[i] + '. ';
+								};
+							}
+						});
+					};
 					$('.break-button').attr("disabled", "disabled");
 					$( '<%= image_tag "small-loader.gif", :alt => "Loader", :id => "small_loader" %>' ).insertBefore( $( ".btn-close" ) );
-					$('#calendar').fullCalendar('updateEvent', event);
-					$('#breakModal').modal('hide');
-					('#bookingAlerts').hide();
-					if (provider_break.warnings.length > 0) {
+					if (warnings.length > 0) {
 						$('#bookingWarnings').empty();
-						var warnings = '';
-						for (i in provider_break.warnings) {
-							warnings += provider_break.warnings[i] + '. ';
-						}
 						$('#bookingWarnings').append(warnings);
 						$('#bookingAlerts').show();
 					}
@@ -1134,7 +1162,11 @@ function editBreakModal(breakId) {
 			$('#provider_break_end_5i option[value="'+dateArray[1].split(':')[1]+'"]').attr("selected",true);
 		}
 		$('#provider_break_name').val(provider_break.name);
-		$('#provider_break_service_provider_id option[value="'+provider_break.service_provider_id+'"]').attr("selected",true);;
+		$('#provider_break_service_provider_id option[value="'+provider_break.service_provider_id+'"]').attr("selected",true);
+		if (provider_break.break_group_id) {
+			window.console.log('grupo')
+			$('#provider_break_service_provider_id option[value="'+0+'"]').attr("selected",true);
+		};
 		$('.break-modal-footer').empty();
 		$('.break-modal-footer').append(
 			'<button type="button" class="btn btn-default btn-close" data-dismiss="modal">Cerrar</button>' +
