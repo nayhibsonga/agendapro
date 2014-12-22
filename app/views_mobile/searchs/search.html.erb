@@ -8,7 +8,6 @@
     <div class="row">
         <div class="col-xs-12">
             <%= form_tag({controller: "searchs", action: "search"}, method: "GET", class: "form-horizontal", id: "search-form") do %>
-                <input type="hidden" id="district" name="district" value="1">
                 <input type="hidden" id="latitude" name="latitude" value="-33.412819">
                 <input type="hidden" id="longitude" name="longitude" value="-70.591945">
                 <div class="form-group">
@@ -59,7 +58,11 @@
 		</div>
 		<% i += 1
 		end %>
-        <%= will_paginate @results, renderer: BootstrapPagination::Rails %>
+		<div class="col-xs-12">
+			<div class="pull-center">
+        		<%= will_paginate @results, renderer: BootstrapPagination::Rails %>
+			</div>
+		</div>
 		<% if @results.empty? %>
 		<div class="col-xs-12">
 			<div class="box-search">
