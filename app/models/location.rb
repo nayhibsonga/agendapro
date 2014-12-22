@@ -173,7 +173,7 @@ class Location < ActiveRecord::Base
 	    services = Array.new
 	    categories = Array.new
 	    service_providers.each do |sp|
-	    	sp.services.each do |s|
+	    	sp.services.where(active: true).each do |s|
 	    		services_ids.push(s.id)
 	    		services.push(s)
 	    		if(!categories.include?(s.service_category))
