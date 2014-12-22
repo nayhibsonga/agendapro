@@ -101,15 +101,21 @@
 												<div class="services">
 													<% category.services.where(active: true).each do |service| %>
 													<div class="service">
-														<p>
-															<%= service.name_with_small_outcall %>
-															<% if service.show_price and service.price > 0 %>
-															<span>&nbsp;&nbsp;<%= number_to_currency(service.price, {:unit => '$', :separator => ',', :delimiter => '.', :precision => 0})%></span>
-															<% end %>
-															<% if location.company.owned %>
-															<%= link_to 'Reservar'.html_safe, url_for(:host => location.company.web_address + '.' + @domain, :local => location.id, service_id: service.id, :controller => 'companies', :action => 'workflow'), :class => "btn btn-xs btn-default btn-green pull-right", :role => "button" %>
-															<% end %>
-														</p>
+														<div class="row">
+															<div class="col-xs-6">
+																<%= service.name_with_small_outcall %>
+															</div>
+															<div class="col-xs-3">
+																<% if service.show_price and service.price > 0 %>
+																<%= number_to_currency(service.price, {:unit => '$', :separator => ',', :delimiter => '.', :precision => 0})%>
+																<% end %>
+															</div>
+															<div class="col-xs-3">
+																<% if location.company.owned %>
+																<%= link_to 'Reservar'.html_safe, url_for(:host => location.company.web_address + '.' + @domain, :local => location.id, service_id: service.id, :controller => 'companies', :action => 'workflow'), :class => "btn btn-xs btn-default btn-green pull-right", :role => "button" %>
+																<% end %>
+															</div>
+														</div>
 													</div>
 												<% end %>
 												</div>
