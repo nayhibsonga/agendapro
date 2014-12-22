@@ -180,10 +180,27 @@
 .border-box:hover,
 .border-box:active,
 .border-box:focus {
-	box-shadow: 2px 2px 2px #505050;
+	box-shadow: inset 2px 2px 2px #505050;
 }
-.border-box a p {
+.border-box > a {
+	display: block;
+	width: 100%;
+	height: 100%;
+}
+.border-box > a > p {
 	color: #505050;
+}
+#carousel-what-we-do .carousel-control {
+  width: 5%;
+  background: none;
+}
+#carousel-what-we-do .carousel-control .fa-chevron-left,
+#carousel-what-we-do .carousel-control .fa-chevron-right {
+  position: absolute;
+  top: 40%;
+  z-index: 5;
+  left: 0;
+  color: #949292;
 }
 .carousel-indicators {
 	bottom: -20px;
@@ -213,20 +230,17 @@
 #carousel-clients {
 	margin-bottom: 10px;
 }
-.carousel-control {
+#carousel-comments .carousel-control {
   left: -35px;
   width: 5%;
-}
-.carousel-control.left {
   background: none;
 }
-.carousel-control.right {
+#carousel-comments .carousel-control.right {
   right: -20px;
   left: auto;
-  background: none;
 }
-.carousel-control .fa-chevron-left,
-.carousel-control .fa-chevron-right {
+#carousel-comments .carousel-control .fa-chevron-left,
+#carousel-comments .carousel-control .fa-chevron-right {
   position: absolute;
   top: 50%;
   z-index: 5;
@@ -302,7 +316,7 @@
 .box-search:active,
 .box-search:focus,
 .box-search:hover {
-	box-shadow: 2px 2px 2px #505050;
+	box-shadow: inset 2px 2px 2px #505050;
 }
 .box-search > a {
 	color: #505050;

@@ -177,10 +177,10 @@ function loadStep2 () {
 				});
 
 				$(function () {
-					$('#prev').click(function () {
+					$('.prev-btn').click(function () {
 						selected = false;
 					});
-					$('#next').click(function () {
+					$('.next-bn').click(function () {
 						selected = false;
 					});
 				});
@@ -221,15 +221,19 @@ function loadStep2 () {
 				else {
 					calendar = new Calendar('/get_available_time.json', data);
 				}
+
+
+				$('#foo4').trigger('updateSizes');
+
 				$(document).on('hourClick', function (e) {
 					addBooking(e);
 				});
 
 				$(function () {
-					$('#prev').click(function () {
+					$('.prev-btn').click(function () {
 						selected = false;
 					});
-					$('#next').click(function () {
+					$('.next-btn').click(function () {
 						selected = false;
 					});
 				});
@@ -245,6 +249,7 @@ function loadStep2 () {
 
 		});
 	}
+	$('#foo4').trigger('updateSizes');
 }
 
 function loadStep3 () {
@@ -329,6 +334,7 @@ function scrollEvents (direction) {
 			}
 			else {
 				loadStep2();
+				
 				step = 2;
 				return true;
 			}
@@ -417,7 +423,7 @@ function loadDescription (serviceId) {
 
 //====== Manage Booking ======//
 
-var selected = false;
+var pressed3 = false;
 
 function addBooking (booking) {
 	window.console.log(booking);
