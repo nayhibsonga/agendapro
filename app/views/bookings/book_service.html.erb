@@ -95,6 +95,7 @@
 				<div class="col-md-7">
 				<% if @errors %>
 					<h3>Tuvimos un error</h3>
+					<div class="resumen-book">
 					<div class="row">
 						<div class="col-md-8">
 							<p>
@@ -111,6 +112,7 @@
 	      					</ol>
 						</div>
 					</div>
+					</div>
 				<% else %>
 					<div class="resumen-book">
 						<div class="row">
@@ -121,7 +123,7 @@
 								
 									<div class="book-title"><%= @booking.client.first_name %>, tu reserva fue recibida exitosamente</div>
 									<p style="margin-bottom: 20px;">
-										<span class="light-gray">Agendar nuevamente</span> &nbsp;<a href="<%= root_url(:host => @url) %>"><i class="fa fa-calendar-o fa-lg light-green"></i></a>
+										<span class="light-gray"><a href="<%= root_url(:host => @url) %>">Agendar nuevamente</span> &nbsp;<i class="fa fa-calendar-o fa-lg light-green"></i></a>
 									</p>
 									
 									<div class="book-subheader dark-gray">Resumen de tu Reserva</div>

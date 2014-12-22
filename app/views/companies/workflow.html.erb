@@ -428,7 +428,7 @@
                           </div>
                         </div>
                         <div class="col-md-6">
-                          <button type="submit" id="submitBtn">Reservar</button>
+                          <button type="submit" data-loading-text="Cargando..." id="submitBtn">Reservar</button>
                         </div>
                       </div>
 
@@ -503,12 +503,56 @@
   <%= javascript_include_tag 'validations/home/workflow' %>
   <script type="text/javascript">
     $(function() {
+      //  Responsive layout, resizing the items
+      $('#foo4').carouFredSel({
+        responsive: true,
+        auto: false,
+        pagination: {
+            container: "#pager2",
+            anchorBuilder: function (nr) {
+              var title;
+              if (nr == 1) {
+                title = '<i class="fa fa-circle fa-2x"></i><span class="circle-number">'+nr+'</span><span class="navigation-title"> | Elegir el servicio</span>';
+              } else if (nr == 2) {
+                title = '<i class="fa fa-circle fa-2x"></i><span class="circle-number">'+nr+'</span><span class="navigation-title"> | Elegir el staff</span>';
+              } else{
+                title = '<i class="fa fa-circle fa-2x"></i><span class="circle-number">'+nr+'</span><span class="navigation-title"> | Ingresa tus datos</span>';
+              };
+              return '<a href="#"><span>' + title + '</span></a>';
+            }
+          },
+        width: '100%',
+        height: 'variable',
+        prev: '.prev-btn',
+        next: '.next-btn',
+        direction: "left",
+        circular: false,
+        infinite: false,
+        onCreate: function () {
+          $('.center-block').parent().remove();
+          $('#foo4').css('visibility', 'visible');
+          loadStep1(<%= if params[:service_id] and params[:service_id].to_i > 0 then params[:service_id] else 0 end %>);
+        },
+        scroll: {
+          conditions: function (direction) {
+            return scrollEvents(direction);
+          },
+          onEnd: function (direction) {
+            if (direction == 'prev') {
+              step = 1;
+            }
+          }
+        }
+      });
 
       compose_name('#full_name', '#firstName', '#lastName');
       split_name('#full_name', '#firstName', '#lastName');
 
       $('#boton-servicio').click(function () {
         window.location.href = 'http://' + $('#workflow_url').data('url') + '/workflow?local=' + $('#workflow_url').data('location-id').toString();
+      });
+      $('#boton-locales').click(function () {
+        window.location.href = 'http://' + $('#workflow_url').data('url') + '/?local=' + $('#workflow_url').data('location-id').toString();
       });
 
       //$("#datepicker").formatDate('yyyy-mm-dd');
@@ -608,6 +652,9 @@
             }
           }
         }
+
+      $('#submitBtn').click(function() {
+        $(this).button('loading');
       });
       
     });
