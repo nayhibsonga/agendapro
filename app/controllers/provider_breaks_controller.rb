@@ -126,11 +126,26 @@ class ProviderBreaksController < ApplicationController
   end
 
   def destroy_provider_break
-    @provider_break = ProviderBreak.find(params[:id])
-    @provider_break.destroy
-    respond_to do |format|
-      format.html { redirect_to bookings_url }
-      format.json { render :json => @provider_break }
+    if provider_break_params[:service_provider_id].to_i != 0
+      @provider_break = ProviderBreak.find(params[:id])
+      @provider_break.destroy
+      respond_to do |format|
+        format.html { redirect_to bookings_url }
+        format.json { render :json => @provider_break }
+      end
+    else
+      break_group = ProviderBreak.find(params[:id]).break_group_id
+      service_providers = ServiceProvider.where(location_id: provider_break_params[:local])
+      provider_breaks = ProviderBreak.where(service_provider_id: service_providers).where(break_group_id: break_group)
+      @break_json = Array.new
+      provider_breaks.each do |provider_break|
+        provider_break.destroy
+        @break_json.push(provider_break)
+      end
+      respond_to do |format|
+        format.html { redirect_to bookings_url }
+        format.json { render :json => @break_json }
+      end
     end
   end
   
