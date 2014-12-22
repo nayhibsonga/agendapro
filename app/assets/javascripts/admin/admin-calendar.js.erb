@@ -931,6 +931,8 @@ function saveBreak (typeURL, extraURL) {
 		success: function(provider_break){
 			switch(typeURL) {
 				case 'POST':
+					$('.break-button').attr("disabled", "disabled");
+					$( '<%= image_tag "small-loader.gif", :alt => "Loader", :id => "small_loader" %>' ).insertBefore( $( ".btn-close" ) );
 					var warnings = '';
 					if ($('#provider_break_service_provider_id').val() != 0) {
 						var label = provider_break.name;
@@ -988,8 +990,6 @@ function saveBreak (typeURL, extraURL) {
 							$('#calendar').fullCalendar('renderEvent', events, true);
 						});
 					};
-					$('.break-button').attr("disabled", "disabled");
-					$( '<%= image_tag "small-loader.gif", :alt => "Loader", :id => "small_loader" %>' ).insertBefore( $( ".btn-close" ) );
 					$('#breakModal').modal('hide');
 
 					if (warnings.length > 0) {
@@ -1000,6 +1000,8 @@ function saveBreak (typeURL, extraURL) {
 					};
 					break;
 				case 'PATCH':
+					$('.break-button').attr("disabled", "disabled");
+					$( '<%= image_tag "small-loader.gif", :alt => "Loader", :id => "small_loader" %>' ).insertBefore( $( ".btn-close" ) );
 					var warnings = '';
 					if ($('#provider_break_service_provider_id').val() != 0) {
 						var label = provider_break.name;
@@ -1044,8 +1046,6 @@ function saveBreak (typeURL, extraURL) {
 							}
 						});
 					};
-					$('.break-button').attr("disabled", "disabled");
-					$( '<%= image_tag "small-loader.gif", :alt => "Loader", :id => "small_loader" %>' ).insertBefore( $( ".btn-close" ) );
 					if (warnings.length > 0) {
 						$('#bookingWarnings').empty();
 						$('#bookingWarnings').append(warnings);
@@ -1055,7 +1055,13 @@ function saveBreak (typeURL, extraURL) {
 				case 'DELETE':
 					$('.break-button').attr("disabled", "disabled");
 					$( '<%= image_tag "small-loader.gif", :alt => "Loader", :id => "small_loader" %>' ).insertBefore( $( ".btn-close" ) );
-					$('#calendar').fullCalendar('removeEvents','b'+provider_break.id);
+					if ($('#provider_break_service_provider_id').val() != 0) {
+						$('#calendar').fullCalendar('removeEvents','b'+provider_break.id);
+					} else {
+						$.each(provider_break, function (key, provider_break) {
+							$('#calendar').fullCalendar('removeEvents','b'+provider_break.id);
+						});
+					};
 					break;
 			}
 			$('#breakModal').modal('hide');
