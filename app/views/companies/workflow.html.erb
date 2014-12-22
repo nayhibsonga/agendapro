@@ -134,7 +134,13 @@
 <div class="row" id="navegacion-workflow">
   <div class="container">
   <div class="col-md-1"><div id="prev3" class="prev-btn"><i class="fa fa-chevron-left fa-lg"></i></div></div>
-  <div class="col-md-10"><div id="pager2" class="pasos-reserva"></div></div>
+  <div class="col-md-10">
+    <div id="pager2" class="pasos-reserva">
+      <!--<a href="#" id="pager-btn-1" class="selected"><span><i class="fa fa-circle fa-2x"></i><span class="circle-number">1</span><span class="navigation-title"> | Elegir el servicio</span></span></a>
+      <a href="#" id="pager-btn-2"><span><i class="fa fa-circle fa-2x"></i><span class="circle-number">2</span><span class="navigation-title"> | Elegir el staff</span></span></a>
+      <a href="#" id="pager-btn-3"><span><i class="fa fa-circle fa-2x"></i><span class="circle-number">3</span><span class="navigation-title"> | Ingresa tus datos</span></span></a>-->
+    </div>
+  </div>
   <div class="col-md-1"><div id="next3" class="next-btn"><i class="fa fa-chevron-right fa-lg"></i></div></div>
   </div>
 </div>
@@ -546,10 +552,10 @@
             
 
             $(function () {
-              $('#prev').click(function () {
+              $('.prev-btn').click(function () {
                 selected = false;
               });
-              $('#next').click(function () {
+              $('.next-btn').click(function () {
                 selected = false;
               });
             });
@@ -576,8 +582,8 @@
               } else{
                 title = '<i class="fa fa-circle fa-2x"></i><span class="circle-number">'+nr+'</span><span class="navigation-title"> | Ingresa tus datos</span>';
               };
-              return '<a href="#"><span>' + title + '</span></a>';
-            }
+              return '<a href="#" id="pager-btn-'+nr+'" class="pager-btn disabled"><span>' + title + '</span></a>';
+            },
           },
         width: '100%',
         height: 'variable',
@@ -596,12 +602,14 @@
             return scrollEvents(direction);
           },
           onEnd: function (direction) {
+
             if (direction == 'prev') {
               step = 1;
             }
           }
         }
       });
+      
     });
   </script>
 <% end %>
