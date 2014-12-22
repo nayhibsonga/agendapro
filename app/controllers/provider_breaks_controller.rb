@@ -77,7 +77,7 @@ class ProviderBreaksController < ApplicationController
       respond_to do |format|
         break_params = provider_break_params.except(:local)
         break_params[:break_group_id] = nil
-        if @provider_break.update(provider_break_params.except(:local))
+        if @provider_break.update(break_params)
 
           @provider_break.warnings ? warnings = @provider_break.warnings.full_messages : warnings = []
           @break_json = {id: @provider_break.id, start: @provider_break.start, end: @provider_break.end, service_provider_id: @provider_break.service_provider_id, name: @provider_break.name, warnings: warnings}
@@ -94,14 +94,6 @@ class ProviderBreaksController < ApplicationController
     else
       break_group = ProviderBreak.find(params[:id]).break_group_id
       service_providers = ServiceProvider.where(location_id: provider_break_params[:local])
-      # if break_group.nil?
-      #   break_group = ProviderBreak.where(service_provider_id: service_providers).where.not(break_group_id: nil).order(:break_group_id).last
-      #   if break_group.nil?
-      #     break_group = 0
-      #   else
-      #     break_group = break_group.break_group_id + 1
-      #   end
-      # end
       provider_breaks = ProviderBreak.where(service_provider_id: service_providers).where(break_group_id: break_group)
       @break_json = Array.new
       @break_erros = Array.new
