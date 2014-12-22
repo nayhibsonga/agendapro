@@ -950,20 +950,13 @@ function saveBreak (typeURL, extraURL) {
 							borderColor: textColors[0],
 							backgroundColor: backColors[0]
 						};
-						// $('.break-button').attr("disabled", "disabled");
-						// $( '<%= image_tag "small-loader.gif", :alt => "Loader", :id => "small_loader" %>' ).insertBefore( $( ".btn-close" ) );
 						$('#calendar').fullCalendar('renderEvent', events, true);
-						// $('#breakModal').modal('hide');
 
 						$('#bookingAlerts').hide();
 						if (provider_break.warnings && provider_break.warnings.length > 0) {
-							// $('#bookingWarnings').empty();
-							// var warnings = '';
 							for (i in provider_break.warnings) {
 								warnings += provider_break.warnings[i] + '. ';
 							}
-							// $('#bookingWarnings').append(warnings);
-							// $('#bookingAlerts').show();
 						}
 					} else{
 						$.each(provider_break, function (key, provider_break) {
@@ -1013,19 +1006,11 @@ function saveBreak (typeURL, extraURL) {
 						event.start = provider_break.start;
 						event.end = provider_break.end;
 						event.resourceId = parseInt(provider_break.service_provider_id);
-						// $('.break-button').attr("disabled", "disabled");
-						// $( '<%= image_tag "small-loader.gif", :alt => "Loader", :id => "small_loader" %>' ).insertBefore( $( ".btn-close" ) );
 						$('#calendar').fullCalendar('updateEvent', event);
-						// $('#breakModal').modal('hide');
-						// $('#bookingAlerts').hide();
 						if (provider_break.warnings.length > 0) {
-							// $('#bookingWarnings').empty();
-							// var warnings = '';
 							for (i in provider_break.warnings) {
 								warnings += provider_break.warnings[i] + '. ';
 							}
-							// $('#bookingWarnings').append(warnings);
-							// $('#bookingAlerts').show();
 						}
 					} else{
 						$.each(provider_break, function (key, provider_break) {
@@ -1170,7 +1155,6 @@ function editBreakModal(breakId) {
 		$('#provider_break_name').val(provider_break.name);
 		$('#provider_break_service_provider_id option[value="'+provider_break.service_provider_id+'"]').attr("selected",true);
 		if (provider_break.break_group_id) {
-			window.console.log('grupo')
 			$('#provider_break_service_provider_id option[value="'+0+'"]').attr("selected",true);
 		};
 		$('.break-modal-footer').empty();
