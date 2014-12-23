@@ -1098,6 +1098,31 @@ function createBreakModal(date, providerId) {
 		$('#provider_break_start_5i option[value="00"]').attr("selected",true);
 		$('#provider_break_end_5i option[value="00"]').attr("selected",true);
 	}
+
+	var localId = parseInt($('#locals-selector').val());
+	window.console.info('before')
+	$.ajax('/local_providers.json', {
+		async: false,
+		data: {
+			location: localId
+		},
+		dataType: 'json',
+		success: function (providersArray, status, jqXHR) {
+			window.console.info('during')
+			var selector = $('#provider_break_service_provider_id');
+			selector.empty();
+			$.each(providersArray, function (key, provider) {
+				selector.append(
+					'<option value="' + provider.id + '">' + provider.public_name + '</option>'
+				);
+			});
+			selector.append(
+				'<option value="0">Todos</option>'
+			);
+		}
+	});
+	window.console.info('after')
+
 	if (parseInt($('#providers-selector').val()) > 0) {
 		$('#provider_break_service_provider_id option[value="'+parseInt($('#providers-selector').val())+'"]').attr("selected",true);
 	}
@@ -1152,6 +1177,39 @@ function editBreakModal(breakId) {
 			$('#provider_break_end_4i option[value="'+dateArray[1].split(':')[0]+'"]').attr("selected",true);
 			$('#provider_break_end_5i option[value="'+dateArray[1].split(':')[1]+'"]').attr("selected",true);
 		}
+
+		var localId = parseInt($('#locals-selector').val());
+		window.console.info('before')
+		$.ajax('/local_providers.json', {
+			async: false,
+			data: {
+				location: localId
+			},
+			dataType: 'json',
+			success: function (providersArray, status, jqXHR) {
+				window.console.info('during')
+				var selector = $('#provider_break_service_provider_id');
+				selector.empty();
+				$.each(providersArray, function (key, provider) {
+					if (provider_break.break_group_id) {
+						if (provider.id == provider_break.service_provider_id) {
+							selector.append(
+								'<option value="' + provider.id + '">' + provider.public_name + '</option>'
+							);
+						};
+					} else {
+						selector.append(
+							'<option value="' + provider.id + '">' + provider.public_name + '</option>'
+						);
+					};
+				});
+				selector.append(
+					'<option value="0">Todos</option>'
+				);
+			}
+		});
+		window.console.info('after')
+		
 		$('#provider_break_name').val(provider_break.name);
 		$('#provider_break_service_provider_id option[value="'+provider_break.service_provider_id+'"]').attr("selected",true);
 		if (provider_break.break_group_id) {
