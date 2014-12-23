@@ -42,7 +42,7 @@ $(function() {
                 $('#latitude').val(lat);
                 $('#longitude').val(lng);
                 $("#inputLocalization").val(results[0].formatted_address);
-                $('#inputSearch').focus();
+                // $('#inputSearch').focus();
                 $('#search-form').submit();
             }
             else {
@@ -73,7 +73,7 @@ $(function() {
                             $('#inputLocalization').val(position.coords.latitude+', '+position.coords.longitude);
                             $('#inputLocalization2').val(position.coords.latitude+', '+position.coords.longitude);
                         }
-                        $('#inputSearch').focus();
+                        // $('#inputSearch').focus();
                         $('.geolocate_btn').html('<i class="fa fa-crosshairs"></i> Encuéntrame');
                         return false;
                     });
