@@ -118,4 +118,12 @@ class ServiceProvider < ActiveRecord::Base
 			return 0
 		end			
 	end
+
+	def get_booking_configuration_email
+		conf = self.booking_configuration_email
+		if conf == 2
+			conf = self.location.get_booking_configuration_email
+		end
+		return conf
+	end
 end
