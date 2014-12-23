@@ -15,12 +15,7 @@ class BookingMailer < ActionMailer::Base
 			:from_email => 'no-reply@agendapro.cl',
 			:from_name => book_info.service_provider.company.name,
 			:subject => 'Nueva Reserva en ' + book_info.service_provider.company.name,
-			:to => [
-				{
-					:email => book_info.service_provider.notification_email,
-					:type => 'to'
-				}
-			],
+			:to => [],
 			:headers => { 'Reply-To' => book_info.service_provider.notification_email },
 			:global_merge_vars => [
 				# {
@@ -52,8 +47,45 @@ class BookingMailer < ActionMailer::Base
 					:content => book_info.service_provider.public_name
 				}
 			],
-			:merge_vars => [
+			:merge_vars => [],
+			:tags => ['booking', 'new_booking'],
+			:images => [
 				{
+					:type => 'image/png',
+					:name => 'company_img.jpg',
+					:content => Base64.encode64(File.read('app/assets/ico/Iso_Pro_Color.png'))
+				}
+			],
+			:attachments => [
+				{
+					:type => 'text/calendar',
+					:name => book_info.service.name + ' - ' + book_info.service_provider.company.name + '.ics',
+					:content => Base64.encode64(book_info.generate_ics.export())
+				}
+			]
+		}
+
+		# => Logo empresa
+		if book_info.location.company.logo_url
+			company_logo = {
+				:type => 'image/' +  File.extname(book_info.location.company.logo_url),
+				:name => 'company_img.jpg',
+				:content => Base64.encode64(File.read('public' + book_info.location.company.logo_url.to_s))
+			}
+			message[:images] = [company_logo]
+		end
+
+		if !book_info.notes.blank?
+			message[:global_merge_vars] << {:name => 'BNOTES', :content => book_info.notes}
+		end
+
+		# Notificacion service provider
+		if book_info.service_provider.get_booking_configuration_email == 0
+			message[:to] << {
+					:email => book_info.service_provider.notification_email,
+					:type => 'to'
+				}
+			message[:merge_vars] << {
 					:rcpt => book_info.service_provider.notification_email,
 					:vars => [
 						{
@@ -90,40 +122,10 @@ class BookingMailer < ActionMailer::Base
 						}
 					]
 				}
-			],
-			:tags => ['booking', 'new_booking'],
-			:images => [
-				{
-					:type => 'image/png',
-					:name => 'company_img.jpg',
-					:content => Base64.encode64(File.read('app/assets/ico/Iso_Pro_Color.png'))
-				}
-			],
-			:attachments => [
-				{
-					:type => 'text/calendar',
-					:name => book_info.service.name + ' - ' + book_info.service_provider.company.name + '.ics',
-					:content => Base64.encode64(book_info.generate_ics.export())
-				}
-			]
-		}
-
-		# => Logo empresa
-		if book_info.location.company.logo_url
-			company_logo = {
-				:type => 'image/' +  File.extname(book_info.location.company.logo_url),
-				:name => 'company_img.jpg',
-				:content => Base64.encode64(File.read('public' + book_info.location.company.logo_url.to_s))
-			}
-			message[:images] = [company_logo]
-		end
-
-		if !book_info.notes.blank?
-			message[:global_merge_vars] << {:name => 'BNOTES', :content => book_info.notes}
 		end
 
 		# Email notificacion local
-		if book_info.location.notification and !book_info.location.email.blank?
+		if book_info.location.notification and !book_info.location.email.blank? and book_info.location.get_booking_configuration_email == 0
 			message[:to] << {
 				:email => book_info.location.email,
 				:type => 'to'
@@ -167,6 +169,7 @@ class BookingMailer < ActionMailer::Base
 			}
 		end
 
+		# Notificacion cliente
 		if book_info.send_mail
 			message[:to] << {
 					:email => book_info.client.email,
@@ -237,18 +240,9 @@ class BookingMailer < ActionMailer::Base
 			:from_email => 'no-reply@agendapro.cl',
 			:from_name => book_info.service_provider.company.name,
 			:subject => 'Reserva Actualizada en ' + book_info.service_provider.company.name,
-			:to => [
-				{
-					:email => book_info.service_provider.notification_email,
-					:type => 'to'
-				}
-			],
+			:to => [],
 			:headers => { 'Reply-To' => book_info.service_provider.notification_email },
 			:global_merge_vars => [
-				# {
-				# 	:name => 'UNSUBSCRIBE',
-				# 	:content => "Si deseas dejar de recibir emails de AgendaPro, puedes dar click <a href='#{unsubscribe_url(:user => Base64.encode64(book_info.client.email))}'>aquí</a>"
-				# },
 				{
 					:name => 'OLD_START',
 					:content => l(old_start)
@@ -278,8 +272,45 @@ class BookingMailer < ActionMailer::Base
 					:content => book_info.service_provider.public_name
 				}
 			],
-			:merge_vars => [
+			:merge_vars => [],
+			:tags => ['booking', 'edit_booking'],
+			:images => [
 				{
+					:type => 'image/png',
+					:name => 'company_img.jpg',
+					:content => Base64.encode64(File.read('app/assets/ico/Iso_Pro_Color.png'))
+				}
+			],
+			:attachments => [
+				{
+					:type => 'text/calendar',
+					:name => book_info.service.name + ' - ' + book_info.service_provider.company.name + '.ics',
+					:content => Base64.encode64(book_info.generate_ics.export())
+				}
+			]
+		}
+
+		if !book_info.notes.blank?
+			message[:global_merge_vars] << {:name => 'BNOTES', :content => book_info.notes}
+		end
+
+		# => Logo empresa
+		if book_info.location.company.logo_url
+			company_logo = {
+				:type => 'image/' +  File.extname(book_info.location.company.logo_url),
+				:name => 'company_img.jpg',
+				:content => Base64.encode64(File.read('public' + book_info.location.company.logo_url.to_s))
+			}
+			message[:images] = [company_logo]
+		end
+
+		# Notificacion service provider
+		if book_info.service_provider.get_booking_configuration_email == 0
+			message[:to] << {
+					:email => book_info.service_provider.notification_email,
+					:type => 'to'
+				}
+			message[:merge_vars] << {
 					:rcpt => book_info.service_provider.notification_email,
 					:vars => [
 						
@@ -317,40 +348,10 @@ class BookingMailer < ActionMailer::Base
 						}
 					]
 				}
-			],
-			:tags => ['booking', 'edit_booking'],
-			:images => [
-				{
-					:type => 'image/png',
-					:name => 'company_img.jpg',
-					:content => Base64.encode64(File.read('app/assets/ico/Iso_Pro_Color.png'))
-				}
-			],
-			:attachments => [
-				{
-					:type => 'text/calendar',
-					:name => book_info.service.name + ' - ' + book_info.service_provider.company.name + '.ics',
-					:content => Base64.encode64(book_info.generate_ics.export())
-				}
-			]
-		}
-
-		if !book_info.notes.blank?
-			message[:global_merge_vars] << {:name => 'BNOTES', :content => book_info.notes}
-		end
-
-		# => Logo empresa
-		if book_info.location.company.logo_url
-			company_logo = {
-				:type => 'image/' +  File.extname(book_info.location.company.logo_url),
-				:name => 'company_img.jpg',
-				:content => Base64.encode64(File.read('public' + book_info.location.company.logo_url.to_s))
-			}
-			message[:images] = [company_logo]
 		end
 
 		# Email notificacion local
-		if book_info.location.notification and !book_info.location.email.blank?
+		if book_info.location.notification and !book_info.location.email.blank? and book_info.location.get_booking_configuration_email == 0
 			message[:to] << {
 				:email => book_info.location.email,
 				:type => 'to'
@@ -394,6 +395,7 @@ class BookingMailer < ActionMailer::Base
 			}
 		end
 
+		# Notificacion cliente
 		if book_info.send_mail
 			message[:to] << {
 				:email => book_info.client.email,
@@ -464,18 +466,9 @@ class BookingMailer < ActionMailer::Base
 			:from_email => 'no-reply@agendapro.cl',
 			:from_name => 'AgendaPro',
 			:subject => 'Reserva Confirmada de ' + book_info.client.first_name + ' ' + book_info.client.last_name,
-			:to => [
-				{
-					:email => book_info.service_provider.notification_email,
-					:type => 'to'
-				}
-			],
+			:to => [],
 			:headers => { 'Reply-To' => book_info.service_provider.notification_email },
 			:global_merge_vars => [
-				# {
-				# 	:name => 'UNSUBSCRIBE',
-				# 	:content => "Si deseas dejar de recibir emails de AgendaPro, puedes dar click <a href='#{unsubscribe_url(:user => Base64.encode64(book_info.client.email))}'>aquí</a>"
-				# },
 				{
 					:name => 'SERVICENAME',
 					:content => book_info.service.name
@@ -501,8 +494,38 @@ class BookingMailer < ActionMailer::Base
 					:content => book_info.service_provider.public_name
 				}
 			],
-			:merge_vars => [
+			:merge_vars => [],
+			:tags => ['booking', 'edit_booking'],
+			:images => [
 				{
+					:type => 'image/png',
+					:name => 'company_img.jpg',
+					:content => Base64.encode64(File.read('app/assets/ico/Iso_Pro_Color.png'))
+				}
+			]
+		}
+
+		if !book_info.notes.blank?
+			message[:global_merge_vars] << {:name => 'BNOTES', :content => book_info.notes}
+		end
+
+		# => Logo empresa
+		if book_info.location.company.logo_url
+			company_logo = {
+				:type => 'image/' +  File.extname(book_info.location.company.logo_url),
+				:name => 'company_img.jpg',
+				:content => Base64.encode64(File.read('public' + book_info.location.company.logo_url.to_s))
+			}
+			message[:images] = [company_logo]
+		end
+
+		# Notificacion service provider
+		if book_info.service_provider.get_booking_configuration_email == 0
+			message[:to] << {
+					:email => book_info.service_provider.notification_email,
+					:type => 'to'
+				}
+			message[:merge_vars] << {
 					:rcpt => book_info.service_provider.notification_email,
 					:vars => [
 						{
@@ -539,33 +562,10 @@ class BookingMailer < ActionMailer::Base
 						}
 					]
 				}
-			],
-			:tags => ['booking', 'edit_booking'],
-			:images => [
-				{
-					:type => 'image/png',
-					:name => 'company_img.jpg',
-					:content => Base64.encode64(File.read('app/assets/ico/Iso_Pro_Color.png'))
-				}
-			]
-		}
-
-		if !book_info.notes.blank?
-			message[:global_merge_vars] << {:name => 'BNOTES', :content => book_info.notes}
-		end
-
-		# => Logo empresa
-		if book_info.location.company.logo_url
-			company_logo = {
-				:type => 'image/' +  File.extname(book_info.location.company.logo_url),
-				:name => 'company_img.jpg',
-				:content => Base64.encode64(File.read('public' + book_info.location.company.logo_url.to_s))
-			}
-			message[:images] = [company_logo]
 		end
 
 		# Email notificacion local
-		if book_info.location.notification and !book_info.location.email.blank?
+		if book_info.location.notification and !book_info.location.email.blank? and book_info.location.get_booking_configuration_email == 0
 			message[:to] << {
 				:email => book_info.location.email,
 				:type => 'to'
@@ -633,18 +633,9 @@ class BookingMailer < ActionMailer::Base
 			:from_email => 'no-reply@agendapro.cl',
 			:from_name => book_info.service_provider.company.name,
 			:subject => 'Reserva Cancelada en ' + book_info.service_provider.company.name,
-			:to => [
-				{
-					:email => book_info.service_provider.notification_email,
-					:type => 'to'
-				}
-			],
+			:to => [],
 			:headers => { 'Reply-To' => book_info.service_provider.notification_email },
 			:global_merge_vars => [
-				# {
-				# 	:name => 'UNSUBSCRIBE',
-				# 	:content => "Si desea dejar de recibir email puede dar click <a href='#{unsubscribe_url(:user => Base64.encode64(book_info.client.email))}'>aquí</a>."
-				# },
 				{
 					:name => 'SERVICENAME',
 					:content => book_info.service.name
@@ -670,8 +661,38 @@ class BookingMailer < ActionMailer::Base
 					:content => book_info.service_provider.public_name
 				}
 			],
-			:merge_vars => [
+			:merge_vars => [],
+			:tags => ['booking', 'cancel_booking'],
+			:images => [
 				{
+					:type => 'image/png',
+					:name => 'company_img.jpg',
+					:content => Base64.encode64(File.read('app/assets/ico/Iso_Pro_Color.png'))
+				}
+			]
+		}
+
+		if !book_info.notes.blank?
+			message[:global_merge_vars] << {:name => 'BNOTES', :content => book_info.notes}
+		end
+
+		# => Logo empresa
+		if book_info.location.company.logo_url
+			company_logo = {
+				:type => 'image/' +  File.extname(book_info.location.company.logo_url),
+				:name => 'company_img.jpg',
+				:content => Base64.encode64(File.read('public' + book_info.location.company.logo_url.to_s))
+			}
+			message[:images] = [company_logo]
+		end
+
+		# Notificacion service provider
+		if book_info.service_provider.get_booking_configuration_email == 0
+			message[:to] << {
+					:email => book_info.service_provider.notification_email,
+					:type => 'to'
+				}
+			message[:merge_vars] << {
 					:rcpt => book_info.service_provider.notification_email,
 					:vars => [
 						
@@ -709,33 +730,10 @@ class BookingMailer < ActionMailer::Base
 						}
 					]
 				}
-			],
-			:tags => ['booking', 'cancel_booking'],
-			:images => [
-				{
-					:type => 'image/png',
-					:name => 'company_img.jpg',
-					:content => Base64.encode64(File.read('app/assets/ico/Iso_Pro_Color.png'))
-				}
-			]
-		}
-
-		if !book_info.notes.blank?
-			message[:global_merge_vars] << {:name => 'BNOTES', :content => book_info.notes}
-		end
-
-		# => Logo empresa
-		if book_info.location.company.logo_url
-			company_logo = {
-				:type => 'image/' +  File.extname(book_info.location.company.logo_url),
-				:name => 'company_img.jpg',
-				:content => Base64.encode64(File.read('public' + book_info.location.company.logo_url.to_s))
-			}
-			message[:images] = [company_logo]
 		end
 
 		# Email notificacion local
-		if book_info.location.notification and !book_info.location.email.blank?
+		if book_info.location.notification and !book_info.location.email.blank? and book_info.location.get_booking_configuration_email == 0
 			message[:to] << {
 				:email => book_info.location.email,
 				:type => 'to'
@@ -779,6 +777,7 @@ class BookingMailer < ActionMailer::Base
 			}
 		end
 
+		# Notificacion cliente
 		if book_info.send_mail
 			message[:to] << {
 				:email => book_info.client.email,
@@ -841,18 +840,9 @@ class BookingMailer < ActionMailer::Base
 			:from_email => 'no-reply@agendapro.cl',
 			:from_name => book_info.service_provider.company.name,
 			:subject => 'Recuerda tu Reserva en ' + book_info.service_provider.company.name,
-			:to => [
-				{
-				  :email => book_info.service_provider.notification_email,
-				  :type => 'to'
-				}
-			],
+			:to => [],
 			:headers => { 'Reply-To' => book_info.service_provider.notification_email },
 			:global_merge_vars => [
-				# {
-				# 	:name => 'UNSUBSCRIBE',
-				# 	:content => "Si deseas dejar de recibir emails de AgendaPro, puedes dar click <a href='#{unsubscribe_url(:user => Base64.encode64(book_info.client.email))}'>aquí</a>"
-				# },
 				{
 					:name => 'SERVICENAME',
 					:content => book_info.service.name
@@ -878,8 +868,38 @@ class BookingMailer < ActionMailer::Base
 					:content => book_info.service_provider.public_name
 				}
 			],
-			:merge_vars => [
+			:merge_vars => [],
+			:tags => ['booking', 'remind_booking'],
+			:images => [
 				{
+					:type => 'image/png',
+					:name => 'company_img.jpg',
+					:content => Base64.encode64(File.read('app/assets/ico/Iso_Pro_Color.png'))
+				}
+			]
+		}
+
+		if !book_info.notes.blank?
+			message[:global_merge_vars] << {:name => 'BNOTES', :content => book_info.notes}
+		end
+
+		# => Logo empresa
+		if book_info.location.company.logo_url
+			company_logo = {
+				:type => 'image/' +  File.extname(book_info.location.company.logo_url),
+				:name => 'company_img.jpg',
+				:content => Base64.encode64(File.read('public' + book_info.location.company.logo_url.to_s))
+			}
+			message[:images] = [company_logo]
+		end
+
+		# Notificacion service provider
+		if book_info.service_provider.get_booking_configuration_email == 0
+			message[:to] << {
+				  :email => book_info.service_provider.notification_email,
+				  :type => 'to'
+				}
+			message[:merge_vars] << {
 				  :rcpt => book_info.service_provider.notification_email,
 				  :vars => [
 					
@@ -917,33 +937,10 @@ class BookingMailer < ActionMailer::Base
 					}
 				  ]
 				}
-			],
-			:tags => ['booking', 'remind_booking'],
-			:images => [
-				{
-					:type => 'image/png',
-					:name => 'company_img.jpg',
-					:content => Base64.encode64(File.read('app/assets/ico/Iso_Pro_Color.png'))
-				}
-			]
-		}
-
-		if !book_info.notes.blank?
-			message[:global_merge_vars] << {:name => 'BNOTES', :content => book_info.notes}
-		end
-
-		# => Logo empresa
-		if book_info.location.company.logo_url
-			company_logo = {
-				:type => 'image/' +  File.extname(book_info.location.company.logo_url),
-				:name => 'company_img.jpg',
-				:content => Base64.encode64(File.read('public' + book_info.location.company.logo_url.to_s))
-			}
-			message[:images] = [company_logo]
 		end
 
 		# Email notificacion local
-		if book_info.location.notification and !book_info.location.email.blank?
+		if book_info.location.notification and !book_info.location.email.blank? and book_info.location.get_booking_configuration_email == 0
 			message[:to] << {
 				:email => book_info.location.email,
 				:type => 'to'
@@ -987,6 +984,7 @@ class BookingMailer < ActionMailer::Base
 			}
 		end
 
+		# Notificacion cliente
 		if book_info.send_mail
 			message[:to] << {
 			  :email => book_info.client.email,
