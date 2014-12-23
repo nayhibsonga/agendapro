@@ -69,7 +69,6 @@ function decode (position) {
 
             $('#latitude').val(position.coords.latitude);
             $('#longitude').val(position.coords.longitude);
-            alert("decode " + $('#latitude').val() + " " + $('#longitude').val());
             //====== Session Storage
             if (typeof(Storage) !== "undefined") {
               sessionStorage.district = district.id;
