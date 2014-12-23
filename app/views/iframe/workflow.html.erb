@@ -28,7 +28,7 @@
         <div id="foo4" style="visibility: collapse;">
           <div class="box-step">
             <div class="row">
-              <div class="col-md-6">
+              <div class="col-sm-6">
                 <div class="services-title dark-gray">
                   Servicios
                 </div>
@@ -38,13 +38,13 @@
               </div>
             </div>
             <div class="row">
-              <div class="col-md-6">
+              <div class="col-sm-6">
                 <div class="panel-group" id="services-selector" style="border-radius: 4px; border: 1px solid #acacac; margin-left: 10px !important;">
                   <%= image_tag "ajax-loader.gif", :alt => "Loader" %>
                 </div>
                 
               </div>
-              <div class="col-md-6">
+              <div class="col-sm-6">
                 <div class="descripcion">
                   <div class="descripcion-header">
                     Descripción del servicio
@@ -64,7 +64,7 @@
           </div>
           <div class="box-step">
             <div class="row">
-              <div class="col-md-3">
+              <div class="col-sm-3">
                 <div class="staff-wrapper">             
                   <span class="subtitulos-workflow">Seleccione un Staff<br /> y Horario &nbsp;</span><span><i class="fa fa-clock-o gray-icon"></i>&nbsp;<i class="fa fa-user gray-icon"></i></span>
                   <div class="sub-workflow dark-gray">Seleccione un staff para ver su horario</div>
@@ -79,7 +79,7 @@
                 </div>
               </div>
 
-              <div class="col-md-9" id="staff-calendar">
+              <div class="col-sm-9" id="staff-calendar">
                 <div class="panel panel-info <%= 'full-margin' if @location.company.company_setting.provider_preference == 2 %>">
                   <div class="calendar-head">
                     <div class="panel-title">
@@ -104,7 +104,7 @@
                     </div>
                   </div>
                   <div class="days-row">
-                    
+                  <br />
                   </div>
                   <div class="panel-body">
                     <div class="horario"></div>
@@ -115,12 +115,12 @@
             </div>
 
             <div class="row">
-              <div class="col-md-3">
+              <div class="col-sm-3">
                 <div class="btn-change btn-prev">
                   <a class="prev2 prev-btn"><i class="fa fa-chevron-left prev-arrow"></i> Anterior</a>
                 </div>  
               </div>
-              <div class="col-md-9">
+              <div class="col-sm-9">
                 <div class="btn-change btn-next">
                   <a class="next2 next-btn">Siguiente <i class="fa fa-chevron-right next-arrow"></i></a>
                 </div>
@@ -131,10 +131,10 @@
           <div class="box-step">
 
             <div class="row" style="margin-left: 0px !important;">
-              <div class="col-md-6">
+              <div class="col-sm-6">
                 <div class="subtitulos-workflow">Ingresa tus datos &nbsp;<i class="fa fa-file-text-o gray-icon"></i></div>
               </div>
-              <div class="col-md-6">
+              <div class="col-sm-6">
               </div>
             </div>
 
@@ -165,12 +165,12 @@
                         <%= hidden_field_tag :lastName, current_user.last_name %>
 
                         <div class="row">
-                          <div class="col-md-12 dark-gray">
+                          <div class="col-xs-12 dark-gray">
                             Nombre
                           </div>
                         </div>
                         <div class="row">
-                          <div class="col-md-12">
+                          <div class="col-xs-12">
                             <div class="form-group has-feedback">
                               <input type="text" id="full_name" name="user[full_name]" class="form-control light-gray" placeholder="Nombre completo (requerido)">
                               <span class="help-block"></span>
@@ -181,22 +181,22 @@
 
                       
                         <div class="row">
-                          <div class="col-md-6 dark-gray">
+                          <div class="col-xs-6 dark-gray">
                             Email
                           </div>
-                          <div class="col-md-6 dark-gray">
+                          <div class="col-xs-6 dark-gray">
                             Teléfono
                           </div>
                         </div>
                         <div class="row">
-                          <div class="col-md-6">
+                          <div class="col-xs-6">
                             <div class="form-group has-feedback">
                               <%= email_field_tag(:email, current_user.email, :class => "form-control light-gray", :placeholder => "ejemplo@dominio.com (requerido)", :required => true) %>
                               <span class="help-block"></span>
                               <span class="form-control-feedback"></span>
                             </div>
                           </div>
-                          <div class="col-md-6">
+                          <div class="col-xs-6">
                             <div class="form-group has-feedback">
                               <%= telephone_field_tag(:phone, current_user.phone, :class => "form-control light-gray", :placeholder => "1122334455 (requerido)", :required => true) %>
                               <span class="help-block"></span>
@@ -210,12 +210,12 @@
                         <%= hidden_field_tag :firstName %>
                         <%= hidden_field_tag :lastName %>
                         <div class="row">
-                          <div class="col-md-12 dark-gray">
+                          <div class="col-xs-12 dark-gray">
                             Nombre
                           </div>
                         </div>
                         <div class="row">
-                          <div class="col-md-12">
+                          <div class="col-xs-12">
                             <div class="form-group has-feedback">
                               <input type="text" id="full_name" name="user[full_name]" class="form-control light-gray" placeholder="Nombre completo (requerido)">
                               <span class="help-block"></span>
@@ -226,22 +226,22 @@
 
                       
                         <div class="row">
-                          <div class="col-md-6 dark-gray">
+                          <div class="col-xs-6 dark-gray">
                             Email
                           </div>
-                          <div class="col-md-6 dark-gray">
+                          <div class="col-xs-6 dark-gray">
                             Teléfono
                           </div>
                         </div>
                         <div class="row">
-                          <div class="col-md-6">
+                          <div class="col-xs-6">
                             <div class="form-group has-feedback">
                               <%= email_field_tag(:email, nil, :class => "form-control light-gray", :placeholder => "ejemplo@dominio.com (requerido)", :required => true) %>
                               <span class="help-block"></span>
                               <span class="form-control-feedback"></span>
                             </div>
                           </div>
-                          <div class="col-md-6">
+                          <div class="col-xs-6">
                             <div class="form-group has-feedback">
                               <%= telephone_field_tag(:phone, nil, :class => "form-control light-gray", :placeholder => "1122334455 (requerido)", :required => true) %>
                               <span class="help-block"></span>
@@ -253,8 +253,8 @@
 
                       <% if @location.company.company_setting.client_exclusive %>
                         <div id="identificationNumber" class="form-group has-feedback">
-                          <%= label_tag(:identification_number, "RUT", class: "col-sm-3 control-label") %>
-                          <div class="col-sm-9">
+                          <%= label_tag(:identification_number, "RUT", class: "col-xs-3 control-label") %>
+                          <div class="col-xs-9">
                             <%= text_field_tag(:identification_number, nil, :class => "form-control light-gray", :placeholder => "Escriba su RUT, debe estar autorizado como cliente" ) %>
                             <span class="help-block"></span>
                             <span class="form-control-feedback"></span>
@@ -262,8 +262,8 @@
                         </div>
                       <% end %>
                       <div id="outcallAddress" class="form-group has-feedback">
-                        <%= label_tag(:address, "Dirección", class: "col-sm-3 control-label") %>
-                        <div class="col-sm-9">
+                        <%= label_tag(:address, "Dirección", class: "col-xs-3 control-label") %>
+                        <div class="col-xs-9">
                           <%= text_field_tag(:address, nil, :class => "form-control light-gray", :placeholder => "Escribe la dirección donde se debe realizar el servicio" ) %>
                           <span class="help-block"></span>
                           <span class="form-control-feedback"></span>
@@ -272,12 +272,12 @@
 
 
                       <div class="row">
-                        <div class="col-md-12 dark-gray">
+                        <div class="col-xs-12 dark-gray">
                           Comentario
                         </div>
                       </div>
                       <div class="row">
-                        <div class="col-md-12">
+                        <div class="col-xs-12">
                           <div class="form-group">
                               <%= text_area_tag(:comment, nil, :class => "form-control light-gray", :placeholder => "Agrega algún comentario a tu reserva en caso de ser necesario", :rows => 4) %>
                           </div>
@@ -285,12 +285,12 @@
                       </div>
 
                       <div class="row" style="margin-top: 20px;">
-                        <div class="col-md-6">
+                        <div class="col-xs-6">
                           <div class="btn-change btn-prev">
                             <a class="prev2 prev-btn"><i class="fa fa-chevron-left prev-arrow"></i> Anterior</a>
                           </div>
                         </div>
-                        <div class="col-md-6">
+                        <div class="col-xs-6">
                           <button type="submit" id="submitBtn">Reservar</button>
                         </div>
                       </div>
