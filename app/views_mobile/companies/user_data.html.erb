@@ -53,6 +53,9 @@
 	</div>
 </div>
 
+<%= content_tag "div", id: "selectedLocal", data: {local: @location, district: @location.district.name} do %>
+<% end %>
+
 <% content_for :scripts do %>
 <%= javascript_include_tag 'split-name' %>
 <%= javascript_include_tag 'validations/validate' %>
