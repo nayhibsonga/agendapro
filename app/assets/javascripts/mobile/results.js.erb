@@ -1,26 +1,17 @@
 $(function() {
     myAlert = new Alert();
     var input = document.getElementById('inputLocalization');
-    var input2 = document.getElementById('inputLocalization2');
     var options = {
       types: ['geocode'],
       componentRestrictions: {country: 'cl'}
     };
     var geocoder = new google.maps.Geocoder();
     var autocomplete = new google.maps.places.Autocomplete(input, options);
-    var autocomplete2 = new google.maps.places.Autocomplete(input2, options);
     var infowindow = new google.maps.InfoWindow();
     google.maps.event.addListener(autocomplete, 'place_changed', function() {
         if (autocomplete.getPlace().geometry) {
             $('#latitude').val(autocomplete.getPlace().geometry.location.k);
             $('#longitude').val(autocomplete.getPlace().geometry.location.D);
-        }
-    });
-    google.maps.event.addListener(autocomplete2, 'place_changed', function() {
-        if (autocomplete2.getPlace().geometry) {
-            $('#inputLocalization').val(autocomplete2.getPlace().formatted_address);
-            $('#latitude').val(autocomplete2.getPlace().geometry.location.k);
-            $('#longitude').val(autocomplete2.getPlace().geometry.location.D);
         }
     });
     $("#inputLocalization").focusin(function () {
@@ -37,20 +28,6 @@ $(function() {
         }
         $(document).unbind("keypress.key1");
     });
-    $("#inputLocalization2").focusin(function () {
-        $(document).bind("keypress.key2", function(e) {
-            if (e.which == 13) {
-                e.preventDefault();
-                selectFirstResult();
-            }
-        });
-    });
-    $("#inputLocalization2").focusout(function () {
-        if(!$(".pac-container").is(":focus") && !$(".pac-container").is(":visible")) {
-            selectFirstResult();
-        }
-        $(document).unbind("keypress.key2");
-    });
      
     function selectFirstResult() {
         infowindow.close();
@@ -65,13 +42,11 @@ $(function() {
                 $('#latitude').val(lat);
                 $('#longitude').val(lng);
                 $("#inputLocalization").val(results[0].formatted_address);
-                $("#inputLocalization2").val(results[0].formatted_address);
                 // $('#inputSearch').focus();
                 $('#search-form').submit();
             }
             else {
                 $("#inputLocalization").val('');
-                $("#inputLocalization2").val('');
             }
         });
     }
@@ -154,18 +129,4 @@ $(function() {
     $('.geolocate_btn').click(function() {
         geolocate();
     });
-    $('.border-box a').click(function() {
-        $('#inputSearch').val($(this).data('search'));
-        if ($('#inputLocalization').val() != 0) {
-            $('#search-form').submit();
-        }
-        else {
-            $('#geolocation-modal').modal('show');
-            // $('#inputLocalization2').focus();
-        }
-    });
-    $('#modal_search').click(function() {
-        $('#search-form').submit();
-    });
-    // $('#inputLocalization').focus();
 });

@@ -180,7 +180,8 @@
 .border-box:hover,
 .border-box:active,
 .border-box:focus {
-	box-shadow: inset 2px 2px 2px #505050;
+	border-color: #22c488;
+	background-color: #eeeeee;
 }
 .border-box > a {
 	display: block;
@@ -316,13 +317,15 @@
 .box-search:active,
 .box-search:focus,
 .box-search:hover {
-	box-shadow: inset 2px 2px 2px #505050;
+	border-color: #22c488;
+	background-color: #eeeeee;
 }
-.box-search > a {
+.box-search > a,
+.box-search > span {
 	color: #505050;
 }
 .box-search img {
-	vertical-align: super;
+	vertical-align: middle;
 	display: inline;
 	width: 70px;
 	margin-right: 10px;
@@ -334,6 +337,7 @@
 	width: -moz-calc(100% - 70px - 20px);
 	width: -webkit-calc(100% - 70px - 20px);
 	width: calc(100% - 70px - 20px);
+	vertical-align: middle;
 }
 .description h3 {
 	border-bottom: 1px solid #505050;
@@ -347,7 +351,7 @@
     background: url(<%= asset_path 'search/pin.png' %>);
     background-size: contain;
     background-repeat: no-repeat;
-    background-position: center top;
+    background-position: left top;
     margin-right: 4px;
 }
 .number-pin span{

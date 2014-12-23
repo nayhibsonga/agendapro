@@ -48,20 +48,41 @@ h6, .h6 {
 	margin-right: auto;
 }
 
-/*.close-menu i {
-	border: #ffffff solid;
-	border-radius: 100%;
-	padding: 2px 4px;
-}*/
-/*html.smr-open,
-body.smr-open,
-body.smr-open > #wrapper {
-	overflow: hidden;
-	-webkit-overflow-scrolling: hidden;
-	width: 100%;
-	height: 100%;
-	position: absolute;
-}*/
+/*Pagination*/
+.pagination > li > a,
+.pagination > li > span {
+	color: #22c488;
+}
+.pagination > li > a:hover,
+.pagination > li > span:hover,
+.pagination > li > a:focus,
+.pagination > li > span:focus {
+	color: #eeeeee;
+}
+.pagination > .active > a,
+.pagination > .active > span,
+.pagination > .active > a:hover,
+.pagination > .active > span:hover,
+.pagination > .active > a:focus,
+.pagination > .active > span:focus {
+	background-color: #22c488;
+	border-color: #22c488;
+}
+.pagination > .disabled > span,
+.pagination > .disabled > span:hover,
+.pagination > .disabled > span:focus,
+.pagination > .disabled > a,
+.pagination > .disabled > a:hover,
+.pagination > .disabled > a:focus {
+	color: #505050;
+}
+.pagination > li > a:hover,
+.pagination > li > span:hover,
+.pagination > li > a:focus,
+.pagination > li > span:focus {
+	color: #22c488;
+}
+/*End Pagination*/
 
 /*** alert ***/
 .alert {
@@ -83,7 +104,7 @@ body.smr-open > #wrapper {
 
 /*Menu*/
 .navbar-agendapro .navbar-nav > li > a {
-	color: #ffffff;
+	color: #777;
 }
 .navbar-agendapro .navbar-nav > li > a.menu-green {
 	color: #22c488;
@@ -103,9 +124,6 @@ body.smr-open > #wrapper {
 	color: #ffffff;
 	background-color: transparent;
 }
-.navbar-agendapro .navbar-nav > li.divider {
-	margin-top: 2em;
-}
 @media screen and (max-width: 767px) {
 	/* General styles for all menus */
 	.navbar-default .navbar-collapse,
@@ -117,7 +135,13 @@ body.smr-open > #wrapper {
 		max-height: 100%;
 	}
 	.cbp-spmenu {
-	    background: #949292;
+	    background: #3a3a3a;
+	}
+	.navbar-agendapro .navbar-nav > li.divider {
+		margin-top: 2em;
+	}
+	.navbar-agendapro .navbar-nav > li > a {
+		color: #ffffff;
 	}
 	.navbar-default .navbar-nav > li > a:hover,
 	.navbar-default .navbar-nav > li > a:active,
