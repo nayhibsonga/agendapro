@@ -261,10 +261,6 @@ class Booking < ActiveRecord::Base
 		end
 	end
 
-	def self.test_mail
-		BookingMailer.book_service_mail(Booking.first)
-	end
-
 	def self.booking_reminder
 		where(:start => 4.hours.ago...92.hours.from_now).each do |booking|
 			unless booking.status == Status.find_by(:name => "Cancelado")

@@ -123,7 +123,6 @@ class Location < ActiveRecord::Base
 	end
 
 	def categories
-
 		# def location_categorized_services
 	 #    location_resources = Location.find(params[:location]).resource_locations.pluck(:resource_id)
 	 #    service_providers = ServiceProvider.where(location_id: params[:location])
@@ -183,7 +182,6 @@ class Location < ActiveRecord::Base
 	    end
 
 	    return categories
-
 	end
 
 	def get_booking_configuration_email
@@ -192,6 +190,17 @@ class Location < ActiveRecord::Base
 			conf = self.company.company_setting.booking_configuration_email
 		end
 		return conf
+	end
+
+	def self.booking_summary
+		where(company_id: Company.where(active: true)).where(active: true).where(notification: true).where.not(email: nil).where.not(email: '').each do |location|
+			puts location.name
+			if location.get_booking_configuration_email == 1
+				Booking.where(location: location).where(updated_at: (Time.now - 1.day)..Time.now).each do |booking|
+					puts "%s agendo %s con %s a las %s, %s" % [booking.client.first_name, booking.service.name, booking.service_provider.public_name, booking.start, booking.status.name]
+				end
+			end
+		end
 	end
 
 end

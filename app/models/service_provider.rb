@@ -126,4 +126,15 @@ class ServiceProvider < ActiveRecord::Base
 		end
 		return conf
 	end
+
+	def self.booking_summary
+		where(company_id: Company.where(active: true)).where(location_id: Location.where(active: true)).where(active: true).each do |provider|
+			puts provider.public_name
+			if provider.get_booking_configuration_email == 1
+				Booking.where(service_provider: provider).where(updated_at: (Time.now - 1.day)..Time.now).each do |booking|
+					puts "%s agendo %s con %s a las %s, %s" % [booking.client.first_name, booking.service.name, booking.service_provider.public_name, booking.start, booking.status.name]
+				end
+			end
+		end
+	end
 end
