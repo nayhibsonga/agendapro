@@ -18,10 +18,6 @@ class BookingMailer < ActionMailer::Base
 			:to => [],
 			:headers => { 'Reply-To' => book_info.service_provider.notification_email },
 			:global_merge_vars => [
-				# {
-				# 	:name => 'UNSUBSCRIBE',
-				# 	:content => "Si deseas dejar de recibir emails de AgendaPro, puedes dar click <a href='#{unsubscribe_url(:user => Base64.encode64(book_info.client.email))}'>aquí</a>"
-				# },
 				{
 					:name => 'COMPANYNAME',
 					:content => book_info.service_provider.company.name
@@ -1033,6 +1029,70 @@ class BookingMailer < ActionMailer::Base
 				}
 			  ]
 			}
+		end
+
+		# => Metadata
+		async = false
+		send_at = DateTime.now
+
+		# => Send mail
+		result = mandrill.messages.send_template template_name, template_content, message, async, send_at
+
+		rescue Mandrill::Error => e
+			puts "A mandrill error occurred: #{e.class} - #{e.message}"
+			raise
+	end
+
+	def booking_summary (booking_data, booking_table)
+		mandrill = Mandrill::API.new Agendapro::Application.config.api_key
+
+		# => Template
+		template_name = 'Booking Summary'
+		template_content = []
+
+		# => Message
+		message = {
+			:from_email => 'no-reply@agendapro.cl',
+			:from_name => 'AgendaPro',
+			:subject => 'Resumen de Reservas',
+			:to => [
+				{
+					:email => booking_data[:to],
+					:type => 'to'
+				}
+			],
+			:global_merge_vars => [
+				{
+					:name => 'COMPANYNAME',
+					:content => booking_data[:company]
+				},
+				{
+					:name => 'NAME',
+					:content => booking_data[:name]
+				},
+				{
+					:name => 'TABLE',
+					:content => booking_table
+				}
+			],
+			:tags => ['booking', 'booking_summary'],
+			:images => [
+				{
+					:type => 'image/png',
+					:name => 'company_img.jpg',
+					:content => Base64.encode64(File.read('app/assets/ico/Iso_Pro_Color.png'))
+				}
+			]
+		}
+
+		# => Logo empresa
+		if booking_data[:logo]
+			company_logo = {
+				:type => 'image/' +  File.extname(booking_data[:logo]),
+				:name => 'company_img.jpg',
+				:content => Base64.encode64(File.read('public' + booking_data[:logo].to_s))
+			}
+			message[:images] = [company_logo]
 		end
 
 		# => Metadata

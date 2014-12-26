@@ -194,10 +194,33 @@ class Location < ActiveRecord::Base
 
 	def self.booking_summary
 		where(company_id: Company.where(active: true)).where(active: true).where(notification: true).where.not(email: nil).where.not(email: '').each do |location|
-			puts location.name
 			if location.get_booking_configuration_email == 1
+				booking_summary = ''
 				Booking.where(location: location).where(updated_at: (Time.now - 1.day)..Time.now).each do |booking|
-					puts "%s agendo %s con %s a las %s, %s" % [booking.client.first_name, booking.service.name, booking.service_provider.public_name, booking.start, booking.status.name]
+					booking_summary += "<tr><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td></tr>" % [booking.client.first_name + ' ' + booking.client.last_name, booking.service.name, booking.service_provider.public_name, I18n.l(booking.start), booking.status.name]
+				end
+				booking_table = '<table class="table">' +
+									'<thead>' +
+										'<tr>' +
+											'<th>Cliente</th>' +
+											'<th>Servicio</th>' +
+											'<th>Prestador</th>' +
+											'<th>Hora</th>' +
+											'<th>Estado</th>' +
+										'</tr>' +
+									'</thead>' +
+									'<tbody>' +
+										booking_summary +
+									'</tbody>' +
+								'</table>'
+				booking_data = {
+					company: location.company.name,
+					logo: location.company.logo_url,
+					name: location.name,
+					to: location.email
+				}
+				if booking_summary.length > 0
+					BookingMailer.booking_summary(booking_data, booking_table)
 				end
 			end
 		end
