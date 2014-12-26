@@ -47,6 +47,10 @@ group :development do
   gem 'binding_of_caller'
   #impresion amigable en consola
   gem 'awesome_print'
+  #Librería para generar datos para el seed
+  gem 'faker'
+  #Geocoder para el seed
+  gem 'geocoder'
 end
 
 #Accounts, Permissions, Roles:
@@ -121,3 +125,7 @@ gem 'prawn-table'
 # Advertencias en validaciones
 # gem 'validation_scopes'
 gem 'validation_scopes', :git => 'https://github.com/ivalkeen/validation_scopes.git'
+
+#Librería para string matching
+gem 'amatch'
+
