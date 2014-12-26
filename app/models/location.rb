@@ -185,5 +185,56 @@ class Location < ActiveRecord::Base
 
 	end
 
+	def categories
+		service_providers = self.service_providers
+
+	    services_ids = Array.new
+	    services = Array.new
+	    categories = Array.new
+	    service_providers.each do |sp|
+	     	sp.services.where(active: true).each do |s|
+	     		services_ids.push(s.id)
+	     		services.push(s)
+	     		if(!categories.include?(s.service_category))
+	     			categories.push(s.service_category)
+	     		end
+	    	end
+	    end
+
+	    return categories
+	end
+
+	# def categories_alt
+	# 	location_resources = self.resource_locations.pluck(:resource_id)
+	#     service_providers = self.service_providers.where(active: true)
+	#     categories = ServiceCategory.where(:company_id => self.company_id).order(order: :asc)
+	#     return categories
+	# end
+
+	# def services_alt
+	# 	location_resources = self.resource_locations.pluck(:resource_id)
+	#     service_providers = self.service_providers.where(active: true)
+
+	#     categories = ServiceCategory.where(:company_id => self.company_id).order(order: :asc)
+	#     services = Service.where(:active => true, :id => ServiceStaff.where(service_provider_id: service_providers.pluck(:id)).pluck(:service_id)).order(order: :asc)
+	#     service_resources_unavailable = ServiceResource.where(service_id: services)
+	#     if location_resources.any?
+	#       if location_resources.length > 1
+	#         service_resources_unavailable = service_resources_unavailable.where('resource_id NOT IN (?)', location_resources)
+	#       else
+	#         service_resources_unavailable = service_resources_unavailable.where('resource_id <> ?', location_resources)
+	#       end
+	#     end
+	#     if service_resources_unavailable.any?
+	#       if service_resources_unavailable.length > 1
+	#         services = services.where('services.id NOT IN (?)', service_resources_unavailable.pluck(:service_id))
+	#       else
+	#         services = services.where('id <> ?', service_resources_unavailable.pluck(:service_id))
+	#       end
+	#     end
+
+	#     return services
+	# end
+
 end
  
