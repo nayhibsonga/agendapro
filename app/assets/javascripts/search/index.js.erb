@@ -119,6 +119,7 @@ $(function() {
             $('#inputLocalization').val(autocomplete2.getPlace().formatted_address);
             $('#latitude').val(autocomplete2.getPlace().geometry.location.k);
             $('#longitude').val(autocomplete2.getPlace().geometry.location.D);
+            
             document.cookie = "lat=" + escape(autocomplete2.getPlace().geometry.location.k);
             document.cookie = "lng=" + escape(autocomplete2.getPlace().geometry.location.D);
             document.cookie = "formatted_address=" + escape(autocomplete2.getPlace().formatted_address);
@@ -163,10 +164,12 @@ $(function() {
                     lng = results[0].geometry.location.lng(),
                     placeName = results[0].address_components[0].long_name,
                     latlng = new google.maps.LatLng(lat, lng);
+             
                 $('#latitude').val(lat);
                 $('#longitude').val(lng);
                 document.cookie = "lat=" + escape(lat);
                 document.cookie = "lng=" + escape(lng);
+              
                 $("#inputLocalization").val(results[0].formatted_address);
                 $("#inputLocalization2").val(results[0].formatted_address);
                 document.cookie = "formatted_address=" + escape(results[0].formatted_address);
@@ -190,6 +193,7 @@ $(function() {
                     $('#longitude').val(position.coords.longitude);
                     document.cookie = "lat=" + escape(position.coords.latitude);
                     document.cookie = "lng=" + escape(position.coords.longitude);
+                   
                     var latlng = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
                     geocoder.geocode({'latLng': latlng}, function(results, status) {
                         if (status == google.maps.GeocoderStatus.OK) {
