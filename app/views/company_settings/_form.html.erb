@@ -319,6 +319,17 @@
 					</div>
 				</div>
 				<div class="form-group">
+					<%= f.label :max_changes, 'Ediciones Maximas:', :class => 'col-sm-3 control-label' %>
+					<div class="col-sm-4">
+						<div class="input-group">
+							<%= f.number_field :max_changes, :min => 0, :required => true, :class => 'form-control' %>
+							<span class="input-group-addon">Veces</span>
+						</div>
+						<span class="help-block"></span>
+						<span class="help-block">Cantidad de veces que un cliente puede editar su reserva.</span>
+					</div>
+				</div>
+				<div class="form-group">
 					<div class="col-sm-offset-3 col-sm-4">
 						<%= f.submit 'Guardar', :class => 'btn btn-agendapro-claro' %>
 						<%= link_to 'Cancelar', dashboard_path, :class => "btn btn-default" %>    

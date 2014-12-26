@@ -285,6 +285,7 @@
                       <input type="hidden" name="service" id="service" value="">
                       <input type="hidden" name="location" id="location" value="<%= @location.id %>">
                       <input type="hidden" name="origin" id="origin" value="true">
+                      <%= hidden_field_tag :max_changes, @location.company.company_setting.max_changes %>
                       <% if user_signed_in? %>
                       <div id="user-data">
                         <%= hidden_field_tag :user_id, current_user.id %>

@@ -805,6 +805,9 @@ function editDrag(event) {
 
 function saveBooking(typeURL, extraURL) {
 	var bookingJSON = jsonBooking();
+	if (typeURL == 'POST') {
+		bookingJSON['max_changes'] = $('#booking_max_changes').val();
+	};
 	$.ajax({
 		type: typeURL,
 		url: '/bookings'+ extraURL +'.json',
