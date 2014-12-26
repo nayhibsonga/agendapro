@@ -104,7 +104,7 @@
                     </div>
                   </div>
                   <div class="days-row">
-                  <br />
+                    
                   </div>
                   <div class="panel-body">
                     <div class="horario"></div>
@@ -366,6 +366,47 @@
   <%= javascript_include_tag 'validations/home/workflow' %>
   <script type="text/javascript">
     $(function() {
+      //  Responsive layout, resizing the items
+      $('#foo4').carouFredSel({
+        responsive: true,
+        auto: false,
+        pagination: {
+            container: "#pager2",
+            anchorBuilder: function (nr) {
+              var title;
+              if (nr == 1) {
+                title = '<i class="fa fa-circle fa-2x"></i><span class="circle-number">'+nr+'</span><span class="navigation-title"> | Elegir el servicio</span>';
+              } else if (nr == 2) {
+                title = '<i class="fa fa-circle fa-2x"></i><span class="circle-number">'+nr+'</span><span class="navigation-title"> | Elegir el staff</span>';
+              } else{
+                title = '<i class="fa fa-circle fa-2x"></i><span class="circle-number">'+nr+'</span><span class="navigation-title"> | Ingresa tus datos</span>';
+              };
+              return '<a href="#"><span>' + title + '</span></a>';
+            }
+          },
+        width: '100%',
+        height: 'variable',
+        prev: '.prev-btn',
+        next: '.next-btn',
+        direction: "left",
+        circular: false,
+        infinite: false,
+        onCreate: function () {
+          $('.center-block').parent().remove();
+          $('#foo4').css('visibility', 'visible');
+          loadStep1(<%= if params[:service_id] and params[:service_id].to_i > 0 then params[:service_id] else 0 end %>);
+        },
+        scroll: {
+          conditions: function (direction) {
+            return scrollEvents(direction);
+          },
+          onEnd: function (direction) {
+            if (direction == 'prev') {
+              step = 1;
+            }
+          }
+        }
+      });
 
       compose_name('#full_name', '#firstName', '#lastName');
       split_name('#full_name', '#firstName', '#lastName');
@@ -430,47 +471,6 @@
         $(e.currentTarget).find('input').datepicker('show');
       });
 
-      //  Responsive layout, resizing the items
-      $('#foo4').carouFredSel({
-        responsive: true,
-        auto: false,
-        pagination: {
-            container: "#pager2",
-            anchorBuilder: function (nr) {
-              var title;
-              if (nr == 1) {
-                title = '<i class="fa fa-circle fa-2x"></i><span class="circle-number">'+nr+'</span><span class="navigation-title"> | Elegir el servicio</span>';
-              } else if (nr == 2) {
-                title = '<i class="fa fa-circle fa-2x"></i><span class="circle-number">'+nr+'</span><span class="navigation-title"> | Elegir el staff</span>';
-              } else{
-                title = '<i class="fa fa-circle fa-2x"></i><span class="circle-number">'+nr+'</span><span class="navigation-title"> | Ingresa tus datos</span>';
-              };
-              return '<a href="#"><span>' + title + '</span></a>';
-            }
-          },
-        width: '100%',
-        height: 'variable',
-        prev: '.prev-btn',
-        next: '.next-btn',
-        direction: "left",
-        circular: false,
-        infinite: false,
-        onCreate: function () {
-          $('.center-block').parent().remove();
-          $('#foo4').css('visibility', 'visible');
-          loadStep1();
-        },
-        scroll: {
-          conditions: function (direction) {
-            return scrollEvents(direction);
-          },
-          onEnd: function (direction) {
-            if (direction == 'prev') {
-              step = 1;
-            }
-          }
-        }
-      });
     });
   </script>
 <% end %>
