@@ -1,5 +1,7 @@
 Agendapro::Application.routes.draw do
 
+  get "payed_bookings/show"
+  get "payed_bookings/get_by_user"
   get "users/index"
   require 'subdomain'
 
