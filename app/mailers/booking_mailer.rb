@@ -1072,10 +1072,6 @@ class BookingMailer < ActionMailer::Base
 			],
 			:headers => { 'Reply-To' => 'contacto@agendapro.cl' },
 			:global_merge_vars => [
-				# {
-				# 	:name => 'UNSUBSCRIBE',
-				# 	:content => "Si deseas dejar de recibir emails de AgendaPro, puedes dar click <a href='#{unsubscribe_url(:user => Base64.encode64(book_info.client.email))}'>aquí</a>"
-				# },
 				{
 					:name => 'COMPANYNAME',
 					:content => payed_booking.booking.location.company.name
@@ -1108,14 +1104,7 @@ class BookingMailer < ActionMailer::Base
 					:name => 'company_img.jpg',
 					:content => Base64.encode64(File.read('app/assets/ico/Iso_Pro_Color.png'))
 				}
-			]#,
-			#:attachments => [
-			#	{
-			#		:type => 'text/calendar',
-			#		:name => book_info.service.name + ' - ' + book_info.service_provider.company.name + '.ics',
-			#		:content => Base64.encode64(book_info.generate_ics.export())
-			#	}
-			#]
+			]
 		}
 
 		# => Metadata
@@ -1156,13 +1145,9 @@ class BookingMailer < ActionMailer::Base
 			],
 			:headers => { 'Reply-To' => 'contacto@agendapro.cl' },
 			:global_merge_vars => [
-				# {
-				# 	:name => 'UNSUBSCRIBE',
-				# 	:content => "Si deseas dejar de recibir emails de AgendaPro, puedes dar click <a href='#{unsubscribe_url(:user => Base64.encode64(book_info.client.email))}'>aquí</a>"
-				# },
 				{
 					:name => 'CLIENT',
-					:content => client.first_name + ' ' client.last_name
+					:content => client.first_name + ' ' + client.last_name
 				},
 				{
 					:name => 'PRICE',
@@ -1192,14 +1177,7 @@ class BookingMailer < ActionMailer::Base
 					:name => 'company_img.jpg',
 					:content => Base64.encode64(File.read('app/assets/ico/Iso_Pro_Color.png'))
 				}
-			]#,
-			#:attachments => [
-			#	{
-			#		:type => 'text/calendar',
-			#		:name => book_info.service.name + ' - ' + book_info.service_provider.company.name + '.ics',
-			#		:content => Base64.encode64(book_info.generate_ics.export())
-			#	}
-			#]
+			]
 		}
 
 		# => Metadata
