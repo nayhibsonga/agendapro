@@ -1,0 +1,45 @@
+<div class="main">
+  <div class="container">
+    <div class="row">
+      <section class="hgroup">
+        <h2>Configuración Página AgendaPro</h2>
+        <h2 class="section_header">Para configurar tu pestaña AgendaPro, sólo debes copiar el código disponible en tu cuenta administrador, en "Configuraciones" (Engranaje arriba a la derecha), en la pestaña "Facebook / Web".</h2>
+        <div class="line-breadcrumb">
+          <ul class="breadcrumb pull-right">
+              <li class="active">Configuraciones</li>
+          </ul>
+        </div>
+      </section>
+    </div>
+    <div class="row">
+      <div class="well">
+      <%= form_for @facebook_page, :url => '/iframe/facebook_submit', :html => {:class => 'form-horizontal'} do |f| %>
+      <% if @facebook_page.errors.any? %>
+        <div id="error_explanation">
+          <h3><%= pluralize(@facebook_page.errors.count, "error") %> no permitió que la página fuera configurada:</h3>
+          <ul>
+          <% @facebook_page.errors.full_messages.each do |msg| %>
+            <li><%= msg %></li>
+          <% end %>
+          </ul>
+        </div>
+      <% end %>
+       <%= f.hidden_field :facebook_page_id %>
+        <div class="form-group">
+        <% if @facebook_page.company_id then @facebook_page.company_id = (@facebook_page.company_id * 123456).to_s(30) end %>
+          <%= f.label :company_id, 'Código AgendaPro', :class => 'col-sm-3 control-label' %>
+          <div class="col-sm-5">
+            <%= f.text_field :company_id, class: "form-control" %>
+            <span class="help-block">Luego de ingresar el código y guardar, ya podrás recibir reservas a través de tu página de facebook.</span>
+          </div>
+        </div>
+        <div class="form-group">
+          <div class="col-sm-offset-3 col-sm-4">
+           <%= f.submit 'Guardar', :class => 'btn btn-agendapro-claro' %>
+          </div> 
+        </div>
+      <% end %>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,132 @@
+//====== Overview ======//
+function loadSchedule(id) {
+  $('#schedule-body').html('<%= image_tag "ajax-loader.gif", :alt => "Loader" %>');
+  $.getJSON('/schedule', {local: id}, function (schedule) {
+    $('#schedule-body').empty();
+    $.each(schedule, function (day, hour) {
+      if (hour.open) {
+        $('#schedule-body').append(
+          '<tr>' +
+            '<th>' + day + ':</th>' +
+            '<th>' + getHour(hour.open) + ' - ' + getHour(hour.close) + '</th>' +
+          '</tr>'
+        );
+      }
+    })
+  });
+}
+
+function getHour(str) {
+  var index = str.indexOf('T'); //2000-1-1T08:00:00Z
+  str = str.substring(index + 1, index + 6); //08:00
+  return str;
+}
+
+//====== Google Map ======//
+function initializeMap(lat, lng, mapDiv) {
+    var properties = {
+        center: new google.maps.LatLng(lat, lng),
+        zoom:   17,
+        panControl: false,
+        zoomControl: true,
+        zoomControlOptions: {
+            style: google.maps.ZoomControlStyle.SMALL
+        },
+        mapTypeControl: true,
+        mapTypeControlOptions: {
+            style: google.maps.MapTypeControlStyle.DROPDOWN_MENU
+        },
+        scaleControl: false,
+        streetViewControl: false,
+        overviewMapControl: false,
+        mapTypeId:  google.maps.MapTypeId.ROADMAP
+    };
+    map = new google.maps.Map(document.getElementById(mapDiv), properties);
+}
+
+function setMarker(latlng, local) {
+  var marker = new google.maps.Marker({
+                position: latlng
+              });
+  marker.setMap(map);
+
+  var infowindow = new google.maps.InfoWindow({
+      content: local
+    });
+  google.maps.event.addListener(marker, 'click', function() {
+      infowindow.open(map,marker);
+  });
+}
+
+function localMap(id) {
+  $.getJSON('/local', {id: id}, function (local) {
+    var latLng = new google.maps.LatLng(local.latitude, local.longitude);
+    map.setCenter(latLng);
+    setMarker(latLng, local.name);
+  });
+}
+
+function loadOutcallDistricts(id) {
+  $.getJSON('/local_districts', {id: id}, function (local_districts) {
+    var districtsString = '';
+    $.each(local_districts.districts, function(index, district) {
+      districtsString += district.name + '<br />';
+    });
+    $('#outcallDistricts').html('<h3>Comunas que se atienden desde esta sucursal:<br /><small>(comunas en '+local_districts.city+', '+local_districts.region+' - '+local_districts.country+')</small></h3><p>'+districtsString+'</p>');
+  });
+}
+
+var myAlert;
+$(function() {
+  myAlert = new Alert('.main');
+
+  $('#outcallDistricts').hide();
+  $('#outcallDistricts').empty();
+
+  $('[name="localRadio"]').on('click', function(event) {
+    var id = event.target.getAttribute('value');
+    loadSchedule(id);
+    localMap(id);
+
+    if ($('#localOption' + id).data('outcall') == true) {
+      $('#outcallDistricts').empty();
+      loadOutcallDistricts(id);
+      $('.google-maps-empresa').hide();
+      $('#outcallDistricts').show();
+    }
+    else {
+      $('.google-maps-empresa').show();
+      $('#outcallDistricts').hide();
+      $('#outcallDistricts').empty();
+    }
+
+    $('.local-seleccionado').removeClass('local-seleccionado');
+    $('#localOption' + id).parents('tr').addClass('local-seleccionado');
+  });
+
+  $('#boton-agendar').click(function (event) {
+    if (!$('[name="localRadio"]').is(':checked')) {
+      myAlert.showAlert(
+        '<h3>Selecciona un local</h3>' +
+        '<p>Debes elegir un local antes de poder agendar.</p>'
+      );
+      event.preventDefault(); // Prevent link from following its href
+    }
+    else {
+      window.location.href = '/iframe/workflow/'+$('input[name=localRadio]:checked').val();
+    }
+  });
+
+  var map;
+  initializeMap(-33.413084, -70.592161, 'map');
+  
+  if ($('[name="localRadio"]').is(':checked')) {
+    var localId = $('input[name=localRadio]:checked').val();
+    loadSchedule(localId);
+    localMap(localId);
+  }
+
+  if ($('[name="localRadio"]').length == 1) {
+    $('input[name=localRadio]').trigger('click');
+  }
+});

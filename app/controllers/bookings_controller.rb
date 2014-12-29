@@ -499,7 +499,9 @@ class BookingsController < ApplicationController
     @booking.price = Service.find(params[:service]).price
     if @booking.save
 
-      #Si eligió pagar
+      #
+      #   PAGO EN LÍNEA DE RESERVA
+      #
       if(params[:payment] == "1")
         trx_id = DateTime.now.to_s.gsub(/[-:T]/i, '')
         num_amount = service.price - service.price*service.discount/100;
@@ -516,6 +518,7 @@ class BookingsController < ApplicationController
           redirect_to punto_pagos_failure_path and return
         end
       end
+      
       # flash[:notice] = "Reserva realizada exitosamente."      
       # BookingMailer.book_service_mail(@booking)
     else @booking.save
