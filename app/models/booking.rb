@@ -6,6 +6,7 @@ class Booking < ActiveRecord::Base
 	belongs_to :location
 	belongs_to :promotion
 	belongs_to :client
+	has_one :payed_booking
 
 	validates :start, :end, :service_provider_id, :service_id, :status_id, :location_id, :client_id, :presence => true
 
