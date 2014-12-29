@@ -58,8 +58,8 @@
 		</div>
 		<% else %>
 			<div hidden>
-				<input type="hidden" id="lat" value="<%= @lat.to_s %>" />
-				<input type="hidden" id="long" value="<%= @long.to_s %>" />
+				<input type="hidden" id="lat" value="<%= @latitude.to_s %>" />
+				<input type="hidden" id="long" value="<%= @longitude.to_s %>" />
 			</div>
 			<div class="row">
 			<!--<div class="col-md-12 col-sm-9" style="padding-left: 0px !important;">
@@ -69,6 +69,12 @@
 				<!--</div>
 			</div>-->
 			</div>
+			<!--<div class="row text-center">
+			<p><br />Estos son los resultados más cerca de "<%= params[:inputLocalization] %>". <a href="" data-toggle="modal" data-target="#geolocation-modal">Cambiar Ubicación</a></p>
+			</div>-->
+			<div class="row text-center">
+			<p><br />Estos son los resultados más cerca de "<%= params[:inputLocalization] %>". <a href="" data-toggle="modal" data-target="#geolocation-modal">Cambiar Ubicación</a></p>
+			</div>	
 			<div class="row">
 				<div class="col-md-12">
 					<p style="font-size: 22px; text-align: center; margin-top: 20px; color: #acacac;">

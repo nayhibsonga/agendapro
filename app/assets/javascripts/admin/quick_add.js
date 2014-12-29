@@ -27,7 +27,7 @@ function buildDay (value, ctrl) {
 							'<option value="06">06</option>' +
 							'<option value="07">07</option>' +
 							'<option value="08">08</option>' +
-							'<option value="09">09</option>' +
+							'<option value="09" selected>09</option>' +
 							'<option value="10">10</option>' +
 							'<option value="11">11</option>' +
 							'<option value="12">12</option>' +
@@ -46,7 +46,7 @@ function buildDay (value, ctrl) {
 					'</div> : ' +
 					'<div class="form-group">' +
 						'<select class="form-control time-select" id="' + ctrl + 'openMinuteId'+ value +'" name="' + ctrl + 'openMinute'+ value +'" disabled="disabled">' +
-							'<option value="00">00</option>' +
+							'<option value="00" selected>00</option>' +
 							'<option value="15">15</option>' +
 							'<option value="30">30</option>' +
 							'<option value="45">45</option>' +
@@ -76,7 +76,7 @@ function buildDay (value, ctrl) {
 							'<option value="15">15</option>' +
 							'<option value="16">16</option>' +
 							'<option value="17">17</option>' +
-							'<option value="18">18</option>' +
+							'<option value="18" selected>18</option>' +
 							'<option value="19">19</option>' +
 							'<option value="20">20</option>' +
 							'<option value="21">21</option>' +
@@ -86,7 +86,7 @@ function buildDay (value, ctrl) {
 					'</div> : ' +
 					'<div class="form-group">' +
 						'<select class="form-control time-select" id="' + ctrl + 'closeMinuteId'+ value +'" name="' + ctrl + 'closeMinute'+ value +'" disabled="disabled">' +
-							'<option value="00">00</option>' +
+							'<option value="00" selected>00</option>' +
 							'<option value="15">15</option>' +
 							'<option value="30">30</option>' +
 							'<option value="45">45</option>' +
@@ -252,7 +252,7 @@ function locationValid (ctrl) {
 				for (i in errors) {
 					errorList += '<li>' + errors[i] + '</li>'
 				}
-				alertId.showAlert(
+				my_alert.showAlert(
 					'<h3>Error</h3>' +
 					'<ul>' +
 						errorList +
@@ -266,7 +266,7 @@ function locationValid (ctrl) {
 			for (i in errors) {
 				errorList += '<li>' + errors[i] + '</li>'
 			}
-			alertId.showAlert(
+			my_alert.showAlert(
 				'<h3>Error</h3>' +
 				'<ul>' +
 					errorList +
@@ -296,7 +296,7 @@ function serviceValid () {
 					for (i in errors) {
 						errorList += '<li>' + errors[i] + '</li>'
 					}
-					alertId.showAlert(
+					my_alert.showAlert(
 						'<h3>Error</h3>' +
 						'<ul>' +
 							errorList +
@@ -311,7 +311,7 @@ function serviceValid () {
 				for (i in errors) {
 					errorList += '<li>' + errors[i] + '</li>'
 				}
-				alertId.showAlert(
+				my_alert.showAlert(
 					'<h3>Error</h3>' +
 					'<ul>' +
 						errorList +
@@ -371,7 +371,7 @@ function providerValid () {
 					for (i in errors) {
 						errorList += '<li>' + errors[i] + '</li>'
 					}
-					alertId.showAlert(
+					my_alert.showAlert(
 						'<h3>Error</h3>' +
 						'<ul>' +
 							errorList +
@@ -386,7 +386,7 @@ function providerValid () {
 				for (i in errors) {
 					errorList += '<li>' + errors[i] + '</li>'
 				}
-				alertId.showAlert(
+				my_alert.showAlert(
 					'<h3>Error</h3>' +
 					'<ul>' +
 						errorList +
@@ -419,7 +419,7 @@ function updateCompany () {
 			for (i in errors) {
 				errorList += '<li>' + errors[i] + '</li>'
 			}
-			alertId.showAlert(
+			my_alert.showAlert(
 				'<h3>Error</h3>' +
 				'<ul>' +
 					errorList +
@@ -455,7 +455,7 @@ function saveLocation (ctrl) {
 			for (i in errors) {
 				errorList += '<li>' + errors[i] + '</li>'
 			}
-			alertId.showAlert(
+			my_alert.showAlert(
 				'<h3>Error</h3>' +
 				'<ul>' +
 					errorList +
@@ -483,7 +483,7 @@ function createService () {
 			for (i in errors) {
 				errorList += '<li>' + errors[i] + '</li>'
 			}
-			alertId.showAlert(
+			my_alert.showAlert(
 				'<h3>Error</h3>' +
 				'<ul>' +
 					errorList +
@@ -529,7 +529,7 @@ function createProvider () {
 			for (i in errors) {
 				errorList += '<li>' + errors[i] + '</li>'
 			}
-			alertId.showAlert(
+			my_alert.showAlert(
 				'<h3>Error</h3>' +
 				'<ul>' +
 					errorList +

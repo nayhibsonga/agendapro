@@ -40,6 +40,7 @@
 		@results.each do |location| %>
 		<div class="col-xs-12">
 			<div class="box-search">
+				<% if location.company.owned %>
 				<a href="<%= url_for(:host => location.company.web_address + '.' + @domain, :local => location.id, :controller => 'companies', :action => 'overview') %>">
 					<% if location.company.logo_url %>
 					<%= image_tag location.company.logo_url.to_s, :alt => location.company.name %>
@@ -53,7 +54,25 @@
 						</div>
 						<p><%= if !location.outcall then location.address+', '+location.district.name else "A Domicilio" end %>.</p>
 					</div>
+					<p><strong>Nota:</strong> Esta empresa no recibe reservas a través de AgendaPro.</p>
 				</a>
+				<% else %>
+				<span>
+					<% if location.company.logo_url %>
+					<%= image_tag location.company.logo_url.to_s, :alt => location.company.name %>
+					<% else %>
+					<%= image_tag 'logo_vacio.png', :alt => 'AgendaPro' %>
+					<% end %>
+					<div class="description">
+						<h3><%= location.company.name %></h3>
+						<div class="number-pin">
+							<span><%= i %></span>
+						</div>
+						<p><%= if !location.outcall then location.address+', '+location.district.name else "A Domicilio" end %>.</p>
+					</div>
+					<p><strong>Nota:</strong> Esta empresa no recibe reservas a través de AgendaPro.</p>
+				</span>
+				<% end %>
 			</div>
 		</div>
 		<% i += 1
