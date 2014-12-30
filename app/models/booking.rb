@@ -6,6 +6,7 @@ class Booking < ActiveRecord::Base
 	belongs_to :location
 	belongs_to :promotion
 	belongs_to :client
+	has_one :payed_booking
 
 	validates :start, :end, :service_provider_id, :service_id, :status_id, :location_id, :client_id, :presence => true
 
@@ -16,7 +17,7 @@ class Booking < ActiveRecord::Base
     s.validate after_commit :bookings_overlap_warning
     s.validate after_commit :bookings_resources_warning
     s.validate after_commit :provider_in_break_warning
-  end
+  	end
 
 	after_commit validate :bookings_overlap, :bookings_resources
 

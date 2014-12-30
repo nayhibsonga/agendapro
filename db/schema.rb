@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20141204141314) do
+ActiveRecord::Schema.define(version: 20141219202825) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -67,6 +67,8 @@ ActiveRecord::Schema.define(version: 20141204141314) do
     t.integer  "client_id"
     t.float    "price",               default: 0.0
     t.boolean  "provider_lock",       default: false
+    t.boolean  "payed",               default: false
+    t.string   "trx_id",              default: ""
   end
 
   add_index "bookings", ["client_id"], name: "index_bookings_on_client_id", using: :btree
@@ -236,6 +238,15 @@ ActiveRecord::Schema.define(version: 20141204141314) do
 
   add_index "economic_sectors_dictionaries", ["economic_sector_id"], name: "index_economic_sectors_dictionaries_on_economic_sector_id", using: :btree
 
+  create_table "facebook_pages", force: true do |t|
+    t.integer  "company_id"
+    t.string   "facebook_page_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "facebook_pages", ["company_id"], name: "index_facebook_pages_on_company_id", using: :btree
+
   create_table "location_outcall_districts", force: true do |t|
     t.integer  "location_id"
     t.integer  "district_id"
@@ -285,6 +296,14 @@ ActiveRecord::Schema.define(version: 20141204141314) do
     t.datetime "updated_at"
   end
 
+  create_table "payed_bookings", force: true do |t|
+    t.integer  "booking_id"
+    t.integer  "punto_pagos_confirmation_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.boolean  "transfer_complete",           default: false
+  end
+
   create_table "payment_statuses", force: true do |t|
     t.string   "name",        null: false
     t.text     "description", null: false
@@ -331,6 +350,7 @@ ActiveRecord::Schema.define(version: 20141204141314) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.string   "name"
+    t.integer  "break_group_id"
   end
 
   add_index "provider_breaks", ["service_provider_id"], name: "index_provider_breaks_on_service_provider_id", using: :btree
@@ -505,6 +525,9 @@ ActiveRecord::Schema.define(version: 20141204141314) do
     t.boolean  "show_price",          default: true
     t.integer  "order",               default: 0
     t.boolean  "outcall",             default: false
+    t.boolean  "has_discount",        default: false
+    t.float    "discount",            default: 0.0
+    t.boolean  "online_payable",      default: false
   end
 
   add_index "services", ["company_id"], name: "index_services_on_company_id", using: :btree

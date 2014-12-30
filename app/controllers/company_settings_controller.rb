@@ -92,6 +92,16 @@ class CompanySettingsController < ApplicationController
   def minisite
   end
 
+  def delete_facebook_pages
+    @facebook_pages = FacebookPage.where(company_id: current_user.company_id)
+    @facebook_pages.delete_all
+    @company_setting =  CompanySetting.find(params[:id])
+    respond_to do |format|
+      format.html { redirect_to edit_company_setting_path(@company_setting), notice: 'Configuración de Facebook desactivada exitosamente.' }
+      format.json { head :no_content }
+    end
+  end
+
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_company_setting
@@ -100,6 +110,6 @@ class CompanySettingsController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def company_setting_params
-      params.require(:company_setting).permit(:email, :sms, :signature, :company_id, :before_booking, :after_booking, :before_edit_booking, :activate_workflow, :activate_search, :client_exclusive, :provider_preference, :calendar_duration, :extended_schedule_bool, :extended_min_hour, :extended_max_hour, :schedule_overcapacity, :provider_overcapacity, :resource_overcapacity, :booking_confirmation_time)
+      params.require(:company_setting).permit(:email, :sms, :signature, :company_id, :before_booking, :after_booking, :before_edit_booking, :activate_workflow, :activate_search, :client_exclusive, :provider_preference, :calendar_duration, :extended_schedule_bool, :extended_min_hour, :extended_max_hour, :schedule_overcapacity, :provider_overcapacity, :resource_overcapacity, :booking_confirmation_time, :page_id)
     end
 end

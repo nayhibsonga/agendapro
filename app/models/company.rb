@@ -32,6 +32,12 @@ class Company < ActiveRecord::Base
 		end
 	end
 
+	def secret_code
+		crypt = ActiveSupport::MessageEncryptor.new(Agendapro::Application.config.secret_key_base)
+		encrypted_data = crypt.encrypt_and_sign(self.id.to_s)
+		return encrypted_data
+	end
+
 	def self.substract_month
 		month_days = Time.now.days_in_month
 		where(payment_status_id: PaymentStatus.find_by_name("Activo").id).each do |company|

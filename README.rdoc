@@ -29,6 +29,7 @@ Update Cronjobs (Whenever Gem): whenever --update-crontab agendapro --set enviro
 
 * ...
 
+* Publicar página de Facebook: https://www.facebook.com/dialog/pagetab?app_id=YOUR_APP_ID&next=YOUR_URL
 
 Please feel free to use a different markup language if you do not plan to run
 <tt>rake doc:app</tt>.

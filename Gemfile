@@ -122,6 +122,9 @@ gem 'groupdate'
 gem 'prawn'
 gem 'prawn-table'
 
+# Facebook
+gem "fbgraph"
+
 # Advertencias en validaciones
 # gem 'validation_scopes'
 gem 'validation_scopes', :git => 'https://github.com/ivalkeen/validation_scopes.git'
@@ -129,3 +132,6 @@ gem 'validation_scopes', :git => 'https://github.com/ivalkeen/validation_scopes.
 #Librería para string matching
 gem 'amatch'
 
+
+#Capistrano para deploy
+gem 'capistrano', '~> 3.3.0'

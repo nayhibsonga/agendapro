@@ -106,6 +106,7 @@ class QuickAddController < ApplicationController
         		new_params = service_params.except(:service_category_id)
     		end
 	    end
+
 	    @service = Service.new(new_params)
 	    @service.company_id = current_user.company_id
 
@@ -155,7 +156,7 @@ class QuickAddController < ApplicationController
     end
 
     def service_params
-      params.require(:service).permit(:name, :price, :duration, :description, :group_service, :capacity, :waiting_list, :company_id, :service_category_id, :outcall, service_category_attributes: [:name, :company_id],  :tag_ids => [] )
+      params.require(:service).permit(:name, :price, :duration, :description, :group_service, :capacity, :waiting_list, :company_id, :service_category_id, :outcall, :online_payable, :has_discount, :discount, service_category_attributes: [:name, :company_id],  :tag_ids => [] )
     end
 
     def company_params

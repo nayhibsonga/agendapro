@@ -550,7 +550,9 @@ function serviceGroup () {
 		$('#service_capacity').closest('.form-group').addClass('hidden');
 		$('#service_capacity').attr('disabled', true);
 	}
+	var oldTop = $(document).scrollTop();
 	$('#foo5').trigger('updateSizes');
+	$(document).scrollTop(oldTop);
 }
 
 function newCategory () {
@@ -582,7 +584,9 @@ function hideLoad () {
 	$('.center-block').parent().addClass('hidden');
   	$('#foo5').css('visibility', 'visible');
 	$('#next2').removeClass('disabled');
+	var oldTop = $(document).scrollTop();
 	$('#foo5').trigger('updateSizes');
+	$(document).scrollTop(oldTop);
 }
 
 function scrollEvents () {
@@ -652,7 +656,9 @@ function changeCity (city_id) {
 				);
 			});
 			$('#location_district_id').attr('disabled', false);
+			var oldTop = $(document).scrollTop();
 			$('#foo5').trigger('updateSizes');
+			$(document).scrollTop(oldTop);
 		};
 	});
 }
@@ -686,7 +692,9 @@ $(function() {
 			$('#location_address').val('');
 			$('#districtsCheckboxes').removeClass('hidden');
 		}
+		var oldTop = $(document).scrollTop();
 		$('#foo5').trigger('updateSizes');
+		$(document).scrollTop(oldTop);
 	});
 	$('#service_outcall').change(function() {
 		if (!$('#service_outcall').prop('checked')) {
@@ -695,6 +703,41 @@ $(function() {
 		else {
 			$('#outcallTip').removeClass('hidden');
 		}
+		var oldTop = $(document).scrollTop();
 		$('#foo5').trigger('updateSizes');
+		$(document).scrollTop(oldTop);
 	});
+});
+
+$(function() {
+
+	$("#service_online_payable").change(function(){
+		if (!$('#service_online_payable').prop('checked')) {
+			$('#form-has-discount').addClass('hidden');
+			$('#form-discount').addClass('hidden');
+		}
+		else {
+			$('#form-has-discount').removeClass('hidden');
+			if($('#service_has_discount').prop('checked'))
+			{
+				$('#form-discount').removeClass('hidden');
+			}
+		}
+		var oldTop = $(document).scrollTop();
+		$('#foo5').trigger('updateSizes');
+		$(document).scrollTop(oldTop);
+	});
+
+	$("#service_has_discount").change(function(){
+		if (!$('#service_has_discount').prop('checked')) {
+			$('#form-discount').addClass('hidden');
+		}
+		else {
+			$('#form-discount').removeClass('hidden');
+		}
+		var oldTop = $(document).scrollTop();
+		$('#foo5').trigger('updateSizes');
+		$(document).scrollTop(oldTop);
+	});
+
 });
