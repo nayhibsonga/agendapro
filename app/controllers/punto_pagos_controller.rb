@@ -227,7 +227,7 @@ class PuntoPagosController < ApplicationController
         booking = Booking.find_by_trx_id(params[:trx_id])
         payed_booking = PayedBooking.new 
         payed_booking.booking = booking
-        payed_booking.punto_pagos_confirmation
+        payed_booking.punto_pagos_confirmation = punto_pagos_confirmation
         payed_booking.transfer_complete = false
         payed_booking.save
         
