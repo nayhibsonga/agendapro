@@ -1062,7 +1062,7 @@ class BookingMailer < ActionMailer::Base
 		# => Message
 		message = {
 			:from_email => 'no-reply@agendapro.cl',
-			:from_name => payed_booking.service_provider.company.name,
+			:from_name => payed_booking.booking.service_provider.company.name,
 			:subject => 'Comprobante de pago en Agendapro',
 			:to => [
 				{
