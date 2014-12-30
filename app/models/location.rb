@@ -186,7 +186,50 @@ class Location < ActiveRecord::Base
 	end
 
 	def categories
-		service_providers = self.service_providers
+		# def location_categorized_services
+	 #    location_resources = Location.find(params[:location]).resource_locations.pluck(:resource_id)
+	 #    service_providers = ServiceProvider.where(location_id: params[:location])
+
+	 #    categories = ServiceCategory.where(:company_id => Location.find(params[:location]).company_id).order(order: :asc)
+	 #    services = Service.where(:active => true, :id => ServiceStaff.where(service_provider_id: service_providers.pluck(:id)).pluck(:service_id)).order(order: :asc)
+	 #    service_resources_unavailable = ServiceResource.where(service_id: services)
+	 #    if location_resources.any?
+	 #      if location_resources.length > 1
+	 #        service_resources_unavailable = service_resources_unavailable.where('resource_id NOT IN (?)', location_resources)
+	 #      else
+	 #        service_resources_unavailable = service_resources_unavailable.where('resource_id <> ?', location_resources)
+	 #      end
+	 #    end
+	 #    if service_resources_unavailable.any?
+	 #      if service_resources_unavailable.length > 1
+	 #        services = services.where('services.id NOT IN (?)', service_resources_unavailable.pluck(:service_id))
+	 #      else
+	 #        services = services.where('id <> ?', service_resources_unavailable.pluck(:service_id))
+	 #      end
+	 #    end
+
+	 #    categorized_services = Array.new
+	 #    categories.each do |category|
+	 #      services_array = Array.new
+	 #      services.each do |service|
+	 #        if service.service_category_id == category.id
+	 #          serviceJSON = service.attributes.merge({'name_with_small_outcall' => service.name_with_small_outcall })
+	 #          services_array.push(serviceJSON)
+	 #        end
+	 #      end
+	 #      service_hash = {
+	 #        :id => category.id,
+	 #        :category => category.name,
+	 #        :services => services_array
+	 #      }
+	 #      categorized_services.push(service_hash)
+	 #    end
+
+	 #    render :json => categorized_services
+	 #  end
+
+
+	    service_providers = self.service_providers
 
 	    services_ids = Array.new
 	    services = Array.new
@@ -202,6 +245,48 @@ class Location < ActiveRecord::Base
 	    end
 
 	    return categories
+	end
+
+	def get_booking_configuration_email
+		conf = self.booking_configuration_email
+		if conf == 2
+			conf = self.company.company_setting.booking_configuration_email
+		end
+		return conf
+	end
+
+	def self.booking_summary
+		where(company_id: Company.where(active: true)).where(active: true).where(notification: true).where.not(email: nil).where.not(email: '').each do |location|
+			if location.get_booking_configuration_email == 1
+				booking_summary = ''
+				Booking.where(location: location).where(updated_at: (Time.now - 1.day)..Time.now).each do |booking|
+					booking_summary += "<tr><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td></tr>" % [booking.client.first_name + ' ' + booking.client.last_name, booking.service.name, booking.service_provider.public_name, I18n.l(booking.start), booking.status.name]
+				end
+				booking_table = '<table class="table">' +
+									'<thead>' +
+										'<tr>' +
+											'<th>Cliente</th>' +
+											'<th>Servicio</th>' +
+											'<th>Prestador</th>' +
+											'<th>Hora</th>' +
+											'<th>Estado</th>' +
+										'</tr>' +
+									'</thead>' +
+									'<tbody>' +
+										booking_summary +
+									'</tbody>' +
+								'</table>'
+				booking_data = {
+					company: location.company.name,
+					logo: location.company.logo_url,
+					name: location.name,
+					to: location.email
+				}
+				if booking_summary.length > 0
+					BookingMailer.booking_summary(booking_data, booking_table)
+				end
+			end
+		end
 	end
 
 	# def categories_alt
