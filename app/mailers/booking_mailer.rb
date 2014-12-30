@@ -1053,7 +1053,7 @@ class BookingMailer < ActionMailer::Base
 	def book_payment_mail (payed_booking)
 		mandrill = Mandrill::API.new Agendapro::Application.config.api_key
 		# => Template
-		template_name = 'Booking'
+		template_name = 'Payment'
 		template_content = []
 
 		owner = User.find_by_company_id(payed_booking.booking.location.company.id)
@@ -1125,11 +1125,11 @@ class BookingMailer < ActionMailer::Base
 	def book_payment_company_mail (payed_booking)
 		mandrill = Mandrill::API.new Agendapro::Application.config.api_key
 		# => Template
-		template_name = 'Booking'
+		template_name = 'Payment'
 		template_content = []
 
 		owner = User.find_by_company_id(payed_booking.booking.location.company.id)
-		email = payed_booking.booking.location.company.company_setting.email
+		#email = payed_booking.booking.location.company.company_setting.email
 		client = payed_booking.booking.client
 
 		# => Message
@@ -1139,7 +1139,7 @@ class BookingMailer < ActionMailer::Base
 			:subject => 'Comprobante de pago en Agendapro',
 			:to => [
 				{
-					:email => email,
+					:email => owner.email,
 					:type => 'to'
 				}
 			],
