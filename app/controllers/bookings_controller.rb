@@ -511,6 +511,7 @@ class BookingsController < ApplicationController
         resp = req.create(trx_id, amount, payment_method)
         if resp.success?
           @booking.trx_id = trx_id
+          @booking.save
           PuntoPagosCreation.create(trx_id: trx_id, payment_method: payment_method, amount: amount, details: "Pago de servicio " + service.name + " a la empresa " +@company.name+" (" + @company.id.to_s + "). trx_id: "+trx_id+" - mp: "+@company.id.to_s+". Resultado: Se procesa")
           redirect_to resp.payment_process_url and return
         else
@@ -518,6 +519,7 @@ class BookingsController < ApplicationController
           redirect_to punto_pagos_failure_path and return
         end
       end
+      @booking.send_booking_mail
       
       # flash[:notice] = "Reserva realizada exitosamente."      
       # BookingMailer.book_service_mail(@booking)

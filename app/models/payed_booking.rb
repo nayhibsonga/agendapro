@@ -10,6 +10,7 @@ class PayedBooking < ActiveRecord::Base
 		#Enviar comprobantes de pago
 		BookingMailer.book_payment_mail(self)
 		BookingMailer.book_payment_company_mail(self)
+		
 	end
 
 end

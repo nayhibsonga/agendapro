@@ -21,7 +21,7 @@ class Booking < ActiveRecord::Base
 
 	after_commit validate :bookings_overlap, :bookings_resources
 
-	after_create :send_booking_mail
+	#after_create :send_booking_mail
 	after_update :send_update_mail
 	
 	def time_in_provider_time_warning
