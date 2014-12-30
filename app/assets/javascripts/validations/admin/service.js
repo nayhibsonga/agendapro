@@ -1,7 +1,7 @@
 $(function() {
 	$('#new_service, [id^="edit_service_"]').validate({
 		errorPlacement: function(error, element) {
-			if (element.attr('id') == 'service_price' || element.attr('id') == 'service_duration' || element.attr('id') == 'service_capacity') {
+			if (element.attr('id') == 'service_price' || element.attr('id') == 'service_duration' || element.attr('id') == 'service_capacity' || element.attr('id') == 'service_discount') {
 				error.appendTo(element.parent().next());
 			}
 			else {
@@ -17,6 +17,10 @@ $(function() {
 				minlength: 3
 			},
 			'service[price]': {
+				required: true,
+				min: 0
+			},
+			'service[discount]': {
 				required: true,
 				min: 0
 			},
