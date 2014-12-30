@@ -684,11 +684,11 @@
         <div class="col-xs-12">
           *|IFNOT:COMPANYNAME|*
           <!---- Service Provider ---->
-          <p><span class="text-green">*|SERVICEPROVIDER|*</span>, fue reservado un servicio contigo</p>
+          <p><span class="text-green">*|SERVICEPROVIDER|*</span>, fue actualizado una reserva contigo</p>
           *|ELSE:|*
           <!---- Cliente ---->
           <p class="text-green text-center">*|COMPANYNAME|*</p>
-          <p class="text-center">*|CLIENTNAME|*, tu reserva fue recibida exitosamente</p>
+          <p class="text-center">*|CLIENTNAME|*, tu reserva fue actualizada exitosamente</p>
           *|END:IF|*
         </div>
       </div>
@@ -728,6 +728,8 @@
               <dd>*|SERVICEPROVIDER|*</dd>
               <dt>¿Cuándo?</dt>
               <dd>*|BSTART|*</dd>
+              <dt>Hora antigua</dt>
+              <dd>*|OLD_START|*</dd>
               *|IF:BNOTES|*
               <dt>Notas</dt>
               <dd>*|BNOTES|*</dd>
@@ -773,6 +775,10 @@
                 <td>¿Cuándo?</td>
                 <td>*|BSTART|*</td>
               </tr>
+              <tr>
+                <td>Hora antigua</td>
+                <td>*|OLD_START|*</td>
+              </tr>
               *|IF:LOCATIONPHONE|*
               <tr>
                 <td>¿Consultas?</td>
@@ -796,6 +802,13 @@
             <a class="btn btn-lg btn-orange btn-action" href="*|EDIT|*" target="_blank">Modificar Reserva</a>
             <a class="btn btn-lg btn-danger btn-action" href="*|CANCEL|*" target="_blank">Cancelar Reserva</a>
           </div>
+        </div>
+      </div>
+      *|END:IF|*
+      *|IF:SIGNATURE|*
+      <div class="row">
+        <div class="col-xs-12">
+          <p>*|SIGNATURE|*</p>
         </div>
       </div>
       *|END:IF|*

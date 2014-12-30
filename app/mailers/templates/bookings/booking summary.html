@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]> <html class="no-js lt-ie9 lt-ie8 lt-ie7" lang="es"> <![endif]-->
+<!--[if IE 7]>    <html class="no-js lt-ie9 lt-ie8" lang="es"> <![endif]-->
+<!--[if IE 8]>    <html class="no-js lt-ie9" lang="es"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="es"> <!--<![endif]-->
+  <head>
+    <!-- start: Meta -->
+    <meta charset="utf-8">
+    <title>AgendaPro</title>
+    <meta name="description" content="AgendaPro - Sistema de agendamiento OnLine para empresas y usuarios.">
+    <meta name="author" content="AgendaPro">
+    <meta name="keyword" content="agendapro, agenda, agenda online, reserva, reserva online">
+    <!-- end: Meta -->
+
+    <!-- start: Mobile Specific -->
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <!-- end: Mobile Specific -->
+
+    <!-- start: CSS -->
+    <style type="text/css">
+      /*Boostrap*/
+      html {
+        font-family: sans-serif;
+        -webkit-text-size-adjust: 100%;
+            -ms-text-size-adjust: 100%;
+      }
+      body {
+        margin: 0;
+      }
+      footer,
+      header {
+        display: block;
+      }
+      a {
+        background-color: transparent;
+      }
+      a:active,
+      a:hover {
+        outline: 0;
+      }
+      img {
+        border: 0;
+      }
+      button {
+        margin: 0;
+        font: inherit;
+        color: inherit;
+      }
+      button {
+        overflow: visible;
+      }
+      button {
+        text-transform: none;
+      }
+      button {
+        -webkit-appearance: button;
+        cursor: pointer;
+      }
+      button::-moz-focus-inner {
+        padding: 0;
+        border: 0;
+      }
+      table {
+        border-spacing: 0;
+        border-collapse: collapse;
+      }
+      td,
+      th {
+        padding: 0;
+      }
+      /*! Source: https://github.com/h5bp/html5-boilerplate/blob/master/src/css/main.css */
+      @media print {
+        *,
+        *:before,
+        *:after {
+          color: #000 !important;
+          text-shadow: none !important;
+          background: transparent !important;
+          -webkit-box-shadow: none !important;
+                  box-shadow: none !important;
+        }
+        a,
+        a:visited {
+          text-decoration: underline;
+        }
+        a[href]:after {
+          content: " (" attr(href) ")";
+        }
+        a[href^="#"]:after,
+        a[href^="javascript:"]:after {
+          content: "";
+        }
+        thead {
+          display: table-header-group;
+        }
+        tr,
+        img {
+          page-break-inside: avoid;
+        }
+        img {
+          max-width: 100% !important;
+        }
+        p {
+          orphans: 3;
+          widows: 3;
+        }
+        .table {
+          border-collapse: collapse !important;
+        }
+        .table td,
+        .table th {
+          background-color: #fff !important;
+        }
+      }
+      * {
+        -webkit-box-sizing: border-box;
+           -moz-box-sizing: border-box;
+                box-sizing: border-box;
+      }
+      *:before,
+      *:after {
+        -webkit-box-sizing: border-box;
+           -moz-box-sizing: border-box;
+                box-sizing: border-box;
+      }
+      html {
+        font-size: 10px;
+        -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+      }
+      body {
+        font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+        font-size: 14px;
+        line-height: 1.42857143;
+        color: #333;
+        background-color: #fff;
+      }
+      button {
+        font-family: inherit;
+        font-size: inherit;
+        line-height: inherit;
+      }
+      a {
+        color: #337ab7;
+        text-decoration: none;
+      }
+      a:hover,
+      a:focus {
+        color: #23527c;
+        text-decoration: underline;
+      }
+      a:focus {
+        outline: thin dotted;
+        outline: 5px auto -webkit-focus-ring-color;
+        outline-offset: -2px;
+      }
+      img {
+        vertical-align: middle;
+      }
+      .text-center {
+        text-align: center;
+      }
+      dl {
+        margin-top: 0;
+        margin-bottom: 20px;
+      }
+      dt,
+      dd {
+        line-height: 1.42857143;
+      }
+      dt {
+        font-weight: bold;
+      }
+      dd {
+        margin-left: 0;
+      }
+      .container-fluid {
+        padding-right: 15px;
+        padding-left: 15px;
+        margin-right: auto;
+        margin-left: auto;
+      }
+      .row {
+        margin-right: -15px;
+        margin-left: -15px;
+      }
+      .col-xs-6, .col-sm-6, .col-xs-12, .col-sm-12 {
+        position: relative;
+        min-height: 1px;
+        padding-right: 15px;
+        padding-left: 15px;
+      }
+      .col-xs-6, .col-xs-12 {
+        float: left;
+      }
+      .col-xs-12 {
+        width: 100%;
+      }
+      .col-xs-6 {
+        width: 50%;
+      }
+      @media (min-width: 768px) {
+        .col-sm-6, .col-sm-12 {
+          float: left;
+        }
+        .col-sm-12 {
+          width: 100%;
+        }
+        .col-sm-6 {
+          width: 50%;
+        }
+        .col-sm-pull-12 {
+          right: 100%;
+        }
+        .col-sm-pull-6 {
+          right: 50%;
+        }
+        .col-sm-push-12 {
+          left: 100%;
+        }
+        .col-sm-push-6 {
+          left: 50%;
+        }
+      }
+      table {
+        background-color: transparent;
+      }
+      th {
+        text-align: left;
+      }
+      .table {
+        width: 100%;
+        max-width: 100%;
+        margin-bottom: 20px;
+      }
+      .table > thead > tr > th,
+      .table > tbody > tr > th,
+      .table > tfoot > tr > th,
+      .table > thead > tr > td,
+      .table > tbody > tr > td,
+      .table > tfoot > tr > td {
+        padding: 8px;
+        line-height: 1.42857143;
+        vertical-align: top;
+        border-top: 1px solid #ddd;
+      }
+      .table > thead > tr > th {
+        vertical-align: bottom;
+        border-bottom: 2px solid #ddd;
+      }
+      .table > caption + thead > tr:first-child > th,
+      .table > colgroup + thead > tr:first-child > th,
+      .table > thead:first-child > tr:first-child > th,
+      .table > caption + thead > tr:first-child > td,
+      .table > colgroup + thead > tr:first-child > td,
+      .table > thead:first-child > tr:first-child > td {
+        border-top: 0;
+      }
+      .table > tbody + tbody {
+        border-top: 2px solid #ddd;
+      }
+      .table .table {
+        background-color: #fff;
+      }
+      table col[class*="col-"] {
+        position: static;
+        display: table-column;
+        float: none;
+      }
+      table td[class*="col-"],
+      table th[class*="col-"] {
+        position: static;
+        display: table-cell;
+        float: none;
+      }
+      .table-responsive {
+        min-height: .01%;
+        overflow-x: auto;
+      }
+      @media screen and (max-width: 767px) {
+        .table-responsive {
+          width: 100%;
+          margin-bottom: 15px;
+          overflow-y: hidden;
+          -ms-overflow-style: -ms-autohiding-scrollbar;
+          border: 1px solid #ddd;
+        }
+        .table-responsive > .table {
+          margin-bottom: 0;
+        }
+        .table-responsive > .table > thead > tr > th,
+        .table-responsive > .table > tbody > tr > th,
+        .table-responsive > .table > tfoot > tr > th,
+        .table-responsive > .table > thead > tr > td,
+        .table-responsive > .table > tbody > tr > td,
+        .table-responsive > .table > tfoot > tr > td {
+          white-space: nowrap;
+        }
+      }
+      .btn {
+        display: inline-block;
+        padding: 6px 12px;
+        margin-bottom: 0;
+        font-size: 14px;
+        font-weight: normal;
+        line-height: 1.42857143;
+        text-align: center;
+        white-space: nowrap;
+        vertical-align: middle;
+        -ms-touch-action: manipulation;
+            touch-action: manipulation;
+        cursor: pointer;
+        -webkit-user-select: none;
+           -moz-user-select: none;
+            -ms-user-select: none;
+                user-select: none;
+        background-image: none;
+        border: 1px solid transparent;
+        border-radius: 4px;
+      }
+      .btn:focus,
+      .btn:active:focus,
+      .btn.active:focus,
+      .btn.focus,
+      .btn:active.focus,
+      .btn.active.focus {
+        outline: thin dotted;
+        outline: 5px auto -webkit-focus-ring-color;
+        outline-offset: -2px;
+      }
+      .btn:hover,
+      .btn:focus,
+      .btn.focus {
+        color: #333;
+        text-decoration: none;
+      }
+      .btn:active,
+      .btn.active {
+        background-image: none;
+        outline: 0;
+        -webkit-box-shadow: inset 0 3px 5px rgba(0, 0, 0, .125);
+                box-shadow: inset 0 3px 5px rgba(0, 0, 0, .125);
+      }
+      .btn-lg,
+      .btn-group-lg > .btn {
+        padding: 10px 16px;
+        font-size: 18px;
+        line-height: 1.33;
+        border-radius: 6px;
+      }
+      .btn-block {
+        display: block;
+        width: 100%;
+      }
+      .btn-block + .btn-block {
+        margin-top: 5px;
+      }
+      .container-fluid:before,
+      .container-fluid:after,
+      .row:before,
+      .row:after {
+        display: table;
+        content: " ";
+      }
+      .container-fluid:after,
+      .row:after {
+        clear: both;
+      }
+      .center-block {
+        display: block;
+        margin-right: auto;
+        margin-left: auto;
+      }
+      .pull-right {
+        float: right !important;
+      }
+      .pull-left {
+        float: left !important;
+      }
+    </style>
+    <style type="text/css">
+      /*AgendaPro*/
+      .pull-center {
+        text-align: center;
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+      }
+      body {
+        color: #505050;
+      }
+      header {
+        background-color: #22c488;
+        padding: 5px;
+        margin-bottom: 10px;
+      }
+      header p {
+        margin-bottom: 0;
+      }
+      header p > a {
+        color: #ffffff;
+      }
+      header p > a:hover,
+      header p > a:focus,
+      header p > a:active {
+        text-decoration: none;
+        color: #ffffff;
+      }
+      .vertical-divider {
+        border-right: 1px solid #949292;
+        height: 60px;
+        display: inline-block;
+        vertical-align: middle;
+        margin: 0 4px;
+      }
+      .text-green {
+        color: #22c488;
+      }
+      a.text-orange {
+        color: #fd9610;
+      }
+      a.text-orange:hover,
+      a.text-orange:focus,
+      a.text-orange:active {
+        color: #db7400;
+        text-decoration: none;
+      }
+      .background-light-gray {
+        background-color: #cbcbcb;
+        color: #ffffff;
+        padding-bottom: 5px;
+        padding-top: 5px;
+      }
+      dl > dt {
+        font-weight: normal;
+        margin-top: 10px;
+      }
+      dl > dd {
+        color: #949292;
+        margin-bottom: 10px;
+      }
+      .btn-orange {
+        color: #ffffff;
+        background-color: #fd9610;
+        border-color: #db7400;
+      }
+      .btn-orange:hover,
+      .btn-orange:focus,
+      .btn-orange.focus,
+      .btn-orange:active,
+      .btn-orange.active {
+        color: #ffffff;
+        background-color: #db7400;
+        border-color: #DF840D;
+      }
+      .btn-green {
+        color: #ffffff;
+        background-color: #22c488;
+        border-color: #1ba970;
+      }
+      .btn-green:hover,
+      .btn-green:focus,
+      .btn-green.focus,
+      .btn-green:active,
+      .btn-green.active {
+        color: #ffffff;
+        background-color: #1ba970;
+        border-color: #00CA8A;
+      }
+      .btn-action {
+        margin-left: 15px;
+        margin-right: 15px;
+      }
+      footer {
+        margin-top: 15px;
+        background-color: #505050;
+        color: #ffffff;
+        padding: 30px 25px;
+        font-size: 13px;
+      }
+      footer img {
+        float: left;
+        margin-right: 15px;
+        width: 25px;
+      }
+      table {
+        margin-top: 20px;
+      }
+      @media screen and (max-width: 768px) {
+        .btn-action {
+          margin: 10px 0;
+          display: block;
+          width: 100%;
+        }
+        footer {
+          padding: 10px;
+          font-size: 12px;
+        }
+      }
+    </style>
+    <!-- end: CSS -->
+  </head>
+
+  <body>
+    <!-- start: Header -->
+    <header>
+      <div class="container-fluid">
+        <div class="row">
+          <div class="col-xs-12">
+            <p class="text-center"><a href="http://www.agendapro.cl" target="_blank">www.agendapro.cl</a></p>
+          </div>
+        </div>
+      </div>
+    </header>
+    <!-- end: Header -->
+
+    <!-- start: content -->
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-xs-12">
+          <div class="pull-center">
+            <img src="cid:agendapro.png" alt="AgendaPro" class="logo">
+            *|IF:company.jpg|*
+            <div class="vertical-divider"></div>
+            <img src="cid:company.jpg" alt="Company Name" class="logo">
+            *|END:IF|*
+          </div>
+        </div>
+        <div class="col-xs-12">
+          <p><span class="text-green">*|NAME|*</span>, aqui esta el resumen de tus reservas</p>
+        </div>
+      </div>
+    </div>
+    <div class="background-light-gray">
+      <div class="container-fluid">
+        <div class="row">
+          <div class="col-xs-12 text-center">Resumen de las Reservas</div>
+        </div>
+      </div>
+    </div>
+    <div class="container-fluid">
+      <div class="col-xs-12">
+        <div class="table-responsive">
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Cliente</th>
+                <th>Servicio</th>
+                <th>Prestador</th>
+                <th>Hora</th>
+                <th>Estado</th>
+              </tr>
+            </thead>
+            <tbody>
+              *|BODY|*
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+    <!-- end: content -->
+
+    <!-- start: footer -->
+    <footer>
+      <div class="container-fluid">
+        <div class="row">
+          <div class="col-xs-12 col-sm-6"><p>Este es un email automático, para contactar a la empresa por favor responde este correo.</p></div>
+          <div class="col-xs-12 col-sm-6">
+            <img src="http://agendapro.cl/assets/footer/1.png">
+            <p>Nuestra Señora de los Angeles 185, Oficina D, Las Condes, Santiago</p>
+          </div>
+          <div class="col-xs-12 col-sm-6 col-sm-push-6">
+            <img src="http://agendapro.cl/assets/footer/3.png">
+            <p>(+56 9) 5178 5898</p>
+          </div>
+          <div class="col-xs-12 col-sm-6 col-sm-pull-6"><a href="http://agendapro.cl/home" target="_blank" class="text-orange">¿Quieres unirte a AgendaPro?</a></div>
+        </div>
+      </div>
+    </footer>
+    <!-- end: footer -->
+  </body>
+</html>
