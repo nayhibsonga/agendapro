@@ -236,7 +236,10 @@ DEPENDENCIES
   cocoon
   devise
   faker
+<<<<<<< HEAD
+=======
   fbgraph
+>>>>>>> 1bdbe8deabd3e5922cd9280aee41dfd855bc7700
   geocoder
   groupdate
   jbuilder (~> 1.2)
