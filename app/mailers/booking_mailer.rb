@@ -1095,7 +1095,16 @@ class BookingMailer < ActionMailer::Base
 				{
 					:name => 'DATE',
 					:content => payed_booking.punto_pagos_confirmation.approvement_date
+				},
+				{
+					:name => 'EDIT',
+					:content => "<a class='btn btn-warning' href='#{booking_edit_url(:confirmation_code => payed_booking.booking.confirmation_code)}' style='display: inline-block;padding: 6px 12px;margin-bottom: 5px;font-size: 14px;font-weight: normal;line-height: 1.428571429;text-align: center;white-space: nowrap;vertical-align: middle;cursor: pointer;background-image: none;border: 1px solid transparent;border-radius: 4px;-webkit-user-select: none;-moz-user-select: none;-ms-user-select: none;-o-user-select: none;user-select: none;color: #ffffff;background-color: #f0ad4e;border-color: #eea236;text-decoration:none;'>Modificar Reserva</a>"
+				},
+				{
+					:name => 'CANCEL',
+					:content => "<a class='btn btn-danger' href='#{booking_cancel_url(:confirmation_code => payed_booking.booking.confirmation_code)}' style='display: inline-block;padding: 6px 12px;margin-bottom: 5px;font-size: 14px;font-weight: normal;line-height: 1.428571429;text-align: center;white-space: nowrap;vertical-align: middle;cursor: pointer;background-image: none;border: 1px solid transparent;border-radius: 4px;-webkit-user-select: none;-moz-user-select: none;-ms-user-select: none;-o-user-select: none;user-select: none;color: #ffffff;background-color: #d9534f;border-color: #d43f3a;text-decoration:none;'>Cancelar Reserva</a>"
 				}
+
 			],
 			:tags => ['payment'],
 			:images => [
