@@ -168,7 +168,7 @@ class PuntoPagosController < ApplicationController
   end
 
   def success
-    if params[:token]
+    #if params[:token]
       if PuntoPagosConfirmation.find_by_token(params[:token])
         trx_id = PuntoPagosConfirmation.find_by_token(params[:token]).trx_id
         if BillingLog.find_by_trx_id(trx_id)
@@ -187,7 +187,7 @@ class PuntoPagosController < ApplicationController
           @success_page = ""
         end
       end
-    end
+    #end
   end
 
   def failure
@@ -226,6 +226,7 @@ class PuntoPagosController < ApplicationController
         #Creamos el registro de la reserva pagada.
         booking = Booking.find_by_trx_id(params[:trx_id])
         booking.status = Status.find_by(:name => "Pagado")
+        booking.payed = true
         booking.save
         payed_booking = PayedBooking.new 
         payed_booking.booking = booking

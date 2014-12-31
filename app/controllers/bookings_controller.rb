@@ -497,12 +497,12 @@ class BookingsController < ApplicationController
       end
     end
     @booking.price = Service.find(params[:service]).price
-    if @booking.save
-
-      #
+    
+    #
       #   PAGO EN LÍNEA DE RESERVA
       #
-      if(params[:payment] == "1")
+    if(params[:payment] == "1")
+      
         trx_id = DateTime.now.to_s.gsub(/[-:T]/i, '')
         num_amount = service.price - service.price*service.discount/100;
         amount = sprintf('%.2f', num_amount)
@@ -512,22 +512,25 @@ class BookingsController < ApplicationController
         if resp.success?
           @booking.trx_id = trx_id
           #@booking.status = Status.find_by(:name => "Pagado")
-          @booking.save
-          PuntoPagosCreation.create(trx_id: trx_id, payment_method: payment_method, amount: amount, details: "Pago de servicio " + service.name + " a la empresa " +@company.name+" (" + @company.id.to_s + "). trx_id: "+trx_id+" - mp: "+@company.id.to_s+". Resultado: Se procesa")
-          redirect_to resp.payment_process_url and return
+          if @booking.save
+            PuntoPagosCreation.create(trx_id: trx_id, payment_method: payment_method, amount: amount, details: "Pago de servicio " + service.name + " a la empresa " +@company.name+" (" + @company.id.to_s + "). trx_id: "+trx_id+" - mp: "+@company.id.to_s+". Resultado: Se procesa")
+            redirect_to resp.payment_process_url and return
+          else
+            @errors = @booking.errors.full_messages
+          end
         else
           puts resp.get_error
           redirect_to punto_pagos_failure_path and return
         end
-      end
-
-      @booking.send_booking_mail
+    else
+      if @booking.save
       
       # flash[:notice] = "Reserva realizada exitosamente."      
       # BookingMailer.book_service_mail(@booking)
-    else @booking.save
-      #flash[:alert] = "Hubo un error guardando los datos de tu reserva. Inténtalo nuevamente."
-      @errors = @booking.errors.full_messages
+      else
+        #flash[:alert] = "Hubo un error guardando los datos de tu reserva. Inténtalo nuevamente."
+        @errors = @booking.errors.full_messages
+      end
     end
 
     # => Domain parser
