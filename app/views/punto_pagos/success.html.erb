@@ -7,6 +7,7 @@
 				<div class="row">
 					<div class="col-md-7">
 						<hr>
+					<% if @success_page == "billing" or @success_page == "plan" %>
 						<% if @success_page == "billing" %>
 						<h4>Resumen de tu Pago</h4>
 						<dl class="dl-horizontal">
@@ -57,7 +58,53 @@
 					        <dd><%= number_to_currency(-1*@company.due_amount, {:unit => '$', :separator => ',', :delimiter => '.', :precision => 0})%> CLP</dd>
 					        <% end %>
 						</dl>
+					<% else %>
+
+						<h4>Tu transferencia se ha efectuado de manera satisfactoria.</h4>
+
+						<dl class="dl-horizontal">
+							<dt>
+								Comercio:
+							</dt>
+							<dd>
+								<%= @booking.payed_booking.location.company.name %>
+							</dd>
+							<dt>
+								Total a pagar:
+							</dt>
+							<dd>
+								$<%= @booking.payed_booking.punto_pagos_confirmation.amount %>
+							</dd>
+							<dt>
+								Número de tarjeta:
+							</dt>
+							<dd>
+								**********<%= @booking.payed_booking.punto_pagos_confirmation.card_number %>
+							</dd>
+							<dt>
+								Orden de compra:
+							</dt>
+							<dd>
+								$<%= @booking.payed_booking.punto_pagos_confirmation.operation_number %>
+							</dd>
+							<dt>
+								Código de autorización:
+							</dt>
+							<dd>
+								$<%= @booking.payed_booking.punto_pagos_confirmation.authorization_code %>
+							</dd>
+							<dt>
+								Fecha:
+							</dt>
+							<dd>
+								$<%= @booking.payed_booking.punto_pagos_confirmation.date %>
+							</dd>
+
+						</dl>
+
+					<% end %>
 					</div>
+
 					<div class="col-md-5">
 						<%= image_tag("backgrounds/icono_reserva2.png", :class => "center-block", size: "232x253") %>
 					</div>
