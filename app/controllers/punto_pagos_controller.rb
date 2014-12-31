@@ -225,6 +225,8 @@ class PuntoPagosController < ApplicationController
 
         #Creamos el registro de la reserva pagada.
         booking = Booking.find_by_trx_id(params[:trx_id])
+        booking.status = Status.find_by(:name => "Pagado")
+        booking.save
         payed_booking = PayedBooking.new 
         payed_booking.booking = booking
         payed_booking.punto_pagos_confirmation = punto_pagos_confirmation
