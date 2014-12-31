@@ -241,7 +241,7 @@ class Booking < ActiveRecord::Base
 	end
 
 	def send_booking_mail
-		if self.trx_id != ""
+		if self.trx_id == ""
 			if self.start > Time.now - 4.hours
 				if self.status != Status.find_by(:name => "Cancelado")
 					BookingMailer.book_service_mail(self)
