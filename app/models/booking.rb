@@ -247,14 +247,6 @@ class Booking < ActiveRecord::Base
 					BookingMailer.book_service_mail(self)
 				end
 			end
-		else
-			if self.payed
-				if self.start > Time.now - 4.hours
-					if self.status != Status.find_by(:name => "Cancelado")
-						BookingMailer.book_service_mail(self)
-					end
-				end
-			end
 		end
 	end
 
