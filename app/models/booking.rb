@@ -21,7 +21,7 @@ class Booking < ActiveRecord::Base
 
 	after_commit validate :bookings_overlap, :bookings_resources
 
-	#after_create :send_booking_mail
+	after_create :send_booking_mail
 	after_update :send_update_mail
 	
 	def time_in_provider_time_warning
@@ -241,9 +241,19 @@ class Booking < ActiveRecord::Base
 	end
 
 	def send_booking_mail
-		if self.start > Time.now - 4.hours
-			if self.status != Status.find_by(:name => "Cancelado")
-				BookingMailer.book_service_mail(self)
+		if self.trx_id != ""
+			if self.start > Time.now - 4.hours
+				if self.status != Status.find_by(:name => "Cancelado")
+					BookingMailer.book_service_mail(self)
+				end
+			end
+		else
+			if self.payed
+				if self.start > Time.now - 4.hours
+					if self.status != Status.find_by(:name => "Cancelado")
+						BookingMailer.book_service_mail(self)
+					end
+				end
 			end
 		end
 	end
