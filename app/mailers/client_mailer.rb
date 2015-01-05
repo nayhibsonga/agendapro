@@ -33,8 +33,8 @@ class ClientMailer < ActionMailer::Base
 		:images => [
 				{
 					:type => 'image/png',
-					:name => 'company_img.jpg',
-					:content => Base64.encode64(File.read('app/assets/ico/Iso_Pro_Color.png'))
+					:name => 'company.jpg',
+					:content => Base64.encode64(File.read('app/assets/images/logos/logodoble2.png'))
 				}
 			],
 		:attachments => []
@@ -44,7 +44,7 @@ class ClientMailer < ActionMailer::Base
 	if Company.find(current_user.company_id).logo_url
 		company_logo = {
 			:type => 'image/' +  File.extname(Company.find(current_user.company_id).logo_url),
-			:name => 'company_img.jpg',
+			:name => 'company.jpg',
 			:content => Base64.encode64(File.read('public' + Company.find(current_user.company_id).logo_url.to_s))
 		}
 		message[:images] = [company_logo]

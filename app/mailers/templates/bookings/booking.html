@@ -541,20 +541,10 @@
       table.wrapper {
         width: 100%;
         color: #505050;
-      }
-      .wrapper {
-        padding-right: 15px;
-        padding-left: 15px;
-        margin-right: auto;
-        margin-left: auto;
-      }
-      table.wrapper > tbody > tr > td {
-        padding-right: 15px;
-        padding-left: 15px;
+        border-spacing: 15px;
       }
       .pull-center {
         text-align: center;
-        display: block;
         margin-left: auto;
         margin-right: auto;
       }
@@ -564,11 +554,20 @@
       tr.header > td {
         padding: 5px;
       }
+      tr.logo > td {
+        padding-top: 10px;
+        margin-right: auto;
+        margin-left: auto;
+        text-align: center;
+      }
       tr.body > td {
         padding-top: 10px;
         padding-bottom: 15px;
-        padding-left: 15px;
         padding-right: 15px;
+        padding-left: 15px;
+      }
+      tr.body + tr.body > td {
+        padding-top: 0;
       }
       tr.footer {
         background-color: #505050;
@@ -577,18 +576,18 @@
       }
       tr.footer > td {
         padding: 30px 0;
+        padding-right: 15px;
+        padding-left: 15px;
       }
       table.content {
         width: 100%;
       }
-      table.content > tbody > tr > td {
+      table.content tr > td {
         padding-left: 10px;
         padding-right: 10px;
       }
       tr.fluid > td {
         width: 50%;
-        min-width: 346px;
-        display: inline-block;
         vertical-align: top;
       }
       .header p {
@@ -624,15 +623,13 @@
         color: #db7400;
         text-decoration: none;
       }
-      .background-light-gray {
+      tr.background-light-gray {
         background-color: #cbcbcb;
         color: #ffffff;
-        padding-bottom: 5px;
-        padding-top: 5px;
       }
-      .background-light-gray > td {
-        padding-bottom: 5px;
-        padding-top: 5px;
+      tr.background-light-gray > td {
+        padding-bottom: 5px !important;
+        padding-top: 5px !important;
       }
       .btn-orange {
         color: #ffffff;
@@ -682,8 +679,9 @@
         margin-bottom: 10px;
       }
       @media screen and (max-width: 767px) {
-        .fluid > td {
+        tr.fluid > td {
           width: 100%;
+          display: inline-block;
         }
         tr.footer {
           font-size: 12px;
@@ -715,203 +713,188 @@
 
   <body>
     <table class="wrapper">
+      <!-- start: Header -->
       <tr class="header">
-        <td>
-          <!-- start: Header -->
+        <td colspan="2">
           <p class="text-center"><a href="http://www.agendapro.cl" target="_blank">www.agendapro.cl</a></p>
-          <!-- end: Header -->
         </td>
       </tr>
+      <!-- end: Header -->
 
+      <!-- start: Logo -->
+      <tr class="logo">
+        <td colspan="2">
+          <img src="cid:agendapro.png" alt="AgendaPro" class="logo">
+          *|IF:company.jpg|*
+          <div class="vertical-divider"></div>
+          <img src="cid:company.jpg" alt="Company Name" class="logo">
+          *|END:IF|*
+        </td>
+      </tr>
+      <!-- end: Logo -->
+
+      <!-- start: content -->
+      <tr class="body">
+        <td colspan="2">
+          *|IFNOT:COMPANYNAME|*
+          <!---- Service Provider ---->
+          <p><span class="text-green">*|SERVICEPROVIDER|*</span>, fue reservado un servicio contigo</p>
+          *|ELSE:|*
+          <!---- Cliente ---->
+          <p class="text-green text-center">*|COMPANYNAME|*</p>
+          <p class="text-center">*|CLIENTNAME|*, tu reserva fue recibida exitosamente</p>
+          *|END:IF|*
+        </td>
+      </tr>
+      *|IFNOT:COMPANYNAME|*
+      <tr class="body fluid">
+        <td>
+          <table class="content">
+            <tr class="background-light-gray">
+              <td>Datos del Cliente</td>
+            </tr>
+            <tr>
+              <td>
+                <dl>
+                  <dt>Nombre</dt>
+                  *|IF:CLIENTNAME|*
+                  <dd>*|CLIENTNAME|*</dd>
+                  *|END:IF|*
+                  <dt>Teléfono</dt>
+                  *|IF:CLIENTPHONE|*
+                  <dd>*|CLIENTPHONE|*</dd>
+                  *|END:IF|*
+                  <dt>Email</dt>
+                  *|IF:CLIENTEMAIL|*
+                  <dd>*|CLIENTEMAIL|*</dd>
+                  *|END:IF|*
+                </dl>
+              </td>
+            </tr>
+          </table>
+        </td>
+        <td>
+          <table class="content">
+            <tr class="background-light-gray">
+              <td>Resumen de la Reserva</td>
+            </tr>
+            <tr>
+              <td>
+                <dl>
+                  <dt>¿Qué reservaron?</dt>
+                  <dd>*|SERVICENAME|*</dd>
+                  <dt>¿Dónde?</dt>
+                  <dd>*|LOCALADDRESS|*</dd>
+                  <dt>¿Con quién?</dt>
+                  <dd>*|SERVICEPROVIDER|*</dd>
+                  <dt>¿Cuándo?</dt>
+                  <dd>*|BSTART|*</dd>
+                  *|IF:BNOTES|*
+                  <dt>Notas</dt>
+                  <dd>*|BNOTES|*</dd>
+                  *|END:IF|*
+                  *|IF:COMPANYCOMMENT|*
+                  <dt>Comentarios</dt>
+                  <dd>*|COMPANYCOMMENT|*</dd>
+                  *|END:IF|*
+                </dl>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+      *|ELSE:|*
+      <tr class="body background-light-gray">
+        <td class="text-center" colspan="2">Resumen de tu Reserva</td>
+      </tr>
+      <tr class="body">
+        <td colspan="2">
+          <table class="table table-bordered">
+            <tbody>
+              <tr>
+                <td>¿Qué Reservaste?</td>
+                <td>*|SERVICENAME|*</td>
+              </tr>
+              <tr>
+                <td>¿Dónde?</td>
+                <td>*|LOCALADDRESS|*</td>
+              </tr>
+              <tr>
+                <td>¿Con quién?</td>
+                <td>*|SERVICEPROVIDER|*</td>
+              </tr>
+              <tr>
+                <td>¿Cuándo?</td>
+                <td>*|BSTART|*</td>
+              </tr>
+              *|IF:LOCATIONPHONE|*
+              <tr>
+                <td>¿Consultas?</td>
+                <td>*|LOCATIONPHONE|*</td>
+              </tr>
+              *|END:IF|*
+              *|IF:BNOTES|*
+              <tr>
+                <td>Notas</td>
+                <td>*|BNOTES|*</td>
+              </tr>
+              *|END:IF|*
+            </tbody>
+          </table>
+        </td>
+      </tr>
+      *|IF:EDIT|*
+      <tr class="body">
+        <td class="pull-center" colspan="2">
+          <a class="btn btn-lg btn-orange btn-action" href="*|EDIT|*" target="_blank">Modificar Reserva</a>
+          <a class="btn btn-lg btn-danger btn-action" href="*|CANCEL|*" target="_blank">Cancelar Reserva</a>
+        </td>
+      </tr>
+      *|END:IF|*
+      *|IF:SIGNATURE|*
       <tr class="body">
         <td>
-          <!-- start: content -->
-          <table class="content">
-            <tr>
-              <td class="pull-center">
-                <img src="cid:agendapro.png" alt="AgendaPro" class="logo">
-                *|IF:company.jpg|*
-                <div class="vertical-divider"></div>
-                <img src="cid:company.jpg" alt="Company Name" class="logo">
-                *|END:IF|*
-              </td>
-            </tr>
-            <tr>
-              <td>
-                *|IFNOT:COMPANYNAME|*
-                <!---- Service Provider ---->
-                <p><span class="text-green">*|SERVICEPROVIDER|*</span>, fue reservado un servicio contigo</p>
-                *|ELSE:|*
-                <!---- Cliente ---->
-                <p class="text-green text-center">*|COMPANYNAME|*</p>
-                <p class="text-center">*|CLIENTNAME|*, tu reserva fue recibida exitosamente</p>
-                *|END:IF|*
-              </td>
-            </tr>
-            *|IFNOT:COMPANYNAME|*
-            <tr>
-              <td>
-                <table class="content">
-                  <tr class="fluid">
-                    <td>
-                      <table class="content">
-                        <tr class="background-light-gray">
-                          <td>Datos del Cliente</td>
-                        </tr>
-                        <tr>
-                          <td>
-                            <dl>
-                              <dt>Nombre</dt>
-                              *|IF:CLIENTNAME|*
-                              <dd>*|CLIENTNAME|*</dd>
-                              *|END:IF|*
-                              <dt>Teléfono</dt>
-                              *|IF:CLIENTPHONE|*
-                              <dd>*|CLIENTPHONE|*</dd>
-                              *|END:IF|*
-                              <dt>Email</dt>
-                              *|IF:CLIENTEMAIL|*
-                              <dd>*|CLIENTEMAIL|*</dd>
-                              *|END:IF|*
-                            </dl>
-                          </td>
-                        </tr>
-                      </table>
-                    </td>
-                    <td>
-                      <table class="content">
-                        <tr class="background-light-gray">
-                          <td>Resumen de la Reserva</td>
-                        </tr>
-                        <tr>
-                          <td>
-                            <dl>
-                              <dt>¿Qué reservaron?</dt>
-                              <dd>*|SERVICENAME|*</dd>
-                              <dt>¿Dónde?</dt>
-                              <dd>*|LOCALADDRESS|*</dd>
-                              <dt>¿Con quién?</dt>
-                              <dd>*|SERVICEPROVIDER|*</dd>
-                              <dt>¿Cuándo?</dt>
-                              <dd>*|BSTART|*</dd>
-                              *|IF:BNOTES|*
-                              <dt>Notas</dt>
-                              <dd>*|BNOTES|*</dd>
-                              *|END:IF|*
-                              *|IF:COMPANYCOMMENT|*
-                              <dt>Comentarios</dt>
-                              <dd>*|COMPANYCOMMENT|*</dd>
-                              *|END:IF|*
-                            </dl>
-                          </td>
-                        </tr>
-                      </table>
-                    </td>
-                  </tr>
-                </table>
-              </td>
-            </tr>
-            *|ELSE:|*
-            <tr class="background-light-gray">
-              <td class="text-center">Resumen de tu Reserva</td>
-            </tr>
-            <tr>
-              <td>
-                <table class="table table-bordered" style="margin-top: 20px;">
-                  <tbody>
-                    <tr>
-                      <td>¿Qué Reservaste?</td>
-                      <td>*|SERVICENAME|*</td>
-                    </tr>
-                    <tr>
-                      <td>¿Dónde?</td>
-                      <td>*|LOCALADDRESS|*</td>
-                    </tr>
-                    <tr>
-                      <td>¿Con quién?</td>
-                      <td>*|SERVICEPROVIDER|*</td>
-                    </tr>
-                    <tr>
-                      <td>¿Cuándo?</td>
-                      <td>*|BSTART|*</td>
-                    </tr>
-                    *|IF:LOCATIONPHONE|*
-                    <tr>
-                      <td>¿Consultas?</td>
-                      <td>*|LOCATIONPHONE|*</td>
-                    </tr>
-                    *|END:IF|*
-                    *|IF:BNOTES|*
-                    <tr>
-                      <td>Notas</td>
-                      <td>*|BNOTES|*</td>
-                    </tr>
-                    *|END:IF|*
-                  </tbody>
-                </table>
-              </td>
-            </tr>
-            *|IF:EDIT|*
-            <tr>
-              <td class="pull-center">
-                <a class="btn btn-lg btn-orange btn-action" href="*|EDIT|*" target="_blank">Modificar Reserva</a>
-                <a class="btn btn-lg btn-danger btn-action" href="*|CANCEL|*" target="_blank">Cancelar Reserva</a>
-              </td>
-            </tr>
-            *|END:IF|*
-            *|IF:SIGNATURE|*
-            <tr>
-              <td>
-                <p>*|SIGNATURE|*</p>
-              </td>
-            </tr>
-            *|END:IF|*
-            *|END:IF|*
-          </table>
-          <!-- end: content -->
+          <p>*|SIGNATURE|*</p>
         </td>
       </tr>
+      *|END:IF|*
+      *|END:IF|*
+      <!-- end: content -->
 
-      <tr class="footer">
+      <!-- start: footer -->
+      <tr class="footer fluid">
         <td>
-          <!-- start: footer -->
           <table class="content">
-            <tr class="fluid">
+            <tr>
               <td>
-                <table class="content">
-                  <tr>
-                    <td>
-                      <p>Este es un email automático, para contactar a la empresa por favor responde este correo.</p>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td>
-                      <a href="http://agendapro.cl/home" target="_blank" class="text-orange">¿Quieres unirte a AgendaPro?</a>
-                    </td>
-                  </tr>
-                </table>
+                <p>Este es un email automático, para contactar a la empresa por favor responde este correo.</p>
               </td>
+            </tr>
+            <tr>
               <td>
-                <table class="content">
-                  <tr>
-                    <td>
-                      <img src="http://agendapro.cl/assets/footer/1.png">
-                      <p>Nuestra Señora de los Angeles 185, Oficina D, Las Condes, Santiago</p>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td>
-                      <img src="http://agendapro.cl/assets/footer/3.png">
-                      <p>(+56 9) 5178 5898</p>
-                    </td>
-                  </tr>
-                </table>
+                <a href="http://agendapro.cl/home" target="_blank" class="text-orange">¿Quieres unirte a AgendaPro?</a>
               </td>
             </tr>
           </table>
-          <!-- end: footer -->
+        </td>
+        <td>
+          <table class="content">
+            <tr>
+              <td>
+                <img src="http://agendapro.cl/assets/footer/1.png">
+                <p>Nuestra Señora de los Angeles 185, Oficina D, Las Condes, Santiago</p>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <img src="http://agendapro.cl/assets/footer/3.png">
+                <p>(+56 9) 5178 5898</p>
+              </td>
+            </tr>
+          </table>
         </td>
       </tr>
+      <!-- end: footer -->
     </table>
   </body>
 </html>

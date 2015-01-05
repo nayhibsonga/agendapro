@@ -174,7 +174,7 @@ class BookingMailer < ActionMailer::Base
 		mandrill = Mandrill::API.new Agendapro::Application.config.api_key
 
 		# => Template
-		template_name = 'Booking'
+		template_name = 'Update Booking'
 		template_content = []
 
 		# => Message
@@ -345,7 +345,7 @@ class BookingMailer < ActionMailer::Base
 		mandrill = Mandrill::API.new Agendapro::Application.config.api_key
 
 		# => Template
-		template_name = 'Booking'
+		template_name = 'Confirm Booking'
 		template_content = []
 
 		# => Message
@@ -475,7 +475,7 @@ class BookingMailer < ActionMailer::Base
 		mandrill = Mandrill::API.new Agendapro::Application.config.api_key
 
 		# => Template
-		template_name = 'Booking'
+		template_name = 'Cancel Booking'
 		template_content = []
 
 		# => Message
@@ -627,7 +627,7 @@ class BookingMailer < ActionMailer::Base
 		mandrill = Mandrill::API.new Agendapro::Application.config.api_key
 
 		# => Template
-		template_name = 'Booking'
+		template_name = 'Booking Reminder'
 		template_content = []
 
 		# => Message
