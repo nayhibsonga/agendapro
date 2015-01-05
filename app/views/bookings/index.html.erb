@@ -50,6 +50,9 @@
 						<li id="booking-li" class="active"><a href="#booking-pane" role="tab" data-toggle="tab" class="tab_index" id="booking-tab">Reserva</a></li>
 						<li id="client-li" class=""><a href="#client-pane" role="tab" data-toggle="tab" class="tab_index" id="client-tab">Datos Cliente</a></li>
 						<li id="history-li" class=""><a href="#history-pane" role="tab" data-toggle="tab" class="tab_index" id="client-tab">Historial Cliente</a></li>
+						<% if @company_setting.booking_history %>
+						<li id="changes-li" class=""><a href="#changes-pane" role="tab" data-toggle="tab" class="tab_index" id="client-tab">Modificaciones Reserva</a></li>
+						<% end %>
 					</ul>
 					<br />
 					<div id="myTabContent" class="tab-content">
@@ -341,6 +344,37 @@
 								</table>
 							</div>
 						</div>
+						<% if @company_setting.booking_history %>
+						<div class="tab-pane" id="changes-pane">
+							<div class="fixed-table">
+								<h4>Últimas reservas del cliente:</h4>
+								<table class="table">
+									<thead>
+										<tr>
+											<th>Acción</th>
+											<th>Fecha</th>
+											<th>Servicio</th>
+											<th>Prestador</th>
+											<th>Estado</th>
+											<th>Usuario</th>
+											<% if @company_setting.staff_code %>
+											<th>Nota Interna</th>
+											<% end %>
+										</tr>
+									</thead>
+									<tbody id="booking-history-tbody">
+										<tr>
+											<% if @company_setting.staff_code %>
+											<td colspan="7">No hay modificaciones para esta reserva...</td>
+											<% else %>
+											<td colspan="6">No hay modificaciones para esta reserva...</td>
+											<% end %>
+										</tr>
+									</tbody>
+								</table>
+							</div>
+						</div>
+						<% end %>
 					</div>
 					<% end %>
 				</div>
@@ -392,7 +426,7 @@
 	</div>
 </div>
 
-<%= content_tag "div", id: "calendar-data", data: { calendar_duration: Company.find(current_user.company_id).company_setting.calendar_duration, extended_schedule: Company.find(current_user.company_id).company_setting.extended_schedule_bool, extended_min_hour: Company.find(current_user.company_id).company_setting.extended_min_hour.beginning_of_hour.hour, extended_max_hour: Company.find(current_user.company_id).company_setting.extended_max_hour.end_of_hour.hour } do %>
+<%= content_tag "div", id: "calendar-data", data: { calendar_duration: @company_setting.calendar_duration, extended_schedule: @company_setting.extended_schedule_bool, extended_min_hour: @company_setting.extended_min_hour.beginning_of_hour.hour, extended_max_hour: @company_setting.extended_max_hour.end_of_hour.hour, booking_history: @company_setting.booking_history, staff_code: @company_setting.staff_code } do %>
 <% end %>
 <% content_for :scripts do %>
 	<%= javascript_include_tag "bookings" %>

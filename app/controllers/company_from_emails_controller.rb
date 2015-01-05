@@ -2,7 +2,7 @@ class CompanyFromEmailsController < ApplicationController
   before_action :set_company_from_email, only: [:show, :edit, :update, :destroy]
   before_action :authenticate_user!, except: [:confirm_email]
   layout "admin", except: [:confirm_email]
-  load_and_authorize_resource
+  # load_and_authorize_resource
 
   # GET /company_from_emails
   # GET /company_from_emails.json

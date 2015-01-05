@@ -2,7 +2,7 @@ class StaffCodesController < ApplicationController
   before_action :set_staff_code, only: [:show, :edit, :update, :destroy]
   before_action :authenticate_user!, except: [:confirm_email]
   layout "admin", except: [:confirm_email]
-  load_and_authorize_resource
+  # load_and_authorize_resource
 
   # GET /staff_codes
   # GET /staff_codes.json
@@ -71,7 +71,7 @@ class StaffCodesController < ApplicationController
     end
 
     # Never trust parameters from the scary internet, only allow the white list through.
-    def company_from_email_params
+    def staff_code_params
       params.require(:staff_code).permit(:staff, :code, :company_id)
     end
 end

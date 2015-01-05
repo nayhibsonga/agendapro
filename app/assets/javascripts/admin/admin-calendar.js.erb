@@ -613,6 +613,7 @@ function createBookingModal(date, provider_id) {
 					modalChange();
 				});
 			};
+			$('#client-history-tbody').html('<tr><td colspan="6">El cliente no tiene historial...</td></tr>');
 			$('#booking-tab').tab('show');
 			$('#bookingModal').modal('show');
 		}
@@ -1432,7 +1433,21 @@ function loadClientHistory() {
 				});
 			}
 			else {
-				$('#client-history-tbody').append('<tr><td colspan="6">El cliente no tiene historial...</td></tr>');
+				$('#client-history-tbody').append('<tr><td colspan="6">El cliente no tiene reservas anteriores...</td></tr>');
+			}
+		});
+	}
+	if (parseInt($('#booking_id').val()) > 0) {
+		$('#booking-history-tbody').empty();
+		$.getJSON('/bookings_history/', {booking_id: parseInt($('#booking_client_id').val())}, function (bookings_history) {
+			if (bookings_history.length > 0) {
+				$.each(bookings_history, function (key, booking_history) {
+					var date = new Date(booking_history.start);
+					$('#booking-history-tbody').append('<tr><td>'+dateToLocal(date)+'</td><td>'+booking_history.service+'</td><td>'+booking_history.provider+'</td><td>'+booking_history.status+'</td><td>'+booking_history.notes+'</td><td>'+booking_history.comment+'</td></tr>');
+				});
+			}
+			else {
+				$('#booking-history-tbody').append('<tr><td colspan="6">No hay modificaciones para esta reserva...</td></tr>');
 			}
 		});
 	}
