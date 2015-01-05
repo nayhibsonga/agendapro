@@ -288,6 +288,7 @@ function saveProvider(method,extraURL) {
 		"block_length": $("#service_provider_block_length").val(),
 		"service_ids": enabledServices,
 		"provider_times_attributes": provider_times,
+		"booking_configuration_email": $('#service_provider_booking_configuration_email').val(),
 	};
 	
 	$.ajax({
