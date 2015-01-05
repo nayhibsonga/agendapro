@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20141219202825) do
+ActiveRecord::Schema.define(version: 20150102171903) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -48,6 +48,26 @@ ActiveRecord::Schema.define(version: 20141219202825) do
   add_index "billing_logs", ["company_id"], name: "index_billing_logs_on_company_id", using: :btree
   add_index "billing_logs", ["plan_id"], name: "index_billing_logs_on_plan_id", using: :btree
   add_index "billing_logs", ["transaction_type_id"], name: "index_billing_logs_on_transaction_type_id", using: :btree
+
+  create_table "booking_histories", force: true do |t|
+    t.integer  "booking_id"
+    t.string   "action"
+    t.integer  "staff_code_id"
+    t.datetime "start"
+    t.integer  "status_id"
+    t.integer  "service_id"
+    t.integer  "service_provider_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.integer  "user_id"
+  end
+
+  add_index "booking_histories", ["booking_id"], name: "index_booking_histories_on_booking_id", using: :btree
+  add_index "booking_histories", ["service_id"], name: "index_booking_histories_on_service_id", using: :btree
+  add_index "booking_histories", ["service_provider_id"], name: "index_booking_histories_on_service_provider_id", using: :btree
+  add_index "booking_histories", ["staff_code_id"], name: "index_booking_histories_on_staff_code_id", using: :btree
+  add_index "booking_histories", ["status_id"], name: "index_booking_histories_on_status_id", using: :btree
+  add_index "booking_histories", ["user_id"], name: "index_booking_histories_on_user_id", using: :btree
 
   create_table "bookings", force: true do |t|
     t.datetime "start",                               null: false
@@ -189,6 +209,8 @@ ActiveRecord::Schema.define(version: 20141219202825) do
     t.boolean  "provider_overcapacity",     default: true,                  null: false
     t.boolean  "resource_overcapacity",     default: true,                  null: false
     t.integer  "booking_confirmation_time", default: 1,                     null: false
+    t.boolean  "booking_history",           default: false
+    t.boolean  "staff_code",                default: false
   end
 
   add_index "company_settings", ["company_id"], name: "index_company_settings_on_company_id", using: :btree
@@ -519,6 +541,16 @@ ActiveRecord::Schema.define(version: 20141219202825) do
 
   add_index "services", ["company_id"], name: "index_services_on_company_id", using: :btree
   add_index "services", ["service_category_id"], name: "index_services_on_service_category_id", using: :btree
+
+  create_table "staff_codes", force: true do |t|
+    t.string   "staff"
+    t.string   "code"
+    t.integer  "company_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "staff_codes", ["company_id"], name: "index_staff_codes_on_company_id", using: :btree
 
   create_table "statuses", force: true do |t|
     t.string   "name",        null: false
