@@ -45,6 +45,8 @@ Agendapro::Application.routes.draw do
 
   resources :clients
 
+  resources :payed_bookings
+
   namespace :admin do 
     get '', :to => 'dashboard#index', :as => '/'
     resources :users 

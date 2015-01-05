@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20141219202825) do
+ActiveRecord::Schema.define(version: 20141231155216) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -120,20 +120,24 @@ ActiveRecord::Schema.define(version: 20141219202825) do
   add_index "clients", ["company_id"], name: "index_clients_on_company_id", using: :btree
 
   create_table "companies", force: true do |t|
-    t.string   "name",                               null: false
-    t.string   "web_address",                        null: false
+    t.string   "name",                                  null: false
+    t.string   "web_address",                           null: false
     t.string   "logo"
-    t.float    "months_active_left",  default: 0.0
-    t.integer  "plan_id",                            null: false
-    t.integer  "payment_status_id",                  null: false
+    t.float    "months_active_left",    default: 0.0
+    t.integer  "plan_id",                               null: false
+    t.integer  "payment_status_id",                     null: false
     t.datetime "created_at"
     t.datetime "updated_at"
     t.text     "description"
     t.text     "cancellation_policy"
-    t.boolean  "active",              default: true
-    t.float    "due_amount",          default: 0.0
+    t.boolean  "active",                default: true
+    t.float    "due_amount",            default: 0.0
     t.date     "due_date"
-    t.boolean  "owned",               default: true
+    t.boolean  "owned",                 default: true
+    t.boolean  "allows_online_payment", default: false
+    t.string   "bank",                  default: ""
+    t.string   "account_number",        default: ""
+    t.string   "company_rut",           default: ""
   end
 
   add_index "companies", ["payment_status_id"], name: "index_companies_on_payment_status_id", using: :btree

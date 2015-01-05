@@ -522,7 +522,7 @@ class BookingsController < ApplicationController
           puts resp.get_error
           redirect_to punto_pagos_failure_path and return
         end
-    else
+    else #SÓLO RESERVA
       if @booking.save
       
       # flash[:notice] = "Reserva realizada exitosamente."      

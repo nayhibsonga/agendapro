@@ -57,6 +57,71 @@
 						<span class="help-block"></span>
 					</div>
 				</div>
+				<div class="form-group">
+					<%= f.label :allows_online_payment, 'Pago en línea', :class => 'col-sm-4 control-label' %>
+						<div class="col-sm-8">	
+							<div class="checkbox">
+								<label>
+									<%= f.check_box :allows_online_payment %> Quiero que mis clientes puedan pagar en línea al reservar
+								</label>
+							</div>
+						</div>	
+					<div class="col-sm-offset-4 col-sm-8">
+						<span class="help-block"></span>
+					</div>
+				</div>
+				<div class="form-group hidden account-info">
+					<label class="col-sm-4 control-label">Banco</label>
+					<div class="col-sm-8">
+
+						<select name="company[bank]" class="form-control" id="company_bank">
+							<option value="">Seleccione un banco</option>
+							<option value="BANCO SECURITY">BANCO SECURITY</option>
+							<option value="BANCO ITAU CHILE">BANCO ITAU CHILE</option>
+							<option value="BANCO PARIS">BANCO PARIS</option>
+							<option value="BANCO SANTANDER">BANCO SANTANDER</option>
+							<option value="BANCO CONSORCIO">BANCO CONSORCIO</option>
+							<option value="BBVA (BCO BILBAO VIZCAYA ARG)">BBVA (BCO BILBAO VIZCAYA ARG)</option>
+							<option value="BANCO INTERNACIONAL">BANCO INTERNACIONAL</option>
+							<option value="SCOTIABANK (Y EX DESARROLLO)">SCOTIABANK (Y EX DESARROLLO)</option>
+							<option value="BANCO DEL ESTADO DE CHILE">BANCO DEL ESTADO DE CHILE</option>
+							<option value="BANCO DO BRASIL S.A.">BANCO DO BRASIL S.A.</option>
+							<option value="CORPBANCA">CORPBANCA</option>
+							<option value="BANCO DE CHILE - EDWARDS">BANCO DE CHILE - EDWARDS</option>
+							<option value="BANCO BICE">BANCO BICE</option>
+							<option value="BCI (BCO DE CREDITO E INV)">BCI (BCO DE CREDITO E INV)</option>
+							<option value="HSBC BANK">HSBC BANK</option>
+							<option value="BANCO RIPLEY">BANCO RIPLEY</option>
+							<option value="RABOBANK">RABOBANK</option>
+							<option value="BANCO FALABELLA">BANCO FALABELLA</option>
+						</select>
+
+					</div>
+					<div class="col-sm-offset-4 col-sm-8">
+						<span class="help-block"></span>
+					</div>
+				</div>
+
+				<div class="form-group hidden account-info">
+					<%= f.label :account_number, 'N° de Cta. Cte.', :class => 'col-sm-4 control-label' %>
+					<div class="col-sm-8">
+							<%= f.text_field :account_number, :class => 'form-control', placeholder: '' %>
+					</div>
+					<div class="col-sm-offset-4 col-sm-8">
+						<span class="help-block"></span>
+					</div>
+				</div>
+
+				<div class="form-group hidden account-info">
+					<%= f.label :company_rut, 'Rut de la empresa', :class => 'col-sm-4 control-label' %>
+					<div class="col-sm-8">
+							<%= f.text_field :company_rut, :class => 'form-control', placeholder: '' %>
+					</div>
+					<div class="col-sm-offset-4 col-sm-8">
+						<span class="help-block"></span>
+					</div>
+				</div>
+
 				<!-- end: Company -->
 				<div class="form-group">
 					<div class="col-sm-offset-4 col-sm-8">
@@ -83,3 +148,18 @@
 	<%= javascript_include_tag 'validations/validate' %>
 	<%= javascript_include_tag 'validations/home/add-company' %>
 <% end %>
+
+<script type="text/javascript">
+
+$("#company_allows_online_payment").change(function(){
+	if($('#company_allows_online_payment').prop('checked'))
+	{
+		$(".account-info").removeClass("hidden");
+	}
+	else
+	{
+		$(".account-info").addClass("hidden");
+	}
+});
+
+</script>

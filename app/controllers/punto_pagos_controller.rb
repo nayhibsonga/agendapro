@@ -191,6 +191,9 @@ class PuntoPagosController < ApplicationController
   end
 
   def failure
+    if Booking.find_by_trx_id(params[:trx_id])
+      @booking = Booking.find_by_trx_id(params[:trx_id])
+    end
   end
 
   def notification
