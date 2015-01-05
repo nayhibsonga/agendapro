@@ -63,8 +63,10 @@ class SearchsController < ApplicationController
 
 			#locations_scores = Hash.new
 
-			locations = Location.where('sqrt((latitude - ' + lat.to_s + ')^2 + (longitude - ' + long.to_s + ')^2) < 0.25') #Location.all
-			loc_ids = Array.new
+			active_companies_ids = Company.where(active: true).pluck(:id)
+			elegible_locations = Location.where(:active => true).where(company_id: active_companies_ids).where(id: ServiceProvider.where(active: true, company_id: active_companies_ids).joins(:provider_times).joins(:services).where("services.id" => Service.where(active: true, company_id: active_companies_ids).pluck(:id)).pluck(:location_id).uniq).joins(:location_times).uniq.order(order: :asc)
+			locations = elegible_locations.where('sqrt((latitude - ' + lat.to_s + ')^2 + (longitude - ' + long.to_s + ')^2) < 0.25') #Location.all
+ 			loc_ids = Array.new
 
 			#Struct.new("Local", :id, :dist)
 

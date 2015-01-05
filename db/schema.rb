@@ -191,7 +191,10 @@ ActiveRecord::Schema.define(version: 20141226161903) do
     t.boolean  "resource_overcapacity",       default: true,                  null: false
     t.integer  "booking_confirmation_time",   default: 1,                     null: false
     t.integer  "booking_configuration_email", default: 0
+<<<<<<< HEAD
     t.integer  "max_changes",                 default: 2
+=======
+>>>>>>> ad7615bdb69ca2fff5bb47ba80e8f3010637b783
   end
 
   add_index "company_settings", ["company_id"], name: "index_company_settings_on_company_id", using: :btree
