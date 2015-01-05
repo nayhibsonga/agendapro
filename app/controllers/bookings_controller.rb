@@ -497,6 +497,7 @@ class BookingsController < ApplicationController
       end
     end
     @booking.price = Service.find(params[:service]).price
+    @booking.max_changes = params[:max_changes]
     if @booking.save
       # flash[:notice] = "Reserva realizada exitosamente."
       
@@ -527,7 +528,7 @@ class BookingsController < ApplicationController
 
     now = DateTime.new(DateTime.now.year, DateTime.now.mon, DateTime.now.mday, DateTime.now.hour, DateTime.now.min)
     booking_start = DateTime.parse(@booking.start.to_s) - @company.company_setting.before_edit_booking / 24.0
-    if (booking_start <=> now) < 1
+    if (booking_start <=> now) < 1 or @booking.max_changes <= 0
       redirect_to blocked_edit_path(:id => @booking.id)
       return
     end
@@ -647,7 +648,7 @@ class BookingsController < ApplicationController
     @booking = Booking.find(params[:id])
     @company = Location.find(@booking.location_id).company
     @selectedLocation = Location.find(@booking.location_id)
-    if @booking.update(start: params[:start], end: params[:end])
+    if @booking.update(start: params[:start], end: params[:end], max_changes: params[:max_changes])
       #flash[:notice] = "Reserva actualizada exitosamente."
       # BookingMailer.update_booking(@booking)
     else
