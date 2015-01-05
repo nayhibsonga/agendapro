@@ -2,6 +2,7 @@ Agendapro::Application.routes.draw do
 
   get "payed_bookings/show"
   get "payed_bookings/get_by_user"
+  post "payed_bookings/create_csv", :to => 'payed_bookings#create_csv'
   get "users/index"
   require 'subdomain'
 

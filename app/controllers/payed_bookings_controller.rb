@@ -1,16 +1,30 @@
 class PayedBookingsController < ApplicationController
 
+	require 'csv'
+
 	before_action :verify_is_admin, :only => [:get_by_user]
-  	before_action :verify_is_super_admin, :only => [:index, :show]
+  	before_action :verify_is_super_admin, :only => [:index, :show, :create_csv]
+  	skip_before_action :verify_authenticity_token
+  	layout "admin"
+  	load_and_authorize_resource
 
   	def index
-  		@transfered_bookings = PayedBooking.where(:transfer_complete => true)
+  		@transfered_bookings = PayedBooking.where(:transfer_complete => true).order(:updated_at).limit(10)
 		@pending_bookings = PayedBooking.where(:transfer_complete => false)
   	end
 
 	def show
-		@transfered_bookings = Booking.where(:transfer_complete => true)
-		@pending_bookings = Booking.where(:transfer_complete => false)
+		@transfered_bookings = PayedBooking.where(:transfer_complete => true)
+		@pending_bookings = PayedBooking.where(:transfer_complete => false)
+	end
+
+	def create_csv
+	
+		respond_to do |format|
+	      format.html
+	      format.csv { render text: PayedBooking.to_csv(params[:type], params[:start_date], params[:end_date]), :filename => "online_payments.csv" }
+	    end		
+
 	end
 
 	def get_by_user

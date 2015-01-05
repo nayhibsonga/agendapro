@@ -11,11 +11,23 @@
 	<div class="col-md-12">
 		<div class="panel panel-info">
 			<div class="panel-heading">
-				<h3 class="panel-title">Pagos no transferidos</h3>&nbsp;&nbsp;<a href="#">Descargar&nbsp;<i class="fa fa-file-excel-o"></i></a>
+				<div class="row">
+					<div class="col-md-5">
+						<h3 class="panel-title">Pagos no transferidos</h3>
+					</div>
+					<div class="col-md-7">
+						<form action="payed_bookings/create_csv.csv" method="post" id="get_pending">
+							<input type="hidden" name="type" value="pending" />
+							Desde: <input type="text" name="start_date" class="datepicker" value="" />
+							Hasta: <input type="text" name="end_date" class="datepicker" value="" />
+							<button>&nbsp;Descargar&nbsp;&nbsp;<i class="fa fa-file-excel-o fa-lg"></i></button>
+						</form>
+					</div>
+				</div>
 			</div>
 			<div class="panel-body scrollable">
 				<table class="table">
-					<thead class="head-white">
+					<thead class="head-white" style="font-size: 12px !important;">
 						<tr>
 							<th>ID</th>
 							<th>Empresa</th>
@@ -30,27 +42,45 @@
 							<th>Fecha</th>
 						</tr>
 					</thead>
-					<tbody>
-						<% @lastBookings.each do |booking| %>
-						<tr>
-							<td>
-								<% if booking.status_id == Status.find_by_name('Cancelado').id %>
-								<span class="label label-danger">Cancelado</span>
-								<% elsif booking.status_id == Status.find_by_name('Pagado').id %>
-								<span class="label label-success">Pagado</span>
-								<% elsif booking.status_id == Status.find_by_name('Confirmado').id %>
-								<span class="label label-primary">Confirmado</span>
-								<% elsif booking.created_at != booking.updated_at %>
-								<span class="label label-warning">Modificado</span>
-								<% else %>
-								<span class="label label-agendapro">Reservado</span>
-								<% end %>
-							</td>
-							<td><%= booking.client.first_name %> <%= booking.client.last_name %></td>
-							<td><%= booking.service.name %></td>
-							<td><%= booking.service_provider.public_name %></td>
-							<td><span class="badge"><%= l booking.start %></span></td>
-						</tr>
+					<tbody style="font-size: 10px !important;">
+						<% @pending_bookings.each do |payed_booking| %>
+
+							<tr>
+								<td>
+									<%= payed_booking.id %>
+								</td>
+								<td>
+									<%= payed_booking.booking.location.company.name %>
+								</td>
+								<td>
+									<%= payed_booking.booking.location.company.bank %>
+								</td>
+								<td>
+									<%= payed_booking.booking.location.company.account_number %>
+								</td>
+								<td>
+									<%= payed_booking.booking.location.company.company_rut %>
+								</td>
+								<td>
+									<% owner = User.find_by_company_id(payed_booking.booking.location.company.id) %>
+									<%= owner.email %>
+								</td>
+								<td>
+									<%= payed_booking.booking.client.first_name + " " + payed_booking.booking.client.last_name %>
+								</td>
+								<td>
+									<%= payed_booking.punto_pagos_confirmation.amount %>
+								</td>
+								<td>
+									<%= payed_booking.punto_pagos_confirmation.operation_number %>
+								</td>
+								<td>
+									<%= payed_booking.punto_pagos_confirmation.authorization_code %>
+								</td>
+								<td>
+									<%= payed_booking.punto_pagos_confirmation.approvement_date %>
+								</td>
+							</tr>
 						<% end %>
 					</tbody>
 				</table>
@@ -58,3 +88,112 @@
 		</div>		
 	</div>
 </div>
+
+<div class="row">
+	<div class="col-md-12">
+		<div class="panel panel-info">
+			<div class="panel-heading">
+				<div class="row">
+					<div class="col-md-5">
+						<h3 class="panel-title">Transferencias efectuadas</h3>
+					</div>
+					<div class="col-md-7">
+						<form action="payed_bookings/create_csv.csv" method="post" id="get_transfered">
+							<input type="hidden" name="type" value="transfered" />
+							Desde: <input type="text" name="start_date" class="datepicker" value="" />
+							Hasta: <input type="text" name="end_date" class="datepicker" value="" />
+							<button>&nbsp;Descargar&nbsp;&nbsp;<i class="fa fa-file-excel-o fa-lg"></i></button>
+						</form>
+					</div>
+				</div>
+			</div>
+			<div class="panel-body scrollable">
+				<table class="table">
+					<thead class="head-white" style="font-size: 12px !important;">
+						<tr>
+							<th>ID</th>
+							<th>Empresa</th>
+							<th>Banco</th>
+							<th>Cta. Cte.</th>
+							<th>Rut</th>
+							<th>Email</th>
+							<th>Cliente</th>
+							<th>Total a pagar</th>
+							<th>Orden de compra</th>
+							<th>Código de autorización</th>
+							<th>Fecha</th>
+						</tr>
+					</thead>
+					<tbody style="font-size: 10px !important;">
+						<% @transfered_bookings.each do |payed_booking| %>
+
+							<tr>
+								<td>
+									<%= payed_booking.id %>
+								</td>
+								<td>
+									<%= payed_booking.booking.location.company.name %>
+								</td>
+								<td>
+									<%= payed_booking.booking.location.company.bank %>
+								</td>
+								<td>
+									<%= payed_booking.booking.location.company.account_number %>
+								</td>
+								<td>
+									<%= payed_booking.booking.location.company.company_rut %>
+								</td>
+								<td>
+									<% owner = User.find_by_company_id(payed_booking.booking.location.company.id) %>
+									<%= owner.email %>
+								</td>
+								<td>
+									<%= payed_booking.booking.client.first_name + " " + payed_booking.booking.client.last_name %>
+								</td>
+								<td>
+									<%= payed_booking.punto_pagos_confirmation.amount %>
+								</td>
+								<td>
+									<%= payed_booking.punto_pagos_confirmation.operation_number %>
+								</td>
+								<td>
+									<%= payed_booking.punto_pagos_confirmation.authorization_code %>
+								</td>
+								<td>
+									<%= payed_booking.punto_pagos_confirmation.approvement_date %>
+								</td>
+							</tr>
+						<% end %>
+					</tbody>
+				</table>
+			</div>
+		</div>		
+	</div>
+</div>
+
+<% content_for :scripts do %>
+	<%= javascript_include_tag "jquery-ui-1.10.4.min.js" %>
+
+
+	<script type="text/javascript">
+
+		$(".datepicker").datepicker({
+          monthNames: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+          monthNamesShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
+          prevText: 'Atrás',
+          nextText: 'Adelante',
+          dayNames: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'],
+          dayNamesShort: ['Dom', 'Lun', 'Mar', 'Mier', 'Jue', 'vie', 'Sáb'],
+          dayNamesMin: ['Dom', 'Lun', 'Mar', 'Mier', 'Jue', 'vie', 'Sáb'],
+          today: 'Hoy',
+          clear: '',
+          firstDay: 1,
+          dateFormat: 'yy-mm-dd',
+          onSelect: function(newDate){    
+          	$(this).val(newDate);
+          }
+      });
+	
+	</script>
+
+<% end %>
