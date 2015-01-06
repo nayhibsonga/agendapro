@@ -450,7 +450,9 @@ class BookingsController < ApplicationController
       params[:comment] += ' - Dirección del cliente (donde se debe realizar el servicio): ' + params[:address]
     end
     if @company.company_setting.client_exclusive
-      if Client.where(identification_number: params[:identification_number], company_id: @company).count > 0
+      if(params[:client_id])
+        client = Client.find(params[:client_id])
+      elsif Client.where(identification_number: params[:identification_number], company_id: @company).count > 0
         client = Client.where(identification_number: params[:identification_number], company_id: @company).first
         client.first_name = params[:firstName]
         client.last_name = params[:lastName]
@@ -469,7 +471,9 @@ class BookingsController < ApplicationController
         return
       end
     else
-      if Client.where(email: params[:email], company_id: @company).count > 0
+      if(params[:client_id])
+        client = Client.find(params[:client_id])
+      elsif Client.where(email: params[:email], company_id: @company).count > 0
         client = Client.where(email: params[:email], company_id: @company).first
         client.first_name = params[:firstName]
         client.last_name = params[:lastName]
@@ -502,10 +506,7 @@ class BookingsController < ApplicationController
       #   PAGO EN LÍNEA DE RESERVA
       #
     if(params[:payment] == "1")
-    @booking.max_changes = params[:max_changes]
-    if @booking.save
-      # flash[:notice] = "Reserva realizada exitosamente."
-      
+        @booking.max_changes = params[:max_changes]
         trx_id = DateTime.now.to_s.gsub(/[-:T]/i, '')
         num_amount = service.price - service.price*service.discount/100;
         amount = sprintf('%.2f', num_amount)

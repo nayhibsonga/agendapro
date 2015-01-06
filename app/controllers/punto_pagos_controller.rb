@@ -192,7 +192,9 @@ class PuntoPagosController < ApplicationController
 
   def failure
     if Booking.find_by_trx_id(params[:trx_id])
-      @booking = Booking.find_by_trx_id(params[:trx_id])
+      failed_booking = Booking.find_by_trx_id(params[:trx_id])
+      @booking = Booking.new(failed_booking.attributes.to_options)
+      failed_booking.destroy
     end
   end
 
