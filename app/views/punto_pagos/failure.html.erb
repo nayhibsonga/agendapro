@@ -109,10 +109,9 @@
 									<% end %>
 								</div>
 								<div class="col-md-4">
-									<%= form_tag("/cancel_booking", method: "post", role: "form", id: "cancel_form" ) do %>
-										<input type="hidden" name="id" value="<%= @booking.id %>" />
-										<button type="submit" data-loading-text="Cargando..." class="cancelBtn">Cancelar</button>
-									<% end %>
+
+										<%= link_to '<button type="submit" data-loading-text="Cargando..." class="cancelBtn">Cancelar</button>'.html_safe, controller: 'bookings', action: 'transfer_error_cancel' %>
+
 								</div>
 							</div>
 						<% end %>
