@@ -740,6 +740,9 @@ class BookingsController < ApplicationController
       if @booking.update(status_id: status)
 
         #AGREGAR REVISIÓN DEL PAGO Y AVISO DE ELLO
+        if @booking.payed
+          @booking.payed_booking.canceled = true
+        end
 
         #flash[:notice] = "Reserva cancelada exitosamente."
         # BookingMailer.cancel_booking(@booking)
@@ -759,7 +762,7 @@ class BookingsController < ApplicationController
   end
 
   def transfer_error_cancel
-
+    render layout: 'workflow'
   end
 
   def check_user_cross_bookings
