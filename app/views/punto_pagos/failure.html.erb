@@ -1,3 +1,65 @@
+<style type="text/css">
+.submitBtn{
+	position: relative;
+	border: 1px solid #f1972d;
+	text-align: center;
+	width: 160px;
+	height: 40px;
+	font-size: 20px;
+	cursor: pointer;
+	background-color: #f1972d;
+	color: #fff;
+	float: right;
+	padding-top: 4px;
+	border-radius: 6px;
+}
+
+.submitBtn:hover{
+	background-color: #e0861c;
+	color: #eee;
+}
+
+.payBtn{
+	
+	border: 1px solid #22c488;
+	text-align: center;
+	width: 160px;
+	height: 40px;
+	font-size: 20px;
+	cursor: pointer;
+	background-color: #22c488;
+	color: #fff;
+	float: left;
+	padding-top: 4px;
+	border-radius: 6px;
+}
+
+.payBtn:hover{
+	background-color: #1ba970;
+	color: #eee;
+}
+
+.cancelBtn{
+	
+	border: 1px solid #22c488;
+	text-align: center;
+	width: 160px;
+	height: 40px;
+	font-size: 20px;
+	cursor: pointer;
+	background-color: #EB2929;
+	color: #fff;
+	float: left;
+	padding-top: 4px;
+	border-radius: 6px;
+}
+
+.cancelBtn:hover{
+	background-color: #DA1818;
+	color: #eee;
+}
+</style>
+
 <div class="main">
 	<br />
     <section class="pricing_wrapper">
@@ -7,34 +69,15 @@
 					<div class="col-md-7">
 						<hr>
 						<h4>¡Lo sentimos, la transacción ha fallado! Inténtalo nuevamente por favor. Si el problema persiste, ponte en contacto con nosotros y te ayudaremos.</h4>
-						<dl class="dl-horizontal">
-							<dt>Código de la Transacción</dt>
-							<dd><%= params[:token] %></dd>
-							<dt>¿Dudas o consultas?</dt>
-							<dd>Por favor envíanos un e-mail a contacto@agendapro.cl o llamanos al (+56 9) 5178 5898</dd>
-						</dl>
 						<% if @booking %>
 							<div class="row">
-								<h5>Puedes intentar pagar de nuevo, sólo mantener la reserva y pagarla en el local, o descartarla.</h5>
+								<div class="col-md-12">
+									<h4>Puedes intentar pagar de nuevo, sólo mantener la reserva y pagarla en el local, o descartarla.</h4>
+								</div>
 							</div>
 							<div class="row">
 								<div class="col-md-4">
-									<form method="post" action="bookings/book_service">
-										<input type="hidden" name="start" value="<%= @booking.start %>" />
-										<input type="hidden" name="end" value="<%= @booking.end %>" />
-										<input type="hidden" name="location" value="<%= @booking.location_id %>" />
-										<input type="hidden" name="provider" value="<%= @booking.service_provider_id %>" />
-										<input type="hidden" name="service" value="<%= @booking.service_id %>" />
-										<input type="hidden" name="client_id" value="<%= @booking.client_id %>" />
-										<input type="hidden" name="comment" value="<%= @booking.notes %>" />
-										<input type="hidden" name="origin" value="<%= @booking.web_origin %>" />
-										<input type="hidden" name="provider_lock" value="<%= @booking.provider_lock %>" />
-										<input type="hidden" name="payment" value="0" />
-										<button type="submit" data-ading-text = "Cargando" class="payBtn">Pagar</button>
-									</form>
-								</div>
-								<div class="col-md-4">
-									<form method="post" action="bookings/book_service">
+									<%= form_tag(:controller => "bookings", :action => "book_service", :method => "post") do %>
 										<input type="hidden" name="start" value="<%= @booking.start %>" />
 										<input type="hidden" name="end" value="<%= @booking.end %>" />
 										<input type="hidden" name="location" value="<%= @booking.location_id %>" />
@@ -46,17 +89,40 @@
 										<input type="hidden" name="provider_lock" value="<%= @booking.provider_lock %>" />
 										<input type="hidden" name="payment" value="1" />
 										<input type="hidden" name="max_changes" value="<%= @booking.max_changes %>" />
-										<button type="submit" data-loading-text="Cargando..." class="submitBtn">Reservar</button>
-									</form>
+										<button type="submit" data-ading-text = "Cargando" class="payBtn">Pagar</button>
+									<% end %>
 								</div>
 								<div class="col-md-4">
-									<form method="post" action="bookings/cancel_booking">
+									<%= form_tag(:controller => "bookings", :action => "book_service", :method => "post") do %>
+										<input type="hidden" name="start" value="<%= @booking.start %>" />
+										<input type="hidden" name="end" value="<%= @booking.end %>" />
+										<input type="hidden" name="location" value="<%= @booking.location_id %>" />
+										<input type="hidden" name="provider" value="<%= @booking.service_provider_id %>" />
+										<input type="hidden" name="service" value="<%= @booking.service_id %>" />
+										<input type="hidden" name="client_id" value="<%= @booking.client_id %>" />
+										<input type="hidden" name="comment" value="<%= @booking.notes %>" />
+										<input type="hidden" name="origin" value="<%= @booking.web_origin %>" />
+										<input type="hidden" name="provider_lock" value="<%= @booking.provider_lock %>" />
+										<input type="hidden" name="payment" value="0" />
+										
+										<button type="submit" data-loading-text="Cargando..." class="submitBtn">Reservar</button>
+									<% end %>
+								</div>
+								<div class="col-md-4">
+									<%= form_tag(:controller => "bookings", :action => "cancel_booking", :method => "post") do %>
 										<input type="hidden" name="id" value="<%= @booking.id %>" />
-										<button type="submit" data-loading-text="Cargando..." class="submitBtn">Cancelar</button>
-									</form>
+										<button type="submit" data-loading-text="Cargando..." class="cancelBtn">Cancelar</button>
+									<% end %>
 								</div>
 							</div>
 						<% end %>
+						<dl class="dl-horizontal">
+							<dt>Código de la Transacción</dt>
+							<dd><%= params[:token] %></dd>
+							<dt>¿Dudas o consultas?</dt>
+							<dd>Por favor envíanos un e-mail a contacto@agendapro.cl o llamanos al (+56 9) 5178 5898</dd>
+						</dl>
+						
 					</div>
 					<div class="col-md-5">
 						<%= image_tag("backgrounds/cross.png", :class => "center-block") %>
