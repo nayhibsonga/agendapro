@@ -7,7 +7,11 @@
     <head>
         <!-- start: Meta -->
         <meta charset="utf-8">
+        <% if @company %>
         <title><%= @company.name %> - AgendaPro</title>
+        <% else %>
+        <title>AgendaPro</title>
+        <% end %>
         <meta name="author" content="AgendaPro">
         <meta name="keyword" content="agendapro, agenda, agenda online, reserva, reserva online">
         <%= csrf_meta_tags %>
