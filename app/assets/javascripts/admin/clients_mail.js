@@ -17,13 +17,13 @@ $(function () {
 			if ($(event.target).prop('checked')) {
 				if (selected > 0) {
 					$(this).prop('checked', true);
-					$('#sendMail').prop('disabled', false);
+					$('#sendMail').attr('disabled', false);
 					selected -= 1;
 				};
 			}
 			else {
 				$(this).prop('checked', false);
-				$('#sendMail').prop('disabled', true);
+				$('#sendMail').attr('disabled', true);
 			}
 		});
 	});
@@ -51,32 +51,20 @@ $(function () {
 			disabled = disabled || $(this).prop('checked');
 		});
 		$('input[name="mail"]').prop('checked', prop);
-		$('#sendMail').prop('disabled', !disabled);
+		$('#sendMail').attr('disabled', !disabled);
 	});
 
-	$('#mailModal').on('show.bs.modal', function (e) {
+	$('#sendMail').click(function (e) {
+		var $link = $(this);
 		var emails = [];
 		$('input[name="client_mail"]').each( function () {
 			if ($(this).prop('checked')) {
 				emails.push($(this).val());
 			};
 		});
-		$('#to').val(emails);
-	});
-	$('#mailModal').on('hidden.bs.modal', function (e) {
-		validator.resetForm();
-		$('.has-success').removeClass('has-success');
-		$('.fa.fa-check').removeClass('fa fa-check');
-		$('.has-error').removeClass('has-error');
-		$('.fa.fa-times').removeClass('fa fa-times');
-	});
-
-	$('#send_mail_button').click( function () {
-		if($('#client_mailer').valid()) {
-			$('.form-group').toggle();
-			$('.modal-footer .btn').toggle();
-			$('.modal-body div:first').toggle()
-		}
+		var params = { to: emails };
+		var ref = $link.attr('href');
+		$link.attr('href', ref + '?' + $.param(params));
 	});
 
 	$('#location').change( function () {

@@ -1,0 +1,88 @@
+<div class="container">
+  <div class="row">
+    <section class="hgroup">
+		<h2>E-mail a Clientes</h2>
+      	<h2 class="section_header">Acá podrás enviarle e-mails a tus clientes contandole de tus servicios o promociones.</h2>
+      	<div class="line-breadcrumb">
+        <ul class="breadcrumb pull-right">
+            <li><%= link_to "Resumen", dashboard_path %> </li>
+	        <li><%= link_to "Clientes", clients_path %> </li>
+            <li class="active">E-mail</li>
+        </ul>
+    </div>
+    </section>
+  </div>
+</div>
+
+<div class="container">
+	<div class="row well">
+		<%= form_tag('/send_mail_client', name: "client_mailer", id: "client_mailer", multipart: true, class: "form-horizontal") do %>
+			<div class="form-group has-feedback">
+				<%= label_tag :from, 'De', :class => 'control-label col-md-2' %>
+				<div class="col-md-10">
+					<%= select_tag :from, options_from_collection_for_select(@from_collection, :email, :email), :class => 'form-control', :required => true %>
+    				<span class="help-block"></span>
+    				<span class="form-control-feedback"></span>
+				</div>
+			</div>
+			<div class="form-group has-feedback">
+				<%= label_tag :to, 'Para', class: 'control-label col-md-2' %>
+				<div class="col-md-10">
+					<%= text_field_tag :to, @to, :class => 'form-control', :required => true, :placeholder => 'ejemplo@dominio.com (requerido)' %>
+    				<span class="help-block"></span>
+    				<span class="form-control-feedback"></span>
+    			</div>
+			</div>
+			<div class="form-group has-feedback">
+				<%= label_tag :subject, 'Asunto', class: 'control-label col-md-2' %>
+				<div class="col-md-10">
+					<%= text_field_tag :subject, nil, :class => 'form-control', :required => true, :autofocus => true, :placeholder => 'Asunto (requerido)' %>
+    				<span class="help-block"></span>
+    				<span class="form-control-feedback"></span>
+				</div>
+			</div>
+			<div class="form-group has-feedback">
+				<div class="col-md-12">
+					<%= label_tag :message, 'Mensaje', class: 'control-label' %>
+				</div>
+				<div class="col-md-12">
+					<%= text_area_tag :message, nil, :class => 'form-control', :rows => 8, :required => true, :placeholder => 'Mensaje (requerido)' %>
+    				<span class="help-block"></span>
+    				<span class="form-control-feedback"></span>
+				</div>
+			</div>
+			<div class="form-group has-feedback">
+				<%= label_tag :attachment, 'Archivo Adjunto', class: 'control-label col-md-2' %>
+				<div class="col-md-10">
+					<%= file_field_tag :attachment, :class => 'form-control' %>
+					<span class="help-block"></span>
+					<span class="form-control-feedback"></span>
+				</div>
+			</div>
+			<div class="form-group">
+				<div class="col-md-offset-2 col-md-10">
+					<button type="submit" class="btn btn-agendapro-claro" data-loading-text='<i class="fa fa-envelope-o"></i> Enviando...' autocomplete="off"><i class="fa fa-envelope-o"></i><span> Enviar</span></button>
+					NOTA: Todos los e-mails son enviados como copia oculta
+				</div>
+			</div>
+		<% end %>
+	</div>
+</div>
+
+<% content_for :scripts do %>
+	<%= javascript_include_tag 'validations/validate' %>
+	<%= javascript_include_tag 'validations/admin/client-email' %>
+	<%= javascript_include_tag 'ckeditor/ckeditor' %>
+	<%= javascript_include_tag 'ckeditor/adapters/jquery' %>
+	<script type="text/javascript">
+		$(function () {
+			$('#message').ckeditor();
+		})
+		$('button[type="submit"]').on('click', function (e) {
+			$('#message').val($('#message').val());
+			if ($('#client_mailer').valid()) {
+				var $btn = $(this).button('loading');
+			};
+		});
+	</script>
+<% end %>

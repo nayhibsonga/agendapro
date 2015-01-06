@@ -2,7 +2,7 @@ class ClientMailer < ActionMailer::Base
   require 'mandrill'
   require 'base64'
 
-  def send_client_mail (current_user, clients, subject, message, company_img, attachment, from)
+  def send_client_mail (current_user, clients, subject, message, attachment, from)
 	mandrill = Mandrill::API.new Agendapro::Application.config.api_key
 	
 	# => Template

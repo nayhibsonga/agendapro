@@ -77,6 +77,7 @@ Agendapro::Application.routes.draw do
   get '/get_direction', :to => 'districts#get_direction'
   get '/time_booking_edit', :to => 'company_settings#time_booking_edit', :as => 'time_booking'
   get '/minisite/:id', :to => 'company_settings#minisite', :as => 'minisite'
+  get '/compose_mail', :to => 'clients#compose_mail', :as => 'send_mail'
   post '/send_mail_client', :to => 'clients#send_mail'
   get '/get_link', :to => 'companies#get_link', :as => 'get_link'
   post '/change_categories_order', :to => 'service_categories#change_categories_order'

@@ -137,6 +137,15 @@ class ClientsController < ApplicationController
     end
   end
 
+  def compose_mail
+    @from_collection = current_user.company.company_from_email.where(confirmed: true)
+    @to = '';
+    params[:to].each do |mail|
+      @to += mail + ', '
+    end
+    @to = @to.chomp(', ')
+  end
+
   def send_mail
     # Sumar mails eviados
     current_sent = current_user.company.company_setting.sent_mails
@@ -152,16 +161,6 @@ class ClientsController < ApplicationController
       clients.push(client_info)
     end
 
-    if current_user.company.logo_url
-      company_img = {
-        :type => 'image/' +  File.extname(current_user.company.logo_url),
-        :name => 'company_img.jpg',
-        :content => Base64.encode64(File.read('public' + current_user.company.logo_url.to_s))
-      }
-    else
-      company_img = {}
-    end
-
     if params[:attachment]
       attachment = {
         :type => params[:attachment].content_type,
@@ -172,7 +171,7 @@ class ClientsController < ApplicationController
       attachment = {}
     end
 
-    ClientMailer.send_client_mail(current_user, clients, params[:subject], params[:message], company_img, attachment, params[:from])
+    ClientMailer.send_client_mail(current_user, clients, params[:subject], params[:message], attachment, params[:from])
 
     redirect_to '/clients', notice: 'E-mail enviado exitosamente.'
   end

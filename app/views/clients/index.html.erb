@@ -106,7 +106,11 @@
 			<%= will_paginate @clients, renderer: BootstrapPagination::Rails %>
 		</div>
 		<div class="col-md-2">
+			<% if @from_collection.first %>
+			<%= link_to 'Enviar E-mail', send_mail_path, class: "btn btn-agendapro-claro pull-right", id: 'sendMail', disabled: true %>
+			<% else %>
 			<button id="sendMail" type="button" class="btn btn-agendapro-claro pull-right" data-toggle="modal" data-target="#mailModal" disabled>Enviar E-mail</button>
+			<% end %>
 		</div>
 	</div>
 	<br />
@@ -170,7 +174,7 @@
 							<%= label_tag :message, 'Mensaje' %>
 						</div>
 						<div class="col-md-12">
-							<%= text_area_tag :message, nil, :class => 'form-control', :rows => 8, :required => true, :placeholder => 'Mensaje (requerido)' %>
+							<%= text_area_tag :message, nil, :class => 'form-control ckeditor', :rows => 8, :required => true, :placeholder => 'Mensaje (requerido)' %>
             				<span class="help-block"></span>
             				<span class="form-control-feedback"></span>
 						</div>
@@ -261,4 +265,5 @@
 	<%= javascript_include_tag 'validations/validate' %>
 	<%= javascript_include_tag 'validations/admin/client-email' %>
 	<%= javascript_include_tag 'admin/clients_mail' %>
+	<%= javascript_include_tag 'ckeditor/ckeditor' %>
 <% end %>
