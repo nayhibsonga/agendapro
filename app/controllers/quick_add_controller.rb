@@ -160,6 +160,6 @@ class QuickAddController < ApplicationController
     end
 
     def company_params
-    	params.require(:company).permit(:logo, economic_sector_ids: [])
+    	params.require(:company).permit(:logo, :allows_online_payment, :bank, :account_number, :company_rut, economic_sector_ids: [])
     end
 end

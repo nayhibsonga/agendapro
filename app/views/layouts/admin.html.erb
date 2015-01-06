@@ -102,6 +102,10 @@
 							<li><%= link_to '<i class="fa fa-check-square-o fa-fw"></i><span class="remove-txt"> Estados de Reserva</span>'.html_safe, statuses_path, { :class => if controller.controller_name == "statuses" then "submenu active" else "submenu" end }  %></li>
 							<li><%= link_to '<i class="fa fa-cloud fa-fw"></i><span class="remove-txt"> Gestión Planes</span>'.html_safe, plans_path, { :class => "submenu" }  %></li>
 							<li><%= link_to '<i class="fa fa-list-ol fa-fw"></i><span class="remove-txt"> Parámetros Numéricos</span>'.html_safe, numeric_parameters_path, { :class => if controller.controller_name == "numeric_parameters" then "submenu active" else "submenu" end }  %></li>
+							<!-- Link a la vista de transferencias hechas. -->
+							<li>
+							<%= link_to '<i class="fa fa-exchange fa-fw"></i><span class="remove-txt"> Transferencias</span>'.html_safe, payed_bookings_path, { :class => if controller.controller_name == "payed_bookings" then "submenu active" else "submenu" end }  %>
+							</li>
 						</ul>
 					</li>
 

@@ -26,6 +26,8 @@ class Company < ActiveRecord::Base
 
 	validate :plan_settings
 
+	after_update :update_online_payment
+
 	def plan_settings
 		if self.locations.where(active: true).count > self.plan.locations || self.service_providers.where(active: true).count > self.plan.service_providers
 			errors.add(:base, "El plan no pudo ser cambiado. Tienes más locales/proveedores activos que lo que permite el plan.")
@@ -141,4 +143,14 @@ class Company < ActiveRecord::Base
 			end
 		end
 	end
+
+	def update_online_payment
+		if(!self.allows_online_payment)
+			self.services.each do |service|
+				service.online_payable = false
+				service.save
+			end
+		end
+	end
+
 end
