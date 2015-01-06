@@ -762,6 +762,7 @@ class BookingsController < ApplicationController
   end
 
   def transfer_error_cancel
+    @company = Company.find(params[:company_id])
     render layout: 'workflow'
   end
 
