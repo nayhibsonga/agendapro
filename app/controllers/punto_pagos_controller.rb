@@ -191,7 +191,7 @@ class PuntoPagosController < ApplicationController
   end
 
   def failure
-    if Booking.find_by_trx_id(params[:trx_id])
+    if Booking.find_by_token(params[:token])
       failed_booking = Booking.find_by_trx_id(params[:trx_id])
       @booking = Booking.new(failed_booking.attributes.to_options)
       failed_booking.destroy
@@ -230,7 +230,7 @@ class PuntoPagosController < ApplicationController
 
         #Creamos el registro de la reserva pagada.
         booking = Booking.find_by_trx_id(params[:trx_id])
-        booking.status = Status.find_by(:name => "Pagado")
+        booking.status_id = Status.find_by(:name => "Pagado").id
         booking.payed = true
         booking.save
         payed_booking = PayedBooking.new 
