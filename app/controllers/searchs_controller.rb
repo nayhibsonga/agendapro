@@ -296,7 +296,6 @@ class SearchsController < ApplicationController
 			#Rails.logger.error("Second: #{lat} #{long}")
 			#Rails.logger.error("Third: #{@latitude} #{@longitude}")
 			#@scores = ordered_scores
-
 			respond_to do |format|
 				format.html
 				format.json { render :json => @results }

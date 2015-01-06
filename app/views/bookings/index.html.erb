@@ -255,6 +255,18 @@
 									</div>
 								</div>
 							</div>
+							<% if @company_setting.staff_code %>
+							<div class="row">
+								<div class="col-md-12">
+									<div class="form-group">
+										<%= label_tag :staff_code, "Código de Empleado", class: "col-sm-2 control-label" %>
+										<div class="col-sm-10">
+											<%= text_field_tag :staff_code, '',{class: "form-control", required: true} %>
+										</div>
+									</div>
+								</div>
+							</div>
+							<% end %>
 						</div>
 						<div class="tab-pane" id="client-pane">
 							<%= f.fields_for :client do |builder| %>
@@ -347,7 +359,7 @@
 						<% if @company_setting.booking_history %>
 						<div class="tab-pane" id="changes-pane">
 							<div class="fixed-table">
-								<h4>Últimas reservas del cliente:</h4>
+								<h4>Modificaciones a la Reserva:</h4>
 								<table class="table">
 									<thead>
 										<tr>
@@ -358,7 +370,7 @@
 											<th>Estado</th>
 											<th>Usuario</th>
 											<% if @company_setting.staff_code %>
-											<th>Nota Interna</th>
+											<th>Código</th>
 											<% end %>
 										</tr>
 									</thead>
