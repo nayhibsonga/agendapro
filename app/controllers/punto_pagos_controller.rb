@@ -191,8 +191,9 @@ class PuntoPagosController < ApplicationController
   end
 
   def failure
-    if Booking.find_by_token(params[:token])
-      failed_booking = Booking.find_by_trx_id(params[:trx_id])
+    if PuntoPagosConfirmation.find_by_token(params[:token])
+      trx_id = PuntoPagosConfirmation.find_by_token(params[:token]).trx_id
+      failed_booking = Booking.find_by_trx_id(trx_id)
       @booking = Booking.new(failed_booking.attributes.to_options)
       failed_booking.destroy
     end
