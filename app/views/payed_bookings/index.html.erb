@@ -2,6 +2,12 @@
   var Chartkick = {"language": "es"};
 </script>
 
+<style type="text/css">
+.datepicker{
+	color: #333 !important;
+}
+</style>
+
 <%= javascript_include_tag "//www.google.com/jsapi", "chartkick" %>
 
 <div class="row">
@@ -13,13 +19,13 @@
 			<div class="panel-heading">
 				<div class="row">
 					<div class="col-md-5">
-						<h3 class="panel-title">Pagos no transferidos</h3>
+						<h3 class="panel-title">Pagos vigentes no transferidos</h3>
 					</div>
 					<div class="col-md-7">
 						<form action="payed_bookings/create_csv.csv" method="post" id="get_pending">
 							<input type="hidden" name="type" value="pending" />
-							Desde: <input type="text" name="start_date" class="datepicker" value="" />
-							Hasta: <input type="text" name="end_date" class="datepicker" value="" />
+							Desde: <input type="text" id="not_transfered_start" name="start_date" class="datepicker" value="" />
+							Hasta: <input type="text" id="not_transfered_end" name="end_date" class="datepicker" value="" />
 							<button>&nbsp;Descargar&nbsp;&nbsp;<i class="fa fa-file-excel-o fa-lg"></i></button>
 						</form>
 					</div>
@@ -95,13 +101,177 @@
 			<div class="panel-heading">
 				<div class="row">
 					<div class="col-md-5">
+						<h3 class="panel-title">Pagos cancelados no transferidos</h3>
+					</div>
+					<div class="col-md-7">
+						<form action="payed_bookings/create_csv.csv" method="post" id="get_pending">
+							<input type="hidden" name="type" value="pending" />
+							Desde: <input type="text" id="not_transfered_canceled_start" name="start_date" class="datepicker" value="" />
+							Hasta: <input type="text" id="not_transfered_canceled_end" name="end_date" class="datepicker" value="" />
+							<button>&nbsp;Descargar&nbsp;&nbsp;<i class="fa fa-file-excel-o fa-lg"></i></button>
+						</form>
+					</div>
+				</div>
+			</div>
+			<div class="panel-body scrollable">
+				<table class="table">
+					<thead class="head-white" style="font-size: 12px !important;">
+						<tr>
+							<th>ID</th>
+							<th>Empresa</th>
+							<th>Banco</th>
+							<th>Cta. Cte.</th>
+							<th>Rut</th>
+							<th>Email</th>
+							<th>Cliente</th>
+							<th>Total a pagar</th>
+							<th>Orden de compra</th>
+							<th>Código de autorización</th>
+							<th>Fecha</th>
+						</tr>
+					</thead>
+					<tbody style="font-size: 10px !important;">
+						<% @pending_canceled_bookings.each do |payed_booking| %>
+
+							<tr>
+								<td>
+									<%= payed_booking.id %>
+								</td>
+								<td>
+									<%= payed_booking.booking.location.company.name %>
+								</td>
+								<td>
+									<%= payed_booking.booking.location.company.bank %>
+								</td>
+								<td>
+									<%= payed_booking.booking.location.company.account_number %>
+								</td>
+								<td>
+									<%= payed_booking.booking.location.company.company_rut %>
+								</td>
+								<td>
+									<% owner = User.find_by_company_id(payed_booking.booking.location.company.id) %>
+									<%= owner.email %>
+								</td>
+								<td>
+									<%= payed_booking.booking.client.first_name + " " + payed_booking.booking.client.last_name %>
+								</td>
+								<td>
+									<%= payed_booking.punto_pagos_confirmation.amount %>
+								</td>
+								<td>
+									<%= payed_booking.punto_pagos_confirmation.operation_number %>
+								</td>
+								<td>
+									<%= payed_booking.punto_pagos_confirmation.authorization_code %>
+								</td>
+								<td>
+									<%= payed_booking.punto_pagos_confirmation.approvement_date %>
+								</td>
+							</tr>
+						<% end %>
+					</tbody>
+				</table>
+			</div>
+		</div>		
+	</div>
+</div>
+
+<div class="row">
+	<div class="col-md-12">
+		<div class="panel panel-info">
+			<div class="panel-heading">
+				<div class="row">
+					<div class="col-md-5">
+						<h3 class="panel-title">Pagos cancelados ya transferidos</h3>
+					</div>
+					<div class="col-md-7">
+						<form action="payed_bookings/create_csv.csv" method="post" id="get_pending">
+							<input type="hidden" name="type" value="pending" />
+							Desde: <input type="text" id="transfered_canceled_start" name="start_date" class="datepicker" value="" />
+							Hasta: <input type="text" id="transfered_canceled_end" name="end_date" class="datepicker" value="" />
+							<button>&nbsp;Descargar&nbsp;&nbsp;<i class="fa fa-file-excel-o fa-lg"></i></button>
+						</form>
+					</div>
+				</div>
+			</div>
+			<div class="panel-body scrollable">
+				<table class="table">
+					<thead class="head-white" style="font-size: 12px !important;">
+						<tr>
+							<th>ID</th>
+							<th>Empresa</th>
+							<th>Banco</th>
+							<th>Cta. Cte.</th>
+							<th>Rut</th>
+							<th>Email</th>
+							<th>Cliente</th>
+							<th>Total a pagar</th>
+							<th>Orden de compra</th>
+							<th>Código de autorización</th>
+							<th>Fecha</th>
+						</tr>
+					</thead>
+					<tbody style="font-size: 10px !important;">
+						<% @transfered_canceled_bookings.each do |payed_booking| %>
+
+							<tr>
+								<td>
+									<%= payed_booking.id %>
+								</td>
+								<td>
+									<%= payed_booking.booking.location.company.name %>
+								</td>
+								<td>
+									<%= payed_booking.booking.location.company.bank %>
+								</td>
+								<td>
+									<%= payed_booking.booking.location.company.account_number %>
+								</td>
+								<td>
+									<%= payed_booking.booking.location.company.company_rut %>
+								</td>
+								<td>
+									<% owner = User.find_by_company_id(payed_booking.booking.location.company.id) %>
+									<%= owner.email %>
+								</td>
+								<td>
+									<%= payed_booking.booking.client.first_name + " " + payed_booking.booking.client.last_name %>
+								</td>
+								<td>
+									<%= payed_booking.punto_pagos_confirmation.amount %>
+								</td>
+								<td>
+									<%= payed_booking.punto_pagos_confirmation.operation_number %>
+								</td>
+								<td>
+									<%= payed_booking.punto_pagos_confirmation.authorization_code %>
+								</td>
+								<td>
+									<%= payed_booking.punto_pagos_confirmation.approvement_date %>
+								</td>
+							</tr>
+						<% end %>
+					</tbody>
+				</table>
+			</div>
+		</div>		
+	</div>
+</div>
+
+<div class="row">
+	<div class="col-md-12">
+		<div class="panel panel-info">
+			<div class="panel-heading">
+				<div class="row">
+					<div class="col-md-5">
 						<h3 class="panel-title">Transferencias efectuadas</h3>
 					</div>
 					<div class="col-md-7">
 						<form action="payed_bookings/create_csv.csv" method="post" id="get_transfered">
 							<input type="hidden" name="type" value="transfered" />
-							Desde: <input type="text" name="start_date" class="datepicker" value="" />
-							Hasta: <input type="text" name="end_date" class="datepicker" value="" />
+							Desde: <input type="text" id="transfered_start" name="start_date" class="datepicker" value="" />
+							Hasta: <input type="text" id="transfered_end" name="end_date" class="datepicker" value="" />
 							<button>&nbsp;Descargar&nbsp;&nbsp;<i class="fa fa-file-excel-o fa-lg"></i></button>
 						</form>
 					</div>
@@ -189,10 +359,12 @@
           clear: '',
           firstDay: 1,
           dateFormat: 'yy-mm-dd',
-          onSelect: function(newDate){    
-          	$(this).val(newDate);
-          }
-      });
+      	});
+
+		$(".datepicker").each(function(){
+			var altField = '#' + $(this).prop('id');
+			$(this).datepicker('option', 'altField', altField);
+		})
 	
 	</script>
 
