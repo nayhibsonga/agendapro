@@ -2,6 +2,7 @@ class BookingsController < ApplicationController
   before_action :set_booking, only: [:show, :edit, :update, :destroy]
   before_action :authenticate_user!, except: [:create, :provider_booking, :book_service, :edit_booking, :edit_booking_post, :cancel_booking, :confirm_booking, :check_user_cross_bookings, :blocked_edit]
   before_action :quick_add, except: [:create, :provider_booking, :book_service, :edit_booking, :edit_booking_post, :cancel_booking, :confirm_booking, :check_user_cross_bookings, :blocked_edit]
+  skip_before_action :verify_authenticity_token, only: [:cancel_booking]
   layout "admin", except: [:book_service, :provider_booking, :edit_booking, :edit_booking_post, :cancel_booking, :confirm_booking, :check_user_cross_bookings, :blocked_edit, :blocked_cancel]
 
   # GET /bookings
@@ -738,6 +739,9 @@ class BookingsController < ApplicationController
       status = Status.find_by(:name => 'Cancelado').id
       
       if @booking.update(status_id: status)
+
+        #AGREGAR REVISIÓN DEL PAGO Y AVISO DE ELLO
+
         #flash[:notice] = "Reserva cancelada exitosamente."
         # BookingMailer.cancel_booking(@booking)
       else
