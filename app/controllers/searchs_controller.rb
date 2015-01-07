@@ -16,7 +16,7 @@ class SearchsController < ApplicationController
 	def search
 		if params[:inputSearch] && params[:latitude] && params[:longitude] && params[:inputLocalization]
 			@lat = params[:latitude]
-			@lng = params[:latitude]
+			@lng = params[:longitude]
 
 			
 
@@ -39,12 +39,12 @@ class SearchsController < ApplicationController
 			# end
 
 			lat = params[:latitude]
-			long = params[:latitude]
+			long = params[:longitude]
 
 
 
 			@latitude = params[:latitude]
-			@longitude = params[:latitude]
+			@longitude = params[:longitude]
 
 			
 
@@ -298,7 +298,7 @@ class SearchsController < ApplicationController
 			#Rails.logger.error("Second: #{lat} #{long}")
 			#Rails.logger.error("Third: #{@latitude} #{@longitude}")
 			#@scores = ordered_scores
-
+			
 			respond_to do |format|
 				format.html
 				format.json { render :json => @results }
