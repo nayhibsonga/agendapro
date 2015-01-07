@@ -15,8 +15,8 @@ class SearchsController < ApplicationController
 	  
 	def search
 		if params[:inputSearch] && params[:latitude] && params[:longitude] && params[:inputLocalization]
-			@lat = cookies[:lat].to_f
-			@lng = cookies[:lng].to_f
+			@lat = params[:latitude]
+			@lng = params[:latitude]
 
 			
 
@@ -27,24 +27,24 @@ class SearchsController < ApplicationController
 			host = request.host_with_port
 			@domain = host[host.index(request.domain)..host.length]
 
-			if(!@lat)
-				lat = params[:latitude]
-			else
-				lat = @lat
-			end
-			if(!@long)
-				long = params[:longitude]
-			else
-				long = @long
-			end
+			# if(!@lat)
+			# 	lat = params[:latitude]
+			# else
+			# 	lat = @lat
+			# end
+			# if(!@long)
+			# 	long = params[:longitude]
+			# else
+			# 	long = @long
+			# end
 
-			lat = @lat
-			long = @lng
+			lat = params[:latitude]
+			long = params[:latitude]
 
 
 
-			@latitude = @lat
-			@longitude = @lng
+			@latitude = params[:latitude]
+			@longitude = params[:latitude]
 
 			
 
@@ -66,6 +66,7 @@ class SearchsController < ApplicationController
 			elegible_locations = Location.where(:active => true).where(company_id: active_companies_ids).where(id: ServiceProvider.where(active: true, company_id: active_companies_ids).joins(:provider_times).joins(:services).where("services.id" => Service.where(active: true, company_id: active_companies_ids).pluck(:id)).pluck(:location_id).uniq).joins(:location_times).uniq.order(order: :asc)
 			locations = elegible_locations.where('sqrt((latitude - ' + lat.to_s + ')^2 + (longitude - ' + long.to_s + ')^2) < 0.25') #Location.all
 			loc_ids = Array.new
+
 
 			#Struct.new("Local", :id, :dist)
 
