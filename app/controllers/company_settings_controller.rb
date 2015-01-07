@@ -26,6 +26,7 @@ class CompanySettingsController < ApplicationController
   # GET /company_settings/1/edit
   def edit
     @company = Company.find(current_user.company_id)
+    @banks = Bank.all
     @emails = current_user.company.company_from_email
     @company_from_email = CompanyFromEmail.new
     @company_setting = @company.company_setting

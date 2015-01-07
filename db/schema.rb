@@ -11,12 +11,17 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-
-ActiveRecord::Schema.define(version: 20150106151442) do
-
+ActiveRecord::Schema.define(version: 20150107133750) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "banks", force: true do |t|
+    t.integer  "code"
+    t.string   "name"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
 
   create_table "billing_infos", force: true do |t|
     t.string   "name"
@@ -138,9 +143,11 @@ ActiveRecord::Schema.define(version: 20150106151442) do
     t.date     "due_date"
     t.boolean  "owned",                 default: true
     t.boolean  "allows_online_payment", default: false
-    t.string   "bank",                  default: ""
     t.string   "account_number",        default: ""
     t.string   "company_rut",           default: ""
+    t.string   "account_name",          default: ""
+    t.integer  "account_type",          default: 3
+    t.integer  "bank_id"
   end
 
   add_index "companies", ["payment_status_id"], name: "index_companies_on_payment_status_id", using: :btree
@@ -200,7 +207,6 @@ ActiveRecord::Schema.define(version: 20150106151442) do
     t.integer  "booking_confirmation_time",   default: 1,                     null: false
     t.integer  "booking_configuration_email", default: 0
     t.integer  "max_changes",                 default: 2
-
   end
 
   add_index "company_settings", ["company_id"], name: "index_company_settings_on_company_id", using: :btree
@@ -314,6 +320,7 @@ ActiveRecord::Schema.define(version: 20150106151442) do
     t.datetime "updated_at"
     t.boolean  "transfer_complete",           default: false
     t.boolean  "canceled",                    default: false
+    t.boolean  "cancel_complete",             default: false
   end
 
   create_table "payment_statuses", force: true do |t|

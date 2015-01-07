@@ -11,10 +11,11 @@ class PayedBookingsController < ApplicationController
   	def index
   		
   		@transfered_bookings = PayedBooking.where(:transfer_complete => true, :canceled => false).order('updated_at DESC').limit(10)
-  		@transfered_canceled_bookings = PayedBooking.where(:transfer_complete => true, :canceled => true).order('updated_at DESC')
 
 		@pending_bookings = PayedBooking.where(:transfer_complete => false, :canceled => false).order('updated_at DESC')
-		@pending_canceled_bookings = PayedBooking.where(:transfer_complete => false, :canceled => true).order('updated_at DESC')
+		@pending_canceled_bookings = PayedBooking.where(:transfer_complete => false, :canceled => true, :cancel_complete => false).order('updated_at DESC')
+
+		@cancel_complete = PayedBooking.where(:cancel_complete => true).order('updated_at DESC')
 
   	end
 
