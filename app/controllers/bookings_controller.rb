@@ -63,11 +63,13 @@ class BookingsController < ApplicationController
     staff_code = nil
     new_booking_params = booking_params.except(:client_first_name, :client_last_name, :client_phone, :client_email, :client_identification_number, :client_address, :client_district, :client_city, :client_birth_day, :client_birth_month, :client_birth_year, :client_age, :client_gender, :staff_code)
     @booking = Booking.new(new_booking_params)
-    if Company.find(current_user.company_id).company_setting.staff_code && booking_params[:staff_code] && !booking_params[:staff_code].empty? && StaffCode.where(company_id: current_user.company_id, code: booking_params[:staff_code]).count > 0
-      staff_code = StaffCode.where(company_id: current_user.company_id, code: booking_params[:staff_code]).first
-    else
-      render :json => { :errors => ["El código de empleado ingresado no es correcto."] }, :status => 422
-      return
+    if Company.find(current_user.company_id).company_setting.staff_code
+      if booking_params[:staff_code] && !booking_params[:staff_code].empty? && StaffCode.where(company_id: current_user.company_id, code: booking_params[:staff_code]).count > 0
+        staff_code = StaffCode.where(company_id: current_user.company_id, code: booking_params[:staff_code]).first
+      else
+        render :json => { :errors => ["El código de empleado ingresado no es correcto."] }, :status => 422
+        return
+      end
     end
     if Company.find(current_user.company_id).company_setting.client_exclusive
       if !booking_params[:client_id].nil? && !booking_params[:client_id].empty? && !booking_params[:client_identification_number].empty?
@@ -166,13 +168,13 @@ class BookingsController < ApplicationController
   def update
     staff_code = nil
     new_booking_params = booking_params.except(:client_first_name, :client_last_name, :client_phone, :client_email, :client_identification_number, :client_address, :client_district, :client_city, :client_birth_day, :client_birth_month, :client_birth_year, :client_age, :client_gender, :staff_code)
-    if Company.find(current_user.company_id).company_setting.staff_code && booking_params[:staff_code] && !booking_params[:staff_code].empty? && StaffCode.where(company_id: current_user.company_id, code: booking_params[:staff_code]).count > 0
-      staff_code = StaffCode.where(company_id: current_user.company_id, code: booking_params[:staff_code]).first
-      puts staff_code.id
-      puts staff_code.inspect
-    else
-      render :json => { :errors => ["El código de empleado ingresado no es correcto."] }, :status => 422
-      return
+    if Company.find(current_user.company_id).company_setting.staff_code
+      if booking_params[:staff_code] && !booking_params[:staff_code].empty? && StaffCode.where(company_id: current_user.company_id, code: booking_params[:staff_code]).count > 0
+        staff_code = StaffCode.where(company_id: current_user.company_id, code: booking_params[:staff_code]).first
+      else
+        render :json => { :errors => ["El código de empleado ingresado no es correcto."] }, :status => 422
+        return
+      end
     end
     if Company.find(current_user.company_id).company_setting.client_exclusive
       if !booking_params[:client_id].nil? && !booking_params[:client_id].empty? && !booking_params[:client_identification_number].empty?
