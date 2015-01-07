@@ -278,11 +278,19 @@ class BookingsController < ApplicationController
   end
 
   def booking_history
-    staff_code = ''
+    staff_code = '-'
+    user = '-'
     bookings = []
     BookingHistory.where(booking_id: params[:booking_id]).order(created_at: :desc).each do |booking_history|
-      (booking_history.staff_code && (current_user.role_id == Role.find_by_name('Administrador General') || current_user.role_id == Role.find_by_name('Administrador Local'))) ? staff_code = booking_history.staff_code.code : staff_code = ''
-      booking_history.user_id > 0 && booking_history.user ? user = booking_history.user.email : user = 'Usuario no registrado'
+      if current_user.role_id == Role.find_by_name('Administrador General').id || current_user.role_id == Role.find_by_name('Administrador Local').id
+        if booking_history.staff_code
+          staff_code = booking_history.staff_code.staff
+        end
+        user = 'Usuario no registrado'
+        if booking_history.user_id > 0 && booking_history.user
+          user = 'Usuario Registrado'
+        end
+      end
       bookings.push( { action: booking_history.action, start: booking_history.start, service: booking_history.service.name, provider: booking_history.service_provider.public_name, status: booking_history.status.name, user: user, staff_code: staff_code } )
     end
     render :json => bookings
