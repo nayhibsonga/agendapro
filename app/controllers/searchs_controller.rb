@@ -49,7 +49,7 @@ class SearchsController < ApplicationController
 			
 
 			#Filtrado de pronombres y artículos
-			search = params[:inputSearch].gsub(/\b([D|d]el?)+\b|\b([U|u]n(o|a)?s?)+\b|\b([E|e]l)+\b|\b([T|t]u)+\b|\b([L|l](o|a)s?)+\b|\b[AaYy]\b|["'.,;:-]|\b([E|e]n)+\b|\b([L|l]a)+\b|\b([C|c]on)+\b|\b([Q|q]ue)+\b|\b([S|s]us?)+\b|\b([E|e]s[o|a]?s?)+\b/i, '').gsub(/(\s)+/, '%')
+			search = params[:inputSearch].gsub(/\b([D|d]el?)+\b|\b([U|u]n(o|a)?s?)+\b|\b([E|e]l)+\b|\b([T|t]u)+\b|\b([L|l](o|a)s?)+\b|\b[AaYy]\b|["'.,;:-]|\b([E|e]n)+\b|\b([L|l]a)+\b|\b([C|c]on)+\b|\b([Q|q]ue)+\b|\b([S|s]us?)+\b|\b([E|e]s[o|a]?s?)+\b/i, '')
 
 			normalized_search = search.mb_chars.normalize(:kd).gsub(/[^\x00-\x7F]/,'').downcase.to_s
 
@@ -90,7 +90,9 @@ class SearchsController < ApplicationController
 
 				company_max = 0
 
-				str_test_array = location.company.name.mb_chars.normalize(:kd).gsub(/[^\x00-\x7F]/,'').downcase.to_s.split(' ')
+				str_test_array = location.company.name.mb_chars.normalize(:kd).gsub(/[^\x00-\x7F]/,'').gsub(/\b([D|d]el?)+\b|\b([U|u]n(o|a)?s?)+\b|\b([E|e]l)+\b|\b([T|t]u)+\b|\b([L|l](o|a)s?)+\b|\b[AaYy]\b|["'.,;:-]|\b([E|e]n)+\b|\b([L|l]a)+\b|\b([C|c]on)+\b|\b([Q|q]ue)+\b|\b([S|s]us?)+\b|\b([E|e]s[o|a]?s?)+\b/i, '').downcase.to_s.split(' ')
+
+				str_test_array = str_test_array[0..3]
 
 				test_array = Array.new
 
@@ -122,8 +124,8 @@ class SearchsController < ApplicationController
 				ecoScore2 = 0
 
 				economic_sectors.each do |sector|
-					score1 = m1.match(sector.name.mb_chars.normalize(:kd).gsub(/[^\x00-\x7F]/,'').downcase.to_s)
-					score2 = m2.match(sector.name.mb_chars.normalize(:kd).gsub(/[^\x00-\x7F]/,'').downcase.to_s)
+					score1 = m1.match(sector.name.mb_chars.normalize(:kd).gsub(/[^\x00-\x7F]/,'').gsub(/\b([D|d]el?)+\b|\b([U|u]n(o|a)?s?)+\b|\b([E|e]l)+\b|\b([T|t]u)+\b|\b([L|l](o|a)s?)+\b|\b[AaYy]\b|["'.,;:-]|\b([E|e]n)+\b|\b([L|l]a)+\b|\b([C|c]on)+\b|\b([Q|q]ue)+\b|\b([S|s]us?)+\b|\b([E|e]s[o|a]?s?)+\b/i, '').downcase.to_s)
+					score2 = m2.match(sector.name.mb_chars.normalize(:kd).gsub(/[^\x00-\x7F]/,'').gsub(/\b([D|d]el?)+\b|\b([U|u]n(o|a)?s?)+\b|\b([E|e]l)+\b|\b([T|t]u)+\b|\b([L|l](o|a)s?)+\b|\b[AaYy]\b|["'.,;:-]|\b([E|e]n)+\b|\b([L|l]a)+\b|\b([C|c]on)+\b|\b([Q|q]ue)+\b|\b([S|s]us?)+\b|\b([E|e]s[o|a]?s?)+\b/i, '').downcase.to_s)
 					if(score1 > ecoScore1)
 						ecoScore1 = score1
 					end
@@ -147,8 +149,8 @@ class SearchsController < ApplicationController
 					#Obtenemos los servicios de una categoría
 					services = services + category.services
 
-					score1 = m1.match(category.name.mb_chars.normalize(:kd).gsub(/[^\x00-\x7F]/,'').downcase.to_s)
-					score2 = m2.match(category.name.mb_chars.normalize(:kd).gsub(/[^\x00-\x7F]/,'').downcase.to_s)
+					score1 = m1.match(category.name.mb_chars.normalize(:kd).gsub(/[^\x00-\x7F]/,'').gsub(/\b([D|d]el?)+\b|\b([U|u]n(o|a)?s?)+\b|\b([E|e]l)+\b|\b([T|t]u)+\b|\b([L|l](o|a)s?)+\b|\b[AaYy]\b|["'.,;:-]|\b([E|e]n)+\b|\b([L|l]a)+\b|\b([C|c]on)+\b|\b([Q|q]ue)+\b|\b([S|s]us?)+\b|\b([E|e]s[o|a]?s?)+\b/i, '').downcase.to_s)
+					score2 = m2.match(category.name.mb_chars.normalize(:kd).gsub(/[^\x00-\x7F]/,'').gsub(/\b([D|d]el?)+\b|\b([U|u]n(o|a)?s?)+\b|\b([E|e]l)+\b|\b([T|t]u)+\b|\b([L|l](o|a)s?)+\b|\b[AaYy]\b|["'.,;:-]|\b([E|e]n)+\b|\b([L|l]a)+\b|\b([C|c]on)+\b|\b([Q|q]ue)+\b|\b([S|s]us?)+\b|\b([E|e]s[o|a]?s?)+\b/i, '').downcase.to_s)
 					if(score1 > catScore1)
 						catScore1 = score1
 					end
@@ -169,8 +171,8 @@ class SearchsController < ApplicationController
 
 				services.each do |service|
 
-					score1 = m1.match(service.name.mb_chars.normalize(:kd).gsub(/[^\x00-\x7F]/,'').downcase.to_s)
-					score2 = m2.match(service.name.mb_chars.normalize(:kd).gsub(/[^\x00-\x7F]/,'').downcase.to_s)
+					score1 = m1.match(service.name.mb_chars.normalize(:kd).gsub(/[^\x00-\x7F]/,'').gsub(/\b([D|d]el?)+\b|\b([U|u]n(o|a)?s?)+\b|\b([E|e]l)+\b|\b([T|t]u)+\b|\b([L|l](o|a)s?)+\b|\b[AaYy]\b|["'.,;:-]|\b([E|e]n)+\b|\b([L|l]a)+\b|\b([C|c]on)+\b|\b([Q|q]ue)+\b|\b([S|s]us?)+\b|\b([E|e]s[o|a]?s?)+\b/i, '').downcase.to_s)
+					score2 = m2.match(service.name.mb_chars.normalize(:kd).gsub(/[^\x00-\x7F]/,'').gsub(/\b([D|d]el?)+\b|\b([U|u]n(o|a)?s?)+\b|\b([E|e]l)+\b|\b([T|t]u)+\b|\b([L|l](o|a)s?)+\b|\b[AaYy]\b|["'.,;:-]|\b([E|e]n)+\b|\b([L|l]a)+\b|\b([C|c]on)+\b|\b([Q|q]ue)+\b|\b([S|s]us?)+\b|\b([E|e]s[o|a]?s?)+\b/i, '').downcase.to_s)
 					if(score1 > servScore1)
 						servScore1 = score1
 					end
@@ -193,8 +195,8 @@ class SearchsController < ApplicationController
 
 				service_providers.each do |provider|
 
-					score1 = m1.match(provider.public_name.mb_chars.normalize(:kd).gsub(/[^\x00-\x7F]/,'').downcase.to_s)
-					score2 = m2.match(provider.public_name.mb_chars.normalize(:kd).gsub(/[^\x00-\x7F]/,'').downcase.to_s)
+					score1 = m1.match(provider.public_name.mb_chars.normalize(:kd).gsub(/[^\x00-\x7F]/,'').gsub(/\b([D|d]el?)+\b|\b([U|u]n(o|a)?s?)+\b|\b([E|e]l)+\b|\b([T|t]u)+\b|\b([L|l](o|a)s?)+\b|\b[AaYy]\b|["'.,;:-]|\b([E|e]n)+\b|\b([L|l]a)+\b|\b([C|c]on)+\b|\b([Q|q]ue)+\b|\b([S|s]us?)+\b|\b([E|e]s[o|a]?s?)+\b/i, '').downcase.to_s)
+					score2 = m2.match(provider.public_name.mb_chars.normalize(:kd).gsub(/[^\x00-\x7F]/,'').gsub(/\b([D|d]el?)+\b|\b([U|u]n(o|a)?s?)+\b|\b([E|e]l)+\b|\b([T|t]u)+\b|\b([L|l](o|a)s?)+\b|\b[AaYy]\b|["'.,;:-]|\b([E|e]n)+\b|\b([L|l]a)+\b|\b([C|c]on)+\b|\b([Q|q]ue)+\b|\b([S|s]us?)+\b|\b([E|e]s[o|a]?s?)+\b/i, '').downcase.to_s)
 					if(score1 > provScore1)
 						provScore1 = score1
 					end
