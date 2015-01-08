@@ -27,10 +27,10 @@ class PayedBooking < ActiveRecord::Base
 	    	transfer = false
 
 	      	if(p_start_date != "")
-	      		start_date = DateTime.parse(params[:start_date])
+	      		start_date = DateTime.parse(p_start_date)
 	      	end
 	      	if(p_end_date != "")
-	      		end_date = DateTime.parse(params[:end_date])
+	      		end_date = DateTime.parse(p_end_date)
 	      	end
 	      	if(type != "pending")
 	      		transfer = true

@@ -28,6 +28,43 @@
 	</div>
 </div>
 
+<div class="modal fade" id="staffCode" tabindex="-1" role="dialog" aria-labelledby="staffCodeLabel" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+				<h4 class="modal-title" id="staffCodeLabel">Agregar Código de Empleado</h4>
+			</div>
+			<%= form_for @staff_code, :html => {:class => 'form-horizontal'} do |f| %>
+				<div class="modal-body">
+
+					<%= f.hidden_field :company_id, :value => current_user.company.id %>
+					<div class="form-group has-feedback">
+						<%= f.label :staff, 'Staff', :class => 'control-label col-xs-2' %>
+						<div class="col-xs-10">
+							<%= f.text_field :staff, :class => 'form-control' %>
+							<span class="help-block"></span>
+							<span class="form-control-feedback"></span>
+						</div>
+					</div>
+					<div class="form-group has-feedback">
+						<%= f.label :code, 'Código', :class => 'control-label col-xs-2' %>
+						<div class="col-xs-10">
+							<%= f.text_field :code, :class => 'form-control' %>
+							<span class="help-block"></span>
+							<span class="form-control-feedback"></span>
+						</div>
+					</div>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+					<%= f.submit 'Guardar', :class => 'btn btn-agendapro-claro' %>
+				</div>
+			<% end %>
+		</div>
+	</div>
+</div>
+
 <div class="row well well-white">
 	<ul id="myTab" class="nav nav-tabs" role="tablist">
 	  <li class=""><a href="#company" role="tab" data-toggle="tab" class="tab_index">Empresa</a></li>
@@ -99,42 +136,65 @@
 					<label class="col-sm-3 control-label">Banco</label>
 					<div class="col-sm-5">
 
-						<select name="company[bank]" class="form-control" id="company_bank">
-							<option value="">Seleccione un banco</option>
-							<option value="BANCO SECURITY">BANCO SECURITY</option>
-							<option value="BANCO ITAU CHILE">BANCO ITAU CHILE</option>
-							<option value="BANCO PARIS">BANCO PARIS</option>
-							<option value="BANCO SANTANDER">BANCO SANTANDER</option>
-							<option value="BANCO CONSORCIO">BANCO CONSORCIO</option>
-							<option value="BBVA (BCO BILBAO VIZCAYA ARG)">BBVA (BCO BILBAO VIZCAYA ARG)</option>
-							<option value="BANCO INTERNACIONAL">BANCO INTERNACIONAL</option>
-							<option value="SCOTIABANK (Y EX DESARROLLO)">SCOTIABANK (Y EX DESARROLLO)</option>
-							<option value="BANCO DEL ESTADO DE CHILE">BANCO DEL ESTADO DE CHILE</option>
-							<option value="BANCO DO BRASIL S.A.">BANCO DO BRASIL S.A.</option>
-							<option value="CORPBANCA">CORPBANCA</option>
-							<option value="BANCO DE CHILE - EDWARDS">BANCO DE CHILE - EDWARDS</option>
-							<option value="BANCO BICE">BANCO BICE</option>
-							<option value="BCI (BCO DE CREDITO E INV)">BCI (BCO DE CREDITO E INV)</option>
-							<option value="HSBC BANK">HSBC BANK</option>
-							<option value="BANCO RIPLEY">BANCO RIPLEY</option>
-							<option value="RABOBANK">RABOBANK</option>
-							<option value="BANCO FALABELLA">BANCO FALABELLA</option>
+						<select name="company[bank_id]" class="form-control" id="company_bank">
+							<% @banks.each do |bank| %>
+								<% if @company.bank_id == bank.id %>
+									<option value="<%= bank.id %>" selected><%= bank.name %></option>
+								<% else %>
+									<option value="<%= bank.id %>"><%= bank.name %></option>
+								<% end %>
+							<% end %>
 						</select>
 
 					</div>
 				</div>
 
-				<div class="form-group hidden account-info">
-					<%= f.label :account_number, 'N° de Cta. Cte.', :class => 'col-sm-3 control-label' %>
+				<div class="form-group hidden account-info account-data">
+					<%= f.label :account_name, 'Nombre Titular', :class => 'col-sm-3 control-label' %>
+					<div class="col-sm-5">
+							<%= f.text_field :account_name, :class => 'form-control', placeholder: '' %>
+					</div>
+				</div>
+
+				<div class="form-group hidden account-info account-data">
+					<%= f.label :company_rut, 'Rut Titular', :class => 'col-sm-3 control-label' %>
+					<div class="col-sm-5">
+							<%= f.text_field :company_rut, :class => 'form-control', placeholder: '' %>
+					</div>
+				</div>
+
+				<div class="form-group hidden account-info account-data">
+					<%= f.label :account_number, 'N° de Cuenta', :class => 'col-sm-3 control-label' %>
 					<div class="col-sm-5">
 							<%= f.text_field :account_number, :class => 'form-control', placeholder: '' %>
 					</div>
 				</div>
 
-				<div class="form-group hidden account-info">
-					<%= f.label :company_rut, 'Rut de la empresa', :class => 'col-sm-3 control-label' %>
+				<div class="form-group hidden account-info account-data">
+					<%= f.label :account_type, 'Tipo de cuenta', :class => 'col-sm-3 control-label' %>
 					<div class="col-sm-5">
-							<%= f.text_field :company_rut, :class => 'form-control', placeholder: '' %>
+						<select name="company[account_type]" class="form-control">
+							<option value="3" <%= "selected" if @company.account_type==3 %>>
+								Cuenta Corriente
+							</option>
+							<option value="2" <%= "selected" if @company.account_type==2 %>>
+								Cuenta de ahorro
+							</option>
+							<option value="1" <%= "selected" if @company.account_type==1 %>>
+								Cuenta Vista
+							</option>
+						</select>
+					</div>
+				</div>
+
+				<div class="form-group hidden" id="other-bank">
+					<div class="col-sm-3">
+					</div>
+					<div class="col-sm-5">
+						Tu banco no está soportado, pero después de editar tu empresa puedes ponerte en contacto con nosotros para permitir que recibas pagos en línea.
+					</div>
+					<div class="col-sm-offset-3 col-sm-5">
+						<span class="help-block"></span>
 					</div>
 				</div>
 
@@ -288,12 +348,53 @@
 					</div>
 				</div>
 				<div class="form-group">
+					<%= f.label :booking_history, 'Historial de Modificaciones de Reservas', :class => 'col-sm-3 control-label' %>
+					<div class="col-sm-5">
+						<%= f.check_box :booking_history %>
+						<span class="help-block">Si activas esta opción, se guardará un historial de modificaciones para cada reserva. Este historial es exclusivamente visible por el Administrador General y el Administrador de Local, para las reservas de el(los) local(es) al que este asociado.</span>
+					</div>
+				</div>
+				<div class="form-group">
+					<%= f.label :staff_code, 'Exigir Código de Staff', :class => 'col-sm-3 control-label' %>
+					<div class="col-sm-5">
+						<%= f.check_box :staff_code %>
+						<span class="help-block">Al activar esta opción, al hacer modificaciones en las reservas, se exigirá un código de empleado que debe coincidir exactamente con algún código permitido. Los códigos permitidos son definidos exclusivamente en la tabla a continuación.</span>
+					</div>
+				</div>
+				<div class="form-group">
 					<div class="col-sm-offset-3 col-sm-4">
 					 <%= f.submit 'Guardar', :class => 'btn btn-agendapro-claro' %>
 					 <%= link_to 'Cancelar', dashboard_path, :class => "btn btn-default" %>
 					</div> 
 				</div>
 			<% end %>
+		</div>
+		<div class="row">
+			<h4>
+				Códigos de Staff
+				<button class="btn btn-agendapro-oscuro pull-right" data-toggle="modal" data-target="#staffCode">
+					Agregar código
+				</button>
+			</h4>
+			<br />
+			<table class="table table-hover">
+				<thead>
+					<tr>
+						<th>Staff</th>
+						<th>Código</th>
+						<th>Eliminar</th>
+					</tr>
+				</thead>
+				<tbody>
+					<% @staff_codes.each do |staff_code| %>
+						<tr>
+							<td><%= staff_code.staff %></td>
+							<td><%= staff_code.code %></td>
+							<td><%= link_to '<i class="fa fa-trash-o"></i>'.html_safe, staff_code, method: :delete, data: { confirm: '¿Estás seguro de eliminar el remitente seleccionado?' }, class: 'btn btn-danger' %></td>
+						</tr>
+						<% end %>
+				</tbody>
+			</table>
 		</div>
 	  </div>
 	  <div class="tab-pane" id="embedded">
@@ -320,34 +421,32 @@
 		</div>
 	  </div>
 	  <div class="tab-pane" id="emails">
-		<div class="container">
-			<div class="row">
-				<h4>
-					Remitentes
-					<button class="btn btn-agendapro-oscuro pull-right" data-toggle="modal" data-target="#fromEmail">
-						Agregar E-mail
-					</button>
-				</h4>
-				<br />
-				<table class="table table-hover">
-					<thead>
+		<div class="row">
+			<h4>
+				Remitentes
+				<button class="btn btn-agendapro-oscuro pull-right" data-toggle="modal" data-target="#fromEmail">
+					Agregar E-mail
+				</button>
+			</h4>
+			<br />
+			<table class="table table-hover">
+				<thead>
+					<tr>
+						<th>Remitente</th>
+						<th>Confirmado</th>
+						<th>Eliminar</th>
+					</tr>
+				</thead>
+				<tbody>
+					<% @emails.each do |email| %>
 						<tr>
-							<th>Remitente</th>
-							<th>Confirmado</th>
-							<th>Eliminar</th>
+							<td><%= email.email %></td>
+							<td><%= unless email.confirmed then 'Falta confirmación' else 'Si' end %></td>
+							<td><%= link_to '<i class="fa fa-trash-o"></i>'.html_safe, email, method: :delete, data: { confirm: '¿Estás seguro de eliminar el remitente seleccionado?' }, class: 'btn btn-danger' %></td>
 						</tr>
-					</thead>
-					<tbody>
-						<% @emails.each do |email| %>
-							<tr>
-								<td><%= email.email %></td>
-								<td><%= unless email.confirmed then 'Falta confirmación' else 'Si' end %></td>
-								<td><%= link_to '<i class="fa fa-trash-o"></i>'.html_safe, email, method: :delete, data: { confirm: '¿Estás seguro de eliminar el remitente seleccionado?' }, class: 'btn btn-danger' %></td>
-							</tr>
-							<% end %>
-					</tbody>
-				</table>
-			</div>
+						<% end %>
+				</tbody>
+			</table>
 		</div>
 
 		<h4>Firma E-mail</h4>
@@ -552,6 +651,15 @@
 			$('.fa.fa-times').removeClass('fa fa-times');
 		});
   	});
+  	$(function () {
+  		$('#staffCode').on('hidden.bs.modal', function (e) {
+			validator.resetForm();
+			$('.has-success').removeClass('has-success');
+			$('.fa.fa-check').removeClass('fa fa-check');
+			$('.has-error').removeClass('has-error');
+			$('.fa.fa-times').removeClass('fa fa-times');
+		});
+  	});
   </script>
 
   <script type="text/javascript">
@@ -560,21 +668,58 @@
   		if($('#company_allows_online_payment').prop('checked'))
 		{
 			$(".account-info").removeClass("hidden");
+			if($("#company_bank :selected").text() == "Otro")
+			{
+				$("#other-bank").removeClass("hidden");
+				$(".account-data").addClass("hidden");
+			}
+			else
+			{
+				$("#other-bank").addClass("hidden");
+				$(".account-data").removeClass("hidden");
+			}
 		}
 		else
 		{
 			$(".account-info").addClass("hidden");
+			$("#other-bank").addClass("hidden");
 		}
+
+
   	});
 
 	$("#company_allows_online_payment").change(function(){
 		if($('#company_allows_online_payment').prop('checked'))
 		{
 			$(".account-info").removeClass("hidden");
+			if($("#company_bank :selected").text() == "Otro")
+			{
+				$("#other-bank").removeClass("hidden");
+				$(".account-data").addClass("hidden");
+			}
+			else
+			{
+				$("#other-bank").addClass("hidden");
+				$(".account-data").removeClass("hidden");
+			}
 		}
 		else
 		{
+			$("#other-bank").addClass("hidden");
 			$(".account-info").addClass("hidden");
+		}
+	});
+
+	$("#company_bank").change(function(){
+		if($("#company_bank :selected").text() == "Otro")
+		{
+			$("#other-bank").removeClass("hidden");
+			$(".account-data").addClass("hidden");
+		}
+		else
+		{
+			$("#other-bank").addClass("hidden");
+			$(".account-data").removeClass("hidden");
 		}
 	});
 

@@ -7,12 +7,13 @@ class BookingsController < ApplicationController
   # GET /bookings
   # GET /bookings.json
   def index
-    @company = Company.where(id: current_user.company_id)
+    @company = Company.find(current_user.company_id)
     if current_user.role_id == Role.find_by_name("Staff").id || current_user.role_id == Role.find_by_name("Staff (sin edición)").id
       @locations = Location.where(:active => true, id: ServiceProvider.where(active: true, id: UserProvider.where(user_id: current_user.id).pluck(:service_provider_id)).pluck(:location_id)).accessible_by(current_ability).order(:order)
     else
       @locations = Location.where(:active => true).accessible_by(current_ability).order(:order)
     end
+    @company_setting = @company.company_setting
     @service_providers = ServiceProvider.where(location_id: @locations).order(:order)
     @bookings = Booking.where(service_provider_id: @service_providers)
     @booking = Booking.new
@@ -59,8 +60,17 @@ class BookingsController < ApplicationController
   # POST /bookings
   # POST /bookings.json
   def create
-    new_booking_params = booking_params.except(:client_first_name, :client_last_name, :client_phone, :client_email, :client_identification_number, :client_address, :client_district, :client_city, :client_birth_day, :client_birth_month, :client_birth_year, :client_age, :client_gender)
+    staff_code = nil
+    new_booking_params = booking_params.except(:client_first_name, :client_last_name, :client_phone, :client_email, :client_identification_number, :client_address, :client_district, :client_city, :client_birth_day, :client_birth_month, :client_birth_year, :client_age, :client_gender, :staff_code)
     @booking = Booking.new(new_booking_params)
+    if Company.find(current_user.company_id).company_setting.staff_code
+      if booking_params[:staff_code] && !booking_params[:staff_code].empty? && StaffCode.where(company_id: current_user.company_id, code: booking_params[:staff_code]).count > 0
+        staff_code = StaffCode.where(company_id: current_user.company_id, code: booking_params[:staff_code]).first.id
+      else
+        render :json => { :errors => ["El código de empleado ingresado no es correcto."] }, :status => 422
+        return
+      end
+    end
     if Company.find(current_user.company_id).company_setting.client_exclusive
       if !booking_params[:client_id].nil? && !booking_params[:client_id].empty? && !booking_params[:client_identification_number].empty?
         @client = Client.find(booking_params[:client_id])
@@ -141,6 +151,7 @@ class BookingsController < ApplicationController
         u = @booking
         if u.warnings then warnings = u.warnings.full_messages else warnings = [] end
         @booking_json = { :id => u.id, :start => u.start, :end => u.end, :service_id => u.service_id, :service_provider_id => u.service_provider_id, :status_id => u.status_id, :first_name => u.client.first_name, :last_name => u.client.last_name, :email => u.client.email, :phone => u.client.phone, :notes => u.notes,  :company_comment => u.company_comment, :provider_lock => u.provider_lock, :service_name => u.service.name, :warnings => warnings }
+        BookingHistory.create(booking_id: @booking.id, action: "Creada por Calendario", start: @booking.start, status_id: @booking.status_id, service_id: @booking.service_id, service_provider_id: @booking.service_provider_id, user_id: current_user.id, staff_code_id: staff_code)
         format.html { redirect_to bookings_path, notice: 'Booking was successfully created.' }
         format.json { render :json => @booking_json }
         format.js { }
@@ -155,7 +166,16 @@ class BookingsController < ApplicationController
   # PATCH/PUT /bookings/1
   # PATCH/PUT /bookings/1.json
   def update
-    new_booking_params = booking_params.except(:client_first_name, :client_last_name, :client_phone, :client_email, :client_identification_number, :client_address, :client_district, :client_city, :client_birth_day, :client_birth_month, :client_birth_year, :client_age, :client_gender)
+    staff_code = nil
+    new_booking_params = booking_params.except(:client_first_name, :client_last_name, :client_phone, :client_email, :client_identification_number, :client_address, :client_district, :client_city, :client_birth_day, :client_birth_month, :client_birth_year, :client_age, :client_gender, :staff_code)
+    if Company.find(current_user.company_id).company_setting.staff_code
+      if booking_params[:staff_code] && !booking_params[:staff_code].empty? && StaffCode.where(company_id: current_user.company_id, code: booking_params[:staff_code]).count > 0
+        staff_code = StaffCode.where(company_id: current_user.company_id, code: booking_params[:staff_code]).first.id
+      else
+        render :json => { :errors => ["El código de empleado ingresado no es correcto."] }, :status => 422
+        return
+      end
+    end
     if Company.find(current_user.company_id).company_setting.client_exclusive
       if !booking_params[:client_id].nil? && !booking_params[:client_id].empty? && !booking_params[:client_identification_number].empty?
         @client = Client.find(booking_params[:client_id])
@@ -235,6 +255,7 @@ class BookingsController < ApplicationController
         u = @booking
         if u.warnings then warnings = u.warnings.full_messages else warnings = [] end
         @booking_json = { :id => u.id, :start => u.start, :end => u.end, :service_id => u.service_id, :service_provider_id => u.service_provider_id, :status_id => u.status_id, :first_name => u.client.first_name, :last_name => u.client.last_name, :email => u.client.email, :phone => u.client.phone, :notes => u.notes,  :company_comment => u.company_comment, :provider_lock => u.provider_lock, :service_name => u.service.name, :warnings => warnings }
+        BookingHistory.create(booking_id: @booking.id, action: "Modificada por Calendario", start: @booking.start, status_id: @booking.status_id, service_id: @booking.service_id, service_provider_id: @booking.service_provider_id, user_id: current_user.id, staff_code_id: staff_code)
         format.html { redirect_to bookings_path, notice: 'Booking was successfully updated.' }
         format.json { render :json => @booking_json }
         format.js { }
@@ -256,6 +277,25 @@ class BookingsController < ApplicationController
       format.html { redirect_to bookings_url }
       format.json { render :json => @booking }
     end
+  end
+
+  def booking_history
+    staff_code = '-'
+    user = '-'
+    bookings = []
+    BookingHistory.where(booking_id: params[:booking_id]).order(created_at: :desc).each do |booking_history|
+      if current_user.role_id == Role.find_by_name('Administrador General').id || current_user.role_id == Role.find_by_name('Administrador Local').id
+        if booking_history.staff_code
+          staff_code = booking_history.staff_code.staff
+        end
+        user = 'Usuario no registrado'
+        if booking_history.user_id > 0 && booking_history.user
+          user = 'Usuario Registrado'
+        end
+      end
+      bookings.push( { action: booking_history.action, start: booking_history.start, service: booking_history.service.name, provider: booking_history.service_provider.public_name, status: booking_history.status.name, user: user, staff_code: staff_code } )
+    end
+    render :json => bookings
   end
 
   def get_booking
@@ -528,9 +568,8 @@ class BookingsController < ApplicationController
         end
     else #SÓLO RESERVA
       if @booking.save
-      
-      # flash[:notice] = "Reserva realizada exitosamente."      
-      # BookingMailer.book_service_mail(@booking)
+        current_user ? user = current_user.id : user = 0
+        BookingHistory.create(booking_id: @booking.id, action: "Creada por Cliente", start: @booking.start, status_id: @booking.status_id, service_id: @booking.service_id, service_provider_id: @booking.service_provider_id, user_id: user)
       else
         #flash[:alert] = "Hubo un error guardando los datos de tu reserva. Inténtalo nuevamente."
         @errors = @booking.errors.full_messages
@@ -681,6 +720,8 @@ class BookingsController < ApplicationController
     if @booking.update(start: params[:start], end: params[:end], max_changes: params[:max_changes])
       #flash[:notice] = "Reserva actualizada exitosamente."
       # BookingMailer.update_booking(@booking)
+      current_user ? user = current_user.id : user = 0
+      BookingHistory.create(booking_id: @booking.id, action: "Modificada por Cliente", start: @booking.start, status_id: @booking.status_id, service_id: @booking.service_id, service_provider_id: @booking.service_provider_id, user_id: user)
     else
       #flash[:alert] = "Hubo un error actualizando tu reserva. Inténtalo nuevamente."
       @errors = @booking.errors
@@ -699,8 +740,10 @@ class BookingsController < ApplicationController
     @booking = Booking.find(id)
     @company = Location.find(@booking.location_id).company
     @selectedLocation = Location.find(@booking.location_id)
-    @booking.update(:status => Status.find_by(:name => 'Confirmado'))
-
+    if @booking.update(:status => Status.find_by(:name => 'Confirmado'))
+      current_user ? user = current_user.id : user = 0
+      BookingHistory.create(booking_id: @booking.id, action: "Confirmada por Cliente", start: @booking.start, status_id: @booking.status_id, service_id: @booking.service_id, service_provider_id: @booking.service_provider_id, user_id: user)
+    end
     render layout: 'workflow'
   end
 
@@ -746,6 +789,8 @@ class BookingsController < ApplicationController
 
         #flash[:notice] = "Reserva cancelada exitosamente."
         # BookingMailer.cancel_booking(@booking)
+        current_user ? user = current_user.id : user = 0
+        BookingHistory.create(booking_id: @booking.id, action: "Cancelada por Cliente", start: @booking.start, status_id: @booking.status_id, service_id: @booking.service_id, service_provider_id: @booking.service_provider_id, user_id: user)
       else
         flash[:alert] = "Hubo un error cancelando tu reserva. Inténtalo nuevamente."
         @errors = @booking.errors
@@ -894,6 +939,6 @@ class BookingsController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def booking_params
-      params.require(:booking).permit(:start, :end, :notes, :service_provider_id, :service_id, :price, :user_id, :status_id, :promotion_id, :client_id, :client_first_name, :client_last_name, :client_email, :client_phone, :confirmation_code, :company_comment, :web_origin, :provider_lock, :send_mail, :client_identification_number, :client_address, :client_district, :client_city, :client_birth_day, :client_birth_month, :client_birth_year, :client_age, :client_gender)
+      params.require(:booking).permit(:start, :end, :notes, :service_provider_id, :service_id, :price, :user_id, :status_id, :promotion_id, :client_id, :client_first_name, :client_last_name, :client_email, :client_phone, :confirmation_code, :company_comment, :web_origin, :provider_lock, :send_mail, :client_identification_number, :client_address, :client_district, :client_city, :client_birth_day, :client_birth_month, :client_birth_year, :client_age, :client_gender, :staff_code)
     end
 end

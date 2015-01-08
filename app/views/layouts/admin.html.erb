@@ -106,6 +106,9 @@
 							<li>
 							<%= link_to '<i class="fa fa-exchange fa-fw"></i><span class="remove-txt"> Transferencias</span>'.html_safe, payed_bookings_path, { :class => if controller.controller_name == "payed_bookings" then "submenu active" else "submenu" end }  %>
 							</li>
+							<li>
+							<%= link_to '<i class="fa fa-university fa-fw"></i><span class="remove-txt"> Bancos</span>'.html_safe, banks_path, { :class => if controller.controller_name == "banks" then "submenu active" else "submenu" end }  %>
+							</li>
 						</ul>
 					</li>
 

@@ -561,6 +561,7 @@ class CompaniesController < ApplicationController
 			return
 		end
 		@company = Company.new
+		@banks = Bank.all
 		render :layout => 'login'
 	end
 
@@ -585,6 +586,6 @@ class CompaniesController < ApplicationController
 
 		# Never trust parameters from the scary internet, only allow the white list through.
 		def company_params
-			params.require(:company).permit(:name, :plan_id, :logo, :allows_online_payment, :bank, :account_number, :company_rut, :remove_logo, :payment_status_id, :pay_due, :web_address, :description, :cancellation_policy, :months_active_left, :due_amount, :due_date, :active, company_setting_attributes: [:before_booking, :after_booking], economic_sector_ids: [])
+			params.require(:company).permit(:name, :plan_id, :logo, :allows_online_payment, :bank_id, :account_number, :company_rut, :account_name, :account_type, :remove_logo, :payment_status_id, :pay_due, :web_address, :description, :cancellation_policy, :months_active_left, :due_amount, :due_date, :active, company_setting_attributes: [:before_booking, :after_booking], economic_sector_ids: [])
 		end
 end

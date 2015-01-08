@@ -74,26 +74,10 @@
 					<label class="col-sm-4 control-label">Banco</label>
 					<div class="col-sm-8">
 
-						<select name="company[bank]" class="form-control" id="company_bank">
-							<option value="">Seleccione un banco</option>
-							<option value="BANCO SECURITY">BANCO SECURITY</option>
-							<option value="BANCO ITAU CHILE">BANCO ITAU CHILE</option>
-							<option value="BANCO PARIS">BANCO PARIS</option>
-							<option value="BANCO SANTANDER">BANCO SANTANDER</option>
-							<option value="BANCO CONSORCIO">BANCO CONSORCIO</option>
-							<option value="BBVA (BCO BILBAO VIZCAYA ARG)">BBVA (BCO BILBAO VIZCAYA ARG)</option>
-							<option value="BANCO INTERNACIONAL">BANCO INTERNACIONAL</option>
-							<option value="SCOTIABANK (Y EX DESARROLLO)">SCOTIABANK (Y EX DESARROLLO)</option>
-							<option value="BANCO DEL ESTADO DE CHILE">BANCO DEL ESTADO DE CHILE</option>
-							<option value="BANCO DO BRASIL S.A.">BANCO DO BRASIL S.A.</option>
-							<option value="CORPBANCA">CORPBANCA</option>
-							<option value="BANCO DE CHILE - EDWARDS">BANCO DE CHILE - EDWARDS</option>
-							<option value="BANCO BICE">BANCO BICE</option>
-							<option value="BCI (BCO DE CREDITO E INV)">BCI (BCO DE CREDITO E INV)</option>
-							<option value="HSBC BANK">HSBC BANK</option>
-							<option value="BANCO RIPLEY">BANCO RIPLEY</option>
-							<option value="RABOBANK">RABOBANK</option>
-							<option value="BANCO FALABELLA">BANCO FALABELLA</option>
+						<select name="company[bank_id]" class="form-control" id="company_bank">
+							<% @banks.each do |bank| %>
+								<option value="<%= bank.id %>"><%= bank.name %></option>
+							<% end %>
 						</select>
 
 					</div>
@@ -102,8 +86,28 @@
 					</div>
 				</div>
 
-				<div class="form-group hidden account-info">
-					<%= f.label :account_number, 'N° de Cta. Cte.', :class => 'col-sm-4 control-label' %>
+				<div class="form-group hidden account-info account-data">
+					<%= f.label :account_name, 'Nombre Titular', :class => 'col-sm-4 control-label' %>
+					<div class="col-sm-8">
+							<%= f.text_field :account_name, :class => 'form-control', placeholder: '' %>
+					</div>
+					<div class="col-sm-offset-4 col-sm-8">
+						<span class="help-block"></span>
+					</div>
+				</div>
+
+				<div class="form-group hidden account-info account-data">
+					<%= f.label :company_rut, 'Rut Titular', :class => 'col-sm-4 control-label' %>
+					<div class="col-sm-8">
+							<%= f.text_field :company_rut, :class => 'form-control', placeholder: '' %>
+					</div>
+					<div class="col-sm-offset-4 col-sm-8">
+						<span class="help-block"></span>
+					</div>
+				</div>
+
+				<div class="form-group hidden account-info account-data">
+					<%= f.label :account_number, 'N° de Cuenta', :class => 'col-sm-4 control-label' %>
 					<div class="col-sm-8">
 							<%= f.text_field :account_number, :class => 'form-control', placeholder: '' %>
 					</div>
@@ -112,10 +116,32 @@
 					</div>
 				</div>
 
-				<div class="form-group hidden account-info">
-					<%= f.label :company_rut, 'Rut de la empresa', :class => 'col-sm-4 control-label' %>
+				<div class="form-group hidden account-info account-data">
+					<%= f.label :account_type, 'Tipo de cuenta', :class => 'col-sm-4 control-label' %>
 					<div class="col-sm-8">
-							<%= f.text_field :company_rut, :class => 'form-control', placeholder: '' %>
+						<select name="company[account_type]" class="form-control">
+							<option value="3">
+								Cuenta Corriente
+							</option>
+							<option value="2">
+								Cuenta de ahorro
+							</option>
+							<option value="1">
+								Cuenta Vista
+							</option>
+						</select>
+					</div>
+					<div class="col-sm-offset-4 col-sm-8">
+						<span class="help-block"></span>
+					</div>
+				</div>
+				
+
+				<div class="form-group hidden" id="other-bank">
+					<div class="col-sm-4">
+					</div>
+					<div class="col-sm-8">
+						Tu banco no está soportado, pero después de registrar tu empresa puedes ponerte en contacto con nosotros para permitir que recibas pagos en línea.
 					</div>
 					<div class="col-sm-offset-4 col-sm-8">
 						<span class="help-block"></span>
@@ -154,11 +180,36 @@
 $("#company_allows_online_payment").change(function(){
 	if($('#company_allows_online_payment').prop('checked'))
 	{
+
 		$(".account-info").removeClass("hidden");
+		if($("#company_bank :selected").text() == "Otro")
+		{
+			$("#other-bank").removeClass("hidden");
+			$(".account-data").addClass("hidden");
+		}
+		else
+		{
+			$("#other-bank").addClass("hidden");
+			$(".account-data").removeClass("hidden");
+		}
 	}
 	else
 	{
+		$("#other-bank").addClass("hidden");
 		$(".account-info").addClass("hidden");
+	}
+});
+
+$("#company_bank").change(function(){
+	if($("#company_bank :selected").text() == "Otro")
+	{
+		$("#other-bank").removeClass("hidden");
+		$(".account-data").addClass("hidden");
+	}
+	else
+	{
+		$("#other-bank").addClass("hidden");
+		$(".account-data").removeClass("hidden");
 	}
 });
 
