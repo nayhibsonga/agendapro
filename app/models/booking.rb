@@ -8,6 +8,8 @@ class Booking < ActiveRecord::Base
 	belongs_to :client
 	has_one :payed_booking
 
+	has_many :booking_histories, dependent: :destroy
+
 	validates :start, :end, :service_provider_id, :service_id, :status_id, :location_id, :client_id, :presence => true
 
 	validate :time_empty_or_negative, :booking_duration, :service_staff, :client_exclusive, :time_in_provider_time

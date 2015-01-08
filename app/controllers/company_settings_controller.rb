@@ -29,6 +29,8 @@ class CompanySettingsController < ApplicationController
     @banks = Bank.all
     @emails = current_user.company.company_from_email
     @company_from_email = CompanyFromEmail.new
+    @staff_codes = current_user.company.staff_codes
+    @staff_code = StaffCode.new
     @company_setting = @company.company_setting
     @web_address = Company.find(current_user.company_id).web_address
 
@@ -111,8 +113,5 @@ class CompanySettingsController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def company_setting_params
-
-      params.require(:company_setting).permit(:email, :sms, :signature, :company_id, :before_booking, :after_booking, :before_edit_booking, :activate_workflow, :activate_search, :client_exclusive, :provider_preference, :calendar_duration, :extended_schedule_bool, :extended_min_hour, :extended_max_hour, :schedule_overcapacity, :provider_overcapacity, :resource_overcapacity, :booking_confirmation_time, :page_id, :max_changes, :booking_configuration_email)
-
+      params.require(:company_setting).permit(:email, :sms, :signature, :company_id, :before_booking, :after_booking, :before_edit_booking, :activate_workflow, :activate_search, :client_exclusive, :provider_preference, :calendar_duration, :extended_schedule_bool, :extended_min_hour, :extended_max_hour, :schedule_overcapacity, :provider_overcapacity, :resource_overcapacity, :booking_confirmation_time, :page_id, :max_changes, :booking_history, :staff_code, :booking_configuration_email)
     end
-end
