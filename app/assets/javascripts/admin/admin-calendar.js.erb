@@ -431,7 +431,7 @@ function editBookingModal(eventId) {
 			$('#booking_status_id option[value="'+booking.status_id+'"]').attr("selected",true);
 			$('#booking_price').val(booking.price);
 			$('#booking_client_id').val(booking.client_id);
-			loadClientHistory();
+			loadClientHistory(eventId);
 			$('#booking_client_first_name').val(booking.first_name);
 			$('#booking_client_last_name').val(booking.last_name);
 			$('#booking_client_identification_number').val(booking.identification_number);
@@ -453,6 +453,7 @@ function editBookingModal(eventId) {
 			$('#booking_client_gender option[value="'+booking.gender+'"]').attr("selected",true);
 			$('#booking_notes').val(booking.notes);
 			$('#booking_company_comment').val(booking.company_comment);
+			$('#staff_code').val('');
 			if (booking.provider_lock) {
 				$('#booking_provider_lock').prop('checked', true);
 				$('#booking_service_provider_id').prop('disabled', true);
@@ -589,6 +590,7 @@ function createBookingModal(date, provider_id) {
 			$('#booking_send_mail').val(0);
 			$('#booking_send_mail').prop('checked', false);
 			$('#booking_send_mail').prop('disabled', true);
+			$('#staff_code').val('');
 			if (!$('label[for=booking_send_mail]').hasClass('disabled')) {
 				$('label[for=booking_send_mail]').addClass('disabled');
 			}
@@ -613,6 +615,7 @@ function createBookingModal(date, provider_id) {
 					modalChange();
 				});
 			};
+			$('#client-history-tbody').html('<tr><td colspan="6">El cliente no tiene historial...</td></tr>');
 			$('#booking-tab').tab('show');
 			$('#bookingModal').modal('show');
 		}
@@ -673,7 +676,8 @@ function jsonBooking() {
 		"notes": $('#booking_notes').val(),
 		"company_comment": $('#booking_company_comment').val(),
 		"send_mail": $('#booking_send_mail').prop('checked'),
-		"provider_lock": $('#booking_provider_lock').prop('checked')
+		"provider_lock": $('#booking_provider_lock').prop('checked'),
+		"staff_code": $('#staff_code').val()
 	};
 	return jsBooking;
 }
@@ -808,6 +812,9 @@ function editDrag(event) {
 
 function saveBooking(typeURL, extraURL) {
 	var bookingJSON = jsonBooking();
+	if (typeURL == 'POST') {
+		bookingJSON['max_changes'] = $('#booking_max_changes').val();
+	};
 	$.ajax({
 		type: typeURL,
 		url: '/bookings'+ extraURL +'.json',
@@ -1421,10 +1428,10 @@ function setAge() {
 	return false;
 }
 
-function loadClientHistory() {
+function loadClientHistory(booking_id) {
 	if (parseInt($('#booking_client_id').val()) > 0) {
 		$('#client-history-tbody').empty();
-		$.getJSON('/clients_bookings_history/', {id: parseInt($('#booking_client_id').val())}, function (bookings_history) {
+		$.getJSON('/clients_bookings_history', {id: parseInt($('#booking_client_id').val())}, function (bookings_history) {
 			if (bookings_history.length > 0) {
 				$.each(bookings_history, function (key, booking_history) {
 					var date = new Date(booking_history.start);
@@ -1432,7 +1439,25 @@ function loadClientHistory() {
 				});
 			}
 			else {
-				$('#client-history-tbody').append('<tr><td colspan="6">El cliente no tiene historial...</td></tr>');
+				$('#client-history-tbody').append('<tr><td colspan="6">El cliente no tiene reservas anteriores...</td></tr>');
+			}
+		});
+	}
+	if (parseInt(booking_id) > 0) {
+		$('#booking-history-tbody').empty();
+		$.getJSON('/booking_history', {booking_id: parseInt(booking_id)}, function (bookings_history) {
+			if (bookings_history.length > 0) {
+				$.each(bookings_history, function (key, booking_history) {
+					var staffCode = '';
+					if ($('#calendar-data').data('staff-code')) {
+						staffCode = '<td>'+booking_history.staff_code+'</td>';
+					}
+					var date = new Date(booking_history.start);
+					$('#booking-history-tbody').append('<tr><td>'+booking_history.action+'</td><td>'+dateToLocal(date)+'</td><td>'+booking_history.service+'</td><td>'+booking_history.provider+'</td><td>'+booking_history.status+'</td><td>'+booking_history.user+'</td>'+staffCode+'</tr>');
+				});
+			}
+			else {
+				$('#booking-history-tbody').append('<tr><td colspan="6">No hay modificaciones para esta reserva...</td></tr>');
 			}
 		});
 	}
@@ -1570,7 +1595,7 @@ $(function() {
 			}
 			$('#xButton').prop('disabled', false);
 			$("#full_name").prop('disabled', true);
-			loadClientHistory();
+			loadClientHistory(0);
 		}
 	}).data( "ui-autocomplete" )._renderItem = function( ul, item ) {
 		return $( '<li>' ).append( '<a>' + item.label + '<br><span class="auto-desc">' + item.desc + '</span></a>' ).appendTo( ul );
@@ -1613,7 +1638,7 @@ $(function() {
 			}
 			$('#xButton').prop('disabled', false);
 			$("#full_name").prop('disabled', true);
-			loadClientHistory();
+			loadClientHistory(0);
 		}
 	}).data( "ui-autocomplete" )._renderItem = function( ul, item ) {
 		return $( '<li>' ).append( '<a>' + item.label + '<br><span class="auto-desc">' + item.desc + '</span></a>' ).appendTo( ul );

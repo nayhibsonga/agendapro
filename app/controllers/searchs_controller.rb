@@ -15,8 +15,8 @@ class SearchsController < ApplicationController
 	  
 	def search
 		if params[:inputSearch] && params[:latitude] && params[:longitude] && params[:inputLocalization]
-			@lat = cookies[:lat].to_f
-			@lng = cookies[:lng].to_f
+			@lat = params[:latitude]
+			@lng = params[:longitude]
 
 			
 
@@ -27,24 +27,24 @@ class SearchsController < ApplicationController
 			host = request.host_with_port
 			@domain = host[host.index(request.domain)..host.length]
 
-			if(!@lat)
-				lat = params[:latitude]
-			else
-				lat = @lat
-			end
-			if(!@long)
-				long = params[:longitude]
-			else
-				long = @long
-			end
+			# if(!@lat)
+			# 	lat = params[:latitude]
+			# else
+			# 	lat = @lat
+			# end
+			# if(!@long)
+			# 	long = params[:longitude]
+			# else
+			# 	long = @long
+			# end
 
-			lat = @lat
-			long = @lng
+			lat = params[:latitude]
+			long = params[:longitude]
 
 
 
-			@latitude = @lat
-			@longitude = @lng
+			@latitude = params[:latitude]
+			@longitude = params[:longitude]
 
 			
 
@@ -63,8 +63,14 @@ class SearchsController < ApplicationController
 
 			#locations_scores = Hash.new
 
-			locations = Location.where('sqrt((latitude - ' + lat.to_s + ')^2 + (longitude - ' + long.to_s + ')^2) < 0.25') #Location.all
-			loc_ids = Array.new
+			## Se eligen los locales activos de empresas activas
+ 			active_companies_ids = Company.where(active: true).pluck(:id)
+			elegible_locations = Location.where(active: true, company_id: active_companies_ids)
+			## Se eligen locales que tengan horarios, que a su vez tengan prestadores con horarios y servicios asociados
+			elegible_locations = elegible_locations.where(id: ServiceProvider.where(active: true, company_id: active_companies_ids).joins(:provider_times).joins(:services).where("services.id" => Service.where(active: true, company_id: active_companies_ids).pluck(:id)).pluck(:location_id).uniq).joins(:location_times).uniq.order(order: :asc)
+			## Se eligen locales dentro del rango
+			locations = elegible_locations.where('sqrt((latitude - ' + lat.to_s + ')^2 + (longitude - ' + long.to_s + ')^2) < 0.25') #Location.all
+ 			loc_ids = Array.new
 
 			#Struct.new("Local", :id, :dist)
 
@@ -82,13 +88,32 @@ class SearchsController < ApplicationController
 
 				#Empresa
 
-				comScore1 = m1.match(location.company.name.mb_chars.normalize(:kd).gsub(/[^\x00-\x7F]/,'').downcase.to_s)
-				comScore2 = m2.match(location.company.name.mb_chars.normalize(:kd).gsub(/[^\x00-\x7F]/,'').downcase.to_s)
+				company_max = 0
 
-				company_max = comScore1
+				str_test_array = location.company.name.mb_chars.normalize(:kd).gsub(/[^\x00-\x7F]/,'').downcase.to_s.split(' ')
 
-				if(comScore2>company_max)
-					company_max = comScore2
+				test_array = Array.new
+
+				for i in 0..str_test_array.count
+				 	str_test_array.permutation(i).to_a.each do |perm|
+				 		test_array.push(perm)
+					end
+				end
+
+				
+
+				test_array.each do |ta|
+
+				 	comScore1 = m1.match(ta.join(" "))
+				 	comScore2 = m2.match(ta.join(" "))
+
+				 	if(comScore1>company_max)
+				 		company_max = comScore1
+				 	end
+				 	if(comScore2>company_max)
+				 		company_max = comScore2
+				 	end
+
 				end
 
 
