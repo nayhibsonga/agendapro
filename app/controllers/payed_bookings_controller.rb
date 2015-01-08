@@ -10,6 +10,17 @@ class PayedBookingsController < ApplicationController
 
   	def index
   		
+
+  		#Organizar por compañía para hacer una sola transferencia:
+
+
+
+  		#@companies = Company.all
+  		#@companies.each do |company|
+  		#	company.locations.each do |loc|
+
+  		#end
+
   		@transfered_bookings = PayedBooking.where(:transfer_complete => true, :canceled => false).order('updated_at DESC').limit(10)
 
 		@pending_bookings = PayedBooking.where(:transfer_complete => false, :canceled => false).order('updated_at DESC')
