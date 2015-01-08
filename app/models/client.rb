@@ -97,8 +97,12 @@ class Client < ActiveRecord::Base
     end
   end
   def self.filter_gender(gender)
-    if gender && (gender != '')
-      where(:gender => gender)
+    if gender && gender != ''
+      if gender != "0"
+        where(:gender => gender)
+      else
+        where('gender != ? and gender != ? or gender IS NULL', 1, 2)
+      end
     else
       all
     end
