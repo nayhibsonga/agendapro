@@ -87,13 +87,32 @@ class SearchsController < ApplicationController
 
 				#Empresa
 
-				comScore1 = m1.match(location.company.name.mb_chars.normalize(:kd).gsub(/[^\x00-\x7F]/,'').downcase.to_s)
-				comScore2 = m2.match(location.company.name.mb_chars.normalize(:kd).gsub(/[^\x00-\x7F]/,'').downcase.to_s)
+				company_max = 0
 
-				company_max = comScore1
+				str_test_array = location.company.name.mb_chars.normalize(:kd).gsub(/[^\x00-\x7F]/,'').downcase.to_s.split(' ')
 
-				if(comScore2>company_max)
-					company_max = comScore2
+				test_array = Array.new
+
+				for i in 0..str_test_array.count
+				 	str_test_array.permutation(i).to_a.each do |perm|
+				 		test_array.push(perm)
+					end
+				end
+
+				
+
+				test_array.each do |ta|
+
+				 	comScore1 = m1.match(ta.join(" "))
+				 	comScore2 = m2.match(ta.join(" "))
+
+				 	if(comScore1>company_max)
+				 		company_max = comScore1
+				 	end
+				 	if(comScore2>company_max)
+				 		company_max = comScore2
+				 	end
+
 				end
 
 
