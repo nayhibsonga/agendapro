@@ -11,9 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-
-ActiveRecord::Schema.define(version: 20150107133750) do
-
+ActiveRecord::Schema.define(version: 20150108180352) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -228,12 +226,9 @@ ActiveRecord::Schema.define(version: 20150107133750) do
     t.boolean  "resource_overcapacity",       default: true,                  null: false
     t.integer  "booking_confirmation_time",   default: 1,                     null: false
     t.integer  "booking_configuration_email", default: 0
-<<<<<<< HEAD
-=======
+    t.integer  "max_changes",                 default: 2
     t.boolean  "booking_history",             default: false
     t.boolean  "staff_code",                  default: false
->>>>>>> 5c5274df3101d831dd24a93fb99528896fa0d38a
-    t.integer  "max_changes",                 default: 2
   end
 
   add_index "company_settings", ["company_id"], name: "index_company_settings_on_company_id", using: :btree
@@ -348,6 +343,21 @@ ActiveRecord::Schema.define(version: 20150107133750) do
     t.boolean  "transfer_complete",           default: false
     t.boolean  "canceled",                    default: false
     t.boolean  "cancel_complete",             default: false
+  end
+
+  create_table "payment_accounts", force: true do |t|
+    t.string   "name"
+    t.string   "rut"
+    t.string   "number"
+    t.float    "amount"
+    t.integer  "bank_code"
+    t.integer  "currency",     default: 0
+    t.integer  "origin",       default: 1
+    t.integer  "destiny",      default: 1
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.boolean  "status",       default: false
+    t.integer  "account_type", default: 3
   end
 
   create_table "payment_statuses", force: true do |t|
