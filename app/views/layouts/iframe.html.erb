@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]> <html class="no-js lt-ie9 lt-ie8 lt-ie7" lang="es"> <![endif]-->
+<!--[if IE 7]>    <html class="no-js lt-ie9 lt-ie8" lang="es"> <![endif]-->
+<!--[if IE 8]>    <html class="no-js lt-ie9" lang="es"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="es"> <!--<![endif]-->
+
+    <head>
+        <!-- start: Meta -->
+        <meta charset="utf-8">
+        <title>AgendaPro App</title>
+        <meta name="author" content="AgendaPro">
+        <meta name="keyword" content="agendapro, agenda, agenda online, reserva, reserva online">
+        <%= csrf_meta_tags %>
+        <!-- end: Meta -->
+
+        <!-- start: Mobile Specific -->
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <!-- end: Mobile Specific -->
+
+        <!-- start: CSS -->
+        <%= stylesheet_link_tag "workflow" %>
+        <%= stylesheet_link_tag "https://fonts.googleapis.com/css?family=Open+Sans:400,300,400italic,600,600italic,700,700italic,300italic" %>
+        <!-- end: CSS -->
+
+        <!-- start: JavaScript-->
+        <%= javascript_include_tag "home-head" %>
+    </head>
+
+    <body>
+        <script>
+          window.fbAsyncInit = function() {
+            FB.init({
+              appId      : '739120539456506',
+              xfbml      : true,
+              version    : 'v2.1'
+            });
+
+            // ADD ADDITIONAL FACEBOOK CODE HERE
+          };
+
+          (function(d, s, id){
+             var js, fjs = d.getElementsByTagName(s)[0];
+             if (d.getElementById(id)) {return;}
+             js = d.createElement(s); js.id = id;
+             js.src = "//connect.facebook.net/en_US/sdk.js";
+             fjs.parentNode.insertBefore(js, fjs);
+           }(document, 'script', 'facebook-jssdk'));
+        </script>
+
+        <!-- start: content -->
+        <%= yield %>
+        <!-- end: content -->
+        <br />
+            <section class="copyright">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-sm-6 col-md-6"> &copy; Copyright 2013 | Gunei Investment SpA | Todos los derechos reservados</div>
+                        <div class="text-right col-sm-6 col-md-6">
+                        <%= link_to 'Términos y Condiciones', '/TyC.pdf', :target => :blank %>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </footer>
+
+        <!-- start: JavaScript-->
+        <%= yield :scripts %>
+        <%= javascript_include_tag "workflow" %>
+        <%= javascript_include_tag "jquery.browser.min" %>
+        <%= javascript_include_tag "browser-detect" %>
+
+        <script>
+          $( "#menu-display" ).click(function() {
+            $( ".nav-pills" ).toggle( "slow" );
+          });
+        </script>
+        <!-- end: JavaScript-->
+        
+        <!------ Originales ------->
+        <!-- Los JS -->
+        <!--<script src='http://connect.facebook.net/en_US/all.js'></script>-->
+    </body>
+</html>

@@ -209,6 +209,21 @@ Agendapro::Application.routes.draw do
 
   get '/service_provider/pdf', :to => 'service_providers#pdf'
   get '/provider_hours', :to => 'bookings#provider_hours'
+
+  get '/iframe/sampler', :to => 'iframe#sampler'
+  post '/iframe/overview/:company_id', :to => 'iframe#overview'
+  post '/iframe/overview', :to => 'iframe#overview'
+  get '/iframe/overview/:company_id', :to => 'iframe#overview'
+  get '/iframe/overview', :to => 'iframe#overview'
+  get '/iframe/workflow/:location_id', :to => 'iframe#workflow'
+  post '/iframe/book_service', :to => 'iframe#book_service'
+  get '/iframe/construction', :to => 'iframe#construction', :as => 'iframe_construction'
+  get '/iframe/facebook_setup', :to => 'iframe#facebook_setup', :as => 'facebook_setup'
+  post '/iframe/facebook_submit', :to => 'iframe#facebook_submit', :as => 'facebook_submit'
+  patch '/iframe/facebook_submit', :to => 'iframe#facebook_submit', :as => 'facebook_submit_edit'
+  get '/iframe/facebook_success', :to => 'iframe#facebook_success', :as => 'facebook_success'
+  get '/iframe/facebook_addtab', :to => 'iframe#facebook_addtab', :as => 'facebook_addtab'
+  get '/company_settings/:id/delete_facebook_pages', :to => 'company_settings#delete_facebook_pages', :as => 'delete_facebook_pages'
   
   # Root
   get '/' => 'searchs#index', :constraints => { :subdomain => 'www' }
