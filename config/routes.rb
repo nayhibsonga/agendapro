@@ -93,6 +93,8 @@ Agendapro::Application.routes.draw do
   get '/clients_rut_suggestion', :to => 'clients#rut_suggestion'
   get '/client_loader', :to => 'clients#client_loader'
 
+  get '/check_staff_code', :to => 'staff_codes#check_staff_code'
+
   get '/provider_services', :to => 'service_providers#provider_service'
 
   # Singup Validations
