@@ -78,8 +78,8 @@ class SearchsController < ApplicationController
 
 			timers = Array.new
 
-			t1 = Time.now.to_f
-			timers << t1
+			#t1 = Time.now.to_f
+			#timers << "Start: " + t1.to_s
 
 			#locations_scores = Hash.new
 			active_companies_ids = Company.where(active: true, :owned => true).pluck(:id)
@@ -87,8 +87,8 @@ class SearchsController < ApplicationController
 			locations = elegible_locations.where('sqrt((latitude - ' + lat.to_s + ')^2 + (longitude - ' + long.to_s + ')^2) < 0.25') #Location.all
 			loc_ids = Array.new
 
-			t2 = Time.now.to_f
-			timers << t2
+			#t2 = Time.now.to_f
+			#timers << "t2-t1: " + (t2-t1).to_s
 
 
 			empty_companies_ids = Company.where(active: true, :owned => false).pluck(:id)
@@ -98,16 +98,16 @@ class SearchsController < ApplicationController
 			#names = locations.pluck('name')
 			#empty_names = empty_locations.pluck('name')
 
-			t3 = Time.now.to_f
-			timers << t3
+			#t3 = Time.now.to_f
+			#timers << "t3-t2: " + (t2-t2).to_s
 
 			#Struct.new("Local", :id, :dist)
 
 			m1 = JaroWinkler.new(normalized_search)
 			m2 = PairDistance.new(normalized_search)
 
-			t4 = Time.now.to_f
-			timers << t4
+			#t4 = Time.now.to_f
+			#timers << "t4-t3: " + (t4-t3).to_s
 
 			#Active companies' locations
 			locations.each do |location|
@@ -119,8 +119,8 @@ class SearchsController < ApplicationController
 
 
 				
-				t5 = Time.now.to_f
-				timers << t5
+				#t5 = Time.now.to_f
+				#timers << "t5-t4: " + (t5-t4).to_s
 
 				#Empresa
 
@@ -141,8 +141,8 @@ class SearchsController < ApplicationController
 					end
 				end
 
-				t6 = Time.now.to_f
-				timers << t6
+				#t6 = Time.now.to_f
+				#timers << "t6-t5: " + (t6-t5).to_s
 				
 
 				test_array.each do |ta|
@@ -159,8 +159,8 @@ class SearchsController < ApplicationController
 
 				end
 
-				t7 = Time.now.to_f
-				timers << t7
+				#t7 = Time.now.to_f
+				#timers << "t7-t6: " + (t7-t6).to_s
 
 
 				#Sectores económicos
@@ -184,8 +184,8 @@ class SearchsController < ApplicationController
 					economics_max = ecoScore2
 				end
 
-				t8 = Time.now.to_f
-				timers << t8
+				#t8 = Time.now.to_f
+				#timers << "t8-t7: " + (t8-t7).to_s
 
 
 				#Categorías
@@ -213,8 +213,8 @@ class SearchsController < ApplicationController
 					categories_max = catScore2
 				end
 
-				t9 = Time.now.to_f
-				timers << t9
+				#t9 = Time.now.to_f
+				#timers << "t9-t8: " + (t9-t8).to_s
 
 				#Servicios
 				servScore1 = 0
@@ -238,8 +238,8 @@ class SearchsController < ApplicationController
 					services_max = servScore2
 				end
 
-				t10 = Time.now.to_f
-				timers << t10
+				#t10 = Time.now.to_f
+				#timers << "t10-t9: " + (t10-t9).to_s
 
 				#Proveedores
 
@@ -265,8 +265,8 @@ class SearchsController < ApplicationController
 				end
 
 
-				t11 = Time.now.to_f
-				timers << t11
+				#t11 = Time.now.to_f
+				#timers << "t11-t10: " + (t11-t10).to_s
 
 				#Máximo
 				max = economics_max
@@ -285,8 +285,8 @@ class SearchsController < ApplicationController
 
 				#Segmentamos por puntaje, guardando las distancias
 
-				t12 = Time.now.to_f
-				timers << t12
+				#t12 = Time.now.to_f
+				#timers << "t12-t11: " + (t12-t11).to_s
 
 				for i in 0..7
 					if((max >= (0.96 - i*0.04)))
@@ -317,11 +317,13 @@ class SearchsController < ApplicationController
 						break
 					end
 				end
+
+				#t13 = Time.now.to_f
+				#timers << "t13-t12: " + (t13-t12).to_s
 					
 			end
 
-			t13 = Time.now.to_f
-			timers << t13
+			
 
 
 			m1 = JaroWinkler.new(normalized_search)
@@ -516,8 +518,8 @@ class SearchsController < ApplicationController
 			end
 
 
-			t14 = Time.now.to_f
-			timers << t14
+			#t14 = Time.now.to_f
+			
 
 			#Ordenamos por distancia
 			ordered_segments = Array.new
@@ -525,8 +527,8 @@ class SearchsController < ApplicationController
 				ordered_segments[i] = loc_segments[i].sort_by{ |loc| loc[1]}
 			end
 
-			t15 = Time.now.to_f
-			timers << t15
+			#t15 = Time.now.to_f
+			#timers << "t15-t14: " + (t15-t14).to_s
 
 			#Ordenamos por distancia
 			empty_ordered_segments = Array.new
@@ -534,8 +536,8 @@ class SearchsController < ApplicationController
 				empty_ordered_segments[i] = empty_loc_segments[i].sort_by{ |loc| loc[1]}
 			end
 
-			t16 = Time.now.to_f
-			timers << t16
+			#t16 = Time.now.to_f
+			#timers << "t16-t15: " + (t16-t15).to_s
 					
 
 			#Entregamos los ids en orden
@@ -547,8 +549,8 @@ class SearchsController < ApplicationController
 				end
 			end
 
-			t17 = Time.now.to_f
-			timers << t17
+			#t17 = Time.now.to_f
+			#timers << "t17-t16: " + (t17-t16).to_s
 
 			#Entregamos los ids en orden
 			for i in 0..7
@@ -559,8 +561,8 @@ class SearchsController < ApplicationController
 				end
 			end
 
-			t18 = Time.now.to_f
-			timers << t18
+			#t18 = Time.now.to_f
+			#timers << "t18-t17: " + (t18-t17).to_s
 
 
 			#Los obtenemos en orden
@@ -572,8 +574,8 @@ class SearchsController < ApplicationController
 
 			@results = @results.paginate(:page => params[:page], :per_page => per_page)
 
-			t19 = Time.now.to_f
-			timers << t19
+			#t19 = Time.now.to_f
+			#timers << "t19-t18: " + (t19-t18).to_s
 
 			i = 1
 			for i in 1..per_page
@@ -604,8 +606,8 @@ class SearchsController < ApplicationController
 			end
 
 
-			t20 = Time.now.to_f
-			timers << t20
+			#t20 = Time.now.to_f
+			#timers << "t20-t19: " + (t20-t19).to_s
 			#Rails.logger.level = 3
 
 			puts timers
