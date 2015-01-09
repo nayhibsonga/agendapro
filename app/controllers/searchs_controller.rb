@@ -84,7 +84,7 @@ class SearchsController < ApplicationController
 			#locations_scores = Hash.new
 			active_companies_ids = Company.where(active: true, :owned => true).pluck(:id)
 			elegible_locations = Location.where(:active => true).where(company_id: active_companies_ids).where(id: ServiceProvider.where(active: true, company_id: active_companies_ids).joins(:provider_times).joins(:services).where("services.id" => Service.where(active: true, company_id: active_companies_ids).pluck(:id)).pluck(:location_id).uniq).joins(:location_times).uniq.order(order: :asc)
-			locations = elegible_locations.where('sqrt((latitude - ' + lat.to_s + ')^2 + (longitude - ' + long.to_s + ')^2) < 0.25').limit(1) #Location.all
+			locations = elegible_locations.where('sqrt((latitude - ' + lat.to_s + ')^2 + (longitude - ' + long.to_s + ')^2) < 0.25') #Location.all
 			loc_ids = Array.new
 
 			t2 = Time.now.to_f
@@ -93,7 +93,7 @@ class SearchsController < ApplicationController
 
 			empty_companies_ids = Company.where(active: true, :owned => false).pluck(:id)
 			empty_elegible_locations = Location.where(:active => true).where(company_id: empty_companies_ids).where(id: ServiceProvider.where(active: true, company_id: empty_companies_ids).joins(:provider_times).joins(:services).where("services.id" => Service.where(active: true, company_id: empty_companies_ids).pluck(:id)).pluck(:location_id).uniq).joins(:location_times).uniq.order(order: :asc)
-			empty_locations = Array.new#= empty_elegible_locations.where('sqrt((latitude - ' + lat.to_s + ')^2 + (longitude - ' + long.to_s + ')^2) < 0.25')
+			empty_locations = empty_elegible_locations.where('sqrt((latitude - ' + lat.to_s + ')^2 + (longitude - ' + long.to_s + ')^2) < 0.25')
 
 			#names = locations.pluck('name')
 			#empty_names = empty_locations.pluck('name')
