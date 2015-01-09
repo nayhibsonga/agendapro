@@ -34,7 +34,7 @@
         <h3>¡Lo sentimos!</h3>
         <br />
         <p>No hay horarios disponibles para este día, intenta eligiendo otro día.<p/>
-        <p>Puedes ponerte en contacto con la empresa si requieres más información al teléfono <%= @location.phone %><%= if @location.email && @location.email != "" then 'o al email ' + @location.email end %></p>
+        <p>Puedes ponerte en contacto con la empresa si requieres más información al teléfono <%= @selectedLocation.phone %><%= if @selectedLocation.email && @selectedLocation.email != "" then 'o al email ' + @selectedLocation.email end %></p>
         <% end %>
       <% end %>
     </div>

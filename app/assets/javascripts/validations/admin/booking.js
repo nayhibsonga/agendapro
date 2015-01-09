@@ -32,6 +32,9 @@ $(function() {
 			'booking[service_provider_id]': {
 				required: true
 			},
+			'staff_code': {
+				required: true
+			},
 			'booking[service_id]': {
 				required: true
 			},
