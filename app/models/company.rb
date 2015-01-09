@@ -15,6 +15,7 @@ class Company < ActiveRecord::Base
 	has_one :company_setting, dependent: :destroy
 	has_one :billing_info, dependent: :destroy
 	has_many :company_from_email, dependent: :destroy
+	has_many :staff_codes, dependent: :destroy
 
 	validates :name, :web_address, :plan, :payment_status, :presence => true
 

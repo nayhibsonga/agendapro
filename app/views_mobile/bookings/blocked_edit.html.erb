@@ -1,25 +1,36 @@
-<div class="center-load">
-	<h2><%= link_to 'AGENDAPRO', root_url(:subdomain => false) %></h2>
-	<%= image_tag 'mobile/cross.png', :alt => 'Agendado' %>
-	<div class="container">
-		<div class="well well-sm">
-			<h3>Lo sentimos</h3>
-			La empresa <strong><%= @company.name %></strong> sólo permite modificar reservas hasta <strong><%= @company.company_setting.before_edit_booking %></strong> horas antes.
+<div class="container container-margin">
+	<div class="row">
+		<div class="col-xs-12">
+			<h3 class="text-center">Lo sentimos</h3>
+			<% if @booking.max_changes <= 0 %>
+			<p>La empresa <strong><%= @company.name %></strong> sólo permite modificar la reserva hasta <strong><%= @company.company_setting.max_changes %></strong> veces.</p>
+			<% else %>
+			<p>La empresa <strong><%= @company.name %></strong> sólo permite modificar reservas hasta <strong><%= @company.company_setting.before_edit_booking %></strong> horas antes.</p>
+			<% end %>
 		</div>
 	</div>
-	<p>Fecha: <%= l @booking.start %></p>
-	<p>Servicio: <%= @booking.service.name %></p>
-	<p>Staff: <%= @booking.service_provider.public_name %></p>
-	<p>Dirección: <%= @booking.location.name %></p>
+	<div class="row background-grey">
+		<div class="col-xs-12">
+			<h4 class="text-center">Resumen de tu Reserva</h4>
+			<table class="table table-bordered">
+				<tbody>
+					<tr>
+						<td><%= @booking.location.name %></td>
+					</tr>
+					<tr>
+						<td><%= l @booking.start.to_date, format: :long %></td>
+					</tr>
+					<tr>
+						<td><%= l @booking.start, format: :hour %> - <%= l @booking.end, format: :hour %></td>
+					</tr>
+					<tr>
+						<td><%= @booking.service.name %></td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+		<div class="col-xs-12">
+			<%= link_to '<i class="fa fa-caret-left"></i> <span>Volver</span>'.html_safe, root_url, class: 'btn btn-orange btn-lg btn-block' %>
+		</div>
+	</div>
 </div>
-
-<% content_for :scripts do %>
-<script type="text/javascript">
-	$(function() {
-		$('body').attr('id', 'loading');
-		window.setTimeout(function () {
-			location.href = "<%= root_url(:subdomain => false) %>";
-		}, 10000);
-	});
-</script>
-<% end %>

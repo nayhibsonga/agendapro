@@ -62,6 +62,7 @@ class SearchsController < ApplicationController
 			end
 
 			#locations_scores = Hash.new
+
 			## Se eligen los locales activos de empresas activas
  			active_companies_ids = Company.where(active: true).pluck(:id)
 			elegible_locations = Location.where(active: true, company_id: active_companies_ids)

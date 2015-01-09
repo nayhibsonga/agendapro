@@ -3,9 +3,15 @@
         <div class="container">
 			<div class="well well-lg">
 				<h3>Lo sentimos</h3>
+				<% if @booking.max_changes <= 0 %>
+				<p>
+					La empresa <strong><%= @company.name %></strong> sólo permite modificar la reserva hasta <strong><%= @company.company_setting.max_changes %></strong> veces.
+				</p>
+				<% else %>
 				<p>
 					La empresa <strong><%= @company.name %></strong> sólo permite modificar reservas hasta <strong><%= @company.company_setting.before_edit_booking %></strong> horas antes.
 				</p>
+				<% end %>
 				<hr>
 				<div class="row">
 					<div class="col-md-6">

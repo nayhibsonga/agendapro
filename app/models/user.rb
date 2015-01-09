@@ -7,6 +7,7 @@ class User < ActiveRecord::Base
 	belongs_to :company
 
 	has_many :bookings, dependent: :nullify
+	has_many :booking_histories, dependent: :nullify
 
 	has_many :user_locations, dependent: :destroy
 	has_many :locations, :through => :user_locations
