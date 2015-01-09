@@ -534,7 +534,7 @@ class CompaniesController < ApplicationController
 		@location = Location.find(params[:location])
 		@company = @location.company
 		@service = Service.find(params[:service])
-		@provider = ServiceProvider.find(params[:provider])
+		@provider = ServiceProvider.find(params[:staff])
 		@start = params[:start]
 		@end = params[:end]
 		@origin = params[:origin]

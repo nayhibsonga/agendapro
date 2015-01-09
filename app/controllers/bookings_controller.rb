@@ -142,7 +142,7 @@ class BookingsController < ApplicationController
         end
       end
     end
-    
+
     if @booking && @booking.service_provider
       @booking.location = @booking.service_provider.location
     end
@@ -361,7 +361,7 @@ class BookingsController < ApplicationController
 
         if booking.company_comment
           comment = booking.company_comment
-        end        
+        end
 
         event = {
           id: booking.id,
@@ -540,7 +540,7 @@ class BookingsController < ApplicationController
     @booking.max_changes = params[:max_changes]
     if @booking.save
       # flash[:notice] = "Reserva realizada exitosamente."
-      
+
       # BookingMailer.book_service_mail(@booking)
       current_user ? user = current_user.id : user = 0
       BookingHistory.create(booking_id: @booking.id, action: "Creada por Cliente", start: @booking.start, status_id: @booking.status_id, service_id: @booking.service_id, service_provider_id: @booking.service_provider_id, user_id: user)
@@ -580,7 +580,12 @@ class BookingsController < ApplicationController
       @provider = @booking.service_provider
 
       # Data
-      date = Date.parse(@booking.start.to_s)
+      @date = Date.parse(@booking.start.to_s)
+      puts params[:datepicker]
+      if !params[:datepicker].blank?
+        @date = Date.parse(params[:datepicker])
+      end
+      puts @date
       service_duration = @service.duration
       company_setting = @company.company_setting
       provider_breaks = ProviderBreak.where(:service_provider_id => @provider.id)
@@ -588,8 +593,8 @@ class BookingsController < ApplicationController
       @available_time = Array.new
 
       # Variable Data
-      provider_times = @provider.provider_times.where(day_id: date.cwday).order(:open)
-      bookings = @provider.bookings.where(:start => date.to_time.beginning_of_day..date.to_time.end_of_day).order(:start)
+      provider_times = @provider.provider_times.where(day_id: @date.cwday).order(:open)
+      bookings = @provider.bookings.where(:start => @date.to_time.beginning_of_day..@date.to_time.end_of_day).order(:start)
 
       # Hour Blocks
       $i = 0
@@ -601,69 +606,69 @@ class BookingsController < ApplicationController
 
         # => Available/Occupied Blocks
         while (provider_time_open <=> provider_time_close) < 0 do
-        block_hour = Hash.new
+          block_hour = Hash.new
 
-        # Tmp data
-        open_hour = provider_time_open.hour
-        open_min = provider_time_open.min
+          # Tmp data
+          open_hour = provider_time_open.hour
+          open_min = provider_time_open.min
 
-        start_block = (open_hour < 10 ? '0' : '') + open_hour.to_s + ':' + (open_min < 10 ? '0' : '') + open_min.to_s
+          start_block = (open_hour < 10 ? '0' : '') + open_hour.to_s + ':' + (open_min < 10 ? '0' : '') + open_min.to_s
 
-        provider_time_open += service_duration.minutes
+          provider_time_open += service_duration.minutes
 
-        # Tmp data
-        next_open_hour = provider_time_open.hour
-        next_open_min = provider_time_open.min
+          # Tmp data
+          next_open_hour = provider_time_open.hour
+          next_open_min = provider_time_open.min
 
-        end_block = (next_open_hour < 10 ? '0' : '') + next_open_hour.to_s + ':' + (next_open_min < 10 ? '0' : '') + next_open_min.to_s
+          end_block = (next_open_hour < 10 ? '0' : '') + next_open_hour.to_s + ':' + (next_open_min < 10 ? '0' : '') + next_open_min.to_s
 
-        # Block Hour
-        hour = {
-          :start => start_block,
-          :end => end_block
-        }
+          # Block Hour
+          hour = {
+            :start => start_block,
+            :end => end_block
+          }
 
-        # Status
-        status = 'available'
-        start_time_block = DateTime.new(date.year, date.mon, date.mday, open_hour, open_min)
-        end_time_block = DateTime.new(date.year, date.mon, date.mday, next_open_hour, next_open_min)
-        
-        # Past hours
-        now = DateTime.new(DateTime.now.year, DateTime.now.mon, DateTime.now.mday, DateTime.now.hour, DateTime.now.min)
-        before_now = start_time_block - company_setting.before_booking / 24.0
-        after_now = now + company_setting.after_booking * 30
+          # Status
+          status = 'available'
+          start_time_block = DateTime.new(@date.year, @date.mon, @date.mday, open_hour, open_min)
+          end_time_block = DateTime.new(@date.year, @date.mon, @date.mday, next_open_hour, next_open_min)
 
-        provider_breaks.each do |provider_break|
-          break_start = DateTime.parse(provider_break.start.to_s)
-          break_end = DateTime.parse(provider_break.end.to_s)
-          if  (break_start - end_time_block) * (start_time_block - break_end) > 0
-          status = 'occupied'
-          end
-        end
+          # Past hours
+          now = DateTime.new(DateTime.now.year, DateTime.now.mon, DateTime.now.mday, DateTime.now.hour, DateTime.now.min)
+          before_now = start_time_block - company_setting.before_booking / 24.0
+          after_now = now + company_setting.after_booking * 30
 
-        if (before_now <=> now) < 1
-          status = 'past'
-        elsif (after_now <=> end_time_block) < 1
-          status = 'past'
-        else
-          bookings.each do |booking|
-          booking_start = DateTime.parse(booking.start.to_s)
-          booking_end = DateTime.parse(booking.end.to_s)
-
-          if (booking_start - end_time_block) * (start_time_block - booking_end) > 0 && booking.status_id != Status.find_by(name: 'Cancelado').id
-            if !@service.group_service || @service.id != booking.service_id
-            status = 'occupied'
-            elsif @service.group_service && @service.id == booking.service_id && @provider.bookings.where(:service_id => @service.id, :start => booking.start).count >= @service.capacity
+          provider_breaks.each do |provider_break|
+            break_start = DateTime.parse(provider_break.start.to_s)
+            break_end = DateTime.parse(provider_break.end.to_s)
+            if  (break_start - end_time_block) * (start_time_block - break_end) > 0
             status = 'occupied'
             end
           end
+
+          if (before_now <=> now) < 1
+            status = 'past'
+          elsif (after_now <=> end_time_block) < 1
+            status = 'past'
+          else
+            bookings.each do |booking|
+            booking_start = DateTime.parse(booking.start.to_s)
+            booking_end = DateTime.parse(booking.end.to_s)
+
+            if (booking_start - end_time_block) * (start_time_block - booking_end) > 0 && booking.status_id != Status.find_by(name: 'Cancelado').id
+              if !@service.group_service || @service.id != booking.service_id
+              status = 'occupied'
+              elsif @service.group_service && @service.id == booking.service_id && @provider.bookings.where(:service_id => @service.id, :start => booking.start).count >= @service.capacity
+              status = 'occupied'
+              end
+            end
+            end
           end
-        end
 
-        block_hour[:date] = date
-        block_hour[:hour] = hour
+          block_hour[:date] = @date
+          block_hour[:hour] = hour
 
-        @available_time << block_hour if status == 'available'
+          @available_time << block_hour if status == 'available'
         end
 
         $i += 1
@@ -740,19 +745,19 @@ class BookingsController < ApplicationController
       @booking = Booking.find(id)
       @company = Location.find(@booking.location_id).company
       @selectedLocation = Location.find(@booking.location_id)
-      
+
       now = DateTime.new(DateTime.now.year, DateTime.now.mon, DateTime.now.mday, DateTime.now.hour, DateTime.now.min)
       booking_start = DateTime.parse(@booking.start.to_s) - @company.company_setting.before_edit_booking / 24.0
-      
+
       if (booking_start <=> now) < 1
         redirect_to blocked_cancel_path(:id => @booking.id)
         return
       end
-      
+
     else
       @booking = Booking.find(params[:id])
       status = Status.find_by(:name => 'Cancelado').id
-      
+
       if @booking.update(status_id: status)
         #flash[:notice] = "Reserva cancelada exitosamente."
         # BookingMailer.cancel_booking(@booking)
@@ -865,12 +870,12 @@ class BookingsController < ApplicationController
 
           if last_row >= 0
             while table_rows[last_row][1] == 'Continuación...'  do
-              # Subir un nivel para ver si es el mismo servicio o no  
+              # Subir un nivel para ver si es el mismo servicio o no
                 last_row -=1
             end
 
-            if (service_name != '') && (service_name == table_rows[last_row][1]) && (client_name == (table_rows[last_row][2])) 
-              
+            if (service_name != '') && (service_name == table_rows[last_row][1]) && (client_name == (table_rows[last_row][2]))
+
               service_name = 'Continuación...'
               client_name = '...'
               client_phone = '...'
