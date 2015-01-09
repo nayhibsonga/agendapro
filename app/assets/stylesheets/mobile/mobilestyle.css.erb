@@ -86,10 +86,13 @@ h6, .h6 {
 
 /*** alert ***/
 .alert {
-	position: absolute;
-	margin-top: 50px;
-	width: 100%;
-	z-index: 10;
+	position: fixed;
+	margin: 55px auto 10px;
+	width: 75%;
+	z-index: 10000;
+	left: 5%;
+	right: 5%;
+	padding: 10px 15px;
 }
 
 /*Forms*/
@@ -149,6 +152,9 @@ h6, .h6 {
 		color: #ffffff;
 		background: #505050;
 	}
+	.navbar-toggle > i {
+		vertical-align: text-bottom;
+	}
 
 	/* Orientation-dependent styles for the content of the menu */
 	.cbp-spmenu-vertical {
@@ -178,7 +184,7 @@ h6, .h6 {
 	.container-fluid > .navbar-collapse {
 		margin-right: 0;
 	}
-	.collapse {
+	.collapse.navbar-collapse {
 		display: block;
 		visibility: visible;
 	}
