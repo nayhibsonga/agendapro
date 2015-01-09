@@ -2,6 +2,7 @@
 class SearchsController < ApplicationController
 	layout "results", except: [:index]
 	require 'amatch'
+	require 'benchmark'
 	include Amatch
 
 	def index
@@ -46,30 +47,69 @@ class SearchsController < ApplicationController
 			@latitude = params[:latitude]
 			@longitude = params[:longitude]
 
-			
-
-			#Filtrado de pronombres y artículos
-			search = params[:inputSearch].gsub(/\b([D|d]el?)+\b|\b([U|u]n(o|a)?s?)+\b|\b([E|e]l)+\b|\b([T|t]u)+\b|\b([L|l](o|a)s?)+\b|\b[AaYy]\b|["'.,;:-]|\b([E|e]n)+\b|\b([L|l]a)+\b|\b([C|c]on)+\b|\b([Q|q]ue)+\b|\b([S|s]us?)+\b|\b([E|e]s[o|a]?s?)+\b/i, '').gsub(/(\s)+/, '%')
-
-			normalized_search = search.mb_chars.normalize(:kd).gsub(/[^\x00-\x7F]/,'').downcase.to_s
-
+			@results = Array.new
+			@empty_results = Array.new
 			#Segmentos de locales según resultados
 			loc_segments = Array.new
-			#two_score_segments = Array.new
+			empty_loc_segments = Array.new
 
 			for i in 0..7
 				loc_segments[i] = Array.new
+				empty_loc_segments[i] = Array.new
 			end
 
+			#Filtrado de pronombres y artículos
+			search = params[:inputSearch].gsub(/\b([D|d]el?)+\b|\b([U|u]n(o|a)?s?)+\b|\b([E|e]l)+\b|\b([T|t]u)+\b|\b([L|l](o|a)s?)+\b|\b[AaYy]\b|["'.,;:-]|\b([E|e]n)+\b|\b([L|l]a)+\b|\b([C|c]on)+\b|\b([Q|q]ue)+\b|\b([S|s]us?)+\b|\b([E|e]s[o|a]?s?)+\b/i, '')
+
+			normalized_search = search.mb_chars.normalize(:kd).gsub(/[^\x00-\x7F]/,'').downcase.to_s
+
+
+			# if(Company.where('lower(name) LIKE ? and active = ?', "%#{normalized_search}%", true).count > 0)
+			# 	matching_companies_ids = Company.where('lower(name) LIKE ? and active = ?', "%#{normalized_search}%", true).pluck(:id)
+			# 	elegible_locations = Location.where(:active => true).where(company_id: matching_companies_ids).where(id: ServiceProvider.where(active: true, company_id: matching_companies_ids).joins(:provider_times).joins(:services).where("services.id" => Service.where(active: true, company_id: matching_companies_ids).pluck(:id)).pluck(:location_id).uniq).joins(:location_times).uniq.order(order: :asc)
+			# 	locations = elegible_locations.where('sqrt((latitude - ' + lat.to_s + ')^2 + (longitude - ' + long.to_s + ')^2) < 0.25')
+
+			# 	locations.each do |location|
+			# 		dist_score = Math.sqrt((location.latitude - lat.to_f)**2 + (location.longitude - long.to_f)**2)
+			# 		local = [location, dist_score]
+			# 		loc_segments[0].push(local)
+			# 	end
+			# end
+
+			timers = Array.new
+
+			t1 = Time.now.to_f
+			timers << t1
+
 			#locations_scores = Hash.new
-			active_companies_ids = Company.where(active: true).pluck(:id)
+			active_companies_ids = Company.where(active: true, :owned => true).pluck(:id)
 			elegible_locations = Location.where(:active => true).where(company_id: active_companies_ids).where(id: ServiceProvider.where(active: true, company_id: active_companies_ids).joins(:provider_times).joins(:services).where("services.id" => Service.where(active: true, company_id: active_companies_ids).pluck(:id)).pluck(:location_id).uniq).joins(:location_times).uniq.order(order: :asc)
-			locations = elegible_locations.where('sqrt((latitude - ' + lat.to_s + ')^2 + (longitude - ' + long.to_s + ')^2) < 0.25') #Location.all
+			locations = elegible_locations.where('sqrt((latitude - ' + lat.to_s + ')^2 + (longitude - ' + long.to_s + ')^2) < 0.25').limit(1) #Location.all
 			loc_ids = Array.new
 
+			t2 = Time.now.to_f
+			timers << t2
+
+
+			empty_companies_ids = Company.where(active: true, :owned => false).pluck(:id)
+			empty_elegible_locations = Location.where(:active => true).where(company_id: empty_companies_ids).where(id: ServiceProvider.where(active: true, company_id: empty_companies_ids).joins(:provider_times).joins(:services).where("services.id" => Service.where(active: true, company_id: empty_companies_ids).pluck(:id)).pluck(:location_id).uniq).joins(:location_times).uniq.order(order: :asc)
+			empty_locations = Array.new#= empty_elegible_locations.where('sqrt((latitude - ' + lat.to_s + ')^2 + (longitude - ' + long.to_s + ')^2) < 0.25')
+
+			#names = locations.pluck('name')
+			#empty_names = empty_locations.pluck('name')
+
+			t3 = Time.now.to_f
+			timers << t3
 
 			#Struct.new("Local", :id, :dist)
 
+			m1 = JaroWinkler.new(normalized_search)
+			m2 = PairDistance.new(normalized_search)
+
+			t4 = Time.now.to_f
+			timers << t4
+
+			#Active companies' locations
 			locations.each do |location|
 
 				economic_sectors = location.company.economic_sectors
@@ -78,20 +118,49 @@ class SearchsController < ApplicationController
 				service_providers = location.service_providers.where(active: true)
 
 
-				m1 = JaroWinkler.new(normalized_search)
-				m2 = PairDistance.new(normalized_search)
-
+				
+				t5 = Time.now.to_f
+				timers << t5
 
 				#Empresa
 
-				comScore1 = m1.match(location.company.name.mb_chars.normalize(:kd).gsub(/[^\x00-\x7F]/,'').downcase.to_s)
-				comScore2 = m2.match(location.company.name.mb_chars.normalize(:kd).gsub(/[^\x00-\x7F]/,'').downcase.to_s)
+				company_max = 0
 
-				company_max = comScore1
+				str_test_array = location.company.name.mb_chars.normalize(:kd).gsub(/[^\x00-\x7F]/,'').downcase.to_s.split(' ')
 
-				if(comScore2>company_max)
-					company_max = comScore2
+				test_array = Array.new
+
+				limit = str_test_array.count
+				if limit>4
+					limit = 4
 				end
+
+				for i in 0..limit
+				 	str_test_array.permutation(i).to_a.each do |perm|
+				 		test_array.push(perm)
+					end
+				end
+
+				t6 = Time.now.to_f
+				timers << t6
+				
+
+				test_array.each do |ta|
+
+				 	comScore1 = m1.match(ta.join(" "))
+				 	comScore2 = m2.match(ta.join(" "))
+
+				 	if(comScore1>company_max)
+				 		company_max = comScore1
+				 	end
+				 	if(comScore2>company_max)
+				 		company_max = comScore2
+				 	end
+
+				end
+
+				t7 = Time.now.to_f
+				timers << t7
 
 
 				#Sectores económicos
@@ -99,8 +168,8 @@ class SearchsController < ApplicationController
 				ecoScore2 = 0
 
 				economic_sectors.each do |sector|
-					score1 = m1.match(sector.name.mb_chars.normalize(:kd).gsub(/[^\x00-\x7F]/,'').downcase.to_s)
-					score2 = m2.match(sector.name.mb_chars.normalize(:kd).gsub(/[^\x00-\x7F]/,'').downcase.to_s)
+					score1 = m1.match(sector.name.mb_chars.normalize(:kd).gsub(/[^\x00-\x7F]/,'').gsub(/\b([D|d]el?)+\b|\b([U|u]n(o|a)?s?)+\b|\b([E|e]l)+\b|\b([T|t]u)+\b|\b([L|l](o|a)s?)+\b|\b[AaYy]\b|["'.,;:-]|\b([E|e]n)+\b|\b([L|l]a)+\b|\b([C|c]on)+\b|\b([Q|q]ue)+\b|\b([S|s]us?)+\b|\b([E|e]s[o|a]?s?)+\b/i, '').downcase.to_s)
+					score2 = m2.match(sector.name.mb_chars.normalize(:kd).gsub(/[^\x00-\x7F]/,'').gsub(/\b([D|d]el?)+\b|\b([U|u]n(o|a)?s?)+\b|\b([E|e]l)+\b|\b([T|t]u)+\b|\b([L|l](o|a)s?)+\b|\b[AaYy]\b|["'.,;:-]|\b([E|e]n)+\b|\b([L|l]a)+\b|\b([C|c]on)+\b|\b([Q|q]ue)+\b|\b([S|s]us?)+\b|\b([E|e]s[o|a]?s?)+\b/i, '').downcase.to_s)
 					if(score1 > ecoScore1)
 						ecoScore1 = score1
 					end
@@ -109,10 +178,14 @@ class SearchsController < ApplicationController
 					end
 				end
 
+
 				economics_max = ecoScore1
 				if(ecoScore2>economics_max)
 					economics_max = ecoScore2
 				end
+
+				t8 = Time.now.to_f
+				timers << t8
 
 
 				#Categorías
@@ -124,8 +197,8 @@ class SearchsController < ApplicationController
 					#Obtenemos los servicios de una categoría
 					services = services + category.services
 
-					score1 = m1.match(category.name.mb_chars.normalize(:kd).gsub(/[^\x00-\x7F]/,'').downcase.to_s)
-					score2 = m2.match(category.name.mb_chars.normalize(:kd).gsub(/[^\x00-\x7F]/,'').downcase.to_s)
+					score1 = m1.match(category.name.mb_chars.normalize(:kd).gsub(/[^\x00-\x7F]/,'').gsub(/\b([D|d]el?)+\b|\b([U|u]n(o|a)?s?)+\b|\b([E|e]l)+\b|\b([T|t]u)+\b|\b([L|l](o|a)s?)+\b|\b[AaYy]\b|["'.,;:-]|\b([E|e]n)+\b|\b([L|l]a)+\b|\b([C|c]on)+\b|\b([Q|q]ue)+\b|\b([S|s]us?)+\b|\b([E|e]s[o|a]?s?)+\b/i, '').downcase.to_s)
+					score2 = m2.match(category.name.mb_chars.normalize(:kd).gsub(/[^\x00-\x7F]/,'').gsub(/\b([D|d]el?)+\b|\b([U|u]n(o|a)?s?)+\b|\b([E|e]l)+\b|\b([T|t]u)+\b|\b([L|l](o|a)s?)+\b|\b[AaYy]\b|["'.,;:-]|\b([E|e]n)+\b|\b([L|l]a)+\b|\b([C|c]on)+\b|\b([Q|q]ue)+\b|\b([S|s]us?)+\b|\b([E|e]s[o|a]?s?)+\b/i, '').downcase.to_s)
 					if(score1 > catScore1)
 						catScore1 = score1
 					end
@@ -140,14 +213,17 @@ class SearchsController < ApplicationController
 					categories_max = catScore2
 				end
 
+				t9 = Time.now.to_f
+				timers << t9
+
 				#Servicios
 				servScore1 = 0
 				servScore2 = 0
 
 				services.each do |service|
 
-					score1 = m1.match(service.name.mb_chars.normalize(:kd).gsub(/[^\x00-\x7F]/,'').downcase.to_s)
-					score2 = m2.match(service.name.mb_chars.normalize(:kd).gsub(/[^\x00-\x7F]/,'').downcase.to_s)
+					score1 = m1.match(service.name.mb_chars.normalize(:kd).gsub(/[^\x00-\x7F]/,'').gsub(/\b([D|d]el?)+\b|\b([U|u]n(o|a)?s?)+\b|\b([E|e]l)+\b|\b([T|t]u)+\b|\b([L|l](o|a)s?)+\b|\b[AaYy]\b|["'.,;:-]|\b([E|e]n)+\b|\b([L|l]a)+\b|\b([C|c]on)+\b|\b([Q|q]ue)+\b|\b([S|s]us?)+\b|\b([E|e]s[o|a]?s?)+\b/i, '').downcase.to_s)
+					score2 = m2.match(service.name.mb_chars.normalize(:kd).gsub(/[^\x00-\x7F]/,'').gsub(/\b([D|d]el?)+\b|\b([U|u]n(o|a)?s?)+\b|\b([E|e]l)+\b|\b([T|t]u)+\b|\b([L|l](o|a)s?)+\b|\b[AaYy]\b|["'.,;:-]|\b([E|e]n)+\b|\b([L|l]a)+\b|\b([C|c]on)+\b|\b([Q|q]ue)+\b|\b([S|s]us?)+\b|\b([E|e]s[o|a]?s?)+\b/i, '').downcase.to_s)
 					if(score1 > servScore1)
 						servScore1 = score1
 					end
@@ -162,6 +238,8 @@ class SearchsController < ApplicationController
 					services_max = servScore2
 				end
 
+				t10 = Time.now.to_f
+				timers << t10
 
 				#Proveedores
 
@@ -170,8 +248,8 @@ class SearchsController < ApplicationController
 
 				service_providers.each do |provider|
 
-					score1 = m1.match(provider.public_name.mb_chars.normalize(:kd).gsub(/[^\x00-\x7F]/,'').downcase.to_s)
-					score2 = m2.match(provider.public_name.mb_chars.normalize(:kd).gsub(/[^\x00-\x7F]/,'').downcase.to_s)
+					score1 = m1.match(provider.public_name.mb_chars.normalize(:kd).gsub(/[^\x00-\x7F]/,'').gsub(/\b([D|d]el?)+\b|\b([U|u]n(o|a)?s?)+\b|\b([E|e]l)+\b|\b([T|t]u)+\b|\b([L|l](o|a)s?)+\b|\b[AaYy]\b|["'.,;:-]|\b([E|e]n)+\b|\b([L|l]a)+\b|\b([C|c]on)+\b|\b([Q|q]ue)+\b|\b([S|s]us?)+\b|\b([E|e]s[o|a]?s?)+\b/i, '').downcase.to_s)
+					score2 = m2.match(provider.public_name.mb_chars.normalize(:kd).gsub(/[^\x00-\x7F]/,'').gsub(/\b([D|d]el?)+\b|\b([U|u]n(o|a)?s?)+\b|\b([E|e]l)+\b|\b([T|t]u)+\b|\b([L|l](o|a)s?)+\b|\b[AaYy]\b|["'.,;:-]|\b([E|e]n)+\b|\b([L|l]a)+\b|\b([C|c]on)+\b|\b([Q|q]ue)+\b|\b([S|s]us?)+\b|\b([E|e]s[o|a]?s?)+\b/i, '').downcase.to_s)
 					if(score1 > provScore1)
 						provScore1 = score1
 					end
@@ -187,6 +265,8 @@ class SearchsController < ApplicationController
 				end
 
 
+				t11 = Time.now.to_f
+				timers << t11
 
 				#Máximo
 				max = economics_max
@@ -204,6 +284,9 @@ class SearchsController < ApplicationController
 				end
 
 				#Segmentamos por puntaje, guardando las distancias
+
+				t12 = Time.now.to_f
+				timers << t12
 
 				for i in 0..7
 					if((max >= (0.96 - i*0.04)))
@@ -237,14 +320,223 @@ class SearchsController < ApplicationController
 					
 			end
 
+			t13 = Time.now.to_f
+			timers << t13
+
+
+			m1 = JaroWinkler.new(normalized_search)
+			m2 = PairDistance.new(normalized_search)
+
+			#Empty companies' locations
+			empty_locations.each do |location|
+
+				economic_sectors = location.company.economic_sectors
+				categories = location.categories
+				services = Array.new
+				service_providers = location.service_providers.where(active: true)
+				
+
+				#Empresa
+
+				empty_company_max = 0
+
+				str_test_array = location.company.name.mb_chars.normalize(:kd).gsub(/[^\x00-\x7F]/,'').gsub(/\b([D|d]el?)+\b|\b([U|u]n(o|a)?s?)+\b|\b([E|e]l)+\b|\b([T|t]u)+\b|\b([L|l](o|a)s?)+\b|\b[AaYy]\b|["'.,;:-]|\b([E|e]n)+\b|\b([L|l]a)+\b|\b([C|c]on)+\b|\b([Q|q]ue)+\b|\b([S|s]us?)+\b|\b([E|e]s[o|a]?s?)+\b/i, '').downcase.to_s.split(' ')
+
+				test_array = Array.new
+
+				limit = str_test_array.count
+				if limit>4
+					limit = 4
+				end
+
+				for i in 0..limit
+				 	str_test_array.permutation(i).to_a.each do |perm|
+				 		test_array.push(perm)
+					end
+				end
+
+				
+
+				test_array.each do |ta|
+
+				 	comScore1 = m1.match(ta.join(" "))
+				 	comScore2 = m2.match(ta.join(" "))
+
+				 	if(comScore1>empty_company_max)
+				 		empty_company_max = comScore1
+				 	end
+				 	if(comScore2>empty_company_max)
+				 		empty_company_max = comScore2
+				 	end
+
+				end
+
+
+				#Sectores económicos
+				ecoScore1 = 0
+				ecoScore2 = 0
+
+				economic_sectors.each do |sector|
+					score1 = m1.match(sector.name.mb_chars.normalize(:kd).gsub(/[^\x00-\x7F]/,'').gsub(/\b([D|d]el?)+\b|\b([U|u]n(o|a)?s?)+\b|\b([E|e]l)+\b|\b([T|t]u)+\b|\b([L|l](o|a)s?)+\b|\b[AaYy]\b|["'.,;:-]|\b([E|e]n)+\b|\b([L|l]a)+\b|\b([C|c]on)+\b|\b([Q|q]ue)+\b|\b([S|s]us?)+\b|\b([E|e]s[o|a]?s?)+\b/i, '').downcase.to_s)
+					score2 = m2.match(sector.name.mb_chars.normalize(:kd).gsub(/[^\x00-\x7F]/,'').gsub(/\b([D|d]el?)+\b|\b([U|u]n(o|a)?s?)+\b|\b([E|e]l)+\b|\b([T|t]u)+\b|\b([L|l](o|a)s?)+\b|\b[AaYy]\b|["'.,;:-]|\b([E|e]n)+\b|\b([L|l]a)+\b|\b([C|c]on)+\b|\b([Q|q]ue)+\b|\b([S|s]us?)+\b|\b([E|e]s[o|a]?s?)+\b/i, '').downcase.to_s)
+					if(score1 > ecoScore1)
+						ecoScore1 = score1
+					end
+					if(score2 > ecoScore2)
+						ecoScore2 = score2
+					end
+				end
+
+				empty_economics_max = ecoScore1
+				if(ecoScore2>empty_economics_max)
+					empty_economics_max = ecoScore2
+				end
+
+
+				#Categorías
+
+				catScore1 = 0
+				catScore2 = 0
+
+				categories.each do |category|
+					#Obtenemos los servicios de una categoría
+					services = services + category.services
+
+					score1 = m1.match(category.name.mb_chars.normalize(:kd).gsub(/[^\x00-\x7F]/,'').gsub(/\b([D|d]el?)+\b|\b([U|u]n(o|a)?s?)+\b|\b([E|e]l)+\b|\b([T|t]u)+\b|\b([L|l](o|a)s?)+\b|\b[AaYy]\b|["'.,;:-]|\b([E|e]n)+\b|\b([L|l]a)+\b|\b([C|c]on)+\b|\b([Q|q]ue)+\b|\b([S|s]us?)+\b|\b([E|e]s[o|a]?s?)+\b/i, '').downcase.to_s)
+					score2 = m2.match(category.name.mb_chars.normalize(:kd).gsub(/[^\x00-\x7F]/,'').gsub(/\b([D|d]el?)+\b|\b([U|u]n(o|a)?s?)+\b|\b([E|e]l)+\b|\b([T|t]u)+\b|\b([L|l](o|a)s?)+\b|\b[AaYy]\b|["'.,;:-]|\b([E|e]n)+\b|\b([L|l]a)+\b|\b([C|c]on)+\b|\b([Q|q]ue)+\b|\b([S|s]us?)+\b|\b([E|e]s[o|a]?s?)+\b/i, '').downcase.to_s)
+					if(score1 > catScore1)
+						catScore1 = score1
+					end
+					if(score2 > catScore2)
+						catScore2 = score2
+					end
+
+				end
+
+				empty_categories_max = catScore1
+				if(catScore2>empty_categories_max)
+					empty_categories_max = catScore2
+				end
+
+				#Servicios
+				servScore1 = 0
+				servScore2 = 0
+
+				services.each do |service|
+
+					score1 = m1.match(service.name.mb_chars.normalize(:kd).gsub(/[^\x00-\x7F]/,'').gsub(/\b([D|d]el?)+\b|\b([U|u]n(o|a)?s?)+\b|\b([E|e]l)+\b|\b([T|t]u)+\b|\b([L|l](o|a)s?)+\b|\b[AaYy]\b|["'.,;:-]|\b([E|e]n)+\b|\b([L|l]a)+\b|\b([C|c]on)+\b|\b([Q|q]ue)+\b|\b([S|s]us?)+\b|\b([E|e]s[o|a]?s?)+\b/i, '').downcase.to_s)
+					score2 = m2.match(service.name.mb_chars.normalize(:kd).gsub(/[^\x00-\x7F]/,'').gsub(/\b([D|d]el?)+\b|\b([U|u]n(o|a)?s?)+\b|\b([E|e]l)+\b|\b([T|t]u)+\b|\b([L|l](o|a)s?)+\b|\b[AaYy]\b|["'.,;:-]|\b([E|e]n)+\b|\b([L|l]a)+\b|\b([C|c]on)+\b|\b([Q|q]ue)+\b|\b([S|s]us?)+\b|\b([E|e]s[o|a]?s?)+\b/i, '').downcase.to_s)
+					if(score1 > servScore1)
+						servScore1 = score1
+					end
+					if(score2 > servScore2)
+						servScore2 = score2
+					end
+
+				end
+
+				empty_services_max = servScore1
+				if(servScore2>empty_services_max)
+					empty_services_max = servScore2
+				end
+
+
+				#Proveedores
+
+				provScore1 = 0
+				provScore2 = 0
+
+				service_providers.each do |provider|
+
+					score1 = m1.match(provider.public_name.mb_chars.normalize(:kd).gsub(/[^\x00-\x7F]/,'').gsub(/\b([D|d]el?)+\b|\b([U|u]n(o|a)?s?)+\b|\b([E|e]l)+\b|\b([T|t]u)+\b|\b([L|l](o|a)s?)+\b|\b[AaYy]\b|["'.,;:-]|\b([E|e]n)+\b|\b([L|l]a)+\b|\b([C|c]on)+\b|\b([Q|q]ue)+\b|\b([S|s]us?)+\b|\b([E|e]s[o|a]?s?)+\b/i, '').downcase.to_s)
+					score2 = m2.match(provider.public_name.mb_chars.normalize(:kd).gsub(/[^\x00-\x7F]/,'').gsub(/\b([D|d]el?)+\b|\b([U|u]n(o|a)?s?)+\b|\b([E|e]l)+\b|\b([T|t]u)+\b|\b([L|l](o|a)s?)+\b|\b[AaYy]\b|["'.,;:-]|\b([E|e]n)+\b|\b([L|l]a)+\b|\b([C|c]on)+\b|\b([Q|q]ue)+\b|\b([S|s]us?)+\b|\b([E|e]s[o|a]?s?)+\b/i, '').downcase.to_s)
+					if(score1 > provScore1)
+						provScore1 = score1
+					end
+					if(score2 > provScore2)
+						provScore2 = score2
+					end
+
+				end
+
+				empty_providers_max = provScore1
+				if(provScore2 > empty_providers_max)
+					empty_providers_max = provScore2
+				end
+
+
+
+				#Máximo
+				empty_max = empty_economics_max
+				if(empty_categories_max>empty_max)
+					empty_empty_max = empty_categories_max
+				end
+				if(empty_services_max>empty_max)
+					empty_max = empty_services_max
+				end
+				if(empty_company_max>empty_max)
+					empty_max = empty_company_max
+				end
+				if(empty_providers_max > empty_max)
+					empty_max = empty_providers_max
+				end
+
+				#Segmentamos por puntaje, guardando las distancias
+
+				for i in 0..7
+					if((empty_max >= (0.96 - i*0.04)))
+						
+						#Calculamos la distancia aproximada
+
+						dist_score = Math.sqrt((location.latitude - lat.to_f)**2 + (location.longitude - long.to_f)**2)
+
+						#Si la distancia es mayor que el máximo por tramos, NO agregamos el local
+						if i > 5
+							if dist_score > 0.10
+								break
+							end
+						elsif i > 3
+							if dist_score > 0.175
+								break
+							end
+						else
+							if dist_score > 0.25
+								break
+							end
+						end
+
+						#Guardamos el local con su distancia
+						local = [location, dist_score]
+						empty_loc_segments[i].push(local)
+
+						break
+					end
+				end
+					
+			end
+
+
+			t14 = Time.now.to_f
+			timers << t14
 
 			#Ordenamos por distancia
 			ordered_segments = Array.new
 			for i in 0..7
 				ordered_segments[i] = loc_segments[i].sort_by{ |loc| loc[1]}
 			end
+
+			t15 = Time.now.to_f
+			timers << t15
+
+			#Ordenamos por distancia
+			empty_ordered_segments = Array.new
+			for i in 0..7
+				empty_ordered_segments[i] = empty_loc_segments[i].sort_by{ |loc| loc[1]}
+			end
+
+			t16 = Time.now.to_f
+			timers << t16
 					
-			@results = Array.new
 
 			#Entregamos los ids en orden
 			for i in 0..7
@@ -255,17 +547,36 @@ class SearchsController < ApplicationController
 				end
 			end
 
+			t17 = Time.now.to_f
+			timers << t17
+
+			#Entregamos los ids en orden
+			for i in 0..7
+				empty_segment = empty_ordered_segments[i]
+				empty_segment.each do |s|
+					#loc_ids.push(s[0])
+					@results << s[0]
+				end
+			end
+
+			t18 = Time.now.to_f
+			timers << t18
+
 
 			#Los obtenemos en orden
 			#loc_ids.each do |lid|
 			#	@results << Location.find(lid)
 				#ordered_scores[lid] = locations_scores[lid]
 			#end
+			per_page = 10
 
-			@results = @results.paginate(:page => params[:page], :per_page => 10)
+			@results = @results.paginate(:page => params[:page], :per_page => per_page)
+
+			t19 = Time.now.to_f
+			timers << t19
 
 			i = 1
-			@results.each do |location|
+			for i in 1..per_page
 				if !File.exist?("app/assets/images/search/pin_map#{i}.png")
 					img = MiniMagick::Image.from_file("app/assets/images/search/pin_map.png")
 					if i<10
@@ -292,7 +603,12 @@ class SearchsController < ApplicationController
 				end
 			end
 
+
+			t20 = Time.now.to_f
+			timers << t20
 			#Rails.logger.level = 3
+
+			puts timers
 
 			#Rails.logger.error("Original: #{@lat} #{@lng}")
 			#Rails.logger.error("Second: #{lat} #{long}")
