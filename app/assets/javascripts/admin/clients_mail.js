@@ -17,21 +17,17 @@ $(function () {
 			if ($(event.target).prop('checked')) {
 				if (selected > 0) {
 					$(this).prop('checked', true);
-					$('#sendMail').attr('disabled', false);
 					selected -= 1;
 				};
 			}
 			else {
 				$(this).prop('checked', false);
-				$('#sendMail').attr('disabled', true);
 			}
 		});
 	});
 
 	$('input[name="client_mail"]').change(function (event) {
 		var selected = mails_left;
-		var prop = true;
-		var disabled = false;
 		$('input[name="client_mail"]').each( function () {
 			if ($(this).prop('checked')) {
 				if (selected <= 0) {
@@ -47,21 +43,21 @@ $(function () {
 				};
 				selected -= 1;
 			};
-			prop = prop && $(this).prop('checked');
-			disabled = disabled || $(this).prop('checked');
 		});
-		$('input[name="mail"]').prop('checked', prop);
-		$('#sendMail').attr('disabled', !disabled);
 	});
 
 	$('#sendMail').click(function (e) {
 		var $link = $(this);
 		var emails = [];
-		$('input[name="client_mail"]').each( function () {
-			if ($(this).prop('checked')) {
-				emails.push($(this).val());
-			};
-		});
+		if ($('input[name="mail"]').prop('checked')) {
+			emails = $('input[name="mail"]').data('mails');
+		} else{
+			$('input[name="client_mail"]').each( function () {
+				if ($(this).prop('checked')) {
+					emails.push($(this).val());
+				};
+			});
+		};
 		var params = { to: emails };
 		var ref = $link.attr('href');
 		$link.attr('href', ref + '?' + $.param(params));
@@ -73,7 +69,7 @@ $(function () {
 			$.getJSON('/local_providers', {location: localId }, function (providersArray) {
 				$('#provider').empty();
 				$('#provider').append('<option value="">Elige un Prestador...</option>');
-				$.each(providersArray, function (key, provider) { 
+				$.each(providersArray, function (key, provider) {
 					$('#provider').append('<option value="' + provider.id + '">' + provider.public_name + '</option>');
 				});
 			});
@@ -82,7 +78,7 @@ $(function () {
 			$.getJSON('/service_providers.json', function (providersArray) {
 				$('#provider').empty();
 				$('#provider').append('<option value="">Elige un Prestador...</option>');
-				$.each(providersArray, function (key, provider) { 
+				$.each(providersArray, function (key, provider) {
 					$('#provider').append('<option value="' + provider.id + '">' + provider.public_name + '</option>');
 				});
 			});
