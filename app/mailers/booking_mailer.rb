@@ -787,7 +787,7 @@ class BookingMailer < ActionMailer::Base
 			raise
 	end
 
-	def booking_summary (booking_data, booking_summary)
+	def booking_summary (booking_data, booking_summary, today_schedule)
 		mandrill = Mandrill::API.new Agendapro::Application.config.api_key
 
 		# => Template
@@ -811,8 +811,12 @@ class BookingMailer < ActionMailer::Base
 					:content => booking_data[:name]
 				},
 				{
-					:name => 'BODY',
+					:name => 'SUMMARY',
 					:content => booking_summary
+				},
+				{
+					:name => 'TODAY',
+					:content => today_schedule
 				}
 			],
 			:tags => ['booking', 'booking_summary'],

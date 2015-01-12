@@ -123,7 +123,7 @@ class HomeMailer < ActionMailer::Base
       :images => [
         {
           :type => 'image/png',
-          :name => 'agendapro.png',
+          :name => 'LOGO',
           :content => Base64.encode64(File.read('app/assets/images/logos/logodoble2.png'))
         }
       ]
