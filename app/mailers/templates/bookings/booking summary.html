@@ -730,13 +730,13 @@
 
       <!-- start: content -->
       <tr class="body">
-        <!---- Service Provider ---->
         <td colspan="2">
-          <p><span class="text-green">*|NAME|*</span>, aqui esta el resumen de tus reservas</p>
+          <p><span class="text-green">*|NAME|*</span>, te enviamos tu horario para el día de hoy y, además, un resumen de las reservas que fueron agendadas y/o modificadas durante el día de ayer.</p>
         </td>
       </tr>
+      <!-- Today Schedule -->
       <tr class="body background-light-gray">
-        <td class="text-center" colspan="2">Resumen de las Reservas</td>
+        <td class="text-center" colspan="2">Horario de hoy</td>
       </tr>
       <tr class="body">
         <td colspan="2">
@@ -752,7 +752,31 @@
                 </tr>
               </thead>
               <tbody>
-                *|BODY|*
+                *|TODAY|*
+              </tbody>
+            </table>
+          </div>
+        </td>
+      </tr>
+      <!-- Summary -->
+      <tr class="body background-light-gray">
+        <td class="text-center" colspan="2">Últimas reservas agendadas y/o modificadas</td>
+      </tr>
+      <tr class="body">
+        <td colspan="2">
+          <div class="table-responsive">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>Cliente</th>
+                  <th>Servicio</th>
+                  <th>Prestador/Duracion</th>
+                  <th>Hora</th>
+                  <th>Estado</th>
+                </tr>
+              </thead>
+              <tbody>
+                *|SUMMARY|*
               </tbody>
             </table>
           </div>

@@ -11,7 +11,7 @@ class UserMailer < ActionMailer::Base
     @user_fname = user.email
     @user_name = user.email
     if (!user.last_name.blank? && !user.first_name.blank?)
-      @user_name = user.first_name + ' ' + user.last_name 
+      @user_name = user.first_name + ' ' + user.last_name
       @user_fname = user.first_name
     end
 
@@ -53,8 +53,8 @@ class UserMailer < ActionMailer::Base
       :images => [
         {
           :type => 'image/png',
-          :name => 'AgendaPro.png',
-          :content => Base64.encode64(File.read('app/assets/images/logos/logo_mail.png'))
+          :name => 'LOGO',
+          :content => Base64.encode64(File.read('app/assets/images/logos/logodoble2.png'))
         }
       ]
     }
