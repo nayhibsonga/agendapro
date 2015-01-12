@@ -260,30 +260,21 @@ class Location < ActiveRecord::Base
 			if location.get_booking_configuration_email == 1
 				booking_summary = ''
 				Booking.where(location: location).where(updated_at: (Time.now - 1.day)..Time.now).each do |booking|
-					booking_summary += "<tr><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td></tr>" % [booking.client.first_name + ' ' + booking.client.last_name, booking.service.name, booking.service_provider.public_name, I18n.l(booking.start), booking.status.name]
+					booking_summary += "<tr style='-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;'>" +
+											"<td style='-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;padding-top:8px;padding-bottom:8px;padding-right:8px;padding-left:8px;line-height:1.42857143;vertical-align:top;border-top-width:1px;border-top-style:solid;border-top-color:#ddd;'>" + booking.client.first_name + ' ' + booking.client.last_name + "</td>" +
+											"<td style='-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;padding-top:8px;padding-bottom:8px;padding-right:8px;padding-left:8px;line-height:1.42857143;vertical-align:top;border-top-width:1px;border-top-style:solid;border-top-color:#ddd;'>" + booking.service.name + "</td>" +
+											"<td style='-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;padding-top:8px;padding-bottom:8px;padding-right:8px;padding-left:8px;line-height:1.42857143;vertical-align:top;border-top-width:1px;border-top-style:solid;border-top-color:#ddd;'>" + booking.service_provider.public_name + "</td>" +
+											"<td style='-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;padding-top:8px;padding-bottom:8px;padding-right:8px;padding-left:8px;line-height:1.42857143;vertical-align:top;border-top-width:1px;border-top-style:solid;border-top-color:#ddd;'>" + I18n.l(booking.start) + "</td>" +
+											"<td style='-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;padding-top:8px;padding-bottom:8px;padding-right:8px;padding-left:8px;line-height:1.42857143;vertical-align:top;border-top-width:1px;border-top-style:solid;border-top-color:#ddd;'>" + booking.status.name + "</td>" +
+										"</tr>"
 				end
-				booking_table = '<table class="table">' +
-									'<thead>' +
-										'<tr>' +
-											'<th>Cliente</th>' +
-											'<th>Servicio</th>' +
-											'<th>Prestador</th>' +
-											'<th>Hora</th>' +
-											'<th>Estado</th>' +
-										'</tr>' +
-									'</thead>' +
-									'<tbody>' +
-										booking_summary +
-									'</tbody>' +
-								'</table>'
 				booking_data = {
-					company: location.company.name,
 					logo: location.company.logo_url,
 					name: location.name,
 					to: location.email
 				}
 				if booking_summary.length > 0
-					BookingMailer.booking_summary(booking_data, booking_table)
+					BookingMailer.booking_summary(booking_data, booking_summary)
 				end
 			end
 		end
@@ -322,4 +313,4 @@ class Location < ActiveRecord::Base
 	# end
 
 end
- 
+

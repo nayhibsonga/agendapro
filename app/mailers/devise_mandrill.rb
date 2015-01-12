@@ -35,8 +35,8 @@ class DeviseMandrill < Devise::Mailer
       :images => [
         {
           :type => 'image/png',
-          :name => 'AgendaPro.png',
-          :content => Base64.encode64(File.read('app/assets/images/logos/logo_mail.png'))
+          :name => 'agendapro.png',
+          :content => Base64.encode64(File.read('app/assets/images/logos/logodoble2.png'))
         }
       ]
     }
