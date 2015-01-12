@@ -18,7 +18,7 @@ class ClientsController < ApplicationController
 
     @from_collection = current_user.company.company_from_email.where(confirmed: true)
 
-    @clients_export = Client.accessible_by(current_ability).search(params[:search]).filter_location(params[:location]).filter_provider(params[:provider]).filter_service(params[:service]).filter_gender(params[:gender]).order(:last_name, :first_name)
+    @clients_export = Client.accessible_by(current_ability).search(params[:search]).filter_location(params[:location]).filter_provider(params[:provider]).filter_service(params[:service]).filter_gender(params[:gender]).filter_birthdate(params[:option]).order(:last_name, :first_name)
     respond_to do |format|
       format.html
       format.csv
@@ -137,42 +137,53 @@ class ClientsController < ApplicationController
     end
   end
 
+  def compose_mail
+    @from_collection = current_user.company.company_from_email.where(confirmed: true)
+    @to = '';
+    if params[:to]
+      params[:to].each do |mail|
+        @to += mail + ', '
+      end
+    end
+    @to = @to.chomp(', ')
+  end
+
   def send_mail
     # Sumar mails eviados
     current_sent = current_user.company.company_setting.sent_mails
-    sent_now = params[:to].split(',').length
+    sent_to = params[:to].split(',')
+    sent_now = sent_to.length
     current_user.company.company_setting.update_attributes :sent_mails => (current_sent + sent_now)
+    attachments = params[:attachment]
+    subject = params[:subject]
+    message = params[:message]
+    sent_from = params[:from]
 
-    clients = Array.new
-    params[:to].split(',').each do |client_mail|
-      client_info = {
-        :email => client_mail,
-        :type => 'bcc'
-      }
-      clients.push(client_info)
+    Thread.new do
+      clients = Array.new
+      sent_to.each do |client_mail|
+        client_info = {
+          :email => client_mail,
+          :type => 'bcc'
+        }
+        clients.push(client_info)
+      end
+
+      if attachments
+        attachment = {
+          :type => attachments.content_type,
+          :name => attachments.original_filename,
+          :content => Base64.encode64(File.read(attachments.tempfile))
+        }
+      else
+        attachment = {}
+      end
+
+      ClientMailer.send_client_mail(current_user, clients, subject, message, attachment, sent_from)
+
+      # Close database connection
+      ActiveRecord::Base.connection.close
     end
-
-    if current_user.company.logo_url
-      company_img = {
-        :type => 'image/' +  File.extname(current_user.company.logo_url),
-        :name => 'company_img.jpg',
-        :content => Base64.encode64(File.read('public' + current_user.company.logo_url.to_s))
-      }
-    else
-      company_img = {}
-    end
-
-    if params[:attachment]
-      attachment = {
-        :type => params[:attachment].content_type,
-        :name => params[:attachment].original_filename,
-        :content => Base64.encode64(File.read(params[:attachment].tempfile))
-      }
-    else
-      attachment = {}
-    end
-
-    ClientMailer.send_client_mail(current_user, clients, params[:subject], params[:message], company_img, attachment, params[:from])
 
     redirect_to '/clients', notice: 'E-mail enviado exitosamente.'
   end

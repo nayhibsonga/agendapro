@@ -1,0 +1,805 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]> <html class="no-js lt-ie9 lt-ie8 lt-ie7" lang="es"> <![endif]-->
+<!--[if IE 7]>    <html class="no-js lt-ie9 lt-ie8" lang="es"> <![endif]-->
+<!--[if IE 8]>    <html class="no-js lt-ie9" lang="es"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="es"> <!--<![endif]-->
+  <head>
+    <!-- start: Meta -->
+    <meta charset="utf-8">
+    <title>AgendaPro</title>
+    <meta name="description" content="AgendaPro - Sistema de agendamiento OnLine para empresas y usuarios.">
+    <meta name="author" content="AgendaPro">
+    <meta name="keyword" content="agendapro, agenda, agenda online, reserva, reserva online">
+    <!-- end: Meta -->
+
+    <!-- start: Mobile Specific -->
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <!-- end: Mobile Specific -->
+
+    <!-- start: CSS -->
+    <style type="text/css">
+      /*Boostrap*/
+      html {
+        font-family: sans-serif;
+        -webkit-text-size-adjust: 100%;
+            -ms-text-size-adjust: 100%;
+      }
+      body {
+        margin: 0;
+      }
+      footer,
+      header {
+        display: block;
+      }
+      a {
+        background-color: transparent;
+      }
+      a:active,
+      a:hover {
+        outline: 0;
+      }
+      b,
+      strong {
+        font-weight: bold;
+      }
+      h1 {
+        margin: .67em 0;
+        font-size: 2em;
+      }
+      img {
+        border: 0;
+      }
+      button {
+        margin: 0;
+        font: inherit;
+        color: inherit;
+      }
+      button {
+        overflow: visible;
+      }
+      button {
+        text-transform: none;
+      }
+      button {
+        -webkit-appearance: button;
+        cursor: pointer;
+      }
+      button[disabled],
+      html input[disabled] {
+        cursor: default;
+      }
+      button::-moz-focus-inner,
+      input::-moz-focus-inner {
+        padding: 0;
+        border: 0;
+      }
+      table {
+        border-spacing: 0;
+        border-collapse: collapse;
+      }
+      td,
+      th {
+        padding: 0;
+      }
+      /*! Source: https://github.com/h5bp/html5-boilerplate/blob/master/src/css/main.css */
+      @media print {
+        *,
+        *:before,
+        *:after {
+          color: #000 !important;
+          text-shadow: none !important;
+          background: transparent !important;
+          -webkit-box-shadow: none !important;
+                  box-shadow: none !important;
+        }
+        a,
+        a:visited {
+          text-decoration: underline;
+        }
+        a[href]:after {
+          content: " (" attr(href) ")";
+        }
+        abbr[title]:after {
+          content: " (" attr(title) ")";
+        }
+        a[href^="#"]:after,
+        a[href^="javascript:"]:after {
+          content: "";
+        }
+        thead {
+          display: table-header-group;
+        }
+        tr,
+        img {
+          page-break-inside: avoid;
+        }
+        img {
+          max-width: 100% !important;
+        }
+        p,
+        h2,
+        h3 {
+          orphans: 3;
+          widows: 3;
+        }
+        h2,
+        h3 {
+          page-break-after: avoid;
+        }
+        .table {
+          border-collapse: collapse !important;
+        }
+        .table td,
+        .table th {
+          background-color: #fff !important;
+        }
+        .table-bordered th,
+        .table-bordered td {
+          border: 1px solid #ddd !important;
+        }
+      }
+      * {
+        -webkit-box-sizing: border-box;
+           -moz-box-sizing: border-box;
+                box-sizing: border-box;
+      }
+      *:before,
+      *:after {
+        -webkit-box-sizing: border-box;
+           -moz-box-sizing: border-box;
+                box-sizing: border-box;
+      }
+      html {
+        font-size: 10px;
+
+        -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+      }
+      body {
+        font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+        font-size: 14px;
+        line-height: 1.42857143;
+        color: #333;
+        background-color: #fff;
+      }
+      button {
+        font-family: inherit;
+        font-size: inherit;
+        line-height: inherit;
+      }
+      a {
+        color: #337ab7;
+        text-decoration: none;
+      }
+      a:hover,
+      a:focus {
+        color: #23527c;
+        text-decoration: underline;
+      }
+      a:focus {
+        outline: thin dotted;
+        outline: 5px auto -webkit-focus-ring-color;
+        outline-offset: -2px;
+      }
+      img {
+        vertical-align: middle;
+      }
+      hr {
+        margin-top: 20px;
+        margin-bottom: 20px;
+        border: 0;
+        border-top: 1px solid #eee;
+      }
+      h1, h2, h3, h4, h5, h6,
+      .h1, .h2, .h3, .h4, .h5, .h6 {
+        font-family: inherit;
+        font-weight: 500;
+        line-height: 1.1;
+        color: inherit;
+      }
+      h1 small, h2 small, h3 small, h4 small, h5 small, h6 small,
+      .h1 small, .h2 small, .h3 small, .h4 small, .h5 small, .h6 small,
+      h1 .small, h2 .small, h3 .small, h4 .small, h5 .small, h6 .small,
+      .h1 .small, .h2 .small, .h3 .small, .h4 .small, .h5 .small, .h6 .small {
+        font-weight: normal;
+        line-height: 1;
+        color: #777;
+      }
+      h1,
+      .h1,
+      h2,
+      .h2,
+      h3,
+      .h3 {
+        margin-top: 20px;
+        margin-bottom: 10px;
+      }
+      h1 small,
+      .h1 small,
+      h2 small,
+      .h2 small,
+      h3 small,
+      .h3 small,
+      h1 .small,
+      .h1 .small,
+      h2 .small,
+      .h2 .small,
+      h3 .small,
+      .h3 .small {
+        font-size: 65%;
+      }
+      h4,
+      .h4,
+      h5,
+      .h5,
+      h6,
+      .h6 {
+        margin-top: 10px;
+        margin-bottom: 10px;
+      }
+      h4 small,
+      .h4 small,
+      h5 small,
+      .h5 small,
+      h6 small,
+      .h6 small,
+      h4 .small,
+      .h4 .small,
+      h5 .small,
+      .h5 .small,
+      h6 .small,
+      .h6 .small {
+        font-size: 75%;
+      }
+      h1,
+      .h1 {
+        font-size: 36px;
+      }
+      h2,
+      .h2 {
+        font-size: 30px;
+      }
+      h3,
+      .h3 {
+        font-size: 24px;
+      }
+      h4,
+      .h4 {
+        font-size: 18px;
+      }
+      h5,
+      .h5 {
+        font-size: 14px;
+      }
+      h6,
+      .h6 {
+        font-size: 12px;
+      }
+      p {
+        margin: 0 0 10px;
+      }
+      small,
+      .small {
+        font-size: 85%;
+      }
+      .text-center {
+        text-align: center;
+      }
+      dl {
+        margin-top: 0;
+        margin-bottom: 20px;
+      }
+      dt,
+      dd {
+        line-height: 1.42857143;
+      }
+      dt {
+        font-weight: bold;
+      }
+      dd {
+        margin-left: 0;
+      }
+      .container {
+        padding-right: 15px;
+        padding-left: 15px;
+        margin-right: auto;
+        margin-left: auto;
+      }
+      @media (min-width: 768px) {
+        .container {
+          width: 750px;
+        }
+      }
+      @media (min-width: 992px) {
+        .container {
+          width: 970px;
+        }
+      }
+      @media (min-width: 1200px) {
+        .container {
+          width: 1170px;
+        }
+      }
+      .container-fluid {
+        padding-right: 15px;
+        padding-left: 15px;
+        margin-right: auto;
+        margin-left: auto;
+      }
+      .row {
+        margin-right: -15px;
+        margin-left: -15px;
+      }
+      .col-xs-6, .col-sm-6, .col-xs-12, .col-sm-12 {
+        position: relative;
+        min-height: 1px;
+        padding-right: 15px;
+        padding-left: 15px;
+      }
+      .col-xs-6, .col-xs-12 {
+        float: left;
+      }
+      .col-xs-12 {
+        width: 100%;
+      }
+      .col-xs-6 {
+        width: 50%;
+      }
+      @media (min-width: 768px) {
+        .col-sm-6, .col-sm-12 {
+          float: left;
+        }
+        .col-sm-12 {
+          width: 100%;
+        }
+        .col-sm-6 {
+          width: 50%;
+        }
+      }
+      table {
+        background-color: transparent;
+      }
+      th {
+        text-align: left;
+      }
+      .table {
+        width: 100%;
+        max-width: 100%;
+        margin-bottom: 20px;
+      }
+      .table > thead > tr > th,
+      .table > tbody > tr > th,
+      .table > tfoot > tr > th,
+      .table > thead > tr > td,
+      .table > tbody > tr > td,
+      .table > tfoot > tr > td {
+        padding: 8px;
+        line-height: 1.42857143;
+        vertical-align: top;
+        border-top: 1px solid #ddd;
+      }
+      .table > thead > tr > th {
+        vertical-align: bottom;
+        border-bottom: 2px solid #ddd;
+      }
+      .table > caption + thead > tr:first-child > th,
+      .table > colgroup + thead > tr:first-child > th,
+      .table > thead:first-child > tr:first-child > th,
+      .table > caption + thead > tr:first-child > td,
+      .table > colgroup + thead > tr:first-child > td,
+      .table > thead:first-child > tr:first-child > td {
+        border-top: 0;
+      }
+      .table > tbody + tbody {
+        border-top: 2px solid #ddd;
+      }
+      .table .table {
+        background-color: #fff;
+      }
+      .table-bordered {
+        border: 1px solid #ddd;
+      }
+      .table-bordered > thead > tr > th,
+      .table-bordered > tbody > tr > th,
+      .table-bordered > tfoot > tr > th,
+      .table-bordered > thead > tr > td,
+      .table-bordered > tbody > tr > td,
+      .table-bordered > tfoot > tr > td {
+        border: 1px solid #ddd;
+      }
+      .table-bordered > thead > tr > th,
+      .table-bordered > thead > tr > td {
+        border-bottom-width: 2px;
+      }
+      table col[class*="col-"] {
+        position: static;
+        display: table-column;
+        float: none;
+      }
+      table td[class*="col-"],
+      table th[class*="col-"] {
+        position: static;
+        display: table-cell;
+        float: none;
+      }
+      .table-responsive {
+        min-height: .01%;
+        overflow-x: auto;
+      }
+      @media screen and (max-width: 767px) {
+        .table-responsive {
+          width: 100%;
+          margin-bottom: 15px;
+          overflow-y: hidden;
+          -ms-overflow-style: -ms-autohiding-scrollbar;
+          border: 1px solid #ddd;
+        }
+        .table-responsive > .table {
+          margin-bottom: 0;
+        }
+        .table-responsive > .table > thead > tr > th,
+        .table-responsive > .table > tbody > tr > th,
+        .table-responsive > .table > tfoot > tr > th,
+        .table-responsive > .table > thead > tr > td,
+        .table-responsive > .table > tbody > tr > td,
+        .table-responsive > .table > tfoot > tr > td {
+          white-space: nowrap;
+        }
+        .table-responsive > .table-bordered {
+          border: 0;
+        }
+        .table-responsive > .table-bordered > thead > tr > th:first-child,
+        .table-responsive > .table-bordered > tbody > tr > th:first-child,
+        .table-responsive > .table-bordered > tfoot > tr > th:first-child,
+        .table-responsive > .table-bordered > thead > tr > td:first-child,
+        .table-responsive > .table-bordered > tbody > tr > td:first-child,
+        .table-responsive > .table-bordered > tfoot > tr > td:first-child {
+          border-left: 0;
+        }
+        .table-responsive > .table-bordered > thead > tr > th:last-child,
+        .table-responsive > .table-bordered > tbody > tr > th:last-child,
+        .table-responsive > .table-bordered > tfoot > tr > th:last-child,
+        .table-responsive > .table-bordered > thead > tr > td:last-child,
+        .table-responsive > .table-bordered > tbody > tr > td:last-child,
+        .table-responsive > .table-bordered > tfoot > tr > td:last-child {
+          border-right: 0;
+        }
+        .table-responsive > .table-bordered > tbody > tr:last-child > th,
+        .table-responsive > .table-bordered > tfoot > tr:last-child > th,
+        .table-responsive > .table-bordered > tbody > tr:last-child > td,
+        .table-responsive > .table-bordered > tfoot > tr:last-child > td {
+          border-bottom: 0;
+        }
+      }
+      .btn {
+        display: inline-block;
+        padding: 6px 12px;
+        margin-bottom: 0;
+        font-size: 14px;
+        font-weight: normal;
+        line-height: 1.42857143;
+        text-align: center;
+        white-space: nowrap;
+        vertical-align: middle;
+        -ms-touch-action: manipulation;
+            touch-action: manipulation;
+        cursor: pointer;
+        -webkit-user-select: none;
+           -moz-user-select: none;
+            -ms-user-select: none;
+                user-select: none;
+        background-image: none;
+        border: 1px solid transparent;
+        border-radius: 4px;
+      }
+      .btn:focus,
+      .btn:active:focus,
+      .btn.active:focus,
+      .btn.focus,
+      .btn:active.focus,
+      .btn.active.focus {
+        outline: thin dotted;
+        outline: 5px auto -webkit-focus-ring-color;
+        outline-offset: -2px;
+      }
+      .btn:hover,
+      .btn:focus,
+      .btn.focus {
+        color: #333;
+        text-decoration: none;
+      }
+      .btn:active,
+      .btn.active {
+        background-image: none;
+        outline: 0;
+        -webkit-box-shadow: inset 0 3px 5px rgba(0, 0, 0, .125);
+                box-shadow: inset 0 3px 5px rgba(0, 0, 0, .125);
+      }
+      .btn.disabled,
+      .btn[disabled],
+      fieldset[disabled] .btn {
+        pointer-events: none;
+        cursor: not-allowed;
+        filter: alpha(opacity=65);
+        -webkit-box-shadow: none;
+                box-shadow: none;
+        opacity: .65;
+      }
+      .btn-lg,
+      .btn-group-lg > .btn {
+        padding: 10px 16px;
+        font-size: 18px;
+        line-height: 1.33;
+        border-radius: 6px;
+      }
+      .container:before,
+      .container:after,
+      .container-fluid:before,
+      .container-fluid:after,
+      .row:before,
+      .row:after {
+        display: table;
+        content: " ";
+      }
+      .container:after,
+      .container-fluid:after,
+      .row:after {
+        clear: both;
+      }
+      .center-block {
+        display: block;
+        margin-right: auto;
+        margin-left: auto;
+      }
+      .pull-right {
+        float: right !important;
+      }
+      .pull-left {
+        float: left !important;
+      }
+    </style>
+    <style type="text/css">
+      /*AgendaPro*/
+      table.wrapper {
+        width: 100%;
+        color: #505050;
+        border-spacing: 15px;
+      }
+      .pull-center {
+        text-align: center;
+        margin-left: auto;
+        margin-right: auto;
+      }
+      tr.header {
+        background-color: #22c488;
+      }
+      tr.header > td {
+        padding: 5px;
+      }
+      tr.logo > td {
+        padding-top: 10px;
+        margin-right: auto;
+        margin-left: auto;
+        text-align: center;
+      }
+      tr.body > td {
+        padding-top: 10px;
+        padding-bottom: 15px;
+        padding-right: 15px;
+        padding-left: 15px;
+      }
+      tr.body + tr.body > td {
+        padding-top: 0;
+      }
+      tr.footer {
+        background-color: #505050;
+        color: #ffffff;
+        font-size: 13px;
+      }
+      tr.footer > td {
+        padding: 30px 0;
+        padding-right: 15px;
+        padding-left: 15px;
+      }
+      table.content {
+        width: 100%;
+      }
+      table.content tr > td {
+        padding-left: 10px;
+        padding-right: 10px;
+      }
+      tr.fluid > td {
+        width: 50%;
+        vertical-align: top;
+      }
+      .header p {
+        margin-bottom: 0;
+      }
+      .header p > a {
+        color: #ffffff;
+      }
+      .header p > a:hover,
+      .header p > a:focus,
+      .header p > a:active {
+        text-decoration: none;
+        color: #ffffff;
+      }
+      .footer img {
+        float: left;
+        margin-right: 15px;
+        width: 25px;
+      }
+      .logo {
+        width: 50%;
+        max-width: 118px;
+      }
+      .text-green {
+        color: #22c488;
+      }
+      a.text-orange {
+        color: #fd9610;
+      }
+      a.text-orange:hover,
+      a.text-orange:focus,
+      a.text-orange:active {
+        color: #db7400;
+        text-decoration: none;
+      }
+      tr.background-light-gray {
+        background-color: #cbcbcb;
+        color: #ffffff;
+      }
+      tr.background-light-gray > td {
+        padding-bottom: 5px !important;
+        padding-top: 5px !important;
+      }
+      .btn-orange {
+        color: #ffffff;
+        background-color: #fd9610;
+        border-color: #db7400;
+      }
+      .btn-orange:hover,
+      .btn-orange:focus,
+      .btn-orange.focus,
+      .btn-orange:active,
+      .btn-orange.active {
+        color: #ffffff;
+        background-color: #db7400;
+        border-color: #DF840D;
+      }
+      .btn-green {
+        color: #ffffff;
+        background-color: #22c488;
+        border-color: #1ba970;
+      }
+      .btn-green:hover,
+      .btn-green:focus,
+      .btn-green.focus,
+      .btn-green:active,
+      .btn-green.active {
+        color: #ffffff;
+        background-color: #1ba970;
+        border-color: #00CA8A;
+      }
+      .btn-action {
+        margin-left: 15px;
+        margin-right: 15px;
+      }
+      .vertical-divider {
+        border-right: 1px solid #949292;
+        height: 60px;
+        display: inline-block;
+        vertical-align: middle;
+        margin: 0 4px;
+      }
+      dl > dt {
+        font-weight: normal;
+        margin-top: 10px;
+      }
+      dl > dd {
+        color: #949292;
+        margin-bottom: 10px;
+      }
+      @media screen and (max-width: 767px) {
+        tr.fluid > td {
+          width: 100%;
+          display: inline-block;
+        }
+        tr.footer {
+          font-size: 12px;
+        }
+        tr.footer > td {
+          padding: 10px 5px;
+        }
+        .btn-action {
+          margin: 10px 0;
+          display: block;
+          width: 100%;
+        }
+      }
+    </style>
+    <!-- end: CSS -->
+  </head>
+
+  <body>
+    <table class="wrapper">
+      <!-- start: Header -->
+      <tr class="header">
+        <td colspan="2">
+          <p class="text-center"><a href="http://www.agendapro.cl" target="_blank">www.agendapro.cl</a></p>
+        </td>
+      </tr>
+      <!-- end: Header -->
+
+      <!-- start: Logo -->
+      <tr class="logo">
+        <td colspan="2">
+          <img src="cid:agendapro.png" alt="AgendaPro" class="logo">
+        </td>
+      </tr>
+      <!-- end: Logo -->
+
+      <!-- start: Content -->
+      <tr class="body">
+        <td colspan="2">
+          <p>*|NAME|* intento crear una compañia desde el celular.</p>
+        </td>
+      </tr>
+      <tr class="body background-light-gray">
+        <td colspan="2" class="text-center">
+          Datos de Contacto
+        </td>
+      </tr>
+      <tr class="body">
+        <td colspan="2">
+          <dl>
+            <dt>Nombre</dt>
+            <dd>*|FNAME|* *|LNAME|*</dd>
+            <dt>E-mail</dt>
+            <dd>*|CLIENTEMAIL|*</dd>
+            <dt>Teléfono</dt>
+            <dd>*|PHONE|*</dd>
+            <dt>Mensaje</dt>
+            <dd>*|MESSAGE|*</dd>
+          </dl>
+        </td>
+      </tr>
+      <!-- end: Content -->
+
+      <!-- start: footer -->
+      <tr class="footer fluid">
+        <td>
+          <table class="content">
+            <tr>
+              <td>
+                <p>Este es un email automático, para contactar a la empresa por favor responde este correo.</p>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <a href="http://agendapro.cl/home" target="_blank" class="text-orange">¿Quieres unirte a AgendaPro?</a>
+              </td>
+            </tr>
+          </table>
+        </td>
+        <td>
+          <table class="content">
+            <tr>
+              <td>
+                <img src="http://agendapro.cl/assets/footer/1.png">
+                <p>Nuestra Señora de los Angeles 185, Oficina D, Las Condes, Santiago</p>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <img src="http://agendapro.cl/assets/footer/3.png">
+                <p>(+56 9) 5178 5898</p>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+      <!-- end: footer -->
+    </table>
+  </body>
+</html>

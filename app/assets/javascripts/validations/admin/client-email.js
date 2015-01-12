@@ -2,7 +2,9 @@ var validator;
 $(function() {
 	validator = $('#client_mailer').validate({
 		errorPlacement: function(error, element) {
-			error.appendTo(element.next());
+			if (element.attr('id') != 'message') {
+				error.appendTo(element.next());
+			};
 		},
 		rules: {
 			'from': {
@@ -29,12 +31,16 @@ $(function() {
 		},
 		highlight: function(element) {
 			$(element).closest('.form-group').removeClass('has-success').addClass('has-error');
-			$(element).parent().children('.form-control-feedback').removeClass('fa fa-check').addClass('fa fa-times');
+			if ($(element).attr('id') != 'message-error') {
+				$(element).parent().children('.form-control-feedback').removeClass('fa fa-check').addClass('fa fa-times');
+			};
 		},
 		success: function(element) {
 			$(element).closest('.form-group').removeClass('has-error').addClass('has-success');
-			$(element).parent().parent().children('.form-control-feedback').removeClass('fa fa-times').addClass('fa fa-check');
-			$(element).parent().empty()
+			if ($(element).attr('id') != 'message-error') {
+				$(element).parent().parent().children('.form-control-feedback').removeClass('fa fa-times').addClass('fa fa-check');
+				$(element).parent().empty()
+			};
 		},
 		submitHandler: function(form) {
 			form.submit();
