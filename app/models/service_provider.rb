@@ -130,8 +130,19 @@ class ServiceProvider < ActiveRecord::Base
 	def self.booking_summary
 		where(company_id: Company.where(active: true)).where(location_id: Location.where(active: true)).where(active: true).each do |provider|
 			if provider.get_booking_configuration_email == 1
+				today_schedule = ''
+				Booking.where(service_provider: provider).where("DATE(start) = DATE(?)", Time.now).where.not(status: Status.find_by(name: 'Cancelado')).order(:start).each do |booking|
+					today_schedule += "<tr style='-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;'>" +
+											"<td style='-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;padding-top:8px;padding-bottom:8px;padding-right:8px;padding-left:8px;line-height:1.42857143;vertical-align:top;border-top-width:1px;border-top-style:solid;border-top-color:#ddd;'>" + booking.client.first_name + ' ' + booking.client.last_name + "</td>" +
+											"<td style='-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;padding-top:8px;padding-bottom:8px;padding-right:8px;padding-left:8px;line-height:1.42857143;vertical-align:top;border-top-width:1px;border-top-style:solid;border-top-color:#ddd;'>" + booking.service.name + "</td>" +
+											"<td style='-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;padding-top:8px;padding-bottom:8px;padding-right:8px;padding-left:8px;line-height:1.42857143;vertical-align:top;border-top-width:1px;border-top-style:solid;border-top-color:#ddd;'>" + booking.service.duration.to_s + " minutos</td>" +
+											"<td style='-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;padding-top:8px;padding-bottom:8px;padding-right:8px;padding-left:8px;line-height:1.42857143;vertical-align:top;border-top-width:1px;border-top-style:solid;border-top-color:#ddd;'>" + I18n.l(booking.start) + "</td>" +
+											"<td style='-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;padding-top:8px;padding-bottom:8px;padding-right:8px;padding-left:8px;line-height:1.42857143;vertical-align:top;border-top-width:1px;border-top-style:solid;border-top-color:#ddd;'>" + booking.status.name + "</td>" +
+										"</tr>"
+				end
+
 				booking_summary = ''
-				Booking.where(service_provider: provider).where(updated_at: (Time.now - 1.day)..Time.now).each do |booking|
+				Booking.where(service_provider: provider).where(updated_at: (Time.now - 1.day)..Time.now).order(:start).each do |booking|
 					booking_summary += "<tr style='-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;'>" +
 											"<td style='-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;padding-top:8px;padding-bottom:8px;padding-right:8px;padding-left:8px;line-height:1.42857143;vertical-align:top;border-top-width:1px;border-top-style:solid;border-top-color:#ddd;'>" + booking.client.first_name + ' ' + booking.client.last_name + "</td>" +
 											"<td style='-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;padding-top:8px;padding-bottom:8px;padding-right:8px;padding-left:8px;line-height:1.42857143;vertical-align:top;border-top-width:1px;border-top-style:solid;border-top-color:#ddd;'>" + booking.service.name + "</td>" +
@@ -145,8 +156,8 @@ class ServiceProvider < ActiveRecord::Base
 					name: provider.public_name,
 					to: provider.notification_email
 				}
-				if booking_summary.length > 0
-					BookingMailer.booking_summary(booking_data, booking_summary)
+				if booking_summary.length > 0 or today_schedule.length > 0
+					BookingMailer.booking_summary(booking_data, booking_summary, today_schedule)
 				end
 			end
 		end
