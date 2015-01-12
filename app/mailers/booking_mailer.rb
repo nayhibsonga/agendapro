@@ -48,7 +48,7 @@ class BookingMailer < ActionMailer::Base
 			:images => [
 				{
 					:type => 'image/png',
-					:name => 'agendapro.png',
+					:name => 'LOGO',
 					:content => Base64.encode64(File.read('app/assets/images/logos/logodoble2.png'))
 				}
 			],
@@ -63,12 +63,11 @@ class BookingMailer < ActionMailer::Base
 
 		# => Logo empresa
 		if book_info.location.company.logo_url
-			ext = File.extname(booking_data[:logo])
-			message[:images] << {
-				:type => 'image/' +  ext[1, ext.size],
-				:name => 'company.jpg',
-				:content => Base64.encode64(File.read('public' + book_info.location.company.logo_url.to_s))
-			}
+			message[:images] = [{
+							:type => MIME::Types.type_for(book_info.location.company.logo_url).first.content_type,
+							:name => 'LOGO',
+							:content => Base64.encode64(File.read('public' + book_info.location.company.logo_url.to_s))
+						}]
 		end
 
 		if !book_info.notes.blank?
@@ -220,7 +219,7 @@ class BookingMailer < ActionMailer::Base
 			:images => [
 				{
 					:type => 'image/png',
-					:name => 'agendapro.png',
+					:name => 'LOGO',
 					:content => Base64.encode64(File.read('app/assets/images/logos/logodoble2.png'))
 				}
 			],
@@ -239,12 +238,11 @@ class BookingMailer < ActionMailer::Base
 
 		# => Logo empresa
 		if book_info.location.company.logo_url
-			ext = File.extname(booking_data[:logo])
-			message[:images] << {
-				:type => 'image/' +  ext[1, ext.size],
-				:name => 'company.jpg',
-				:content => Base64.encode64(File.read('public' + book_info.location.company.logo_url.to_s))
-			}
+			message[:images] = [{
+							:type => MIME::Types.type_for(book_info.location.company.logo_url).first.content_type,
+							:name => 'LOGO',
+							:content => Base64.encode64(File.read('public' + book_info.location.company.logo_url.to_s))
+						}]
 		end
 
 		# Notificacion service provider
@@ -388,7 +386,7 @@ class BookingMailer < ActionMailer::Base
 			:images => [
 				{
 					:type => 'image/png',
-					:name => 'agendapro.png',
+					:name => 'LOGO',
 					:content => Base64.encode64(File.read('app/assets/images/logos/logodoble2.png'))
 				}
 			]
@@ -400,12 +398,11 @@ class BookingMailer < ActionMailer::Base
 
 		# => Logo empresa
 		if book_info.location.company.logo_url
-			ext = File.extname(booking_data[:logo])
-			message[:images] << {
-				:type => 'image/' +  ext[1, ext.size],
-				:name => 'company.jpg',
-				:content => Base64.encode64(File.read('public' + book_info.location.company.logo_url.to_s))
-			}
+			message[:images] = [{
+							:type => MIME::Types.type_for(book_info.location.company.logo_url).first.content_type,
+							:name => 'LOGO',
+							:content => Base64.encode64(File.read('public' + book_info.location.company.logo_url.to_s))
+						}]
 		end
 
 		# Notificacion service provider
@@ -519,7 +516,7 @@ class BookingMailer < ActionMailer::Base
 			:images => [
 				{
 					:type => 'image/png',
-					:name => 'agendapro.png',
+					:name => 'LOGO',
 					:content => Base64.encode64(File.read('app/assets/images/logos/logodoble2.png'))
 				}
 			]
@@ -531,12 +528,11 @@ class BookingMailer < ActionMailer::Base
 
 		# => Logo empresa
 		if book_info.location.company.logo_url
-			ext = File.extname(booking_data[:logo])
-			message[:images] << {
-				:type => 'image/' +  ext[1, ext.size],
-				:name => 'company.jpg',
-				:content => Base64.encode64(File.read('public' + book_info.location.company.logo_url.to_s))
-			}
+			message[:images] = [{
+							:type => MIME::Types.type_for(book_info.location.company.logo_url).first.content_type,
+							:name => 'LOGO',
+							:content => Base64.encode64(File.read('public' + book_info.location.company.logo_url.to_s))
+						}]
 		end
 
 		# Notificacion service provider
@@ -672,7 +668,7 @@ class BookingMailer < ActionMailer::Base
 			:images => [
 				{
 					:type => 'image/png',
-					:name => 'agendapro.png',
+					:name => 'LOGO',
 					:content => Base64.encode64(File.read('app/assets/images/logos/logodoble2.png'))
 				}
 			]
@@ -684,12 +680,11 @@ class BookingMailer < ActionMailer::Base
 
 		# => Logo empresa
 		if book_info.location.company.logo_url
-			ext = File.extname(booking_data[:logo])
-			message[:images] << {
-				:type => 'image/' +  ext[1, ext.size],
-				:name => 'company.jpg',
-				:content => Base64.encode64(File.read('public' + book_info.location.company.logo_url.to_s))
-			}
+			message[:images] = [{
+							:type => MIME::Types.type_for(book_info.location.company.logo_url).first.content_type,
+							:name => 'LOGO',
+							:content => Base64.encode64(File.read('public' + book_info.location.company.logo_url.to_s))
+						}]
 		end
 
 		# Notificacion service provider
@@ -832,12 +827,11 @@ class BookingMailer < ActionMailer::Base
 
 		# => Logo empresa
 		if booking_data[:logo]
-			ext = File.extname(booking_data[:logo])
-			message[:images] << {
-				:type => 'image/' +  ext[1, ext.size],
-				:name => 'COMPANYIMG',
-				:content => Base64.encode64(File.read('public' + booking_data[:logo].to_s))
-			}
+			message[:images] = [{
+							:type => MIME::Types.type_for(booking_data[:logo]).first.content_type,
+							:name => 'LOGO',
+							:content => Base64.encode64(File.read('public' + booking_data[:logo].to_s))
+						}]
 		end
 
 		# => Metadata

@@ -4,7 +4,7 @@ class ClientMailer < ActionMailer::Base
 
   def send_client_mail (current_user, clients, subject, message, attachment, from)
 	mandrill = Mandrill::API.new Agendapro::Application.config.api_key
-	
+
 	# => Template
 	template_name = 'clientmail'
 	template_content = []
@@ -43,7 +43,7 @@ class ClientMailer < ActionMailer::Base
 	# => Logo empresa
 	if Company.find(current_user.company_id).logo_url
 		company_logo = {
-			:type => 'image/' +  File.extname(Company.find(current_user.company_id).logo_url),
+			:type => MIME::Types.type_for(Company.find(current_user.company_id).logo_url).first.content_type,
 			:name => 'company.jpg',
 			:content => Base64.encode64(File.read('public' + Company.find(current_user.company_id).logo_url.to_s))
 		}
