@@ -67,7 +67,7 @@ class Client < ActiveRecord::Base
     end
   end
 
-  def self.search(search)
+  def self.search(search, company_id)
     if search
       search_rut = search.gsub(/[.-]/, "")
       search_array = search.split(' ')
@@ -75,9 +75,9 @@ class Client < ActiveRecord::Base
         item.prepend('%')
         item << '%'
       end
-      clients1 = where('first_name ILIKE ANY ( array[:s] )', :s => search_array).where('last_name ILIKE ANY ( array[:s] )', :s => search_array).pluck(:id)
-      clients2 = where("CONCAT(first_name, ' ', last_name) ILIKE :s OR email ILIKE :s OR first_name ILIKE :s OR last_name ILIKE :s OR replace(replace(identification_number, '.', ''), '-', '') ILIKE :r", :s => "%#{search}%", :r => "%#{search_rut}%").pluck(:id)
-      where(id: (clients1 + clients2).uniq)\
+      clients1 = where(company_id: company_id).where('first_name ILIKE ANY ( array[:s] )', :s => search_array).where('last_name ILIKE ANY ( array[:s] )', :s => search_array).pluck(:id).uniq
+      clients2 = where(company_id: company_id).where("CONCAT(first_name, ' ', last_name) ILIKE :s OR email ILIKE :s OR first_name ILIKE :s OR last_name ILIKE :s OR replace(replace(identification_number, '.', ''), '-', '') ILIKE :r", :s => "%#{search}%", :r => "%#{search_rut}%").pluck(:id).uniq
+      where(id: (clients1 + clients2).uniq)
     else
       all
     end

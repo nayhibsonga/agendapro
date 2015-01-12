@@ -11,14 +11,14 @@ class ClientsController < ApplicationController
     @locations = Location.where(company_id: current_user.company_id, active: true)
     @service_providers = ServiceProvider.where(company_id: current_user.company_id, active: true)
     @services = Service.where(company_id: current_user.company_id, active: true)
-    @clients = Client.accessible_by(current_ability).search(params[:search]).filter_location(params[:location]).filter_provider(params[:provider]).filter_service(params[:service]).filter_gender(params[:gender]).filter_birthdate(params[:option]).order(:last_name, :first_name).paginate(:page => params[:page], :per_page => 25)
+    @clients = Client.accessible_by(current_ability).search(params[:search], current_user.company_id).filter_location(params[:location]).filter_provider(params[:provider]).filter_service(params[:service]).filter_gender(params[:gender]).filter_birthdate(params[:option]).order(:last_name, :first_name).paginate(:page => params[:page], :per_page => 25)
 
     @max_mails = current_user.company.company_setting.daily_mails
     @mails_left = current_user.company.company_setting.daily_mails - current_user.company.company_setting.sent_mails
 
     @from_collection = current_user.company.company_from_email.where(confirmed: true)
 
-    @clients_export = Client.accessible_by(current_ability).search(params[:search]).filter_location(params[:location]).filter_provider(params[:provider]).filter_service(params[:service]).filter_gender(params[:gender]).filter_birthdate(params[:option]).order(:last_name, :first_name)
+    @clients_export = Client.accessible_by(current_ability).search(params[:search], current_user.company_id).filter_location(params[:location]).filter_provider(params[:provider]).filter_service(params[:service]).filter_gender(params[:gender]).filter_birthdate(params[:option]).order(:last_name, :first_name)
     respond_to do |format|
       format.html
       format.csv
@@ -216,7 +216,15 @@ class ClientsController < ApplicationController
   end
 
   def name_suggestion
-    @clients = Client.where(company_id: current_user.company_id).where("CONCAT(first_name, ' ', last_name) ILIKE :s OR first_name ILIKE :s OR last_name ILIKE :s", :s => "%#{params[:term]}%").order(:last_name, :first_name).uniq
+    search_array = params[:term].split(' ')
+    search_array.each do |item|
+      item.prepend('%')
+      item << '%'
+    end
+    @clients1 = Client.where(company_id: current_user.company_id).where('first_name ILIKE ANY ( array[:s] )', :s => search_array).where('last_name ILIKE ANY ( array[:s] )', :s => search_array).pluck(:id).uniq
+    @clients2 = Client.where(company_id: current_user.company_id).where("CONCAT(first_name, ' ', last_name) ILIKE :s OR first_name ILIKE :s OR last_name ILIKE :s", :s => "%#{params[:term]}%").order(:last_name, :first_name).pluck(:id).uniq
+
+    @clients = Client.where(id: (@clients1 + @clients2).uniq)
 
     @clients_arr = Array.new
     @clients.each do |client|
