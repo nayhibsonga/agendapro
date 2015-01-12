@@ -1,7 +1,7 @@
 class BookingMailer < ActionMailer::Base
 	require 'mandrill'
 	require 'base64'
-	
+
 	include ActionView::Helpers::NumberHelper
 
 	def book_service_mail (book_info)
@@ -63,8 +63,9 @@ class BookingMailer < ActionMailer::Base
 
 		# => Logo empresa
 		if book_info.location.company.logo_url
+			ext = File.extname(booking_data[:logo])
 			message[:images] << {
-				:type => 'image/' +  File.extname(book_info.location.company.logo_url),
+				:type => 'image/' +  ext[1, ext.size],
 				:name => 'company.jpg',
 				:content => Base64.encode64(File.read('public' + book_info.location.company.logo_url.to_s))
 			}
@@ -238,8 +239,9 @@ class BookingMailer < ActionMailer::Base
 
 		# => Logo empresa
 		if book_info.location.company.logo_url
+			ext = File.extname(booking_data[:logo])
 			message[:images] << {
-				:type => 'image/' +  File.extname(book_info.location.company.logo_url),
+				:type => 'image/' +  ext[1, ext.size],
 				:name => 'company.jpg',
 				:content => Base64.encode64(File.read('public' + book_info.location.company.logo_url.to_s))
 			}
@@ -398,8 +400,9 @@ class BookingMailer < ActionMailer::Base
 
 		# => Logo empresa
 		if book_info.location.company.logo_url
+			ext = File.extname(booking_data[:logo])
 			message[:images] << {
-				:type => 'image/' +  File.extname(book_info.location.company.logo_url),
+				:type => 'image/' +  ext[1, ext.size],
 				:name => 'company.jpg',
 				:content => Base64.encode64(File.read('public' + book_info.location.company.logo_url.to_s))
 			}
@@ -528,8 +531,9 @@ class BookingMailer < ActionMailer::Base
 
 		# => Logo empresa
 		if book_info.location.company.logo_url
+			ext = File.extname(booking_data[:logo])
 			message[:images] << {
-				:type => 'image/' +  File.extname(book_info.location.company.logo_url),
+				:type => 'image/' +  ext[1, ext.size],
 				:name => 'company.jpg',
 				:content => Base64.encode64(File.read('public' + book_info.location.company.logo_url.to_s))
 			}
@@ -680,8 +684,9 @@ class BookingMailer < ActionMailer::Base
 
 		# => Logo empresa
 		if book_info.location.company.logo_url
+			ext = File.extname(booking_data[:logo])
 			message[:images] << {
-				:type => 'image/' +  File.extname(book_info.location.company.logo_url),
+				:type => 'image/' +  ext[1, ext.size],
 				:name => 'company.jpg',
 				:content => Base64.encode64(File.read('public' + book_info.location.company.logo_url.to_s))
 			}
@@ -819,7 +824,7 @@ class BookingMailer < ActionMailer::Base
 			:images => [
 				{
 					:type => 'image/png',
-					:name => 'agendapro.png',
+					:name => 'LOGO',
 					:content => Base64.encode64(File.read('app/assets/images/logos/logodoble2.png'))
 				}
 			]
@@ -827,9 +832,10 @@ class BookingMailer < ActionMailer::Base
 
 		# => Logo empresa
 		if booking_data[:logo]
+			ext = File.extname(booking_data[:logo])
 			message[:images] << {
-				:type => 'image/' +  File.extname(booking_data[:logo]),
-				:name => 'company.jpg',
+				:type => 'image/' +  ext[1, ext.size],
+				:name => 'COMPANYIMG',
 				:content => Base64.encode64(File.read('public' + booking_data[:logo].to_s))
 			}
 		end
