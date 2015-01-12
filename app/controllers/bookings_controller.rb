@@ -492,8 +492,6 @@ class BookingsController < ApplicationController
     if @company.company_setting.client_exclusive
       if Client.where(identification_number: params[:identification_number], company_id: @company).count > 0
         client = Client.where(identification_number: params[:identification_number], company_id: @company).first
-        client.first_name = params[:firstName]
-        client.last_name = params[:lastName]
         client.email = params[:email]
         client.phone = params[:phone]
         client.save

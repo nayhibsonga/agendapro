@@ -70,7 +70,14 @@ class Client < ActiveRecord::Base
   def self.search(search)
     if search
       search_rut = search.gsub(/[.-]/, "")
-      where ["CONCAT(first_name, ' ', last_name) ILIKE :s OR email ILIKE :s OR first_name ILIKE :s OR last_name ILIKE :s OR replace(replace(identification_number, '.', ''), '-', '') ILIKE :r", :s => "%#{search}%", :r => "%#{search_rut}%"]
+      search_array = search.split(' ')
+      search_array.each do |item|
+        item.prepend('%')
+        item << '%'
+      end
+      clients1 = where('first_name ILIKE ANY ( array[:s] )', :s => search_array).where('last_name ILIKE ANY ( array[:s] )', :s => search_array).pluck(:id)
+      clients2 = where("CONCAT(first_name, ' ', last_name) ILIKE :s OR email ILIKE :s OR first_name ILIKE :s OR last_name ILIKE :s OR replace(replace(identification_number, '.', ''), '-', '') ILIKE :r", :s => "%#{search}%", :r => "%#{search_rut}%").pluck(:id)
+      where(id: (clients1 + clients2).uniq)\
     else
       all
     end
