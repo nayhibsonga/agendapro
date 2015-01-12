@@ -36,7 +36,7 @@ class BillingInfosController < ApplicationController
         format.html { redirect_to select_plan_path, notice: 'Gracias por ingresar su información de facturación, esta será validada a la brevedad.' }
         format.json { render action: 'show', status: :created, location: @billing_info }
       else
-        format.html { redirect_to select_plan_path, notice: 'Hubo un problema en la validación de los datos, porfavor revíselos.' }
+        format.html { redirect_to select_plan_path, notice: 'Hubo un problema en la validación de los datos, por favor revíselos.' }
         format.json { render json: @billing_info.errors, status: :unprocessable_entity }
       end
     end
@@ -50,7 +50,7 @@ class BillingInfosController < ApplicationController
         format.html { redirect_to select_plan_path, notice: 'Gracias por actualizar su información de facturación, esta será validada a la brevedad.' }
         format.json { head :no_content }
       else
-        format.html { redirect_to select_plan_path, notice: 'Hubo un problema en la validación de los datos, porfavor revíselos.' }
+        format.html { redirect_to select_plan_path, notice: 'Hubo un problema en la validación de los datos, por favor revíselos.' }
         format.json { render json: @billing_info.errors, status: :unprocessable_entity }
       end
     end
