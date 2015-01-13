@@ -145,7 +145,7 @@ class SearchsController < ApplicationController
 					limit = 4
 				end
 
-				for i in 0..limit
+				for i in 0..limit-1
 				 	str_test_array.permutation(i).to_a.each do |perm|
 				 		test_array.push(perm)
 					end
@@ -365,7 +365,7 @@ class SearchsController < ApplicationController
 					limit = 4
 				end
 
-				for i in 0..limit
+				for i in 0..limit-1
 				 	str_test_array.permutation(i).to_a.each do |perm|
 				 		test_array.push(perm)
 					end
