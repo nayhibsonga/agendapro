@@ -8,6 +8,7 @@ class PayedBooking < ActiveRecord::Base
 
 	def send_confirmation
 		#Enviar comprobantes de pago
+		BookingMailer.book_service_mail(self.booking)
 		BookingMailer.book_payment_mail(self)
 		BookingMailer.book_payment_company_mail(self)
 	end
