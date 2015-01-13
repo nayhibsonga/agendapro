@@ -1,10 +1,6 @@
 Agendapro::Application.routes.draw do
 
-  resources :banks
-
-  get "payed_bookings/show"
-  get "payed_bookings/get_by_user"
-  post "payed_bookings/create_csv", :to => 'payed_bookings#create_csv'
+  
   get "users/index"
   require 'subdomain'
 
@@ -50,6 +46,7 @@ Agendapro::Application.routes.draw do
   resources :clients
 
   resources :payed_bookings
+  resources :banks
 
   namespace :admin do 
     get '', :to => 'dashboard#index', :as => '/'
@@ -85,6 +82,7 @@ Agendapro::Application.routes.draw do
   get '/get_direction', :to => 'districts#get_direction'
   get '/time_booking_edit', :to => 'company_settings#time_booking_edit', :as => 'time_booking'
   get '/minisite/:id', :to => 'company_settings#minisite', :as => 'minisite'
+  get '/compose_mail', :to => 'clients#compose_mail', :as => 'send_mail'
   post '/send_mail_client', :to => 'clients#send_mail'
   get '/get_link', :to => 'companies#get_link', :as => 'get_link'
   post '/change_categories_order', :to => 'service_categories#change_categories_order'
@@ -99,6 +97,8 @@ Agendapro::Application.routes.draw do
   get '/clients_last_name_suggestion', :to => 'clients#last_name_suggestion'
   get '/clients_rut_suggestion', :to => 'clients#rut_suggestion'
   get '/client_loader', :to => 'clients#client_loader'
+
+  get '/check_staff_code', :to => 'staff_codes#check_staff_code'
 
   get '/provider_services', :to => 'service_providers#provider_service'
 
@@ -234,6 +234,13 @@ Agendapro::Application.routes.draw do
   get '/iframe/facebook_success', :to => 'iframe#facebook_success', :as => 'facebook_success'
   get '/iframe/facebook_addtab', :to => 'iframe#facebook_addtab', :as => 'facebook_addtab'
   get '/company_settings/:id/delete_facebook_pages', :to => 'company_settings#delete_facebook_pages', :as => 'delete_facebook_pages'
+
+  # Payed Bookings
+  get "payed_bookings/show", :to => 'payed_bookings#show'
+  get "payed_bookings/get_by_user", :to => 'payed_bookings#get_by_user'
+  post "payed_bookings/create_csv", :to => 'payed_bookings#create_csv'
+  post "payed_bookings/mark_as_payed", :to => 'payed_bookings#mark_as_payed'
+  post "payed_bookings/mark_several_as_payed", :to => 'payed_bookings#mark_several_as_payed'
   
   # Root
   get '/' => 'searchs#index', :constraints => { :subdomain => 'www' }

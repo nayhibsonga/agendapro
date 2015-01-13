@@ -285,10 +285,10 @@
 					</div>
 				</div>
 				<div class="form-group">
-					<%= f.label :booking_configuration_email, 'Resumen Reservas', :class => 'col-sm-3 control-label' %>
+					<%= f.label :booking_configuration_email, 'Notificaciones de Reservas', :class => 'col-sm-3 control-label' %>
 					<div class="col-sm-5">
-						<%= f.select :booking_configuration_email, options_for_select([["Por cada reserva", 0], ["Una vez al día", 1], ["No se envía resumen", 3]], selected: @company_setting.booking_configuration_email ), {}, {class: "form-control" } %>
-						<span class="help-block">En esta opción defines como se envía el resumen de las reservas.</span>
+						<%= f.select :booking_configuration_email, options_for_select([["Notificación por cada reserva", 0], ["Enviar resumen de reservas diario", 1], ["No notificar reservas por email", 3]], selected: @company_setting.booking_configuration_email ), {}, {class: "form-control" } %>
+						<span class="help-block">Esta opción define cómo se notifican las reservas al email. Puedes configurar esta opción para cada local y prestador independientemente.</span>
 					</div>
 				</div>
 				<div class="form-group">
@@ -403,14 +403,14 @@
 	    	<ol>
 	    		<li>Haz click en el siguiente link: <a href="https://www.facebook.com/dialog/pagetab?api_key=739120539456506&next=https%3A%2F%2Fwww.facebook.com%2F" target="_blank">App AgendaPro para Facebook</a><br /><small>(Asegúrate que hayas iniciado sesión en Facebook como administrador de la página (la cuenta personal de alguien que puede editar tu página) a la que le quieres agregar reservas en línea. No debes iniciar sesión "usar como" tú página.</small></li>
 	    		<li>Elige la página a la que quieres agregar reservas en línea</li>
-	    		<li>En tu página de facebook, busca el boton <strong>“Más”</strong> y selecciona <strong>“Administrar Pestaña”</strong></li>
+	    		<li>En tu página de Facebook, busca el botón <strong>“Más”</strong> y selecciona <strong>“Administrar Pestaña”</strong></li>
 	    		<li>Arrastra la pestaña <strong>“¡Reserva Online!”</strong> a la posición que deseas (recomendamos entre las primeras 4 posiciones)</li>
 	    		<li>En la misma página, ahora selecciona la pestaña <strong>“¡Reserva Online!”</strong></li>
 	    		<li>Pega el siguiente código en el espacio de campo de texto <strong>"Código AgendaPro"</strong>, y haz click en <string>"Guardar"</strong><pre class="pre-scrollable well-white"><%= (@company.id * 123456).to_s(30) %></pre></li>
 	    		<li>¡Ya estás listo para que tus clientes reserven tus servicios a través de <strong>Facebook</strong>!</li>
 	    		<hr />
 	    		<p><strong>¿Quieres desactivar las reservas en línea por Facebook?</strong></p>
-	    		<p>Para hacerlo debes desactivar las reservas por facebook apretando el siquiente botón "Desactivar Facebook", y luego debes eliminar la pestaña de tu página de Facebook manualmente, desde las configuraciones de esta.</p>
+	    		<p>Para hacerlo debes desactivar las reservas por Facebook apretando el siquiente botón "Desactivar Facebook", y luego debes eliminar la pestaña de tu página de Facebook manualmente, desde las configuraciones de esta.</p>
 	    		<p><%= link_to "Desactivar Facebook", delete_facebook_pages_path, data: { confirm: '¿Estás seguro de querer desactivar las reservas desde Facebook? Por favor recuerda eliminar la pestaña de tu página de Facebook.' }, class: "btn btn-danger" %></p>
 	    	</ol>
 		</div>

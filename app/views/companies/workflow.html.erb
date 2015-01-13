@@ -197,7 +197,7 @@
           </div>
           <div class="box-step">
             <div class="row staff">
-              <div class="col-md-3" style="max-height: 346px; overflow-y: hidden;">
+              <div class="col-md-3 step2-left-col" style="max-height: 346px; overflow-y: hidden;">
                 <div class="staff-wrapper">             
                   <span class="subtitulos-workflow">Seleccione un Staff<br /> y Horario &nbsp;</span><span><i class="fa fa-clock-o gray-icon"></i>&nbsp;<i class="fa fa-user gray-icon"></i></span>
                   <div class="sub-workflow dark-gray">Seleccione un staff para ver su horario</div>
@@ -207,6 +207,8 @@
                       </ul>
                     </div>
                   
+                </div>
+                <div style="clear: both;">
                 </div>
               </div>
 
@@ -424,7 +426,7 @@
                           </div>
                         </div>
                         <div class="col-md-6" id="reservar1">
-                          <button type="submit" data-loading-text="Cargando..." class="submitBtn">Reservar</button>
+                          <button type="submit" class="submitBtn">Reservar</button>
                         </div>
                       </div>
 
@@ -658,10 +660,6 @@
             }
           }
         }
-      });
-
-      $('.submitBtn').click(function() {
-        $(this).button('loading');
       });
       
     });

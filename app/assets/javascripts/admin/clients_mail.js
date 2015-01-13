@@ -17,21 +17,17 @@ $(function () {
 			if ($(event.target).prop('checked')) {
 				if (selected > 0) {
 					$(this).prop('checked', true);
-					$('#sendMail').prop('disabled', false);
 					selected -= 1;
 				};
 			}
 			else {
 				$(this).prop('checked', false);
-				$('#sendMail').prop('disabled', true);
 			}
 		});
 	});
 
 	$('input[name="client_mail"]').change(function (event) {
 		var selected = mails_left;
-		var prop = true;
-		var disabled = false;
 		$('input[name="client_mail"]').each( function () {
 			if ($(this).prop('checked')) {
 				if (selected <= 0) {
@@ -47,36 +43,24 @@ $(function () {
 				};
 				selected -= 1;
 			};
-			prop = prop && $(this).prop('checked');
-			disabled = disabled || $(this).prop('checked');
 		});
-		$('input[name="mail"]').prop('checked', prop);
-		$('#sendMail').prop('disabled', !disabled);
 	});
 
-	$('#mailModal').on('show.bs.modal', function (e) {
+	$('#sendMail').click(function (e) {
+		var $link = $(this);
 		var emails = [];
-		$('input[name="client_mail"]').each( function () {
-			if ($(this).prop('checked')) {
-				emails.push($(this).val());
-			};
-		});
-		$('#to').val(emails);
-	});
-	$('#mailModal').on('hidden.bs.modal', function (e) {
-		validator.resetForm();
-		$('.has-success').removeClass('has-success');
-		$('.fa.fa-check').removeClass('fa fa-check');
-		$('.has-error').removeClass('has-error');
-		$('.fa.fa-times').removeClass('fa fa-times');
-	});
-
-	$('#send_mail_button').click( function () {
-		if($('#client_mailer').valid()) {
-			$('.form-group').toggle();
-			$('.modal-footer .btn').toggle();
-			$('.modal-body div:first').toggle()
-		}
+		if ($('input[name="mail"]').prop('checked')) {
+			emails = $('input[name="mail"]').data('mails');
+		} else{
+			$('input[name="client_mail"]').each( function () {
+				if ($(this).prop('checked')) {
+					emails.push($(this).val());
+				};
+			});
+		};
+		var params = { to: emails };
+		var ref = $link.attr('href');
+		$link.attr('href', ref + '?' + $.param(params));
 	});
 
 	$('#location').change( function () {
@@ -85,7 +69,7 @@ $(function () {
 			$.getJSON('/local_providers', {location: localId }, function (providersArray) {
 				$('#provider').empty();
 				$('#provider').append('<option value="">Elige un Prestador...</option>');
-				$.each(providersArray, function (key, provider) { 
+				$.each(providersArray, function (key, provider) {
 					$('#provider').append('<option value="' + provider.id + '">' + provider.public_name + '</option>');
 				});
 			});
@@ -94,7 +78,7 @@ $(function () {
 			$.getJSON('/service_providers.json', function (providersArray) {
 				$('#provider').empty();
 				$('#provider').append('<option value="">Elige un Prestador...</option>');
-				$.each(providersArray, function (key, provider) { 
+				$.each(providersArray, function (key, provider) {
 					$('#provider').append('<option value="' + provider.id + '">' + provider.public_name + '</option>');
 				});
 			});

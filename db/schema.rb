@@ -11,7 +11,9 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150108180352) do
+
+ActiveRecord::Schema.define(version: 20150112134708) do
+
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -343,6 +345,7 @@ ActiveRecord::Schema.define(version: 20150108180352) do
     t.boolean  "transfer_complete",           default: false
     t.boolean  "canceled",                    default: false
     t.boolean  "cancel_complete",             default: false
+    t.integer  "payment_account_id"
   end
 
   create_table "payment_accounts", force: true do |t|
@@ -358,6 +361,7 @@ ActiveRecord::Schema.define(version: 20150108180352) do
     t.datetime "updated_at"
     t.boolean  "status",       default: false
     t.integer  "account_type", default: 3
+    t.integer  "company_id"
   end
 
   create_table "payment_statuses", force: true do |t|
