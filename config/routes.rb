@@ -1,10 +1,6 @@
 Agendapro::Application.routes.draw do
 
-  resources :banks
-
-  get "payed_bookings/show"
-  get "payed_bookings/get_by_user"
-  post "payed_bookings/create_csv", :to => 'payed_bookings#create_csv'
+  
   get "users/index"
   require 'subdomain'
 
@@ -50,6 +46,7 @@ Agendapro::Application.routes.draw do
   resources :clients
 
   resources :payed_bookings
+  resources :banks
 
   namespace :admin do 
     get '', :to => 'dashboard#index', :as => '/'
@@ -234,6 +231,13 @@ Agendapro::Application.routes.draw do
   get '/iframe/facebook_success', :to => 'iframe#facebook_success', :as => 'facebook_success'
   get '/iframe/facebook_addtab', :to => 'iframe#facebook_addtab', :as => 'facebook_addtab'
   get '/company_settings/:id/delete_facebook_pages', :to => 'company_settings#delete_facebook_pages', :as => 'delete_facebook_pages'
+
+  # Payed Bookings
+  get "payed_bookings/show", :to => 'payed_bookings#show'
+  get "payed_bookings/get_by_user", :to => 'payed_bookings#get_by_user'
+  post "payed_bookings/create_csv", :to => 'payed_bookings#create_csv'
+  post "payed_bookings/mark_as_payed", :to => 'payed_bookings#mark_as_payed'
+  post "payed_bookings/mark_several_as_payed", :to => 'payed_bookings#mark_several_as_payed'
   
   # Root
   get '/' => 'searchs#index', :constraints => { :subdomain => 'www' }
