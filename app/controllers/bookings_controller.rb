@@ -786,13 +786,14 @@ class BookingsController < ApplicationController
       @booking = Booking.find(params[:id])
       status = Status.find_by(:name => 'Cancelado').id
 
-      if @booking.update(status_id: status)
+      payed = false
 
-        #AGREGAR REVISIÓN DEL PAGO Y AVISO DE ELLO
-        if @booking.payed
+      if @booking.update(status_id: status, payed: payed)
+
+        if !@booking.payed_booking.nil?
           @booking.payed_booking.canceled = true
+          @booking.payed_booking.save
         end
-
         #flash[:notice] = "Reserva cancelada exitosamente."
         # BookingMailer.cancel_booking(@booking)
         current_user ? user = current_user.id : user = 0
