@@ -286,6 +286,8 @@ class Location < ActiveRecord::Base
 				}
 				if booking_summary.length > 0 or today_schedule.length > 0
 					BookingMailer.booking_summary(booking_data, booking_summary, today_schedule)
+					puts booking_summary.inspect
+					puts today_schedule.inspect
 				end
 			end
 		end

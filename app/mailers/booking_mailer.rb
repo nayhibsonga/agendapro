@@ -790,6 +790,9 @@ class BookingMailer < ActionMailer::Base
 	def booking_summary (booking_data, booking_summary, today_schedule)
 		mandrill = Mandrill::API.new Agendapro::Application.config.api_key
 
+		# puts booking_summary.inspect
+		# puts today_schedule.inspect
+
 		# => Template
 		template_name = 'Booking Summary'
 		template_content = []
