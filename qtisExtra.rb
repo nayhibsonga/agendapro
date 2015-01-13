@@ -1,4 +1,4 @@
-if b1=Booking.new(start: "2015-01-20T17:30:00Z", end: "2015-01-20T18:30:00Z", service_provider_id: 505, location_id: 158, service_id: 1902, client_id: 69590, status_id: 1, send_mail: FALSE) and b1.save then puts "OK b1" else puts "ERROR b1"+b1.errors.full_messages.inspect end
+# if b1=Booking.new(start: "2015-01-20T17:30:00Z", end: "2015-01-20T18:30:00Z", service_provider_id: 505, location_id: 158, service_id: 1902, client_id: 69590, status_id: 1, send_mail: FALSE) and b1.save then puts "OK b1" else puts "ERROR b1"+b1.errors.full_messages.inspect end
 
 if b219=Booking.new(start: "2015-01-14T15:00:00Z",end: "2015-01-14T16:00:00Z",service_provider_id:534,location_id: 161,service_id: 2145,client_id: 74075,status_id: 1, send_mail: FALSE) and  b219.save then puts "OK 219" else puts "ERROR 219 "+b219.errors.full_messages.inspect end
 if b220=Booking.new(start: "2015-01-14T15:00:00Z",end: "2015-01-14T16:00:00Z",service_provider_id:534,location_id: 161,service_id: 2145,client_id: 73807,status_id: 1, send_mail: FALSE) and  b220.save then puts "OK 220" else puts "ERROR 220 "+b220.errors.full_messages.inspect end
