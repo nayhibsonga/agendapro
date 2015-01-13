@@ -11,25 +11,21 @@ CKEDITOR.editorConfig = function( config ) {
 	// The toolbar groups arrangement, optimized for two toolbar rows.
 	config.toolbarGroups = [
 		{ name: 'clipboard',   groups: [ 'clipboard', 'undo' ] },
-		{ name: 'editing',     groups: [ 'find', 'selection', 'spellchecker' ] },
+		{ name: 'editing',     groups: [ 'spellchecker' ] },
 		{ name: 'links' },
 		{ name: 'insert' },
-		// { name: 'forms' },
-		{ name: 'tools' },
-		{ name: 'document',	   groups: [ 'mode', 'document', 'doctools' ] },
-		// { name: 'others' },
+		{ name: 'tools', groups: ['maximize', 'mode'] },
 		'/',
 		{ name: 'basicstyles', groups: [ 'basicstyles', 'cleanup' ] },
-		{ name: 'paragraph',   groups: [ 'list', 'indent', 'blocks', 'align', 'bidi' ] },
+		{ name: 'paragraph',   groups: [ 'list', 'indent', 'blocks', 'align' ] },
 		'/',
 		{ name: 'styles' },
-		{ name: 'colors' },
-		{ name: 'about' }
+		{ name: 'colors' }
 	];
 
 	// Remove some buttons provided by the standard plugins, which are
 	// not needed in the Standard(s) toolbar.
-	config.removeButtons = 'Subscript,Superscript';
+	config.removeButtons = 'Subscript,Superscript,CreateDiv,Flash,PageBreak,Iframe,ShowBlocks,Smiley';
 
 	// Set the most common block elements.
 	config.format_tags = 'p;h1;h2;h3;pre';
@@ -46,3 +42,4 @@ CKEDITOR.editorConfig = function( config ) {
 	// Number of space inserted by Tab
 	config.tabSpaces = 2;
 };
+
