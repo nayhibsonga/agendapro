@@ -898,11 +898,11 @@ class BookingMailer < ActionMailer::Base
 				},
 				{
 					:name => 'EDIT',
-					:content => "<a class='btn btn-warning' href='#{booking_edit_url(:confirmation_code => payed_booking.booking.confirmation_code)}' style='display: inline-block;padding: 6px 12px;margin-bottom: 5px;font-size: 14px;font-weight: normal;line-height: 1.428571429;text-align: center;white-space: nowrap;vertical-align: middle;cursor: pointer;background-image: none;border: 1px solid transparent;border-radius: 4px;-webkit-user-select: none;-moz-user-select: none;-ms-user-select: none;-o-user-select: none;user-select: none;color: #ffffff;background-color: #f0ad4e;border-color: #eea236;text-decoration:none;'>Modificar Reserva</a>"
+					:content => booking_edit_url(:confirmation_code => payed_booking.booking.confirmation_code)
 				},
 				{
 					:name => 'CANCEL',
-					:content => "<a class='btn btn-danger' href='#{booking_cancel_url(:confirmation_code => payed_booking.booking.confirmation_code)}' style='display: inline-block;padding: 6px 12px;margin-bottom: 5px;font-size: 14px;font-weight: normal;line-height: 1.428571429;text-align: center;white-space: nowrap;vertical-align: middle;cursor: pointer;background-image: none;border: 1px solid transparent;border-radius: 4px;-webkit-user-select: none;-moz-user-select: none;-ms-user-select: none;-o-user-select: none;user-select: none;color: #ffffff;background-color: #d9534f;border-color: #d43f3a;text-decoration:none;'>Cancelar Reserva</a>"
+					:content => booking_cancel_url(:confirmation_code => payed_booking.booking.confirmation_code)
 				}
 
 			],
@@ -912,6 +912,11 @@ class BookingMailer < ActionMailer::Base
 					:type => 'image/png',
 					:name => 'company_img.jpg',
 					:content => Base64.encode64(File.read('app/assets/ico/Iso_Pro_Color.png'))
+				},
+				{
+					:type => 'image/png',
+					:name => 'LOGO',
+					:content => Base64.encode64(File.read('app/assets/images/logos/logodoble2.png'))
 				}
 			]
 		}
@@ -985,6 +990,11 @@ class BookingMailer < ActionMailer::Base
 					:type => 'image/png',
 					:name => 'company_img.jpg',
 					:content => Base64.encode64(File.read('app/assets/ico/Iso_Pro_Color.png'))
+				},
+				{
+					:type => 'image/png',
+					:name => 'LOGO',
+					:content => Base64.encode64(File.read('app/assets/images/logos/logodoble2.png'))
 				}
 			]
 		}
