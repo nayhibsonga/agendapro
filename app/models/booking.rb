@@ -256,6 +256,11 @@ class Booking < ActiveRecord::Base
 		if self.start > Time.now - 4.hours
 			if self.status == Status.find_by(:name => "Cancelado")
 				BookingMailer.cancel_booking(self)
+				if !self.payed_booking.nil?
+					BookingMailer.cancel_payment_mail(self.payed_booking, 1)
+					BookingMailer.cancel_payment_mail(self.payed_booking, 2)
+					BookingMailer.cancel_payment_mail(self.payed_booking, 3)
+				end
 			else
 				if changed_attributes['start']
 					BookingMailer.update_booking(self, changed_attributes['start'])
