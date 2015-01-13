@@ -8,6 +8,38 @@ CKEDITOR.editorConfig = function( config ) {
 	// For complete reference see:
 	// http://docs.ckeditor.com/#!/api/CKEDITOR.config
 
+	/* Filebrowser routes */
+  // The location of a script that handles file uploads in the Image dialog.
+  // config.filebrowserImageUploadUrl = "/ckeditor/pictures";
+
+  // Rails CSRF token
+  config.filebrowserParams = function(){
+    var csrf_token, csrf_param, meta,
+      metas = document.getElementsByTagName('meta'),
+      params = new Object();
+
+    for ( var i = 0 ; i < metas.length ; i++ ){
+      meta = metas[i];
+
+      switch(meta.name) {
+        case "csrf-token":
+          csrf_token = meta.content;
+          break;
+        case "csrf-param":
+          csrf_param = meta.content;
+          break;
+        default:
+          continue;
+      };
+    };
+
+    if (csrf_param !== undefined && csrf_token !== undefined) {
+      params[csrf_param] = csrf_token;
+    };
+
+    return params;
+  };
+
 	// The toolbar groups arrangement, optimized for two toolbar rows.
 	config.toolbarGroups = [
 		{ name: 'clipboard',   groups: [ 'clipboard', 'undo' ] },
@@ -41,5 +73,7 @@ CKEDITOR.editorConfig = function( config ) {
 	CKEDITOR.config.magicline_everywhere = true;
 	// Number of space inserted by Tab
 	config.tabSpaces = 2;
+
+	// config.extraPlugins = 'image2';
 };
 
