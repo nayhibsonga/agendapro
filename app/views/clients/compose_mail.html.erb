@@ -69,11 +69,14 @@
 	</div>
 </div>
 
+<% content_for :stylesheets do %>
+	<%= stylesheet_link_tag 'admin/admin-ckeditor' %>
+<% end %>
+
 <% content_for :scripts do %>
 	<%= javascript_include_tag 'validations/validate' %>
 	<%= javascript_include_tag 'validations/admin/client-email' %>
-	<%= javascript_include_tag 'ckeditor/ckeditor' %>
-	<%= javascript_include_tag 'ckeditor/adapters/jquery' %>
+	<%= javascript_include_tag 'admin/admin-ckeditor' %>
 	<script type="text/javascript">
 		$(function () {
 			$('#message').ckeditor();
