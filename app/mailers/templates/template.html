@@ -6347,38 +6347,88 @@
     </style>
     <style type="text/css">
       /*AgendaPro*/
+      table.wrapper {
+        width: 100%;
+        color: #505050;
+        border-spacing: 15px;
+      }
+      /*.wrapper {
+        padding-right: 15px;
+        padding-left: 15px;
+        margin-right: auto;
+        margin-left: auto;
+      }*/
+      /*table.wrapper > tbody > tr > td {
+        padding-right: 15px;
+        padding-left: 15px;
+      }*/
       .pull-center {
         text-align: center;
-        display: block;
         margin-left: auto;
         margin-right: auto;
       }
-      body {
-        color: #505050;
-      }
-      header {
+      tr.header {
         background-color: #22c488;
-        padding: 5px;
-        margin-bottom: 10px;
       }
-      header p {
+      tr.header > td {
+        padding: 5px;
+      }
+      tr.logo > td {
+        padding-top: 10px;
+        margin-right: auto;
+        margin-left: auto;
+        text-align: center;
+      }
+      tr.body > td {
+        padding-top: 10px;
+        padding-bottom: 15px;
+        padding-right: 15px;
+        padding-left: 15px;
+      }
+      tr.body + tr.body > td {
+        padding-top: 0;
+      }
+      tr.footer {
+        background-color: #505050;
+        color: #ffffff;
+        font-size: 13px;
+      }
+      tr.footer > td {
+        padding: 30px 0;
+        padding-right: 15px;
+        padding-left: 15px;
+      }
+      table.content {
+        width: 100%;
+      }
+      table.content tr > td {
+        padding-left: 10px;
+        padding-right: 10px;
+      }
+      tr.fluid > td {
+        width: 50%;
+        vertical-align: top;
+      }
+      .header p {
         margin-bottom: 0;
       }
-      header p > a {
+      .header p > a {
         color: #ffffff;
       }
-      header p > a:hover,
-      header p > a:focus,
-      header p > a:active {
+      .header p > a:hover,
+      .header p > a:focus,
+      .header p > a:active {
         text-decoration: none;
         color: #ffffff;
       }
-      .vertical-divider {
-        border-right: 1px solid #949292;
-        height: 60px;
-        display: inline-block;
-        vertical-align: middle;
-        margin: 0 4px;
+      .footer img {
+        float: left;
+        margin-right: 15px;
+        width: 25px;
+      }
+      .logo {
+        width: 50%;
+        max-width: 118px;
       }
       .text-green {
         color: #22c488;
@@ -6392,25 +6442,13 @@
         color: #db7400;
         text-decoration: none;
       }
-      .background-light-gray {
+      tr.background-light-gray {
         background-color: #cbcbcb;
         color: #ffffff;
-        padding-bottom: 5px;
-        padding-top: 5px;
       }
-      dl > dt {
-        font-weight: normal;
-        margin-top: 10px;
-      }
-      dl > dd {
-        color: #949292;
-        margin-bottom: 10px;
-      }
-      table.table-bordered > tbody > tr > td {
-        width: 50%;
-        padding-bottom: 15px;
-        padding-top: 15px;
-        padding-left: 30px;
+      tr.background-light-gray > td {
+        padding-bottom: 5px !important;
+        padding-top: 5px !important;
       }
       .btn-orange {
         color: #ffffff;
@@ -6444,31 +6482,36 @@
         margin-left: 15px;
         margin-right: 15px;
       }
-      footer {
-        margin-top: 15px;
-        background-color: #505050;
-        color: #ffffff;
-        padding: 30px 25px;
-        font-size: 13px;
+      .vertical-divider {
+        border-right: 1px solid #949292;
+        height: 60px;
+        display: inline-block;
+        vertical-align: middle;
+        margin: 0 4px;
       }
-      footer img {
-        float: left;
-        margin-right: 15px;
-        width: 25px;
+      dl > dt {
+        font-weight: normal;
+        margin-top: 10px;
       }
-      @media screen and (max-width: 768px) {
-        table.table-bordered > tbody > tr > td {
-          width: auto;
-          padding: 8px;
+      dl > dd {
+        color: #949292;
+        margin-bottom: 10px;
+      }
+      @media screen and (max-width: 767px) {
+        tr.fluid > td {
+          width: 100%;
+          display: inline-block;
+        }
+        tr.footer {
+          font-size: 12px;
+        }
+        tr.footer > td {
+          padding: 10px 5px;
         }
         .btn-action {
           margin: 10px 0;
           display: block;
           width: 100%;
-        }
-        footer {
-          padding: 10px;
-          font-size: 12px;
         }
       }
     </style>
@@ -6476,47 +6519,66 @@
   </head>
 
   <body>
-    <!-- start: Header -->
-    <header>
-      <div class="container-fluid">
-        <div class="row">
-          <div class="col-xs-12">
-            <p class="text-center"><a href="http://www.agendapro.cl" target="_blank">www.agendapro.cl</a></p>
-          </div>
-        </div>
-      </div>
-    </header>
-    <!-- end: Header -->
+    <table class="wrapper">
+      <!-- start: Header -->
+      <tr class="header">
+        <td colspan="2">
+          <p class="text-center"><a href="http://www.agendapro.cl" target="_blank">www.agendapro.cl</a></p>
+        </td>
+      </tr>
+      <!-- end: Header -->
 
-    <!-- start: content -->
-    <div class="container-fluid">
-      <div class="row">
-        <div class="col-xs-12">
-          <div class="pull-center">
-            <img src="" alt="AgendaPro">
-          </div>
-        </div>
-      </div>
-    </div>
-    <!-- end: content -->
+      <!-- start: Logo -->
+      <tr class="logo">
+        <td colspan="2">
+          <img src="cid:agendapro.png" alt="AgendaPro" class="logo">
+          *|IF:company.jpg|*
+          <div class="vertical-divider"></div>
+          <img src="cid:company.jpg" alt="Company Name" class="logo">
+          *|END:IF|*
+        </td>
+      </tr>
+      <!-- end: Logo -->
 
-    <!-- start: footer -->
-    <footer>
-      <div class="container-fluid">
-        <div class="row">
-          <div class="col-xs-12 col-sm-6"><p>Este es un email automático, para contactar a la empresa por favor responde este correo.</p></div>
-          <div class="col-xs-12 col-sm-6">
-            <img src="http://agendapro.cl/assets/footer/1.png">
-            <p>Nuestra Señora de los Angeles 185, Oficina D, Las Condes, Santiago</p>
-          </div>
-          <div class="col-xs-12 col-sm-6 col-sm-push-6">
-            <img src="http://agendapro.cl/assets/footer/3.png">
-            <p>(+56 9) 5178 5898</p>
-          </div>
-          <div class="col-xs-12 col-sm-6 col-sm-pull-6"><a href="http://agendapro.cl/home" target="_blank" class="text-orange">¿Quieres unirte a AgendaPro?</a></div>
-        </div>
-      </div>
-    </footer>
-    <!-- end: footer -->
+      <!-- start: Content -->
+      <tr class="body">
+      </tr>
+      <!-- end: Content -->
+
+      <!-- start: footer -->
+      <tr class="footer fluid">
+        <td>
+          <table class="content">
+            <tr>
+              <td>
+                <p>Este es un email automático, para contactar a la empresa por favor responde este correo.</p>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <a href="http://agendapro.cl/home" target="_blank" class="text-orange">¿Quieres unirte a AgendaPro?</a>
+              </td>
+            </tr>
+          </table>
+        </td>
+        <td>
+          <table class="content">
+            <tr>
+              <td>
+                <img src="http://agendapro.cl/assets/footer/1.png">
+                <p>Nuestra Señora de los Angeles 185, Oficina D, Las Condes, Santiago</p>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <img src="http://agendapro.cl/assets/footer/3.png">
+                <p>(+56 9) 5178 5898</p>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+      <!-- end: footer -->
+    </table>
   </body>
 </html>

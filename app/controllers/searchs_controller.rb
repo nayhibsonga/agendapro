@@ -47,8 +47,15 @@ class SearchsController < ApplicationController
 			@latitude = params[:latitude]
 			@longitude = params[:longitude]
 
+
 			@results = Array.new
 			@empty_results = Array.new
+
+			#Filtrado de pronombres y artículos
+			search = params[:inputSearch].gsub(/\b([D|d]el?)+\b|\b([U|u]n(o|a)?s?)+\b|\b([E|e]l)+\b|\b([T|t]u)+\b|\b([L|l](o|a)s?)+\b|\b[AaYy]\b|["'.,;:-]|\b([E|e]n)+\b|\b([L|l]a)+\b|\b([C|c]on)+\b|\b([Q|q]ue)+\b|\b([S|s]us?)+\b|\b([E|e]s[o|a]?s?)+\b/i, '')
+
+			normalized_search = search.mb_chars.normalize(:kd).gsub(/[^\x00-\x7F]/,'').downcase.to_s
+
 			#Segmentos de locales según resultados
 			loc_segments = Array.new
 			empty_loc_segments = Array.new
@@ -62,6 +69,16 @@ class SearchsController < ApplicationController
 			search = params[:inputSearch].gsub(/\b([D|d]el?)+\b|\b([U|u]n(o|a)?s?)+\b|\b([E|e]l)+\b|\b([T|t]u)+\b|\b([L|l](o|a)s?)+\b|\b[AaYy]\b|["'.,;:-]|\b([E|e]n)+\b|\b([L|l]a)+\b|\b([C|c]on)+\b|\b([Q|q]ue)+\b|\b([S|s]us?)+\b|\b([E|e]s[o|a]?s?)+\b/i, '')
 
 			normalized_search = search.mb_chars.normalize(:kd).gsub(/[^\x00-\x7F]/,'').downcase.to_s
+
+
+			## Se eligen los locales activos de empresas activas
+ 			#active_companies_ids = Company.where(active: true).pluck(:id)
+			#elegible_locations = Location.where(active: true, company_id: active_companies_ids)
+			## Se eligen locales que tengan horarios, que a su vez tengan prestadores con horarios y servicios asociados
+			#elegible_locations = elegible_locations.where(id: ServiceProvider.where(active: true, company_id: active_companies_ids).joins(:provider_times).joins(:services).where("services.id" => Service.where(active: true, company_id: active_companies_ids).pluck(:id)).pluck(:location_id).uniq).joins(:location_times).uniq.order(order: :asc)
+			## Se eligen locales dentro del rango
+			#locations = elegible_locations.where('sqrt((latitude - ' + lat.to_s + ')^2 + (longitude - ' + long.to_s + ')^2) < 0.25') #Location.all
+ 			#loc_ids = Array.new
 
 
 			# if(Company.where('lower(name) LIKE ? and active = ?', "%#{normalized_search}%", true).count > 0)
@@ -89,7 +106,6 @@ class SearchsController < ApplicationController
 			#
 			# EMPRESAS CON DUEÑO
 			#
-
 
 			#Guardamos los score de los sectores economicos para no calcularlos varias veces
 			economic_scores = Hash.new
@@ -134,9 +150,6 @@ class SearchsController < ApplicationController
 				 		test_array.push(perm)
 					end
 				end
-
-				#t6 = Time.now.to_f
-				#timers << "t6-t5: " + (t6-t5).to_s
 				
 
 				test_array.each do |ta|
@@ -159,6 +172,7 @@ class SearchsController < ApplicationController
 				#Obtenemos los scores de services y service_providers de la compañía de antemano
 				service_providers = ServiceProvider.where(company_id: company.id, active: true)
 				service_providers.each do |provider|
+
 
 
 					score1 = m1.match(provider.public_name.mb_chars.normalize(:kd).gsub(/[^\x00-\x7F]/,'').gsub(/\b([D|d]el?)+\b|\b([U|u]n(o|a)?s?)+\b|\b([E|e]l)+\b|\b([T|t]u)+\b|\b([L|l](o|a)s?)+\b|\b[AaYy]\b|["'.,;:-]|\b([E|e]n)+\b|\b([L|l]a)+\b|\b([C|c]on)+\b|\b([Q|q]ue)+\b|\b([S|s]us?)+\b|\b([E|e]s[o|a]?s?)+\b/i, '').downcase.to_s)
@@ -249,8 +263,6 @@ class SearchsController < ApplicationController
 					end
 
 					economics_max = loc_economic_scores.max
-
-
 
 					max = economics_max
 					if(categories_max>max)
@@ -357,11 +369,7 @@ class SearchsController < ApplicationController
 				 	str_test_array.permutation(i).to_a.each do |perm|
 				 		test_array.push(perm)
 					end
-				end
-
-				#t6 = Time.now.to_f
-				#timers << "t6-t5: " + (t6-t5).to_s
-				
+				end				
 
 				test_array.each do |ta|
 
@@ -979,17 +987,12 @@ class SearchsController < ApplicationController
 				ordered_segments[i] = loc_segments[i].sort_by{ |loc| loc[1]}
 			end
 
-			#t15 = Time.now.to_f
-			#timers << "t15-t14: " + (t15-t14).to_s
 
 			#Ordenamos por distancia
 			empty_ordered_segments = Array.new
 			for i in 0..7
 				empty_ordered_segments[i] = empty_loc_segments[i].sort_by{ |loc| loc[1]}
 			end
-
-			#t16 = Time.now.to_f
-			#timers << "t16-t15: " + (t16-t15).to_s
 					
 
 			#Entregamos los ids en orden
@@ -1001,8 +1004,6 @@ class SearchsController < ApplicationController
 				end
 			end
 
-			#t17 = Time.now.to_f
-			#timers << "t17-t16: " + (t17-t16).to_s
 
 			#Entregamos los ids en orden
 			for i in 0..7

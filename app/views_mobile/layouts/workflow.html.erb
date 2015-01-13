@@ -39,7 +39,7 @@
 						<button type="button" class="navbar-toggle collapsed toggle-menu menu-right push-body" data-toggle="collapse" data-target="#navbar-menu">
 							<i class="fa fa-bars"></i>
 						</button>
-						<%= link_to '<i class="fa fa-caret-left"></i>'.html_safe, '/', class: "navbar-brand" %>
+						<%= link_to '<i class="fa fa-caret-left fa-2x"></i>'.html_safe, '/', class: "navbar-brand" %>
 						<p class="navbar-text"><%= @company.name %></p>
 					</div>
 					<!-- Collect the nav links, forms, and other content for toggling -->
@@ -47,18 +47,18 @@
 						<ul class="nav navbar-nav">
 							<li><%= link_to 'Buscador', root_without_subdomain %></li>
 							<li><%= link_to 'Clientes', root_without_subdomain(anchor: 'clients-target') %></li>
-                            <li><%= link_to 'Que Hacemos', root_without_subdomain(anchor: 'what-we-do-target') %></li>
-                            <li><%= link_to 'Contacto', root_without_subdomain(anchor: 'contact-target') %></li>
+              <li><%= link_to 'Qué Hacemos', root_without_subdomain(anchor: 'what-we-do-target') %></li>
+              <li><%= link_to 'Contacto', root_without_subdomain(anchor: 'contact-target') %></li>
 							<li class="divider"></li>
 							<% if user_signed_in? %>
-                            <li><%= link_to '<i class="fa fa-calendar"></i> Mi Agenda'.html_safe, my_agenda_path %></li>
-							<li><%= link_to '<i class="fa fa-user"></i> Editar Perfil'.html_safe, edit_user_registration_path %></li>
+              <li><%= link_to '<i class="fa fa-calendar"></i> Mi Agenda'.html_safe, my_agenda_path, class: "menu-green" %></li>
+							<li><%= link_to '<i class="fa fa-user"></i> Editar Perfil'.html_safe, edit_user_registration_path, class: "menu-green" %></li>
 							<li><%= link_to '<i class="fa fa-question"></i> Tutoriales'.html_safe, tutorials_path %></li>
-							<li><%= link_to '<i class="fa fa-power-off"></i> Salir'.html_safe, destroy_user_session_path, method: :delete %></li>
-                            <% else %>
-							<li><%= link_to '<i class="fa fa-user"></i> Registrate'.html_safe, new_user_registration_path, class: "menu-green" %></li>
-                            <li><%= link_to '<i class="fa fa-calendar-o"></i> Iniciar Sesión'.html_safe, new_user_session_path, class: "menu-green" %></li>
-                            <% end %>
+							<li><%= link_to '<i class="fa fa-power-off"></i> Salir'.html_safe, destroy_user_session_path, method: :delete, class: "menu-orange" %></li>
+              <% else %>
+							<li><%= link_to '<i class="fa fa-user"></i> Regístrate'.html_safe, new_user_registration_path, class: "menu-green" %></li>
+              <li><%= link_to '<i class="fa fa-calendar-o"></i> Iniciar Sesión'.html_safe, new_user_session_path, class: "menu-green" %></li>
+              <% end %>
 							<li><%= link_to "Agrega tu Empresa", home_path, class: "menu-orange" %></li>
 						</ul>
 					</div>
@@ -70,18 +70,22 @@
 		<!-- start: content -->
 		<div id="wrapper">
 			<!-- start: Alerts -->
-			<% if notice %>
-				<div class="alert alert-info alert-dismissable">
-					<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-					<%= notice %>
-				</div>
-			<% end %>
-			<% if alert %>
-				<div class="alert alert-warning alert-dismissable">
-					<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-					<%= alert %>
-				</div>
-			<% end %>
+      <% if notice %>
+      <div class="alert alert-info alert-dismissable fade in">
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+        <%= notice %>
+      </div>
+      <% end %>
+      <% if alert %>
+      <div class="alert alert-warning alert-dismissable fade in">
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+        <%= alert %>
+      </div>
+      <% end %>
 			<!-- end: Alerts -->
 			<%= yield %>
 		</div>

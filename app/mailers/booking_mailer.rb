@@ -1,7 +1,7 @@
 class BookingMailer < ActionMailer::Base
 	require 'mandrill'
 	require 'base64'
-	
+
 	include ActionView::Helpers::NumberHelper
 
 	def book_service_mail (book_info)
@@ -48,7 +48,7 @@ class BookingMailer < ActionMailer::Base
 			:images => [
 				{
 					:type => 'image/png',
-					:name => 'agendapro.png',
+					:name => 'LOGO',
 					:content => Base64.encode64(File.read('app/assets/images/logos/logodoble2.png'))
 				}
 			],
@@ -63,11 +63,11 @@ class BookingMailer < ActionMailer::Base
 
 		# => Logo empresa
 		if book_info.location.company.logo_url
-			message[:images] << {
-				:type => 'image/' +  File.extname(book_info.location.company.logo_url),
-				:name => 'company.jpg',
-				:content => Base64.encode64(File.read('public' + book_info.location.company.logo_url.to_s))
-			}
+			message[:images] = [{
+							:type => MIME::Types.type_for(book_info.location.company.logo_url).first.content_type,
+							:name => 'LOGO',
+							:content => Base64.encode64(File.read('public' + book_info.location.company.logo_url.to_s))
+						}]
 		end
 
 		if !book_info.notes.blank?
@@ -174,7 +174,7 @@ class BookingMailer < ActionMailer::Base
 		mandrill = Mandrill::API.new Agendapro::Application.config.api_key
 
 		# => Template
-		template_name = 'Booking'
+		template_name = 'Update Booking'
 		template_content = []
 
 		# => Message
@@ -219,7 +219,7 @@ class BookingMailer < ActionMailer::Base
 			:images => [
 				{
 					:type => 'image/png',
-					:name => 'agendapro.png',
+					:name => 'LOGO',
 					:content => Base64.encode64(File.read('app/assets/images/logos/logodoble2.png'))
 				}
 			],
@@ -238,11 +238,11 @@ class BookingMailer < ActionMailer::Base
 
 		# => Logo empresa
 		if book_info.location.company.logo_url
-			message[:images] << {
-				:type => 'image/' +  File.extname(book_info.location.company.logo_url),
-				:name => 'company.jpg',
-				:content => Base64.encode64(File.read('public' + book_info.location.company.logo_url.to_s))
-			}
+			message[:images] = [{
+							:type => MIME::Types.type_for(book_info.location.company.logo_url).first.content_type,
+							:name => 'LOGO',
+							:content => Base64.encode64(File.read('public' + book_info.location.company.logo_url.to_s))
+						}]
 		end
 
 		# Notificacion service provider
@@ -345,7 +345,7 @@ class BookingMailer < ActionMailer::Base
 		mandrill = Mandrill::API.new Agendapro::Application.config.api_key
 
 		# => Template
-		template_name = 'Booking'
+		template_name = 'Confirm Booking'
 		template_content = []
 
 		# => Message
@@ -386,7 +386,7 @@ class BookingMailer < ActionMailer::Base
 			:images => [
 				{
 					:type => 'image/png',
-					:name => 'agendapro.png',
+					:name => 'LOGO',
 					:content => Base64.encode64(File.read('app/assets/images/logos/logodoble2.png'))
 				}
 			]
@@ -398,11 +398,11 @@ class BookingMailer < ActionMailer::Base
 
 		# => Logo empresa
 		if book_info.location.company.logo_url
-			message[:images] << {
-				:type => 'image/' +  File.extname(book_info.location.company.logo_url),
-				:name => 'company.jpg',
-				:content => Base64.encode64(File.read('public' + book_info.location.company.logo_url.to_s))
-			}
+			message[:images] = [{
+							:type => MIME::Types.type_for(book_info.location.company.logo_url).first.content_type,
+							:name => 'LOGO',
+							:content => Base64.encode64(File.read('public' + book_info.location.company.logo_url.to_s))
+						}]
 		end
 
 		# Notificacion service provider
@@ -475,7 +475,7 @@ class BookingMailer < ActionMailer::Base
 		mandrill = Mandrill::API.new Agendapro::Application.config.api_key
 
 		# => Template
-		template_name = 'Booking'
+		template_name = 'Cancel Booking'
 		template_content = []
 
 		# => Message
@@ -516,7 +516,7 @@ class BookingMailer < ActionMailer::Base
 			:images => [
 				{
 					:type => 'image/png',
-					:name => 'agendapro.png',
+					:name => 'LOGO',
 					:content => Base64.encode64(File.read('app/assets/images/logos/logodoble2.png'))
 				}
 			]
@@ -528,11 +528,11 @@ class BookingMailer < ActionMailer::Base
 
 		# => Logo empresa
 		if book_info.location.company.logo_url
-			message[:images] << {
-				:type => 'image/' +  File.extname(book_info.location.company.logo_url),
-				:name => 'company.jpg',
-				:content => Base64.encode64(File.read('public' + book_info.location.company.logo_url.to_s))
-			}
+			message[:images] = [{
+							:type => MIME::Types.type_for(book_info.location.company.logo_url).first.content_type,
+							:name => 'LOGO',
+							:content => Base64.encode64(File.read('public' + book_info.location.company.logo_url.to_s))
+						}]
 		end
 
 		# Notificacion service provider
@@ -627,7 +627,7 @@ class BookingMailer < ActionMailer::Base
 		mandrill = Mandrill::API.new Agendapro::Application.config.api_key
 
 		# => Template
-		template_name = 'Booking'
+		template_name = 'Booking Reminder'
 		template_content = []
 
 		# => Message
@@ -668,7 +668,7 @@ class BookingMailer < ActionMailer::Base
 			:images => [
 				{
 					:type => 'image/png',
-					:name => 'agendapro.png',
+					:name => 'LOGO',
 					:content => Base64.encode64(File.read('app/assets/images/logos/logodoble2.png'))
 				}
 			]
@@ -680,11 +680,11 @@ class BookingMailer < ActionMailer::Base
 
 		# => Logo empresa
 		if book_info.location.company.logo_url
-			message[:images] << {
-				:type => 'image/' +  File.extname(book_info.location.company.logo_url),
-				:name => 'company.jpg',
-				:content => Base64.encode64(File.read('public' + book_info.location.company.logo_url.to_s))
-			}
+			message[:images] = [{
+							:type => MIME::Types.type_for(book_info.location.company.logo_url).first.content_type,
+							:name => 'LOGO',
+							:content => Base64.encode64(File.read('public' + book_info.location.company.logo_url.to_s))
+						}]
 		end
 
 		# Notificacion service provider
@@ -787,7 +787,7 @@ class BookingMailer < ActionMailer::Base
 			raise
 	end
 
-	def booking_summary (booking_data, booking_summary)
+	def booking_summary (booking_data, booking_summary, today_schedule)
 		mandrill = Mandrill::API.new Agendapro::Application.config.api_key
 
 		# => Template
@@ -811,15 +811,19 @@ class BookingMailer < ActionMailer::Base
 					:content => booking_data[:name]
 				},
 				{
-					:name => 'BODY',
+					:name => 'SUMMARY',
 					:content => booking_summary
+				},
+				{
+					:name => 'TODAY',
+					:content => today_schedule
 				}
 			],
 			:tags => ['booking', 'booking_summary'],
 			:images => [
 				{
 					:type => 'image/png',
-					:name => 'agendapro.png',
+					:name => 'LOGO',
 					:content => Base64.encode64(File.read('app/assets/images/logos/logodoble2.png'))
 				}
 			]
@@ -827,11 +831,11 @@ class BookingMailer < ActionMailer::Base
 
 		# => Logo empresa
 		if booking_data[:logo]
-			message[:images] << {
-				:type => 'image/' +  File.extname(booking_data[:logo]),
-				:name => 'company.jpg',
-				:content => Base64.encode64(File.read('public' + booking_data[:logo].to_s))
-			}
+			message[:images] = [{
+							:type => MIME::Types.type_for(booking_data[:logo]).first.content_type,
+							:name => 'LOGO',
+							:content => Base64.encode64(File.read('public' + booking_data[:logo].to_s))
+						}]
 		end
 
 		# => Metadata
@@ -845,7 +849,6 @@ class BookingMailer < ActionMailer::Base
 			puts "A mandrill error occurred: #{e.class} - #{e.message}"
 			raise
 	end
-
 	#Correo de comprobante de pago para el cliente
 	def book_payment_mail (payed_booking)
 		mandrill = Mandrill::API.new Agendapro::Application.config.api_key

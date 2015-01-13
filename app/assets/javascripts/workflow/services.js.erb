@@ -407,7 +407,7 @@ function loadDescription (serviceId) {
 			$('#services-description').append(
 				'<tr>' +
 					'<td class="dark-gray">Precio:</td>' +
-					'<td class="light-gray">¡Gratis! - Confirmar Promoción en Local</td>' +
+					'<td class="light-gray">¡Consultar en Local!</td>' +
 				'</tr>'
 			);
 		}
@@ -462,7 +462,6 @@ function loadDescription (serviceId) {
 var pressed3 = false;
 
 function addBooking (booking) {
-	window.console.log(booking);
 	selected = true;
 	$('#start').val(generateDate(booking.date, booking.start));
 	$('#end').val(generateDate(booking.date, booking.end));
