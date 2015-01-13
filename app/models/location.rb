@@ -284,10 +284,11 @@ class Location < ActiveRecord::Base
 					name: location.name,
 					to: location.email
 				}
+				puts "OK"
 				if booking_summary.length > 0 or today_schedule.length > 0
-					BookingMailer.booking_summary(booking_data, booking_summary, today_schedule)
 					puts "summary "+booking_summary.inspect
 					puts "today "+today_schedule.inspect
+					BookingMailer.booking_summary(booking_data, booking_summary, today_schedule)
 				end
 			end
 		end
