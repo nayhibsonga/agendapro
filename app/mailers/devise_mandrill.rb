@@ -28,15 +28,15 @@ class DeviseMandrill < Devise::Mailer
         },
         {
           :name => 'RESET_PASSWORD',
-          :content => "<a href='#{edit_user_password_url(:reset_password_token => token)}'>Cambiar mi contraseña</a>"
+          :content => edit_user_password_url(:reset_password_token => token)
         }
       ],
       :tags => ['devise', 'password'],
       :images => [
         {
           :type => 'image/png',
-          :name => 'AgendaPro.png',
-          :content => Base64.encode64(File.read('app/assets/images/logos/logo_mail.png'))
+          :name => 'LOGO',
+          :content => Base64.encode64(File.read('app/assets/images/logos/logodoble2.png'))
         }
       ]
     }

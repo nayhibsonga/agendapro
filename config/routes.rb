@@ -37,6 +37,7 @@ Agendapro::Application.routes.draw do
   resources :resource_categories
   resources :resources
   resources :company_from_emails
+  resources :staff_codes
   resources :billing_infos
 
   resources :numeric_parameters
@@ -77,6 +78,7 @@ Agendapro::Application.routes.draw do
   get '/get_direction', :to => 'districts#get_direction'
   get '/time_booking_edit', :to => 'company_settings#time_booking_edit', :as => 'time_booking'
   get '/minisite/:id', :to => 'company_settings#minisite', :as => 'minisite'
+  get '/compose_mail', :to => 'clients#compose_mail', :as => 'send_mail'
   post '/send_mail_client', :to => 'clients#send_mail'
   get '/get_link', :to => 'companies#get_link', :as => 'get_link'
   post '/change_categories_order', :to => 'service_categories#change_categories_order'
@@ -91,6 +93,8 @@ Agendapro::Application.routes.draw do
   get '/clients_last_name_suggestion', :to => 'clients#last_name_suggestion'
   get '/clients_rut_suggestion', :to => 'clients#rut_suggestion'
   get '/client_loader', :to => 'clients#client_loader'
+
+  get '/check_staff_code', :to => 'staff_codes#check_staff_code'
 
   get '/provider_services', :to => 'service_providers#provider_service'
 
@@ -173,6 +177,7 @@ Agendapro::Application.routes.draw do
   delete '/provider_breaks/:id', :to => 'provider_breaks#destroy_provider_break', :as => 'delete_provider_break'
   get '/available_providers', :to => 'service_providers#available_providers', :as => 'available_service_providers'
   get '/clients_bookings_history', :to => 'clients#bookings_history'
+  get '/booking_history', :to => 'bookings#booking_history'
   get '/fixed_bookings', :to => 'bookings#fixed_index', :as => 'fixed_bookings'
 
   get '/edit_booking', :to => 'bookings#edit_booking', :as => 'booking_edit'
