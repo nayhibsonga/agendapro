@@ -311,7 +311,7 @@ class SearchsController < ApplicationController
 
 
 			#
-			# EMPRESAS CON DUEÑO
+			# EMPRESAS DIN DUEÑO
 			#
 
 
