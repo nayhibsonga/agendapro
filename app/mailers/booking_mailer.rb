@@ -591,24 +591,49 @@ class BookingMailer < ActionMailer::Base
 
 		# Notificacion cliente
 		if book_info.send_mail
-			message[:to] << {
-				:email => book_info.client.email,
-				:name => book_info.client.first_name + ' ' + book_info.client.last_name,
-				:type => 'to'
-			}
-			message[:merge_vars] << {
-				:rcpt => book_info.client.email,
-				:vars => [
-					{
-						:name => 'COMPANYNAME',
-						:content => book_info.service_provider.company.name
-					},
-					{
-						:name => 'LOCATIONPHONE',
-						:content => number_to_phone(book_info.location.phone)
-					}
-				]
-			}
+			if book_info.payed_booking.nil?
+				message[:to] << {
+					:email => book_info.client.email,
+					:name => book_info.client.first_name + ' ' + book_info.client.last_name,
+					:type => 'to'
+				}
+				message[:merge_vars] << {
+					:rcpt => book_info.client.email,
+					:vars => [
+						{
+							:name => 'COMPANYNAME',
+							:content => book_info.service_provider.company.name
+						},
+						{
+							:name => 'LOCATIONPHONE',
+							:content => number_to_phone(book_info.location.phone)
+						}
+					]
+				}
+			else
+				message[:to] << {
+					:email => book_info.client.email,
+					:name => book_info.client.first_name + ' ' + book_info.client.last_name,
+					:type => 'to'
+				}
+				message[:merge_vars] << {
+					:rcpt => book_info.client.email,
+					:vars => [
+						{
+							:name => 'COMPANYNAME',
+							:content => book_info.service_provider.company.name
+						},
+						{
+							:name => 'LOCATIONPHONE',
+							:content => number_to_phone(book_info.location.phone)
+						},
+						{
+							:name => 'PAYED',
+							:content => "true"
+						}
+					]
+				}
+			end
 		end
 
 		# => Metadata
