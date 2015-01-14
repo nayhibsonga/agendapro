@@ -72,7 +72,7 @@
          	<% end %>
 			<th>
 				E-mail
-				<input name="mail" class="pull-right" type="checkbox" value="" data-mails="<%= @clients_export.where.not(email: nil).where.not(email: "").pluck(:email) %>">
+				<input name="mail" class="pull-right" type="checkbox" value="" data-mails="<%= @clients_export.where.not(email: nil).where.not(email: "").limit(@monthly_mails - @monthly_mails_sent).pluck(:email) %>">
 			</th>
 		</tr>
 	</thead>

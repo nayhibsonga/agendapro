@@ -15,55 +15,41 @@
 </div>
 
 <div class="container">
+	<div class="row">
+		<div class="col-sm-12">
+
+		</div>
+	</div>
 	<div class="row well">
-		<%= form_tag('/send_mail_client', name: "client_mailer", id: "client_mailer", multipart: true, class: "form-horizontal") do %>
-			<div class="form-group has-feedback">
-				<%= label_tag :from, 'De', :class => 'control-label col-md-2' %>
-				<div class="col-md-10">
-					<%= select_tag :from, options_from_collection_for_select(@from_collection, :email, :email), :class => 'form-control', :required => true %>
-    				<span class="help-block"></span>
-    				<span class="form-control-feedback"></span>
-				</div>
-			</div>
-			<div class="form-group has-feedback">
-				<%= label_tag :to, 'Para', class: 'control-label col-md-2' %>
-				<div class="col-md-10">
-					<%= text_field_tag :to, @to, :class => 'form-control', :required => true, :placeholder => 'ejemplo@dominio.com (requerido)' %>
-    				<span class="help-block"></span>
-    				<span class="form-control-feedback"></span>
-    			</div>
-			</div>
-			<div class="form-group has-feedback">
-				<%= label_tag :subject, 'Asunto', class: 'control-label col-md-2' %>
-				<div class="col-md-10">
-					<%= text_field_tag :subject, nil, :class => 'form-control', :required => true, :autofocus => true, :placeholder => 'Asunto (requerido)' %>
-    				<span class="help-block"></span>
-    				<span class="form-control-feedback"></span>
-				</div>
-			</div>
-			<div class="form-group has-feedback">
-				<div class="col-md-12">
-					<%= label_tag :message, 'Mensaje', class: 'control-label' %>
-				</div>
-				<div class="col-md-12">
-					<%= text_area_tag :message, nil, :class => 'form-control', :rows => 8, :required => true, :placeholder => 'Mensaje (requerido)' %>
-    				<span class="help-block"></span>
-    				<span class="form-control-feedback"></span>
-				</div>
-			</div>
-			<div class="form-group has-feedback">
-				<%= label_tag :attachment, 'Archivo Adjunto', class: 'control-label col-md-2' %>
-				<div class="col-md-10">
-					<%= file_field_tag :attachment, :class => 'form-control' %>
-					<span class="help-block"></span>
-					<span class="form-control-feedback"></span>
-				</div>
+		<%= form_tag('/send_mail_client', name: "client_mailer", id: "client_mailer", multipart: true) do %>
+			<div class="form-group">
+				<%= label_tag :from, 'De' %>
+				<%= select_tag :from, options_from_collection_for_select(@from_collection, :email, :email), :class => 'form-control', :required => true %>
+				<span class="help-block"></span>
 			</div>
 			<div class="form-group">
-				<div class="col-md-offset-2 col-md-10">
-					<button type="submit" class="btn btn-agendapro-claro" data-loading-text='<i class="fa fa-envelope-o"></i> Enviando...' autocomplete="off"><i class="fa fa-envelope-o"></i><span> Enviar</span></button>
-					NOTA: Todos los e-mails son enviados como copia oculta
-				</div>
+				<%= label_tag :to, 'Para' %><small class="pull-right"> Estas enviando el e-mail a <%= pluralize(params[:to].length, 'persona') %>.</small>
+				<%= text_field_tag :to, @to, :class => 'form-control', :required => true, :placeholder => 'ejemplo@dominio.com (requerido)' %>
+				<span class="help-block"></span>
+			</div>
+			<div class="form-group">
+				<%= label_tag :subject, 'Asunto' %>
+				<%= text_field_tag :subject, nil, :class => 'form-control', :required => true, :autofocus => true, :placeholder => 'Asunto (requerido)' %>
+				<span class="help-block"></span>
+			</div>
+			<div class="form-group">
+				<%= label_tag :message, 'Mensaje' %>
+				<%= text_area_tag :message, nil, :class => 'form-control', :rows => 8, :required => true, :placeholder => 'Mensaje (requerido)' %>
+				<span class="help-block"></span>
+			</div>
+			<div class="form-group">
+				<%= label_tag :attachment, 'Archivo Adjunto' %>
+				<%= file_field_tag :attachment, :class => 'form-control' %>
+				<span class="help-block"></span>
+			</div>
+			<div class="form-group">
+				<button type="submit" class="btn btn-agendapro-claro" data-loading-text='<i class="fa fa-envelope-o"></i> Enviando...' autocomplete="off"><i class="fa fa-envelope-o"></i><span> Enviar</span></button>
+				<p>NOTA: Todos los e-mails son enviados como copia oculta</p>
 			</div>
 		<% end %>
 	</div>
