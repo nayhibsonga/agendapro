@@ -142,7 +142,7 @@
 							<li><%= link_to '<i class="fa fa-cubes fa-fw"></i><span class="remove-txt"> Recursos</span>'.html_safe, resources_path, { :class => if controller.controller_name == "resources" then "submenu active" else "submenu" end } %></li>
 							<% if current_user.role_id == Role.find_by_name("Administrador General").id %>
 							<li>
-								<%= link_to '<i class="fa fa-exchange fa-fw"></i><span class="remove-txt"> Pagos en línea</span>'.html_safe, 'payed_bookings/get_by_user', { :class => "submenu" }  %>
+								<%= link_to '<i class="fa fa-exchange fa-fw"></i><span class="remove-txt"> Pagos en línea</span>'.html_safe, '/company_bookings', { :class => "submenu" }  %>
 								</li>
 							<% end %>
 

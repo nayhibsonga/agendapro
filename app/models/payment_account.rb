@@ -4,19 +4,12 @@ class PaymentAccount < ActiveRecord::Base
 
 
 	def self.to_csv(type, p_start_date, p_end_date)
+
 		CSV.generate do |csv|
-
-			#head_array = ["ID", "Empresa", "Banco", "Cuenta Corriente", "Rut", "Email", "Cliente", "Monto recibido", "Orden de compra", "Código de autorización", "Fecha"]
-
-	        #head_array = self.column_names + Booking.column_names + PuntoPagosConfirmation.column_names
-	        #head_array << Booking.column_names
-	        #head_array << PuntoPagosConfirmation.column_names
-
-	        #csv << head_array
 	      	
 	        start_date = DateTime.new(1990,1,1,0,0,0)
 	    	end_date = DateTime.now
-	    	transfer = false
+	    	status = false
 
 	      	if(p_start_date != "")
 	      		start_date = DateTime.parse(p_start_date)
@@ -24,13 +17,15 @@ class PaymentAccount < ActiveRecord::Base
 	      	if(p_end_date != "")
 	      		end_date = DateTime.parse(p_end_date)
 	      	end
-	      	if(type != "pending")
-	      		transfer = true
-	      	end
+	      	if(type == "admin_pending")
+	      		status = false
+	      	elsif(type == "admin_transfered")
+	      		status = true
+	      		header = ["Nombre titular", "Rut titular", "Cuenta titular", "Monto", "Banco", "Tipo de cuenta", "Modena", "Oficina origen", "Oficina destino", "N° Factura"]
+	      		csv << header
+	      	end      	
 
-	      	
-
-		    arr = PaymentAccount.where("status = ? and created_at BETWEEN ? AND ?", false, start_date, end_date)
+		    arr = PaymentAccount.where("status = ? and created_at BETWEEN ? AND ?", status, start_date, end_date)
 
 	        arr.each do |payment_account|
 	        	row_array = Array.new
@@ -47,8 +42,8 @@ class PaymentAccount < ActiveRecord::Base
 	        	row_array << factura
 	        	csv << row_array
 	        end
-
 	    end
+
 	end
 
 

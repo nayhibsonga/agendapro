@@ -236,11 +236,17 @@ Agendapro::Application.routes.draw do
   get '/company_settings/:id/delete_facebook_pages', :to => 'company_settings#delete_facebook_pages', :as => 'delete_facebook_pages'
 
   # Payed Bookings
-  get "payed_bookings/show", :to => 'payed_bookings#show'
-  get "payed_bookings/get_by_user", :to => 'payed_bookings#get_by_user'
+  get "/company_bookings", :to => 'payed_bookings#show'
   post "payed_bookings/create_csv", :to => 'payed_bookings#create_csv'
+  post "payed_bookings/create_company_csv", :to => 'payed_bookings#create_company_csv'
   post "payed_bookings/mark_as_payed", :to => 'payed_bookings#mark_as_payed'
+  post "payed_bookings/unmark_as_payed", :to => 'payed_bookings#unmark_as_payed'
   post "payed_bookings/mark_several_as_payed", :to => 'payed_bookings#mark_several_as_payed'
+  post "payed_bookings/unmark_several_as_payed", :to => 'payed_bookings#unmark_several_as_payed'
+  post "payed_bookings/mark_canceled_as_payed", :to => 'payed_bookings#mark_canceled_as_payed'
+  post "payed_bookings/unmark_canceled_as_payed", :to => 'payed_bookings#unmark_canceled_as_payed'
+  post "payed_bookings/mark_several_canceled_as_payed", :to => 'payed_bookings#mark_several_canceled_as_payed'
+  post "payed_bookings/unmark_several_canceled_as_payed", :to => 'payed_bookings#unmark_several_canceled_as_payed'
   
   # Root
   get '/' => 'searchs#index', :constraints => { :subdomain => 'www' }

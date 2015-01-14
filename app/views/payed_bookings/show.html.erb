@@ -1,3 +1,18 @@
+<script type="text/javascript">
+  var Chartkick = {"language": "es"};
+</script>
+
+<style type="text/css">
+.datepicker{
+	color: #333 !important;
+}
+</style>
+
+<%= javascript_include_tag "//www.google.com/jsapi", "chartkick" %>
+
+<div class="row">
+	<h3> </h3>
+</div>
 <div class="row">
 	<div class="col-md-12">
 		<div class="panel panel-info">
@@ -7,11 +22,11 @@
 						<h3 class="panel-title">Transferencias pendientes</h3>
 					</div>
 					<div class="col-md-7">
-						<form action="payed_bookings/create_csv.csv" method="post" id="get_transfered">
-							<input type="hidden" name="type" value="transfered" />
-							Desde: <input type="text" id="transfered_start" name="start_date" class="datepicker" value="" />
-							Hasta: <input type="text" id="transfered_end" name="end_date" class="datepicker" value="" />
-							<button>&nbsp;Descargar&nbsp;&nbsp;<i class="fa fa-file-excel-o fa-lg"></i></button>
+						<form action="payed_bookings/create_company_csv.csv" method="post" id="get_transfered">
+							<input type="hidden" name="type" value="company_pending" />
+							Desde: <input type="text" id="pending_start" name="start_date" class="datepicker" value="" />
+							Hasta: <input type="text" id="pending_end" name="end_date" class="datepicker" value="" />
+							<button class="download-csv">&nbsp;Descargar&nbsp;&nbsp;<i class="fa fa-file-excel-o fa-lg"></i></button>
 						</form>
 					</div>
 				</div>
@@ -23,7 +38,9 @@
 							<th>ID</th>
 							
 							<th>Cliente</th>
-							<th>Total a pagar</th>
+							<th>Local</th>
+							<th>Servicio</th>
+							<th>Monto</th>
 							<th>Orden de compra</th>
 							<th>Código de autorización</th>
 							<th>Fecha</th>
@@ -39,6 +56,12 @@
 								
 								<td>
 									<%= payed_booking.booking.client.first_name + " " + payed_booking.booking.client.last_name %>
+								</td>
+								<td>
+									<%= payed_booking.booking.location.name %>
+								</td>
+								<td>
+									<%= payed_booking.booking.service.name %>
 								</td>
 								<td>
 									<%= payed_booking.punto_pagos_confirmation.amount %>
@@ -71,11 +94,11 @@
 						<h3 class="panel-title">Transferencias completadas</h3>
 					</div>
 					<div class="col-md-7">
-						<form action="payed_bookings/create_csv.csv" method="post" id="get_transfered">
-							<input type="hidden" name="type" value="transfered" />
+						<form action="payed_bookings/create_company_csv.csv" method="post" id="get_transfered">
+							<input type="hidden" name="type" value="company_transfered" />
 							Desde: <input type="text" id="transfered_start" name="start_date" class="datepicker" value="" />
 							Hasta: <input type="text" id="transfered_end" name="end_date" class="datepicker" value="" />
-							<button>&nbsp;Descargar&nbsp;&nbsp;<i class="fa fa-file-excel-o fa-lg"></i></button>
+							<button class="download-csv">&nbsp;Descargar&nbsp;&nbsp;<i class="fa fa-file-excel-o fa-lg"></i></button>
 						</form>
 					</div>
 				</div>
@@ -85,9 +108,10 @@
 					<thead class="head-white" style="font-size: 12px !important;">
 						<tr>
 							<th>ID</th>
-							
 							<th>Cliente</th>
-							<th>Total a pagar</th>
+							<th>Local</th>
+							<th>Servicio</th>
+							<th>Monto</th>
 							<th>Orden de compra</th>
 							<th>Código de autorización</th>
 							<th>Fecha</th>
@@ -103,6 +127,12 @@
 								
 								<td>
 									<%= payed_booking.booking.client.first_name + " " + payed_booking.booking.client.last_name %>
+								</td>
+								<td>
+									<%= payed_booking.booking.location.name %>
+								</td>
+								<td>
+									<%= payed_booking.booking.service.name %>
 								</td>
 								<td>
 									<%= payed_booking.punto_pagos_confirmation.amount %>
