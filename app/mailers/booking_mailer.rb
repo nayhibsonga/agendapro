@@ -1180,7 +1180,7 @@ class BookingMailer < ActionMailer::Base
 				:subject => 'Cancelación de pago en Agendapro',
 				:to => [
 					{
-						:email => 'iegomez@uc.cl',
+						:email => 'iegomez@uc.cl', #Cambiar a contacto@agendapro.cl
 						:type => 'to'
 					}
 				],
@@ -1201,6 +1201,10 @@ class BookingMailer < ActionMailer::Base
 					{
 						:name => 'CLIENT',
 						:content => client.first_name + ' ' + client.last_name
+					},
+					{
+						:name => 'CLIENTEMAIL',
+						:content => client.email
 					},
 					{
 						:name => 'PRICE',
