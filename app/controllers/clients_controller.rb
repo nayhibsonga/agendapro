@@ -13,8 +13,8 @@ class ClientsController < ApplicationController
     @services = Service.where(company_id: current_user.company_id, active: true)
     @clients = Client.accessible_by(current_ability).search(params[:search], current_user.company_id).filter_location(params[:location]).filter_provider(params[:provider]).filter_service(params[:service]).filter_gender(params[:gender]).filter_birthdate(params[:option]).order(:last_name, :first_name).paginate(:page => params[:page], :per_page => 25)
 
-    @max_mails = current_user.company.company_setting.daily_mails
-    @mails_left = current_user.company.company_setting.daily_mails - current_user.company.company_setting.sent_mails
+    @monthly_mails = current_user.company.plan.monthly_mails
+    @monthly_mails_sent = current_user.company.company_setting.monthly_mails
 
     @from_collection = current_user.company.company_from_email.where(confirmed: true)
 

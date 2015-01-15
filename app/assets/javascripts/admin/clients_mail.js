@@ -1,23 +1,21 @@
-function saveBreak (typeURL, extraURL) {
-
-}
-
 var my_alert;
-var mails_left;
+var monthly_mails;
+var monthly_mails_sent;
 $(function () {
 	my_alert = new Alert();
 
-	mails_left = $('#mails').data('mails-left');
+	monthly_mails = $('#mails').data('monthly-mails');
+	monthly_mails_sent = $('#mails').data('monthly-mails-sent');
 
 	$('.modal-body div:first').toggle()
 
 	$('input[name="mail"]').change(function (event) {
-		var selected = mails_left;
+		var mails_sent = monthly_mails_sent;
 		$('input[name="client_mail"]').each( function () {
 			if ($(event.target).prop('checked')) {
-				if (selected > 0) {
+				if (mails_sent < monthly_mails) {
 					$(this).prop('checked', true);
-					selected -= 1;
+					mails_sent += 1;
 				};
 			}
 			else {
@@ -27,23 +25,23 @@ $(function () {
 	});
 
 	$('input[name="client_mail"]').change(function (event) {
-		var selected = mails_left;
+		var mails_sent = monthly_mails_sent;
 		$('input[name="client_mail"]').each( function () {
 			if ($(this).prop('checked')) {
-				if (selected <= 0) {
+				mails_sent += 1;
+				if (mails_sent > monthly_mails) {
 					$(event.target).prop('checked', false);
-					if (selected <= 0) {
-						my_alert.showAlert(
-							'<h3>Lo sentimos</h3>' +
-							'No puedes seleccionar más de ' + mails_left + ' clientes.' +
-							'<br>' +
-							'Solo puedes mandar un máximo de ' + $('#mails').data('max-mails') + ' e-mails por día.'
-						);
-					};
 				};
-				selected -= 1;
 			};
 		});
+		if (mails_sent > monthly_mails) {
+			my_alert.showAlert(
+				'<h3>Lo sentimos</h3>' +
+				'No puedes seleccionar más de ' + (monthly_mails - monthly_mails_sent) + ' clientes.' +
+				'<br>' +
+				'Solo puedes mandar un máximo de ' + monthly_mails + ' e-mails al mes.'
+			);
+		};
 	});
 
 	$('#sendMail').click(function (e) {
@@ -97,26 +95,26 @@ $(function () {
 		$('#client_can_book'+event.target.value).hide();
 		$('#loader'+event.target.value).show();
 		$.ajax({
-		type: 'PATCH',
-		url: '/clients/'+event.target.value+'.json',
-		data: { "client": { "can_book": $('#client_can_book'+event.target.value).prop('checked') } },
-		dataType: 'json',
-		success: function(provider_break){
-			$('#loader'+event.target.value).hide();
-			$('#client_can_book'+event.target.value).show();
-		},
-		error: function(xhr){
-			$('#loader'+event.target.value).hide();
-			$('#client_can_book'+event.target.value).prop('checked', !$('#client_can_book'+event.target.value).prop('checked'));
-			$(event.target.id).show();
-			var errors = $.parseJSON(xhr.responseText).errors;
-			var errores = 'Error\n';
-			for (i in errors) {
-				errores += '*' + errors[i] + '\n';
+			type: 'PATCH',
+			url: '/clients/'+event.target.value+'.json',
+			data: { "client": { "can_book": $('#client_can_book'+event.target.value).prop('checked') } },
+			dataType: 'json',
+			success: function(provider_break){
+				$('#loader'+event.target.value).hide();
+				$('#client_can_book'+event.target.value).show();
+			},
+			error: function(xhr){
+				$('#loader'+event.target.value).hide();
+				$('#client_can_book'+event.target.value).prop('checked', !$('#client_can_book'+event.target.value).prop('checked'));
+				$(event.target.id).show();
+				var errors = $.parseJSON(xhr.responseText).errors;
+				var errores = 'Error\n';
+				for (i in errors) {
+					errores += '*' + errors[i] + '\n';
+				}
+				alert(errores);
+				// alertId.showAlert(errores);
 			}
-			alert(errores);
-			// alertId.showAlert(errores);
-		}
-	});
+		});
 	});
 });

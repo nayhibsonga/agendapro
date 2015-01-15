@@ -60,7 +60,6 @@
 	color: #ffffff;
 	text-transform: uppercase;
 	font-size: 2.10em;
-	font-family: TradeGothicCn18;
 	font-weight: 300;
 }
 .search-text-green {
@@ -69,16 +68,16 @@
 
 /*Search Form*/
 .fill {
-    min-height: 100%;
-    height: 100%;
+  min-height: 100%;
+  height: 100%;
 }
 .container-search {
-    display: table;
-    vertical-align: middle;
+  display: table;
+  vertical-align: middle;
 }
 .vertical-center-row {
-    display: table-cell;
-    vertical-align: middle;
+  display: table-cell;
+  vertical-align: middle;
 }
 .image-pin {
 	width: 22.07%;
@@ -194,13 +193,17 @@
 #carousel-what-we-do .carousel-control {
   width: 5%;
   background: none;
+  left: 12px;
+}
+#carousel-what-we-do .carousel-control.right {
+	right: 25px;
+	left: auto;
 }
 #carousel-what-we-do .carousel-control .fa-chevron-left,
 #carousel-what-we-do .carousel-control .fa-chevron-right {
   position: absolute;
   top: 40%;
   z-index: 5;
-  left: 0;
   color: #949292;
 }
 .carousel-indicators {
@@ -248,7 +251,7 @@
   display: inline-block;
 }
 .comments.background-light-grey {
-	font-family: TradeGothicLight;
+	font-family: TradeGothic;
 	padding: 25px 30px;
 	margin: 20px 0;
 }
@@ -259,11 +262,24 @@
 	height: 70px;
 	width: 70px;
 }
+.social a:hover,
+.social a:focus {
+	text-decoration: none;
+}
 .social img {
 	width: 47px;
 	height: auto;
 	display: inline;
 	margin: 0 20px;
+	-webkit-transition: all 0.5s ease-in-out;
+	-moz-transition: all 0.5s ease-in-out;
+	-o-transition: all 0.5s ease-in-out;
+	transition: all 0.5s ease-in-out;
+}
+.social img:hover,
+.social img:active,
+.social img:focus {
+	opacity: .5;
 }
 .media-heading a {
 	color: #22c488;
@@ -356,10 +372,10 @@
     margin-right: 4px;
 }
 .number-pin span{
-    position: absolute;
-    left: 30%;
-    top: 15%;
-    font-size: 13px;
-    font-weight: bold;
-    color: #ffffff;
+  position: absolute;
+  left: 30%;
+  top: 15%;
+  font-size: 13px;
+  font-weight: bold;
+  color: #ffffff;
 }
