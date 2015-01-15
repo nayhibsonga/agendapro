@@ -1,81 +1,64 @@
 <div class="container">
-  <div class="row">
-    <div class="col-xs-12 pull-center">
-      <div class="border-box below-navbar">
-        <div id="carousel-home" class="carousel slide" data-ride="carousel">
-            <!-- Indicators -->
-            <ol class="carousel-indicators">
-                <li data-target="#carousel-home" data-slide-to="0" class="active"></li>
-                <li data-target="#carousel-home" data-slide-to="1"></li>
-                <li data-target="#carousel-home" data-slide-to="2"></li>
-                <li data-target="#carousel-home" data-slide-to="3"></li>
-                <li data-target="#carousel-home" data-slide-to="4"></li>
-                <li data-target="#carousel-home" data-slide-to="5"></li>
-            </ol>
-
-            <!-- Wrapper for slides -->
-            <div class="carousel-inner" role="listbox">
-                <div class="item active">
-                  <div class="content">
-                    <h3>Reservas Online</h3>
-                    <%= image_tag 'home/index/1.png', width: '48.5' %>
-                    <p>Tus clientes podrán reservar a cualquier hora del día, desde cualquier lugar.</p>
-                  </div>
-                </div>
-                <div class="item">
-                  <div class="content">
-                    <h3>Simple y Amigable</h3>
-                    <%= image_tag 'home/index/3.png', width: '48.5' %>
-                    <p>Con una interfaz intuitiva y fácil de usar, gestiona tu negocio de manera rápida y eficiente.</p>
-                  </div>
-                </div>
-                <div class="item">
-                  <div class="content">
-                    <h3>Administra tu Agenda</h3>
-                    <%= image_tag 'home/index/4.png', width: '48.5' %>
-                    <p>Administra todos tus locales y staff en un mismo lugar. Confirma, edita y cancela tus reservas.</p>
-                  </div>
-                </div>
-                <div class="item">
-                  <div class="content">
-                    <h3>Fideliza tus Clientes</h3>
-                    <%= image_tag 'home/index/5.png', width: '48.5' %>
-                    <p>Realiza continuamente un seguimiento a tus clientes y sus servicios preferidos.</p>
-                  </div>
-                </div>
-                <div class="item">
-                  <div class="content">
-                    <h3>Gestiona tu Negocio</h3>
-                    <%= image_tag 'home/index/2.png', width: '48.5' %>
-                    <p>Ahorra tiempo y recursos, organizando las reservas para tu staff y revisa el desempeño de tus locales.</p>
-                  </div>
-                </div>
-                <div class="item">
-                  <div class="content">
-                    <h3>Recordatorios Automáticos</h3>
-                    <%= image_tag 'home/index/6.png', width: '48.5' %>
-                    <p>Disminuye la inasistencia enviado recordatorios automáticos a tus clientes.</p>
-                  </div>
-                </div>
-            </div>
-
-            <!-- Controls -->
-            <a class="left carousel-control" href="#carousel-home" role="button" data-slide="prev">
-                <span class="fa fa-chevron-left" aria-hidden="true"></span>
-                <span class="sr-only">Previous</span>
-            </a>
-            <a class="right carousel-control" href="#carousel-home" role="button" data-slide="next">
-                <span class="fa fa-chevron-right" aria-hidden="true"></span>
-                <span class="sr-only">Next</span>
-            </a>
-        </div>
-      </div>
-    </div>
-  </div>
   <div class="row below-navbar">
     <div class="col-xs-12">
       <%= link_to 'Pruebalo Gratis ahora!', mobile_contact_url, class: 'btn btn-orange btn-lg btn-block' %>
       <p class="text-center">No se requiere tarjeta de crédito</p>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-xs-12 col-sm-6 col-md-4">
+      <div class="pull-center">
+        <div class="border-box">
+          <h3>Reservas Online</h3>
+          <%= image_tag 'home/index/1.png', width: '48.5' %>
+          <p>Tus clientes podrán reservar a cualquier hora del día, desde cualquier lugar.</p>
+        </div>
+      </div>
+    </div>
+    <div class="col-xs-12 col-sm-6 col-md-4">
+      <div class="pull-center">
+        <div class="border-box">
+          <h3>Simple y Amigable</h3>
+          <%= image_tag 'home/index/3.png', width: '48.5' %>
+          <p>Con una interfaz intuitiva y fácil de usar, gestiona tu negocio de manera rápida y eficiente.</p>
+        </div>
+      </div>
+    </div>
+    <div class="col-xs-12 col-sm-6 col-md-4">
+      <div class="pull-center">
+        <div class="border-box">
+          <h3>Administra tu Agenda</h3>
+          <%= image_tag 'home/index/4.png', width: '48.5' %>
+          <p>Administra todos tus locales y staff en un mismo lugar. Confirma, edita y cancela tus reservas.</p>
+        </div>
+      </div>
+    </div>
+    <div class="col-xs-12 col-sm-6 col-md-4">
+      <div class="pull-center">
+        <div class="border-box">
+          <h3>Fideliza tus Clientes</h3>
+          <%= image_tag 'home/index/5.png', width: '48.5' %>
+          <p>Realiza continuamente un seguimiento a tus clientes y sus servicios preferidos.</p>
+        </div>
+      </div>
+    </div>
+    <div class="col-xs-12 col-sm-6 col-md-4">
+      <div class="pull-center">
+        <div class="border-box">
+          <h3>Gestiona tu Negocio</h3>
+          <%= image_tag 'home/index/2.png', width: '48.5' %>
+          <p>Ahorra tiempo y recursos, organizando las reservas para tu staff y revisa el desempeño de tus locales.</p>
+        </div>
+      </div>
+    </div>
+    <div class="col-xs-12 col-sm-6 col-md-4">
+      <div class="pull-center">
+        <div class="border-box">
+          <h3>Recordatorios Automáticos</h3>
+          <%= image_tag 'home/index/6.png', width: '48.5' %>
+          <p>Disminuye la inasistencia enviado recordatorios automáticos a tus clientes.</p>
+        </div>
+      </div>
     </div>
   </div>
 </div>
