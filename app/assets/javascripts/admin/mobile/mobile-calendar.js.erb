@@ -1,0 +1,84 @@
+function loadProviders () {
+  if (parseInt($('#locals-selector').val()) > 0) {
+    var localId = parseInt($('#locals-selector').val());
+    $.getJSON('/location_services', {location: localId}, function (services) {
+      $.getJSON('/local_providers', {location: localId}, function (providersArray) {
+        $('#providers-selector').empty();
+        if (providersArray.length > 0) {
+          $.each(providersArray, function (key, provider) {
+            $('#providers-selector').append('<option name="providerRadio" value="'+provider.id+'">'+provider.public_name+'</option>');
+          });
+          providerId = parseInt($('#providers-selector').val());
+          loadProviderTime(providerId);
+        };
+      });
+    });
+  };
+}
+
+function loadProviderTime (providerId) {
+  var extended_schedule_bool = $('#calendar-data').data('extended-schedule');
+  if (extended_schedule_bool) {
+    var extended_min_hour = $('#calendar-data').data('extended-min-hour');
+    var extended_max_hour = $('#calendar-data').data('extended-max-hour');
+    loadWeekCalendar(extended_min_hour, extended_max_hour, providerId);
+  }
+  else {
+    var min_hour = $('#locals-selector').find(':selected').data('minhour');
+    var max_hour = $('#locals-selector').find(':selected').data('maxhour');
+    loadWeekCalendar(min_hour, max_hour, providerId);
+  }
+}
+
+function loadWeekCalendar (startTime, endTime, providerId) {
+  //Default values
+  startTime = startTime || 0;
+  endTime = endTime || 24;
+  var duration = $('#calendar-data').data('calendar-duration');
+
+  $('#calendar').fullCalendar('removeEvents');
+  $('#calendar').empty();
+  $('#calendar').fullCalendar({
+    header: false,
+    eventClick: function(event) {
+      window.console.log('eventClick');
+      // editBookingModal(event.id);
+    },
+    firstDay: 1,  //Lunes
+    defaultView: 'agendaDay',
+    allDaySlot: false,
+    axisFormat: 'HH:mm',
+    timeFormat: 'HH:mm{ - HH:mm}',
+    minTime: startTime,
+    maxTime: endTime,
+    defaultEventMinutes: duration,
+    slotMinutes: duration,
+    aspectRatio: 1.35
+    // editable: true,
+    // disableResizing: true
+  });
+
+  $('.fc-button').click(function () {
+    var providerId = parseInt($('#providers-selector').val());
+    // loadProviderEvents(providerId);
+  });
+  // loadProviderEvents(providerId);
+}
+
+$(function() {
+  if (parseInt($('#locals-selector').val()) > 0) {
+    loadProviders();
+  };
+
+  $('#locals-selector').change(function() {
+    if (parseInt($('#locals-selector').val()) > 0) {
+      loadProviders();
+    };
+  });
+  $('#providers-selector').change(function() {
+    providerId = parseInt($('#providers-selector').val());
+    if (providerId > 0) {
+      loadProviderTime(providerId);
+    };
+  });
+});

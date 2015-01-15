@@ -51,6 +51,13 @@
               <li><%= link_to 'Contacto', root_path(anchor: 'contact-target') %></li>
 							<li class="divider"></li>
 							<% if user_signed_in? %>
+              <% if current_user.company_id %>
+                  <% if current_user.role_id == Role.find_by_name("Staff (sin edición)").id %>
+                  <li><%= link_to '<i class="fa fa-dashboard"></i> Panel Empresa'.html_safe, fixed_bookings_path, class: "menu-green" %></li>
+                  <% else %>
+                  <li><%= link_to '<i class="fa fa-dashboard"></i> Panel Empresa'.html_safe, bookings_path, class: "menu-green" %></li>
+                  <% end %>
+              <% end %>
               <li><%= link_to '<i class="fa fa-calendar"></i> Mi Agenda'.html_safe, my_agenda_path, class: "menu-green" %></li>
 							<li><%= link_to '<i class="fa fa-user"></i> Editar Perfil'.html_safe, edit_user_registration_path, class: "menu-green" %></li>
 							<li><%= link_to '<i class="fa fa-question"></i> Tutoriales'.html_safe, tutorials_path %></li>
@@ -67,26 +74,27 @@
 		</header>
 		<!-- end: Header -->
 
+		<!-- start: Alerts -->
+    <% if notice %>
+      <div class="alert alert-info alert-dismissable fade in">
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+        <%= notice %>
+      </div>
+    <% end %>
+    <% if alert %>
+      <div class="alert alert-warning alert-dismissable fade in">
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+        <%= alert %>
+      </div>
+    <% end %>
+		<!-- end: Alerts -->
+
 		<!-- start: content -->
 		<div id="wrapper">
-			<!-- start: Alerts -->
-      <% if notice %>
-        <div class="alert alert-info alert-dismissable fade in">
-          <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-          </button>
-          <%= notice %>
-        </div>
-      <% end %>
-      <% if alert %>
-        <div class="alert alert-warning alert-dismissable fade in">
-          <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-          </button>
-          <%= alert %>
-        </div>
-      <% end %>
-			<!-- end: Alerts -->
 			<%= yield %>
 		</div>
 		<!-- end: content -->
