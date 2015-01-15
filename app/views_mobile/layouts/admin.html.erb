@@ -21,12 +21,6 @@
 		<%= yield :stylesheets %>
 		<!-- end: CSS -->
 
-		<!-- The HTML5 shim, for IE6-8 support of HTML5 elements -->
-		<!--[if lt IE 9]>
-			<script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
-			<script src="assets/stylesheets/admin/ie6-8.css"></script>
-		<![endif]-->
-
 		<!-- start: Favicon and Touch Icons -->
 		<%= favicon_link_tag "favicon.png", :rel => "shortcut icon" %>
 		<!-- end: Favicon and Touch Icons -->
@@ -50,55 +44,21 @@
           <!-- Collect the nav links, forms, and other content for toggling -->
           <div class="cbp-spmenu cbp-spmenu-vertical cbp-spmenu-right collapse navbar-collapse" id="navbar-menu">
             <ul class="nav navbar-nav">
-              <li><%= link_to 'Buscador', root_path %></li>
+              <li><%= link_to 'Inicio', root_path %></li>
+              <li><a href="#">Clientes</a></li>
               <li><%= link_to "Contacto", contact_path %></li>
               <li class="divider"></li>
               <% if user_signed_in? %>
-              <li><%= link_to '<i class="fa fa-calendar"></i> Mi Agenda'.html_safe, my_agenda_path, class: "menu-green" %></li>
               <li><%= link_to '<i class="fa fa-user"></i> Editar Perfil'.html_safe, edit_user_registration_path, class: "menu-green" %></li>
               <li><%= link_to '<i class="fa fa-power-off"></i> Salir'.html_safe, destroy_user_session_path, method: :delete, class: "menu-orange" %></li>
               <% else %>
-              <li><%= link_to '<i class="fa fa-user"></i> Regístrate'.html_safe, new_user_registration_path, class: "menu-green" %></li>
               <li><%= link_to '<i class="fa fa-calendar-o"></i> Iniciar Sesión'.html_safe, new_user_session_path, class: "menu-green" %></li>
               <% end %>
-              <!-- <li><%= link_to "Agrega tu Empresa", home_path, class: "menu-orange" %></li> -->
             </ul>
           </div>
         </div>
       </nav>
   	</header>
-		<header>
-			<a href="<%= root_without_subdomain %>" id="logo"></a>
-			<% if (current_user.role_id == Role.find_by_name("Administrador General").id) %>
-			<ul id="menu-config">
-				<li><a href="#" id="open-config"><div class="pull-right"><i class="fa fa-cog fa-lg"></i></div></a>
-					<ul id="sub-menu-config" class="close-menu-config">
-						<li><%= link_to '<i class="fa fa-wrench"></i> Configuraciones'.html_safe, edit_company_setting_path(Company.find(current_user.company_id).company_setting.id) %></li>
-						<li><%= link_to '<i class="fa fa-sitemap"></i> Usuarios'.html_safe, admin_users_path %></li>
-						<li><%= link_to '<i class="fa fa-dollar"></i> Facturación'.html_safe, select_plan_path %></li>
-					</ul>
-				</li>
-			</ul>
-			<% end %>
-			<a href="#" id="link-imprimir" data-toggle="modal" data-target="#printingModal"><div class="pull-right"><i class="fa fa-print fa-lg"></i></div></a>
-			<ul id="menu-usuario">
-			  <li><a href="#" id="open-usuario"><%= current_user.email %> <span class="fa fa-chevron-down"></span></a>
-				<ul id="sub-menu-usuario" class="close-menu-usuario">
-				  <li>
-					<% if current_user.company_id || current_user.role_id == Role.find_by(:name => 'Super Admin').id %>
-					<%= link_to '<i class="fa fa-dashboard"></i> Panel Empresa'.html_safe, dashboard_path %>
-					<% else %>
-					<%= link_to '<i class="fa fa-building-o"></i> Agregar mi Compañía'.html_safe, add_company_path %>
-					<% end %>
-				  </li>
-				  <li><%= link_to '<i class="fa fa-calendar"></i> Mi Agenda'.html_safe, my_agenda_path(:id => current_user.id) %></li>
-				  <li><%= link_to '<i class="fa fa-user"></i> Perfil'.html_safe, edit_user_registration_path %></li>
-				  <li><%= link_to '<i class="fa fa-question"></i> Tutoriales'.html_safe, tutorials_path %></li>
-				  <li><%= link_to '<i class="fa fa-power-off"></i> Cerrar Sesión'.html_safe, destroy_user_session_path, method: :delete %></li>
-				</ul>
-			  </li>
-			</ul>
-		</header>
 		<!-- end: Header -->
 
 		<div id="sidebar" class="">

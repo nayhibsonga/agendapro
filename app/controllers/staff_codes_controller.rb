@@ -64,6 +64,11 @@ class StaffCodesController < ApplicationController
     end
   end
 
+  def check_staff_code
+    @staff_code = StaffCode.where(code: params[:booking_staff_code], company_id: current_user.company_id).first
+    render :json => !@staff_code.nil?
+  end
+
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_staff_code

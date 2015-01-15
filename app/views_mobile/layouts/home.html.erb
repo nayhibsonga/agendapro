@@ -72,14 +72,18 @@
         <div id="wrapper">
             <!-- start: Alerts -->
             <% if notice %>
-                <div class="alert alert-info alert-dismissable">
-                    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                <div class="alert alert-info alert-dismissable fade in">
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
                     <%= notice %>
                 </div>
             <% end %>
             <% if alert %>
-                <div class="alert alert-warning alert-dismissable">
-                    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                <div class="alert alert-warning alert-dismissable fade in">
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
                     <%= alert %>
                 </div>
             <% end %>
@@ -89,9 +93,8 @@
         <!-- end: content -->
 
         <!-- start: JavaScript-->
-        <%= javascript_include_tag "jquery-1.11.1.min" %>
-        <%= yield :scripts %>
         <%= javascript_include_tag "mobile" %>
+        <%= yield :scripts %>
         <!-- end: JavaScript-->
     </body>
 </html>
