@@ -60,10 +60,12 @@ class BookingsController < ApplicationController
   # POST /bookings
   # POST /bookings.json
   def create
+    @company = Company.find(current_user.company_id)
+    @company_setting = @company.company_setting
     staff_code = nil
     new_booking_params = booking_params.except(:client_first_name, :client_last_name, :client_phone, :client_email, :client_identification_number, :client_address, :client_district, :client_city, :client_birth_day, :client_birth_month, :client_birth_year, :client_age, :client_gender, :staff_code)
     @booking = Booking.new(new_booking_params)
-    if Company.find(current_user.company_id).company_setting.staff_code
+    if @company_setting.staff_code
       if booking_params[:staff_code] && !booking_params[:staff_code].empty? && StaffCode.where(company_id: current_user.company_id, code: booking_params[:staff_code]).count > 0
         staff_code = StaffCode.where(company_id: current_user.company_id, code: booking_params[:staff_code]).first.id
       else
@@ -71,7 +73,7 @@ class BookingsController < ApplicationController
         return
       end
     end
-    if Company.find(current_user.company_id).company_setting.client_exclusive
+    if @company_setting.client_exclusive
       if !booking_params[:client_id].nil? && !booking_params[:client_id].empty? && !booking_params[:client_identification_number].empty?
         @client = Client.find(booking_params[:client_id])
         @client.first_name = booking_params[:client_first_name]
@@ -142,7 +144,7 @@ class BookingsController < ApplicationController
         end
       end
     end
-
+    @booking.max_changes = @company_setting.max_changes
     if @booking && @booking.service_provider
       @booking.location = @booking.service_provider.location
     end
@@ -166,9 +168,11 @@ class BookingsController < ApplicationController
   # PATCH/PUT /bookings/1
   # PATCH/PUT /bookings/1.json
   def update
+    @company = Company.find(current_user.company_id)
+    @company_setting = @company.company_setting
     staff_code = nil
     new_booking_params = booking_params.except(:client_first_name, :client_last_name, :client_phone, :client_email, :client_identification_number, :client_address, :client_district, :client_city, :client_birth_day, :client_birth_month, :client_birth_year, :client_age, :client_gender, :staff_code)
-    if Company.find(current_user.company_id).company_setting.staff_code
+    if @company_setting.staff_code
       if booking_params[:staff_code] && !booking_params[:staff_code].empty? && StaffCode.where(company_id: current_user.company_id, code: booking_params[:staff_code]).count > 0
         staff_code = StaffCode.where(company_id: current_user.company_id, code: booking_params[:staff_code]).first.id
       else
@@ -176,7 +180,7 @@ class BookingsController < ApplicationController
         return
       end
     end
-    if Company.find(current_user.company_id).company_setting.client_exclusive
+    if @company_setting.client_exclusive
       if !booking_params[:client_id].nil? && !booking_params[:client_id].empty? && !booking_params[:client_identification_number].empty?
         @client = Client.find(booking_params[:client_id])
         @client.first_name = booking_params[:client_first_name]
@@ -290,7 +294,7 @@ class BookingsController < ApplicationController
         end
         user = 'Usuario no registrado'
         if booking_history.user_id > 0 && booking_history.user
-          user = 'Usuario Registrado'
+          user = booking_history.user.email
         end
       end
       bookings.push( { action: booking_history.action, start: booking_history.start, service: booking_history.service.name, provider: booking_history.service_provider.public_name, status: booking_history.status.name, user: user, staff_code: staff_code } )
@@ -492,8 +496,6 @@ class BookingsController < ApplicationController
     if @company.company_setting.client_exclusive
       if Client.where(identification_number: params[:identification_number], company_id: @company).count > 0
         client = Client.where(identification_number: params[:identification_number], company_id: @company).first
-        client.first_name = params[:firstName]
-        client.last_name = params[:lastName]
         client.email = params[:email]
         client.phone = params[:phone]
         client.save
