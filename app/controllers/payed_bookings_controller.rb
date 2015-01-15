@@ -162,12 +162,19 @@ class PayedBookingsController < ApplicationController
 		@response['status'] = 'error'
 		@response['error'] = ''
 
+		#ids = Array.new
+		#params[:ids].each do |id|
+		#	if !id.nil? && !id==""
+		#		ids << id
+		#	end
+		#end
+
 		@payment_accounts = PaymentAccount.find(params[:ids])
 		@payment_accounts.each do |payment_account|
 			payment_account.status = true
 			payment_account.payed_bookings.each do |payed_booking|
 				payed_booking.transfer_complete = true
-				payed_booking.booking.status = Status.where(:name => "Pagado")
+				payed_booking.booking.status_id = Status.find_by_name("Pagado").id
 				payed_booking.booking.save
 				payed_booking.save
 			end
@@ -179,9 +186,6 @@ class PayedBookingsController < ApplicationController
 		end
 
 		redirect_to action: 'index'
-		# respond_to do |format|
-		# 	format.json { render json: @response}
-		# end
 
 	end
 
@@ -223,21 +227,19 @@ class PayedBookingsController < ApplicationController
 			payment_account.status = false
 			payment_account.payed_bookings.each do |payed_booking|
 				payed_booking.transfer_complete = false
-				payed_booking.booking.status = Status.where(:name => "Pagado")
+				payed_booking.booking.status_id = Status.find_by_name("Pagado").id
 				payed_booking.booking.save
 				payed_booking.save
 			end
 			if payment_account.save
 				@response['status'] = 'ok'
-				redirect_to action: 'index'
-				return
+
 			else
 				@response['error'] = payment_account.errors
-				redirect_to "/403"
-				return
 			end
 		end
-
+		redirect_to action: 'index'
+		return
 	end
 
 
@@ -255,7 +257,13 @@ class PayedBookingsController < ApplicationController
 	end
 
 	def mark_several_canceled_as_payed
-
+		payed_bookings = PayedBooking.find(params[:ids])
+		payed_bookings.each do |payed_booking|
+			payed_booking.cancel_complete = true
+			payed_booking.save
+		end
+		redirect_to action: 'index'
+		return
 	end
 
 	def unmark_canceled_as_payed
@@ -272,6 +280,14 @@ class PayedBookingsController < ApplicationController
 	end
 
 	def unmark_several_canceled_as_payed
+
+		payed_bookings = PayedBooking.find(params[:ids])
+		payed_bookings.each do |payed_booking|
+			payed_booking.cancel_complete = false
+			payed_booking.save
+		end
+		redirect_to action: 'index'
+		return
 
 	end
 
