@@ -11,7 +11,6 @@
         <%= hidden_field_tag :provider_lock, @lock %>
         <%= hidden_field_tag :firstName, if user_signed_in? then current_user.first_name else nil end %>
         <%= hidden_field_tag :lastName, if user_signed_in? then current_user.last_name else nil end %>
-        <%= hidden_field_tag :max_changes, @location.company.company_setting.max_changes %>
         <div id="user-data">
           <div class="form-group">
             <input type="text" id="full_name" name="user[full_name]" class="form-control" placeholder="Nombre completo" required <%= 'disabled' if @location.company.company_setting.client_exclusive %>>
