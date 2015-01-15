@@ -551,7 +551,7 @@ class BookingsController < ApplicationController
         trx_id = DateTime.now.to_s.gsub(/[-:T]/i, '')
         num_amount = service.price - service.price*service.discount/100;
         amount = sprintf('%.2f', num_amount)
-        payment_method = '03'
+        payment_method = params[:mp]
         req = PuntoPagos::Request.new()
         resp = req.create(trx_id, amount, payment_method)
         if resp.success?
