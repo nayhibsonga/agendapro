@@ -62,7 +62,7 @@
 						<% if @booking.payed_booking.nil? || @booking.payed_booking.punto_pagos_confirmation.nil? %>
 
 							<h4>Tu transferencia está siendo procesada.</h4>
-							<h4>Espera unos segundos y haz click <%= link_to "aquí", 'punto_pagos/success/'+@token %> para confirmar el pago.</h4>
+							<h4>Espera unos segundos y haz click <%= link_to "aquí", '/punto_pagos/success/'+@token %> para confirmar el pago.</h4>
 
 						<% else %>
 							<h4>Tu transferencia se ha efectuado de manera satisfactoria.</h4>
