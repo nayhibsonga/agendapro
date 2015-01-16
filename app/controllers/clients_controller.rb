@@ -216,7 +216,7 @@ class ClientsController < ApplicationController
   end
 
   def name_suggestion
-    search_array = params[:term].split(' ')
+    search_array = params[:term].gsub(/\b([D|d]el?)+\b|\b([U|u]n(o|a)?s?)+\b|\b([E|e]l)+\b|\b([T|t]u)+\b|\b([L|l](o|a)s?)+\b|\b[AaYy]\b|["'.,;:-]|\b([E|e]n)+\b|\b([L|l]a)+\b|\b([C|c]on)+\b|\b([Q|q]ue)+\b|\b([S|s]us?)+\b|\b([E|e]s[o|a]?s?)+\b/i, '').split(' ')
     search_array.each do |item|
       item.prepend('%')
       item << '%'
