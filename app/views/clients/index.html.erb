@@ -59,6 +59,7 @@
 </div>
 
 <table class="table table-bordered">
+	<caption id="mails" data-monthly-mails="<%= @monthly_mails %>" data-monthly-mails-sent="<%= @monthly_mails_sent %>">E-mails enviados <%= number_with_delimiter(@monthly_mails_sent) %> de <%= number_with_delimiter(@monthly_mails) %></caption>
 	<thead>
 		<tr>
 			<th>Nombre</th>
@@ -71,7 +72,7 @@
          	<% end %>
 			<th>
 				E-mail
-				<input name="mail" class="pull-right" type="checkbox" value="" data-mails="<%= @clients_export.where.not(email: nil).where.not(email: "").pluck(:email) %>">
+				<input name="mail" class="pull-right" type="checkbox" value="" data-mails="<%= @clients_export.where.not(email: nil).where.not(email: "").limit(@monthly_mails - @monthly_mails_sent).pluck(:email) %>">
 			</th>
 		</tr>
 	</thead>
@@ -131,79 +132,7 @@
 	</div>
 </div>
 
-<% if @from_collection.first %>
-<div class="modal fade" id="mailModal" tabindex="-1" role="dialog" aria-labelledby="mailModalLabel" aria-hidden="true">
-	<div class="modal-dialog">
-		<div class="modal-content">
-			<div class="modal-header">
-				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-				<h4 class="modal-title" id="mailModalLabel">Enviar E-mail</h4>
-			</div>
-			<%= form_tag('/send_mail_client', name: "client_mailer", id: "client_mailer", multipart: true, class: "form-horizontal") do %>
-				<div class="modal-body">
-					<div class="center-block" style="display: table;">
-						<p>
-							<h3>Enviando E-mail</h3>
-							<span>Por favor espere</span>
-						</p>
-						<%= image_tag 'ajax-loader.gif', :alt => 'Loader' %>
-					</div>
-					<div class="form-group has-feedback">
-						<%= label_tag :from, 'De', :class => 'control-label col-md-2' %>
-						<div class="col-md-10">
-							<%= select_tag :from, options_from_collection_for_select(@from_collection, :email, :email), :class => 'form-control', :required => true %>
-            				<span class="help-block"></span>
-            				<span class="form-control-feedback"></span>
-						</div>
-					</div>
-					<div class="form-group has-feedback">
-						<%= label_tag :to, 'Para', class: 'control-label col-md-2' %>
-						<div class="col-md-10">
-							<%= text_field_tag :to, nil, :class => 'form-control', :required => true, :placeholder => 'ejemplo@dominio.com (requerido)' %>
-            				<span class="help-block"></span>
-            				<span class="form-control-feedback"></span>
-            			</div>
-					</div>
-					<div class="form-group has-feedback">
-						<%= label_tag :subject, 'Asunto', class: 'control-label col-md-2' %>
-						<div class="col-md-10">
-							<%= text_field_tag :subject, nil, :class => 'form-control', :required => true, :autofocus => true, :placeholder => 'Asunto (requerido)' %>
-            				<span class="help-block"></span>
-            				<span class="form-control-feedback"></span>
-						</div>
-					</div>
-					<div class="form-group has-feedback">
-						<div class="col-md-12">
-							<%= label_tag :message, 'Mensaje' %>
-						</div>
-						<div class="col-md-12">
-							<%= text_area_tag :message, nil, :class => 'form-control ckeditor', :rows => 8, :required => true, :placeholder => 'Mensaje (requerido)' %>
-            				<span class="help-block"></span>
-            				<span class="form-control-feedback"></span>
-						</div>
-					</div>
-					<div class="form-group has-feedback">
-						<%= label_tag :attachment, 'Archivo Adjunto', class: 'control-label col-md-3' %>
-						<div class="col-md-9">
-							<%= file_field_tag :attachment, :class => 'form-control' %>
-							<span class="help-block"></span>
-							<span class="form-control-feedback"></span>
-						</div>
-					</div>
-					<div>
-						<p>NOTA: Todos los e-mails son enviados como copia oculta</p>
-					</div>
-				</div>
-				<div class="modal-footer">
-					<button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
-					<button class="btn btn-agendapro-claro" type="submit" action="/send_mail_client" value="client_mailer"><i class="fa fa-envelope-o"></i><span> Enviar</span></button>
-				</div>
-			<% end %>
-		</div>
-	</div>
-</div>
-
-<% else %>
+<% if !@from_collection.first %>
 <div class="modal fade" id="mailModal" tabindex="-1" role="dialog" aria-labelledby="mailModalLabel" aria-hidden="true">
 	<div class="modal-dialog">
 		<div class="modal-content">
@@ -260,9 +189,6 @@
 		</div>
 	</div>
 </div>
-
-<%= content_tag "div", id: "mails", data: {mails_left: @mails_left, max_mails: @max_mails} do %>
-<% end %>
 
 <% content_for :scripts do %>
 	<%= javascript_include_tag 'validations/validate' %>
