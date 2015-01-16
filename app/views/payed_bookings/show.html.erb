@@ -19,7 +19,8 @@
 			<div class="panel-heading">
 				<div class="row">
 					<div class="col-md-5">
-						<h3 class="panel-title">Transferencias pendientes</h3>
+						<h3 class="panel-title payments-title">Transferencias pendientes&nbsp;&nbsp;<span style="cursor: pointer;" data-toggle="tooltip" data-placement="bottom" title="Pagos efectuados por clientes que AgendaPro aún no ha transferido a la empresa."><i class="fa fa-question-circle"></i></span></h3>
+						
 					</div>
 					<div class="col-md-7">
 						<form action="payed_bookings/create_company_csv.csv" method="post" id="get_transfered">
@@ -91,7 +92,7 @@
 			<div class="panel-heading">
 				<div class="row">
 					<div class="col-md-5">
-						<h3 class="panel-title">Transferencias completadas</h3>
+						<h3 class="panel-title payments-title">Transferencias completadas</h3>
 					</div>
 					<div class="col-md-7">
 						<form action="payed_bookings/create_company_csv.csv" method="post" id="get_transfered">
@@ -174,7 +175,7 @@
           firstDay: 1,
           dateFormat: 'yy-mm-dd',
       	});
-	
+
 		$(".datepicker").each(function(){
 			var altField = '#' + $(this).prop('id');
 			$(this).datepicker('option', 'altField', altField);
