@@ -6,7 +6,7 @@
                 <h3>Elige el plan que mejor se acomode a tus necesidades o <strong>contáctanos si necesitas uno a tu medida.</strong></h3>
             </div>
             <div class="col-sm-2 text-center">
-                
+
             </div>
             <div class="col-sm-5">
                 <h1>&nbsp;</h1>
@@ -27,7 +27,12 @@
                         <hr class="pricing-hr">
                         <div class="the_price"><span>$</span><%= number_with_precision(plan.price, precision: 0, separator: '', delimiter: '.') %><small>/Mes<br>(+ IVA)</small></div>
                         <div class="the_offerings">
-                            <p> <strong>¡Primer mes GRATIS!</strong><br /><strong><%= plan.locations %></strong> Local(es)<br /><strong><%= plan.service_providers %></strong> Staffs </p>
+                            <p>
+                                <strong>¡Primer mes GRATIS!</strong><br />
+                                <strong><%= plan.locations %></strong> Local(es)<br />
+                                <strong><%= plan.service_providers %></strong> Staffs<br />
+                                <strong><%= number_with_delimiter(plan.monthly_mails) %></strong> E-mails publicitarios
+                            </p>
                             <br>
                         </div>
                     </div>

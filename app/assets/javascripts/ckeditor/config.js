@@ -73,7 +73,5 @@ CKEDITOR.editorConfig = function( config ) {
 	CKEDITOR.config.magicline_everywhere = true;
 	// Number of space inserted by Tab
 	config.tabSpaces = 2;
-
-	// config.extraPlugins = 'image2';
 };
 
