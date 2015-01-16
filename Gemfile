@@ -132,6 +132,11 @@ gem 'validation_scopes', :git => 'https://github.com/ivalkeen/validation_scopes.
 #Librería para string matching
 gem 'amatch'
 
+<<<<<<< HEAD
 
 #Capistrano para deploy
 gem 'capistrano', '~> 3.3.0'
+
+# Editor de texto tipo word
+gem 'ckeditor'
+
