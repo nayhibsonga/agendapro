@@ -547,7 +547,7 @@ class BookingsController < ApplicationController
       #   PAGO EN LÍNEA DE RESERVA
       #
     if(params[:payment] == "1")
-        @booking.max_changes = params[:max_changes]
+        @booking.max_changes = @company.company_setting.max_changes
         trx_id = DateTime.now.to_s.gsub(/[-:T]/i, '')
         num_amount = service.price - service.price*service.discount/100;
         amount = sprintf('%.2f', num_amount)
@@ -556,6 +556,7 @@ class BookingsController < ApplicationController
         resp = req.create(trx_id, amount, payment_method)
         if resp.success?
           @booking.trx_id = trx_id
+          @booking.token = resp.get_token
           #@booking.status = Status.find_by(:name => "Pagado")
           if @booking.save
             PuntoPagosCreation.create(trx_id: trx_id, payment_method: payment_method, amount: amount, details: "Pago de servicio " + service.name + " a la empresa " +@company.name+" (" + @company.id.to_s + "). trx_id: "+trx_id+" - mp: "+@company.id.to_s+". Resultado: Se procesa")
