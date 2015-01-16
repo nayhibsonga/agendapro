@@ -30,8 +30,32 @@ function loadProviderTime (providerId) {
   }
 }
 
+function loadProviderEvents(providerId) {
+  $('.btn-group > button').addClass('disabled');
+  $('#loader').removeClass('hidden');
+  var localId = parseInt($('#locals-selector').val());
+  var start = $('#calendar').fullCalendar('getView').start;
+  var end = $('#calendar').fullCalendar('getView').end;
+  var startParam = start.getFullYear() + '-' + (start.getMonth() + 1) + '-' + start.getDate();
+  var endParam = end.getFullYear() + '-' + (end.getMonth() + 1) + '-' + end.getDate();
+  $('#calendar').fullCalendar('removeEvents');
+  $.getJSON('/booking',
+    {
+      location: localId,
+      provider: providerId,
+      start: startParam,
+      end: endParam
+    }, function (events_list) {
+      $('#calendar').fullCalendar('addEventSource', events_list);
+      $('.btn-group > button').removeClass('disabled');
+      $('#loader').addClass('hidden');
+  });
+  return false;
+}
+
+// var duration = 15;
 function loadWeekCalendar (startTime, endTime, providerId) {
-  //Default values
+  // //Default values
   startTime = startTime || 0;
   endTime = endTime || 24;
   var duration = $('#calendar-data').data('calendar-duration');
@@ -40,8 +64,9 @@ function loadWeekCalendar (startTime, endTime, providerId) {
   $('#calendar').empty();
   $('#calendar').fullCalendar({
     header: false,
+    resources: [],
     eventClick: function(event) {
-      window.console.log('eventClick');
+      window.console.log(event.id);
       // editBookingModal(event.id);
     },
     firstDay: 1,  //Lunes
@@ -52,19 +77,15 @@ function loadWeekCalendar (startTime, endTime, providerId) {
     minTime: startTime,
     maxTime: endTime,
     defaultEventMinutes: duration,
-    slotMinutes: duration,
-    aspectRatio: 1.35
+    slotMinutes: duration
     // editable: true,
-    // disableResizing: true
+    // disableResizing: true,
   });
 
-  $('.fc-button').click(function () {
-    var providerId = parseInt($('#providers-selector').val());
-    // loadProviderEvents(providerId);
-  });
-  // loadProviderEvents(providerId);
+  loadProviderEvents(providerId);
 }
 
+var picker;
 $(function() {
   if (parseInt($('#locals-selector').val()) > 0) {
     loadProviders();
@@ -79,6 +100,49 @@ $(function() {
     providerId = parseInt($('#providers-selector').val());
     if (providerId > 0) {
       loadProviderTime(providerId);
+    };
+  });
+
+  var datepicker = $('#today').pickadate({
+    monthsFull: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+    monthsShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
+    weekdaysFull: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'],
+    weekdaysShort: ['Dom', 'Lun', 'Mar', 'Mier', 'Jue', 'vie', 'Sáb'],
+    today: 'Hoy',
+    clear: '',
+    firstDay: 1,
+    format: 'ddd dd/mm/yyyy',
+    formatSubmit: 'yyyy/mm/dd',
+    hiddenName: true,
+    onSet: function (context) {
+      if (context.select) {
+        var val = $('#today').val();
+        $('#today').text(val);
+        $('#calendar').fullCalendar('gotoDate', new Date(context.select));
+        providerId = parseInt($('#providers-selector').val());
+        if (providerId > 0) {
+          loadProviderEvents(providerId);
+        };
+      };
+    }
+  });
+  picker = datepicker.pickadate('picker');
+  $('#prev').click(function() {
+    $('#calendar').fullCalendar('prev');
+    var d = $('#calendar').fullCalendar('getDate');
+    picker.set('select', d);
+    providerId = parseInt($('#providers-selector').val());
+    if (providerId > 0) {
+      loadProviderEvents(providerId);
+    };
+  });
+  $('#next').click(function() {
+    $('#calendar').fullCalendar('next');
+    var d = $('#calendar').fullCalendar('getDate');
+    picker.set('select', d);
+    providerId = parseInt($('#providers-selector').val());
+    if (providerId > 0) {
+      loadProviderEvents(providerId);
     };
   });
 });
