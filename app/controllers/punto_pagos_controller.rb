@@ -168,7 +168,7 @@ class PuntoPagosController < ApplicationController
   end
 
   def success
-    #if params[:token]
+    if params[:token]
       if PuntoPagosConfirmation.find_by_token(params[:token])
         trx_id = PuntoPagosConfirmation.find_by_token(params[:token]).trx_id
         if BillingLog.find_by_trx_id(trx_id)
@@ -182,12 +182,13 @@ class PuntoPagosController < ApplicationController
         elsif Booking.find_by_trx_id(trx_id)
           #Mostrar página similar a la de reserva hecha, confirmando que se pagó
           @booking = Booking.find_by_trx_id(trx_id)
+          @token = params[:token]
           @success_page = "booking"
         else
           @success_page = ""
         end
       end
-    #end
+    end
   end
 
   def failure

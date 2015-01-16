@@ -59,47 +59,55 @@
 						</dl>
 					<% else %>
 
-						<h4>Tu transferencia se ha efectuado de manera satisfactoria.</h4>
+						<% if @booking.payed_booking.punto_pagos_confirmation.nil? %>
 
-						<dl class="dl-horizontal">
-							<dt>
-								Comercio:
-							</dt>
-							<dd>
-								<%= @booking.location.company.name %>
-							</dd>
-							<dt>
-								Total a pagar:
-							</dt>
-							<dd>
-								$<%= @booking.payed_booking.punto_pagos_confirmation.amount %>
-							</dd>
-							<dt>
-								Número de tarjeta:
-							</dt>
-							<dd>
-								**********<%= @booking.payed_booking.punto_pagos_confirmation.card_number %>
-							</dd>
-							<dt>
-								Orden de compra:
-							</dt>
-							<dd>
-								<%= @booking.payed_booking.punto_pagos_confirmation.operation_number %>
-							</dd>
-							<dt>
-								Código de autorización:
-							</dt>
-							<dd>
-								<%= @booking.payed_booking.punto_pagos_confirmation.authorization_code %>
-							</dd>
-							<dt>
-								Fecha:
-							</dt>
-							<dd>
-								<%= @booking.payed_booking.punto_pagos_confirmation.approvement_date %>
-							</dd>
+							<h4>Tu transferencia está siendo procesada.</h4>
+							<h4>Espera unos segundos y haz click <%= link_to "aquí", 'punto_pagos/success/'+@token %> para confirmar el pago.</h4>
 
-						</dl>
+						<% else %>
+							<h4>Tu transferencia se ha efectuado de manera satisfactoria.</h4>
+
+							<dl class="dl-horizontal">
+								<dt>
+									Comercio:
+								</dt>
+								<dd>
+									<%= @booking.location.company.name %>
+								</dd>
+								<dt>
+									Total a pagar:
+								</dt>
+								<dd>
+									$<%= @booking.payed_booking.punto_pagos_confirmation.amount %>
+								</dd>
+								<dt>
+									Número de tarjeta:
+								</dt>
+								<dd>
+									**********<%= @booking.payed_booking.punto_pagos_confirmation.card_number %>
+								</dd>
+								<dt>
+									Orden de compra:
+								</dt>
+								<dd>
+									<%= @booking.payed_booking.punto_pagos_confirmation.operation_number %>
+								</dd>
+								<dt>
+									Código de autorización:
+								</dt>
+								<dd>
+									<%= @booking.payed_booking.punto_pagos_confirmation.authorization_code %>
+								</dd>
+								<dt>
+									Fecha:
+								</dt>
+								<dd>
+									<%= @booking.payed_booking.punto_pagos_confirmation.approvement_date %>
+								</dd>
+
+							</dl>
+
+						<% end %>
 
 					<% end %>
 					</div>
