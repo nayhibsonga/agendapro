@@ -371,7 +371,7 @@ function scrollEvents (direction) {
 //====== Load Info ======//
 
 function loadDescription (serviceId) {
-	$('#services-description').html('<%= image_tag "ajax-loader.gif", :alt => "Loader" %>');
+	$('#services-description').html('<div class="ajax-loader"><%= image_tag "ajax-loader.gif", :alt => "Loader" %></div>');
 	$.getJSON('/service', {id: serviceId}, function (service) {
 		$('#services-description').empty();
 		$('#services-description').append(
