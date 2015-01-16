@@ -61,6 +61,20 @@ body {
   background-color: #db7400;
   border-color: #DF840D;
 }
+.btn-red {
+	color: #ffffff;
+	background-color: #fd633f;
+	border-color: #e55938;
+}
+.btn-red:hover,
+.btn-red:focus,
+.btn-red.focus,
+.btn-red:active,
+.btn-red.active {
+  color: #ffffff;
+  background-color: #e55938;
+  border-color: #CD4E31;
+}
 
 /*** Calendar **/
 .background-green {
@@ -95,4 +109,27 @@ body {
 }
 .fc-event-inner {
 	border-radius: 4px;
+}
+
+/*** view booking ***/
+.booking {
+	margin-top: 15px;
+}
+.booking tr > td:first-child {
+	padding-left: 15px;
+}
+.booking tr > td:last-child {
+	text-align: right;
+	padding-right: 15px;
+}
+.modal-backdrop {
+	position: fixed;
+	height: 100% !important;
+}
+#cancelModal .modal-content {
+	background-color: #22c488;
+	color: #ffffff;
+}
+#cancelModal .modal-content > .modal-body {
+	padding: 30px 15px;
 }

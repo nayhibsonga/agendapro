@@ -1,15 +1,63 @@
-<p id="notice"><%= notice %></p>
-
-<p>Inicio: <%= @booking.start %></p>
-<p>Término: <%= @booking.end %></p>
-<p>Nota: <%= @booking.notes %></p>
-<p>Staff: <%= @booking.service_provider.user.first_name %></p>
-<% if @booking.user %>
-<p>Usuario: <%= @booking.user.first_name %></p>
+<% content_for :modals do %>
+<!-- Modal -->
+<div class="modal fade" id="cancelModal" tabindex="-1" aria-hidden="true">
+	<div class="modal-dialog modal-sm">
+		<div class="modal-content">
+			<div class="modal-body">
+				<div class="pull-center">
+					¿Seguro que quieres cancelar la reserva?
+					<button type="button" class="btn btn-default" data-dismiss="modal" aria-label="Close">Cerrar</button>
+					<button type="button" class="btn btn-red">Aceptar</button>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
 <% end %>
-<p>Servicio: <%= @booking.service.name %></p>
-<p>Status: <%= @booking.status.name %></p>
-<p>Promoción: <%= @booking.promotion %></p>
 
-<%= link_to 'Editar', edit_booking_path(@booking) %> |
-<%= link_to 'Atrás', bookings_path %>
+<!-- Buttons -->
+<div class="container-fluid" style="padding: 1px;">
+	<div class="row">
+		<div class="col-xs-12">
+			<div class="btn-group btn-group-lg btn-group-justified" role="group">
+				<%= link_to 'Modificar', edit_booking_path(@booking), class: 'btn btn-orange' %>
+				<a type="button" class="btn btn-red" data-toggle="modal" data-target="#cancelModal">Cancelar</a>
+			</div>
+		</div>
+	</div>
+</div>
+
+<!-- Booking Data -->
+<div class="row">
+	<div class="col-xs-12">
+		<table class="table table-bordered booking">
+			<thead>
+				<tr>
+					<th colspan="2" class="text-center">Detalles de la Reserva</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td>Cliente</td>
+					<td><%= @booking.client.first_name %> <%= @booking.client.last_name %></td>
+				</tr>
+				<tr>
+					<td>Prestador</td>
+					<td><%= @booking.service_provider.public_name %></td>
+				</tr>
+				<tr>
+					<td>Servicio</td>
+					<td><%= @booking.service.name %></td>
+				</tr>
+				<tr>
+					<td>Fecha</td>
+					<td><%= l @booking.start.to_date, format: :day %></td>
+				</tr>
+				<tr>
+					<td>Tiempo</td>
+					<td><%= l @booking.start.to_time, format: :hour %> - <%= l @booking.end.to_time, format: :hour %></td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+</div>

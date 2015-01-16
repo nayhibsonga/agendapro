@@ -53,7 +53,6 @@ function loadProviderEvents(providerId) {
   return false;
 }
 
-// var duration = 15;
 function loadWeekCalendar (startTime, endTime, providerId) {
   // //Default values
   startTime = startTime || 0;
@@ -66,7 +65,9 @@ function loadWeekCalendar (startTime, endTime, providerId) {
     header: false,
     resources: [],
     eventClick: function(event) {
-      window.console.log(event.id);
+      if ($.isNumeric(event.id)) {
+        window.location.href = "/bookings/" + event.id;
+      }
       // editBookingModal(event.id);
     },
     firstDay: 1,  //Lunes
@@ -78,8 +79,6 @@ function loadWeekCalendar (startTime, endTime, providerId) {
     maxTime: endTime,
     defaultEventMinutes: duration,
     slotMinutes: duration
-    // editable: true,
-    // disableResizing: true,
   });
 
   loadProviderEvents(providerId);
@@ -131,18 +130,10 @@ $(function() {
     $('#calendar').fullCalendar('prev');
     var d = $('#calendar').fullCalendar('getDate');
     picker.set('select', d);
-    providerId = parseInt($('#providers-selector').val());
-    if (providerId > 0) {
-      loadProviderEvents(providerId);
-    };
   });
   $('#next').click(function() {
     $('#calendar').fullCalendar('next');
     var d = $('#calendar').fullCalendar('getDate');
     picker.set('select', d);
-    providerId = parseInt($('#providers-selector').val());
-    if (providerId > 0) {
-      loadProviderEvents(providerId);
-    };
   });
 });
