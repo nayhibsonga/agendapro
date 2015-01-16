@@ -154,6 +154,18 @@ class Company < ActiveRecord::Base
 				service.save
 			end
 		end
+
+		#Si cambia los datos de la cuenta, hay que actualizar el payment_account
+		if(!self.payment_accounts.nil?)
+			self.payment_accounts.each do |pa|
+				pa.number = self.account_number
+				pa.rut = self.company_rut
+				pa.name = self.account_name
+				pa.account_type = self.account_type
+				pa.save
+			end
+		end
+
 	end
 
 end

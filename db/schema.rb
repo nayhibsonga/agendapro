@@ -11,9 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-
-ActiveRecord::Schema.define(version: 20150112134708) do
-
+ActiveRecord::Schema.define(version: 20150116130618) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -99,6 +97,7 @@ ActiveRecord::Schema.define(version: 20150112134708) do
     t.boolean  "payed",               default: false
     t.string   "trx_id",              default: ""
     t.integer  "max_changes",         default: 2
+    t.string   "token",               default: ""
   end
 
   add_index "bookings", ["client_id"], name: "index_bookings_on_client_id", using: :btree
