@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150116172054) do
+ActiveRecord::Schema.define(version: 20150119175137) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -240,12 +240,12 @@ ActiveRecord::Schema.define(version: 20150116172054) do
     t.boolean  "active",              default: true
     t.integer  "constraint_option",                  null: false
     t.integer  "constraint_quantity",                null: false
-    t.integer  "company_id_id"
+    t.integer  "company_id"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
 
-  add_index "deals", ["company_id_id"], name: "index_deals_on_company_id_id", using: :btree
+  add_index "deals", ["company_id"], name: "index_deals_on_company_id", using: :btree
 
   create_table "dictionaries", force: true do |t|
     t.string   "name",       null: false
