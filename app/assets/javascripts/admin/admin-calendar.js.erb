@@ -1,6 +1,6 @@
 var statusIcon = [" blocked", " reserved", " confirmed", " completed", " payed", " cancelled", " noshow", " break"];
-var backColors = ["#CCCCBB", "#B0C2F2", "#FFE1AE", "#E9B0F2", "#B0F2C2", "#FAFCAF", "#FFB6AE", "#999977"];
-var textColors = ["#222211", "#102050", "#554004", "#401040", "#105020", "#505205", "#551004", "#111100"];
+var backColors = ["#9d9d9d", "#0f91cf", "#fbcb5d", "#db7dcf", "#6bcfa1", "#FAFCAF", "#FFB6AE", "#fb8e74"];
+var textColors = ["#676767", "#0b587b", "#d1a94e", "#aa5fa0", "#58ab85", "#505205", "#551004", "#d47760"];
 var resourcesColors = [];
 var servicesJSON;
 
@@ -758,7 +758,7 @@ function editDrag(event) {
 					event.start = booking.start;
 					event.end = booking.end;
 					event.resourceId = booking.service_provider_id;
-					event.textColor = textColors[booking.status_id];
+					event.textColor = "#ffffff";
 					event.borderColor = textColors[booking.status_id];
 					event.backgroundColor = backColors[booking.status_id];
 					event.className = originClass;
@@ -837,7 +837,7 @@ function saveBooking(typeURL, extraURL) {
 						start: booking.start,
 						end: booking.end,
 						resourceId: booking.service_provider_id,
-						textColor: textColors[booking.status_id],
+						textColor: "#ffffff",
 						borderColor: textColors[booking.status_id],
 						backgroundColor: backColors[booking.status_id],
 						className: originClass,
@@ -877,7 +877,7 @@ function saveBooking(typeURL, extraURL) {
 					event.start = booking.start;
 					event.end = booking.end;
 					event.resourceId = booking.service_provider_id;
-					event.textColor = textColors[booking.status_id];
+					event.textColor = "#ffffff";
 					event.borderColor = textColors[booking.status_id];
 					event.backgroundColor = backColors[booking.status_id];
 					event.className = originClass;
@@ -953,7 +953,7 @@ function saveBreak (typeURL, extraURL) {
 							start: provider_break.start,
 							end: provider_break.end,
 							resourceId: parseInt(provider_break.service_provider_id),
-							textColor: textColors[0],
+							textColor: "#ffffff",
 							borderColor: textColors[0],
 							backgroundColor: backColors[0]
 						};
@@ -978,7 +978,7 @@ function saveBreak (typeURL, extraURL) {
 								start: provider_break.start,
 								end: provider_break.end,
 								resourceId: parseInt(provider_break.service_provider_id),
-								textColor: textColors[0],
+								textColor: "#ffffff",
 								borderColor: textColors[0],
 								backgroundColor: backColors[0]
 							};
@@ -1040,7 +1040,7 @@ function saveBreak (typeURL, extraURL) {
 									start: provider_break.start,
 									end: provider_break.end,
 									resourceId: parseInt(provider_break.service_provider_id),
-									textColor: textColors[0],
+									textColor: "#ffffff",
 									borderColor: textColors[0],
 									backgroundColor: backColors[0]
 								};

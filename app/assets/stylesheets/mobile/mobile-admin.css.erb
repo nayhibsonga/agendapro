@@ -101,14 +101,30 @@ body {
 	padding-bottom: 10px;
 	border-bottom: 1px solid #949292;
 }
+.btn-group > .btn {
+	padding: 10px;
+}
+.btn-group > .btn:first-child,
+.btn-group > .btn:last-child {
+	padding: 10px 16px;
+}
+.calendar-date .btn-green {
+	padding: 10px 13px;
+}
 #calendar thead {
 	display: none;
+}
+.fc-agenda-slots td div {
+	height: 60px !important;
 }
 .fc-event {
 	border-radius: 4px;
 }
 .fc-event-inner {
 	border-radius: 4px;
+}
+.fc-event-vert .fc-event-bg {
+	display: none;
 }
 
 /*** view booking ***/
@@ -132,4 +148,10 @@ body {
 }
 #cancelModal .modal-content > .modal-body {
 	padding: 30px 15px;
+}
+#cancelModal .btn {
+	padding: 4px 30px;
+}
+#cancelModal .btn-default {
+	color: #22c488;
 }
