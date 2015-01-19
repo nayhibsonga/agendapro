@@ -1,4 +1,3 @@
-
 <div class="main">
     <div class="container">
         <div class="row">
@@ -10,217 +9,217 @@
         </div>
     </div>
     <div class="agenda-section">
-	    <div class="container">
-	    	<div class="row">
-		    	<div class="col-md-12">
-			    	<div class="about-subtitle">
-		                <% if @user.first_name.blank? || @user.last_name.blank? %>
-							<%= @user.email %>
-						<% else %>
-							<%= @user.first_name + " " + @user.last_name %>
-						<% end %>
-		            </div>
-	            </div>
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="about-subtitle">
+                        <% if @user.first_name.blank? || @user.last_name.blank? %>
+                            <%= @user.email %>
+                        <% else %>
+                            <%= @user.first_name + " " + @user.last_name %>
+                        <% end %>
+                    </div>
+                </div>
             </div>
             <div class="row">
-            	<div class="col-md-12" style="text-align: center;">
-            		<% if !@user.phone.blank? %>
-            			<%= image_tag "search/email.png", :size => "20x15" %>&nbsp;Email:&nbsp;<%= @user.email %>&nbsp;&nbsp;&nbsp;
-            			<%= image_tag "telefono.png", :size => "15x15" %>&nbsp;Teléfono:&nbsp;<%= @user.phone %>
-            		<% else %>
-            			<%= image_tag "search/email.png", :size => "20x15" %>&nbsp;Email:&nbsp;<%= @user.email %>
-            		<% end %>
-            	</div>
+                <div class="col-md-12" style="text-align: center;">
+                    <% if !@user.phone.blank? %>
+                        <%= image_tag "search/email.png", :size => "20x15" %>&nbsp;Email:&nbsp;<%= @user.email %>&nbsp;&nbsp;&nbsp;
+                        <%= image_tag "telefono.png", :size => "15x15" %>&nbsp;Teléfono:&nbsp;<%= @user.phone %>
+                    <% else %>
+                        <%= image_tag "search/email.png", :size => "20x15" %>&nbsp;Email:&nbsp;<%= @user.email %>
+                    <% end %>
+                </div>
             </div>
             <div class="row" style="margin-top: 25px;">
-	            <div class="col-md-12" style="text-align: center;">
-	            	Puedes editar tus datos <%= link_to 'aquí', edit_user_registration_path %>.
-	            </div>
+                <div class="col-md-12" style="text-align: center;">
+                    Puedes editar tus datos <%= link_to 'aquí', edit_user_registration_path %>.
+                </div>
             </div>
-	    </div>
+        </div>
     </div>
 
     <div class="container">
-		<div class="row">
-			<div class="col-md-2">
-				<div class="search-btn sector_search" data-search="spa">
-						<%= image_tag "search/1spa.png", :class => "img-responsive", size: "47x33" %>
-						<span>Spa</span>
-				</div>
-			</div>
-			<div class="col-md-2">
-				<div class="search-btn sector_search" data-search="peluquería">
-						<%= image_tag "search/2peluqueria.png", :class => "img-responsive", size: "47x33" %>
-						<span>Peluquería</span>
-				</div>
-			</div>
-			<div class="col-md-2">
-				<div class="search-btn sector_search" data-search="maquillaje">
-						<%= image_tag "search/3maquillaje.png", :class => "img-responsive", size: "47x33" %>
-						<span>Maquillaje</span>
-				</div>
-			</div>
-			<div class="col-md-2">
-				<div class="search-btn sector_search" data-search="centro de estética">
-						<%= image_tag "search/4centrosdeestetica.png", :class => "img-responsive", size: "47x33" %>
-						<span>Centros de estética</span>
-				</div>
-			</div>
-			<div class="col-md-2">
-				<div class="search-btn sector_search" data-search="masaje">
-						<%= image_tag "search/5masajes.png", :class => "img-responsive", size: "47x33" %>
-						<span>Masajes</span>
-				</div>
-			</div>
-			<div class="col-md-2">
-				<div class="search-btn sector_search" data-search="manicure">
-						<%= image_tag "search/6manosypies.png", :class => "img-responsive", size: "47x33" %>
-						<span>Manos y pies</span>
-				</div>
-			</div>
-		</div>
-		<div class="row" style="margin-top: 20px;">
-			<div class="col-md-2 col-md-offset-2">
-				<div class="search-btn sector_search" data-search="medicina alternativa">
-						<%= image_tag "search/7medicinaalternativa.png", :class => "img-responsive", size: "47x33" %>
-						<span>Medicina alternativa</span>
-				</div>
-			</div>
-			<div class="col-md-2">
-				<div class="search-btn sector_search" data-search="bronceado">
-						<%= image_tag "search/8bronceados.png", :class => "img-responsive", size: "47x33" %>
-						<span>Bronceados</span>
-				</div>
-			</div>
-			<div class="col-md-2">
-				<div class="search-btn sector_search" data-search="tratamiento facial">
-						<%= image_tag "search/9tratamientosfaciales.png", :class => "img-responsive", size: "47x33" %>
-						<span>Tratamientos faciales</span>
-				</div>
-			</div>
-			<div class="col-md-2">
-				<div class="search-btn sector_search" data-search="tratamiento corporal">
-						<%= image_tag "search/10tratamientoscorporales.png", :class => "img-responsive", size: "47x33" %>
-						<span>Tratamientos corporales</span>
-				</div>
-			</div>
-		</div>
+        <div class="row">
+            <div class="col-md-2">
+                <div class="search-btn btn-default sector_search" data-search="spa">
+                        <%= image_tag "search/1spa.png", :class => "img-responsive", size: "47x33" %>
+                        <span>Spa</span>
+                </div>
+            </div>
+            <div class="col-md-2">
+                <div class="search-btn btn-default sector_search" data-search="peluquería">
+                        <%= image_tag "search/2peluqueria.png", :class => "img-responsive", size: "47x33" %>
+                        <span>Peluquería</span>
+                </div>
+            </div>
+            <div class="col-md-2">
+                <div class="search-btn btn-default sector_search" data-search="maquillaje">
+                        <%= image_tag "search/3maquillaje.png", :class => "img-responsive", size: "47x33" %>
+                        <span>Maquillaje</span>
+                </div>
+            </div>
+            <div class="col-md-2">
+                <div class="search-btn btn-default sector_search" data-search="centro de estética">
+                        <%= image_tag "search/4centrosdeestetica.png", :class => "img-responsive", size: "47x33" %>
+                        <span>Centros de estética</span>
+                </div>
+            </div>
+            <div class="col-md-2">
+                <div class="search-btn btn-default sector_search" data-search="masaje">
+                        <%= image_tag "search/5masajes.png", :class => "img-responsive", size: "47x33" %>
+                        <span>Masajes</span>
+                </div>
+            </div>
+            <div class="col-md-2">
+                <div class="search-btn btn-default sector_search" data-search="manicure">
+                        <%= image_tag "search/6manosypies.png", :class => "img-responsive", size: "47x33" %>
+                        <span>Manos y pies</span>
+                </div>
+            </div>
+        </div>
+        <div class="row" style="margin-top: 20px;">
+            <div class="col-md-2 col-md-offset-2">
+                <div class="search-btn btn-default sector_search" data-search="medicina alternativa">
+                        <%= image_tag "search/7medicinaalternativa.png", :class => "img-responsive", size: "47x33" %>
+                        <span>Medicina alternativa</span>
+                </div>
+            </div>
+            <div class="col-md-2">
+                <div class="search-btn btn-default sector_search" data-search="bronceado">
+                        <%= image_tag "search/8bronceados.png", :class => "img-responsive", size: "47x33" %>
+                        <span>Bronceados</span>
+                </div>
+            </div>
+            <div class="col-md-2">
+                <div class="search-btn btn-default sector_search" data-search="tratamiento facial">
+                        <%= image_tag "search/9tratamientosfaciales.png", :class => "img-responsive", size: "47x33" %>
+                        <span>Tratamientos faciales</span>
+                </div>
+            </div>
+            <div class="col-md-2">
+                <div class="search-btn btn-default sector_search" data-search="tratamiento corporal">
+                        <%= image_tag "search/10tratamientoscorporales.png", :class => "img-responsive", size: "47x33" %>
+                        <span>Tratamientos corporales</span>
+                </div>
+            </div>
+        </div>
     </div>
 
-    <div class="container">   	
-		<div class="reservas-header">
-			Reservas Activas
-		</div>
-    	<div class="panel-reservas">
-    		<div class="campos campos-header">
-    			<div class="campo">
-    				Inicio
-    			</div>
-    			<div class="campo">
-    				Empresa
-    			</div>
-    			<div class="campo">
-    				Local
-    			</div>
-    			<div class="campo">
-    				Servicio
-    			</div>
-    			<div class="campo">
-    				Staff
-    			</div>
-    			<div class="campo">
-    				Precio
-    			</div>
-    			<div class="campo">
-    				Opciones
-    			</div>
-    		</div>
-    		<div style="clear: both;"></div>
-    		<% @activeBookings.each do |booking| %>
-    		<hr />
-    		<div class="campos booking">
-    			<div class="campo">
-    				<%= l booking.start, format: :short %>
-    			</div>
-    			<div class="campo">
-    				<%= Company.find(booking.service_provider.company_id).name %>
-    			</div>
-    			<div class="campo">
-    				<%= booking.location.name %>
-    			</div>
-    			<div class="campo">
-    				<%= booking.service.name %>
-    			</div>
-    			<div class="campo">
-    				<%= booking.service_provider.public_name %>
-    			</div>
-    			<div class="campo">
-    				$<%= number_with_precision(booking.service.price, precision: 0, separator: '', delimiter: '.') %>
-    			</div>
-    			<div class="campo">
-    				<%= link_to '<i class="fa fa-pencil"></i> Editar'.html_safe, booking_edit_url(:confirmation_code => booking.confirmation_code), :class => 'btn btn-warning btn-xs' %>
-					<%= link_to '<i class="fa fa-trash-o"></i> Cancelar'.html_safe, booking_cancel_url(:confirmation_code => booking.confirmation_code), :class => 'btn btn-danger btn-xs' %>
-    			</div>
-    		</div>
-    		<div style="clear: both;"></div>
-    		<% end %>
+    <div class="container">     
+        <div class="reservas-header">
+            Reservas Activas
+        </div>
+        <div class="panel-reservas">
+            <div class="campos campos-header">
+                <div class="campo">
+                    Inicio
+                </div>
+                <div class="campo">
+                    Empresa
+                </div>
+                <div class="campo">
+                    Local
+                </div>
+                <div class="campo">
+                    Servicio
+                </div>
+                <div class="campo">
+                    Staff
+                </div>
+                <div class="campo">
+                    Precio
+                </div>
+                <div class="campo">
+                    Opciones
+                </div>
+            </div>
+            <div style="clear: both;"></div>
+            <% @activeBookings.each do |booking| %>
+            <hr />
+            <div class="campos booking">
+                <div class="campo">
+                    <%= l booking.start, format: :short %>
+                </div>
+                <div class="campo">
+                    <%= Company.find(booking.service_provider.company_id).name %>
+                </div>
+                <div class="campo">
+                    <%= booking.location.name %>
+                </div>
+                <div class="campo">
+                    <%= booking.service.name %>
+                </div>
+                <div class="campo">
+                    <%= booking.service_provider.public_name %>
+                </div>
+                <div class="campo">
+                    $<%= number_with_precision(booking.service.price, precision: 0, separator: '', delimiter: '.') %>
+                </div>
+                <div class="campo">
+                    <%= link_to '<i class="fa fa-pencil"></i> Editar'.html_safe, booking_edit_url(:confirmation_code => booking.confirmation_code), :class => 'btn btn-warning btn-xs' %>
+                    <%= link_to '<i class="fa fa-trash-o"></i> Cancelar'.html_safe, booking_cancel_url(:confirmation_code => booking.confirmation_code), :class => 'btn btn-danger btn-xs' %>
+                </div>
+            </div>
+            <div style="clear: both;"></div>
+            <% end %>
 
-    		<div style="clear: both;"></div>
-    	</div>
+            <div style="clear: both;"></div>
+        </div>
     </div>
 
     <div class="container">
-    	<div class="reservas-header">
-			Últimas Reservas
-		</div>
-    	<div class="panel-reservas">
-    		<div class="campos">
-    			<div class="campo2">
-    				Inicio
-    			</div>
-    			<div class="campo2">
-    				Empresa
-    			</div>
-    			<div class="campo2">
-    				Local
-    			</div>
-    			<div class="campo2">
-    				Servicio
-    			</div>
-    			<div class="campo2">
-    				Staff
-    			</div>
-    			<div class="campo2">
-    				Estado
-    			</div>
-    		</div>
-    		<div style="clear: both;"></div>
-    		<% @lastBookings.each do |booking| %>
-    		<hr />
-    		<div class="campos booking">
-    			<div class="campo2">
-    				<%= l booking.start, format: :short %>
-    			</div>
-    			<div class="campo2">
-    				<%= Company.find(booking.service_provider.company_id).name %>
-    			</div>
-    			<div class="campo2">
-    				<%= booking.location.name %>
-    			</div>
-    			<div class="campo2">
-    				<%= booking.service.name %>
-    			</div>
-    			<div class="campo2">
-    				<%= booking.service_provider.public_name %>
-    			</div>
-    			<div class="campo2">
-    				<%= booking.status.name %>
-    			</div>
-    		</div>
-    		<div style="clear: both;"></div>							
-			<% end %>
-    		<div style="clear: both;"></div>
-    	</div>
+        <div class="reservas-header">
+            Últimas Reservas
+        </div>
+        <div class="panel-reservas">
+            <div class="campos">
+                <div class="campo2">
+                    Inicio
+                </div>
+                <div class="campo2">
+                    Empresa
+                </div>
+                <div class="campo2">
+                    Local
+                </div>
+                <div class="campo2">
+                    Servicio
+                </div>
+                <div class="campo2">
+                    Staff
+                </div>
+                <div class="campo2">
+                    Estado
+                </div>
+            </div>
+            <div style="clear: both;"></div>
+            <% @lastBookings.each do |booking| %>
+            <hr />
+            <div class="campos booking">
+                <div class="campo2">
+                    <%= l booking.start, format: :short %>
+                </div>
+                <div class="campo2">
+                    <%= Company.find(booking.service_provider.company_id).name %>
+                </div>
+                <div class="campo2">
+                    <%= booking.location.name %>
+                </div>
+                <div class="campo2">
+                    <%= booking.service.name %>
+                </div>
+                <div class="campo2">
+                    <%= booking.service_provider.public_name %>
+                </div>
+                <div class="campo2">
+                    <%= booking.status.name %>
+                </div>
+            </div>
+            <div style="clear: both;"></div>                            
+            <% end %>
+            <div style="clear: both;"></div>
+        </div>
     </div>
 
 </div>

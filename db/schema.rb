@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150113213925) do
+ActiveRecord::Schema.define(version: 20150116172054) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -212,15 +212,12 @@ ActiveRecord::Schema.define(version: 20150113213925) do
     t.integer  "booking_confirmation_time",   default: 1,                     null: false
     t.boolean  "booking_history",             default: false
     t.boolean  "staff_code",                  default: false
-<<<<<<< HEAD
     t.integer  "booking_configuration_email", default: 0
     t.integer  "max_changes",                 default: 2
     t.boolean  "deal_activate",               default: false
     t.string   "deal_name"
     t.boolean  "deal_overcharge",             default: true
-=======
     t.integer  "monthly_mails",               default: 0,                     null: false
->>>>>>> 12dba03baeac3d1fca0599326422ead869c6082c
   end
 
   add_index "company_settings", ["company_id"], name: "index_company_settings_on_company_id", using: :btree
