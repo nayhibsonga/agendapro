@@ -139,7 +139,7 @@ class ClientsController < ApplicationController
 
   def compose_mail
     @from_collection = current_user.company.company_from_email.where(confirmed: true)
-    @to = Client.accessible_by(current_ability).search(params[:search], current_user.company_id).filter_location(params[:location]).filter_provider(params[:provider]).filter_service(params[:service]).filter_gender(params[:gender]).filter_birthdate(params[:option]).order(:last_name, :first_name).pluck(:email).uniq
+    @to = Client.where.not.(email: nil).where.not.(email: "").accessible_by(current_ability).search(params[:search], current_user.company_id).filter_location(params[:location]).filter_provider(params[:provider]).filter_service(params[:service]).filter_gender(params[:gender]).filter_birthdate(params[:option]).order(:last_name, :first_name).pluck(:email).uniq
     # @to = '';
     # if params[:to]
     #   params[:to].each do |mail|

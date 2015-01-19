@@ -111,7 +111,9 @@
 		</div>
 		<div class="col-md-2">
 			<% if @from_collection.first %>
-			<%= link_to 'Enviar E-mail a este listado', send_mail_path(search: params[:search], location: params[:location], provider: params[:provider], service: params[:service], gender: params[:gender], option: params[:option]), class: "btn btn-agendapro-claro pull-right", id: 'sendMail' %>
+				<% if @monthly_mails_sent < @monthly_mails %>
+					<%= link_to 'Enviar E-mail a este listado', send_mail_path(search: params[:search], location: params[:location], provider: params[:provider], service: params[:service], gender: params[:gender], option: params[:option]), class: "btn btn-agendapro-claro pull-right", id: 'sendMail' %>
+				<% end %>
 			<% else %>
 			<button id="sendMail" type="button" class="btn btn-agendapro-claro pull-right" data-toggle="modal" data-target="#mailModal">Enviar E-mail</button>
 			<% end %>
