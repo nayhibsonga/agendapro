@@ -539,7 +539,7 @@ class BookingsController < ApplicationController
       end
     end
     @booking.price = Service.find(params[:service]).price
-    @booking.max_changes = params[:max_changes]
+    @booking.max_changes = @company.company_setting.max_changes
     if @booking.save
       # flash[:notice] = "Reserva realizada exitosamente."
 
@@ -697,7 +697,8 @@ class BookingsController < ApplicationController
     @booking = Booking.find(params[:id])
     @company = Location.find(@booking.location_id).company
     @selectedLocation = Location.find(@booking.location_id)
-    if @booking.update(start: params[:start], end: params[:end], max_changes: params[:max_changes])
+    max_changes = @booking.max_changes - 1
+    if @booking.update(start: params[:start], end: params[:end], max_changes: max_changes)
       #flash[:notice] = "Reserva actualizada exitosamente."
       # BookingMailer.update_booking(@booking)
       current_user ? user = current_user.id : user = 0

@@ -103,10 +103,10 @@
 													<% category[:services].each do |service| %>
 													<div class="service" style="margin-bottom: 5px;">
 														<div class="row">
-															<div class="col-xs-5">
+															<div class="col-xs-5 service-detail">
 																- <%= service["name_with_small_outcall"] %>
 															</div>
-															<div class="col-xs-4">
+															<div class="col-xs-4 service-detail">
 																<% if service["show_price"] and service["price"] > 0 %>
 																<%= number_to_currency(service["price"], {:unit => '$', :separator => ',', :delimiter => '.', :precision => 0})%>
 																<% end %>
