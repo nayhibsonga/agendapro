@@ -44,22 +44,22 @@ $(function () {
 		};
 	});
 
-	$('#sendMail').click(function (e) {
-		var $link = $(this);
-		var emails = [];
-		if ($('input[name="mail"]').prop('checked')) {
-			emails = $('input[name="mail"]').data('mails');
-		} else{
-			$('input[name="client_mail"]').each( function () {
-				if ($(this).prop('checked')) {
-					emails.push($(this).val());
-				};
-			});
-		};
-		var params = { to: emails };
-		var ref = $link.attr('href');
-		$link.attr('href', ref + '?' + $.param(params));
-	});
+	// $('#sendMail').click(function (e) {
+	// 	var $link = $(this);
+	// 	var emails = [];
+	// 	if ($('input[name="mail"]').prop('checked')) {
+	// 		emails = $('input[name="mail"]').data('mails');
+	// 	} else{
+	// 		$('input[name="client_mail"]').each( function () {
+	// 			if ($(this).prop('checked')) {
+	// 				emails.push($(this).val());
+	// 			};
+	// 		});
+	// 	};
+	// 	var params = { to: emails };
+	// 	var ref = $link.attr('href');
+	// 	$link.attr('href', ref + '?' + $.param(params));
+	// });
 
 	$('#location').change( function () {
 		var localId = $('#location').val();

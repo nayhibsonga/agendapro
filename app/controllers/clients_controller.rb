@@ -139,21 +139,22 @@ class ClientsController < ApplicationController
 
   def compose_mail
     @from_collection = current_user.company.company_from_email.where(confirmed: true)
-    @to = '';
-    if params[:to]
-      params[:to].each do |mail|
-        @to += mail + ', '
-      end
-    end
-    @to = @to.chomp(', ')
+    @to = Client.accessible_by(current_ability).search(params[:search], current_user.company_id).filter_location(params[:location]).filter_provider(params[:provider]).filter_service(params[:service]).filter_gender(params[:gender]).filter_birthdate(params[:option]).order(:last_name, :first_name).pluck(:email).uniq
+    # @to = '';
+    # if params[:to]
+    #   params[:to].each do |mail|
+    #     @to += mail + ', '
+    #   end
+    # end
+    # @to = @to.chomp(', ')
   end
 
   def send_mail
     # Sumar mails eviados
-    current_sent = current_user.company.company_setting.sent_mails
-    sent_to = params[:to].split(',')
+    current_sent = current_user.company.company_setting.monthly_mails
+    sent_to = params[:to].split(' ')
     sent_now = sent_to.length
-    current_user.company.company_setting.update_attributes :sent_mails => (current_sent + sent_now)
+    current_user.company.company_setting.update_attributes :monthly_mails => (current_sent + sent_now)
     attachments = params[:attachment]
     subject = params[:subject]
     message = params[:message]
