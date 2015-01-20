@@ -472,14 +472,14 @@ class BookingsController < ApplicationController
     service_provider.bookings.each do |provider_booking|
       unless provider_booking.status_id == cancelled_id
         if (provider_booking.start.to_datetime - params[:end].to_datetime) * (params[:start].to_datetime - provider_booking.end.to_datetime) > 0
-          if !service.group_service || params[:service] != provider_booking.service_id
+          if !service.group_service || params[:service].to_i != provider_booking.service_id
             flash[:alert] = "Lo sentimos, la hora seleccionada ya está reservada para el prestador elegido."
             @errors = ["Lo sentimos, la hora seleccionada ya está reservada para el prestador elegido"]
             host = request.host_with_port
             @url = @company.web_address + '.' + host[host.index(request.domain)..host.length]
             render layout: "workflow"
             return
-          elsif service.group_service && params[:service] == provider_booking.service_id && service_provider.bookings.where(:service_id =>service.id, :start => params[:start].to_datetime).count >= service.capacity
+          elsif service.group_service && params[:service].to_i == provider_booking.service_id && service_provider.bookings.where(:service_id => service.id, :start => params[:start].to_datetime).count >= service.capacity
             flash[:alert] = "La capacidad del servicio grupal llegó a su límite."
             @errors = ["La capacidad del servicio grupal llegó a su límite"]
             host = request.host_with_port
@@ -543,6 +543,7 @@ class BookingsController < ApplicationController
       end
     end
     @booking.price = Service.find(params[:service]).price
+    @booking.max_changes = @company.company_setting.max_changes
     #
       #   PAGO EN LÍNEA DE RESERVA
       #
@@ -557,7 +558,6 @@ class BookingsController < ApplicationController
         if resp.success?
           @booking.trx_id = trx_id
           @booking.token = resp.get_token
-          #@booking.status = Status.find_by(:name => "Pagado")
           if @booking.save
             PuntoPagosCreation.create(trx_id: trx_id, payment_method: payment_method, amount: amount, details: "Pago de servicio " + service.name + " a la empresa " +@company.name+" (" + @company.id.to_s + "). trx_id: "+trx_id+" - mp: "+@company.id.to_s+". Resultado: Se procesa")
             redirect_to resp.payment_process_url and return
@@ -570,11 +570,11 @@ class BookingsController < ApplicationController
         end
     else #SÓLO RESERVA
       if @booking.save
-        current_user ? user = current_user.id : user = 0
-        BookingHistory.create(booking_id: @booking.id, action: "Creada por Cliente", start: @booking.start, status_id: @booking.status_id, service_id: @booking.service_id, service_provider_id: @booking.service_provider_id, user_id: user)
+      current_user ? user = current_user.id : user = 0
+      BookingHistory.create(booking_id: @booking.id, action: "Creada por Cliente", start: @booking.start, status_id: @booking.status_id, service_id: @booking.service_id, service_provider_id: @booking.service_provider_id, user_id: user)
       else
-        #flash[:alert] = "Hubo un error guardando los datos de tu reserva. Inténtalo nuevamente."
-        @errors = @booking.errors.full_messages
+      #flash[:alert] = "Hubo un error guardando los datos de tu reserva. Inténtalo nuevamente."
+      @errors = @booking.errors.full_messages
       end
     end
 
@@ -724,7 +724,8 @@ class BookingsController < ApplicationController
     @booking = Booking.find(params[:id])
     @company = Location.find(@booking.location_id).company
     @selectedLocation = Location.find(@booking.location_id)
-    if @booking.update(start: params[:start], end: params[:end], max_changes: params[:max_changes])
+    max_changes = @booking.max_changes - 1
+    if @booking.update(start: params[:start], end: params[:end], max_changes: max_changes)
       #flash[:notice] = "Reserva actualizada exitosamente."
       # BookingMailer.update_booking(@booking)
       current_user ? user = current_user.id : user = 0

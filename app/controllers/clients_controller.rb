@@ -13,8 +13,8 @@ class ClientsController < ApplicationController
     @services = Service.where(company_id: current_user.company_id, active: true)
     @clients = Client.accessible_by(current_ability).search(params[:search], current_user.company_id).filter_location(params[:location]).filter_provider(params[:provider]).filter_service(params[:service]).filter_gender(params[:gender]).filter_birthdate(params[:option]).order(:last_name, :first_name).paginate(:page => params[:page], :per_page => 25)
 
-    @max_mails = current_user.company.company_setting.daily_mails
-    @mails_left = current_user.company.company_setting.daily_mails - current_user.company.company_setting.sent_mails
+    @monthly_mails = current_user.company.plan.monthly_mails
+    @monthly_mails_sent = current_user.company.company_setting.monthly_mails
 
     @from_collection = current_user.company.company_from_email.where(confirmed: true)
 
@@ -139,21 +139,23 @@ class ClientsController < ApplicationController
 
   def compose_mail
     @from_collection = current_user.company.company_from_email.where(confirmed: true)
-    @to = '';
-    if params[:to]
-      params[:to].each do |mail|
-        @to += mail + ', '
-      end
-    end
-    @to = @to.chomp(', ')
+    @to = Client.accessible_by(current_ability).search(params[:search], current_user.company_id).filter_location(params[:location]).filter_provider(params[:provider]).filter_service(params[:service]).filter_gender(params[:gender]).filter_birthdate(params[:option]).order(:last_name, :first_name).pluck(:email).uniq
+    # @to = '';
+    # if params[:to]
+    #   params[:to].each do |mail|
+    #     @to += mail + ', '
+    #   end
+    # end
+    # @to = @to.chomp(', ')
   end
 
   def send_mail
     # Sumar mails eviados
-    current_sent = current_user.company.company_setting.sent_mails
-    sent_to = params[:to].split(',')
+    current_sent = current_user.company.company_setting.monthly_mails
+    sent_to = params[:to].split(' ')
     sent_now = sent_to.length
-    current_user.company.company_setting.update_attributes :sent_mails => (current_sent + sent_now)
+    current_sent + sent_now >= 0 ? new_mails = current_sent + sent_now : new_mails = 0
+    current_user.company.company_setting.update_attributes :monthly_mails => (new_mails)
     attachments = params[:attachment]
     subject = params[:subject]
     message = params[:message]
@@ -216,12 +218,14 @@ class ClientsController < ApplicationController
   end
 
   def name_suggestion
-    search_array = params[:term].split(' ')
+    search_array = params[:term].gsub(/\b([D|d]el?)+\b|\b([U|u]n(o|a)?s?)+\b|\b([E|e]l)+\b|\b([T|t]u)+\b|\b([L|l](o|a)s?)+\b|\b[AaYy]\b|["'.,;:-]|\b([E|e]n)+\b|\b([L|l]a)+\b|\b([C|c]on)+\b|\b([Q|q]ue)+\b|\b([S|s]us?)+\b|\b([E|e]s[o|a]?s?)+\b/i, '').split(' ')
+    search_array2 = []
     search_array.each do |item|
-      item.prepend('%')
-      item << '%'
+      if item.length > 2
+        search_array2.push('%'+item+'%')
+      end
     end
-    @clients1 = Client.where(company_id: current_user.company_id).where('first_name ILIKE ANY ( array[:s] )', :s => search_array).where('last_name ILIKE ANY ( array[:s] )', :s => search_array).pluck(:id).uniq
+    @clients1 = Client.where(company_id: current_user.company_id).where('first_name ILIKE ANY ( array[:s] )', :s => search_array2).where('last_name ILIKE ANY ( array[:s] )', :s => search_array2).pluck(:id).uniq
     @clients2 = Client.where(company_id: current_user.company_id).where("CONCAT(first_name, ' ', last_name) ILIKE :s OR first_name ILIKE :s OR last_name ILIKE :s", :s => "%#{params[:term]}%").order(:last_name, :first_name).pluck(:id).uniq
 
     @clients = Client.where(id: (@clients1 + @clients2).uniq)

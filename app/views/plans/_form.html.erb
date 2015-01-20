@@ -17,14 +17,14 @@
       <%= f.text_field :name, :autofocus => true, :required => true, :class => 'form-control' %>
     </div>
   </div>
-  
+
   <div class="form-group">
     <%= f.label :locations, '# Locales:', :class => 'col-sm-3 control-label' %>
     <div class="col-sm-4">
       <%= f.number_field :locations, :in => 1...1000, :required => true, :class => 'form-control' %>
     </div>
   </div>
-  
+
   <div class="form-group">
     <%= f.label :service_providers, '# Prestadores de Servicios:', :class => 'col-sm-3 control-label' %>
     <div class="col-sm-4">
@@ -37,7 +37,13 @@
       <%= f.number_field :price, :required => true, :class => 'form-control' %>
     </div>
   </div>
-  
+  <div class="form-group">
+    <%= f.label :monthly_mails, 'E-mails Mensuales', class: 'col-sm-3 control-label' %>
+    <div class="col-sm-4">
+      <%= f.number_field :monthly_mails, required: true, min: 0, class: 'form-control' %>
+    </div>
+  </div>
+
   <div class="form-group">
     <div class="col-sm-offset-3 col-sm-4">
       <div class="checkbox">
@@ -56,11 +62,11 @@
       </div>
     </div>
   </div>
-  
+
   <div class="form-group">
     <div class="actions col-sm-offset-3 col-sm-4">
       <%= f.submit 'Guardar', :class => 'btn btn-primary' %>
-      <%= link_to 'Cancelar', plans_path, class: "btn btn-danger" %>    
+      <%= link_to 'Cancelar', plans_path, class: "btn btn-danger" %>
     </div>
   </div>
 <% end %>

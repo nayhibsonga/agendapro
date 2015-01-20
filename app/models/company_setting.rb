@@ -19,9 +19,9 @@ class CompanySetting < ActiveRecord::Base
 		end
 	end
 
-	def self.daily_mails
+	def self.monthly_mails
 		all.each do |setting|
-			setting.update_attributes :sent_mails => 0
+			setting.update_attributes :monthly_mails => 0
 		end
 	end
 end

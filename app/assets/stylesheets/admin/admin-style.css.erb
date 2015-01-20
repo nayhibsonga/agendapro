@@ -4,7 +4,7 @@ html, body{
 	height: 100%;
 }
 body{
-	background: rgba(163,199,198,1); 
+	background: rgba(163,199,198,1);
 	background: url(<%= asset_path 'backgrounds/wild_oliva_light_head.png' %>);
 	/*background: #cbcdcc;
 	background: -moz-linear-gradient(left,  #cbcdcc 0%, #dddfde 100%);
@@ -441,19 +441,19 @@ li.selected> div.control-box{
 }
 
 /* Agregar margen a las filas, usado en vista cliente */
-.top-buffer { 
-	margin-top:20px; 
+.top-buffer {
+	margin-top:20px;
 }
 
 /* Paginación */
 
 .fixed-panel{
     max-height: 250px;
-    overflow-y:scroll; 
+    overflow-y:scroll;
 }
 .fixed-table{
     max-height: 350px;
-    overflow-y:scroll; 
+    overflow-y:scroll;
 }
 .table-checkboxes label
 {
@@ -619,7 +619,15 @@ td.centered {
 	}
 }*/
 
-@media (max-width: 1023px) { 
+caption {
+	caption-side: bottom;
+	text-align: right;
+	background-color: #bbb;
+	color: #ffffff;
+	padding: 4px 8px;
+}
+
+@media (max-width: 1023px) {
 	#admin-content{
 		width: calc(100% - 50px) !important;
 	}

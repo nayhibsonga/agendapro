@@ -3,7 +3,7 @@
 <div class="workflow-header">
   <div class="container">
 
-  
+
     <div class="row">
       <% if !@company.description.blank? %>
         <div class="col-md-6 company-header-left company-header">
@@ -43,9 +43,9 @@
           </div>
         </div>
         <div class="col-md-2 company-header-right company-header">
-          
+
           <% if @selectedLocation %>
-            <div id="phone-info">         
+            <div id="phone-info">
               <%= image_tag 'telefono.png', :alt => '', :size => "12x14", :class=>"loc-icon" %>&nbsp;
               <span id="phone-number">
                 <%= @selectedLocation.phone %>
@@ -53,7 +53,7 @@
               <%= image_tag 'ubicacion.png', :alt => '', :size => "12x14", :class=>"loc-icon" %>&nbsp;
               <span id="phone-address">
                 <%= if !@selectedLocation.outcall then @selectedLocation.address+', '+@selectedLocation.district.name else "A Domicilio" end %>
-              </span>       
+              </span>
             </div>
           <% else %>
             <div id="phone-info" hidden>
@@ -99,9 +99,9 @@
           </div>
         </div>
         <div class="col-md-6 company-header-center2 company-header">
-          
+
           <% if @selectedLocation %>
-            <div id="phone-info">         
+            <div id="phone-info">
               <%= image_tag 'telefono.png', :alt => '', :size => "12x14", :class=>"loc-icon" %>&nbsp;
               <span id="phone-number">
                 <%= @selectedLocation.phone %>
@@ -109,7 +109,7 @@
               <%= image_tag 'ubicacion.png', :alt => '', :size => "12x14", :class=>"loc-icon" %>&nbsp;
               <span id="phone-address">
                 <%= if !@selectedLocation.outcall then @selectedLocation.address+', '+@selectedLocation.district.name else "A Domicilio" end %>
-              </span>       
+              </span>
             </div>
           <% else %>
             <div id="phone-info" hidden>
@@ -143,7 +143,7 @@
 
 <div>
   <div class="container">
-    
+
   </div>
   <div class="container" id="warning"></div>
   <div class="container">
@@ -175,7 +175,7 @@
                 <div class="panel-group" id="services-selector" style="border-radius: 4px; border: 1px solid #acacac; margin-left: 10px !important;">
                   <%= image_tag "ajax-loader.gif", :alt => "Loader" %>
                 </div>
-                
+
               </div>
               <div class="col-md-6">
                 <div class="descripcion">
@@ -206,7 +206,9 @@
                         <%= image_tag "ajax-loader.gif", :alt => "Loader" %>
                       </ul>
                     </div>
-                  
+
+                </div>
+                <div style="clear: both;">
                 </div>
                 <div style="clear: both;">
                 </div>
@@ -222,7 +224,7 @@
                         </div>
                         <div class="col-xs-8">
                           <span class="tittle"></span>
-                          
+
                         </div>
                         <div class="col-xs-2">
                           <span class="date-span">
@@ -237,13 +239,13 @@
                     </div>
                   </div>
                   <div class="days-row">
-                    
+
                   </div>
                   <div class="panel-body">
                     <div class="horario"></div>
                   </div>
                 </div>
-                
+
               </div>
             </div>
 
@@ -251,7 +253,7 @@
               <div class="col-md-3">
                 <div class="btn-change btn-prev">
                   <a class="prev2 prev-btn"><i class="fa fa-chevron-left prev-arrow"></i> Anterior</a>
-                </div>  
+                </div>
               </div>
               <div class="col-md-9">
                 <div class="btn-change btn-next">
@@ -259,7 +261,7 @@
                 </div>
               </div>
             </div>
-            
+
           </div>
           <div class="box-step">
 
@@ -292,7 +294,7 @@
                       <input type="hidden" name="location" id="location" value="<%= @location.id %>">
                       <input type="hidden" name="origin" id="origin" value="true">
                       <input type="hidden" name="payment" id="payment" value="0">
-                      <%= hidden_field_tag :max_changes, @location.company.company_setting.max_changes %>
+
                       <% if user_signed_in? %>
                       <div id="user-data">
                         <%= hidden_field_tag :user_id, current_user.id %>
@@ -314,7 +316,7 @@
                           </div>
                         </div>
 
-                      
+
                         <div class="row">
                           <div class="col-md-6 dark-gray">
                             Email
@@ -339,7 +341,7 @@
                             </div>
                           </div>
                         </div>
-                        
+
                       </div>
                       <% else %>
                         <%= hidden_field_tag :firstName %>
@@ -359,7 +361,7 @@
                           </div>
                         </div>
 
-                      
+
                         <div class="row">
                           <div class="col-md-6 dark-gray">
                             Email
@@ -600,22 +602,22 @@
   <script type="text/javascript">
 
 
-  $(".payBtn").click(function(e){
-    e.preventDefault();
-    $("#payment").val("1");
-    $("#bookingForm").submit();
-  });
+    $(".payBtn").click(function(e){
+      e.preventDefault();
+      $("#payment").val("1");
+      $("#bookingForm").submit();
+    });
 
-  $(".submitBtn").click(function(e){
-    e.preventDefault();
-    $("#payment").val("0");
-    $("#bookingForm").submit();
-  })
+    $(".submitBtn").click(function(e){
+      e.preventDefault();
+      $("#payment").val("0");
+      $("#bookingForm").submit();
+    })
     
 
     $(function() {
       //  Responsive layout, resizing the items
-      
+
       compose_name('#full_name', '#firstName', '#lastName');
       split_name('#full_name', '#firstName', '#lastName');
 
@@ -640,7 +642,7 @@
           firstDay: 1,
           dateFormat: 'yy-mm-dd',
           onSelect: function(newDate){
-            
+
             var data = {
               provider: $('[name="staffRadio"]:checked').val(),
               local: $('#selectedLocal').data('local').id,
@@ -650,7 +652,7 @@
 
             console.log(data);
 
-            
+
 
             if (calendar) {
               calendar.rebuild('/get_available_time.json', data);
@@ -660,11 +662,11 @@
               calendar = new Calendar('/get_available_time.json', data);
               console.log("New calendar.");
             }
-            
+
             $(document).on('hourClick', function (e) {
               addBooking(e);
             });
-            
+
 
             $(function () {
               $('.prev-btn').click(function () {
@@ -678,7 +680,7 @@
           }
       });
 
-      $(document.body).on('click', '.date-span', function(e){ 
+      $(document.body).on('click', '.date-span', function(e){
         $(e.currentTarget).find('input').datepicker('show');
       });
 
@@ -724,7 +726,7 @@
           }
         }
       });
-      
+
     });
 
   var waitForFinalEvent = (function () {
@@ -744,7 +746,7 @@
       waitForFinalEvent(function(){
         var count = $('.columna-dia').length;
         var width = (100 / count);
-        
+
         var width2 = $(".horario")[0].clientWidth/count;
         $('.dia-semana').width(width2-1);
         $('.dia-semana:last').width(width2-1);
