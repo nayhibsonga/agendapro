@@ -9,57 +9,57 @@ $(function () {
 
 	$('.modal-body div:first').toggle()
 
-	$('input[name="mail"]').change(function (event) {
-		var mails_sent = monthly_mails_sent;
-		$('input[name="client_mail"]').each( function () {
-			if ($(event.target).prop('checked')) {
-				if (mails_sent < monthly_mails) {
-					$(this).prop('checked', true);
-					mails_sent += 1;
-				};
-			}
-			else {
-				$(this).prop('checked', false);
-			}
-		});
-	});
+	// $('input[name="mail"]').change(function (event) {
+	// 	var mails_sent = monthly_mails_sent;
+	// 	$('input[name="client_mail"]').each( function () {
+	// 		if ($(event.target).prop('checked')) {
+	// 			if (mails_sent < monthly_mails) {
+	// 				$(this).prop('checked', true);
+	// 				mails_sent += 1;
+	// 			};
+	// 		}
+	// 		else {
+	// 			$(this).prop('checked', false);
+	// 		}
+	// 	});
+	// });
 
-	$('input[name="client_mail"]').change(function (event) {
-		var mails_sent = monthly_mails_sent;
-		$('input[name="client_mail"]').each( function () {
-			if ($(this).prop('checked')) {
-				mails_sent += 1;
-				if (mails_sent > monthly_mails) {
-					$(event.target).prop('checked', false);
-				};
-			};
-		});
-		if (mails_sent > monthly_mails) {
-			my_alert.showAlert(
-				'<h3>Lo sentimos</h3>' +
-				'No puedes seleccionar más de ' + (monthly_mails - monthly_mails_sent) + ' clientes.' +
-				'<br>' +
-				'Solo puedes mandar un máximo de ' + monthly_mails + ' e-mails al mes.'
-			);
-		};
-	});
+	// $('input[name="client_mail"]').change(function (event) {
+	// 	var mails_sent = monthly_mails_sent;
+	// 	$('input[name="client_mail"]').each( function () {
+	// 		if ($(this).prop('checked')) {
+	// 			mails_sent += 1;
+	// 			if (mails_sent > monthly_mails) {
+	// 				$(event.target).prop('checked', false);
+	// 			};
+	// 		};
+	// 	});
+	// 	if (mails_sent > monthly_mails) {
+	// 		my_alert.showAlert(
+	// 			'<h3>Lo sentimos</h3>' +
+	// 			'No puedes seleccionar más de ' + (monthly_mails - monthly_mails_sent) + ' clientes.' +
+	// 			'<br>' +
+	// 			'Solo puedes mandar un máximo de ' + monthly_mails + ' e-mails al mes.'
+	// 		);
+	// 	};
+	// });
 
-	$('#sendMail').click(function (e) {
-		var $link = $(this);
-		var emails = [];
-		if ($('input[name="mail"]').prop('checked')) {
-			emails = $('input[name="mail"]').data('mails');
-		} else{
-			$('input[name="client_mail"]').each( function () {
-				if ($(this).prop('checked')) {
-					emails.push($(this).val());
-				};
-			});
-		};
-		var params = { to: emails };
-		var ref = $link.attr('href');
-		$link.attr('href', ref + '?' + $.param(params));
-	});
+	// $('#sendMail').click(function (e) {
+	// 	var $link = $(this);
+	// 	var emails = [];
+	// 	if ($('input[name="mail"]').prop('checked')) {
+	// 		emails = $('input[name="mail"]').data('mails');
+	// 	} else{
+	// 		$('input[name="client_mail"]').each( function () {
+	// 			if ($(this).prop('checked')) {
+	// 				emails.push($(this).val());
+	// 			};
+	// 		});
+	// 	};
+	// 	var params = { to: emails };
+	// 	var ref = $link.attr('href');
+	// 	$link.attr('href', ref + '?' + $.param(params));
+	// });
 
 	$('#location').change( function () {
 		var localId = $('#location').val();

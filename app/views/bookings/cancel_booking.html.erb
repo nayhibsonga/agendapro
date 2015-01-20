@@ -23,7 +23,7 @@
             </div>
             <%= form_tag("/cancel_booking", method: "post", role: "form", class: "form-horizontal", id: "edit_form" ) do %>
               <input type="hidden" name="id" id="id" value="<%= @booking.id %>">
-              <button type="submit" class="submitBtn">Cancelar</button>
+              <button type="submit" class="submitBtn">Cancelar Reserva</button>
             <% end %>
           <% else %>
             <div class="panel panel-info">

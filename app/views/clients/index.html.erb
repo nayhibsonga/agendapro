@@ -70,10 +70,6 @@
 			<% if Company.find(current_user.company_id).company_setting.client_exclusive %>
 	    	<th>¿Puede Reservar?</th>
          	<% end %>
-			<th>
-				E-mail
-				<input name="mail" class="pull-right" type="checkbox" value="" data-mails="<%= @clients_export.where.not(email: nil).where.not(email: "").limit(@monthly_mails - @monthly_mails_sent).pluck(:email) %>">
-			</th>
 		</tr>
 	</thead>
 	<tbody>
@@ -88,15 +84,6 @@
             	<% if Company.find(current_user.company_id).company_setting.client_exclusive %>
 	    		<td class="centered"><%= check_box_tag 'client_can_book'+client.id.to_s, client.id, client.can_book, class: 'client_can_book' %><%= image_tag "small-loader.gif", :alt => "Loader", :id => "loader"+client.id.to_s, hidden: true %></td>
          		<% end %>
-				<td>
-					<% if client.valid_email %>
-					<div class="checkbox" style="margin-top: 0; margin-bottom: 0;">
-						<label>
-							<input type="checkbox" name="client_mail" value="<%= client.email %>">Enviar E-mail
-						</label>
-					</div>
-					<% end %>
-				</td>
 			</tr>
 		 <% end %>
 	</tbody>
@@ -111,7 +98,9 @@
 		</div>
 		<div class="col-md-2">
 			<% if @from_collection.first %>
-			<%= link_to 'Enviar E-mail', send_mail_path, class: "btn btn-agendapro-claro pull-right", id: 'sendMail' %>
+				<% if @monthly_mails_sent < @monthly_mails %>
+					<%= link_to 'Enviar E-mail a este listado', send_mail_path(search: params[:search], location: params[:location], provider: params[:provider], service: params[:service], gender: params[:gender], option: params[:option]), class: "btn btn-agendapro-claro pull-right", id: 'sendMail' %>
+				<% end %>
 			<% else %>
 			<button id="sendMail" type="button" class="btn btn-agendapro-claro pull-right" data-toggle="modal" data-target="#mailModal">Enviar E-mail</button>
 			<% end %>
