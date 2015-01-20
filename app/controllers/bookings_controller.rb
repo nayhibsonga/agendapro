@@ -51,6 +51,9 @@ class BookingsController < ApplicationController
   # GET /bookings/new
   def new
     @booking = Booking.new
+    if mobile_request?
+      @company = current_user.company
+    end
   end
 
   # GET /bookings/1/edit
