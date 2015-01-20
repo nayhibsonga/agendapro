@@ -61,8 +61,19 @@
 
 						<% if @booking.payed_booking.nil? || @booking.payed_booking.punto_pagos_confirmation.nil? %>
 
+
 							<h4>Tu transferencia está siendo procesada.</h4>
-							<h4>Espera unos segundos y haz click <%= link_to "aquí", '/punto_pagos/success/'+@token %> para confirmar el pago.</h4>
+							<div style="margin-top: 20px; margin-left: 50px;">
+								<%= image_tag "ajax-loader.gif", :alt => "Loader" %>
+							</div>
+							<script type="text/javascript">
+								$(document).ready(function(){
+									setTimeout(function(){
+									   window.location.reload(1);
+									}, 3000);
+								});
+							</script>
+							<!--<h4>Espera unos segundos y haz click <%= link_to "aquí", '/punto_pagos/success/'+@token %> para confirmar el pago.</h4>-->
 
 						<% else %>
 							<h4>Tu transferencia se ha efectuado de manera satisfactoria.</h4>

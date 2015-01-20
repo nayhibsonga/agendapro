@@ -2,7 +2,7 @@ class PayedBookingsController < ApplicationController
 
 	require 'csv'
 
-	before_action :verify_is_admin, :only => [:show, :create_company_csv]
+	before_action :verify_is_admin, :only => [:show, :edit, :create_company_csv]
   	before_action :verify_is_super_admin, :only => [:index, :create_csv, :mark_as_payed, :mark_several_as_payed, :mark_canceled_as_payed, :mark_several_canceled_as_payed]
   	#before_action :authenticate_user!
   	skip_before_action :verify_authenticity_token
@@ -294,7 +294,7 @@ class PayedBookingsController < ApplicationController
 	def show
 
 		company = current_user.company
-		bookings = Booking.where(:location_id => Location.where(:company_id => company.id))
+		bookings = Booking.where(:location_id => Location.where(:company_id => company.id)).order('created_at desc')
 
 		@pending_payments = Array.new
 		@transfered_payments = Array.new
@@ -308,6 +308,20 @@ class PayedBookingsController < ApplicationController
 					@pending_payments << booking.payed_booking
 				end
 			end
+		end
+	end
+
+	def edit
+		@payed_booking = PayedBooking.find(params[:id])
+	end
+
+	def update
+		@payed_booking = PayedBooking.find(params[:id])
+		@payed_booking.booking.status_id = Status.find(params[:status_id]).id
+		if @payed_booking.booking.save
+			redirect_to action: 'edit', id: @payed_booking.id, notice: 'Se ha editado correctamente.'
+		else
+			redirect_to action: 'edit', id: @payed_booking.id, notice: 'Ha ocurrido un error en la edición.'
 		end
 	end
 

@@ -44,6 +44,7 @@
 							<th>Orden de compra</th>
 							<th>Código de autorización</th>
 							<th>Fecha</th>
+							<th>Ver más</th>
 						</tr>
 					</thead>
 					<tbody style="font-size: 10px !important;">
@@ -74,6 +75,9 @@
 								</td>
 								<td>
 									<%= payed_booking.punto_pagos_confirmation.approvement_date %>
+								</td>
+								<td>
+									<%= link_to "Editar", controller: "payed_bookings", action: "edit", id: payed_booking.id %>
 								</td>
 							</tr>
 						<% end %>
@@ -115,6 +119,7 @@
 							<th>Orden de compra</th>
 							<th>Código de autorización</th>
 							<th>Fecha</th>
+							<th>Ver más</th>
 						</tr>
 					</thead>
 					<tbody style="font-size: 10px !important;">
@@ -145,6 +150,9 @@
 								</td>
 								<td>
 									<%= payed_booking.punto_pagos_confirmation.approvement_date %>
+								</td>
+								<td>
+									<%= link_to "Editar", controller: "payed_bookings", action: "edit", id: payed_booking.id %>
 								</td>
 							</tr>
 						<% end %>
