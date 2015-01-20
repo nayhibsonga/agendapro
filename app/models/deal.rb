@@ -1,4 +1,4 @@
 class Deal < ActiveRecord::Base
-  belongs_to :company_id
+  belongs_to :company
   has_many :bookings
 end

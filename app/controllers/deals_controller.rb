@@ -58,7 +58,7 @@ class DealsController < ApplicationController
   def destroy
     @deal.destroy
     respond_to do |format|
-      format.html { redirect_to deals_url }
+      format.html { redirect_to edit_company_setting_path(current_user.company.company_setting), notice: 'Convenio eliminado exitosamente.' }
       format.json { head :no_content }
     end
   end
@@ -71,6 +71,6 @@ class DealsController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def deal_params
-      params.require(:deal).permit(:code, :quantity, :active, :constraint_option, :constraint_quantity, :company_id_id)
+      params.require(:deal).permit(:code, :quantity, :active, :constraint_option, :constraint_quantity, :company_id)
     end
 end

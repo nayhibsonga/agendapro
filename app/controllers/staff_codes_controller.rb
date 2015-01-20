@@ -59,7 +59,7 @@ class StaffCodesController < ApplicationController
   def destroy
     @staff_code.destroy
     respond_to do |format|
-      format.html { redirect_to staff_codes_url }
+      format.html { redirect_to edit_company_setting_path(current_user.company.company_setting), notice: 'Código de empleado eliminado exitosamente.'}
       format.json { head :no_content }
     end
   end

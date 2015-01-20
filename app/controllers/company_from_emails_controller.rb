@@ -60,7 +60,7 @@ class CompanyFromEmailsController < ApplicationController
   def destroy
     @company_from_email.destroy
     respond_to do |format|
-      format.html { redirect_to edit_company_setting_path(current_user.company.company_setting) }
+      format.html { redirect_to edit_company_setting_path(current_user.company.company_setting), notice: 'E-mail eliminado exitosamente.' }
       format.json { head :no_content }
     end
   end
