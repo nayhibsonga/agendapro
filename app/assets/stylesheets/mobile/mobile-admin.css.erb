@@ -1,6 +1,6 @@
 /*** navbar-agendapro ***/
 body {
-	padding-top: 40px;
+	padding-top: 41px;
 	color: #505050;
 }
 .navbar-agendapro {
@@ -11,7 +11,7 @@ body {
 .navbar-agendapro > .container .navbar-brand {
 	margin-left: 0px;
 	padding: 5px 5px;
-	height: 40px;
+	height: 4px;
 }
 .navbar-agendapro .navbar-text {
 	margin-bottom: 0;
@@ -126,6 +126,122 @@ body {
 .fc-event-vert .fc-event-bg {
 	display: none;
 }
+.origin-web-lock > .fc-event-inner > .fc-event-head > .fc-event-time:before{
+	display:inline-block;
+	font-family:FontAwesome;
+	font-style:normal;
+	font-weight:normal;
+	line-height:1;
+		-webkit-font-smoothing:antialiased;
+		-moz-osx-font-smoothing:grayscale;
+	content:"\f0ac   \f023";
+	margin-right: 3px;
+	font-size:1.3333333333333333em;
+	line-height:.75em;
+	vertical-align:-15%
+}
+.origin-web-unlock > .fc-event-inner > .fc-event-head > .fc-event-time:before{
+	display:inline-block;
+	font-family:FontAwesome;
+	font-style:normal;
+	font-weight:normal;
+	line-height:1;
+		-webkit-font-smoothing:antialiased;
+		-moz-osx-font-smoothing:grayscale;
+	content:"\f0ac   \f09c";
+	margin-right: 3px;
+	font-size:1.3333333333333333em;
+	line-height:.75em;
+	vertical-align:-15%
+}
+.origin-manual-lock > .fc-event-inner > .fc-event-head > .fc-event-time:before{
+	display:inline-block;
+	font-family:FontAwesome;
+	font-style:normal;
+	font-weight:normal;
+	line-height:1;
+		-webkit-font-smoothing:antialiased;
+		-moz-osx-font-smoothing:grayscale;
+	content:"\f007   \f023";
+	margin-right: 3px;
+	font-size:1.3333333333333333em;
+	line-height:.75em;
+	vertical-align:-15%
+}
+.origin-manual-unlock > .fc-event-inner > .fc-event-head > .fc-event-time:before{
+	display:inline-block;
+	font-family:FontAwesome;
+	font-style:normal;
+	font-weight:normal;
+	line-height:1;
+		-webkit-font-smoothing:antialiased;
+		-moz-osx-font-smoothing:grayscale;
+	content:"\f007   \f09c";
+	margin-right: 3px;
+	font-size:1.3333333333333333em;
+	line-height:.75em;
+	vertical-align:-15%
+}
+.confirmed > .fc-event-inner > .fc-event-head > .fc-event-time:after{
+	display:inline-block;
+	font-family:FontAwesome;
+	font-style:normal;
+	font-weight:normal;
+	line-height:1;
+		-webkit-font-smoothing:antialiased;
+		-moz-osx-font-smoothing:grayscale;
+	content:"\f00c";
+	margin-left: 3px;
+	margin-right: 3px;
+	font-size:1.3333333333333333em;
+	line-height:.75em;
+	vertical-align:-15%
+}
+.completed > .fc-event-inner > .fc-event-head > .fc-event-time:after{
+	display:inline-block;
+	font-family:FontAwesome;
+	font-style:normal;
+	font-weight:normal;
+	line-height:1;
+		-webkit-font-smoothing:antialiased;
+		-moz-osx-font-smoothing:grayscale;
+	content:"\f046";
+	margin-left: 3px;
+	margin-right: 3px;
+	font-size:1.3333333333333333em;
+	line-height:.75em;
+	vertical-align:-15%
+}
+.noshow > .fc-event-inner > .fc-event-head > .fc-event-time:after{
+	display:inline-block;
+	font-family:FontAwesome;
+	font-style:normal;
+	font-weight:normal;
+	line-height:1;
+		-webkit-font-smoothing:antialiased;
+		-moz-osx-font-smoothing:grayscale;
+	content:"\f00d";
+	margin-left: 3px;
+	margin-right: 3px;
+	font-size:1.3333333333333333em;
+	line-height:.75em;
+	vertical-align:-15%
+}
+.payed > .fc-event-inner > .fc-event-head > .fc-event-time:after{
+	display:inline-block;
+	font-family:FontAwesome;
+	font-style:normal;
+	font-weight:normal;
+	line-height:1;
+		-webkit-font-smoothing:antialiased;
+		-moz-osx-font-smoothing:grayscale;
+	content:"\f155";
+	margin-left: 3px;
+	margin-right: 3px;
+	font-size:1.3333333333333333em;
+	line-height:.75em;
+	vertical-align:-15%
+}
 
 /*** view booking ***/
 .booking {
@@ -154,4 +270,24 @@ body {
 }
 #cancelModal .btn-default {
 	color: #22c488;
+}
+
+/*** Edit Booking ***/
+.nav-pills > li {
+	float: none;
+	display: table-cell;
+	width: 1%;
+	text-align: center;
+}
+.nav-pills > li > a,
+.nav-pills > li > a:hover,
+.nav-pills > li > a:focus {
+	color: #22c488;
+	border: 1px solid #22c488;
+}
+.nav-pills > li.active > a,
+.nav-pills > li.active > a:hover,
+.nav-pills > li.active > a:focus {
+	color: #ffffff;
+	background-color: #22c488;
 }

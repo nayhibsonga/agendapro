@@ -14,7 +14,7 @@
             </div>
             <div class="col-xs-12" style="margin-top: 10px;">
               <button type="button" class="btn btn-default" data-dismiss="modal" aria-label="Close">Cerrar</button>
-              <button type="button" class="btn btn-red">Aceptar</button>
+              <%= link_to 'Aceptar'.html_safe, @booking, :class => "btn btn-red", method: :delete %>
             </div>
           </div>
         </div>
@@ -59,12 +59,20 @@
           <td><%= @booking.service.name %></td>
         </tr>
         <tr>
+          <td>Local</td>
+          <td><%= @booking.location.name %></td>
+        </tr>
+        <tr>
+          <td>Estado</td>
+          <td><%= @booking.status.name %></td>
+        </tr>
+        <tr>
           <td>Fecha</td>
           <td><%= l @booking.start.to_date, format: :day %></td>
         </tr>
         <tr>
           <td>Tiempo</td>
-          <td><%= l @booking.start.to_time, format: :hour %> - <%= l @booking.end.to_time, format: :hour %></td>
+          <td><%= @booking.start.strftime('%H:%M') %> - <%= @booking.end.strftime('%H:%M') %></td>
         </tr>
       </tbody>
     </table>
