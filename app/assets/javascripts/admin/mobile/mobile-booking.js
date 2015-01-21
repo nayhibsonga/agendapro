@@ -67,7 +67,8 @@ function saveBooking (typeURL, booking_id) {
       for (i in errors) {
         errores += '*' + errors[i] + '\n';
       }
-      $('button[type="submit"]').button('reset');
+      $('button[type="submit"]').removeClass('disabled');
+      $('button[type="submit"]').html('Guardar');
       alert(errores);
     }
   });
@@ -84,11 +85,17 @@ $(function () {
   $('#booking_service').change(function (event) {
     var service_id = $(this).val();
     loadServiceData(service_id);
-  })
+  });
+
+  $('#start').change(function () {
+    var service_id = $('#booking_service').val();
+    loadServiceData(service_id);
+  });
 
   $('button[type="submit"]').click(function (event) {
     event.preventDefault();
-    $(this).button('loading');
+    $(this).addClass('disabled');
+    $(this).html($(this).data('loading'));
     var booking = '';
     if ($(this).data('id')) {
       booking = '/' + $(this).data('id');
@@ -135,7 +142,7 @@ $(function () {
       $('#email').val(client.email);
       $('#phone').val(client.phone);
       $('#identification_number').val(client.identification_number);
-      $('#name').blur();
+      $('#email').blur();
     }
   }).data( "ui-autocomplete" )._renderItem = function( ul, item ) {
     return $( '<li>' ).append( '<a>' + item.label + '<br><span class="auto-desc">' + item.desc + '</span></a>' ).appendTo( ul );

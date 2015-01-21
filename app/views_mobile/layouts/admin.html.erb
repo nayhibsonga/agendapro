@@ -52,15 +52,15 @@
               <% else %>
               <li><%= link_to 'Calendario', bookings_path %></li>
               <% end %>
-              <li><a href="#">Clientes</a></li>
+              <% if current_user.role_id != Role.find_by_name("Staff").id  && current_user.role_id != Role.find_by_name("Staff (sin edición)").id %>
+              <li><%= link_to 'Clientes', clients_path %></li>
+              <% end %>
               <li><%= link_to "Contacto", contact_path %></li>
               <li class="divider"></li>
-              <% if user_signed_in? %>
               <li><%= link_to '<i class="fa fa-user"></i> Editar Perfil'.html_safe, edit_user_registration_path, class: "menu-green" %></li>
               <li><%= link_to '<i class="fa fa-power-off"></i> Salir'.html_safe, destroy_user_session_path, method: :delete, class: "menu-orange" %></li>
               <% else %>
               <li><%= link_to '<i class="fa fa-calendar-o"></i> Iniciar Sesión'.html_safe, new_user_session_path, class: "menu-green" %></li>
-              <% end %>
             </ul>
           </div>
         </div>
