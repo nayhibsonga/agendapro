@@ -16,6 +16,9 @@ class PayedBookingsController < ApplicationController
   		#Pagos pendiente de payed_bookings sumados por empresa.
   		@companies_pending_payment = Array.new
 
+  		#Comisión que se le cobra a la empresa por el pago en línea
+  		commission = NumericParameter.find_by_name("online_payment_commission").value
+
   		Company.all.each do |company|
 
   			pending_count = PayedBooking.where(:transfer_complete => false, :canceled => false, :booking_id => Booking.where(:location_id => Location.where(:company_id => company.id))).count
@@ -24,7 +27,12 @@ class PayedBookingsController < ApplicationController
 	  			if(PaymentAccount.where(:company_id => company.id, :status => false).count > 0)
 	  				payment_account = PaymentAccount.where(:company_id => company.id, :status => false).first  			
 		  		end
-		  		payment_account.amount = 0 #Lo reseteamos y sumamos de nuevo por si hubiera un nuevo payed_booking
+
+		  		#Lo reseteamos y sumamos de nuevo por si hubiera un nuevo payed_booking
+		  		payment_account.amount = 0
+		  		payment_account.company_amount = 0
+		  		payment_account.gain_amount = 0
+		  		
 
 	  		 	company.locations.each do |loc|
 	  		 		loc.bookings.each do |booking|
@@ -41,15 +49,17 @@ class PayedBookingsController < ApplicationController
 	  		 				end
 	  		 				
 	  		 				payment_account.amount = payment_account.amount + booking.payed_booking.punto_pagos_confirmation.amount
+	  		 				payment_account.company_amount = payment_account.company_amount + booking.payed_booking.punto_pagos_confirmation.amount*(100-commission)/100
 
 	  		 				
 	  		 				booking.payed_booking.payment_account = payment_account
 	  		 				booking.payed_booking.save
-	  		 				
-	  		 				
+		
 	  		 			end
 	  		 		end
 	  		 	end
+
+	  		 	payment_account.gain_amount = payment_account.amount-payment_account.company_amount
 
 	  		 	if !payment_account.amount.nil? and payment_account.amount > 0
 	  		 		payment_account.save

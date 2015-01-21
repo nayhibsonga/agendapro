@@ -353,7 +353,7 @@ class CompaniesController < ApplicationController
 				end
 			end
 
-    else
+    	else
 
 			# Data
 			provider = ServiceProvider.find(params[:provider])
@@ -517,7 +517,7 @@ class CompaniesController < ApplicationController
 					provider_times_first_open_start = provider_times_first_open_end
 				end
 			end
-    end
+    	end
 
     if params[:provider] == "0"
     	@lock = false
@@ -531,6 +531,7 @@ class CompaniesController < ApplicationController
 	end
 
 	def user_data
+		
 		@location = Location.find(params[:location])
 		@company = @location.company
 		@service = Service.find(params[:service])

@@ -37,15 +37,15 @@
 						<tr>
 							<th><input type="checkbox" id="mark-pendings" /></th>
 							<th>ID</th>
-							<th>Nombre Titular</th>
-							<th>Rut Titular</th>
-							<th>Cuenta Titular</th>
-							<th>Monto</th>
-							<th>Banco (code)</th>
-							<th>Tipo de cuenta</th>
+							<th>Empresa</th>
+							<th>N° de transacciones</th>
+							<th>Monto recibido</th>
+							<th>Monto a pagar</th>
+							<th>Ganancia</th>
 							<th>
 								<form method="post" action="payed_bookings/mark_several_as_payed" id="mark-several-as-payed-form">
-									<a href="#" id="mark-pendings-btn" class="check-btn">Pagar marcados</a>
+									<button class="mark" id="mark-pendings-btn">Pagar seleccionados</button>
+									<!--<a href="#" id="mark-pendings-btn" class="check-btn">Pagar marcados</a>-->
 								</form>
 							</th>
 						</tr>
@@ -61,22 +61,19 @@
 									<%= payment_account.id %>
 								</td>
 								<td>
-									<%= payment_account.name.gsub(/-/,'') %>
+									<%= payment_account.company.name %>
 								</td>
 								<td>
-									<%= payment_account.rut.gsub!(/[\s.-]/,'') %>
+									<%= payment_account.payed_bookings.count.to_s %>
 								</td>
 								<td>
-									<%= payment_account.number.gsub!(/[\s.-]/,'') %>
+									<%= payment_account.amount.round.to_s %>
 								</td>
 								<td>
-									<%= payment_account.amount.to_s %>
+									<%= payment_account.company_amount.round.to_s %>
 								</td>
 								<td>
-									<%= payment_account.bank_code %>
-								</td>
-								<td>
-									<%= payment_account.account_type %>
+									<%= payment_account.gain_amount.round.to_s %>
 								</td>
 								<td>
 								<form method="post" action="payed_bookings/mark_as_payed">
@@ -117,15 +114,14 @@
 						<tr>
 							<th><input type="checkbox" id="mark-transfers" /></th>
 							<th>ID</th>
-							<th>Nombre Titular</th>
-							<th>Rut Titular</th>
-							<th>Cuenta Titular</th>
-							<th>Monto</th>
-							<th>Banco (code)</th>
-							<th>Tipo de cuenta</th>
+							<th>Empresa</th>
+							<th>N° de transacciones</th>
+							<th>Monto recibido</th>
+							<th>Monto a pagar</th>
+							<th>Ganancia</th>
 							<th>
 								<form method="post" action="payed_bookings/unmark_several_as_payed" id="unmark-several-as-payed-form">
-									<a href="#" id="mark-transfers-btn" class="check-btn">Cancelar marcados</a>
+									<button class="mark-cancel" id="mark-transfers-btn">Cancelar seleccionados</button>
 								</form>
 							</th>
 						</tr>
@@ -138,25 +134,22 @@
 									<input type="checkbox" class="mark-transfer" payment_account_id="<%= payment_account.id %>" />
 								</td>
 								<td>
-								<%= payment_account.id %>
+									<%= payment_account.id %>
 								</td>
 								<td>
-									<%= payment_account.name.gsub(/-/,'') %>
+									<%= payment_account.company.name %>
 								</td>
 								<td>
-									<%= payment_account.rut.gsub!(/[\s.-]/,'') %>
+									<%= payment_account.payed_bookings.count.to_s %>
 								</td>
 								<td>
-									<%= payment_account.number.gsub!(/[\s.-]/,'') %>
+									<%= payment_account.amount.round.to_s %>
 								</td>
 								<td>
-									<%= payment_account.amount.to_s %>
+									<%= payment_account.company_amount.round.to_s %>
 								</td>
 								<td>
-									<%= payment_account.bank_code %>
-								</td>
-								<td>
-									<%= payment_account.account_type %>
+									<%= payment_account.gain_amount.round.to_s %>
 								</td>
 								<td>
 								<form method="post" action="payed_bookings/unmark_as_payed">
@@ -276,7 +269,7 @@
 							<th>Fecha</th>
 							<th>
 								<form method="post" action="payed_bookings/mark_several_canceled_as_payed" id="mark-several-canceled-as-payed-form">
-									<a href="#" id="mark-canceled-pendings-btn" class="check-btn">Pagar marcados</a>
+									<button id="mark-canceled-pendings-btn" class="mark">Pagar seleccionados</button>
 								</form>
 							</th>
 						</tr>
@@ -366,7 +359,7 @@
 							<th>Fecha</th>
 							<th>
 								<form method="post" action="payed_bookings/unmark_several_canceled_as_payed" id="unmark-several-canceled-as-payed-form">
-									<a href="#" id="mark-canceled-transfers-btn" class="check-btn">Cancelar marcados</a>
+									<button id="mark-canceled-transfers-btn" class="mark-cancel">Cancelar seleccionados</button>
 								</form>
 							</th>
 						</tr>
