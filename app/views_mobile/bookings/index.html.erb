@@ -6,7 +6,7 @@
         <label class="control-label calendar-label">Elige Local</label>
       </div>
       <div class="col-xs-8">
-        <select class="form-control" id="locals-selector" name="locals-selector">
+        <select class="form-control input-lg" id="locals-selector" name="locals-selector">
           <% @locations.each do |location| %>
           <option value="<%= location.id %>" data-minhour="<%= location.location_times.order(:open).first.open.beginning_of_hour.hour %>" data-maxhour="<%= location.location_times.order(:close).last.close.end_of_hour.hour %>"><%= location.name %></option>
           <% end %>
@@ -18,7 +18,7 @@
         <label class="control-label calendar-label">Elige Prestador</label>
       </div>
       <div class="col-xs-8">
-        <select class="form-control" id="providers-selector" name="providers-selector">
+        <select class="form-control input-lg" id="providers-selector" name="providers-selector">
         </select>
       </div>
     </div>
