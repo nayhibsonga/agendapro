@@ -80,12 +80,14 @@
           <%= label_tag :name, 'Nombre', class: 'control-label col-xs-3' %>
           <div class="col-xs-9">
             <%= text_field_tag :name, nil, class: 'form-control' %>
+            <ul id="name_suggestion"></ul>
           </div>
         </div>
         <div class="form-group">
           <%= label_tag :email, 'E-mail', class: 'control-label col-xs-3' %>
           <div class="col-xs-9">
             <%= text_field_tag :email, nil, class: 'form-control' %>
+            <ul id="email_suggestion"></ul>
             <div class="checkbox">
               <label>
                 <input type="checkbox" id="send_mail" name="send_mail"> Notificar cliente por e-mail
@@ -116,6 +118,11 @@
       </div>
     </div>
   </div>
+<% end %>
+
+<% content_for :stylesheets do %>
+<%= stylesheet_link_tag "jquery-ui-1.10.4" %>
+<%= stylesheet_link_tag "admin/autocomplete" %>
 <% end %>
 
 <% content_for :scripts do %>

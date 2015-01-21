@@ -96,4 +96,48 @@ $(function () {
     var url = $(this).data('url');
     saveBooking(url, booking);
   });
+
+  $('#name').autocomplete({
+    source: '/clients_name_suggestion',
+    appendTo: '#name_suggestion',
+    position: {my: "right top", at: "right bottom", collision: "none"},
+    autoFocus: true,
+    minLength: 3,
+    select: function (event, ui) {
+      event.preventDefault();
+      var client = eval("(" + ui.item.value + ")");
+      $('#name').val(client.first_name + ' ' + client.last_name);
+      $('#booking_client').val(client.id);
+      $('#first_name').val(client.first_name);
+      $('#last_name').val(client.last_name);
+      $('#email').val(client.email);
+      $('#phone').val(client.phone);
+      $('#identification_number').val(client.identification_number);
+      $('#name').blur();
+    }
+  }).data( "ui-autocomplete" )._renderItem = function( ul, item ) {
+    return $( '<li>' ).append( '<a>' + item.label + '<br><span class="auto-desc">' + item.desc + '</span></a>' ).appendTo( ul );
+  };
+
+  $('#email').autocomplete({
+    source: '/clients_suggestion',
+    appendTo: '#email_suggestion',
+    position: {my: "right top", at: "right bottom", collision: "none"},
+    autoFocus: true,
+    minLength: 3,
+    select: function (event, ui) {
+      event.preventDefault();
+      var client = eval("(" + ui.item.value + ")");
+      $('#name').val(client.first_name + ' ' + client.last_name);
+      $('#booking_client').val(client.id);
+      $('#first_name').val(client.first_name);
+      $('#last_name').val(client.last_name);
+      $('#email').val(client.email);
+      $('#phone').val(client.phone);
+      $('#identification_number').val(client.identification_number);
+      $('#name').blur();
+    }
+  }).data( "ui-autocomplete" )._renderItem = function( ul, item ) {
+    return $( '<li>' ).append( '<a>' + item.label + '<br><span class="auto-desc">' + item.desc + '</span></a>' ).appendTo( ul );
+  };
 });
