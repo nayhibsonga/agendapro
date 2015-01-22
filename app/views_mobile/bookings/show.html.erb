@@ -25,9 +25,9 @@
 <% end %>
 
 <!-- Buttons -->
-<div class="container-fluid" style="padding: 1px;">
+<div class="container-fluid">
   <div class="row">
-    <div class="col-xs-12">
+    <div class="col-xs-12" style="padding-left: 1px; padding-right: 1px;">
       <div class="btn-group btn-group-lg btn-group-justified" role="group">
         <%= link_to 'Modificar', edit_booking_path(@booking), class: 'btn btn-orange' %>
         <a type="button" class="btn btn-red" data-toggle="modal" data-target="#cancelModal">Cancelar</a>
@@ -37,44 +37,46 @@
 </div>
 
 <!-- Booking Data -->
-<div class="row">
-  <div class="col-xs-12">
-    <table class="table table-bordered booking">
-      <thead>
-        <tr>
-          <th colspan="2" class="text-center">Detalles de la Reserva</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td>Cliente</td>
-          <td><%= @booking.client.first_name %> <%= @booking.client.last_name %></td>
-        </tr>
-        <tr>
-          <td>Prestador</td>
-          <td><%= @booking.service_provider.public_name %></td>
-        </tr>
-        <tr>
-          <td>Servicio</td>
-          <td><%= @booking.service.name %></td>
-        </tr>
-        <tr>
-          <td>Local</td>
-          <td><%= @booking.location.name %></td>
-        </tr>
-        <tr>
-          <td>Estado</td>
-          <td><%= @booking.status.name %></td>
-        </tr>
-        <tr>
-          <td>Fecha</td>
-          <td><%= l @booking.start.to_date, format: :day %></td>
-        </tr>
-        <tr>
-          <td>Tiempo</td>
-          <td><%= @booking.start.strftime('%H:%M') %> - <%= @booking.end.strftime('%H:%M') %></td>
-        </tr>
-      </tbody>
-    </table>
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-xs-12" style="padding: 0;">
+      <table class="table table-bordered booking">
+        <thead>
+          <tr>
+            <th colspan="2" class="text-center">Detalles de la Reserva</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Cliente</td>
+            <td><%= @booking.client.first_name %> <%= @booking.client.last_name %></td>
+          </tr>
+          <tr>
+            <td>Prestador</td>
+            <td><%= @booking.service_provider.public_name %></td>
+          </tr>
+          <tr>
+            <td>Servicio</td>
+            <td><%= @booking.service.name %></td>
+          </tr>
+          <tr>
+            <td>Local</td>
+            <td><%= @booking.location.name %></td>
+          </tr>
+          <tr>
+            <td>Estado</td>
+            <td><%= @booking.status.name %></td>
+          </tr>
+          <tr>
+            <td>Fecha</td>
+            <td><%= l @booking.start.to_date, format: :day %></td>
+          </tr>
+          <tr>
+            <td>Tiempo</td>
+            <td><%= @booking.start.strftime('%H:%M') %> - <%= @booking.end.strftime('%H:%M') %></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
   </div>
 </div>
