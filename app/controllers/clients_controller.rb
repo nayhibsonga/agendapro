@@ -40,6 +40,9 @@ class ClientsController < ApplicationController
     @lastBookings = Array.new
     @client = Client.new
     @client_comment = ClientComment.new
+    if mobile_request?
+      @company = current_user.company
+    end
   end
 
   # GET /clients/1/edit
