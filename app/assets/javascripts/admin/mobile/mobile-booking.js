@@ -94,14 +94,16 @@ $(function () {
 
   $('button[type="submit"]').click(function (event) {
     event.preventDefault();
-    $(this).addClass('disabled');
-    $(this).html($(this).data('loading'));
-    var booking = '';
-    if ($(this).data('id')) {
-      booking = '/' + $(this).data('id');
+    if (validator.valid()) {
+      $(this).addClass('disabled');
+      $(this).html($(this).data('loading'));
+      var booking = '';
+      if ($(this).data('id')) {
+        booking = '/' + $(this).data('id');
+      };
+      var url = $(this).data('url');
+      saveBooking(url, booking);
     };
-    var url = $(this).data('url');
-    saveBooking(url, booking);
   });
 
   $('#name').autocomplete({
