@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150116172054) do
+ActiveRecord::Schema.define(version: 20150122152025) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -218,6 +218,11 @@ ActiveRecord::Schema.define(version: 20150116172054) do
     t.string   "deal_name"
     t.boolean  "deal_overcharge",             default: true
     t.integer  "monthly_mails",               default: 0,                     null: false
+    t.boolean  "deal_exclusive",              default: false
+    t.integer  "deal_quantity",               default: 0
+    t.integer  "deal_constraint_option",      default: 0
+    t.integer  "deal_constraint_quantity",    default: 0
+    t.boolean  "deal_identification_number",  default: false
   end
 
   add_index "company_settings", ["company_id"], name: "index_company_settings_on_company_id", using: :btree
@@ -240,12 +245,12 @@ ActiveRecord::Schema.define(version: 20150116172054) do
     t.boolean  "active",              default: true
     t.integer  "constraint_option",                  null: false
     t.integer  "constraint_quantity",                null: false
-    t.integer  "company_id_id"
+    t.integer  "company_id"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
 
-  add_index "deals", ["company_id_id"], name: "index_deals_on_company_id_id", using: :btree
+  add_index "deals", ["company_id"], name: "index_deals_on_company_id", using: :btree
 
   create_table "dictionaries", force: true do |t|
     t.string   "name",       null: false

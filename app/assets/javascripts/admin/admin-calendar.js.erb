@@ -454,6 +454,7 @@ function editBookingModal(eventId) {
 			$('#booking_notes').val(booking.notes);
 			$('#booking_company_comment').val(booking.company_comment);
 			$('#booking_staff_code').val('');
+			$('#booking_deal_code').val(booking.deal_code);
 			if (booking.provider_lock) {
 				$('#booking_provider_lock').prop('checked', true);
 				$('#booking_service_provider_id').prop('disabled', true);
@@ -591,6 +592,7 @@ function createBookingModal(date, provider_id) {
 			$('#booking_send_mail').prop('checked', false);
 			$('#booking_send_mail').prop('disabled', true);
 			$('#booking_staff_code').val('');
+			$('#booking_deal_code').val('');
 			if (!$('label[for=booking_send_mail]').hasClass('disabled')) {
 				$('label[for=booking_send_mail]').addClass('disabled');
 			}
@@ -677,7 +679,8 @@ function jsonBooking() {
 		"company_comment": $('#booking_company_comment').val(),
 		"send_mail": $('#booking_send_mail').prop('checked'),
 		"provider_lock": $('#booking_provider_lock').prop('checked'),
-		"staff_code": $('#booking_staff_code').val()
+		"staff_code": $('#booking_staff_code').val(),
+		"deal_code": $('#booking_deal_code').val()
 	};
 	return jsBooking;
 }

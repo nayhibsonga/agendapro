@@ -75,7 +75,7 @@ class IframeController < ApplicationController
 			return
 		end
 
-		unless @company.company_setting.activate_workflow && @company.active
+		unless @company && @company.company_setting && @company.active && @company.company_setting.activate_workflow
 			redirect_to iframe_construction_path
 			return
 		end
