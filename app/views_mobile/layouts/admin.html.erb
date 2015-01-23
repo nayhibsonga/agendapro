@@ -1,34 +1,34 @@
 <!DOCTYPE html>
-<!--[if lt IE 7]> <html class="no-js lt-ie9 lt-ie8 lt-ie7" lang="es"> <![endif]-->
-<!--[if IE 7]>    <html class="no-js lt-ie9 lt-ie8" lang="es"> <![endif]-->
-<!--[if IE 8]>    <html class="no-js lt-ie9" lang="es"> <![endif]-->
-<!--[if gt IE 8]><!--> <html class="no-js" lang="es"> <!--<![endif]-->
+<html lang="es">
   <head>
     <!-- start: Meta -->
-    <meta charset="utf-8">
-    <title>AgendaPro</title>
+    <meta charset="utf-8" />
+    <title>Administrador - AgendaPro</title>
     <meta name="description" content="AgendaPro - Sistema de agendamiento OnLine para empresas y usuarios.">
     <meta name="author" content="AgendaPro">
     <meta name="keyword" content="agendapro, agenda, agenda online, reserva, reserva online">
+
     <%= csrf_meta_tags %>
     <!-- end: Meta -->
 
     <!-- start: Mobile Specific -->
-    <meta name="apple-mobile-web-app-capable" content="yes" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <!-- end: Mobile Specific -->
 
     <!-- start: CSS -->
     <%= stylesheet_link_tag "mobile" %>
-    <%= stylesheet_link_tag "mobile/mobile-home" %>
+    <%= stylesheet_link_tag "mobile/mobile-admin" %>
     <%= yield :stylesheets %>
     <!-- end: CSS -->
 
-    <!-- Fav and touch icons -->
+    <!-- start: Favicon and Touch Icons -->
     <%= favicon_link_tag "favicon.png", :rel => "shortcut icon" %>
+    <!-- end: Favicon and Touch Icons -->
   </head>
 
   <body>
+    <%= yield :modals %>
+
     <!-- start: Header -->
     <header>
       <nav class="navbar navbar-default navbar-agendapro navbar-agendapro-white navbar-fixed-top" role="navigation">
@@ -41,33 +41,24 @@
             <a href="<%= root_without_subdomain %>" class="navbar-brand">
               <%= image_tag 'logos/logo2.png', :alt => 'AgendaPro', :size => '120x41' %>
             </a>
+            <p class="navbar-text text-center"><%= @company.name %></p>
           </div>
           <!-- Collect the nav links, forms, and other content for toggling -->
           <div class="cbp-spmenu cbp-spmenu-vertical cbp-spmenu-right collapse navbar-collapse" id="navbar-menu">
             <ul class="nav navbar-nav">
-              <li><%= link_to 'Buscador', root_path %></li>
-              <li><%= link_to 'Inicio', home_path %></li>
-              <li><%= link_to "Características", features_path %></li>
-              <li><%= link_to "Planes", view_plans_path %></li>
-              <li><%= link_to "Tutoriales", tutorials_path %></li>
+              <li><%= link_to 'Inicio', root_path %></li>
+              <% if current_user.role_id == Role.find_by_name("Staff (sin edición)").id %>
+              <li><%= link_to 'Calendario', fixed_bookings_path %></li>
+              <% else %>
+              <li><%= link_to 'Calendario', bookings_path %></li>
+              <% end %>
+              <% if current_user.role_id != Role.find_by_name("Staff").id  && current_user.role_id != Role.find_by_name("Staff (sin edición)").id %>
+              <li><%= link_to 'Clientes', clients_path %></li>
+              <% end %>
               <li><%= link_to "Contacto", contact_path %></li>
               <li class="divider"></li>
-              <% if user_signed_in? %>
-              <% if current_user.company_id %>
-                <% if current_user.role_id == Role.find_by_name("Staff (sin edición)").id %>
-                <li><%= link_to '<i class="fa fa-dashboard"></i> Panel Empresa'.html_safe, fixed_bookings_path, class: "menu-green" %></li>
-                <% else %>
-                <li><%= link_to '<i class="fa fa-dashboard"></i> Panel Empresa'.html_safe, bookings_path, class: "menu-green" %></li>
-                <% end %>
-              <% end %>
-              <!-- <li><%= link_to '<i class="fa fa-calendar"></i> Mi Agenda'.html_safe, my_agenda_path, class: "menu-green" %></li> -->
               <li><%= link_to '<i class="fa fa-user"></i> Editar Perfil'.html_safe, edit_user_registration_path, class: "menu-green" %></li>
               <li><%= link_to '<i class="fa fa-power-off"></i> Salir'.html_safe, destroy_user_session_path, method: :delete, class: "menu-orange" %></li>
-              <% else %>
-              <li><%= link_to '<i class="fa fa-user"></i> Regístrate'.html_safe, new_user_registration_path, class: "menu-green" %></li>
-              <li><%= link_to '<i class="fa fa-calendar-o"></i> Iniciar Sesión'.html_safe, new_user_session_path, class: "menu-green" %></li>
-              <% end %>
-              <!-- <li><%= link_to "Agrega tu Empresa", home_path, class: "menu-orange" %></li> -->
             </ul>
           </div>
         </div>
@@ -96,7 +87,7 @@
 
     <!-- start: content -->
     <div id="wrapper">
-        <%= yield %>
+      <%= yield %>
     </div>
     <!-- end: content -->
 

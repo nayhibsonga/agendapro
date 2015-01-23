@@ -51,6 +51,9 @@ class BookingsController < ApplicationController
   # GET /bookings/new
   def new
     @booking = Booking.new
+    if mobile_request?
+      @company = current_user.company
+    end
   end
 
   # GET /bookings/1/edit
@@ -362,8 +365,8 @@ class BookingsController < ApplicationController
 
   def provider_booking
     statusIcon = [" blocked", " reserved", " confirmed", " completed", " payed", " cancelled", " noshow", " break"]
-    backColors = ["#CCCCBB", "#B0C2F2", "#FFE1AE", "#E9B0F2", "#B0F2C2", "#FAFCAF", "#FFB6AE", "#999977"]
-    textColors = ["#222211", "#102050", "#554004", "#401040", "#105020", "#505205", "#551004", "#111100"]
+    backColors = ["#9d9d9d", "#0f91cf", "#fbcb5d", "#db7dcf", "#6bcfa1", "#FAFCAF", "#FFB6AE", "#fb8e74"]
+    textColors = ["#676767", "#0b587b", "#d1a94e", "#aa5fa0", "#58ab85", "#505205", "#551004", "#d47760"]
     if params[:provider] != "0"
       @providers = ServiceProvider.where(:id => params[:provider])
     else
@@ -422,7 +425,7 @@ class BookingsController < ApplicationController
           start: booking.start,
           end: booking.end,
           resourceId: booking.service_provider_id,
-          textColor: textColors[booking.status_id],
+          textColor: "#ffffff",
           borderColor: textColors[booking.status_id],
           backgroundColor: backColors[booking.status_id],
           className: originClass,
@@ -451,7 +454,7 @@ class BookingsController < ApplicationController
         start: provider_break.start,
         end: provider_break.end,
         resourceId: provider_break.service_provider_id,
-        textColor: textColors[0],
+        textColor: "#ffffff",
         borderColor: textColors[0],
         backgroundColor: backColors[0]
       }
@@ -475,9 +478,9 @@ class BookingsController < ApplicationController
         start: start_date,
         end: end_date,
         resourceId: provider.id,
-        textColor: textColors[7],
-        borderColor: textColors[7],
-        backgroundColor: backColors[7]
+        textColor: "#ffffff",
+        borderColor: textColors[0],
+        backgroundColor: backColors[0]
       }
       provider.provider_times.order(:day_id, :open).each do |provider_time|
         offset = (provider_time.day_id - day_number)
@@ -495,9 +498,9 @@ class BookingsController < ApplicationController
           start: time_end,
           end: time_start,
           resourceId: provider.id,
-          textColor: textColors[7],
-          borderColor: textColors[7],
-          backgroundColor: backColors[7]
+          textColor: "#ffffff",
+          borderColor: textColors[0],
+          backgroundColor: backColors[0]
         }
       end
       event[:end] = end_date
@@ -1005,6 +1008,9 @@ class BookingsController < ApplicationController
     # Use callbacks to share common setup or constraints between actions.
     def set_booking
       @booking = Booking.find(params[:id])
+      if mobile_request?
+        @company = current_user.company
+      end
     end
 
     # Never trust parameters from the scary internet, only allow the white list through.
