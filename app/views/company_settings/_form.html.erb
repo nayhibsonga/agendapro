@@ -68,6 +68,7 @@
 <div class="row well well-white">
 	<ul id="myTab" class="nav nav-tabs" role="tablist">
 	  <li class=""><a href="#company" role="tab" data-toggle="tab" class="tab_index">Empresa</a></li>
+	  <li class=""><a href="#online-payment" role="tab" data-toggle="tab" class="tab_index">Pago en línea</a></li>
 	  <li class=""><a href="#minisite" role="tab" data-toggle="tab" class="tab_index">Reservas</a></li>
 	  <li class=""><a href="#calendar" role="tab" data-toggle="tab" class="tab_index">Calendario</a></li>
 	  <li class=""><a href="#emails" role="tab" data-toggle="tab" class="tab_index">E-mails</a></li>
@@ -121,83 +122,6 @@
 					<span class="help-block">Esta es la página del sitio en AgendaPro. <strong>NO recomendamos editarla.</strong></span>
 				</div>
 
-				<div class="form-group">
-					<%= f.label :allows_online_payment, 'Pago en línea', :class => 'col-sm-3 control-label' %>
-						<div class="col-sm-5">	
-							<div class="checkbox">
-								<label>
-									<%= f.check_box :allows_online_payment %> Quiero que mis clientes puedan pagar en línea al reservar
-								</label>
-							</div>
-						</div>	
-				</div>
-
-				<div class="form-group hidden account-info">
-					<label class="col-sm-3 control-label">Banco</label>
-					<div class="col-sm-5">
-
-						<select name="company[bank_id]" class="form-control" id="company_bank">
-							<% @banks.each do |bank| %>
-								<% if @company.bank_id == bank.id %>
-									<option value="<%= bank.id %>" selected><%= bank.name %></option>
-								<% else %>
-									<option value="<%= bank.id %>"><%= bank.name %></option>
-								<% end %>
-							<% end %>
-						</select>
-
-					</div>
-				</div>
-
-				<div class="form-group hidden account-info account-data">
-					<%= f.label :account_name, 'Nombre Titular', :class => 'col-sm-3 control-label' %>
-					<div class="col-sm-5">
-							<%= f.text_field :account_name, :class => 'form-control', placeholder: '' %>
-					</div>
-				</div>
-
-				<div class="form-group hidden account-info account-data">
-					<%= f.label :company_rut, 'Rut Titular', :class => 'col-sm-3 control-label' %>
-					<div class="col-sm-5">
-							<%= f.text_field :company_rut, :class => 'form-control', placeholder: '' %>
-					</div>
-				</div>
-
-				<div class="form-group hidden account-info account-data">
-					<%= f.label :account_number, 'N° de Cuenta', :class => 'col-sm-3 control-label' %>
-					<div class="col-sm-5">
-							<%= f.text_field :account_number, :class => 'form-control', placeholder: '' %>
-					</div>
-				</div>
-
-				<div class="form-group hidden account-info account-data">
-					<%= f.label :account_type, 'Tipo de cuenta', :class => 'col-sm-3 control-label' %>
-					<div class="col-sm-5">
-						<select name="company[account_type]" class="form-control">
-							<option value="3" <%= "selected" if @company.account_type==3 %>>
-								Cuenta Corriente
-							</option>
-							<option value="2" <%= "selected" if @company.account_type==2 %>>
-								Cuenta de ahorro
-							</option>
-							<option value="1" <%= "selected" if @company.account_type==1 %>>
-								Cuenta Vista
-							</option>
-						</select>
-					</div>
-				</div>
-
-				<div class="form-group hidden" id="other-bank">
-					<div class="col-sm-3">
-					</div>
-					<div class="col-sm-5">
-						Tu banco no está soportado, pero después de editar tu empresa puedes ponerte en contacto con nosotros para permitir que recibas pagos en línea.
-					</div>
-					<div class="col-sm-offset-3 col-sm-5">
-						<span class="help-block"></span>
-					</div>
-				</div>
-
 				<div class="form-group has-feedback">
 					<%= f.label :logo, 'Logo Compañía', :class => 'col-sm-3 control-label' %>
 					<div class="col-sm-5">
@@ -214,12 +138,16 @@
 					<%= image_tag @company.logo_url.to_s, :size => "80x80", :alt => @company.name %>
 					<% end %>
 				</div>
-				<div class="form-group">
+				<!--<div class="form-group">
 					<%= f.label :cancellation_policy, 'Política de Cancelación', :class => 'col-sm-3 control-label' %>
 					<div class="col-sm-5">
 						<%= f.text_area :cancellation_policy, :class => 'form-control', :rows => "7" %>
 					</div>
-				</div>
+				</div>-->
+
+
+
+
 				<div class="form-group has-feedback">
 					<%= f.label :economic_sector_ids, 'Sector Económico', :class => 'col-sm-3 control-label' %>
 					<div class="col-sm-5">
@@ -246,6 +174,186 @@
 			<% end %>
 		</div>
 	  </div>
+	  <div class="tab-pane" id="online-payment">
+	    <!-- PAGO EN LÍNEA -->
+
+	    <div class="row">
+
+	    	<!-- DETALLES PAGO EN LÍNEA -->
+	    	<%= form_for @company_setting, :html => {:class => 'form-horizontal'} do |f| %>
+	    	<div class="form-group">
+	    		<%= f.hidden_field :company_id, :value => current_user.company.id %>
+				<%= f.label :allows_online_payment, 'Pago en línea', :class => 'col-sm-3 control-label' %>
+					<div class="col-sm-5">	
+						<div class="checkbox">
+							<label>
+								<%= f.check_box :allows_online_payment %> Quiero que mis clientes puedan pagar en línea al reservar
+							</label>
+						</div>
+					</div>	
+			</div>
+
+			<div class="form-group hidden account-info">
+				<label class="col-sm-3 control-label">Banco</label>
+				<div class="col-sm-5">
+
+					<select name="company_setting[bank_id]" class="form-control" id="company_bank">
+						<% @banks.each do |bank| %>
+							<% if @company_setting.bank_id == bank.id %>
+								<option value="<%= bank.id %>" selected><%= bank.name %></option>
+							<% else %>
+								<option value="<%= bank.id %>"><%= bank.name %></option>
+							<% end %>
+						<% end %>
+					</select>
+
+				</div>
+			</div>
+
+			<div class="form-group hidden account-info account-data">
+				<%= f.label :account_name, 'Nombre Titular', :class => 'col-sm-3 control-label' %>
+				<div class="col-sm-5">
+						<%= f.text_field :account_name, :class => 'form-control', placeholder: '' %>
+				</div>
+			</div>
+
+			<div class="form-group hidden account-info account-data">
+				<%= f.label :company_rut, 'Rut Titular', :class => 'col-sm-3 control-label' %>
+				<div class="col-sm-5">
+						<%= f.text_field :company_rut, :class => 'form-control', placeholder: '' %>
+				</div>
+			</div>
+
+			<div class="form-group hidden account-info account-data">
+				<%= f.label :account_number, 'N° de Cuenta', :class => 'col-sm-3 control-label' %>
+				<div class="col-sm-5">
+						<%= f.text_field :account_number, :class => 'form-control', placeholder: '' %>
+				</div>
+			</div>
+
+			<div class="form-group hidden account-info account-data">
+				<%= f.label :account_type, 'Tipo de cuenta', :class => 'col-sm-3 control-label' %>
+				<div class="col-sm-5">
+					<select name="company_setting[account_type]" class="form-control">
+						<option value="3" <%= "selected" if @company_setting.account_type==3 %>>
+							Cuenta Corriente
+						</option>
+						<option value="2" <%= "selected" if @company_setting.account_type==2 %>>
+							Cuenta de ahorro
+						</option>
+						<option value="1" <%= "selected" if @company_setting.account_type==1 %>>
+							Cuenta Vista
+						</option>
+					</select>
+				</div>
+			</div>
+
+			<div class="form-group hidden" id="other-bank">
+				<div class="col-sm-3">
+				</div>
+				<div class="col-sm-5">
+					Tu banco no está soportado, pero después de editar tu empresa puedes ponerte en contacto con nosotros para permitir que recibas pagos en línea.
+				</div>
+				<div class="col-sm-offset-3 col-sm-5">
+					<span class="help-block"></span>
+				</div>
+			</div>
+
+	    	<!-- FIN DETALLES PAGO EN LÍNEA -->
+
+	    	<%= f.fields_for :online_cancelation_policy do |p| %>
+	  		<!-- POLÍTICA DE CANCELACIÓN PAGOS EN LÍNEA -->
+			<div class="form-group has-feedback account-info">
+				
+				<%= p.label :cancelable, "Es cancelable ", class: "col-sm-3 control-label" %>
+				<div class="col-sm-5">
+					<div class="checkbox">
+						<label>
+							<%= p.check_box :cancelable %> Quiero que se puedan cancelar las reservas pagadas en línea.
+						</label>
+					</div>
+					<span class="help-block"></span>
+					<span class="form-control-feedback"></span>
+				</div>
+			</div>
+			<div class="form-group has-feedback account-info">
+				<%= p.label :cancel_max, 'Tiempo máximo de cancelación &nbsp;&nbsp;<span style="cursor: pointer;" data-toggle="tooltip" data-placement="bottom" title="Esto es la cantidad de tiempo, desde el momento en que se efectuó la reserva, que el cliente tendrá para cancelarla, siempre y cuando no se encuentre dentro del límite previo a la hora del servicio."><i class="fa fa-question-circle"></i></span>'.html_safe, class: "col-sm-3 control-label" %>
+				<div class="col-sm-3">
+					<%= p.number_field :cancel_max, :autofocus => true, :class => 'form-control', placeholder: '' %> 
+					<span class="help-block"></span>
+					<span class="form-control-feedback"></span>
+				</div>
+				<div class="col-sm-2">
+					<select name="company_setting[online_cancelation_policy_attributes][cancel_unit]" class="form-control">
+						<% TimeUnit.all.each do |u| %>
+							<% if @company.company_setting.online_cancelation_policy.cancel_unit == u.id %>
+								<option value="<%= u.id %>" selected><%= u.unit %></option>
+							<% else %>
+								<option value="<%= u.id %>"><%= u.unit %></option>
+							<% end %>
+						<% end %>
+					</select>
+					<span class="help-block"></span>
+					<span class="form-control-feedback"></span>
+				</div>
+			</div>
+			<div class="form-group has-feedback account-info">
+				<%= p.label :min_hours, 'Plazo mínimo de cancelación/modificación &nbsp;&nbsp;<span style="cursor: pointer;" data-toggle="tooltip" data-placement="bottom" title="Esto es la cantidad de tiempo límite para cancelar o modificar la reserva antes de que el servicio se fuera a llevar a cabo."><i class="fa fa-question-circle"></i></span>'.html_safe, class: "col-sm-3 control-label" %>
+				<div class="col-sm-5">
+					<div class="input-group">
+						<%= p.number_field :min_hours, :class => 'form-control', placeholder: '' %>
+						<span class="input-group-addon">Horas</span>
+					</div>
+					<span class="help-block"></span>
+					<span class="form-control-feedback"></span>
+				</div>
+			</div>
+			<div class="form-group has-feedback account-info">
+				<%= p.label :modifiable, "Es modificable ", class: "col-sm-3 control-label" %>
+				<div class="col-sm-5">
+					<div class="checkbox">
+						<label>
+							<%= p.check_box :modifiable %> Quiero que se puedan modificar las reservas pagadas en línea.
+						</label>
+					</div>
+					<span class="help-block"></span>
+					<span class="form-control-feedback"></span>
+				</div>
+			</div>
+			<div class="form-group has-feedback account-info">
+				<%= p.label :modification_max, 'Tiempo máximo de modificación &nbsp;&nbsp;<span style="cursor: pointer;" data-toggle="tooltip" data-placement="bottom" title="Esto es la cantidad de tiempo, desde el momento en que se efectuó la reserva, que el cliente tendrá para modificarla, siempre y cuando no se encuentre dentro del límite previo a la hora del servicio."><i class="fa fa-question-circle"></i></span>'.html_safe, class: "col-sm-3 control-label" %>
+				<div class="col-sm-3">
+					<%= p.number_field :modification_max, :class => 'form-control', placeholder: '' %> 
+					<span class="help-block"></span>
+					<span class="form-control-feedback"></span>
+				</div>
+				<div class="col-sm-2">
+					<select name="company_setting[online_cancelation_policy_attributes][modification_unit]" class="form-control">
+						<% TimeUnit.all.each do |u| %>
+							<% if @company.company_setting.online_cancelation_policy.modification_unit == u.id %>
+								<option value="<%= u.id %>" selected><%= u.unit %></option>
+							<% else %>
+								<option value="<%= u.id %>"><%= u.unit %></option>
+							<% end %>
+						<% end %>
+					</select>
+					<span class="help-block"></span>
+					<span class="form-control-feedback"></span>
+				</div>
+			</div>
+			<div class="form-group">
+				<div class="col-sm-offset-3 col-sm-4">
+					<%= f.submit 'Guardar', :class => 'btn btn-agendapro-claro' %>
+					<%= link_to 'Cancelar', dashboard_path, :class => "btn btn-default" %>    
+				</div>
+			</div>
+			<% end %>
+			<% end %>
+			<!-- FIN POLÍTICA DE CANCELACIÓN PAGOS EN LÍNEA -->
+		</div>
+	  <!-- FIN PAGO EN LÍNEA -->
+	  </div>
+
 	  <div class="tab-pane" id="minisite">
 	    <div class="row">
 			<%= form_for @company_setting, :html => {:class => 'form-horizontal'} do |f| %>
@@ -665,10 +773,10 @@
   <script type="text/javascript">
 
   	$(document).ready(function(){
-  		if($('#company_allows_online_payment').prop('checked'))
+  		if($('#company_setting_allows_online_payment').prop('checked'))
 		{
 			$(".account-info").removeClass("hidden");
-			if($("#company_bank :selected").text() == "Otro")
+			if($("#company_setting_bank :selected").text() == "Otro")
 			{
 				$("#other-bank").removeClass("hidden");
 				$(".account-data").addClass("hidden");
@@ -684,15 +792,13 @@
 			$(".account-info").addClass("hidden");
 			$("#other-bank").addClass("hidden");
 		}
+	});
 
-
-  	});
-
-	$("#company_allows_online_payment").change(function(){
-		if($('#company_allows_online_payment').prop('checked'))
+	$("#company_setting_allows_online_payment").change(function(){
+		if($('#company_setting_allows_online_payment').prop('checked'))
 		{
 			$(".account-info").removeClass("hidden");
-			if($("#company_bank :selected").text() == "Otro")
+			if($("#company_setting_bank :selected").text() == "Otro")
 			{
 				$("#other-bank").removeClass("hidden");
 				$(".account-data").addClass("hidden");
@@ -710,8 +816,8 @@
 		}
 	});
 
-	$("#company_bank").change(function(){
-		if($("#company_bank :selected").text() == "Otro")
+	$("#company_setting_bank").change(function(){
+		if($("#company_setting_bank :selected").text() == "Otro")
 		{
 			$("#other-bank").removeClass("hidden");
 			$(".account-data").addClass("hidden");

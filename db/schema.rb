@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150120155015) do
+ActiveRecord::Schema.define(version: 20150122135732) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -149,26 +149,20 @@ ActiveRecord::Schema.define(version: 20150120155015) do
   add_index "clients", ["company_id"], name: "index_clients_on_company_id", using: :btree
 
   create_table "companies", force: true do |t|
-    t.string   "name",                                  null: false
-    t.string   "web_address",                           null: false
+    t.string   "name",                               null: false
+    t.string   "web_address",                        null: false
     t.string   "logo"
-    t.float    "months_active_left",    default: 0.0
-    t.integer  "plan_id",                               null: false
-    t.integer  "payment_status_id",                     null: false
+    t.float    "months_active_left",  default: 0.0
+    t.integer  "plan_id",                            null: false
+    t.integer  "payment_status_id",                  null: false
     t.datetime "created_at"
     t.datetime "updated_at"
     t.text     "description"
     t.text     "cancellation_policy"
-    t.boolean  "active",                default: true
-    t.float    "due_amount",            default: 0.0
+    t.boolean  "active",              default: true
+    t.float    "due_amount",          default: 0.0
     t.date     "due_date"
-    t.boolean  "owned",                 default: true
-    t.boolean  "allows_online_payment", default: false
-    t.string   "account_number",        default: ""
-    t.string   "company_rut",           default: ""
-    t.string   "account_name",          default: ""
-    t.integer  "account_type",          default: 3
-    t.integer  "bank_id"
+    t.boolean  "owned",               default: true
   end
 
   add_index "companies", ["payment_status_id"], name: "index_companies_on_payment_status_id", using: :btree
@@ -229,6 +223,12 @@ ActiveRecord::Schema.define(version: 20150120155015) do
     t.boolean  "booking_history",             default: false
     t.boolean  "staff_code",                  default: false
     t.integer  "monthly_mails",               default: 0,                     null: false
+    t.boolean  "allows_online_payment",       default: false
+    t.string   "account_number",              default: ""
+    t.string   "company_rut",                 default: ""
+    t.string   "account_name",                default: ""
+    t.integer  "account_type",                default: 3
+    t.integer  "bank_id"
   end
 
   add_index "company_settings", ["company_id"], name: "index_company_settings_on_company_id", using: :btree
@@ -333,6 +333,19 @@ ActiveRecord::Schema.define(version: 20150120155015) do
     t.float    "value"
     t.datetime "created_at"
     t.datetime "updated_at"
+  end
+
+  create_table "online_cancelation_policies", force: true do |t|
+    t.boolean  "cancelable",         default: true
+    t.boolean  "modifiable",         default: true
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.integer  "cancel_max",         default: 1
+    t.integer  "modification_max",   default: 1
+    t.integer  "min_hours",          default: 12
+    t.integer  "modification_unit",  default: 1
+    t.integer  "cancel_unit",        default: 1
+    t.integer  "company_setting_id"
   end
 
   create_table "payed_bookings", force: true do |t|
@@ -620,6 +633,12 @@ ActiveRecord::Schema.define(version: 20150120155015) do
   end
 
   add_index "tags", ["economic_sector_id"], name: "index_tags_on_economic_sector_id", using: :btree
+
+  create_table "time_units", force: true do |t|
+    t.string   "unit"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
 
   create_table "transaction_types", force: true do |t|
     t.string   "name",        null: false

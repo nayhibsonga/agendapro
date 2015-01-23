@@ -76,6 +76,7 @@ class CompaniesController < ApplicationController
 			@company.payment_status_id = PaymentStatus.find_by_name("Admin").id
 			@company.plan_id = Plan.find_by_name("Admin").id
 			@company.build_company_setting
+			@company.company_setting.build_online_cancelation_policy
 			@company.owned = false
 		end
 
@@ -575,6 +576,6 @@ class CompaniesController < ApplicationController
 
 		# Never trust parameters from the scary internet, only allow the white list through.
 		def company_params
-			params.require(:company).permit(:name, :plan_id, :logo, :allows_online_payment, :bank_id, :account_number, :company_rut, :account_name, :account_type, :remove_logo, :payment_status_id, :pay_due, :web_address, :description, :cancellation_policy, :months_active_left, :due_amount, :due_date, :active, company_setting_attributes: [:before_booking, :after_booking], economic_sector_ids: [])
+			params.require(:company).permit(:name, :plan_id, :logo, :remove_logo, :payment_status_id, :pay_due, :web_address, :description, :cancellation_policy, :months_active_left, :due_amount, :due_date, :active, company_setting_attributes: [:before_booking, :after_booking, :allows_online_payment, :account_number, :company_rut, :account_name, :account_type, :bank_id], economic_sector_ids: [])
 		end
 end

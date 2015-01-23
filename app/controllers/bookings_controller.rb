@@ -604,6 +604,66 @@ class BookingsController < ApplicationController
       return
     end
 
+    #Revisar si fue pagada en línea.
+    #Si lo fue, revisar política de modificación.
+    if @booking.payed || !@booking.payed_booking.nil?
+      if !@company.company_setting.online_cancelation_policy.nil?
+        ocp = @company.company_setting.online_cancelation_policy
+        if !ocp.modifiable
+          redirect_to blocked_edit_path(:id => @booking.id, :online => true)
+          return
+        else
+          #Revisar tiempos de modificación, tanto máximo como el mínimo específico para los pagados en línea
+
+          #Mínimo
+          book_start = DateTime.parse(@booking.start.to_s)
+          min_hours = (book_start-now)/(60*60)
+          min_hours = min_hours.to_i.abs
+
+          if min_hours >= ocp.min_hours.to_i
+            redirect_to blocked_edit_path(:id => @booking.id, :online => true)
+              return
+          end
+
+          #Máximo
+          booking_creation = DateTime.parse(@booking.created_at.to_s)
+          minutes = (booking_creation.to_time - now.to_time)/(60)
+          hours = (booking_creation.to_time - now.to_time)/(60*60)
+          days = (booking_creation.to_time - now.to_time)/(60*60*24)
+          minutes = minutes.to_i.abs
+          hours = hours.to_i.abs
+          days = days.to_i.abs
+          weeks = days/7
+          months = days/30
+
+          #Obtener el máximo
+          num = ocp.modification_max.to_i
+          if ocp.modification_unit == TimeUnit.find_by_unit("Minutos").id
+            if minutes >= ocp.modification_max.to_i
+              redirect_to blocked_edit_path(:id => @booking.id, :online => true)
+              return
+            end
+          elsif ocp.modification_unit == TimeUnit.find_by_unit("Horas").id
+            if hours >= ocp.modification_max.to_i
+              redirect_to blocked_edit_path(:id => @booking.id, :online => true)
+              return
+            end
+          elsif ocp.modification_unit == TimeUnit.find_by_unit("Semanas").id
+            if weeks >= ocp.modification_max.to_i
+              redirect_to blocked_edit_path(:id => @booking.id, :online => true)
+              return
+            end
+          elsif ocp.modification_unit == TimeUnit.find_by_unit("Meses").id
+            if months >= ocp.modification_max.to_i
+              redirect_to blocked_edit_path(:id => @booking.id, :online => true)
+              return
+            end
+          end
+
+        end
+      end
+    end
+
     if mobile_request?
       @service = @booking.service
       @provider = @booking.service_provider
@@ -712,7 +772,10 @@ class BookingsController < ApplicationController
   def blocked_edit
     @booking = Booking.find(params[:id])
     @company = Location.find(@booking.location_id).company
-
+    @reason = "company"
+    if(params[:online])
+      @reason = "online"
+    end
     # => Domain parser
     host = request.host_with_port
     @url = @company.web_address + '.' + host[host.index(request.domain)..host.length]
@@ -758,7 +821,10 @@ class BookingsController < ApplicationController
   def blocked_cancel
     @booking = Booking.find(params[:id])
     @company = Location.find(@booking.location_id).company
-
+    @reason = "company"
+    if(params[:online])
+      @reason = "online"
+    end
     # => Domain parser
     host = request.host_with_port
     @url = @company.web_address + '.' + host[host.index(request.domain)..host.length]
@@ -782,6 +848,66 @@ class BookingsController < ApplicationController
       if (booking_start <=> now) < 1
         redirect_to blocked_cancel_path(:id => @booking.id)
         return
+      end
+
+      #Revisar si fue pagada en línea.
+      #Si lo fue, revisar política de modificación.
+      if @booking.payed || !@booking.payed_booking.nil?
+        if !@company.company_setting.online_cancelation_policy.nil?
+          ocp = @company.company_setting.online_cancelation_policy
+          if !ocp.cancelable
+            redirect_to blocked_cancel_path(:id => @booking.id, :online => true)
+            return
+          else
+            #Revisar tiempos de modificación, tanto máximo como el mínimo específico para los pagados en línea
+
+            #Mínimo
+            book_start = DateTime.parse(@booking.start.to_s)
+            min_hours = (book_start-now)/(60*60)
+            min_hours = min_hours.to_i.abs
+
+            if min_hours >= ocp.min_hours.to_i
+              redirect_to blocked_cancel_path(:id => @booking.id, :online => true)
+                return
+            end
+
+            #Máximo
+            booking_creation = DateTime.parse(@booking.created_at.to_s)
+            minutes = (booking_creation.to_time - now.to_time)/(60)
+            hours = (booking_creation.to_time - now.to_time)/(60*60)
+            days = (booking_creation.to_time - now.to_time)/(60*60*24)
+            minutes = minutes.to_i.abs
+            hours = hours.to_i.abs
+            days = days.to_i.abs
+            weeks = days/7
+            months = days/30
+
+            #Obtener el máximo
+            num = ocp.cancel_max.to_i
+            if ocp.cancel_unit == TimeUnit.find_by_unit("Minutos").id
+              if minutes >= ocp.cancel_max.to_i
+                redirect_to blocked_cancel_path(:id => @booking.id, :online => true)
+                return
+              end
+            elsif ocp.cancel_unit == TimeUnit.find_by_unit("Horas").id
+              if hours >= ocp.cancel_max.to_i
+                redirect_to blocked_cancel_path(:id => @booking.id, :online => true)
+                return
+              end
+            elsif ocp.cancel_unit == TimeUnit.find_by_unit("Semanas").id
+              if weeks >= ocp.cancel_max.to_i
+                redirect_to blocked_cancel_path(:id => @booking.id, :online => true)
+                return
+              end
+            elsif ocp.cancel_unit == TimeUnit.find_by_unit("Meses").id
+              if months >= ocp.cancel_max.to_i
+                redirect_to blocked_cancel_path(:id => @booking.id, :online => true)
+                return
+              end
+            end
+
+          end
+        end
       end
 
     else

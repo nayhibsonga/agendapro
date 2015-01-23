@@ -65,7 +65,7 @@
                 </div>
               </div>
 
-              <% if current_user.company.allows_online_payment %>
+              <% if current_user.company.company_setting.allows_online_payment %>
 
                 <div class="form-group">
                 <%= f.label :online_payable, "Pago en línea", class: "col-sm-3 control-label" %>

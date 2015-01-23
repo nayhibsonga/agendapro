@@ -37,6 +37,8 @@ class QuickAddController < ApplicationController
 		@service_provider.company_id = current_user.company_id
 
 		@company = current_user.company
+		@company_setting = @company.company_setting
+		@company_setting.build_online_cancelation_policy
 	end
 
 	def location_valid
@@ -147,6 +149,17 @@ class QuickAddController < ApplicationController
 		end
   	end
 
+  # 	def update_settings
+  # 		respond_to do |format|
+  # 			@company_setting = @company.company_setting
+		# 	if @company_setting.update(company_setting_params)
+		# 		format.json { head :no_content }
+		# 	else
+		# 		format.json { render :layout => false, :json => { :errors => @company_setting.errors.full_messages }, :status => 422 }
+		# 	end
+		# end
+  # 	end
+
   	def location_params
       params.require(:location).permit(:name, :address, :phone, :longitude, :latitude, :company_id, :district_id, :outcall, :district_ids => [], location_times_attributes: [:id, :open, :close, :day_id, :location_id, :_destroy])
     end
@@ -162,4 +175,9 @@ class QuickAddController < ApplicationController
     def company_params
     	params.require(:company).permit(:logo, :allows_online_payment, :bank, :account_number, :company_rut, economic_sector_ids: [])
     end
+
+    # def company_setting_params
+    #   params.require(:company_setting).permit(:email, :sms, :signature, :company_id, :before_booking, :after_booking, :before_edit_booking, :activate_workflow, :activate_search, :client_exclusive, :provider_preference, :calendar_duration, :extended_schedule_bool, :extended_min_hour, :extended_max_hour, :schedule_overcapacity, :provider_overcapacity, :resource_overcapacity, :booking_confirmation_time, :page_id, :max_changes, :booking_history, :staff_code, :booking_configuration_email, :allows_online_payment, :bank_id, :account_number, :company_rut, :account_name, :account_type, online_cancelation_policy_attributes: [:cancelable, :cancel_max, :cancel_unit, :min_hours, :modifiable, :modification_max, :modification_unit])
+    # end
+
 end

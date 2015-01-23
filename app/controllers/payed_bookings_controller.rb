@@ -40,12 +40,12 @@ class PayedBookingsController < ApplicationController
 	  		 			if(!booking.payed_booking.nil? && booking.payed_booking.canceled == false)
 
 	  		 				if payment_account.company_id.nil?
-	  		 					payment_account.name = company.account_name
-	  		 					payment_account.rut = company.company_rut
-	  		 					payment_account.number = company.account_number
+	  		 					payment_account.name = company.company_setting.account_name
+	  		 					payment_account.rut = company.company_setting.company_rut
+	  		 					payment_account.number = company.company_setting.account_number
 	  		 					payment_account.company = company
-	  		 					payment_account.bank_code = company.bank.code
-	  		 					payment_account.account_type = company.account_type
+	  		 					payment_account.bank_code = company.company_setting.bank.code
+	  		 					payment_account.account_type = company.company_setting.account_type
 	  		 				end
 	  		 				
 	  		 				payment_account.amount = payment_account.amount + booking.payed_booking.punto_pagos_confirmation.amount

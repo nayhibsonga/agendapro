@@ -55,7 +55,7 @@
       </div>
     </div>
 
-    <% if @company.allows_online_payment && @service.online_payable %>
+    <% if @company.company_setting.allows_online_payment && @service.online_payable %>
       <div class="row">
         <div class="col-xs-6">
           <div class="form-group">

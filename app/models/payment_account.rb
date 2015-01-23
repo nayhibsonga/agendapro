@@ -32,7 +32,7 @@ class PaymentAccount < ActiveRecord::Base
 	        	row_array << payment_account.name.gsub(/-/,'')
 	        	row_array << payment_account.rut.gsub(/[\s.-]/,'')
 	        	row_array << payment_account.number.gsub(/[\s.-]/,'')
-	        	row_array << payment_account.amount.to_s.gsub(/[\s.-]/,'')
+	        	row_array << payment_account.company_amount.round.to_s.gsub(/[\s.-]/,'')
 	        	row_array << payment_account.bank_code
 	        	row_array << payment_account.account_type
 	        	row_array << 0

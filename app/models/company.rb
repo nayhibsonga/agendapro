@@ -148,7 +148,7 @@ class Company < ActiveRecord::Base
 	end
 
 	def update_online_payment
-		if(!self.allows_online_payment)
+		if(!self.company_setting.allows_online_payment)
 			self.services.each do |service|
 				service.online_payable = false
 				service.save
@@ -158,10 +158,10 @@ class Company < ActiveRecord::Base
 		#Si cambia los datos de la cuenta, hay que actualizar el payment_account
 		if(!self.payment_accounts.nil?)
 			self.payment_accounts.each do |pa|
-				pa.number = self.account_number
-				pa.rut = self.company_rut
-				pa.name = self.account_name
-				pa.account_type = self.account_type
+				pa.number = self.company_setting.account_number
+				pa.rut = self.company_setting.company_rut
+				pa.name = self.company_setting.account_name
+				pa.account_type = self.company_setting.account_type
 				pa.save
 			end
 		end

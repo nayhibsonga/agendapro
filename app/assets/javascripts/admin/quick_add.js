@@ -430,6 +430,34 @@ function updateCompany () {
 	});
 }
 
+function updateCompanySetting(){
+	$.ajax({
+		type: "POST",
+		url: '/quick_add/update_settings',
+		data: $('.company_settings_form').serialize(),
+		dataType: 'json',
+		success: function(result){
+			//nextFn = serviceValid;
+    		//$('#foo5').trigger('nextPage');
+    		//hideLoad();
+		},
+		error: function (xhr){
+		    var errors = $.parseJSON(xhr.responseText).errors;
+		    var errorList = '';
+			for (i in errors) {
+				errorList += '<li>' + errors[i] + '</li>'
+			}
+			my_alert.showAlert(
+				'<h3>Error</h3>' +
+				'<ul>' +
+					errorList +
+				'</ul>'
+			);
+			hideLoad();
+		}
+	});
+}
+
 function saveLocation (ctrl) {
 	var locationJSON = locJSON(ctrl);
 	$.ajax({
