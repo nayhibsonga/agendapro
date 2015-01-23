@@ -88,11 +88,9 @@ ActiveRecord::Schema.define(version: 20150122152025) do
     t.float    "price",               default: 0.0
     t.boolean  "provider_lock",       default: false
     t.integer  "max_changes",         default: 2
-    t.integer  "deal_id"
   end
 
   add_index "bookings", ["client_id"], name: "index_bookings_on_client_id", using: :btree
-  add_index "bookings", ["deal_id"], name: "index_bookings_on_deal_id", using: :btree
   add_index "bookings", ["location_id"], name: "index_bookings_on_location_id", using: :btree
   add_index "bookings", ["promotion_id"], name: "index_bookings_on_promotion_id", using: :btree
   add_index "bookings", ["service_id"], name: "index_bookings_on_service_id", using: :btree
@@ -210,13 +208,10 @@ ActiveRecord::Schema.define(version: 20150122152025) do
     t.boolean  "provider_overcapacity",       default: true,                  null: false
     t.boolean  "resource_overcapacity",       default: true,                  null: false
     t.integer  "booking_confirmation_time",   default: 1,                     null: false
-    t.boolean  "booking_history",             default: false
-    t.boolean  "staff_code",                  default: false
     t.integer  "booking_configuration_email", default: 0
     t.integer  "max_changes",                 default: 2
-    t.boolean  "deal_activate",               default: false
-    t.string   "deal_name"
-    t.boolean  "deal_overcharge",             default: true
+    t.boolean  "booking_history",             default: false
+    t.boolean  "staff_code",                  default: false
     t.integer  "monthly_mails",               default: 0,                     null: false
     t.boolean  "deal_exclusive",              default: false
     t.integer  "deal_quantity",               default: 0
@@ -239,6 +234,7 @@ ActiveRecord::Schema.define(version: 20150122152025) do
     t.datetime "updated_at"
   end
 
+<<<<<<< HEAD
   create_table "deals", force: true do |t|
     t.string   "code",                               null: false
     t.integer  "quantity",                           null: false
@@ -252,6 +248,8 @@ ActiveRecord::Schema.define(version: 20150122152025) do
 
   add_index "deals", ["company_id"], name: "index_deals_on_company_id", using: :btree
 
+=======
+>>>>>>> 7506490ab36edc8770ea5663f78b21c2cc98951a
   create_table "dictionaries", force: true do |t|
     t.string   "name",       null: false
     t.integer  "tag_id",     null: false
@@ -330,6 +328,7 @@ ActiveRecord::Schema.define(version: 20150122152025) do
     t.string   "email",                       default: ""
     t.boolean  "notification",                default: false
     t.integer  "booking_configuration_email", default: 0
+    t.string   "second_address"
   end
 
   add_index "locations", ["company_id"], name: "index_locations_on_company_id", using: :btree

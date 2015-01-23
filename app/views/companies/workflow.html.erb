@@ -53,6 +53,7 @@
               <%= image_tag 'ubicacion.png', :alt => '', :size => "12x14", :class=>"loc-icon" %>&nbsp;
               <span id="phone-address">
                 <%= if !@selectedLocation.outcall then @selectedLocation.address+', '+@selectedLocation.district.name else "A Domicilio" end %>
+                <br><%= if !@selectedLocation.second_address.blank? then @selectedLocation.second_address else '' end %>
               </span>
             </div>
           <% else %>
@@ -109,6 +110,7 @@
               <%= image_tag 'ubicacion.png', :alt => '', :size => "12x14", :class=>"loc-icon" %>&nbsp;
               <span id="phone-address">
                 <%= if !@selectedLocation.outcall then @selectedLocation.address+', '+@selectedLocation.district.name else "A Domicilio" end %>
+                <br><%= if !@selectedLocation.second_address.blank? then @selectedLocation.second_address else '' end %>
               </span>
             </div>
           <% else %>
