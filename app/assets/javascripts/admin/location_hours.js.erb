@@ -479,7 +479,6 @@ function geolocate (district, address) {
       } else {
         $('h4 small').addClass('hide');
         $('#error').removeClass('hide');
-        $('#error').focus();
         map.setZoom(12);
         if (marker) {
           marker.setMap(null);
