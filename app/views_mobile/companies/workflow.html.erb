@@ -12,14 +12,14 @@
     <div class="col-xs-12 col-sm-10">
       <div id="reservar">
         <%= form_tag("select_hour", method: "post", role: "form") do %>
-          <%= hidden_field_tag :local, @location.id %>
+          <%= hidden_field_tag :location, @location.id %>
           <div class="form-group">
-            <%= label_tag :services, 'Selecciona el servicio que quieres' %>
-            <%= select_tag :services, nil, :class => 'form-control' %>
+            <%= label_tag :service, 'Selecciona el servicio que quieres' %>
+            <%= select_tag :service, nil, :class => 'form-control' %>
           </div>
           <div class="form-group" <%= 'style="display:none;"'.html_safe if @company.company_setting.provider_preference == 2 %>>
-            <%= label_tag :providers, 'Selecciona al staff' %>
-            <%= select_tag :providers, nil, :disabled => true, :class => 'form-control' %>
+            <%= label_tag :provider, 'Selecciona al staff' %>
+            <%= select_tag :provider, nil, :disabled => true, :class => 'form-control' %>
           </div>
           <div class="form-group">
             <%= label_tag :datepicker, 'Selecciona una fecha' %>
@@ -37,9 +37,9 @@
             <div class="panel-group" id="information" role="tablist" aria-multiselectable="true">
               <div class="panel panel-white">
                 <div class="panel-heading" role="tab" id="addressHeading">
-                    <a data-toggle="collapse" data-parent="#information" href="#address" aria-expanded="true" aria-controls="address">
+                    <a data-toggle="collapse" data-parent="#information" href="#address" aria-expanded="false" aria-controls="address">
                       <h4 class="panel-title panel-title-caret">
-                          Descripción
+                        Descripción
                       </h4>
                     </a>
                 </div>
@@ -51,7 +51,7 @@
               </div>
               <div class="panel panel-white">
                 <div class="panel-heading" role="tab" id="scheduleHeading">
-                  <a data-toggle="collapse" data-parent="#information" href="#schedule" aria-expanded="true" aria-controls="schedule">
+                  <a data-toggle="collapse" data-parent="#information" href="#schedule" aria-expanded="false" aria-controls="schedule">
                     <h4 class="panel-title panel-title-caret">
                       Horario
                     </h4>
@@ -64,13 +64,13 @@
               </div>
               <div class="panel panel-white">
                 <div class="panel-heading" role="tab" id="telefoneHeading">
-                  <a data-toggle="collapse" data-parent="#information" href="#telefone" aria-expanded="true" aria-controls="telefone">
+                  <a data-toggle="collapse" data-parent="#information" href="#phone" aria-expanded="false" aria-controls="phone">
                     <h4 class="panel-title panel-title-caret">
                       Teléfono
                     </h4>
                   </a>
                 </div>
-                <div id="telefone" class="panel-collapse collapse" role="tabpanel" aria-labelledby="telefoneHeading">
+                <div id="phone" class="panel-collapse collapse" role="tabpanel" aria-labelledby="telefoneHeading">
                   <div class="panel-body">
                     <%= @location.phone %>
                   </div>

@@ -51,6 +51,13 @@ GEM
       json (>= 1.7)
     chartkick (1.2.5)
     chronic (0.10.2)
+    ckeditor (4.1.1)
+      cocaine
+      orm_adapter (~> 0.5.0)
+    climate_control (0.0.3)
+      activesupport (>= 3.0)
+    cocaine (0.5.5)
+      climate_control (>= 0.0.3, < 1.0)
     cocoon (1.2.5)
     coderay (1.1.0)
     coffee-rails (4.0.1)
@@ -218,6 +225,7 @@ DEPENDENCIES
   cancan
   carrierwave
   chartkick
+  ckeditor
   cocoon
   devise
   faker

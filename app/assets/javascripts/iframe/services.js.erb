@@ -359,7 +359,6 @@ function loadDescription (serviceId) {
 var selected = false;
 
 function addBooking (booking) {
-	window.console.log(booking);
 	selected = true;
 	$('#start').val(generateDate(booking.date, booking.start));
 	$('#end').val(generateDate(booking.date, booking.end));

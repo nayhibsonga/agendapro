@@ -34,7 +34,7 @@
         <td>
           <% if service_category.name != "Sin Categoría" %>
           <%= link_to '<i class="fa fa-pencil"></i> Editar'.html_safe, edit_service_category_path(service_category), :class => "btn btn-sm btn-warning" %>
-          <%= link_to '<i class="fa fa-trash-o"></i> Eliminar'.html_safe, service_category, :class => "btn btn-sm btn-danger", method: :delete, data: { confirm: '¿Estás seguro de eliminar la Categoría seleccionada?' } %>
+          <%= link_to '<i class="fa fa-trash-o"></i> Eliminar'.html_safe, service_category, :class => "btn btn-sm btn-danger", method: :delete, data: { confirm: '¿Estás seguro de eliminar la Categoría seleccionada?' } unless cannot? :destroy, service_category %>
           <% end %>
           <span class="pull-right">
             <i class="fa fa-bars"></i>

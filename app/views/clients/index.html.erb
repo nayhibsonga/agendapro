@@ -40,14 +40,17 @@
 		</div>
 		<div class="row top-buffer">
 			<div class="form-group">
-				<div class="col-md-1">
+				<div class="col-xs-1">
 					<label class="pull-right">Buscar:</label>
 				</div>
-				<div class="col-md-9">
+				<div class="col-xs-7">
 					<%= text_field_tag :search, nil, :class => "form-control", :placeholder => "Buscar por nombre, apellido, e-mail o RUT...", :value => params[:search] %>
 				</div>
-				<div class="col-md-2">
-					<button class="btn btn-agendapro-claro pull-right" type="submit" action="/clients" value="client_filter"><i class="fa fa-search"></i><span> Buscar</span></button>
+				<div class="col-xs-2">
+					<button class="btn btn-agendapro-claro" type="submit" action="/clients" value="client_filter"><i class="fa fa-search"></i><span> Buscar</span></button>
+				</div>
+				<div class="col-xs-2">
+					<%= link_to '<i class="fa fa-minus"></i> Reiniciar Filtros'.html_safe, clients_path, class: "btn btn-agendapro-oscuro pull-right" %>
 				</div>
 			</div>
 		</div>
@@ -56,6 +59,7 @@
 </div>
 
 <table class="table table-bordered">
+	<caption id="mails" data-monthly-mails="<%= @monthly_mails %>" data-monthly-mails-sent="<%= @monthly_mails_sent %>">E-mails enviados <%= number_with_delimiter(@monthly_mails_sent) %> de <%= number_with_delimiter(@monthly_mails) %></caption>
 	<thead>
 		<tr>
 			<th>Nombre</th>
@@ -66,10 +70,6 @@
 			<% if Company.find(current_user.company_id).company_setting.client_exclusive %>
 	    	<th>¿Puede Reservar?</th>
          	<% end %>
-			<th>
-				E-mail
-				<input name="mail" class="pull-right" type="checkbox" value="">
-			</th>
 		</tr>
 	</thead>
 	<tbody>
@@ -84,15 +84,6 @@
             	<% if Company.find(current_user.company_id).company_setting.client_exclusive %>
 	    		<td class="centered"><%= check_box_tag 'client_can_book'+client.id.to_s, client.id, client.can_book, class: 'client_can_book' %><%= image_tag "small-loader.gif", :alt => "Loader", :id => "loader"+client.id.to_s, hidden: true %></td>
          		<% end %>
-				<td>
-					<% if client.valid_email %>
-					<div class="checkbox" style="margin-top: 0; margin-bottom: 0;">
-						<label>
-							<input type="checkbox" name="client_mail" value="<%= client.email %>">Enviar E-mail
-						</label>
-					</div>
-					<% end %>
-				</td>
 			</tr>
 		 <% end %>
 	</tbody>
@@ -100,13 +91,19 @@
 <div class="container">
 	<div class="row">
 		<div class="col-md-2">
-			<%= link_to '<i class="fa fa-plus"></i> Nuevo Cliente'.html_safe, new_client_path, :class => "btn btn-agendapro-claro" %> 
+			<%= link_to '<i class="fa fa-plus"></i> Nuevo Cliente'.html_safe, new_client_path, :class => "btn btn-agendapro-claro" %>
 		</div>
 		<div class="col-md-8 pagination">
 			<%= will_paginate @clients, renderer: BootstrapPagination::Rails %>
 		</div>
 		<div class="col-md-2">
-			<button id="sendMail" type="button" class="btn btn-agendapro-claro pull-right" data-toggle="modal" data-target="#mailModal" disabled>Enviar E-mail</button>
+			<% if @from_collection.first %>
+				<% if @monthly_mails_sent < @monthly_mails %>
+					<%= link_to 'Enviar E-mail a este listado', send_mail_path(search: params[:search], location: params[:location], provider: params[:provider], service: params[:service], gender: params[:gender], option: params[:option]), class: "btn btn-agendapro-claro pull-right", id: 'sendMail' %>
+				<% end %>
+			<% else %>
+			<button id="sendMail" type="button" class="btn btn-agendapro-claro pull-right" data-toggle="modal" data-target="#mailModal">Enviar E-mail</button>
+			<% end %>
 		</div>
 	</div>
 	<br />
@@ -124,79 +121,7 @@
 	</div>
 </div>
 
-<% if @from_collection.first %>
-<div class="modal fade" id="mailModal" tabindex="-1" role="dialog" aria-labelledby="mailModalLabel" aria-hidden="true">
-	<div class="modal-dialog">
-		<div class="modal-content">
-			<div class="modal-header">
-				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-				<h4 class="modal-title" id="mailModalLabel">Enviar E-mail</h4>
-			</div>
-			<%= form_tag('/send_mail_client', name: "client_mailer", id: "client_mailer", multipart: true, class: "form-horizontal") do %>
-				<div class="modal-body">
-					<div class="center-block" style="display: table;">
-						<p>
-							<h3>Enviando E-mail</h3>
-							<span>Por favor espere</span>
-						</p>
-						<%= image_tag 'ajax-loader.gif', :alt => 'Loader' %>
-					</div>
-					<div class="form-group has-feedback">
-						<%= label_tag :from, 'De', :class => 'control-label col-md-2' %>
-						<div class="col-md-10">
-							<%= select_tag :from, options_from_collection_for_select(@from_collection, :email, :email), :class => 'form-control', :required => true %>
-            				<span class="help-block"></span>
-            				<span class="form-control-feedback"></span>
-						</div>
-					</div>
-					<div class="form-group has-feedback">
-						<%= label_tag :to, 'Para', class: 'control-label col-md-2' %>
-						<div class="col-md-10">
-							<%= text_field_tag :to, nil, :class => 'form-control', :required => true, :placeholder => 'ejemplo@dominio.com (requerido)' %>
-            				<span class="help-block"></span>
-            				<span class="form-control-feedback"></span>
-            			</div>
-					</div>
-					<div class="form-group has-feedback">
-						<%= label_tag :subject, 'Asunto', class: 'control-label col-md-2' %>
-						<div class="col-md-10">
-							<%= text_field_tag :subject, nil, :class => 'form-control', :required => true, :autofocus => true, :placeholder => 'Asunto (requerido)' %>
-            				<span class="help-block"></span>
-            				<span class="form-control-feedback"></span>
-						</div>
-					</div>
-					<div class="form-group has-feedback">
-						<div class="col-md-12">
-							<%= label_tag :message, 'Mensaje' %>
-						</div>
-						<div class="col-md-12">
-							<%= text_area_tag :message, nil, :class => 'form-control', :rows => 8, :required => true, :placeholder => 'Mensaje (requerido)' %>
-            				<span class="help-block"></span>
-            				<span class="form-control-feedback"></span>
-						</div>
-					</div>
-					<div class="form-group has-feedback">
-						<%= label_tag :attachment, 'Archivo Adjunto', class: 'control-label col-md-3' %>
-						<div class="col-md-9">
-							<%= file_field_tag :attachment, :class => 'form-control' %>
-							<span class="help-block"></span>
-							<span class="form-control-feedback"></span>
-						</div>
-					</div>
-					<div>
-						<p>NOTA: Todos los e-mails son enviados como copia oculta</p>
-					</div>
-				</div>
-				<div class="modal-footer">
-					<button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
-					<button class="btn btn-agendapro-claro" type="submit" action="/send_mail_client" value="client_mailer"><i class="fa fa-envelope-o"></i><span> Enviar</span></button>
-				</div>
-			<% end %>
-		</div>
-	</div>
-</div>
-
-<% else %>
+<% if !@from_collection.first %>
 <div class="modal fade" id="mailModal" tabindex="-1" role="dialog" aria-labelledby="mailModalLabel" aria-hidden="true">
 	<div class="modal-dialog">
 		<div class="modal-content">
@@ -235,7 +160,7 @@
 					<li>Las fechas de cumpleaños deben ser en formato aaaa-mm-dd (ej: 1980-02-24)</li><br />
 					<li>Para ingresar el género de los clientes, se debe utilizar 0 si no se desea especificar, 1 si es Femenino o 2 si es Masculino.</li><br />
 					<h4>Plantillas para importación:</h4>
-					<%= link_to 'Plantilla Excel', '/clients_base.xls', :target => :blank %> | 
+					<%= link_to 'Plantilla Excel', '/clients_base.xls', :target => :blank %> |
 					<%= link_to 'Plantilla CSV', '/clients_base.csv', :target => :blank %><br />
 				</ul>
 				<div class="form-group" id="file-group">
@@ -253,9 +178,6 @@
 		</div>
 	</div>
 </div>
-
-<%= content_tag "div", id: "mails", data: {mails_left: @mails_left, max_mails: @max_mails} do %>
-<% end %>
 
 <% content_for :scripts do %>
 	<%= javascript_include_tag 'validations/validate' %>

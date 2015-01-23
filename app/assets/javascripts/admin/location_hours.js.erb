@@ -111,7 +111,6 @@ function initialize() {
 			$('#closeHourId'+ value).prop('disabled', false);
 			$('#closeMinuteId'+ value).prop('disabled', false);
 			// Deseleccionar por defecto
-			window.console.log('#openHourId' + value + ' > option:selected')
 			$('#openHourId' + value + ' > option:selected').removeAttr('selected');
 			$('#openMinuteId' + value + ' > option:selected').removeAttr('selected');
 			$('#closeHourId' + value + ' > option:selected').removeAttr('selected');
@@ -287,7 +286,8 @@ function locJSON() {
 		"location_times_attributes": location_times,
 		"email": $('input[name="location[email]"]').val(),
 		"notification": $('#location_notification').prop('checked'),
-		"company_id": $('#location_company_id').val()
+		"company_id": $('#location_company_id').val(),
+		"booking_configuration_email": $('#location_booking_configuration_email').val()
 	};
 	return locationJSON;
 }

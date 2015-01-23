@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20141219202825) do
+ActiveRecord::Schema.define(version: 20150116172054) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -49,6 +49,26 @@ ActiveRecord::Schema.define(version: 20141219202825) do
   add_index "billing_logs", ["plan_id"], name: "index_billing_logs_on_plan_id", using: :btree
   add_index "billing_logs", ["transaction_type_id"], name: "index_billing_logs_on_transaction_type_id", using: :btree
 
+  create_table "booking_histories", force: true do |t|
+    t.integer  "booking_id"
+    t.string   "action"
+    t.integer  "staff_code_id"
+    t.datetime "start"
+    t.integer  "status_id"
+    t.integer  "service_id"
+    t.integer  "service_provider_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.integer  "user_id"
+  end
+
+  add_index "booking_histories", ["booking_id"], name: "index_booking_histories_on_booking_id", using: :btree
+  add_index "booking_histories", ["service_id"], name: "index_booking_histories_on_service_id", using: :btree
+  add_index "booking_histories", ["service_provider_id"], name: "index_booking_histories_on_service_provider_id", using: :btree
+  add_index "booking_histories", ["staff_code_id"], name: "index_booking_histories_on_staff_code_id", using: :btree
+  add_index "booking_histories", ["status_id"], name: "index_booking_histories_on_status_id", using: :btree
+  add_index "booking_histories", ["user_id"], name: "index_booking_histories_on_user_id", using: :btree
+
   create_table "bookings", force: true do |t|
     t.datetime "start",                               null: false
     t.datetime "end",                                 null: false
@@ -67,9 +87,12 @@ ActiveRecord::Schema.define(version: 20141219202825) do
     t.integer  "client_id"
     t.float    "price",               default: 0.0
     t.boolean  "provider_lock",       default: false
+    t.integer  "max_changes",         default: 2
+    t.integer  "deal_id"
   end
 
   add_index "bookings", ["client_id"], name: "index_bookings_on_client_id", using: :btree
+  add_index "bookings", ["deal_id"], name: "index_bookings_on_deal_id", using: :btree
   add_index "bookings", ["location_id"], name: "index_bookings_on_location_id", using: :btree
   add_index "bookings", ["promotion_id"], name: "index_bookings_on_promotion_id", using: :btree
   add_index "bookings", ["service_id"], name: "index_bookings_on_service_id", using: :btree
@@ -167,28 +190,34 @@ ActiveRecord::Schema.define(version: 20141219202825) do
 
   create_table "company_settings", force: true do |t|
     t.text     "signature"
-    t.boolean  "email",                     default: false
-    t.boolean  "sms",                       default: false
-    t.integer  "company_id",                                                null: false
+    t.boolean  "email",                       default: false
+    t.boolean  "sms",                         default: false
+    t.integer  "company_id",                                                  null: false
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.integer  "before_booking",            default: 24,                    null: false
-    t.integer  "after_booking",             default: 6,                     null: false
-    t.integer  "daily_mails",               default: 50
-    t.integer  "sent_mails",                default: 0
-    t.integer  "before_edit_booking",       default: 12
-    t.boolean  "activate_search",           default: true
-    t.boolean  "activate_workflow",         default: true
-    t.boolean  "client_exclusive",          default: false
+    t.integer  "before_booking",              default: 24,                    null: false
+    t.integer  "after_booking",               default: 6,                     null: false
+    t.integer  "before_edit_booking",         default: 12
+    t.boolean  "activate_search",             default: true
+    t.boolean  "activate_workflow",           default: true
+    t.boolean  "client_exclusive",            default: false
     t.integer  "provider_preference"
-    t.integer  "calendar_duration",         default: 15
-    t.boolean  "extended_schedule_bool",    default: false,                 null: false
-    t.time     "extended_min_hour",         default: '2000-01-01 09:00:00', null: false
-    t.time     "extended_max_hour",         default: '2000-01-01 20:00:00', null: false
-    t.boolean  "schedule_overcapacity",     default: true,                  null: false
-    t.boolean  "provider_overcapacity",     default: true,                  null: false
-    t.boolean  "resource_overcapacity",     default: true,                  null: false
-    t.integer  "booking_confirmation_time", default: 1,                     null: false
+    t.integer  "calendar_duration",           default: 15
+    t.boolean  "extended_schedule_bool",      default: false,                 null: false
+    t.time     "extended_min_hour",           default: '2000-01-01 09:00:00', null: false
+    t.time     "extended_max_hour",           default: '2000-01-01 20:00:00', null: false
+    t.boolean  "schedule_overcapacity",       default: true,                  null: false
+    t.boolean  "provider_overcapacity",       default: true,                  null: false
+    t.boolean  "resource_overcapacity",       default: true,                  null: false
+    t.integer  "booking_confirmation_time",   default: 1,                     null: false
+    t.boolean  "booking_history",             default: false
+    t.boolean  "staff_code",                  default: false
+    t.integer  "booking_configuration_email", default: 0
+    t.integer  "max_changes",                 default: 2
+    t.boolean  "deal_activate",               default: false
+    t.string   "deal_name"
+    t.boolean  "deal_overcharge",             default: true
+    t.integer  "monthly_mails",               default: 0,                     null: false
   end
 
   add_index "company_settings", ["company_id"], name: "index_company_settings_on_company_id", using: :btree
@@ -204,6 +233,19 @@ ActiveRecord::Schema.define(version: 20141219202825) do
     t.datetime "created_at"
     t.datetime "updated_at"
   end
+
+  create_table "deals", force: true do |t|
+    t.string   "code",                               null: false
+    t.integer  "quantity",                           null: false
+    t.boolean  "active",              default: true
+    t.integer  "constraint_option",                  null: false
+    t.integer  "constraint_quantity",                null: false
+    t.integer  "company_id_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "deals", ["company_id_id"], name: "index_deals_on_company_id_id", using: :btree
 
   create_table "dictionaries", force: true do |t|
     t.string   "name",       null: false
@@ -268,20 +310,21 @@ ActiveRecord::Schema.define(version: 20141219202825) do
   add_index "location_times", ["location_id"], name: "index_location_times_on_location_id", using: :btree
 
   create_table "locations", force: true do |t|
-    t.string   "name",                         null: false
-    t.string   "address",                      null: false
-    t.string   "phone",                        null: false
+    t.string   "name",                                        null: false
+    t.string   "address",                                     null: false
+    t.string   "phone",                                       null: false
     t.float    "latitude"
     t.float    "longitude"
-    t.integer  "district_id",                  null: false
-    t.integer  "company_id",                   null: false
+    t.integer  "district_id",                                 null: false
+    t.integer  "company_id",                                  null: false
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.boolean  "active",       default: true
-    t.integer  "order",        default: 0
-    t.boolean  "outcall",      default: false
-    t.string   "email",        default: ""
-    t.boolean  "notification", default: false
+    t.boolean  "active",                      default: true
+    t.integer  "order",                       default: 0
+    t.boolean  "outcall",                     default: false
+    t.string   "email",                       default: ""
+    t.boolean  "notification",                default: false
+    t.integer  "booking_configuration_email", default: 0
   end
 
   add_index "locations", ["company_id"], name: "index_locations_on_company_id", using: :btree
@@ -321,6 +364,7 @@ ActiveRecord::Schema.define(version: 20141219202825) do
     t.datetime "updated_at"
     t.float    "price",             default: 0.0,   null: false
     t.boolean  "special",           default: false
+    t.integer  "monthly_mails",     default: 5000,  null: false
   end
 
   create_table "promotions", force: true do |t|
@@ -456,14 +500,15 @@ ActiveRecord::Schema.define(version: 20141219202825) do
 
   create_table "service_providers", force: true do |t|
     t.integer  "location_id"
-    t.integer  "company_id",                        null: false
+    t.integer  "company_id",                                 null: false
     t.string   "notification_email"
     t.string   "public_name"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.boolean  "active",             default: true
-    t.integer  "order",              default: 0
-    t.integer  "block_length",       default: 30
+    t.boolean  "active",                      default: true
+    t.integer  "order",                       default: 0
+    t.integer  "block_length",                default: 30
+    t.integer  "booking_configuration_email", default: 0
   end
 
   add_index "service_providers", ["company_id"], name: "index_service_providers_on_company_id", using: :btree
@@ -519,6 +564,16 @@ ActiveRecord::Schema.define(version: 20141219202825) do
 
   add_index "services", ["company_id"], name: "index_services_on_company_id", using: :btree
   add_index "services", ["service_category_id"], name: "index_services_on_service_category_id", using: :btree
+
+  create_table "staff_codes", force: true do |t|
+    t.string   "staff"
+    t.string   "code"
+    t.integer  "company_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "staff_codes", ["company_id"], name: "index_staff_codes_on_company_id", using: :btree
 
   create_table "statuses", force: true do |t|
     t.string   "name",        null: false

@@ -11,14 +11,14 @@ class ClientsController < ApplicationController
     @locations = Location.where(company_id: current_user.company_id, active: true)
     @service_providers = ServiceProvider.where(company_id: current_user.company_id, active: true)
     @services = Service.where(company_id: current_user.company_id, active: true)
-    @clients = Client.accessible_by(current_ability).search(params[:search]).filter_location(params[:location]).filter_provider(params[:provider]).filter_service(params[:service]).filter_gender(params[:gender]).filter_birthdate(params[:option]).order(:last_name, :first_name).paginate(:page => params[:page], :per_page => 25)
+    @clients = Client.accessible_by(current_ability).search(params[:search], current_user.company_id).filter_location(params[:location]).filter_provider(params[:provider]).filter_service(params[:service]).filter_gender(params[:gender]).filter_birthdate(params[:option]).order(:last_name, :first_name).paginate(:page => params[:page], :per_page => 25)
 
-    @max_mails = current_user.company.company_setting.daily_mails
-    @mails_left = current_user.company.company_setting.daily_mails - current_user.company.company_setting.sent_mails
+    @monthly_mails = current_user.company.plan.monthly_mails
+    @monthly_mails_sent = current_user.company.company_setting.monthly_mails
 
     @from_collection = current_user.company.company_from_email.where(confirmed: true)
 
-    @clients_export = Client.accessible_by(current_ability).search(params[:search]).filter_location(params[:location]).filter_provider(params[:provider]).filter_service(params[:service]).filter_gender(params[:gender]).order(:last_name, :first_name)
+    @clients_export = Client.accessible_by(current_ability).search(params[:search], current_user.company_id).filter_location(params[:location]).filter_provider(params[:provider]).filter_service(params[:service]).filter_gender(params[:gender]).filter_birthdate(params[:option]).order(:last_name, :first_name)
     respond_to do |format|
       format.html
       format.csv
@@ -137,42 +137,55 @@ class ClientsController < ApplicationController
     end
   end
 
+  def compose_mail
+    @from_collection = current_user.company.company_from_email.where(confirmed: true)
+    @to = Client.accessible_by(current_ability).search(params[:search], current_user.company_id).filter_location(params[:location]).filter_provider(params[:provider]).filter_service(params[:service]).filter_gender(params[:gender]).filter_birthdate(params[:option]).order(:last_name, :first_name).pluck(:email).uniq
+    # @to = '';
+    # if params[:to]
+    #   params[:to].each do |mail|
+    #     @to += mail + ', '
+    #   end
+    # end
+    # @to = @to.chomp(', ')
+  end
+
   def send_mail
     # Sumar mails eviados
-    current_sent = current_user.company.company_setting.sent_mails
-    sent_now = params[:to].split(',').length
-    current_user.company.company_setting.update_attributes :sent_mails => (current_sent + sent_now)
+    current_sent = current_user.company.company_setting.monthly_mails
+    sent_to = params[:to].split(' ')
+    sent_now = sent_to.length
+    current_sent + sent_now >= 0 ? new_mails = current_sent + sent_now : new_mails = 0
+    current_user.company.company_setting.update_attributes :monthly_mails => (new_mails)
+    attachments = params[:attachment]
+    subject = params[:subject]
+    message = params[:message]
+    sent_from = params[:from]
 
-    clients = Array.new
-    params[:to].split(',').each do |client_mail|
-      client_info = {
-        :email => client_mail,
-        :type => 'bcc'
-      }
-      clients.push(client_info)
+    Thread.new do
+      clients = Array.new
+      sent_to.each do |client_mail|
+        client_info = {
+          :email => client_mail,
+          :type => 'bcc'
+        }
+        clients.push(client_info)
+      end
+
+      if attachments
+        attachment = {
+          :type => attachments.content_type,
+          :name => attachments.original_filename,
+          :content => Base64.encode64(File.read(attachments.tempfile))
+        }
+      else
+        attachment = {}
+      end
+
+      ClientMailer.send_client_mail(current_user, clients, subject, message, attachment, sent_from)
+
+      # Close database connection
+      ActiveRecord::Base.connection.close
     end
-
-    if current_user.company.logo_url
-      company_img = {
-        :type => 'image/' +  File.extname(current_user.company.logo_url),
-        :name => 'company_img.jpg',
-        :content => Base64.encode64(File.read('public' + current_user.company.logo_url.to_s))
-      }
-    else
-      company_img = {}
-    end
-
-    if params[:attachment]
-      attachment = {
-        :type => params[:attachment].content_type,
-        :name => params[:attachment].original_filename,
-        :content => Base64.encode64(File.read(params[:attachment].tempfile))
-      }
-    else
-      attachment = {}
-    end
-
-    ClientMailer.send_client_mail(current_user, clients, params[:subject], params[:message], company_img, attachment, params[:from])
 
     redirect_to '/clients', notice: 'E-mail enviado exitosamente.'
   end
@@ -205,7 +218,17 @@ class ClientsController < ApplicationController
   end
 
   def name_suggestion
-    @clients = Client.where(company_id: current_user.company_id).where("CONCAT(first_name, ' ', last_name) ILIKE :s OR first_name ILIKE :s OR last_name ILIKE :s", :s => "%#{params[:term]}%").order(:last_name, :first_name).uniq
+    search_array = params[:term].gsub(/\b([D|d]el?)+\b|\b([U|u]n(o|a)?s?)+\b|\b([E|e]l)+\b|\b([T|t]u)+\b|\b([L|l](o|a)s?)+\b|\b[AaYy]\b|["'.,;:-]|\b([E|e]n)+\b|\b([L|l]a)+\b|\b([C|c]on)+\b|\b([Q|q]ue)+\b|\b([S|s]us?)+\b|\b([E|e]s[o|a]?s?)+\b/i, '').split(' ')
+    search_array2 = []
+    search_array.each do |item|
+      if item.length > 2
+        search_array2.push('%'+item+'%')
+      end
+    end
+    @clients1 = Client.where(company_id: current_user.company_id).where('first_name ILIKE ANY ( array[:s] )', :s => search_array2).where('last_name ILIKE ANY ( array[:s] )', :s => search_array2).pluck(:id).uniq
+    @clients2 = Client.where(company_id: current_user.company_id).where("CONCAT(first_name, ' ', last_name) ILIKE :s OR first_name ILIKE :s OR last_name ILIKE :s", :s => "%#{params[:term]}%").order(:last_name, :first_name).pluck(:id).uniq
+
+    @clients = Client.where(id: (@clients1 + @clients2).uniq)
 
     @clients_arr = Array.new
     @clients.each do |client|
