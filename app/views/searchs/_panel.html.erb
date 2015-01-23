@@ -39,7 +39,7 @@
 					<div class="col-md-1">
 					</div>
 					<div class="data-local-search col-md-7">
-						<div class="loc-div"><%= image_tag 'ubicacion.png', :alt => '', :size => "12x16", :class=>"loc-icon" %>&nbsp;<%= if !location.outcall then location.address+', '+location.district.name else "A Domicilio" end %>.<br /><br />
+						<div class="loc-div"><%= image_tag 'ubicacion.png', :alt => '', :size => "12x16", :class=>"loc-icon" %>&nbsp;<%= if !location.outcall then location.address+', '+location.district.name else "A Domicilio" end %>.<br />&nbsp;&nbsp;&nbsp;<%= if !location.second_address.blank? then location.second_address else '' end %><br />
 						<%= image_tag 'telefono.png', :alt => '', :size => "12x14", :class=>"loc-icon" %>&nbsp;Tel: <%= location.phone %></div>
 						<% if !location.company.owned %>
 						<br />
@@ -61,7 +61,7 @@
 					<div class="col-md-1">
 					</div>
 					<div class="data-local-search col-md-7">
-						<div>                                                    
+						<div>
 							<% if location.company.description.blank? %>
 							<div style="margin-top: 30px;">
 							<table><tr><td>&nbsp;</td></tr><tr><td style="vertical-align: middle; text-align: justify;">No hay descripción para esta empresa.</td></tr><tr><td>&nbsp;</td></tr></table></div>
@@ -87,7 +87,7 @@
 
 						<div class="panel-group" id="categories<%=location.id%>" style="margin-top: 20px;">
 						<% if location.company.owned %>
-							<% location.categorized_services.each do |category| %>								
+							<% location.categorized_services.each do |category| %>
 								<% if category[:services].count > 0 %>
 									<div class="panel panel-default">
 										<div class="panel-heading">
@@ -124,7 +124,7 @@
 								<% end %>
 							<% end %>
 						<% else %>
-							<% location.company.service_categories.each do |category| %>								
+							<% location.company.service_categories.each do |category| %>
 								<% if category.services.count > 0 %>
 									<div class="panel panel-default">
 										<div class="panel-heading">
