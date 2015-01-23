@@ -270,6 +270,20 @@
 								</div>
 							</div>
 							<% end %>
+							<% if @company_setting.deal_activate %>
+							<div class="row">
+								<div class="col-md-12">
+									<div class="form-group has-feedback">
+										<%= label_tag :booking_deal_code, "Código de Convenio", class: "col-sm-2 control-label" %>
+										<div class="col-sm-10">
+											<%= text_field_tag :booking_deal_code, '',{class: "form-control", required: true} %>
+											<span class="help-block"></span>
+											<span class="form-control-feedback"></span>
+										</div>
+									</div>
+								</div>
+							</div>
+							<% end %>
 						</div>
 						<div class="tab-pane" id="client-pane">
 							<%= f.fields_for :client do |builder| %>

@@ -95,7 +95,7 @@
 					<div class="form-group has-feedback">
 						<%= f.label :constraint_option, 'Restricción por Periodo', :class => 'control-label col-xs-4' %>
 						<div class="col-xs-8">
-							<%= f.select :constraint_option, options_for_select([["Sin restricción", 0],["Simultáneo", 1],["Por día", 2],["Por semana", 3],["Por mes", 4]]), :class => 'form-control' %>
+							<%= f.select :constraint_option, options_for_select([["Sin restricción", 0],["Simultáneo", 1],["Por día", 2],["Por semana", 3],["Por mes", 4]]), {}, {:class => 'form-control'} %>
 							<span class="help-block"></span>
 							<span class="form-control-feedback"></span>
 						</div>
@@ -378,7 +378,7 @@
 	    <div class="row well well-white">
 	    	<h4>AgendaPro App (pestaña) para tu página de Facebook:</h4>
 	    	<ol>
-	    		<li>Haz click en el siguiente link: <a href="https://www.facebook.com/dialog/pagetab?api_key=739120539456506&next=https%3A%2F%2Fwww.facebook.com%2F" target="_blank">App AgendaPro para Facebook</a><br /><small>(Asegúrate que hayas iniciado sesión en Facebook como administrador de la página (la cuenta personal de alguien que puede editar tu página) a la que le quieres agregar reservas en línea. No debes iniciar sesión "usar como" tú página.</small></li>
+	    		<li>Haz click en el siguiente link: <a href="https://www.facebook.com/dialog/pagetab?api_key=739120539456506&next=https%3A%2F%2Fwww.facebook.com%2F" target="_blank">App AgendaPro para Facebook</a><br /><small>Asegúrate que hayas iniciado sesión en Facebook como administrador de la página (la cuenta personal de alguien que puede editar tu página) a la que le quieres agregar reservas en línea. No debes iniciar sesión "usar como" tú página.</small></li>
 	    		<li>Elige la página a la que quieres agregar reservas en línea</li>
 	    		<li>En tu página de Facebook, busca el botón <strong>“Más”</strong> y selecciona <strong>“Administrar Pestaña”</strong></li>
 	    		<li>Arrastra la pestaña <strong>“¡Reserva Online!”</strong> a la posición que deseas (recomendamos entre las primeras 4 posiciones)</li>
@@ -452,21 +452,56 @@
 					<%= f.label :deal_activate, 'Activar Convenios', :class => 'col-sm-3 control-label' %>
 					<div class="col-sm-5">
 						<%= f.check_box :deal_activate %>
-						<span class="help-block">Si habilitas esta opción, para guardar una reserva, tanto como tus clientes como desde el administrador, deberan ingresar un código y este debe coincidir exactamente con alguno de los ingresados en la tabla de esta misma sección.</span>
+						<span class="help-block">Si habilitas esta opción, para guardar una reserva, tanto como tus clientes como desde el administrador, deberan ingresar un código. Este será validado según las opciones que se muestran a continuación.</span>
 					</div>
 				</div>
 				<div class="form-group">
 					<%= f.label :deal_name, 'Etiqueta del Convenio', :class => 'col-sm-3 control-label' %>
 					<div class="col-sm-5">
-						<%= f.text_field :deal_name, :autofocus => true, :class => 'form-control', placeholder: 'Ej: RUT Empresa, Código de Promoción, etc...' %>
+						<%= f.text_field :deal_name, :class => 'form-control', placeholder: 'Ej: RUT Empresa, Código de Promoción, etc...' %>
 						<span class="help-block">Aquí defines el texto de la etiqueta que aparece donde se debe ingresar el código del convenio. Si se deja en blanco, la etiqueta quedará como "Código de Convenio".</span>
+					</div>
+				</div>
+				<div class="form-group">
+					<%= f.label :deal_identification_number, 'Etiqueta es RUT', :class => 'col-sm-3 control-label' %>
+					<div class="col-sm-5">
+						<%= f.check_box :deal_identification_number %>
+						<span class="help-block">Si habilitas esta opción, se validará y dará formato al campo ingresado como si fuera RUT (persona o empresa).</span>
+					</div>
+				</div>
+				<div class="form-group">
+					<%= f.label :deal_quantity, 'Cantidad Permitida', :class => 'col-sm-3 control-label' %>
+					<div class="col-sm-5">
+						<%= f.number_field :deal_quantity, :class => 'form-control' %>
+						<span class="help-block">Cantidad de veces que se puede usar cada convenio por defecto. Si se deja en 0, cada convenio se puede usar ilimitadamente.</span>
+					</div>
+				</div>
+				<div class="form-group">
+					<%= f.label :deal_constraint_option, 'Periodo Restricción', :class => 'col-sm-3 control-label' %>
+					<div class="col-sm-5">
+						<%= f.select :deal_constraint_option, options_for_select([["Sin restricción", 0],["Simultáneo", 1],["Por día", 2],["Por semana", 3],["Por mes", 4]]), {}, {:class => 'form-control'} %>
+						<span class="help-block">Aquí defines si un mismo código puede ser usado más de una vez durante un mismo periodo de tiempo (mismo instante, día, semana o mes).</span>
+					</div>
+				</div>
+				<div class="form-group">
+					<%= f.label :deal_constraint_quantity, 'Límite Restricción', :class => 'col-sm-3 control-label' %>
+					<div class="col-sm-5">
+						<%= f.number_field :deal_constraint_quantity, :class => 'form-control' %>
+						<span class="help-block">Aquí defines cuántas veces puede ser usado un mismo en ese mismo periodo de tiempo. Si se deja en 0, cada convenio se puede usar ilimitadamente en ese mismo periodo de tiempo.</span>
+					</div>
+				</div>
+				<div class="form-group">
+					<%= f.label :deal_exclusive, 'Exclusivo Convenios Creados', :class => 'col-sm-3 control-label' %>
+					<div class="col-sm-5">
+						<%= f.check_box :deal_exclusive %>
+						<span class="help-block">Si habilitas esta opción, sólo se podrán usar códigos que estén previamente creados en la tabla de convenios, al final de esta página.</span>
 					</div>
 				</div>
 				<div class="form-group">
 					<%= f.label :deal_overcharge, 'Sobrecarga Convenios', :class => 'col-sm-3 control-label' %>
 					<div class="col-sm-5">
 						<%= f.check_box :deal_overcharge %>
-						<span class="help-block">Si habilitas esta opción, sólo desde el administrador, podrás sobrecargar las capacidades y límites definidos en cada convenio.</span>
+						<span class="help-block">Si habilitas esta opción, sólo desde el administrador, podrás sobrecargar las capacidades y límites definidos en cada convenio, y la creación de convenios desde el administrador, aunque la opción anterior esté habilitada.</span>
 					</div>
 				</div>
 				<div class="form-group">
