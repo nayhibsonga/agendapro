@@ -195,6 +195,7 @@ class BookingsController < ApplicationController
     @company = Company.find(current_user.company_id)
     @company_setting = @company.company_setting
     staff_code = nil
+    new_booking_params = booking_params.except(:client_first_name, :client_last_name, :client_phone, :client_email, :client_identification_number, :client_address, :client_district, :client_city, :client_birth_day, :client_birth_month, :client_birth_year, :client_age, :client_gender, :staff_code, :deal_code)
     if @company_setting.staff_code
       if booking_params[:staff_code] && !booking_params[:staff_code].empty? && StaffCode.where(company_id: current_user.company_id, code: booking_params[:staff_code]).count > 0
         staff_code = StaffCode.where(company_id: current_user.company_id, code: booking_params[:staff_code]).first.id
@@ -227,7 +228,6 @@ class BookingsController < ApplicationController
         return
       end
     end
-    @booking = Booking.new(new_booking_params)
     if @company_setting.client_exclusive
       if !booking_params[:client_id].nil? && !booking_params[:client_id].empty? && !booking_params[:client_identification_number].empty?
         @client = Client.find(booking_params[:client_id])
