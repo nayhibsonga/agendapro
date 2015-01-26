@@ -120,6 +120,9 @@ $(function () {
       $('#first_name').val(client.first_name);
       $('#last_name').val(client.last_name);
       $('#email').val(client.email);
+      if (client.email) {
+        $('#send_mail').prop('checked', true);
+      };
       $('#phone').val(client.phone);
       $('#identification_number').val(client.identification_number);
       $('#name').blur();
@@ -142,6 +145,9 @@ $(function () {
       $('#first_name').val(client.first_name);
       $('#last_name').val(client.last_name);
       $('#email').val(client.email);
+      if (client.email) {
+        $('#send_mail').prop('checked', true);
+      };
       $('#phone').val(client.phone);
       $('#identification_number').val(client.identification_number);
       $('#email').blur();
