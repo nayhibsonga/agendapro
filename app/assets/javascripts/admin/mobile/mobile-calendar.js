@@ -113,6 +113,7 @@ $(function() {
     weekdaysShort: ['Dom', 'Lun', 'Mar', 'Mier', 'Jue', 'vie', 'Sáb'],
     today: 'Hoy',
     clear: '',
+    close: 'Cerrar',
     firstDay: 1,
     format: 'ddd dd/mm/yyyy',
     formatSubmit: 'yyyy/mm/dd',
