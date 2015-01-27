@@ -27,13 +27,17 @@ class ClientMailer < ActionMailer::Base
 			{
 				:name => 'COMPANYNAME',
 				:content => Company.find(current_user.company_id).name
+			},
+			{
+				:name => 'URL',
+				:content => Company.find(current_user.company_id).web_address
 			}
 		],
 		:tags => ['client_mail', 'Client'],
 		:images => [
 				{
 					:type => 'image/png',
-					:name => 'company.jpg',
+					:name => 'LOGO',
 					:content => Base64.encode64(File.read('app/assets/images/logos/logodoble2.png'))
 				}
 			],
@@ -44,7 +48,7 @@ class ClientMailer < ActionMailer::Base
 	if Company.find(current_user.company_id).logo_url
 		company_logo = {
 			:type => MIME::Types.type_for(Company.find(current_user.company_id).logo_url).first.content_type,
-			:name => 'company.jpg',
+			:name => 'LOGO',
 			:content => Base64.encode64(File.read('public' + Company.find(current_user.company_id).logo_url.to_s))
 		}
 		message[:images] = [company_logo]
