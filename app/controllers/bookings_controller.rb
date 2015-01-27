@@ -231,7 +231,6 @@ class BookingsController < ApplicationController
         return
       end
     end
-    @booking = Booking.new(new_booking_params)
     if @company_setting.client_exclusive
       if !booking_params[:client_id].nil? && !booking_params[:client_id].empty? && !booking_params[:client_identification_number].empty?
         @client = Client.find(booking_params[:client_id])
