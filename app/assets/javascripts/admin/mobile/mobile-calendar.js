@@ -106,18 +106,7 @@ $(function() {
     window.location.href = "/bookings/new?" + $.param({location: $('#locals-selector').val()});
   });
 
-  var datepicker = $('#today').pickadate({
-    monthsFull: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
-    monthsShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
-    weekdaysFull: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'],
-    weekdaysShort: ['Dom', 'Lun', 'Mar', 'Mier', 'Jue', 'vie', 'Sáb'],
-    today: 'Hoy',
-    clear: '',
-    close: 'Cerrar',
-    firstDay: 1,
-    format: 'ddd dd/mm/yyyy',
-    formatSubmit: 'yyyy/mm/dd',
-    hiddenName: true,
+  picker = datepicker('#today', {
     onSet: function (context) {
       if (context.select) {
         var val = $('#today').val();
@@ -130,7 +119,6 @@ $(function() {
       };
     }
   });
-  picker = datepicker.pickadate('picker');
   $('#prev').click(function() {
     $('#calendar').fullCalendar('prev');
     var d = $('#calendar').fullCalendar('getDate');

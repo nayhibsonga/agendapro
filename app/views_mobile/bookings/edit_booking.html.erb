@@ -45,13 +45,11 @@
 <% end %>
 
 <% content_for :stylesheets do %>
-<%= stylesheet_link_tag "default" %>
-<%= stylesheet_link_tag "default.date" %>
+<%= stylesheet_link_tag "datepicker" %>
 <% end %>
 
 <% content_for :scripts do %>
-<%= javascript_include_tag "picker" %>
-<%= javascript_include_tag "picker.date" %>
+<%= javascript_include_tag "datepicker" %>
 <%= javascript_include_tag "mobile/workflow" %>
 <script type="text/javascript">
   $(document).ready(function(){
@@ -77,18 +75,10 @@
       $('#datepicker').val(date);
       $('#form-date').submit();
     });
-    $('span.center-block').pickadate({
-      monthsFull: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
-      monthsShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
-      weekdaysFull: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'],
-      weekdaysShort: ['Dom', 'Lun', 'Mar', 'Mier', 'Jue', 'vie', 'Sáb'],
-      today: 'Hoy',
-      clear: '',
-      firstDay: 1,
+
+    datepicker('span.center-block', {
       min: true,
       format: 'dddd d !de mmmm !de yyyy',
-      formatSubmit: 'yyyy/mm/dd',
-      hiddenName: true,
       onSet: function (context) {
         if (context.select) {
           $('#datepicker').val(new Date(context.select));

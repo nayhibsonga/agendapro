@@ -98,14 +98,12 @@
 <% end %>
 
 <% content_for :stylesheets do %>
-<%= stylesheet_link_tag "default" %>
-<%= stylesheet_link_tag "default.date" %>
+<%= stylesheet_link_tag "datepicker" %>
 <% end %>
 
 <% content_for :scripts do %>
 <%= javascript_include_tag "mobile/workflow" %>
-<%= javascript_include_tag "picker" %>
-<%= javascript_include_tag "picker.date" %>
+<%= javascript_include_tag "datepicker" %>
 <script type="text/javascript">
   $(document).ready(function(){
     $('.btn-wide').click(function () {

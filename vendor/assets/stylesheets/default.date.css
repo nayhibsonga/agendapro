@@ -55,7 +55,7 @@
 }
 .picker__select--month:focus,
 .picker__select--year:focus {
-  border-color: #1ba970;
+  border-color: #0089ec;
 }
 /**
  * The month navigation buttons.
@@ -112,7 +112,7 @@
 .picker__nav--next:hover {
   cursor: pointer;
   color: #000000;
-  background: #adf0d1;
+  background: #b1dcfb;
 }
 .picker__nav--disabled,
 .picker__nav--disabled:hover,
@@ -179,7 +179,7 @@
   right: 2px;
   width: 0;
   height: 0;
-  border-top: 0.5em solid #22c488;
+  border-top: 0.5em solid #0059bc;
   border-left: .5em solid transparent;
 }
 .picker__day--disabled:before {
@@ -192,21 +192,21 @@
 .picker__day--outfocus:hover {
   cursor: pointer;
   color: #000000;
-  background: #adf0d1;
+  background: #b1dcfb;
 }
 .picker__day--highlighted {
-  border-color: #1ba970;
+  border-color: #0089ec;
 }
 .picker__day--highlighted:hover,
 .picker--focused .picker__day--highlighted {
   cursor: pointer;
   color: #000000;
-  background: #adf0d1;
+  background: #b1dcfb;
 }
 .picker__day--selected,
 .picker__day--selected:hover,
 .picker--focused .picker__day--selected {
-  background: #1ba970;
+  background: #0089ec;
   color: #ffffff;
 }
 .picker__day--disabled,
@@ -241,13 +241,13 @@
 .picker__button--clear:hover {
   cursor: pointer;
   color: #000000;
-  background: #adf0d1;
-  border-bottom-color: #adf0d1;
+  background: #b1dcfb;
+  border-bottom-color: #b1dcfb;
 }
 .picker__button--today:focus,
 .picker__button--clear:focus {
-  background: #adf0d1;
-  border-color: #1ba970;
+  background: #b1dcfb;
+  border-color: #0089ec;
   outline: none;
 }
 .picker__button--today:before,
@@ -261,7 +261,7 @@
   margin-right: .45em;
   top: -0.05em;
   width: 0;
-  border-top: 0.66em solid #22c488;
+  border-top: 0.66em solid #0059bc;
   border-left: .66em solid transparent;
 }
 .picker__button--clear:before {
