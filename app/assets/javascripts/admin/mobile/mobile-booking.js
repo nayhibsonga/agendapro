@@ -74,6 +74,19 @@ function saveBooking (typeURL, booking_id) {
   });
 }
 
+function validateMail () {
+  var $regex = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+  var $email = $('#email').val();
+
+  if ($email != '' && $regex.test($email)) {
+    $('#send_mail').prop('checked', true);
+    window.console.log(true)
+  } else {
+    $('#send_mail').prop('checked', false);
+    window.console.log(false)
+  };
+}
+
 $(function () {
   split_name ('#name', '#first_name', '#last_name');
 
@@ -106,6 +119,10 @@ $(function () {
     };
   });
 
+  $('#email').change(function (event) {
+    validateMail();
+  });
+
   $('#name').autocomplete({
     source: '/clients_name_suggestion',
     appendTo: '#name_suggestion',
@@ -120,12 +137,10 @@ $(function () {
       $('#first_name').val(client.first_name);
       $('#last_name').val(client.last_name);
       $('#email').val(client.email);
-      if (client.email) {
-        $('#send_mail').prop('checked', true);
-      };
       $('#phone').val(client.phone);
       $('#identification_number').val(client.identification_number);
       $('#name').blur();
+      validateMail();
     }
   }).data( "ui-autocomplete" )._renderItem = function( ul, item ) {
     return $( '<li>' ).append( '<a>' + item.label + '<br><span class="auto-desc">' + item.desc + '</span></a>' ).appendTo( ul );
@@ -145,12 +160,10 @@ $(function () {
       $('#first_name').val(client.first_name);
       $('#last_name').val(client.last_name);
       $('#email').val(client.email);
-      if (client.email) {
-        $('#send_mail').prop('checked', true);
-      };
       $('#phone').val(client.phone);
       $('#identification_number').val(client.identification_number);
       $('#email').blur();
+      validateMail();
     }
   }).data( "ui-autocomplete" )._renderItem = function( ul, item ) {
     return $( '<li>' ).append( '<a>' + item.label + '<br><span class="auto-desc">' + item.desc + '</span></a>' ).appendTo( ul );
