@@ -8,12 +8,6 @@ $(function() {
 			'date': {
 				required: true
 			},
-			'start': {
-				require: true
-			},
-			'end': {
-				require: true
-			},
 			'booking[service_provider]': {
 				required: true
 			},
@@ -33,12 +27,6 @@ $(function() {
 			}
 		},
 		messages: {
-			'start': {
-				require_from_group: 'Debe elegir una hora.'
-			},
-			'end': {
-				require_from_group: 'Debe elegir una hora.'
-			},
 			'booking_staff_code': {
 				remote: 'El código es incorrecto, por favor inténtalo nuevamente.'
 			}

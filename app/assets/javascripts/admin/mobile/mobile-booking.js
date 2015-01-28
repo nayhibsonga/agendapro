@@ -107,7 +107,7 @@ $(function () {
 
   $('button[type="submit"]').click(function (event) {
     event.preventDefault();
-    if (validator.valid()) {
+    if ($('form').valid()) {
       $(this).addClass('disabled');
       $(this).html($(this).data('loading'));
       var booking = '';

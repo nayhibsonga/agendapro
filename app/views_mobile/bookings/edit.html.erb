@@ -26,14 +26,14 @@
             <div class="form-group">
               <%= label_tag :start, 'Hora Inicio', class: 'control-label col-xs-3' %>
               <div class="col-xs-9">
-                <%= time_field_tag :start, @booking.start.strftime('%H:%M'), step: 300, class: 'form-control' %>
+                <%= time_field_tag :start, @booking.start.strftime('%H:%M'), step: 300, class: 'form-control', required: true %>
                 <span class="help-block"></span>
               </div>
             </div>
             <div class="form-group">
               <%= label_tag :end, 'Hora Termino', class: 'control-label col-xs-3' %>
               <div class="col-xs-9">
-                <%= time_field_tag :end, @booking.end.strftime('%H:%M'), step: 300, class: 'form-control' %>
+                <%= time_field_tag :end, @booking.end.strftime('%H:%M'), step: 300, class: 'form-control', required: true %>
               </div>
             </div>
             <div class="form-group">
