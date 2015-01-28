@@ -75,6 +75,14 @@
             <td>Tiempo</td>
             <td><%= @booking.start.strftime('%H:%M') %> - <%= @booking.end.strftime('%H:%M') %></td>
           </tr>
+          <tr>
+            <td>Notas</td>
+            <td><%= @booking.notes %></td>
+          </tr>
+          <tr>
+            <td>Comentario Interno</td>
+            <td><%= @booking.company_comment %></td>
+          </tr>
         </tbody>
       </table>
     </div>
