@@ -91,7 +91,12 @@
           <%= hidden_field_tag :last_name %>
           <%= label_tag :name, 'Nombre', class: 'control-label col-xs-3' %>
           <div class="col-xs-9">
-            <%= text_field_tag :name, nil, class: 'form-control' %>
+            <div class="input-group">
+              <%= text_field_tag :name, nil, class: 'form-control' %>
+              <span class="input-group-btn">
+                <button class="btn btn-red" type="button" id="clear" name="clear" disabled><i class="fa fa-times-circle"></i></button>
+              </span>
+            </div>
             <span class="help-block"></span>
             <ul id="name_suggestion"></ul>
           </div>

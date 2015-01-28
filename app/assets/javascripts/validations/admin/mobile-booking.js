@@ -2,7 +2,13 @@ var validator;
 $(function() {
 	validator = $('form').validate({
 		errorPlacement: function(error, element) {
-			error.appendTo(element.next());
+			var id = element.attr('id');
+			if (element.attr('id') == 'name') {
+				error.appendTo(element.parent().next());
+			}
+			else {
+				error.appendTo(element.next());
+			};
 		},
 		rules: {
 			'date': {

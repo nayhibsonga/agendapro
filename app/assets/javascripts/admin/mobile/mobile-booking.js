@@ -133,6 +133,8 @@ $(function () {
       event.preventDefault();
       var client = eval("(" + ui.item.value + ")");
       $('#name').val(client.first_name + ' ' + client.last_name);
+      $('#name').prop('disabled', true);
+      $('#clear').prop('disabled', false);
       $('#booking_client').val(client.id);
       $('#first_name').val(client.first_name);
       $('#last_name').val(client.last_name);
@@ -156,6 +158,8 @@ $(function () {
       event.preventDefault();
       var client = eval("(" + ui.item.value + ")");
       $('#name').val(client.first_name + ' ' + client.last_name);
+      $('#name').prop('disabled', true);
+      $('#clear').prop('disabled', false);
       $('#booking_client').val(client.id);
       $('#first_name').val(client.first_name);
       $('#last_name').val(client.last_name);
@@ -168,4 +172,14 @@ $(function () {
   }).data( "ui-autocomplete" )._renderItem = function( ul, item ) {
     return $( '<li>' ).append( '<a>' + item.label + '<br><span class="auto-desc">' + item.desc + '</span></a>' ).appendTo( ul );
   };
+
+  $('#clear').click(function (event) {
+    $(this).prop('disabled', true);
+    $('#name').prop('disabled', false);
+    $('#booking_client').val('');
+    $('#name').val('');
+    $('#email').val('');
+    $('#send_mail').prop('checked', false);
+    $('#phone').val('');
+  });
 });
