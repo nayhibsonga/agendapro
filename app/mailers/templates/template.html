@@ -6346,110 +6346,34 @@
       }
     </style>
     <style type="text/css">
-      /*AgendaPro*/
-      table.wrapper {
-        width: 100%;
-        color: #505050;
-        border-spacing: 15px;
+      html,
+      body {
+        font-family: Helvetica, Arial, sans-serif;
+        background: #ffffff;
+        font-size: 12px;
+        font-weight: lighter;
       }
-      /*.wrapper {
-        padding-right: 15px;
-        padding-left: 15px;
-        margin-right: auto;
-        margin-left: auto;
-      }*/
-      /*table.wrapper > tbody > tr > td {
-        padding-right: 15px;
-        padding-left: 15px;
-      }*/
       .pull-center {
         text-align: center;
         margin-left: auto;
         margin-right: auto;
       }
-      tr.header {
-        background-color: #22c488;
-      }
-      tr.header > td {
-        padding: 5px;
-      }
-      tr.logo > td {
-        padding-top: 10px;
+      .content {
+        font-family: Helvetica, Arial;
+        font-size: 12px;
+        font-weight: lighter;
         margin-right: auto;
         margin-left: auto;
-        text-align: center;
-      }
-      tr.body > td {
-        padding-top: 10px;
-        padding-bottom: 15px;
         padding-right: 15px;
         padding-left: 15px;
-      }
-      tr.body + tr.body > td {
-        padding-top: 0;
-      }
-      tr.footer {
-        background-color: #505050;
-        color: #ffffff;
-        font-size: 13px;
-      }
-      tr.footer > td {
-        padding: 30px 0;
-        padding-right: 15px;
-        padding-left: 15px;
-      }
-      table.content {
         width: 100%;
+        max-width: 600px;
+        border: 1px solid #727171;
+        color: #505050;
+        background: #ffffff;
       }
-      table.content tr > td {
-        padding-left: 10px;
-        padding-right: 10px;
-      }
-      tr.fluid > td {
-        width: 50%;
-        vertical-align: top;
-      }
-      .header p {
-        margin-bottom: 0;
-      }
-      .header p > a {
-        color: #ffffff;
-      }
-      .header p > a:hover,
-      .header p > a:focus,
-      .header p > a:active {
-        text-decoration: none;
-        color: #ffffff;
-      }
-      .footer img {
-        float: left;
-        margin-right: 15px;
-        width: 25px;
-      }
-      .logo {
-        width: 50%;
-        max-width: 118px;
-      }
-      .text-green {
-        color: #22c488;
-      }
-      a.text-orange {
-        color: #fd9610;
-      }
-      a.text-orange:hover,
-      a.text-orange:focus,
-      a.text-orange:active {
-        color: #db7400;
-        text-decoration: none;
-      }
-      tr.background-light-gray {
-        background-color: #cbcbcb;
-        color: #ffffff;
-      }
-      tr.background-light-gray > td {
-        padding-bottom: 5px !important;
-        padding-top: 5px !important;
-      }
+
+      /* Buttons */
       .btn-orange {
         color: #ffffff;
         background-color: #fd9610;
@@ -6478,107 +6402,152 @@
         background-color: #1ba970;
         border-color: #00CA8A;
       }
-      .btn-action {
-        margin-left: 15px;
-        margin-right: 15px;
+      .btn-red {
+        color: #ffffff;
+        background-color: #fd633f;
+        border-color: #e55938;
       }
-      .vertical-divider {
-        border-right: 1px solid #949292;
-        height: 60px;
-        display: inline-block;
-        vertical-align: middle;
-        margin: 0 4px;
+      .btn-red:hover,
+      .btn-red:focus,
+      .btn-red.focus,
+      .btn-red:active,
+      .btn-red.active {
+        color: #ffffff;
+        background-color: #e55938;
+        border-color: #CD4E31;
       }
-      dl > dt {
-        font-weight: normal;
+
+      /* Backgrounds */
+      .background-light-grey {
+        margin-right: -15px;
+        margin-left: -15px;
+        padding: 5px 15px;
+        background: #f1f4f5;
+        color: #727171;
+        text-align: center;
+        font-size: 10px;
+        min-height: 24px;
+      }
+      .background-light-grey a,
+      .background-light-grey a:hover,
+      .background-light-grey a:active {
+        color: #505050;
+        text-decoration: none;
+      }
+      .background-dark-grey {
+        margin-right: -15px;
+        margin-left: -15px;
+        padding: 5px 15px;
+        background: #d2d3d3;
+        color: #ffffff;
+        text-align: center;
+        min-height: 30px;
+      }
+      .background-green {
+        margin-right: -15px;
+        margin-left: -15px;
+        padding: 10px 20px;
+        background: #22c488;
+        color: #ffffff;
+        min-height: 30px;
+        font-size: 12px;
         margin-top: 10px;
-      }
-      dl > dd {
-        color: #949292;
         margin-bottom: 10px;
       }
-      @media screen and (max-width: 767px) {
-        tr.fluid > td {
-          width: 100%;
-          display: inline-block;
-        }
-        tr.footer {
-          font-size: 12px;
-        }
-        tr.footer > td {
-          padding: 10px 5px;
-        }
-        .btn-action {
-          margin: 10px 0;
-          display: block;
-          width: 100%;
-        }
+      .background-light-grey.footer {
+        padding-top: 30px;
+        padding-bottom: 30px;
+        font-size: 12px;
+        word-wrap: break-word;
+      }
+
+      /* General */
+      .logo {
+        width: 50%;
+        max-width: 118px;
+      }
+      .footer {
+        text-align: initial;
+        padding-top: 5px;
+        padding-bottom: 5px;
+        padding-left: 30px;
+        padding-right: 30px;
+        font-size: 10px;
+      }
+      .footer img {
+        margin-left: -1px;
+        margin-right: 10px;
+        width: 20px;
+        display: inline;
+        vertical-align: top;
+      }
+      h4 {
+        font-size: 20px;
       }
     </style>
     <!-- end: CSS -->
   </head>
 
   <body>
-    <table class="wrapper">
-      <!-- start: Header -->
-      <tr class="header">
-        <td colspan="2">
-          <p class="text-center"><a href="http://www.agendapro.cl" target="_blank">www.agendapro.cl</a></p>
-        </td>
-      </tr>
-      <!-- end: Header -->
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-xs-12">
+          <div class="content">
+            <!-- Start: Header -->
+            <div class="background-light-grey" style="margin-bottom: 10px;">
+              <div class="row">
+                <div class="col-xs-12">
+                  <a href="http://*|URL|*.agendapro.cl" target="_blanck">*|URL|*.agendapro.cl</a>
+                </div>
+              </div>
+            </div>
+            <!-- End: Header -->
 
-      <!-- start: Logo -->
-      <tr class="logo">
-        <td colspan="2">
-          <img src="cid:agendapro.png" alt="AgendaPro" class="logo">
-          *|IF:company.jpg|*
-          <div class="vertical-divider"></div>
-          <img src="cid:company.jpg" alt="Company Name" class="logo">
-          *|END:IF|*
-        </td>
-      </tr>
-      <!-- end: Logo -->
+            <!-- Start: Content -->
+            <div class="row">
+              <div class="col-xs-12">
+                <div class="pull-center">
+                  <img src="cid:LOGO" class="logo" alt="Logo">
+                </div>
+              </div>
+            </div>
+            <!-- End: Content -->
 
-      <!-- start: Content -->
-      <tr class="body">
-      </tr>
-      <!-- end: Content -->
-
-      <!-- start: footer -->
-      <tr class="footer fluid">
-        <td>
-          <table class="content">
-            <tr>
-              <td>
-                <p>Este es un email automático, para contactar a la empresa por favor responde este correo.</p>
-              </td>
-            </tr>
-            <tr>
-              <td>
-                <a href="http://agendapro.cl/home" target="_blank" class="text-orange">¿Quieres unirte a AgendaPro?</a>
-              </td>
-            </tr>
-          </table>
-        </td>
-        <td>
-          <table class="content">
-            <tr>
-              <td>
-                <img src="http://agendapro.cl/assets/footer/1.png">
-                <p>Nuestra Señora de los Angeles 185, Oficina D, Las Condes, Santiago</p>
-              </td>
-            </tr>
-            <tr>
-              <td>
-                <img src="http://agendapro.cl/assets/footer/3.png">
-                <p>(+56 9) 5178 5898</p>
-              </td>
-            </tr>
-          </table>
-        </td>
-      </tr>
-      <!-- end: footer -->
-    </table>
+            <!-- Start: Footer -->
+            <div class="background-light-grey footer" style="margin-top: 10px;">
+              <div class="row">
+                <div class="col-xs-4">
+                  <p class="text-left">
+                    <img src="http://agendapro.cl/assets/email/address.png" alt="Direccion">
+                    Nuestra Señora de los Angeles 185, Oficina D, Las Condes
+                  </p>
+                </div>
+                <div class="col-xs-4">
+                  <p class="text-center">
+                    <img src="http://agendapro.cl/assets/email/phone.png" alt="Telefono">
+                    (+56 9) 5178 5898
+                  </p>
+                </div>
+                <div class="col-xs-4">
+                  <p class="text-right">
+                    <img src="http://agendapro.cl/assets/email/email.png" alt="E-mail">
+                    contacto@agendapro.cl
+                  </p>
+                </div>
+              </div>
+            </div>
+            <div class="row footer">
+              <div class="col-xs-6">
+                <p class="text-left" style="margin-bottom: 0;">Este es un email automático, para contactar a la empresa por favor responde este correo.</p>
+              </div>
+              <div class="col-xs-6">
+                <p class="text-right" style="margin-bottom: 0;">Copyright 2013 | Gunei Investment SpA | Todos los derechos reservados</p>
+              </div>
+            </div>
+            <!-- End: Footer -->
+          </div>
+        </div>
+      </div>
+    </div>
   </body>
 </html>

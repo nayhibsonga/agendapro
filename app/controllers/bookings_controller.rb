@@ -365,8 +365,8 @@ class BookingsController < ApplicationController
 
   def provider_booking
     statusIcon = [" blocked", " reserved", " confirmed", " completed", " payed", " cancelled", " noshow", " break"]
-    backColors = ["#9d9d9d", "#0f91cf", "#fbcb5d", "#db7dcf", "#6bcfa1", "#FAFCAF", "#FFB6AE", "#fb8e74"]
-    textColors = ["#676767", "#0b587b", "#d1a94e", "#aa5fa0", "#58ab85", "#505205", "#551004", "#d47760"]
+    backColors = ["#cacaca", "#77d0fa", "#fbe09f", "#fab5fb", "#adf0d1", "#FAFCAF", "#fbc1b3", "#a6a5a5"]
+    textColors = ["#707070", "#0b587d", "#a78a47", "#8e508f", "#4c8b6e", "#505205", "#a15240", "#737373"]
     if params[:provider] != "0"
       @providers = ServiceProvider.where(:id => params[:provider])
     else
@@ -425,7 +425,7 @@ class BookingsController < ApplicationController
           start: booking.start,
           end: booking.end,
           resourceId: booking.service_provider_id,
-          textColor: "#ffffff",
+          textColor: textColors[booking.status_id],
           borderColor: textColors[booking.status_id],
           backgroundColor: backColors[booking.status_id],
           className: originClass,
@@ -454,9 +454,9 @@ class BookingsController < ApplicationController
         start: provider_break.start,
         end: provider_break.end,
         resourceId: provider_break.service_provider_id,
-        textColor: "#ffffff",
-        borderColor: textColors[0],
-        backgroundColor: backColors[0]
+        textColor: textColors[7],
+        borderColor: textColors[7],
+        backgroundColor: backColors[7]
       }
       events.push(event)
     end
@@ -478,7 +478,7 @@ class BookingsController < ApplicationController
         start: start_date,
         end: end_date,
         resourceId: provider.id,
-        textColor: "#ffffff",
+        textColor: textColors[0],
         borderColor: textColors[0],
         backgroundColor: backColors[0]
       }
@@ -498,7 +498,7 @@ class BookingsController < ApplicationController
           start: time_end,
           end: time_start,
           resourceId: provider.id,
-          textColor: "#ffffff",
+          textColor: textColors[0],
           borderColor: textColors[0],
           backgroundColor: backColors[0]
         }

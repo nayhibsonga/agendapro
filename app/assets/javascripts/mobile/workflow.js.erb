@@ -64,17 +64,9 @@ function loadProviders (localId, serviceId) {
       var maxDate = new Date($('#timeInterval').data('max'));
 
       $('#datepicker').attr('disabled', false);
-      $('#datepicker').pickadate({
-        monthsFull: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
-        monthsShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
-        weekdaysFull: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'],
-        weekdaysShort: ['Dom', 'Lun', 'Mar', 'Mier', 'Jue', 'vie', 'Sáb'],
-        today: 'Hoy',
-        clear: '',
-        firstDay: 1,
+      datepicker('#datepicker', {
         format: 'dddd d !de mmmm !de yyyy',
-        formatSubmit: 'yyyy/mm/dd',
-        hiddenName: true,
+        min: true,
         klass: {
           input: 'datepicker'
         },
@@ -95,17 +87,8 @@ function loadProviders (localId, serviceId) {
         var maxDate = new Date($('#timeInterval').data('max'));
 
         $('#datepicker').attr('disabled', false);
-        $('#datepicker').pickadate({
-          monthsFull: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
-          monthsShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
-          weekdaysFull: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'],
-          weekdaysShort: ['Dom', 'Lun', 'Mar', 'Mier', 'Jue', 'vie', 'Sáb'],
-          today: 'Hoy',
-          clear: '',
-          firstDay: 1,
+        datepicker('#datepicker', {
           format: 'dddd d !de mmmm !de yyyy',
-          formatSubmit: 'yyyy/mm/dd',
-          hiddenName: true,
           min: minDate,
           max: maxDate,
           klass: {

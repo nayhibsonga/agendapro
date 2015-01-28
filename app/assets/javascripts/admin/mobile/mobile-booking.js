@@ -49,7 +49,9 @@ function saveBooking (typeURL, booking_id) {
     'client_phone': $('#phone').val(),
     'send_mail': $('#send_mail').prop('checked'),
     "client_identification_number": $('#identification_number').val(),
-    "staff_code": $('#booking_staff_code').val()
+    "staff_code": $('#booking_staff_code').val(),
+    "notes": $('#booking_notes').val(),
+    "company_comment": $('#booking_company_comment').val()
   }
   $.ajax({
     type: typeURL,
@@ -74,6 +76,19 @@ function saveBooking (typeURL, booking_id) {
   });
 }
 
+function validateMail () {
+  var $regex = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+  var $email = $('#email').val();
+
+  if ($email != '' && $regex.test($email)) {
+    $('#send_mail').prop('checked', true);
+    window.console.log(true)
+  } else {
+    $('#send_mail').prop('checked', false);
+    window.console.log(false)
+  };
+}
+
 $(function () {
   split_name ('#name', '#first_name', '#last_name');
 
@@ -94,14 +109,20 @@ $(function () {
 
   $('button[type="submit"]').click(function (event) {
     event.preventDefault();
-    $(this).addClass('disabled');
-    $(this).html($(this).data('loading'));
-    var booking = '';
-    if ($(this).data('id')) {
-      booking = '/' + $(this).data('id');
+    if ($('form').valid()) {
+      $(this).addClass('disabled');
+      $(this).html($(this).data('loading'));
+      var booking = '';
+      if ($(this).data('id')) {
+        booking = '/' + $(this).data('id');
+      };
+      var url = $(this).data('url');
+      saveBooking(url, booking);
     };
-    var url = $(this).data('url');
-    saveBooking(url, booking);
+  });
+
+  $('#email').change(function (event) {
+    validateMail();
   });
 
   $('#name').autocomplete({
@@ -114,6 +135,8 @@ $(function () {
       event.preventDefault();
       var client = eval("(" + ui.item.value + ")");
       $('#name').val(client.first_name + ' ' + client.last_name);
+      $('#name').prop('disabled', true);
+      $('#clear').prop('disabled', false);
       $('#booking_client').val(client.id);
       $('#first_name').val(client.first_name);
       $('#last_name').val(client.last_name);
@@ -121,6 +144,7 @@ $(function () {
       $('#phone').val(client.phone);
       $('#identification_number').val(client.identification_number);
       $('#name').blur();
+      validateMail();
     }
   }).data( "ui-autocomplete" )._renderItem = function( ul, item ) {
     return $( '<li>' ).append( '<a>' + item.label + '<br><span class="auto-desc">' + item.desc + '</span></a>' ).appendTo( ul );
@@ -136,6 +160,8 @@ $(function () {
       event.preventDefault();
       var client = eval("(" + ui.item.value + ")");
       $('#name').val(client.first_name + ' ' + client.last_name);
+      $('#name').prop('disabled', true);
+      $('#clear').prop('disabled', false);
       $('#booking_client').val(client.id);
       $('#first_name').val(client.first_name);
       $('#last_name').val(client.last_name);
@@ -143,8 +169,19 @@ $(function () {
       $('#phone').val(client.phone);
       $('#identification_number').val(client.identification_number);
       $('#email').blur();
+      validateMail();
     }
   }).data( "ui-autocomplete" )._renderItem = function( ul, item ) {
     return $( '<li>' ).append( '<a>' + item.label + '<br><span class="auto-desc">' + item.desc + '</span></a>' ).appendTo( ul );
   };
+
+  $('#clear').click(function (event) {
+    $(this).prop('disabled', true);
+    $('#name').prop('disabled', false);
+    $('#booking_client').val('');
+    $('#name').val('');
+    $('#email').val('');
+    $('#send_mail').prop('checked', false);
+    $('#phone').val('');
+  });
 });
