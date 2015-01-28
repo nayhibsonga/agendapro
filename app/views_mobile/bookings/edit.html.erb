@@ -111,9 +111,9 @@
             </div>
             <% if @company.company_setting.client_exclusive %>
             <div class="form-group">
-              <%= f.label :identification_number, "RUT", class: "control-label col-xs-3" %>
+              <%= label_tag :identification_number, "RUT", class: "control-label col-xs-3" %>
               <div class="col-xs-9">
-                <%= f.text_field :identification_number, class: "form-control" %>
+                <%= text_field_tag :identification_number, class: "form-control" %>
               </div>
             </div>
             <% end %>
