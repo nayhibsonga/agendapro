@@ -5,6 +5,7 @@ Company.all.each do |c|
 		cs = CompanySetting.new
 		cs.company_id = c.id
 		cs.save
+		c.save
 
 	end
 
