@@ -84,9 +84,6 @@
 				<li><div id="dp" class="lateralDatepicker"></div></li>
 				<% end %>
 				<% if current_user.role_id == Role.find_by_name("Super Admin").id %>
-				<!--<li><%= link_to '<i class="fa fa-building fa-fw"></i><span class="remove-txt"> Empresas</span>'.html_safe, companies_path, { :class => if controller.controller_name == "companies" then "active" end } %></li>-->
-				<% end %>
-				<% if current_user.role_id == Role.find_by_name("Super Admin").id %>
 					<li>
 						<%= link_to '<i class="fa fa-building fa-fw"></i><span class="remove-txt"> Control de gestión</span>'.html_safe, '/companies_payments', { :class => "submenu" }  %>
 					</li>
