@@ -194,9 +194,11 @@ class PuntoPagosController < ApplicationController
   def failure
     if PuntoPagosConfirmation.find_by_token(params[:token])
       trx_id = PuntoPagosConfirmation.find_by_token(params[:token]).trx_id
-      failed_booking = Booking.find_by_trx_id(trx_id)
-      @booking = Booking.new(failed_booking.attributes.to_options)
-      failed_booking.destroy
+      if(Booking.find_by_trx_id(trx_id))
+        failed_booking = Booking.find_by_trx_id(trx_id)
+        @booking = Booking.new(failed_booking.attributes.to_options)
+        failed_booking.destroy
+      end
     elsif Booking.find_by_token(params[:token]) #Cuando el servicio está caído y no hay notificación
       failed_booking = Booking.find_by_token(params[:token])
       @booking = Booking.new(failed_booking.attributes.to_options)
