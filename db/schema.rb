@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150122135732) do
+ActiveRecord::Schema.define(version: 20150127154214) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -55,6 +55,15 @@ ActiveRecord::Schema.define(version: 20150122135732) do
   add_index "billing_logs", ["company_id"], name: "index_billing_logs_on_company_id", using: :btree
   add_index "billing_logs", ["plan_id"], name: "index_billing_logs_on_plan_id", using: :btree
   add_index "billing_logs", ["transaction_type_id"], name: "index_billing_logs_on_transaction_type_id", using: :btree
+
+  create_table "billing_records", force: true do |t|
+    t.integer  "company_id"
+    t.float    "amount"
+    t.date     "date"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.integer  "transaction_type_id"
+  end
 
   create_table "booking_histories", force: true do |t|
     t.integer  "booking_id"

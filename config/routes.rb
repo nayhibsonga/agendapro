@@ -64,6 +64,7 @@ Agendapro::Application.routes.draw do
   post '/quick_add/services', :to => 'quick_add#create_services'
   post '/quick_add/service_provider', :to => 'quick_add#create_service_provider'
   patch '/quick_add/update_company', :to => 'quick_add#update_company'
+  #post '/quick_add/update_settings', :to => 'quick_add#update_settings'
 
   # Reporting
   get '/dashboard', :to => 'dashboard#index', :as => 'dashboard'
@@ -139,6 +140,17 @@ Agendapro::Application.routes.draw do
   get "/logs/plan_logs", :to => 'plans#plan_logs', :as => 'plan_logs'
   get "/logs/billing_logs", :to => 'plans#billing_logs', :as => 'billing_logs'
   get "/company/:id/add_month", :to => 'companies#add_month', :as => 'add_month'
+  get "/companies_payments", :to => 'companies#manage'
+  get "/manage_company/:id", :to => 'companies#manage_company'
+  get "/companies/new_payment/:id", :to => 'companies#new_payment'
+  post "/companies/add_payment", :to => 'companies#add_payment'
+  get "/get_year_incomes", :to => 'companies#get_year_incomes'
+  get "/get_year_bookings", :to => 'companies#get_year_bookings'
+  get '/companies_incomes', :to => 'companies#incomes'
+  get '/companies_locations', :to => 'companies#locations'
+  get '/companies_monthly_locations', :to => 'companies#monthly_locations'
+  get '/companies_monthly_bookings', :to => 'companies#monthly_bookings'
+  post '/companies/update_company', :to => 'companies#update_company'
 
   # Search
   get "searchs/index"
@@ -234,6 +246,7 @@ Agendapro::Application.routes.draw do
   get '/iframe/facebook_success', :to => 'iframe#facebook_success', :as => 'facebook_success'
   get '/iframe/facebook_addtab', :to => 'iframe#facebook_addtab', :as => 'facebook_addtab'
   get '/company_settings/:id/delete_facebook_pages', :to => 'company_settings#delete_facebook_pages', :as => 'delete_facebook_pages'
+  post '/company_settings/update_payment', :to => 'company_settings#update_payment'
 
   # Payed Bookings
   get "/company_bookings", :to => 'payed_bookings#show'

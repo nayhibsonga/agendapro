@@ -7,6 +7,7 @@ class Company < ActiveRecord::Base
 	has_many :users, dependent: :nullify
 	has_many :plan_logs, dependent: :destroy
 	has_many :billing_logs, dependent: :destroy
+	has_many :billing_records, dependent: :destroy
 	has_many :services, dependent: :destroy
 	has_many :service_providers, dependent: :destroy
 	has_many :locations, dependent: :destroy

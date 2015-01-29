@@ -1,0 +1,524 @@
+<div class="row companies_header">
+	<ul class="nav nav-tabs">
+
+		<li><a id="companies_payments" href="/companies_payments">Estados de pagos</a></li>
+
+		<li><a id="companies_incomes" href="/companies_incomes">Ingresos mensuales</a></li>
+
+		<li><a id="companies_locations" href="/companies_locations">Clientes y locales</a></li>
+
+		<li><a id="companies_monthly_locations" href="/companies_monthly_locations">Locales mensuales</a></li>
+
+		<li><a id="companies_monthly_bookings" href="/companies_monthly_bookings">Resumen de reservas</a></li>
+
+	</ul>
+</div>
+
+<% if params[:notice] %>
+    <div class="alert alert-info alert-dismissable fade in">
+        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+    <%= params[:notice] %>
+    </div>
+<% end %>
+
+<% if params[:alert] %>
+    <div class="alert alert-warning alert-dismissable fade in">
+        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+    <%= params[:alert] %>
+    </div>
+<% end %>
+
+<div class="company-head-name">
+	<h3><%= @company.name %></h3>
+</div>
+
+<div class="row companies_header">
+	<ul class="nav nav-tabs">
+
+		<li class="active"><a href="/manage_company/<%= @company.id %>">Ver/Manejar</a></li>
+
+		<li><a href="/companies/new_payment/<%= @company.id %>">Agregar pago</a></li>
+
+	</ul>
+</div>
+
+<div class="row well well-white" style="margin-top: 20px;">
+	<ul id="myTab" class="nav nav-tabs" role="tablist">
+	  <li class="active"><a href="#summary" role="tab" data-toggle="tab" class="tab_index">Resumen</a></li>
+	  <li><a href="#incomes" role="tab" data-toggle="tab" class="tab_index">Ingresos</a></li>
+	  <li><a href="#bookings" role="tab" data-toggle="tab" class="tab_index">Reservas</a></li>
+	  <li><a href="#payments" role="tab" data-toggle= "tab" class="tab_index">Pagos</a></li>
+	  <li><a href="#edit" role="tab" data-toggle="tab" class="tab_index">Edición</a></li>
+	</ul>
+	<div id="myTabContent" class="tab-content">
+	<br />
+		<div class="tab-pane active" id="summary">
+			<div class="row" style="margin-top: 10px;">
+				<div class="col-sm-4">
+					<label class="control-label">Fecha de ingreso: </label>
+				</div>
+				<div class="col-sm-8">
+					<%= @company.created_at %>
+				</div>
+			</div>
+			<div class="row" style="margin-top: 10px;">
+				<div class="col-sm-4">
+					<label class="control-label">Número de reservas: </label>
+				</div>
+				<div class="col-sm-8">
+					<%= @bookings.count %>
+				</div>
+			</div>
+			<div class="row" style="margin-top: 10px;">
+				<div class="col-sm-4">
+					<label class="control-label">Plan: </label>
+				</div>
+				<div class="col-sm-8">
+					<%= @company.plan.name %>
+				</div>
+			</div>
+			<div class="row" style="margin-top: 10px;">
+				<div class="col-sm-4">
+					<label class="control-label">Costo: </label>
+				</div>
+				<div class="col-sm-8">
+					<%= @company.plan.price %>
+				</div>
+			</div>
+			<div class="row" style="margin-top: 10px;">
+				<div class="col-sm-4">
+					<label class="control-label">Locales: </label>
+				</div>
+				<div class="col-sm-8">
+					<%= @company.locations.count %>
+				</div>
+			</div>
+			<div class="row" style="margin-top: 10px;">
+				<div class="col-sm-4">
+					<label class="control-label">Última fecha de pago: </label>
+				</div>
+				<div class="col-sm-8">
+					<% bl = BillingLog.where(:company_id => @company.id).order('created_at desc').first %>
+					<% rec = BillingRecord.where(:company_id => @company.id).order('date desc').first %>
+					<% if !bl.nil? && !rec.nil? %>
+						<%if bl.created_at <= rec.date %>
+							<%= rec.date %>
+						<% else %>
+							<%= bl.created_at %>
+						<% end %>
+					<% elsif bl.nil? && !rec.nil? %>
+						<%= rec.date %>
+					<% elsif !bl.nil? && rec.nil? %>
+						<%= bl.created_at %>
+					<% else %>
+						No existen pagos
+					<% end %>
+				</div>
+			</div>
+			<div class="row" style="margin-top: 10px;">
+				<div class="col-sm-4">
+					<label class="control-label">Último monto de pago: </label>
+				</div>
+				<div class="col-sm-8">
+					<% bl = BillingLog.where(:company_id => @company.id).order('created_at desc').first %>
+					<% rec = BillingRecord.where(:company_id => @company.id).order('date desc').first %>
+					<% if !bl.nil? && !rec.nil? %>
+						<% if bl.created_at <= rec.date %>
+							<%= rec.amount %>
+						<% else %>
+							<%= bl.payment %>
+						<% end %>
+					<% elsif bl.nil? && !rec.nil? %>
+						<%= rec.amount %>
+					<% elsif !bl.nil? && rec.nil? %>
+						<%= bl.payment %>
+					<% else %>
+						No existen pagos
+					<% end %>
+				</div>
+			</div>
+			<div class="row" style="margin-top: 10px;">
+				<div class="col-sm-4">
+					<label class="control-label">Deuda actual: </label>
+				</div>
+				<div class="col-sm-8">
+					<%= @company.due_amount %>
+				</div>
+			</div>
+		</div>
+
+		<div class="tab-pane" id="incomes">
+			<div class="form-group">
+				<label class="col-md-2 control-label">
+					Selecciona el año
+				</label>
+				<div class="col-md-2">
+					<select id="year-select" name="year" class="form-control">
+						<% current = DateTime.now.year.to_i %>
+						<% for i in 2014..current do %>
+							<% if i == current %>
+								<option value="<%= i %>" selected><%= i.to_s %></option>
+							<% else %>
+								<option value="<%= i %>"><%= i.to_s %></option>
+							<% end %>
+						<% end %>
+					</select>
+				</div>
+			</div>
+			<div id="year-incomes" style="margin-top: 10px;">
+				<div class="row">
+					<div class="col-md-12">
+						<h3>Ingresos para el año <span id="selected-year"><%= current %></span></h3>
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-md-12">
+						<table class="companies-table">
+
+						</table>
+					</div> 
+				</div>
+			</div>
+		</div>
+
+		<div class="tab-pane" id="bookings">
+			<div class="form-group">
+				<label class="col-md-2 control-label">
+					Selecciona el año
+				</label>
+				<div class="col-md-2">
+					<select id="bookings-year-select" name="year" class="form-control">
+						<% current = DateTime.now.year.to_i %>
+						<% for i in 2014..current do %>
+							<% if i == current %>
+								<option value="<%= i %>" selected><%= i.to_s %></option>
+							<% else %>
+								<option value="<%= i %>"><%= i.to_s %></option>
+							<% end %>
+						<% end %>
+					</select>
+				</div>
+			</div>
+			<div id="year-bookings" style="margin-top: 10px;">
+				<div class="row">
+					<div class="col-md-12">
+						<h3>Reservas para el año <span id="bookings-selected-year"><%= current %></span></h3>
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-md-12">
+						<table class="companies-table">
+
+						</table>
+					</div> 
+				</div>
+			</div>
+		</div>
+
+		<div class="tab-pane" id="payments">
+			<div class="scrollable" style="max-height: 220px;">
+				<h4>Pagos en línea</h4>
+				<table class="companies-table">
+					<tr class="companies-table-header">
+						<th>
+							Fecha
+						</th>
+						<th>
+							Monto
+						</th>
+						<th>
+							Meses
+						</th>
+						<th>
+							Número de cuotas
+						</th>
+						<th>
+							Número de operación
+						</th>
+						<th>
+							Código de autorización
+						</th>
+					</tr>
+
+					<% logs = @company.billing_logs.order('created_at desc') %>
+					<% logs.each do |log| %>
+						<% punto_pago = PuntoPagosConfirmation.find_by_trx_id(log.trx_id) %>
+						<td>
+							<%= log.created_at %>
+						</td>
+						<td>
+							<%= log.payment %>
+						</td>
+						<td>
+							<%= log.amount %>
+						</td>
+						<% if punto_pago.nil? %>
+							<td></td>
+							<td></td>
+							<td></td>
+						<% else %>
+							<td>
+								<%= punto_pago.dues_number %>
+							</td>
+							<td>
+								<%= punto_pago.operation_number %>
+							</td>
+							<td>
+								<%= punto_pago.authorization_code %>
+							</td>
+						<% end %>
+					<% end %>
+
+				</table>
+			</div>
+
+			<div class="scrollable" style="max-height: 220px;">
+				<h4>Otros pagos</h4>
+				<table class="companies-table">
+					<tr class="companies-table-header">
+						<th>
+							Fecha
+						</th>
+						<th>
+							Tipo
+						</th>
+						<th>
+							Monto
+						</th>
+					</tr>
+
+					<% records = @company.billing_records.order('date desc') %>
+					<% records.each do |record| %>
+						<tr>
+							<td>
+								<%= record.date %>
+							</td>
+							<td>
+								<% if !record.transaction_type.nil? %>
+								<%= record.transaction_type.name %>
+								<% end %>
+							</td>
+							<td>
+								<%= record.amount %>
+							</td>
+						</tr>
+					<% end %>
+
+				</table>
+			</div>
+		</div>
+
+		<div class="tab-pane" id="edit">
+
+			<%= form_tag({ :controller => 'companies', :action => 'update_company'}, method: "post") do %>
+
+				<input type="hidden" name="id" value="<%= @company.id %>" />
+				<div class="row" style="margin-top: 10px;">
+
+						<div class="col-sm-3">
+							<label class="control-label">Plan: </label>
+						</div>
+						<div class="col-sm-2">
+							<%= @company.plan.name %>
+						</div>
+						<div class="col-sm-2">
+							<select name="new_plan_id" class="form-control">
+								<% Plan.all.each do |plan| %>
+									<% if plan.id == @company.plan_id %>
+										<option value="<%= plan.id %>" selected><%= plan.name %></option>
+									<% else %>
+										<option value="<%= plan.id %>"><%= plan.name %></option>
+									<% end %>
+								<% end %>
+							</select>
+						</div>
+						<!--<div class="col-sm-2">
+						<button class="btn">Editar</button>
+					</div>-->
+
+				</div>
+			
+			
+				
+				<div class="row" style="margin-top: 10px;">
+
+						<div class="col-sm-3">
+							<label class="control-label">Estado actual: </label>
+						</div>
+						<div class="col-sm-2">
+							<%= @company.payment_status.name %>
+						</div>
+						<div class="col-sm-2">
+							<select name="new_payment_status_id" class="form-control">
+								<% PaymentStatus.all.each do |status| %>
+									<% if status.id == @company.payment_status_id %>
+										<option value="<%= status.id %>" selected><%= status.name %></option>
+									<% else %>
+										<option value="<%= status.id %>"><%= status.name %></option>
+									<% end %>
+								<% end %>
+							</select>
+						</div>
+						<!--<div class="col-sm-2">
+						<button class="btn">Editar</button>
+					</div>-->
+
+				</div>
+
+
+
+				<div class="row" style="margin-top: 10px;">
+					<div class="col-sm-3">
+						<label class="control-label">Meses activos restantes: </label>
+					</div>
+					<div class="col-sm-2">
+						<%= @company.months_active_left %>
+					</div>
+					<div class="col-sm-2">
+						<input type="number" class="form-control" name="new_months_active_left" value="<%= @company.months_active_left %>" />
+					</div>
+					<!--<div class="col-sm-2">
+						<button class="btn">Editar</button>
+					</div>-->
+				</div>
+
+				<div class="row" style="margin-top: 10px;">
+					<div class="col-sm-3">
+						<label class="control-label">Deuda actual: </label>
+					</div>
+					<div class="col-sm-2">
+						<%= @company.due_amount %>
+					</div>
+					<div class="col-sm-2">
+						<input type="number" class="form-control" name="new_due_amount" value="<%= @company.due_amount %>" />
+					</div>
+					<!--<div class="col-sm-2">
+						<button class="btn">Editar</button>
+					</div>-->
+				</div>
+
+				<div class="row" style="margin-top: 10px;">
+					<div class="col-sm-2 col-sm-offset-5">
+						<div class="btn-group btn-group-justified">
+			                <div class="btn-group">
+								<button class="btn btn-green">Editar</button>
+							</div>
+						</div>
+					</div>
+				</div>
+			<% end %>
+
+			<div class="row" style="margin-top: 20px;">
+				<div class="col-sm-3">
+					<label class="control-label">Última fecha de pago: </label>
+				</div>
+				<div class="col-sm-2">
+					<% bl = BillingLog.where(:company_id => @company.id).order('created_at desc').first %>
+					<% rec = BillingRecord.where(:company_id => @company.id).order('date desc').first %>
+					<% if !bl.nil? && !rec.nil? %>
+						<%if bl.created_at <= rec.date %>
+							$<%= rec.amount %> en <%= rec.date %>
+						<% else %>
+							$<%= bl.payment %> en <%= bl.created_at %>
+						<% end %>
+					<% elsif bl.nil? && !rec.nil? %>
+						$<%= rec.amount %> en <%= rec.date %>
+					<% elsif !bl.nil? && rec.nil? %>
+						$<%= bl.payment %> en <%= bl.created_at %>
+					<% else %>
+						No existen pagos
+					<% end %>
+				</div>
+				<div class="col-sm-2">
+					<%= link_to "Agregar pago", controller: "companies", action: "new_payment", id: @company.id %>
+				</div>
+			</div>
+			
+		</div>
+
+	</div>
+</div>
+
+
+<% content_for :scripts do %>
+	<%= javascript_include_tag "jquery-ui-1.10.4.min.js" %>
+
+	<script type="text/javascript">
+		$("#year-select").on('change', function(){
+			var year = $(this).val();
+			var id = <%= @company.id %>;
+			$.ajax({
+				url: '/get_year_incomes?id=' + id + '&year=' + year,
+				method: 'get',
+				success: function(response){
+
+					$("#year-incomes table").empty();
+
+					$("#year-incomes table").append('<tr class="companies-table-header">');
+					for(i=1; i<=13; i++)
+					{
+						$("#year-incomes table tr:first").append('<th>'+response[i]['month']+'</th>');
+					}
+					//$("#year-bookings table").append('</tr>');
+					$("#year-incomes table").append('<tr>');
+					for(i=1; i<=13; i++)
+					{
+						$("#year-incomes table tr:last").append('<td>'+response[i]['income']+'</td>');
+					}
+					//$("#year-bookings table").append('</tr>');
+
+					$("#selected-year").empty();
+					$("#selected-year").append(year);
+							
+				},
+				error: function(){
+
+				}
+			});
+		});
+
+		$(document).ready(function(){
+			$("#year-select").trigger('change');
+		});
+
+
+		$("#bookings-year-select").on('change', function(){
+			var year = $(this).val();
+			var id = <%= @company.id %>;
+			$.ajax({
+				url: '/get_year_bookings?id=' + id + '&year=' + year,
+				method: 'get',
+				success: function(response){
+
+					$("#year-bookings table").empty();
+
+					$("#year-bookings table").append('<tr class="companies-table-header">');
+					for(i=1; i<=13; i++)
+					{
+						$("#year-bookings table tr:first").append('<th>'+response[i]['month']+'</th>');
+					}
+					//$("#year-bookings table").append('</tr>');
+					$("#year-bookings table").append('<tr>');
+					for(i=1; i<=13; i++)
+					{
+						$("#year-bookings table tr:last").append('<td>'+response[i]['count']+'</td>');
+					}
+					//$("#year-bookings table").append('</tr>');
+
+					$("#bookings-selected-year").empty();
+					$("#bookings-selected-year").append(year);
+							
+				},
+				error: function(){
+
+				}
+			});
+		});
+
+		$(document).ready(function(){
+			$("#bookings-year-select").trigger('change');
+		});
+
+	</script>
+
+<% end %>

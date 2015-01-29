@@ -331,7 +331,7 @@ class PayedBookingsController < ApplicationController
 		if @payed_booking.booking.save
 			redirect_to action: 'edit', id: @payed_booking.id, notice: 'Se ha editado correctamente.'
 		else
-			redirect_to action: 'edit', id: @payed_booking.id, notice: 'Ha ocurrido un error en la edición.'
+			redirect_to action: 'edit', id: @payed_booking.id, alert: 'Ha ocurrido un error en la edición.'
 		end
 	end
 

@@ -639,22 +639,22 @@ class BookingsController < ApplicationController
           #Obtener el máximo
           num = ocp.modification_max.to_i
           if ocp.modification_unit == TimeUnit.find_by_unit("Minutos").id
-            if minutes >= ocp.modification_max.to_i
+            if minutes >= num
               redirect_to blocked_edit_path(:id => @booking.id, :online => true)
               return
             end
           elsif ocp.modification_unit == TimeUnit.find_by_unit("Horas").id
-            if hours >= ocp.modification_max.to_i
+            if hours >= num
               redirect_to blocked_edit_path(:id => @booking.id, :online => true)
               return
             end
           elsif ocp.modification_unit == TimeUnit.find_by_unit("Semanas").id
-            if weeks >= ocp.modification_max.to_i
+            if weeks >= num
               redirect_to blocked_edit_path(:id => @booking.id, :online => true)
               return
             end
           elsif ocp.modification_unit == TimeUnit.find_by_unit("Meses").id
-            if months >= ocp.modification_max.to_i
+            if months >= num
               redirect_to blocked_edit_path(:id => @booking.id, :online => true)
               return
             end
@@ -885,22 +885,22 @@ class BookingsController < ApplicationController
             #Obtener el máximo
             num = ocp.cancel_max.to_i
             if ocp.cancel_unit == TimeUnit.find_by_unit("Minutos").id
-              if minutes >= ocp.cancel_max.to_i
+              if minutes >= num
                 redirect_to blocked_cancel_path(:id => @booking.id, :online => true)
                 return
               end
             elsif ocp.cancel_unit == TimeUnit.find_by_unit("Horas").id
-              if hours >= ocp.cancel_max.to_i
+              if hours >= num
                 redirect_to blocked_cancel_path(:id => @booking.id, :online => true)
                 return
               end
             elsif ocp.cancel_unit == TimeUnit.find_by_unit("Semanas").id
-              if weeks >= ocp.cancel_max.to_i
+              if weeks >= num
                 redirect_to blocked_cancel_path(:id => @booking.id, :online => true)
                 return
               end
             elsif ocp.cancel_unit == TimeUnit.find_by_unit("Meses").id
-              if months >= ocp.cancel_max.to_i
+              if months >= num
                 redirect_to blocked_cancel_path(:id => @booking.id, :online => true)
                 return
               end
