@@ -14,6 +14,7 @@
 
     <!-- start: Mobile Specific -->
     <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <!-- end: Mobile Specific -->
 
@@ -35,7 +36,8 @@
       a:hover {
         outline: 0;
       }
-      b {
+      b,
+      strong {
         font-weight: bold;
       }
       img {
@@ -141,34 +143,6 @@
       .text-center {
         text-align: center;
       }
-      .container-fluid {
-        padding-right: 15px;
-        padding-left: 15px;
-        margin-right: auto;
-        margin-left: auto;
-      }
-      .row {
-        margin-right: -15px;
-        margin-left: -15px;
-      }
-      .col-xs-4, .col-xs-6, .col-xs-12 {
-        position: relative;
-        min-height: 1px;
-        padding-right: 15px;
-        padding-left: 15px;
-      }
-      .col-xs-4, .col-xs-6, .col-xs-12 {
-        float: left;
-      }
-      .col-xs-12 {
-        width: 100%;
-      }
-      .col-xs-6 {
-        width: 50%;
-      }
-      .col-xs-4 {
-        width: 33.33333333%;
-      }
       table {
         background-color: transparent;
       }
@@ -180,14 +154,20 @@
         max-width: 100%;
         margin-bottom: 20px;
       }
-      .table > tbody > tr > td {
+      .table > thead > tr > th,
+      .table > tbody > tr > th,
+      .table > tfoot > tr > th,
+      .table > thead > tr > td,
+      .table > tbody > tr > td,
+      .table > tfoot > tr > td {
         padding: 8px;
         line-height: 1.42857143;
         vertical-align: top;
         border-top: 1px solid #ddd;
       }
-      .table .table {
-        background-color: #fff;
+      .table > thead > tr > th {
+        vertical-align: bottom;
+        border-bottom: 2px solid #ddd;
       }
       .btn {
         display: inline-block;
@@ -240,25 +220,49 @@
         line-height: 1.33;
         border-radius: 6px;
       }
-      .container-fluid:before,
-      .container-fluid:after,
-      .row:before,
-      .row:after {
-        display: table;
-        content: " ";
+      .center-block {
+        display: block;
+        margin-right: auto;
+        margin-left: auto;
       }
-      .container-fluid:after,
-      .row:after {
-        clear: both;
+      .pull-right {
+        float: right !important;
+      }
+      .pull-left {
+        float: left !important;
       }
     </style>
     <style type="text/css">
+      /* Containers */
       html,
       body {
-        font-family: Helvetica, Arial, sans-serif;
-        background: #ffffff;
+        font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
         font-size: 12px;
-        font-weight: lighter;
+        font-weight: 300;
+        color: #505050;
+        background: #ffffff;
+      }
+      table {
+        width: 100%;
+        max-width: 100%;
+        font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
+        font-size: 12px;
+        font-weight: 300;
+        color: #505050;
+        background: #ffffff;
+      }
+      table > thead > tr > th,
+      table > tbody > tr > th,
+      table > tfoot > tr > th,
+      table > thead > tr > td,
+      table > tbody > tr > td,
+      table > tfoot > tr > td {
+        padding: 8px 15px;
+        line-height: 1.42857143;
+        vertical-align: top;
+      }
+      table table {
+        background-color: #ffffff;
       }
       .pull-center {
         text-align: center;
@@ -266,18 +270,18 @@
         margin-right: auto;
       }
       .content {
-        font-family: Helvetica, Arial;
-        font-size: 12px;
-        font-weight: lighter;
         margin-right: auto;
         margin-left: auto;
-        padding-right: 15px;
-        padding-left: 15px;
-        width: 100%;
         max-width: 600px;
         border: 1px solid #727171;
-        color: #505050;
-        background: #ffffff;
+        margin-top: 10px;
+        margin-bottom: 10px;
+      }
+      .col-2 {
+        width: 50%;
+      }
+      .col-3 {
+        width: 33%;
       }
 
       /* Buttons */
@@ -325,61 +329,90 @@
       }
 
       /* Backgrounds */
-      .background-light-grey {
-        margin-right: -15px;
-        margin-left: -15px;
-        padding: 5px 15px;
-        background: #f1f4f5;
-        color: #727171;
-        text-align: center;
-        font-size: 10px;
-        min-height: 24px;
-      }
-      .background-light-grey a,
-      .background-light-grey a:hover,
-      .background-light-grey a:active {
-        color: #505050;
-        text-decoration: none;
-      }
-      .background-dark-grey {
-        margin-right: -15px;
-        margin-left: -15px;
-        padding: 5px 15px;
-        background: #d2d3d3;
-        color: #ffffff;
-        text-align: center;
-        min-height: 30px;
-      }
       .background-green {
-        margin-right: -15px;
-        margin-left: -15px;
-        padding: 10px 20px;
         background: #22c488;
         color: #ffffff;
-        min-height: 30px;
-        font-size: 12px;
-        margin-top: 10px;
-        margin-bottom: 10px;
+      }
+      .background-green > td {
+        padding: 10px 20px;
+      }
+      .background-dark-grey {
+        background: #d2d3d3;
+        color: #ffffff;
+      }
+      .background-dark-grey > td {
+        text-align: center;
+      }
+      .background-light-grey {
+        background: #f1f4f5;
+        color: #727171;
       }
 
       /* General */
+      .header,
+      .footer {
+        background: #f1f4f5;
+        color: #727171;
+        font-size: 10px;
+        min-height: 24px;
+      }
+      .header > td {
+        padding: 5px 30px;
+        text-align: center;
+      }
+      .header a,
+      .header a:hover,
+      .header a:active {
+        color: #727171;
+        text-decoration: none;
+      }
+      .footer > td {
+        padding: 5px 30px;
+      }
+      .footer > td:first-child:not(:last-child) {
+        padding-right: 10px;
+      }
+      .footer > td:last-child:not(:first-child) {
+        padding-left: 10px;
+      }
+      .footer > td > p {
+        margin: 0;
+      }
       .logo {
         width: 50%;
         max-width: 118px;
       }
-      .footer {
-        padding-left: 30px;
-        padding-right: 30px;
+      .footer img {
+        margin-left: -1px;
+        margin-right: 10px;
+        width: 20px;
+        display: inline;
+        vertical-align: top;
       }
       h4 {
         font-size: 20px;
       }
 
       /* Booking */
+      .background-green > td > p {
+        font-size: 20px;
+        margin: 0;
+      }
+      .responsive-table {
+        min-height: .01%;
+        overflow-x: auto;
+        width: 100%;
+        overflow-y: hidden;
+        -ms-overflow-style: -ms-autohiding-scrollbar;
+      }
+      .responsive-table > .table {
+        margin-bottom: 0;
+      }
       .table-booking {
         margin-right: auto;
         margin-left: auto;
         width: 80%;
+        background: transparent;
       }
       .table-booking > tbody > tr > td {
         width: 1%;
@@ -407,18 +440,6 @@
       .text-box > p:first-child {
         color: #ffffff;
       }
-      .responsive-table {
-        min-height: .01%;
-        overflow-x: auto;
-        width: 100%;
-        margin-bottom: 15px;
-        overflow-y: hidden;
-        -ms-overflow-style: -ms-autohiding-scrollbar;
-        margin-bottom: 20px;
-      }
-      .responsive-table > .table {
-        margin-bottom: 0;
-      }
       .pull-center > .btn {
         margin-bottom: 5px;
       }
@@ -427,208 +448,202 @@
   </head>
 
   <body>
-    <div class="container-fluid">
-      <div class="row">
-        <div class="col-xs-12">
-          <div class="content">
-            <!-- Start: Header -->
-            <div class="background-light-grey" style="margin-bottom: 10px;">
-              <div class="row">
-                <div class="col-xs-12">
-                  *|IF:URL|*<a href="http://*|URL|*.agendapro.cl" target="_blanck">*|URL|*.agendapro.cl</a>*|END:IF|*
-                </div>
-              </div>
-            </div>
-            <!-- End: Header -->
+    <table class="content">
+      <tbody>
+        <!-- Start: Header -->
+        <tr class="header">
+          <td colspan="2">
+            <a href="http://*|URL|*.agendapro.cl" target="_blanck">*|URL|*.agendapro.cl</a>
+          </td>
+        </tr>
+        <!-- End: Header -->
 
-            <!-- Start: Content -->
-            <div class="row">
-              <div class="col-xs-12">
-                <div class="pull-center">
-                  <img src="cid:LOGO" class="logo" alt="Logo">
-                </div>
-              </div>
+        <!-- Start: Content -->
+        <tr>
+          <td colspan="2">
+            <div class="pull-center">
+              <img src="cid:LOGO" class="logo" alt="Logo">
             </div>
-            <div class="row">
-              <div class="col-xs-12">
-                <h4 class="text-center">*|COMPANYNAME|*</h4>
-                *|IF:CLIENT|*
-                <p class="text-center">*|CLIENTNAME|*, tu reserva fue recibida exitosamente</p>
-                *|ELSE|*
-                <p class="text-center">*|SERVICEPROVIDER|*, fue reservado un servicio contigo</p>
-                *|END:IF|*
-              </div>
+          </td>
+        </tr>
+        <tr>
+          <td colspan="2">
+            <h4 class="text-center">*|COMPANYNAME|*</h4>
+            *|IF:CLIENT|*
+            <p class="text-center">*|CLIENTNAME|*, tu reserva fue recibida exitosamente</p>
+            *|ELSE|*
+            <p class="text-center">*|SERVICEPROVIDER|*, fue reservado un servicio contigo</p>
+            *|END:IF|*
+          </td>
+        </tr>
+        *|IF:CLIENT|*
+        <tr class="background-green">
+          <td colspan="2">
+            <p class="text-center"><b>Resumen</b> de tu reserva</p>
+          </td>
+        </tr>
+        <tr class="background-green">
+          <td colspan="2">
+            <div class="responsive-table">
+              <table class="table table-booking">
+                <tbody>
+                  <tr>
+                    <td>
+                      <div class="icon-box">
+                        <img src="http://agendapro.cl/assets/email/what.png" alt="¿Qué Reservaste?">
+                      </div>
+                      <div class="text-box">
+                        <p><b>¿Qué Reservaste?</b></p>
+                        <p>*|SERVICENAME|*</p>
+                      </div>
+                    </td>
+                    <td>
+                      <div class="icon-box">
+                        <img src="http://agendapro.cl/assets/email/when.png" alt="¿Cuando?">
+                      </div>
+                      <div class="text-box">
+                        <p><b>¿Cuándo?</b></p>
+                        <p>*|BSTART|*</p>
+                      </div>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>
+                      <div class="icon-box">
+                        <img src="http://agendapro.cl/assets/email/where.png" alt="¿Dónde?">
+                      </div>
+                      <div class="text-box">
+                        <p><b>¿Dónde?</b></p>
+                        <p>*|LOCALADDRESS|*</p>
+                      </div>
+                    </td>
+                    <td>
+                      <div class="icon-box">
+                        <img src="http://agendapro.cl/assets/email/question.png" alt="Consultas">
+                      </div>
+                      <div class="text-box">
+                        <p><b>Consultas</b></p>
+                        <p>*|LOCATIONPHONE|*</p>
+                      </div>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>
+                      <div class="icon-box">
+                        <img src="http://agendapro.cl/assets/email/who.png" alt="¿Con Quien?">
+                      </div>
+                      <div class="text-box">
+                        <p><b>¿Con Quien?</b></p>
+                        <p>*|SERVICEPROVIDER|*</p>
+                      </div>
+                    </td>
+                    <td>
+                      <div class="icon-box">
+                        <img src="http://agendapro.cl/assets/email/notes.png" alt="Notas">
+                      </div>
+                      <div class="text-box">
+                        <p><b>Notas</b></p>
+                        *|IF:BNOTES|*<p>*|BNOTES|*</p>*|END:IF|*
+                      </div>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
             </div>
-            <div class="background-green">
-              *|IF:CLIENT|*
-              <div class="row">
-                <div class="col-xs-12">
-                  <p class="text-center" style="font-size: 20px;"><b>Resumen</b> de tu reserva</p>
-                </div>
-                <div class="col-xs-12">
-                  <div class="responsive-table">
-                    <table class="table table-booking">
-                      <tbody>
-                        <tr>
-                          <td>
-                            <div class="icon-box">
-                              <img src="http://agendapro.cl/assets/email/what.png" alt="¿Qué Reservaste?">
-                            </div>
-                            <div class="text-box">
-                              <p><b>¿Qué Reservaste?</b></p>
-                              <p>*|SERVICENAME|*</p>
-                            </div>
-                          </td>
-                          <td>
-                            <div class="icon-box">
-                              <img src="http://agendapro.cl/assets/email/when.png" alt="¿Cuando?">
-                            </div>
-                            <div class="text-box">
-                              <p><b>¿Cuándo?</b></p>
-                              <p>*|BSTART|*</p>
-                            </div>
-                          </td>
-                        </tr>
-                        <tr>
-                          <td>
-                            <div class="icon-box">
-                              <img src="http://agendapro.cl/assets/email/where.png" alt="¿Dónde?">
-                            </div>
-                            <div class="text-box">
-                              <p><b>¿Dónde?</b></p>
-                              <p>*|LOCALADDRESS|*</p>
-                            </div>
-                          </td>
-                          <td>
-                            <div class="icon-box">
-                              <img src="http://agendapro.cl/assets/email/question.png" alt="Consultas">
-                            </div>
-                            <div class="text-box">
-                              <p><b>Consultas</b></p>
-                              <p>*|LOCATIONPHONE|*</p>
-                            </div>
-                          </td>
-                        </tr>
-                        <tr>
-                          <td>
-                            <div class="icon-box">
-                              <img src="http://agendapro.cl/assets/email/who.png" alt="¿Con Quien?">
-                            </div>
-                            <div class="text-box">
-                              <p><b>¿Con Quien?</b></p>
-                              <p>*|SERVICEPROVIDER|*</p>
-                            </div>
-                          </td>
-                          <td>
-                            <div class="icon-box">
-                              <img src="http://agendapro.cl/assets/email/notes.png" alt="Notas">
-                            </div>
-                            <div class="text-box">
-                              <p><b>Notas</b></p>
-                              *|IF:BNOTES|*<p>*|BNOTES|*</p>*|END:IF|*
-                            </div>
-                          </td>
-                        </tr>
-                      </tbody>
-                    </table>
-                  </div>
-                </div>
-              </div>
-              *|ELSE|*
-              <div class="row">
-                <div class="col-xs-12">
-                  <p class="text-center" style="font-size: 20px;"><b>Resumen</b> de la reserva</p>
-                </div>
-                <div class="col-xs-12">
-                  <div class="responsive-table">
-                    <table class="table table-booking">
-                      <tbody>
-                        <tr>
-                          <td>
-                            <div class="icon-box">
-                              <img src="http://agendapro.cl/assets/email/what.png" alt="¿Qué Reservaste?">
-                            </div>
-                            <div class="text-box">
-                              <p><b>¿Qué Reservaron?</b></p>
-                              <p>*|SERVICENAME|*</p>
-                            </div>
-                          </td>
-                        </tr>
-                        <tr>
-                          <td>
-                            <div class="icon-box">
-                              <img src="http://agendapro.cl/assets/email/when.png" alt="¿Cuando?">
-                            </div>
-                            <div class="text-box">
-                              <p><b>¿Cuándo?</b></p>
-                              <p>*|BSTART|*</p>
-                            </div>
-                          </td>
-                        </tr>
-                        <tr>
-                          <td>
-                            <div class="icon-box">
-                              <img src="http://agendapro.cl/assets/email/who.png" alt="¿Con Quien?">
-                            </div>
-                            <div class="text-box">
-                              <p><b>¿Quien?</b></p>
-                              <p>*|CLIENTNAME|*</p>
-                            </div>
-                          </td>
-                        </tr>
-                        <tr>
-                          <td>
-                            <div class="icon-box">
-                              <img src="http://agendapro.cl/assets/email/notes.png" alt="Notas">
-                            </div>
-                            <div class="text-box">
-                              <p><b>Notas</b></p>
-                              *|IF:BNOTES|*<p>*|BNOTES|*</p>*|END:IF|*
-                              *|IF:COMPANYCOMMENT|*<p>*|COMPANYCOMMENT|*</p>*|END:IF|*
-                            </div>
-                          </td>
-                        </tr>
-                      </tbody>
-                    </table>
-                  </div>
-                </div>
-              </div>
-              *|END:IF|*
+          </td>
+        </tr>
+        *|ELSE|*
+        <tr class="background-green">
+          <td colspan="2">
+            <p class="text-center"><b>Resumen</b> de la reserva</p>
+          </td>
+        </tr>
+        <tr class="background-green">
+          <td colspan="2">
+            <div class="responsive-table">
+              <table class="table table-booking">
+                <tbody>
+                  <tr>
+                    <td>
+                      <div class="icon-box">
+                        <img src="http://agendapro.cl/assets/email/what.png" alt="¿Qué Reservaste?">
+                      </div>
+                      <div class="text-box">
+                        <p><b>¿Qué Reservaron?</b></p>
+                        <p>*|SERVICENAME|*</p>
+                      </div>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>
+                      <div class="icon-box">
+                        <img src="http://agendapro.cl/assets/email/when.png" alt="¿Cuando?">
+                      </div>
+                      <div class="text-box">
+                        <p><b>¿Cuándo?</b></p>
+                        <p>*|BSTART|*</p>
+                      </div>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>
+                      <div class="icon-box">
+                        <img src="http://agendapro.cl/assets/email/who.png" alt="¿Con Quien?">
+                      </div>
+                      <div class="text-box">
+                        <p><b>¿Quien?</b></p>
+                        <p>*|CLIENTNAME|*</p>
+                      </div>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>
+                      <div class="icon-box">
+                        <img src="http://agendapro.cl/assets/email/notes.png" alt="Notas">
+                      </div>
+                      <div class="text-box">
+                        <p><b>Notas</b></p>
+                        *|IF:BNOTES|*<p>*|BNOTES|*</p>*|END:IF|*
+                        *|IF:COMPANYCOMMENT|*<p>*|COMPANYCOMMENT|*</p>*|END:IF|*
+                      </div>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
             </div>
-            <div class="row">
-              <div class="col-xs-12">
-                *|IF:EDIT|*
-                <div class="pull-center">
-                  <a class="btn btn-lg btn-orange" href="*|EDIT|*" target="_blank">Modificar Reserva</a>
-                  <a class="btn btn-lg btn-red" href="*|CANCEL|*" target="_blank">Cancelar Reserva</a>
-                </div>
-                *|END:IF|*
-              </div>
-            </div>
-            *|IF:SIGNATURE|*
-            <div class="row">
-              <div class="col-xs-12">
-                <p>*|SIGNATURE|*</p>
-              </div>
+          </td>
+        </tr>
+        *|END:IF|*
+        <tr>
+          <td colspan="2">
+            *|IF:EDIT|*
+            <div class="pull-center">
+              <a class="btn btn-lg btn-orange" href="*|EDIT|*" target="_blank">Modificar Reserva</a>
+              <a class="btn btn-lg btn-red" href="*|CANCEL|*" target="_blank">Cancelar Reserva</a>
             </div>
             *|END:IF|*
-            <!-- End: Content -->
+          </td>
+        </tr>
+        *|IF:SIGNATURE|*
+        <tr>
+          <td colspan="2">
+            <p>*|SIGNATURE|*</p>
+          </td>
+        </tr>
+        *|END:IF|*
+        <!-- End: Content -->
 
-            <!-- Start: Footer -->
-            <div class="background-light-grey footer" style="margin-top: 10px;">
-              <div class="row">
-                <div class="col-xs-6">
-                  <p class="text-left" style="margin-bottom: 0;">Este es un email automático, para contactar a la empresa por favor responde este correo.</p>
-                </div>
-                <div class="col-xs-6">
-                  <p class="text-right" style="margin-bottom: 0;">Copyright 2013 | Gunei Investment SpA | Todos los derechos reservados</p>
-                </div>
-              </div>
-            </div>
-            <!-- End: Footer -->
-          </div>
-        </div>
-      </div>
-    </div>
+        <!-- Start: Footer -->
+        <tr class="footer">
+          <td class="col-2">
+            <p class="text-left">Este es un email automático, para contactar a la empresa por favor responde este correo.</p>
+          </td>
+          <td class="col-2">
+            <p class="text-right">Copyright 2013 | Gunei Investment SpA | Todos los derechos reservados</p>
+          </td>
+        </tr>
+        <!-- End: Footer -->
+      </tbody>
+    </table>
   </body>
 </html>
