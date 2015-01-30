@@ -543,7 +543,6 @@ class BookingMailer < ActionMailer::Base
 
 		# Notificacion cliente
 		if book_info.send_mail
-<<<<<<< HEAD
 			message[:to] << {
 				:email => book_info.client.email,
 				:name => book_info.client.first_name + ' ' + book_info.client.last_name,

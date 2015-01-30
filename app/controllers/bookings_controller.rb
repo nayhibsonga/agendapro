@@ -647,13 +647,6 @@ class BookingsController < ApplicationController
     end
     @booking.price = Service.find(params[:service]).price
     @booking.max_changes = @company.company_setting.max_changes
-<<<<<<< HEAD
-
-    if @booking.save
-      # flash[:notice] = "Reserva realizada exitosamente."
-
-      # BookingMailer.book_service_mail(@booking)
-=======
     #
       #   PAGO EN LÍNEA DE RESERVA
       #
@@ -680,7 +673,6 @@ class BookingsController < ApplicationController
         end
     else #SÓLO RESERVA
       if @booking.save
->>>>>>> 09b70e9e3a30f02e4b2dd41458d68ba1351a2ee7
       current_user ? user = current_user.id : user = 0
       BookingHistory.create(booking_id: @booking.id, action: "Creada por Cliente", start: @booking.start, status_id: @booking.status_id, service_id: @booking.service_id, service_provider_id: @booking.service_provider_id, user_id: user)
       else

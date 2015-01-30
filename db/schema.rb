@@ -108,13 +108,12 @@ ActiveRecord::Schema.define(version: 20150129165121) do
     t.boolean  "payed",               default: false
     t.string   "trx_id",              default: ""
     t.integer  "max_changes",         default: 2
-<<<<<<< HEAD
-=======
     t.string   "token",               default: ""
->>>>>>> 09b70e9e3a30f02e4b2dd41458d68ba1351a2ee7
+    t.integer  "deal_id"
   end
 
   add_index "bookings", ["client_id"], name: "index_bookings_on_client_id", using: :btree
+  add_index "bookings", ["deal_id"], name: "index_bookings_on_deal_id", using: :btree
   add_index "bookings", ["location_id"], name: "index_bookings_on_location_id", using: :btree
   add_index "bookings", ["promotion_id"], name: "index_bookings_on_promotion_id", using: :btree
   add_index "bookings", ["service_id"], name: "index_bookings_on_service_id", using: :btree
@@ -237,20 +236,20 @@ ActiveRecord::Schema.define(version: 20150129165121) do
     t.boolean  "booking_history",             default: false
     t.boolean  "staff_code",                  default: false
     t.integer  "monthly_mails",               default: 0,                     null: false
-<<<<<<< HEAD
+    t.boolean  "deal_activate",               default: false
+    t.string   "deal_name"
+    t.boolean  "deal_overcharge",             default: true
     t.boolean  "deal_exclusive",              default: false
     t.integer  "deal_quantity",               default: 0
     t.integer  "deal_constraint_option",      default: 0
     t.integer  "deal_constraint_quantity",    default: 0
     t.boolean  "deal_identification_number",  default: false
-=======
     t.boolean  "allows_online_payment",       default: false
     t.string   "account_number",              default: ""
     t.string   "company_rut",                 default: ""
     t.string   "account_name",                default: ""
     t.integer  "account_type",                default: 3
     t.integer  "bank_id"
->>>>>>> 09b70e9e3a30f02e4b2dd41458d68ba1351a2ee7
   end
 
   add_index "company_settings", ["company_id"], name: "index_company_settings_on_company_id", using: :btree
@@ -267,8 +266,6 @@ ActiveRecord::Schema.define(version: 20150129165121) do
     t.datetime "updated_at"
   end
 
-<<<<<<< HEAD
-<<<<<<< HEAD
   create_table "deals", force: true do |t|
     t.string   "code",                               null: false
     t.integer  "quantity",                           null: false
@@ -282,10 +279,6 @@ ActiveRecord::Schema.define(version: 20150129165121) do
 
   add_index "deals", ["company_id"], name: "index_deals_on_company_id", using: :btree
 
-=======
->>>>>>> 7506490ab36edc8770ea5663f78b21c2cc98951a
-=======
->>>>>>> 09b70e9e3a30f02e4b2dd41458d68ba1351a2ee7
   create_table "dictionaries", force: true do |t|
     t.string   "name",       null: false
     t.integer  "tag_id",     null: false
