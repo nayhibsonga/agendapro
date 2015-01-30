@@ -19,6 +19,80 @@ class SearchsController < ApplicationController
 			@lat = params[:latitude]
 			@lng = params[:longitude]
 
+		
+
+			if cookies[:formatted_address]
+				@formatted_address = cookies[:formatted_address].encode('UTF-8', 'binary', invalid: :replace, undef: :replace, replace: '')
+			end
+			# => Domain parser
+			host = request.host_with_port
+			@domain = host[host.index(request.domain)..host.length]
+
+
+			lat = params[:latitude]
+			long = params[:longitude]
+
+			@latitude = params[:latitude]
+			@longitude = params[:longitude]
+
+			@results = Array.new
+			@empty_results = Array.new
+
+			search = params[:inputSearch].gsub(/\b([D|d]el?)+\b|\b([U|u]n(o|a)?s?)+\b|\b([E|e]l)+\b|\b([T|t]u)+\b|\b([L|l](o|a)s?)+\b|\b[AaYy]\b|["'.,;:-]|\b([E|e]n)+\b|\b([L|l]a)+\b|\b([C|c]on)+\b|\b([Q|q]ue)+\b|\b([S|s]us?)+\b|\b([E|e]s[o|a]?s?)+\b/i, '')
+
+			normalized_search = search.mb_chars.normalize(:kd).gsub(/[^\x00-\x7F]/,'').downcase.to_s
+
+			@results = Location.search(normalized_search)
+
+			per_page = 10
+
+			@results = @results.paginate(:page => params[:page], :per_page => per_page)
+
+			i = 1
+			for i in 1..per_page
+				if !File.exist?("app/assets/images/search/pin_map#{i}.png")
+					img = MiniMagick::Image.from_file("app/assets/images/search/pin_map.png")
+					if i<10
+						img.combine_options do |c|
+					    	c.draw "text 9,22 '#{i.to_s}'"
+							c.fill("#FFFFFF")
+							c.pointsize "17"
+						end
+					elsif i<100
+						img.combine_options do |c|
+					    	c.draw "text 4,22 '#{i.to_s}'"
+							c.fill("#FFFFFF")
+							c.pointsize "17"
+						end
+					else
+						img.combine_options do |c|
+					    	c.draw "text 1,22 '#{i.to_s}'"
+							c.fill("#FFFFFF")
+							c.pointsize "17"
+						end
+					end
+						
+					img.write("app/assets/images/search/pin_map#{i}.png")
+				end
+			end
+
+
+			respond_to do |format|
+				format.html
+				format.json { render :json => @results }
+			end
+		else
+			redirect_to root_path
+		end
+
+
+	end
+
+	def search2
+		if params[:inputSearch] && params[:latitude] && params[:longitude] && params[:inputLocalization]
+			@lat = params[:latitude]
+			@lng = params[:longitude]
+
 			
 
 			if cookies[:formatted_address]
@@ -323,7 +397,7 @@ class SearchsController < ApplicationController
 
 
 			#
-			# EMPRESAS DIN DUEÑO
+			# EMPRESAS SIN DUEÑO
 			#
 
 
