@@ -431,6 +431,34 @@ function updateCompany () {
 	});
 }
 
+function updateCompanySetting(){
+	$.ajax({
+		type: "POST",
+		url: '/quick_add/update_settings',
+		data: $('.company_settings_form').serialize(),
+		dataType: 'json',
+		success: function(result){
+			//nextFn = serviceValid;
+    		//$('#foo5').trigger('nextPage');
+    		//hideLoad();
+		},
+		error: function (xhr){
+		    var errors = $.parseJSON(xhr.responseText).errors;
+		    var errorList = '';
+			for (i in errors) {
+				errorList += '<li>' + errors[i] + '</li>'
+			}
+			my_alert.showAlert(
+				'<h3>Error</h3>' +
+				'<ul>' +
+					errorList +
+				'</ul>'
+			);
+			hideLoad();
+		}
+	});
+}
+
 function saveLocation (ctrl) {
 	var locationJSON = locJSON(ctrl);
 	$.ajax({
@@ -551,7 +579,9 @@ function serviceGroup () {
 		$('#service_capacity').closest('.form-group').addClass('hidden');
 		$('#service_capacity').attr('disabled', true);
 	}
+	var oldTop = $(document).scrollTop();
 	$('#foo5').trigger('updateSizes');
+	$(document).scrollTop(oldTop);
 }
 
 function newCategory () {
@@ -583,7 +613,9 @@ function hideLoad () {
 	$('.center-block').parent().addClass('hidden');
   	$('#foo5').css('visibility', 'visible');
 	$('#next2').removeClass('disabled');
+	var oldTop = $(document).scrollTop();
 	$('#foo5').trigger('updateSizes');
+	$(document).scrollTop(oldTop);
 }
 
 function scrollEvents () {
@@ -653,7 +685,9 @@ function changeCity (city_id) {
 				);
 			});
 			$('#location_district_id').attr('disabled', false);
+			var oldTop = $(document).scrollTop();
 			$('#foo5').trigger('updateSizes');
+			$(document).scrollTop(oldTop);
 		};
 	});
 }
@@ -755,7 +789,9 @@ $(function() {
 			$('#location_address').val('');
 			$('#districtsCheckboxes').removeClass('hidden');
 		}
+		var oldTop = $(document).scrollTop();
 		$('#foo5').trigger('updateSizes');
+		$(document).scrollTop(oldTop);
 	});
 	$('#service_outcall').change(function() {
 		if (!$('#service_outcall').prop('checked')) {
@@ -764,9 +800,10 @@ $(function() {
 		else {
 			$('#outcallTip').removeClass('hidden');
 		}
+		var oldTop = $(document).scrollTop();
 		$('#foo5').trigger('updateSizes');
+		$(document).scrollTop(oldTop);
 	});
-
 	$('#location_district_id, #location_address, #location_outcall').change(function (eve) {
     var district = $('#location_district_id').val();
     var address = $('#location_address').val();
@@ -777,3 +814,39 @@ $(function() {
     };
   });
 });
+
+});
+
+$(function() {
+
+	$("#service_online_payable").change(function(){
+		if (!$('#service_online_payable').prop('checked')) {
+			$('#form-has-discount').addClass('hidden');
+			$('#form-discount').addClass('hidden');
+		}
+		else {
+			$('#form-has-discount').removeClass('hidden');
+			if($('#service_has_discount').prop('checked'))
+			{
+				$('#form-discount').removeClass('hidden');
+			}
+		}
+		var oldTop = $(document).scrollTop();
+		$('#foo5').trigger('updateSizes');
+		$(document).scrollTop(oldTop);
+	});
+
+	$("#service_has_discount").change(function(){
+		if (!$('#service_has_discount').prop('checked')) {
+			$('#form-discount').addClass('hidden');
+		}
+		else {
+			$('#form-discount').removeClass('hidden');
+		}
+		var oldTop = $(document).scrollTop();
+		$('#foo5').trigger('updateSizes');
+		$(document).scrollTop(oldTop);
+	});
+
+});
+>>>>>>> 09b70e9e3a30f02e4b2dd41458d68ba1351a2ee7

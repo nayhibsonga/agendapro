@@ -38,7 +38,29 @@ $(function() {
 		submitHandler: function(form) {
 			$('#submitBtn').attr("disabled", "disabled");
 			$('#submitBtn').html('Cargando...');
-			form.submit();
+			if($("#payment").val()=="1")
+			{
+				var is_selected = false;
+				$('.mp_radio').each(function(){
+				if($(this).prop('checked'))
+					{
+						is_selected = true;
+						console.log(is_selected);
+					}
+				});
+				if(is_selected)
+				{
+					form.submit();
+				}
+				else
+				{
+					$("#medio-de-pago").modal('show');
+				}
+		  	}
+		  	else
+		  	{
+		  		form.submit();
+		  	}
 		}
 	});
 	$('#identification_number').change(function() {

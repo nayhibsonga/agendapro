@@ -9,7 +9,19 @@
 				</p>
 				<% else %>
 				<p>
-					La empresa <strong><%= @company.name %></strong> sólo permite modificar reservas hasta <strong><%= @company.company_setting.before_edit_booking %></strong> horas antes.
+					<% if @reason == "company" %>
+						La empresa <strong><%= @company.name %></strong> sólo permite modificar reservas hasta <strong><%= @company.company_setting.before_edit_booking %></strong> horas antes.
+					<% else %>
+						<% if !@company.company_setting.online_cancelation_policy.modifiable %>
+							La empresa <strong><%= @company.name %></strong> no permite modificar reservas pagadas en línea.
+						<% else %>
+							No cumple con la política de modificación de la empresa <strong><%= @company.name %></strong> para reservas pagas en línea:
+							<br />
+								Tiempo máximo de modificación desde la fecha en que se efectuó la reserva: <%= @company.company_setting.online_cancelation_policy.modification_max.to_s %> <%= TimeUnit.find(@company.company_setting.online_cancelation_policy.modification_unit).unit.to_s %>
+							<br />
+								Mínimo de horas antes de la reserva: <%= @company.company_setting.online_cancelation_policy.min_hours.to_s %>
+						<% end %>
+					<% end %>
 				</p>
 				<% end %>
 				<hr>

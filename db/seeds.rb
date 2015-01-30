@@ -269,6 +269,7 @@
 	# Plan para las personas que partieron con nosotros antes en la Beta y no se han querido cambiar...
 	plan_beta = Plan.create(name: "Beta", locations: 1, service_providers: 2, custom: true, price: 14900, special: false)
 
+
 # => Test Company
 	# test_company = Company.create(name: 'Test Company', web_address: 'test', economic_sector_id: 1, plan_id: 2, payment_status_id: 1, description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus pharetra quam neque, eget condimentum purus semper id. In porta ut mauris id congue. Quisque accumsan mauris nec turpis tincidunt, quis rhoncus augue porttitor. Mauris quis malesuada sem. Donec nisi metus.", cancellation_policy: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam tincidunt rutrum sapien vel ultricies. Sed.")
 
