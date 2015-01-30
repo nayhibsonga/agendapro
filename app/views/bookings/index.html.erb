@@ -45,7 +45,6 @@
 			</div>
 			<div class="modal-body booking-modal-body">
 				<%= form_for @booking, html: {class: "form-horizontal"} do |f| %>
-				<%= f.hidden_field :max_changes, value: Company.find(current_user.company_id).company_setting.max_changes %>
 				<div class="row well well-sm">
 					<ul id="myTab" class="nav nav-tabs" role="tablist">
 						<li id="booking-li" class="active"><a href="#booking-pane" role="tab" data-toggle="tab" class="tab_index" id="booking-tab">Reserva</a></li>
@@ -71,7 +70,7 @@
 									<div class="form-group has-feedback">
 										<label class="col-sm-4 control-label">Hora</label>
 										<div class="col-sm-8">
-											<div class="input datetime required booking_start_end ">       
+											<div class="input datetime required booking_start_end ">
 												<select class="form-control date-select datetime required" id="bookingStartHour" name="booking[start_hours]">
 													<option value="00">00</option>
 													<option value="01">01</option>
@@ -111,7 +110,7 @@
 													<option value="45">45</option>
 													<option value="50">50</option>
 													<option value="55">55</option>
-												</select> - 
+												</select> -
 												<select class="form-control date-select datetime required" id="bookingEndHour" name="booking[end_hours]">
 													<option value="00">00</option>
 													<option value="01">01</option>
@@ -451,4 +450,12 @@
 <% end %>
 <% content_for :stylesheets do %>
 	<%= stylesheet_link_tag "admin/admin-calendar" %>
+	<style type="text/css">
+		.fa-spin {
+		  -webkit-animation: spin 1s infinite linear;
+		  -moz-animation: spin 1s infinite linear;
+		  -o-animation: spin 1s infinite linear;
+		  animation: spin 1s infinite linear;
+		}
+	</style>
 <% end %>

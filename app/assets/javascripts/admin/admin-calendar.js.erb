@@ -4,6 +4,8 @@ var textColors = ["#222211", "#102050", "#554004", "#401040", "#105020", "#50520
 var resourcesColors = [];
 var servicesJSON;
 
+var bookingBuffer = []
+
 function loadProviders () {
 	if (parseInt($('#locals-selector').val()) > 0) {
 		var localId = parseInt($('#locals-selector').val());
@@ -373,7 +375,7 @@ function loadWeekCalendar (startTime, endTime, hiddenDays, resourcesArray, provi
 
 function loadProviderEvents(providerId) {
 	$(".fc-button").css("display", "none");
-	$(".fc-header-center").append('<%= image_tag "small-loader.gif", :alt => "Loader", :id => "small_loader_header", :class => "small-loader-header" %>');
+	$(".fc-header-center").append('<span id="small_loader_header"><i class="fa fa-spinner fa-spin"></i> </span>');
 	var localId = parseInt($('#locals-selector').val());
 	var start = $('#calendar').fullCalendar('getView').visStart;
 	var end = $('#calendar').fullCalendar('getView').visEnd;
@@ -530,6 +532,7 @@ function editBookingModal(eventId) {
 }
 
 function createBookingModal(date, provider_id) {
+	bookingBuffer = []
 	var localId = parseInt($('#locals-selector').val());
 	var date = date || 0;
 	var provider_id = provider_id || 0;
@@ -599,7 +602,8 @@ function createBookingModal(date, provider_id) {
 			$('.booking-modal-title').append('Nueva Reserva');
 			$('.booking-modal-footer').append(
 				'<button type="button" class="btn btn-default btn-close booking-button" data-dismiss="modal">Cerrar</button>' +
-				'<button type="button" class="btn btn-agendapro-claro booking-button" onclick="createBooking()">Guardar</button>'
+				'<button type="button" class="btn btn-agendapro-claro booking-button" onclick="createBooking()">Guardar</button>' +
+				'<button type="button" class="btn btn-agendapro-oscuro booking-button" onclick="addNewService()">Nuevo Servicio</button>'
 			);
 
 			if (provider_id) {
@@ -630,7 +634,7 @@ function createBookingModal(date, provider_id) {
 function editBooking(eventId) {
 	if ($('#new_booking').valid()) {
 		$('.booking-button').attr("disabled", "disabled");
-		$( '<%= image_tag "small-loader.gif", :alt => "Loader", :id => "small_loader" %>' ).insertBefore( $( ".btn-close" ) );
+		$( '<span id="small_loader"><i class="fa fa-spinner fa-spin"></i> </span>' ).insertBefore( $( ".btn-close" ) );
 		saveBooking('PATCH','/'+eventId);
 	};
 }
@@ -638,15 +642,65 @@ function editBooking(eventId) {
 function createBooking() {
 	if ($('#new_booking').valid()) {
 		$('.booking-button').attr("disabled", "disabled");
-		$( '<%= image_tag "small-loader.gif", :alt => "Loader", :id => "small_loader" %>' ).insertBefore( $( ".btn-close" ) );
+		$( '<span id="small_loader"><i class="fa fa-spinner fa-spin"></i> </span>' ).insertBefore( $( ".btn-close" ) );
 		saveBooking('POST','');
 	};
+}
+
+function addNewService () {
+	if ($('#new_booking').valid()) {
+		$('.booking-button').prop('disabled', true);
+		$( '<span id="small_loader"><i class="fa fa-spinner fa-spin"></i> </span>' ).insertBefore( $( ".btn-close" ) );
+
+		var booking = jsonBooking();
+		booking_valid(booking);
+	};
+}
+
+function booking_valid (booking) {
+	$.ajax({
+		type: 'POST',
+		url: '/booking_valid.json',
+		data: { "booking": booking },
+		dataType: 'json',
+		success: function (result) {
+			bookingBuffer.push(booking);
+
+			$('#bookingStartHour').val($('#bookingEndHour').val());
+			$('#bookingStartMinute').val($('#bookingEndMinute').val());
+			$('#bookingEndHour').val('');
+			$('#bookingEndMinute').val('');
+			$('#booking_service_provider_id').val('');
+			$('#booking_provider_lock').prop('checked', false);
+			$('#booking_service_id').val('');
+			$('#booking_price').val(0);
+			$('#booking_notes').val('');
+			$('#booking_company_comment').val('');
+
+			validator.resetForm();
+			$('.has-feedback').removeClass('has-success has-error');
+			$('.form-control-feedback').removeClass('fa fa-check fa-times');
+
+			$('.booking-button').prop("disabled", false);
+			$('#small_loader').remove();
+		},
+		error: function (xhr) {
+			var errors = $.parseJSON(xhr.responseText).errors;
+			var errores = 'Error\n';
+			for (i in errors) {
+				errores += '*' + errors[i] + '\n';
+			}
+			$('.booking-button').prop("disabled", false);
+			$('#small_loader').remove();
+			alert(errores);
+		},
+	});
 }
 
 function deleteBooking(eventId) {
 	if (confirm('¿Estás seguro que quieres cancelar esta reserva?\nEsta acción no se puede revertir.')) {
 		$('.booking-button').attr("disabled", "disabled");
-		$( '<%= image_tag "small-loader.gif", :alt => "Loader", :id => "small_loader" %>' ).insertBefore( $( ".btn-close" ) );
+		$( '<span id="small_loader"><i class="fa fa-spinner fa-spin"></i> </span>' ).insertBefore( $( ".btn-close" ) );
 		saveBooking('DELETE','/'+eventId);
 	};
 }
@@ -812,9 +866,6 @@ function editDrag(event) {
 
 function saveBooking(typeURL, extraURL) {
 	var bookingJSON = jsonBooking();
-	if (typeURL == 'POST') {
-		bookingJSON['max_changes'] = $('#booking_max_changes').val();
-	};
 	$.ajax({
 		type: typeURL,
 		url: '/bookings'+ extraURL +'.json',
@@ -939,7 +990,7 @@ function saveBreak (typeURL, extraURL) {
 			switch(typeURL) {
 				case 'POST':
 					$('.break-button').attr("disabled", "disabled");
-					$( '<%= image_tag "small-loader.gif", :alt => "Loader", :id => "small_loader" %>' ).insertBefore( $( ".btn-close" ) );
+					$( '<span id="small_loader"><i class="fa fa-spinner fa-spin"></i> </span>' ).insertBefore( $( ".btn-close" ) );
 					var warnings = '';
 					if ($('#provider_break_service_provider_id').val() != 0) {
 						var label = provider_break.name;
@@ -1001,7 +1052,7 @@ function saveBreak (typeURL, extraURL) {
 					break;
 				case 'PATCH':
 					$('.break-button').attr("disabled", "disabled");
-					$( '<%= image_tag "small-loader.gif", :alt => "Loader", :id => "small_loader" %>' ).insertBefore( $( ".btn-close" ) );
+					$( '<span id="small_loader"><i class="fa fa-spinner fa-spin"></i> </span>' ).insertBefore( $( ".btn-close" ) );
 					var warnings = '';
 					if ($('#provider_break_service_provider_id').val() != 0) {
 						var label = provider_break.name;
@@ -1061,7 +1112,7 @@ function saveBreak (typeURL, extraURL) {
 					break;
 				case 'DELETE':
 					$('.break-button').attr("disabled", "disabled");
-					$( '<%= image_tag "small-loader.gif", :alt => "Loader", :id => "small_loader" %>' ).insertBefore( $( ".btn-close" ) );
+					$( '<span id="small_loader"><i class="fa fa-spinner fa-spin"></i> </span>' ).insertBefore( $( ".btn-close" ) );
 					if ($('#provider_break_service_provider_id').val() != 0) {
 						$('#calendar').fullCalendar('removeEvents','b'+provider_break.id);
 					} else {

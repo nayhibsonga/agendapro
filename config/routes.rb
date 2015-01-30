@@ -44,9 +44,9 @@ Agendapro::Application.routes.draw do
 
   resources :clients
 
-  namespace :admin do 
+  namespace :admin do
     get '', :to => 'dashboard#index', :as => '/'
-    resources :users 
+    resources :users
   end
 
   # Quick Add
@@ -72,7 +72,7 @@ Agendapro::Application.routes.draw do
   get '/report_location_providers/:id', :to => 'reports#location_providers'
   get '/report_provider_services/:id', :to => 'reports#provider_services'
 
-  # 
+  #
   post '/client_comments', :to => 'clients#create_comment', :as => 'client_comments'
   get '/select_plan', :to => 'plans#select_plan', :as => 'select_plan'
   get '/get_direction', :to => 'districts#get_direction'
@@ -179,6 +179,7 @@ Agendapro::Application.routes.draw do
   get '/clients_bookings_history', :to => 'clients#bookings_history'
   get '/booking_history', :to => 'bookings#booking_history'
   get '/fixed_bookings', :to => 'bookings#fixed_index', :as => 'fixed_bookings'
+  post '/booking_valid', :to => 'bookings#booking_valid'
 
   get '/edit_booking', :to => 'bookings#edit_booking', :as => 'booking_edit'
   post '/edited_booking', :to => 'bookings#edit_booking_post'
@@ -200,7 +201,7 @@ Agendapro::Application.routes.draw do
   get '/locations/:id/activate', :to => 'locations#activate', :as => 'activate_location'
   get '/services/:id/activate', :to => 'services#activate', :as => 'activate_service'
   get '/service_providers/:id/activate', :to => 'service_providers#activate', :as => 'activate_service_provider'
-  
+
   get '/companies/:id/deactivate', :to => 'companies#deactivate', :as => 'deactivate_company'
   get '/locations/:id/deactivate', :to => 'locations#deactivate', :as => 'deactivate_location'
   get '/services/:id/deactivate', :to => 'services#deactivate', :as => 'deactivate_service'
@@ -229,13 +230,13 @@ Agendapro::Application.routes.draw do
   get '/iframe/facebook_success', :to => 'iframe#facebook_success', :as => 'facebook_success'
   get '/iframe/facebook_addtab', :to => 'iframe#facebook_addtab', :as => 'facebook_addtab'
   get '/company_settings/:id/delete_facebook_pages', :to => 'company_settings#delete_facebook_pages', :as => 'delete_facebook_pages'
-  
+
   # Root
   get '/' => 'searchs#index', :constraints => { :subdomain => 'www' }
   get '/' => 'companies#overview', :constraints => { :subdomain => /.+/ }
 
   root :to => 'searchs#index'
-  
+
 
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".
