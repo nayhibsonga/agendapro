@@ -407,6 +407,7 @@
         overflow-y: hidden;
         -ms-overflow-style: -ms-autohiding-scrollbar;
         margin-bottom: 8px;
+        min-width: 440px;
       }
       .responsive-table > .table {
         margin-bottom: 0;
@@ -416,6 +417,13 @@
       }
       table.summary > thead > tr > th {
         font-weight: bold;
+      }
+      table.summary > thead > tr > th,
+      table.summary > thead > tr > td,
+      table.summary > tbody > tr > th,
+      table.summary > tbody > tr > td {
+        width: 1%;
+        min-width: 100px;
       }
     </style>
     <!-- end: CSS -->
