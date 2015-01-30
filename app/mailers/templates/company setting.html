@@ -35,6 +35,10 @@
       a:hover {
         outline: 0;
       }
+      b,
+      strong {
+        font-weight: bold;
+      }
       img {
         border: 0;
       }
@@ -46,16 +50,29 @@
       button {
         overflow: visible;
       }
-      button {
+      button,
+      select {
         text-transform: none;
       }
-      button {
+      button,
+      html input[type="button"],
+      input[type="reset"],
+      input[type="submit"] {
         -webkit-appearance: button;
         cursor: pointer;
       }
-      button::-moz-focus-inner {
+      button::-moz-focus-inner,
+      input::-moz-focus-inner {
         padding: 0;
         border: 0;
+      }
+      table {
+        border-spacing: 0;
+        border-collapse: collapse;
+      }
+      td,
+      th {
+        padding: 0;
       }
       * {
         -webkit-box-sizing: border-box;
@@ -80,7 +97,10 @@
         color: #333;
         background-color: #fff;
       }
-      button {
+      input,
+      button,
+      select,
+      textarea {
         font-family: inherit;
         font-size: inherit;
         line-height: inherit;
@@ -130,33 +150,27 @@
       .text-center {
         text-align: center;
       }
-      .container-fluid {
-        padding-right: 15px;
-        padding-left: 15px;
-        margin-right: auto;
-        margin-left: auto;
+      table {
+        background-color: transparent;
       }
-      .row {
-        margin-right: -15px;
-        margin-left: -15px;
+      th {
+        text-align: left;
       }
-      .col-xs-4, .col-xs-6, .col-xs-12 {
-        position: relative;
-        min-height: 1px;
-        padding-right: 15px;
-        padding-left: 15px;
-      }
-      .col-xs-4, .col-xs-6, .col-xs-12 {
-        float: left;
-      }
-      .col-xs-12 {
+      .table {
         width: 100%;
+        max-width: 100%;
+        margin-bottom: 20px;
       }
-      .col-xs-6 {
-        width: 50%;
-      }
-      .col-xs-4 {
-        width: 33.33333333%;
+      .table > thead > tr > th,
+      .table > tbody > tr > th,
+      .table > tfoot > tr > th,
+      .table > thead > tr > td,
+      .table > tbody > tr > td,
+      .table > tfoot > tr > td {
+        padding: 8px;
+        line-height: 1.42857143;
+        vertical-align: top;
+        border-top: 1px solid #ddd;
       }
       .btn {
         display: inline-block;
@@ -209,25 +223,49 @@
         line-height: 1.33;
         border-radius: 6px;
       }
-      .container-fluid:before,
-      .container-fluid:after,
-      .row:before,
-      .row:after {
-        display: table;
-        content: " ";
+      .center-block {
+        display: block;
+        margin-right: auto;
+        margin-left: auto;
       }
-      .container-fluid:after,
-      .row:after {
-        clear: both;
+      .pull-right {
+        float: right !important;
+      }
+      .pull-left {
+        float: left !important;
       }
     </style>
     <style type="text/css">
+      /* Containers */
       html,
       body {
-        font-family: Helvetica, Arial, sans-serif;
-        background: #ffffff;
+        font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
         font-size: 12px;
-        font-weight: lighter;
+        font-weight: 300;
+        color: #505050;
+        background: #ffffff;
+      }
+      table {
+        width: 100%;
+        max-width: 100%;
+        font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
+        font-size: 12px;
+        font-weight: 300;
+        color: #505050;
+        background: #ffffff;
+      }
+      table > thead > tr > th,
+      table > tbody > tr > th,
+      table > tfoot > tr > th,
+      table > thead > tr > td,
+      table > tbody > tr > td,
+      table > tfoot > tr > td {
+        padding: 8px 15px;
+        line-height: 1.42857143;
+        vertical-align: top;
+      }
+      table table {
+        background-color: #ffffff;
       }
       .pull-center {
         text-align: center;
@@ -235,18 +273,18 @@
         margin-right: auto;
       }
       .content {
-        font-family: Helvetica, Arial;
-        font-size: 12px;
-        font-weight: lighter;
         margin-right: auto;
         margin-left: auto;
-        padding-right: 15px;
-        padding-left: 15px;
-        width: 100%;
         max-width: 600px;
         border: 1px solid #727171;
-        color: #505050;
-        background: #ffffff;
+        margin-top: 10px;
+        margin-bottom: 10px;
+      }
+      .col-2 {
+        width: 50%;
+      }
+      .col-3 {
+        width: 33%;
       }
 
       /* Buttons */
@@ -294,123 +332,125 @@
       }
 
       /* Backgrounds */
-      .background-light-grey {
-        margin-right: -15px;
-        margin-left: -15px;
-        padding: 5px 15px;
-        background: #f1f4f5;
-        color: #727171;
-        text-align: center;
-        font-size: 10px;
-        min-height: 24px;
-      }
-      .background-light-grey a,
-      .background-light-grey a:hover,
-      .background-light-grey a:active {
-        color: #505050;
-        text-decoration: none;
-      }
-      .background-dark-grey {
-        margin-right: -15px;
-        margin-left: -15px;
-        padding: 5px 15px;
-        background: #d2d3d3;
-        color: #ffffff;
-        text-align: center;
-        min-height: 30px;
-      }
       .background-green {
-        margin-right: -15px;
-        margin-left: -15px;
-        padding: 10px 20px;
         background: #22c488;
         color: #ffffff;
-        min-height: 30px;
-        font-size: 12px;
-        margin-top: 10px;
-        margin-bottom: 10px;
+      }
+      .background-green > td {
+        padding: 10px 20px;
+      }
+      .background-dark-grey {
+        background: #d2d3d3;
+        color: #ffffff;
+      }
+      .background-dark-grey > td {
+        text-align: center;
+      }
+      .background-light-grey {
+        background: #f1f4f5;
+        color: #727171;
       }
 
       /* General */
+      .header,
+      .footer {
+        background: #f1f4f5;
+        color: #727171;
+        font-size: 10px;
+        min-height: 24px;
+      }
+      .header > td {
+        padding: 5px 30px;
+        text-align: center;
+      }
+      .header a,
+      .header a:hover,
+      .header a:active {
+        color: #727171;
+        text-decoration: none;
+      }
+      .footer > td {
+        padding: 5px 30px;
+      }
+      .footer > td:first-child:not(:last-child) {
+        padding-right: 10px;
+      }
+      .footer > td:last-child:not(:first-child) {
+        padding-left: 10px;
+      }
+      .footer > td > p {
+        margin: 0;
+      }
       .logo {
         width: 50%;
         max-width: 118px;
       }
-      .footer {
-        padding-left: 30px;
-        padding-right: 30px;
+      .footer img {
+        margin-left: -1px;
+        margin-right: 10px;
+        width: 20px;
+        display: inline;
+        vertical-align: top;
       }
       h4 {
         font-size: 20px;
       }
 
       /* Company Setting */
-      .sub-content {
-        width: 80%;
-        margin-right: auto;
-        margin-left: auto;
-      }
-      .sub-content .btn-green {
-        margin-top: 20px;
-        margin-bottom: 20px;
+      .subcontent {
+        text-align: center;
+        padding-left: 60px;
+        padding-right: 60px;
       }
     </style>
     <!-- end: CSS -->
   </head>
 
   <body>
-    <div class="container-fluid">
-      <div class="row">
-        <div class="col-xs-12">
-          <div class="content">
-            <!-- Start: Header -->
-            <div class="background-light-grey" style="margin-bottom: 10px;">
-              <div class="row">
-                <div class="col-xs-12">
-                  *|IF:URL|*<a href="http://*|URL|*.agendapro.cl" target="_blanck">*|URL|*.agendapro.cl</a>*|END:IF|*
-                </div>
-              </div>
-            </div>
-            <!-- End: Header -->
+    <table class="content">
+      <tbody>
+        <!-- Start: Header -->
+        <tr class="header">
+          <td colspan="2">
+            <a href="http://*|URL|*.agendapro.cl" target="_blanck">*|URL|*.agendapro.cl</a>
+          </td>
+        </tr>
+        <!-- End: Header -->
 
-            <!-- Start: Content -->
-            <div class="row">
-              <div class="col-xs-12">
-                <div class="pull-center">
-                  <img src="cid:LOGO" class="logo" alt="Logo">
-                </div>
-              </div>
+        <!-- Start: Content -->
+        <tr>
+          <td colspan="2">
+            <div class="pull-center">
+              <img src="cid:LOGO" class="logo" alt="Logo">
             </div>
-            <div class="row">
-              <div class="col-xs-12">
-                <h4 class="text-center">*|COMPANYNAME|*</h4>
-              </div>
-              <div class="col-xs-12">
-                <div class="sub-content">
-                  <p class="text-center">Estimado (a),</p>
-                  <p class="text-center">Este correo ha sido agregado como nuevo remitente a la lista de correos de su cuenta AgendaPro. Por favor confirme en el siguiente link:</p>
-                  <p class="text-center"><a class="btn btn-lg btn-green" href="*|CONFIRM|*" target="_blank">Confirmar E-mail</a></p>
-                  <p class="text-center">Le recordamos que no podrá utilizar la dirección de correo hasta que sea confirmada.</p>
-                </div>
-              </div>
-            </div>
-            <!-- End: Content -->
+          </td>
+        </tr>
+        <tr>
+          <td colspan="2">
+            <h4 class="text-center">*|COMPANYNAME|*</h4>
+          </td>
+        </tr>
+        <tr>
+          <td class="subcontent" colspan="2">
+            <p>Estimado (a),</p>
+            <p>Este correo ha sido agregado como nuevo remitente a la lista de correos de su cuenta AgendaPro. Por favor confirme en el siguiente link:</p>
+            <p><a class="btn btn-lg btn-green" href="*|CONFIRM|*" target="_blank">Confirmar E-mail</a></p>
+            <p>Le recordamos que no podrá utilizar la dirección de correo hasta que sea confirmada.</p>
+          </td>
+        </tr>
+        <!-- End: Content -->
 
-            <!-- Start: Footer -->
-            <div class="background-light-grey footer" style="margin-top: 10px;">
-              <div class="row">
-                <div class="col-xs-6">
-                  <p class="text-left" style="margin-bottom: 0;">Este es un email automático, para contactar a la empresa por favor responde este correo.</p>
-                </div>
-                <div class="col-xs-6">
-                  <p class="text-right" style="margin-bottom: 0;">Copyright 2013 | Gunei Investment SpA | Todos los derechos reservados</p>
-                </div>
-              </div>
-            </div>
-            <!-- End: Footer -->
-          </div>
-        </div>
-      </div>
-    </div>
+        <!-- Start: Footer -->
+        <tr class="footer">
+          <td class="col-2">
+            <p class="text-left">Este es un email automático, para contactar a la empresa por favor responde este correo.</p>
+          </td>
+          <td class="col-2">
+            <p class="text-right">Copyright 2013 | Gunei Investment SpA | Todos los derechos reservados</p>
+          </td>
+        </tr>
+        <!-- End: Footer -->
+      </tbody>
+    </table>
   </body>
 </html>
