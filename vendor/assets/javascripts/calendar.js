@@ -1,4 +1,4 @@
-function Calendar (source, getData, onLoad) {
+function Calendar (source, getData) {
 
 	// Default Values
 	var months = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
@@ -12,7 +12,7 @@ function Calendar (source, getData, onLoad) {
 
 	var week;
 	var clickEvent;
-	var onload;
+	var onload = true;
 
 	// Generate Calendar
 	var generateCalendar = function (date) {
@@ -243,7 +243,7 @@ function Calendar (source, getData, onLoad) {
 		return date.getFullYear() + '-' + correctNumber(date.getMonth() + 1) + '-' + correctNumber(date.getDate());
 	}
 
-	this.rebuild = function (source, getData, onLoad) {
+	this.rebuild = function (source, getData) {
 		var day = parseDate(getData['date'], '00:00');
 
 		sources = {
@@ -258,7 +258,7 @@ function Calendar (source, getData, onLoad) {
 		getData = getData || {};
 		sources.data = $.extend(true, sources.data, getData);
 		week = generateCalendar(day);
-		onload = onLoad;
+		onload = true;
 	}
 
 	this.getClickDetails = function () {
@@ -270,7 +270,7 @@ function Calendar (source, getData, onLoad) {
 		sources.source = source || sources.source;
 		getData = getData || {};
 		sources.data = $.extend(true, sources.data, getData);
-		onload = onLoad;
+		onload = true;
 
 		week = generateCalendar();
 
