@@ -229,6 +229,10 @@ class Location < ActiveRecord::Base
 	 #  end
 
 
+	 	# categories = self.service_providers.services.where(:active => true).pluck('service_category_id')
+	 	# categories = ServiceCategory.where(:service_id => Service.where(:active => true, :id => ServiceProvider.where(:location_id => loc.id)))
+	 	# categories = .service_providers.join(:service).where(:active => true).pluck('service_category_id')
+
 	    service_providers = self.service_providers
 
 	    services_ids = Array.new

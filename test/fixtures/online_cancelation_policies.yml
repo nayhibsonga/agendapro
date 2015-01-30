@@ -1,0 +1,15 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  cancelable: false
+  cancel_max_hours: 1.5
+  modifiable: false
+  modification_unit: MyString
+  modification_max: 1.5
+
+two:
+  cancelable: false
+  cancel_max_hours: 1.5
+  modifiable: false
+  modification_unit: MyString
+  modification_max: 1.5

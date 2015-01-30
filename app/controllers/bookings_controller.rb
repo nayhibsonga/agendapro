@@ -2,7 +2,7 @@ class BookingsController < ApplicationController
   before_action :set_booking, only: [:show, :edit, :update, :destroy]
   before_action :authenticate_user!, except: [:create, :provider_booking, :book_service, :edit_booking, :edit_booking_post, :cancel_booking, :confirm_booking, :check_user_cross_bookings, :blocked_edit, :blocked_cancel]
   before_action :quick_add, except: [:create, :provider_booking, :book_service, :edit_booking, :edit_booking_post, :cancel_booking, :confirm_booking, :check_user_cross_bookings, :blocked_edit, :blocked_cancel]
-  layout "admin", except: [:book_service, :provider_booking, :edit_booking, :edit_booking_post, :cancel_booking, :confirm_booking, :check_user_cross_bookings, :blocked_edit, :blocked_cancel]
+  layout "admin", except: [:book_service, :provider_booking, :edit_booking, :edit_booking_post, :cancel_booking, :transfer_error_cancel, :confirm_booking, :check_user_cross_bookings, :blocked_edit, :blocked_cancel]
 
   # GET /bookings
   # GET /bookings.json
@@ -593,7 +593,9 @@ class BookingsController < ApplicationController
       params[:comment] += ' - Dirección del cliente (donde se debe realizar el servicio): ' + params[:address]
     end
     if @company.company_setting.client_exclusive
-      if Client.where(identification_number: params[:identification_number], company_id: @company).count > 0
+      if(params[:client_id])
+        client = Client.find(params[:client_id])
+      elsif Client.where(identification_number: params[:identification_number], company_id: @company).count > 0
         client = Client.where(identification_number: params[:identification_number], company_id: @company).first
         client.email = params[:email]
         client.phone = params[:phone]
@@ -610,7 +612,9 @@ class BookingsController < ApplicationController
         return
       end
     else
-      if Client.where(email: params[:email], company_id: @company).count > 0
+      if(params[:client_id])
+        client = Client.find(params[:client_id])
+      elsif Client.where(email: params[:email], company_id: @company).count > 0
         client = Client.where(email: params[:email], company_id: @company).first
         client.first_name = params[:firstName]
         client.last_name = params[:lastName]
@@ -642,16 +646,38 @@ class BookingsController < ApplicationController
     end
     @booking.price = Service.find(params[:service]).price
     @booking.max_changes = @company.company_setting.max_changes
-
-    if @booking.save
-      # flash[:notice] = "Reserva realizada exitosamente."
-
-      # BookingMailer.book_service_mail(@booking)
+    #
+      #   PAGO EN LÍNEA DE RESERVA
+      #
+    if(params[:payment] == "1")
+        @booking.max_changes = @company.company_setting.max_changes
+        trx_id = DateTime.now.to_s.gsub(/[-:T]/i, '')
+        num_amount = service.price - service.price*service.discount/100;
+        amount = sprintf('%.2f', num_amount)
+        payment_method = params[:mp]
+        req = PuntoPagos::Request.new()
+        resp = req.create(trx_id, amount, payment_method)
+        if resp.success?
+          @booking.trx_id = trx_id
+          @booking.token = resp.get_token
+          if @booking.save
+            PuntoPagosCreation.create(trx_id: trx_id, payment_method: payment_method, amount: amount, details: "Pago de servicio " + service.name + " a la empresa " +@company.name+" (" + @company.id.to_s + "). trx_id: "+trx_id+" - mp: "+@company.id.to_s+". Resultado: Se procesa")
+            redirect_to resp.payment_process_url and return
+          else
+            @errors = @booking.errors.full_messages
+          end
+        else
+          puts resp.get_error
+          redirect_to punto_pagos_failure_path and return
+        end
+    else #SÓLO RESERVA
+      if @booking.save
       current_user ? user = current_user.id : user = 0
       BookingHistory.create(booking_id: @booking.id, action: "Creada por Cliente", start: @booking.start, status_id: @booking.status_id, service_id: @booking.service_id, service_provider_id: @booking.service_provider_id, user_id: user)
-    else
+      else
       #flash[:alert] = "Hubo un error guardando los datos de tu reserva. Inténtalo nuevamente."
       @errors = @booking.errors.full_messages
+      end
     end
 
     # => Domain parser
@@ -678,6 +704,66 @@ class BookingsController < ApplicationController
     if (booking_start <=> now) < 1 or @booking.max_changes <= 0
       redirect_to blocked_edit_path(:id => @booking.id)
       return
+    end
+
+    #Revisar si fue pagada en línea.
+    #Si lo fue, revisar política de modificación.
+    if @booking.payed || !@booking.payed_booking.nil?
+      if !@company.company_setting.online_cancelation_policy.nil?
+        ocp = @company.company_setting.online_cancelation_policy
+        if !ocp.modifiable
+          redirect_to blocked_edit_path(:id => @booking.id, :online => true)
+          return
+        else
+          #Revisar tiempos de modificación, tanto máximo como el mínimo específico para los pagados en línea
+
+          #Mínimo
+          book_start = DateTime.parse(@booking.start.to_s)
+          min_hours = (book_start-now)/(60*60)
+          min_hours = min_hours.to_i.abs
+
+          if min_hours >= ocp.min_hours.to_i
+            redirect_to blocked_edit_path(:id => @booking.id, :online => true)
+              return
+          end
+
+          #Máximo
+          booking_creation = DateTime.parse(@booking.created_at.to_s)
+          minutes = (booking_creation.to_time - now.to_time)/(60)
+          hours = (booking_creation.to_time - now.to_time)/(60*60)
+          days = (booking_creation.to_time - now.to_time)/(60*60*24)
+          minutes = minutes.to_i.abs
+          hours = hours.to_i.abs
+          days = days.to_i.abs
+          weeks = days/7
+          months = days/30
+
+          #Obtener el máximo
+          num = ocp.modification_max.to_i
+          if ocp.modification_unit == TimeUnit.find_by_unit("Minutos").id
+            if minutes >= num
+              redirect_to blocked_edit_path(:id => @booking.id, :online => true)
+              return
+            end
+          elsif ocp.modification_unit == TimeUnit.find_by_unit("Horas").id
+            if hours >= num
+              redirect_to blocked_edit_path(:id => @booking.id, :online => true)
+              return
+            end
+          elsif ocp.modification_unit == TimeUnit.find_by_unit("Semanas").id
+            if weeks >= num
+              redirect_to blocked_edit_path(:id => @booking.id, :online => true)
+              return
+            end
+          elsif ocp.modification_unit == TimeUnit.find_by_unit("Meses").id
+            if months >= num
+              redirect_to blocked_edit_path(:id => @booking.id, :online => true)
+              return
+            end
+          end
+
+        end
+      end
     end
 
     if mobile_request?
@@ -788,7 +874,10 @@ class BookingsController < ApplicationController
   def blocked_edit
     @booking = Booking.find(params[:id])
     @company = Location.find(@booking.location_id).company
-
+    @reason = "company"
+    if(params[:online])
+      @reason = "online"
+    end
     # => Domain parser
     host = request.host_with_port
     @url = @company.web_address + '.' + host[host.index(request.domain)..host.length]
@@ -834,7 +923,10 @@ class BookingsController < ApplicationController
   def blocked_cancel
     @booking = Booking.find(params[:id])
     @company = Location.find(@booking.location_id).company
-
+    @reason = "company"
+    if(params[:online])
+      @reason = "online"
+    end
     # => Domain parser
     host = request.host_with_port
     @url = @company.web_address + '.' + host[host.index(request.domain)..host.length]
@@ -860,11 +952,78 @@ class BookingsController < ApplicationController
         return
       end
 
+      #Revisar si fue pagada en línea.
+      #Si lo fue, revisar política de modificación.
+      if @booking.payed || !@booking.payed_booking.nil?
+        if !@company.company_setting.online_cancelation_policy.nil?
+          ocp = @company.company_setting.online_cancelation_policy
+          if !ocp.cancelable
+            redirect_to blocked_cancel_path(:id => @booking.id, :online => true)
+            return
+          else
+            #Revisar tiempos de modificación, tanto máximo como el mínimo específico para los pagados en línea
+
+            #Mínimo
+            book_start = DateTime.parse(@booking.start.to_s)
+            min_hours = (book_start-now)/(60*60)
+            min_hours = min_hours.to_i.abs
+
+            if min_hours >= ocp.min_hours.to_i
+              redirect_to blocked_cancel_path(:id => @booking.id, :online => true)
+                return
+            end
+
+            #Máximo
+            booking_creation = DateTime.parse(@booking.created_at.to_s)
+            minutes = (booking_creation.to_time - now.to_time)/(60)
+            hours = (booking_creation.to_time - now.to_time)/(60*60)
+            days = (booking_creation.to_time - now.to_time)/(60*60*24)
+            minutes = minutes.to_i.abs
+            hours = hours.to_i.abs
+            days = days.to_i.abs
+            weeks = days/7
+            months = days/30
+
+            #Obtener el máximo
+            num = ocp.cancel_max.to_i
+            if ocp.cancel_unit == TimeUnit.find_by_unit("Minutos").id
+              if minutes >= num
+                redirect_to blocked_cancel_path(:id => @booking.id, :online => true)
+                return
+              end
+            elsif ocp.cancel_unit == TimeUnit.find_by_unit("Horas").id
+              if hours >= num
+                redirect_to blocked_cancel_path(:id => @booking.id, :online => true)
+                return
+              end
+            elsif ocp.cancel_unit == TimeUnit.find_by_unit("Semanas").id
+              if weeks >= num
+                redirect_to blocked_cancel_path(:id => @booking.id, :online => true)
+                return
+              end
+            elsif ocp.cancel_unit == TimeUnit.find_by_unit("Meses").id
+              if months >= num
+                redirect_to blocked_cancel_path(:id => @booking.id, :online => true)
+                return
+              end
+            end
+
+          end
+        end
+      end
+
     else
       @booking = Booking.find(params[:id])
       status = Status.find_by(:name => 'Cancelado').id
 
-      if @booking.update(status_id: status)
+      payed = false
+
+      if @booking.update(status_id: status, payed: payed)
+
+        if !@booking.payed_booking.nil?
+          @booking.payed_booking.canceled = true
+          @booking.payed_booking.save
+        end
         #flash[:notice] = "Reserva cancelada exitosamente."
         # BookingMailer.cancel_booking(@booking)
         current_user ? user = current_user.id : user = 0
@@ -881,6 +1040,11 @@ class BookingsController < ApplicationController
     host = request.host_with_port
     @url = @company.web_address + '.' + host[host.index(request.domain)..host.length]
 
+    render layout: 'workflow'
+  end
+
+  def transfer_error_cancel
+    @company = Company.find(params[:company_id])
     render layout: 'workflow'
   end
 

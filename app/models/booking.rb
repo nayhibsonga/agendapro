@@ -7,6 +7,7 @@ class Booking < ActiveRecord::Base
 	belongs_to :promotion
 	belongs_to :client
 	belongs_to :deal
+	has_one :payed_booking
 
 	has_many :booking_histories, dependent: :destroy
 
@@ -316,9 +317,11 @@ class Booking < ActiveRecord::Base
 	end
 
 	def send_booking_mail
-		if self.start > Time.now - 4.hours
-			if self.status != Status.find_by(:name => "Cancelado")
-				BookingMailer.book_service_mail(self)
+		if self.trx_id == ""
+			if self.start > Time.now - 4.hours
+				if self.status != Status.find_by(:name => "Cancelado")
+					BookingMailer.book_service_mail(self)
+				end
 			end
 		end
 	end
@@ -327,6 +330,11 @@ class Booking < ActiveRecord::Base
 		if self.start > Time.now - 4.hours
 			if self.status == Status.find_by(:name => "Cancelado")
 				BookingMailer.cancel_booking(self)
+				if !self.payed_booking.nil?
+					BookingMailer.cancel_payment_mail(self.payed_booking, 1)
+					BookingMailer.cancel_payment_mail(self.payed_booking, 2)
+					BookingMailer.cancel_payment_mail(self.payed_booking, 3)
+				end
 			else
 				if changed_attributes['start']
 					BookingMailer.update_booking(self, changed_attributes['start'])

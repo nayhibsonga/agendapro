@@ -1,0 +1,11 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  company_id: 1
+  amount: 1.5
+  date: 2015-01-27
+
+two:
+  company_id: 1
+  amount: 1.5
+  date: 2015-01-27
