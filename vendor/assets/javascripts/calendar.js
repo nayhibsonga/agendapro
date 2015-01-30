@@ -1,4 +1,4 @@
-function Calendar (source, getData) {
+function Calendar (source, getData, onLoad) {
 
 	// Default Values
 	var months = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
@@ -12,6 +12,7 @@ function Calendar (source, getData) {
 
 	var week;
 	var clickEvent;
+	var onload;
 
 	// Generate Calendar
 	var generateCalendar = function (date) {
@@ -67,9 +68,11 @@ function Calendar (source, getData) {
 	}
 
 	// Generate Week
+	var available_hour;
 	var generateWeek = function (monday) {
 		sources.data.date = formatDate(monday);
 		$.getJSON(sources.source, sources.data, function (data, status) {
+			available_hour = false;
 
 			$(".days-row").empty();
 			
@@ -114,7 +117,9 @@ function Calendar (source, getData) {
 				pos += 1;
 			});
 
-
+			if (onload && !available_hour) {
+				$('#next').click();
+			}
 
 			$('.horario').append('<div class="clear"></div>');
 			calculateWidth();
@@ -142,6 +147,7 @@ function Calendar (source, getData) {
 					div.addClass('hora-disponible');
 					var span = $('<span>').text(hours.hour.start + ' - ' + hours.hour.end);
 					div.append(span);
+					available_hour = true;
 					break;
 				case 'occupied':
 					div.addClass('hora-ocupada');
@@ -237,9 +243,7 @@ function Calendar (source, getData) {
 		return date.getFullYear() + '-' + correctNumber(date.getMonth() + 1) + '-' + correctNumber(date.getDate());
 	}
 
-	this.rebuild = function (source, getData) {
-
-		console.log(getData['date']);
+	this.rebuild = function (source, getData, onLoad) {
 		var day = parseDate(getData['date'], '00:00');
 
 		sources = {
@@ -254,6 +258,7 @@ function Calendar (source, getData) {
 		getData = getData || {};
 		sources.data = $.extend(true, sources.data, getData);
 		week = generateCalendar(day);
+		onload = onLoad;
 	}
 
 	this.getClickDetails = function () {
@@ -265,6 +270,7 @@ function Calendar (source, getData) {
 		sources.source = source || sources.source;
 		getData = getData || {};
 		sources.data = $.extend(true, sources.data, getData);
+		onload = onLoad;
 
 		week = generateCalendar();
 
@@ -274,6 +280,7 @@ function Calendar (source, getData) {
 			$('#next').attr('disabled', true);
 			var day = new Date(week.getFullYear(), week.getMonth(), week.getDate());
 			day.setDate(week.getDate() - 7);
+			onload = false;
 			week = generateCalendar(day);
 		});
 		$('#next').click(function () {
@@ -281,6 +288,7 @@ function Calendar (source, getData) {
 			$('#next').attr('disabled', true);
 			var day = new Date(week.getFullYear(), week.getMonth(), week.getDate());
 			day.setDate(week.getDate() + 7);
+			onload = false;
 			week = generateCalendar(day);
 		});
 	});

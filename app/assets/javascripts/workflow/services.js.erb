@@ -166,10 +166,10 @@ function loadStep2 () {
 				}
 
 				if (calendar) {
-					calendar.rebuild('/get_available_time.json', data);
+					calendar.rebuild('/get_available_time.json', data, true);
 				}
 				else {
-					calendar = new Calendar('/get_available_time.json', data);
+					calendar = new Calendar('/get_available_time.json', data, true);
 				}
 
 				$(document).on('hourClick', function (e) {
@@ -216,10 +216,10 @@ function loadStep2 () {
 
 
 				if (calendar) {
-					calendar.rebuild('/get_available_time.json', data);
+					calendar.rebuild('/get_available_time.json', data, true);
 				}
 				else {
-					calendar = new Calendar('/get_available_time.json', data);
+					calendar = new Calendar('/get_available_time.json', data, true);
 				}
 
 
@@ -247,9 +247,9 @@ function loadStep2 () {
 				});
 			});
 
+			$('#foo4').trigger('updateSizes');
 		});
 	}
-	$('#foo4').trigger('updateSizes');
 }
 
 function loadStep3 () {
