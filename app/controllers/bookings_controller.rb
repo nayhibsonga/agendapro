@@ -60,106 +60,140 @@ class BookingsController < ApplicationController
   # POST /bookings
   # POST /bookings.json
   def create
+    @bookings = []
+    @errors = []
+
     @company = Company.find(current_user.company_id)
     @company_setting = @company.company_setting
-    staff_code = nil
-    new_booking_params = booking_params.except(:client_first_name, :client_last_name, :client_phone, :client_email, :client_identification_number, :client_address, :client_district, :client_city, :client_birth_day, :client_birth_month, :client_birth_year, :client_age, :client_gender, :staff_code)
-    @booking = Booking.new(new_booking_params)
-    if @company_setting.staff_code
-      if booking_params[:staff_code] && !booking_params[:staff_code].empty? && StaffCode.where(company_id: current_user.company_id, code: booking_params[:staff_code]).count > 0
-        staff_code = StaffCode.where(company_id: current_user.company_id, code: booking_params[:staff_code]).first.id
-      else
-        render :json => { :errors => ["El código de empleado ingresado no es correcto."] }, :status => 422
-        return
+    booking_buffer_params[:bookings].each do |pos, buffer_params|
+      staff_code = nil
+      new_booking_params = buffer_params.except(:client_first_name, :client_last_name, :client_phone, :client_email, :client_identification_number, :client_address, :client_district, :client_city, :client_birth_day, :client_birth_month, :client_birth_year, :client_age, :client_gender, :staff_code)
+      @booking = Booking.new(new_booking_params)
+
+      if @company_setting.staff_code
+        if !buffer_params[:staff_code].blank? && StaffCode.where(company_id: current_user.company_id, code: buffer_params[:staff_code]).count > 0
+          staff_code = StaffCode.where(company_id: current_user.company_id, code: buffer_params[:staff_code]).first.id
+        else
+          # Ver si se mantiene el error agregandolo a un array o se borra
+          render :json => { :errors => ["El código de empleado ingresado no es correcto."] }, :status => 422
+          return
+        end
       end
-    end
-    if @company_setting.client_exclusive
-      if !booking_params[:client_id].nil? && !booking_params[:client_id].empty? && !booking_params[:client_identification_number].empty?
-        @client = Client.find(booking_params[:client_id])
-        @client.first_name = booking_params[:client_first_name]
-        @client.last_name = booking_params[:client_last_name]
-        @client.email = booking_params[:client_email]
-        @client.phone = booking_params[:client_phone]
-        @client.address = booking_params[:client_address]
-        @client.district = booking_params[:client_district]
-        @client.city = booking_params[:client_city]
-        @client.birth_day = booking_params[:client_birth_day]
-        @client.birth_month = booking_params[:client_birth_month]
-        @client.birth_year = booking_params[:client_birth_year]
-        @client.age = booking_params[:client_age]
-        @client.gender = booking_params[:client_gender]
-        @client.save
-        if User.find_by_email(@client.email)
-          new_booking_params[:user_id] = User.find_by_email(@client.email).id
+
+      if @company_setting.client_exclusive
+        if !buffer_params[:client_id].blank? && !buffer_params[:client_identification_number].blank?
+          @client = Client.find(buffer_params[:client_id])
+          @client.first_name = buffer_params[:client_first_name]
+          @client.last_name = buffer_params[:client_last_name]
+          @client.email = buffer_params[:client_email]
+          @client.phone = buffer_params[:client_phone]
+          @client.address = buffer_params[:client_address]
+          @client.district = buffer_params[:client_district]
+          @client.city = buffer_params[:client_city]
+          @client.birth_day = buffer_params[:client_birth_day]
+          @client.birth_month = buffer_params[:client_birth_month]
+          @client.birth_year = buffer_params[:client_birth_year]
+          @client.age = buffer_params[:client_age]
+          @client.gender = buffer_params[:client_gender]
+          @client.save
+          if User.find_by_email(@client.email)
+            new_booking_params[:user_id] = User.find_by_email(@client.email).id
+          end
+        else
+          # Ver si se mantiene el error agregandolo a un array o se borra
+          render :json => { :errors => ["El cliente no está registrado o no puede reservar."] }, :status => 422
+          return
         end
       else
-        render :json => { :errors => ["El cliente no está registrado o no puede reservar."] }, :status => 422
-        return
-      end
-    else
-      if !booking_params[:client_id].nil? && !booking_params[:client_id].empty?
-        @client = Client.find(booking_params[:client_id])
-        @client.first_name = booking_params[:client_first_name]
-        @client.last_name = booking_params[:client_last_name]
-        @client.email = booking_params[:client_email]
-        @client.phone = booking_params[:client_phone]
-        @client.address = booking_params[:client_address]
-        @client.district = booking_params[:client_district]
-        @client.city = booking_params[:client_city]
-        @client.birth_day = booking_params[:client_birth_day]
-        @client.birth_month = booking_params[:client_birth_month]
-        @client.birth_year = booking_params[:client_birth_year]
-        @client.age = booking_params[:client_age]
-        @client.gender = booking_params[:client_gender]
-        @client.save
-        if User.find_by_email(@client.email)
-          new_booking_params[:user_id] = User.find_by_email(@client.email).id
-        end
-      else
-        if !booking_params[:client_email].nil?
-          if booking_params[:client_email].empty?
-            if Client.where(email: '', company_id: ServiceProvider.find(booking_params[:service_provider_id]).company.id).where("CONCAT(first_name, ' ', last_name) = :s", :s => booking_params[:client_first_name]+' '+booking_params[:client_last_name]).count > 0
-              client = Client.where(email: '', company_id: ServiceProvider.find(booking_params[:service_provider_id]).company.id).where("CONCAT(first_name, ' ', last_name) = :s", :s => booking_params[:client_first_name]+' '+booking_params[:client_last_name]).first
-              @booking.client = client
-            else
-              client = Client.new(email: booking_params[:client_email], first_name: booking_params[:client_first_name], last_name: booking_params[:client_last_name], phone: booking_params[:client_phone], address: booking_params[:client_address], district: booking_params[:client_district], city: booking_params[:client_city], birth_day: booking_params[:client_birth_day], birth_month: booking_params[:client_birth_month], birth_year: booking_params[:client_birth_year], age: booking_params[:client_age], gender: booking_params[:client_gender], company_id: ServiceProvider.find(booking_params[:service_provider_id]).company.id)
-              if client.save
+        if !buffer_params[:client_id].blank?
+          @client = Client.find(buffer_params[:client_id])
+          @client.first_name = buffer_params[:client_first_name]
+          @client.last_name = buffer_params[:client_last_name]
+          @client.email = buffer_params[:client_email]
+          @client.phone = buffer_params[:client_phone]
+          @client.address = buffer_params[:client_address]
+          @client.district = buffer_params[:client_district]
+          @client.city = buffer_params[:client_city]
+          @client.birth_day = buffer_params[:client_birth_day]
+          @client.birth_month = buffer_params[:client_birth_month]
+          @client.birth_year = buffer_params[:client_birth_year]
+          @client.age = buffer_params[:client_age]
+          @client.gender = buffer_params[:client_gender]
+          @client.save
+          if User.find_by_email(@client.email)
+            new_booking_params[:user_id] = User.find_by_email(@client.email).id
+          end
+        else
+          if !buffer_params[:client_email].nil?
+            if buffer_params[:client_email].empty?
+              if Client.where(email: '', company_id: ServiceProvider.find(buffer_params[:service_provider_id]).company.id).where("CONCAT(first_name, ' ', last_name) = :s", :s => buffer_params[:client_first_name]+' '+buffer_params[:client_last_name]).count > 0
+                client = Client.where(email: '', company_id: ServiceProvider.find(buffer_params[:service_provider_id]).company.id).where("CONCAT(first_name, ' ', last_name) = :s", :s => buffer_params[:client_first_name]+' '+buffer_params[:client_last_name]).first
                 @booking.client = client
+              else
+                client = Client.new(email: buffer_params[:client_email], first_name: buffer_params[:client_first_name], last_name: buffer_params[:client_last_name], phone: buffer_params[:client_phone], address: buffer_params[:client_address], district: buffer_params[:client_district], city: buffer_params[:client_city], birth_day: buffer_params[:client_birth_day], birth_month: buffer_params[:client_birth_month], birth_year: buffer_params[:client_birth_year], age: buffer_params[:client_age], gender: buffer_params[:client_gender], company_id: ServiceProvider.find(buffer_params[:service_provider_id]).company.id)
+                if client.save
+                  @booking.client = client
+                end
+              end
+            else
+              if Client.where(email: buffer_params[:client_email], company_id: ServiceProvider.find(buffer_params[:service_provider_id]).company.id).count > 0
+                client = Client.where(email: buffer_params[:client_email], company_id: ServiceProvider.find(buffer_params[:service_provider_id]).company.id).first
+                @booking.client = client
+              else
+                client = Client.new(email: buffer_params[:client_email], first_name: buffer_params[:client_first_name], last_name: buffer_params[:client_last_name], phone: buffer_params[:client_phone], address: buffer_params[:client_address], district: buffer_params[:client_district], city: buffer_params[:client_city], birth_day: buffer_params[:client_birth_day], birth_month: buffer_params[:client_birth_month], birth_year: buffer_params[:client_birth_year], age: buffer_params[:client_age], gender: buffer_params[:client_gender], company_id: ServiceProvider.find(buffer_params[:service_provider_id]).company.id)
+                if client.save
+                  @booking.client = client
+                end
               end
             end
-          else
-            if Client.where(email: booking_params[:client_email], company_id: ServiceProvider.find(booking_params[:service_provider_id]).company.id).count > 0
-              client = Client.where(email: booking_params[:client_email], company_id: ServiceProvider.find(booking_params[:service_provider_id]).company.id).first
-              @booking.client = client
-            else
-              client = Client.new(email: booking_params[:client_email], first_name: booking_params[:client_first_name], last_name: booking_params[:client_last_name], phone: booking_params[:client_phone], address: booking_params[:client_address], district: booking_params[:client_district], city: booking_params[:client_city], birth_day: booking_params[:client_birth_day], birth_month: booking_params[:client_birth_month], birth_year: booking_params[:client_birth_year], age: booking_params[:client_age], gender: booking_params[:client_gender], company_id: ServiceProvider.find(booking_params[:service_provider_id]).company.id)
-              if client.save
-                @booking.client = client
-              end
+            if User.find_by_email(buffer_params[:client_email])
+              new_booking_params[:user_id] = User.find_by_email(buffer_params[:client_email]).id
             end
-          end
-          if User.find_by_email(booking_params[:client_email])
-            new_booking_params[:user_id] = User.find_by_email(booking_params[:client_email]).id
           end
         end
       end
-    end
-    @booking.max_changes = @company_setting.max_changes
-    if @booking && @booking.service_provider
-      @booking.location = @booking.service_provider.location
-    end
-    respond_to do |format|
+
+      @booking.max_changes = @company_setting.max_changes
+
+      if @booking && @booking.service_provider
+        @booking.location = @booking.service_provider.location
+      end
+
       if @booking.save
         u = @booking
         if u.warnings then warnings = u.warnings.full_messages else warnings = [] end
-        @booking_json = { :id => u.id, :start => u.start, :end => u.end, :service_id => u.service_id, :service_provider_id => u.service_provider_id, :status_id => u.status_id, :first_name => u.client.first_name, :last_name => u.client.last_name, :email => u.client.email, :phone => u.client.phone, :notes => u.notes,  :company_comment => u.company_comment, :provider_lock => u.provider_lock, :service_name => u.service.name, :warnings => warnings }
+
+        @bookings << {
+          :id => u.id,
+          :start => u.start,
+          :end => u.end,
+          :service_id => u.service_id,
+          :service_provider_id => u.service_provider_id,
+          :status_id => u.status_id,
+          :first_name => u.client.first_name,
+          :last_name => u.client.last_name,
+          :email => u.client.email,
+          :phone => u.client.phone,
+          :notes => u.notes,
+          :company_comment => u.company_comment,
+          :provider_lock => u.provider_lock,
+          :service_name => u.service.name,
+          :warnings => warnings
+        }
+
         BookingHistory.create(booking_id: @booking.id, action: "Creada por Calendario", start: @booking.start, status_id: @booking.status_id, service_id: @booking.service_id, service_provider_id: @booking.service_provider_id, user_id: current_user.id, staff_code_id: staff_code)
+      else
+        @errors << @booking.errors.full_messages
+      end
+    end
+    respond_to do |format|
+      if @errors.length == 0
         format.html { redirect_to bookings_path, notice: 'Booking was successfully created.' }
-        format.json { render :json => @booking_json }
+        format.json { render :json => @bookings }
         format.js { }
       else
         format.html { render action: 'new' }
-        format.json { render :json => { :errors => @booking.errors.full_messages }, :status => 422 }
+        format.json { render :json => { :errors => @errors }, :status => 422 }
         format.js { }
       end
     end
@@ -1016,5 +1050,9 @@ class BookingsController < ApplicationController
     # Never trust parameters from the scary internet, only allow the white list through.
     def booking_params
       params.require(:booking).permit(:start, :end, :notes, :service_provider_id, :service_id, :price, :user_id, :status_id, :promotion_id, :client_id, :client_first_name, :client_last_name, :client_email, :client_phone, :confirmation_code, :company_comment, :web_origin, :provider_lock, :send_mail, :client_identification_number, :client_address, :client_district, :client_city, :client_birth_day, :client_birth_month, :client_birth_year, :client_age, :client_gender, :staff_code)
+    end
+
+    def booking_buffer_params
+      params.permit(bookings: [:start, :end, :notes, :service_provider_id, :service_id, :price, :user_id, :status_id, :promotion_id, :client_id, :client_first_name, :client_last_name, :client_email, :client_phone, :confirmation_code, :company_comment, :web_origin, :provider_lock, :send_mail, :client_identification_number, :client_address, :client_district, :client_city, :client_birth_day, :client_birth_month, :client_birth_year, :client_age, :client_gender, :staff_code])
     end
 end
