@@ -17,6 +17,7 @@ ActiveRecord::Schema.define(version: 20150129165121) do
   enable_extension "plpgsql"
   enable_extension "pg_trgm"
   enable_extension "fuzzystrmatch"
+  enable_extension "unaccent"
 
   create_table "banks", force: true do |t|
     t.integer  "code"
@@ -236,6 +237,12 @@ ActiveRecord::Schema.define(version: 20150129165121) do
     t.boolean  "booking_history",             default: false
     t.boolean  "staff_code",                  default: false
     t.integer  "monthly_mails",               default: 0,                     null: false
+    t.boolean  "allows_online_payment",       default: false
+    t.string   "account_number",              default: ""
+    t.string   "company_rut",                 default: ""
+    t.string   "account_name",                default: ""
+    t.integer  "account_type",                default: 3
+    t.integer  "bank_id"
     t.boolean  "deal_activate",               default: false
     t.string   "deal_name"
     t.boolean  "deal_overcharge",             default: true
@@ -244,12 +251,6 @@ ActiveRecord::Schema.define(version: 20150129165121) do
     t.integer  "deal_constraint_option",      default: 0
     t.integer  "deal_constraint_quantity",    default: 0
     t.boolean  "deal_identification_number",  default: false
-    t.boolean  "allows_online_payment",       default: false
-    t.string   "account_number",              default: ""
-    t.string   "company_rut",                 default: ""
-    t.string   "account_name",                default: ""
-    t.integer  "account_type",                default: 3
-    t.integer  "bank_id"
   end
 
   add_index "company_settings", ["company_id"], name: "index_company_settings_on_company_id", using: :btree
