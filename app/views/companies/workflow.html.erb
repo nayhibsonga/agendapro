@@ -53,6 +53,7 @@
               <%= image_tag 'ubicacion.png', :alt => '', :size => "12x14", :class=>"loc-icon" %>&nbsp;
               <span id="phone-address">
                 <%= if !@selectedLocation.outcall then @selectedLocation.address+', '+@selectedLocation.district.name else "A Domicilio" end %>
+                <br><%= if !@selectedLocation.second_address.blank? then @selectedLocation.second_address else '' end %>
               </span>
             </div>
           <% else %>
@@ -109,6 +110,7 @@
               <%= image_tag 'ubicacion.png', :alt => '', :size => "12x14", :class=>"loc-icon" %>&nbsp;
               <span id="phone-address">
                 <%= if !@selectedLocation.outcall then @selectedLocation.address+', '+@selectedLocation.district.name else "A Domicilio" end %>
+                <br><%= if !@selectedLocation.second_address.blank? then @selectedLocation.second_address else '' end %>
               </span>
             </div>
           <% else %>
@@ -393,6 +395,16 @@
                           <%= label_tag(:identification_number, "RUT", class: "col-sm-3 control-label") %>
                           <div class="col-sm-9">
                             <%= text_field_tag(:identification_number, nil, :class => "form-control light-gray", :placeholder => "Escriba su RUT, debe estar autorizado como cliente" ) %>
+                            <span class="help-block"></span>
+                            <span class="form-control-feedback"></span>
+                          </div>
+                        </div>
+                      <% end %>
+                      <% if @location.company.company_setting.deal_activate %>
+                        <div id="" class="form-group has-feedback">
+                          <%= label_tag(:deal_code, @location.company.company_setting.deal_name && @location.company.company_setting.deal_name != "" ? @location.company.company_setting.deal_name : "Convenio", class: "col-sm-3 control-label") %>
+                          <div class="col-sm-9">
+                            <%= text_field_tag(:deal_code, nil, :class => "form-control light-gray" ) %>
                             <span class="help-block"></span>
                             <span class="form-control-feedback"></span>
                           </div>

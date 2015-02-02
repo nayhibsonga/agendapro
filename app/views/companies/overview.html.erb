@@ -1,7 +1,7 @@
 <div class="workflow-header">
   <div class="container">
 
-  
+
     <div class="row">
       <% if !@company.description.blank? %>
         <div class="col-md-6 company-header-left company-header">
@@ -41,9 +41,9 @@
           </div>
         </div>
         <div class="col-md-2 company-header-right company-header">
-          
+
           <% if @selectedLocation %>
-            <div id="phone-info">         
+            <div id="phone-info">
               <%= image_tag 'telefono.png', :alt => '', :size => "12x14", :class=>"loc-icon" %>&nbsp;
               <span id="phone-number">
                 <%= @selectedLocation.phone %>
@@ -51,7 +51,7 @@
               <%= image_tag 'ubicacion.png', :alt => '', :size => "12x14", :class=>"loc-icon" %>&nbsp;
               <span id="phone-address">
                 <%= if !@selectedLocation.outcall then @selectedLocation.address+', '+@selectedLocation.district.name else "A Domicilio" end %>
-              </span>       
+              </span>
             </div>
           <% else %>
             <div id="phone-info" hidden>
@@ -100,9 +100,9 @@
           </div>
         </div>
         <div class="col-md-6 company-header-center2 company-header">
-          
+
           <% if @selectedLocation %>
-            <div id="phone-info">         
+            <div id="phone-info">
               <%= image_tag 'telefono.png', :alt => '', :size => "12x14", :class=>"loc-icon" %>&nbsp;
               <span id="phone-number">
                 <%= @selectedLocation.phone %>
@@ -110,7 +110,8 @@
               <%= image_tag 'ubicacion.png', :alt => '', :size => "12x14", :class=>"loc-icon" %>&nbsp;
               <span id="phone-address">
                 <%= if !@selectedLocation.outcall then @selectedLocation.address+', '+@selectedLocation.district.name else "A Domicilio" end %>
-              </span>       
+                <br><%= if !@selectedLocation.second_address.blank? then @selectedLocation.second_address else '' end %>
+              </span>
             </div>
           <% else %>
             <script type="text/javascript">
@@ -165,6 +166,9 @@
                     <p>
                       <span class="local-name"><%= local.name %></span><br/>
                       <span class="local-address" localid="<%= local.id %>"><%= if !local.outcall then local.address+', '+local.district.name else "A Domicilio" end %></span>
+                      <% if !local.second_address.blank? %>
+                      <span class="local-address" localid="<%= local.id %>"><%= local.second_address %></span>
+                      <% end %>
                       <span class="local-phone" localid="<%= local.id %>" hidden><%= local.phone%></span>
                     </p>
 
@@ -179,7 +183,7 @@
       <div class="col-md-3">
         <div id="div-agendar">
           <a href="#" class="" id="boton-agendar">
-            <i class="fa fa-calendar-o" style="font-size: 20px !important; margin-bottom: 3px !important;"></i>&nbsp;&nbsp;Agendar 
+            <i class="fa fa-calendar-o" style="font-size: 20px !important; margin-bottom: 3px !important;"></i>&nbsp;&nbsp;Agendar
           </a>
         </div>
         <div class="schedule">

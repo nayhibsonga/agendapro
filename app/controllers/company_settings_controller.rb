@@ -32,6 +32,8 @@ class CompanySettingsController < ApplicationController
     @company_from_email = CompanyFromEmail.new
     @staff_codes = current_user.company.staff_codes
     @staff_code = StaffCode.new
+    @deals = current_user.company.deals
+    @deal = Deal.new
     @company_setting = @company.company_setting
     @online_cancelation_policy = OnlineCancelationPolicy.new
     if(!@company_setting.online_cancelation_policy.nil?)
@@ -132,6 +134,8 @@ class CompanySettingsController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def company_setting_params
-      params.require(:company_setting).permit(:email, :sms, :signature, :company_id, :before_booking, :after_booking, :before_edit_booking, :activate_workflow, :activate_search, :client_exclusive, :provider_preference, :calendar_duration, :extended_schedule_bool, :extended_min_hour, :extended_max_hour, :schedule_overcapacity, :provider_overcapacity, :resource_overcapacity, :booking_confirmation_time, :page_id, :max_changes, :booking_history, :staff_code, :booking_configuration_email, :allows_online_payment, :bank_id, :account_number, :company_rut, :account_name, :account_type, online_cancelation_policy_attributes: [:cancelable, :cancel_max, :cancel_unit, :min_hours, :modifiable, :modification_max, :modification_unit])
+
+      params.require(:company_setting).permit(:email, :sms, :signature, :company_id, :before_booking, :after_booking, :before_edit_booking, :activate_workflow, :activate_search, :client_exclusive, :provider_preference, :calendar_duration, :extended_schedule_bool, :extended_min_hour, :extended_max_hour, :schedule_overcapacity, :provider_overcapacity, :resource_overcapacity, :booking_confirmation_time, :page_id, :booking_history, :staff_code, :booking_configuration_email, :max_changes, :deal_name, :deal_activate, :deal_overcharge, :deal_exclusive, :deal_quantity, :deal_constraint_option, :deal_constraint_quantity, :deal_identification_number)
+
     end
 end

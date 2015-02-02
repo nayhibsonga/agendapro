@@ -13,7 +13,7 @@
 							<div class="col-sm-6">
 								<div class="checkbox">
 									<label>
-										<%= b.check_box %> <%= b.object.name.html_safe %> 
+										<%= b.check_box %> <%= b.object.name.html_safe %>
 									</label>
 								</div>
 							</div>
@@ -93,16 +93,22 @@
 						<%= f.text_field :address, class: "form-control" %>
 						<span class="help-block"></span>
 						<span class="form-control-feedback"></span>
-						<div class="checkbox">
-			                <label>
-			                	<%= f.check_box :outcall %> Sin Dirección (sólo servicios a domicilio).
-			                </label>
-			            </div>
-			           	<div id="districtsCheckboxes" class='hidden'>
-			           		
-			           	</div>
 					</div>
 				</div>
+        <div class="form-group has-feedback">
+          <%= f.label :second_address, "Dirección Adicional", class: "col-sm-3 control-label" %>
+          <div class="col-sm-9">
+            <%= f.text_field :second_address, class: "form-control", placeholder: 'Oficina D, Local 22' %>
+            <span class="help-block"></span>
+            <span class="form-control-feedback"></span>
+            <div class="checkbox">
+              <label>
+                <%= f.check_box :outcall %> Sin Dirección (sólo servicios a domicilio).
+              </label>
+            </div>
+            <div id="districtsCheckboxes" class='hidden'></div>
+          </div>
+        </div>
 				<div class="form-group has-feedback">
 					<%= f.label :phone, "Teléfono: ", class: "col-sm-3 control-label" %>
 					<div class="col-sm-9">
@@ -131,6 +137,12 @@
 					</table>
 				</div>
 			</div>
+			<div style="margin-top: 10px;">
+	      <h4 class="text-center" style="margin-bottom: 0;">¿Aquí se ubica tu local? <small class="hide"><i class="fa fa-spinner fa-spin"></i></small></h4>
+	      <span class="hide" id="error">Hubo un error ubicando tu local</span>
+	      <span>Puedes dar click en el mapa para cambiar la ubicación</span>
+	      <div id="map"></div>
+	    </div>
 		</div>
 	</fieldset>
 </div>
@@ -178,7 +190,7 @@
 							<div class="checkbox">
 				                <label>
 				                <% if params[:step] && params[:step] > 1 && Company.find(current_user.company_id).locations.first.outcall %>
-				                  <%= f.check_box :outcall, :checked => true, :disabled => true  %> 
+				                  <%= f.check_box :outcall, :checked => true, :disabled => true  %>
 				                <% else %>
 				                	<%= f.check_box :outcall %>
 				                <% end %>

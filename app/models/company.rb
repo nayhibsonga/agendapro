@@ -19,8 +19,8 @@ class Company < ActiveRecord::Base
 	belongs_to :bank
 	has_many :company_from_email, dependent: :destroy
 	has_many :staff_codes, dependent: :destroy
+	has_many :deals, dependent: :destroy
 	has_many :payment_accounts
-
 	validates :name, :web_address, :plan, :payment_status, :presence => true
 
 	validates_uniqueness_of :web_address

@@ -1,7 +1,7 @@
 class StaffCodesController < ApplicationController
   before_action :set_staff_code, only: [:show, :edit, :update, :destroy]
-  before_action :authenticate_user!, except: [:confirm_email]
-  layout "admin", except: [:confirm_email]
+  before_action :authenticate_user!
+  layout "admin"
   # load_and_authorize_resource
 
   # GET /staff_codes
@@ -59,7 +59,7 @@ class StaffCodesController < ApplicationController
   def destroy
     @staff_code.destroy
     respond_to do |format|
-      format.html { redirect_to staff_codes_url }
+      format.html { redirect_to edit_company_setting_path(current_user.company.company_setting), notice: 'Código de empleado eliminado exitosamente.'}
       format.json { head :no_content }
     end
   end
