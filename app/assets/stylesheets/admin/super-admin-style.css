@@ -1,0 +1,13 @@
+/*
+*	Datepicker
+*/
+
+.ui-datepicker{
+	width: 230px !important;  
+    height: auto !important;  
+    margin: 5px auto 0 !important;  
+    font: 9pt Arial, sans-serif !important;  
+    -webkit-box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, .5) !important;  
+    -moz-box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, .5) !important;  
+    box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, .5) !important;  
+}
