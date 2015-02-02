@@ -38,6 +38,7 @@ class Location < ActiveRecord::Base
 
 	after_commit :extended_schedule
 
+
 	pg_search_scope :search, :associated_against => {
 		:company => :name,
 		:services => :name,
@@ -45,18 +46,20 @@ class Location < ActiveRecord::Base
 		:service_categories => :name
 		},
 		:using => {
+                    :trigram => {
+                      	:threshold => 0.1,
+                      	:prefix => true,
+                    	:dictionary => 'spanish',
+                    	:any_word => true
+                    },
                     :tsearch => {
                     	:prefix => true,
-                    	:dictionary => 'spanish'
-                    },
-                    :trigram => {
-                      	:threshold => 0.1
+                    	:dictionary => 'spanish',
+                    	:any_word => true
                     }
-        }
+        },
+        :ignoring => :accents
 
-	#def is_active?
-	#	return self.active and self.company.active
-	#end
 
 	def extended_schedule
 		company_setting = self.company.company_setting

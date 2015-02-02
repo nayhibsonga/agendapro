@@ -42,7 +42,52 @@ class SearchsController < ApplicationController
 
 			normalized_search = search.mb_chars.normalize(:kd).gsub(/[^\x00-\x7F]/,'').downcase.to_s
 
-			@results = Location.search(normalized_search)
+
+			#EMPRESAS CON DUEÑO
+
+			result = Location.search(normalized_search).where(id: ServiceProvider.where(active: true).pluck('location_id')).where(company_id: Company.where(:active => true, :owned => true)).where(:active => true).where('sqrt((latitude - ' + lat.to_s + ')^2 + (longitude - ' + long.to_s + ')^2) < 0.25')
+
+			locs = Array.new
+
+			result.each do |location|
+				dist_score = Math.sqrt((location.latitude - lat.to_f)**2 + (location.longitude - long.to_f)**2)
+				local = [location, dist_score]
+				locs.push(local)
+			end
+
+			ordered_locs = locs.sort_by{ |loc| loc[1]}
+
+			#FIN EMPRESAS CON DUEÑO
+
+			#EMPRESAS SIN DUEÑO
+
+			unowned_result = Location.search(normalized_search).where(id: ServiceProvider.where(active: true).pluck('location_id')).where(company_id: Company.where(:active => true, :owned => false)).where(:active => true).where('sqrt((latitude - ' + lat.to_s + ')^2 + (longitude - ' + long.to_s + ')^2) < 0.25')
+
+			unowned_locs = Array.new
+
+			unowned_result.each do |location|
+				dist_score = Math.sqrt((location.latitude - lat.to_f)**2 + (location.longitude - long.to_f)**2)
+				local = [location, dist_score]
+				unowned_locs.push(local)
+			end
+
+			unowned_ordered_locs = unowned_locs.sort_by{ |loc| loc[1]}
+
+
+
+			#FIN EMPRESAS SIN DUEÑO
+				
+			@results = Array.new
+
+			ordered_locs.each do |s|
+				#loc_ids.push(s[0])
+				@results << s[0]
+			end
+
+			unowned_ordered_locs.each do |s|
+				#loc_ids.push(s[0])
+				@results << s[0]
+			end
 
 			per_page = 10
 

@@ -1,4 +1,5 @@
 class Company < ActiveRecord::Base
+
 	belongs_to :plan
 	belongs_to :payment_status
 
