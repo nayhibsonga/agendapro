@@ -43,7 +43,7 @@
 </div><!-- /.modal -->
 
 <!-- search -->
-<div class="background fill" style="height: 650px; background-color: #646464; background-image: url(<%= asset_path 'search/fondo'+rand(1..7).to_s+'.png' %>);" id="buscador">
+<div class="background fill" style="height: 650px; background-color: #646464; background-image: url(<%= asset_path 'search/fondo'+rand(2..7).to_s+'.png' %>);" id="buscador">
     <div class="fill">
         <div class="container container-search fill" id="buscador2" style="height: 650px;">
             <div class="row vertical-center-row">
@@ -114,7 +114,7 @@
             <div class="col-sm-12">
                 <h1 class="text-center text-uppercase">¿Qué puedes encontrar?</h1>
                 <h3 class="text-center search-text-green">¡Reserva los mejores servicios de salud y belleza en Chile!</h3>
-                <%= image_tag "search/caret-down.png", alt: "caret-down", class: "pull-center", width: "39px" %>
+                <%= image_tag "search/caret-down.png", alt: "caret-down", class: "pull-center caret-down", width: "39px" %>
             </div>
         </div>
     </div>
@@ -184,7 +184,10 @@
                 </div>
             </div>
             <div class="row">
-                <div class="col-xs-12">
+                <div class="col-xs-1">
+                    <a id="msprev" class="cfs-arrow pull-left" href="#"><%= image_tag "search/prev_arrow.png", alt: "Prev Arrow" %></a>
+                </div>
+                <div class="col-xs-10">
                     <div id="carousel">
                         <a href="http://theboss.agendapro.cl/"><%= image_tag "search/companies/thebosscolor.png", alt: "The Boss", size: "169x121" %></a>
                         <!-- <a href="http://miranda.agendapro.cl/"><%= image_tag "search/companies/mirandacolor.png", alt: "Miranda", size: "121x121" %></a> -->
@@ -196,7 +199,7 @@
                         <a href="http://softhair.agendapro.cl/"><%= image_tag 'search/companies/softhaircolor.png', alt: 'Soft Hair', size: '169x121' %></a>
                         <a href="http://pamelan.agendapro.cl/"><%= image_tag 'search/companies/pamelancolor.png', alt: 'Pamelan', size: '169x121' %></a>
                         <a href="http://laserbellefemme.agendapro.cl/"><%= image_tag 'search/companies/laserbellefemmecolor.png', alt: 'Laser Belle Femme', size: '169x121' %></a>
-                        <a href="http://estilosurbanos.agendapro.cl/"><%= image_tag 'search/companies/estilosurbanoscolor.png', alt: 'Estilos Urbanos', size: '169x121' %></a>
+                        <!-- <a href="http://estilosurbanos.agendapro.cl/"><%= image_tag 'search/companies/estilosurbanoscolor.png', alt: 'Estilos Urbanos', size: '169x121' %></a> -->
                         <a href="http://veronicavergara.agendapro.cl/"><%= image_tag 'search/companies/veronicavergaracolor.png', alt: 'Veronica Vergara', size: '169x121' %></a>
                         <a href="http://qtis.agendapro.cl/"><%= image_tag 'search/companies/qtiscolor.png', alt: 'Qtis e.i.r.l.', size: '169x121' %></a>
                         <a href="http://elfoton.agendapro.cl/"><%= image_tag 'search/companies/elfotoncolor.png', alt: 'El Foton', size: '169x121' %></a>
@@ -205,6 +208,9 @@
                         <a href="http://huellas.agendapro.cl/"><%= image_tag 'search/companies/huellascolor.png', alt: 'Huellas', size: '169x121' %></a>
                         <a href="http://lkstudiodebelleza.agendapro.cl/"><%= image_tag 'search/companies/lkstudiodebellezacolor.png', alt: 'LK Studio de Belleza', size: '169x121' %></a>
                     </div>
+                </div>
+                <div class="col-xs-1">
+                    <a id="msnext" class="cfs-arrow pull-right" href="#"><%= image_tag "search/next_arrow.png", alt: "Next Arrow" %></a>
                 </div>
             </div>
         </div>
