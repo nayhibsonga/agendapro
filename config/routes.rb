@@ -180,6 +180,7 @@ Agendapro::Application.routes.draw do
   get '/booking_history', :to => 'bookings#booking_history'
   get '/fixed_bookings', :to => 'bookings#fixed_index', :as => 'fixed_bookings'
   post '/booking_valid', :to => 'bookings#booking_valid'
+  post '/force_create', :to => 'bookings#force_create'
 
   get '/edit_booking', :to => 'bookings#edit_booking', :as => 'booking_edit'
   post '/edited_booking', :to => 'bookings#edit_booking_post'
