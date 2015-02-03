@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <!-- start: Meta -->
+    <meta charset="utf-8" />
+    <title>Administrador - AgendaPro</title>
+    <meta name="description" content="AgendaPro - Sistema de agendamiento OnLine para empresas y usuarios.">
+    <meta name="author" content="AgendaPro">
+    <meta name="keyword" content="agendapro, agenda, agenda online, reserva, reserva online">
+
+    <%= csrf_meta_tags %>
+    <!-- end: Meta -->
+
+    <!-- start: Mobile Specific -->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- end: Mobile Specific -->
+
+    <!-- start: CSS -->
+    <%= stylesheet_link_tag "mobile" %>
+    <%= stylesheet_link_tag "mobile/mobile-admin" %>
+    <%= yield :stylesheets %>
+    <!-- end: CSS -->
+
+    <!-- start: Favicon and Touch Icons -->
+    <%= favicon_link_tag "favicon.png", :rel => "shortcut icon" %>
+    <!-- end: Favicon and Touch Icons -->
+  </head>
+
+  <body>
+    <%= yield :modals %>
+
+    <!-- start: Header -->
+    <header>
+      <nav class="navbar navbar-default navbar-agendapro navbar-agendapro-white navbar-fixed-top" role="navigation">
+        <div class="container">
+          <!-- Brand and toggle get grouped for better mobile display -->
+          <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed toggle-menu menu-right push-body" data-toggle="collapse" data-target="#navbar-menu">
+              <i class="fa fa-bars"></i>
+            </button>
+            <a href="<%= root_without_subdomain %>" class="navbar-brand">
+              <%= image_tag 'logos/logo2.png', :alt => 'AgendaPro', :size => '120x41' %>
+            </a>
+            <p class="navbar-text text-center"><%= @company.name %></p>
+          </div>
+          <!-- Collect the nav links, forms, and other content for toggling -->
+          <div class="cbp-spmenu cbp-spmenu-vertical cbp-spmenu-right collapse navbar-collapse" id="navbar-menu">
+            <ul class="nav navbar-nav">
+              <li><%= link_to 'Inicio', root_path %></li>
+              <% if current_user.role_id == Role.find_by_name("Staff (sin edición)").id %>
+              <li><%= link_to 'Calendario', fixed_bookings_path %></li>
+              <% else %>
+              <li><%= link_to 'Calendario', bookings_path %></li>
+              <% end %>
+              <% if current_user.role_id != Role.find_by_name("Staff").id  && current_user.role_id != Role.find_by_name("Staff (sin edición)").id %>
+              <li><%= link_to 'Clientes', clients_path %></li>
+              <% end %>
+              <li><%= link_to "Contacto", contact_path %></li>
+              <li class="divider"></li>
+              <li><%= link_to '<i class="fa fa-user"></i> Editar Perfil'.html_safe, edit_user_registration_path, class: "menu-green" %></li>
+              <li><%= link_to '<i class="fa fa-power-off"></i> Salir'.html_safe, destroy_user_session_path, method: :delete, class: "menu-orange" %></li>
+            </ul>
+          </div>
+        </div>
+      </nav>
+    </header>
+    <!-- end: Header -->
+
+    <!-- start: Alerts -->
+    <% if notice %>
+      <div class="alert alert-info alert-dismissable fade in">
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+        <%= notice %>
+      </div>
+    <% end %>
+    <% if alert %>
+      <div class="alert alert-warning alert-dismissable fade in">
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+        <%= alert %>
+      </div>
+    <% end %>
+    <!-- end: Alerts -->
+
+    <!-- start: content -->
+    <div id="wrapper">
+      <%= yield %>
+    </div>
+    <!-- end: content -->
+
+    <!-- start: JavaScript-->
+    <%= javascript_include_tag "mobile" %>
+    <%= yield :scripts %>
+    <!-- end: JavaScript-->
+  </body>
+</html>

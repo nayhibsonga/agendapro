@@ -45,24 +45,25 @@ class HomeMailer < ActionMailer::Base
         {
           :name => 'MESSAGE',
           :content => contact_info['message']
-        }
-      ],
-      :merge_vars => [
+        },
         {
-          :rcpt => 'contacto@agendapro.cl',
-          :vars => [
-            {
-              :name => 'CLIENTEMAIL',
-              :content => contact_info['email']
-            }
-          ]
+          :name => 'CLIENTEMAIL',
+          :content => contact_info['email']
+        },
+        {
+          :name => 'SUBJECT',
+          :content => contact_info['subject']
+        },
+        {
+          :name => 'URL',
+          :content => 'www'
         }
       ],
       :tags => ['contact'],
       :images => [
         {
           :type => 'image/png',
-          :name => 'agendapro.png',
+          :name => 'LOGO',
           :content => Base64.encode64(File.read('app/assets/images/logos/logodoble2.png'))
         }
       ]
@@ -117,6 +118,10 @@ class HomeMailer < ActionMailer::Base
         {
           :name => 'MESSAGE',
           :content => contact_info['message']
+        },
+        {
+          :name => 'URL',
+          :content => 'www'
         }
       ],
       :tags => ['contact'],
