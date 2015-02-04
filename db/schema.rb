@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150123134135) do
+ActiveRecord::Schema.define(version: 20150204152946) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -88,9 +88,11 @@ ActiveRecord::Schema.define(version: 20150123134135) do
     t.float    "price",               default: 0.0
     t.boolean  "provider_lock",       default: false
     t.integer  "max_changes",         default: 2
+    t.integer  "deal_id"
   end
 
   add_index "bookings", ["client_id"], name: "index_bookings_on_client_id", using: :btree
+  add_index "bookings", ["deal_id"], name: "index_bookings_on_deal_id", using: :btree
   add_index "bookings", ["location_id"], name: "index_bookings_on_location_id", using: :btree
   add_index "bookings", ["promotion_id"], name: "index_bookings_on_promotion_id", using: :btree
   add_index "bookings", ["service_id"], name: "index_bookings_on_service_id", using: :btree
@@ -193,9 +195,9 @@ ActiveRecord::Schema.define(version: 20150123134135) do
     t.integer  "company_id",                                                  null: false
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.integer  "before_booking",              default: 24,                    null: false
-    t.integer  "after_booking",               default: 6,                     null: false
-    t.integer  "before_edit_booking",         default: 12
+    t.integer  "before_booking",              default: 3,                     null: false
+    t.integer  "after_booking",               default: 3,                     null: false
+    t.integer  "before_edit_booking",         default: 3
     t.boolean  "activate_search",             default: true
     t.boolean  "activate_workflow",           default: true
     t.boolean  "client_exclusive",            default: false
@@ -208,11 +210,20 @@ ActiveRecord::Schema.define(version: 20150123134135) do
     t.boolean  "provider_overcapacity",       default: true,                  null: false
     t.boolean  "resource_overcapacity",       default: true,                  null: false
     t.integer  "booking_confirmation_time",   default: 1,                     null: false
-    t.integer  "booking_configuration_email", default: 0
-    t.integer  "max_changes",                 default: 2
     t.boolean  "booking_history",             default: false
     t.boolean  "staff_code",                  default: false
+    t.integer  "booking_configuration_email", default: 0
+    t.integer  "max_changes",                 default: 2
+    t.boolean  "deal_activate",               default: false
+    t.string   "deal_name"
+    t.boolean  "deal_overcharge",             default: true
     t.integer  "monthly_mails",               default: 0,                     null: false
+    t.boolean  "deal_exclusive",              default: false
+    t.integer  "deal_quantity",               default: 0
+    t.integer  "deal_constraint_option",      default: 0
+    t.integer  "deal_constraint_quantity",    default: 0
+    t.boolean  "deal_identification_number",  default: false
+    t.boolean  "deal_required",               default: false,                 null: false
   end
 
   add_index "company_settings", ["company_id"], name: "index_company_settings_on_company_id", using: :btree
@@ -228,6 +239,19 @@ ActiveRecord::Schema.define(version: 20150123134135) do
     t.datetime "created_at"
     t.datetime "updated_at"
   end
+
+  create_table "deals", force: true do |t|
+    t.string   "code",                               null: false
+    t.integer  "quantity",                           null: false
+    t.boolean  "active",              default: true
+    t.integer  "constraint_option",                  null: false
+    t.integer  "constraint_quantity",                null: false
+    t.integer  "company_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "deals", ["company_id"], name: "index_deals_on_company_id", using: :btree
 
   create_table "dictionaries", force: true do |t|
     t.string   "name",       null: false
