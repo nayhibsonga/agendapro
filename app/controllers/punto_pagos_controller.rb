@@ -185,7 +185,9 @@ class PuntoPagosController < ApplicationController
           @token = params[:token]
           @success_page = "booking"
         else
-          @success_page = ""
+          #Something (lie a booking) was deleted, should redirect to failure
+          redirect_to action: 'failure', token: params[:token]
+          #@success_page = ""
         end
       end
     end
@@ -203,6 +205,9 @@ class PuntoPagosController < ApplicationController
       failed_booking = Booking.find_by_token(params[:token])
       @booking = Booking.new(failed_booking.attributes.to_options)
       failed_booking.destroy
+    else
+      #Nothing found, there was an error
+
     end
   end
 
