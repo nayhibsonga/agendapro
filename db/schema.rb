@@ -232,6 +232,11 @@ ActiveRecord::Schema.define(version: 20150127154214) do
     t.boolean  "booking_history",             default: false
     t.boolean  "staff_code",                  default: false
     t.integer  "monthly_mails",               default: 0,                     null: false
+    t.boolean  "deal_exclusive",              default: false
+    t.integer  "deal_quantity",               default: 0
+    t.integer  "deal_constraint_option",      default: 0
+    t.integer  "deal_constraint_quantity",    default: 0
+    t.boolean  "deal_identification_number",  default: false
     t.boolean  "allows_online_payment",       default: false
     t.string   "account_number",              default: ""
     t.string   "company_rut",                 default: ""
@@ -253,6 +258,20 @@ ActiveRecord::Schema.define(version: 20150127154214) do
     t.datetime "created_at"
     t.datetime "updated_at"
   end
+
+
+  create_table "deals", force: true do |t|
+    t.string   "code",                               null: false
+    t.integer  "quantity",                           null: false
+    t.boolean  "active",              default: true
+    t.integer  "constraint_option",                  null: false
+    t.integer  "constraint_quantity",                null: false
+    t.integer  "company_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "deals", ["company_id"], name: "index_deals_on_company_id", using: :btree
 
   create_table "dictionaries", force: true do |t|
     t.string   "name",       null: false
@@ -332,6 +351,7 @@ ActiveRecord::Schema.define(version: 20150127154214) do
     t.string   "email",                       default: ""
     t.boolean  "notification",                default: false
     t.integer  "booking_configuration_email", default: 0
+    t.string   "second_address"
   end
 
   add_index "locations", ["company_id"], name: "index_locations_on_company_id", using: :btree

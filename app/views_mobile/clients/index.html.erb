@@ -1,0 +1,55 @@
+<div class="background-green">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-xs-12">
+        <p class="text-center" style="margin: 0;">Clientes</p>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-xs-12">
+      <div class="background-grey">
+        <span class="pull-left" style="margin: 5px;"><i class="fa fa-users fa-2x"></i></span>
+        <span>Acá podrás agregar y editar clientes de tu Empresa</span>
+        <div class="clearfix"></div>
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-xs-12">
+      <%= link_to '<i class="fa fa-plus"></i> Agregar Clientes'.html_safe, new_client_path, :class => "btn btn-lg btn-block btn-orange" %>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-xs-12">
+      <%= form_tag clients_path, name: "client_filter", id: "client_filter", method: "get" do %>
+        <div class="input-group input-group-lg">
+          <%= text_field_tag :search, nil, :class => "form-control", :placeholder => "Buscar por nombre, apellido, e-mail o RUT...", :value => params[:search] %>
+          <span class="input-group-btn">
+            <button class="btn btn-default" type="submit" action="/clients" value="client_filter"><i class="fa fa-search"></i></button>
+          </span>
+        </div>
+      <% end %>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-xs-12">
+      <ul class="list-unstyled">
+        <% @clients.each do |client| %>
+        <ul class="list-inline">
+          <li><i class="fa fa-user"></i></li>
+          <li><p><%= client.first_name %> <%= client.last_name %></p></li>
+          <li><%= link_to 'Modificar', edit_client_path(client), :class => "btn btn-sm btn-green" %></li>
+        </ul>
+        <% end %>
+      </ul>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-xs-12">
+      <%= will_paginate @clients, renderer: BootstrapPagination::Rails %>
+    </div>
+  </div>
+</div>

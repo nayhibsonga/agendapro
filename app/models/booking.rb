@@ -6,6 +6,7 @@ class Booking < ActiveRecord::Base
 	belongs_to :location
 	belongs_to :promotion
 	belongs_to :client
+	belongs_to :deal
 	has_one :payed_booking
 
 	has_many :booking_histories, dependent: :destroy
@@ -15,13 +16,14 @@ class Booking < ActiveRecord::Base
 	validate :time_empty_or_negative, :booking_duration, :service_staff, :client_exclusive, :time_in_provider_time
 
 	validation_scope :warnings do |s|
-    s.validate after_commit :time_in_provider_time_warning
-    s.validate after_commit :bookings_overlap_warning
-    s.validate after_commit :bookings_resources_warning
-    s.validate after_commit :provider_in_break_warning
-  	end
+		s.validate after_commit :time_in_provider_time_warning
+		s.validate after_commit :bookings_overlap_warning
+		s.validate after_commit :bookings_resources_warning
+		s.validate after_commit :bookings_deal_warning
+		s.validate after_commit :provider_in_break_warning
+	end
 
-	after_commit validate :bookings_overlap, :bookings_resources
+	after_commit validate :bookings_overlap, :bookings_resources, :bookings_deal
 
 	after_create :send_booking_mail
 	after_update :send_update_mail
@@ -104,6 +106,40 @@ class Booking < ActiveRecord::Base
 					if group_services.uniq.count + used_resource >= ResourceLocation.where(resource_id: resource.id, location_id: self.location.id).first.quantity
 						warnings.add(:base, "Este local ya tiene asignado(s) el(los) recurso(s) necesario(s) para realizar este servicio")
 						return
+					end
+				end
+			end
+		end
+	end
+
+	def bookings_deal_warning
+		cancelled_id = Status.find_by(name: 'Cancelado').id
+		unless self.status_id == cancelled_id
+			if !self.deal.nil?
+				if self.deal.quantity > 0 && self.deal.bookings.where.not(status_id: cancelled_id).count >= self.deal.quantity
+					warnings.add(:base, "Este convenio ya fue utilizado el máximo de veces que era permitida.")
+					return
+				elsif self.deal.constraint_option > 0 && self.deal.constraint_quantity > 0
+					if self.deal.constraint_option == 1
+						if self.deal.bookings.where.not(status_id: cancelled_id).where(start: self.start).count >= self.deal.constraint_quantity
+							warnings.add(:base, "Este convenio ya fue utilizado el máximo de veces que era permitida simultáneamente.")
+							return
+						end
+					elsif self.deal.constraint_option == 2
+						if self.deal.bookings.where.not(status_id: cancelled_id).where(start: self.start.beginning_of_day..self.start.end_of_day).count >= self.deal.constraint_quantity
+							warnings.add(:base, "Este convenio ya fue utilizado el máximo de veces que era permitida por día.")
+							return
+						end
+					elsif self.deal.constraint_option == 3
+						if self.deal.bookings.where.not(status_id: cancelled_id).where(start: self.start.beginning_of_week..self.start.end_of_week).count >= self.deal.constraint_quantity
+							warnings.add(:base, "Este convenio ya fue utilizado el máximo de veces que era permitida por semana.")
+							return
+						end
+					elsif self.deal.constraint_option == 4
+						if self.deal.bookings.where.not(status_id: cancelled_id).where(start: self.start.beginning_of_month..self.start.end_of_month).count >= self.deal.constraint_quantity
+							warnings.add(:base, "Este convenio ya fue utilizado el máximo de veces que era permitida por mes.")
+							return
+						end
 					end
 				end
 			end
@@ -203,6 +239,44 @@ class Booking < ActiveRecord::Base
 						if group_services.uniq.count + used_resource >= ResourceLocation.where(resource_id: resource.id, location_id: self.location.id).first.quantity
 							errors.add(:base, "Este local ya tiene asignado(s) el(los) recurso(s) necesario(s) para realizar este servicio")
 							return
+						end
+					end
+				end
+			end
+		end
+	end
+
+	def bookings_deal
+		if self.location.company.company_setting.deal_activate
+			unless self.location.company.company_setting.deal_overcharge
+				cancelled_id = Status.find_by(name: 'Cancelado').id
+				unless self.status_id == cancelled_id
+					if !self.deal.nil?
+						if self.deal.quantity > 0 && self.deal.bookings.where.not(status_id: cancelled_id).count >= self.deal.quantity
+							errors.add(:base, "Este convenio ya fue utilizado el máximo de veces que era permitida.")
+							return
+						elsif self.deal.constraint_option > 0 && self.deal.constraint_quantity > 0
+							if self.deal.constraint_option == 1
+								if self.deal.bookings.where.not(status_id: cancelled_id).where(start: self.start).count >= self.deal.constraint_quantity
+									errors.add(:base, "Este convenio ya fue utilizado el máximo de veces que era permitida simultáneamente.")
+									return
+								end
+							elsif self.deal.constraint_option == 2
+								if self.deal.bookings.where.not(status_id: cancelled_id).where(start: self.start.beginning_of_day..self.start.end_of_day).count >= self.deal.constraint_quantity
+									errors.add(:base, "Este convenio ya fue utilizado el máximo de veces que era permitida por día.")
+									return
+								end
+							elsif self.deal.constraint_option == 3
+								if self.deal.bookings.where.not(status_id: cancelled_id).where(start: self.start.beginning_of_week..self.start.end_of_week).count >= self.deal.constraint_quantity
+									errors.add(:base, "Este convenio ya fue utilizado el máximo de veces que era permitida por semana.")
+									return
+								end
+							elsif self.deal.constraint_option == 4
+								if self.deal.bookings.where.not(status_id: cancelled_id).where(start: self.start.beginning_of_month..self.start.end_of_month).count >= self.deal.constraint_quantity
+									errors.add(:base, "Este convenio ya fue utilizado el máximo de veces que era permitida por mes.")
+									return
+								end
+							end
 						end
 					end
 				end

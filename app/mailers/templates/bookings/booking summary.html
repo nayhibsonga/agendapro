@@ -28,9 +28,6 @@
       body {
         margin: 0;
       }
-      footer {
-        display: block;
-      }
       a {
         background-color: transparent;
       }
@@ -41,13 +38,6 @@
       b,
       strong {
         font-weight: bold;
-      }
-      h1 {
-        margin: .67em 0;
-        font-size: 2em;
-      }
-      small {
-        font-size: 80%;
       }
       img {
         border: 0;
@@ -67,8 +57,7 @@
         -webkit-appearance: button;
         cursor: pointer;
       }
-      button::-moz-focus-inner,
-      input::-moz-focus-inner {
+      button::-moz-focus-inner {
         padding: 0;
         border: 0;
       }
@@ -79,63 +68,6 @@
       td,
       th {
         padding: 0;
-      }
-      /*! Source: https://github.com/h5bp/html5-boilerplate/blob/master/src/css/main.css */
-      @media print {
-        *,
-        *:before,
-        *:after {
-          color: #000 !important;
-          text-shadow: none !important;
-          background: transparent !important;
-          -webkit-box-shadow: none !important;
-                  box-shadow: none !important;
-        }
-        a,
-        a:visited {
-          text-decoration: underline;
-        }
-        a[href]:after {
-          content: " (" attr(href) ")";
-        }
-        abbr[title]:after {
-          content: " (" attr(title) ")";
-        }
-        a[href^="#"]:after,
-        a[href^="javascript:"]:after {
-          content: "";
-        }
-        thead {
-          display: table-header-group;
-        }
-        tr,
-        img {
-          page-break-inside: avoid;
-        }
-        img {
-          max-width: 100% !important;
-        }
-        p,
-        h2,
-        h3 {
-          orphans: 3;
-          widows: 3;
-        }
-        h2,
-        h3 {
-          page-break-after: avoid;
-        }
-        .table {
-          border-collapse: collapse !important;
-        }
-        .table td,
-        .table th {
-          background-color: #fff !important;
-        }
-        .table-bordered th,
-        .table-bordered td {
-          border: 1px solid #ddd !important;
-        }
       }
       * {
         -webkit-box-sizing: border-box;
@@ -150,6 +82,7 @@
       }
       html {
         font-size: 10px;
+
         -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
       }
       body {
@@ -181,97 +114,24 @@
       img {
         vertical-align: middle;
       }
-      h1, h2, h3, h4, h5, h6,
-      .h1, .h2, .h3, .h4, .h5, .h6 {
+      h4,
+      .h4 {
         font-family: inherit;
         font-weight: 500;
         line-height: 1.1;
         color: inherit;
       }
-      h1 small, h2 small, h3 small, h4 small, h5 small, h6 small,
-      .h1 small, .h2 small, .h3 small, .h4 small, .h5 small, .h6 small,
-      h1 .small, h2 .small, h3 .small, h4 .small, h5 .small, h6 .small,
-      .h1 .small, .h2 .small, .h3 .small, .h4 .small, .h5 .small, .h6 .small {
-        font-weight: normal;
-        line-height: 1;
-        color: #777;
-      }
-      h1,
-      .h1,
-      h2,
-      .h2,
-      h3,
-      .h3 {
-        margin-top: 20px;
-        margin-bottom: 10px;
-      }
-      h1 small,
-      .h1 small,
-      h2 small,
-      .h2 small,
-      h3 small,
-      .h3 small,
-      h1 .small,
-      .h1 .small,
-      h2 .small,
-      .h2 .small,
-      h3 .small,
-      .h3 .small {
-        font-size: 65%;
-      }
       h4,
-      .h4,
-      h5,
-      .h5,
-      h6,
-      .h6 {
+      .h4 {
         margin-top: 10px;
         margin-bottom: 10px;
-      }
-      h4 small,
-      .h4 small,
-      h5 small,
-      .h5 small,
-      h6 small,
-      .h6 small,
-      h4 .small,
-      .h4 .small,
-      h5 .small,
-      .h5 .small,
-      h6 .small,
-      .h6 .small {
-        font-size: 75%;
-      }
-      h1,
-      .h1 {
-        font-size: 36px;
-      }
-      h2,
-      .h2 {
-        font-size: 30px;
-      }
-      h3,
-      .h3 {
-        font-size: 24px;
       }
       h4,
       .h4 {
         font-size: 18px;
       }
-      h5,
-      .h5 {
-        font-size: 14px;
-      }
-      h6,
-      .h6 {
-        font-size: 12px;
-      }
       p {
         margin: 0 0 10px;
-      }
-      small,
-      .small {
-        font-size: 85%;
       }
       .text-left {
         text-align: left;
@@ -281,68 +141,6 @@
       }
       .text-center {
         text-align: center;
-      }
-      .text-justify {
-        text-align: justify;
-      }
-      .text-uppercase {
-        text-transform: uppercase;
-      }
-      .text-capitalize {
-        text-transform: capitalize;
-      }
-      dl {
-        margin-top: 0;
-        margin-bottom: 20px;
-      }
-      dt,
-      dd {
-        line-height: 1.42857143;
-      }
-      dt {
-        font-weight: bold;
-      }
-      dd {
-        margin-left: 0;
-      }
-      .container-fluid {
-        padding-right: 15px;
-        padding-left: 15px;
-        margin-right: auto;
-        margin-left: auto;
-      }
-      .row {
-        margin-right: -15px;
-        margin-left: -15px;
-      }
-      .col-xs-6, .col-xs-12, .col-sm-12 {
-        position: relative;
-        min-height: 1px;
-        padding-right: 15px;
-        padding-left: 15px;
-      }
-      .col-xs-6, .col-xs-12 {
-        float: left;
-      }
-      .col-xs-12 {
-        width: 100%;
-      }
-      .col-xs-6 {
-        width: 50%;
-      }
-      @media (min-width: 768px) {
-        .col-sm-6 {
-          float: left;
-        }
-        .col-sm-6 {
-          width: 50%;
-        }
-        .col-sm-pull-6 {
-          right: 50%;
-        }
-        .col-sm-push-6 {
-          left: 50%;
-        }
       }
       table {
         background-color: transparent;
@@ -369,61 +167,6 @@
       .table > thead > tr > th {
         vertical-align: bottom;
         border-bottom: 2px solid #ddd;
-      }
-      .table > tbody + tbody {
-        border-top: 2px solid #ddd;
-      }
-      .table .table {
-        background-color: #fff;
-      }
-      table col[class*="col-"] {
-        position: static;
-        display: table-column;
-        float: none;
-      }
-      table td[class*="col-"],
-      table th[class*="col-"] {
-        position: static;
-        display: table-cell;
-        float: none;
-      }
-      .table > thead > tr > td.active,
-      .table > tbody > tr > td.active,
-      .table > tfoot > tr > td.active,
-      .table > thead > tr > th.active,
-      .table > tbody > tr > th.active,
-      .table > tfoot > tr > th.active,
-      .table > thead > tr.active > td,
-      .table > tbody > tr.active > td,
-      .table > tfoot > tr.active > td,
-      .table > thead > tr.active > th,
-      .table > tbody > tr.active > th,
-      .table > tfoot > tr.active > th {
-        background-color: #f5f5f5;
-      }
-      .table-responsive {
-        min-height: .01%;
-        overflow-x: auto;
-      }
-      @media screen and (max-width: 767px) {
-        .table-responsive {
-          width: 100%;
-          margin-bottom: 15px;
-          overflow-y: hidden;
-          -ms-overflow-style: -ms-autohiding-scrollbar;
-          border: 1px solid #ddd;
-        }
-        .table-responsive > .table {
-          margin-bottom: 0;
-        }
-        .table-responsive > .table > thead > tr > th,
-        .table-responsive > .table > tbody > tr > th,
-        .table-responsive > .table > tfoot > tr > th,
-        .table-responsive > .table > thead > tr > td,
-        .table-responsive > .table > tbody > tr > td,
-        .table-responsive > .table > tfoot > tr > td {
-          white-space: nowrap;
-        }
       }
       .btn {
         display: inline-block;
@@ -469,68 +212,12 @@
         -webkit-box-shadow: inset 0 3px 5px rgba(0, 0, 0, .125);
                 box-shadow: inset 0 3px 5px rgba(0, 0, 0, .125);
       }
-      .btn-danger {
-        color: #fff;
-        background-color: #d9534f;
-        border-color: #d43f3a;
-      }
-      .btn-danger:hover,
-      .btn-danger:focus,
-      .btn-danger.focus,
-      .btn-danger:active,
-      .btn-danger.active,
-      .open > .dropdown-toggle.btn-danger {
-        color: #fff;
-        background-color: #c9302c;
-        border-color: #ac2925;
-      }
-      .btn-danger:active,
-      .btn-danger.active,
-      .open > .dropdown-toggle.btn-danger {
-        background-image: none;
-      }
-      .btn-danger.disabled,
-      .btn-danger[disabled],
-      fieldset[disabled] .btn-danger,
-      .btn-danger.disabled:hover,
-      .btn-danger[disabled]:hover,
-      fieldset[disabled] .btn-danger:hover,
-      .btn-danger.disabled:focus,
-      .btn-danger[disabled]:focus,
-      fieldset[disabled] .btn-danger:focus,
-      .btn-danger.disabled.focus,
-      .btn-danger[disabled].focus,
-      fieldset[disabled] .btn-danger.focus,
-      .btn-danger.disabled:active,
-      .btn-danger[disabled]:active,
-      fieldset[disabled] .btn-danger:active,
-      .btn-danger.disabled.active,
-      .btn-danger[disabled].active,
-      fieldset[disabled] .btn-danger.active {
-        background-color: #d9534f;
-        border-color: #d43f3a;
-      }
-      .btn-danger .badge {
-        color: #d9534f;
-        background-color: #fff;
-      }
       .btn-lg,
       .btn-group-lg > .btn {
         padding: 10px 16px;
         font-size: 18px;
         line-height: 1.33;
         border-radius: 6px;
-      }
-      .container-fluid:before,
-      .container-fluid:after,
-      .row:before,
-      .row:after {
-        display: table;
-        content: " ";
-      }
-      .container-fluid:after,
-      .row:after {
-        clear: both;
       }
       .center-block {
         display: block;
@@ -545,100 +232,58 @@
       }
     </style>
     <style type="text/css">
-      /*AgendaPro*/
-      table.wrapper {
-        width: 100%;
+      /* Containers */
+      html,
+      body {
+        font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
+        font-size: 12px;
+        font-weight: 300;
         color: #505050;
-        border-spacing: 15px;
+        background: #ffffff;
+      }
+      table {
+        width: 100%;
+        max-width: 100%;
+        font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
+        font-size: 12px;
+        font-weight: 300;
+        color: #505050;
+        background: #ffffff;
+      }
+      table > thead > tr > th,
+      table > tbody > tr > th,
+      table > tfoot > tr > th,
+      table > thead > tr > td,
+      table > tbody > tr > td,
+      table > tfoot > tr > td {
+        padding: 8px 15px;
+        line-height: 1.42857143;
+        vertical-align: top;
+      }
+      table table {
+        background-color: #ffffff;
       }
       .pull-center {
         text-align: center;
         margin-left: auto;
         margin-right: auto;
       }
-      tr.header {
-        background-color: #22c488;
-      }
-      tr.header > td {
-        padding: 5px;
-      }
-      tr.logo > td {
-        padding-top: 10px;
+      .content {
         margin-right: auto;
         margin-left: auto;
-        text-align: center;
+        max-width: 600px;
+        border: 1px solid #727171;
+        margin-top: 10px;
+        margin-bottom: 10px;
       }
-      tr.body > td {
-        padding-top: 10px;
-        padding-bottom: 15px;
-        padding-right: 15px;
-        padding-left: 15px;
-      }
-      tr.body + tr.body > td {
-        padding-top: 0;
-      }
-      tr.footer {
-        background-color: #505050;
-        color: #ffffff;
-        font-size: 13px;
-      }
-      tr.footer > td {
-        padding: 30px 0;
-        padding-right: 15px;
-        padding-left: 15px;
-      }
-      table.content {
-        width: 100%;
-      }
-      table.content > tbody > tr > td {
-        padding-left: 10px;
-        padding-right: 10px;
-      }
-      tr.fluid > td {
+      .col-2 {
         width: 50%;
-        vertical-align: top;
       }
-      .header p {
-        margin-bottom: 0;
+      .col-3 {
+        width: 33%;
       }
-      .header p > a {
-        color: #ffffff;
-      }
-      .header p > a:hover,
-      .header p > a:focus,
-      .header p > a:active {
-        text-decoration: none;
-        color: #ffffff;
-      }
-      .footer img {
-        float: left;
-        margin-right: 15px;
-        width: 25px;
-      }
-      .logo {
-        width: 50%;
-        max-width: 118px;
-      }
-      .text-green {
-        color: #22c488;
-      }
-      a.text-orange {
-        color: #fd9610;
-      }
-      a.text-orange:hover,
-      a.text-orange:focus,
-      a.text-orange:active {
-        color: #db7400;
-        text-decoration: none;
-      }
-      tr.background-light-gray {
-        background-color: #cbcbcb;
-        color: #ffffff;
-      }
-      tr.background-light-gray > td {
-        padding-bottom: 5px !important;
-        padding-top: 5px !important;
-      }
+
+      /* Buttons */
       .btn-orange {
         color: #ffffff;
         background-color: #fd9610;
@@ -667,157 +312,216 @@
         background-color: #1ba970;
         border-color: #00CA8A;
       }
-      .btn-action {
-        margin-left: 15px;
-        margin-right: 15px;
+      .btn-red {
+        color: #ffffff;
+        background-color: #fd633f;
+        border-color: #e55938;
       }
-      .vertical-divider {
-        border-right: 1px solid #949292;
-        height: 60px;
-        display: inline-block;
-        vertical-align: middle;
-        margin: 0 4px;
+      .btn-red:hover,
+      .btn-red:focus,
+      .btn-red.focus,
+      .btn-red:active,
+      .btn-red.active {
+        color: #ffffff;
+        background-color: #e55938;
+        border-color: #CD4E31;
       }
-      dl > dt {
-        font-weight: normal;
-        margin-top: 10px;
+
+      /* Backgrounds */
+      .background-green {
+        background: #22c488;
+        color: #ffffff;
       }
-      dl > dd {
-        color: #949292;
-        margin-bottom: 10px;
+      .background-green > td {
+        padding: 10px 20px;
       }
-      @media screen and (max-width: 767px) {
-        tr.fluid > td {
-          width: 100%;
-          display: inline-block;
-        }
-        tr.footer {
-          font-size: 12px;
-        }
-        tr.footer > td {
-          padding: 10px 0;
-        }
-        .btn-action {
-          margin: 10px 0;
-          display: block;
-          width: 100%;
-        }
+      .background-dark-grey {
+        background: #d2d3d3;
+        color: #ffffff;
       }
-      div.table-responsive {
-        margin-top: 20px;
+      .background-dark-grey > td {
+        text-align: center;
+      }
+      .background-light-grey {
+        background: #f1f4f5;
+        color: #727171;
+      }
+
+      /* General */
+      .header,
+      .footer {
+        background: #f1f4f5;
+        color: #727171;
+        font-size: 10px;
+        min-height: 24px;
+      }
+      .header > td {
+        padding: 5px 30px;
+        text-align: center;
+      }
+      .header a,
+      .header a:hover,
+      .header a:active {
+        color: #727171;
+        text-decoration: none;
+      }
+      .footer > td {
+        padding: 5px 30px;
+      }
+      .footer > td:first-child:not(:last-child) {
+        padding-right: 10px;
+      }
+      .footer > td:last-child:not(:first-child) {
+        padding-left: 10px;
+      }
+      .footer > td > p {
+        margin: 0;
+      }
+      .logo {
+        width: 50%;
+        max-width: 118px;
+      }
+      .footer img {
+        margin-left: -1px;
+        margin-right: 10px;
+        width: 20px;
+        display: inline;
+        vertical-align: top;
+      }
+      h4 {
+        font-size: 20px;
+      }
+
+      /* Booking */
+      .background-green > td {
+        padding-right: 40px;
+        padding-left: 40px;
+      }
+      .background-green > td > p {
+        margin: 0;
+      }
+      .responsive-table {
+        min-height: .01%;
+        overflow-x: auto;
+        width: 100%;
+        overflow-y: hidden;
+        -ms-overflow-style: -ms-autohiding-scrollbar;
+        margin-bottom: 8px;
+        min-width: 440px;
+      }
+      .responsive-table > .table {
+        margin-bottom: 0;
+      }
+      table.summary {
+        color: #626262;
+      }
+      table.summary > thead > tr > th {
+        font-weight: bold;
+      }
+      table.summary > thead > tr > th,
+      table.summary > thead > tr > td,
+      table.summary > tbody > tr > th,
+      table.summary > tbody > tr > td {
+        width: 1%;
+        min-width: 100px;
       }
     </style>
     <!-- end: CSS -->
   </head>
 
   <body>
-    <table class="wrapper">
-      <!-- start: Header -->
-      <tr class="header">
-        <td colspan="2">
-          <p class="text-center"><a href="http://www.agendapro.cl" target="_blank">www.agendapro.cl</a></p>
-        </td>
-      </tr>
-      <!-- end: Header -->
+    <table class="content">
+      <tbody>
+        <!-- Start: Header -->
+        <tr class="header">
+          <td colspan="2">
+            <a href="http://*|URL|*.agendapro.cl" target="_blanck">*|URL|*.agendapro.cl</a>
+          </td>
+        </tr>
+        <!-- End: Header -->
 
-      <!-- start: Logo -->
-      <tr class="logo">
-        <td colspan="2">
-          <img src="cid:LOGO" alt="AgendaPro" class="logo">
-        </td>
-      </tr>
-      <!-- end: Logo -->
+        <!-- Start: Content -->
+        <tr>
+          <td colspan="2">
+            <div class="pull-center">
+              <img src="cid:LOGO" class="logo" alt="Logo">
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <td colspan="2">
+            <h4 class="text-center">*|COMPANYNAME|*</h4>
+          </td>
+        </tr>
+        <tr class="background-green">
+          <td colspan="2">
+            <p class="text-center">*|NAME|*, te enviamos tu horario para el día de hoy y, además, un resumen de las reservas que fueron agendadas y/o modificadas durante el día de ayer.</p>
+          </td>
+        </tr>
+        <tr><td colspan="2"><!-- white space --></td></tr>
+        <tr class="background-dark-grey">
+          <td colspan="2">
+            Horario de Hoy
+          </td>
+        </tr>
+        <tr>
+          <td colspan="2">
+            <div class="responsive-table">
+              <table class="table table-bordered summary">
+                <thead>
+                  <tr>
+                    <th>Cliente</th>
+                    <th>Servicio</th>
+                    <th>Prestador/Duración</th>
+                    <th>Hora</th>
+                    <th>Estado</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  *|TODAY|*
+                </tbody>
+              </table>
+            </div>
+          </td>
+        </tr>
+        <tr class="background-dark-grey">
+          <td colspan="2">
+            Últimas reservas agendadas y/o modificadas
+          </td>
+        </tr>
+        <tr>
+          <td colspan="2">
+            <div class="responsive-table">
+              <table class="table table-bordered summary">
+                <thead>
+                  <tr>
+                    <th>Cliente</th>
+                    <th>Servicio</th>
+                    <th>Prestador/Duración</th>
+                    <th>Hora</th>
+                    <th>Estado</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  *|SUMMARY|*
+                </tbody>
+              </table>
+            </div>
+          </td>
+        </tr>
+        <!-- End: Content -->
 
-      <!-- start: content -->
-      <tr class="body">
-        <td colspan="2">
-          <p><span class="text-green">*|NAME|*</span>, te enviamos tu horario para el día de hoy y, además, un resumen de las reservas que fueron agendadas y/o modificadas durante el día de ayer.</p>
-        </td>
-      </tr>
-      <!-- Today Schedule -->
-      <tr class="body background-light-gray">
-        <td class="text-center" colspan="2">Horario de hoy</td>
-      </tr>
-      <tr class="body">
-        <td colspan="2">
-          <div class="table-responsive">
-            <table class="table">
-              <thead>
-                <tr>
-                  <th>Cliente</th>
-                  <th>Servicio</th>
-                  <th>Prestador/Duracion</th>
-                  <th>Hora</th>
-                  <th>Estado</th>
-                </tr>
-              </thead>
-              <tbody>
-                *|TODAY|*
-              </tbody>
-            </table>
-          </div>
-        </td>
-      </tr>
-      <!-- Summary -->
-      <tr class="body background-light-gray">
-        <td class="text-center" colspan="2">Últimas reservas agendadas y/o modificadas</td>
-      </tr>
-      <tr class="body">
-        <td colspan="2">
-          <div class="table-responsive">
-            <table class="table">
-              <thead>
-                <tr>
-                  <th>Cliente</th>
-                  <th>Servicio</th>
-                  <th>Prestador/Duracion</th>
-                  <th>Hora</th>
-                  <th>Estado</th>
-                </tr>
-              </thead>
-              <tbody>
-                *|SUMMARY|*
-              </tbody>
-            </table>
-          </div>
-        </td>
-      </tr>
-      <!-- end: content -->
-
-      <!-- start: footer -->
-      <tr class="footer fluid">
-        <td>
-          <table class="content">
-            <tr>
-              <td>
-                <p>Este es un email automático, para contactar a la empresa por favor responde este correo.</p>
-              </td>
-            </tr>
-            <tr>
-              <td>
-                <a href="http://agendapro.cl/home" target="_blank" class="text-orange">¿Quieres unirte a AgendaPro?</a>
-              </td>
-            </tr>
-          </table>
-        </td>
-        <td>
-          <table class="content">
-            <tr>
-              <td>
-                <img src="http://agendapro.cl/assets/footer/1.png">
-                <p>Nuestra Señora de los Angeles 185, Oficina D, Las Condes, Santiago</p>
-              </td>
-            </tr>
-            <tr>
-              <td>
-                <img src="http://agendapro.cl/assets/footer/3.png">
-                <p>(+56 9) 5178 5898</p>
-              </td>
-            </tr>
-          </table>
-        </td>
-      </tr>
-      <!-- end: footer -->
+        <!-- Start: Footer -->
+        <tr class="footer">
+          <td class="col-2">
+            <p class="text-left">Este es un email automático, para contactar a la empresa por favor responde este correo.</p>
+          </td>
+          <td class="col-2">
+            <p class="text-right">Copyright 2013 | Gunei Investment SpA | Todos los derechos reservados</p>
+          </td>
+        </tr>
+        <!-- End: Footer -->
+      </tbody>
     </table>
   </body>
 </html>

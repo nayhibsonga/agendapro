@@ -19,24 +19,28 @@ class BookingMailer < ActionMailer::Base
 			:headers => { 'Reply-To' => book_info.service_provider.notification_email },
 			:global_merge_vars => [
 				{
-					:name => 'SERVICEPROVIDER',
-					:content => book_info.service_provider.public_name
+					:name => 'URL',
+					:content => book_info.service_provider.company.web_address
+				},
+				{
+					:name => 'COMPANYNAME',
+					:content => book_info.service_provider.company.name
 				},
 				{
 					:name => 'CLIENTNAME',
 					:content => book_info.client.first_name + ' ' + book_info.client.last_name
 				},
 				{
-					:name => 'LOCALADDRESS',
-					:content => book_info.location.address + " - " + District.find(book_info.location.district_id).name
-				},
-				{
-					:name => 'BSTART',
-					:content => l(book_info.start)
+					:name => 'SERVICEPROVIDER',
+					:content => book_info.service_provider.public_name
 				},
 				{
 					:name => 'SERVICENAME',
 					:content => book_info.service.name
+				},
+				{
+					:name => 'BSTART',
+					:content => l(book_info.start)
 				},
 				{
 					:name => 'SIGNATURE',
@@ -84,14 +88,6 @@ class BookingMailer < ActionMailer::Base
 					:rcpt => book_info.service_provider.notification_email,
 					:vars => [
 						{
-							:name => 'CLIENTPHONE',
-							:content => number_to_phone(book_info.client.phone)
-						},
-						{
-							:name => 'CLIENTEMAIL',
-							:content => book_info.client.email
-						},
-						{
 							:name => 'COMPANYCOMMENT',
 							:content => book_info.company_comment
 						}
@@ -108,14 +104,6 @@ class BookingMailer < ActionMailer::Base
 			message[:merge_vars] << {
 				:rcpt => book_info.location.email,
 				:vars => [
-					{
-						:name => 'CLIENTPHONE',
-						:content => number_to_phone(book_info.client.phone)
-					},
-					{
-						:name => 'CLIENTEMAIL',
-						:content => book_info.client.email
-					},
 					{
 						:name => 'COMPANYCOMMENT',
 						:content => book_info.company_comment
@@ -139,8 +127,8 @@ class BookingMailer < ActionMailer::Base
 				:rcpt => book_info.client.email,
 				:vars => [
 					{
-						:name => 'COMPANYNAME',
-						:content => book_info.service_provider.company.name
+						:name => 'LOCALADDRESS',
+						:content => book_info.location.address + " - " + District.find(book_info.location.district_id).name
 					},
 					{
 						:name => 'LOCATIONPHONE',
@@ -153,6 +141,10 @@ class BookingMailer < ActionMailer::Base
 					{
 						:name => 'CANCEL',
 						:content => booking_cancel_url(:confirmation_code => book_info.confirmation_code)
+					},
+					{
+						:name => 'CLIENT',
+						:content => true
 					}
 				]
 			}
@@ -186,24 +178,28 @@ class BookingMailer < ActionMailer::Base
 			:headers => { 'Reply-To' => book_info.service_provider.notification_email },
 			:global_merge_vars => [
 				{
-					:name => 'SERVICEPROVIDER',
-					:content => book_info.service_provider.public_name
+					:name => 'URL',
+					:content => book_info.service_provider.company.web_address
+				},
+				{
+					:name => 'COMPANYNAME',
+					:content => book_info.service_provider.company.name
 				},
 				{
 					:name => 'CLIENTNAME',
 					:content => book_info.client.first_name + ' ' + book_info.client.last_name
 				},
 				{
-					:name => 'LOCALADDRESS',
-					:content => book_info.location.address + " - " + District.find(book_info.location.district_id).name
-				},
-				{
-					:name => 'BSTART',
-					:content => l(book_info.start)
+					:name => 'SERVICEPROVIDER',
+					:content => book_info.service_provider.public_name
 				},
 				{
 					:name => 'SERVICENAME',
 					:content => book_info.service.name
+				},
+				{
+					:name => 'BSTART',
+					:content => l(book_info.start)
 				},
 				{
 					:name => 'SIGNATURE',
@@ -255,14 +251,6 @@ class BookingMailer < ActionMailer::Base
 					:rcpt => book_info.service_provider.notification_email,
 					:vars => [
 						{
-							:name => 'CLIENTPHONE',
-							:content => number_to_phone(book_info.client.phone)
-						},
-						{
-							:name => 'CLIENTEMAIL',
-							:content => book_info.client.email
-						},
-						{
 							:name => 'COMPANYCOMMENT',
 							:content => book_info.company_comment
 						}
@@ -279,14 +267,6 @@ class BookingMailer < ActionMailer::Base
 			message[:merge_vars] << {
 				:rcpt => book_info.location.email,
 				:vars => [
-					{
-						:name => 'CLIENTPHONE',
-						:content => number_to_phone(book_info.client.phone)
-					},
-					{
-						:name => 'CLIENTEMAIL',
-						:content => book_info.client.email
-					},
 					{
 						:name => 'COMPANYCOMMENT',
 						:content => book_info.company_comment
@@ -310,8 +290,8 @@ class BookingMailer < ActionMailer::Base
 				:rcpt => book_info.client.email,
 				:vars => [
 					{
-						:name => 'COMPANYNAME',
-						:content => book_info.service_provider.company.name
+						:name => 'LOCALADDRESS',
+						:content => book_info.location.address + " - " + District.find(book_info.location.district_id).name
 					},
 					{
 						:name => 'LOCATIONPHONE',
@@ -324,6 +304,10 @@ class BookingMailer < ActionMailer::Base
 					{
 						:name => 'CANCEL',
 						:content => booking_cancel_url(:confirmation_code => book_info.confirmation_code)
+					},
+					{
+						:name => 'CLIENT',
+						:content => true
 					}
 				]
 			}
@@ -357,28 +341,32 @@ class BookingMailer < ActionMailer::Base
 			:headers => { 'Reply-To' => book_info.service_provider.notification_email },
 			:global_merge_vars => [
 				{
-					:name => 'SERVICEPROVIDER',
-					:content => book_info.service_provider.public_name
-				},
-				{
-					:name => 'CLIENTNAME',
-					:content => book_info.client.first_name + ' ' + book_info.client.last_name
+					:name => 'SERVICENAME',
+					:content => book_info.service.name
 				},
 				{
 					:name => 'LOCALADDRESS',
 					:content => book_info.location.address + " - " + District.find(book_info.location.district_id).name
 				},
 				{
+					:name => 'SERVICEPROVIDER',
+					:content => book_info.service_provider.public_name
+				},
+				{
 					:name => 'BSTART',
 					:content => l(book_info.start)
 				},
 				{
-					:name => 'SERVICENAME',
-					:content => book_info.service.name
-				},
-				{
 					:name => 'SIGNATURE',
 					:content => if !book_info.location.company.company_setting.signature.blank? then book_info.location.company.company_setting.signature.gsub('\r\n', '<br />') end
+				},
+				{
+					:name => 'COMPANYNAME',
+					:content => book_info.service_provider.company.name
+				},
+				{
+					:name => 'URL',
+					:content => book_info.service_provider.company.web_address
 				}
 			],
 			:merge_vars => [],
@@ -415,14 +403,6 @@ class BookingMailer < ActionMailer::Base
 					:rcpt => book_info.service_provider.notification_email,
 					:vars => [
 						{
-							:name => 'CLIENTPHONE',
-							:content => number_to_phone(book_info.client.phone)
-						},
-						{
-							:name => 'CLIENTEMAIL',
-							:content => book_info.client.email
-						},
-						{
 							:name => 'COMPANYCOMMENT',
 							:content => book_info.company_comment
 						}
@@ -439,14 +419,6 @@ class BookingMailer < ActionMailer::Base
 			message[:merge_vars] << {
 				:rcpt => book_info.location.email,
 				:vars => [
-					{
-						:name => 'CLIENTPHONE',
-						:content => number_to_phone(book_info.client.phone)
-					},
-					{
-						:name => 'CLIENTEMAIL',
-						:content => book_info.client.email
-					},
 					{
 						:name => 'COMPANYCOMMENT',
 						:content => book_info.company_comment
@@ -487,24 +459,28 @@ class BookingMailer < ActionMailer::Base
 			:headers => { 'Reply-To' => book_info.service_provider.notification_email },
 			:global_merge_vars => [
 				{
-					:name => 'SERVICEPROVIDER',
-					:content => book_info.service_provider.public_name
+					:name => 'URL',
+					:content => book_info.service_provider.company.web_address
+				},
+				{
+					:name => 'COMPANYNAME',
+					:content => book_info.service_provider.company.name
 				},
 				{
 					:name => 'CLIENTNAME',
 					:content => book_info.client.first_name + ' ' + book_info.client.last_name
 				},
 				{
-					:name => 'LOCALADDRESS',
-					:content => book_info.location.address + " - " + District.find(book_info.location.district_id).name
-				},
-				{
-					:name => 'BSTART',
-					:content => l(book_info.start)
+					:name => 'SERVICEPROVIDER',
+					:content => book_info.service_provider.public_name
 				},
 				{
 					:name => 'SERVICENAME',
 					:content => book_info.service.name
+				},
+				{
+					:name => 'BSTART',
+					:content => l(book_info.start)
 				},
 				{
 					:name => 'SIGNATURE',
@@ -545,14 +521,6 @@ class BookingMailer < ActionMailer::Base
 					:rcpt => book_info.service_provider.notification_email,
 					:vars => [
 						{
-							:name => 'CLIENTPHONE',
-							:content => number_to_phone(book_info.client.phone)
-						},
-						{
-							:name => 'CLIENTEMAIL',
-							:content => book_info.client.email
-						},
-						{
 							:name => 'COMPANYCOMMENT',
 							:content => book_info.company_comment
 						}
@@ -569,14 +537,6 @@ class BookingMailer < ActionMailer::Base
 			message[:merge_vars] << {
 				:rcpt => book_info.location.email,
 				:vars => [
-					{
-						:name => 'CLIENTPHONE',
-						:content => number_to_phone(book_info.client.phone)
-					},
-					{
-						:name => 'CLIENTEMAIL',
-						:content => book_info.client.email
-					},
 					{
 						:name => 'COMPANYCOMMENT',
 						:content => book_info.company_comment
@@ -601,31 +561,24 @@ class BookingMailer < ActionMailer::Base
 					:rcpt => book_info.client.email,
 					:vars => [
 						{
-							:name => 'COMPANYNAME',
-							:content => book_info.service_provider.company.name
+							:name => 'LOCALADDRESS',
+							:content => book_info.location.address + " - " + District.find(book_info.location.district_id).name
 						},
 						{
 							:name => 'LOCATIONPHONE',
 							:content => number_to_phone(book_info.location.phone)
-						}
-					]
-				}
-			else
-				message[:to] << {
-					:email => book_info.client.email,
-					:name => book_info.client.first_name + ' ' + book_info.client.last_name,
-					:type => 'to'
-				}
-				message[:merge_vars] << {
-					:rcpt => book_info.client.email,
-					:vars => [
-						{
-							:name => 'COMPANYNAME',
-							:content => book_info.service_provider.company.name
 						},
 						{
-							:name => 'LOCATIONPHONE',
-							:content => number_to_phone(book_info.location.phone)
+							:name => 'EDIT',
+							:content => booking_edit_url(:confirmation_code => book_info.confirmation_code)
+						},
+						{
+							:name => 'CANCEL',
+							:content => booking_cancel_url(:confirmation_code => book_info.confirmation_code)
+						},
+						{
+							:name => 'CLIENT',
+							:content => true
 						},
 						{
 							:name => 'PAYED',
@@ -664,24 +617,28 @@ class BookingMailer < ActionMailer::Base
 			:headers => { 'Reply-To' => book_info.service_provider.notification_email },
 			:global_merge_vars => [
 				{
-					:name => 'SERVICEPROVIDER',
-					:content => book_info.service_provider.public_name
+					:name => 'URL',
+					:content => book_info.service_provider.company.web_address
+				},
+				{
+					:name => 'COMPANYNAME',
+					:content => book_info.service_provider.company.name
 				},
 				{
 					:name => 'CLIENTNAME',
 					:content => book_info.client.first_name + ' ' + book_info.client.last_name
 				},
 				{
-					:name => 'LOCALADDRESS',
-					:content => book_info.location.address + " - " + District.find(book_info.location.district_id).name
-				},
-				{
-					:name => 'BSTART',
-					:content => l(book_info.start)
+					:name => 'SERVICEPROVIDER',
+					:content => book_info.service_provider.public_name
 				},
 				{
 					:name => 'SERVICENAME',
 					:content => book_info.service.name
+				},
+				{
+					:name => 'BSTART',
+					:content => l(book_info.start)
 				},
 				{
 					:name => 'SIGNATURE',
@@ -722,14 +679,6 @@ class BookingMailer < ActionMailer::Base
 				  :rcpt => book_info.service_provider.notification_email,
 				  :vars => [
 						{
-							:name => 'CLIENTPHONE',
-							:content => number_to_phone(book_info.client.phone)
-						},
-						{
-							:name => 'CLIENTEMAIL',
-							:content => book_info.client.email
-						},
-						{
 							:name => 'COMPANYCOMMENT',
 							:content => book_info.company_comment
 						}
@@ -746,14 +695,6 @@ class BookingMailer < ActionMailer::Base
 			message[:merge_vars] << {
 				:rcpt => book_info.location.email,
 				:vars => [
-					{
-						:name => 'CLIENTPHONE',
-						:content => number_to_phone(book_info.client.phone)
-					},
-					{
-						:name => 'CLIENTEMAIL',
-						:content => book_info.client.email
-					},
 					{
 						:name => 'COMPANYCOMMENT',
 						:content => book_info.company_comment
@@ -777,8 +718,8 @@ class BookingMailer < ActionMailer::Base
 			  :rcpt => book_info.client.email,
 			  :vars => [
 					{
-						:name => 'COMPANYNAME',
-						:content => book_info.service_provider.company.name
+						:name => 'LOCALADDRESS',
+						:content => book_info.location.address + " - " + District.find(book_info.location.district_id).name
 					},
 					{
 						:name => 'LOCATIONPHONE',
@@ -795,6 +736,10 @@ class BookingMailer < ActionMailer::Base
 					{
 						:name => 'CONFIRM',
 						:content => confirm_booking_url(:confirmation_code => book_info.confirmation_code)
+					},
+					{
+						:name => 'CLIENT',
+						:content => true
 					}
 			  ]
 			}
@@ -831,6 +776,14 @@ class BookingMailer < ActionMailer::Base
 				}
 			],
 			:global_merge_vars => [
+				{
+					:name => 'COMPANYNAME',
+					:content => booking_data[:company]
+				},
+				{
+					:name => 'URL',
+					:content => booking_data[:url]
+				},
 				{
 					:name => 'NAME',
 					:content => booking_data[:name]

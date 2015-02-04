@@ -53,6 +53,7 @@
               <%= image_tag 'ubicacion.png', :alt => '', :size => "12x14", :class=>"loc-icon" %>&nbsp;
               <span id="phone-address">
                 <%= if !@selectedLocation.outcall then @selectedLocation.address+', '+@selectedLocation.district.name else "A Domicilio" end %>
+                <br><%= if !@selectedLocation.second_address.blank? then @selectedLocation.second_address else '' end %>
               </span>
             </div>
           <% else %>
@@ -109,6 +110,7 @@
               <%= image_tag 'ubicacion.png', :alt => '', :size => "12x14", :class=>"loc-icon" %>&nbsp;
               <span id="phone-address">
                 <%= if !@selectedLocation.outcall then @selectedLocation.address+', '+@selectedLocation.district.name else "A Domicilio" end %>
+                <br><%= if !@selectedLocation.second_address.blank? then @selectedLocation.second_address else '' end %>
               </span>
             </div>
           <% else %>
@@ -198,10 +200,10 @@
           <div class="box-step">
             <div class="row staff">
               <div class="col-md-3 step2-left-col" style="max-height: 346px; overflow-y: hidden;">
-                <div class="staff-wrapper">             
-                  <span class="subtitulos-workflow">Seleccione un Staff<br /> y Horario &nbsp;</span><span><i class="fa fa-clock-o gray-icon"></i>&nbsp;<i class="fa fa-user gray-icon"></i></span>
-                  <div class="sub-workflow dark-gray">Seleccione un staff para ver su horario</div>
-                    <div class="panel panel-default light-gray" <%= 'style="display:none;"'.html_safe if @location.company.company_setting.provider_preference == 2 %>>
+                <div class="staff-wrapper" <%= 'style="display:none;"'.html_safe if @location.company.company_setting.provider_preference == 2 %>>
+                  <span class="subtitulos-workflow">Elige Staff<br /> y Horario &nbsp;</span><span><i class="fa fa-clock-o gray-icon"></i>&nbsp;<i class="fa fa-user gray-icon"></i></span>
+                  <div class="sub-workflow dark-gray">Selecciona un staff para ver su horario</div>
+                    <div class="panel panel-default light-gray">
                       <ul class="list-group" id="staff-selector">
                         <%= image_tag "ajax-loader.gif", :alt => "Loader" %>
                       </ul>
@@ -250,12 +252,15 @@
             </div>
 
             <div class="row change-bar">
-              <div class="col-md-3">
+              <div class="col-sm-3">
                 <div class="btn-change btn-prev">
                   <a class="prev2 prev-btn"><i class="fa fa-chevron-left prev-arrow"></i> Anterior</a>
                 </div>
               </div>
-              <div class="col-md-9">
+              <div class="col-sm-6">
+                <p class="p-label"><span class="wf-label label-available">&nbsp;</span> Disponible<span class="wf-label label-past">&nbsp;</span> Pasada<span class="wf-label label-unavailable">&nbsp;</span> Ocupado</p>
+              </div>
+              <div class="col-sm-3">
                 <div class="btn-change btn-next">
                   <a class="next2 next-btn">Siguiente <i class="fa fa-chevron-right next-arrow"></i></a>
                 </div>
@@ -393,6 +398,16 @@
                           <%= label_tag(:identification_number, "RUT", class: "col-sm-3 control-label") %>
                           <div class="col-sm-9">
                             <%= text_field_tag(:identification_number, nil, :class => "form-control light-gray", :placeholder => "Escriba su RUT, debe estar autorizado como cliente" ) %>
+                            <span class="help-block"></span>
+                            <span class="form-control-feedback"></span>
+                          </div>
+                        </div>
+                      <% end %>
+                      <% if @location.company.company_setting.deal_activate %>
+                        <div id="" class="form-group has-feedback">
+                          <%= label_tag(:deal_code, @location.company.company_setting.deal_name && @location.company.company_setting.deal_name != "" ? @location.company.company_setting.deal_name : "Convenio", class: "col-sm-3 control-label") %>
+                          <div class="col-sm-9">
+                            <%= text_field_tag(:deal_code, nil, :class => "form-control light-gray" ) %>
                             <span class="help-block"></span>
                             <span class="form-control-feedback"></span>
                           </div>

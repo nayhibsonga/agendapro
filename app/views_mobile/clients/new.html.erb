@@ -1,0 +1,16 @@
+<div class="background-green">
+	<div class="container-fluid">
+		<div class="row">
+			<div class="col-xs-12">
+				<p class="text-center" style="margin: 0;">Agregar Cliente</p>
+			</div>
+		</div>
+	</div>
+</div>
+
+<%= render 'form' %>
+
+<% content_for :scripts do %>
+	<%= javascript_include_tag 'validations/validate' %>
+	<%= javascript_include_tag 'validations/admin/client' %>
+<% end %>
