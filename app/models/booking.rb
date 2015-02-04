@@ -24,7 +24,7 @@ class Booking < ActiveRecord::Base
 
 	after_create :send_booking_mail
 	after_update :send_update_mail
-	
+
 	def time_in_provider_time_warning
 		bstart = self.start.clone()
 		bend = self.end.clone()
@@ -54,7 +54,7 @@ class Booking < ActiveRecord::Base
 			end
 		end
 	end
-	
+
 	def bookings_overlap_warning
 		cancelled_id = Status.find_by(name: 'Cancelado').id
 		unless self.status_id == cancelled_id
@@ -70,7 +70,7 @@ class Booking < ActiveRecord::Base
 								return
 							end
 						end
-					end	
+					end
 				end
 			end
 		end
@@ -96,7 +96,7 @@ class Booking < ActiveRecord::Base
 									if location_booking.service != self.service || location_booking.service_provider != self.service_provider
 										group_services.push(location_booking.service_provider.id)
 									end
-								end		
+								end
 							end
 						end
 					end
@@ -150,7 +150,7 @@ class Booking < ActiveRecord::Base
 			end
 		end
 	end
-	
+
 	def bookings_overlap
 		unless self.location.company.company_setting.provider_overcapacity
 			cancelled_id = Status.find_by(name: 'Cancelado').id
@@ -167,7 +167,7 @@ class Booking < ActiveRecord::Base
 									return
 								end
 							end
-						end	
+						end
 					end
 				end
 			end
@@ -195,7 +195,7 @@ class Booking < ActiveRecord::Base
 										if location_booking.service != self.service || location_booking.service_provider != self.service_provider
 											group_services.push(location_booking.service_provider.id)
 										end
-									end		
+									end
 								end
 							end
 						end
@@ -229,7 +229,7 @@ class Booking < ActiveRecord::Base
 
 	def client_exclusive
 		if self.service_provider.company.company_setting.client_exclusive
-			if !self.client.can_book || self.client.identification_number.nil? || self.client.identification_number.empty? 
+			if !self.client.can_book || self.client.identification_number.nil? || self.client.identification_number.empty?
 				errors.add(:base, "El cliente ingresado no figura en los registros o no puede reservar.")
 			end
 		end
@@ -244,7 +244,9 @@ class Booking < ActiveRecord::Base
 	def send_booking_mail
 		if self.start > Time.now - 4.hours
 			if self.status != Status.find_by(:name => "Cancelado")
-				BookingMailer.book_service_mail(self)
+				if self.booking_group.nil?
+					BookingMailer.book_service_mail(self)
+				end
 			end
 		end
 	end

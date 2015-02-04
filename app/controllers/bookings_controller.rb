@@ -65,6 +65,20 @@ class BookingsController < ApplicationController
 
     @company = Company.find(current_user.company_id)
     @company_setting = @company.company_setting
+
+    booking_group = nil
+    if booking_buffer_params[:bookings].length > 1
+      provider = booking_buffer_params[:bookings]['0']['service_provider_id']
+      location = ServiceProvider.find(provider).location
+
+      group = Booking.where(location: location).where.not(booking_group: nil).order(:booking_group).last
+      if group.nil?
+        booking_group = 0
+      else
+        booking_group = group.booking_group + 1
+      end
+    end
+
     booking_buffer_params[:bookings].each do |pos, buffer_params|
       staff_code = nil
       new_booking_params = buffer_params.except(:client_first_name, :client_last_name, :client_phone, :client_email, :client_identification_number, :client_address, :client_district, :client_city, :client_birth_day, :client_birth_month, :client_birth_year, :client_age, :client_gender, :staff_code)
@@ -158,6 +172,7 @@ class BookingsController < ApplicationController
       end
 
       @booking.max_changes = @company_setting.max_changes
+      @booking.booking_group = booking_group
 
       if @booking && @booking.service_provider
         @booking.location = @booking.service_provider.location
@@ -218,6 +233,20 @@ class BookingsController < ApplicationController
 
     @company = Company.find(current_user.company_id)
     @company_setting = @company.company_setting
+
+    booking_group = nil
+    if booking_buffer_params[:bookings].length > 1
+      provider = booking_buffer_params[:bookings]['0']['service_provider_id']
+      location = ServiceProvider.find(provider).location
+
+      group = Booking.where(location: location).where.not(booking_group: nil).order(:booking_group).last
+      if group.nil?
+        booking_group = 0
+      else
+        booking_group = group.booking_group + 1
+      end
+    end
+
     booking_buffer_params[:bookings].each do |pos, buffer_params|
       staff_code = nil
       new_booking_params = buffer_params.except(:client_first_name, :client_last_name, :client_phone, :client_email, :client_identification_number, :client_address, :client_district, :client_city, :client_birth_day, :client_birth_month, :client_birth_year, :client_age, :client_gender, :staff_code)
@@ -311,6 +340,7 @@ class BookingsController < ApplicationController
       end
 
       @booking.max_changes = @company_setting.max_changes
+      @booking.booking_group = booking_group
 
       if @booking && @booking.service_provider
         @booking.location = @booking.service_provider.location
