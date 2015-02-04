@@ -138,6 +138,9 @@ gem 'capistrano', '~> 3.3.0'
 # Editor de texto tipo word
 gem 'ckeditor'
 
-# Para ejecutar tareas asíncronas o programadas en el background.
+# Para ejecutar tareas asíncronas o programadas en segundo plano.
 gem 'delayed_job_active_record'
+
+# Para demonizar las tareas en segundo plano.
+gem "daemons"
 
