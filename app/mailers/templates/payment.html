@@ -390,23 +390,25 @@
           </td>
         </tr>
         <tr>
-          <td class="text-center" colspan="2">
+          <td colspan="2">
             *|IF:CANCEL|*
               *|IF:CLIENTCANCEL|*
-                <b>*|CLIENT|*, has cancelado una reserva paga en línea.</b> Contáctanos en contacto@agendapro.cl con los datos de la transferencia copiados en este correo para hacerte la devolución del dinero.
+                <p class="text-center"><b>*|CLIENT|*, has cancelado una reserva paga en línea.</b></p>
+                <p class="text-center">Contáctanos en contacto@agendapro.cl con los datos de la transferencia copiados en este correo para hacerte la devolución del dinero.</p>
               *|END:IF|*
               *|IF:COMPANYCANCEL|*
-                <b>Se ha cancelado una reserva en *|COMPANYNAME|* pagada en línea hecha por medio de AgendaPro.</b> Nosotros efectuaremos la devolución del dinero al cliente, y la cancelación se verá reflejada en tu panel de control.
+                <p class="text-center"><b>Se ha cancelado una reserva en *|COMPANYNAME|* pagada en línea hecha por medio de AgendaPro.</b></p>
+                <p class="text-center">Nosotros efectuaremos la devolución del dinero al cliente, y la cancelación se verá reflejada en tu panel de control.</p>
               *|END:IF|*
               *|IF:AGENDAPROCANCEL|*
-                <b>Se ha cancelado una reserva en *|COMPANYNAME|* pagada en línea hecha por medio de AgendaPro, por parte del cliente *|CLIENT|* con correo *|CLIENTEMAIL|*.</b> Los datos de la transferencia se muestran a continuación.
+                <p class="text-center"><b>Se ha cancelado una reserva en *|COMPANYNAME|* pagada en línea hecha por medio de AgendaPro, por parte del cliente *|CLIENT|* con correo *|CLIENTEMAIL|*.</b></p>
+                <p class="text-center">Los datos de la transferencia se muestran a continuación.</p>
               *|END:IF|*
             *|ELSE:|*
-              *|IF:COMPANYNAME|*
-                Su transacción fue realizada con éxito.
-              *|END:IF|*
               *|IF:CLIENT|*
-                Se ha efectuado un pago de reserva en nuestra plataforma.
+                <p class="text-center">Su transacción fue realizada con éxito.</p>
+              *|ELSE:|*
+                <p class="text-center">Se ha efectuado un pago de reserva en nuestra plataforma.</p>
               *|END:IF|*
             *|END:IF|*
           </td>
@@ -416,16 +418,15 @@
             <table class="table table-bordered">
               <tbody>
                 *|IFNOT:CANCEL|*
-                  *|IF:COMPANYNAME|*
-                  <tr>
-                    <td>Comercio</td>
-                    <td>*|COMPANYNAME|*</td>
-                  </tr>
-                  *|END:IF|*
                   *|IF:CLIENT|*
                   <tr>
                     <td>Cliente</td>
                     <td>*|CLIENT|*</td>
+                  </tr>
+                  *|ELSE:|*
+                  <tr>
+                    <td>Comercio</td>
+                    <td>*|COMPANYNAME|*</td>
                   </tr>
                   *|END:IF|*
                 *|END:IF|*
