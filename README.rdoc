@@ -16,6 +16,27 @@ Usin ImageMagick: convert zoolander.jpg -resize 200x200 -background transparent 
 
 * Configuration
 
+	1) Log rotation:
+	 - Create file /etc/logrotate.d/web-app with superuser permissions.
+	 - Paste the following formula:
+	 	# /etc/logrotate.d/web-app
+		# Rotate Rails application logs based on file size
+		# Rotate log if file greater than 20 MB
+		/home/agendapro/web-app/log/*.log {
+				daily
+				missingok
+				rotate 90
+				dateext
+				dateformat .%Y-%m-%d
+				compress
+				delaycompress
+				notifempty
+				copytruncate
+		}
+		- run twice in console to check log creation and compression:
+			sudo /usr/sbin/logrotate -f /etc/logrotate.conf
+			
+
 * Database creation
 
 * Database initialization

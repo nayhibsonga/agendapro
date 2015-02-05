@@ -1,4 +1,5 @@
 class Company < ActiveRecord::Base
+
 	belongs_to :plan
 	belongs_to :payment_status
 
@@ -19,6 +20,7 @@ class Company < ActiveRecord::Base
 	has_many :company_from_email, dependent: :destroy
 	has_many :staff_codes, dependent: :destroy
 	has_many :deals, dependent: :destroy
+
 	has_many :payment_accounts, dependent: :destroy
 
 	validates :name, :web_address, :plan, :payment_status, :presence => true

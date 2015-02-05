@@ -136,6 +136,7 @@ function loadStep2 () {
 				});
 			}
 
+
 			$('[name="staffRadio"]').on('click', function(event) {
 				$('.horario').show();
 
@@ -187,6 +188,8 @@ function loadStep2 () {
 					});
 				});
 			});
+
+
 
 			if ($('#providerPreference').data('provider-preference') != 1) {
 				$('[name="staffRadio"]').first().prop("checked", true);
@@ -251,6 +254,7 @@ function loadStep2 () {
 
 			$('#foo4').trigger('updateSizes');
 		});
+ 		
 	}
 }
 

@@ -816,6 +816,7 @@ $(function() {
   });
 });
 
+
 $(function() {
 
 	$("#service_online_payable").change(function(){
@@ -848,3 +849,4 @@ $(function() {
 	});
 
 });
+

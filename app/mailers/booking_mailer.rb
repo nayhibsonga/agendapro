@@ -587,6 +587,24 @@ class BookingMailer < ActionMailer::Base
 					]
 				}
 			end
+			message[:to] << {
+				:email => book_info.client.email,
+				:name => book_info.client.first_name + ' ' + book_info.client.last_name,
+				:type => 'to'
+			}
+			message[:merge_vars] << {
+				:rcpt => book_info.client.email,
+				:vars => [
+					{
+						:name => 'CLIENTNAME',
+						:content => book_info.client.first_name + ' ' + book_info.client.last_name
+					},
+					{
+						:name => 'LOCATIONPHONE',
+						:content => number_to_phone(book_info.location.phone)
+					}
+				]
+			}
 		end
 
 		# => Metadata

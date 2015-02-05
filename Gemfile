@@ -138,3 +138,6 @@ gem 'capistrano', '~> 3.3.0'
 # Editor de texto tipo word
 gem 'ckeditor'
 
+#pg_search para búsqueda utilizando extensiones de Postgres
+gem 'pg_search'
+

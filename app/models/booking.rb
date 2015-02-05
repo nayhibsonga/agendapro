@@ -16,12 +16,14 @@ class Booking < ActiveRecord::Base
 	validate :time_empty_or_negative, :booking_duration, :service_staff, :client_exclusive, :time_in_provider_time
 
 	validation_scope :warnings do |s|
+
 		s.validate after_commit :time_in_provider_time_warning
 		s.validate after_commit :bookings_overlap_warning
 		s.validate after_commit :bookings_resources_warning
 		s.validate after_commit :bookings_deal_warning
 		s.validate after_commit :provider_in_break_warning
 	end
+
 
 	after_commit validate :bookings_overlap, :bookings_resources, :bookings_deal
 

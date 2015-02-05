@@ -1,10 +1,15 @@
 class Location < ActiveRecord::Base
+	require 'pg_search'
+	include PgSearch
 
 	belongs_to :district
 	belongs_to :company
 
 	has_many :location_times, dependent: :destroy
+
 	has_many :service_providers, dependent: :destroy
+	has_many :active_service_providers, -> { where active: true}, class_name: "ServiceProvider"
+
 	has_many :bookings, dependent: :destroy
 
 	has_many :location_outcall_districts, dependent: :destroy
@@ -16,6 +21,16 @@ class Location < ActiveRecord::Base
 	has_many :user_locations, dependent: :destroy
 	has_many :users, :through => :user_locations
 
+	has_many :services, -> { where active: true }, :through => :active_service_providers
+
+	#has_many :services, -> { where active: true }, :through => :service_providers
+
+	has_many :service_categories, :through => :services
+
+	has_many :economic_sectors, :through => :company
+
+	has_many :economic_sectors_dictionaries, :through => :economic_sectors
+
 	accepts_nested_attributes_for :location_times, :reject_if => :all_blank, :allow_destroy => true
 
 	validates :name, :phone, :company, :district, :presence => true
@@ -24,6 +39,30 @@ class Location < ActiveRecord::Base
 	validate :new_plan_locations, :on => :create
 
 	after_commit :extended_schedule
+
+
+	pg_search_scope :search, :associated_against => {
+		:company => :name,
+		:services => :name,
+		:economic_sectors => :name,
+		:economic_sectors_dictionaries => :name,
+		:service_categories => :name
+		},
+		:using => {
+                    :trigram => {
+                      	:threshold => 0.1,
+                      	:prefix => true,
+                    	:dictionary => 'spanish',
+                    	:any_word => true
+                    },
+                    :tsearch => {
+                    	:prefix => true,
+                    	:dictionary => 'spanish',
+                    	:any_word => true
+                    }
+        },
+        :ignoring => :accents
+
 
 	def extended_schedule
 		company_setting = self.company.company_setting

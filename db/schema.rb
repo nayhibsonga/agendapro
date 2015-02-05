@@ -11,10 +11,17 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
+<<<<<<< HEAD
 ActiveRecord::Schema.define(version: 20150127154214) do
+=======
+ActiveRecord::Schema.define(version: 20150129165121) do
+>>>>>>> 9e0c6f7265aadc1f63d2ea8145814ddd7c90c257
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+  enable_extension "pg_trgm"
+  enable_extension "fuzzystrmatch"
+  enable_extension "unaccent"
 
   create_table "banks", force: true do |t|
     t.integer  "code"
@@ -107,9 +114,14 @@ ActiveRecord::Schema.define(version: 20150127154214) do
     t.string   "trx_id",              default: ""
     t.integer  "max_changes",         default: 2
     t.string   "token",               default: ""
+<<<<<<< HEAD
+=======
+    t.integer  "deal_id"
+>>>>>>> 9e0c6f7265aadc1f63d2ea8145814ddd7c90c257
   end
 
   add_index "bookings", ["client_id"], name: "index_bookings_on_client_id", using: :btree
+  add_index "bookings", ["deal_id"], name: "index_bookings_on_deal_id", using: :btree
   add_index "bookings", ["location_id"], name: "index_bookings_on_location_id", using: :btree
   add_index "bookings", ["promotion_id"], name: "index_bookings_on_promotion_id", using: :btree
   add_index "bookings", ["service_id"], name: "index_bookings_on_service_id", using: :btree
@@ -232,17 +244,31 @@ ActiveRecord::Schema.define(version: 20150127154214) do
     t.boolean  "booking_history",             default: false
     t.boolean  "staff_code",                  default: false
     t.integer  "monthly_mails",               default: 0,                     null: false
+<<<<<<< HEAD
     t.boolean  "deal_exclusive",              default: false
     t.integer  "deal_quantity",               default: 0
     t.integer  "deal_constraint_option",      default: 0
     t.integer  "deal_constraint_quantity",    default: 0
     t.boolean  "deal_identification_number",  default: false
+=======
+>>>>>>> 9e0c6f7265aadc1f63d2ea8145814ddd7c90c257
     t.boolean  "allows_online_payment",       default: false
     t.string   "account_number",              default: ""
     t.string   "company_rut",                 default: ""
     t.string   "account_name",                default: ""
     t.integer  "account_type",                default: 3
     t.integer  "bank_id"
+<<<<<<< HEAD
+=======
+    t.boolean  "deal_activate",               default: false
+    t.string   "deal_name"
+    t.boolean  "deal_overcharge",             default: true
+    t.boolean  "deal_exclusive",              default: false
+    t.integer  "deal_quantity",               default: 0
+    t.integer  "deal_constraint_option",      default: 0
+    t.integer  "deal_constraint_quantity",    default: 0
+    t.boolean  "deal_identification_number",  default: false
+>>>>>>> 9e0c6f7265aadc1f63d2ea8145814ddd7c90c257
   end
 
   add_index "company_settings", ["company_id"], name: "index_company_settings_on_company_id", using: :btree
@@ -259,7 +285,10 @@ ActiveRecord::Schema.define(version: 20150127154214) do
     t.datetime "updated_at"
   end
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> 9e0c6f7265aadc1f63d2ea8145814ddd7c90c257
   create_table "deals", force: true do |t|
     t.string   "code",                               null: false
     t.integer  "quantity",                           null: false
