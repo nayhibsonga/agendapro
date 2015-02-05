@@ -20,7 +20,12 @@ class Company < ActiveRecord::Base
 	has_many :company_from_email, dependent: :destroy
 	has_many :staff_codes, dependent: :destroy
 	has_many :deals, dependent: :destroy
+<<<<<<< HEAD
+	has_many :payment_accounts, dependent: :destroy
+
+=======
 	has_many :payment_accounts
+>>>>>>> 9e0c6f7265aadc1f63d2ea8145814ddd7c90c257
 	validates :name, :web_address, :plan, :payment_status, :presence => true
 
 	validates_uniqueness_of :web_address

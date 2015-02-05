@@ -327,7 +327,7 @@ class Location < ActiveRecord::Base
 					name: location.name,
 					to: location.email,
 					company: location.company.name,
-					url: location.company.url
+					url: location.company.web_address
 				}
 				if booking_summary.length > 0 or today_schedule.length > 0
 					BookingMailer.booking_summary(booking_data, booking_summary, today_schedule)

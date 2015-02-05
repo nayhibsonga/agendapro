@@ -156,7 +156,7 @@ class ServiceProvider < ActiveRecord::Base
 					name: provider.public_name,
 					to: provider.notification_email,
 					company: provider.location.company.name,
-					url: provider.location.company.url
+					url: provider.location.company.web_address
 				}
 				if booking_summary.length > 0 or today_schedule.length > 0
 					BookingMailer.booking_summary(booking_data, booking_summary, today_schedule)

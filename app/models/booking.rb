@@ -16,20 +16,36 @@ class Booking < ActiveRecord::Base
 	validate :time_empty_or_negative, :booking_duration, :service_staff, :client_exclusive, :time_in_provider_time
 
 	validation_scope :warnings do |s|
+<<<<<<< HEAD
+=======
 
+>>>>>>> 9e0c6f7265aadc1f63d2ea8145814ddd7c90c257
 		s.validate after_commit :time_in_provider_time_warning
 		s.validate after_commit :bookings_overlap_warning
 		s.validate after_commit :bookings_resources_warning
 		s.validate after_commit :bookings_deal_warning
 		s.validate after_commit :provider_in_break_warning
 	end
+<<<<<<< HEAD
+=======
 
+>>>>>>> 9e0c6f7265aadc1f63d2ea8145814ddd7c90c257
 
 	after_commit validate :bookings_overlap, :bookings_resources, :bookings_deal
 
-	after_create :send_booking_mail
+	after_create :send_booking_mail, :wait_for_payment
 	after_update :send_update_mail
 	
+	def wait_for_payment
+		self.delay(run_at: 150.seconds.from_now).payment_timeout
+	end
+
+	def payment_timeout
+		if !self.payed and self.trx_id != "" and self.payed_booking.nil?
+			self.delete
+		end
+	end
+
 	def time_in_provider_time_warning
 		bstart = self.start.clone()
 		bend = self.end.clone()
