@@ -59,16 +59,13 @@ $(function() {
 			'company_setting[account_number]': {
 				required: '#company_setting_allows_online_payment:checked'
 			},
-			'company_setting[online_cancelation_policy_attributes][cancel_max]'
-			{
+			'company_setting[online_cancelation_policy_attributes][cancel_max]': {
 				required: '#company_setting_online_cancelation_policy_attributes_cancelable:checked'
 			},
-			'company_setting[online_cancelation_policy_attributes][min_hours]'
-			{
+			'company_setting[online_cancelation_policy_attributes][min_hours]': {
 				required: '#company_setting_online_cancelation_policy_attributes_cancelable:checked'
 			},
-			'company_setting[online_cancelation_policy_attributes][modification_max]'
-			{
+			'company_setting[online_cancelation_policy_attributes][modification_max]': {
 				required: '#company_setting_online_cancelation_policy_attributes_modifiable:checked'
 			}
 		},
