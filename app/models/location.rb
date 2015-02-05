@@ -29,6 +29,8 @@ class Location < ActiveRecord::Base
 
 	has_many :economic_sectors, :through => :company
 
+	has_many :economic_sectors_dictionaries, :through => :economic_sectors
+
 	accepts_nested_attributes_for :location_times, :reject_if => :all_blank, :allow_destroy => true
 
 	validates :name, :phone, :company, :district, :presence => true
@@ -43,6 +45,7 @@ class Location < ActiveRecord::Base
 		:company => :name,
 		:services => :name,
 		:economic_sectors => :name,
+		:economic_sectors_dictionaries => :name,
 		:service_categories => :name
 		},
 		:using => {
