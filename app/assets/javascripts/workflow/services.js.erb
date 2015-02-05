@@ -248,6 +248,7 @@ function loadStep3 () {
 	if ($('[name="staffRadio"]').is(':checked')){
 		if (selected) {
 			booking_buffer.push(actual_booking);
+			$('#bookings').val(JSON.stringify(booking_buffer));
 
 			// Summary
 			$('#summary').empty();

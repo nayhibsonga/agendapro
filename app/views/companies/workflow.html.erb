@@ -255,7 +255,7 @@
                   </div>
                   <div class="panel-body">
                     <%= form_tag("book", method: "post", role: "form", class: "form-horizontal", id: "bookingForm" ) do %>
-                      <input type="hidden" name="booking_buffer" id="booking_buffer" value="">
+                      <input type="hidden" name="bookings" id="bookings" value="">
                       <input type="hidden" name="location" id="location" value="<%= @location.id %>">
                       <input type="hidden" name="origin" id="origin" value="true">
                       <% if user_signed_in? %>

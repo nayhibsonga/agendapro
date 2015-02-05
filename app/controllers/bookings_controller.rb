@@ -1,8 +1,8 @@
 class BookingsController < ApplicationController
   before_action :set_booking, only: [:show, :edit, :update, :destroy]
-  before_action :authenticate_user!, except: [:create, :force_create, :booking_valid, :provider_booking, :book_service, :edit_booking, :edit_booking_post, :cancel_booking, :confirm_booking, :check_user_cross_bookings, :blocked_edit]
-  before_action :quick_add, except: [:create, :force_create, :booking_valid, :provider_booking, :book_service, :edit_booking, :edit_booking_post, :cancel_booking, :confirm_booking, :check_user_cross_bookings, :blocked_edit]
-  layout "admin", except: [:book_service, :provider_booking, :edit_booking, :edit_booking_post, :cancel_booking, :confirm_booking, :check_user_cross_bookings, :blocked_edit, :blocked_cancel]
+  before_action :authenticate_user!, except: [:create, :force_create, :booking_valid, :provider_booking, :book_service, :book_error, :remove_bookings, :edit_booking, :edit_booking_post, :cancel_booking, :confirm_booking, :check_user_cross_bookings, :blocked_edit]
+  before_action :quick_add, except: [:create, :force_create, :booking_valid, :provider_booking, :book_service, :book_error, :remove_bookings, :edit_booking, :edit_booking_post, :cancel_booking, :confirm_booking, :check_user_cross_bookings, :blocked_edit]
+  layout "admin", except: [:book_service, :book_error, :remove_bookings, :provider_booking, :edit_booking, :edit_booking_post, :cancel_booking, :confirm_booking, :check_user_cross_bookings, :blocked_edit, :blocked_cancel]
 
   # GET /bookings
   # GET /bookings.json
@@ -787,36 +787,14 @@ class BookingsController < ApplicationController
   end
 
   def book_service
+    @bookings = []
+    @errors = []
+
     @location_id = params[:location]
     @selectedLocation = Location.find(@location_id)
     @company = Location.find(params[:location]).company
     cancelled_id = Status.find_by(name: 'Cancelado').id
-    service_provider = ServiceProvider.find(params[:provider])
-    service = Service.find(params[:service])
-    service_provider.bookings.each do |provider_booking|
-      unless provider_booking.status_id == cancelled_id
-        if (provider_booking.start.to_datetime - params[:end].to_datetime) * (params[:start].to_datetime - provider_booking.end.to_datetime) > 0
-          if !service.group_service || params[:service].to_i != provider_booking.service_id
-            flash[:alert] = "Lo sentimos, la hora seleccionada ya está reservada para el prestador elegido."
-            @errors = ["Lo sentimos, la hora seleccionada ya está reservada para el prestador elegido"]
-            host = request.host_with_port
-            @url = @company.web_address + '.' + host[host.index(request.domain)..host.length]
-            render layout: "workflow"
-            return
-          elsif service.group_service && params[:service].to_i == provider_booking.service_id && service_provider.bookings.where(:service_id => service.id, :start => params[:start].to_datetime).count >= service.capacity
-            flash[:alert] = "La capacidad del servicio grupal llegó a su límite."
-            @errors = ["La capacidad del servicio grupal llegó a su límite"]
-            host = request.host_with_port
-            @url = @company.web_address + '.' + host[host.index(request.domain)..host.length]
-            render layout: "workflow"
-            return
-          end
-        end
-      end
-    end
-    if params[:address] && !params[:address].empty?
-      params[:comment] += ' - Dirección del cliente (donde se debe realizar el servicio): ' + params[:address]
-    end
+
     if @company.company_setting.client_exclusive
       if Client.where(identification_number: params[:identification_number], company_id: @company).count > 0
         client = Client.where(identification_number: params[:identification_number], company_id: @company).first
@@ -828,7 +806,7 @@ class BookingsController < ApplicationController
         end
       else
         #flash[:alert] = "No estás ingresado como cliente o no puedes reservar. Por favor comunícate con la empresa proveedora del servicio."
-        @errors = ["No estás ingresado como cliente"]
+        @errors << "No estás ingresado como cliente"
         host = request.host_with_port
         @url = @company.web_address + '.' + host[host.index(request.domain)..host.length]
         render layout: "workflow"
@@ -852,27 +830,104 @@ class BookingsController < ApplicationController
         end
       end
     end
-    if user_signed_in?
-      @booking = Booking.new(start: params[:start], end: params[:end], notes: params[:comment], service_provider_id: params[:provider], service_id: params[:service], location_id: params[:location], status_id: Status.find_by(name: 'Reservado').id, client_id: client.id, user_id: current_user.id, web_origin: params[:origin], provider_lock: params[:provider_lock])
-    else
-      if User.find_by_email(params[:email])
-        @user = User.find_by_email(params[:email])
-        @booking = Booking.new(start: params[:start], end: params[:end], notes: params[:comment], service_provider_id: params[:provider], service_id: params[:service], location_id: params[:location], status_id: Status.find_by(name: 'Reservado').id, client_id: client.id, user_id: @user.id, web_origin: params[:origin], provider_lock: params[:provider_lock])
+
+    if params[:address] && !params[:address].empty?
+      params[:comment] += ' - Dirección del cliente (donde se debe realizar el servicio): ' + params[:address]
+    end
+
+    booking_data = JSON.parse(params[:bookings], symbolize_names: true)
+
+    booking_group = nil
+    if booking_data.length > 1
+      provider = booking_data[0][:provider]
+      location = ServiceProvider.find(provider).location
+
+      group = Booking.where(location: location).where.not(booking_group: nil).order(:booking_group).last
+      if group.nil?
+        booking_group = 0
       else
-        @booking = Booking.new(start: params[:start], end: params[:end], notes: params[:comment], service_provider_id: params[:provider], service_id: params[:service], location_id: params[:location], status_id: Status.find_by(name: 'Reservado').id, client_id: client.id, web_origin: params[:origin], provider_lock: params[:provider_lock])
+        booking_group = group.booking_group + 1
       end
     end
-    @booking.price = Service.find(params[:service]).price
-    @booking.max_changes = @company.company_setting.max_changes
-    if @booking.save
-      # flash[:notice] = "Reserva realizada exitosamente."
 
-      # BookingMailer.book_service_mail(@booking)
-      current_user ? user = current_user.id : user = 0
-      BookingHistory.create(booking_id: @booking.id, action: "Creada por Cliente", start: @booking.start, status_id: @booking.status_id, service_id: @booking.service_id, service_provider_id: @booking.service_provider_id, user_id: user)
-    else
-      #flash[:alert] = "Hubo un error guardando los datos de tu reserva. Inténtalo nuevamente."
-      @errors = @booking.errors.full_messages
+    booking_data.each do |buffer_params|
+      service_provider = ServiceProvider.find(buffer_params[:provider])
+      service = Service.find(buffer_params[:service])
+      service_provider.bookings.each do |provider_booking|
+        unless provider_booking.status_id == cancelled_id
+          if (provider_booking.start.to_datetime - buffer_params[:end].to_datetime) * (buffer_params[:start].to_datetime - provider_booking.end.to_datetime) > 0
+            if !service.group_service || buffer_params[:service].to_i != provider_booking.service_id
+              @errors << "Lo sentimos, la hora " + I18n.l(buffer_params[:start].to_datetime, format: :hour) + " ya está reservada para " + service_provider.public_name
+              next
+            elsif service.group_service && buffer_params[:service].to_i == provider_booking.service_id && service_provider.bookings.where(:service_id => service.id, :start => buffer_params[:start].to_datetime).count >= service.capacity
+              @errors << "La capacidad del servicio grupal " + service.name + ", llegó a su límite"
+              next
+            end
+          end
+        end
+      end
+
+      if user_signed_in?
+        @booking = Booking.new(
+          start: buffer_params[:start],
+          end: buffer_params[:end],
+          notes: params[:comment],
+          service_provider_id: service_provider.id,
+          service_id: service.id,
+          location_id: @selectedLocation.id,
+          status_id: Status.find_by(name: 'Reservado').id,
+          client_id: client.id,
+          user_id: current_user.id,
+          web_origin: params[:origin],
+          provider_lock: buffer_params[:provider_lock]
+        )
+      else
+        if User.find_by_email(params[:email])
+          @user = User.find_by_email(params[:email])
+          @booking = Booking.new(
+            start: buffer_params[:start],
+            end: buffer_params[:end],
+            notes: params[:comment],
+            service_provider_id: service_provider.id,
+            service_id: service.id,
+            location_id: @selectedLocation.id,
+            status_id: Status.find_by(name: 'Reservado').id,
+            client_id: client.id,
+            user_id: @user.id,
+            web_origin: params[:origin],
+            provider_lock: buffer_params[:provider_lock]
+          )
+        else
+          @booking = Booking.new(
+            start: buffer_params[:start],
+            end: buffer_params[:end],
+            notes: params[:comment],
+            service_provider_id: service_provider.id,
+            service_id: service.id,
+            location_id: @selectedLocation.id,
+            status_id: Status.find_by(name: 'Reservado').id,
+            client_id: client.id,
+            web_origin: params[:origin],
+            provider_lock: buffer_params[:provider_lock]
+          )
+        end
+      end
+
+      @booking.price = service.price
+      @booking.max_changes = @company.company_setting.max_changes
+      @booking.booking_group = booking_group
+
+      if @booking.save
+        current_user ? user = current_user.id : user = 0
+        BookingHistory.create(booking_id: @booking.id, action: "Creada por Cliente", start: @booking.start, status_id: @booking.status_id, service_id: @booking.service_id, service_provider_id: @booking.service_provider_id, user_id: user)
+      else
+        @errors << @booking.errors.full_messages
+      end
+    end
+
+    if @errors.length > 0 and booking_data.length > 1
+      redirect_to book_error_path(bookings: @bookings.map{|b| b.id}, location: @selectedLocation.id, client: client.id, errors: @errors)
+      return
     end
 
     # => Domain parser
@@ -880,6 +935,30 @@ class BookingsController < ApplicationController
     @url = @company.web_address + '.' + host[host.index(request.domain)..host.length]
 
     render layout: "workflow"
+  end
+
+  def book_error
+    @location = Location.find(params[:location])
+    @company = @location.company
+    @client = Client.find(params[:client])
+    @bookings = Booking.find(params[:bookings])
+    @errors = params[:errors]
+
+    render layout: "workflow"
+  end
+
+  def remove_bookings
+    @bookings = Booking.find(params[:bookings].split())
+    @bookings.each do |booking|
+      booking.destroy
+    end
+
+    # => Domain parser
+    host = request.host_with_port
+    @url = Company.find(params[:company]).web_address + '.' + host[host.index(request.domain)..host.length]
+
+    flash[:notice] = "Reserva cancelada"
+    redirect_to @url
   end
 
   def edit_booking
