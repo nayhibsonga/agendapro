@@ -42,7 +42,7 @@ class Location < ActiveRecord::Base
 
 
 	pg_search_scope :search, :associated_against => {
-		:company => :name,
+		:company => {:name => 'A'},
 		:services => :name,
 		:economic_sectors => :name,
 		:economic_sectors_dictionaries => :name,
