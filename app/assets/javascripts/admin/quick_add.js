@@ -804,10 +804,7 @@ $(function() {
 		$('#foo5').trigger('updateSizes');
 		$(document).scrollTop(oldTop);
 	});
-<<<<<<< HEAD
 
-=======
->>>>>>> 9e0c6f7265aadc1f63d2ea8145814ddd7c90c257
 	$('#location_district_id, #location_address, #location_outcall').change(function (eve) {
     var district = $('#location_district_id').val();
     var address = $('#location_address').val();
@@ -818,11 +815,7 @@ $(function() {
     };
   });
 });
-<<<<<<< HEAD
-=======
 
-});
->>>>>>> 9e0c6f7265aadc1f63d2ea8145814ddd7c90c257
 
 $(function() {
 
@@ -857,6 +850,9 @@ $(function() {
 
 });
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 >>>>>>> 09b70e9e3a30f02e4b2dd41458d68ba1351a2ee7
 >>>>>>> 9e0c6f7265aadc1f63d2ea8145814ddd7c90c257
+=======
+>>>>>>> 07d86b12b1a810d5d1eefcfc0ea20b09d7708bc5

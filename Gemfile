@@ -138,14 +138,13 @@ gem 'capistrano', '~> 3.3.0'
 # Editor de texto tipo word
 gem 'ckeditor'
 
-<<<<<<< HEAD
 # Para ejecutar tareas asíncronas o programadas en segundo plano.
 gem 'delayed_job_active_record'
 
 # Para demonizar las tareas en segundo plano.
 gem "daemons"
-=======
+
 #pg_search para búsqueda utilizando extensiones de Postgres
 gem 'pg_search'
->>>>>>> 9e0c6f7265aadc1f63d2ea8145814ddd7c90c257
+
 

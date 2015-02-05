@@ -551,7 +551,6 @@ class BookingMailer < ActionMailer::Base
 
 		# Notificacion cliente
 		if book_info.send_mail
-<<<<<<< HEAD
 			if book_info.payed_booking.nil?
 				message[:to] << {
 					:email => book_info.client.email,
@@ -588,7 +587,6 @@ class BookingMailer < ActionMailer::Base
 					]
 				}
 			end
-=======
 			message[:to] << {
 				:email => book_info.client.email,
 				:name => book_info.client.first_name + ' ' + book_info.client.last_name,
@@ -607,7 +605,6 @@ class BookingMailer < ActionMailer::Base
 					}
 				]
 			}
->>>>>>> 9e0c6f7265aadc1f63d2ea8145814ddd7c90c257
 		end
 
 		# => Metadata

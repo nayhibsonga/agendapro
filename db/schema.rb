@@ -299,7 +299,6 @@ ActiveRecord::Schema.define(version: 20150204160735) do
 
   add_index "delayed_jobs", ["priority", "run_at"], name: "delayed_jobs_priority", using: :btree
 
-
   create_table "dictionaries", force: true do |t|
     t.string   "name",       null: false
     t.integer  "tag_id",     null: false
