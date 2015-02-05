@@ -74,10 +74,24 @@ class ApplicationController < ActionController::Base
 
   private
 
-  private 
-
   def after_sign_out_path_for(resource_or_scope)
     root_path
+  end
+
+  def after_sign_in_path_for(resource)
+    if current_user && current_user.company_id && current_user.company_id > 0
+      dashboard_path
+    else
+      request.env['omniauth.origin'] || stored_location_for(resource) || root_path
+    end
+  end
+
+  def after_sign_up_path_for(resource)
+    if current_user && current_user.company_id && current_user.company_id > 0
+      dashboard_path
+    else
+      root_path
+    end
   end
 
 end

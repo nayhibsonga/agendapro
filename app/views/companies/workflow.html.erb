@@ -258,7 +258,7 @@
                 </div>
               </div>
               <div class="col-sm-6">
-                <p class="p-label"><span class="wf-label label-available">&nbsp;</span> Disponible<span class="wf-label label-past">&nbsp;</span> Pasada<span class="wf-label label-unavailable">&nbsp;</span> Ocupado</p>
+                <p class="p-label"><span class="wf-label label-available">&nbsp;</span> Disponible<span class="wf-label label-past">&nbsp;</span> No Disponible<span class="wf-label label-unavailable">&nbsp;</span> Ocupado</p>
               </div>
               <div class="col-sm-3">
                 <div class="btn-change btn-next">
@@ -394,22 +394,34 @@
                       <% end %>
 
                       <% if @location.company.company_setting.client_exclusive %>
-                        <div id="identificationNumber" class="form-group has-feedback">
-                          <%= label_tag(:identification_number, "RUT", class: "col-sm-3 control-label") %>
-                          <div class="col-sm-9">
-                            <%= text_field_tag(:identification_number, nil, :class => "form-control light-gray", :placeholder => "Escriba su RUT, debe estar autorizado como cliente" ) %>
-                            <span class="help-block"></span>
-                            <span class="form-control-feedback"></span>
+                        <div class="row">
+                          <div class="col-md-12 dark-gray">
+                            RUT
+                          </div>
+                        </div>
+                        <div class="row">
+                          <div class="col-md-12">
+                            <div class="form-group has-feedback">
+                              <%= text_field_tag(:identification_number, nil, :class => "form-control light-gray", :placeholder => "Escriba su RUT, debe estar autorizado como cliente" ) %>
+                              <span class="help-block"></span>
+                              <span class="form-control-feedback"></span>
+                            </div>
                           </div>
                         </div>
                       <% end %>
                       <% if @location.company.company_setting.deal_activate %>
-                        <div id="" class="form-group has-feedback">
-                          <%= label_tag(:deal_code, @location.company.company_setting.deal_name && @location.company.company_setting.deal_name != "" ? @location.company.company_setting.deal_name : "Convenio", class: "col-sm-3 control-label") %>
-                          <div class="col-sm-9">
-                            <%= text_field_tag(:deal_code, nil, :class => "form-control light-gray" ) %>
-                            <span class="help-block"></span>
-                            <span class="form-control-feedback"></span>
+                        <div class="row">
+                          <div class="col-md-12 dark-gray">
+                            <%= !@location.company.company_setting.deal_name.blank? ? @location.company.company_setting.deal_name : "Convenio" %>
+                          </div>
+                        </div>
+                        <div class="row">
+                          <div class="col-md-12">
+                            <div class="form-group has-feedback">
+                              <%= text_field_tag(:deal_code, nil, :class => "form-control light-gray" ) %>
+                              <span class="help-block"></span>
+                              <span class="form-control-feedback"></span>
+                            </div>
                           </div>
                         </div>
                       <% end %>
@@ -718,6 +730,8 @@
 <% end %>
 <%= content_tag "div", id: "workflow_url", data: {url: @url, location_id: @location.id} do %>
 <% end %>
+<%= content_tag "div", id: "dealCode", data: {deal_identification_number: @location.company.company_setting.deal_identification_number, deal_required: @location.company.company_setting.deal_required } do %>
+<% end %>
 
 <% content_for :scripts do %>
   <%= javascript_include_tag 'workflow/services' %>
@@ -726,6 +740,16 @@
   <%= javascript_include_tag 'split-name' %>
   <%= javascript_include_tag 'validations/validate' %>
   <%= javascript_include_tag 'validations/home/workflow' %>
+  <% if @location.company.company_setting.deal_identification_number %>
+    <script type="text/javascript">
+      $('#deal_code').change(function() {
+        var rut_string = $('#deal_code').val()
+        if (rut_string != '') { 
+          $('#deal_code').val(rut_format(rut_string));
+        }
+      });
+    </script>
+  <% end %>
   <script type="text/javascript">
 
 

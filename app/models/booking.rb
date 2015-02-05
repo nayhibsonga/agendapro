@@ -253,7 +253,7 @@ class Booking < ActiveRecord::Base
 			unless self.location.company.company_setting.deal_overcharge
 				cancelled_id = Status.find_by(name: 'Cancelado').id
 				unless self.status_id == cancelled_id
-					if !self.deal.nil?
+					if !self.deal.blank?
 						if self.deal.quantity > 0 && self.deal.bookings.where.not(status_id: cancelled_id).count >= self.deal.quantity
 							errors.add(:base, "Este convenio ya fue utilizado el máximo de veces que era permitida.")
 							return
@@ -279,6 +279,11 @@ class Booking < ActiveRecord::Base
 									return
 								end
 							end
+						end
+					else
+						if self.location.company.company_setting.deal_required
+							errors.add(:base, "Es obligatorio incluir un código de convenio para reservar.")
+							return
 						end
 					end
 				end

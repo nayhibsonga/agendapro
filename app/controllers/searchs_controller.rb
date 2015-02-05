@@ -9,7 +9,7 @@ class SearchsController < ApplicationController
 		@lat = cookies[:lat].to_f
 		@lng = cookies[:lng].to_f
 		if cookies[:formatted_address]
-			@formatted_address = cookies[:formatted_address].encode('UTF-8', 'binary', invalid: :replace, undef: :replace, replace: '')
+			@formatted_address = cookies[:formatted_address].unpack("C*").pack("U*")
 		end
 		render layout: "search"
 	end
@@ -141,7 +141,7 @@ class SearchsController < ApplicationController
 			
 
 			if cookies[:formatted_address]
-				@formatted_address = cookies[:formatted_address].encode('UTF-8', 'binary', invalid: :replace, undef: :replace, replace: '')
+				@formatted_address = cookies[:formatted_address].unpack("C*").pack("U*")
 			end
 			# => Domain parser
 			host = request.host_with_port
