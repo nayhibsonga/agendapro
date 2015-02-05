@@ -206,8 +206,7 @@ class PuntoPagosController < ApplicationController
       @booking = Booking.new(failed_booking.attributes.to_options)
       failed_booking.destroy
     else
-      #Nothing found, there was an error
-
+      #Nothing found, there was a timeout error
     end
   end
 

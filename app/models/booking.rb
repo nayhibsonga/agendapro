@@ -29,11 +29,11 @@ class Booking < ActiveRecord::Base
 	after_update :send_update_mail
 	
 	def wait_for_payment
-		self.delay(run_at: 2.minutes.from_now).payment_timeout
+		self.delay(run_at: 150.seconds.from_now).payment_timeout
 	end
 
 	def payment_timeout
-		if !self.payed and self.trx_id != ""
+		if !self.payed and self.trx_id != "" and self.payed_booking.nil?
 			self.delete
 		end
 	end
