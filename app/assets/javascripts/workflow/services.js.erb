@@ -4,7 +4,7 @@ var actual_booking = null;
 //====== Load Steps ======//
 function loadStep1 (service_id) {
 	$('#services-description').empty();
-	$('#services-selector').html('<%= image_tag "ajax-loader.gif", :alt => "Loader", :class => "loader-gif" %>');
+	$('#services-selector').html('<p class="text-center" style="color: #ccc;"><i class="fa fa-spinner fa-spin fa-2x"></i></p>');
 	var localId = $('#selectedLocal').data('local').id;
 	var categoryCount = 0;
 	$.getJSON('/local_services', {location: localId}, function (categorized_services) {
@@ -96,7 +96,7 @@ function loadStep1 (service_id) {
 var calendar;
 function loadStep2 () {
 	if($('[name="serviceRadio"]').is(':checked')){
-		$('#staff-selector').html('<%= image_tag "ajax-loader.gif", :alt => "Loader" %>');
+		$('#staff-selector').html('<p class="text-center" style="color: #ccc;"><i class="fa fa-spinner fa-spin fa-2x"></i></p>');
 		$('.horario').hide();
 		selected = false;
 		var serviceId = $('input[name=serviceRadio]:checked').val();
@@ -135,12 +135,12 @@ function loadStep2 () {
 			$('[name="staffRadio"]').on('click', function(event) {
 				$('.horario').show();
 
-				if (event.target.getAttribute('value') == 0) {
-					$('#provider_lock').val(false);
-				}
-				else {
-					$('#provider_lock').val(true);
-				}
+				// if (event.target.getAttribute('value') == 0) {
+				// 	$('#provider_lock').val(false);
+				// }
+				// else {
+				// 	$('#provider_lock').val(true);
+				// }
 
 				var data;
 				if($("#datepicker").val()!="") {
@@ -183,7 +183,7 @@ function loadStep2 () {
 				$('[name="staffRadio"]').first().prop("checked", true);
 				$('[name="staffRadio"]').first().closest('.list-group-item').addClass('selected-wf-option');
 				$('.horario').show();
-				$('#provider_lock').val(false);
+				// $('#provider_lock').val(false);
 
 				var data;
 
@@ -234,7 +234,6 @@ function loadStep2 () {
 			});
 		});
 	}
-	$('#foo4').trigger('updateSizes');
 }
 
 function loadStep3 () {
@@ -249,8 +248,6 @@ function loadStep3 () {
 	if ($('[name="staffRadio"]').is(':checked')){
 		if (selected) {
 			booking_buffer.push(actual_booking);
-
-			$('#service').val($('input[name=serviceRadio]:checked').val());
 
 			// Summary
 			$('#summary').empty();
@@ -365,7 +362,7 @@ function scrollEvents (direction) {
 
 //====== Load Info ======//
 function loadDescription (serviceId) {
-	$('#services-description').html('<div class="ajax-loader"><%= image_tag "ajax-loader.gif", :alt => "Loader" %></div>');
+	$('#services-description').html('<tr><td class="text-center" style="color: #ccc;"><i class="fa fa-spinner fa-spin fa-2x"></i></td></tr>');
 	$.getJSON('/service', {id: serviceId}, function (service) {
 		$('#services-description').empty();
 		$('#services-description').append(
@@ -513,5 +510,6 @@ $(function () {
 
 	$(document).on('calendarBuilded', function (e) {
 		blockBookingBufferHour();
+		$('#foo4').trigger('updateSizes');
 	});
 });
