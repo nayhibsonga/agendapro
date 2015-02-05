@@ -652,7 +652,10 @@ class BookingsController < ApplicationController
     if(params[:payment] == "1")
         @booking.max_changes = @company.company_setting.max_changes
         trx_id = DateTime.now.to_s.gsub(/[-:T]/i, '')
-        num_amount = service.price - service.price*service.discount/100;
+        num_amount = service.price
+        if service.has_discount
+          num_amount = service.price - service.price*service.discount/100;
+        end
         amount = sprintf('%.2f', num_amount)
         payment_method = params[:mp]
         req = PuntoPagos::Request.new()
