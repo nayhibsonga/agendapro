@@ -1,7 +1,10 @@
 Agendapro::Application.routes.draw do
 
 
+<<<<<<< HEAD
+=======
   resources :deals
+>>>>>>> 9e0c6f7265aadc1f63d2ea8145814ddd7c90c257
   get "users/index"
   require 'subdomain'
 
@@ -45,6 +48,7 @@ Agendapro::Application.routes.draw do
   resources :numeric_parameters
 
   resources :clients
+  resources :deals
 
   resources :payed_bookings
   resources :banks
