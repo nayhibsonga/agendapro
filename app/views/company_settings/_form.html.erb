@@ -235,7 +235,7 @@
 	    <div class="row">
 
 	    	<!-- DETALLES PAGO EN LÍNEA -->
-	    	<%= form_for @company_setting, :html => {:class => 'form-horizontal'} do |f| %>
+	    	<%= form_for @company_setting, :html => {:class => 'form-horizontal', :id => 'online-payment-form'} do |f| %>
 	    	<div class="form-group">
 	    		<%= f.hidden_field :company_id, :value => current_user.company.id %>
 				<%= f.label :allows_online_payment, 'Pago en línea', :class => 'col-sm-3 control-label' %>

@@ -45,7 +45,7 @@ class SearchsController < ApplicationController
 
 			#EMPRESAS CON DUEÑO
 
-			result = Location.search(normalized_search).where(id: ServiceProvider.where(active: true).pluck('location_id')).where(company_id: Company.where(:active => true, :owned => true)).where(:active => true).where('sqrt((latitude - ' + lat.to_s + ')^2 + (longitude - ' + long.to_s + ')^2) < 0.25')
+			result = Location.search(normalized_search).where(id: ServiceProvider.where(active: true).pluck('location_id')).where(company_id: Company.where(:active => true, :owned => true).where(id: CompanySetting.where(:activate_search => true, :activate_workflow => true).pluck('company_id'))).where(:active => true).where('sqrt((latitude - ' + lat.to_s + ')^2 + (longitude - ' + long.to_s + ')^2) < 0.25')
 
 			locs = Array.new
 
@@ -61,7 +61,7 @@ class SearchsController < ApplicationController
 
 			#EMPRESAS SIN DUEÑO
 
-			unowned_result = Location.search(normalized_search).where(id: ServiceProvider.where(active: true).pluck('location_id')).where(company_id: Company.where(:active => true, :owned => false)).where(:active => true).where('sqrt((latitude - ' + lat.to_s + ')^2 + (longitude - ' + long.to_s + ')^2) < 0.25')
+			unowned_result = Location.search(normalized_search).where(id: ServiceProvider.where(active: true).pluck('location_id')).where(company_id: Company.where(:active => true, :owned => false).where(id: CompanySetting.where(:activate_search => true, :activate_workflow => true).pluck('company_id'))).where(:active => true).where('sqrt((latitude - ' + lat.to_s + ')^2 + (longitude - ' + long.to_s + ')^2) < 0.25')
 
 			unowned_locs = Array.new
 
