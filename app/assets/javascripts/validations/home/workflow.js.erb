@@ -20,7 +20,8 @@ $(function() {
 				minlength: 2
 			},
 			deal_code: {
-				required: true
+				required: $('#dealCode').data('deal-required'),
+				rut: $('#dealCode').data('deal-identification-number')
 			},
 			address: {
 				minlength: 3

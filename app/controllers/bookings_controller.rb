@@ -92,8 +92,13 @@ class BookingsController < ApplicationController
           end
         end
       else
-        render :json => { :errors => ["El código de convenio ingresado no es correcto."] }, :status => 422
-        return
+        if @company_setting.deal_required
+          render :json => { :errors => ["El código de convenio debe ser ingresado."] }, :status => 422
+          return
+        else
+          deal_code = nil
+          new_booking_params[:deal_id] = nil
+        end
       end
     end
     @booking = Booking.new(new_booking_params)
@@ -224,8 +229,13 @@ class BookingsController < ApplicationController
           end
         end
       else
-        render :json => { :errors => ["El código de convenio ingresado no es correcto."] }, :status => 422
-        return
+        if @company_setting.deal_required
+          render :json => { :errors => ["El código de convenio debe ser ingresado."] }, :status => 422
+          return
+        else
+          deal_code = nil
+          new_booking_params[:deal_id] = nil
+        end
       end
     end
     if @company_setting.client_exclusive
@@ -554,6 +564,8 @@ class BookingsController < ApplicationController
       else
         if !@company.company_setting.deal_exclusive
           deal = Deal.create(company_id: @company.id, code: params[:deal_code], quantity: @company.company_setting.deal_quantity, constraint_option: @company.company_setting.deal_constraint_quantity, constraint_quantity: @company.company_setting.deal_constraint_quantity)
+        elsif !@company.company_setting.deal_required
+          deal = nil
         else
           #flash[:alert] = "No estás ingresado como cliente o no puedes reservar. Por favor comunícate con la empresa proveedora del servicio."
           flash[:alert] = "Lo sentimos, el convenio es inválido."

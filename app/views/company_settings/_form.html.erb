@@ -452,7 +452,14 @@
 					<%= f.label :deal_activate, 'Activar Convenios', :class => 'col-sm-3 control-label' %>
 					<div class="col-sm-5">
 						<%= f.check_box :deal_activate %>
-						<span class="help-block">Si habilitas esta opción, para guardar una reserva, tanto como tus clientes como desde el administrador, deberan ingresar un código. Este será validado según las opciones que se muestran a continuación.</span>
+						<span class="help-block">Si habilitas esta opción, al guardar una reserva, tanto como tus clientes como desde el administrador, se podrá ingresar un código. Este será validado según las opciones que se muestran a continuación.</span>
+					</div>
+				</div>
+				<div class="form-group">
+					<%= f.label :deal_required, 'Requerir Código', :class => 'col-sm-3 control-label' %>
+					<div class="col-sm-5">
+						<%= f.check_box :deal_required %>
+						<span class="help-block">Si activas esta opción, para guardar una reserva, se exigirá que se entregue un código de convenio al hacer una reserva (tanto tus clientes como desde el administrador).</span>
 					</div>
 				</div>
 				<div class="form-group">
