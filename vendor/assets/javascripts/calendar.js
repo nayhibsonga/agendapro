@@ -43,7 +43,7 @@ function Calendar (source, getData) {
 
 		// Tittle calculation
 		generateTittle(monday, sunday);
-		
+
 		return now;
 	}
 
@@ -72,7 +72,7 @@ function Calendar (source, getData) {
 		$.getJSON(sources.source, sources.data, function (data, status) {
 
 			$(".days-row").empty();
-			
+
 			$.each(data, function(day, day_blocks){
 				var date = parseDate(day);
 				var dayNumber = date.getDay();
@@ -83,7 +83,7 @@ function Calendar (source, getData) {
 				}
 			});
 
-			
+
 
 			var pos = 0;
 			$.each(data, function (day, day_blocks) {
@@ -120,6 +120,9 @@ function Calendar (source, getData) {
 			calculateWidth();
 			$('#next').removeAttr('disabled');
 			$('#prev').removeAttr('disabled');
+			$.event.trigger({
+				type: 'calendarBuilded'
+			});
 		});
 	}
 
@@ -218,7 +221,7 @@ function Calendar (source, getData) {
 		var count = $('.columna-dia').length;
 		var width = (100 / count);
 		$('.columna-dia').css('width', width + '%');
-		
+
 		var width2 = $(".horario")[0].clientWidth/count;
 		$('.dia-semana').css('width', width2);
 		$('.dia-semana:last').css('width', width2-1);

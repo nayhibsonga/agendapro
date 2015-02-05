@@ -1,9 +1,5 @@
-<%= stylesheet_link_tag "calendar" %>
-
 <div class="workflow-header">
   <div class="container">
-
-
     <div class="row">
       <% if !@company.description.blank? %>
         <div class="col-md-6 company-header-left company-header">
@@ -32,9 +28,6 @@
                 </div>
               </div>
             </div>
-            <div class="col-md-3">
-
-            </div>
           </div>
         </div>
         <div class="col-md-4 company-header-center company-header">
@@ -43,7 +36,6 @@
           </div>
         </div>
         <div class="col-md-2 company-header-right company-header">
-
           <% if @selectedLocation %>
             <div id="phone-info">
               <%= image_tag 'telefono.png', :alt => '', :size => "12x14", :class=>"loc-icon" %>&nbsp;
@@ -66,7 +58,6 @@
           <% end %>
           <div style="clear: both;"></div>
         </div>
-
       <% else %>
         <div class="col-md-6 company-header-left company-header" style="border-right: 1px solid #949292;">
           <div class="row">
@@ -94,13 +85,9 @@
                 </div>
               </div>
             </div>
-            <div class="col-md-3">
-
-            </div>
           </div>
         </div>
         <div class="col-md-6 company-header-center2 company-header">
-
           <% if @selectedLocation %>
             <div id="phone-info">
               <%= image_tag 'telefono.png', :alt => '', :size => "12x14", :class=>"loc-icon" %>&nbsp;
@@ -124,29 +111,26 @@
           <div style="clear: both;"></div>
         </div>
       <% end %>
-
     </div>
   </div>
 </div>
 
 <div class="row" id="navegacion-workflow">
   <div class="container">
-  <div class="col-md-1"><div id="prev3" class="prev-btn"><i class="fa fa-chevron-left fa-lg"></i></div></div>
+  <div class="col-md-1">
+    <div id="prev3" class="prev-btn"><i class="fa fa-chevron-left fa-lg"></i></div>
+  </div>
   <div class="col-md-10">
     <div id="pager2" class="pasos-reserva">
-      <!--<a href="#" id="pager-btn-1" class="selected"><span><i class="fa fa-circle fa-2x"></i><span class="circle-number">1</span><span class="navigation-title"> | Elegir el servicio</span></span></a>
-      <a href="#" id="pager-btn-2"><span><i class="fa fa-circle fa-2x"></i><span class="circle-number">2</span><span class="navigation-title"> | Elegir el staff</span></span></a>
-      <a href="#" id="pager-btn-3"><span><i class="fa fa-circle fa-2x"></i><span class="circle-number">3</span><span class="navigation-title"> | Ingresa tus datos</span></span></a>-->
     </div>
   </div>
-  <div class="col-md-1"><div id="next3" class="next-btn"><i class="fa fa-chevron-right fa-lg"></i></div></div>
+  <div class="col-md-1">
+    <div id="next3" class="next-btn"><i class="fa fa-chevron-right fa-lg"></i></div>
+  </div>
   </div>
 </div>
 
 <div>
-  <div class="container">
-
-  </div>
   <div class="container" id="warning"></div>
   <div class="container">
     <div clas="row" id="espacio-workflow">
@@ -177,7 +161,6 @@
                 <div class="panel-group" id="services-selector" style="border-radius: 4px; border: 1px solid #acacac; margin-left: 10px !important;">
                   <%= image_tag "ajax-loader.gif", :alt => "Loader" %>
                 </div>
-
               </div>
               <div class="col-md-6">
                 <div class="descripcion">
@@ -203,17 +186,15 @@
                 <div class="staff-wrapper">
                   <span class="subtitulos-workflow">Seleccione un Staff<br /> y Horario &nbsp;</span><span><i class="fa fa-clock-o gray-icon"></i>&nbsp;<i class="fa fa-user gray-icon"></i></span>
                   <div class="sub-workflow dark-gray">Seleccione un staff para ver su horario</div>
-                    <div class="panel panel-default light-gray" <%= 'style="display:none;"'.html_safe if @location.company.company_setting.provider_preference == 2 %>>
-                      <ul class="list-group" id="staff-selector">
-                        <%= image_tag "ajax-loader.gif", :alt => "Loader" %>
-                      </ul>
-                    </div>
-
+                  <div class="panel panel-default light-gray" <%= 'style="display:none;"'.html_safe if @location.company.company_setting.provider_preference == 2 %>>
+                    <ul class="list-group" id="staff-selector">
+                      <%= image_tag "ajax-loader.gif", :alt => "Loader" %>
+                    </ul>
+                  </div>
                 </div>
                 <div style="clear: both;">
                 </div>
               </div>
-
               <div class="col-md-9" id="staff-calendar">
                 <div class="panel panel-info <%= 'full-margin' if @location.company.company_setting.provider_preference == 2 %>">
                   <div class="calendar-head">
@@ -224,7 +205,6 @@
                         </div>
                         <div class="col-xs-8">
                           <span class="tittle"></span>
-
                         </div>
                         <div class="col-xs-2">
                           <span class="date-span">
@@ -239,16 +219,13 @@
                     </div>
                   </div>
                   <div class="days-row">
-
                   </div>
                   <div class="panel-body">
                     <div class="horario"></div>
                   </div>
                 </div>
-
               </div>
             </div>
-
             <div class="row change-bar">
               <div class="col-md-3">
                 <div class="btn-change btn-prev">
@@ -259,38 +236,31 @@
                 <div class="btn-change btn-next">
                   <a class="next2 next-btn">Siguiente <i class="fa fa-chevron-right next-arrow"></i></a>
                 </div>
+                <a class="btn btn-large btn-green pull-right" style="padding: 9px 12px; margin-right: 10px; width: 160px;" onclick="addNewService()"><i class="fa fa-plus"></i> Agregar Servicio</a>
               </div>
             </div>
-
           </div>
           <div class="box-step">
-
             <div class="row" style="margin-left: 0px !important;">
               <div class="col-md-6">
                 <div class="subtitulos-workflow">Ingresa tus datos &nbsp;<i class="fa fa-file-text-o gray-icon"></i></div>
               </div>
-              <div class="col-md-6">
-              </div>
             </div>
-
             <div class="row" style="margin-left: 0px !important;">
-
               <div class="col-md-6">
-
-
                 <!-- INICIO FORM -->
-
                 <div id="form-datos">
                   <div class="datos-heading">
                     Datos de la reserva
                   </div>
                   <div class="panel-body">
                     <%= form_tag("book", method: "post", role: "form", class: "form-horizontal", id: "bookingForm" ) do %>
-                      <input type="hidden" name="start" id="start" value="">
+                      <input type="hidden" name="booking_buffer" id="booking_buffer" value="">
+                      <!-- <input type="hidden" name="start" id="start" value="">
                       <input type="hidden" name="end" id="end" value="">
                       <input type="hidden" name="provider_lock" id="provider_lock" value="">
                       <input type="hidden" name="provider" id="provider" value="">
-                      <input type="hidden" name="service" id="service" value="">
+                      <input type="hidden" name="service" id="service" value=""> -->
                       <input type="hidden" name="location" id="location" value="<%= @location.id %>">
                       <input type="hidden" name="origin" id="origin" value="true">
                       <% if user_signed_in? %>
@@ -298,7 +268,6 @@
                         <%= hidden_field_tag :user_id, current_user.id %>
                         <%= hidden_field_tag :firstName, current_user.first_name %>
                         <%= hidden_field_tag :lastName, current_user.last_name %>
-
                         <div class="row">
                           <div class="col-md-12 dark-gray">
                             Nombre
@@ -313,8 +282,6 @@
                             </div>
                           </div>
                         </div>
-
-
                         <div class="row">
                           <div class="col-md-6 dark-gray">
                             Email
@@ -339,7 +306,6 @@
                             </div>
                           </div>
                         </div>
-
                       </div>
                       <% else %>
                         <%= hidden_field_tag :firstName %>
@@ -358,8 +324,6 @@
                             </div>
                           </div>
                         </div>
-
-
                         <div class="row">
                           <div class="col-md-6 dark-gray">
                             Email
@@ -385,7 +349,6 @@
                           </div>
                         </div>
                       <% end %>
-
                       <% if @location.company.company_setting.client_exclusive %>
                         <div id="identificationNumber" class="form-group has-feedback">
                           <%= label_tag(:identification_number, "RUT", class: "col-sm-3 control-label") %>
@@ -404,8 +367,6 @@
                           <span class="form-control-feedback"></span>
                         </div>
                       </div>
-
-
                       <div class="row">
                         <div class="col-md-12 dark-gray">
                           Comentario
@@ -414,11 +375,10 @@
                       <div class="row">
                         <div class="col-md-12">
                           <div class="form-group">
-                              <%= text_area_tag(:comment, nil, :class => "form-control light-gray", :placeholder => "Agrega algún comentario a tu reserva en caso de ser necesario", :rows => 4) %>
+                            <%= text_area_tag(:comment, nil, :class => "form-control light-gray", :placeholder => "Agrega algún comentario a tu reserva en caso de ser necesario", :rows => 4) %>
                           </div>
                         </div>
                       </div>
-
                       <div class="row" style="margin-top: 20px;">
                         <div class="col-md-6">
                           <div class="btn-change btn-prev">
@@ -429,19 +389,12 @@
                           <button type="submit" id="submitBtn">Reservar</button>
                         </div>
                       </div>
-
                     <% end %>
                   </div>
                 </div>
-
                 <!-- FIN FORM -->
-
-
-
-
               </div>
               <div class="col-md-6">
-
                 <div id="resumen-reserva">
                   <div class="resumen-heading">
                     Resumen de tu Reserva
@@ -453,34 +406,13 @@
                     </table>
                   </div>
                 </div>
-
               </div>
             </div>
-
           </div>
-
-
-
-
         </div>
-
-        <!--<div class="row">
-          <div class="col-md-6">
-            <div class="btn-change btn-prev">
-              <a id="prev2"><i class="fa fa-chevron-left"></i> Anterior</a>
-            </div>
-          </div>
-          <div class="col-md-6">
-            <div class="btn-change btn-next">
-              <a id="next2">Siguiente <i class="fa fa-chevron-right"></i></a>
-            </div>
-          </div>
-        </div>-->
-
       </div>
     </div>
   </div>
-</div>
 </div>
 
 <%= content_tag "div", id: "selectedLocal", data: {local: @location, district: @location.district.name} do %>
@@ -492,6 +424,10 @@
 <%= content_tag "div", id: "workflow_url", data: {url: @url, location_id: @location.id} do %>
 <% end %>
 
+<% content_for :stylesheets do %>
+  <%= stylesheet_link_tag "calendar" %>
+<% end %>
+
 <% content_for :scripts do %>
   <%= javascript_include_tag 'workflow/services' %>
   <%= javascript_include_tag 'jquery.carouFredSel-6.2.1.js' %>
@@ -500,10 +436,6 @@
   <%= javascript_include_tag 'validations/validate' %>
   <%= javascript_include_tag 'validations/home/workflow' %>
   <script type="text/javascript">
-
-
-
-
     $(function() {
       //  Responsive layout, resizing the items
 
@@ -531,17 +463,13 @@
           firstDay: 1,
           dateFormat: 'yy-mm-dd',
           onSelect: function(newDate){
-
             var data = {
               provider: $('[name="staffRadio"]:checked').val(),
               local: $('#selectedLocal').data('local').id,
               date: newDate,
               service: $('input[name="serviceRadio"]:checked').val(),
             }
-
             console.log(data);
-
-
 
             if (calendar) {
               calendar.rebuild('/get_available_time.json', data);
@@ -556,7 +484,6 @@
               addBooking(e);
             });
 
-
             $(function () {
               $('.prev-btn').click(function () {
                 selected = false;
@@ -565,7 +492,6 @@
                 selected = false;
               });
             });
-
           }
       });
 
@@ -578,19 +504,19 @@
         responsive: true,
         auto: false,
         pagination: {
-            container: "#pager2",
-            anchorBuilder: function (nr) {
-              var title;
-              if (nr == 1) {
-                title = '<i class="fa fa-circle fa-2x"></i><span class="circle-number">'+nr+'</span><span class="navigation-title"> | Elegir el servicio</span>';
-              } else if (nr == 2) {
-                title = '<i class="fa fa-circle fa-2x"></i><span class="circle-number">'+nr+'</span><span class="navigation-title"> | Elegir el staff</span>';
-              } else{
-                title = '<i class="fa fa-circle fa-2x"></i><span class="circle-number">'+nr+'</span><span class="navigation-title"> | Ingresa tus datos</span>';
-              };
-              return '<a href="#" id="pager-btn-'+nr+'" class="pager-btn disabled"><span>' + title + '</span></a>';
-            },
+          container: "#pager2",
+          anchorBuilder: function (nr) {
+            var title;
+            if (nr == 1) {
+              title = '<i class="fa fa-circle fa-2x"></i><span class="circle-number">'+nr+'</span><span class="navigation-title"> | Elegir el servicio</span>';
+            } else if (nr == 2) {
+              title = '<i class="fa fa-circle fa-2x"></i><span class="circle-number">'+nr+'</span><span class="navigation-title"> | Elegir el staff</span>';
+            } else{
+              title = '<i class="fa fa-circle fa-2x"></i><span class="circle-number">'+nr+'</span><span class="navigation-title"> | Ingresa tus datos</span>';
+            };
+            return '<a href="#" id="pager-btn-'+nr+'" class="pager-btn disabled"><span>' + title + '</span></a>';
           },
+        },
         width: '100%',
         height: 'variable',
         prev: '.prev-btn',
@@ -608,30 +534,28 @@
             return scrollEvents(direction);
           },
           onEnd: function (direction) {
-
             if (direction == 'prev') {
               step = 1;
             }
           }
         }
       });
-
     });
 
-  var waitForFinalEvent = (function () {
-    var timers = {};
-    return function (callback, ms, uniqueId) {
-      if (!uniqueId) {
-        uniqueId = "Don't call this twice without a uniqueId";
-      }
-      if (timers[uniqueId]) {
-        clearTimeout (timers[uniqueId]);
-      }
-      timers[uniqueId] = setTimeout(callback, ms);
-    };
-  })();
+    var waitForFinalEvent = (function () {
+      var timers = {};
+      return function (callback, ms, uniqueId) {
+        if (!uniqueId) {
+          uniqueId = "Don't call this twice without a uniqueId";
+        }
+        if (timers[uniqueId]) {
+          clearTimeout (timers[uniqueId]);
+        }
+        timers[uniqueId] = setTimeout(callback, ms);
+      };
+    })();
 
-  $(window).resize(function () {
+    $(window).resize(function () {
       waitForFinalEvent(function(){
         var count = $('.columna-dia').length;
         var width = (100 / count);
@@ -643,13 +567,12 @@
         console.log("Resize " + $(".horario")[0].clientWidth);
         //...
       }, 100, "some unique string");
-  });
+    });
 
-  $(document).ready(function(){
-    var oldTop = $(document).scrollTop();
-    $('#foo4').trigger('updateSizes');
-    $(document).scrollTop(oldTop);
-  })
-
+    $(document).ready(function(){
+      var oldTop = $(document).scrollTop();
+      $('#foo4').trigger('updateSizes');
+      $(document).scrollTop(oldTop);
+    });
   </script>
 <% end %>
