@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150203211016) do
+ActiveRecord::Schema.define(version: 20150204152946) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -195,9 +195,9 @@ ActiveRecord::Schema.define(version: 20150203211016) do
     t.integer  "company_id",                                                  null: false
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.integer  "before_booking",              default: 24,                    null: false
-    t.integer  "after_booking",               default: 6,                     null: false
-    t.integer  "before_edit_booking",         default: 12
+    t.integer  "before_booking",              default: 3,                     null: false
+    t.integer  "after_booking",               default: 3,                     null: false
+    t.integer  "before_edit_booking",         default: 3
     t.boolean  "activate_search",             default: true
     t.boolean  "activate_workflow",           default: true
     t.boolean  "client_exclusive",            default: false
