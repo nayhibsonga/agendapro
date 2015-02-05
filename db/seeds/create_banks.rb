@@ -1,17 +1,17 @@
-banks = [[code: 1, name: "Banco Chile - CityBank"],
-[code: 12, name: "Banco Del Estado"],
-[code: 14, name: "Banco Scotia Sud Americano"],
-[code: 27, name: "Corpbanca"],
-[code: 28, name: "Banco Bice"],
-[code: 37, name: "Banco Santander Santiago"],
-[code: 39, name: "Banco Itau"],
-[code: 16, name: "Banco Credito"],
-[code: 46, name: "ABM Amor Bank (Chile)"],
-[code: 49, name: "Banco Security"],
-[code: 51, name: "Banco Falabella"],
-[code: 504, name: "Banco Bilbao Vizcaya Argentaria, Chile"],
-[code: 507, name: "Banco del Desarrollo"],
-[code: 0, name: "Otro"]
+banks = [[1, "Banco Chile - CityBank"],
+[12, "Banco Del Estado"],
+[14, "Banco Scotia Sud Americano"],
+[27, "Corpbanca"],
+[28, "Banco Bice"],
+[37, "Banco Santander Santiago"],
+[39, "Banco Itau"],
+[16, "Banco Credito"],
+[46, "ABM Amor Bank (Chile)"],
+[49, "Banco Security"],
+[51, "Banco Falabella"],
+[504, "Banco Bilbao Vizcaya Argentaria, Chile"],
+[507, "Banco del Desarrollo"],
+[0, "Otro"]
 ]
 
 banks.each do |arr|
