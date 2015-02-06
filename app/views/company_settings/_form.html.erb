@@ -330,9 +330,12 @@
 					<span class="help-block"></span>
 					<span class="form-control-feedback"></span>
 				</div>
+				<div class="col-sm-2">
+					<span style="cursor: pointer;" data-toggle="tooltip" data-placement="bottom" title="Si permites cancelaciones, el cliente podrá cancelar su reserva durante el tiempo establecido, y el dinero le será devuelto."><i class="fa fa-question-circle fa-lg"></i></span>
+				</div>
 			</div>
-			<div class="form-group has-feedback account-info">
-				<%= p.label :cancel_max, 'Tiempo máximo de cancelación &nbsp;&nbsp;<span style="cursor: pointer;" data-toggle="tooltip" data-placement="bottom" title="Esto es la cantidad de tiempo, desde el momento en que se efectuó la reserva, que el cliente tendrá para cancelarla, siempre y cuando no se encuentre dentro del límite previo a la hora del servicio."><i class="fa fa-question-circle"></i></span>'.html_safe, class: "col-sm-3 control-label" %>
+			<div class="form-group has-feedback account-info cancel-div">
+				<%= p.label :cancel_max, 'Tiempo máximo de cancelación', class: "col-sm-3 control-label" %>
 				<div class="col-sm-3">
 					<%= p.number_field :cancel_max, :autofocus => true, :class => 'form-control', placeholder: '' %> 
 					<span class="help-block"></span>
@@ -343,24 +346,18 @@
 						<% TimeUnit.all.each do |u| %>
 							<% if @company.company_setting.online_cancelation_policy.cancel_unit == u.id %>
 								<option value="<%= u.id %>" selected><%= u.unit %></option>
+							<% elsif u.unit == "Meses" %>
+								<option value="<%= u.id %>" selected><%= u.unit %></option>
 							<% else %>
-								<option value="<%= u.id %>"><%= u.unit %></option>
+								<option value="<%= u.id %>" ><%= u.unit %></option>
 							<% end %>
 						<% end %>
 					</select>
 					<span class="help-block"></span>
 					<span class="form-control-feedback"></span>
 				</div>
-			</div>
-			<div class="form-group has-feedback account-info">
-				<%= p.label :min_hours, 'Plazo mínimo de cancelación/modificación &nbsp;&nbsp;<span style="cursor: pointer;" data-toggle="tooltip" data-placement="bottom" title="Esto es la cantidad de tiempo límite para cancelar o modificar la reserva antes de que el servicio se fuera a llevar a cabo."><i class="fa fa-question-circle"></i></span>'.html_safe, class: "col-sm-3 control-label" %>
-				<div class="col-sm-5">
-					<div class="input-group">
-						<%= p.number_field :min_hours, :class => 'form-control', placeholder: '' %>
-						<span class="input-group-addon">Horas</span>
-					</div>
-					<span class="help-block"></span>
-					<span class="form-control-feedback"></span>
+				<div class="col-sm-2">
+					<span style="cursor: pointer;" data-toggle="tooltip" data-placement="bottom" title="Esto es la cantidad de tiempo, desde el momento en que se efectuó la reserva, que el cliente tendrá para cancelarla, siempre y cuando no se encuentre dentro del límite previo a la hora del servicio."><i class="fa fa-question-circle fa-lg"></i></span>
 				</div>
 			</div>
 			<div class="form-group has-feedback account-info">
@@ -374,9 +371,12 @@
 					<span class="help-block"></span>
 					<span class="form-control-feedback"></span>
 				</div>
+				<div class="col-sm-2">
+					<span style="cursor: pointer;" data-toggle="tooltip" data-placement="bottom" title="Si permites modificaciones, el cliente podrá modificar la reserva ya pagada una cantidad de veces igual al máximo definido en Período Agenda, y durante el tiempo establecido."><i class="fa fa-question-circle fa-lg"></i></span>
+				</div>
 			</div>
-			<div class="form-group has-feedback account-info">
-				<%= p.label :modification_max, 'Tiempo máximo de modificación &nbsp;&nbsp;<span style="cursor: pointer;" data-toggle="tooltip" data-placement="bottom" title="Esto es la cantidad de tiempo, desde el momento en que se efectuó la reserva, que el cliente tendrá para modificarla, siempre y cuando no se encuentre dentro del límite previo a la hora del servicio."><i class="fa fa-question-circle"></i></span>'.html_safe, class: "col-sm-3 control-label" %>
+			<div class="form-group has-feedback account-info modification-div">
+				<%= p.label :modification_max, 'Tiempo máximo de modificación', class: "col-sm-3 control-label" %>
 				<div class="col-sm-3">
 					<%= p.number_field :modification_max, :class => 'form-control', placeholder: '' %> 
 					<span class="help-block"></span>
@@ -387,6 +387,8 @@
 						<% TimeUnit.all.each do |u| %>
 							<% if @company.company_setting.online_cancelation_policy.modification_unit == u.id %>
 								<option value="<%= u.id %>" selected><%= u.unit %></option>
+							<% elsif u.unit == "Meses" %>
+								<option value="<%= u.id %>" selected><%= u.unit %></option>
 							<% else %>
 								<option value="<%= u.id %>"><%= u.unit %></option>
 							<% end %>
@@ -394,6 +396,22 @@
 					</select>
 					<span class="help-block"></span>
 					<span class="form-control-feedback"></span>
+				</div>
+				<div class="col-sm-2">
+					<span style="cursor: pointer;" data-toggle="tooltip" data-placement="bottom" title="Esto es la cantidad de tiempo, desde el momento en que se efectuó la reserva, que el cliente tendrá para modificarla, siempre y cuando no se encuentre dentro del límite previo a la hora del servicio."><i class="fa fa-question-circle fa-lg"></i></span>
+				</div>
+			</div>
+			<div class="form-group has-feedback account-info min-hours-div">
+				<%= p.label :min_hours, 'Plazo mínimo de cancelación/modificación', class: "col-sm-3 control-label" %>
+				<div class="col-sm-5">
+					<div class="input-group">
+						<%= p.number_field :min_hours, :class => 'form-control', placeholder: '' %>
+						<span class="input-group-addon">Horas</span>
+					</div>
+					<span class="help-block"></span>
+				</div>
+				<div class="col-sm-2">
+				<span style="cursor: pointer;" data-toggle="tooltip" data-placement="bottom" title="Esto es la cantidad de tiempo límite para cancelar o modificar la reserva antes de que el servicio se fuera a llevar a cabo."><i class="fa fa-question-circle fa-lg"></i></span>
 				</div>
 			</div>
 			<div class="form-group">
@@ -941,6 +959,7 @@
   		if($('#company_setting_allows_online_payment').prop('checked'))
 		{
 			$(".account-info").removeClass("hidden");
+
 			if($("#company_setting_bank :selected").text() == "Otro")
 			{
 				$("#other-bank").removeClass("hidden");
@@ -951,6 +970,38 @@
 				$("#other-bank").addClass("hidden");
 				$(".account-data").removeClass("hidden");
 			}
+
+			var mod_can = false;
+
+			if($("#company_setting_online_cancelation_policy_attributes_cancelable").prop('checked'))
+			{
+				$(".cancel-div").removeClass('hidden');
+				mod_can = true;
+			}
+			else
+			{
+				$(".cancel-div").addClass('hidden');
+			}
+
+			if($("#company_setting_online_cancelation_policy_attributes_modifiable").prop('checked'))
+			{
+				$(".modification-div").removeClass('hidden');
+				mod_can = true;
+			}
+			else
+			{
+				$(".modification-div").addClass('hidden');
+			}
+
+			if(mod_can)
+			{
+				$('.min-hours-div').removeClass('hidden');
+			}
+			else
+			{
+				$('.min-hours-div').addClass('hidden');
+			}
+
 		}
 		else
 		{
@@ -973,6 +1024,38 @@
 				$("#other-bank").addClass("hidden");
 				$(".account-data").removeClass("hidden");
 			}
+
+			var mod_can = false;
+
+			if($("#company_setting_online_cancelation_policy_attributes_cancelable").prop('checked'))
+			{
+				$(".cancel-div").removeClass('hidden');
+				mod_can = true;
+			}
+			else
+			{
+				$(".cancel-div").addClass('hidden');
+			}
+
+			if($("#company_setting_online_cancelation_policy_attributes_modifiable").prop('checked'))
+			{
+				$(".modification-div").removeClass('hidden');
+				mod_can = true;
+			}
+			else
+			{
+				$(".modification-div").addClass('hidden');
+			}
+
+			if(mod_can)
+			{
+				$('.min-hours-div').removeClass('hidden');
+			}
+			else
+			{
+				$('.min-hours-div').addClass('hidden');
+			}
+
 		}
 		else
 		{
@@ -993,6 +1076,76 @@
 			$(".account-data").removeClass("hidden");
 		}
 	});
+
+
+	$("#company_setting_online_cancelation_policy_attributes_modifiable").change(function(){
+		var mod_can = false;
+
+		if($("#company_setting_online_cancelation_policy_attributes_cancelable").prop('checked'))
+		{
+			$(".cancel-div").removeClass('hidden');
+			mod_can = true;
+		}
+		else
+		{
+			$(".cancel-div").addClass('hidden');
+		}
+
+		if($("#company_setting_online_cancelation_policy_attributes_modifiable").prop('checked'))
+		{
+			$(".modification-div").removeClass('hidden');
+			mod_can = true;
+		}
+		else
+		{
+			$(".modification-div").addClass('hidden');
+		}
+
+		if(mod_can)
+		{
+			$('.min-hours-div').removeClass('hidden');
+		}
+		else
+		{
+			$('.min-hours-div').addClass('hidden');
+		}
+	});
+
+	$("#company_setting_online_cancelation_policy_attributes_cancelable").change(function(){
+		
+		var mod_can = false;
+
+		if($("#company_setting_online_cancelation_policy_attributes_cancelable").prop('checked'))
+		{
+			$(".cancel-div").removeClass('hidden');
+			mod_can = true;
+		}
+		else
+		{
+			$(".cancel-div").addClass('hidden');
+		}
+
+		if($("#company_setting_online_cancelation_policy_attributes_modifiable").prop('checked'))
+		{
+			$(".modification-div").removeClass('hidden');
+			mod_can = true;
+		}
+		else
+		{
+			$(".modification-div").addClass('hidden');
+		}
+
+		if(mod_can)
+		{
+			$('.min-hours-div').removeClass('hidden');
+		}
+		else
+		{
+			$('.min-hours-div').addClass('hidden');
+		}
+
+	});
+
 
 	</script>
 
