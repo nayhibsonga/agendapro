@@ -210,6 +210,10 @@ class BookingsController < ApplicationController
     end
     respond_to do |format|
       if @errors.length == 0
+        if @bookings.length > 1
+          Booking.send_multiple_booking_mail(@booking.location_id, booking_group)
+        end
+
         format.html { redirect_to bookings_path, notice: 'Booking was successfully created.' }
         format.json { render :json => @bookings }
         format.js { }
@@ -377,6 +381,10 @@ class BookingsController < ApplicationController
       end
     end
     respond_to do |format|
+      if @bookings.length > 1
+        Booking.send_multiple_booking_mail(@booking.location_id, booking_group)
+      end
+
       format.html { redirect_to bookings_path, notice: 'Booking was successfully created.' }
       format.json { render :json => @bookings }
       format.js { }
@@ -930,6 +938,10 @@ class BookingsController < ApplicationController
       return
     end
 
+    if @bookings.length > 1
+      Booking.send_multiple_booking_mail(@location_id, booking_group)
+    end
+
     # => Domain parser
     host = request.host_with_port
     @url = @company.web_address + '.' + host[host.index(request.domain)..host.length]
@@ -1184,7 +1196,7 @@ class BookingsController < ApplicationController
     render layout: 'workflow'
   end
 
-  def cancel_booking
+  def cancel_all_booking
     require 'date'
 
     unless params[:id]
