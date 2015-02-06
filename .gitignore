@@ -36,7 +36,7 @@ public/assets/
 *.idea*
 
 # Archivo de configuración Local
-config/local_env.yml
+/config/local_env.yml
 
 # Configuración DB
-config/database.yml
+/config/database.yml
