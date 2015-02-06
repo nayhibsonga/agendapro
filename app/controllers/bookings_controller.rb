@@ -1184,6 +1184,46 @@ class BookingsController < ApplicationController
     render layout: 'workflow'
   end
 
+  def cancel_booking
+    require 'date'
+
+    unless params[:id]
+      crypt = ActiveSupport::MessageEncryptor.new(Agendapro::Application.config.secret_key_base)
+      id = crypt.decrypt_and_verify(params[:confirmation_code])
+      @booking = Booking.find(id)
+      @company = Location.find(@booking.location_id).company
+      @selectedLocation = Location.find(@booking.location_id)
+
+      now = DateTime.new(DateTime.now.year, DateTime.now.mon, DateTime.now.mday, DateTime.now.hour, DateTime.now.min)
+      booking_start = DateTime.parse(@booking.start.to_s) - @company.company_setting.before_edit_booking / 24.0
+
+      if (booking_start <=> now) < 1
+        flash[:alert] = "No fue posible cancelar"
+        redirect_to root_path
+        return
+      end
+
+    else
+      booking = Booking.find(params[:id])
+      @company = Location.find(booking.location_id).company
+      @bookings = Booking.where(location: booking.location).where(booking_group: booking.booking_group)
+      status = Status.find_by(:name => 'Cancelado').id
+
+      @bookings.each do |book|
+        if book.update(status_id: status)
+          current_user ? user = current_user.id : user = 0
+          BookingHistory.create(booking_id: book.id, action: "Cancelada por Cliente", start: book.start, status_id: book.status_id, service_id: book.service_id, service_provider_id: book.service_provider_id, user_id: user)
+        end
+      end
+    end
+
+    # => Domain parser
+    host = request.host_with_port
+    @url = @company.web_address + '.' + host[host.index(request.domain)..host.length]
+
+    render layout: 'workflow'
+  end
+
   def check_user_cross_bookings
     require 'date'
     if !params[:user_id].blank?

@@ -188,6 +188,8 @@ Agendapro::Application.routes.draw do
   post '/edited_booking', :to => 'bookings#edit_booking_post'
   get '/cancel_booking', :to => 'bookings#cancel_booking', :as => 'booking_cancel'
   post '/cancel_booking', :to => 'bookings#cancel_booking'
+  get '/cancel_all_booking', :to => 'bookings#cancel_all_booking', :as => 'cancel_all_booking'
+  post '/cancel_all_booking', :to => 'bookings#cancel_all_booking'
   get '/confirm_booking', :to => 'bookings#confirm_booking', :as => 'confirm_booking'
   get '/blocked_edit', :to => 'bookings#blocked_edit', :as => 'blocked_edit'
   get '/blocked_cancel', :to => 'bookings#blocked_cancel', :as => 'blocked_cancel'

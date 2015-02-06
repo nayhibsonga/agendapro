@@ -295,4 +295,99 @@ class Booking < ActiveRecord::Base
 		end
 		return event
 	end
+
+	def self.send_multiple_booking_mail(location, group)
+		helper = Rails.application.routes.url_helpers
+		@data = {}
+
+		# GENERAL
+			bookings = Booking.where(location_id: location).where(booking_group: group)
+			@data[:company] = bookings[0].location.company.name
+			@data[:url] = bookings[0].location.company.web_address
+			@data[:signature] = bookings[0].location.company.company_setting.signature
+			@data[:logo] = Base64.encode64(File.read('app/assets/images/logos/logodoble2.png'))
+			@data[:type] = 'image/png'
+			if bookings[0].location.company.logo_url
+				@data[:logo] = Base64.encode64(File.read('public' + bookings[0].location.company.logo_url.to_s))
+				@data[:type] = MIME::Types.type_for(bookings[0].location.company.logo_url).first.content_type
+			end
+
+		# USER
+			@user = {}
+			@user[:where] = bookings[0].location.address + ', ' + bookings[0].location.district.name
+			@user[:phone] = bookings[0].location.phone
+			@user[:name] = bookings[0].client.first_name
+			@user[:send_mail] = bookings[bookings.length - 1].send_mail
+			@user[:email] = bookings[0].client.email
+			@user[:cancel] = helper.cancel_all_booking_url(confirmation_code => bookings[0].confirmation_code)
+
+			@user_table = ''
+			bookings.each do |book|
+				@user_table = '<tr>' +
+						'<td>' + book.service.name + '</td>' +
+						'<td>' + I18n.l(book.start) + '</td>' +
+						'<td>' + book.service_provider.public_name + '</td>' +
+						'<td>' + if book.notes.blank? then '' else book.notes end + '</td>' +
+						'<td>' +
+							'<a class="btn btn-xs btn-orange" target="_blank" href="' + helper.booking_edit_url(:confirmation_code => book.confirmation_code) + '">Editar</a>' +
+							'<a class="btn btn-xs btn-red" target="_blank" href="' + helper.booking_cancel_url(:confirmation_code => book.confirmation_code) + '">Cancelar</a>' +
+						'</td>' +
+					'</tr>'
+			end
+
+			@user[:user_table] = @user_table
+
+			# falta boton cancelar
+			@data[:user] = @user
+
+		# LOCATION
+			@location = {}
+			@location[:name] = bookings[0].location.name
+			@location[:client_name] = bookings[0].client.first_name + ' ' + bookings[0].client.last_name
+			@location[:send_mail] = bookings[0].location.notification and !bookings[0].location.email.blank? and bookings[0].location.get_booking_configuration_email == 0
+			@location[:email] = bookings[0].location.email
+
+			@location_table = ''
+			bookings.each do |book|
+				@location_table = '<tr>' +
+						'<td>' + book.service.name + '</td>' +
+						'<td>' + I18n.l(book.start) + '</td>' +
+						'<td>' + if book.notes.blank? then '' else book.notes end + '</td>' +
+						'<td>' + if book.company_comment.blank? then '' else book.company_comment end + '</td>' +
+					'</tr>'
+			end
+			@location[:location_table] = @location_table
+
+			@data[:location] = @location
+
+		# SERVICE PROVIDER
+			@provider = {}
+			@providers_array = []
+			@provider[:client_name] = bookings[0].client.first_name + ' ' + bookings[0].client.last_name
+
+			ServiceProvider.where(location_id: location).each do |provider|
+				@staff = {}
+				@staff[:name] = provider.public_name
+				@staff[:email] = provider.notification_email
+				if provider.get_booking_configuration_email == 0
+					provider_bookings = Booking.where(location_id: location).where(booking_group: group).where(service_provider: provider)
+					@provider_table = ''
+					provider_bookings.each do |book|
+						@provider_table = '<tr>' +
+								'<td>' + book.service.name + '</td>' +
+								'<td>' + I18n.l(book.start) + '</td>' +
+								'<td>' + if book.notes.blank? then '' else book.notes end + '</td>' +
+								'<td>' + if book.company_comment.blank? then '' else book.company_comment end + '</td>' +
+							'</tr>'
+					end
+					@staff[:provider_table] = @provider_table
+					@providers_array << @staff
+				end
+			end
+
+			@provider[:array] = @providers_array
+			@data[:provider] = @provider
+
+		# puts @data
+	end
 end
