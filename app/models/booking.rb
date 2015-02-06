@@ -27,8 +27,19 @@ class Booking < ActiveRecord::Base
 
 	after_commit validate :bookings_overlap, :bookings_resources, :bookings_deal
 
-	after_create :send_booking_mail
+	after_create :send_booking_mail, :wait_for_payment
 	after_update :send_update_mail
+
+	 def wait_for_payment
+                self.delay(run_at: 4.minutes.from_now).payment_timeout
+    end
+
+    def payment_timeout
+            if !self.payed and self.trx_id != "" and self.payed_booking.nil?
+                    self.delete
+            end
+    end
+
 	
 	def time_in_provider_time_warning
 		bstart = self.start.clone()
