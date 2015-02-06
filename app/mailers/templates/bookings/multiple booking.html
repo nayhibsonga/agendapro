@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]> <html class="no-js lt-ie9 lt-ie8 lt-ie7" lang="es"> <![endif]-->
+<!--[if IE 7]>    <html class="no-js lt-ie9 lt-ie8" lang="es"> <![endif]-->
+<!--[if IE 8]>    <html class="no-js lt-ie9" lang="es"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="es"> <!--<![endif]-->
+  <head>
+    <!-- start: Meta -->
+    <meta charset="utf-8">
+    <title>AgendaPro</title>
+    <meta name="description" content="AgendaPro - Sistema de agendamiento OnLine para empresas y usuarios.">
+    <meta name="author" content="AgendaPro">
+    <meta name="keyword" content="agendapro, agenda, agenda online, reserva, reserva online">
+    <!-- end: Meta -->
+
+    <!-- start: Mobile Specific -->
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <!-- end: Mobile Specific -->
+
+    <!-- start: CSS -->
+    <style type="text/css">
+      /*Boostrap*/
+      html {
+        font-family: sans-serif;
+        -webkit-text-size-adjust: 100%;
+            -ms-text-size-adjust: 100%;
+      }
+      body {
+        margin: 0;
+      }
+      a {
+        background-color: transparent;
+      }
+      a:active,
+      a:hover {
+        outline: 0;
+      }
+      b,
+      strong {
+        font-weight: bold;
+      }
+      img {
+        border: 0;
+      }
+      button,
+      input,
+      optgroup,
+      select,
+      textarea {
+        margin: 0;
+        font: inherit;
+        color: inherit;
+      }
+      button {
+        overflow: visible;
+      }
+      button,
+      select {
+        text-transform: none;
+      }
+      button,
+      html input[type="button"],
+      input[type="reset"],
+      input[type="submit"] {
+        -webkit-appearance: button;
+        cursor: pointer;
+      }
+      button::-moz-focus-inner,
+      input::-moz-focus-inner {
+        padding: 0;
+        border: 0;
+      }
+      table {
+        border-spacing: 0;
+        border-collapse: collapse;
+      }
+      td,
+      th {
+        padding: 0;
+      }
+      * {
+        -webkit-box-sizing: border-box;
+           -moz-box-sizing: border-box;
+                box-sizing: border-box;
+      }
+      *:before,
+      *:after {
+        -webkit-box-sizing: border-box;
+           -moz-box-sizing: border-box;
+                box-sizing: border-box;
+      }
+      html {
+        font-size: 10px;
+
+        -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+      }
+      body {
+        font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+        font-size: 14px;
+        line-height: 1.42857143;
+        color: #333;
+        background-color: #fff;
+      }
+      input,
+      button,
+      select,
+      textarea {
+        font-family: inherit;
+        font-size: inherit;
+        line-height: inherit;
+      }
+      a {
+        color: #337ab7;
+        text-decoration: none;
+      }
+      a:hover,
+      a:focus {
+        color: #23527c;
+        text-decoration: underline;
+      }
+      a:focus {
+        outline: thin dotted;
+        outline: 5px auto -webkit-focus-ring-color;
+        outline-offset: -2px;
+      }
+      img {
+        vertical-align: middle;
+      }
+      h4,
+      .h4 {
+        font-family: inherit;
+        font-weight: 500;
+        line-height: 1.1;
+        color: inherit;
+      }
+      h4,
+      .h4 {
+        margin-top: 10px;
+        margin-bottom: 10px;
+      }
+      h4,
+      .h4 {
+        font-size: 18px;
+      }
+      .text-left {
+        text-align: left;
+      }
+      .text-right {
+        text-align: right;
+      }
+      .text-center {
+        text-align: center;
+      }
+      table {
+        background-color: transparent;
+      }
+      th {
+        text-align: left;
+      }
+      .table {
+        width: 100%;
+        max-width: 100%;
+        margin-bottom: 20px;
+      }
+      .table > thead > tr > th,
+      .table > tbody > tr > th,
+      .table > tfoot > tr > th,
+      .table > thead > tr > td,
+      .table > tbody > tr > td,
+      .table > tfoot > tr > td {
+        padding: 8px;
+        line-height: 1.42857143;
+        vertical-align: top;
+        border-top: 1px solid #ddd;
+      }
+      .table > thead > tr > th {
+        vertical-align: bottom;
+        border-bottom: 2px solid #ddd;
+      }
+      .btn {
+        display: inline-block;
+        padding: 6px 12px;
+        margin-bottom: 0;
+        font-size: 14px;
+        font-weight: normal;
+        line-height: 1.42857143;
+        text-align: center;
+        white-space: nowrap;
+        vertical-align: middle;
+        -ms-touch-action: manipulation;
+            touch-action: manipulation;
+        cursor: pointer;
+        -webkit-user-select: none;
+           -moz-user-select: none;
+            -ms-user-select: none;
+                user-select: none;
+        background-image: none;
+        border: 1px solid transparent;
+        border-radius: 4px;
+      }
+      .btn:focus,
+      .btn:active:focus,
+      .btn.active:focus,
+      .btn.focus,
+      .btn:active.focus,
+      .btn.active.focus {
+        outline: thin dotted;
+        outline: 5px auto -webkit-focus-ring-color;
+        outline-offset: -2px;
+      }
+      .btn:hover,
+      .btn:focus,
+      .btn.focus {
+        color: #333;
+        text-decoration: none;
+      }
+      .btn:active,
+      .btn.active {
+        background-image: none;
+        outline: 0;
+        -webkit-box-shadow: inset 0 3px 5px rgba(0, 0, 0, .125);
+                box-shadow: inset 0 3px 5px rgba(0, 0, 0, .125);
+      }
+      .btn-lg,
+      .btn-group-lg > .btn {
+        padding: 10px 16px;
+        font-size: 18px;
+        line-height: 1.33;
+        border-radius: 6px;
+      }
+      .btn-xs,
+      .btn-group-xs > .btn {
+        padding: 1px 5px;
+        font-size: 12px;
+        line-height: 1.5;
+        border-radius: 3px;
+      }
+      .btn-block {
+        display: block;
+        width: 100%;
+      }
+      .btn-block + .btn-block {
+        margin-top: 5px;
+      }
+      .center-block {
+        display: block;
+        margin-right: auto;
+        margin-left: auto;
+      }
+      .pull-right {
+        float: right !important;
+      }
+      .pull-left {
+        float: left !important;
+      }
+    </style>
+    <style type="text/css">
+      /* Containers */
+      html,
+      body {
+        font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
+        font-size: 12px;
+        font-weight: 300;
+        color: #505050;
+        background: #ffffff;
+      }
+      table {
+        width: 100%;
+        max-width: 100%;
+        font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
+        font-size: 12px;
+        font-weight: 300;
+        color: #505050;
+        background: #ffffff;
+      }
+      table > thead > tr > th,
+      table > tbody > tr > th,
+      table > tfoot > tr > th,
+      table > thead > tr > td,
+      table > tbody > tr > td,
+      table > tfoot > tr > td {
+        padding: 8px 15px;
+        line-height: 1.42857143;
+        vertical-align: top;
+      }
+      table table {
+        background-color: #ffffff;
+      }
+      .pull-center {
+        text-align: center;
+        margin-left: auto;
+        margin-right: auto;
+      }
+      .content {
+        margin-right: auto;
+        margin-left: auto;
+        max-width: 600px;
+        border: 1px solid #727171;
+        margin-top: 10px;
+        margin-bottom: 10px;
+      }
+      .col-2 {
+        width: 50%;
+      }
+      .col-3 {
+        width: 33%;
+      }
+
+      /* Buttons */
+      .btn-orange {
+        color: #ffffff;
+        background-color: #fd9610;
+        border-color: #db7400;
+      }
+      .btn-orange:hover,
+      .btn-orange:focus,
+      .btn-orange.focus,
+      .btn-orange:active,
+      .btn-orange.active {
+        color: #ffffff;
+        background-color: #db7400;
+        border-color: #DF840D;
+      }
+      .btn-green {
+        color: #ffffff;
+        background-color: #22c488;
+        border-color: #1ba970;
+      }
+      .btn-green:hover,
+      .btn-green:focus,
+      .btn-green.focus,
+      .btn-green:active,
+      .btn-green.active {
+        color: #ffffff;
+        background-color: #1ba970;
+        border-color: #00CA8A;
+      }
+      .btn-red {
+        color: #ffffff;
+        background-color: #fd633f;
+        border-color: #e55938;
+      }
+      .btn-red:hover,
+      .btn-red:focus,
+      .btn-red.focus,
+      .btn-red:active,
+      .btn-red.active {
+        color: #ffffff;
+        background-color: #e55938;
+        border-color: #CD4E31;
+      }
+
+      /* Backgrounds */
+      .background-green {
+        background: #22c488;
+        color: #ffffff;
+      }
+      .background-green > td {
+        padding: 10px 20px;
+      }
+      .background-dark-grey {
+        background: #d2d3d3;
+        color: #ffffff;
+      }
+      .background-dark-grey > td {
+        text-align: center;
+      }
+      .background-light-grey {
+        background: #f1f4f5;
+        color: #727171;
+      }
+
+      /* General */
+      .header,
+      .footer {
+        background: #f1f4f5;
+        color: #727171;
+        font-size: 10px;
+        min-height: 24px;
+      }
+      .header > td {
+        padding: 5px 30px;
+        text-align: center;
+      }
+      .header a,
+      .header a:hover,
+      .header a:active {
+        color: #727171;
+        text-decoration: none;
+      }
+      .footer > td {
+        padding: 5px 30px;
+      }
+      .footer > td:first-child:not(:last-child) {
+        padding-right: 10px;
+      }
+      .footer > td:last-child:not(:first-child) {
+        padding-left: 10px;
+      }
+      .footer > td > p {
+        margin: 0;
+      }
+      .logo {
+        width: 50%;
+        max-width: 118px;
+      }
+      .footer img {
+        margin-left: -1px;
+        margin-right: 10px;
+        width: 20px;
+        display: inline;
+        vertical-align: top;
+      }
+      h4 {
+        font-size: 20px;
+      }
+
+      /* Multiple Booking */
+      .background-green > td > p {
+        font-size: 20px;
+        margin: 0;
+      }
+      .responsive-table {
+        min-height: .01%;
+        overflow-x: auto;
+        width: 100%;
+        overflow-y: hidden;
+        -ms-overflow-style: -ms-autohiding-scrollbar;
+        min-width: 440px;
+      }
+      .responsive-table > .table {
+        margin-bottom: 0;
+      }
+      .icon-box {
+        display: table-cell;
+      }
+      .icon-box > img {
+        width: 50px;
+        height: 50px;
+        padding: 5px;
+        border: 1px solid #ffffff;
+        border-radius: 6px;
+      }
+      .text-box {
+        display: table-cell;
+        padding: 5px;
+        vertical-align: middle;
+        color: #126848;
+      }
+      .text-box > p {
+        margin: 0;
+      }
+      .text-box > p:first-child {
+        color: #ffffff;
+      }
+      table.summary {
+        color: #626262;
+        background: transparent !important;
+      }
+      table.summary > thead > tr > th {
+        font-weight: bold;
+        color: #ffffff;
+      }
+    </style>
+    <!-- end: CSS -->
+  </head>
+
+  <body>
+    <table class="content">
+      <tbody>
+        <!-- Start: Header -->
+        <tr class="header">
+          <td colspan="2">
+            *|IF:URL|*
+            <a href="http://*|URL|*.agendapro.cl" target="_blanck">*|URL|*.agendapro.cl</a>
+            *|END:IF|*
+          </td>
+        </tr>
+        <!-- End: Header -->
+
+        <!-- Start: Content -->
+        <tr>
+          <td colspan="2">
+            <div class="pull-center">
+              <img src="cid:LOGO" class="logo" alt="Logo">
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <td colspan="2">
+            <h4 class="text-center">*|COMPANYNAME|*</h4>
+            *|IF:CLIENT|*
+            <p class="text-center">*|CLIENTNAME|*, tus servicios fueron reservados exitosamente</p>
+            *|ELSE:|*
+            <p class="text-center">*|SERVICEPROVIDER|*, fue reservado multiples servicios contigo</p>
+            *|END:IF|*
+          </td>
+        </tr>
+        *|IF:CLIENT|*
+        <tr class="background-green">
+          <td colspan="2">
+            <p class="text-center"><b>Resumen</b> de tu reserva</p>
+          </td>
+        </tr>
+        <tr class="background-green">
+          <td>
+            <div class="icon-box">
+              <img src="http://agendapro.cl/assets/email/where.png" alt="¿Dónde?">
+            </div>
+            <div class="text-box">
+              <p style="color: #ffffff;"><b>¿Dónde?</b></p>
+              <p>*|LOCALADDRESS|*</p>
+            </div>
+          </td>
+          <td>
+            <div class="icon-box">
+              <img src="http://agendapro.cl/assets/email/question.png" alt="Consultas">
+            </div>
+            <div class="text-box">
+              <p style="color: #ffffff;"><b>Consultas</b></p>
+              <p>*|LOCATIONPHONE|*</p>
+            </div>
+          </td>
+        </tr>
+        <tr class="background-green">
+          <td colspan="2">
+            <div class="responsive-table">
+              <table class="table summary">
+                <thead>
+                  <tr>
+                    <th>Que Reservaste</th>
+                    <th>Cuando</th>
+                    <th>Con Quien</th>
+                    <th>Notas</th>
+                    <th></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  *|bookings|*
+                </tbody>
+              </table>
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <td colspan="2">
+            <a href="*|CANCEL|*" class="btn btn-lg btn-block btn-red" target="_blank">Cancelar todos los Servicios</a>
+          </td>
+        </tr>
+        *|ELSE:|*
+        <tr class="background-green">
+          <td colspan="2">
+            <p class="text-center"><b>Resumen</b> de la reserva</p>
+          </td>
+        </tr>
+        <tr class="background-green">
+          <td colspan="2">
+            <div class="icon-box">
+              <img src="http://agendapro.cl/assets/email/who.png" alt="¿Quien?">
+            </div>
+            <div class="text-box">
+              <p style="color: #ffffff;"><b>¿Quien?</b></p>
+              <p>*|CLIENTNAME|*</p>
+            </div>
+          </td>
+        </tr>
+        <tr class="background-green">
+          <td colspan="2">
+            <div class="responsive-table">
+              <table class="table summary">
+                <thead>
+                  <tr>
+                    <th>Que Reservaron</th>
+                    <th>Cuando</th>
+                    <th>Notas</th>
+                    <th>Comentario</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  *|bookings|*
+                </tbody>
+              </table>
+            </div>
+          </td>
+        </tr>
+        *|END:IF|*
+        *|IF:SIGNATURE|*
+        <tr>
+          <td colspan="2">
+            <p>*|SIGNATURE|*</p>
+          </td>
+        </tr>
+        <!-- End: Content -->
+
+        <!-- Start: Footer -->
+        <tr class="footer">
+          <td class="col-2">
+            <p class="text-left">Este es un email automático, para contactar a la empresa por favor responde este correo.</p>
+          </td>
+          <td class="col-2">
+            <p class="text-right">Copyright 2013 | Gunei Investment SpA | Todos los derechos reservados</p>
+          </td>
+        </tr>
+        <!-- End: Footer -->
+      </tbody>
+    </table>
+  </body>
+</html>
