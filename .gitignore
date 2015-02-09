@@ -40,3 +40,8 @@ public/assets/
 
 # Configuración DB
 /config/database.yml
+
+# Archivos de certificado SSL
+*.crt
+*.csr
+*.key
