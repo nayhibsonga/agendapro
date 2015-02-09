@@ -243,12 +243,12 @@ ActiveRecord::Schema.define(version: 20150204183022) do
     t.string   "company_rut",                 default: ""
     t.string   "account_name",                default: ""
     t.integer  "account_type",                default: 3
+    t.integer  "bank_id"
     t.boolean  "deal_exclusive",              default: false
     t.integer  "deal_quantity",               default: 0
     t.integer  "deal_constraint_option",      default: 0
     t.integer  "deal_constraint_quantity",    default: 0
     t.boolean  "deal_identification_number",  default: false
-    t.boolean  "deal_required",               default: false,                 null: false
   end
 
   add_index "company_settings", ["company_id"], name: "index_company_settings_on_company_id", using: :btree
