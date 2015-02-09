@@ -894,7 +894,7 @@ class BookingMailer < ActionMailer::Base
 					:type => 'to'
 				}
 			message[:merge_vars] << {
-					:rcpt => book_info.service_provider.notification_email,
+					:rcpt => provider[:email],
 					:vars => [
 						{
 							:name => 'CLIENTNAME',
@@ -919,7 +919,7 @@ class BookingMailer < ActionMailer::Base
 				:type => 'to'
 			}
 			message[:merge_vars] << {
-				:rcpt => book_info.location.email,
+				:rcpt => data[:location][:email],
 				:vars => [
 					{
 						:name => 'CLIENTNAME',
@@ -927,11 +927,11 @@ class BookingMailer < ActionMailer::Base
 					},
 					{
 						:name => 'SERVICEPROVIDER',
-						:content => provider[:location][:name]
+						:content => data[:location][:name]
 					},
 					{
 						:name => 'BOOKINGS',
-						:content => provider[:location][:location_table]
+						:content => data[:location][:location_table]
 					}
 				]
 			}
@@ -945,10 +945,10 @@ class BookingMailer < ActionMailer::Base
 					:type => 'to'
 				}
 			message[:merge_vars] << {
-				:rcpt => book_info.client.email,
+				:rcpt => data[:user][:email],
 				:vars => [
 					{
-						:name => 'LOCATIONADDRESS',
+						:name => 'LOCALADDRESS',
 						:content => data[:user][:where]
 					},
 					{
@@ -957,11 +957,11 @@ class BookingMailer < ActionMailer::Base
 					},
 					{
 						:name => 'BOOKINGS',
-						:content => provider[:user][:user_table]
+						:content => data[:user][:user_table]
 					},
 					{
 						:name => 'CLIENTNAME',
-						:content => provider[:user][:name]
+						:content => data[:user][:name]
 					},
 					{
 						:name => 'CLIENT',
