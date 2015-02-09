@@ -136,7 +136,7 @@ gem 'amatch'
 gem 'capistrano', '~> 3.3.0'
 gem 'capistrano-passenger'
 gem 'capistrano-rails', '~> 1.1'
-gem 'capistrano-rvm'
+gem 'capistrano-bundler', '~> 1.1.2'
 
 # Editor de texto tipo word
 gem 'ckeditor'
