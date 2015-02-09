@@ -134,10 +134,19 @@ gem 'amatch'
 
 #Capistrano para deploy
 gem 'capistrano', '~> 3.3.0'
+gem 'capistrano-passenger'
+gem 'capistrano-rails', '~> 1.1'
+gem 'capistrano-rvm'
 
 # Editor de texto tipo word
 gem 'ckeditor'
 
 #pg_search para búsqueda utilizando extensiones de Postgres
 gem 'pg_search'
+
+gem 'delayed_job_active_record'
+
+gem 'daemons'
+
+
 
