@@ -215,9 +215,9 @@ ActiveRecord::Schema.define(version: 20150204183022) do
     t.integer  "company_id",                                                  null: false
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.integer  "before_booking",              default: 24,                    null: false
-    t.integer  "after_booking",               default: 6,                     null: false
-    t.integer  "before_edit_booking",         default: 12
+    t.integer  "before_booking",              default: 3,                     null: false
+    t.integer  "after_booking",               default: 3,                     null: false
+    t.integer  "before_edit_booking",         default: 3
     t.boolean  "activate_search",             default: true
     t.boolean  "activate_workflow",           default: true
     t.boolean  "client_exclusive",            default: false
@@ -243,12 +243,12 @@ ActiveRecord::Schema.define(version: 20150204183022) do
     t.string   "company_rut",                 default: ""
     t.string   "account_name",                default: ""
     t.integer  "account_type",                default: 3
-    t.integer  "bank_id"
     t.boolean  "deal_exclusive",              default: false
     t.integer  "deal_quantity",               default: 0
     t.integer  "deal_constraint_option",      default: 0
     t.integer  "deal_constraint_quantity",    default: 0
     t.boolean  "deal_identification_number",  default: false
+    t.boolean  "deal_required",               default: false,                 null: false
   end
 
   add_index "company_settings", ["company_id"], name: "index_company_settings_on_company_id", using: :btree

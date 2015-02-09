@@ -12,6 +12,7 @@ function Calendar (source, getData) {
 
 	var week;
 	var clickEvent;
+	var onload = true;
 
 	// Generate Calendar
 	var generateCalendar = function (date) {
@@ -67,9 +68,11 @@ function Calendar (source, getData) {
 	}
 
 	// Generate Week
+	var available_hour;
 	var generateWeek = function (monday) {
 		sources.data.date = formatDate(monday);
 		$.getJSON(sources.source, sources.data, function (data, status) {
+			available_hour = false;
 
 			$(".days-row").empty();
 
@@ -114,7 +117,9 @@ function Calendar (source, getData) {
 				pos += 1;
 			});
 
-
+			if (onload && !available_hour) {
+				$('#next').click();
+			}
 
 			$('.horario').append('<div class="clear"></div>');
 			calculateWidth();
@@ -145,6 +150,7 @@ function Calendar (source, getData) {
 					div.addClass('hora-disponible');
 					var span = $('<span>').text(hours.hour.start + ' - ' + hours.hour.end);
 					div.append(span);
+					available_hour = true;
 					break;
 				case 'occupied':
 					div.addClass('hora-ocupada');
@@ -241,8 +247,6 @@ function Calendar (source, getData) {
 	}
 
 	this.rebuild = function (source, getData) {
-
-		console.log(getData['date']);
 		var day = parseDate(getData['date'], '00:00');
 
 		sources = {
@@ -257,6 +261,7 @@ function Calendar (source, getData) {
 		getData = getData || {};
 		sources.data = $.extend(true, sources.data, getData);
 		week = generateCalendar(day);
+		onload = true;
 	}
 
 	this.getClickDetails = function () {
@@ -268,6 +273,7 @@ function Calendar (source, getData) {
 		sources.source = source || sources.source;
 		getData = getData || {};
 		sources.data = $.extend(true, sources.data, getData);
+		onload = true;
 
 		week = generateCalendar();
 
@@ -277,6 +283,7 @@ function Calendar (source, getData) {
 			$('#next').attr('disabled', true);
 			var day = new Date(week.getFullYear(), week.getMonth(), week.getDate());
 			day.setDate(week.getDate() - 7);
+			onload = false;
 			week = generateCalendar(day);
 		});
 		$('#next').click(function () {
@@ -284,6 +291,7 @@ function Calendar (source, getData) {
 			$('#next').attr('disabled', true);
 			var day = new Date(week.getFullYear(), week.getMonth(), week.getDate());
 			day.setDate(week.getDate() + 7);
+			onload = false;
 			week = generateCalendar(day);
 		});
 	});

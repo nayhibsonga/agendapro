@@ -12,7 +12,7 @@
 /db/*.sqlite3-journal
 
 # Ignore all logfiles and tempfiles.
-/log/*.log
+/log/*
 /tmp
 
 # Archivos temporales del editor
@@ -34,3 +34,14 @@ public/assets/
 
 # Archivos de RubyMine
 *.idea*
+
+# Archivo de configuración Local
+/config/local_env.yml
+
+# Configuración DB
+/config/database.yml
+
+# Archivos de certificado SSL
+*.crt
+*.csr
+*.key
