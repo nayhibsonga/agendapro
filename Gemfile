@@ -150,8 +150,3 @@ gem "daemons"
 
 #pg_search para búsqueda utilizando extensiones de Postgres
 gem 'pg_search'
-
-gem 'delayed_job_active_record'
-
-gem 'daemons'
-
