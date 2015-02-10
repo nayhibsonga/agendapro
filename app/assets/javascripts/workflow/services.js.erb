@@ -298,12 +298,21 @@ function loadStep3 () {
 			);
 			if(current_service.online_payable)
 			{
-				if(current_service.has_discount)
+				if(current_service.has_discount && current_service.discount > 0)
 				{
 					$("#summary").append(
 						'<tr>' +
 							'<td class="dark-gray">Descuento</th>' +
-							'<td class="light-gray">Si prepagas tu reserva en línea, tienes un ' + current_service.discount + '% de descuento.</td>' +
+							'<td class="light-gray">Si prepagas tu reserva en línea, tienes un ' + current_service.discount + '% de descuento. <b>¡Te ahorras $' + current_service.price*current_service.discount/100 + '!</b></td>' +
+						'</tr>'
+					);
+				}
+				else
+				{
+					$("#summary").append(
+						'<tr>' +
+							'<td class="dark-gray">Precio</th>' +
+							'<td class="light-gray"><b>$' + current_service.price + '.</b></td>' +
 						'</tr>'
 					);
 				}
@@ -443,13 +452,13 @@ function loadDescription (serviceId) {
 			$("#reservar1").hide();
 			$("#reservar2").show();
 
-			if(service.has_discount)
+			if(service.has_discount && current_service.discount > 0)
 			{
 				$("#discount").append(
-					'Precio final: $' + (service.price-service.price*service.discount/100) + '.'
+					'Precio final: $' + (service.price-service.price*service.discount/100)
 				);
 				$("#normal-book").append(
-					'Precio final: $' + service.price + '.'
+					'Precio final: $' + service.price
 				);
 			}
 		}

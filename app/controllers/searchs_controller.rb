@@ -45,48 +45,87 @@ class SearchsController < ApplicationController
 
 			#EMPRESAS CON DUEÑO
 
-			result = Location.search(normalized_search).where(id: ServiceProvider.where(active: true).pluck('location_id')).where(company_id: Company.where(:active => true, :owned => true).where(id: CompanySetting.where(:activate_search => true, :activate_workflow => true).pluck('company_id'))).where(:active => true).where('sqrt((latitude - ' + lat.to_s + ')^2 + (longitude - ' + long.to_s + ')^2) < 0.25')
+			query = Location.search(normalized_search).where(id: ServiceProvider.where(active: true).pluck('location_id')).where(company_id: Company.where(:active => true, :owned => true).where(id: CompanySetting.where(:activate_search => true, :activate_workflow => true).pluck('company_id'))).where(:active => true).where('sqrt((latitude - ' + lat.to_s + ')^2 + (longitude - ' + long.to_s + ')^2) < 0.25')
+
+			# Divide the results in a reasonable amount of subgroups in order
+			# to rank by distance only inside those groups
+			# For now, subgroups whill have max 10 locations
 
 			locs = Array.new
+			ordered_locs = Array.new
 
-			result.each do |location|
-				dist_score = Math.sqrt((location.latitude - lat.to_f)**2 + (location.longitude - long.to_f)**2)
-				local = [location, dist_score]
-				locs.push(local)
+
+			count = (query.count / 10).ceil
+			results = Array.new
+
+			for i in 0..count-1
+				group = query[i*10, (i+1)*10]
+				results << group
 			end
 
-			ordered_locs = locs.sort_by{ |loc| loc[1]}
+			j = 0
+			results.each do |result|
+				locs[j] = Array.new
+				result.each do |location|
+					dist_score = Math.sqrt((location.latitude - lat.to_f)**2 + (location.longitude - long.to_f)**2)
+					local = [location, dist_score]
+					locs[j].push(local)
+				end
+				j = j+1
+			end
+
+			for i in 0..j-1
+				ordered_locs[i] = locs[i].sort_by{ |loc| loc[1]}
+			end
 
 			#FIN EMPRESAS CON DUEÑO
 
 			#EMPRESAS SIN DUEÑO
 
-			unowned_result = Location.search(normalized_search).where(id: ServiceProvider.where(active: true).pluck('location_id')).where(company_id: Company.where(:active => true, :owned => false).where(id: CompanySetting.where(:activate_search => true, :activate_workflow => true).pluck('company_id'))).where(:active => true).where('sqrt((latitude - ' + lat.to_s + ')^2 + (longitude - ' + long.to_s + ')^2) < 0.25')
+			unowned_query = Location.search(normalized_search).where(id: ServiceProvider.where(active: true).pluck('location_id')).where(company_id: Company.where(:active => true, :owned => false).where(id: CompanySetting.where(:activate_search => true, :activate_workflow => true).pluck('company_id'))).where(:active => true).where('sqrt((latitude - ' + lat.to_s + ')^2 + (longitude - ' + long.to_s + ')^2) < 0.25')
 
 			unowned_locs = Array.new
 
-			unowned_result.each do |location|
-				dist_score = Math.sqrt((location.latitude - lat.to_f)**2 + (location.longitude - long.to_f)**2)
-				local = [location, dist_score]
-				unowned_locs.push(local)
+			count = (unowned_query.count / 10).ceil
+			unowned_results = Array.new
+
+			for i in 0..count-1
+				group = unowned_query[i*10, (i+1)*10]
+				unowned_results << group
 			end
 
-			unowned_ordered_locs = unowned_locs.sort_by{ |loc| loc[1]}
+			j = 0
+			unowned_results.each do |result|
+				unowned_locs[j] = Array.new
+				result.each do |location|
+					dist_score = Math.sqrt((location.latitude - lat.to_f)**2 + (location.longitude - long.to_f)**2)
+					local = [location, dist_score]
+					unowned_locs[j].push(local)
+				end
+				j = j+1
+			end
 
+			unowned_ordered_locs = Array.new
+
+			for i in 0..j-1
+				unowned_ordered_locs[i] = unowned_locs[i].sort_by{ |loc| loc[1]}
+			end
 
 
 			#FIN EMPRESAS SIN DUEÑO
 				
 			@results = Array.new
 
-			ordered_locs.each do |s|
-				#loc_ids.push(s[0])
-				@results << s[0]
+			ordered_locs.each do |arr|
+				arr.each do |s|
+					@results << s[0]
+				end
 			end
 
-			unowned_ordered_locs.each do |s|
-				#loc_ids.push(s[0])
-				@results << s[0]
+			unowned_ordered_locs.each do |arr|
+				arr.each do |s|
+					@results << s[0]
+				end
 			end
 
 			per_page = 10
