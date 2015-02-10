@@ -11,19 +11,20 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-<<<<<<< HEAD
 ActiveRecord::Schema.define(version: 20150204160735) do
-=======
-
-ActiveRecord::Schema.define(version: 20150204160735) do
-
->>>>>>> 22b3dc1c2a905dc3ee2519bf69d3243c1c2175da
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
   enable_extension "pg_trgm"
   enable_extension "fuzzystrmatch"
   enable_extension "unaccent"
+
+  create_table "banks", force: true do |t|
+    t.integer  "code"
+    t.string   "name"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
 
   create_table "banks", force: true do |t|
     t.integer  "code"
@@ -115,7 +116,16 @@ ActiveRecord::Schema.define(version: 20150204160735) do
     t.boolean  "payed",               default: false
     t.string   "trx_id",              default: ""
     t.integer  "max_changes",         default: 2
+<<<<<<< HEAD
     t.string   "token",               default: ""
+=======
+<<<<<<< HEAD
+=======
+    t.boolean  "payed",               default: false
+    t.string   "trx_id",              default: ""
+    t.string   "token",               default: ""
+>>>>>>> d561ca41e951c5102292e1616e6895f80f06738f
+>>>>>>> development
     t.integer  "deal_id"
   end
 
@@ -238,29 +248,45 @@ ActiveRecord::Schema.define(version: 20150204160735) do
     t.boolean  "provider_overcapacity",       default: true,                  null: false
     t.boolean  "resource_overcapacity",       default: true,                  null: false
     t.integer  "booking_confirmation_time",   default: 1,                     null: false
-    t.integer  "booking_configuration_email", default: 0
-    t.integer  "max_changes",                 default: 2
     t.boolean  "booking_history",             default: false
     t.boolean  "staff_code",                  default: false
+    t.integer  "booking_configuration_email", default: 0
+    t.integer  "max_changes",                 default: 2
+    t.boolean  "deal_activate",               default: false
+    t.string   "deal_name"
+    t.boolean  "deal_overcharge",             default: true
     t.integer  "monthly_mails",               default: 0,                     null: false
+<<<<<<< HEAD
+=======
+    t.boolean  "deal_activate",               default: false
+    t.string   "deal_name"
+    t.boolean  "deal_overcharge",             default: true
+>>>>>>> development
     t.boolean  "allows_online_payment",       default: false
     t.string   "account_number",              default: ""
     t.string   "company_rut",                 default: ""
     t.string   "account_name",                default: ""
     t.integer  "account_type",                default: 3
     t.integer  "bank_id"
+<<<<<<< HEAD
     t.boolean  "deal_activate",               default: false
     t.string   "deal_name"
     t.boolean  "deal_overcharge",             default: true
+=======
+>>>>>>> development
     t.boolean  "deal_exclusive",              default: false
     t.integer  "deal_quantity",               default: 0
     t.integer  "deal_constraint_option",      default: 0
     t.integer  "deal_constraint_quantity",    default: 0
     t.boolean  "deal_identification_number",  default: false
 <<<<<<< HEAD
+<<<<<<< HEAD
     t.boolean  "deal_required",               default: false,                 null: false
 =======
 >>>>>>> 22b3dc1c2a905dc3ee2519bf69d3243c1c2175da
+=======
+    t.boolean  "deal_required",               default: false,                 null: false
+>>>>>>> development
   end
 
   add_index "company_settings", ["company_id"], name: "index_company_settings_on_company_id", using: :btree
@@ -291,6 +317,7 @@ ActiveRecord::Schema.define(version: 20150204160735) do
   add_index "deals", ["company_id"], name: "index_deals_on_company_id", using: :btree
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 
 >>>>>>> 22b3dc1c2a905dc3ee2519bf69d3243c1c2175da
@@ -310,6 +337,8 @@ ActiveRecord::Schema.define(version: 20150204160735) do
 
   add_index "delayed_jobs", ["priority", "run_at"], name: "delayed_jobs_priority", using: :btree
 
+=======
+>>>>>>> development
   create_table "dictionaries", force: true do |t|
     t.string   "name",       null: false
     t.integer  "tag_id",     null: false
