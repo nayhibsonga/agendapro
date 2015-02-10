@@ -31,7 +31,7 @@ class Company < ActiveRecord::Base
 
 	accepts_nested_attributes_for :company_setting
 
-	validate :plan_settings
+	#validate :plan_settings
 
 	after_update :update_online_payment
 
