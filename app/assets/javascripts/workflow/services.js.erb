@@ -303,7 +303,17 @@ function loadStep3 () {
 					$("#summary").append(
 						'<tr>' +
 							'<td class="dark-gray">Descuento</th>' +
-							'<td class="light-gray">Si prepagas tu reserva en línea, tienes un ' + current_service.discount + '% de descuento. <b>¡Ahorras $' + current_service.price*(current_service.discount)/100 +  '!</b></td>' +
+							'<td class="light-gray">Si prepagas tu reserva en línea, tienes un ' + current_service.discount + '% de descuento. <b>¡Te ahorras $' + current_service.price*current_service.discount/100 + '!</b></td>' +
+						'</tr>'
+					);
+
+				}
+				else
+				{
+					$("#summary").append(
+						'<tr>' +
+							'<td class="dark-gray">Precio</th>' +
+							'<td class="light-gray"><b>$' + current_service.price + '.</b></td>' +
 						'</tr>'
 					);
 				}
