@@ -131,11 +131,10 @@ gem 'validation_scopes', :git => 'https://github.com/ivalkeen/validation_scopes.
 gem 'amatch'
 
 #Capistrano para deploy
-gem 'capistrano', '~> 3.3.0'
-#gem 'capistrano-passenger'
-gem 'capistrano-rails', '~> 1.1.1'
+gem 'capistrano', '~> 3.1.0'
 gem 'capistrano-bundler', '~> 1.1.2'
-gem 'capistrano-rvm'
+gem 'capistrano-rails', '~> 1.1.1'
+gem 'capistrano-rvm', github: "capistrano/rvm"
 
 # Editor de texto tipo word
 gem 'ckeditor'
