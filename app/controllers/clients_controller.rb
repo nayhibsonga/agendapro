@@ -8,6 +8,9 @@ class ClientsController < ApplicationController
   # GET /clients
   # GET /clients.json
   def index
+    if mobile_request?
+      @company = current_user.company
+    end
     @locations = Location.where(company_id: current_user.company_id, active: true)
     @service_providers = ServiceProvider.where(company_id: current_user.company_id, active: true)
     @services = Service.where(company_id: current_user.company_id, active: true)
@@ -37,6 +40,9 @@ class ClientsController < ApplicationController
     @lastBookings = Array.new
     @client = Client.new
     @client_comment = ClientComment.new
+    if mobile_request?
+      @company = current_user.company
+    end
   end
 
   # GET /clients/1/edit
@@ -293,6 +299,9 @@ class ClientsController < ApplicationController
     # Use callbacks to share common setup or constraints between actions.
     def set_client
       @client = Client.find(params[:id])
+      if mobile_request?
+        @company = current_user.company
+      end
     end
 
     # Never trust parameters from the scary internet, only allow the white list through.

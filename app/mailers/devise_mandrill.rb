@@ -23,8 +23,8 @@ class DeviseMandrill < Devise::Mailer
       :headers => { 'Reply-To' => "contacto@agendapro.cl" },
       :global_merge_vars => [
         {
-          :name => 'EMAIL',
-          :content => record.email
+          :name => 'URL',
+          :content => 'www'
         },
         {
           :name => 'RESET_PASSWORD',
