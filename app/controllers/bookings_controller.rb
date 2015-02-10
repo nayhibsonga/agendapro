@@ -678,6 +678,7 @@ class BookingsController < ApplicationController
           @booking.trx_id = trx_id
           @booking.token = resp.get_token
           if @booking.save
+            current_user ? user = current_user.id : user = 0
             PuntoPagosCreation.create(trx_id: trx_id, payment_method: payment_method, amount: amount, details: "Pago de servicio " + service.name + " a la empresa " +@company.name+" (" + @company.id.to_s + "). trx_id: "+trx_id+" - mp: "+@company.id.to_s+". Resultado: Se procesa")
             BookingHistory.create(booking_id: @booking.id, action: "Creada por Cliente", start: @booking.start, status_id: @booking.status_id, service_id: @booking.service_id, service_provider_id: @booking.service_provider_id, user_id: user)
             redirect_to resp.payment_process_url and return
