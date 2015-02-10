@@ -47,14 +47,20 @@ $(function() {
 $(function() {
 	$('#online-payment-form').validate({
 		errorPlacement: function(error, element) {			
-			error.appendTo(element.next());			
+			if (element.attr('id') == 'company_setting_online_cancelation_policy_attributes_min_hours') {
+				error.appendTo(element.parent().next());
+			}
+			else {
+				error.appendTo(element.next());
+			}		
 		},
 		rules: {
 			'company_setting[account_name]': {
 				required: '#company_setting_allows_online_payment:checked'
 			},
 			'company_setting[company_rut]': {
-				required: '#company_setting_allows_online_payment:checked'
+				required: '#company_setting_allows_online_payment:checked',
+				rut: true
 			},
 			'company_setting[account_number]': {
 				required: '#company_setting_allows_online_payment:checked'
@@ -82,4 +88,10 @@ $(function() {
 			form.submit();
 		}
 	});
+
+	$('#company_setting_company_rut').change(function() {
+		var rut_string = $('#company_setting_company_rut').val()
+		$('#company_setting_company_rut').val(rut_format(rut_string));
+	});
+
 });

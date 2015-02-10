@@ -51,6 +51,9 @@ $(function() {
 				});
 				if(is_selected)
 				{
+					$('.modal-pay').attr("disabled", "disabled");
+					$('.submitBtn').attr("disabled", "disabled");
+					$('.payBtn').attr("disabled", "disabled");
 					form.submit();
 				}
 				else
@@ -60,6 +63,9 @@ $(function() {
 		  	}
 		  	else
 		  	{
+		  		$('.modal-pay').attr("disabled", "disabled");
+				$('.submitBtn').attr("disabled", "disabled");
+				$('.payBtn').attr("disabled", "disabled");
 		  		form.submit();
 		  	}
 		}

@@ -22,7 +22,7 @@ Usin ImageMagick: convert zoolander.jpg -resize 200x200 -background transparent 
 	 	# /etc/logrotate.d/web-app
 		# Rotate Rails application logs based on file size
 		# Rotate log if file greater than 20 MB
-		/home/agendapro/web-app/log/*.log {
+		/home/agendapro/web_app/log/*.log {
 				daily
 				missingok
 				rotate 90

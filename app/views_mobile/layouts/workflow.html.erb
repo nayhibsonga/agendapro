@@ -39,7 +39,11 @@
 						<button type="button" class="navbar-toggle collapsed toggle-menu menu-right push-body" data-toggle="collapse" data-target="#navbar-menu">
 							<i class="fa fa-bars"></i>
 						</button>
-						<%= link_to '<i class="fa fa-caret-left fa-2x"></i>'.html_safe, '/', class: "navbar-brand" %>
+						<%=
+							link_to_if params[:action] == 'workflow', '<i class="fa fa-caret-left fa-2x"></i>'.html_safe, request.env['HTTP_REFERER'] || :back, class: "navbar-brand" do
+								link_to '<i class="fa fa-caret-left fa-2x"></i>'.html_safe, '/', class: "navbar-brand"
+							end
+						%>
 						<p class="navbar-text"><%= @company.name %></p>
 					</div>
 					<!-- Collect the nav links, forms, and other content for toggling -->
@@ -102,14 +106,6 @@
 		<!-- start: JavaScript-->
 		<%= javascript_include_tag "mobile" %>
 		<%= yield :scripts %>
-		<script type="text/javascript">
-			$(function () {
-				$('a.navbar-brand').click(function (event) {
-					event.preventDefault();
-					window.history.back();
-				});
-			});
-		</script>
 		<!-- end: JavaScript-->
 	</body>
 </html>

@@ -106,6 +106,14 @@
       .h4 {
         font-size: 18px;
       }
+      h5,
+      .h5 {
+        font-size: 14px;
+      }
+      h6,
+      .h6 {
+        font-size: 12px;
+      }
       p {
         margin: 0 0 10px;
       }
@@ -143,6 +151,35 @@
       .table > thead > tr > th {
         vertical-align: bottom;
         border-bottom: 2px solid #ddd;
+      }
+      .table > caption + thead > tr:first-child > th,
+      .table > colgroup + thead > tr:first-child > th,
+      .table > thead:first-child > tr:first-child > th,
+      .table > caption + thead > tr:first-child > td,
+      .table > colgroup + thead > tr:first-child > td,
+      .table > thead:first-child > tr:first-child > td {
+        border-top: 0;
+      }
+      .table > tbody + tbody {
+        border-top: 2px solid #ddd;
+      }
+      .table .table {
+        background-color: #fff;
+      }
+      .table-bordered {
+        border: 1px solid #ddd;
+      }
+      .table-bordered > thead > tr > th,
+      .table-bordered > tbody > tr > th,
+      .table-bordered > tfoot > tr > th,
+      .table-bordered > thead > tr > td,
+      .table-bordered > tbody > tr > td,
+      .table-bordered > tfoot > tr > td {
+        border: 1px solid #ddd;
+      }
+      .table-bordered > thead > tr > th,
+      .table-bordered > thead > tr > td {
+        border-bottom-width: 2px;
       }
       .center-block {
         display: block;
@@ -274,8 +311,7 @@
 
       /* General */
       .header,
-      .footer,
-      .sub-footer {
+      .footer {
         background: #f1f4f5;
         color: #727171;
         font-size: 10px;
@@ -318,29 +354,10 @@
         font-size: 20px;
       }
 
-      /* User */
-      .text-green {
-        color: #22c488;
-      }
-      .footer {
-        font-size: 12px;
-      }
-      .footer table.table {
+      /* Payment */
+      .table-bordered {
+        color: #ffffff;
         background: transparent;
-        color: #727171;
-        margin-bottom: 0;
-      }
-      .footer table.table > tbody > tr > td {
-        border-top: none;
-      }
-      table.table p {
-        margin: 0;
-        word-break: break-word;
-      }
-      .sub-footer{
-        color: #505050;
-        background: #ffffff;
-        font-size: 10px;
       }
     </style>
     <!-- end: CSS -->
@@ -369,65 +386,78 @@
         </tr>
         <tr>
           <td colspan="2">
-            <h4 class="text-center">Bienvenido a AgendaPro</h4>
+            <h4 class="text-center">*|COMPANYNAME|*</h4>
           </td>
         </tr>
         <tr>
           <td colspan="2">
-            <p class="text-center">Ahora podrás disfrutar de todos los beneficios que <a href="http://agendapro.cl" target="_blank" class="text-green">AgendaPro</a> tiene para ti.</p>
+            *|IF:CANCEL|*
+              *|IF:CLIENTCANCEL|*
+                <p class="text-center"><b>*|CLIENT|*, has cancelado una reserva paga en línea.</b></p>
+                <p class="text-center">Contáctanos en contacto@agendapro.cl con los datos de la transferencia copiados en este correo para hacerte la devolución del dinero.</p>
+              *|END:IF|*
+              *|IF:COMPANYCANCEL|*
+                <p class="text-center"><b>Se ha cancelado una reserva en *|COMPANYNAME|* pagada en línea hecha por medio de AgendaPro.</b></p>
+                <p class="text-center">Nosotros efectuaremos la devolución del dinero al cliente, y la cancelación se verá reflejada en tu panel de control.</p>
+              *|END:IF|*
+              *|IF:AGENDAPROCANCEL|*
+                <p class="text-center"><b>Se ha cancelado una reserva en *|COMPANYNAME|* pagada en línea hecha por medio de AgendaPro, por parte del cliente *|CLIENT|* con correo *|CLIENTEMAIL|*.</b></p>
+                <p class="text-center">Los datos de la transferencia se muestran a continuación.</p>
+              *|END:IF|*
+            *|ELSE:|*
+              *|IF:CLIENT|*
+                <p class="text-center">Su transacción fue realizada con éxito.</p>
+              *|ELSE:|*
+                <p class="text-center">Se ha efectuado un pago de reserva en nuestra plataforma.</p>
+              *|END:IF|*
+            *|END:IF|*
           </td>
         </tr>
         <tr class="background-green">
           <td colspan="2">
-            <p class="text-center" style="font-size: 20px;">Datos de Registro</p>
-          </td>
-        </tr>
-        <tr class="background-green">
-          <td class="col-2">
-            <p class="text-right">
-              <img src="http://agendapro.cl/assets/email/email-white.png" alt="E-mail">
-              Mail: *|EMAIL|*
-            </p>
-          </td>
-          <td class="col-2">
-            <p class="text-left">
-              <img src="http://agendapro.cl/assets/email/password.png" alt="E-mail">
-              Contraseña: *|PASSWORD|*
-            </p>
+            <table class="table table-bordered">
+              <tbody>
+                *|IFNOT:CANCEL|*
+                  *|IF:CLIENT|*
+                  <tr>
+                    <td>Cliente</td>
+                    <td>*|CLIENT|*</td>
+                  </tr>
+                  *|ELSE:|*
+                  <tr>
+                    <td>Comercio</td>
+                    <td>*|COMPANYNAME|*</td>
+                  </tr>
+                  *|END:IF|*
+                *|END:IF|*
+                <tr>
+                  <td>Total a pagar</td>
+                  <td>*|PRICE|*</td>
+                </tr>
+                <tr>
+                  <td>Número de tarjeta</td>
+                  <td>***********|CARDNUMBER|*</td>
+                </tr>
+                <tr>
+                  <td>Orden de compra</td>
+                  <td>*|PAYORDER|*</td>
+                </tr>
+                <tr>
+                  <td>Código de autorización</td>
+                  <td>*|AUTHNUMBER|*</td>
+                </tr>
+                <tr>
+                  <td>Fecha</td>
+                  <td>*|DATE|*</td>
+                </tr>
+              </tbody>
+            </table>
           </td>
         </tr>
         <!-- End: Content -->
 
         <!-- Start: Footer -->
         <tr class="footer">
-          <td colspan="2">
-            <table class="table">
-              <tbody>
-                <tr>
-                  <td class="col-3">
-                    <p class="text-left">
-                      <img src="http://agendapro.cl/assets/email/address.png" alt="Direccion">
-                      Nuestra Señora de los Angeles 185, Oficina D, Las Condes
-                    </p>
-                  </td>
-                  <td class="col-3">
-                      <p class="text-center">
-                        <img src="http://agendapro.cl/assets/email/phone.png" alt="Telefono">
-                        (+56 9) 5178 5898
-                      </p>
-                    </td>
-                  <td class="col-3">
-                    <p class="text-right">
-                      <img src="http://agendapro.cl/assets/email/email.png" alt="E-mail">
-                      contacto@agendapro.cl
-                    </p>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </td>
-        </tr>
-        <tr class="sub-footer">
           <td class="col-2">
             <p class="text-left">Este es un email automático, para contactar a la empresa por favor responde este correo.</p>
           </td>
