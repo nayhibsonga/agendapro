@@ -1,8 +1,8 @@
 class BookingsController < ApplicationController
   before_action :set_booking, only: [:show, :edit, :update, :destroy]
-  before_action :authenticate_user!, except: [:create, :force_create, :booking_valid, :provider_booking, :book_service, :book_error, :remove_bookings, :edit_booking, :edit_booking_post, :cancel_booking, :confirm_booking, :check_user_cross_bookings, :blocked_edit, :blocked_cancel, :optimizer_hours]
-  before_action :quick_add, except: [:create, :force_create, :booking_valid, :provider_booking, :book_service, :book_error, :remove_bookings, :edit_booking, :edit_booking_post, :cancel_booking, :confirm_booking, :check_user_cross_bookings, :blocked_edit, :blocked_cancel, :optimizer_hours]
-  layout "admin", except: [:book_service, :book_error, :remove_bookings, :provider_booking, :edit_booking, :edit_booking_post, :cancel_booking, :confirm_booking, :check_user_cross_bookings, :blocked_edit, :blocked_cancel, :optimizer_hours]
+  before_action :authenticate_user!, except: [:create, :force_create, :booking_valid, :provider_booking, :book_service, :book_error, :remove_bookings, :edit_booking, :edit_booking_post, :cancel_booking, :confirm_booking, :check_user_cross_bookings, :blocked_edit, :blocked_cancel, :optimizer_hours, :optimizer_data]
+  before_action :quick_add, except: [:create, :force_create, :booking_valid, :provider_booking, :book_service, :book_error, :remove_bookings, :edit_booking, :edit_booking_post, :cancel_booking, :confirm_booking, :check_user_cross_bookings, :blocked_edit, :blocked_cancel, :optimizer_hours, :optimizer_data]
+  layout "admin", except: [:book_service, :book_error, :remove_bookings, :provider_booking, :edit_booking, :edit_booking_post, :cancel_booking, :confirm_booking, :check_user_cross_bookings, :blocked_edit, :blocked_cancel, :optimizer_hours, :optimizer_data]
 
   # GET /bookings
   # GET /bookings.json
@@ -1444,7 +1444,7 @@ class BookingsController < ApplicationController
     @hours_array = []
 
     # Generals
-    array_length = if params[:resultsLength] then params[:resultsLength].to_i else 5 end
+    array_length = if params[:resultsLength] then params[:resultsLength].to_i else 6 end
     local = Location.find(params[:local])
     company_setting = local.company.company_setting
     cancelled_id = Status.find_by(name: 'Cancelado').id
@@ -1556,7 +1556,10 @@ class BookingsController < ApplicationController
                 :service => service.id,
                 :provider => provider.id,
                 :start => dateTimePointer,
-                :end => dateTimePointer + service.duration.minutes
+                :end => dateTimePointer + service.duration.minutes,
+                :service_name => service.name,
+                :provider_name => provider.public_name,
+                :provider_lock => serviceStaff[serviceStaffPos][:provider] != 0,
               }
               serviceStaffPos += 1
               dateTimePointer += service.duration.minutes
@@ -1585,6 +1588,20 @@ class BookingsController < ApplicationController
       format.html
       format.json { render :json => @hours_array }
     end
+  end
+
+  def optimizer_data
+    @local = Location.find(params[:local])
+    @company = @local.company
+    @bookings = JSON.parse(params[:bookings], symbolize_names: true)
+
+    @outcall = false
+    @bookings.each do |booking|
+      service = Service.find(booking[:service])
+      @outcall ||= service.outcall
+    end
+
+    render layout: "workflow"
   end
 
   private

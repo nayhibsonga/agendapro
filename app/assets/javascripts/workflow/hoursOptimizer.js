@@ -3,7 +3,8 @@ var serviceTitle = "Elegir servicio y staff<br><small>Elige los servicios y pres
 var serviceButton = "Agregar otro servicio";
 var hourTitle = "Resultado de la busqueda<br><small>Selecciona una fecha y hora</small>";
 var hourButton = "Ver mas resultados";
-var resultsLength = 5;
+var resultsLength = 6;
+var bookings = []
 
 // Functions
 function loadServiceModal () {
@@ -104,14 +105,16 @@ function loadHourModal () {
 
   $('#addButton').off('click'); // Unbind click event
   $('#addButton').click(function (e) {
-    resultsLength += 5;
+    resultsLength += 6;
     $('#selectHour').empty();
     loadHours();
   }); // Bind click event
 
   $('#nextButton').off('click'); // Unbind click event
   $('#nextButton').click(function (e) {
-    if ($('input[name="hoursRadio"]:checked').val()) {} else {
+    if ($('input[name="hoursRadio"]:checked').val()) {
+      userData();
+    } else {
       alert('Debe seleccionar una hora');
     };
   }); // Bind click event
@@ -141,13 +144,21 @@ function loadHours () {
           '</p>' +
         '</label>'
       );
+      bookings.push(hour.bookings);
     });
   });
 }
 
+function userData () {
+  var pos = $('input[name="hoursRadio"]:checked').val();
+  $('#userData > #bookings').val(JSON.stringify(bookings[pos]));
+  $('#userData').submit();
+}
+
 $(function () {
   $('#hoursOptimizer').on('show.bs.modal', function (e) {
-    resultsLength = 5;
+    resultsLength = 6;
+    bookings = [];
     loadServiceModal();
   });
 });
