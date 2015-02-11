@@ -163,6 +163,7 @@ Agendapro::Application.routes.draw do
   post '/remove_bookings', :to => 'bookings#remove_bookings'
   get '/get_available_time', :to => 'locations#get_available_time'
   get '/check_user_cross_bookings', :to => 'bookings#check_user_cross_bookings'
+  get '/optimizer_hours', :to => 'bookings#optimizer_hours'
   # Workflow - Mobile
   post '/select_hour', :to => 'companies#select_hour'
   post '/user_data', :to => 'companies#user_data'

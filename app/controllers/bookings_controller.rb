@@ -1,8 +1,8 @@
 class BookingsController < ApplicationController
   before_action :set_booking, only: [:show, :edit, :update, :destroy]
-  before_action :authenticate_user!, except: [:create, :force_create, :booking_valid, :provider_booking, :book_service, :book_error, :remove_bookings, :edit_booking, :edit_booking_post, :cancel_booking, :confirm_booking, :check_user_cross_bookings, :blocked_edit, :blocked_cancel]
-  before_action :quick_add, except: [:create, :force_create, :booking_valid, :provider_booking, :book_service, :book_error, :remove_bookings, :edit_booking, :edit_booking_post, :cancel_booking, :confirm_booking, :check_user_cross_bookings, :blocked_edit, :blocked_cancel]
-  layout "admin", except: [:book_service, :book_error, :remove_bookings, :provider_booking, :edit_booking, :edit_booking_post, :cancel_booking, :confirm_booking, :check_user_cross_bookings, :blocked_edit, :blocked_cancel]
+  before_action :authenticate_user!, except: [:create, :force_create, :booking_valid, :provider_booking, :book_service, :book_error, :remove_bookings, :edit_booking, :edit_booking_post, :cancel_booking, :confirm_booking, :check_user_cross_bookings, :blocked_edit, :blocked_cancel, :optimizer_hours]
+  before_action :quick_add, except: [:create, :force_create, :booking_valid, :provider_booking, :book_service, :book_error, :remove_bookings, :edit_booking, :edit_booking_post, :cancel_booking, :confirm_booking, :check_user_cross_bookings, :blocked_edit, :blocked_cancel, :optimizer_hours]
+  layout "admin", except: [:book_service, :book_error, :remove_bookings, :provider_booking, :edit_booking, :edit_booking_post, :cancel_booking, :confirm_booking, :check_user_cross_bookings, :blocked_edit, :blocked_cancel, :optimizer_hours]
 
   # GET /bookings
   # GET /bookings.json
@@ -1013,7 +1013,7 @@ class BookingsController < ApplicationController
       provider_times = @provider.provider_times.where(day_id: @date.cwday).order(:open)
       bookings = @provider.bookings.where(:start => @date.to_time.beginning_of_day..@date.to_time.end_of_day).order(:start)
 
-    # Data
+      # Data
       provider = @booking.service_provider
       provider_breaks = provider.provider_breaks
       provider_times_first = provider.provider_times.order(:open).first
@@ -1437,6 +1437,153 @@ class BookingsController < ApplicationController
     end
     respond_to do |format|
       format.json { render :json => table_rows }
+    end
+  end
+
+  def optimizer_hours
+    @hours_array = []
+
+    # Generals
+    array_length = if params[:resultsLength] then params[:resultsLength].to_i else 5 end
+    local = Location.find(params[:local])
+    company_setting = local.company.company_setting
+    cancelled_id = Status.find_by(name: 'Cancelado').id
+    serviceStaff = JSON.parse(params[:serviceStaff], symbolize_names: true)
+    now = DateTime.new(DateTime.now.year, DateTime.now.mon, DateTime.now.mday, DateTime.now.hour, DateTime.now.min)
+
+    # Pointers
+    dateTimePointer = local.location_times.where(day_id: now.cwday).order(:open).first.open
+    dateTimePointer = DateTime.new(now.year, now.mon, now.mday, dateTimePointer.hour, dateTimePointer.min)
+
+    while @hours_array.length < array_length and (dateTimePointer <=> now + company_setting.after_booking.month) == -1
+      # Pointers
+      serviceStaffPos = 0
+      bookings = []
+      while serviceStaffPos < serviceStaff.length and (dateTimePointer <=> now + company_setting.after_booking.month) == -1
+        service_valid = false
+        service = Service.find(serviceStaff[serviceStaffPos][:service])
+
+        # Hora dentro del horario del local
+        local.location_times.where(day_id: dateTimePointer.cwday).each do |times|
+          location_open = DateTime.new(dateTimePointer.year, dateTimePointer.month, dateTimePointer.mday, times.open.hour, times.open.min)
+          location_close = DateTime.new(dateTimePointer.year, dateTimePointer.month, dateTimePointer.mday, times.close.hour, times.close.min)
+
+          if location_open <= dateTimePointer and (dateTimePointer + service.duration.minutes) <= location_close
+            service_valid = true
+            break
+          end
+        end
+
+        # Horario dentro del horario del provider
+        if service_valid
+          providers = []
+          if serviceStaff[serviceStaffPos][:provider] != 0
+            providers << ServiceProvider.find(serviceStaff[serviceStaffPos][:provider])
+          else
+            providers = ServiceProvider.where(id: service.service_providers.pluck(:id), location_id: local.id, active: true).order(order: :desc).sort_by {|service_provider| service_provider.provider_booking_day_occupation(dateTimePointer) }
+          end
+
+          providers.each do |provider|
+            service_valid = false
+            provider.provider_times.where(day_id: dateTimePointer.cwday).each do |provider_time|
+              provider_open = DateTime.new(dateTimePointer.year, dateTimePointer.month, dateTimePointer.mday, provider_time.open.hour, provider_time.open.min)
+              provider_close = DateTime.new(dateTimePointer.year, dateTimePointer.month, dateTimePointer.mday, provider_time.close.hour, provider_time.close.min)
+
+              if provider_open <= dateTimePointer and (dateTimePointer + service.duration.minutes) <= provider_close
+                service_valid = true
+                break
+              end
+            end
+
+            # Provider breaks
+            if service_valid
+              provider.provider_breaks.each do |provider_break|
+                if (provider_break.start.to_datetime - (dateTimePointer + service.duration.minutes))*(dateTimePointer - provider_break.end.to_datetime) > 0
+                  service_valid = false
+                  break
+                end
+              end
+            end
+
+            # Cross Booking
+            if service_valid
+              Booking.where(service_provider_id: provider.id, start: dateTimePointer.to_time.beginning_of_day..dateTimePointer.to_time.end_of_day).each do |provider_booking|
+                unless provider_booking.status_id == cancelled_id
+                  if (provider_booking.start.to_datetime - (dateTimePointer + service.duration.minutes)) * (dateTimePointer - provider_booking.end.to_datetime) > 0
+                    if !service.group_service || service.id != provider_booking.service_id
+                      service_valid = false
+                      break
+                    elsif service.group_service && service.id == provider_booking.service_id && provider.bookings.where(service_id: service.id, start: dateTimePointer).count >= service.capacity
+                      service_valid = false
+                      break
+                    end
+                  end
+                end
+              end
+            end
+
+            # Recursos
+            if service_valid and service.resources.count > 0
+              service.resources.each do |resource|
+                if !local.resource_locations.pluck(:resource_id).include?(resource.id)
+                  service_valid = false
+                  break
+                end
+                used_resource = 0
+                group_services = []
+                local.bookings.where(:start => dateTimePointer.to_time.beginning_of_day..dateTimePointer.to_time.end_of_day).each do |location_booking|
+                  if location_booking.status_id != cancelled_id && (location_booking.start.to_datetime - (dateTimePointer + service.duration.minutes)) * (dateTimePointer - location_booking.end.to_datetime) > 0
+                    if location_booking.service.resources.include?(resource)
+                      if !location_booking.service.group_service
+                        used_resource += 1
+                      else
+                        if location_booking.service != service || location_booking.service_provider != provider
+                          group_services.push(location_booking.service_provider.id)
+                        end
+                      end
+                    end
+                  end
+                end
+                if group_services.uniq.count + used_resource >= ResourceLocation.where(resource_id: resource.id, location_id: local.id).first.quantity
+                  service_valid = false
+                  break
+                end
+              end
+            end
+
+            if service_valid
+              bookings << {
+                :service => service.id,
+                :provider => provider.id,
+                :start => dateTimePointer,
+                :end => dateTimePointer + service.duration.minutes
+              }
+              serviceStaffPos += 1
+              dateTimePointer += service.duration.minutes
+              break
+            end
+          end
+        end
+
+        if !service_valid
+          dateTimePointer += service.duration.minutes
+          serviceStaffPos = 0
+          bookings = []
+        end
+      end
+
+      if bookings.length > 0
+        @hours_array << {
+          :date => I18n.l(bookings[0][:start].to_date, format: :day_short),
+          :hour => I18n.l(bookings[0][:start].to_datetime, format: :hour) + ' - ' + I18n.l(bookings[bookings.length - 1][:end].to_datetime, format: :hour) + ' Hrs',
+          :bookings => bookings
+        }
+      end
+    end
+
+    respond_to do |format|
+      format.html
+      format.json { render :json => @hours_array }
     end
   end
 

@@ -3,10 +3,13 @@ var serviceTitle = "Elegir servicio y staff<br><small>Elige los servicios y pres
 var serviceButton = "Agregar otro servicio";
 var hourTitle = "Resultado de la busqueda<br><small>Selecciona una fecha y hora</small>";
 var hourButton = "Ver mas resultados";
+var resultsLength = 5;
 
 // Functions
 function loadServiceModal () {
+  $('#selectHour').hide();
   $('#serviceOptimizer').empty();
+  $('#serviceOptimizer').show();
   $('#optimizerTitle').html(serviceTitle);
   $('#addButton > span').html(serviceButton);
   loadService();
@@ -14,6 +17,11 @@ function loadServiceModal () {
   $('#addButton').off('click'); // Unbind click event
   $('#addButton').click(function (e) {
     loadService();
+  }); // Bind click event
+
+  $('#nextButton').off('click'); // Unbind click event
+  $('#nextButton').click(function (e) {
+    loadHourModal();
   }); // Bind click event
 }
 
@@ -85,8 +93,61 @@ function loadStaff (selector) {
   });
 }
 
+function loadHourModal () {
+  $('#serviceOptimizer').hide();
+  $('#selectHour').empty();
+  $('#selectHour').show();
+  $('#optimizerTitle').html(hourTitle);
+  $('#addButton > span').html(hourButton);
+
+  loadHours();
+
+  $('#addButton').off('click'); // Unbind click event
+  $('#addButton').click(function (e) {
+    resultsLength += 5;
+    $('#selectHour').empty();
+    loadHours();
+  }); // Bind click event
+
+  $('#nextButton').off('click'); // Unbind click event
+  $('#nextButton').click(function (e) {
+    if ($('input[name="hoursRadio"]:checked').val()) {} else {
+      alert('Debe seleccionar una hora');
+    };
+  }); // Bind click event
+}
+
+function loadHours () {
+  $('#selectHour').append('<p class="text-center"><i class="fa fa-spinner fa-spin fa-lg"></i></p>');
+  var localId = $('#selectedLocal').data('local').id;
+  var selects = [];
+  $('select[name="serviceOptimizerSelector"]').each(function (i, service) {
+    var provider = $(service).closest('.form-group').find('select[name="providerOptimizerSelector"]');
+    selects.push({
+      service: $(service).val(),
+      provider: provider.val()
+    });
+  });
+  $.getJSON('/optimizer_hours', { local: localId, serviceStaff: JSON.stringify(selects), resultsLength: resultsLength }, function (hours_array) {
+    $('#selectHour > p').remove();
+    $.each(hours_array, function (pos, hour) {
+      $('#selectHour').append(
+        '<label class="checkbox-inline">' +
+          '<input type="radio" name="hoursRadio" value="' + pos + '">' +
+          '<p>' +
+            '<i class="fa fa-calendar-o fa-green"></i> ' + hour.date +
+            '<br>' +
+            '<i class="fa fa-clock-o fa-green"></i> ' + hour.hour +
+          '</p>' +
+        '</label>'
+      );
+    });
+  });
+}
+
 $(function () {
   $('#hoursOptimizer').on('show.bs.modal', function (e) {
+    resultsLength = 5;
     loadServiceModal();
   });
 });
