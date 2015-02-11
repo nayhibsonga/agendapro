@@ -1463,14 +1463,21 @@ class BookingsController < ApplicationController
         service_valid = false
         service = Service.find(serviceStaff[serviceStaffPos][:service])
 
-        # Hora dentro del horario del local
-        local.location_times.where(day_id: dateTimePointer.cwday).each do |times|
-          location_open = DateTime.new(dateTimePointer.year, dateTimePointer.month, dateTimePointer.mday, times.open.hour, times.open.min)
-          location_close = DateTime.new(dateTimePointer.year, dateTimePointer.month, dateTimePointer.mday, times.close.hour, times.close.min)
+        if dateTimePointer >= now + company_setting.before_booking.hours
+          service_valid = true
+        end
 
-          if location_open <= dateTimePointer and (dateTimePointer + service.duration.minutes) <= location_close
-            service_valid = true
-            break
+        # Hora dentro del horario del local
+        if service_valid
+          service_valid = false
+          local.location_times.where(day_id: dateTimePointer.cwday).each do |times|
+            location_open = DateTime.new(dateTimePointer.year, dateTimePointer.month, dateTimePointer.mday, times.open.hour, times.open.min)
+            location_close = DateTime.new(dateTimePointer.year, dateTimePointer.month, dateTimePointer.mday, times.close.hour, times.close.min)
+
+            if location_open <= dateTimePointer and (dateTimePointer + service.duration.minutes) <= location_close
+              service_valid = true
+              break
+            end
           end
         end
 

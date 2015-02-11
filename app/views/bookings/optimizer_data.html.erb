@@ -273,3 +273,15 @@
     </div>
   </div>
 </div>
+
+<% content_for :scripts do %>
+  <%= javascript_include_tag 'split-name' %>
+  <%= javascript_include_tag 'validations/validate' %>
+  <%= javascript_include_tag 'validations/home/workflow' %>
+  <script type="text/javascript">
+    $(function() {
+      compose_name('#full_name', '#firstName', '#lastName');
+      split_name('#full_name', '#firstName', '#lastName');
+    });
+  </script>
+<% end %>

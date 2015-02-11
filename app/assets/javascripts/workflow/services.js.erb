@@ -4,7 +4,7 @@ var actual_booking = null;
 //====== Load Steps ======//
 function loadStep1 (service_id) {
 	$('#services-description').empty();
-	$('#services-selector').html('<p class="text-center" style="color: #ccc;"><i class="fa fa-spinner fa-spin fa-2x"></i></p>');
+	$('#services-selector').html('<p class="text-center" style="color: #ccc;"><i class="fa fa-spinner fa-spin fa-lg"></i></p>');
 	var localId = $('#selectedLocal').data('local').id;
 	var categoryCount = 0;
 	$.getJSON('/local_services', {location: localId}, function (categorized_services) {
@@ -96,7 +96,7 @@ function loadStep1 (service_id) {
 var calendar;
 function loadStep2 () {
 	if($('[name="serviceRadio"]').is(':checked')){
-		$('#staff-selector').html('<p class="text-center" style="color: #ccc;"><i class="fa fa-spinner fa-spin fa-2x"></i></p>');
+		$('#staff-selector').html('<p class="text-center" style="color: #ccc;"><i class="fa fa-spinner fa-spin fa-lg"></i></p>');
 		$('.horario').hide();
 		selected = false;
 		var serviceId = $('input[name=serviceRadio]:checked').val();
@@ -363,7 +363,7 @@ function scrollEvents (direction) {
 
 //====== Load Info ======//
 function loadDescription (serviceId) {
-	$('#services-description').html('<tr><td class="text-center" style="color: #ccc;"><i class="fa fa-spinner fa-spin fa-2x"></i></td></tr>');
+	$('#services-description').html('<tr><td class="text-center" style="color: #ccc;"><i class="fa fa-spinner fa-spin fa-lg"></i></td></tr>');
 	$.getJSON('/service', {id: serviceId}, function (service) {
 		$('#services-description').empty();
 		$('#services-description').append(
