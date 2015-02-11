@@ -26,13 +26,6 @@ ActiveRecord::Schema.define(version: 20150204160735) do
     t.datetime "updated_at"
   end
 
-  create_table "banks", force: true do |t|
-    t.integer  "code"
-    t.string   "name"
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
-
   create_table "billing_infos", force: true do |t|
     t.string   "name"
     t.string   "rut"
@@ -113,20 +106,11 @@ ActiveRecord::Schema.define(version: 20150204160735) do
     t.integer  "client_id"
     t.float    "price",               default: 0.0
     t.boolean  "provider_lock",       default: false
-    t.boolean  "payed",               default: false
-    t.string   "trx_id",              default: ""
     t.integer  "max_changes",         default: 2
-<<<<<<< HEAD
-    t.string   "token",               default: ""
-=======
-<<<<<<< HEAD
-=======
+    t.integer  "deal_id"
     t.boolean  "payed",               default: false
     t.string   "trx_id",              default: ""
     t.string   "token",               default: ""
->>>>>>> d561ca41e951c5102292e1616e6895f80f06738f
->>>>>>> development
-    t.integer  "deal_id"
   end
 
   add_index "bookings", ["client_id"], name: "index_bookings_on_client_id", using: :btree
@@ -256,37 +240,18 @@ ActiveRecord::Schema.define(version: 20150204160735) do
     t.string   "deal_name"
     t.boolean  "deal_overcharge",             default: true
     t.integer  "monthly_mails",               default: 0,                     null: false
-<<<<<<< HEAD
-=======
-    t.boolean  "deal_activate",               default: false
-    t.string   "deal_name"
-    t.boolean  "deal_overcharge",             default: true
->>>>>>> development
+    t.boolean  "deal_exclusive",              default: false
+    t.integer  "deal_quantity",               default: 0
+    t.integer  "deal_constraint_option",      default: 0
+    t.integer  "deal_constraint_quantity",    default: 0
+    t.boolean  "deal_identification_number",  default: false
+    t.boolean  "deal_required",               default: false,                 null: false
     t.boolean  "allows_online_payment",       default: false
     t.string   "account_number",              default: ""
     t.string   "company_rut",                 default: ""
     t.string   "account_name",                default: ""
     t.integer  "account_type",                default: 3
     t.integer  "bank_id"
-<<<<<<< HEAD
-    t.boolean  "deal_activate",               default: false
-    t.string   "deal_name"
-    t.boolean  "deal_overcharge",             default: true
-=======
->>>>>>> development
-    t.boolean  "deal_exclusive",              default: false
-    t.integer  "deal_quantity",               default: 0
-    t.integer  "deal_constraint_option",      default: 0
-    t.integer  "deal_constraint_quantity",    default: 0
-    t.boolean  "deal_identification_number",  default: false
-<<<<<<< HEAD
-<<<<<<< HEAD
-    t.boolean  "deal_required",               default: false,                 null: false
-=======
->>>>>>> 22b3dc1c2a905dc3ee2519bf69d3243c1c2175da
-=======
-    t.boolean  "deal_required",               default: false,                 null: false
->>>>>>> development
   end
 
   add_index "company_settings", ["company_id"], name: "index_company_settings_on_company_id", using: :btree
@@ -316,11 +281,6 @@ ActiveRecord::Schema.define(version: 20150204160735) do
 
   add_index "deals", ["company_id"], name: "index_deals_on_company_id", using: :btree
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
-
->>>>>>> 22b3dc1c2a905dc3ee2519bf69d3243c1c2175da
   create_table "delayed_jobs", force: true do |t|
     t.integer  "priority",   default: 0, null: false
     t.integer  "attempts",   default: 0, null: false
@@ -337,8 +297,6 @@ ActiveRecord::Schema.define(version: 20150204160735) do
 
   add_index "delayed_jobs", ["priority", "run_at"], name: "delayed_jobs_priority", using: :btree
 
-=======
->>>>>>> development
   create_table "dictionaries", force: true do |t|
     t.string   "name",       null: false
     t.integer  "tag_id",     null: false
