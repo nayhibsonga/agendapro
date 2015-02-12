@@ -17,10 +17,10 @@ class User < ActiveRecord::Base
 
 	accepts_nested_attributes_for :company
 
-	#validates :email, :role, :presence => true
-	#validate :location_company_users
+	validates :email, :role, :presence => true
+	validate :location_company_users
 
-	#after_create :send_welcome_mail, :get_past_bookings
+	after_create :send_welcome_mail, :get_past_bookings
 
 	def send_welcome_mail
 		UserMailer.welcome_email(self)
