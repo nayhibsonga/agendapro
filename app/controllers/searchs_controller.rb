@@ -54,28 +54,40 @@ class SearchsController < ApplicationController
 			locs = Array.new
 			ordered_locs = Array.new
 
+			logger.info "IMPORTANT Results count: " + query.count.to_s
 
-			count = (query.count / 10).ceil
-			results = Array.new
+			if query.count > 10
 
-			for i in 0..count-1
-				group = query[i*10, (i+1)*10]
-				results << group
-			end
+				count = (query.count / 10).ceil
+				results = Array.new
 
-			j = 0
-			results.each do |result|
-				locs[j] = Array.new
-				result.each do |location|
+				for i in 0..count-1
+					group = query[i*10, (i+1)*10]
+					results << group
+				end
+
+				j = 0
+				results.each do |result|
+					locs[j] = Array.new
+					result.each do |location|
+						dist_score = Math.sqrt((location.latitude - lat.to_f)**2 + (location.longitude - long.to_f)**2)
+						local = [location, dist_score]
+						locs[j].push(local)
+					end
+					j = j+1
+				end
+
+				for i in 0..j-1
+					ordered_locs[i] = locs[i].sort_by{ |loc| loc[1]}
+				end
+
+			else
+				query.each do |location|
 					dist_score = Math.sqrt((location.latitude - lat.to_f)**2 + (location.longitude - long.to_f)**2)
 					local = [location, dist_score]
-					locs[j].push(local)
+					locs.push(local)
 				end
-				j = j+1
-			end
-
-			for i in 0..j-1
-				ordered_locs[i] = locs[i].sort_by{ |loc| loc[1]}
+				ordered_locs[0] = locs.sort_by{ |loc| loc[1]}
 			end
 
 			#FIN EMPRESAS CON DUEÑO
