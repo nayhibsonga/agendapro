@@ -42,25 +42,6 @@
       img {
         border: 0;
       }
-      button {
-        margin: 0;
-        font: inherit;
-        color: inherit;
-      }
-      button {
-        overflow: visible;
-      }
-      button {
-        text-transform: none;
-      }
-      button {
-        -webkit-appearance: button;
-        cursor: pointer;
-      }
-      button::-moz-focus-inner {
-        padding: 0;
-        border: 0;
-      }
       table {
         border-spacing: 0;
         border-collapse: collapse;
@@ -91,11 +72,6 @@
         line-height: 1.42857143;
         color: #333;
         background-color: #fff;
-      }
-      button {
-        font-family: inherit;
-        font-size: inherit;
-        line-height: inherit;
       }
       a {
         color: #337ab7;
@@ -129,6 +105,14 @@
       h4,
       .h4 {
         font-size: 18px;
+      }
+      h5,
+      .h5 {
+        font-size: 14px;
+      }
+      h6,
+      .h6 {
+        font-size: 12px;
       }
       p {
         margin: 0 0 10px;
@@ -168,56 +152,34 @@
         vertical-align: bottom;
         border-bottom: 2px solid #ddd;
       }
-      .btn {
-        display: inline-block;
-        padding: 6px 12px;
-        margin-bottom: 0;
-        font-size: 14px;
-        font-weight: normal;
-        line-height: 1.42857143;
-        text-align: center;
-        white-space: nowrap;
-        vertical-align: middle;
-        -ms-touch-action: manipulation;
-            touch-action: manipulation;
-        cursor: pointer;
-        -webkit-user-select: none;
-           -moz-user-select: none;
-            -ms-user-select: none;
-                user-select: none;
-        background-image: none;
-        border: 1px solid transparent;
-        border-radius: 4px;
+      .table > caption + thead > tr:first-child > th,
+      .table > colgroup + thead > tr:first-child > th,
+      .table > thead:first-child > tr:first-child > th,
+      .table > caption + thead > tr:first-child > td,
+      .table > colgroup + thead > tr:first-child > td,
+      .table > thead:first-child > tr:first-child > td {
+        border-top: 0;
       }
-      .btn:focus,
-      .btn:active:focus,
-      .btn.active:focus,
-      .btn.focus,
-      .btn:active.focus,
-      .btn.active.focus {
-        outline: thin dotted;
-        outline: 5px auto -webkit-focus-ring-color;
-        outline-offset: -2px;
+      .table > tbody + tbody {
+        border-top: 2px solid #ddd;
       }
-      .btn:hover,
-      .btn:focus,
-      .btn.focus {
-        color: #333;
-        text-decoration: none;
+      .table .table {
+        background-color: #fff;
       }
-      .btn:active,
-      .btn.active {
-        background-image: none;
-        outline: 0;
-        -webkit-box-shadow: inset 0 3px 5px rgba(0, 0, 0, .125);
-                box-shadow: inset 0 3px 5px rgba(0, 0, 0, .125);
+      .table-bordered {
+        border: 1px solid #ddd;
       }
-      .btn-lg,
-      .btn-group-lg > .btn {
-        padding: 10px 16px;
-        font-size: 18px;
-        line-height: 1.33;
-        border-radius: 6px;
+      .table-bordered > thead > tr > th,
+      .table-bordered > tbody > tr > th,
+      .table-bordered > tfoot > tr > th,
+      .table-bordered > thead > tr > td,
+      .table-bordered > tbody > tr > td,
+      .table-bordered > tfoot > tr > td {
+        border: 1px solid #ddd;
+      }
+      .table-bordered > thead > tr > th,
+      .table-bordered > thead > tr > td {
+        border-bottom-width: 2px;
       }
       .center-block {
         display: block;
@@ -392,57 +354,10 @@
         font-size: 20px;
       }
 
-      /* Booking */
-      .background-green > td > p {
-        font-size: 20px;
-        margin: 0;
-      }
-      .responsive-table {
-        min-height: .01%;
-        overflow-x: auto;
-        width: 100%;
-        overflow-y: hidden;
-        -ms-overflow-style: -ms-autohiding-scrollbar;
-        min-width: 440px;
-      }
-      .responsive-table > .table {
-        margin-bottom: 0;
-      }
-      .table-booking {
-        margin-right: auto;
-        margin-left: auto;
-        width: 80%;
-        background: transparent;
-      }
-      .table-booking > tbody > tr > td {
-        width: 1%;
-        border-top: none;
-        min-width: 150px;
-      }
-      .icon-box {
-        display: table-cell;
-      }
-      .icon-box > img {
-        width: 50px;
-        height: 50px;
-        padding: 5px;
-        border: 1px solid #ffffff;
-        border-radius: 6px;
-      }
-      .text-box {
-        display: table-cell;
-        padding: 5px;
-        vertical-align: middle;
-        color: #126848;
-      }
-      .text-box > p {
-        margin: 0;
-      }
-      .text-box > p:first-child {
+      /* Payment */
+      .table-bordered {
         color: #ffffff;
-      }
-      .pull-center > .btn {
-        margin-bottom: 5px;
+        background: transparent;
       }
     </style>
     <!-- end: CSS -->
@@ -472,158 +387,73 @@
         <tr>
           <td colspan="2">
             <h4 class="text-center">*|COMPANYNAME|*</h4>
-            *|IF:CLIENT|*
-            <p class="text-center">*|CLIENTNAME|*, tu reserva fue cancelada exitosamente</p>
+          </td>
+        </tr>
+        <tr>
+          <td colspan="2">
+            *|IF:CANCEL|*
+              *|IF:CLIENTCANCEL|*
+                <p class="text-center"><b>*|CLIENT|*, has cancelado una reserva paga en línea.</b></p>
+                <p class="text-center">Contáctanos en contacto@agendapro.cl con los datos de la transferencia copiados en este correo para hacerte la devolución del dinero.</p>
+              *|END:IF|*
+              *|IF:COMPANYCANCEL|*
+                <p class="text-center"><b>Se ha cancelado una reserva en *|COMPANYNAME|* pagada en línea hecha por medio de AgendaPro.</b></p>
+                <p class="text-center">Nosotros efectuaremos la devolución del dinero al cliente, y la cancelación se verá reflejada en tu panel de control.</p>
+              *|END:IF|*
+              *|IF:AGENDAPROCANCEL|*
+                <p class="text-center"><b>Se ha cancelado una reserva en *|COMPANYNAME|* pagada en línea hecha por medio de AgendaPro, por parte del cliente *|CLIENT|* con correo *|CLIENTEMAIL|*.</b></p>
+                <p class="text-center">Los datos de la transferencia se muestran a continuación.</p>
+              *|END:IF|*
             *|ELSE:|*
-            <p class="text-center">*|SERVICEPROVIDER|*, fue cancelada una reserva contigo</p>
+              *|IF:CLIENT|*
+                <p class="text-center">Su transacción fue realizada con éxito.</p>
+              *|ELSE:|*
+                <p class="text-center">Se ha efectuado un pago de reserva en nuestra plataforma.</p>
+              *|END:IF|*
             *|END:IF|*
           </td>
         </tr>
-        *|IF:CLIENT|*
         <tr class="background-green">
           <td colspan="2">
-            <p class="text-center"><b>Resumen</b> de tu reserva</p>
+            <table class="table table-bordered">
+              <tbody>
+                *|IFNOT:CANCEL|*
+                  *|IF:CLIENT|*
+                  <tr>
+                    <td>Cliente</td>
+                    <td>*|CLIENT|*</td>
+                  </tr>
+                  *|ELSE:|*
+                  <tr>
+                    <td>Comercio</td>
+                    <td>*|COMPANYNAME|*</td>
+                  </tr>
+                  *|END:IF|*
+                *|END:IF|*
+                <tr>
+                  <td>Total a pagar</td>
+                  <td>*|PRICE|*</td>
+                </tr>
+                <tr>
+                  <td>Número de tarjeta</td>
+                  <td>***********|CARDNUMBER|*</td>
+                </tr>
+                <tr>
+                  <td>Orden de compra</td>
+                  <td>*|PAYORDER|*</td>
+                </tr>
+                <tr>
+                  <td>Código de autorización</td>
+                  <td>*|AUTHNUMBER|*</td>
+                </tr>
+                <tr>
+                  <td>Fecha</td>
+                  <td>*|DATE|*</td>
+                </tr>
+              </tbody>
+            </table>
           </td>
         </tr>
-        <tr class="background-green">
-          <td colspan="2">
-            <div class="responsive-table">
-              <table class="table table-booking">
-                <tbody>
-                  <tr>
-                    <td>
-                      <div class="icon-box">
-                        <img src="http://agendapro.cl/assets/email/what.png" alt="¿Qué Reservaste?">
-                      </div>
-                      <div class="text-box">
-                        <p style="color: #ffffff;"><b>¿Qué Reservaste?</b></p>
-                        <p>*|SERVICENAME|*</p>
-                      </div>
-                    </td>
-                    <td>
-                      <div class="icon-box">
-                        <img src="http://agendapro.cl/assets/email/when.png" alt="¿Cuando?">
-                      </div>
-                      <div class="text-box">
-                        <p style="color: #ffffff;"><b>¿Cuándo?</b></p>
-                        <p>*|BSTART|*</p>
-                      </div>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td>
-                      <div class="icon-box">
-                        <img src="http://agendapro.cl/assets/email/where.png" alt="¿Dónde?">
-                      </div>
-                      <div class="text-box">
-                        <p style="color: #ffffff;"><b>¿Dónde?</b></p>
-                        <p>*|LOCALADDRESS|*</p>
-                      </div>
-                    </td>
-                    <td>
-                      <div class="icon-box">
-                        <img src="http://agendapro.cl/assets/email/question.png" alt="Consultas">
-                      </div>
-                      <div class="text-box">
-                        <p style="color: #ffffff;"><b>Consultas</b></p>
-                        <p>*|LOCATIONPHONE|*</p>
-                      </div>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td>
-                      <div class="icon-box">
-                        <img src="http://agendapro.cl/assets/email/who.png" alt="¿Con Quien?">
-                      </div>
-                      <div class="text-box">
-                        <p style="color: #ffffff;"><b>¿Con Quien?</b></p>
-                        <p>*|SERVICEPROVIDER|*</p>
-                      </div>
-                    </td>
-                    <td>
-                      <div class="icon-box">
-                        <img src="http://agendapro.cl/assets/email/notes.png" alt="Notas">
-                      </div>
-                      <div class="text-box">
-                        <p style="color: #ffffff;"><b>Notas</b></p>
-                        *|IF:BNOTES|*<p>*|BNOTES|*</p>*|END:IF|*
-                      </div>
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-          </td>
-        </tr>
-        *|ELSE:|*
-        <tr class="background-green">
-          <td colspan="2">
-            <p class="text-center"><b>Resumen</b> de la reserva</p>
-          </td>
-        </tr>
-        <tr class="background-green">
-          <td colspan="2">
-            <div class="responsive-table">
-              <table class="table table-booking">
-                <tbody>
-                  <tr>
-                    <td>
-                      <div class="icon-box">
-                        <img src="http://agendapro.cl/assets/email/what.png" alt="¿Qué Reservaste?">
-                      </div>
-                      <div class="text-box">
-                        <p style="color: #ffffff;"><b>¿Qué Reservaron?</b></p>
-                        <p>*|SERVICENAME|*</p>
-                      </div>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td>
-                      <div class="icon-box">
-                        <img src="http://agendapro.cl/assets/email/when.png" alt="¿Cuando?">
-                      </div>
-                      <div class="text-box">
-                        <p style="color: #ffffff;"><b>¿Cuándo?</b></p>
-                        <p>*|BSTART|*</p>
-                      </div>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td>
-                      <div class="icon-box">
-                        <img src="http://agendapro.cl/assets/email/who.png" alt="¿Con Quien?">
-                      </div>
-                      <div class="text-box">
-                        <p style="color: #ffffff;"><b>¿Quien?</b></p>
-                        <p>*|CLIENTNAME|*</p>
-                      </div>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td>
-                      <div class="icon-box">
-                        <img src="http://agendapro.cl/assets/email/notes.png" alt="Notas">
-                      </div>
-                      <div class="text-box">
-                        <p style="color: #ffffff;"><b>Notas</b></p>
-                        *|IF:BNOTES|*<p>*|BNOTES|*</p>*|END:IF|*
-                        *|IF:COMPANYCOMMENT|*<p>*|COMPANYCOMMENT|*</p>*|END:IF|*
-                      </div>
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-          </td>
-        </tr>
-        *|END:IF|*
-        *|IF:SIGNATURE|*
-        <tr>
-          <td colspan="2">
-            <p>*|SIGNATURE|*</p>
-          </td>
-        </tr>
-        *|END:IF|*
         <!-- End: Content -->
 
         <!-- Start: Footer -->

@@ -1,6 +1,6 @@
 Agendapro::Application.configure do
   # Se setea el host por defecto en production. Ojo de cambiarlo a mano en bambucalendar
-  Rails.application.routes.default_url_options[:host] = 'agendapro.cl'
+  Rails.application.routes.default_url_options[:host] = ENV["DEFAULT_URL_OPTIONS"]
   
   # Settings specified here will take precedence over those in config/application.rb.
 
@@ -67,7 +67,7 @@ Agendapro::Application.configure do
   # Ignore bad email addresses and do not raise email delivery errors.
   # Set this to true and configure the email server for immediate delivery to raise delivery errors.
 
-  config.action_mailer.default_url_options = { :host => 'www.agendapro.cl' }
+  config.action_mailer.default_url_options = { :host => ENV["DEFAULT_URL_OPTIONS"] }
   config.action_mailer.delivery_method = :smtp
   config.action_mailer.perform_deliveries = true
   config.action_mailer.raise_delivery_errors = true
