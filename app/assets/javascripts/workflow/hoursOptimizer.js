@@ -146,6 +146,9 @@ function loadHours () {
       );
       bookings.push(hour.bookings);
     });
+    if (hours_array.length == 0) {
+      $('#selectHour').append('<p class="text-center">No encontramos horarios disponibles</p>');
+    };
   });
 }
 

@@ -1484,7 +1484,7 @@ class BookingsController < ApplicationController
         # Horario dentro del horario del provider
         if service_valid
           providers = []
-          if serviceStaff[serviceStaffPos][:provider] != 0
+          if serviceStaff[serviceStaffPos][:provider] != "0"
             providers << ServiceProvider.find(serviceStaff[serviceStaffPos][:provider])
           else
             providers = ServiceProvider.where(id: service.service_providers.pluck(:id), location_id: local.id, active: true).order(order: :desc).sort_by {|service_provider| service_provider.provider_booking_day_occupation(dateTimePointer) }
@@ -1566,7 +1566,7 @@ class BookingsController < ApplicationController
                 :end => dateTimePointer + service.duration.minutes,
                 :service_name => service.name,
                 :provider_name => provider.public_name,
-                :provider_lock => serviceStaff[serviceStaffPos][:provider] != 0,
+                :provider_lock => serviceStaff[serviceStaffPos][:provider] != "0",
               }
               serviceStaffPos += 1
               dateTimePointer += service.duration.minutes
