@@ -11,13 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-<<<<<<< HEAD
-ActiveRecord::Schema.define(version: 20150204160735) do
-=======
-
-ActiveRecord::Schema.define(version: 20150204160735) do
-
->>>>>>> 22b3dc1c2a905dc3ee2519bf69d3243c1c2175da
+ActiveRecord::Schema.define(version: 20150210231701) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -257,10 +251,7 @@ ActiveRecord::Schema.define(version: 20150204160735) do
     t.integer  "deal_constraint_option",      default: 0
     t.integer  "deal_constraint_quantity",    default: 0
     t.boolean  "deal_identification_number",  default: false
-<<<<<<< HEAD
     t.boolean  "deal_required",               default: false,                 null: false
-=======
->>>>>>> 22b3dc1c2a905dc3ee2519bf69d3243c1c2175da
   end
 
   add_index "company_settings", ["company_id"], name: "index_company_settings_on_company_id", using: :btree
@@ -290,10 +281,6 @@ ActiveRecord::Schema.define(version: 20150204160735) do
 
   add_index "deals", ["company_id"], name: "index_deals_on_company_id", using: :btree
 
-<<<<<<< HEAD
-=======
-
->>>>>>> 22b3dc1c2a905dc3ee2519bf69d3243c1c2175da
   create_table "delayed_jobs", force: true do |t|
     t.integer  "priority",   default: 0, null: false
     t.integer  "attempts",   default: 0, null: false

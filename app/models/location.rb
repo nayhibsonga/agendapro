@@ -52,12 +52,10 @@ class Location < ActiveRecord::Base
                     :trigram => {
                       	:threshold => 0.1,
                       	:prefix => true,
-                    	:dictionary => 'spanish',
                     	:any_word => true
                     },
                     :tsearch => {
                     	:prefix => true,
-                    	:dictionary => 'spanish',
                     	:any_word => true
                     }
         },
