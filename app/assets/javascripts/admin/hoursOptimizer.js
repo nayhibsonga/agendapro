@@ -12,6 +12,8 @@ var bookings = []
 
 // Functions
 function loadServiceModal () {
+  $('#addButton').prop('disabled', true);
+  $('#nextButton').prop('disabled', true);
   $('#selectHour').hide();
   $('#hoursOptimizer #new_booking').hide();
   $('#serviceOptimizer').empty();
@@ -22,6 +24,8 @@ function loadServiceModal () {
 
   $('#addButton').off('click'); // Unbind click event
   $('#addButton').click(function (e) {
+    $('#addButton').prop('disabled', true);
+    $('#nextButton').prop('disabled', true);
     loadService();
   }); // Bind click event
 
@@ -67,6 +71,9 @@ function loadService () {
     loadStaff('select[name="serviceOptimizerSelector"]:last');
 
     $('#serviceOptimizer > p').remove();
+  }).always(function () {
+    $('#addButton').prop('disabled', false);
+    $('#nextButton').prop('disabled', false);
   });
 }
 
@@ -106,10 +113,12 @@ function loadHourModal () {
   $('#optimizerTitle').html(hourTitle);
   $('#addButton > span').html(hourButton);
 
+  $('#addButton').prop('disabled', true);
   loadHours();
 
   $('#addButton').off('click'); // Unbind click event
   $('#addButton').click(function (e) {
+    $('#addButton').prop('disabled', true);
     resultsLength += 6;
     $('#selectHour').empty();
     loadHours();
@@ -136,7 +145,7 @@ function loadHours () {
       provider: provider.val()
     });
   });
-  $.getJSON('/optimizer_hours', { local: localId, serviceStaff: JSON.stringify(selects), resultsLength: resultsLength }, function (hours_array) {
+  $.getJSON('/optimizer_hours', { local: localId, serviceStaff: JSON.stringify(selects), resultsLength: resultsLength, admin: true }, function (hours_array) {
     $('#selectHour > p').remove();
     $.each(hours_array, function (pos, hour) {
       $('#selectHour').append(
@@ -154,6 +163,8 @@ function loadHours () {
     if (hours_array.length == 0) {
       $('#selectHour').append('<p class="text-center">No encontramos horarios disponibles</p>');
     };
+  }).always(function () {
+    $('#addButton').prop('disabled', false);
   });
 }
 

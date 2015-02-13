@@ -1463,7 +1463,11 @@ class BookingsController < ApplicationController
         service_valid = false
         service = Service.find(serviceStaff[serviceStaffPos][:service])
 
-        if dateTimePointer >= now + company_setting.before_booking.hours
+        minHour = now
+        if not params[:admin]
+          minHour += company_setting.before_booking.hours
+        end
+        if dateTimePointer >= minHour
           service_valid = true
         end
 
@@ -1583,7 +1587,7 @@ class BookingsController < ApplicationController
         end
       end
 
-      if bookings.length > 0
+      if bookings.length > 0 and (dateTimePointer <=> now + company_setting.after_booking.month) == -1
         @hours_array << {
           :date => I18n.l(bookings[0][:start].to_date, format: :day_short),
           :hour => I18n.l(bookings[0][:start].to_datetime, format: :hour) + ' - ' + I18n.l(bookings[bookings.length - 1][:end].to_datetime, format: :hour) + ' Hrs',
