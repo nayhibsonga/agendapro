@@ -1567,6 +1567,7 @@ class BookingsController < ApplicationController
                 :service_name => service.name,
                 :provider_name => provider.public_name,
                 :provider_lock => serviceStaff[serviceStaffPos][:provider] != "0",
+                :price => service.price
               }
               serviceStaffPos += 1
               dateTimePointer += service.duration.minutes

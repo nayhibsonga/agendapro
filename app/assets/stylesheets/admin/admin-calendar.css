@@ -89,7 +89,7 @@ header{
 	overflow-x: hidden;
 }*/
 .auto-desc {
-	font-size: 0.75em; 
+	font-size: 0.75em;
 }
 .fc-event {
 	border-radius: 4px;
@@ -280,7 +280,7 @@ body .modal-admin {
 	padding: 10px;
 }
 
-/************************************************************ 
+/************************************************************
  *							Slider							*
  ************************************************************/
 .slider {
@@ -390,7 +390,7 @@ a.print-schedule {
 }*/
 
 /* Menu responsivo */
-@media (max-width: 1280px) { 
+@media (max-width: 1280px) {
 	#dp {
 		font-size: 0.65em;
 		font-size: 0.875vw;
@@ -417,7 +417,7 @@ a.print-schedule {
 		font-size: 12px;
 	}
 }
-@media (max-width: 1023px) { 
+@media (max-width: 1023px) {
 	#dp {
 		display: none;
 	}
@@ -439,4 +439,37 @@ a.print-schedule {
 	.btn-text {
 		display: none;
 	}
+}
+
+.fa-spin {
+  -webkit-animation: spin 1s infinite linear;
+  -moz-animation: spin 1s infinite linear;
+  -o-animation: spin 1s infinite linear;
+  animation: spin 1s infinite linear;
+}
+
+/* Hour Optimizer */
+.fa-green {
+	color: #22c488;
+}
+
+#selectHour > label {
+	width: 33%;
+}
+
+#selectHour > .checkbox-inline {
+	color: #949292;
+	border-right: 1px solid #949292;
+	padding-left: 15px;
+	margin-bottom: 12px;
+}
+#selectHour > .checkbox-inline + .checkbox-inline {
+	margin-left: 0;
+}
+
+#selectHour > .checkbox-inline > p {
+	display: inline-block;
+	vertical-align: top;
+	margin: 0 10px 0 5px;
+	font-size: 15px;
 }
