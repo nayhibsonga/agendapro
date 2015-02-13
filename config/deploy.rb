@@ -10,7 +10,7 @@ set :deploy_to, '/home/agendapro/development-sh'
 
 set :branch, 'development-sh'
 
-set :linked_files, %w{config/database.yml}
+set :linked_files, %w{config/database.yml config/local_env.yml}
 
 #Cambiar esto para que se copien los bins y otros.
 
