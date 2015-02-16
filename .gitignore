@@ -46,3 +46,11 @@ public/assets/
 *.crt
 *.csr
 *.key
+
+# Archivos de Capistrano
+.capistrano/
+.capistrano/*
+Capfile
+config/deploy.rb
+config/deploy/
+config/deploy/*
