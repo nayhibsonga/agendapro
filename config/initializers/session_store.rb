@@ -2,4 +2,3 @@
 
 Agendapro::Application.config.session_store :cookie_store, key: '_agendapro_session', :domain => ENV["SESSION_STORE_URL"]
 
-
