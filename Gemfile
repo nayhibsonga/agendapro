@@ -151,3 +151,6 @@ gem 'pg_search'
 
 #Librería para generar datos para el seed
 gem 'faker'
+
+#New Relic
+gem 'newrelic_rpm'

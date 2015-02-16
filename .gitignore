@@ -42,6 +42,9 @@ public/assets/
 # Configuración DB
 /config/database.yml
 
+# Archivo de configuración de New Relic
+/config/newrelic.yml
+
 # Archivos de certificado SSL
 *.crt
 *.csr
