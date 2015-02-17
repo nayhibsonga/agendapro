@@ -479,9 +479,20 @@ function editBookingModal(eventId) {
 				$('#booking_send_mail').prop('disabled', false);
 				$('label[for=booking_send_mail]').removeClass('disabled');
 			}
+
 			else {
 				$('#booking_send_mail').prop('disabled', true);
 				$('label[for=booking_send_mail]').addClass('disabled');
+			}
+			if(booking.payed)
+			{
+				$("#is_prepayed").empty();
+				$("#is_prepayed").append("Sí");
+			}
+			else
+			{
+				$("#is_prepayed").empty();
+				$("#is_prepayed").append("No");
 			}
 			$('.booking-modal-title').empty();
 			$('.booking-modal-footer').empty();
