@@ -6,7 +6,7 @@ set :application, 'agendapro-railsweb'
 
 set :repo_url, 'https://agendapro:G*g8~1GEQ]@bitbucket.org/agendapro/agendapro-railsweb'
 
-set :deploy_to, '/home/agendapro/web_app'
+set :deploy_to, '/home/agendapro/development'
 
 set :branch, 'development-test'
 
@@ -16,17 +16,19 @@ set :linked_files, %w{config/database.yml config/local_env.yml}
 
 set :linked_dirs, %w{log tmp/pids tmp/cache tmp/sockets vendor/bundle public/system}
 
+set :keep_releases, 2
+
 namespace :deploy do
 
- desc 'Restart application'
+   desc 'Restart application'
 
- task :restart do
+   task :restart do
 
- on roles(:app), in: :sequence, wait: 5 do
+     on roles(:app), in: :sequence, wait: 5 do
 
- execute :touch, release_path.join('tmp/restart.txt')
+      execute :touch, release_path.join('tmp/restart.txt')
 
- end
+   end
 
  end
 
