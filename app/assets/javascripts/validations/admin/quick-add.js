@@ -55,10 +55,15 @@ $(function() {
 			else if (element.attr('id') == 'service_capacity') {
 				error.appendTo(element.parent().next());
 			}
+			else if (element.attr('id') == 'service_discount') {
+				error.appendTo(element.parent().next());
+			}
 			else {
 				error.appendTo(element.next());
 			}
+			var oldTop = $(document).scrollTop();
 			$('#foo5').trigger('updateSizes');
+			$(document).scrollTop(oldTop);
 		},
 		rules: {
 			'service[name]': {

@@ -163,7 +163,8 @@ function loadResourcesCalendar (startTime, endTime, hiddenDays, resourcesArray, 
 						'Servicio: ' + event.service_qtip + '<br/>' +
 						'Teléfono: ' + event.phone_qtip + '<br/>' +
 						'E-mail: ' + event.email_qtip + '<br/>' +
-						'Comentario: ' + event.comment_qtip
+						'Comentario: ' + event.comment_qtip + '<br />' +
+						'Pagado en línea: ' + event.prepayed_qtip
 				   },
 				   position: {
 						my: 'bottom center',  // el triángulo sale de abajo al medio
@@ -299,7 +300,8 @@ function loadWeekCalendar (startTime, endTime, hiddenDays, resourcesArray, provi
 								   'Servicio: ' + event.service_qtip + '<br/>' +
 								   'Teléfono: ' + event.phone_qtip + '<br/>' +
 								   'E-mail: ' + event.email_qtip + '<br/>' +
-								   'Comentario: ' + event.comment_qtip
+								   'Comentario: ' + event.comment_qtip + '<br />' +
+								   'Pagado en línea: ' + event.prepayed_qtip
 					   },
 					   position: {
 						   my: 'bottom center',  // el triángulo sale de abajo al medio
@@ -479,10 +481,23 @@ function editBookingModal(eventId) {
 				$('#booking_send_mail').prop('disabled', false);
 				$('label[for=booking_send_mail]').removeClass('disabled');
 			}
+
 			else {
 				$('#booking_send_mail').prop('disabled', true);
 				$('label[for=booking_send_mail]').addClass('disabled');
 			}
+
+			if(booking.payed)
+			{
+				$("#is_prepayed").empty();
+				$("#is_prepayed").append("Sí");
+			}
+			else
+			{
+				$("#is_prepayed").empty();
+				$("#is_prepayed").append("No");
+			}
+			
 			$('.booking-modal-title').empty();
 			$('.booking-modal-footer').empty();
 			$('.booking-modal-title').append('Editando Reserva');

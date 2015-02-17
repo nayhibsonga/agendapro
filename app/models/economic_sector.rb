@@ -1,4 +1,5 @@
 class EconomicSector < ActiveRecord::Base
+
 	has_many :company_economic_sectors
 	has_many :companies, :through => :company_economic_sectors
 	has_many :tags, dependent: :destroy

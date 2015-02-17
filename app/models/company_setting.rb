@@ -1,5 +1,9 @@
 class CompanySetting < ActiveRecord::Base
 	belongs_to :company
+	has_one :online_cancelation_policy
+	belongs_to :bank
+	
+	accepts_nested_attributes_for :online_cancelation_policy
 
 	#validates :email, :sms, :presence => true
 	validate after_commit :extended_schedule

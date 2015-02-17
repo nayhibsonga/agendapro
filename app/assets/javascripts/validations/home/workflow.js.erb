@@ -20,7 +20,8 @@ $(function() {
 				minlength: 2
 			},
 			deal_code: {
-				required: true
+				required: $('#dealCode').data('deal-required'),
+				rut: $('#dealCode').data('deal-identification-number')
 			},
 			address: {
 				minlength: 3
@@ -38,7 +39,35 @@ $(function() {
 		submitHandler: function(form) {
 			$('#submitBtn').attr("disabled", "disabled");
 			$('#submitBtn').html('Cargando...');
-			form.submit();
+			if($("#payment").val()=="1")
+			{
+				var is_selected = false;
+				$('.mp_radio').each(function(){
+				if($(this).prop('checked'))
+					{
+						is_selected = true;
+						console.log(is_selected);
+					}
+				});
+				if(is_selected)
+				{
+					$('.modal-pay').attr("disabled", "disabled");
+					$('.submitBtn').attr("disabled", "disabled");
+					$('.payBtn').attr("disabled", "disabled");
+					form.submit();
+				}
+				else
+				{
+					$("#medio-de-pago").modal('show');
+				}
+		  	}
+		  	else
+		  	{
+		  		$('.modal-pay').attr("disabled", "disabled");
+				$('.submitBtn').attr("disabled", "disabled");
+				$('.payBtn').attr("disabled", "disabled");
+		  		form.submit();
+		  	}
 		}
 	});
 	$('#identification_number').change(function() {

@@ -1,4 +1,3 @@
-<% if ["billing","plan"].include? @success_page %>
 <div class="main">
 	<br />
     <section class="pricing_wrapper">
@@ -7,6 +6,7 @@
 				<div class="row">
 					<div class="col-md-7">
 						<hr>
+					<% if @success_page == "billing" or @success_page == "plan" %>
 						<% if @success_page == "billing" %>
 						<h4>Resumen de tu Pago</h4>
 						<dl class="dl-horizontal">
@@ -57,7 +57,72 @@
 					        <dd><%= number_to_currency(-1*@company.due_amount, {:unit => '$', :separator => ',', :delimiter => '.', :precision => 0})%> CLP</dd>
 					        <% end %>
 						</dl>
+					<% else %>
+
+						<% if @booking.payed_booking.nil? || @booking.payed_booking.punto_pagos_confirmation.nil? %>
+
+
+							<h4>Tu transferencia está siendo procesada.</h4>
+							<div style="margin-top: 20px; margin-left: 50px;">
+								<%= image_tag "ajax-loader.gif", :alt => "Loader" %>
+							</div>
+							<script type="text/javascript">
+								$(document).ready(function(){
+									setTimeout(function(){
+									   window.location.reload(1);
+									}, 3000);
+								});
+							</script>
+							<!--<h4>Espera unos segundos y haz click <%= link_to "aquí", '/punto_pagos/success/'+@token %> para confirmar el pago.</h4>-->
+
+						<% else %>
+							<h4>Tu transferencia se ha efectuado de manera satisfactoria.</h4>
+
+							<dl class="dl-horizontal">
+								<dt>
+									Comercio:
+								</dt>
+								<dd>
+									<%= @booking.location.company.name %>
+								</dd>
+								<dt>
+									Total a pagar:
+								</dt>
+								<dd>
+									$<%= @booking.payed_booking.punto_pagos_confirmation.amount %>
+								</dd>
+								<dt>
+									Número de tarjeta:
+								</dt>
+								<dd>
+									**********<%= @booking.payed_booking.punto_pagos_confirmation.card_number %>
+								</dd>
+								<dt>
+									Orden de compra:
+								</dt>
+								<dd>
+									<%= @booking.payed_booking.punto_pagos_confirmation.operation_number %>
+								</dd>
+								<dt>
+									Código de autorización:
+								</dt>
+								<dd>
+									<%= @booking.payed_booking.punto_pagos_confirmation.authorization_code %>
+								</dd>
+								<dt>
+									Fecha:
+								</dt>
+								<dd>
+									<%= @booking.payed_booking.punto_pagos_confirmation.approvement_date %>
+								</dd>
+
+							</dl>
+
+						<% end %>
+
+					<% end %>
 					</div>
+
 					<div class="col-md-5">
 						<%= image_tag("backgrounds/icono_reserva2.png", :class => "center-block", size: "232x253") %>
 					</div>
@@ -66,4 +131,3 @@
         </div>
     </section>
 </div>
-<% end %>
