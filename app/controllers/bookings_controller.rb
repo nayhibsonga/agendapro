@@ -39,7 +39,11 @@ class BookingsController < ApplicationController
   # GET /bookings/1.json
   def show
     u = @booking
-    @booking_json = { :id => u.id, :start => u.start, :end => u.end, :service_id => u.service_id, :service_provider_id => u.service_provider_id, :price => u.price, :status_id => u.status_id, :client_id => u.client.id, :first_name => u.client.first_name, :last_name => u.client.last_name, :email => u.client.email, :phone => u.client.phone, :identification_number => u.client.identification_number, :send_mail => u.send_mail, :provider_lock => u.provider_lock, :notes => u.notes,  :company_comment => u.company_comment, :service_provider_active => u.service_provider.active, :service_active => u.service.active, :service_provider_name => u.service_provider.public_name, :service_name => u.service.name, :address => u.client.address, :district => u.client.district, :city => u.client.city, :birth_day => u.client.birth_day, :birth_month => u.client.birth_month, :birth_year => u.client.birth_year, :age => u.client.age, :gender => u.client.gender, deal_code: @booking.deal.nil? ? nil : @booking.deal.code }
+    is_payed = false
+    if u.payed && !u.payed_booking.nil?
+      is_payed = true
+    end
+    @booking_json = { :id => u.id, :start => u.start, :end => u.end, :service_id => u.service_id, :service_provider_id => u.service_provider_id, :price => u.price, :status_id => u.status_id, :client_id => u.client.id, :first_name => u.client.first_name, :last_name => u.client.last_name, :email => u.client.email, :phone => u.client.phone, :identification_number => u.client.identification_number, :send_mail => u.send_mail, :provider_lock => u.provider_lock, :notes => u.notes,  :company_comment => u.company_comment, :service_provider_active => u.service_provider.active, :service_active => u.service.active, :service_provider_name => u.service_provider.public_name, :service_name => u.service.name, :address => u.client.address, :district => u.client.district, :city => u.client.city, :birth_day => u.client.birth_day, :birth_month => u.client.birth_month, :birth_year => u.client.birth_year, :age => u.client.age, :gender => u.client.gender, deal_code: @booking.deal.nil? ? nil : @booking.deal.code, :payed => is_payed }
     respond_to do |format|
       format.html { }
       format.json { render :json => @booking_json }
@@ -403,6 +407,7 @@ class BookingsController < ApplicationController
         phone = ''
         email = ''
         comment = ''
+        prepayed = ''
 
         if booking.client.first_name
           title += booking.client.first_name
@@ -430,6 +435,12 @@ class BookingsController < ApplicationController
           comment = booking.company_comment
         end
 
+        if !booking.payed_booking.nil? && booking.payed
+          prepayed = 'Sí'
+        else
+          prepayed = 'No'
+        end
+
         event = {
           id: booking.id,
           title: title,
@@ -446,7 +457,8 @@ class BookingsController < ApplicationController
           service_qtip: booking.service.name,
           phone_qtip: phone,
           email_qtip: email,
-          comment_qtip: comment
+          comment_qtip: comment,
+          prepayed_qtip: prepayed
         }
         events.push(event)
       end

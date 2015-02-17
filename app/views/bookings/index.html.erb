@@ -233,6 +233,14 @@
 									</div>
 									<% end %>
 									<div class="form-group">
+										<%= f.label :payed, "Pagado en línea", class: "col-sm-4 control-label" %>
+										<div class="col-sm-8">
+											<div class="input-group" id="is_prepayed">
+												
+											</div>
+										</div>
+									</div>
+									<div class="form-group">
 										<%= f.label :status, "Estado", class: "col-sm-4 control-label" %>
 										<div class="col-sm-8">
 											<%= f.collection_select :status_id, Status.all.order(:name), :id, :name, {selected: Status.find_by_name( 'Reservado').id}, { class: "form-control" }%>

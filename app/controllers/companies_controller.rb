@@ -284,6 +284,7 @@ class CompaniesController < ApplicationController
 			@bookings[i] = Hash.new
 			@bookings[i]['month'] = ""
 			@bookings[i]['count'] = 0
+			@bookings[i]['web'] = 0
 		end
 
 		@bookings[1]['month'] = "Enero"
