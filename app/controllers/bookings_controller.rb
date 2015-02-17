@@ -403,6 +403,7 @@ class BookingsController < ApplicationController
         phone = ''
         email = ''
         comment = ''
+        prepayed = ''
 
         if booking.client.first_name
           title += booking.client.first_name
@@ -430,6 +431,12 @@ class BookingsController < ApplicationController
           comment = booking.company_comment
         end
 
+        if !booking.payed_booking.nil? && booking.payed
+          prepayed = 'Sí'
+        else
+          prepayed = 'No'
+        end
+
         event = {
           id: booking.id,
           title: title,
@@ -446,7 +453,8 @@ class BookingsController < ApplicationController
           service_qtip: booking.service.name,
           phone_qtip: phone,
           email_qtip: email,
-          comment_qtip: comment
+          comment_qtip: comment,
+          prepayed_qtip: prepayed
         }
         events.push(event)
       end
