@@ -54,8 +54,6 @@ class SearchsController < ApplicationController
 			locs = Array.new
 			ordered_locs = Array.new
 
-			logger.info "IMPORTANT Results count: " + query.count.to_s
-
 			if query.count > 10
 
 				count = (query.count / 10).ceil
@@ -97,30 +95,41 @@ class SearchsController < ApplicationController
 			unowned_query = Location.search(normalized_search).where(id: ServiceProvider.where(active: true).pluck('location_id')).where(company_id: Company.where(:active => true, :owned => false).where(id: CompanySetting.where(:activate_search => true, :activate_workflow => true).pluck('company_id'))).where(:active => true).where('sqrt((latitude - ' + lat.to_s + ')^2 + (longitude - ' + long.to_s + ')^2) < 0.25')
 
 			unowned_locs = Array.new
-
-			count = (unowned_query.count / 10).ceil
-			unowned_results = Array.new
-
-			for i in 0..count-1
-				group = unowned_query[i*10, (i+1)*10]
-				unowned_results << group
-			end
-
-			j = 0
-			unowned_results.each do |result|
-				unowned_locs[j] = Array.new
-				result.each do |location|
-					dist_score = Math.sqrt((location.latitude - lat.to_f)**2 + (location.longitude - long.to_f)**2)
-					local = [location, dist_score]
-					unowned_locs[j].push(local)
-				end
-				j = j+1
-			end
-
 			unowned_ordered_locs = Array.new
 
-			for i in 0..j-1
-				unowned_ordered_locs[i] = unowned_locs[i].sort_by{ |loc| loc[1]}
+
+			if query.count > 10
+
+				count = (unowned_query.count / 10).ceil
+				unowned_results = Array.new
+
+				for i in 0..count-1
+					unowned_group = query[i*10, (i+1)*10]
+					unowned_results << unowned_group
+				end
+
+				j = 0
+				unowned_results.each do |unowned_result|
+					unowned_locs[j] = Array.new
+					unowned_result.each do |location|
+						dist_score = Math.sqrt((location.latitude - lat.to_f)**2 + (location.longitude - long.to_f)**2)
+						local = [location, dist_score]
+						unowned_locs[j].push(local)
+					end
+					j = j+1
+				end
+
+				for i in 0..j-1
+					unowned_ordered_locs[i] = unowned_locs[i].sort_by{ |loc| loc[1]}
+				end
+
+			else
+				unowned_query.each do |location|
+					dist_score = Math.sqrt((location.latitude - lat.to_f)**2 + (location.longitude - long.to_f)**2)
+					local = [location, dist_score]
+					unowned_locs.push(local)
+				end
+				unowned_ordered_locs[0] = unowned_locs.sort_by{ |loc| loc[1]}
 			end
 
 
