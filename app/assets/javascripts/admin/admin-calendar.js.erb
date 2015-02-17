@@ -484,6 +484,7 @@ function editBookingModal(eventId) {
 				$('#booking_send_mail').prop('disabled', true);
 				$('label[for=booking_send_mail]').addClass('disabled');
 			}
+
 			if(booking.payed)
 			{
 				$("#is_prepayed").empty();
@@ -494,6 +495,7 @@ function editBookingModal(eventId) {
 				$("#is_prepayed").empty();
 				$("#is_prepayed").append("No");
 			}
+			
 			$('.booking-modal-title').empty();
 			$('.booking-modal-footer').empty();
 			$('.booking-modal-title').append('Editando Reserva');
