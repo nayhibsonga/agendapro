@@ -25,13 +25,21 @@ class CompanyFromEmailMailer < ActionMailer::Base
 				{
 					:name => 'CONFIRM',
 					:content => confirm_email_url(:confirmation_code => email.confirmation_code)
+				},
+				{
+					:name => 'COMPANYNAME',
+					:content => Company.find(current_user.company_id).name
+				},
+				{
+					:name => 'URL',
+					:content => Company.find(current_user.company_id).web_address
 				}
 			],
 			:tags => ['companysetting'],
 			:images => [
 				{
 					:type => 'image/png',
-					:name => 'agendapro.png',
+					:name => 'LOGO',
 					:content => Base64.encode64(File.read('app/assets/images/logos/logodoble2.png'))
 				}
 			]

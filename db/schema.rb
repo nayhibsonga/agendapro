@@ -230,10 +230,13 @@ ActiveRecord::Schema.define(version: 20150204183022) do
     t.boolean  "provider_overcapacity",       default: true,                  null: false
     t.boolean  "resource_overcapacity",       default: true,                  null: false
     t.integer  "booking_confirmation_time",   default: 1,                     null: false
-    t.integer  "booking_configuration_email", default: 0
-    t.integer  "max_changes",                 default: 2
     t.boolean  "booking_history",             default: false
     t.boolean  "staff_code",                  default: false
+    t.integer  "booking_configuration_email", default: 0
+    t.integer  "max_changes",                 default: 2
+    t.boolean  "deal_activate",               default: false
+    t.string   "deal_name"
+    t.boolean  "deal_overcharge",             default: true
     t.integer  "monthly_mails",               default: 0,                     null: false
     t.boolean  "deal_activate",               default: false
     t.string   "deal_name"
