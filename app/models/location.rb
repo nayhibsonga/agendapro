@@ -40,26 +40,41 @@ class Location < ActiveRecord::Base
 
 	after_commit :extended_schedule
 
+	pg_search_scope :search_company_name, :associated_against => {
+		:company => :name
+	},
+	:using => {
+                :trigram => {
+                  	:threshold => 0.1,
+                  	:prefix => true,
+                	:any_word => true
+                },
+                :tsearch => {
+                	:prefix => true,
+                	:any_word => true
+                }
+    },
+    :ignoring => :accents
 
 	pg_search_scope :search, :associated_against => {
-		:company => :name,
-		:services => :name,
-		:economic_sectors => :name,
-		:economic_sectors_dictionaries => :name,
-		:service_categories => :name
-		},
-		:using => {
-                    :trigram => {
-                      	:threshold => 0.1,
-                      	:prefix => true,
-                    	:any_word => true
-                    },
-                    :tsearch => {
-                    	:prefix => true,
-                    	:any_word => true
-                    }
-        },
-        :ignoring => :accents
+	:company => :name,
+	:services => :name,
+	:economic_sectors => :name,
+	:economic_sectors_dictionaries => :name,
+	:service_categories => :name
+	},
+	:using => {
+                :trigram => {
+                  	:threshold => 0.1,
+                  	:prefix => true,
+                	:any_word => true
+                },
+                :tsearch => {
+                	:prefix => true,
+                	:any_word => true
+                }
+    },
+    :ignoring => :accents
 
 
 	def extended_schedule
