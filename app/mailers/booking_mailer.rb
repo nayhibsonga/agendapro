@@ -957,7 +957,7 @@ class BookingMailer < ActionMailer::Base
 			:global_merge_vars => [
 				{
 					:name => 'COMPANYNAME',
-					:content => owner.company.name
+					:content => payed_booking.booking.location.company.name
 				},
 				{
 					:name => 'CLIENT',
