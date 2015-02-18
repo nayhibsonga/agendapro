@@ -36,6 +36,11 @@ module Agendapro
       YAML.load_file(env_file).each do |key, value|
         ENV[key.to_s] = value
       end if File.exists?(env_file)
+
+      puts ENV["PUNTO_PAGOS_API_ENV_PROD"]
+      puts ENV["PUNTO_PAGOS_API_KEY_PROD"]
+      puts ENV["PUNTO_PAGOS_API_SECRET_PROD"]
+      
     end
 
     # Settings in config/environments/* take precedence over those specified here.
