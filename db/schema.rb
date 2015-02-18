@@ -107,10 +107,10 @@ ActiveRecord::Schema.define(version: 20150210231701) do
     t.float    "price",               default: 0.0
     t.boolean  "provider_lock",       default: false
     t.integer  "max_changes",         default: 2
-    t.integer  "deal_id"
     t.boolean  "payed",               default: false
     t.string   "trx_id",              default: ""
     t.string   "token",               default: ""
+    t.integer  "deal_id"
   end
 
   add_index "bookings", ["client_id"], name: "index_bookings_on_client_id", using: :btree

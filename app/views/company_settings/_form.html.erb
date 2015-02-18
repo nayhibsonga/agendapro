@@ -138,7 +138,7 @@
           <li><strong>E-mails: </strong>En esta sección puedes configurar la dirección desde donde se envían los correos masivos (Remitentes) y la firma que se adjuntará en tus e-mails.</li><br />
           <li><strong>Periodo AgendaPro: </strong>En esta sección puedes configurar el Tiempo Mínimo de Reserva y el Tiempo Máximo a futuro, además de la cantidad de horas mínimas necesarias para que tus clientes puedan modificar o cancelar una reserva.</li><br />
           <li><strong>Facebook: </strong>En esta sección puedes seguir las instrucciones para permitir reservas por Facebook, agregando una pestaña a la página de tu empresa.</li><br />
-          <li><strong>Facebook: </strong>En esta sección puedes seguir las instrucciones para permitir reservas por Facebook, agregando una pestaña a la página de tu empresa..</li><br />
+          <li><strong>Facebook: </strong>En esta sección puedes definir c.</li><br />
           <li><strong>Link AgendaPro: </strong>En esta sección puedes obtener el Link AgendaPro, el cual te permitirá insertar el link a tu mini-sitio en cualquier otro sitio web que tengas. Hay varias opciones para que elijas la que más te acomoda.</li>
         </ol>
       </div>
@@ -189,12 +189,6 @@
             <%= image_tag @company.logo_url.to_s, :size => "80x80", :alt => @company.name %>
             <% end %>
           </div>
-          <div class="form-group">
-            <%= f.label :cancellation_policy, 'Política de Cancelación', :class => 'col-sm-3 control-label' %>
-            <div class="col-sm-5">
-              <%= f.text_area :cancellation_policy, :class => 'form-control', :rows => "7" %>
-            </div>
-          </div>
           <div class="form-group has-feedback">
             <%= f.label :economic_sector_ids, 'Sector Económico', :class => 'col-sm-3 control-label' %>
             <div class="col-sm-5">
@@ -220,7 +214,7 @@
         <% end %>
       </div>
     </div>
-        <div class="tab-pane" id="online-payment">
+            <div class="tab-pane" id="online-payment">
       <!-- PAGO EN LÍNEA -->
 
       <div class="row">
@@ -909,12 +903,7 @@
 </div>
 
 <% content_for :scripts do %>
-  <%= javascript_include_tag 'validations/validate' %>
-  <%= javascript_include_tag 'validations/admin/company-edit' %>
-  <%= javascript_include_tag 'validations/admin/company-email' %>
-  <%= javascript_include_tag 'validations/admin/time-booking' %>
-  <%= javascript_include_tag "admin/link_agendapro" %>
-  <%= javascript_include_tag 'ckeditor/init' %>
+  <%= javascript_include_tag "admin/company_settings" %>
   <script type="text/javascript">
     var web_address = '<%= @web_address %>';
     $(function () {
@@ -934,8 +923,23 @@
         $('.fa.fa-times').removeClass('fa fa-times');
       });
 
+      if($('#company_setting_allows_online_payment').prop('checked')) {
+        $(".account-info").removeClass("hidden");
+        if($("#company_setting_bank :selected").text() == "Otro") {
+          $("#other-bank").removeClass("hidden");
+          $(".account-data").addClass("hidden");
+        } else {
+          $("#other-bank").addClass("hidden");
+          $(".account-data").removeClass("hidden");
+        }
+      } else {
+        $(".account-info").addClass("hidden");
+        $("#other-bank").addClass("hidden");
+      }
+
       CKEDITOR.replace(company_setting_signature);
     });
+<<<<<<< HEAD
   </script>
 
   <script type="text/javascript">
@@ -1138,4 +1142,33 @@
 	var web_address = '<%= @web_address %>';
 	</script>
 	<%= javascript_include_tag "admin/link_agendapro" %>
+=======
+
+    $("#company_setting_allows_online_payment").change(function(){
+      if($('#company_setting_allows_online_payment').prop('checked')) {
+        $(".account-info").removeClass("hidden");
+        if($("#company_setting_bank :selected").text() == "Otro") {
+          $("#other-bank").removeClass("hidden");
+          $(".account-data").addClass("hidden");
+        } else {
+          $("#other-bank").addClass("hidden");
+          $(".account-data").removeClass("hidden");
+        }
+      } else {
+        $("#other-bank").addClass("hidden");
+        $(".account-info").addClass("hidden");
+      }
+    });
+
+    $("#company_setting_bank").change(function(){
+      if($("#company_setting_bank :selected").text() == "Otro") {
+        $("#other-bank").removeClass("hidden");
+        $(".account-data").addClass("hidden");
+      } else {
+        $("#other-bank").addClass("hidden");
+        $(".account-data").removeClass("hidden");
+      }
+    });
+  </script>
+>>>>>>> 7e39b767a74264b2bac6b1ba5799ce83da1aca5c
 <% end %>
