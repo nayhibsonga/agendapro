@@ -40,17 +40,6 @@ class Booking < ActiveRecord::Base
             end
     end
 
-	
-	def wait_for_payment
-		self.delay(run_at: 150.seconds.from_now).payment_timeout
-	end
-
-	def payment_timeout
-		if !self.payed and self.trx_id != "" and self.payed_booking.nil?
-			self.delete
-		end
-	end
-
 	def time_in_provider_time_warning
 		bstart = self.start.clone()
 		bend = self.end.clone()
