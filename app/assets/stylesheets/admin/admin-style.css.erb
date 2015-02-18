@@ -1,19 +1,8 @@
 @charset "UTF-8";
 
-/*html, body{
-  height: 100%;
-}*/
 body{
   background: rgba(163,199,198,1);
   background: url(<%= asset_path 'backgrounds/wild_oliva_light_head.png' %>);
-  /*background: #cbcdcc;
-  background: -moz-linear-gradient(left,  #cbcdcc 0%, #dddfde 100%);
-  background: -webkit-gradient(linear, left top, right top, color-stop(0%,#cbcdcc), color-stop(100%,#dddfde));
-  background: -webkit-linear-gradient(left,  #cbcdcc 0%,#dddfde 100%);
-  background: -o-linear-gradient(left,  #cbcdcc 0%,#dddfde 100%);
-  background: -ms-linear-gradient(left,  #cbcdcc 0%,#dddfde 100%);
-  background: linear-gradient(to right,  #cbcdcc 0%,#dddfde 100%);
-  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#cbcdcc', endColorstr='#dddfde',GradientType=1 );*/
 }
 a {
   color: rgba(61,154,150,1);
@@ -934,6 +923,12 @@ caption {
   =============================== New Style ====================================
   ==============================================================================
 */
+
+/*
+  ================================
+  ========== Scroll Bar ==========
+  ================================
+*/
 ::-webkit-scrollbar {
   width: 10px;
 }
@@ -948,6 +943,11 @@ caption {
     background-color: #aaa;
 }
 
+/*
+  ================================
+  =========== General ============
+  ================================
+*/
 @font-face {
   font-family: TradeGothic;
   src: url('/assets/Trade Gothic LT Condensed No. 18.ttf');
@@ -982,11 +982,14 @@ body {
   margin-right: auto;
 }
 
-/*** navbar-admin ***/
+/*
+  ================================
+  ========= Navbar Admin =========
+  ================================
+*/
 .navbar-admin {
   background-color: #ffffff;
   border-color: #e7e7e7;
-  /*min-height: 60px;*/
   -webkit-transition: all 0.5s ease-in-out;
   -moz-transition: all 0.5s ease-in-out;
   -o-transition: all 0.5s ease-in-out;
@@ -997,13 +1000,22 @@ body {
 }
 .navbar-admin .navbar-nav > li > a,
 .navbar-admin .navbar-nav > li > a:focus {
-  /*color: #cfcdcd;*/
+  color: #646464;
   text-transform: uppercase;
   font-family: TradeGothic, FranklinGothic, "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
   font-size: 16px;
 }
 .navbar-admin .navbar-nav > li > a:hover {
-  color: #22c488;
+  color: #cccccc;
+  background-color: transparent;
+}
+.navbar-admin .navbar-nav > .active > a {
+  color: #a5a5a5;
+  background-color: transparent;
+}
+.navbar-admin .navbar-nav > .active > a:hover,
+.navbar-admin .navbar-nav > .active > a:focus {
+  color: #cccccc;
   background-color: transparent;
 }
 .navbar-admin .navbar-nav > li > a.menu-green {
@@ -1012,15 +1024,26 @@ body {
 .navbar-admin .navbar-nav > li > a.menu-green:hover {
   color: #fd9610;
 }
-.navbar-admin .navbar-nav > .active > a {
-  color: #22c488;
-  background-color: transparent;
-}
-.navbar-admin .navbar-nav > .active > a:hover,
-.navbar-admin .navbar-nav > .active > a:focus {
-  color: #fd9610;
-  background-color: transparent;
-}
 .navbar-brand {
   padding: 5px 5px;
+}
+.navbar-admin .navbar-nav .open .dropdown-menu > li > a {
+  color: #646464;
+}
+.navbar-admin .navbar-nav .open .dropdown-menu > li > a:hover,
+.navbar-admin .navbar-nav .open .dropdown-menu > li > a:focus {
+  color: #cccccc;
+  background-color: transparent;
+}
+.navbar-admin .navbar-nav .open .dropdown-menu > .active > a,
+.navbar-admin .navbar-nav .open .dropdown-menu > .active > a:hover,
+.navbar-admin .navbar-nav .open .dropdown-menu > .active > a:focus {
+  color: #a5a5a5;
+  background-color: transparent;
+}
+.navbar-default .navbar-nav > .open > a,
+.navbar-default .navbar-nav > .open > a:hover,
+.navbar-default .navbar-nav > .open > a:focus {
+  color: #a5a5a5;
+  background-color: transparent;
 }
