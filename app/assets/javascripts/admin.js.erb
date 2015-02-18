@@ -1,22 +1,6 @@
-//= require jquery-migrate-1.2.1
+//= require jquery-1.11.1.min
 //= require application
+//= require jquery-ui-1.10.4.min
+//= require home/modernizr.custom.48287
+//= require jquery-migrate-1.2.1
 // require cocoon
-
-$(window).load(function() {
-	if ($('#payment_data').data('due-payment') == true) {
-		$('#paymentModal').modal('show');
-	}
-});
-
-// $(window).load(function() {
-// 	var contentPercent = 99.95 - 100*$('#sidebar').width()/$('#sidebar').offsetParent().width();
-// 	$('#admin-content').width(contentPercent+'%');
-// 	$('a#closetab').click(function() {
-// 		var contentPercent = 99.95 - 100*$('#sidebar').width()/$('#sidebar').offsetParent().width();
-// 		$('#admin-content').width(contentPercent.toString()+'%');
-// 	});
-// });
-// window.onresize = function(event) {
-//     var contentPercent = 99.9 - 100*$('#sidebar').width()/$('#sidebar').offsetParent().width();
-// 	$('#admin-content').width(contentPercent.toString()+'%');
-// };

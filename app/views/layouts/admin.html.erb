@@ -20,7 +20,6 @@
 
     <!-- start: CSS -->
     <%= stylesheet_link_tag "admin" %>
-    <% stylesheet_link_tag "fullcalendar_css" if params[:controller] == "bookings" %>
     <%= yield :stylesheets %>
     <!-- end: CSS -->
 
@@ -67,13 +66,13 @@
               <li class="dropdown <%= 'active' if current_page?(locations_path) or current_page?(service_providers_path) or current_page?(services_path) or current_page?(service_categories_path) or current_page?(resources_path) or current_page?("/company_bookings") %>">
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Administracion <i class="fa fa-chevron-down"></i></a>
                 <ul class="dropdown-menu" role="menu">
-                  <li><%= link_to 'Locales', locations_path %></li>
-                  <li><%= link_to 'Prestadores de Servicios', service_providers_path %></li>
-                  <li><%= link_to 'Servicios', services_path %></li>
-                  <li><%= link_to 'Categorías de Servicios', service_categories_path %></li>
-                  <li><%= link_to 'Recursos', resources_path %></li>
+                  <li><%= link_to '<i class="fa fa-home fa-fw"></i> Locales'.html_safe, locations_path %></li>
+                  <li><%= link_to '<i class="fa fa-user fa-fw"></i> Prestadores de Servicios'.html_safe, service_providers_path %></li>
+                  <li><%= link_to '<i class="fa fa-book fa-fw"></i> Servicios'.html_safe, services_path %></li>
+                  <li><%= link_to '<i class="fa fa-list fa-fw"></i> Categorías de Servicios'.html_safe, service_categories_path %></li>
+                  <li><%= link_to '<i class="fa fa-cubes fa-fw"></i> Recursos'.html_safe, resources_path %></li>
                   <% if current_user.role == Role.find_by(name: "Administrador General") %>
-                  <li><%= link_to 'Pagos en línea', '/company_bookings' %></li>
+                  <li><%= link_to '<i class="fa fa-exchange fa-fw"></i> Pagos en línea'.html_safe, '/company_bookings' %></li>
                   <% end %>
                 </ul>
               </li>
@@ -85,32 +84,32 @@
               <li class="dropdown <%= 'active' if current_page?(admin_users_path) or current_page?(roles_path) or current_page?(payment_statuses_path) or current_page?(statuses_path) or current_page?(plans_path) or current_page?(numeric_parameters_path) or current_page?(payed_bookings_path) or current_page?(banks_path) %>">
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">General <i class="fa fa-chevron-down"></i></a>
                 <ul class="dropdown-menu" role="menu">
-                  <li><%= link_to 'Usuarios', admin_users_path %></li>
-                  <li><%= link_to 'Roles', roles_path %></li>
-                  <li><%= link_to 'Estados de Pago', payment_statuses_path %></li>
-                  <li><%= link_to 'Estados de Reserva', statuses_path %></li>
-                  <li><%= link_to 'Gestión Planes', plans_path %></li>
-                  <li><%= link_to 'Parámetros Numéricos', numeric_parameters_path %></li>
-                  <li><%= link_to 'Transferencias', payed_bookings_path %></li>
-                  <li><%= link_to 'Bancos', banks_path %></li>
+                  <li><%= link_to '<i class="fa fa-user fa-fw"></i> Usuarios'.html_safe, admin_users_path %></li>
+                  <li><%= link_to '<i class="fa fa-lock fa-fw"></i> Roles'.html_safe, roles_path %></li>
+                  <li><%= link_to '<i class="fa fa-usd fa-fw"></i> Estados de Pago'.html_safe, payment_statuses_path %></li>
+                  <li><%= link_to '<i class="fa fa-check-square-o fa-fw"></i> Estados de Reserva'.html_safe, statuses_path %></li>
+                  <li><%= link_to '<i class="fa fa-cloud fa-fw"></i> Gestión Planes'.html_safe, plans_path %></li>
+                  <li><%= link_to '<i class="fa fa-list-ol fa-fw"></i> Parámetros Numéricos'.html_safe, numeric_parameters_path %></li>
+                  <li><%= link_to '<i class="fa fa-exchange fa-fw"></i> Transferencias'.html_safe, payed_bookings_path %></li>
+                  <li><%= link_to '<i class="fa fa-university fa-fw"></i> Bancos'.html_safe, banks_path %></li>
                 </ul>
               </li>
               <!-- Lugares -->
               <li class="dropdown <%= 'active' if current_page?(countries_path) or current_page?(regions_path) or current_page?(cities_path) or current_page?(districts_path) %>">
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Lugares <i class="fa fa-chevron-down"></i></a>
                 <ul class="dropdown-menu" role="menu">
-                  <li><%= link_to 'Países', countries_path %></li>
-                  <li><%= link_to 'Regiones', regions_path %></li>
-                  <li><%= link_to 'Ciudades', cities_path %></li>
-                  <li><%= link_to 'Comunas', districts_path %></li>
+                  <li><%= link_to '<i class="fa fa-globe fa-fw"></i> Países'.html_safe, countries_path %></li>
+                  <li><%= link_to '<i class="fa fa-picture-o fa-fw"></i> Regiones'.html_safe, regions_path %></li>
+                  <li><%= link_to '<i class="fa fa-building-o fa-fw"></i> Ciudades'.html_safe, cities_path %></li>
+                  <li><%= link_to '<i class="fa fa-home fa-fw"></i> Comunas'.html_safe, districts_path %></li>
                 </ul>
               </li>
               <!-- Buscador -->
               <li class="dropdown <%= 'active' if current_page?(countries_path) or current_page?(regions_path) or current_page?(cities_path) or current_page?(districts_path) %>">
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Buscador <i class="fa fa-chevron-down"></i></a>
                 <ul class="dropdown-menu" role="menu">
-                  <li><%= link_to 'Sector Ecónomico', economic_sectors_path %></li>
-                  <li><%= link_to 'Tags', tags_path %></li>
+                  <li><%= link_to '<i class="fa fa-usd fa-fw"></i> Sector Ecónomico'.html_safe, economic_sectors_path %></li>
+                  <li><%= link_to '<i class="fa fa-tags fa-fw"></i> Tags'.html_safe, tags_path %></li>
                 </ul>
               </li>
               <% end %>
@@ -120,9 +119,9 @@
               <li class="dropdown <%= 'active' if current_page?(edit_company_setting_path(current_user.company.company_setting.id)) or current_page?(admin_users_path) or current_page?(select_plan_path) %>">
                 <a href="#" class="dropdown-toggle menu-green" data-toggle="dropdown" role="button" aria-expanded="false"><i class="fa fa-cog fa-lg"></i></a>
                 <ul class="dropdown-menu" role="menu">
-                  <li><%= link_to '<i class="fa fa-wrench"></i> Configuraciones'.html_safe, edit_company_setting_path(Company.find(current_user.company_id).company_setting.id) %></li>
-                  <li><%= link_to '<i class="fa fa-sitemap"></i> Usuarios'.html_safe, admin_users_path %></li>
-                  <li><%= link_to '<i class="fa fa-dollar"></i> Facturación'.html_safe, select_plan_path %></li>
+                  <li><%= link_to '<i class="fa fa-wrench fa-fw"></i> Configuraciones'.html_safe, edit_company_setting_path(Company.find(current_user.company_id).company_setting.id) %></li>
+                  <li><%= link_to '<i class="fa fa-sitemap fa-fw"></i> Usuarios'.html_safe, admin_users_path %></li>
+                  <li><%= link_to '<i class="fa fa-dollar fa-fw"></i> Facturación'.html_safe, select_plan_path %></li>
                 </ul>
               </li>
               <% end %>
@@ -221,99 +220,22 @@
     <!-- end: Content -->
 
     <!-- start: JavaScript-->
-    <!--[if !IE]>-->
-      <%= javascript_include_tag "adminNIE" %>
-    <!--<![endif]-->
-    <!--[if IE]>
-      <%= javascript_include_tag "adminIE" %>
-    <!--<![endif]-->
-      <%= javascript_include_tag "admin" %>
-    <!--[if !IE]>-->
-        <script type="text/javascript">
-        window.jQuery || document.write("<script src='vendor/jquery-2.1.0.min.js'>"+"<"+"/script>");
-        </script>
-    <!--<![endif]-->
-    <!--[if IE]>
+    <%= javascript_include_tag "admin" %>
+    <!--[if gte IE 9]><!-->
       <script type="text/javascript">
-      window.jQuery || document.write("<script src='vendor/jquery-1.11.0.min.js'>"+"<"+"/script>");
+        window.jQuery || document.write("<script src='/assets/jquery-2.1.1.min.js'>" + "<" + "/script>");
       </script>
-    <![endif]-->
+    <!--<![endif]-->
     <%= yield :scripts %>
-    <% javascript_include_tag "jquery.browser.min" %>
-    <% javascript_include_tag "browser-detect" %>
     <!--Start of Zopim Live Chat Script-->
     <%= javascript_include_tag 'zopim' %>
     <!--End of Zopim Live Chat Script-->
-
     <!-- end: JavaScript-->
 
     <script type="text/javascript">
       $(document).ready(function(){
-        $('#closetab').toggle(function () {
-            $("#sidebar").addClass("colapsar");
-            $("#admin-content").addClass("expandir");
-            $(".menu-lateral li").addClass("colapsado-ok");
-            $(".remove-txt").addClass("kill-txt");
-            $('#closetab > span:first').removeClass('fa-chevron-left');
-            $('#closetab > span:first').addClass('fa-chevron-right');
-            $('#dp').addClass('dpCollapse');
-            if (typeof(Storage) !== "undefined") {
-              sessionStorage.menu = "close";
-            }
-        }, function () {
-            $("#sidebar").removeClass("colapsar");
-            $("#admin-content").removeClass("expandir");
-            $(".menu-lateral li").removeClass("colapsado-ok");
-            $(".remove-txt").removeClass("kill-txt");
-            $('#closetab > span:first').removeClass('fa-chevron-right');
-            $('#closetab > span:first').addClass('fa-chevron-left');
-            $('#dp').removeClass('dpCollapse');
-            if (typeof(Storage) !== "undefined") {
-              sessionStorage.menu = "open";
-            }
-        });
-        $('.open-submenu').click( function (event) {
-          var submenu = $(event.target).closest('a').next();
-          if (submenu.hasClass('submenu-close')) {
-            submenu.removeClass('submenu-close');
-          }
-          else {
-            submenu.addClass('submenu-close');
-          }
-        });
-        $('#open-usuario').toggle(function () {
-              $("#sub-menu-usuario").removeClass("close-menu-usuario");
-              $("#sub-menu-config").addClass("close-menu-config");
-        }, function () {
-              $("#sub-menu-usuario").addClass("close-menu-usuario");
-        });
-        $('#open-config').toggle(function () {
-              $("#sub-menu-config").removeClass("close-menu-config");
-              $("#sub-menu-usuario").addClass("close-menu-usuario");
-        }, function () {
-              $("#sub-menu-config").addClass("close-menu-config");
-        });
-        $('#open-imprimir').toggle(function () {
-              $("#sub-menu-config").removeClass("close-menu-config");
-              $("#sub-menu-usuario").addClass("close-menu-usuario");
-        }, function () {
-              $("#sub-menu-config").addClass("close-menu-config");
-        });
-
-        if ($('.active').hasClass('submenu')) {
-          $('.active').closest('ul').removeClass('submenu-close');
-        }
-
-        if (typeof(Storage) !== "undefined") {
-          if (sessionStorage.menu == "close") {
-            $("#sidebar").addClass("colapsar");
-            $("#admin-content").addClass("expandir");
-            $(".menu-lateral li").addClass("colapsado-ok");
-            $(".remove-txt").addClass("kill-txt");
-            $('#closetab > span:first').removeClass('fa-chevron-left');
-            $('#closetab > span:first').addClass('fa-chevron-right');
-            $('#dp').addClass('dpCollapse');
-          }
+        if ($('#payment_data').data('due-payment') == true) {
+          $('#paymentModal').modal('show');
         }
 
         $('#provider_date').datepicker({
@@ -382,8 +304,8 @@
         });
 
         $('#printingButton').click(function(){
-              $(this).attr('href', '/service_provider/pdf.pdf?provider_date=' + $('#provider_date').val()+'&location_id=' + $('#location_id').val()+'&service_provider_id=' + $('#service_provider_id').val());
-          });
+          $(this).attr('href', '/service_provider/pdf.pdf?provider_date=' + $('#provider_date').val()+'&location_id=' + $('#location_id').val()+'&service_provider_id=' + $('#service_provider_id').val());
+        });
       });
     </script>
   </body>
