@@ -956,6 +956,10 @@ class BookingMailer < ActionMailer::Base
 			:headers => { 'Reply-To' => 'contacto@agendapro.cl' },
 			:global_merge_vars => [
 				{
+					:name => 'COMPANYNAME',
+					:content => owner.company.name
+				},
+				{
 					:name => 'CLIENT',
 					:content => client.first_name + ' ' + client.last_name
 				},
