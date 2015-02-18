@@ -1,16 +1,16 @@
 @charset "UTF-8";
 
-body{
+/*body{
   background: rgba(163,199,198,1);
   background: url(<%= asset_path 'backgrounds/wild_oliva_light_head.png' %>);
-}
-a {
+}*/
+/*a {
   color: rgba(61,154,150,1);
   text-decoration: none;
 }
 a:hover {
   color: rgba(27,115,112,1);
-}
+}*/
 
 /* Se agrega estilo de títulos y textos varios */
 .hgroup {
@@ -107,7 +107,7 @@ footer{
   width: 100%;
   background: rgba(27,115,112,1);
 }*/
-#logo{
+/*#logo{
   width:127px;
   height:39px;
   margin: 2px 0px 0px 20px;
@@ -190,11 +190,11 @@ footer{
   color: #333;
   font-weight: bold;
   text-decoration: none;
-}
+}*/
 /*#menu-config i{
   margin-left: 100%;
 }*/
-#menu-config li a:hover{
+/*#menu-config li a:hover{
   background: rgba(27,115,112,1);
   color: #fff;
 }
@@ -220,27 +220,17 @@ footer{
   -webkit-box-shadow: 0 6px 12px rgba(0,0,0,0.175);
   box-shadow: 0 6px 12px rgba(0,0,0,0.175);
   padding: 5px 1px !important;
-  /*margin: 46px 0px;*/
 }
 #open-config{
-  color:#fff !important;/*
-  margin-left: 80%;*/
-}
-.container{
+  color:#fff !important;
+}*/
+/*.container{
   width:100% !important;
-}
+}*/
 
-#admin-content{
+/*#admin-content{
   background: #ffffff;
   background: url(<%= asset_path 'backgrounds/wild_oliva_light.png' %>);
-  /*background: #ececec;
-  background: -moz-linear-gradient(top,  #ececec 0%, #f0f6f6 100%);
-  background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#ececec), color-stop(100%,#f0f6f6));
-  background: -webkit-linear-gradient(top,  #ececec 0%,#f0f6f6 100%);
-  background: -o-linear-gradient(top,  #ececec 0%,#f0f6f6 100%);
-  background: -ms-linear-gradient(top,  #ececec 0%,#f0f6f6 100%);
-  background: linear-gradient(to bottom,  #ececec 0%,#f0f6f6 100%);
-  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ececec', endColorstr='#f0f6f6',GradientType=0 );*/
   min-height: 100%;
   width: 83.33333333333334%;
   float:left;
@@ -322,13 +312,13 @@ li.colapsado-ok> a> span.colapse-hidden{
 }
 .kill-txt{
   display: none;
-}
+}*/
 
-.center-block {
+/*.center-block {
   display: block;
   margin-left: auto;
   margin-right: auto;
-}
+}*/
 
 /* Agregado 18 Febrero */
 .caret-especial{
@@ -479,7 +469,7 @@ li.location-listed {
   padding-left: 10px;
 }
 
-.nav .open > a, .nav .open > a:hover {
+/*.nav .open > a, .nav .open > a:hover {
   border-color: rgba(61,154,150,1);
 }
 
@@ -493,7 +483,7 @@ a:focus {
 
 .dropdown-menu > .active > a, .dropdown-menu > .active > a:hover, .dropdown-menu > .active > a:focus {
   background: rgba(61,154,150,1);
-}
+}*/
 
 .positive-variation {
   color: rgba(27,115,112,1);
@@ -981,6 +971,13 @@ body {
   margin-left: auto;
   margin-right: auto;
 }
+a {
+  color: #22c488;
+  text-decoration: none;
+}
+a:hover {
+  color: #1ba970;
+}
 
 /*
   ================================
@@ -1027,6 +1024,10 @@ body {
 .navbar-brand {
   padding: 5px 5px;
 }
+.navbar-admin .navbar-toggle {
+  margin-top: 4px;
+  margin-bottom: 4px;
+}
 .navbar-admin .navbar-nav .open .dropdown-menu > li > a {
   color: #646464;
 }
@@ -1046,4 +1047,36 @@ body {
 .navbar-default .navbar-nav > .open > a:focus {
   color: #a5a5a5;
   background-color: transparent;
+}
+
+/*
+  ================================
+  ========== Dashboard ===========
+  ================================
+*/
+.panel-green {
+  border-color: #1ba970;
+}
+.panel-green > .panel-heading {
+  color: #505050;
+  background-color: #22c488;
+  border-color: #1ba970;
+}
+.panel-green > .panel-heading + .panel-collapse > .panel-body {
+  border-top-color: #1ba970;
+}
+.panel-green > .panel-heading .badge {
+  color: #22c488;
+  background-color: #505050;
+}
+.panel-green > .panel-footer + .panel-collapse > .panel-body {
+  border-bottom-color: #1ba970;
+}
+.panel-scrollable {
+  max-height: 337px;
+  overflow-y: auto;
+  overflow-y: overlay;
+}
+.label-agendapro {
+  background-color: #22c488;
 }
