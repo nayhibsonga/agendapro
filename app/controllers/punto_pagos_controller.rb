@@ -184,6 +184,8 @@ class PuntoPagosController < ApplicationController
           @booking = Booking.find_by_trx_id(trx_id)
           @token = params[:token]
           @success_page = "booking"
+          host = request.host_with_port
+          @url = @booking.location.company.web_address + '.' + host[host.index(request.domain)..host.length]
         else
           #Something (lie a booking) was deleted, should redirect to failure
           redirect_to action: 'failure', token: params[:token]
