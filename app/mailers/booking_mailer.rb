@@ -1040,6 +1040,10 @@ class BookingMailer < ActionMailer::Base
 				:headers => { 'Reply-To' => 'contacto@agendapro.cl' },
 				:global_merge_vars => [
 					{
+						:name => 'COMPANYNAME',
+						:content => payed_booking.booking.location.company.name
+					},
+					{
 						:name => 'CANCEL',
 						:content => 'true'
 					},
