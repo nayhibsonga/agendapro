@@ -170,15 +170,8 @@
   $(document).ready(function(){
     $("#payBtn").click(function(e){
       e.preventDefault();
-      $("#payment").val("1");
       $("#mp-selector").show();
       $("#payBtn").attr("disabled", "true");
-    });
-
-    $("#submitBtn").click(function(e){
-      e.preventDefault();
-      $("#payment").val("0");
-      $("#bookingForm").submit();
     });
 
     $('#select-medio').click(function(){
@@ -194,6 +187,7 @@
       if(is_selected)
       {
         //console.log("Entra");
+        $("#payment").val("1");
         $('#bookingForm').submit();
       }
     });
