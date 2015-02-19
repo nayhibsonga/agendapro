@@ -18,6 +18,7 @@ class PayedBookingsController < ApplicationController
 
   		#Comisión que se le cobra a la empresa por el pago en línea
   		commission = NumericParameter.find_by_name("online_payment_commission").value
+  		now = DateTime.new(DateTime.now.year, DateTime.now.mon, DateTime.now.mday, DateTime.now.hour, DateTime.now.min)
 
   		Company.all.each do |company|
 
@@ -38,23 +39,24 @@ class PayedBookingsController < ApplicationController
 	  		 		loc.bookings.each do |booking|
 
 	  		 			if(!booking.payed_booking.nil? && booking.payed_booking.canceled == false)
+	  		 				booking_end = DateTime.parse(booking.end.to_s)
+	  		 				if (booking_end <=> now) < 1
+		  		 				if payment_account.company_id.nil?
+		  		 					payment_account.name = company.company_setting.account_name
+		  		 					payment_account.rut = company.company_setting.company_rut
+		  		 					payment_account.number = company.company_setting.account_number
+		  		 					payment_account.company = company
+		  		 					payment_account.bank_code = company.company_setting.bank.code
+		  		 					payment_account.account_type = company.company_setting.account_type
+		  		 				end
+		  		 				
+		  		 				payment_account.amount = payment_account.amount + booking.payed_booking.punto_pagos_confirmation.amount
+		  		 				payment_account.company_amount = payment_account.company_amount + booking.payed_booking.punto_pagos_confirmation.amount*(100-commission)/100
 
-	  		 				if payment_account.company_id.nil?
-	  		 					payment_account.name = company.company_setting.account_name
-	  		 					payment_account.rut = company.company_setting.company_rut
-	  		 					payment_account.number = company.company_setting.account_number
-	  		 					payment_account.company = company
-	  		 					payment_account.bank_code = company.company_setting.bank.code
-	  		 					payment_account.account_type = company.company_setting.account_type
-	  		 				end
-	  		 				
-	  		 				payment_account.amount = payment_account.amount + booking.payed_booking.punto_pagos_confirmation.amount
-	  		 				payment_account.company_amount = payment_account.company_amount + booking.payed_booking.punto_pagos_confirmation.amount*(100-commission)/100
-
-	  		 				
-	  		 				booking.payed_booking.payment_account = payment_account
-	  		 				booking.payed_booking.save
-		
+		  		 				
+		  		 				booking.payed_booking.payment_account = payment_account
+		  		 				booking.payed_booking.save
+		  		 			end
 	  		 			end
 	  		 		end
 	  		 	end

@@ -121,7 +121,9 @@
 <div class="row well well-white">
 	<ul id="myTab" class="nav nav-tabs" role="tablist">
 	  <li class=""><a href="#company" role="tab" data-toggle="tab" class="tab_index">Empresa</a></li>
-	  <li class=""><a href="#online-payment" role="tab" data-toggle="tab" class="tab_index">Pago en línea</a></li>
+	  <% if current_user.company.company_setting.online_payment_capable %>
+	  	<li class=""><a href="#online-payment" role="tab" data-toggle="tab" class="tab_index">Pago en línea</a></li>
+	  <% end %>
 	  <li class=""><a href="#minisite" role="tab" data-toggle="tab" class="tab_index">Reservas</a></li>
 	  <li class=""><a href="#calendar" role="tab" data-toggle="tab" class="tab_index">Calendario</a></li>
 	  <li class=""><a href="#emails" role="tab" data-toggle="tab" class="tab_index">E-mails</a></li>
