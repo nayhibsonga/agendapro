@@ -245,10 +245,7 @@ table.fc-agenda-days {
 .modal-body .nav {
   font-size: 17px;
 }
-body .modal-admin {
-  width: 790px;
-}
-.modal-admin .checkbox {
+#bookingModal .checkbox {
   padding-top: 0px;
 }
 .modal-header {
