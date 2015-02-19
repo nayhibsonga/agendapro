@@ -116,106 +116,120 @@
 </div>
 
 <div class="row well well-white">
-  <ul id="myTab" class="nav nav-tabs" role="tablist">
-    <li class=""><a href="#company" role="tab" data-toggle="tab" class="tab_index">Empresa</a></li>
-    <li class=""><a href="#online-payment" role="tab" data-toggle="tab" class="tab_index">Pago en línea</a></li>
-    <li class=""><a href="#minisite" role="tab" data-toggle="tab" class="tab_index">Reservas</a></li>
-    <li class=""><a href="#calendar" role="tab" data-toggle="tab" class="tab_index">Calendario</a></li>
-    <li class=""><a href="#emails" role="tab" data-toggle="tab" class="tab_index">E-mails</a></li>
-    <li class=""><a href="#times" role="tab" data-toggle="tab" class="tab_index">Periodo Agenda</a></li>
-    <li class=""><a href="#embedded" role="tab" data-toggle="tab" class="tab_index">Facebook / Web</a></li>
-    <li class=""><a href="#deals" role="tab" data-toggle="tab" class="tab_index">Convenios</a></li>
-    <li class=""><a href="#link" role="tab" data-toggle="tab" class="tab_index">Link AgendaPro</a></li>
-  </ul>
-  <div id="myTabContent" class="tab-content">
-    <br />
-    <div class="tab-pane active" id="landing">
-      <div class="row">
-        <ol>
-          <li><strong>Empresa: </strong>En esta sección puedes configurar el nombre de empresa, la descripción, la url de tu mini-sitio, el logo que quieres mostrar y la política de cancelación.</li><br />
-          <li><strong>Reservas: </strong>En esta sección puedes habilitar el mini-sitio AgendaPro, la opción de aparecer en el Buscador AgendaPro y limitar que sólo las personas en tu base de datos puedan reservar.</li><br />
-          <li><strong>Calendario: </strong>En esta sección puedes controlar el tamaño, en tiempo, de cada bloque del horario en la sección calendario.</li><br />
-          <li><strong>E-mails: </strong>En esta sección puedes configurar la dirección desde donde se envían los correos masivos (Remitentes) y la firma que se adjuntará en tus e-mails.</li><br />
-          <li><strong>Periodo AgendaPro: </strong>En esta sección puedes configurar el Tiempo Mínimo de Reserva y el Tiempo Máximo a futuro, además de la cantidad de horas mínimas necesarias para que tus clientes puedan modificar o cancelar una reserva.</li><br />
-          <li><strong>Facebook: </strong>En esta sección puedes seguir las instrucciones para permitir reservas por Facebook, agregando una pestaña a la página de tu empresa.</li><br />
-          <li><strong>Facebook: </strong>En esta sección puedes definir c.</li><br />
-          <li><strong>Link AgendaPro: </strong>En esta sección puedes obtener el Link AgendaPro, el cual te permitirá insertar el link a tu mini-sitio en cualquier otro sitio web que tengas. Hay varias opciones para que elijas la que más te acomoda.</li>
-        </ol>
-      </div>
-    </div>
-    <div class="tab-pane" id="company">
-      <div class="row">
-        <%= form_for @company, :html => {:class => 'form-horizontal company-form', :multipart => true} do |f| %>
-          <div class="form-group has-feedback">
-            <%= f.label :name, 'Nombre', :class => 'col-sm-3 control-label' %>
-            <div class="col-sm-5">
-              <%= f.text_field :name, :autofocus => true, :class => 'form-control', :placeholder => 'Nombre Compañía (requerido)' %>
-              <span class="help-block"></span>
-              <span class="form-control-feedback"></span>
-            </div>
-          </div>
-          <div class="form-group">
-            <%= f.label :description, 'Descripción', :class => 'col-sm-3 control-label' %>
-            <div class="col-sm-5">
-              <%= f.text_area :description, :class => 'form-control', :rows => "7" %>
-            </div>
-          </div>
-          <div class="form-group has-feedback">
-            <%= f.label :web_address, 'Dirección Sitio AgendaPro', :class => 'col-sm-3 control-label' %>
-            <div class="col-sm-5">
-              <div class="input-group">
-                <%= f.text_field :web_address, :required => true, :class => 'form-control', :placeholder => 'Empresa (requerido)' %>
-                <span class="input-group-addon">.agendapro.cl</span>
-              </div>
-            </div>
-            <div class="col-sm-offset-3 col-sm-5">
-              <span class="help-block"></span>
-            </div>
-            <span class="help-block">Esta es la página del sitio en AgendaPro. <strong>NO recomendamos editarla.</strong></span>
-          </div>
-          <div class="form-group has-feedback">
-            <%= f.label :logo, 'Logo Compañía', :class => 'col-sm-3 control-label' %>
-            <div class="col-sm-5">
-              <%= f.file_field :logo, :accept => 'image/png,image/gif,image/jpeg', :class => 'form-control' %>
-              <span class="help-block"></span>
-              <span class="form-control-feedback"></span>
-              <div class="checkbox">
-                <label>
-                  <%= f.check_box :remove_logo %> Quitar Logo
-                </label>
-              </div>
-            </div>
-            <% if @company.logo_url %>
-            <%= image_tag @company.logo_url.to_s, :size => "80x80", :alt => @company.name %>
-            <% end %>
-          </div>
-          <div class="form-group has-feedback">
-            <%= f.label :economic_sector_ids, 'Sector Económico', :class => 'col-sm-3 control-label' %>
-            <div class="col-sm-5">
-              <%= f.collection_check_boxes :economic_sector_ids, EconomicSector.all, :id, :name, {}, {class: "check_boxes"} do |b|%>
-                <div class="col-sm-6">
-                  <div class="checkbox">
-                    <label>
-                      <%= b.check_box %> <%= b.object.name.html_safe %>
-                    </label>
-                  </div>
-                </div>
-              <% end %>
-              <span class="help-block"></span>
-              <span class="form-control-feedback"></span>
-            </div>
-          </div>
-          <div class="form-group">
-            <div class="col-sm-offset-3 col-sm-4">
-              <%= f.submit 'Guardar', :class => 'btn btn-agendapro-claro' %>
-              <%= link_to 'Cancelar', dashboard_path, :class => "btn btn-default" %>
-            </div>
-          </div>
-        <% end %>
-      </div>
-    </div>
-            <div class="tab-pane" id="online-payment">
-      <!-- PAGO EN LÍNEA -->
+	<ul id="myTab" class="nav nav-tabs" role="tablist">
+	  <li class=""><a href="#company" role="tab" data-toggle="tab" class="tab_index">Empresa</a></li>
+	  <% if current_user.company.company_setting.online_payment_capable %>
+	  	<li class=""><a href="#online-payment" role="tab" data-toggle="tab" class="tab_index">Pago en línea</a></li>
+	  <% end %>
+	  <li class=""><a href="#minisite" role="tab" data-toggle="tab" class="tab_index">Reservas</a></li>
+	  <li class=""><a href="#calendar" role="tab" data-toggle="tab" class="tab_index">Calendario</a></li>
+	  <li class=""><a href="#emails" role="tab" data-toggle="tab" class="tab_index">E-mails</a></li>
+	  <li class=""><a href="#times" role="tab" data-toggle="tab" class="tab_index">Periodo Agenda</a></li>
+	  <li class=""><a href="#embedded" role="tab" data-toggle="tab" class="tab_index">Facebook / Web</a></li>
+	  <li class=""><a href="#deals" role="tab" data-toggle="tab" class="tab_index">Convenios</a></li>
+	  <li class=""><a href="#link" role="tab" data-toggle="tab" class="tab_index">Link AgendaPro</a></li>
+	</ul>
+	<div id="myTabContent" class="tab-content">
+	<br />
+	<div class="tab-pane active" id="landing">
+	    <div class="row">
+	    	<ol>
+				<li><strong>Empresa: </strong>En esta sección puedes configurar el nombre de empresa, la descripción, la url de tu mini-sitio, el logo que quieres mostrar y la política de cancelación.</li><br />
+				<li><strong>Reservas: </strong>En esta sección puedes habilitar el mini-sitio AgendaPro, la opción de aparecer en el Buscador AgendaPro y limitar que sólo las personas en tu base de datos puedan reservar.</li><br />
+				<li><strong>Calendario: </strong>En esta sección puedes controlar el tamaño, en tiempo, de cada bloque del horario en la sección calendario.</li><br />
+				<li><strong>E-mails: </strong>En esta sección puedes configurar la dirección desde donde se envían los correos masivos (Remitentes) y la firma que se adjuntará en tus e-mails.</li><br />
+				<li><strong>Periodo AgendaPro: </strong>En esta sección puedes configurar el Tiempo Mínimo de Reserva y el Tiempo Máximo a futuro, además de la cantidad de horas mínimas necesarias para que tus clientes puedan modificar o cancelar una reserva.</li><br />
+				<li><strong>Facebook: </strong>En esta sección puedes seguir las instrucciones para permitir reservas por Facebook, agregando una pestaña a la página de tu empresa.</li><br />
+				<li><strong>Facebook: </strong>En esta sección puedes definir c.</li><br />
+				<li><strong>Link AgendaPro: </strong>En esta sección puedes obtener el Link AgendaPro, el cual te permitirá insertar el link a tu mini-sitio en cualquier otro sitio web que tengas. Hay varias opciones para que elijas la que más te acomoda.</li>
+			</ol>
+		</div>
+	  </div>
+	  <div class="tab-pane" id="company">
+	    <div class="row">
+			<%= form_for @company, :html => {:class => 'form-horizontal company-form', :multipart => true} do |f| %>
+				<div class="form-group has-feedback">
+					<%= f.label :name, 'Nombre', :class => 'col-sm-3 control-label' %>
+					<div class="col-sm-5">
+						<%= f.text_field :name, :autofocus => true, :class => 'form-control', :placeholder => 'Nombre Compañía (requerido)' %>
+						<span class="help-block"></span>
+						<span class="form-control-feedback"></span>
+					</div>
+				</div>
+				<div class="form-group">
+					<%= f.label :description, 'Descripción', :class => 'col-sm-3 control-label' %>
+					<div class="col-sm-5">
+						<%= f.text_area :description, :class => 'form-control', :rows => "7" %>
+					</div>
+				</div>
+				<div class="form-group has-feedback">
+					<%= f.label :web_address, 'Dirección Sitio AgendaPro', :class => 'col-sm-3 control-label' %>
+					<div class="col-sm-5">
+						<div class="input-group">
+							<%= f.text_field :web_address, :required => true, :class => 'form-control', :placeholder => 'Empresa (requerido)' %>
+							<span class="input-group-addon">.agendapro.cl</span>
+						</div>
+					</div>
+					<div class="col-sm-offset-3 col-sm-5">
+						<span class="help-block"></span>
+					</div>
+					<span class="help-block">Esta es la página del sitio en AgendaPro. <strong>NO recomendamos editarla.</strong></span>
+				</div>
+
+				<div class="form-group has-feedback">
+					<%= f.label :logo, 'Logo Compañía', :class => 'col-sm-3 control-label' %>
+					<div class="col-sm-5">
+						<%= f.file_field :logo, :accept => 'image/png,image/gif,image/jpeg', :class => 'form-control' %>
+						<span class="help-block"></span>
+						<span class="form-control-feedback"></span>
+						<div class="checkbox">
+							<label>
+								<%= f.check_box :remove_logo %> Quitar Logo
+							</label>
+						</div>
+					</div>
+					<% if @company.logo_url %>
+					<%= image_tag @company.logo_url.to_s, :size => "80x80", :alt => @company.name %>
+					<% end %>
+				</div>
+				<!--<div class="form-group">
+					<%= f.label :cancellation_policy, 'Política de Cancelación', :class => 'col-sm-3 control-label' %>
+					<div class="col-sm-5">
+						<%= f.text_area :cancellation_policy, :class => 'form-control', :rows => "7" %>
+					</div>
+				</div>-->
+
+
+
+
+				<div class="form-group has-feedback">
+					<%= f.label :economic_sector_ids, 'Sector Económico', :class => 'col-sm-3 control-label' %>
+					<div class="col-sm-5">
+						<%= f.collection_check_boxes :economic_sector_ids, EconomicSector.all, :id, :name, {}, {class: "check_boxes"} do |b|%>
+							<div class="col-sm-6">
+								<div class="checkbox">
+									<label>
+										<%= b.check_box %> <%= b.object.name.html_safe %> 
+									</label>
+								</div>
+							</div>
+						<% end %>
+						<span class="help-block"></span>
+						<span class="form-control-feedback"></span>
+					</div>
+				</div>
+
+				<div class="form-group">
+					<div class="col-sm-offset-3 col-sm-4">
+					 <%= f.submit 'Guardar', :class => 'btn btn-agendapro-claro' %>
+					 <%= link_to 'Cancelar', dashboard_path, :class => "btn btn-default" %>
+					</div> 
+				</div>
+			<% end %>
+		</div>
+	  </div>
+	  <div class="tab-pane" id="online-payment">
+	    <!-- PAGO EN LÍNEA -->
 
       <div class="row">
 
