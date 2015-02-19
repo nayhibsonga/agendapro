@@ -178,7 +178,7 @@
 						<table class="companies-table">
 
 						</table>
-					</div> 
+					</div>
 				</div>
 			</div>
 		</div>
@@ -212,7 +212,7 @@
 						<table class="companies-table">
 
 						</table>
-					</div> 
+					</div>
 				</div>
 			</div>
 		</div>
@@ -339,9 +339,9 @@
 					</div>-->
 
 				</div>
-			
-			
-				
+
+
+
 				<div class="row" style="margin-top: 10px;">
 
 						<div class="col-sm-3">
@@ -435,7 +435,7 @@
 					<%= link_to "Agregar pago", controller: "companies", action: "new_payment", id: @company.id %>
 				</div>
 			</div>
-			
+
 		</div>
 
 	</div>
@@ -443,7 +443,7 @@
 
 
 <% content_for :scripts do %>
-	<%= javascript_include_tag "jquery-ui-1.10.4.min.js" %>
+	<%= javascript_include_tag "jquery-ui.min" %>
 
 	<script type="text/javascript">
 		$("#year-select").on('change', function(){
@@ -471,7 +471,7 @@
 
 					$("#selected-year").empty();
 					$("#selected-year").append(year);
-							
+
 				},
 				error: function(){
 
@@ -509,7 +509,7 @@
 
 					$("#bookings-selected-year").empty();
 					$("#bookings-selected-year").append(year);
-							
+
 				},
 				error: function(){
 

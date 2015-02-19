@@ -290,7 +290,7 @@
                     Datos de la reserva
                   </div>
                   <div class="panel-body">
-                    
+
                       <input type="hidden" name="start" id="start" value="">
                       <input type="hidden" name="end" id="end" value="">
                       <input type="hidden" name="provider_lock" id="provider_lock" value="">
@@ -305,7 +305,7 @@
                         <%= hidden_field_tag :user_id, current_user.id %>
                         <%= hidden_field_tag :firstName, current_user.first_name %>
                         <%= hidden_field_tag :lastName, current_user.last_name %>
-                        
+
                         <div class="row">
                           <div class="col-md-12 dark-gray">
                             Nombre
@@ -447,7 +447,7 @@
                         </div>
                       </div>
 
-                    
+
                   </div>
                 </div>
 
@@ -482,8 +482,8 @@
                         <div>
                           <button type="submit" data-loading-text = "Cargando" class="payBtn">Pagar</button>
                         </div>
-                        
-                        
+
+
                       </div>
                       <div class="col-md-6">
                         <button type="submit" data-loading-text="Cargando..." class="submitBtn">Reservar</button>
@@ -577,7 +577,7 @@
                     <div class="row" id="policy-info" hidden>
                       <div class="col-md-12" style="padding-left: 10px !important; padding-top: 10px;">
                         <h3>Modificación:</h3>
-                      
+
                         <% if !@location.company.company_setting.online_cancelation_policy.modifiable %>
                           <p>La empresa no permite modificar reservas pagadas en línea.</p>
                         <% else %>
@@ -594,7 +594,7 @@
 
 
                         <h3>Cancelación:</h3>
-                        
+
                         <% if !@location.company.company_setting.online_cancelation_policy.cancelable %>
                           <p>La empresa no permite cancelar reservas pagadas en línea.</p>
                         <% else %>
@@ -611,7 +611,7 @@
                     </div>
 
                   </div>
-                  <div class="modal-footer"> 
+                  <div class="modal-footer">
                     <button type="button" class="modal-pay" id="select-medio">Confirmar pago</button>
                   </div>
                 </div><!-- /.modal-content -->
@@ -637,7 +637,7 @@
 
 
                       <h3>Modificación:</h3>
-                      
+
                       <% if !@location.company.company_setting.online_cancelation_policy.modifiable %>
                         <p>La empresa no permite modificar reservas pagadas en línea.</p>
                       <% else %>
@@ -654,7 +654,7 @@
 
 
                       <h3>Cancelación:</h3>
-                      
+
                       <% if !@location.company.company_setting.online_cancelation_policy.cancelable %>
                         <p>La empresa no permite cancelar reservas pagadas en línea.</p>
                       <% else %>
@@ -667,10 +667,10 @@
                           Si cancela su reserva, se le devolverá un 90% del monto cancelado debido a los costos de transacción.
                         </p>
                       <% end %>
-                      
+
 
                     </div>
-                    <div class="modal-footer"> 
+                    <div class="modal-footer">
                       <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
                     </div>
                   </div><!-- /.modal-content -->
@@ -722,7 +722,7 @@
 <% content_for :scripts do %>
   <%= javascript_include_tag 'workflow/services' %>
   <%= javascript_include_tag 'jquery.carouFredSel-6.2.1.js' %>
-  <%= javascript_include_tag "jquery-ui-1.10.4.min.js" %>
+  <%= javascript_include_tag "jquery-ui.min" %>
   <%= javascript_include_tag 'split-name' %>
   <%= javascript_include_tag 'validations/validate' %>
   <%= javascript_include_tag 'validations/home/workflow' %>
@@ -740,7 +740,7 @@
       $("#payment").val("0");
       $("#bookingForm").submit();
     })
-    
+
 
     $(function() {
       //  Responsive layout, resizing the items

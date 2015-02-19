@@ -73,7 +73,7 @@
 						Junio
 					</th>
 					<th>
-						Julio	
+						Julio
 					</th>
 					<th>
 						Agosto
@@ -95,7 +95,7 @@
 					</th>
 				</tr>
 				<%	@companies.each do |company| %>
-					<% 
+					<%
 						company_income = 0
 					%>
 					<tr>
@@ -109,14 +109,14 @@
 
 								start_date = DateTime.new(@year, i, 1)
 								end_date = start_date
-								if i < 12	
+								if i < 12
 									end_date = DateTime.new(@year, i+1, 1)-1.minutes
 								else
 									end_date = DateTime.new(@year+1, 1, 1)-1.minutes
 								end
 								billing_logs = BillingLog.where('company_id = ? and created_at BETWEEN ? and ?', company.id, start_date, end_date)
 								billing_records = BillingRecord.where('company_id = ? and date BETWEEN ? and ?', company.id, start_date, end_date)
-								
+
 								billing_logs.each do |bl|
 									month_income = month_income + bl.payment
 									company_income = company_income + bl.payment
@@ -166,14 +166,14 @@
 </div>
 
 <% content_for :scripts do %>
-	<%= javascript_include_tag "jquery-ui-1.10.4.min.js" %>
+	<%= javascript_include_tag "jquery-ui.min" %>
 
 	<script type="text/javascript">
 		$("#year-select").on('change', function(){
-			
+
 			var year = $(this).val();
 			$("#year-select-link").attr("href", "/companies_incomes?year=" + year);
-			
+
 		});
 
 	</script>

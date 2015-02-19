@@ -1,469 +1,489 @@
-<div id="bookingAlerts" class="alert alert-warning" style="display: none;">
-	<button id="bookingAlertsClose" type="button" class="close">&times;</button>
-	<strong>¡Advertencia!</strong> <span id="bookingWarnings"></span>
+<div class="container-fluid background-grey">
+  <div class="row">
+    <div class="col-md-6">
+      <div class="row">
+        <div class="col-md-3">
+          <label class="control-label label-calendar">Elige Local:</label>
+        </div>
+        <div class="col-md-9">
+          <select class="form-control" id="locals-selector" name="localSelector">
+            <% @locations.each do |location| %>
+              <option value="<%= location.id %>" data-minhour="<%= location.location_times.order(:open).first.open.beginning_of_hour.hour %>" data-maxhour="<%= location.location_times.order(:close).last.close.end_of_hour.hour %>"><%= location.name %></option>
+            <% end %>
+          </select>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-6">
+      <div class="row">
+        <div class="col-md-3">
+          <label class="control-label label-calendar">Elige Prestador:</label>
+        </div>
+        <div class="col-md-9">
+          <div id="providers-div">
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
 
-<div class="row well well-sm well-calendar">
-	<div class="col-md-2">
-		<label class="control-label label-calendar">Elige Local:</label>
-	</div>
-	<div class="col-md-4">
-		<select class="form-control" id="locals-selector" name="localSelector">
-			<% @locations.each do |location| %>
-				<option value="<%= location.id %>" data-minhour="<%= location.location_times.order(:open).first.open.beginning_of_hour.hour %>" data-maxhour="<%= location.location_times.order(:close).last.close.end_of_hour.hour %>"><%= location.name %></option>
-			<% end %>
-		</select>
-	</div>
-	<div class="col-md-2">
-		<label class="control-label label-calendar">Elige Prestador:</label>
-	</div>
-	<div class="col-md-4">
-		<div id="providers-div">
-		</div>
-	</div>
+<div class="container-fluid">
+  <div class="row">
+    <div id="bookingAlerts" class="alert alert-warning" style="display: none;">
+      <button id="bookingAlertsClose" type="button" class="close">&times;</button>
+      <strong>¡Advertencia!</strong> <span id="bookingWarnings"></span>
+    </div>
+  </div>
 </div>
 
 <% content_for :calendar do %>
-    <div class="col-md-12">
-        <%= link_to '<i class="fa fa-times"></i>  Bloquear Horario'.html_safe, '#', :class => "btn btn-agendapro-claro btn-md createBreak modal-trigger" %>
-        <%= link_to '<i class="fa fa-calendar"></i>  Agregar Reserva'.html_safe, '#', :class => "btn btn-agendapro-claro btn-md createBooking modal-trigger" %>
-        <input type="hidden" id="set-date" />
-        <div class="row">
-            <div id="popover" class="popover">
-            </div>
-            <div id='calendar'></div>
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-md-2 hidden-xs hidden-sm">
+        <div id="dp"></div>
+      </div>
+      <div class="col-sm-12 col-md-10">
+        <div id="popover" class="popover"></div>
+        <div class="calendar-btn">
+          <input type="hidden" id="set-date" />
+          <%= link_to '<i class="fa fa-calendar"></i> Agregar Reserva'.html_safe, '#', class: "btn btn-white", id: "createBooking" %>
+          <%= link_to '<i class="fa fa-times"></i> Bloquear Horario'.html_safe, '#', class: "btn btn-white", id: "createBreak" %>
         </div>
+        <div id='calendar'></div>
+      </div>
     </div>
+  </div>
 <% end %>
 
+<% content_for :modals do %>
 <div class="modal fade" id="bookingModal" role="dialog" aria-labelledby="bookingModalLabel" aria-hidden="true">
-	<div class="modal-dialog modal-admin">
-		<div class="modal-content">
-			<div class="modal-header">
-				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-				<h4 class="modal-title booking-modal-title" id="bookingModalLabel"></h4>
-			</div>
-			<div class="modal-body booking-modal-body">
-				<%= form_for @booking, html: {class: "form-horizontal"} do |f| %>
-				<%= f.hidden_field :max_changes, value: Company.find(current_user.company_id).company_setting.max_changes %>
-				<div class="row well well-sm">
-					<ul id="myTab" class="nav nav-tabs" role="tablist">
-						<li id="booking-li" class="active"><a href="#booking-pane" role="tab" data-toggle="tab" class="tab_index" id="booking-tab">Reserva</a></li>
-						<li id="client-li" class=""><a href="#client-pane" role="tab" data-toggle="tab" class="tab_index" id="client-tab">Datos Cliente</a></li>
-						<li id="history-li" class=""><a href="#history-pane" role="tab" data-toggle="tab" class="tab_index" id="client-tab">Historial Cliente</a></li>
-						<% if @company_setting.booking_history %>
-						<li id="changes-li" class=""><a href="#changes-pane" role="tab" data-toggle="tab" class="tab_index" id="client-tab">Modificaciones Reserva</a></li>
-						<% end %>
-					</ul>
-					<br />
-					<div id="myTabContent" class="tab-content">
-						<div class="tab-pane active" id="booking-pane">
-							<div class="row">
-								<div class="col-md-6">
-									<div class="form-group has-feedback">
-										<label for="datePicker" class="col-sm-4 control-label">Fecha</label>
-										<div class="col-sm-8">
-											<input type="text" id="datePicker" class="form-control" name="datePicker" placeholder="31/12/2014 (requerido)">
-											<span class="help-block"></span>
-											<span class="form-control-feedback"></span>
-										</div>
-									</div>
-									<div class="form-group has-feedback">
-										<label class="col-sm-4 control-label">Hora</label>
-										<div class="col-sm-8">
-											<div class="input datetime required booking_start_end ">
-												<select class="form-control date-select datetime required" id="bookingStartHour" name="booking[start_hours]">
-													<option value="00">00</option>
-													<option value="01">01</option>
-													<option value="02">02</option>
-													<option value="03">03</option>
-													<option value="04">04</option>
-													<option value="05">05</option>
-													<option value="06">06</option>
-													<option value="07">07</option>
-													<option value="08">08</option>
-													<option value="09">09</option>
-													<option value="10">10</option>
-													<option value="11">11</option>
-													<option value="12">12</option>
-													<option value="13">13</option>
-													<option value="14">14</option>
-													<option value="15">15</option>
-													<option value="16">16</option>
-													<option value="17">17</option>
-													<option value="18">18</option>
-													<option value="19">19</option>
-													<option value="20">20</option>
-													<option value="21">21</option>
-													<option value="22">22</option>
-													<option value="23">23</option>
-												</select>
-												:<select class="form-control date-select datetime required" id="bookingStartMinute" name="booking[start_minutes]">
-													<option value="00">00</option>
-													<option value="05">05</option>
-													<option value="10">10</option>
-													<option value="15">15</option>
-													<option value="20">20</option>
-													<option value="25">25</option>
-													<option value="30">30</option>
-													<option value="35">35</option>
-													<option value="40">40</option>
-													<option value="45">45</option>
-													<option value="50">50</option>
-													<option value="55">55</option>
-												</select> -
-												<select class="form-control date-select datetime required" id="bookingEndHour" name="booking[end_hours]">
-													<option value="00">00</option>
-													<option value="01">01</option>
-													<option value="02">02</option>
-													<option value="03">03</option>
-													<option value="04">04</option>
-													<option value="05">05</option>
-													<option value="06">06</option>
-													<option value="07">07</option>
-													<option value="08">08</option>
-													<option value="09">09</option>
-													<option value="10">10</option>
-													<option value="11">11</option>
-													<option value="12">12</option>
-													<option value="13">13</option>
-													<option value="14">14</option>
-													<option value="15">15</option>
-													<option value="16">16</option>
-													<option value="17">17</option>
-													<option value="18">18</option>
-													<option value="19">19</option>
-													<option value="20">20</option>
-													<option value="21">21</option>
-													<option value="22">22</option>
-													<option value="23">23</option>
-												</select>
-												:<select class="form-control date-select datetime required" id="bookingEndMinute" name="booking[end_minutes]">
-													<option value="00">00</option>
-													<option value="05">05</option>
-													<option value="10">10</option>
-													<option value="15">15</option>
-													<option value="20">20</option>
-													<option value="25">25</option>
-													<option value="30">30</option>
-													<option value="35">35</option>
-													<option value="40">40</option>
-													<option value="45">45</option>
-													<option value="50">50</option>
-													<option value="55">55</option>
-												</select>
-											</div>
-										</div>
-									</div>
-									<div class="form-group has-feedback">
-										<%= f.label :service_provider_id, "Prestador de Servicios", class: "col-sm-4 control-label" %>
-										<div class="col-sm-8">
-											<%= f.collection_select :service_provider_id, ServiceProvider.where(location_id: Location.where(company_id: current_user.company_id, :active => true)).accessible_by(current_ability), :id, :public_name, {}, { class: "form-control" }%>
-											<span class="help-block"></span>
-											<span class="form-control-feedback"></span>
-											<div class="checkbox">
-												<label>
-													<%= f.check_box :provider_lock %>Prestador seleccionado por cliente
-												</label>
-											</div>
-										</div>
-									</div>
-									<div class="form-group has-feedback">
-										<%= f.label :service, "Servicio", class: "col-sm-4 control-label" %>
-										<div class="col-sm-8">
-											<select class="form-control" id="booking_service_id" name="booking[service_id]" disabled></select>
-											<span class="help-block"></span>
-											<span class="form-control-feedback"></span>
-											<!-- <%= f.collection_select :service_id, Service.where(company_id: current_user.company_id), :id, :name, {}, { class: "form-control" }%> -->
-										</div>
-									</div>
-									<div class="form-group has-feedback">
-										<%= f.label :price, "Precio", class: "col-sm-4 control-label" %>
-										<div class="col-sm-8">
-											<%= f.number_field :price, min: 0, class: "form-control" %>
-											<span class="help-block"></span>
-											<span class="form-control-feedback"></span>
-										</div>
-									</div>
-								</div>
-								<div class="col-md-6">
-									<% if @booking.client.nil? then @booking.build_client end %>
-									<%= f.fields_for :client do |builder| %>
-									<%= content_tag "div", id: "client_exclusive_data", data: { client_exclusive: Company.find(current_user.company_id).company_setting.client_exclusive } do %>
-									<% end %>
-									<% if Company.find(current_user.company_id).company_setting.client_exclusive %>
-							          <div class="form-group">
-										<%= builder.label :identification_number, "RUT", class: "col-sm-4 control-label" %>
-										<div class="col-sm-8">
-											<%= builder.text_field :identification_number, class: "form-control", disabled: true %>
-										</div>
-									</div>
-							          <% end %>
-									<div class="form-group has-feedback">
-										<label for="full_name" class="col-sm-4 control-label">Nombre Cliente</label>
-										<div class="col-sm-8">
-											<div class="input-group">
-												<input type="text" id="full_name" class="form-control" placeholder="Buscar clientes..." name="full_name">
-												<span class="input-group-btn">
-											    	<button class="btn btn-danger" type="button" id="xButton"><i class="fa fa-times-circle"></i></button>
-											   	</span>
-											</div>
-											<span class="help-block"></span>
-											<!-- <span class="form-control-feedback"></span> -->
-											<ul id="full_name_suggestions"></ul>
-										</div>
-									</div>
-									<div class="form-group">
-										<%= builder.label :email, "E-mail", class: "col-sm-4 control-label" %>
-										<div class="col-sm-8">
-											<%= builder.text_field :email, class: "form-control" %>
-											<ul id="email_suggestions"></ul>
-											<div class="checkbox">
-												<label>
-													<%= f.check_box :send_mail, :disabled => true %>Notificar cliente por e-mail
-												</label>
-											</div>
-										</div>
-									</div>
-									<div class="form-group">
-										<%= builder.label :phone, "Teléfono", class: "col-sm-4 control-label" %>
-										<div class="col-sm-8">
-											<%= builder.text_field :phone, class: "form-control" %>
-										</div>
-									</div>
-									<% end %>
-									<div class="form-group">
-										<%= f.label :status, "Estado", class: "col-sm-4 control-label" %>
-										<div class="col-sm-8">
-											<%= f.collection_select :status_id, Status.all.order(:name), :id, :name, {selected: Status.find_by_name( 'Reservado').id}, { class: "form-control" }%>
-										</div>
-									</div>
-								</div>
-							</div>
-							<div class="row">
-								<div class="col-md-12">
-									<div class="form-group">
-										<%= f.label :notes, "Notas compartidas con cliente", class: "col-sm-2 control-label" %>
-										<div class="col-sm-10">
-											<%= f.text_area :notes, :rows => "2", class: "form-control modal-textarea" %>
-										</div>
-									</div>
-									<div class="form-group">
-										<%= f.label :company_comment, "Comentario Interno", class: "col-sm-2 control-label" %>
-										<div class="col-sm-10">
-											<%= f.text_area :company_comment, :rows => "2", class: "form-control modal-textarea" %>
-										</div>
-									</div>
-								</div>
-							</div>
-							<% if @company_setting.staff_code %>
-							<div class="row">
-								<div class="col-md-12">
-									<div class="form-group has-feedback">
-										<%= label_tag :booking_staff_code, "Código de Empleado", class: "col-sm-2 control-label" %>
-										<div class="col-sm-10">
-											<%= text_field_tag :booking_staff_code, '',{class: "form-control", required: true} %>
-											<span class="help-block"></span>
-											<span class="form-control-feedback"></span>
-										</div>
-									</div>
-								</div>
-							</div>
-							<% end %>
-							<% if @company_setting.deal_activate %>
-							<div class="row">
-								<div class="col-md-12">
-									<div class="form-group has-feedback">
-										<%= label_tag :booking_deal_code, "Código de Convenio", class: "col-sm-2 control-label" %>
-										<div class="col-sm-10">
-											<%= text_field_tag :booking_deal_code, '',{class: "form-control", required: true} %>
-											<span class="help-block"></span>
-											<span class="form-control-feedback"></span>
-										</div>
-									</div>
-								</div>
-							</div>
-							<% end %>
-						</div>
-						<div class="tab-pane" id="client-pane">
-							<%= f.fields_for :client do |builder| %>
-							<div class="row">
-								<div class="col-md-6">
-									<%= builder.hidden_field :id %>
-									<div class="form-group">
-										<%= builder.label :first_name, "Nombre", class: "col-sm-4 control-label" %>
-										<div class="col-sm-8">
-											<%= builder.text_field :first_name, class: "form-control" %>
-										</div>
-									</div>
-									<div class="form-group">
-										<%= builder.label :last_name, "Apellido", class: "col-sm-4 control-label" %>
-										<div class="col-sm-8">
-											<%= builder.text_field :last_name, class: "form-control" %>
-										</div>
-									</div>
-									<div class="form-group">
-										<%= builder.label :birth_day, "Cumpleaños", class: "col-sm-4 control-label" %>
-											<div class="col-sm-2">
-											<%= builder.select :birth_day, [['01',1], ['02',2], ['03',3], ['04',4], ['05',5], ['06',6], ['07',7], ['08',8], ['09',9], ['10',10], ['11',11], ['12',12], ['13',13], ['14',14], ['15',15], ['16',16], ['17',17], ['18',18], ['19',19], ['20',20], ['21',21], ['22',22], ['23',23], ['24',24], ['25',25], ['26',26], ['27',27], ['28',28], ['29',29], ['30',30], ['31',31]], {prompt: "Día"}, { class: "form-control date-select"} %>
-											</div>
-											<div class="col-sm-4">
-											<%= builder.select :birth_month, [['Enero',1], ['Febrero',2], ['Marzo',3], ['Abril',4], ['Mayo',5], ['Junio',6], ['Julio',7], ['Agosto',8], ['Septiembre',9], ['Octubre',10], ['Noviembre',11], ['Diciembre',12]], {prompt: "Mes"}, { class: "form-control date-select"} %>
-											</div>
-											<div class="col-sm-2">
-											<%= builder.select :birth_year, options_for_select(Time.now.year.downto(Time.now.year-100).map {|s| ["#{s}", s]}), {prompt: "Año"}, { class: "form-control date-select"} %>
-											</div>
-									</div>
-									<div class="form-group">
-										<%= builder.label :age, "Edad", class: "col-sm-4 control-label" %>
-										<div class="col-sm-8">
-											<%= builder.number_field :age, class: "form-control" %>
-										</div>
-									</div>
-									<div class="form-group">
-										<%= builder.label :gender, "Género", class: "col-sm-4 control-label" %>
-										<div class="col-sm-8">
-											<%= builder.select :gender, [['No especificado',0], ['Femenino',1], ['Masculino',2]], { }, { class: "form-control"} %>
-										</div>
-									</div>
-								</div>
-								<div class="col-md-6">
-									<div class="form-group">
-										<%= builder.label :address, "Dirección", class: "col-sm-4 control-label" %>
-										<div class="col-sm-8">
-											<%= builder.text_field :address, class: "form-control" %>
-										</div>
-									</div>
-									<div class="form-group">
-										<%= builder.label :district, "Comuna", class: "col-sm-4 control-label" %>
-										<div class="col-sm-8">
-											<%= builder.text_field :district, class: "form-control" %>
-										</div>
-									</div>
-									<div class="form-group">
-										<%= builder.label :city, "Ciudad", class: "col-sm-4 control-label" %>
-										<div class="col-sm-8">
-											<%= builder.text_field :city, class: "form-control" %>
-										</div>
-									</div>
-								</div>
-							</div>
-							<% end %>
-							<p><strong>Nota:</strong> Si modificas estos datos, al guardar la reserva, se actualizarán los datos del cliente.</p>
-						</div>
-						<div class="tab-pane" id="history-pane">
-							<div class="fixed-table">
-								<h4>Últimas reservas del cliente (máx. 10 reservas):</h4>
-								<table class="table">
-									<thead>
-										<tr>
-											<th>Fecha</th>
-											<th>Servicio</th>
-											<th>Prestador</th>
-											<th>Estado</th>
-											<th>Nota Cliente</th>
-											<th>Nota Interna</th>
-										</tr>
-									</thead>
-									<tbody id="client-history-tbody">
-										<tr>
-											<td colspan="6">No hay un cliente seleccionado...</td>
-										</tr>
-									</tbody>
-								</table>
-							</div>
-						</div>
-						<% if @company_setting.booking_history %>
-						<div class="tab-pane" id="changes-pane">
-							<div class="fixed-table">
-								<h4>Modificaciones a la Reserva:</h4>
-								<table class="table">
-									<thead>
-										<tr>
-											<th>Acción</th>
-											<th>Fecha</th>
-											<th>Servicio</th>
-											<th>Prestador</th>
-											<th>Estado</th>
-											<th>Usuario</th>
-											<% if @company_setting.staff_code %>
-											<th>Responsable</th>
-											<% end %>
-										</tr>
-									</thead>
-									<tbody id="booking-history-tbody">
-										<tr>
-											<% if @company_setting.staff_code %>
-											<td colspan="7">No hay modificaciones para esta reserva...</td>
-											<% else %>
-											<td colspan="6">No hay modificaciones para esta reserva...</td>
-											<% end %>
-										</tr>
-									</tbody>
-								</table>
-							</div>
-						</div>
-						<% end %>
-					</div>
-					<% end %>
-				</div>
-			</div>
-			<div class="modal-footer booking-modal-footer">
-			</div>
-		</div>
-	</div>
+  <div class="modal-dialog modal-admin">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h4 class="modal-title booking-modal-title" id="bookingModalLabel"></h4>
+      </div>
+      <div class="modal-body booking-modal-body">
+        <%= form_for @booking, html: {class: "form-horizontal"} do |f| %>
+        <%= f.hidden_field :max_changes, value: Company.find(current_user.company_id).company_setting.max_changes %>
+        <div class="row well well-sm">
+          <ul id="myTab" class="nav nav-tabs" role="tablist">
+            <li id="booking-li" class="active"><a href="#booking-pane" role="tab" data-toggle="tab" class="tab_index" id="booking-tab">Reserva</a></li>
+            <li id="client-li" class=""><a href="#client-pane" role="tab" data-toggle="tab" class="tab_index" id="client-tab">Datos Cliente</a></li>
+            <li id="history-li" class=""><a href="#history-pane" role="tab" data-toggle="tab" class="tab_index" id="client-tab">Historial Cliente</a></li>
+            <% if @company_setting.booking_history %>
+            <li id="changes-li" class=""><a href="#changes-pane" role="tab" data-toggle="tab" class="tab_index" id="client-tab">Modificaciones Reserva</a></li>
+            <% end %>
+          </ul>
+          <br />
+          <div id="myTabContent" class="tab-content">
+            <div class="tab-pane active" id="booking-pane">
+              <div class="row">
+                <div class="col-md-6">
+                  <div class="form-group has-feedback">
+                    <label for="datePicker" class="col-sm-4 control-label">Fecha</label>
+                    <div class="col-sm-8">
+                      <input type="text" id="datePicker" class="form-control" name="datePicker" placeholder="31/12/2014 (requerido)">
+                      <span class="help-block"></span>
+                      <span class="form-control-feedback"></span>
+                    </div>
+                  </div>
+                  <div class="form-group has-feedback">
+                    <label class="col-sm-4 control-label">Hora</label>
+                    <div class="col-sm-8">
+                      <div class="input datetime required booking_start_end ">
+                        <select class="form-control date-select datetime required" id="bookingStartHour" name="booking[start_hours]">
+                          <option value="00">00</option>
+                          <option value="01">01</option>
+                          <option value="02">02</option>
+                          <option value="03">03</option>
+                          <option value="04">04</option>
+                          <option value="05">05</option>
+                          <option value="06">06</option>
+                          <option value="07">07</option>
+                          <option value="08">08</option>
+                          <option value="09">09</option>
+                          <option value="10">10</option>
+                          <option value="11">11</option>
+                          <option value="12">12</option>
+                          <option value="13">13</option>
+                          <option value="14">14</option>
+                          <option value="15">15</option>
+                          <option value="16">16</option>
+                          <option value="17">17</option>
+                          <option value="18">18</option>
+                          <option value="19">19</option>
+                          <option value="20">20</option>
+                          <option value="21">21</option>
+                          <option value="22">22</option>
+                          <option value="23">23</option>
+                        </select>
+                        :<select class="form-control date-select datetime required" id="bookingStartMinute" name="booking[start_minutes]">
+                          <option value="00">00</option>
+                          <option value="05">05</option>
+                          <option value="10">10</option>
+                          <option value="15">15</option>
+                          <option value="20">20</option>
+                          <option value="25">25</option>
+                          <option value="30">30</option>
+                          <option value="35">35</option>
+                          <option value="40">40</option>
+                          <option value="45">45</option>
+                          <option value="50">50</option>
+                          <option value="55">55</option>
+                        </select> -
+                        <select class="form-control date-select datetime required" id="bookingEndHour" name="booking[end_hours]">
+                          <option value="00">00</option>
+                          <option value="01">01</option>
+                          <option value="02">02</option>
+                          <option value="03">03</option>
+                          <option value="04">04</option>
+                          <option value="05">05</option>
+                          <option value="06">06</option>
+                          <option value="07">07</option>
+                          <option value="08">08</option>
+                          <option value="09">09</option>
+                          <option value="10">10</option>
+                          <option value="11">11</option>
+                          <option value="12">12</option>
+                          <option value="13">13</option>
+                          <option value="14">14</option>
+                          <option value="15">15</option>
+                          <option value="16">16</option>
+                          <option value="17">17</option>
+                          <option value="18">18</option>
+                          <option value="19">19</option>
+                          <option value="20">20</option>
+                          <option value="21">21</option>
+                          <option value="22">22</option>
+                          <option value="23">23</option>
+                        </select>
+                        :<select class="form-control date-select datetime required" id="bookingEndMinute" name="booking[end_minutes]">
+                          <option value="00">00</option>
+                          <option value="05">05</option>
+                          <option value="10">10</option>
+                          <option value="15">15</option>
+                          <option value="20">20</option>
+                          <option value="25">25</option>
+                          <option value="30">30</option>
+                          <option value="35">35</option>
+                          <option value="40">40</option>
+                          <option value="45">45</option>
+                          <option value="50">50</option>
+                          <option value="55">55</option>
+                        </select>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="form-group has-feedback">
+                    <%= f.label :service_provider_id, "Prestador de Servicios", class: "col-sm-4 control-label" %>
+                    <div class="col-sm-8">
+                      <%= f.collection_select :service_provider_id, ServiceProvider.where(location_id: Location.where(company_id: current_user.company_id, :active => true)).accessible_by(current_ability), :id, :public_name, {}, { class: "form-control" }%>
+                      <span class="help-block"></span>
+                      <span class="form-control-feedback"></span>
+                      <div class="checkbox">
+                        <label>
+                          <%= f.check_box :provider_lock %>Prestador seleccionado por cliente
+                        </label>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="form-group has-feedback">
+                    <%= f.label :service, "Servicio", class: "col-sm-4 control-label" %>
+                    <div class="col-sm-8">
+                      <select class="form-control" id="booking_service_id" name="booking[service_id]" disabled></select>
+                      <span class="help-block"></span>
+                      <span class="form-control-feedback"></span>
+                      <!-- <%= f.collection_select :service_id, Service.where(company_id: current_user.company_id), :id, :name, {}, { class: "form-control" }%> -->
+                    </div>
+                  </div>
+                  <div class="form-group has-feedback">
+                    <%= f.label :price, "Precio", class: "col-sm-4 control-label" %>
+                    <div class="col-sm-8">
+                      <%= f.number_field :price, min: 0, class: "form-control" %>
+                      <span class="help-block"></span>
+                      <span class="form-control-feedback"></span>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <% if @booking.client.nil? then @booking.build_client end %>
+                  <%= f.fields_for :client do |builder| %>
+                  <%= content_tag "div", id: "client_exclusive_data", data: { client_exclusive: Company.find(current_user.company_id).company_setting.client_exclusive } do %>
+                  <% end %>
+                  <% if Company.find(current_user.company_id).company_setting.client_exclusive %>
+                        <div class="form-group">
+                    <%= builder.label :identification_number, "RUT", class: "col-sm-4 control-label" %>
+                    <div class="col-sm-8">
+                      <%= builder.text_field :identification_number, class: "form-control", disabled: true %>
+                    </div>
+                  </div>
+                        <% end %>
+                  <div class="form-group has-feedback">
+                    <label for="full_name" class="col-sm-4 control-label">Nombre Cliente</label>
+                    <div class="col-sm-8">
+                      <div class="input-group">
+                        <input type="text" id="full_name" class="form-control" placeholder="Buscar clientes..." name="full_name">
+                        <span class="input-group-btn">
+                            <button class="btn btn-danger" type="button" id="xButton"><i class="fa fa-times-circle"></i></button>
+                          </span>
+                      </div>
+                      <span class="help-block"></span>
+                      <!-- <span class="form-control-feedback"></span> -->
+                      <ul id="full_name_suggestions"></ul>
+                    </div>
+                  </div>
+                  <div class="form-group">
+                    <%= builder.label :email, "E-mail", class: "col-sm-4 control-label" %>
+                    <div class="col-sm-8">
+                      <%= builder.text_field :email, class: "form-control" %>
+                      <ul id="email_suggestions"></ul>
+                      <div class="checkbox">
+                        <label>
+                          <%= f.check_box :send_mail, :disabled => true %>Notificar cliente por e-mail
+                        </label>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="form-group">
+                    <%= builder.label :phone, "Teléfono", class: "col-sm-4 control-label" %>
+                    <div class="col-sm-8">
+                      <%= builder.text_field :phone, class: "form-control" %>
+                    </div>
+                  </div>
+                  <% end %>
+                  <div class="form-group">
+                    <%= f.label :status, "Estado", class: "col-sm-4 control-label" %>
+                    <div class="col-sm-8">
+                      <%= f.collection_select :status_id, Status.all.order(:name), :id, :name, {selected: Status.find_by_name( 'Reservado').id}, { class: "form-control" }%>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-md-12">
+                  <div class="form-group">
+                    <%= f.label :notes, "Notas compartidas con cliente", class: "col-sm-2 control-label" %>
+                    <div class="col-sm-10">
+                      <%= f.text_area :notes, :rows => "2", class: "form-control modal-textarea" %>
+                    </div>
+                  </div>
+                  <div class="form-group">
+                    <%= f.label :company_comment, "Comentario Interno", class: "col-sm-2 control-label" %>
+                    <div class="col-sm-10">
+                      <%= f.text_area :company_comment, :rows => "2", class: "form-control modal-textarea" %>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <% if @company_setting.staff_code %>
+              <div class="row">
+                <div class="col-md-12">
+                  <div class="form-group has-feedback">
+                    <%= label_tag :booking_staff_code, "Código de Empleado", class: "col-sm-2 control-label" %>
+                    <div class="col-sm-10">
+                      <%= text_field_tag :booking_staff_code, '',{class: "form-control", required: true} %>
+                      <span class="help-block"></span>
+                      <span class="form-control-feedback"></span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <% end %>
+              <% if @company_setting.deal_activate %>
+              <div class="row">
+                <div class="col-md-12">
+                  <div class="form-group has-feedback">
+                    <%= label_tag :booking_deal_code, "Código de Convenio", class: "col-sm-2 control-label" %>
+                    <div class="col-sm-10">
+                      <%= text_field_tag :booking_deal_code, '',{class: "form-control", required: true} %>
+                      <span class="help-block"></span>
+                      <span class="form-control-feedback"></span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <% end %>
+            </div>
+            <div class="tab-pane" id="client-pane">
+              <%= f.fields_for :client do |builder| %>
+              <div class="row">
+                <div class="col-md-6">
+                  <%= builder.hidden_field :id %>
+                  <div class="form-group">
+                    <%= builder.label :first_name, "Nombre", class: "col-sm-4 control-label" %>
+                    <div class="col-sm-8">
+                      <%= builder.text_field :first_name, class: "form-control" %>
+                    </div>
+                  </div>
+                  <div class="form-group">
+                    <%= builder.label :last_name, "Apellido", class: "col-sm-4 control-label" %>
+                    <div class="col-sm-8">
+                      <%= builder.text_field :last_name, class: "form-control" %>
+                    </div>
+                  </div>
+                  <div class="form-group">
+                    <%= builder.label :birth_day, "Cumpleaños", class: "col-sm-4 control-label" %>
+                      <div class="col-sm-2">
+                      <%= builder.select :birth_day, [['01',1], ['02',2], ['03',3], ['04',4], ['05',5], ['06',6], ['07',7], ['08',8], ['09',9], ['10',10], ['11',11], ['12',12], ['13',13], ['14',14], ['15',15], ['16',16], ['17',17], ['18',18], ['19',19], ['20',20], ['21',21], ['22',22], ['23',23], ['24',24], ['25',25], ['26',26], ['27',27], ['28',28], ['29',29], ['30',30], ['31',31]], {prompt: "Día"}, { class: "form-control date-select"} %>
+                      </div>
+                      <div class="col-sm-4">
+                      <%= builder.select :birth_month, [['Enero',1], ['Febrero',2], ['Marzo',3], ['Abril',4], ['Mayo',5], ['Junio',6], ['Julio',7], ['Agosto',8], ['Septiembre',9], ['Octubre',10], ['Noviembre',11], ['Diciembre',12]], {prompt: "Mes"}, { class: "form-control date-select"} %>
+                      </div>
+                      <div class="col-sm-2">
+                      <%= builder.select :birth_year, options_for_select(Time.now.year.downto(Time.now.year-100).map {|s| ["#{s}", s]}), {prompt: "Año"}, { class: "form-control date-select"} %>
+                      </div>
+                  </div>
+                  <div class="form-group">
+                    <%= builder.label :age, "Edad", class: "col-sm-4 control-label" %>
+                    <div class="col-sm-8">
+                      <%= builder.number_field :age, class: "form-control" %>
+                    </div>
+                  </div>
+                  <div class="form-group">
+                    <%= builder.label :gender, "Género", class: "col-sm-4 control-label" %>
+                    <div class="col-sm-8">
+                      <%= builder.select :gender, [['No especificado',0], ['Femenino',1], ['Masculino',2]], { }, { class: "form-control"} %>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <%= builder.label :address, "Dirección", class: "col-sm-4 control-label" %>
+                    <div class="col-sm-8">
+                      <%= builder.text_field :address, class: "form-control" %>
+                    </div>
+                  </div>
+                  <div class="form-group">
+                    <%= builder.label :district, "Comuna", class: "col-sm-4 control-label" %>
+                    <div class="col-sm-8">
+                      <%= builder.text_field :district, class: "form-control" %>
+                    </div>
+                  </div>
+                  <div class="form-group">
+                    <%= builder.label :city, "Ciudad", class: "col-sm-4 control-label" %>
+                    <div class="col-sm-8">
+                      <%= builder.text_field :city, class: "form-control" %>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <% end %>
+              <p><strong>Nota:</strong> Si modificas estos datos, al guardar la reserva, se actualizarán los datos del cliente.</p>
+            </div>
+            <div class="tab-pane" id="history-pane">
+              <div class="fixed-table">
+                <h4>Últimas reservas del cliente (máx. 10 reservas):</h4>
+                <table class="table">
+                  <thead>
+                    <tr>
+                      <th>Fecha</th>
+                      <th>Servicio</th>
+                      <th>Prestador</th>
+                      <th>Estado</th>
+                      <th>Nota Cliente</th>
+                      <th>Nota Interna</th>
+                    </tr>
+                  </thead>
+                  <tbody id="client-history-tbody">
+                    <tr>
+                      <td colspan="6">No hay un cliente seleccionado...</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+            <% if @company_setting.booking_history %>
+            <div class="tab-pane" id="changes-pane">
+              <div class="fixed-table">
+                <h4>Modificaciones a la Reserva:</h4>
+                <table class="table">
+                  <thead>
+                    <tr>
+                      <th>Acción</th>
+                      <th>Fecha</th>
+                      <th>Servicio</th>
+                      <th>Prestador</th>
+                      <th>Estado</th>
+                      <th>Usuario</th>
+                      <% if @company_setting.staff_code %>
+                      <th>Responsable</th>
+                      <% end %>
+                    </tr>
+                  </thead>
+                  <tbody id="booking-history-tbody">
+                    <tr>
+                      <% if @company_setting.staff_code %>
+                      <td colspan="7">No hay modificaciones para esta reserva...</td>
+                      <% else %>
+                      <td colspan="6">No hay modificaciones para esta reserva...</td>
+                      <% end %>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+            <% end %>
+          </div>
+          <% end %>
+        </div>
+      </div>
+      <div class="modal-footer booking-modal-footer">
+      </div>
+    </div>
+  </div>
 </div>
-
 <div class="modal fade" id="breakModal" tabindex="-1" role="dialog" aria-labelledby="breakModalLabel" aria-hidden="true">
-	<div class="modal-dialog">
-		<div class="modal-content">
-			<div class="modal-header">
-				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-				<h4 class="modal-title break-modal-title" id="breakModalLabel">Bloquear Horas o Agregar Vacaciones</h4>
-			</div>
-			<div class="modal-body break-modal-body">
-				<%= form_for @provider_break, html: {class: "form-horizontal"} do |f| %>
-					<div class="form-group">
-						<%= f.label :service_provider_id, "Prestador de Servicios", class: "col-sm-3 control-label" %>
-						<div class="col-sm-9">
-							<%= f.collection_select :service_provider_id, ServiceProvider.where(location_id: Location.where(company_id: current_user.company_id, :active => true)).accessible_by(current_ability), :id, :public_name, {}, { class: "form-control" }%>
-						</div>
-					</div>
-					<div class="form-group">
-						<%= f.label :name, "Etiqueta", class: "col-sm-3 control-label" %>
-						<div class="col-sm-9">
-							<%= f.text_field :name,  class: "form-control" %>
-						</div>
-					</div>
-					<div class="form-group">
-						<%= f.label :start, "Inicio", class: "col-sm-3 control-label" %>
-						<div class="col-sm-9">
-							<%= f.datetime_select :start, {default: 4.hours.ago, :minute_step => 5}, {class: "form-control date-select"} %>
-						</div>
-					</div>
-					<div class="form-group">
-						<%= f.label :end, "Fin", class: "col-sm-3 control-label" %>
-						<div class="col-sm-9">
-							<%= f.datetime_select :end, {default: 4.hours.ago, :minute_step => 5}, {class: "form-control date-select"} %>
-						</div>
-					</div>
-				<% end %>
-			</div>
-			<div class="modal-footer break-modal-footer">
-			</div>
-		</div>
-	</div>
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h4 class="modal-title break-modal-title" id="breakModalLabel">Bloquear Horas o Agregar Vacaciones</h4>
+      </div>
+      <div class="modal-body break-modal-body">
+        <%= form_for @provider_break, html: {class: "form-horizontal"} do |f| %>
+          <div class="form-group">
+            <%= f.label :service_provider_id, "Prestador de Servicios", class: "col-sm-3 control-label" %>
+            <div class="col-sm-9">
+              <%= f.collection_select :service_provider_id, ServiceProvider.where(location_id: Location.where(company_id: current_user.company_id, :active => true)).accessible_by(current_ability), :id, :public_name, {}, { class: "form-control" }%>
+            </div>
+          </div>
+          <div class="form-group">
+            <%= f.label :name, "Etiqueta", class: "col-sm-3 control-label" %>
+            <div class="col-sm-9">
+              <%= f.text_field :name,  class: "form-control" %>
+            </div>
+          </div>
+          <div class="form-group">
+            <%= f.label :start, "Inicio", class: "col-sm-3 control-label" %>
+            <div class="col-sm-9">
+              <%= f.datetime_select :start, {default: 4.hours.ago, :minute_step => 5}, {class: "form-control date-select"} %>
+            </div>
+          </div>
+          <div class="form-group">
+            <%= f.label :end, "Fin", class: "col-sm-3 control-label" %>
+            <div class="col-sm-9">
+              <%= f.datetime_select :end, {default: 4.hours.ago, :minute_step => 5}, {class: "form-control date-select"} %>
+            </div>
+          </div>
+        <% end %>
+      </div>
+      <div class="modal-footer break-modal-footer">
+      </div>
+    </div>
+  </div>
 </div>
+<% end %>
 
 <%= content_tag "div", id: "calendar-data", data: { calendar_duration: @company_setting.calendar_duration, extended_schedule: @company_setting.extended_schedule_bool, extended_min_hour: @company_setting.extended_min_hour.beginning_of_hour.hour, extended_max_hour: @company_setting.extended_max_hour.end_of_hour.hour, booking_history: @company_setting.booking_history, staff_code: @company_setting.staff_code } do %>
 <% end %>
+
 <% content_for :scripts do %>
-	<%= javascript_include_tag "bookings" %>
-	<%= javascript_include_tag "jquery-ui-1.10.4.min.js" %>
-	<%= javascript_include_tag 'validations/validate' %>
-	<%= javascript_include_tag 'validations/admin/booking' %>
+  <%= javascript_include_tag "bookings" %>
 <% end %>
+
 <% content_for :stylesheets do %>
-	<% stylesheet_link_tag "fullcalendar_css" %>
-	<%= stylesheet_link_tag "admin/admin-calendar" %>
+  <%= stylesheet_link_tag "fullcalendar_css" %>
+  <%= stylesheet_link_tag "admin/admin-calendar" %>
 <% end %>

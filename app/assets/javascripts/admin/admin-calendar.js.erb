@@ -1499,11 +1499,11 @@ $(function() {
 	$('#new_provider_break').keypress(function(e){
 		if ( e.which == 13 ) return false;
 	});
-	$('.createBooking').click(function() {
+	$('#createBooking').click(function() {
 		createBookingModal();
 		return false;
 	});
-	$('.createBreak').click(function() {
+	$('#createBreak').click(function() {
 		createBreakModal();
 		return false;
 	});
@@ -1548,6 +1548,7 @@ $(function() {
 			loadProviderEvents(providerId);
 		}
 	});
+
 	$("#set-date").datepicker({
 		dateFormat: 'dd-mm-yy',
 		buttonText: '<i class="fa fa-clock-o"></i> Ir a',
@@ -1565,6 +1566,7 @@ $(function() {
 			loadProviderEvents(providerId);
 		}
 	});
+	$(".ui-datepicker-trigger").addClass("btn");
 
 	$("#full_name").on('input',function(e){
 		splitFullName();
@@ -1689,8 +1691,6 @@ $(function() {
 			$('#booking_service_provider_id').prop('disabled', false);
 		}
 	});
-
-	$(".ui-datepicker-trigger").addClass("btn btn-agendapro-claro pull-right")
 
 	$('#bookingModal').on('hidden.bs.modal', function (e) {
 		$('#booking_service_id').attr('disabled', true);

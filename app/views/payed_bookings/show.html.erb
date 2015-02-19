@@ -36,7 +36,7 @@
 					<thead class="head-white" style="font-size: 12px !important;">
 						<tr>
 							<th>ID</th>
-							
+
 							<th>Cliente</th>
 							<th>Local</th>
 							<th>Servicio</th>
@@ -54,7 +54,7 @@
 								<td>
 									<%= payed_booking.id %>
 								</td>
-								
+
 								<td>
 									<%= payed_booking.booking.client.first_name + " " + payed_booking.booking.client.last_name %>
 								</td>
@@ -84,7 +84,7 @@
 					</tbody>
 				</table>
 			</div>
-		</div>		
+		</div>
 	</div>
 </div>
 
@@ -129,7 +129,7 @@
 								<td>
 									<%= payed_booking.id %>
 								</td>
-								
+
 								<td>
 									<%= payed_booking.booking.client.first_name + " " + payed_booking.booking.client.last_name %>
 								</td>
@@ -159,12 +159,12 @@
 					</tbody>
 				</table>
 			</div>
-		</div>		
+		</div>
 	</div>
 </div>
 
 <% content_for :scripts do %>
-	<%= javascript_include_tag "jquery-ui-1.10.4.min.js" %>
+	<%= javascript_include_tag "jquery-ui.min" %>
 
 	<script type="text/javascript">
 

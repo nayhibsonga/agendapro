@@ -11,7 +11,7 @@
 		<li class="active"><a id="companies_monthly_locations" href="/companies_monthly_locations">Locales mensuales</a></li>
 
 		<li><a id="companies_monthly_bookings" href="/companies_monthly_bookings">Resumen de reservas</a></li>
-		
+
 		<li><%= link_to 'Empresas', companies_path, { :id => "companies" } %></li>
 
 	</ul>
@@ -71,7 +71,7 @@
 					Junio
 				</th>
 				<th>
-					Julio	
+					Julio
 				</th>
 				<th>
 					Agosto
@@ -93,7 +93,7 @@
 				</th>
 			</tr>
 			<%	@companies.each do |company| %>
-				<% 
+				<%
 					company_locations = 0
 				%>
 				<tr>
@@ -107,20 +107,20 @@
 
 							start_date = DateTime.new(@year, i, 1)
 							end_date = start_date
-							if i < 12	
+							if i < 12
 								end_date = DateTime.new(@year, i+1, 1)-1.minutes
 							else
 								end_date = DateTime.new(@year+1, 1, 1)-1.minutes
 							end
 
 							locations_count = Location.where('company_id = ? and created_at BETWEEN ? and ?', company.id, start_date, end_date).count
-							
-							
+
+
 							month_locations = locations_count
 							company_locations = company_locations + locations_count
 							@locations[i]['count'] = @locations[i]['count'] + locations_count
 							@locations[13]['count'] = @locations[13]['count'] + locations_count
-												
+
 						%>
 
 						<td>
@@ -158,14 +158,14 @@
 
 
 <% content_for :scripts do %>
-	<%= javascript_include_tag "jquery-ui-1.10.4.min.js" %>
+	<%= javascript_include_tag "jquery-ui.min" %>
 
 	<script type="text/javascript">
 		$("#year-select").on('change', function(){
-			
+
 			var year = $(this).val();
 			$("#year-select-link").attr("href", "/companies_monthly_locations?year=" + year);
-			
+
 		});
 
 	</script>

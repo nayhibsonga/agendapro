@@ -48,7 +48,7 @@
 		</div>
 		<% for i in 1..12 do %>
 			<% companies = @companies_arr[i]['companies'] %>
-			
+
 			<% if !companies.nil? && companies.count > 0 %>
 				<h4><%= @companies_arr[i]['month'] %></h4>
 				<div class="scrollable" style="max-height: 200px;">
@@ -86,7 +86,7 @@
 					</table>
 				</div>
 			<% else %>
-				
+
 			<% end %>
 
 		<% end %>
@@ -95,14 +95,14 @@
 </div>
 
 <% content_for :scripts do %>
-	<%= javascript_include_tag "jquery-ui-1.10.4.min.js" %>
+	<%= javascript_include_tag "jquery-ui.min" %>
 
 	<script type="text/javascript">
 		$("#year-select").on('change', function(){
-			
+
 			var year = $(this).val();
 			$("#year-select-link").attr("href", "/companies_locations?year=" + year);
-			
+
 		});
 
 	</script>

@@ -45,7 +45,7 @@
 
 <div style="margin-top: 10px;">
 	<%= form_tag({ :controller => 'companies', :action => 'add_payment'}, method: "post") do %>
-	
+
 		<input type="hidden" name="id" value="<%= @company.id %>" />
 		<div class="row">
 			<div class="col-sm-3">
@@ -93,7 +93,7 @@
 				Haz los cambios necesarios que reflejen el pago.
 			</div>
 			<div class="col-sm-3">
-				
+
 			</div>
 		</div>
 		<div class="row" style="margin-top: 10px;">
@@ -114,7 +114,7 @@
 				<small>Selecciona un nuevo plan si quieres cambiarlo.</small>
 			</div>
 			<div class="col-sm-5">
-				
+
 			</div>
 		</div>
 		<div class="row" style="margin-top: 10px;">
@@ -135,7 +135,7 @@
 				<small>Selecciona un nuevo estado si quieres cambiarlo.</small>
 			</div>
 			<div class="col-sm-5">
-				
+
 			</div>
 		</div>
 		<div class="row" style="margin-top: 10px;">
@@ -177,12 +177,12 @@
 </div>
 
 <% content_for :scripts do %>
-	<%= javascript_include_tag "jquery-ui-1.10.4.min.js" %>
+	<%= javascript_include_tag "jquery-ui.min" %>
 
 
 	<script type="text/javascript">
 
-		
+
 			$("#datepicker").datepicker({
 	          monthNames: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
 	          monthNamesShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
@@ -202,7 +202,7 @@
 				$(this).datepicker('option', 'altField', altField);
 			});
 
-			
-		
+
+
 	</script>
 <% end %>

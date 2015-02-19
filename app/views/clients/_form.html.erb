@@ -91,11 +91,11 @@
 			</div>
 			<div class="col-sm-3">
 				<%= f.select :birth_month, [['Enero',1], ['Febrero',2], ['Marzo',3], ['Abril',4], ['Mayo',5], ['Junio',6], ['Julio',7], ['Agosto',8], ['Septiembre',9], ['Octubre',10], ['Noviembre',11], ['Diciembre',12]], {prompt: "Mes..."}, { class: "form-control date-select"} %>
-			
+
 			</div>
 			<div class="col-sm-3">
 				<%= f.select :birth_year, options_for_select(Time.now.year.downto(Time.now.year-100).map {|s| ["#{s}", s]}, selected: @client.birth_year), {prompt: "Año..."}, { class: "form-control date-select"} %>
-			
+
 			</div>
 		  </div>
 		  <div class="form-group has-feedback">
@@ -115,10 +115,10 @@
 		  <div class="form-group">
 			<div class="col-md-6 col-md-offset-3">
 			  <%= f.submit 'Guardar', :class => 'btn btn-agendapro-claro' %>
-			  <%= link_to 'Cancelar', clients_path, class: "btn btn-default" %>  
+			  <%= link_to 'Cancelar', clients_path, class: "btn btn-default" %>
 			</div>
 		  </div>
-		</div>	
+		</div>
   	<% end %>
 
 	<% if @client.id %>
@@ -177,11 +177,11 @@
 			</table>
 		  </div>
 		</div>
-		<%= link_to "Ver Historial Completo", client_history_path(:id => @client.id) %>      
+		<%= link_to "Ver Historial Completo", client_history_path(:id => @client.id) %>
 	  </div>
 	<% end %>
   </div>
-  
+
   <div class="row">
 	<% if @client.id %>
 	  <div class="col-md-12">
@@ -228,10 +228,10 @@
 	  </div>
 	<% end %>
   </div>
-  
+
   <% content_for :scripts do %>
 	<%= javascript_include_tag "clients" %>
-	<%= stylesheet_link_tag "jquery-ui-1.10.4" %>
-	<%= javascript_include_tag "jquery-ui-1.10.4.min" %>
+	<%= stylesheet_link_tag "jquery-ui" %>
+	<%= javascript_include_tag "jquery-ui.min" %>
   <% end %>
 </div>

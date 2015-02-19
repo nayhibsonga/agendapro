@@ -10,7 +10,7 @@
 
 <div>
   <div class="container">
-    
+
   </div>
   <div class="container" id="warning"></div>
   <div class="container">
@@ -42,7 +42,7 @@
                 <div class="panel-group" id="services-selector" style="border-radius: 4px; border: 1px solid #acacac; margin-left: 10px !important;">
                   <%= image_tag "ajax-loader.gif", :alt => "Loader" %>
                 </div>
-                
+
               </div>
               <div class="col-sm-6">
                 <div class="descripcion">
@@ -65,7 +65,7 @@
           <div class="box-step">
             <div class="row">
               <div class="col-md-3">
-                <div class="staff-wrapper">             
+                <div class="staff-wrapper">
                   <span class="subtitulos-workflow">Seleccione un Staff<br /> y Horario &nbsp;</span><span><i class="fa fa-clock-o gray-icon"></i>&nbsp;<i class="fa fa-user gray-icon"></i></span>
                   <div class="sub-workflow dark-gray">Seleccione un staff para ver su horario</div>
                   <div <%= 'style="display:none;"'.html_safe if @location.company.company_setting.provider_preference == 2 %>>
@@ -75,7 +75,7 @@
                       </ul>
                     </div>
                   </div>
-                  
+
                 </div>
               </div>
               <br />
@@ -89,7 +89,7 @@
                         </div>
                         <div class="col-xs-8">
                           <span class="tittle"></span>
-                          
+
                         </div>
                         <div class="col-xs-2">
                           <span class="date-span">
@@ -104,13 +104,13 @@
                     </div>
                   </div>
                   <div class="days-row">
-                    
+
                   </div>
                   <div class="panel-body">
                     <div class="horario"></div>
                   </div>
                 </div>
-                
+
               </div>
             </div>
 
@@ -118,7 +118,7 @@
               <div class="col-sm-3">
                 <div class="btn-change btn-prev">
                   <a class="prev2 prev-btn"><i class="fa fa-chevron-left prev-arrow"></i> Anterior</a>
-                </div>  
+                </div>
               </div>
               <div class="col-sm-9">
                 <div class="btn-change btn-next">
@@ -126,7 +126,7 @@
                 </div>
               </div>
             </div>
-            
+
           </div>
           <div class="box-step">
 
@@ -179,7 +179,7 @@
                           </div>
                         </div>
 
-                      
+
                         <div class="row">
                           <div class="col-xs-6 dark-gray">
                             Email
@@ -204,7 +204,7 @@
                             </div>
                           </div>
                         </div>
-                        
+
                       </div>
                       <% else %>
                         <%= hidden_field_tag :firstName %>
@@ -224,7 +224,7 @@
                           </div>
                         </div>
 
-                      
+
                         <div class="row">
                           <div class="col-xs-6 dark-gray">
                             Email
@@ -301,7 +301,7 @@
 
                 <!-- FIN FORM -->
 
-                
+
 
 
               </div>
@@ -360,7 +360,7 @@
 <% content_for :scripts do %>
   <%= javascript_include_tag 'workflow/services' %>
   <%= javascript_include_tag 'jquery.carouFredSel-6.2.1.js' %>
-  <%= javascript_include_tag "jquery-ui-1.10.4.min.js" %>
+  <%= javascript_include_tag "jquery-ui.min" %>
   <%= javascript_include_tag 'split-name' %>
   <%= javascript_include_tag 'validations/validate' %>
   <%= javascript_include_tag 'validations/home/workflow' %>
@@ -429,7 +429,7 @@
           firstDay: 1,
           dateFormat: 'yy-mm-dd',
           onSelect: function(newDate){
-            
+
             var data = {
               provider: $('[name="staffRadio"]:checked').val(),
               local: $('#selectedLocal').data('local').id,
@@ -439,7 +439,7 @@
 
             console.log(data);
 
-            
+
 
             if (calendar) {
               calendar.rebuild('/get_available_time.json', data);
@@ -449,11 +449,11 @@
               calendar = new Calendar('/get_available_time.json', data);
               console.log("New calendar.");
             }
-            
+
             $(document).on('hourClick', function (e) {
               addBooking(e);
             });
-            
+
 
             $(function () {
               $('#prev').click(function () {
@@ -467,7 +467,7 @@
           }
       });
 
-      $(document.body).on('click', '.date-span', function(e){ 
+      $(document.body).on('click', '.date-span', function(e){
         $(e.currentTarget).find('input').datepicker('show');
       });
 
