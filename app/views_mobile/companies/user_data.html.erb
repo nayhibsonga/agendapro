@@ -63,7 +63,7 @@
           </div>
           <div class="form-group">
             <% if @service.has_discount %>
-              Precio:&nbsp;<%= (@service.price*(100-@service.discount)/100).to_s %>
+              Precio:&nbsp;<%= number_to_currency((@service.price*(100-@service.discount)/100), unit: "$", separator: ".", delimiter: ",", precision: 0) %>
             <% end %>
           </div>
         </div>
@@ -75,7 +75,7 @@
           </div>
           <div class="form-group">
             <% if @service.has_discount %>
-              Precio:&nbsp;<%= @service.price.to_s %>
+              Precio:&nbsp;<%= number_to_currency(@service.price, unit: "$", separator: ".", delimiter: ",", precision: 0) %>
             <% end %>
           </div>
         </div>
