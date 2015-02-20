@@ -200,6 +200,9 @@ table.fc-agenda-days {
   ========== Datepicker ==========
   ================================
 */
+.ui-datepicker {
+  z-index: 1041 !important;
+}
 .ui-datepicker-trigger {
   color: #22c488;
   border-color: #d1d1d1;
@@ -217,6 +220,21 @@ table.fc-agenda-days {
 .ui-datepicker-trigger:active,
 .ui-datepicker-trigger.active {
   background-image: none;
+}
+@media (min-width: 992px) {
+  .ui-datepicker-trigger {
+    display: none;
+  }
+  #dp {
+    padding-top: 43px;
+    margin-right: -15px;
+  }
+  #dp .ui-datepicker {
+    width: 100%;
+  }
+  #dp .ui-datepicker .ui-datepicker-title select {
+    font-size: .8em;
+  }
 }
 @media (min-width: 992px) {
   .ui-datepicker-trigger {
@@ -275,7 +293,4 @@ table.fc-agenda-days {
 }
 .auto-desc {
   font-size: 0.75em;
-}
-.datepicker {
-  z-index: 1151 !important;
 }

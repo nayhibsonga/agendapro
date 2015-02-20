@@ -1,186 +1,200 @@
-<div class="container">
+<div class="container-fluid">
   <div class="row">
-    <section class="hgroup">
-      <h2>Clientes de la Empresa</h2>
-      <h2 class="section_header">Acá podrás agregar y editar clientes de tu empresa. Los clientes generados son válidos para todos los locales de tu compañía. Las personas que reserven en tu portal AgendaPro serán agregadas automáticamente.</h2>
-      <div class="line-breadcrumb">
-        <ul class="breadcrumb pull-right">
-            <li><%= link_to "Resumen", dashboard_path %> </li>
-            <li class="active">Clientes</li>
-        </ul>
+    <div class="col-md-12">
+      <h2 class="text-green">Clientes de la Empresa</h2>
+      <p>Acá podrás agregar y editar clientes de tu empresa. Los clientes generados son válidos para todos los locales de tu compañía. Las personas que reserven en tu portal AgendaPro serán agregadas automáticamente.</p>
     </div>
-    </section>
   </div>
 </div>
 
-<div class="container">
-	<div class="row well">
-		<%= form_tag clients_path, name: "client_filter", id: "client_filter", method: "get" do %>
-		<div class="row">
-			<div class="form-group">
-				<div class="col-md-1">
-					<label class="pull-right">Filtrar por:</label>
-				</div>
-				<div class="col-md-2">
-					<%= select_tag :location, options_from_collection_for_select(@locations, "id", "name", params[:location]), prompt: "Local...", class: "form-control", :onchange => "this.form.submit();" %>
-				</div>
-				<div class="col-md-2">
-					<%= select_tag :provider, options_from_collection_for_select(@service_providers, "id", "public_name", params[:provider]), prompt: "Prestador...", class: "form-control", :onchange => "this.form.submit();" %>
-				</div>
-				<div class="col-md-2">
-					<%= select_tag :service, options_from_collection_for_select(@services, "id", "name", params[:service]), prompt: "Servicio...", class: "form-control", :onchange => "this.form.submit();" %>
-				</div>
-				<div class="col-md-2">
-					<%= select_tag :gender, options_for_select([['No Especificado', 0], ['Femenino', 1], ['Masculino', 2]], params[:gender]), prompt: "Género...", class: "form-control", :onchange => "this.form.submit();" %>
-				</div>
-				<div class="col-md-3">
-					<%= select_tag :option, options_for_select([['Hoy', 0], ['Esta Semana', 1], ['Este Mes', 2]], params[:option]), prompt: "Cumpleaños...", class: "form-control", :onchange => "this.form.submit();" %>
-				</div>
-			</div>
-		</div>
-		<div class="row top-buffer">
-			<div class="form-group">
-				<div class="col-xs-1">
-					<label class="pull-right">Buscar:</label>
-				</div>
-				<div class="col-xs-7">
-					<%= text_field_tag :search, nil, :class => "form-control", :placeholder => "Buscar por nombre, apellido, e-mail o RUT...", :value => params[:search] %>
-				</div>
-				<div class="col-xs-2">
-					<button class="btn btn-agendapro-claro" type="submit" action="/clients" value="client_filter"><i class="fa fa-search"></i><span> Buscar</span></button>
-				</div>
-				<div class="col-xs-2">
-					<%= link_to '<i class="fa fa-minus"></i> Reiniciar Filtros'.html_safe, clients_path, class: "btn btn-agendapro-oscuro pull-right" %>
-				</div>
-			</div>
-		</div>
-	<% end %>
-	</div>
+<div class="container-fluid background-grey" style="margin: 30px 0;">
+  <div class="row">
+    <div class="col-md-12">
+      <%= form_tag clients_path, name: "client_filter", id: "client_filter", method: "get", class: "form-horizontal" do %>
+        <div class="form-group">
+          <label class="col-md-1 control-label">Filtrar por:</label>
+          <div class="col-md-2">
+            <%= select_tag :location, options_from_collection_for_select(@locations, "id", "name", params[:location]), prompt: "Local...", class: "form-control", :onchange => "this.form.submit();" %>
+          </div>
+          <div class="col-md-2">
+            <%= select_tag :provider, options_from_collection_for_select(@service_providers, "id", "public_name", params[:provider]), prompt: "Prestador...", class: "form-control", :onchange => "this.form.submit();" %>
+          </div>
+          <div class="col-md-3">
+            <%= select_tag :service, options_from_collection_for_select(@services, "id", "name", params[:service]), prompt: "Servicio...", class: "form-control", :onchange => "this.form.submit();" %>
+          </div>
+          <div class="col-md-2">
+            <%= select_tag :gender, options_for_select([['No Especificado', 0], ['Femenino', 1], ['Masculino', 2]], params[:gender]), prompt: "Género...", class: "form-control", :onchange => "this.form.submit();" %>
+          </div>
+          <div class="col-md-2">
+            <%= select_tag :option, options_for_select([['Hoy', 0], ['Esta Semana', 1], ['Este Mes', 2]], params[:option]), prompt: "Cumpleaños...", class: "form-control", :onchange => "this.form.submit();" %>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="col-md-1 control-label">Buscar:</label>
+          <div class="col-xs-7">
+            <%= text_field_tag :search, nil, :class => "form-control", :placeholder => "Buscar por nombre, apellido, e-mail o RUT...", :value => params[:search] %>
+          </div>
+          <div class="col-xs-2">
+            <button class="btn btn-green btn-bloc" type="submit" action="/clients" value="client_filter"><i class="fa fa-search"></i><span> Buscar</span></button>
+          </div>
+          <div class="col-xs-2">
+            <%= link_to '<i class="fa fa-minus"></i> Reiniciar Filtros'.html_safe, clients_path, class: "btn btn-white btn-bloc" %>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  </div>
 </div>
 
-<table class="table table-bordered">
-	<caption id="mails" data-monthly-mails="<%= @monthly_mails %>" data-monthly-mails-sent="<%= @monthly_mails_sent %>">E-mails enviados <%= number_with_delimiter(@monthly_mails_sent) %> de <%= number_with_delimiter(@monthly_mails) %></caption>
-	<thead>
-		<tr>
-			<th>Nombre</th>
-			<th>Apellido</th>
-			<th>E-mail</th>
-			<th>RUT</th>
-			<th>Opciones</th>
-			<% if Company.find(current_user.company_id).company_setting.client_exclusive %>
-	    	<th>¿Puede Reservar?</th>
-         	<% end %>
-		</tr>
-	</thead>
-	<tbody>
-		<% @clients.each do |client| %>
-			<tr>
-				<td><%= client.first_name %></td>
-				<td><%= client.last_name %></td>
-				<td><%= client.email %></td>
-				<td><%= client.identification_number %></td>
-				<td><%= link_to '<i class="fa fa-pencil"></i> Editar'.html_safe, edit_client_path(client), :class => "btn btn-sm btn-margin-bottom btn-warning" %>
-            		<%= link_to '<i class="fa fa-trash-o"></i> Eliminar'.html_safe, client, :class => "btn btn-sm btn-margin-bottom btn-danger", method: :delete, data: { confirm: '¿Estás seguro de eliminar el Cliente seleccionado? Este cliente tiene '+client.bookings.count.to_s+' reserva(s) asociada(s), que será(n) eliminada(s) también.' } unless cannot? :destroy, client %></td>
-            	<% if Company.find(current_user.company_id).company_setting.client_exclusive %>
-	    		<td class="centered"><%= check_box_tag 'client_can_book'+client.id.to_s, client.id, client.can_book, class: 'client_can_book' %><%= image_tag "small-loader.gif", :alt => "Loader", :id => "loader"+client.id.to_s, hidden: true %></td>
-         		<% end %>
-			</tr>
-		 <% end %>
-	</tbody>
-</table>
-<div class="container">
-	<div class="row">
-		<div class="col-md-2">
-			<%= link_to '<i class="fa fa-plus"></i> Nuevo Cliente'.html_safe, new_client_path, :class => "btn btn-agendapro-claro" %>
-		</div>
-		<div class="col-md-8 pagination">
-			<%= will_paginate @clients, renderer: BootstrapPagination::Rails %>
-		</div>
-		<div class="col-md-2">
-			<% if @from_collection.first %>
-				<% if @monthly_mails_sent < @monthly_mails %>
-					<%= link_to 'Enviar E-mail a este listado', send_mail_path(search: params[:search], location: params[:location], provider: params[:provider], service: params[:service], gender: params[:gender], option: params[:option]), class: "btn btn-agendapro-claro pull-right", id: 'sendMail' %>
-				<% end %>
-			<% else %>
-			<button id="sendMail" type="button" class="btn btn-agendapro-claro pull-right" data-toggle="modal" data-target="#mailModal">Enviar E-mail</button>
-			<% end %>
-		</div>
-	</div>
-	<br />
-	<div class="row">
-		<div class="col-md-6">
-			<button id="import_clients" type="button" class="btn btn-agendapro-oscuro" data-toggle="modal" data-target="#importModal"><i class="fa fa-group"></i> Importar Clientes</button>
-		</div>
-		<div class="col-md-6">
-			<h4 class="pull-right">
-			  Descargar este listado de clientes:
-			  <%= link_to "CSV", clients_path(format: "csv", location: params[:location], provider: params[:provider], gender: params[:gender]) %> |
-			  <%= link_to "Excel", clients_path(format: "xls", location: params[:location], provider: params[:provider], gender: params[:gender]) %>
-			</h4>
-		</div>
-	</div>
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-md-12">
+      <table class="table table-bordered table-green">
+        <caption id="mails" data-monthly-mails="<%= @monthly_mails %>" data-monthly-mails-sent="<%= @monthly_mails_sent %>">E-mails enviados <%= number_with_delimiter(@monthly_mails_sent) %> de <%= number_with_delimiter(@monthly_mails) %></caption>
+        <thead>
+          <tr>
+            <th>Nombre</th>
+            <th>Apellido</th>
+            <th>E-mail</th>
+            <th>RUT</th>
+            <th>Opciones</th>
+            <% if Company.find(current_user.company_id).company_setting.client_exclusive %>
+            <th>¿Puede Reservar?</th>
+            <% end %>
+          </tr>
+        </thead>
+        <tbody>
+          <% @clients.each do |client| %>
+            <tr>
+              <td><%= client.first_name %></td>
+              <td><%= client.last_name %></td>
+              <td><%= client.email %></td>
+              <td><%= client.identification_number %></td>
+              <td>
+                <%= link_to '<i class="fa fa-pencil"></i> Editar'.html_safe, edit_client_path(client), :class => "btn btn-sm btn-margin-bottom btn-orange" %>
+                <%= link_to '<i class="fa fa-trash-o"></i> Eliminar'.html_safe, client, :class => "btn btn-sm btn-margin-bottom btn-red", method: :delete, data: { confirm: '¿Estás seguro de eliminar el Cliente seleccionado? Este cliente tiene '+client.bookings.count.to_s+' reserva(s) asociada(s), que será(n) eliminada(s) también.' } unless cannot? :destroy, client %>
+              </td>
+              <% if Company.find(current_user.company_id).company_setting.client_exclusive %>
+              <td class="centered">
+                <%= check_box_tag 'client_can_book'+client.id.to_s, client.id, client.can_book, class: 'client_can_book' %>
+                <i class="fa fa-spin fa-spinner hidden" id="loader<%= client.id.to_s %>"></i>
+              </td>
+              <% end %>
+            </tr>
+           <% end %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-sm-2 col-md-2">
+      <%= link_to '<i class="fa fa-plus"></i> Nuevo Cliente'.html_safe, new_client_path, :class => "btn btn-white" %>
+    </div>
+    <div class="col-sm-8 col-md-8 pagination">
+      <%= will_paginate @clients, renderer: BootstrapPagination::Rails %>
+    </div>
+    <div class="col-sm-2 col-md-2">
+      <% if @from_collection.first %>
+        <% if @monthly_mails_sent < @monthly_mails %>
+          <%= link_to '<i class="fa fa-envelope"></i> Enviar E-mail'.html_safe, send_mail_path(search: params[:search], location: params[:location], provider: params[:provider], service: params[:service], gender: params[:gender], option: params[:option]), class: "btn btn-white pull-right", id: 'sendMail' %>
+        <% else %>
+          <p class="text-right">Has alcanzado el limite de e-mails.</p>
+        <% end %>
+      <% else %>
+        <button id="sendMail" type="button" class="btn btn-white pull-right" data-toggle="modal" data-target="#mailModal"><i class="fa fa-envelope"></i> Enviar E-mail</button>
+      <% end %>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-sm-6 col-md-6">
+      <button id="import_clients" type="button" class="btn btn-white" data-toggle="modal" data-target="#importModal"><i class="fa fa-group"></i> Importar Clientes</button>
+    </div>
+    <div class="col-sm-6 col-md-6">
+      <p class="text-right">
+        Descargar este listado de clientes:
+        <%= link_to '<i class="fa fa-download"></i> CSV'.html_safe, clients_path(format: "csv", location: params[:location], provider: params[:provider], gender: params[:gender]), class: "btn btn-white" %>
+        <%= link_to '<i class="fa fa-download"></i> Excel'.html_safe, clients_path(format: "xls", location: params[:location], provider: params[:provider], gender: params[:gender]), class: "btn btn-white" %>
+      </p>
+    </div>
+  </div>
 </div>
 
-<% if !@from_collection.first %>
-<div class="modal fade" id="mailModal" tabindex="-1" role="dialog" aria-labelledby="mailModalLabel" aria-hidden="true">
-	<div class="modal-dialog">
-		<div class="modal-content">
-			<div class="modal-header">
-				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-				<h4 class="modal-title" id="mailModalLabel">No es posible Enviar E-mails</h4>
-			</div>
-			<ul>
-				<h4>Por favor confirme como mínimo una dirección de e-mail válida</h4>
-				<p>Para lo anterior, valide en <%= link_to "Configuración E-mails", edit_company_setting_path(id: Company.find(current_user.company_id).company_setting.id) %> algún e-mail.</p>
-			</ul>
-			<div class="modal-footer">
-				<button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
-			</div>
-		</div>
-	</div>
-</div>
+<% content_for :modals do %>
+  <% if !@from_collection.first %>
+  <div class="modal fade" id="mailModal" tabindex="-1" role="dialog" aria-labelledby="mailModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+          <h4 class="modal-title" id="mailModalLabel">No es posible Enviar E-mails</h4>
+        </div>
+        <ul>
+          <h4>Por favor confirme como mínimo una dirección de e-mail válida</h4>
+          <p>Para lo anterior, valide en <%= link_to "Configuración E-mails", edit_company_setting_path(id: Company.find(current_user.company_id).company_setting.id) %> algún e-mail.</p>
+        </ul>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <% end %>
+
+  <div class="modal fade" id="importModal" tabindex="-1" role="dialog" aria-labelledby="importModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+          <h4 class="modal-title" id="importModalLabel">Importar Clientes</h4>
+        </div>
+        <%= form_tag import_clients_path, multipart: true, class: 'form-horizontal' do %>
+        <div class="modal-body">
+          <h4>Instrucciones:</h4>
+          <ul class="list-separate">
+            <li>Usar las plantillas de ejemplo como base para la importación. Todos los campos son opcionales.</li>
+            <li><strong>No se pueden cambiar los nombres de las columnas</strong> de las plantillas bases.</li>
+            <li>
+              El identificador único para los clientes es el <strong>e-mail</strong>:
+              <ul>
+                <li>Si se sube un cliente con un email existente, se reemplazaran los valores guardados anteriormente.</li>
+                <li>Si no existe el e-mail, se crea un cliente nuevo.</li>
+                <li>Para editar el e-mail de un cliente o eliminar un cliente de la base de datos, se debe realizar a través de la página.</li>
+              </ul>
+            </li>
+            <li>Las fechas de cumpleaños deben ser en formato <mark>aaaa-mm-dd</mark> (ej: 1980-02-24)</li>
+            <li>
+              Para ingresar el género de los clientes se debe utilizar:
+              <ul>
+                <li><mark>0</mark> si no se desea especificar.</li>
+                <li><mark>1</mark> si es Femenino.</li>
+                <li><mark>2</mark> si es Masculino.</li>
+              </ul>
+            </li>
+          </ul>
+          <p>
+            Plantillas para importación:
+            <%= link_to '<i class="fa fa-download"></i> Plantilla Excel'.html_safe, '/clients_base.xls', :target => :blank, class: "btn btn-white" %>
+            <%= link_to '<i class="fa fa-download"></i> Plantilla CSV'.html_safe, '/clients_base.csv', :target => :blank, class: "btn btn-white" %>
+          </p>
+          <div class="form-group" id="file-group">
+            <label for="file" class="control-label col-md-3">Seleccionar Archivo</label>
+            <div class="col-md-9">
+              <%= file_field_tag :file, :class => 'form-control'  %>
+            </div>
+          </div>
+        </div>
+          <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+          <%= submit_tag "Importar", class: "btn btn-green", disabled: true, id: "import_button" %>
+        </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
 <% end %>
 
-<div class="modal fade" id="importModal" tabindex="-1" role="dialog" aria-labelledby="importModalLabel" aria-hidden="true">
-	<div class="modal-dialog">
-		<div class="modal-content">
-			<div class="modal-header">
-				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-				<h4 class="modal-title" id="importModalLabel">Importar Clientes</h4>
-			</div>
-			<%= form_tag import_clients_path, multipart: true, class: 'form-horizontal' do %>
-			<div class="modal-body">
-				<ul>
-					<h4>Instrucciones:</h4>
-					<li>Usar las plantillas de ejemplo como base para la importación. Todos los campos son opcionales.</li><br />
-					<li><strong>No se pueden cambiar los nombres de las columnas</strong> de las plantillas bases.</li><br />
-					<li>El identificador único para los clientes es el e-mail, por lo que si se sube un cliente con un email existente, se reemplazaran los valores guardados anteriormente.<br />
-					Si no existe el e-mail, se crea un cliente nuevo.<br />
-					Para editar el e-mail de un cliente o eliminar un cliente de la base de datos, se debe realizar a través de la página.</li><br />
-					<li>Las fechas de cumpleaños deben ser en formato aaaa-mm-dd (ej: 1980-02-24)</li><br />
-					<li>Para ingresar el género de los clientes, se debe utilizar 0 si no se desea especificar, 1 si es Femenino o 2 si es Masculino.</li><br />
-					<h4>Plantillas para importación:</h4>
-					<%= link_to 'Plantilla Excel', '/clients_base.xls', :target => :blank %> |
-					<%= link_to 'Plantilla CSV', '/clients_base.csv', :target => :blank %><br />
-				</ul>
-				<div class="form-group" id="file-group">
-					<label for="file" class="control-label col-md-3">Seleccionar Archivo</label>
-					<div class="col-md-9">
-						<%= file_field_tag :file, :class => 'form-control'  %>
-					</div>
-				</div>
-			</div>
-		  	<div class="modal-footer">
-				<button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
-				<%= submit_tag "Importar", class: "btn btn-agendapro-oscuro", disabled: true, id: "import_button" %>
-			</div>
-			<% end %>
-		</div>
-	</div>
-</div>
-
 <% content_for :scripts do %>
-	<%= javascript_include_tag 'validations/validate' %>
-	<%= javascript_include_tag 'validations/admin/client-email' %>
-	<%= javascript_include_tag 'admin/clients_mail' %>
+  <%= javascript_include_tag 'validations/validate' %>
+  <%= javascript_include_tag 'validations/admin/client-email' %>
+  <%= javascript_include_tag 'admin/clients_mail' %>
 <% end %>

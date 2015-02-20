@@ -91,14 +91,14 @@ h3.link_section_header {
   margin: 0 auto -40px;
   padding: 0 0 40px;
 }
-footer{
+/*footer{
   height: 40px;
   background-color: #383e4b;
   color: #ffffff;
 }
 .footer-data{
   margin-top: 10px;
-}
+}*/
 .fix-height{
   min-height: 100%;
 }
@@ -337,9 +337,9 @@ li.colapsado-ok> a> span.colapse-hidden{
 /*tbody{
   background: rgba(255, 255, 255, 0.76);
 }*/
-.table-bordered{
+/*.table-bordered{
   border: 1px solid rgba(27,115,112,0.6);
-}
+}*/
 .fc-event-vert .fc-event-bg {
   display: none;
 }
@@ -446,18 +446,18 @@ p.justified {
   text-align:justify;
 }
 
-.label.label-agendapro {
+/*.label.label-agendapro {
   background-color: rgba(27,115,112,1);
-}
+}*/
 /*      Dashboard     */
-thead.head-white {
+/*thead.head-white {
   color: #333;
   background: inherit;
 }
 .panel > .panel-body.scrollable {
   max-height: 285px;
   overflow: auto;
-}
+}*/
 /*      End Dashboard     */
 
 .well-white {
@@ -667,12 +667,6 @@ td.centered {
     background-color: #22c488 !important;
     color: #fff !important;
     font-weight: bold !important;
-    /*-webkit-box-shadow: inset 0px 1px 1px 0px rgba(250, 250, 250, 2);
-    -moz-box-shadow: inset 0px 1px 1px 0px rgba(250, 250, 250, .2);
-    box-shadow: inset 0px 1px 1px 0px rgba(250, 250, 250, .2);
-    text-shadow: 1px -1px 0px #000;
-    filter: dropshadow(color=#000, offx=1, offy=-1);
-    */
     line-height: 30px !important;
 }*/
 
@@ -866,14 +860,6 @@ section.copyright a:hover {
   }
 }*/
 
-caption {
-  caption-side: bottom;
-  text-align: right;
-  background-color: #bbb;
-  color: #ffffff;
-  padding: 4px 8px;
-}
-
 #map {
   width: 100%;
   height: 260px;
@@ -960,6 +946,7 @@ body {
   font-family: TradeGothic, FranklinGothic, "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
   background: #ffffff;
   font-size: 17px;
+  color: #505050;
 }
 body {
   padding-top: 50px;
@@ -976,6 +963,9 @@ a {
 }
 a:hover {
   color: #1ba970;
+}
+.alert {
+  margin-top: 5px;
 }
 
 /*
@@ -1306,4 +1296,29 @@ fieldset[disabled] .btn-white.active {
   border: 1px solid #e3e3e3;
   padding-top: 10px;
   padding-bottom: 10px;
+}
+
+/*
+  ================================
+  =========== Clients ============
+  ================================
+*/
+.text-green {
+  color: #22c488;
+}
+.table caption {
+  caption-side: bottom;
+  text-align: right;
+  background-color: #f5f5f5;
+  padding: 4px 8px;
+}
+.table-green > thead > tr > th,
+.table-green > thead > tr > td {
+  background-color: #22c488;
+  color: #ffffff;
+  border-right: transparent;
+  border-left: transparent;
+}
+.list-separate > li:not(:last-child) {
+  margin-bottom: inherit;
 }
