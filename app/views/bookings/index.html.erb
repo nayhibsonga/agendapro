@@ -233,6 +233,14 @@
 									</div>
 									<% end %>
 									<div class="form-group">
+										<%= f.label :payed, "Pagado en línea", class: "col-sm-4 control-label" %>
+										<div class="col-sm-8">
+											<div class="input-group" id="is_prepayed">
+												
+											</div>
+										</div>
+									</div>
+									<div class="form-group">
 										<%= f.label :status, "Estado", class: "col-sm-4 control-label" %>
 										<div class="col-sm-8">
 											<%= f.collection_select :status_id, Status.all.order(:name), :id, :name, {selected: Status.find_by_name( 'Reservado').id}, { class: "form-control" }%>
@@ -274,9 +282,9 @@
 							<div class="row">
 								<div class="col-md-12">
 									<div class="form-group has-feedback">
-										<%= label_tag :booking_deal_code, "Código de Convenio", class: "col-sm-2 control-label" %>
+										<%= label_tag :booking_deal_code, @company_setting.deal_name.blank? ? "Código de Convenio" : @company_setting.deal_name, class: "col-sm-2 control-label" %>
 										<div class="col-sm-10">
-											<%= text_field_tag :booking_deal_code, '',{class: "form-control", required: true} %>
+											<%= text_field_tag :booking_deal_code, '',{class: "form-control"} %>
 											<span class="help-block"></span>
 											<span class="form-control-feedback"></span>
 										</div>
@@ -455,14 +463,26 @@
 	</div>
 </div>
 
-<%= content_tag "div", id: "calendar-data", data: { calendar_duration: @company_setting.calendar_duration, extended_schedule: @company_setting.extended_schedule_bool, extended_min_hour: @company_setting.extended_min_hour.beginning_of_hour.hour, extended_max_hour: @company_setting.extended_max_hour.end_of_hour.hour, booking_history: @company_setting.booking_history, staff_code: @company_setting.staff_code } do %>
+<%= content_tag "div", id: "calendar-data", data: { calendar_duration: @company_setting.calendar_duration, extended_schedule: @company_setting.extended_schedule_bool, extended_min_hour: @company_setting.extended_min_hour.beginning_of_hour.hour, extended_max_hour: @company_setting.extended_max_hour.end_of_hour.hour, booking_history: @company_setting.booking_history, staff_code: @company_setting.staff_code, deal_identification_number: @company_setting.deal_identification_number, deal_required: @company_setting.deal_required } do %>
 <% end %>
 <% content_for :scripts do %>
 	<%= javascript_include_tag "bookings" %>
 	<%= javascript_include_tag "jquery-ui-1.10.4.min.js" %>
 	<%= javascript_include_tag 'validations/validate' %>
 	<%= javascript_include_tag 'validations/admin/booking' %>
+	<% if @company_setting.deal_activate && @company_setting.deal_identification_number%>
+		<script type="text/javascript">
+			$('#booking_deal_code').change(function() {
+				var rut_string = $('#booking_deal_code').val()
+				if (rut_string != '') {	
+					$('#booking_deal_code').val(rut_format(rut_string));
+				}
+			});
+		</script>
+	<% end %>
 <% end %>
+
+
 <% content_for :stylesheets do %>
 	<%= stylesheet_link_tag "admin/admin-calendar" %>
 <% end %>
