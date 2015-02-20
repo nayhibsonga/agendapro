@@ -126,7 +126,9 @@
 	  <li class=""><a href="#emails" role="tab" data-toggle="tab" class="tab_index">E-mails</a></li>
 	  <li class=""><a href="#times" role="tab" data-toggle="tab" class="tab_index">Periodo Agenda</a></li>
 	  <li class=""><a href="#embedded" role="tab" data-toggle="tab" class="tab_index">Facebook / Web</a></li>
-	  <li class=""><a href="#deals" role="tab" data-toggle="tab" class="tab_index">Convenios</a></li>
+    <% if current_user.company.company_setting.deal_activate %>
+	   <li class=""><a href="#deals" role="tab" data-toggle="tab" class="tab_index">Convenios</a></li>
+    <% end %>
 	  <li class=""><a href="#link" role="tab" data-toggle="tab" class="tab_index">Link AgendaPro</a></li>
 	</ul>
 	<div id="myTabContent" class="tab-content">
@@ -646,6 +648,7 @@
         <% end %>
       </div>
     </div>
+    <% if current_user.company.company_setting.deal_activate %>
     <div class="tab-pane" id="deals">
       <div class="row">
         <%= form_for @company_setting, :html => {:class => 'form-horizontal'} do |f| %>
@@ -746,6 +749,7 @@
         </table>
       </div>
     </div>
+    <% end %>
     <div class="tab-pane" id="times">
       <div class="row">
         <%= form_for @company_setting, :html => {:class => 'form-horizontal times-form'} do |f| %>

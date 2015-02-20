@@ -58,3 +58,4 @@ Capfile
 config/deploy.rb
 config/deploy/
 config/deploy/*
+config/deploy/production.rb
