@@ -1,5 +1,7 @@
  //====== Load Steps ======//
 
+var current_service;
+
 function loadStep1 (service_id) {
 
 	$('#services-description').empty();
@@ -134,6 +136,7 @@ function loadStep2 () {
 				});
 			}
 
+
 			$('[name="staffRadio"]').on('click', function(event) {
 				$('.horario').show();
 
@@ -185,6 +188,8 @@ function loadStep2 () {
 					});
 				});
 			});
+
+
 
 			if ($('#providerPreference').data('provider-preference') != 1) {
 				$('[name="staffRadio"]').first().prop("checked", true);
@@ -249,6 +254,7 @@ function loadStep2 () {
 
 			$('#foo4').trigger('updateSizes');
 		});
+ 		
 	}
 }
 
@@ -290,6 +296,27 @@ function loadStep3 () {
 					'<td class="light-gray">' + formattedTime($('#start').val()) + '</td>' +
 				'</tr>'
 			);
+			if(current_service.online_payable)
+			{
+				if(current_service.has_discount && current_service.discount > 0)
+				{
+					$("#summary").append(
+						'<tr>' +
+							'<td class="dark-gray">Descuento</th>' +
+							'<td class="light-gray">Si prepagas tu reserva en línea, tienes un ' + current_service.discount + '% de descuento. <b>¡Te ahorras $' + current_service.price*current_service.discount/100 + '!</b></td>' +
+						'</tr>'
+					);
+				}
+				else
+				{
+					$("#summary").append(
+						'<tr>' +
+							'<td class="dark-gray">Precio</th>' +
+							'<td class="light-gray"><b>$' + current_service.price + '.</b></td>' +
+						'</tr>'
+					);
+				}
+			}
 			return true;
 		}
 		myAlert.showAlert(
@@ -373,6 +400,7 @@ function scrollEvents (direction) {
 function loadDescription (serviceId) {
 	$('#services-description').html('<div class="ajax-loader"><%= image_tag "ajax-loader.gif", :alt => "Loader" %></div>');
 	$.getJSON('/service', {id: serviceId}, function (service) {
+		current_service = service;
 		$('#services-description').empty();
 		$('#services-description').append(
 			'<tr>' +
@@ -417,6 +445,27 @@ function loadDescription (serviceId) {
 					'<td class="light-gray">' + service.description + '</td>' +
 				'</tr>'
 			);
+		}
+		$("#discount").empty();
+		$("#normal-book").empty();
+		if(service.online_payable){
+			$("#reservar1").hide();
+			$("#reservar2").show();
+
+			if(service.has_discount && current_service.discount > 0)
+			{
+				$("#discount").append(
+					'Precio final: $' + (service.price-service.price*service.discount/100)
+				);
+				$("#normal-book").append(
+					'Precio final: $' + service.price
+				);
+			}
+		}
+		else
+		{
+			$("#reservar2").hide();
+			$("#reservar1").show();
 		}
 	});
 }

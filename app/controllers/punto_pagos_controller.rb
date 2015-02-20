@@ -1,7 +1,20 @@
 class PuntoPagosController < ApplicationController
+
   skip_before_action :verify_authenticity_token
   before_action :authenticate_user!, :only => [:generate_company_transaction, :generate_plan_transaction]
   before_action :verify_is_admin, :only => [:generate_company_transaction, :generate_plan_transaction]
+
+  #Métodos de pagos de reservas
+
+  def generate_reservation_payment
+    amount = params[:amount].to_i
+    payment_method = params[:mp]
+  end
+
+
+
+  #Métodos de pagos de compañía/plan
+
   def generate_transaction
   	trx_id = DateTime.now.to_s.gsub(/[-:T]/i, '')
   	amount = '10000.00'
@@ -166,18 +179,41 @@ class PuntoPagosController < ApplicationController
           @plan_log = PlanLog.find_by_trx_id(trx_id)
           @company = Company.find(@plan_log.company_id)
           @success_page = "plan"
+        elsif Booking.find_by_trx_id(trx_id)
+          #Mostrar página similar a la de reserva hecha, confirmando que se pagó
+          @booking = Booking.find_by_trx_id(trx_id)
+          @token = params[:token]
+          @success_page = "booking"
+          host = request.host_with_port
+          @url = @booking.location.company.web_address + '.' + host[host.index(request.domain)..host.length]
         else
-          @success_page = ""
+          #Something (lie a booking) was deleted, should redirect to failure
+          redirect_to action: 'failure', token: params[:token]
+          #@success_page = ""
         end
       end
     end
   end
 
   def failure
+    if PuntoPagosConfirmation.find_by_token(params[:token])
+      trx_id = PuntoPagosConfirmation.find_by_token(params[:token]).trx_id
+      if(Booking.find_by_trx_id(trx_id))
+        failed_booking = Booking.find_by_trx_id(trx_id)
+        @booking = Booking.new(failed_booking.attributes.to_options)
+        failed_booking.destroy
+      end
+    elsif Booking.find_by_token(params[:token]) #Cuando el servicio está caído y no hay notificación
+      failed_booking = Booking.find_by_token(params[:token])
+      @booking = Booking.new(failed_booking.attributes.to_options)
+      failed_booking.destroy
+    else
+      #Nothing found, there was a timeout error
+    end
   end
 
   def notification
-    PuntoPagosConfirmation.create(response: params[:respuesta], token: params[:token], trx_id: params[:trx_id], payment_method: params[:medio_pago], amount: params[:monto], approvement_date: params[:fecha_aprobacion], card_number: params[:numero_tarjeta], dues_number: params[:num_cuotas], dues_type: params[:tipo_cuotas], dues_amount:params[:valor_cuota], first_due_date: params[:primer_vencimiento], operation_number: params[:numero_operacion], authorization_code: params[:codigo_autorizacion])
+    punto_pagos_confirmation = PuntoPagosConfirmation.create(response: params[:respuesta], token: params[:token], trx_id: params[:trx_id], payment_method: params[:medio_pago], amount: params[:monto], approvement_date: params[:fecha_aprobacion], card_number: params[:numero_tarjeta], dues_number: params[:num_cuotas], dues_type: params[:tipo_cuotas], dues_amount:params[:valor_cuota], first_due_date: params[:primer_vencimiento], operation_number: params[:numero_operacion], authorization_code: params[:codigo_autorizacion])
     if params[:respuesta] == "00"
       if BillingLog.find_by_trx_id(params[:trx_id])
         billing_log = BillingLog.find_by_trx_id(params[:trx_id])
@@ -204,7 +240,21 @@ class PuntoPagosController < ApplicationController
         else
           CompanyCronLog.create(company_id: company.id, action_ref: 8, details: "ERROR notification_plan "+company.errors.full_messages.inspect)
         end
+      elsif Booking.find_by_trx_id(params[:trx_id])
+
+        #Creamos el registro de la reserva pagada.
+        booking = Booking.find_by_trx_id(params[:trx_id])
+        booking.status_id = Status.find_by(:name => "Pagado").id
+        booking.payed = true
+        booking.save
+        payed_booking = PayedBooking.new 
+        payed_booking.booking = booking
+        payed_booking.punto_pagos_confirmation = punto_pagos_confirmation
+        payed_booking.transfer_complete = false
+        payed_booking.save
+        
       end
     end
   end
+
 end

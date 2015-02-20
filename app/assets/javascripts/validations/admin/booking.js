@@ -36,6 +36,10 @@ $(function() {
 				required: true,
 				remote: '/check_staff_code'
 			},
+			'booking_deal_code': {
+				required: $('#calendar-data').data('deal-required'),
+				rut: $('#calendar-data').data('deal-identification-number')
+			},
 			'booking[service_id]': {
 				required: true
 			},

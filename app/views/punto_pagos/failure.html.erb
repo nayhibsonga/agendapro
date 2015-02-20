@@ -1,3 +1,80 @@
+<style type="text/css">
+.submitBtn{
+	position: relative;
+	border: 1px solid #f1972d;
+	text-align: center;
+	width: 160px;
+	height: 40px;
+	font-size: 20px;
+	cursor: pointer;
+	background-color: #f1972d;
+	color: #fff;
+	float: left;
+	border-radius: 6px;
+}
+
+.submitBtn:hover{
+	background-color: #e0861c;
+	color: #eee;
+}
+
+.payBtn{
+	
+	border: 1px solid #22c488;
+	text-align: center;
+	width: 160px;
+	height: 40px;
+	font-size: 20px;
+	cursor: pointer;
+	background-color: #22c488;
+	color: #fff;
+	float: left;
+	border-radius: 6px;
+}
+
+.payBtn:hover{
+	background-color: #1ba970;
+	color: #eee;
+}
+
+.cancelBtn{
+	
+	border: 1px solid #EB2929;
+	text-align: center;
+	width: 160px;
+	height: 40px;
+	font-size: 20px;
+	cursor: pointer;
+	background-color: #EB2929;
+	color: #fff;
+	float: left;
+	border-radius: 6px;
+}
+
+.cancelBtn:hover{
+	background-color: #DA1818;
+	color: #eee;
+}
+
+.modal-pay{
+	border: 1px solid #22c488;
+	text-align: center;
+	width: 140px;
+	height: 40px;
+	font-size: 18px;
+	cursor: pointer;
+	background-color: #22c488;
+	color: #fff;
+	float: right;
+	border-radius: 6px;
+}
+
+.modal-pay:hover{
+	background-color: #1ba970;
+	color: #eee;
+}
+</style>
+
 <div class="main">
 	<br />
     <section class="pricing_wrapper">
@@ -7,12 +84,49 @@
 					<div class="col-md-7">
 						<hr>
 						<h4>¡Lo sentimos, la transacción ha fallado! Inténtalo nuevamente por favor. Si el problema persiste, ponte en contacto con nosotros y te ayudaremos.</h4>
+						<% if @booking %>
+							<div class="row">
+								<div class="col-md-12">
+									<h4>Puedes intentar pagar de nuevo, sólo mantener la reserva y pagarla en el local, o descartarla.</h4>
+								</div>
+							</div>
+							<div class="row">
+								<div class="col-md-4">
+									<button type="button" data-ading-text = "Cargando" class="payBtn">Pagar</button>
+								</div>
+								<div class="col-md-4">
+									<%= form_tag(:controller => "bookings", :action => "book_service", :method => "post") do %>
+										<input type="hidden" name="start" value="<%= @booking.start %>" />
+										<input type="hidden" name="end" value="<%= @booking.end %>" />
+										<input type="hidden" name="location" value="<%= @booking.location_id %>" />
+										<input type="hidden" name="provider" value="<%= @booking.service_provider_id %>" />
+										<input type="hidden" name="service" value="<%= @booking.service_id %>" />
+										<input type="hidden" name="client_id" value="<%= @booking.client_id %>" />
+										<input type="hidden" name="comment" value="<%= @booking.notes %>" />
+										<input type="hidden" name="origin" value="<%= @booking.web_origin %>" />
+										<input type="hidden" name="provider_lock" value="<%= @booking.provider_lock %>" />
+										<input type="hidden" name="payment" value="0" />
+										
+										<button type="submit" data-loading-text="Cargando..." class="submitBtn">Reservar</button>
+									<% end %>
+								</div>
+								<div class="col-md-4">
+
+										<%= link_to '<button type="submit" data-loading-text="Cargando..." class="cancelBtn">Cancelar</button>'.html_safe, controller: 'bookings', action: 'transfer_error_cancel', company_id: @booking.location.company.id %>
+
+								</div>
+							</div>
+						<% else %>
+							<h4>Por seguridad, el portal de pagos puede haber rechazado tu solicitud si tardaste mucho tiempo.</h4>
+						<% end %>
+						<hr />
 						<dl class="dl-horizontal">
 							<dt>Código de la Transacción</dt>
 							<dd><%= params[:token] %></dd>
 							<dt>¿Dudas o consultas?</dt>
 							<dd>Por favor envíanos un e-mail a contacto@agendapro.cl o llamanos al (+56 9) 5178 5898</dd>
 						</dl>
+						
 					</div>
 					<div class="col-md-5">
 						<%= image_tag("backgrounds/cross.png", :class => "center-block") %>
@@ -21,4 +135,91 @@
        		</div>
         </div>
     </section>
+
+
+    <!--  MODAL MEDIO DE PAGO -->
+
+    <% if @booking %>
+	    <div class="modal fade" id="medio-de-pago" tabindex="-1" role="dialog" aria-labelledby="siginLabel" aria-hidden="true">
+	      <div class="modal-dialog">
+	        <div class="modal-content">
+	          <div class="modal-header">
+	            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+	            <h4 class="modal-title" style="color: #505050 !important;">Elige el medio de pago</h4>
+	          </div>
+				<div class="modal-body" style="color: #505050 !important;">
+					<%= form_tag(:controller => "bookings", :action => "book_service", :method => "post") do %>
+						<input type="hidden" name="start" value="<%= @booking.start %>" />
+						<input type="hidden" name="end" value="<%= @booking.end %>" />
+						<input type="hidden" name="location" value="<%= @booking.location_id %>" />
+						<input type="hidden" name="provider" value="<%= @booking.service_provider_id %>" />
+						<input type="hidden" name="service" value="<%= @booking.service_id %>" />
+						<input type="hidden" name="client_id" value="<%= @booking.client_id %>" />
+						<input type="hidden" name="comment" value="<%= @booking.notes %>" />
+						<input type="hidden" name="origin" value="<%= @booking.web_origin %>" />
+						<input type="hidden" name="provider_lock" value="<%= @booking.provider_lock %>" />
+						<input type="hidden" name="payment" value="1" />
+						<input type="hidden" name="max_changes" value="<%= @booking.max_changes %>" />
+						<div class="row">
+						  <div class="col-md-4">
+						    <input type="radio" name="mp" value="04" required class="mp_radio" />
+						    <image src="https://www.puntopagos.com/content/mp4.gif" alt="Banco Chile" class="mp_link" mp = "04" />
+						  </div>
+						  <div class="col-md-4">
+						    <input type="radio" name="mp" value="05" required class="mp_radio" />
+						    <image src="https://www.puntopagos.com/content/mp5.gif" alt="BCI" class="mp_link" mp = "05" />
+						  </div>
+						  <div class="col-md-4">
+						    <input type="radio" name="mp" value="06" required class="mp_radio" />
+						    <image src="https://www.puntopagos.com/content/mp6.gif" alt="TBanc" class="mp_link" mp = "06" />
+						  </div>
+						</div>
+						<div class="row">
+						  <div class="col-md-4">
+						    <input type="radio" name="mp" value="07" required class="mp_radio" />
+						    <image src="https://www.puntopagos.com/content/mp7.gif" alt="Banco Estado" class="mp_link" mp = "07" />
+						  </div>
+						  <div class="col-md-4">
+						    <input type="radio" name="mp" value="03" required class="mp_radio" checked />
+						    <image src="https://www.puntopagos.com/content/mp3.gif" alt="Webpay Transbank" class="mp_link" mp = "03" />
+						  </div>
+						  <div class="col-md-4">
+						    <input type="radio" name="mp" value="04" style="display: none !important;" required class="mp_radio" />
+						    <image style="display: none;" src="https://www.puntopagos.com/content/mp1.gif" alt="Banco Santander" class="mp_link" mp = "01" />
+						  </div>
+						</div>
+						<div class="row">
+							<div class="col-md-4">
+							</div>
+							<div class="col-md-4">
+							</div>
+							<div class="col-md-4">
+								<button type="submit" class="modal-pay" id="select-medio">Confirmar pago</button>
+							</div>
+						</div>
+					<% end %>
+				</div>
+				<div class="modal-footer"> 
+					<button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+				</div> 
+	        </div><!-- /.modal-content -->
+	      </div><!-- /.modal-dialog -->
+	    </div><!-- /.modal -->
+    <% end %>
+
+
+    <!-- FIN MODAL MEDIO DE PAGO -->
+
+
 </div>
+
+
+<script type="text/javascript">
+	
+	$(document).ready(function(){
+		$(".payBtn").click(function(){
+			$("#medio-de-pago").modal('show');
+		});
+	});
+	
+</script>

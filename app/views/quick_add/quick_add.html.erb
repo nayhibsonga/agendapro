@@ -30,10 +30,13 @@
 						<span class="form-control-feedback"></span>
 					</div>
 				</div>
+
 			<% end %>
 		</div>
 	</fieldset>
 </div>
+<!-- End User Data -->
+
 <!-- Local -->
 <div class="box-step step-workflow">
 	<fieldset disabled>
@@ -255,6 +258,44 @@
 							<!-- <span class="form-control-feedback"></span> -->
 						</div>
 					</div>
+
+					<% if @company.company_setting.allows_online_payment %>
+					
+						<div class="form-group">
+							<%= f.label :online_payable, "Pago en línea:", class: "col-sm-4 control-label" %>
+							<div class="col-sm-8">
+								<div class="checkbox">
+									<label>
+										<%= f.check_box :online_payable %> Este servicio se puede pagar en línea
+									</label>
+								</div>
+							</div>
+		        		</div>
+
+						<div class="form-group hidden" id="form-has-discount">
+							<%= f.label :has_discount, "Descuento:", class: "col-sm-4 control-label" %>
+							<div class="col-sm-8">
+								<div class="checkbox">
+									<label>
+										<%= f.check_box :has_discount %> Tiene descuento por pago en línea
+									</label>
+								</div>
+							</div>
+		        		</div>
+
+		        		<div class="form-group hidden" id="form-discount">
+							<div class="col-sm-8 col-sm-offset-4">
+								<div class="input-group">
+									<%= f.number_field :discount, class: "form-control", min: 0, placeholder: '0 (requerido)' %>
+									<span class="input-group-addon">%</span>
+								</div>
+								<span class="help-block"></span>
+							</div>
+		        		</div>
+
+	        		<% end %>
+	        		
+
 				</div>
 			<% end %>
 		</div>
@@ -324,4 +365,73 @@
 	<%= javascript_include_tag "admin/quick_add" %>
 	<%= javascript_include_tag "validations/validate" %>
 	<%= javascript_include_tag "validations/admin/quick-add" %>
+
+	<script type="text/javascript">
+		$(document).ready(function(){
+	  		if($('#company_setting_allows_online_payment').prop('checked'))
+			{
+				$(".account-info").removeClass("hidden");
+				if($("#company_setting_bank :selected").text() == "Otro")
+				{
+					$("#other-bank").removeClass("hidden");
+					$(".account-data").addClass("hidden");
+				}
+				else
+				{
+					$("#other-bank").addClass("hidden");
+					$(".account-data").removeClass("hidden");
+				}
+			}
+			else
+			{
+				$(".account-info").addClass("hidden");
+				$("#other-bank").addClass("hidden");
+			}
+			var oldTop = $(document).scrollTop();
+			$('#foo5').trigger('updateSizes');
+			$(document).scrollTop(oldTop);
+		});
+
+		$("#company_setting_allows_online_payment").change(function(){
+			if($('#company_setting_allows_online_payment').prop('checked'))
+			{
+				$(".account-info").removeClass("hidden");
+				if($("#company_setting_bank :selected").text() == "Otro")
+				{
+					$("#other-bank").removeClass("hidden");
+					$(".account-data").addClass("hidden");
+				}
+				else
+				{
+					$("#other-bank").addClass("hidden");
+					$(".account-data").removeClass("hidden");
+				}
+			}
+			else
+			{
+				$("#other-bank").addClass("hidden");
+				$(".account-info").addClass("hidden");
+			}
+			var oldTop = $(document).scrollTop();
+			$('#foo5').trigger('updateSizes');
+			$(document).scrollTop(oldTop);
+		});
+
+		$("#company_setting_bank").change(function(){
+			if($("#company_setting_bank :selected").text() == "Otro")
+			{
+				$("#other-bank").removeClass("hidden");
+				$(".account-data").addClass("hidden");
+			}
+			else
+			{
+				$("#other-bank").addClass("hidden");
+				$(".account-data").removeClass("hidden");
+			}
+			var oldTop = $(document).scrollTop();
+			$('#foo5').trigger('updateSizes');
+			$(document).scrollTop(oldTop);
+		});
+	</script>
+
 <% end %>

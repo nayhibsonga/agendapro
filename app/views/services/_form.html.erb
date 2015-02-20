@@ -48,6 +48,7 @@
                   </div>
                 </div>
               </div>
+              
               <div class="form-group">
                 <%= f.label :duration, "Duración", class: "col-sm-3 control-label" %>
                 <div class="col-sm-9">
@@ -63,6 +64,43 @@
                   </div>
                 </div>
               </div>
+
+              <% if current_user.company.company_setting.allows_online_payment %>
+
+                <div class="form-group">
+                <%= f.label :online_payable, "Pago en línea", class: "col-sm-3 control-label" %>
+                  <div class="col-sm-9">
+                    <div class="checkbox">
+                      <label>
+                        <%= f.check_box :online_payable %> Este servicio se puede pagar en línea
+                      </label>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="form-group">
+                <%= f.label :has_discount, "Descuento", class: "col-sm-3 control-label" %>
+                  <div class="col-sm-9">
+                    <div class="checkbox">
+                      <label>
+                        <%= f.check_box :has_discount %> Tiene descuento por pago en línea en línea
+                      </label>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="form-group">
+                  <div class="col-sm-9 col-sm-offset-3">
+                    <div class="input-group">
+                      <%= f.number_field :discount, class: "form-control", min: 0, placeholder: '0 (requerido)' %>
+                      <span class="input-group-addon">%</span>
+                    </div>
+                    <span class="help-block"></span>
+                  </div>
+                </div>
+
+              <% end %>
+
             </div>
           </div>
           <div class="col-md-6">

@@ -6,7 +6,7 @@ test:
   environment:        'sandbox'
   puntopagos_key:     'rxAeXTifyHgrUAZCeS9i'
   puntopagos_secret:  'QcklPFRnwbJA262I1prThkdx6kkGTH2bBeUu5q6w'
-production:
-  environment:        ENV["PUNTO_PAGOS_API_ENV_PROD"].to_s
-  puntopagos_key:     ENV["PUNTO_PAGOS_API_KEY_PROD"].to_s
-  puntopagos_secret:  ENV["PUNTO_PAGOS_API_SECRET_PROD"].to_s
+production:   
+  environment:        'sandbox'
+  puntopagos_key:     'rxAeXTifyHgrUAZCeS9i'
+  puntopagos_secret:  'QcklPFRnwbJA262I1prThkdx6kkGTH2bBeUu5q6w'

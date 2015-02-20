@@ -1,4 +1,5 @@
 class Company < ActiveRecord::Base
+
 	belongs_to :plan
 	belongs_to :payment_status
 
@@ -7,6 +8,7 @@ class Company < ActiveRecord::Base
 	has_many :users, dependent: :nullify
 	has_many :plan_logs, dependent: :destroy
 	has_many :billing_logs, dependent: :destroy
+	has_many :billing_records, dependent: :destroy
 	has_many :services, dependent: :destroy
 	has_many :service_providers, dependent: :destroy
 	has_many :locations, dependent: :destroy
@@ -14,9 +16,12 @@ class Company < ActiveRecord::Base
 	has_many :clients, dependent: :destroy
 	has_one :company_setting, dependent: :destroy
 	has_one :billing_info, dependent: :destroy
+	belongs_to :bank
 	has_many :company_from_email, dependent: :destroy
 	has_many :staff_codes, dependent: :destroy
 	has_many :deals, dependent: :destroy
+
+	has_many :payment_accounts, dependent: :destroy
 
 	validates :name, :web_address, :plan, :payment_status, :presence => true
 
@@ -27,6 +32,8 @@ class Company < ActiveRecord::Base
 	accepts_nested_attributes_for :company_setting
 
 	validate :plan_settings
+
+	after_update :update_online_payment
 
 	def plan_settings
 		if self.locations.where(active: true).count > self.plan.locations || self.service_providers.where(active: true).count > self.plan.service_providers
@@ -143,4 +150,26 @@ class Company < ActiveRecord::Base
 			end
 		end
 	end
+
+	def update_online_payment
+		if(!self.company_setting.allows_online_payment)
+			self.services.each do |service|
+				service.online_payable = false
+				service.save
+			end
+		end
+
+		#Si cambia los datos de la cuenta, hay que actualizar el payment_account
+		if(!self.payment_accounts.nil?)
+			self.payment_accounts.each do |pa|
+				pa.number = self.company_setting.account_number
+				pa.rut = self.company_setting.company_rut
+				pa.name = self.company_setting.account_name
+				pa.account_type = self.company_setting.account_type
+				pa.save
+			end
+		end
+
+	end
+
 end
