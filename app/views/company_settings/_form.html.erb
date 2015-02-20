@@ -957,7 +957,6 @@
 
       CKEDITOR.replace(company_setting_signature);
     });
-<<<<<<< HEAD
   </script>
 
   <script type="text/javascript">
@@ -1160,33 +1159,4 @@
 	var web_address = '<%= @web_address %>';
 	</script>
 	<%= javascript_include_tag "admin/link_agendapro" %>
-=======
-
-    $("#company_setting_allows_online_payment").change(function(){
-      if($('#company_setting_allows_online_payment').prop('checked')) {
-        $(".account-info").removeClass("hidden");
-        if($("#company_setting_bank :selected").text() == "Otro") {
-          $("#other-bank").removeClass("hidden");
-          $(".account-data").addClass("hidden");
-        } else {
-          $("#other-bank").addClass("hidden");
-          $(".account-data").removeClass("hidden");
-        }
-      } else {
-        $("#other-bank").addClass("hidden");
-        $(".account-info").addClass("hidden");
-      }
-    });
-
-    $("#company_setting_bank").change(function(){
-      if($("#company_setting_bank :selected").text() == "Otro") {
-        $("#other-bank").removeClass("hidden");
-        $(".account-data").addClass("hidden");
-      } else {
-        $("#other-bank").addClass("hidden");
-        $(".account-data").removeClass("hidden");
-      }
-    });
-  </script>
->>>>>>> 7e39b767a74264b2bac6b1ba5799ce83da1aca5c
 <% end %>

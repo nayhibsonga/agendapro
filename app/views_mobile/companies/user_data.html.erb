@@ -102,31 +102,31 @@
 
       <div class="row">
         <div class="col-xs-6">
-          <input type="radio" name="mp" value="04" required class="mp_radio" />
+          <input type="radio" name="mp" value="04" class="mp_radio" />
           <image class="img-responsive" src="https://www.puntopagos.com/content/mp4.gif" alt="Banco Chile" class="mp_link" mp = "04" />
         </div>
         <div class="col-xs-6">
-          <input type="radio" name="mp" value="05" required class="mp_radio" />
+          <input type="radio" name="mp" value="05" class="mp_radio" />
           <image class="img-responsive" src="https://www.puntopagos.com/content/mp5.gif" alt="BCI" class="mp_link" mp = "05" />
         </div>
       </div>
       <div class="row">
         <div class="col-xs-6">
-          <input type="radio" name="mp" value="06" required class="mp_radio" />
+          <input type="radio" name="mp" value="06" class="mp_radio" />
           <image class="img-responsive" src="https://www.puntopagos.com/content/mp6.gif" alt="TBanc" class="mp_link" mp = "06" />
         </div>
         <div class="col-xs-6">
-          <input type="radio" name="mp" value="07" required class="mp_radio" />
+          <input type="radio" name="mp" value="07" class="mp_radio" />
           <image class="img-responsive" src="https://www.puntopagos.com/content/mp7.gif" alt="Banco Estado" class="mp_link" mp = "07" />
         </div>
       </div>
       <div class="row">
         <div class="col-xs-6">
-          <input type="radio" name="mp" value="03" required class="mp_radio" />
+          <input type="radio" name="mp" value="03" class="mp_radio" />
           <image class="img-responsive" src="https://www.puntopagos.com/content/mp3.gif" alt="Webpay Transbank" class="mp_link" mp = "03" />
         </div>
         <div class="col-xs-6">
-          <input type="radio" name="mp" value="04" style="display: none !important;" required class="mp_radio" />
+          <input type="radio" name="mp" value="04" style="display: none !important;" class="mp_radio" />
           <image class="img-responsive" style="display: none;" src="https://www.puntopagos.com/content/mp1.gif" alt="Banco Santander" class="mp_link" mp = "01" />
         </div>
       </div>
@@ -170,8 +170,15 @@
   $(document).ready(function(){
     $("#payBtn").click(function(e){
       e.preventDefault();
+      $("#payment").val("1");
       $("#mp-selector").show();
       $("#payBtn").attr("disabled", "true");
+    });
+
+    $("#submitBtn").click(function(e){
+      e.preventDefault();
+      $("#payment").val("0");
+      $("#bookingForm").submit();
     });
 
     $('#select-medio').click(function(){
@@ -187,7 +194,6 @@
       if(is_selected)
       {
         //console.log("Entra");
-        $("#payment").val("1");
         $('#bookingForm').submit();
       }
     });
