@@ -6,15 +6,15 @@ set :application, 'agendapro-railsweb'
 
 set :repo_url, 'https://agendapro:G*g8~1GEQ]@bitbucket.org/agendapro/agendapro-railsweb'
 
-set :deploy_to, '/home/agendapro/development'
+set :deploy_to, '/home/agendapro/app'
 
-set :branch, 'development-test'
+set :branch, 'development'
 
-set :linked_files, %w{config/database.yml config/local_env.yml}
+set :linked_files, %w{config/database.yml config/local_env.yml config/puntopagos.yml config/newrelic.yml}
 
 #Cambiar esto para que se copien los bins y otros.
 
-set :linked_dirs, %w{log tmp/pids tmp/cache tmp/sockets vendor/bundle public/system}
+set :linked_dirs, %w{log tmp/pids tmp/cache tmp/sockets vendor/bundle public/system public/uploads/logos}
 
 set :keep_releases, 2
 
