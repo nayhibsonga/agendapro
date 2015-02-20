@@ -51,7 +51,7 @@ class PayedBookingsController < ApplicationController
 		  		 				end
 		  		 				
 		  		 				payment_account.amount = payment_account.amount + booking.payed_booking.punto_pagos_confirmation.amount
-		  		 				payment_account.company_amount = payment_account.company_amount + booking.payed_booking.punto_pagos_confirmation.amount*(100-commission)/100
+		  		 				payment_account.company_amount = payment_account.amount*(100-commission)/100
 
 		  		 				
 		  		 				booking.payed_booking.payment_account = payment_account
