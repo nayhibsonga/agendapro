@@ -7,7 +7,7 @@ class DashboardController < ApplicationController
 	def index
 		# @lastBookings = Booking.all.order("id desc").limit(5).reverse
 
-		if current_user.company.company_setting.online_cancelation_policy.nil?
+		if current_user.role_id != Role.find_by_name("Super Admin").id current_user.company.company_setting.online_cancelation_policy.nil?
 			ocp = OnlineCancelationPolicy.new
 			ocp.company_setting_id = current_user.company.company_setting.id
 			ocp.save
