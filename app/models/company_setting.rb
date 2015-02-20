@@ -7,6 +7,7 @@ class CompanySetting < ActiveRecord::Base
 
 	#validates :email, :sms, :presence => true
 	validate after_commit :extended_schedule
+	after_create :create_online_policy
 
 	def extended_schedule
 		if self.extended_min_hour >= self.extended_max_hour
@@ -28,4 +29,13 @@ class CompanySetting < ActiveRecord::Base
 			setting.update_attributes :monthly_mails => 0
 		end
 	end
+
+	def create_online_policy
+		if self.online_cancelation_policy.nil?
+			ocp = OnlineCancelationPolicy.new
+			ocp.company_setting_id = self.id
+			ocp.save
+		end
+	end
+
 end
