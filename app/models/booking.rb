@@ -30,7 +30,7 @@ class Booking < ActiveRecord::Base
 	after_create :send_booking_mail, :wait_for_payment
 	after_update :send_update_mail
 
-	 def wait_for_payment
+	def wait_for_payment
                 self.delay(run_at: 4.minutes.from_now).payment_timeout
     end
 
