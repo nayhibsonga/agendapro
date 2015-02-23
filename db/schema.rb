@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150220051406) do
+ActiveRecord::Schema.define(version: 20150223150625) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -237,12 +237,10 @@ ActiveRecord::Schema.define(version: 20150220051406) do
     t.boolean  "booking_history",             default: false
     t.boolean  "staff_code",                  default: false
     t.integer  "monthly_mails",               default: 0,                     null: false
-    t.boolean  "allows_online_payment",       default: false
-    t.string   "account_number",              default: ""
-    t.string   "company_rut",                 default: ""
-    t.string   "account_name",                default: ""
-    t.integer  "account_type",                default: 3
-    t.integer  "bank_id"
+    t.boolean  "booking_history",             default: false
+    t.boolean  "staff_code",                  default: false
+    t.integer  "booking_configuration_email", default: 0
+    t.integer  "max_changes",                 default: 2
     t.boolean  "deal_activate",               default: false
     t.string   "deal_name"
     t.boolean  "deal_overcharge",             default: true
@@ -252,6 +250,15 @@ ActiveRecord::Schema.define(version: 20150220051406) do
     t.integer  "deal_constraint_quantity",    default: 0
     t.boolean  "deal_identification_number",  default: false
     t.boolean  "deal_required",               default: false,                 null: false
+    t.boolean  "allows_online_payment",       default: false
+    t.string   "account_number",              default: ""
+    t.string   "company_rut",                 default: ""
+    t.string   "account_name",                default: ""
+    t.integer  "account_type",                default: 3
+    t.integer  "bank_id"
+    t.string   "locations",                   default: "Lugares",             null: false
+    t.string   "services",                    default: "Servicios",           null: false
+    t.string   "staff",                       default: "Staff",               null: false
     t.boolean  "online_payment_capable",      default: false
   end
 
@@ -603,6 +610,11 @@ ActiveRecord::Schema.define(version: 20150220051406) do
     t.integer  "order",                       default: 0
     t.integer  "block_length",                default: 30
     t.integer  "booking_configuration_email", default: 0
+<<<<<<< HEAD
+=======
+    t.decimal  "comission_value",             default: 0.0,  null: false
+    t.integer  "comission_option",            default: 0,    null: false
+>>>>>>> dev-reports
   end
 
   add_index "service_providers", ["company_id"], name: "index_service_providers_on_company_id", using: :btree
@@ -657,6 +669,8 @@ ActiveRecord::Schema.define(version: 20150220051406) do
     t.boolean  "has_discount",        default: false
     t.float    "discount",            default: 0.0
     t.boolean  "online_payable",      default: false
+    t.decimal  "comission_value",     default: 0.0,   null: false
+    t.integer  "comission_option",    default: 0,     null: false
   end
 
   add_index "services", ["company_id"], name: "index_services_on_company_id", using: :btree
