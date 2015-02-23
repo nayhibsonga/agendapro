@@ -1,5 +1,5 @@
 class DashboardController < ApplicationController
-	
+
   before_action :authenticate_user!
   before_action :quick_add
   layout "admin"
@@ -7,7 +7,7 @@ class DashboardController < ApplicationController
 	def index
 		# @lastBookings = Booking.all.order("id desc").limit(5).reverse
 
-		if current_user.company.company_setting.online_cancelation_policy.nil?
+		if current_user.role_id != Role.find_by_name("Super Admin").id && current_user.company.company_setting.online_cancelation_policy.nil?
 			ocp = OnlineCancelationPolicy.new
 			ocp.company_setting_id = current_user.company.company_setting.id
 			ocp.save
@@ -22,8 +22,12 @@ class DashboardController < ApplicationController
 		@monthBookings = Booking.where(service_provider_id: @service_providers).where("created_at BETWEEN ? AND ?", Time.now.beginning_of_month, Time.now.end_of_month)
 		@statusArray = []
 		Status.all.each do |status|
-			@statusArray.push([status.name,@monthBookings.where(:status_id => status.id).count]) 
+			@statusArray.push([status.name,@monthBookings.where(:status_id => status.id).count])
 		end
+
+		if mobile_request?
+      @company = current_user.company
+    end
 	end
-	
+
 end

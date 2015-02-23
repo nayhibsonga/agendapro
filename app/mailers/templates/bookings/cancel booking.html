@@ -423,8 +423,8 @@
         display: table-cell;
       }
       .icon-box > img {
-        width: 60px;
-        height: 60px;
+        width: 50px;
+        height: 50px;
         padding: 5px;
         border: 1px solid #ffffff;
         border-radius: 6px;
@@ -454,7 +454,9 @@
         <!-- Start: Header -->
         <tr class="header">
           <td colspan="2">
+            *|IF:URL|*
             <a href="http://*|URL|*.agendapro.cl" target="_blanck">*|URL|*.agendapro.cl</a>
+            *|END:IF|*
           </td>
         </tr>
         <!-- End: Header -->
@@ -494,7 +496,7 @@
                         <img src="http://agendapro.cl/assets/email/what.png" alt="¿Qué Reservaste?">
                       </div>
                       <div class="text-box">
-                        <p><b>¿Qué Reservaste?</b></p>
+                        <p style="color: #ffffff;"><b>¿Qué Reservaste?</b></p>
                         <p>*|SERVICENAME|*</p>
                       </div>
                     </td>
@@ -503,7 +505,7 @@
                         <img src="http://agendapro.cl/assets/email/when.png" alt="¿Cuando?">
                       </div>
                       <div class="text-box">
-                        <p><b>¿Cuándo?</b></p>
+                        <p style="color: #ffffff;"><b>¿Cuándo?</b></p>
                         <p>*|BSTART|*</p>
                       </div>
                     </td>
@@ -514,7 +516,7 @@
                         <img src="http://agendapro.cl/assets/email/where.png" alt="¿Dónde?">
                       </div>
                       <div class="text-box">
-                        <p><b>¿Dónde?</b></p>
+                        <p style="color: #ffffff;"><b>¿Dónde?</b></p>
                         <p>*|LOCALADDRESS|*</p>
                       </div>
                     </td>
@@ -523,7 +525,7 @@
                         <img src="http://agendapro.cl/assets/email/question.png" alt="Consultas">
                       </div>
                       <div class="text-box">
-                        <p><b>Consultas</b></p>
+                        <p style="color: #ffffff;"><b>Consultas</b></p>
                         <p>*|LOCATIONPHONE|*</p>
                       </div>
                     </td>
@@ -534,7 +536,7 @@
                         <img src="http://agendapro.cl/assets/email/who.png" alt="¿Con Quien?">
                       </div>
                       <div class="text-box">
-                        <p><b>¿Con Quien?</b></p>
+                        <p style="color: #ffffff;"><b>¿Con Quien?</b></p>
                         <p>*|SERVICEPROVIDER|*</p>
                       </div>
                     </td>
@@ -543,7 +545,7 @@
                         <img src="http://agendapro.cl/assets/email/notes.png" alt="Notas">
                       </div>
                       <div class="text-box">
-                        <p><b>Notas</b></p>
+                        <p style="color: #ffffff;"><b>Notas</b></p>
                         *|IF:BNOTES|*<p>*|BNOTES|*</p>*|END:IF|*
                       </div>
                     </td>
@@ -570,7 +572,7 @@
                         <img src="http://agendapro.cl/assets/email/what.png" alt="¿Qué Reservaste?">
                       </div>
                       <div class="text-box">
-                        <p><b>¿Qué Reservaron?</b></p>
+                        <p style="color: #ffffff;"><b>¿Qué Reservaron?</b></p>
                         <p>*|SERVICENAME|*</p>
                       </div>
                     </td>
@@ -581,7 +583,7 @@
                         <img src="http://agendapro.cl/assets/email/when.png" alt="¿Cuando?">
                       </div>
                       <div class="text-box">
-                        <p><b>¿Cuándo?</b></p>
+                        <p style="color: #ffffff;"><b>¿Cuándo?</b></p>
                         <p>*|BSTART|*</p>
                       </div>
                     </td>
@@ -592,7 +594,7 @@
                         <img src="http://agendapro.cl/assets/email/who.png" alt="¿Con Quien?">
                       </div>
                       <div class="text-box">
-                        <p><b>¿Quien?</b></p>
+                        <p style="color: #ffffff;"><b>¿Quien?</b></p>
                         <p>*|CLIENTNAME|*</p>
                       </div>
                     </td>
@@ -603,7 +605,7 @@
                         <img src="http://agendapro.cl/assets/email/notes.png" alt="Notas">
                       </div>
                       <div class="text-box">
-                        <p><b>Notas</b></p>
+                        <p style="color: #ffffff;"><b>Notas</b></p>
                         *|IF:BNOTES|*<p>*|BNOTES|*</p>*|END:IF|*
                         *|IF:COMPANYCOMMENT|*<p>*|COMPANYCOMMENT|*</p>*|END:IF|*
                       </div>
