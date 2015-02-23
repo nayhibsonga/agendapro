@@ -117,7 +117,7 @@ function addBreak (value, openTime, closeTime) {
 				'</form>' +
 			'</th>' +
 			'<th>' +
-				'<a id="'+value+'removeBreak'+breakCount+'" class="btn btn-danger"><i class="fa fa-trash-o"></i></a>' +
+				'<a id="'+value+'removeBreak'+breakCount+'" class="btn btn-red"><i class="fa fa-trash-o"></i></a>' +
 			'</th>' +
 		'</tr>'
 	);
@@ -127,11 +127,11 @@ function addBreak (value, openTime, closeTime) {
 	});
 	if (openTime != null){
 		$('#'+value+'openHourId'+breakCount+' option[value="'+openTime[0]+'"]').attr("selected",true);
-		$('#'+value+'openMinuteId'+breakCount+' option[value="'+openTime[1]+'"]').attr("selected",true);	
+		$('#'+value+'openMinuteId'+breakCount+' option[value="'+openTime[1]+'"]').attr("selected",true);
 	}
 	if (closeTime != null) {
 		$('#'+value+'closeHourId'+breakCount+' option[value="'+closeTime[0]+'"]').attr("selected",true);
-		$('#'+value+'closeMinuteId'+breakCount+' option[value="'+closeTime[1]+'"]').attr("selected",true);	
+		$('#'+value+'closeMinuteId'+breakCount+' option[value="'+closeTime[1]+'"]').attr("selected",true);
 	}
 }
 
@@ -164,8 +164,8 @@ function initialize() {
 				var value = providerTimesData[arrayCounter].day_id;
 				$('#dayStatusId'+ value).prop('checked', true);
 				$('#dayStatusId'+ value).val(1);
-				$('#dayStatusId'+value).closest('tr').children().last().append('<a id="addBreakdiv'+value+'" onclick="addBreak('+value+')" class="btn btn-agendapro-claro"><i class="fa fa-plus"></i></a>');
-				
+				$('#dayStatusId'+value).closest('tr').children().last().append('<a id="addBreakdiv'+value+'" onclick="addBreak('+value+')" class="btn btn-green"><i class="fa fa-plus"></i></a>');
+
 				$('#openHourId'+ value).prop('disabled', false);
 				$('#openMinuteId'+ value).prop('disabled', false);
 				$('#closeHourId'+ value).prop('disabled', false);
@@ -218,7 +218,7 @@ function changeDayStatus(value) {
 		$('#closeHourId'+ value).prop('disabled', false);
 		$('#closeMinuteId'+ value).prop('disabled', false);
 		$('#dayStatusId'+ value).val(1);
-		$('#dayStatusId'+value).closest('tr').children().last().append('<a id="addBreakdiv'+value+'" class="btn btn-agendapro-claro"><i class="fa fa-plus"></i></a>');
+		$('#dayStatusId'+value).closest('tr').children().last().append('<a id="addBreakdiv'+value+'" class="btn btn-green"><i class="fa fa-plus"></i></a>');
 		$('#addBreakdiv'+value).click(function() {
 			addBreak(value);
 		});
@@ -290,7 +290,7 @@ function saveProvider(method,extraURL) {
 		"provider_times_attributes": provider_times,
 		"booking_configuration_email": $('#service_provider_booking_configuration_email').val(),
 	};
-	
+
 	$.ajax({
 		type: method,
 		url: ' /service_providers'+ extraURL +'.json',
