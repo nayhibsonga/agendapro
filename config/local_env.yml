@@ -1,3 +1,19 @@
 # API Keys for Mandrill separetes in enviroments
 MANDRILL_API_KEY_PROD: 'HL4ERbuZZO6rrM2nlVjzZg'
 MANDRILL_API_KEY_DEV: 'UhM-Y7RNxHZJeJa4ajil6Q'
+
+# API Keys for Mandrill separetes in enviroments
+#MANDRILL_API_KEY_PROD: 'UhM-Y7RNxHZJeJa4ajil6Q'
+
+# Session Store config/initializers/session_store.rb
+#SESSION_STORE_URL: 'agendapro.cl'
+SESSION_STORE_URL: 'lvh.me'
+
+# Session Store config/environments/production.rb
+#DEFAULT_URL_OPTIONS: 'agendapro.cl'
+DEFAULT_URL_OPTIONS: 'lvh.me'
+
+# Session Store config/puntopagos.yml
+PUNTO_PAGOS_API_ENV_PROD: 'sandbox'
+PUNTO_PAGOS_API_KEY_PROD: 'rxAeXTifyHgrUAZCeS9i'
+PUNTO_PAGOS_API_SECRET_PROD: 'QcklPFRnwbJA262I1prThkdx6kkGTH2bBeUu5q6w'
