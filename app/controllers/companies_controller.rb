@@ -3,7 +3,7 @@ class CompaniesController < ApplicationController
 	before_action :set_company, only: [:show, :edit, :update, :destroy, :edit_payment]
 	before_action :authenticate_user!, except: [:new, :overview, :workflow, :check_company_web_address, :select_hour, :user_data]
 	before_action :quick_add, except: [:new, :overview, :workflow, :add_company, :check_company_web_address, :select_hour, :user_data]
-	before_action :verify_is_super_admin, only: [:index, :edit_payment, :new, :edit, :manage, :manage_company, :new_payment, :add_payment, :update_company, :get_year_incomes, :incomes, :locations, :monthly_locations]
+	before_action :verify_is_super_admin, only: [:index, :edit_payment, :new, :edit, :manage, :manage_company, :new_payment, :add_payment, :update_company, :get_year_incomes, :incomes, :locations, :monthly_locations, :deactivate_company]
 
 	layout "admin", except: [:show, :overview, :workflow, :add_company, :select_hour, :user_data]
 	load_and_authorize_resource
@@ -402,6 +402,20 @@ class CompaniesController < ApplicationController
 		@locations[11]['month'] = "Noviembre"
 		@locations[12]['month'] = "Diciembre"
 
+	end
+
+
+	def deactivate_company
+		@company = Company.find(params[:id])
+		@company.active = false
+		@company.due_amount = 0
+		@company.months_active_left = 0
+		@company.payment_status_id = PaymentStatus.find_by_name("Inactivo").id
+		if @company.save
+			redirect_to :action => 'manage_company', :id => @company.id, :notice => 'Companía editada correctamente.'
+		else
+			redirect_to :action => 'manage_company', :id => @company.id, :alert => 'Ocurrió un error al editar la compañía.'
+		end
 	end
 
 
