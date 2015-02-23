@@ -92,7 +92,7 @@
 					<label class="control-label">Locales: </label>
 				</div>
 				<div class="col-sm-8">
-					<%= @company.locations.count %>
+					<%= @company.locations.where(:active => true).count %>
 				</div>
 			</div>
 			<div class="row" style="margin-top: 10px;">
@@ -377,7 +377,7 @@
 						<%= @company.months_active_left %>
 					</div>
 					<div class="col-sm-2">
-						<input type="number" class="form-control" name="new_months_active_left" value="<%= @company.months_active_left %>" />
+						<input type="number" class="form-control" name="new_months_active_left" />
 					</div>
 					<!--<div class="col-sm-2">
 						<button class="btn">Editar</button>
@@ -392,7 +392,7 @@
 						<%= @company.due_amount %>
 					</div>
 					<div class="col-sm-2">
-						<input type="number" class="form-control" name="new_due_amount" value="<%= @company.due_amount %>" />
+						<input type="number" class="form-control" name="new_due_amount" />
 					</div>
 					<!--<div class="col-sm-2">
 						<button class="btn">Editar</button>
