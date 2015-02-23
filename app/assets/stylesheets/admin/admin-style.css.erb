@@ -961,7 +961,8 @@ a {
   color: #22c488;
   text-decoration: none;
 }
-a:hover {
+a:hover,
+a:active {
   color: #1ba970;
 }
 .alert {
@@ -1321,4 +1322,13 @@ fieldset[disabled] .btn-white.active {
 }
 .list-separate > li:not(:last-child) {
   margin-bottom: inherit;
+}
+
+/*
+  ================================
+  =========== Reports ============
+  ================================
+*/
+.table-summary > tbody > tr:last-child > td {
+  font-weight: bold;
 }
