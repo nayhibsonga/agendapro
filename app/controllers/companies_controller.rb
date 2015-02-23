@@ -300,6 +300,27 @@ class CompaniesController < ApplicationController
 		@bookings[11]['month'] = "Noviembre"
 		@bookings[12]['month'] = "Diciembre"
 
+		@cat_bookings = Hash.new
+		for i in 1..13
+			@cat_bookings[i] = Hash.new
+			@cat_bookings[i]['month'] = ""
+			@cat_bookings[i]['count'] = 0
+			@cat_bookings[i]['web'] = 0
+		end
+
+		@cat_bookings[1]['month'] = "Enero"
+		@cat_bookings[2]['month'] = "Febrero"
+		@cat_bookings[3]['month'] = "Marzo"
+		@cat_bookings[4]['month'] = "Abril"
+		@cat_bookings[5]['month'] = "Mayo"
+		@cat_bookings[6]['month'] = "Junio"
+		@cat_bookings[7]['month'] = "Julio"
+		@cat_bookings[8]['month'] = "Agosto"
+		@cat_bookings[9]['month'] = "Septiembre"
+		@cat_bookings[10]['month'] = "Octubre"
+		@cat_bookings[11]['month'] = "Noviembre"
+		@cat_bookings[12]['month'] = "Diciembre"
+
 	end
 
 	#SuperAdmin

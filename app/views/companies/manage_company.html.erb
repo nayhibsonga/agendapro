@@ -57,6 +57,31 @@
 		<div class="tab-pane active" id="summary">
 			<div class="row" style="margin-top: 10px;">
 				<div class="col-sm-4">
+					<label class="control-label">Dueño: </label>
+				</div>
+				<div class="col-sm-8">
+					<%
+						c_user = User.find_by_company_id(@company.id)
+						if !c_user.nil? %>
+							<%= c_user.first_name + " " + c_user.last_name %>
+						<% end
+					%>
+				</div>
+			</div>
+			<div class="row" style="margin-top: 10px;">
+				<div class="col-sm-4">
+					<label class="control-label">Email: </label>
+				</div>
+				<div class="col-sm-8">
+					<%
+						if !c_user.nil? %>
+							<%= c_user.email %>
+						<% end
+					%>
+				</div>
+			</div>
+			<div class="row" style="margin-top: 10px;">
+				<div class="col-sm-4">
 					<label class="control-label">Fecha de ingreso: </label>
 				</div>
 				<div class="col-sm-8">
@@ -244,31 +269,33 @@
 
 					<% logs = @company.billing_logs.order('created_at desc') %>
 					<% logs.each do |log| %>
-						<% punto_pago = PuntoPagosConfirmation.find_by_trx_id(log.trx_id) %>
-						<td>
-							<%= log.created_at %>
-						</td>
-						<td>
-							<%= log.payment %>
-						</td>
-						<td>
-							<%= log.amount %>
-						</td>
-						<% if punto_pago.nil? %>
-							<td></td>
-							<td></td>
-							<td></td>
-						<% else %>
+						<tr>
+							<% punto_pago = PuntoPagosConfirmation.find_by_trx_id(log.trx_id) %>
 							<td>
-								<%= punto_pago.dues_number %>
+								<%= log.created_at %>
 							</td>
 							<td>
-								<%= punto_pago.operation_number %>
+								<%= log.payment %>
 							</td>
 							<td>
-								<%= punto_pago.authorization_code %>
+								<%= log.amount %>
 							</td>
-						<% end %>
+							<% if punto_pago.nil? %>
+								<td></td>
+								<td></td>
+								<td></td>
+							<% else %>
+								<td>
+									<%= punto_pago.dues_number %>
+								</td>
+								<td>
+									<%= punto_pago.operation_number %>
+								</td>
+								<td>
+									<%= punto_pago.authorization_code %>
+								</td>
+							<% end %>
+						</tr>
 					<% end %>
 
 				</table>
