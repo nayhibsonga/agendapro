@@ -45,6 +45,9 @@ public/assets/
 # Archivo de configuración de New Relic
 /config/newrelic.yml
 
+# Archivo de configuración de Punto Pagos
+/config/puntopagos.yml
+
 # Archivos de certificado SSL
 *.crt
 *.csr
