@@ -57,7 +57,7 @@ class CompaniesController < ApplicationController
 		billing_record.date = date
 		if billing_record.save
 			if @company.plan.id != params[:new_plan_id]
-				@company.plan_id = params[:new_plan_id]	
+				@company.plan_id = params[:new_plan_id]
 			end
 			if params[:new_due] != ""
 				@company.due_amount = params[:new_due].to_f
@@ -104,8 +104,12 @@ class CompaniesController < ApplicationController
 		@company = Company.find(params[:id])
 		@company.payment_status_id = params[:new_payment_status_id]
 		@company.plan_id = params[:new_plan_id]
-		@company.due_amount = params[:new_due_amount]
-		@company.months_active_left = params[:new_months_active_left]
+		if params[:new_due_amount].match(/\A[+-]?\d+?(_?\d+)*(\.\d+e?\d*)?\Z/) != nil
+			@company.due_amount = params[:new_due_amount]
+		end
+		if params[:new_months_active_left].match(/\A[+-]?\d+?(_?\d+)*(\.\d+e?\d*)?\Z/) != nil
+			@company.months_active_left = params[:new_months_active_left]
+		end
 
 		if @company.save
 			redirect_to :action => 'manage_company', :id => @company.id, :notice => 'Companía editada correctamente.'
@@ -120,7 +124,7 @@ class CompaniesController < ApplicationController
 	def get_year_incomes
 
 		@incomes = Hash.new
-		
+
 		total = 0
 		year = params[:year].to_i
 
@@ -150,14 +154,14 @@ class CompaniesController < ApplicationController
 
 			start_date = DateTime.new(year, i, 1)
 			end_date = start_date
-			if i < 12	
+			if i < 12
 				end_date = DateTime.new(year, i+1, 1)-1.minutes
 			else
 				end_date = DateTime.new(year+1, 1, 1)-1.minutes
 			end
 			billing_logs = BillingLog.where('company_id = ? and created_at BETWEEN ? and ?', @company.id, start_date, end_date)
 			billing_records = BillingRecord.where('company_id = ? and date BETWEEN ? and ?', @company.id, start_date, end_date)
-			
+
 			billing_logs.each do |bl|
 				month_income = month_income + bl.payment
 				total = total + bl.payment
@@ -174,13 +178,13 @@ class CompaniesController < ApplicationController
 		@incomes[13]['income'] = total
 
 		render :json => @incomes
-		
+
 	end
 
 	#SuperAdmin
 	def get_year_bookings
 		@bookings = Hash.new
-		
+
 		total = 0
 		year = params[:year].to_i
 
@@ -211,15 +215,15 @@ class CompaniesController < ApplicationController
 
 			start_date = DateTime.new(year, i, 1)
 			end_date = start_date
-			if i < 12	
+			if i < 12
 				end_date = DateTime.new(year, i+1, 1)-1.minutes
 			else
 				end_date = DateTime.new(year+1, 1, 1)-1.minutes
 			end
 
-			
+
 			month_bookings = Booking.where('start BETWEEN ? and ?', start_date, end_date).where(:location_id => @company.locations.pluck(:id)).count
-			
+
 
 			@bookings[i]['count'] = month_bookings
 			total = total + month_bookings
@@ -300,6 +304,27 @@ class CompaniesController < ApplicationController
 		@bookings[11]['month'] = "Noviembre"
 		@bookings[12]['month'] = "Diciembre"
 
+		@cat_bookings = Hash.new
+		for i in 1..13
+			@cat_bookings[i] = Hash.new
+			@cat_bookings[i]['month'] = ""
+			@cat_bookings[i]['count'] = 0
+			@cat_bookings[i]['web'] = 0
+		end
+
+		@cat_bookings[1]['month'] = "Enero"
+		@cat_bookings[2]['month'] = "Febrero"
+		@cat_bookings[3]['month'] = "Marzo"
+		@cat_bookings[4]['month'] = "Abril"
+		@cat_bookings[5]['month'] = "Mayo"
+		@cat_bookings[6]['month'] = "Junio"
+		@cat_bookings[7]['month'] = "Julio"
+		@cat_bookings[8]['month'] = "Agosto"
+		@cat_bookings[9]['month'] = "Septiembre"
+		@cat_bookings[10]['month'] = "Octubre"
+		@cat_bookings[11]['month'] = "Noviembre"
+		@cat_bookings[12]['month'] = "Diciembre"
+
 	end
 
 	#SuperAdmin
@@ -318,7 +343,7 @@ class CompaniesController < ApplicationController
 
 			start_date = DateTime.new(@year, i, 1)
 			end_date = start_date
-			if i < 12	
+			if i < 12
 				end_date = DateTime.new(@year, i+1, 1)-1.minutes
 			else
 				end_date = DateTime.new(@year+1, 1, 1)-1.minutes
@@ -538,6 +563,19 @@ class CompaniesController < ApplicationController
 
 	def workflow
 		@company = Company.find_by(web_address: request.subdomain)
+		if @company.nil?
+			@company = Company.find_by(web_address: request.subdomain.gsub(/www\./i, ''))
+			if @company.nil?
+				flash[:alert] = "No existe la compañia buscada."
+
+				host = request.host_with_port
+				domain = host[host.index(request.domain)..host.length]
+
+				redirect_to root_url(:host => domain)
+				return
+			end
+		end
+
 		unless @company.company_setting.activate_workflow && @company.active
 			flash[:alert] = "Lo sentimos, el mini-sitio que estás buscando no se encuentra disponible."
 
@@ -897,7 +935,7 @@ class CompaniesController < ApplicationController
 	end
 
 	def user_data
-		
+
 		@location = Location.find(params[:location])
 		@company = @location.company
 		@service = Service.find(params[:service])
