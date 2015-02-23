@@ -36,6 +36,12 @@ class ReportsController < ApplicationController
 	  	render "_location_providers", layout: false
 	end
 
+	def location_comission
+		@location = Location.find(params[:id])
+
+	  	render "_location_comission", layout: false
+	end
+
 	def location_services
 		@location = Location.find(params[:id])
 		@services = Service.where(id: ServiceStaff.where(service_provider_id: @location.service_providers.where(active: true).pluck(:id)).pluck(:service_id), active: true)
