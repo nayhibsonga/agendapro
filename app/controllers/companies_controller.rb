@@ -104,8 +104,12 @@ class CompaniesController < ApplicationController
 		@company = Company.find(params[:id])
 		@company.payment_status_id = params[:new_payment_status_id]
 		@company.plan_id = params[:new_plan_id]
-		@company.due_amount = params[:new_due_amount]
-		@company.months_active_left = params[:new_months_active_left]
+		if params[:new_due_amount].match(/\A[+-]?\d+?(_?\d+)*(\.\d+e?\d*)?\Z/) != nil
+			@company.due_amount = params[:new_due_amount]
+		end
+		if params[:new_months_active_left].match(/\A[+-]?\d+?(_?\d+)*(\.\d+e?\d*)?\Z/) != nil
+			@company.months_active_left = params[:new_months_active_left]
+		end
 
 		if @company.save
 			redirect_to :action => 'manage_company', :id => @company.id, :notice => 'Companía editada correctamente.'

@@ -28,6 +28,9 @@
 	<div id="myTabContent" class="tab-content">
 	<br />
 		<div class="tab-pane" id="late">
+			<div class="companies-count">
+				Número de empresas: <%= @late_companies.count %>
+			</div>
 			<table class="companies-table">
 
 				<tr class="companies-table-header">
@@ -94,8 +97,12 @@
 					</tr>
 				<% end %>
 			</table>
+
 		</div>
 		<div class="tab-pane" id="blocked">
+			<div class="companies-count">
+				Número de empresas: <%= @blocked_companies.count %>
+			</div>
 			<table class="companies-table">
 
 				<tr class="companies-table-header">
@@ -164,6 +171,9 @@
 			</table>
 		</div>
 		<div class="tab-pane" id="inactive">
+			<div class="companies-count">
+				Número de empresas: <%= @inactive_companies.count %>
+			</div>
 			<table class="companies-table">
 
 				<tr class="companies-table-header">
@@ -232,6 +242,9 @@
 			</table>
 		</div>
 		<div class="tab-pane active" id="trial">
+			<div class="companies-count">
+				Número de empresas: <%= @trial_companies.count %>
+			</div>
 			<table class="companies-table">
 
 				<tr class="companies-table-header">
@@ -294,6 +307,9 @@
 			</table>
 		</div>
 		<div class="tab-pane" id="active">
+			<div class="companies-count">
+				Número de empresas: <%= @active_companies.count %>
+			</div>
 			<table class="companies-table">
 
 				<tr class="companies-table-header">
@@ -356,6 +372,9 @@
 			</table>
 		</div>
 		<div class="tab-pane" id="issued">
+			<div class="companies-count">
+				Número de empresas: <%= @issued_companies.count %>
+			</div>
 			<table class="companies-table">
 
 				<tr class="companies-table-header">
