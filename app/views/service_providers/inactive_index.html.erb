@@ -2,7 +2,14 @@
   <div class="row">
     <div class="col-md-12">
       <h2 class="text-green">Prestadores de Servicios Inactivos</h2>
-      <p>Acá puedes re-activar y editar los Prestadores de Servicios previamente desactivados.</p>
+      <div class="row">
+        <div class="col-md-8">
+          <p class="text-buttons">Acá puedes re-activar y editar los Prestadores de Servicios previamente desactivados.</p>
+        </div>
+        <div class="col-md-4 action-buttons">
+          <%= link_to 'Prestadores de Servicios Activos', service_providers_path, :class => "btn btn-white" %>
+        </div>
+      </div>
     </div>
   </div>
   <div class="row">
@@ -26,11 +33,6 @@
           <% end %>
         </tbody>
       </table>
-    </div>
-  </div>
-  <div class="row">
-    <div class="col-md-12">
-      <%= link_to 'Prestadores de Servicios Activos', service_providers_path, :class => "btn btn-white" %>
     </div>
   </div>
 </div>

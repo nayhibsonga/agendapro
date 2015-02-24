@@ -1337,6 +1337,21 @@ fieldset[disabled] .btn-white.active {
   font-weight: bold;
   color: #fd633f;
 }
+.text-buttons {
+  margin-top: 10px;
+}
+.action-buttons {
+  margin-bottom: 10px;
+  text-align: right;
+}
+@media (max-width: 992px) {
+  .action-buttons {
+    text-align: initial;
+  }
+  .action-buttons > a:last-child {
+    float: right;
+  }
+}
 
 /*
   ================================

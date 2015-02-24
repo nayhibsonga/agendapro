@@ -2,7 +2,15 @@
   <div class="row">
     <div class="col-md-12">
       <h2 class="text-green">Locales</h2>
-      <p>Crea y edita los locales asociados a tu compañía.</p>
+      <div class="row">
+        <div class="col-md-8">
+          <p class="text-buttons">Crea y edita los locales asociados a tu compañía.</p>
+        </div>
+        <div class="col-md-4 action-buttons">
+          <%= link_to '<i class="fa fa-plus"></i> Nuevo Local'.html_safe, new_location_path, :class => "btn btn-green" unless cannot? :create, Location %>
+          <%= link_to '<i class="fa fa-minus"></i> Locales Inactivos'.html_safe, inactive_locations_path, :class => "btn btn-white" unless cannot? :destroy, Location %>
+        </div>
+      </div>
     </div>
   </div>
   <div class="row">
@@ -35,12 +43,6 @@
           <% end %>
         </tbody>
       </table>
-    </div>
-  </div>
-  <div class="row">
-    <div class="col-md-12">
-      <%= link_to '<i class="fa fa-plus"></i> Nuevo Local'.html_safe, new_location_path, :class => "btn btn-green" unless cannot? :create, Location %>
-      <%= link_to '<i class="fa fa-minus"></i> Locales Inactivos'.html_safe, inactive_locations_path, :class => "btn btn-white pull-right" unless cannot? :destroy, Location %>
     </div>
   </div>
 </div>
