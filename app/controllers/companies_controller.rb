@@ -73,8 +73,50 @@ class CompaniesController < ApplicationController
 
 			redirect_to :action => 'manage_company', :id => @company.id
 		else
-			redirect_to :action => 'new_payment', :id => @company_id, :alert => 'Ocurrió un error al ingresar el pago.'
+			redirect_to :action => 'new_payment', :id => @company.id, :alert => 'Ocurrió un error al ingresar el pago.'
 		end
+	end
+
+
+	def payment
+
+		@record = BillingRecord.find(params[:id])
+		@company = @record.company
+
+	end
+
+	def modify_payment
+
+		@record = BillingRecord.find(params[:id])
+		if params[:amount].match(/\A[+-]?\d+?(_?\d+)*(\.\d+e?\d*)?\Z/) != nil
+			@record.amount = params[:amount].to_f
+		end
+		if params[:date] != ""
+			date = Date.parse(params[:date])
+			@record.date = date
+		end
+		@record.transaction_type_id = params[:transaction_type_id]
+		@company = @record.company
+
+		if @record.save
+			if @company.plan.id != params[:new_plan_id]
+				@company.plan_id = params[:new_plan_id]
+			end
+			if params[:new_due] != ""
+				@company.due_amount = params[:new_due].to_f
+			end
+			if params[:new_months] != ""
+				@company.months_active_left = params[:new_months].to_f
+			end
+			if @company.payment_status_id != params[:new_status_id]
+				@company.payment_status_id = params[:new_status_id]
+			end
+			@company.save
+			redirect_to :action => 'manage_company', :id => @company.id
+		else
+			redirect_to :action => 'payment', :id => @record.id, :alert => 'Ocurrió un error al ingresar el pago.'
+		end
+
 	end
 
 	#TODO

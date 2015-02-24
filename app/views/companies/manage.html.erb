@@ -18,15 +18,70 @@
 
 <div class="row well well-white" style="margin-top: 20px;">
 	<ul id="myTab" class="nav nav-tabs" role="tablist">
-		<li class="active"><a href="#trial" role="tab" data-toggle="tab" class="tab_index">En prueba</a></li>
+		<li class="active"><a href="#summary" role="tab" data-toggle="tab" class="tab_index">Resumen</a></li>
+		<li class=""><a href="#trial" role="tab" data-toggle="tab" class="tab_index">Trial</a></li>
 		<li class=""><a href="#active" role="tab" data-toggle="tab" class="tab_index">Activos</a></li>
 		<li class=""><a href="#issued" role="tab" data-toggle="tab" class="tab_index">Emitidos</a></li>
-	 	<li class=""><a href="#late" role="tab" data-toggle="tab" class="tab_index">Morosos</a></li>
+	 	<li class=""><a href="#late" role="tab" data-toggle="tab" class="tab_index">Vencidos</a></li>
 	 	<li class=""><a href="#blocked" role="tab" data-toggle="tab" class="tab_index">Bloqueados</a></li>
 	 	<li class=""><a href="#inactive" role="tab" data-toggle="tab" class="tab_index">Inactivos</a></li>
 	</ul>
 	<div id="myTabContent" class="tab-content">
 	<br />
+
+		<div class="tab-pane active" id="summary">
+			<table>
+				<tr>
+					<td>
+						Trial:
+					</td>
+					<td>
+						<%= @trial_companies.count %>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						Activas:
+					</td>
+					<td>
+						<%= @active_companies.count %>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						Emitidas:
+					</td>
+					<td>
+						<%= @issued_companies.count %>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						Vencidas:
+					</td>
+					<td>
+						<%= @late_companies.count %>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						Bloqueadas:
+					</td>
+					<td>
+						<%= @blocked_companies.count %>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						Inactivas:
+					</td>
+					<td>
+						<%= @inactive_companies.count %>
+					</td>
+				</tr>
+			</table>
+		</div>
+
 		<div class="tab-pane" id="late">
 			<div class="companies-count">
 				Número de empresas: <%= @late_companies.count %>
@@ -241,7 +296,7 @@
 				<% end %>
 			</table>
 		</div>
-		<div class="tab-pane active" id="trial">
+		<div class="tab-pane" id="trial">
 			<div class="companies-count">
 				Número de empresas: <%= @trial_companies.count %>
 			</div>
