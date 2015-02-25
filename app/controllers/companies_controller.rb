@@ -85,6 +85,16 @@ class CompaniesController < ApplicationController
 
 	end
 
+	def delete_payment
+		@record = BillingRecord.find(params[:record_id])
+		@company = Company.find(params[:id])
+		if @record.delete
+			redirect_to :action => 'manage_company', :id => @company.id, :notice => 'Pago eliminado correctamente.'
+		else
+			redirect_to :action => 'manage_company', :id => @company.id, :alert => 'Ocurrió un error al ingresar el pago.'
+		end
+	end
+
 	def modify_payment
 
 		@record = BillingRecord.find(params[:id])

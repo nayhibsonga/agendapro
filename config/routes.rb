@@ -147,6 +147,7 @@ Agendapro::Application.routes.draw do
   get "/manage_company/:id", :to => 'companies#manage_company'
   get "/companies/new_payment/:id", :to => 'companies#new_payment'
   post "/companies/add_payment", :to => 'companies#add_payment'
+  post "/companies/delete_payment", :to => 'companies#delete_payment'
   get "/companies/payment/:id", :to => 'companies#payment'
   post "/companies/modify_payment", :to => 'companies#modify_payment'
   get "/get_year_incomes", :to => 'companies#get_year_incomes'
