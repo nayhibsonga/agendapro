@@ -361,7 +361,7 @@ class CompaniesController < ApplicationController
 
 	#CSV generation
 	def get_monthly_bookings
-		filename = params[:type] + "_" + params[:sub_type]
+		filename = params[:type] + "_" + params[:subtype]
 		year = params[:year]
 		filename = filename + "_" + year + ".csv"
 		
