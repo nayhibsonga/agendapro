@@ -392,4 +392,134 @@ class Booking < ActiveRecord::Base
 		end
 		return event
 	end
+
+	def generate_csv(type, subtype, year)
+
+		companies = Company.all.order(:name)
+
+		bookings = Hash.new
+
+		companies_info = Hash.new
+		for i in 1..12
+			companies_info[i] = Array.new
+		end
+
+		for i in 1..13
+			bookings[i] = Hash.new
+			bookings[i]['month'] = ""
+			bookings[i]['count'] = 0
+			bookings[i]['web'] = 0
+		end
+
+		bookings[1]['month'] = "Enero"
+		bookings[2]['month'] = "Febrero"
+		bookings[3]['month'] = "Marzo"
+		bookings[4]['month'] = "Abril"
+		bookings[5]['month'] = "Mayo"
+		bookings[6]['month'] = "Junio"
+		bookings[7]['month'] = "Julio"
+		bookings[8]['month'] = "Agosto"
+		bookings[9]['month'] = "Septiembre"
+		bookings[10]['month'] = "Octubre"
+		bookings[11]['month'] = "Noviembre"
+		bookings[12]['month'] = "Diciembre"
+
+		cat_bookings = Hash.new
+		for i in 1..13
+			cat_bookings[i] = Hash.new
+			cat_bookings[i]['month'] = ""
+			cat_bookings[i]['count'] = 0
+			cat_bookings[i]['web'] = 0
+		end
+
+		cat_bookings[1]['month'] = "Enero"
+		cat_bookings[2]['month'] = "Febrero"
+		cat_bookings[3]['month'] = "Marzo"
+		cat_bookings[4]['month'] = "Abril"
+		cat_bookings[5]['month'] = "Mayo"
+		cat_bookings[6]['month'] = "Junio"
+		cat_bookings[7]['month'] = "Julio"
+		cat_bookings[8]['month'] = "Agosto"
+		cat_bookings[9]['month'] = "Septiembre"
+		cat_bookings[10]['month'] = "Octubre"
+		cat_bookings[11]['month'] = "Noviembre"
+		cat_bookings[12]['month'] = "Diciembre"
+
+		companies.each do |company|
+			company_bookings = 0
+			company_web_bookings = 0
+
+			for i in 1..12 do
+
+				company_info = Hash.new
+				company_info['company'] = company
+				company_info['count'] = 0
+				company_info['web'] = 0
+				month_bookings = 0
+				start_date = DateTime.new(year.to_i, i, 1)
+				end_date = start_date
+				if i < 12	
+					end_date = DateTime.new(year.to_i, i+1, 1)-1.minutes
+				else
+					end_date = DateTime.new(year.to_i+1, 1, 1)-1.minutes
+				end
+
+				bookings = Booking.where('start BETWEEN ? and ?', start_date, end_date).where(:location_id => company.locations.pluck(:id))
+				bookings_count = bookings.count
+				
+				web_bookings = bookings.where(:web_origin => true)
+
+				month_bookings = bookings_count
+				company_bookings = company_bookings + bookings_count
+				company_web_bookings = company_web_bookings + web_bookings.count
+				bookings[i]['count'] = @bookings[i]['count'] + bookings_count
+				bookings[i]['web'] = @bookings[i]['web'] + web_bookings.count
+				bookings[13]['count'] = @bookings[13]['count'] + bookings_count
+				bookings[13]['web'] = 	@bookings[13]['web'] + web_bookings.count
+
+				company_info['count'] = month_bookings
+				company_info['web'] = web_bookings.count
+				companies_info[i] << company_info
+
+			end
+		end
+
+
+		CSV.generate do |csv|
+
+			header = Array.new
+			if type == 'book_date'
+				if subtype == 'general'
+
+					header = ["Empresa", "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre", "Total"]
+
+				elsif subtype == 'versus'
+
+					header = ["", "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre", "Total"]
+
+				elsif subtype == 'all'
+
+				elsif subtype == 'web'
+
+				end
+			else
+				if subtype == 'general'
+
+					header = ["Empresa", "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre", "Total"]
+
+				elsif subtype == 'versus'
+
+					header = ["", "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre", "Total"]
+
+				elsif subtype == 'all'
+
+
+				elsif subtype == 'web'
+
+				end
+			end
+		end
+
+	end
+
 end

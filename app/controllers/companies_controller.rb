@@ -119,26 +119,6 @@ class CompaniesController < ApplicationController
 
 	end
 
-	#TODO
-	#SuperAdmin
-	# def payment
-
-	# 	@type = params[:type]
-
-	# 	if @type == "BillingLog"
-	# 		@log = BillingLog.find(params[:id])
-	# 		@punto_pagos = PuntoPagosConfirmation.find_by_trx_id(@log.trx_id)
-	# 	else
-	# 		@record = BillingRecord.find(params[:id])
-	# 	end
-
-	# end
-
-	# #TODO
-	# #SuperAdmin
-	# def company_payments
-
-	# end
 
 	#SuperAdmin
 	def update_company
@@ -367,6 +347,16 @@ class CompaniesController < ApplicationController
 		@cat_bookings[11]['month'] = "Noviembre"
 		@cat_bookings[12]['month'] = "Diciembre"
 
+	end
+
+	#CSV generation
+	def get_monthly_bookings
+		filename = params[:type] + "_" + params[:sub_type]
+		year = params[:year]
+		filename = filename + "_" + year + ".csv"
+		
+	    send_data Booking.generate_csv(params[:type], params[:subtype], params[:year]), filename: filename
+	    
 	end
 
 	#SuperAdmin

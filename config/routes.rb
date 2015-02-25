@@ -157,6 +157,7 @@ Agendapro::Application.routes.draw do
   get '/companies_monthly_bookings', :to => 'companies#monthly_bookings'
   post '/companies/update_company', :to => 'companies#update_company'
   post '/companies/deactivate_company', :to => 'companies#deactivate_company'
+  post '/companies/get_monthly_bookings', :to => 'companies#get_monthly_bookings'
 
   # Search
   get "searchs/index"

@@ -80,8 +80,22 @@
 					<!-- FECHA DE RESERVA -->
 
 					<div class="col-md-12">
-						<div class="companies_incomes_header">
-							<h3>Reservas para el año <%= @year %></h3>
+						<div class="row">
+							<div class="col-md-6">
+								<div class="companies_incomes_header">
+									<h3>Reservas para el año <%= @year %></h3>
+								</div>
+							</div>
+							<div class="col-md-6">
+								<div style="float:right;">
+									<%= form_tag({ :controller => 'companies', :action => 'get_monthly_bookings'}, method: "post") do %>
+										<input type="hidden" name="type" value="book_date" />
+										<input type="hidden" name="subtype" value="general" />
+										<input type="hidden" name="year" value="<%= @year %>" />
+										<button class="download-csv">&nbsp;Descargar&nbsp;&nbsp;<i class="fa fa-file-excel-o fa-lg"></i></button>
+									<% end %>
+								</div>
+							</div>
 						</div>
 						<div class="scrollable"  style="max-height: 400px;">
 							<table class="companies-table">
@@ -224,8 +238,22 @@
 				<div class="tab-pane" id="versus1">
 
 					<div class="col-md-12">
-						<div class="companies_incomes_header">
-							<h3>Reservas vs Reservas Web (<%= @year %>)</h3>
+						<div class="row">
+							<div class="col-md-6">
+								<div class="companies_incomes_header">
+									<h3>Reservas vs Reservas Web (<%= @year %>)</h3>
+								</div>
+							</div>
+							<div class="col-md-6">
+								<div style="float:right;">
+									<%= form_tag({ :controller => 'companies', :action => 'get_monthly_bookings'}, method: "post") do %>
+										<input type="hidden" name="type" value="book_date" />
+										<input type="hidden" name="subtype" value="versus" />
+										<input type="hidden" name="year" value="<%= @year %>" />
+										<button class="download-csv">&nbsp;Descargar&nbsp;&nbsp;<i class="fa fa-file-excel-o fa-lg"></i></button>
+									<% end %>
+								</div>
+							</div>
 						</div>
 						<table class="companies-table">
 							<tr class="companies-table-header">
@@ -306,8 +334,22 @@
 
 				<div class="tab-pane" id="all1">
 					<div class="col-md-12">
-						<div class="companies_incomes_header">
-							<h3>Top reservas por mes (<%= @year %>)</h3>
+						<div class="row">
+							<div class="col-md-6">
+								<div class="companies_incomes_header">
+									<h3>Top reservas por mes (<%= @year %>)</h3>
+								</div>
+							</div>
+							<div class="col-md-6">
+								<div style="float:right;">
+									<%= form_tag({ :controller => 'companies', :action => 'get_monthly_bookings'}, method: "post") do %>
+										<input type="hidden" name="type" value="book_date" />
+										<input type="hidden" name="subtype" value="all" />
+										<input type="hidden" name="year" value="<%= @year %>" />
+										<button class="download-csv">&nbsp;Descargar&nbsp;&nbsp;<i class="fa fa-file-excel-o fa-lg"></i></button>
+									<% end %>
+								</div>
+							</div>
 						</div>
 						<% for i in 1..12 %>
 							<h4> <%= @bookings[i]['month'] %> </h4>
@@ -399,8 +441,22 @@
 
 				<div class="tab-pane" id="web1">
 					<div class="col-md-12">
-						<div class="companies_incomes_header">
-							<h3>Top reservas web por mes (<%= @year %>)</h3>
+						<div class="row">
+							<div class="col-md-6">
+								<div class="companies_incomes_header">
+									<h3>Top reservas web por mes (<%= @year %>)</h3>
+								</div>
+							</div>
+							<div class="col-md-6">
+								<div style="float:right;">
+									<%= form_tag({ :controller => 'companies', :action => 'get_monthly_bookings'}, method: "post") do %>
+										<input type="hidden" name="type" value="book_date" />
+										<input type="hidden" name="subtype" value="web" />
+										<input type="hidden" name="year" value="<%= @year %>" />
+										<button class="download-csv">&nbsp;Descargar&nbsp;&nbsp;<i class="fa fa-file-excel-o fa-lg"></i></button>
+									<% end %>
+								</div>
+							</div>
 						</div>
 						<% for i in 1..12 %>
 							<h4> <%= @bookings[i]['month'] %> </h4>
@@ -507,20 +563,32 @@
 			<br />
 
 
+				<div class="col-md-12">
+					<div class="companies_incomes_header">
+						<h3>POR FECHA DE CREACIÓN</h3>
+					</div>
+				</div>
 				<!-- INICIO GENERAL -->
 
 				<div class="tab-pane active" id="general2">
 
-					
 					<div class="col-md-12">
-						<div class="companies_incomes_header">
-							<h3>POR FECHA DE CREACIÓN</h3>
-						</div>
-					</div>
-
-					<div class="col-md-12">
-						<div class="companies_incomes_header">
-							<h3>Reservas para el año <%= @year %></h3>
+						<div class="row">
+							<div class="col-md-6">
+								<div class="companies_incomes_header">
+									<h3>Reservas para el año <%= @year %></h3>
+								</div>
+							</div>
+							<div class="col-md-6">
+								<div style="float:right;">
+									<%= form_tag({ :controller => 'companies', :action => 'get_monthly_bookings'}, method: "post") do %>
+										<input type="hidden" name="type" value="creation_date" />
+										<input type="hidden" name="subtype" value="general" />
+										<input type="hidden" name="year" value="<%= @year %>" />
+										<button class="download-csv">&nbsp;Descargar&nbsp;&nbsp;<i class="fa fa-file-excel-o fa-lg"></i></button>
+									<% end %>
+								</div>
+							</div>
 						</div>
 						<div class="scrollable"  style="max-height: 400px;">
 							<table class="companies-table">
@@ -663,8 +731,22 @@
 				<div class="tab-pane" id="versus2">
 
 					<div class="col-md-12">
-						<div class="companies_incomes_header">
-							<h3>Reservas vs Reservas Web (<%= @year %>)</h3>
+						<div class="row">
+							<div class="col-md-6">
+								<div class="companies_incomes_header">
+									<h3>Reservas vs Reservas Web (<%= @year %>)</h3>
+								</div>
+							</div>
+							<div class="col-md-6">
+								<div style="float:right;">
+									<%= form_tag({ :controller => 'companies', :action => 'get_monthly_bookings'}, method: "post") do %>
+										<input type="hidden" name="type" value="creation_date" />
+										<input type="hidden" name="subtype" value="versus" />
+										<input type="hidden" name="year" value="<%= @year %>" />
+										<button class="download-csv">&nbsp;Descargar&nbsp;&nbsp;<i class="fa fa-file-excel-o fa-lg"></i></button>
+									<% end %>
+								</div>
+							</div>
 						</div>
 						<table class="companies-table">
 							<tr class="companies-table-header">
@@ -745,8 +827,22 @@
 
 				<div class="tab-pane" id="all2">
 					<div class="col-md-12">
-						<div class="companies_incomes_header">
-							<h3>Top reservas por mes (<%= @year %>)</h3>
+						<div class="row">
+							<div class="col-md-6">
+								<div class="companies_incomes_header">
+									<h3>Top reservas por mes (<%= @year %>)</h3>
+								</div>
+							</div>
+							<div class="col-md-6">
+								<div style="float:right;">
+									<%= form_tag({ :controller => 'companies', :action => 'get_monthly_bookings'}, method: "post") do %>
+										<input type="hidden" name="type" value="creation_date" />
+										<input type="hidden" name="subtype" value="all" />
+										<input type="hidden" name="year" value="<%= @year %>" />
+										<button class="download-csv">&nbsp;Descargar&nbsp;&nbsp;<i class="fa fa-file-excel-o fa-lg"></i></button>
+									<% end %>
+								</div>
+							</div>
 						</div>
 						<% for i in 1..12 %>
 							<h4> <%= @cat_bookings[i]['month'] %> </h4>
@@ -838,8 +934,22 @@
 
 				<div class="tab-pane" id="web2">
 					<div class="col-md-12">
-						<div class="companies_incomes_header">
-							<h3>Top reservas web por mes (<%= @year %>)</h3>
+						<div class="row">
+							<div class="col-md-6">
+								<div class="companies_incomes_header">
+									<h3>Top reservas web por mes (<%= @year %>)</h3>
+								</div>
+							</div>
+							<div class="col-md-6">
+								<div style="float:right;">
+									<%= form_tag({ :controller => 'companies', :action => 'get_monthly_bookings'}, method: "post") do %>
+										<input type="hidden" name="type" value="creation_date" />
+										<input type="hidden" name="subtype" value="web" />
+										<input type="hidden" name="year" value="<%= @year %>" />
+										<button class="download-csv">&nbsp;Descargar&nbsp;&nbsp;<i class="fa fa-file-excel-o fa-lg"></i></button>
+									<% end %>
+								</div>
+							</div>
 						</div>
 						<% for i in 1..12 %>
 							<h4> <%= @cat_bookings[i]['month'] %> </h4>
