@@ -16,7 +16,7 @@ function loadStep1 (service_id) {
 				categoryCount = categoryCount + 1;
 				$.each(service_hash.services, function (key, service) {
 					//====== Generando Radios
-					servicesHTML += 
+					servicesHTML +=
 						'<li class="list-group-item">' +
 							'<div class="radio">' +
 								'<label>' +
@@ -56,7 +56,7 @@ function loadStep1 (service_id) {
 		$('[name="serviceRadio"]').on('click', function(event) {
 			//event.preventDefault();
 			var serviceId = event.target.getAttribute('value');
-			if ($(event.target).data('outcall') == true) { 
+			if ($(event.target).data('outcall') == true) {
 				$('#outcallAddress').show();
                 var settings = $('#bookingForm').validate().settings;
                 settings.rules.address = {required: true}
@@ -93,12 +93,13 @@ function loadStep1 (service_id) {
 	 	};
 	});
 
- 	
+
 }
 
 var calendar;
+var staffSelected;
 function loadStep2 () {
-	
+
 	if($('[name="serviceRadio"]').is(':checked')){
 		$('#staff-selector').html('<%= image_tag "ajax-loader.gif", :alt => "Loader" %>');
 		$('.horario').hide();
@@ -168,12 +169,15 @@ function loadStep2 () {
 					}
 				}
 
-				if (calendar) {
-					calendar.rebuild('/get_available_time.json', data);
-				}
-				else {
-					calendar = new Calendar('/get_available_time.json', data);
-				}
+				if ($(this).val() != staffSelected) {
+					staffSelected = $(this).val();
+					if (calendar) {
+						calendar.rebuild('/get_available_time.json', data);
+					}
+					else {
+						calendar = new Calendar('/get_available_time.json', data);
+					}
+				};
 
 				$(document).on('hourClick', function (e) {
 					addBooking(e);
@@ -254,7 +258,7 @@ function loadStep2 () {
 
 			$('#foo4').trigger('updateSizes');
 		});
- 		
+
 	}
 }
 
@@ -361,7 +365,7 @@ function scrollEvents (direction) {
 			}
 			else {
 				loadStep2();
-				
+
 				step = 2;
 				return true;
 			}
@@ -415,7 +419,7 @@ function loadDescription (serviceId) {
 					'<td class="light-gray">$ ' + service.price.toLocaleString() + '</td>' +
 				'</tr>'
 			);
-		} 
+		}
 		else if (service.show_price && service.price == 0) {
 			$('#services-description').append(
 				'<tr>' +
@@ -495,7 +499,7 @@ function formattedTime (timestamp) {
 	var dateString = timestamp;
 
 	var s = new Date(dateString.substring(0, 4), parseInt(dateString.substring(5, 7)) - 1, dateString.substring(8, 10), dateString.substring(11, 13), dateString.substring(14, 16), 0);
-	
+
 	var weekday = ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"]
 
 	var monthname = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"]
