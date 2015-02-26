@@ -1,0 +1,182 @@
+<div class="workflow-header">
+  <div class="container">
+    <div class="row">
+      <% if !@company.description.blank? %>
+        <div class="col-md-6 company-header-left company-header">
+          <div class="col-md-3">
+            <% if @company.logo_url %>
+              <%= image_tag @company.logo_url.to_s, :size => "80x80", :alt => @company.name, :class => "company-logo img-responsive" %>
+            <% else %>
+              <%= image_tag 'logo_vacio.png', :alt => 'AgendaPro', :size => "80x80", :class => "company-logo img-responsive" %>
+            <% end %>
+          </div>
+          <div class="col-md-9" style="color: #949292; font-size: 30px; padding-top: 20px;">
+            <%= @company.name %>
+          </div>
+        </div>
+        <div class="col-md-4 company-header-center company-header">
+          <div class="header-description">
+            <%= @company.description %>
+          </div>
+        </div>
+        <div class="col-md-2 company-header-right company-header">
+          <% if @location %>
+            <div id="phone-info">
+              <%= image_tag 'telefono.png', :alt => '', :size => "12x14", :class=>"loc-icon" %>&nbsp;
+              <span id="phone-number">
+                <%= @location.phone %>
+              </span><br />
+              <%= image_tag 'ubicacion.png', :alt => '', :size => "12x14", :class=>"loc-icon" %>&nbsp;
+              <span id="phone-address">
+                <%= if !@location.outcall then @location.address+', '+@location.district.name else "A Domicilio" end %>
+              </span>
+            </div>
+          <% else %>
+            <div id="phone-info" hidden>
+              <%= image_tag 'telefono.png', :alt => '', :size => "12x14", :class=>"loc-icon" %>&nbsp;
+              <span id="phone-number"></span><br />
+              <%= image_tag 'ubicacion.png', :alt => '', :size => "12x14", :class=>"loc-icon" %>&nbsp;
+              <span id="phone-address"></span>
+            </div>
+          <% end %>
+          <div style="clear: both;"></div>
+        </div>
+      <% else %>
+        <div class="col-md-6 company-header-left company-header" style="border-right: 1px solid #949292;">
+          <div class="col-md-3">
+            <% if @company.logo_url %>
+              <%= image_tag @company.logo_url.to_s, :size => "80x80", :alt => @company.name, :class => "company-logo img-responsive" %>
+            <% else %>
+              <%= image_tag 'logo_vacio.png', :alt => 'AgendaPro', :size => "80x80", :class => "company-logo img-responsive" %>
+            <% end %>
+          </div>
+          <div class="col-md-9" style="color: #949292; font-size: 30px; padding-top: 20px;">
+            <%= @company.name %>
+          </div>
+        </div>
+        <div class="col-md-6 company-header-center2 company-header">
+          <% if @location %>
+            <div id="phone-info">
+              <%= image_tag 'telefono.png', :alt => '', :size => "12x14", :class=>"loc-icon" %>&nbsp;
+              <span id="phone-number">
+                <%= @location.phone %>
+              </span><br />
+              <%= image_tag 'ubicacion.png', :alt => '', :size => "12x14", :class=>"loc-icon" %>&nbsp;
+              <span id="phone-address">
+                <%= if !@location.outcall then @location.address+', '+@location.district.name else "A Domicilio" end %>
+              </span>
+            </div>
+          <% else %>
+            <div id="phone-info" hidden>
+              <%= image_tag 'telefono.png', :alt => '', :size => "12x14", :class=>"loc-icon" %>&nbsp;
+              <span id="phone-number"></span><br />
+              <%= image_tag 'ubicacion.png', :alt => '', :size => "12x14", :class=>"loc-icon" %>&nbsp;
+              <span id="phone-address"></span>
+            </div>
+          <% end %>
+          <div style="clear: both;"></div>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>
+
+<div class="main">
+  <section class="pricing_wrapper">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-7">
+          <div class="resumen-book">
+            <div class="row">
+              <div class="col-md-1">
+              </div>
+              <div class="col-md-10">
+                <div class="book-title"><%= @client.first_name %>, no fue posible guardar todos los servicios</div>
+                <%= form_tag("/remove_bookings", method: "post", role: "form") do %>
+                  <%= hidden_field_tag :bookings, @bookings.map { |b| b.id } %>
+                  <%= hidden_field_tag :company, @company.id %>
+                  <button id="accept" class="btn btn-lg btn-green" style="padding: 10px 16px; border-radius: 10px;">Mantener Reserva</button>
+                  <button id="cancel" type="submit" class="btn btn-lg btn-orange" style="padding: 8px 16px;">Cancelar Reserva</button>
+                <% end %>
+                <p style="margin-bottom: 20px;">
+                </p>
+                <div class="book-subheader dark-gray">Resumen de lo reservado</div>
+                <dl class="dl-horizontal book-dl">
+                  <dt class="dark-gray">¿Qué reservaste?</dt>
+                  <dd class="light-gray">
+                    <% @bookings.each do |booking| %>
+                      <p><%= booking.service.name %></p>
+                    <% end %>
+                  </dd>
+                  <dt class="dark-gray">¿Dónde?</dt>
+                  <dd class="light-gray"><%= @location.address %>, <%= @location.district.name %></dd>
+                  <dt class="dark-gray">¿Con quién?</dt>
+                  <dd class="light-gray">
+                    <% @bookings.each do |booking| %>
+                      <p><%= booking.service_provider.public_name %></p>
+                    <% end %>
+                  </dd>
+                  <dt class="dark-gray">¿Cuándo?</dt>
+                  <dd class="light-gray">
+                    <% @bookings.each do |booking| %>
+                      <p><%= l booking.start %></p>
+                    <% end %>
+                  </dd>
+                  <% if !@bookings[0].notes.empty? %>
+                  <dt class="dark-gray">Notas</dt>
+                  <dd class="light-gray"><%= @bookings[0].notes %></dd>
+                  <% end %>
+                </dl>
+
+                <div class="book-subheader dark-gray">Tus Datos</div>
+                <dl class="dl-horizontal book-dl">
+                  <dt class="dark-gray">Nombre</dt>
+                  <dd class="light-gray"><%= @client.first_name %> <%= @client.last_name %></dd>
+                  <% if !@client.email.empty? %>
+                  <dt class="dark-gray">E-mail</dt>
+                  <dd class="light-gray"><%= @client.email %></dd>
+                  <% end %>
+                  <% if !@client.phone.empty? %>
+                  <dt class="dark-gray">Teléfono</dt>
+                  <dd class="light-gray"><%= @client.phone %></dd>
+                  <% end %>
+                </dl>
+
+                <div>
+                  <%= image_tag("logos/logo2.png", :class=> "bottom-logo") %>
+                </div>
+              </div>
+              <div class="col-md-1">
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-5">
+          <%= image_tag("backgrounds/cross.png", :class => "book-center-error") %>
+        </div>
+        <div class="col-md-5" id="error">
+          <div class="book-title">Errores</div>
+          <ul class="list-unstyled">
+            <% @errors.each do |msg| %>
+            <li class="light-gray"><%= msg %></li>
+            <% end %>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<% content_for :scripts do %>
+<script type="text/javascript">
+  $(function() {
+    $('#accept').on('click', function () {
+      $('#accept, #error, #cancel').remove();
+      var src = $('img.book-center-error').attr('src');
+      src = src.replace('cross', 'icono_reserva2');
+      $('img.book-center-error').attr('src', src);
+      $('.book-title').html('<%= @client.first_name %>, tu reserva fue realizada con exito');
+    });
+  });
+</script>
+<% end %>
