@@ -517,7 +517,7 @@
                     <div class="row">
                       <div class="col-md-6">
                         <div style="color: #505050; padding: 5px 5px 5px 5px;">
-                          <a href="#" id="open-online-policy" data-toggle="modal" data-target="#online-policy" style="color: #505050 !important;"><b>Política de pagos en línea.</b></a>
+                          <a href="#" id="open-online-policy" data-toggle="modal" data-target="#online-policy" style="color: #505050 !important; border-top: 1px solid #949292; padding-top: 5px;"><b><%= image_tag 'icono_pago.png', :alt => 'Pago' %>Política de pagos en línea.</b></a>
                         </div>
 
                       </div>
@@ -555,30 +555,30 @@
 
                     <div class="row">
                       <div class="col-md-4">
-                        <input type="radio" name="mp" value="04" class="mp_radio" />
-                        <image src="https://www.puntopagos.com/content/mp4.gif" alt="Banco Chile" class="mp_link" mp = "04" />
+                        <input type="radio" name="mp" value="04" class="mp_radio" id="mp_radio_04" />
+                        <label for="mp_radio_04"><image src="https://www.puntopagos.com/content/mp4.gif" alt="Banco Chile" class="mp_link" mp = "04" /></label>
                       </div>
                       <div class="col-md-4">
-                        <input type="radio" name="mp" value="05" class="mp_radio" />
-                        <image src="https://www.puntopagos.com/content/mp5.gif" alt="BCI" class="mp_link" mp = "05" />
+                        <input type="radio" name="mp" value="05" class="mp_radio" id="mp_radio_05" />
+                        <label for="mp_radio_05"><image src="https://www.puntopagos.com/content/mp5.gif" alt="BCI" class="mp_link" mp = "05" /></label>
                       </div>
                       <div class="col-md-4">
-                        <input type="radio" name="mp" value="06" class="mp_radio" />
-                        <image src="https://www.puntopagos.com/content/mp6.gif" alt="TBanc" class="mp_link" mp = "06" />
+                        <input type="radio" name="mp" value="06" class="mp_radio" id="mp_radio_06" />
+                        <label for="mp_radio_06"><image src="https://www.puntopagos.com/content/mp6.gif" alt="TBanc" class="mp_link" mp = "06" /></label>
                       </div>
                     </div>
                     <div class="row">
                       <div class="col-md-4">
-                        <input type="radio" name="mp" value="07" class="mp_radio" />
-                        <image src="https://www.puntopagos.com/content/mp7.gif" alt="Banco Estado" class="mp_link" mp = "07" />
+                        <input type="radio" name="mp" value="07" class="mp_radio" id="mp_radio_07" />
+                        <label for="mp_radio_07"><image src="https://www.puntopagos.com/content/mp7.gif" alt="Banco Estado" class="mp_link" mp = "07" /></label>
                       </div>
                       <div class="col-md-4">
-                        <input type="radio" name="mp" value="03" class="mp_radio" />
-                        <image src="https://www.puntopagos.com/content/mp3.gif" alt="Webpay Transbank" class="mp_link" mp = "03" />
+                        <input type="radio" name="mp" value="03" class="mp_radio" id="mp_radio_03" />
+                        <label for="mp_radio_03"><image src="https://www.puntopagos.com/content/mp3.gif" alt="Webpay Transbank" class="mp_link" mp = "03" /></label>
                       </div>
                       <div class="col-md-4">
-                        <input type="radio" name="mp" value="04" style="display: none !important;" class="mp_radio" />
-                        <image style="display: none;" src="https://www.puntopagos.com/content/mp1.gif" alt="Banco Santander" class="mp_link" mp = "01" />
+                        <input type="radio" name="mp" value="01" style="display: none !important;" class="mp_radio" id="mp_radio_01" />
+                        <label for="mp_radio_01"><image style="display: none;" src="https://www.puntopagos.com/content/mp1.gif" alt="Banco Santander" class="mp_link" mp = "01" /></label>
                       </div>
                     </div>
                     <div class="row">

@@ -5,7 +5,7 @@ class PaymentAccount < ActiveRecord::Base
 
 	def self.to_csv(type, p_start_date, p_end_date)
 
-		CSV.generate do |csv|
+		CSV.generate(col_sep: ';') do |csv|
 	      	
 	        start_date = DateTime.new(1990,1,1,0,0,0)
 	    	end_date = DateTime.now
@@ -29,7 +29,7 @@ class PaymentAccount < ActiveRecord::Base
 
 	        arr.each do |payment_account|
 	        	row_array = Array.new
-	        	row_array << payment_account.name.gsub(/-/,'')
+	        	row_array << payment_account.name.mb_chars.normalize(:kd).gsub(/[']/,'').gsub(/[^\x00-\x7F]/,'').upcase.lstrip.rstrip
 	        	row_array << payment_account.rut.gsub(/[\s.-]/,'')
 	        	row_array << payment_account.number.gsub(/[\s.-]/,'')
 	        	row_array << payment_account.company_amount.round.to_s.gsub(/[\s.-]/,'')
