@@ -106,7 +106,6 @@ ActiveRecord::Schema.define(version: 20150225140427) do
     t.integer  "client_id"
     t.float    "price",               default: 0.0
     t.boolean  "provider_lock",       default: false
-    t.integer  "max_changes",         default: 2
     t.boolean  "payed",               default: false
     t.string   "trx_id",              default: ""
     t.integer  "max_changes",         default: 2

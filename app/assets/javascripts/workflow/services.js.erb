@@ -267,10 +267,22 @@ function loadStep3 () {
 			var service = '';
 			var when = '';
 			var provider = '';
+			var payable = true;
+			var price = '';
+			var discounted_price = 0;
 			for (var i = 0; i < booking_buffer.length; i++) {
 				service += '<p class="light-gray">' + booking_buffer[i].service_name + '</p>';
 				provider += '<p class="light-gray">' + booking_buffer[i].provider_name + '</p>';
 				when += '<p class="light-gray">' + formattedTime(booking_buffer[i].start) + '</p>';
+				if(!booking_buffer[i].online_payable)
+				{
+					payable = false;
+				}
+				else
+				{
+					//discounted_price = discounted_price + booking_buffer.
+				}
+
 			};
 
 			$('#summary').append(
@@ -291,7 +303,7 @@ function loadStep3 () {
 					'<td class="light-gray">' + when + '</td>' +
 				'</tr>'
 			);
-			if(current_service.online_payable)
+			/*if(current_service.online_payable)
 			{
 				if(current_service.has_discount && current_service.discount > 0)
 				{
@@ -311,7 +323,7 @@ function loadStep3 () {
 						'</tr>'
 					);
 				}
-			}
+			}*/
 			return true;
 		}
 		myAlert.showAlert(
@@ -472,7 +484,41 @@ function loadDescription (serviceId) {
 var pressed3 = false;
 
 function addBooking (booking) {
-	selected = true;
+
+	//Add AJAX call to check if service accepts online payment
+
+	var serviceId = $('input[name=serviceRadio]:checked').val();
+	$.getJSON('/service', {id: serviceId}, function (service_response) {
+		var service_online_payable = false;
+		var service_has_discount = false;
+		var service_discount = 0;
+		if(service_response.online_payable)
+		{
+			online = true;
+			if(service_response.has_discount)
+			{
+				has_discount = true;
+				discount = 0;
+			}
+		}
+		selected = true;
+		actual_booking = {
+			start: generateDate(booking.date, booking.start),
+			end: generateDate(booking.date, booking.end),
+			provider: booking.provider,
+			provider_name: $('input[name="staffRadio"]:checked').next().html(),
+			provider_lock: $('[name="staffRadio"]:checked').val() == 0 ? false : true,
+			service: $('input[name=serviceRadio]:checked').val(),
+			service_name: $('input[name=serviceRadio]:checked').next().html(),
+			online_payable: service_online_payable,
+			has_discount: service_has_discount,
+			discount: service_discount
+		};
+		checkUserCrossBookings();
+
+	});
+
+	/*selected = true;
 	actual_booking = {
 		start: generateDate(booking.date, booking.start),
 		end: generateDate(booking.date, booking.end),
@@ -482,7 +528,7 @@ function addBooking (booking) {
 		service: $('input[name=serviceRadio]:checked').val(),
 		service_name: $('input[name=serviceRadio]:checked').next().html()
 	};
-	checkUserCrossBookings();
+	checkUserCrossBookings();*/
 }
 
 function generateDate(date, time) {

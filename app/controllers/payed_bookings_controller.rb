@@ -22,7 +22,9 @@ class PayedBookingsController < ApplicationController
 
   		Company.all.each do |company|
 
-  			pending_count = PayedBooking.where(:transfer_complete => false, :canceled => false, :booking_id => Booking.where('"bookings".end < ?', now).where(:location_id => Location.where(:company_id => company.id))).count
+  			cancel_max = company.company_setting.online_cancelation_policy.cancel_max
+  			limit_date = now-cancel_max.hours
+  			pending_count = PayedBooking.where(:transfer_complete => false, :canceled => false, :booking_id => Booking.where('"bookings".created_at < ?', limit_date).where(:location_id => Location.where(:company_id => company.id))).count
   			if pending_count > 0
 	  			payment_account = PaymentAccount.new
 	  			if(PaymentAccount.where(:company_id => company.id, :status => false).count > 0)
