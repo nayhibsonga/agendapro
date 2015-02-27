@@ -267,22 +267,36 @@ function loadStep3 () {
 			var service = '';
 			var when = '';
 			var provider = '';
+			var prices = '';
+			var payable_prices = '';
 			var payable = true;
-			var price = '';
+			var price = 0;
 			var discounted_price = 0;
 			for (var i = 0; i < booking_buffer.length; i++) {
+				console.log("Booking payable: " + booking_buffer[i].online_payable);
 				service += '<p class="light-gray">' + booking_buffer[i].service_name + '</p>';
 				provider += '<p class="light-gray">' + booking_buffer[i].provider_name + '</p>';
 				when += '<p class="light-gray">' + formattedTime(booking_buffer[i].start) + '</p>';
 				if(!booking_buffer[i].online_payable)
 				{
 					payable = false;
+					prices += '<p class="light-gray">Precio: $' + booking_buffer[i].price + '</p>';
 				}
 				else
 				{
-					//discounted_price = discounted_price + booking_buffer.
+					if (booking_buffer[i].has_discount)
+					{
+						payable_prices += '<p class="light-gray">Precio normal: $' + booking_buffer[i].price + ' - Descuento: ' + booking_buffer[i].discount + '%<br />Precio con descuento: $' + (100-booking_buffer[i].discount)*booking_buffer[i].price/100 + '</p>';
+						discounted_price = discounted_price + (100-booking_buffer[i].discount)*booking_buffer[i].price/100;
+					}
+					else
+					{
+						payable_prices += '<p class="light-gray">Precio normal: $' + booking_buffer[i].price + ' - (Sin descuento)</p>';
+						discounted_price = discounted_price + booking_buffer[i].price;
+					}
+					price = price + booking_buffer[i].price;
 				}
-
+				console.log(payable);
 			};
 
 			$('#summary').append(
@@ -299,31 +313,51 @@ function loadStep3 () {
 					'<td class="light-gray">' + provider + '</td>' +
 				'</tr>' +
 				'<tr>' +
-					'<td class="dark-gray">¿Cuándo?</th>' +
+					'<td class="dark-gray">¿Cuándo?</td>' +
 					'<td class="light-gray">' + when + '</td>' +
 				'</tr>'
 			);
-			/*if(current_service.online_payable)
+			if(payable)
 			{
-				if(current_service.has_discount && current_service.discount > 0)
-				{
-					$("#summary").append(
-						'<tr>' +
-							'<td class="dark-gray">Descuento</th>' +
-							'<td class="light-gray">Si prepagas tu reserva en línea, tienes un ' + current_service.discount + '% de descuento. <b>¡Te ahorras $' + current_service.price*current_service.discount/100 + '!</b></td>' +
-						'</tr>'
-					);
-				}
-				else
-				{
-					$("#summary").append(
-						'<tr>' +
-							'<td class="dark-gray">Precio</th>' +
-							'<td class="light-gray"><b>$' + current_service.price + '.</b></td>' +
-						'</tr>'
-					);
-				}
-			}*/
+
+				$('#summary').append(
+					'<tr>' +
+						'<td class="dark-gray">Precios</td>' +
+						'<td class="light-gray">' + payable_prices + '</td>' +
+					'</tr>' +
+					'<tr>' +
+						'<td class="dark-gray">Precio final:</td>' +
+						'<td class="light-gray">$' + discounted_price + '</td>' +
+					'</tr>'
+				);
+
+			}
+			else
+			{
+				$('#summary').append(
+					'<tr>' +
+						'<td class="dark-gray">Precios</td>' +
+						'<td class="light-gray">' + prices + '</td>' +
+					'</tr>'
+				);
+			}
+			$("#discount").empty();
+			$("#normal-book").empty();
+			if(payable){
+				$("#reservar1").hide();
+				$("#reservar2").show();
+				$("#discount").append(
+					'Precio final: $' + discounted_price
+				);
+				$("#normal-book").append(
+					'Precio final: $' + price
+				);
+			}
+			else
+			{
+				$("#reservar2").hide();
+				$("#reservar1").show();
+			}
 			return true;
 		}
 		myAlert.showAlert(
@@ -492,13 +526,14 @@ function addBooking (booking) {
 		var service_online_payable = false;
 		var service_has_discount = false;
 		var service_discount = 0;
+		var service_price = service_response.price;
 		if(service_response.online_payable)
 		{
-			online = true;
+			service_online_payable = true;
 			if(service_response.has_discount)
 			{
-				has_discount = true;
-				discount = 0;
+				service_has_discount = true;
+				service_discount = service_response.discount;
 			}
 		}
 		selected = true;
@@ -512,7 +547,8 @@ function addBooking (booking) {
 			service_name: $('input[name=serviceRadio]:checked').next().html(),
 			online_payable: service_online_payable,
 			has_discount: service_has_discount,
-			discount: service_discount
+			discount: service_discount,
+			price: service_price
 		};
 		checkUserCrossBookings();
 

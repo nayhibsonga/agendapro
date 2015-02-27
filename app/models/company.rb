@@ -153,7 +153,7 @@ class Company < ActiveRecord::Base
 
 	def update_online_payment
 
-		if !self.online_payment_capable
+		if !self.company_setting.online_payment_capable
 			self.company_setting.allows_online_payment = false
 		end
 

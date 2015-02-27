@@ -868,9 +868,7 @@ class BookingsController < ApplicationController
   end
 
   def book_service
-    # => Domain parser
-    host = request.host_with_port
-    @url = @company.web_address + '.' + host[host.index(request.domain)..host.length]
+    
 
     @bookings = []
     @errors = []
@@ -879,6 +877,10 @@ class BookingsController < ApplicationController
     @selectedLocation = Location.find(@location_id)
     @company = Location.find(params[:location]).company
     cancelled_id = Status.find_by(name: 'Cancelado').id
+
+    # => Domain parser
+    host = request.host_with_port
+    @url = @company.web_address + '.' + host[host.index(request.domain)..host.length]
 
     if @company.company_setting.client_exclusive
       if(params[:client_id])
