@@ -392,4 +392,724 @@ class Booking < ActiveRecord::Base
 		end
 		return event
 	end
+
+	def self.generate_csv(type, subtype, year)
+
+		companies = Company.all.order(:name)
+
+		bookings = Hash.new
+
+		companies_info = Hash.new
+		for i in 1..12
+			companies_info[i] = Array.new
+		end
+
+		for i in 1..13
+			bookings[i] = Hash.new
+			bookings[i]['month'] = ""
+			bookings[i]['count'] = 0
+			bookings[i]['web'] = 0
+		end
+
+		bookings[1]['month'] = "Enero"
+		bookings[2]['month'] = "Febrero"
+		bookings[3]['month'] = "Marzo"
+		bookings[4]['month'] = "Abril"
+		bookings[5]['month'] = "Mayo"
+		bookings[6]['month'] = "Junio"
+		bookings[7]['month'] = "Julio"
+		bookings[8]['month'] = "Agosto"
+		bookings[9]['month'] = "Septiembre"
+		bookings[10]['month'] = "Octubre"
+		bookings[11]['month'] = "Noviembre"
+		bookings[12]['month'] = "Diciembre"
+
+		cat_bookings = Hash.new
+		for i in 1..13
+			cat_bookings[i] = Hash.new
+			cat_bookings[i]['month'] = ""
+			cat_bookings[i]['count'] = 0
+			cat_bookings[i]['web'] = 0
+		end
+
+		cat_bookings[1]['month'] = "Enero"
+		cat_bookings[2]['month'] = "Febrero"
+		cat_bookings[3]['month'] = "Marzo"
+		cat_bookings[4]['month'] = "Abril"
+		cat_bookings[5]['month'] = "Mayo"
+		cat_bookings[6]['month'] = "Junio"
+		cat_bookings[7]['month'] = "Julio"
+		cat_bookings[8]['month'] = "Agosto"
+		cat_bookings[9]['month'] = "Septiembre"
+		cat_bookings[10]['month'] = "Octubre"
+		cat_bookings[11]['month'] = "Noviembre"
+		cat_bookings[12]['month'] = "Diciembre"
+
+		# companies.each do |company|
+		# 	company_bookings = 0
+		# 	company_web_bookings = 0
+
+		# 	for i in 1..12 do
+
+		# 		company_info = Hash.new
+		# 		company_info['company'] = company
+		# 		company_info['count'] = 0
+		# 		company_info['web'] = 0
+		# 		month_bookings = 0
+		# 		start_date = DateTime.new(year.to_i, i, 1)
+		# 		end_date = start_date
+		# 		if i < 12	
+		# 			end_date = DateTime.new(year.to_i, i+1, 1)-1.minutes
+		# 		else
+		# 			end_date = DateTime.new(year.to_i+1, 1, 1)-1.minutes
+		# 		end
+
+		# 		bookings = Booking.where('start BETWEEN ? and ?', start_date, end_date).where(:location_id => company.locations.pluck(:id))
+		# 		bookings_count = bookings.count
+				
+		# 		web_bookings = bookings.where(:web_origin => true)
+
+		# 		month_bookings = bookings_count
+		# 		company_bookings = company_bookings + bookings_count
+		# 		company_web_bookings = company_web_bookings + web_bookings.count
+		# 		bookings[i]['count'] = @bookings[i]['count'] + bookings_count
+		# 		bookings[i]['web'] = @bookings[i]['web'] + web_bookings.count
+		# 		bookings[13]['count'] = @bookings[13]['count'] + bookings_count
+		# 		bookings[13]['web'] = 	@bookings[13]['web'] + web_bookings.count
+
+		# 		company_info['count'] = month_bookings
+		# 		company_info['web'] = web_bookings.count
+		# 		companies_info[i] << company_info
+
+		# 	end
+		# end
+
+
+		CSV.generate do |csv|
+
+			header = Array.new
+			if type == 'book_date'
+				if subtype == 'general'
+
+					header = ["Empresa", "Atributo", "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre", "Total"]
+					csv << header
+					companies.each do |company|
+
+						company_total = 0
+						company_web = 0
+
+						row1 = Array.new
+						row2 = Array.new
+						row3 = Array.new
+
+						row1 << company.name
+						row1 << "Total"
+
+						row2 << ""
+						row2 << "Web"
+
+						row3 << ""
+						row3 << "%"
+
+						for i in 1..12
+							month_bookings = 0
+							start_date = DateTime.new(year.to_i, i, 1)
+							end_date = start_date
+							if i < 12	
+								end_date = DateTime.new(year.to_i, i+1, 1)-1.minutes
+							else
+								end_date = DateTime.new(year.to_i+1, 1, 1)-1.minutes
+							end
+
+							total_bookings = Booking.where('start BETWEEN ? and ?', start_date, end_date).where(:location_id => company.locations.pluck(:id))
+							web_bookings = total_bookings.where(:web_origin => true)
+
+							company_total = company_total + total_bookings.count
+							company_web = company_web + web_bookings.count
+
+							row1 << total_bookings.count.to_s
+							row2 << web_bookings.count.to_s
+							if(total_bookings.count > 0)
+								row3 << (web_bookings.count*100/total_bookings.count).to_s
+							else
+								row3 << "0"
+							end
+						end
+
+						row1 << company_total.to_s
+						row2 << company_web.to_s
+						if (company_total > 0)
+							row3 << (company_web*100/company_total).to_s
+						else
+							row3 << "0"
+						end
+						csv << row1
+						csv << row2
+						csv << row3
+					end
+
+				elsif subtype == 'versus'
+
+					header = ["", "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre", "Total"]
+
+					csv << header
+
+					row1 = Array.new
+					row2 = Array.new
+					row3 = Array.new
+
+					row1 << "Reservas"
+					row2 << "Web"
+					row3 << "%"
+
+					total = 0
+					total_web = 0
+
+					for i in 1..12
+
+						start_date = DateTime.new(year.to_i, i, 1)
+						end_date = start_date
+						if i < 12	
+							end_date = DateTime.new(year.to_i, i+1, 1)-1.minutes
+						else
+							end_date = DateTime.new(year.to_i+1, 1, 1)-1.minutes
+						end
+
+						total_bookings = Booking.where('start BETWEEN ? and ?', start_date, end_date)
+						web_bookings = total_bookings.where(:web_origin => true)
+
+						total = total + total_bookings.count
+						total_web = total_web + web_bookings.count
+
+						row1 << total_bookings.count.to_s
+						row2 << web_bookings.count.to_s
+						if total_bookings.count > 0
+							row3 << (web_bookings.count * 100 / total_bookings.count).to_s
+						else
+							row3 << "0"
+						end
+					end
+
+					row1 << total.to_s
+					row2 << total_web.to_s
+
+					if total > 0
+						row3 << (total_web*100/total).to_s
+					else
+						row3 << "0"
+					end
+
+					csv << row1
+					csv << row2
+					csv << row3
+
+				elsif subtype == 'all'
+
+					for i in 1..12
+
+						month_header = Array.new
+						month_header << bookings[i]['month']
+						csv << month_header
+						
+						header = Array.new
+						header << ""
+
+						row1 = Array.new
+						row2 = Array.new
+						row3 = Array.new
+						row1 << "Reservas"
+						row2 << "Web"
+						row3 << "%"
+
+
+						companies_array = Array.new
+
+						books_total = 0
+						web_total = 0
+
+						companies.each do |company|
+
+							company_hash = Hash.new
+							company_hash['company'] = company
+							company_hash['count'] = 0
+							company_hash['web'] = 0
+
+							start_date = DateTime.new(year.to_i, i, 1)
+							end_date = start_date
+							if i < 12	
+								end_date = DateTime.new(year.to_i, i+1, 1)-1.minutes
+							else
+								end_date = DateTime.new(year.to_i+1, 1, 1)-1.minutes
+							end
+
+							total_bookings = Booking.where('start BETWEEN ? and ?', start_date, end_date).where(:location_id => company.locations.pluck(:id))
+
+							web_bookings = total_bookings.where(:web_origin => true)
+
+							company_hash['count'] = total_bookings.count
+							company_hash['web'] = web_bookings.count
+
+							books_total = books_total + total_bookings.count
+							web_total = web_total + web_bookings.count
+
+							companies_array << company_hash
+
+						end
+
+						top_companies = companies_array.sort_by { |info| info['count'] }.reverse
+						top_total = 0
+						top_web = 0
+
+						for j in 0..9
+							header << top_companies[j]['company'].name
+							row1 << top_companies[j]['count'].to_s
+							row2 << top_companies[j]['web'].to_s
+							if top_companies[j]['count'] > 0
+								row3 << (top_companies[j]['web']*100/top_companies[j]['count']).to_s
+							else
+								row3 << "0"
+							end
+							top_total = top_total + top_companies[j]['count']
+							top_web = top_web + top_companies[j]['web']
+						end
+
+						row1 << top_total.to_s
+						row2 << top_web.to_s 
+						if top_total > 0
+							row3 << (top_web*100/top_total).to_s
+						else
+							row3 << "0"
+						end
+
+						row1 << books_total.to_s
+						row2 << web_total.to_s
+						if books_total > 0
+							row3 << (web_total*100/books_total).to_s
+						else
+							row3 << "0"
+						end
+
+						header << "Total top"
+						header << "Total todos"
+
+						csv << header
+						csv << row1
+						csv << row2
+						csv << row3
+
+					end
+
+				elsif subtype == 'web'
+
+					for i in 1..12
+
+						month_header = Array.new
+						month_header << bookings[i]['month']
+						csv << month_header
+						
+						header = Array.new
+						header << ""
+
+						row1 = Array.new
+						row2 = Array.new
+						row3 = Array.new
+						row1 << "Reservas"
+						row2 << "Web"
+						row3 << "%"
+
+
+						companies_array = Array.new
+
+						books_total = 0
+						web_total = 0
+
+						companies.each do |company|
+
+							company_hash = Hash.new
+							company_hash['company'] = company
+							company_hash['count'] = 0
+							company_hash['web'] = 0
+
+							start_date = DateTime.new(year.to_i, i, 1)
+							end_date = start_date
+							if i < 12	
+								end_date = DateTime.new(year.to_i, i+1, 1)-1.minutes
+							else
+								end_date = DateTime.new(year.to_i+1, 1, 1)-1.minutes
+							end
+
+							total_bookings = Booking.where('start BETWEEN ? and ?', start_date, end_date).where(:location_id => company.locations.pluck(:id))
+
+							web_bookings = total_bookings.where(:web_origin => true)
+
+							company_hash['count'] = total_bookings.count
+							company_hash['web'] = web_bookings.count
+
+							books_total = books_total + total_bookings.count
+							web_total = web_total + web_bookings.count
+
+							companies_array << company_hash
+
+						end
+
+						top_companies = companies_array.sort_by { |info| info['web'] }.reverse
+						top_total = 0
+						top_web = 0
+
+						for j in 0..9
+							header << top_companies[j]['company'].name
+							row1 << top_companies[j]['count'].to_s
+							row2 << top_companies[j]['web'].to_s
+							if top_companies[j]['count'] > 0
+								row3 << (top_companies[j]['web']*100/top_companies[j]['count']).to_s
+							else
+								row3 << "0"
+							end
+							top_total = top_total + top_companies[j]['count']
+							top_web = top_web + top_companies[j]['web']
+						end
+
+						row1 << top_total.to_s
+						row2 << top_web.to_s 
+						if top_total > 0
+							row3 << (top_web*100/top_total).to_s
+						else
+							row3 << "0"
+						end
+
+						row1 << books_total.to_s
+						row2 << web_total.to_s
+						if books_total > 0
+							row3 << (web_total*100/books_total).to_s
+						else
+							row3 << "0"
+						end
+
+						header << "Total top"
+						header << "Total todos"
+
+						csv << header
+						csv << row1
+						csv << row2
+						csv << row3
+
+					end
+
+				end
+			else
+				if subtype == 'general'
+
+					header = ["Empresa", "Atributo", "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre", "Total"]
+					csv << header
+					companies.each do |company|
+
+						company_total = 0
+						company_web = 0
+
+						row1 = Array.new
+						row2 = Array.new
+						row3 = Array.new
+
+						row1 << company.name
+						row1 << "Total"
+
+						row2 << ""
+						row2 << "Web"
+
+						row3 << ""
+						row3 << "%"
+
+						for i in 1..12
+							month_bookings = 0
+							start_date = DateTime.new(year.to_i, i, 1)
+							end_date = start_date
+							if i < 12	
+								end_date = DateTime.new(year.to_i, i+1, 1)-1.minutes
+							else
+								end_date = DateTime.new(year.to_i+1, 1, 1)-1.minutes
+							end
+
+							total_bookings = Booking.where('created_at BETWEEN ? and ?', start_date, end_date).where(:location_id => company.locations.pluck(:id))
+							web_bookings = total_bookings.where(:web_origin => true)
+
+							company_total = company_total + total_bookings.count
+							company_web = company_web + web_bookings.count
+
+							row1 << total_bookings.count.to_s
+							row2 << web_bookings.count.to_s
+							if(total_bookings.count > 0)
+								row3 << (web_bookings.count*100/total_bookings.count).to_s
+							else
+								row3 << "0"
+							end
+						end
+
+						row1 << company_total.to_s
+						row2 << company_web.to_s
+						if (company_total > 0)
+							row3 << (company_web*100/company_total).to_s
+						else
+							row3 << "0"
+						end
+						csv << row1
+						csv << row2
+						csv << row3
+					end
+
+				elsif subtype == 'versus'
+
+					header = ["", "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre", "Total"]
+
+					csv << header
+
+					row1 = Array.new
+					row2 = Array.new
+					row3 = Array.new
+
+					row1 << "Reservas"
+					row2 << "Web"
+					row3 << "%"
+
+					total = 0
+					total_web = 0
+
+					for i in 1..12
+
+						start_date = DateTime.new(year.to_i, i, 1)
+						end_date = start_date
+						if i < 12	
+							end_date = DateTime.new(year.to_i, i+1, 1)-1.minutes
+						else
+							end_date = DateTime.new(year.to_i+1, 1, 1)-1.minutes
+						end
+
+						total_bookings = Booking.where('created_at BETWEEN ? and ?', start_date, end_date)
+						web_bookings = total_bookings.where(:web_origin => true)
+
+						total = total + total_bookings.count
+						total_web = total_web + web_bookings.count
+
+						row1 << total_bookings.count.to_s
+						row2 << web_bookings.count.to_s
+						if total_bookings.count > 0
+							row3 << (web_bookings.count * 100 / total_bookings.count).to_s
+						else
+							row3 << "0"
+						end
+					end
+
+					row1 << total.to_s
+					row2 << total_web.to_s
+
+					if total > 0
+						row3 << (total_web*100/total).to_s
+					else
+						row3 << "0"
+					end
+
+					csv << row1
+					csv << row2
+					csv << row3
+
+				elsif subtype == 'all'
+
+					
+
+					for i in 1..12
+
+						month_header = Array.new
+						month_header << bookings[i]['month']
+						csv << month_header
+						
+						header = Array.new
+						header << ""
+
+						row1 = Array.new
+						row2 = Array.new
+						row3 = Array.new
+						row1 << "Reservas"
+						row2 << "Web"
+						row3 << "%"
+
+
+						companies_array = Array.new
+
+						books_total = 0
+						web_total = 0
+
+						companies.each do |company|
+
+							company_hash = Hash.new
+							company_hash['company'] = company
+							company_hash['count'] = 0
+							company_hash['web'] = 0
+
+							start_date = DateTime.new(year.to_i, i, 1)
+							end_date = start_date
+							if i < 12	
+								end_date = DateTime.new(year.to_i, i+1, 1)-1.minutes
+							else
+								end_date = DateTime.new(year.to_i+1, 1, 1)-1.minutes
+							end
+
+							total_bookings = Booking.where('created_at BETWEEN ? and ?', start_date, end_date).where(:location_id => company.locations.pluck(:id))
+
+							web_bookings = total_bookings.where(:web_origin => true)
+
+							company_hash['count'] = total_bookings.count
+							company_hash['web'] = web_bookings.count
+
+							books_total = books_total + total_bookings.count
+							web_total = web_total + web_bookings.count
+
+							companies_array << company_hash
+
+						end
+
+						top_companies = companies_array.sort_by { |info| info['count'] }.reverse
+						top_total = 0
+						top_web = 0
+
+						for j in 0..9
+							header << top_companies[j]['company'].name
+							row1 << top_companies[j]['count'].to_s
+							row2 << top_companies[j]['web'].to_s
+							if top_companies[j]['count'] > 0
+								row3 << (top_companies[j]['web']*100/top_companies[j]['count']).to_s
+							else
+								row3 << "0"
+							end
+							top_total = top_total + top_companies[j]['count']
+							top_web = top_web + top_companies[j]['web']
+						end
+
+						row1 << top_total.to_s
+						row2 << top_web.to_s 
+						if top_total > 0
+							row3 << (top_web*100/top_total).to_s
+						else
+							row3 << "0"
+						end
+
+						row1 << books_total.to_s
+						row2 << web_total.to_s
+						if books_total > 0
+							row3 << (web_total*100/books_total).to_s
+						else
+							row3 << "0"
+						end
+
+						header << "Total top"
+						header << "Total todos"
+
+						csv << header
+						csv << row1
+						csv << row2
+						csv << row3
+
+					end
+
+
+				elsif subtype == 'web'
+
+					for i in 1..12
+
+						month_header = Array.new
+						month_header << bookings[i]['month']
+						csv << month_header
+						
+						header = Array.new
+						header << ""
+
+						row1 = Array.new
+						row2 = Array.new
+						row3 = Array.new
+						row1 << "Reservas"
+						row2 << "Web"
+						row3 << "%"
+
+
+						companies_array = Array.new
+
+						books_total = 0
+						web_total = 0
+
+						companies.each do |company|
+
+							company_hash = Hash.new
+							company_hash['company'] = company
+							company_hash['count'] = 0
+							company_hash['web'] = 0
+
+							start_date = DateTime.new(year.to_i, i, 1)
+							end_date = start_date
+							if i < 12	
+								end_date = DateTime.new(year.to_i, i+1, 1)-1.minutes
+							else
+								end_date = DateTime.new(year.to_i+1, 1, 1)-1.minutes
+							end
+
+							total_bookings = Booking.where('created_at BETWEEN ? and ?', start_date, end_date).where(:location_id => company.locations.pluck(:id))
+
+							web_bookings = total_bookings.where(:web_origin => true)
+
+							company_hash['count'] = total_bookings.count
+							company_hash['web'] = web_bookings.count
+
+							books_total = books_total + total_bookings.count
+							web_total = web_total + web_bookings.count
+
+							companies_array << company_hash
+
+						end
+
+						top_companies = companies_array.sort_by { |info| info['web'] }.reverse
+						top_total = 0
+						top_web = 0
+
+						for j in 0..9
+							header << top_companies[j]['company'].name
+							row1 << top_companies[j]['count'].to_s
+							row2 << top_companies[j]['web'].to_s
+							if top_companies[j]['count'] > 0
+								row3 << (top_companies[j]['web']*100/top_companies[j]['count']).to_s
+							else
+								row3 << "0"
+							end
+							top_total = top_total + top_companies[j]['count']
+							top_web = top_web + top_companies[j]['web']
+						end
+
+						row1 << top_total.to_s
+						row2 << top_web.to_s 
+						if top_total > 0
+							row3 << (top_web*100/top_total).to_s
+						else
+							row3 << "0"
+						end
+
+						row1 << books_total.to_s
+						row2 << web_total.to_s
+						if books_total > 0
+							row3 << (web_total*100/books_total).to_s
+						else
+							row3 << "0"
+						end
+
+						header << "Total top"
+						header << "Total todos"
+
+						csv << header
+						csv << row1
+						csv << row2
+						csv << row3
+
+					end
+
+				end
+			end
+		end
+
+	end
+
 end

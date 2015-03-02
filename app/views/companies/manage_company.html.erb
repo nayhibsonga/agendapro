@@ -1,3 +1,9 @@
+<style type="text/css">
+.btn-red{
+	background-color: #FF0000 !important;
+}
+</style>
+
 <div class="row companies_header">
 	<ul class="nav nav-tabs">
 
@@ -18,7 +24,9 @@
 
 <% if params[:notice] %>
     <div class="alert alert-info alert-dismissable fade in">
-        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+    	
+        	<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+        
     <%= params[:notice] %>
     </div>
 <% end %>
@@ -31,7 +39,23 @@
 <% end %>
 
 <div class="company-head-name">
-	<h3><%= @company.name %></h3>
+	<div class="row">
+		<div class="col-md-4">
+			<h3><%= @company.name %></h3>
+		</div>
+		<div class="col-md-8">
+			<h3>
+			<% if @company.payment_status_id != PaymentStatus.find_by_name('Inactivo').id %>
+				<%= form_tag({ :controller => 'companies', :action => 'deactivate_company'}, method: "post") do %>
+		    		<input type="hidden" name="id" value="<%= @company.id %>" />
+					<span>
+						<button type="submit" class="btn btn-red" id="deactivateBtn">Desactivar</button>
+					</span>
+				<% end %>
+			<% end %>
+			</h3>
+		</div>
+	</div>
 </div>
 
 <div class="row companies_header">
@@ -57,7 +81,7 @@
 		<div class="tab-pane active" id="summary">
 			<div class="row" style="margin-top: 10px;">
 				<div class="col-sm-4">
-					<label class="control-label">Dueño: </label>
+					<label class="control-label">Administrador: </label>
 				</div>
 				<div class="col-sm-8">
 					<%
@@ -94,6 +118,14 @@
 				</div>
 				<div class="col-sm-8">
 					<%= @bookings.count %>
+				</div>
+			</div>
+			<div class="row" style="margin-top: 10px;">
+				<div class="col-sm-4">
+					<label class="control-label">Estado: </label>
+				</div>
+				<div class="col-sm-8">
+					<%= @company.payment_status.name %>
 				</div>
 			</div>
 			<div class="row" style="margin-top: 10px;">
@@ -170,6 +202,14 @@
 				</div>
 				<div class="col-sm-8">
 					<%= @company.due_amount %>
+				</div>
+			</div>
+			<div class="row" style="margin-top: 10px;">
+				<div class="col-sm-4">
+					<label class="control-label">Meses activos restantes: </label>
+				</div>
+				<div class="col-sm-8">
+					<%= @company.months_active_left %>
 				</div>
 			</div>
 		</div>
@@ -314,6 +354,12 @@
 						<th>
 							Monto
 						</th>
+						<th>
+							Editar
+						</th>
+						<th>
+							Eliminar
+						</th>
 					</tr>
 
 					<% records = @company.billing_records.order('date desc') %>
@@ -329,6 +375,18 @@
 							</td>
 							<td>
 								<%= record.amount %>
+							</td>
+							<td>
+								<%= link_to 'Editar', '/companies/payment/'+record.id.to_s %>
+							</td>
+							<td>
+								<%= form_tag({ :controller => 'companies', :action => 'delete_payment'}, method: "post") do %>
+						    		<input type="hidden" name="record_id" value="<%= record.id %>" />
+						    		<input type="hidden" name="id" value="<%= @company.id %>" />
+									<span>
+										<button type="submit" class="btn btn-red" id="deletePayment">Eliminar</button>
+									</span>
+								<% end %>
 							</td>
 						</tr>
 					<% end %>
@@ -510,6 +568,23 @@
 			$("#year-select").trigger('change');
 		});
 
+		$("#deactivateBtn").click(function(e){
+			e.preventDefault();
+			var r = confirm("¿Estás seguro que deseas desactivarla?");
+			if (r == true)
+			{
+				$(this).closest("form").submit();
+			}
+		});
+
+		$("#deletePayment").click(function(e){
+			e.preventDefault();
+			var r = confirm("¿Estás seguro que deseas eliminarlo?");
+			if (r == true)
+			{
+				$(this).closest("form").submit();
+			}
+		});
 
 		$("#bookings-year-select").on('change', function(){
 			var year = $(this).val();
