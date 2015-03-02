@@ -1062,7 +1062,7 @@ class BookingsController < ApplicationController
         trx_id = DateTime.now.to_s.gsub(/[-:T]/i, '')
         num_amount = service.price
         if service.has_discount
-          num_amount = service.price - service.price*service.discount/100;
+          num_amount = (service.price - service.price*service.discount/100).round;
         end
         amount = sprintf('%.2f', num_amount)
         payment_method = params[:mp]

@@ -25,7 +25,8 @@ class PaymentAccount < ActiveRecord::Base
 	      		csv << header
 	      	end      	
 
-		    arr = PaymentAccount.where("status = ? and created_at BETWEEN ? AND ?", status, start_date, end_date)
+	      	other_bank_code = Bank.find_by_name("Otro").code
+		    arr = PaymentAccount.where("status = ? and created_at BETWEEN ? AND ? AND bank_code <> ?", status, start_date, end_date, other_bank_code)
 
 	        arr.each do |payment_account|
 	        	row_array = Array.new

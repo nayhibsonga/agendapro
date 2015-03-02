@@ -260,7 +260,7 @@ function loadStep3 () {
 	if ($('[name="staffRadio"]').is(':checked')){
 		if (selected) {
 			booking_buffer.push(actual_booking);
-			$('#bookings').val(JSON.stringify(booking_buffer));
+			$('.bookings').val(JSON.stringify(booking_buffer));
 
 			// Summary
 			$('#summary').empty();
@@ -286,7 +286,7 @@ function loadStep3 () {
 				{
 					if (booking_buffer[i].has_discount)
 					{
-						payable_prices += '<p class="light-gray">Precio normal: $' + booking_buffer[i].price + ' - Descuento: ' + booking_buffer[i].discount + '%<br />Precio con descuento: $' + (100-booking_buffer[i].discount)*booking_buffer[i].price/100 + '</p>';
+						payable_prices += '<p class="light-gray">Precio normal: $' + booking_buffer[i].price + ' - Descuento: ' + booking_buffer[i].discount + '%<br />Precio con descuento: $' +  Math.round((100-booking_buffer[i].discount)*booking_buffer[i].price/100) + '</p>';
 						discounted_price = discounted_price + (100-booking_buffer[i].discount)*booking_buffer[i].price/100;
 					}
 					else
@@ -319,7 +319,6 @@ function loadStep3 () {
 			);
 			if(payable)
 			{
-
 				$('#summary').append(
 					'<tr>' +
 						'<td class="dark-gray">Precios</td>' +
@@ -347,7 +346,7 @@ function loadStep3 () {
 				$("#reservar1").hide();
 				$("#reservar2").show();
 				$("#discount").append(
-					'Precio final: $' + discounted_price
+					'Precio final: $' +  Math.round(discounted_price)
 				);
 				$("#normal-book").append(
 					'Precio final: $' + price
@@ -499,7 +498,7 @@ function loadDescription (serviceId) {
 			if(service.has_discount && current_service.discount > 0)
 			{
 				$("#discount").append(
-					'Precio final: $' + (service.price-service.price*service.discount/100)
+					'Precio final: $' + Math.round((service.price-service.price*service.discount/100))
 				);
 				$("#normal-book").append(
 					'Precio final: $' + service.price
