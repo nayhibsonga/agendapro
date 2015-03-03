@@ -29,8 +29,8 @@ class PayedBookingsController < ApplicationController
 	  				cancel_max = company.company_setting.online_cancelation_policy.cancel_max
 	  			end
 	  			limit_date = now-cancel_max.hours
-	  			pending_count = PayedBooking.where(:transfer_complete => false, :canceled => false, :id => Booking.where('"bookings".created_at < ?', limit_date).where(:location_id => Location.where(:company_id => company.id))).pluck(:id).count
-	  			if pending_count > 0
+	  			pending_payed_bookings = PayedBooking.where(:transfer_complete => false, :canceled => false, :id => Booking.where('"bookings".created_at < ?', limit_date).where(:location_id => Location.where(:company_id => company.id)).pluck('distinct payed_booking_id'))
+	  			if pending_payed_bookings.count > 0
 		  			payment_account = PaymentAccount.new
 		  			if(PaymentAccount.where(:company_id => company.id, :status => false).count > 0)
 		  				payment_account = PaymentAccount.where(:company_id => company.id, :status => false).first  			
@@ -42,30 +42,46 @@ class PayedBookingsController < ApplicationController
 			  		payment_account.gain_amount = 0
 			  		
 
-		  		 	company.locations.each do |loc|
-		  		 		loc.bookings.each do |booking|
+			  		#Get company's payed_bookings instead of bookings, because bookings share payed_bookings
+			  		pending_payed_bookings.each do |payed_booking|
+			  			if payment_account.company_id.nil?
+  		 					payment_account.name = company.company_setting.account_name
+  		 					payment_account.rut = company.company_setting.company_rut
+  		 					payment_account.number = company.company_setting.account_number
+  		 					payment_account.company = company
+  		 					payment_account.bank_code = company.company_setting.bank.code
+  		 					payment_account.account_type = company.company_setting.account_type
+  		 				end
+  		 				payment_account.amount = payment_account.amount + payed_booking.punto_pagos_confirmation.amount
+  		 				payment_account.company_amount = payment_account.amount*(100-commission)/100		 				
+  		 				payed_booking.payment_account = payment_account
+  		 				payed_booking.save
+			  		end
 
-		  		 			if(!booking.payed_booking.nil? && booking.payed_booking.canceled == false)
+		  		 	# company.locations.each do |loc|
+		  		 	# 	loc.bookings.each do |booking|
+
+		  		 	# 		if(!booking.payed_booking.nil? && booking.payed_booking.canceled == false)
 		  		 				
-		  		 				if payment_account.company_id.nil?
-		  		 					payment_account.name = company.company_setting.account_name
-		  		 					payment_account.rut = company.company_setting.company_rut
-		  		 					payment_account.number = company.company_setting.account_number
-		  		 					payment_account.company = company
-		  		 					payment_account.bank_code = company.company_setting.bank.code
-		  		 					payment_account.account_type = company.company_setting.account_type
-		  		 				end
+		  		 	# 			if payment_account.company_id.nil?
+		  		 	# 				payment_account.name = company.company_setting.account_name
+		  		 	# 				payment_account.rut = company.company_setting.company_rut
+		  		 	# 				payment_account.number = company.company_setting.account_number
+		  		 	# 				payment_account.company = company
+		  		 	# 				payment_account.bank_code = company.company_setting.bank.code
+		  		 	# 				payment_account.account_type = company.company_setting.account_type
+		  		 	# 			end
 		  		 				
-		  		 				payment_account.amount = payment_account.amount + booking.payed_booking.punto_pagos_confirmation.amount
-		  		 				payment_account.company_amount = payment_account.amount*(100-commission)/100
+		  		 	# 			payment_account.amount = payment_account.amount + booking.payed_booking.punto_pagos_confirmation.amount
+		  		 	# 			payment_account.company_amount = payment_account.amount*(100-commission)/100
 
 		  		 				
-		  		 				booking.payed_booking.payment_account = payment_account
-		  		 				booking.payed_booking.save
+		  		 	# 			booking.payed_booking.payment_account = payment_account
+		  		 	# 			booking.payed_booking.save
 			  		 			
-		  		 			end
-		  		 		end
-		  		 	end
+		  		 	# 		end
+		  		 	# 	end
+		  		 	# end
 
 		  		 	payment_account.gain_amount = payment_account.amount-payment_account.company_amount
 
