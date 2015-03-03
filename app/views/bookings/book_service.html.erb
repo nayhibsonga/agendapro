@@ -125,7 +125,7 @@
                       <% end %>
                     </dd>
                     <dt class="dark-gray">¿Dónde?</dt>
-                    <dd class="light-gray"><%= @booking.location.address %>, <%= @booking.location.district.name %></dd>
+                    <dd class="light-gray"><%= @bookings[0].location.address %>, <%= @bookings[0].location.district.name %></dd>
                     <dt class="dark-gray">¿Con quién?</dt>
                     <dd class="light-gray">
                       <% @bookings.each do |booking| %>
@@ -135,12 +135,14 @@
                     <dt class="dark-gray">¿Cuándo?</dt>
                     <dd class="light-gray">
                       <% @bookings.each do |booking| %>
-                        <p><%= l booking.start %></p>
+                        <p><%= booking.start %></p>
                       <% end %>
                     </dd>
-                    <% if !@booking.notes.empty? %>
-                    <dt class="dark-gray">Notas</dt>
-                    <dd class="light-gray"><%= @bookings[0].notes %></dd>
+                    <% @bookings.each do |booking| %>
+                      <% if !booking.notes.empty? %>
+                      <dt class="dark-gray">Notas</dt>
+                      <dd class="light-gray"><%= booking.notes %></dd>
+                      <% end %>
                     <% end %>
                   </dl>
 

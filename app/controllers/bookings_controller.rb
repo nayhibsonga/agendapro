@@ -984,6 +984,12 @@ class BookingsController < ApplicationController
       end
     end
 
+    group_payment = false
+    if(params[:payment] == "1")
+      group_payment = true
+    end
+    final_price = 0
+
     booking_data.each do |buffer_params|
       service_provider = ServiceProvider.find(buffer_params[:provider])
       service = Service.find(buffer_params[:service])
@@ -1055,34 +1061,47 @@ class BookingsController < ApplicationController
         @booking.deal = deal
       end
 
+      @bookings << @booking
+
       #
       #   PAGO EN LÍNEA DE RESERVA
       #
       if(params[:payment] == "1")
-        trx_id = DateTime.now.to_s.gsub(/[-:T]/i, '')
+
+        #Check if all payments are payable
+        #Apply grouped discount
+        if !service.online_payable
+          group_payment = false
+          # Redirect to error
+        end
+
+        #trx_id = DateTime.now.to_s.gsub(/[-:T]/i, '')
         num_amount = service.price
         if service.has_discount
           num_amount = (service.price - service.price*service.discount/100).round;
         end
-        amount = sprintf('%.2f', num_amount)
-        payment_method = params[:mp]
-        req = PuntoPagos::Request.new()
-        resp = req.create(trx_id, amount, payment_method)
-        if resp.success?
-          @booking.trx_id = trx_id
-          @booking.token = resp.get_token
-          if @booking.save
-            current_user ? user = current_user.id : user = 0
-            PuntoPagosCreation.create(trx_id: trx_id, payment_method: payment_method, amount: amount, details: "Pago de servicio " + service.name + " a la empresa " +@company.name+" (" + @company.id.to_s + "). trx_id: "+trx_id+" - mp: "+@company.id.to_s+". Resultado: Se procesa")
-            BookingHistory.create(booking_id: @booking.id, action: "Creada por Cliente", start: @booking.start, status_id: @booking.status_id, service_id: @booking.service_id, service_provider_id: @booking.service_provider_id, user_id: user)
-            redirect_to resp.payment_process_url and return
-          else
-            @errors = @booking.errors.full_messages
-          end
-        else
-          puts resp.get_error
-          redirect_to punto_pagos_failure_path and return
-        end
+        final_price = final_price + num_amount
+
+        #amount = sprintf('%.2f', num_amount)
+        #payment_method = params[:mp]
+        #req = PuntoPagos::Request.new()
+        #resp = req.create(trx_id, amount, payment_method)
+        # if resp.success?
+        #   @booking.trx_id = trx_id
+        #   @booking.token = resp.get_token
+        #   if @booking.save
+        #     current_user ? user = current_user.id : user = 0
+        #     PuntoPagosCreation.create(trx_id: trx_id, payment_method: payment_method, amount: amount, details: "Pago de servicio " + service.name + " a la empresa " +@company.name+" (" + @company.id.to_s + "). trx_id: "+trx_id+" - mp: "+@company.id.to_s+". Resultado: Se procesa")
+        #     BookingHistory.create(booking_id: @booking.id, action: "Creada por Cliente", start: @booking.start, status_id: @booking.status_id, service_id: @booking.service_id, service_provider_id: @booking.service_provider_id, user_id: user)
+        #     redirect_to resp.payment_process_url and return
+        #   else
+        #     @errors = @booking.errors.full_messages
+        #   end
+        # else
+        #   puts resp.get_error
+        #   redirect_to punto_pagos_failure_path and return
+        # end
+
       else #SÓLO RESERVA
         if @booking.save
           current_user ? user = current_user.id : user = 0
@@ -1091,11 +1110,48 @@ class BookingsController < ApplicationController
           @errors << @booking.errors.full_messages
         end
       end
+
     end
+
+
 
     if @errors.length > 0 and booking_data.length > 1
       redirect_to book_error_path(bookings: @bookings.map{|b| b.id}, location: @selectedLocation.id, client: client.id, errors: @errors)
       return
+    end
+
+    #If they can be payed, redirect to payment_process,
+    #then check for error or send notifications mails.
+    if group_payment
+      trx_id = DateTime.now.to_s.gsub(/[-:T]/i, '')
+      amount = sprintf('%.2f', final_price)
+      payment_method = params[:mp]
+      req = PuntoPagos::Request.new()
+      resp = req.create(trx_id, amount, payment_method)
+      if resp.success?
+        proceed_with_payment = true
+        @bookings.each do |booking|
+          booking.trx_id = trx_id
+          booking.token = resp.get_token
+          if booking.save
+            current_user ? user = current_user.id : user = 0            
+            BookingHistory.create(booking_id: booking.id, action: "Creada por Cliente", start: booking.start, status_id: booking.status_id, service_id: booking.service_id, service_provider_id: booking.service_provider_id, user_id: user)           
+          else
+            @errors = @booking.errors.full_messages
+            proceed_with_payment = false
+          end
+        end
+        if proceed_with_payment
+          PuntoPagosCreation.create(trx_id: trx_id, payment_method: payment_method, amount: amount, details: "Pago de varios servicios a la empresa " +@company.name+" (" + @company.id.to_s + "). trx_id: "+trx_id+" - mp: "+@company.id.to_s+". Resultado: Se procesa")
+          redirect_to resp.payment_process_url and return
+        else
+          puts resp.get_error
+          redirect_to punto_pagos_failure_path and return
+        end
+      else
+        puts resp.get_error
+        redirect_to punto_pagos_failure_path and return
+      end
     end
 
     if @bookings.length > 1

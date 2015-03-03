@@ -10,7 +10,7 @@
         <div id="selectHour"></div>
         <%= form_tag '/optimizer_data', method: 'post', role: 'form', class: 'hidden', id: 'userData' do %>
           <input type="hidden" id="local" name="local" value="<%= @location.id %>">
-          <input type="hidden" id="bookings" name="bookings">
+          <input type="hidden" class="bookings" name="bookings">
         <% end %>
       </div>
       <div class="modal-footer">
@@ -284,7 +284,7 @@
                     Datos de la reserva
                   </div>
                   <div class="panel-body">
-                    <input type="hidden" name="bookings" id="bookings" value="">
+                    <input type="hidden" name="bookings" class="bookings" value="">
                     <input type="hidden" name="location" id="location" value="<%= @location.id %>">
                     <input type="hidden" name="origin" id="origin" value="true">
                     <input type="hidden" name="payment" id="payment" value="0">

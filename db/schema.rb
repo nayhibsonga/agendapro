@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150225140427) do
+ActiveRecord::Schema.define(version: 20150302152532) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -112,6 +112,7 @@ ActiveRecord::Schema.define(version: 20150225140427) do
     t.string   "token",               default: ""
     t.integer  "deal_id"
     t.integer  "booking_group"
+    t.integer  "payed_booking_id"
   end
 
   add_index "bookings", ["client_id"], name: "index_bookings_on_client_id", using: :btree
@@ -404,7 +405,6 @@ ActiveRecord::Schema.define(version: 20150225140427) do
   end
 
   create_table "payed_bookings", force: true do |t|
-    t.integer  "booking_id"
     t.integer  "punto_pagos_confirmation_id"
     t.datetime "created_at"
     t.datetime "updated_at"

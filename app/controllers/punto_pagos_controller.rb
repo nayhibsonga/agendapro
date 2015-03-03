@@ -204,9 +204,14 @@ class PuntoPagosController < ApplicationController
         failed_booking.destroy
       end
     elsif Booking.find_by_token(params[:token]) #Cuando el servicio está caído y no hay notificación
-      failed_booking = Booking.find_by_token(params[:token])
-      @booking = Booking.new(failed_booking.attributes.to_options)
-      failed_booking.destroy
+      bookings = Booking.where(:token => params[:token])
+      @bookings = Array.new
+      bookings.each do |failed_booking|
+        #failed_booking = Booking.find_by_token(params[:token])
+        booking = Booking.new(failed_booking.attributes.to_options)
+        @bookings << booking
+        failed_booking.destroy
+      end
     else
       #Nothing found, there was a timeout error
     end
@@ -243,15 +248,19 @@ class PuntoPagosController < ApplicationController
       elsif Booking.find_by_trx_id(params[:trx_id])
 
         #Creamos el registro de la reserva pagada.
-        booking = Booking.find_by_trx_id(params[:trx_id])
-        booking.status_id = Status.find_by(:name => "Pagado").id
-        booking.payed = true
-        booking.save
-        payed_booking = PayedBooking.new 
-        payed_booking.booking = booking
+
+        payed_booking = PayedBooking.new
         payed_booking.punto_pagos_confirmation = punto_pagos_confirmation
         payed_booking.transfer_complete = false
         payed_booking.save
+
+        bookings = Array.new
+        Booking.where(:trx_id => params[:trx_id]).each do |booking|
+          booking.status_id = Status.find_by(:name => "Pagado").id
+          booking.payed = true
+          booking.payed_booking = payed_booking
+          booking.save
+        end
         
       end
     end

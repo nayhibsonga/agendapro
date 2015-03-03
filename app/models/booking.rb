@@ -7,7 +7,7 @@ class Booking < ActiveRecord::Base
 	belongs_to :promotion
 	belongs_to :client
 	belongs_to :deal
-	has_one :payed_booking
+	belongs_to :payed_booking
 
 	has_many :booking_histories, dependent: :destroy
 

@@ -29,7 +29,7 @@ class PayedBookingsController < ApplicationController
 	  				cancel_max = company.company_setting.online_cancelation_policy.cancel_max
 	  			end
 	  			limit_date = now-cancel_max.hours
-	  			pending_count = PayedBooking.where(:transfer_complete => false, :canceled => false, :booking_id => Booking.where('"bookings".created_at < ?', limit_date).where(:location_id => Location.where(:company_id => company.id))).count
+	  			pending_count = PayedBooking.where(:transfer_complete => false, :canceled => false, :id => Booking.where('"bookings".created_at < ?', limit_date).where(:location_id => Location.where(:company_id => company.id))).pluck(:id).count
 	  			if pending_count > 0
 		  			payment_account = PaymentAccount.new
 		  			if(PaymentAccount.where(:company_id => company.id, :status => false).count > 0)
@@ -158,8 +158,10 @@ class PayedBookingsController < ApplicationController
 		@payment_account.status = true
 		@payment_account.payed_bookings.each do |payed_booking|
 			payed_booking.transfer_complete = true
-			payed_booking.booking.status_id = Status.find_by_name("Pagado").id
-			payed_booking.booking.save
+			payed_booking.bookings.each do |booking|
+				booking.status_id = Status.find_by_name("Pagado").id
+				booking.save
+			end
 			payed_booking.save
 		end
 		if @payment_account.save
@@ -193,8 +195,10 @@ class PayedBookingsController < ApplicationController
 			payment_account.status = true
 			payment_account.payed_bookings.each do |payed_booking|
 				payed_booking.transfer_complete = true
-				payed_booking.booking.status_id = Status.find_by_name("Pagado").id
-				payed_booking.booking.save
+				payed_booking.bookings.each do |booking|
+					booking.status_id = Status.find_by_name("Pagado").id
+					booking.save
+				end
 				payed_booking.save
 			end
 			if payment_account.save
@@ -219,8 +223,10 @@ class PayedBookingsController < ApplicationController
 		@payment_account.status = false
 		@payment_account.payed_bookings.each do |payed_booking|
 			payed_booking.transfer_complete = false
-			payed_booking.booking.status_id = Status.find_by_name("Pagado").id
-			payed_booking.booking.save
+			payed_booking.bookings.each do |booking|
+				booking.status_id = Status.find_by_name("Pagado").id
+				booking.save
+			end
 			payed_booking.save
 		end
 		if @payment_account.save
@@ -246,8 +252,10 @@ class PayedBookingsController < ApplicationController
 			payment_account.status = false
 			payment_account.payed_bookings.each do |payed_booking|
 				payed_booking.transfer_complete = false
-				payed_booking.booking.status_id = Status.find_by_name("Pagado").id
-				payed_booking.booking.save
+				payed_booking.bookings.each do |booking|
+					booking.status_id = Status.find_by_name("Pagado").id
+					booking.save
+				end
 				payed_booking.save
 			end
 			if payment_account.save
@@ -335,9 +343,15 @@ class PayedBookingsController < ApplicationController
 	end
 
 	def update
+		error = false
 		@payed_booking = PayedBooking.find(params[:id])
-		@payed_booking.booking.status_id = Status.find(params[:status_id]).id
-		if @payed_booking.booking.save
+		@payed_booking.bookings.each do |booking|
+			booking.status_id = Status.find(params[:status_id]).id
+			if !booking.save
+				error = true
+			end
+		end
+		if !error
 			redirect_to action: 'edit', id: @payed_booking.id, notice: 'Se ha editado correctamente.'
 		else
 			redirect_to action: 'edit', id: @payed_booking.id, alert: 'Ha ocurrido un error en la edición.'

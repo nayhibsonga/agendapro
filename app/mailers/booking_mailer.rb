@@ -990,13 +990,13 @@ class BookingMailer < ActionMailer::Base
 		template_name = 'Payment'
 		template_content = []
 
-		owner = User.find_by_company_id(payed_booking.booking.location.company.id)
-		client = payed_booking.booking.client
+		owner = User.find_by_company_id(payed_booking.bookings.first.location.company.id)
+		client = payed_booking.bookings.first.client
 
 		# => Message
 		message = {
 			:from_email => 'no-reply@agendapro.cl',
-			:from_name => payed_booking.booking.service_provider.company.name,
+			:from_name => payed_booking.bookings.first.service_provider.company.name,
 			:subject => 'Comprobante de pago en Agendapro',
 			:to => [
 				{
@@ -1008,7 +1008,7 @@ class BookingMailer < ActionMailer::Base
 			:global_merge_vars => [
 				{
 					:name => 'COMPANYNAME',
-					:content => payed_booking.booking.location.company.name
+					:content => payed_booking.bookings.first.location.company.name
 				},
 				{
 					:name => 'PRICE',
@@ -1032,11 +1032,11 @@ class BookingMailer < ActionMailer::Base
 				},
 				{
 					:name => 'EDIT',
-					:content => booking_edit_url(:confirmation_code => payed_booking.booking.confirmation_code)
+					:content => booking_edit_url(:confirmation_code => payed_booking.bookings.first.confirmation_code)
 				},
 				{
 					:name => 'CANCEL',
-					:content => booking_cancel_url(:confirmation_code => payed_booking.booking.confirmation_code)
+					:content => booking_cancel_url(:confirmation_code => payed_booking.bookings.first.confirmation_code)
 				}
 
 			],
@@ -1074,9 +1074,9 @@ class BookingMailer < ActionMailer::Base
 		template_name = 'Payment'
 		template_content = []
 
-		owner = User.find_by_company_id(payed_booking.booking.location.company.id)
+		owner = User.find_by_company_id(payed_booking.bookings.first.location.company.id)
 		#email = payed_booking.booking.location.company.company_setting.email
-		client = payed_booking.booking.client
+		client = payed_booking.bookings.first.client
 
 		# => Message
 		message = {
@@ -1093,7 +1093,7 @@ class BookingMailer < ActionMailer::Base
 			:global_merge_vars => [
 				{
 					:name => 'COMPANYNAME',
-					:content => payed_booking.booking.location.company.name
+					:content => payed_booking.bookings.first.location.company.name
 				},
 				{
 					:name => 'CLIENT',
@@ -1154,9 +1154,9 @@ class BookingMailer < ActionMailer::Base
 		template_name = 'Payment'
 		template_content = []
 
-		owner = User.find_by_company_id(payed_booking.booking.location.company.id)
+		owner = User.find_by_company_id(payed_booking.bookings.first.location.company.id)
 		#email = payed_booking.booking.location.company.company_setting.email
-		client = payed_booking.booking.client
+		client = payed_booking.bookings.first.client
 
 		message = Hash.new
 
@@ -1176,7 +1176,7 @@ class BookingMailer < ActionMailer::Base
 				:global_merge_vars => [
 					{
 						:name => 'COMPANYNAME',
-						:content => payed_booking.booking.location.company.name
+						:content => payed_booking.bookings.first.location.company.name
 					},
 					{
 						:name => 'CANCEL',
@@ -1249,7 +1249,7 @@ class BookingMailer < ActionMailer::Base
 					},
 					{
 						:name => 'COMPANYNAME',
-						:content => payed_booking.booking.location.company.name
+						:content => payed_booking.bookings.first.location.company.name
 					},
 					{
 						:name => 'PRICE',
@@ -1310,7 +1310,7 @@ class BookingMailer < ActionMailer::Base
 					},
 					{
 						:name => 'COMPANYNAME',
-						:content => payed_booking.booking.location.company.name
+						:content => payed_booking.bookings.first.location.company.name
 					},
 					{
 						:name => 'CLIENT',
