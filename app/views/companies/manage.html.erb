@@ -18,16 +18,74 @@
 
 <div class="row well well-white" style="margin-top: 20px;">
 	<ul id="myTab" class="nav nav-tabs" role="tablist">
-	  <li class="active"><a href="#late" role="tab" data-toggle="tab" class="tab_index">Morosos</a></li>
-	  <li class=""><a href="#blocked" role="tab" data-toggle="tab" class="tab_index">Bloqueados</a></li>
-	  <li class=""><a href="#inactive" role="tab" data-toggle="tab" class="tab_index">Inactivos</a></li>
-	  <li class=""><a href="#trial" role="tab" data-toggle="tab" class="tab_index">En prueba</a></li>
-	  <li class=""><a href="#active" role="tab" data-toggle="tab" class="tab_index">Activos</a></li>
-	  <li class=""><a href="#issued" role="tab" data-toggle="tab" class="tab_index">Emitidos</a></li>
+		<li class="active"><a href="#summary" role="tab" data-toggle="tab" class="tab_index">Resumen</a></li>
+		<li class=""><a href="#trial" role="tab" data-toggle="tab" class="tab_index">Trial</a></li>
+		<li class=""><a href="#active" role="tab" data-toggle="tab" class="tab_index">Activos</a></li>
+		<li class=""><a href="#issued" role="tab" data-toggle="tab" class="tab_index">Emitidos</a></li>
+	 	<li class=""><a href="#late" role="tab" data-toggle="tab" class="tab_index">Vencidos</a></li>
+	 	<li class=""><a href="#blocked" role="tab" data-toggle="tab" class="tab_index">Bloqueados</a></li>
+	 	<li class=""><a href="#inactive" role="tab" data-toggle="tab" class="tab_index">Inactivos</a></li>
 	</ul>
 	<div id="myTabContent" class="tab-content">
 	<br />
-		<div class="tab-pane active" id="late">
+
+		<div class="tab-pane active" id="summary">
+			<table>
+				<tr>
+					<td>
+						Trial:
+					</td>
+					<td>
+						<%= @trial_companies.count %>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						Activas:
+					</td>
+					<td>
+						<%= @active_companies.count %>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						Emitidas:
+					</td>
+					<td>
+						<%= @issued_companies.count %>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						Vencidas:
+					</td>
+					<td>
+						<%= @late_companies.count %>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						Bloqueadas:
+					</td>
+					<td>
+						<%= @blocked_companies.count %>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						Inactivas:
+					</td>
+					<td>
+						<%= @inactive_companies.count %>
+					</td>
+				</tr>
+			</table>
+		</div>
+
+		<div class="tab-pane" id="late">
+			<div class="companies-count">
+				Número de empresas: <%= @late_companies.count %>
+			</div>
 			<table class="companies-table">
 
 				<tr class="companies-table-header">
@@ -94,8 +152,12 @@
 					</tr>
 				<% end %>
 			</table>
+
 		</div>
 		<div class="tab-pane" id="blocked">
+			<div class="companies-count">
+				Número de empresas: <%= @blocked_companies.count %>
+			</div>
 			<table class="companies-table">
 
 				<tr class="companies-table-header">
@@ -164,6 +226,9 @@
 			</table>
 		</div>
 		<div class="tab-pane" id="inactive">
+			<div class="companies-count">
+				Número de empresas: <%= @inactive_companies.count %>
+			</div>
 			<table class="companies-table">
 
 				<tr class="companies-table-header">
@@ -232,6 +297,9 @@
 			</table>
 		</div>
 		<div class="tab-pane" id="trial">
+			<div class="companies-count">
+				Número de empresas: <%= @trial_companies.count %>
+			</div>
 			<table class="companies-table">
 
 				<tr class="companies-table-header">
@@ -294,6 +362,9 @@
 			</table>
 		</div>
 		<div class="tab-pane" id="active">
+			<div class="companies-count">
+				Número de empresas: <%= @active_companies.count %>
+			</div>
 			<table class="companies-table">
 
 				<tr class="companies-table-header">
@@ -356,6 +427,9 @@
 			</table>
 		</div>
 		<div class="tab-pane" id="issued">
+			<div class="companies-count">
+				Número de empresas: <%= @issued_companies.count %>
+			</div>
 			<table class="companies-table">
 
 				<tr class="companies-table-header">
