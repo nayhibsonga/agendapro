@@ -252,6 +252,7 @@ class PuntoPagosController < ApplicationController
         payed_booking = PayedBooking.new
         payed_booking.punto_pagos_confirmation = punto_pagos_confirmation
         payed_booking.transfer_complete = false
+        payed_booking.save
 
         bookings = Array.new
         Booking.where(:trx_id => params[:trx_id]).each do |booking|
@@ -260,7 +261,15 @@ class PuntoPagosController < ApplicationController
           booking.payed_booking = payed_booking
           booking.save
         end
-        payed_booking.save
+
+        if bookings.count >1
+          Booking.send_multiple_booking_mail(bookings.first.location_id, bookings.first.booking_group)
+        else
+          BookingMailer.book_service_mail(bookings.first)
+        end
+        #Enviar comprobantes de pago
+        BookingMailer.book_payment_mail(payed_booking)
+        BookingMailer.book_payment_company_mail(payed_booking)
         
       end
     end

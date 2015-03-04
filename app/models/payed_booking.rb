@@ -4,19 +4,19 @@ class PayedBooking < ActiveRecord::Base
 	belongs_to :punto_pagos_confirmation
 	belongs_to :payment_account
 
-	after_create :send_confirmation
+	#after_create :send_confirmation
 
-	def send_confirmation
-		#Enviar resúmenes de reservas
-		if self.bookings.count >1
-			Booking.send_multiple_booking_mail(self.bookings.first.location_id, self.bookings.count)
-		else
-			BookingMailer.book_service_mail(self.bookings.first)
-		end
-		#Enviar comprobantes de pago
-		BookingMailer.book_payment_mail(self)
-		BookingMailer.book_payment_company_mail(self)
-	end
+	# def send_confirmation
+	# 	#Enviar resúmenes de reservas
+	# 	if self.bookings.count >1
+	# 		Booking.send_multiple_booking_mail(self.bookings.first.location_id, self.bookings.count)
+	# 	else
+	# 		BookingMailer.book_service_mail(self.bookings.first)
+	# 	end
+	# 	#Enviar comprobantes de pago
+	# 	BookingMailer.book_payment_mail(self)
+	# 	BookingMailer.book_payment_company_mail(self)
+	# end
 
 
 	def self.to_csv(type, p_start_date, p_end_date)
