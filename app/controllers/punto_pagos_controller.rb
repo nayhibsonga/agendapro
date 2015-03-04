@@ -260,6 +260,7 @@ class PuntoPagosController < ApplicationController
           booking.payed = true
           booking.payed_booking = payed_booking
           booking.save
+          bookings << booking
         end
 
         if bookings.count >1
