@@ -1,10 +1,15 @@
 class Location < ActiveRecord::Base
+	require 'pg_search'
+	include PgSearch
 
 	belongs_to :district
 	belongs_to :company
 
 	has_many :location_times, dependent: :destroy
+
 	has_many :service_providers, dependent: :destroy
+	has_many :active_service_providers, -> { where active: true}, class_name: "ServiceProvider"
+
 	has_many :bookings, dependent: :destroy
 
 	has_many :location_outcall_districts, dependent: :destroy
@@ -16,6 +21,16 @@ class Location < ActiveRecord::Base
 	has_many :user_locations, dependent: :destroy
 	has_many :users, :through => :user_locations
 
+	has_many :services, -> { where active: true }, :through => :active_service_providers
+
+	#has_many :services, -> { where active: true }, :through => :service_providers
+
+	has_many :service_categories, :through => :services
+
+	has_many :economic_sectors, :through => :company
+
+	has_many :economic_sectors_dictionaries, :through => :economic_sectors
+
 	accepts_nested_attributes_for :location_times, :reject_if => :all_blank, :allow_destroy => true
 
 	validates :name, :phone, :company, :district, :presence => true
@@ -24,6 +39,43 @@ class Location < ActiveRecord::Base
 	validate :new_plan_locations, :on => :create
 
 	after_commit :extended_schedule
+
+	pg_search_scope :search_company_name, :associated_against => {
+		:company => :name
+	},
+	:using => {
+                :trigram => {
+                  	:threshold => 0.1,
+                  	:prefix => true,
+                	:any_word => true
+                },
+                :tsearch => {
+                	:prefix => true,
+                	:any_word => true
+                }
+    },
+    :ignoring => :accents
+
+	pg_search_scope :search, :associated_against => {
+	:company => :name,
+	:services => :name,
+	:economic_sectors => :name,
+	:economic_sectors_dictionaries => :name,
+	:service_categories => :name
+	},
+	:using => {
+                :trigram => {
+                  	:threshold => 0.1,
+                  	:prefix => true,
+                	:any_word => true
+                },
+                :tsearch => {
+                	:prefix => true,
+                	:any_word => true
+                }
+    },
+    :ignoring => :accents
+
 
 	def extended_schedule
 		company_setting = self.company.company_setting
@@ -229,6 +281,10 @@ class Location < ActiveRecord::Base
 	 #  end
 
 
+	 	# categories = self.service_providers.services.where(:active => true).pluck('service_category_id')
+	 	# categories = ServiceCategory.where(:service_id => Service.where(:active => true, :id => ServiceProvider.where(:location_id => loc.id)))
+	 	# categories = .service_providers.join(:service).where(:active => true).pluck('service_category_id')
+
 	    service_providers = self.service_providers
 
 	    services_ids = Array.new
@@ -261,28 +317,30 @@ class Location < ActiveRecord::Base
 				today_schedule = ''
 				Booking.where(service_provider_id: ServiceProvider.where(location: location).where(active: true)).where("DATE(start) = DATE(?)", Time.now).where.not(status: Status.find_by(name: 'Cancelado')).order(:start).each do |booking|
 					today_schedule += "<tr style='-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;'>" +
-											"<td style='-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;padding-top:8px;padding-bottom:8px;padding-right:8px;padding-left:8px;line-height:1.42857143;vertical-align:top;border-top-width:1px;border-top-style:solid;border-top-color:#ddd;'>" + booking.client.first_name + ' ' + booking.client.last_name + "</td>" +
-											"<td style='-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;padding-top:8px;padding-bottom:8px;padding-right:8px;padding-left:8px;line-height:1.42857143;vertical-align:top;border-top-width:1px;border-top-style:solid;border-top-color:#ddd;'>" + booking.service.name + "</td>" +
-											"<td style='-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;padding-top:8px;padding-bottom:8px;padding-right:8px;padding-left:8px;line-height:1.42857143;vertical-align:top;border-top-width:1px;border-top-style:solid;border-top-color:#ddd;'>" + booking.service_provider.public_name + "</td>" +
-											"<td style='-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;padding-top:8px;padding-bottom:8px;padding-right:8px;padding-left:8px;line-height:1.42857143;vertical-align:top;border-top-width:1px;border-top-style:solid;border-top-color:#ddd;'>" + I18n.l(booking.start) + "</td>" +
-											"<td style='-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;padding-top:8px;padding-bottom:8px;padding-right:8px;padding-left:8px;line-height:1.42857143;vertical-align:top;border-top-width:1px;border-top-style:solid;border-top-color:#ddd;'>" + booking.status.name + "</td>" +
+											"<td style='-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;padding-top:8px;padding-bottom:8px;padding-right:8px;padding-left:8px;line-height:1.42857143;vertical-align:top;border-top-width:1px;border-top-style:solid;border-top-color:#ddd;border-width:1px;border-style:solid;border-color:#ddd;'>" + booking.client.first_name + ' ' + booking.client.last_name + "</td>" +
+											"<td style='-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;padding-top:8px;padding-bottom:8px;padding-right:8px;padding-left:8px;line-height:1.42857143;vertical-align:top;border-top-width:1px;border-top-style:solid;border-top-color:#ddd;border-width:1px;border-style:solid;border-color:#ddd;'>" + booking.service.name + "</td>" +
+											"<td style='-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;padding-top:8px;padding-bottom:8px;padding-right:8px;padding-left:8px;line-height:1.42857143;vertical-align:top;border-top-width:1px;border-top-style:solid;border-top-color:#ddd;border-width:1px;border-style:solid;border-color:#ddd;'>" + booking.service_provider.public_name + "</td>" +
+											"<td style='-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;padding-top:8px;padding-bottom:8px;padding-right:8px;padding-left:8px;line-height:1.42857143;vertical-align:top;border-top-width:1px;border-top-style:solid;border-top-color:#ddd;border-width:1px;border-style:solid;border-color:#ddd;'>" + I18n.l(booking.start) + "</td>" +
+											"<td style='-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;padding-top:8px;padding-bottom:8px;padding-right:8px;padding-left:8px;line-height:1.42857143;vertical-align:top;border-top-width:1px;border-top-style:solid;border-top-color:#ddd;border-width:1px;border-style:solid;border-color:#ddd;'>" + booking.status.name + "</td>" +
 										"</tr>"
 				end
 
 				booking_summary = ''
 				Booking.where(location: location).where(updated_at: (Time.now - 1.day)..Time.now).order(:start).each do |booking|
 					booking_summary += "<tr style='-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;'>" +
-											"<td style='-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;padding-top:8px;padding-bottom:8px;padding-right:8px;padding-left:8px;line-height:1.42857143;vertical-align:top;border-top-width:1px;border-top-style:solid;border-top-color:#ddd;'>" + booking.client.first_name + ' ' + booking.client.last_name + "</td>" +
-											"<td style='-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;padding-top:8px;padding-bottom:8px;padding-right:8px;padding-left:8px;line-height:1.42857143;vertical-align:top;border-top-width:1px;border-top-style:solid;border-top-color:#ddd;'>" + booking.service.name + "</td>" +
-											"<td style='-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;padding-top:8px;padding-bottom:8px;padding-right:8px;padding-left:8px;line-height:1.42857143;vertical-align:top;border-top-width:1px;border-top-style:solid;border-top-color:#ddd;'>" + booking.service_provider.public_name + "</td>" +
-											"<td style='-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;padding-top:8px;padding-bottom:8px;padding-right:8px;padding-left:8px;line-height:1.42857143;vertical-align:top;border-top-width:1px;border-top-style:solid;border-top-color:#ddd;'>" + I18n.l(booking.start) + "</td>" +
-											"<td style='-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;padding-top:8px;padding-bottom:8px;padding-right:8px;padding-left:8px;line-height:1.42857143;vertical-align:top;border-top-width:1px;border-top-style:solid;border-top-color:#ddd;'>" + booking.status.name + "</td>" +
+											"<td style='-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;padding-top:8px;padding-bottom:8px;padding-right:8px;padding-left:8px;line-height:1.42857143;vertical-align:top;border-top-width:1px;border-top-style:solid;border-top-color:#ddd;border-width:1px;border-style:solid;border-color:#ddd;'>" + booking.client.first_name + ' ' + booking.client.last_name + "</td>" +
+											"<td style='-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;padding-top:8px;padding-bottom:8px;padding-right:8px;padding-left:8px;line-height:1.42857143;vertical-align:top;border-top-width:1px;border-top-style:solid;border-top-color:#ddd;border-width:1px;border-style:solid;border-color:#ddd;'>" + booking.service.name + "</td>" +
+											"<td style='-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;padding-top:8px;padding-bottom:8px;padding-right:8px;padding-left:8px;line-height:1.42857143;vertical-align:top;border-top-width:1px;border-top-style:solid;border-top-color:#ddd;border-width:1px;border-style:solid;border-color:#ddd;'>" + booking.service_provider.public_name + "</td>" +
+											"<td style='-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;padding-top:8px;padding-bottom:8px;padding-right:8px;padding-left:8px;line-height:1.42857143;vertical-align:top;border-top-width:1px;border-top-style:solid;border-top-color:#ddd;border-width:1px;border-style:solid;border-color:#ddd;'>" + I18n.l(booking.start) + "</td>" +
+											"<td style='-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;padding-top:8px;padding-bottom:8px;padding-right:8px;padding-left:8px;line-height:1.42857143;vertical-align:top;border-top-width:1px;border-top-style:solid;border-top-color:#ddd;border-width:1px;border-style:solid;border-color:#ddd;'>" + booking.status.name + "</td>" +
 										"</tr>"
 				end
 				booking_data = {
 					logo: location.company.logo_url,
 					name: location.name,
-					to: location.email
+					to: location.email,
+					company: location.company.name,
+					url: location.company.web_address
 				}
 				if booking_summary.length > 0 or today_schedule.length > 0
 					BookingMailer.booking_summary(booking_data, booking_summary, today_schedule)

@@ -1,0 +1,65 @@
+<!-- Selectors -->
+<div class="background-green">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-xs-12">
+        <form class="form-horizontal">
+          <div class="form-group form-group-lg">
+            <label class="control-label col-xs-4 calendar-label">Elige Local</label>
+            <div class="col-xs-8">
+              <select class="form-control" id="locals-selector" name="locals-selector">
+                <% @locations.each do |location| %>
+                <option value="<%= location.id %>" data-minhour="<%= location.location_times.order(:open).first.open.beginning_of_hour.hour %>" data-maxhour="<%= location.location_times.order(:close).last.close.end_of_hour.hour %>"><%= location.name %></option>
+                <% end %>
+              </select>
+            </div>
+          </div>
+          <div class="form-group form-group-lg">
+            <label class="control-label col-xs-4 calendar-label">Elige Prestador</label>
+            <div class="col-xs-8">
+              <select class="form-control" id="providers-selector" name="providers-selector">
+              </select>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Calendar header -->
+<div class="container-fluid calendar-date">
+  <div class="row">
+    <div class="col-xs-9">
+      <div class="btn-group" role="group">
+        <button type="button" class="btn btn-default" id="prev" name="prev"><i class="fa fa-angle-left fa-lg"></i></button>
+        <button type="button" class="btn btn-default" id="today" name="today"><%= l DateTime.now.to_date, format: :default_day %></button>
+        <button type="button" class="btn btn-default" id="next" name="next"><i class="fa fa-angle-right fa-lg"></i></button>
+      </div>
+      <span id="loader" class="hidden"><i class="fa fa-spinner fa-spin"></i></span>
+    </div>
+    <div class="col-xs-3">
+      <button type="button" class="btn btn-green pull-right" id="add" name="add"><i class="fa fa-plus fa-lg"></i></button>
+    </div>
+  </div>
+</div>
+
+<!-- Calendar -->
+<div id="calendar"></div>
+
+<%= content_tag "div", id: "calendar-data", data: {
+  extended_schedule: @company_setting.extended_schedule_bool,
+  extended_min_hour: @company_setting.extended_min_hour.beginning_of_hour.hour,
+  extended_max_hour: @company_setting.extended_max_hour.end_of_hour.hour,
+  calendar_duration: @company_setting.calendar_duration,
+  booking_history: @company_setting.booking_history,
+  staff_code: @company_setting.staff_code } do %>
+<% end %>
+
+<% content_for :stylesheets do %>
+  <%= stylesheet_link_tag "admin/mobile-calendar" %>
+<% end %>
+
+<% content_for :scripts do %>
+  <%= javascript_include_tag "admin/mobile-calendar" %>
+<% end %>

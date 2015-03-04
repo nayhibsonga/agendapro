@@ -1,0 +1,196 @@
+<script type="text/javascript">
+  var Chartkick = {"language": "es"};
+</script>
+
+<style type="text/css">
+.datepicker{
+	color: #333 !important;
+}
+</style>
+
+<%= javascript_include_tag "//www.google.com/jsapi", "chartkick" %>
+<%= stylesheet_link_tag "admin/super-admin-style" %>
+
+<div class="row">
+	<h3> </h3>
+</div>
+<div class="row">
+	<div class="col-md-12">
+		<div class="panel panel-info">
+			<div class="panel-heading">
+				<div class="row">
+					<div class="col-md-5">
+						<h3 class="panel-title payments-title">Transferencias pendientes&nbsp;&nbsp;<span style="cursor: pointer;" data-toggle="tooltip" data-placement="bottom" title="Pagos efectuados por clientes que AgendaPro aún no ha transferido a la empresa."><i class="fa fa-question-circle"></i></span></h3>
+					</div>
+					<div class="col-md-7">
+						<form action="payed_bookings/create_company_csv.csv" method="post" id="get_transfered">
+							<input type="hidden" name="type" value="company_pending" />
+							Desde: <input type="text" id="pending_start" name="start_date" class="datepicker" value="" />
+							Hasta: <input type="text" id="pending_end" name="end_date" class="datepicker" value="" />
+							<button class="download-csv">&nbsp;Descargar&nbsp;&nbsp;<i class="fa fa-file-excel-o fa-lg"></i></button>
+						</form>
+					</div>
+				</div>
+			</div>
+			<div class="panel-body scrollable">
+				<table class="table">
+					<thead class="head-white" style="font-size: 12px !important;">
+						<tr>
+							<th>ID</th>
+							
+							<th>Cliente</th>
+							<th>Local</th>
+							<th>Servicio</th>
+							<th>Monto</th>
+							<th>Orden de compra</th>
+							<th>Código de autorización</th>
+							<th>Fecha</th>
+							<th>Ver más</th>
+						</tr>
+					</thead>
+					<tbody style="font-size: 10px !important;">
+						<% @pending_payments.each do |payed_booking| %>
+
+							<tr>
+								<td>
+									<%= payed_booking.id %>
+								</td>
+								
+								<td>
+									<%= payed_booking.booking.client.first_name + " " + payed_booking.booking.client.last_name %>
+								</td>
+								<td>
+									<%= payed_booking.booking.location.name %>
+								</td>
+								<td>
+									<%= payed_booking.booking.service.name %>
+								</td>
+								<td>
+									<%= payed_booking.punto_pagos_confirmation.amount %>
+								</td>
+								<td>
+									<%= payed_booking.punto_pagos_confirmation.operation_number %>
+								</td>
+								<td>
+									<%= payed_booking.punto_pagos_confirmation.authorization_code %>
+								</td>
+								<td>
+									<%= payed_booking.punto_pagos_confirmation.approvement_date %>
+								</td>
+								<td>
+									<%= link_to "Editar", controller: "payed_bookings", action: "edit", id: payed_booking.id %>
+								</td>
+							</tr>
+						<% end %>
+					</tbody>
+				</table>
+			</div>
+		</div>		
+	</div>
+</div>
+
+
+<div class="row">
+	<div class="col-md-12">
+		<div class="panel panel-info">
+			<div class="panel-heading">
+				<div class="row">
+					<div class="col-md-5">
+						<h3 class="panel-title payments-title">Transferencias completadas</h3>
+					</div>
+					<div class="col-md-7">
+						<form action="payed_bookings/create_company_csv.csv" method="post" id="get_transfered">
+							<input type="hidden" name="type" value="company_transfered" />
+							Desde: <input type="text" id="transfered_start" name="start_date" class="datepicker" value="" />
+							Hasta: <input type="text" id="transfered_end" name="end_date" class="datepicker" value="" />
+							<button class="download-csv">&nbsp;Descargar&nbsp;&nbsp;<i class="fa fa-file-excel-o fa-lg"></i></button>
+						</form>
+					</div>
+				</div>
+			</div>
+			<div class="panel-body scrollable">
+				<table class="table">
+					<thead class="head-white" style="font-size: 12px !important;">
+						<tr>
+							<th>ID</th>
+							<th>Cliente</th>
+							<th>Local</th>
+							<th>Servicio</th>
+							<th>Monto</th>
+							<th>Orden de compra</th>
+							<th>Código de autorización</th>
+							<th>Fecha</th>
+							<th>Ver más</th>
+						</tr>
+					</thead>
+					<tbody style="font-size: 10px !important;">
+						<% @transfered_payments.each do |payed_booking| %>
+
+							<tr>
+								<td>
+									<%= payed_booking.id %>
+								</td>
+								
+								<td>
+									<%= payed_booking.booking.client.first_name + " " + payed_booking.booking.client.last_name %>
+								</td>
+								<td>
+									<%= payed_booking.booking.location.name %>
+								</td>
+								<td>
+									<%= payed_booking.booking.service.name %>
+								</td>
+								<td>
+									<%= payed_booking.punto_pagos_confirmation.amount %>
+								</td>
+								<td>
+									<%= payed_booking.punto_pagos_confirmation.operation_number %>
+								</td>
+								<td>
+									<%= payed_booking.punto_pagos_confirmation.authorization_code %>
+								</td>
+								<td>
+									<%= payed_booking.punto_pagos_confirmation.approvement_date %>
+								</td>
+								<td>
+									<%= link_to "Editar", controller: "payed_bookings", action: "edit", id: payed_booking.id %>
+								</td>
+							</tr>
+						<% end %>
+					</tbody>
+				</table>
+			</div>
+		</div>		
+	</div>
+</div>
+
+<% content_for :scripts do %>
+	<%= javascript_include_tag "jquery-ui-1.10.4.min.js" %>
+
+	<script type="text/javascript">
+
+
+		$(".datepicker").datepicker({
+          monthNames: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+          monthNamesShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
+          prevText: 'Atrás',
+          nextText: 'Adelante',
+          dayNames: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'],
+          dayNamesShort: ['Dom', 'Lun', 'Mar', 'Mier', 'Jue', 'Vie', 'Sáb'],
+          dayNamesMin: ['Dom', 'Lun', 'Mar', 'Mier', 'Jue', 'Vie', 'Sáb'],
+          today: 'Hoy',
+          clear: '',
+          firstDay: 1,
+          dateFormat: 'yy-mm-dd',
+      	});
+
+		$(".datepicker").each(function(){
+			var altField = '#' + $(this).prop('id');
+			$(this).datepicker('option', 'altField', altField);
+		});
+	</script>
+
+<% end %>
+
+
+

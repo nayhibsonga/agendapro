@@ -1,0 +1,47 @@
+function datepicker (target, config) {
+	target = target || null;
+	config = config || {};
+
+	var $defaultConfig = {
+		monthsFull: [
+			'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'
+		],
+    monthsShort: [
+    	'Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'
+    ],
+    weekdaysFull: [
+    	'Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'
+    ],
+    weekdaysShort: [
+    	'Dom', 'Lun', 'Mar', 'Mier', 'Jue', 'vie', 'Sáb'
+    ],
+    today: 'Hoy',
+    clear: '',
+    close: 'Cerrar',
+    firstDay: 1,
+    format: 'ddd dd/mm/yyyy',
+    formatSubmit: 'yyyy/mm/dd',
+    hiddenName: true,
+    onStart: function () {
+      var $button = document.createElement('button');
+      var $picker = this;
+      $($button).addClass('picker__button--cancel')
+        .html('Cancelar')
+        .click(function (event) {
+          $picker.close();
+        });
+      $('.picker__footer').append($button);
+    }
+	}
+
+	var $config = $.extend({}, $defaultConfig, config);
+
+	if ($(target).length > 0) {
+		var $datepicker = $(target).pickadate($config);
+		var $picker = $datepicker.pickadate('picker');
+		return $picker;
+	} else {
+		$.error('No target reached');
+		return null;
+	};
+}

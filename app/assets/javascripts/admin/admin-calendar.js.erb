@@ -1,6 +1,6 @@
 var statusIcon = [" blocked", " reserved", " confirmed", " completed", " payed", " cancelled", " noshow", " break"];
-var backColors = ["#CCCCBB", "#B0C2F2", "#FFE1AE", "#E9B0F2", "#B0F2C2", "#FAFCAF", "#FFB6AE", "#999977"];
-var textColors = ["#222211", "#102050", "#554004", "#401040", "#105020", "#505205", "#551004", "#111100"];
+var backColors = ["#cacaca", "#77d0fa", "#fbe09f", "#fab5fb", "#adf0d1", "#FAFCAF", "#fbc1b3", "#a6a5a5"];
+var textColors = ["#707070", "#0b587d", "#a78a47", "#8e508f", "#4c8b6e", "#505205", "#a15240", "#737373"];
 var resourcesColors = [];
 var servicesJSON;
 
@@ -161,7 +161,8 @@ function loadResourcesCalendar (startTime, endTime, hiddenDays, resourcesArray, 
 						'Servicio: ' + event.service_qtip + '<br/>' +
 						'Teléfono: ' + event.phone_qtip + '<br/>' +
 						'E-mail: ' + event.email_qtip + '<br/>' +
-						'Comentario: ' + event.comment_qtip
+						'Comentario: ' + event.comment_qtip + '<br />' +
+						'Pagado en línea: ' + event.prepayed_qtip
 				   },
 				   position: {
 						my: 'bottom center',  // el triángulo sale de abajo al medio
@@ -297,7 +298,8 @@ function loadWeekCalendar (startTime, endTime, hiddenDays, resourcesArray, provi
 								   'Servicio: ' + event.service_qtip + '<br/>' +
 								   'Teléfono: ' + event.phone_qtip + '<br/>' +
 								   'E-mail: ' + event.email_qtip + '<br/>' +
-								   'Comentario: ' + event.comment_qtip
+								   'Comentario: ' + event.comment_qtip + '<br />' +
+								   'Pagado en línea: ' + event.prepayed_qtip
 					   },
 					   position: {
 						   my: 'bottom center',  // el triángulo sale de abajo al medio
@@ -454,6 +456,7 @@ function editBookingModal(eventId) {
 			$('#booking_notes').val(booking.notes);
 			$('#booking_company_comment').val(booking.company_comment);
 			$('#booking_staff_code').val('');
+			$('#booking_deal_code').val(booking.deal_code);
 			if (booking.provider_lock) {
 				$('#booking_provider_lock').prop('checked', true);
 				$('#booking_service_provider_id').prop('disabled', true);
@@ -476,10 +479,23 @@ function editBookingModal(eventId) {
 				$('#booking_send_mail').prop('disabled', false);
 				$('label[for=booking_send_mail]').removeClass('disabled');
 			}
+
 			else {
 				$('#booking_send_mail').prop('disabled', true);
 				$('label[for=booking_send_mail]').addClass('disabled');
 			}
+
+			if(booking.payed)
+			{
+				$("#is_prepayed").empty();
+				$("#is_prepayed").append("Sí");
+			}
+			else
+			{
+				$("#is_prepayed").empty();
+				$("#is_prepayed").append("No");
+			}
+			
 			$('.booking-modal-title').empty();
 			$('.booking-modal-footer').empty();
 			$('.booking-modal-title').append('Editando Reserva');
@@ -591,6 +607,7 @@ function createBookingModal(date, provider_id) {
 			$('#booking_send_mail').prop('checked', false);
 			$('#booking_send_mail').prop('disabled', true);
 			$('#booking_staff_code').val('');
+			$('#booking_deal_code').val('');
 			if (!$('label[for=booking_send_mail]').hasClass('disabled')) {
 				$('label[for=booking_send_mail]').addClass('disabled');
 			}
@@ -677,7 +694,8 @@ function jsonBooking() {
 		"company_comment": $('#booking_company_comment').val(),
 		"send_mail": $('#booking_send_mail').prop('checked'),
 		"provider_lock": $('#booking_provider_lock').prop('checked'),
-		"staff_code": $('#booking_staff_code').val()
+		"staff_code": $('#booking_staff_code').val(),
+		"deal_code": $('#booking_deal_code').val()
 	};
 	return jsBooking;
 }
@@ -953,9 +971,9 @@ function saveBreak (typeURL, extraURL) {
 							start: provider_break.start,
 							end: provider_break.end,
 							resourceId: parseInt(provider_break.service_provider_id),
-							textColor: textColors[0],
-							borderColor: textColors[0],
-							backgroundColor: backColors[0]
+							textColor: textColors[7],
+							borderColor: textColors[7],
+							backgroundColor: backColors[7]
 						};
 						$('#calendar').fullCalendar('renderEvent', events, true);
 
@@ -978,9 +996,9 @@ function saveBreak (typeURL, extraURL) {
 								start: provider_break.start,
 								end: provider_break.end,
 								resourceId: parseInt(provider_break.service_provider_id),
-								textColor: textColors[0],
-								borderColor: textColors[0],
-								backgroundColor: backColors[0]
+								textColor: textColors[7],
+								borderColor: textColors[7],
+								backgroundColor: backColors[7]
 							};
 							if (provider_break.warnings.length > 0) {
 								for (i in provider_break.warnings) {
@@ -1040,9 +1058,9 @@ function saveBreak (typeURL, extraURL) {
 									start: provider_break.start,
 									end: provider_break.end,
 									resourceId: parseInt(provider_break.service_provider_id),
-									textColor: textColors[0],
-									borderColor: textColors[0],
-									backgroundColor: backColors[0]
+									textColor: textColors[7],
+									borderColor: textColors[7],
+									backgroundColor: backColors[7]
 								};
 								$('#calendar').fullCalendar('renderEvent', events, true);
 							};

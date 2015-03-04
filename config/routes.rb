@@ -1,5 +1,8 @@
 Agendapro::Application.routes.draw do
 
+
+  resources :deals
+
   get "users/index"
   require 'subdomain'
 
@@ -43,6 +46,10 @@ Agendapro::Application.routes.draw do
   resources :numeric_parameters
 
   resources :clients
+  resources :deals
+
+  resources :payed_bookings
+  resources :banks
 
   namespace :admin do 
     get '', :to => 'dashboard#index', :as => '/'
@@ -60,6 +67,7 @@ Agendapro::Application.routes.draw do
   post '/quick_add/services', :to => 'quick_add#create_services'
   post '/quick_add/service_provider', :to => 'quick_add#create_service_provider'
   patch '/quick_add/update_company', :to => 'quick_add#update_company'
+  #post '/quick_add/update_settings', :to => 'quick_add#update_settings'
 
   # Reporting
   get '/dashboard', :to => 'dashboard#index', :as => 'dashboard'
@@ -135,6 +143,22 @@ Agendapro::Application.routes.draw do
   get "/logs/plan_logs", :to => 'plans#plan_logs', :as => 'plan_logs'
   get "/logs/billing_logs", :to => 'plans#billing_logs', :as => 'billing_logs'
   get "/company/:id/add_month", :to => 'companies#add_month', :as => 'add_month'
+  get "/companies_payments", :to => 'companies#manage'
+  get "/manage_company/:id", :to => 'companies#manage_company'
+  get "/companies/new_payment/:id", :to => 'companies#new_payment'
+  post "/companies/add_payment", :to => 'companies#add_payment'
+  post "/companies/delete_payment", :to => 'companies#delete_payment'
+  get "/companies/payment/:id", :to => 'companies#payment'
+  post "/companies/modify_payment", :to => 'companies#modify_payment'
+  get "/get_year_incomes", :to => 'companies#get_year_incomes'
+  get "/get_year_bookings", :to => 'companies#get_year_bookings'
+  get '/companies_incomes', :to => 'companies#incomes'
+  get '/companies_locations', :to => 'companies#locations'
+  get '/companies_monthly_locations', :to => 'companies#monthly_locations'
+  get '/companies_monthly_bookings', :to => 'companies#monthly_bookings'
+  post '/companies/update_company', :to => 'companies#update_company'
+  post '/companies/deactivate_company', :to => 'companies#deactivate_company'
+  post '/companies/get_monthly_bookings', :to => 'companies#get_monthly_bookings'
 
   # Search
   get "searchs/index"
@@ -183,6 +207,7 @@ Agendapro::Application.routes.draw do
   get '/edit_booking', :to => 'bookings#edit_booking', :as => 'booking_edit'
   post '/edited_booking', :to => 'bookings#edit_booking_post'
   get '/cancel_booking', :to => 'bookings#cancel_booking', :as => 'booking_cancel'
+  get '/transfer_cancel', :to => 'bookings#transfer_error_cancel'
   post '/cancel_booking', :to => 'bookings#cancel_booking'
   get '/confirm_booking', :to => 'bookings#confirm_booking', :as => 'confirm_booking'
   get '/blocked_edit', :to => 'bookings#blocked_edit', :as => 'blocked_edit'
@@ -229,6 +254,21 @@ Agendapro::Application.routes.draw do
   get '/iframe/facebook_success', :to => 'iframe#facebook_success', :as => 'facebook_success'
   get '/iframe/facebook_addtab', :to => 'iframe#facebook_addtab', :as => 'facebook_addtab'
   get '/company_settings/:id/delete_facebook_pages', :to => 'company_settings#delete_facebook_pages', :as => 'delete_facebook_pages'
+  post '/company_settings/update_payment', :to => 'company_settings#update_payment'
+
+  # Payed Bookings
+  get "/company_bookings", :to => 'payed_bookings#show'
+  post "payed_bookings/create_csv", :to => 'payed_bookings#create_csv'
+  post "payed_bookings/create_company_csv", :to => 'payed_bookings#create_company_csv'
+  post "payed_bookings/mark_as_payed", :to => 'payed_bookings#mark_as_payed'
+  post "payed_bookings/unmark_as_payed", :to => 'payed_bookings#unmark_as_payed'
+  post "payed_bookings/mark_several_as_payed", :to => 'payed_bookings#mark_several_as_payed'
+  post "payed_bookings/unmark_several_as_payed", :to => 'payed_bookings#unmark_several_as_payed'
+  post "payed_bookings/mark_canceled_as_payed", :to => 'payed_bookings#mark_canceled_as_payed'
+  post "payed_bookings/unmark_canceled_as_payed", :to => 'payed_bookings#unmark_canceled_as_payed'
+  post "payed_bookings/mark_several_canceled_as_payed", :to => 'payed_bookings#mark_several_canceled_as_payed'
+  post "payed_bookings/unmark_several_canceled_as_payed", :to => 'payed_bookings#unmark_several_canceled_as_payed'
+  post "payed_bookings/update", :to => 'payed_bookings#update'
   
   # Root
   get '/' => 'searchs#index', :constraints => { :subdomain => 'www' }
