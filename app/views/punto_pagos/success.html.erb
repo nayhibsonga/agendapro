@@ -93,13 +93,13 @@
 								<dt class="dark-gray">¿Con quién?</dt>
 								<dd class="light-gray">
 									<% @bookings.each do |booking| %>
-										<%= booking.service_provider.public_name %>
+										<%= booking.service_provider.public_name %><br />
 									<% end %>
 								</dd>
 								<dt class="dark-gray">¿Cuándo?</dt>
 								<dd class="light-gray">
 									<% @bookings.each do |booking| %>
-										<%= booking.start %>
+										<%= booking.start %><br />
 									<% end %>
 								</dd>
 								<% if !@bookings.first.notes.empty? %>
