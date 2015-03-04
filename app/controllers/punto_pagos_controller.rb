@@ -185,7 +185,7 @@ class PuntoPagosController < ApplicationController
           @token = params[:token]
           @success_page = "booking"
           host = request.host_with_port
-          @url = @booking.location.company.web_address + '.' + host[host.index(request.domain)..host.length]
+          @url = @bookings.first.location.company.web_address + '.' + host[host.index(request.domain)..host.length]
         else
           #Something (lie a booking) was deleted, should redirect to failure
           redirect_to action: 'failure', token: params[:token]
@@ -252,7 +252,6 @@ class PuntoPagosController < ApplicationController
         payed_booking = PayedBooking.new
         payed_booking.punto_pagos_confirmation = punto_pagos_confirmation
         payed_booking.transfer_complete = false
-        payed_booking.save
 
         bookings = Array.new
         Booking.where(:trx_id => params[:trx_id]).each do |booking|
@@ -261,6 +260,7 @@ class PuntoPagosController < ApplicationController
           booking.payed_booking = payed_booking
           booking.save
         end
+        payed_booking.save
         
       end
     end
