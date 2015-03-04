@@ -135,6 +135,7 @@
                 <input type="hidden" name="bookings" id="bookings" value="<%= @bookings %>">
                 <input type="hidden" name="location" id="location" value="<%= @local.id %>">
                 <input type="hidden" name="origin" id="origin" value="true">
+                <input type="hidden" name="payment" id="payment" value="0">
                 <div id="user-data">
                   <% if user_signed_in? %>
                   <%= hidden_field_tag :user_id, current_user.id %>
@@ -220,7 +221,9 @@
                     </div>
                   </div>
                   <div class="col-md-6">
-                    <button type="submit" id="submitBtn">Reservar</button>
+                    <% if !@local.company.company_setting.allows_online_payment %>
+                      <button type="submit" id="submitBtn">Reservar</button>
+                    <% end %>
                   </div>
                 </div>
               <% end %>
@@ -264,9 +267,113 @@
                       <% end %>
                     </td>
                   </tr>
+                  
+                  <% 
+                    total_price = 0
+                    online_price = 0
+                    if @local.company.company_setting.allows_online_payment
+                      all_payable = true
+                      @bookings.each do |booking|
+                        if !booking[:online_payable]
+                          all_payable = false
+                        else
+                          if booking[:has_discount]
+                            online_price = online_price + (booking[:price]*(100-booking[:discount])/100)
+                          else
+                            online_price = online_price + booking[:price]
+                          end
+                        end
+                        total_price = total_price + booking[:price]
+                      end
+                    end 
+                  %>
+                  
+                  <tr>
+                    <td class="dark-gray">Precios</td>
+                    <td class="light-gray">
+                      <% if all_payable %>
+                        <% @bookings.each do |booking| %>
+                          <% if booking[:has_discount] %>
+                            <p class="light-gray">
+                              Precio normal: <%= number_to_currency(booking[:price], unit: "CLP $", delimiter: ".") %> - Descuento: <%= booking[:discount] %>%<br />
+                              Precio con descuento: <%= number_to_currency(booking[:price]*(100-booking[:discount])/100, unit: "CLP $", delimiter: ".")  %>
+                            </p>
+                          <% else %>
+                            <p class="light-gray">
+                              Precio normal: <%= number_to_currency(booking[:price], unit: "CLP $", delimiter: ".") %> - (Sin descuento)<br />
+                            </p>
+                          <% end %>
+                        <% end %>
+                      <% end %>
+                    </td>
+                  </tr>
+                  <% if all_payable %>
+                  <tr>
+                    <td class="dark-gray">Precio normal</td>
+                    <td class="light-gray">
+                      Precio final: <%= number_to_currency(total_price, unit: "CLP $", delimiter: ".") %>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td class="dark-gray">Precio pago en línea</td>
+                    <td class="light-gray">
+                      Precio final: <%= number_to_currency(online_price, unit: "CLP $", delimiter: ".") %>
+                    </td>
+                  </tr>
+                  <% end %>
                 </tbody>
               </table>
             </div>
+          </div>
+          <div id="reservar2" style="margin-top: 20px;">
+            <!--<div class="row">
+              <div class="col-md-6">
+
+                <a href="#" id="openPayOptions">Seleccionar opción de pago</a>
+
+              </div>
+            </div>-->
+            <% if @local.company.company_setting.allows_online_payment and all_payable %>
+              <div class="row">
+                <div class="col-md-6">
+                  <div>
+                    <button type="submit" data-loading-text = "Cargando" class="payBtn">Pagar</button>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <button type="submit" data-loading-text="Cargando..." class="submitBtn">Reservar</button>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-md-6">
+                  <div id="discount" style="color: #505050; padding: 5px 5px 5px 5px;">
+                    Precio final: <%= number_to_currency(online_price, unit: "CLP $", delimiter: ".") %>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div id="normal-book" style="color: #505050; padding: 5px 5px 5px 5px; float: right; text-align: right;">
+                    Precio final: <%= number_to_currency(total_price, unit: "CLP $", delimiter: ".") %>
+                  </div>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-md-6">
+                  <div style="color: #505050; padding: 5px 5px 5px 5px;">
+                    <a href="#" id="open-online-policy" data-toggle="modal" data-target="#online-policy" style="color: #505050 !important; border-top: 1px solid #949292; padding-top: 5px;"><b><%= image_tag 'icono_pago.png', :alt => 'Pago' %>Política de pagos en línea.</b></a>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div style="color: #505050; padding: 5px 5px 5px 5px; float: right; text-align: right;">
+                  </div>
+                </div>
+              </div>
+            <% else %>
+              <div class="row">
+                <div class="col-md-6 col-md-offset-6">
+                  <button type="submit" data-loading-text="Cargando..." class="submitBtn">Reservar</button>
+                </div>
+              </div>
+            <% end %>
           </div>
         </div>
       </div>
@@ -282,6 +389,19 @@
     $(function() {
       compose_name('#full_name', '#firstName', '#lastName');
       split_name('#full_name', '#firstName', '#lastName');
+
+      $(".payBtn").click(function(e){
+        e.preventDefault();
+        $("#payment").val("1");
+        $("#bookingForm").submit();
+      });
+
+      $(".submitBtn").click(function(e){
+        e.preventDefault();
+        $("#payment").val("0");
+        $("#bookingForm").submit();
+      })
+
     });
   </script>
 <% end %>

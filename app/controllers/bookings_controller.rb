@@ -1911,6 +1911,9 @@ class BookingsController < ApplicationController
             end
 
             if service_valid
+
+
+
               bookings << {
                 :service => service.id,
                 :provider => provider.id,
@@ -1919,7 +1922,10 @@ class BookingsController < ApplicationController
                 :service_name => service.name,
                 :provider_name => provider.public_name,
                 :provider_lock => serviceStaff[serviceStaffPos][:provider] != "0",
-                :price => service.price
+                :price => service.price,
+                :online_payable => service.online_payable,
+                :has_discount => service.has_discount,
+                :discount => service.discount
               }
               serviceStaffPos += 1
               dateTimePointer += service.duration.minutes

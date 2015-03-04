@@ -165,7 +165,7 @@ function loadHours () {
 
 function userData () {
   var pos = $('input[name="hoursRadio"]:checked').val();
-  $('#userData > #bookings').val(JSON.stringify(bookings[pos]));
+  $('#userData > .bookings').val(JSON.stringify(bookings[pos]));
   $('#userData').submit();
 }
 
