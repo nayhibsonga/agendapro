@@ -107,7 +107,7 @@
 									Total a pagar:
 								</dt>
 								<dd>
-									$<%= @booking.payed_booking.punto_pagos_confirmation.amount %>
+									<%= number_to_currency(@booking.payed_booking.punto_pagos_confirmation.amount, unit: "CLP $", delimiter: ".") %>
 								</dd>
 								<dt>
 									Número de tarjeta:

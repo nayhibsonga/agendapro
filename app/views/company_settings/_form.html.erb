@@ -337,28 +337,19 @@
       </div>
       <div class="form-group has-feedback account-info cancel-div">
         <%= p.label :cancel_max, 'Tiempo máximo de cancelación', class: "col-sm-3 control-label" %>
-        <div class="col-sm-3">
-          <%= p.number_field :cancel_max, :autofocus => true, :class => 'form-control', placeholder: '' %> 
+        <div class="col-sm-5">
+          <div class="input-group">
+            <%= p.number_field :cancel_max, :autofocus => true, :class => 'form-control', placeholder: '' %>
+            <% unit_id = TimeUnit.find_by_unit("Horas").id %>
+            <input type="hidden" name="company_setting[online_cancelation_policy_attributes][cancel_unit]" value="<%= unit_id %>" />
+            <span class="input-group-addon">Horas</span>
+          </div>
+          <div><small>Máximo 48 horas.</small></div>
           <span class="help-block"></span>
           <span class="form-control-feedback"></span>
         </div>
         <div class="col-sm-2">
-          <select name="company_setting[online_cancelation_policy_attributes][cancel_unit]" class="form-control">
-            <% TimeUnit.all.each do |u| %>
-              <% if @company.company_setting.online_cancelation_policy.cancel_unit == u.id %>
-                <option value="<%= u.id %>" selected><%= u.unit %></option>
-              <% elsif u.unit == "Meses" %>
-                <option value="<%= u.id %>" selected><%= u.unit %></option>
-              <% else %>
-                <option value="<%= u.id %>" ><%= u.unit %></option>
-              <% end %>
-            <% end %>
-          </select>
-          <span class="help-block"></span>
-          <span class="form-control-feedback"></span>
-        </div>
-        <div class="col-sm-2">
-          <span style="cursor: pointer;" data-toggle="tooltip" data-placement="bottom" title="Esto es la cantidad de tiempo, desde el momento en que se efectuó la reserva, que el cliente tendrá para cancelarla, siempre y cuando no se encuentre dentro del límite previo a la hora del servicio."><i class="fa fa-question-circle fa-lg"></i></span>
+          <span style="cursor: pointer;" data-toggle="tooltip" data-placement="bottom" title="Esto es la cantidad de tiempo, desde el momento en que se efectuó la reserva, que el cliente tendrá para cancelarla, siempre y cuando no se encuentre dentro del límite previo a la hora del servicio. No puede ser más de 48 horas."><i class="fa fa-question-circle fa-lg"></i></span>
         </div>
       </div>
       <div class="form-group has-feedback account-info">

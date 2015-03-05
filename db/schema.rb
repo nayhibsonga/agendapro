@@ -11,7 +11,11 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
+<<<<<<< HEAD
 ActiveRecord::Schema.define(version: 20150223150625) do
+=======
+ActiveRecord::Schema.define(version: 20150225140427) do
+>>>>>>> c51fdfdbcbab5c4277b8f3e82e315f06c8665831
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -397,11 +401,11 @@ ActiveRecord::Schema.define(version: 20150223150625) do
     t.boolean  "modifiable",         default: true
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.integer  "cancel_max",         default: 1
+    t.integer  "cancel_max",         default: 24
     t.integer  "modification_max",   default: 1
     t.integer  "min_hours",          default: 12
     t.integer  "modification_unit",  default: 1
-    t.integer  "cancel_unit",        default: 1
+    t.integer  "cancel_unit",        default: 2
     t.integer  "company_setting_id"
   end
 

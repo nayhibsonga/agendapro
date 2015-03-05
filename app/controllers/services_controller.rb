@@ -124,8 +124,9 @@ class ServicesController < ApplicationController
   end
 
   def location_categorized_services
+
     location_resources = Location.find(params[:location]).resource_locations.pluck(:resource_id)
-    service_providers = ServiceProvider.where(location_id: params[:location])
+    service_providers = ServiceProvider.where(location_id: params[:location]).where(:active => true)
 
     categories = ServiceCategory.where(:company_id => Location.find(params[:location]).company_id).order(order: :asc)
     services = Service.where(:active => true, :id => ServiceStaff.where(service_provider_id: service_providers.pluck(:id)).pluck(:service_id)).order(order: :asc)
