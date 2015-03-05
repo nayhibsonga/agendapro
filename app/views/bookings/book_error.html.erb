@@ -91,60 +91,116 @@
               <div class="col-md-1">
               </div>
               <div class="col-md-10">
-                <div class="book-title"><%= @client.first_name %>, no fue posible guardar todos los servicios</div>
-                <%= form_tag("/remove_bookings", method: "post", role: "form") do %>
-                  <%= hidden_field_tag :bookings, @bookings.map { |b| b.id } %>
-                  <%= hidden_field_tag :company, @company.id %>
-                  <button id="accept" class="btn btn-lg btn-green" style="padding: 10px 16px; border-radius: 10px;">Mantener Reserva</button>
-                  <button id="cancel" type="submit" class="btn btn-lg btn-orange" style="padding: 8px 16px;">Cancelar Reserva</button>
-                <% end %>
-                <p style="margin-bottom: 20px;">
-                </p>
-                <div class="book-subheader dark-gray">Resumen de lo reservado</div>
-                <dl class="dl-horizontal book-dl">
-                  <dt class="dark-gray">¿Qué reservaste?</dt>
-                  <dd class="light-gray">
-                    <% @bookings.each do |booking| %>
-                      <p><%= booking.service.name %></p>
-                    <% end %>
-                  </dd>
-                  <dt class="dark-gray">¿Dónde?</dt>
-                  <dd class="light-gray"><%= @location.address %>, <%= @location.district.name %></dd>
-                  <dt class="dark-gray">¿Con quién?</dt>
-                  <dd class="light-gray">
-                    <% @bookings.each do |booking| %>
-                      <p><%= booking.service_provider.public_name %></p>
-                    <% end %>
-                  </dd>
-                  <dt class="dark-gray">¿Cuándo?</dt>
-                  <dd class="light-gray">
-                    <% @bookings.each do |booking| %>
-                      <p><%= l booking.start %></p>
-                    <% end %>
-                  </dd>
-                  <% if !@bookings[0].notes.empty? %>
-                  <dt class="dark-gray">Notas</dt>
-                  <dd class="light-gray"><%= @bookings[0].notes %></dd>
-                  <% end %>
-                </dl>
+                <!--<div class="book-title"></div>-->
 
-                <div class="book-subheader dark-gray">Tus Datos</div>
-                <dl class="dl-horizontal book-dl">
-                  <dt class="dark-gray">Nombre</dt>
-                  <dd class="light-gray"><%= @client.first_name %> <%= @client.last_name %></dd>
-                  <% if !@client.email.empty? %>
-                  <dt class="dark-gray">E-mail</dt>
-                  <dd class="light-gray"><%= @client.email %></dd>
+                <h3> <%= @client.first_name %>, no fue posible guardar todos los servicios. </h3>
+                              
+                <% if @payment == "book" %>
+                  <p> A continuación te presentamos el resumen y las opciones de reserva. </p>
+                  <%= form_tag("/remove_bookings", method: "post", role: "form") do %>
+                    <%= hidden_field_tag :bookings, @bookings.map { |b| b.id } %>
+                    <%= hidden_field_tag :company, @company.id %>
+                    <button id="accept" class="btn btn-lg btn-green" style="padding: 10px 16px; border-radius: 10px;">Mantener Reserva</button>
+                    <button id="cancel" type="submit" class="btn btn-lg btn-orange" style="padding: 8px 16px;">Cancelar Reserva</button>
                   <% end %>
-                  <% if !@client.phone.empty? %>
-                  <dt class="dark-gray">Teléfono</dt>
-                  <dd class="light-gray"><%= @client.phone %></dd>
-                  <% end %>
-                </dl>
+                  <p style="margin-bottom: 20px;">
+                  </p>
+                  <div class="book-subheader dark-gray">Servicios correctamente reservados</div>
+                  <dl class="dl-horizontal book-dl">
+                    <dt class="dark-gray">Servicios</dt>
+                    <dd class="light-gray">
+                      <% @bookings.each do |booking| %>
+                        <p><%= booking.service.name %></p>
+                      <% end %>
+                    </dd>
+                    <dt class="dark-gray">Lugar</dt>
+                    <dd class="light-gray"><%= @location.address %>, <%= @location.district.name %></dd>
+                    <dt class="dark-gray">Prestadores</dt>
+                    <dd class="light-gray">
+                      <% @bookings.each do |booking| %>
+                        <p><%= booking.service_provider.public_name %></p>
+                      <% end %>
+                    </dd>
+                    <dt class="dark-gray">Horarios</dt>
+                    <dd class="light-gray">
+                      <% @bookings.each do |booking| %>
+                        <p><%= I18n.l(booking.start.to_datetime) %></p>
+                      <% end %>
+                    </dd>
+                    <% if !@bookings[0].notes.empty? %>
+                    <dt class="dark-gray">Notas</dt>
+                    <dd class="light-gray"><%= @bookings[0].notes %></dd>
+                    <% end %>
+                  </dl>
+
+                  <div class="book-subheader dark-gray">Servicios que no pudieron ser reservados</div>
+                  <dl class="dl-horizontal book-dl">
+
+                    <dt class="dark-gray">Servicios</dt>
+                    <dd class="light-gray">
+                      <% @blocked_bookings.each do |blocked| %>
+                        <p><%= blocked.service.name %></p>
+                      <% end %>
+                    </dd>
+
+                    <dt class="dark-gray">Lugar</dt>
+                    <dd class="light-gray">
+                      <%= @location.address %>, <%= @location.district.name %>
+                    </dd>
+
+                    <dt class="dark-gray">Prestadores</dt>
+                    <dd class="light-gray">
+                      <% @blocked_bookings.each do |blocked| %>
+                        <p><%= blocked.service_provider.public_name %></p>
+                      <% end %>
+                    </dd>
+
+                    <dt class="dark-gray">Horarios</dt>
+                    <dd class="light-gray">
+                      <% @blocked_bookings.each do |blocked| %>
+                        <p><%= I18n.l(blocked.start.to_datetime) %></p>
+                      <% end %>
+                    </dd>
+
+                  </dl>
+
+                  <div class="book-subheader dark-gray">Tus Datos</div>
+                  <dl class="dl-horizontal book-dl">
+                    <dt class="dark-gray">Nombre</dt>
+                    <dd class="light-gray"><%= @client.first_name %> <%= @client.last_name %></dd>
+                    <% if !@client.email.empty? %>
+                    <dt class="dark-gray">E-mail</dt>
+                    <dd class="light-gray"><%= @client.email %></dd>
+                    <% end %>
+                    <% if !@client.phone.empty? %>
+                    <dt class="dark-gray">Teléfono</dt>
+                    <dd class="light-gray"><%= @client.phone %></dd>
+                    <% end %>
+                  </dl>
+
+                <% else %>
+
+                  <p>
+                    Lo sentimos, no fue posible agendar los servicios.<br>
+                    Si deseas agendar nuevamente haz click <a href="<%= root_url(:host => @url) %>">aquí.</a>
+                  </p>
+                  <div id="error">
+                    <div class="book-title">Errores</div>
+                    <ul class="list-unstyled">
+                      <% @errors.each do |msg| %>
+                      <li class="light-gray"><%= msg %></li>
+                      <% end %>
+                    </ul>
+                  </div>
+
+                <% end %>
+                  
 
                 <div>
                   <%= image_tag("logos/logo2.png", :class=> "bottom-logo") %>
                 </div>
+
+
               </div>
               <div class="col-md-1">
               </div>
@@ -153,15 +209,17 @@
         </div>
         <div class="col-md-5">
           <%= image_tag("backgrounds/cross.png", :class => "book-center-error") %>
-        </div>
-        <div class="col-md-5" id="error">
-          <div class="book-title">Errores</div>
-          <ul class="list-unstyled">
-            <% @errors.each do |msg| %>
-            <li class="light-gray"><%= msg %></li>
-            <% end %>
-          </ul>
-        </div>
+          <% if @payment == "book" %>
+            <div id="error">
+              <div class="book-title">Errores</div>
+              <ul class="list-unstyled">
+                <% @errors.each do |msg| %>
+                <li class="light-gray"><%= msg %></li>
+                <% end %>
+              </ul>
+            </div>
+          <% end %>
+        </div>        
       </div>
     </div>
   </section>

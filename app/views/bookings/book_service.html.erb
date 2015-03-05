@@ -86,7 +86,7 @@
     <div class="container">
       <div class="row">
         <div class="col-md-7">
-          <% if @errors.length > 1 %>
+          <% if @errors.length > 0 %>
             <h3>Tuvimos un error</h3>
             <div class="resumen-book">
               <div class="row">
@@ -170,7 +170,7 @@
             </div>
           <% end %>
         </div>
-        <% if @errors.length %>
+        <% if @errors.length > 0 %>
           <div class="col-md-5">
             <%= image_tag("backgrounds/cross.png", :class => "book-center-error") %>
           </div>

@@ -417,19 +417,19 @@
                 <input type="radio" name="mp" value="01" style="display: none !important;" class="mp_radio" id="mp_radio_01" />
                 <label for="mp_radio_01"><image style="display: none;" src="https://www.puntopagos.com/content/mp1.gif" alt="Banco Santander" class="mp_link" mp = "01" /></label>
               </div>
-              <div class="row">
-                <div class="col-md-12" style="padding-left: 10px; padding-top: 10px;">
-                  <p>Antes de pagar, asegúrate de leer la política de pagos en línea de la empresa: <a href="#" id="policy-link" style="color: #505050 !important;"><b>ver.</b></a></p>
-                </div>
+            </div>
+            <div class="row">
+              <div class="col-md-12" style="padding-left: 10px; padding-top: 10px;">
+                <p>Antes de pagar, asegúrate de leer la política de pagos en línea de la empresa: <a href="#" id="policy-link" style="color: #505050 !important;"><b>ver.</b></a></p>
               </div>
             </div>
-            <div class="modal-footer">
-              <button type="button" class="modal-pay" id="select-medio">Confirmar pago</button>
-            </div>
-          </div><!-- /.modal-content -->
-        </div><!-- /.modal-dialog -->
-      </div><!-- /.modal -->
-    </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="modal-pay" id="select-medio">Confirmar pago</button>
+          </div>
+        </div><!-- /.modal-content -->
+      </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
     <!-- FIN MODAL MEDIO DE PAGO -->
 
     <!-- MODAL POLÍTICA DE MODIFICACIÓN/CANCELACIÓN PAGOS EN LÍNEA -->
@@ -500,7 +500,13 @@
         e.preventDefault();
         $("#payment").val("0");
         $("#bookingForm").submit();
-      })
+      });
+
+      $("#policy-link").click(function(e){
+        e.preventDefault();
+        $("#medio-de-pago").modal('hide');
+        $("#online-policy").modal('show');
+      });
 
     });
   </script>

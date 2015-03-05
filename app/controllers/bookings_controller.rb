@@ -872,6 +872,7 @@ class BookingsController < ApplicationController
 
     @bookings = []
     @errors = []
+    @blocked_bookings = []
 
     @location_id = params[:location]
     @selectedLocation = Location.find(@location_id)
@@ -991,16 +992,19 @@ class BookingsController < ApplicationController
     final_price = 0
 
     booking_data.each do |buffer_params|
+      block_it = false
       service_provider = ServiceProvider.find(buffer_params[:provider])
       service = Service.find(buffer_params[:service])
       service_provider.bookings.each do |provider_booking|
         unless provider_booking.status_id == cancelled_id
           if (provider_booking.start.to_datetime - buffer_params[:end].to_datetime) * (buffer_params[:start].to_datetime - provider_booking.end.to_datetime) > 0
             if !service.group_service || buffer_params[:service].to_i != provider_booking.service_id
-              @errors << "Lo sentimos, la hora " + I18n.l(buffer_params[:start].to_datetime, format: :hour) + " ya está reservada para " + service_provider.public_name
+              @errors << "Lo sentimos, la hora " + I18n.l(buffer_params[:start].to_datetime) + " con " + service_provider.public_name + " ya fue reservada por otro cliente."
+              block_it = true
               next
             elsif service.group_service && buffer_params[:service].to_i == provider_booking.service_id && service_provider.bookings.where(:service_id => service.id, :start => buffer_params[:start].to_datetime).count >= service.capacity
-              @errors << "La capacidad del servicio grupal " + service.name + ", llegó a su límite"
+              @errors << "Lo sentimos, la capacidad del servicio grupal " + service.name + " llegó a su límite."
+              block_it = true
               next
             end
           end
@@ -1053,6 +1057,8 @@ class BookingsController < ApplicationController
         end
       end
 
+      
+
       @booking.price = service.price
       @booking.max_changes = @company.company_setting.max_changes
       @booking.booking_group = booking_group
@@ -1061,7 +1067,11 @@ class BookingsController < ApplicationController
         @booking.deal = deal
       end
 
-      @bookings << @booking
+      if block_it
+        @blocked_bookings << @booking
+      else
+        @bookings << @booking
+      end
 
       #
       #   PAGO EN LÍNEA DE RESERVA
@@ -1114,11 +1124,7 @@ class BookingsController < ApplicationController
     end
 
 
-
-    if @errors.length > 0 and booking_data.length > 1
-      redirect_to book_error_path(bookings: @bookings.map{|b| b.id}, location: @selectedLocation.id, client: client.id, errors: @errors)
-      return
-    end
+    
 
     #If they can be payed, redirect to payment_process,
     #then check for error or send notifications mails.
@@ -1141,6 +1147,13 @@ class BookingsController < ApplicationController
             proceed_with_payment = false
           end
         end
+        #Check for errors before starting payment
+
+        if @errors.length > 0 and @blocked_bookings.count > 0
+          redirect_to book_error_path(bookings: @bookings.map{|b| b.id}, location: @selectedLocation.id, client: client.id, errors: @errors, payment: "payment", blocked_bookings: @blocked_bookings.map{|b| b.id})
+          return
+        end
+
         if proceed_with_payment
           PuntoPagosCreation.create(trx_id: trx_id, payment_method: payment_method, amount: amount, details: "Pago de varios servicios a la empresa " +@company.name+" (" + @company.id.to_s + "). trx_id: "+trx_id+" - mp: "+@company.id.to_s+". Resultado: Se procesa")
           redirect_to resp.payment_process_url and return
@@ -1152,6 +1165,16 @@ class BookingsController < ApplicationController
         puts resp.get_error
         redirect_to punto_pagos_failure_path and return
       end
+    end
+
+    str_payment = "book"
+    if group_payment
+      str_payment = "payment"
+    end
+
+    if @errors.length > 0 and booking_data.length > 0
+      redirect_to book_error_path(bookings: @bookings.map{|b| b.id}, location: @selectedLocation.id, client: client.id, errors: @errors, payment: str_payment, blocked_bookings: @blocked_bookings.map{|b| b.id})
+      return
     end
 
     if @bookings.length > 1
@@ -1166,7 +1189,11 @@ class BookingsController < ApplicationController
     @company = @location.company
     @client = Client.find(params[:client])
     @bookings = Booking.find(params[:bookings])
+    @payment = params[:payment]
+    @blocked_bookings = Booking.find(params[:blocked_bookings])
     @errors = params[:errors]
+    host = request.host_with_port
+    @url = @company.web_address + '.' + host[host.index(request.domain)..host.length]
 
     render layout: "workflow"
   end

@@ -3,6 +3,31 @@ var actual_booking = null;
 
 var current_service;
 
+function currency(price)
+{
+	var amount = price.toString();
+	console.log(amount);
+	console.log(amount.length);
+	var j = 0;
+	var stack = new Array();
+	for(i = amount.length-1; i>=0; i--)
+	{
+		j = j+1;
+		stack.push(amount[i]);
+		if(j == 3)
+		{
+			stack.push('.');
+			j = 0;
+		}
+	}
+	var formatted_amount = "CLP $ ";
+	for(i = stack.length-1; i >=0 ; i--)
+	{
+		formatted_amount = formatted_amount + stack[i]
+	}
+	return formatted_amount;
+}
+
 //====== Load Steps ======//
 function loadStep1 (service_id) {
 	$('#services-description').empty();
@@ -280,18 +305,18 @@ function loadStep3 () {
 				if(!booking_buffer[i].online_payable)
 				{
 					payable = false;
-					prices += '<p class="light-gray">Precio: $' + booking_buffer[i].price + '</p>';
+					prices += '<p class="light-gray">Precio: ' + currency(booking_buffer[i].price) + '</p>';
 				}
 				else
 				{
 					if (booking_buffer[i].has_discount)
 					{
-						payable_prices += '<p class="light-gray">Precio normal: $' + booking_buffer[i].price + ' - Descuento: ' + booking_buffer[i].discount + '%<br />Precio con descuento: $' +  Math.round((100-booking_buffer[i].discount)*booking_buffer[i].price/100) + '</p>';
+						payable_prices += '<p class="light-gray">Precio normal: ' + currency(booking_buffer[i].price) + ' - Descuento: ' + booking_buffer[i].discount + '%<br />Precio con descuento: ' +  currency(Math.round((100-booking_buffer[i].discount)*booking_buffer[i].price/100)) + '</p>';
 						discounted_price = discounted_price + (100-booking_buffer[i].discount)*booking_buffer[i].price/100;
 					}
 					else
 					{
-						payable_prices += '<p class="light-gray">Precio normal: $' + booking_buffer[i].price + ' - (Sin descuento)</p>';
+						payable_prices += '<p class="light-gray">Precio normal: ' + currency(booking_buffer[i].price) + ' - (Sin descuento)</p>';
 						discounted_price = discounted_price + booking_buffer[i].price;
 					}
 					price = price + booking_buffer[i].price;
@@ -326,11 +351,11 @@ function loadStep3 () {
 					'</tr>' +
 					'<tr>' +
 						'<td class="dark-gray">Precio normal:</td>' +
-						'<td class="light-gray">$' + price + '</td>' +
+						'<td class="light-gray">' + currency(price) + '</td>' +
 					'</tr>' +
 					'<tr>' +
 						'<td class="dark-gray">Precio pago en línea:</td>' +
-						'<td class="light-gray">$' + discounted_price + '</td>' +
+						'<td class="light-gray">' + currency(Math.round(discounted_price)) + '</td>' +
 					'</tr>'
 				);
 
@@ -350,10 +375,10 @@ function loadStep3 () {
 				$("#reservar1").hide();
 				$("#reservar2").show();
 				$("#discount").append(
-					'Precio final: $' +  Math.round(discounted_price)
+					'Precio final: ' +  currency(Math.round(discounted_price))
 				);
 				$("#normal-book").append(
-					'Precio final: $' + price
+					'Precio final: ' + currency(price)
 				);
 			}
 			else
@@ -459,7 +484,7 @@ function loadDescription (serviceId) {
 			$('#services-description').append(
 				'<tr>' +
 					'<td class="dark-gray">Precio:</td>' +
-					'<td class="light-gray">$ ' + service.price.toLocaleString() + '</td>' +
+					'<td class="light-gray">' + currency(service.price) + '</td>' +
 				'</tr>'
 			);
 		}
