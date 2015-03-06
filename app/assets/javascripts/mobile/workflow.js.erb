@@ -26,18 +26,18 @@ function loadServices (localId) {
         $.each(service_hash.services, function (key, service) {
           servicesHTML += '<option value="' + service.id + '">' + service.name + '</option>';
         });
-        $('#services').append(
+        $('#service').append(
           '<optgroup label="' + service_hash.category + '">' + servicesHTML + '</optgroup>'
         );
       };
     });
-    $('#services').prepend(
+    $('#service').prepend(
       '<option value="0">Selecciona un servicio</option>'
     );
-    $('#services').one('change', function (event) {
-      $('#services option:first').remove();
+    $('#service').one('change', function (event) {
+      $('#service option:first').remove();
     });
-    $('#services').change(function (event) {
+    $('#service').change(function (event) {
       var serviceId = $(event.target).val();
       loadProviders(localId, serviceId);
     });
@@ -46,35 +46,27 @@ function loadServices (localId) {
 
 function loadProviders (localId, serviceId) {
   $.getJSON('/providers_services', {id: serviceId, local: localId}, function (providers) {
-    $('#providers').attr('disabled', true);
-    $('#providers').empty();
+    $('#provider').attr('disabled', true);
+    $('#provider').empty();
     if ($('#providerPreference').data('provider-preference') != 2) {
       $.each(providers, function (key, provider) {
-        $('#providers').append(
+        $('#provider').append(
           '<option value="' + provider.id + '">' + provider.public_name + '</option>'
         );
       });
     }
 
     if ($('#providerPreference').data('provider-preference') != 1) {
-      $('#providers').prepend(
+      $('#provider').prepend(
         '<option value="0">Sin Preferencia</option>'
       );
       var minDate = new Date($('#timeInterval').data('min'));
       var maxDate = new Date($('#timeInterval').data('max'));
 
       $('#datepicker').attr('disabled', false);
-      $('#datepicker').pickadate({
-        monthsFull: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
-        monthsShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
-        weekdaysFull: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'],
-        weekdaysShort: ['Dom', 'Lun', 'Mar', 'Mier', 'Jue', 'vie', 'Sáb'],
-        today: 'Hoy',
-        clear: '',
-        firstDay: 1,
+      datepicker('#datepicker', {
         format: 'dddd d !de mmmm !de yyyy',
-        formatSubmit: 'yyyy/mm/dd',
-        hiddenName: true,
+        min: true,
         klass: {
           input: 'datepicker'
         },
@@ -84,28 +76,19 @@ function loadProviders (localId, serviceId) {
       });
     }
     else {
-      $('#providers').prepend(
+      $('#provider').prepend(
         '<option value="0">Selecciona un prestador</option>'
       );
-      $('#providers').one('change', function (event) {
-        $('#providers option:first').remove();
+      $('#provider').one('change', function (event) {
+        $('#provider option:first').remove();
       });
-      $('#providers').change(function (event) {
+      $('#provider').change(function (event) {
         var minDate = new Date($('#timeInterval').data('min'));
         var maxDate = new Date($('#timeInterval').data('max'));
 
         $('#datepicker').attr('disabled', false);
-        $('#datepicker').pickadate({
-          monthsFull: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
-          monthsShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
-          weekdaysFull: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'],
-          weekdaysShort: ['Dom', 'Lun', 'Mar', 'Mier', 'Jue', 'vie', 'Sáb'],
-          today: 'Hoy',
-          clear: '',
-          firstDay: 1,
+        datepicker('#datepicker', {
           format: 'dddd d !de mmmm !de yyyy',
-          formatSubmit: 'yyyy/mm/dd',
-          hiddenName: true,
           min: minDate,
           max: maxDate,
           klass: {
@@ -117,7 +100,7 @@ function loadProviders (localId, serviceId) {
         });
       });
     }
-    $('#providers').attr('disabled', false);
+    $('#provider').attr('disabled', false);
   });
 }
 
@@ -125,7 +108,7 @@ function addBooking (date, start, end, provider) {
   selected = true;
   $('#start').val(generateDate(date, start));
   $('#end').val(generateDate(date, end));
-  $('#provider').val(provider);
+  $('#staff').val(provider);
 }
 
 function generateDate(date, time) {

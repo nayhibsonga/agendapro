@@ -23,7 +23,8 @@
       <tr>
         <th>Nombre</th>
         <th>Locales</th>
-        <th>Prestadores de Servicio</th>
+        <th>Prestadores</th>
+        <th>E-mails mensuales</th>
         <th>Precio (sin IVA)</th>
         <th>Opciones</th>
       </tr>
@@ -35,6 +36,7 @@
           <td><%= plan.name %></td>
           <td><%= plan.locations %></td>
           <td><%= plan.service_providers %></td>
+          <td><%= number_with_delimiter(plan.monthly_mails) %></td>
           <td><%= number_to_currency(plan.price, {:unit => '$', :separator => ',', :delimiter => '.', :precision => 0})%> CLP</td>
           <% if @company.plan == Plan.find_by_name("Trial") && plan.price == @price %>
           <td>¡Este sería tu Plan!</td>
@@ -47,7 +49,7 @@
           <% end %>
 
           <%= content_tag "div", id: "plan_"+plan.id.to_s, data: { plan_price: plan.price, plan_month_value: (@month_days - @day_number + 1)*plan.price/@month_days } do %><%end%>
-          
+
         </tr>
       <% end %>
       <% if @company.plan.custom && @company.plan != Plan.find_by_name("Trial") %>
@@ -80,7 +82,7 @@
         <option value="6">6 Meses - <%= number_to_currency(@plan_6*(1+@sales_tax), {:unit => '$', :separator => ',', :delimiter => '.', :precision => 0})%> CLP (<%= number_with_precision(@month_discount_6*100, :precision => 0) %>% dcto.)</option>
         <option value="9">9 Meses - <%= number_to_currency(@plan_9*(1+@sales_tax), {:unit => '$', :separator => ',', :delimiter => '.', :precision => 0})%> CLP (<%= number_with_precision(@month_discount_9*100, :precision => 0) %>% dcto.)</option>
         <option value="12">12 Meses - <%= number_to_currency(@plan_12*(1+@sales_tax), {:unit => '$', :separator => ',', :delimiter => '.', :precision => 0})%> CLP (<%= number_with_precision(@month_discount_12*100, :precision => 0) %>% dcto.)</option>
-      </select> 
+      </select>
     </p>
     <p>Y, luego, selecciona el medio de pago haciendo click sobre su imagen:</p>
     <table class="table" id="mp_table">

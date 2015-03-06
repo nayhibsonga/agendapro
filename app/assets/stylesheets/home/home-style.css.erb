@@ -138,7 +138,6 @@ a:hover {
 #mensaje-principal h3{
 	color: #646464;
 	font-weight: 400;
-	text-align: left;
 	font-size: 21px;
 }
 #mensaje-principal a{
@@ -166,7 +165,7 @@ a:hover {
 footer {
 	margin-top: 40px;
 	/*color: #fff;*/
-	border-top: solid 2px #E2E3E4;/*solid 2px #fff;*/
+	border-top: solid 1px #949292;/*solid 2px #fff;*/
 	background-color: #E2E3E4;/*#222222;*/
 	background: url(<%= asset_path 'backgrounds/wild_oliva_light_head.png' %>);/*url(images/backgrounds/wild_oliva_dark.png);*/
 	/*background: #cbcdcc;
@@ -566,9 +565,9 @@ h2.section_header {
 	margin-top: 25px;
 	color: #fff;
 	text-align: center;
-	font-size: 32px;
+	font-size: 24px;
 	background-color: #22c488;
-	padding-top: 5px;
+	padding-top: 0px;
 }
 
 .panel-reservas{
@@ -602,6 +601,7 @@ h2.section_header {
 	padding-left: 10px;
 	padding-top: 10px;
 	padding-bottom: 10px;
+	font-size: 18px;
 }
 
 .campo2{
@@ -612,10 +612,11 @@ h2.section_header {
 	padding-left: 10px;
 	padding-top: 10px;
 	padding-bottom: 10px;
+	font-size: 18px;
 }
 
 .booking{
-	
+
 	font-size: 16px;
 	color: #949292;
 }
@@ -630,27 +631,35 @@ h2.section_header {
 	max-height: 200px;
     overflow: auto;
 }
-::-webkit-scrollbar {  
-	width: 10px;  
-}  
-::-webkit-scrollbar-track {  
-    background-color: #eaeaea;  
-    border-left: 1px solid #ccc;  
-}  
-::-webkit-scrollbar-thumb {  
-    background-color: #ccc;  
-}  
-::-webkit-scrollbar-thumb:hover {  
-    background-color: #aaa;  
+::-webkit-scrollbar {
+	width: 10px;
+}
+::-webkit-scrollbar-track {
+    background-color: #eaeaea;
+    border-left: 1px solid #ccc;
+}
+::-webkit-scrollbar-thumb {
+    background-color: #ccc;
+}
+::-webkit-scrollbar-thumb:hover {
+    background-color: #aaa;
 }
 
 @font-face {
 	font-family: TradeGothic;
-	src: url(<%= font_path('TradeGothicLTStd.otf') %>);
+	src: url('/assets/Trade Gothic LT Condensed No. 18.ttf');
+	src: url('/assets/Trade Gothic LT Condensed No. 18.ttf?#iefix') format('truetype'),
+	url('/assets/Trade Gothic LT Condensed No. 18.ttf') format('truetype');
+	font-weight: normal;
+	font-style: normal;
 }
 @font-face {
-	font-family: TradeGothicCn18;
-	src: url(<%= font_path('TradeGothicLTStd-Cn18.otf') %>);
+	font-family: FranklinGothic;
+	src: url('/assets/ITC Franklin Gothic LT Book Extra Compressed.ttf');
+	src: url('/assets/ITC Franklin Gothic LT Book Extra Compressed.ttf?#iefix') format('truetype'),
+	url('/assets/ITC Franklin Gothic LT Book Extra Compressed.ttf') format('truetype');
+	font-weight: normal;
+	font-style: normal;
 }
 /*Ejemplo para IE*/
 /*@font-face{
@@ -666,7 +675,7 @@ h2.section_header {
 
 html,
 body {
-	font-family: TradeGothicCn18, TradeGothic, Helvetica, Arial;
+	font-family: TradeGothic, FranklinGothic, "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
 	background: #ffffff;
 	font-size: 17px;
     overflow-x: hidden;
@@ -711,9 +720,8 @@ body {
 .navbar-agendapro .navbar-nav > li > a:focus {
 	color: #cfcdcd;
 	text-transform: uppercase;
-	font-family: TradeGothicCn18;
+	font-family: TradeGothic, FranklinGothic, "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
 	font-size: 16px;
-	margin-top: 5px;
 	margin-right: 5px;
 	margin-left: 5px;
 }
@@ -757,9 +765,8 @@ body {
 	font-size: 14px;
 	border: 2px solid #fd9610;
 	border-radius: 15px;
-	padding: 8px 14px 4px;
+	padding: 4px 14px;
 	margin-top: 7px;
-	line-height: inherit;
 }
 .navbar-agendapro .navbar-nav > li > a.menu-orange:hover {
   color: #ffffff;
@@ -793,9 +800,8 @@ body {
 .navbar-home .navbar-nav > li > a:focus {
 	color: #646464;
 	text-transform: uppercase;
-	font-family: TradeGothicCn18;
+	font-family: TradeGothic, FranklinGothic, "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
 	font-size: 16px;
-	margin-top: 5px;
 	margin-right: 5px;
 	margin-left: 5px;
 }
@@ -840,9 +846,8 @@ body {
 	font-size: 14px;
 	border: 2px solid #fd9610;
 	border-radius: 15px;
-	padding: 8px 14px 4px;
+	padding: 4px 14px;
 	margin-top: 7px;
-	line-height: inherit;
 }
 .navbar-home .navbar-nav > li > a.menu-orange:hover {
   color: #ffffff;
@@ -851,13 +856,12 @@ body {
 
 /*** alert ***/
 .alert {
-	padding-top: 5px;
-	padding-bottom: 5px;
-	font-size: 14px;
-	position: absolute;
-	margin-top: 60px;
-	width: 100%;
-	z-index: 10;
+	position: fixed;
+	margin: 65px auto 10px;
+	width: 75%;
+	z-index: 10000;
+	left: 5%;
+	right: 5%;
 }
 .alert .alert-agendapro {
 	position: absolute;
@@ -898,7 +902,7 @@ body {
 .below-navbar {
 	padding-top: 50px;
 }
-.fill { 
+.fill {
     min-height: 100%;
     height: 100%;
 }
@@ -916,7 +920,7 @@ body {
 /*Search Text*/
 h1, h2, h3, h4, h5, h6,
 .h1, .h2, .h3, .h4, .h5, .h6 {
-  font-family: TradeGothicCn18;
+  font-family: TradeGothic, FranklinGothic, "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
 }
 h1.search-text {
 	margin-top: 0;
@@ -926,7 +930,7 @@ h1.search-text {
 	color: #ffffff;
 	text-transform: uppercase;
 	font-size: 73px;
-	font-family: TradeGothicCn18;
+	font-family: TradeGothic, FranklinGothic, "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
 	font-weight: 300;
 }
 .search-text-green {
@@ -934,7 +938,7 @@ h1.search-text {
 }
 .typed-cursor{
     opacity: 1;
- 	color: #22c488;   
+ 	color: #22c488;
     -webkit-animation: blink 0.7s infinite;
     -moz-animation: blink 0.7s infinite;
     animation: blink 0.7s infinite;
@@ -1259,7 +1263,7 @@ h1.search-text {
   	background-color: #fd9610;
 	border: 2px solid #fd9610;
 	border-radius: 10px;
-	padding: 10px 24px 6px;
+	padding: 6px 24px 6px;
 	line-height: inherit;
 }
 
@@ -1307,8 +1311,8 @@ div.pricing_plan.special > img.special_tag {
 #carousel > a > img {
 	opacity: 0.6;
 	filter: alpha(opacity=60);
-	margin-left: 60px;
-	margin-right: 60px;
+	margin-left: 45px;
+	margin-right: 45px;
 }
 #carousel > a > img:hover {
 	opacity: 1;
@@ -1318,7 +1322,7 @@ div.pricing_plan.special > img.special_tag {
     display: block;
     float: left;
 }
-.btn-group-fill-height .btn { 
+.btn-group-fill-height .btn {
   white-space: normal;
 }
 div.row.row-padded {
@@ -1382,6 +1386,27 @@ div.row.row-padded {
 	height: 30px;
 }*/
 
+.media-heading {
+	padding-bottom: 5px;
+}
+
+.caret-down {
+	margin-top: 25px;
+}
+
+.cfs-arrow {
+	padding-top: 25px;
+}
+
+/*.left-separator {
+	border-left: solid 1px #646464;
+}*/
+
+.form-control::-webkit-input-placeholder { color: #c0c0c0; }
+.form-control:-moz-placeholder           { color: #c0c0c0; }
+.form-control::-moz-placeholder          { color: #c0c0c0; }
+.form-control:-ms-input-placeholder      { color: #c0c0c0; } 
+
 /* Media queries */
 @media (max-width: 1199px) {
     .boxed-feature > div > img {
@@ -1398,7 +1423,7 @@ div.row.row-padded {
 	}
 }
 
-@media (max-width: 991px) { 
+@media (max-width: 991px) {
 	#barra-superior{
 		height: auto;
 	}
@@ -1481,7 +1506,7 @@ div.row.row-padded {
 }
 
 /* Small devices (tablets, 768px and up) */
-@media (max-width: 767px) { 
+@media (max-width: 767px) {
 	#logo{
 		margin-left: 20px;
 	}

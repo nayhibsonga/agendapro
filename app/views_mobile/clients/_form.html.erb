@@ -1,0 +1,122 @@
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-xs-12">
+      <%= form_for @client, html: {class: "form-horizontal" } do |f| %>
+        <% if @client.errors.any? %>
+        <div id="error_explanation">
+          <h3><%= pluralize(@client.errors.count, "error") %> no permitió que el cliente fuera guardado:</h3>
+          <ul>
+            <% @client.errors.full_messages.each do |msg| %>
+            <li><%= msg %></li>
+            <% end %>
+          </ul>
+        </div>
+        <% end %>
+        <% if Company.find(current_user.company_id).company_setting.client_exclusive %>
+        <div class="form-group">
+          <%= f.label :can_book, "¿Puede reservar?", class: "col-xs-3 control-label" %>
+          <div class="col-xs-9">
+            <%= f.check_box :can_book, class: "check_box" %>
+          </div>
+        </div>
+        <% end %>
+        <div class="form-group">
+          <%= f.label :email, "E-mail", class: "col-xs-3 control-label" %>
+          <div class="col-xs-9">
+            <%= f.text_field :email, :autofocus => true, class: "form-control" %>
+            <span class="help-block"></span>
+          </div>
+        </div>
+        <div class="form-group">
+          <%= f.label :first_name, "Nombre", class: "col-xs-3 control-label" %>
+          <div class="col-xs-9">
+            <%= f.text_field :first_name, class: "form-control" %>
+            <span class="help-block"></span>
+          </div>
+        </div>
+        <div class="form-group">
+          <%= f.label :last_name, "Apellido", class: "col-xs-3 control-label" %>
+          <div class="col-xs-9">
+            <%= f.text_field :last_name, class: "form-control" %>
+            <span class="help-block"></span>
+          </div>
+        </div>
+        <div class="form-group">
+          <%= f.label :identification_number, "RUT", class: "col-xs-3 control-label" %>
+          <div class="col-xs-9">
+            <%= f.text_field :identification_number, class: "form-control" %>
+            <span class="help-block"></span>
+          </div>
+        </div>
+        <div class="form-group">
+          <%= f.label :phone, "Teléfono", class: "col-xs-3 control-label" %>
+          <div class="col-xs-9">
+            <%= f.text_field :phone, class: "form-control" %>
+            <span class="help-block"></span>
+          </div>
+        </div>
+        <div class="form-group">
+          <%= f.label :address, "Dirección", class: "col-xs-3 control-label" %>
+          <div class="col-xs-9">
+            <%= f.text_field :address, class: "form-control" %>
+            <span class="help-block"></span>
+          </div>
+        </div>
+        <div class="form-group">
+          <%= f.label :district, "Comuna", class: "col-xs-3 control-label" %>
+          <div class="col-xs-9">
+            <%= f.text_field :district, class: "form-control" %>
+            <span class="help-block"></span>
+          </div>
+        </div>
+        <div class="form-group">
+          <%= f.label :city, "Ciudad", class: "col-xs-3 control-label" %>
+          <div class="col-xs-9">
+            <%= f.text_field :city, class: "form-control" %>
+            <span class="help-block"></span>
+          </div>
+        </div>
+        <div class="form-group date-select">
+          <%= f.label :birth_day, "Cumpleaños", class: "col-xs-3 control-label" %>
+          <div class="col-xs-3">
+            <%= f.select :birth_day, [
+                ['01',1], ['02',2], ['03',3], ['04',4], ['05',5], ['06',6], ['07',7], ['08',8], ['09',9], ['10',10], ['11',11], ['12',12], ['13',13], ['14',14], ['15',15], ['16',16], ['17',17], ['18',18], ['19',19], ['20',20], ['21',21], ['22',22], ['23',23], ['24',24], ['25',25], ['26',26], ['27',27], ['28',28], ['29',29], ['30',30], ['31',31]
+              ], { prompt: "Día..." }, { class: "form-control" } %>
+          </div>
+          <div class="col-xs-3">
+            <%= f.select :birth_month, [
+                ['Enero',1], ['Febrero',2], ['Marzo',3], ['Abril',4], ['Mayo',5], ['Junio',6], ['Julio',7], ['Agosto',8], ['Septiembre',9], ['Octubre',10], ['Noviembre',11], ['Diciembre',12]
+              ], { prompt: "Mes..." }, { class: "form-control" } %>
+          </div>
+          <div class="col-xs-3">
+            <%= f.select :birth_year, options_for_select(Time.now.year.downto(Time.now.year-100).map {|s| ["#{s}", s]}, selected: @client.birth_year), { prompt: "Año..." }, { class: "form-control" } %>
+
+          </div>
+        </div>
+        <div class="form-group">
+          <%= f.label :age, "Edad", class: "col-xs-3 control-label" %>
+          <div class="col-xs-9">
+            <%= f.number_field :age, class: "form-control", :min => 0 %>
+            <span class="help-block"></span>
+          </div>
+        </div>
+        <div class="form-group">
+          <%= f.label :gender, "Género", class: "col-xs-3 control-label" %>
+          <div class="col-xs-9">
+            <%= f.select :gender, [['No especificado',0], ['Femenino',1], ['Masculino',2]], { }, { class: "form-control"} %>
+          </div>
+        </div>
+        <div class="form-group">
+          <div class="col-xs-12">
+            <%= f.submit 'Guardar', :class => 'btn btn-block btn-orange' %>
+            <%= link_to 'Volver', clients_path, class: "btn btn-block btn-default" %>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>
+
+<% content_for :scripts do %>
+<%= javascript_include_tag "clients" %>
+<% end %>

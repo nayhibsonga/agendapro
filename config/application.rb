@@ -12,7 +12,7 @@ module Agendapro
   class Application < Rails::Application
 
     config.assets.enabled = true
-    
+
     config.assets.precompile << Proc.new { |path|
       if path =~ /\.(css|js|gif|png|jpg|otf|eot|svg|ttf|woff)\z/
         full_path = Rails.application.assets.resolve(path).to_path
@@ -29,11 +29,14 @@ module Agendapro
       end
     }
 
+    # config.assets.precompile += %w( ckeditor/* )
+
     config.before_configuration do
-      env_file = File.join(Rails.root, 'config', 'local_env.yml')
-      YAML.load(File.open(env_file)).each do |key, value|
+      env_file = "#{Rails.root}/config/local_env.yml"
+      YAML.load_file(env_file).each do |key, value|
         ENV[key.to_s] = value
       end if File.exists?(env_file)
+      
     end
 
     # Settings in config/environments/* take precedence over those specified here.

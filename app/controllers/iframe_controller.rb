@@ -75,7 +75,7 @@ class IframeController < ApplicationController
 			return
 		end
 
-		unless @company.company_setting.activate_workflow && @company.active
+		unless @company && @company.company_setting && @company.active && @company.company_setting.activate_workflow
 			redirect_to iframe_construction_path
 			return
 		end
@@ -130,7 +130,7 @@ class IframeController < ApplicationController
 		    client.phone = params[:phone]
 		    client.save
 		  else
-		    flash[:alert] = "No estás ingresado como cliente o no puedes reservar. Porfavor comunícate con la empresa proveedora del servicio."
+		    flash[:alert] = "No estás ingresado como cliente o no puedes reservar. Por favor comunícate con la empresa proveedora del servicio."
 		    @errors = ["No estás ingresado como cliente"]
 		    host = request.host_with_port
 		    @url = @company.web_address + '.' + host[host.index(request.domain)..host.length]

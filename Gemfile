@@ -47,8 +47,6 @@ group :development do
   gem 'binding_of_caller'
   #impresion amigable en consola
   gem 'awesome_print'
-  #Librería para generar datos para el seed
-  gem 'faker'
   #Geocoder para el seed
   gem 'geocoder'
 end
@@ -132,3 +130,27 @@ gem 'validation_scopes', :git => 'https://github.com/ivalkeen/validation_scopes.
 #Librería para string matching
 gem 'amatch'
 
+#Capistrano para deploy
+gem 'capistrano', '~> 3.1.0'
+gem 'capistrano-bundler', '~> 1.1.2'
+gem 'capistrano-rails', '~> 1.1.1'
+gem 'capistrano-rvm', github: "capistrano/rvm"
+gem 'capistrano3-delayed-job', '~> 1.0'
+
+# Editor de texto tipo word
+gem 'ckeditor'
+
+# Para ejecutar tareas asíncronas o programadas en segundo plano.
+gem 'delayed_job_active_record'
+
+# Para demonizar las tareas en segundo plano.
+gem "daemons"
+
+#pg_search para búsqueda utilizando extensiones de Postgres
+gem 'pg_search'
+
+#Librería para generar datos para el seed
+gem 'faker'
+
+#New Relic
+gem 'newrelic_rpm'

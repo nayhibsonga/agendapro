@@ -1,57 +1,152 @@
 <div class="container container-margin">
-	<div class="row">
-		<div class="col-xs-12">
-			<%= form_tag("book", method: "post", role: "form", id: "bookingForm") do %>
-            	<%= hidden_field_tag :service, @service.id %>
-            	<%= hidden_field_tag :provider, @provider.id %>
-            	<%= hidden_field_tag :start, @start %>
-            	<%= hidden_field_tag :end, @end %>
-            	<%= hidden_field_tag :origin, @origin %>
-            	<%= hidden_field_tag :location, @location.id %>
-            	<%= hidden_field_tag :provider_lock, @lock %>
-            	<%= hidden_field_tag :firstName, if user_signed_in? then current_user.first_name else nil end %>
-                <%= hidden_field_tag :lastName, if user_signed_in? then current_user.last_name else nil end %>
-            	<div id="user-data">
-					<div class="form-group">
-						<input type="text" id="full_name" name="user[full_name]" class="form-control" placeholder="Nombre completo" required <%= 'disabled' if @location.company.company_setting.client_exclusive %>>
-                        <span class="help-block"></span>
-					</div>
-					<div class="form-group">
-						<%= email_field_tag(:email, if user_signed_in? then current_user.email else nil end, :class => "form-control", :placeholder => "E-mail", :required => true) %>
-						<span class="help-block"></span>
-					</div>
-					<div class="form-group">
-						<%= telephone_field_tag(:phone, if user_signed_in? then current_user.phone else nil end, :class => "form-control", :placeholder => "Teléfono", :required => true) %>
-						<span class="help-block"></span>
-					</div>
-            	</div>
-            	<% if user_signed_in? %>
-            	<div class="form-group">
-            		<p id="user-message">Estas agendando como <strong><%= current_user.email %></strong>.<br /> Si no eres tu, haz click <a href="#" id="user-change">aquí</a><br /></p>
-            	</div>
-            	<% end %>
-            	<% if @location.company.company_setting.client_exclusive %>
-				<div class="form-group">
-					<%= text_field_tag(:identification_number, nil, :class => "form-control", :placeholder => "RUT" ) %>
-					<span class="help-block"></span>
-				</div>
-				<% end %>
-				<% if @service.outcall %>
-				<div id="outcallAddress" class="form-group">
-					<%= text_field_tag(:address, nil, :class => "form-control", :placeholder => "Escribe la dirección donde se debe realizar el servicio" ) %>
-					<span class="help-block"></span>
-				</div>
-				<% end %>
-				<div class="form-group">
-					<%= text_area_tag(:comment, nil, :class => "form-control", :placeholder => "Agrega algún comentario a tu reserva en caso de ser necesario..", :rows => 4) %>
-				</div>
-				<div class="form-group">
-					<button type="submit" class="btn btn-green btn-block" id="submitBtn">Reservar</button>
-				</div>
-			<% end %>
-		</div>
-	</div>
+  <%= form_tag("book", method: "post", role: "form", id: "bookingForm") do %>
+    <div class="row">
+      <div class="col-xs-12">
+        
+          <%= hidden_field_tag :service, @service.id %>
+          <%= hidden_field_tag :provider, @provider.id %>
+          <%= hidden_field_tag :start, @start %>
+          <%= hidden_field_tag :end, @end %>
+          <%= hidden_field_tag :origin, @origin %>
+          <%= hidden_field_tag :location, @location.id %>
+          <%= hidden_field_tag :provider_lock, @lock %>
+          <%= hidden_field_tag :firstName, if user_signed_in? then current_user.first_name else nil end %>
+          <%= hidden_field_tag :lastName, if user_signed_in? then current_user.last_name else nil end %>
+          <div id="user-data">
+            <div class="form-group">
+              <input type="text" id="full_name" name="user[full_name]" class="form-control" placeholder="Nombre completo" required <%= 'disabled' if @location.company.company_setting.client_exclusive %>>
+              <span class="help-block"></span>
+            </div>
+            <div class="form-group">
+              <%= email_field_tag(:email, if user_signed_in? then current_user.email else nil end, :class => "form-control", :placeholder => "E-mail", :required => true) %>
+              <span class="help-block"></span>
+            </div>
+            <div class="form-group">
+              <%= telephone_field_tag(:phone, if user_signed_in? then current_user.phone else nil end, :class => "form-control", :placeholder => "Teléfono", :required => true) %>
+              <span class="help-block"></span>
+            </div>
+          </div>
+          <% if @location.company.company_setting.client_exclusive %>
+          <div class="form-group">
+            <%= text_field_tag(:identification_number, nil, :class => "form-control", :placeholder => "RUT" ) %>
+            <span class="help-block"></span>
+          </div>
+          <% end %>
+          <% if @service.outcall %>
+          <div id="outcallAddress" class="form-group">
+            <%= text_field_tag(:address, nil, :class => "form-control", :placeholder => "Escribe la dirección donde se debe realizar el servicio" ) %>
+            <span class="help-block"></span>
+          </div>
+          <% end %>
+          <div class="form-group">
+            <%= text_area_tag(:comment, nil, :class => "form-control", :placeholder => "Agrega algún comentario a tu reserva en caso de ser necesario..", :rows => 4) %>
+          </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-xs-12">
+        <input type="hidden" id="payment" name="payment" value="0">
+      <!--
+        AGREGAR RESUMEN DE RESERVA
+      -->
+
+
+      </div>
+    </div>
+
+    <% if @company.company_setting.allows_online_payment && @service.online_payable %>
+      <div class="row">
+        <div class="col-xs-6">
+          <div class="form-group">
+            <button type="submit" class="btn btn-green btn-lg btn-block" id="payBtn">Pagar</button>
+          </div>
+          <div class="form-group">
+            <% if @service.has_discount %>
+              Precio:&nbsp;<%= number_to_currency((@service.price*(100-@service.discount)/100), unit: "$", separator: ".", delimiter: ",", precision: 0) %>
+            <% end %>
+          </div>
+        </div>
+        <div class="col-xs-6">
+          <div class="form-group">
+            
+            <button type="submit" class="btn btn-orange btn-lg btn-block" id="submitBtn">Reservar</button>
+            
+          </div>
+          <div class="form-group">
+            <% if @service.has_discount %>
+              Precio:&nbsp;<%= number_to_currency(@service.price, unit: "$", separator: ".", delimiter: ",", precision: 0) %>
+            <% end %>
+          </div>
+        </div>
+      </div>
+    <% else %>
+      <div class="row">
+        <div class="col-xs-12">
+          <div class="form-group">
+            
+            <button type="submit" class="btn btn-orange btn-lg btn-block" id="submitBtn">Reservar</button>
+            
+          </div>
+        </div>
+      </div>
+    <% end %>
+
+    <div id="mp-selector" hidden>
+      <div class="row">
+        <div class="col-xs-10 col-offset-xs-12">
+          <h4 class="modal-title" style="color: #ccc !important;">Elige el medio de pago</h4>
+        </div>
+      </div>
+
+
+      <div class="row">
+        <div class="col-xs-6">
+          <input type="radio" name="mp" value="04" class="mp_radio" />
+          <image class="img-responsive" src="https://www.puntopagos.com/content/mp4.gif" alt="Banco Chile" class="mp_link" mp = "04" />
+        </div>
+        <div class="col-xs-6">
+          <input type="radio" name="mp" value="05" class="mp_radio" />
+          <image class="img-responsive" src="https://www.puntopagos.com/content/mp5.gif" alt="BCI" class="mp_link" mp = "05" />
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-xs-6">
+          <input type="radio" name="mp" value="06" class="mp_radio" />
+          <image class="img-responsive" src="https://www.puntopagos.com/content/mp6.gif" alt="TBanc" class="mp_link" mp = "06" />
+        </div>
+        <div class="col-xs-6">
+          <input type="radio" name="mp" value="07" class="mp_radio" />
+          <image class="img-responsive" src="https://www.puntopagos.com/content/mp7.gif" alt="Banco Estado" class="mp_link" mp = "07" />
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-xs-6">
+          <input type="radio" name="mp" value="03" class="mp_radio" />
+          <image class="img-responsive" src="https://www.puntopagos.com/content/mp3.gif" alt="Webpay Transbank" class="mp_link" mp = "03" />
+        </div>
+        <div class="col-xs-6">
+          <input type="radio" name="mp" value="04" style="display: none !important;" class="mp_radio" />
+          <image class="img-responsive" style="display: none;" src="https://www.puntopagos.com/content/mp1.gif" alt="Banco Santander" class="mp_link" mp = "01" />
+        </div>
+      </div>
+
+      <div class="row" style="margin-bottom: 10px; margin-top: 5px;"> 
+        <div class="col-xs-6 col-xs-offset-3">
+          <button class="btn btn-green btn-lg btn-block" id="select-medio">Pagar</button>
+        </div>
+      </div>
+    </div><!-- /.modal-content -->
+
+
+  <% end %>
 </div>
+
+<!--  MODAL MEDIO DE PAGO -->
+
+
+
+<!-- FIN MODAL MEDIO DE PAGO -->
 
 <%= content_tag "div", id: "selectedLocal", data: {local: @location, district: @location.district.name} do %>
 <% end %>
@@ -61,20 +156,49 @@
 <%= javascript_include_tag 'validations/validate' %>
 <%= javascript_include_tag 'validations/home/workflow' %>
 <script type="text/javascript">
-	$(function() {
-		compose_name('#full_name', '#firstName', '#lastName');
-		split_name('#full_name', '#firstName', '#lastName');
-		<% if user_signed_in? %>
-		$('#user-data').hide();
-		$('#user-change').click(function () {
-			$('#user-data').show();
-			$('#user-message').hide();
-		});
-		<% end %>
-		$('.volver').click(function () {
-			history.back();
-			return false;
-		});
-	});
+  $(function() {
+    compose_name('#full_name', '#firstName', '#lastName');
+    split_name('#full_name', '#firstName', '#lastName');
+
+
+    $('.volver').click(function () {
+      history.back();
+      return false;
+    });
+  });
+
+  $(document).ready(function(){
+    $("#payBtn").click(function(e){
+      e.preventDefault();
+      $("#payment").val("1");
+      $("#mp-selector").show();
+      $("#payBtn").attr("disabled", "true");
+    });
+
+    $("#submitBtn").click(function(e){
+      e.preventDefault();
+      $("#payment").val("0");
+      $("#bookingForm").submit();
+    });
+
+    $('#select-medio').click(function(){
+      console.log('clicked select medio');
+      var is_selected = false;
+      $('.mp_radio').each(function(){
+        if($(this).prop('checked'))
+        {
+          is_selected = true;
+          console.log(is_selected);
+        }
+      });
+      if(is_selected)
+      {
+        //console.log("Entra");
+        $('#bookingForm').submit();
+      }
+    });
+
+  });
+
 </script>
 <% end %>

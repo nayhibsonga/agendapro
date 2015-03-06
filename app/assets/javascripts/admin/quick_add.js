@@ -201,6 +201,7 @@ function locJSON (ctrl) {
 	var locationJSON  = {
 		"name": $('#location_name').val(),
 		"address": $('#location_address').val(),
+		"second_address": $('#location_second_address').val(),
 		"phone": $('#location_phone').val(),
 		"district_id": $('#location_district_id').val(),
 		"outcall": $('#location_outcall').prop('checked'),
@@ -426,7 +427,35 @@ function updateCompany () {
 				'</ul>'
 			);
 			hideLoad();
-		}, 
+		},
+	});
+}
+
+function updateCompanySetting(){
+	$.ajax({
+		type: "POST",
+		url: '/quick_add/update_settings',
+		data: $('.company_settings_form').serialize(),
+		dataType: 'json',
+		success: function(result){
+			//nextFn = serviceValid;
+    		//$('#foo5').trigger('nextPage');
+    		//hideLoad();
+		},
+		error: function (xhr){
+		    var errors = $.parseJSON(xhr.responseText).errors;
+		    var errorList = '';
+			for (i in errors) {
+				errorList += '<li>' + errors[i] + '</li>'
+			}
+			my_alert.showAlert(
+				'<h3>Error</h3>' +
+				'<ul>' +
+					errorList +
+				'</ul>'
+			);
+			hideLoad();
+		}
 	});
 }
 
@@ -442,7 +471,7 @@ function saveLocation (ctrl) {
 	    	$('#service_provider_location_id').parent().append('<p class="form-control-static">' + result.name + '</p>');
 	    	if (result.outcall) {
 	    		$('#service_outcall').prop('checked', true);
-	    		$('#service_outcall').prop('disabled', true);	
+	    		$('#service_outcall').prop('disabled', true);
 	    	}
 
 	    	nextFn = serviceValid;
@@ -550,7 +579,9 @@ function serviceGroup () {
 		$('#service_capacity').closest('.form-group').addClass('hidden');
 		$('#service_capacity').attr('disabled', true);
 	}
+	var oldTop = $(document).scrollTop();
 	$('#foo5').trigger('updateSizes');
+	$(document).scrollTop(oldTop);
 }
 
 function newCategory () {
@@ -582,7 +613,9 @@ function hideLoad () {
 	$('.center-block').parent().addClass('hidden');
   	$('#foo5').css('visibility', 'visible');
 	$('#next2').removeClass('disabled');
+	var oldTop = $(document).scrollTop();
 	$('#foo5').trigger('updateSizes');
+	$(document).scrollTop(oldTop);
 }
 
 function scrollEvents () {
@@ -652,13 +685,83 @@ function changeCity (city_id) {
 				);
 			});
 			$('#location_district_id').attr('disabled', false);
+			var oldTop = $(document).scrollTop();
 			$('#foo5').trigger('updateSizes');
+			$(document).scrollTop(oldTop);
 		};
 	});
 }
 
+/*** Google Maps ***/
+var map;
+var marker;
+function createMap () {
+  var mapProp = {
+    center: new google.maps.LatLng(-33.412819, -70.591945),
+    zoom: 15,
+    mapTypeId: google.maps.MapTypeId.ROADMAP
+  };
+  map = new google.maps.Map(document.getElementById('map'), mapProp);
+
+  google.maps.event.addListener(map, 'click', function (event) {
+    var latLng = event.latLng;
+    setCenter(latLng, 17);
+  });
+}
+
+function setMarker (latLng) {
+  marker = new google.maps.Marker({
+    position: latLng,
+    map: map
+  });
+}
+
+function setCenter (latLng, zoom) {
+  if (!$('#error').hasClass('hide')) {
+    $('#error').addClass('hide');
+  };
+  if (marker) {
+    marker.setMap(null);
+  };
+  map.panTo(latLng);
+  map.setCenter(latLng);
+  map.setZoom(zoom);
+  setMarker(latLng);
+  $('#location_latitude').val(latLng.lat());
+  $('#location_longitude').val(latLng.lng());
+  $('h4 small').addClass('hide');
+  $('#next2').attr('disabled', false);
+}
+
+function geolocate (district, address) {
+  $('#next2').attr('disabled', true);
+  $('h4 small').removeClass('hide');
+  $.getJSON('/get_direction', { id: district }, function (direction) {
+    var geolocation = direction;
+    var zoom = 13;
+    if (!$('#location_outcall').prop('checked')) {
+      geolocation = $('#location_address').val() + ', ' + geolocation;
+      zoom = 17;
+    };
+    var geocoder = new google.maps.Geocoder();
+    geocoder.geocode({ "address": JSON.stringify(geolocation) }, function (results, status) {
+      if (status == google.maps.GeocoderStatus.OK) {
+        setCenter(results[0].geometry.location, zoom);
+      } else {
+        $('h4 small').addClass('hide');
+        $('#error').removeClass('hide');
+        map.setZoom(12);
+        if (marker) {
+          marker.setMap(null);
+        };
+      };
+    });
+  });
+}
+
 $(function() {
 	nextFn = updateCompany;
+  createMap();
 	initialize('local');
 	initialize('prov');
 	$('#service_group_service').click(function (e) {
@@ -686,7 +789,9 @@ $(function() {
 			$('#location_address').val('');
 			$('#districtsCheckboxes').removeClass('hidden');
 		}
+		var oldTop = $(document).scrollTop();
 		$('#foo5').trigger('updateSizes');
+		$(document).scrollTop(oldTop);
 	});
 	$('#service_outcall').change(function() {
 		if (!$('#service_outcall').prop('checked')) {
@@ -695,6 +800,61 @@ $(function() {
 		else {
 			$('#outcallTip').removeClass('hidden');
 		}
+		var oldTop = $(document).scrollTop();
 		$('#foo5').trigger('updateSizes');
+		$(document).scrollTop(oldTop);
 	});
+
+	$('#location_district_id, #location_address, #location_outcall').change(function (eve) {
+    var district = $('#location_district_id').val();
+    var address = $('#location_address').val();
+    if (district != '') {
+      if ($('#location_outcall').prop('checked') || address.length > 0) {
+        geolocate(district, address);
+      };
+    };
+  });
+});
+
+
+$(function() {
+
+	$("#service_online_payable").change(function(){
+		if (!$('#service_online_payable').prop('checked')) {
+			$('#form-has-discount').addClass('hidden');
+			$('#form-discount').addClass('hidden');
+		}
+		else {
+			$('#form-has-discount').removeClass('hidden');
+			if($('#service_has_discount').prop('checked'))
+			{
+				$('#form-discount').removeClass('hidden');
+			}
+		}
+		var oldTop = $(document).scrollTop();
+		$('#foo5').trigger('updateSizes');
+		$(document).scrollTop(oldTop);
+	});
+
+	$("#service_has_discount").change(function(){
+		if (!$('#service_has_discount').prop('checked')) {
+			$('#form-discount').addClass('hidden');
+		}
+		else {
+			$('#form-discount').removeClass('hidden');
+		}
+		var oldTop = $(document).scrollTop();
+		$('#foo5').trigger('updateSizes');
+		$(document).scrollTop(oldTop);
+	});
+	
+	$('#location_district_id, #location_address, #location_outcall').change(function (eve) {
+    var district = $('#location_district_id').val();
+    var address = $('#location_address').val();
+    if (district != '') {
+      if ($('#location_outcall').prop('checked') || address.length > 0) {
+        geolocate(district, address);
+      };
+    };
+  });
 });

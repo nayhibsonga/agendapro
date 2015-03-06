@@ -1,3 +1,20 @@
+<div class="row companies_header">
+  <ul class="nav nav-tabs">
+
+    <li><a id="companies_payments" href="/companies_payments">Estados de pagos</a></li>
+
+    <li><a id="companies_incomes" href="/companies_incomes">Ingresos mensuales</a></li>
+
+    <li><a id="companies_locations" href="/companies_locations">Clientes y locales</a></li>
+
+    <li><a id="companies_monthly_locations" href="/companies_monthly_locations">Locales mensuales</a></li>
+
+    <li><a id="companies_monthly_bookings" href="/companies_monthly_bookings">Resumen de reservas</a></li>
+
+    <li class="active"><%= link_to 'Empresas', companies_path, { :id => "companies" } %></li>
+
+  </ul>
+</div>
 <div class="container">
   <div class="row">
     <section class="hgroup">
@@ -28,10 +45,10 @@
 		<% @plan_logs.each do |plan_log| %>
 			<tr>
 				<td><%= Company.find(plan_log.company_id).name %></td>
-				<td><%= Plan.find(billing_log.prev_plan_id).name %></td>
-				<td><%= Plan.find(billing_log.new_plan_id).name %></td>
-				<td><%= billing_log.trx_id %></td>
-				<td><%= l billing_log.created_at, format: :short %></td>
+				<td><%= Plan.find(plan_log.prev_plan_id).name %></td>
+				<td><%= Plan.find(plan_log.new_plan_id).name %></td>
+				<td><%= plan_log.trx_id %></td>
+				<td><%= l plan_log.created_at, format: :short %></td>
 			</tr>
 		 <% end %>
 	</tbody>

@@ -8,11 +8,9 @@ class UserMailer < ActionMailer::Base
     template_name = 'User'
     template_content = []
 
-    @user_fname = user.email
     @user_name = user.email
     if (!user.last_name.blank? && !user.first_name.blank?)
-      @user_name = user.first_name + ' ' + user.last_name 
-      @user_fname = user.first_name
+      @user_name = user.first_name + ' ' + user.last_name
     end
 
     # => Message
@@ -28,21 +26,13 @@ class UserMailer < ActionMailer::Base
       ],
       :headers => { 'Reply-To' => "contacto@agendapro.cl" },
       :global_merge_vars => [
-        # {
-        #   :name => 'UNSUBSCRIBE',
-        #   :content => "Si desea dejar de recibir email puede dar click <a href='#{unsubscribe_url(:user => Base64.encode64(user.email))}'>aquí</a>."
-        # },
-        {
-          :name => 'FNAME',
-          :content => @user_fname
-        },
-        {
-          :name => 'user',
-          :content => user.email
-        },
         {
           :name => 'URL',
-          :content => 'http://www.agendapro.cl'
+          :content => 'www'
+        },
+        {
+          :name => 'EMAIL',
+          :content => user.email
         },
         {
           :name => 'PASSWORD',
@@ -53,8 +43,8 @@ class UserMailer < ActionMailer::Base
       :images => [
         {
           :type => 'image/png',
-          :name => 'AgendaPro.png',
-          :content => Base64.encode64(File.read('app/assets/images/logos/logo_mail.png'))
+          :name => 'LOGO',
+          :content => Base64.encode64(File.read('app/assets/images/logos/logodoble2.png'))
         }
       ]
     }

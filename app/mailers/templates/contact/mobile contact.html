@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]> <html class="no-js lt-ie9 lt-ie8 lt-ie7" lang="es"> <![endif]-->
+<!--[if IE 7]>    <html class="no-js lt-ie9 lt-ie8" lang="es"> <![endif]-->
+<!--[if IE 8]>    <html class="no-js lt-ie9" lang="es"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="es"> <!--<![endif]-->
+  <head>
+    <!-- start: Meta -->
+    <meta charset="utf-8">
+    <title>AgendaPro</title>
+    <meta name="description" content="AgendaPro - Sistema de agendamiento OnLine para empresas y usuarios.">
+    <meta name="author" content="AgendaPro">
+    <meta name="keyword" content="agendapro, agenda, agenda online, reserva, reserva online">
+    <!-- end: Meta -->
+
+    <!-- start: Mobile Specific -->
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <!-- end: Mobile Specific -->
+
+    <!-- start: CSS -->
+    <style type="text/css">
+      /*Boostrap*/
+      html {
+        font-family: sans-serif;
+        -webkit-text-size-adjust: 100%;
+            -ms-text-size-adjust: 100%;
+      }
+      body {
+        margin: 0;
+      }
+      a {
+        background-color: transparent;
+      }
+      a:active,
+      a:hover {
+        outline: 0;
+      }
+      b,
+      strong {
+        font-weight: bold;
+      }
+      table {
+        border-spacing: 0;
+        border-collapse: collapse;
+      }
+      td,
+      th {
+        padding: 0;
+      }
+      * {
+        -webkit-box-sizing: border-box;
+           -moz-box-sizing: border-box;
+                box-sizing: border-box;
+      }
+      *:before,
+      *:after {
+        -webkit-box-sizing: border-box;
+           -moz-box-sizing: border-box;
+                box-sizing: border-box;
+      }
+      html {
+        font-size: 10px;
+
+        -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+      }
+      body {
+        font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+        font-size: 14px;
+        line-height: 1.42857143;
+        color: #333;
+        background-color: #fff;
+      }
+      a {
+        color: #337ab7;
+        text-decoration: none;
+      }
+      a:hover,
+      a:focus {
+        color: #23527c;
+        text-decoration: underline;
+      }
+      a:focus {
+        outline: thin dotted;
+        outline: 5px auto -webkit-focus-ring-color;
+        outline-offset: -2px;
+      }
+      img {
+        vertical-align: middle;
+      }
+      p {
+        margin: 0 0 10px;
+      }
+      .text-left {
+        text-align: left;
+      }
+      .text-right {
+        text-align: right;
+      }
+      .text-center {
+        text-align: center;
+      }
+      table {
+        background-color: transparent;
+      }
+      th {
+        text-align: left;
+      }
+      .table {
+        width: 100%;
+        max-width: 100%;
+        margin-bottom: 20px;
+      }
+      .table > thead > tr > th,
+      .table > tbody > tr > th,
+      .table > tfoot > tr > th,
+      .table > thead > tr > td,
+      .table > tbody > tr > td,
+      .table > tfoot > tr > td {
+        padding: 8px;
+        line-height: 1.42857143;
+        vertical-align: top;
+        border-top: 1px solid #ddd;
+      }
+      .table > thead > tr > th {
+        vertical-align: bottom;
+        border-bottom: 2px solid #ddd;
+      }
+      .center-block {
+        display: block;
+        margin-right: auto;
+        margin-left: auto;
+      }
+      .pull-right {
+        float: right !important;
+      }
+      .pull-left {
+        float: left !important;
+      }
+    </style>
+    <style type="text/css">
+      /* Containers */
+      html,
+      body {
+        font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
+        font-size: 12px;
+        font-weight: 300;
+        color: #505050;
+        background: #ffffff;
+      }
+      table {
+        width: 100%;
+        max-width: 100%;
+        font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
+        font-size: 12px;
+        font-weight: 300;
+        color: #505050;
+        background: #ffffff;
+      }
+      table > thead > tr > th,
+      table > tbody > tr > th,
+      table > tfoot > tr > th,
+      table > thead > tr > td,
+      table > tbody > tr > td,
+      table > tfoot > tr > td {
+        padding: 8px 15px;
+        line-height: 1.42857143;
+        vertical-align: top;
+      }
+      table table {
+        background-color: #ffffff;
+      }
+      .pull-center {
+        text-align: center;
+        margin-left: auto;
+        margin-right: auto;
+      }
+      .content {
+        margin-right: auto;
+        margin-left: auto;
+        max-width: 600px;
+        border: 1px solid #727171;
+        margin-top: 10px;
+        margin-bottom: 10px;
+      }
+      .col-2 {
+        width: 50%;
+      }
+      .col-3 {
+        width: 33%;
+      }
+
+      /* Buttons */
+      .btn-orange {
+        color: #ffffff;
+        background-color: #fd9610;
+        border-color: #db7400;
+      }
+      .btn-orange:hover,
+      .btn-orange:focus,
+      .btn-orange.focus,
+      .btn-orange:active,
+      .btn-orange.active {
+        color: #ffffff;
+        background-color: #db7400;
+        border-color: #DF840D;
+      }
+      .btn-green {
+        color: #ffffff;
+        background-color: #22c488;
+        border-color: #1ba970;
+      }
+      .btn-green:hover,
+      .btn-green:focus,
+      .btn-green.focus,
+      .btn-green:active,
+      .btn-green.active {
+        color: #ffffff;
+        background-color: #1ba970;
+        border-color: #00CA8A;
+      }
+      .btn-red {
+        color: #ffffff;
+        background-color: #fd633f;
+        border-color: #e55938;
+      }
+      .btn-red:hover,
+      .btn-red:focus,
+      .btn-red.focus,
+      .btn-red:active,
+      .btn-red.active {
+        color: #ffffff;
+        background-color: #e55938;
+        border-color: #CD4E31;
+      }
+
+      /* Backgrounds */
+      .background-green {
+        background: #22c488;
+        color: #ffffff;
+      }
+      .background-green > td {
+        padding: 10px 20px;
+      }
+      .background-dark-grey {
+        background: #d2d3d3;
+        color: #ffffff;
+      }
+      .background-dark-grey > td {
+        text-align: center;
+      }
+      .background-light-grey {
+        background: #f1f4f5;
+        color: #727171;
+      }
+
+      /* General */
+      .header,
+      .footer,
+      .sub-footer {
+        background: #f1f4f5;
+        color: #727171;
+        font-size: 10px;
+        min-height: 24px;
+      }
+      .header > td {
+        padding: 5px 30px;
+        text-align: center;
+      }
+      .header a,
+      .header a:hover,
+      .header a:active {
+        color: #727171;
+        text-decoration: none;
+      }
+      .footer > td {
+        padding: 5px 30px;
+      }
+      .footer > td:first-child:not(:last-child) {
+        padding-right: 10px;
+      }
+      .footer > td:last-child:not(:first-child) {
+        padding-left: 10px;
+      }
+      .footer > td > p {
+        margin: 0;
+      }
+      .logo {
+        width: 50%;
+        max-width: 118px;
+      }
+      .footer img {
+        margin-left: -1px;
+        margin-right: 10px;
+        width: 20px;
+        display: inline;
+        vertical-align: top;
+      }
+      h4 {
+        font-size: 20px;
+      }
+
+      /* Contact */
+      .background-green > td {
+        padding: 10px 60px;
+      }
+      .box {
+        padding: 10px;
+        border: 1px solid #949292;
+        color: #727171;
+        width: 100%;
+        height: 100%;
+        display: inline-block;
+      }
+      .text-green {
+        color: #22c488;
+        font-weight: bold;
+      }
+      .footer {
+        font-size: 12px;
+      }
+      .footer table.table {
+        background: transparent;
+        color: #727171;
+        margin-bottom: 0;
+      }
+      .footer table.table > tbody > tr > td {
+        border-top: none;
+      }
+      table.table p {
+        margin: 0;
+        word-break: break-word;
+      }
+      .sub-footer{
+        color: #505050;
+        background: #ffffff;
+        font-size: 10px;
+      }
+    </style>
+    <!-- end: CSS -->
+  </head>
+
+  <body>
+    <table class="content">
+      <tbody>
+        <!-- Start: Header -->
+        <tr class="header">
+          <td colspan="2">
+            *|IF:URL|*
+            <a href="http://*|URL|*.agendapro.cl" target="_blanck">*|URL|*.agendapro.cl</a>
+            *|END:IF|*
+          </td>
+        </tr>
+        <!-- End: Header -->
+
+        <!-- Start: Content -->
+        <tr>
+          <td colspan="2">
+            <div class="pull-center">
+              <img src="cid:LOGO" class="logo" alt="Logo">
+            </div>
+          </td>
+        </tr>
+        <tr class="background-green">
+          <td colspan="2">
+            <p class="text-center">*|NAME|* intento crear una compañia desde el celular.</p>
+          </td>
+        </tr>
+        <tr><td colspan="2"><!-- white space --></td></tr>
+        <tr>
+          <td>
+            <div class="box">
+              <p class="text-green">Mensaje</p>
+              <p>*|MESSAGE|*</p>
+              &nbsp;
+            </div>
+          </td>
+          <td>
+            <div class="box">
+              <p class="text-green">Datos de Contacto</p>
+              <p>Nombre: *|NAME|*</p>
+              <p>Mail: *|EMAIL|*</p>
+              <p>Teléfono: *|PHONE|*</p>
+              &nbsp;
+            </div>
+          </td>
+        </tr>
+        <!-- End: Content -->
+
+        <!-- Start: Footer -->
+        <tr class="footer">
+          <td colspan="2">
+            <table class="table">
+              <tbody>
+                <tr>
+                  <td class="col-3">
+                    <p class="text-left">
+                      <img src="http://agendapro.cl/assets/email/address.png" alt="Direccion">
+                      Nuestra Señora de los Angeles 185, Oficina D, Las Condes
+                    </p>
+                  </td>
+                  <td class="col-3">
+                      <p class="text-center">
+                        <img src="http://agendapro.cl/assets/email/phone.png" alt="Telefono">
+                        (+56 9) 5178 5898
+                      </p>
+                    </td>
+                  <td class="col-3">
+                    <p class="text-right">
+                      <img src="http://agendapro.cl/assets/email/email.png" alt="E-mail">
+                      contacto@agendapro.cl
+                    </p>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </td>
+        </tr>
+        <tr class="sub-footer">
+          <td class="col-2">
+            <p class="text-left">Este es un email automático, para contactar a la empresa por favor responde este correo.</p>
+          </td>
+          <td class="col-2">
+            <p class="text-right">Copyright 2013 | Gunei Investment SpA | Todos los derechos reservados</p>
+          </td>
+        </tr>
+        <!-- End: Footer -->
+      </tbody>
+    </table>
+  </body>
+</html>

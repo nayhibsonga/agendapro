@@ -3,7 +3,9 @@
 <div class="row" id="navegacion-workflow">
   <div class="col-md-12">
     <div class="container" style="color: #505050 !important; padding-top: 5px;">
-     <i class="fa fa-clock-o gray-icon">&nbsp;&nbsp;<span style="font-size: 24px !important; margin-top: -5px;">Elegir la nueva hora</span></i>
+
+     <i class="fa fa-clock-o gray-icon">&nbsp;&nbsp;<span style="font-size: 24px !important; margin-top: -11px;">Elegir la nueva hora</span></i>
+
     </div>
   </div>
 </div>
@@ -11,8 +13,8 @@
 <div class="main">
   <div class="container">
     <div clas="row" id="espacio-workflow">
-      <div class="col-md-12" id="staff-calendar">
-        
+      <div class="col-md-12" id="staff-calendar" class="edit-booking-calendar">
+
           <div class="panel panel-info">
             <div class="calendar-head">
               <div class="panel-title">
@@ -22,7 +24,7 @@
                   </div>
                   <div class="col-md-8">
                     <span class="tittle"></span>
-                    
+
                   </div>
                   <div class="col-md-2">
                     <span class="date-span">
@@ -39,12 +41,12 @@
             <div class="days-row">
             </div>
             <div class="panel-body">
-              
+
               <div class="horario" style="max-height: 350px; overflow-y: auto;"></div>
             </div>
-            
+
           </div>
-        
+
       </div>
     </div>
     <div class="row">
@@ -53,9 +55,7 @@
           <input type="hidden" name="id" id="id" value="<%= @booking.id %>">
           <input type="hidden" name="start" id="start" value="">
           <input type="hidden" name="end" id="end" value="">
-
           <button type="submit" class="submitBtn">Modificar Hora</button>
-
         <% end %>
       </div>
     </div>
@@ -85,7 +85,7 @@
             firstDay: 1,
             dateFormat: 'yy-mm-dd',
             onSelect: function(newDate){
-              
+
               var data = {
                 date: newDate,
                 provider: $('#booking').data('booking').service_provider_id,
@@ -97,12 +97,12 @@
 
               calendar.rebuild('/get_available_time.json', data);
               console.log("Rebuild calendar.");
-              
-              
+
+
               $(document).on('hourClick', function (e) {
                 addBooking(e);
               });
-              
+
 
               $(function () {
                 $('#prev').click(function () {
@@ -116,7 +116,7 @@
             }
         });
 
-        $(document.body).on('click', '.date-span', function(e) { 
+        $(document.body).on('click', '.date-span', function(e) {
           $(e.currentTarget).find('input').datepicker('show');
         });
 

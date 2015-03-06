@@ -1,0 +1,90 @@
+/**
+ * The month and year selectors.
+ */
+.picker__select--month:focus,
+.picker__select--year:focus {
+  border-color: #1ba970;
+}
+/**
+ * The month navigation buttons.
+ */
+.picker__nav--prev:hover,
+.picker__nav--next:hover {
+  background: #adf0d1;
+}
+/**
+ * The days on the calendar
+ */
+.picker__day--today:before {
+  border-top: 0.5em solid #22c488;
+}
+.picker__day--infocus:hover,
+.picker__day--outfocus:hover {
+  background: #adf0d1;
+}
+.picker__day--highlighted {
+  border-color: #1ba970;
+}
+.picker__day--highlighted:hover,
+.picker--focused .picker__day--highlighted {
+  background: #adf0d1;
+}
+.picker__day--selected,
+.picker__day--selected:hover,
+.picker--focused .picker__day--selected {
+  background: #1ba970;
+}
+/**
+ * The footer containing the "today" and "clear" buttons.
+ */
+.picker__button--today:hover,
+.picker__button--clear:hover {
+  background: #adf0d1;
+  border-bottom-color: #adf0d1;
+}
+.picker__button--today:focus,
+.picker__button--clear:focus {
+  background: #adf0d1;
+  border-color: #1ba970;
+}
+.picker__button--today:before {
+  border-top: 0.66em solid #22c488;
+}
+
+/**
+ * Cancel button.
+ */
+.picker__button--cancel {
+  border: 1px solid #ffffff;
+  background: #ffffff;
+  font-size: .8em;
+  padding: .66em 0;
+  font-weight: bold;
+  width: 50%;
+  display: inline-block;
+  vertical-align: bottom;
+}
+.picker__button--cancel:hover {
+  cursor: pointer;
+  color: #000000;
+  background: #adf0d1;
+  border-bottom-color: #adf0d1;
+}
+.picker__button--cancel:focus {
+  background: #adf0d1;
+  border-color: #1ba970;
+  outline: none;
+}
+.picker__button--cancel:before {
+  position: relative;
+  display: inline-block;
+  height: 0;
+}
+.picker__button--cancel:before {
+  content: "\2718";
+  margin-right: .35em;
+  top: -0.1em;
+  color: #e55938;
+  vertical-align: top;
+  font-size: 1.1em;
+}

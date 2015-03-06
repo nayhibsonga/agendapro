@@ -1,53 +1,93 @@
 <div class="container container-margin">
-	<div class="row">
-		<div class="col-xs-12">
-			<%= form_tag("user_data", method: "post", role: "form") do %>
-				<%= hidden_field_tag :service, @service.id %>
-				<%= hidden_field_tag :provider, nil %>
-				<%= hidden_field_tag :start, nil %>
-				<%= hidden_field_tag :end, nil %>
-				<%= hidden_field_tag :origin, true %>
-            	<%= hidden_field_tag :provider_lock, @lock %>
-				<%= hidden_field_tag :location, @location.id %>
-				<% unless @available_time.length == 0 %>
-				<div class="form-group">
-					<label for="">Selecciona un horario</label>
-					<% @available_time.each do |time| %>
-					<button type="submit" class="btn btn-block btn-default btn-lg" data-date="<%= time[:date] %>" data-start="<%= time[:hour][:start] %>" data-end="<%= time[:hour][:end] %>" data-provider="<%= time[:provider] %>"><%= time[:hour][:start]  %></button>
-					<% end %>
-				</div>
-				<a type="button" class="btn btn-green btn-block" disabled>Siguiente</a>
-				<% else %>
-				<h3>¡Lo sentimos!</h3>
-				<br />
-				<p>No hay horarios disponibles para este día o no se puede reservar con tan poca anticipación.<p/>
-				<p>Por favor ponte en contacto con la empresa si requieres más información al teléfono <%= @location.phone %><%= if @location.email && @location.email != "" then 'o al email '+@location.email end %></p>
-				<% end %>
-			<% end %>
-		</div>
-	</div>
+  <div class="row">
+    <div class="col-xs-12">
+      <h2 style="margin-top: 0;">Selecciona un horario</h2>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-xs-12">
+      <%= form_tag("select_hour", method: "post", role: "form", id: "form-date") do %>
+        <%= hidden_field_tag :location, @location.id %>
+        <%= hidden_field_tag :service, @service.id %>
+        <%= hidden_field_tag :provider, params[:provider] %>
+        <%= hidden_field_tag :datepicker, @date %>
+        <div class="form-group">
+          <span class="pull-left action" data-date="<%= @date - 1 %>" style="z-index: 5;"><i class="fa fa-caret-left fa-lg"></i></span>
+          <span class="pull-right action" data-date="<%= @date + 1 %>" style="z-index: 5;"><i class="fa fa-caret-right fa-lg"></i></span>
+          <span class="center-block text-center" style="z-index: 0;"><%= l @date, format: :day %></span>
+        </div>
+      <% end %>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-xs-12">
+      <%= form_tag("user_data", method: "post", role: "form") do %>
+        <%= hidden_field_tag :service, @service.id %>
+        <%= hidden_field_tag :staff, nil %>
+        <%= hidden_field_tag :start, nil %>
+        <%= hidden_field_tag :end, nil %>
+        <%= hidden_field_tag :origin, true %>
+        <%= hidden_field_tag :provider_lock, @lock %>
+        <%= hidden_field_tag :location, @location.id %>
+        <% unless @available_time.length == 0 %>
+        <div class="form-group">
+          <% @available_time.each do |time| %>
+          <button type="submit" class="btn btn-block btn-default btn-lg" data-date="<%= time[:date] %>" data-start="<%= time[:hour][:start] %>" data-end="<%= time[:hour][:end] %>" data-provider="<%= time[:provider] %>"><%= time[:hour][:start]  %></button>
+          <% end %>
+        </div>
+        <a type="button" class="btn btn-green btn-block" disabled>Siguiente</a>
+        <% else %>
+        <h3>¡Lo sentimos!</h3>
+        <br />
+        <p>No hay horarios disponibles para este día, intenta eligiendo otro día.<p/>
+        <p>Puedes ponerte en contacto con la empresa si requieres más información al teléfono <%= @location.phone %><%= if @location.email && @location.email != "" then 'o al email ' + @location.email end %></p>
+        <% end %>
+      <% end %>
+    </div>
+  </div>
 </div>
 
+<% content_for :stylesheets do %>
+<%= stylesheet_link_tag "datepicker" %>
+<% end %>
+
 <% content_for :scripts do %>
+<%= javascript_include_tag "datepicker" %>
 <%= javascript_include_tag "mobile/workflow" %>
 <script type="text/javascript">
-	$(document).ready(function(){
-		$('button[type="submit"]').click(function (event) {
-			event.preventDefault();
-			$('.btn-press').removeClass('btn-press').addClass('btn-default');
-			$(event.target).addClass('btn-press').removeClass('btn-default');
-			$('a.btn-green').attr('disabled', false);
-			$("html, body").delay(500).animate({ scrollTop: $(document).height() }, 1000, "swing");
+  $(document).ready(function(){
+    $('button[type="submit"]').click(function (event) {
+      event.preventDefault();
+      $('.btn-press').removeClass('btn-press').addClass('btn-default');
+      $(event.target).addClass('btn-press').removeClass('btn-default');
+      $('a.btn-green').attr('disabled', false);
+      $("html, body").delay(500).animate({ scrollTop: $(document).height() }, 1000, "swing");
 
-			var date = $(event.target).data('date');
-			var start = $(event.target).data('start');
-			var end = $(event.target).data('end');
-			var provider = $(event.target).data('provider');
-			addBooking(date, start, end, provider);
-		});
-		$('a.btn-green').click(function (event) {
-			$('form').submit();
-		});
-	});
+      var date = $(event.target).data('date');
+      var start = $(event.target).data('start');
+      var end = $(event.target).data('end');
+      var provider = $(event.target).data('provider');
+      addBooking(date, start, end, provider);
+    });
+    $('a.btn-green').click(function (event) {
+      $('form').submit();
+    });
+    $('span.action').click(function (event) {
+      var date = $(event.target).parent().data('date');
+      $('#datepicker').val(date);
+      $('#form-date').submit();
+    });
+
+    datepicker('span.center-block', {
+      min: true,
+      format: 'dddd d !de mmmm !de yyyy',
+      onSet: function (context) {
+        if (context.select) {
+          $('#datepicker').val(new Date(context.select));
+          $('#form-date').submit();
+        };
+      }
+    });
+  });
 </script>
 <% end %>

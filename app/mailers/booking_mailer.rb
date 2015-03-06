@@ -1,7 +1,7 @@
 class BookingMailer < ActionMailer::Base
 	require 'mandrill'
 	require 'base64'
-	
+
 	include ActionView::Helpers::NumberHelper
 
 	def book_service_mail (book_info)
@@ -15,29 +15,28 @@ class BookingMailer < ActionMailer::Base
 			:from_email => 'no-reply@agendapro.cl',
 			:from_name => book_info.service_provider.company.name,
 			:subject => 'Nueva Reserva en ' + book_info.service_provider.company.name,
-			:to => [
-				{
-					:email => book_info.service_provider.notification_email,
-					:type => 'to'
-				}
-			],
+			:to => [],
 			:headers => { 'Reply-To' => book_info.service_provider.notification_email },
 			:global_merge_vars => [
-				# {
-				# 	:name => 'UNSUBSCRIBE',
-				# 	:content => "Si deseas dejar de recibir emails de AgendaPro, puedes dar click <a href='#{unsubscribe_url(:user => Base64.encode64(book_info.client.email))}'>aquí</a>"
-				# },
+				{
+					:name => 'URL',
+					:content => book_info.service_provider.company.web_address
+				},
 				{
 					:name => 'COMPANYNAME',
 					:content => book_info.service_provider.company.name
 				},
 				{
-					:name => 'SERVICENAME',
-					:content => book_info.service.name
+					:name => 'CLIENTNAME',
+					:content => book_info.client.first_name + ' ' + book_info.client.last_name
 				},
 				{
-					:name => 'LOCALADDRESS',
-					:content => book_info.location.address + " - " + District.find(book_info.location.district_id).name
+					:name => 'SERVICEPROVIDER',
+					:content => book_info.service_provider.public_name
+				},
+				{
+					:name => 'SERVICENAME',
+					:content => book_info.service.name
 				},
 				{
 					:name => 'BSTART',
@@ -45,58 +44,16 @@ class BookingMailer < ActionMailer::Base
 				},
 				{
 					:name => 'SIGNATURE',
-					:content => if !book_info.location.company.company_setting.signature.blank? then book_info.location.company.company_setting.signature.gsub('\r\n', '<br />') end
-				},
-				{
-					:name => 'SERVICEPROVIDER',
-					:content => book_info.service_provider.public_name
+					:content => book_info.location.company.company_setting.signature
 				}
 			],
-			:merge_vars => [
-				{
-					:rcpt => book_info.service_provider.notification_email,
-					:vars => [
-						{
-							:name => 'NAME',
-							:content => book_info.service_provider.public_name
-						},
-						{
-							:name => 'MESSAGE',
-							:content => 'fue reservado un servicio contigo'
-						},
-						{
-							:name => 'WHAT',
-							:content => "¿Qué reservaron?"
-						},
-						{
-							:name => 'BOOKING',
-							:content => "Resumen de la Nueva Reserva"
-						},
-						{
-							:name => 'CLIENTNAME',
-							:content => book_info.client.first_name + ' ' + book_info.client.last_name
-						},
-						{
-							:name => 'CLIENTPHONE',
-							:content => number_to_phone(book_info.client.phone)
-						},
-						{
-							:name => 'CLIENTEMAIL',
-							:content => book_info.client.email
-						},
-						{
-							:name => 'COMPANYCOMMENT',
-							:content => book_info.company_comment
-						}
-					]
-				}
-			],
+			:merge_vars => [],
 			:tags => ['booking', 'new_booking'],
 			:images => [
 				{
 					:type => 'image/png',
-					:name => 'company_img.jpg',
-					:content => Base64.encode64(File.read('app/assets/ico/Iso_Pro_Color.png'))
+					:name => 'LOGO',
+					:content => Base64.encode64(File.read('app/assets/images/logos/logodoble2.png'))
 				}
 			],
 			:attachments => [
@@ -110,20 +67,36 @@ class BookingMailer < ActionMailer::Base
 
 		# => Logo empresa
 		if book_info.location.company.logo_url
-			company_logo = {
-				:type => 'image/' +  File.extname(book_info.location.company.logo_url),
-				:name => 'company_img.jpg',
-				:content => Base64.encode64(File.read('public' + book_info.location.company.logo_url.to_s))
-			}
-			message[:images] = [company_logo]
+			message[:images] = [{
+							:type => MIME::Types.type_for(book_info.location.company.logo_url).first.content_type,
+							:name => 'LOGO',
+							:content => Base64.encode64(File.read('public' + book_info.location.company.logo_url.to_s))
+						}]
 		end
 
 		if !book_info.notes.blank?
 			message[:global_merge_vars] << {:name => 'BNOTES', :content => book_info.notes}
 		end
 
+		# Notificacion service provider
+		if book_info.service_provider.get_booking_configuration_email == 0
+			message[:to] << {
+					:email => book_info.service_provider.notification_email,
+					:type => 'to'
+				}
+			message[:merge_vars] << {
+					:rcpt => book_info.service_provider.notification_email,
+					:vars => [
+						{
+							:name => 'COMPANYCOMMENT',
+							:content => book_info.company_comment
+						}
+					]
+				}
+		end
+
 		# Email notificacion local
-		if book_info.location.notification and !book_info.location.email.blank?
+		if book_info.location.notification and !book_info.location.email.blank? and book_info.location.get_booking_configuration_email == 0
 			message[:to] << {
 				:email => book_info.location.email,
 				:type => 'to'
@@ -132,41 +105,18 @@ class BookingMailer < ActionMailer::Base
 				:rcpt => book_info.location.email,
 				:vars => [
 					{
-						:name => 'NAME',
-						:content => book_info.location.name
-					},
-					{
-						:name => 'MESSAGE',
-						:content => 'fue reservado un servicio en el local'
-					},
-					{
-						:name => 'WHAT',
-						:content => "¿Qué reservaron?"
-					},
-					{
-						:name => 'BOOKING',
-						:content => "Resumen de la Nueva Reserva"
-					},
-					{
-						:name => 'CLIENTNAME',
-						:content => book_info.client.first_name + ' ' + book_info.client.last_name
-					},
-					{
-						:name => 'CLIENTPHONE',
-						:content => number_to_phone(book_info.client.phone)
-					},
-					{
-						:name => 'CLIENTEMAIL',
-						:content => book_info.client.email
-					},
-					{
 						:name => 'COMPANYCOMMENT',
 						:content => book_info.company_comment
 					}
 				]
 			}
+			message[:global_merge_vars][0] = {
+						:name => 'SERVICEPROVIDER',
+						:content => book_info.location.name
+					}
 		end
 
+		# Notificacion cliente
 		if book_info.send_mail
 			message[:to] << {
 					:email => book_info.client.email,
@@ -176,38 +126,25 @@ class BookingMailer < ActionMailer::Base
 			message[:merge_vars] << {
 				:rcpt => book_info.client.email,
 				:vars => [
-					
 					{
-						:name => 'NAME',
-						:content => book_info.client.first_name
-					},
-					{
-						:name => 'MESSAGE',
-						:content => 'tu reserva fue recibida exitosamente'
-					},
-					{
-						:name => 'EDIT',
-						:content => "<a class='btn btn-warning' href='#{booking_edit_url(:confirmation_code => book_info.confirmation_code)}' style='display: inline-block;padding: 6px 12px;margin-bottom: 5px;font-size: 14px;font-weight: normal;line-height: 1.428571429;text-align: center;white-space: nowrap;vertical-align: middle;cursor: pointer;background-image: none;border: 1px solid transparent;border-radius: 4px;-webkit-user-select: none;-moz-user-select: none;-ms-user-select: none;-o-user-select: none;user-select: none;color: #ffffff;background-color: #f0ad4e;border-color: #eea236;text-decoration:none;'>Modificar Reserva</a>"
-					},
-					{
-						:name => 'CANCEL',
-						:content => "<a class='btn btn-danger' href='#{booking_cancel_url(:confirmation_code => book_info.confirmation_code)}' style='display: inline-block;padding: 6px 12px;margin-bottom: 5px;font-size: 14px;font-weight: normal;line-height: 1.428571429;text-align: center;white-space: nowrap;vertical-align: middle;cursor: pointer;background-image: none;border: 1px solid transparent;border-radius: 4px;-webkit-user-select: none;-moz-user-select: none;-ms-user-select: none;-o-user-select: none;user-select: none;color: #ffffff;background-color: #d9534f;border-color: #d43f3a;text-decoration:none;'>Cancelar Reserva</a>"
+						:name => 'LOCALADDRESS',
+						:content => book_info.location.address + " - " + District.find(book_info.location.district_id).name
 					},
 					{
 						:name => 'LOCATIONPHONE',
 						:content => number_to_phone(book_info.location.phone)
 					},
 					{
-						:name => 'WHAT',
-						:content => "¿Qué reservaste?"
+						:name => 'EDIT',
+						:content => booking_edit_url(:confirmation_code => book_info.confirmation_code)
 					},
 					{
-						:name => 'BOOKING',
-						:content => "Resumen de tu Reserva"
+						:name => 'CANCEL',
+						:content => booking_cancel_url(:confirmation_code => book_info.confirmation_code)
 					},
 					{
-						:name => 'HOURS',
-						:content => book_info.location.company.company_setting.before_edit_booking
+						:name => 'CLIENT',
+						:content => true
 					}
 				]
 			}
@@ -229,7 +166,7 @@ class BookingMailer < ActionMailer::Base
 		mandrill = Mandrill::API.new Agendapro::Application.config.api_key
 
 		# => Template
-		template_name = 'Booking'
+		template_name = 'Update Booking'
 		template_content = []
 
 		# => Message
@@ -237,25 +174,24 @@ class BookingMailer < ActionMailer::Base
 			:from_email => 'no-reply@agendapro.cl',
 			:from_name => book_info.service_provider.company.name,
 			:subject => 'Reserva Actualizada en ' + book_info.service_provider.company.name,
-			:to => [
-				{
-					:email => book_info.service_provider.notification_email,
-					:type => 'to'
-				}
-			],
+			:to => [],
 			:headers => { 'Reply-To' => book_info.service_provider.notification_email },
 			:global_merge_vars => [
-				# {
-				# 	:name => 'UNSUBSCRIBE',
-				# 	:content => "Si deseas dejar de recibir emails de AgendaPro, puedes dar click <a href='#{unsubscribe_url(:user => Base64.encode64(book_info.client.email))}'>aquí</a>"
-				# },
 				{
-					:name => 'OLD_START',
-					:content => l(old_start)
+					:name => 'URL',
+					:content => book_info.service_provider.company.web_address
 				},
 				{
-					:name => 'LOCALADDRESS',
-					:content => book_info.location.address + " - " + District.find(book_info.location.district_id).name
+					:name => 'COMPANYNAME',
+					:content => book_info.service_provider.company.name
+				},
+				{
+					:name => 'CLIENTNAME',
+					:content => book_info.client.first_name + ' ' + book_info.client.last_name
+				},
+				{
+					:name => 'SERVICEPROVIDER',
+					:content => book_info.service_provider.public_name
 				},
 				{
 					:name => 'SERVICENAME',
@@ -267,63 +203,20 @@ class BookingMailer < ActionMailer::Base
 				},
 				{
 					:name => 'SIGNATURE',
-					:content => if !book_info.location.company.company_setting.signature.blank? then book_info.location.company.company_setting.signature.gsub('\r\n', '<br />') end
+					:content => book_info.location.company.company_setting.signature
 				},
 				{
-					:name => 'COMPANYNAME',
-					:content => book_info.service_provider.company.name
-				},
-				{
-					:name => 'SERVICEPROVIDER',
-					:content => book_info.service_provider.public_name
+					:name => 'OLD_START',
+					:content => l(old_start)
 				}
 			],
-			:merge_vars => [
-				{
-					:rcpt => book_info.service_provider.notification_email,
-					:vars => [
-						
-						{
-							:name => 'NAME',
-							:content => book_info.service_provider.public_name
-						},
-						{
-							:name => 'MESSAGE',
-							:content => 'fue modificada una de tus reservas, a continuación se presentan los detalles actualizados'
-						},
-						{
-							:name => 'WHAT',
-							:content => "¿Qué reservaron?"
-						},
-						{
-							:name => 'BOOKING',
-							:content => "Resumen de la Reserva"
-						},
-						{
-							:name => 'CLIENTNAME',
-							:content => book_info.client.first_name + ' ' + book_info.client.last_name
-						},
-						{
-							:name => 'CLIENTPHONE',
-							:content => number_to_phone(book_info.client.phone)
-						},
-						{
-							:name => 'CLIENTMAIL',
-							:content => book_info.client.email
-						},
-						{
-							:name => 'COMPANYCOMMENT',
-							:content => book_info.company_comment
-						}
-					]
-				}
-			],
+			:merge_vars => [],
 			:tags => ['booking', 'edit_booking'],
 			:images => [
 				{
 					:type => 'image/png',
-					:name => 'company_img.jpg',
-					:content => Base64.encode64(File.read('app/assets/ico/Iso_Pro_Color.png'))
+					:name => 'LOGO',
+					:content => Base64.encode64(File.read('app/assets/images/logos/logodoble2.png'))
 				}
 			],
 			:attachments => [
@@ -341,16 +234,32 @@ class BookingMailer < ActionMailer::Base
 
 		# => Logo empresa
 		if book_info.location.company.logo_url
-			company_logo = {
-				:type => 'image/' +  File.extname(book_info.location.company.logo_url),
-				:name => 'company_img.jpg',
-				:content => Base64.encode64(File.read('public' + book_info.location.company.logo_url.to_s))
-			}
-			message[:images] = [company_logo]
+			message[:images] = [{
+							:type => MIME::Types.type_for(book_info.location.company.logo_url).first.content_type,
+							:name => 'LOGO',
+							:content => Base64.encode64(File.read('public' + book_info.location.company.logo_url.to_s))
+						}]
+		end
+
+		# Notificacion service provider
+		if book_info.service_provider.get_booking_configuration_email == 0
+			message[:to] << {
+					:email => book_info.service_provider.notification_email,
+					:type => 'to'
+				}
+			message[:merge_vars] << {
+					:rcpt => book_info.service_provider.notification_email,
+					:vars => [
+						{
+							:name => 'COMPANYCOMMENT',
+							:content => book_info.company_comment
+						}
+					]
+				}
 		end
 
 		# Email notificacion local
-		if book_info.location.notification and !book_info.location.email.blank?
+		if book_info.location.notification and !book_info.location.email.blank? and book_info.location.get_booking_configuration_email == 0
 			message[:to] << {
 				:email => book_info.location.email,
 				:type => 'to'
@@ -359,41 +268,18 @@ class BookingMailer < ActionMailer::Base
 				:rcpt => book_info.location.email,
 				:vars => [
 					{
-						:name => 'NAME',
-						:content => book_info.location.name
-					},
-					{
-						:name => 'MESSAGE',
-						:content => 'fue modificada una reserva, a continuación se presentan los detalles actualizados'
-					},
-					{
-						:name => 'WHAT',
-						:content => "¿Qué reservaron?"
-					},
-					{
-						:name => 'BOOKING',
-						:content => "Resumen de la Reserva"
-					},
-					{
-						:name => 'CLIENTNAME',
-						:content => book_info.client.first_name + ' ' + book_info.client.last_name
-					},
-					{
-						:name => 'CLIENTPHONE',
-						:content => number_to_phone(book_info.client.phone)
-					},
-					{
-						:name => 'CLIENTEMAIL',
-						:content => book_info.client.email
-					},
-					{
 						:name => 'COMPANYCOMMENT',
 						:content => book_info.company_comment
 					}
 				]
 			}
+			message[:global_merge_vars][0] = {
+						:name => 'SERVICEPROVIDER',
+						:content => book_info.location.name
+					}
 		end
 
+		# Notificacion cliente
 		if book_info.send_mail
 			message[:to] << {
 				:email => book_info.client.email,
@@ -403,38 +289,25 @@ class BookingMailer < ActionMailer::Base
 			message[:merge_vars] << {
 				:rcpt => book_info.client.email,
 				:vars => [
-					
 					{
-						:name => 'NAME',
-						:content => book_info.client.first_name
-					},
-					{
-						:name => 'MESSAGE',
-						:content => 'tu reserva fue actualizada exitosamente'
-					},
-					{
-						:name => 'EDIT',
-						:content => "<a class='btn btn-warning' href='#{booking_edit_url(:confirmation_code => book_info.confirmation_code)}' style='display: inline-block;padding: 6px 12px;margin-bottom: 0;font-size: 14px;font-weight: normal;line-height: 1.428571429;text-align: center;white-space: nowrap;vertical-align: middle;cursor: pointer;background-image: none;border: 1px solid transparent;border-radius: 4px;-webkit-user-select: none;-moz-user-select: none;-ms-user-select: none;-o-user-select: none;user-select: none;color: #ffffff;background-color: #f0ad4e;border-color: #eea236;text-decoration:none;'>Modificar Reserva</a>"
-					},
-					{
-						:name => 'CANCEL',
-						:content => "<a class='btn btn-danger' href='#{booking_cancel_url(:confirmation_code => book_info.confirmation_code)}' style='display: inline-block;padding: 6px 12px;margin-bottom: 0;font-size: 14px;font-weight: normal;line-height: 1.428571429;text-align: center;white-space: nowrap;vertical-align: middle;cursor: pointer;background-image: none;border: 1px solid transparent;border-radius: 4px;-webkit-user-select: none;-moz-user-select: none;-ms-user-select: none;-o-user-select: none;user-select: none;color: #ffffff;background-color: #d9534f;border-color: #d43f3a;text-decoration:none;'>Cancelar Reserva</a>"
+						:name => 'LOCALADDRESS',
+						:content => book_info.location.address + " - " + District.find(book_info.location.district_id).name
 					},
 					{
 						:name => 'LOCATIONPHONE',
 						:content => number_to_phone(book_info.location.phone)
 					},
 					{
-						:name => 'WHAT',
-						:content => "¿Qué reservaste?"
+						:name => 'EDIT',
+						:content => booking_edit_url(:confirmation_code => book_info.confirmation_code)
 					},
 					{
-						:name => 'BOOKING',
-						:content => "Resumen de tu Reserva"
+						:name => 'CANCEL',
+						:content => booking_cancel_url(:confirmation_code => book_info.confirmation_code)
 					},
 					{
-						:name => 'HOURS',
-						:content => book_info.location.company.company_setting.before_edit_booking
+						:name => 'CLIENT',
+						:content => true
 					}
 				]
 			}
@@ -456,7 +329,7 @@ class BookingMailer < ActionMailer::Base
 		mandrill = Mandrill::API.new Agendapro::Application.config.api_key
 
 		# => Template
-		template_name = 'Booking'
+		template_name = 'Confirm Booking'
 		template_content = []
 
 		# => Message
@@ -464,18 +337,9 @@ class BookingMailer < ActionMailer::Base
 			:from_email => 'no-reply@agendapro.cl',
 			:from_name => 'AgendaPro',
 			:subject => 'Reserva Confirmada de ' + book_info.client.first_name + ' ' + book_info.client.last_name,
-			:to => [
-				{
-					:email => book_info.service_provider.notification_email,
-					:type => 'to'
-				}
-			],
+			:to => [],
 			:headers => { 'Reply-To' => book_info.service_provider.notification_email },
 			:global_merge_vars => [
-				# {
-				# 	:name => 'UNSUBSCRIBE',
-				# 	:content => "Si deseas dejar de recibir emails de AgendaPro, puedes dar click <a href='#{unsubscribe_url(:user => Base64.encode64(book_info.client.email))}'>aquí</a>"
-				# },
 				{
 					:name => 'SERVICENAME',
 					:content => book_info.service.name
@@ -485,8 +349,12 @@ class BookingMailer < ActionMailer::Base
 					:content => book_info.location.address + " - " + District.find(book_info.location.district_id).name
 				},
 				{
-					:name => 'COMPANYNAME',
-					:content => book_info.service_provider.company.name
+					:name => 'CLIENTNAME',
+					:content => book_info.client.first_name + ' ' + book_info.client.last_name
+				},
+				{
+					:name => 'SERVICEPROVIDER',
+					:content => book_info.service_provider.public_name
 				},
 				{
 					:name => 'BSTART',
@@ -494,58 +362,24 @@ class BookingMailer < ActionMailer::Base
 				},
 				{
 					:name => 'SIGNATURE',
-					:content => if !book_info.location.company.company_setting.signature.blank? then book_info.location.company.company_setting.signature.gsub('\r\n', '<br />') end
+					:content => book_info.location.company.company_setting.signature
 				},
 				{
-					:name => 'SERVICEPROVIDER',
-					:content => book_info.service_provider.public_name
-				}
-			],
-			:merge_vars => [
+					:name => 'COMPANYNAME',
+					:content => book_info.service_provider.company.name
+				},
 				{
-					:rcpt => book_info.service_provider.notification_email,
-					:vars => [
-						{
-							:name => 'NAME',
-							:content => book_info.service_provider.public_name
-						},
-						{
-							:name => 'MESSAGE',
-							:content => 'tu cliente ha confirmado la siguiente reserva'
-						},
-						{
-							:name => 'WHAT',
-							:content => "¿Qué reservaron?"
-						},
-						{
-							:name => 'BOOKING',
-							:content => "Resumen de la Reserva Confirmada"
-						},
-						{
-							:name => 'CLIENTNAME',
-							:content => book_info.client.first_name + ' ' + book_info.client.last_name
-						},
-						{
-							:name => 'CLIENTPHONE',
-							:content => number_to_phone(book_info.client.phone)
-						},
-						{
-							:name => 'CLIENTMAIL',
-							:content => book_info.client.email
-						},
-						{
-							:name => 'COMPANYCOMMENT',
-							:content => book_info.company_comment
-						}
-					]
+					:name => 'URL',
+					:content => book_info.service_provider.company.web_address
 				}
 			],
+			:merge_vars => [],
 			:tags => ['booking', 'edit_booking'],
 			:images => [
 				{
 					:type => 'image/png',
-					:name => 'company_img.jpg',
-					:content => Base64.encode64(File.read('app/assets/ico/Iso_Pro_Color.png'))
+					:name => 'LOGO',
+					:content => Base64.encode64(File.read('app/assets/images/logos/logodoble2.png'))
 				}
 			]
 		}
@@ -556,16 +390,32 @@ class BookingMailer < ActionMailer::Base
 
 		# => Logo empresa
 		if book_info.location.company.logo_url
-			company_logo = {
-				:type => 'image/' +  File.extname(book_info.location.company.logo_url),
-				:name => 'company_img.jpg',
-				:content => Base64.encode64(File.read('public' + book_info.location.company.logo_url.to_s))
-			}
-			message[:images] = [company_logo]
+			message[:images] = [{
+							:type => MIME::Types.type_for(book_info.location.company.logo_url).first.content_type,
+							:name => 'LOGO',
+							:content => Base64.encode64(File.read('public' + book_info.location.company.logo_url.to_s))
+						}]
+		end
+
+		# Notificacion service provider
+		if book_info.service_provider.get_booking_configuration_email == 0
+			message[:to] << {
+					:email => book_info.service_provider.notification_email,
+					:type => 'to'
+				}
+			message[:merge_vars] << {
+					:rcpt => book_info.service_provider.notification_email,
+					:vars => [
+						{
+							:name => 'COMPANYCOMMENT',
+							:content => book_info.company_comment
+						}
+					]
+				}
 		end
 
 		# Email notificacion local
-		if book_info.location.notification and !book_info.location.email.blank?
+		if book_info.location.notification and !book_info.location.email.blank? and book_info.location.get_booking_configuration_email == 0
 			message[:to] << {
 				:email => book_info.location.email,
 				:type => 'to'
@@ -574,39 +424,15 @@ class BookingMailer < ActionMailer::Base
 				:rcpt => book_info.location.email,
 				:vars => [
 					{
-						:name => 'NAME',
-						:content => book_info.location.name
-					},
-					{
-						:name => 'MESSAGE',
-						:content => 'el cliente ha confirmado la siguiente reserva'
-					},
-					{
-						:name => 'WHAT',
-						:content => "¿Qué reservaron?"
-					},
-					{
-						:name => 'BOOKING',
-						:content => "Resumen de la Reserva Confirmada"
-					},
-					{
-						:name => 'CLIENTNAME',
-						:content => book_info.client.first_name + ' ' + book_info.client.last_name
-					},
-					{
-						:name => 'CLIENTPHONE',
-						:content => number_to_phone(book_info.client.phone)
-					},
-					{
-						:name => 'CLIENTEMAIL',
-						:content => book_info.client.email
-					},
-					{
 						:name => 'COMPANYCOMMENT',
 						:content => book_info.company_comment
 					}
 				]
 			}
+			message[:global_merge_vars][0] = {
+						:name => 'SERVICEPROVIDER',
+						:content => book_info.location.name
+					}
 		end
 
 		# => Metadata
@@ -625,7 +451,7 @@ class BookingMailer < ActionMailer::Base
 		mandrill = Mandrill::API.new Agendapro::Application.config.api_key
 
 		# => Template
-		template_name = 'Booking'
+		template_name = 'Cancel Booking'
 		template_content = []
 
 		# => Message
@@ -633,29 +459,28 @@ class BookingMailer < ActionMailer::Base
 			:from_email => 'no-reply@agendapro.cl',
 			:from_name => book_info.service_provider.company.name,
 			:subject => 'Reserva Cancelada en ' + book_info.service_provider.company.name,
-			:to => [
-				{
-					:email => book_info.service_provider.notification_email,
-					:type => 'to'
-				}
-			],
+			:to => [],
 			:headers => { 'Reply-To' => book_info.service_provider.notification_email },
 			:global_merge_vars => [
-				# {
-				# 	:name => 'UNSUBSCRIBE',
-				# 	:content => "Si desea dejar de recibir email puede dar click <a href='#{unsubscribe_url(:user => Base64.encode64(book_info.client.email))}'>aquí</a>."
-				# },
 				{
-					:name => 'SERVICENAME',
-					:content => book_info.service.name
-				},
-				{
-					:name => 'LOCALADDRESS',
-					:content => book_info.location.address + " - " + District.find(book_info.location.district_id).name
+					:name => 'URL',
+					:content => book_info.service_provider.company.web_address
 				},
 				{
 					:name => 'COMPANYNAME',
 					:content => book_info.service_provider.company.name
+				},
+				{
+					:name => 'CLIENTNAME',
+					:content => book_info.client.first_name + ' ' + book_info.client.last_name
+				},
+				{
+					:name => 'SERVICEPROVIDER',
+					:content => book_info.service_provider.public_name
+				},
+				{
+					:name => 'SERVICENAME',
+					:content => book_info.service.name
 				},
 				{
 					:name => 'BSTART',
@@ -663,59 +488,16 @@ class BookingMailer < ActionMailer::Base
 				},
 				{
 					:name => 'SIGNATURE',
-					:content => if !book_info.location.company.company_setting.signature.blank? then book_info.location.company.company_setting.signature.gsub('\r\n', '<br />') end
-				},
-				{
-					:name => 'SERVICEPROVIDER',
-					:content => book_info.service_provider.public_name
+					:content => book_info.location.company.company_setting.signature
 				}
 			],
-			:merge_vars => [
-				{
-					:rcpt => book_info.service_provider.notification_email,
-					:vars => [
-						
-						{
-							:name => 'NAME',
-							:content => book_info.service_provider.public_name
-						},
-						{
-							:name => 'MESSAGE',
-							:content => 'fue cancelada una reserva contigo, a continuación se presentan los detalles'
-						},
-						{
-							:name => 'WHAT',
-							:content => "¿Qué cancelaron?"
-						},
-						{
-							:name => 'BOOKING',
-							:content => "Resumen de la Reserva Cancelada"
-						},
-						{
-							:name => 'CLIENTNAME',
-							:content => book_info.client.first_name + ' ' + book_info.client.last_name
-						},
-						{
-							:name => 'CLIENTPHONE',
-							:content => number_to_phone(book_info.client.phone)
-						},
-						{
-							:name => 'CLIENTMAIL',
-							:content => book_info.client.email
-						},
-						{
-							:name => 'COMPANYCOMMENT',
-							:content => book_info.company_comment
-						}
-					]
-				}
-			],
+			:merge_vars => [],
 			:tags => ['booking', 'cancel_booking'],
 			:images => [
 				{
 					:type => 'image/png',
-					:name => 'company_img.jpg',
-					:content => Base64.encode64(File.read('app/assets/ico/Iso_Pro_Color.png'))
+					:name => 'LOGO',
+					:content => Base64.encode64(File.read('app/assets/images/logos/logodoble2.png'))
 				}
 			]
 		}
@@ -726,16 +508,32 @@ class BookingMailer < ActionMailer::Base
 
 		# => Logo empresa
 		if book_info.location.company.logo_url
-			company_logo = {
-				:type => 'image/' +  File.extname(book_info.location.company.logo_url),
-				:name => 'company_img.jpg',
-				:content => Base64.encode64(File.read('public' + book_info.location.company.logo_url.to_s))
-			}
-			message[:images] = [company_logo]
+			message[:images] = [{
+							:type => MIME::Types.type_for(book_info.location.company.logo_url).first.content_type,
+							:name => 'LOGO',
+							:content => Base64.encode64(File.read('public' + book_info.location.company.logo_url.to_s))
+						}]
+		end
+
+		# Notificacion service provider
+		if book_info.service_provider.get_booking_configuration_email == 0
+			message[:to] << {
+					:email => book_info.service_provider.notification_email,
+					:type => 'to'
+				}
+			message[:merge_vars] << {
+					:rcpt => book_info.service_provider.notification_email,
+					:vars => [
+						{
+							:name => 'COMPANYCOMMENT',
+							:content => book_info.company_comment
+						}
+					]
+				}
 		end
 
 		# Email notificacion local
-		if book_info.location.notification and !book_info.location.email.blank?
+		if book_info.location.notification and !book_info.location.email.blank? and book_info.location.get_booking_configuration_email == 0
 			message[:to] << {
 				:email => book_info.location.email,
 				:type => 'to'
@@ -744,77 +542,56 @@ class BookingMailer < ActionMailer::Base
 				:rcpt => book_info.location.email,
 				:vars => [
 					{
-						:name => 'NAME',
-						:content => book_info.location.name
-					},
-					{
-						:name => 'MESSAGE',
-						:content => 'fue cancelada una reserva, a continuación se presentan los detalles'
-					},
-					{
-						:name => 'WHAT',
-						:content => "¿Qué reservaron?"
-					},
-					{
-						:name => 'BOOKING',
-						:content => "Resumen de la Reserva Cancelada"
-					},
-					{
-						:name => 'CLIENTNAME',
-						:content => book_info.client.first_name + ' ' + book_info.client.last_name
-					},
-					{
-						:name => 'CLIENTPHONE',
-						:content => number_to_phone(book_info.client.phone)
-					},
-					{
-						:name => 'CLIENTEMAIL',
-						:content => book_info.client.email
-					},
-					{
 						:name => 'COMPANYCOMMENT',
 						:content => book_info.company_comment
 					}
 				]
 			}
+			message[:global_merge_vars][0] = {
+						:name => 'SERVICEPROVIDER',
+						:content => book_info.location.name
+					}
 		end
 
+		# Notificacion cliente
 		if book_info.send_mail
 			message[:to] << {
 				:email => book_info.client.email,
 				:name => book_info.client.first_name + ' ' + book_info.client.last_name,
 				:type => 'to'
 			}
-			message[:merge_vars] << {
+			mergeVars = {
 				:rcpt => book_info.client.email,
 				:vars => [
-					
 					{
-						:name => 'NAME',
-						:content => book_info.client.first_name
-					},
-					{
-						:name => 'MESSAGE',
-						:content => 'tu reserva fue cancelada exitosamente'
+						:name => 'LOCALADDRESS',
+						:content => book_info.location.address + " - " + District.find(book_info.location.district_id).name
 					},
 					{
 						:name => 'LOCATIONPHONE',
 						:content => number_to_phone(book_info.location.phone)
 					},
 					{
-						:name => 'WHAT',
-						:content => "¿Qué cancelaste?"
+						:name => 'EDIT',
+						:content => booking_edit_url(:confirmation_code => book_info.confirmation_code)
 					},
 					{
-						:name => 'BOOKING',
-						:content => "Resumen de tu Reserva Cancelada"
+						:name => 'CANCEL',
+						:content => booking_cancel_url(:confirmation_code => book_info.confirmation_code)
 					},
 					{
-						:name => 'HOURS',
-						:content => book_info.location.company.company_setting.before_edit_booking
+						:name => 'CLIENT',
+						:content => true
 					}
 				]
 			}
+			if !book_info.payed_booking.nil?
+				message[:merge_vars][:vars] << {
+							:name => 'PAYED',
+							:content => "true"
+						}
+			end
+			message[:merge_vars] << mergeVars
 		end
 
 		# => Metadata
@@ -833,7 +610,7 @@ class BookingMailer < ActionMailer::Base
 		mandrill = Mandrill::API.new Agendapro::Application.config.api_key
 
 		# => Template
-		template_name = 'Booking'
+		template_name = 'Booking Reminder'
 		template_content = []
 
 		# => Message
@@ -841,29 +618,28 @@ class BookingMailer < ActionMailer::Base
 			:from_email => 'no-reply@agendapro.cl',
 			:from_name => book_info.service_provider.company.name,
 			:subject => 'Recuerda tu Reserva en ' + book_info.service_provider.company.name,
-			:to => [
-				{
-				  :email => book_info.service_provider.notification_email,
-				  :type => 'to'
-				}
-			],
+			:to => [],
 			:headers => { 'Reply-To' => book_info.service_provider.notification_email },
 			:global_merge_vars => [
-				# {
-				# 	:name => 'UNSUBSCRIBE',
-				# 	:content => "Si deseas dejar de recibir emails de AgendaPro, puedes dar click <a href='#{unsubscribe_url(:user => Base64.encode64(book_info.client.email))}'>aquí</a>"
-				# },
 				{
-					:name => 'SERVICENAME',
-					:content => book_info.service.name
-				},
-				{
-					:name => 'LOCALADDRESS',
-					:content => book_info.location.address + " - " + District.find(book_info.location.district_id).name
+					:name => 'URL',
+					:content => book_info.service_provider.company.web_address
 				},
 				{
 					:name => 'COMPANYNAME',
 					:content => book_info.service_provider.company.name
+				},
+				{
+					:name => 'CLIENTNAME',
+					:content => book_info.client.first_name + ' ' + book_info.client.last_name
+				},
+				{
+					:name => 'SERVICEPROVIDER',
+					:content => book_info.service_provider.public_name
+				},
+				{
+					:name => 'SERVICENAME',
+					:content => book_info.service.name
 				},
 				{
 					:name => 'BSTART',
@@ -871,59 +647,16 @@ class BookingMailer < ActionMailer::Base
 				},
 				{
 					:name => 'SIGNATURE',
-					:content => if !book_info.location.company.company_setting.signature.blank? then book_info.location.company.company_setting.signature.gsub('\r\n', '<br />') end
-				},
-				{
-					:name => 'SERVICEPROVIDER',
-					:content => book_info.service_provider.public_name
+					:content => book_info.location.company.company_setting.signature
 				}
 			],
-			:merge_vars => [
-				{
-				  :rcpt => book_info.service_provider.notification_email,
-				  :vars => [
-					
-					{
-					  :name => 'NAME',
-					  :content => book_info.service_provider.public_name
-					},
-					{
-					  :name => 'MESSAGE',
-					  :content => 'Recuerda que tienen una hora agendada contigo'  
-					},
-					{
-						:name => 'WHAT',
-						:content => "¿Qué reservaron?"
-					},
-					{
-						:name => 'BOOKING',
-						:content => "Resumen de la Reserva"
-					},
-					{
-						:name => 'CLIENTNAME',
-						:content => book_info.client.first_name + ' ' + book_info.client.last_name
-					},
-					{
-						:name => 'CLIENTPHONE',
-						:content => number_to_phone(book_info.client.phone)
-					},
-					{
-						:name => 'CLIENTMAIL',
-						:content => book_info.client.email
-					},
-					{
-						:name => 'COMPANYCOMMENT',
-						:content => book_info.company_comment
-					}
-				  ]
-				}
-			],
+			:merge_vars => [],
 			:tags => ['booking', 'remind_booking'],
 			:images => [
 				{
 					:type => 'image/png',
-					:name => 'company_img.jpg',
-					:content => Base64.encode64(File.read('app/assets/ico/Iso_Pro_Color.png'))
+					:name => 'LOGO',
+					:content => Base64.encode64(File.read('app/assets/images/logos/logodoble2.png'))
 				}
 			]
 		}
@@ -934,16 +667,32 @@ class BookingMailer < ActionMailer::Base
 
 		# => Logo empresa
 		if book_info.location.company.logo_url
-			company_logo = {
-				:type => 'image/' +  File.extname(book_info.location.company.logo_url),
-				:name => 'company_img.jpg',
-				:content => Base64.encode64(File.read('public' + book_info.location.company.logo_url.to_s))
-			}
-			message[:images] = [company_logo]
+			message[:images] = [{
+							:type => MIME::Types.type_for(book_info.location.company.logo_url).first.content_type,
+							:name => 'LOGO',
+							:content => Base64.encode64(File.read('public' + book_info.location.company.logo_url.to_s))
+						}]
+		end
+
+		# Notificacion service provider
+		if book_info.service_provider.get_booking_configuration_email == 0
+			message[:to] << {
+				  :email => book_info.service_provider.notification_email,
+				  :type => 'to'
+				}
+			message[:merge_vars] << {
+				  :rcpt => book_info.service_provider.notification_email,
+				  :vars => [
+						{
+							:name => 'COMPANYCOMMENT',
+							:content => book_info.company_comment
+						}
+				  ]
+				}
 		end
 
 		# Email notificacion local
-		if book_info.location.notification and !book_info.location.email.blank?
+		if book_info.location.notification and !book_info.location.email.blank? and book_info.location.get_booking_configuration_email == 0
 			message[:to] << {
 				:email => book_info.location.email,
 				:type => 'to'
@@ -952,41 +701,18 @@ class BookingMailer < ActionMailer::Base
 				:rcpt => book_info.location.email,
 				:vars => [
 					{
-						:name => 'NAME',
-						:content => book_info.location.name
-					},
-					{
-						:name => 'MESSAGE',
-						:content => 'Recuerda que tienen una hora agendada'
-					},
-					{
-						:name => 'WHAT',
-						:content => "¿Qué reservaron?"
-					},
-					{
-						:name => 'BOOKING',
-						:content => "Resumen de la Reserva"
-					},
-					{
-						:name => 'CLIENTNAME',
-						:content => book_info.client.first_name + ' ' + book_info.client.last_name
-					},
-					{
-						:name => 'CLIENTPHONE',
-						:content => number_to_phone(book_info.client.phone)
-					},
-					{
-						:name => 'CLIENTEMAIL',
-						:content => book_info.client.email
-					},
-					{
 						:name => 'COMPANYCOMMENT',
 						:content => book_info.company_comment
 					}
 				]
 			}
+			message[:global_merge_vars][0] = {
+						:name => 'SERVICEPROVIDER',
+						:content => book_info.location.name
+					}
 		end
 
+		# Notificacion cliente
 		if book_info.send_mail
 			message[:to] << {
 			  :email => book_info.client.email,
@@ -996,43 +722,30 @@ class BookingMailer < ActionMailer::Base
 			message[:merge_vars] << {
 			  :rcpt => book_info.client.email,
 			  :vars => [
-				
-				{
-				  :name => 'NAME',
-				  :content => book_info.client.first_name
-				},
-				{
-				  :name => 'MESSAGE',
-				  :content => 'recuerda tu reserva'
-				},
-				{
-					:name => 'EDIT',
-					:content => "<a class='btn btn-warning' href='#{booking_edit_url(:confirmation_code => book_info.confirmation_code)}' style='display: inline-block;padding: 6px 12px;margin-bottom: 0;font-size: 14px;font-weight: normal;line-height: 1.428571429;text-align: center;white-space: nowrap;vertical-align: middle;cursor: pointer;background-image: none;border: 1px solid transparent;border-radius: 4px;-webkit-user-select: none;-moz-user-select: none;-ms-user-select: none;-o-user-select: none;user-select: none;color: #ffffff;background-color: #f0ad4e;border-color: #eea236;text-decoration:none;'>Modificar Reserva</a>"
-				},
-				{
-					:name => 'CANCEL',
-					:content => "<a class='btn btn-danger' href='#{booking_cancel_url(:confirmation_code => book_info.confirmation_code)}' style='display: inline-block;padding: 6px 12px;margin-bottom: 0;font-size: 14px;font-weight: normal;line-height: 1.428571429;text-align: center;white-space: nowrap;vertical-align: middle;cursor: pointer;background-image: none;border: 1px solid transparent;border-radius: 4px;-webkit-user-select: none;-moz-user-select: none;-ms-user-select: none;-o-user-select: none;user-select: none;color: #ffffff;background-color: #d9534f;border-color: #d43f3a;text-decoration:none;'>Cancelar Reserva</a>"
-				},
-				{
-					:name => 'CONFIRM',
-					:content => "<a class='btn btn-agendapro-claro btn-lg' href='#{confirm_booking_url(:confirmation_code => book_info.confirmation_code)}' style='display: inline-block;padding: 10px 16px;margin-bottom: 0;font-size: 18px;font-weight: normal;line-height: 1.33;text-align: center;white-space: nowrap;vertical-align: middle;cursor: pointer;background-image: none;border: 1px solid transparent;border-radius: 6px;-webkit-user-select: none;-moz-user-select: none;-ms-user-select: none;-o-user-select: none;user-select: none;color: #ffffff;background-color: rgba(61,154,150,1);border-color: rgba(55, 133, 129, 1);text-decoration:none;'>Confirmar Reserva</a>"
-				},
-				{
-					:name => 'LOCATIONPHONE',
-					:content => number_to_phone(book_info.location.phone)
-				},
-				{
-					:name => 'WHAT',
-					:content => "¿Qué reservaste?"
-				},
-				{
-					:name => 'BOOKING',
-					:content => "Resumen de tu Reserva"
-				},
-				{
-					:name => 'HOURS',
-					:content => book_info.location.company.company_setting.before_edit_booking
-				}
+					{
+						:name => 'LOCALADDRESS',
+						:content => book_info.location.address + " - " + District.find(book_info.location.district_id).name
+					},
+					{
+						:name => 'LOCATIONPHONE',
+						:content => number_to_phone(book_info.location.phone)
+					},
+					{
+						:name => 'EDIT',
+						:content => booking_edit_url(:confirmation_code => book_info.confirmation_code)
+					},
+					{
+						:name => 'CANCEL',
+						:content => booking_cancel_url(:confirmation_code => book_info.confirmation_code)
+					},
+					{
+						:name => 'CONFIRM',
+						:content => confirm_booking_url(:confirmation_code => book_info.confirmation_code)
+					},
+					{
+						:name => 'CLIENT',
+						:content => true
+					}
 			  ]
 			}
 		end
@@ -1048,4 +761,465 @@ class BookingMailer < ActionMailer::Base
 			puts "A mandrill error occurred: #{e.class} - #{e.message}"
 			raise
 	end
+
+	def booking_summary (booking_data, booking_summary, today_schedule)
+		mandrill = Mandrill::API.new Agendapro::Application.config.api_key
+
+		# => Template
+		template_name = 'Booking Summary'
+		template_content = []
+
+		# => Message
+		message = {
+			:from_email => 'no-reply@agendapro.cl',
+			:from_name => 'AgendaPro',
+			:subject => 'Resumen de Reservas',
+			:to => [
+				{
+					:email => booking_data[:to],
+					:type => 'to'
+				}
+			],
+			:global_merge_vars => [
+				{
+					:name => 'COMPANYNAME',
+					:content => booking_data[:company]
+				},
+				{
+					:name => 'URL',
+					:content => booking_data[:url]
+				},
+				{
+					:name => 'NAME',
+					:content => booking_data[:name]
+				},
+				{
+					:name => 'SUMMARY',
+					:content => booking_summary
+				},
+				{
+					:name => 'TODAY',
+					:content => today_schedule
+				}
+			],
+			:tags => ['booking', 'booking_summary'],
+			:images => [
+				{
+					:type => 'image/png',
+					:name => 'LOGO',
+					:content => Base64.encode64(File.read('app/assets/images/logos/logodoble2.png'))
+				}
+			]
+		}
+
+		# => Logo empresa
+		if booking_data[:logo]
+			message[:images] = [{
+							:type => MIME::Types.type_for(booking_data[:logo]).first.content_type,
+							:name => 'LOGO',
+							:content => Base64.encode64(File.read('public' + booking_data[:logo].to_s))
+						}]
+		end
+
+		# => Metadata
+		async = false
+		send_at = DateTime.now
+
+		# => Send mail
+		result = mandrill.messages.send_template template_name, template_content, message, async, send_at
+
+		rescue Mandrill::Error => e
+			puts "A mandrill error occurred: #{e.class} - #{e.message}"
+			raise
+	end
+	#Correo de comprobante de pago para el cliente
+	def book_payment_mail (payed_booking)
+		mandrill = Mandrill::API.new Agendapro::Application.config.api_key
+		# => Template
+		template_name = 'Payment'
+		template_content = []
+
+		owner = User.find_by_company_id(payed_booking.booking.location.company.id)
+		client = payed_booking.booking.client
+
+		# => Message
+		message = {
+			:from_email => 'no-reply@agendapro.cl',
+			:from_name => payed_booking.booking.service_provider.company.name,
+			:subject => 'Comprobante de pago en Agendapro',
+			:to => [
+				{
+					:email => client.email,
+					:type => 'to'
+				}
+			],
+			:headers => { 'Reply-To' => 'contacto@agendapro.cl' },
+			:global_merge_vars => [
+				{
+					:name => 'COMPANYNAME',
+					:content => payed_booking.booking.location.company.name
+				},
+				{
+					:name => 'PRICE',
+					:content => payed_booking.punto_pagos_confirmation.amount
+				},
+				{
+					:name => 'CARDNUMBER',
+					:content => payed_booking.punto_pagos_confirmation.card_number
+				},
+				{
+					:name => 'PAYORDER',
+					:content => payed_booking.punto_pagos_confirmation.operation_number
+				},
+				{
+					:name => 'AUTHNUMBER',
+					:content => payed_booking.punto_pagos_confirmation.authorization_code
+				},
+				{
+					:name => 'DATE',
+					:content => payed_booking.punto_pagos_confirmation.approvement_date
+				},
+				{
+					:name => 'EDIT',
+					:content => booking_edit_url(:confirmation_code => payed_booking.booking.confirmation_code)
+				},
+				{
+					:name => 'CANCEL',
+					:content => booking_cancel_url(:confirmation_code => payed_booking.booking.confirmation_code)
+				}
+
+			],
+			:tags => ['payment'],
+			:images => [
+				{
+					:type => 'image/png',
+					:name => 'company_img.jpg',
+					:content => Base64.encode64(File.read('app/assets/ico/Iso_Pro_Color.png'))
+				},
+				{
+					:type => 'image/png',
+					:name => 'LOGO',
+					:content => Base64.encode64(File.read('app/assets/images/logos/logodoble2.png'))
+				}
+			]
+		}
+
+		# => Metadata
+		async = false
+		send_at = DateTime.now
+
+		# => Send mail
+		result = mandrill.messages.send_template template_name, template_content, message, async, send_at
+
+		rescue Mandrill::Error => e
+			puts "A mandrill error occurred: #{e.class} - #{e.message}"
+			raise
+
+	end
+
+
+	#Comprobante de pago para la empresa
+	def book_payment_company_mail (payed_booking)
+		mandrill = Mandrill::API.new Agendapro::Application.config.api_key
+		# => Template
+		template_name = 'Payment'
+		template_content = []
+
+		owner = User.find_by_company_id(payed_booking.booking.location.company.id)
+		#email = payed_booking.booking.location.company.company_setting.email
+		client = payed_booking.booking.client
+
+		# => Message
+		message = {
+			:from_email => 'no-reply@agendapro.cl',
+			:from_name => 'AgendaPro',
+			:subject => 'Comprobante de pago en Agendapro',
+			:to => [
+				{
+					:email => owner.email,
+					:type => 'to'
+				}
+			],
+			:headers => { 'Reply-To' => 'contacto@agendapro.cl' },
+			:global_merge_vars => [
+				{
+					:name => 'COMPANYNAME',
+					:content => payed_booking.booking.location.company.name
+				},
+				{
+					:name => 'CLIENT',
+					:content => client.first_name + ' ' + client.last_name
+				},
+				{
+					:name => 'PRICE',
+					:content => payed_booking.punto_pagos_confirmation.amount
+				},
+				{
+					:name => 'CARDNUMBER',
+					:content => payed_booking.punto_pagos_confirmation.card_number
+				},
+				{
+					:name => 'PAYORDER',
+					:content => payed_booking.punto_pagos_confirmation.operation_number
+				},
+				{
+					:name => 'AUTHNUMBER',
+					:content => payed_booking.punto_pagos_confirmation.authorization_code
+				},
+				{
+					:name => 'DATE',
+					:content => payed_booking.punto_pagos_confirmation.approvement_date
+				}
+			],
+			:tags => ['payment'],
+			:images => [
+				{
+					:type => 'image/png',
+					:name => 'company_img.jpg',
+					:content => Base64.encode64(File.read('app/assets/ico/Iso_Pro_Color.png'))
+				},
+				{
+					:type => 'image/png',
+					:name => 'LOGO',
+					:content => Base64.encode64(File.read('app/assets/images/logos/logodoble2.png'))
+				}
+			]
+		}
+
+		# => Metadata
+		async = false
+		send_at = DateTime.now
+
+		# => Send mail
+		result = mandrill.messages.send_template template_name, template_content, message, async, send_at
+
+		rescue Mandrill::Error => e
+			puts "A mandrill error occurred: #{e.class} - #{e.message}"
+			raise
+
+	end
+
+	#Comprobante de pago para la empresa
+	def cancel_payment_mail (payed_booking, target)
+		mandrill = Mandrill::API.new Agendapro::Application.config.api_key
+		# => Template
+		template_name = 'Payment'
+		template_content = []
+
+		owner = User.find_by_company_id(payed_booking.booking.location.company.id)
+		#email = payed_booking.booking.location.company.company_setting.email
+		client = payed_booking.booking.client
+
+		message = Hash.new
+
+		if target == 1 #Mail al cliente
+			# => Message
+			message = {
+				:from_email => 'no-reply@agendapro.cl',
+				:from_name => 'AgendaPro',
+				:subject => 'Cancelación de pago en Agendapro',
+				:to => [
+					{
+						:email => client.email,
+						:type => 'to'
+					}
+				],
+				:headers => { 'Reply-To' => 'contacto@agendapro.cl' },
+				:global_merge_vars => [
+					{
+						:name => 'COMPANYNAME',
+						:content => payed_booking.booking.location.company.name
+					},
+					{
+						:name => 'CANCEL',
+						:content => 'true'
+					},
+					{
+						:name => 'CLIENTCANCEL',
+						:content => 'true'
+					},
+					{
+						:name => 'CLIENT',
+						:content => client.first_name + ' ' + client.last_name
+					},
+					{
+						:name => 'PRICE',
+						:content => payed_booking.punto_pagos_confirmation.amount
+					},
+					{
+						:name => 'CARDNUMBER',
+						:content => payed_booking.punto_pagos_confirmation.card_number
+					},
+					{
+						:name => 'PAYORDER',
+						:content => payed_booking.punto_pagos_confirmation.operation_number
+					},
+					{
+						:name => 'AUTHNUMBER',
+						:content => payed_booking.punto_pagos_confirmation.authorization_code
+					},
+					{
+						:name => 'DATE',
+						:content => payed_booking.punto_pagos_confirmation.approvement_date
+					}
+				],
+				:tags => ['payment'],
+				:images => [
+					{
+						:type => 'image/png',
+						:name => 'company_img.jpg',
+						:content => Base64.encode64(File.read('app/assets/ico/Iso_Pro_Color.png'))
+					},
+					{
+						:type => 'image/png',
+						:name => 'LOGO',
+						:content => Base64.encode64(File.read('app/assets/images/logos/logodoble2.png'))
+					}
+				]
+			}
+		elsif target == 2 #Mail a la empresa
+			# => Message
+			message = {
+				:from_email => 'no-reply@agendapro.cl',
+				:from_name => 'AgendaPro',
+				:subject => 'Cancelación de pago en Agendapro',
+				:to => [
+					{
+						:email => owner.email,
+						:type => 'to'
+					}
+				],
+				:headers => { 'Reply-To' => 'contacto@agendapro.cl' },
+				:global_merge_vars => [
+					{
+						:name => 'CANCEL',
+						:content => 'true'
+					},
+					{
+						:name => 'COMPANYCANCEL',
+						:content => 'true'
+					},
+					{
+						:name => 'COMPANYNAME',
+						:content => payed_booking.booking.location.company.name
+					},
+					{
+						:name => 'PRICE',
+						:content => payed_booking.punto_pagos_confirmation.amount
+					},
+					{
+						:name => 'CARDNUMBER',
+						:content => payed_booking.punto_pagos_confirmation.card_number
+					},
+					{
+						:name => 'PAYORDER',
+						:content => payed_booking.punto_pagos_confirmation.operation_number
+					},
+					{
+						:name => 'AUTHNUMBER',
+						:content => payed_booking.punto_pagos_confirmation.authorization_code
+					},
+					{
+						:name => 'DATE',
+						:content => payed_booking.punto_pagos_confirmation.approvement_date
+					}
+				],
+				:tags => ['payment'],
+				:images => [
+					{
+						:type => 'image/png',
+						:name => 'company_img.jpg',
+						:content => Base64.encode64(File.read('app/assets/ico/Iso_Pro_Color.png'))
+					},
+					{
+						:type => 'image/png',
+						:name => 'LOGO',
+						:content => Base64.encode64(File.read('app/assets/images/logos/logodoble2.png'))
+					}
+				]
+			}
+		else #Mail a AgendaPro
+			# => Message
+			message = {
+				:from_email => 'no-reply@agendapro.cl',
+				:from_name => 'AgendaPro',
+				:subject => 'Cancelación de pago en Agendapro',
+				:to => [
+					{
+						:email => 'iegomez@uc.cl', #Cambiar a contacto@agendapro.cl
+						:type => 'to'
+					}
+				],
+				:headers => { 'Reply-To' => 'contacto@agendapro.cl' },
+				:global_merge_vars => [
+					{
+						:name => 'CANCEL',
+						:content => 'true'
+					},
+					{
+						:name => 'AGENDAPROCANCEL',
+						:content => 'true'
+					},
+					{
+						:name => 'COMPANYNAME',
+						:content => payed_booking.booking.location.company.name
+					},
+					{
+						:name => 'CLIENT',
+						:content => client.first_name + ' ' + client.last_name
+					},
+					{
+						:name => 'CLIENTEMAIL',
+						:content => client.email
+					},
+					{
+						:name => 'PRICE',
+						:content => payed_booking.punto_pagos_confirmation.amount
+					},
+					{
+						:name => 'CARDNUMBER',
+						:content => payed_booking.punto_pagos_confirmation.card_number
+					},
+					{
+						:name => 'PAYORDER',
+						:content => payed_booking.punto_pagos_confirmation.operation_number
+					},
+					{
+						:name => 'AUTHNUMBER',
+						:content => payed_booking.punto_pagos_confirmation.authorization_code
+					},
+					{
+						:name => 'DATE',
+						:content => payed_booking.punto_pagos_confirmation.approvement_date
+					}
+				],
+				:tags => ['payment'],
+				:images => [
+					{
+						:type => 'image/png',
+						:name => 'company_img.jpg',
+						:content => Base64.encode64(File.read('app/assets/ico/Iso_Pro_Color.png'))
+					},
+					{
+						:type => 'image/png',
+						:name => 'LOGO',
+						:content => Base64.encode64(File.read('app/assets/images/logos/logodoble2.png'))
+					}
+				]
+			}
+		end
+
+		# => Metadata
+		async = false
+		send_at = DateTime.now
+
+		# => Send mail
+		result = mandrill.messages.send_template template_name, template_content, message, async, send_at
+
+		rescue Mandrill::Error => e
+			puts "A mandrill error occurred: #{e.class} - #{e.message}"
+			raise
+
+	end
+
 end

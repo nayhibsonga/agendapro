@@ -1,83 +1,65 @@
-function saveBreak (typeURL, extraURL) {
-
-}
-
 var my_alert;
-var mails_left;
+var monthly_mails;
+var monthly_mails_sent;
 $(function () {
 	my_alert = new Alert();
 
-	mails_left = $('#mails').data('mails-left');
+	monthly_mails = $('#mails').data('monthly-mails');
+	monthly_mails_sent = $('#mails').data('monthly-mails-sent');
 
 	$('.modal-body div:first').toggle()
 
-	$('input[name="mail"]').change(function (event) {
-		var selected = mails_left;
-		$('input[name="client_mail"]').each( function () {
-			if ($(event.target).prop('checked')) {
-				if (selected > 0) {
-					$(this).prop('checked', true);
-					$('#sendMail').prop('disabled', false);
-					selected -= 1;
-				};
-			}
-			else {
-				$(this).prop('checked', false);
-				$('#sendMail').prop('disabled', true);
-			}
-		});
-	});
+	// $('input[name="mail"]').change(function (event) {
+	// 	var mails_sent = monthly_mails_sent;
+	// 	$('input[name="client_mail"]').each( function () {
+	// 		if ($(event.target).prop('checked')) {
+	// 			if (mails_sent < monthly_mails) {
+	// 				$(this).prop('checked', true);
+	// 				mails_sent += 1;
+	// 			};
+	// 		}
+	// 		else {
+	// 			$(this).prop('checked', false);
+	// 		}
+	// 	});
+	// });
 
-	$('input[name="client_mail"]').change(function (event) {
-		var selected = mails_left;
-		var prop = true;
-		var disabled = false;
-		$('input[name="client_mail"]').each( function () {
-			if ($(this).prop('checked')) {
-				if (selected <= 0) {
-					$(event.target).prop('checked', false);
-					if (selected <= 0) {
-						my_alert.showAlert(
-							'<h3>Lo sentimos</h3>' +
-							'No puedes seleccionar más de ' + mails_left + ' clientes.' +
-							'<br>' +
-							'Solo puedes mandar un máximo de ' + $('#mails').data('max-mails') + ' e-mails por día.'
-						);
-					};
-				};
-				selected -= 1;
-			};
-			prop = prop && $(this).prop('checked');
-			disabled = disabled || $(this).prop('checked');
-		});
-		$('input[name="mail"]').prop('checked', prop);
-		$('#sendMail').prop('disabled', !disabled);
-	});
+	// $('input[name="client_mail"]').change(function (event) {
+	// 	var mails_sent = monthly_mails_sent;
+	// 	$('input[name="client_mail"]').each( function () {
+	// 		if ($(this).prop('checked')) {
+	// 			mails_sent += 1;
+	// 			if (mails_sent > monthly_mails) {
+	// 				$(event.target).prop('checked', false);
+	// 			};
+	// 		};
+	// 	});
+	// 	if (mails_sent > monthly_mails) {
+	// 		my_alert.showAlert(
+	// 			'<h3>Lo sentimos</h3>' +
+	// 			'No puedes seleccionar más de ' + (monthly_mails - monthly_mails_sent) + ' clientes.' +
+	// 			'<br>' +
+	// 			'Solo puedes mandar un máximo de ' + monthly_mails + ' e-mails al mes.'
+	// 		);
+	// 	};
+	// });
 
-	$('#mailModal').on('show.bs.modal', function (e) {
-		var emails = [];
-		$('input[name="client_mail"]').each( function () {
-			if ($(this).prop('checked')) {
-				emails.push($(this).val());
-			};
-		});
-		$('#to').val(emails);
-	});
-	$('#mailModal').on('hidden.bs.modal', function (e) {
-		validator.resetForm();
-		$('.has-success').removeClass('has-success');
-		$('.fa.fa-check').removeClass('fa fa-check');
-		$('.has-error').removeClass('has-error');
-		$('.fa.fa-times').removeClass('fa fa-times');
-	});
-
-	$('#send_mail_button').click( function () {
-		if($('#client_mailer').valid()) {
-			$('.form-group').toggle();
-			$('.modal-footer .btn').toggle();
-			$('.modal-body div:first').toggle()
-		}
-	});
+	// $('#sendMail').click(function (e) {
+	// 	var $link = $(this);
+	// 	var emails = [];
+	// 	if ($('input[name="mail"]').prop('checked')) {
+	// 		emails = $('input[name="mail"]').data('mails');
+	// 	} else{
+	// 		$('input[name="client_mail"]').each( function () {
+	// 			if ($(this).prop('checked')) {
+	// 				emails.push($(this).val());
+	// 			};
+	// 		});
+	// 	};
+	// 	var params = { to: emails };
+	// 	var ref = $link.attr('href');
+	// 	$link.attr('href', ref + '?' + $.param(params));
+	// });
 
 	$('#location').change( function () {
 		var localId = $('#location').val();
@@ -85,7 +67,7 @@ $(function () {
 			$.getJSON('/local_providers', {location: localId }, function (providersArray) {
 				$('#provider').empty();
 				$('#provider').append('<option value="">Elige un Prestador...</option>');
-				$.each(providersArray, function (key, provider) { 
+				$.each(providersArray, function (key, provider) {
 					$('#provider').append('<option value="' + provider.id + '">' + provider.public_name + '</option>');
 				});
 			});
@@ -94,7 +76,7 @@ $(function () {
 			$.getJSON('/service_providers.json', function (providersArray) {
 				$('#provider').empty();
 				$('#provider').append('<option value="">Elige un Prestador...</option>');
-				$.each(providersArray, function (key, provider) { 
+				$.each(providersArray, function (key, provider) {
 					$('#provider').append('<option value="' + provider.id + '">' + provider.public_name + '</option>');
 				});
 			});
@@ -113,26 +95,26 @@ $(function () {
 		$('#client_can_book'+event.target.value).hide();
 		$('#loader'+event.target.value).show();
 		$.ajax({
-		type: 'PATCH',
-		url: '/clients/'+event.target.value+'.json',
-		data: { "client": { "can_book": $('#client_can_book'+event.target.value).prop('checked') } },
-		dataType: 'json',
-		success: function(provider_break){
-			$('#loader'+event.target.value).hide();
-			$('#client_can_book'+event.target.value).show();
-		},
-		error: function(xhr){
-			$('#loader'+event.target.value).hide();
-			$('#client_can_book'+event.target.value).prop('checked', !$('#client_can_book'+event.target.value).prop('checked'));
-			$(event.target.id).show();
-			var errors = $.parseJSON(xhr.responseText).errors;
-			var errores = 'Error\n';
-			for (i in errors) {
-				errores += '*' + errors[i] + '\n';
+			type: 'PATCH',
+			url: '/clients/'+event.target.value+'.json',
+			data: { "client": { "can_book": $('#client_can_book'+event.target.value).prop('checked') } },
+			dataType: 'json',
+			success: function(provider_break){
+				$('#loader'+event.target.value).hide();
+				$('#client_can_book'+event.target.value).show();
+			},
+			error: function(xhr){
+				$('#loader'+event.target.value).hide();
+				$('#client_can_book'+event.target.value).prop('checked', !$('#client_can_book'+event.target.value).prop('checked'));
+				$(event.target.id).show();
+				var errors = $.parseJSON(xhr.responseText).errors;
+				var errores = 'Error\n';
+				for (i in errors) {
+					errores += '*' + errors[i] + '\n';
+				}
+				alert(errores);
+				// alertId.showAlert(errores);
 			}
-			alert(errores);
-			// alertId.showAlert(errores);
-		}
-	});
+		});
 	});
 });

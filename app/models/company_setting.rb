@@ -1,5 +1,9 @@
 class CompanySetting < ActiveRecord::Base
 	belongs_to :company
+	has_one :online_cancelation_policy
+	belongs_to :bank
+	
+	accepts_nested_attributes_for :online_cancelation_policy
 
 	#validates :email, :sms, :presence => true
 	validate after_commit :extended_schedule
@@ -19,9 +23,9 @@ class CompanySetting < ActiveRecord::Base
 		end
 	end
 
-	def self.daily_mails
+	def self.monthly_mails
 		all.each do |setting|
-			setting.update_attributes :sent_mails => 0
+			setting.update_attributes :monthly_mails => 0
 		end
 	end
 end

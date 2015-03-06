@@ -1,6 +1,6 @@
 var statusIcon = [" blocked", " reserved", " confirmed", " completed", " payed", " cancelled", " noshow", " break"];
-var backColors = ["#CCCCBB", "#B0C2F2", "#FFE1AE", "#E9B0F2", "#B0F2C2", "#FAFCAF", "#FFB6AE", "#999977"];
-var textColors = ["#222211", "#102050", "#554004", "#401040", "#105020", "#505205", "#551004", "#111100"];
+var backColors = ["#cacaca", "#77d0fa", "#fbe09f", "#fab5fb", "#adf0d1", "#FAFCAF", "#fbc1b3", "#a6a5a5"];
+var textColors = ["#707070", "#0b587d", "#a78a47", "#8e508f", "#4c8b6e", "#505205", "#a15240", "#737373"];
 var resourcesColors = [];
 var servicesJSON;
 
@@ -40,7 +40,7 @@ function loadProviders () {
 						else {
 							loadProviderTime(providerId);
 						}
-						
+
 					});
 					loadLocationTime (localId, resources);
 					return true;
@@ -130,7 +130,7 @@ function loadResourcesCalendar (startTime, endTime, hiddenDays, resourcesArray, 
 			var offX  = (jsEvent.offsetX || jsEvent.clientX - $(jsEvent.target).offset().left);
 			$('.popover').css('left', offX + 60 + 'px');
 			$('.popover').css('top', jsEvent.pageY - p.offset().top - 40 + 'px');
-			
+
 			var column_click = $(this).context.cellIndex;
 			var resourceId = view.resources[column_click - 1].id
 			$('#closePopover').click(function() {
@@ -150,7 +150,7 @@ function loadResourcesCalendar (startTime, endTime, hiddenDays, resourcesArray, 
 			});
 			$('.popover').show();
 		},
-		 
+
 		eventRender: function(event, element) {
 			if ($.isNumeric(event.id)) {
 			   element.qtip({
@@ -161,7 +161,8 @@ function loadResourcesCalendar (startTime, endTime, hiddenDays, resourcesArray, 
 						'Servicio: ' + event.service_qtip + '<br/>' +
 						'Teléfono: ' + event.phone_qtip + '<br/>' +
 						'E-mail: ' + event.email_qtip + '<br/>' +
-						'Comentario: ' + event.comment_qtip
+						'Comentario: ' + event.comment_qtip + '<br />' +
+						'Pagado en línea: ' + event.prepayed_qtip
 				   },
 				   position: {
 						my: 'bottom center',  // el triángulo sale de abajo al medio
@@ -181,8 +182,8 @@ function loadResourcesCalendar (startTime, endTime, hiddenDays, resourcesArray, 
 		//eventMouseover: function(calEvent, domEvent) {
 		// 	var layer =	"<div id='events-layer' class='fc-transparent' style='position:absolute; width:100%; height:100%; top:-1px; text-align:right; z-index:100'>asdfff</div>";
 		// 	$(this).append(layer);
-		// }, 
- 
+		// },
+
 		// eventMouseout: function(calEvent, domEvent) {
 		// 	$(this).find('div[id*=events-layer]').remove();
 		// },
@@ -193,11 +194,11 @@ function loadResourcesCalendar (startTime, endTime, hiddenDays, resourcesArray, 
 		timeFormat: 'HH:mm{ - HH:mm}',
 		columnFormat: {
 			week: 'ddd d/M',
-			day: 'dddd d/M' 
+			day: 'dddd d/M'
 		},
 		titleFormat: {
 			week: 'MMM d[ yyyy]{ &#8212;[ MMM] d yyyy}',
-			day: 'dddd, d MMM yyyy'  
+			day: 'dddd, d MMM yyyy'
 		},
 		buttonText: {
 			prev:     '&lsaquo;', // <
@@ -213,7 +214,7 @@ function loadResourcesCalendar (startTime, endTime, hiddenDays, resourcesArray, 
 		dayNamesShort: ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'],
 		minTime: startTime,
 		maxTime: endTime,
-		// firstHour: startHour, 
+		// firstHour: startHour,
 		defaultEventMinutes: duration,
 		editable: true,
 		disableResizing: true,
@@ -285,7 +286,7 @@ function loadWeekCalendar (startTime, endTime, hiddenDays, resourcesArray, provi
 			});
 			$('.popover').show();
 		},
-		
+
 		eventRender: function(event, element) {
 		   if ($.isNumeric(event.id)) {
 			   if ($.isNumeric(event.id)) {
@@ -297,7 +298,8 @@ function loadWeekCalendar (startTime, endTime, hiddenDays, resourcesArray, provi
 								   'Servicio: ' + event.service_qtip + '<br/>' +
 								   'Teléfono: ' + event.phone_qtip + '<br/>' +
 								   'E-mail: ' + event.email_qtip + '<br/>' +
-								   'Comentario: ' + event.comment_qtip
+								   'Comentario: ' + event.comment_qtip + '<br />' +
+								   'Pagado en línea: ' + event.prepayed_qtip
 					   },
 					   position: {
 						   my: 'bottom center',  // el triángulo sale de abajo al medio
@@ -322,11 +324,11 @@ function loadWeekCalendar (startTime, endTime, hiddenDays, resourcesArray, provi
 		timeFormat: 'HH:mm{ - HH:mm}',
 		columnFormat: {
 			week: 'ddd d/M',
-			day: 'dddd d/M' 
+			day: 'dddd d/M'
 		},
 		titleFormat: {
 			week: 'MMM d[ yyyy]{ &#8212;[ MMM] d yyyy}',
-			day: 'dddd, d MMM yyyy'  
+			day: 'dddd, d MMM yyyy'
 		},
 		buttonText: {
 			prev:     '&lsaquo;', // <
@@ -341,7 +343,7 @@ function loadWeekCalendar (startTime, endTime, hiddenDays, resourcesArray, provi
 		dayNamesShort: ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'],
 		minTime: startTime,
 		maxTime: endTime,
-		// firstHour: startHour, 
+		// firstHour: startHour,
 		defaultEventMinutes: duration,
 		editable: true,
 		disableResizing: true,
@@ -431,7 +433,7 @@ function editBookingModal(eventId) {
 			$('#booking_status_id option[value="'+booking.status_id+'"]').attr("selected",true);
 			$('#booking_price').val(booking.price);
 			$('#booking_client_id').val(booking.client_id);
-			loadClientHistory();
+			loadClientHistory(eventId);
 			$('#booking_client_first_name').val(booking.first_name);
 			$('#booking_client_last_name').val(booking.last_name);
 			$('#booking_client_identification_number').val(booking.identification_number);
@@ -453,6 +455,8 @@ function editBookingModal(eventId) {
 			$('#booking_client_gender option[value="'+booking.gender+'"]').attr("selected",true);
 			$('#booking_notes').val(booking.notes);
 			$('#booking_company_comment').val(booking.company_comment);
+			$('#booking_staff_code').val('');
+			$('#booking_deal_code').val(booking.deal_code);
 			if (booking.provider_lock) {
 				$('#booking_provider_lock').prop('checked', true);
 				$('#booking_service_provider_id').prop('disabled', true);
@@ -475,10 +479,23 @@ function editBookingModal(eventId) {
 				$('#booking_send_mail').prop('disabled', false);
 				$('label[for=booking_send_mail]').removeClass('disabled');
 			}
+
 			else {
 				$('#booking_send_mail').prop('disabled', true);
 				$('label[for=booking_send_mail]').addClass('disabled');
 			}
+
+			if(booking.payed)
+			{
+				$("#is_prepayed").empty();
+				$("#is_prepayed").append("Sí");
+			}
+			else
+			{
+				$("#is_prepayed").empty();
+				$("#is_prepayed").append("No");
+			}
+			
 			$('.booking-modal-title').empty();
 			$('.booking-modal-footer').empty();
 			$('.booking-modal-title').append('Editando Reserva');
@@ -524,7 +541,7 @@ function editBookingModal(eventId) {
 			setAge();
 			$('#booking-tab').tab('show');
 			$('#bookingModal').modal('show');
-		});	
+		});
 	}
 }
 
@@ -589,6 +606,8 @@ function createBookingModal(date, provider_id) {
 			$('#booking_send_mail').val(0);
 			$('#booking_send_mail').prop('checked', false);
 			$('#booking_send_mail').prop('disabled', true);
+			$('#booking_staff_code').val('');
+			$('#booking_deal_code').val('');
 			if (!$('label[for=booking_send_mail]').hasClass('disabled')) {
 				$('label[for=booking_send_mail]').addClass('disabled');
 			}
@@ -613,6 +632,7 @@ function createBookingModal(date, provider_id) {
 					modalChange();
 				});
 			};
+			$('#client-history-tbody').html('<tr><td colspan="6">El cliente no tiene historial...</td></tr>');
 			$('#booking-tab').tab('show');
 			$('#bookingModal').modal('show');
 		}
@@ -673,7 +693,9 @@ function jsonBooking() {
 		"notes": $('#booking_notes').val(),
 		"company_comment": $('#booking_company_comment').val(),
 		"send_mail": $('#booking_send_mail').prop('checked'),
-		"provider_lock": $('#booking_provider_lock').prop('checked')
+		"provider_lock": $('#booking_provider_lock').prop('checked'),
+		"staff_code": $('#booking_staff_code').val(),
+		"deal_code": $('#booking_deal_code').val()
 	};
 	return jsBooking;
 }
@@ -727,10 +749,10 @@ function editDrag(event) {
 		};
 	}
 	else {
-		if (event.resourceId) { 
+		if (event.resourceId) {
 			var warning = '¿Estás seguro que deseas modificar la reserva? Si la reserva tenía una preferencia de prestador, esta se perderá.';
 		}
-		else { 
+		else {
 			var warning = '¿Estás seguro que deseas modificar la reserva?';
 		}
 		if (confirm(warning)) {
@@ -808,6 +830,9 @@ function editDrag(event) {
 
 function saveBooking(typeURL, extraURL) {
 	var bookingJSON = jsonBooking();
+	if (typeURL == 'POST') {
+		bookingJSON['max_changes'] = $('#booking_max_changes').val();
+	};
 	$.ajax({
 		type: typeURL,
 		url: '/bookings'+ extraURL +'.json',
@@ -946,9 +971,9 @@ function saveBreak (typeURL, extraURL) {
 							start: provider_break.start,
 							end: provider_break.end,
 							resourceId: parseInt(provider_break.service_provider_id),
-							textColor: textColors[0],
-							borderColor: textColors[0],
-							backgroundColor: backColors[0]
+							textColor: textColors[7],
+							borderColor: textColors[7],
+							backgroundColor: backColors[7]
 						};
 						$('#calendar').fullCalendar('renderEvent', events, true);
 
@@ -971,9 +996,9 @@ function saveBreak (typeURL, extraURL) {
 								start: provider_break.start,
 								end: provider_break.end,
 								resourceId: parseInt(provider_break.service_provider_id),
-								textColor: textColors[0],
-								borderColor: textColors[0],
-								backgroundColor: backColors[0]
+								textColor: textColors[7],
+								borderColor: textColors[7],
+								backgroundColor: backColors[7]
 							};
 							if (provider_break.warnings.length > 0) {
 								for (i in provider_break.warnings) {
@@ -1019,11 +1044,26 @@ function saveBreak (typeURL, extraURL) {
 								label = 'Hora Bloqueada';
 							}
 							event = $('#calendar').fullCalendar('clientEvents', 'b'+provider_break.id)[0];
-							event.title = label;
-							event.start = provider_break.start;
-							event.end = provider_break.end;
-							event.resourceId = parseInt(provider_break.service_provider_id);
-							$('#calendar').fullCalendar('updateEvent', event);
+							if (event) {
+								event.title = label;
+								event.start = provider_break.start;
+								event.end = provider_break.end;
+								event.resourceId = parseInt(provider_break.service_provider_id);
+								$('#calendar').fullCalendar('updateEvent', event);
+							} else {
+								var events = {
+									id: 'b'+provider_break.id,
+									title: label,
+									allDay: false,
+									start: provider_break.start,
+									end: provider_break.end,
+									resourceId: parseInt(provider_break.service_provider_id),
+									textColor: textColors[7],
+									borderColor: textColors[7],
+									backgroundColor: backColors[7]
+								};
+								$('#calendar').fullCalendar('renderEvent', events, true);
+							};
 							if (provider_break.warnings.length > 0) {
 								for (i in provider_break.warnings) {
 									warnings += provider_break.warnings[i] + '. ';
@@ -1067,7 +1107,7 @@ function getAvailableProviders() {
 	if (parseInt($('#locals-selector').val()) > 0) {
 		if (parseInt($('#providers-selector').val()) == 0) {
 			queryJSON = { "start": $('#datePicker').val() +"T"+ $('#bookingStartHour').val() +":"+ $('#bookingStartMinute').val() +":00Z","end":$('#datePicker').val() +"T"+ $('#bookingEnd').text() +":00Z", "location_id": parseInt($('#locals-selector').val()) }
-			$.getJSON('/available_providers', queryJSON, function (providersArray) { 
+			$.getJSON('/available_providers', queryJSON, function (providersArray) {
 				$(function(){
 					$('#booking_service_provider_id option').filter(function () {
 					   return $.inArray(this.value(), providersArray) == -1;
@@ -1100,7 +1140,6 @@ function createBreakModal(date, providerId) {
 	}
 
 	var localId = parseInt($('#locals-selector').val());
-	window.console.info('before')
 	$.ajax('/local_providers.json', {
 		async: false,
 		data: {
@@ -1108,7 +1147,6 @@ function createBreakModal(date, providerId) {
 		},
 		dataType: 'json',
 		success: function (providersArray, status, jqXHR) {
-			window.console.info('during')
 			var selector = $('#provider_break_service_provider_id');
 			selector.empty();
 			$.each(providersArray, function (key, provider) {
@@ -1121,7 +1159,6 @@ function createBreakModal(date, providerId) {
 			);
 		}
 	});
-	window.console.info('after')
 
 	if (parseInt($('#providers-selector').val()) > 0) {
 		$('#provider_break_service_provider_id option[value="'+parseInt($('#providers-selector').val())+'"]').attr("selected",true);
@@ -1179,7 +1216,6 @@ function editBreakModal(breakId) {
 		}
 
 		var localId = parseInt($('#locals-selector').val());
-		window.console.info('before')
 		$.ajax('/local_providers.json', {
 			async: false,
 			data: {
@@ -1187,7 +1223,6 @@ function editBreakModal(breakId) {
 			},
 			dataType: 'json',
 			success: function (providersArray, status, jqXHR) {
-				window.console.info('during')
 				var selector = $('#provider_break_service_provider_id');
 				selector.empty();
 				$.each(providersArray, function (key, provider) {
@@ -1208,8 +1243,7 @@ function editBreakModal(breakId) {
 				);
 			}
 		});
-		window.console.info('after')
-		
+
 		$('#provider_break_name').val(provider_break.name);
 		$('#provider_break_service_provider_id option[value="'+provider_break.service_provider_id+'"]').attr("selected",true);
 		if (provider_break.break_group_id) {
@@ -1226,7 +1260,7 @@ function editBreakModal(breakId) {
 }
 
 function validEmail(email) {
-	if (email != null) {	
+	if (email != null) {
 		var atpos = email.indexOf("@");
 		var dotpos = email.lastIndexOf(".");
 		if (atpos < 1 || dotpos < atpos+2 || dotpos+2 >= email.length) {
@@ -1254,7 +1288,7 @@ function splitFullName() {
 		}
 		else if (nameArray.length == 2) {
 			$('#booking_client_first_name').val(nameArray[0]);
-			$('#booking_client_last_name').val(nameArray[1]);	
+			$('#booking_client_last_name').val(nameArray[1]);
 		}
 		else if (nameArray.length == 3) {
 			$('#booking_client_first_name').val(nameArray[0]);
@@ -1345,7 +1379,7 @@ function animateLeft (selector, n) {
 			animateLeft(selector, n + 1);
 		};
 	}
-	
+
 	if (rowElements > displayedElements && n < displayedElements) {
 		//Animation
 		$(selector + sliderSelector).animate(
@@ -1386,7 +1420,7 @@ function animateRight (selector, n) {
 			animateRight(selector, n + 1);
 		};
 	}
-	
+
 	if (rowElements > displayedElements && n < displayedElements) {
 		//Animation
 		$(selector + sliderSelector).animate(
@@ -1400,7 +1434,7 @@ function animateRight (selector, n) {
 }
 
 function setAge() {
-	
+
 	if ($('#booking_client_birth_day').val() != '' && $('#booking_client_birth_month').val() != '' && $('#booking_client_birth_year').val() != '')
 	{
 		var day = $('#booking_client_birth_day').val();
@@ -1416,15 +1450,15 @@ function setAge() {
 
 		var yearsApart = milli/milliPerYear;
 		$('#booking_client_age').val(yearsApart | 0);
-			
+
 	}
 	return false;
 }
 
-function loadClientHistory() {
+function loadClientHistory(booking_id) {
 	if (parseInt($('#booking_client_id').val()) > 0) {
 		$('#client-history-tbody').empty();
-		$.getJSON('/clients_bookings_history/', {id: parseInt($('#booking_client_id').val())}, function (bookings_history) {
+		$.getJSON('/clients_bookings_history', {id: parseInt($('#booking_client_id').val())}, function (bookings_history) {
 			if (bookings_history.length > 0) {
 				$.each(bookings_history, function (key, booking_history) {
 					var date = new Date(booking_history.start);
@@ -1432,7 +1466,25 @@ function loadClientHistory() {
 				});
 			}
 			else {
-				$('#client-history-tbody').append('<tr><td colspan="6">El cliente no tiene historial...</td></tr>');
+				$('#client-history-tbody').append('<tr><td colspan="6">El cliente no tiene reservas anteriores...</td></tr>');
+			}
+		});
+	}
+	if (parseInt(booking_id) > 0) {
+		$('#booking-history-tbody').empty();
+		$.getJSON('/booking_history', {booking_id: parseInt(booking_id)}, function (bookings_history) {
+			if (bookings_history.length > 0) {
+				$.each(bookings_history, function (key, booking_history) {
+					var staffCode = '';
+					if ($('#calendar-data').data('staff-code')) {
+						staffCode = '<td>'+booking_history.staff_code+'</td>';
+					}
+					var date = new Date(booking_history.start);
+					$('#booking-history-tbody').append('<tr><td>'+booking_history.action+'</td><td>'+dateToLocal(date)+'</td><td>'+booking_history.service+'</td><td>'+booking_history.provider+'</td><td>'+booking_history.status+'</td><td>'+booking_history.user+'</td>'+staffCode+'</tr>');
+				});
+			}
+			else {
+				$('#booking-history-tbody').append('<tr><td colspan="6">No hay modificaciones para esta reserva...</td></tr>');
 			}
 		});
 	}
@@ -1485,13 +1537,13 @@ $(function() {
 		dayNamesMin: [ "Do", "Lu", "Ma", "Mi", "Ju", "Vi", "Sá" ],
 		dayNamesShort: [ "Dom", "Lun", "Mar", "Mié", "Jue", "Vie", "Sáb" ]
 	});
-	$("#bookingStartHour").on("change", function() { 
+	$("#bookingStartHour").on("change", function() {
 		modalChange();
 	});
-	$("#bookingStartMinute").on("change", function() { 
+	$("#bookingStartMinute").on("change", function() {
 		modalChange();
 	});
-	$("#booking_service_id").on("change", function() { 
+	$("#booking_service_id").on("change", function() {
 		modalChange();
 	});
 
@@ -1570,7 +1622,7 @@ $(function() {
 			}
 			$('#xButton').prop('disabled', false);
 			$("#full_name").prop('disabled', true);
-			loadClientHistory();
+			loadClientHistory(0);
 		}
 	}).data( "ui-autocomplete" )._renderItem = function( ul, item ) {
 		return $( '<li>' ).append( '<a>' + item.label + '<br><span class="auto-desc">' + item.desc + '</span></a>' ).appendTo( ul );
@@ -1613,7 +1665,7 @@ $(function() {
 			}
 			$('#xButton').prop('disabled', false);
 			$("#full_name").prop('disabled', true);
-			loadClientHistory();
+			loadClientHistory(0);
 		}
 	}).data( "ui-autocomplete" )._renderItem = function( ul, item ) {
 		return $( '<li>' ).append( '<a>' + item.label + '<br><span class="auto-desc">' + item.desc + '</span></a>' ).appendTo( ul );
@@ -1723,7 +1775,7 @@ $(function() {
 	$('#bookingAlertsClose').click(function() {
 		$('#bookingAlerts').hide();
 	});
-	
+
 	$('#provider_break_service_provider_id').append(
 		'<option value="0">Todos</option>'
 	);

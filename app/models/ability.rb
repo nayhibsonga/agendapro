@@ -125,6 +125,16 @@ class Ability
         can :create, Company, :id => user.company_id
         can :update, Company, :id => user.company_id
 
+        # can :read, CompanyFromEmail
+        # can :destroy, CompanyFromEmail
+        # can :create, CompanyFromEmail
+        # can :update, CompanyFromEmail
+
+        # can :read, StaffCode
+        # can :destroy, StaffCode
+        # can :create, StaffCode
+        # can :update, StaffCode
+
         company_abilities.each do |c|
             can :read, c, :company_id => user.company_id
             can :destroy, c, :company_id => user.company_id
@@ -186,6 +196,7 @@ class Ability
         can :update_comment, Client
         can :destroy_comment, Client
 
+        can :compose_mail, Client, :company_id => user.company_id
         can :send_mail, Client, :company_id => user.company_id
         can :import, Client
 
@@ -210,6 +221,9 @@ class Ability
         can :create_provider_break, ProviderBreak
         can :update_provider_break, ProviderBreak
         can :destroy_provider_break, ProviderBreak
+
+        # can :read, StaffCode, :company_id => user.company_id
+        can :read, BookingHistory, :company_id => user.company_id
 
         can :read, Service, :company_id => user.company_id
         can :create, Service, :company_id => user.company_id
@@ -282,6 +296,7 @@ class Ability
         can :update_comment, Client, :company_id => user.company_id
         can :destroy_comment, Client, :company_id => user.company_id
         
+                can :compose_mail, Client, :company_id => user.company_id
         can :send_mail, Client, :company_id => user.company_id
         can :import, Client
 
@@ -333,6 +348,7 @@ class Ability
         can :update_comment, Client, :company_id => user.company_id
         can :destroy_comment, Client, :company_id => user.company_id
 
+        can :compose_mail, Client, :company_id => user.company_id
         can :send_mail, Client, :company_id => user.company_id
         can :import, Client
 

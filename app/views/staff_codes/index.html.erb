@@ -1,0 +1,25 @@
+<h1>Listing staff_codes</h1>
+
+<table>
+  <thead>
+    <tr>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @staff_codes.each do |staff_code| %>
+      <tr>
+        <td><%= link_to 'Show', staff_code %></td>
+        <td><%= link_to 'Edit', edit_staff_code_path(staff_code) %></td>
+        <td><%= link_to 'Destroy', staff_code, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<br>
+
+<%= link_to 'New Staff code', new_staff_code_path %>

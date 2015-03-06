@@ -37,6 +37,10 @@ class ServicesController < ApplicationController
   # GET /services/1
   # GET /services/1.json
   def show
+    respond_to do |format|
+      format.html
+      format.json { render json: @service }
+    end
   end
 
   # GET /services/new
@@ -47,6 +51,7 @@ class ServicesController < ApplicationController
 
   # GET /services/1/edit
   def edit
+
   end
 
   # POST /services
@@ -119,8 +124,9 @@ class ServicesController < ApplicationController
   end
 
   def location_categorized_services
+
     location_resources = Location.find(params[:location]).resource_locations.pluck(:resource_id)
-    service_providers = ServiceProvider.where(location_id: params[:location])
+    service_providers = ServiceProvider.where(location_id: params[:location]).where(:active => true)
 
     categories = ServiceCategory.where(:company_id => Location.find(params[:location]).company_id).order(order: :asc)
     services = Service.where(:active => true, :id => ServiceStaff.where(service_provider_id: service_providers.pluck(:id)).pluck(:service_id)).order(order: :asc)
@@ -198,6 +204,6 @@ class ServicesController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def service_params
-      params.require(:service).permit(:name, :price, :show_price, :duration, :outcall, :description, :group_service, :capacity, :waiting_list, :outcall, :company_id, :service_category_id, service_category_attributes: [:name, :company_id, :id],  :tag_ids => [], :service_provider_ids => [], :resource_ids => [] )
+      params.require(:service).permit(:name, :price, :show_price, :duration, :outcall, :description, :group_service, :capacity, :waiting_list, :outcall, :online_payable, :has_discount, :discount, :company_id, :service_category_id, service_category_attributes: [:name, :company_id, :id],  :tag_ids => [], :service_provider_ids => [], :resource_ids => [] )
     end
 end

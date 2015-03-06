@@ -1,5 +1,10 @@
 @charset "UTF-8";
 
+.mp_link{
+	cursor: pointer;
+	max-width: 120px;
+}
+
 .subtitulos-workflow {
 	color: #22c488;
 	font-size: 30px;
@@ -20,11 +25,21 @@
 
 .staff-wrapper{
 	padding-right: 25px;
-	border-right: 1px solid #22c488;
 	max-height: 346px;
+}
+ 
+.step2-left-col{
+	border-right: 1px solid #22c488;
+	height: 346px;
+}
+
+.step2-left-col{
+	border-right: 1px solid #22c488;
+	height: 346px;
 }
 
 .staff-wrapper .panel-default{
+
 	
 	border-color: #acacac;
 	margin-top: 5px;
@@ -111,7 +126,7 @@ input[type=radio   ]:not(old):checked + span{
 .circle-number{
 	position: absolute; 
 	margin-left: -19px; 
-	margin-top: -5px; 
+	margin-top: -7px; 
 	color: #fff; 
 	font-weight: bold; 
 	font-size: 20px;
@@ -119,7 +134,7 @@ input[type=radio   ]:not(old):checked + span{
 
 .navigation-title{
 	position: absolute;
-	margin-top: -5px;
+	margin-top: -7px;
 	margin-left: 4px;
 	font-size: 20px;
 }
@@ -129,7 +144,7 @@ input[type=radio   ]:not(old):checked + span{
 }
 
 .box-step{
-	min-height:400px;
+	min-height:404px;
 	float:left;
 }
 
@@ -152,7 +167,7 @@ input[type=radio   ]:not(old):checked + span{
 .main {
 	/*background: url(<%= asset_path 'backgrounds/wild_oliva_light.png' %>);
 	background-color: #E2E3E4;*/
-	min-height: 400px;
+	min-height: 404px;
 	padding-top: 20px;
 }
 .logo-empresa{
@@ -284,7 +299,7 @@ input[type=radio   ]:not(old):checked + span{
 	height: 44px;
 	font-size: 26px;
 	color: #fff;
-	padding-top: 10px;
+	padding-top: 6px;
 	//padding-left: 20px !important;
 }
 
@@ -480,7 +495,7 @@ input[type=radio   ]:not(old):checked + span{
 #phone-info{
 	padding-top: 0px;
 	text-align: left;
-	font-size: 14px;
+	font-size: 17px;
 	color: #505050;
 }
 
@@ -495,13 +510,13 @@ input[type=radio   ]:not(old):checked + span{
 
 a.btn-green-wf {
 	background-color: transparent;
-	border: 2px solid #22c488;
+	border: 1px solid #22c488;
 	color: #22c488;
 	font-weight: bold;
 	margin: 5px;
 }
 a.btn-green-wf:hover {
-	border: 2px solid #1ba970;
+	border: 1px solid #1ba970;
 	color: #1ba970;
 }
 
@@ -511,14 +526,14 @@ div.active > a.btn-green-wf {
 }
 div.active > a.btn-green-wf:hover {
 	background-color: #1ba970;
-	border: 2px solid #1ba970;
+	border: 1px solid #1ba970;
 	color: #ffffff;
 }
 
 #boton-agendar{
 	font-size: 24px;
 	text-align: center;
-	padding-top: 16px !important;
+	padding-top: 11px !important;
 	display: block;
 	height: 100%;
 	color: #fff !important;
@@ -670,7 +685,7 @@ div.active > a.btn-green-wf:hover {
 
 .descripcion-header{
 	padding-left: 12px;
-	padding-top: 6px;
+	padding-top: 2px;
 	font-size: 22px;
 	background-color: #22c488;
 	color: #fff;
@@ -698,7 +713,7 @@ div.active > a.btn-green-wf:hover {
 	background-color: #ddd;
 	height: 44px;
 	font-size: 22px;
-	padding-top: 10px;
+	padding-top: 7px;
 	padding-left: 15px;
 	color: #fff;
 }
@@ -733,7 +748,7 @@ div.active > a.btn-green-wf:hover {
 	background-color: #22c488;
 	height: 44px;
 	font-size: 22px;
-	padding-top: 10px;
+	padding-top: 7px;
 	padding-left: 15px;
 	color: #fff;
 	border-top-left-radius: 6px;
@@ -785,7 +800,7 @@ div.active > a.btn-green-wf:hover {
 .book-subheader{
 	font-size: 20px;
 	height: 38px;
-	padding-top: 7px;
+	padding-top: 4px;
 	padding-left: 8px;
 	border: 1px solid #ddd;
 	margin-bottom: 8px;
@@ -833,7 +848,7 @@ div.active > a.btn-green-wf:hover {
 	display: block;
 	height: 100%;
 	text-decoration: none !important;
-	padding-top: 7px !important;
+	padding-top: 4px !important;
 	text-decoration: none !important;
 }
 
@@ -921,7 +936,6 @@ div.active > a.btn-green-wf:hover {
 	background-color: #f1972d;
 	color: #fff;
 	float: right;
-	padding-top: 4px;
 	border-radius: 6px;
 }
 
@@ -936,7 +950,6 @@ div.active > a.btn-green-wf:hover {
 	background-color: #f1972d;
 	color: #fff;
 	float: right;
-	padding-top: 4px;
 	border-radius: 6px;
 }
 
@@ -947,6 +960,66 @@ div.active > a.btn-green-wf:hover {
 
 #submitBtn:hover{
 	background-color: #e0861c;
+	color: #eee;
+}
+
+#payBtn{
+	position: relative;
+	border: 1px solid #22c488;
+	text-align: center;
+	width: 160px;
+	height: 40px;
+	font-size: 20px;
+	cursor: pointer;
+	background-color: #22c488;
+	color: #fff;
+	float: left;
+	border-radius: 6px;
+}
+
+.payBtn{	
+	border: 1px solid #22c488;
+	text-align: center;
+	width: 160px;
+	height: 40px;
+	font-size: 20px;
+	cursor: pointer;
+	background-color: #22c488;
+	color: #fff;
+	float: left;
+	border-radius: 6px;
+}
+
+.payBtn:hover{
+	background-color: #1ba970;
+	color: #eee;
+}
+
+.payBtn:focus{
+	background-color: #1ba970;
+	color: #eee;
+}
+
+#payBtn:hover{
+	background-color: #1ba970;
+	color: #eee;
+}
+
+.modal-pay{
+	border: 1px solid #22c488;
+	text-align: center;
+	width: 140px;
+	height: 40px;
+	font-size: 18px;
+	cursor: pointer;
+	background-color: #22c488;
+	color: #fff;
+	float: right;
+	border-radius: 6px;
+}
+
+.modal-pay:hover{
+	background-color: #1ba970;
 	color: #eee;
 }
 
@@ -1113,6 +1186,9 @@ section.copyright a:hover {
     margin-bottom: 0;  
 }
 
+
+
+
 .resumen-book{
 	color: #979797;
 }
@@ -1161,4 +1237,61 @@ section.copyright a:hover {
 }
 .well {
 	color: #646464;
+}
+
+.ajax-loader img{
+	display: block;
+	margin-left: auto;
+	margin-right: auto;
+	margin-top: 20px;
+}
+
+.edit-booking-calendar .bloque-hora span{
+	height: 36px !important;
+}
+
+.workflow-footer {
+	padding-top: 20px;
+	background-color: #ffffff;
+	padding-bottom: 30px;
+}
+
+.workflow-footer .copyright-footer {
+	color: #646464;
+}
+
+.workflow-footer .links-footer {
+	font-size: 14px;
+	color: #646464;
+}
+
+.workflow-footer a {
+	color: #646464;
+}
+
+.p-label {
+	display: inline;
+	color: #646464;
+}
+
+.wf-label {
+	height: 20px;
+	padding-left: 10px;
+	padding-right: 10px;
+	border: solid 1px #acacac;
+	border-radius:3px;
+	margin-right: 5px;
+	margin-left: 15px;
+}
+
+.label-available {
+	background-color: #ffffff;
+}
+
+.label-unavailable {
+	background-color: #f2dede;
+}
+
+.label-past {
+	background-color: #d2d2d2;
 }

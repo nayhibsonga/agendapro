@@ -1,25 +1,29 @@
 @font-face {
 	font-family: TradeGothic;
-	src: url(<%= font_path('TradeGothicLTStd.otf') %>);
+	src: url('/assets/Trade Gothic LT Condensed No. 18.ttf');
+	src: url('/assets/Trade Gothic LT Condensed No. 18.ttf?#iefix') format('truetype'),
+	url('/assets/Trade Gothic LT Condensed No. 18.ttf') format('truetype');
+	font-weight: normal;
+	font-style: normal;
 }
 @font-face {
-	font-family: TradeGothicCn18;
-	src: url(<%= font_path('TradeGothicLTStd-Cn18.otf') %>);
-}
-@font-face {
-	font-family: TradeGothicLight;
-	src: url(<%= font_path('TradeGothicLTStd-Light.otf') %>);
+	font-family: FranklinGothic;
+	src: url('/assets/ITC Franklin Gothic LT Book Extra Compressed.ttf');
+	src: url('/assets/ITC Franklin Gothic LT Book Extra Compressed.ttf?#iefix') format('truetype'),
+	url('/assets/ITC Franklin Gothic LT Book Extra Compressed.ttf') format('truetype');
+	font-weight: normal;
+	font-style: normal;
 }
 
 html,
 body {
-	font-family: TradeGothicCn18, TradeGothic, TradeGothicLight;
+	font-family: TradeGothic, FranklinGothic, "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
 	background: #ffffff;
 	font-size: 17px;
 }
 h1, h2, h3, h4, h5, h6,
 .h1, .h2, .h3, .h4, .h5, .h6 {
-	font-family: TradeGothicCn18;
+	font-family: TradeGothic, FranklinGothic, "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
 	line-height: 1.1;
 }
 h1, .h1 {
@@ -86,10 +90,17 @@ h6, .h6 {
 
 /*** alert ***/
 .alert {
-	position: absolute;
-	margin-top: 50px;
-	width: 100%;
-	z-index: 10;
+	position: fixed;
+	margin: 55px auto 10px;
+	width: 75%;
+	z-index: 10000;
+	left: 5%;
+	right: 5%;
+	padding: 10px 15px;
+}
+.alert-dismissable,
+.alert-dismissible {
+	padding-right: 35px;
 }
 
 /*Forms*/
@@ -149,6 +160,9 @@ h6, .h6 {
 		color: #ffffff;
 		background: #505050;
 	}
+	.navbar-toggle > i {
+		vertical-align: text-bottom;
+	}
 
 	/* Orientation-dependent styles for the content of the menu */
 	.cbp-spmenu-vertical {
@@ -178,7 +192,7 @@ h6, .h6 {
 	.container-fluid > .navbar-collapse {
 		margin-right: 0;
 	}
-	.collapse {
+	.collapse.navbar-collapse {
 		display: block;
 		visibility: visible;
 	}

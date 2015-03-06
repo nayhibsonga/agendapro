@@ -1,4 +1,4 @@
-  
+
 class ProviderBreaksController < ApplicationController
   before_action :authenticate_user!
   load_and_authorize_resource
@@ -94,21 +94,57 @@ class ProviderBreaksController < ApplicationController
     else
       break_group = ProviderBreak.find(params[:id]).break_group_id
       service_providers = ServiceProvider.where(location_id: provider_break_params[:local])
-      provider_breaks = ProviderBreak.where(service_provider_id: service_providers).where(break_group_id: break_group)
       @break_json = Array.new
       @break_erros = Array.new
       status = true
-      provider_breaks.each do |breaks|
+      if !break_group.nil?
+        provider_breaks = ProviderBreak.where(service_provider_id: service_providers).where(break_group_id: break_group)
+        provider_breaks.each do |breaks|
+          break_params = provider_break_params.except(:local)
+          break_params[:service_provider_id] = breaks.service_provider_id
+          break_params[:break_group_id] = break_group
+          if breaks.update(break_params)
+            breaks.warnings ? warnings = breaks.warnings.full_messages : warnings = []
+            @break_json.push({id: breaks.id, start: breaks.start, end: breaks.end, service_provider_id: breaks.service_provider_id, name: breaks.name, warnings: warnings})
+            status = status && true
+          else
+            @break_erros.push(breaks.errors.full_messages)
+            status = status && false
+          end
+        end
+      else
+        originalBreak = ProviderBreak.find(params[:id])
+        break_group = ProviderBreak.where(service_provider_id: service_providers).where.not(break_group_id: nil).order(:break_group_id).last
+        if break_group.nil?
+          break_group = 0
+        else
+          break_group = break_group.break_group_id + 1
+        end
         break_params = provider_break_params.except(:local)
-        break_params[:service_provider_id] = breaks.service_provider_id
+        break_params[:service_provider_id] = originalBreak.service_provider_id
         break_params[:break_group_id] = break_group
-        if breaks.update(break_params)
-          breaks.warnings ? warnings = breaks.warnings.full_messages : warnings = []
-          @break_json.push({id: breaks.id, start: breaks.start, end: breaks.end, service_provider_id: breaks.service_provider_id, name: breaks.name, warnings: warnings})
+        # The provider with the break
+        if originalBreak.update(break_params)
+          originalBreak.warnings ? warnings = originalBreak.warnings.full_messages : warnings = []
+          @break_json.push({id: originalBreak.id, start: originalBreak.start, end: originalBreak.end, service_provider_id: originalBreak.service_provider_id, name: originalBreak.name, warnings: warnings})
           status = status && true
         else
-          @break_erros.push(breaks.errors.full_messages)
+          @break_erros.push(originalBreak.errors.full_messages)
           status = status && false
+        end
+        # The rest of the Providers
+        service_providers = ServiceProvider.where(location_id: provider_break_params[:local]).where.not(id: originalBreak.service_provider_id)
+        service_providers.each do |provider|
+          break_params[:service_provider_id] = provider.id
+          breaks = ProviderBreak.new(break_params)
+          if breaks.save
+            breaks.warnings ? warnings = breaks.warnings.full_messages : warnings = []
+            @break_json.push({id: breaks.id, start: breaks.start, end: breaks.end, service_provider_id: breaks.service_provider_id, name: breaks.name, warnings: warnings})
+            status = status && true
+          else
+            @break_erros.push(breaks.errors.full_messages)
+            status = status && false
+          end
         end
       end
       respond_to do |format|
@@ -148,7 +184,7 @@ class ProviderBreaksController < ApplicationController
       end
     end
   end
-  
+
   def provider_break_params
     params.require(:provider_break).permit(:start, :end, :service_provider_id, :name, :local)
   end

@@ -2,9 +2,9 @@ class ClientMailer < ActionMailer::Base
   require 'mandrill'
   require 'base64'
 
-  def send_client_mail (current_user, clients, subject, message, company_img, attachment, from)
+  def send_client_mail (current_user, clients, subject, message, attachment, from)
 	mandrill = Mandrill::API.new Agendapro::Application.config.api_key
-	
+
 	# => Template
 	template_name = 'clientmail'
 	template_content = []
@@ -27,14 +27,18 @@ class ClientMailer < ActionMailer::Base
 			{
 				:name => 'COMPANYNAME',
 				:content => Company.find(current_user.company_id).name
+			},
+			{
+				:name => 'URL',
+				:content => Company.find(current_user.company_id).web_address
 			}
 		],
 		:tags => ['client_mail', 'Client'],
 		:images => [
 				{
 					:type => 'image/png',
-					:name => 'company_img.jpg',
-					:content => Base64.encode64(File.read('app/assets/ico/Iso_Pro_Color.png'))
+					:name => 'LOGO',
+					:content => Base64.encode64(File.read('app/assets/images/logos/logodoble2.png'))
 				}
 			],
 		:attachments => []
@@ -43,8 +47,8 @@ class ClientMailer < ActionMailer::Base
 	# => Logo empresa
 	if Company.find(current_user.company_id).logo_url
 		company_logo = {
-			:type => 'image/' +  File.extname(Company.find(current_user.company_id).logo_url),
-			:name => 'company_img.jpg',
+			:type => MIME::Types.type_for(Company.find(current_user.company_id).logo_url).first.content_type,
+			:name => 'LOGO',
 			:content => Base64.encode64(File.read('public' + Company.find(current_user.company_id).logo_url.to_s))
 		}
 		message[:images] = [company_logo]

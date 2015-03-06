@@ -138,7 +138,6 @@ $(function() {
 
 			$('#service_service_category_id').find('option').remove().end();
 			$.each(service_categories, function (key, service_category) {
-				window.console.log(service_category);
 				$('#service_service_category_id').append(
 					'<option value="' + service_category.id + '">' + service_category.name + '</option>'
 				);

@@ -1,40 +1,32 @@
-<% unless params[:id] %>
-<div class="container">
+<div class="container container-margin">
+  <% unless params[:id] %>
   <div class="row">
     <div class="col-xs-12">
-      <div class="panel panel-info">
-        <div class="panel-heading">
-          <h3 class="panel-title">¿Estás seguro de cancelar tu reserva?</h3>
+      <h3 class="text-center">¿Estás seguro de cancelar tu reserva?</h3>
+      <p>Si cancelas tu reserva, otra persona podrá utilizar la hora liberada.</p>
+    </div>
+    <div class="col-xs-12">
+      <%= form_tag("/cancel_booking", method: "post", role: "form", id: "edit_form" ) do %>
+        <%= hidden_field_tag :id, @booking.id %>
+        <div class="form-group">
+          <button type="submit" class="btn btn-green btn-lg btn-block">Cancelar Reserva</button>
+          <%= link_to '<i class="fa fa-caret-left"></i> <span>Volver</span>'.html_safe, root_url, class: 'btn btn-orange btn-lg btn-block' %>
         </div>
-        <div class="panel-body">
-          <p>Si cancelas tu reserva, otra persona podrá utilizar la hora liberada</p><br />
-          <%= form_tag("/cancel_booking", method: "post", role: "form", id: "edit_form" ) do %>
-            <%= hidden_field_tag :id, @booking.id %>
-            <div class="form-group">
-              <button type="submit" class="btn btn-success">Cancelar Reserva</button>
-              <%= link_to 'Atras', root_url(:subdomain => false), :class => 'btn btn-default' %>
-            </div>
-          <% end %>
-        </div>
+      <% end %>
+    </div>
+  </div>
+  <% else %>
+  <div class="row">
+    <div class="col-xs-12">
+      <h3 class="text-center">Tu reserva fue cancelada</h3>
+      <div class="pull-center">
+        <%= image_tag 'logos/logo2.png', :alt => 'AgendaPro' %>
+        <% if @company.logo_url %>
+        <div class="vertical-divider"></div>
+        <%= image_tag @company.logo_url.to_s, :alt => @company.name %>
+        <% end %>
       </div>
     </div>
   </div>
+  <% end %>
 </div>
-<% else %>
-<div class="center-load">
-  <h2><%= link_to 'AGENDAPRO', root_url(:subdomain => false) %></h2>
-  <%= image_tag 'mobile/check.png', :alt => 'Agendado' %>
-  <p>Tu reserva fue cancelada exitosamente</p>
-</div>
-
-<% content_for :scripts do %>
-<script type="text/javascript">
-  $(function() {
-    $('body').attr('id', 'loading');
-    window.setTimeout(function () {
-      location.href = "<%= root_url(:subdomain => false) %>";
-    }, 10000);
-  });
-</script>
-<% end %>
-<% end %>
