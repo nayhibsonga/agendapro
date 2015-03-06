@@ -690,7 +690,7 @@ class BookingsController < ApplicationController
           staff_code = booking_history.staff_code.staff
         end
         user = 'Usuario no registrado'
-        if booking_history.user_id > 0 && booking_history.user
+        if booking_history.user_id && booking_history.user_id > 0 && booking_history.user
           user = booking_history.user.email
         end
       end

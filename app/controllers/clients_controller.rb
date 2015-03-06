@@ -65,7 +65,15 @@ class ClientsController < ApplicationController
         format.html { redirect_to clients_path, notice: 'Cliente creado exitosamente.' }
         format.json { render action: 'edit', status: :created, location: @client }
       else
-        format.html { render action: 'new' }
+        format.html { 
+          @activeBookings = Array.new
+          @lastBookings = Array.new
+          @client = Client.new
+          @client_comment = ClientComment.new
+          if mobile_request?
+            @company = current_user.company
+          end
+          render action: 'new' }
         format.json { render json: @client.errors, status: :unprocessable_entity }
       end
     end
@@ -79,7 +87,13 @@ class ClientsController < ApplicationController
         format.html { redirect_to clients_path, notice: 'Cliente actualizado exitosamente.' }
         format.json { head :no_content }
       else
-        format.html { render action: 'edit' }
+        format.html { 
+          @activeBookings = Booking.where(:client_id => @client).where("start > ?", DateTime.now).order(start: :asc)
+          @lastBookings = Booking.where(:client_id => @client).where("start <= ?", DateTime.now).order(start: :desc)
+          @next_bookings = Booking
+          @client_comment = ClientComment.new
+          @client_comments = ClientComment.where(client_id: @client).order(created_at: :desc)
+          render action: 'edit' }
         format.json { render json: @client.errors, status: :unprocessable_entity }
       end
     end

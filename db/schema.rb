@@ -106,13 +106,14 @@ ActiveRecord::Schema.define(version: 20150302152532) do
     t.integer  "client_id"
     t.float    "price",               default: 0.0
     t.boolean  "provider_lock",       default: false
+    t.integer  "max_changes",         default: 2
     t.boolean  "payed",               default: false
     t.string   "trx_id",              default: ""
-    t.integer  "max_changes",         default: 2
     t.string   "token",               default: ""
     t.integer  "deal_id"
     t.integer  "booking_group"
     t.integer  "payed_booking_id"
+
   end
 
   add_index "bookings", ["client_id"], name: "index_bookings_on_client_id", using: :btree
@@ -234,21 +235,21 @@ ActiveRecord::Schema.define(version: 20150302152532) do
     t.boolean  "provider_overcapacity",       default: true,                  null: false
     t.boolean  "resource_overcapacity",       default: true,                  null: false
     t.integer  "booking_confirmation_time",   default: 1,                     null: false
-    t.integer  "booking_configuration_email", default: 0
+    t.integer  "booking_configuration_email", default: 1
     t.integer  "max_changes",                 default: 2
     t.boolean  "booking_history",             default: false
     t.boolean  "staff_code",                  default: false
     t.integer  "monthly_mails",               default: 0,                     null: false
+    t.boolean  "deal_activate",               default: false
+    t.string   "deal_name"
+    t.boolean  "deal_overcharge",             default: true
     t.boolean  "allows_online_payment",       default: false
     t.string   "account_number",              default: ""
     t.string   "company_rut",                 default: ""
     t.string   "account_name",                default: ""
     t.integer  "account_type",                default: 3
     t.integer  "bank_id"
-    t.boolean  "deal_activate",               default: false
-    t.string   "deal_name"
-    t.boolean  "deal_overcharge",             default: true
-    t.boolean  "deal_exclusive",              default: false
+    t.boolean  "deal_exclusive",              default: true
     t.integer  "deal_quantity",               default: 0
     t.integer  "deal_constraint_option",      default: 0
     t.integer  "deal_constraint_quantity",    default: 0
@@ -377,7 +378,7 @@ ActiveRecord::Schema.define(version: 20150302152532) do
     t.boolean  "outcall",                     default: false
     t.string   "email",                       default: ""
     t.boolean  "notification",                default: false
-    t.integer  "booking_configuration_email", default: 0
+    t.integer  "booking_configuration_email", default: 2
     t.string   "second_address"
   end
 
@@ -603,7 +604,7 @@ ActiveRecord::Schema.define(version: 20150302152532) do
     t.boolean  "active",                      default: true
     t.integer  "order",                       default: 0
     t.integer  "block_length",                default: 30
-    t.integer  "booking_configuration_email", default: 0
+    t.integer  "booking_configuration_email", default: 2
   end
 
   add_index "service_providers", ["company_id"], name: "index_service_providers_on_company_id", using: :btree

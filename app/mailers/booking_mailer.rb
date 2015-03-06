@@ -349,6 +349,10 @@ class BookingMailer < ActionMailer::Base
 					:content => book_info.location.address + " - " + District.find(book_info.location.district_id).name
 				},
 				{
+					:name => 'CLIENTNAME',
+					:content => book_info.client.first_name + ' ' + book_info.client.last_name
+				},
+				{
 					:name => 'SERVICEPROVIDER',
 					:content => book_info.service_provider.public_name
 				},
@@ -551,60 +555,43 @@ class BookingMailer < ActionMailer::Base
 
 		# Notificacion cliente
 		if book_info.send_mail
-			if book_info.payed_booking.nil?
-				message[:to] << {
-					:email => book_info.client.email,
-					:name => book_info.client.first_name + ' ' + book_info.client.last_name,
-					:type => 'to'
-				}
-				message[:merge_vars] << {
-					:rcpt => book_info.client.email,
-					:vars => [
-						{
-							:name => 'LOCALADDRESS',
-							:content => book_info.location.address + " - " + District.find(book_info.location.district_id).name
-						},
-						{
-							:name => 'LOCATIONPHONE',
-							:content => number_to_phone(book_info.location.phone)
-						},
-						{
-							:name => 'EDIT',
-							:content => booking_edit_url(:confirmation_code => book_info.confirmation_code)
-						},
-						{
-							:name => 'CANCEL',
-							:content => booking_cancel_url(:confirmation_code => book_info.confirmation_code)
-						},
-						{
-							:name => 'CLIENT',
-							:content => true
-						},
-						{
-							:name => 'PAYED',
-							:content => "true"
-						}
-					]
-				}
-			end
 			message[:to] << {
 				:email => book_info.client.email,
 				:name => book_info.client.first_name + ' ' + book_info.client.last_name,
 				:type => 'to'
 			}
-			message[:merge_vars] << {
+			mergeVars = {
 				:rcpt => book_info.client.email,
 				:vars => [
 					{
-						:name => 'CLIENTNAME',
-						:content => book_info.client.first_name + ' ' + book_info.client.last_name
+						:name => 'LOCALADDRESS',
+						:content => book_info.location.address + " - " + District.find(book_info.location.district_id).name
 					},
 					{
 						:name => 'LOCATIONPHONE',
 						:content => number_to_phone(book_info.location.phone)
+					},
+					{
+						:name => 'EDIT',
+						:content => booking_edit_url(:confirmation_code => book_info.confirmation_code)
+					},
+					{
+						:name => 'CANCEL',
+						:content => booking_cancel_url(:confirmation_code => book_info.confirmation_code)
+					},
+					{
+						:name => 'CLIENT',
+						:content => true
 					}
 				]
 			}
+			if !book_info.payed_booking.nil?
+				message[:merge_vars][:vars] << {
+							:name => 'PAYED',
+							:content => "true"
+						}
+			end
+			message[:merge_vars] << mergeVars
 		end
 
 		# => Metadata
