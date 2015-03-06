@@ -1,7 +1,7 @@
 class BookingsController < ApplicationController
   before_action :set_booking, only: [:show, :edit, :update, :destroy]
-  before_action :authenticate_user!, except: [:create, :force_create, :booking_valid, :provider_booking, :book_service, :book_error, :remove_bookings, :edit_booking, :edit_booking_post, :cancel_booking, :confirm_booking, :check_user_cross_bookings, :blocked_edit, :blocked_cancel, :optimizer_hours, :optimizer_data]
-  before_action :quick_add, except: [:create, :force_create, :booking_valid, :provider_booking, :book_service, :book_error, :remove_bookings, :edit_booking, :edit_booking_post, :cancel_booking, :confirm_booking, :check_user_cross_bookings, :blocked_edit, :blocked_cancel, :optimizer_hours, :optimizer_data]
+  before_action :authenticate_user!, except: [:create, :force_create, :booking_valid, :provider_booking, :book_service, :book_error, :remove_bookings, :edit_booking, :edit_booking_post, :cancel_booking, :confirm_booking, :check_user_cross_bookings, :blocked_edit, :blocked_cancel, :optimizer_hours, :optimizer_data, :transfer_error_cancel]
+  before_action :quick_add, except: [:create, :force_create, :booking_valid, :provider_booking, :book_service, :book_error, :remove_bookings, :edit_booking, :edit_booking_post, :cancel_booking, :confirm_booking, :check_user_cross_bookings, :blocked_edit, :blocked_cancel, :optimizer_hours, :optimizer_data, :transfer_error_cancel]
   layout "admin", except: [:book_service, :book_error, :remove_bookings, :provider_booking, :edit_booking, :edit_booking_post, :cancel_booking, :transfer_error_cancel, :confirm_booking, :check_user_cross_bookings, :blocked_edit, :blocked_cancel, :optimizer_hours, :optimizer_data]
 
   # GET /bookings
@@ -1143,12 +1143,15 @@ class BookingsController < ApplicationController
             current_user ? user = current_user.id : user = 0            
             BookingHistory.create(booking_id: booking.id, action: "Creada por Cliente", start: booking.start, status_id: booking.status_id, service_id: booking.service_id, service_provider_id: booking.service_provider_id, user_id: user)           
           else
-            @errors = @booking.errors.full_messages
+            @errors = booking.errors.full_messages
             proceed_with_payment = false
           end
         end
-        #Check for errors before starting payment
+        @blocked_bookings.each do |b_booking|
+          b_booking.save
+        end
 
+        #Check for errors before starting payment
         if @errors.length > 0 and @blocked_bookings.count > 0
           redirect_to book_error_path(bookings: @bookings.map{|b| b.id}, location: @selectedLocation.id, client: client.id, errors: @errors, payment: "payment", blocked_bookings: @blocked_bookings.map{|b| b.id})
           return
@@ -1188,10 +1191,28 @@ class BookingsController < ApplicationController
     @location = Location.find(params[:location])
     @company = @location.company
     @client = Client.find(params[:client])
-    @bookings = Booking.find(params[:bookings])
+    @tried_bookings = []
+    if(params[:bookings])
+      @tried_bookings = Booking.find(params[:bookings])
+    end
     @payment = params[:payment]
     @blocked_bookings = Booking.find(params[:blocked_bookings])
     @errors = params[:errors]
+    @bookings = []
+
+    #If payed, delete them all.
+    if @payment == "payment"
+      @blocked_bookings.each do |booking|
+        booking.delete
+      end
+    else #Create fake bookings and delete the real ones
+      @tried_bookings.each do |booking|
+        fake_booking = Booking.new(booking.attributes.to_options)
+        @bookings << fake_booking
+        booking.delete
+      end
+    end
+
     host = request.host_with_port
     @url = @company.web_address + '.' + host[host.index(request.domain)..host.length]
 
@@ -1691,8 +1712,13 @@ class BookingsController < ApplicationController
   end
 
   def transfer_error_cancel
-    @company = Company.find(params[:company_id])
-    render layout: 'workflow'
+    if params[:company_id]
+      @company = Company.find(params[:company_id])
+      render layout: 'workflow'
+    else
+      redirect_to root_without_subdomain
+      return
+    end
   end
 
   def check_user_cross_bookings
