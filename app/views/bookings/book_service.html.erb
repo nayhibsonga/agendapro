@@ -135,7 +135,7 @@
                     <dt class="dark-gray">¿Cuándo?</dt>
                     <dd class="light-gray">
                       <% @bookings.each do |booking| %>
-                        <p><%= booking.start %></p>
+                        <p><%= I18n.l(booking.start.to_datetime) %></p>
                       <% end %>
                     </dd>
                     <% @bookings.each do |booking| %>

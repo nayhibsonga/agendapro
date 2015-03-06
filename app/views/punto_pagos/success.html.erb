@@ -99,7 +99,7 @@
 								<dt class="dark-gray">¿Cuándo?</dt>
 								<dd class="light-gray">
 									<% @bookings.each do |booking| %>
-										<%= booking.start %><br />
+										<%= I18n.l(booking.start.to_datetime) %><br />
 									<% end %>
 								</dd>
 								<% if !@bookings.first.notes.empty? %>
