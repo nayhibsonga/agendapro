@@ -419,7 +419,19 @@ function loadDescription (serviceId) {
 					'<td class="light-gray">$ ' + service.price.toLocaleString() + '</td>' +
 				'</tr>'
 			);
-		}
+			if(service.online_payable)
+			{
+				if(service.has_discount && service.discount > 0)
+				{
+					$('#services-description').append(
+						'<tr>' +
+							'<td class="dark-gray">Precio pago en línea:</td>' +
+							'<td class="light-gray"><b>$ ' + Math.round(service.price*(100-service.discount)/100).toLocaleString() + ' (' + service.discount + '% de descuento)</b></td>' +
+						'</tr>'
+					);
+				}
+			}
+		} 
 		else if (service.show_price && service.price == 0) {
 			$('#services-description').append(
 				'<tr>' +
