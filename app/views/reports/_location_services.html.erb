@@ -18,10 +18,10 @@
 							<%= service.name %>
 							</td>
 							<td>
-								<%= int_with_variation(location_service_booking_count(0, 0, service.id, @location.id), location_service_booking_count(0, 1, service.id, @location.id)) %>
+								<%= int_with_variation(location_service_booking_count(params[:from], params[:to], params[:status], params[:option], service.id, @location.id), location_service_booking_count(params[:from], params[:to], params[:status], params[:option], service.id, @location.id)) %>
 							</td>
 							<td>
-								<%= int_with_variation(location_service_booking_count(1, 0, service.id, @location.id), location_service_booking_count(1, 1, service.id, @location.id)) %>
+								<%= int_with_variation(location_service_booking_count(params[:from], params[:to], params[:status], params[:option], service.id, @location.id), location_service_booking_count(params[:from], params[:to], params[:status], params[:option], service.id, @location.id)) %>
 							</td>
 						</tr>
 						<% end %>
@@ -29,10 +29,10 @@
 							<td><strong>Total</strong>
 							</td>
 							<td><strong>
-								<%= int_with_variation(location_booking_count(0, 0, @location.id), location_booking_count(0, 1, @location.id)) %>
+								<%= int_with_variation(location_booking_count(params[:from], params[:to], params[:status], params[:option], @location.id), location_booking_count(params[:from], params[:to], params[:status], params[:option], @location.id)) %>
 							</strong></td>
 							<td><strong>
-								<%= int_with_variation(location_booking_count(1, 0, @location.id), location_booking_count(1, 1, @location.id)) %>
+								<%= int_with_variation(location_booking_count(params[:from], params[:to], params[:status], params[:option], @location.id), location_booking_count(params[:from], params[:to], params[:status], params[:option], @location.id)) %>
 							</strong></td>
 						</tr>
 					</tbody>
@@ -43,17 +43,17 @@
 </div>
 <div class="row">
 	<div class="col-md-6">
-		<%= pie_chart location_booking_ranking3(0, 0, @location.id), library: { title: "Ranking Servicio Utilizados Última Semana" }  %>
+		<%= pie_chart location_booking_ranking3(params[:from], params[:to], params[:status], params[:option], @location.id), library: { title: "Ranking Servicio Utilizados Última Semana" }  %>
 	</div>
 	<div class="col-md-6">
-		<%= pie_chart location_booking_ranking3(1, 0, @location.id), library: { title: "Ranking Servicio Utilizados Último Mes" }  %>
+		<%= pie_chart location_booking_ranking3(params[:from], params[:to], params[:status], params[:option], @location.id), library: { title: "Ranking Servicio Utilizados Último Mes" }  %>
 	</div>
 </div>
 <div class="row">
 	<div class="col-md-6">
-		<%= pie_chart location_booking_ranking3(0, 1, @location.id), library: { title: "Ranking Servicio Utilizados Semana Anterior" }  %>
+		<%= pie_chart location_booking_ranking3(params[:from], params[:to], params[:status], params[:option], @location.id), library: { title: "Ranking Servicio Utilizados Semana Anterior" }  %>
 	</div>
 	<div class="col-md-6">
-		<%= pie_chart location_booking_ranking3(1, 1, @location.id), library: { title: "Ranking Servicio Utilizados Mes Anterior" }  %>
+		<%= pie_chart location_booking_ranking3(params[:from], params[:to], params[:status], params[:option], @location.id), library: { title: "Ranking Servicio Utilizados Mes Anterior" }  %>
 	</div>
 </div>

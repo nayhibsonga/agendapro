@@ -75,7 +75,7 @@ Agendapro::Application.routes.draw do
   get '/report_locations', :to => 'reports#locations'
   get '/report_services', :to => 'reports#services'
   get '/report_statuses', :to => 'reports#statuses'
-  get '/report_status_details/:status_id/:time_range_id', :to => 'reports#status_details'
+  get '/report_status_details', :to => 'reports#status_details'
   get '/report_location_services/:id', :to => 'reports#location_services'
   get '/report_location_providers/:id', :to => 'reports#location_providers'
   get '/report_location_comission/:id', :to => 'reports#location_comission'

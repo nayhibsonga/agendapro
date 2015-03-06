@@ -3,10 +3,11 @@ class ReportsController < ApplicationController
 	before_action :authenticate_user!
 	before_action :verify_is_admin
 	before_action :quick_add
+	before_action :set_params
 	layout "admin"
 
 	def index
-		@locations = Location.accessible_by(current_ability).where(active: true).order(:name)
+		@locations = Location.accessible_by(current_ability).where(company_id: current_user.company_id, active: true).order(:name)
 	end
 
 	def statuses
@@ -14,9 +15,6 @@ class ReportsController < ApplicationController
 	end
 
 	def status_details
-		status_id = params[:status_id].to_i
-		time_range_id = params[:time_range_id].to_i
-
 		render "_status_details", layout: false
 	end
 
@@ -53,5 +51,12 @@ class ReportsController < ApplicationController
 		@service_provider = ServiceProvider.find(params[:id])
 
 	  	render "_provider_services", layout: false
+	end
+
+	def set_params
+		params[:from] ||= Time.now.strftime("%Y-%m-%d")
+		params[:to] ||= Time.now.strftime("%Y-%m-%d")
+		params[:status] ||= 0
+		params[:option] ||= 0
 	end
 end

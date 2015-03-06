@@ -20,16 +20,16 @@
 							<%= provider.public_name %>
 							</td>
 							<td>
-								<%= int_with_variation(provider_booking_count(0, 0, provider.id), provider_booking_count(0, 1, provider.id)) %>
+								<%= int_with_variation(provider_booking_count(params[:from], params[:to], params[:status], params[:option], provider.id), provider_booking_count(params[:from], params[:to], params[:status], params[:option], provider.id)) %>
 							</td>
 							<td>
-								<%= int_with_variation(provider_booking_count(1, 0, provider.id), provider_booking_count(1, 1, provider.id)) %>
+								<%= int_with_variation(provider_booking_count(params[:from], params[:to], params[:status], params[:option], provider.id), provider_booking_count(params[:from], params[:to], params[:status], params[:option], provider.id)) %>
 							</td>
 							<td>
-								<%= percentage_with_variation(provider_booking_occupation(0, 0, provider.id), provider_booking_occupation(0, 1, provider.id)) %>
+								<%= percentage_with_variation(provider_booking_occupation(params[:from], params[:to], params[:status], params[:option], provider.id), provider_booking_occupation(params[:from], params[:to], params[:status], params[:option], provider.id)) %>
 							</td>
 							<td>
-								<%= percentage_with_variation(provider_booking_occupation(1, 0, provider.id), provider_booking_occupation(1, 1, provider.id)) %>
+								<%= percentage_with_variation(provider_booking_occupation(params[:from], params[:to], params[:status], params[:option], provider.id), provider_booking_occupation(params[:from], params[:to], params[:status], params[:option], provider.id)) %>
 							</td>
 						</tr>
 						<% end %>
@@ -37,16 +37,16 @@
 							<td><strong>Total</strong>
 							</td>
 							<td><strong>
-								<%= int_with_variation(location_booking_count(0, 0, @location.id), location_booking_count(0, 1, @location.id)) %>
+								<%= int_with_variation(location_booking_count(params[:from], params[:to], params[:status], params[:option], @location.id), location_booking_count(params[:from], params[:to], params[:status], params[:option], @location.id)) %>
 							</strong></td>
 							<td><strong>
-								<%= int_with_variation(location_booking_count(1, 0, @location.id), location_booking_count(1, 1, @location.id)) %>
+								<%= int_with_variation(location_booking_count(params[:from], params[:to], params[:status], params[:option], @location.id), location_booking_count(params[:from], params[:to], params[:status], params[:option], @location.id)) %>
 							</strong></td>
 							<td><strong>
-								<%= percentage_with_variation(location_booking_occupation(0, 0, @location.id), location_booking_occupation(0, 1, @location.id)) %>
+								<%= percentage_with_variation(location_booking_occupation(params[:from], params[:to], params[:status], params[:option], @location.id), location_booking_occupation(params[:from], params[:to], params[:status], params[:option], @location.id)) %>
 							</strong></td>
 							<td><strong>
-								<%= percentage_with_variation(location_booking_occupation(1, 0, @location.id), location_booking_occupation(1, 1, @location.id)) %>
+								<%= percentage_with_variation(location_booking_occupation(params[:from], params[:to], params[:status], params[:option], @location.id), location_booking_occupation(params[:from], params[:to], params[:status], params[:option], @location.id)) %>
 							</strong></td>
 						</tr>
 					</tbody>
@@ -64,6 +64,6 @@
 
 <div class="row">
 	<div class="col-md-12 graphs">
-		<%= line_chart location_booking_by_hour(3, 0, @location.id), discrete: true, library: {hAxis: {title: "Hora del Día" }, vAxis: {title: "# Reservas", format: "#"}, title: "Reservas por Hora por Día de  "+@location.name } %>
+		<%= line_chart location_booking_by_hour(params[:from], params[:to], params[:status], params[:option], @location.id), discrete: true, library: {hAxis: {title: "Hora del Día" }, vAxis: {title: "# Reservas", format: "#"}, title: "Reservas por Hora por Día de  "+@location.name } %>
 	</div>
 </div>
