@@ -132,7 +132,7 @@
             </div>
             <div class="panel-body">
               <%= form_tag("book", method: "post", role: "form", class: "form-horizontal", id: "bookingForm" ) do %>
-                <input type="hidden" name="bookings" id="bookings" value="<%= @bookings %>">
+                <input type="hidden" name="bookings" id="bookings" value="<%= @string_bookings %>">
                 <input type="hidden" name="location" id="location" value="<%= @local.id %>">
                 <input type="hidden" name="origin" id="origin" value="true">
                 <input type="hidden" name="payment" id="payment" value="0">
@@ -226,6 +226,110 @@
                     <% end %>
                   </div>
                 </div>
+
+
+                  <!-- MODALES -->
+
+                    <!-- MODAL MEDIO DE PAGO -->
+                      <div class="modal fade" id="medio-de-pago" tabindex="-1" role="dialog" aria-labelledby="siginLabel" aria-hidden="true">
+                        <div class="modal-dialog">
+                          <div class="modal-content">
+                            <div class="modal-header">
+                              <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                              <h4 class="modal-title" style="color: #505050 !important;">Elige el medio de pago</h4>
+                            </div>
+                            <div class="modal-body" style="color: #505050 !important;">
+
+                              <div class="row">
+                                <div class="col-md-4">
+                                  <input type="radio" name="mp" value="04" class="mp_radio" id="mp_radio_04" />
+                                  <label for="mp_radio_04"><image src="https://www.puntopagos.com/content/mp4.gif" alt="Banco Chile" class="mp_link" mp = "04" /></label>
+                                </div>
+                                <div class="col-md-4">
+                                  <input type="radio" name="mp" value="05" class="mp_radio" id="mp_radio_05" />
+                                  <label for="mp_radio_05"><image src="https://www.puntopagos.com/content/mp5.gif" alt="BCI" class="mp_link" mp = "05" /></label>
+                                </div>
+                                <div class="col-md-4">
+                                  <input type="radio" name="mp" value="06" class="mp_radio" id="mp_radio_06" />
+                                  <label for="mp_radio_06"><image src="https://www.puntopagos.com/content/mp6.gif" alt="TBanc" class="mp_link" mp = "06" /></label>
+                                </div>
+                              </div>
+                              <div class="row">
+                                <div class="col-md-4">
+                                  <input type="radio" name="mp" value="07" class="mp_radio" id="mp_radio_07" />
+                                  <label for="mp_radio_07"><image src="https://www.puntopagos.com/content/mp7.gif" alt="Banco Estado" class="mp_link" mp = "07" /></label>
+                                </div>
+                                <div class="col-md-4">
+                                  <input type="radio" name="mp" value="03" class="mp_radio" id="mp_radio_03" />
+                                  <label for="mp_radio_03"><image src="https://www.puntopagos.com/content/mp3.gif" alt="Webpay Transbank" class="mp_link" mp = "03" /></label>
+                                </div>
+                                <div class="col-md-4">
+                                  <input type="radio" name="mp" value="01" style="display: none !important;" class="mp_radio" id="mp_radio_01" />
+                                  <label for="mp_radio_01"><image style="display: none;" src="https://www.puntopagos.com/content/mp1.gif" alt="Banco Santander" class="mp_link" mp = "01" /></label>
+                                </div>
+                              </div>
+                              <div class="row">
+                                <div class="col-md-12" style="padding-left: 10px; padding-top: 10px;">
+                                  <p>Antes de pagar, asegúrate de leer la política de pagos en línea de la empresa: <a href="#" id="policy-link" style="color: #505050 !important;"><b>ver.</b></a></p>
+                                </div>
+                              </div>
+                            </div>
+                            <div class="modal-footer">
+                              <button type="button" class="modal-pay" id="select-medio">Confirmar pago</button>
+                            </div>
+                          </div><!-- /.modal-content -->
+                        </div><!-- /.modal-dialog -->
+                      </div><!-- /.modal -->
+                      <!-- FIN MODAL MEDIO DE PAGO -->
+
+                      <!-- MODAL POLÍTICA DE MODIFICACIÓN/CANCELACIÓN PAGOS EN LÍNEA -->
+                      <div class="modal fade" id="online-policy" tabindex="-1" role="dialog" aria-labelledby="siginLabel" aria-hidden="true">
+                        <div class="modal-dialog">
+                          <div class="modal-content">
+                            <div class="modal-header">
+                              <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                              <h4 class="modal-title" style="color: #505050 !important;">Política de modificación/cancelación de reservas pagadas en línea.</h4>
+                            </div>
+                            <div class="modal-body" style="color: #505050 !important;">
+                              <h3>Modificación:</h3>
+                              <% if !@local.company.company_setting.online_cancelation_policy.modifiable %>
+                                <p>La empresa no permite modificar reservas pagadas en línea.</p>
+                              <% else %>
+                                <p>La reserva se puede modificar:</p>
+                                <p>- Hasta <%= @local.company.company_setting.online_cancelation_policy.min_hours.to_s %> horas antes del servicio contratado.<br />
+                                - Hasta <%= @local.company.company_setting.online_cancelation_policy.modification_max.to_s %> <%= TimeUnit.find(@local.company.company_setting.online_cancelation_policy.modification_unit).unit.to_s.downcase %> desde la fecha en que se efectuó el pago.</p>
+                                <p>
+                                  Si no cumple con alguna de las dos restricciones, no podrá modificar su reserva.
+                                  <br />
+                                  Además, la empresa permite modificar la reserva un máximo de <%= @local.company.company_setting.max_changes.to_s %> veces.
+                                </p>
+                              <% end %>
+
+                              <h3>Cancelación:</h3>
+                              <% if !@local.company.company_setting.online_cancelation_policy.cancelable %>
+                                <p>La empresa no permite cancelar reservas pagadas en línea.</p>
+                              <% else %>
+                                <p>La reserva se puede cancelar:</p>
+                                <p>- Hasta <%= @local.company.company_setting.online_cancelation_policy.min_hours.to_s %> horas antes del servicio contratado.<br />
+                                - Hasta <%= @local.company.company_setting.online_cancelation_policy.cancel_max.to_s %> <%= TimeUnit.find(@local.company.company_setting.online_cancelation_policy.cancel_unit).unit.to_s.downcase %> desde la fecha en que se efectuó el pago.</p>
+                                <p>Si no cumple con alguna de las dos restricciones, no podrá cancelar su reserva.</p>
+                                <br />
+                                <p>
+                                  Si cancela su reserva, se le devolverá un 90% del monto cancelado debido a los costos de transacción.
+                                </p>
+                              <% end %>
+                            </div>
+                            <div class="modal-footer">
+                              <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+                            </div>
+                          </div><!-- /.modal-content -->
+                        </div><!-- /.modal-dialog -->
+                      </div><!-- /.modal -->
+                      <!-- FIN MODAL POLÍTICA DE MODIFICACIÓN/CANCELACIÓN PAGOS EN LÍNEA -->
+
+                  <!-- FIN MODALES -->
+
+
               <% end %>
             </div>
           </div>
@@ -380,102 +484,7 @@
     </div>
 
 
-    <!-- MODAL MEDIO DE PAGO -->
-    <div class="modal fade" id="medio-de-pago" tabindex="-1" role="dialog" aria-labelledby="siginLabel" aria-hidden="true">
-      <div class="modal-dialog">
-        <div class="modal-content">
-          <div class="modal-header">
-            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-            <h4 class="modal-title" style="color: #505050 !important;">Elige el medio de pago</h4>
-          </div>
-          <div class="modal-body" style="color: #505050 !important;">
-
-            <div class="row">
-              <div class="col-md-4">
-                <input type="radio" name="mp" value="04" class="mp_radio" id="mp_radio_04" />
-                <label for="mp_radio_04"><image src="https://www.puntopagos.com/content/mp4.gif" alt="Banco Chile" class="mp_link" mp = "04" /></label>
-              </div>
-              <div class="col-md-4">
-                <input type="radio" name="mp" value="05" class="mp_radio" id="mp_radio_05" />
-                <label for="mp_radio_05"><image src="https://www.puntopagos.com/content/mp5.gif" alt="BCI" class="mp_link" mp = "05" /></label>
-              </div>
-              <div class="col-md-4">
-                <input type="radio" name="mp" value="06" class="mp_radio" id="mp_radio_06" />
-                <label for="mp_radio_06"><image src="https://www.puntopagos.com/content/mp6.gif" alt="TBanc" class="mp_link" mp = "06" /></label>
-              </div>
-            </div>
-            <div class="row">
-              <div class="col-md-4">
-                <input type="radio" name="mp" value="07" class="mp_radio" id="mp_radio_07" />
-                <label for="mp_radio_07"><image src="https://www.puntopagos.com/content/mp7.gif" alt="Banco Estado" class="mp_link" mp = "07" /></label>
-              </div>
-              <div class="col-md-4">
-                <input type="radio" name="mp" value="03" class="mp_radio" id="mp_radio_03" />
-                <label for="mp_radio_03"><image src="https://www.puntopagos.com/content/mp3.gif" alt="Webpay Transbank" class="mp_link" mp = "03" /></label>
-              </div>
-              <div class="col-md-4">
-                <input type="radio" name="mp" value="01" style="display: none !important;" class="mp_radio" id="mp_radio_01" />
-                <label for="mp_radio_01"><image style="display: none;" src="https://www.puntopagos.com/content/mp1.gif" alt="Banco Santander" class="mp_link" mp = "01" /></label>
-              </div>
-            </div>
-            <div class="row">
-              <div class="col-md-12" style="padding-left: 10px; padding-top: 10px;">
-                <p>Antes de pagar, asegúrate de leer la política de pagos en línea de la empresa: <a href="#" id="policy-link" style="color: #505050 !important;"><b>ver.</b></a></p>
-              </div>
-            </div>
-          </div>
-          <div class="modal-footer">
-            <button type="button" class="modal-pay" id="select-medio">Confirmar pago</button>
-          </div>
-        </div><!-- /.modal-content -->
-      </div><!-- /.modal-dialog -->
-    </div><!-- /.modal -->
-    <!-- FIN MODAL MEDIO DE PAGO -->
-
-    <!-- MODAL POLÍTICA DE MODIFICACIÓN/CANCELACIÓN PAGOS EN LÍNEA -->
-    <div class="modal fade" id="online-policy" tabindex="-1" role="dialog" aria-labelledby="siginLabel" aria-hidden="true">
-      <div class="modal-dialog">
-        <div class="modal-content">
-          <div class="modal-header">
-            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-            <h4 class="modal-title" style="color: #505050 !important;">Política de modificación/cancelación de reservas pagadas en línea.</h4>
-          </div>
-          <div class="modal-body" style="color: #505050 !important;">
-            <h3>Modificación:</h3>
-            <% if !@local.company.company_setting.online_cancelation_policy.modifiable %>
-              <p>La empresa no permite modificar reservas pagadas en línea.</p>
-            <% else %>
-              <p>La reserva se puede modificar:</p>
-              <p>- Hasta <%= @local.company.company_setting.online_cancelation_policy.min_hours.to_s %> horas antes del servicio contratado.<br />
-              - Hasta <%= @local.company.company_setting.online_cancelation_policy.modification_max.to_s %> <%= TimeUnit.find(@local.company.company_setting.online_cancelation_policy.modification_unit).unit.to_s.downcase %> desde la fecha en que se efectuó el pago.</p>
-              <p>
-                Si no cumple con alguna de las dos restricciones, no podrá modificar su reserva.
-                <br />
-                Además, la empresa permite modificar la reserva un máximo de <%= @local.company.company_setting.max_changes.to_s %> veces.
-              </p>
-            <% end %>
-
-            <h3>Cancelación:</h3>
-            <% if !@local.company.company_setting.online_cancelation_policy.cancelable %>
-              <p>La empresa no permite cancelar reservas pagadas en línea.</p>
-            <% else %>
-              <p>La reserva se puede cancelar:</p>
-              <p>- Hasta <%= @local.company.company_setting.online_cancelation_policy.min_hours.to_s %> horas antes del servicio contratado.<br />
-              - Hasta <%= @local.company.company_setting.online_cancelation_policy.cancel_max.to_s %> <%= TimeUnit.find(@local.company.company_setting.online_cancelation_policy.cancel_unit).unit.to_s.downcase %> desde la fecha en que se efectuó el pago.</p>
-              <p>Si no cumple con alguna de las dos restricciones, no podrá cancelar su reserva.</p>
-              <br />
-              <p>
-                Si cancela su reserva, se le devolverá un 90% del monto cancelado debido a los costos de transacción.
-              </p>
-            <% end %>
-          </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
-          </div>
-        </div><!-- /.modal-content -->
-      </div><!-- /.modal-dialog -->
-    </div><!-- /.modal -->
-    <!-- FIN MODAL POLÍTICA DE MODIFICACIÓN/CANCELACIÓN PAGOS EN LÍNEA -->
+    
 
 
   </div>
@@ -506,6 +515,24 @@
         e.preventDefault();
         $("#medio-de-pago").modal('hide');
         $("#online-policy").modal('show');
+      });
+
+      $('#select-medio').click(function(){
+        console.log('clicked select medio');
+        var is_selected = false;
+        $('.mp_radio').each(function(){
+          if($(this).prop('checked'))
+          {
+            is_selected = true;
+            console.log(is_selected);
+          }
+        });
+        if(is_selected)
+        {
+          console.log("Entra");
+          $("#medio-de-pago").modal('hide');
+          $('#bookingForm').submit();
+        }
       });
 
     });

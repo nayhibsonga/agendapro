@@ -1,6 +1,6 @@
 class BookingsController < ApplicationController
   before_action :set_booking, only: [:show, :edit, :update, :destroy]
-  before_action :authenticate_user!, except: [:create, :force_create, :booking_valid, :provider_booking, :book_service, :book_error, :remove_bookings, :edit_booking, :edit_booking_post, :cancel_booking, :confirm_booking, :check_user_cross_bookings, :blocked_edit, :blocked_cancel, :optimizer_hours, :optimizer_data, :transfer_error_cancel]
+  before_action :authenticate_user!, except: [:create, :force_create, :booking_valid, :provider_booking, :book_service, :book_error, :remove_bookings, :edit_booking, :edit_booking_post, :cancel_booking, :cancel_all_booking, :confirm_booking, :check_user_cross_bookings, :blocked_edit, :blocked_cancel, :optimizer_hours, :optimizer_data, :transfer_error_cancel]
   before_action :quick_add, except: [:create, :force_create, :booking_valid, :provider_booking, :book_service, :book_error, :remove_bookings, :edit_booking, :edit_booking_post, :cancel_booking, :confirm_booking, :check_user_cross_bookings, :blocked_edit, :blocked_cancel, :optimizer_hours, :optimizer_data, :transfer_error_cancel]
   layout "admin", except: [:book_service, :book_error, :remove_bookings, :provider_booking, :edit_booking, :edit_booking_post, :cancel_booking, :transfer_error_cancel, :confirm_booking, :check_user_cross_bookings, :blocked_edit, :blocked_cancel, :optimizer_hours, :optimizer_data]
 
@@ -1681,6 +1681,7 @@ class BookingsController < ApplicationController
       id = crypt.decrypt_and_verify(params[:confirmation_code])
       @booking = Booking.find(id)
       @company = Location.find(@booking.location_id).company
+      @bookings = Booking.where(location: @booking.location).where(booking_group: @booking.booking_group)
       @selectedLocation = Location.find(@booking.location_id)
 
       now = DateTime.new(DateTime.now.year, DateTime.now.mon, DateTime.now.mday, DateTime.now.hour, DateTime.now.min)
@@ -1690,7 +1691,16 @@ class BookingsController < ApplicationController
         flash[:alert] = "No fue posible cancelar"
         redirect_to root_path
         return
+      else
+        status = Status.find_by(:name => 'Cancelado').id
+        @bookings.each do |book|
+          if book.update(status_id: status)
+            current_user ? user = current_user.id : user = 0
+            BookingHistory.create(booking_id: book.id, action: "Cancelada por Cliente", start: book.start, status_id: book.status_id, service_id: book.service_id, service_provider_id: book.service_provider_id, user_id: user)
+          end
+        end
       end
+
     else
       booking = Booking.find(params[:id])
       @company = Location.find(booking.location_id).company
@@ -2012,7 +2022,23 @@ class BookingsController < ApplicationController
   def optimizer_data
     @local = Location.find(params[:local])
     @company = @local.company
+
     @bookings = JSON.parse(params[:bookings], symbolize_names: true)
+    @string_bookings = JSON.pretty_generate(@bookings)
+
+
+    # hash_array = Array.new
+
+    # @bookings.each do |booking|
+
+    #   book_array = {:start => booking.start, :end => booking.end, :provider => booking.service_provider_id, :service => booking.service_id, :provider_lock => booking.provider_lock, :max_changes => booking.max_changes}
+
+    #   hash_array << book_array
+
+    # end
+
+    # json_array = JSON.generate(hash_array)
+
 
     @outcall = false
     @bookings.each do |booking|
