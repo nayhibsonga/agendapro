@@ -305,7 +305,6 @@ function loadStep3 () {
 				if(!booking_buffer[i].online_payable)
 				{
 					payable = false;
-					prices += '<p class="light-gray">Precio: ' + currency(booking_buffer[i].price) + '</p>';
 				}
 				else
 				{
@@ -319,9 +318,9 @@ function loadStep3 () {
 						payable_prices += '<p class="light-gray">Precio normal: ' + currency(booking_buffer[i].price) + ' - (Sin descuento)</p>';
 						discounted_price = discounted_price + booking_buffer[i].price;
 					}
-					price = price + booking_buffer[i].price;
 				}
-				console.log(payable);
+				prices += '<p class="light-gray">' + currency(booking_buffer[i].price) + '</p>';
+				price = price + booking_buffer[i].price;
 			};
 
 			$('#summary').append(

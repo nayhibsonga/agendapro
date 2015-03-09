@@ -391,39 +391,38 @@
                       end
                     end 
                   %>
-                  
-                  <tr>
-                    <td class="dark-gray">Precios</td>
-                    <td class="light-gray">
-                      <% if all_payable %>
-                        <% @bookings.each do |booking| %>
-                          <% if booking[:has_discount] %>
-                            <p class="light-gray">
-                              Precio normal: <%= number_to_currency(booking[:price], unit: "CLP $", delimiter: ".") %> - Descuento: <%= booking[:discount] %>%<br />
-                              Precio con descuento: <%= number_to_currency(booking[:price]*(100-booking[:discount])/100, unit: "CLP $", delimiter: ".")  %>
-                            </p>
-                          <% else %>
-                            <p class="light-gray">
-                              Precio normal: <%= number_to_currency(booking[:price], unit: "CLP $", delimiter: ".") %> - (Sin descuento)<br />
-                            </p>
-                          <% end %>
-                        <% end %>
-                      <% end %>
-                    </td>
-                  </tr>
                   <% if all_payable %>
-                  <tr>
-                    <td class="dark-gray">Precio normal</td>
-                    <td class="light-gray">
-                      Precio final: <%= number_to_currency(total_price, unit: "CLP $", delimiter: ".") %>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td class="dark-gray">Precio pago en línea</td>
-                    <td class="light-gray">
-                      Precio final: <%= number_to_currency(online_price, unit: "CLP $", delimiter: ".") %>
-                    </td>
-                  </tr>
+                    <tr>
+                      <td class="dark-gray">Precios</td>
+                      <td class="light-gray">
+                        
+                          <% @bookings.each do |booking| %>
+                            <% if booking[:has_discount] %>
+                              <p class="light-gray">
+                                Precio normal: <%= number_to_currency(booking[:price], unit: "CLP $", delimiter: ".") %> - Descuento: <%= booking[:discount] %>%<br />
+                                Precio con descuento: <%= number_to_currency(booking[:price]*(100-booking[:discount])/100, unit: "CLP $", delimiter: ".")  %>
+                              </p>
+                            <% else %>
+                              <p class="light-gray">
+                                Precio normal: <%= number_to_currency(booking[:price], unit: "CLP $", delimiter: ".") %> - (Sin descuento)<br />
+                              </p>
+                            <% end %>
+                          <% end %>
+                        
+                      </td>
+                    </tr>
+                    <tr>
+                      <td class="dark-gray">Precio normal</td>
+                      <td class="light-gray">
+                        Precio final: <%= number_to_currency(total_price, unit: "CLP $", delimiter: ".") %>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td class="dark-gray">Precio pago en línea</td>
+                      <td class="light-gray">
+                        Precio final: <%= number_to_currency(online_price, unit: "CLP $", delimiter: ".") %>
+                      </td>
+                    </tr>
                   <% end %>
                 </tbody>
               </table>
@@ -471,7 +470,7 @@
                   </div>
                 </div>
               </div>
-            <% else %>
+            <% elsif  @local.company.company_setting.allows_online_payment %>
               <div class="row">
                 <div class="col-md-6 col-md-offset-6">
                   <button type="submit" data-loading-text="Cargando..." class="submitBtn">Reservar</button>
