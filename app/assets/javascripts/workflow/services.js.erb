@@ -668,6 +668,11 @@ function addNewService () {
 			);
 		}
 		else {
+			myAlert.showAlert(
+				'<h3>Servicio agregado.</h3>' + 
+				'<p>Has agregado el servicio ' + actual_booking.service_name + ' con ' + actual_booking.provider_name + ', el día ' +
+				formattedTime(actual_booking.start) + '</p'
+			);
 			booking_buffer.push(actual_booking);
 			$('input[name=serviceRadio]:checked').prop('checked', false);
 			$('#services-description').empty();

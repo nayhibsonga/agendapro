@@ -2026,6 +2026,8 @@ class BookingsController < ApplicationController
     @bookings = JSON.parse(params[:bookings], symbolize_names: true)
     @string_bookings = JSON.pretty_generate(@bookings)
 
+    host = request.host_with_port
+    @url = @company.web_address + '.' + host[host.index(request.domain)..host.length]
 
     # hash_array = Array.new
 

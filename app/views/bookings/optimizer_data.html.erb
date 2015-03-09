@@ -423,6 +423,15 @@
                         Precio final: <%= number_to_currency(online_price, unit: "CLP $", delimiter: ".") %>
                       </td>
                     </tr>
+                  <% else %>
+                    <tr>
+                      <td class="dark-gray">Precios</td>
+                      <td class="light-gray">
+                        <% @bookings.each do |booking| %>
+                          <%= number_to_currency(booking[:price], unit: "CLP $", delimiter: ".") %><br />
+                        <% end %>
+                      </td>
+                    </tr>
                   <% end %>
                 </tbody>
               </table>
@@ -489,6 +498,9 @@
   </div>
 </div>
 
+<%= content_tag "div", id: "workflow_url", data: {url: @url, location_id: @local.id} do %>
+<% end %>
+
 <% content_for :scripts do %>
   <%= javascript_include_tag 'split-name' %>
   <%= javascript_include_tag 'validations/validate' %>
@@ -532,6 +544,13 @@
           $("#medio-de-pago").modal('hide');
           $('#bookingForm').submit();
         }
+      });
+
+      $('#boton-servicio').click(function () {
+        window.location.href = 'http://' + $('#workflow_url').data('url') + '/workflow?local=' + $('#workflow_url').data('location-id').toString();
+      });
+      $('#boton-locales').click(function () {
+        window.location.href = 'http://' + $('#workflow_url').data('url') + '/?local=' + $('#workflow_url').data('location-id').toString();
       });
 
     });
