@@ -238,6 +238,23 @@ input[type=radio   ]:not(old):checked + span{
   pointer-events: none;
 }
 
+.optimizer-date-span {
+  position: relative;
+  font-size: 16px;
+  cursor: pointer;
+  color: #949292;
+}
+
+.optimizer-date-span input {
+  // invisible input as jquery ui requires an actual input
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  opacity: 0;
+  width: 10px !important;
+  pointer-events: none;
+}
+
 
 #prev{
 	background-color: #22c488 !important;

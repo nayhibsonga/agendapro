@@ -44,24 +44,23 @@ function loadService () {
       selectData += '<optgroup label="' + category + '">' + services + '</optgroup>';
     });
 
+    //Load date picker.
+
+    //Load service/provider picker.
     $('#serviceOptimizer').append(
       '<div class="form-group">' +
-        '<label for="serviceOptimizerSelector" class="col-xs-2 control-label">Servicio</label>' +
-        '<div class="col-xs-10">' +
+        '<label for="serviceOptimizerSelector" class="col-xs-3 control-label">Servicio</label>' +
+        '<div class="col-xs-9">' +
           '<select class="form-control" name="serviceOptimizerSelector">' +
             selectData +
           '</select>' +
         '</div>' +
-        '<label for="providerOptimizerSelector" class="col-xs-2 control-label">Prestador</label>' +
-        '<div class="col-xs-10">' +
+        '<label for="providerOptimizerSelector" class="col-xs-3 control-label">Prestador</label>' +
+        '<div class="col-xs-9">' +
           '<select class="form-control" name="providerOptimizerSelector"></select>' +
         '</div>' +
       '</div>'
     );
-
-    $('select[name="serviceOptimizerSelector"]:last').change(function (e) {
-      loadStaff(this);
-    });
 
     loadStaff('select[name="serviceOptimizerSelector"]:last');
 
@@ -70,6 +69,27 @@ function loadService () {
     $('#addButton').prop('disabled', false);
     $('#nextButton').prop('disabled', false);
   });
+
+
+
+  /*$("#optimizerDateSelector").datepicker({
+      monthNames: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+      monthNamesShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
+      prevText: 'Atrás',
+      nextText: 'Adelante',
+      dayNames: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'],
+      dayNamesShort: ['Dom', 'Lun', 'Mar', 'Mier', 'Jue', 'vie', 'Sáb'],
+      dayNamesMin: ['Dom', 'Lun', 'Mar', 'Mier', 'Jue', 'vie', 'Sáb'],
+      today: 'Hoy',
+      clear: '',
+      firstDay: 1,
+      dateFormat: 'yy-mm-dd',
+      onSelect: function(newDate){
+        
+      }
+  });*/
+
+
 }
 
 function loadStaff (selector) {
@@ -140,7 +160,10 @@ function loadHours () {
       provider: provider.val()
     });
   });
-  $.getJSON('/optimizer_hours', { local: localId, serviceStaff: JSON.stringify(selects), resultsLength: resultsLength }, function (hours_array) {
+
+  var start_date = $("#optimizerDateSelector").val();
+
+  $.getJSON('/optimizer_hours', { local: localId, serviceStaff: JSON.stringify(selects), resultsLength: resultsLength, start_date: start_date }, function (hours_array) {
     $('#selectHour > p').remove();
     $.each(hours_array, function (pos, hour) {
       $('#selectHour').append(
@@ -175,4 +198,8 @@ $(function () {
     bookings = [];
     loadServiceModal();
   });
+
+
 });
+
+

@@ -170,14 +170,23 @@
         <div id="foo4" style="visibility: collapse;">
           <div class="box-step">
             <div class="row">
-              <div class="col-md-6">
+              <div class="col-md-3">
                 <div class="services-title dark-gray">
                   Servicios
                 </div>
-                <button type="button" class="btn btn-green pull-right" data-toggle="modal" data-target="#hoursOptimizer" style="background: #22c488; color: #ffffff;">Optimizar Horas</button>
                 <div class="services-subtitle light-gray">
                   Seleccione un servicio
                 </div>
+              </div>
+              <div class="col-md-3" style="text-align: right;">
+                <span class="optimizer-date-span" style="margin-top: 5px !important;">
+                  Seleccionar inicio&nbsp;<i class="fa fa-calendar-o"></i>
+                  <input type="text" class="form-control" name="optimizerDateSelector" id="optimizerDateSelector" class="datepicker" />
+                </span>
+                <button type="button" class="btn btn-green" data-toggle="modal" data-target="#hoursOptimizer" style="background: #22c488; color: #ffffff; margin-top: -50px !important;">Optimizar Horas</button>
+              </div>
+              <div class="col-md-6">
+
               </div>
             </div>
             <div class="row">
@@ -706,6 +715,27 @@
       });
 
       $(document.body).on('click', '.date-span', function(e){
+        $(e.currentTarget).find('input').datepicker('show');
+      });
+
+      $("#optimizerDateSelector").datepicker({
+          monthNames: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+          monthNamesShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
+          prevText: 'Atrás',
+          nextText: 'Adelante',
+          dayNames: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'],
+          dayNamesShort: ['Dom', 'Lun', 'Mar', 'Mier', 'Jue', 'vie', 'Sáb'],
+          dayNamesMin: ['Dom', 'Lun', 'Mar', 'Mier', 'Jue', 'vie', 'Sáb'],
+          today: 'Hoy',
+          clear: '',
+          firstDay: 1,
+          dateFormat: 'yy-mm-dd',
+          onSelect: function(newDate){
+            
+          }
+      });
+
+      $(document.body).on('click', '.optimizer-date-span', function(e){
         $(e.currentTarget).find('input').datepicker('show');
       });
 

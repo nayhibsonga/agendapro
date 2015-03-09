@@ -1862,6 +1862,11 @@ class BookingsController < ApplicationController
     serviceStaff = JSON.parse(params[:serviceStaff], symbolize_names: true)
     now = DateTime.new(DateTime.now.year, DateTime.now.mon, DateTime.now.mday, DateTime.now.hour, DateTime.now.min)
 
+    if params[:start_date] and params[:start_date] != ""
+      now = params[:start_date].to_datetime
+      now = now - company_setting.before_booking.hours
+    end
+
     # Pointers
     dateTimePointer = local.location_times.where(day_id: now.cwday).order(:open).first.open
     dateTimePointer = DateTime.new(now.year, now.mon, now.mday, dateTimePointer.hour, dateTimePointer.min)
