@@ -155,6 +155,11 @@ function loadResourcesCalendar (startTime, endTime, hiddenDays, resourcesArray, 
 
 		eventRender: function(event, element) {
 			if ($.isNumeric(event.id)) {
+				var prepayed = event.prepayed_qtip;
+		   		if (prepayed === undefined)
+		   		{
+		   			prepayed = "No";
+		   		}
 			   element.qtip({
 				   content: {
 						button: true,
@@ -164,7 +169,7 @@ function loadResourcesCalendar (startTime, endTime, hiddenDays, resourcesArray, 
 						'Teléfono: ' + event.phone_qtip + '<br/>' +
 						'E-mail: ' + event.email_qtip + '<br/>' +
 						'Comentario: ' + event.comment_qtip + '<br />' +
-						'Pagado en línea: ' + event.prepayed_qtip
+						'Pagado en línea: ' + prepayed
 				   },
 				   position: {
 						my: 'bottom center',  // el triángulo sale de abajo al medio
@@ -292,6 +297,11 @@ function loadWeekCalendar (startTime, endTime, hiddenDays, resourcesArray, provi
 		eventRender: function(event, element) {
 		   if ($.isNumeric(event.id)) {
 			   if ($.isNumeric(event.id)) {
+			   		var prepayed = event.prepayed_qtip;
+			   		if (prepayed === undefined)
+			   		{
+			   			prepayed = "No";
+			   		}
 				   element.qtip({
 					   content: {
 						   button: true,
@@ -301,7 +311,7 @@ function loadWeekCalendar (startTime, endTime, hiddenDays, resourcesArray, provi
 								   'Teléfono: ' + event.phone_qtip + '<br/>' +
 								   'E-mail: ' + event.email_qtip + '<br/>' +
 								   'Comentario: ' + event.comment_qtip + '<br />' +
-								   'Pagado en línea: ' + event.prepayed_qtip
+								   'Pagado en línea: ' + prepayed
 					   },
 					   position: {
 						   my: 'bottom center',  // el triángulo sale de abajo al medio
@@ -840,6 +850,7 @@ function editDrag(event) {
 					event.service_qtip = booking.service_name;
 					event.phone_qtip = booking.phone;
 					event.email_qtip = booking.email;
+					event.prepayed_qtip = booking.prepayed;
 					event.comment_qtip = booking.company_comment;
 					$('#calendar').fullCalendar('updateEvent', event);
 					alert("Reserva actualizada exitosamente.");
@@ -940,6 +951,7 @@ function saveBooking(typeURL, extraURL) {
 						event.phone_qtip = booking.phone;
 						event.email_qtip = booking.email;
 						event.comment_qtip = booking.company_comment;
+						event.prepayed_qtip = booking.prepayed;
 						$('#calendar').fullCalendar('updateEvent', event);
 					}
 					else {

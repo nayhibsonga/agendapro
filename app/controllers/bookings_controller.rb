@@ -189,6 +189,11 @@ class BookingsController < ApplicationController
         u = @booking
         if u.warnings then warnings = u.warnings.full_messages else warnings = [] end
 
+        prepayed = "No"
+        if @booking.payed
+          prepayed = "Sí"
+        end
+
         @bookings << {
           :id => u.id,
           :start => u.start,
@@ -204,7 +209,8 @@ class BookingsController < ApplicationController
           :company_comment => u.company_comment,
           :provider_lock => u.provider_lock,
           :service_name => u.service.name,
-          :warnings => warnings
+          :warnings => warnings,
+          :prepayed => prepayed
         }
 
         BookingHistory.create(booking_id: @booking.id, action: "Creada por Calendario", start: @booking.start, status_id: @booking.status_id, service_id: @booking.service_id, service_provider_id: @booking.service_provider_id, user_id: current_user.id, staff_code_id: staff_code)
@@ -360,7 +366,10 @@ class BookingsController < ApplicationController
       if @booking.save
         u = @booking
         if u.warnings then warnings = u.warnings.full_messages else warnings = [] end
-
+          prepayed = "No"
+          if @booking.payed
+            prepayed = "Sí"
+          end
         @bookings << {
           :id => u.id,
           :start => u.start,
@@ -376,7 +385,8 @@ class BookingsController < ApplicationController
           :company_comment => u.company_comment,
           :provider_lock => u.provider_lock,
           :service_name => u.service.name,
-          :warnings => warnings
+          :warnings => warnings,
+          :prepayed => prepayed
         }
 
         BookingHistory.create(booking_id: @booking.id, action: "Creada por Calendario", start: @booking.start, status_id: @booking.status_id, service_id: @booking.service_id, service_provider_id: @booking.service_provider_id, user_id: current_user.id, staff_code_id: staff_code)
