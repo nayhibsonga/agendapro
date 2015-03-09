@@ -414,13 +414,13 @@
                     <tr>
                       <td class="dark-gray">Precio normal</td>
                       <td class="light-gray">
-                        Precio final: <%= number_to_currency(total_price, unit: "CLP $", delimiter: ".") %>
+                        <%= number_to_currency(total_price, unit: "CLP $", delimiter: ".") %>
                       </td>
                     </tr>
                     <tr>
                       <td class="dark-gray">Precio pago en línea</td>
                       <td class="light-gray">
-                        Precio final: <%= number_to_currency(online_price, unit: "CLP $", delimiter: ".") %>
+                        <%= number_to_currency(online_price, unit: "CLP $", delimiter: ".") %>
                       </td>
                     </tr>
                   <% else %>
