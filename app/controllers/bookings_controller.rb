@@ -1606,6 +1606,7 @@ class BookingsController < ApplicationController
             # Puede cancelar todas o ninguna.
             if @booking.payed_booking.bookings.count > 1
               redirect_to blocked_cancel_path(:id => @booking.id, :online => true)
+              return
             end
 
             #Revisar tiempos de modificación, tanto máximo como el mínimo específico para los pagados en línea
