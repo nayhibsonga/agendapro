@@ -586,7 +586,7 @@ class BookingMailer < ActionMailer::Base
 				]
 			}
 			if !book_info.payed_booking.nil?
-				message[:merge_vars][:vars] << {
+				mergeVars[:vars] << {
 							:name => 'PAYED',
 							:content => "true"
 						}
