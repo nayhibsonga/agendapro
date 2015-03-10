@@ -1566,6 +1566,9 @@ class BookingsController < ApplicationController
     @reason = "company"
     if(params[:online])
       @reason = "online"
+      if !params[:only_booking].nil? and params[:only_booking]
+        @reason = "only_booking"
+      end
     end
     # => Domain parser
     host = request.host_with_port
@@ -1605,7 +1608,7 @@ class BookingsController < ApplicationController
             # No permitir cancelar una particular si fueron pagadas varias juntas.
             # Puede cancelar todas o ninguna.
             if @booking.payed_booking.bookings.count > 1
-              redirect_to blocked_cancel_path(:id => @booking.id, :online => true)
+              redirect_to blocked_cancel_path(:id => @booking.id, :online => true, :only_booking => true)
               return
             end
 
