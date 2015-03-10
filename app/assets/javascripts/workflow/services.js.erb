@@ -654,12 +654,12 @@ function blockBookingBufferHour () {
 			var bookingStart = new Date(start_date[0], start_date[1]-1, start_date[2], start_time[0], start_time[1], start_time[2], 0);
 			var bookingEnd = new Date(end_date[0], end_date[1]-1, end_date[2], end_time[0], end_time[1], end_time[2], 0);
 
-			var blockStart = new Date(start_date[0], start_date[1], start_date[2], start.split(":")[0], start.split(":")[1], 0, 0);
-			var blockEnd = new Date(end_date[0], end_date[1], end_date[2], end.split(":")[0], end.split(":")[1], 0, 0);
-			console.log("Start: " + blockStart + " / End: " + blockEnd);
-			console.log("Booking Start: " + bookingStart + " / Booking End: " + bookingEnd);
-
-			if ( bookingStart >= blockStart && bookingStart <= blockEnd ) {
+			var blockStart = new Date(start_date[0], start_date[1]-1, start_date[2], start.split(":")[0], start.split(":")[1], 0, 0);
+			var blockEnd = new Date(end_date[0], end_date[1]-1, end_date[2], end.split(":")[0], end.split(":")[1], 0, 0);
+			
+			//Check for no overlap and negate it.
+			if(!(bookingEnd <= blockStart || blockEnd <= bookingStart))
+			{
 				$(hourBlock).removeClass('hora-disponible').addClass('hora-ocupada');
 			};
 		});
