@@ -50,7 +50,7 @@ function loadService () {
     $('#serviceOptimizer').append(
       '<div class="form-group">' +
         '<label for="serviceOptimizerSelector" class="col-xs-3 control-label">Servicio</label>' +
-        '<div class="col-xs-9">' +
+        '<div class="col-xs-9" style="margin-bottom: 10px !important;">' +
           '<select class="form-control" name="serviceOptimizerSelector">' +
             selectData +
           '</select>' +
@@ -63,32 +63,15 @@ function loadService () {
     );
 
     loadStaff('select[name="serviceOptimizerSelector"]:last');
+    $('select[name="serviceOptimizerSelector"]:last').change(function (e) {
+      loadStaff(this);
+    });
 
     $('#serviceOptimizer > p').remove();
   }).always(function () {
     $('#addButton').prop('disabled', false);
     $('#nextButton').prop('disabled', false);
   });
-
-
-
-  /*$("#optimizerDateSelector").datepicker({
-      monthNames: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
-      monthNamesShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
-      prevText: 'Atrás',
-      nextText: 'Adelante',
-      dayNames: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'],
-      dayNamesShort: ['Dom', 'Lun', 'Mar', 'Mier', 'Jue', 'vie', 'Sáb'],
-      dayNamesMin: ['Dom', 'Lun', 'Mar', 'Mier', 'Jue', 'vie', 'Sáb'],
-      today: 'Hoy',
-      clear: '',
-      firstDay: 1,
-      dateFormat: 'yy-mm-dd',
-      onSelect: function(newDate){
-        
-      }
-  });*/
-
 
 }
 
@@ -165,14 +148,26 @@ function loadHours () {
 
   $.getJSON('/optimizer_hours', { local: localId, serviceStaff: JSON.stringify(selects), resultsLength: resultsLength, start_date: start_date }, function (hours_array) {
     $('#selectHour > p').remove();
+    var services_str = "";
     $.each(hours_array, function (pos, hour) {
+      console.log(hour.bookings);
+      services_str = services_str + '<div class="optimizerDetail" pos="'+ pos +'" hidden><h3>Detalle</h3><br />';
+      for(i = 0; i < hour.bookings.length; i++)
+      {
+        services_str = services_str + '<label class="checkbox-inline"><p><i class="fa fa-check-circle-o fa-green"></i> ' + hour.bookings[i].service_name +
+            '<br />' +
+            '<i class="fa fa-calendar-o fa-green"></i> ' + hour.bookings[i].start.split("T")[1].split("+")[0].split(":")[0] + ":" + hour.bookings[i].start.split("T")[1].split("+")[0].split(":")[1] + ' - ' + hour.bookings[i].end.split("T")[1].split("+")[0].split(":")[0] + ":" + hour.bookings[i].end.split("T")[1].split("+")[0].split(":")[1] +
+            '</p></label>';
+      }
+      services_str = services_str + "</div>";
       $('#selectHour').append(
         '<label class="checkbox-inline">' +
           '<input type="radio" name="hoursRadio" value="' + pos + '">' +
           '<p>' +
             '<i class="fa fa-calendar-o fa-green"></i> ' + hour.date +
-            '<br>' +
+            '<br />' +
             '<i class="fa fa-clock-o fa-green"></i> ' + hour.hour +
+            '<br /><a href="#" class="optimizerDetailLink" pos="'+ pos +'">Ver detalle</a>' +
           '</p>' +
         '</label>'
       );
@@ -180,7 +175,22 @@ function loadHours () {
     });
     if (hours_array.length == 0) {
       $('#selectHour').append('<p class="text-center">No encontramos horarios disponibles</p>');
-    };
+    }
+    else
+    {
+      $('#hoursDetails').append(services_str);
+      $('.optimizerDetailLink').on('click', function(e){
+        e.preventDefault();
+        var pos_num = $(this).attr('pos');
+        $('.optimizerDetail').each(function(){
+          if($(this).attr("pos") != pos_num)
+          {
+            $(this).hide();
+          }
+        });
+        $('.optimizerDetail[pos="'+pos_num+'"]').toggle();
+      });
+    }
   }).always(function () {
     $('#addButton').prop('disabled', false);
   });
@@ -199,6 +209,11 @@ $(function () {
     loadServiceModal();
   });
 
+  $('.optimizerDetailLink').on('click', function(e){
+    e.preventDefault();
+    var pos_num = $(this).attr('pos');
+    $('.optimizerDetail[pos="'+pos_num+'"]').show();
+  });
 
 });
 
