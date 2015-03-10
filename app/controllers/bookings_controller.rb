@@ -1592,8 +1592,8 @@ class BookingsController < ApplicationController
         return
       end
 
-      #Revisar si fue pagada en línea.
-      #Si lo fue, revisar política de modificación.
+      # Revisar si fue pagada en línea.
+      # Si lo fue, revisar política de modificación.
       if @booking.payed || !@booking.payed_booking.nil?
         if !@company.company_setting.online_cancelation_policy.nil?
           ocp = @company.company_setting.online_cancelation_policy
@@ -1601,8 +1601,14 @@ class BookingsController < ApplicationController
             redirect_to blocked_cancel_path(:id => @booking.id, :online => true)
             return
           else
-            #Revisar tiempos de modificación, tanto máximo como el mínimo específico para los pagados en línea
 
+            # No permitir cancelar una particular si fueron pagadas varias juntas.
+            # Puede cancelar todas o ninguna.
+            if @booking.payed_booking.bookings.count > 1
+              redirect_to blocked_cancel_path(:id => @booking.id, :online => true)
+            end
+
+            #Revisar tiempos de modificación, tanto máximo como el mínimo específico para los pagados en línea
             #Mínimo
             book_start = DateTime.parse(@booking.start.to_s)
             min_hours = (book_start-now)/(60*60)
@@ -1949,7 +1955,7 @@ class BookingsController < ApplicationController
           BookingHistory.create(booking_id: book.id, action: "Cancelada por Cliente", start: book.start, status_id: book.status_id, service_id: book.service_id, service_provider_id: book.service_provider_id, user_id: user)
         end
       end
-      
+
     end
 
     # => Domain parser
