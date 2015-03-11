@@ -1863,16 +1863,18 @@ class BookingsController < ApplicationController
             end
           end
         end
+
+        booking_start = DateTime.parse(booking.start.to_s) - @company.company_setting.before_edit_booking / 24.0
+
+        if (booking_start <=> now) < 1
+          flash[:alert] = "No fue posible cancelar"
+          redirect_to root_path
+          return
+        end
+        
       end
       #Fin pagadas
 
-      booking_start = DateTime.parse(booking.start.to_s) - @company.company_setting.before_edit_booking / 24.0
-
-      if (booking_start <=> now) < 1
-        flash[:alert] = "No fue posible cancelar"
-        redirect_to root_path
-        return
-      end
       # else
       #   status = Status.find_by(:name => 'Cancelado').id
       #   @bookings.each do |book|
