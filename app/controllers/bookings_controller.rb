@@ -1800,8 +1800,6 @@ class BookingsController < ApplicationController
       @selectedLocation = Location.find(@booking.location_id)
 
       now = DateTime.new(DateTime.now.year, DateTime.now.mon, DateTime.now.mday, DateTime.now.hour, DateTime.now.min)
-      booking_start = DateTime.parse(@booking.start.to_s) - @company.company_setting.before_edit_booking / 24.0
-
 
       #Pagadas
 
@@ -1868,7 +1866,7 @@ class BookingsController < ApplicationController
       end
       #Fin pagadas
 
-
+      booking_start = DateTime.parse(booking.start.to_s) - @company.company_setting.before_edit_booking / 24.0
 
       if (booking_start <=> now) < 1
         flash[:alert] = "No fue posible cancelar"
@@ -1957,6 +1955,8 @@ class BookingsController < ApplicationController
         if book.update(status_id: status)
           current_user ? user = current_user.id : user = 0
           BookingHistory.create(booking_id: book.id, action: "Cancelada por Cliente", start: book.start, status_id: book.status_id, service_id: book.service_id, service_provider_id: book.service_provider_id, user_id: user)
+        else
+          logger.info book.errors
         end
       end
 
