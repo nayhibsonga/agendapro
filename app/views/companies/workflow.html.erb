@@ -6,6 +6,21 @@
         <h3 class="modal-title" id="optimizerTitle" style="line-height: 1.1;"></h3>
       </div>
       <div class="modal-body">
+        <div id="pickerSelectDate">
+          <div class="row">
+            <div class="col-xs-3" style="text-align: right; font-weight: bold;">
+              Inicio
+            </div>
+            <div class="col-xs-9">
+              <input id="initialPickerDate" value="<%= I18n.l(DateTime.now.to_date) %>" hidden />
+              <span id="pickerSelected" style="color: #949292;"><%= I18n.l(DateTime.now.to_date) %></span>&nbsp;&nbsp;
+              <span class="optimizer-date-span" style="float: right;">
+                Seleccionar nuevo inicio&nbsp;<i class="fa fa-calendar-o"></i>
+                <input type="text" class="form-control" name="optimizerDateSelector" id="optimizerDateSelector" class="datepicker" />
+              </span>
+            </div>
+          </div>
+        </div>
         <form class="form-horizontal" id="serviceOptimizer"></form>
         <div id="selectHour"></div>
         <div id="hoursDetails"></div>
@@ -180,24 +195,27 @@
                 </div>
               </div>
               <div class="col-md-3" style="text-align: right;">
-                <table style="float: right; margin-top: 10px;">
-                <tr>
-                <td style:"text-align:right;">
-                <button type="button" class="btn btn-green" data-toggle="modal" data-target="#hoursOptimizer" style="background: #22c488; color: #ffffff;">Optimizar Horas</button>
-                </td>
-                </tr>
-                <tr>
-                <td style:"text-align:right;">
-                <span class="optimizer-date-span" style="margin-top: 5px !important;">
-                  Seleccionar inicio&nbsp;<i class="fa fa-calendar-o"></i>
-                  <input type="text" class="form-control" name="optimizerDateSelector" id="optimizerDateSelector" class="datepicker" />
-                </span>
-                </td>
-                </tr>
-                </table>
+                
               </div>
-              <div class="col-md-6">
+              <div class="col-md-6" style="text-align: right;">
+                <table style="float: right; margin-top: 10px;">
+                  <tr>
+                    <td style="text-align: right; color: #949292;">
+                      <b>O elige varios servicios y te propondremos los mejores horarios:&nbsp;&nbsp;</b>
+                    </td>
+                    <td style:"text-align:right;">
+                      <button type="button" class="btn btn-green" data-toggle="modal" data-target="#hoursOptimizer" style="background: #22c488; color: #ffffff;">Elegir servicios</button>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td style="text-align: right;">
 
+                    </td>
+                    <td style:"text-align:right;">
+                      
+                    </td>
+                  </tr>
+                </table>
               </div>
             </div>
             <div class="row">
@@ -742,7 +760,9 @@
           firstDay: 1,
           dateFormat: 'yy-mm-dd',
           onSelect: function(newDate){
-            
+            $("#pickerSelected").empty();
+            var prettyDate = newDate.split("-")[2] + "/" + newDate.split("-")[1] + "/" + newDate.split("-")[0];
+            $("#pickerSelected").append(prettyDate);
           }
       });
 

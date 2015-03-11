@@ -1952,13 +1952,11 @@ class BookingsController < ApplicationController
         end
       end
       #Fin pagadas
-      logger.info "There are " + @bookings.count
+
       @bookings.each do |book|
         if book.update(status_id: status)
           current_user ? user = current_user.id : user = 0
           BookingHistory.create(booking_id: book.id, action: "Cancelada por Cliente", start: book.start, status_id: book.status_id, service_id: book.service_id, service_provider_id: book.service_provider_id, user_id: user)
-        else
-          logger.info book.errors
         end
       end
 
@@ -1989,7 +1987,7 @@ class BookingsController < ApplicationController
       bookings.each do |booking|
         book_start = DateTime.parse(booking.start.to_s)
         book_end = DateTime.parse(booking.end.to_s)
-        if (book_start - booking_end) * (booking_start - book_end) > 0
+        if (booking_end <= book_start || book_end <= booking_start)
           render :json => {
             :crossover => true,
             :booking => {
@@ -2116,8 +2114,18 @@ class BookingsController < ApplicationController
       now = now - company_setting.before_booking.hours
     end
 
-    # Pointers
-    dateTimePointer = local.location_times.where(day_id: now.cwday).order(:open).first.open
+
+    days_ids = [1,2,3,4,5,6,7]
+    index = days_ids.find_index(now.cwday)
+    ordered_days = days_ids[index, days_ids.length] + days_ids[0, index]
+    
+    for i in 1..ordered_days.length
+      dtp = local.location_times.where(day_id: ordered_days[i]).order(:open).first
+      if !dtp.nil?
+        break
+      end
+    end
+    dateTimePointer = dtp.open
     dateTimePointer = DateTime.new(now.year, now.mon, now.mday, dateTimePointer.hour, dateTimePointer.min)
 
     while @hours_array.length < array_length and (dateTimePointer <=> now + company_setting.after_booking.month) == -1
@@ -2128,6 +2136,9 @@ class BookingsController < ApplicationController
         service_valid = false
         service = Service.find(serviceStaff[serviceStaffPos][:service])
 
+        #Find next service block starting from dateTimePointer
+        service_sum = service.duration.minutes
+
         minHour = now
         if not params[:admin]
           minHour += company_setting.before_booking.hours
@@ -2137,6 +2148,12 @@ class BookingsController < ApplicationController
         end
 
         # Hora dentro del horario del local
+
+        #if service_valid
+        #  service_valid = false
+        #  for 
+        #end
+
         if service_valid
           service_valid = false
           local.location_times.where(day_id: dateTimePointer.cwday).each do |times|
@@ -2174,7 +2191,7 @@ class BookingsController < ApplicationController
             # Provider breaks
             if service_valid
               provider.provider_breaks.each do |provider_break|
-                if (provider_break.start.to_datetime - (dateTimePointer + service.duration.minutes))*(dateTimePointer - provider_break.end.to_datetime) > 0
+                if !(provider_break.end.to_datetime <= dateTimePointer || (dateTimePointer + service.duration.minutes) <= provider_break.start.to_datetime)
                   service_valid = false
                   break
                 end
@@ -2185,7 +2202,8 @@ class BookingsController < ApplicationController
             if service_valid
               Booking.where(service_provider_id: provider.id, start: dateTimePointer.to_time.beginning_of_day..dateTimePointer.to_time.end_of_day).each do |provider_booking|
                 unless provider_booking.status_id == cancelled_id
-                  if (provider_booking.start.to_datetime - (dateTimePointer + service.duration.minutes)) * (dateTimePointer - provider_booking.end.to_datetime) > 0
+                  pointerEnd = dateTimePointer+service.duration.minutes
+                  if (pointerEnd <= provider_booking.start.to_datetime || provider_booking.end.to_datetime <= dateTimePointer)
                     if !service.group_service || service.id != provider_booking.service_id
                       service_valid = false
                       break
@@ -2193,6 +2211,8 @@ class BookingsController < ApplicationController
                       service_valid = false
                       break
                     end
+                  else
+                    service_valid = false
                   end
                 end
               end
@@ -2208,7 +2228,7 @@ class BookingsController < ApplicationController
                 used_resource = 0
                 group_services = []
                 local.bookings.where(:start => dateTimePointer.to_time.beginning_of_day..dateTimePointer.to_time.end_of_day).each do |location_booking|
-                  if location_booking.status_id != cancelled_id && (location_booking.start.to_datetime - (dateTimePointer + service.duration.minutes)) * (dateTimePointer - location_booking.end.to_datetime) > 0
+                  if location_booking.status_id != cancelled_id && (location_booking.end.to_datetime <= dateTimePointer || (dateTimePointer + service.duration.minutes) <= location_booking.start.to_datetime)
                     if location_booking.service.resources.include?(resource)
                       if !location_booking.service.group_service
                         used_resource += 1
