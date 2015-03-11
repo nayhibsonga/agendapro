@@ -209,6 +209,10 @@ $(function () {
     loadServiceModal();
   });
 
+  $('#hoursOptimizer').on('hide.bs.modal', function(e){
+    $("#hoursDetails").empty();
+  });
+
   $('.optimizerDetailLink').on('click', function(e){
     e.preventDefault();
     var pos_num = $(this).attr('pos');
