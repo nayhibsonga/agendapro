@@ -1871,7 +1871,7 @@ class BookingsController < ApplicationController
           redirect_to root_path
           return
         end
-        
+
       end
       #Fin pagadas
 
@@ -1952,7 +1952,7 @@ class BookingsController < ApplicationController
         end
       end
       #Fin pagadas
-
+      logger.info "There are " + @bookings.count
       @bookings.each do |book|
         if book.update(status_id: status)
           current_user ? user = current_user.id : user = 0
