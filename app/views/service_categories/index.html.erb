@@ -1,53 +1,57 @@
-<div class="container">
+<div class="container-fluid">
   <div class="row">
-    <section class="hgroup">
-      <h2>Categorías de Servicios</h2>
-      <h2 class="section_header">Estas son las Categorías creadas para clasificar y facilitar la búsqueda de tus servicios. Acá puedes editarlas y crear nuevas.</h2>
-      <div class="line-breadcrumb">
-        <ul class="breadcrumb pull-right">
-            <li><%= link_to "Resumen", dashboard_path %> </li>
-            <li class="active">Categorías de Servicios</li>
-        </ul>
+    <div class="col-md-12">
+      <h2 class="text-green">Categorías de Servicios</h2>
+      <div class="row">
+        <div class="col-md-8">
+          <p class="text-buttons">Estas son las Categorías creadas para clasificar y facilitar la búsqueda de tus servicios. Acá puedes editarlas y crear nuevas.</p>
+        </div>
+        <div class="col-md-4 action-buttons">
+          <%= link_to '<i class="fa fa-plus"></i> Nueva Categoría de Servicios'.html_safe, new_service_category_path, :class => "btn btn-green" %>
+        </div>
+      </div>
     </div>
-    </section>
+  </div>
+  <div class="row">
+    <div class="col-md-12">
+      <table class="table table-bordered table-green">
+        <thead>
+          <tr>
+            <th>Nombre</th>
+            <% if current_user.role_id == Role.find_by_name('Super Admin').id %>
+            <th>Empresa</th>
+            <% end %>
+            <th>Opciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @service_categories.each do |service_category| %>
+            <tr draggable="true" data-resource="categories">
+              <td data-category="<%= service_category.id %>"><%= service_category.name %></td>
+              <% if current_user.role_id == Role.find_by_name('Super Admin').id %>
+              <td><%= service_category.company.name %></td>
+              <% end %>
+              <td>
+                <% if service_category.name != "Sin Categoría" %>
+                <%= link_to '<i class="fa fa-pencil"></i> Editar'.html_safe, edit_service_category_path(service_category), :class => "btn btn-sm btn-orange" %>
+                <%= link_to '<i class="fa fa-trash-o"></i> Eliminar'.html_safe, service_category, :class => "btn btn-sm btn-red", method: :delete, data: { confirm: '¿Estás seguro de eliminar la Categoría seleccionada?' } unless cannot? :destroy, service_category %>
+                <% end %>
+                <span class="pull-right">
+                  <i class="fa fa-bars"></i>
+                </span>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
   </div>
 </div>
 
-<table class="table table-bordered">
-  <thead>
-    <tr>
-      <th>Nombre</th>
-      <% if current_user.role_id == Role.find_by_name('Super Admin').id %>
-      <th>Empresa</th>
-      <% end %>
-      <th>Opciones</th>
-    </tr>
-  </thead>
+<% content_for :stylesheets do %>
+  <%= stylesheet_link_tag "admin/draggable" %>
+<% end %>
 
-  <tbody>
-    <% @service_categories.each do |service_category| %>
-      <tr draggable="true" data-resource="categories">
-        <td data-category="<%= service_category.id %>"><%= service_category.name %></td>
-        <% if current_user.role_id == Role.find_by_name('Super Admin').id %>
-        <td><%= service_category.company.name %></td>
-        <% end %>
-        <td>
-          <% if service_category.name != "Sin Categoría" %>
-          <%= link_to '<i class="fa fa-pencil"></i> Editar'.html_safe, edit_service_category_path(service_category), :class => "btn btn-sm btn-warning" %>
-          <%= link_to '<i class="fa fa-trash-o"></i> Eliminar'.html_safe, service_category, :class => "btn btn-sm btn-danger", method: :delete, data: { confirm: '¿Estás seguro de eliminar la Categoría seleccionada?' } unless cannot? :destroy, service_category %>
-          <% end %>
-          <span class="pull-right">
-            <i class="fa fa-bars"></i>
-          </span>
-        </td>
-      </tr>
-    <% end %>
-  </tbody>
-</table>
-
-<%= link_to '<i class="fa fa-plus"></i> Nueva Categoría de Servicios'.html_safe, new_service_category_path, :class => "btn btn-agendapro-claro" %>
-
-<%= stylesheet_link_tag "admin/draggable" %>
 <% content_for :scripts do %>
   <%= javascript_include_tag 'admin/draggable' %>
   <%= javascript_include_tag 'admin/category_draggable' %>
