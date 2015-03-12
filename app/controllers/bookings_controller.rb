@@ -682,6 +682,7 @@ class BookingsController < ApplicationController
         if service.has_discount
           num_amount = (service.price - service.price*service.discount/100).round;
         end
+        @booking.price = num_amount
         amount = sprintf('%.2f', num_amount)
         payment_method = params[:mp]
         req = PuntoPagos::Request.new()
