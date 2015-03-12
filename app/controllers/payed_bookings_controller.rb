@@ -29,7 +29,7 @@ class PayedBookingsController < ApplicationController
   				limit_date = now
   				if !company.company_setting.online_cancelation_policy.nil?
 	  				cancel_max = company.company_setting.online_cancelation_policy.cancel_max
-	  				if company.company_setting.cancelable
+	  				if company.company_setting.online_cancelation_policy.cancelable
 	  					limit_date = now-cancel_max.hours
 	  				end
 	  			end
