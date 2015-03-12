@@ -1901,7 +1901,7 @@ class BookingsController < ApplicationController
               return
             else
               #Revisar tiempos de modificación, tanto máximo como el mínimo específico para los pagados en línea
-
+              
               #Mínimo
               book_start = DateTime.parse(booking.start.to_s)
               min_hours = (book_start-now)/(60*60)
