@@ -156,6 +156,8 @@ function loadHours () {
         services_str = services_str + '<label class="checkbox-inline"><p><i class="fa fa-check-circle-o fa-green"></i> ' + hour.bookings[i].service_name +
             '<br />' +
             '<i class="fa fa-calendar-o fa-green"></i> ' + hour.bookings[i].start.split("T")[1].split("+")[0].split(":")[0] + ":" + hour.bookings[i].start.split("T")[1].split("+")[0].split(":")[1] + ' - ' + hour.bookings[i].end.split("T")[1].split("+")[0].split(":")[0] + ":" + hour.bookings[i].end.split("T")[1].split("+")[0].split(":")[1] +
+            '<br />' + 
+            '<i class="fa fa-user fa-green"></i> ' + hour.bookings[i].provider_name +
             '</p></label>';
       }
       services_str = services_str + "</div>";
