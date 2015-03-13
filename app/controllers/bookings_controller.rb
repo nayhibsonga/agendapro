@@ -1890,7 +1890,7 @@ class BookingsController < ApplicationController
       @company = Location.find(booking.location_id).company
       @bookings = Booking.where(location: booking.location).where(booking_group: booking.booking_group)
       status = Status.find_by(:name => 'Cancelado').id
-
+      were_payed = true
 
       @bookings.each do |booking|
         if booking.payed || !booking.payed_booking.nil?
@@ -1949,15 +1949,27 @@ class BookingsController < ApplicationController
 
             end
           end
+        else
+          were_payed = false
         end
       end
       #Fin pagadas
 
+      success = true
       @bookings.each do |book|
         if book.update(status_id: status)
           current_user ? user = current_user.id : user = 0
           BookingHistory.create(booking_id: book.id, action: "Cancelada por Cliente", start: book.start, status_id: book.status_id, service_id: book.service_id, service_provider_id: book.service_provider_id, user_id: user)
+        else
+          success = false
         end
+      end
+
+      if success && were_payed
+        payed_booking = @bookings.first.payed_booking
+        BookingMailer.cancel_payment_mail(payed_booking, 1)
+        BookingMailer.cancel_payment_mail(payed_booking, 2)
+        BookingMailer.cancel_payment_mail(payed_booking, 3)
       end
 
     end
