@@ -147,7 +147,19 @@ function loadHours () {
   });
   $.getJSON('/optimizer_hours', { local: localId, serviceStaff: JSON.stringify(selects), resultsLength: resultsLength, admin: true }, function (hours_array) {
     $('#selectHour > p').remove();
+    var services_str = "";
     $.each(hours_array, function (pos, hour) {
+
+      services_str = services_str + '<div class="optimizerDetail" pos="'+ pos +'" hidden><h3>Detalle</h3><br />';
+      for(i = 0; i < hour.bookings.length; i++)
+      {
+        services_str = services_str + '<label class="checkbox-inline"><p><i class="fa fa-check-circle-o fa-green"></i> ' + hour.bookings[i].service_name +
+            '<br />' +
+            '<i class="fa fa-calendar-o fa-green"></i> ' + hour.bookings[i].start.split("T")[1].split("+")[0].split(":")[0] + ":" + hour.bookings[i].start.split("T")[1].split("+")[0].split(":")[1] + ' - ' + hour.bookings[i].end.split("T")[1].split("+")[0].split(":")[0] + ":" + hour.bookings[i].end.split("T")[1].split("+")[0].split(":")[1] +
+            '</p></label>';
+      }
+      services_str = services_str + "</div>";
+
       $('#selectHour').append(
         '<label class="checkbox-inline">' +
           '<input type="radio" name="hoursRadio" value="' + pos + '">' +
@@ -155,6 +167,7 @@ function loadHours () {
             '<i class="fa fa-calendar-o fa-green"></i> ' + hour.date +
             '<br>' +
             '<i class="fa fa-clock-o fa-green"></i> ' + hour.hour +
+            '<br /><a href="#" class="optimizerDetailLink" pos="'+ pos +'">Ver detalle</a>' +
           '</p>' +
         '</label>'
       );
@@ -162,7 +175,22 @@ function loadHours () {
     });
     if (hours_array.length == 0) {
       $('#selectHour').append('<p class="text-center">No encontramos horarios disponibles</p>');
-    };
+    }
+    else
+    {
+      $('#hoursDetails').append(services_str);
+      $('.optimizerDetailLink').on('click', function(e){
+        e.preventDefault();
+        var pos_num = $(this).attr('pos');
+        $('.optimizerDetail').each(function(){
+          if($(this).attr("pos") != pos_num)
+          {
+            $(this).hide();
+          }
+        });
+        $('.optimizerDetail[pos="'+pos_num+'"]').toggle();
+      });
+    }
   }).always(function () {
     $('#addButton').prop('disabled', false);
   });
@@ -445,12 +473,19 @@ $(function () {
 
   $('#hoursOptimizer').on('hidden.bs.modal', function (e) {
     optimizerValidator.resetForm();
+    $("#hoursDetails").empty();
     $('.has-success').removeClass('has-success');
     $('.fa.fa-check').removeClass('fa fa-check');
     $('.has-error').removeClass('has-error');
     $('#hoursOptimizer #new_booking').find('.fa.fa-times').removeClass('fa fa-times');
     $('#nextButton').removeAttr("disabled");
     $('#small_loader').remove();
+  });
+
+  $('.optimizerDetailLink').on('click', function(e){
+    e.preventDefault();
+    var pos_num = $(this).attr('pos');
+    $('.optimizerDetail[pos="'+pos_num+'"]').show();
   });
 
   $(userForm + "#full_name").on('input',function(e){

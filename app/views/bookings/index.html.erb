@@ -1,3 +1,49 @@
+<style type="text/css">
+.optimizer-date-span {
+  position: relative;
+  font-size: 16px;
+  cursor: pointer;
+  color: #949292;
+  z-index: 2;
+}
+
+.optimizer-date-span input {
+  // invisible input as jquery ui requires an actual input
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  opacity: 0;
+  width: 10px !important;
+  pointer-events: none;
+}
+
+.optimizerDetail > label {
+  width: 33%;
+}
+
+.optimizerDetail > h3 {
+  color: #949292;
+  padding-left: 15px;
+}
+
+.optimizerDetail > .checkbox-inline {
+  color: #949292;
+  border-right: 1px solid #949292;
+  padding-left: 15px;
+  margin-bottom: 12px;
+}
+.optimizerDetail > .checkbox-inline + .checkbox-inline {
+  margin-left: 0;
+}
+
+.optimizerDetail > .checkbox-inline > p {
+  display: inline-block;
+  vertical-align: top;
+  margin: 0 10px 0 5px;
+  font-size: 15px;
+}
+</style>
+
 <div class="modal fade" id="bookingModal" role="dialog" aria-labelledby="bookingModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-admin">
     <div class="modal-content">
@@ -449,8 +495,24 @@
         <h3 class="modal-title" id="optimizerTitle" style="line-height: 1.1;"></h3>
       </div>
       <div class="modal-body">
+        <!--<div id="pickerSelectDate">
+          <div class="row">
+            <div class="col-xs-3" style="text-align: right; font-weight: bold;">
+              Inicio
+            </div>
+            <div class="col-xs-9">
+              <input id="initialPickerDate" value="<%= I18n.l(DateTime.now.to_date) %>" hidden />
+              <span id="pickerSelected" style="color: #949292;"><%= I18n.l(DateTime.now.to_date) %></span>&nbsp;&nbsp;
+              <span class="optimizer-date-span" style="float: right;">
+                Seleccionar nuevo inicio&nbsp;<i class="fa fa-calendar-o"></i>
+                <input type="text" class="form-control" name="optimizerDateSelector" id="optimizerDateSelector" class="datepicker" />
+              </span>
+            </div>
+          </div>
+        </div>-->
         <form class="form-horizontal" id="serviceOptimizer"></form>
         <div id="selectHour"></div>
+        <div id="hoursDetails"></div>
         <%= form_for @booking, html: {class: "form-horizontal"} do |f| %>
           <% if @booking.client.nil? then @booking.build_client end %>
           <%= f.fields_for :client do |builder| %>
@@ -593,6 +655,30 @@
 					$('#booking_deal_code').val(rut_format(rut_string));
 				}
 			});
+
+      /*$("#optimizerDateSelector").datepicker({
+          monthNames: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+          monthNamesShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
+          prevText: 'Atrás',
+          nextText: 'Adelante',
+          dayNames: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'],
+          dayNamesShort: ['Dom', 'Lun', 'Mar', 'Mier', 'Jue', 'vie', 'Sáb'],
+          dayNamesMin: ['Dom', 'Lun', 'Mar', 'Mier', 'Jue', 'vie', 'Sáb'],
+          today: 'Hoy',
+          clear: '',
+          firstDay: 1,
+          dateFormat: 'yy-mm-dd',
+          onSelect: function(newDate){
+            $("#pickerSelected").empty();
+            var prettyDate = newDate.split("-")[2] + "/" + newDate.split("-")[1] + "/" + newDate.split("-")[0];
+            $("#pickerSelected").append(prettyDate);
+          }
+      });
+
+      $(document.body).on('click', '.optimizer-date-span', function(e){
+        $(e.currentTarget).find('input').datepicker('show');
+      });*/
+
 		</script>
 	<% end %>
 <% end %>
