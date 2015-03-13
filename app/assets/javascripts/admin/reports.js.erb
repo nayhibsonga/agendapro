@@ -2,9 +2,8 @@ $(function() {
 	$('.tab_index.render').click(function(event) {
 		$('#render_content').html('<br /><%= image_tag "ajax-loader.gif", :alt => "Loader" %>');
 		var report = event.target.id.replace(/[0-9]/g, '');
-		window.console.log(event.target.id);
 		$.ajax({
-		    url: "/report_"+report+"/"+event.target.id.replace( /^\D+/g, '') + '?from=' + $('#from').val() + '&to=' + $('#to').val() + '&status=' + $('#status').val() + '&option=' + $('#option').val(),
+		    url: '/report_'+report+'/'+event.target.id.replace( /^\D+/g, '') + '?from=' + $('#from').val() + '&to=' + $('#to').val() + '&status_ids=' + $('input:checkbox:checked.report_select').map(function () {return parseInt(this.value);}).get() + '&option=' + $('#option').val(),
 		    cache: false,
 		    success: function(html){
 		      $('#render_content').html(html);

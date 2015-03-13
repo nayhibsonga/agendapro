@@ -54,9 +54,10 @@ class ReportsController < ApplicationController
 	end
 
 	def set_params
-		params[:from] ||= Time.now.strftime("%Y-%m-%d")
-		params[:to] ||= Time.now.strftime("%Y-%m-%d")
-		params[:status] ||= 0
-		params[:option] ||= 0
+		@from = params[:from].blank? ? Time.now.beginning_of_day : Time.parse(params[:from]).beginning_of_day
+		@to = params[:to].blank? ? Time.now.end_of_day : Time.parse(params[:to]).end_of_day
+		@status_ids = params[:status_ids] ? Status.where(id: params[:status_ids].split(',').map { |i| i.to_i }) : Status.where.not(name: 'Cancelado').pluck(:id)
+		puts @status_ids
+		@option = params[:option] ? params[:option].to_i : 0
 	end
 end

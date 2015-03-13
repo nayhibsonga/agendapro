@@ -8,8 +8,8 @@
 				<table class="table">
 					<thead class="head-white">
 						<th>Servicio</th>
-						<th>Reservas Última Semana</th>
-						<th>Reservas Último Mes</th>
+						<th>Reservas</th>
+						<th>Recaudación</th>
 					</thead>
 					<tbody>
 						<% @service_provider.services.where(company_id: current_user.company_id, active: true).each do |service| %>
@@ -18,10 +18,10 @@
 							<%= service.name %>
 							</td>
 							<td>
-								<%= int_with_variation(provider_service_booking_count(params[:from], params[:to], params[:status], params[:option], service.id, @service_provider.id), provider_service_booking_count(params[:from], params[:to], params[:status], params[:option], service.id, @service_provider.id)) %>
+								<%= provider_service_booking_count(@from, @to, @status_ids, @option, service.id, @service_provider.id) %>
 							</td>
 							<td>
-								<%= int_with_variation(provider_service_booking_count(params[:from], params[:to], params[:status], params[:option], service.id, @service_provider.id), provider_service_booking_count(params[:from], params[:to], params[:status], params[:option], service.id, @service_provider.id)) %>
+								<%= number_to_currency(provider_service_booking_revenue(@from, @to, @status_ids, @option, service.id, @service_provider.id), currency: ' $', separator: ',', delimeter: '.', precision: 0) %>
 							</td>
 						</tr>
 						<% end %>
@@ -29,10 +29,10 @@
 							<td><strong>Total</strong>
 							</td>
 							<td><strong>
-								<%= int_with_variation(provider_booking_count(params[:from], params[:to], params[:status], params[:option], @service_provider.id), provider_booking_count(params[:from], params[:to], params[:status], params[:option], @service_provider.id)) %>
+								<%= provider_booking_count(@from, @to, @status_ids, @option, @service_provider.id) %>
 							</strong></td>
 							<td><strong>
-								<%= int_with_variation(provider_booking_count(params[:from], params[:to], params[:status], params[:option], @service_provider.id), provider_booking_count(params[:from], params[:to], params[:status], params[:option], @service_provider.id)) %>
+								<%= number_to_currency(provider_booking_revenue(@from, @to, @status_ids, @option, @service_provider.id), currency: ' $', separator: ',', delimeter: '.', precision: 0) %>
 							</strong></td>
 						</tr>
 					</tbody>
@@ -43,17 +43,6 @@
 </div>
 <div class="row">
 	<div class="col-md-6">
-		<%= pie_chart provider_booking_ranking3(params[:from], params[:to], params[:status], params[:option], @service_provider.id), library: { title: "Ranking Servicio Utilizados Última Semana" }  %>
-	</div>
-	<div class="col-md-6">
-		<%= pie_chart provider_booking_ranking3(params[:from], params[:to], params[:status], params[:option], @service_provider.id), library: { title: "Ranking Servicio Utilizados Último Mes" }  %>
-	</div>
-</div>
-<div class="row">
-	<div class="col-md-6">
-		<%= pie_chart provider_booking_ranking3(params[:from], params[:to], params[:status], params[:option], @service_provider.id), library: { title: "Ranking Servicio Utilizados Semana Anterior" }  %>
-	</div>
-	<div class="col-md-6">
-		<%= pie_chart provider_booking_ranking3(params[:from], params[:to], params[:status], params[:option], @service_provider.id), library: { title: "Ranking Servicio Utilizados Mes Anterior" }  %>
+		<%= pie_chart provider_booking_ranking3(@from, @to, @status_ids, @option, @service_provider.id), library: { title: "Ranking Servicio Utilizados" }  %>
 	</div>
 </div>

@@ -23,33 +23,46 @@
 	</div>
 </div>
 
-<div class="row">
-	<div class="col-md-3">
-		<div class="form-group">
-			<input type="text" id="from" name="from" class="form-control report_select" value="<%= Time.now.strftime("%Y-%m-%d") %>">
+<div class="row well">
+	<div class="col-sm-12">
+		<div class="row">
+			<div class="form-group col-sm-4">
+				<label for="from" class="col-sm-2 control-label">Desde: </label>
+				<div class="col-sm-10">
+					<input type="text" id="from" name="from" class="form-control report_select" value="<%= Time.now.strftime("%Y-%m-%d") %>">
+				</div>
+			</div>
+			<div class="form-group col-sm-4">
+				<label for="from" class="col-sm-2 control-label">Hasta: </label>
+				<div class="col-sm-10">
+					<input type="text" id="to" name="to" class="form-control report_select" value="<%= Time.now.strftime("%Y-%m-%d") %>">
+				</div>
+			</div>
+			<!-- <div class="col-md-3">
+				<div class="form-group">
+					<select class="form-control report_select" id="status">
+						<option value="0">Todos</option>
+						<% Status.all.order(:name).each do |status| %>
+							<option value="<%= status.id %>"><%= status.name %></option>
+						<% end %>
+					</select>
+				</div>
+			</div> -->
+			<div class="col-sm-4">
+				<div class="form-group">
+					<select class="form-control report_select" id="option">
+						<option value="0">Por fecha de creación</option>
+						<option value="1">Por fecha de realización</option>
+					</select>
+				</div>
+			</div>
 		</div>
-	</div>
-	<div class="col-md-3">
-		<div class="form-group">
-			<input type="text" id="to" name="to" class="form-control report_select" value="<%= Time.now.strftime("%Y-%m-%d") %>">
-		</div>
-	</div>
-	<div class="col-md-3">
-		<div class="form-group">
-			<select class="form-control report_select" id="status">
-				<option value="0">Todos</option>
-				<% Status.all.order(:name).each do |status| %>
-					<option value="<%= status.id %>"><%= status.name %></option>
-				<% end %>
-			</select>
-		</div>
-	</div>
-	<div class="col-md-3">
-		<div class="form-group">
-			<select class="form-control report_select" id="option">
-				<option value="0">Por fecha de creación</option>
-				<option value="1">Por fecha de realización</option>
-			</select>
+		<div class="row">
+		    <label for="status_ids[]">Estado: </label>
+		    <% for status in Status.all do %>
+		      <%= check_box_tag 'status_ids[]', status.id, params[:status_ids].blank? && status.name != 'Cancelado' ? true : params[:status_ids] && params[:status_ids].includes(status.id), {class: "report_select"} %>
+		      <%= status.name.humanize %>
+		    <% end %>
 		</div>
 	</div>
 </div>

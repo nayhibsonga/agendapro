@@ -1,21 +1,21 @@
 <div class="row">
 	<div class="col-md-4 col-md-offset-1 well">
 		<h4>Cantidad de Reservas</h4>
-		<p><%= int_with_variation(status_booking_count(params[:from], params[:to], params[:status], params[:option], current_user.company_id),status_booking_count(params[:from], params[:to], params[:status], params[:option], current_user.company_id)) %></p>
+		<p><%= status_booking_count(@from, @to, @status_ids, @option, current_user.company_id) %></p>
 	</div>
 	<div class="col-md-4 col-md-offset-2 well">
-		<h4>Capacidad Utilizada</h4>
-		<p><%= percentage_with_variation(booking_occupation(params[:from], params[:to], params[:status], params[:option], current_user.company_id), booking_occupation(params[:from], params[:to], params[:status], params[:option], current_user.company_id)) %></p>
+		<h4>Recaudación</h4>
+		<p><%= number_to_currency(booking_revenue(@from, @to, @status_ids, @option, current_user.company_id), currency: ' $', separator: ',', delimeter: '.', precision: 0) %></p>
 	</div>
 </div>
 <div class="row">
 	<div class="col-md-6">
-		<%= pie_chart status_booking_ranking3(params[:from], params[:to], params[:status], params[:option], current_user.company_id), library: { title: "Ranking Servicio Utilizados" }  %>
+		<%= pie_chart status_booking_ranking3(@from, @to, @status_ids, @option, current_user.company_id), library: { title: "Ranking Servicio Utilizados" }  %>
 	</div>
 	<div class="col-md-6">
-		<%= pie_chart status_booking_by_day(params[:from], params[:to], params[:status], params[:option], current_user.company_id), library: { title: "Reservas por Día de la Semana" }  %>
+		<%= pie_chart status_booking_by_day(@from, @to, @status_ids, @option, current_user.company_id), library: { title: "Reservas por Día de la Semana" }  %>
 	</div>
 </div>
 <div class="row">
-	<%= line_chart status_booking_by_hour(params[:from], params[:to], params[:status], params[:option], current_user.company_id), discrete: true, library: {hAxis: {title: "Hora del Día" }, vAxis: {title: "# Reservas", format: "#"}, title: "Reservas por Hora por Día" } %>
+	<%= line_chart status_booking_by_hour(@from, @to, @status_ids, @option, current_user.company_id), discrete: true, library: {hAxis: {title: "Hora del Día" }, vAxis: {title: "# Reservas", format: "#"}, title: "Reservas por Hora por Día" } %>
 </div>
