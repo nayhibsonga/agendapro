@@ -1999,7 +1999,7 @@ class BookingsController < ApplicationController
       bookings.each do |booking|
         book_start = DateTime.parse(booking.start.to_s)
         book_end = DateTime.parse(booking.end.to_s)
-        if (booking_end <= book_start || book_end <= booking_start)
+        if !(booking_end <= book_start || book_end <= booking_start)
           render :json => {
             :crossover => true,
             :booking => {
