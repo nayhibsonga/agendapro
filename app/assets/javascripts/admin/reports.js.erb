@@ -3,21 +3,33 @@ $(function() {
 		$('#render_content').html('<br /><%= image_tag "ajax-loader.gif", :alt => "Loader" %>');
 		var report = event.target.id.replace(/[0-9]/g, '');
 		$.ajax({
-		    url: "/report_"+report+"/"+event.target.id.replace( /^\D+/g, ''),
+		    url: '/report_'+report+'/'+event.target.id.replace( /^\D+/g, '') + '?from=' + $('#from').val() + '&to=' + $('#to').val() + '&status_ids=' + $('input:checkbox:checked.report_select').map(function () {return parseInt(this.value);}).get() + '&option=' + $('#option').val(),
 		    cache: false,
 		    success: function(html){
 		      $('#render_content').html(html);
 		    }
 		});
 	});
-	$('select.report_select').change(function() {
-		$('#status_details').html('<br /><%= image_tag "ajax-loader.gif", :alt => "Loader" %>');
-		$.ajax({
-		    url: "/report_status_details/"+$('#status_id').val()+"/"+$('#time_range_id').val(),
-		    cache: false,
-		    success: function(html){
-		      $('#status_details').html(html);
-		    }
-		});
+	$('.report_select').change(function() {
+		$('ul.nav-tabs li.active').not('.dropdown').last().children('a').first().click();
 	});
+	$( "#from" ).datepicker({
+    	dateFormat: 'dd-mm-yy',
+      defaultDate: "+1w",
+      changeMonth: true,
+      numberOfMonths: 3,
+      onClose: function( selectedDate ) {
+        $( "#to" ).datepicker( "option", "minDate", selectedDate );
+      }
+    });
+    $( "#to" ).datepicker({
+    	dateFormat: 'dd-mm-yy',
+      defaultDate: "+1w",
+      changeMonth: true,
+      numberOfMonths: 3,
+      onClose: function( selectedDate ) {
+        $( "#from" ).datepicker( "option", "maxDate", selectedDate );
+      }
+    });
+    $('ul.nav-tabs li.active').not('.dropdown').last().children('a').first().click();
 });

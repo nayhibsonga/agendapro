@@ -1,5 +1,5 @@
 <script type="text/javascript">
-  var Chartkick = {"language": "es"};
+	var Chartkick = {"language": "es"};
 </script>
 
 <%= javascript_include_tag "//www.google.com/jsapi", "chartkick" %>
@@ -23,13 +23,58 @@
 	</div>
 </div>
 
+<div class="row well">
+	<div class="col-sm-12">
+		<div class="row">
+			<div class="form-group col-sm-4">
+				<label for="from" class="col-sm-2 control-label">Desde: </label>
+				<div class="col-sm-10">
+					<input type="text" id="from" name="from" class="form-control report_select" value="<%= Time.now.strftime("%Y-%m-%d") %>">
+				</div>
+			</div>
+			<div class="form-group col-sm-4">
+				<label for="from" class="col-sm-2 control-label">Hasta: </label>
+				<div class="col-sm-10">
+					<input type="text" id="to" name="to" class="form-control report_select" value="<%= Time.now.strftime("%Y-%m-%d") %>">
+				</div>
+			</div>
+			<!-- <div class="col-md-3">
+				<div class="form-group">
+					<select class="form-control report_select" id="status">
+						<option value="0">Todos</option>
+						<% Status.all.order(:name).each do |status| %>
+							<option value="<%= status.id %>"><%= status.name %></option>
+						<% end %>
+					</select>
+				</div>
+			</div> -->
+			<div class="col-sm-4">
+				<div class="form-group">
+					<select class="form-control report_select" id="option">
+						<option value="0">Por fecha de creación</option>
+						<option value="1">Por fecha de realización</option>
+					</select>
+				</div>
+			</div>
+		</div>
+		<div class="row">
+		    <label for="status_ids[]">Estado: </label>
+		    <% for status in Status.all do %>
+		      <%= check_box_tag 'status_ids[]', status.id, params[:status_ids].blank? && status.name != 'Cancelado' ? true : params[:status_ids] && params[:status_ids].includes(status.id), {class: "report_select"} %>
+		      <%= status.name.humanize %>
+		    <% end %>
+		</div>
+	</div>
+</div>
+
+
 <div class="row well well-white">
 	<ul id="myTab" class="nav nav-tabs" role="tablist">
-		<li class="active"><a href="#render_content" role="tab" data-toggle="tab" class="tab_index render" id="statuses">General</a></li>
+		<li class="active"><a href="#render_content" role="tab" data-toggle="tab" class="tab_index render" id="status_details">General</a></li>
 		<li class=""><a href="#render_content" role="tab" data-toggle="tab" class="tab_index render" id="locations">Locales</a></li>
 		<li class=""><a href="#render_content" role="tab" data-toggle="tab" class="tab_index render" id="services">Servicios</a></li>
 		<li class="dropdown">
-			<a href="#" id="myTabDrop1" class="dropdown-toggle" data-toggle="dropdown">Servicios por Local <span class="caret"></span></a>
+			<a href="#" id="myTabDrop1" class="dropdown-toggle" data-toggle="dropdown">Servicios por Local<span class="caret"></span></a>
 			<ul class="dropdown-menu" role="menu" aria-labelledby="myTabDrop1">
 				<% @locations.each do |location| %>
 				<li><a href="#render_content" tabindex="-1" role="tab" data-toggle="tab" class="tab_index render" id="location_services<%=location.id%>"><%= location.name %></a></li>
@@ -37,7 +82,7 @@
 			</ul>
 		</li>
 		<li class="dropdown">
-			<a href="#" id="myTabDrop1" class="dropdown-toggle" data-toggle="dropdown">Prestadores por Local <span class="caret"></span></a>
+			<a href="#" id="myTabDrop1" class="dropdown-toggle" data-toggle="dropdown">Prestadores por Local<span class="caret"></span></a>
 			<ul class="dropdown-menu" role="menu" aria-labelledby="myTabDrop1">
 				<% @locations.each do |location| %>
 				<li><a href="#render_content" tabindex="-1" role="tab" data-toggle="tab" class="tab_index render" id="location_providers<%=location.id%>"><%= location.name %></a></li>
@@ -45,7 +90,7 @@
 			</ul>
 		</li>
 		<li class="dropdown">
-			<a href="#" id="myTabDrop1" class="dropdown-toggle" data-toggle="dropdown">Servicios por Prestador <span class="caret"></span></a>
+			<a href="#" id="myTabDrop1" class="dropdown-toggle" data-toggle="dropdown">Servicios por Prestador<span class="caret"></span></a>
 			<ul class="dropdown-menu" role="menu" aria-labelledby="myTabDrop1">
 				<% @locations.each do |location| %>
 				<li class="location-listed"> <strong><%= location.name %></strong></li>
@@ -55,12 +100,20 @@
 				<% end %>
 			</ul>
 		</li>
-		<li class=""><a href="#help" role="tab" data-toggle="tab" class="tab_index">Ayuda</a></li>
+		<li class="dropdown">
+			<a href="#" id="myTabDrop1" class="dropdown-toggle" data-toggle="dropdown">Comisiones por Local<span class="caret"></span></a>
+			<ul class="dropdown-menu" role="menu" aria-labelledby="myTabDrop1">
+				<% @locations.each do |location| %>
+				<li><a href="#render_content" tabindex="-1" role="tab" data-toggle="tab" class="tab_index render" id="location_comission<%=location.id%>"><%= location.name %></a></li>
+				<% end %>
+			</ul>
+		</li>
+		<!-- <li class=""><a href="#help" role="tab" data-toggle="tab" class="tab_index">Ayuda</a></li> -->
 	</ul>
 	<div id="myTabContent" class="tab-content">
 	<br />	
-	  <div class="tab-pane active" id="render_content">
-	    <%= render 'statuses' %>
+	  <div class="tab-pane active" id="render_content"><!-- 
+	    <%= render 'statuses', params: { from: Time.now.strftime("%Y-%m-%d"), to: Time.now.strftime("%Y-%m-%d"), status: 0, option: 0 } %> -->
 	  </div>
 	  <div class="tab-pane" id="help">
 	    <div class="row">

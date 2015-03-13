@@ -1,0 +1,74 @@
+<div class="row">
+	<div class="col-md-12">
+		<div class="panel panel-info">
+			<div class="panel-heading">
+				<h3 class="panel-title">Comisiones <%= @location.name %> por Prestador (mes anterior)</h3>
+			</div>
+			<div class="panel-body scrollable">
+				<table class="table">
+					<thead class="head-white">
+						<th>Prestador/Servicio</th>
+						<th>Comisión</th>
+						<th>Cantidad</th>
+						<th>Recaudación</th>
+						<th>Comisión</th>
+					</thead>
+					<tbody>
+						<% @location.service_providers.where(active: true).order(:public_name).each do |provider| %>
+						<% provider_count = 0 %>
+						<% provider_income = 0 %>
+						<% provider_comission = 0 %>
+						<tr><td colspan="5"><strong><%= provider.public_name %></strong></td></tr>
+						<% provider.services.each do |service| %>
+						<% if @option == 1 %>
+						<% service_count = Booking.where(service_provider_id: provider.id, service_id: service.id, status_id: @status_ids, start: @from.beginning_of_month..@to.end_of_month).count %>
+						<% service_income = Booking.where(service_provider_id: provider.id, service_id: service.id, status_id: @status_ids, start: @from.beginning_of_month..@to.end_of_month).sum(:price) %>
+						<% else %>
+						<% service_count = Booking.where(service_provider_id: provider.id, service_id: service.id, status_id: @status_ids, created_at: @from.beginning_of_month..@to.end_of_month).count %>
+						<% service_income = Booking.where(service_provider_id: provider.id, service_id: service.id, status_id: @status_ids, created_at: @from.beginning_of_month..@to.end_of_month).sum(:price) %>
+						<% end %>
+						<% service_comission = service.comission_option == 0 ? service_income*service.comission_value/100 : service.comission_value*service_count %>
+						<% provider_count += service_count %>
+						<% provider_income += service_income %>
+						<% provider_comission += service_comission %>
+						<tr>
+							<td>
+								<%= service.name %>
+							</td>
+							<td>
+								<%= service.comission_option == 0 ? service.comission_value.to_s+"%" : number_to_currency(service.comission_value, unit: "$ ", separator: ",", delimiter: ".", precision: 0) %>
+							</td>
+							<td>
+								<%= service_count %>
+							</td>
+							<td>
+								<%= number_to_currency(service_income, unit: "$ ", separator: ",", delimiter: ".", precision: 0) %>
+							</td>
+							<td>
+								<%= number_to_currency(service_comission, unit: "$ ", separator: ",", delimiter: ".", precision: 0) %>
+							</td>
+						</tr>
+						<% end %>
+						<tr>
+							<td><strong>Total</strong>
+							</td>
+							<td><strong>
+							</strong></td>
+							<td><strong>
+								<%= provider_count %>
+							</strong></td>
+							<td><strong>
+								<%= number_to_currency(provider_income, unit: "$ ", separator: ",", delimiter: ".", precision: 0) %>
+							</strong></td>
+							<td><strong>
+								<%= number_to_currency(provider_comission, unit: "$ ", separator: ",", delimiter: ".", precision: 0) %>
+							</strong></td>
+						</tr>
+						<tr><td colspan="5"><strong></strong></td></tr>
+						<% end %>
+					</tbody>
+				</table>
+			</div>
+		</div>
+	</div>
+</div>
