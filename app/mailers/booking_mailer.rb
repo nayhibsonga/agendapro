@@ -1024,6 +1024,10 @@ class BookingMailer < ActionMailer::Base
 				{
 					:name => 'CANCEL',
 					:content => booking_cancel_url(:confirmation_code => payed_booking.bookings.first.confirmation_code)
+				},
+				{
+					:name => 'CLIENT',
+					:content => client.first_name + ' ' + client.last_name
 				}
 
 			],
@@ -1081,10 +1085,6 @@ class BookingMailer < ActionMailer::Base
 				{
 					:name => 'COMPANYNAME',
 					:content => payed_booking.bookings.first.location.company.name
-				},
-				{
-					:name => 'CLIENT',
-					:content => client.first_name + ' ' + client.last_name
 				},
 				{
 					:name => 'PRICE',
