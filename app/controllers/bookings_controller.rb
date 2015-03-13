@@ -1194,6 +1194,19 @@ class BookingsController < ApplicationController
       Booking.send_multiple_booking_mail(@location_id, booking_group)
     end
 
+    @try_register = false
+
+    if !user_signed_in?
+      if !User.find_by_email(params[:email])
+        @try_register = true
+        @user = User.new
+        @user.email = params[:email]
+        @user.first_name = params[:firstName]
+        @user.last_name = params[:lastName]
+        @user.phone = params[:phone]
+      end
+    end
+
     render layout: "workflow"
   end
 
