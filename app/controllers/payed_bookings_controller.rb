@@ -27,16 +27,16 @@ class PayedBookingsController < ApplicationController
   				
   				cancel_max = 0
   				limit_date = now
-
   				if !company.company_setting.online_cancelation_policy.nil?
 	  				cancel_max = company.company_setting.online_cancelation_policy.cancel_max
-	  				if company.company_setting.cancelable
+	  				if company.company_setting.online_cancelation_policy.cancelable
 	  					limit_date = now-cancel_max.hours
 	  				end
 	  			end
-	  			
+
 	  			pending_payed_bookings = PayedBooking.where(:transfer_complete => false, :canceled => false, :id => Booking.where('"bookings".created_at < ?', limit_date).where(:location_id => Location.where(:company_id => company.id)).pluck('distinct payed_booking_id'))
 	  			if pending_payed_bookings.count > 0
+
 		  			payment_account = PaymentAccount.new
 		  			if(PaymentAccount.where(:company_id => company.id, :status => false).count > 0)
 		  				payment_account = PaymentAccount.where(:company_id => company.id, :status => false).first  			
