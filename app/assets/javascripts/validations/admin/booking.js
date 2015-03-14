@@ -1,4 +1,4 @@
-var validator;
+var validator, optimizerValidator;
 $(function() {
 	validator = $('#new_booking').validate({
 		errorPlacement: function(error, element) {
@@ -64,6 +64,45 @@ $(function() {
 			'booking[end_minutes]': {
 				require_from_group: 'Debe elegir una hora.\n'
 			},
+			'booking_staff_code': {
+				remote: 'El código es incorrecto, por favor inténtalo nuevamente.'
+			}
+		},
+		highlight: function(element) {
+			$(element).closest('.form-group').removeClass('has-success').addClass('has-error');
+			$(element).parent().children('.form-control-feedback').removeClass('fa fa-check').addClass('fa fa-times');
+		},
+		success: function(element) {
+			$(element).closest('.form-group').removeClass('has-error').addClass('has-success');
+			$(element).parent().parent().children('.form-control-feedback').removeClass('fa fa-times').addClass('fa fa-check');
+			$(element).parent().empty()
+		},
+		submitHandler: function(form) {
+			// form.submit();
+		}
+	});
+
+	optimizerValidator = $('#hoursOptimizer #new_booking').validate({
+		errorPlacement: function(error, element) {
+			var id = element.attr('id');
+			if (element.attr('id') == 'full_name') {
+				error.appendTo(element.parent().next());
+			}
+			else {
+				error.appendTo(element.next());
+			};
+		},
+		rules: {
+			'booking_staff_code': {
+				required: true,
+				remote: '/check_staff_code'
+			},
+			full_name: {
+				required: true,
+				minlength: 3
+			}
+		},
+		messages: {
 			'booking_staff_code': {
 				remote: 'El código es incorrecto, por favor inténtalo nuevamente.'
 			}

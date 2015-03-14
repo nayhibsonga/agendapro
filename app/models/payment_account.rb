@@ -21,7 +21,7 @@ class PaymentAccount < ActiveRecord::Base
 	      		status = false
 	      	elsif(type == "admin_transfered")
 	      		status = true
-	      		header = ["Nombre titular", "Rut titular", "Cuenta titular", "Monto", "Banco", "Tipo de cuenta", "Modena", "Oficina origen", "Oficina destino", "N° Factura"]
+	      		header = ["Nombre titular", "Rut titular", "Cuenta titular", "Monto", "Banco", "Tipo de cuenta", "Moneda", "Oficina origen", "Oficina destino", "N° Factura"]
 	      		csv << header
 	      	end      	
 

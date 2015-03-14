@@ -436,6 +436,13 @@
             </div>
           </div>
           <div class="form-group">
+            <%= f.label :allows_optimization, 'Permitir optimización de horas', :class => 'col-sm-3 control-label' %>
+            <div class="col-sm-5">
+              <%= f.check_box :allows_optimization %>
+              <span class="help-block">Habilita esta opción para que tus clientes puedan elegir un horario óptimo sin importar los bloques horarios predefinidos.</span>
+            </div>
+          </div>
+          <div class="form-group">
             <%= f.label :client_exclusive, 'Exclusivo para Clientes', :class => 'col-sm-3 control-label' %>
             <div class="col-sm-5">
               <%= f.check_box :client_exclusive %>
