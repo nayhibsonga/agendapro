@@ -378,7 +378,7 @@
                     if @local.company.company_setting.allows_online_payment
                       all_payable = true
                       @bookings.each do |booking|
-                        if !booking[:online_payable]
+                        if !booking[:online_payable] || !booking[:show_price] || booking[:price].to_i == 0
                           all_payable = false
                         else
                           if booking[:has_discount]
@@ -428,7 +428,11 @@
                       <td class="dark-gray">Precios</td>
                       <td class="light-gray">
                         <% @bookings.each do |booking| %>
-                          <%= number_to_currency(booking[:price], unit: "CLP $", delimiter: ".") %><br />
+                          <% if !booking[:show_price] || booking[:price].to_i == 0 %>
+                            Preguntar en local<br />
+                          <% else %>
+                            <%= number_to_currency(booking[:price], unit: "CLP $", delimiter: ".") %><br />
+                          <% end %>
                         <% end %>
                       </td>
                     </tr>
