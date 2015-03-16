@@ -8,10 +8,9 @@
 				<table class="table">
 					<thead class="head-white">
 						<th>Prestador</th>
-						<th>Reservas Última Semana</th>
-						<th>Reservas Último Mes</th>
-						<th>Ocupación Última Semana</th>
-						<th>Ocupación Último Mes</th>
+						<th>Reservas</th>
+						<th>Recaudación</th>
+						<th>Ocupación</th>
 					</thead>
 					<tbody>
 						<% @location.service_providers.where(active: true).order(:public_name).each do |provider| %>
@@ -20,16 +19,13 @@
 							<%= provider.public_name %>
 							</td>
 							<td>
-								<%= int_with_variation(provider_booking_count(0, 0, provider.id), provider_booking_count(0, 1, provider.id)) %>
+								<%= provider_booking_count(@from, @to, @status_ids, @option, provider.id) %>
 							</td>
 							<td>
-								<%= int_with_variation(provider_booking_count(1, 0, provider.id), provider_booking_count(1, 1, provider.id)) %>
+								<%= number_to_currency(provider_booking_revenue(@from, @to, @status_ids, @option, provider.id), currency: ' $', separator: ',', delimeter: '.', precision: 0) %>
 							</td>
 							<td>
-								<%= percentage_with_variation(provider_booking_occupation(0, 0, provider.id), provider_booking_occupation(0, 1, provider.id)) %>
-							</td>
-							<td>
-								<%= percentage_with_variation(provider_booking_occupation(1, 0, provider.id), provider_booking_occupation(1, 1, provider.id)) %>
+								<%= number_to_percentage(provider_booking_occupation(@from, @to, @status_ids, @option, provider.id), precision: 2) %>
 							</td>
 						</tr>
 						<% end %>
@@ -37,16 +33,13 @@
 							<td><strong>Total</strong>
 							</td>
 							<td><strong>
-								<%= int_with_variation(location_booking_count(0, 0, @location.id), location_booking_count(0, 1, @location.id)) %>
+								<%= location_booking_count(@from, @to, @status_ids, @option, @location.id) %>
 							</strong></td>
 							<td><strong>
-								<%= int_with_variation(location_booking_count(1, 0, @location.id), location_booking_count(1, 1, @location.id)) %>
+								<%= number_to_currency(location_booking_revenue(@from, @to, @status_ids, @option, @location.id), currency: ' $', separator: ',', delimeter: '.', precision: 0) %>
 							</strong></td>
 							<td><strong>
-								<%= percentage_with_variation(location_booking_occupation(0, 0, @location.id), location_booking_occupation(0, 1, @location.id)) %>
-							</strong></td>
-							<td><strong>
-								<%= percentage_with_variation(location_booking_occupation(1, 0, @location.id), location_booking_occupation(1, 1, @location.id)) %>
+								<%= number_to_percentage(location_booking_occupation(@from, @to, @status_ids, @option, @location.id), precision: 2) %>
 							</strong></td>
 						</tr>
 					</tbody>
@@ -64,6 +57,6 @@
 
 <div class="row">
 	<div class="col-md-12 graphs">
-		<%= line_chart location_booking_by_hour(3, 0, @location.id), discrete: true, library: {hAxis: {title: "Hora del Día" }, vAxis: {title: "# Reservas", format: "#"}, title: "Reservas por Hora por Día de  "+@location.name } %>
+		<%= line_chart location_booking_by_hour(@from, @to, @status_ids, @option, @location.id), discrete: true, library: {hAxis: {title: "Hora del Día" }, vAxis: {title: "# Reservas", format: "#"}, title: "Reservas por Hora por Día de  "+@location.name } %>
 	</div>
 </div>

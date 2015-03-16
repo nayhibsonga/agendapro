@@ -3,10 +3,11 @@ class ReportsController < ApplicationController
 	before_action :authenticate_user!
 	before_action :verify_is_admin
 	before_action :quick_add
+	before_action :set_params
 	layout "admin"
 
 	def index
-		@locations = Location.accessible_by(current_ability).where(active: true).order(:name)
+		@locations = Location.accessible_by(current_ability).where(company_id: current_user.company_id, active: true).order(:name)
 	end
 
 	def statuses
@@ -14,9 +15,6 @@ class ReportsController < ApplicationController
 	end
 
 	def status_details
-		status_id = params[:status_id].to_i
-		time_range_id = params[:time_range_id].to_i
-
 		render "_status_details", layout: false
 	end
 
@@ -36,6 +34,12 @@ class ReportsController < ApplicationController
 	  	render "_location_providers", layout: false
 	end
 
+	def location_comission
+		@location = Location.find(params[:id])
+
+	  	render "_location_comission", layout: false
+	end
+
 	def location_services
 		@location = Location.find(params[:id])
 		@services = Service.where(id: ServiceStaff.where(service_provider_id: @location.service_providers.where(active: true).pluck(:id)).pluck(:service_id), active: true)
@@ -47,5 +51,13 @@ class ReportsController < ApplicationController
 		@service_provider = ServiceProvider.find(params[:id])
 
 	  	render "_provider_services", layout: false
+	end
+
+	def set_params
+		@from = params[:from].blank? ? Time.now.beginning_of_day : Time.parse(params[:from]).beginning_of_day
+		@to = params[:to].blank? ? Time.now.end_of_day : Time.parse(params[:to]).end_of_day
+		@status_ids = params[:status_ids] ? Status.where(id: params[:status_ids].split(',').map { |i| i.to_i }) : Status.where.not(name: 'Cancelado').pluck(:id)
+		puts @status_ids
+		@option = params[:option] ? params[:option].to_i : 0
 	end
 end

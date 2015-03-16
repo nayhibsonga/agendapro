@@ -440,3 +440,36 @@ a.print-schedule {
 		display: none;
 	}
 }
+
+.fa-spin {
+  -webkit-animation: spin 1s infinite linear;
+  -moz-animation: spin 1s infinite linear;
+  -o-animation: spin 1s infinite linear;
+  animation: spin 1s infinite linear;
+}
+
+/* Hour Optimizer */
+.fa-green {
+	color: #22c488;
+}
+
+#selectHour > label {
+	width: 33%;
+}
+
+#selectHour > .checkbox-inline {
+	color: #949292;
+	border-right: 1px solid #949292;
+	padding-left: 15px;
+	margin-bottom: 12px;
+}
+#selectHour > .checkbox-inline + .checkbox-inline {
+	margin-left: 0;
+}
+
+#selectHour > .checkbox-inline > p {
+	display: inline-block;
+	vertical-align: top;
+	margin: 0 10px 0 5px;
+	font-size: 15px;
+}
