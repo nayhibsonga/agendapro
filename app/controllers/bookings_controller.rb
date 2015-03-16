@@ -2287,7 +2287,8 @@ class BookingsController < ApplicationController
                 :price => service.price,
                 :online_payable => service.online_payable,
                 :has_discount => service.has_discount,
-                :discount => service.discount
+                :discount => service.discount,
+                :show_price => service.show_price
               }
               serviceStaffPos += 1
               dateTimePointer += service.duration.minutes

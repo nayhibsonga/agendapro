@@ -297,14 +297,19 @@ function loadStep3 () {
 			var payable = true;
 			var price = 0;
 			var discounted_price = 0;
+			var show_all = true;
 			for (var i = 0; i < booking_buffer.length; i++) {
 				console.log("Booking payable: " + booking_buffer[i].online_payable);
 				service += '<p class="light-gray">' + booking_buffer[i].service_name + '</p>';
 				provider += '<p class="light-gray">' + booking_buffer[i].provider_name + '</p>';
 				when += '<p class="light-gray">' + formattedTime(booking_buffer[i].start) + '</p>';
-				if(!booking_buffer[i].online_payable)
+				if(!booking_buffer[i].online_payable || !booking_buffer[i].show_price || booking_buffer[i].price == 0)
 				{
 					payable = false;
+					if(!booking_buffer[i].show_price || booking_buffer[i].price == 0)
+					{
+						show_all = false;
+					}
 				}
 				else
 				{
@@ -319,8 +324,15 @@ function loadStep3 () {
 						discounted_price = discounted_price + booking_buffer[i].price;
 					}
 				}
-				prices += '<p class="light-gray">' + currency(booking_buffer[i].price) + '</p>';
-				price = price + booking_buffer[i].price;
+				if(booking_buffer[i].show_price && booking_buffer[i].price > 0)
+				{
+					prices += '<p class="light-gray">' + currency(booking_buffer[i].price) + '</p>';
+					price = price + booking_buffer[i].price;
+				}
+				else
+				{
+					prices += '<p class="light-gray">Preguntar en local.</p>';
+				}
 			};
 
 			$('#summary').append(
@@ -567,6 +579,7 @@ function addBooking (booking) {
 		var service_has_discount = false;
 		var service_discount = 0;
 		var service_price = service_response.price;
+		var show_price = service_response.show_price;
 		if(service_response.online_payable)
 		{
 			service_online_payable = true;
@@ -588,7 +601,8 @@ function addBooking (booking) {
 			online_payable: service_online_payable,
 			has_discount: service_has_discount,
 			discount: service_discount,
-			price: service_price
+			price: service_price,
+			show_price: show_price
 		};
 		checkUserCrossBookings();
 
