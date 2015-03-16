@@ -627,10 +627,10 @@ function createBookingModal(date, provider_id) {
 			$('.booking-modal-title').empty();
 			$('.booking-modal-footer').empty();
 			$('.booking-modal-title').append('Nueva Reserva');
+				// '<button type="button" class="btn btn-agendapro-claro booking-button pull-left" data-toggle="modal" data-target="#hoursOptimizer">Buscador de Horas</button>' +
 			$('.booking-modal-footer').append(
-				'<button type="button" class="btn btn-agendapro-claro booking-button pull-left" data-toggle="modal" data-target="#hoursOptimizer">Optimizar Horas</button>' +
 				'<button type="button" class="btn btn-default btn-close booking-button" data-dismiss="modal">Cerrar</button>' +
-				'<button type="button" class="btn btn-agendapro-oscuro booking-button" onclick="addNewService()">Agregar Servicio</button>' +
+				'<button type="button" class="btn btn-warning booking-button" onclick="addNewService()">Agregar Otro Servicio</button>' +
 				'<button type="button" class="btn btn-agendapro-claro booking-button" onclick="createBooking()">Guardar</button>'
 			);
 

@@ -82,6 +82,7 @@
 				<% end %>
 				<% if controller.controller_name == "bookings" %>
 				<li><div id="dp" class="lateralDatepicker"></div></li>
+				<li><div class="row text-center"><button type="button" class="btn btn-agendapro-claro hours-optimizer-button" data-toggle="modal" data-target="#hoursOptimizer" style="width: 100%;">Buscador de Horas</button></div></li>
 				<% end %>
 				<% if current_user.role_id == Role.find_by_name("Super Admin").id %>
 					<li>
