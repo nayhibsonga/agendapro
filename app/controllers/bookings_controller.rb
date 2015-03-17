@@ -878,7 +878,7 @@ class BookingsController < ApplicationController
   end
 
   def book_service
-    
+
 
     @bookings = []
     @errors = []
@@ -1067,7 +1067,7 @@ class BookingsController < ApplicationController
         end
       end
 
-      
+
 
       @booking.price = service.price
       @booking.max_changes = @company.company_setting.max_changes
@@ -1134,7 +1134,7 @@ class BookingsController < ApplicationController
     end
 
 
-    
+
 
     #If they can be payed, redirect to payment_process,
     #then check for error or send notifications mails.
@@ -1150,10 +1150,10 @@ class BookingsController < ApplicationController
           booking.trx_id = trx_id
           booking.token = resp.get_token
           if booking.save
-            current_user ? user = current_user.id : user = 0            
-            BookingHistory.create(booking_id: booking.id, action: "Creada por Cliente", start: booking.start, status_id: booking.status_id, service_id: booking.service_id, service_provider_id: booking.service_provider_id, user_id: user)           
+            current_user ? user = current_user.id : user = 0
+            BookingHistory.create(booking_id: booking.id, action: "Creada por Cliente", start: booking.start, status_id: booking.status_id, service_id: booking.service_id, service_provider_id: booking.service_provider_id, user_id: user)
           else
-            @errors = booking.errors.full_messages
+            @errors << booking.errors.full_messages
             proceed_with_payment = false
           end
         end
@@ -2143,7 +2143,7 @@ class BookingsController < ApplicationController
     days_ids = [1,2,3,4,5,6,7]
     index = days_ids.find_index(now.cwday)
     ordered_days = days_ids[index, days_ids.length] + days_ids[0, index]
-    
+
     for i in 1..ordered_days.length
       dtp = local.location_times.where(day_id: ordered_days[i]).order(:open).first
       if !dtp.nil?
@@ -2176,7 +2176,7 @@ class BookingsController < ApplicationController
 
         #if service_valid
         #  service_valid = false
-        #  for 
+        #  for
         #end
 
         if service_valid
