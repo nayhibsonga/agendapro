@@ -37,7 +37,7 @@
   </div>
 </div>
 
-<%= content_tag "div", id: "calendar-data", data: { calendar_duration: @company_setting.calendar_duration, extended_schedule: @company_setting.extended_schedule_bool, extended_min_hour: @company_setting.extended_min_hour.beginning_of_hour.hour, extended_max_hour: @company_setting.extended_max_hour.end_of_hour.hour, booking_history: @company_setting.booking_history, staff_code: @company_setting.staff_code } do %>
+<%= content_tag "div", id: "calendar-data", data: { calendar_duration: @company_setting.calendar_duration, extended_schedule: @company_setting.extended_schedule_bool, extended_min_hour: @company_setting.extended_min_hour.beginning_of_hour.hour, extended_max_hour: @company_setting.extended_max_hour.end_of_hour.hour, booking_history: @company_setting.booking_history, staff_code: @company_setting.staff_code, deal_identification_number: @company_setting.deal_identification_number, deal_required: @company_setting.deal_required } do %>
 <% end %>
 
 <% content_for :calendar do %>
@@ -45,6 +45,7 @@
     <div class="row">
       <div class="col-md-2 hidden-xs hidden-sm">
         <div id="dp"></div>
+        <button type="button" class="btn btn-agendapro-claro hours-optimizer-button" data-toggle="modal" data-target="#hoursOptimizer" style="width: 100%;">Buscador de Horas</button>
       </div>
       <div class="col-sm-12 col-md-10">
         <div id="popover" class="popover"></div>
@@ -471,6 +472,123 @@
           <% end %>
         </div>
         <div class="modal-footer break-modal-footer">
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="modal fade" id="hoursOptimizer" tabindex="-1" role="dialog" aria-labelledby="optimizador de Horas" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Cerrar"><i class="fa fa-times" aria-hidden="true"></i></button>
+          <h3 class="modal-title" id="optimizerTitle" style="line-height: 1.1;"></h3>
+        </div>
+        <div class="modal-body">
+          <!--<div id="pickerSelectDate">
+            <div class="row">
+              <div class="col-xs-3" style="text-align: right; font-weight: bold;">
+                Inicio
+              </div>
+              <div class="col-xs-9">
+                <input id="initialPickerDate" value="<%= I18n.l(DateTime.now.to_date) %>" hidden />
+                <span id="pickerSelected" style="color: #949292;"><%= I18n.l(DateTime.now.to_date) %></span>&nbsp;&nbsp;
+                <span class="optimizer-date-span" style="float: right;">
+                  Seleccionar nuevo inicio&nbsp;<i class="fa fa-calendar-o"></i>
+                  <input type="text" class="form-control" name="optimizerDateSelector" id="optimizerDateSelector" class="datepicker" />
+                </span>
+              </div>
+            </div>
+          </div>-->
+          <form class="form-horizontal" id="serviceOptimizer"></form>
+          <div id="selectHour"></div>
+          <div id="hoursDetails"></div>
+          <%= form_for @booking, html: {class: "form-horizontal"} do |f| %>
+            <% if @booking.client.nil? then @booking.build_client end %>
+            <%= f.fields_for :client do |builder| %>
+              <%= builder.hidden_field :id %>
+              <%= builder.hidden_field :first_name %>
+              <%= builder.hidden_field :last_name %>
+              <%= builder.hidden_field :birth_day %>
+              <%= builder.hidden_field :birth_month %>
+              <%= builder.hidden_field :birth_year %>
+              <%= builder.hidden_field :age %>
+              <%= builder.hidden_field :gender %>
+              <%= builder.hidden_field :address %>
+              <%= builder.hidden_field :district %>
+              <%= builder.hidden_field :city %>
+              <% if Company.find(current_user.company_id).company_setting.client_exclusive %>
+                <div class="form-group">
+                  <%= builder.label :identification_number, "RUT", class: "col-sm-4 control-label" %>
+                  <div class="col-sm-8">
+                    <%= builder.text_field :identification_number, class: "form-control", disabled: true %>
+                  </div>
+                </div>
+              <% end %>
+              <div class="form-group has-feedback">
+                <label for="full_name" class="col-sm-4 control-label">Nombre Cliente</label>
+                <div class="col-sm-8">
+                  <div class="input-group">
+                    <input type="text" id="full_name" class="form-control" placeholder="Buscar clientes..." name="full_name">
+                    <span class="input-group-btn">
+                      <button class="btn btn-danger" type="button" id="xButton" disabled><i class="fa fa-times-circle"></i></button>
+                    </span>
+                  </div>
+                  <span class="help-block"></span>
+                  <ul id="full_name_suggestions"></ul>
+                </div>
+              </div>
+              <div class="form-group">
+                <%= builder.label :email, "E-mail", class: "col-sm-4 control-label" %>
+                <div class="col-sm-8">
+                  <%= builder.text_field :email, class: "form-control" %>
+                  <ul id="email_suggestions"></ul>
+                  <div class="checkbox">
+                    <label>
+                      <%= f.check_box :send_mail, :disabled => true %>Notificar cliente por e-mail
+                    </label>
+                  </div>
+                </div>
+              </div>
+              <div class="form-group">
+                <%= builder.label :phone, "Teléfono", class: "col-sm-4 control-label" %>
+                <div class="col-sm-8">
+                  <%= builder.text_field :phone, class: "form-control" %>
+                </div>
+              </div>
+            <% end %>
+            <div class="form-group">
+              <%= f.label :status, "Estado", class: "col-sm-4 control-label" %>
+              <div class="col-sm-8">
+                <%= f.collection_select :status_id, Status.all.order(:name), :id, :name, {selected: Status.find_by_name( 'Reservado').id}, { class: "form-control" }%>
+              </div>
+            </div>
+            <div class="form-group">
+              <%= f.label :notes, "Notas compartidas con cliente", class: "col-sm-4 control-label" %>
+              <div class="col-sm-8">
+                <%= f.text_area :notes, :rows => "2", class: "form-control modal-textarea" %>
+              </div>
+            </div>
+            <div class="form-group">
+              <%= f.label :company_comment, "Comentario Interno", class: "col-sm-4 control-label" %>
+              <div class="col-sm-8">
+                <%= f.text_area :company_comment, :rows => "2", class: "form-control modal-textarea" %>
+              </div>
+            </div>
+            <% if @company_setting.staff_code %>
+              <div class="form-group has-feedback">
+                <%= label_tag :booking_staff_code, "Código de Empleado", class: "col-sm-4 control-label" %>
+                <div class="col-sm-8">
+                  <%= text_field_tag :booking_staff_code, '',{class: "form-control", required: true} %>
+                  <span class="help-block"></span>
+                  <span class="form-control-feedback"></span>
+                </div>
+              </div>
+            <% end %>
+          <% end %>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-agendapro-claro pull-left" id="addButton"><i class="fa fa-plus"></i>&nbsp;<span></span></button>
+          <button type="button" class="btn btn-agendapro-oscuro" id="nextButton">Siguiente</button>
         </div>
       </div>
     </div>

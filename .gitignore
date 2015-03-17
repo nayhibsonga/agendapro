@@ -14,7 +14,6 @@
 # Ignore all logfiles and tempfiles.
 /log/*
 /tmp
-/log/
 
 # Archivos temporales del editor
 *.*~
@@ -38,11 +37,27 @@ public/assets/
 
 # Archivo de configuración Local
 /config/local_env.yml
+config/puntopagos.yml
 
 # Configuración DB
 /config/database.yml
+
+# Archivo de configuración de New Relic
+/config/newrelic.yml
+
+# Archivo de configuración de Punto Pagos
+/config/puntopagos.yml
 
 # Archivos de certificado SSL
 *.crt
 *.csr
 *.key
+
+# Archivos de Capistrano
+.capistrano/
+.capistrano/*
+Capfile
+config/deploy.rb
+config/deploy/
+config/deploy/*
+config/deploy/production.rb

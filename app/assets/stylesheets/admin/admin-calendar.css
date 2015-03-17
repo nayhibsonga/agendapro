@@ -294,3 +294,84 @@ table.fc-agenda-days {
 .auto-desc {
   font-size: 0.75em;
 }
+
+.fa-spin {
+  -webkit-animation: spin 1s infinite linear;
+  -moz-animation: spin 1s infinite linear;
+  -o-animation: spin 1s infinite linear;
+  animation: spin 1s infinite linear;
+}
+
+/* Hour Optimizer */
+.fa-green {
+	color: #22c488;
+}
+
+#selectHour > label {
+	width: 33%;
+}
+
+#selectHour > .checkbox-inline {
+	color: #949292;
+	border-right: 1px solid #949292;
+	padding-left: 15px;
+	margin-bottom: 12px;
+}
+#selectHour > .checkbox-inline + .checkbox-inline {
+	margin-left: 0;
+}
+
+#selectHour > .checkbox-inline > p {
+	display: inline-block;
+	vertical-align: top;
+	margin: 0 10px 0 5px;
+	font-size: 15px;
+}
+
+/*
+  ================================
+  ======== Hour Optimizer ========
+  ================================
+*/
+.hours-optimizer-button {
+  margin-top: 10px;
+  width: 100%;
+}
+.optimizer-date-span {
+  position: relative;
+  font-size: 16px;
+  cursor: pointer;
+  color: #949292;
+  z-index: 2;
+}
+.optimizer-date-span input {
+  // invisible input as jquery ui requires an actual input
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  opacity: 0;
+  width: 10px !important;
+  pointer-events: none;
+}
+.optimizerDetail > label {
+  width: 33%;
+}
+.optimizerDetail > h3 {
+  color: #949292;
+  padding-left: 15px;
+}
+.optimizerDetail > .checkbox-inline {
+  color: #949292;
+  border-right: 1px solid #949292;
+  padding-left: 15px;
+  margin-bottom: 12px;
+}
+.optimizerDetail > .checkbox-inline + .checkbox-inline {
+  margin-left: 0;
+}
+.optimizerDetail > .checkbox-inline > p {
+  display: inline-block;
+  vertical-align: top;
+  margin: 0 10px 0 5px;
+  font-size: 15px;
+}

@@ -42,117 +42,1009 @@
 </div>
 
 
-<div class="row">
-	<div class="col-md-12">
-		<div class="companies_incomes_header">
-			<h3>Reservas para el año <%= @year %></h3>
+<div class="row well well-white" style="margin-top: 20px;">
+
+	<ul id="booking-types" class="nav nav-tabs" role="tablist">
+
+		<li class="active"><a href="#book-date" role="tab" data-toggle="tab" class="tab_index">Por fecha de reserva</a></li>
+		<li class=""><a href="#creation-date" role="tab" data-toggle="tab" class="tab_index">Por fecha de creación</a></li>
+
+	</ul>
+
+	<div class="tab-content">
+
+		<!-- INICIO POR FECHAS DE RESERVA -->
+
+		<div id="book-date" class="tab-pane active">
+			<ul id="bookings-details-tab1" class="nav nav-tabs" role="tablist">
+			  <li class="active"><a href="#general1" role="tab" data-toggle="tab" class="tab_index">General</a></li>
+			  <li class=""><a href="#versus1" role="tab" data-toggle="tab" class="tab_index">Total vs Web</a></li>
+			  <li class=""><a href="#all1" role="tab" data-toggle="tab" class="tab_index">Top Reservas</a></li>
+			  <li class=""><a href="#web1" role="tab" data-toggle="tab" class="tab_index">Top Reservas Web</a></li>
+			</ul>
+			<div id="bookings-details-content1" class="tab-content">
+			<br />
+
+
+				<div class="col-md-12">
+					<div class="companies_incomes_header">
+						<h3>POR FECHA DE RESERVA</h3>
+					</div>
+				</div>
+
+				<!-- INICIO GENERAL -->
+
+
+				<div class="tab-pane active" id="general1">
+
+					<!-- FECHA DE RESERVA -->
+
+					<div class="col-md-12">
+						<div class="row">
+							<div class="col-md-6">
+								<div class="companies_incomes_header">
+									<h3>Reservas para el año <%= @year %></h3>
+								</div>
+							</div>
+							<div class="col-md-6">
+								<div style="float:right;">
+									<%= form_tag({ :controller => 'companies', :action => 'get_monthly_bookings'}, method: "post") do %>
+										<input type="hidden" name="type" value="book_date" />
+										<input type="hidden" name="subtype" value="general" />
+										<input type="hidden" name="year" value="<%= @year %>" />
+										<button class="download-csv">&nbsp;Descargar&nbsp;&nbsp;<i class="fa fa-file-excel-o fa-lg"></i></button>
+									<% end %>
+								</div>
+							</div>
+						</div>
+						<div class="scrollable"  style="max-height: 400px;">
+							<table class="companies-table">
+								<tr class="companies-table-header">
+									<th>
+										Empresa
+									</th>
+									<% for i in 1..12 %>
+										<th><%= @bookings[i]['month'] %></th>
+									<% end %>
+									<th>
+										Total
+									</th>
+								</tr>
+								<%
+									companies_info = Hash.new
+									for i in 1..12
+										companies_info[i] = Array.new
+									end
+								%>
+								<%	@companies.each do |company| %>
+									<%
+
+										company_bookings = 0
+										company_web_bookings = 0
+									%>
+									<tr>
+										<td style="width: 10%;">
+											<%= link_to company.name, controller: "companies", action: "manage_company", id: company.id %>
+										</td>
+										<% for i in 1..12 do %>
+
+											<%
+
+												#Company info for each month
+												company_info = Hash.new
+												company_info['company'] = company
+												company_info['count'] = 0
+												company_info['web'] = 0
+
+												month_bookings = 0
+
+												start_date = DateTime.new(@year, i, 1)
+												end_date = start_date
+												if i < 12
+													end_date = DateTime.new(@year, i+1, 1)-1.minutes
+												else
+													end_date = DateTime.new(@year+1, 1, 1)-1.minutes
+												end
+
+												bookings = Booking.where('start BETWEEN ? and ?', start_date, end_date).where(:location_id => company.locations.pluck(:id))
+												bookings_count = bookings.count
+
+												web_bookings = bookings.where(:web_origin => true)
+												#bookings.each do |booking|
+												#	if !booking.payed_booking.nil? &&  booking.payed
+												#		prepayed_bookings << booking
+												#	end
+												#end
+
+												month_bookings = bookings_count
+												company_bookings = company_bookings + bookings_count
+												company_web_bookings = company_web_bookings + web_bookings.count
+												@bookings[i]['count'] = @bookings[i]['count'] + bookings_count
+												@bookings[i]['web'] = @bookings[i]['web'] + web_bookings.count
+												@bookings[13]['count'] = @bookings[13]['count'] + bookings_count
+												@bookings[13]['web'] = 	@bookings[13]['web'] + web_bookings.count
+
+												company_info['count'] = month_bookings
+												company_info['web'] = web_bookings.count
+												companies_info[i] << company_info
+
+											%>
+
+											<td>
+												Total: <%= month_bookings.to_s %><br />
+												Web: <%= web_bookings.count.to_s %><br />
+												%:  <% if month_bookings > 0 %>
+														<%= web_bookings.count*100/month_bookings %>
+													<% else %>
+														<%= 0 %>
+													<% end %>
+											</td>
+
+										<% end %>
+
+										<td>
+											<b>
+												Total: <%= company_bookings.to_s %><br />
+												Web: <%= company_web_bookings.to_s %><br />
+												%: <% if company_bookings > 0 %>
+														<%= company_web_bookings*100/company_bookings %>
+													<% else %>
+														<%= 0 %>
+													<% end %>
+											</b>
+										</td>
+									</tr>
+								<% end %>
+								<tr>
+									<td>
+										<b>Total:</b>
+									</td>
+									<% total = 0 %>
+									<% for i in 1..12 %>
+										<td>
+											<b>
+												Total: <%= @bookings[i]['count'].to_s %><br />
+												Web: <%= @bookings[i]['web'].to_s %><br />
+												%: <% if @bookings[i]['count'] > 0 %>
+														<%= @bookings[i]['web']*100/@bookings[i]['count'] %>
+													<% else %>
+														<%= 0 %>
+													<% end %>
+											</b>
+										</td>
+									<% end %>
+									<td>
+										<b>
+											Total: <%= @bookings[13]['count'].to_s %>
+											Web: <%= @bookings[13]['web'].to_s %><br />
+											%: <% if @bookings[13]['count'] > 0 %>
+													<%= @bookings[13]['web']*100/@bookings[13]['count'] %>
+												<% else %>
+													<%= 0 %>
+												<% end %>
+										</b>
+									</td>
+								</tr>
+							</table>
+						</div>
+					</div>
+
+				</div>
+
+				<!-- FIN GENERAL -->
+
+				<!-- INICIO RESERVAS VS WEB -->
+
+				<div class="tab-pane" id="versus1">
+
+					<div class="col-md-12">
+						<div class="row">
+							<div class="col-md-6">
+								<div class="companies_incomes_header">
+									<h3>Reservas vs Reservas Web (<%= @year %>)</h3>
+								</div>
+							</div>
+							<div class="col-md-6">
+								<div style="float:right;">
+									<%= form_tag({ :controller => 'companies', :action => 'get_monthly_bookings'}, method: "post") do %>
+										<input type="hidden" name="type" value="book_date" />
+										<input type="hidden" name="subtype" value="versus" />
+										<input type="hidden" name="year" value="<%= @year %>" />
+										<button class="download-csv">&nbsp;Descargar&nbsp;&nbsp;<i class="fa fa-file-excel-o fa-lg"></i></button>
+									<% end %>
+								</div>
+							</div>
+						</div>
+						<table class="companies-table">
+							<tr class="companies-table-header">
+								<th>
+
+								</th>
+								<% for i in 1..12 %>
+									<th><%= @bookings[i]['month'] %></th>
+								<% end %>
+								<th>
+									Total
+								</th>
+							</tr>
+							<tr>
+								<td>
+									<b>
+										Reservas
+									</b>
+								</td>
+								<% for i in 1..12 %>
+									<td>
+											<%= @bookings[i]['count'].to_s %>
+									</td>
+								<% end %>
+								<td>
+									<b><%= @bookings[13]['count'].to_s %></b>
+								</td>
+							</tr>
+							<tr>
+								<td>
+									<b>
+										Web origin
+									</b>
+								</td>
+								<% for i in 1..12 %>
+									<td>
+											<%= @bookings[i]['web'].to_s %>
+									</td>
+								<% end %>
+								<td>
+									<b><%= @bookings[13]['web'].to_s %></b>
+								</td>
+							</tr>
+							<tr>
+								<td>
+									<b>
+										%
+									</b>
+								</td>
+								<% for i in 1..12 %>
+									<td>
+										<% if @bookings[i]['count'] > 0 %>
+											<%= @bookings[i]['web']*100/@bookings[i]['count'] %>
+										<% else %>
+											<%= 0 %>
+										<% end %>
+									</td>
+								<% end %>
+								<td>
+									<b>
+									<% if @bookings[13]['count'] > 0 %>
+											<%= @bookings[13]['web']*100/@bookings[13]['count'] %>
+										<% else %>
+											<%= 0 %>
+										<% end %>
+									</b>
+								</td>
+							</tr>
+						</table>
+					</div>
+				</div>
+
+
+				<!-- FIN RESERVAS VS WEB -->
+
+				<!-- INICIO TOP RESERVAS -->
+
+
+				<div class="tab-pane" id="all1">
+					<div class="col-md-12">
+						<div class="row">
+							<div class="col-md-6">
+								<div class="companies_incomes_header">
+									<h3>Top reservas por mes (<%= @year %>)</h3>
+								</div>
+							</div>
+							<div class="col-md-6">
+								<div style="float:right;">
+									<%= form_tag({ :controller => 'companies', :action => 'get_monthly_bookings'}, method: "post") do %>
+										<input type="hidden" name="type" value="book_date" />
+										<input type="hidden" name="subtype" value="all" />
+										<input type="hidden" name="year" value="<%= @year %>" />
+										<button class="download-csv">&nbsp;Descargar&nbsp;&nbsp;<i class="fa fa-file-excel-o fa-lg"></i></button>
+									<% end %>
+								</div>
+							</div>
+						</div>
+						<% for i in 1..12 %>
+							<h4> <%= @bookings[i]['month'] %> </h4>
+							<%
+								top_companies = companies_info[i].sort_by { |info| info['count'] }.reverse
+							%>
+							<table class="companies-table">
+								<tr class="companies-table-header">
+									<th>
+
+									</th>
+									<% for j in 0..9 %>
+										<% if !top_companies[j].nil? %>
+											<th>
+												<%= top_companies[j]['company'].name %>
+											</th>
+										<% end %>
+									<% end %>
+									<th>Total</th>
+								</tr>
+								<tr>
+									<td>
+										<b>Reservas</b>
+									</td>
+									<% num_bookings = 0 %>
+									<% for j in 0..9 %>
+										<% if !top_companies[j].nil? %>
+											<td>
+												<%= top_companies[j]['count'] %>
+											</td>
+											<% num_bookings = num_bookings + top_companies[j]['count'] %>
+										<% end %>
+									<% end %>
+									<td>
+										<b><%= num_bookings %></b>
+									</td>
+								</tr>
+								<tr>
+									<td>
+										<b>Web</b>
+									</td>
+									<% num_web_bookings = 0 %>
+									<% for j in 0..9 %>
+										<% if !top_companies[j].nil? %>
+											<td>
+												<%= top_companies[j]['web'] %>
+											</td>
+											<% num_web_bookings = num_web_bookings + top_companies[j]['web'] %>
+										<% end %>
+									<% end %>
+									<td>
+										<b><%= num_web_bookings %></b>
+									</td>
+								</tr>
+								<tr>
+									<td>
+										<b>%</b>
+									</td>
+									<% for j in 0..9 %>
+										<% if !top_companies[j].nil? %>
+											<td>
+												<% if top_companies[j]['count'] > 0 %>
+													<%= top_companies[j]['web']*100/top_companies[j]['count'] %>
+												<% else %>
+													<%= 0 %>
+												<% end %>
+											</td>
+										<% end %>
+									<% end %>
+									<td>
+										<% if num_bookings > 0 %>
+											<%= num_web_bookings*100/num_bookings %>
+										<% else %>
+											<%= 0 %>
+										<% end %>
+									</td>
+								</tr>
+							</table>
+						<% end %>
+
+					</div>
+				</div>
+
+
+				<!-- FIN TOP RESERVAS -->
+
+
+				<!-- INICIO TOP RESERVAS WEB -->
+
+				<div class="tab-pane" id="web1">
+					<div class="col-md-12">
+						<div class="row">
+							<div class="col-md-6">
+								<div class="companies_incomes_header">
+									<h3>Top reservas web por mes (<%= @year %>)</h3>
+								</div>
+							</div>
+							<div class="col-md-6">
+								<div style="float:right;">
+									<%= form_tag({ :controller => 'companies', :action => 'get_monthly_bookings'}, method: "post") do %>
+										<input type="hidden" name="type" value="book_date" />
+										<input type="hidden" name="subtype" value="web" />
+										<input type="hidden" name="year" value="<%= @year %>" />
+										<button class="download-csv">&nbsp;Descargar&nbsp;&nbsp;<i class="fa fa-file-excel-o fa-lg"></i></button>
+									<% end %>
+								</div>
+							</div>
+						</div>
+						<% for i in 1..12 %>
+							<h4> <%= @bookings[i]['month'] %> </h4>
+							<%
+								top_companies = companies_info[i].sort_by { |info| info['web'] }.reverse
+							%>
+							<table class="companies-table">
+								<tr class="companies-table-header">
+									<th>
+
+									</th>
+									<% for j in 0..9 %>
+										<% if !top_companies[j].nil? %>
+											<th>
+												<%= top_companies[j]['company'].name %>
+											</th>
+										<% end %>
+									<% end %>
+									<th>Total</th>
+								</tr>
+								<tr>
+									<td>
+										<b>Reservas</b>
+									</td>
+									<% num_bookings = 0 %>
+									<% for j in 0..9 %>
+										<% if !top_companies[j].nil? %>
+											<td>
+												<%= top_companies[j]['count'] %>
+											</td>
+											<% num_bookings = num_bookings + top_companies[j]['count'] %>
+										<% end %>
+									<% end %>
+									<td>
+										<b><%= num_bookings %></b>
+									</td>
+								</tr>
+								<tr>
+									<td>
+										<b>Web</b>
+									</td>
+									<% num_web_bookings = 0 %>
+									<% for j in 0..9 %>
+										<% if !top_companies[j].nil? %>
+											<td>
+												<%= top_companies[j]['web'] %>
+											</td>
+											<% num_web_bookings = num_web_bookings + top_companies[j]['web'] %>
+										<% end %>
+									<% end %>
+									<td>
+										<b><%= num_web_bookings %></b>
+									</td>
+								</tr>
+								<tr>
+									<td>
+										<b>%</b>
+									</td>
+									<% for j in 0..9 %>
+										<% if !top_companies[j].nil? %>
+											<td>
+												<% if top_companies[j]['count'] > 0 %>
+													<%= top_companies[j]['web']*100/top_companies[j]['count'] %>
+												<% else %>
+													<%= 0 %>
+												<% end %>
+											</td>
+										<% end %>
+									<% end %>
+									<td>
+										<% if num_bookings > 0 %>
+											<%= num_web_bookings*100/num_bookings %>
+										<% else %>
+											<%= 0 %>
+										<% end %>
+									</td>
+								</tr>
+							</table>
+						<% end %>
+
+					</div>
+				</div>
+
+			<!-- FIN TOP RESERVAS WEB -->
+
+			</div>
+
+
+
 		</div>
-		<table class="companies-table">
-			<tr class="companies-table-header">
-				<th>
-					Empresa
-				</th>
-				<th>
-					Enero
-				</th>
-				<th>
-					Febrero
-				</th>
-				<th>
-					Marzo
-				</th>
-				<th>
-					Abril
-				</th>
-				<th>
-					Mayo
-				</th>
-				<th>
-					Junio
-				</th>
-				<th>
-					Julio
-				</th>
-				<th>
-					Agosto
-				</th>
-				<th>
-					Septiembre
-				</th>
-				<th>
-					Octubre
-				</th>
-				<th>
-					Noviembre
-				</th>
-				<th>
-					Diciembre
-				</th>
-				<th>
-					Total
-				</th>
-			</tr>
-			<%	@companies.each do |company| %>
-				<%
-					company_bookings = 0
-				%>
-				<tr>
-					<td>
-						<%= link_to company.name, controller: "companies", action: "manage_company", id: company.id %>
-					</td>
-					<% for i in 1..12 do %>
 
-						<%
-							month_bookings = 0
+		<!-- FIN POR FECHAS DE RESERVA -->
 
-							start_date = DateTime.new(@year, i, 1)
-							end_date = start_date
-							if i < 12
-								end_date = DateTime.new(@year, i+1, 1)-1.minutes
-							else
-								end_date = DateTime.new(@year+1, 1, 1)-1.minutes
-							end
+		<!-- INICIO POR FECHAS DE CREACIÓN -->
 
-							bookings_count = Booking.where('start BETWEEN ? and ?', start_date, end_date).where(:location_id => company.locations.pluck(:id)).count
+		<div id="creation-date" class="tab-pane">
+			<ul id="bookings-details-tab2" class="nav nav-tabs" role="tablist">
+			  <li class="active"><a href="#general2" role="tab" data-toggle="tab" class="tab_index">General</a></li>
+			  <li class=""><a href="#versus2" role="tab" data-toggle="tab" class="tab_index">Total vs Web</a></li>
+			  <li class=""><a href="#all2" role="tab" data-toggle="tab" class="tab_index">Top Reservas</a></li>
+			  <li class=""><a href="#web2" role="tab" data-toggle="tab" class="tab_index">Top Reservas Web</a></li>
+			</ul>
+			<div id="bookings-details-content2" class="tab-content">
+			<br />
 
 
-							month_bookings = bookings_count
-							company_bookings = company_bookings + bookings_count
-							@bookings[i]['count'] = @bookings[i]['count'] + bookings_count
-							@bookings[13]['count'] = @bookings[13]['count'] + bookings_count
+				<div class="col-md-12">
+					<div class="companies_incomes_header">
+						<h3>POR FECHA DE CREACIÓN</h3>
+					</div>
+				</div>
+				<!-- INICIO GENERAL -->
 
-						%>
+				<div class="tab-pane active" id="general2">
 
-						<td>
-							<%= month_bookings.to_s %>
-						</td>
+					<div class="col-md-12">
+						<div class="row">
+							<div class="col-md-6">
+								<div class="companies_incomes_header">
+									<h3>Reservas para el año <%= @year %></h3>
+								</div>
+							</div>
+							<div class="col-md-6">
+								<div style="float:right;">
+									<%= form_tag({ :controller => 'companies', :action => 'get_monthly_bookings'}, method: "post") do %>
+										<input type="hidden" name="type" value="creation_date" />
+										<input type="hidden" name="subtype" value="general" />
+										<input type="hidden" name="year" value="<%= @year %>" />
+										<button class="download-csv">&nbsp;Descargar&nbsp;&nbsp;<i class="fa fa-file-excel-o fa-lg"></i></button>
+									<% end %>
+								</div>
+							</div>
+						</div>
+						<div class="scrollable"  style="max-height: 400px;">
+							<table class="companies-table">
+								<tr class="companies-table-header">
+									<th>
+										Empresa
+									</th>
+									<% for i in 1..12 %>
+										<th><%= @bookings[i]['month'] %></th>
+									<% end %>
+									<th>
+										Total
+									</th>
+								</tr>
+								<%
+									companies_info = Hash.new
+									for i in 1..12
+										companies_info[i] = Array.new
+									end
+								%>
+								<%	@companies.each do |company| %>
+									<%
 
-					<% end %>
-					<td>
-						<b><%= company_bookings.to_s %></b>
-					</td>
-				</tr>
-			<% end %>
-			<tr>
-				<td>
-					<b>Total:</b>
-				</td>
-				<% total = 0 %>
-				<% for i in 1..12 %>
-					<td>
-						<b>
-							<%= @bookings[i]['count'].to_s %>
-						</b>
-					</td>
-				<% end %>
-				<td>
-					<b>
-						<%= @bookings[13]['count'].to_s %>
-					</b>
-				</td>
-			</tr>
-		</table>
+										company_bookings = 0
+										company_web_bookings = 0
+									%>
+									<tr>
+										<td style="width: 10%;">
+											<%= link_to company.name, controller: "companies", action: "manage_company", id: company.id %>
+										</td>
+										<% for i in 1..12 do %>
+
+											<%
+
+												#Company info for each month
+												company_info = Hash.new
+												company_info['company'] = company
+												company_info['count'] = 0
+												company_info['web'] = 0
+
+												month_bookings = 0
+
+												start_date = DateTime.new(@year, i, 1)
+												end_date = start_date
+												if i < 12
+													end_date = DateTime.new(@year, i+1, 1)-1.minutes
+												else
+													end_date = DateTime.new(@year+1, 1, 1)-1.minutes
+												end
+
+												bookings = Booking.where('created_at BETWEEN ? and ?', start_date, end_date).where(:location_id => company.locations.pluck(:id))
+												bookings_count = bookings.count
+
+												web_bookings = bookings.where(:web_origin => true)
+												#bookings.each do |booking|
+												#	if !booking.payed_booking.nil? &&  booking.payed
+												#		prepayed_bookings << booking
+												#	end
+												#end
+
+												month_bookings = bookings_count
+												company_bookings = company_bookings + bookings_count
+												company_web_bookings = company_web_bookings + web_bookings.count
+												@cat_bookings[i]['count'] = @cat_bookings[i]['count'] + bookings_count
+												@cat_bookings[i]['web'] = @cat_bookings[i]['web'] + web_bookings.count
+												@cat_bookings[13]['count'] = @cat_bookings[13]['count'] + bookings_count
+												@cat_bookings[13]['web'] = 	@cat_bookings[13]['web'] + web_bookings.count
+
+												company_info['count'] = month_bookings
+												company_info['web'] = web_bookings.count
+												companies_info[i] << company_info
+
+											%>
+
+											<td>
+												Total: <%= month_bookings.to_s %><br />
+												Web: <%= web_bookings.count.to_s %><br />
+												%:  <% if month_bookings > 0 %>
+														<%= web_bookings.count*100/month_bookings %>
+													<% else %>
+														<%= 0 %>
+													<% end %>
+											</td>
+
+										<% end %>
+
+										<td>
+											<b>
+												Total: <%= company_bookings.to_s %><br />
+												Web: <%= company_web_bookings.to_s %><br />
+												%: <% if company_bookings > 0 %>
+														<%= company_web_bookings*100/company_bookings %>
+													<% else %>
+														<%= 0 %>
+													<% end %>
+											</b>
+										</td>
+									</tr>
+								<% end %>
+								<tr>
+									<td>
+										<b>Total:</b>
+									</td>
+									<% total = 0 %>
+									<% for i in 1..12 %>
+										<td>
+											<b>
+												Total: <%= @cat_bookings[i]['count'].to_s %><br />
+												Web: <%= @cat_bookings[i]['web'].to_s %><br />
+												%: <% if @cat_bookings[i]['count'] > 0 %>
+														<%= @cat_bookings[i]['web']*100/@cat_bookings[i]['count'] %>
+													<% else %>
+														<%= 0 %>
+													<% end %>
+											</b>
+										</td>
+									<% end %>
+									<td>
+										<b>
+											Total: <%= @cat_bookings[13]['count'].to_s %>
+											Web: <%= @cat_bookings[13]['web'].to_s %><br />
+											%: <% if @cat_bookings[13]['count'] > 0 %>
+													<%= @cat_bookings[13]['web']*100/@cat_bookings[13]['count'] %>
+												<% else %>
+													<%= 0 %>
+												<% end %>
+										</b>
+									</td>
+								</tr>
+							</table>
+						</div>
+					</div>
+
+				</div>
+
+				<!-- FIN GENERAL -->
+
+				<!-- INICIO RESERVAS VS WEB -->
+
+				<div class="tab-pane" id="versus2">
+
+					<div class="col-md-12">
+						<div class="row">
+							<div class="col-md-6">
+								<div class="companies_incomes_header">
+									<h3>Reservas vs Reservas Web (<%= @year %>)</h3>
+								</div>
+							</div>
+							<div class="col-md-6">
+								<div style="float:right;">
+									<%= form_tag({ :controller => 'companies', :action => 'get_monthly_bookings'}, method: "post") do %>
+										<input type="hidden" name="type" value="creation_date" />
+										<input type="hidden" name="subtype" value="versus" />
+										<input type="hidden" name="year" value="<%= @year %>" />
+										<button class="download-csv">&nbsp;Descargar&nbsp;&nbsp;<i class="fa fa-file-excel-o fa-lg"></i></button>
+									<% end %>
+								</div>
+							</div>
+						</div>
+						<table class="companies-table">
+							<tr class="companies-table-header">
+								<th>
+
+								</th>
+								<% for i in 1..12 %>
+									<th><%= @cat_bookings[i]['month'] %></th>
+								<% end %>
+								<th>
+									Total
+								</th>
+							</tr>
+							<tr>
+								<td>
+									<b>
+										Reservas
+									</b>
+								</td>
+								<% for i in 1..12 %>
+									<td>
+											<%= @cat_bookings[i]['count'].to_s %>
+									</td>
+								<% end %>
+								<td>
+									<b><%= @cat_bookings[13]['count'].to_s %></b>
+								</td>
+							</tr>
+							<tr>
+								<td>
+									<b>
+										Web origin
+									</b>
+								</td>
+								<% for i in 1..12 %>
+									<td>
+											<%= @cat_bookings[i]['web'].to_s %>
+									</td>
+								<% end %>
+								<td>
+									<b><%= @cat_bookings[13]['web'].to_s %></b>
+								</td>
+							</tr>
+							<tr>
+								<td>
+									<b>
+										%
+									</b>
+								</td>
+								<% for i in 1..12 %>
+									<td>
+										<% if @cat_bookings[i]['count'] > 0 %>
+											<%= @cat_bookings[i]['web']*100/@cat_bookings[i]['count'] %>
+										<% else %>
+											<%= 0 %>
+										<% end %>
+									</td>
+								<% end %>
+								<td>
+									<b>
+									<% if @cat_bookings[13]['count'] > 0 %>
+											<%= @cat_bookings[13]['web']*100/@cat_bookings[13]['count'] %>
+										<% else %>
+											<%= 0 %>
+										<% end %>
+									</b>
+								</td>
+							</tr>
+						</table>
+					</div>
+				</div>
+
+
+				<!-- FIN RESERVAS VS WEB -->
+
+				<!-- INICIO TOP RESERVAS -->
+
+
+				<div class="tab-pane" id="all2">
+					<div class="col-md-12">
+						<div class="row">
+							<div class="col-md-6">
+								<div class="companies_incomes_header">
+									<h3>Top reservas por mes (<%= @year %>)</h3>
+								</div>
+							</div>
+							<div class="col-md-6">
+								<div style="float:right;">
+									<%= form_tag({ :controller => 'companies', :action => 'get_monthly_bookings'}, method: "post") do %>
+										<input type="hidden" name="type" value="creation_date" />
+										<input type="hidden" name="subtype" value="all" />
+										<input type="hidden" name="year" value="<%= @year %>" />
+										<button class="download-csv">&nbsp;Descargar&nbsp;&nbsp;<i class="fa fa-file-excel-o fa-lg"></i></button>
+									<% end %>
+								</div>
+							</div>
+						</div>
+						<% for i in 1..12 %>
+							<h4> <%= @cat_bookings[i]['month'] %> </h4>
+							<%
+								top_companies = companies_info[i].sort_by { |info| info['count'] }.reverse
+							%>
+							<table class="companies-table">
+								<tr class="companies-table-header">
+									<th>
+
+									</th>
+									<% for j in 0..9 %>
+										<% if !top_companies[j].nil? %>
+											<th>
+												<%= top_companies[j]['company'].name %>
+											</th>
+										<% end %>
+									<% end %>
+									<th>Total</th>
+								</tr>
+								<tr>
+									<td>
+										<b>Reservas</b>
+									</td>
+									<% num_bookings = 0 %>
+									<% for j in 0..9 %>
+										<% if !top_companies[j].nil? %>
+											<td>
+												<%= top_companies[j]['count'] %>
+											</td>
+											<% num_bookings = num_bookings + top_companies[j]['count'] %>
+										<% end %>
+									<% end %>
+									<td>
+										<b><%= num_bookings %></b>
+									</td>
+								</tr>
+								<tr>
+									<td>
+										<b>Web</b>
+									</td>
+									<% num_web_bookings = 0 %>
+									<% for j in 0..9 %>
+										<% if !top_companies[j].nil? %>
+											<td>
+												<%= top_companies[j]['web'] %>
+											</td>
+											<% num_web_bookings = num_web_bookings + top_companies[j]['web'] %>
+										<% end %>
+									<% end %>
+									<td>
+										<b><%= num_web_bookings %></b>
+									</td>
+								</tr>
+								<tr>
+									<td>
+										<b>%</b>
+									</td>
+									<% for j in 0..9 %>
+										<% if !top_companies[j].nil? %>
+											<td>
+												<% if top_companies[j]['count'] > 0 %>
+													<%= top_companies[j]['web']*100/top_companies[j]['count'] %>
+												<% else %>
+													<%= 0 %>
+												<% end %>
+											</td>
+										<% end %>
+									<% end %>
+									<td>
+										<% if num_bookings > 0 %>
+											<%= num_web_bookings*100/num_bookings %>
+										<% else %>
+											<%= 0 %>
+										<% end %>
+									</td>
+								</tr>
+							</table>
+						<% end %>
+
+					</div>
+				</div>
+
+
+				<!-- FIN TOP RESERVAS -->
+
+
+				<!-- INICIO TOP RESERVAS WEB -->
+
+				<div class="tab-pane" id="web2">
+					<div class="col-md-12">
+						<div class="row">
+							<div class="col-md-6">
+								<div class="companies_incomes_header">
+									<h3>Top reservas web por mes (<%= @year %>)</h3>
+								</div>
+							</div>
+							<div class="col-md-6">
+								<div style="float:right;">
+									<%= form_tag({ :controller => 'companies', :action => 'get_monthly_bookings'}, method: "post") do %>
+										<input type="hidden" name="type" value="creation_date" />
+										<input type="hidden" name="subtype" value="web" />
+										<input type="hidden" name="year" value="<%= @year %>" />
+										<button class="download-csv">&nbsp;Descargar&nbsp;&nbsp;<i class="fa fa-file-excel-o fa-lg"></i></button>
+									<% end %>
+								</div>
+							</div>
+						</div>
+						<% for i in 1..12 %>
+							<h4> <%= @cat_bookings[i]['month'] %> </h4>
+							<%
+								top_companies = companies_info[i].sort_by { |info| info['web'] }.reverse
+							%>
+							<table class="companies-table">
+								<tr class="companies-table-header">
+									<th>
+
+									</th>
+									<% for j in 0..9 %>
+										<% if !top_companies[j].nil? %>
+											<th>
+												<%= top_companies[j]['company'].name %>
+											</th>
+										<% end %>
+									<% end %>
+									<th>Total</th>
+								</tr>
+								<tr>
+									<td>
+										<b>Reservas</b>
+									</td>
+									<% num_bookings = 0 %>
+									<% for j in 0..9 %>
+										<% if !top_companies[j].nil? %>
+											<td>
+												<%= top_companies[j]['count'] %>
+											</td>
+											<% num_bookings = num_bookings + top_companies[j]['count'] %>
+										<% end %>
+									<% end %>
+									<td>
+										<b><%= num_bookings %></b>
+									</td>
+								</tr>
+								<tr>
+									<td>
+										<b>Web</b>
+									</td>
+									<% num_web_bookings = 0 %>
+									<% for j in 0..9 %>
+										<% if !top_companies[j].nil? %>
+											<td>
+												<%= top_companies[j]['web'] %>
+											</td>
+											<% num_web_bookings = num_web_bookings + top_companies[j]['web'] %>
+										<% end %>
+									<% end %>
+									<td>
+										<b><%= num_web_bookings %></b>
+									</td>
+								</tr>
+								<tr>
+									<td>
+										<b>%</b>
+									</td>
+									<% for j in 0..9 %>
+										<% if !top_companies[j].nil? %>
+											<td>
+												<% if top_companies[j]['count'] > 0 %>
+													<%= top_companies[j]['web']*100/top_companies[j]['count'] %>
+												<% else %>
+													<%= 0 %>
+												<% end %>
+											</td>
+										<% end %>
+									<% end %>
+									<td>
+										<% if num_bookings > 0 %>
+											<%= num_web_bookings*100/num_bookings %>
+										<% else %>
+											<%= 0 %>
+										<% end %>
+									</td>
+								</tr>
+							</table>
+						<% end %>
+
+					</div>
+				</div>
+
+			<!-- FIN TOP RESERVAS WEB -->
+
+			</div>
+
+
+
+		</div>
+
+		<!-- FIN POR FECHAS DE CREACIÓN-->
+
 	</div>
+
 </div>
 
 

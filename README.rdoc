@@ -23,6 +23,25 @@ Things you may want to cover:
   Usin ImageMagick: convert zoolander.jpg -resize 200x200 -background transparent -gravity center -extent 200x200 zoolander.jpg
 
 * Configuration
+  * Log rotation:
+   - Create file /etc/logrotate.d/web-app with superuser permissions.
+   - Paste the following formula:
+    # /etc/logrotate.d/web-app
+    # Rotate Rails application logs based on file size
+    # Rotate log if file greater than 20 MB
+    /home/agendapro/web_app/log/*.log {
+        daily
+        missingok
+        rotate 90
+        dateext
+        dateformat .%Y-%m-%d
+        compress
+        delaycompress
+        notifempty
+        copytruncate
+    }
+    - run twice in console to check log creation and compression:
+      sudo /usr/sbin/logrotate -f /etc/logrotate.conf
 
 * Database Instalation
   sudo apt-get install postgresql postgresql-contrib
@@ -41,7 +60,7 @@ Things you may want to cover:
 * How to run the test suite
 
 * Services (job queues, cache servers, search engines, etc.)
-Update Cronjobs (Whenever Gem): whenever --update-crontab agendapro --set environment=production
+  Update Cronjobs (Whenever Gem): whenever --update-crontab agendapro --set environment=production
 
 * Deployment instructions
 

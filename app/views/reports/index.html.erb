@@ -1,6 +1,6 @@
 <!-- Chartkick se usa antes de q se carge la pagina -->
 <script type="text/javascript">
-  var Chartkick = {"language": "es"};
+	var Chartkick = {"language": "es"};
 </script>
 <%= javascript_include_tag "//www.google.com/jsapi", "chartkick" %>
 
@@ -9,6 +9,49 @@
     <div class="col-md-12">
       <h2 class="text-green">Reportes</h2>
       <p>Acá podrás visualizar toda la información almacenada en el sistema. Puedes ver el detalle de tu negocio y compararlo con el periodo anterior de forma sencilla.</p>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-12">
+      <div class="row">
+        <div class="col-md-4">
+          <div class="form-group">
+            <label for="from" class="col-md-2 control-label">Desde:</label>
+            <div class="col-md-10">
+              <input type="text" id="from" name="from" class="form-control report_select" value="<%= Time.now.strftime("%Y-%m-%d") %>">
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="form-group">
+            <label for="from" class="col-md-2 control-label">Hasta:</label>
+            <div class="col-md-10">
+              <input type="text" id="to" name="to" class="form-control report_select" value="<%= Time.now.strftime("%Y-%m-%d") %>">
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="form-group">
+            <select class="form-control report_select" id="option">
+              <option value="0">Por fecha de creación</option>
+              <option value="1">Por fecha de realización</option>
+            </select>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-12">
+          <div class="form-group">
+            <label for="status_ids[]" class="col-md-2 control-label">Estado:</label>
+            <div class="col-md-10">
+              <% for status in Status.all do %>
+                <%= check_box_tag 'status_ids[]', status.id, params[:status_ids].blank? && status.name != 'Cancelado' ? true : params[:status_ids] && params[:status_ids].includes(status.id), {class: "report_select"} %>
+                <%= status.name.humanize %>
+              <% end %>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
   <div class="row">
@@ -44,13 +87,21 @@
             <% end %>
           </ul>
         </li>
-        <li class=""><a href="#help" role="tab" data-toggle="tab" class="tab_index">Ayuda</a></li>
+        <li class="dropdown">
+          <a href="#" id="myTabDrop1" class="dropdown-toggle" data-toggle="dropdown">Comisiones por Local<span class="caret"></span></a>
+          <ul class="dropdown-menu" role="menu" aria-labelledby="myTabDrop1">
+            <% @locations.each do |location| %>
+            <li><a href="#render_content" tabindex="-1" role="tab" data-toggle="tab" class="tab_index render" id="location_comission<%=location.id%>"><%= location.name %></a></li>
+            <% end %>
+          </ul>
+        </li>
+        <!-- <li class=""><a href="#help" role="tab" data-toggle="tab" class="tab_index">Ayuda</a></li> -->
       </ul>
       <div id="myTabContent" class="tab-content" style="padding-top: 10px;">
         <div class="tab-pane fade in active" id="render_content">
-          <%= render 'statuses' %>
+          <!-- <% render 'statuses' %> -->
         </div>
-        <div class="tab-pane fade" id="help">
+        <!-- <div class="tab-pane fade" id="help">
           <div class="row">
             <div class="col-md-12">
               <ol class="list-separate">
@@ -63,7 +114,7 @@
               </ol>
             </div>
           </div>
-        </div>
+        </div> -->
       </div>
     </div>
   </div>

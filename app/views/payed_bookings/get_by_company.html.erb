@@ -38,7 +38,7 @@
 								</td>
 								
 								<td>
-									<%= payed_booking.booking.client.first_name + " " + payed_booking.booking.client.last_name %>
+									<%= payed_booking.bookings.first.client.first_name + " " + payed_booking.bookings.first.client.last_name %>
 								</td>
 								<td>
 									<%= payed_booking.punto_pagos_confirmation.amount %>
@@ -102,7 +102,7 @@
 								</td>
 								
 								<td>
-									<%= payed_booking.booking.client.first_name + " " + payed_booking.booking.client.last_name %>
+									<%= payed_booking.bookings.first.client.first_name + " " + payed_booking.bookings.first.client.last_name %>
 								</td>
 								<td>
 									<%= payed_booking.punto_pagos_confirmation.amount %>
@@ -124,6 +124,5 @@
 		</div>		
 	</div>
 </div>
-
 
 

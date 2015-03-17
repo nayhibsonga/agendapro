@@ -181,11 +181,15 @@ class PuntoPagosController < ApplicationController
           @success_page = "plan"
         elsif Booking.find_by_trx_id(trx_id)
           #Mostrar página similar a la de reserva hecha, confirmando que se pagó
-          @booking = Booking.find_by_trx_id(trx_id)
+          @bookings = Booking.where(:trx_id => trx_id)
           @token = params[:token]
           @success_page = "booking"
+          host = request.host_with_port
+          @url = @bookings.first.location.company.web_address + '.' + host[host.index(request.domain)..host.length]
         else
-          @success_page = ""
+          #Something (lie a booking) was deleted, should redirect to failure
+          redirect_to action: 'failure', token: params[:token]
+          #@success_page = ""
         end
       end
     end
@@ -195,14 +199,26 @@ class PuntoPagosController < ApplicationController
     if PuntoPagosConfirmation.find_by_token(params[:token])
       trx_id = PuntoPagosConfirmation.find_by_token(params[:token]).trx_id
       if(Booking.find_by_trx_id(trx_id))
-        failed_booking = Booking.find_by_trx_id(trx_id)
-        @booking = Booking.new(failed_booking.attributes.to_options)
-        failed_booking.destroy
+        bookings = Booking.where(:trx_id => trx_id)
+        @bookings = Array.new
+        bookings.each do |failed_booking|
+          #failed_booking = Booking.find_by_token(params[:token])
+          booking = Booking.new(failed_booking.attributes.to_options)
+          @bookings << booking
+          failed_booking.destroy
+        end
       end
     elsif Booking.find_by_token(params[:token]) #Cuando el servicio está caído y no hay notificación
-      failed_booking = Booking.find_by_token(params[:token])
-      @booking = Booking.new(failed_booking.attributes.to_options)
-      failed_booking.destroy
+      bookings = Booking.where(:token => params[:token])
+      @bookings = Array.new
+      bookings.each do |failed_booking|
+        #failed_booking = Booking.find_by_token(params[:token])
+        booking = Booking.new(failed_booking.attributes.to_options)
+        @bookings << booking
+        failed_booking.destroy
+      end
+    else
+      #Nothing found, there was a timeout error
     end
   end
 
@@ -237,15 +253,29 @@ class PuntoPagosController < ApplicationController
       elsif Booking.find_by_trx_id(params[:trx_id])
 
         #Creamos el registro de la reserva pagada.
-        booking = Booking.find_by_trx_id(params[:trx_id])
-        booking.status_id = Status.find_by(:name => "Pagado").id
-        booking.payed = true
-        booking.save
-        payed_booking = PayedBooking.new 
-        payed_booking.booking = booking
+
+        payed_booking = PayedBooking.new
         payed_booking.punto_pagos_confirmation = punto_pagos_confirmation
         payed_booking.transfer_complete = false
         payed_booking.save
+
+        bookings = Array.new
+        Booking.where(:trx_id => params[:trx_id]).each do |booking|
+          booking.status_id = Status.find_by(:name => "Pagado").id
+          booking.payed = true
+          booking.payed_booking = payed_booking
+          booking.save
+          bookings << booking
+        end
+
+        if bookings.count >1
+          Booking.send_multiple_booking_mail(bookings.first.location_id, bookings.first.booking_group)
+        else
+          BookingMailer.book_service_mail(bookings.first)
+        end
+        #Enviar comprobantes de pago
+        BookingMailer.book_payment_mail(payed_booking)
+        BookingMailer.book_payment_company_mail(payed_booking)
         
       end
     end

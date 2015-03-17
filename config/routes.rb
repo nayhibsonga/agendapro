@@ -1,6 +1,8 @@
 Agendapro::Application.routes.draw do
 
 
+  resources :deals
+
   get "users/index"
   require 'subdomain'
 
@@ -49,9 +51,9 @@ Agendapro::Application.routes.draw do
   resources :payed_bookings
   resources :banks
 
-  namespace :admin do 
+  namespace :admin do
     get '', :to => 'dashboard#index', :as => '/'
-    resources :users 
+    resources :users
   end
 
   # Quick Add
@@ -73,12 +75,13 @@ Agendapro::Application.routes.draw do
   get '/report_locations', :to => 'reports#locations'
   get '/report_services', :to => 'reports#services'
   get '/report_statuses', :to => 'reports#statuses'
-  get '/report_status_details/:status_id/:time_range_id', :to => 'reports#status_details'
+  get '/report_status_details', :to => 'reports#status_details'
   get '/report_location_services/:id', :to => 'reports#location_services'
   get '/report_location_providers/:id', :to => 'reports#location_providers'
+  get '/report_location_comission/:id', :to => 'reports#location_comission'
   get '/report_provider_services/:id', :to => 'reports#provider_services'
 
-  # 
+  #
   post '/client_comments', :to => 'clients#create_comment', :as => 'client_comments'
   get '/select_plan', :to => 'plans#select_plan', :as => 'select_plan'
   get '/get_direction', :to => 'districts#get_direction'
@@ -145,6 +148,9 @@ Agendapro::Application.routes.draw do
   get "/manage_company/:id", :to => 'companies#manage_company'
   get "/companies/new_payment/:id", :to => 'companies#new_payment'
   post "/companies/add_payment", :to => 'companies#add_payment'
+  post "/companies/delete_payment", :to => 'companies#delete_payment'
+  get "/companies/payment/:id", :to => 'companies#payment'
+  post "/companies/modify_payment", :to => 'companies#modify_payment'
   get "/get_year_incomes", :to => 'companies#get_year_incomes'
   get "/get_year_bookings", :to => 'companies#get_year_bookings'
   get '/companies_incomes', :to => 'companies#incomes'
@@ -152,6 +158,8 @@ Agendapro::Application.routes.draw do
   get '/companies_monthly_locations', :to => 'companies#monthly_locations'
   get '/companies_monthly_bookings', :to => 'companies#monthly_bookings'
   post '/companies/update_company', :to => 'companies#update_company'
+  post '/companies/deactivate_company', :to => 'companies#deactivate_company'
+  post '/companies/get_monthly_bookings', :to => 'companies#get_monthly_bookings'
 
   # Search
   get "searchs/index"
@@ -176,8 +184,12 @@ Agendapro::Application.routes.draw do
   get '/get_booking', :to => 'bookings#get_booking'
   get '/get_booking_info', :to => 'bookings#get_booking_info'
   post "/book", :to => 'bookings#book_service'
+  get '/book_error', :to => 'bookings#book_error', :as => 'book_error'
+  post '/remove_bookings', :to => 'bookings#remove_bookings'
   get '/get_available_time', :to => 'locations#get_available_time'
   get '/check_user_cross_bookings', :to => 'bookings#check_user_cross_bookings'
+  get '/optimizer_hours', :to => 'bookings#optimizer_hours'
+  post '/optimizer_data', :to => 'bookings#optimizer_data'
   # Workflow - Mobile
   post '/select_hour', :to => 'companies#select_hour'
   post '/user_data', :to => 'companies#user_data'
@@ -196,12 +208,16 @@ Agendapro::Application.routes.draw do
   get '/clients_bookings_history', :to => 'clients#bookings_history'
   get '/booking_history', :to => 'bookings#booking_history'
   get '/fixed_bookings', :to => 'bookings#fixed_index', :as => 'fixed_bookings'
+  post '/booking_valid', :to => 'bookings#booking_valid'
+  post '/force_create', :to => 'bookings#force_create'
 
   get '/edit_booking', :to => 'bookings#edit_booking', :as => 'booking_edit'
   post '/edited_booking', :to => 'bookings#edit_booking_post'
   get '/cancel_booking', :to => 'bookings#cancel_booking', :as => 'booking_cancel'
   get '/transfer_cancel', :to => 'bookings#transfer_error_cancel'
   post '/cancel_booking', :to => 'bookings#cancel_booking'
+  get '/cancel_all_booking', :to => 'bookings#cancel_all_booking', :as => 'cancel_all_booking'
+  post '/cancel_all_booking', :to => 'bookings#cancel_all_booking'
   get '/confirm_booking', :to => 'bookings#confirm_booking', :as => 'confirm_booking'
   get '/blocked_edit', :to => 'bookings#blocked_edit', :as => 'blocked_edit'
   get '/blocked_cancel', :to => 'bookings#blocked_cancel', :as => 'blocked_cancel'
@@ -218,7 +234,7 @@ Agendapro::Application.routes.draw do
   get '/locations/:id/activate', :to => 'locations#activate', :as => 'activate_location'
   get '/services/:id/activate', :to => 'services#activate', :as => 'activate_service'
   get '/service_providers/:id/activate', :to => 'service_providers#activate', :as => 'activate_service_provider'
-  
+
   get '/companies/:id/deactivate', :to => 'companies#deactivate', :as => 'deactivate_company'
   get '/locations/:id/deactivate', :to => 'locations#deactivate', :as => 'deactivate_location'
   get '/services/:id/deactivate', :to => 'services#deactivate', :as => 'deactivate_service'
@@ -247,6 +263,7 @@ Agendapro::Application.routes.draw do
   get '/iframe/facebook_success', :to => 'iframe#facebook_success', :as => 'facebook_success'
   get '/iframe/facebook_addtab', :to => 'iframe#facebook_addtab', :as => 'facebook_addtab'
   get '/company_settings/:id/delete_facebook_pages', :to => 'company_settings#delete_facebook_pages', :as => 'delete_facebook_pages'
+
   post '/company_settings/update_payment', :to => 'company_settings#update_payment'
 
   # Payed Bookings
@@ -262,13 +279,13 @@ Agendapro::Application.routes.draw do
   post "payed_bookings/mark_several_canceled_as_payed", :to => 'payed_bookings#mark_several_canceled_as_payed'
   post "payed_bookings/unmark_several_canceled_as_payed", :to => 'payed_bookings#unmark_several_canceled_as_payed'
   post "payed_bookings/update", :to => 'payed_bookings#update'
-  
+
   # Root
   get '/' => 'searchs#index', :constraints => { :subdomain => 'www' }
   get '/' => 'companies#overview', :constraints => { :subdomain => /.+/ }
 
   root :to => 'searchs#index'
-  
+
 
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".

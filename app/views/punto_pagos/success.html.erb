@@ -59,7 +59,7 @@
 						</dl>
 					<% else %>
 
-						<% if @booking.payed_booking.nil? || @booking.payed_booking.punto_pagos_confirmation.nil? %>
+						<% if @bookings.first.payed_booking.nil? || @bookings.first.payed_booking.punto_pagos_confirmation.nil? %>
 
 
 							<h4>Tu transferencia está siendo procesada.</h4>
@@ -77,43 +77,73 @@
 
 						<% else %>
 							<h4>Tu transferencia se ha efectuado de manera satisfactoria.</h4>
-
+							<p style="margin-bottom: 20px;">
+								<span class="light-gray"><a href="<%= root_url(:host => @url) %>">Agendar nuevamente</span> &nbsp;<i class="fa fa-calendar-o fa-lg light-green"></i></a>
+							</p>
+							<div class="book-subheader dark-gray">Resumen de tu Reserva</div>
+							<dl class="dl-horizontal book-dl">
+								<dt class="dark-gray">¿Qué reservaste?</dt>
+								<dd class="light-gray">
+									<% @bookings.each do |booking| %>
+										<%= booking.service.name %><br />
+									<% end %>
+								</dd>
+								<dt class="dark-gray">¿Dónde?</dt>
+								<dd class="light-gray"><%= @bookings.first.location.address %>, <%= @bookings.first.location.district.name %></dd>
+								<dt class="dark-gray">¿Con quién?</dt>
+								<dd class="light-gray">
+									<% @bookings.each do |booking| %>
+										<%= booking.service_provider.public_name %><br />
+									<% end %>
+								</dd>
+								<dt class="dark-gray">¿Cuándo?</dt>
+								<dd class="light-gray">
+									<% @bookings.each do |booking| %>
+										<%= I18n.l(booking.start.to_datetime) %><br />
+									<% end %>
+								</dd>
+								<% if !@bookings.first.notes.empty? %>
+								<dt class="dark-gray">Notas</dt>
+								<dd class="light-gray"><%= @bookings.first.notes %></dd>
+								<% end %>
+							</dl>
+							<div class="book-subheader dark-gray">Comprobante de pago</div>
 							<dl class="dl-horizontal">
 								<dt>
 									Comercio:
 								</dt>
 								<dd>
-									<%= @booking.location.company.name %>
+									<%= @bookings.first.location.company.name %>
 								</dd>
 								<dt>
 									Total a pagar:
 								</dt>
 								<dd>
-									$<%= @booking.payed_booking.punto_pagos_confirmation.amount %>
+									<%= number_to_currency(@bookings.first.payed_booking.punto_pagos_confirmation.amount, unit: "CLP $", delimiter: ".") %>
 								</dd>
 								<dt>
 									Número de tarjeta:
 								</dt>
 								<dd>
-									**********<%= @booking.payed_booking.punto_pagos_confirmation.card_number %>
+									**********<%= @bookings.first.payed_booking.punto_pagos_confirmation.card_number %>
 								</dd>
 								<dt>
 									Orden de compra:
 								</dt>
 								<dd>
-									<%= @booking.payed_booking.punto_pagos_confirmation.operation_number %>
+									<%= @bookings.first.payed_booking.punto_pagos_confirmation.operation_number %>
 								</dd>
 								<dt>
 									Código de autorización:
 								</dt>
 								<dd>
-									<%= @booking.payed_booking.punto_pagos_confirmation.authorization_code %>
+									<%= @bookings.first.payed_booking.punto_pagos_confirmation.authorization_code %>
 								</dd>
 								<dt>
 									Fecha:
 								</dt>
 								<dd>
-									<%= @booking.payed_booking.punto_pagos_confirmation.approvement_date %>
+									<%= @bookings.first.payed_booking.punto_pagos_confirmation.approvement_date %>
 								</dd>
 
 							</dl>

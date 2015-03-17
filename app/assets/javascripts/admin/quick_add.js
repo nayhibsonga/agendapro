@@ -816,6 +816,7 @@ $(function() {
   });
 });
 
+
 $(function() {
 
 	$("#service_online_payable").change(function(){
@@ -846,5 +847,14 @@ $(function() {
 		$('#foo5').trigger('updateSizes');
 		$(document).scrollTop(oldTop);
 	});
-
+	
+	$('#location_district_id, #location_address, #location_outcall').change(function (eve) {
+    var district = $('#location_district_id').val();
+    var address = $('#location_address').val();
+    if (district != '') {
+      if ($('#location_outcall').prop('checked') || address.length > 0) {
+        geolocate(district, address);
+      };
+    };
+  });
 });

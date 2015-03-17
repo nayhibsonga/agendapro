@@ -9,6 +9,7 @@
 </style>
 
 <%= javascript_include_tag "//www.google.com/jsapi", "chartkick" %>
+<%= stylesheet_link_tag "admin/super-admin-style" %>
 
 <div class="row">
 	<h3> </h3>
@@ -56,13 +57,15 @@
 								</td>
 
 								<td>
-									<%= payed_booking.booking.client.first_name + " " + payed_booking.booking.client.last_name %>
+									<%= payed_booking.bookings.first.client.first_name + " " + payed_booking.bookings.first.client.last_name %>
 								</td>
 								<td>
-									<%= payed_booking.booking.location.name %>
+									<%= payed_booking.bookings.first.location.name %>
 								</td>
 								<td>
-									<%= payed_booking.booking.service.name %>
+									<% payed_booking.bookings.each do |booking| %>
+										<%= booking.service.name %>
+									<% end %>
 								</td>
 								<td>
 									<%= payed_booking.punto_pagos_confirmation.amount %>
@@ -131,13 +134,15 @@
 								</td>
 
 								<td>
-									<%= payed_booking.booking.client.first_name + " " + payed_booking.booking.client.last_name %>
+									<%= payed_booking.bookings.first.client.first_name + " " + payed_booking.bookings.first.client.last_name %>
 								</td>
 								<td>
-									<%= payed_booking.booking.location.name %>
+									<%= payed_booking.bookings.first.location.name %>
 								</td>
 								<td>
-									<%= payed_booking.booking.service.name %>
+									<% payed_booking.bookings.each do |booking| %>
+									<%= booking.service.name %>
+									<% end %>
 								</td>
 								<td>
 									<%= payed_booking.punto_pagos_confirmation.amount %>

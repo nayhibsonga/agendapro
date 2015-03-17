@@ -20,7 +20,8 @@ $(function() {
 				minlength: 2
 			},
 			deal_code: {
-				required: true
+				required: $('#dealCode').data('deal-required'),
+				rut: $('#dealCode').data('deal-identification-number')
 			},
 			address: {
 				minlength: 3
@@ -36,10 +37,13 @@ $(function() {
 			$(element).parent().empty()
 		},
 		submitHandler: function(form) {
+			window.console.log("entro incial");
 			$('#submitBtn').attr("disabled", "disabled");
 			$('#submitBtn').html('Cargando...');
 			if($("#payment").val()=="1")
 			{
+				$('#select-medio').attr("disabled", "disabled");
+				$('#select-medio').html('Cargando...');
 				var is_selected = false;
 				$('.mp_radio').each(function(){
 				if($(this).prop('checked'))
@@ -50,15 +54,25 @@ $(function() {
 				});
 				if(is_selected)
 				{
+					$('.modal-pay').attr("disabled", "disabled");
+					$('.submitBtn').attr("disabled", "disabled");
+					$('.payBtn').attr("disabled", "disabled");
 					form.submit();
 				}
 				else
 				{
 					$("#medio-de-pago").modal('show');
+					$('#select-medio').attr("disabled", false);
+					$('#select-medio').html('Pagar');
+					$('#submitBtn').attr("disabled", false);
+					$('#submitBtn').html('Reservar');
 				}
 		  	}
 		  	else
-		  	{
+		  	{	
+		  		$('.modal-pay').attr("disabled", "disabled");
+				$('.submitBtn').attr("disabled", "disabled");
+				$('.payBtn').attr("disabled", "disabled");
 		  		form.submit();
 		  	}
 		}

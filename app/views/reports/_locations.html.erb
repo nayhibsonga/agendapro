@@ -9,30 +9,29 @@
           <thead>
             <tr>
               <th>Sucursal</th>
-              <th>Reservas Última Semana</th>
-              <th>Reservas Último Mes</th>
-              <th>Ocupación Última Semana</th>
-              <th>Ocupación Último Mes</th>
+              <th>Reservas</th>
+              <th>Recaudación</th>
+              <th>Ocupación</th>
             </tr>
           </thead>
           <tbody>
             <% Location.where(company_id: current_user.company_id, active: true).order(:name).each do |location| %>
               <tr>
                 <td><%= location.name %></td>
-                <td><%= int_with_variation(location_booking_count(0, 0, location.id), location_booking_count(0, 1, location.id)) %></td>
-                <td><%= int_with_variation(location_booking_count(1, 0, location.id), location_booking_count(1, 1, location.id)) %></td>
-                <td><%= percentage_with_variation(location_booking_occupation(0, 0, location.id), location_booking_occupation(0, 1, location.id)) %></td>
-                <td><%= percentage_with_variation(location_booking_occupation(1, 0, location.id), location_booking_occupation(1, 1, location.id)) %></td>
+                <td><%= location_booking_count(@from, @to, @status_ids, @option, location.id) %></td>
+                <td><%= number_to_currency(location_booking_revenue(@from, @to, @status_ids, @option, location.id), currency: ' $', separator: ',', delimeter: '.', precision: 0) %></td>
+                <td><%= number_to_percentage(location_booking_occupation(@from, @to, @status_ids, @option, location.id), precision: 2) %></td>
               </tr>
             <% end %>
+          </tbody>
+          <tfoot>
             <tr>
               <td>Total</td>
-              <td><%= int_with_variation(booking_count(0, 0, current_user.company_id), booking_count(0, 1, current_user.company_id)) %></td>
-              <td><%= int_with_variation(booking_count(1, 0, current_user.company_id), booking_count(1, 1, current_user.company_id)) %></td>
-              <td><%= percentage_with_variation(booking_occupation(0, 0, current_user.company_id), booking_occupation(0, 1, current_user.company_id)) %></td>
-              <td><%= percentage_with_variation(booking_occupation(1, 0, current_user.company_id), booking_occupation(1, 1, current_user.company_id)) %></td>
+              <td><%= booking_count(@from, @to, @status_ids, @option, current_user.company_id) %></td>
+              <td><%= number_to_currency(booking_revenue(@from, @to, @status_ids, @option, current_user.company_id), currency: ' $', separator: ',', delimeter: '.', precision: 0) %></td>
+              <td><%= number_to_percentage(booking_occupation(@from, @to, @status_ids, @option, current_user.company_id), precision: 2) %></td>
             </tr>
-          </tbody>
+          </tfoot>
         </table>
       </div>
     </div>

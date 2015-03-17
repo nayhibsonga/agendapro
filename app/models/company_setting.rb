@@ -1,11 +1,13 @@
 class CompanySetting < ActiveRecord::Base
 	belongs_to :company
 	has_one :online_cancelation_policy
+	belongs_to :bank
 	
 	accepts_nested_attributes_for :online_cancelation_policy
 
 	#validates :email, :sms, :presence => true
 	validate after_commit :extended_schedule
+	after_update :check_payment_accounts
 
 	def extended_schedule
 		if self.extended_min_hour >= self.extended_max_hour
@@ -27,4 +29,16 @@ class CompanySetting < ActiveRecord::Base
 			setting.update_attributes :monthly_mails => 0
 		end
 	end
+
+	def check_payment_accounts
+		self.company.payment_accounts.each do |payment_account|
+			payment_account.name = self.account_name
+			payment_account.rut = self.company_rut
+			payment_account.number = self.account_number
+			payment_account.bank_code = self.bank.code
+			payment_account.account_type = self.account_type
+			payment_account.save
+		end
+	end
+
 end

@@ -31,7 +31,7 @@
 						<label class="control-label">Cliente:</label>
 					</div>
 					<div class="col-sm-6">
-						<%= @payed_booking.booking.client.first_name + " " + @payed_booking.booking.client.last_name %>
+						<%= @payed_booking.bookings.first.client.first_name + " " + @payed_booking.bookings.first.client.last_name %>
 					</div>
 					<div class="col-sm-3">
 
@@ -43,7 +43,7 @@
 						<label class="control-label">Local:</label>
 					</div>
 					<div class="col-sm-6">
-						<%= @payed_booking.booking.location.name %>
+						<%= @payed_booking.bookings.first.location.name %>
 					</div>
 					<div class="col-sm-3">
 
@@ -52,10 +52,12 @@
 
 				<div class="row">
 					<div class="col-sm-3">
-						<label class="control-label">Servicio:</label>
+						<label class="control-label">Servicio(s):</label>
 					</div>
 					<div class="col-sm-6">
-						<%= @payed_booking.booking.service.name %>
+						<% @payed_booking.bookings.each do |booking| %>
+						<%= @booking.service.name %><br />
+						<% end %>
 					</div>
 					<div class="col-sm-3">
 
@@ -94,7 +96,7 @@
 					<div class="col-sm-2">
 						<select id="status_id" class="form-control">
 							<% Status.all.each do |status| %>
-								<% if @payed_booking.booking.status_id == status.id %>
+								<% if @payed_booking.bookings.first.status_id == status.id %>
 									<option value="<%= status.id %>" selected> <%= status.name %> </option>
 								<% else %>
 									<option value="<%= status.id %>"> <%= status.name %> </option>
@@ -114,7 +116,7 @@
 					</div>
 					<div class="col-sm-3">
 						<form action="/payed_bookings/update" method="post">
-							<input type="hidden" id="input-status-id" name="status_id" value="<%= @payed_booking.booking.status_id %>">
+							<input type="hidden" id="input-status-id" name="status_id" value="<%= @payed_booking.bookings.first.status_id %>">
 							<input type="hidden" name="id" value="<%= @payed_booking.id %>" />
 							<button class="edit-btn">Editar</button>
 						</form>

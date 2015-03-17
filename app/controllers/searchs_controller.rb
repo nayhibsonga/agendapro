@@ -19,6 +19,196 @@ class SearchsController < ApplicationController
 			@lat = params[:latitude]
 			@lng = params[:longitude]
 
+		
+
+			if cookies[:formatted_address]
+				@formatted_address = cookies[:formatted_address].encode('UTF-8', 'binary', invalid: :replace, undef: :replace, replace: '')
+			end
+			# => Domain parser
+			host = request.host_with_port
+			@domain = host[host.index(request.domain)..host.length]
+
+
+			lat = params[:latitude]
+			long = params[:longitude]
+
+			@latitude = params[:latitude]
+			@longitude = params[:longitude]
+
+			@results = Array.new
+			@empty_results = Array.new
+
+			search = params[:inputSearch].gsub(/\b([D|d]el?)+\b|\b([U|u]n(o|a)?s?)+\b|\b([E|e]l)+\b|\b([T|t]u)+\b|\b([L|l](o|a)s?)+\b|\b[AaYy]\b|["'.,;:-]|\b([E|e]n)+\b|\b([L|l]a)+\b|\b([C|c]on)+\b|\b([Q|q]ue)+\b|\b([S|s]us?)+\b|\b([E|e]s[o|a]?s?)+\b/i, '')
+
+			normalized_search = search.mb_chars.normalize(:kd).gsub(/[^\x00-\x7F]/,'').downcase.to_s
+
+
+			#EMPRESAS CON DUEÑO
+
+			query_company_name = Location.search_company_name(normalized_search).where(id: ServiceProvider.where(active: true).pluck('location_id')).where(company_id: Company.where(:active => true, :owned => true).where(id: CompanySetting.where(:activate_search => true, :activate_workflow => true).pluck('company_id'))).where(:active => true).where('sqrt((latitude - ' + lat.to_s + ')^2 + (longitude - ' + long.to_s + ')^2) < 0.25')
+
+			#rest
+			query_rest = Location.search(normalized_search).where(id: ServiceProvider.where(active: true).pluck('location_id')).where(company_id: Company.where(:active => true, :owned => true).where(id: CompanySetting.where(:activate_search => true, :activate_workflow => true).pluck('company_id'))).where(:active => true).where('sqrt((latitude - ' + lat.to_s + ')^2 + (longitude - ' + long.to_s + ')^2) < 0.25') - query_company_name
+
+
+			query = query_company_name + query_rest
+
+			# Divide the results in a reasonable amount of subgroups in order
+			# to rank by distance only inside those groups
+			# For now, subgroups whill have max 10 locations
+
+			locs = Array.new
+			ordered_locs = Array.new
+
+			if query.count > 10
+
+				count = (query.count / 10).ceil
+				results = Array.new
+
+				for i in 0..count-1
+					group = query[i*10, (i+1)*10]
+					results << group
+				end
+
+				j = 0
+				results.each do |result|
+					locs[j] = Array.new
+					result.each do |location|
+						dist_score = Math.sqrt((location.latitude - lat.to_f)**2 + (location.longitude - long.to_f)**2)
+						local = [location, dist_score]
+						locs[j].push(local)
+					end
+					j = j+1
+				end
+
+				for i in 0..j-1
+					ordered_locs[i] = locs[i].sort_by{ |loc| loc[1]}
+				end
+
+			else
+				query.each do |location|
+					dist_score = Math.sqrt((location.latitude - lat.to_f)**2 + (location.longitude - long.to_f)**2)
+					local = [location, dist_score]
+					locs.push(local)
+				end
+				ordered_locs[0] = locs.sort_by{ |loc| loc[1]}
+			end
+
+			#FIN EMPRESAS CON DUEÑO
+
+			#EMPRESAS SIN DUEÑO
+
+			unowned_query_company_names = Location.search_company_name(normalized_search).where(id: ServiceProvider.where(active: true).pluck('location_id')).where(company_id: Company.where(:active => true, :owned => false).where(id: CompanySetting.where(:activate_search => true, :activate_workflow => true).pluck('company_id'))).where(:active => true).where('sqrt((latitude - ' + lat.to_s + ')^2 + (longitude - ' + long.to_s + ')^2) < 0.25')
+
+			unowned_query_rest = Location.search(normalized_search).where(id: ServiceProvider.where(active: true).pluck('location_id')).where(company_id: Company.where(:active => true, :owned => false).where(id: CompanySetting.where(:activate_search => true, :activate_workflow => true).pluck('company_id'))).where(:active => true).where('sqrt((latitude - ' + lat.to_s + ')^2 + (longitude - ' + long.to_s + ')^2) < 0.25') - unowned_query_company_names
+
+
+			unowned_query = unowned_query_company_names + unowned_query_rest
+
+			unowned_locs = Array.new
+			unowned_ordered_locs = Array.new
+
+
+			if unowned_query.count > 10
+
+				count = (unowned_query.count / 10).ceil
+				unowned_results = Array.new
+
+				for i in 0..count-1
+					unowned_group = query[i*10, (i+1)*10]
+					unowned_results << unowned_group
+				end
+
+				j = 0
+				unowned_results.each do |unowned_result|
+					unowned_locs[j] = Array.new
+					unowned_result.each do |location|
+						dist_score = Math.sqrt((location.latitude - lat.to_f)**2 + (location.longitude - long.to_f)**2)
+						local = [location, dist_score]
+						unowned_locs[j].push(local)
+					end
+					j = j+1
+				end
+
+				for i in 0..j-1
+					unowned_ordered_locs[i] = unowned_locs[i].sort_by{ |loc| loc[1]}
+				end
+
+			else
+				unowned_query.each do |location|
+					dist_score = Math.sqrt((location.latitude - lat.to_f)**2 + (location.longitude - long.to_f)**2)
+					local = [location, dist_score]
+					unowned_locs.push(local)
+				end
+				unowned_ordered_locs[0] = unowned_locs.sort_by{ |loc| loc[1]}
+			end
+
+
+			#FIN EMPRESAS SIN DUEÑO
+				
+			@results = Array.new
+
+			ordered_locs.each do |arr|
+				arr.each do |s|
+					@results << s[0]
+				end
+			end
+
+			unowned_ordered_locs.each do |arr|
+				arr.each do |s|
+					@results << s[0]
+				end
+			end
+
+			per_page = 10
+
+			@results = @results.paginate(:page => params[:page], :per_page => per_page)
+
+			i = 1
+			for i in 1..per_page
+				if !File.exist?("app/assets/images/search/pin_map#{i}.png")
+					img = MiniMagick::Image.from_file("app/assets/images/search/pin_map.png")
+					if i<10
+						img.combine_options do |c|
+					    	c.draw "text 9,22 '#{i.to_s}'"
+							c.fill("#FFFFFF")
+							c.pointsize "17"
+						end
+					elsif i<100
+						img.combine_options do |c|
+					    	c.draw "text 4,22 '#{i.to_s}'"
+							c.fill("#FFFFFF")
+							c.pointsize "17"
+						end
+					else
+						img.combine_options do |c|
+					    	c.draw "text 1,22 '#{i.to_s}'"
+							c.fill("#FFFFFF")
+							c.pointsize "17"
+						end
+					end
+						
+					img.write("app/assets/images/search/pin_map#{i}.png")
+				end
+			end
+
+
+			respond_to do |format|
+				format.html
+				format.json { render :json => @results }
+			end
+		else
+			redirect_to root_path
+		end
+
+
+	end
+
+	def search2
+		if params[:inputSearch] && params[:latitude] && params[:longitude] && params[:inputLocalization]
+			@lat = params[:latitude]
+			@lng = params[:longitude]
+
 			
 
 			if cookies[:formatted_address]
@@ -323,7 +513,7 @@ class SearchsController < ApplicationController
 
 
 			#
-			# EMPRESAS DIN DUEÑO
+			# EMPRESAS SIN DUEÑO
 			#
 
 
