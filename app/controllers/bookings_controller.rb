@@ -906,7 +906,6 @@ class BookingsController < ApplicationController
         end
       else
         @errors << "No estás ingresado como cliente"
-        raise ##########################################
         render layout: "workflow"
         return
       end
@@ -943,31 +942,26 @@ class BookingsController < ApplicationController
         deal = Deal.where(code: params[:deal_code], company_id: @company).first
         if deal.quantity> 0 && deal.bookings.where.not(status_id: cancelled_id).count >= deal.quantity
           @errors << "Este convenio ya fue utilizado el máximo de veces que era permitida."
-          raise ##########################################
         elsif deal.constraint_option > 0 && deal.constraint_quantity > 0
           booking_data.each do |buffer_params|
             if deal.constraint_option == 1
               if deal.bookings.where.not(status_id: cancelled_id).where(start: buffer_params[:start].to_datetime).count >= deal.constraint_quantity
                 @errors << "Este convenio ya fue utilizado el máximo de veces que era permitida simultáneamente."
-                raise ##########################################
                 break
               end
             elsif deal.constraint_option == 2
               if deal.bookings.where.not(status_id: cancelled_id).where(start: buffer_params[:start].to_datetime.beginning_of_day..buffer_params[:start].to_datetime.end_of_day).count >= deal.constraint_quantity
                 @errors << "Este convenio ya fue utilizado el máximo de veces que era permitida por día."
-                raise ##########################################
                 break
               end
             elsif deal.constraint_option == 3
               if deal.bookings.where.not(status_id: cancelled_id).where(start: buffer_params[:start].to_datetime.beginning_of_week..buffer_params[:start].to_datetime.end_of_week).count >= deal.constraint_quantity
                 @errors << "Este convenio ya fue utilizado el máximo de veces que era permitida por semana."
-                raise ##########################################
                 break
               end
             elsif deal.constraint_option == 4
               if deal.bookings.where.not(status_id: cancelled_id).where(start: buffer_params[:start].to_datetime.beginning_of_month..buffer_params[:start].to_datetime.end_of_month).count >= deal.constraint_quantity
                 @errors << "Este convenio ya fue utilizado el máximo de veces que era permitida por mes."
-                raise ##########################################
                 break
               end
             end
@@ -982,7 +976,6 @@ class BookingsController < ApplicationController
           deal = Deal.create(company_id: @company.id, code: params[:deal_code], quantity: @company.company_setting.deal_quantity, constraint_option: @company.company_setting.deal_constraint_quantity, constraint_quantity: @company.company_setting.deal_constraint_quantity)
         else
           @errors << "Convenio es inválido o inexistente."
-          raise ##########################################
           render layout: "workflow"
           return
         end
@@ -1017,12 +1010,10 @@ class BookingsController < ApplicationController
           if (provider_booking.start.to_datetime - buffer_params[:end].to_datetime) * (buffer_params[:start].to_datetime - provider_booking.end.to_datetime) > 0
             if !service.group_service || buffer_params[:service].to_i != provider_booking.service_id
               @errors << "Lo sentimos, la hora " + I18n.l(buffer_params[:start].to_datetime) + " con " + service_provider.public_name + " ya fue reservada por otro cliente."
-              raise ##########################################
               block_it = true
               next
             elsif service.group_service && buffer_params[:service].to_i == provider_booking.service_id && service_provider.bookings.where(:service_id => service.id, :start => buffer_params[:start].to_datetime).count >= service.capacity
               @errors << "Lo sentimos, la capacidad del servicio grupal " + service.name + " llegó a su límite."
-              raise ##########################################
               block_it = true
               next
             end
@@ -1137,7 +1128,6 @@ class BookingsController < ApplicationController
           BookingHistory.create(booking_id: @booking.id, action: "Creada por Cliente", start: @booking.start, status_id: @booking.status_id, service_id: @booking.service_id, service_provider_id: @booking.service_provider_id, user_id: user)
         else
           @errors << @booking.errors.full_messages
-          raise ##########################################
         end
       end
 
@@ -1163,8 +1153,7 @@ class BookingsController < ApplicationController
             current_user ? user = current_user.id : user = 0
             BookingHistory.create(booking_id: booking.id, action: "Creada por Cliente", start: booking.start, status_id: booking.status_id, service_id: booking.service_id, service_provider_id: booking.service_provider_id, user_id: user)
           else
-            @errors = booking.errors.full_messages
-            raise ########################################## pushear error
+            @errors << booking.errors.full_messages
             proceed_with_payment = false
           end
         end
