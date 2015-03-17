@@ -85,7 +85,7 @@
 				</div>
 				<div class="col-sm-8">
 					<%
-						c_user = User.where(:company_id => @company.id, :role_id => Role.find_by_name('Administrador General').id)s
+						c_user = User.where(:company_id => @company.id, :role_id => Role.find_by_name('Administrador General').id).first
 						if !c_user.nil? %>
 							<%= c_user.first_name + " " + c_user.last_name %>
 						<% end
