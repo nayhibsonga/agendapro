@@ -45,7 +45,7 @@
     <div class="row">
       <div class="col-md-2 hidden-xs hidden-sm">
         <div id="dp"></div>
-        <button type="button" class="btn btn-agendapro-claro hours-optimizer-button" data-toggle="modal" data-target="#hoursOptimizer" style="width: 100%;">Buscador de Horas</button>
+        <button type="button" class="btn btn-green btn-block hours-optimizer-button" data-toggle="modal" data-target="#hoursOptimizer">Buscador de Horas</button>
       </div>
       <div class="col-sm-12 col-md-10">
         <div id="popover" class="popover"></div>
@@ -484,21 +484,6 @@
           <h3 class="modal-title" id="optimizerTitle" style="line-height: 1.1;"></h3>
         </div>
         <div class="modal-body">
-          <!--<div id="pickerSelectDate">
-            <div class="row">
-              <div class="col-xs-3" style="text-align: right; font-weight: bold;">
-                Inicio
-              </div>
-              <div class="col-xs-9">
-                <input id="initialPickerDate" value="<%= I18n.l(DateTime.now.to_date) %>" hidden />
-                <span id="pickerSelected" style="color: #949292;"><%= I18n.l(DateTime.now.to_date) %></span>&nbsp;&nbsp;
-                <span class="optimizer-date-span" style="float: right;">
-                  Seleccionar nuevo inicio&nbsp;<i class="fa fa-calendar-o"></i>
-                  <input type="text" class="form-control" name="optimizerDateSelector" id="optimizerDateSelector" class="datepicker" />
-                </span>
-              </div>
-            </div>
-          </div>-->
           <form class="form-horizontal" id="serviceOptimizer"></form>
           <div id="selectHour"></div>
           <div id="hoursDetails"></div>
@@ -518,15 +503,15 @@
               <%= builder.hidden_field :city %>
               <% if Company.find(current_user.company_id).company_setting.client_exclusive %>
                 <div class="form-group">
-                  <%= builder.label :identification_number, "RUT", class: "col-sm-4 control-label" %>
-                  <div class="col-sm-8">
+                  <%= builder.label :identification_number, "RUT", class: "col-md-4 control-label" %>
+                  <div class="col-md-8">
                     <%= builder.text_field :identification_number, class: "form-control", disabled: true %>
                   </div>
                 </div>
               <% end %>
               <div class="form-group has-feedback">
-                <label for="full_name" class="col-sm-4 control-label">Nombre Cliente</label>
-                <div class="col-sm-8">
+                <label for="full_name" class="col-md-4 control-label">Nombre Cliente</label>
+                <div class="col-md-8">
                   <div class="input-group">
                     <input type="text" id="full_name" class="form-control" placeholder="Buscar clientes..." name="full_name">
                     <span class="input-group-btn">
@@ -538,8 +523,8 @@
                 </div>
               </div>
               <div class="form-group">
-                <%= builder.label :email, "E-mail", class: "col-sm-4 control-label" %>
-                <div class="col-sm-8">
+                <%= builder.label :email, "E-mail", class: "col-md-4 control-label" %>
+                <div class="col-md-8">
                   <%= builder.text_field :email, class: "form-control" %>
                   <ul id="email_suggestions"></ul>
                   <div class="checkbox">
@@ -550,34 +535,34 @@
                 </div>
               </div>
               <div class="form-group">
-                <%= builder.label :phone, "Teléfono", class: "col-sm-4 control-label" %>
-                <div class="col-sm-8">
+                <%= builder.label :phone, "Teléfono", class: "col-md-4 control-label" %>
+                <div class="col-md-8">
                   <%= builder.text_field :phone, class: "form-control" %>
                 </div>
               </div>
             <% end %>
             <div class="form-group">
-              <%= f.label :status, "Estado", class: "col-sm-4 control-label" %>
-              <div class="col-sm-8">
+              <%= f.label :status, "Estado", class: "col-md-4 control-label" %>
+              <div class="col-md-8">
                 <%= f.collection_select :status_id, Status.all.order(:name), :id, :name, {selected: Status.find_by_name( 'Reservado').id}, { class: "form-control" }%>
               </div>
             </div>
             <div class="form-group">
-              <%= f.label :notes, "Notas compartidas con cliente", class: "col-sm-4 control-label" %>
-              <div class="col-sm-8">
+              <%= f.label :notes, "Notas compartidas con cliente", class: "col-md-4 control-label" %>
+              <div class="col-md-8">
                 <%= f.text_area :notes, :rows => "2", class: "form-control modal-textarea" %>
               </div>
             </div>
             <div class="form-group">
-              <%= f.label :company_comment, "Comentario Interno", class: "col-sm-4 control-label" %>
-              <div class="col-sm-8">
+              <%= f.label :company_comment, "Comentario Interno", class: "col-md-4 control-label" %>
+              <div class="col-md-8">
                 <%= f.text_area :company_comment, :rows => "2", class: "form-control modal-textarea" %>
               </div>
             </div>
             <% if @company_setting.staff_code %>
               <div class="form-group has-feedback">
-                <%= label_tag :booking_staff_code, "Código de Empleado", class: "col-sm-4 control-label" %>
-                <div class="col-sm-8">
+                <%= label_tag :booking_staff_code, "Código de Empleado", class: "col-md-4 control-label" %>
+                <div class="col-md-8">
                   <%= text_field_tag :booking_staff_code, '',{class: "form-control", required: true} %>
                   <span class="help-block"></span>
                   <span class="form-control-feedback"></span>
@@ -587,8 +572,8 @@
           <% end %>
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-agendapro-claro pull-left" id="addButton"><i class="fa fa-plus"></i>&nbsp;<span></span></button>
-          <button type="button" class="btn btn-agendapro-oscuro" id="nextButton">Siguiente</button>
+          <button type="button" class="btn btn-orange pull-left" id="addButton"><i class="fa fa-plus"></i>&nbsp;<span></span></button>
+          <button type="button" class="btn btn-green" id="nextButton">Siguiente</button>
         </div>
       </div>
     </div>

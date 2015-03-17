@@ -74,6 +74,7 @@ function loadService () {
   }).always(function () {
     $('#addButton').prop('disabled', false);
     $('#nextButton').prop('disabled', false);
+    $('#serviceOptimizer').animate({"scrollTop": $('#serviceOptimizer')[0].scrollHeight}, "slow");
   });
 }
 
@@ -121,6 +122,7 @@ function loadHourModal () {
     $('#addButton').prop('disabled', true);
     resultsLength += 6;
     $('#selectHour').empty();
+    $('#hoursDetails').empty();
     loadHours();
   }); // Bind click event
 
@@ -156,7 +158,7 @@ function loadHours () {
         services_str = services_str + '<label class="checkbox-inline"><p><i class="fa fa-check-circle-o fa-green"></i> ' + hour.bookings[i].service_name +
             '<br />' +
             '<i class="fa fa-calendar-o fa-green"></i> ' + hour.bookings[i].start.split("T")[1].split("+")[0].split(":")[0] + ":" + hour.bookings[i].start.split("T")[1].split("+")[0].split(":")[1] + ' - ' + hour.bookings[i].end.split("T")[1].split("+")[0].split(":")[0] + ":" + hour.bookings[i].end.split("T")[1].split("+")[0].split(":")[1] +
-            '<br />' + 
+            '<br />' +
             '<i class="fa fa-user fa-green"></i> ' + hour.bookings[i].provider_name +
             '</p></label>';
       }
@@ -195,11 +197,13 @@ function loadHours () {
     }
   }).always(function () {
     $('#addButton').prop('disabled', false);
+    $('#selectHour').animate({"scrollTop": $('#selectHour')[0].scrollHeight}, "slow");
   });
 }
 
 function loadUserModal () {
   $('#selectHour').hide();
+  $('#hoursDetails').hide();
   $('#addButton').hide();
   $('#hoursOptimizer #new_booking').show();
   $('#optimizerTitle').html(userTitle);
