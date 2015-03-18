@@ -108,6 +108,24 @@
             </div>
           <% else %>
             <div class="resumen-book">
+
+              <div class="row" hidden>
+                <div class="col-md-8">
+                  <p>
+                    Lo sentimos, hubo un error agendando el servicio<br>
+                    Puedes ver mas detalles del error <a id="errorLink" href="#">acá</a><br>
+                    Si deseas agendar nuevamente haz click <a href="<%= root_url(:host => @url) %>">aquí</a>
+                  </p>
+                </div>
+                <div class="col-md-4" id="errorDiv">
+                  <ol>
+                    <% @errors.each do |msg| %>
+                    <li><%= msg %></li>
+                    <% end %>
+                  </ol>
+                </div>
+              </div>
+
               <div class="row">
                 <div class="col-md-1">
                 </div>
@@ -175,9 +193,101 @@
             <%= image_tag("backgrounds/cross.png", :class => "book-center-error") %>
           </div>
         <% else %>
-          <div class="col-md-5">
-            <%= image_tag("backgrounds/icono_reserva2.png", :class => "book-center", size: "232x253") %>
-          </div>
+          <% if @try_register %>
+            <div class="col-md-5">
+              
+              <div class="suggest-register" style="height: 100%;">
+                <div class="row">
+                  <div class="col-md-12">
+                    <div class="suggest-register-header">
+                      <span class="suggest-register-header1">
+                        ¿Quieres recibir promociones y descuentos?
+                      </span>
+                      <span class="suggest-register-header2">
+                        ¡Regístrate!
+                      </span>
+                    </div>
+
+                    <%= form_for :user, :url => user_registration_url(:subdomain => false), :html => { class: 'form-horizontal', id: 'signup-form' } do |f| %>
+                      <%= f.hidden_field :role_id, :value => Role.where(:name => "Usuario Registrado").first.id %>
+                      <%= f.hidden_field :first_name, :value => @user.first_name %>
+                      <%= f.hidden_field :last_name, :value => @user.last_name %>
+                      <%= f.hidden_field :phone, :value => @user.phone %>
+
+                      <div class="row">
+                        <div class="col-sm-2">
+                          
+                        </div>
+                        <div class="col-sm-8">
+                          <div class="has-feedback">
+                            <span style="display: block; color: #505050;">Nombre</span>
+                            <input type="text" id="user_full_name" name="user[full_name]" class="form-control" placeholder="Nombre completo (requerido)" value="<%= @user.first_name + ' ' + @user.last_name %>">
+                            <span class="help-block"></span>
+                            <span class="form-control-feedback"></span>
+                          </div>
+                        </div>
+                        <div class="col-sm-2">
+                        </div>
+                      </div>
+
+                      <div class="row">
+                        <div class="col-sm-2">
+
+                        </div>
+                        <div class="col-sm-8">
+                          <div class="has-feedback">
+                            <span style="display: block; color: #505050;">Email</span>
+                            <%= f.email_field :email, :required => true, :class => 'form-control', :value => @user.email, :placeholder => 'ejemplo@dominio.com (requerido)' %>
+                            <span class="help-block"></span>
+                            <span class="form-control-feedback"></span>
+                          </div>
+                        </div>
+                        <div class="col-sm-2">
+                        </div>
+                      </div>
+
+                      <div class="row">
+                        <div class="col-sm-2">
+                          <%= image_tag("backgrounds/flecha.png", :class => "suggest-register-password-img") %>
+                        </div>
+                        <div class="col-sm-8">
+
+                          <div class="has-feedback">
+                            <span style="display: block; color: #505050;">Contraseña</span>
+                            <%= f.password_field :password, :required => true, :class => 'form-control', :placeholder => 'xxxxxxxx (requerido)' %>
+                            <span class="help-block"></span>
+                            <span class="form-control-feedback"></span>
+                          </div>
+
+                          <div class="has-feedback">
+                            <span style="display: block; color: #505050;">Confirmar contraseña</span>
+                            <%= f.password_field :password_confirmation, :required => true, :class => 'form-control', :placeholder => 'xxxxxxxx (requerido)' %>
+                            <span class="help-block"></span>
+                            <span class="form-control-feedback"></span>
+                          </div>
+
+                        </div>
+                        <div class="col-sm-2">
+
+                        </div>
+                      </div>
+        
+                      <div class="form-group">
+                        <div class="col-sm-offset-2 col-sm-8">
+                          <%= f.submit 'Regístrate', :class => 'btn btn-orange pull-right' %>
+                        </div>
+                      </div>
+                    <% end %>
+                  </div>
+                </div>
+              </div>
+              <div style="clear: both;"></div>
+            </div>
+          <% else %>
+            <div class="col-md-5">
+              <%= image_tag("backgrounds/icono_reserva2.png", :class => "book-center", size: "232x253") %>
+            </div>
+          <% end %>
         <% end %>
       </div>
     </div>
@@ -187,28 +297,30 @@
 <%= content_tag "div", id: "workflow_url", data: {url: @url, location_id: @location_id} do %>
 <% end %>
 
-<% if @errors %>
+
 <% content_for :scripts do %>
-<script type="text/javascript">
-  $(function() {
-    $('#errorDiv').hide();
-    $('#errorLink').on('click', function () {
-      $('#errorDiv').show();
+  <%= javascript_include_tag 'split-name' %>
+  <%= javascript_include_tag 'validations/validate' %>
+  <%= javascript_include_tag 'validations/home/signup' %>
+  <script type="text/javascript">
+
+    $(function() {
+      $('#errorDiv').hide();
+      $('#errorLink').on('click', function () {
+        $('#errorDiv').show();
+      });
+      $('#boton-servicio').click(function () {
+        window.location.href = 'http://' + $('#workflow_url').data('url') + '/workflow?local=' + $('#workflow_url').data('location-id').toString();
+      });
     });
-    $('#boton-servicio').click(function () {
-      window.location.href = 'http://' + $('#workflow_url').data('url') + '/workflow?local=' + $('#workflow_url').data('location-id').toString();
+
+    $(document).ready(function(){
+      split_name('#user_full_name', '#user_first_name', '#user_last_name', '#signup-form');
+      $(".col-md-5").css("height", $(".col-md-7").css("height"));
+      console.log($(".suggest-register").css("height"));
+      console.log($(".col-md-5").css("height"));
+      console.log($(".col-md-7").css("height"));
     });
-  });
-</script>
-<% end %>
-<% else %>
-<% content_for :scripts do %>
-<script type="text/javascript">
-  $(function() {
-    $('#boton-servicio').click(function () {
-      window.location.href = 'http://' + $('#workflow_url').data('url') + '/workflow?local=' + $('#workflow_url').data('location-id').toString();
-    });
-  });
-</script>
-<% end %>
+
+  </script>
 <% end %>

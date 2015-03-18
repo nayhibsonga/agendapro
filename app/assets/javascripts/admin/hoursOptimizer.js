@@ -199,6 +199,7 @@ function loadHours () {
 }
 
 function loadUserModal () {
+  $("#hoursDetails").empty();
   $('#selectHour').hide();
   $('#addButton').hide();
   $('#hoursOptimizer #new_booking').show();
