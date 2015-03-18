@@ -2307,6 +2307,7 @@ class BookingsController < ApplicationController
       if bookings.length > 0 and (dateTimePointer <=> now + company_setting.after_booking.month) == -1
         @hours_array << {
           :date => I18n.l(bookings[0][:start].to_date, format: :day_short),
+          :full_date => I18n.l(bookings[0][:start].to_date, format: :day),
           :hour => I18n.l(bookings[0][:start].to_datetime, format: :hour) + ' - ' + I18n.l(bookings[bookings.length - 1][:end].to_datetime, format: :hour) + ' Hrs',
           :bookings => bookings
         }
