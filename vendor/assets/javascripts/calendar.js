@@ -1,3 +1,4 @@
+var ajaxRequest;
 function Calendar (source, getData) {
 
 	// Default Values
@@ -70,8 +71,11 @@ function Calendar (source, getData) {
 	// Generate Week
 	var available_hour;
 	var generateWeek = function (monday) {
+		if (ajaxRequest != null) {
+			ajaxRequest.abort();
+		}
 		sources.data.date = formatDate(monday);
-		$.getJSON(sources.source, sources.data, function (data, status) {
+		ajaxRequest = $.getJSON(sources.source, sources.data, function (data, status) {
 			available_hour = false;
 
 			$(".days-row").empty();
