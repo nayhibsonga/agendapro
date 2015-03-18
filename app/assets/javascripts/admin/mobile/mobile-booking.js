@@ -57,7 +57,7 @@ function saveBooking (typeURL, booking_id) {
     type: typeURL,
     url: '/bookings' + booking_id + '.json',
     data: {
-      "booking": JSONData
+      "bookings": [JSONData]
     },
     dataType: 'json',
     success: function(booking){
