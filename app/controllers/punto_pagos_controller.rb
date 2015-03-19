@@ -200,7 +200,7 @@ class PuntoPagosController < ApplicationController
               @user.phone = client.phone
             end
           end
-
+          render layout: "workflow"
         else
           #Something (lie a booking) was deleted, should redirect to failure
           redirect_to action: 'failure', token: params[:token]
