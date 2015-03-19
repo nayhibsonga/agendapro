@@ -189,6 +189,7 @@ class PuntoPagosController < ApplicationController
 
           @try_register = false
           client = @bookings.first.client
+          @company = @bookings.first.location.company
 
           if !user_signed_in?
             if !User.find_by_email(client.email)
