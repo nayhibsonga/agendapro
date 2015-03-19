@@ -186,6 +186,21 @@ class PuntoPagosController < ApplicationController
           @success_page = "booking"
           host = request.host_with_port
           @url = @bookings.first.location.company.web_address + '.' + host[host.index(request.domain)..host.length]
+
+          @try_register = false
+          client = @bookings.first.client
+
+          if !user_signed_in?
+            if !User.find_by_email(client.email)
+              @try_register = true
+              @user = User.new
+              @user.email = client.email
+              @user.first_name = client.first_name
+              @user.last_name = client.last_name
+              @user.phone = client.phone
+            end
+          end
+
         else
           #Something (lie a booking) was deleted, should redirect to failure
           redirect_to action: 'failure', token: params[:token]
