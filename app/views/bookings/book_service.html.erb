@@ -223,7 +223,7 @@
                             <span style="display: block; color: #505050;">Nombre</span>
                             <input type="text" id="user_full_name" name="user[full_name]" class="form-control" placeholder="Nombre completo (requerido)" value="<%= @user.first_name + ' ' + @user.last_name %>">
                             <span class="help-block"></span>
-                            <span class="form-control-feedback"></span>
+                            <span class="form-control-feedback" style="top: 7px !important;"></span>
                           </div>
                         </div>
                         <div class="col-sm-2">
@@ -239,7 +239,7 @@
                             <span style="display: block; color: #505050;">Email</span>
                             <%= f.email_field :email, :required => true, :class => 'form-control', :value => @user.email, :placeholder => 'ejemplo@dominio.com (requerido)' %>
                             <span class="help-block"></span>
-                            <span class="form-control-feedback"></span>
+                            <span class="form-control-feedback" style="top: 7px !important;"></span>
                           </div>
                         </div>
                         <div class="col-sm-2">
@@ -256,14 +256,14 @@
                             <span style="display: block; color: #505050;">Contraseña</span>
                             <%= f.password_field :password, :required => true, :class => 'form-control', :placeholder => 'xxxxxxxx (requerido)' %>
                             <span class="help-block"></span>
-                            <span class="form-control-feedback"></span>
+                            <span class="form-control-feedback" style="top: 7px !important;"></span>
                           </div>
 
                           <div class="has-feedback">
                             <span style="display: block; color: #505050;">Confirmar contraseña</span>
                             <%= f.password_field :password_confirmation, :required => true, :class => 'form-control', :placeholder => 'xxxxxxxx (requerido)' %>
                             <span class="help-block"></span>
-                            <span class="form-control-feedback"></span>
+                            <span class="form-control-feedback" style="top: 7px !important;"></span>
                           </div>
 
                         </div>
@@ -321,6 +321,7 @@
   $('#register-form').validate({
       errorPlacement: function(error, element) {
         error.appendTo(element.next());
+        $(".error").css("color", "#fff");
       },
       rules: {
         'user[full_name]': {
