@@ -116,41 +116,39 @@
 											<% end %>
 										</dl>
 										<div class="book-subheader dark-gray">Comprobante de pago</div>
-										<dl class="dl-horizontal">
-											<dt>
-												Comercio:
-											</dt>
-											<dd>
+										<dl class="dl-horizontal book-dl">
+											<dt class="dark-gray">Comercio</dt>
+											<dd class="light-gray">
 												<%= @bookings.first.location.company.name %>
 											</dd>
-											<dt>
+											<dt class="dark-gray">
 												Total a pagar:
 											</dt>
-											<dd>
+											<dd class="light-gray">
 												<%= number_to_currency(@bookings.first.payed_booking.punto_pagos_confirmation.amount, unit: "CLP $", delimiter: ".") %>
 											</dd>
-											<dt>
+											<dt class="dark-gray">
 												Número de tarjeta:
 											</dt>
-											<dd>
+											<dd class="light-gray">
 												**********<%= @bookings.first.payed_booking.punto_pagos_confirmation.card_number %>
 											</dd>
-											<dt>
+											<dt class="dark-gray">
 												Orden de compra:
 											</dt>
-											<dd>
+											<dd class="light-gray">
 												<%= @bookings.first.payed_booking.punto_pagos_confirmation.operation_number %>
 											</dd>
-											<dt>
+											<dt class="dark-gray">
 												Código de autorización:
 											</dt>
-											<dd>
+											<dd class="light-gray">
 												<%= @bookings.first.payed_booking.punto_pagos_confirmation.authorization_code %>
 											</dd>
-											<dt>
+											<dt class="dark-gray">
 												Fecha:
 											</dt>
-											<dd>
+											<dd class="light-gray">
 												<%= @bookings.first.payed_booking.punto_pagos_confirmation.approvement_date %>
 											</dd>
 

@@ -291,6 +291,7 @@ class PuntoPagosController < ApplicationController
         #Enviar comprobantes de pago
         BookingMailer.book_payment_mail(payed_booking)
         BookingMailer.book_payment_company_mail(payed_booking)
+        BookingMailer.book_payment_agendapro_mail(payed_booking)
         
       end
     end
