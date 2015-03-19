@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150319174459) do
+ActiveRecord::Schema.define(version: 20150319184051) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -383,6 +383,7 @@ ActiveRecord::Schema.define(version: 20150319174459) do
     t.boolean  "notification",                default: false
     t.integer  "booking_configuration_email", default: 0
     t.string   "second_address"
+    t.boolean  "online_booking",              default: true
   end
 
   add_index "locations", ["company_id"], name: "index_locations_on_company_id", using: :btree
@@ -610,6 +611,7 @@ ActiveRecord::Schema.define(version: 20150319174459) do
     t.integer  "booking_configuration_email", default: 0
     t.decimal  "comission_value",             default: 0.0,  null: false
     t.integer  "comission_option",            default: 0,    null: false
+    t.boolean  "online_booking",              default: true
   end
 
   add_index "service_providers", ["company_id"], name: "index_service_providers_on_company_id", using: :btree
@@ -666,6 +668,7 @@ ActiveRecord::Schema.define(version: 20150319174459) do
     t.boolean  "online_payable",      default: false
     t.decimal  "comission_value",     default: 0.0,   null: false
     t.integer  "comission_option",    default: 0,     null: false
+    t.boolean  "online_booking",      default: true
   end
 
   add_index "services", ["company_id"], name: "index_services_on_company_id", using: :btree

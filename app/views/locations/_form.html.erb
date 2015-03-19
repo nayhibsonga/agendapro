@@ -110,6 +110,18 @@
           </div>
         </div>
 
+        <% if current_user.company.company_setting.activate_workflow %>
+        <div class="form-group">
+          <div class="col-sm-offset-3 col-sm-9">
+            <div class="checkbox">
+              <label>
+                <%= f.check_box :online_booking %> Este local acepta reservas Online
+              </label>
+            </div>
+          </div>
+        </div>
+        <% end %>
+
         <%= f.hidden_field :latitude %>
         <%= f.hidden_field :longitude %>
         <div class="form-group">
