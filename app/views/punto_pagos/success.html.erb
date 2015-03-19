@@ -1,269 +1,282 @@
 <div class="main">
-	<br />
-    <section class="pricing_wrapper">
-        <div class="container">
-			<div class="well well-lg">
-				<div class="row">
-					<div class="col-md-7">
-						<hr>
-					<% if @success_page == "billing" or @success_page == "plan" %>
-						<% if @success_page == "billing" %>
-						<h4>Resumen de tu Pago</h4>
-						<dl class="dl-horizontal">
-							<dt>¿Qué plan pagaste?</dt>
-							<dd>Plan <%= Plan.find(@billing_log.plan_id).name %></dd>
-							<dt>¿Cuántos meses pagaste?</dt>
-							<dd><%= number_with_precision(@billing_log.amount, precision: 0) %></dd>
-							<dt>¿Cuánto costó?</dt>
-							<dd><%= number_to_currency(@billing_log.payment, unit: "CLP $", delimiter: ".")%></dd>
-							<dt>Código de la Transacción</dt>
-							<dd><%= @billing_log.trx_id %></dd>
-							<dt>¿Dudas o consultas?</dt>
-							<dd>Por favor envíanos un e-mail a contacto@agendapro.cl o llamanos al (+56 9) 5178 5898</dd>
-						</dl>
-						<% elsif @success_page == "plan" %>
-						<h4>Resumen de tu Pago</h4>
-						<dl class="dl-horizontal">
-							<dt>Plan anterior</dt>
-							<dd>Plan <%= Plan.find(@plan_log.prev_plan_id).name %></dd>
-							<dt>Plan Nuevo</dt>
-							<dd>Plan <%= Plan.find(@plan_log.new_plan_id).name %></dd>
-							<dt>¿Cuánto costó?</dt>
-							<dd><%= number_to_currency(PuntoPagosConfirmation.find_by_trx_id(@plan_log.trx_id).amount, unit: "CLP $", delimiter: ".")%></dd>
-							<dt>Código de la Transacción</dt>
-							<dd><%= @plan_log.trx_id %></dd>
-							<dt>¿Dudas o consultas?</dt>
-							<dd>Por favor envíanos un e-mail a contacto@agendapro.cl o llamanos al (+56 9) 5178 5898</dd>
-						</dl>
-						<% end %>
-						<hr>
-						<h4>Información de la Cuenta</h4>
-						<dl class="dl-horizontal">
-							<dt>Administrador</dt>
-							<dd><%= current_user.first_name + " " + current_user.last_name %></dd>
-							<dt>E-mail</dt>
-							<dd><%= current_user.email %></dd>
-							<dt>Teléfono</dt>
-							<dd><%= current_user.phone %></dd>
-							<dt>Estado de Cuenta</dt>
-							<dd><%= PaymentStatus.find(@company.payment_status_id).name %></dd>
-							<dt>Meses Restantes</dt>
-							<dd><%= @company.months_active_left.to_i %> (Incluyendo mes actual)</dd>
-							<% if @company.due_amount >= 0 %>
-					        <dt>Deuda Actual</dt>
-					        <dd><%= number_to_currency(@company.due_amount, {:unit => '$', :separator => ',', :delimiter => '.', :precision => 0})%> CLP</dd>
-					        <% else %>
-					        <dt>Saldo a Favor</dt>
-					        <dd><%= number_to_currency(-1*@company.due_amount, {:unit => '$', :separator => ',', :delimiter => '.', :precision => 0})%> CLP</dd>
-					        <% end %>
-						</dl>
-					<% else %>
+  	<section class="pricing_wrapper">
+    	<div class="container">
+      		<div class="row">
+        		<div class="col-md-7">
 
-						<% if @bookings.first.payed_booking.nil? || @bookings.first.payed_booking.punto_pagos_confirmation.nil? %>
+        			<div class="resumen-book">
 
-
-							<h4>Tu transferencia está siendo procesada.</h4>
-							<div style="margin-top: 20px; margin-left: 50px;">
-								<%= image_tag "ajax-loader.gif", :alt => "Loader" %>
-							</div>
-							<script type="text/javascript">
-								$(document).ready(function(){
-									setTimeout(function(){
-									   window.location.reload(1);
-									}, 3000);
-								});
-							</script>
-							<!--<h4>Espera unos segundos y haz click <%= link_to "aquí", '/punto_pagos/success/'+@token %> para confirmar el pago.</h4>-->
-
-						<% else %>
-							<h4>Tu transferencia se ha efectuado de manera satisfactoria.</h4>
-							<p style="margin-bottom: 20px;">
-								<span class="light-gray"><a href="<%= root_url(:host => @url) %>">Agendar nuevamente</span> &nbsp;<i class="fa fa-calendar-o fa-lg light-green"></i></a>
-							</p>
-							<div class="book-subheader dark-gray">Resumen de tu Reserva</div>
-							<dl class="dl-horizontal book-dl">
-								<dt class="dark-gray">¿Qué reservaste?</dt>
-								<dd class="light-gray">
-									<% @bookings.each do |booking| %>
-										<%= booking.service.name %><br />
+	        			<div class="row">
+		        			<div class="col-md-1">
+		        			</div>
+		        			<div class="col-md-10">
+								<% if @success_page == "billing" or @success_page == "plan" %>
+									<% if @success_page == "billing" %>
+									<h4>Resumen de tu Pago</h4>
+									<dl class="dl-horizontal">
+										<dt>¿Qué plan pagaste?</dt>
+										<dd>Plan <%= Plan.find(@billing_log.plan_id).name %></dd>
+										<dt>¿Cuántos meses pagaste?</dt>
+										<dd><%= number_with_precision(@billing_log.amount, precision: 0) %></dd>
+										<dt>¿Cuánto costó?</dt>
+										<dd><%= number_to_currency(@billing_log.payment, unit: "CLP $", delimiter: ".")%></dd>
+										<dt>Código de la Transacción</dt>
+										<dd><%= @billing_log.trx_id %></dd>
+										<dt>¿Dudas o consultas?</dt>
+										<dd>Por favor envíanos un e-mail a contacto@agendapro.cl o llamanos al (+56 9) 5178 5898</dd>
+									</dl>
+									<% elsif @success_page == "plan" %>
+									<h4>Resumen de tu Pago</h4>
+									<dl class="dl-horizontal">
+										<dt>Plan anterior</dt>
+										<dd>Plan <%= Plan.find(@plan_log.prev_plan_id).name %></dd>
+										<dt>Plan Nuevo</dt>
+										<dd>Plan <%= Plan.find(@plan_log.new_plan_id).name %></dd>
+										<dt>¿Cuánto costó?</dt>
+										<dd><%= number_to_currency(PuntoPagosConfirmation.find_by_trx_id(@plan_log.trx_id).amount, unit: "CLP $", delimiter: ".")%></dd>
+										<dt>Código de la Transacción</dt>
+										<dd><%= @plan_log.trx_id %></dd>
+										<dt>¿Dudas o consultas?</dt>
+										<dd>Por favor envíanos un e-mail a contacto@agendapro.cl o llamanos al (+56 9) 5178 5898</dd>
+									</dl>
 									<% end %>
-								</dd>
-								<dt class="dark-gray">¿Dónde?</dt>
-								<dd class="light-gray"><%= @bookings.first.location.address %>, <%= @bookings.first.location.district.name %></dd>
-								<dt class="dark-gray">¿Con quién?</dt>
-								<dd class="light-gray">
-									<% @bookings.each do |booking| %>
-										<%= booking.service_provider.public_name %><br />
+									<hr>
+									<h4>Información de la Cuenta</h4>
+									<dl class="dl-horizontal">
+										<dt>Administrador</dt>
+										<dd><%= current_user.first_name + " " + current_user.last_name %></dd>
+										<dt>E-mail</dt>
+										<dd><%= current_user.email %></dd>
+										<dt>Teléfono</dt>
+										<dd><%= current_user.phone %></dd>
+										<dt>Estado de Cuenta</dt>
+										<dd><%= PaymentStatus.find(@company.payment_status_id).name %></dd>
+										<dt>Meses Restantes</dt>
+										<dd><%= @company.months_active_left.to_i %> (Incluyendo mes actual)</dd>
+										<% if @company.due_amount >= 0 %>
+								        <dt>Deuda Actual</dt>
+								        <dd><%= number_to_currency(@company.due_amount, {:unit => '$', :separator => ',', :delimiter => '.', :precision => 0})%> CLP</dd>
+								        <% else %>
+								        <dt>Saldo a Favor</dt>
+								        <dd><%= number_to_currency(-1*@company.due_amount, {:unit => '$', :separator => ',', :delimiter => '.', :precision => 0})%> CLP</dd>
+								        <% end %>
+									</dl>
+								<% else %>
+
+									<% if @bookings.first.payed_booking.nil? || @bookings.first.payed_booking.punto_pagos_confirmation.nil? %>
+
+
+										<h4>Tu transferencia está siendo procesada.</h4>
+										<div style="margin-top: 20px; margin-left: 50px;">
+											<%= image_tag "ajax-loader.gif", :alt => "Loader" %>
+										</div>
+										<script type="text/javascript">
+											$(document).ready(function(){
+												setTimeout(function(){
+												   window.location.reload(1);
+												}, 3000);
+											});
+										</script>
+										<!--<h4>Espera unos segundos y haz click <%= link_to "aquí", '/punto_pagos/success/'+@token %> para confirmar el pago.</h4>-->
+
+									<% else %>
+										<div class="book-title">Tu transferencia se ha efectuado de manera satisfactoria.</div>
+										<!--<p style="margin-bottom: 20px;">
+											<span class="light-gray"><a href="<%= root_url(:host => @url) %>">Agendar nuevamente</span> &nbsp;<i class="fa fa-calendar-o fa-lg light-green"></i></a>
+										</p>-->
+										<p style="margin-bottom: 20px;">
+						                    <a href="<%= root_url(:host => @url) %>"><span class="light-gray">Agendar nuevamente</span> &nbsp;<i class="fa fa-calendar-o fa-lg light-green"></i></a>
+						                </p>
+										<div class="book-subheader dark-gray">Resumen de tu Reserva</div>
+										<dl class="dl-horizontal book-dl">
+											<dt class="dark-gray">¿Qué reservaste?</dt>
+											<dd class="light-gray">
+												<% @bookings.each do |booking| %>
+													<%= booking.service.name %><br />
+												<% end %>
+											</dd>
+											<dt class="dark-gray">¿Dónde?</dt>
+											<dd class="light-gray"><%= @bookings.first.location.address %>, <%= @bookings.first.location.district.name %></dd>
+											<dt class="dark-gray">¿Con quién?</dt>
+											<dd class="light-gray">
+												<% @bookings.each do |booking| %>
+													<%= booking.service_provider.public_name %><br />
+												<% end %>
+											</dd>
+											<dt class="dark-gray">¿Cuándo?</dt>
+											<dd class="light-gray">
+												<% @bookings.each do |booking| %>
+													<%= I18n.l(booking.start.to_datetime) %><br />
+												<% end %>
+											</dd>
+											<% if !@bookings.first.notes.empty? %>
+											<dt class="dark-gray">Notas</dt>
+											<dd class="light-gray"><%= @bookings.first.notes %></dd>
+											<% end %>
+										</dl>
+										<div class="book-subheader dark-gray">Comprobante de pago</div>
+										<dl class="dl-horizontal">
+											<dt>
+												Comercio:
+											</dt>
+											<dd>
+												<%= @bookings.first.location.company.name %>
+											</dd>
+											<dt>
+												Total a pagar:
+											</dt>
+											<dd>
+												<%= number_to_currency(@bookings.first.payed_booking.punto_pagos_confirmation.amount, unit: "CLP $", delimiter: ".") %>
+											</dd>
+											<dt>
+												Número de tarjeta:
+											</dt>
+											<dd>
+												**********<%= @bookings.first.payed_booking.punto_pagos_confirmation.card_number %>
+											</dd>
+											<dt>
+												Orden de compra:
+											</dt>
+											<dd>
+												<%= @bookings.first.payed_booking.punto_pagos_confirmation.operation_number %>
+											</dd>
+											<dt>
+												Código de autorización:
+											</dt>
+											<dd>
+												<%= @bookings.first.payed_booking.punto_pagos_confirmation.authorization_code %>
+											</dd>
+											<dt>
+												Fecha:
+											</dt>
+											<dd>
+												<%= @bookings.first.payed_booking.punto_pagos_confirmation.approvement_date %>
+											</dd>
+
+										</dl>
+
 									<% end %>
-								</dd>
-								<dt class="dark-gray">¿Cuándo?</dt>
-								<dd class="light-gray">
-									<% @bookings.each do |booking| %>
-										<%= I18n.l(booking.start.to_datetime) %><br />
-									<% end %>
-								</dd>
-								<% if !@bookings.first.notes.empty? %>
-								<dt class="dark-gray">Notas</dt>
-								<dd class="light-gray"><%= @bookings.first.notes %></dd>
+
 								<% end %>
-							</dl>
-							<div class="book-subheader dark-gray">Comprobante de pago</div>
-							<dl class="dl-horizontal">
-								<dt>
-									Comercio:
-								</dt>
-								<dd>
-									<%= @bookings.first.location.company.name %>
-								</dd>
-								<dt>
-									Total a pagar:
-								</dt>
-								<dd>
-									<%= number_to_currency(@bookings.first.payed_booking.punto_pagos_confirmation.amount, unit: "CLP $", delimiter: ".") %>
-								</dd>
-								<dt>
-									Número de tarjeta:
-								</dt>
-								<dd>
-									**********<%= @bookings.first.payed_booking.punto_pagos_confirmation.card_number %>
-								</dd>
-								<dt>
-									Orden de compra:
-								</dt>
-								<dd>
-									<%= @bookings.first.payed_booking.punto_pagos_confirmation.operation_number %>
-								</dd>
-								<dt>
-									Código de autorización:
-								</dt>
-								<dd>
-									<%= @bookings.first.payed_booking.punto_pagos_confirmation.authorization_code %>
-								</dd>
-								<dt>
-									Fecha:
-								</dt>
-								<dd>
-									<%= @bookings.first.payed_booking.punto_pagos_confirmation.approvement_date %>
-								</dd>
+							</div>
+							<div class="col-md-1">
+		        			</div>
+						</div>
 
-							</dl>
-
-						<% end %>
-
-					<% end %>
 					</div>
-					<% if @success_page == "billing" or @success_page == "plan" %>
+
+				</div>
+				<% if @success_page == "billing" or @success_page == "plan" %>
+					<div class="col-md-5">
+						<%= image_tag("backgrounds/icono_reserva2.png", :class => "center-block", size: "232x253") %>
+					</div>
+				<% else %>
+					<% if @bookings.first.payed_booking.nil? || @bookings.first.payed_booking.punto_pagos_confirmation.nil? %>
 						<div class="col-md-5">
 							<%= image_tag("backgrounds/icono_reserva2.png", :class => "center-block", size: "232x253") %>
 						</div>
 					<% else %>
-						<% if @bookings.first.payed_booking.nil? || @bookings.first.payed_booking.punto_pagos_confirmation.nil? %>
-							<div class="col-md-5">
+
+						<% if @try_register %>
+				            <div class="col-md-5">
+				              
+				              <div class="suggest-register" style="height: 100%;">
+				                <div class="row">
+				                  <div class="col-md-12">
+				                    <div class="suggest-register-header">
+				                      <span class="suggest-register-header1">
+				                        ¿Quieres recibir promociones y descuentos?
+				                      </span>
+				                      <span class="suggest-register-header2">
+				                        ¡Regístrate!
+				                      </span>
+				                    </div>
+
+				                    <%= form_for :user, :url => user_registration_url(:subdomain => false), :html => { class: 'form-horizontal', id: 'register-form' } do |f| %>
+				                      <%= f.hidden_field :role_id, :value => Role.where(:name => "Usuario Registrado").first.id %>
+				                      <%= f.hidden_field :first_name, :value => @user.first_name %>
+				                      <%= f.hidden_field :last_name, :value => @user.last_name %>
+				                      <%= f.hidden_field :phone, :value => @user.phone %>
+
+				                      <div class="row">
+				                        <div class="col-sm-2">
+				                          
+				                        </div>
+				                        <div class="col-sm-8">
+				                          <div class="has-feedback">
+				                            <span style="display: block; color: #505050;">Nombre</span>
+				                            <input type="text" id="user_full_name" name="user[full_name]" class="form-control" placeholder="Nombre completo (requerido)" value="<%= @user.first_name + ' ' + @user.last_name %>">
+				                            <span class="help-block"></span>
+				                            <span class="form-control-feedback"></span>
+				                          </div>
+				                        </div>
+				                        <div class="col-sm-2">
+				                        </div>
+				                      </div>
+
+				                      <div class="row">
+				                        <div class="col-sm-2">
+
+				                        </div>
+				                        <div class="col-sm-8">
+				                          <div class="has-feedback">
+				                            <span style="display: block; color: #505050;">Email</span>
+				                            <%= f.email_field :email, :required => true, :class => 'form-control', :value => @user.email, :placeholder => 'ejemplo@dominio.com (requerido)' %>
+				                            <span class="help-block"></span>
+				                            <span class="form-control-feedback"></span>
+				                          </div>
+				                        </div>
+				                        <div class="col-sm-2">
+				                        </div>
+				                      </div>
+
+				                      <div class="row">
+				                        <div class="col-sm-2">
+				                          <%= image_tag("backgrounds/flecha.png", :class => "suggest-register-password-img") %>
+				                        </div>
+				                        <div class="col-sm-8">
+
+				                          <div class="has-feedback">
+				                            <span style="display: block; color: #505050;">Contraseña</span>
+				                            <%= f.password_field :password, :required => true, :class => 'form-control', :placeholder => 'xxxxxxxx (requerido)' %>
+				                            <span class="help-block"></span>
+				                            <span class="form-control-feedback"></span>
+				                          </div>
+
+				                          <div class="has-feedback">
+				                            <span style="display: block; color: #505050;">Confirmar contraseña</span>
+				                            <%= f.password_field :password_confirmation, :required => true, :class => 'form-control', :placeholder => 'xxxxxxxx (requerido)' %>
+				                            <span class="help-block"></span>
+				                            <span class="form-control-feedback"></span>
+				                          </div>
+
+				                        </div>
+				                        <div class="col-sm-2">
+
+				                        </div>
+				                      </div>
+				        
+				                      <div class="form-group">
+				                        <div class="col-sm-offset-2 col-sm-8">
+				                          <%= f.submit 'Regístrate', :class => 'btn btn-orange pull-right' %>
+				                        </div>
+				                      </div>
+				                    <% end %>
+				                  </div>
+				                </div>
+				              </div>
+				              <div style="clear: both;"></div>
+				            </div>
+				          <% else %>
+				          	<div class="col-md-5">
 								<%= image_tag("backgrounds/icono_reserva2.png", :class => "center-block", size: "232x253") %>
 							</div>
-						<% else %>
-
-							<% if @try_register %>
-					            <div class="col-md-5">
-					              
-					              <div class="suggest-register" style="height: 100%;">
-					                <div class="row">
-					                  <div class="col-md-12">
-					                    <div class="suggest-register-header">
-					                      <span class="suggest-register-header1">
-					                        ¿Quieres recibir promociones y descuentos?
-					                      </span>
-					                      <span class="suggest-register-header2">
-					                        ¡Regístrate!
-					                      </span>
-					                    </div>
-
-					                    <%= form_for :user, :url => user_registration_url(:subdomain => false), :html => { class: 'form-horizontal', id: 'register-form' } do |f| %>
-					                      <%= f.hidden_field :role_id, :value => Role.where(:name => "Usuario Registrado").first.id %>
-					                      <%= f.hidden_field :first_name, :value => @user.first_name %>
-					                      <%= f.hidden_field :last_name, :value => @user.last_name %>
-					                      <%= f.hidden_field :phone, :value => @user.phone %>
-
-					                      <div class="row">
-					                        <div class="col-sm-2">
-					                          
-					                        </div>
-					                        <div class="col-sm-8">
-					                          <div class="has-feedback">
-					                            <span style="display: block; color: #505050;">Nombre</span>
-					                            <input type="text" id="user_full_name" name="user[full_name]" class="form-control" placeholder="Nombre completo (requerido)" value="<%= @user.first_name + ' ' + @user.last_name %>">
-					                            <span class="help-block"></span>
-					                            <span class="form-control-feedback"></span>
-					                          </div>
-					                        </div>
-					                        <div class="col-sm-2">
-					                        </div>
-					                      </div>
-
-					                      <div class="row">
-					                        <div class="col-sm-2">
-
-					                        </div>
-					                        <div class="col-sm-8">
-					                          <div class="has-feedback">
-					                            <span style="display: block; color: #505050;">Email</span>
-					                            <%= f.email_field :email, :required => true, :class => 'form-control', :value => @user.email, :placeholder => 'ejemplo@dominio.com (requerido)' %>
-					                            <span class="help-block"></span>
-					                            <span class="form-control-feedback"></span>
-					                          </div>
-					                        </div>
-					                        <div class="col-sm-2">
-					                        </div>
-					                      </div>
-
-					                      <div class="row">
-					                        <div class="col-sm-2">
-					                          <%= image_tag("backgrounds/flecha.png", :class => "suggest-register-password-img") %>
-					                        </div>
-					                        <div class="col-sm-8">
-
-					                          <div class="has-feedback">
-					                            <span style="display: block; color: #505050;">Contraseña</span>
-					                            <%= f.password_field :password, :required => true, :class => 'form-control', :placeholder => 'xxxxxxxx (requerido)' %>
-					                            <span class="help-block"></span>
-					                            <span class="form-control-feedback"></span>
-					                          </div>
-
-					                          <div class="has-feedback">
-					                            <span style="display: block; color: #505050;">Confirmar contraseña</span>
-					                            <%= f.password_field :password_confirmation, :required => true, :class => 'form-control', :placeholder => 'xxxxxxxx (requerido)' %>
-					                            <span class="help-block"></span>
-					                            <span class="form-control-feedback"></span>
-					                          </div>
-
-					                        </div>
-					                        <div class="col-sm-2">
-
-					                        </div>
-					                      </div>
-					        
-					                      <div class="form-group">
-					                        <div class="col-sm-offset-2 col-sm-8">
-					                          <%= f.submit 'Regístrate', :class => 'btn btn-orange pull-right' %>
-					                        </div>
-					                      </div>
-					                    <% end %>
-					                  </div>
-					                </div>
-					              </div>
-					              <div style="clear: both;"></div>
-					            </div>
-					          <% else %>
-					          	<div class="col-md-5">
-									<%= image_tag("backgrounds/icono_reserva2.png", :class => "center-block", size: "232x253") %>
-								</div>
-							<% end %>
 						<% end %>
 					<% end %>
-				</div>
-       		</div>
-        </div>
-    </section>
+				<% end %>
+       	  	</div>
+      	</div>
+  	</section>
 </div>
 
 <% content_for :scripts do %>
