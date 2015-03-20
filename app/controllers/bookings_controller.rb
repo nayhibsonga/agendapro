@@ -1211,27 +1211,53 @@ class BookingsController < ApplicationController
   end
 
   def book_error
+
+    @client = Client.find(params[:client])
+
+    @try_register = false
+
+    if !user_signed_in?
+      if !User.find_by_email(@client.email)
+        @try_register = true
+        @user = User.new
+        @user.email = @client.email
+        @user.first_name = @client.first_name
+        @user.last_name = @client.last_name
+        @user.phone = @client.phone
+      end
+    end
+
+
     @location = Location.find(params[:location])
     @company = @location.company
-    @client = Client.find(params[:client])
+    
     @tried_bookings = []
     if(params[:bookings])
       @tried_bookings = Booking.find(params[:bookings])
     end
     @payment = params[:payment]
-    @blocked_bookings = Booking.find(params[:blocked_bookings])
+    @blocks = Booking.find(params[:blocked_bookings])
     @errors = params[:errors]
     @bookings = []
+    @blocked_bookings = []
 
     #If payed, delete them all.
     if @payment == "payment"
-      @blocked_bookings.each do |booking|
+      @blocks.each do |booking|
+        booking.delete
+      end
+      @tried_bookings.each do |booking|
         booking.delete
       end
     else #Create fake bookings and delete the real ones
       @tried_bookings.each do |booking|
         fake_booking = Booking.new(booking.attributes.to_options)
         @bookings << fake_booking
+        booking.delete
+      end
+      @blocks.each do |booking|
+        fake_blocked = Booking.new(booking.attributes.to_options)
+        @blocked_bookings << fake_blocked
         booking.delete
       end
     end

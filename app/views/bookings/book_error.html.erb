@@ -175,6 +175,10 @@
                           <input type="hidden" name="origin" value="<%= @bookings.first.web_origin %>" />
                           <input type="hidden" name="client_id" value="<%= @bookings.first.client_id %>" />
                           <input type="hidden" name="comment" value="<%= @bookings.first.notes %>" />
+                          <input type="hidden" name="email" value="<%= @client.email %>" />
+                          <input type="hidden" name="firstName" value="<%= @client.first_name %>" />
+                          <input type="hidden" name="lastName" value="<%= @client.last_name %>" />
+                          <input type="hidden" name="phone" value="<%= @client.phone %>" />
 
                           <% if @bookings.first.client.address.nil? %>
                             <input type="hidden" name="address" value="" />
