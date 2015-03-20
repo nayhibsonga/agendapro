@@ -1162,6 +1162,13 @@ class BookingsController < ApplicationController
         #  b_booking.save
         #end
 
+        @bookings.each do |b|
+          if b.id.nil?
+            @errors << "Hubo un error al guardar un servicio."
+            proceed_with_payment = false
+          end
+        end
+
         #Check for errors before starting payment
         if @errors.length > 0 and @blocked_bookings.count > 0
           books = []
