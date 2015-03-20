@@ -1170,7 +1170,7 @@ class BookingsController < ApplicationController
               books << b
             end
           end
-          redirect_to book_error_path(bookings: books.where('id not null').map{|b| b.id}, location: @selectedLocation.id, client: client.id, errors: @errors, payment: "payment", blocked_bookings: @blocked_bookings)
+          redirect_to book_error_path(bookings: books.map{|b| b.id}, location: @selectedLocation.id, client: client.id, errors: @errors, payment: "payment", blocked_bookings: @blocked_bookings)
           return
         end
 
