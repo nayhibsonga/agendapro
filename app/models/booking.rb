@@ -29,18 +29,6 @@ class Booking < ActiveRecord::Base
 
 	after_create :send_booking_mail, :wait_for_payment
 	after_update :send_update_mail
-	before_save :check_bookings
-	before_create :check_bookings
-
-	def check_bookings
-		if !self.service.group_service && self.web_origin
-			if Booking.where(:service_id => self.service_id, :service_provider_id => self.service_provider_id, :start => self.start, :end => self.end).count > 0
-				false
-			end
-			true
-		end
-		true
-	end
 
 	def wait_for_payment
     	self.delay(run_at: 4.minutes.from_now).payment_timeout

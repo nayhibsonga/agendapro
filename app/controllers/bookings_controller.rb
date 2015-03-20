@@ -1078,7 +1078,7 @@ class BookingsController < ApplicationController
       end
 
       if block_it
-        @blocked_bookings << @booking
+        @blocked_bookings << @booking.service.name + " con " + @booking.service_provider.public_name + " el " + I18n.l(@booking.start.to_datetime)
       else
         @bookings << @booking
       end
@@ -1128,6 +1128,7 @@ class BookingsController < ApplicationController
           BookingHistory.create(booking_id: @booking.id, action: "Creada por Cliente", start: @booking.start, status_id: @booking.status_id, service_id: @booking.service_id, service_provider_id: @booking.service_provider_id, user_id: user)
         else
           @errors << @booking.errors.full_messages
+          @blocked_bookings << @booking.service.name + " con " + @booking.service_provider.public_name + " el " + I18n.l(@booking.start.to_datetime)
         end
       end
 
@@ -1157,13 +1158,19 @@ class BookingsController < ApplicationController
             proceed_with_payment = false
           end
         end
-        @blocked_bookings.each do |b_booking|
-          b_booking.save
-        end
+        #@blocked_bookings.each do |b_booking|
+        #  b_booking.save
+        #end
 
         #Check for errors before starting payment
         if @errors.length > 0 and @blocked_bookings.count > 0
-          redirect_to book_error_path(bookings: @bookings.map{|b| b.id}, location: @selectedLocation.id, client: client.id, errors: @errors, payment: "payment", blocked_bookings: @blocked_bookings.map{|b| b.id})
+          books = []
+          @bookings.each do |b|
+            if !b.id.nil?
+              books << b
+            end
+          end
+          redirect_to book_error_path(bookings: books.where('id not null').map{|b| b.id}, location: @selectedLocation.id, client: client.id, errors: @errors, payment: "payment", blocked_bookings: @blocked_bookings)
           return
         end
 
@@ -1175,6 +1182,9 @@ class BookingsController < ApplicationController
           redirect_to punto_pagos_failure_path and return
         end
       else
+        @bookings.each do |booking|
+            booking.delete
+        end
         puts resp.get_error
         redirect_to punto_pagos_failure_path and return
       end
@@ -1185,8 +1195,22 @@ class BookingsController < ApplicationController
       str_payment = "payment"
     end
 
+
+    @bookings.each do |b|
+      if b.id.nil?
+        @errors << "Hubo un error al guardar un servicio."
+      end
+    end
+
+
     if @errors.length > 0 and booking_data.length > 0
-      redirect_to book_error_path(bookings: @bookings.map{|b| b.id}, location: @selectedLocation.id, client: client.id, errors: @errors, payment: str_payment, blocked_bookings: @blocked_bookings.map{|b| b.id})
+      books = []
+      @bookings.each do |b|
+        if !b.id.nil?
+          books << b
+        end
+      end
+      redirect_to book_error_path(bookings: books.map{|b| b.id}, location: @selectedLocation.id, client: client.id, errors: @errors, payment: str_payment, blocked_bookings: @blocked_bookings)
       return
     end
 
@@ -1236,16 +1260,12 @@ class BookingsController < ApplicationController
       @tried_bookings = Booking.find(params[:bookings])
     end
     @payment = params[:payment]
-    @blocks = Booking.find(params[:blocked_bookings])
+    @blocked_bookings = params[:blocked_bookings]
     @errors = params[:errors]
     @bookings = []
-    @blocked_bookings = []
 
     #If payed, delete them all.
     if @payment == "payment"
-      @blocks.each do |booking|
-        booking.delete
-      end
       @tried_bookings.each do |booking|
         booking.delete
       end
@@ -1253,11 +1273,6 @@ class BookingsController < ApplicationController
       @tried_bookings.each do |booking|
         fake_booking = Booking.new(booking.attributes.to_options)
         @bookings << fake_booking
-        booking.delete
-      end
-      @blocks.each do |booking|
-        fake_blocked = Booking.new(booking.attributes.to_options)
-        @blocked_bookings << fake_blocked
         booking.delete
       end
     end
