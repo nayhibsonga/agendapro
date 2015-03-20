@@ -38,7 +38,8 @@ function loadServiceModal () {
 function loadService () {
   $('#serviceOptimizer').append('<p class="text-center"><i class="fa fa-spinner fa-spin fa-lg"></i></p>');
   var localId = $('#locals-selector').val();
-  $.getJSON('/local_services', {location: localId}, function (categorized_services) {
+  var admin_origin = true;
+  $.getJSON('/local_services', {location: localId, admin_origin: admin_origin}, function (categorized_services) {
     var selectData = '';
     $.each(categorized_services, function (key, service_hash) {
       var category = service_hash.category;
@@ -81,9 +82,10 @@ function loadStaff (selector) {
   var serviceId = $(selector).val();
   var localId = $('#locals-selector').val();
   var providerPreference = $('#providerPreference').data('provider-preference');
+  var admin_origin = true;
 
   var providerSelector = $(selector).closest('.form-group').find('select[name="providerOptimizerSelector"]');
-  $.getJSON('/providers_services', {id: serviceId, local: localId}, function (providers) {
+  $.getJSON('/providers_services', {id: serviceId, local: localId, admin_origin: admin_origin}, function (providers) {
     providerSelector.attr('disabled', true);
     providerSelector.empty();
 

@@ -114,6 +114,9 @@ class ServicesController < ApplicationController
   def get_providers
     service = Service.find(params[:id])
     providers = service.service_providers.where(:active => true, online_booking: true).where('location_id = ?', params[:local]).order(order: :asc)
+    if params[:admin_origin]
+      providers = service.service_providers.where(:active => true).where('location_id = ?', params[:local]).order(order: :asc)
+    end
     render :json => providers
   end
 
@@ -127,9 +130,17 @@ class ServicesController < ApplicationController
 
     location_resources = Location.find(params[:location]).resource_locations.pluck(:resource_id)
     service_providers = ServiceProvider.where(location_id: params[:location]).where(:active => true, online_booking: true)
+    if params[:admin_origin]
+      service_providers = ServiceProvider.where(location_id: params[:location]).where(:active => true)
+    end
 
     categories = ServiceCategory.where(:company_id => Location.find(params[:location]).company_id).order(order: :asc)
     services = Service.where(:active => true, online_booking: true, :id => ServiceStaff.where(service_provider_id: service_providers.pluck(:id)).pluck(:service_id)).order(order: :asc)
+
+    if params[:admin_origin]
+      services = Service.where(:active => true, :id => ServiceStaff.where(service_provider_id: service_providers.pluck(:id)).pluck(:service_id)).order(order: :asc)
+    end
+
     service_resources_unavailable = ServiceResource.where(service_id: services)
     if location_resources.any?
       if location_resources.length > 1
