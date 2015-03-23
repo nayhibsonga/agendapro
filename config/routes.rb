@@ -11,7 +11,7 @@ Agendapro::Application.routes.draw do
   post "mandrill/unsubscribe"
   get "mandrill/resuscribe"
 
-  devise_for :users, controllers: {registrations: 'registrations', :omniauth_callbacks: "omniauth_callbacks"}
+  devise_for :users, controllers: {registrations: 'registrations', omniauth_callbacks: "omniauth_callbacks"}
   resources :countries
   resources :regions
   resources :cities
