@@ -1,16 +1,10 @@
-<div class="container">
-	<div class="row">
-		<section class="hgroup">
-			<h2>Configuraciones</h2>
-			<h2 class="section_header">Acá podrás editar todos los parámetros de tu empresa, como el nombre, el logo, habilitar el mini-sitio, la dirección de envío de e-mails por defecto, la firma y varias opciones más. </h2>
-			<div class="line-breadcrumb">
-				<ul class="breadcrumb pull-right">
-						<li><%= link_to "Resumen", dashboard_path %> </li>
-						<li class="active">Configuraciones</li>
-				</ul>
-			</div>
-		</section>
-	</div>
+<div class="container-fluid background-grey">
+  <div class="row">
+    <div class="col-md-10 col-md-offset-2">
+      <h2 class="text-green">Configuraciones</h2>
+      <p>Acá podrás editar todos los parámetros de tu empresa, como el nombre, el logo, habilitar el mini-sitio, la dirección de envío de e-mails por defecto, la firma y varias opciones más.</p>
+    </div>
+  </div>
 </div>
 
 <%= render 'form' %>

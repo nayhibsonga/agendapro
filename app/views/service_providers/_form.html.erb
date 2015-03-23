@@ -73,12 +73,6 @@
               </div>
             </div>
           </div>
-          <div class="form-group">
-            <div class="actions col-md-offset-4 col-md-8">
-              <%= f.submit 'Guardar', :class => "btn btn-green buttonProvider"%>
-              <%= link_to 'Cancelar'.html_safe, service_providers_path, :class => "btn btn-white" %>
-            </div>
-          </div>
           <% if current_user.company.company_setting.activate_workflow %>
           <div class="form-group">
             <div class="col-md-offset-4 col-md-8">
@@ -90,6 +84,12 @@
             </div>
           </div>
           <% end %>
+          <div class="form-group">
+            <div class="actions col-md-offset-4 col-md-8">
+              <%= f.submit 'Guardar', :class => "btn btn-green buttonProvider"%>
+              <%= link_to 'Cancelar'.html_safe, service_providers_path, :class => "btn btn-white" %>
+            </div>
+          </div>
         <% end %>
       </div>
     </div>
