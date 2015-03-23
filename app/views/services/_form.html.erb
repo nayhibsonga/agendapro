@@ -130,6 +130,17 @@
                   </div>
                 </div>
               </div>
+              <% if current_user.company.company_setting.activate_workflow %>
+              <div class="form-group">
+                <div class="col-sm-offset-3 col-sm-9">
+                  <div class="checkbox">
+                    <label>
+                      <%= f.check_box :online_booking %> Este servicio se puede reservar Online
+                    </label>
+                  </div>
+                </div>
+              </div>
+              <% end %>
               <div class="form-group hidden">
                 <%= f.label :capacity, "Capacidad", class: "col-md-3 control-label" %>
                 <div class="col-md-9">

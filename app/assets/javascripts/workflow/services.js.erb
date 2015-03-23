@@ -133,6 +133,9 @@ function loadStep2 () {
 
 		$.getJSON('/providers_services', {id: serviceId, local: $('#selectedLocal').data('local').id}, function (providers) {
 			$('#staff-selector').empty();
+			$('#staff-selector').append(
+				'<li id="staff-selector-spinner" class="text-center" style="color: #ccc; display: none;"><i class="fa fa-spinner fa-spin fa-lg"></i></li>'
+			);
 			if ($('#providerPreference').data('provider-preference') != 1) {
 				if (providers.length > 1) {
 					$('#staff-selector').append(
@@ -697,7 +700,7 @@ function addNewService () {
 		}
 		else {
 			myAlert.showAlert(
-				'<h3>Servicio agregado.</h3>' + 
+				'<h3><i class="fa fa-check fa-green fa-lg"></i>&nbsp;&nbsp;Servicio agregado.</h3>' + 
 				'<p>Has agregado el servicio ' + actual_booking.service_name + ' con ' + actual_booking.provider_name + ', el día ' +
 				formattedTime(actual_booking.start) + '</p'
 			);

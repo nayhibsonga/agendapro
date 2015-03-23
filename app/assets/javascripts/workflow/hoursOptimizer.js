@@ -148,20 +148,21 @@ function loadHours () {
 
   $.getJSON('/optimizer_hours', { local: localId, serviceStaff: JSON.stringify(selects), resultsLength: resultsLength, start_date: start_date }, function (hours_array) {
     $('#selectHour > p').remove();
+    $("#hoursDetails").empty();
     var services_str = "";
     $.each(hours_array, function (pos, hour) {
       console.log(hour.bookings);
-      services_str = services_str + '<div class="optimizerDetail" pos="'+ pos +'" hidden><h3>Detalle</h3><br />';
+      services_str = services_str + '<div class="optimizerDetail" pos="'+ pos +'" hidden><div class="optimizerDetailHeader"><span class="odHeader">Detalle</span><span class="odDate">Día ' + hour.full_date + '</span></div><div class="optimizerDetailBody">';
       for(i = 0; i < hour.bookings.length; i++)
       {
-        services_str = services_str + '<label class="checkbox-inline"><p><i class="fa fa-check-circle-o fa-green"></i> ' + hour.bookings[i].service_name +
-            '<br />' +
+        services_str = services_str + '<label class="checkbox-inline"><p><i class="fa fa-check-circle-o fa-green"></i> <span style="color: #505050;">' + hour.bookings[i].service_name +
+            '</span><br />' +
             '<i class="fa fa-calendar-o fa-green"></i> ' + hour.bookings[i].start.split("T")[1].split("+")[0].split(":")[0] + ":" + hour.bookings[i].start.split("T")[1].split("+")[0].split(":")[1] + ' - ' + hour.bookings[i].end.split("T")[1].split("+")[0].split(":")[0] + ":" + hour.bookings[i].end.split("T")[1].split("+")[0].split(":")[1] +
             '<br />' + 
             '<i class="fa fa-user fa-green"></i> ' + hour.bookings[i].provider_name +
             '</p></label>';
       }
-      services_str = services_str + "</div>";
+      services_str = services_str + "</div></div>";
       $('#selectHour').append(
         '<label class="checkbox-inline">' +
           '<input type="radio" name="hoursRadio" value="' + pos + '">' +
@@ -192,11 +193,17 @@ function loadHours () {
           }
         });
         $('.optimizerDetail[pos="'+pos_num+'"]').toggle();
+        var elem = document.getElementById('selectHour');
+        elem.scrollTop = elem.scrollHeight;
       });
     }
+    var elem = document.getElementById('selectHour');
+    elem.scrollTop = elem.scrollHeight;
   }).always(function () {
     $('#addButton').prop('disabled', false);
   });
+  var elem = document.getElementById('selectHour');
+  elem.scrollTop = elem.scrollHeight;
 }
 
 function userData () {

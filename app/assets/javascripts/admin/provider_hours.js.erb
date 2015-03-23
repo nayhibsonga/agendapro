@@ -297,6 +297,7 @@ function saveProvider(method,extraURL) {
 		"service_ids": enabledServices,
 		"provider_times_attributes": provider_times,
 		"booking_configuration_email": $('#service_provider_booking_configuration_email').val(),
+    	"online_booking": $('#service_provider_online_booking').prop('checked')
 	};
 
 	$.ajax({

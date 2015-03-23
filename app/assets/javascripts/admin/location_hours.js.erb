@@ -292,7 +292,8 @@ function locJSON() {
     "email": $('input[name="location[email]"]').val(),
     "notification": $('#location_notification').prop('checked'),
     "company_id": $('#location_company_id').val(),
-    "booking_configuration_email": $('#location_booking_configuration_email').val()
+    "booking_configuration_email": $('#location_booking_configuration_email').val(),
+    "online_booking": $('#location_online_booking').prop('checked')
   };
   return locationJSON;
 }

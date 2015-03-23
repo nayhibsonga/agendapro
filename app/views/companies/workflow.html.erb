@@ -6,28 +6,30 @@
         <h3 class="modal-title" id="optimizerTitle" style="line-height: 1.1;"></h3>
       </div>
       <div class="modal-body">
-        <div id="pickerSelectDate">
-          <div class="row">
-            <div class="col-xs-3" style="text-align: right; font-weight: bold;">
-              Inicio
-            </div>
-            <div class="col-xs-9">
-              <input id="initialPickerDate" value="<%= I18n.l(DateTime.now.to_date) %>" hidden />
-              <span id="pickerSelected" style="color: #949292;"><%= I18n.l(DateTime.now.to_date) %></span>&nbsp;&nbsp;
-              <span class="optimizer-date-span" style="float: right;">
-                Seleccionar nuevo inicio&nbsp;<i class="fa fa-calendar-o"></i>
-                <input type="text" class="form-control" name="optimizerDateSelector" id="optimizerDateSelector" class="datepicker" />
-              </span>
+        <div id="optimizerFirst">
+          <div id="pickerSelectDate">
+            <div class="row">
+              <div class="col-xs-3" style="text-align: right; font-weight: bold;">
+                Inicio
+              </div>
+              <div class="col-xs-9">
+                <input id="initialPickerDate" value="<%= I18n.l(DateTime.now.to_date) %>" hidden />
+                <span id="pickerSelected" style="color: #949292;"><%= I18n.l(DateTime.now.to_date) %></span>&nbsp;&nbsp;
+                <span class="optimizer-date-span" style="float: right;">
+                  Seleccionar nuevo inicio&nbsp;<i class="fa fa-calendar-o"></i>
+                  <input type="text" class="form-control" name="optimizerDateSelector" id="optimizerDateSelector" class="datepicker" />
+                </span>
+              </div>
             </div>
           </div>
+          <form class="form-horizontal" id="serviceOptimizer"></form>
+          <div id="selectHour"></div>
+          <%= form_tag '/optimizer_data', method: 'post', role: 'form', class: 'hidden', id: 'userData' do %>
+            <input type="hidden" id="local" name="local" value="<%= @location.id %>">
+            <input type="hidden" class="bookings" name="bookings">
+          <% end %>
         </div>
-        <form class="form-horizontal" id="serviceOptimizer"></form>
-        <div id="selectHour"></div>
         <div id="hoursDetails"></div>
-        <%= form_tag '/optimizer_data', method: 'post', role: 'form', class: 'hidden', id: 'userData' do %>
-          <input type="hidden" id="local" name="local" value="<%= @location.id %>">
-          <input type="hidden" class="bookings" name="bookings">
-        <% end %>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-green pull-left" id="addButton"><i class="fa fa-plus"></i>&nbsp;<span></span></button>
@@ -205,7 +207,7 @@
                         <b>O elige varios servicios y te propondremos los mejores horarios:&nbsp;&nbsp;</b>
                       </td>
                       <td style:"text-align:right;">
-                        <button type="button" class="btn btn-green" data-toggle="modal" data-target="#hoursOptimizer" style="background: #22c488; color: #ffffff;">Elegir servicios</button>
+                        <button type="button" class="btn btn-green" data-toggle="modal" data-target="#hoursOptimizer" style="background: #22c488; color: #ffffff; font-size: 20px;">Elegir servicios</button>
                       </td>
                     </tr>
                     <tr>
@@ -298,11 +300,12 @@
                   <a class="prev2 prev-btn"><i class="fa fa-chevron-left prev-arrow"></i> Anterior</a>
                 </div>
               </div>
-              <div class="col-sm-6">
+              <div class="col-sm-5">
                 <p class="p-label"><span class="wf-label label-available">&nbsp;</span> Disponible<span class="wf-label label-past">&nbsp;</span> No Disponible<span class="wf-label label-unavailable">&nbsp;</span> Ocupado</p>
-                <a class="btn btn-large btn-green pull-right" style="padding: 9px 12px; margin-right: 10px; width: 160px;" onclick="addNewService()"><i class="fa fa-plus"></i> Agregar Servicio</a>
+                
               </div>
-              <div class="col-sm-3">
+              <div class="col-sm-4">
+                <a class="btn btn-large btn-green btn-add-service" style="padding: 5px 12px; margin-right: 10px; width: 160px; font-size: 20px;" onclick="addNewService()"><i class="fa fa-plus"></i> Agregar Servicio</a>
                 <div class="btn-change btn-next">
                   <a class="next2 next-btn">Siguiente <i class="fa fa-chevron-right next-arrow"></i></a>
                 </div>

@@ -64,7 +64,7 @@ function saveBooking (typeURL, booking_id) {
       window.location.href = "/bookings/"
     },
     error: function(xhr){
-      var errors = $.parseJSON(xhr.responseText).errors;
+      var errors = $.parseJSON(xhr.responseText).errors[0].errors;
       var errores = 'Error\n';
       for (i in errors) {
         errores += '*' + errors[i] + '\n';

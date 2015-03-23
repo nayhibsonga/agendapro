@@ -1,3 +1,4 @@
+var ajaxRequest;
 function Calendar (source, getData) {
 
 	// Default Values
@@ -70,8 +71,13 @@ function Calendar (source, getData) {
 	// Generate Week
 	var available_hour;
 	var generateWeek = function (monday) {
+		if (ajaxRequest != null) {
+			ajaxRequest.abort();
+		}
 		sources.data.date = formatDate(monday);
-		$.getJSON(sources.source, sources.data, function (data, status) {
+			$('#staff-selector > .list-group-item').hide();
+			$('#staff-selector-spinner').show();
+		ajaxRequest = $.getJSON(sources.source, sources.data, function (data, status) {
 			available_hour = false;
 
 			$(".days-row").empty();
@@ -128,6 +134,8 @@ function Calendar (source, getData) {
 			$.event.trigger({
 				type: 'calendarBuilded'
 			});
+			$('#staff-selector-spinner').hide();
+			$('#staff-selector > .list-group-item').show();
 		});
 	}
 

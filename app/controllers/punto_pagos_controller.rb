@@ -186,6 +186,22 @@ class PuntoPagosController < ApplicationController
           @success_page = "booking"
           host = request.host_with_port
           @url = @bookings.first.location.company.web_address + '.' + host[host.index(request.domain)..host.length]
+
+          @try_register = false
+          client = @bookings.first.client
+          @company = @bookings.first.location.company
+
+          if !user_signed_in?
+            if !User.find_by_email(client.email)
+              @try_register = true
+              @user = User.new
+              @user.email = client.email
+              @user.first_name = client.first_name
+              @user.last_name = client.last_name
+              @user.phone = client.phone
+            end
+          end
+          render layout: "workflow"
         else
           #Something (lie a booking) was deleted, should redirect to failure
           redirect_to action: 'failure', token: params[:token]
@@ -276,6 +292,7 @@ class PuntoPagosController < ApplicationController
         #Enviar comprobantes de pago
         BookingMailer.book_payment_mail(payed_booking)
         BookingMailer.book_payment_company_mail(payed_booking)
+        BookingMailer.book_payment_agendapro_mail(payed_booking)
         
       end
     end
