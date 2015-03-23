@@ -591,7 +591,7 @@ class CompaniesController < ApplicationController
 			redirect_to root_url(:host => domain)
 			return
 		end
-		@locations = Location.where(:active => true).where(company_id: @company.id).where(id: ServiceProvider.where(active: true, company_id: @company.id).joins(:provider_times).joins(:services).where("services.id" => Service.where(active: true, company_id: @company.id).pluck(:id)).pluck(:location_id).uniq).joins(:location_times).uniq.order(order: :asc)
+		@locations = Location.where(:active => true, online_booking: true).where(company_id: @company.id).where(id: ServiceProvider.where(active: true, company_id: @company.id, online_booking: true).joins(:provider_times).joins(:services).where("services.id" => Service.where(active: true, company_id: @company.id, online_booking: true).pluck(:id)).pluck(:location_id).uniq).joins(:location_times).uniq.order(order: :asc)
 
 		# => Domain parser
 		host = request.host_with_port

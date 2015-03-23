@@ -72,6 +72,17 @@
 						</div>
 					</div>
 				</div>
+				<% if current_user.company.company_setting.activate_workflow %>
+	              <div class="form-group">
+	                <div class="col-sm-offset-4 col-sm-8">
+	                  <div class="checkbox">
+	                    <label>
+	                      <%= f.check_box :online_booking %> Este prestador acepta reservas Online
+	                    </label>
+	                  </div>
+	                </div>
+	              </div>
+	              <% end %>
 
 				<div class="form-group">
 					<div class="actions col-sm-offset-4 col-sm-8">

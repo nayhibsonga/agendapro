@@ -45,10 +45,10 @@ class SearchsController < ApplicationController
 
 			#EMPRESAS CON DUEÑO
 
-			query_company_name = Location.search_company_name(normalized_search).where(id: ServiceProvider.where(active: true).pluck('location_id')).where(company_id: Company.where(:active => true, :owned => true).where(id: CompanySetting.where(:activate_search => true, :activate_workflow => true).pluck('company_id'))).where(:active => true).where('sqrt((latitude - ' + lat.to_s + ')^2 + (longitude - ' + long.to_s + ')^2) < 0.25')
+			query_company_name = Location.search_company_name(normalized_search).where(online_booking: true, id: ServiceProvider.where(active: true, online_booking: true).pluck('location_id')).where(company_id: Company.where(:active => true, :owned => true).where(id: CompanySetting.where(:activate_search => true, :activate_workflow => true).pluck('company_id'))).where(:active => true).where('sqrt((latitude - ' + lat.to_s + ')^2 + (longitude - ' + long.to_s + ')^2) < 0.25')
 
 			#rest
-			query_rest = Location.search(normalized_search).where(id: ServiceProvider.where(active: true).pluck('location_id')).where(company_id: Company.where(:active => true, :owned => true).where(id: CompanySetting.where(:activate_search => true, :activate_workflow => true).pluck('company_id'))).where(:active => true).where('sqrt((latitude - ' + lat.to_s + ')^2 + (longitude - ' + long.to_s + ')^2) < 0.25') - query_company_name
+			query_rest = Location.search(normalized_search).where(online_booking: true, id: ServiceProvider.where(active: true, online_booking: true).pluck('location_id')).where(company_id: Company.where(:active => true, :owned => true).where(id: CompanySetting.where(:activate_search => true, :activate_workflow => true).pluck('company_id'))).where(:active => true).where('sqrt((latitude - ' + lat.to_s + ')^2 + (longitude - ' + long.to_s + ')^2) < 0.25') - query_company_name
 
 
 			query = query_company_name + query_rest
@@ -98,9 +98,9 @@ class SearchsController < ApplicationController
 
 			#EMPRESAS SIN DUEÑO
 
-			unowned_query_company_names = Location.search_company_name(normalized_search).where(id: ServiceProvider.where(active: true).pluck('location_id')).where(company_id: Company.where(:active => true, :owned => false).where(id: CompanySetting.where(:activate_search => true, :activate_workflow => true).pluck('company_id'))).where(:active => true).where('sqrt((latitude - ' + lat.to_s + ')^2 + (longitude - ' + long.to_s + ')^2) < 0.25')
+			unowned_query_company_names = Location.search_company_name(normalized_search).where(online_booking: true, id: ServiceProvider.where(active: true, online_booking: true).pluck('location_id')).where(company_id: Company.where(:active => true, :owned => false).where(id: CompanySetting.where(:activate_search => true, :activate_workflow => true).pluck('company_id'))).where(:active => true).where('sqrt((latitude - ' + lat.to_s + ')^2 + (longitude - ' + long.to_s + ')^2) < 0.25')
 
-			unowned_query_rest = Location.search(normalized_search).where(id: ServiceProvider.where(active: true).pluck('location_id')).where(company_id: Company.where(:active => true, :owned => false).where(id: CompanySetting.where(:activate_search => true, :activate_workflow => true).pluck('company_id'))).where(:active => true).where('sqrt((latitude - ' + lat.to_s + ')^2 + (longitude - ' + long.to_s + ')^2) < 0.25') - unowned_query_company_names
+			unowned_query_rest = Location.search(normalized_search).where(online_booking: true, id: ServiceProvider.where(active: true, online_booking: true).pluck('location_id')).where(company_id: Company.where(:active => true, :owned => false).where(id: CompanySetting.where(:activate_search => true, :activate_workflow => true).pluck('company_id'))).where(:active => true).where('sqrt((latitude - ' + lat.to_s + ')^2 + (longitude - ' + long.to_s + ')^2) < 0.25') - unowned_query_company_names
 
 
 			unowned_query = unowned_query_company_names + unowned_query_rest
@@ -360,7 +360,7 @@ class SearchsController < ApplicationController
 				providers_scores = Hash.new
 
 				#Obtenemos los scores de services y service_providers de la compañía de antemano
-				service_providers = ServiceProvider.where(company_id: company.id, active: true)
+				service_providers = ServiceProvider.where(company_id: company.id, active: true, online_booking: true)
 				service_providers.each do |provider|
 
 
@@ -398,7 +398,7 @@ class SearchsController < ApplicationController
 
 
 				#Iteramos sobre los locales de la compañía
-				elegible_locations = Location.where(:active => true, :company_id => company.id).where(id: ServiceProvider.where(active: true, company_id: company.id).joins(:provider_times).joins(:services).where("services.id" => Service.where(active: true, company_id: company.id).pluck(:id)).pluck(:location_id).uniq).joins(:location_times).uniq.order(order: :asc)
+				elegible_locations = Location.where(:active => true, online_booking: true, :company_id => company.id).where(id: ServiceProvider.where(active: true, online_booking: true, company_id: company.id).joins(:provider_times).joins(:services).where("services.id" => Service.where(active: true, online_booking: true, company_id: company.id).pluck(:id)).pluck(:location_id).uniq).joins(:location_times).uniq.order(order: :asc)
 				locations = elegible_locations.where('sqrt((latitude - ' + lat.to_s + ')^2 + (longitude - ' + long.to_s + ')^2) < 0.25')
 
 				locations.each do |location|
@@ -427,7 +427,7 @@ class SearchsController < ApplicationController
 					end
 
 					#Providers scores
-					providers_ids = ServiceProvider.where(location_id: location.id, :active => true).pluck('id')
+					providers_ids = ServiceProvider.where(location_id: location.id, :active => true, online_booking: true).pluck('id')
 					loc_providers_scores = Array.new
 					providers_ids.each do |pid|
 						loc_providers_scores << providers_scores[pid]
@@ -579,7 +579,7 @@ class SearchsController < ApplicationController
 				providers_scores = Hash.new
 
 				#Obtenemos los scores de services y service_providers de la compañía de antemano
-				service_providers = ServiceProvider.where(company_id: company.id, active: true)
+				service_providers = ServiceProvider.where(company_id: company.id, active: true, online_booking: true)
 				service_providers.each do |provider|
 
 
@@ -616,7 +616,7 @@ class SearchsController < ApplicationController
 
 
 				#Iteramos sobre los locales de la compañía
-				elegible_locations = Location.where(:active => true, :company_id => company.id).where(id: ServiceProvider.where(active: true, company_id: company.id).joins(:provider_times).joins(:services).where("services.id" => Service.where(active: true, company_id: company.id).pluck(:id)).pluck(:location_id).uniq).joins(:location_times).uniq.order(order: :asc)
+				elegible_locations = Location.where(:active => true, online_booking: true, :company_id => company.id).where(id: ServiceProvider.where(active: true, online_booking: true, company_id: company.id).joins(:provider_times).joins(:services).where("services.id" => Service.where(active: true, online_booking: true, company_id: company.id).pluck(:id)).pluck(:location_id).uniq).joins(:location_times).uniq.order(order: :asc)
 				locations = elegible_locations.where('sqrt((latitude - ' + lat.to_s + ')^2 + (longitude - ' + long.to_s + ')^2) < 0.25')
 
 				locations.each do |location|
@@ -645,7 +645,7 @@ class SearchsController < ApplicationController
 					end
 
 					#Providers scores
-					providers_ids = ServiceProvider.where(location_id: location.id, :active => true).pluck('id')
+					providers_ids = ServiceProvider.where(location_id: location.id, :active => true, online_booking: true).pluck('id')
 					loc_providers_scores = Array.new
 					providers_ids.each do |pid|
 						loc_providers_scores << providers_scores[pid]

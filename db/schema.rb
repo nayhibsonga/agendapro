@@ -11,7 +11,8 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150319161612) do
+ActiveRecord::Schema.define(version: 20150319184051) do
+
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -222,7 +223,7 @@ ActiveRecord::Schema.define(version: 20150319161612) do
     t.integer  "before_booking",              default: 3,                     null: false
     t.integer  "after_booking",               default: 3,                     null: false
     t.integer  "before_edit_booking",         default: 3
-    t.boolean  "activate_search",             default: true
+    t.boolean  "activate_search",             default: false
     t.boolean  "activate_workflow",           default: true
     t.boolean  "client_exclusive",            default: false
     t.integer  "provider_preference"
@@ -380,6 +381,7 @@ ActiveRecord::Schema.define(version: 20150319161612) do
     t.boolean  "notification",                default: false
     t.integer  "booking_configuration_email", default: 0
     t.string   "second_address"
+    t.boolean  "online_booking",              default: true
   end
 
   add_index "locations", ["company_id"], name: "index_locations_on_company_id", using: :btree
@@ -605,6 +607,7 @@ ActiveRecord::Schema.define(version: 20150319161612) do
     t.integer  "order",                       default: 0
     t.integer  "block_length",                default: 30
     t.integer  "booking_configuration_email", default: 0
+    t.boolean  "online_booking",              default: true
   end
 
   add_index "service_providers", ["company_id"], name: "index_service_providers_on_company_id", using: :btree
@@ -661,6 +664,7 @@ ActiveRecord::Schema.define(version: 20150319161612) do
     t.boolean  "online_payable",      default: false
     t.decimal  "comission_value",     default: 0.0,   null: false
     t.integer  "comission_option",    default: 0,     null: false
+    t.boolean  "online_booking",      default: true
   end
 
   add_index "services", ["company_id"], name: "index_services_on_company_id", using: :btree
