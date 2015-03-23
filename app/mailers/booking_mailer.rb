@@ -1058,6 +1058,94 @@ class BookingMailer < ActionMailer::Base
 			raise
 	end
 
+	#Correo de comprobante de pago para AgendaPro
+	def book_payment_agendapro_mail(payed_booking)
+		mandrill = Mandrill::API.new Agendapro::Application.config.api_key
+		# => Template
+		template_name = 'Payment'
+		template_content = []
+
+		owner = User.find_by_company_id(payed_booking.bookings.first.location.company.id)
+		client = payed_booking.bookings.first.client
+
+		# => Message
+		message = {
+			:from_email => 'no-reply@agendapro.cl',
+			:from_name => payed_booking.bookings.first.service_provider.company.name,
+			:subject => 'Comprobante de pago en Agendapro',
+			:to => [
+				{
+					:email => "nrossi@agendapro.cl",
+					:type => 'to'
+				}
+			],
+			:headers => { 'Reply-To' => 'contacto@agendapro.cl' },
+			:global_merge_vars => [
+				{
+					:name => 'COMPANYNAME',
+					:content => payed_booking.bookings.first.location.company.name
+				},
+				{
+					:name => 'PRICE',
+					:content => payed_booking.punto_pagos_confirmation.amount
+				},
+				{
+					:name => 'CARDNUMBER',
+					:content => payed_booking.punto_pagos_confirmation.card_number
+				},
+				{
+					:name => 'PAYORDER',
+					:content => payed_booking.punto_pagos_confirmation.operation_number
+				},
+				{
+					:name => 'AUTHNUMBER',
+					:content => payed_booking.punto_pagos_confirmation.authorization_code
+				},
+				{
+					:name => 'DATE',
+					:content => payed_booking.punto_pagos_confirmation.approvement_date
+				},
+				{
+					:name => 'EDIT',
+					:content => booking_edit_url(:confirmation_code => payed_booking.bookings.first.confirmation_code)
+				},
+				{
+					:name => 'CANCEL',
+					:content => booking_cancel_url(:confirmation_code => payed_booking.bookings.first.confirmation_code)
+				},
+				{
+					:name => 'CLIENT',
+					:content => client.first_name + ' ' + client.last_name
+				}
+
+			],
+			:tags => ['payment'],
+			:images => [
+				{
+					:type => 'image/png',
+					:name => 'company_img.jpg',
+					:content => Base64.encode64(File.read('app/assets/ico/Iso_Pro_Color.png'))
+				},
+				{
+					:type => 'image/png',
+					:name => 'LOGO',
+					:content => Base64.encode64(File.read('app/assets/images/logos/logodoble2.png'))
+				}
+			]
+		}
+
+		# => Metadata
+		async = false
+		send_at = DateTime.now
+
+		# => Send mail
+		result = mandrill.messages.send_template template_name, template_content, message, async, send_at
+
+		rescue Mandrill::Error => e
+			puts "A mandrill error occurred: #{e.class} - #{e.message}"
+		raise
+	end
+
 	#Comprobante de pago para la empresa
 	def book_payment_company_mail (payed_booking)
 		mandrill = Mandrill::API.new Agendapro::Application.config.api_key

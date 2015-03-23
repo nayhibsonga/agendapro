@@ -175,6 +175,10 @@
                           <input type="hidden" name="origin" value="<%= @bookings.first.web_origin %>" />
                           <input type="hidden" name="client_id" value="<%= @bookings.first.client_id %>" />
                           <input type="hidden" name="comment" value="<%= @bookings.first.notes %>" />
+                          <input type="hidden" name="email" value="<%= @client.email %>" />
+                          <input type="hidden" name="firstName" value="<%= @client.first_name %>" />
+                          <input type="hidden" name="lastName" value="<%= @client.last_name %>" />
+                          <input type="hidden" name="phone" value="<%= @client.phone %>" />
 
                           <% if @bookings.first.client.address.nil? %>
                             <input type="hidden" name="address" value="" />
@@ -211,7 +215,7 @@
                     <% if @bookings.count > 0 %>
                       <%= link_to '<button type="submit" data-loading-text="Cargando..." class="cancelBtn">Cancelar</button>'.html_safe, controller: 'bookings', action: 'transfer_error_cancel', company_id: @bookings.first.location.company.id %>
                     <% else %>
-                      <%= link_to '<button type="submit" data-loading-text="Cargando..." class="cancelBtn">Cancelar</button>'.html_safe, controller: 'bookings', action: 'transfer_error_cancel', company_id: @blocked_bookings.first.location.company.id %>
+                      <%= link_to '<button type="submit" data-loading-text="Cargando..." class="cancelBtn">Cancelar</button>'.html_safe, controller: 'bookings', action: 'transfer_error_cancel', company_id: @company.id %>
                     <% end %>
                     </div>
                   </div>
@@ -253,26 +257,7 @@
                     <dt class="dark-gray">Servicios</dt>
                     <dd class="light-gray">
                       <% @blocked_bookings.each do |blocked| %>
-                        <p><%= blocked.service.name %></p>
-                      <% end %>
-                    </dd>
-
-                    <dt class="dark-gray">Lugar</dt>
-                    <dd class="light-gray">
-                      <%= @location.address %>, <%= @location.district.name %>
-                    </dd>
-
-                    <dt class="dark-gray">Prestadores</dt>
-                    <dd class="light-gray">
-                      <% @blocked_bookings.each do |blocked| %>
-                        <p><%= blocked.service_provider.public_name %></p>
-                      <% end %>
-                    </dd>
-
-                    <dt class="dark-gray">Horarios</dt>
-                    <dd class="light-gray">
-                      <% @blocked_bookings.each do |blocked| %>
-                        <p><%= I18n.l(blocked.start.to_datetime) %></p>
+                        <p><%= blocked %></p>
                       <% end %>
                     </dd>
 
