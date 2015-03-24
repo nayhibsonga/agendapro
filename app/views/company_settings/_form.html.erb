@@ -14,7 +14,6 @@
         <% if current_user.company.company_setting.deal_activate %>
         <li role="presentation"><a href="#deals" role="tab" data-toggle="pill" data-title="" data-description="">Convenios</a></li>
         <% end %>
-        <li role="presentation"><a href="#link" role="tab" data-toggle="pill" data-title="" data-description="">Link AgendaPro</a></li>
       </ul>
     </div>
     <!-- Panels -->
@@ -77,6 +76,7 @@
                 </div>
               </div>
             </div>
+            <% if current_user.company.company_setting.online_payment_capable %>
             <div class="col-md-6">
               <div class="media">
                 <div class="media-left">
@@ -87,7 +87,22 @@
                 </div>
               </div>
             </div>
+            <% end %>
           </div>
+          <% if current_user.company.company_setting.deal_activate %>
+          <div class="row">
+            <div class="col-md-6">
+              <div class="media">
+                <div class="media-left">
+                  <img class="media-object media-image" src="..." alt="...">
+                </div>
+                <div class="media-body">
+                  <span class="text-green">Convenios:</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <% end %>
         </div>
         <!-- Company -->
         <div class="tab-pane" id="company">
@@ -438,7 +453,68 @@
             </div>
           </div>
         </div>
+        <!-- Embedded -->
+        <div class="tab-pane" id="embedded">
+          <div class="row">
+            <div class="col-md-12">
+              <h3 class="text-green">AgendaPro App (pestaña) para tu página de Facebook:</h3>
+            </div>
+            <div class="col-md-6">
+              <div class="circle-list">
+                <span>1</span>
+                <p>Haz click en el siguiente link: <a href="https://www.facebook.com/dialog/pagetab?api_key=739120539456506&next=https%3A%2F%2Fwww.facebook.com%2F" target="_blank">App AgendaPro para Facebook</a></p>
+              </div>
+              Asegúrate que hayas iniciado sesión en Facebook como administrador de la página (la cuenta personal de alguien que puede editar tu página) a la que le quieres agregar reservas en línea. No debes iniciar sesión "usar como" tú página.
+              <div class="circle-list">
+                <span>2</span>
+                <p>Elige la página a la que quieres agregar reservas en línea</p>
+              </div>
+              <div class="circle-list">
+                <span>3</span>
+                <p>En tu página de Facebook, busca el botón <mark>“Más”</mark> y selecciona <mark>“Administrar Pestaña”</mark></p>
+              </div>
+              <div class="circle-list">
+                <span>4</span>
+                <p>Arrastra la pestaña <mark>“¡Reserva Online!”</mark> a la posición que deseas (recomendamos entre las primeras 4 posiciones)</p>
+              </div>
+              <div class="circle-list">
+                <span>5</span>
+                <p>En la misma página, ahora selecciona la pestaña <mark>“¡Reserva Online!”</mark></p>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="circle-list">
+                <span>6</span>
+                <p>Pega el siguiente código en el espacio de campo de texto <mark>"Código AgendaPro"</mark>, y haz click en <mark>"Guardar"</mark></p>
+              </div>
+              <pre class="pre-scrollable"><%= (@company.id * 123456).to_s(30) %></pre>
+              <div class="circle-list">
+                <span>7</span>
+                <p>¡Ya estás listo para que tus clientes reserven tus servicios a través de <mark>Facebook</mark>!</p>
+              </div>
+              <h3 class="text-green">¿Quieres desactivar las reservas en línea por Facebook?</h3>
+              <p>Para hacerlo debes desactivar las reservas por Facebook apretando el siquiente botón "Desactivar Facebook", y luego debes eliminar la pestaña de tu página de Facebook manualmente, desde las configuraciones de esta.</p>
+              <p><%= link_to "Desactivar Facebook", delete_facebook_pages_path, data: { confirm: '¿Estás seguro de querer desactivar las reservas desde Facebook? Por favor recuerda eliminar la pestaña de tu página de Facebook.' }, class: "btn btn-red" %></p>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-12">
+              <div class="background-grey">
+                <h3 class="text-green">Agendapro directamente en tu Página Web:</h3>
+                <p>Simplemente pega este código en el archivo de tu página a la que quieres agregar las reservas en línea (si necesitas apoyo, puede pedir ayuda al administrador de tu página web o webmaster, o escribirnos a contacto@agendapro.cl con tus dudas).</p>
+              </div>
+              <pre class="pre-scrollable well-white">&lt;iframe src="<%= root_url(subdomain: 'www') %>iframe/overview/<%= @company.secret_code %>" width="810" marginwidth="0" marginheight="0" frameborder="no" scrolling="yes" style="border-width:0px;" &gt;&lt;/iframe&gt;</pre>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-12">
+              <h3 class="text-green">Agrega el botón AgendaPro</h3>
+              <pre class="pre-scrollable">&lt;a class="btn btn-green btn-lg" href="http://<%= @web_address %>.agendapro.cl" target="_blank" style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;text-decoration:none;display:inline-block;margin-bottom:0;font-weight:normal;text-align:center;white-space:nowrap;vertical-align:middle;-ms-touch-action:manipulation;touch-action:manipulation;cursor:pointer;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;background-image:none;border-width:1px;border-style:solid;padding-top:10px;padding-bottom:10px;padding-right:16px;padding-left:16px;font-size:18px;line-height:1.33;border-radius:6px;color:#ffffff;background-color:#22c488;border-color:#1ba970;" &gt;Reserva Online&lt;/a&gt;</pre>
+            </div>
+          </div>
+        </div>
         <!-- Pago en Linea -->
+        <% if current_user.company.company_setting.online_payment_capable %>
         <div class="tab-pane" id="online-payment">
           <div class="row">
             <div class="col-md-12">
@@ -605,50 +681,7 @@
             </div>
           </div>
         </div>
-        <!-- Embedded -->
-        <div class="tab-pane" id="embedded">
-          <div class="row">
-            <div class="col-md-12">
-              <div class="well">
-                <h4>AgendaPro App (pestaña) para tu página de Facebook:</h4>
-                <ol>
-                  <li>
-                    Haz click en el siguiente link: <a href="https://www.facebook.com/dialog/pagetab?api_key=739120539456506&next=https%3A%2F%2Fwww.facebook.com%2F" target="_blank">App AgendaPro para Facebook</a>
-                    <br />
-                    <small>Asegúrate que hayas iniciado sesión en Facebook como administrador de la página (la cuenta personal de alguien que puede editar tu página) a la que le quieres agregar reservas en línea. No debes iniciar sesión "usar como" tú página.</small>
-                  </li>
-                  <li>Elige la página a la que quieres agregar reservas en línea</li>
-                  <li>En tu página de Facebook, busca el botón <strong>“Más”</strong> y selecciona <strong>“Administrar Pestaña”</strong></li>
-                  <li>Arrastra la pestaña <strong>“¡Reserva Online!”</strong> a la posición que deseas (recomendamos entre las primeras 4 posiciones)</li>
-                  <li>En la misma página, ahora selecciona la pestaña <strong>“¡Reserva Online!”</strong></li>
-                  <li>
-                    Pega el siguiente código en el espacio de campo de texto <strong>"Código AgendaPro"</strong>, y haz click en <strong>"Guardar"</strong>
-                    <pre class="pre-scrollable well-white"><%= (@company.id * 123456).to_s(30) %></pre>
-                  </li>
-                  <li>¡Ya estás listo para que tus clientes reserven tus servicios a través de <strong>Facebook</strong>!</li>
-                </ol>
-              </div>
-            </div>
-          </div>
-          <div class="row">
-            <div class="col-md-12">
-              <div class="well">
-                <h4>¿Quieres desactivar las reservas en línea por Facebook?</h4>
-                <p>Para hacerlo debes desactivar las reservas por Facebook apretando el siquiente botón "Desactivar Facebook", y luego debes eliminar la pestaña de tu página de Facebook manualmente, desde las configuraciones de esta.</p>
-                <p><%= link_to "Desactivar Facebook", delete_facebook_pages_path, data: { confirm: '¿Estás seguro de querer desactivar las reservas desde Facebook? Por favor recuerda eliminar la pestaña de tu página de Facebook.' }, class: "btn btn-red" %></p>
-              </div>
-            </div>
-          </div>
-          <div class="row">
-            <div class="col-md-12">
-              <div class="well">
-                <h4>Agendapro directamente en tu Página Web:</h4>
-                <p>Simplemente pega este código en el archivo de tu página a la que quieres agregar las reservas en línea (si necesitas apoyo, puede pedir ayuda al administrador de tu página web o webmaster, o escribirnos a contacto@agendapro.cl con tus dudas).</p>
-                <pre class="pre-scrollable well-white">&lt;iframe src="<%= root_url(subdomain: 'www') %>iframe/overview/<%= @company.secret_code %>" width="810" marginwidth="0" marginheight="0" frameborder="no" scrolling="yes" style="border-width:0px;" &gt;&lt;/iframe&gt;</pre>
-              </div>
-            </div>
-          </div>
-        </div>
+        <% end %>
         <!-- Deals -->
         <% if current_user.company.company_setting.deal_activate %>
         <div class="tab-pane" id="deals">
@@ -753,119 +786,6 @@
           </div>
         </div>
         <% end %>
-        <!-- Link -->
-        <div class="tab-pane" id="link">
-          <div class="row">
-            <div class="col-md-6">
-              <div class="well">
-                <div class="row">
-                  <div class="col-md-12">
-                    <h3 class="link_section_header">1. Elige el formato:</h3>
-                  </div>
-                  <div class="col-md-12">
-                    <div class="radio">
-                      <label>
-                        <input type="radio" name="formatRadio" style="float: none;" value="sizeImageRadio">
-                        <%= image_tag 'logos/logo_mail.png', :alt => 'AgendaPro' %>
-                      </label>
-                    </div>
-                  </div>
-                  <div class="col-md-12">
-                    <div class="radio">
-                      <label>
-                        <input type="radio" name="formatRadio" style="float: none;" value="sizeButtonRadio">
-                        <span class="btn btn-green">Reserva Online</span>
-                      </label>
-                    </div>
-                  </div>
-                  <div class="col-md-12">
-                    <div class="radio">
-                      <label>
-                        <input type="radio" name="formatRadio" value="sizeLinkRadio">
-                        <a>¡Reserva acá!</a>
-                      </label>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div class="col-md-6">
-              <div class="well">
-                <div class="row">
-                  <div class="col-md-12">
-                    <h3 class="link_section_header">2. Elige el tamaño:</h3>
-                  </div>
-                  <div class="col-md-12">
-                    <div class="row">
-                      <div class="col-md-12">
-                        <div class="radio hidden">
-                          <label>
-                            <input type="radio" name="sizeImageRadio" style="float: none;" value="202x74">
-                            <%= image_tag 'logos/logo_mail.png', :alt => 'AgendaPro', :size => '202x74' %>
-                          </label>
-                        </div>
-                      </div>
-                      <div class="col-md-12">
-                        <div class="radio hidden">
-                          <label>
-                            <input type="radio" name="sizeImageRadio" style="float: none;" value="101x37">
-                            <%= image_tag 'logos/logo_mail.png', :alt => 'AgendaPro', :size => '101x37' %>
-                          </label>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="col-md-12">
-                    <div class="row">
-                      <div class="col-md-12">
-                        <div class="radio hidden">
-                          <label>
-                            <input type="radio" name="sizeButtonRadio" style="float: none;" value="btn-lg">
-                            <span class="btn btn-green btn-lg">Grande</span>
-                          </label>
-                        </div>
-                      </div>
-                      <div class="col-md-12">
-                        <div class="radio hidden">
-                          <label>
-                            <input type="radio" name="sizeButtonRadio" style="float: none;" value="">
-                            <span class="btn btn-green">Mediano</span>
-                          </label>
-                        </div>
-                      </div>
-                      <div class="col-md-12">
-                        <div class="radio hidden">
-                          <label>
-                            <input type="radio" name="sizeButtonRadio" style="float: none;" value="btn-sm">
-                            <span class="btn btn-green btn-sm">Chico</span>
-                          </label>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="col-md-12">
-                    <div class="row">
-                      <div class="col-md-12">
-                        <div class="radio hidden">
-                          <label>
-                            <input type="radio" name="sizeLinkRadio" value="">
-                            <a>Link a AgendaPro</a>
-                          </label>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="row">
-            <div class="col-md-12">
-              <h3>Copia tu código</h3>
-              <pre class="pre-scrollable"></pre>
-            </div>
-          </div>
-        </div>
       </div>
     </div>
   </div>
