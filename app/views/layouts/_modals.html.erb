@@ -173,6 +173,13 @@
 									<%= f.submit 'Regístrate', :class => 'btn btn-orange' %>
 								</div>
 							</div>
+							<div class="row">
+								<div class="col-sm-12">
+									¿Quieres recibir las ofertas en tu mail? &nbsp;&nbsp;
+									<%= f.check_box :receives_offers, :required => true, :checked => true %>
+								</div>
+								
+							</div>
 						<% end %>
 					</div>
 				</div>
