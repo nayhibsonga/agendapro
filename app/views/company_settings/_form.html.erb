@@ -12,7 +12,7 @@
         <li role="presentation"><a href="#online-payment" role="tab" data-toggle="pill" data-title="" data-description="">Pago en línea</a></li>
         <% end %>
         <% if current_user.company.company_setting.deal_activate %>
-        <li role="presentation"><a href="#deals" role="tab" data-toggle="pill" data-title="" data-description="">Convenios</a></li>
+        <li role="presentation"><a href="#deals" role="tab" data-toggle="pill" data-title="Convenios" data-description="Configura el uso de convenios, el tiempo y la cantidad de veces que se pueden usar.">Convenios</a></li>
         <% end %>
       </ul>
     </div>
@@ -94,10 +94,10 @@
             <div class="col-md-6">
               <div class="media">
                 <div class="media-left">
-                  <%= image_tag 'admin/7.png', class: 'media-object media-image' %>
+                  <%= image_tag 'admin/6.png', class: 'media-object media-image' %>
                 </div>
                 <div class="media-body">
-                  <span class="text-green">Convenios:</span>
+                  <span class="text-green">Convenios:</span> configura el uso de convenios, el tiempo y la cantidad de veces que se pueden usar.
                 </div>
               </div>
             </div>
@@ -687,67 +687,71 @@
         <div class="tab-pane" id="deals">
           <div class="row">
             <div class="col-md-12">
-              <%= form_for @company_setting, :html => {:class => 'form-horizontal'} do |f| %>
-                <div class="form-group">
-                  <%= f.label :deal_activate, 'Activar Convenios', :class => 'col-sm-3 control-label' %>
-                  <div class="col-sm-5">
-                    <%= f.check_box :deal_activate %>
-                    <span class="help-block">Si habilitas esta opción, para guardar una reserva, tanto como tus clientes como desde el administrador, deberan ingresar un código. Este será validado según las opciones que se muestran a continuación.</span>
+              <%= form_for @company_setting, :html => {:class => 'company-form'} do |f| %>
+                <div class="row">
+                  <div class="col-md-6">
+                    <div class="form-group">
+                      <div class="checkbox">
+                        <label>
+                          <%= f.check_box :deal_activate %> Activar Convenios
+                        </label>
+                        <span class="help-block">Si habilitas esta opción, para guardar una reserva, tanto como tus clientes como desde el administrador, deberan ingresar un código. Este será validado según las opciones que se muestran a continuación.</span>
+                      </div>
+                    </div>
+                    <div class="form-group">
+                      <%= f.label :deal_name, 'Etiqueta del Convenio' %>
+                      <span class="help-block">Aquí defines el texto de la etiqueta que aparece donde se debe ingresar el código del convenio. Si se deja en blanco, la etiqueta quedará como "Código de Convenio".</span>
+                      <%= f.text_field :deal_name, :class => 'form-control', placeholder: 'Ej: RUT Empresa, Código de Promoción, etc...' %>
+                    </div>
+                    <div class="form-group">
+                      <div class="checkbox">
+                        <label>
+                          <%= f.check_box :deal_identification_number %> Etiqueta es RUT
+                        </label>
+                        <span class="help-block">Si habilitas esta opción, se validará y dará formato al campo ingresado como si fuera RUT (persona o empresa).</span>
+                      </div>
+                    </div>
+                    <div class="form-group">
+                      <%= f.label :deal_quantity, 'Cantidad Permitida' %>
+                      <span class="help-block">Cantidad de veces que se puede usar cada convenio por defecto. Si se deja en 0, cada convenio se puede usar ilimitadamente.</span>
+                      <%= f.number_field :deal_quantity, :class => 'form-control' %>
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="form-group">
+                      <%= f.label :deal_constraint_option, 'Periodo Restricción' %>
+                      <span class="help-block">Aquí defines si un mismo código puede ser usado más de una vez durante un mismo periodo de tiempo (mismo instante, día, semana o mes).</span>
+                      <%= f.select :deal_constraint_option, options_for_select([["Sin restricción", 0],["Simultáneo", 1],["Por día", 2],["Por semana", 3],["Por mes", 4]]), {}, {:class => 'form-control'} %>
+                    </div>
+                    <div class="form-group">
+                      <%= f.label :deal_constraint_quantity, 'Límite Restricción' %>
+                      <span class="help-block">Aquí defines cuántas veces puede ser usado un mismo en ese mismo periodo de tiempo. Si se deja en 0, cada convenio se puede usar ilimitadamente en ese mismo periodo de tiempo.</span>
+                      <%= f.number_field :deal_constraint_quantity, :class => 'form-control' %>
+                    </div>
+                    <div class="form-group">
+                      <div class="checkbox">
+                        <label>
+                          <%= f.check_box :deal_exclusive %> Exclusivo Convenios Creados
+                        </label>
+                        <span class="help-block">Si habilitas esta opción, sólo se podrán usar códigos que estén previamente creados en la tabla de convenios, al final de esta página.</span>
+                      </div>
+                    </div>
+                    <div class="form-group">
+                      <div class="checkbox">
+                        <label>
+                          <%= f.check_box :deal_overcharge %> Sobrecarga Convenios
+                        </label>
+                        <span class="help-block">Si habilitas esta opción, sólo desde el administrador, podrás sobrecargar las capacidades y límites definidos en cada convenio, y la creación de convenios desde el administrador, aunque la opción anterior esté habilitada.</span>
+                      </div>
+                    </div>
                   </div>
                 </div>
-                <div class="form-group">
-                  <%= f.label :deal_name, 'Etiqueta del Convenio', :class => 'col-sm-3 control-label' %>
-                  <div class="col-sm-5">
-                    <%= f.text_field :deal_name, :class => 'form-control', placeholder: 'Ej: RUT Empresa, Código de Promoción, etc...' %>
-                    <span class="help-block">Aquí defines el texto de la etiqueta que aparece donde se debe ingresar el código del convenio. Si se deja en blanco, la etiqueta quedará como "Código de Convenio".</span>
-                  </div>
-                </div>
-                <div class="form-group">
-                  <%= f.label :deal_identification_number, 'Etiqueta es RUT', :class => 'col-sm-3 control-label' %>
-                  <div class="col-sm-5">
-                    <%= f.check_box :deal_identification_number %>
-                    <span class="help-block">Si habilitas esta opción, se validará y dará formato al campo ingresado como si fuera RUT (persona o empresa).</span>
-                  </div>
-                </div>
-                <div class="form-group">
-                  <%= f.label :deal_quantity, 'Cantidad Permitida', :class => 'col-sm-3 control-label' %>
-                  <div class="col-sm-5">
-                    <%= f.number_field :deal_quantity, :class => 'form-control' %>
-                    <span class="help-block">Cantidad de veces que se puede usar cada convenio por defecto. Si se deja en 0, cada convenio se puede usar ilimitadamente.</span>
-                  </div>
-                </div>
-                <div class="form-group">
-                  <%= f.label :deal_constraint_option, 'Periodo Restricción', :class => 'col-sm-3 control-label' %>
-                  <div class="col-sm-5">
-                    <%= f.select :deal_constraint_option, options_for_select([["Sin restricción", 0],["Simultáneo", 1],["Por día", 2],["Por semana", 3],["Por mes", 4]]), {}, {:class => 'form-control'} %>
-                    <span class="help-block">Aquí defines si un mismo código puede ser usado más de una vez durante un mismo periodo de tiempo (mismo instante, día, semana o mes).</span>
-                  </div>
-                </div>
-                <div class="form-group">
-                  <%= f.label :deal_constraint_quantity, 'Límite Restricción', :class => 'col-sm-3 control-label' %>
-                  <div class="col-sm-5">
-                    <%= f.number_field :deal_constraint_quantity, :class => 'form-control' %>
-                    <span class="help-block">Aquí defines cuántas veces puede ser usado un mismo en ese mismo periodo de tiempo. Si se deja en 0, cada convenio se puede usar ilimitadamente en ese mismo periodo de tiempo.</span>
-                  </div>
-                </div>
-                <div class="form-group">
-                  <%= f.label :deal_exclusive, 'Exclusivo Convenios Creados', :class => 'col-sm-3 control-label' %>
-                  <div class="col-sm-5">
-                    <%= f.check_box :deal_exclusive %>
-                    <span class="help-block">Si habilitas esta opción, sólo se podrán usar códigos que estén previamente creados en la tabla de convenios, al final de esta página.</span>
-                  </div>
-                </div>
-                <div class="form-group">
-                  <%= f.label :deal_overcharge, 'Sobrecarga Convenios', :class => 'col-sm-3 control-label' %>
-                  <div class="col-sm-5">
-                    <%= f.check_box :deal_overcharge %>
-                    <span class="help-block">Si habilitas esta opción, sólo desde el administrador, podrás sobrecargar las capacidades y límites definidos en cada convenio, y la creación de convenios desde el administrador, aunque la opción anterior esté habilitada.</span>
-                  </div>
-                </div>
-                <div class="form-group">
-                  <div class="col-sm-offset-3 col-sm-5">
-                    <%= f.submit 'Guardar', :class => 'btn btn-green' %>
-                    <%= link_to 'Cancelar', dashboard_path, :class => "btn btn-default" %>
+                <div class="row">
+                  <div class="col-md-12">
+                    <div class="form-group">
+                      <%= f.submit 'Guardar', :class => 'btn btn-green' %>
+                      <%= link_to 'Cancelar', dashboard_path, :class => "btn btn-default" %>
+                    </div>
                   </div>
                 </div>
               <% end %>
@@ -755,11 +759,13 @@
           </div>
           <div class="row">
             <div class="col-md-12">
-              <h4>
-                Listado de Convenios
-                <button class="btn btn-white pull-right" data-toggle="modal" data-target="#deal">Agregar Convenio</button>
-              </h4>
-              <table class="table table-hover">
+              <div class="background-grey">
+                <h3 class="text-green">
+                  Listado de Convenios
+                  <button class="btn btn-green pull-right" data-toggle="modal" data-target="#deal">Agregar Convenio</button>
+                </h3>
+              </div>
+              <table class="table table-hover table-green">
                 <thead>
                   <tr>
                     <th>Código</th>
@@ -777,7 +783,7 @@
                       <% options = ["Sin restricción","Simultáneo","Por día","Por semana","Por mes"] %>
                       <td><%= options[deal.constraint_option] %></td>
                       <td><%= deal.constraint_quantity %></td>
-                      <td><%= link_to '<i class="fa fa-trash-o"></i>'.html_safe, deal, method: :delete, data: { confirm: '¿Estás seguro de eliminar el convenio seleccionado?' }, class: 'btn btn-danger' %></td>
+                      <td><%= link_to '<i class="fa fa-trash-o"></i>'.html_safe, deal, method: :delete, data: { confirm: '¿Estás seguro de eliminar el convenio seleccionado?' }, class: 'btn btn-red' %></td>
                     </tr>
                   <% end %>
                 </tbody>
