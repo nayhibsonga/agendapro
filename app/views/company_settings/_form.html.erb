@@ -3,18 +3,18 @@
     <!-- Navegation Tabs -->
     <div class="col-md-2">
       <ul id="myTab" class="nav nav-pills nav-stacked tab-margin" role="tablist">
-        <li role="presentation"><a href="#company" role="tab" data-toggle="pill">Empresa</a></li>
+        <li role="presentation"><a href="#company" role="tab" data-toggle="pill" data-title="Empresa" data-description="Configura el nombre de empresa, descripción, url de tu mini-sitio, logo y política de cancelación.">Empresa</a></li>
+        <li role="presentation"><a href="#minisite" role="tab" data-toggle="pill" data-title="Reservas" data-description="Habilita tu mini-sitio, la opción de aparecer en el Buscador AgendaPro y limitar que sólo las personas en tu vase de datos puedan reservar.">Reservas</a></li>
+        <li role="presentation"><a href="#calendar" role="tab" data-toggle="pill" data-title="Calendario" data-description="Controla el tamaño, el tiempo, de cada bloque del horario en la sección calendario.">Calendario</a></li>
+        <li role="presentation"><a href="#emails" role="tab" data-toggle="pill" data-title="E-mails" data-description="Configura la dirección desde donde se envían los correos masivos (Remitentes) y la firma de estos.">E-mails</a></li>
+        <li role="presentation"><a href="#embedded" role="tab" data-toggle="pill" data-title="Facebook y Link" data-description="Agrega una pestaña de reservas a la página de facebook de tu empresa.">Facebook y Link</a></li>
         <% if current_user.company.company_setting.online_payment_capable %>
-        <li role="presentation"><a href="#online-payment" role="tab" data-toggle="pill">Pago en línea</a></li>
+        <li role="presentation"><a href="#online-payment" role="tab" data-toggle="pill" data-title="" data-description="">Pago en línea</a></li>
         <% end %>
-        <li role="presentation"><a href="#minisite" role="tab" data-toggle="pill">Reservas</a></li>
-        <li role="presentation"><a href="#calendar" role="tab" data-toggle="pill">Calendario</a></li>
-        <li role="presentation"><a href="#emails" role="tab" data-toggle="pill">E-mails</a></li>
-        <li role="presentation"><a href="#embedded" role="tab" data-toggle="pill">Facebook / Web</a></li>
         <% if current_user.company.company_setting.deal_activate %>
-        <li role="presentation"><a href="#deals" role="tab" data-toggle="pill">Convenios</a></li>
+        <li role="presentation"><a href="#deals" role="tab" data-toggle="pill" data-title="" data-description="">Convenios</a></li>
         <% end %>
-        <li role="presentation"><a href="#link" role="tab" data-toggle="pill">Link AgendaPro</a></li>
+        <li role="presentation"><a href="#link" role="tab" data-toggle="pill" data-title="" data-description="">Link AgendaPro</a></li>
       </ul>
     </div>
     <!-- Panels -->
@@ -29,7 +29,7 @@
                   <img class="media-object media-image" src="..." alt="...">
                 </div>
                 <div class="media-body">
-                  <span class="text-green">Empresa:</span> En esta sección puedes configurar el nombre de empresa, la descripción, la url de tu mini-sitio, el logo que quieres mostrar y la política de cancelación.
+                  <span class="text-green">Empresa:</span> configura el nombre de empresa, descripción, url de tu mini-sitio, logo y política de cancelación.
                 </div>
               </div>
             </div>
@@ -39,29 +39,7 @@
                   <img class="media-object media-image" src="..." alt="...">
                 </div>
                 <div class="media-body">
-                  <span class="text-green">Periodo AgendaPro:</span> En esta sección puedes configurar el Tiempo Mínimo de Reserva y el Tiempo Máximo a futuro, además de la cantidad de horas mínimas necesarias para que tus clientes puedan modificar o cancelar una reserva.
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="row">
-            <div class="col-md-6">
-              <div class="media">
-                <div class="media-left">
-                  <img class="media-object media-image" src="..." alt="...">
-                </div>
-                <div class="media-body">
-                  <span class="text-green">Reservas:</span> En esta sección puedes habilitar el mini-sitio AgendaPro, la opción de aparecer en el Buscador AgendaPro y limitar que sólo las personas en tu base de datos puedan reservar.
-                </div>
-              </div>
-            </div>
-            <div class="col-md-6">
-              <div class="media">
-                <div class="media-left">
-                  <img class="media-object media-image" src="..." alt="...">
-                </div>
-                <div class="media-body">
-                  <span class="text-green">Facebook:</span> En esta sección puedes seguir las instrucciones para permitir reservas por Facebook, agregando una pestaña a la página de tu empresa.
+                  <span class="text-green">E-mails:</span> configura la dirección desde donde se envían los correos masivos (Remitentes) y la firma de estos.
                 </div>
               </div>
             </div>
@@ -73,7 +51,7 @@
                   <img class="media-object media-image" src="..." alt="...">
                 </div>
                 <div class="media-body">
-                  <span class="text-green">Calendario:</span> En esta sección puedes controlar el tamaño, en tiempo, de cada bloque del horario en la sección calendario.
+                  <span class="text-green">Reservas:</span> habilita tu mini-sitio, la opción de aparecer en el Buscador AgendaPro y limitar que sólo las personas en tu vase de datos puedan reservar.
                 </div>
               </div>
             </div>
@@ -83,7 +61,7 @@
                   <img class="media-object media-image" src="..." alt="...">
                 </div>
                 <div class="media-body">
-                  <span class="text-green">Link AgendaPro:</span> En esta sección puedes obtener el Link AgendaPro, el cual te permitirá insertar el link a tu mini-sitio en cualquier otro sitio web que tengas. Hay varias opciones para que elijas la que más te acomoda.
+                  <span class="text-green">Facebook y Link:</span> agrega una pestaña de reservas a la página de facebook de tu empresa.
                 </div>
               </div>
             </div>
@@ -95,7 +73,17 @@
                   <img class="media-object media-image" src="..." alt="...">
                 </div>
                 <div class="media-body">
-                  <span class="text-green">E-mails:</span> En esta sección puedes configurar la dirección desde donde se envían los correos masivos (Remitentes) y la firma que se adjuntará en tus e-mails.
+                  <span class="text-green">Calendario:</span> controla el tamaño, el tiempo, de cada bloque del horario en la sección calendario.
+                </div>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="media">
+                <div class="media-left">
+                  <img class="media-object media-image" src="..." alt="...">
+                </div>
+                <div class="media-body">
+                  <span class="text-green">Pago Online:</span>
                 </div>
               </div>
             </div>
@@ -1002,6 +990,16 @@
   <script type="text/javascript">
     var web_address = '<%= @web_address %>';
     $(function () {
+      $('#myTab a').click(function (e) {
+        var title = $(this).data('title');
+        var description = $(this).data('description');
+
+        if (title.length > 0 && description.length > 0) {
+          $('#title').html(title);
+          $('#description').html(description);
+        };
+      });
+
       $('#fromEmail').on('hidden.bs.modal', function (e) {
         validator.resetForm();
         $('.has-success').removeClass('has-success');
