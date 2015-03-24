@@ -263,6 +263,7 @@ Agendapro::Application.routes.draw do
   get '/iframe/facebook_success', :to => 'iframe#facebook_success', :as => 'facebook_success'
   get '/iframe/facebook_addtab', :to => 'iframe#facebook_addtab', :as => 'facebook_addtab'
   get '/company_settings/:id/delete_facebook_pages', :to => 'company_settings#delete_facebook_pages', :as => 'delete_facebook_pages'
+  get '/iframe/book_error', :to => 'iframe#book_error', :as => 'iframe_book_error'
 
   post '/company_settings/update_payment', :to => 'company_settings#update_payment'
 
