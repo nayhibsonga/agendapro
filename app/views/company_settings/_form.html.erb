@@ -452,102 +452,108 @@
         <div class="tab-pane" id="calendar">
           <div class="row">
             <div class="col-md-12">
-              <div class="row">
-                <div class="col-md-12">
-                  <%= form_for @company_setting, :html => {:class => 'form-horizontal calendar-form'} do |f| %>
+              <%= form_for @company_setting, :html => {:class => 'company-form'} do |f| %>
+                <div class="row">
+                  <div class="col-md-6">
                     <div class="form-group">
-                      <%= f.label :calendar_duration, 'Bloque Calendario', :class => 'col-sm-3 control-label' %>
-                      <div class="col-sm-5">
-                        <div class="input-group">
-                          <%= f.select :calendar_duration, options_for_select({ "5" => "5", "10" => "10", "15" => "15", "20" => "20", "30" => "30", "45" => "45", "60" => "60" }, @company_setting.calendar_duration), {}, {class: "form-control"} %>
-                          <span class="input-group-addon">minutos</span>
-                        </div>
-                        <span class="help-block">Esta opción determina el largo de cada bloque en la sección <strong>"Calendario"</strong>.</span>
+                      <%= f.label :calendar_duration, 'Bloque Calendario' %>
+                      <span class="help-block">Esta opción determina el largo de cada bloque en la sección <strong>"Calendario"</strong>.</span>
+                      <div class="input-group">
+                        <%= f.select :calendar_duration, options_for_select({ "5" => "5", "10" => "10", "15" => "15", "20" => "20", "30" => "30", "45" => "45", "60" => "60" }, @company_setting.calendar_duration), {}, {class: "form-control"} %>
+                        <span class="input-group-addon">minutos</span>
                       </div>
                     </div>
                     <div class="form-group">
-                      <%= f.label :provider_overcapacity, 'Permitir Reservas Sobrepuestas', :class => 'col-sm-3 control-label' %>
-                      <div class="col-sm-5">
-                        <%= f.check_box :provider_overcapacity %>
+                      <div class="checkbox">
+                        <label>
+                          <%= f.check_box :provider_overcapacity %> Permitir Reservas Sobrepuestas
+                        </label>
                         <span class="help-block">Si habilitas esta opción, los prestadores pueden tener dos reservas en un mismo horario. Esto es sólo válido para reservas ingresadas internamente, tus clientes que reservan desde el buscador y página personal no podrán reservar ellos mismos donde ya haya una reserva.</span>
                       </div>
                     </div>
                     <div class="form-group">
-                      <%= f.label :resource_overcapacity, 'Permitir Sobrecarga de Recursos', :class => 'col-sm-3 control-label' %>
-                      <div class="col-sm-5">
-                        <%= f.check_box :resource_overcapacity %>
+                      <div class="checkbox">
+                        <label>
+                          <%= f.check_box :resource_overcapacity %> Permitir Sobrecarga de Recursos
+                        </label>
                         <span class="help-block">Al habilitar esta opción, podrás hacer reservas incluso cuando los recursos estén siendo utilizados o no disponibles. Esto es sólo válido para reservas ingresadas internamente, tus clientes que reservan desde el buscador y página personal no podrán reservar ellos mismos donde los resursos no estén disponibles.</span>
                       </div>
                     </div>
                     <div class="form-group">
-                      <%= f.label :schedule_overcapacity, 'Permitir Reservas Fuera de Horario', :class => 'col-sm-3 control-label' %>
-                      <div class="col-sm-5">
-                        <%= f.check_box :schedule_overcapacity %>
+                      <div class="checkbox">
+                        <label>
+                          <%= f.check_box :schedule_overcapacity %> Permitir Reservas Fuera de Horario
+                        </label>
                         <span class="help-block">Esta opción te permite poder tomar reservas fuera del horario del prestador, para reservas ingresadas internamente. Si habilitas esta opción podrás hacer reservas en todo el horario visible en la sección <strong>"Calendario"</strong>, puedes extender este habilitando la próxima opción.</span>
                       </div>
                     </div>
+                  </div>
+                  <div class="col-md-6">
                     <div class="form-group">
-                      <%= f.label :extended_schedule_bool, 'Extender Calendario', :class => 'col-sm-3 control-label' %>
-                      <div class="col-sm-5">
-                        <%= f.check_box :extended_schedule_bool %>
+                      <div class="checkbox">
+                        <label>
+                          <%= f.check_box :extended_schedule_bool %> Extender Calendario
+                        </label>
                         <span class="help-block">Habilita esta opción para extender el horario en la sección <strong>"Calendario"</strong>, y así poder tomar reservas antes y/o después de tu horario normal, si la opción anterior así lo permite.</span>
                       </div>
                     </div>
                     <div class="form-group ">
-                      <%= f.label :extended_min_hour, 'Horario Calendario Extendido', :class => 'col-sm-3 control-label' %>
-                      <div class="col-sm-5 form-inline">
+                      <%= f.label :extended_min_hour, 'Horario Calendario Extendido' %>
+                      <div>
                         <%= f.time_select :extended_min_hour, {minute_step: 15}, {:class => 'form-control date-select', required: true} %> - <%= f.time_select :extended_max_hour, {minute_step: 15}, {:class => 'form-control date-select', required: true} %>
                       </div>
                     </div>
                     <div class="form-group">
-                      <%= f.label :booking_history, 'Historial de Modificaciones de Reservas', :class => 'col-sm-3 control-label' %>
-                      <div class="col-sm-5">
-                        <%= f.check_box :booking_history %>
+                      <div class="checkbox">
+                        <label>
+                          <%= f.check_box :booking_history %> Historial de Modificaciones de Reservas
+                        </label>
                         <span class="help-block">Si activas esta opción, se guardará un historial de modificaciones para cada reserva. Este historial es exclusivamente visible por el Administrador General y el Administrador de Local, para las reservas de el(los) local(es) al que este asociado.</span>
                       </div>
                     </div>
                     <div class="form-group">
-                      <%= f.label :staff_code, 'Exigir Código de Staff', :class => 'col-sm-3 control-label' %>
-                      <div class="col-sm-5">
-                        <%= f.check_box :staff_code %>
+                      <div class="checkbox">
+                        <label>
+                          <%= f.check_box :staff_code %> Exigir Código de Staff
+                        </label>
                         <span class="help-block">Al activar esta opción, al hacer modificaciones en las reservas, se exigirá un código de empleado que debe coincidir exactamente con algún código permitido. Los códigos permitidos son definidos exclusivamente en la tabla a continuación.</span>
                       </div>
                     </div>
                     <div class="form-group">
-                      <div class="col-sm-offset-3 col-sm-5">
-                        <%= f.submit 'Guardar', :class => 'btn btn-green' %>
-                        <%= link_to 'Cancelar', dashboard_path, :class => "btn btn-default" %>
-                      </div>
+                      <%= f.submit 'Guardar', :class => 'btn btn-green' %>
+                      <%= link_to 'Cancelar', dashboard_path, :class => "btn btn-default" %>
                     </div>
+                  </div>
+                </div>
+              <% end %>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-12">
+              <div class="background-grey">
+                <h3 class="text-green">
+                  Códigos de Staff
+                  <button class="btn btn-green pull-right" data-toggle="modal" data-target="#staffCode">Agregar código</button>
+                </h3>
+              </div>
+              <table class="table table-hover table-green">
+                <thead>
+                  <tr>
+                    <th>Staff</th>
+                    <th>Código</th>
+                    <th>Eliminar</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <% @staff_codes.each do |staff_code| %>
+                    <tr>
+                      <td><%= staff_code.staff %></td>
+                      <td><%= staff_code.code %></td>
+                      <td><%= link_to '<i class="fa fa-trash-o"></i>'.html_safe, staff_code, method: :delete, data: { confirm: '¿Estás seguro de eliminar el remitente seleccionado?' }, class: 'btn btn-red' %></td>
+                    </tr>
                   <% end %>
-                </div>
-              </div>
-              <div class="row">
-                <div class="col-md-12">
-                  <h4>
-                    Códigos de Staff
-                    <button class="btn btn-white pull-right" data-toggle="modal" data-target="#staffCode">Agregar código</button>
-                  </h4>
-                  <table class="table table-hover">
-                    <thead>
-                      <tr>
-                        <th>Staff</th>
-                        <th>Código</th>
-                        <th>Eliminar</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <% @staff_codes.each do |staff_code| %>
-                        <tr>
-                          <td><%= staff_code.staff %></td>
-                          <td><%= staff_code.code %></td>
-                          <td><%= link_to '<i class="fa fa-trash-o"></i>'.html_safe, staff_code, method: :delete, data: { confirm: '¿Estás seguro de eliminar el remitente seleccionado?' }, class: 'btn btn-red' %></td>
-                        </tr>
-                      <% end %>
-                    </tbody>
-                  </table>
-                </div>
-              </div>
+                </tbody>
+              </table>
             </div>
           </div>
         </div>
