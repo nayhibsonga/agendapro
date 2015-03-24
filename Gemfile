@@ -154,3 +154,8 @@ gem 'faker'
 
 #New Relic
 gem 'newrelic_rpm'
+
+#Facebook and Google login
+gem 'omniauth'
+gem 'omniauth-google-oauth2'
+gem 'omniauth-facebook'

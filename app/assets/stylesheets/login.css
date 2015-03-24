@@ -2,5 +2,6 @@
  *= require application
  *= require home/home-style
  *= require home/edited-home-style
+ *= require home/bootstrap-social
  *= require UItoTop
  */

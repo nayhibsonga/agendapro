@@ -7,6 +7,38 @@
 				<h4 class="modal-title">Inicia Sesión</h4>
 			</div>
 			<div class="modal-body">
+
+
+				<div class="row">
+					<div class="col-sm-12">
+						<span class="login-title">Ingresa con tus cuenta de Facebook o Google</span>
+					</div>
+				</div>
+				<div class="row" style="margin-top: 20px; padding-bottom: 20px; margin-bottom: 10px; border-bottom: 1px solid #949292;">
+					<div class="col-sm-2">
+					</div>
+					<div class="col-sm-4">
+						<!--<a class="btn btn-block btn-social btn-facebook pull-right" href="users/auth/facebook">
+							<i class="fa fa-facebook"></i> Entra con Facebook
+						</a>-->
+						<%= link_to '<i class="fa fa-facebook"></i>Ingresa con Facebook'.html_safe, user_omniauth_authorize_path(:facebook), { :class => "btn btn-block btn-social btn-facebook pull-right" }  %>
+					</div>
+					<div class="col-sm-4">
+						<!--<a class="btn btn-block btn-social btn-google-plus" href="users/auth/google_oauth2">
+							<i class="fa fa-google"></i> Entra con Google
+						</a>-->
+						<%= link_to '<i class="fa fa-google"></i>Ingresa con Google'.html_safe, user_omniauth_authorize_path(:google_oauth2), { :class => "btn btn-block btn-social btn-google-plus" }  %>
+					</div>
+					<div class="col-sm-2">
+					</div>
+				</div>
+
+				<div class="row" style="margin-bottom: 15px;">
+					<div class="col-sm-12">
+						<span class="login-title">O ingresa con tu cuenta de AgendaPro</span>
+					</div>
+				</div>
+
 				<div class="row">
 					<div class="col-sm-12">
 						<%= form_for :user, :url => user_session_url(:subdomain => false), :html => { class: 'form-horizontal' } do |f| %>
@@ -61,6 +93,35 @@
 				<h4 class="modal-title">Regístrate</h4>
 			</div>
 			<div class="modal-body">
+
+				<div class="row">
+					<div class="col-sm-12">
+						<span class="login-title">Regístrate con tus cuentas de Facebook o Google</span>
+					</div>
+				</div>
+				<div class="row" style="margin-top: 20px; padding-bottom: 20px; margin-bottom: 10px; border-bottom: 1px solid #949292;">
+					<div class="col-sm-2">
+					</div>
+					<div class="col-sm-4">
+						<!--<a class="btn btn-block btn-social btn-facebook pull-right" href="users/auth/facebook">
+							<i class="fa fa-facebook"></i> Entra con Facebook
+						</a>-->
+						<%= link_to '<i class="fa fa-facebook"></i> Facebook'.html_safe, user_omniauth_authorize_path(:facebook), { :class => "btn btn-block btn-social btn-facebook pull-right" }  %>
+					</div>
+					<div class="col-sm-4">
+						<!--<a class="btn btn-block btn-social btn-google-plus" href="users/auth/google_oauth2">
+							<i class="fa fa-google"></i> Entra con Google
+						</a>-->
+						<%= link_to '<i class="fa fa-google"></i> Google'.html_safe, user_omniauth_authorize_path(:google_oauth2), { :class => "btn btn-block btn-social btn-google-plus" }  %>
+					</div>
+					<div class="col-sm-2">
+					</div>
+				</div>
+				<div class="row" style="margin-bottom: 15px;">
+					<div class="col-sm-12">
+						<span class="login-title">O crea tu propia cuenta</span>
+					</div>
+				</div>
 				<div class="row">
 					<div class="col-sm-12">
 						<%= form_for :user, :url => user_registration_url(:subdomain => false), :html => { class: 'form-horizontal', id: 'signup-form' } do |f| %>
@@ -111,6 +172,13 @@
 								<div class="col-sm-offset-4 col-sm-8">
 									<%= f.submit 'Regístrate', :class => 'btn btn-orange' %>
 								</div>
+							</div>
+							<div class="row">
+								<div class="col-sm-12">
+									¿Quieres recibir las ofertas en tu mail? &nbsp;&nbsp;
+									<%= f.check_box :receives_offers, :required => true, :checked => true %>
+								</div>
+								
 							</div>
 						<% end %>
 					</div>
