@@ -10,7 +10,6 @@
         <li role="presentation"><a href="#minisite" role="tab" data-toggle="pill">Reservas</a></li>
         <li role="presentation"><a href="#calendar" role="tab" data-toggle="pill">Calendario</a></li>
         <li role="presentation"><a href="#emails" role="tab" data-toggle="pill">E-mails</a></li>
-        <li role="presentation"><a href="#times" role="tab" data-toggle="pill">Periodo Agenda</a></li>
         <li role="presentation"><a href="#embedded" role="tab" data-toggle="pill">Facebook / Web</a></li>
         <% if current_user.company.company_setting.deal_activate %>
         <li role="presentation"><a href="#deals" role="tab" data-toggle="pill">Convenios</a></li>
@@ -106,70 +105,82 @@
         <div class="tab-pane" id="company">
           <div class="row">
             <div class="col-md-12">
-              <%= form_for @company, :html => {:class => 'form-horizontal company-form', :multipart => true} do |f| %>
-                <div class="form-group has-feedback">
-                  <%= f.label :name, 'Nombre', :class => 'col-md-3 control-label' %>
-                  <div class="col-md-5">
-                    <%= f.text_field :name, :autofocus => true, :class => 'form-control', :placeholder => 'Nombre Compañía (requerido)' %>
-                    <span class="help-block"></span>
-                    <span class="form-control-feedback"></span>
-                  </div>
-                </div>
-                <div class="form-group">
-                  <%= f.label :description, 'Descripción', :class => 'col-md-3 control-label' %>
-                  <div class="col-md-5">
-                    <%= f.text_area :description, :class => 'form-control', :rows => "7" %>
-                  </div>
-                </div>
-                <div class="form-group has-feedback">
-                  <%= f.label :web_address, 'Dirección Sitio AgendaPro', :class => 'col-md-3 control-label' %>
-                  <div class="col-md-5">
-                    <div class="input-group">
-                      <%= f.text_field :web_address, :required => true, :class => 'form-control', :placeholder => 'Empresa (requerido)' %>
-                      <span class="input-group-addon">.agendapro.cl</span>
+              <%= form_for @company, :html => {:class => 'company-form', :multipart => true} do |f| %>
+                <div class="row">
+                  <div class="col-md-6">
+                    <div class="form-group has-feedback">
+                      <%= f.label :name, 'Nombre' %>
+                      <%= f.text_field :name, :autofocus => true, :class => 'form-control', :placeholder => 'Nombre Compañía (requerido)' %>
+                      <span class="help-block"></span>
+                      <span class="form-control-feedback"></span>
                     </div>
-                  </div>
-                  <div class="col-md-offset-3 col-md-5">
-                    <span class="help-block"></span>
-                  </div>
-                  <span class="help-block">Esta es la página del sitio en AgendaPro. <strong>NO recomendamos editarla.</strong></span>
-                </div>
-                <div class="form-group has-feedback">
-                  <%= f.label :logo, 'Logo Compañía', :class => 'col-md-3 control-label' %>
-                  <div class="col-md-5">
-                    <%= f.file_field :logo, :accept => 'image/png,image/gif,image/jpeg', :class => 'form-control' %>
-                    <span class="help-block"></span>
-                    <span class="form-control-feedback"></span>
-                    <div class="checkbox">
-                      <label>
-                        <%= f.check_box :remove_logo %> Quitar Logo
-                      </label>
-                    </div>
-                  </div>
-                  <% if @company.logo_url %>
-                  <%= image_tag @company.logo_url.to_s, :size => "80x80", :alt => @company.name %>
-                  <% end %>
-                </div>
-                <div class="form-group has-feedback">
-                  <%= f.label :economic_sector_ids, 'Sector Económico', :class => 'col-md-3 control-label' %>
-                  <div class="col-md-5">
-                    <%= f.collection_check_boxes :economic_sector_ids, EconomicSector.all, :id, :name, {}, {class: "check_boxes"} do |b|%>
-                      <div class="col-md-4">
-                        <div class="checkbox">
-                          <label>
-                            <%= b.check_box %> <%= b.object.name.html_safe %>
-                          </label>
-                        </div>
+                    <div class="form-group has-feedback">
+                      <%= f.label :web_address, 'Dirección Sitio AgendaPro' %>
+                      <div class="input-group">
+                        <%= f.text_field :web_address, :required => true, :class => 'form-control', :placeholder => 'Empresa (requerido)' %>
+                        <span class="input-group-addon">.agendapro.cl</span>
                       </div>
-                    <% end %>
-                    <span class="help-block"></span>
-                    <span class="form-control-feedback"></span>
+                      <span class="help-block"></span>
+                      <span class="help-block">Esta es la página del sitio en AgendaPro. <strong>NO recomendamos editarla.</strong></span>
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="form-group">
+                      <%= f.label :description, 'Descripción' %>
+                      <%= f.text_area :description, :class => 'form-control', :rows => "7" %>
+                    </div>
                   </div>
                 </div>
-                <div class="form-group">
-                  <div class="col-md-offset-3 col-md-5">
-                   <%= f.submit 'Guardar', :class => 'btn btn-green' %>
-                   <%= link_to 'Cancelar', dashboard_path, :class => "btn btn-default" %>
+                <div class="row">
+                  <div class="col-md-3">
+                    <div class="form-group has-feedback">
+                      <%= f.label :logo, 'Logo Compañía' %>
+                      <%= f.file_field :logo, :accept => 'image/png,image/gif,image/jpeg', :class => 'form-control' %>
+                      <span class="help-block"></span>
+                      <span class="form-control-feedback"></span>
+                      <div class="checkbox">
+                        <label>
+                          <%= f.check_box :remove_logo %> Quitar Logo
+                        </label>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-md-3">
+                    <div class="company-logo">
+                      <% if @company.logo_url %>
+                      <%= image_tag @company.logo_url.to_s, :size => "80x80", :alt => @company.name %>
+                      <% end %>
+                    </div>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-md-12">
+                    <div class="form-group has-feedback">
+                      <%= f.label :economic_sector_ids, 'Sector Económico' %>
+                      <div class="background-green">
+                        <div class="row">
+                          <%= f.collection_check_boxes :economic_sector_ids, EconomicSector.all, :id, :name, {}, {class: "check_boxes"} do |b|%>
+                            <div class="col-md-2">
+                              <div class="checkbox">
+                                <label>
+                                  <%= b.check_box %> <%= b.object.name.html_safe %>
+                                </label>
+                              </div>
+                            </div>
+                          <% end %>
+                        </div>
+                        <span class="help-block"></span>
+                        <span class="form-control-feedback"></span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-md-12">
+                    <div class="form-group">
+                      <%= f.submit 'Guardar', :class => 'btn btn-green' %>
+                      <%= link_to 'Cancelar', dashboard_path, :class => "btn btn-default" %>
+                    </div>
                   </div>
                 </div>
               <% end %>
@@ -347,60 +358,102 @@
         <div class="tab-pane" id="minisite">
           <div class="row">
             <div class="col-md-12">
-              <%= form_for @company_setting, :html => {:class => 'form-horizontal'} do |f| %>
-                <div class="form-group">
-                  <%= f.label :activate_workflow, 'Reservas en línea', :class => 'col-md-3 control-label' %>
-                  <div class="col-md-5">
-                    <%= f.check_box :activate_workflow %>
-                    <span class="help-block">Habilita esta opción para que tus clientes puedan reservar por internet a través del sistema de AgendaPro, sin la necesidad de llamados a tu local para coordinar una hora.</span>
+              <%= form_for @company_setting, :html => {:class => 'company-form'} do |f| %>
+                <div class="row">
+                  <div class="col-md-6">
+                    <div class="form-group">
+                      <div class="checkbox">
+                        <label>
+                          <%= f.check_box :activate_workflow %> Reservas en línea
+                        </label>
+                        <span class="help-block">Habilita esta opción para que tus clientes puedan reservar por internet a través del sistema de AgendaPro, sin la necesidad de llamados a tu local para coordinar una hora.</span>
+                      </div>
+                    </div>
+                    <div class="form-group">
+                      <div class="checkbox">
+                        <label>
+                          <%= f.check_box :activate_search %> Aparecer en el Buscador
+                        </label>
+                        <span class="help-block">Habilita esta opción para que tus clientes encuentren tu negocio en el buscador de AgendaPro.</span>
+                      </div>
+                    </div>
+                    <div class="form-group">
+                      <div class="checkbox">
+                        <label>
+                          <%= f.check_box :allows_optimization %> Permitir optimización de horas
+                        </label>
+                        <span class="help-block">Habilita esta opción para que tus clientes puedan elegir un horario óptimo sin importar los bloques horarios predefinidos.</span>
+                      </div>
+                    </div>
+                    <div class="form-group">
+                      <div class="checkbox">
+                        <label>
+                          <%= f.check_box :client_exclusive %> Exclusivo para Clientes
+                        </label>
+                        <span class="help-block">Habilita esta opción para que sólo puedan reservar clientes ingresados en la sección Clientes, usando el RUT.</span>
+                      </div>
+                    </div>
+                    <div class="form-group">
+                      <%= f.label :provider_preference, 'Preferencia Prestador' %>
+                      <span class="help-block">Aquí configuras si el cliente puede o debe elegir el prestador con el que se atenderá. Si no se elige, se seleccionará automáticamente al prestador con menos ocupación ese día.</span>
+                      <%= f.select :provider_preference, options_for_select([["Cliente puede elegir prestador", 0], ["Cliente debe elegir prestador", 1], ["Cliente no puede elegir prestador", 2]], selected: @company_setting.provider_preference ), {}, {class: "form-control" } %>
+                    </div>
+                    <div class="form-group">
+                      <%= f.label :booking_confirmation_time, 'Recordatorios' %>
+                      <span class="help-block">En esta opción defines cuántos días antes de la reserva se envía el recordatorio al cliente..</span>
+                      <%= f.select :booking_confirmation_time, options_for_select([["El mismo día", 0], ["1 día antes", 1], ["2 días antes", 2], ["3 días antes", 3]], selected: @company_setting.booking_confirmation_time ), {}, {class: "form-control" } %>
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="form-group">
+                      <%= f.label :booking_configuration_email, 'Notificaciones de Reservas' %>
+                      <span class="help-block">Esta opción define cómo se notifican las reservas al email. Puedes configurar esta opción para cada local y prestador independientemente.</span>
+                      <%= f.select :booking_configuration_email, options_for_select([["Notificación por cada reserva", 0], ["Enviar resumen de reservas diario", 1], ["No notificar reservas por email", 3]], selected: @company_setting.booking_configuration_email ), {}, {class: "form-control" } %>
+                    </div>
+                    <div class="form-group has-feedback">
+                      <%= f.label :before_booking, 'Tiempo Mínimo de Reserva:' %>
+                      <span class="help-block">Horas mínimas requeridas para que un cliente reserve. No se podrá reservar con menos anticipación.</span>
+                      <div class="input-group">
+                        <%= f.number_field :before_booking, :in => 1...169, :required => true, :class => 'form-control' %>
+                        <span class="input-group-addon">Horas</span>
+                      </div>
+                      <span class="help-block"></span>
+                    </div>
+                    <div class="form-group">
+                      <%= f.label :after_booking, 'Tiempo Máximo a Futuro:' %>
+                      <span class="help-block">Tiempo máximo que una persona puede reservar a futuro. No se permiten reservas para más de X meses a futuro.</span>
+                      <div class="input-group">
+                        <%= f.number_field :after_booking, :in => 1...13, :required => true, :class => 'form-control' %>
+                        <span class="input-group-addon">Meses</span>
+                      </div>
+                      <span class="help-block"></span>
+                    </div>
+                    <div class="form-group">
+                      <%= f.label :before_edit_booking, 'Política de Edición de Reservas:' %>
+                      <span class="help-block">Horas mínimas requeridas para que un cliente edite o cancele su reserva. No se podrá editar o cancelar reservas con menos anticipación.</span>
+                      <div class="input-group">
+                        <%= f.number_field :before_edit_booking, :in => 1...169, :required => true, :class => 'form-control' %>
+                        <span class="input-group-addon">Horas</span>
+                      </div>
+                      <span class="help-block"></span>
+                    </div>
+                    <div class="form-group">
+                      <%= f.label :max_changes, 'Ediciones Maximas:' %>
+                      <span class="help-block">Cantidad de veces que un cliente puede editar su reserva.</span>
+                      <div class="input-group">
+                        <%= f.number_field :max_changes, :min => 0, :required => true, :class => 'form-control' %>
+                        <span class="input-group-addon">Veces</span>
+                      </div>
+                      <span class="help-block"></span>
+                    </div>
                   </div>
                 </div>
-                <div class="form-group">
-                  <%= f.label :activate_search, 'Aparecer en el Buscador', :class => 'col-md-3 control-label' %>
-                  <div class="col-md-5">
-                    <%= f.check_box :activate_search %>
-                    <span class="help-block">Habilita esta opción para que tus clientes encuentren tu negocio en el buscador de AgendaPro.</span>
-                  </div>
-                </div>
-                <div class="form-group">
-                  <%= f.label :allows_optimization, 'Permitir optimización de horas', :class => 'col-md-3 control-label' %>
-                  <div class="col-md-5">
-                    <%= f.check_box :allows_optimization %>
-                    <span class="help-block">Habilita esta opción para que tus clientes puedan elegir un horario óptimo sin importar los bloques horarios predefinidos.</span>
-                  </div>
-                </div>
-                <div class="form-group">
-                  <%= f.label :client_exclusive, 'Exclusivo para Clientes', :class => 'col-md-3 control-label' %>
-                  <div class="col-md-5">
-                    <%= f.check_box :client_exclusive %>
-                    <span class="help-block">Habilita esta opción para que sólo puedan reservar clientes ingresados en la sección Clientes, usando el RUT.</span>
-                  </div>
-                </div>
-                <div class="form-group">
-                  <%= f.label :provider_preference, 'Preferencia Prestador', :class => 'col-md-3 control-label' %>
-                  <div class="col-md-5">
-                    <%= f.select :provider_preference, options_for_select([["Cliente puede elegir prestador", 0], ["Cliente debe elegir prestador", 1], ["Cliente no puede elegir prestador", 2]], selected: @company_setting.provider_preference ), {}, {class: "form-control" } %>
-                    <span class="help-block">Aquí configuras si el cliente puede o debe elegir el prestador con el que se atenderá. Si no se elige, se seleccionará automáticamente al prestador con menos ocupación ese día.</span>
-                  </div>
-                </div>
-                <div class="form-group">
-                  <%= f.label :booking_confirmation_time, 'Recordatorios', :class => 'col-md-3 control-label' %>
-                  <div class="col-md-5">
-                    <%= f.select :booking_confirmation_time, options_for_select([["El mismo día", 0], ["1 día antes", 1], ["2 días antes", 2], ["3 días antes", 3]], selected: @company_setting.booking_confirmation_time ), {}, {class: "form-control" } %>
-                    <span class="help-block">En esta opción defines cuántos días antes de la reserva se envía el recordatorio al cliente..</span>
-                  </div>
-                </div>
-                <div class="form-group">
-                  <%= f.label :booking_configuration_email, 'Notificaciones de Reservas', :class => 'col-md-3 control-label' %>
-                  <div class="col-md-5">
-                    <%= f.select :booking_configuration_email, options_for_select([["Notificación por cada reserva", 0], ["Enviar resumen de reservas diario", 1], ["No notificar reservas por email", 3]], selected: @company_setting.booking_configuration_email ), {}, {class: "form-control" } %>
-                    <span class="help-block">Esta opción define cómo se notifican las reservas al email. Puedes configurar esta opción para cada local y prestador independientemente.</span>
-                  </div>
-                </div>
-                <div class="form-group">
-                  <div class="col-md-offset-3 col-md-5">
-                    <%= f.submit 'Guardar', :class => 'btn btn-green' %>
-                    <%= link_to 'Cancelar', dashboard_path, :class => "btn btn-default" %>
+                <div class="row">
+                  <div class="col-md-12">
+                    <div class="form-group">
+                      <%= f.submit 'Guardar', :class => 'btn btn-green' %>
+                      <%= link_to 'Cancelar', dashboard_path, :class => "btn btn-default" %>
+                    </div>
                   </div>
                 </div>
               <% end %>
@@ -707,65 +760,6 @@
           </div>
         </div>
         <% end %>
-        <!-- Times -->
-        <div class="tab-pane" id="times">
-          <div class="row">
-            <div class="col-md-12">
-              <%= form_for @company_setting, :html => {:class => 'form-horizontal times-form'} do |f| %>
-                <div class="form-group has-feedback">
-                  <%= f.label :before_booking, 'Tiempo Mínimo de Reserva:', :class => 'col-sm-3 control-label' %>
-                  <div class="col-sm-4">
-                    <div class="input-group">
-                      <%= f.number_field :before_booking, :in => 1...169, :required => true, :class => 'form-control' %>
-                      <span class="input-group-addon">Horas</span>
-                    </div>
-                    <span class="help-block"></span>
-                    <span class="help-block">Horas mínimas requeridas para que un cliente reserve. No se podrá reservar con menos anticipación.</span>
-                  </div>
-                </div>
-                <div class="form-group">
-                  <%= f.label :after_booking, 'Tiempo Máximo a Futuro:', :class => 'col-sm-3 control-label' %>
-                  <div class="col-sm-4">
-                    <div class="input-group">
-                      <%= f.number_field :after_booking, :in => 1...13, :required => true, :class => 'form-control' %>
-                      <span class="input-group-addon">Meses</span>
-                    </div>
-                    <span class="help-block"></span>
-                    <span class="help-block">Tiempo máximo que una persona puede reservar a futuro. No se permiten reservas para más de X meses a futuro.</span>
-                  </div>
-                </div>
-                <div class="form-group">
-                  <%= f.label :before_edit_booking, 'Política de Edición de Reservas:', :class => 'col-sm-3 control-label' %>
-                  <div class="col-sm-4">
-                    <div class="input-group">
-                      <%= f.number_field :before_edit_booking, :in => 1...169, :required => true, :class => 'form-control' %>
-                      <span class="input-group-addon">Horas</span>
-                    </div>
-                    <span class="help-block"></span>
-                    <span class="help-block">Horas mínimas requeridas para que un cliente edite o cancele su reserva. No se podrá editar o cancelar reservas con menos anticipación.</span>
-                  </div>
-                </div>
-                <div class="form-group">
-                  <%= f.label :max_changes, 'Ediciones Maximas:', :class => 'col-sm-3 control-label' %>
-                  <div class="col-sm-4">
-                    <div class="input-group">
-                      <%= f.number_field :max_changes, :min => 0, :required => true, :class => 'form-control' %>
-                      <span class="input-group-addon">Veces</span>
-                    </div>
-                    <span class="help-block"></span>
-                    <span class="help-block">Cantidad de veces que un cliente puede editar su reserva.</span>
-                  </div>
-                </div>
-                <div class="form-group">
-                  <div class="col-sm-offset-3 col-sm-5">
-                    <%= f.submit 'Guardar', :class => 'btn btn-green' %>
-                    <%= link_to 'Cancelar', dashboard_path, :class => "btn btn-default" %>
-                  </div>
-                </div>
-              <% end %>
-            </div>
-          </div>
-        </div>
         <!-- Link -->
         <div class="tab-pane" id="link">
           <div class="row">
