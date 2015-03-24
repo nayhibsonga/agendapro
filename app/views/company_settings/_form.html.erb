@@ -783,7 +783,7 @@
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
-            <%= f.submit 'Guardar', :class => 'btn btn-agendapro-claro' %>
+            <%= f.submit 'Guardar', :class => 'btn btn-green' %>
           </div>
         <% end %>
       </div>
@@ -819,7 +819,7 @@
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
-            <%= f.submit 'Guardar', :class => 'btn btn-agendapro-claro' %>
+            <%= f.submit 'Guardar', :class => 'btn btn-green' %>
           </div>
         <% end %>
       </div>
@@ -871,7 +871,7 @@
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
-            <%= f.submit 'Guardar', :class => 'btn btn-agendapro-claro' %>
+            <%= f.submit 'Guardar', :class => 'btn btn-green' %>
           </div>
         <% end %>
       </div>
@@ -882,7 +882,6 @@
 <% content_for :scripts do %>
   <%= javascript_include_tag "admin/company_settings" %>
   <script type="text/javascript">
-    var web_address = '<%= @web_address %>';
     $(function () {
       $('#myTab a').click(function (e) {
         var title = $(this).data('title');
@@ -924,208 +923,142 @@
         $("#other-bank").addClass("hidden");
       }
 
+      if($('#company_setting_allows_online_payment').prop('checked')) {
+        $(".account-info").removeClass("hidden");
+
+        if($("#company_setting_bank :selected").text() == "Otro") {
+          $("#other-bank").removeClass("hidden");
+          $(".account-data").addClass("hidden");
+        } else {
+          $("#other-bank").addClass("hidden");
+          $(".account-data").removeClass("hidden");
+        }
+
+        var mod_can = false;
+
+        if($("#company_setting_online_cancelation_policy_attributes_cancelable").prop('checked')) {
+          $(".cancel-div").removeClass('hidden');
+          mod_can = true;
+        } else {
+          $(".cancel-div").addClass('hidden');
+        }
+
+        if($("#company_setting_online_cancelation_policy_attributes_modifiable").prop('checked')) {
+          $(".modification-div").removeClass('hidden');
+          mod_can = true;
+        } else {
+          $(".modification-div").addClass('hidden');
+        }
+
+        if(mod_can) {
+          $('.min-hours-div').removeClass('hidden');
+        } else {
+          $('.min-hours-div').addClass('hidden');
+        }
+      } else {
+        $(".account-info").addClass("hidden");
+        $("#other-bank").addClass("hidden");
+      }
+
+      $("#company_setting_allows_online_payment").change(function(){
+        if($('#company_setting_allows_online_payment').prop('checked')) {
+          $(".account-info").removeClass("hidden");
+          if($("#company_setting_bank :selected").text() == "Otro") {
+            $("#other-bank").removeClass("hidden");
+            $(".account-data").addClass("hidden");
+          } else {
+            $("#other-bank").addClass("hidden");
+            $(".account-data").removeClass("hidden");
+          }
+
+          var mod_can = false;
+
+          if($("#company_setting_online_cancelation_policy_attributes_cancelable").prop('checked')) {
+            $(".cancel-div").removeClass('hidden');
+            mod_can = true;
+          } else {
+            $(".cancel-div").addClass('hidden');
+          }
+
+          if($("#company_setting_online_cancelation_policy_attributes_modifiable").prop('checked')) {
+            $(".modification-div").removeClass('hidden');
+            mod_can = true;
+          } else {
+            $(".modification-div").addClass('hidden');
+          }
+
+          if(mod_can) {
+            $('.min-hours-div').removeClass('hidden');
+          } else {
+            $('.min-hours-div').addClass('hidden');
+          }
+        } else {
+          $("#other-bank").addClass("hidden");
+          $(".account-info").addClass("hidden");
+        }
+      });
+
+      $("#company_setting_bank").change(function(){
+        if($("#company_setting_bank :selected").text() == "Otro") {
+          $("#other-bank").removeClass("hidden");
+          $(".account-data").addClass("hidden");
+        } else {
+          $("#other-bank").addClass("hidden");
+          $(".account-data").removeClass("hidden");
+        }
+      });
+
+
+      $("#company_setting_online_cancelation_policy_attributes_modifiable").change(function(){
+        var mod_can = false;
+
+        if($("#company_setting_online_cancelation_policy_attributes_cancelable").prop('checked')) {
+          $(".cancel-div").removeClass('hidden');
+          mod_can = true;
+        } else {
+          $(".cancel-div").addClass('hidden');
+        }
+
+        if($("#company_setting_online_cancelation_policy_attributes_modifiable").prop('checked')) {
+          $(".modification-div").removeClass('hidden');
+          mod_can = true;
+        } else {
+          $(".modification-div").addClass('hidden');
+        }
+
+        if(mod_can) {
+          $('.min-hours-div').removeClass('hidden');
+        } else {
+          $('.min-hours-div').addClass('hidden');
+        }
+      });
+
+      $("#company_setting_online_cancelation_policy_attributes_cancelable").change(function(){
+
+        var mod_can = false;
+
+        if($("#company_setting_online_cancelation_policy_attributes_cancelable").prop('checked')) {
+          $(".cancel-div").removeClass('hidden');
+          mod_can = true;
+        } else {
+          $(".cancel-div").addClass('hidden');
+        }
+
+        if($("#company_setting_online_cancelation_policy_attributes_modifiable").prop('checked')) {
+          $(".modification-div").removeClass('hidden');
+          mod_can = true;
+        } else {
+          $(".modification-div").addClass('hidden');
+        }
+
+        if(mod_can) {
+          $('.min-hours-div').removeClass('hidden');
+        } else {
+          $('.min-hours-div').addClass('hidden');
+        }
+      });
+
       CKEDITOR.replace(company_setting_signature);
     });
   </script>
-
-  <script type="text/javascript">
-
-  	$(document).ready(function(){
-  		if($('#company_setting_allows_online_payment').prop('checked'))
-		{
-			$(".account-info").removeClass("hidden");
-
-			if($("#company_setting_bank :selected").text() == "Otro")
-			{
-				$("#other-bank").removeClass("hidden");
-				$(".account-data").addClass("hidden");
-			}
-			else
-			{
-				$("#other-bank").addClass("hidden");
-				$(".account-data").removeClass("hidden");
-			}
-
-			var mod_can = false;
-
-			if($("#company_setting_online_cancelation_policy_attributes_cancelable").prop('checked'))
-			{
-				$(".cancel-div").removeClass('hidden');
-				mod_can = true;
-			}
-			else
-			{
-				$(".cancel-div").addClass('hidden');
-			}
-
-			if($("#company_setting_online_cancelation_policy_attributes_modifiable").prop('checked'))
-			{
-				$(".modification-div").removeClass('hidden');
-				mod_can = true;
-			}
-			else
-			{
-				$(".modification-div").addClass('hidden');
-			}
-
-			if(mod_can)
-			{
-				$('.min-hours-div').removeClass('hidden');
-			}
-			else
-			{
-				$('.min-hours-div').addClass('hidden');
-			}
-
-		}
-		else
-		{
-			$(".account-info").addClass("hidden");
-			$("#other-bank").addClass("hidden");
-		}
-	});
-
-	$("#company_setting_allows_online_payment").change(function(){
-		if($('#company_setting_allows_online_payment').prop('checked'))
-		{
-			$(".account-info").removeClass("hidden");
-			if($("#company_setting_bank :selected").text() == "Otro")
-			{
-				$("#other-bank").removeClass("hidden");
-				$(".account-data").addClass("hidden");
-			}
-			else
-			{
-				$("#other-bank").addClass("hidden");
-				$(".account-data").removeClass("hidden");
-			}
-
-			var mod_can = false;
-
-			if($("#company_setting_online_cancelation_policy_attributes_cancelable").prop('checked'))
-			{
-				$(".cancel-div").removeClass('hidden');
-				mod_can = true;
-			}
-			else
-			{
-				$(".cancel-div").addClass('hidden');
-			}
-
-			if($("#company_setting_online_cancelation_policy_attributes_modifiable").prop('checked'))
-			{
-				$(".modification-div").removeClass('hidden');
-				mod_can = true;
-			}
-			else
-			{
-				$(".modification-div").addClass('hidden');
-			}
-
-			if(mod_can)
-			{
-				$('.min-hours-div').removeClass('hidden');
-			}
-			else
-			{
-				$('.min-hours-div').addClass('hidden');
-			}
-
-		}
-		else
-		{
-			$("#other-bank").addClass("hidden");
-			$(".account-info").addClass("hidden");
-		}
-	});
-
-	$("#company_setting_bank").change(function(){
-		if($("#company_setting_bank :selected").text() == "Otro")
-		{
-			$("#other-bank").removeClass("hidden");
-			$(".account-data").addClass("hidden");
-		}
-		else
-		{
-			$("#other-bank").addClass("hidden");
-			$(".account-data").removeClass("hidden");
-		}
-	});
-
-
-	$("#company_setting_online_cancelation_policy_attributes_modifiable").change(function(){
-		var mod_can = false;
-
-		if($("#company_setting_online_cancelation_policy_attributes_cancelable").prop('checked'))
-		{
-			$(".cancel-div").removeClass('hidden');
-			mod_can = true;
-		}
-		else
-		{
-			$(".cancel-div").addClass('hidden');
-		}
-
-		if($("#company_setting_online_cancelation_policy_attributes_modifiable").prop('checked'))
-		{
-			$(".modification-div").removeClass('hidden');
-			mod_can = true;
-		}
-		else
-		{
-			$(".modification-div").addClass('hidden');
-		}
-
-		if(mod_can)
-		{
-			$('.min-hours-div').removeClass('hidden');
-		}
-		else
-		{
-			$('.min-hours-div').addClass('hidden');
-		}
-	});
-
-	$("#company_setting_online_cancelation_policy_attributes_cancelable").change(function(){
-
-		var mod_can = false;
-
-		if($("#company_setting_online_cancelation_policy_attributes_cancelable").prop('checked'))
-		{
-			$(".cancel-div").removeClass('hidden');
-			mod_can = true;
-		}
-		else
-		{
-			$(".cancel-div").addClass('hidden');
-		}
-
-		if($("#company_setting_online_cancelation_policy_attributes_modifiable").prop('checked'))
-		{
-			$(".modification-div").removeClass('hidden');
-			mod_can = true;
-		}
-		else
-		{
-			$(".modification-div").addClass('hidden');
-		}
-
-		if(mod_can)
-		{
-			$('.min-hours-div').removeClass('hidden');
-		}
-		else
-		{
-			$('.min-hours-div').addClass('hidden');
-		}
-
-	});
-
-
-	</script>
-
-  <script type="text/javascript">
-	var web_address = '<%= @web_address %>';
-	</script>
-	<%= javascript_include_tag "admin/link_agendapro" %>
 <% end %>
