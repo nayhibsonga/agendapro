@@ -495,21 +495,21 @@
         <h3 class="modal-title" id="optimizerTitle" style="line-height: 1.1;"></h3>
       </div>
       <div class="modal-body">
-        <!--<div id="pickerSelectDate">
+        <div id="pickerSelectDate">
           <div class="row">
-            <div class="col-xs-3" style="text-align: right; font-weight: bold;">
+            <div class="col-xs-2" style="text-align: right; font-weight: bold;">
               Inicio
             </div>
-            <div class="col-xs-9">
+            <div class="col-xs-10">
               <input id="initialPickerDate" value="<%= I18n.l(DateTime.now.to_date) %>" hidden />
               <span id="pickerSelected" style="color: #949292;"><%= I18n.l(DateTime.now.to_date) %></span>&nbsp;&nbsp;
-              <span class="optimizer-date-span" style="float: right;">
+              <span id="optimizer-datepicker-link" class="optimizer-date-span" style="float: right;">
                 Seleccionar nuevo inicio&nbsp;<i class="fa fa-calendar-o"></i>
                 <input type="text" class="form-control" name="optimizerDateSelector" id="optimizerDateSelector" class="datepicker" />
               </span>
             </div>
           </div>
-        </div>-->
+        </div>
         <form class="form-horizontal" id="serviceOptimizer"></form>
         <div id="selectHour"></div>
         <div id="hoursDetails"></div>
@@ -655,8 +655,14 @@
 					$('#booking_deal_code').val(rut_format(rut_string));
 				}
 			});
+		</script>
+	<% end %>
 
-      /*$("#optimizerDateSelector").datepicker({
+  <script type="text/javascript">
+
+    $(function(){
+
+      $("#optimizerDateSelector").datepicker({
           monthNames: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
           monthNamesShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
           prevText: 'Atrás',
@@ -672,15 +678,22 @@
             $("#pickerSelected").empty();
             var prettyDate = newDate.split("-")[2] + "/" + newDate.split("-")[1] + "/" + newDate.split("-")[0];
             $("#pickerSelected").append(prettyDate);
+          },
+          beforeShow: function(date) {
+            $('#ui-datepicker-div').addClass("customDatepicker");
+            $(".customDatepicker .ui-datepicker-calendar").css("width", "214px !important");
           }
       });
 
       $(document.body).on('click', '.optimizer-date-span', function(e){
         $(e.currentTarget).find('input').datepicker('show');
-      });*/
+      });
 
-		</script>
-	<% end %>
+    });
+
+  </script>
+
+
 <% end %>
 
 
