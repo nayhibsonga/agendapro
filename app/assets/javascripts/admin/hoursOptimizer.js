@@ -147,7 +147,10 @@ function loadHours () {
       provider: provider.val()
     });
   });
-  $.getJSON('/optimizer_hours', { local: localId, serviceStaff: JSON.stringify(selects), resultsLength: resultsLength, admin: true }, function (hours_array) {
+
+  var start_date = $("#optimizerDateSelector").val();
+
+  $.getJSON('/optimizer_hours', { local: localId, serviceStaff: JSON.stringify(selects), resultsLength: resultsLength, start_date: start_date, admin: true }, function (hours_array) {
     $('#selectHour > p').remove();
     var services_str = "";
     $.each(hours_array, function (pos, hour) {
@@ -182,6 +185,7 @@ function loadHours () {
     }
     else
     {
+      $("#pickerSelectDate").hide();
       $('#hoursDetails').append(services_str);
       $('.optimizerDetailLink').on('click', function(e){
         e.preventDefault();
@@ -478,6 +482,9 @@ $(function () {
 
   $('#hoursOptimizer').on('hidden.bs.modal', function (e) {
     optimizerValidator.resetForm();
+    $("#pickerSelected").empty();
+    $("#pickerSelected").append($("#initialPickerDate").val());
+    $("#pickerSelectDate").show();
     $("#hoursDetails").empty();
     $('.has-success').removeClass('has-success');
     $('.fa.fa-check').removeClass('fa fa-check');
