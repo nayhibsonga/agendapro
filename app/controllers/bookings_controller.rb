@@ -2183,10 +2183,12 @@ class BookingsController < ApplicationController
     now = DateTime.new(DateTime.now.year, DateTime.now.mon, DateTime.now.mday, DateTime.now.hour, DateTime.now.min)
 
     if params[:start_date] and params[:start_date] != ""
-      now = params[:start_date].to_datetime
-      now = now - company_setting.before_booking.hours
+      if params[:start_date].to_datetime > now
+        now = params[:start_date].to_datetime
+      end
     end
 
+    #now = now - company_setting.before_booking.hours
 
     days_ids = [1,2,3,4,5,6,7]
     index = days_ids.find_index(now.cwday)
@@ -2198,14 +2200,25 @@ class BookingsController < ApplicationController
         break
       end
     end
+
+
     dateTimePointer = dtp.open
     dateTimePointer = DateTime.new(now.year, now.mon, now.mday, dateTimePointer.hour, dateTimePointer.min)
 
+
     while @hours_array.length < array_length and (dateTimePointer <=> now + company_setting.after_booking.month) == -1
+
       # Pointers
       serviceStaffPos = 0
       bookings = []
       while serviceStaffPos < serviceStaff.length and (dateTimePointer <=> now + company_setting.after_booking.month) == -1
+
+
+        Rails.logger.info "Info: " +dateTimePointer.to_s
+        Rails.logger.debug "Debug: " +dateTimePointer.to_s
+        logger.info "Info: " +dateTimePointer.to_s
+        logger.debug "Debug: " +dateTimePointer.to_s
+
         service_valid = false
         service = Service.find(serviceStaff[serviceStaffPos][:service])
 
@@ -2235,6 +2248,7 @@ class BookingsController < ApplicationController
 
             if location_open <= dateTimePointer and (dateTimePointer + service.duration.minutes) <= location_close
               service_valid = true
+              logger.debug "Valid 1"
               break
             end
           end
@@ -2257,6 +2271,7 @@ class BookingsController < ApplicationController
 
               if provider_open <= dateTimePointer and (dateTimePointer + service.duration.minutes) <= provider_close
                 service_valid = true
+                logger.debug "Valid 2"
                 break
               end
             end
@@ -2266,6 +2281,7 @@ class BookingsController < ApplicationController
               provider.provider_breaks.each do |provider_break|
                 if !(provider_break.end.to_datetime <= dateTimePointer || (dateTimePointer + service.duration.minutes) <= provider_break.start.to_datetime)
                   service_valid = false
+                  logger.debug "Invalid 1"
                   break
                 end
               end
@@ -2277,15 +2293,18 @@ class BookingsController < ApplicationController
                 unless provider_booking.status_id == cancelled_id
                   pointerEnd = dateTimePointer+service.duration.minutes
                   if (pointerEnd <= provider_booking.start.to_datetime || provider_booking.end.to_datetime <= dateTimePointer)
-                    if !service.group_service || service.id != provider_booking.service_id
-                      service_valid = false
-                      break
+                    if !service.group_service #|| service.id != provider_booking.service_id
+                      #service_valid = false
+                      #logger.debug "Invalid 2"
+                      #break
                     elsif service.group_service && service.id == provider_booking.service_id && provider.bookings.where(service_id: service.id, start: dateTimePointer).count >= service.capacity
                       service_valid = false
+                      logger.debug "Invalid 3"
                       break
                     end
                   else
                     service_valid = false
+                    logger.debug "Invalid 4"
                   end
                 end
               end
@@ -2296,6 +2315,7 @@ class BookingsController < ApplicationController
               service.resources.each do |resource|
                 if !local.resource_locations.pluck(:resource_id).include?(resource.id)
                   service_valid = false
+                  logger.debug "Invalid 5"
                   break
                 end
                 used_resource = 0
@@ -2315,14 +2335,13 @@ class BookingsController < ApplicationController
                 end
                 if group_services.uniq.count + used_resource >= ResourceLocation.where(resource_id: resource.id, location_id: local.id).first.quantity
                   service_valid = false
+                  logger.debug "Invalid 6"
                   break
                 end
               end
             end
 
             if service_valid
-
-
 
               bookings << {
                 :service => service.id,
