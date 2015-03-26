@@ -1165,6 +1165,7 @@ class BookingsController < ApplicationController
         @bookings.each do |b|
           if b.id.nil?
             @errors << "Hubo un error al guardar un servicio."
+            @blocked_bookings << b.service.name + " con " + b.service_provider.public_name + " el " + I18n.l(b.start.to_datetime)
             proceed_with_payment = false
           end
         end
@@ -1206,6 +1207,7 @@ class BookingsController < ApplicationController
     @bookings.each do |b|
       if b.id.nil?
         @errors << "Hubo un error al guardar un servicio."
+        @blocked_bookings << b.service.name + " con " + b.service_provider.public_name + " el " + I18n.l(b.start.to_datetime)
       end
     end
 
@@ -1267,7 +1269,12 @@ class BookingsController < ApplicationController
       @tried_bookings = Booking.find(params[:bookings])
     end
     @payment = params[:payment]
-    @blocked_bookings = params[:blocked_bookings]
+
+    @blocked_bookings = []
+
+    if params[:blocked_bookings]
+      @blocked_bookings = params[:blocked_bookings]
+    end
     @errors = params[:errors]
     @bookings = []
 
