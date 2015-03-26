@@ -12,6 +12,7 @@ var bookings = []
 
 // Functions
 function loadServiceModal () {
+  $('#optimizerPrevButton').hide();
   $('#addButton').prop('disabled', true);
   $('#nextButton').prop('disabled', true);
   $('#selectHour').hide();
@@ -201,6 +202,7 @@ function loadHours () {
     }
   }).always(function () {
     $('#addButton').prop('disabled', false);
+    $('#optimizerPrevButton').show();
   });
 }
 
@@ -478,6 +480,12 @@ $(function () {
     bookings = [];
     resetForm();
     loadServiceModal();
+  });
+
+  $('#optimizerPrevButton').click(function(e){
+    loadServiceModal();
+    $("#hoursDetails").empty();
+    $("#pickerSelectDate").show();
   });
 
   $('#hoursOptimizer').on('hidden.bs.modal', function (e) {

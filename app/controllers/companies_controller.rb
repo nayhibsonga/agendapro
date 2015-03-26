@@ -143,6 +143,12 @@ class CompaniesController < ApplicationController
 			@company.months_active_left = params[:new_months_active_left]
 		end
 
+		if @company.payment_status_id != PaymentStatus.find_by_name("Inactivo").id and @company.payment_status_id != PaymentStatus.find_by_name("Bloqueado").id
+			@company.active = true
+		else
+			@company.active = false
+		end
+
 		if @company.save
 			redirect_to :action => 'manage_company', :id => @company.id, :notice => 'Companía editada correctamente.'
 		else
