@@ -106,11 +106,11 @@ ActiveRecord::Schema.define(version: 20150324161729) do
     t.integer  "client_id"
     t.float    "price",               default: 0.0
     t.boolean  "provider_lock",       default: false
+    t.integer  "max_changes",         default: 2
+    t.integer  "deal_id"
     t.boolean  "payed",               default: false
     t.string   "trx_id",              default: ""
-    t.integer  "max_changes",         default: 2
     t.string   "token",               default: ""
-    t.integer  "deal_id"
     t.integer  "booking_group"
     t.integer  "payed_booking_id"
   end
@@ -234,26 +234,29 @@ ActiveRecord::Schema.define(version: 20150324161729) do
     t.boolean  "provider_overcapacity",       default: true,                  null: false
     t.boolean  "resource_overcapacity",       default: true,                  null: false
     t.integer  "booking_confirmation_time",   default: 1,                     null: false
-    t.integer  "booking_configuration_email", default: 0
-    t.integer  "max_changes",                 default: 2
     t.boolean  "booking_history",             default: false
     t.boolean  "staff_code",                  default: false
-    t.integer  "monthly_mails",               default: 0,                     null: false
-    t.boolean  "allows_online_payment",       default: false
-    t.string   "account_number",              default: ""
-    t.string   "company_rut",                 default: ""
-    t.string   "account_name",                default: ""
-    t.integer  "account_type",                default: 3
-    t.integer  "bank_id"
+    t.integer  "booking_configuration_email", default: 0
+    t.integer  "max_changes",                 default: 2
     t.boolean  "deal_activate",               default: false
     t.string   "deal_name"
     t.boolean  "deal_overcharge",             default: true
+    t.integer  "monthly_mails",               default: 0,                     null: false
     t.boolean  "deal_exclusive",              default: false
     t.integer  "deal_quantity",               default: 0
     t.integer  "deal_constraint_option",      default: 0
     t.integer  "deal_constraint_quantity",    default: 0
     t.boolean  "deal_identification_number",  default: false
     t.boolean  "deal_required",               default: false,                 null: false
+    t.boolean  "allows_online_payment",       default: false
+    t.string   "account_number",              default: ""
+    t.string   "company_rut",                 default: ""
+    t.string   "account_name",                default: ""
+    t.integer  "account_type",                default: 3
+    t.integer  "bank_id"
+    t.string   "locations",                   default: "Lugares",             null: false
+    t.string   "services",                    default: "Servicios",           null: false
+    t.string   "staff",                       default: "Staff",               null: false
     t.boolean  "online_payment_capable",      default: false
     t.boolean  "allows_optimization",         default: true
   end
@@ -606,6 +609,8 @@ ActiveRecord::Schema.define(version: 20150324161729) do
     t.integer  "order",                       default: 0
     t.integer  "block_length",                default: 30
     t.integer  "booking_configuration_email", default: 0
+    t.decimal  "comission_value",             default: 0.0,  null: false
+    t.integer  "comission_option",            default: 0,    null: false
     t.boolean  "online_booking",              default: true
   end
 

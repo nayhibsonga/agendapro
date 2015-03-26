@@ -470,13 +470,13 @@
           <div class="form-group">
             <%= f.label :start, "Inicio", class: "col-sm-3 control-label" %>
             <div class="col-sm-9">
-              <%= f.datetime_select :start, {default: 4.hours.ago, :minute_step => 5}, {class: "form-control date-select"} %>
+              <%= f.datetime_select :start, {default: eval(ENV["TIME_ZONE_OFFSET"]).ago, :minute_step => 5}, {class: "form-control date-select"} %>
             </div>
           </div>
           <div class="form-group">
             <%= f.label :end, "Fin", class: "col-sm-3 control-label" %>
             <div class="col-sm-9">
-              <%= f.datetime_select :end, {default: 4.hours.ago, :minute_step => 5}, {class: "form-control date-select"} %>
+              <%= f.datetime_select :end, {default: eval(ENV["TIME_ZONE_OFFSET"]).ago, :minute_step => 5}, {class: "form-control date-select"} %>
             </div>
           </div>
         <% end %>
