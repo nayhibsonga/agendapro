@@ -145,6 +145,8 @@ class CompaniesController < ApplicationController
 
 		if @company.payment_status_id != PaymentStatus.find_by_name("Inactivo").id and @company.payment_status_id != PaymentStatus.find_by_name("Bloqueado").id
 			@company.active = true
+		else
+			@company.active = false
 		end
 
 		if @company.save
