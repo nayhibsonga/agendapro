@@ -15,6 +15,7 @@ class PayedBookingsController < ApplicationController
   		#Organizar por compañía para hacer una sola transferencia:
   		#Pagos pendiente de payed_bookings sumados por empresa.
   		@companies_pending_payment = Array.new
+  		@other_companies_pending_payment = Array.new
 
   		#Comisión que se le cobra a la empresa por el pago en línea
   		commission = NumericParameter.find_by_name("online_payment_commission").value
@@ -95,7 +96,11 @@ class PayedBookingsController < ApplicationController
 
 		  		 	if !payment_account.amount.nil? and payment_account.amount > 0
 		  		 		payment_account.save
-		  		 		@companies_pending_payment << payment_account
+		  		 		if payment_account.bank_code != Bank.find_by_name("Otro").code
+		  		 			@companies_pending_payment << payment_account
+		  		 		else
+		  		 			@other_companies_pending_payment << payment_account
+		  		 		end
 		  		 	else
 		  		 		#payment_account.destroy
 		  		 	end
@@ -103,6 +108,8 @@ class PayedBookingsController < ApplicationController
   		 	end
 
   		end
+
+  		@all_pending_transfers = PayedBooking.where(:transfer_complete => false, :canceled => false).order('updated_at DESC').limit(25)
 
   		@transfered_payments = PaymentAccount.where(:status => true)
 
@@ -138,7 +145,7 @@ class PayedBookingsController < ApplicationController
 
 	    filename = filename + "_" + start_date + "_" + end_date + ".csv"
 
-	    if params[:type] == "admin_pending" || params[:type] == "admin_transfered"
+	    if params[:type] == "admin_pending" || params[:type] == "admin_transfered" || params[:type] == "other_admin_pending"
 	    	send_data PaymentAccount.to_csv(params[:type], params[:start_date], params[:end_date]), filename: filename
 	    else
 	    	send_data PayedBooking.to_csv(params[:type], params[:start_date], params[:end_date]), filename: filename
