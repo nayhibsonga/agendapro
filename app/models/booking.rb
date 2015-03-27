@@ -349,7 +349,7 @@ class Booking < ActiveRecord::Base
 
 	def send_update_mail
 		if self.start > Time.now - eval(ENV["TIME_ZONE_OFFSET"])
-			if self.status == Status.find_by(:name => "Cancelado")
+			if self.status == Status.find_by(:name => "Cancelado") && !changed_attributes['user_id']
 				BookingMailer.cancel_booking(self)
 				#if !self.payed_booking.nil?
 				#	BookingMailer.cancel_payment_mail(self.payed_booking, 1)
