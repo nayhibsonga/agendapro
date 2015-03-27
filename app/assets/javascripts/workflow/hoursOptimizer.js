@@ -236,6 +236,8 @@ $(function () {
   });
 
   $('#optimizerPrevButton').click(function(e){
+    resultsLength = 6;
+    bookings = [];
     loadServiceModal();
     $("#hoursDetails").empty();
     $("#pickerSelectDate").show();
