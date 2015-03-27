@@ -224,13 +224,13 @@
                     <!--<a class="btn btn-block btn-social btn-facebook pull-right" href="users/auth/facebook">
                       <i class="fa fa-facebook"></i> Entra con Facebook
                     </a>-->
-                    <%= link_to '<i class="fa fa-facebook"></i> Facebook'.html_safe, user_omniauth_authorize_path(:facebook), { :class => "btn btn-block btn-social btn-facebook pull-right" }  %>
+                    <%= link_to '<i class="fa fa-facebook"></i> Facebook'.html_safe, social_login_url('facebook'), { :class => "btn btn-block btn-social btn-facebook pull-right" }  %>
                   </div>
                   <div class="col-sm-4">
                     <!--<a class="btn btn-block btn-social btn-google-plus" href="users/auth/google_oauth2">
                       <i class="fa fa-google"></i> Entra con Google
                     </a>-->
-                    <%= link_to '<i class="fa fa-google"></i> Google'.html_safe, user_omniauth_authorize_path(:google_oauth2), { :class => "btn btn-block btn-social btn-google-plus" }  %>
+                    <%= link_to '<i class="fa fa-google"></i> Google'.html_safe, social_login_url('google_oauth2'), { :class => "btn btn-block btn-social btn-google-plus" }  %>
                   </div>
                   <div class="col-sm-2">
                   </div>
