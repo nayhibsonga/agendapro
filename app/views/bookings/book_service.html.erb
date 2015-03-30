@@ -157,7 +157,7 @@
                       <% end %>
                     </dd>
                     <% @bookings.each do |booking| %>
-                      <% if !booking.notes.empty? %>
+                      <% if !booking.notes.blank? %>
                       <dt class="dark-gray">Notas</dt>
                       <dd class="light-gray"><p><%= booking.notes %></p></dd>
                       <% end %>
@@ -168,11 +168,11 @@
                   <dl class="dl-horizontal book-dl">
                     <dt class="dark-gray">Nombre</dt>
                     <dd class="light-gray"><p><%= @booking.client.first_name %> <%= @booking.client.last_name %></p></dd>
-                    <% if !@booking.client.email.empty? %>
+                    <% if !@booking.client.email.blank? %>
                     <dt class="dark-gray">E-mail</dt>
                     <dd class="light-gray"><p><%= @booking.client.email %></p></dd>
                     <% end %>
-                    <% if !@booking.client.phone.empty? %>
+                    <% if !@booking.client.phone.blank? %>
                     <dt class="dark-gray">Teléfono</dt>
                     <dd class="light-gray"><p><%= @booking.client.phone %></p></dd>
                     <% end %>
