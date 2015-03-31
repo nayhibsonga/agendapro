@@ -290,15 +290,71 @@ fieldset[disabled] .btn-agendapro-orange.active {
   ======== Form Feedback =========
   ================================
 */
-.form-control-feedback {
-	top: 50px;
+.has-feedback .form-control-feedback.fa {
+  line-height: 34px;
 }
-.form-horizontal .has-feedback .form-control-feedback {
-	top: 10px;
-	right: 27px;
+.has-success .help-block,
+.has-success .control-label,
+.has-success .radio,
+.has-success .checkbox,
+.has-success .radio-inline,
+.has-success .checkbox-inline,
+.has-success.radio label,
+.has-success.checkbox label,
+.has-success.radio-inline label,
+.has-success.checkbox-inline label {
+  color: #22c488;
 }
-.has-feedback input[type="number"].form-control {
-	padding-right: 2px;
+.has-success .form-control {
+  border-color: #22c488;
+  -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);
+          box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);
+}
+.has-success .form-control:focus {
+  border-color: #1ba970;
+  -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075), 0 0 6px #4c8b6e;
+          box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075), 0 0 6px #4c8b6e;
+}
+.has-success .input-group-addon {
+  color: #22c488;
+  background-color: #adf0d1;
+  border-color: #22c488;
+}
+.has-success .form-control-feedback {
+  color: #22c488;
+}
+.has-error .help-block,
+.has-error .control-label,
+.has-error .radio,
+.has-error .checkbox,
+.has-error .radio-inline,
+.has-error .checkbox-inline,
+.has-error.radio label,
+.has-error.checkbox label,
+.has-error.radio-inline label,
+.has-error.checkbox-inline label {
+  color: #fd633f;
+}
+.has-error .form-control {
+  border-color: #fd633f;
+  -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);
+          box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);
+}
+.has-error .form-control:focus {
+  border-color: #e55938;
+  -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075), 0 0 6px #a15240;
+          box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075), 0 0 6px #a15240;
+}
+.has-error .input-group-addon {
+  color: #fd633f;
+  background-color: #fbc1b3;
+  border-color: #fd633f;
+}
+.has-error .form-control-feedback {
+  color: #fd633f;
+}
+.has-feedback label ~ .form-control-feedback {
+  top: 30px;
 }
 
 /*
