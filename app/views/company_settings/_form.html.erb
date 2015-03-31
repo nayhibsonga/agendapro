@@ -442,6 +442,13 @@
             </div>
           </div>
           <div class="form-group">
+            <%= f.label :activate_notes, 'Permitir notas del cliente', :class => 'col-sm-3 control-label' %>
+            <div class="col-sm-5">
+              <%= f.check_box :activate_notes %>
+              <span class="help-block">Habilita esta opción para que tus clientes puedan incluir un comentario de texto libre al reservar a través de la página.</span>
+            </div>
+          </div>
+          <div class="form-group">
             <%= f.label :client_exclusive, 'Exclusivo para Clientes', :class => 'col-sm-3 control-label' %>
             <div class="col-sm-5">
               <%= f.check_box :client_exclusive %>

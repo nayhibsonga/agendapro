@@ -459,6 +459,7 @@
                         <span class="form-control-feedback"></span>
                       </div>
                     </div>
+                    <% if @location.company.company_setting.activate_notes %>
                     <div class="row">
                       <div class="col-md-12 dark-gray">
                         Comentario
@@ -471,6 +472,7 @@
                         </div>
                       </div>
                     </div>
+                    <% end %>
                     <div class="row" style="margin-top: 20px;">
                       <div class="col-md-6">
                         <div class="btn-change btn-prev">
