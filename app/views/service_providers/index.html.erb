@@ -1,15 +1,17 @@
-<div class="container-fluid">
+<div class="container-fluid background-grey">
   <div class="row">
     <div class="col-md-12">
       <h2 class="text-green">Prestadores de Servicios</h2>
-      <div class="row">
-        <div class="col-md-8">
-          <p class="text-buttons">Los Prestadores de Servicios son las personas, máquinas o salas necesarias para realizar un servicio. Acá los podrás crear y editar.</p>
-        </div>
-        <div class="col-md-4 action-buttons">
-          <%= link_to '<i class="fa fa-plus"></i> Nuevo Prestador de Servicios'.html_safe, new_service_provider_path, :class => "btn btn-green" %>
+      <p>Los Prestadores de Servicios son las personas, máquinas o salas necesarias para realizar un servicio. Acá los podrás crear y editar.</p>
+    </div>
+  </div>
+</div>
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-md-12">
+      <div class="pull-right" style="margin: 10px 0;">
+        <%= link_to '<i class="fa fa-plus"></i> Nuevo Prestador de Servicios'.html_safe, new_service_provider_path, :class => "btn btn-green" %>
           <%= link_to '<i class="fa fa-minus"></i> Prestadores de Servicios Inactivos'.html_safe, inactive_service_providers_path, :class => "btn btn-white" %>
-        </div>
       </div>
     </div>
   </div>

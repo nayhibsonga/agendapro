@@ -1,14 +1,16 @@
-<div class="container-fluid">
+<div class="container-fluid background-grey">
   <div class="row">
     <div class="col-md-12">
       <h2 class="text-green">Categorías de Servicios</h2>
-      <div class="row">
-        <div class="col-md-8">
-          <p class="text-buttons">Estas son las Categorías creadas para clasificar y facilitar la búsqueda de tus servicios. Acá puedes editarlas y crear nuevas.</p>
-        </div>
-        <div class="col-md-4 action-buttons">
-          <%= link_to '<i class="fa fa-plus"></i> Nueva Categoría de Servicios'.html_safe, new_service_category_path, :class => "btn btn-green" %>
-        </div>
+      <p>Estas son las Categorías creadas para clasificar y facilitar la búsqueda de tus servicios. Acá puedes editarlas y crear nuevas.</p>
+    </div>
+  </div>
+</div>
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-md-12">
+      <div class="pull-right" style="margin: 10px 0;">
+        <%= link_to '<i class="fa fa-plus"></i> Nueva Categoría de Servicios'.html_safe, new_service_category_path, :class => "btn btn-green" %>
       </div>
     </div>
   </div>
