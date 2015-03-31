@@ -11,7 +11,7 @@ $(function() {
     });
   });
   $('.report_select').change(function() {
-    $('ul.nav-tabs li.active').not('.dropdown').last().children('a').first().click();
+    $('ul.nav-pills li.active').not('.dropdown').last().children('a').first().click();
   });
   $("#from").datepicker({
     dateFormat: 'dd-mm-yy',
@@ -31,5 +31,5 @@ $(function() {
       $( "#from" ).datepicker( "option", "maxDate", selectedDate );
     }
   });
-  $('ul.nav-tabs li.active').not('.dropdown').last().children('a').first().click();
+  $('ul.nav-pills li.active').not('.dropdown').last().children('a').first().click();
 });
