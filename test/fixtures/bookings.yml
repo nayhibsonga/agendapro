@@ -1,14 +1,1 @@
 # Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
-
-<% 10.times do |n| %>
-  <% 
-    i = 12
-    start_date = i.days.ago
-    end_date = start_date + 30.minutes
-  %>
-  booking_<%= n %>:
-    start: <%= start_date.to_s(:db) %>
-    end: <%= end_dateB.to_s(:db) %>
-    notes: <%= "Comentario de booking#{n}" %>
-    
-<% end %>

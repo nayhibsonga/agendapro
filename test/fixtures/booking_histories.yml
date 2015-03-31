@@ -1,19 +1,2 @@
 # Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
-one:
-  booking_id: 
-  action: MyString
-  staff_code_id: 
-  start: 2015-01-02 13:59:50
-  status_id: 
-  service_id: 
-  service_provider_id: 
-
-two:
-  booking_id: 
-  action: MyString
-  staff_code_id: 
-  start: 2015-01-02 13:59:50
-  status_id: 
-  service_id: 
-  service_provider_id: 

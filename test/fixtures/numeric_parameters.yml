@@ -1,21 +1,21 @@
 # Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
 numeric_parameter_1:
-	name: sales_tax
-	value: 0.19
+    name: sales_tax
+    value: 0.19
 numeric_parameter_2:
-	name: 4_month_discount
-	value: 0.05
+    name: 4_month_discount
+    value: 0.05
 numeric_parameter_3:
-	name: 6_month_discount
-	value: 0.1
+    name: 6_month_discount
+    value: 0.1
 numeric_parameter_4:
-	name: 9_month_discount
-	value: 0.15
+    name: 9_month_discount
+    value: 0.15
 numeric_parameter_5:
-	name: 12_month_discount
-	value: 0.2
+    name: 12_month_discount
+    value: 0.2
 numeric_parameter_6:
-	name: online_payment_commission
-	value: 10.0
+    name: online_payment_commission
+    value: 10.0
 

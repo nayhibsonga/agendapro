@@ -1,146 +1,146 @@
 # Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
 service_category_1:
-	name: Categoría de Prueba
-	company: company_1
-	order: 0
+    name: Categoría de Prueba
+    company: company_1
+    order: 0
 service_category_2:
-	name: Sin Categoría
-	company: company_1
-	order: 0
+    name: Sin Categoría
+    company: company_1
+    order: 0
 service_category_4:
-	name: Depilación
-	company: company_1
-	order: 0
+    name: Depilación
+    company: company_1
+    order: 0
 service_category_5:
-	name: Pestañas
-	company: company_1
-	order: 0
+    name: Pestañas
+    company: company_1
+    order: 0
 service_category_6:
-	name: Manos
-	company: company_1
-	order: 0
+    name: Manos
+    company: company_1
+    order: 0
 service_category_7:
-	name: Pies
-	company: company_1
-	order: 0
+    name: Pies
+    company: company_1
+    order: 0
 service_category_8:
-	name: Peluqueria
-	company: company_1
-	order: 0
+    name: Peluqueria
+    company: company_1
+    order: 0
 service_category_9:
-	name: Pies
-	company: company_1
-	order: 0
+    name: Pies
+    company: company_1
+    order: 0
 service_category_10:
-	name: Cabeza
-	company: company_1
-	order: 0
+    name: Cabeza
+    company: company_1
+    order: 0
 service_category_11:
-	name: Manos
-	company: company_1
-	order: 0
+    name: Manos
+    company: company_1
+    order: 0
 service_category_14:
-	name: Estética
-	company: company_1
-	order: 0
+    name: Estética
+    company: company_1
+    order: 0
 service_category_15:
-	name: Masaje
-	company: company_1
-	order: 0
+    name: Masaje
+    company: company_1
+    order: 0
 service_category_16:
-	name: Cremas
-	company: company_2
-	order: 0
+    name: Cremas
+    company: company_2
+    order: 0
 service_category_17:
-	name: Sin Categoría
-	company: company_2
-	order: 0
+    name: Sin Categoría
+    company: company_2
+    order: 0
 service_category_19:
-	name: Depilación Laser
-	company: company_2
-	order: 0
+    name: Depilación Laser
+    company: company_2
+    order: 0
 service_category_21:
-	name: Masaje
-	company: company_2
-	order: 0
+    name: Masaje
+    company: company_2
+    order: 0
 service_category_25:
-	name: Consulta
-	company: company_2
-	order: 0
+    name: Consulta
+    company: company_2
+    order: 0
 service_category_27:
-	name: Masajes
-	company: company_2
-	order: 0
+    name: Masajes
+    company: company_2
+    order: 0
 service_category_28:
-	name: Depilación
-	company: company_2
-	order: 0
+    name: Depilación
+    company: company_2
+    order: 0
 service_category_30:
-	name: Tratamiento Facial
-	company: company_2
-	order: 0
+    name: Tratamiento Facial
+    company: company_2
+    order: 0
 service_category_31:
-	name: Sin Categoría
-	company: company_3
-	order: 0
+    name: Sin Categoría
+    company: company_3
+    order: 0
 service_category_32:
-	name: Facial
-	company: company_3
-	order: 0
+    name: Facial
+    company: company_3
+    order: 0
 service_category_33:
-	name: Corporal
-	company: company_3
-	order: 0
+    name: Corporal
+    company: company_3
+    order: 0
 service_category_35:
-	name: Corporal
-	company: company_3
-	order: 0
+    name: Corporal
+    company: company_3
+    order: 0
 service_category_36:
-	name: Facial
-	company: company_3
-	order: 0
+    name: Facial
+    company: company_3
+    order: 0
 service_category_37:
-	name: Evaluación
-	company: company_3
-	order: 0
+    name: Evaluación
+    company: company_3
+    order: 0
 service_category_39:
-	name: Cortes de Pelo
-	company: company_3
-	order: 0
+    name: Cortes de Pelo
+    company: company_3
+    order: 0
 service_category_41:
-	name: Peinados
-	company: company_3
-	order: 0
+    name: Peinados
+    company: company_3
+    order: 0
 service_category_42:
-	name: Coloración
-	company: company_3
-	order: 0
+    name: Coloración
+    company: company_3
+    order: 0
 service_category_43:
-	name: Masajes
-	company: company_3
-	order: 0
+    name: Masajes
+    company: company_3
+    order: 0
 service_category_44:
-	name: Alisado Permanente
-	company: company_3
-	order: 0
+    name: Alisado Permanente
+    company: company_3
+    order: 0
 service_category_45:
-	name: Manicure y Pedicure
-	company: company_3
-	order: 0
+    name: Manicure y Pedicure
+    company: company_3
+    order: 0
 service_category_46:
-	name: Facial
-	company: company_3
-	order: 0
+    name: Facial
+    company: company_3
+    order: 0
 service_category_47:
-	name: Depilación
-	company: company_3
-	order: 0
+    name: Depilación
+    company: company_3
+    order: 0
 service_category_49:
-	name: Depilación
-	company: company_3
-	order: 0
+    name: Depilación
+    company: company_3
+    order: 0
 service_category_50:
-	name: Peeling
-	company: company_3
-	order: 0
+    name: Peeling
+    company: company_3
+    order: 0
