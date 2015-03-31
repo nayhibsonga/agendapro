@@ -108,7 +108,7 @@
         <div class="tab-pane" id="company">
           <div class="row">
             <div class="col-md-12">
-              <%= form_for @company, :html => {:class => 'company-form', :multipart => true} do |f| %>
+              <%= form_for @company, :html => {:class => 'company-form', :id => 'company-form', :multipart => true} do |f| %>
                 <div class="row">
                   <div class="col-md-6">
                     <div class="form-group has-feedback">
@@ -194,7 +194,7 @@
         <div class="tab-pane" id="minisite">
           <div class="row">
             <div class="col-md-12">
-              <%= form_for @company_setting, :html => {:class => 'company-form'} do |f| %>
+              <%= form_for @company_setting, :html => {:class => 'company-form', :id => '#times-form'} do |f| %>
                 <div class="row">
                   <div class="col-md-6">
                     <div class="form-group">
@@ -546,14 +546,17 @@
                     <div class="form-group hidden account-info account-data">
                       <%= f.label :account_name, 'Nombre Titular' %>
                       <%= f.text_field :account_name, :class => 'form-control', placeholder: '' %>
+                      <span class="help-block"></span>
                     </div>
                     <div class="form-group hidden account-info account-data">
                       <%= f.label :company_rut, 'Rut Titular' %>
                       <%= f.text_field :company_rut, :class => 'form-control', placeholder: '' %>
+                      <span class="help-block"></span>
                     </div>
                     <div class="form-group hidden account-info account-data">
                       <%= f.label :account_number, 'N° de Cuenta' %>
                       <%= f.text_field :account_number, :class => 'form-control', placeholder: '' %>
+                      <span class="help-block"></span>
                     </div>
                     <div class="form-group hidden account-info account-data">
                       <%= f.label :account_type, 'Tipo de cuenta' %>
@@ -622,6 +625,7 @@
                             <% end %>
                           <% end %>
                         </select>
+                        <span class="help-block"></span>
                       </div>
                       <div class="form-group has-feedback account-info min-hours-div">
                         <%= p.label :min_hours, 'Plazo mínimo de cancelación/modificación' %>
@@ -630,6 +634,7 @@
                           <%= p.number_field :min_hours, :class => 'form-control', placeholder: '' %>
                           <span class="input-group-addon">Horas</span>
                         </div>
+                        <span class="help-block"></span>
                       </div>
                     <% end %>
                   </div>

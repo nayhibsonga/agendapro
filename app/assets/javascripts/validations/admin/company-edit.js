@@ -1,8 +1,8 @@
 $(function() {
-	$('.company-form').validate({
+	$('#company-form').validate({
 		errorPlacement: function(error, element) {
 			if (element.attr('id') == 'company_web_address') {
-				error.appendTo(element.parent().parent().next().children('.help-block'));
+				error.appendTo(element.parent().next());
 			}
 			else {
 				error.appendTo(element.next());
@@ -46,34 +46,38 @@ $(function() {
 
 $(function() {
 	$('#online-payment-form').validate({
-		errorPlacement: function(error, element) {			
-			if (element.attr('id') == 'company_setting_online_cancelation_policy_attributes_min_hours') {
+		errorPlacement: function(error, element) {
+			var id = element.attr('id');
+			if (id == 'company_setting_online_cancelation_policy_attributes_min_hours' || id == 'company_setting_online_cancelation_policy_attributes_cancel_max') {
 				error.appendTo(element.parent().next());
+			}
+			else if (id == 'company_setting_online_cancelation_policy_attributes_modification_max') {
+				error.appendTo(element.next().next());
 			}
 			else {
 				error.appendTo(element.next());
-			}		
+			}
 		},
 		rules: {
 			'company_setting[account_name]': {
-				required: '#company_setting_allows_online_payment:checked'
+				required: true
 			},
 			'company_setting[company_rut]': {
-				required: '#company_setting_allows_online_payment:checked',
+				required: true,
 				rut: true
 			},
 			'company_setting[account_number]': {
-				required: '#company_setting_allows_online_payment:checked'
+				required: true
 			},
 			'company_setting[online_cancelation_policy_attributes][cancel_max]': {
-				required: '#company_setting_online_cancelation_policy_attributes_cancelable:checked',
+				required: true,
 				max: 48
 			},
 			'company_setting[online_cancelation_policy_attributes][min_hours]': {
-				required: '#company_setting_online_cancelation_policy_attributes_cancelable:checked'
+				required: true
 			},
 			'company_setting[online_cancelation_policy_attributes][modification_max]': {
-				required: '#company_setting_online_cancelation_policy_attributes_modifiable:checked'
+				required: true
 			}
 		},
 		highlight: function(element) {

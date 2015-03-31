@@ -18,6 +18,7 @@
             <%= f.label :company_id, "Empresa", class: "col-md-3 control-label" %>
             <div class="col-md-5">
               <%= f.collection_select :company_id, Company.where(owned: false).order(:name), :id, :name, {}, { class: "form-control", required: true} %>
+              <span class="help-block"></span>
             </div>
           </div>
           <% end %>
