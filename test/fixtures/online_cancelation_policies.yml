@@ -1,15 +1,31 @@
 # Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
-one:
+online_cancelation_policy_1:
   cancelable: false
-  cancel_max_hours: 1.5
   modifiable: false
-  modification_unit: MyString
-  modification_max: 1.5
+  cancel_max: 32
+  modification_max: 3
+  min_hours: 32
+  modification_unit: 4
+  cancel_unit: 2
+  company_setting: company_setting_1
 
-two:
+online_cancelation_policy_2:
   cancelable: false
-  cancel_max_hours: 1.5
-  modifiable: false
-  modification_unit: MyString
-  modification_max: 1.5
+  modifiable: true
+  cancel_max: 32
+  modification_max: 3
+  min_hours: 32
+  modification_unit: 4
+  cancel_unit: 2
+  company_setting: company_setting_2
+
+  online_cancelation_policy_3:
+  cancelable: true
+  modifiable: true
+  cancel_max: 32
+  modification_max: 3
+  min_hours: 32
+  modification_unit: 4
+  cancel_unit: 2
+  company_setting: company_setting_3

@@ -1,13 +1,78 @@
-# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+#Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
-one:
-  name: MyString
-  locations: 1
-  staffs: 1
-  custom: false
+plan_personal:
+	name: Personal
+	locations: 1
+	service_providers: 1
+	custom: false
+	created_at: 2014-03-19 14:27:33
+	updated_at: 2014-03-19 14:27:33
+	price: 14900.0
+	special: false
+	monthly_mails: 5000
 
-two:
-  name: MyString
-  locations: 1
-  staffs: 1
-  custom: false
+plan_basico:
+	name: Básico
+	locations: 1
+	service_providers: 30
+	custom: false
+	created_at: 2014-03-19 14:27:33
+	updated_at: 2014-03-19 14:27:33
+	price: 24900.0
+	special: false
+	monthly_mails: 5000
+
+plan_beta:
+	name: Beta
+	locations: 1
+	service_providers: 2
+	custom: true
+	created_at: 2014-03-19 14:27:33
+	updated_at: 2014-03-19 14:27:33
+	price: 14900.0
+	special: false
+	monthly_mails: 5000
+
+plan_premium:
+	name: Premium
+	locations: 3
+	service_providers: 90
+	custom: false
+	created_at: 2014-03-19 14:27:33
+	updated_at: 2015-01-16 22:27:26
+	price: 49900.0
+	special: false
+	monthly_mails: 15000
+
+plan_trial:
+	name: Trial
+	locations: 5
+	service_providers: 90
+	custom: true
+	created_at: 2014-03-19 14:27:33
+	updated_at: 2015-01-16 22:27:26
+	price: 0.0
+	special: false
+	monthly_mails: 25000
+
+plan_admin:
+	name: Admin
+	locations: 99
+	service_providers: 99
+	custom: true
+	created_at: 2014-10-30 13:01:44
+	updated_at: 2015-01-16 22:27:26
+	price: 0.0
+	special: false
+	monthly_mails: 495000
+
+plan_normal:
+	name: Normal
+	locations: 2
+	service_providers: 60
+	custom: false
+	created_at: 2014-03-19 14:27:33
+	updated_at: 2015-01-16 22:27:26
+	price: 39900.0
+	special: true
+	monthly_mails: 10000

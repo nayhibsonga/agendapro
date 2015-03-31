@@ -1,0 +1,42 @@
+
+<% 3.times do |n| %>
+<% i = n %>
+  service_provider_<%= i %>:
+    location: location_1
+    company: company_1
+    notification_email: <%= "provider#{i}@agendapro.cl" %>
+    public_name: <%= "Provider#{i}" %>
+    active: true
+    order: 0
+    block_length: 30
+    booking_configuration_email: 0
+    online_booking: true
+<% end %>
+
+<% 3.times do |n| %>
+<% i = n + 3 %>
+  service_provider_<%= i %>:
+    location: location_2
+    company: company_2
+    notification_email: <%= "provider#{i}@agendapro.cl" %>
+    public_name: <%= "Provider#{i}" %>
+    active: true
+    order: 0
+    block_length: 30
+    booking_configuration_email: 0
+    online_booking: true
+<% end %>
+
+<% 4.times do |n| %>
+<% i = n + 6 %>
+  service_provider_<%= i %>:
+    location: location_3
+    company: company_3
+    notification_email: <%= "provider#{i}@agendapro.cl" %>
+    public_name: <%= "Provider#{i}" %>
+    active: true
+    order: 0
+    block_length: 30
+    booking_configuration_email: 0
+    online_booking: true
+<% end %>
