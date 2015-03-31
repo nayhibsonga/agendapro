@@ -1,5 +1,5 @@
 class CompanySettingsController < ApplicationController
-  before_action :set_company_setting, only: [:show, :edit, :update, :destroy, :minisite]
+  before_action :set_company_setting, only: [:show, :edit, :update, :destroy]
   before_action :authenticate_user!
   before_action :quick_add
   load_and_authorize_resource
@@ -106,6 +106,7 @@ class CompanySettingsController < ApplicationController
   end
 
   def minisite
+    @company_setting = CompanySetting.find_by(:company_id => params[:company])
   end
 
 

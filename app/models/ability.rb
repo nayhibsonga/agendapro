@@ -181,9 +181,6 @@ class Ability
 
         can :provider_service, ServiceProvider
 
-        can :time_booking_edit, CompanySetting, :company => user.company_id
-        can :minisite, CompanySetting, :id => user.company.company_setting.id
-
         can :get_link, Company
 
         can :history, Client, :company_id => user.company_id

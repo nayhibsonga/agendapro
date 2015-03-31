@@ -28,6 +28,22 @@ function currency(price)
 	return formatted_amount;
 }
 
+////////////////
+// IMPORTANTE //
+// Por un tema de confusión del calendario de horas del WF, se dejaron TODAS las consultas AJAX de esta página no-asíncronas.
+// Para hacer una consulta asíncrona, se debe hacer así (o por el estilo):
+// $.ajax({
+//     url: 'your url',
+//     global: false,
+//     type: 'GET',
+//     data: {},
+//     async: false,
+//     success: function() {
+//     	// código aquí
+//     }
+// });
+////////////////
+
 $.ajaxSetup({
 	async: false
 });
