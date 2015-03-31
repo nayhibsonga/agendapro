@@ -277,5 +277,34 @@
 	$(function () {
 		split_name('#user_full_name', '#user_first_name', '#user_last_name', '#new_user');
 	});
+
+	$(function () {
+		$('#user_company_attributes_name').on('change', function() {
+			var tmp = $('#user_company_attributes_name').val();
+			tmp = tmp.toLowerCase();
+			tmp = tmp.replace(/[áäâà]/gi, 'a'); //special a
+			tmp = tmp.replace(/[éëêè]/gi, 'e'); //Special e
+			tmp = tmp.replace(/[íïîì]/gi, 'i'); //Special i
+			tmp = tmp.replace(/[óöôò]/gi, 'o'); //Special o
+			tmp = tmp.replace(/[úüûù]/gi, 'u'); //Special u
+			tmp = tmp.replace(/ñ/gi, 'n');  //Special ñ
+			tmp = tmp.replace(/[^a-z0-9]/gi,'');
+			$('#user_company_attributes_web_address').val(tmp);
+		});
+
+		$('#user_company_attributes_web_address').on('change', function() {
+			var tmp = $('#user_company_attributes_web_address').val();
+			tmp = tmp.toLowerCase();
+			tmp = tmp.replace(/[áäâà]/gi, 'a'); //special a
+			tmp = tmp.replace(/[éëêè]/gi, 'e'); //Special e
+			tmp = tmp.replace(/[íïîì]/gi, 'i'); //Special i
+			tmp = tmp.replace(/[óöôò]/gi, 'o'); //Special o
+			tmp = tmp.replace(/[úüûù]/gi, 'u'); //Special u
+			tmp = tmp.replace(/ñ/gi, 'n');  //Special ñ
+			tmp = tmp.replace(/[^a-z0-9]/gi,'');
+			$('#user_company_attributes_web_address').val(tmp);
+		});
+	});
+
 </script>
 <% end %>
