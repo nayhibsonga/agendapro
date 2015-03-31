@@ -1157,6 +1157,36 @@
 	});
 
 
+  $(function () {
+    
+    /*$('#company_name').on('change', function() {
+      var tmp = $('#company_name').val();
+      tmp = tmp.toLowerCase();
+      tmp = tmp.replace(/[áäâà]/gi, 'a'); //special a
+      tmp = tmp.replace(/[éëêè]/gi, 'e'); //Special e
+      tmp = tmp.replace(/[íïîì]/gi, 'i'); //Special i
+      tmp = tmp.replace(/[óöôò]/gi, 'o'); //Special o
+      tmp = tmp.replace(/[úüûù]/gi, 'u'); //Special u
+      tmp = tmp.replace(/ñ/gi, 'n');  //Special ñ
+      tmp = tmp.replace(/[^a-z0-9]/gi,'');
+      $('#company_web_address').val(tmp);
+    });*/
+
+    $('#company_web_address').on('change', function() {
+      var tmp = $('#company_web_address').val();
+      tmp = tmp.toLowerCase();
+      tmp = tmp.replace(/[áäâà]/gi, 'a'); //special a
+      tmp = tmp.replace(/[éëêè]/gi, 'e'); //Special e
+      tmp = tmp.replace(/[íïîì]/gi, 'i'); //Special i
+      tmp = tmp.replace(/[óöôò]/gi, 'o'); //Special o
+      tmp = tmp.replace(/[úüûù]/gi, 'u'); //Special u
+      tmp = tmp.replace(/ñ/gi, 'n');  //Special ñ
+      tmp = tmp.replace(/[^a-z0-9]/gi,'');
+      $('#company_web_address').val(tmp);
+    });
+  });
+
+
 	</script>
 
   <script type="text/javascript">
