@@ -28,6 +28,10 @@ function currency(price)
 	return formatted_amount;
 }
 
+$.ajaxSetup({
+	async: false
+});
+
 //====== Load Steps ======//
 function loadStep1 (service_id) {
 	$('#services-description').empty();
@@ -216,6 +220,13 @@ function loadStep2 () {
 				});
 			});
 
+			var radios = $('input[name=staffRadio]');
+			radios.on('change', function() {
+				radios.each(function() {
+					var radio = $(this);
+					radio.closest('.list-group-item')[radio.is(':checked') ? 'addClass' : 'removeClass']('selected-wf-option');
+				});
+			});
 
 
 			if ($('#providerPreference').data('provider-preference') != 1) {
@@ -264,13 +275,6 @@ function loadStep2 () {
 				});
 			}
 
-			var radios = $('input[name=staffRadio]');
-			radios.on('change', function() {
-				radios.each(function() {
-					var radio = $(this);
-					radio.closest('.list-group-item')[radio.is(':checked') ? 'addClass' : 'removeClass']('selected-wf-option');
-				});
-			});
 		});
 
 	}
