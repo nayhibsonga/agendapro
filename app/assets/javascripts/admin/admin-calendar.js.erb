@@ -1646,8 +1646,10 @@ function loadClientHistory(booking_id) {
 					if ($('#calendar-data').data('staff-code')) {
 						staffCode = '<td>'+booking_history.staff_code+'</td>';
 					}
+					var created = new Date(booking_history.created);
+					created.setHours(created.getHours() - <%= ENV["TIME_ZONE_OFFSET"].split('.')[0] %>);
 					var date = new Date(booking_history.start);
-					$('#booking-history-tbody').append('<tr><td>'+booking_history.action+'</td><td>'+dateToLocal(date)+'</td><td>'+booking_history.service+'</td><td>'+booking_history.provider+'</td><td>'+booking_history.status+'</td><td>'+booking_history.user+'</td>'+staffCode+'</tr>');
+					$('#booking-history-tbody').append('<tr><td>'+booking_history.action+'</td><td>'+dateToLocal(created)+'</td><td>'+dateToLocal(date)+'</td><td>'+booking_history.service+'</td><td>'+booking_history.provider+'</td><td>'+booking_history.status+'</td><td>'+booking_history.user+'</td>'+staffCode+'</tr>');
 				});
 			}
 			else {

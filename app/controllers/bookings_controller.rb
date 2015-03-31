@@ -704,7 +704,7 @@ class BookingsController < ApplicationController
           user = booking_history.user.email
         end
       end
-      bookings.push( { action: booking_history.action, start: booking_history.start, service: booking_history.service.name, provider: booking_history.service_provider.public_name, status: booking_history.status.name, user: user, staff_code: staff_code } )
+      bookings.push( { action: booking_history.action, created: booking_history.created_at, start: booking_history.start, service: booking_history.service.name, provider: booking_history.service_provider.public_name, status: booking_history.status.name, user: user, staff_code: staff_code } )
     end
     render :json => bookings
   end
