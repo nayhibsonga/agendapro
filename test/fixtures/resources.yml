@@ -1,11 +1,125 @@
 # Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
-one:
-  name: MyString
-  quantity: 1
-  location_id: 
-
-two:
-  name: MyString
-  quantity: 1
-  location_id: 
+resource_category_1:
+	name: Sala
+	company: company_1
+resource_category_2:
+	name: Tenis
+	company: company_1
+resource_category_3:
+	name: Golf
+	company: company_1
+resource_category_4:
+	name: Box
+	company: company_1
+resource_category_5:
+	name: Box
+	company: company_1
+resource_category_6:
+	name: Tratamiento corporal y facial
+	company: company_1
+resource_category_7:
+	name: Cosmetologa
+	company: company_1
+resource_category_8:
+	name: Manicure
+	company: company_1
+resource_category_9:
+	name: Pedicure
+	company: company_1
+resource_category_10:
+	name: Color
+	company: company_1
+resource_category_11:
+	name: MAQUILLAJE
+	company: company_1
+resource_category_12:
+	name: DEPILACION
+	company: company_1
+resource_category_13:
+	name: SPA
+	company: company_1
+resource_category_14:
+	name: Estética
+	company: company_1
+resource_category_15:
+	name: Squash
+	company: company_1
+resource_category_16:
+	name: Aceites
+	company: company_1
+resource_category_17:
+	name: Filtros de Aceite
+	company: company_1
+resource_category_18:
+	name: Filtros de Combustible
+	company: company_1
+resource_category_19:
+	name: Filtros de Aire
+	company: company_1
+resource_category_20:
+	name: Podologia clinicca
+	company: company_2
+resource_category_21:
+	name: Podologia Clinica
+	company: company_2
+resource_category_22:
+	name: Relator
+	company: company_2
+resource_category_23:
+	name: DEPILACION
+	company: company_2
+resource_category_24:
+	name: PIES
+	company: company_2
+resource_category_25:
+	name: MANOS
+	company: company_2
+resource_category_26:
+	name: Renovación Facial Geneo
+	company: company_2
+resource_category_27:
+	name: facial
+	company: company_2
+resource_category_28:
+	name: corporal
+	company: company_2
+resource_category_29:
+	name: Manos
+	company: company_2
+resource_category_30:
+	name: Casa
+	company: company_2
+resource_category_31:
+	name: Box de atención
+	company: company_2
+resource_category_32:
+	name: Box
+	company: company_2
+resource_category_33:
+	name: Manicure
+	company: company_2
+resource_category_34:
+	name: Pedicure
+	company: company_3
+resource_category_35:
+	name: Boxes
+	company: company_3
+resource_category_36:
+	name: Maquillaje
+	company: company_3
+resource_category_37:
+	name: Peluquerías
+	company: company_3
+resource_category_38:
+	name: Box
+	company: company_3
+resource_category_39:
+	name: Equipos
+	company: company_3
+resource_category_40:
+	name: Criolipolisis
+	company: company_3
+resource_category_41:
+	name: LipoLAser
+	company: company_3

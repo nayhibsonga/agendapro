@@ -1,7 +1,46 @@
 # Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
-one:
-  name: MyString
-
-two:
-  name: MyString
+economic_sector_1:
+	name: Centros de Estética
+economic_sector_2:
+	name: Medicina Alternativa
+economic_sector_3:
+	name: Psicología
+economic_sector_4:
+	name: Odontología
+economic_sector_5:
+	name: Talleres Mecánicos
+economic_sector_6:
+	name: Centros de Podología
+economic_sector_7:
+	name: Artes Marciales
+economic_sector_8:
+	name: Centros de Yoga
+economic_sector_9:
+	name: Centros Deportivos
+economic_sector_10:
+	name: SPA
+economic_sector_11:
+	name: Kinesiología
+economic_sector_12:
+	name: Peluquería
+economic_sector_13:
+	name: Contacto AgendaPro
+economic_sector_14:
+	name: Maquillaje
+economic_sector_15:
+	name: Acondicionamiento Físico
+economic_sector_16:
+	name: Pilates
+economic_sector_17:
+	name: Manicure
+economic_sector_18:
+	name: Fotografía
+economic_sector_19:
+	name: Agencia Turística
+economic_sector_20:
+	name: Pedicure
+economic_sector_21:
+	name: Depilación
+economic_sector_22:
+	name: Bronceados

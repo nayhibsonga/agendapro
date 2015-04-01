@@ -1,29 +1,2 @@
 # Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
-one:
-  token: 
-  trx_id: 
-  payment_method: 
-  amount: 
-  approvement_date: 
-  card_number: 
-  dues_number: 
-  dues_type: 
-  dues_amount: 
-  first_due_date: 
-  operation_number: 
-  authorization_code: MyString
-
-two:
-  token: 
-  trx_id: 
-  payment_method: 
-  amount: 
-  approvement_date: 
-  card_number: 
-  dues_number: 
-  dues_type: 
-  dues_amount: 
-  first_due_date: 
-  operation_number: 
-  authorization_code: MyString
