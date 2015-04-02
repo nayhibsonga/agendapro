@@ -43,8 +43,36 @@
   </tbody>
 </table>
 
-<%= link_to '<i class="fa fa-plus"></i> Nuevo Local'.html_safe, new_location_path, :class => "btn btn-agendapro-claro" unless cannot? :create, Location %>
-<%= link_to '<i class="fa fa-minus"></i> Locales Inactivos'.html_safe, inactive_locations_path, :class => "btn btn-agendapro-claro pull-right" unless cannot? :destroy, Location %>
+
+
+<% if @locations.where(active:true).count < @locations.first.company.plan.locations %>
+  <div class="row">
+    <div class="col-md-6">
+      <%= link_to '<i class="fa fa-plus"></i> Nuevo Local'.html_safe, new_location_path, :class => "btn btn-agendapro-claro" unless cannot? :create, Location %>
+    </div>
+    <div class="col-md-6">
+      <%= link_to '<i class="fa fa-minus"></i> Locales Inactivos'.html_safe, inactive_locations_path, :class => "btn btn-agendapro-claro pull-right" unless cannot? :destroy, Location %>
+    </div>
+  </div>
+<% else %>
+  <div class="row">
+    <div class="col-md-6">
+      <a href="#" class="btn btn-agendapro-claro disabled">Nuevo Local</a><br />
+    </div>
+    <div class="col-md-6">
+      <%= link_to '<i class="fa fa-minus"></i> Locales Inactivos'.html_safe, inactive_locations_path, :class => "btn btn-agendapro-claro pull-right" unless cannot? :destroy, Location %>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-6" style="margin-top: 10px;">
+      No puedes crear más locales con el plan actual.<br />
+      <%= link_to 'Cambiar mi plan', select_plan_path %>
+    </div>
+    <div class="col-md-6">
+    </div>
+  </div>
+<% end %>
+
 
 <%= stylesheet_link_tag "admin/draggable" %>
 <% content_for :scripts do %>

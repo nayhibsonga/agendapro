@@ -2,7 +2,7 @@
   <div class="container">
     <div class="row">
       <% if !@company.description.blank? %>
-        <div class="col-md-6 company-header-left company-header">
+        <div class="col-md-4 company-header-left company-header">
           <div class="row">
             <div class="col-md-3">
               <% if @company.logo_url %>
@@ -35,7 +35,7 @@
             <%= @company.description %>
           </div>
         </div>
-        <div class="col-md-2 company-header-right company-header">
+        <div class="col-md-4 company-header-right company-header">
           <% if @local %>
             <div id="phone-info">
               <%= image_tag 'telefono.png', :alt => '', :size => "12x14", :class=>"loc-icon" %>&nbsp;
@@ -59,7 +59,7 @@
           <div style="clear: both;"></div>
         </div>
       <% else %>
-        <div class="col-md-6 company-header-left company-header" style="border-right: 1px solid #949292;">
+        <div class="col-md-4 company-header-left company-header" style="border-right: 1px solid #949292;">
           <div class="row">
             <div class="col-md-3">
               <% if @company.logo_url %>
@@ -87,7 +87,7 @@
             </div>
           </div>
         </div>
-        <div class="col-md-6 company-header-center2 company-header">
+        <div class="col-md-8 company-header-center2 company-header">
           <% if @local %>
             <div id="phone-info">
               <%= image_tag 'telefono.png', :alt => '', :size => "12x14", :class=>"loc-icon" %>&nbsp;

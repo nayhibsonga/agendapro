@@ -5,7 +5,7 @@
   
     <div class="row">
       <% if !@company.description.blank? %>
-        <div class="col-md-6 company-header-left company-header">
+        <div class="col-md-4 company-header-left company-header">
         	<div class="col-md-3">
 				<% if @company.logo_url %>
 					<%= image_tag @company.logo_url.to_s, :size => "80x80", :alt => @company.name, :class => "company-logo img-responsive" %>
@@ -22,7 +22,7 @@
             <%= @company.description %>
           </div>
         </div>
-        <div class="col-md-2 company-header-right company-header">
+        <div class="col-md-4 company-header-right company-header">
           
           <% if @selectedLocation %>
             <div id="phone-info">         
@@ -47,7 +47,7 @@
         </div>
 
       <% else %>
-        <div class="col-md-6 company-header-left company-header" style="border-right: 1px solid #949292;">
+        <div class="col-md-4 company-header-left company-header" style="border-right: 1px solid #949292;">
 			<div class="col-md-3">
 				<% if @company.logo_url %>
 					<%= image_tag @company.logo_url.to_s, :size => "80x80", :alt => @company.name, :class => "company-logo img-responsive" %>
@@ -59,7 +59,7 @@
 				<%= @company.name %>
 			</div>
         </div>
-        <div class="col-md-6 company-header-center2 company-header">
+        <div class="col-md-8 company-header-center2 company-header">
           
           <% if @selectedLocation %>
             <div id="phone-info">         
