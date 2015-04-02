@@ -40,28 +40,41 @@ class Location < ActiveRecord::Base
 
 	after_commit :extended_schedule
 
+	pg_search_scope :search_company_name, :associated_against => {
+		:company => :name
+	},
+	:using => {
+                :trigram => {
+                  	:threshold => 0.1,
+                  	:prefix => true,
+                	:any_word => true
+                },
+                :tsearch => {
+                	:prefix => true,
+                	:any_word => true
+                }
+    },
+    :ignoring => :accents
 
 	pg_search_scope :search, :associated_against => {
-		:company => :name,
-		:services => :name,
-		:economic_sectors => :name,
-		:economic_sectors_dictionaries => :name,
-		:service_categories => :name
-		},
-		:using => {
-                    :trigram => {
-                      	:threshold => 0.1,
-                      	:prefix => true,
-                    	:dictionary => 'spanish',
-                    	:any_word => true
-                    },
-                    :tsearch => {
-                    	:prefix => true,
-                    	:dictionary => 'spanish',
-                    	:any_word => true
-                    }
-        },
-        :ignoring => :accents
+	:company => :name,
+	:services => :name,
+	:economic_sectors => :name,
+	:economic_sectors_dictionaries => :name,
+	:service_categories => :name
+	},
+	:using => {
+                :trigram => {
+                  	:threshold => 0.1,
+                  	:prefix => true,
+                	:any_word => true
+                },
+                :tsearch => {
+                	:prefix => true,
+                	:any_word => true
+                }
+    },
+    :ignoring => :accents
 
 
 	def extended_schedule
@@ -164,10 +177,10 @@ class Location < ActiveRecord::Base
 	def categorized_services
 
 	    location_resources = self.resource_locations.pluck(:resource_id)
-	    service_providers = self.service_providers.where(active: true)
+	    service_providers = self.service_providers.where(active: true, online_booking: true)
 
 	    categories = ServiceCategory.where(:company_id => self.company_id).order(order: :asc)
-	    services = Service.where(:active => true, :id => ServiceStaff.where(service_provider_id: service_providers.pluck(:id)).pluck(:service_id)).order(order: :asc)
+	    services = Service.where(:active => true, online_booking: true, :id => ServiceStaff.where(service_provider_id: service_providers.pluck(:id)).pluck(:service_id)).order(order: :asc)
 	    service_resources_unavailable = ServiceResource.where(service_id: services)
 	    if location_resources.any?
 	      if location_resources.length > 1

@@ -1,5 +1,5 @@
 class CompanySettingsController < ApplicationController
-  before_action :set_company_setting, only: [:show, :edit, :update, :destroy, :minisite]
+  before_action :set_company_setting, only: [:show, :edit, :update, :destroy]
   before_action :authenticate_user!
   before_action :quick_add
   load_and_authorize_resource
@@ -106,6 +106,7 @@ class CompanySettingsController < ApplicationController
   end
 
   def minisite
+    @company_setting = CompanySetting.find_by(:company_id => params[:company])
   end
 
 
@@ -134,11 +135,6 @@ class CompanySettingsController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def company_setting_params
-
-      params.require(:company_setting).permit(:email, :sms, :signature, :company_id, :before_booking, :after_booking, :before_edit_booking, :activate_workflow, :activate_search, :client_exclusive, :provider_preference, :calendar_duration, :extended_schedule_bool, :extended_min_hour, :extended_max_hour, :schedule_overcapacity, :provider_overcapacity, :resource_overcapacity, :booking_confirmation_time, :page_id, :booking_history, :staff_code, :booking_configuration_email, :max_changes, :deal_name, :deal_activate, :deal_overcharge, :deal_exclusive, :deal_quantity, :deal_constraint_option, :deal_constraint_quantity, :deal_identification_number, :allows_online_payment, :bank_id, :account_number, :company_rut, :account_name, :account_type, online_cancelation_policy_attributes: [:cancelable, :cancel_max, :cancel_unit, :min_hours, :modifiable, :modification_max, :modification_unit])
-
-
-      params.require(:company_setting).permit(:email, :sms, :signature, :company_id, :before_booking, :after_booking, :before_edit_booking, :activate_workflow, :activate_search, :client_exclusive, :provider_preference, :calendar_duration, :extended_schedule_bool, :extended_min_hour, :extended_max_hour, :schedule_overcapacity, :provider_overcapacity, :resource_overcapacity, :booking_confirmation_time, :page_id, :booking_history, :staff_code, :booking_configuration_email, :max_changes, :deal_name, :deal_activate, :deal_overcharge, :deal_exclusive, :deal_quantity, :deal_constraint_option, :deal_constraint_quantity, :deal_identification_number, :allows_online_payment, :bank_id, :account_number, :company_rut, :account_name, :account_type, online_cancelation_policy_attributes: [:cancelable, :cancel_max, :cancel_unit, :min_hours, :modifiable, :modification_max, :modification_unit])
-
+      params.require(:company_setting).permit(:email, :sms, :signature, :company_id, :before_booking, :after_booking, :before_edit_booking, :activate_workflow, :activate_search, :client_exclusive, :provider_preference, :calendar_duration, :extended_schedule_bool, :extended_min_hour, :extended_max_hour, :schedule_overcapacity, :provider_overcapacity, :resource_overcapacity, :booking_confirmation_time, :page_id, :booking_history, :staff_code, :booking_configuration_email, :max_changes, :deal_name, :deal_activate, :deal_overcharge, :deal_exclusive, :deal_quantity, :deal_constraint_option, :deal_constraint_quantity, :deal_identification_number, :deal_required, :allows_online_payment, :bank_id, :account_number, :company_rut, :account_name, :account_type, :allows_optimization, :activate_notes, online_cancelation_policy_attributes: [:cancelable, :cancel_max, :cancel_unit, :min_hours, :modifiable, :modification_max, :modification_unit])
     end
 end

@@ -1,7 +1,167 @@
 # Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
-one:
-  name: MyString
-
-two:
-  name: MyString
+city_1:
+	name: Santiago
+	region: region_1
+city_2:
+	name: Viña del Mar
+	region: region_2
+city_3:
+	name: Arica
+	region: region_3
+city_4:
+	name: Parinacota
+	region: region_3
+city_5:
+	name: Iquique
+	region: region_4
+city_6:
+	name: Tamarugal
+	region: region_4
+city_7:
+	name: Antofagasta
+	region: region_5
+city_8:
+	name: Calama
+	region: region_5
+city_9:
+	name: Tocopilla
+	region: region_5
+city_10:
+	name: Chañaral
+	region: region_6
+city_11:
+	name: Copiapó
+	region: region_6
+city_12:
+	name: Vallenar
+	region: region_6
+city_13:
+	name: Illapel
+	region: region_7
+city_14:
+	name: Coquimbo
+	region: region_7
+city_15:
+	name: Ovalle
+	region: region_7
+city_16:
+	name: Isla de Pascua
+	region: region_2
+city_17:
+	name: Los Andes
+	region: region_2
+city_18:
+	name: Quilpué
+	region: region_2
+city_19:
+	name: La Ligua
+	region: region_2
+city_20:
+	name: Temuco
+	region: region_12
+city_21:
+	name: Quillota
+	region: region_2
+city_22:
+	name: Angol
+	region: region_12
+city_23:
+	name: San Antonio
+	region: region_2
+city_24:
+	name: San Felipe
+	region: region_2
+city_25:
+	name: Valparaíso
+	region: region_2
+city_26:
+	name: Ranco
+	region: region_13
+city_27:
+	name: Valdivia
+	region: region_13
+city_28:
+	name: Chiloé
+	region: region_14
+city_29:
+	name: Puerto Montt
+	region: region_14
+city_30:
+	name: Osorno
+	region: region_14
+city_31:
+	name: Chaitén
+	region: region_14
+city_32:
+	name: Rancagua
+	region: region_9
+city_33:
+	name: Pichilemu
+	region: region_9
+city_34:
+	name: San Fernando
+	region: region_9
+city_35:
+	name: Aysén
+	region: region_15
+city_36:
+	name: Cochrane
+	region: region_15
+city_37:
+	name: General Carrera
+	region: region_15
+city_38:
+	name: Coyhaique
+	region: region_15
+city_39:
+	name: Puerto Williams
+	region: region_16
+city_40:
+	name: Punta Arenas
+	region: region_16
+city_41:
+	name: Tierra del Fuego
+	region: region_16
+city_42:
+	name: Puerto Natales
+	region: region_16
+city_43:
+	name: Colina
+	region: region_1
+city_44:
+	name: Cauquenes
+	region: region_10
+city_45:
+	name: Puente Alto
+	region: region_1
+city_46:
+	name: Curicó
+	region: region_10
+city_47:
+	name: Linares
+	region: region_10
+city_48:
+	name: San Bernardo
+	region: region_1
+city_49:
+	name: Melipilla
+	region: region_1
+city_50:
+	name: Talca
+	region: region_10
+city_51:
+	name: Talagante
+	region: region_1
+city_52:
+	name: Arauco
+	region: region_11
+city_53:
+	name: Los Ángeles
+	region: region_11
+city_54:
+	name: Concepción
+	region: region_11
+city_55:
+	name: Chillán
+	region: region_11

@@ -20,4 +20,10 @@ module UrlHelper
       root_url(subdomain: false)
     end
   end
+
+  def social_login_url(provider)
+    url = root_url(subdomain: false) + "users/auth/" + provider
+    return url
+  end
+
 end

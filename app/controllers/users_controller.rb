@@ -73,7 +73,7 @@ class UsersController < ApplicationController
     @lat = cookies[:lat]
     @lng = cookies[:lng]
     if cookies[:formatted_address]
-      @formatted_address = cookies[:formatted_address].encode('UTF-8', 'binary', invalid: :replace, undef: :replace, replace: '')
+      @formatted_address = cookies[:formatted_address].unpack("C*").pack("U*")
     end
 
     #@activeBookings = Booking.where(:user_id => params[:id], :status_id => Status.find_by(:name => ['Reservado', 'Pagado', 'Confirmado'])).where("start > ?", DateTime.now).order(:start) 
@@ -99,6 +99,6 @@ class UsersController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def user_params
-      params.require(:user).permit(:id, :first_name, :last_name, :email, :phone, :password, :role_id, :company_id)
+      params.require(:user).permit(:id, :first_name, :last_name, :email, :phone, :password, :role_id, :company_id, :uid, :provider, :receives_offers)
     end
 end

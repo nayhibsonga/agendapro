@@ -1,3 +1,4 @@
+var ajaxRequest;
 function Calendar (source, getData) {
 
 	// Default Values
@@ -44,7 +45,7 @@ function Calendar (source, getData) {
 
 		// Tittle calculation
 		generateTittle(monday, sunday);
-		
+
 		return now;
 	}
 
@@ -70,12 +71,18 @@ function Calendar (source, getData) {
 	// Generate Week
 	var available_hour;
 	var generateWeek = function (monday) {
+		if (ajaxRequest != null) {
+			ajaxRequest.abort();
+		}
 		sources.data.date = formatDate(monday);
-		$.getJSON(sources.source, sources.data, function (data, status) {
+		$('#staff-selector > .list-group-item').hide();
+		$('#staff-selector-spinner').show();
+		
+		ajaxRequest = $.getJSON(sources.source, sources.data, function (data, status) {
 			available_hour = false;
 
 			$(".days-row").empty();
-			
+
 			$.each(data, function(day, day_blocks){
 				var date = parseDate(day);
 				var dayNumber = date.getDay();
@@ -86,7 +93,7 @@ function Calendar (source, getData) {
 				}
 			});
 
-			
+
 
 			var pos = 0;
 			$.each(data, function (day, day_blocks) {
@@ -125,6 +132,11 @@ function Calendar (source, getData) {
 			calculateWidth();
 			$('#next').removeAttr('disabled');
 			$('#prev').removeAttr('disabled');
+			$.event.trigger({
+				type: 'calendarBuilded'
+			});
+			$('#staff-selector-spinner').hide();
+			$('#staff-selector > .list-group-item').show();
 		});
 	}
 
@@ -224,7 +236,7 @@ function Calendar (source, getData) {
 		var count = $('.columna-dia').length;
 		var width = (100 / count);
 		$('.columna-dia').css('width', width + '%');
-		
+
 		var width2 = $(".horario")[0].clientWidth/count;
 		$('.dia-semana').css('width', width2);
 		$('.dia-semana:last').css('width', width2-1);

@@ -82,10 +82,14 @@
 				<% end %>
 				<% if controller.controller_name == "bookings" %>
 				<li><div id="dp" class="lateralDatepicker"></div></li>
+				<li><div class="row text-center"><button type="button" class="btn btn-agendapro-claro hours-optimizer-button" data-toggle="modal" data-target="#hoursOptimizer" style="width: 100%; display:none;">Buscador de Horas</button></div></li>
 				<% end %>
 				<% if current_user.role_id == Role.find_by_name("Super Admin").id %>
 					<li>
 						<%= link_to '<i class="fa fa-building fa-fw"></i><span class="remove-txt"> Control de gestión</span>'.html_safe, '/companies_payments', { :class => "submenu" }  %>
+					</li>
+					<li>
+						<%= link_to '<i class="fa fa-exchange fa-fw"></i><span class="remove-txt"> Transferencias</span>'.html_safe, payed_bookings_path, { :class => if controller.controller_name == "payed_bookings" then "submenu active" else "submenu" end }  %>
 					</li>
 				<% end %>
 				<% if current_user.role_id != Role.find_by_name("Staff").id  && current_user.role_id != Role.find_by_name("Staff (sin edición)").id %>
@@ -105,9 +109,6 @@
 							<li><%= link_to '<i class="fa fa-cloud fa-fw"></i><span class="remove-txt"> Gestión Planes</span>'.html_safe, plans_path, { :class => "submenu" }  %></li>
 							<li><%= link_to '<i class="fa fa-list-ol fa-fw"></i><span class="remove-txt"> Parámetros Numéricos</span>'.html_safe, numeric_parameters_path, { :class => if controller.controller_name == "numeric_parameters" then "submenu active" else "submenu" end }  %></li>
 							<!-- Link a la vista de transferencias hechas. -->
-							<li>
-							<%= link_to '<i class="fa fa-exchange fa-fw"></i><span class="remove-txt"> Transferencias</span>'.html_safe, payed_bookings_path, { :class => if controller.controller_name == "payed_bookings" then "submenu active" else "submenu" end }  %>
-							</li>
 							<li>
 							<%= link_to '<i class="fa fa-university fa-fw"></i><span class="remove-txt"> Bancos</span>'.html_safe, banks_path, { :class => if controller.controller_name == "banks" then "submenu active" else "submenu" end }  %>
 							</li>
@@ -142,10 +143,10 @@
 							<li><%= link_to '<i class="fa fa-book fa-fw"></i><span class="remove-txt"> Servicios</span>'.html_safe, services_path, { :class => if controller.controller_name == "services" then "submenu active" else "submenu" end } %></li>
 							<li><%= link_to '<i class="fa fa-list fa-fw"></i><span class="remove-txt"> Categorías de Servicios</span>'.html_safe, service_categories_path, { :class => if controller.controller_name == "service_categories" then "submenu active" else "submenu" end } %></li>
 							<li><%= link_to '<i class="fa fa-cubes fa-fw"></i><span class="remove-txt"> Recursos</span>'.html_safe, resources_path, { :class => if controller.controller_name == "resources" then "submenu active" else "submenu" end } %></li>
-							<% if current_user.role_id == Role.find_by_name("Administrador General").id %>
-							<li>
-							<%= link_to '<i class="fa fa-exchange fa-fw"></i><span class="remove-txt"> Pagos en línea</span>'.html_safe, '/company_bookings', { :class => "submenu" }  %>
-							</li>
+							<% if current_user.role_id == Role.find_by_name("Administrador General").id && current_user.company.company_setting.online_payment_capable %>
+								<li>
+								<%= link_to '<i class="fa fa-exchange fa-fw"></i><span class="remove-txt"> Pagos en línea</span>'.html_safe, '/company_bookings', { :class => "submenu" }  %>
+								</li>
 							<% end %>
 
 						</ul>

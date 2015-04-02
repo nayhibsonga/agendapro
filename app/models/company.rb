@@ -23,7 +23,6 @@ class Company < ActiveRecord::Base
 
 	has_many :payment_accounts, dependent: :destroy
 
-
 	validates :name, :web_address, :plan, :payment_status, :presence => true
 
 	validates_uniqueness_of :web_address
@@ -153,7 +152,12 @@ class Company < ActiveRecord::Base
 	end
 
 	def update_online_payment
-		if(!self.company_setting.allows_online_payment)
+
+		if !self.company_setting.online_payment_capable
+			self.company_setting.allows_online_payment = false
+		end
+
+		if !self.company_setting.allows_online_payment
 			self.services.each do |service|
 				service.online_payable = false
 				service.save
@@ -161,7 +165,7 @@ class Company < ActiveRecord::Base
 		end
 
 		#Si cambia los datos de la cuenta, hay que actualizar el payment_account
-		if(!self.payment_accounts.nil?)
+		if !self.payment_accounts.nil?
 			self.payment_accounts.each do |pa|
 				pa.number = self.company_setting.account_number
 				pa.rut = self.company_setting.company_rut

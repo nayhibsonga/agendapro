@@ -48,6 +48,22 @@
                   </div>
                 </div>
               </div>
+              <div class="form-group has-feedback">
+                <%= f.label :comission_value, 'Comisión de Venta', class: "col-sm-3 control-label" %>
+                <div class="col-sm-5">
+                  <%= f.number_field :comission_value, :class => 'form-control', placeholder: '' %> 
+                  <span class="help-block"></span>
+                  <span class="form-control-feedback"></span>
+                </div>
+                <div class="col-sm-3">
+                  <%= f.select :comission_option, options_for_select([["%", 0], ["$", 1]], selected: @service.comission_option ), {}, {class: "form-control" } %>
+                  <span class="help-block"></span>
+                  <span class="form-control-feedback"></span>
+                </div>
+                <div class="col-sm-1">
+                  <span style="cursor: pointer;" data-toggle="tooltip" data-placement="bottom" title="Si los prestadores que hacen este servicio perciben una comisión al realizarlo, puedes definir esto acá y después ver en la sección 'Reportes' el detalle de estas comisiones. Se pueden definir tanto como un porcentaje del precio del servicio o un valor fijo."><i class="fa fa-question-circle fa-lg"></i></span>
+                </div>
+              </div>
               
               <div class="form-group">
                 <%= f.label :duration, "Duración", class: "col-sm-3 control-label" %>
@@ -121,6 +137,17 @@
                   </div>
                 </div>
               </div>
+              <% if current_user.company.company_setting.activate_workflow %>
+              <div class="form-group">
+                <div class="col-sm-offset-3 col-sm-9">
+                  <div class="checkbox">
+                    <label>
+                      <%= f.check_box :online_booking %> Este servicio se puede reservar Online
+                    </label>
+                  </div>
+                </div>
+              </div>
+              <% end %>
               <div class="form-group hidden">
                 <%= f.label :capacity, "Capacidad", class: "col-sm-3 control-label" %>
                 <div class="col-sm-9">

@@ -35,6 +35,7 @@ es:
       long: ! '%A %d de %B de %Y'
       short: ! '%d de %b'
       day: ! '%A %d de %B'
+      day_short: ! '%a %d de %B'
       default_day: ! '%a %d/%m/%Y'
     month_names:
     -

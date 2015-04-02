@@ -6,6 +6,13 @@
 				<p>
 					<% if @reason == "company" %>
 						La empresa <strong><%= @company.name %></strong> sólo permite cancelar reservas hasta <strong><%= @company.company_setting.before_edit_booking %></strong> horas antes.
+					<% elsif @reason =="only_booking" %>
+						No se puede cancelar un servicio que fue pagado en conjunto con otros servicios.
+						<% if !@company.company_setting.online_cancelation_policy.cancelable %>
+							<br />Además, la empresa <strong><%= @company.name %></strong> no permite cancelar reservas pagadas en línea.
+						<% else %>
+							<br />Puedes cancelar el conjunto completo de reservas apretando "Cancelar todos los servicios" en el correo de resumen.
+						<% end %>
 					<% else %>
 						<% if !@company.company_setting.online_cancelation_policy.cancelable %>
 							La empresa <strong><%= @company.name %></strong> no permite cancelar reservas pagadas en línea.

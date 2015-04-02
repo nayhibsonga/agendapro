@@ -15,9 +15,11 @@ banks = [[1, "Banco Chile - CityBank"],
 ]
 
 banks.each do |arr|
+
 	bank = Bank.new
 	bank.code = arr[0]
 	bank.name = arr[1]
 	bank.save
 	puts "Bank saved"
+
 end

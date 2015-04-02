@@ -7,7 +7,7 @@ class Booking < ActiveRecord::Base
 	belongs_to :promotion
 	belongs_to :client
 	belongs_to :deal
-	has_one :payed_booking
+	belongs_to :payed_booking
 
 	has_many :booking_histories, dependent: :destroy
 
@@ -29,16 +29,16 @@ class Booking < ActiveRecord::Base
 
 	after_create :send_booking_mail, :wait_for_payment
 	after_update :send_update_mail
-	
-	def wait_for_payment
-		self.delay(run_at: 150.seconds.from_now).payment_timeout
-	end
 
-	def payment_timeout
-		if !self.payed and self.trx_id != "" and self.payed_booking.nil?
-			self.delete
-		end
-	end
+	def wait_for_payment
+    	self.delay(run_at: 4.minutes.from_now).payment_timeout
+    end
+
+    def payment_timeout
+        if !self.payed and self.trx_id != "" and self.payed_booking.nil?
+            self.delete
+        end
+    end
 
 	def time_in_provider_time_warning
 		bstart = self.start.clone()
@@ -69,7 +69,7 @@ class Booking < ActiveRecord::Base
 			end
 		end
 	end
-	
+
 	def bookings_overlap_warning
 		cancelled_id = Status.find_by(name: 'Cancelado').id
 		unless self.status_id == cancelled_id
@@ -85,7 +85,7 @@ class Booking < ActiveRecord::Base
 								return
 							end
 						end
-					end	
+					end
 				end
 			end
 		end
@@ -111,7 +111,7 @@ class Booking < ActiveRecord::Base
 									if location_booking.service != self.service || location_booking.service_provider != self.service_provider
 										group_services.push(location_booking.service_provider.id)
 									end
-								end		
+								end
 							end
 						end
 					end
@@ -199,7 +199,7 @@ class Booking < ActiveRecord::Base
 			end
 		end
 	end
-	
+
 	def bookings_overlap
 		unless self.location.company.company_setting.provider_overcapacity
 			cancelled_id = Status.find_by(name: 'Cancelado').id
@@ -216,7 +216,7 @@ class Booking < ActiveRecord::Base
 									return
 								end
 							end
-						end	
+						end
 					end
 				end
 			end
@@ -244,7 +244,7 @@ class Booking < ActiveRecord::Base
 										if location_booking.service != self.service || location_booking.service_provider != self.service_provider
 											group_services.push(location_booking.service_provider.id)
 										end
-									end		
+									end
 								end
 							end
 						end
@@ -263,7 +263,7 @@ class Booking < ActiveRecord::Base
 			unless self.location.company.company_setting.deal_overcharge
 				cancelled_id = Status.find_by(name: 'Cancelado').id
 				unless self.status_id == cancelled_id
-					if !self.deal.nil?
+					if !self.deal.blank?
 						if self.deal.quantity > 0 && self.deal.bookings.where.not(status_id: cancelled_id).count >= self.deal.quantity
 							errors.add(:base, "Este convenio ya fue utilizado el máximo de veces que era permitida.")
 							return
@@ -289,6 +289,11 @@ class Booking < ActiveRecord::Base
 									return
 								end
 							end
+						end
+					else
+						if self.location.company.company_setting.deal_required
+							errors.add(:base, "Es obligatorio incluir un código de convenio para reservar.")
+							return
 						end
 					end
 				end
@@ -316,7 +321,7 @@ class Booking < ActiveRecord::Base
 
 	def client_exclusive
 		if self.service_provider.company.company_setting.client_exclusive
-			if !self.client.can_book || self.client.identification_number.nil? || self.client.identification_number.empty? 
+			if !self.client.can_book || self.client.identification_number.nil? || self.client.identification_number.empty?
 				errors.add(:base, "El cliente ingresado no figura en los registros o no puede reservar.")
 			end
 		end
@@ -329,24 +334,30 @@ class Booking < ActiveRecord::Base
 	end
 
 	def send_booking_mail
-		if self.trx_id == ""
-			if self.start > Time.now - 4.hours
-				if self.status != Status.find_by(:name => "Cancelado")
-					BookingMailer.book_service_mail(self)
+		if !self.id.nil?
+			if self.trx_id == ""
+				if self.start > Time.now - eval(ENV["TIME_ZONE_OFFSET"])
+					if self.status != Status.find_by(:name => "Cancelado")
+						if self.booking_group.nil?
+							BookingMailer.book_service_mail(self)
+						end
+					end
 				end
 			end
 		end
 	end
 
 	def send_update_mail
-		if self.start > Time.now - 4.hours
+		if self.start > Time.now - eval(ENV["TIME_ZONE_OFFSET"])
 			if self.status == Status.find_by(:name => "Cancelado")
-				BookingMailer.cancel_booking(self)
-				if !self.payed_booking.nil?
-					BookingMailer.cancel_payment_mail(self.payed_booking, 1)
-					BookingMailer.cancel_payment_mail(self.payed_booking, 2)
-					BookingMailer.cancel_payment_mail(self.payed_booking, 3)
+				if changed_attributes['status_id']
+					BookingMailer.cancel_booking(self)
 				end
+				#if !self.payed_booking.nil?
+				#	BookingMailer.cancel_payment_mail(self.payed_booking, 1)
+				#	BookingMailer.cancel_payment_mail(self.payed_booking, 2)
+				#	BookingMailer.cancel_payment_mail(self.payed_booking, 3)
+				#end
 			else
 				if changed_attributes['start']
 					BookingMailer.update_booking(self, changed_attributes['start'])
@@ -358,10 +369,10 @@ class Booking < ActiveRecord::Base
 	end
 
 	def self.booking_reminder
-		where(:start => 4.hours.ago...92.hours.from_now).each do |booking|
+		where(:start => eval(ENV["TIME_ZONE_OFFSET"]).ago...(96.hours - eval(ENV["TIME_ZONE_OFFSET"])).from_now).each do |booking|
 			unless booking.status == Status.find_by(:name => "Cancelado")
 				booking_confirmation_time = booking.location.company.company_setting.booking_confirmation_time
-				if ((booking_confirmation_time.days - 4.hours).from_now..(booking_confirmation_time.days + 1.days - 4.hours).from_now).cover?(booking.start)
+				if ((booking_confirmation_time.days - eval(ENV["TIME_ZONE_OFFSET"])).from_now..(booking_confirmation_time.days + 1.days - eval(ENV["TIME_ZONE_OFFSET"])).from_now).cover?(booking.start)
 					if booking.send_mail
 						BookingMailer.book_reminder_mail(booking)
 					end
@@ -387,4 +398,829 @@ class Booking < ActiveRecord::Base
 		end
 		return event
 	end
+
+	def self.generate_csv(type, subtype, year)
+
+		companies = Company.all.order(:name)
+
+		bookings = Hash.new
+
+		companies_info = Hash.new
+		for i in 1..12
+			companies_info[i] = Array.new
+		end
+
+		for i in 1..13
+			bookings[i] = Hash.new
+			bookings[i]['month'] = ""
+			bookings[i]['count'] = 0
+			bookings[i]['web'] = 0
+		end
+
+		bookings[1]['month'] = "Enero"
+		bookings[2]['month'] = "Febrero"
+		bookings[3]['month'] = "Marzo"
+		bookings[4]['month'] = "Abril"
+		bookings[5]['month'] = "Mayo"
+		bookings[6]['month'] = "Junio"
+		bookings[7]['month'] = "Julio"
+		bookings[8]['month'] = "Agosto"
+		bookings[9]['month'] = "Septiembre"
+		bookings[10]['month'] = "Octubre"
+		bookings[11]['month'] = "Noviembre"
+		bookings[12]['month'] = "Diciembre"
+
+		cat_bookings = Hash.new
+		for i in 1..13
+			cat_bookings[i] = Hash.new
+			cat_bookings[i]['month'] = ""
+			cat_bookings[i]['count'] = 0
+			cat_bookings[i]['web'] = 0
+		end
+
+		cat_bookings[1]['month'] = "Enero"
+		cat_bookings[2]['month'] = "Febrero"
+		cat_bookings[3]['month'] = "Marzo"
+		cat_bookings[4]['month'] = "Abril"
+		cat_bookings[5]['month'] = "Mayo"
+		cat_bookings[6]['month'] = "Junio"
+		cat_bookings[7]['month'] = "Julio"
+		cat_bookings[8]['month'] = "Agosto"
+		cat_bookings[9]['month'] = "Septiembre"
+		cat_bookings[10]['month'] = "Octubre"
+		cat_bookings[11]['month'] = "Noviembre"
+		cat_bookings[12]['month'] = "Diciembre"
+
+		# companies.each do |company|
+		# 	company_bookings = 0
+		# 	company_web_bookings = 0
+
+		# 	for i in 1..12 do
+
+		# 		company_info = Hash.new
+		# 		company_info['company'] = company
+		# 		company_info['count'] = 0
+		# 		company_info['web'] = 0
+		# 		month_bookings = 0
+		# 		start_date = DateTime.new(year.to_i, i, 1)
+		# 		end_date = start_date
+		# 		if i < 12	
+		# 			end_date = DateTime.new(year.to_i, i+1, 1)-1.minutes
+		# 		else
+		# 			end_date = DateTime.new(year.to_i+1, 1, 1)-1.minutes
+		# 		end
+
+		# 		bookings = Booking.where('start BETWEEN ? and ?', start_date, end_date).where(:location_id => company.locations.pluck(:id))
+		# 		bookings_count = bookings.count
+				
+		# 		web_bookings = bookings.where(:web_origin => true)
+
+		# 		month_bookings = bookings_count
+		# 		company_bookings = company_bookings + bookings_count
+		# 		company_web_bookings = company_web_bookings + web_bookings.count
+		# 		bookings[i]['count'] = @bookings[i]['count'] + bookings_count
+		# 		bookings[i]['web'] = @bookings[i]['web'] + web_bookings.count
+		# 		bookings[13]['count'] = @bookings[13]['count'] + bookings_count
+		# 		bookings[13]['web'] = 	@bookings[13]['web'] + web_bookings.count
+
+		# 		company_info['count'] = month_bookings
+		# 		company_info['web'] = web_bookings.count
+		# 		companies_info[i] << company_info
+
+		# 	end
+		# end
+
+
+		CSV.generate do |csv|
+
+			header = Array.new
+			if type == 'book_date'
+				if subtype == 'general'
+
+					header = ["Empresa", "Atributo", "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre", "Total"]
+					csv << header
+					companies.each do |company|
+
+						company_total = 0
+						company_web = 0
+
+						row1 = Array.new
+						row2 = Array.new
+						row3 = Array.new
+
+						row1 << company.name
+						row1 << "Total"
+
+						row2 << ""
+						row2 << "Web"
+
+						row3 << ""
+						row3 << "%"
+
+						for i in 1..12
+							month_bookings = 0
+							start_date = DateTime.new(year.to_i, i, 1)
+							end_date = start_date
+							if i < 12	
+								end_date = DateTime.new(year.to_i, i+1, 1)-1.minutes
+							else
+								end_date = DateTime.new(year.to_i+1, 1, 1)-1.minutes
+							end
+
+							total_bookings = Booking.where('start BETWEEN ? and ?', start_date, end_date).where(:location_id => company.locations.pluck(:id))
+							web_bookings = total_bookings.where(:web_origin => true)
+
+							company_total = company_total + total_bookings.count
+							company_web = company_web + web_bookings.count
+
+							row1 << total_bookings.count.to_s
+							row2 << web_bookings.count.to_s
+							if(total_bookings.count > 0)
+								row3 << (web_bookings.count*100/total_bookings.count).to_s
+							else
+								row3 << "0"
+							end
+						end
+
+						row1 << company_total.to_s
+						row2 << company_web.to_s
+						if (company_total > 0)
+							row3 << (company_web*100/company_total).to_s
+						else
+							row3 << "0"
+						end
+						csv << row1
+						csv << row2
+						csv << row3
+					end
+
+				elsif subtype == 'versus'
+
+					header = ["", "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre", "Total"]
+
+					csv << header
+
+					row1 = Array.new
+					row2 = Array.new
+					row3 = Array.new
+
+					row1 << "Reservas"
+					row2 << "Web"
+					row3 << "%"
+
+					total = 0
+					total_web = 0
+
+					for i in 1..12
+
+						start_date = DateTime.new(year.to_i, i, 1)
+						end_date = start_date
+						if i < 12	
+							end_date = DateTime.new(year.to_i, i+1, 1)-1.minutes
+						else
+							end_date = DateTime.new(year.to_i+1, 1, 1)-1.minutes
+						end
+
+						total_bookings = Booking.where('start BETWEEN ? and ?', start_date, end_date)
+						web_bookings = total_bookings.where(:web_origin => true)
+
+						total = total + total_bookings.count
+						total_web = total_web + web_bookings.count
+
+						row1 << total_bookings.count.to_s
+						row2 << web_bookings.count.to_s
+						if total_bookings.count > 0
+							row3 << (web_bookings.count * 100 / total_bookings.count).to_s
+						else
+							row3 << "0"
+						end
+					end
+
+					row1 << total.to_s
+					row2 << total_web.to_s
+
+					if total > 0
+						row3 << (total_web*100/total).to_s
+					else
+						row3 << "0"
+					end
+
+					csv << row1
+					csv << row2
+					csv << row3
+
+				elsif subtype == 'all'
+
+					for i in 1..12
+
+						month_header = Array.new
+						month_header << bookings[i]['month']
+						csv << month_header
+						
+						header = Array.new
+						header << ""
+
+						row1 = Array.new
+						row2 = Array.new
+						row3 = Array.new
+						row1 << "Reservas"
+						row2 << "Web"
+						row3 << "%"
+
+
+						companies_array = Array.new
+
+						books_total = 0
+						web_total = 0
+
+						companies.each do |company|
+
+							company_hash = Hash.new
+							company_hash['company'] = company
+							company_hash['count'] = 0
+							company_hash['web'] = 0
+
+							start_date = DateTime.new(year.to_i, i, 1)
+							end_date = start_date
+							if i < 12	
+								end_date = DateTime.new(year.to_i, i+1, 1)-1.minutes
+							else
+								end_date = DateTime.new(year.to_i+1, 1, 1)-1.minutes
+							end
+
+							total_bookings = Booking.where('start BETWEEN ? and ?', start_date, end_date).where(:location_id => company.locations.pluck(:id))
+
+							web_bookings = total_bookings.where(:web_origin => true)
+
+							company_hash['count'] = total_bookings.count
+							company_hash['web'] = web_bookings.count
+
+							books_total = books_total + total_bookings.count
+							web_total = web_total + web_bookings.count
+
+							companies_array << company_hash
+
+						end
+
+						top_companies = companies_array.sort_by { |info| info['count'] }.reverse
+						top_total = 0
+						top_web = 0
+
+						for j in 0..9
+							header << top_companies[j]['company'].name
+							row1 << top_companies[j]['count'].to_s
+							row2 << top_companies[j]['web'].to_s
+							if top_companies[j]['count'] > 0
+								row3 << (top_companies[j]['web']*100/top_companies[j]['count']).to_s
+							else
+								row3 << "0"
+							end
+							top_total = top_total + top_companies[j]['count']
+							top_web = top_web + top_companies[j]['web']
+						end
+
+						row1 << top_total.to_s
+						row2 << top_web.to_s 
+						if top_total > 0
+							row3 << (top_web*100/top_total).to_s
+						else
+							row3 << "0"
+						end
+
+						row1 << books_total.to_s
+						row2 << web_total.to_s
+						if books_total > 0
+							row3 << (web_total*100/books_total).to_s
+						else
+							row3 << "0"
+						end
+
+						header << "Total top"
+						header << "Total todos"
+
+						csv << header
+						csv << row1
+						csv << row2
+						csv << row3
+
+					end
+
+				elsif subtype == 'web'
+
+					for i in 1..12
+
+						month_header = Array.new
+						month_header << bookings[i]['month']
+						csv << month_header
+						
+						header = Array.new
+						header << ""
+
+						row1 = Array.new
+						row2 = Array.new
+						row3 = Array.new
+						row1 << "Reservas"
+						row2 << "Web"
+						row3 << "%"
+
+
+						companies_array = Array.new
+
+						books_total = 0
+						web_total = 0
+
+						companies.each do |company|
+
+							company_hash = Hash.new
+							company_hash['company'] = company
+							company_hash['count'] = 0
+							company_hash['web'] = 0
+
+							start_date = DateTime.new(year.to_i, i, 1)
+							end_date = start_date
+							if i < 12	
+								end_date = DateTime.new(year.to_i, i+1, 1)-1.minutes
+							else
+								end_date = DateTime.new(year.to_i+1, 1, 1)-1.minutes
+							end
+
+							total_bookings = Booking.where('start BETWEEN ? and ?', start_date, end_date).where(:location_id => company.locations.pluck(:id))
+
+							web_bookings = total_bookings.where(:web_origin => true)
+
+							company_hash['count'] = total_bookings.count
+							company_hash['web'] = web_bookings.count
+
+							books_total = books_total + total_bookings.count
+							web_total = web_total + web_bookings.count
+
+							companies_array << company_hash
+
+						end
+
+						top_companies = companies_array.sort_by { |info| info['web'] }.reverse
+						top_total = 0
+						top_web = 0
+
+						for j in 0..9
+							header << top_companies[j]['company'].name
+							row1 << top_companies[j]['count'].to_s
+							row2 << top_companies[j]['web'].to_s
+							if top_companies[j]['count'] > 0
+								row3 << (top_companies[j]['web']*100/top_companies[j]['count']).to_s
+							else
+								row3 << "0"
+							end
+							top_total = top_total + top_companies[j]['count']
+							top_web = top_web + top_companies[j]['web']
+						end
+
+						row1 << top_total.to_s
+						row2 << top_web.to_s 
+						if top_total > 0
+							row3 << (top_web*100/top_total).to_s
+						else
+							row3 << "0"
+						end
+
+						row1 << books_total.to_s
+						row2 << web_total.to_s
+						if books_total > 0
+							row3 << (web_total*100/books_total).to_s
+						else
+							row3 << "0"
+						end
+
+						header << "Total top"
+						header << "Total todos"
+
+						csv << header
+						csv << row1
+						csv << row2
+						csv << row3
+
+					end
+
+				end
+			else
+				if subtype == 'general'
+
+					header = ["Empresa", "Atributo", "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre", "Total"]
+					csv << header
+					companies.each do |company|
+
+						company_total = 0
+						company_web = 0
+
+						row1 = Array.new
+						row2 = Array.new
+						row3 = Array.new
+
+						row1 << company.name
+						row1 << "Total"
+
+						row2 << ""
+						row2 << "Web"
+
+						row3 << ""
+						row3 << "%"
+
+						for i in 1..12
+							month_bookings = 0
+							start_date = DateTime.new(year.to_i, i, 1)
+							end_date = start_date
+							if i < 12	
+								end_date = DateTime.new(year.to_i, i+1, 1)-1.minutes
+							else
+								end_date = DateTime.new(year.to_i+1, 1, 1)-1.minutes
+							end
+
+							total_bookings = Booking.where('created_at BETWEEN ? and ?', start_date, end_date).where(:location_id => company.locations.pluck(:id))
+							web_bookings = total_bookings.where(:web_origin => true)
+
+							company_total = company_total + total_bookings.count
+							company_web = company_web + web_bookings.count
+
+							row1 << total_bookings.count.to_s
+							row2 << web_bookings.count.to_s
+							if(total_bookings.count > 0)
+								row3 << (web_bookings.count*100/total_bookings.count).to_s
+							else
+								row3 << "0"
+							end
+						end
+
+						row1 << company_total.to_s
+						row2 << company_web.to_s
+						if (company_total > 0)
+							row3 << (company_web*100/company_total).to_s
+						else
+							row3 << "0"
+						end
+						csv << row1
+						csv << row2
+						csv << row3
+					end
+
+				elsif subtype == 'versus'
+
+					header = ["", "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre", "Total"]
+
+					csv << header
+
+					row1 = Array.new
+					row2 = Array.new
+					row3 = Array.new
+
+					row1 << "Reservas"
+					row2 << "Web"
+					row3 << "%"
+
+					total = 0
+					total_web = 0
+
+					for i in 1..12
+
+						start_date = DateTime.new(year.to_i, i, 1)
+						end_date = start_date
+						if i < 12	
+							end_date = DateTime.new(year.to_i, i+1, 1)-1.minutes
+						else
+							end_date = DateTime.new(year.to_i+1, 1, 1)-1.minutes
+						end
+
+						total_bookings = Booking.where('created_at BETWEEN ? and ?', start_date, end_date)
+						web_bookings = total_bookings.where(:web_origin => true)
+
+						total = total + total_bookings.count
+						total_web = total_web + web_bookings.count
+
+						row1 << total_bookings.count.to_s
+						row2 << web_bookings.count.to_s
+						if total_bookings.count > 0
+							row3 << (web_bookings.count * 100 / total_bookings.count).to_s
+						else
+							row3 << "0"
+						end
+					end
+
+					row1 << total.to_s
+					row2 << total_web.to_s
+
+					if total > 0
+						row3 << (total_web*100/total).to_s
+					else
+						row3 << "0"
+					end
+
+					csv << row1
+					csv << row2
+					csv << row3
+
+				elsif subtype == 'all'
+
+					
+
+					for i in 1..12
+
+						month_header = Array.new
+						month_header << bookings[i]['month']
+						csv << month_header
+						
+						header = Array.new
+						header << ""
+
+						row1 = Array.new
+						row2 = Array.new
+						row3 = Array.new
+						row1 << "Reservas"
+						row2 << "Web"
+						row3 << "%"
+
+
+						companies_array = Array.new
+
+						books_total = 0
+						web_total = 0
+
+						companies.each do |company|
+
+							company_hash = Hash.new
+							company_hash['company'] = company
+							company_hash['count'] = 0
+							company_hash['web'] = 0
+
+							start_date = DateTime.new(year.to_i, i, 1)
+							end_date = start_date
+							if i < 12	
+								end_date = DateTime.new(year.to_i, i+1, 1)-1.minutes
+							else
+								end_date = DateTime.new(year.to_i+1, 1, 1)-1.minutes
+							end
+
+							total_bookings = Booking.where('created_at BETWEEN ? and ?', start_date, end_date).where(:location_id => company.locations.pluck(:id))
+
+							web_bookings = total_bookings.where(:web_origin => true)
+
+							company_hash['count'] = total_bookings.count
+							company_hash['web'] = web_bookings.count
+
+							books_total = books_total + total_bookings.count
+							web_total = web_total + web_bookings.count
+
+							companies_array << company_hash
+
+						end
+
+						top_companies = companies_array.sort_by { |info| info['count'] }.reverse
+						top_total = 0
+						top_web = 0
+
+						for j in 0..9
+							header << top_companies[j]['company'].name
+							row1 << top_companies[j]['count'].to_s
+							row2 << top_companies[j]['web'].to_s
+							if top_companies[j]['count'] > 0
+								row3 << (top_companies[j]['web']*100/top_companies[j]['count']).to_s
+							else
+								row3 << "0"
+							end
+							top_total = top_total + top_companies[j]['count']
+							top_web = top_web + top_companies[j]['web']
+						end
+
+						row1 << top_total.to_s
+						row2 << top_web.to_s 
+						if top_total > 0
+							row3 << (top_web*100/top_total).to_s
+						else
+							row3 << "0"
+						end
+
+						row1 << books_total.to_s
+						row2 << web_total.to_s
+						if books_total > 0
+							row3 << (web_total*100/books_total).to_s
+						else
+							row3 << "0"
+						end
+
+						header << "Total top"
+						header << "Total todos"
+
+						csv << header
+						csv << row1
+						csv << row2
+						csv << row3
+
+					end
+
+
+				elsif subtype == 'web'
+
+					for i in 1..12
+
+						month_header = Array.new
+						month_header << bookings[i]['month']
+						csv << month_header
+						
+						header = Array.new
+						header << ""
+
+						row1 = Array.new
+						row2 = Array.new
+						row3 = Array.new
+						row1 << "Reservas"
+						row2 << "Web"
+						row3 << "%"
+
+
+						companies_array = Array.new
+
+						books_total = 0
+						web_total = 0
+
+						companies.each do |company|
+
+							company_hash = Hash.new
+							company_hash['company'] = company
+							company_hash['count'] = 0
+							company_hash['web'] = 0
+
+							start_date = DateTime.new(year.to_i, i, 1)
+							end_date = start_date
+							if i < 12	
+								end_date = DateTime.new(year.to_i, i+1, 1)-1.minutes
+							else
+								end_date = DateTime.new(year.to_i+1, 1, 1)-1.minutes
+							end
+
+							total_bookings = Booking.where('created_at BETWEEN ? and ?', start_date, end_date).where(:location_id => company.locations.pluck(:id))
+
+							web_bookings = total_bookings.where(:web_origin => true)
+
+							company_hash['count'] = total_bookings.count
+							company_hash['web'] = web_bookings.count
+
+							books_total = books_total + total_bookings.count
+							web_total = web_total + web_bookings.count
+
+							companies_array << company_hash
+
+						end
+
+						top_companies = companies_array.sort_by { |info| info['web'] }.reverse
+						top_total = 0
+						top_web = 0
+
+						for j in 0..9
+							header << top_companies[j]['company'].name
+							row1 << top_companies[j]['count'].to_s
+							row2 << top_companies[j]['web'].to_s
+							if top_companies[j]['count'] > 0
+								row3 << (top_companies[j]['web']*100/top_companies[j]['count']).to_s
+							else
+								row3 << "0"
+							end
+							top_total = top_total + top_companies[j]['count']
+							top_web = top_web + top_companies[j]['web']
+						end
+
+						row1 << top_total.to_s
+						row2 << top_web.to_s 
+						if top_total > 0
+							row3 << (top_web*100/top_total).to_s
+						else
+							row3 << "0"
+						end
+
+						row1 << books_total.to_s
+						row2 << web_total.to_s
+						if books_total > 0
+							row3 << (web_total*100/books_total).to_s
+						else
+							row3 << "0"
+						end
+
+						header << "Total top"
+						header << "Total todos"
+
+						csv << header
+						csv << row1
+						csv << row2
+						csv << row3
+
+					end
+
+				end
+			end
+		end
+
+	end
+
+	def self.send_multiple_booking_mail(location, group)
+		helper = Rails.application.routes.url_helpers
+		@data = {}
+
+		# GENERAL
+			bookings = Booking.where(location_id: location).where(booking_group: group).order(:start)
+			@data[:company] = bookings[0].location.company.name
+			@data[:url] = bookings[0].location.company.web_address
+			@data[:signature] = bookings[0].location.company.company_setting.signature
+			@data[:logo] = Base64.encode64(File.read('app/assets/images/logos/logodoble2.png'))
+			@data[:type] = 'image/png'
+			if bookings[0].location.company.logo_url
+				@data[:logo] = Base64.encode64(File.read('public' + bookings[0].location.company.logo_url.to_s))
+				@data[:type] = MIME::Types.type_for(bookings[0].location.company.logo_url).first.content_type
+			end
+
+		# USER
+			@user = {}
+			@user[:where] = bookings[0].location.address + ', ' + bookings[0].location.district.name
+			@user[:phone] = bookings[0].location.phone
+			@user[:name] = bookings[0].client.first_name
+			@user[:send_mail] = bookings[bookings.length - 1].send_mail
+			@user[:email] = bookings[0].client.email
+			@user[:cancel] = helper.cancel_all_booking_url(:confirmation_code => bookings[0].confirmation_code)
+
+			@user_table = ''
+			bookings.each do |book|
+				@user_table += '<tr style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;">' +
+						'<td style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;padding-top:8px;padding-bottom:8px;padding-right:8px;padding-left:8px;line-height:1.42857143;vertical-align:top;border-top-width:1px;border-top-style:solid;border-top-color:#ddd;">' + book.service.name + '</td>' +
+						'<td style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;padding-top:8px;padding-bottom:8px;padding-right:8px;padding-left:8px;line-height:1.42857143;vertical-align:top;border-top-width:1px;border-top-style:solid;border-top-color:#ddd;">' + I18n.l(book.start) + '</td>' +
+						'<td style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;padding-top:8px;padding-bottom:8px;padding-right:8px;padding-left:8px;line-height:1.42857143;vertical-align:top;border-top-width:1px;border-top-style:solid;border-top-color:#ddd;">' + book.service_provider.public_name + '</td>' +
+						'<td style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;padding-top:8px;padding-bottom:8px;padding-right:8px;padding-left:8px;line-height:1.42857143;vertical-align:top;border-top-width:1px;border-top-style:solid;border-top-color:#ddd;">' + if book.notes.blank? then '' else book.notes end + '</td>' +
+						'<td style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;padding-top:8px;padding-bottom:8px;padding-right:8px;padding-left:8px;line-height:1.42857143;vertical-align:top;border-top-width:1px;border-top-style:solid;border-top-color:#ddd;">' +
+							'<a class="btn btn-xs btn-orange" target="_blank" href="' + helper.booking_edit_url(:confirmation_code => book.confirmation_code) + '" style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;text-decoration:none;display:inline-block;margin-bottom:5px;font-weight:normal;text-align:center;white-space:nowrap;vertical-align:middle;-ms-touch-action:manipulation;touch-action:manipulation;cursor:pointer;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;background-image:none;border-width:1px;border-style:solid;padding-top:1px;padding-bottom:1px;padding-right:5px;padding-left:5px;font-size:12px;line-height:1.5;border-radius:3px;color:#ffffff;background-color:#fd9610;border-color:#db7400; width: 90%;">Editar</a>' +
+							'<a class="btn btn-xs btn-red" target="_blank" href="' + helper.booking_cancel_url(:confirmation_code => book.confirmation_code) + '" style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;text-decoration:none;display:inline-block;margin-bottom:5px;font-weight:normal;text-align:center;white-space:nowrap;vertical-align:middle;-ms-touch-action:manipulation;touch-action:manipulation;cursor:pointer;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;background-image:none;border-width:1px;border-style:solid;padding-top:1px;padding-bottom:1px;padding-right:5px;padding-left:5px;font-size:12px;line-height:1.5;border-radius:3px;color:#ffffff;background-color:#fd633f;border-color:#e55938; width: 90%;">Cancelar</a>' +
+						'</td>' +
+					'</tr>'
+			end
+
+			@user[:user_table] = @user_table
+
+			@data[:user] = @user
+
+		# LOCATION
+			@location = {}
+			@location[:name] = bookings[0].location.name
+			@location[:client_name] = bookings[0].client.first_name + ' ' + bookings[0].client.last_name
+			@location[:send_mail] = bookings[0].location.notification and !bookings[0].location.email.blank? and bookings[0].location.get_booking_configuration_email == 0
+			@location[:email] = bookings[0].location.email
+
+			@location_table = ''
+			bookings.each do |book|
+				@location_table += '<tr style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;">' +
+						'<td style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;padding-top:8px;padding-bottom:8px;padding-right:8px;padding-left:8px;line-height:1.42857143;vertical-align:top;border-top-width:1px;border-top-style:solid;border-top-color:#ddd;">' + book.service.name + '</td>' +
+						'<td style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;padding-top:8px;padding-bottom:8px;padding-right:8px;padding-left:8px;line-height:1.42857143;vertical-align:top;border-top-width:1px;border-top-style:solid;border-top-color:#ddd;">' + I18n.l(book.start) + '</td>' +
+						'<td style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;padding-top:8px;padding-bottom:8px;padding-right:8px;padding-left:8px;line-height:1.42857143;vertical-align:top;border-top-width:1px;border-top-style:solid;border-top-color:#ddd;">' + if book.notes.blank? then '' else book.notes end + '</td>' +
+						'<td style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;padding-top:8px;padding-bottom:8px;padding-right:8px;padding-left:8px;line-height:1.42857143;vertical-align:top;border-top-width:1px;border-top-style:solid;border-top-color:#ddd;">' + if book.company_comment.blank? then '' else book.company_comment end + '</td>' +
+					'</tr>'
+			end
+			@location[:location_table] = @location_table
+
+			@data[:location] = @location
+
+		# SERVICE PROVIDER
+
+			#Get providers ids
+			providers_ids = []
+			bookings.each do |book|
+				if !providers_ids.include?(book.service_provider_id)
+					providers_ids << book.service_provider_id
+				end
+			end
+
+			@provider = {}
+			@providers_array = []
+			@provider[:client_name] = bookings[0].client.first_name + ' ' + bookings[0].client.last_name
+
+			ServiceProvider.find(providers_ids).each do |provider|
+				@staff = {}
+				@staff[:name] = provider.public_name
+				@staff[:email] = provider.notification_email
+				if provider.get_booking_configuration_email == 0
+					provider_bookings = Booking.where(location_id: location).where(booking_group: group).where(service_provider: provider).order(:start)
+					@provider_table = ''
+					provider_bookings.each do |book|
+						@provider_table += '<tr style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;">' +
+								'<td style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;padding-top:8px;padding-bottom:8px;padding-right:8px;padding-left:8px;line-height:1.42857143;vertical-align:top;border-top-width:1px;border-top-style:solid;border-top-color:#ddd;">' + book.service.name + '</td>' +
+								'<td style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;padding-top:8px;padding-bottom:8px;padding-right:8px;padding-left:8px;line-height:1.42857143;vertical-align:top;border-top-width:1px;border-top-style:solid;border-top-color:#ddd;">' + I18n.l(book.start) + '</td>' +
+								'<td style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;padding-top:8px;padding-bottom:8px;padding-right:8px;padding-left:8px;line-height:1.42857143;vertical-align:top;border-top-width:1px;border-top-style:solid;border-top-color:#ddd;">' + if book.notes.blank? then '' else book.notes end + '</td>' +
+								'<td style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;padding-top:8px;padding-bottom:8px;padding-right:8px;padding-left:8px;line-height:1.42857143;vertical-align:top;border-top-width:1px;border-top-style:solid;border-top-color:#ddd;">' + if book.company_comment.blank? then '' else book.company_comment end + '</td>' +
+							'</tr>'
+					end
+					@staff[:provider_table] = @provider_table
+					@providers_array << @staff
+				end
+			end
+
+			@provider[:array] = @providers_array
+			@data[:provider] = @provider
+
+		if bookings.order(:start).first.start > Time.now - eval(ENV["TIME_ZONE_OFFSET"])
+			BookingMailer.multiple_booking_mail(@data)
+		end
+	end
+
 end

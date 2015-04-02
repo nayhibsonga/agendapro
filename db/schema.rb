@@ -11,9 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-
-ActiveRecord::Schema.define(version: 20150204160735) do
-
+ActiveRecord::Schema.define(version: 20150330154139) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -113,6 +111,8 @@ ActiveRecord::Schema.define(version: 20150204160735) do
     t.integer  "max_changes",         default: 2
     t.string   "token",               default: ""
     t.integer  "deal_id"
+    t.integer  "booking_group"
+    t.integer  "payed_booking_id"
   end
 
   add_index "bookings", ["client_id"], name: "index_bookings_on_client_id", using: :btree
@@ -219,10 +219,10 @@ ActiveRecord::Schema.define(version: 20150204160735) do
     t.integer  "company_id",                                                  null: false
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.integer  "before_booking",              default: 24,                    null: false
-    t.integer  "after_booking",               default: 6,                     null: false
-    t.integer  "before_edit_booking",         default: 12
-    t.boolean  "activate_search",             default: true
+    t.integer  "before_booking",              default: 3,                     null: false
+    t.integer  "after_booking",               default: 3,                     null: false
+    t.integer  "before_edit_booking",         default: 3
+    t.boolean  "activate_search",             default: false
     t.boolean  "activate_workflow",           default: true
     t.boolean  "client_exclusive",            default: false
     t.integer  "provider_preference"
@@ -253,6 +253,10 @@ ActiveRecord::Schema.define(version: 20150204160735) do
     t.integer  "deal_constraint_option",      default: 0
     t.integer  "deal_constraint_quantity",    default: 0
     t.boolean  "deal_identification_number",  default: false
+    t.boolean  "deal_required",               default: false,                 null: false
+    t.boolean  "online_payment_capable",      default: false
+    t.boolean  "allows_optimization",         default: true
+    t.boolean  "activate_notes",              default: true,                  null: false
   end
 
   add_index "company_settings", ["company_id"], name: "index_company_settings_on_company_id", using: :btree
@@ -281,7 +285,6 @@ ActiveRecord::Schema.define(version: 20150204160735) do
   end
 
   add_index "deals", ["company_id"], name: "index_deals_on_company_id", using: :btree
-
 
   create_table "delayed_jobs", force: true do |t|
     t.integer  "priority",   default: 0, null: false
@@ -378,6 +381,7 @@ ActiveRecord::Schema.define(version: 20150204160735) do
     t.boolean  "notification",                default: false
     t.integer  "booking_configuration_email", default: 0
     t.string   "second_address"
+    t.boolean  "online_booking",              default: true
   end
 
   add_index "locations", ["company_id"], name: "index_locations_on_company_id", using: :btree
@@ -395,16 +399,15 @@ ActiveRecord::Schema.define(version: 20150204160735) do
     t.boolean  "modifiable",         default: true
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.integer  "cancel_max",         default: 1
+    t.integer  "cancel_max",         default: 24
     t.integer  "modification_max",   default: 1
     t.integer  "min_hours",          default: 12
     t.integer  "modification_unit",  default: 1
-    t.integer  "cancel_unit",        default: 1
+    t.integer  "cancel_unit",        default: 2
     t.integer  "company_setting_id"
   end
 
   create_table "payed_bookings", force: true do |t|
-    t.integer  "booking_id"
     t.integer  "punto_pagos_confirmation_id"
     t.datetime "created_at"
     t.datetime "updated_at"
@@ -604,6 +607,7 @@ ActiveRecord::Schema.define(version: 20150204160735) do
     t.integer  "order",                       default: 0
     t.integer  "block_length",                default: 30
     t.integer  "booking_configuration_email", default: 0
+    t.boolean  "online_booking",              default: true
   end
 
   add_index "service_providers", ["company_id"], name: "index_service_providers_on_company_id", using: :btree
@@ -658,6 +662,9 @@ ActiveRecord::Schema.define(version: 20150204160735) do
     t.boolean  "has_discount",        default: false
     t.float    "discount",            default: 0.0
     t.boolean  "online_payable",      default: false
+    t.decimal  "comission_value",     default: 0.0,   null: false
+    t.integer  "comission_option",    default: 0,     null: false
+    t.boolean  "online_booking",      default: true
   end
 
   add_index "services", ["company_id"], name: "index_services_on_company_id", using: :btree
@@ -726,20 +733,23 @@ ActiveRecord::Schema.define(version: 20150204160735) do
     t.string   "first_name"
     t.string   "last_name"
     t.string   "phone"
-    t.integer  "role_id",                             null: false
+    t.integer  "role_id",                               null: false
     t.integer  "company_id"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.string   "email",                  default: "", null: false
-    t.string   "encrypted_password",     default: "", null: false
+    t.string   "email",                  default: "",   null: false
+    t.string   "encrypted_password",     default: "",   null: false
     t.string   "reset_password_token"
     t.datetime "reset_password_sent_at"
     t.datetime "remember_created_at"
-    t.integer  "sign_in_count",          default: 0,  null: false
+    t.integer  "sign_in_count",          default: 0,    null: false
     t.datetime "current_sign_in_at"
     t.datetime "last_sign_in_at"
     t.string   "current_sign_in_ip"
     t.string   "last_sign_in_ip"
+    t.string   "provider"
+    t.string   "uid"
+    t.boolean  "receives_offers",        default: true
   end
 
   add_index "users", ["company_id"], name: "index_users_on_company_id", using: :btree

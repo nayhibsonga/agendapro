@@ -15,15 +15,6 @@ $(function() {
 				required: true,
 				email: true,
 				remote: '/check_user'
-			},
-			'user[password]': {
-				required: true,
-				rangelength: [8, 128]
-			},
-			'user[password_confirmation]': {
-				required: true,
-				rangelength: [8, 128],
-				equalTo: $('input[name="user[password]"]:last')
 			}
 		},
 		messages: {
@@ -44,4 +35,8 @@ $(function() {
 			form.submit();
 		}
 	});
+
+	$("#signup-form #user_password").rules("add", {required: true, rangelength: [8, 128]});
+	$("#signup-form #user_password_confirmation").rules("add", {required: true, rangelength: [8, 128], equalTo: $('#signup-form #user_password')});
+
 });
