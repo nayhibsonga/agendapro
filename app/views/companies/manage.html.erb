@@ -1,495 +1,354 @@
-<div class="row companies_header">
-	<ul class="nav nav-tabs">
-
-		<li class="active"><a id="companies_payments" href="/companies_payments">Estados de pagos</a></li>
-
-		<li><a id="companies_incomes" href="/companies_incomes">Ingresos mensuales</a></li>
-
-		<li><a id="companies_locations" href="/companies_locations">Clientes y locales</a></li>
-
-		<li><a id="companies_monthly_locations" href="/companies_monthly_locations">Locales mensuales</a></li>
-
-		<li><a id="companies_monthly_bookings" href="/companies_monthly_bookings">Resumen de reservas</a></li>
-
-		<li><%= link_to 'Empresas', companies_path, { :id => "companies" } %></li>
-
-	</ul>
+<div class="container-fluid background-grey">
+  <div class="row">
+    <div class="col-md-12">
+      <h2 class="text-green">Estados de Pagos</h2>
+    </div>
+  </div>
 </div>
-
-<div class="row well well-white" style="margin-top: 20px;">
-	<ul id="myTab" class="nav nav-tabs" role="tablist">
-		<li class="active"><a href="#summary" role="tab" data-toggle="tab" class="tab_index">Resumen</a></li>
-		<li class=""><a href="#trial" role="tab" data-toggle="tab" class="tab_index">Trial</a></li>
-		<li class=""><a href="#active" role="tab" data-toggle="tab" class="tab_index">Activos</a></li>
-		<li class=""><a href="#issued" role="tab" data-toggle="tab" class="tab_index">Emitidos</a></li>
-	 	<li class=""><a href="#late" role="tab" data-toggle="tab" class="tab_index">Vencidos</a></li>
-	 	<li class=""><a href="#blocked" role="tab" data-toggle="tab" class="tab_index">Bloqueados</a></li>
-	 	<li class=""><a href="#inactive" role="tab" data-toggle="tab" class="tab_index">Inactivos</a></li>
-	</ul>
-	<div id="myTabContent" class="tab-content">
-	<br />
-
-		<div class="tab-pane active" id="summary">
-			<table>
-				<tr>
-					<td>
-						Trial:
-					</td>
-					<td>
-						<%= @trial_companies.count %>
-					</td>
-				</tr>
-				<tr>
-					<td>
-						Activas:
-					</td>
-					<td>
-						<%= @active_companies.count %>
-					</td>
-				</tr>
-				<tr>
-					<td>
-						Emitidas:
-					</td>
-					<td>
-						<%= @issued_companies.count %>
-					</td>
-				</tr>
-				<tr>
-					<td>
-						Vencidas:
-					</td>
-					<td>
-						<%= @late_companies.count %>
-					</td>
-				</tr>
-				<tr>
-					<td>
-						Bloqueadas:
-					</td>
-					<td>
-						<%= @blocked_companies.count %>
-					</td>
-				</tr>
-				<tr>
-					<td>
-						Inactivas:
-					</td>
-					<td>
-						<%= @inactive_companies.count %>
-					</td>
-				</tr>
-			</table>
-		</div>
-
-		<div class="tab-pane" id="late">
-			<div class="companies-count">
-				Número de empresas: <%= @late_companies.count %>
-			</div>
-			<table class="companies-table">
-
-				<tr class="companies-table-header">
-					<th>
-						Empresa
-					</th>
-					<th>
-						Plan
-					</th>
-					<th>
-						Último pago
-					</th>
-					<th>
-						Deuda
-					</th>
-					<th>
-						Meses adeudados
-					</th>
-					<th>
-						Ver/Manejar
-					</th>
-					<th>
-						Agregar pago
-					</th>
-				</tr>
-
-				<% @late_companies.each do |company| %>
-					<tr>
-						<td>
-							<%= link_to company.name, controller: "companies", action: "manage_company", id: company.id %>
-						</td>
-						<td>
-							<%= company.plan.name %>
-						</td>
-						<td>
-							<% bl = BillingLog.where(:company_id => company.id).order('created_at desc').first %>
-							<% rec = BillingRecord.where(:company_id => company.id).order('date desc').first %>
-							<% if !bl.nil? && !rec.nil? %>
-								<%if bl.created_at <= rec.date %>
-									<%= rec.date %>
-								<% else %>
-									<%= bl.created_at %>
-								<% end %>
-							<% elsif bl.nil? && !rec.nil? %>
-								<%= rec.date %>
-							<% elsif !bl.nil? && rec.nil? %>
-								<%= bl.created_at %>
-							<% else %>
-								No existen pagos
-							<% end %>
-						</td>
-						<td>
-							<%= company.due_amount %>
-						</td>
-						<td>
-							<%= company.months_active_left.abs %>
-						</td>
-						<td>
-							<%= link_to "Manejar", controller: "companies", action: "manage_company", id: company.id %>
-						</td>
-						<td>
-							<%= link_to "Agregar pago", controller: "companies", action: "new_payment", id: company.id %>
-						</td>
-					</tr>
-				<% end %>
-			</table>
-
-		</div>
-		<div class="tab-pane" id="blocked">
-			<div class="companies-count">
-				Número de empresas: <%= @blocked_companies.count %>
-			</div>
-			<table class="companies-table">
-
-				<tr class="companies-table-header">
-					<th>
-						Empresa
-					</th>
-					<th>
-						Plan
-					</th>
-					<th>
-						Último pago
-					</th>
-					<th>
-						Deuda
-					</th>
-					<th>
-						Meses adeudados
-					</th>
-					<th>
-						Ver/Manejar
-					</th>
-					<th>
-						Agregar pago
-					</th>
-				</tr>
-
-				<% @blocked_companies.each do |company| %>
-					<tr>
-						<td>
-							<%= link_to company.name, controller: "companies", action: "manage_company", id: company.id %>
-						</td>
-						<td>
-							<%= company.plan.name %>
-						</td>
-						<td>
-							<% bl = BillingLog.where(:company_id => company.id).order('created_at desc').first %>
-							<% rec = BillingRecord.where(:company_id => company.id).order('date desc').first %>
-							<% if !bl.nil? && !rec.nil? %>
-								<%if bl.created_at <= rec.date %>
-									<%= rec.date %>
-								<% else %>
-									<%= bl.created_at %>
-								<% end %>
-							<% elsif bl.nil? && !rec.nil? %>
-								<%= rec.date %>
-							<% elsif !bl.nil? && rec.nil? %>
-								<%= bl.created_at %>
-							<% else %>
-								No existen pagos
-							<% end %>
-						</td>
-						<td>
-							<%= company.due_amount %>
-						</td>
-						<td>
-							<%= company.months_active_left.abs %>
-						</td>
-						<td>
-							<%= link_to "Manejar", controller: "companies", action: "manage_company", id: company.id %>
-						</td>
-						<td>
-							<%= link_to "Agregar pago", controller: "companies", action: "new_payment", id: company.id %>
-						</td>
-					</tr>
-				<% end %>
-			</table>
-		</div>
-		<div class="tab-pane" id="inactive">
-			<div class="companies-count">
-				Número de empresas: <%= @inactive_companies.count %>
-			</div>
-			<table class="companies-table">
-
-				<tr class="companies-table-header">
-					<th>
-						Empresa
-					</th>
-					<th>
-						Plan
-					</th>
-					<th>
-						Último pago
-					</th>
-					<th>
-						Deuda
-					</th>
-					<th>
-						Meses adeudados
-					</th>
-					<th>
-						Ver/Manejar
-					</th>
-					<th>
-						Agregar pago
-					</th>
-				</tr>
-
-				<% @inactive_companies.each do |company| %>
-					<tr>
-						<td>
-							<%= link_to company.name, controller: "companies", action: "manage_company", id: company.id %>
-						</td>
-						<td>
-							<%= company.plan.name %>
-						</td>
-						<td>
-							<% bl = BillingLog.where(:company_id => company.id).order('created_at desc').first %>
-							<% rec = BillingRecord.where(:company_id => company.id).order('date desc').first %>
-							<% if !bl.nil? && !rec.nil? %>
-								<%if bl.created_at <= rec.date %>
-									<%= rec.date %>
-								<% else %>
-									<%= bl.created_at %>
-								<% end %>
-							<% elsif bl.nil? && !rec.nil? %>
-								<%= rec.date %>
-							<% elsif !bl.nil? && rec.nil? %>
-								<%= bl.created_at %>
-							<% else %>
-								No existen pagos
-							<% end %>
-						</td>
-						<td>
-							<%= company.due_amount %>
-						</td>
-						<td>
-							<%= company.months_active_left.abs %>
-						</td>
-						<td>
-							<%= link_to "Manejar", controller: "companies", action: "manage_company", id: company.id %>
-						</td>
-						<td>
-							<%= link_to "Agregar pago", controller: "companies", action: "new_payment", id: company.id %>
-						</td>
-					</tr>
-				<% end %>
-			</table>
-		</div>
-		<div class="tab-pane" id="trial">
-			<div class="companies-count">
-				Número de empresas: <%= @trial_companies.count %>
-			</div>
-			<table class="companies-table">
-
-				<tr class="companies-table-header">
-					<th>
-						Empresa
-					</th>
-					<th>
-						Plan
-					</th>
-					<th>
-						Último pago
-					</th>
-					<th>
-						Meses restantes
-					</th>
-					<th>
-						Ver/Manejar
-					</th>
-					<th>
-						Agregar pago
-					</th>
-				</tr>
-
-				<% @trial_companies.each do |company| %>
-					<tr>
-						<td>
-							<%= link_to company.name, controller: "companies", action: "manage_company", id: company.id %>
-						</td>
-						<td>
-							<%= company.plan.name %>
-						</td>
-						<td>
-							<% bl = BillingLog.where(:company_id => company.id).order('created_at desc').first %>
-							<% rec = BillingRecord.where(:company_id => company.id).order('date desc').first %>
-							<% if !bl.nil? && !rec.nil? %>
-								<%if bl.created_at <= rec.date %>
-									<%= rec.date %>
-								<% else %>
-									<%= bl.created_at %>
-								<% end %>
-							<% elsif bl.nil? && !rec.nil? %>
-								<%= rec.date %>
-							<% elsif !bl.nil? && rec.nil? %>
-								<%= bl.created_at %>
-							<% else %>
-								No existen pagos
-							<% end %>
-						</td>
-						<td>
-							<%= company.months_active_left.abs %>
-						</td>
-						<td>
-							<%= link_to "Manejar", controller: "companies", action: "manage_company", id: company.id %>
-						</td>
-						<td>
-							<%= link_to "Agregar pago", controller: "companies", action: "new_payment", id: company.id %>
-						</td>
-					</tr>
-				<% end %>
-			</table>
-		</div>
-		<div class="tab-pane" id="active">
-			<div class="companies-count">
-				Número de empresas: <%= @active_companies.count %>
-			</div>
-			<table class="companies-table">
-
-				<tr class="companies-table-header">
-					<th>
-						Empresa
-					</th>
-					<th>
-						Plan
-					</th>
-					<th>
-						Último pago
-					</th>
-					<th>
-						Meses restantes
-					</th>
-					<th>
-						Ver/Manejar
-					</th>
-					<th>
-						Agregar pago
-					</th>
-				</tr>
-
-				<% @active_companies.each do |company| %>
-					<tr>
-						<td>
-							<%= link_to company.name, controller: "companies", action: "manage_company", id: company.id %>
-						</td>
-						<td>
-							<%= company.plan.name %>
-						</td>
-						<td>
-							<% bl = BillingLog.where(:company_id => company.id).order('created_at desc').first %>
-							<% rec = BillingRecord.where(:company_id => company.id).order('date desc').first %>
-							<% if !bl.nil? && !rec.nil? %>
-								<%if bl.created_at <= rec.date %>
-									<%= rec.date %>
-								<% else %>
-									<%= bl.created_at %>
-								<% end %>
-							<% elsif bl.nil? && !rec.nil? %>
-								<%= rec.date %>
-							<% elsif !bl.nil? && rec.nil? %>
-								<%= bl.created_at %>
-							<% else %>
-								No existen pagos
-							<% end %>
-						</td>
-						<td>
-							<%= company.months_active_left.abs %>
-						</td>
-						<td>
-							<%= link_to "Manejar", controller: "companies", action: "manage_company", id: company.id %>
-						</td>
-						<td>
-							<%= link_to "Agregar pago", controller: "companies", action: "new_payment", id: company.id %>
-						</td>
-					</tr>
-				<% end %>
-			</table>
-		</div>
-		<div class="tab-pane" id="issued">
-			<div class="companies-count">
-				Número de empresas: <%= @issued_companies.count %>
-			</div>
-			<table class="companies-table">
-
-				<tr class="companies-table-header">
-					<th>
-						Empresa
-					</th>
-					<th>
-						Plan
-					</th>
-					<th>
-						Último pago
-					</th>
-					<th>
-						Meses restantes
-					</th>
-					<th>
-						Ver/Manejar
-					</th>
-					<th>
-						Agregar pago
-					</th>
-				</tr>
-
-				<% @issued_companies.each do |company| %>
-					<tr>
-						<td>
-							<%= link_to company.name, controller: "companies", action: "manage_company", id: company.id %>
-						</td>
-						<td>
-							<%= company.plan.name %>
-						</td>
-						<td>
-							<% bl = BillingLog.where(:company_id => company.id).order('created_at desc').first %>
-							<% rec = BillingRecord.where(:company_id => company.id).order('date desc').first %>
-							<% if !bl.nil? && !rec.nil? %>
-								<%if bl.created_at <= rec.date %>
-									<%= rec.date %>
-								<% else %>
-									<%= bl.created_at %>
-								<% end %>
-							<% elsif bl.nil? && !rec.nil? %>
-								<%= rec.date %>
-							<% elsif !bl.nil? && rec.nil? %>
-								<%= bl.created_at %>
-							<% else %>
-								No existen pagos
-							<% end %>
-						</td>
-						<td>
-							<%= company.months_active_left.abs %>
-						</td>
-						<td>
-							<%= link_to "Manejar", controller: "companies", action: "manage_company", id: company.id %>
-						</td>
-						<td>
-							<%= link_to "Agregar pago", controller: "companies", action: "new_payment", id: company.id %>
-						</td>
-					</tr>
-				<% end %>
-			</table>
-		</div>
-	</div>
+<div class="container-fluid">
+  <div class="row">
+    <!-- Navegation Tabs -->
+    <div class="col-md-2">
+      <ul class="nav nav-pills nav-stacked tab-margin">
+        <li class="active"><a id="companies_payments" href="/companies_payments">Estados de pagos</a></li>
+        <li><a id="companies_incomes" href="/companies_incomes">Ingresos mensuales</a></li>
+        <li><a id="companies_locations" href="/companies_locations">Clientes y locales</a></li>
+        <li><a id="companies_monthly_locations" href="/companies_monthly_locations">Locales mensuales</a></li>
+        <li><a id="companies_monthly_bookings" href="/companies_monthly_bookings">Resumen de reservas</a></li>
+        <li><%= link_to 'Empresas', companies_path, { :id => "companies" } %></li>
+      </ul>
+    </div>
+    <!-- Panels -->
+    <div class="col-md-10 left-panel">
+      <div class="tab-margin">
+        <ul id="myTab" class="nav nav-tabs" role="tablist">
+          <li class="active"><a href="#summary" role="tab" data-toggle="tab" class="tab_index">Resumen</a></li>
+          <li class=""><a href="#trial" role="tab" data-toggle="tab" class="tab_index">Trial</a></li>
+          <li class=""><a href="#active" role="tab" data-toggle="tab" class="tab_index">Activos</a></li>
+          <li class=""><a href="#issued" role="tab" data-toggle="tab" class="tab_index">Emitidos</a></li>
+          <li class=""><a href="#late" role="tab" data-toggle="tab" class="tab_index">Vencidos</a></li>
+          <li class=""><a href="#blocked" role="tab" data-toggle="tab" class="tab_index">Bloqueados</a></li>
+          <li class=""><a href="#inactive" role="tab" data-toggle="tab" class="tab_index">Inactivos</a></li>
+        </ul>
+        <div id="myTabContent" class="tab-content">
+          <div class="tab-pane fade in active" id="summary">
+            <table class="table table-hover">
+              <tr>
+                <th>
+                  Trial:
+                </th>
+                <td>
+                  <%= @trial_companies.count %>
+                </td>
+              </tr>
+              <tr>
+                <th>
+                  Activas:
+                </th>
+                <td>
+                  <%= @active_companies.count %>
+                </td>
+              </tr>
+              <tr>
+                <th>
+                  Emitidas:
+                </th>
+                <td>
+                  <%= @issued_companies.count %>
+                </td>
+              </tr>
+              <tr>
+                <th>
+                  Vencidas:
+                </th>
+                <td>
+                  <%= @late_companies.count %>
+                </td>
+              </tr>
+              <tr>
+                <th>
+                  Bloqueadas:
+                </th>
+                <td>
+                  <%= @blocked_companies.count %>
+                </td>
+              </tr>
+              <tr>
+                <th>
+                  Inactivas:
+                </th>
+                <td>
+                  <%= @inactive_companies.count %>
+                </td>
+              </tr>
+            </table>
+          </div>
+          <div class="tab-pane fade" id="trial">
+            <p>Número de empresas: <%= @trial_companies.count %></p>
+            <table class="table table-hover table-green">
+              <thead>
+                <tr>
+                  <th>Empresa</th>
+                  <th>Plan</th>
+                  <th>Último pago</th>
+                  <th>Meses restantes</th>
+                  <th>Ver/Manejar</th>
+                  <th>Agregar pago</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% @trial_companies.each do |company| %>
+                  <tr>
+                    <td><%= link_to company.name, controller: "companies", action: "manage_company", id: company.id %></td>
+                    <td><%= company.plan.name %></td>
+                    <td>
+                      <% bl = BillingLog.where(:company_id => company.id).order('created_at desc').first %>
+                      <% rec = BillingRecord.where(:company_id => company.id).order('date desc').first %>
+                      <% if !bl.nil? && !rec.nil? %>
+                        <%if bl.created_at <= rec.date %>
+                          <%= rec.date %>
+                        <% else %>
+                          <%= bl.created_at %>
+                        <% end %>
+                      <% elsif bl.nil? && !rec.nil? %>
+                        <%= rec.date %>
+                      <% elsif !bl.nil? && rec.nil? %>
+                        <%= bl.created_at %>
+                      <% else %>
+                        No existen pagos
+                      <% end %>
+                    </td>
+                    <td><%= company.months_active_left.abs %></td>
+                    <td><%= link_to '<i class="fa fa-pencil"></i> Manejar'.html_safe, {controller: "companies", action: "manage_company", id: company.id}, class: "btn btn-sm btn-orange" %></td>
+                    <td><%= link_to '<i class="fa fa-plus"></i> Agregar pago'.html_safe, {controller: "companies", action: "new_payment", id: company.id}, class: "btn btn-sm btn-green" %></td>
+                  </tr>
+                <% end %>
+              </tbody>
+            </table>
+          </div>
+          <div class="tab-pane fade" id="active">
+            <p>Número de empresas: <%= @active_companies.count %></p>
+            <table class="table table-hover table-green">
+              <thead>
+                <tr>
+                  <th>Empresa</th>
+                  <th>Plan</th>
+                  <th>Último pago</th>
+                  <th>Meses restantes</th>
+                  <th>Ver/Manejar</th>
+                  <th>Agregar pago</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% @active_companies.each do |company| %>
+                  <tr>
+                    <td><%= link_to company.name, controller: "companies", action: "manage_company", id: company.id %></td>
+                    <td><%= company.plan.name %></td>
+                    <td>
+                      <% bl = BillingLog.where(:company_id => company.id).order('created_at desc').first %>
+                      <% rec = BillingRecord.where(:company_id => company.id).order('date desc').first %>
+                      <% if !bl.nil? && !rec.nil? %>
+                        <%if bl.created_at <= rec.date %>
+                          <%= rec.date %>
+                        <% else %>
+                          <%= bl.created_at %>
+                        <% end %>
+                      <% elsif bl.nil? && !rec.nil? %>
+                        <%= rec.date %>
+                      <% elsif !bl.nil? && rec.nil? %>
+                        <%= bl.created_at %>
+                      <% else %>
+                        No existen pagos
+                      <% end %>
+                    </td>
+                    <td><%= company.months_active_left.abs %></td>
+                    <td><%= link_to '<i class="fa fa-pencil"></i> Manejar'.html_safe, {controller: "companies", action: "manage_company", id: company.id}, class: "btn btn-sm btn-orange" %></td>
+                    <td><%= link_to '<i class="fa fa-plus"></i> Agregar pago'.html_safe, {controller: "companies", action: "new_payment", id: company.id}, class: "btn btn-sm btn-green" %></td>
+                  </tr>
+                <% end %>
+              </tbody>
+            </table>
+          </div>
+          <div class="tab-pane fade" id="issued">
+            <p>Número de empresas: <%= @issued_companies.count %></p>
+            <table class="table table-hover table-green">
+              <thead>
+                <tr>
+                  <th>Empresa</th>
+                  <th>Plan</th>
+                  <th>Último pago</th>
+                  <th>Meses restantes</th>
+                  <th>Ver/Manejar</th>
+                  <th>Agregar pago</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% @issued_companies.each do |company| %>
+                  <tr>
+                    <td><%= link_to company.name, controller: "companies", action: "manage_company", id: company.id %></td>
+                    <td><%= company.plan.name %></td>
+                    <td>
+                      <% bl = BillingLog.where(:company_id => company.id).order('created_at desc').first %>
+                      <% rec = BillingRecord.where(:company_id => company.id).order('date desc').first %>
+                      <% if !bl.nil? && !rec.nil? %>
+                        <%if bl.created_at <= rec.date %>
+                          <%= rec.date %>
+                        <% else %>
+                          <%= bl.created_at %>
+                        <% end %>
+                      <% elsif bl.nil? && !rec.nil? %>
+                        <%= rec.date %>
+                      <% elsif !bl.nil? && rec.nil? %>
+                        <%= bl.created_at %>
+                      <% else %>
+                        No existen pagos
+                      <% end %>
+                    </td>
+                    <td><%= company.months_active_left.abs %></td>
+                    <td><%= link_to '<i class="fa fa-pencil"></i> Manejar'.html_safe, {controller: "companies", action: "manage_company", id: company.id}, class: "btn btn-sm btn-orange" %></td>
+                    <td><%= link_to '<i class="fa fa-plus"></i> Agregar pago'.html_safe, {controller: "companies", action: "new_payment", id: company.id}, class: "btn btn-sm btn-green" %></td>
+                  </tr>
+                <% end %>
+              </tbody>
+            </table>
+          </div>
+          <div class="tab-pane fade" id="late">
+            <p>Número de empresas: <%= @late_companies.count %></p>
+            <table class="table table-hover table-green">
+              <thead>
+                <tr>
+                  <th>Empresa</th>
+                  <th>Plan</th>
+                  <th>Último pago</th>
+                  <th>Deuda</th>
+                  <th>Meses adeudados</th>
+                  <th>Ver/Manejar</th>
+                  <th>Agregar pago</th>
+                </tr>
+              </thead>
+              <thead>
+                <% @late_companies.each do |company| %>
+                  <tr>
+                    <td><%= link_to company.name, controller: "companies", action: "manage_company", id: company.id %></td>
+                    <td><%= company.plan.name %></td>
+                    <td>
+                      <% bl = BillingLog.where(:company_id => company.id).order('created_at desc').first %>
+                      <% rec = BillingRecord.where(:company_id => company.id).order('date desc').first %>
+                      <% if !bl.nil? && !rec.nil? %>
+                        <%if bl.created_at <= rec.date %>
+                          <%= rec.date %>
+                        <% else %>
+                          <%= bl.created_at %>
+                        <% end %>
+                      <% elsif bl.nil? && !rec.nil? %>
+                        <%= rec.date %>
+                      <% elsif !bl.nil? && rec.nil? %>
+                        <%= bl.created_at %>
+                      <% else %>
+                        No existen pagos
+                      <% end %>
+                    </td>
+                    <td><%= company.due_amount %></td>
+                    <td><%= company.months_active_left.abs %></td>
+                    <td><%= link_to '<i class="fa fa-pencil"></i> Manejar'.html_safe, {controller: "companies", action: "manage_company", id: company.id}, class: "btn btn-sm btn-orange" %></td>
+                    <td><%= link_to '<i class="fa fa-plus"></i> Agregar pago'.html_safe, {controller: "companies", action: "new_payment", id: company.id}, class: "btn btn-sm btn-green" %></td>
+                  </tr>
+                <% end %>
+              </thead>
+            </table>
+          </div>
+          <div class="tab-pane fade" id="blocked">
+            <p>Número de empresas: <%= @blocked_companies.count %></p>
+            <table class="table table-hoover table-green">
+              <thead>
+                <tr>
+                  <th>Empresa</th>
+                  <th>Plan</th>
+                  <th>Último pago</th>
+                  <th>Deuda</th>
+                  <th>Meses adeudados</th>
+                  <th>Ver/Manejar</th>
+                  <th>Agregar pago</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% @blocked_companies.each do |company| %>
+                  <tr>
+                    <td><%= link_to company.name, controller: "companies", action: "manage_company", id: company.id %></td>
+                    <td><%= company.plan.name %></td>
+                    <td>
+                      <% bl = BillingLog.where(:company_id => company.id).order('created_at desc').first %>
+                      <% rec = BillingRecord.where(:company_id => company.id).order('date desc').first %>
+                      <% if !bl.nil? && !rec.nil? %>
+                        <%if bl.created_at <= rec.date %>
+                          <%= rec.date %>
+                        <% else %>
+                          <%= bl.created_at %>
+                        <% end %>
+                      <% elsif bl.nil? && !rec.nil? %>
+                        <%= rec.date %>
+                      <% elsif !bl.nil? && rec.nil? %>
+                        <%= bl.created_at %>
+                      <% else %>
+                        No existen pagos
+                      <% end %>
+                    </td>
+                    <td><%= company.due_amount %></td>
+                    <td><%= company.months_active_left.abs %></td>
+                    <td><%= link_to '<i class="fa fa-pencil"></i> Manejar'.html_safe, {controller: "companies", action: "manage_company", id: company.id}, class: "btn btn-sm btn-orange" %></td>
+                    <td><%= link_to '<i class="fa fa-plus"></i> Agregar pago'.html_safe, {controller: "companies", action: "new_payment", id: company.id}, class: "btn btn-sm btn-green" %></td>
+                  </tr>
+                <% end %>
+              </tbody>
+            </table>
+          </div>
+          <div class="tab-pane fade" id="inactive">
+            <p>Número de empresas: <%= @inactive_companies.count %></p>
+            <table class="table table-hover table-green">
+              <thead>
+                <tr>
+                  <th>Empresa</th>
+                  <th>Plan</th>
+                  <th>Último pago</th>
+                  <th>Deuda</th>
+                  <th>Meses adeudados</th>
+                  <th>Ver/Manejar</th>
+                  <th>Agregar pago</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% @inactive_companies.each do |company| %>
+                  <tr>
+                    <td><%= link_to company.name, controller: "companies", action: "manage_company", id: company.id %></td>
+                    <td><%= company.plan.name %></td>
+                    <td>
+                      <% bl = BillingLog.where(:company_id => company.id).order('created_at desc').first %>
+                      <% rec = BillingRecord.where(:company_id => company.id).order('date desc').first %>
+                      <% if !bl.nil? && !rec.nil? %>
+                        <%if bl.created_at <= rec.date %>
+                          <%= rec.date %>
+                        <% else %>
+                          <%= bl.created_at %>
+                        <% end %>
+                      <% elsif bl.nil? && !rec.nil? %>
+                        <%= rec.date %>
+                      <% elsif !bl.nil? && rec.nil? %>
+                        <%= bl.created_at %>
+                      <% else %>
+                        No existen pagos
+                      <% end %>
+                    </td>
+                    <td><%= company.due_amount %></td>
+                    <td><%= company.months_active_left.abs %></td>
+                    <td><%= link_to '<i class="fa fa-pencil"></i> Manejar'.html_safe, {controller: "companies", action: "manage_company", id: company.id}, class: "btn btn-sm btn-orange" %></td>
+                    <td><%= link_to '<i class="fa fa-plus"></i> Agregar pago'.html_safe, {controller: "companies", action: "new_payment", id: company.id}, class: "btn btn-sm btn-green" %></td>
+                  </tr>
+                <% end %>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>

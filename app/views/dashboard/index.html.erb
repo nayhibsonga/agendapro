@@ -1,3 +1,8 @@
+<script type="text/javascript">
+  var Chartkick = {"language": "es"};
+</script>
+<%= javascript_include_tag "//www.google.com/jsapi", "chartkick" %>
+
 <div class="container-fluid" style="padding-top: 10px;">
   <% if current_user.role == Role.find_by(name: "Super Admin") %>
   <div class="row">
@@ -107,10 +112,3 @@
   </div>
   <% end %>
 </div>
-
-<% content_for :scripts do %>
-  <%= javascript_include_tag "//www.google.com/jsapi", "chartkick" %>
-  <script type="text/javascript">
-    var Chartkick = {"language": "es"};
-  </script>
-<% end %>

@@ -1,173 +1,111 @@
-
-<div class="row companies_header">
-	<ul class="nav nav-tabs">
-
-		<li><a id="companies_payments" href="/companies_payments">Estados de pagos</a></li>
-
-		<li><a id="companies_incomes" href="/companies_incomes">Ingresos mensuales</a></li>
-
-		<li><a id="companies_locations" href="/companies_locations">Clientes y locales</a></li>
-
-		<li class="active"><a id="companies_monthly_locations" href="/companies_monthly_locations">Locales mensuales</a></li>
-
-		<li><a id="companies_monthly_bookings" href="/companies_monthly_bookings">Resumen de reservas</a></li>
-
-		<li><%= link_to 'Empresas', companies_path, { :id => "companies" } %></li>
-
-	</ul>
+<div class="container-fluid background-grey">
+  <div class="row">
+    <div class="col-md-12">
+      <h2 class="text-green">Locales mensuales</h2>
+    </div>
+  </div>
 </div>
-
-<div class="row" style="margin-top: 10px; margin-bottom: 10px;">
-	<div class="col-md-12">
-		<div class="form-group">
-			<div class="col-md-2">
-				<select id="year-select" name="year" class="form-control">
-					<% current = DateTime.now.year.to_i %>
-					<% for i in 2014..current do %>
-						<% if i == @year %>
-							<option value="<%= i %>" selected><%= i.to_s %></option>
-						<% else %>
-							<option value="<%= i %>"><%= i.to_s %></option>
-						<% end %>
-					<% end %>
-				</select>
-			</div>
-			<div class="col-md-2">
-				<span class="form-control">
-					<a id="year-select-link" href="/companies_monthly_locations?year=<%= @year %>">Obtener locales</a>
-				</span>
-			</div>
-		</div>
-	</div>
+<div class="container-fluid">
+  <div class="row">
+    <!-- Navegation Tabs -->
+    <div class="col-md-2">
+      <ul class="nav nav-pills nav-stacked tab-margin">
+        <li><a id="companies_payments" href="/companies_payments">Estados de pagos</a></li>
+        <li><a id="companies_incomes" href="/companies_incomes">Ingresos mensuales</a></li>
+        <li><a id="companies_locations" href="/companies_locations">Clientes y locales</a></li>
+        <li class="active"><a id="companies_monthly_locations" href="/companies_monthly_locations">Locales mensuales</a></li>
+        <li><a id="companies_monthly_bookings" href="/companies_monthly_bookings">Resumen de reservas</a></li>
+        <li><%= link_to 'Empresas', companies_path, { :id => "companies" } %></li>
+      </ul>
+    </div>
+    <!-- Panels -->
+    <div class="col-md-10 left-panel">
+      <div class="tab-margin">
+        <div class="row">
+          <div class="col-md-3">
+            <select id="year-select" name="year" class="form-control col-md-4">
+              <% current = DateTime.now.year.to_i %>
+              <% for i in 2014..current do %>
+                <% if i == @year %>
+                  <option value="<%= i %>" selected><%= i.to_s %></option>
+                <% else %>
+                  <option value="<%= i %>"><%= i.to_s %></option>
+                <% end %>
+              <% end %>
+            </select>
+          </div>
+          <div class="col-md-3">
+            <a id="year-select-link" href="/companies_monthly_locations?year=<%= @year %>" class="btn btn-white">Obtener locales</a>
+          </div>
+        </div>
+        <h3>Locales creados para el año <%= @year %></h3>
+        <table class="table table-hover table-green">
+          <thead>
+            <tr>
+              <th>Empresa</th>
+              <th>Enero</th>
+              <th>Febrero</th>
+              <th>Marzo</th>
+              <th>Abril</th>
+              <th>Mayo</th>
+              <th>Junio</th>
+              <th>Julio</th>
+              <th>Agosto</th>
+              <th>Septiembre</th>
+              <th>Octubre</th>
+              <th>Noviembre</th>
+              <th>Diciembre</th>
+              <th>Total</th>
+            </tr>
+          </thead>
+          <tbody>
+          </tbody>
+          <%  @companies.each do |company| %>
+            <% company_locations = 0 %>
+            <tr>
+              <td><%= link_to company.name, controller: "companies", action: "manage_company", id: company.id %></td>
+              <% for i in 1..12 do %>
+                <%
+                  month_locations = 0
+                  start_date = DateTime.new(@year, i, 1)
+                  end_date = start_date
+                  if i < 12
+                    end_date = DateTime.new(@year, i+1, 1)-1.minutes
+                  else
+                    end_date = DateTime.new(@year+1, 1, 1)-1.minutes
+                  end
+                  locations_count = Location.where('company_id = ? and created_at BETWEEN ? and ?', company.id, start_date, end_date).count
+                  month_locations = locations_count
+                  company_locations = company_locations + locations_count
+                  @locations[i]['count'] = @locations[i]['count'] + locations_count
+                  @locations[13]['count'] = @locations[13]['count'] + locations_count
+                %>
+                <td><%= month_locations.to_s %></td>
+              <% end %>
+              <th><%= company_locations.to_s %></th>
+            </tr>
+          <% end %>
+          <tfoot>
+          </tfoot>
+          <tr>
+            <th>Total</th>
+            <% total = 0 %>
+            <% for i in 1..12 %>
+              <th><%= @locations[i]['count'].to_s %></th>
+            <% end %>
+            <th><%= @locations[13]['count'].to_s %></th>
+          </tr>
+        </table>
+      </div>
+    </div>
+  </div>
 </div>
-
-
-<div class="row">
-	<div class="col-md-12">
-		<div class="companies_incomes_header">
-			<h3>Locales creados para el año <%= @year %></h3>
-		</div>
-		<table class="companies-table">
-			<tr class="companies-table-header">
-				<th>
-					Empresa
-				</th>
-				<th>
-					Enero
-				</th>
-				<th>
-					Febrero
-				</th>
-				<th>
-					Marzo
-				</th>
-				<th>
-					Abril
-				</th>
-				<th>
-					Mayo
-				</th>
-				<th>
-					Junio
-				</th>
-				<th>
-					Julio
-				</th>
-				<th>
-					Agosto
-				</th>
-				<th>
-					Septiembre
-				</th>
-				<th>
-					Octubre
-				</th>
-				<th>
-					Noviembre
-				</th>
-				<th>
-					Diciembre
-				</th>
-				<th>
-					Total
-				</th>
-			</tr>
-			<%	@companies.each do |company| %>
-				<%
-					company_locations = 0
-				%>
-				<tr>
-					<td>
-						<%= link_to company.name, controller: "companies", action: "manage_company", id: company.id %>
-					</td>
-					<% for i in 1..12 do %>
-
-						<%
-							month_locations = 0
-
-							start_date = DateTime.new(@year, i, 1)
-							end_date = start_date
-							if i < 12
-								end_date = DateTime.new(@year, i+1, 1)-1.minutes
-							else
-								end_date = DateTime.new(@year+1, 1, 1)-1.minutes
-							end
-
-							locations_count = Location.where('company_id = ? and created_at BETWEEN ? and ?', company.id, start_date, end_date).count
-
-
-							month_locations = locations_count
-							company_locations = company_locations + locations_count
-							@locations[i]['count'] = @locations[i]['count'] + locations_count
-							@locations[13]['count'] = @locations[13]['count'] + locations_count
-
-						%>
-
-						<td>
-							<%= month_locations.to_s %>
-						</td>
-
-					<% end %>
-					<td>
-						<b><%= company_locations.to_s %></b>
-					</td>
-				</tr>
-			<% end %>
-			<tr>
-				<td>
-					<b>Total:</b>
-				</td>
-				<% total = 0 %>
-				<% for i in 1..12 %>
-					<td>
-						<b>
-							<%= @locations[i]['count'].to_s %>
-						</b>
-					</td>
-				<% end %>
-				<td>
-					<b>
-						<%= @locations[13]['count'].to_s %>
-					</b>
-				</td>
-			</tr>
-		</table>
-	</div>
-</div>
-
-
 
 <% content_for :scripts do %>
-	<%= javascript_include_tag "jquery-ui.min" %>
-
-	<script type="text/javascript">
-		$("#year-select").on('change', function(){
-
-			var year = $(this).val();
-			$("#year-select-link").attr("href", "/companies_monthly_locations?year=" + year);
-
-		});
-
-	</script>
-
+  <script type="text/javascript">
+    $("#year-select").on('change', function(){
+      var year = $(this).val();
+      $("#year-select-link").attr("href", "/companies_monthly_locations?year=" + year);
+    });
+  </script>
 <% end %>
