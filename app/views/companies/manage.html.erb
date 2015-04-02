@@ -226,7 +226,7 @@
                   <th>Agregar pago</th>
                 </tr>
               </thead>
-              <thead>
+              <tbody>
                 <% @late_companies.each do |company| %>
                   <tr>
                     <td><%= link_to company.name, controller: "companies", action: "manage_company", id: company.id %></td>
@@ -254,7 +254,7 @@
                     <td><%= link_to '<i class="fa fa-plus"></i> Agregar pago'.html_safe, {controller: "companies", action: "new_payment", id: company.id}, class: "btn btn-sm btn-green" %></td>
                   </tr>
                 <% end %>
-              </thead>
+              </tbody>
             </table>
           </div>
           <div class="tab-pane fade" id="blocked">
