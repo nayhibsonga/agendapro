@@ -44,7 +44,6 @@ $(function() {
 			$(element).parent().empty()
 		},
 		submitHandler: function(form) {
-			saveLocation();
 			form.submit();
 		}
 	});
@@ -64,89 +63,3 @@ $(function() {
 	});
 
 });
-
-function saveLocation() {
-	  var locationJSON = locJSON();
-	  var locationId = $('#id_data').data('id');
-	  if ( $('#title').length > 0 ) {
-	    $.ajax({
-	      type: "PATCH",
-	      url: ' /locations/'+ JSON.stringify(locationId) +'.json',
-	      data: { location: locationJSON },
-	      dataType: 'json',
-	      success: function(){
-	        document.location.href = '/locations/';
-	      },
-	      error: function(xhr){
-	        var errors = $.parseJSON(xhr.responseText).errors;
-	        var errorList = '';
-	        var num_limit = false;
-	        for(i in errors) {
-	          console.log(errors[i]);
-	          if (error[i] == "No se pueden agregar más locales con el plan actual, ¡mejóralo!.")
-	          {
-	            num_limit = true;
-	          }
-	        }
-
-	        if(num_limit)
-	        {
-	          errorList += '<li>No se pueden agregar más locales con el plan actual, ¡mejóralo!.</li>'
-	        }
-	        else
-	        {
-	          for (i in errors) {
-	            errorList += '<li>' + errors[i] + '</li>'
-	          }
-	        }
-	        alertId.showAlert(
-	          '<h3>Error</h3>' +
-	          '<ul>' +
-	            errorList +
-	          '</ul>'
-	        );
-	      }
-	    });
-	  }
-	  else {
-	    var locationJSON = locJSON();
-	    $.ajax({
-	      type: "POST",
-	      url: '/locations.json',
-	      data: { "location": locationJSON },
-	      dataType: 'json',
-	      success: function(){
-	        document.location.href = '/locations/';
-	      },
-	      error: function(xhr){
-	        var errors = $.parseJSON(xhr.responseText).errors;
-	        var errorList = '';
-	        var num_limit = false;
-	        for(i in errors) {
-	          console.log(errors[i]);
-	          if (errors[i] == "No se pueden agregar más locales con el plan actual, ¡mejóralo!.")
-	          {
-	            num_limit = true;
-	          }
-	        }
-
-	        if(num_limit)
-	        {
-	          errorList += '<li>No se pueden agregar más locales con el plan actual, ¡mejóralo!.</li>'
-	        }
-	        else
-	        {
-	          for (i in errors) {
-	            errorList += '<li>' + errors[i] + '</li>'
-	          }
-	        }
-	        alertId.showAlert(
-	          '<h3>Error</h3>' +
-	          '<ul>' +
-	            errorList +
-	          '</ul>'
-	        );
-	      }
-	    });
-	  }
-	}
