@@ -26,7 +26,8 @@ class CompanySetting < ActiveRecord::Base
 
 	def self.monthly_mails
 		all.each do |setting|
-			setting.update_attributes :monthly_mails => 0
+			setting.monthly_mails  = 0
+			setting.save
 		end
 	end
 
