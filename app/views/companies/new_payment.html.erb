@@ -1,208 +1,146 @@
-<div class="row companies_header">
-	<ul class="nav nav-tabs">
-
-		<li><a id="companies_payments" href="/companies_payments">Estados de pagos</a></li>
-
-		<li><a id="companies_incomes" href="/companies_incomes">Ingresos mensuales</a></li>
-
-		<li><a id="companies_locations" href="/companies_locations">Clientes y locales</a></li>
-
-		<li><a id="companies_monthly_locations" href="/companies_monthly_locations">Locales mensuales</a></li>
-
-		<li><a id="companies_monthly_bookings" href="/companies_monthly_bookings">Resumen de reservas</a></li>
-
-		<li><%= link_to 'Empresas', companies_path, { :id => "companies" } %></li>
-
-	</ul>
-</div>
-<% if params[:notice] %>
-    <div class="alert alert-info alert-dismissable fade in">
-        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-    <%= params[:notice] %>
+<div class="container-fluid background-grey">
+  <div class="row">
+    <div class="col-md-12">
+      <h2 class="text-green">
+        <%= @company.name %>
+      </h2>
     </div>
-<% end %>
-
-<% if params[:alert] %>
-    <div class="alert alert-warning alert-dismissable fade in">
-        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-    <%= params[:alert] %>
+  </div>
+</div>
+<div class="container-fluid">
+  <div class="row">
+    <!-- Navegation Tabs -->
+    <div class="col-md-2">
+      <ul class="nav nav-pills nav-stacked tab-margin">
+        <li><a id="companies_payments" href="/companies_payments">Estados de pagos</a></li>
+        <li><a id="companies_incomes" href="/companies_incomes">Ingresos mensuales</a></li>
+        <li><a id="companies_locations" href="/companies_locations">Clientes y locales</a></li>
+        <li><a id="companies_monthly_locations" href="/companies_monthly_locations">Locales mensuales</a></li>
+        <li><a id="companies_monthly_bookings" href="/companies_monthly_bookings">Resumen de reservas</a></li>
+        <li><%= link_to 'Empresas', companies_path, { :id => "companies" } %></li>
+      </ul>
     </div>
-<% end %>
-
-<div class="company-head-name">
-	<h3><%= @company.name %></h3>
-</div>
-
-<div class="row companies_header">
-	<ul class="nav nav-tabs">
-
-		<li><a href="/manage_company/<%= @company.id %>">Ver/Manejar</a></li>
-
-		<li class="active"><a href="/companies/new_payment/<%= @company.id %>">Agregar pago</a></li>
-
-	</ul>
-</div>
-
-<div style="margin-top: 10px;">
-	<%= form_tag({ :controller => 'companies', :action => 'add_payment'}, method: "post") do %>
-
-		<input type="hidden" name="id" value="<%= @company.id %>" />
-		<div class="row">
-			<div class="col-sm-3">
-				<label class="control-label">Monto: </label>
-			</div>
-			<div class="col-sm-4">
-				<input type="number" name="amount" class="form-control" />
-			</div>
-			<div class="col-sm-3">
-
-			</div>
-		</div>
-		<div class="row" style="margin-top: 10px;">
-			<div class="col-sm-3">
-				<label class="control-label">Fecha: </label>
-			</div>
-			<div class="col-sm-4">
-				<input type="text" name="date" class="datepicker form-control" id="datepicker" />
-			</div>
-			<div class="col-sm-3">
-
-			</div>
-		</div>
-		<div class="row" style="margin-top: 10px;">
-			<div class="col-sm-3">
-				<label class="control-label">Tipo de transacción: </label>
-			</div>
-			<div class="col-sm-4">
-				<select name="transaction_type_id" class="form-control">
-					<% t1 = TransactionType.find_by_name('Transferencia') %>
-					<% t2 = TransactionType.find_by_name('Otra') %>
-					<option value="<%= t1.id %>"><%= t1.name %></option>
-					<option value="<%= t2.id %>"><%= t2.name %></option>
-				</select>
-			</div>
-			<div class="col-sm-3">
-
-			</div>
-		</div>
-		<div class="row" style="margin-top: 10px;">
-			<div class="col-sm-3">
-				<label class="control-label">Opciones de actualización</label>
-			</div>
-			<div class="col-sm-6">
-				Haz los cambios necesarios que reflejen el pago.
-			</div>
-			<div class="col-sm-3">
-
-			</div>
-		</div>
-		<div class="row" style="margin-top: 10px;">
-			<div class="col-sm-3">
-				<label class="control-label">Cambio de plan: </label>
-			</div>
-			<div class="col-sm-4">
-				<select name="new_plan_id" class="form-control">
-					<% Plan.all.each do |plan| %>
-						<% if plan.id == @company.plan_id %>
-							<option value="<%= plan.id %>" selected><%= plan.name %></option>
-						<% else %>
-							<option value="<%= plan.id %>"><%= plan.name %></option>
-						<% end %>
-					<% end %>
-				</select>
-				<br />
-				<small>Selecciona un nuevo plan si quieres cambiarlo.</small>
-			</div>
-			<div class="col-sm-5">
-
-			</div>
-		</div>
-		<div class="row" style="margin-top: 10px;">
-			<div class="col-sm-3">
-				<label class="control-label">Cambio de estado: </label>
-			</div>
-			<div class="col-sm-4">
-				<select name="new_status_id" class="form-control">
-					<% PaymentStatus.all.each do |status| %>
-						<% if status.id == @company.payment_status_id %>
-							<option value="<%= status.id %>" selected><%= status.name %></option>
-						<% else %>
-							<option value="<%= status.id %>"><%= status.name %></option>
-						<% end %>
-					<% end %>
-				</select>
-				<br />
-				<small>Selecciona un nuevo estado si quieres cambiarlo.</small>
-			</div>
-			<div class="col-sm-5">
-
-			</div>
-		</div>
-		<div class="row" style="margin-top: 10px;">
-			<div class="col-sm-3">
-				<label class="control-label">Definir meses: </label>
-			</div>
-			<div class="col-sm-4">
-				<input type="number" name="new_months" class="form-control" />
-				<br />
-				<small>Define los meses restantes.</small>
-			</div>
-			<div class="col-sm-5">
-				Meses restantes actuales: <%= @company.months_active_left %>
-			</div>
-		</div>
-		<div class="row" style="margin-top: 10px;">
-			<div class="col-sm-3">
-				<label class="control-label">Nueva deuda: </label>
-			</div>
-			<div class="col-sm-4">
-				<input type="number" name="new_due" class="form-control" />
-				<br />
-				<small>Anota la nueva deuda si quieres cambiarla.</small>
-			</div>
-			<div class="col-sm-5">
-				Deuda actual: <%= @company.due_amount %>
-			</div>
-		</div>
-		<div class="row" style="margin-top: 10px;">
-			<div class="col-sm-3">
-			</div>
-			<div class="col-sm-3">
-				<button class="edit-btn">Agregar pago</button>
-			</div>
-			<div class="col-sm-3">
-			</div>
-		</div>
-	<% end %>
+    <!-- Panels -->
+    <div class="col-md-10 left-panel">
+      <div class="tab-margin">
+        <ul class="nav nav-tabs">
+          <li><a href="/manage_company/<%= @company.id %>">Ver/Manejar</a></li>
+          <li class="active"><a href="/companies/new_payment/<%= @company.id %>">Agregar pago</a></li>
+        </ul>
+        <div class="row">
+          <div class="col-md-12">
+            <%= form_tag({ :controller => 'companies', :action => 'add_payment'}, method: "post", class: "form-horizontal tab-margin") do %>
+              <input type="hidden" name="id" value="<%= @company.id %>" />
+              <div class="form-group">
+                <label class="control-label col-md-2">Monto</label>
+                <div class="col-md-4">
+                  <input type="number" name="amount" class="form-control" />
+                </div>
+              </div>
+              <div class="form-group">
+                <label class="control-label col-md-2">Fecha</label>
+                <div class="col-md-4">
+                  <input type="text" name="date" class="datepicker form-control" id="datepicker" />
+                </div>
+              </div>
+              <div class="form-group">
+                <label class="control-label col-md-2">Tipo de transacción</label>
+                <div class="col-md-4">
+                  <%
+                    t1 = TransactionType.find_by_name('Transferencia')
+                    t2 = TransactionType.find_by_name('Otra')
+                  %>
+                  <select name="transaction_type_id" class="form-control">
+                    <option value="<%= t1.id %>"><%= t1.name %></option>
+                    <option value="<%= t2.id %>"><%= t2.name %></option>
+                  </select>
+                </div>
+              </div>
+              <legend>Opciones de actualización <small class="help-block">Haz los cambios necesarios que reflejen el pago.</small></legend>
+              <div class="form-group">
+                <label class="control-label col-md-2">Cambio de plan</label>
+                <div class="col-md-4">
+                  <select name="new_plan_id" class="form-control">
+                    <% Plan.all.each do |plan| %>
+                      <% if plan.id == @company.plan_id %>
+                        <option value="<%= plan.id %>" selected><%= plan.name %></option>
+                      <% else %>
+                        <option value="<%= plan.id %>"><%= plan.name %></option>
+                      <% end %>
+                    <% end %>
+                  </select>
+                  <span class="help-block">Selecciona un nuevo plan si quieres cambiarlo.</span>
+                </div>
+              </div>
+              <div class="form-group">
+                <label class="control-label col-md-2">Cambio de estado</label>
+                <div class="col-md-4">
+                  <select name="new_status_id" class="form-control">
+                    <% PaymentStatus.all.each do |status| %>
+                      <% if status.id == @company.payment_status_id %>
+                        <option value="<%= status.id %>" selected><%= status.name %></option>
+                      <% else %>
+                        <option value="<%= status.id %>"><%= status.name %></option>
+                      <% end %>
+                    <% end %>
+                  </select>
+                  <span class="help-block">Selecciona un nuevo estado si quieres cambiarlo.</span>
+                </div>
+              </div>
+              <div class="form-group">
+                <label class="control-label col-md-2">Definir meses</label>
+                <div class="col-md-4">
+                  <input type="number" name="new_months" class="form-control" />
+                  <span class="help-block">Define los meses restantes.</span>
+                </div>
+                <div class="col-md-4">
+                  <p class="form-control-static">Meses restantes actuales: <%= @company.months_active_left %></p>
+                </div>
+              </div>
+              <div class="form-group">
+                <label class="control-label col-md-2">Nueva deuda</label>
+                <div class="col-md-4">
+                  <input type="number" name="new_due" class="form-control" />
+                  <span class="help-block">Anota la nueva deuda si quieres cambiarla.</span>
+                </div>
+                <div class="col-md-4">
+                  <p class="form-control-static">Deuda actual: <%= @company.due_amount %></p>
+                </div>
+              </div>
+              <div class="form-group">
+                <div class="col-md-4 col-md-offset-2">
+                  <button class="btn btn-green">Agregar pago</button>
+                </div>
+              </div>
+            <% end %>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
 
 <% content_for :scripts do %>
-	<%= javascript_include_tag "jquery-ui.min" %>
+  <script type="text/javascript">
+    $(function () {
+      $("#datepicker").datepicker({
+        monthNames: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+        monthNamesShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
+        prevText: 'Atrás',
+        nextText: 'Adelante',
+        dayNames: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'],
+        dayNamesShort: ['Dom', 'Lun', 'Mar', 'Mier', 'Jue', 'Vie', 'Sáb'],
+        dayNamesMin: ['Dom', 'Lun', 'Mar', 'Mier', 'Jue', 'Vie', 'Sáb'],
+        today: 'Hoy',
+        clear: '',
+        firstDay: 1,
+        dateFormat: 'yy-mm-dd',
+      });
 
-
-	<script type="text/javascript">
-
-
-			$("#datepicker").datepicker({
-	          monthNames: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
-	          monthNamesShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
-	          prevText: 'Atrás',
-	          nextText: 'Adelante',
-	          dayNames: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'],
-	          dayNamesShort: ['Dom', 'Lun', 'Mar', 'Mier', 'Jue', 'Vie', 'Sáb'],
-	          dayNamesMin: ['Dom', 'Lun', 'Mar', 'Mier', 'Jue', 'Vie', 'Sáb'],
-	          today: 'Hoy',
-	          clear: '',
-	          firstDay: 1,
-	          dateFormat: 'yy-mm-dd',
-	      	});
-
-			$("#datepicker").each(function(){
-				var altField = '#' + $(this).prop('id');
-				$(this).datepicker('option', 'altField', altField);
-			});
-
-
-
-	</script>
+      $("#datepicker").each(function(){
+        var altField = '#' + $(this).prop('id');
+        $(this).datepicker('option', 'altField', altField);
+      });
+    });
+  </script>
 <% end %>
