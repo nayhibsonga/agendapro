@@ -250,6 +250,7 @@
                 <div style="clear: both;">
                 </div>
               </div>
+              <div class="spinner" id="provider-hours-spinner" style="display:none;"><span style="color: #ccc;"><i class="fa fa-spinner fa-spin fa-lg"></i></span></div>
               <div class="col-md-<%= @location.company.company_setting.provider_preference == 2 ? '12' : '9' %>" id="staff-calendar">
                 <div class="panel panel-info <%= 'full-margin' if @location.company.company_setting.provider_preference == 2 %>">
                   <div class="calendar-head">
@@ -437,12 +438,20 @@
                         </div>
                       </div>
                     <% end %>
-                    <div id="outcallAddress" class="form-group has-feedback">
-                      <%= label_tag(:address, "Dirección", class: "col-sm-12 control-label") %>
-                      <div class="col-sm-12">
-                        <%= text_field_tag(:address, nil, :class => "form-control light-gray", :placeholder => "Escribe la dirección donde se debe realizar el servicio" ) %>
-                        <span class="help-block"></span>
-                        <span class="form-control-feedback"></span>
+                    <div id="outcallAddress" class="row form-group has-feedback">
+                      <div class="row">
+                        <div class="col-md-12 dark-gray">
+                          Dirección
+                        </div>
+                      </div>
+                      <div class="row">
+                        <div class="col-md-12">
+                          <div class="form-group has-feedback">
+                            <%= text_field_tag(:address, nil, :class => "form-control light-gray", :placeholder => "Escribe la dirección donde se debe realizar el servicio" ) %>
+                            <span class="help-block"></span>
+                            <span class="form-control-feedback"></span>
+                          </div>
+                        </div>
                       </div>
                     </div>
                     <% if @location.company.company_setting.activate_notes %>
