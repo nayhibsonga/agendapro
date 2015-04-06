@@ -2,7 +2,7 @@
   <div class="row">
     <section class="hgroup">
 			<h2>E-mail a Clientes</h2>
-    	<h2 class="section_header">Acá podrás enviarle e-mails a tus clientes contandole de tus servicios o promociones.</h2>
+    	<h2 class="section_header">Acá podrás enviarle e-mails a tus clientes contándoles de tus servicios o promociones.</h2>
     	<div class="line-breadcrumb">
         <ul class="breadcrumb pull-right">
           <li><%= link_to "Resumen", dashboard_path %> </li>
@@ -23,7 +23,7 @@
 				<span class="help-block"></span>
 			</div>
 			<div class="form-group">
-				<%= label_tag :to, 'Para' %><small class="pull-right"> Estas enviando el e-mail a <%= pluralize(@to.length, 'persona') %>.</small>
+				<%= label_tag :to, 'Para' %><small class="pull-right"> Estás enviando el e-mail a <%= pluralize(@to.length, 'persona') %>.</small>
 				<%= text_field_tag :to, @to, :class => 'form-control', :required => true, :placeholder => 'ejemplo@dominio.com (requerido)' %>
 				<span class="help-block"></span>
 			</div>
@@ -43,7 +43,7 @@
 				<span class="help-block"></span>
 			</div>
 			<div class="form-group">
-				<button type="submit" class="btn btn-agendapro-claro" data-loading-text='<i class="fa fa-envelope-o"></i> Enviando...' autocomplete="off"><i class="fa fa-envelope-o"></i><span> Enviar</span></button>
+				<button type="submit" id="btnSendMail" class="btn btn-agendapro-claro" data-loading-text='<i class="fa fa-envelope-o"></i> Enviando...' autocomplete="off"><i class="fa fa-envelope-o"></i><span> Enviar</span></button>
 				<p>NOTA: Todos los e-mails son enviados como copia oculta</p>
 			</div>
 		<% end %>
@@ -58,11 +58,34 @@
 		$(function () {
 			CKEDITOR.replace(message);
 		});
-		$('button[type="submit"]').on('click', function (e) {
-			$('#message').val($('#message').val());
-			if ($('#client_mailer').valid()) {
+		$('#btnSendMail').on('click', function (e) {
+			console.log("Entra a click");
+			//console.log($('#message').val());
+			//$('#message').val($('#message').val());
+			//console.log($('#message').val());
+			$("#client_mailer").submit();
+			/*if ($('#client_mailer').valid()) {
+				console.log("Entra a if");
 				var $btn = $(this).button('loading');
-			};
+				
+			};*/
 		});
+
+		CKEDITOR.on('instanceReady', function () {
+		    $.each(CKEDITOR.instances, function (instance) {
+		        CKEDITOR.instances[instance].document.on("keyup", CK_jQ);
+		        CKEDITOR.instances[instance].document.on("paste", CK_jQ);
+		        CKEDITOR.instances[instance].document.on("keypress", CK_jQ);
+		        CKEDITOR.instances[instance].document.on("blur", CK_jQ);
+		        CKEDITOR.instances[instance].document.on("change", CK_jQ);
+		    });
+		});
+
+		function CK_jQ() {
+		    for (instance in CKEDITOR.instances) {
+		        CKEDITOR.instances[instance].updateElement();
+		    }
+		}
+
 	</script>
 <% end %>
