@@ -1,22 +1,35 @@
-<h1>Ciudades</h1>
-
-<table class="table table-bordered">
-  <thead>
-    <tr>
-      <th>Nombre</th>
-      <th>Opciones</th>
-    </tr>
-  </thead>
-
-  <tbody>
-    <% @cities.each do |city| %>
-      <tr>
-        <td><%= city.name %></td>
-        <td><%= link_to '<i class="fa fa-pencil"></i> Editar'.html_safe, edit_city_path(city), :class => "btn btn-warning" %>
-        <%= link_to '<i class="fa fa-trash-o"></i> Eliminar'.html_safe, city, :class => "btn btn-danger", method: :delete, data: { confirm: '¿Estás seguro?' } %></td>
-      </tr>
-    <% end %>
-  </tbody>
-</table>
-
-<%= link_to '<i class="fa fa-plus"></i> Nueva Ciudad', new_city_path, :class => "btn btn-primary" %>
+<div class="container-fluid background-grey">
+  <div class="row">
+    <div class="col-md-12">
+      <h2 class="text-green">
+        Ciudades
+        <%= link_to '<i class="fa fa-plus"></i> Nuevo Ciudad'.html_safe, new_city_path, :class => "btn btn-green pull-right" %>
+      </h2>
+    </div>
+  </div>
+</div>
+<div class="container-fluid tab-margin">
+  <div class="row">
+    <div class="col-md-12">
+      <table class="table table-green">
+        <thead>
+          <tr>
+            <th>Nombre</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @cities.each do |city| %>
+            <tr>
+              <td><%= city.name %></td>
+              <td>
+                <%= link_to '<i class="fa fa-pencil"></i> Editar'.html_safe, edit_city_path(city), :class => "btn btn-orange" %>
+                <%= link_to '<i class="fa fa-trash-o"></i> Eliminar'.html_safe, city, :class => "btn btn-red", method: :delete, data: { confirm: '¿Estás seguro?' } %>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

@@ -1,9 +1,11 @@
 <div class="form-group">
-	<%= f.label :name, 'Sinónimo: ', :class => 'col-sm-3 control-label' %>
-	<div class="col-sm-4 input-group">
-		<%= f.text_field :name, :class => 'form-control' %>
-		<span class="input-group-btn">
-			<%= link_to_remove_association '<i class="fa fa-trash-o"></i>'.html_safe, f, :class => "btn btn-danger" %>
-		</span>
+	<%= f.label :name, 'Sinónimo: ', :class => 'col-md-2 control-label' %>
+	<div class="col-md-4">
+    <div class="input-group">
+      <%= f.text_field :name, :class => 'form-control' %>
+      <span class="input-group-btn">
+        <%= link_to_remove_association '<i class="fa fa-trash-o"></i>'.html_safe, f, :class => "btn btn-red" %>
+      </span>
+    </div>
 	</div>
 </div>
