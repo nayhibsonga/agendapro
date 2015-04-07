@@ -20,7 +20,7 @@ online_cancelation_policy_2:
   cancel_unit: 2
   company_setting: company_setting_2
 
-  online_cancelation_policy_3:
+online_cancelation_policy_3:
   cancelable: true
   modifiable: true
   cancel_max: 32

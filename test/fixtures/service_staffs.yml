@@ -1,9 +1,2 @@
 # Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
-one:
-  service_id: 1
-  staff_id: 1
-
-two:
-  service_id: 1
-  staff_id: 1

@@ -2,7 +2,7 @@
 
 location_1:
   name: Location1
-  adress: Elisa Cole 10
+  address: Elisa Cole 10
   phone: +56993215098
   latitude: -33.4448416
   longitude: -70.6332227
@@ -14,12 +14,12 @@ location_1:
   email: "iegomez@agendapro.cl"
   notification: true
   booking_configuration_email: 0
-  second_adress:
+  second_address:
   online_booking: true
 
 location_2:
   name: Location2
-  adress: Apoquindo 3000
+  address: Apoquindo 3000
   phone: +56993215098
   latitude: -33.4172287
   longitude: -70.5985262
@@ -31,12 +31,12 @@ location_2:
   email: "iegomez@agendapro.cl"
   notification: true
   booking_configuration_email: 0
-  second_adress:
+  second_address:
   online_booking: true
 
-  location_3:
+location_3:
   name: Location3
-  adress: Providencia 2000
+  address: Providencia 2000
   phone: +56993215098
   latitude: -33.4350761
   longitude: -70.6249434
@@ -48,5 +48,5 @@ location_2:
   email: "iegomez@agendapro.cl"
   notification: true
   booking_configuration_email: 0
-  second_adress:
+  second_address:
   online_booking: true
