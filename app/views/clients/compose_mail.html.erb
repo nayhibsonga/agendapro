@@ -35,7 +35,7 @@
             <span class="help-block"></span>
           </div>
           <div class="form-group">
-            <button type="submit" class="btn btn-green" data-loading-text='<i class="fa fa-envelope-o"></i> Enviando...' autocomplete="off"><i class="fa fa-envelope-o"></i><span> Enviar</span></button>
+            <button type="submit" id="btnSendMail" class="btn btn-green" data-loading-text='<i class="fa fa-envelope-o"></i> Enviando...' autocomplete="off"><i class="fa fa-envelope-o"></i><span> Enviar</span></button>
             <p><small><strong>NOTA:</strong> Todos los e-mails son enviados como copia oculta</small></p>
           </div>
         <% end %>
@@ -52,11 +52,26 @@
     $(function () {
       CKEDITOR.replace(message);
     });
-    $('button[type="submit"]').on('click', function (e) {
-      $('#message').val($('#message').val());
+    $('#btnSendMail').on('click', function (e) {
       if ($('#client_mailer').valid()) {
         var $btn = $(this).button('loading');
+        $("#client_mailer").submit();
       };
     });
+    CKEDITOR.on('instanceReady', function () {
+      $.each(CKEDITOR.instances, function (instance) {
+        CKEDITOR.instances[instance].document.on("keyup", CK_jQ);
+        CKEDITOR.instances[instance].document.on("paste", CK_jQ);
+        CKEDITOR.instances[instance].document.on("keypress", CK_jQ);
+        CKEDITOR.instances[instance].document.on("blur", CK_jQ);
+        CKEDITOR.instances[instance].document.on("change", CK_jQ);
+      });
+    });
+
+    function CK_jQ() {
+      for (instance in CKEDITOR.instances) {
+        CKEDITOR.instances[instance].updateElement();
+      }
+    }
   </script>
 <% end %>

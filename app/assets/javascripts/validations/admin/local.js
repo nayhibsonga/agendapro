@@ -42,10 +42,10 @@ $(function() {
 			$(element).closest('.form-group').removeClass('has-error').addClass('has-success');
 			$(element).parent().parent().children('.form-control-feedback').removeClass('fa fa-times').addClass('fa fa-check');
 			$(element).parent().empty()
-		}//,
-		// submitHandler: function(form) {
-		// 	form.submit();
-		// }
+		},
+		submitHandler: function(form) {
+			form.submit();
+		}
 	});
 
 	$('input[name="location[notification]"]').change(function (event) {
@@ -61,4 +61,5 @@ $(function() {
 			$('input[name="location[email]"]').next().empty()
 		};
 	});
+
 });

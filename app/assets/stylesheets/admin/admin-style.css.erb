@@ -458,7 +458,12 @@ p.justified {
   max-height: 285px;
   overflow: auto;
 }*/
-/*      End Dashboard     */
+
+.panel > .panel-body.payments-panel {
+	max-height: 420px;
+	overflow: auto;
+}
+/*			End Dashboard			*/
 
 .well-white {
   background: #ffffff;
@@ -1332,6 +1337,45 @@ fieldset[disabled] .btn-white.active {
   font-weight: bold;
   color: #fd633f;
 }
+
+
+.hours-optimizer-button {
+  margin-top: 10px;
+  width: 100%;
+}
+
+.optimizerBtn{
+  width: 120px;
+}
+
+#optimizerPrevButton{
+  display: none;
+}
+
+@media (max-width: 1023px) {
+  #admin-content{
+    width: calc(100% - 50px) !important;
+  }
+  #sidebar{
+    width: 50px !important;
+  }
+  .colapse-hidden{
+    display: none;
+  }
+  .remove-txt{
+    display: none;
+  }
+  .menu-lateral{
+    font-size: 21px;/*14px;*/
+  }
+  #submenu>li>a, #submenu2>li>a, #submenu3>li>a{
+    font-size: 18px;/*12px;*/
+    padding-left: 20px;
+  }
+  .content-fix{
+    margin: 0px 30px;
+  }
+}
 .text-buttons {
   margin-top: 10px;
 }
@@ -1463,3 +1507,5 @@ fieldset[disabled] .btn-white.active {
 .payments-title{
   margin-top: 5px;
 }
+
+

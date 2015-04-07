@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150319184051) do
+ActiveRecord::Schema.define(version: 20150330154139) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -256,6 +256,7 @@ ActiveRecord::Schema.define(version: 20150319184051) do
     t.boolean  "deal_required",               default: false,                 null: false
     t.boolean  "online_payment_capable",      default: false
     t.boolean  "allows_optimization",         default: true
+    t.boolean  "activate_notes",              default: true,                  null: false
   end
 
   add_index "company_settings", ["company_id"], name: "index_company_settings_on_company_id", using: :btree
@@ -732,20 +733,23 @@ ActiveRecord::Schema.define(version: 20150319184051) do
     t.string   "first_name"
     t.string   "last_name"
     t.string   "phone"
-    t.integer  "role_id",                             null: false
+    t.integer  "role_id",                               null: false
     t.integer  "company_id"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.string   "email",                  default: "", null: false
-    t.string   "encrypted_password",     default: "", null: false
+    t.string   "email",                  default: "",   null: false
+    t.string   "encrypted_password",     default: "",   null: false
     t.string   "reset_password_token"
     t.datetime "reset_password_sent_at"
     t.datetime "remember_created_at"
-    t.integer  "sign_in_count",          default: 0,  null: false
+    t.integer  "sign_in_count",          default: 0,    null: false
     t.datetime "current_sign_in_at"
     t.datetime "last_sign_in_at"
     t.string   "current_sign_in_ip"
     t.string   "last_sign_in_ip"
+    t.string   "provider"
+    t.string   "uid"
+    t.boolean  "receives_offers",        default: true
   end
 
   add_index "users", ["company_id"], name: "index_users_on_company_id", using: :btree

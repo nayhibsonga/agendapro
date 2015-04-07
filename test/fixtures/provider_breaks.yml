@@ -1,11 +1,8 @@
 # Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
-one:
-  start: 2014-04-23
-  end: 2014-04-23
-  service_provider_id: 
-
-two:
-  start: 2014-04-23
-  end: 2014-04-23
-  service_provider_id: 
+provider_break_1:
+	start: 2015-04-08 18:00:00
+	end: 2015-04-08 19:00:00
+	service_provider: service_provider_1
+	name: 
+	break_group_id: nil

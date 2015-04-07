@@ -12,6 +12,7 @@ var bookings = []
 
 // Functions
 function loadServiceModal () {
+  $('#optimizerPrevButton').hide();
   $('#addButton').prop('disabled', true);
   $('#nextButton').prop('disabled', true);
   $('#selectHour').hide();
@@ -149,14 +150,15 @@ function loadHours () {
       provider: provider.val()
     });
   });
-  $.getJSON('/optimizer_hours', { local: localId, serviceStaff: JSON.stringify(selects), resultsLength: resultsLength, admin: true }, function (hours_array) {
+
+  var start_date = $("#optimizerDateSelector").val();
+
+  $.getJSON('/optimizer_hours', { local: localId, serviceStaff: JSON.stringify(selects), resultsLength: resultsLength, start_date: start_date, admin: true }, function (hours_array) {
     $('#selectHour > p').remove();
     var services_str = "";
     $.each(hours_array, function (pos, hour) {
-
       services_str = services_str + '<div class="optimizerDetail" pos="'+ pos +'" hidden><h3>Detalle</h3><br />';
-      for(i = 0; i < hour.bookings.length; i++)
-      {
+      for(i = 0; i < hour.bookings.length; i++) {
         services_str = services_str + '<label class="checkbox-inline"><p><i class="fa fa-check-circle-o fa-green"></i> ' + hour.bookings[i].service_name +
             '<br />' +
             '<i class="fa fa-calendar-o fa-green"></i> ' + hour.bookings[i].start.split("T")[1].split("+")[0].split(":")[0] + ":" + hour.bookings[i].start.split("T")[1].split("+")[0].split(":")[1] + ' - ' + hour.bookings[i].end.split("T")[1].split("+")[0].split(":")[0] + ":" + hour.bookings[i].end.split("T")[1].split("+")[0].split(":")[1] +
@@ -182,8 +184,8 @@ function loadHours () {
     if (hours_array.length == 0) {
       $('#selectHour').append('<p class="text-center">No encontramos horarios disponibles</p>');
     }
-    else
-    {
+    else {
+      $("#pickerSelectDate").hide();
       $('#hoursDetails').append(services_str);
       $('.optimizerDetailLink').on('click', function(e){
         e.preventDefault();
@@ -200,6 +202,7 @@ function loadHours () {
   }).always(function () {
     $('#addButton').prop('disabled', false);
     $('#selectHour').animate({"scrollTop": $('#selectHour')[0].scrollHeight}, "slow");
+    $('#optimizerPrevButton').show();
   });
 }
 
@@ -480,8 +483,20 @@ $(function () {
     loadServiceModal();
   });
 
+  $('#optimizerPrevButton').click(function(e){
+    resultsLength = 6;
+    bookings = [];
+    resetForm();
+    loadServiceModal();
+    $("#hoursDetails").empty();
+    $("#pickerSelectDate").show();
+  });
+
   $('#hoursOptimizer').on('hidden.bs.modal', function (e) {
     optimizerValidator.resetForm();
+    $("#pickerSelected").empty();
+    $("#pickerSelected").append($("#initialPickerDate").val());
+    $("#pickerSelectDate").show();
     $("#hoursDetails").empty();
     $('.has-success').removeClass('has-success');
     $('.fa.fa-check').removeClass('fa fa-check');

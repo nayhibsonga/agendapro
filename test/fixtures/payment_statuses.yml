@@ -1,9 +1,30 @@
 # Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
-one:
-  name: MyString
-  description: MyText
+estado_vencido:
+  name: Vencido
+  description: La empresa está atrasada en el pago del mes en curso
 
-two:
-  name: MyString
-  description: MyText
+estado_trial:
+  name: Trial
+  description: La empresa está en período de prueba
+
+estado_bloqueado:
+	name: Bloqueado
+	description: La empresa está bloqueada por no pago de plan
+
+estado_emitido:
+	name: Emitido
+	description: La empresa tiene un pago emitido vigente
+
+estado_inactivo:
+	name: Inactivo
+	description: La empresa está inactiva por no uso/pago
+
+estado_activo:
+	name: Bloqueado
+	description: La empresa tiene todos los pagos al día
+
+estado_admin:
+	name: Admin
+	description: Para empresas que agreguemos nosotros
+

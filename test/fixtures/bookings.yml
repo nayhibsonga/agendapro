@@ -1,19 +1,14 @@
 # Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
-one:
-  start: 2013-12-09
-  end: 2013-12-09
-  notes: MyText
-  staff_id: 1
-  user_id: 1
-  status_id: 1
-  promotion_id: MyString
-
-two:
-  start: 2013-12-09
-  end: 2013-12-09
-  notes: MyText
-  staff_id: 1
-  user_id: 1
-  status_id: 1
-  promotion_id: MyString
+<% 10.times do |n| %>
+  <% 
+    i = 12
+    start_date = i.days.ago
+    end_date = start_date + 30.minutes
+  %>
+  booking_<%= n %>:
+    start: <%= start_date.to_s(:db) %>
+    end: <%= end_dateB.to_s(:db) %>
+    notes: <%= "Comentario de booking#{n}" %>
+    
+<% end %>

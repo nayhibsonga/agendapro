@@ -405,6 +405,7 @@
                         <tr>
                           <th>Acción</th>
                           <th>Fecha</th>
+                          <th>Reserva</th>
                           <th>Servicio</th>
                           <th>Prestador</th>
                           <th>Estado</th>
@@ -460,13 +461,13 @@
             <div class="form-group">
               <%= f.label :start, "Inicio", class: "col-sm-3 control-label" %>
               <div class="col-sm-9">
-                <%= f.datetime_select :start, {default: 4.hours.ago, :minute_step => 5}, {class: "form-control date-select"} %>
+                <%= f.datetime_select :start, {default: eval(ENV["TIME_ZONE_OFFSET"]).ago, :minute_step => 5}, {class: "form-control date-select"} %>
               </div>
             </div>
             <div class="form-group">
               <%= f.label :end, "Fin", class: "col-sm-3 control-label" %>
               <div class="col-sm-9">
-                <%= f.datetime_select :end, {default: 4.hours.ago, :minute_step => 5}, {class: "form-control date-select"} %>
+                <%= f.datetime_select :end, {default: eval(ENV["TIME_ZONE_OFFSET"]).ago, :minute_step => 5}, {class: "form-control date-select"} %>
               </div>
             </div>
           <% end %>
@@ -476,6 +477,7 @@
       </div>
     </div>
   </div>
+
   <div class="modal fade" id="hoursOptimizer" tabindex="-1" role="dialog" aria-labelledby="optimizador de Horas" aria-hidden="true">
     <div class="modal-dialog">
       <div class="modal-content">
@@ -484,6 +486,21 @@
           <h3 class="modal-title" id="optimizerTitle" style="line-height: 1.1;"></h3>
         </div>
         <div class="modal-body">
+          <div id="pickerSelectDate">
+            <div class="row">
+              <div class="col-xs-2" style="text-align: right; font-weight: bold;">
+                Inicio
+              </div>
+              <div class="col-xs-10">
+                <input id="initialPickerDate" value="<%= I18n.l(DateTime.now.to_date) %>" hidden />
+                <span id="pickerSelected" style="color: #949292;"><%= I18n.l(DateTime.now.to_date) %></span>&nbsp;&nbsp;
+                <span id="optimizer-datepicker-link" class="optimizer-date-span" style="float: right;">
+                  Seleccionar nuevo inicio&nbsp;<i class="fa fa-calendar-o"></i>
+                  <input type="text" class="form-control" name="optimizerDateSelector" id="optimizerDateSelector" class="datepicker" />
+                </span>
+              </div>
+            </div>
+          </div>
           <form class="form-horizontal" id="serviceOptimizer"></form>
           <div id="selectHour"></div>
           <div id="hoursDetails"></div>
@@ -573,6 +590,7 @@
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-orange pull-left" id="addButton"><i class="fa fa-plus"></i>&nbsp;<span></span></button>
+          <button type="button" class="btn btn-agendapro-oscuro optimizerBtn" id="optimizerPrevButton" hidden><i class="fa fa-chevron-left"></i>&nbsp;Atrás</button>
           <button type="button" class="btn btn-green" id="nextButton">Siguiente</button>
         </div>
       </div>
@@ -582,6 +600,46 @@
 
 <% content_for :scripts do %>
   <%= javascript_include_tag "bookings" %>
+
+	<script type="text/javascript">
+    <% if @company_setting.deal_activate && @company_setting.deal_identification_number%>
+		$('#booking_deal_code').change(function() {
+			var rut_string = $('#booking_deal_code').val()
+			if (rut_string != '') {
+				$('#booking_deal_code').val(rut_format(rut_string));
+			}
+		});
+    <% end %>
+
+    $(function(){
+      $("#optimizerDateSelector").datepicker({
+        monthNames: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+        monthNamesShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
+        prevText: 'Atrás',
+        nextText: 'Adelante',
+        dayNames: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'],
+        dayNamesShort: ['Dom', 'Lun', 'Mar', 'Mier', 'Jue', 'vie', 'Sáb'],
+        dayNamesMin: ['Dom', 'Lun', 'Mar', 'Mier', 'Jue', 'vie', 'Sáb'],
+        today: 'Hoy',
+        clear: '',
+        firstDay: 1,
+        dateFormat: 'yy-mm-dd',
+        onSelect: function(newDate){
+          $("#pickerSelected").empty();
+          var prettyDate = newDate.split("-")[2] + "/" + newDate.split("-")[1] + "/" + newDate.split("-")[0];
+          $("#pickerSelected").append(prettyDate);
+        },
+        beforeShow: function(date) {
+          $('#ui-datepicker-div').addClass("customDatepicker");
+          $(".customDatepicker .ui-datepicker-calendar").css("width", "214px !important");
+        }
+      });
+
+      $(document.body).on('click', '.optimizer-date-span', function(e){
+        $(e.currentTarget).find('input').datepicker('show');
+      });
+    });
+  </script>
 <% end %>
 
 <% content_for :stylesheets do %>

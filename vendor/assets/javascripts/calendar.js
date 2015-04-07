@@ -75,8 +75,9 @@ function Calendar (source, getData) {
 			ajaxRequest.abort();
 		}
 		sources.data.date = formatDate(monday);
-			$('#staff-selector > .list-group-item').hide();
-			$('#staff-selector-spinner').show();
+		$('#staff-selector > .list-group-item').hide();
+		$('#staff-selector-spinner').show();
+		
 		ajaxRequest = $.getJSON(sources.source, sources.data, function (data, status) {
 			available_hour = false;
 

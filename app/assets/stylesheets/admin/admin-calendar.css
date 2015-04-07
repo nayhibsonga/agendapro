@@ -279,6 +279,7 @@ table.fc-agenda-days {
 .disabled {
   color: #777777;
 }
+
 .auto-desc {
   font-size: 0.75em;
 }
@@ -328,6 +329,10 @@ table.fc-agenda-days {
   vertical-align: top;
   margin: 0 10px 0 5px;
   font-size: 15px;
+}
+
+select[name="serviceOptimizerSelector"] {
+  margin-bottom: 5px;
 }
 
 #serviceOptimizer {

@@ -224,6 +224,14 @@
                     <div class="form-group">
                       <div class="checkbox">
                         <label>
+                          <%= f.check_box :activate_notes %> Permitir notas del cliente
+                        </label>
+                        <span class="help-block">Habilita esta opción para que tus clientes puedan incluir un comentario de texto libre al reservar a través de la página.</span>
+                      </div>
+                    </div>
+                    <div class="form-group">
+                      <div class="checkbox">
+                        <label>
                           <%= f.check_box :client_exclusive %> Exclusivo para Clientes
                         </label>
                         <span class="help-block">Habilita esta opción para que sólo puedan reservar clientes ingresados en la sección Clientes, usando el RUT.</span>
@@ -1061,6 +1069,19 @@
         } else {
           $('.min-hours-div').addClass('hidden');
         }
+      });
+
+      $('#company_web_address').on('change', function() {
+        var tmp = $('#company_web_address').val();
+        tmp = tmp.toLowerCase();
+        tmp = tmp.replace(/[áäâà]/gi, 'a'); //special a
+        tmp = tmp.replace(/[éëêè]/gi, 'e'); //Special e
+        tmp = tmp.replace(/[íïîì]/gi, 'i'); //Special i
+        tmp = tmp.replace(/[óöôò]/gi, 'o'); //Special o
+        tmp = tmp.replace(/[úüûù]/gi, 'u'); //Special u
+        tmp = tmp.replace(/ñ/gi, 'n');  //Special ñ
+        tmp = tmp.replace(/[^a-z0-9]/gi,'');
+        $('#company_web_address').val(tmp);
       });
 
       CKEDITOR.replace(company_setting_signature);

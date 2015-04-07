@@ -334,11 +334,13 @@ class Booking < ActiveRecord::Base
 	end
 
 	def send_booking_mail
-		if self.trx_id == ""
-			if self.start > Time.now - 4.hours
-				if self.status != Status.find_by(:name => "Cancelado")
-					if self.booking_group.nil?
-						BookingMailer.book_service_mail(self)
+		if !self.id.nil?
+			if self.trx_id == ""
+				if self.start > Time.now - eval(ENV["TIME_ZONE_OFFSET"])
+					if self.status != Status.find_by(:name => "Cancelado")
+						if self.booking_group.nil?
+							BookingMailer.book_service_mail(self)
+						end
 					end
 				end
 			end
@@ -346,9 +348,11 @@ class Booking < ActiveRecord::Base
 	end
 
 	def send_update_mail
-		if self.start > Time.now - 4.hours
+		if self.start > Time.now - eval(ENV["TIME_ZONE_OFFSET"])
 			if self.status == Status.find_by(:name => "Cancelado")
-				BookingMailer.cancel_booking(self)
+				if changed_attributes['status_id']
+					BookingMailer.cancel_booking(self)
+				end
 				#if !self.payed_booking.nil?
 				#	BookingMailer.cancel_payment_mail(self.payed_booking, 1)
 				#	BookingMailer.cancel_payment_mail(self.payed_booking, 2)
@@ -365,10 +369,10 @@ class Booking < ActiveRecord::Base
 	end
 
 	def self.booking_reminder
-		where(:start => 4.hours.ago...92.hours.from_now).each do |booking|
+		where(:start => eval(ENV["TIME_ZONE_OFFSET"]).ago...(96.hours - eval(ENV["TIME_ZONE_OFFSET"])).from_now).each do |booking|
 			unless booking.status == Status.find_by(:name => "Cancelado")
 				booking_confirmation_time = booking.location.company.company_setting.booking_confirmation_time
-				if ((booking_confirmation_time.days - 4.hours).from_now..(booking_confirmation_time.days + 1.days - 4.hours).from_now).cover?(booking.start)
+				if ((booking_confirmation_time.days - eval(ENV["TIME_ZONE_OFFSET"])).from_now..(booking_confirmation_time.days + 1.days - eval(ENV["TIME_ZONE_OFFSET"])).from_now).cover?(booking.start)
 					if booking.send_mail
 						BookingMailer.book_reminder_mail(booking)
 					end
@@ -1178,11 +1182,20 @@ class Booking < ActiveRecord::Base
 			@data[:location] = @location
 
 		# SERVICE PROVIDER
+
+			#Get providers ids
+			providers_ids = []
+			bookings.each do |book|
+				if !providers_ids.include?(book.service_provider_id)
+					providers_ids << book.service_provider_id
+				end
+			end
+
 			@provider = {}
 			@providers_array = []
 			@provider[:client_name] = bookings[0].client.first_name + ' ' + bookings[0].client.last_name
 
-			ServiceProvider.where(location_id: location).each do |provider|
+			ServiceProvider.find(providers_ids).each do |provider|
 				@staff = {}
 				@staff[:name] = provider.public_name
 				@staff[:email] = provider.notification_email
@@ -1205,7 +1218,7 @@ class Booking < ActiveRecord::Base
 			@provider[:array] = @providers_array
 			@data[:provider] = @provider
 
-		if bookings.order(:start).first.start > Time.now - 4.hours
+		if bookings.order(:start).first.start > Time.now - eval(ENV["TIME_ZONE_OFFSET"])
 			BookingMailer.multiple_booking_mail(@data)
 		end
 	end

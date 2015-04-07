@@ -21,7 +21,7 @@ class Client < ActiveRecord::Base
           valid = true
         end
         if !valid
-          Booking.where('bookings.start >= ?', Time.now - 4.hours).where(client_id: self.id).each do |booking|
+          Booking.where('bookings.start >= ?', Time.now - eval(ENV["TIME_ZONE_OFFSET"])).where(client_id: self.id).each do |booking|
             if booking.send_mail
               booking.send_mail = false
               booking.save

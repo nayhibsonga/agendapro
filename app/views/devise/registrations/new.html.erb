@@ -35,11 +35,12 @@
 		</div>
 		<div class="col-md-5">
 			<div class="row well well-square signup-well">
-			<div class="col-sm-12">
-			<h2>¡Regístrate!</h2>
-			<p>Y en 3 simples pasos ya estarás recibiendo tus reservas de forma automática.</p>
+				<div class="col-sm-12">
+					<h2>¡Regístrate!</h2>
+					<p>Y en 3 simples pasos ya estarás recibiendo tus reservas de forma automática.</p>
+				</div>
 			</div>
-			</div>
+
 			<div class="row">
 			<%= form_for resource, :as => resource_name, :url => registration_path(resource_name), :html => { :class => 'form-horizontal well well-square', :multipart => true } do |f| %>
 				<!-- start: User -->
@@ -172,13 +173,46 @@
 		</div>
 		<div class="col-md-5">
 			<div class="row well well-square signup-well">
-			<div class="col-sm-12">
-			<h2>¡Regístrate!</h2>
-			<p>Y descubre los beneficios que tenemos para ti.</p>
+				<div class="col-sm-12">
+					<h2>¡Regístrate!</h2>
+					<p>Y descubre los beneficios que tenemos para ti.</p>
+				</div>
 			</div>
-			</div>
+
 			<div class="row">
 			<%= form_for resource, :as => resource_name, :url => registration_path(resource_name), :html => { :class => 'form-horizontal well', :multipart => true } do |f| %>
+
+
+				<div class="row">
+					<div class="col-sm-12">
+						<span class="login-title"><p style="text-align: center;">Regístrate con tus cuentas de Facebook o Google</p></span>
+					</div>
+				</div>
+				<div class="row" style="margin-top: 20px; padding-bottom: 20px; margin-bottom: 10px; border-bottom: 1px solid #949292;">
+					<div class="col-sm-2">
+					</div>
+					<div class="col-sm-4">
+						<!--<a class="btn btn-block btn-social btn-facebook pull-right" href="users/auth/facebook">
+							<i class="fa fa-facebook"></i> Entra con Facebook
+						</a>-->
+						<%= link_to '<i class="fa fa-facebook"></i> Facebook'.html_safe, social_login_url('facebook'), { :class => "btn btn-block btn-social btn-facebook pull-right" }  %>
+					</div>
+					<div class="col-sm-4">
+						<!--<a class="btn btn-block btn-social btn-google-plus" href="users/auth/google_oauth2">
+							<i class="fa fa-google"></i> Entra con Google
+						</a>-->
+						<%= link_to '<i class="fa fa-google"></i> Google'.html_safe, social_login_url('google_oauth2'), { :class => "btn btn-block btn-social btn-google-plus" }  %>
+					</div>
+					<div class="col-sm-2">
+					</div>
+				</div>
+				<div class="row" style="margin-bottom: 15px;">
+					<div class="col-sm-12">
+						<span class="login-title"><p style="text-align: center;">O crea tu propia cuenta</p></span>
+					</div>
+				</div>
+
+
 				<%= f.hidden_field :role_id, :value => Role.where(:name => "Usuario Registrado").first.id %>
 				<%= f.hidden_field :first_name %>
 				<%= f.hidden_field :last_name %>
@@ -214,6 +248,17 @@
 						<span class="form-control-feedback"></span>
 					</div>
 				</div>
+				<div class="form-group has-feedback">
+			        <%= f.label :receives_offers, 'Recibir ofertas en mi mail', :class => 'col-sm-4 control-label' %>
+			        <div class="col-sm-4">
+			          <%= f.check_box :receives_offers, :required => true%>
+			        </div>
+			    </div>
+				<div class="form-group">
+                   <div class="col-sm-offset-4 col-sm-8">
+                           <%= f.submit 'Regístrate', :class => 'btn btn-orange' %>
+                   </div>
+               </div>
 			<% end %>
 			</div>
 		</div>
@@ -232,5 +277,34 @@
 	$(function () {
 		split_name('#user_full_name', '#user_first_name', '#user_last_name', '#new_user');
 	});
+
+	$(function () {
+		$('#user_company_attributes_name').on('change', function() {
+			var tmp = $('#user_company_attributes_name').val();
+			tmp = tmp.toLowerCase();
+			tmp = tmp.replace(/[áäâà]/gi, 'a'); //special a
+			tmp = tmp.replace(/[éëêè]/gi, 'e'); //Special e
+			tmp = tmp.replace(/[íïîì]/gi, 'i'); //Special i
+			tmp = tmp.replace(/[óöôò]/gi, 'o'); //Special o
+			tmp = tmp.replace(/[úüûù]/gi, 'u'); //Special u
+			tmp = tmp.replace(/ñ/gi, 'n');  //Special ñ
+			tmp = tmp.replace(/[^a-z0-9]/gi,'');
+			$('#user_company_attributes_web_address').val(tmp);
+		});
+
+		$('#user_company_attributes_web_address').on('change', function() {
+			var tmp = $('#user_company_attributes_web_address').val();
+			tmp = tmp.toLowerCase();
+			tmp = tmp.replace(/[áäâà]/gi, 'a'); //special a
+			tmp = tmp.replace(/[éëêè]/gi, 'e'); //Special e
+			tmp = tmp.replace(/[íïîì]/gi, 'i'); //Special i
+			tmp = tmp.replace(/[óöôò]/gi, 'o'); //Special o
+			tmp = tmp.replace(/[úüûù]/gi, 'u'); //Special u
+			tmp = tmp.replace(/ñ/gi, 'n');  //Special ñ
+			tmp = tmp.replace(/[^a-z0-9]/gi,'');
+			$('#user_company_attributes_web_address').val(tmp);
+		});
+	});
+
 </script>
 <% end %>

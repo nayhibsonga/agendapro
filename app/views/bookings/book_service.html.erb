@@ -2,7 +2,7 @@
   <div class="container">
     <div class="row">
       <% if !@company.description.blank? %>
-        <div class="col-md-6 company-header-left company-header">
+        <div class="col-md-4 company-header-left company-header">
           <div class="col-md-3">
             <% if @company.logo_url %>
               <%= image_tag @company.logo_url.to_s, :size => "80x80", :alt => @company.name, :class => "company-logo img-responsive" %>
@@ -19,7 +19,7 @@
             <%= @company.description %>
           </div>
         </div>
-        <div class="col-md-2 company-header-right company-header">
+        <div class="col-md-4 company-header-right company-header">
           <% if @selectedLocation %>
             <div id="phone-info">
               <%= image_tag 'telefono.png', :alt => '', :size => "12x14", :class=>"loc-icon" %>&nbsp;
@@ -42,7 +42,7 @@
           <div style="clear: both;"></div>
         </div>
       <% else %>
-        <div class="col-md-6 company-header-left company-header" style="border-right: 1px solid #949292;">
+        <div class="col-md-4 company-header-left company-header" style="border-right: 1px solid #949292;">
           <div class="col-md-3">
             <% if @company.logo_url %>
               <%= image_tag @company.logo_url.to_s, :size => "80x80", :alt => @company.name, :class => "company-logo img-responsive" %>
@@ -54,7 +54,7 @@
             <%= @company.name %>
           </div>
         </div>
-        <div class="col-md-6 company-header-center2 company-header">
+        <div class="col-md-8 company-header-center2 company-header">
           <% if @selectedLocation %>
             <div id="phone-info">
               <%= image_tag 'telefono.png', :alt => '', :size => "12x14", :class=>"loc-icon" %>&nbsp;
@@ -157,7 +157,7 @@
                       <% end %>
                     </dd>
                     <% @bookings.each do |booking| %>
-                      <% if !booking.notes.empty? %>
+                      <% if !booking.notes.blank? %>
                       <dt class="dark-gray">Notas</dt>
                       <dd class="light-gray"><p><%= booking.notes %></p></dd>
                       <% end %>
@@ -168,11 +168,11 @@
                   <dl class="dl-horizontal book-dl">
                     <dt class="dark-gray">Nombre</dt>
                     <dd class="light-gray"><p><%= @booking.client.first_name %> <%= @booking.client.last_name %></p></dd>
-                    <% if !@booking.client.email.empty? %>
+                    <% if !@booking.client.email.blank? %>
                     <dt class="dark-gray">E-mail</dt>
                     <dd class="light-gray"><p><%= @booking.client.email %></p></dd>
                     <% end %>
-                    <% if !@booking.client.phone.empty? %>
+                    <% if !@booking.client.phone.blank? %>
                     <dt class="dark-gray">Teléfono</dt>
                     <dd class="light-gray"><p><%= @booking.client.phone %></p></dd>
                     <% end %>
@@ -190,7 +190,7 @@
         </div>
         <% if @errors.length > 0 %>
           <div class="col-md-5">
-            <%= image_tag("backgrounds/cross.png", :class => "book-center-error") %>
+            <%= image_tag("backgrounds/error.png", :class => "book-center-error") %>
           </div>
         <% else %>
           <% if @try_register %>
@@ -207,12 +207,51 @@
                         ¡Regístrate!
                       </span>
                     </div>
+                  </div>
+                </div>
+              </div>
 
+              <div style="background-color: #f2f2f2; padding-left: 0px !important; padding-right: 0px !important; margin-left: 0px !important; margin-right: 0px !important;">
+                <div class="row" style="padding-top: 10px;">
+                  <div class="col-sm-12">
+                    <span class="book-login-title-gray"><p style="text-align: center;">Regístrate con tus cuentas de Facebook o Google</p></span>
+                  </div>
+                </div>
+                <div class="row" style="margin-top: 10px; padding-bottom: 20px;">
+                  <div class="col-sm-2">
+                  </div>
+                  <div class="col-sm-4">
+                    <!--<a class="btn btn-block btn-social btn-facebook pull-right" href="users/auth/facebook">
+                      <i class="fa fa-facebook"></i> Entra con Facebook
+                    </a>-->
+                    <%= link_to '<i class="fa fa-facebook"></i> Facebook'.html_safe, social_login_url('facebook'), { :class => "btn btn-block btn-social btn-facebook pull-right" }  %>
+                  </div>
+                  <div class="col-sm-4">
+                    <!--<a class="btn btn-block btn-social btn-google-plus" href="users/auth/google_oauth2">
+                      <i class="fa fa-google"></i> Entra con Google
+                    </a>-->
+                    <%= link_to '<i class="fa fa-google"></i> Google'.html_safe, social_login_url('google_oauth2'), { :class => "btn btn-block btn-social btn-google-plus" }  %>
+                  </div>
+                  <div class="col-sm-2">
+                  </div>
+                </div>
+              </div>
+
+              
+              <div class="suggest-register" style="height: 100%;">
+                <div class="row">
+                  <div class="col-md-12">
                     <%= form_for :user, :url => user_registration_url(:subdomain => false), :html => { class: 'form-horizontal', id: 'register-form' } do |f| %>
                       <%= f.hidden_field :role_id, :value => Role.where(:name => "Usuario Registrado").first.id %>
                       <%= f.hidden_field :first_name, :value => @user.first_name %>
                       <%= f.hidden_field :last_name, :value => @user.last_name %>
                       <%= f.hidden_field :phone, :value => @user.phone %>
+
+                      <div class="row" style="margin-bottom: 5px;">
+                        <div class="col-sm-12">
+                          <span class="book-login-title"><p style="text-align: center;">O crea tu propia cuenta</p></span>
+                        </div>
+                      </div>
 
                       <div class="row">
                         <div class="col-sm-2">
@@ -264,6 +303,12 @@
                             <%= f.password_field :password_confirmation, :required => true, :class => 'form-control', :placeholder => 'xxxxxxxx (requerido)' %>
                             <span class="help-block"></span>
                             <span class="form-control-feedback" style="top: 7px !important;"></span>
+                          </div>
+                          <div class="form-group has-feedback">
+                              <%= f.label :receives_offers, 'Recibir ofertas en mi mail', :class => 'col-sm-10' %>
+                              <div class="col-sm-2">
+                                <%= f.check_box :receives_offers, :required => true%>
+                              </div>
                           </div>
 
                         </div>

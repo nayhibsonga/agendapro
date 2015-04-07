@@ -10,8 +10,17 @@
   <div class="row">
     <div class="col-md-12">
       <div class="pull-right" style="margin: 10px 0;">
-        <%= link_to '<i class="fa fa-plus"></i> Nuevo Local'.html_safe, new_location_path, :class => "btn btn-green" unless cannot? :create, Location %>
-        <%= link_to '<i class="fa fa-minus"></i> Locales Inactivos'.html_safe, inactive_locations_path, :class => "btn btn-white" unless cannot? :destroy, Location %>
+        <% if @locations.where(active:true).count < @locations.first.company.plan.locations %>
+          <%= link_to '<i class="fa fa-plus"></i> Nuevo Local'.html_safe, new_location_path, :class => "btn btn-green" unless cannot? :create, Location %>
+          <%= link_to '<i class="fa fa-minus"></i> Locales Inactivos'.html_safe, inactive_locations_path, :class => "btn btn-white" unless cannot? :destroy, Location %>
+        <% else %>
+          <a href="#" class="btn btn-green disabled">Nuevo Local</a>
+          <%= link_to '<i class="fa fa-minus"></i> Locales Inactivos'.html_safe, inactive_locations_path, :class => "btn btn-white" unless cannot? :destroy, Location %>
+          <p>
+            No puedes crear más locales con el plan actual.<br />
+            <%= link_to 'Cambiar mi plan', select_plan_path %>
+          </p>
+        <% end %>
       </div>
     </div>
   </div>
