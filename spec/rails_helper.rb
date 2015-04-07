@@ -3,6 +3,7 @@ ENV["RAILS_ENV"] ||= 'test'
 require 'spec_helper'
 require File.expand_path("../../config/environment", __FILE__)
 require 'rspec/rails'
+require 'devise'
 require 'capybara/rails'
 
 # Requires supporting ruby files with custom matchers and macros, etc, in
@@ -19,36 +20,45 @@ Dir[Rails.root.join("spec/support/**/*.rb")].each { |f| require f }
 ActiveRecord::Migration.check_pending! if defined?(ActiveRecord::Migration)
 
 RSpec.configure do |config|
-
-
-  config.include FactoryGirl::Syntax::Methods
-  
   # Remove this line if you're not using ActiveRecord or ActiveRecord fixtures
-  config.fixture_path = "#{::Rails.root}/spec/fixtures"
+  config.fixture_path = "#{::Rails.root}/test/fixtures"
+  config.include FactoryGirl::Syntax::Methods
+
 
   # If you're not using ActiveRecord, or you'd prefer not to run each of your
   # examples within a transaction, remove the following line or assign false
   # instead of true.
+  
+  require 'database_cleaner'  # setting up for Capybara/Selenium testing
+  # disable Rails implicit wrapping of test in database transaction
+  # essential to disable this if testing with Capybara/Selenium
+  # and you wish to eliminate poundage of head against wall
   config.use_transactional_fixtures = false
-
+  # Set up for Capybara/Selenium feature tests:
   config.before(:suite) do
-    DatabaseCleaner.clean_with(:truncation)
+     DatabaseCleaner.clean_with(:truncation)
   end
-
   config.before(:each) do
-    DatabaseCleaner.strategy = :transaction
+     DatabaseCleaner.strategy = :transaction
   end
-
   config.before(:each, :js => true) do
-    DatabaseCleaner.strategy = :truncation
+     DatabaseCleaner.strategy = :truncation
   end
-
   config.before(:each) do
-    DatabaseCleaner.start
+     DatabaseCleaner.start
+  end
+  config.after(:each) do
+     DatabaseCleaner.clean
   end
 
-  config.after(:each) do
-    DatabaseCleaner.clean
+
+  config.include Devise::TestHelpers, :type => :controller
+  config.extend ControllerMacros, :type => :controller
+  config.include RSpec::Rails::RequestExampleGroup, :type => feature
+
+  config.include Warden::Test::Helpers
+  config.before :suite do
+    Warden.test_mode!
   end
 
   # RSpec Rails can automatically mix in different behaviours to your tests
