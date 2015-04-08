@@ -91,7 +91,7 @@ class CompaniesController < ApplicationController
 		if @record.delete
 			redirect_to :action => 'manage_company', :id => @company.id, :notice => 'Pago eliminado correctamente.'
 		else
-			redirect_to :action => 'manage_company', :id => @company.id, :alert => 'Ocurrió un error al ingresar el pago.'
+			redirect_to :action => 'manage_company', :id => @company.id, :alert => 'Ocurrió un error al eliminar el pago.'
 		end
 	end
 
@@ -124,7 +124,7 @@ class CompaniesController < ApplicationController
 			@company.save
 			redirect_to :action => 'manage_company', :id => @company.id
 		else
-			redirect_to :action => 'payment', :id => @record.id, :alert => 'Ocurrió un error al ingresar el pago.'
+			redirect_to :action => 'payment', :id => @record.id, :alert => 'Ocurrió un error al modificar el pago.'
 		end
 
 	end
@@ -460,9 +460,11 @@ class CompaniesController < ApplicationController
 		@company.months_active_left = 0
 		@company.payment_status_id = PaymentStatus.find_by_name("Inactivo").id
 		if @company.save
-			redirect_to :action => 'manage_company', :id => @company.id, :notice => 'Companía editada correctamente.'
+			flash[:notice] = 'Companía editada correctamente.'
+			redirect_to :action => 'manage_company', :id => @company.id
 		else
-			redirect_to :action => 'manage_company', :id => @company.id, :alert => 'Ocurrió un error al editar la compañía.'
+			flash[:alert] = 'Ocurrió un error al editar la compañía.'
+			redirect_to :action => 'manage_company', :id => @company.id
 		end
 	end
 

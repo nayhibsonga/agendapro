@@ -21,7 +21,7 @@ estado_inactivo:
     description: La empresa está inactiva por no uso/pago
 
 estado_activo:
-    name: Bloqueado
+    name: Activo
     description: La empresa tiene todos los pagos al día
 
 estado_admin:

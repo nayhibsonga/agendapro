@@ -5,7 +5,7 @@ describe SearchsController do
 	#login_user
 	before(:each) do
 		
-	@role1 = FactoryGirl.create(:role)
+        @role1 = FactoryGirl.create(:role)
         @role2 = FactoryGirl.create(:role, :admin_role)
         @role3 = FactoryGirl.create(:role, :general_admin_role)
         @role4 = FactoryGirl.create(:role, :super_admin_role)
@@ -84,10 +84,6 @@ describe SearchsController do
 		#response.should render_template :search
 		expect(response).to render_template :search
 	end
-
-    it "should find unowned company without services" do
-
-    end
 
     it "should not find companies without activate workflow and search" do
             get :search, :inputSearch => @service_company2.name, :latitude => @location_company2.latitude, :longitude => @location_company2.longitude, :inputLocalization => @location_company2.address
