@@ -1,14 +1,12 @@
 require 'rails_helper'
+# spec/features/user_creates_a_foobar_spec.rb
+feature 'Companies' do
 
-describe CompaniesController do
+    include UrlHelper
 
-	include UrlHelper
-	login_super_admin
-	#subject.current_user
+	background do
 
-	before(:each) do
-
-		@role1 = FactoryGirl.create(:role)
+        @role1 = FactoryGirl.create(:role)
         @role2 = FactoryGirl.create(:role, :admin_role)
         @role3 = FactoryGirl.create(:role, :general_admin_role)
         @role4 = FactoryGirl.create(:role, :super_admin_role)
@@ -51,6 +49,7 @@ describe CompaniesController do
 
         @company = FactoryGirl.create(:company, plan: @plan_trial, payment_status: @payment_status_trial)
         @company_setting = FactoryGirl.create(:company_setting, company: @company, bank: @bank)
+        @online_cancelation_policy = FactoryGirl.create(:online_cancelation_policy, company_setting: @company_setting)
 
         @location = FactoryGirl.create(:location, district: @district, company: @company)
 
@@ -75,172 +74,54 @@ describe CompaniesController do
         @company_setting2 = FactoryGirl.create(:company_setting, company: @company2, bank: @bank, activate_search: false, activate_workflow: false)
 
         @new_plan = @plan_premium
-		@transaction_type = FactoryGirl.create(:transaction_type, :transaction_type_transferencia)
-		@new_payment_status = @payment_status_activo
-		@date = DateTime.now
+        @transaction_type = FactoryGirl.create(:transaction_type, :transaction_type_transferencia)
+        @new_payment_status = @payment_status_activo
+        @date = DateTime.now
 
-	end
+        Capybara.app_host = "http://#{@company.web_address}.lvh.me:3000"
+    	
+  	end
 
-	let(:params) do
-		{
-			:id => @company.id, 
-			:amount => @new_plan.price, 
-			:date => @date, 
-			:transaction_type_id => @transaction_type.id, 
-			:new_plan_id => @new_plan.id, 
-			:new_due => 0.0, 
-			:new_months => 1, 
-			:new_status_id => @new_payment_status.id
-		}
-	end		
+    scenario 'Fills user data when logged', :js => true do
 
+        @user = FactoryGirl.build(:user, role: @role1) #, role_id: @role.id)
+        @user.save
+        login_as(@user, :scope => :user)
 
-	#Super Admin
-	it "should get companies for management" do
+        visit Capybara.app_host
 
-		get :manage
+        expect(page).to have_content "Selecciona el lugar"
 
-		expect(assigns(:companies)).to_not be nil
-		expect(response).to render_template :manage
+        loc_radio = 'localOption' + @location.id.to_s
+        choose loc_radio
+        click_link 'boton-agendar'
 
-	end
+        expect(page).to have_content "Seleccione un servicio"
 
+        choose 'serviceRadio'
+        
+        find(".next2").click
 
-	it "should correctly add a manual payment" do
+        #find(".hora-disponible").click
 
-		puts "Company: " + @company.id.to_s
+        #find(".next2").click
 
-		expect {post :add_payment, params}.to change(BillingRecord,:count).by(1)
-		puts @new_payment_status.id.to_s
-		expect(assigns(:company)).to_not be_nil
-		expect(assigns(:company).plan_id).to eq(@new_plan.id)
-		expect(assigns(:company).payment_status_id).to eq(@new_payment_status.id)
-		expect(assigns(:company).due_amount).to eq(0)
-		expect(assigns(:company).months_active_left).to eq(1)
-		expect(response).to redirect_to(:action => "manage_company", :id => @company.id)
+        page.should have_field('firstName', with: @user.first_name)
+        page.should have_field('lastName', with: @user.last_name)
+        page.should have_field('email', with: @user.email)
+        page.should have_field('phone', with: @user.phone)
 
-	end
+    end
 
-	it "should deactivate a company" do
+    scenario 'Uses the optimizer', :js => true do
 
-		post :deactivate_company, {:id => @company.id}
+        visit Capybara.app_host
+        loc_radio = 'localOption' + @location.id.to_s
+        choose loc_radio
+        click_link 'boton-agendar'
 
-		expect(assigns(:company).active).to eq(false)
-		expect(assigns(:company).months_active_left).to eq(0)
-		expect(assigns(:company).payment_status_id).to eq(@payment_status_inactivo.id)
+        click_button 'optimizerOpenBtn'
 
-		expect(response).to redirect_to(:action => "manage_company", :id => @company.id)
-
-	end
-
-
-	context 'with_subdomain' do
-
-		before(:each) do
-			@request.host = "#{@company.web_address}.test.host"
-		end
-
-		############
-		# OVERVIEW #
-		############
-
-		it "should redirect to root_path with wrong web_address " do
-
-			wrong_address = @company.web_address + "wrong"
-			
-			@request.host = "#{wrong_address}.test.host"
-
-			get :overview
-
-			expect(response).to redirect_to(root_without_subdomain)
-
-		end
-
-		it "should redirect to root_path if not active workflow or search" do
-
-			@request.host = "#{@company2}.test.host"
-			get :overview
-
-			expect(response).to redirect_to(root_without_subdomain)
-			expect(flash[:alert]).to_not be_nil
-
-		end
-
-		it "should alert and render overview if location is set and doesn't exist" do
-
-			get :overview, {:local => 12345}
-
-			expect(assigns(:company)).to_not be nil
-
-			expect(assigns(:locations)).to_not be_nil
-			expect(assigns(:locations).empty?).to eq(false)
-
-			expect(response).to render_template(:overview)
-
-		end
-
-		it "should get locations and render overview" do
-
-			get :overview
-
-			expect(assigns(:company)).to_not be nil
-
-			expect(assigns(:locations)).to_not be_nil
-			expect(assigns(:locations).empty?).to eq(false)
-
-			expect(response).to render_template(:overview)
-
-		end
-
-
-		############
-		# WORKFLOW #
-		############
-
-		it "(Workflow) should redirect to root_path with wrong web_address " do
-
-			wrong_address = @company.web_address + "wrong"
-			
-			@request.host = "#{wrong_address}.test.host"
-
-			get :workflow
-
-			expect(response).to redirect_to(root_without_subdomain)
-
-		end
-
-		it "(Workflow) should redirect to root_path if not active workflow or search" do
-
-			@request.host = "#{@company2}.test.host"
-			get :workflow
-
-			expect(response).to redirect_to(root_without_subdomain)
-			expect(flash[:alert]).to_not be_nil
-
-		end
-
-		it "(Workflow) should alert and redirect to overview if location is set and doesn't exist" do
-
-			get :workflow, {:local => 12345}
-
-			expect(assigns(:company)).to_not be nil
-
-			expect(response).to redirect_to(:controller => 'companies', :action => 'overview')
-
-		end
-
-		it "(Workflow) should render workflow" do
-
-			get :overview
-
-			expect(assigns(:company)).to_not be nil
-
-			expect(response).to render_template(:workflow)
-
-		end
-
-
-	end
-
+    end
 
 end
