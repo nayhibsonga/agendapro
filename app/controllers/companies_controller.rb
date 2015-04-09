@@ -665,12 +665,20 @@ class CompaniesController < ApplicationController
 			redirect_to root_url(:host => domain)
 			return
 		end
-		@location = Location.find(params[:local])
-		@selectedLocation = @location
+
 
 		# => Domain parser
 		host = request.host_with_port
 		@url = @company.web_address + '.' + host[host.index(request.domain)..host.length]
+
+		if Location.where(:id => params[:local]).count > 0
+			@location = Location.find(params[:local])
+			@selectedLocation = @location
+		else
+			flash[:alert] = "Lo sentimos, el local ingresado no existe."
+			redirect_to :action => "overview"
+			return
+		end
 
 		if mobile_request?
 			company_setting = @company.company_setting
