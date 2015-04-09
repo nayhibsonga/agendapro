@@ -42,37 +42,37 @@
     <div class="container">
         <div class="row">
             <div class="col-md-2">
-                <div class="search-btn btn-default sector_search" data-search="spa">
+                <div class="search-btn btn-default sector_search_agenda" data-search="spa">
                         <%= image_tag "search/1spa.png", :class => "img-responsive", size: "47x33" %>
                         <span>Spa</span>
                 </div>
             </div>
             <div class="col-md-2">
-                <div class="search-btn btn-default sector_search" data-search="peluquería">
+                <div class="search-btn btn-default sector_search_agenda" data-search="peluquería">
                         <%= image_tag "search/2peluqueria.png", :class => "img-responsive", size: "47x33" %>
                         <span>Peluquería</span>
                 </div>
             </div>
             <div class="col-md-2">
-                <div class="search-btn btn-default sector_search" data-search="maquillaje">
+                <div class="search-btn btn-default sector_search_agenda" data-search="maquillaje">
                         <%= image_tag "search/3maquillaje.png", :class => "img-responsive", size: "47x33" %>
                         <span>Maquillaje</span>
                 </div>
             </div>
             <div class="col-md-2">
-                <div class="search-btn btn-default sector_search" data-search="centro de estética">
+                <div class="search-btn btn-default sector_search_agenda" data-search="centro de estética">
                         <%= image_tag "search/4centrosdeestetica.png", :class => "img-responsive", size: "47x33" %>
                         <span>Centros de estética</span>
                 </div>
             </div>
             <div class="col-md-2">
-                <div class="search-btn btn-default sector_search" data-search="masaje">
+                <div class="search-btn btn-default sector_search_agenda" data-search="masaje">
                         <%= image_tag "search/5masajes.png", :class => "img-responsive", size: "47x33" %>
                         <span>Masajes</span>
                 </div>
             </div>
             <div class="col-md-2">
-                <div class="search-btn btn-default sector_search" data-search="manicure">
+                <div class="search-btn btn-default sector_search_agenda" data-search="manicure">
                         <%= image_tag "search/6manosypies.png", :class => "img-responsive", size: "47x33" %>
                         <span>Manos y pies</span>
                 </div>
@@ -80,25 +80,25 @@
         </div>
         <div class="row" style="margin-top: 20px;">
             <div class="col-md-2 col-md-offset-2">
-                <div class="search-btn btn-default sector_search" data-search="medicina alternativa">
+                <div class="search-btn btn-default sector_search_agenda" data-search="medicina alternativa">
                         <%= image_tag "search/7medicinaalternativa.png", :class => "img-responsive", size: "47x33" %>
                         <span>Medicina alternativa</span>
                 </div>
             </div>
             <div class="col-md-2">
-                <div class="search-btn btn-default sector_search" data-search="bronceado">
+                <div class="search-btn btn-default sector_search_agenda" data-search="bronceado">
                         <%= image_tag "search/8bronceados.png", :class => "img-responsive", size: "47x33" %>
                         <span>Bronceados</span>
                 </div>
             </div>
             <div class="col-md-2">
-                <div class="search-btn btn-default sector_search" data-search="tratamiento facial">
+                <div class="search-btn btn-default sector_search_agenda" data-search="tratamiento facial">
                         <%= image_tag "search/9tratamientosfaciales.png", :class => "img-responsive", size: "47x33" %>
                         <span>Tratamientos faciales</span>
                 </div>
             </div>
             <div class="col-md-2">
-                <div class="search-btn btn-default sector_search" data-search="tratamiento corporal">
+                <div class="search-btn btn-default sector_search_agenda" data-search="tratamiento corporal">
                         <%= image_tag "search/10tratamientoscorporales.png", :class => "img-responsive", size: "47x33" %>
                         <span>Tratamientos corporales</span>
                 </div>
@@ -371,7 +371,7 @@
         $('.geolocate_btn').click(function() {
             geolocate();
         });
-        $('.sector_search').click(function() {
+        $('.sector_search_agenda').click(function() {
             $('#inputSearch').val($(this).data('search'));
             if ($('#inputLocalization').val() != 0) {
                 $('#search-form').submit();
