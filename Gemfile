@@ -56,6 +56,7 @@ group :development, :test do
   gem 'factory_girl_rails'
   gem 'capybara'
   gem 'database_cleaner'
+  gem 'selenium-webdriver', '~> 2.45.0'
 end
 
 #Accounts, Permissions, Roles:

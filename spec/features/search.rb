@@ -38,25 +38,27 @@ feature 'Search' do
 
         @service_staff1 = FactoryGirl.create(:service_staff, service: @service1, service_provider: @service_provider1)
         @service_staff2 = FactoryGirl.create(:service_staff, service: @service2, service_provider: @service_provider2)
+
+        Capybara.app_host = "http://lvh.me:3000"
     	
   	end
 
-    scenario 'Finds company by name' do
+    scenario 'Finds company by name', :js => true do
 
         visit root_path
 
         fill_in 'inputLocalization', :with => @location1.address
-        fill_in 'inputSearch', :with => @company_name
+        fill_in 'inputSearch', :with => @company.name
         click_button 'search_btn'
 
         #get :search, :inputSearch => @company.name, :latitude => @location1.latitude, :longitude => @location1.longitude, :inputLocalization => @location1.address
 
-        expect(page).to have_content "Estos son los resultados"
+        expect(page).to have_content @company.name
         #expect(page).not_to have_content "Lo sentimos, no hemos encontrado resultados para tu búsqueda."
 
     end
 
-    scenario 'Results are empty with location not active' do
+    scenario 'Results are empty with location not active', :js => true do
         
         visit root_path
 
