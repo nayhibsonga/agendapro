@@ -88,6 +88,15 @@
         </div>
         <!-- end: content -->
 
+        <div class="above-navbar">
+            <div class="container">
+                <div class="row pull-center">
+                    <%= image_tag 'search/logo_corfo.png', :alt => 'Corfo', :size => "207x72", class: "logo-corfo" %>
+                    <%= image_tag 'search/logo_semilla.png', :alt => 'Corfo', :size => "137x72", class: "logo-semilla" %>
+                </div>
+            </div>
+        </div>
+
         <div class="background-repeat contact-footer" style="background-image: url(<%= asset_path 'backgrounds/gray-background.png' %>);">
             <div class="container">
                 <div class="row pull-center">
@@ -129,6 +138,10 @@
         <!--Start of Zopim Live Chat Script-->
         <%= javascript_include_tag 'zopim' %><!-- Removido -->
         <!--End of Zopim Live Chat Script-->
+
+        <!--Start of Crazy Egg Script-->
+        <%= javascript_include_tag 'crazy_egg' %>
+        <!--End of Crazy Egg Script-->
 
         <!--<script>
           // $( "#menu-display" ).click(function() {

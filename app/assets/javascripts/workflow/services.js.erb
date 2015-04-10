@@ -28,6 +28,26 @@ function currency(price)
 	return formatted_amount;
 }
 
+////////////////
+// IMPORTANTE //
+// Por un tema de confusión del calendario de horas del WF, se dejaron TODAS las consultas AJAX de esta página no-asíncronas.
+// Para hacer una consulta asíncrona, se debe hacer así (o por el estilo):
+// $.ajax({
+//     url: 'your url',
+//     global: false,
+//     type: 'GET',
+//     data: {},
+//     async: false,
+//     success: function() {
+//     	// código aquí
+//     }
+// });
+////////////////
+
+$.ajaxSetup({
+	async: false
+});
+
 //====== Load Steps ======//
 function loadStep1 (service_id) {
 	$('#services-description').empty();
@@ -137,7 +157,7 @@ function loadStep2 () {
 				'<li id="staff-selector-spinner" class="text-center" style="color: #ccc; display: none;"><i class="fa fa-spinner fa-spin fa-lg"></i></li>'
 			);
 			if ($('#providerPreference').data('provider-preference') != 1) {
-				if (providers.length > 1) {
+				if (providers.length > 1 || $('#providerPreference').data('provider-preference') == 2) {
 					$('#staff-selector').append(
 						'<li class="list-group-item">' +
 							'<div class="radio">' +
@@ -216,6 +236,13 @@ function loadStep2 () {
 				});
 			});
 
+			var radios = $('input[name=staffRadio]');
+			radios.on('change', function() {
+				radios.each(function() {
+					var radio = $(this);
+					radio.closest('.list-group-item')[radio.is(':checked') ? 'addClass' : 'removeClass']('selected-wf-option');
+				});
+			});
 
 
 			if ($('#providerPreference').data('provider-preference') != 1) {
@@ -264,13 +291,6 @@ function loadStep2 () {
 				});
 			}
 
-			var radios = $('input[name=staffRadio]');
-			radios.on('change', function() {
-				radios.each(function() {
-					var radio = $(this);
-					radio.closest('.list-group-item')[radio.is(':checked') ? 'addClass' : 'removeClass']('selected-wf-option');
-				});
-			});
 		});
 
 	}

@@ -44,7 +44,7 @@
   <div class="container">
     <div class="row">
       <% if !@company.description.blank? %>
-        <div class="col-md-6 company-header-left company-header">
+        <div class="col-md-4 company-header-left company-header">
           <div class="row">
             <div class="col-md-3">
               <% if @company.logo_url %>
@@ -53,7 +53,7 @@
                 <%= image_tag 'logo_vacio.png', :alt => 'AgendaPro', :size => "80x80", :class => "company-logo" %>
               <% end %>
             </div>
-            <div class="col-md-6">
+            <div class="col-md-9">
               <div class="row">
                 <div class="col-md-12 company-name">
                   <%= @company.name %>
@@ -77,7 +77,7 @@
             <%= @company.description %>
           </div>
         </div>
-        <div class="col-md-2 company-header-right company-header">
+        <div class="col-md-4 company-header-right company-header">
           <% if @selectedLocation %>
             <div id="phone-info">
               <%= image_tag 'telefono.png', :alt => '', :size => "12x14", :class=>"loc-icon" %>&nbsp;
@@ -101,7 +101,7 @@
           <div style="clear: both;"></div>
         </div>
       <% else %>
-        <div class="col-md-6 company-header-left company-header" style="border-right: 1px solid #949292;">
+        <div class="col-md-4 company-header-left company-header" style="border-right: 1px solid #949292;">
           <div class="row">
             <div class="col-md-3">
               <% if @company.logo_url %>
@@ -110,7 +110,7 @@
                 <%= image_tag 'logo_vacio.png', :alt => 'AgendaPro', :size => "80x80", :class => "company-logo" %>
               <% end %>
             </div>
-            <div class="col-md-6">
+            <div class="col-md-9">
               <div class="row">
                 <div class="col-md-12 company-name">
                   <%= @company.name %>
@@ -129,7 +129,7 @@
             </div>
           </div>
         </div>
-        <div class="col-md-6 company-header-center2 company-header">
+        <div class="col-md-8 company-header-center2 company-header">
           <% if @selectedLocation %>
             <div id="phone-info">
               <%= image_tag 'telefono.png', :alt => '', :size => "12x14", :class=>"loc-icon" %>&nbsp;
@@ -189,7 +189,7 @@
         <div id="foo4" style="visibility: collapse;">
           <div class="box-step">
             <div class="row">
-              <div class="col-md-3">
+              <div class="col-sm-3">
                 <div class="services-title dark-gray">
                   Servicios
                 </div>
@@ -197,39 +197,25 @@
                   Seleccione un servicio
                 </div>
               </div>
-              <div class="col-md-3" style="text-align: right;">
+              <div class="col-sm-3 col-md-4" style="text-align: right;">
                 
               </div>
-              <div class="col-md-6" style="text-align: right;">
-                <% if @company.company_setting.allows_optimization %>
-                  <table style="float: right; margin-top: 10px;">
-                    <tr>
-                      <td style="text-align: right; color: #949292;">
-                        <b>O elige varios servicios y te propondremos los mejores horarios:&nbsp;&nbsp;</b>
-                      </td>
-                      <td style:"text-align:right;">
-                        <button type="button" id="optimizerOpenBtn" class="btn btn-green" data-toggle="modal" data-target="#hoursOptimizer" style="background: #22c488; color: #ffffff; font-size: 20px;">Elegir servicios</button>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td style="text-align: right;">
-
-                      </td>
-                      <td style:"text-align:right;">
-                        
-                      </td>
-                    </tr>
-                  </table>
-                <% end %>
+              <% if @company.company_setting.allows_optimization %>
+              <div class="col-sm-3" style="text-align: right; color: #505050;">
+                <b>O elige varios servicios y te propondremos los mejores horarios:&nbsp;&nbsp;</b>
               </div>
+              <div class="col-sm-3 col-md-2" style="text-align: right;">
+                <button type="button" id="optimizerOpenBtn" class="btn btn-green" data-toggle="modal" data-target="#hoursOptimizer" style="background: #22c488; color: #ffffff; font-size: 20px;">Elegir servicios</button>
+              </div>
+              <% end %>
             </div>
             <div class="row">
-              <div class="col-md-6">
+              <div class="col-sm-6">
                 <div class="panel-group" id="services-selector" style="border-radius: 4px; border: 1px solid #acacac; margin-left: 10px !important;">
                   <span style="color: #ccc;"><i class="fa fa-spinner fa-spin fa-lg"></i></span>
                 </div>
               </div>
-              <div class="col-md-6">
+              <div class="col-sm-6">
                 <div class="descripcion">
                   <div class="descripcion-header">
                     Descripción del servicio
@@ -249,8 +235,8 @@
           </div>
           <div class="box-step">
             <div class="row staff">
-              <div class="col-md-3 step2-left-col" style="max-height: 346px; overflow-y: hidden;">
-                <div class="staff-wrapper" <%= 'style="display:none;"'.html_safe if @location.company.company_setting.provider_preference == 2 %>>
+              <div class="col-md-3 step2-left-col" style="max-height: 346px; overflow-y: hidden;<%= 'display:none;' if @location.company.company_setting.provider_preference == 2 %>">
+                <div class="staff-wrapper">
                   <span class="subtitulos-workflow">Elige Staff<br /> y Horario &nbsp;</span><span><i class="fa fa-clock-o gray-icon"></i>&nbsp;<i class="fa fa-user gray-icon"></i></span>
                   <div class="sub-workflow dark-gray">Selecciona un staff para ver su horario</div>
                     <div class="panel panel-default light-gray">
@@ -264,7 +250,8 @@
                 <div style="clear: both;">
                 </div>
               </div>
-              <div class="col-md-9" id="staff-calendar">
+              <div class="spinner" id="provider-hours-spinner" style="display:none;"><span style="color: #ccc;"><i class="fa fa-spinner fa-spin fa-lg"></i></span></div>
+              <div class="col-md-<%= @location.company.company_setting.provider_preference == 2 ? '12' : '9' %>" id="staff-calendar">
                 <div class="panel panel-info <%= 'full-margin' if @location.company.company_setting.provider_preference == 2 %>">
                   <div class="calendar-head">
                     <div class="panel-title">
@@ -451,12 +438,20 @@
                         </div>
                       </div>
                     <% end %>
-                    <div id="outcallAddress" class="form-group has-feedback">
-                      <%= label_tag(:address, "Dirección", class: "col-sm-3 control-label") %>
-                      <div class="col-sm-9">
-                        <%= text_field_tag(:address, nil, :class => "form-control light-gray", :placeholder => "Escribe la dirección donde se debe realizar el servicio" ) %>
-                        <span class="help-block"></span>
-                        <span class="form-control-feedback"></span>
+                    <div id="outcallAddress" class="row form-group has-feedback">
+                      <div class="row">
+                        <div class="col-md-12 dark-gray">
+                          Dirección
+                        </div>
+                      </div>
+                      <div class="row">
+                        <div class="col-md-12">
+                          <div class="form-group has-feedback">
+                            <%= text_field_tag(:address, nil, :class => "form-control light-gray", :placeholder => "Escribe la dirección donde se debe realizar el servicio" ) %>
+                            <span class="help-block"></span>
+                            <span class="form-control-feedback"></span>
+                          </div>
+                        </div>
                       </div>
                     </div>
                     <% if @location.company.company_setting.activate_notes %>
@@ -786,9 +781,9 @@
           anchorBuilder: function (nr) {
             var title;
             if (nr == 1) {
-              title = '<i class="fa fa-circle fa-2x"></i><span class="circle-number">'+nr+'</span><span class="navigation-title"> | Elegir el servicio</span>';
+              title = '<i class="fa fa-circle fa-2x"></i><span class="circle-number">'+nr+'</span><span class="navigation-title"> | Elige tu servicio</span>';
             } else if (nr == 2) {
-              title = '<i class="fa fa-circle fa-2x"></i><span class="circle-number">'+nr+'</span><span class="navigation-title"> | Elegir el staff</span>';
+              title = '<i class="fa fa-circle fa-2x"></i><span class="circle-number">'+nr+'</span><span class="navigation-title"> | Elige tu hora</span>';
             } else{
               title = '<i class="fa fa-circle fa-2x"></i><span class="circle-number">'+nr+'</span><span class="navigation-title"> | Ingresa tus datos</span>';
             };

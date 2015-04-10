@@ -259,7 +259,7 @@ ActiveRecord::Schema.define(version: 20150330154139) do
     t.string   "staff",                       default: "Staff",               null: false
     t.boolean  "online_payment_capable",      default: false
     t.boolean  "allows_optimization",         default: true
-    t.boolean  "activate_notes",              default: false,                 null: false
+    t.boolean  "activate_notes",              default: true,                  null: false
   end
 
   add_index "company_settings", ["company_id"], name: "index_company_settings_on_company_id", using: :btree

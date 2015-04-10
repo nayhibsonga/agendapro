@@ -1,7 +1,22 @@
 # Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
-one:
-  name: MyString
+lunes:
+    name: Lunes
 
-two:
-  name: MyString
+martes:
+    name: Martes
+
+miercoles:
+    name: Miércoles
+
+jueves:
+    name: Jueves
+
+viernes:
+    name: Viernes
+
+sabado:
+    name: Sábado
+
+domingo:
+    name: Domingo

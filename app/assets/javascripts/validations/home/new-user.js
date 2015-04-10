@@ -38,7 +38,6 @@ $(function() {
 				required: true,
 				minlength: 3,
 				maxlength: 200,
-				alphaNumeric: $('#user_company_attributes_web_address').val(),
 				remote: '/check_company'
 			},
 			terms: {
@@ -63,21 +62,12 @@ $(function() {
 			$(element).parent().empty()
 		},
 		submitHandler: function(form) {
+			var tmp = $('#user_company_attributes_web_address').val();
+			tmp = tmp.toLowerCase();
+			tmp = tmp.replace(/[^a-z0-9]/gi,'');
+			$('#user_company_attributes_web_address').val(tmp);
 			form.submit();
 		}
 	});
 
-	$('#user_company_attributes_name').one('change', function() {
-		var tmp = $('#user_company_attributes_name').val();
-		tmp = tmp.replace(/ /g, '');		//Space
-		tmp = tmp.replace(/\./g, '');		//Dots
-		tmp = tmp.replace(/[áäâà]/gi, 'a');	//special a
-		tmp = tmp.replace(/[éëêè]/gi, 'e');	//Special e
-		tmp = tmp.replace(/[íïîì]/gi, 'i');	//Special i
-		tmp = tmp.replace(/[óöôò]/gi, 'o');	//Special o
-		tmp = tmp.replace(/[úüûù]/gi, 'u');	//Special u
-		tmp = tmp.replace(/ñ/gi, 'n');		//Special ñ
-		tmp = tmp.toLowerCase();
-		$('#user_company_attributes_web_address').val(tmp);
-	});
 });

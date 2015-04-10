@@ -3,7 +3,7 @@
 <p>Inicio: <%= @booking.start %></p>
 <p>Término: <%= @booking.end %></p>
 <p>Nota: <%= @booking.notes %></p>
-<p>Staff: <%= @booking.service_provider.user.first_name %></p>
+<p>Staff: <%= @booking.service_provider.public_name %></p>
 <% if @booking.user %>
 <p>Usuario: <%= @booking.user.first_name %></p>
 <% end %>

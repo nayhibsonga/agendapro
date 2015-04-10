@@ -2,7 +2,7 @@ every 1.days, :at => '6 am' do
   runner "Booking.booking_reminder"
 end
 
-every :month, :at => '12 am' do
+every '0 3 1 * *' do
   runner "CompanySetting.monthly_mails"
 end
 

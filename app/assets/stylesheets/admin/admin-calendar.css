@@ -383,6 +383,43 @@ a.print-schedule {
 	margin-bottom: 17px;
 }
 
+.fa-spin {
+  -webkit-animation: spin 1s infinite linear;
+  -moz-animation: spin 1s infinite linear;
+  -o-animation: spin 1s infinite linear;
+  animation: spin 1s infinite linear;
+}
+
+/* Hour Optimizer */
+.fa-green {
+	color: #22c488;
+}
+
+#selectHour > label {
+	width: 33%;
+}
+
+#selectHour > .checkbox-inline {
+	color: #949292;
+	border-right: 1px solid #949292;
+	padding-left: 15px;
+	margin-bottom: 12px;
+}
+#selectHour > .checkbox-inline + .checkbox-inline {
+	margin-left: 0;
+}
+
+#selectHour > .checkbox-inline > p {
+	display: inline-block;
+	vertical-align: top;
+	margin: 0 10px 0 5px;
+	font-size: 15px;
+}
+
+select[name="serviceOptimizerSelector"] {
+	margin-bottom: 5px;
+}
+
 /*Intento de marcar líneas de columna*/
 /*table.fc-agenda-days > tbody > tr >td.fc-widget-content {
 	border: 1px solid #000000;
@@ -441,38 +478,6 @@ a.print-schedule {
 	}
 }
 
-.fa-spin {
-  -webkit-animation: spin 1s infinite linear;
-  -moz-animation: spin 1s infinite linear;
-  -o-animation: spin 1s infinite linear;
-  animation: spin 1s infinite linear;
-}
-
-/* Hour Optimizer */
-.fa-green {
-	color: #22c488;
-}
-
-#selectHour > label {
-	width: 33%;
-}
-
-#selectHour > .checkbox-inline {
-	color: #949292;
-	border-right: 1px solid #949292;
-	padding-left: 15px;
-	margin-bottom: 12px;
-}
-#selectHour > .checkbox-inline + .checkbox-inline {
-	margin-left: 0;
-}
-
-#selectHour > .checkbox-inline > p {
-	display: inline-block;
-	vertical-align: top;
-	margin: 0 10px 0 5px;
-	font-size: 15px;
-}
 
 
 

@@ -6,6 +6,7 @@ $(function() {
 				error.appendTo(element.next());
 			};
 		},
+		ignore: [],
 		rules: {
 			'from': {
 				required: true
@@ -43,6 +44,7 @@ $(function() {
 			};
 		},
 		submitHandler: function(form) {
+			console.log("Entra a submitHandler");
 			form.submit();
 		}
 	});

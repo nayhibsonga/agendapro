@@ -128,7 +128,7 @@
                     </div> -->
                     <div class="row footer">
                         <div class="col-xs-4 col-lg-2 pull-right">
-                            <%= image_tag 'logos/logo2.png', :alt => 'AgendaPro', :size => "127x43", class: "img-responsive pull-right" %>
+                            <%= image_tag 'logos/logo2.png', :alt => 'AgendaPro', :size => "115x39", class: "img-responsive pull-right" %>
                         </div>
                         <div class="col-xs-8 col-lg-5 links-footer pull-right">
                             <%= link_to "Agrega tu Empresa", home_path %> | <%= link_to "Sobre Nosotros", aboutus_path %> | <%= link_to "Tutoriales", tutorials_path %> | <%= link_to 'Términos y Condiciones', '/Term_y_Cond_AgendaPro122014.pdf', :target => :blank %>
@@ -149,6 +149,10 @@
         <!--Start of Zopim Live Chat Script-->
         <%= javascript_include_tag 'zopim' %>
         <!--End of Zopim Live Chat Script-->
+
+        <!--Start of Crazy Egg Script-->
+        <%= javascript_include_tag 'crazy_egg' %>
+        <!--End of Crazy Egg Script-->
 
         <script>
           $( "#menu-display" ).click(function() {

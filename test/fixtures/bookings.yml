@@ -1,19 +1,79 @@
 # Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
-one:
-  start: 2013-12-09
-  end: 2013-12-09
-  notes: MyText
-  staff_id: 1
-  user_id: 1
-  status_id: 1
-  promotion_id: MyString
+booking_1:
+    start: 2015-04-03 11:15:00
+    end: 2015-04-03 12:00:00
+    notes: 
+    service_provider: service_provider_1
+    user_id:
+    service: service_1
+    location: location_1
+    status_id: status_6
+    promotion_id:
+    created_at: 2015-03-31 14:41:46
+    updated_at: 2015-03-31 14:42:34
+    company_comment: 
+    web_origin: true
+    send_mail: true
+    client: client_0
+    price: 10000.0
+    provider_lock: true
+    payed: false
+    trx_id: 
+    max_changes: 2
+    token: 
+    deal_id:
+    booking_group:
+    payed_booking_id:
 
-two:
-  start: 2013-12-09
-  end: 2013-12-09
-  notes: MyText
-  staff_id: 1
-  user_id: 1
-  status_id: 1
-  promotion_id: MyString
+booking_2:
+    start: 2015-03-30 11:15:00
+    end: 2015-03-30 12:15:00
+    notes: 
+    service_provider: service_provider_4
+    user_id:
+    service: service_4
+    location: location_2
+    status: status_6
+    promotion_id:
+    created_at: 2015-03-27 16:09:50
+    updated_at: 2015-03-31 14:42:29
+    company_comment: 
+    web_origin: true
+    send_mail: true
+    client: client_3
+    price: 15000.0
+    provider_lock: true
+    payed: false
+    trx_id: 
+    max_changes: 2
+    token: 
+    deal_id:
+    booking_group:
+    payed_booking_id:
+
+booking_3:
+    start: 2015-03-30 10:30:00
+    end: 2015-03-30 11:15:00
+    notes: 
+    service_provider: service_provider_7
+    user_id:
+    service: service_5
+    location: location_3
+    status: status_5
+    promotion_id:
+    created_at: 2015-03-27 16:09:50
+    updated_at: 2015-03-31 14:42:29
+    company_comment: 
+    web_origin: true
+    send_mail: true
+    client: client_6
+    price: 10000.0
+    provider_lock: true
+    payed: false
+    trx_id: 
+    max_changes: 2
+    token: 
+    deal_id:
+    booking_group:
+    payed_booking_id:

@@ -1,25 +1,25 @@
-<div class="workflow-header">
+<!-- <div class="workflow-header">
   <div class="container">
     <div class="row">
       <% if !@company.description.blank? %>
-        <div class="col-md-6 company-header-left company-header">
-          <div class="col-md-3">
+        <div class="col-sm-4 company-header-left company-header">
+          <div class="col-sm-3">
             <% if @company.logo_url %>
               <%= image_tag @company.logo_url.to_s, :size => "80x80", :alt => @company.name, :class => "company-logo img-responsive" %>
             <% else %>
               <%= image_tag 'logo_vacio.png', :alt => 'AgendaPro', :size => "80x80", :class => "company-logo img-responsive" %>
             <% end %>
           </div>
-          <div class="col-md-9" style="color: #949292; font-size: 30px; padding-top: 20px;">
+          <div class="col-sm-9" style="color: #949292; font-size: 30px; padding-top: 20px;">
             <%= @company.name %>
           </div>
         </div>
-        <div class="col-md-4 company-header-center company-header">
+        <div class="col-sm-4 company-header-center company-header">
           <div class="header-description">
             <%= @company.description %>
           </div>
         </div>
-        <div class="col-md-2 company-header-right company-header">
+        <div class="col-sm-4 company-header-right company-header">
           <% if @selectedLocation %>
             <div id="phone-info">
               <%= image_tag 'telefono.png', :alt => '', :size => "12x14", :class=>"loc-icon" %>&nbsp;
@@ -42,19 +42,19 @@
           <div style="clear: both;"></div>
         </div>
       <% else %>
-        <div class="col-md-6 company-header-left company-header" style="border-right: 1px solid #949292;">
-          <div class="col-md-3">
+        <div class="col-sm-4 company-header-left company-header" style="border-right: 1px solid #949292;">
+          <div class="col-sm-3">
             <% if @company.logo_url %>
               <%= image_tag @company.logo_url.to_s, :size => "80x80", :alt => @company.name, :class => "company-logo img-responsive" %>
             <% else %>
               <%= image_tag 'logo_vacio.png', :alt => 'AgendaPro', :size => "80x80", :class => "company-logo img-responsive" %>
             <% end %>
           </div>
-          <div class="col-md-9" style="color: #949292; font-size: 30px; padding-top: 20px;">
+          <div class="col-sm-9" style="color: #949292; font-size: 30px; padding-top: 20px;">
             <%= @company.name %>
           </div>
         </div>
-        <div class="col-md-6 company-header-center2 company-header">
+        <div class="col-sm-8 company-header-center2 company-header">
           <% if @selectedLocation %>
             <div id="phone-info">
               <%= image_tag 'telefono.png', :alt => '', :size => "12x14", :class=>"loc-icon" %>&nbsp;
@@ -79,25 +79,25 @@
       <% end %>
     </div>
   </div>
-</div>
+</div> -->
 
 <div class="main">
   <section class="pricing_wrapper">
     <div class="container">
       <div class="row">
-        <div class="col-md-7">
+        <div class="col-sm-7">
           <% if @errors.length > 0 %>
             <h3>Tuvimos un error</h3>
             <div class="resumen-book">
               <div class="row">
-                <div class="col-md-8">
+                <div class="col-sm-8">
                   <p>
                     Lo sentimos, hubo un error agendando el servicio<br>
                     Puedes ver mas detalles del error <a id="errorLink" href="#">acá</a><br>
                     Si deseas agendar nuevamente haz click <a href="<%= root_url(:host => @url) %>">aquí</a>
                   </p>
                 </div>
-                <div class="col-md-4" id="errorDiv">
+                <div class="col-sm-4" id="errorDiv">
                   <ol>
                     <% @errors.each do |msg| %>
                     <li><%= msg %></li>
@@ -110,14 +110,14 @@
             <div class="resumen-book">
 
               <div class="row" hidden>
-                <div class="col-md-8">
+                <div class="col-sm-8">
                   <p>
                     Lo sentimos, hubo un error agendando el servicio<br>
                     Puedes ver mas detalles del error <a id="errorLink" href="#">acá</a><br>
                     Si deseas agendar nuevamente haz click <a href="<%= root_url(:host => @url) %>">aquí</a>
                   </p>
                 </div>
-                <div class="col-md-4" id="errorDiv">
+                <div class="col-sm-4" id="errorDiv">
                   <ol>
                     <% @errors.each do |msg| %>
                     <li><%= msg %></li>
@@ -127,9 +127,9 @@
               </div>
 
               <div class="row">
-                <div class="col-md-1">
+                <div class="col-sm-1">
                 </div>
-                <div class="col-md-10">
+                <div class="col-sm-10">
                   <div class="book-title"><%= @booking.client.first_name %>, tu reserva fue recibida exitosamente</div>
                   <p style="margin-bottom: 20px;">
                     <a href="<%= root_url(:host => @url) %>"><span class="light-gray">Agendar nuevamente</span> &nbsp;<i class="fa fa-calendar-o fa-lg light-green"></i></a>
@@ -182,23 +182,23 @@
                     <%= image_tag("logos/logo2.png", :class=> "bottom-logo") %>
                   </div>
                 </div>
-                <div class="col-md-1">
+                <div class="col-sm-1">
                 </div>
               </div>
             </div>
           <% end %>
         </div>
         <% if @errors.length > 0 %>
-          <div class="col-md-5">
-            <%= image_tag("backgrounds/cross.png", :class => "book-center-error") %>
+          <div class="col-sm-5">
+            <%= image_tag("backgrounds/error.png", :class => "book-center-error") %>
           </div>
         <% else %>
           <% if @try_register %>
-            <div class="col-md-5">
+            <div class="col-sm-5">
               
               <div class="suggest-register" style="height: 100%;">
                 <div class="row">
-                  <div class="col-md-12">
+                  <div class="col-sm-12">
                     <div class="suggest-register-header">
                       <span class="suggest-register-header1">
                         ¿Quieres recibir promociones y descuentos?
@@ -284,7 +284,7 @@
               <div style="clear: both;"></div>
             </div>
           <% else %>
-            <div class="col-md-5">
+            <div class="col-sm-5">
               <%= image_tag("backgrounds/icono_reserva2.png", :class => "book-center", size: "232x253") %>
             </div>
           <% end %>

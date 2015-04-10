@@ -1,19 +1,43 @@
 # Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
-one:
-  name: MyString
-  web_address: MyString
-  logo: MyString
-  pay_due: 1.5
-  economic_sector_id: 1
-  plan_id: 1
-  payment_status_id: 1
+company_1:
+  name: Company1
+  web_address: company1
+  logo: MyLogo
+  months_active_left: 1.0
+  plan: plan_basico
+  payment_status: estado_activo
+  description: Test company 1
+  cancellation_policy:
+  active: true
+  due_amount: 0.0
+  due_date:
+  owned: true
 
-two:
-  name: MyString
-  web_address: MyString
-  logo: MyString
-  pay_due: 1.5
-  economic_sector_id: 1
-  plan_id: 1
-  payment_status_id: 1
+company_2:
+  name: Company2
+  web_address: company2
+  logo: MyLogo
+  months_active_left: 1.0
+  plan: plan_normal
+  payment_status: estado_activo
+  description: Test company 2
+  cancellation_policy:
+  active: true
+  due_amount: 0.0
+  due_date:
+  owned: true
+
+company_3:
+  name: Company3
+  web_address: company3
+  logo: MyLogo
+  months_active_left: 1.0
+  plan: plan_premium
+  payment_status: estado_activo
+  description: Test company 3
+  cancellation_policy:
+  active: true
+  due_amount: 0.0
+  due_date:
+  owned: true
