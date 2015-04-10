@@ -43,7 +43,7 @@
 </div><!-- /.modal -->
 
 <!-- search -->
-<div class="background fill" style="height: 650px; background-color: #646464; background-image: url(<%= asset_path 'search/fondo'+rand(2..7).to_s+'.png' %>);" id="buscador">
+<div class="background fill" style="height: 650px; background-color: #646464; background-image: url(<%= asset_path 'search/fondo'+rand(2..11).to_s+'.png' %>);" id="buscador">
     <div class="fill">
         <div class="container container-search fill" id="buscador2" style="height: 650px;">
             <div class="row vertical-center-row">
@@ -122,45 +122,45 @@
         <div class="container">
             <div class="row row-padded">
                 <a class="btn btn-default sector_search" role="button" data-search="spa">
-                        <%= image_tag "search/1.png", alt: "Spa", size: "48x37" %>
+                        <%= image_tag "search/spa.png", alt: "Spa", size: "48x37" %>
                         <p>Spa</p>
                 </a>
                 <a class="btn btn-default sector_search" role="button" data-search="peluquería">
-                        <%= image_tag "search/2.png", alt: "Peluquerías", size: "48x37" %>
+                        <%= image_tag "search/peluqueria.png", alt: "Peluquerías", size: "48x37" %>
                         <p>Peluquerías</p>
                 </a>
                 <a class="btn btn-default sector_search" role="button" data-search="maquillaje">
-                        <%= image_tag "search/3.png", alt: "Maquillaje", size: "48x37" %>
+                        <%= image_tag "search/maquillaje.png", alt: "Maquillaje", size: "48x37" %>
                         <p>Maquillaje</p>
                 </a>
                 <a class="btn btn-default sector_search" role="button" data-search="centro de estética">
-                        <%= image_tag "search/4.png", alt: "Clinicas y Centros de Estetica", size: "48x37" %>
+                        <%= image_tag "search/centros_de_estetica.png", alt: "Clinicas y Centros de Estetica", size: "48x37" %>
                         <p>Centros de Estética</p>
                 </a>
                 <a class="btn btn-default sector_search" role="button" data-search="masaje">
-                        <%= image_tag "search/5.png", alt: "Masajes", size: "48x37" %>
+                        <%= image_tag "search/masajes.png", alt: "Masajes", size: "48x37" %>
                         <p>Masajes</p>
                 </a>
             </div>
             <div class="row row-padded">
                 <a class="btn btn-default sector_search" role="button" data-search="manicure">
-                        <%= image_tag "search/6.png", alt: "Manos y Pies", size: "48x37" %>
+                        <%= image_tag "search/manicure_pedicure.png", alt: "Manos y Pies", size: "48x37" %>
                         <p>Manos y Pies</p>
                 </a>
                 <a class="btn btn-default sector_search" role="button" data-search="medicina alternativa">
-                        <%= image_tag "search/7.png", alt: "Medicina Alternativa", size: "48x37" %>
+                        <%= image_tag "search/medicina_alternativa.png", alt: "Medicina Alternativa", size: "48x37" %>
                         <p>Medicina Alternativa</p>
                 </a>
                 <a class="btn btn-default sector_search" role="button" data-search="bronceado">
-                        <%= image_tag "search/8.png", alt: "Bronceados", size: "48x37" %>
+                        <%= image_tag "search/bronceado.png", alt: "Bronceados", size: "48x37" %>
                         <p>Bronceados</p>
                 </a>
                 <a class="btn btn-default sector_search" role="button" data-search="tratamiento facial">
-                        <%= image_tag "search/9.png", alt: "Tratamientos Faciales", size: "48x37" %>
+                        <%= image_tag "search/tratamientos_faciales.png", alt: "Tratamientos Faciales", size: "48x37" %>
                         <p>Tratamientos Faciales</p>
                 </a>
                 <a class="btn btn-default sector_search" role="button" data-search="tratamiento corporal">
-                        <%= image_tag "search/10.png", alt: "Tratamientos Corporales", size: "48x37" %>
+                        <%= image_tag "search/tratamientos_corporales.png", alt: "Tratamientos Corporales", size: "48x37" %>
                         <p>Tratamientos Corporales</p>
                 </a>
             </div>
@@ -365,6 +365,14 @@
                     </div>
                 <% end %>
             </div>
+        </div>
+    </div>
+</div>
+<div class="below-navbar">
+    <div class="container">
+        <div class="row pull-center">
+            <%= image_tag 'search/logo_corfo.png', :alt => 'Corfo', :size => "207x72", class: "logo-corfo" %>
+            <%= image_tag 'search/logo_semilla.png', :alt => 'Corfo', :size => "137x72", class: "logo-semilla" %>
         </div>
     </div>
 </div>

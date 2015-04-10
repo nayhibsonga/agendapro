@@ -9,22 +9,22 @@ estado_trial:
   description: La empresa está en período de prueba
 
 estado_bloqueado:
-	name: Bloqueado
-	description: La empresa está bloqueada por no pago de plan
+    name: Bloqueado
+    description: La empresa está bloqueada por no pago de plan
 
 estado_emitido:
-	name: Emitido
-	description: La empresa tiene un pago emitido vigente
+    name: Emitido
+    description: La empresa tiene un pago emitido vigente
 
 estado_inactivo:
-	name: Inactivo
-	description: La empresa está inactiva por no uso/pago
+    name: Inactivo
+    description: La empresa está inactiva por no uso/pago
 
 estado_activo:
-	name: Bloqueado
-	description: La empresa tiene todos los pagos al día
+    name: Activo
+    description: La empresa tiene todos los pagos al día
 
 estado_admin:
-	name: Admin
-	description: Para empresas que agreguemos nosotros
+    name: Admin
+    description: Para empresas que agreguemos nosotros
 

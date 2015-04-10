@@ -107,10 +107,10 @@ ActiveRecord::Schema.define(version: 20150330154139) do
     t.float    "price",               default: 0.0
     t.boolean  "provider_lock",       default: false
     t.integer  "max_changes",         default: 2
+    t.integer  "deal_id"
     t.boolean  "payed",               default: false
     t.string   "trx_id",              default: ""
     t.string   "token",               default: ""
-    t.integer  "deal_id"
     t.integer  "booking_group"
     t.integer  "payed_booking_id"
   end
@@ -254,6 +254,15 @@ ActiveRecord::Schema.define(version: 20150330154139) do
     t.integer  "deal_constraint_quantity",    default: 0
     t.boolean  "deal_identification_number",  default: false
     t.boolean  "deal_required",               default: false,                 null: false
+    t.boolean  "allows_online_payment",       default: false
+    t.string   "account_number",              default: ""
+    t.string   "company_rut",                 default: ""
+    t.string   "account_name",                default: ""
+    t.integer  "account_type",                default: 3
+    t.integer  "bank_id"
+    t.string   "locations",                   default: "Lugares",             null: false
+    t.string   "services",                    default: "Servicios",           null: false
+    t.string   "staff",                       default: "Staff",               null: false
     t.boolean  "online_payment_capable",      default: false
     t.boolean  "allows_optimization",         default: true
     t.boolean  "activate_notes",              default: true,                  null: false
@@ -606,7 +615,13 @@ ActiveRecord::Schema.define(version: 20150330154139) do
     t.boolean  "active",                      default: true
     t.integer  "order",                       default: 0
     t.integer  "block_length",                default: 30
+<<<<<<< HEAD
     t.integer  "booking_configuration_email", default: 2
+=======
+    t.integer  "booking_configuration_email", default: 0
+    t.decimal  "comission_value",             default: 0.0,  null: false
+    t.integer  "comission_option",            default: 0,    null: false
+>>>>>>> 20290dbc4a0dd18a6173c56d93f8da04beaf7402
     t.boolean  "online_booking",              default: true
   end
 

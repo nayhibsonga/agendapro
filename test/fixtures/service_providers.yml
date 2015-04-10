@@ -1,6 +1,6 @@
 
 <% 3.times do |n| %>
-<% i = n %>
+<% i = n+1 %>
   service_provider_<%= i %>:
     location: location_1
     company: company_1
@@ -14,7 +14,7 @@
 <% end %>
 
 <% 3.times do |n| %>
-<% i = n + 3 %>
+<% i = n + 4 %>
   service_provider_<%= i %>:
     location: location_2
     company: company_2
@@ -28,7 +28,7 @@
 <% end %>
 
 <% 4.times do |n| %>
-<% i = n + 6 %>
+<% i = n + 7 %>
   service_provider_<%= i %>:
     location: location_3
     company: company_3
