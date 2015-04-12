@@ -143,10 +143,8 @@ function Calendar (source, getData) {
 			});
 			$('#foo4').trigger('updateSizes');
 		});
-		setTimeout(function(){
-			$('#staff-selector-spinner').hide();
-			$('#staff-selector > .list-group-item').show();
-		}, 2000);
+		$('#staff-selector-spinner').hide();
+		$('#staff-selector > .list-group-item').show();
 		$.ajaxSetup({
 			async: true
 		});
