@@ -71,12 +71,18 @@ function Calendar (source, getData) {
 	// Generate Week
 	var available_hour;
 	var generateWeek = function (monday) {
+
+		$('#staff-selector-spinner').show();
+		$('#staff-selector > .list-group-item').hide();
+
+		$.ajaxSetup({
+			async: false
+		});
+
 		if (ajaxRequest != null) {
 			ajaxRequest.abort();
 		}
 		sources.data.date = formatDate(monday);
-		$('#staff-selector > .list-group-item').hide();
-		$('#staff-selector-spinner').show();
 		
 		ajaxRequest = $.getJSON(sources.source, sources.data, function (data, status) {
 			available_hour = false;
@@ -135,8 +141,14 @@ function Calendar (source, getData) {
 			$.event.trigger({
 				type: 'calendarBuilded'
 			});
+			$('#foo4').trigger('updateSizes');
+		});
+		setTimeout(function(){
 			$('#staff-selector-spinner').hide();
 			$('#staff-selector > .list-group-item').show();
+		}, 2000);
+		$.ajaxSetup({
+			async: true
 		});
 	}
 

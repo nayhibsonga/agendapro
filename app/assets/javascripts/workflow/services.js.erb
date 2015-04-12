@@ -6,8 +6,8 @@ var current_service;
 function currency(price)
 {
 	var amount = price.toString();
-	console.log(amount);
-	console.log(amount.length);
+	//console.log(amount);
+	//console.log(amount.length);
 	var j = 0;
 	var stack = new Array();
 	for(i = amount.length-1; i>=0; i--)
@@ -27,26 +27,6 @@ function currency(price)
 	}
 	return formatted_amount;
 }
-
-////////////////
-// IMPORTANTE //
-// Por un tema de confusión del calendario de horas del WF, se dejaron TODAS las consultas AJAX de esta página no-asíncronas.
-// Para hacer una consulta asíncrona, se debe hacer así (o por el estilo):
-// $.ajax({
-//     url: 'your url',
-//     global: false,
-//     type: 'GET',
-//     data: {},
-//     async: false,
-//     success: function() {
-//     	// código aquí
-//     }
-// });
-////////////////
-
-$.ajaxSetup({
-	async: false
-});
 
 //====== Load Steps ======//
 function loadStep1 (service_id) {
@@ -146,7 +126,8 @@ var staffSelected;
 function loadStep2 () {
 
 	if($('[name="serviceRadio"]').is(':checked')){
-		$('#staff-selector').html('<p class="text-center" style="color: #ccc;"><i class="fa fa-spinner fa-spin fa-lg"></i></p>');
+		$('#staff-selector-spinner').show();
+		$('#staff-selector > .list-group-item').hide();
 		$('.horario').hide();
 		selected = false;
 		var serviceId = $('input[name=serviceRadio]:checked').val();
@@ -186,9 +167,14 @@ function loadStep2 () {
 			}
 
 
-			$('[name="staffRadio"]').on('click', function(event) {
-				$('.horario').show();
 
+
+			$('[name="staffRadio"]').on('click', function(event) {
+				$('#staff-selector-spinner').show();
+				$('#staff-selector > .list-group-item').hide();
+
+				$('.horario').show();
+				
 				// if (event.target.getAttribute('value') == 0) {
 				// 	$('#provider_lock').val(false);
 				// }
@@ -238,6 +224,8 @@ function loadStep2 () {
 
 			var radios = $('input[name=staffRadio]');
 			radios.on('change', function() {
+				$('#staff-selector-spinner').show();
+				$('#staff-selector > .list-group-item').hide();
 				radios.each(function() {
 					var radio = $(this);
 					radio.closest('.list-group-item')[radio.is(':checked') ? 'addClass' : 'removeClass']('selected-wf-option');
@@ -672,7 +660,7 @@ function formattedTime (timestamp) {
 }
 
 function blockBookingBufferHour () {
-	console.log("Entra a block.");
+	//console.log("Entra a block.");
 	for (var i = 0; i < booking_buffer.length; i++) {
 		console.log("For " + i);
 		var date = booking_buffer[i].start.split(' ')[0]
@@ -736,6 +724,27 @@ function addNewService () {
 var myAlert;
 $(function () {
 	myAlert  = new Alert();
+
+	////////////////
+	// IMPORTANTE //
+	// Por un tema de confusión del calendario de horas del WF, se dejaron TODAS las consultas AJAX de esta página no-asíncronas.
+	// Para hacer una consulta asíncrona, se debe hacer así (o por el estilo):
+	// $.ajax({
+	//     url: 'your url',
+	//     global: false,
+	//     type: 'GET',
+	//     data: {},
+	//     async: false,
+	//     success: function() {
+	//     	// código aquí
+	//     }
+	// });
+	////////////////
+
+	// $.ajaxSetup({
+	// 	async: false
+	// });
+
 	$( document ).ajaxComplete(function() {
 		var oldTop = $(document).scrollTop();
 		$('#foo4').trigger('updateSizes');
