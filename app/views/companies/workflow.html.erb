@@ -55,18 +55,40 @@
             </div>
             <div class="col-md-9">
               <div class="row">
-                <div class="col-md-12 company-name">
-                  <%= @company.name %>
-                </div>
+                <% if @company.name.length < 11 %>
+                  <div class="col-md-12 company-name">
+                    <span style="margin-left: 10px !important;">
+                      <%= @company.name %>
+                    </span>
+                  </div>
+                <% else %>
+                  <div class="col-md-12 company-name">
+                      <%= @company.name %>
+                  </div>
+                <% end %>
               </div>
+              <% if @company.name.length < 11 %>
+                <br />
+              <% end %>
               <div class="row header-btns">
                 <div class="col-md-12">
-                  <div class="header-btn inactive">
-                    <a href="#" id="boton-locales" class="btn btn-default btn-green-wf">Lugares</a>
-                  </div>
-                  <div class="header-btn active" style="float: left;">
-                    <a href="#" id="boton-servicio" class="btn btn-default btn-green-wf">Servicios</a>
-                  </div>
+                  <% if @company.name.length < 11 %>
+                    <span style="margin-left: 10px !important;">
+                      <div class="header-btn inactive">
+                        <a href="#" id="boton-locales" class="btn btn-default btn-green-wf">Lugares</a>
+                      </div>
+                      <div class="header-btn active" style="float: left;">
+                        <a href="#" id="boton-servicio" class="btn btn-default btn-green-wf">Servicios</a>
+                      </div>
+                    </span>
+                  <% else %>
+                    <div class="header-btn inactive">
+                      <a href="#" id="boton-locales" class="btn btn-default btn-green-wf">Lugares</a>
+                    </div>
+                    <div class="header-btn active" style="float: left;">
+                      <a href="#" id="boton-servicio" class="btn btn-default btn-green-wf">Servicios</a>
+                    </div>
+                  <% end %>
                 </div>
               </div>
             </div>
@@ -112,10 +134,23 @@
             </div>
             <div class="col-md-9">
               <div class="row">
-                <div class="col-md-12 company-name">
-                  <%= @company.name %>
-                </div>
+                
+                <% if @company.name.length < 11 %>
+                  <div class="col-md-12 company-name">
+                    <span style="margin-left: 10px !important;">
+                      <%= @company.name %>
+                    </span>
+                  </div>
+                <% else %>
+                  <div class="col-md-12 company-name">
+                      <%= @company.name %>
+                  </div>
+                <% end %>
+                
               </div>
+              <% if @company.name.length < 11 %>
+                <br />
+              <% end %>
               <div class="row header-btns">
                 <div class="col-md-12">
                   <div class="header-btn inactive">
@@ -276,7 +311,9 @@
                   <div class="days-row">
                   </div>
                   <div class="panel-body">
-                    <div class="horario"></div>
+                    <div class="horario">
+                      <%= image_tag "ajax-loader.gif", :alt => "Loader", :id => "calendar-loader" %>
+                    </div>
                   </div>
                 </div>
               </div>
