@@ -3,7 +3,15 @@
 	<head>
 		<!-- start: Meta -->
 		<meta charset="utf-8" />
-		<title>Administrador - AgendaPro</title>
+		<% if !current_user.company.nil? %>
+
+			<title>Administrador <%= current_user.company.name %> AgendaPro</title>
+
+		<% else %>
+
+			<title>Administrador - AgendaPro</title>
+
+		<% end %>
 		<meta name="description" content="AgendaPro - Sistema de agendamiento OnLine para empresas y usuarios.">
 		<meta name="author" content="AgendaPro">
 		<meta name="keyword" content="agendapro, agenda, agenda online, reserva, reserva online">

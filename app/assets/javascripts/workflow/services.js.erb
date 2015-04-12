@@ -125,6 +125,8 @@ var calendar;
 var staffSelected;
 function loadStep2 () {
 
+	
+	
 	if($('[name="serviceRadio"]').is(':checked')){
 		$('#staff-selector-spinner').show();
 		$('#staff-selector > .list-group-item').hide();
@@ -199,6 +201,11 @@ function loadStep2 () {
 				}
 
 				if ($(this).val() != staffSelected) {
+
+
+					$("#calendar-loader").show();
+
+
 					staffSelected = $(this).val();
 					if (calendar) {
 						calendar.rebuild('/get_available_time.json', data);
@@ -206,6 +213,9 @@ function loadStep2 () {
 					else {
 						calendar = new Calendar('/get_available_time.json', data);
 					}
+
+					$("#calendar-loader").hide();
+
 				};
 
 				$(document).on('hourClick', function (e) {
@@ -256,12 +266,18 @@ function loadStep2 () {
 					}
 				}
 
+				$("#calendar-loader").show();
+
+
 				if (calendar) {
 					calendar.rebuild('/get_available_time.json', data);
 				}
 				else {
 					calendar = new Calendar('/get_available_time.json', data);
 				}
+
+				$("#calendar-loader").hide();
+
 
 				$('#foo4').trigger('updateSizes');
 
@@ -282,6 +298,7 @@ function loadStep2 () {
 		});
 
 	}
+	
 }
 
 function loadStep3 () {
