@@ -24,6 +24,7 @@
         <%= yield :stylesheets %>
         <!-- end: CSS -->
 
+        <% if ENV["MONITORING_ACTIVATION"] == "TRUE" %>
         <!-- Begin Inspectlet Embed Code -->
         <script type="text/javascript" id="inspectletjs">
         window.__insp = window.__insp || [];
@@ -35,6 +36,7 @@
         })();
         </script>
         <!-- End Inspectlet Embed Code -->
+        <% end %>
 
         <!-- start: JavaScript-->
         <%= javascript_include_tag "home-head" %><!-- Removido -->

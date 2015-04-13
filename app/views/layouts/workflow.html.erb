@@ -23,6 +23,7 @@
         <%= stylesheet_link_tag "https://fonts.googleapis.com/css?family=Open+Sans:400,300,400italic,600,600italic,700,700italic,300italic" %>
         <!-- end: CSS -->
 
+        <% if ENV["MONITORING_ACTIVATION"] == "TRUE" %>
         <!-- Begin Inspectlet Embed Code -->
         <script type="text/javascript" id="inspectletjs">
         window.__insp = window.__insp || [];
@@ -34,6 +35,7 @@
         })();
         </script>
         <!-- End Inspectlet Embed Code -->
+        <% end %>
 
         <!-- start: JavaScript-->
         <%= javascript_include_tag "home-head" %>
