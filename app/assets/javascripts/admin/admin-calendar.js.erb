@@ -1626,23 +1626,23 @@ $(function() {
 		}
 	});
 
-	$("#set-date").datepicker({
-		dateFormat: 'dd-mm-yy',
-		buttonText: '<i class="fa fa-clock-o"></i> Ir a',
-		changeMonth: true,
-		changeYear: true,
-		showOn: 'button',
-		firstDay: 1,
-		dayNames: [ "Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado" ],
-		dayNamesMin: [ "Do", "Lu", "Ma", "Mi", "Ju", "Vi", "Sá" ],
-		dayNamesShort: [ "Dom", "Lun", "Mar", "Mié", "Jue", "Vie", "Sáb" ],
-		onSelect: function(dateText, inst) {
-			var d = new Date(parseInt(dateText.split('-')[2]), parseInt(dateText.split('-')[1]) - 1, parseInt(dateText.split('-')[0]));
-			$('#calendar').fullCalendar('gotoDate', d);
-			var providerId = parseInt($('#providers-selector').val());
-			loadProviderEvents(providerId);
-		}
-	});
+	// $("#set-date").datepicker({
+	// 	dateFormat: 'dd-mm-yy',
+	// 	buttonText: '<i class="fa fa-clock-o"></i> Ir a',
+	// 	changeMonth: true,
+	// 	changeYear: true,
+	// 	showOn: 'button',
+	// 	firstDay: 1,
+	// 	dayNames: [ "Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado" ],
+	// 	dayNamesMin: [ "Do", "Lu", "Ma", "Mi", "Ju", "Vi", "Sá" ],
+	// 	dayNamesShort: [ "Dom", "Lun", "Mar", "Mié", "Jue", "Vie", "Sáb" ],
+	// 	onSelect: function(dateText, inst) {
+	// 		var d = new Date(parseInt(dateText.split('-')[2]), parseInt(dateText.split('-')[1]) - 1, parseInt(dateText.split('-')[0]));
+	// 		$('#calendar').fullCalendar('gotoDate', d);
+	// 		var providerId = parseInt($('#providers-selector').val());
+	// 		loadProviderEvents(providerId);
+	// 	}
+	// });
 	$(".ui-datepicker-trigger").addClass("btn");
 
 	$("#full_name").on('input',function(e){
