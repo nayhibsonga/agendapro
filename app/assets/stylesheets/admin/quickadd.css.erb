@@ -1,0 +1,366 @@
+@charset "UTF-8";
+/*
+  ================================
+  ========== Scroll Bar ==========
+  ================================
+*/
+::-webkit-scrollbar {
+  width: 10px;
+}
+::-webkit-scrollbar-track {
+    background-color: #eaeaea;
+    border-left: 1px solid #ccc;
+}
+::-webkit-scrollbar-thumb {
+    background-color: #ccc;
+}
+::-webkit-scrollbar-thumb:hover {
+    background-color: #aaa;
+}
+
+/*
+  ================================
+  =========== General ============
+  ================================
+*/
+@font-face {
+  font-family: TradeGothic;
+  src: url('/assets/Trade Gothic LT Condensed No. 18.ttf');
+  src: url('/assets/Trade Gothic LT Condensed No. 18.ttf?#iefix') format('truetype'),
+  url('/assets/Trade Gothic LT Condensed No. 18.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+@font-face {
+  font-family: FranklinGothic;
+  src: url('/assets/ITC Franklin Gothic LT Book Extra Compressed.ttf');
+  src: url('/assets/ITC Franklin Gothic LT Book Extra Compressed.ttf?#iefix') format('truetype'),
+  url('/assets/ITC Franklin Gothic LT Book Extra Compressed.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+html,
+body {
+  font-family: TradeGothic, FranklinGothic, "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
+  background: #ffffff;
+  font-size: 17px;
+  color: #505050;
+}
+.pull-center {
+  text-align: center;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+a {
+  color: #22c488;
+  text-decoration: none;
+}
+a:hover,
+a:active {
+  color: #1ba970;
+}
+.alert {
+  margin-top: 5px;
+}
+
+/*
+  ================================
+  =========== Buttons ============
+  ================================
+*/
+.btn-green {
+  color: #ffffff;
+  background-color: #22c488;
+  border-color: #1ba970;
+}
+.btn-green:hover,
+.btn-green:focus,
+.btn-green.focus,
+.btn-green:active,
+.btn-green.active,
+.open > .dropdown-toggle.btn-green {
+  color: #ffffff;
+  background-color: #1ba970;
+  border-color: #4c8b6e;
+}
+.btn-green:active,
+.btn-green.active,
+.open > .dropdown-toggle.btn-green {
+  background-image: none;
+}
+.btn-green.disabled,
+.btn-green[disabled],
+fieldset[disabled] .btn-green,
+.btn-green.disabled:hover,
+.btn-green[disabled]:hover,
+fieldset[disabled] .btn-green:hover,
+.btn-green.disabled:focus,
+.btn-green[disabled]:focus,
+fieldset[disabled] .btn-green:focus,
+.btn-green.disabled.focus,
+.btn-green[disabled].focus,
+fieldset[disabled] .btn-green.focus,
+.btn-green.disabled:active,
+.btn-green[disabled]:active,
+fieldset[disabled] .btn-green:active,
+.btn-green.disabled.active,
+.btn-green[disabled].active,
+fieldset[disabled] .btn-green.active {
+  background-color: #22c488;
+  border-color: #1ba970;
+}
+.btn-green .badge {
+  color: #22c488;
+  background-color: #ffffff;
+}
+.btn-orange {
+  color: #ffffff;
+  background-color: #fd9610;
+  border-color: #db7400;
+}
+.btn-orange:hover,
+.btn-orange:focus,
+.btn-orange.focus,
+.btn-orange:active,
+.btn-orange.active,
+.open > .dropdown-toggle.btn-orange {
+  color: #ffffff;
+  background-color: #db7400;
+  border-color: #a78a47;
+}
+.btn-orange:active,
+.btn-orange.active,
+.open > .dropdown-toggle.btn-orange {
+  background-image: none;
+}
+.btn-orange.disabled,
+.btn-orange[disabled],
+fieldset[disabled] .btn-orange,
+.btn-orange.disabled:hover,
+.btn-orange[disabled]:hover,
+fieldset[disabled] .btn-orange:hover,
+.btn-orange.disabled:focus,
+.btn-orange[disabled]:focus,
+fieldset[disabled] .btn-orange:focus,
+.btn-orange.disabled.focus,
+.btn-orange[disabled].focus,
+fieldset[disabled] .btn-orange.focus,
+.btn-orange.disabled:active,
+.btn-orange[disabled]:active,
+fieldset[disabled] .btn-orange:active,
+.btn-orange.disabled.active,
+.btn-orange[disabled].active,
+fieldset[disabled] .btn-orange.active {
+  background-color: #fd9610;
+  border-color: #db7400;
+}
+.btn-orange .badge {
+  color: #fd9610;
+  background-color: #ffffff;
+}
+.btn-red {
+  color: #ffffff;
+  background-color: #fd633f;
+  border-color: #e55938;
+}
+.btn-red:hover,
+.btn-red:focus,
+.btn-red.focus,
+.btn-red:active,
+.btn-red.active,
+.open > .dropdown-toggle.btn-red {
+  color: #ffffff;
+  background-color: #e55938;
+  border-color: #a15240;
+}
+.btn-red:active,
+.btn-red.active,
+.open > .dropdown-toggle.btn-red {
+  background-image: none;
+}
+.btn-red.disabled,
+.btn-red[disabled],
+fieldset[disabled] .btn-red,
+.btn-red.disabled:hover,
+.btn-red[disabled]:hover,
+fieldset[disabled] .btn-red:hover,
+.btn-red.disabled:focus,
+.btn-red[disabled]:focus,
+fieldset[disabled] .btn-red:focus,
+.btn-red.disabled.focus,
+.btn-red[disabled].focus,
+fieldset[disabled] .btn-red.focus,
+.btn-red.disabled:active,
+.btn-red[disabled]:active,
+fieldset[disabled] .btn-red:active,
+.btn-red.disabled.active,
+.btn-red[disabled].active,
+fieldset[disabled] .btn-red.active {
+  background-color: #fd633f;
+  border-color: #e55938;
+}
+.btn-red .badge {
+  color: #fd633f;
+  background-color: #ffffff;
+}
+.btn-white {
+  color: #22c488;
+  background-color: #ffffff;
+  border-color: #d1d1d1;
+}
+.btn-white:hover,
+.btn-white:focus,
+.btn-white.focus,
+.btn-white:active,
+.btn-white.active,
+.open > .dropdown-toggle.btn-white {
+  color: #1ba970;
+  background-color: #d1d1d1;
+  border-color: #c0c0c0;
+}
+.btn-white:active,
+.btn-white.active,
+.open > .dropdown-toggle.btn-white {
+  background-image: none;
+}
+.btn-white.disabled,
+.btn-white[disabled],
+fieldset[disabled] .btn-white,
+.btn-white.disabled:hover,
+.btn-white[disabled]:hover,
+fieldset[disabled] .btn-white:hover,
+.btn-white.disabled:focus,
+.btn-white[disabled]:focus,
+fieldset[disabled] .btn-white:focus,
+.btn-white.disabled.focus,
+.btn-white[disabled].focus,
+fieldset[disabled] .btn-white.focus,
+.btn-white.disabled:active,
+.btn-white[disabled]:active,
+fieldset[disabled] .btn-white:active,
+.btn-white.disabled.active,
+.btn-white[disabled].active,
+fieldset[disabled] .btn-white.active {
+  background-color: #ffffff;
+  border-color: #d1d1d1;
+}
+.btn-white .badge {
+  background-color: #22c488;
+  color: #ffffff;
+}
+.btn-transparent {
+  color: #ffffff;
+  background-color: transparent;
+  border-color: #ffffff;
+}
+.btn-transparent:hover,
+.btn-transparent:focus,
+.btn-transparent.focus,
+.btn-transparent:active,
+.btn-transparent.active,
+.open > .dropdown-toggle.btn-transparent {
+  color: #d1d1d1;
+  background-color: #ffffff;
+  border-color: #d1d1d1;
+}
+.btn-transparent:active,
+.btn-transparent.active,
+.open > .dropdown-toggle.btn-transparent {
+  background-image: none;
+}
+.btn-transparent.disabled,
+.btn-transparent[disabled],
+fieldset[disabled] .btn-transparent,
+.btn-transparent.disabled:hover,
+.btn-transparent[disabled]:hover,
+fieldset[disabled] .btn-transparent:hover,
+.btn-transparent.disabled:focus,
+.btn-transparent[disabled]:focus,
+fieldset[disabled] .btn-transparent:focus,
+.btn-transparent.disabled.focus,
+.btn-transparent[disabled].focus,
+fieldset[disabled] .btn-transparent.focus,
+.btn-transparent.disabled:active,
+.btn-transparent[disabled]:active,
+fieldset[disabled] .btn-transparent:active,
+.btn-transparent.disabled.active,
+.btn-transparent[disabled].active,
+fieldset[disabled] .btn-transparent.active {
+  background-color: transparent;
+  border-color: #d1d1d1;
+  color: #d1d1d1
+}
+.btn-transparent .badge {
+  background-color: #ffffff;
+  color: #d1d1d1;
+}
+/*
+  ================================
+  ============ Start =============
+  ================================
+*/
+.content-fill {
+  height: calc(100% - 100px);
+  min-height: calc(100% - 100px);
+  padding-bottom: 50px;
+  padding-top: 50px;
+  position: relative;
+}
+.background-start {
+  background-image: url(<%= asset_path 'quickadd/start.png' %>);
+  background-position: center center;
+  background-repeat: no-repeat;
+  background-size: cover;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+  color: #ffffff;
+}
+.vertical-center {
+  bottom: 0;
+  height: 170px;
+  left: 0;
+  margin: auto;
+  position: absolute;
+  right: 0;
+  top: 0;
+}
+.content-top {
+  position: absolute;
+  top: 50px;
+}
+.content-bottom {
+  bottom: 50px;
+  position: absolute;
+}
+.btn-wide {
+  border-radius: 10px;
+  font-size: 25px;
+  padding: 15px 35px;
+}
+
+/*
+  ================================
+  =========== Company ============
+  ================================
+*/
+.label-green {
+  color: #22c488;
+  font-size: 30px;
+  margin-bottom: 10px;
+  margin-top: 20px;
+  font-weight: 500;
+  line-height: 1.1;
+}
+
+/*
+  ================================
+  ========== New Local ===========
+  ================================
+*/
+.background-green {
+  background: #22c488;
+  color: #ffffff;
+}

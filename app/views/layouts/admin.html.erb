@@ -6,7 +6,6 @@
   <head>
     <!-- start: Meta -->
     <meta charset="utf-8" />
-    <meta charset="utf-8" />
     <% if !current_user.company.nil? %>
     <title>Administrador <%= current_user.company.name %> AgendaPro</title>
     <% else %>
@@ -246,10 +245,6 @@
       </script>
     <!--<![endif]-->
     <%= yield :scripts %>
-    <!--Start of Zopim Live Chat Script-->
-    <% javascript_include_tag 'zopim' %>
-    <% javascript_include_tag 'crazy_egg' %>
-    <!--End of Zopim Live Chat Script-->
     <!-- end: JavaScript-->
 
     <script type="text/javascript">
