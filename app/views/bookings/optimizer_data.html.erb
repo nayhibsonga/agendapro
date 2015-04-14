@@ -11,12 +11,25 @@
                 <%= image_tag 'logo_vacio.png', :alt => 'AgendaPro', :size => "80x80", :class => "company-logo" %>
               <% end %>
             </div>
-            <div class="col-md-6">
+            <div class="col-md-9">
               <div class="row">
-                <div class="col-md-12 company-name">
-                  <%= @company.name %>
-                </div>
+                
+                <% if @company.name.length < 11 %>
+                  <div class="col-md-12 company-name">
+                    <span style="margin-left: 10px !important;">
+                      <%= @company.name %>
+                    </span>
+                  </div>
+                <% else %>
+                  <div class="col-md-12 company-name">
+                      <%= @company.name %>
+                  </div>
+                <% end %>
+
               </div>
+              <% if @company.name.length < 11 %>
+                <br />
+              <% end %>
               <div class="row header-btns">
                 <div class="col-md-12">
                   <div class="header-btn inactive">
@@ -68,12 +81,25 @@
                 <%= image_tag 'logo_vacio.png', :alt => 'AgendaPro', :size => "80x80", :class => "company-logo" %>
               <% end %>
             </div>
-            <div class="col-md-6">
+            <div class="col-md-9">
+              
               <div class="row">
-                <div class="col-md-12 company-name">
-                  <%= @company.name %>
-                </div>
+                <% if @company.name.length < 11 %>
+                  <div class="col-md-12 company-name">
+                    <span style="margin-left: 10px !important;">
+                      <%= @company.name %>
+                    </span>
+                  </div>
+                <% else %>
+                  <div class="col-md-12 company-name">
+                      <%= @company.name %>
+                  </div>
+                <% end %>
               </div>
+              <% if @company.name.length < 11 %>
+                <br />
+              <% end %>
+              
               <div class="row header-btns">
                 <div class="col-md-12">
                   <div class="header-btn inactive">

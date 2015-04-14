@@ -7,15 +7,21 @@ $(function() {
 			'user[full_name]': {
 				required: true
 			},
-			// 'user[phone]': {
-			// 	required: true,
-			// 	rangelength: [8, 15]
-			// },
 			'user[email]': {
 				required: true,
 				email: true,
 				remote: '/check_user'
 			}
+			/*,
+			'user[password]': {
+				required: true,
+				rangelength: [8, 128]
+			},
+			'user[password_confirmation]': {
+				required: true,
+				rangelength: [8, 128],
+				equalTo: $('input[name="user[password]"]:last')
+			}*/
 		},
 		messages: {
 			'user[email]': {

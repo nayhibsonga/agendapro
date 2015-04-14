@@ -39,7 +39,7 @@
   </div>
 </div>
 
-<div class="workflow-header">
+<!-- <div class="workflow-header">
   <div class="container">
     <div class="row">
       <% if !@company.description.blank? %>
@@ -52,7 +52,7 @@
                 <%= image_tag 'logo_vacio.png', :alt => 'AgendaPro', :size => "80x80", :class => "company-logo" %>
               <% end %>
             </div>
-            <div class="col-md-6">
+            <div class="col-md-9">
               <div class="row">
                 <div class="col-md-12 company-name">
                   <%= @company.name %>
@@ -109,7 +109,7 @@
                 <%= image_tag 'logo_vacio.png', :alt => 'AgendaPro', :size => "80x80", :class => "company-logo" %>
               <% end %>
             </div>
-            <div class="col-md-6">
+            <div class="col-md-9">
               <div class="row">
                 <div class="col-md-12 company-name">
                   <%= @company.name %>
@@ -154,7 +154,7 @@
       <% end %>
     </div>
   </div>
-</div>
+</div> -->
 
 <div class="row" id="navegacion-workflow">
   <div class="container">
@@ -245,7 +245,7 @@
           </div>
           <div class="box-step">
             <div class="row staff">
-              <div class="col-sm-3 step2-left-col" style="max-height: 346px; overflow-y: scroll;<%= 'display:none;' if @location.company.company_setting.provider_preference == 2 %>">
+              <div class="col-md-3 step2-left-col" style="max-height: 346px; overflow-y: scroll;<%= 'display:none;' if @location.company.company_setting.provider_preference == 2 %>">
                 <div class="staff-wrapper">
                   <span class="subtitulos-workflow">Elige Staff<br /> y Horario &nbsp;</span><span><i class="fa fa-clock-o gray-icon"></i>&nbsp;<i class="fa fa-user gray-icon"></i></span>
                   <div class="sub-workflow dark-gray">Selecciona un staff para ver su horario</div>
@@ -260,7 +260,7 @@
                 <div style="clear: both;">
                 </div>
               </div>
-              <div class="col-sm-<%= @location.company.company_setting.provider_preference == 2 ? '12' : '9' %>" id="staff-calendar">
+              <div class="col-md-<%= @location.company.company_setting.provider_preference == 2 ? '12' : '9' %>" id="staff-calendar">
                 <div class="panel panel-info <%= 'full-margin' if @location.company.company_setting.provider_preference == 2 %>">
                   <div class="calendar-head">
                     <div class="panel-title">
@@ -291,18 +291,21 @@
                 </div>
               </div>
             </div>
+            <div class="row">
+              <div class="col-sm-4">
+                <a class="btn btn-large btn-green btn-add-service" style="padding: 5px 12px; margin-right: 10px; margin-bottom: 5px; width: 190px; font-size: 20px;" onclick="addNewService()"><i class="fa fa-plus"></i> Agregar Otro Servicio</a>
+              </div>
+              <div class="col-sm-8">
+                <p class="p-label"><span class="wf-label label-available">&nbsp;</span> Disponible<span class="wf-label label-past">&nbsp;</span> No Disponible<span class="wf-label label-unavailable">&nbsp;</span> Ocupado</p>
+              </div>
+            </div>
             <div class="row change-bar">
-              <div class="col-sm-3">
+              <div class="col-sm-6">
                 <div class="btn-change btn-prev">
                   <a class="prev2 prev-btn"><i class="fa fa-chevron-left prev-arrow"></i> Anterior</a>
                 </div>
               </div>
-              <div class="col-sm-4">
-                <p class="p-label"><span class="wf-label label-available">&nbsp;</span> Disponible<span class="wf-label label-past">&nbsp;</span> No Disponible<span class="wf-label label-unavailable">&nbsp;</span> Ocupado</p>
-
-              </div>
-              <div class="col-sm-5">
-                <a class="btn btn-large btn-green btn-add-service" style="padding: 5px 12px; margin-right: 10px; margin-bottom: 5px; width: 190px; font-size: 20px;" onclick="addNewService()"><i class="fa fa-plus"></i> Agregar Otro Servicio</a>
+              <div class="col-sm-6">
                 <div class="btn-change btn-next">
                   <a class="next2 next-btn">Siguiente <i class="fa fa-chevron-right next-arrow"></i></a>
                 </div>
@@ -468,13 +471,13 @@
                       </div>
                     </div>
                     <div class="row" style="margin-top: 20px;">
-                      <div class="col-sm-6">
-                        <div class="btn-change btn-prev">
+                      <div class="col-md-6">
+                        <div class="btn-change btn-prev leftBookingButton">
                           <a class="prev2 prev-btn"><i class="fa fa-chevron-left prev-arrow"></i> Anterior</a>
                         </div>
                       </div>
-                      <div class="col-sm-6" id="reservar1">
-                        <button type="submit" class="submitBtn">Reservar</button>
+                      <div class="col-md-6" id="reservar1">
+                        <button type="submit" class="submitBtn leftBookingButton">Reservar</button>
                       </div>
                     </div>
                   </div>
@@ -783,7 +786,7 @@
             if (nr == 1) {
               title = '<i class="fa fa-circle fa-2x"></i><span class="circle-number">'+nr+'</span><span class="navigation-title"> | Elegir el servicio</span>';
             } else if (nr == 2) {
-              title = '<i class="fa fa-circle fa-2x"></i><span class="circle-number">'+nr+'</span><span class="navigation-title"> | Elegir el staff</span>';
+              title = '<i class="fa fa-circle fa-2x"></i><span class="circle-number">'+nr+'</span><span class="navigation-title"> | Elegir el horario</span>';
             } else{
               title = '<i class="fa fa-circle fa-2x"></i><span class="circle-number">'+nr+'</span><span class="navigation-title"> | Ingresa tus datos</span>';
             };

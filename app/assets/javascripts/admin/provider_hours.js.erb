@@ -158,8 +158,6 @@ function initialize() {
 	if ( $('#title').length > 0 ) {
 		var providerTimesData = $('#provider_times_data').data('provider-times');
 		var breaksArray = [0,0,0,0,0,0,0];
-		providerTimesData = sortByKey(providerTimesData,'open');
-		providerTimesData = sortByKey(providerTimesData,'day_id');
 		$.each(providerTimesData, function(index,providerTime) {
 			breaksArray[(providerTime.day_id - 1)] += 1;
 		});

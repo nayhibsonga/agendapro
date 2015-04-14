@@ -1,27 +1,27 @@
 # Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
 role_1:
-	name: Super Admin
-	description: Administrador de la aplicaión AgendaPro
+    name: Super Admin
+    description: Administrador de la aplicaión AgendaPro
 role_2:
-	name: Administrador Local
-	description: Administrador de local
+    name: Administrador Local
+    description: Administrador de local
 role_3:
-	name: Staff
-	description: Usuario con atribuciones de atención en su local
+    name: Staff
+    description: Usuario con atribuciones de atención en su local
 role_4:
-	name: Usuario Registrado
-	description: Usuario con cuenta registrada y accesible
+    name: Usuario Registrado
+    description: Usuario con cuenta registrada y accesible
 role_5:
-	name: Usuario No Registrado
-	description: Usuario con cuenta no registrada
+    name: Usuario No Registrado
+    description: Usuario con cuenta no registrada
 role_6:
-	name: Recepcionista
-	description: Usuario frontdesk de una empresa
+    name: Recepcionista
+    description: Usuario frontdesk de una empresa
 role_7:
-	name: Administrador General
-	description: Administrador de empresa inscrita en AgendaPro
+    name: Administrador General
+    description: Administrador de empresa inscrita en AgendaPro
 role_8:
-	name: Staff (sin edición)
-	description: asd
+    name: Staff (sin edición)
+    description: asd
 

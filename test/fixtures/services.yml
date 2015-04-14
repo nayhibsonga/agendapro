@@ -16,7 +16,92 @@ service_1:
   outcall: false
   has_discount: false
   discount: 0
-  onlin_payable: false
+  online_payable: false
   comission_value: 0
   comission_option: 0
   online_booking: true
+
+service_2:
+  name: Service2
+  price: 5000
+  duration: 30
+  description: Segundo ejemplo de servicio
+  group_service: true
+  capacity: 3
+  waiting_list: false
+  company: company_1
+  service_category: service_category_2
+  active: true
+  show_price: true
+  order: 0
+  outcall: false
+  has_discount: false
+  discount: 0
+  online_payable: false
+  comission_value: 0
+  comission_option: 0
+  online_booking: true
+
+service_3:
+  name: Service3
+  price: 5000
+  duration: 30
+  description: Tercer ejemplo de servicio
+  group_service: false
+  capacity: 1
+  waiting_list: false
+  company: company_1
+  service_category: service_category_4
+  active: true
+  show_price: true
+  order: 0
+  outcall: false
+  has_discount: true
+  discount: 10
+  online_payable: true
+  comission_value: 0
+  comission_option: 0
+  online_booking: true
+
+service_4:
+  name: Service4
+  price: 5000
+  duration: 30
+  description: Cuarto ejemplo de servicio
+  group_service: false
+  capacity: 1
+  waiting_list: false
+  company: company_2
+  service_category: service_category_16
+  active: true
+  show_price: true
+  order: 0
+  outcall: false
+  has_discount: true
+  discount: 10
+  online_payable: true
+  comission_value: 0
+  comission_option: 0
+  online_booking: true
+
+service_5:
+  name: Service5
+  price: 10000
+  duration: 30
+  description: Quinto ejemplo de servicio
+  group_service: false
+  capacity: 1
+  waiting_list: false
+  company: company_3
+  service_category: service_category_32
+  active: true
+  show_price: true
+  order: 0
+  outcall: false
+  has_discount: false
+  discount: 10
+  online_payable: false
+  comission_value: 0
+  comission_option: 0
+  online_booking: false
+

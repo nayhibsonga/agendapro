@@ -53,13 +53,11 @@
                 <%= image_tag 'logo_vacio.png', :alt => 'AgendaPro', :size => "80x80", :class => "company-logo" %>
               <% end %>
             </div>
-            <div class="col-md-6">
+            <div class="col-md-9">
               <div class="row">
                 <div class="col-md-12 company-name">
-                  <%= @company.name %>
+                    <%= @company.name %>
                 </div>
-              </div>
-              <div class="row header-btns">
                 <div class="col-md-12">
                   <div class="header-btn inactive">
                     <a href="#" id="boton-locales" class="btn btn-default btn-green-wf">Lugares</a>
@@ -110,13 +108,11 @@
                 <%= image_tag 'logo_vacio.png', :alt => 'AgendaPro', :size => "80x80", :class => "company-logo" %>
               <% end %>
             </div>
-            <div class="col-md-6">
+            <div class="col-md-9">
               <div class="row">
                 <div class="col-md-12 company-name">
-                  <%= @company.name %>
+                    <%= @company.name %>
                 </div>
-              </div>
-              <div class="row header-btns">
                 <div class="col-md-12">
                   <div class="header-btn inactive">
                     <a href="#" id="boton-locales" class="btn btn-default btn-green-wf">Lugares</a>
@@ -250,7 +246,6 @@
                 <div style="clear: both;">
                 </div>
               </div>
-              <div class="spinner" id="provider-hours-spinner" style="display:none;"><span style="color: #ccc;"><i class="fa fa-spinner fa-spin fa-lg"></i></span></div>
               <div class="col-md-<%= @location.company.company_setting.provider_preference == 2 ? '12' : '9' %>" id="staff-calendar">
                 <div class="panel panel-info <%= 'full-margin' if @location.company.company_setting.provider_preference == 2 %>">
                   <div class="calendar-head">
@@ -277,7 +272,9 @@
                   <div class="days-row">
                   </div>
                   <div class="panel-body">
-                    <div class="horario"></div>
+                    <div class="horario">
+                      <!-- <%= image_tag "ajax-loader.gif", :alt => "Loader", :id => "calendar-loader" %> -->
+                    </div>
                   </div>
                 </div>
               </div>

@@ -1,19 +1,19 @@
 # Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
 hours:
-	id: 1
-  	unit: "Minutos"
+    id: 1
+    unit: "Minutos"
 
 months:
-  	id: 2
-  	unit: "Horas"
+    id: 2
+    unit: "Horas"
 
 days:
-	id: 3
-	unit: "Semanas"
+    id: 3
+    unit: "Semanas"
 
 days:
-	id: 4
-	unit: "Meses"
+    id: 4
+    unit: "Meses"
 
 

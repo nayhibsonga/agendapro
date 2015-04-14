@@ -26,8 +26,8 @@ class DashboardController < ApplicationController
 		end
 
 		if mobile_request?
-      @company = current_user.company
-    end
+	      @company = current_user.company
+	    end
 	end
 
 end
