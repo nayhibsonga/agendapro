@@ -381,5 +381,23 @@ class Location < ActiveRecord::Base
 	#     return services
 	# end
 
+	def get_full_address
+		full_address = self.address
+		full_address += " " + self.second_address if !self.second_address.blank?
+		full_address += ", " + self.district.name
+		full_address += ", " + self.district.city.name
+		return full_address
+	end
+
+	def get_full_address_country
+		full_address = self.address
+		full_address += " " + self.second_address if !self.second_address.blank?
+		full_address += ", " + self.district.name
+		full_address += ", " + self.district.city.name
+		full_address += ", " + self.district.city.region.name
+		full_address += ", " + self.district.city.region.country.name
+		return full_address
+	end
+
 end
 

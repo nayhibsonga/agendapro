@@ -11,7 +11,11 @@ class BookingsPdf < Prawn::Document
 	def header
 		y_position = cursor
 		bounding_box([0, y_position], width: 260, height: 40) do
-			image "#{Rails.root}/app/assets/images/logos/logo_mail.png", width: 100, height: 37
+			if @booking.service.company.logo.to_s != ""
+				image "#{Rails.root}/public"+@service_provider.company.logo.to_s, width: 50, height: 50
+			else
+				image "#{Rails.root}/app/assets/images/logos/logo_mail.png", width: 100, height: 37
+			end
 		end
 		bounding_box([480, y_position], width: 260, height: 40) do
 			text  I18n.l DateTime.now.to_date
