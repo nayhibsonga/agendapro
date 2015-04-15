@@ -383,16 +383,23 @@ class Booking < ActiveRecord::Base
 
 	def generate_ics
 		booking = self
+		address = ''
+		date = I18n.l booking.start
+		if !self.service.outcall
+			address = booking.location.name + " - " + booking.location.get_full_address
+		else
+			address = "A domicilio"
+		end
 		event = RiCal.Calendar do |cal|
 		  cal.event do |event|
-			event.summary = booking.service.name + ' en ' + booking.location.name
-			event.description = "Se reservó " + booking.service.name + " en "  + booking.location.name + ", con una duración de " + booking.service.duration.to_s
+			event.summary = booking.service.name + ' en ' + booking.location.company.name
+			event.description = "Datos de tu reserva:\n- Fecha: " + date + "\n- Servicio: " + booking.service.name + "\n- Prestador: " + booking.service_provider.public_name + "\n- Lugar: " + address + ".\nNOTA: por favor asegúrate que el calendario de tu celular esté en la zona horario correcta. En caso contrario, este recordatorio podría quedar guardado para otra hora."
 			event.dtstart =  booking.start.strftime('%Y%m%dT%H%M%S')
 			event.dtend = booking.end.strftime('%Y%m%dT%H%M%S')
-			event.location = booking.location.address
+			event.location = booking.location.get_full_address
 			event.add_attendee booking.client.email
 			event.alarm do
-			  description "Recuerda " + booking.service.name + " en "  + booking.location.name
+			  description "Recuerda tu hora de " + booking.service.name + " en "  + booking.location.company.name
 			end
 		  end
 		end
