@@ -10,7 +10,7 @@
 <%= content_tag "div", id: "id_data", data: { id: @service_provider.id } do %>
   <% end %>
 
-<%= content_tag "div", id: "provider_times_data", data: { provider_times: @service_provider.provider_times.to_json } do %>
+<%= content_tag "div", id: "provider_times_data", data: { provider_times: @service_provider.provider_times.order(:day_id, :open).to_json } do %>
   <% end %>
 
 <%= render "form" %>

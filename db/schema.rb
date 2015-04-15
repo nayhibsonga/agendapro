@@ -615,13 +615,9 @@ ActiveRecord::Schema.define(version: 20150330154139) do
     t.boolean  "active",                      default: true
     t.integer  "order",                       default: 0
     t.integer  "block_length",                default: 30
-<<<<<<< HEAD
-    t.integer  "booking_configuration_email", default: 2
-=======
     t.integer  "booking_configuration_email", default: 0
     t.decimal  "comission_value",             default: 0.0,  null: false
     t.integer  "comission_option",            default: 0,    null: false
->>>>>>> 20290dbc4a0dd18a6173c56d93f8da04beaf7402
     t.boolean  "online_booking",              default: true
   end
 

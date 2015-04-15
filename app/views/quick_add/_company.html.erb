@@ -1,0 +1,56 @@
+<div class="content-fill">
+  <%= form_for @company, html: {multipart: true} do |f| %>
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-md-12">
+          <div class="form-group has-feedback">
+            <label class="text-center label-green col-md-12">Agrega tu Logotipo</label>
+            <div class="col-md-2 col-md-offset-5">
+              <%= f.file_field :logo, :accept => 'image/png,image/gif,image/jpeg', :class => 'form-control' %>
+              <span class="help-block"></span>
+              <span class="form-control-feedback"></span>
+            </div>
+          </div>
+          <div class="form-group has-feedback">
+            <label class="text-center label-green col-md-12">Agrega una Descripción de tu Empresa</label>
+            <div class="col-md-6 col-md-offset-3">
+              <%= f.text_area :description, class: 'form-control', rows: 10 %>
+              <span class="help-block"></span>
+              <span class="form-control-feedback"></span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="container-fluid background-green">
+      <div class="row">
+        <div class="col-md-12">
+          <h2 class="text-center">¿A qué te dedicas?</h2>
+          <p class="text-center text-dark-green">Selecciona el rubro al que estás dedicado</p>
+          <div class="form-group has-feedback">
+            <%= f.collection_check_boxes :economic_sector_ids, EconomicSector.all, :id, :name, {}, {class: "check_boxes"} do |b|%>
+              <div class="col-md-3">
+                <div class="checkbox">
+                  <label>
+                    <%= b.check_box %> <%= b.object.name.html_safe %>
+                  </label>
+                </div>
+              </div>
+            <% end %>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-md-12">
+          <div class="form-group">
+            <div class="col-md-2 col-md-offset-5">
+              <button class="btn btn-green btn-lg">Guardar</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  <% end %>
+</div>
