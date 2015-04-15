@@ -1114,7 +1114,11 @@ function saveBreak (typeURL, extraURL) {
 		"name": $('#provider_break_name').val(),
 		"start": $('#provider_break_start_1i').val() +"-"+ $('#provider_break_start_2i').val() +"-"+ $('#provider_break_start_3i').val() +"T"+ $('#provider_break_start_4i').val() +":"+ $('#provider_break_start_5i').val() +":00Z",
 		"end": $('#provider_break_end_1i').val() +"-"+ $('#provider_break_end_2i').val() +"-"+ $('#provider_break_end_3i').val() +"T"+ $('#provider_break_end_4i').val() +":"+ $('#provider_break_end_5i').val() +":00Z",
-		"local": $('#locals-selector').val() };
+		"local": $('#locals-selector').val(),
+		"repeat": $('#break_repeat').val(),
+		"repeat_end": $('#provider_break_repeat_repeat_end_1i').val() +"-"+ $('#provider_break_repeat_repeat_end_2i').val() +"-"+ $('#provider_break_repeat_repeat_end_3i').val() +"T"+ $('#provider_break_repeat_repeat_end_4i').val() +":"+ $('#provider_break_repeat_repeat_end_5i').val() +":00Z",
+		"times": $("#break_times").val(),
+		"repeat_option": $('input[name="repeat_option"]:checked').val()};
 	$.ajax({
 		type: typeURL,
 		url: '/provider_breaks'+extraURL+'.json',
@@ -1126,7 +1130,7 @@ function saveBreak (typeURL, extraURL) {
 					$('.break-button').attr("disabled", "disabled");
 					$( '<span id="small_loader"><i class="fa fa-spinner fa-spin"></i> </span>' ).insertBefore( $( ".btn-close" ) );
 					var warnings = '';
-					if ($('#provider_break_service_provider_id').val() != 0) {
+					if ($('#provider_break_service_provider_id').val() != 0 && $('#break_repeat').val() == "never") {
 						var label = provider_break.name;
 						if (label == null) {
 							label = 'Hora Bloqueada';
@@ -1295,16 +1299,26 @@ function createBreakModal(date, providerId) {
 		$('#provider_break_start_1i option[value="'+dateArray[3]+'"]').attr("selected",true);
 		$('#provider_break_start_4i option[value="'+dateArray[4].split(':')[0]+'"]').attr("selected",true);
 		$('#provider_break_start_5i option[value="'+dateArray[4].split(':')[1]+'"]').attr("selected",true);
+		
 		$('#provider_break_end_3i option[value="'+parseInt(dateArray[2])+'"]').attr("selected",true);
 		$('#provider_break_end_2i option[value="'+(date.getMonth()+1)+'"]').attr("selected",true);
 		$('#provider_break_end_1i option[value="'+dateArray[3]+'"]').attr("selected",true);
 		$('#provider_break_end_4i option[value="'+dateArray[4].split(':')[0]+'"]').attr("selected",true);
 		$('#provider_break_end_5i option[value="'+dateArray[4].split(':')[1]+'"]').attr("selected",true);
+
+		$('#provider_break_repeat_repeat_end_3i option[value="'+parseInt(dateArray[2])+'"]').attr("selected",true);
+		$('#provider_break_repeat_repeat_end_2i option[value="'+(date.getMonth()+1)+'"]').attr("selected",true);
+		$('#provider_break_repeat_repeat_end_1i option[value="'+dateArray[3]+'"]').attr("selected",true);
+		$('#provider_break_repeat_repeat_end_4i option[value="'+dateArray[4].split(':')[0]+'"]').attr("selected",true);
+		$('#provider_break_repeat_repeat_end_5i option[value="'+dateArray[4].split(':')[1]+'"]').attr("selected",true);
 	}
 	else {
 		$('#provider_break_start_5i option[value="00"]').attr("selected",true);
 		$('#provider_break_end_5i option[value="00"]').attr("selected",true);
+		$('#provider_break_repeat_repeat_end_5i option[value="00"]').attr("selected",true);
 	}
+
+	$(".form-repeat-div").show();
 
 	var localId = parseInt($('#locals-selector').val());
 	$.ajax('/local_providers.json', {
@@ -1382,6 +1396,8 @@ function editBreakModal(breakId) {
 			$('#provider_break_end_5i option[value="'+dateArray[1].split(':')[1]+'"]').attr("selected",true);
 		}
 
+		$(".form-repeat-div").hide();
+
 		var localId = parseInt($('#locals-selector').val());
 		$.ajax('/local_providers.json', {
 			async: false,
@@ -1417,11 +1433,24 @@ function editBreakModal(breakId) {
 			$('#provider_break_service_provider_id option[value="'+0+'"]').attr("selected",true);
 		};
 		$('.break-modal-footer').empty();
-		$('.break-modal-footer').append(
-			'<button type="button" class="btn btn-default btn-close" data-dismiss="modal">Cerrar</button>' +
-			'<button type="button" class="btn btn-danger" id="destroy_break" onClick="saveBreak(\'DELETE\',\'/'+breakId+'\')">Eliminar</button>' +
-			'<button type="button" class="btn btn-agendapro-claro" id="edit_break" onClick="saveBreak(\'PATCH\',\'/'+breakId+'\')">Guardar</button>'
-		);
+		console.log(provider_break.break_repeat_id);
+		console.log(provider_break.break_repeat_id == null);
+		if(provider_break.break_repeat_id == null)
+		{
+			$('.break-modal-footer').append(
+				'<button type="button" class="btn btn-default btn-close" data-dismiss="modal">Cerrar</button>' +
+				'<button type="button" class="btn btn-danger" id="destroy_break" onClick="saveBreak(\'DELETE\',\'/'+breakId+'\')">Eliminar</button>' +
+				'<button type="button" class="btn btn-agendapro-claro" id="edit_break" onClick="saveBreak(\'PATCH\',\'/'+breakId+'\')">Guardar</button>'
+			);
+		}
+		else
+		{
+			$('.break-modal-footer').append(
+				'<button type="button" class="btn btn-default btn-close" data-dismiss="modal">Cerrar</button>' +
+				'<button type="button" class="btn btn-danger" id="destroy_break" onClick="saveBreak(\'DELETE\',\'/'+breakId+'\')">Eliminar</button>' +
+				'<button type="button" class="btn btn-agendapro-claro" id="edit_break" onClick="saveBreak(\'PATCH\',\'/'+breakId+'\')">Guardar</button>'
+			);
+		}
 		$('#breakModal').modal('show');
 	});
 }
