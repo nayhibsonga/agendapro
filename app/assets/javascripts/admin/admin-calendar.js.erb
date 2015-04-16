@@ -1118,7 +1118,8 @@ function saveBreak (typeURL, extraURL) {
 		"repeat": $('#break_repeat').val(),
 		"repeat_end": $('#provider_break_repeat_repeat_end_1i').val() +"-"+ $('#provider_break_repeat_repeat_end_2i').val() +"-"+ $('#provider_break_repeat_repeat_end_3i').val() +"T"+ $('#provider_break_repeat_repeat_end_4i').val() +":"+ $('#provider_break_repeat_repeat_end_5i').val() +":00Z",
 		"times": $("#break_times").val(),
-		"repeat_option": $('input[name="repeat_option"]:checked').val()};
+		"repeat_option": $('input[name="repeat_option"]:checked').val()
+		};
 	$.ajax({
 		type: typeURL,
 		url: '/provider_breaks'+extraURL+'.json',
@@ -1274,6 +1275,92 @@ function saveBreak (typeURL, extraURL) {
 	});
 }
 
+function editRepeatBreak()
+{
+	var breakJSON = {
+		"service_provider_id": $('#provider_break_service_provider_id').val(),
+		"name": $('#provider_break_name').val(),
+		"start": $('#provider_break_start_1i').val() +"-"+ $('#provider_break_start_2i').val() +"-"+ $('#provider_break_start_3i').val() +"T"+ $('#provider_break_start_4i').val() +":"+ $('#provider_break_start_5i').val() +":00Z",
+		"end": $('#provider_break_end_1i').val() +"-"+ $('#provider_break_end_2i').val() +"-"+ $('#provider_break_end_3i').val() +"T"+ $('#provider_break_end_4i').val() +":"+ $('#provider_break_end_5i').val() +":00Z",
+		"local": $('#locals-selector').val(),
+		"repeat_id" : $("#provider_break_repeat_id").val()
+		};
+	$.ajax({
+		type: "post",
+		url: '/provider_breaks/update_repeat_break.json',
+		data: { "provider_break": breakJSON },
+		dataType: 'json',
+		success: function(provider_break){
+			var warnings = "";
+			$.each(provider_break, function (key, provider_break) {
+				var label = provider_break.name;
+				if (label == null) {
+					label = 'Hora Bloqueada';
+				}
+				event = $('#calendar').fullCalendar('clientEvents', 'b'+provider_break.id)[0];
+				if (event) {
+					event.title = label;
+					event.start = provider_break.start;
+					event.end = provider_break.end;
+					event.resourceId = parseInt(provider_break.service_provider_id);
+					$('#calendar').fullCalendar('updateEvent', event);
+				} else {
+					var events = {
+						id: 'b'+provider_break.id,
+						title: label,
+						allDay: false,
+						start: provider_break.start,
+						end: provider_break.end,
+						resourceId: parseInt(provider_break.service_provider_id),
+						textColor: textColors[7],
+						borderColor: textColors[7],
+						backgroundColor: backColors[7]
+					};
+					$('#calendar').fullCalendar('renderEvent', events, true);
+				};
+				if (provider_break.warnings.length > 0) {
+					for (i in provider_break.warnings) {
+						warnings += provider_break.warnings[i] + '. ';
+					};
+				}
+				
+			});
+			if (warnings.length > 0) {
+				$('#bookingWarnings').empty();
+				$('#bookingWarnings').append(warnings);
+				$('#bookingAlerts').show();
+			}
+			$("#breakModal").modal('hide');
+		}
+	});
+}
+
+function deleteRepeatBreak()
+{
+	var breakJSON = {
+		"service_provider_id": $('#provider_break_service_provider_id').val(),
+		"name": $('#provider_break_name').val(),
+		"start": $('#provider_break_start_1i').val() +"-"+ $('#provider_break_start_2i').val() +"-"+ $('#provider_break_start_3i').val() +"T"+ $('#provider_break_start_4i').val() +":"+ $('#provider_break_start_5i').val() +":00Z",
+		"end": $('#provider_break_end_1i').val() +"-"+ $('#provider_break_end_2i').val() +"-"+ $('#provider_break_end_3i').val() +"T"+ $('#provider_break_end_4i').val() +":"+ $('#provider_break_end_5i').val() +":00Z",
+		"local": $('#locals-selector').val(),
+		"repeat_id" : $("#provider_break_repeat_id").val()
+		};
+	$.ajax({
+		type: "post",
+		url: '/provider_breaks/destroy_repeat_break.json',
+		data: { "provider_break": breakJSON },
+		dataType: 'json',
+		success: function(provider_break){
+			$('.break-button').attr("disabled", "disabled");
+			$( '<span id="small_loader"><i class="fa fa-spinner fa-spin"></i> </span>' ).insertBefore( $( ".btn-close" ) );
+			$.each(provider_break, function (key, provider_break) {
+				$('#calendar').fullCalendar('removeEvents','b'+provider_break.id);
+			});
+			$("#breakModal").modal('hide');
+		}
+	});
+}
+
 function getAvailableProviders() {
 	if (parseInt($('#locals-selector').val()) > 0) {
 		if (parseInt($('#providers-selector').val()) == 0) {
@@ -1361,6 +1448,7 @@ function createBreakModal(date, providerId) {
 	}
 
 	$('#provider_break_name').val('');
+	$("#provider_break_repeat_id").val('');
 	$('.break-modal-footer').empty();
 	$('.break-modal-footer').append(
 		'<button type="button" class="btn btn-default btn-close break-button" data-dismiss="modal">Cerrar</button>' +
@@ -1432,6 +1520,10 @@ function editBreakModal(breakId) {
 		if (provider_break.break_group_id) {
 			$('#provider_break_service_provider_id option[value="'+0+'"]').attr("selected",true);
 		};
+		if(provider_break.break_repeat_id != null)
+		{
+			$("#provider_break_repeat_id").val(provider_break.break_repeat_id);
+		}
 		$('.break-modal-footer').empty();
 		console.log(provider_break.break_repeat_id);
 		console.log(provider_break.break_repeat_id == null);
@@ -1446,9 +1538,15 @@ function editBreakModal(breakId) {
 		else
 		{
 			$('.break-modal-footer').append(
-				'<button type="button" class="btn btn-default btn-close" data-dismiss="modal">Cerrar</button>' +
+				'<div class="row"><div class="col-md-2">'+
+				'<button type="button" class="btn btn-default btn-close pull-left" data-dismiss="modal">Cerrar</button>' +
+				'</div><div class="col-md-4">' + 
 				'<button type="button" class="btn btn-danger" id="destroy_break" onClick="saveBreak(\'DELETE\',\'/'+breakId+'\')">Eliminar</button>' +
-				'<button type="button" class="btn btn-agendapro-claro" id="edit_break" onClick="saveBreak(\'PATCH\',\'/'+breakId+'\')">Guardar</button>'
+				'<button type="button" class="btn btn-agendapro-claro" id="edit_break" onClick="saveBreak(\'PATCH\',\'/'+breakId+'\')">Editar</button>' +
+				'</div><div class="col-md-6">' + 
+				'<button type="button" class="btn btn-danger" id="destroy_repeat_break" onClick="deleteRepeatBreak()">Eliminar serie</button>' +
+				'<button type="button" class="btn btn-agendapro-claro" id="edit_repeat_break" onClick="editRepeatBreak()">Editar serie</button>' +
+				'</div></div>'
 			);
 		}
 		$('#breakModal').modal('show');
