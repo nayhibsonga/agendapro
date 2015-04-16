@@ -350,7 +350,6 @@ select[name="serviceOptimizerSelector"] {
 }
 
 .optimizer-date-span input {
-  // invisible input as jquery ui requires an actual input
   position: absolute;
   left: 0;
   bottom: 0;
@@ -386,9 +385,31 @@ select[name="serviceOptimizerSelector"] {
   font-size: 15px;
 }
 
+.set-date-btn {
+  font-size: 12px;
+  margin-top: 5px;
+  display: block;
+}
+.hours-optimizer-button {
+  font-size: 12px;
+}
+
+#dp {
+  display: none;
+}
+
 @media (min-width: 992px) {
   .hours-optimizer-button {
-    margin-top: 10px;
     margin-left: 7px;
+    font-size: 14px;
   }
+  .set-date-btn {
+    margin-left: 7px;
+    display: none;
+    font-size: 14px;
+  }
+  #dp {
+    display: block;
+  }
+
 }
