@@ -14,7 +14,7 @@
     </div>
     <div class="col-md-12 content-bottom">
       <div class="pull-center">
-        <a href="#" class="btn btn-transparent btn-wide">Comenzar</a>
+        <a href="#" onclick='scrollToAnchor("quick_add_step1");' class="btn btn-transparent btn-wide">Comenzar</a>
       </div>
     </div>
   </div>
@@ -36,117 +36,7 @@
   </script>
 <% end %>
 
-<!-- Local -->
-<div class="box-step step-workflow">
-  <fieldset disabled>
-    <div class="col-md-12">
-      <h4>Nuevo Local</h4>
-    </div>
-    <div class="col-md-6">
-      <%= form_for @location, html: {class: "form-horizontal"} do |f| %>
-        <%= f.hidden_field :latitude %>
-        <%= f.hidden_field :longitude %>
-        <div class="form-group has-feedback">
-          <%= f.label :name, "Nombre: ", class: "col-sm-3 control-label" %>
-          <div class="col-sm-9">
-            <%= f.text_field :name, :autofocus => true, class: "form-control" %>
-            <span class="help-block"></span>
-            <span class="form-control-feedback"></span>
-          </div>
-        </div>
-        <div class="form-group has-feedback">
-          <%= label_tag :country, "País: ", class: "col-sm-3 control-label" %>
-          <div class="col-sm-9">
-            <%= select_tag :country, options_from_collection_for_select(Country.all.order(:name), :id, :name), class: "form-control", include_blank: true %>
-            <span class="help-block"></span>
-            <span class="form-control-feedback"></span>
-          </div>
-        </div>
-        <div class="form-group has-feedback">
-          <%= label_tag :region, "Región: ", class: "col-sm-3 control-label" %>
-          <div class="col-sm-9">
-            <%= select_tag :region, options_from_collection_for_select(Region.all.order(:name), :id, :name), class: "form-control", :disabled => true %>
-            <span class="help-block"></span>
-            <span class="form-control-feedback"></span>
-          </div>
-        </div>
-        <div class="form-group has-feedback">
-          <%= label_tag :city, "Ciudad: ", class: "col-sm-3 control-label" %>
-          <div class="col-sm-9">
-            <%= select_tag :city, options_from_collection_for_select(City.all.order(:name), :id, :name), class: "form-control", :disabled => true %>
-            <span class="help-block"></span>
-            <span class="form-control-feedback"></span>
-          </div>
-        </div>
-        <div class="form-group has-feedback">
-          <%= f.label :district, "Comuna: ", class: "col-sm-3 control-label" %>
-          <div class="col-sm-9">
-            <%= f.collection_select :district_id, District.all, :id, :name, {}, { class: "form-control", :disabled => true }%>
-            <span class="help-block"></span>
-            <span class="form-control-feedback"></span>
-          </div>
-        </div>
-        <div class="form-group has-feedback">
-          <%= f.label :address, "Dirección: ", class: "col-sm-3 control-label" %>
-          <div class="col-sm-9">
-            <%= f.text_field :address, class: "form-control" %>
-            <span class="help-block"></span>
-            <span class="form-control-feedback"></span>
-          </div>
-        </div>
-        <div class="form-group has-feedback">
-          <%= f.label :second_address, "Dirección Adicional", class: "col-sm-3 control-label" %>
-          <div class="col-sm-9">
-            <%= f.text_field :second_address, class: "form-control", placeholder: 'Oficina D, Local 22' %>
-            <span class="help-block"></span>
-            <span class="form-control-feedback"></span>
-            <div class="checkbox">
-              <label>
-                <%= f.check_box :outcall %> Sin Dirección (sólo servicios a domicilio).
-              </label>
-            </div>
-            <div id="districtsCheckboxes" class='hidden'></div>
-          </div>
-        </div>
-        <div class="form-group has-feedback">
-          <%= f.label :phone, "Teléfono: ", class: "col-sm-3 control-label" %>
-          <div class="col-sm-9">
-            <%= f.text_field :phone, class: "form-control" %>
-            <span class="help-block"></span>
-          </div>
-        </div>
-      <% end %>
-      <div style="margin-top: 10px;">
-        <h4 class="text-center" style="margin-bottom: 0;">¿Aquí se ubica tu local? <small class="hide"><i class="fa fa-spinner fa-spin"></i></small></h4>
-        <span class="hide" id="error">Hubo un error ubicando tu local</span>
-        <span>Puedes dar click en el mapa para cambiar la ubicación</span>
-        <div id="map"></div>
-    <br />
-    <br />
-      </div>
-    </div>
-    <div class="col-md-6">
-      <div class="panel panel-info">
-        <div class="panel-heading">
-          <h3 class="panel-title">
-            Horario Local
-          </h3>
-        </div>
-        <div class="panel-body">
-          <table class="table">
-            <tbody id="localTable">
-              <tr>
-                <th>Día</th>
-                <th>Apertura</th>
-                <th>Cierre</th>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </div>
-  </fieldset>
-</div>
+
 <!-- Service -->
 <div class="box-step step-workflow-min">
   <fieldset disabled>
@@ -366,73 +256,4 @@
   <%= javascript_include_tag "admin/quick_add" %>
   <%= javascript_include_tag "validations/validate" %>
   <%= javascript_include_tag "validations/admin/quick-add" %>
-
-  <script type="text/javascript">
-    $(document).ready(function(){
-        if($('#company_setting_allows_online_payment').prop('checked'))
-      {
-        $(".account-info").removeClass("hidden");
-        if($("#company_setting_bank :selected").text() == "Otro")
-        {
-          $("#other-bank").removeClass("hidden");
-          $(".account-data").addClass("hidden");
-        }
-        else
-        {
-          $("#other-bank").addClass("hidden");
-          $(".account-data").removeClass("hidden");
-        }
-      }
-      else
-      {
-        $(".account-info").addClass("hidden");
-        $("#other-bank").addClass("hidden");
-      }
-      var oldTop = $(document).scrollTop();
-      $('#foo5').trigger('updateSizes');
-      $(document).scrollTop(oldTop);
-    });
-
-    $("#company_setting_allows_online_payment").change(function(){
-      if($('#company_setting_allows_online_payment').prop('checked'))
-      {
-        $(".account-info").removeClass("hidden");
-        if($("#company_setting_bank :selected").text() == "Otro")
-        {
-          $("#other-bank").removeClass("hidden");
-          $(".account-data").addClass("hidden");
-        }
-        else
-        {
-          $("#other-bank").addClass("hidden");
-          $(".account-data").removeClass("hidden");
-        }
-      }
-      else
-      {
-        $("#other-bank").addClass("hidden");
-        $(".account-info").addClass("hidden");
-      }
-      var oldTop = $(document).scrollTop();
-      $('#foo5').trigger('updateSizes');
-      $(document).scrollTop(oldTop);
-    });
-
-    $("#company_setting_bank").change(function(){
-      if($("#company_setting_bank :selected").text() == "Otro")
-      {
-        $("#other-bank").removeClass("hidden");
-        $(".account-data").addClass("hidden");
-      }
-      else
-      {
-        $("#other-bank").addClass("hidden");
-        $(".account-data").removeClass("hidden");
-      }
-      var oldTop = $(document).scrollTop();
-      $('#foo5').trigger('updateSizes');
-      $(document).scrollTop(oldTop);
-    });
-  </script>
-
 <% end %>

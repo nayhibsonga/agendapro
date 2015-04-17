@@ -39,6 +39,7 @@ class QuickAddController < ApplicationController
 		@company = current_user.company
 		@company_setting = @company.company_setting
 		@company_setting.build_online_cancelation_policy
+		@company_setting.save
 	end
 
 	def location_valid
@@ -173,7 +174,7 @@ class QuickAddController < ApplicationController
     end
 
     def company_params
-    	params.require(:company).permit(:logo, :allows_online_payment, :bank, :account_number, :company_rut, economic_sector_ids: [])
+    	params.require(:company).permit(:logo, :description, :allows_online_payment, :bank, :account_number, :company_rut, economic_sector_ids: [])
     end
 
     # def company_setting_params
