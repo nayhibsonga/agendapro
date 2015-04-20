@@ -1,19 +1,33 @@
 <div id="quick_add_step2" class="content-fill">
-  <div class="container-fluid background-green">
+  <div class="container background-green">
     <div class="row">
       <div class="col-md-12">
         <h2 class="text-center">¿Cuántos locales/sucursales tienes?</h2>
         <p class="text-center text-dark-green">Completa la información de cada uno de tus locales (máximo 5)</p>
       </div>
     </div>
+    <div class="row">
+      <div class="col-md-12">
+        <ul class="nav nav-pills quickadd-pills">
+          <% @company.locations.where(active:true).each do |location| %>
+          <li><a href=""><%= location.name %></a></li>
+          <% end %>
+          <li class="active"><a href="">Nuevo Local</a></li>
+      </ul>
+      </div>
+    </div>
   </div>
-  <div class="container-fluid">
+  <div class="container">
     <!-- Local -->
-    <div class="box-step step-workflow">
+    <div class="row">
+      <div class="col-md-6">
+        <h4>Nuevo Local</h4>
+      </div>
+      <div class="col-md-6">
+      </div>
+    </div>
+    <div class="row">
       <fieldset id="fieldset_step2" disabled>
-        <div class="col-md-12">
-          <h4>Nuevo Local</h4>
-        </div>
         <div class="col-md-6">
           <%= form_for @location, html: {class: "form-horizontal"} do |f| %>
             <%= f.hidden_field :latitude %>
@@ -88,22 +102,16 @@
               </div>
             </div>
           <% end %>
-          <div style="margin-top: 10px;">
+        </div>
+        <div class="col-md-6">
+          <div style="margin-bottom:10px;">
             <h4 class="text-center" style="margin-bottom: 0;">¿Aquí se ubica tu local? <small class="hide"><i class="fa fa-spinner fa-spin"></i></small></h4>
             <span class="hide" id="error">Hubo un error ubicando tu local</span>
             <span>Puedes dar click en el mapa para cambiar la ubicación</span>
-            <div id="map"></div>
-        <br />
-        <br />
+            <div id="map" style="height:100px;"></div>
           </div>
-        </div>
-        <div class="col-md-6">
+          <h3>Selecciona el horario de apertura y cierre para cada día</h3>
           <div class="panel panel-info">
-            <div class="panel-heading">
-              <h3 class="panel-title">
-                Horario Local
-              </h3>
-            </div>
             <div class="panel-body">
               <table class="table">
                 <tbody id="localTable">

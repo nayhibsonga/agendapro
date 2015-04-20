@@ -617,7 +617,7 @@ class BookingMailer < ActionMailer::Base
 		message = {
 			:from_email => 'no-reply@agendapro.cl',
 			:from_name => book_info.service_provider.company.name,
-			:subject => 'Recuerda tu Reserva en ' + book_info.service_provider.company.name,
+			:subject => 'Confirma tu reserva en ' + book_info.service_provider.company.name,
 			:to => [],
 			:headers => { 'Reply-To' => book_info.service_provider.notification_email },
 			:global_merge_vars => [

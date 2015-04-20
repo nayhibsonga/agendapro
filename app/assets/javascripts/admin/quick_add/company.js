@@ -1,7 +1,7 @@
 // Post
 function updateCompany () {
 	$('#update_company_button').addClass('disabled');
-	$('#update_company_spinner').removeClass('hidden');
+	$('#update_company_spinner').show();
 	var formId = $('[id^=edit_company_]').prop('id');
 	$.ajax({
 		type: 'POST',
@@ -13,7 +13,7 @@ function updateCompany () {
 		success: function (result) {
 			initializeStep2();
 			$('#update_company_button').removeClass('disabled');
-			$('#update_company_spinner').addClass('hidden');
+			$('#update_company_spinner').hide();
 		},
 		error: function (xhr) {
 			var errors = $.parseJSON(xhr.responseText).errors;
@@ -28,7 +28,7 @@ function updateCompany () {
 				'</ul>'
 			);
 			$('#update_company_button').removeClass('disabled');
-			$('#update_company_spinner').addClass('hidden');
+			$('#update_company_spinner').hide();
 		},
 	});
 }
