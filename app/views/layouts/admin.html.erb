@@ -3,7 +3,15 @@
 	<head>
 		<!-- start: Meta -->
 		<meta charset="utf-8" />
-		<title>Administrador - AgendaPro</title>
+		<% if !current_user.company.nil? %>
+
+			<title>Administrador <%= current_user.company.name %> AgendaPro</title>
+
+		<% else %>
+
+			<title>Administrador - AgendaPro</title>
+
+		<% end %>
 		<meta name="description" content="AgendaPro - Sistema de agendamiento OnLine para empresas y usuarios.">
 		<meta name="author" content="AgendaPro">
 		<meta name="keyword" content="agendapro, agenda, agenda online, reserva, reserva online">
@@ -20,6 +28,20 @@
 		<%= stylesheet_link_tag "fullcalendar_css" if params[:controller] == "bookings" %>
 		<%= yield :stylesheets %>
 		<!-- end: CSS -->
+
+		<% if ENV["MONITORING_ACTIVATION"] == "TRUE" %>
+        <!-- Begin Inspectlet Embed Code -->
+        <script type="text/javascript" id="inspectletjs">
+        window.__insp = window.__insp || [];
+        __insp.push(['wid', 1883420541]);
+        (function() {
+        function __ldinsp(){var insp = document.createElement('script'); insp.type = 'text/javascript'; insp.async = true; insp.id = "inspsync"; insp.src = ('https:' == document.location.protocol ? 'https' : 'http') + '://cdn.inspectlet.com/inspectlet.js'; var x = document.getElementsByTagName('script')[0]; x.parentNode.insertBefore(insp, x); }
+        if (window.attachEvent) window.attachEvent('onload', __ldinsp);
+        else window.addEventListener('load', __ldinsp, false);
+        })();
+        </script>
+        <!-- End Inspectlet Embed Code -->
+        <% end %>
 		
 
 		<!-- The HTML5 shim, for IE6-8 support of HTML5 elements -->

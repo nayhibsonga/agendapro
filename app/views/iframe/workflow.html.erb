@@ -245,7 +245,7 @@
           </div>
           <div class="box-step">
             <div class="row staff">
-              <div class="col-sm-3 step2-left-col" style="max-height: 346px; overflow-y: scroll;<%= 'display:none;' if @location.company.company_setting.provider_preference == 2 %>">
+              <div class="col-md-3 step2-left-col" style="max-height: 346px; overflow-y: scroll;<%= 'display:none;' if @location.company.company_setting.provider_preference == 2 %>">
                 <div class="staff-wrapper">
                   <span class="subtitulos-workflow">Elige Staff<br /> y Horario &nbsp;</span><span><i class="fa fa-clock-o gray-icon"></i>&nbsp;<i class="fa fa-user gray-icon"></i></span>
                   <div class="sub-workflow dark-gray">Selecciona un staff para ver su horario</div>
@@ -260,7 +260,7 @@
                 <div style="clear: both;">
                 </div>
               </div>
-              <div class="col-sm-<%= @location.company.company_setting.provider_preference == 2 ? '12' : '9' %>" id="staff-calendar">
+              <div class="col-md-<%= @location.company.company_setting.provider_preference == 2 ? '12' : '9' %>" id="staff-calendar">
                 <div class="panel panel-info <%= 'full-margin' if @location.company.company_setting.provider_preference == 2 %>">
                   <div class="calendar-head">
                     <div class="panel-title">
@@ -471,13 +471,13 @@
                       </div>
                     </div>
                     <div class="row" style="margin-top: 20px;">
-                      <div class="col-sm-6">
-                        <div class="btn-change btn-prev">
+                      <div class="col-md-6">
+                        <div class="btn-change btn-prev leftBookingButton">
                           <a class="prev2 prev-btn"><i class="fa fa-chevron-left prev-arrow"></i> Anterior</a>
                         </div>
                       </div>
-                      <div class="col-sm-6" id="reservar1">
-                        <button type="submit" class="submitBtn">Reservar</button>
+                      <div class="col-md-6" id="reservar1">
+                        <button type="submit" class="submitBtn leftBookingButton">Reservar</button>
                       </div>
                     </div>
                   </div>
