@@ -1449,6 +1449,8 @@ function createBreakModal(date, providerId) {
 
 	$('#provider_break_name').val('');
 	$("#provider_break_repeat_id").val('');
+	//$("#provider_break_service_provider_id").attr("disabled", false);
+	$('#provider_break_service_provider_id option[value="0"]').attr("disabled", false);
 	$('.break-modal-footer').empty();
 	$('.break-modal-footer').append(
 		'<button type="button" class="btn btn-default btn-close break-button" data-dismiss="modal">Cerrar</button>' +
@@ -1525,8 +1527,10 @@ function editBreakModal(breakId) {
 			$("#provider_break_repeat_id").val(provider_break.break_repeat_id);
 		}
 		$('.break-modal-footer').empty();
-		console.log(provider_break.break_repeat_id);
-		console.log(provider_break.break_repeat_id == null);
+		
+		//$("#provider_break_service_provider_id").attr("disabled", "disabled");
+		$('#provider_break_service_provider_id option[value="0"]').attr("disabled", "disabled");
+
 		if(provider_break.break_repeat_id == null)
 		{
 			$('.break-modal-footer').append(

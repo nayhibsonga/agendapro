@@ -203,7 +203,7 @@ Agendapro::Application.routes.draw do
   get '/provider_breaks/:id', :to => 'provider_breaks#get_provider_break', :as => 'get_provider_break'
   post '/provider_breaks', :to => 'provider_breaks#create_provider_break', :as => 'create_provider_breaks'
   patch '/provider_breaks/:id', :to => 'provider_breaks#update_provider_break', :as => 'edit_provider_break'
-  delete '/provider_breaks/provider_breaks/:id', :to => 'provider_breaks#destroy_provider_break', :as => 'delete_provider_break'
+  delete '/provider_breaks/:id', :to => 'provider_breaks#destroy_provider_break', :as => 'delete_provider_break'
   post '/provider_breaks/update_repeat_break', :to => 'provider_breaks#update_repeat_break', :as => 'update_repeat_break'
   post '/provider_breaks/destroy_repeat_break', :to => 'provider_breaks#destroy_repeat_break', :as => 'destroy_repeat_break'
   get '/available_providers', :to => 'service_providers#available_providers', :as => 'available_service_providers'
