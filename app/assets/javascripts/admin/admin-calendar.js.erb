@@ -1114,7 +1114,12 @@ function saveBreak (typeURL, extraURL) {
 		"name": $('#provider_break_name').val(),
 		"start": $('#provider_break_start_1i').val() +"-"+ $('#provider_break_start_2i').val() +"-"+ $('#provider_break_start_3i').val() +"T"+ $('#provider_break_start_4i').val() +":"+ $('#provider_break_start_5i').val() +":00Z",
 		"end": $('#provider_break_end_1i').val() +"-"+ $('#provider_break_end_2i').val() +"-"+ $('#provider_break_end_3i').val() +"T"+ $('#provider_break_end_4i').val() +":"+ $('#provider_break_end_5i').val() +":00Z",
-		"local": $('#locals-selector').val() };
+		"local": $('#locals-selector').val(),
+		"repeat": $('#break_repeat').val(),
+		"repeat_end": $('#provider_break_repeat_repeat_end_1i').val() +"-"+ $('#provider_break_repeat_repeat_end_2i').val() +"-"+ $('#provider_break_repeat_repeat_end_3i').val() +"T"+ $('#provider_break_repeat_repeat_end_4i').val() +":"+ $('#provider_break_repeat_repeat_end_5i').val() +":00Z",
+		"times": $("#break_times").val(),
+		"repeat_option": $('input[name="repeat_option"]:checked').val()
+		};
 	$.ajax({
 		type: typeURL,
 		url: '/provider_breaks'+extraURL+'.json',
@@ -1126,7 +1131,7 @@ function saveBreak (typeURL, extraURL) {
 					$('.break-button').attr("disabled", "disabled");
 					$( '<span id="small_loader"><i class="fa fa-spinner fa-spin"></i> </span>' ).insertBefore( $( ".btn-close" ) );
 					var warnings = '';
-					if ($('#provider_break_service_provider_id').val() != 0) {
+					if ($('#provider_break_service_provider_id').val() != 0 && $('#break_repeat').val() == "never") {
 						var label = provider_break.name;
 						if (label == null) {
 							label = 'Hora Bloqueada';
@@ -1185,6 +1190,7 @@ function saveBreak (typeURL, extraURL) {
 					};
 					break;
 				case 'PATCH':
+					var newProviderId = "0";
 					$('.break-button').attr("disabled", "disabled");
 					$( '<span id="small_loader"><i class="fa fa-spinner fa-spin"></i> </span>' ).insertBefore( $( ".btn-close" ) );
 					var warnings = '';
@@ -1198,6 +1204,7 @@ function saveBreak (typeURL, extraURL) {
 						event.start = provider_break.start;
 						event.end = provider_break.end;
 						event.resourceId = parseInt(provider_break.service_provider_id);
+						newProviderId = provider_break.service_provider_id;
 						$('#calendar').fullCalendar('updateEvent', event);
 						if (provider_break.warnings.length > 0) {
 							for (i in provider_break.warnings) {
@@ -1216,6 +1223,7 @@ function saveBreak (typeURL, extraURL) {
 								event.start = provider_break.start;
 								event.end = provider_break.end;
 								event.resourceId = parseInt(provider_break.service_provider_id);
+								newProviderId = provider_break.service_provider_id;
 								$('#calendar').fullCalendar('updateEvent', event);
 							} else {
 								var events = {
@@ -1238,6 +1246,14 @@ function saveBreak (typeURL, extraURL) {
 							}
 						});
 					};
+					selProviderId = parseInt($('#providers-selector').val())
+					if (selProviderId == 0) {
+						//loadLocationTime (resources);
+					}
+					else {
+						$('#providers-selector option[value="'+newProviderId+'"]').attr("selected", "selected")
+						loadProviderTime(newProviderId);
+					}
 					if (warnings.length > 0) {
 						$('#bookingWarnings').empty();
 						$('#bookingWarnings').append(warnings);
@@ -1270,6 +1286,104 @@ function saveBreak (typeURL, extraURL) {
 	});
 }
 
+function editRepeatBreak(breakId)
+{
+	var breakJSON = {
+		"service_provider_id": $('#provider_break_service_provider_id').val(),
+		"name": $('#provider_break_name').val(),
+		"start": $('#provider_break_start_1i').val() +"-"+ $('#provider_break_start_2i').val() +"-"+ $('#provider_break_start_3i').val() +"T"+ $('#provider_break_start_4i').val() +":"+ $('#provider_break_start_5i').val() +":00Z",
+		"end": $('#provider_break_end_1i').val() +"-"+ $('#provider_break_end_2i').val() +"-"+ $('#provider_break_end_3i').val() +"T"+ $('#provider_break_end_4i').val() +":"+ $('#provider_break_end_5i').val() +":00Z",
+		"local": $('#locals-selector').val(),
+		"repeat_id" : $("#provider_break_repeat_id").val(),
+		"id" : breakId
+		};
+	$.ajax({
+		type: "post",
+		url: '/provider_breaks/update_repeat_break.json',
+		data: { "provider_break": breakJSON },
+		dataType: 'json',
+		success: function(provider_break){
+			var warnings = "";
+			var newProviderId = "0";
+			$.each(provider_break, function (key, provider_break) {
+				var label = provider_break.name;
+				newProviderId = provider_break.service_provider_id;
+				if (label == null) {
+					label = 'Hora Bloqueada';
+				}
+				event = $('#calendar').fullCalendar('clientEvents', 'b'+provider_break.id)[0];
+				if (event) {
+					event.title = label;
+					event.start = provider_break.start;
+					event.end = provider_break.end;
+					event.resourceId = parseInt(provider_break.service_provider_id);
+					$('#calendar').fullCalendar('updateEvent', event);
+				} else {
+					var events = {
+						id: 'b'+provider_break.id,
+						title: label,
+						allDay: false,
+						start: provider_break.start,
+						end: provider_break.end,
+						resourceId: parseInt(provider_break.service_provider_id),
+						textColor: textColors[7],
+						borderColor: textColors[7],
+						backgroundColor: backColors[7]
+					};
+					$('#calendar').fullCalendar('renderEvent', events, true);
+				};
+				if (provider_break.warnings.length > 0) {
+					for (i in provider_break.warnings) {
+						warnings += provider_break.warnings[i] + '. ';
+					};
+				}
+				
+			});
+			selProviderId = parseInt($('#providers-selector').val())
+			if (selProviderId == 0) {
+				//loadLocationTime (localId, resources);
+			}
+			else {
+				$('#providers-selector option[value="'+newProviderId+'"]').attr("selected", "selected")
+				loadProviderTime(newProviderId);
+			}
+			if (warnings.length > 0) {
+				$('#bookingWarnings').empty();
+				$('#bookingWarnings').append(warnings);
+				$('#bookingAlerts').show();
+			}
+			$("#breakModal").modal('hide');
+		}
+	});
+}
+
+function deleteRepeatBreak(breakId)
+{
+	var breakJSON = {
+		"service_provider_id": $('#provider_break_service_provider_id').val(),
+		"name": $('#provider_break_name').val(),
+		"start": $('#provider_break_start_1i').val() +"-"+ $('#provider_break_start_2i').val() +"-"+ $('#provider_break_start_3i').val() +"T"+ $('#provider_break_start_4i').val() +":"+ $('#provider_break_start_5i').val() +":00Z",
+		"end": $('#provider_break_end_1i').val() +"-"+ $('#provider_break_end_2i').val() +"-"+ $('#provider_break_end_3i').val() +"T"+ $('#provider_break_end_4i').val() +":"+ $('#provider_break_end_5i').val() +":00Z",
+		"local": $('#locals-selector').val(),
+		"repeat_id" : $("#provider_break_repeat_id").val(),
+		"id" : breakId
+		};
+	$.ajax({
+		type: "post",
+		url: '/provider_breaks/destroy_repeat_break.json',
+		data: { "provider_break": breakJSON },
+		dataType: 'json',
+		success: function(provider_break){
+			$('.break-button').attr("disabled", "disabled");
+			$( '<span id="small_loader"><i class="fa fa-spinner fa-spin"></i> </span>' ).insertBefore( $( ".btn-close" ) );
+			$.each(provider_break, function (key, provider_break) {
+				$('#calendar').fullCalendar('removeEvents','b'+provider_break.id);
+			});
+			$("#breakModal").modal('hide');
+		}
+	});
+}
+
 function getAvailableProviders() {
 	if (parseInt($('#locals-selector').val()) > 0) {
 		if (parseInt($('#providers-selector').val()) == 0) {
@@ -1287,6 +1401,7 @@ function getAvailableProviders() {
 
 function createBreakModal(date, providerId) {
 	var providerId = providerId || 0;
+
 	var date = date || 0;
 	if (date != 0) {
 		dateArray = date.toString().split(' ');
@@ -1295,16 +1410,26 @@ function createBreakModal(date, providerId) {
 		$('#provider_break_start_1i option[value="'+dateArray[3]+'"]').attr("selected",true);
 		$('#provider_break_start_4i option[value="'+dateArray[4].split(':')[0]+'"]').attr("selected",true);
 		$('#provider_break_start_5i option[value="'+dateArray[4].split(':')[1]+'"]').attr("selected",true);
+		
 		$('#provider_break_end_3i option[value="'+parseInt(dateArray[2])+'"]').attr("selected",true);
 		$('#provider_break_end_2i option[value="'+(date.getMonth()+1)+'"]').attr("selected",true);
 		$('#provider_break_end_1i option[value="'+dateArray[3]+'"]').attr("selected",true);
 		$('#provider_break_end_4i option[value="'+dateArray[4].split(':')[0]+'"]').attr("selected",true);
 		$('#provider_break_end_5i option[value="'+dateArray[4].split(':')[1]+'"]').attr("selected",true);
+
+		$('#provider_break_repeat_repeat_end_3i option[value="'+parseInt(dateArray[2])+'"]').attr("selected",true);
+		$('#provider_break_repeat_repeat_end_2i option[value="'+(date.getMonth()+1)+'"]').attr("selected",true);
+		$('#provider_break_repeat_repeat_end_1i option[value="'+dateArray[3]+'"]').attr("selected",true);
+		$('#provider_break_repeat_repeat_end_4i option[value="'+dateArray[4].split(':')[0]+'"]').attr("selected",true);
+		$('#provider_break_repeat_repeat_end_5i option[value="'+dateArray[4].split(':')[1]+'"]').attr("selected",true);
 	}
 	else {
 		$('#provider_break_start_5i option[value="00"]').attr("selected",true);
 		$('#provider_break_end_5i option[value="00"]').attr("selected",true);
+		$('#provider_break_repeat_repeat_end_5i option[value="00"]').attr("selected",true);
 	}
+
+	$(".form-repeat-div").show();
 
 	var localId = parseInt($('#locals-selector').val());
 	$.ajax('/local_providers.json', {
@@ -1347,6 +1472,9 @@ function createBreakModal(date, providerId) {
 	}
 
 	$('#provider_break_name').val('');
+	$("#provider_break_repeat_id").val('');
+	//$("#provider_break_service_provider_id").attr("disabled", false);
+	$('#provider_break_service_provider_id option[value="0"]').attr("hidden", false);
 	$('.break-modal-footer').empty();
 	$('.break-modal-footer').append(
 		'<button type="button" class="btn btn-default btn-close break-button" data-dismiss="modal">Cerrar</button>' +
@@ -1382,6 +1510,8 @@ function editBreakModal(breakId) {
 			$('#provider_break_end_5i option[value="'+dateArray[1].split(':')[1]+'"]').attr("selected",true);
 		}
 
+		$(".form-repeat-div").hide();
+
 		var localId = parseInt($('#locals-selector').val());
 		$.ajax('/local_providers.json', {
 			async: false,
@@ -1393,7 +1523,17 @@ function editBreakModal(breakId) {
 				var selector = $('#provider_break_service_provider_id');
 				selector.empty();
 				$.each(providersArray, function (key, provider) {
-					if (provider_break.break_group_id) {
+					if (provider.id == provider_break.service_provider_id) {
+							selector.append(
+								'<option value="' + provider.id + '" selected>' + provider.public_name + '</option>'
+							);
+					}
+					else {
+						selector.append(
+							'<option value="' + provider.id + '">' + provider.public_name + '</option>'
+						);
+					}
+					/*if (provider_break.break_group_id) {
 						if (provider.id == provider_break.service_provider_id) {
 							selector.append(
 								'<option value="' + provider.id + '">' + provider.public_name + '</option>'
@@ -1403,25 +1543,50 @@ function editBreakModal(breakId) {
 						selector.append(
 							'<option value="' + provider.id + '">' + provider.public_name + '</option>'
 						);
-					};
+					};*/
 				});
-				selector.append(
+				/*selector.append(
 					'<option value="0">Todos</option>'
-				);
+				);*/
 			}
 		});
 
 		$('#provider_break_name').val(provider_break.name);
 		$('#provider_break_service_provider_id option[value="'+provider_break.service_provider_id+'"]').attr("selected",true);
-		if (provider_break.break_group_id) {
+		/*if (provider_break.break_group_id) {
 			$('#provider_break_service_provider_id option[value="'+0+'"]').attr("selected",true);
-		};
+		};*/
+		if(provider_break.break_repeat_id != null)
+		{
+			$("#provider_break_repeat_id").val(provider_break.break_repeat_id);
+		}
 		$('.break-modal-footer').empty();
-		$('.break-modal-footer').append(
-			'<button type="button" class="btn btn-default btn-close" data-dismiss="modal">Cerrar</button>' +
-			'<button type="button" class="btn btn-danger" id="destroy_break" onClick="saveBreak(\'DELETE\',\'/'+breakId+'\')">Eliminar</button>' +
-			'<button type="button" class="btn btn-agendapro-claro" id="edit_break" onClick="saveBreak(\'PATCH\',\'/'+breakId+'\')">Guardar</button>'
-		);
+		
+		//$("#provider_break_service_provider_id").attr("disabled", "disabled");
+		$('#provider_break_service_provider_id option[value="0"]').attr("hidden", "hidden");
+
+		if(provider_break.break_repeat_id == null)
+		{
+			$('.break-modal-footer').append(
+				'<button type="button" class="btn btn-default btn-close" data-dismiss="modal">Cerrar</button>' +
+				'<button type="button" class="btn btn-danger" id="destroy_break" onClick="saveBreak(\'DELETE\',\'/'+breakId+'\')">Eliminar</button>' +
+				'<button type="button" class="btn btn-agendapro-claro" id="edit_break" onClick="saveBreak(\'PATCH\',\'/'+breakId+'\')">Guardar</button>'
+			);
+		}
+		else
+		{
+			$('.break-modal-footer').append(
+				'<div class="row"><div class="col-md-2">'+
+				'<button type="button" class="btn btn-default btn-close pull-left" data-dismiss="modal">Cerrar</button>' +
+				'</div><div class="col-md-4">' + 
+				'<button type="button" class="btn btn-danger" id="destroy_break" onClick="saveBreak(\'DELETE\',\'/'+breakId+'\')">Eliminar</button>' +
+				'<button type="button" class="btn btn-agendapro-claro" id="edit_break" onClick="saveBreak(\'PATCH\',\'/'+breakId+'\')">Editar</button>' +
+				'</div><div class="col-md-6">' + 
+				'<button type="button" class="btn btn-danger" id="destroy_repeat_break" onClick="deleteRepeatBreak(' + breakId +')">Eliminar serie</button>' +
+				'<button type="button" class="btn btn-agendapro-claro" id="edit_repeat_break" onClick="editRepeatBreak(' + breakId +')">Editar serie</button>' +
+				'</div></div>'
+			);
+		}
 		$('#breakModal').modal('show');
 	});
 }

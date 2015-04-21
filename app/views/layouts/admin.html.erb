@@ -78,7 +78,7 @@
 				<ul id="sub-menu-usuario" class="close-menu-usuario">
 				  <li>
 					<% if current_user.company_id || current_user.role_id == Role.find_by(:name => 'Super Admin').id %>
-					<%= link_to '<i class="fa fa-dashboard"></i> Panel Empresa'.html_safe, dashboard_path %>
+					<%= link_to '<i class="fa fa-dashboard"></i> Panel Empresa'.html_safe, root_url(subdomain: false) + "dashboard" %>
 					<% else %>
 					<%= link_to '<i class="fa fa-building-o"></i> Agregar mi Compañía'.html_safe, add_company_path %>
 					<% end %>
