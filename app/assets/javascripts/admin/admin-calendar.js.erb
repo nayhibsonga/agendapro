@@ -1190,6 +1190,7 @@ function saveBreak (typeURL, extraURL) {
 					};
 					break;
 				case 'PATCH':
+					var newProviderId = "0";
 					$('.break-button').attr("disabled", "disabled");
 					$( '<span id="small_loader"><i class="fa fa-spinner fa-spin"></i> </span>' ).insertBefore( $( ".btn-close" ) );
 					var warnings = '';
@@ -1203,6 +1204,7 @@ function saveBreak (typeURL, extraURL) {
 						event.start = provider_break.start;
 						event.end = provider_break.end;
 						event.resourceId = parseInt(provider_break.service_provider_id);
+						newProviderId = provider_break.service_provider_id;
 						$('#calendar').fullCalendar('updateEvent', event);
 						if (provider_break.warnings.length > 0) {
 							for (i in provider_break.warnings) {
@@ -1221,6 +1223,7 @@ function saveBreak (typeURL, extraURL) {
 								event.start = provider_break.start;
 								event.end = provider_break.end;
 								event.resourceId = parseInt(provider_break.service_provider_id);
+								newProviderId = provider_break.service_provider_id;
 								$('#calendar').fullCalendar('updateEvent', event);
 							} else {
 								var events = {
@@ -1243,6 +1246,14 @@ function saveBreak (typeURL, extraURL) {
 							}
 						});
 					};
+					selProviderId = parseInt($('#providers-selector').val())
+					if (selProviderId == 0) {
+						//loadLocationTime (resources);
+					}
+					else {
+						$('#providers-selector option[value="'+newProviderId+'"]').attr("selected", "selected")
+						loadProviderTime(newProviderId);
+					}
 					if (warnings.length > 0) {
 						$('#bookingWarnings').empty();
 						$('#bookingWarnings').append(warnings);
@@ -1293,8 +1304,10 @@ function editRepeatBreak(breakId)
 		dataType: 'json',
 		success: function(provider_break){
 			var warnings = "";
+			var newProviderId = "0";
 			$.each(provider_break, function (key, provider_break) {
 				var label = provider_break.name;
+				newProviderId = provider_break.service_provider_id;
 				if (label == null) {
 					label = 'Hora Bloqueada';
 				}
@@ -1326,6 +1339,14 @@ function editRepeatBreak(breakId)
 				}
 				
 			});
+			selProviderId = parseInt($('#providers-selector').val())
+			if (selProviderId == 0) {
+				//loadLocationTime (localId, resources);
+			}
+			else {
+				$('#providers-selector option[value="'+newProviderId+'"]').attr("selected", "selected")
+				loadProviderTime(newProviderId);
+			}
 			if (warnings.length > 0) {
 				$('#bookingWarnings').empty();
 				$('#bookingWarnings').append(warnings);
