@@ -1381,12 +1381,6 @@ function getAvailableProviders() {
 function createBreakModal(date, providerId) {
 	var providerId = providerId || 0;
 
-	if(providerId == 0)
-	{
-		alert("Este local no posee prestadores, por lo que no puedes crear bloqueos de horario.");
-		return false;
-	}
-
 	var date = date || 0;
 	if (date != 0) {
 		dateArray = date.toString().split(' ');
@@ -1520,17 +1514,17 @@ function editBreakModal(breakId) {
 						);
 					};
 				});
-				selector.append(
+				/*selector.append(
 					'<option value="0">Todos</option>'
-				);
+				);*/
 			}
 		});
 
 		$('#provider_break_name').val(provider_break.name);
 		$('#provider_break_service_provider_id option[value="'+provider_break.service_provider_id+'"]').attr("selected",true);
-		if (provider_break.break_group_id) {
+		/*if (provider_break.break_group_id) {
 			$('#provider_break_service_provider_id option[value="'+0+'"]').attr("selected",true);
-		};
+		};*/
 		if(provider_break.break_repeat_id != null)
 		{
 			$("#provider_break_repeat_id").val(provider_break.break_repeat_id);
