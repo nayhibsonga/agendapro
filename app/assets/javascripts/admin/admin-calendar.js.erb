@@ -1380,6 +1380,13 @@ function getAvailableProviders() {
 
 function createBreakModal(date, providerId) {
 	var providerId = providerId || 0;
+
+	if(providerId == 0)
+	{
+		alert("Este local no posee prestadores, por lo que no puedes crear bloqueos de horario.");
+		return false;
+	}
+
 	var date = date || 0;
 	if (date != 0) {
 		dateArray = date.toString().split(' ');
@@ -1452,7 +1459,7 @@ function createBreakModal(date, providerId) {
 	$('#provider_break_name').val('');
 	$("#provider_break_repeat_id").val('');
 	//$("#provider_break_service_provider_id").attr("disabled", false);
-	$('#provider_break_service_provider_id option[value="0"]').attr("disabled", false);
+	$('#provider_break_service_provider_id option[value="0"]').attr("hidden", false);
 	$('.break-modal-footer').empty();
 	$('.break-modal-footer').append(
 		'<button type="button" class="btn btn-default btn-close break-button" data-dismiss="modal">Cerrar</button>' +
@@ -1531,7 +1538,7 @@ function editBreakModal(breakId) {
 		$('.break-modal-footer').empty();
 		
 		//$("#provider_break_service_provider_id").attr("disabled", "disabled");
-		$('#provider_break_service_provider_id option[value="0"]').attr("disabled", "disabled");
+		$('#provider_break_service_provider_id option[value="0"]').attr("hidden", "hidden");
 
 		if(provider_break.break_repeat_id == null)
 		{

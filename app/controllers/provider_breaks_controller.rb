@@ -201,13 +201,6 @@ class ProviderBreaksController < ApplicationController
         break_group = break_group.break_group_id + 1
       end
 
-      repeat_id = 0
-      repeat_group = ProviderBreak.where.not(break_repeat_id: nil).order(:break_repeat_id).last
-      if repeat_group.nil?
-        repeat_id = 0
-      else
-        repeat_id = repeat_group.break_repeat_id + 1
-      end
 
       @break_json = Array.new
       @break_errors = Array.new
@@ -218,6 +211,13 @@ class ProviderBreaksController < ApplicationController
         service_providers.each do |provider|
           
           break_group_id = break_group
+          repeat_id = 0
+          repeat_group = ProviderBreak.where.not(break_repeat_id: nil).order(:break_repeat_id).last
+          if repeat_group.nil?
+            repeat_id = 0
+          else
+            repeat_id = repeat_group.break_repeat_id + 1
+          end
           
           #repeat_group = ProviderBreak.where.not(break_repeat_id: nil).order(:break_repeat_id).last
 
@@ -351,6 +351,14 @@ class ProviderBreaksController < ApplicationController
       else
 
         service_providers.each do |provider|
+          
+          repeat_id = 0
+          repeat_group = ProviderBreak.where.not(break_repeat_id: nil).order(:break_repeat_id).last
+          if repeat_group.nil?
+            repeat_id = 0
+          else
+            repeat_id = repeat_group.break_repeat_id + 1
+          end
           
           break_group_id = break_group
           provider_break = ProviderBreak.new(:start => params[:provider_break][:start], :end => params[:provider_break][:end], :service_provider_id => provider.id, :name => params[:provider_break][:name], :break_group_id => break_group_id)
@@ -498,7 +506,7 @@ class ProviderBreaksController < ApplicationController
     provider_breaks = ProviderBreak.where(break_repeat_id: provider_break_params[:repeat_id])
     #.where(service_provider_id: provider_break_params[:service_provider_id].to_i)
     #puts "Repeat ID: " + provider_break_params[:repeat_id]
-    break_group = provider_breaks.first.break_group_id
+    #break_group = provider_breaks.first.break_group_id
     service_providers = ServiceProvider.where(location_id: provider_break_params[:local])
     @break_json = Array.new
     @break_errors = Array.new
