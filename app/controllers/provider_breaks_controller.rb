@@ -504,9 +504,11 @@ class ProviderBreaksController < ApplicationController
     @break_errors = Array.new
     status = true
 
+    first_break = ProviderBreak.find(params[:provider_break][:id])
+
     #Differences in hours
-    start_diff = (provider_breaks.first.start.to_datetime - provider_break_params[:start].to_datetime)*24
-    end_diff = (provider_breaks.first.end.to_datetime - provider_break_params[:end].to_datetime)*24
+    start_diff = (first_break.start.to_datetime - provider_break_params[:start].to_datetime)*24
+    end_diff = (first_break.end.to_datetime - provider_break_params[:end].to_datetime)*24
 
     puts "Diffs"
     puts start_diff
@@ -605,6 +607,6 @@ class ProviderBreaksController < ApplicationController
   end
 
   def provider_break_params
-    params.require(:provider_break).permit(:start, :end, :service_provider_id, :name, :local, :repeat, :repeat_option, :times, :repeat_end, :repeat_id)
+    params.require(:provider_break).permit(:id, :start, :end, :service_provider_id, :name, :local, :repeat, :repeat_option, :times, :repeat_end, :repeat_id)
   end
 end

@@ -1275,7 +1275,7 @@ function saveBreak (typeURL, extraURL) {
 	});
 }
 
-function editRepeatBreak()
+function editRepeatBreak(breakId)
 {
 	var breakJSON = {
 		"service_provider_id": $('#provider_break_service_provider_id').val(),
@@ -1283,7 +1283,8 @@ function editRepeatBreak()
 		"start": $('#provider_break_start_1i').val() +"-"+ $('#provider_break_start_2i').val() +"-"+ $('#provider_break_start_3i').val() +"T"+ $('#provider_break_start_4i').val() +":"+ $('#provider_break_start_5i').val() +":00Z",
 		"end": $('#provider_break_end_1i').val() +"-"+ $('#provider_break_end_2i').val() +"-"+ $('#provider_break_end_3i').val() +"T"+ $('#provider_break_end_4i').val() +":"+ $('#provider_break_end_5i').val() +":00Z",
 		"local": $('#locals-selector').val(),
-		"repeat_id" : $("#provider_break_repeat_id").val()
+		"repeat_id" : $("#provider_break_repeat_id").val(),
+		"id" : breakId
 		};
 	$.ajax({
 		type: "post",
@@ -1335,7 +1336,7 @@ function editRepeatBreak()
 	});
 }
 
-function deleteRepeatBreak()
+function deleteRepeatBreak(breakId)
 {
 	var breakJSON = {
 		"service_provider_id": $('#provider_break_service_provider_id').val(),
@@ -1343,7 +1344,8 @@ function deleteRepeatBreak()
 		"start": $('#provider_break_start_1i').val() +"-"+ $('#provider_break_start_2i').val() +"-"+ $('#provider_break_start_3i').val() +"T"+ $('#provider_break_start_4i').val() +":"+ $('#provider_break_start_5i').val() +":00Z",
 		"end": $('#provider_break_end_1i').val() +"-"+ $('#provider_break_end_2i').val() +"-"+ $('#provider_break_end_3i').val() +"T"+ $('#provider_break_end_4i').val() +":"+ $('#provider_break_end_5i').val() +":00Z",
 		"local": $('#locals-selector').val(),
-		"repeat_id" : $("#provider_break_repeat_id").val()
+		"repeat_id" : $("#provider_break_repeat_id").val(),
+		"id" : breakId
 		};
 	$.ajax({
 		type: "post",
@@ -1548,8 +1550,8 @@ function editBreakModal(breakId) {
 				'<button type="button" class="btn btn-danger" id="destroy_break" onClick="saveBreak(\'DELETE\',\'/'+breakId+'\')">Eliminar</button>' +
 				'<button type="button" class="btn btn-agendapro-claro" id="edit_break" onClick="saveBreak(\'PATCH\',\'/'+breakId+'\')">Editar</button>' +
 				'</div><div class="col-md-6">' + 
-				'<button type="button" class="btn btn-danger" id="destroy_repeat_break" onClick="deleteRepeatBreak()">Eliminar serie</button>' +
-				'<button type="button" class="btn btn-agendapro-claro" id="edit_repeat_break" onClick="editRepeatBreak()">Editar serie</button>' +
+				'<button type="button" class="btn btn-danger" id="destroy_repeat_break" onClick="deleteRepeatBreak(' + breakId +')">Eliminar serie</button>' +
+				'<button type="button" class="btn btn-agendapro-claro" id="edit_repeat_break" onClick="editRepeatBreak(' + breakId +')">Editar serie</button>' +
 				'</div></div>'
 			);
 		}
