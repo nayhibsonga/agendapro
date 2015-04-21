@@ -772,7 +772,7 @@ body {
 .navbar-home {
   background-color: #ffffff;
   border-color: #e7e7e7;
-  min-height: 60px;
+  height: 60px;
   -webkit-transition: all 0.5s ease-in-out;
   -moz-transition: all 0.5s ease-in-out;
   -o-transition: all 0.5s ease-in-out;
@@ -1553,11 +1553,22 @@ div.row.row-padded {
     .navbar-collapse.collapse.in {
         display: block!important;
     }
-    .navbar-agendapro .navbar-collapse.collapse.in {
-    	background-color: #646464;
-    }
+    .navbar-agendapro .navbar-collapse.collapse.in,
     .navbar-agendapro .navbar-collapse.collapsing {
     	background-color: #646464;
+      float: right;
+      min-width: 200px;
+      padding-bottom: 15px;
+    }
+    .navbar-home .navbar-collapse.collapse.in,
+    .navbar-home .navbar-collapse.collapsing {
+      background-color: #ffffff;
+      float: right;
+      min-width: 200px;
+      padding-bottom: 15px;
+    }
+    .navbar-right {
+      margin-right: 0;
     }
     .collapsing {
         overflow: hidden!important;
