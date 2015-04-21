@@ -1502,7 +1502,17 @@ function editBreakModal(breakId) {
 				var selector = $('#provider_break_service_provider_id');
 				selector.empty();
 				$.each(providersArray, function (key, provider) {
-					if (provider_break.break_group_id) {
+					if (provider.id == provider_break.service_provider_id) {
+							selector.append(
+								'<option value="' + provider.id + '" selected>' + provider.public_name + '</option>'
+							);
+					}
+					else {
+						selector.append(
+							'<option value="' + provider.id + '">' + provider.public_name + '</option>'
+						);
+					}
+					/*if (provider_break.break_group_id) {
 						if (provider.id == provider_break.service_provider_id) {
 							selector.append(
 								'<option value="' + provider.id + '">' + provider.public_name + '</option>'
@@ -1512,7 +1522,7 @@ function editBreakModal(breakId) {
 						selector.append(
 							'<option value="' + provider.id + '">' + provider.public_name + '</option>'
 						);
-					};
+					};*/
 				});
 				/*selector.append(
 					'<option value="0">Todos</option>'
