@@ -495,8 +495,9 @@ class ProviderBreaksController < ApplicationController
 
   #Edit all repetitions
   def update_repeat_break
-    provider_breaks = ProviderBreak.where(break_repeat_id: provider_break_params[:repeat_id]).where(service_provider_id: provider_break_params[:service_provider_id].to_i)
-    puts "Repeat ID: " + provider_break_params[:repeat_id]
+    provider_breaks = ProviderBreak.where(break_repeat_id: provider_break_params[:repeat_id])
+    #.where(service_provider_id: provider_break_params[:service_provider_id].to_i)
+    #puts "Repeat ID: " + provider_break_params[:repeat_id]
     break_group = provider_breaks.first.break_group_id
     service_providers = ServiceProvider.where(location_id: provider_break_params[:local])
     @break_json = Array.new
@@ -514,7 +515,7 @@ class ProviderBreaksController < ApplicationController
     #if provider_break_params[:service_provider_id].to_i != 0
       provider_breaks.each do |breaks|
      
-        #breaks.service_provider_id = provider_break_params[:service_provider_id]
+        breaks.service_provider_id = provider_break_params[:service_provider_id]
         breaks.name = provider_break_params[:name]
         breaks.start = breaks.start - start_diff.hours
         breaks.end = breaks.end - end_diff.hours
