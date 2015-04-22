@@ -455,7 +455,13 @@
         <h4 class="modal-title break-modal-title" id="breakModalLabel">Bloquear Horas o Agregar Vacaciones</h4>
       </div>
       <div class="modal-body break-modal-body">
+        <div id="break-loader" hidden>
+          <p style="text-align: center; margn-top: 50px;">
+            <%= image_tag "ajax-loader.gif", :alt => "Loader" %>
+          </p>
+        </div>
         <%= form_for @provider_break, html: {class: "form-horizontal"} do |f| %>
+          <input type="hidden" id="provider_break_repeat_id" name="provider_break_repeat_id" value="" />
           <div class="form-group">
             <%= f.label :service_provider_id, "Prestador de Servicios", class: "col-sm-3 control-label" %>
             <div class="col-sm-9">
@@ -480,6 +486,61 @@
               <%= f.datetime_select :end, {default: eval(ENV["TIME_ZONE_OFFSET"]).ago, :minute_step => 5}, {class: "form-control date-select"} %>
             </div>
           </div>
+          <div class="form-group form-repeat-div">
+            <label class="col-sm-3 control-label">
+              Repetición
+            </label>
+            <div class="col-sm-9">
+              Define el esquema de repetición, eligiendo la cantidad de veces o la fecha de término.
+            </div>
+          </div>
+          <div class="form-group form-repeat-div">
+            <label class="col-sm-3 control-label">
+              Repetir
+            </label>
+            <div class="col-sm-9">
+              <select name="repeat" id="break_repeat" class="form-control">
+                <option value="never">
+                  Nunca
+                </option>
+                <option value="daily">
+                  Diariamente
+                </option>
+                <option value="weekly">
+                  Semanalmente
+                </option>
+                <option value="monthly_day">
+                  Mensualmente (por día)
+                </option>
+                <option value="monthly_date">
+                  Mensualmente (por fecha)
+                </option>
+                <option value="yearly">
+                  Anualmente (por fecha)
+                </option>
+              </select>
+            </div>
+          </div>
+          <div class="form-group form-repeat-div">
+            <label class="col-sm-3 control-label">
+              Finaliza
+            </label>
+            <div class="col-sm-9">
+              <div>
+                <%= radio_button_tag :repeat_option, 'times', true %>&nbsp;Después de un número de repeticiones (incluida la original)
+              </div>
+              <div>
+                <%= number_field_tag :break_times, nil,  class: "form-control" %>
+              </div>
+              <div>
+                <%= radio_button_tag :repeat_option, 'date_end', false %>&nbsp;El
+              </div>
+              <div>
+                <%= datetime_select "provider_break_repeat", "repeat_end", {default: eval(ENV["TIME_ZONE_OFFSET"]).ago, :minute_step => 5}, {class: "form-control date-select"} %> 
+              </div>
+            </div>
+          </div>    
+
         <% end %>
       </div>
       <div class="modal-footer break-modal-footer">
