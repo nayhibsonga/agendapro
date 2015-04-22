@@ -399,7 +399,7 @@ class ProviderBreaksController < ApplicationController
         break_params[:break_group_id] = nil
         @provider_break.service_provider_id = provider_break_params[:service_provider_id]
         @provider_break.break_group_id = nil
-        if !provider_break_params[:name] || provider_break_params[:name].nil? || provider_break_params[:name] = ""
+        if !provider_break_params[:name] || provider_break_params[:name].nil? || provider_break_params[:name] == ""
 
         else
           @provider_break.name = provider_break_params[:name]
