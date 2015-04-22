@@ -455,6 +455,11 @@
         <h4 class="modal-title break-modal-title" id="breakModalLabel">Bloquear Horas o Agregar Vacaciones</h4>
       </div>
       <div class="modal-body break-modal-body">
+        <div id="break-loader" hidden>
+          <p style="text-align: center; margn-top: 50px;">
+            <%= image_tag "ajax-loader.gif", :alt => "Loader" %>
+          </p>
+        </div>
         <%= form_for @provider_break, html: {class: "form-horizontal"} do |f| %>
           <input type="hidden" id="provider_break_repeat_id" name="provider_break_repeat_id" value="" />
           <div class="form-group">

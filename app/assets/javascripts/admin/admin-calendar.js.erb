@@ -1120,6 +1120,9 @@ function saveBreak (typeURL, extraURL) {
 		"times": $("#break_times").val(),
 		"repeat_option": $('input[name="repeat_option"]:checked').val()
 		};
+	$("#break-loader").show();
+	$("#new_provider_break").hide();
+	$(".break-modal-footer").hide();
 	$.ajax({
 		type: typeURL,
 		url: '/provider_breaks'+extraURL+'.json',
@@ -1180,6 +1183,9 @@ function saveBreak (typeURL, extraURL) {
 							$('#calendar').fullCalendar('renderEvent', events, true);
 						});
 					};
+					$("#break-loader").hide();
+					$("#new_provider_break").show();
+					$(".break-modal-footer").show();
 					$('#breakModal').modal('hide');
 
 					if (warnings.length > 0) {
@@ -1272,6 +1278,9 @@ function saveBreak (typeURL, extraURL) {
 					};
 					break;
 			}
+			$("#break-loader").hide();
+			$("#new_provider_break").show();
+			$(".break-modal-footer").show();
 			$('#breakModal').modal('hide');
 		},
 		error: function(xhr){
@@ -1281,6 +1290,10 @@ function saveBreak (typeURL, extraURL) {
 				errores += '*' + errors[i] + '\n';
 			}
 			alert(errores);
+			$("#break-loader").hide();
+			$("#new_provider_break").show();
+			$(".break-modal-footer").show();
+			$('#breakModal').modal('hide');
 			// alertId.showAlert(errores);
 		}
 	});
@@ -1297,6 +1310,9 @@ function editRepeatBreak(breakId)
 		"repeat_id" : $("#provider_break_repeat_id").val(),
 		"id" : breakId
 		};
+	$("#break-loader").show();
+	$("#new_provider_break").hide();
+	$(".break-modal-footer").hide();
 	$.ajax({
 		type: "post",
 		url: '/provider_breaks/update_repeat_break.json',
@@ -1352,6 +1368,9 @@ function editRepeatBreak(breakId)
 				$('#bookingWarnings').append(warnings);
 				$('#bookingAlerts').show();
 			}
+			$("#break-loader").hide();
+			$("#new_provider_break").show();
+			$(".break-modal-footer").show();
 			$("#breakModal").modal('hide');
 		}
 	});
@@ -1368,6 +1387,9 @@ function deleteRepeatBreak(breakId)
 		"repeat_id" : $("#provider_break_repeat_id").val(),
 		"id" : breakId
 		};
+	$("#break-loader").show();
+	$("#new_provider_break").hide();
+	$(".break-modal-footer").hide();
 	$.ajax({
 		type: "post",
 		url: '/provider_breaks/destroy_repeat_break.json',
@@ -1379,6 +1401,9 @@ function deleteRepeatBreak(breakId)
 			$.each(provider_break, function (key, provider_break) {
 				$('#calendar').fullCalendar('removeEvents','b'+provider_break.id);
 			});
+			$("#break-loader").hide();
+			$("#new_provider_break").show();
+			$(".break-modal-footer").show();
 			$("#breakModal").modal('hide');
 		}
 	});
