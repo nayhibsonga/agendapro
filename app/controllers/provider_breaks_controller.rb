@@ -359,7 +359,7 @@ class ProviderBreaksController < ApplicationController
           else
             repeat_id = repeat_group.break_repeat_id + 1
           end
-          
+
           break_group_id = break_group
           provider_break = ProviderBreak.new(:start => params[:provider_break][:start], :end => params[:provider_break][:end], :service_provider_id => provider.id, :name => params[:provider_break][:name], :break_group_id => break_group_id)
 
@@ -399,7 +399,11 @@ class ProviderBreaksController < ApplicationController
         break_params[:break_group_id] = nil
         @provider_break.service_provider_id = provider_break_params[:service_provider_id]
         @provider_break.break_group_id = nil
-        @provider_break.name = provider_break_params[:name]
+        if !provider_break_params[:name] || provider_break_params[:name].nil? || provider_break_params[:name] = ""
+
+        else
+          @provider_break.name = provider_break_params[:name]
+        end
         @provider_break.start = provider_break_params[:start]
         @provider_break.end = provider_break_params[:end]
         @provider_break.break_repeat_id = nil
