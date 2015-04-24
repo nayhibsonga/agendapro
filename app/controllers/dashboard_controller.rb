@@ -6,6 +6,8 @@ class DashboardController < ApplicationController
 
 	def index
 		# @lastBookings = Booking.all.order("id desc").limit(5).reverse
+		host = request.host_with_port
+    	@url = host[host.index(request.domain)..host.length]
 
 		if current_user.role_id != Role.find_by_name("Super Admin").id && current_user.company.company_setting.online_cancelation_policy.nil?
 			ocp = OnlineCancelationPolicy.new

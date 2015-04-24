@@ -119,6 +119,8 @@ class Ability
         can :create_provider_break, ProviderBreak
         can :update_provider_break, ProviderBreak
         can :destroy_provider_break, ProviderBreak
+        can :update_repeat_break, ProviderBreak
+        can :destroy_repeat_break, ProviderBreak
 
         can :read, Company, :id => user.company_id
         can :destroy, Company, :id => user.company_id
