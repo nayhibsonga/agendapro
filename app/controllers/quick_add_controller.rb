@@ -29,6 +29,7 @@ class QuickAddController < ApplicationController
 	        @resource_category.save
     	end
 		@location = Location.new
+		@service_category = ServiceCategory.new
 		@service = Service.new
 		@service_provider = ServiceProvider.new
 
@@ -40,6 +41,11 @@ class QuickAddController < ApplicationController
 		@company_setting = @company.company_setting
 		@company_setting.build_online_cancelation_policy
 		@company_setting.save
+	end
+
+	def load_location
+		@location = Location.find(params[:id])
+		render json: {location: @location, location_times: @location.location_times, location_districts: @location.location_outcall_districts, country_id: @location.district.city.region.country.id, region_id: @location.district.city.region.id, city_id: @location.district.city.id}
 	end
 
 	def location_valid
@@ -96,6 +102,26 @@ class QuickAddController < ApplicationController
 	      if @location.save
 	        format.json { render :layout => false, :json => @location }
 	      else
+	        format.json { render :layout => false, :json => { :errors => @location.errors.full_messages }, :status => 422 }
+	      end
+	    end
+	end
+	def update_location
+		@location_times = Location.find(params[:id]).location_times
+	    @location_times.each do |location_time|
+	      location_time.location_id = nil
+	      location_time.save
+	    end
+		@location = Location.find(params[:id])
+	    respond_to do |format|
+	      if @location.update(location_params)
+        	@location_times.destroy_all
+	        format.json { render :layout => false, :json => @location }
+	      else
+	        @location_times.each do |location_time|
+	          location_time.location_id = @location.id
+	          location_time.save
+	        end
 	        format.json { render :layout => false, :json => { :errors => @location.errors.full_messages }, :status => 422 }
 	      end
 	    end

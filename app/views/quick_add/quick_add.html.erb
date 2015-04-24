@@ -20,240 +20,36 @@
   </div>
 </div>
 
-<%= render 'company' %>
-<%= render 'new_local' %>
-
 <% content_for :scripts do %>
+  <%= javascript_include_tag "http://maps.google.com/maps/api/js?sensor=false" %>
+  <%= javascript_include_tag "Alert" %>
+  <%= javascript_include_tag "validations/validate" %>
+  <%= javascript_include_tag "validations/admin/quick-add" %>
+  <%= javascript_include_tag "bootstrap-tagsinput" %>
+  <%= javascript_include_tag "bootstrap3-typeahead" %>
+
   <script type="text/javascript">
+    function scrollToAnchor(aid){
+      var aTag = $("#"+ aid);
+      $('html,body').animate({scrollTop: aTag.offset().top},'slow');
+    }
+    var my_alert;
     $(function () {
+      my_alert = new Alert();
       var windowheight = $(window).height();
-      $(".content-fill").height(windowheight - 100);
+      // $(".content-fill").height(windowheight - 100);
+      $('.content-fill').css('min-height', (windowheight) + 'px');
     });
     $( window ).resize(function() {
       var windowheight = $(window).height();
-      $(".content-fill").height(windowheight - 100);
+      // $(".content-fill").height(windowheight - 100);
+      $('.content-fill').css('min-height', (windowheight) + 'px');
     });
   </script>
 <% end %>
 
+<%= render 'company' %>
+<%= render 'new_local' %>
+<%= render 'services' %>
+<%= render 'providers' %>
 
-<!-- Service -->
-<div class="box-step step-workflow-min">
-  <fieldset disabled>
-    <div class="col-md-12">
-      <h4>Nuevo Servicio</h4>
-      <%= form_for @service, html: {class: "form-horizontal" } do |f| %>
-        <div class="col-md-6">
-          <div class="form-group">
-            <%= f.label :name, "Nombre: ", class: "col-sm-3 control-label" %>
-            <div class="col-sm-9">
-              <%= f.text_field :name, :autofocus => true, class: "form-control" %>
-              <span class="help-block"></span>
-              <span class="form-control-feedback"></span>
-            </div>
-          </div>
-          <div class="form-group">
-            <%= f.label :price, "Precio: ", class: "col-sm-3 control-label" %>
-            <div class="col-sm-9">
-              <div class="input-group">
-                <span class="input-group-addon">$</span>
-                <%= f.number_field :price, class: "form-control", min: 0, placeholder: '0 (requerido)' %>
-                <span class="input-group-addon">Pesos</span>
-              </div>
-              <span class="help-block"></span>
-              <!-- <span class="form-control-feedback"></span> -->
-              <div class="checkbox">
-                <label>
-                  <%= f.check_box :show_price %> Mostrar el precio en tu mini-sitio AgendaPro
-                </label>
-              </div>
-            </div>
-          </div>
-          <div class="form-group">
-            <%= f.label :duration, "Duración: ", class: "col-sm-3 control-label" %>
-            <div class="col-sm-9">
-              <div class="input-group">
-                <%= f.number_field :duration, class: "form-control", min: 5, placeholder: '5 (requerido)' %>
-                <span class="input-group-addon">Minutos</span>
-              </div>
-              <span class="help-block"></span>
-              <!-- <span class="form-control-feedback"></span> -->
-              <div class="checkbox">
-                        <label>
-                        <% if params[:step] && params[:step] > 1 && Company.find(current_user.company_id).locations.first.outcall %>
-                          <%= f.check_box :outcall, :checked => true, :disabled => true  %>
-                        <% else %>
-                          <%= f.check_box :outcall %>
-                        <% end %>
-                          Servicio a domicilio <br /><small id="outcallTip" class="hidden">Si el servicio no pertenece a una sucursal exclusivamente a domicilio, recomendamos ingresar las comunas que se atienden en la descripción.</small>
-                        </label>
-                      </div>
-            </div>
-          </div>
-          <div class="form-group">
-            <%= f.label :description, "Descripción: ", class: "col-sm-3 control-label" %>
-            <div class="col-sm-9">
-              <%= f.text_area :description, class: "form-control" %>
-              <span class="help-block"></span>
-              <span class="form-control-feedback"></span>
-            </div>
-          </div>
-        </div>
-        <div class="col-md-6">
-          <div class="form-group">
-            <%= f.label :service_category_id, "Categoría de Servicio:", class: "col-sm-4 control-label" %>
-            <div class="col-sm-8">
-              <%= f.collection_select :service_category_id, ServiceCategory.where(company_id: current_user.company_id), :id, :name, {}, { class: "form-control" }%>
-              <span class="help-block"></span>
-              <span class="form-control-feedback"></span>
-            </div>
-              </div>
-          <% if @service.service_category.nil? then @service.build_service_category end %>
-          <%= f.fields_for :service_category do |builder| %>
-          <div class="form-group hidden">
-            <%= builder.label :name, "Categoría de Servicio:", class: "col-sm-4 control-label" %>
-            <div class="col-sm-8">
-              <%= builder.text_field :name, class: "form-control", :value => '', disabled: true %>
-              <span class="help-block"></span>
-              <span class="form-control-feedback"></span>
-              <%= builder.hidden_field :company_id, class: "form-control", :value => current_user.company_id %>
-            </div>
-          </div>
-          <% end %>
-          <div class="form-group">
-            <div class="col-sm-offset-4 col-sm-8">
-              <div class="checkbox">
-                <label>
-                  <input type="checkbox" name="catCheck" id="categoryCheckboxId" value="0" onchange="newCategory()" class="checkbox"> Crear nueva Categoría de Servicio
-                </label>
-              </div>
-            </div>
-          </div>
-          <div class="form-group">
-            <div class="col-sm-offset-4 col-sm-8">
-              <div class="checkbox">
-                <label>
-                  <%= f.check_box :group_service %> Servicio Grupal
-                </label>
-              </div>
-            </div>
-          </div>
-          <div class="form-group hidden">
-            <%= f.label :capacity, "Capacidad: ", class: "col-sm-4 control-label" %>
-            <div class="col-sm-8">
-              <div class="input-group">
-                <%= f.number_field :capacity, class: "form-control", min: 2, disabled: true %>
-                <span class="input-group-addon">Personas</span>
-              </div>
-              <span class="help-block"></span>
-              <!-- <span class="form-control-feedback"></span> -->
-            </div>
-          </div>
-
-          <% if @company.company_setting.allows_online_payment %>
-
-            <div class="form-group">
-              <%= f.label :online_payable, "Pago en línea:", class: "col-sm-4 control-label" %>
-              <div class="col-sm-8">
-                <div class="checkbox">
-                  <label>
-                    <%= f.check_box :online_payable %> Este servicio se puede pagar en línea
-                  </label>
-                </div>
-              </div>
-                </div>
-
-            <div class="form-group hidden" id="form-has-discount">
-              <%= f.label :has_discount, "Descuento:", class: "col-sm-4 control-label" %>
-              <div class="col-sm-8">
-                <div class="checkbox">
-                  <label>
-                    <%= f.check_box :has_discount %> Tiene descuento por pago en línea
-                  </label>
-                </div>
-              </div>
-                </div>
-
-                <div class="form-group hidden" id="form-discount">
-              <div class="col-sm-8 col-sm-offset-4">
-                <div class="input-group">
-                  <%= f.number_field :discount, class: "form-control", min: 0, placeholder: '0 (requerido)' %>
-                  <span class="input-group-addon">%</span>
-                </div>
-                <span class="help-block"></span>
-              </div>
-                </div>
-
-              <% end %>
-
-
-        </div>
-      <% end %>
-    </div>
-  </fieldset>
-</div>
-<!-- Prestador de Servicios -->
-<div class="box-step step-workflow">
-  <fieldset disabled>
-    <div class="col-md-12">
-      <h4>Nuevo Prestador de Servicios</h4>
-    </div>
-    <div class="col-md-6">
-      <%= form_for @service_provider, html: {class: "form-horizontal" } do |f| %>
-        <div class="form-group has-feedback">
-          <%= f.label :public_name, "Nombre Público:", class: "col-sm-3 control-label" %>
-          <div class="col-sm-9">
-            <%= f.text_field :public_name, :autofocus => true, class: "form-control" %>
-            <span class="help-block"></span>
-            <span class="form-control-feedback"></span>
-          </div>
-        </div>
-        <div class="form-group has-feedback">
-          <%= f.label :notification_email, "Email de Notificación:", class: "col-sm-3 control-label" %>
-          <div class="col-sm-9">
-            <%= f.text_field :notification_email, class: "form-control" %>
-            <span class="help-block"></span>
-            <span class="form-control-feedback"></span>
-          </div>
-        </div>
-        <div class="form-group">
-          <%= f.label :location_id, "Local:", class: "col-sm-3 control-label" %>
-          <div class="col-sm-9">
-            <% if params[:step] && params[:step] > 1 %>
-            <%= f.hidden_field :location_id, class: "form-control", :value => Company.find(current_user.company_id).locations.first.id if params[:step] > 1 %>
-            <p class="form-control-static"><%= Company.find(current_user.company_id).locations.first.name %></p>
-            <% else %>
-            <%= f.hidden_field :location_id, class: "form-control", :value => '' %>
-            <% end %>
-          </div>
-        </div>
-      <% end %>
-    </div>
-    <div class="col-md-6">
-      <div class="panel panel-info">
-        <div class="panel-heading">
-          <h3 class="panel-title">Horario Local</h3>
-        </div>
-        <div class="panel-body">
-          <table class="table">
-            <tbody id="provTable">
-              <tr>
-                <th>Día</th>
-                <th>Apertura</th>
-                <th>Cierre</th>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </div>
-  </fieldset>
-</div>
-
-<% content_for :scripts do %>
-  <%= javascript_include_tag "http://maps.google.com/maps/api/js?sensor=false" %>
-  <%= javascript_include_tag "Alert" %>
-  <%= javascript_include_tag "admin/quick_add" %>
-  <%= javascript_include_tag "validations/validate" %>
-  <%= javascript_include_tag "validations/admin/quick-add" %>
-<% end %>

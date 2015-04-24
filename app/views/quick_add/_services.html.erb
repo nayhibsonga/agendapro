@@ -1,0 +1,91 @@
+<fieldset class="content-fill" id="fieldset_step3" <%= "disabled" if @company.service_categories.count < 1 %>>
+<section id="quick_add_step3" class="green-background">
+<div class="container">
+  <div class="row">
+    <div class="col-sm-12">
+      <h2 class="text-center">¿Cuáles son las categorías o familias de servicios que ofreces?</h2>
+      <p class="text-center text-dark-green">Por favor ingrésalas a continuación (por ejemplo: masajes, cortes de pelo, depilación, tratamientos, etc.)</p>
+    </div>
+  </div>
+  <div class="row">
+    <% @company.service_categories.each do |service_category| %>
+    <div class="col-sm-12 text-center">
+      <p class="text-center text-dark-green"><%= service_category.name %> <button id="service_category_delete_<%= service_category.id %>" class="btn btn-danger btn-xs"><i class="fa fa-trash-o"></i></button></p>
+    </div>
+    <% end %>
+    <div class="col-sm-12 text-center">
+      <%= form_for @service_category, html: {class: "form-inline" } do |f| %>
+        <div class="form-group">
+          <%= f.label :name, "Nueva Categoría de Servicios: ", class: "control-label" %>
+          <%= f.text_field :name, class: "form-control" %>
+        </div>
+        <button class="btn btn-default">Guardar</button>
+        <% end %>
+    </div>
+  </div>
+</div>
+</section>
+<section>  
+<div class="container">
+  <!-- Local -->
+  <div class="row">
+      <div class="col-sm-12 text-center">
+      <table class="table">
+      <% @company.services.where(active: true).each do |service| %>
+      <tr>
+        <td><%= service.name %></td><td><%= number_to_currency(service.price, currency: ' $', separator: ',', delimeter: '.', precision: 0) %></td><td><%= service.duration %> mins.</td><td><%= service.service_category.name %></td><td><button id="service_delete_<%= service.id %>" class="btn btn-danger btn-xs"><i class="fa fa-trash-o"></i></button></td>
+      </tr>
+      <% end %>
+      </table>
+      </div>
+      <div class="col-sm-12 text-center">
+        <%= form_for @service, html: {class: "form-inline" } do |f| %>
+          <div class="form-group">
+            <%= f.label :name, "Nombre: ", class: "control-label" %>
+            <%= f.text_field :name, class: "form-control" %>
+          </div>
+          <div class="form-group">
+            <%= f.label :price, "Precio: ", class: "control-label" %>
+            <%= f.text_field :price, class: "form-control" %>
+          </div>
+          <div class="form-group">
+            <%= f.label :duration, "Duración: ", class: "control-label" %>
+            <%= f.text_field :duration, class: "form-control" %>
+          </div>
+          <div class="form-group">
+            <%= f.label :service_category_id, "Categoría: ", class: "control-label" %>
+            <%= f.collection_select :service_category_id, ServiceCategory.where(company_id: current_user.company_id), :id, :name, {}, { class: "form-control" }%>
+          </div>
+          <button class="btn btn-default">Guardar</button>
+        <% end %>
+      </div>
+  </div>
+</div>
+</section>
+</fieldset>
+
+<% content_for :scripts do %>
+  <%= javascript_include_tag "admin/quick_add/services" %>
+  <script type="text/javascript">
+
+    // var elt = $('#service_categories_input');
+    // elt.tagsinput({
+    //   itemValue: 'value',
+    //   itemText: 'text',
+    //   typeaheadjs: {
+    //     source: function(str) {
+    //       return {"text": str, "value": 0 };
+    //     }
+    //   },
+    //   freeInput: false
+    // });
+    // <% @company.service_categories.each do |service_category| %>
+    // elt.tagsinput('add', { "value":  <%= service_category.id %>, "text": "<%= service_category.name %>" });
+    // <% end %>
+  <% if @company.services.where(active:true).count > 0 %>
+    
+  <% else %>
+    
+  <% end %>
+  </script>
+<% end %>

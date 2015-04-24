@@ -1,5 +1,6 @@
 // Post
 function updateCompany () {
+	$('#fieldset_step1').attr('disabled');
 	$('#update_company_button').addClass('disabled');
 	$('#update_company_spinner').show();
 	var formId = $('[id^=edit_company_]').prop('id');
@@ -12,6 +13,8 @@ function updateCompany () {
 		processData: false,
 		success: function (result) {
 			initializeStep2();
+			scrollToAnchor("quick_add_step2");
+			$('#fieldset_step1').removeAttr('disabled');
 			$('#update_company_button').removeClass('disabled');
 			$('#update_company_spinner').hide();
 		},
@@ -27,6 +30,7 @@ function updateCompany () {
 					errorList +
 				'</ul>'
 			);
+			$('#fieldset_step1').removeAttr('disabled');
 			$('#update_company_button').removeClass('disabled');
 			$('#update_company_spinner').hide();
 		},

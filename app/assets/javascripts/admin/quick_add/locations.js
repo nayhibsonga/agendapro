@@ -1,6 +1,5 @@
 function initializeStep2 () {
 	$('#fieldset_step2').removeAttr('disabled');
-	scrollToAnchor("quick_add_step2");
 	createMap();
 	initialize('local');
 }
@@ -103,6 +102,7 @@ function buildDay (value, ctrl) {
 }
 
 function initialize (ctrl) {
+	$('#' + ctrl + 'Table').empty();
 	for(var i = 1; i < 8; ++i) {
 		buildDay(i, ctrl);
 	}
@@ -127,7 +127,6 @@ function changeDayStatus (value, ctrl) {
 
 function startLocation () {
 	if (!$('#new_location').valid()) {
-		hideLoad();
 		return false;
 	};
 	if ((!$('#location_outcall').prop('checked')) && ($('#location_address').val() != '') && ($('#location_district_id').val() != '')) {
@@ -180,6 +179,95 @@ function startLocation () {
 			});
 		});
 	}
+}
+
+// // Validations
+// function locationValid (ctrl) {
+// 	var locationJSON = locJSON(ctrl);
+// 	$.ajax({
+// 	    type: "POST",
+// 	    url: '/quick_add/location_valid.json',
+// 	    data: { "location": locationJSON },
+// 	    dataType: 'json',
+// 	    success: function (result){
+// 	    	if ($.parseJSON(result.valid)) {
+// 	    		saveLocation(ctrl);
+// 	    	}
+// 	    	else {
+// 	    		var errors = result.errors;
+// 	    		var errorList = '';
+// 				for (i in errors) {
+// 					errorList += '<li>' + errors[i] + '</li>'
+// 				}
+// 				my_alert.showAlert(
+// 					'<h3>Error</h3>' +
+// 					'<ul>' +
+// 						errorList +
+// 					'</ul>'
+// 				);
+// 	    	}
+// 		},
+// 		error: function (xhr){
+// 		    var errors = $.parseJSON(xhr.responseText).errors;
+// 		    var errorList = '';
+// 			for (i in errors) {
+// 				errorList += '<li>' + errors[i] + '</li>'
+// 			}
+// 			my_alert.showAlert(
+// 				'<h3>Error</h3>' +
+// 				'<ul>' +
+// 					errorList +
+// 				'</ul>'
+// 			);
+// 			hideLoad();
+// 		}
+// 	});
+// }
+
+function saveLocation (typeURL, extraURL) {
+	var locationJSON = locJSON('local');
+	$.ajax({
+	    type: typeURL,
+	    url: '/quick_add/location'+extraURL+'.json',
+	    data: { "location": locationJSON },
+	    dataType: 'json',
+	    success: function (result){
+			$('#load_location_spinner').show();
+			$('#location_pills.nav-pills li').removeClass('active');
+			if (typeURL == 'POST') {
+				$('#new_location_pill').parent().before('<li><a href="#" id="location_pill_'+result.id+'">'+result.name+'<!--  <button id="location_delete_'+result.id+'" class="btn btn-danger btn-xs"><i class="fa fa-trash-o"></i></button> --></a></li>');
+				$('#location_pill_'+result.id).click(function(event){
+					event.preventDefault();
+					$('#load_location_spinner').show();
+					$('#location_pills.nav-pills li').removeClass('active');
+					load_location(result.id);
+				});
+			}
+			else {
+				$('#location_pill_'+result.id).html(result.name);
+			}
+			$('#update_location_spinner').hide();
+			$('#update_location_button').atrr('disabled', false);
+			$('#next_location_button').atrr('disabled', false);
+	    	new_location();
+		},
+		error: function (xhr){
+		    var errors = $.parseJSON(xhr.responseText).errors;
+		    var errorList = '';
+			for (i in errors) {
+				errorList += '<li>' + errors[i] + '</li>'
+			}
+			my_alert.showAlert(
+				'<h3>Error</h3>' +
+				'<ul>' +
+					errorList +
+				'</ul>'
+			);
+			$('#update_location_spinner').hide();
+			$('#update_location_button').atrr('disabled', false);
+			$('#next_location_button').atrr('disabled', false);
+		}
+	});
 }
 
 function locJSON (ctrl) {
@@ -286,6 +374,146 @@ function changeCity (city_id) {
 	});
 }
 
+function new_location() {
+	$('#location_name').val('');
+	$('#location_address').val('');
+	$('#location_second_address').val('');
+	$('#location_phone').val('');
+	$('#location_district_id').val('');
+	$('#location_outcall').prop('checked', false);
+	$('#location_latitude').val('');
+	$('#location_longitude').val('');
+	$('#location_address').attr('disabled', false);
+	$('#location_second_address').attr('disabled', false);
+	$('#location_district_ids').val('');
+	$('#districtsCheckboxes').addClass('hidden');
+	$('#country option[value=""]').prop('selected', true);
+	$('#region option[value=""]').prop('selected', true);
+	$('#region').attr('disabled', true);
+	$('#city option[value=""]').prop('selected', true);
+	$('#city').attr('disabled', true);
+	$('#location_district_id option[value=""]').prop('selected', true);
+	$('#location_district_id').attr('disabled', true);
+	$('#districtsCheckboxes').empty();
+	$('#update_location_button').attr('name', 'new_location_btn');
+	$('#new_location_pill').parent().addClass('active');
+	$('#load_location_spinner').hide();
+	initialize('local');
+}
+
+function load_location(id) {
+	$.getJSON('/quick_add/load_location/'+id, {}, function (location) {
+		$('#location_name').val(location.location.name);
+		$('#location_address').val(location.location.address);
+		$('#location_second_address').val(location.location.second_address);
+		$('#location_phone').val(location.location.phone);
+		$('#location_outcall').prop('checked', location.location.outcall);
+		$('#location_latitude').val(location.location.latitude);
+		$('#location_longitude').val(location.location.longitude);
+		$('#location_address').attr('disabled', false);
+		$('#location_second_address').attr('disabled', false);
+	    var latitude = parseFloat($('#location_latitude').val());
+	    var longitude = parseFloat($('#location_longitude').val());
+	    setCenter(new google.maps.LatLng(latitude, longitude), 17);
+		$.each(location.location_times, function(index,locationTime) {
+			window.console.log()
+			var value = locationTime.day_id;
+			$('#localdayStatusId'+ value).prop('checked', true);
+			$('#localdayStatusId'+ value).val(1);
+
+			$('#localopenHourId'+ value).prop('disabled', false);
+			$('#localopenMinuteId'+ value).prop('disabled', false);
+			$('#localcloseHourId'+ value).prop('disabled', false);
+			$('#localcloseMinuteId'+ value).prop('disabled', false);
+			// Deseleccionar por defecto
+			$('#localopenHourId' + value + ' > option:selected').removeAttr('selected');
+			$('#localopenMinuteId' + value + ' > option:selected').removeAttr('selected');
+			$('#localcloseHourId' + value + ' > option:selected').removeAttr('selected');
+			$('#localcloseMinuteId' + value + ' > option:selected').removeAttr('selected');
+
+			var openTime = new Date(Date.parse(locationTime.open)).toUTCString().split(" ")[4].split(":");
+			var closeTime = new Date(Date.parse(locationTime.close)).toUTCString().split(" ")[4].split(":");
+
+			$('#localopenHourId'+ value +' option[value="'+openTime[0]+'"]').attr("selected",true);
+			$('#localopenMinuteId'+ value +' option[value="'+openTime[1]+'"]').attr("selected",true);
+			$('#localcloseHourId'+ value +' option[value="'+closeTime[0]+'"]').attr("selected",true);
+			$('#localcloseMinuteId'+ value +' option[value="'+closeTime[1]+'"]').attr("selected",true);
+	    });
+		$('#country option[value="'+location.country_id+'"]').attr("selected",true);
+	    $.getJSON('/country_regions', {country_id: location.country_id}, function (regions) {
+	      if (regions.length > 0) {
+	        $('#region').empty();
+	        $.each(regions, function (key, region) {
+	          $('#region').append(
+	            '<option value="' + region.id + '">' + region.name + '</option>'
+	          );
+	        });
+	        $('#region').prepend(
+	          '<option></option>'
+	        );
+	        $('#region').attr('disabled', false);
+	        $('#region option[value="'+location.region_id+'"]').attr("selected",true);
+	        $('#region').change(function (event) {
+	          $('#city').attr('disabled', true);
+	          $('#city').val('');
+	          $('#location_district_id').attr('disabled', true);
+	          $('#location_district_id').val('');
+	          var region_id = $(event.target).val();
+	          changeRegion(region_id);
+	        });
+	        $.getJSON('/region_cities', {region_id: location.region_id}, function (cities) {
+	          if (cities.length) {
+	            $('#city').empty();
+	            $.each(cities, function (key, city) {
+	              $('#city').append(
+	                '<option value="' + city.id + '">' + city.name + '</option>'
+	              );
+	            });
+	            $('#city').prepend(
+	              '<option></option>'
+	            );
+	            $('#city').attr('disabled', false);
+	            $('#city option[value="'+location.city_id+'"]').attr("selected",true);
+	            $('#city').change(function (event) {
+	              $('#location_district_id').attr('disabled', true);
+	              $('#location_district_id').val('');
+	              var city_id = $(event.target).val();
+	              changeCity(city_id);
+	            });
+	            $.getJSON('/city_districs', {city_id: location.city_id}, function (districts) {
+	              if (districts.length) {
+	                $('#location_district_id').empty();
+	                $('#districtsCheckboxes').html('<div class="panel panel-info"><div class="panel-heading"><h3 class="panel-title">Comunas que atiendes</h3></div><div id="districtsPanel" class="panel-body"></div></div>');
+	                $.each(districts, function (key, district) {
+	                  $('#location_district_id').append(
+	                    '<option value="' + district.id + '">' + district.name + '</option>'
+	                  );
+	                  $('#districtsPanel').append(
+	                    '<input type="checkbox" value="' + district.id + '" class="districtActive"/> ' + district.name + '<br />'
+	                  );
+	                });
+	                $('#location_district_id').attr('disabled', false);
+	                $('#location_district_id option[value="'+location.location.district_id+'"]').attr("selected",true);
+	                if (location.location.outcall) {
+	                  $('#location_address').attr('disabled', true);
+	                  $('#location_second_address').attr('disabled', true);
+	                  $('#districtsCheckboxes').removeClass('hidden');
+	                  $.each(location.location_districts, function(index,locationDistrict) {
+	                    $('.districtActive[value="'+locationDistrict.district_id+'"]').prop('checked',true);
+	                  });
+	                }
+	              };
+				$('#location_pill_'+id).parent().addClass('active');
+				$('#load_location_spinner').hide();
+				$('#update_location_button').attr('name', 'edit_location_btn_'+id);
+	            });
+	          };
+	        });
+	      };
+	    });
+	});
+}
+
 /*** Google Maps ***/
 var map;
 var marker;
@@ -351,19 +579,21 @@ function geolocate (district, address) {
 }
 
 $(function() {
-	initialize('prov');
 	$('#location_outcall').change(function() {
 		$('#location_outcall').parents('.form-group').removeClass('has-error has-success');
 		$('#location_outcall').parents('.form-group').find('.help-block').empty();
 		$('#location_outcall').parents('.form-group').find('.form-control-feedback').removeClass('fa fa-times fa-check')
 		if (!$('#location_outcall').prop('checked')) {
 			$('#location_address').attr('disabled', false);
+			$('#location_second_address').attr('disabled', false);
 			$('#location_district_ids').val('');
 			$('#districtsCheckboxes').addClass('hidden');
 		}
 		else {
 			$('#location_address').attr('disabled', true);
+			$('#location_second_address').attr('disabled', true);
 			$('#location_address').val('');
+			$('#location_second_address').val('');
 			$('#districtsCheckboxes').removeClass('hidden');
 		}
 	});
@@ -393,5 +623,43 @@ $(function() {
 		    geolocate(district, address);
 		  };
 		};
+	});
+
+	$('#location_pills.nav-pills li a').click(function(event) {
+		event.preventDefault();
+		$('#load_location_spinner').show();
+		$('#location_pills.nav-pills li').removeClass('active');
+		if (event.target.id == "new_location_pill") {
+			new_location();
+		}
+		else {
+			if (parseInt(event.target.id.split("location_pill_")[1]) > 0) {
+				load_location(parseInt(event.target.id.split("location_pill_")[1]));
+			}
+			else {
+				window.console.log("Bad location link");
+			}
+		}
+	});
+
+	$('#update_location_button').click(function(event) {
+		$('#update_location_spinner').show();
+		$('#update_location_button').atrr('disabled', true);
+		$('#next_location_button').atrr('disabled', true);
+		if(event.target.name == 'new_location_btn') {
+			saveLocation('POST','');
+		}
+		else {
+			if (parseInt(event.target.name.split("edit_location_btn_")[1]) > 0) {
+				saveLocation('PATCH', '/'+parseInt(event.target.name.split("edit_location_btn_")[1]));
+			}
+			else {
+				window.console.log("Bad location update");
+			}
+		}
+	});
+
+	$('#next_location_button').click(function(){
+		scrollToAnchor('quick_add_step3');
 	});
 });
