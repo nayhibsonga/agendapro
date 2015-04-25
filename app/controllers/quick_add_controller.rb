@@ -48,51 +48,61 @@ class QuickAddController < ApplicationController
 		render json: {location: @location, location_times: @location.location_times, location_districts: @location.location_outcall_districts, country_id: @location.district.city.region.country.id, region_id: @location.district.city.region.id, city_id: @location.district.city.id}
 	end
 
-	def location_valid
-		@location = Location.new(location_params)
-	    @location.company_id = current_user.company_id
+	# def location_valid
+	# 	@location = Location.new(location_params)
+	#     @location.company_id = current_user.company_id
 
-	    respond_to do |format|
-	      if @location.valid?
-	        format.json { render :layout => false, :json => {:valid => true} }
-	      else
-	        format.json { render :layout => false, :json => { :valid => false, :errors => @location.errors.full_messages } }
-	      end
-	    end
-	end
+	#     respond_to do |format|
+	#       if @location.valid?
+	#         format.json { render :layout => false, :json => {:valid => true} }
+	#       else
+	#         format.json { render :layout => false, :json => { :valid => false, :errors => @location.errors.full_messages } }
+	#       end
+	#     end
+	# end
 
-	def services_valid
-		if service_params[:service_category_attributes]
-			if service_params[:service_category_attributes][:name].nil?
-	        	new_params = service_params.except(:service_category_attributes)
-	    	else
-	        	new_params = service_params.except(:service_category_id)
-	    	end
-	    end
-	    @service = Service.new(new_params)
-	    @service.company_id = current_user.company_id
+	# def services_valid
+	# 	if service_params[:service_category_attributes]
+	# 		if service_params[:service_category_attributes][:name].nil?
+	#         	new_params = service_params.except(:service_category_attributes)
+	#     	else
+	#         	new_params = service_params.except(:service_category_id)
+	#     	end
+	#     end
+	#     @service = Service.new(new_params)
+	#     @service.company_id = current_user.company_id
 
-	    respond_to do |format|
-	      if @service.valid?
-	        format.json { render :layout => false, :json => {:valid => true} }
-	      else
-	        format.json { render :layout => false, :json => {:valid => false, :errors => @service.errors.full_messages} }
-	      end
-	    end
-	end
+	#     respond_to do |format|
+	#       if @service.valid?
+	#         format.json { render :layout => false, :json => {:valid => true} }
+	#       else
+	#         format.json { render :layout => false, :json => {:valid => false, :errors => @service.errors.full_messages} }
+	#       end
+	#     end
+	# end
 
-	def service_provider_valid
-		@service_provider = ServiceProvider.new(service_provider_params)
-	    @service_provider.company_id = current_user.company_id
+	# def service_provider_valid
+	# 	@service_provider = ServiceProvider.new(service_provider_params)
+	#     @service_provider.company_id = current_user.company_id
 
-	    respond_to do |format|
-	      if @service_provider.valid?
-        	format.json { render :layout => false, :json => {:valid => true} }
-	      else
-	        format.json { render :layout => false, :json => { :valid => false, :errors => @service_provider.errors.full_messages }, :status => 422 }
-	      end
-	    end
-	end
+	#     respond_to do |format|
+	#       if @service_provider.valid?
+ #        	format.json { render :layout => false, :json => {:valid => true} }
+	#       else
+	#         format.json { render :layout => false, :json => { :valid => false, :errors => @service_provider.errors.full_messages }, :status => 422 }
+	#       end
+	#     end
+	# end
+
+  	def update_company
+  		respond_to do |format|
+			if @company.update(company_params)
+				format.json { head :no_content }
+			else
+				format.json { render :layout => false, :json => { :errors => @location.errors.full_messages }, :status => 422 }
+			end
+		end
+  	end
 
 	def create_location
 		@location = Location.new(location_params)
@@ -127,20 +137,46 @@ class QuickAddController < ApplicationController
 	    end
 	end
 
-  	def create_services
-	    if service_params[:service_category_attributes]
-	      	if service_params[:service_category_attributes][:name].nil?
-        		new_params = service_params.except(:service_category_attributes)
-    		else
-        		new_params = service_params.except(:service_category_id)
-    		end
-	    end
+	def create_service_category
+	    @service_category = ServiceCategory.new(service_category_params)
+	    @service_category.company_id = current_user.company_id
 
-	    @service = Service.new(new_params)
+	    respond_to do |format|
+	      if @service_category.save
+	        format.json { render :layout => false, :json => @service_category }
+	      else
+	        format.json { render :layout => false, :json => { :errors => @service_category.errors.full_messages, :status => 422} }
+	      end
+	    end
+  	end
+  	def delete_service_category
+  		@service_category.find(params[:id])
+	    respond_to do |format|
+	      if @service_category.destroy
+	        format.json { render :layout => false, :json => @service_category }
+	      else
+	        format.json { render :layout => false, :json => { :errors => @service_category.errors.full_messages, :status => 422} }
+	      end
+	    end
+  	end
+
+  	def create_service
+	    @service = Service.new(service_params)
 	    @service.company_id = current_user.company_id
 
 	    respond_to do |format|
 	      if @service.save
+	        format.json { render :layout => false, :json => @service }
+	      else
+	        format.json { render :layout => false, :json => { :errors => @service.errors.full_messages, :status => 422} }
+	      end
+	    end
+  	end
+  	def delete_service
+	    @service = Service.find(params[:id])
+
+	    respond_to do |format|
+	      if @service.destroy
 	        format.json { render :layout => false, :json => @service }
 	      else
 	        format.json { render :layout => false, :json => { :errors => @service.errors.full_messages, :status => 422} }
@@ -152,28 +188,31 @@ class QuickAddController < ApplicationController
 	    @service_provider = ServiceProvider.new(service_provider_params)
 	    @service_provider.company_id = current_user.company_id
 
+	    @service_provider.services = Service.where(company_id: current_user.company_id, active: true)
+
+	    @provider_times = []
+	    Location.find(service_provider_params[:location_id]).location_times.each do |location_time|
+	    	@provider_times.push(ProviderTime.new(day_id: location_time.day_id, open:location_time.open, close: location_time.close))
+	    end
+	    @service_provider.provider_times = @provider_times
+
 	    respond_to do |format|
 	      if @service_provider.save
-	      	@serviceStaff = ServiceStaff.new(:service_id => Service.find_by(:company_id => current_user.company_id).id, :service_provider_id => @service_provider.id)
-	      	if @serviceStaff.save
-	        	format.json { render :layout => false, :json => @service_provider }
-	        else
-	        	format.json { render :layout => false, :json => { :errors => @serviceStaff.errors.full_messages }, :status => 422 }
-	        end
+	        format.json { render :layout => false, :json => @service_provider }
 	      else
 	        format.json { render :layout => false, :json => { :errors => @service_provider.errors.full_messages }, :status => 422 }
 	      end
 	    end
   	end
-
-  	def update_company
-  		respond_to do |format|
-			if @company.update(company_params)
-				format.json { head :no_content }
-			else
-				format.json { render :layout => false, :json => { :errors => @location.errors.full_messages }, :status => 422 }
-			end
-		end
+  	def delete_service_provider
+  		@service_provider = ServiceProvider.find(params[:id])
+	    respond_to do |format|
+	      if @service_provider.destroy
+	        format.json { render :layout => false, :json => @service_provider }
+	      else
+	        format.json { render :layout => false, :json => { :errors => @service_provider.errors.full_messages }, :status => 422 }
+	      end
+	    end
   	end
 
   # 	def update_settings
@@ -193,6 +232,10 @@ class QuickAddController < ApplicationController
 
     def service_provider_params
       params.require(:service_provider).permit(:user_id, :location_id, :public_name, :notification_email, :service_ids => [], provider_times_attributes: [:id, :open, :close, :day_id, :service_provider_id, :_destroy])
+    end
+
+    def service_category_params
+      params.require(:service_cateogry).permit(:name)
     end
 
     def service_params

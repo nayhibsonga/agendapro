@@ -8,13 +8,7 @@
 
 
 $(function() {
-	$('#service_categories_input').on('itemAdded', function(event) {
-	  window.console.log(event);
-	  event.item.id = 1;
-	  window.console.log(event.item);
-	});
-
 	$('#next_service_button').click(function(){
-		scrollToAnchor('quick_add_step4');
+		scrollToAnchor('fieldset_step4');
 	});
 });

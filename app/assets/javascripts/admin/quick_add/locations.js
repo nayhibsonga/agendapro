@@ -660,6 +660,6 @@ $(function() {
 	});
 
 	$('#next_location_button').click(function(){
-		scrollToAnchor('quick_add_step3');
+		scrollToAnchor('fieldset_step3');
 	});
 });

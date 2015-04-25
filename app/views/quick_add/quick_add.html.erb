@@ -1,4 +1,4 @@
-<div class="container-fluid background-start content-fill">
+<div id="quick_add_step0" class="container-fluid background-start content-fill">
   <div class="row">
     <div class="col-md-12 content-top">
       <div class="pull-center">
@@ -14,7 +14,7 @@
     </div>
     <div class="col-md-12 content-bottom">
       <div class="pull-center">
-        <a href="#" onclick='scrollToAnchor("quick_add_step1");' class="btn btn-transparent btn-wide">Comenzar</a>
+        <a href="#" onclick='scrollToAnchor("fieldset_step1");' class="btn btn-transparent btn-wide">Comenzar</a>
       </div>
     </div>
   </div>
@@ -53,3 +53,25 @@
 <%= render 'services' %>
 <%= render 'providers' %>
 
+<div id="quick_add_step5" class="container-fluid background-start content-fill">
+  <div class="row">
+    <div class="col-md-12 content-top">
+      <div class="pull-center">
+        <%= image_tag 'logos/logo1.png', alt: 'AgendaPro' %>
+      </div>
+    </div>
+    <div class="col-md-12 vertical-center">
+      <div class="pull-center">
+        <%= image_tag 'quickadd/glasses.png', alt: 'glasses', size: "91x37" %>
+      </div>
+      <h1 class="text-center text-uppercase">Ya estás listo para usar AgendaPro</h1>
+      <h1 class="text-center">Tu mini-sitio es <%= link_to root_url(subdomain: @company.web_address), root_url(subdomain: @company.web_address), target: '_blank' %> y podrás modificar toda la información que acabas de ingresar en la sección "Administración". Además puedes configurar muchas cosas de la aplicación en la sección "Configuraciones", te recomendamos partir por ahí.</h1>
+    </div>
+    <div class="col-md-12 content-bottom">
+      <div class="pull-center">
+        <%= link_to "Comenzar a Reservar", dashboard_path, class: "btn btn-transparent btn-wide" %>
+        <%= link_to "Ver Configuraciones", edit_company_setting_path(@company.company_setting.id), class: "btn btn-transparent btn-wide" %>
+      </div>
+    </div>
+  </div>
+</div>

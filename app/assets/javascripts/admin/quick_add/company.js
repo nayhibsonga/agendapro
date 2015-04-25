@@ -13,7 +13,7 @@ function updateCompany () {
 		processData: false,
 		success: function (result) {
 			initializeStep2();
-			scrollToAnchor("quick_add_step2");
+			scrollToAnchor("fieldset_step2");
 			$('#fieldset_step1').removeAttr('disabled');
 			$('#update_company_button').removeClass('disabled');
 			$('#update_company_spinner').hide();

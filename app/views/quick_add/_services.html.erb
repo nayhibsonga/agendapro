@@ -1,5 +1,5 @@
-<fieldset class="content-fill" id="fieldset_step3" <%= "disabled" if @company.service_categories.count < 1 %>>
-<section id="quick_add_step3" class="green-background">
+<fieldset class="content-fill" id="fieldset_step3" <%= "disabled" if false %>>
+<section class="green-background">
 <div class="container">
   <div class="row">
     <div class="col-sm-12">
@@ -33,7 +33,7 @@
       <table class="table">
       <% @company.services.where(active: true).each do |service| %>
       <tr>
-        <td><%= service.name %></td><td><%= number_to_currency(service.price, currency: ' $', separator: ',', delimeter: '.', precision: 0) %></td><td><%= service.duration %> mins.</td><td><%= service.service_category.name %></td><td><button id="service_delete_<%= service.id %>" class="btn btn-danger btn-xs"><i class="fa fa-trash-o"></i></button></td>
+        <td><%= service.name %></td><td><%= number_to_currency(service.price, currency: '$ ', separator: ',', delimeter: '.', precision: 0) %></td><td><%= service.duration %> mins.</td><td><%= service.service_category.name %></td><td><button id="service_delete_<%= service.id %>" class="btn btn-danger btn-xs"><i class="fa fa-trash-o"></i></button></td>
       </tr>
       <% end %>
       </table>
@@ -58,6 +58,9 @@
           </div>
           <button class="btn btn-default">Guardar</button>
         <% end %>
+      </div>
+      <div class="col-sm-12 text-center">
+        <a id="next_service_button" class="btn btn-orange btn-lg">Siguiente</a>
       </div>
   </div>
 </div>
