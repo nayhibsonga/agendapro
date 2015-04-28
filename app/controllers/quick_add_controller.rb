@@ -97,9 +97,9 @@ class QuickAddController < ApplicationController
   	def update_company
   		respond_to do |format|
 			if @company.update(company_params)
-				format.json { head :no_content }
+				format.json { render :layout => false, :json => @company.logo_url }
 			else
-				format.json { render :layout => false, :json => { :errors => @location.errors.full_messages }, :status => 422 }
+				format.json { render :layout => false, :json => { :errors => @company.errors.full_messages }, :status => 422 }
 			end
 		end
   	end
@@ -150,7 +150,20 @@ class QuickAddController < ApplicationController
 	    end
   	end
   	def delete_service_category
-  		@service_category.find(params[:id])
+  		@service_category = ServiceCategory.find(params[:id])
+  		if @service_category.name == "Sin Categoría"
+			format.json { render :layout => false, :json => { :errors => ['No se puede eliminar esta categoría.'], :status => 422} }
+		end
+		@services = Service.where(service_category_id: @service_category)
+		@new_service_category = ServiceCategory.where(company_id: @service_category.company_id, name: "Sin Categoría").first
+		if @new_service_category.nil?
+			@new_service_category = ServiceCategory.create(name: "Sin Categoría", company_id: @service_category.company_id)
+			@new_service_category.save
+		end
+	    @services.each do |service|
+	      service.service_category = @new_service_category
+	      service.save
+	    end
 	    respond_to do |format|
 	      if @service_category.destroy
 	        format.json { render :layout => false, :json => @service_category }
@@ -166,7 +179,7 @@ class QuickAddController < ApplicationController
 
 	    respond_to do |format|
 	      if @service.save
-	        format.json { render :layout => false, :json => @service }
+	        format.json { render :layout => false, :json => { service: @service, service_category: @service.service_category.name } }
 	      else
 	        format.json { render :layout => false, :json => { :errors => @service.errors.full_messages, :status => 422} }
 	      end
@@ -188,6 +201,13 @@ class QuickAddController < ApplicationController
 	    @service_provider = ServiceProvider.new(service_provider_params)
 	    @service_provider.company_id = current_user.company_id
 
+	    if Location.find(service_provider_params[:location_id]).outcall
+	    	Service.where(company_id: current_user.company_id, active: true).each do |service|
+	    		service.outcall = true
+	    		service.save
+	    	end
+	    end
+
 	    @service_provider.services = Service.where(company_id: current_user.company_id, active: true)
 
 	    @provider_times = []
@@ -198,7 +218,7 @@ class QuickAddController < ApplicationController
 
 	    respond_to do |format|
 	      if @service_provider.save
-	        format.json { render :layout => false, :json => @service_provider }
+	        format.json { render :layout => false, :json => { service_provider: @service_provider, location: @service_provider.location.name } }
 	      else
 	        format.json { render :layout => false, :json => { :errors => @service_provider.errors.full_messages }, :status => 422 }
 	      end
@@ -235,7 +255,7 @@ class QuickAddController < ApplicationController
     end
 
     def service_category_params
-      params.require(:service_cateogry).permit(:name)
+      params.require(:service_category).permit(:name)
     end
 
     def service_params

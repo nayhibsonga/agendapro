@@ -1,20 +1,20 @@
-<fieldset id="fieldset_step2" <%= "disabled" if @company.locations.where(active:true).count < 1 %>>
+<fieldset id="fieldset_step2" class="content-fill" <%= "disabled" if @company.locations.where(active:true).count < 1 %>>
 <section class="green-background">
 <div class="container">
   <div class="row">
     <div class="col-md-12">
       <h2 class="text-center">¿Cuántos locales/sucursales tienes?</h2>
-      <p class="text-center text-dark-green">Completa la información de cada uno de tus locales (máximo <%= @company.plan.locations %>)</p>
+      <p class="text-center text-dark-green">Completa la información de cada uno de tus locales (máximo <%= @company.plan.locations %>)
+        <i id="load_location_spinner" class="fa fa-spinner fa-spin" style="display:none;"></i></p>
     </div>
   </div>
   <div class="row">
     <div class="col-md-12">
-      <ul id="location_pills" class="nav nav-pills quickadd-pills">
+      <ul id="location_pills" class="nav nav-pills nav-justified quickadd-pills">
         <% @company.locations.where(active:true).each do |location| %>
         <li><a href="#" id="location_pill_<%= location.id %>"><%= location.name %><!--  <button id="location_delete_<%= location.id %>" class="btn btn-danger btn-xs"><i class="fa fa-trash-o"></i></button> --></a></li>
         <% end %>
         <li class="active"><a href="#" id="new_location_pill">Nuevo Local</a></li>
-        <i id="load_location_spinner" class="fa fa-spinner fa-spin" style="display:none;"></i>
     </ul>
     </div>
   </div>
@@ -77,7 +77,7 @@
             </div>
           </div>
           <div class="form-group has-feedback">
-            <%= f.label :second_address, "Dirección Adicional", class: "col-sm-3 control-label" %>
+            <%= f.label :second_address, "Dirección Adicional: ", class: "col-sm-3 control-label" %>
             <div class="col-sm-9">
               <%= f.text_field :second_address, class: "form-control", placeholder: 'Oficina D, Local 22' %>
               <span class="help-block"></span>
@@ -108,12 +108,12 @@
       </div>
       <div class="col-md-6">
         <div style="margin-bottom:10px;">
-          <h4 class="text-center" style="margin-bottom: 0;">¿Aquí se ubica tu local? <small class="hide"><i class="fa fa-spinner fa-spin"></i></small></h4>
+          <h4 style="margin-bottom: 0; margin-top: 0;">¿Aquí se ubica tu local? <small class="hide"><i class="fa fa-spinner fa-spin"></i></small></h4>
           <span class="hide" id="error">Hubo un error ubicando tu local</span>
           <span>Puedes dar click en el mapa para cambiar la ubicación</span>
           <div id="map" style="height:100px;"></div>
         </div>
-        <h3>Selecciona el horario de apertura y cierre para cada día</h3>
+        <h4 class="text-dark-green">Selecciona el horario de apertura y cierre para cada día</h4>
         <div class="panel panel-info">
           <div class="panel-body">
             <table class="table">

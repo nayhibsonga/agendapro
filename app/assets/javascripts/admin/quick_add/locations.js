@@ -10,14 +10,14 @@ var local = 'local';
 function buildDay (value, ctrl) {
 	$('#' + ctrl + 'Table').append(
 		'<tr>' +
-			'<th>' +
+			'<td>' +
 				'<div class="checkbox">' +
 				    '<label>' +
 				    	'<input type="checkbox" name="' + ctrl + 'dayStatus'+ value +'" id="' + ctrl + 'dayStatusId'+ value +'" value="0" onchange="changeDayStatus('+ value +',' + ctrl + ')"> ' + days[value - 1] + ':' +
 				    '</label>' +
 				'</div>' +
-			'</th>' +
-			'<th>' +
+			'</td>' +
+			'<td>' +
 				'<form class="form-inline" role="form">' +
 					'<div class="form-group">' +
 						'<select class="form-control time-select" id="' + ctrl + 'openHourId'+ value +'" name="' + ctrl + 'openHour'+ value +'" disabled="disabled">' +
@@ -56,8 +56,8 @@ function buildDay (value, ctrl) {
 						'</select>' +
 					'</div>' +
 				'</form>' +
-			'</th>' +
-			'<th>' +
+			'</td>' +
+			'<td>' +
 				'<form class="form-inline" role="form">' +
 					'<div class="form-group">' +
 						'<select class="form-control time-select" id="' + ctrl + 'closeHourId'+ value +'" name="' + ctrl + 'closeHour'+ value +'" disabled="disabled">' +
@@ -96,7 +96,7 @@ function buildDay (value, ctrl) {
 						'</select>' +
 					'</div>' +
 				'</form>' +
-			'</th>' +
+			'</td>' +
 		'</tr>'
   	);
 }
@@ -236,6 +236,7 @@ function saveLocation (typeURL, extraURL) {
 			$('#location_pills.nav-pills li').removeClass('active');
 			if (typeURL == 'POST') {
 				$('#new_location_pill').parent().before('<li><a href="#" id="location_pill_'+result.id+'">'+result.name+'<!--  <button id="location_delete_'+result.id+'" class="btn btn-danger btn-xs"><i class="fa fa-trash-o"></i></button> --></a></li>');
+				$('#service_provider_location_id').append('<option value="'+ result.id +'">'+ result.name +'</option>')
 				$('#location_pill_'+result.id).click(function(event){
 					event.preventDefault();
 					$('#load_location_spinner').show();
@@ -245,10 +246,11 @@ function saveLocation (typeURL, extraURL) {
 			}
 			else {
 				$('#location_pill_'+result.id).html(result.name);
+				$('#service_provider_location_id option[value="'+ result.id +'"]').html(result.name);
 			}
 			$('#update_location_spinner').hide();
-			$('#update_location_button').atrr('disabled', false);
-			$('#next_location_button').atrr('disabled', false);
+			$('#update_location_button').attr('disabled', false);
+			$('#next_location_button').attr('disabled', false);
 	    	new_location();
 		},
 		error: function (xhr){
@@ -264,8 +266,8 @@ function saveLocation (typeURL, extraURL) {
 				'</ul>'
 			);
 			$('#update_location_spinner').hide();
-			$('#update_location_button').atrr('disabled', false);
-			$('#next_location_button').atrr('disabled', false);
+			$('#update_location_button').attr('disabled', false);
+			$('#next_location_button').attr('disabled', false);
 		}
 	});
 }
@@ -644,8 +646,8 @@ $(function() {
 
 	$('#update_location_button').click(function(event) {
 		$('#update_location_spinner').show();
-		$('#update_location_button').atrr('disabled', true);
-		$('#next_location_button').atrr('disabled', true);
+		$('#update_location_button').attr('disabled', true);
+		$('#next_location_button').attr('disabled', true);
 		if(event.target.name == 'new_location_btn') {
 			saveLocation('POST','');
 		}

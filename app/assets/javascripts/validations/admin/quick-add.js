@@ -46,24 +46,7 @@ $(function() {
 
 	$('#new_service').validate({
 		errorPlacement: function(error, element) {
-			if (element.attr('id') == 'service_price') {
-				error.appendTo(element.parent().next());
-			}
-			else if (element.attr('id') == 'service_duration') {
-				error.appendTo(element.parent().next());
-			}
-			else if (element.attr('id') == 'service_capacity') {
-				error.appendTo(element.parent().next());
-			}
-			else if (element.attr('id') == 'service_discount') {
-				error.appendTo(element.parent().next());
-			}
-			else {
-				error.appendTo(element.next());
-			}
-			var oldTop = $(document).scrollTop();
-			$('#foo5').trigger('updateSizes');
-			$(document).scrollTop(oldTop);
+			error.appendTo(element.next());
 		},
 		rules: {
 			'service[name]': {
@@ -79,20 +62,9 @@ $(function() {
 				min: 5,
 				max: 1439
 			},
-			'service[description]': {
-				minlength: 3
-			},
 			'service[service_category_id]': {
 				required: true
 			},
-			'service[service_category_attributes][name]': {
-				required: true,
-				minlength: 3
-			},
-			'service[capacity]': {
-				required: true,
-				min: 2
-			}
 		},
 		
 		highlight: function(element) {
@@ -117,11 +89,6 @@ $(function() {
 			'service_provider[public_name]': {
 				required: true,
 				minlength: 3
-			},
-			'service_provider[notification_email]': {
-				required: true,
-				minlength: 3,
-				email: true
 			}
 		},
 		highlight: function(element) {

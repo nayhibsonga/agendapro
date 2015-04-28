@@ -325,8 +325,8 @@ fieldset[disabled] .btn-transparent.active {
   color: #ffffff;
 }
 .vertical-center {
+  height: 300px;
   bottom: 0;
-  height: 170px;
   left: 0;
   margin: auto;
   position: absolute;
@@ -350,15 +350,56 @@ fieldset[disabled] .btn-transparent.active {
 section.green-background {
   background-color: #22c488;
   color: #ffffff;
+  padding-bottom: 20px;
+  margin-bottom: 20px;
 }
 
-.table th, .table td { 
-  border-top: none !important; 
+th {
+  text-align: center;
 }
 
-.panel-info {
-  border-color: #505050;
+form.form-inline {
+  margin-top: 10px;
+  margin-bottom: 20px;
 }
+
+div.category-pill {
+  color: #22c488;
+  background-color: #ffffff;
+  padding: 10px;
+  margin: 5px;
+  border-radius: 4px;
+  display: inline-block;
+}
+
+button.service-category-delete-btn {
+  color: #22c488;
+  border: 0;
+}
+
+div.step5-check {
+  font-size: 72px;
+}
+
+h3.step5-text {
+  padding-left: 15%;
+  padding-right: 15%;
+}
+
+a.btn-green-hover:hover {
+  background-color: #22c488;
+  color: #ffffff;
+}
+
+a.btn-orange-hover:hover {
+  background-color: #fd9610;
+  color: #ffffff;
+}
+
+.form-inline > .form-group {
+  margin-right: 50px;
+}
+
 
 /*
   ================================
@@ -372,6 +413,30 @@ section.green-background {
   margin-top: 20px;
   font-weight: 500;
   line-height: 1.1;
+}
+.quickadd-logo-input {
+  display: none;
+}
+input[type="file"] {
+  display: none;
+}
+.quickadd-logo-label {
+  border-radius: 4px;
+  border: 1px solid #ccc;
+  display: inline-block;
+  padding: 6px 12px;
+  cursor: pointer;
+  color: #ffffff;
+  background-color: #22c488;
+}
+.quickadd-logo-label:hover {
+  background-color: #1ba970;
+}
+.company-logo {
+  border-radius: 4px;
+  border: 1px solid #ccc;
+  overflow: hidden;
+  margin-bottom: 10px;
 }
 
 /*
@@ -395,6 +460,7 @@ section.green-background {
 .quickadd-pills > li > a {
   background-color: #ffffff;
   color: #22c488;
+  margin-right: 5px;
 }
 .quickadd-pills > li.active > a {
   background-color: #fd9610;
@@ -404,4 +470,19 @@ section.green-background {
   background-color: #db7400;
   color: #ffffff;
 }
+.quickadd-pills > li.active > a:focus {
+  background-color: #db7400;
+  color: #ffffff;
+}
 
+.panel-info {
+  border-color: #505050;
+}
+table.table tbody#localTable th, .table tbody#localTable td {
+  padding: 0;
+  border-top: none !important;
+  margin-bottom: 0;
+}
+table.table tbody#localTable th form, .table tbody#localTable td form {
+  margin-bottom: 0;
+}

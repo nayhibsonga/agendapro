@@ -14,10 +14,16 @@
   <!-- Local -->
   <div class="row">
       <div class="col-sm-12 text-center">
-      <table class="table">
-      <% @company.service_providers.where(active: true).each do |service_provider| %>
+      <table id="service_providers" class="table">
       <tr>
-        <td><%= service_provider.public_name %></td><td><%= service_provider.location.name %></td><td><button id="provider_delete_<%= service_provider.id %>" class="btn btn-danger btn-xs"><i class="fa fa-trash-o"></i></button></td>
+        <th>Nombre</th>
+        <th>Email de Notificación</th>
+        <th>Local</th>
+        <th></th>
+      </tr>
+      <% @company.service_providers.where(active: true).each do |service_provider| %>
+      <tr id="service_provider_<%= service_provider.id %>">
+        <td><%= service_provider.public_name %></td><td><%= service_provider.notification_email %></td><td><%= service_provider.location.name %></td><td><button id="service_provider_delete_<%= service_provider.id %>" class="btn btn-danger btn-xs service-provider-delete-btn"><i class="fa fa-trash-o"></i></button></td>
       </tr>
       <% end %>
       </table>
@@ -29,10 +35,15 @@
             <%= f.text_field :public_name, class: "form-control" %>
           </div>
           <div class="form-group">
+            <%= f.label :notification_email, "Email de Notificación: ", class: "control-label" %>
+            <%= f.text_field :notification_email, class: "form-control" %>
+          </div>
+          <div class="form-group">
             <%= f.label :location_id, "Local: ", class: "control-label" %>
             <%= f.collection_select :location_id, Location.where(company_id: current_user.company_id, active: true), :id, :name, {}, { class: "form-control" }%>
           </div>
-          <button class="btn btn-default">Guardar</button>
+          <a id="update_service_provider_button" class="btn btn-green">Guardar</a>
+          <i id="update_service_provider_spinner" class="fa fa-spinner fa-spin" style="display:none;"></i>
         <% end %>
       </div>
       <div class="col-sm-12 text-center">
