@@ -8,6 +8,9 @@ class ServiceProvider < ActiveRecord::Base
 	has_many :user_providers, dependent: :destroy
 	has_many :users, :through => :user_providers
 
+	has_many :notification_providers, dependent: :destroy
+	has_many :notification_emails, :through => :notification_providers
+
 	has_many :provider_times, :inverse_of => :service_provider, dependent: :destroy
 	has_many :bookings, dependent: :destroy
 	has_many :provider_breaks, dependent: :destroy
