@@ -62,7 +62,7 @@ class SearchsController < ApplicationController
 
 			if query.count > 10
 
-				count = (query.count / 10).ceil
+				count = (query.count.to_f / 10).ceil
 				results = Array.new
 
 				for i in 0..count-1
@@ -111,7 +111,7 @@ class SearchsController < ApplicationController
 
 			if unowned_query.count > 10
 
-				count = (unowned_query.count / 10).ceil
+				count = (unowned_query.count.to_f / 10).ceil
 				unowned_results = Array.new
 
 				for i in 0..count-1
