@@ -109,7 +109,7 @@
 													<%= I18n.l(booking.start.to_datetime) %><br />
 												<% end %>
 											</dd>
-											<% if !@bookings.first.notes.empty? %>
+											<% if !@bookings.first.notes.blank? %>
 											<dt class="dark-gray">Notas</dt>
 											<dd class="light-gray"><%= @bookings.first.notes %></dd>
 											<% end %>

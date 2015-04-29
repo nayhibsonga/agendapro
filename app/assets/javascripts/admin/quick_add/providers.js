@@ -14,6 +14,7 @@ function saveServiceProvider () {
 				$('#update_service_provider_button').attr('disabled', true);
 	    		deleteServiceProvider(result.service_provider.id);
 	    	});
+	    	$('#next_provider_button').attr('disabled', false);
 			$('#update_service_provider_button').attr('disabled', false);
 			$('#update_service_provider_spinner').hide();
 		},
@@ -41,7 +42,10 @@ function deleteServiceProvider (id) {
 	    url: '/quick_add/service_provider/'+ id +'.json',
 	    dataType: 'json',
 	    success: function (result){
-	    	$('#service_provider_'+result.id).remove();
+	    	$('#service_provider_'+result.service_provider.id).remove();
+	    	if (result.service_provider_count < 1) {
+	    		$('#next_provider_button').attr('disabled', true);
+	    	}
 			$('#update_service_provider_button').attr('disabled', false);
 			$('#update_service_provider_spinner').hide();
 		},
@@ -65,6 +69,8 @@ function deleteServiceProvider (id) {
 
 $(function() {
 	$('#next_provider_button').click(function(){
+		$('#quick_add_step5').show();
+		$('#quick_add_step5').attr('disabled', false);
 		scrollToAnchor('quick_add_step5');
 	});
 

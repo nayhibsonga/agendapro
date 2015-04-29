@@ -5,7 +5,7 @@
       <div class="row">
         <div class="col-md-12">
           <h2 class="text-center">¿A qué te dedicas?</h2>
-          <p class="text-center text-dark-green">Selecciona el o los rubros a los que estás dedicado</p>
+          <p class="text-center text-dark-green">Selecciona el o los rubros a los que estás dedicado (mínimo 1)</p>
           <div class="form-group has-feedback">
             <%= f.collection_check_boxes :economic_sector_ids, EconomicSector.all, :id, :name, {}, {class: "check_boxes"} do |b|%>
               <div class="col-md-3">
@@ -57,7 +57,7 @@
         <div class="col-md-12">
           <div class="form-group">
             <div class="text-center">
-              <a id="update_company_button" class="btn btn-orange btn-lg">Siguiente</a>
+              <a id="update_company_button" class="btn btn-orange btn-lg next-button">Siguiente Paso</a>
               <i id="update_company_spinner" class="fa fa-spinner fa-spin" style="display:none;"></i>
             </div>
           </div>

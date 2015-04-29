@@ -87,6 +87,7 @@ function saveService () {
 				$('#update_service_button').attr('disabled', true);
 	    		deleteService(result.service.id);
 	    	});
+	    	$('#next_service_button').attr('disabled', false);
 			$('#update_service_button').attr('disabled', false);
 			$('#update_service_spinner').hide();
 		},
@@ -114,7 +115,10 @@ function deleteService (id) {
 	    url: '/quick_add/service/'+ id +'.json',
 	    dataType: 'json',
 	    success: function (result){
-	    	$('#service_'+result.id).remove();
+	    	$('#service_'+result.service.id).remove();
+	    	if (result.service_count < 1) {
+	    		$('#next_service_button').attr('disabled', true);
+	    	}
 			$('#update_service_button').attr('disabled', false);
 			$('#update_service_spinner').hide();
 		},
@@ -138,6 +142,8 @@ function deleteService (id) {
 
 $(function() {
 	$('#next_service_button').click(function(){
+		$('#fieldset_step4').show();
+		$('#fieldset_step4').attr('disabled', false);
 		scrollToAnchor('fieldset_step4');
 	});
 

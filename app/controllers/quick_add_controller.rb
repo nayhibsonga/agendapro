@@ -95,6 +95,11 @@ class QuickAddController < ApplicationController
 	# end
 
   	def update_company
+  		puts company_params[:economic_sector_ids]
+  		if company_params[:economic_sector_ids] == [""]
+  			render :json => { :errors => ['Debes elegir al menos un rubro o sector económico.'] }, :status => 422
+  			return
+  		end
   		respond_to do |format|
 			if @company.update(company_params)
 				format.json { render :layout => false, :json => @company.logo_url }
@@ -152,7 +157,8 @@ class QuickAddController < ApplicationController
   	def delete_service_category
   		@service_category = ServiceCategory.find(params[:id])
   		if @service_category.name == "Sin Categoría"
-			format.json { render :layout => false, :json => { :errors => ['No se puede eliminar esta categoría.'], :status => 422} }
+			render :json => { :errors => ['No se puede eliminar esta categoría.']} , :status => 422
+			return
 		end
 		@services = Service.where(service_category_id: @service_category)
 		@new_service_category = ServiceCategory.where(company_id: @service_category.company_id, name: "Sin Categoría").first
@@ -181,7 +187,7 @@ class QuickAddController < ApplicationController
 	      if @service.save
 	        format.json { render :layout => false, :json => { service: @service, service_category: @service.service_category.name } }
 	      else
-	        format.json { render :layout => false, :json => { :errors => @service.errors.full_messages, :status => 422} }
+	        format.json { render :layout => false, :json => { :errors => @service.errors.full_messages }, :status => 422 }
 	      end
 	    end
   	end
@@ -189,10 +195,10 @@ class QuickAddController < ApplicationController
 	    @service = Service.find(params[:id])
 
 	    respond_to do |format|
-	      if @service.destroy
-	        format.json { render :layout => false, :json => @service }
+	      if @service.update(active: false)
+	        format.json { render :layout => false, :json => { service: @service, service_count: @service.company.services.where(active:true).count } }
 	      else
-	        format.json { render :layout => false, :json => { :errors => @service.errors.full_messages, :status => 422} }
+	        format.json { render :layout => false, :json => { :errors => @service.errors.full_messages }, :status => 422 }
 	      end
 	    end
   	end
@@ -227,8 +233,8 @@ class QuickAddController < ApplicationController
   	def delete_service_provider
   		@service_provider = ServiceProvider.find(params[:id])
 	    respond_to do |format|
-	      if @service_provider.destroy
-	        format.json { render :layout => false, :json => @service_provider }
+	      if @service_provider.update(active: false)
+	        format.json { render :layout => false, :json => { service_provider: @service_provider, service_provider_count: @service_provider.company.service_providers.where(active: true).count } }
 	      else
 	        format.json { render :layout => false, :json => { :errors => @service_provider.errors.full_messages }, :status => 422 }
 	      end

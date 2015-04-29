@@ -267,7 +267,6 @@ function saveLocation (typeURL, extraURL) {
 			);
 			$('#update_location_spinner').hide();
 			$('#update_location_button').attr('disabled', false);
-			$('#next_location_button').attr('disabled', false);
 		}
 	});
 }
@@ -662,6 +661,8 @@ $(function() {
 	});
 
 	$('#next_location_button').click(function(){
+		$('#fieldset_step3').show();
+		$('#fieldset_step3').attr('disabled', false);
 		scrollToAnchor('fieldset_step3');
 	});
 });

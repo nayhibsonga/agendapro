@@ -1,4 +1,4 @@
-<fieldset class="content-fill" id="fieldset_step3" <%= "disabled" if false %>>
+<fieldset class="content-fill below-1 below-2" id="fieldset_step3" <%= 'style="display: none;" disabled'.html_safe if @company.locations.where(active: true).count < 1 %>>
 <section class="green-background">
 <div class="container">
   <div class="row">
@@ -72,7 +72,7 @@
         <% end %>
       </div>
       <div class="col-sm-12 text-center">
-        <a id="next_service_button" class="btn btn-orange btn-lg">Siguiente</a>
+        <a id="next_service_button" class="btn btn-orange btn-lg next-button" <%= 'disabled' if @company.services.where(active: true).count < 1 %>>Siguiente Paso</a>
         <i id="update_service_spinner" class="fa fa-spinner fa-spin" style="display:none;"></i>
       </div>
   </div>
