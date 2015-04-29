@@ -11,14 +11,37 @@ class ProviderBreaksController < ApplicationController
   end
 
   def get_provider_break
+
     provider_break = ProviderBreak.find(params[:id])
-    render :json => provider_break
+    provider_break_repeat = {}
+    service_providers = {}
+
+    if provider_break.break_repeat_id != nil
+
+      #Return provider_break info, provider_break_repeat info, and service_providers ids.
+
+      provider_break_repeat = ProviderBreakRepeat.find(provider_break.break_repeat_id)
+      service_providers = ServiceProvider.where(:id => ProviderBreak.where(:break_repeat_id => provider_break_repeat.id).pluck(:service_provider_id))
+
+    end
+
+    provider_break_json = {:provider_break => provider_break, :provider_break_repeat => provider_break_repeat, :service_providers => service_providers}
+
+    render :json => provider_break_json
+
   end
 
   def create_provider_break
-    if params[:provider_break][:service_provider_id].to_i != 0
+
+    ids = params[:provider_break][:service_provider_id]
+    puts params[:provider_break][:service_provider_id]
+    puts params[:provider_break][:service_provider_id].inspect
+
+    if ids.count < 1
+
+    elsif ids.count == 1
       if params[:provider_break][:repeat] == "never"
-        @provider_break = ProviderBreak.new(:start => params[:provider_break][:start], :end => params[:provider_break][:end], :service_provider_id => params[:provider_break][:service_provider_id].to_i, :name => params[:provider_break][:name])
+        @provider_break = ProviderBreak.new(:start => params[:provider_break][:start], :end => params[:provider_break][:end], :service_provider_id => ids[0].to_i, :name => params[:provider_break][:name])
         respond_to do |format|
           if @provider_break.save
             @provider_break.warnings ? warnings = @provider_break.warnings.full_messages : warnings = []
@@ -36,25 +59,31 @@ class ProviderBreaksController < ApplicationController
         @break_json = Array.new
         @break_errors = Array.new
 
+        @provider_break_repeat = ProviderBreakRepeat.create(:start_date => params[:provider_break][:start].to_datetime, :repeat_option => params[:provider_break][:repeat_option], :repeat_type => params[:provider_break][:repeat])
+
         status = true
 
+        repeat_id = @provider_break_repeat.id
 
-        repeat_id = 0
-        repeat_group = ProviderBreak.where.not(break_repeat_id: nil).order(:break_repeat_id).last
-        if repeat_group.nil?
-          repeat_id = 0
-        else
-          repeat_id = repeat_group.break_repeat_id + 1
-        end
+        #repeat_id = 0
+        #repeat_group = ProviderBreak.where.not(break_repeat_id: nil).order(:break_repeat_id).last
+        #if repeat_group.nil?
+        #  repeat_id = 0
+        #else
+        #  repeat_id = repeat_group.break_repeat_id + 1
+        #end
 
         #repeat_id = DateTime.now.to_s.gsub(/[-:T]/i, '')
         first_start_date = params[:provider_break][:start].to_datetime
         first_end_date = params[:provider_break][:end].to_datetime
+        start_date = first_start_date
+        end_date = first_end_date
         if params[:provider_break][:repeat_option] == "times"
           times = 1
           if params[:provider_break][:times] != ""
             times = params[:provider_break][:times].to_i
           end
+          @provider_break_repeat.times = times
           for i in 0..times-1
             if params[:provider_break][:repeat] == "daily"
               start_date = first_start_date + i.days
@@ -95,7 +124,7 @@ class ProviderBreaksController < ApplicationController
               start_date = first_start_date + i.years
               end_date = first_end_date + i.years
             end               
-            provider_break = ProviderBreak.new(:start => start_date, :end => end_date, :service_provider_id => params[:provider_break][:service_provider_id].to_i, :name => params[:provider_break][:name], :break_repeat_id => repeat_id)
+            provider_break = ProviderBreak.new(:start => start_date, :end => end_date, :service_provider_id => ids[0].to_i, :name => params[:provider_break][:name], :break_repeat_id => repeat_id)
 
             if provider_break.save
               provider_break.warnings ? warnings = provider_break.warnings.full_messages : warnings = []
@@ -107,12 +136,15 @@ class ProviderBreaksController < ApplicationController
             end
 
           end
+          @provider_break_repeat.end_date = end_date
         else
 
 
           start_date = first_start_date
           end_date = first_end_date
           final_date = params[:provider_break][:repeat_end].to_datetime
+          @provider_break_repeat.end_date = final_date
+          @provider_break_repeat.times = nil
 
           i = 0
 
@@ -161,7 +193,7 @@ class ProviderBreaksController < ApplicationController
               break
             end 
 
-            provider_break = ProviderBreak.new(:start => start_date, :end => end_date, :service_provider_id => params[:provider_break][:service_provider_id].to_i, :name => params[:provider_break][:name], :break_repeat_id => repeat_id)
+            provider_break = ProviderBreak.new(:start => start_date, :end => end_date, :service_provider_id => ids[0].to_i, :name => params[:provider_break][:name], :break_repeat_id => repeat_id)
 
             if provider_break.save
               provider_break.warnings ? warnings = provider_break.warnings.full_messages : warnings = []
@@ -178,6 +210,8 @@ class ProviderBreaksController < ApplicationController
 
         end
 
+        @provider_break_repeat.save
+
         respond_to do |format|
           if status
             format.html { redirect_to bookings_path, notice: 'Booking was successfully created.' }
@@ -193,7 +227,7 @@ class ProviderBreaksController < ApplicationController
       end
     else
 
-      service_providers = ServiceProvider.where(location_id: provider_break_params[:local])
+      service_providers = ServiceProvider.find(ids)
       break_group = ProviderBreak.where(service_provider_id: service_providers).where.not(break_group_id: nil).order(:break_group_id).last
       if break_group.nil?
         break_group = 0
@@ -208,24 +242,27 @@ class ProviderBreaksController < ApplicationController
 
 
       if params[:provider_break][:repeat] != "never"
+
+        @provider_break_repeat = ProviderBreakRepeat.create(:start_date => params[:provider_break][:start].to_datetime, :repeat_option => params[:provider_break][:repeat_option], :repeat_type => params[:provider_break][:repeat])
+
+        repeat_id = @provider_break_repeat.id
+
         service_providers.each do |provider|
           
           break_group_id = break_group
-          repeat_id = 0
-          repeat_group = ProviderBreak.where.not(break_repeat_id: nil).order(:break_repeat_id).last
-          if repeat_group.nil?
-            repeat_id = 0
-          else
-            repeat_id = repeat_group.break_repeat_id + 1
-          end
           
-          #repeat_group = ProviderBreak.where.not(break_repeat_id: nil).order(:break_repeat_id).last
-
-          #repeat_id = DateTime.now.to_s.gsub(/[-:T]/i, '')
+          
           first_start_date = params[:provider_break][:start].to_datetime
           first_end_date = params[:provider_break][:end].to_datetime
+          start_date = first_start_date
+          end_date = first_end_date
+
           if params[:provider_break][:repeat_option] == "times"
-            times = params[:provider_break][:times].to_i
+            times = 1
+            if params[:provider_break][:times] != ""
+              times = params[:provider_break][:times].to_i
+            end
+          @provider_break_repeat.times = times
             for i in 0..times-1
               if params[:provider_break][:repeat] == "daily"
                 start_date = first_start_date + i.days
@@ -277,11 +314,14 @@ class ProviderBreaksController < ApplicationController
               end
 
             end
+            @provider_break_repeat.end_date = end_date
           else
 
             start_date = first_start_date
             end_date = first_end_date
             final_date = params[:provider_break][:repeat_end].to_datetime
+            @provider_break_repeat.end_date = final_date
+            @provider_break_repeat.times = nil
 
             i = 0
 
@@ -351,14 +391,6 @@ class ProviderBreaksController < ApplicationController
       else
 
         service_providers.each do |provider|
-          
-          repeat_id = 0
-          repeat_group = ProviderBreak.where.not(break_repeat_id: nil).order(:break_repeat_id).last
-          if repeat_group.nil?
-            repeat_id = 0
-          else
-            repeat_id = repeat_group.break_repeat_id + 1
-          end
 
           break_group_id = break_group
           provider_break = ProviderBreak.new(:start => params[:provider_break][:start], :end => params[:provider_break][:end], :service_provider_id => provider.id, :name => params[:provider_break][:name], :break_group_id => break_group_id)
@@ -374,6 +406,8 @@ class ProviderBreaksController < ApplicationController
         end
 
       end
+
+      @provider_break_repeat.save
 
       respond_to do |format|
         if status
@@ -507,6 +541,10 @@ class ProviderBreaksController < ApplicationController
 
   #Edit all repetitions
   def update_repeat_break
+
+    #ServiceProvider ids
+    ids = provider_break_params[:service_provider_id]
+
     provider_breaks = ProviderBreak.where(break_repeat_id: provider_break_params[:repeat_id])
     #.where(service_provider_id: provider_break_params[:service_provider_id].to_i)
     #puts "Repeat ID: " + provider_break_params[:repeat_id]
@@ -619,6 +657,6 @@ class ProviderBreaksController < ApplicationController
   end
 
   def provider_break_params
-    params.require(:provider_break).permit(:id, :start, :end, :service_provider_id, :name, :local, :repeat, :repeat_option, :times, :repeat_end, :repeat_id)
+    params.require(:provider_break).permit(:id, :start, :end, :name, :local, :repeat, :repeat_option, :times, :repeat_end, :repeat_id, :service_provider_id => [])
   end
 end

@@ -1109,8 +1109,15 @@ function saveBookingBuffer () {
 }
 
 function saveBreak (typeURL, extraURL) {
+	var break_service_providers_ids = new Array();
+	$(".providers_check_boxes").each(function(){
+		if($(this).prop("checked"))
+		{
+			break_service_providers_ids.push($(this).val());
+		}
+	});
 	var breakJSON = {
-		"service_provider_id": $('#provider_break_service_provider_id').val(),
+		"service_provider_id": break_service_providers_ids,
 		"name": $('#provider_break_name').val(),
 		"start": $('#provider_break_start_1i').val() +"-"+ $('#provider_break_start_2i').val() +"-"+ $('#provider_break_start_3i').val() +"T"+ $('#provider_break_start_4i').val() +":"+ $('#provider_break_start_5i').val() +":00Z",
 		"end": $('#provider_break_end_1i').val() +"-"+ $('#provider_break_end_2i').val() +"-"+ $('#provider_break_end_3i').val() +"T"+ $('#provider_break_end_4i').val() +":"+ $('#provider_break_end_5i').val() +":00Z",
@@ -1464,24 +1471,27 @@ function createBreakModal(date, providerId) {
 		},
 		dataType: 'json',
 		success: function (providersArray, status, jqXHR) {
-			var selector = $('#provider_break_service_provider_id');
-			selector.empty();
-			$.each(providersArray, function (key, provider) {
-				selector.append(
-					'<option value="' + provider.id + '">' + provider.public_name + '</option>'
+			var checkboxes_selector = $("#providers_checkboxes");
+			checkboxes_selector.empty();
+
+			$.each(providersArray, function (key, provider){
+				checkboxes_selector.append(
+					'<div class="checkbox"><label>' +
+    				'<input class="check_boxes providers_check_boxes" id="provider_break_service_provider_id_' + provider.id + '" name="provider_break[service_provider_id][]" type="checkbox" value="' + provider.id + '"> ' + provider.public_name + ' ' +
+  					'</label></div>'
 				);
 			});
-			selector.append(
-				'<option value="0">Todos</option>'
-			);
+
 		}
 	});
 
 	if (parseInt($('#providers-selector').val()) > 0) {
-		$('#provider_break_service_provider_id option[value="'+parseInt($('#providers-selector').val())+'"]').attr("selected",true);
+		$("#provider_break_service_provider_id_" + parseInt($('#providers-selector').val())).prop("checked", true);
+		
 	}
 	if (providerId > 0) {
-		$('#provider_break_service_provider_id option[value="'+providerId+'"]').attr("selected",true);
+
+		$("#provider_break_service_provider_id_" + providerId).prop("checked", true);
 	}
 
 	var end_minutes = parseInt($('#provider_break_end_5i').val()) + $('#calendar-data').data('calendar-duration');
@@ -1499,7 +1509,7 @@ function createBreakModal(date, providerId) {
 	$('#provider_break_name').val('');
 	$("#provider_break_repeat_id").val('');
 	//$("#provider_break_service_provider_id").attr("disabled", false);
-	$('#provider_break_service_provider_id option[value="0"]').attr("hidden", false);
+	//$('#provider_break_service_provider_id option[value="0"]').attr("hidden", false);
 	$('.break-modal-footer').empty();
 	$('.break-modal-footer').append(
 		'<button type="button" class="btn btn-default btn-close break-button" data-dismiss="modal">Cerrar</button>' +
@@ -1509,7 +1519,11 @@ function createBreakModal(date, providerId) {
 }
 
 function editBreakModal(breakId) {
-	$.getJSON('/provider_breaks/'+breakId, function (provider_break) {
+	$.getJSON('/provider_breaks/'+breakId, function (provider_break_json) {
+
+		var provider_break = provider_break_json.provider_break
+		var provider_break_repeat = provider_break_json.provider_break_repeat
+		var break_service_providers = provider_break_json.service_providers
 		var start = provider_break.start || 0;
 		var end = provider_break.end || 0;
 		if (start != 0) {
@@ -1547,48 +1561,41 @@ function editBreakModal(breakId) {
 			success: function (providersArray, status, jqXHR) {
 				var selector = $('#provider_break_service_provider_id');
 				selector.empty();
-				$.each(providersArray, function (key, provider) {
-					if (provider.id == provider_break.service_provider_id) {
-							selector.append(
-								'<option value="' + provider.id + '" selected>' + provider.public_name + '</option>'
-							);
-					}
-					else {
-						selector.append(
-							'<option value="' + provider.id + '">' + provider.public_name + '</option>'
-						);
-					}
-					/*if (provider_break.break_group_id) {
-						if (provider.id == provider_break.service_provider_id) {
-							selector.append(
-								'<option value="' + provider.id + '">' + provider.public_name + '</option>'
-							);
-						};
-					} else {
-						selector.append(
-							'<option value="' + provider.id + '">' + provider.public_name + '</option>'
-						);
-					};*/
+
+				var checkboxes_selector = $("#providers_checkboxes");
+				checkboxes_selector.empty();
+
+				$.each(providersArray, function(key, provider){
+
+					checkboxes_selector.append(
+						'<div class="checkbox"><label>' +
+	    				'<input class="check_boxes providers_check_boxes" id="provider_break_service_provider_id_' + provider.id + '" name="provider_break[service_provider_id][]" type="checkbox" value="' + provider.id + '"> ' + provider.public_name + ' ' +
+	  					'</label></div>'
+					);
+
 				});
-				/*selector.append(
-					'<option value="0">Todos</option>'
-				);*/
+
+				console.log(break_service_providers);
+				
+
+				for(i = 0; i < break_service_providers.length; i++)
+				{
+					console.log(break_service_providers[i]);
+					console.log(break_service_providers[i].id);
+					$("#provider_break_service_provider_id_" + parseInt(break_service_providers[i].id)).prop("checked", true);
+				}
+
 			}
 		});
 
 		$('#provider_break_name').val(provider_break.name);
-		$('#provider_break_service_provider_id option[value="'+provider_break.service_provider_id+'"]').attr("selected",true);
-		/*if (provider_break.break_group_id) {
-			$('#provider_break_service_provider_id option[value="'+0+'"]').attr("selected",true);
-		};*/
+
 		if(provider_break.break_repeat_id != null)
 		{
 			$("#provider_break_repeat_id").val(provider_break.break_repeat_id);
 		}
 		$('.break-modal-footer').empty();
 		
-		//$("#provider_break_service_provider_id").attr("disabled", "disabled");
-		$('#provider_break_service_provider_id option[value="0"]').attr("hidden", "hidden");
 
 		if(provider_break.break_repeat_id == null)
 		{
@@ -1600,17 +1607,56 @@ function editBreakModal(breakId) {
 		}
 		else
 		{
+			$(".form-repeat-div").show();
+
+			$('#break_repeat option[value="' + provider_break_repeat.repeat_type + '"]').prop("selected", true);
+
+			$('[name="repeat_option"][value="' + provider_break_repeat.repeat_option + '"]').prop("checked", true);
+
+
+			if(provider_break_repeat.repeat_option == "times")
+			{
+				$("#break_times").val(provider_break_repeat.times);
+			}
+			else
+			{
+				$("#break_times").val("");
+			}
+			
+
+			repeat_dateArray = provider_break_repeat.end_date.toString().split('T');
+			repeat_date = new Date(provider_break_repeat.end_date)
+			repeat_month = repeat_date.getMonth()+1;
+			repeat_day = repeat_date.getDate();
+			$('#provider_break_repeat_repeat_end_1i option[value="'+repeat_date.getFullYear()+'"]').attr("selected",true);
+			$('#provider_break_repeat_repeat_end_2i option[value="'+repeat_month+'"]').attr("selected",true);
+			$('#provider_break_repeat_repeat_end_3i option[value="'+repeat_day+'"]').attr("selected",true);
+			$('#provider_break_repeat_repeat_end_4i option[value="'+repeat_dateArray[1].split(':')[0]+'"]').attr("selected",true);
+			$('#provider_break_repeat_repeat_end_5i option[value="'+repeat_dateArray[1].split(':')[1]+'"]').attr("selected",true);
+
+
 			$('.break-modal-footer').append(
+				'<div class="row"><div class="col-md-2"></div><div class="col-md-4 pull-l"><span style="cursor: pointer;" data-toggle="popover" data-placement="top" title="Edición" data-content="Eliminar: Sólo se eliminará este bloqueo, quedando el resto de la serie de repetición intacta. Guardar: Sólo se editará este bloqueo y será removido de la serie de repetición a la que pertencía."><i class="fa fa-question-circle"></i>&nbsp;¿Qué estoy editando?</span></div><div class="col-md-6"><span style="cursor: pointer;" data-toggle="popover" data-placement="top" title="Edición de serie" data-content="Eliminar: Se eliminará la serie de repetición completa para los prestadores seleccionados. Los otros prestadores mantendrán la serie de bloqueos si la tenían. Guardar: Se guardarán los cambios de la serie de repetición para los prestadores seleccionados. Si se seleccionan menos prestadores que los originales, se separará en dos series: una para los elegidos, y otra para los no elegidos. En cambio, si se agregan prestadores, se crearán bloqueos para ese prestador y serán incluidos en la serie original."><i class="fa fa-question-circle"></i>&nbsp;¿Qué estoy editando?</span></div></div>' +
 				'<div class="row"><div class="col-md-2">'+
 				'<button type="button" class="btn btn-default btn-close pull-left" data-dismiss="modal">Cerrar</button>' +
 				'</div><div class="col-md-4">' + 
-				'<button type="button" class="btn btn-danger" id="destroy_break" onClick="saveBreak(\'DELETE\',\'/'+breakId+'\')">Eliminar</button>' +
-				'<button type="button" class="btn btn-agendapro-claro" id="edit_break" onClick="saveBreak(\'PATCH\',\'/'+breakId+'\')">Editar</button>' +
+				'<button title="Sólo se eliminará este bloqueo, quedando el resto de la serie de repetición intacta." type="button" class="btn btn-danger" id="destroy_break" onClick="saveBreak(\'DELETE\',\'/'+breakId+'\')">Eliminar</button>' +
+				'<button title="Sólo se editará este bloqueo y será removido de la serie de repetición a la que pertencía." type="button" class="btn btn-agendapro-claro" id="edit_break" onClick="saveBreak(\'PATCH\',\'/'+breakId+'\')">Guardar</button>' +
 				'</div><div class="col-md-6">' + 
-				'<button type="button" class="btn btn-danger" id="destroy_repeat_break" onClick="deleteRepeatBreak(' + breakId +')">Eliminar serie</button>' +
-				'<button type="button" class="btn btn-agendapro-claro" id="edit_repeat_break" onClick="editRepeatBreak(' + breakId +')">Editar serie</button>' +
+				'<button title="Se eliminará la serie de repetición completa para los prestadores seleccionados. Los otros prestadores mantendrán la serie de bloqueos si la tenían." type="button" class="btn btn-danger" id="destroy_repeat_break" onClick="deleteRepeatBreak(' + breakId +')">Eliminar serie</button>' +
+				'<button title="Se guardarán los cambios de la serie de repetición para los prestadores seleccionados. Si se seleccionan menos prestadores que los originales, se separará en dos series: una para los elegidos, y otra para los no elegidos. En cambio, si se agregan prestadores, se crearán bloqueos para ese prestador y serán incluidos en la serie original." type="button" class="btn btn-agendapro-claro" id="edit_repeat_break" onClick="editRepeatBreak(' + breakId +')">Guardar serie</button>' +
 				'</div></div>'
 			);
+			
+			  $('[data-toggle="tooltip"]').tooltip({
+			  	placement: "top"
+			  });
+
+			  $('[data-toggle="popover"]').popover();
+
+			  $(".popover").css("width", "400px");
+			
+
 		}
 		$('#breakModal').modal('show');
 	});
