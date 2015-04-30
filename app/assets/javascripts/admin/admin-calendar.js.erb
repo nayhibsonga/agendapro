@@ -1270,14 +1270,25 @@ function saveBreak (typeURL, extraURL) {
 
 function editRepeatBreak(breakId)
 {
+	var break_service_providers_ids = new Array();
+	$(".providers_check_boxes").each(function(){
+		if($(this).prop("checked"))
+		{
+			break_service_providers_ids.push($(this).val());
+		}
+	});
 	var breakJSON = {
-		"service_provider_id": $('#provider_break_service_provider_id').val(),
+		"service_provider_id": break_service_providers_ids,
 		"name": $('#provider_break_name').val(),
 		"start": $('#provider_break_start_1i').val() +"-"+ $('#provider_break_start_2i').val() +"-"+ $('#provider_break_start_3i').val() +"T"+ $('#provider_break_start_4i').val() +":"+ $('#provider_break_start_5i').val() +":00Z",
 		"end": $('#provider_break_end_1i').val() +"-"+ $('#provider_break_end_2i').val() +"-"+ $('#provider_break_end_3i').val() +"T"+ $('#provider_break_end_4i').val() +":"+ $('#provider_break_end_5i').val() +":00Z",
 		"local": $('#locals-selector').val(),
 		"repeat_id" : $("#provider_break_repeat_id").val(),
-		"id" : breakId
+		"id" : breakId,
+		"repeat": $('#break_repeat').val(),
+		"repeat_end": $('#provider_break_repeat_repeat_end_1i').val() +"-"+ $('#provider_break_repeat_repeat_end_2i').val() +"-"+ $('#provider_break_repeat_repeat_end_3i').val() +"T"+ $('#provider_break_repeat_repeat_end_4i').val() +":"+ $('#provider_break_repeat_repeat_end_5i').val() +":00Z",
+		"times": $("#break_times").val(),
+		"repeat_option": $('input[name="repeat_option"]:checked').val()
 		};
 	$("#break-loader").show();
 	$("#new_provider_break").hide();
@@ -1287,9 +1298,16 @@ function editRepeatBreak(breakId)
 		url: '/provider_breaks/update_repeat_break.json',
 		data: { "provider_break": breakJSON },
 		dataType: 'json',
-		success: function(provider_break){
+		success: function(provider_break_json){
 			var warnings = "";
 			var newProviderId = "0";
+			var provider_break = provider_break_json[0]
+			var break_deletes = provider_break_json[1]
+
+			$.each(break_deletes, function (key, break_delete) {
+				$('#calendar').fullCalendar('removeEvents','b'+break_delete.id);
+			});
+
 			$.each(provider_break, function (key, provider_break) {
 				var label = provider_break.name;
 				newProviderId = provider_break.service_provider_id;
@@ -1347,8 +1365,15 @@ function editRepeatBreak(breakId)
 
 function deleteRepeatBreak(breakId)
 {
+	var break_service_providers_ids = new Array();
+	$(".providers_check_boxes").each(function(){
+		if($(this).prop("checked"))
+		{
+			break_service_providers_ids.push($(this).val());
+		}
+	});
 	var breakJSON = {
-		"service_provider_id": $('#provider_break_service_provider_id').val(),
+		"service_provider_id": break_service_providers_ids,
 		"name": $('#provider_break_name').val(),
 		"start": $('#provider_break_start_1i').val() +"-"+ $('#provider_break_start_2i').val() +"-"+ $('#provider_break_start_3i').val() +"T"+ $('#provider_break_start_4i').val() +":"+ $('#provider_break_start_5i').val() +":00Z",
 		"end": $('#provider_break_end_1i').val() +"-"+ $('#provider_break_end_2i').val() +"-"+ $('#provider_break_end_3i').val() +"T"+ $('#provider_break_end_4i').val() +":"+ $('#provider_break_end_5i').val() +":00Z",
