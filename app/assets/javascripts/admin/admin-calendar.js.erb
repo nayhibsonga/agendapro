@@ -779,6 +779,10 @@ function editDrag(event) {
 		var eventJSON = {start: startString, end: endString};
 	}
 	if (event.id.toString().charAt(0) === 'b') {
+		var break_service_providers_ids = new Array();
+		break_service_providers_ids.push(event.resourceId)
+		eventJSON = {start: startString, end: endString, service_provider_id: break_service_providers_ids, provider_lock: false};
+
 		if (confirm('¿Estás seguro que deseas modificar el bloqueo de horario?')) {
 			$.ajax({
 				type: 'PATCH',
@@ -1141,11 +1145,12 @@ function saveBreak (typeURL, extraURL) {
 					$('.break-button').attr("disabled", "disabled");
 					$( '<span id="small_loader"><i class="fa fa-spinner fa-spin"></i> </span>' ).insertBefore( $( ".btn-close" ) );
 					var warnings = '';
-					if ($('#provider_break_service_provider_id').val() != 0 && $('#break_repeat').val() == "never") {
+
+					$.each(provider_break, function (key, provider_break) {
 						var label = provider_break.name;
 						if (label == null) {
 							label = 'Hora Bloqueada';
-						}
+						};
 						var events = {
 							id: 'b'+provider_break.id,
 							title: label,
@@ -1157,39 +1162,15 @@ function saveBreak (typeURL, extraURL) {
 							borderColor: textColors[7],
 							backgroundColor: backColors[7]
 						};
-						$('#calendar').fullCalendar('renderEvent', events, true);
-
-						$('#bookingAlerts').hide();
 						if (provider_break.warnings && provider_break.warnings.length > 0) {
 							for (i in provider_break.warnings) {
 								warnings += provider_break.warnings[i] + '. ';
 							}
 						}
-					} else{
-						$.each(provider_break, function (key, provider_break) {
-							var label = provider_break.name;
-							if (label == null) {
-								label = 'Hora Bloqueada';
-							};
-							var events = {
-								id: 'b'+provider_break.id,
-								title: label,
-								allDay: false,
-								start: provider_break.start,
-								end: provider_break.end,
-								resourceId: parseInt(provider_break.service_provider_id),
-								textColor: textColors[7],
-								borderColor: textColors[7],
-								backgroundColor: backColors[7]
-							};
-							if (provider_break.warnings.length > 0) {
-								for (i in provider_break.warnings) {
-									warnings += provider_break.warnings[i] + '. ';
-								}
-							}
-							$('#calendar').fullCalendar('renderEvent', events, true);
-						});
-					};
+						$('#calendar').fullCalendar('renderEvent', events, true);
+
+					});
+
 					$("#break-loader").hide();
 					$("#new_provider_break").show();
 					$(".break-modal-footer").show();
@@ -1207,58 +1188,41 @@ function saveBreak (typeURL, extraURL) {
 					$('.break-button').attr("disabled", "disabled");
 					$( '<span id="small_loader"><i class="fa fa-spinner fa-spin"></i> </span>' ).insertBefore( $( ".btn-close" ) );
 					var warnings = '';
-					if ($('#provider_break_service_provider_id').val() != 0) {
+					
+					$.each(provider_break, function (key, provider_break) {
 						var label = provider_break.name;
 						if (label == null) {
 							label = 'Hora Bloqueada';
 						}
 						event = $('#calendar').fullCalendar('clientEvents', 'b'+provider_break.id)[0];
-						event.title = label;
-						event.start = provider_break.start;
-						event.end = provider_break.end;
-						event.resourceId = parseInt(provider_break.service_provider_id);
-						newProviderId = provider_break.service_provider_id;
-						$('#calendar').fullCalendar('updateEvent', event);
-						if (provider_break.warnings.length > 0) {
+						if (event) {
+							event.title = label;
+							event.start = provider_break.start;
+							event.end = provider_break.end;
+							event.resourceId = parseInt(provider_break.service_provider_id);
+							newProviderId = provider_break.service_provider_id;
+							$('#calendar').fullCalendar('updateEvent', event);
+						} else {
+							var events = {
+								id: 'b'+provider_break.id,
+								title: label,
+								allDay: false,
+								start: provider_break.start,
+								end: provider_break.end,
+								resourceId: parseInt(provider_break.service_provider_id),
+								textColor: textColors[7],
+								borderColor: textColors[7],
+								backgroundColor: backColors[7]
+							};
+							$('#calendar').fullCalendar('renderEvent', events, true);
+						};
+						if (provider_break.warnings && provider_break.warnings.length > 0) {
 							for (i in provider_break.warnings) {
 								warnings += provider_break.warnings[i] + '. ';
-							}
-						}
-					} else{
-						$.each(provider_break, function (key, provider_break) {
-							var label = provider_break.name;
-							if (label == null) {
-								label = 'Hora Bloqueada';
-							}
-							event = $('#calendar').fullCalendar('clientEvents', 'b'+provider_break.id)[0];
-							if (event) {
-								event.title = label;
-								event.start = provider_break.start;
-								event.end = provider_break.end;
-								event.resourceId = parseInt(provider_break.service_provider_id);
-								newProviderId = provider_break.service_provider_id;
-								$('#calendar').fullCalendar('updateEvent', event);
-							} else {
-								var events = {
-									id: 'b'+provider_break.id,
-									title: label,
-									allDay: false,
-									start: provider_break.start,
-									end: provider_break.end,
-									resourceId: parseInt(provider_break.service_provider_id),
-									textColor: textColors[7],
-									borderColor: textColors[7],
-									backgroundColor: backColors[7]
-								};
-								$('#calendar').fullCalendar('renderEvent', events, true);
 							};
-							if (provider_break.warnings.length > 0) {
-								for (i in provider_break.warnings) {
-									warnings += provider_break.warnings[i] + '. ';
-								};
-							}
-						});
-					};
+						}
+					});
+
 					selProviderId = parseInt($('#providers-selector').val())
 					if (selProviderId == 0) {
 						//loadLocationTime (resources);
@@ -1276,13 +1240,11 @@ function saveBreak (typeURL, extraURL) {
 				case 'DELETE':
 					$('.break-button').attr("disabled", "disabled");
 					$( '<span id="small_loader"><i class="fa fa-spinner fa-spin"></i> </span>' ).insertBefore( $( ".btn-close" ) );
-					if ($('#provider_break_service_provider_id').val() != 0) {
+
+					$.each(provider_break, function (key, provider_break) {
 						$('#calendar').fullCalendar('removeEvents','b'+provider_break.id);
-					} else {
-						$.each(provider_break, function (key, provider_break) {
-							$('#calendar').fullCalendar('removeEvents','b'+provider_break.id);
-						});
-					};
+					});
+
 					break;
 			}
 			$("#break-loader").hide();
@@ -1524,6 +1486,7 @@ function editBreakModal(breakId) {
 		var provider_break = provider_break_json.provider_break
 		var provider_break_repeat = provider_break_json.provider_break_repeat
 		var break_service_providers = provider_break_json.service_providers
+		var group_service_providers = provider_break_json.group_service_providers
 		var start = provider_break.start || 0;
 		var end = provider_break.end || 0;
 		if (start != 0) {
@@ -1577,12 +1540,23 @@ function editBreakModal(breakId) {
 
 				console.log(break_service_providers);
 				
-
-				for(i = 0; i < break_service_providers.length; i++)
+				if(break_service_providers != null && break_service_providers.length > 0)
 				{
-					console.log(break_service_providers[i]);
-					console.log(break_service_providers[i].id);
-					$("#provider_break_service_provider_id_" + parseInt(break_service_providers[i].id)).prop("checked", true);
+					for(i = 0; i < break_service_providers.length; i++)
+					{
+						$("#provider_break_service_provider_id_" + parseInt(break_service_providers[i].id)).prop("checked", true);
+					}
+				}
+				else if(group_service_providers != null && group_service_providers.length > 0)
+				{
+					for(i = 0; i < group_service_providers.length; i++)
+					{
+						$("#provider_break_service_provider_id_" + parseInt(group_service_providers[i].id)).prop("checked", true);
+					}
+				}
+				else
+				{
+					$("#provider_break_service_provider_id_" + parseInt(provider_break.service_provider_id)).prop("checked", true);
 				}
 
 			}

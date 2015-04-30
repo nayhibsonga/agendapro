@@ -15,6 +15,7 @@ class ProviderBreaksController < ApplicationController
     provider_break = ProviderBreak.find(params[:id])
     provider_break_repeat = {}
     service_providers = {}
+    group_service_providers = {}
 
     if provider_break.break_repeat_id != nil
 
@@ -25,7 +26,13 @@ class ProviderBreaksController < ApplicationController
 
     end
 
-    provider_break_json = {:provider_break => provider_break, :provider_break_repeat => provider_break_repeat, :service_providers => service_providers}
+    if provider_break.break_group_id
+
+      group_service_providers = ServiceProvider.where(:id => ProviderBreak.where(:break_group_id => provider_break.break_group_id).pluck(:service_provider_id))
+
+    end
+
+    provider_break_json = {:provider_break => provider_break, :provider_break_repeat => provider_break_repeat, :service_providers => service_providers, :group_service_providers => group_service_providers}
 
     render :json => provider_break_json
 
@@ -34,18 +41,27 @@ class ProviderBreaksController < ApplicationController
   def create_provider_break
 
     ids = params[:provider_break][:service_provider_id]
-    puts params[:provider_break][:service_provider_id]
-    puts params[:provider_break][:service_provider_id].inspect
 
-    if ids.count < 1
-
+    if(ids.nil? || ids.length < 1)
+      @break_json = Array.new
+      respond_to do |format|
+        format.html { redirect_to bookings_path, notice: 'No se seleccionaron proveedores.' }
+        format.json { render :json => @break_json }
+        format.js { }
+      end
+      return
     elsif ids.count == 1
+
+      @break_json = Array.new
+
       if params[:provider_break][:repeat] == "never"
+
         @provider_break = ProviderBreak.new(:start => params[:provider_break][:start], :end => params[:provider_break][:end], :service_provider_id => ids[0].to_i, :name => params[:provider_break][:name])
+
         respond_to do |format|
           if @provider_break.save
             @provider_break.warnings ? warnings = @provider_break.warnings.full_messages : warnings = []
-            @break_json = {id: @provider_break.id, start: @provider_break.start, end: @provider_break.end, service_provider_id: @provider_break.service_provider_id, name: @provider_break.name, warnings: warnings}
+            @break_json << {id: @provider_break.id, start: @provider_break.start, end: @provider_break.end, service_provider_id: @provider_break.service_provider_id, name: @provider_break.name, warnings: warnings}
             format.html { redirect_to bookings_path, notice: 'Booking was successfully created.' }
             format.json { render :json => @break_json }
             format.js { }
@@ -56,7 +72,7 @@ class ProviderBreaksController < ApplicationController
           end
         end
       else
-        @break_json = Array.new
+        
         @break_errors = Array.new
 
         @provider_break_repeat = ProviderBreakRepeat.create(:start_date => params[:provider_break][:start].to_datetime, :repeat_option => params[:provider_break][:repeat_option], :repeat_type => params[:provider_break][:repeat])
@@ -228,7 +244,7 @@ class ProviderBreaksController < ApplicationController
     else
 
       service_providers = ServiceProvider.find(ids)
-      break_group = ProviderBreak.where(service_provider_id: service_providers).where.not(break_group_id: nil).order(:break_group_id).last
+      break_group = ProviderBreak.where.not(break_group_id: nil).order('break_group_id asc').last
       if break_group.nil?
         break_group = 0
       else
@@ -388,6 +404,7 @@ class ProviderBreaksController < ApplicationController
           end
 
         end
+        @provider_break_repeat.save
       else
 
         service_providers.each do |provider|
@@ -407,7 +424,7 @@ class ProviderBreaksController < ApplicationController
 
       end
 
-      @provider_break_repeat.save
+      
 
       respond_to do |format|
         if status
@@ -428,33 +445,224 @@ class ProviderBreaksController < ApplicationController
   def update_provider_break
     #if provider_break_params[:service_provider_id].to_i != 0
       @provider_break = ProviderBreak.find(params[:id])
-      respond_to do |format|
-        break_params = provider_break_params.except(:local)
-        break_params[:break_group_id] = nil
-        @provider_break.service_provider_id = provider_break_params[:service_provider_id]
-        @provider_break.break_group_id = nil
-        if !provider_break_params[:name] || provider_break_params[:name].nil? || provider_break_params[:name] == ""
+      ids = params[:provider_break][:service_provider_id]
+      @break_errors = Array.new
+      @break_json = Array.new
+
+      status = true
+      new_name = @provider_break.name
+      if provider_break_params[:name] && provider_break_params[:name] != ""
+        new_name = provider_break_params[:name]
+      end
+
+      if(ids.nil? || ids.length < 1)
+        @break_json = Array.new
+        respond_to do |format|
+          format.html { redirect_to bookings_path, notice: 'No se seleccionaron proveedores.' }
+          format.json { render :json => @break_json }
+          format.js { }
+        end
+        return
+      end
+      
+      service_providers = ServiceProvider.find(ids)
+      group_service_providers = []
+
+      if @provider_break.break_group_id != nil
+        group_service_providers = ServiceProvider.where(:id => ProviderBreak.where(:break_group_id => @provider_break.break_group_id).pluck(:service_provider_id))
+
+        if (service_providers - group_service_providers).empty? and (group_service_providers - service_providers).empty?
+
+          #The providers given are the same of the group
+          provider_breaks = ProviderBreak.where(:break_group_id => @provider_break.break_group_id)
+
+          provider_breaks.each do |provider_break|
+
+            provider_break.name = new_name
+            provider_break.start = provider_break_params[:start]
+            provider_break.end = provider_break_params[:end]
+            provider_break.break_repeat_id = nil
+
+            if provider_break.save
+              provider_break.warnings ? warnings = provider_break.warnings.full_messages : warnings = []
+              @break_json.push({id: provider_break.id, start: provider_break.start, end: provider_break.end, service_provider_id: provider_break.service_provider_id, name: provider_break.name, warnings: warnings})
+              status = status && true
+            else
+              @break_errors.push(provider_break.errors.full_messages)
+              status = status && false
+            end
+
+          end
 
         else
-          @provider_break.name = provider_break_params[:name]
+
+          new_providers = service_providers - group_service_providers
+          old_providers = group_service_providers - service_providers
+
+          #Add new given providers to the group.
+          new_providers.each do |service_provider|
+
+            provider_break = ProviderBreak.new
+
+            provider_break.service_provider_id = service_provider.id
+            provider_break.name = new_name
+            provider_break.start = provider_break_params[:start]
+            provider_break.end = provider_break_params[:end]
+            provider_break.break_group_id = @provider_break.break_group_id
+            provider_break.break_repeat_id = nil
+
+            if provider_break.save
+              provider_break.warnings ? warnings = provider_break.warnings.full_messages : warnings = []
+              @break_json.push({id: provider_break.id, start: provider_break.start, end: provider_break.end, service_provider_id: provider_break.service_provider_id, name: provider_break.name, warnings: warnings})
+              status = status && true
+            else
+              @break_errors.push(provider_break.errors.full_messages)
+              status = status && false
+            end
+
+          end
+
+          #Detach providers that weren't given in params from the group. Give them a new break_group_id.
+          if !old_providers.empty?
+
+            break_group = ProviderBreak.where('break_group_id is not null').order('break_group_id asc').last
+            new_break_group_id = 0
+            if break_group.nil?
+              new_break_group_id = 0
+            else
+              new_break_group = break_group.break_group_id + 1
+            end
+
+            old_provider_breaks = ProviderBreak.where(:service_provider_id => old_providers.map(&:id), :break_group_id => @provider_break.break_group_id)
+
+            old_provider_breaks.each do |provider_break|
+              provider_break.break_group_id = new_break_group_id
+              
+              if provider_break.save
+                provider_break.warnings ? warnings = provider_break.warnings.full_messages : warnings = []
+                @break_json.push({id: provider_break.id, start: provider_break.start, end: provider_break.end, service_provider_id: provider_break.service_provider_id, name: provider_break.name, warnings: warnings})
+                status = status && true
+              else
+                @break_errors.push(provider_break.errors.full_messages)
+                status = status && false
+              end
+
+            end
+
+          end
+
+          #For those given that are not new, just update their values.
+          update_providers = service_providers - new_providers - old_providers
+          update_provider_breaks = ProviderBreak.where(:service_provider_id => update_providers.map(&:id), :break_group_id => @provider_break.break_group_id)
+          update_provider_breaks.each do |provider_break|
+
+            provider_break.name = new_name
+            provider_break.start = provider_break_params[:start]
+            provider_break.end = provider_break_params[:end]
+            
+            if provider_break.save
+              provider_break.warnings ? warnings = provider_break.warnings.full_messages : warnings = []
+              @break_json.push({id: provider_break.id, start: provider_break.start, end: provider_break.end, service_provider_id: provider_break.service_provider_id, name: provider_break.name, warnings: warnings})
+              status = status && true
+            else
+              @break_errors.push(provider_break.errors.full_messages)
+              status = status && false
+            end
+
+          end
+
         end
-        @provider_break.start = provider_break_params[:start]
-        @provider_break.end = provider_break_params[:end]
-        @provider_break.break_repeat_id = nil
-        if @provider_break.save
 
-          @provider_break.warnings ? warnings = @provider_break.warnings.full_messages : warnings = []
-          @break_json = {id: @provider_break.id, start: @provider_break.start, end: @provider_break.end, service_provider_id: @provider_break.service_provider_id, name: @provider_break.name, warnings: warnings}
+      else
 
-          format.html { redirect_to bookings_path, notice: 'Booking was successfully created.' }
+        #It has no group. If it's one, just edit it. Else, edit it and create the rest with group.
+        if ids.length == 1
+
+          @provider_break.service_provider_id = ids[0]
+          @provider_break.name = new_name
+          @provider_break.start = provider_break_params[:start]
+          @provider_break.end = provider_break_params[:end]
+
+          if @provider_break.save
+            @provider_break.warnings ? warnings = @provider_break.warnings.full_messages : warnings = []
+            @break_json.push({id: @provider_break.id, start: @provider_break.start, end: @provider_break.end, service_provider_id: @provider_break.service_provider_id, name: @provider_break.name, warnings: warnings})
+            status = status && true
+          else
+            @break_errors.push(provider_break.errors.full_messages)
+            status = status && false
+          end
+
+        else
+
+          
+          new_providers = []
+          service_providers.each do |service_provider|
+            if service_provider.id != @provider_break.service_provider.id
+              new_providers << service_provider
+            end
+          end
+
+          break_group = ProviderBreak.where('break_group_id is not null').order('break_group_id asc').last
+          new_break_group_id = 0
+          if break_group.nil?
+            new_break_group_id = 0
+          else
+            new_break_group = break_group.break_group_id + 1
+          end
+
+          @provider_break.name = new_name
+          @provider_break.start = provider_break_params[:start]
+          @provider_break.end = provider_break_params[:end]
+          @provider_break.break_group_id = new_break_group_id
+
+          if @provider_break.save
+            @provider_break.warnings ? warnings = @provider_break.warnings.full_messages : warnings = []
+            @break_json.push({id: @provider_break.id, start: @provider_break.start, end: @provider_break.end, service_provider_id: @provider_break.service_provider_id, name: @provider_break.name, warnings: warnings})
+            status = status && true
+          else
+            @break_errors.push(provider_break.errors.full_messages)
+            status = status && false
+          end
+
+          #Add new given providers to the group.
+          new_providers.each do |service_provider|
+
+            provider_break = ProviderBreak.new
+
+            provider_break.service_provider_id = service_provider.id
+            provider_break.name = new_name
+            provider_break.start = provider_break_params[:start]
+            provider_break.end = provider_break_params[:end]
+            provider_break.break_group_id = new_break_group_id
+            provider_break.break_repeat_id = nil
+
+            if provider_break.save
+              provider_break.warnings ? warnings = provider_break.warnings.full_messages : warnings = []
+              @break_json.push({id: provider_break.id, start: provider_break.start, end: provider_break.end, service_provider_id: provider_break.service_provider_id, name: provider_break.name, warnings: warnings})
+              status = status && true
+            else
+              @break_errors.push(provider_break.errors.full_messages)
+              status = status && false
+            end
+
+          end
+
+        end      
+
+      end
+
+      respond_to do |format|
+        if status
+          format.html { redirect_to bookings_path, notice: 'Breaks were successfully created.' }
           format.json { render :json => @break_json }
           format.js { }
         else
           format.html { render action: 'index' }
-          format.json { render :json => { :errors => @provider_break.errors.full_messages }, :status => 422 }
+          format.json { render :json => { :errors => @break_errors }, :status => 422 }
           format.js { }
         end
       end
+
     # else
     #   break_group = ProviderBreak.find(params[:id]).break_group_id
     #   service_providers = ServiceProvider.where(location_id: provider_break_params[:local])
@@ -618,27 +826,32 @@ class ProviderBreaksController < ApplicationController
 
 
   def destroy_provider_break
-    if provider_break_params[:service_provider_id].to_i != 0
-      @provider_break = ProviderBreak.find(params[:id])
-      @provider_break.destroy
-      respond_to do |format|
-        format.html { redirect_to bookings_url }
-        format.json { render :json => @provider_break }
-      end
-    else
-      break_group = ProviderBreak.find(params[:id]).break_group_id
-      service_providers = ServiceProvider.where(location_id: provider_break_params[:local])
-      provider_breaks = ProviderBreak.where(service_provider_id: service_providers).where(break_group_id: break_group)
-      @break_json = Array.new
+
+    provider_break = ProviderBreak.find(params[:id])
+    @break_json = Array.new
+
+    if !provider_break.break_group_id.nil?
+
+      ids = provider_break_params[:service_provider_id]
+      provider_breaks = ProviderBreak.where(:service_provider_id => ids, :break_group_id => provider_break.break_group_id)
+
       provider_breaks.each do |provider_break|
         provider_break.destroy
         @break_json.push(provider_break)
       end
-      respond_to do |format|
-        format.html { redirect_to bookings_url }
-        format.json { render :json => @break_json }
-      end
+
+    else
+
+      provider_break.destroy
+      @break_json.push(provider_break)
+
     end
+
+    respond_to do |format|
+      format.html { redirect_to bookings_url }
+      format.json { render :json => @break_json }
+    end
+
   end
 
 
