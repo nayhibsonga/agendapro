@@ -55,6 +55,9 @@ function buildDay (value, ctrl) {
 							'<option value="45">45</option>' +
 						'</select>' +
 					'</div>' +
+					'<div class="form-group">' +
+						'<label>&nbsp;&nbsp;-&nbsp;&nbsp;</label>' +
+					'</div>' +
 				'</form>' +
 			'</td>' +
 			'<td>' +
@@ -255,6 +258,7 @@ function saveLocation (typeURL, extraURL) {
 		},
 		error: function (xhr){
 		    var errors = $.parseJSON(xhr.responseText).errors;
+		    var location_count = $.parseJSON(xhr.responseText).location_count
 		    var errorList = '';
 			for (i in errors) {
 				errorList += '<li>' + errors[i] + '</li>'
@@ -265,6 +269,9 @@ function saveLocation (typeURL, extraURL) {
 					errorList +
 				'</ul>'
 			);
+			if (location_count > 0) {
+				$('#next_location_button').attr('disabled', false);
+			}
 			$('#update_location_spinner').hide();
 			$('#update_location_button').attr('disabled', false);
 		}
@@ -376,6 +383,9 @@ function changeCity (city_id) {
 }
 
 function new_location() {
+	location_validation.resetForm();
+    $('#new_location .form-group').removeClass('has-error has-success');
+    $('#new_location .form-group').find('.form-control-feedback').removeClass('fa fa-times fa-check');
 	$('#location_name').val('');
 	$('#location_address').val('');
 	$('#location_second_address').val('');
@@ -403,6 +413,9 @@ function new_location() {
 }
 
 function load_location(id) {
+	location_validation.resetForm();
+    $('#new_location .form-group').removeClass('has-error has-success');
+    $('#new_location .form-group').find('.form-control-feedback').removeClass('fa fa-times fa-check');
 	$.getJSON('/quick_add/load_location/'+id, {}, function (location) {
 		$('#location_name').val(location.location.name);
 		$('#location_address').val(location.location.address);
@@ -416,6 +429,8 @@ function load_location(id) {
 	    var latitude = parseFloat($('#location_latitude').val());
 	    var longitude = parseFloat($('#location_longitude').val());
 	    setCenter(new google.maps.LatLng(latitude, longitude), 17);
+	    $('select.time-select').attr('disabled', true);
+	    $('#localTable input:checkbox').prop('checked', false);
 		$.each(location.location_times, function(index,locationTime) {
 			window.console.log()
 			var value = locationTime.day_id;
@@ -643,22 +658,22 @@ $(function() {
 		}
 	});
 
-	$('#update_location_button').click(function(event) {
-		$('#update_location_spinner').show();
-		$('#update_location_button').attr('disabled', true);
-		$('#next_location_button').attr('disabled', true);
-		if(event.target.name == 'new_location_btn') {
-			saveLocation('POST','');
-		}
-		else {
-			if (parseInt(event.target.name.split("edit_location_btn_")[1]) > 0) {
-				saveLocation('PATCH', '/'+parseInt(event.target.name.split("edit_location_btn_")[1]));
-			}
-			else {
-				window.console.log("Bad location update");
-			}
-		}
-	});
+	// $('#update_location_button').click(function(event) {
+	// 	$('#update_location_spinner').show();
+	// 	$('#update_location_button').attr('disabled', true);
+	// 	$('#next_location_button').attr('disabled', true);
+	// 	if(event.target.name == 'new_location_btn') {
+	// 		saveLocation('POST','');
+	// 	}
+	// 	else {
+	// 		if (parseInt(event.target.name.split("edit_location_btn_")[1]) > 0) {
+	// 			saveLocation('PATCH', '/'+parseInt(event.target.name.split("edit_location_btn_")[1]));
+	// 		}
+	// 		else {
+	// 			window.console.log("Bad location update");
+	// 		}
+	// 	}
+	// });
 
 	$('#next_location_button').click(function(){
 		$('#fieldset_step3').show();

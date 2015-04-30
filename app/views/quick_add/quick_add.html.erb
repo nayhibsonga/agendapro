@@ -23,10 +23,6 @@
 <% content_for :scripts do %>
   <%= javascript_include_tag "http://maps.google.com/maps/api/js?sensor=false" %>
   <%= javascript_include_tag "Alert" %>
-  <%= javascript_include_tag "validations/validate" %>
-  <%= javascript_include_tag "validations/admin/quick-add" %>
-  <%= javascript_include_tag "bootstrap-tagsinput" %>
-  <%= javascript_include_tag "bootstrap3-typeahead" %>
 
   <script type="text/javascript">
     function scrollToAnchor(aid){
@@ -52,6 +48,11 @@
 <%= render 'new_local' %>
 <%= render 'services' %>
 <%= render 'providers' %>
+
+<% content_for :scripts do %>
+  <%= javascript_include_tag "validations/validate" %>
+  <%= javascript_include_tag "validations/admin/quick-add" %>
+<% end %>
 
 <div id="quick_add_step5" class="container-fluid background-start content-fill below-1 below-2 below-3 below-4"  <%= 'style="display: none;" disabled'.html_safe if @company.service_providers.where(active: true).count < 1 %>>
   <div class="row">

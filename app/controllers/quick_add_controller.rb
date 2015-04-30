@@ -113,21 +113,30 @@ class QuickAddController < ApplicationController
 		@location = Location.new(location_params)
 	    @location.company_id = current_user.company_id
 
+	    if location_params[:location_times_attributes].blank? || location_params[:location_times_attributes] == [""]
+  			render :json => { :errors => ['Debes elegir un horario con al menos un día disponible.'], :location_count => @location.company.locations.where(active: true).count }, :status => 422
+  			return
+  		end
+
 	    respond_to do |format|
 	      if @location.save
 	        format.json { render :layout => false, :json => @location }
 	      else
-	        format.json { render :layout => false, :json => { :errors => @location.errors.full_messages }, :status => 422 }
+	        format.json { render :layout => false, :json => { :errors => @location.errors.full_messages, :location_count => @location.company.locations.where(active: true).count }, :status => 422 }
 	      end
 	    end
 	end
 	def update_location
-		@location_times = Location.find(params[:id]).location_times
+		@location = Location.find(params[:id])
+		@location_times = @location.location_times
+		if location_params[:location_times_attributes].blank? || location_params[:location_times_attributes] == [""]
+  			render :json => { :errors => ['Debes elegir un horario con al menos un día disponible.'], :location_count => @location.company.locations.where(active: true).count }, :status => 422
+  			return
+  		end
 	    @location_times.each do |location_time|
 	      location_time.location_id = nil
 	      location_time.save
 	    end
-		@location = Location.find(params[:id])
 	    respond_to do |format|
 	      if @location.update(location_params)
         	@location_times.destroy_all
@@ -137,7 +146,7 @@ class QuickAddController < ApplicationController
 	          location_time.location_id = @location.id
 	          location_time.save
 	        end
-	        format.json { render :layout => false, :json => { :errors => @location.errors.full_messages }, :status => 422 }
+	        format.json { render :layout => false, :json => { :errors => @location.errors.full_messages, :location_count => @location.company.locations.where(active: true).count }, :status => 422 }
 	      end
 	    end
 	end

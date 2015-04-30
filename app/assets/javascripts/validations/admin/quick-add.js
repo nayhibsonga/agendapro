@@ -1,5 +1,10 @@
+var location_validation;
+var service_category_validation;
+var service_validation;
+var service_provider_validation;
+
 $(function() {
-	$('#new_location').validate({
+	location_validation = $('#new_location').validate({
 		errorPlacement: function(error, element) {
 			error.appendTo(element.next());
 		},
@@ -40,11 +45,51 @@ $(function() {
 			$(element).parent().empty()
 		},
 		submitHandler: function(form) {
-			form.submit();
+			$('#update_location_spinner').show();
+			$('#update_location_button').attr('disabled', true);
+			$('#next_location_button').attr('disabled', true);
+			if(event.target.name == 'new_location_btn') {
+				saveLocation('POST','');
+			}
+			else {
+				if (parseInt(event.target.name.split("edit_location_btn_")[1]) > 0) {
+					saveLocation('PATCH', '/'+parseInt(event.target.name.split("edit_location_btn_")[1]));
+				}
+				else {
+					window.console.log("Bad location update");
+				}
+			}
 		}
 	});
 
-	$('#new_service').validate({
+	service_category_validation = $('#new_service_category').validate({
+		errorPlacement: function(error, element) {
+			error.appendTo(element.next());
+		},
+		rules: {
+			'service_category[name]': {
+				required: true,
+				minlength: 3
+			}
+		},
+		
+		highlight: function(element) {
+			$(element).closest('.form-group').removeClass('has-success has-feedback').addClass('has-error has-feedback');
+			$(element).parent().children('.form-control-feedback').removeClass('fa fa-check').addClass('fa fa-times');
+		},
+		success: function(element) {
+			$(element).closest('.form-group').removeClass('has-error has-feedback').addClass('has-success has-feedback');
+			$(element).parent().parent().children('.form-control-feedback').removeClass('fa fa-times').addClass('fa fa-check');
+			$(element).parent().empty()
+		},
+		submitHandler: function(form) {
+			$('#update_service_category_spinner').show();
+			$('#update_service_category_button').attr('disabled', true);
+			saveServiceCategory();
+		}
+	});
+
+	service_validation = $('#new_service').validate({
 		errorPlacement: function(error, element) {
 			error.appendTo(element.next());
 		},
@@ -77,17 +122,24 @@ $(function() {
 			$(element).parent().empty()
 		},
 		submitHandler: function(form) {
-			form.submit();
+			$('#update_service_spinner').show();
+			$('#update_service_button').attr('disabled', true);
+			saveService();
 		}
 	});
 
-	$('#new_service_provider').validate({
+	service_provider_validation = $('#new_service_provider').validate({
 		errorPlacement: function(error, element) {
 			error.appendTo(element.next());
 		},
 		rules: {
 			'service_provider[public_name]': {
 				required: true,
+				minlength: 3
+			},
+			'service_provider[notification_email]': {
+				required: true,
+				email: true,
 				minlength: 3
 			}
 		},
@@ -101,8 +153,9 @@ $(function() {
 			$(element).parent().empty()
 		},
 		submitHandler: function(form) {
-			form.submit();
-		}
+			$('#update_service_provider_spinner').show();
+			$('#update_service_provider_button').attr('disabled', true);
+			saveServiceProvider();		}
 	});
 
 	$('[id^="edit_company_"]').validate({

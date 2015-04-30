@@ -99,7 +99,8 @@
           </div>
           <div class="form-group">
             <div class="col-sm-9 col-sm-offset-3">
-              <a id="update_location_button" name="new_location_btn" class="btn btn-green btn-lg">Guardar Local</a>
+              <button id="update_location_button" name="new_location_btn" class="btn btn-green btn-lg">Guardar Local</button>
+              <!-- <a id="update_location_button" name="new_location_btn" class="btn btn-green btn-lg">Guardar Local</a> -->
               <a id="next_location_button" class="btn btn-orange btn-lg" <%= 'disabled' if @company.locations.where(active: true).count < 1 %>>Siguiente Paso</a>
               <i id="update_location_spinner" class="fa fa-spinner fa-spin" style="display:none;"></i>
             </div>

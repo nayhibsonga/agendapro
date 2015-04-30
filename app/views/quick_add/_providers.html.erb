@@ -42,7 +42,7 @@
             <%= f.label :location_id, "Local: ", class: "control-label" %>
             <%= f.collection_select :location_id, Location.where(company_id: current_user.company_id, active: true), :id, :name, {}, { class: "form-control" }%>
           </div>
-          <a id="update_service_provider_button" class="btn btn-green">Guardar</a>
+          <button id="update_service_provider_button" class="btn btn-green">Guardar</button>
           <i id="update_service_provider_spinner" class="fa fa-spinner fa-spin" style="display:none;"></i>
         <% end %>
       </div>

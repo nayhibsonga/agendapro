@@ -21,6 +21,9 @@ function saveServiceCategory () {
 				$('#update_service_category_button').attr('disabled', true);
 	    		deleteServiceCategory(result.id);
 	    	});
+			service_category_validation.resetForm();
+		    $('#new_service_category .form-group').removeClass('has-error has-success');
+		    $('#new_service_category .form-group').find('.form-control-feedback').removeClass('fa fa-times fa-check');
 			$('#update_service_category_button').attr('disabled', false);
 			$('#update_service_category_spinner').hide();
 		},
@@ -87,6 +90,9 @@ function saveService () {
 				$('#update_service_button').attr('disabled', true);
 	    		deleteService(result.service.id);
 	    	});
+			service_validation.resetForm();
+		    $('#new_service .form-group').removeClass('has-error has-success');
+		    $('#new_service .form-group').find('.form-control-feedback').removeClass('fa fa-times fa-check');
 	    	$('#next_service_button').attr('disabled', false);
 			$('#update_service_button').attr('disabled', false);
 			$('#update_service_spinner').hide();
@@ -147,12 +153,6 @@ $(function() {
 		scrollToAnchor('fieldset_step4');
 	});
 
-	$('#update_service_category_button').click(function() {
-		$('#update_service_category_spinner').show();
-		$('#update_service_category_button').attr('disabled', true);
-		saveServiceCategory();
-	});
-
 	$('.service-category-delete-btn').click(function(event) {
 		$('#update_service_category_spinner').show();
 		$('#update_service_category_button').attr('disabled', true);
@@ -163,12 +163,6 @@ $(function() {
 		else {
 			window.console.log("Bad category delete");
 		}
-	});
-
-	$('#update_service_button').click(function() {
-		$('#update_service_spinner').show();
-		$('#update_service_button').attr('disabled', true);
-		saveService();
 	});
 
 	$('.service-delete-btn').click(function(event) {

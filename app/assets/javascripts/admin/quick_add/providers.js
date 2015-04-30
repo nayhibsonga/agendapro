@@ -14,6 +14,9 @@ function saveServiceProvider () {
 				$('#update_service_provider_button').attr('disabled', true);
 	    		deleteServiceProvider(result.service_provider.id);
 	    	});
+			service_provider_validation.resetForm();
+		    $('#new_service_provider .form-group').removeClass('has-error has-success');
+		    $('#new_service_provider .form-group').find('.form-control-feedback').removeClass('fa fa-times fa-check');
 	    	$('#next_provider_button').attr('disabled', false);
 			$('#update_service_provider_button').attr('disabled', false);
 			$('#update_service_provider_spinner').hide();
@@ -72,12 +75,6 @@ $(function() {
 		$('#quick_add_step5').show();
 		$('#quick_add_step5').attr('disabled', false);
 		scrollToAnchor('quick_add_step5');
-	});
-
-	$('#update_service_provider_button').click(function() {
-		$('#update_service_provider_spinner').show();
-		$('#update_service_provider_button').attr('disabled', true);
-		saveServiceProvider();
 	});
 
 	$('.service-provider-delete-btn').click(function(event) {
