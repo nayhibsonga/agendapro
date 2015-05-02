@@ -136,8 +136,5 @@
   <% if @company.economic_sectors.count > 0 %>
     initializeStep2();
   <% end %>
-  <% if @company.locations.where(active: true).count < 1 %>
-    $('#next_location_button').attr('disabled', false);
-  <% end %>
   </script>
 <% end %>

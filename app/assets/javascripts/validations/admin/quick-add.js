@@ -4,7 +4,9 @@ var service_validation;
 var service_provider_validation;
 
 $(function() {
-	location_validation = $('#new_location').validate({
+	location_validation = $('#new_location').submit(function(e) {
+		e.preventDefault();
+	}).validate({
 		errorPlacement: function(error, element) {
 			error.appendTo(element.next());
 		},
@@ -48,21 +50,24 @@ $(function() {
 			$('#update_location_spinner').show();
 			$('#update_location_button').attr('disabled', true);
 			$('#next_location_button').attr('disabled', true);
-			if(form.find('button').first().attr('name') == 'new_location_btn') {
+			if($(form).find('button').first().attr('name') == 'new_location_btn') {
 				saveLocation('POST','');
 			}
 			else {
-				if (parseInt(form.find('button').first().attr('name').split("edit_location_btn_")[1]) > 0) {
-					saveLocation('PATCH', '/'+parseInt(form.find('button').first().attr('name').split("edit_location_btn_")[1]));
+				if (parseInt($(form).find('button').first().attr('name').split("edit_location_btn_")[1]) > 0) {
+					saveLocation('PATCH', '/'+parseInt($(form).find('button').first().attr('name').split("edit_location_btn_")[1]));
 				}
 				else {
 					window.console.log("Bad location update");
 				}
 			}
+
 		}
 	});
 
-	service_category_validation = $('#new_service_category').validate({
+	service_category_validation = $('#new_service_category').submit(function(e) {
+		e.preventDefault();
+	}).validate({
 		errorPlacement: function(error, element) {
 			error.appendTo(element.next());
 		},
@@ -89,7 +94,9 @@ $(function() {
 		}
 	});
 
-	service_validation = $('#new_service').validate({
+	service_validation = $('#new_service').submit(function(e) {
+		e.preventDefault();
+	}).validate({
 		errorPlacement: function(error, element) {
 			error.appendTo(element.next());
 		},
@@ -128,7 +135,9 @@ $(function() {
 		}
 	});
 
-	service_provider_validation = $('#new_service_provider').validate({
+	service_provider_validation = $('#new_service_provider').submit(function(e) {
+		e.preventDefault();
+	}).validate({
 		errorPlacement: function(error, element) {
 			error.appendTo(element.next());
 		},
@@ -158,7 +167,9 @@ $(function() {
 			saveServiceProvider();		}
 	});
 
-	$('[id^="edit_company_"]').validate({
+	$('[id^="edit_company_"]').submit(function(e) {
+		e.preventDefault();
+	}).validate({
 		errorPlacement: function(error, element) {
 			error.appendTo(element.next());
 		},
