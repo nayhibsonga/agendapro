@@ -133,10 +133,11 @@
 <% content_for :scripts do %>
   <%= javascript_include_tag "admin/quick_add/locations" %>
   <script type="text/javascript">
-  <% if @company.locations.where(active:true).count > 0 %>
+  <% if @company.economic_sectors.count > 0 %>
     initializeStep2();
-  <% else %>
-    $('#next_location_button').attr('disabled', true);
+  <% end %>
+  <% if @company.locations.where(active: true).count < 1 %>
+    $('#next_location_button').attr('disabled', false);
   <% end %>
   </script>
 <% end %>
