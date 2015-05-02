@@ -48,6 +48,7 @@ $(function() {
 			$('#update_location_spinner').show();
 			$('#update_location_button').attr('disabled', true);
 			$('#next_location_button').attr('disabled', true);
+			window.console.log(form);
 			if(event.target.name == 'new_location_btn') {
 				saveLocation('POST','');
 			}
