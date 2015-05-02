@@ -48,13 +48,12 @@ $(function() {
 			$('#update_location_spinner').show();
 			$('#update_location_button').attr('disabled', true);
 			$('#next_location_button').attr('disabled', true);
-			window.console.log(form);
-			if(event.target.name == 'new_location_btn') {
+			if(form.find('button').first().attr('name') == 'new_location_btn') {
 				saveLocation('POST','');
 			}
 			else {
-				if (parseInt(event.target.name.split("edit_location_btn_")[1]) > 0) {
-					saveLocation('PATCH', '/'+parseInt(event.target.name.split("edit_location_btn_")[1]));
+				if (parseInt(form.find('button').first().attr('name').split("edit_location_btn_")[1]) > 0) {
+					saveLocation('PATCH', '/'+parseInt(form.find('button').first().attr('name').split("edit_location_btn_")[1]));
 				}
 				else {
 					window.console.log("Bad location update");
