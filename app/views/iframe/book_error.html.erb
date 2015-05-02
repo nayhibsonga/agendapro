@@ -244,7 +244,7 @@
                           <p><%= I18n.l(booking.start.to_datetime) %></p>
                         <% end %>
                       </dd>
-                      <% if !@bookings[0].notes.empty? %>
+                      <% if !@bookings[0].notes.blank? %>
                       <dt class="dark-gray">Notas</dt>
                       <dd class="light-gray"><%= @bookings[0].notes %></dd>
                       <% end %>
@@ -267,11 +267,11 @@
                   <dl class="dl-horizontal book-dl">
                     <dt class="dark-gray">Nombre</dt>
                     <dd class="light-gray"><%= @client.first_name %> <%= @client.last_name %></dd>
-                    <% if !@client.email.empty? %>
+                    <% if !@client.email.blank? %>
                     <dt class="dark-gray">E-mail</dt>
                     <dd class="light-gray"><%= @client.email %></dd>
                     <% end %>
-                    <% if !@client.phone.empty? %>
+                    <% if !@client.phone.blank? %>
                     <dt class="dark-gray">Teléfono</dt>
                     <dd class="light-gray"><%= @client.phone %></dd>
                     <% end %>
