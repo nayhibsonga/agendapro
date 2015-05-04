@@ -6,6 +6,7 @@ var service_provider_validation;
 $(function() {
 	location_validation = $('#new_location').submit(function(e) {
 		e.preventDefault();
+		window.console.log('prevented');
 	}).validate({
 		errorPlacement: function(error, element) {
 			error.appendTo(element.next());

@@ -39,7 +39,7 @@
 							<dd><%= @booking.service_provider.public_name %></dd>
 							<dt>¿Cuándo?</dt>
 							<dd><%= l @booking.start %></dd>
-							<% if !@booking.notes.empty? %>
+							<% if !@booking.notes.blank? %>
 							<dt>Notas</dt>
 							<dd><%= @booking.notes %></dd>
 							<% end %>
