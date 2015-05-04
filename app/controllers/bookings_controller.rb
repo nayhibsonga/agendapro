@@ -932,6 +932,10 @@ class BookingsController < ApplicationController
       end
     end
 
+    if params[:comment].blank?
+      params[:comment] = ''
+    end
+
     if params[:address] && !params[:address].empty?
       params[:comment] += ' - Dirección del cliente (donde se debe realizar el servicio): ' + params[:address]
     end
