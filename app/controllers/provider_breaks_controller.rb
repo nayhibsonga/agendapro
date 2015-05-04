@@ -107,6 +107,12 @@ class ProviderBreaksController < ApplicationController
             elsif params[:provider_break][:repeat] == "weekly"
               start_date = first_start_date + i.weeks
               end_date = first_end_date + i.weeks
+            elsif params[:provider_break][:repeat] == "biweekly"
+              start_date = first_start_date + (i*2).weeks
+              end_date = first_end_date + (i*2).weeks
+            elsif params[:provider_break][:repeat] == "triweekly"
+              start_date = first_start_date + (i*3).weeks
+              end_date = first_end_date + (i*3).weeks
             elsif params[:provider_break][:repeat] == "monthly_date"
               start_date = first_start_date + i.months
               end_date = first_end_date + i.months
@@ -172,6 +178,12 @@ class ProviderBreaksController < ApplicationController
             elsif params[:provider_break][:repeat] == "weekly"
               start_date = first_start_date + i.weeks
               end_date = first_end_date + i.weeks
+            elsif params[:provider_break][:repeat] == "biweekly"
+              start_date = first_start_date + (i*2).weeks
+              end_date = first_end_date + (i*2).weeks
+            elsif params[:provider_break][:repeat] == "triweekly"
+              start_date = first_start_date + (i*3).weeks
+              end_date = first_end_date + (i*3).weeks
             elsif params[:provider_break][:repeat] == "monthly_date"
               start_date = first_start_date + i.months
               end_date = first_end_date + i.months
@@ -286,6 +298,12 @@ class ProviderBreaksController < ApplicationController
               elsif params[:provider_break][:repeat] == "weekly"
                 start_date = first_start_date + i.weeks
                 end_date = first_end_date + i.weeks
+              elsif params[:provider_break][:repeat] == "biweekly"
+                start_date = first_start_date + (i*2).weeks
+                end_date = first_end_date + (i*2).weeks
+              elsif params[:provider_break][:repeat] == "triweekly"
+                start_date = first_start_date + (i*3).weeks
+                end_date = first_end_date + (i*3).weeks
               elsif params[:provider_break][:repeat] == "monthly_date"
                 start_date = first_start_date + i.months
                 end_date = first_end_date + i.months
@@ -349,6 +367,12 @@ class ProviderBreaksController < ApplicationController
               elsif params[:provider_break][:repeat] == "weekly"
                 start_date = first_start_date + i.weeks
                 end_date = first_end_date + i.weeks
+              elsif params[:provider_break][:repeat] == "biweekly"
+                start_date = first_start_date + (i*2).weeks
+                end_date = first_end_date + (i*2).weeks
+              elsif params[:provider_break][:repeat] == "triweekly"
+                start_date = first_start_date + (i*3).weeks
+                end_date = first_end_date + (i*3).weeks
               elsif params[:provider_break][:repeat] == "monthly_date"
                 start_date = first_start_date + i.months
                 end_date = first_end_date + i.months
@@ -744,6 +768,12 @@ class ProviderBreaksController < ApplicationController
             elsif params[:provider_break][:repeat] == "weekly"
               start_date = first_start_date + i.weeks
               end_date = first_end_date + i.weeks
+            elsif params[:provider_break][:repeat] == "biweekly"
+              start_date = first_start_date + (i*2).weeks
+              end_date = first_end_date + (i*2).weeks
+            elsif params[:provider_break][:repeat] == "triweekly"
+              start_date = first_start_date + (i*3).weeks
+              end_date = first_end_date + (i*3).weeks
             elsif params[:provider_break][:repeat] == "monthly_date"
               start_date = first_start_date + i.months
               end_date = first_end_date + i.months
@@ -807,6 +837,12 @@ class ProviderBreaksController < ApplicationController
             elsif params[:provider_break][:repeat] == "weekly"
               start_date = first_start_date + i.weeks
               end_date = first_end_date + i.weeks
+            elsif params[:provider_break][:repeat] == "biweekly"
+              start_date = first_start_date + (i*2).weeks
+              end_date = first_end_date + (i*2).weeks
+            elsif params[:provider_break][:repeat] == "triweekly"
+              start_date = first_start_date + (i*3).weeks
+              end_date = first_end_date + (i*3).weeks
             elsif params[:provider_break][:repeat] == "monthly_date"
               start_date = first_start_date + i.months
               end_date = first_end_date + i.months
@@ -927,6 +963,12 @@ class ProviderBreaksController < ApplicationController
               elsif params[:provider_break][:repeat] == "weekly"
                 start_date = first_start_date + i.weeks
                 end_date = first_end_date + i.weeks
+              elsif params[:provider_break][:repeat] == "biweekly"
+                start_date = first_start_date + (i*2).weeks
+                end_date = first_end_date + (i*2).weeks
+              elsif params[:provider_break][:repeat] == "triweekly"
+                start_date = first_start_date + (i*3).weeks
+                end_date = first_end_date + (i*3).weeks
               elsif params[:provider_break][:repeat] == "monthly_date"
                 start_date = first_start_date + i.months
                 end_date = first_end_date + i.months
@@ -990,6 +1032,12 @@ class ProviderBreaksController < ApplicationController
               elsif params[:provider_break][:repeat] == "weekly"
                 start_date = first_start_date + i.weeks
                 end_date = first_end_date + i.weeks
+              elsif params[:provider_break][:repeat] == "biweekly"
+                start_date = first_start_date + (i*2).weeks
+                end_date = first_end_date + (i*2).weeks
+              elsif params[:provider_break][:repeat] == "triweekly"
+                start_date = first_start_date + (i*3).weeks
+                end_date = first_end_date + (i*3).weeks
               elsif params[:provider_break][:repeat] == "monthly_date"
                 start_date = first_start_date + i.months
                 end_date = first_end_date + i.months
@@ -1095,6 +1143,12 @@ class ProviderBreaksController < ApplicationController
             elsif params[:provider_break][:repeat] == "weekly"
               start_date = first_start_date + i.weeks
               end_date = first_end_date + i.weeks
+            elsif params[:provider_break][:repeat] == "biweekly"
+              start_date = first_start_date + (i*2).weeks
+              end_date = first_end_date + (i*2).weeks
+            elsif params[:provider_break][:repeat] == "triweekly"
+              start_date = first_start_date + (i*3).weeks
+              end_date = first_end_date + (i*3).weeks
             elsif params[:provider_break][:repeat] == "monthly_date"
               start_date = first_start_date + i.months
               end_date = first_end_date + i.months
@@ -1158,6 +1212,12 @@ class ProviderBreaksController < ApplicationController
             elsif params[:provider_break][:repeat] == "weekly"
               start_date = first_start_date + i.weeks
               end_date = first_end_date + i.weeks
+            elsif params[:provider_break][:repeat] == "biweekly"
+              start_date = first_start_date + (i*2).weeks
+              end_date = first_end_date + (i*2).weeks
+            elsif params[:provider_break][:repeat] == "triweekly"
+              start_date = first_start_date + (i*3).weeks
+              end_date = first_end_date + (i*3).weeks
             elsif params[:provider_break][:repeat] == "monthly_date"
               start_date = first_start_date + i.months
               end_date = first_end_date + i.months

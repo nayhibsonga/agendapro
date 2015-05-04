@@ -1146,30 +1146,62 @@ function saveBreak (typeURL, extraURL) {
 					$( '<span id="small_loader"><i class="fa fa-spinner fa-spin"></i> </span>' ).insertBefore( $( ".btn-close" ) );
 					var warnings = '';
 
-					$.each(provider_break, function (key, provider_break) {
-						var label = provider_break.name;
-						if (label == null) {
-							label = 'Hora Bloqueada';
-						};
-						var events = {
-							id: 'b'+provider_break.id,
-							title: label,
-							allDay: false,
-							start: provider_break.start,
-							end: provider_break.end,
-							resourceId: parseInt(provider_break.service_provider_id),
-							textColor: textColors[7],
-							borderColor: textColors[7],
-							backgroundColor: backColors[7]
-						};
-						if (provider_break.warnings && provider_break.warnings.length > 0) {
-							for (i in provider_break.warnings) {
-								warnings += provider_break.warnings[i] + '. ';
+					if($("#providers-selector").val() == "0")
+					{
+						$.each(provider_break, function (key, provider_break) {
+							var label = provider_break.name;
+							if (label == null) {
+								label = 'Hora Bloqueada';
+							};
+							var events = {
+								id: 'b'+provider_break.id,
+								title: label,
+								allDay: false,
+								start: provider_break.start,
+								end: provider_break.end,
+								resourceId: parseInt(provider_break.service_provider_id),
+								textColor: textColors[7],
+								borderColor: textColors[7],
+								backgroundColor: backColors[7]
+							};
+							if (provider_break.warnings && provider_break.warnings.length > 0) {
+								for (i in provider_break.warnings) {
+									warnings += provider_break.warnings[i] + '. ';
+								}
 							}
-						}
-						$('#calendar').fullCalendar('renderEvent', events, true);
+							$('#calendar').fullCalendar('renderEvent', events, true);
 
-					});
+						});
+					}
+					else
+					{
+						$.each(provider_break, function (key, provider_break) {
+							if ($("#providers-selector").val() == provider_break.id)
+							{
+								var label = provider_break.name;
+								if (label == null) {
+									label = 'Hora Bloqueada';
+								};
+								var events = {
+									id: 'b'+provider_break.id,
+									title: label,
+									allDay: false,
+									start: provider_break.start,
+									end: provider_break.end,
+									resourceId: parseInt(provider_break.service_provider_id),
+									textColor: textColors[7],
+									borderColor: textColors[7],
+									backgroundColor: backColors[7]
+								};
+								if (provider_break.warnings && provider_break.warnings.length > 0) {
+									for (i in provider_break.warnings) {
+										warnings += provider_break.warnings[i] + '. ';
+									}
+								}
+								$('#calendar').fullCalendar('renderEvent', events, true);
+							}
+						});
+					}
 
 					$("#break-loader").hide();
 					$("#new_provider_break").show();
@@ -1448,6 +1480,9 @@ function createBreakModal(date, providerId) {
 		$('#provider_break_repeat_repeat_end_5i option[value="00"]').attr("selected",true);
 	}
 
+	$('#break_repeat option[value="never"]').prop("selected", true);
+	$("#break_times").val('');
+	$("#repeat_option_times").prop("checked", true);
 	$(".form-repeat-div").show();
 
 	var localId = parseInt($('#locals-selector').val());
@@ -1635,7 +1670,7 @@ function editBreakModal(breakId) {
 
 
 			$('.break-modal-footer').append(
-				'<div class="row"><div class="col-md-2"></div><div class="col-md-4 pull-l"><span style="cursor: pointer;" data-toggle="popover" data-placement="top" title="Edición" data-content="Eliminar: Sólo se eliminará este bloqueo, quedando el resto de la serie de repetición intacta. Guardar: Sólo se editará este bloqueo y será removido de la serie de repetición a la que pertencía."><i class="fa fa-question-circle"></i>&nbsp;¿Qué estoy editando?</span></div><div class="col-md-6"><span style="cursor: pointer;" data-toggle="popover" data-placement="top" title="Edición de serie" data-content="Eliminar: Se eliminará la serie de repetición completa para los prestadores seleccionados. Los otros prestadores mantendrán la serie de bloqueos si la tenían. Guardar: Se guardarán los cambios de la serie de repetición para los prestadores seleccionados. Si se seleccionan menos prestadores que los originales, se separará en dos series: una para los elegidos, y otra para los no elegidos. En cambio, si se agregan prestadores, se crearán bloqueos para ese prestador y serán incluidos en la serie original."><i class="fa fa-question-circle"></i>&nbsp;¿Qué estoy editando?</span></div></div>' +
+				'<div class="row"><div class="col-md-2"></div><div class="col-md-4 pull-l"><span class="custom-span-popover" style="cursor: pointer;" data-toggle="popover" data-placement="top" title="Edición" data-content="Eliminar: Sólo se eliminará este bloqueo, quedando el resto de la serie de repetición intacta. Guardar: Sólo se editará este bloqueo y será removido de la serie de repetición a la que pertencía.">¿Qué estoy editando?&nbsp;<i class="fa fa-question-circle"></i></span></div><div class="col-md-6"><span class="custom-span-popover" style="cursor: pointer;" data-toggle="popover" data-placement="top" title="Edición de serie" data-content="Eliminar: Se eliminará la serie de repetición completa para los prestadores seleccionados. Los otros prestadores mantendrán la serie de bloqueos si la tenían. Guardar: Se guardarán los cambios de la serie de repetición para los prestadores seleccionados. Si se seleccionan menos prestadores que los originales, se separará en dos series: una para los elegidos, y otra para los no elegidos. En cambio, si se agregan prestadores, se crearán bloqueos para ese prestador y serán incluidos en la serie original.">¿Qué estoy editando?&nbsp;<i class="fa fa-question-circle"></i></span></div></div>' +
 				'<div class="row"><div class="col-md-2">'+
 				'<button type="button" class="btn btn-default btn-close pull-left" data-dismiss="modal">Cerrar</button>' +
 				'</div><div class="col-md-4">' + 
@@ -1651,9 +1686,11 @@ function editBreakModal(breakId) {
 			  	placement: "top"
 			  });
 
-			  $('[data-toggle="popover"]').popover();
-
-			  $(".popover").css("width", "400px");
+			  $('.custom-span-popover').popover({ 
+			  	placement: 'top',
+				template: '<div class="popover custom-popover"><div class="arrow"></div><h3 class="popover-title"></h3><div class="popover-content"></div></div>'
+				});
+			  $(".custom-popover").css("width", "350px !important");
 			
 
 		}
