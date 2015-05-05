@@ -71,6 +71,7 @@ function loadWeekCalendar (startTime, endTime, providerId) {
       }
     },
     dayClick: function(date, allDay, jsEvent, view) {
+      window.conosole.log(date)
       var dates = {
         convert:function(d) {
           // Converts the date in d to a date-object. The input can be:
