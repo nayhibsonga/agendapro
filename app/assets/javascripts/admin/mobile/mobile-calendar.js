@@ -71,7 +71,6 @@ function loadWeekCalendar (startTime, endTime, providerId) {
       }
     },
     dayClick: function(date, allDay, jsEvent, view) {
-      window.conosole.log(date)
       var dates = {
         convert:function(d) {
           // Converts the date in d to a date-object. The input can be:
@@ -109,9 +108,14 @@ function loadWeekCalendar (startTime, endTime, providerId) {
         }
       }
       if (dateSelected != null && dates.compare(date, dateSelected) == 0) {
+        var stringDate = "";
+        var arrDate = date.toString().split(" ");
+        for (var i = 0; i < arrDate.length && i < 5; i++) {
+          stringDate += arrDate[i] + " ";
+        };
         window.location.href = "/bookings/new?" + $.param({
           location: $('#locals-selector').val(),
-          date: date
+          date: stringDate.trim()
         });
       } else {
         $('td.fc-widget-content.active').removeClass('active');
