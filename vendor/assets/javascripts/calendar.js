@@ -23,7 +23,7 @@ function Calendar (source, getData) {
 		$('#staff-selector-spinner').show();
 		$('#staff-selector > .list-group-item').hide();
 		$('.days-row').hide();
-		$('.horario').html('<div style="color: rgb(204, 204, 204);"><i class="fa fa-spinner fa-spin fa-lg"></i></div>');
+		$('.horario').html('<div style="color: rgb(204, 204, 204); text-align: center;"><i class="fa fa-spinner fa-spin fa-lg"></i></div>');
 
 		$('.columna-dia').remove();
 		$('.clear').remove();
