@@ -12,8 +12,14 @@ class ProviderBreaksController < ApplicationController
   end
 
   def get_provider_break
-    provider_break = ProviderBreak.find(params[:id])
-    render :json => provider_break
+    @break = ProviderBreak.find(params[:id])
+    if mobile_request?
+      @company = current_user.company
+    end
+    respond_to do |format|
+      format.html { }
+      format.json { render :json => @break }
+    end
   end
 
   def create_provider_break

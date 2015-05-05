@@ -68,7 +68,9 @@ function loadWeekCalendar (startTime, endTime, providerId) {
     eventClick: function(event) {
       if ($.isNumeric(event.id)) {
         window.location.href = "/bookings/" + event.id;
-      }
+      } else if (event.id.indexOf('b') >= 0) {
+        window.location.href = "/provider_breaks/" + event.id.split('b')[1]
+      };
     },
     dayClick: function(date, allDay, jsEvent, view) {
       var dates = {
