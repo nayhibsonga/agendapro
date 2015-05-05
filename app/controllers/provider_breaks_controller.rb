@@ -2,6 +2,7 @@
 class ProviderBreaksController < ApplicationController
   before_action :authenticate_user!
   load_and_authorize_resource
+  layout "admin"
 
   def provider_breaks
     start_date = DateTime.parse(params[:start])
@@ -71,7 +72,7 @@ class ProviderBreaksController < ApplicationController
 
               #Get correct day
               diff = (start_date.wday-first_start_date.wday)%7
-              
+
               if (start_date - diff.days).wday == first_start_date.wday
                 start_date = start_date - diff.days
                 end_date = end_date - diff.days
@@ -94,7 +95,7 @@ class ProviderBreaksController < ApplicationController
             elsif params[:provider_break][:repeat] == "yearly"
               start_date = first_start_date + i.years
               end_date = first_end_date + i.years
-            end               
+            end
             provider_break = ProviderBreak.new(:start => start_date, :end => end_date, :service_provider_id => params[:provider_break][:service_provider_id].to_i, :name => params[:provider_break][:name], :break_repeat_id => repeat_id)
 
             if provider_break.save
@@ -133,7 +134,7 @@ class ProviderBreaksController < ApplicationController
 
               #Get correct day
               diff = (start_date.wday-first_start_date.wday)%7
-              
+
               if (start_date - diff.days).wday == first_start_date.wday
                 start_date = start_date - diff.days
                 end_date = end_date - diff.days
@@ -159,7 +160,7 @@ class ProviderBreaksController < ApplicationController
 
             if start_date > final_date
               break
-            end 
+            end
 
             provider_break = ProviderBreak.new(:start => start_date, :end => end_date, :service_provider_id => params[:provider_break][:service_provider_id].to_i, :name => params[:provider_break][:name], :break_repeat_id => repeat_id)
 
@@ -209,7 +210,7 @@ class ProviderBreaksController < ApplicationController
 
       if params[:provider_break][:repeat] != "never"
         service_providers.each do |provider|
-          
+
           break_group_id = break_group
           repeat_id = 0
           repeat_group = ProviderBreak.where.not(break_repeat_id: nil).order(:break_repeat_id).last
@@ -218,7 +219,7 @@ class ProviderBreaksController < ApplicationController
           else
             repeat_id = repeat_group.break_repeat_id + 1
           end
-          
+
           #repeat_group = ProviderBreak.where.not(break_repeat_id: nil).order(:break_repeat_id).last
 
           #repeat_id = DateTime.now.to_s.gsub(/[-:T]/i, '')
@@ -242,7 +243,7 @@ class ProviderBreaksController < ApplicationController
 
                 #Get correct day
                 diff = (start_date.wday-first_start_date.wday)%7
-                
+
                 if (start_date - diff.days).wday == first_start_date.wday
                   start_date = start_date - diff.days
                   end_date = end_date - diff.days
@@ -264,7 +265,7 @@ class ProviderBreaksController < ApplicationController
               elsif params[:provider_break][:repeat] == "yearly"
                 start_date = first_start_date + i.years
                 end_date = first_end_date + i.years
-              end               
+              end
               provider_break = ProviderBreak.new(:start => start_date, :end => end_date, :service_provider_id => provider.id, :name => params[:provider_break][:name], :break_group_id => break_group_id, :break_repeat_id => repeat_id)
 
               if provider_break.save
@@ -302,7 +303,7 @@ class ProviderBreaksController < ApplicationController
 
                 #Get correct day
                 diff = (start_date.wday-first_start_date.wday)%7
-                
+
                 if (start_date - diff.days).wday == first_start_date.wday
                   start_date = start_date - diff.days
                   end_date = end_date - diff.days
@@ -351,7 +352,7 @@ class ProviderBreaksController < ApplicationController
       else
 
         service_providers.each do |provider|
-          
+
           repeat_id = 0
           repeat_group = ProviderBreak.where.not(break_repeat_id: nil).order(:break_repeat_id).last
           if repeat_group.nil?
@@ -528,7 +529,7 @@ class ProviderBreaksController < ApplicationController
 
     #if provider_break_params[:service_provider_id].to_i != 0
       provider_breaks.each do |breaks|
-     
+
         breaks.service_provider_id = provider_break_params[:service_provider_id]
         breaks.name = provider_break_params[:name]
         breaks.start = breaks.start - start_diff.hours
@@ -546,7 +547,7 @@ class ProviderBreaksController < ApplicationController
       end
     # else
 
-    #   provider_breaks.each do |breaks|     
+    #   provider_breaks.each do |breaks|
     #     #breaks.service_provider_id = provider_break_params[:service_provider_id]
     #     breaks.name = provider_break_params[:name]
     #     breaks.start = breaks.start - start_diff.hours
@@ -560,7 +561,7 @@ class ProviderBreaksController < ApplicationController
     #       @break_errors.push(breaks.errors.full_messages)
     #       status = status && false
     #     end
-    #   end      
+    #   end
 
     # end
 
@@ -577,7 +578,6 @@ class ProviderBreaksController < ApplicationController
     end
 
   end
-
 
   def destroy_provider_break
     if provider_break_params[:service_provider_id].to_i != 0
@@ -603,7 +603,6 @@ class ProviderBreaksController < ApplicationController
     end
   end
 
-
   #Destroy all repetitions
   def destroy_repeat_break
     provider_breaks = ProviderBreak.where(:break_repeat_id => params[:provider_break][:repeat_id], :service_provider_id => params[:provider_break][:service_provider_id])
@@ -615,6 +614,18 @@ class ProviderBreaksController < ApplicationController
     respond_to do |format|
       format.html { redirect_to bookings_url }
       format.json { render :json => @break_json }
+    end
+  end
+
+  # GET /provider_breaks/new
+  def new
+    @break = ProviderBreak.new
+    if mobile_request?
+      @company = current_user.company
+      @date = DateTime.now
+      if !params[:date].blank?
+        @date = params[:date].to_time
+      end
     end
   end
 

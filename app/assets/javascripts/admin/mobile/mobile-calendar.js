@@ -108,18 +108,26 @@ function loadWeekCalendar (startTime, endTime, providerId) {
         }
       }
       if (dateSelected != null && dates.compare(date, dateSelected) == 0) {
-        var stringDate = "";
         var arrDate = date.toString().split(" ");
-        for (var i = 0; i < arrDate.length && i < 5; i++) {
-          stringDate += arrDate[i] + " ";
-        };
-        window.location.href = "/bookings/new?" + $.param({
+        var stringDate = arrDate[0] + " " + arrDate[1] + " " + arrDate[2] + " " + arrDate[3] + " " + arrDate[4];
+        var bookHref = "/bookings/new?" + $.param({
           location: $('#locals-selector').val(),
-          date: stringDate.trim()
+          date: stringDate,
+          provider: providerId
         });
+        $('#addModal .btn-green').attr('href', bookHref);
+        var breakHref = "/provider_breaks/new?" + $.param({
+          location: $('#locals-selector').val(),
+          date: stringDate,
+          provider: providerId
+        });
+        $('#addModal .btn-grey').attr('href', breakHref);
+        $('#addModal').modal('toggle');
       } else {
+        $('td.fc-widget-content.active').children().first().html("&nbsp;");
         $('td.fc-widget-content.active').removeClass('active');
         $(jsEvent.currentTarget).addClass('active');
+        $(jsEvent.currentTarget).children().first().html('<i class="fa fa-plus fa-lg"></i>');
         dateSelected = date;
       };
     },
@@ -157,7 +165,17 @@ $(function() {
   });
 
   $('#add').click(function () {
-    window.location.href = "/bookings/new?" + $.param({location: $('#locals-selector').val()});
+    var bookHref = "/bookings/new?" + $.param({
+      location: $('#locals-selector').val(),
+      provider: $('#providers-selector').val()
+    });
+    $('#addModal .btn-green').attr('href', bookHref);
+    var breakHref = "/provider_breaks/new?" + $.param({
+      location: $('#locals-selector').val(),
+      provider: $('#providers-selector').val()
+    });
+    $('#addModal .btn-grey').attr('href', breakHref);
+    $('#addModal').modal('toggle');
   });
 
   picker = datepicker('#today', {
