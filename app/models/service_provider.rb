@@ -180,8 +180,9 @@ class ServiceProvider < ActiveRecord::Base
 	      location_times_first = local.location_times.order(:open).first
 	      location_times_final = local.location_times.order(close: :desc).first
 
-	      @week_blocks = ''
-	      @days_row = ''
+	      @week_blocks = Array.new
+	      @days_row = Array.new
+	      @days_count = 0
 	      # Week Blocks
 	      # {
 	      #   21-02-2014: [block_hour, block_hour, ...],
@@ -200,7 +201,7 @@ class ServiceProvider < ActiveRecord::Base
 	        #   }
 	        # }
 
-	        available_time = ''
+	        available_time = Array.new
 
 	        # Variable Data
 	        day = date.cwday
@@ -221,7 +222,11 @@ class ServiceProvider < ActiveRecord::Base
 	            location_times_first_open_end = location_times_first_open_start + service_duration.minutes
 
 	            status = 'hora-vacia'
-	            hour = '<div class="bloque-hora '+ status +'" data-start data-end data-provider><span></span></div>'
+	            hour = { status: status,
+            	start_block: '',
+            	end_block: '',
+            	available_provider: ''}
+	            # hour = '<div class="bloque-hora '+ status +'" data-start data-end data-provider><span></span></div>'
 
 	            open_hour = location_times_first_open_start.hour
 	            open_min = location_times_first_open_start.min
@@ -329,15 +334,20 @@ class ServiceProvider < ActiveRecord::Base
 	            end
 
 	            if ['hora-pasada','hora-disponible','hora-ocupada'].include? status
-	              hour = '<div class="bloque-hora '+ status +'" data-start="'+ start_block +'" data-end="'+ end_block +'" data-provider="'+ available_provider.to_s + '"><span>'+ start_block +' - '+ end_block +'</span></div>'
+	            	hour = { status: status,
+	            	start_block: start_block,
+	            	end_block: end_block,
+	            	available_provider: available_provider.to_s}
+	            	# hour = '<div class="bloque-hora '+ status +'" data-start="'+ start_block +'" data-end="'+ end_block +'" data-provider="' + available_provider.to_s + '"><span>'+ start_block +' - '+ end_block +'</span></div>'
 	            end
 
-	            available_time += hour
+	            available_time << hour
 	            location_times_first_open_start = location_times_first_open_start + service_duration.minutes
 	          end
-	          if available_time != ''
-	          	@week_blocks += '<div class="columna-dia" data-date="'+ date.strftime("%Y-%m-%d") +'">'+ available_time +'</div>'
-	          	@days_row += '<div class="dia-semana">'+ week_days[date.wday] +' '+ date.strftime("%e") +'</div>'
+	          if available_time.count > 0
+	          	@days_count += 1
+      			@week_blocks << { available_time: available_time, formatted_date: date.strftime('%Y-%m-%d') }
+      			@days_row << { day_name: week_days[date.wday], day_number: date.strftime("%e")}
 	          end
 	        end
 	      end
@@ -356,8 +366,9 @@ class ServiceProvider < ActiveRecord::Base
 	      provider_times_first = provider.provider_times.order(:open).first
 	      provider_times_final = provider.provider_times.order(close: :desc).first
 
-	      @week_blocks = ''
-	      @days_row = ''
+	      @week_blocks = Array.new
+	      @days_row = Array.new
+	      @days_count = 0
 	      # Week Blocks
 	      # {
 	      #   21-02-2014: [block_hour, block_hour, ...],
@@ -375,7 +386,7 @@ class ServiceProvider < ActiveRecord::Base
 	        #   }
 	        # }
 
-	        available_time = ''
+	        available_time = Array.new
 
 	        # Variable Data
 	        day = date.cwday
@@ -395,7 +406,11 @@ class ServiceProvider < ActiveRecord::Base
 	            provider_times_first_open_end = provider_times_first_open_start + service_duration.minutes
 
 	            status = 'hora-vacia'
-	            hour = '<div class="bloque-hora '+ status +'" data-start data-end data-provider><span></span></div>'
+	            hour = { status: status,
+            	start_block: '',
+            	end_block: '',
+            	available_provider: ''}
+	            # hour = '<div class="bloque-hora '+ status +'" data-start data-end data-provider><span></span></div>'
 
 	            available_provider = ''
 	            provider_time_valid = false
@@ -501,20 +516,44 @@ class ServiceProvider < ActiveRecord::Base
 	            end
 
 	            if ['hora-pasada','hora-disponible','hora-ocupada'].include? status
-	              hour = '<div class="bloque-hora '+ status +'" data-start="'+ start_block +'" data-end="'+ end_block +'" data-provider="' + available_provider.to_s + '"><span>'+ start_block +' - '+ end_block +'</span></div>'
+	            	hour = { status: status,
+	            	start_block: start_block,
+	            	end_block: end_block,
+	            	available_provider: available_provider.to_s}
+	            	# hour = '<div class="bloque-hora '+ status +'" data-start="'+ start_block +'" data-end="'+ end_block +'" data-provider="' + available_provider.to_s + '"><span>'+ start_block +' - '+ end_block +'</span></div>'
 	            end
 
-	            available_time += hour
+	            available_time << hour
 	            provider_times_first_open_start = provider_times_first_open_end
 	          end
-	          if available_time != ''
-	          	@week_blocks += '<div class="columna-dia" data-date="'+ date.strftime("%Y-%m-%d") +'">'+ available_time +'</div>'
-	          	@days_row += '<div class="dia-semana">'+ week_days[date.wday] +' '+ date.strftime("%e") +'</div>'
+	          if available_time.count > 0
+	          	@days_count += 1
+      			@week_blocks << { available_time: available_time, formatted_date: date.strftime('%Y-%m-%d') }
+      			@days_row << { day_name: week_days[date.wday], day_number: date.strftime("%e")}
 	          end
 	        end
 	      end
 	    end
 
-	    return { panel_body: @week_blocks, days_row: @days_row }
+	    week_blocks = ''
+	    days_row = ''
+	    width = ( 100.0 / @days_count ).round(2).to_s
+
+	    @week_blocks.each do |week_block|
+	    	week_blocks += '<div class="columna-dia" data-date="' + week_block[:formatted_date] + '" style="width: ' + width + '%;">'
+	    	week_block[:available_time].each do |hour|
+	    		week_blocks += '<div class="bloque-hora ' + hour[:status] + '" data-start="' + hour[:start_block] + '" data-end="' + hour[:end_block] + '" data-provider="' + hour[:available_provider] + '"><span>' + hour[:start_block] + ' - ' + hour[:end_block] + '</span></div>'
+	    	end
+	    	week_blocks += '<div class="clear"></div></div>'
+	    end
+	    week_blocks += '<div class="clear"></div>'
+
+	    @days_row.each do |day|
+	    	days_row += '<div class="dia-semana" style="width: ' + width + '%;">' + day[:day_name] + ' ' + day[:day_number] + '</div>'
+	    end
+
+	    days_count = @days_count
+
+	    return { panel_body: week_blocks, days_row: days_row, days_count: days_count }
 	end
 end

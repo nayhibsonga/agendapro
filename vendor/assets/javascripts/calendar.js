@@ -17,6 +17,14 @@ function Calendar (source, getData) {
 
 	// Generate Calendar
 	var generateCalendar = function (date) {
+
+		onload = false;
+
+		$('#staff-selector-spinner').show();
+		$('#staff-selector > .list-group-item').hide();
+		$('.days-row').hide();
+		$('.horario').html('<div style="color: rgb(204, 204, 204);"><i class="fa fa-spinner fa-spin fa-lg"></i></div>');
+
 		$('.columna-dia').remove();
 		$('.clear').remove();
 		clickEvent = null;
@@ -41,12 +49,89 @@ function Calendar (source, getData) {
 				sunday = weekDay;
 			}
 		};
-		generateWeek(monday);
 
-		// Tittle calculation
-		generateTittle(monday, sunday);
+		if (ajaxRequest != null) {
+			ajaxRequest.abort();
+		}
+		sources.data.date = formatDate(monday);
+		
+		ajaxRequest = $.getJSON(sources.source, sources.data, function (data, status) {
+			$('.days-row').html(data.days_row);
+			$('.horario').html(data.panel_body);
+			$('.bloque-hora').click(function (e) {
+				var element = $(e.currentTarget);
+				if (element.hasClass('hora-disponible')) {
+					// Activate block
+					$('.hora-activo').addClass('hora-disponible').removeClass('hora-activo');
+					element.removeClass('hora-disponible').addClass('hora-activo');
+
+					// Event
+					var details = {
+						time: new Date(),
+						message: 'Hour ' + element.data('start') + ' - ' + element.data('end') + ' click on day ' + element.parent().data('date'),
+						date: element.parent().data('date'),
+						start: element.data('start'),
+						end: element.data('end'),
+						provider: element.data('provider'),
+						objectDate: parseDate(element.parent().data('date'), element.data('start'))
+						// status: hours.status
+					};
+					$.event.trigger({
+						type: 'hourClick',
+						time: details.time,
+						message: details.message,
+						date: details.date,
+						start: details.start,
+						end: details.end,
+						provider: details.provider,
+						// status: details.status,
+						objectDate: details.objectDate
+					});
+					clickEvent = details;
+				}
+			});
+
+			// Tittle calculation
+			generateTittle(monday, sunday);
+
+			$('.days-row').show();
+			calculateWidth();
+			$('#next').removeAttr('disabled');
+			$('#prev').removeAttr('disabled');
+			$.event.trigger({
+				type: 'calendarBuilded'
+			});
+			$('#foo4').trigger('updateSizes');
+			$('#staff-selector-spinner').hide();
+			$('#staff-selector > .list-group-item').show();
+		});
 
 		return now;
+	}
+
+	function getScrollbarWidth() {
+	    var outer = document.createElement("div");
+	    outer.style.visibility = "hidden";
+	    outer.style.width = "100px";
+	    outer.style.msOverflowStyle = "scrollbar"; // needed for WinJS apps
+
+	    document.body.appendChild(outer);
+
+	    var widthNoScroll = outer.offsetWidth;
+	    // force scrollbars
+	    outer.style.overflow = "scroll";
+
+	    // add innerdiv
+	    var inner = document.createElement("div");
+	    inner.style.width = "100%";
+	    outer.appendChild(inner);        
+
+	    var widthWithScroll = inner.offsetWidth;
+
+	    // remove divs
+	    outer.parentNode.removeChild(outer);
+
+	    return widthNoScroll - widthWithScroll;
 	}
 
 	// Tittle calculation
@@ -71,13 +156,6 @@ function Calendar (source, getData) {
 	// Generate Week
 	var available_hour;
 	var generateWeek = function (monday) {
-
-		$('#staff-selector-spinner').show();
-		$('#staff-selector > .list-group-item').hide();
-
-		$.ajaxSetup({
-			async: false
-		});
 
 		if (ajaxRequest != null) {
 			ajaxRequest.abort();
@@ -145,9 +223,6 @@ function Calendar (source, getData) {
 		});
 		$('#staff-selector-spinner').hide();
 		$('#staff-selector > .list-group-item').show();
-		$.ajaxSetup({
-			async: true
-		});
 	}
 
 	// Generate Hours
@@ -249,7 +324,6 @@ function Calendar (source, getData) {
 
 		var width2 = $(".horario")[0].clientWidth/count;
 		$('.dia-semana').css('width', width2);
-		$('.dia-semana:last').css('width', width2-1);
 	}
 
 	var correctNumber = function (number) {

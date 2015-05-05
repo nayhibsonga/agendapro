@@ -41,7 +41,6 @@
             <div class="days-row">
             </div>
             <div class="panel-body">
-
               <div class="horario" style="max-height: 350px; overflow-y: auto;"></div>
             </div>
 
@@ -95,8 +94,7 @@
 
               console.log(data);
 
-              calendar.rebuild('/get_available_time.json', data);
-              console.log("Rebuild calendar.");
+              calendar.rebuild('/available_hours_week_html', data);
 
 
               $(document).on('hourClick', function (e) {

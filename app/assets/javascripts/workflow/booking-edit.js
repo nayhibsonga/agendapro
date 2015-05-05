@@ -5,7 +5,7 @@ function loadCalendar () {
 		local: $('#booking').data('booking').location_id,
 		service: $('#booking').data('booking').service_id
 	}
-	calendar = new Calendar('/get_available_time.json', data);
+	calendar = new Calendar('/available_hours_week_html', data);
 	
 	$(document).on('hourClick', function (e) {
 		addBooking(e);

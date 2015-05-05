@@ -208,10 +208,10 @@ function loadStep2 () {
 
 					staffSelected = $(this).val();
 					if (calendar) {
-						calendar.rebuild('/get_available_time.json', data);
+						calendar.rebuild('/available_hours_week_html', data);
 					}
 					else {
-						calendar = new Calendar('/get_available_time.json', data);
+						calendar = new Calendar('/available_hours_week_html', data);
 					}
 
 					// $("#calendar-loader").hide();
@@ -270,10 +270,10 @@ function loadStep2 () {
 
 
 				if (calendar) {
-					calendar.rebuild('/get_available_time.json', data);
+					calendar.rebuild('/available_hours_week_html', data);
 				}
 				else {
-					calendar = new Calendar('/get_available_time.json', data);
+					calendar = new Calendar('/available_hours_week_html', data);
 				}
 
 				// $("#calendar-loader").hide();
@@ -770,6 +770,7 @@ $(function () {
 
 
 	$(document).on('calendarBuilded', function (e) {
+		
 		blockBookingBufferHour();
 		$('#foo4').trigger('updateSizes');
 	});
