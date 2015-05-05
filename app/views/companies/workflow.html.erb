@@ -715,15 +715,12 @@
               date: newDate,
               service: $('input[name="serviceRadio"]:checked').val(),
             }
-            console.log(data);
 
             if (calendar) {
-              calendar.rebuild('/get_available_time.json', data);
-              console.log("Rebuild calendar.");
+              calendar.rebuild('/available_hours_week_html', data);
             }
             else {
-              calendar = new Calendar('/get_available_time.json', data);
-              console.log("New calendar.");
+              calendar = new Calendar('/available_hours_week_html', data);
             }
 
             $(document).on('hourClick', function (e) {

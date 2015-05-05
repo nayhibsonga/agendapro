@@ -195,6 +195,7 @@ Agendapro::Application.routes.draw do
   get '/check_user_cross_bookings', :to => 'bookings#check_user_cross_bookings'
   get '/optimizer_hours', :to => 'bookings#optimizer_hours'
   post '/optimizer_data', :to => 'bookings#optimizer_data'
+  get '/available_hours_week_html', :to => 'service_providers#available_hours_week_html'
   # Workflow - Mobile
   post '/select_hour', :to => 'companies#select_hour'
   post '/user_data', :to => 'companies#user_data'
