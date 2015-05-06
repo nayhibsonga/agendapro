@@ -57,6 +57,10 @@ class BookingsController < ApplicationController
     @booking = Booking.new
     if mobile_request?
       @company = current_user.company
+      @date = DateTime.now
+      if !params[:date].blank?
+        @date = params[:date].to_time
+      end
     end
   end
 
@@ -1269,7 +1273,7 @@ class BookingsController < ApplicationController
 
     @location = Location.find(params[:location])
     @company = @location.company
-    
+
     @tried_bookings = []
     if(params[:bookings])
       @tried_bookings = Booking.find(params[:bookings])

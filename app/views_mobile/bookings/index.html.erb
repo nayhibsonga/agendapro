@@ -56,6 +56,29 @@
   staff_code: @company_setting.staff_code } do %>
 <% end %>
 
+<% content_for :modals do %>
+  <div class="modal fade" id="addModal" tabindex="-1" role="dialog" aria-labelledby="addModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-sm">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+          <h4 class="modal-title" id="addModalLabel">Agregar Reserva/Bloqueo</h4>
+        </div>
+        <div class="modal-body">
+          <div class="container-fluid">
+            <div class="row">
+              <div class="col-xs-12">
+                <a href="#" class="btn btn-green btn-lg btn-block">Reserva</a>
+                <a href="#" class="btn btn-grey btn-lg btn-block">Bloqueo</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+<% end %>
+
 <% content_for :stylesheets do %>
   <%= stylesheet_link_tag "admin/mobile-calendar" %>
 <% end %>

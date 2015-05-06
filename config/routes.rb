@@ -201,6 +201,7 @@ Agendapro::Application.routes.draw do
   post '/user_data', :to => 'companies#user_data'
 
   # Fullcalendar
+  get '/provider_breaks/new', :to => 'provider_breaks#new', :as => 'new_provider_break'
   get '/service', :to => 'services#service_data'  # Fullcalendar
   get '/services_list', :to => 'services#services_data'  # Fullcalendar
   get '/provider_time', :to => 'service_providers#provider_time'  # Fullcalendar
