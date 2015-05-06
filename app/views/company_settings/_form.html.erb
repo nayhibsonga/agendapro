@@ -1,18 +1,27 @@
+<% content_for :stylesheets do %>
+  <style>
+    .media {
+      cursor: pointer;
+      cursor: hand;
+    }
+  </style>
+<% end %>
+
 <div class="container-fluid">
   <div class="row">
     <!-- Navegation Tabs -->
     <div class="col-md-2">
       <ul id="myTab" class="nav nav-pills nav-stacked tab-margin" role="tablist">
-        <li role="presentation"><a href="#company" role="tab" data-toggle="pill" data-title="Empresa" data-description="Configura el nombre de empresa, descripción, url de tu mini-sitio, logo y política de cancelación.">Empresa</a></li>
-        <li role="presentation"><a href="#minisite" role="tab" data-toggle="pill" data-title="Reservas" data-description="Habilita tu mini-sitio, la opción de aparecer en el Buscador AgendaPro y limitar que sólo las personas en tu vase de datos puedan reservar.">Reservas</a></li>
-        <li role="presentation"><a href="#calendar" role="tab" data-toggle="pill" data-title="Calendario" data-description="Controla el tamaño, el tiempo, de cada bloque del horario en la sección calendario.">Calendario</a></li>
-        <li role="presentation"><a href="#emails" role="tab" data-toggle="pill" data-title="E-mails" data-description="Configura la dirección desde donde se envían los correos masivos (Remitentes) y la firma de estos.">E-mails</a></li>
-        <li role="presentation"><a href="#embedded" role="tab" data-toggle="pill" data-title="Facebook / Web" data-description="Agrega una pestaña de reservas a la página de facebook de tu empresa.">Facebook / Web</a></li>
+        <li role="presentation"><a id="company_link" href="#company" role="tab" data-toggle="pill" data-title="Empresa" data-description="Configura el nombre de empresa, descripción, url de tu mini-sitio, logo y política de cancelación.">Empresa</a></li>
+        <li role="presentation"><a id="minisite_link" href="#minisite" role="tab" data-toggle="pill" data-title="Reservas" data-description="Habilita tu mini-sitio, la opción de aparecer en el Buscador AgendaPro y limitar que sólo las personas en tu vase de datos puedan reservar.">Reservas</a></li>
+        <li role="presentation"><a id="calendar_link" href="#calendar" role="tab" data-toggle="pill" data-title="Calendario" data-description="Controla el tamaño, el tiempo, de cada bloque del horario en la sección calendario.">Calendario</a></li>
+        <li role="presentation"><a id="email_link" href="#emails" role="tab" data-toggle="pill" data-title="E-mails" data-description="Configura la dirección desde donde se envían los correos masivos (Remitentes) y la firma de estos.">E-mails</a></li>
+        <li role="presentation"><a id="embedded_link" href="#embedded" role="tab" data-toggle="pill" data-title="Facebook / Web" data-description="Agrega una pestaña de reservas a la página de facebook de tu empresa.">Facebook / Web</a></li>
         <% if current_user.company.company_setting.online_payment_capable %>
-        <li role="presentation"><a href="#online-payment" role="tab" data-toggle="pill" data-title="Pago Online" data-description="Habilita el pago en línea, configura si es editable o cancelable una reserva pagada">Pago Online</a></li>
+        <li role="presentation"><a id="payment_link" href="#online-payment" role="tab" data-toggle="pill" data-title="Pago Online" data-description="Habilita el pago en línea, configura si es editable o cancelable una reserva pagada">Pago Online</a></li>
         <% end %>
         <% if current_user.company.company_setting.deal_activate %>
-        <li role="presentation"><a href="#deals" role="tab" data-toggle="pill" data-title="Convenios" data-description="Configura el uso de convenios, el tiempo y la cantidad de veces que se pueden usar.">Convenios</a></li>
+        <li role="presentation"><a id="deal_link" href="#deals" role="tab" data-toggle="pill" data-title="Convenios" data-description="Configura el uso de convenios, el tiempo y la cantidad de veces que se pueden usar.">Convenios</a></li>
         <% end %>
       </ul>
     </div>
@@ -23,7 +32,7 @@
         <div class="tab-pane active" id="landing">
           <div class="row">
             <div class="col-md-6">
-              <div class="media">
+              <div onclick="$('#company_link').click();" class="media">
                 <div class="media-left">
                   <%= image_tag 'admin/1.png', class: 'media-object media-image' %>
                 </div>
@@ -33,7 +42,7 @@
               </div>
             </div>
             <div class="col-md-6">
-              <div class="media">
+              <div onclick="$('#email_link').click();" class="media">
                 <div class="media-left">
                   <%= image_tag 'admin/4.png', class: 'media-object media-image' %>
                 </div>
@@ -45,7 +54,7 @@
           </div>
           <div class="row">
             <div class="col-md-6">
-              <div class="media">
+              <div onclick="$('#minisite_link').click();" class="media">
                 <div class="media-left">
                   <%= image_tag 'admin/2.png', class: 'media-object media-image' %>
                 </div>
@@ -55,7 +64,7 @@
               </div>
             </div>
             <div class="col-md-6">
-              <div class="media">
+              <div onclick="$('#embedded_link').click();" class="media">
                 <div class="media-left">
                   <%= image_tag 'admin/5.png', class: 'media-object media-image' %>
                 </div>
@@ -67,7 +76,7 @@
           </div>
           <div class="row">
             <div class="col-md-6">
-              <div class="media">
+              <div onclick="$('#calendar_link').click();" class="media">
                 <div class="media-left">
                   <%= image_tag 'admin/3.png', class: 'media-object media-image' %>
                 </div>
@@ -78,7 +87,7 @@
             </div>
             <% if current_user.company.company_setting.online_payment_capable %>
             <div class="col-md-6">
-              <div class="media">
+              <div onclick="$('#payment_link').click();" class="media">
                 <div class="media-left">
                   <%= image_tag 'admin/6.png', class: 'media-object media-image' %>
                 </div>
@@ -92,7 +101,7 @@
           <% if current_user.company.company_setting.deal_activate %>
           <div class="row">
             <div class="col-md-6">
-              <div class="media">
+              <div onclick="$('#deal_link').click();" class="media">
                 <div class="media-left">
                   <%= image_tag 'admin/6.png', class: 'media-object media-image' %>
                 </div>

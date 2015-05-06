@@ -50,7 +50,7 @@
         <button type="button" class="btn btn-green btn-block hours-optimizer-button" data-toggle="modal" data-target="#hoursOptimizer">Buscador de Horas</button>
       </div>
       <div class="col-xs-10">
-        <div id="popover" class="popover"></div>
+        <div id="popover" class="popover popover-right"></div>
         <div class="calendar-btn">
           <%= link_to '<i class="fa fa-calendar"></i> Agregar Reserva'.html_safe, '#', class: "btn btn-white", id: "createBooking" %>
           <%= link_to '<i class="fa fa-times"></i> Bloquear Horario'.html_safe, '#', class: "btn btn-white", id: "createBreak" %>
@@ -453,10 +453,11 @@
         </div>
         <%= form_for @provider_break, html: {class: "form-horizontal"} do |f| %>
           <input type="hidden" id="provider_break_repeat_id" name="provider_break_repeat_id" value="" />
-          <div class="form-group">
-            <%= f.label :service_provider_id, "Prestador de Servicios", class: "col-sm-3 control-label" %>
-            <div class="col-sm-9">
-              <%= f.collection_select :service_provider_id, ServiceProvider.where(location_id: Location.where(company_id: current_user.company_id, :active => true)).accessible_by(current_ability), :id, :public_name, {}, { class: "form-control" }%>
+            <div class="form-group">
+              <%= f.label :service_provider_id, "Prestador de Servicios", class: "col-sm-3 control-label" %>
+              <div class="col-sm-9">
+                <%= f.collection_select :service_provider_id, ServiceProvider.where(location_id: Location.where(company_id: current_user.company_id, :active => true)).accessible_by(current_ability), :id, :public_name, {}, { class: "form-control" }%>
+              </div>
             </div>
             <div class="form-group">
               <%= f.label :name, "Etiqueta", class: "col-sm-3 control-label" %>
@@ -476,7 +477,6 @@
                 <%= f.datetime_select :end, {default: eval(ENV["TIME_ZONE_OFFSET"]).ago, :minute_step => 5}, {class: "form-control date-select"} %>
               </div>
             </div>
-          </div>
           <div class="form-group form-repeat-div">
             <label class="col-sm-3 control-label">
               Repetición
@@ -674,6 +674,7 @@
     <% end %>
 
     $(function(){
+
       $("#optimizerDateSelector").datepicker({
         monthNames: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
         monthNamesShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],

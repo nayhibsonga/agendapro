@@ -130,17 +130,30 @@ function loadResourcesCalendar (startTime, endTime, hiddenDays, resourcesArray, 
 			};
 		},
 		dayClick: function(date, allDay, jsEvent, view) {
-			var p = $('.popover').parent();
-			$('.popover').empty();
-			$('.popover').html('<a id="closePopover" class="closePopover"><i class="fa fa-times"></i></a><br /><a id="bookingPopover" class="actionPopover">Agregar Reserva</a><br /><a id="breakPopover" class="actionPopover">Bloquear Horario</a>');
+			var p = $('#popover').parent();
+			$('#popover').empty();
+			$('#popover').removeClass('popover-right').removeClass('popover-left');
+			$('#popover').html('<a id="closePopover" class="closePopover"><i class="fa fa-times"></i></a><br /><a id="bookingPopover" class="actionPopover">Agregar Reserva</a><br /><a id="breakPopover" class="actionPopover">Bloquear Horario</a>');
 			var offX  = (jsEvent.offsetX || jsEvent.clientX - $(jsEvent.target).offset().left);
-			$('.popover').css('left', offX + 60 + 'px');
-			$('.popover').css('top', jsEvent.pageY - p.offset().top - 40 + 'px');
+
+			if (offX + 75 > p.width() - 150) {
+				$('#popover').addClass('popover-left');
+				offX = offX - 150;
+			}
+			else {
+				$('#popover').addClass('popover-right');
+			}
+
+			$('#popover').css('left', offX + 75 + 'px');
+			$('#popover').css('top', jsEvent.pageY - p.offset().top - 35 + 'px');
+
+			// window.console.log(offX + 60);
+			// window.console.log(jsEvent.pageY - p.offset().top - 40);
 
 			var column_click = $(this).context.cellIndex;
 			var resourceId = view.resources[column_click - 1].id
 			$('#closePopover').click(function() {
-				$('.popover').hide();
+				$('#popover').hide();
 			});
 			$('#bookingPopover').click(function() {
 				if (!bookingModalOpen) {
@@ -148,13 +161,13 @@ function loadResourcesCalendar (startTime, endTime, hiddenDays, resourcesArray, 
 					createBookingModal(date, resourceId);
 
 				};
-				$('.popover').hide();
+				$('#popover').hide();
 			});
 			$('#breakPopover').click(function() {
 				createBreakModal(date, resourceId);
-				$('.popover').hide();
+				$('#popover').hide();
 			});
-			$('.popover').show();
+			$('#popover').show();
 		},
 
 		eventRender: function(event, element) {
@@ -263,8 +276,18 @@ function loadWeekCalendar (startTime, endTime, hiddenDays, resourcesArray, provi
 		dayClick: function(date, allDay, jsEvent, view) {
 			var p = $('.popover').parent();
 			$('.popover').empty();
+			$('#popover').removeClass('popover-right').removeClass('popover-left');
 			$('.popover').html('<a id="closePopover" class="closePopover"><i class="fa fa-times"></i></a><br /><a id="bookingPopover" class="actionPopover">Agregar Reserva</a><br /><a id="breakPopover" class="actionPopover">Bloquear Horario</a>');
 			var offX  = (jsEvent.offsetX || jsEvent.clientX - $(jsEvent.target).offset().left);
+
+			if (offX + 75 > p.width() - 150) {
+				$('#popover').addClass('popover-left');
+				offX = offX - 150;
+			}
+			else {
+				$('#popover').addClass('popover-right');
+			}
+
 			$('.popover').css('left', offX + 60 + 'px');
 			$('.popover').css('top', jsEvent.pageY - p.offset().top - 40 + 'px');
 			$('#closePopover').click(function() {
@@ -1574,7 +1597,7 @@ function editBreakModal(breakId) {
 			$('.break-modal-footer').append(
 				'<button type="button" class="btn btn-default btn-close" data-dismiss="modal">Cerrar</button>' +
 				'<button type="button" class="btn btn-danger" id="destroy_break" onClick="saveBreak(\'DELETE\',\'/'+breakId+'\')">Eliminar</button>' +
-				'<button type="button" class="btn btn-agendapro-claro" id="edit_break" onClick="saveBreak(\'PATCH\',\'/'+breakId+'\')">Guardar</button>'
+				'<button type="button" class="btn btn-green" id="edit_break" onClick="saveBreak(\'PATCH\',\'/'+breakId+'\')">Guardar</button>'
 			);
 		}
 		else
@@ -1805,9 +1828,15 @@ $(function() {
 		firstDay: 1,
 		changeMonth: true,
 		changeYear: true,
-		dayNames: [ "Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado" ],
-		dayNamesMin: [ "Do", "Lu", "Ma", "Mi", "Ju", "Vi", "Sá" ],
-		dayNamesShort: [ "Dom", "Lun", "Mar", "Mié", "Jue", "Vie", "Sáb" ],
+		monthNames: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+        monthNamesShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
+        prevText: 'Atrás',
+        nextText: 'Adelante',
+        dayNames: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'],
+        dayNamesShort: ['Dom', 'Lun', 'Mar', 'Mier', 'Jue', 'vie', 'Sáb'],
+        dayNamesMin: ['Dom', 'Lun', 'Mar', 'Mier', 'Jue', 'vie', 'Sáb'],
+        today: 'Hoy',
+        clear: '',
 		onSelect: function(dateText, inst) {
 			var d = new Date(parseInt(dateText.split('-')[2]), parseInt(dateText.split('-')[1]) - 1, parseInt(dateText.split('-')[0]));
 			$('#calendar').fullCalendar('gotoDate', d);
@@ -1821,9 +1850,15 @@ $(function() {
 		changeMonth: true,
 		changeYear: true,
 		firstDay: 1,
-		dayNames: [ "Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado" ],
-		dayNamesMin: [ "Do", "Lu", "Ma", "Mi", "Ju", "Vi", "Sá" ],
-		dayNamesShort: [ "Dom", "Lun", "Mar", "Mié", "Jue", "Vie", "Sáb" ],
+		monthNames: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+        monthNamesShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
+        prevText: 'Atrás',
+        nextText: 'Adelante',
+        dayNames: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'],
+        dayNamesShort: ['Dom', 'Lun', 'Mar', 'Mier', 'Jue', 'vie', 'Sáb'],
+        dayNamesMin: ['Dom', 'Lun', 'Mar', 'Mier', 'Jue', 'vie', 'Sáb'],
+        today: 'Hoy',
+        clear: '',
 		onSelect: function(dateText, inst) {
 			var d = new Date(parseInt(dateText.split('-')[2]), parseInt(dateText.split('-')[1]) - 1, parseInt(dateText.split('-')[0]));
 			$('#calendar').fullCalendar('gotoDate', d);

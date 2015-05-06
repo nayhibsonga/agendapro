@@ -69,8 +69,8 @@
   width: auto;
   /*box-shadow: 0 0 5px rgba(0, 0, 0, .5);*/
 }
-.popover:after,
-.popover:before {
+.popover-right:after,
+.popover-right:before {
   right: 100%;
   border: solid transparent;
   content:" ";
@@ -79,16 +79,40 @@
   position: absolute;
   pointer-events: none;
 }
-.popover:after {
+.popover-right:after {
   border-color: rgba(255, 255, 255, 0);
   border-right-color: #f5f5f5;
   border-width: 10px;
   top: 50%;
   margin-top: -10px;
 }
-.popover:before {
+.popover-right:before {
   border-color: rgba(201, 201, 201, 0);
   border-right-color: #e3e3e3;
+  border-width: 11px;
+  top: 50%;
+  margin-top: -11px;
+}
+.popover-left:after,
+.popover-left:before {
+  left: 100%;
+  border: solid transparent;
+  content:" ";
+  height: 0;
+  width: 0;
+  position: absolute;
+  pointer-events: none;
+}
+.popover-left:after {
+  border-color: rgba(255, 255, 255, 0);
+  border-left-color: #f5f5f5;
+  border-width: 10px;
+  top: 50%;
+  margin-top: -10px;
+}
+.popover-left:before {
+  border-color: rgba(201, 201, 201, 0);
+  border-left-color: #e3e3e3;
   border-width: 11px;
   top: 50%;
   margin-top: -11px;
@@ -397,6 +421,31 @@ select[name="serviceOptimizerSelector"] {
 #dp {
   display: none;
 }
+
+.optimizerBtn {
+  width: auto;
+}
+
+/*.fc-widget-header
+{
+  width:200px;
+}
+.fc-widget-header.fc-first, .fc-widget-header.fc-last
+{
+  width:auto;
+}
+.fc-widget-content
+{
+  width:200px;
+}
+.fc-widget-content.fc-first, .fc-widget-content.fc-last
+{
+  width:auto;
+}
+
+#calendar table {
+  table-layout: fixed;
+}*/
 
 @media (min-width: 992px) {
   .hours-optimizer-button {
