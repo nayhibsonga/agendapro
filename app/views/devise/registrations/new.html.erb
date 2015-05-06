@@ -1,3 +1,13 @@
+<% if user_signed_in? && current_user.company_id && current_user.company_id > 0  %>
+  <script type="text/javascript">
+    window.location.href="/dashboard"
+  </script>
+<% elsif user_signed_in? %>
+  <script type="text/javascript">
+    window.location.href="/"
+  </script>
+<% end %>
+
 <% if params[:company] && params[:company] == 'true' %>
 	<div class="row">
 		<div class="col-md-5 col-sm-offset-1">

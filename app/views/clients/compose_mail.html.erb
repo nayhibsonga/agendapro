@@ -16,7 +16,7 @@
           </div>
           <div class="form-group">
             <%= label_tag :to, 'Para' %><small class="pull-right"> Estas enviando el e-mail a <%= pluralize(@to.length, 'persona') %>.</small>
-            <%= text_field_tag :to, @to, :class => 'form-control', :required => true, :placeholder => 'ejemplo@dominio.com (requerido)' %>
+            <p class="form-control-static"><%= @to.map(&:inspect).join(', ') %></p>
             <span class="help-block"></span>
           </div>
           <div class="form-group">
@@ -43,6 +43,15 @@
     </div>
   </div>
 </div>
+
+<% content_for :stylesheets do %>
+  <style>
+  .form-control-static {
+    max-height: 100px;
+    overflow-y: scroll;
+  }
+  </style>
+<% end %>
 
 <% content_for :scripts do %>
   <%= javascript_include_tag 'validations/validate' %>
