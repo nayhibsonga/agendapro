@@ -1,35 +1,37 @@
-<%= form_for @district, html: {class: "form-horizontal" } do |f| %>
-  <% if @district.errors.any? %>
-    <div id="error_explanation">
-      <h2><%= pluralize(@district.errors.count, "error") %> no permitió que la comuna se creara:</h2>
+<div class="container-fluid tab-margin">
+  <div class="row">
+    <div class="col-md-12">
+      <%= form_for @district, html: {class: "form-horizontal" } do |f| %>
+        <% if @district.errors.any? %>
+          <div id="error_explanation">
+            <h2><%= pluralize(@district.errors.count, "error") %> no permitió que la comuna se creara:</h2>
+            <ul>
+              <% @district.errors.full_messages.each do |msg| %>
+                <li><%= msg %></li>
+              <% end %>
+            </ul>
+          </div>
+        <% end %>
 
-      <ul>
-      <% @district.errors.full_messages.each do |msg| %>
-        <li><%= msg %></li>
+        <div class="form-group">
+          <%= f.label :name, "Nombre:", class: "col-md-2 control-label" %>
+          <div class="col-md-4">
+            <%= f.text_field :name, :autofocus => true, class: "form-control" %>
+          </div>
+        </div>
+        <div class="form-group">
+          <%= f.label :city_id, "Ciudad:", class: "col-md-2 control-label" %>
+          <div class="col-md-4">
+            <%= f.collection_select :city_id, City.all, :id, :name, {selected: @district.city_id}, {class: "form-control"} %>
+          </div>
+        </div>
+        <div class="form-group">
+          <div class="actions col-md-offset-2 col-md-4">
+            <%= f.submit 'Guardar', :class => 'btn btn-green' %>
+            <%= link_to 'Cancelar', districts_path, class: "btn btn-default" %>
+          </div>
+        </div>
       <% end %>
-      </ul>
-    </div>
-  <% end %>
-
-  <div class="form-group">
-    <%= f.label :name, "Nombre:", class: "col-sm-3 control-label" %>
-    <div class="col-sm-4">
-      <%= f.text_field :name, :autofocus => true, class: "form-control" %>
     </div>
   </div>
-
-  <div class="form-group">
-    <%= f.label :city_id, "Ciudad:", class: "col-sm-3 control-label" %>
-    <div class="col-sm-4">
-      <%= f.collection_select :city_id, City.all, :id, :name, {selected: @district.city_id}, {class: "form-control"} %>
-    </div>
-  </div>
-
-  <div class="form-group">
-    <div class="actions col-sm-offset-3 col-sm-4">
-      <%= f.submit 'Guardar', :class => 'btn btn-primary' %>
-      <%= link_to 'Cancelar', districts_path, class: "btn btn-danger" %>    
-    </div>
-  </div>
-
-<% end %>
+</div>

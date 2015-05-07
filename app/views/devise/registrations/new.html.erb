@@ -1,3 +1,13 @@
+<% if user_signed_in? && current_user.company_id && current_user.company_id > 0  %>
+  <script type="text/javascript">
+    window.location.href="/dashboard"
+  </script>
+<% elsif user_signed_in? %>
+  <script type="text/javascript">
+    window.location.href="/"
+  </script>
+<% end %>
+
 <% if params[:company] && params[:company] == 'true' %>
 	<div class="row">
 		<div class="col-md-5 col-sm-offset-1">
@@ -141,7 +151,7 @@
 		<div class="col-md-5 col-sm-offset-1">
 			<div class="row signup-feature">
 				<div class="col-sm-12">
-					<h1>ÚNETE A LA RED DE SERVICIOS MÁS GRANDE DE CHILE Y AUMENTA TUS VENTAS.<br /></h1>
+					<h1>ÚNETE A LA RED DE SERVICIOS MÁS GRANDE DE CHILE Y RECIBE LAS MEJORES PROMOCIONES.<br /></h1>
 				</div>
 			</div>
 			<div class="row signup-feature">

@@ -1,45 +1,65 @@
-<div class="container">
+<div class="container-fluid background-grey">
   <div class="row">
-    <section class="hgroup">
-      <h2>Usuarios registrados en tu compañía</h2>
-      <h2 class="section_header">A continuación se presentan los usuarios que tienen cuenta asociada a tu empresa.</h2>
-      <h4>Tipos de Usuarios: </h4>
-      <ul>
-        <li><strong>Administrador General: </strong>La cuenta Administrador General es la cuenta con todos los permisos posibles.</li><br />
-        <li><strong>Administrador Local: </strong>El Administrador Local es una cuenta que tiene el manejo completo de un local, además puede crear servicios y prestadores de servicios.</li><br />
-        <li><strong>Recepcionista: </strong>La cuenta Recepcionista puede reservar horas a todos los prestadores del local asignado.</li><br />
-        <li><strong>Staff: </strong>La cuenta Staff es la cuenta que puede manejar las reservas de los prestadores seleccionados.</li><br />
-        <li><strong>Staff (sin edición): </strong>La cuenta Staff es la cuenta que puede sólo ver las reservas de los prestadores seleccionados.</li><br />
-      </ul>
-      <div class="line-breadcrumb">
-        <ul class="breadcrumb pull-right">
-            <li><%= link_to "Resumen", dashboard_path %> </li>
-            <li class="active">Usuarios</li>
-        </ul>
+    <div class="col-md-12">
+      <h2 class="text-green">Usuarios registrados en tu compañía</h2>
+      <p>A continuación se presentan los usuarios que tienen cuenta asociada a tu empresa.</p>
     </div>
-    </section>
   </div>
 </div>
-
-<table class="table table-bordered">
-  <thead>
-    <tr>
-      <th>E-mail</th>
-      <th>Tipo</th>
-      <th>Acciones</th>
-    </tr>
-  </thead>
-
-  <tbody>
-    <% @users.each do |user| %>
-      <tr>
-        <td><%= user.email %></td>
-        <td><%= user.role.name %></td>
-        <td><%= link_to '<i class="fa fa-pencil"></i> Editar'.html_safe, edit_admin_user_path(:id => user.id), :class => "btn btn-warning" unless user.id == current_user.id %>
-          <%= link_to '<i class="fa fa-trash-o"></i> Eliminar'.html_safe, admin_user_path(user), :class => "btn btn-danger",  method: :delete, data: { confirm: '¿Estás seguro de eliminar al Usuario seleccionado?' } unless user.id == current_user.id %></td>
-      </tr>
-    <% end %>
-  </tbody>
-</table>
-
-<%= link_to '<i class="fa fa-plus"></i> Nuevo Usuario'.html_safe, new_admin_user_path, :class => "btn btn-agendapro-claro" %>
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-md-12">
+      <h3 class="text-green">Tipos de Usuarios</h3>
+      <div class="row">
+        <div class="col-md-4">
+          <p><span class="text-green">Administrador General:</span> La cuenta Administrador General es la cuenta con todos los permisos posibles.</p>
+        </div>
+        <div class="col-md-4">
+          <p><span class="text-green">Administrador Local:</span> El Administrador Local es una cuenta que tiene el manejo completo de un local, además puede crear servicios y prestadores de servicios.</p>
+        </div>
+        <div class="col-md-4">
+          <p><span class="text-green">Recepcionista:</span> La cuenta Recepcionista puede reservar horas a todos los prestadores del local asignado.</p>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-4">
+          <p><span class="text-green">Staff:</span> La cuenta Staff es la cuenta que puede manejar las reservas de los prestadores seleccionados.</p>
+        </div>
+        <div class="col-md-4">
+          <p><span class="text-green">Staff (sin edición):</span> La cuenta Staff es la cuenta que puede sólo ver las reservas de los prestadores seleccionados.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-12">
+      <div class="background-grey">
+        <h3 class="text-green">Usuarios</h3>
+      </div>
+      <table class="table table-hover table-green">
+        <thead>
+          <tr>
+            <th>E-mail</th>
+            <th>Tipo</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @users.each do |user| %>
+            <tr>
+              <td><%= user.email %></td>
+              <td><%= user.role.name %></td>
+              <td>
+                <%= link_to '<i class="fa fa-pencil"></i> Editar'.html_safe, edit_admin_user_path(:id => user.id), :class => "btn btn-orange" unless user.id == current_user.id %>
+                <%= link_to '<i class="fa fa-trash-o"></i> Eliminar'.html_safe, admin_user_path(user), :class => "btn btn-red",  method: :delete, data: { confirm: '¿Estás seguro de eliminar al Usuario seleccionado?' } unless user.id == current_user.id %>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+    <div class="col-md-12">
+      <%= link_to '<i class="fa fa-plus"></i> Nuevo Usuario'.html_safe, new_admin_user_path, :class => "btn btn-green" %>
+    </div>
+  </div>
+</div>

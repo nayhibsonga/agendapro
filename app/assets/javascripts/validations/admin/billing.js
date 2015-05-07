@@ -4,7 +4,7 @@ $(function() {
 		errorPlacement: function(error, element) {
 			var id = element.attr('id');
 			if (element.attr('id') == 'billing_info_accept') {
-				error.appendTo(element.next().next());
+				error.appendTo(element.parent().next());
 			}
 			else{
 				error.appendTo(element.next());

@@ -16,3 +16,7 @@
 tr.over {
 	border: 2px dashed #000;
 }
+
+.fa-bars {
+	cursor: move;
+}

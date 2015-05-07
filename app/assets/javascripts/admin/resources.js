@@ -32,7 +32,7 @@ function saveCategory (typeURL, extraURL) {
 				$('#resourceCategoryModal').modal('hide');
 				break;
 			case 'PATCH':
-				
+
 				break;
 			case 'DELETE':
 				$('#resource_resource_category_id option[value="'+extraURL.substring(1)+'"]').remove();
@@ -101,14 +101,13 @@ function saveResource (typeURL, extraURL) {
 }
 
 function getResourceCategories() {
-	// $('#resourceCategoriesTable').html('<tr><th>Categoría</th><th>Eliminar</th></tr>');
 	$('#resource_category_name').val('');
 	$('#resourceCategoriesTable').empty();
 	$.getJSON('/resource_categories', function (categoriesArray) {
 		$.each(categoriesArray, function (key, category) {
 			var buttonString = '';
 			if(category.name != "Sin Categoría") {
-				buttonString = '<a class="btn btn-danger" onclick="saveCategory(\'DELETE\',\'/'+category.id+'\')"><i class="fa fa-trash-o"></i></a>';
+				buttonString = '<a class="btn btn-red" onclick="saveCategory(\'DELETE\',\'/'+category.id+'\')"><i class="fa fa-trash-o"></i></a>';
 			}
 			$('#resourceCategoriesTable').append('<tr><td>'+category.name+'</td><td>'+buttonString+'</td></tr>');
 		});

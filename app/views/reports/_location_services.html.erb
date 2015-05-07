@@ -1,48 +1,41 @@
 <div class="row">
-	<div class="col-md-12">
-		<div class="panel panel-info">
-			<div class="panel-heading">
-				<h3 class="panel-title">Reservas de <%= @location.name %> por Servicio</h3>
-			</div>
-			<div class="panel-body scrollable">
-				<table class="table">
-					<thead class="head-white">
-						<th>Servicio</th>
-						<th>Reservas</th>
-						<th>Recaudación</th>
-					</thead>
-					<tbody>
-						<% @services.each do |service| %>
-						<tr>
-							<td>
-							<%= service.name %>
-							</td>
-							<td>
-								<%= location_service_booking_count(@from, @to, @status_ids, @option, service.id, @location.id) %>
-							</td>
-							<td>
-								<%= number_to_currency(location_service_booking_revenue(@from, @to, @status_ids, @option, service.id, @location.id), currency: ' $', separator: ',', delimeter: '.', precision: 0) %>
-							</td>
-						</tr>
-						<% end %>
-						<tr>
-							<td><strong>Total</strong>
-							</td>
-							<td><strong>
-								<%= location_booking_count(@from, @to, @status_ids, @option, @location.id) %>
-							</strong></td>
-							<td><strong>
-								<%= number_to_currency(location_booking_revenue(@from, @to, @status_ids, @option, @location.id), currency: ' $', separator: ',', delimeter: '.', precision: 0) %>
-							</strong></td>
-						</tr>
-					</tbody>
-				</table>
-			</div>
-		</div>
-	</div>
+  <div class="col-md-12">
+    <div class="panel panel-green">
+      <div class="panel-heading">
+        <h3 class="panel-title">Reservas de <%= @location.name %> por Servicio</h3>
+      </div>
+      <div class="panel-body panel-scrollable">
+        <table class="table table-summary">
+          <thead>
+            <tr>
+              <th>Servicio</th>
+              <th>Reservas</th>
+              <th>Recaudación</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% @services.each do |service| %>
+              <tr>
+                <td><%= service.name %></td>
+                <td><%= location_service_booking_count(@from, @to, @status_ids, @option, service.id, @location.id) %></td>
+                <td><%= number_to_currency(location_service_booking_revenue(@from, @to, @status_ids, @option, service.id, @location.id), currency: ' $', separator: ',', delimeter: '.', precision: 0) %></td>
+              </tr>
+            <% end %>
+          </tbody>
+          <tfoot>
+            <tr>
+              <td>Total</td>
+              <td><%= location_booking_count(@from, @to, @status_ids, @option, @location.id) %></td>
+              <td><%= number_to_currency(location_booking_revenue(@from, @to, @status_ids, @option, @location.id), currency: ' $', separator: ',', delimeter: '.', precision: 0) %></td>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+    </div>
+  </div>
 </div>
 <div class="row">
-	<div class="col-md-6">
-		<%= pie_chart location_booking_ranking3(@from, @to, @status_ids, @option, @location.id), library: { title: "Ranking Servicio Utilizados" }  %>
-	</div>
+  <div class="col-md-12">
+    <%= pie_chart location_booking_ranking3(@from, @to, @status_ids, @option, @location.id), library: { title: "Ranking Servicio Utilizados" } %>
+  </div>
 </div>

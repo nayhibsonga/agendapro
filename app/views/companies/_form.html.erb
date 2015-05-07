@@ -1,90 +1,83 @@
-<div class="container">
-	<div class="row well">
-		<%= form_for @company, :html => {:class => 'form-horizontal', :multipart => true} do |f| %>
-			<% if @company.errors.any? %>
-				<div id="error_explanation">
-					<h2><%= pluralize(@company.errors.count, "error") %> no permitió que la empresa sea creada:</h2>
+<%= form_for @company, :html => {:class => 'form-horizontal', :multipart => true} do |f| %>
+  <% if @company.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(@company.errors.count, "error") %> no permitió que la empresa sea creada:</h2>
 
-					<ul>
-					<% @company.errors.full_messages.each do |msg| %>
-						<li><%= msg %></li>
-					<% end %>
-					</ul>
-				</div>
-			<% end %>
+      <ul>
+      <% @company.errors.full_messages.each do |msg| %>
+        <li><%= msg %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
 
-			<div class="form-group has-feedback">
-				<%= f.label :name, 'Nombre', :class => 'col-sm-3 control-label' %>
-				<div class="col-sm-5">
-					<%= f.text_field :name, :autofocus => true, :class => 'form-control', :placeholder => 'Nombre Compañía (requerido)' %>
-					<span class="help-block"></span>
-					<span class="form-control-feedback"></span>
-				</div>
-			</div>
-			<div class="form-group">
-				<%= f.label :description, 'Descripción', :class => 'col-sm-3 control-label' %>
-				<div class="col-sm-5">
-					<%= f.text_area :description, :class => 'form-control', :rows => "7" %>
-				</div>
-			</div>
-			<div class="form-group has-feedback">
-				<%= f.label :web_address, 'Dirección Sitio AgendaPro', :class => 'col-sm-3 control-label' %>
-				<div class="col-sm-5">
-					<div class="input-group">
-						<%= f.text_field :web_address, :required => true, :class => 'form-control', :placeholder => 'Empresa (requerido)' %>
-						<span class="input-group-addon">.agendapro.cl</span>
-					</div>
-				</div>
-				<div class="col-sm-offset-3 col-sm-5">
-					<span class="help-block"></span>
-				</div>
-				<span class="help-block">Esta es la página del sitio en AgendaPro. <strong>NO recomendamos editarla.</strong></span>
-			</div>
-			<div class="form-group has-feedback">
-				<%= f.label :logo, 'Logo Compañía', :class => 'col-sm-3 control-label' %>
-				<div class="col-sm-5">
-					<%= f.file_field :logo, :accept => 'image/png,image/gif,image/jpeg', :class => 'form-control' %>
-					<span class="help-block"></span>
-					<span class="form-control-feedback"></span>
-					<div class="checkbox">
-						<label>
-							<%= f.check_box :remove_logo %> Quitar Logo
-						</label>
-					</div>
-				</div>
-				<% if @company.logo_url %>
-				<%= image_tag @company.logo_url.to_s, :size => "80x80", :alt => @company.name %>
-				<% end %>
-			</div>
-			<div class="form-group">
-				<%= f.label :cancellation_policy, 'Política de Cancelación', :class => 'col-sm-3 control-label' %>
-				<div class="col-sm-5">
-					<%= f.text_area :cancellation_policy, :class => 'form-control', :rows => "7" %>
-				</div>
-			</div>
-			<div class="form-group has-feedback">
-				<%= f.label :economic_sector_ids, 'Sectores Económicos', :class => 'col-sm-3 control-label' %>
-				<div class="col-sm-5">
-					<%= f.collection_check_boxes :economic_sector_ids, EconomicSector.all, :id, :name, {}, {class: "check_boxes"} do |b|%>
-						<div class="col-sm-6">
-							<div class="checkbox">
-								<label>
-									<%= b.check_box %> <%= b.object.name.html_safe %> 
-								</label>
-							</div>
-						</div>
-					<% end %>
-				<span class="help-block"></span>
-				<span class="form-control-feedback"></span>
-				</div>
-			</div>
-
-			<div class="form-group">
-				<div class="col-sm-offset-3 col-sm-4">
-				 <%= f.submit 'Guardar', :class => 'btn btn-agendapro-claro' %>
-				 <%= link_to 'Cancelar', dashboard_path, :class => "btn btn-default" %>
-				</div> 
-			</div>
-		<% end %>
-	</div>
-</div>
+  <div class="form-group has-feedback">
+    <%= f.label :name, 'Nombre', class: 'control-label col-md-2' %>
+    <div class="col-md-9">
+      <%= f.text_field :name, :autofocus => true, :class => 'form-control', :placeholder => 'Nombre Compañía (requerido)' %>
+      <span class="help-block"></span>
+      <span class="form-control-feedback"></span>
+    </div>
+  </div>
+  <div class="form-group has-feedback">
+    <%= f.label :web_address, 'Dirección Sitio AgendaPro', class: 'control-label col-md-2' %>
+    <div class="col-md-9">
+      <div class="input-group">
+        <%= f.text_field :web_address, :required => true, :class => 'form-control', :placeholder => 'Empresa (requerido)' %>
+        <span class="input-group-addon">.agendapro.cl</span>
+      </div>
+      <span class="help-block"></span>
+      <span class="help-block">Esta es la página del sitio en AgendaPro. <strong>NO recomendamos editarla.</strong></span>
+    </div>
+  </div>
+  <div class="form-group">
+    <%= f.label :description, 'Descripción', class: 'control-label col-md-2' %>
+    <div class="col-md-9">
+      <%= f.text_area :description, :class => 'form-control', :rows => "7" %>
+    </div>
+  </div>
+  <div class="form-group has-feedback">
+    <%= f.label :logo, 'Logo Compañía', class: 'control-label col-md-2' %>
+    <div class="col-md-3">
+      <%= f.file_field :logo, :accept => 'image/png,image/gif,image/jpeg', :class => 'form-control' %>
+      <span class="help-block"></span>
+      <span class="form-control-feedback"></span>
+      <div class="checkbox">
+        <label>
+          <%= f.check_box :remove_logo %> Quitar Logo
+        </label>
+      </div>
+    </div>
+    <div class="col-md-6">
+      <% if @company.logo_url %>
+      <div class="company-logo">
+        <%= image_tag @company.logo_url.to_s, :size => "80x80", :alt => @company.name %>
+      </div>
+      <% end %>
+    </div>
+  </div>
+  <div class="form-group has-feedback">
+    <%= f.label :economic_sector_ids, 'Sector Económico', class: 'control-label col-md-2' %>
+    <div class="col-md-9">
+      <div class="row">
+        <%= f.collection_check_boxes :economic_sector_ids, EconomicSector.all, :id, :name, {}, {class: "check_boxes"} do |b|%>
+          <div class="col-md-2">
+            <div class="checkbox">
+              <label>
+                <%= b.check_box %> <%= b.object.name.html_safe %>
+              </label>
+            </div>
+          </div>
+        <% end %>
+      </div>
+      <span class="help-block"></span>
+      <span class="form-control-feedback"></span>
+    </div>
+  </div>
+  <div class="form-group">
+    <div class="col-md-9 col-md-offset-2">
+      <%= f.submit 'Guardar', :class => 'btn btn-green' %>
+      <%= link_to 'Cancelar', dashboard_path, :class => "btn btn-default" %>
+    </div>
+  </div>
+<% end %>

@@ -1,67 +1,69 @@
-<div class="container">
-	<div class="row">
-		<section class="hgroup">
-			<h2>Prestadores de Servicios</h2>
-			<h2 class="section_header">Los Prestadores de Servicios son las personas, máquinas o salas necesarias para realizar un servicio. Acá los podrás crear y editar.</h2>
-			<div class="line-breadcrumb">
-				<ul class="breadcrumb pull-right">
-						<li><%= link_to "Resumen", dashboard_path %> </li>
-						<li class="active">Prestadores de Servicios</li>
-				</ul>
-		</div>
-		</section>
-	</div>
+<div class="container-fluid background-grey">
+  <div class="row">
+    <div class="col-md-12">
+      <h2 class="text-green">Prestadores de Servicios</h2>
+      <p>Los Prestadores de Servicios son las personas, máquinas o salas necesarias para realizar un servicio. Acá los podrás crear y editar.</p>
+    </div>
+  </div>
+</div>
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-md-12">
+      <div class="pull-right" style="margin: 10px 0;">
+        <%= link_to '<i class="fa fa-plus"></i> Nuevo Prestador de Servicios'.html_safe, new_service_provider_path, :class => "btn btn-green" %>
+          <%= link_to '<i class="fa fa-minus"></i> Prestadores de Servicios Inactivos'.html_safe, inactive_service_providers_path, :class => "btn btn-white" %>
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-12">
+      <div class="panel-group" id="accordion">
+        <% @locations.each do |location| %>
+        <div class="panel panel-default">
+          <div class="panel-heading">
+            <h4 class="panel-title" data-toggle="collapse" data-parent="#accordion" href="#collapse<%= location.id %>">
+              <a><%= location.name %></a>
+            </h4>
+          </div>
+          <div id="collapse<%= location.id %>" class="panel-collapse collapse<% if @locations.count == 1%> in<% end %>">
+            <div class="panel-body">
+              <table class="table table-bordered table-green">
+                <thead>
+                  <tr>
+                    <th>Nombre</th>
+                    <th>Opciones</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <% @service_providers.each do |service_provider| %>
+                    <% if service_provider.location_id == location.id %>
+                    <tr draggable="true">
+                      <td data-provider="<%= service_provider.id %>"><%= service_provider.public_name %></td>
+                      <td>
+                        <%= link_to '<i class="fa fa-pencil"></i> Editar'.html_safe, edit_service_provider_path(service_provider), :class => "btn btn-sm btn-orange" %>
+                        <%= link_to '<i class="fa fa-trash-o"></i> Eliminar'.html_safe, deactivate_service_provider_path(:id => service_provider.id), :class => "btn btn-sm btn-red", data: { confirm: '¿Estás seguro de desactivar el Prestador seleccionado? Este prestador tiene ' + Booking.where(:service_provider_id => service_provider.id).where.not(:status => Status.find_by(:name => 'Cancelado')).where('start >= ?', DateTime.now).length.to_s + ' reserva(s) asociada(s), que será(n) eliminada(s).' } %>
+                        <span class="pull-right">
+                          <i class="fa fa-bars"></i>
+                        </span>
+                      </td>
+                    </tr>
+                    <% end %>
+                  <% end %>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
 </div>
 
-<div class="panel-group" id="accordion">
-	<% @locations.each do |location| %> 
-	<div class="panel panel-default">
-		<div class="panel-heading">
-			<h4 class="panel-title" data-toggle="collapse" data-parent="#accordion" href="#collapse<%= location.id %>">
-				<a>
-					<%= location.name %>
-				</a>
-			</h4>
-		</div>
-		<div id="collapse<%= location.id %>" class="panel-collapse collapse<% if @locations.count == 1%> in<% end %>">
-			<div class="panel-body">
-				<table class="table table-bordered">
-					<thead>
-						<tr>
-							<th>Nombre</th>
-							<th>Opciones</th>
-						</tr>
-					</thead>
+<% content_for :stylesheets do %>
+  <%= stylesheet_link_tag "admin/draggable" %>
+<% end %>
 
-					<tbody>
-						<% @service_providers.each do |service_provider| %>
-						<% if service_provider.location_id == location.id %>
-							<tr draggable="true">
-								<td data-provider="<%= service_provider.id %>"><%= service_provider.public_name %></td>
-								<td>
-									<%= link_to '<i class="fa fa-pencil"></i> Editar'.html_safe, edit_service_provider_path(service_provider), :class => "btn btn-sm btn-warning" %>
-									<%= link_to '<i class="fa fa-trash-o"></i> Eliminar'.html_safe, deactivate_service_provider_path(:id => service_provider.id), :class => "btn btn-sm btn-danger", data: { confirm: '¿Estás seguro de desactivar el Prestador seleccionado? Este prestador tiene ' + Booking.where(:service_provider_id => service_provider.id).where.not(:status => Status.find_by(:name => 'Cancelado')).where('start >= ?', DateTime.now).length.to_s + ' reserva(s) asociada(s), que será(n) eliminada(s).' } %>
-									<span class="pull-right">
-										<i class="fa fa-bars"></i>
-									</span>
-								</td>
-							</tr>
-						<% end %>
-						<% end %>
-					</tbody>
-				</table> 
-			</div>
-		</div>
-	</div>
-	<% end %>
-</div>
-
-<br/>
-
-<%= link_to '<i class="fa fa-plus"></i> Nuevo Prestador de Servicios'.html_safe, new_service_provider_path, :class => "btn btn-agendapro-claro" %>
-<%= link_to '<i class="fa fa-minus"></i> Prestadores de Servicios Inactivos'.html_safe, inactive_service_providers_path, :class => "btn btn-agendapro-claro pull-right" %>
-
-<%= stylesheet_link_tag "admin/draggable" %>
 <% content_for :scripts do %>
   <%= javascript_include_tag 'admin/draggable' %>
   <%= javascript_include_tag 'admin/provider_draggable' %>

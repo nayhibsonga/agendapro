@@ -33,7 +33,7 @@
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-green pull-left" id="addButton"><i class="fa fa-plus"></i>&nbsp;<span></span></button>
-        <button type="button" class="btn btn-orange optimizerBtn" id="optimizerPrevButton" hidden><i class="fa fa-chevron-left"></i>&nbsp;Atrás</button>
+        <button type="button" class="btn btn-orange optimizerBtn" id="optimizerPrevButton" hidden><i class="fa fa-chevron-left"></i>&nbsp;AtrÃ¡s</button>
         <button type="button" class="btn btn-orange optimizerBtn" id="nextButton">Siguiente&nbsp;<i class="fa fa-chevron-right"></i></button>
       </div>
     </div>
@@ -44,16 +44,16 @@
   <div class="container">
     <div class="row">
       <% if !@company.description.blank? %>
-        <div class="col-md-4 company-header-left company-header">
+        <div class="col-xs-5 col-md-4 company-header-left company-header">
           <div class="row">
-            <div class="col-md-3">
+            <div class="col-xs-4 col-md-3">
               <% if @company.logo_url %>
                 <%= image_tag @company.logo_url.to_s, :size => "80x80", :alt => @company.name, :class => "company-logo" %>
               <% else %>
                 <%= image_tag 'logo_vacio.png', :alt => 'AgendaPro', :size => "80x80", :class => "company-logo" %>
               <% end %>
             </div>
-            <div class="col-md-9">
+            <div class="col-xs-8 col-md-9">
               <div class="row">
                 <div class="col-md-12 company-name">
                     <%= @company.name %>
@@ -70,12 +70,12 @@
             </div>
           </div>
         </div>
-        <div class="col-md-4 company-header-center company-header">
+        <div class="col-xs-4 col-md-4 company-header-center company-header">
           <div class="header-description">
             <%= @company.description %>
           </div>
         </div>
-        <div class="col-md-4 company-header-right company-header">
+        <div class="col-xs-3 col-md-4 company-header-right company-header">
           <% if @selectedLocation %>
             <div id="phone-info">
               <%= image_tag 'telefono.png', :alt => '', :size => "12x14", :class=>"loc-icon" %>&nbsp;
@@ -99,16 +99,16 @@
           <div style="clear: both;"></div>
         </div>
       <% else %>
-        <div class="col-md-4 company-header-left company-header" style="border-right: 1px solid #949292;">
+        <div class="col-xs-5 col-md-4 company-header-left company-header" style="border-right: 1px solid #949292;">
           <div class="row">
-            <div class="col-md-3">
+            <div class="col-xs-4 col-md-3">
               <% if @company.logo_url %>
                 <%= image_tag @company.logo_url.to_s, :size => "80x80", :alt => @company.name, :class => "company-logo" %>
               <% else %>
                 <%= image_tag 'logo_vacio.png', :alt => 'AgendaPro', :size => "80x80", :class => "company-logo" %>
               <% end %>
             </div>
-            <div class="col-md-9">
+            <div class="col-xs-8 col-md-9">
               <div class="row">
                 <div class="col-md-12 company-name">
                     <%= @company.name %>
@@ -125,7 +125,7 @@
             </div>
           </div>
         </div>
-        <div class="col-md-8 company-header-center2 company-header">
+        <div class="col-xs-7 col-md-8 company-header-center2 company-header">
           <% if @selectedLocation %>
             <div id="phone-info">
               <%= image_tag 'telefono.png', :alt => '', :size => "12x14", :class=>"loc-icon" %>&nbsp;
@@ -194,7 +194,7 @@
                 </div>
               </div>
               <div class="col-sm-3 col-md-4" style="text-align: right;">
-                
+
               </div>
               <% if @company.company_setting.allows_optimization %>
               <div class="col-sm-3" style="text-align: right; color: #505050;">
@@ -280,16 +280,15 @@
               </div>
             </div>
             <div class="row change-bar">
-              <div class="col-sm-3">
+              <div class="col-xs-12 col-md-5 col-md-push-2">
+                <p class="p-label"><span class="wf-label label-available">&nbsp;</span> Disponible<span class="wf-label label-past">&nbsp;</span> No Disponible<span class="wf-label label-unavailable">&nbsp;</span> Ocupado</p>
+              </div>
+              <div class="col-xs-4 col-md-2 col-md-pull-5">
                 <div class="btn-change btn-prev">
                   <a class="prev2 prev-btn"><i class="fa fa-chevron-left prev-arrow"></i> Anterior</a>
                 </div>
               </div>
-              <div class="col-sm-4">
-                <p class="p-label"><span class="wf-label label-available">&nbsp;</span> Disponible<span class="wf-label label-past">&nbsp;</span> No Disponible<span class="wf-label label-unavailable">&nbsp;</span> Ocupado</p>
-                
-              </div>
-              <div class="col-sm-5">
+              <div class="col-xs-8 col-md-5">
                 <a class="btn btn-large btn-green btn-add-service" style="padding: 5px 12px; margin-right: 10px; font-size: 20px;" onclick="addNewService()"><i class="fa fa-plus"></i> Agregar Otro Servicio</a>
                 <div class="btn-change btn-next">
                   <a class="next2 next-btn">Siguiente <i class="fa fa-chevron-right next-arrow"></i></a>
@@ -341,7 +340,7 @@
                           Email
                         </div>
                         <div class="col-md-6 dark-gray">
-                          Teléfono
+                          TelÃ©fono
                         </div>
                       </div>
                       <div class="row">
@@ -383,7 +382,7 @@
                           Email
                         </div>
                         <div class="col-md-6 dark-gray">
-                          Teléfono
+                          TelÃ©fono
                         </div>
                       </div>
                       <div class="row">
@@ -438,13 +437,13 @@
                     <div id="outcallAddress" class="row form-group has-feedback">
                       <div class="row">
                         <div class="col-md-12 dark-gray">
-                          Dirección
+                          DirecciÃ³n
                         </div>
                       </div>
                       <div class="row">
                         <div class="col-md-12">
                           <div class="form-group has-feedback">
-                            <%= text_field_tag(:address, nil, :class => "form-control light-gray", :placeholder => "Escribe la dirección donde se debe realizar el servicio" ) %>
+                            <%= text_field_tag(:address, nil, :class => "form-control light-gray", :placeholder => "Escribe la direcciÃ³n donde se debe realizar el servicio" ) %>
                             <span class="help-block"></span>
                             <span class="form-control-feedback"></span>
                           </div>
@@ -460,7 +459,7 @@
                     <div class="row">
                       <div class="col-md-12">
                         <div class="form-group">
-                          <%= text_area_tag(:comment, nil, :class => "form-control light-gray", :placeholder => "Agrega algún comentario a tu reserva en caso de ser necesario", :rows => 4) %>
+                          <%= text_area_tag(:comment, nil, :class => "form-control light-gray", :placeholder => "Agrega algÃºn comentario a tu reserva en caso de ser necesario", :rows => 4) %>
                         </div>
                       </div>
                     </div>
@@ -495,7 +494,7 @@
                   <!--<div class="row">
                     <div class="col-md-6">
 
-                      <a href="#" id="openPayOptions">Seleccionar opción de pago</a>
+                      <a href="#" id="openPayOptions">Seleccionar opciÃ³n de pago</a>
 
                     </div>
                   </div>-->
@@ -523,7 +522,7 @@
                     <div class="row">
                       <div class="col-md-6">
                         <div style="color: #505050; padding: 5px 5px 5px 5px;">
-                          <a href="#" id="open-online-policy" data-toggle="modal" data-target="#online-policy" style="color: #505050 !important; border-top: 1px solid #949292; padding-top: 5px;"><b><%= image_tag 'icono_pago.png', :alt => 'Pago' %>Política de pagos en línea.</b></a>
+                          <a href="#" id="open-online-policy" data-toggle="modal" data-target="#online-policy" style="color: #505050 !important; border-top: 1px solid #949292; padding-top: 5px;"><b><%= image_tag 'icono_pago.png', :alt => 'Pago' %>PolÃ­tica de pagos en lÃ­nea.</b></a>
                         </div>
                       </div>
                       <div class="col-md-6">
@@ -580,7 +579,7 @@
                       </div>
                       <div class="row">
                         <div class="col-md-12" style="padding-left: 10px; padding-top: 10px;">
-                          <p>Antes de pagar, asegúrate de leer la política de pagos en línea de la empresa: <a href="#" id="policy-link" style="color: #505050 !important;"><b>ver.</b></a></p>
+                          <p>Antes de pagar, asegÃºrate de leer la polÃ­tica de pagos en lÃ­nea de la empresa: <a href="#" id="policy-link" style="color: #505050 !important;"><b>ver.</b></a></p>
                         </div>
                       </div>
                     </div>
@@ -592,40 +591,40 @@
               </div><!-- /.modal -->
               <!-- FIN MODAL MEDIO DE PAGO -->
 
-              <!-- MODAL POLÍTICA DE MODIFICACIÓN/CANCELACIÓN PAGOS EN LÍNEA -->
+              <!-- MODAL POLÃTICA DE MODIFICACIÃ“N/CANCELACIÃ“N PAGOS EN LÃNEA -->
               <div class="modal fade" id="online-policy" tabindex="-1" role="dialog" aria-labelledby="siginLabel" aria-hidden="true">
                 <div class="modal-dialog">
                   <div class="modal-content">
                     <div class="modal-header">
                       <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                      <h4 class="modal-title" style="color: #505050 !important;">Política de modificación/cancelación de reservas pagadas en línea.</h4>
+                      <h4 class="modal-title" style="color: #505050 !important;">PolÃ­tica de modificaciÃ³n/cancelaciÃ³n de reservas pagadas en lÃ­nea.</h4>
                     </div>
                     <div class="modal-body" style="color: #505050 !important;">
-                      <h3>Modificación:</h3>
+                      <h3>ModificaciÃ³n:</h3>
                       <% if !@location.company.company_setting.online_cancelation_policy.modifiable %>
-                        <p>La empresa no permite modificar reservas pagadas en línea.</p>
+                        <p>La empresa no permite modificar reservas pagadas en lÃ­nea.</p>
                       <% else %>
                         <p>La reserva se puede modificar:</p>
                         <p>- Hasta <%= @location.company.company_setting.online_cancelation_policy.min_hours.to_s %> horas antes del servicio contratado.<br />
-                        - Hasta <%= @location.company.company_setting.online_cancelation_policy.modification_max.to_s %> <%= TimeUnit.find(@location.company.company_setting.online_cancelation_policy.modification_unit).unit.to_s.downcase %> desde la fecha en que se efectuó el pago.</p>
+                        - Hasta <%= @location.company.company_setting.online_cancelation_policy.modification_max.to_s %> <%= TimeUnit.find(@location.company.company_setting.online_cancelation_policy.modification_unit).unit.to_s.downcase %> desde la fecha en que se efectuÃ³ el pago.</p>
                         <p>
-                          Si no cumple con alguna de las dos restricciones, no podrá modificar su reserva.
+                          Si no cumple con alguna de las dos restricciones, no podrÃ¡ modificar su reserva.
                           <br />
-                          Además, la empresa permite modificar la reserva un máximo de <%= @location.company.company_setting.max_changes.to_s %> veces.
+                          AdemÃ¡s, la empresa permite modificar la reserva un mÃ¡ximo de <%= @location.company.company_setting.max_changes.to_s %> veces.
                         </p>
                       <% end %>
 
-                      <h3>Cancelación:</h3>
+                      <h3>CancelaciÃ³n:</h3>
                       <% if !@location.company.company_setting.online_cancelation_policy.cancelable %>
-                        <p>La empresa no permite cancelar reservas pagadas en línea.</p>
+                        <p>La empresa no permite cancelar reservas pagadas en lÃ­nea.</p>
                       <% else %>
                         <p>La reserva se puede cancelar:</p>
                         <p>- Hasta <%= @location.company.company_setting.online_cancelation_policy.min_hours.to_s %> horas antes del servicio contratado.<br />
-                        - Hasta <%= @location.company.company_setting.online_cancelation_policy.cancel_max.to_s %> <%= TimeUnit.find(@location.company.company_setting.online_cancelation_policy.cancel_unit).unit.to_s.downcase %> desde la fecha en que se efectuó el pago.</p>
-                        <p>Si no cumple con alguna de las dos restricciones, no podrá cancelar su reserva.</p>
+                        - Hasta <%= @location.company.company_setting.online_cancelation_policy.cancel_max.to_s %> <%= TimeUnit.find(@location.company.company_setting.online_cancelation_policy.cancel_unit).unit.to_s.downcase %> desde la fecha en que se efectuÃ³ el pago.</p>
+                        <p>Si no cumple con alguna de las dos restricciones, no podrÃ¡ cancelar su reserva.</p>
                         <br />
                         <p>
-                          Si cancela su reserva, se le devolverá un 90% del monto cancelado debido a los costos de transacción.
+                          Si cancela su reserva, se le devolverÃ¡ un 90% del monto cancelado debido a los costos de transacciÃ³n.
                         </p>
                       <% end %>
                     </div>
@@ -635,7 +634,7 @@
                   </div><!-- /.modal-content -->
                 </div><!-- /.modal-dialog -->
               </div><!-- /.modal -->
-              <!-- FIN MODAL POLÍTICA DE MODIFICACIÓN/CANCELACIÓN PAGOS EN LÍNEA -->
+              <!-- FIN MODAL POLÃTICA DE MODIFICACIÃ“N/CANCELACIÃ“N PAGOS EN LÃNEA -->
 
               <% end %>
             </div>
@@ -700,11 +699,11 @@
       $("#datepicker").datepicker({
           monthNames: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
           monthNamesShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
-          prevText: 'Atrás',
+          prevText: 'AtrÃ¡s',
           nextText: 'Adelante',
-          dayNames: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'],
-          dayNamesShort: ['Dom', 'Lun', 'Mar', 'Mier', 'Jue', 'vie', 'Sáb'],
-          dayNamesMin: ['Dom', 'Lun', 'Mar', 'Mier', 'Jue', 'vie', 'Sáb'],
+          dayNames: ['Domingo', 'Lunes', 'Martes', 'MiÃ©rcoles', 'Jueves', 'Viernes', 'SÃ¡bado'],
+          dayNamesShort: ['Dom', 'Lun', 'Mar', 'Mier', 'Jue', 'vie', 'SÃ¡b'],
+          dayNamesMin: ['Dom', 'Lun', 'Mar', 'Mier', 'Jue', 'vie', 'SÃ¡b'],
           today: 'Hoy',
           clear: '',
           firstDay: 1,
@@ -746,11 +745,11 @@
       $("#optimizerDateSelector").datepicker({
           monthNames: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
           monthNamesShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
-          prevText: 'Atrás',
+          prevText: 'AtrÃ¡s',
           nextText: 'Adelante',
-          dayNames: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'],
-          dayNamesShort: ['Dom', 'Lun', 'Mar', 'Mier', 'Jue', 'vie', 'Sáb'],
-          dayNamesMin: ['Dom', 'Lun', 'Mar', 'Mier', 'Jue', 'vie', 'Sáb'],
+          dayNames: ['Domingo', 'Lunes', 'Martes', 'MiÃ©rcoles', 'Jueves', 'Viernes', 'SÃ¡bado'],
+          dayNamesShort: ['Dom', 'Lun', 'Mar', 'Mier', 'Jue', 'vie', 'SÃ¡b'],
+          dayNamesMin: ['Dom', 'Lun', 'Mar', 'Mier', 'Jue', 'vie', 'SÃ¡b'],
           today: 'Hoy',
           clear: '',
           firstDay: 1,
@@ -847,7 +846,7 @@
         $("#online-policy").modal('show');
       });
 
-      
+
 
       $('#select-medio').click(function(){
         console.log('clicked select medio');
