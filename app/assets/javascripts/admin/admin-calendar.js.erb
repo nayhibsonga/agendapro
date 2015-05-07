@@ -779,6 +779,10 @@ function editDrag(event) {
 		var eventJSON = {start: startString, end: endString};
 	}
 	if (event.id.toString().charAt(0) === 'b') {
+		var break_service_providers_ids = new Array();
+		break_service_providers_ids.push(event.resourceId)
+		eventJSON = {start: startString, end: endString, service_provider_id: break_service_providers_ids, provider_lock: false};
+
 		if (confirm('¿Estás seguro que deseas modificar el bloqueo de horario?')) {
 			$.ajax({
 				type: 'PATCH',
@@ -1109,8 +1113,15 @@ function saveBookingBuffer () {
 }
 
 function saveBreak (typeURL, extraURL) {
+	var break_service_providers_ids = new Array();
+	$(".providers_check_boxes").each(function(){
+		if($(this).prop("checked"))
+		{
+			break_service_providers_ids.push($(this).val());
+		}
+	});
 	var breakJSON = {
-		"service_provider_id": $('#provider_break_service_provider_id').val(),
+		"service_provider_id": break_service_providers_ids,
 		"name": $('#provider_break_name').val(),
 		"start": $('#provider_break_start_1i').val() +"-"+ $('#provider_break_start_2i').val() +"-"+ $('#provider_break_start_3i').val() +"T"+ $('#provider_break_start_4i').val() +":"+ $('#provider_break_start_5i').val() +":00Z",
 		"end": $('#provider_break_end_1i').val() +"-"+ $('#provider_break_end_2i').val() +"-"+ $('#provider_break_end_3i').val() +"T"+ $('#provider_break_end_4i').val() +":"+ $('#provider_break_end_5i').val() +":00Z",
@@ -1134,31 +1145,9 @@ function saveBreak (typeURL, extraURL) {
 					$('.break-button').attr("disabled", "disabled");
 					$( '<span id="small_loader"><i class="fa fa-spinner fa-spin"></i> </span>' ).insertBefore( $( ".btn-close" ) );
 					var warnings = '';
-					if ($('#provider_break_service_provider_id').val() != 0 && $('#break_repeat').val() == "never") {
-						var label = provider_break.name;
-						if (label == null) {
-							label = 'Hora Bloqueada';
-						}
-						var events = {
-							id: 'b'+provider_break.id,
-							title: label,
-							allDay: false,
-							start: provider_break.start,
-							end: provider_break.end,
-							resourceId: parseInt(provider_break.service_provider_id),
-							textColor: textColors[7],
-							borderColor: textColors[7],
-							backgroundColor: backColors[7]
-						};
-						$('#calendar').fullCalendar('renderEvent', events, true);
 
-						$('#bookingAlerts').hide();
-						if (provider_break.warnings && provider_break.warnings.length > 0) {
-							for (i in provider_break.warnings) {
-								warnings += provider_break.warnings[i] + '. ';
-							}
-						}
-					} else{
+					if($("#providers-selector").val() == "0")
+					{
 						$.each(provider_break, function (key, provider_break) {
 							var label = provider_break.name;
 							if (label == null) {
@@ -1175,14 +1164,45 @@ function saveBreak (typeURL, extraURL) {
 								borderColor: textColors[7],
 								backgroundColor: backColors[7]
 							};
-							if (provider_break.warnings.length > 0) {
+							if (provider_break.warnings && provider_break.warnings.length > 0) {
 								for (i in provider_break.warnings) {
 									warnings += provider_break.warnings[i] + '. ';
 								}
 							}
 							$('#calendar').fullCalendar('renderEvent', events, true);
+
 						});
-					};
+					}
+					else
+					{
+						$.each(provider_break, function (key, provider_break) {
+							if ($("#providers-selector").val() == provider_break.id)
+							{
+								var label = provider_break.name;
+								if (label == null) {
+									label = 'Hora Bloqueada';
+								};
+								var events = {
+									id: 'b'+provider_break.id,
+									title: label,
+									allDay: false,
+									start: provider_break.start,
+									end: provider_break.end,
+									resourceId: parseInt(provider_break.service_provider_id),
+									textColor: textColors[7],
+									borderColor: textColors[7],
+									backgroundColor: backColors[7]
+								};
+								if (provider_break.warnings && provider_break.warnings.length > 0) {
+									for (i in provider_break.warnings) {
+										warnings += provider_break.warnings[i] + '. ';
+									}
+								}
+								$('#calendar').fullCalendar('renderEvent', events, true);
+							}
+						});
+					}
+
 					$("#break-loader").hide();
 					$("#new_provider_break").show();
 					$(".break-modal-footer").show();
@@ -1200,58 +1220,41 @@ function saveBreak (typeURL, extraURL) {
 					$('.break-button').attr("disabled", "disabled");
 					$( '<span id="small_loader"><i class="fa fa-spinner fa-spin"></i> </span>' ).insertBefore( $( ".btn-close" ) );
 					var warnings = '';
-					if ($('#provider_break_service_provider_id').val() != 0) {
+					
+					$.each(provider_break, function (key, provider_break) {
 						var label = provider_break.name;
 						if (label == null) {
 							label = 'Hora Bloqueada';
 						}
 						event = $('#calendar').fullCalendar('clientEvents', 'b'+provider_break.id)[0];
-						event.title = label;
-						event.start = provider_break.start;
-						event.end = provider_break.end;
-						event.resourceId = parseInt(provider_break.service_provider_id);
-						newProviderId = provider_break.service_provider_id;
-						$('#calendar').fullCalendar('updateEvent', event);
-						if (provider_break.warnings.length > 0) {
+						if (event) {
+							event.title = label;
+							event.start = provider_break.start;
+							event.end = provider_break.end;
+							event.resourceId = parseInt(provider_break.service_provider_id);
+							newProviderId = provider_break.service_provider_id;
+							$('#calendar').fullCalendar('updateEvent', event);
+						} else {
+							var events = {
+								id: 'b'+provider_break.id,
+								title: label,
+								allDay: false,
+								start: provider_break.start,
+								end: provider_break.end,
+								resourceId: parseInt(provider_break.service_provider_id),
+								textColor: textColors[7],
+								borderColor: textColors[7],
+								backgroundColor: backColors[7]
+							};
+							$('#calendar').fullCalendar('renderEvent', events, true);
+						};
+						if (provider_break.warnings && provider_break.warnings.length > 0) {
 							for (i in provider_break.warnings) {
 								warnings += provider_break.warnings[i] + '. ';
-							}
-						}
-					} else{
-						$.each(provider_break, function (key, provider_break) {
-							var label = provider_break.name;
-							if (label == null) {
-								label = 'Hora Bloqueada';
-							}
-							event = $('#calendar').fullCalendar('clientEvents', 'b'+provider_break.id)[0];
-							if (event) {
-								event.title = label;
-								event.start = provider_break.start;
-								event.end = provider_break.end;
-								event.resourceId = parseInt(provider_break.service_provider_id);
-								newProviderId = provider_break.service_provider_id;
-								$('#calendar').fullCalendar('updateEvent', event);
-							} else {
-								var events = {
-									id: 'b'+provider_break.id,
-									title: label,
-									allDay: false,
-									start: provider_break.start,
-									end: provider_break.end,
-									resourceId: parseInt(provider_break.service_provider_id),
-									textColor: textColors[7],
-									borderColor: textColors[7],
-									backgroundColor: backColors[7]
-								};
-								$('#calendar').fullCalendar('renderEvent', events, true);
 							};
-							if (provider_break.warnings.length > 0) {
-								for (i in provider_break.warnings) {
-									warnings += provider_break.warnings[i] + '. ';
-								};
-							}
-						});
-					};
+						}
+					});
+
 					selProviderId = parseInt($('#providers-selector').val())
 					if (selProviderId == 0) {
 						//loadLocationTime (resources);
@@ -1269,13 +1272,11 @@ function saveBreak (typeURL, extraURL) {
 				case 'DELETE':
 					$('.break-button').attr("disabled", "disabled");
 					$( '<span id="small_loader"><i class="fa fa-spinner fa-spin"></i> </span>' ).insertBefore( $( ".btn-close" ) );
-					if ($('#provider_break_service_provider_id').val() != 0) {
+
+					$.each(provider_break, function (key, provider_break) {
 						$('#calendar').fullCalendar('removeEvents','b'+provider_break.id);
-					} else {
-						$.each(provider_break, function (key, provider_break) {
-							$('#calendar').fullCalendar('removeEvents','b'+provider_break.id);
-						});
-					};
+					});
+
 					break;
 			}
 			$("#break-loader").hide();
@@ -1301,14 +1302,25 @@ function saveBreak (typeURL, extraURL) {
 
 function editRepeatBreak(breakId)
 {
+	var break_service_providers_ids = new Array();
+	$(".providers_check_boxes").each(function(){
+		if($(this).prop("checked"))
+		{
+			break_service_providers_ids.push($(this).val());
+		}
+	});
 	var breakJSON = {
-		"service_provider_id": $('#provider_break_service_provider_id').val(),
+		"service_provider_id": break_service_providers_ids,
 		"name": $('#provider_break_name').val(),
 		"start": $('#provider_break_start_1i').val() +"-"+ $('#provider_break_start_2i').val() +"-"+ $('#provider_break_start_3i').val() +"T"+ $('#provider_break_start_4i').val() +":"+ $('#provider_break_start_5i').val() +":00Z",
 		"end": $('#provider_break_end_1i').val() +"-"+ $('#provider_break_end_2i').val() +"-"+ $('#provider_break_end_3i').val() +"T"+ $('#provider_break_end_4i').val() +":"+ $('#provider_break_end_5i').val() +":00Z",
 		"local": $('#locals-selector').val(),
 		"repeat_id" : $("#provider_break_repeat_id").val(),
-		"id" : breakId
+		"id" : breakId,
+		"repeat": $('#break_repeat').val(),
+		"repeat_end": $('#provider_break_repeat_repeat_end_1i').val() +"-"+ $('#provider_break_repeat_repeat_end_2i').val() +"-"+ $('#provider_break_repeat_repeat_end_3i').val() +"T"+ $('#provider_break_repeat_repeat_end_4i').val() +":"+ $('#provider_break_repeat_repeat_end_5i').val() +":00Z",
+		"times": $("#break_times").val(),
+		"repeat_option": $('input[name="repeat_option"]:checked').val()
 		};
 	$("#break-loader").show();
 	$("#new_provider_break").hide();
@@ -1318,9 +1330,16 @@ function editRepeatBreak(breakId)
 		url: '/provider_breaks/update_repeat_break.json',
 		data: { "provider_break": breakJSON },
 		dataType: 'json',
-		success: function(provider_break){
+		success: function(provider_break_json){
 			var warnings = "";
 			var newProviderId = "0";
+			var provider_break = provider_break_json[0]
+			var break_deletes = provider_break_json[1]
+
+			$.each(break_deletes, function (key, break_delete) {
+				$('#calendar').fullCalendar('removeEvents','b'+break_delete.id);
+			});
+
 			$.each(provider_break, function (key, provider_break) {
 				var label = provider_break.name;
 				newProviderId = provider_break.service_provider_id;
@@ -1378,8 +1397,15 @@ function editRepeatBreak(breakId)
 
 function deleteRepeatBreak(breakId)
 {
+	var break_service_providers_ids = new Array();
+	$(".providers_check_boxes").each(function(){
+		if($(this).prop("checked"))
+		{
+			break_service_providers_ids.push($(this).val());
+		}
+	});
 	var breakJSON = {
-		"service_provider_id": $('#provider_break_service_provider_id').val(),
+		"service_provider_id": break_service_providers_ids,
 		"name": $('#provider_break_name').val(),
 		"start": $('#provider_break_start_1i').val() +"-"+ $('#provider_break_start_2i').val() +"-"+ $('#provider_break_start_3i').val() +"T"+ $('#provider_break_start_4i').val() +":"+ $('#provider_break_start_5i').val() +":00Z",
 		"end": $('#provider_break_end_1i').val() +"-"+ $('#provider_break_end_2i').val() +"-"+ $('#provider_break_end_3i').val() +"T"+ $('#provider_break_end_4i').val() +":"+ $('#provider_break_end_5i').val() +":00Z",
@@ -1454,6 +1480,9 @@ function createBreakModal(date, providerId) {
 		$('#provider_break_repeat_repeat_end_5i option[value="00"]').attr("selected",true);
 	}
 
+	$('#break_repeat option[value="never"]').prop("selected", true);
+	$("#break_times").val('');
+	$("#repeat_option_times").prop("checked", true);
 	$(".form-repeat-div").show();
 
 	var localId = parseInt($('#locals-selector').val());
@@ -1464,24 +1493,27 @@ function createBreakModal(date, providerId) {
 		},
 		dataType: 'json',
 		success: function (providersArray, status, jqXHR) {
-			var selector = $('#provider_break_service_provider_id');
-			selector.empty();
-			$.each(providersArray, function (key, provider) {
-				selector.append(
-					'<option value="' + provider.id + '">' + provider.public_name + '</option>'
+			var checkboxes_selector = $("#providers_checkboxes");
+			checkboxes_selector.empty();
+
+			$.each(providersArray, function (key, provider){
+				checkboxes_selector.append(
+					'<div class="checkbox"><label>' +
+    				'<input class="check_boxes providers_check_boxes" id="provider_break_service_provider_id_' + provider.id + '" name="provider_break[service_provider_id][]" type="checkbox" value="' + provider.id + '"> ' + provider.public_name + ' ' +
+  					'</label></div>'
 				);
 			});
-			selector.append(
-				'<option value="0">Todos</option>'
-			);
+
 		}
 	});
 
 	if (parseInt($('#providers-selector').val()) > 0) {
-		$('#provider_break_service_provider_id option[value="'+parseInt($('#providers-selector').val())+'"]').attr("selected",true);
+		$("#provider_break_service_provider_id_" + parseInt($('#providers-selector').val())).prop("checked", true);
+		
 	}
 	if (providerId > 0) {
-		$('#provider_break_service_provider_id option[value="'+providerId+'"]').attr("selected",true);
+
+		$("#provider_break_service_provider_id_" + providerId).prop("checked", true);
 	}
 
 	var end_minutes = parseInt($('#provider_break_end_5i').val()) + $('#calendar-data').data('calendar-duration');
@@ -1499,7 +1531,7 @@ function createBreakModal(date, providerId) {
 	$('#provider_break_name').val('');
 	$("#provider_break_repeat_id").val('');
 	//$("#provider_break_service_provider_id").attr("disabled", false);
-	$('#provider_break_service_provider_id option[value="0"]').attr("hidden", false);
+	//$('#provider_break_service_provider_id option[value="0"]').attr("hidden", false);
 	$('.break-modal-footer').empty();
 	$('.break-modal-footer').append(
 		'<button type="button" class="btn btn-default btn-close break-button" data-dismiss="modal">Cerrar</button>' +
@@ -1509,7 +1541,12 @@ function createBreakModal(date, providerId) {
 }
 
 function editBreakModal(breakId) {
-	$.getJSON('/provider_breaks/'+breakId, function (provider_break) {
+	$.getJSON('/provider_breaks/'+breakId, function (provider_break_json) {
+
+		var provider_break = provider_break_json.provider_break
+		var provider_break_repeat = provider_break_json.provider_break_repeat
+		var break_service_providers = provider_break_json.service_providers
+		var group_service_providers = provider_break_json.group_service_providers
 		var start = provider_break.start || 0;
 		var end = provider_break.end || 0;
 		if (start != 0) {
@@ -1547,48 +1584,52 @@ function editBreakModal(breakId) {
 			success: function (providersArray, status, jqXHR) {
 				var selector = $('#provider_break_service_provider_id');
 				selector.empty();
-				$.each(providersArray, function (key, provider) {
-					if (provider.id == provider_break.service_provider_id) {
-							selector.append(
-								'<option value="' + provider.id + '" selected>' + provider.public_name + '</option>'
-							);
-					}
-					else {
-						selector.append(
-							'<option value="' + provider.id + '">' + provider.public_name + '</option>'
-						);
-					}
-					/*if (provider_break.break_group_id) {
-						if (provider.id == provider_break.service_provider_id) {
-							selector.append(
-								'<option value="' + provider.id + '">' + provider.public_name + '</option>'
-							);
-						};
-					} else {
-						selector.append(
-							'<option value="' + provider.id + '">' + provider.public_name + '</option>'
-						);
-					};*/
+
+				var checkboxes_selector = $("#providers_checkboxes");
+				checkboxes_selector.empty();
+
+				$.each(providersArray, function(key, provider){
+
+					checkboxes_selector.append(
+						'<div class="checkbox"><label>' +
+	    				'<input class="check_boxes providers_check_boxes" id="provider_break_service_provider_id_' + provider.id + '" name="provider_break[service_provider_id][]" type="checkbox" value="' + provider.id + '"> ' + provider.public_name + ' ' +
+	  					'</label></div>'
+					);
+
 				});
-				/*selector.append(
-					'<option value="0">Todos</option>'
-				);*/
+
+				console.log(break_service_providers);
+				
+				if(break_service_providers != null && break_service_providers.length > 0)
+				{
+					for(i = 0; i < break_service_providers.length; i++)
+					{
+						$("#provider_break_service_provider_id_" + parseInt(break_service_providers[i].id)).prop("checked", true);
+					}
+				}
+				else if(group_service_providers != null && group_service_providers.length > 0)
+				{
+					for(i = 0; i < group_service_providers.length; i++)
+					{
+						$("#provider_break_service_provider_id_" + parseInt(group_service_providers[i].id)).prop("checked", true);
+					}
+				}
+				else
+				{
+					$("#provider_break_service_provider_id_" + parseInt(provider_break.service_provider_id)).prop("checked", true);
+				}
+
 			}
 		});
 
 		$('#provider_break_name').val(provider_break.name);
-		$('#provider_break_service_provider_id option[value="'+provider_break.service_provider_id+'"]').attr("selected",true);
-		/*if (provider_break.break_group_id) {
-			$('#provider_break_service_provider_id option[value="'+0+'"]').attr("selected",true);
-		};*/
+
 		if(provider_break.break_repeat_id != null)
 		{
 			$("#provider_break_repeat_id").val(provider_break.break_repeat_id);
 		}
 		$('.break-modal-footer').empty();
 		
-		//$("#provider_break_service_provider_id").attr("disabled", "disabled");
-		$('#provider_break_service_provider_id option[value="0"]').attr("hidden", "hidden");
 
 		if(provider_break.break_repeat_id == null)
 		{
@@ -1600,17 +1641,58 @@ function editBreakModal(breakId) {
 		}
 		else
 		{
+			$(".form-repeat-div").show();
+
+			$('#break_repeat option[value="' + provider_break_repeat.repeat_type + '"]').prop("selected", true);
+
+			$('[name="repeat_option"][value="' + provider_break_repeat.repeat_option + '"]').prop("checked", true);
+
+
+			if(provider_break_repeat.repeat_option == "times")
+			{
+				$("#break_times").val(provider_break_repeat.times);
+			}
+			else
+			{
+				$("#break_times").val("");
+			}
+			
+
+			repeat_dateArray = provider_break_repeat.end_date.toString().split('T');
+			repeat_date = new Date(provider_break_repeat.end_date)
+			repeat_month = repeat_date.getMonth()+1;
+			repeat_day = repeat_date.getDate();
+			$('#provider_break_repeat_repeat_end_1i option[value="'+repeat_date.getFullYear()+'"]').attr("selected",true);
+			$('#provider_break_repeat_repeat_end_2i option[value="'+repeat_month+'"]').attr("selected",true);
+			$('#provider_break_repeat_repeat_end_3i option[value="'+repeat_day+'"]').attr("selected",true);
+			$('#provider_break_repeat_repeat_end_4i option[value="'+repeat_dateArray[1].split(':')[0]+'"]').attr("selected",true);
+			$('#provider_break_repeat_repeat_end_5i option[value="'+repeat_dateArray[1].split(':')[1]+'"]').attr("selected",true);
+
+
 			$('.break-modal-footer').append(
+				'<div class="row"><div class="col-md-2"></div><div class="col-md-4 pull-l"><span class="custom-span-popover" style="cursor: pointer;" data-toggle="popover" data-placement="top" title="Edición" data-content="Eliminar: Sólo se eliminará este bloqueo, quedando el resto de la serie de repetición intacta. Guardar: Sólo se editará este bloqueo y será removido de la serie de repetición a la que pertencía.">¿Qué estoy editando?&nbsp;<i class="fa fa-question-circle"></i></span></div><div class="col-md-6"><span class="custom-span-popover" style="cursor: pointer;" data-toggle="popover" data-placement="top" title="Edición de serie" data-content="Eliminar: Se eliminará la serie de repetición completa para los prestadores seleccionados. Los otros prestadores mantendrán la serie de bloqueos si la tenían. Guardar: Se guardarán los cambios de la serie de repetición para los prestadores seleccionados. Si se seleccionan menos prestadores que los originales, se separará en dos series: una para los elegidos, y otra para los no elegidos. En cambio, si se agregan prestadores, se crearán bloqueos para ese prestador y serán incluidos en la serie original.">¿Qué estoy editando?&nbsp;<i class="fa fa-question-circle"></i></span></div></div>' +
 				'<div class="row"><div class="col-md-2">'+
 				'<button type="button" class="btn btn-default btn-close pull-left" data-dismiss="modal">Cerrar</button>' +
 				'</div><div class="col-md-4">' + 
-				'<button type="button" class="btn btn-danger" id="destroy_break" onClick="saveBreak(\'DELETE\',\'/'+breakId+'\')">Eliminar</button>' +
-				'<button type="button" class="btn btn-agendapro-claro" id="edit_break" onClick="saveBreak(\'PATCH\',\'/'+breakId+'\')">Editar</button>' +
+				'<button title="Sólo se eliminará este bloqueo, quedando el resto de la serie de repetición intacta." type="button" class="btn btn-danger" id="destroy_break" onClick="saveBreak(\'DELETE\',\'/'+breakId+'\')">Eliminar</button>' +
+				'<button title="Sólo se editará este bloqueo y será removido de la serie de repetición a la que pertencía." type="button" class="btn btn-agendapro-claro" id="edit_break" onClick="saveBreak(\'PATCH\',\'/'+breakId+'\')">Guardar</button>' +
 				'</div><div class="col-md-6">' + 
-				'<button type="button" class="btn btn-danger" id="destroy_repeat_break" onClick="deleteRepeatBreak(' + breakId +')">Eliminar serie</button>' +
-				'<button type="button" class="btn btn-agendapro-claro" id="edit_repeat_break" onClick="editRepeatBreak(' + breakId +')">Editar serie</button>' +
+				'<button title="Se eliminará la serie de repetición completa para los prestadores seleccionados. Los otros prestadores mantendrán la serie de bloqueos si la tenían." type="button" class="btn btn-danger" id="destroy_repeat_break" onClick="deleteRepeatBreak(' + breakId +')">Eliminar serie</button>' +
+				'<button title="Se guardarán los cambios de la serie de repetición para los prestadores seleccionados. Si se seleccionan menos prestadores que los originales, se separará en dos series: una para los elegidos, y otra para los no elegidos. En cambio, si se agregan prestadores, se crearán bloqueos para ese prestador y serán incluidos en la serie original." type="button" class="btn btn-agendapro-claro" id="edit_repeat_break" onClick="editRepeatBreak(' + breakId +')">Guardar serie</button>' +
 				'</div></div>'
 			);
+			
+			  $('[data-toggle="tooltip"]').tooltip({
+			  	placement: "top"
+			  });
+
+			  $('.custom-span-popover').popover({ 
+			  	placement: 'top',
+				template: '<div class="popover custom-popover"><div class="arrow"></div><h3 class="popover-title"></h3><div class="popover-content"></div></div>'
+				});
+			  $(".custom-popover").css("width", "350px !important");
+			
+
 		}
 		$('#breakModal').modal('show');
 	});
