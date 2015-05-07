@@ -264,6 +264,7 @@ table.fc-agenda-days {
   }
 }
 
+
 /*
   ================================
   ============ Modals ============
@@ -271,6 +272,20 @@ table.fc-agenda-days {
 */
 .modal-body {
   font-size: 14px;
+}
+.custom-popover:after, .custom-popover:before {
+    display: none;
+}
+.custom-popover:after {
+    display: none;
+}
+.custom-popover:before {
+    display: none;
+}
+
+.closePopover i {
+	font-size:0.7em;
+	margin-right: 10px;
 }
 .modal-body .nav {
   font-size: 17px;

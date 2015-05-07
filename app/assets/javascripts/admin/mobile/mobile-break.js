@@ -3,7 +3,7 @@ function saveBreak (typeURL, booking_id) {
   var breakJSON = {
     'start': date[2] + '/' + date[1] + '/' + date[0] + 'T' + $('#start').val() + ':00Z',
     'end': date[2] + '/' + date[1] + '/' + date[0] + 'T' + $('#end').val() + ':00Z',
-    "service_provider_id": $('#provider_break_service_provider_id').val(),
+    "service_provider_id": [$('#provider_break_service_provider_id').val()],
     "name": $('#provider_break_name').val(),
     "local": $('#provider_break_location').val(),
     "repeat": "never"
