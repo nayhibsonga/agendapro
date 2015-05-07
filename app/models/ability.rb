@@ -73,6 +73,7 @@ class Ability
     can :select_hour, Company
     can :user_data, Company
     can :client_loader, Client
+    can :available_hours_week_html, ServiceProvider
 
     can :edit_booking, Booking
     can :edit_booking_post, Booking

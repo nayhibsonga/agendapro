@@ -124,9 +124,6 @@ function loadStep1 (service_id) {
 var calendar;
 var staffSelected;
 function loadStep2 () {
-
-	
-	
 	if($('[name="serviceRadio"]').is(':checked')){
 		$('#staff-selector-spinner').show();
 		$('#staff-selector > .list-group-item').hide();
@@ -172,8 +169,6 @@ function loadStep2 () {
 
 
 			$('[name="staffRadio"]').on('click', function(event) {
-				$('#staff-selector-spinner').show();
-				$('#staff-selector > .list-group-item').hide();
 
 				$('.horario').show();
 				
@@ -183,35 +178,30 @@ function loadStep2 () {
 				// else {
 				// 	$('#provider_lock').val(true);
 				// }
-
-				var data;
-				if($("#datepicker").val()!="") {
-					data = {
-						provider: event.target.getAttribute('value'),
-						local: $('#selectedLocal').data('local').id,
-						service: $('input[name="serviceRadio"]:checked').val(),
-						date: $("#datepicker").val()
-					}
-				} else {
-					data = {
-						provider: event.target.getAttribute('value'),
-						local: $('#selectedLocal').data('local').id,
-						service: $('input[name="serviceRadio"]:checked').val()
-					}
-				}
-
 				if ($(this).val() != staffSelected) {
 
-
-					// $("#calendar-loader").show();
-
+					var data;
+					if($("#datepicker").val()!="") {
+						data = {
+							provider: event.target.getAttribute('value'),
+							local: $('#selectedLocal').data('local').id,
+							service: $('input[name="serviceRadio"]:checked').val(),
+							date: $("#datepicker").val()
+						}
+					} else {
+						data = {
+							provider: event.target.getAttribute('value'),
+							local: $('#selectedLocal').data('local').id,
+							service: $('input[name="serviceRadio"]:checked').val()
+						}
+					}
 
 					staffSelected = $(this).val();
 					if (calendar) {
-						calendar.rebuild('/get_available_time.json', data);
+						calendar.rebuild('/available_hours_week_html', data);
 					}
 					else {
-						calendar = new Calendar('/get_available_time.json', data);
+						calendar = new Calendar('/available_hours_week_html', data);
 					}
 
 					// $("#calendar-loader").hide();
@@ -249,8 +239,9 @@ function loadStep2 () {
 				$('.horario').show();
 				// $('#provider_lock').val(false);
 
-				var data;
+				staffSelected = $('[name="staffRadio"]').first().val();
 
+				var data;
 				if($("#datepicker").val()!="") {
 					data = {
 						provider: $('[name="staffRadio"]').first().val(),
@@ -267,13 +258,14 @@ function loadStep2 () {
 				}
 
 				// $("#calendar-loader").show();
-
+				
+					
 
 				if (calendar) {
-					calendar.rebuild('/get_available_time.json', data);
+					calendar.rebuild('/available_hours_week_html', data);
 				}
 				else {
-					calendar = new Calendar('/get_available_time.json', data);
+					calendar = new Calendar('/available_hours_week_html', data);
 				}
 
 				// $("#calendar-loader").hide();
@@ -770,6 +762,7 @@ $(function () {
 
 
 	$(document).on('calendarBuilded', function (e) {
+
 		blockBookingBufferHour();
 		$('#foo4').trigger('updateSizes');
 	});
