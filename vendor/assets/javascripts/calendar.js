@@ -324,6 +324,8 @@ function Calendar (source, getData) {
 
 		var width2 = $(".horario")[0].clientWidth/count;
 		$('.dia-semana').css('width', width2);
+
+		$('.dia-semana').last().css('width', $(".horario")[0].clientWidth/count - 1);
 	}
 
 	var correctNumber = function (number) {
