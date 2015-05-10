@@ -401,5 +401,25 @@ class Location < ActiveRecord::Base
 		return full_address
 	end
 
+	def opened_days_zero_index
+		opened_days = []
+		self.location_times.each do |location_time|
+			if !opened_days.include? (location_time.day_id % 7)
+				opened_days.push(location_time.day_id % 7)
+			end
+		end
+		return opened_days
+	end
+
+	def closed_days_zero_index
+		closed_days = [0,1,2,3,4,5,6]
+		self.location_times.each do |location_time|
+			if closed_days.include? (location_time.day_id % 7)
+				closed_days.delete(location_time.day_id % 7)
+			end
+		end
+		return closed_days
+	end
+
 end
 

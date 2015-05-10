@@ -24,6 +24,14 @@
               </div>
               <% end %>
               <div class="form-group has-feedback">
+                <%= f.label :record, "Número de Cliente", class: "col-sm-3 control-label" %>
+                <div class="col-sm-9">
+                  <%= f.text_field :record, :autofocus => true, class: "form-control" %>
+                  <span class="help-block"></span>
+                  <span class="form-control-feedback"></span>
+                </div>
+              </div>
+              <div class="form-group has-feedback">
                 <%= f.label :email, "E-mail", class: "col-sm-3 control-label" %>
                 <div class="col-sm-9">
                   <%= f.text_field :email, :autofocus => true, class: "form-control" %>
@@ -59,6 +67,14 @@
                 <%= f.label :phone, "Teléfono", class: "col-sm-3 control-label" %>
                 <div class="col-sm-9">
                   <%= f.text_field :phone, class: "form-control" %>
+                  <span class="help-block"></span>
+                  <span class="form-control-feedback"></span>
+                </div>
+              </div>
+              <div class="form-group has-feedback">
+                <%= f.label :second_phone, "Teléfono 2", class: "col-sm-3 control-label" %>
+                <div class="col-sm-9">
+                  <%= f.text_field :second_phone, class: "form-control" %>
                   <span class="help-block"></span>
                   <span class="form-control-feedback"></span>
                 </div>
