@@ -84,8 +84,8 @@
               </span><br />
               <%= image_tag 'ubicacion.png', :alt => '', :size => "12x14", :class=>"loc-icon" %>&nbsp;
               <span id="phone-address">
-                <%= if !@selectedLocation.outcall then @selectedLocation.address+', '+@selectedLocation.district.name else "A Domicilio" end %>
-                <br><%= if !@selectedLocation.second_address.blank? then @selectedLocation.second_address else '' end %>
+                <% @second_address = @selectedLocation.second_address.blank? ? '' : ', ' + @selectedLocation.second_address %>
+                <%= if !@selectedLocation.outcall then @selectedLocation.address+@second_address+', '+@selectedLocation.district.name else "A Domicilio" end %>
               </span>
             </div>
           <% else %>
@@ -134,8 +134,8 @@
               </span><br />
               <%= image_tag 'ubicacion.png', :alt => '', :size => "12x14", :class=>"loc-icon" %>&nbsp;
               <span id="phone-address">
-                <%= if !@selectedLocation.outcall then @selectedLocation.address+', '+@selectedLocation.district.name else "A Domicilio" end %>
-                <br><%= if !@selectedLocation.second_address.blank? then @selectedLocation.second_address else '' end %>
+                <% @second_address = @selectedLocation.second_address.blank? ? '' : ', ' + @selectedLocation.second_address %>
+                <%= if !@selectedLocation.outcall then @selectedLocation.address+@second_address+', '+@selectedLocation.district.name else "A Domicilio" end %>
               </span>
             </div>
           <% else %>

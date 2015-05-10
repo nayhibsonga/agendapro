@@ -1161,6 +1161,8 @@ function saveBreak (typeURL, extraURL) {
 					$( '<span id="small_loader"><i class="fa fa-spinner fa-spin"></i> </span>' ).insertBefore( $( ".btn-close" ) );
 					var warnings = '';
 
+					window.console.log(provider_break);
+
 					if($("#providers-selector").val() == "0")
 					{
 						$.each(provider_break, function (key, provider_break) {
