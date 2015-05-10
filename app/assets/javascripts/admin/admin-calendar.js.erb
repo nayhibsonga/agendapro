@@ -1154,18 +1154,16 @@ function saveBreak (typeURL, extraURL) {
 		url: '/provider_breaks'+extraURL+'.json',
 		data: { "provider_break": breakJSON },
 		dataType: 'json',
-		success: function(provider_break){
+		success: function(provider_breaks){
 			switch(typeURL) {
 				case 'POST':
 					$('.break-button').attr("disabled", "disabled");
 					$( '<span id="small_loader"><i class="fa fa-spinner fa-spin"></i> </span>' ).insertBefore( $( ".btn-close" ) );
 					var warnings = '';
 
-					window.console.log(provider_break);
-
 					if($("#providers-selector").val() == "0")
 					{
-						$.each(provider_break, function (key, provider_break) {
+						$.each(provider_breaks, function (key, provider_break) {
 							var label = provider_break.name;
 							if (label == null) {
 								label = 'Hora Bloqueada';
@@ -1192,8 +1190,8 @@ function saveBreak (typeURL, extraURL) {
 					}
 					else
 					{
-						$.each(provider_break, function (key, provider_break) {
-							if ($("#providers-selector").val() == provider_break.id)
+						$.each(provider_breaks, function (key, provider_break) {
+							if ($("#providers-selector").val() == provider_break.service_provider_id)
 							{
 								var label = provider_break.name;
 								if (label == null) {
