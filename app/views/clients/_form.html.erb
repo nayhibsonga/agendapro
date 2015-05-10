@@ -232,7 +232,7 @@
               <tr>
                 <td id="comment<%= client_comment.id %>"><%= client_comment.comment.gsub("\n", "<br />").html_safe %></td>
                 <td>
-                  <p><%= l client_comment.created_at, format: :short %></p>
+                  <p><%= l client_comment.created_at - eval(ENV["TIME_ZONE_OFFSET"]), format: :short %></p>
                   <%= link_to '<i class="fa fa-pencil"></i> Editar'.html_safe, '#', :class => 'btn btn-orange btn-sm', :id => 'edit_button' + client_comment.id.to_s %>
                   <%= link_to '<i class="fa fa-trash-o"></i> Eliminar'.html_safe, '#', :class => 'btn btn-red btn-sm', :id => 'destroy_button' + client_comment.id.to_s %>
                 </td>

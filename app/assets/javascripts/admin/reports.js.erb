@@ -29,7 +29,7 @@ $(function() {
     numberOfMonths: 3,
     firstDay: 1,
     onClose: function( selectedDate ) {
-      $( "#to" ).datepicker( "option", "minDate", selectedDate );
+      $("#to").datepicker( "option", "minDate", selectedDate );
     }
   });
   $("#to").datepicker({
@@ -52,4 +52,6 @@ $(function() {
     }
   });
   $('ul.nav-pills li.active').not('.dropdown').last().children('a').first().click();
+  $("#to").datepicker('setDate', new Date());
+  $("#from").datepicker('setDate', new Date());
 });
