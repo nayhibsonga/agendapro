@@ -539,8 +539,9 @@ class ProviderBreaksController < ApplicationController
 
         if (service_providers - group_service_providers).empty? and (group_service_providers - service_providers).empty?
 
+          puts "Entra acá"
           #The providers given are the same of the group
-          provider_breaks = ProviderBreak.where(:break_group_id => @provider_break.break_group_id)
+          provider_breaks = ProviderBreak.where(:break_group_id => @provider_break.break_group_id, :start => @provider_break.start, :end => @provider_break.end)
 
           provider_breaks.each do |provider_break|
 
@@ -619,7 +620,7 @@ class ProviderBreaksController < ApplicationController
 
           #For those given that are not new, just update their values.
           update_providers = service_providers - new_providers - old_providers
-          update_provider_breaks = ProviderBreak.where(:service_provider_id => update_providers.map(&:id), :break_group_id => @provider_break.break_group_id)
+          update_provider_breaks = ProviderBreak.where(:service_provider_id => update_providers.map(&:id), :break_group_id => @provider_break.break_group_id, :start => @provider_break.start, :end => @provider_break.start)
           update_provider_breaks.each do |provider_break|
 
             provider_break.name = new_name
@@ -1398,7 +1399,7 @@ class ProviderBreaksController < ApplicationController
     if !provider_break.break_group_id.nil?
 
       ids = provider_break_params[:service_provider_id]
-      provider_breaks = ProviderBreak.where(:service_provider_id => ids, :break_group_id => provider_break.break_group_id)
+      provider_breaks = ProviderBreak.where(:service_provider_id => ids, :break_group_id => provider_break.break_group_id, :start => provider_break.start, :end => provider_break.end)
 
       provider_breaks.each do |provider_break|
         provider_break.destroy
