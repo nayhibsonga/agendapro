@@ -49,11 +49,27 @@ class ProviderBreaksController < ApplicationController
 
     ids = params[:provider_break][:service_provider_id]
 
+    if params[:provider_break][:end].to_datetime <= params[:provider_break][:start].to_datetime
+
+      @break_json = Array.new
+      @break_errors = Array.new
+      @break_errors.push("La fecha de fin no puedes ser anterior o igual a la de inicio.")
+      respond_to do |format|
+        format.html { redirect_to bookings_path, notice: 'La fecha de fin no puedes ser anterior o igual a la de inicio.' }
+        format.json { render :json => @break_errors }
+        format.js { }
+      end
+      return
+
+    end
+
     if(ids.nil? || ids.length < 1)
       @break_json = Array.new
+      @break_errors = Array.new
+      @break_errors.push("No se seleccionaron proveedores.")
       respond_to do |format|
         format.html { redirect_to bookings_path, notice: 'No se seleccionaron proveedores.' }
-        format.json { render :json => @break_json }
+        format.json { render :json => @break_errors }
         format.js { }
       end
       return
@@ -475,6 +491,9 @@ class ProviderBreaksController < ApplicationController
   #Edit only this one, take out from series.
   def update_provider_break
     #if provider_break_params[:service_provider_id].to_i != 0
+
+  
+
       @provider_break = ProviderBreak.find(params[:id])
       ids = params[:provider_break][:service_provider_id]
       @break_errors = Array.new
@@ -486,11 +505,27 @@ class ProviderBreaksController < ApplicationController
         new_name = provider_break_params[:name]
       end
 
+      if params[:provider_break][:end].to_datetime <= params[:provider_break][:start].to_datetime
+
+        @break_json = Array.new
+        @break_errors = Array.new
+        @break_errors.push("La fecha de fin no puedes ser anterior o igual a la de inicio.")
+        respond_to do |format|
+          format.html { redirect_to bookings_path, notice: 'La fecha de fin no puedes ser anterior o igual a la de inicio.' }
+          format.json { render :json => @break_errors }
+          format.js { }
+        end
+        return
+
+      end
+
       if(ids.nil? || ids.length < 1)
         @break_json = Array.new
+        @break_errors = Array.new
+        @break_errors.push("No se seleccionaron proveedores.")
         respond_to do |format|
           format.html { redirect_to bookings_path, notice: 'No se seleccionaron proveedores.' }
-          format.json { render :json => @break_json }
+          format.json { render :json => @break_errors }
           format.js { }
         end
         return
@@ -504,8 +539,9 @@ class ProviderBreaksController < ApplicationController
 
         if (service_providers - group_service_providers).empty? and (group_service_providers - service_providers).empty?
 
+          puts "Entra acá"
           #The providers given are the same of the group
-          provider_breaks = ProviderBreak.where(:break_group_id => @provider_break.break_group_id)
+          provider_breaks = ProviderBreak.where(:break_group_id => @provider_break.break_group_id, :start => @provider_break.start, :end => @provider_break.end)
 
           provider_breaks.each do |provider_break|
 
@@ -584,7 +620,7 @@ class ProviderBreaksController < ApplicationController
 
           #For those given that are not new, just update their values.
           update_providers = service_providers - new_providers - old_providers
-          update_provider_breaks = ProviderBreak.where(:service_provider_id => update_providers.map(&:id), :break_group_id => @provider_break.break_group_id)
+          update_provider_breaks = ProviderBreak.where(:service_provider_id => update_providers.map(&:id), :break_group_id => @provider_break.break_group_id, :start => @provider_break.start, :end => @provider_break.start)
           update_provider_breaks.each do |provider_break|
 
             provider_break.name = new_name
@@ -703,11 +739,27 @@ class ProviderBreaksController < ApplicationController
     
     ids = provider_break_params[:service_provider_id]
 
+    if params[:provider_break][:end].to_datetime <= params[:provider_break][:start].to_datetime
+
+      @break_json = Array.new
+      @break_errors = Array.new
+      @break_errors.push("La fecha de fin no puedes ser anterior o igual a la de inicio.")
+      respond_to do |format|
+        format.html { redirect_to bookings_path, notice: 'La fecha de fin no puedes ser anterior o igual a la de inicio.' }
+        format.json { render :json => @break_errors }
+        format.js { }
+      end
+      return
+
+    end
+
     if(ids.nil? || ids.length < 1)
       @break_json = Array.new
+      @break_errors = Array.new
+      @break_errors.push("No se seleccionaron proveedores.")
       respond_to do |format|
         format.html { redirect_to bookings_path, notice: 'No se seleccionaron proveedores.' }
-        format.json { render :json => @break_json }
+        format.json { render :json => @break_errors }
         format.js { }
       end
       return
@@ -1347,7 +1399,7 @@ class ProviderBreaksController < ApplicationController
     if !provider_break.break_group_id.nil?
 
       ids = provider_break_params[:service_provider_id]
-      provider_breaks = ProviderBreak.where(:service_provider_id => ids, :break_group_id => provider_break.break_group_id)
+      provider_breaks = ProviderBreak.where(:service_provider_id => ids, :break_group_id => provider_break.break_group_id, :start => provider_break.start, :end => provider_break.end)
 
       provider_breaks.each do |provider_break|
         provider_break.destroy
