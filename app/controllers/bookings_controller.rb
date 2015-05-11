@@ -1046,7 +1046,7 @@ class BookingsController < ApplicationController
               @errors << "Lo sentimos, la hora " + I18n.l(buffer_params[:start].to_datetime) + " con " + service_provider.public_name + " ya fue reservada por otro cliente."
               block_it = true
               next
-            elsif service.group_service && buffer_params[:service].to_i == provider_booking.service_id && service_provider.bookings.where(:service_id => service.id, :start => buffer_params[:start].to_datetime).count >= service.capacity
+            elsif service.group_service && buffer_params[:service].to_i == provider_booking.service_id && service_provider.bookings.where(:service_id => service.id, :start => buffer_params[:start].to_datetime).where.not(status_id: Status.find_by_name('Cancelado')).count >= service.capacity
               @errors << "Lo sentimos, la capacidad del servicio grupal " + service.name + " llegó a su límite."
               block_it = true
               next
@@ -1542,7 +1542,7 @@ class BookingsController < ApplicationController
                   if !@service.group_service || @service.id != provider_booking.service_id
                     provider_free = false
                     break
-                  elsif @service.group_service && @service.id == provider_booking.service_id && service_provider.bookings.where(:service_id => @service.id, :start => start_time_block).count >= @service.capacity
+                  elsif @service.group_service && @service.id == provider_booking.service_id && service_provider.bookings.where(:service_id => @service.id, :start => start_time_block).where.not(status_id: Status.find_by_name('Cancelado')).count >= @service.capacity
                     provider_free = false
                     break
                   end
@@ -2338,7 +2338,7 @@ class BookingsController < ApplicationController
                       #service_valid = false
                       #logger.debug "Invalid 2"
                       #break
-                    elsif service.group_service && service.id == provider_booking.service_id && provider.bookings.where(service_id: service.id, start: dateTimePointer).count >= service.capacity
+                    elsif service.group_service && service.id == provider_booking.service_id && provider.bookings.where(service_id: service.id, start: dateTimePointer).where.not(status_id: Status.find_by_name('Cancelado')).count >= service.capacity
                       service_valid = false
                       logger.debug "Invalid 3"
                       break
