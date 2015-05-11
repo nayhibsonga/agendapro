@@ -1288,7 +1288,7 @@ function saveBreak (typeURL, extraURL) {
 					$('.break-button').attr("disabled", "disabled");
 					$( '<span id="small_loader"><i class="fa fa-spinner fa-spin"></i> </span>' ).insertBefore( $( ".btn-close" ) );
 
-					$.each(provider_break, function (key, provider_break) {
+					$.each(provider_breaks, function (key, provider_break) {
 						$('#calendar').fullCalendar('removeEvents','b'+provider_break.id);
 					});
 

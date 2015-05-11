@@ -34,6 +34,7 @@ class ProviderBreaksController < ApplicationController
 
     provider_break_json = {:provider_break => provider_break, :provider_break_repeat => provider_break_repeat, :service_providers => service_providers, :group_service_providers => group_service_providers}
 
+    @break = ProviderBreak.find(params[:id])
     if mobile_request?
       @company = current_user.company
     end
