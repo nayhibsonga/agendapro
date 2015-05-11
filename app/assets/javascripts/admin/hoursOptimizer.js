@@ -175,7 +175,6 @@ function loadHours () {
             '<i class="fa fa-calendar-o fa-green"></i> ' + hour.date +
             '<br>' +
             '<i class="fa fa-clock-o fa-green"></i> ' + hour.hour +
-            '<br /><a href="#" class="optimizerDetailLink" pos="'+ pos +'">Ver detalle</a>' +
           '</p>' +
         '</label>'
       );
@@ -187,9 +186,9 @@ function loadHours () {
     else {
       $("#pickerSelectDate").hide();
       $('#hoursDetails').append(services_str);
-      $('.optimizerDetailLink').on('click', function(e){
-        e.preventDefault();
-        var pos_num = $(this).attr('pos');
+      $('input[type=radio][name="hoursRadio"]').change(function(e){
+        // e.preventDefault();
+        var pos_num = $(this).val();
         $('.optimizerDetail').each(function(){
           if($(this).attr("pos") != pos_num)
           {
