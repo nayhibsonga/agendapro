@@ -4,6 +4,8 @@ require 'csv'
 
 require 'rails/all'
 
+
+
 # Require the gems listed in Gemfile, including any gems
 # you've limited to :test, :development, or :production.
 Bundler.require(:default, Rails.env)
@@ -28,6 +30,8 @@ module Agendapro
         false
       end
     }
+
+    # config.encoding = "utf-8"
 
     # config.assets.precompile += %w( ckeditor/* )
 
