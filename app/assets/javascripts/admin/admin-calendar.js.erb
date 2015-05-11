@@ -1236,7 +1236,7 @@ function saveBreak (typeURL, extraURL) {
 					$( '<span id="small_loader"><i class="fa fa-spinner fa-spin"></i> </span>' ).insertBefore( $( ".btn-close" ) );
 					var warnings = '';
 					
-					$.each(provider_break, function (key, provider_break) {
+					$.each(provider_breaks, function (key, provider_break) {
 						var label = provider_break.name;
 						if (label == null) {
 							label = 'Hora Bloqueada';
