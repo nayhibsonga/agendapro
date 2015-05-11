@@ -1135,6 +1135,17 @@ function saveBreak (typeURL, extraURL) {
 			break_service_providers_ids.push($(this).val());
 		}
 	});
+
+	var startDate = new Date(parseInt($('#provider_break_start_1i').val()), parseInt($('#provider_break_start_2i').val())-1, parseInt($('#provider_break_start_3i').val()), parseInt($('#provider_break_start_4i').val()), parseInt($('#provider_break_start_5i').val()), 0);
+
+	var endDate = new Date(parseInt($('#provider_break_end_1i').val()), parseInt($('#provider_break_end_2i').val())-1, parseInt($('#provider_break_end_3i').val()), parseInt($('#provider_break_end_4i').val()), parseInt($('#provider_break_end_5i').val()), 0);
+
+	if (startDate.getTime() >= endDate.getTime())
+	{
+		alert("La fecha de fin no puede ser anterior o igual a la de inicio.");
+		return false;
+	}
+
 	var breakJSON = {
 		"service_provider_id": break_service_providers_ids,
 		"name": $('#provider_break_name').val(),
@@ -1324,6 +1335,17 @@ function editRepeatBreak(breakId)
 			break_service_providers_ids.push($(this).val());
 		}
 	});
+
+	var startDate = new Date(parseInt($('#provider_break_start_1i').val()), parseInt($('#provider_break_start_2i').val())-1, parseInt($('#provider_break_start_3i').val()), parseInt($('#provider_break_start_4i').val()), parseInt($('#provider_break_start_5i').val()), 0);
+
+	var endDate = new Date(parseInt($('#provider_break_end_1i').val()), parseInt($('#provider_break_end_2i').val())-1, parseInt($('#provider_break_end_3i').val()), parseInt($('#provider_break_end_4i').val()), parseInt($('#provider_break_end_5i').val()), 0);
+
+	if (startDate.getTime() >= endDate.getTime())
+	{
+		alert("La fecha de fin no puede ser anterior o igual a la de inicio.");
+		return false;
+	}
+	
 	var breakJSON = {
 		"service_provider_id": break_service_providers_ids,
 		"name": $('#provider_break_name').val(),
