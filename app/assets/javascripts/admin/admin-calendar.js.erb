@@ -1878,6 +1878,8 @@ function dateFullToLocal(date) {
 $(function() {
 	// alertId = new Alert();
 
+	clearTimeout(alertDismiss);
+
 	$('#new_booking').keypress(function(e){
 		if ( e.which == 13 ) return false;
 	});
