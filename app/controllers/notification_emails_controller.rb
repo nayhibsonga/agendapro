@@ -1,5 +1,6 @@
 class NotificationEmailsController < ApplicationController
   before_action :set_notification_email, only: [:show, :edit, :update, :destroy]
+  before_action :authenticate_user!
 
   respond_to :html
 

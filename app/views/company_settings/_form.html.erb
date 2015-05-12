@@ -23,6 +23,7 @@
         <% if current_user.company.company_setting.deal_activate %>
         <li role="presentation"><a id="deal_link" href="#deals" role="tab" data-toggle="pill" data-title="Convenios" data-description="Configura el uso de convenios, el tiempo y la cantidad de veces que se pueden usar.">Convenios</a></li>
         <% end %>
+        <li role="presentation"><a id="notifications_link" href="#notifications" role="tab" data-toggle="pill" data-title="Notificaciones" data-description="Configura que e-mails deseas recibir y a que correo.">Notificaciones</a></li>
       </ul>
     </div>
     <!-- Panels -->
@@ -85,6 +86,18 @@
                 </div>
               </div>
             </div>
+            <div class="col-md-6">
+              <div onclick="$('#notifications_link').click();" class="media">
+                <div class="media-left">
+                  <%= image_tag 'admin/7.png', class: 'media-object media-image' %>
+                </div>
+                <div class="media-body">
+                  <span class="text-green">Notificaciones:</span> configura que e-mails deseas recibir y a que correo.
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="row">
             <% if current_user.company.company_setting.online_payment_capable %>
             <div class="col-md-6">
               <div onclick="$('#payment_link').click();" class="media">
@@ -97,9 +110,7 @@
               </div>
             </div>
             <% end %>
-          </div>
-          <% if current_user.company.company_setting.deal_activate %>
-          <div class="row">
+            <% if current_user.company.company_setting.deal_activate %>
             <div class="col-md-6">
               <div onclick="$('#deal_link').click();" class="media">
                 <div class="media-left">
@@ -110,8 +121,8 @@
                 </div>
               </div>
             </div>
+            <% end %>
           </div>
-          <% end %>
         </div>
         <!-- Company -->
         <div class="tab-pane" id="company">
@@ -777,6 +788,159 @@
           </div>
         </div>
         <% end %>
+        <!-- Notifications -->
+        <div class="tab-pane" id="notifications">
+          <div class="row">
+            <div class="col-md-6">
+              <%= form_for @notification_email, html: {class: 'company-form'} do |f| %>
+              <%= f.hidden_field :company, value: @company %>
+                <div class="row">
+                  <div class="col-md-12">
+                    <div class="form-group">
+                      <%= f.label :email, "E-mail de Notificación" %>
+                      <%= f.email_field :email, class: "form-control" %>
+                    </div>
+                    <div class="form-group">
+                      <%= f.select :receptor_type, [['Compañía', 0], ['Locales', 1], ['Prestador de Servicio', 2]], {}, {class: 'form-control'} %>
+                    </div>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-md-12">
+                    <div class="form-group">
+                      <%= f.label :location_ids, @company.name %>
+                      <%= f.collection_check_boxes :location_ids, @company.locations, :id, :name, {}, {class: "check_boxes"} do |b|%>
+                        <div class="checkbox">
+                          <label>
+                            <%= b.check_box %> <%= b.text %>
+                          </label>
+                        </div>
+                      <% end %>
+                    </div>
+                  </div>
+                  <div class="col-md-12">
+                    <div class="row">
+                      <% for local in @company.locations %>
+                      <div class="col-sm-4">
+                        <div class="form-group">
+                          <%= f.label :service_provider_ids, local.name %>
+                          <%= f.collection_check_boxes :service_provider_ids, local.service_providers, :id, :public_name, {}, {class: "check_boxes"} do |b|%>
+                            <div class="checkbox">
+                              <label>
+                                <%= b.check_box %> <%= b.text %>
+                              </label>
+                            </div>
+                          <% end %>
+                        </div>
+                      </div>
+                      <% end %>
+                    </div>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-md-12">
+                    <div class="form-group background-green">
+                      <div class="row">
+                        <div class="col-sm-4">
+                          <div class="checkbox">
+                            <label>
+                              <%= f.check_box :summary %> Resumen diario
+                            </label>
+                          </div>
+                        </div>
+                        <div class="col-sm-4">
+                          <div class="checkbox">
+                            <label>
+                              <%= f.check_box :new %> Nueva reserva manual
+                            </label>
+                          </div>
+                        </div>
+                        <div class="col-sm-4">
+                          <div class="checkbox">
+                            <label>
+                              <%= f.check_box :modified %> Reserva manual modificada
+                            </label>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="row">
+                        <div class="col-sm-4">
+                          <div class="checkbox">
+                            <label>
+                              <%= f.check_box :confirmed %> Reserva manual confirmada
+                            </label>
+                          </div>
+                        </div>
+                        <div class="col-sm-4">
+                          <div class="checkbox">
+                            <label>
+                              <%= f.check_box :canceled %> Reserva manual cancelada
+                            </label>
+                          </div>
+                        </div>
+                        <div class="col-sm-4">
+                          <div class="checkbox">
+                            <label>
+                              <%= f.check_box :new_web %> Nueva reserva manual
+                            </label>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="row">
+                        <div class="col-sm-4">
+                          <div class="checkbox">
+                            <label>
+                              <%= f.check_box :modified_web %> Reserva manual modificada
+                            </label>
+                          </div>
+                        </div>
+                        <div class="col-sm-4">
+                          <div class="checkbox">
+                            <label>
+                              <%= f.check_box :confirmed_web %> Reserva manual confirmada
+                            </label>
+                          </div>
+                        </div>
+                        <div class="col-sm-4">
+                          <div class="checkbox">
+                            <label>
+                              <%= f.check_box :canceled_web %> Reserva manual cancelada
+                            </label>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-md-12">
+                    <div class="form-group">
+                      <%= f.submit 'Guardar', :class => 'btn btn-green' %>
+                      <%= link_to 'Cancelar', dashboard_path, :class => "btn btn-default" %>
+                    </div>
+                  </div>
+                </div>
+              <% end %>
+            </div>
+            <div class="col-md-6">
+              <div class="background-grey">
+                <h4 class="text-green">Notificaciones Activas</h4>
+                <table class="table table-bordered">
+                  <thead>
+                    <tr>
+                      <th>E-mail</th>
+                      <th>Tipo</th>
+                      <th>Notificaciones</th>
+                      <th></th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -904,7 +1068,7 @@
 <% content_for :scripts do %>
   <%= javascript_include_tag "admin/company_settings" %>
   <script type="text/javascript">
-    
+
 
     $(function () {
       $('#myTab a').click(function (e) {

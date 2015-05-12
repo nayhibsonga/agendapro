@@ -42,7 +42,7 @@ class CompanySettingsController < ApplicationController
       @online_cancelation_policy = @company_setting.build_online_cancelation_policy
     end
     @web_address = Company.find(current_user.company_id).web_address
-
+    @notification_email = NotificationEmail.new
   end
 
   # POST /company_settings
@@ -50,7 +50,7 @@ class CompanySettingsController < ApplicationController
   def create
     @company_setting = CompanySetting.new(company_setting_params)
     @company_setting.company_id = current_user.company_id
-    
+
 
     respond_to do |format|
       if @company_setting.save
@@ -112,7 +112,7 @@ class CompanySettingsController < ApplicationController
 
   def update_payment
 
-    
+
 
   end
 
