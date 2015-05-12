@@ -1198,7 +1198,7 @@ class BookingsController < ApplicationController
 
         @bookings.each do |b|
           if b.id.nil?
-            @errors << "Hubo un error al guardar un servicio."
+            @errors << "Hubo un error al guardar un servicio." + b.errors.inspect
             @blocked_bookings << b.service.name + " con " + b.service_provider.public_name + " el " + I18n.l(b.start.to_datetime)
             proceed_with_payment = false
           end
@@ -1237,10 +1237,9 @@ class BookingsController < ApplicationController
       str_payment = "payment"
     end
 
-
     @bookings.each do |b|
       if b.id.nil?
-        @errors << "Hubo un error al guardar un servicio."
+        @errors << "Hubo un error al guardar un servicio. " + b.errors.inspect
         @blocked_bookings << b.service.name + " con " + b.service_provider.public_name + " el " + I18n.l(b.start.to_datetime)
       end
     end
