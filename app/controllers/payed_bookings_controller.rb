@@ -367,6 +367,8 @@ class PayedBookingsController < ApplicationController
 				end
 			end
 		end
+
+		@company_setting = current_user.company.company_setting
 	end
 
 	def edit

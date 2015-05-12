@@ -1,3 +1,13 @@
+<div class="container-fluid background-grey">
+  <div class="row">
+    <div class="col-md-12">
+      <h2 class="text-green">Reservas Pagadas en línea</h2>
+      <p>Acá podrás revisar el detalle de todas las reservas que fueron pagadas en línea a través de la plataforma. Primero, las reservas que aún no han sido realizadas y están pendientes por transferir a la empresa. Luego, las reservas pagadas que ya fueron transferidas a la empresa.</p>
+    </div>
+  </div>
+</div>
+
+<% if @company_setting.allows_online_payment %>
 <div class="container-fluid" style="padding-top: 10px;">
   <div class="row">
     <div class="col-md-12">
@@ -147,6 +157,18 @@
       $(this).datepicker('option', 'altField', altField);
     });
   </script>
+<% end %>
+
+<% else %>
+
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-md-12">
+      <p><br />¡Activa los pagos en línea y asegura el pago de tus servicios!<br />Para activarlo y/o detalles comerciales envía un mensaje a Nicolás a:<br /><br /><a class="btn btn-green btn-lg" href="mailto:nrossi@agendapro.cl?Subject=Activar%20transferencias%20en%20linea" target="_top">nrossi@agendapro.cl</a></p>
+    </div>
+  </div>
+</div>
+
 <% end %>
 
 

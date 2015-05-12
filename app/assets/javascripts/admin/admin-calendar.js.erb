@@ -1902,12 +1902,12 @@ $(function() {
 
 	clearTimeout(alertDismiss);
 
-	$('#new_booking').keypress(function(e){
-		if ( e.which == 13 ) return false;
-	});
-	$('#new_provider_break').keypress(function(e){
-		if ( e.which == 13 ) return false;
-	});
+	$('form input, form select').bind('keypress keydown keyup', function(e){
+    	if(e.keyCode == 13) {
+       		e.preventDefault();
+       	}
+    });
+
 	$('#createBooking').click(function() {
 		createBookingModal();
 		return false;
