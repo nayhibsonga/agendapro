@@ -477,3 +477,16 @@ select[name="serviceOptimizerSelector"] {
   }
 
 }
+@media (max-width: 1199px) {
+  .ui-datepicker table {
+    font-size: .7em;
+  }
+  .ui-datepicker th {
+    padding: .5em .3em;
+  }
+  .ui-datepicker td span,
+  .ui-datepicker td a {
+    padding: .1em;
+    text-align: center;
+  }
+}
