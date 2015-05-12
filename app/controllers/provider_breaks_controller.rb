@@ -1440,6 +1440,7 @@ class ProviderBreaksController < ApplicationController
     @break = ProviderBreak.new
     if mobile_request?
       @company = current_user.company
+      @duration = @company.company_setting.calendar_duration
       @date = DateTime.now
       if !params[:date].blank?
         @date = params[:date].to_time
