@@ -7,11 +7,11 @@ class CreateNotificationEmails < ActiveRecord::Migration
       t.boolean :summary, default: true
       t.boolean :new, default: false
       t.boolean :modified, default: false
-      t.boolean :condifrmed, default: false
+      t.boolean :confirmed, default: false
       t.boolean :canceled, default: false
       t.boolean :new_web, default: false
       t.boolean :modified_web, default: false
-      t.boolean :condifrmed_web, default: false
+      t.boolean :confirmed_web, default: false
       t.boolean :canceled_web, default: false
 
       t.timestamps

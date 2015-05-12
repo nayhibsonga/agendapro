@@ -14,23 +14,24 @@ class NotificationEmail < ActiveRecord::Base
     # receptor_type: 0 = company, 1 = locations, 2 = providers
     if self.receptor_type == 1
       if self.locations.empty?
-        errors.add(:base, "Este tipo de usuario debe tener al menos un local asociado.")
+        errors.add(:base, "Este tipo de receptor debe tener al menos un local asociado.")
       end
     else
       if !self.locations.empty?
-        errors.add(:base, "Este tipo de usuario no debe tener ningún local asociado.")
+        errors.add(:base, "Este tipo de receptor no debe tener ningún local asociado.")
       end
     end
   end
+
   def provider_company_notifications
     # receptor_type: 0 = company, 1 = locations, 2 = providers
     if self.receptor_type == 2
       if self.service_providers.empty?
-        errors.add(:base, "Este tipo de usuario debe tener al menos un prestador asociado.")
+        errors.add(:base, "Este tipo de receptor debe tener al menos un prestador asociado.")
       end
     else
       if !self.service_providers.empty?
-        errors.add(:base, "Este tipo de usuario no debe tener ningún prestador asociado.")
+        errors.add(:base, "Este tipo de receptor no debe tener ningún prestador asociado.")
       end
     end
   end

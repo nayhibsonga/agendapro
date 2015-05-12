@@ -18,7 +18,7 @@ class User < ActiveRecord::Base
 	accepts_nested_attributes_for :company
 
 	validates :email, :role, :presence => true
-	validate :location_company_users
+	validate :location_company_users, :provider_company_users
 
 	after_create :send_welcome_mail, :get_past_bookings
 
@@ -60,7 +60,7 @@ class User < ActiveRecord::Base
 	      return user
 	    else
 	    	if auth.info.email.nil? || auth.info.email == ""
-	    		
+
 	    	else
 		    	registered_user = User.where(:email => auth.info.email).first
 		    	if registered_user
@@ -83,7 +83,7 @@ class User < ActiveRecord::Base
 	        	:last_name => auth.info.last_name,
 	            :email => auth.info.email,
 	            :password => Devise.friendly_token[0,20],
-	            :provider => auth.provider, 
+	            :provider => auth.provider,
 	            :uid => auth.uid,
 	            :role_id => Role.find_by_name("Usuario Registrado").id
 	        )
