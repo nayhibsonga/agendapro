@@ -1,57 +1,67 @@
-<div class="row companies_header">
-  <ul class="nav nav-tabs">
-
-    <li><a id="companies_payments" href="/companies_payments">Estados de pagos</a></li>
-
-    <li><a id="companies_incomes" href="/companies_incomes">Ingresos mensuales</a></li>
-
-    <li><a id="companies_locations" href="/companies_locations">Clientes y locales</a></li>
-
-    <li><a id="companies_monthly_locations" href="/companies_monthly_locations">Locales mensuales</a></li>
-
-    <li><a id="companies_monthly_bookings" href="/companies_monthly_bookings">Resumen de reservas</a></li>
-
-    <li class="active"><%= link_to 'Empresas', companies_path, { :id => "companies" } %></li>
-
-  </ul>
+<div class="container-fluid background-grey">
+  <div class="row">
+    <div class="col-md-12">
+      <h2 class="text-green">
+        Billing Info
+        <%= link_to '<i class="fa fa-plus"></i> New Billing info'.html_safe, new_billing_info_path, class: "btn btn-green pull-right" %>
+      </h2>
+    </div>
+  </div>
 </div>
-<h1>Listing billing_infos</h1>
-
-<table class="table">
-  <thead>
-    <tr>
-      <th>Empresa</th>
-      <th>Razón Social</th>
-      <th>Rut</th>
-      <th>Sector</th>
-      <th>Responsable</th>
-      <th>Dirección</th>
-      <th>E-mail</th>
-      <th>Teléfono</th>
-      <th></th>
-      <th></th>
-      <th></th>
-    </tr>
-  </thead>
-
-  <tbody>
-    <% @billing_infos.each do |billing_info| %>
-      <tr>
-        <td><%= billing_info.company.name %></td>
-        <td><%= billing_info.name %></td>
-        <td><%= billing_info.rut %></td>
-        <td><%= billing_info.sector %></td>
-        <td><%= billing_info.contact %></td>
-        <td><%= billing_info.address %></td>
-        <td><%= billing_info.email %></td>
-        <td><%= billing_info.phone %></td>
-        <td><%= link_to 'Edit', edit_billing_info_path(billing_info) %></td>
-        <td><%= link_to 'Destroy', billing_info, method: :delete, data: { confirm: 'Are you sure?' } %></td>
-      </tr>
-    <% end %>
-  </tbody>
-</table>
-
-<br>
-
-<%= link_to 'New Billing info', new_billing_info_path %>
+<div class="container-fluid">
+  <div class="row">
+    <!-- Navegation Tabs -->
+    <div class="col-md-2">
+      <ul class="nav nav-pills nav-stacked tab-margin">
+        <li><a id="companies_payments" href="/companies_payments">Estados de pagos</a></li>
+        <li><a id="companies_incomes" href="/companies_incomes">Ingresos mensuales</a></li>
+        <li><a id="companies_locations" href="/companies_locations">Clientes y locales</a></li>
+        <li><a id="companies_monthly_locations" href="/companies_monthly_locations">Locales mensuales</a></li>
+        <li><a id="companies_monthly_bookings" href="/companies_monthly_bookings">Resumen de reservas</a></li>
+        <li class="active"><%= link_to 'Empresas', companies_path, { :id => "companies" } %></li>
+      </ul>
+    </div>
+    <!-- Panels -->
+    <div class="col-md-10 left-panel">
+      <div class="tab-margin">
+        <div class="row">
+          <div class="col-md-12">
+            <table class="table table-green">
+              <thead>
+                <tr>
+                  <th>Empresa</th>
+                  <th>Razón Social</th>
+                  <th>Rut</th>
+                  <th>Sector</th>
+                  <th>Responsable</th>
+                  <th>Dirección</th>
+                  <th>E-mail</th>
+                  <th>Teléfono</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody>
+                <% @billing_infos.each do |billing_info| %>
+                  <tr>
+                    <td><%= billing_info.company.name %></td>
+                    <td><%= billing_info.name %></td>
+                    <td><%= billing_info.rut %></td>
+                    <td><%= billing_info.sector %></td>
+                    <td><%= billing_info.contact %></td>
+                    <td><%= billing_info.address %></td>
+                    <td><%= billing_info.email %></td>
+                    <td><%= billing_info.phone %></td>
+                    <td>
+                      <%= link_to '<i class="fa fa-pencil"></i> Edit'.html_safe, edit_billing_info_path(billing_info), class: "btn btn-orange" %>
+                      <%= link_to '<i class="fa fa-trash-o"></i> Destroy'.html_safe, billing_info, method: :delete, data: { confirm: 'Are you sure?' }, class: "btn btn-red" %>
+                    </td>
+                  </tr>
+                <% end %>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -557,7 +557,7 @@ h2.section_header {
 }
 
 .search-btn span{
-	font-size: 16px;
+	font-size: 14px;
 	color: #505050;
 }
 
@@ -646,32 +646,27 @@ h2.section_header {
 }
 
 @font-face {
-	font-family: TradeGothic;
-	src: url('/assets/Trade Gothic LT Condensed No. 18.ttf');
-	src: url('/assets/Trade Gothic LT Condensed No. 18.ttf?#iefix') format('truetype'),
-	url('/assets/Trade Gothic LT Condensed No. 18.ttf') format('truetype');
-	font-weight: normal;
-	font-style: normal;
+  font-family: TradeGothic;
+  src: url('/assets/TradeGothicLT-CondEighteen.eot');
+  src: url('/assets/TradeGothicLT-CondEighteen.eot?#iefix') format('embedded-opentype'),
+       url('/assets/TradeGothicLT-CondEighteen.woff2') format('woff2'),
+       url('/assets/TradeGothicLT-CondEighteen.woff') format('woff'),
+       url('/assets/TradeGothicLT-CondEighteen.ttf') format('truetype'),
+       url('/assets/TradeGothicLT-CondEighteen.svg#TradeGothicLT-CondEighteen') format('svg');
+  font-weight: normal;
+  font-style: normal;
 }
 @font-face {
-	font-family: FranklinGothic;
-	src: url('/assets/ITC Franklin Gothic LT Book Extra Compressed.ttf');
-	src: url('/assets/ITC Franklin Gothic LT Book Extra Compressed.ttf?#iefix') format('truetype'),
-	url('/assets/ITC Franklin Gothic LT Book Extra Compressed.ttf') format('truetype');
-	font-weight: normal;
-	font-style: normal;
+  font-family: FranklinGothic;
+  src: url('/assets/FranklinGothicLT-BookXCmpr.eot');
+  src: url('/assets/FranklinGothicLT-BookXCmpr.eot?#iefix') format('embedded-opentype'),
+       url('/assets/FranklinGothicLT-BookXCmpr.woff2') format('woff2'),
+       url('/assets/FranklinGothicLT-BookXCmpr.woff') format('woff'),
+       url('/assets/FranklinGothicLT-BookXCmpr.ttf') format('truetype'),
+       url('/assets/FranklinGothicLT-BookXCmpr.svg#FranklinGothicLT-BookXCmpr') format('svg');
+  font-weight: normal;
+  font-style: normal;
 }
-/*Ejemplo para IE*/
-/*@font-face{
-	font-family:'pt-sans';
-	src:url('https://www.mysite.com/font/PTS55F.eot'); // IE9 Compat Modes
-	src:url('https://www.mysite.com/font/PTS55F.eot?#iefix') format('embedded-opentype'), // IE6-IE8
-	url('https://www.mysite.com/font/PTS55F.woff') format('woff'), // Modern Browsers
-	url('https://www.mysite.com/font/PTS55F.ttf') format('truetype'), // Safari, Android, iOS
-	url('https://www.mysite.com/font/PTS55F.svg#pt-sans') format('svg');  // Legacy iOS
-	font-weight:normal;
-	font-style:normal;
-}*/
 
 html,
 body {
@@ -777,7 +772,7 @@ body {
 .navbar-home {
   background-color: #ffffff;
   border-color: #e7e7e7;
-  min-height: 60px;
+  height: 60px;
   -webkit-transition: all 0.5s ease-in-out;
   -moz-transition: all 0.5s ease-in-out;
   -o-transition: all 0.5s ease-in-out;
@@ -1493,6 +1488,10 @@ div.row.row-padded {
 	.sector_search_agenda span {
 		font-size: 14px;
 	}
+  .navbar-form {
+    margin-right: -15px;
+    margin-left: -15px;
+  }
 }
 
 @media (max-width: 991px) {
@@ -1558,11 +1557,22 @@ div.row.row-padded {
     .navbar-collapse.collapse.in {
         display: block!important;
     }
-    .navbar-agendapro .navbar-collapse.collapse.in {
-    	background-color: #646464;
-    }
+    .navbar-agendapro .navbar-collapse.collapse.in,
     .navbar-agendapro .navbar-collapse.collapsing {
     	background-color: #646464;
+      float: right;
+      min-width: 200px;
+      padding-bottom: 15px;
+    }
+    .navbar-home .navbar-collapse.collapse.in,
+    .navbar-home .navbar-collapse.collapsing {
+      background-color: #ffffff;
+      float: right;
+      min-width: 200px;
+      padding-bottom: 15px;
+    }
+    .navbar-right {
+      margin-right: 0;
     }
     .collapsing {
         overflow: hidden!important;
@@ -1585,7 +1595,7 @@ div.row.row-padded {
 		font-size: 11px;
 	}
 	.sector_search_agenda span {
-		font-size: 11px;
+		font-size: 9px;
 	}
 }
 
@@ -1613,6 +1623,9 @@ div.row.row-padded {
 		display:none;
 	}
 	.sector-button {
+		font-size: 7px;
+	}
+	.sector_search_agenda span {
 		font-size: 7px;
 	}
 }

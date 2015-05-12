@@ -62,13 +62,22 @@ class SearchsController < ApplicationController
 
 			if query.count > 10
 
-				count = (query.count / 10).ceil
+				count = (query.count.to_f / 10).ceil
 				results = Array.new
 
-				for i in 0..count-1
-					group = query[i*10, (i+1)*10]
-					results << group
+				current_rank = query[0].pg_search_rank
+				current_group = Array.new
+				query.each do |res|
+					if res.pg_search_rank == current_rank
+						current_group << res
+					else
+						results << current_group
+						current_group = Array.new
+						current_group << res
+						current_rank = res.pg_search_rank
+					end
 				end
+				results << current_group
 
 				j = 0
 				results.each do |result|
@@ -111,13 +120,22 @@ class SearchsController < ApplicationController
 
 			if unowned_query.count > 10
 
-				count = (unowned_query.count / 10).ceil
+				count = (unowned_query.count.to_f / 10).ceil
 				unowned_results = Array.new
 
-				for i in 0..count-1
-					unowned_group = query[i*10, (i+1)*10]
-					unowned_results << unowned_group
+				current_rank = unowned_query[0].pg_search_rank
+				current_group = Array.new
+				unowned_query.each do |res|
+					if res.pg_search_rank == current_rank
+						current_group << res
+					else
+						unowned_results << current_group
+						current_group = Array.new
+						current_group << res
+						current_rank = res.pg_search_rank
+					end
 				end
+				unowned_results << current_group
 
 				j = 0
 				unowned_results.each do |unowned_result|

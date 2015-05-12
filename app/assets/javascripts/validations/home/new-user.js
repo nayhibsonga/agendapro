@@ -46,7 +46,7 @@ $(function() {
 		},
 		messages: {
 			'user[email]': {
-				remote: 'El e-mail ya existe, puedes ingresar o agregar tu compañía <a href="/add_company">aquí</a>.'
+				remote: 'El e-mail ya existe, puedes crear tu compañia <a href="/add_company">aquí</a>.'
 			},
 			'user[company_attributes][web_address]': {
 				remote: 'La dirección web ya existe'

@@ -58,16 +58,21 @@ Agendapro::Application.routes.draw do
 
   # Quick Add
   get '/quick_add', :to => 'quick_add#quick_add', :as => 'quick_add'
+  get '/quick_add/load_location/:id', :to => 'quick_add#load_location'
     # Validation
-  post '/quick_add/location_valid', :to => 'quick_add#location_valid'
-  post '/quick_add/services_valid', :to => 'quick_add#services_valid'
-  post '/quick_add/service_provider_valid', :to => 'quick_add#service_provider_valid'
+  # post '/quick_add/location_valid', :to => 'quick_add#location_valid'
+  # post '/quick_add/services_valid', :to => 'quick_add#services_valid'
+  # post '/quick_add/service_provider_valid', :to => 'quick_add#service_provider_valid'
     # POST
   post '/quick_add/location', :to => 'quick_add#create_location'
-  post '/quick_add/services', :to => 'quick_add#create_services'
+  patch '/quick_add/location/:id', :to => 'quick_add#update_location'
+  post '/quick_add/service_category', :to => 'quick_add#create_service_category'
+  delete '/quick_add/service_category/:id', :to => 'quick_add#delete_service_category'
+  post '/quick_add/service', :to => 'quick_add#create_service'
+  delete '/quick_add/service/:id', :to => 'quick_add#delete_service'
   post '/quick_add/service_provider', :to => 'quick_add#create_service_provider'
+  delete '/quick_add/service_provider/:id', :to => 'quick_add#delete_service_provider'
   patch '/quick_add/update_company', :to => 'quick_add#update_company'
-  #post '/quick_add/update_settings', :to => 'quick_add#update_settings'
 
   # Reporting
   get '/dashboard', :to => 'dashboard#index', :as => 'dashboard'
@@ -190,11 +195,13 @@ Agendapro::Application.routes.draw do
   get '/check_user_cross_bookings', :to => 'bookings#check_user_cross_bookings'
   get '/optimizer_hours', :to => 'bookings#optimizer_hours'
   post '/optimizer_data', :to => 'bookings#optimizer_data'
+  get '/available_hours_week_html', :to => 'service_providers#available_hours_week_html'
   # Workflow - Mobile
   post '/select_hour', :to => 'companies#select_hour'
   post '/user_data', :to => 'companies#user_data'
 
   # Fullcalendar
+  get '/provider_breaks/new', :to => 'provider_breaks#new', :as => 'new_provider_break'
   get '/service', :to => 'services#service_data'  # Fullcalendar
   get '/services_list', :to => 'services#services_data'  # Fullcalendar
   get '/provider_time', :to => 'service_providers#provider_time'  # Fullcalendar

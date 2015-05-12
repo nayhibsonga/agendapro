@@ -1,433 +1,329 @@
 <!DOCTYPE html>
-<html lang="es">
-	<head>
-		<!-- start: Meta -->
-		<meta charset="utf-8" />
-		<% if !current_user.company.nil? %>
+<!--[if lt IE 7]> <html class="no-js lt-ie9 lt-ie8 lt-ie7" lang="es"> <![endif]-->
+<!--[if IE 7]>    <html class="no-js lt-ie9 lt-ie8" lang="es"> <![endif]-->
+<!--[if IE 8]>    <html class="no-js lt-ie9" lang="es"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="es"> <!--<![endif]-->
+  <head>
+    <!-- start: Meta -->
+    <meta charset="utf-8" />
+    <% if !current_user.company.nil? %>
+    <title>Administrador <%= current_user.company.name %> AgendaPro</title>
+    <% else %>
+    <title>Administrador - AgendaPro</title>
+    <% end %>
+    <meta name="description" content="AgendaPro - Sistema de agendamiento OnLine para empresas y usuarios.">
+    <meta name="author" content="AgendaPro">
+    <meta name="keyword" content="agendapro, agenda, agenda online, reserva, reserva online">
 
-			<title>Administrador <%= current_user.company.name %> AgendaPro</title>
+    <%= csrf_meta_tags %>
+    <!-- end: Meta -->
 
-		<% else %>
+    <!-- start: Mobile Specific -->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- end: Mobile Specific -->
 
-			<title>Administrador - AgendaPro</title>
+    <!-- start: CSS -->
+    <%= stylesheet_link_tag "admin" %>
+    <%= yield :stylesheets %>
+    <!-- end: CSS -->
 
-		<% end %>
-		<meta name="description" content="AgendaPro - Sistema de agendamiento OnLine para empresas y usuarios.">
-		<meta name="author" content="AgendaPro">
-		<meta name="keyword" content="agendapro, agenda, agenda online, reserva, reserva online">
+    <% if ENV["MONITORING_ACTIVATION"] == "TRUE" %>
+    <!-- Begin Inspectlet Embed Code -->
+    <script type="text/javascript" id="inspectletjs">
+      window.__insp = window.__insp || [];
+      __insp.push(['wid', 1883420541]);
+      (function() {
+      function __ldinsp(){var insp = document.createElement('script'); insp.type = 'text/javascript'; insp.async = true; insp.id = "inspsync"; insp.src = ('https:' == document.location.protocol ? 'https' : 'http') + '://cdn.inspectlet.com/inspectlet.js'; var x = document.getElementsByTagName('script')[0]; x.parentNode.insertBefore(insp, x); }
+      if (window.attachEvent) window.attachEvent('onload', __ldinsp);
+      else window.addEventListener('load', __ldinsp, false);
+      })();
+    </script>
+    <!-- End Inspectlet Embed Code -->
+    <% end %>
 
-		<%= csrf_meta_tags %>
-		<!-- end: Meta -->
-		
-		<!-- start: Mobile Specific -->
-		<meta name="viewport" content="width=device-width, initial-scale=1">
-		<!-- end: Mobile Specific -->
-		
-		<!-- start: CSS -->
-		<%= stylesheet_link_tag "admin" %>
-		<%= stylesheet_link_tag "fullcalendar_css" if params[:controller] == "bookings" %>
-		<%= yield :stylesheets %>
-		<!-- end: CSS -->
+    <!-- start: Favicon and Touch Icons -->
+    <%= favicon_link_tag "favicon.png", :rel => "shortcut icon" %>
+    <!-- end: Favicon and Touch Icons -->
+  </head>
 
-		<% if ENV["MONITORING_ACTIVATION"] == "TRUE" %>
-        <!-- Begin Inspectlet Embed Code -->
-        <script type="text/javascript" id="inspectletjs">
-        window.__insp = window.__insp || [];
-        __insp.push(['wid', 1883420541]);
-        (function() {
-        function __ldinsp(){var insp = document.createElement('script'); insp.type = 'text/javascript'; insp.async = true; insp.id = "inspsync"; insp.src = ('https:' == document.location.protocol ? 'https' : 'http') + '://cdn.inspectlet.com/inspectlet.js'; var x = document.getElementsByTagName('script')[0]; x.parentNode.insertBefore(insp, x); }
-        if (window.attachEvent) window.attachEvent('onload', __ldinsp);
-        else window.addEventListener('load', __ldinsp, false);
-        })();
-        </script>
-        <!-- End Inspectlet Embed Code -->
-        <% end %>
-		
+  <body>
+    <!-- start: Header -->
+    <header>
+      <nav class="navbar navbar-default navbar-fixed-top navbar-admin" role="navigation">
+        <div class="container-fluid">
+          <!-- Brand and toggle get grouped for better mobile display -->
+          <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+              <i class="fa fa-bars"></i>
+            </button>
+            <a href="<%= root_without_subdomain %>" class="navbar-brand">
+              <%= image_tag 'logos/logo2.png', :alt => 'AgendaPro', :size => "115x39" %>
+            </a>
+          </div>
+          <!-- Collect the nav links, forms, and other content for toggling -->
+          <div class="collapse navbar-collapse" id="navbar">
+            <ul class="nav navbar-nav navbar-right">
+              <!-- Dashboard -->
+              <li class="<%= 'active' if current_page?(dashboard_path) %>"><%= link_to 'Resumen', dashboard_path %></li>
+              <!-- Calendario -->
+              <% if current_user.role == Role.find_by_name("Staff (sin edición)") %>
+              <li class="<%= 'active' if current_page?(fixed_bookings_path) %>"><%= link_to 'Calendario', fixed_bookings_path %></li>
+              <% else %>
+              <li class="<%= 'active' if current_page?(bookings_path) %>"><%= link_to 'Calendario', bookings_path %></li>
+              <% end %>
+              <!-- Clientes -->
+              <% if current_user.role != Role.find_by(name: "Staff") or current_user.role != Role.find_by(name: "Staff (sin edición)") %>
+              <li class="<%= 'active' if current_page?(clients_path) %>"><%= link_to 'Clientes', clients_path %></li>
+              <% end %>
+              <!-- Reportes -->
+              <% if current_user.role == Role.find_by(name: "Administrador General") %>
+              <li class="<%= 'active' if current_page?(reports_path) %>"><%= link_to 'Reportes', reports_path %></li>
+              <% end %>
+              <!-- Administracion -->
+              <% if current_user.role == Role.find_by(name: "Super Admin") or current_user.role == Role.find_by(name: "Administrador General") or current_user.role == Role.find_by(name: "Administrador Local") %>
+              <li class="dropdown <%= 'active' if current_page?(locations_path) or current_page?(service_providers_path) or current_page?(services_path) or current_page?(service_categories_path) or current_page?(resources_path) or current_page?("/company_bookings") %>">
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Administracion <i class="fa fa-chevron-down"></i></a>
+                <ul class="dropdown-menu" role="menu">
+                  <li><%= link_to '<i class="fa fa-home fa-fw"></i> Locales'.html_safe, locations_path %></li>
+                  <li><%= link_to '<i class="fa fa-user fa-fw"></i> Prestadores de Servicios'.html_safe, service_providers_path %></li>
+                  <li><%= link_to '<i class="fa fa-book fa-fw"></i> Servicios'.html_safe, services_path %></li>
+                  <li><%= link_to '<i class="fa fa-list fa-fw"></i> Categorías de Servicios'.html_safe, service_categories_path %></li>
+                  <li><%= link_to '<i class="fa fa-cubes fa-fw"></i> Recursos'.html_safe, resources_path %></li>
+                  <% if current_user.role == Role.find_by(name: "Administrador General") %>
+                  <li><%= link_to '<i class="fa fa-exchange fa-fw"></i> Pagos en línea'.html_safe, '/company_bookings' %></li>
+                  <% end %>
+                </ul>
+              </li>
+              <% end %>
+              <!-- Super Admin -->
+              <% if current_user.role == Role.find_by_name("Super Admin") %>
+              <li class="<%= 'active' if current_page?("/companies_payments") %>"><%= link_to 'Control de gestión', '/companies_payments' %></li>
+              <!-- General -->
+              <li class="dropdown <%= 'active' if current_page?(admin_users_path) or current_page?(roles_path) or current_page?(payment_statuses_path) or current_page?(statuses_path) or current_page?(plans_path) or current_page?(numeric_parameters_path) or current_page?(payed_bookings_path) or current_page?(banks_path) %>">
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">General <i class="fa fa-chevron-down"></i></a>
+                <ul class="dropdown-menu" role="menu">
+                  <li><%= link_to '<i class="fa fa-user fa-fw"></i> Usuarios'.html_safe, admin_users_path %></li>
+                  <li><%= link_to '<i class="fa fa-lock fa-fw"></i> Roles'.html_safe, roles_path %></li>
+                  <li><%= link_to '<i class="fa fa-usd fa-fw"></i> Estados de Pago'.html_safe, payment_statuses_path %></li>
+                  <li><%= link_to '<i class="fa fa-check-square-o fa-fw"></i> Estados de Reserva'.html_safe, statuses_path %></li>
+                  <li><%= link_to '<i class="fa fa-cloud fa-fw"></i> Gestión Planes'.html_safe, plans_path %></li>
+                  <li><%= link_to '<i class="fa fa-list-ol fa-fw"></i> Parámetros Numéricos'.html_safe, numeric_parameters_path %></li>
+                  <li><%= link_to '<i class="fa fa-exchange fa-fw"></i> Transferencias'.html_safe, payed_bookings_path %></li>
+                  <li><%= link_to '<i class="fa fa-university fa-fw"></i> Bancos'.html_safe, banks_path %></li>
+                </ul>
+              </li>
+              <!-- Lugares -->
+              <li class="dropdown <%= 'active' if current_page?(countries_path) or current_page?(regions_path) or current_page?(cities_path) or current_page?(districts_path) %>">
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Lugares <i class="fa fa-chevron-down"></i></a>
+                <ul class="dropdown-menu" role="menu">
+                  <li><%= link_to '<i class="fa fa-globe fa-fw"></i> Países'.html_safe, countries_path %></li>
+                  <li><%= link_to '<i class="fa fa-picture-o fa-fw"></i> Regiones'.html_safe, regions_path %></li>
+                  <li><%= link_to '<i class="fa fa-building-o fa-fw"></i> Ciudades'.html_safe, cities_path %></li>
+                  <li><%= link_to '<i class="fa fa-home fa-fw"></i> Comunas'.html_safe, districts_path %></li>
+                </ul>
+              </li>
+              <!-- Buscador -->
+              <li class="dropdown <%= 'active' if current_page?(countries_path) or current_page?(regions_path) or current_page?(cities_path) or current_page?(districts_path) %>">
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Buscador <i class="fa fa-chevron-down"></i></a>
+                <ul class="dropdown-menu" role="menu">
+                  <li><%= link_to '<i class="fa fa-usd fa-fw"></i> Sector Ecónomico'.html_safe, economic_sectors_path %></li>
+                  <li><%= link_to '<i class="fa fa-tags fa-fw"></i> Tags'.html_safe, tags_path %></li>
+                </ul>
+              </li>
+              <% end %>
+              <%= render 'layouts/home_dropdown' %>
+              <li><a href="#" class="menu-green" data-toggle="modal" data-target="#printingModal"><i class="fa fa-print fa-lg"></i></a></li>
+              <% if current_user.role_id == Role.find_by(name: "Administrador General").id %>
+              <li class="dropdown <%= 'active' if current_page?(edit_company_setting_path(current_user.company.company_setting.id)) or current_page?(admin_users_path) or current_page?(select_plan_path) %>">
+                <a href="#" class="dropdown-toggle menu-green" data-toggle="dropdown" role="button" aria-expanded="false"><i class="fa fa-cog fa-lg"></i></a>
+                <ul class="dropdown-menu" role="menu">
+                  <li><%= link_to '<i class="fa fa-wrench fa-fw"></i> Configuraciones'.html_safe, edit_company_setting_path(Company.find(current_user.company_id).company_setting.id) %></li>
+                  <li><%= link_to '<i class="fa fa-sitemap fa-fw"></i> Usuarios'.html_safe, admin_users_path %></li>
+                  <li><%= link_to '<i class="fa fa-dollar fa-fw"></i> Facturación'.html_safe, select_plan_path %></li>
+                </ul>
+              </li>
+              <% end %>
+            </ul>
+          </div>
+        </div>
+      </nav>
+      <!-- start: Alerts -->
+      <% if notice %>
+        <div class="alert alert-info alert-dismissable fade in">
+          <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+          <%= notice %>
+        </div>
+      <% end %>
+      <% if alert %>
+        <div class="alert alert-warning alert-dismissable fade in">
+          <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+          <%= alert %>
+        </div>
+      <% end %>
+      <!-- end: Alerts -->
+    </header>
+    <!-- end: Header -->
 
-		<!-- The HTML5 shim, for IE6-8 support of HTML5 elements -->
-		<!--[if lt IE 9]>
-		
-			<script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
-			<script src="assets/stylesheets/admin/ie6-8.css"></script>
-			
-		<![endif]-->
-		
-		<!-- start: Favicon and Touch Icons -->
-			<%= favicon_link_tag "favicon.png", :rel => "shortcut icon" %>
-		<!-- end: Favicon and Touch Icons -->
-	</head>
+    <!-- start: Modals -->
+    <div class="modal fade" id="paymentModal" tabindex="-1" role="dialog" aria-labelledby="paymentModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+            <h4 class="modal-title" id="paymentModalLabel">Cuenta AgendaPro</h4>
+          </div>
+          <div class="modal-body">
+            <p class="justified">¡Recuerda activar tu cuenta AgendaPro! No te pierdas un segundo el acceso a las oportunidades que te da tu cuenta AgendaPro. Si no eres el(la) administrador(a), ponte en contacto con él(ella) para que active la cuenta.</p>
+            <p class="justified">¡Aprovecha las facilidades de pago que ofrecemos y descuentos al pagar por adelantado! Puedes pagar tu cuenta directamente a través de la página, por medio de WebPay o transferencias bancarias de los principales bancos. Si no te acomoda ninguna de estas opciones o tienes alguna duda respecto a tu plan actual, te invitamos a ponerte en contacto con nosotros enviando un e-mail a <%= link_to 'contacto@agendapro.cl', contact_path, :target => "_blank" %>, para recibir las instrucciones a seguir.</p>
+            <p>Medios de pago disponibles:</p>
+            <table class="table">
+              <tr><td><%= image_tag("https://www.puntopagos.com/content/mp4.gif") %></td><td><%= image_tag("https://www.puntopagos.com/content/mp5.gif") %></td></tr>
+              <tr><td><%= image_tag("https://www.puntopagos.com/content/mp6.gif") %></td><td><%= image_tag("https://www.puntopagos.com/content/mp7.gif") %></td><td><%= image_tag("https://www.puntopagos.com/content/mp3.gif") %></td></tr>
+            </table>
+            <% if current_user.role_id == Role.find_by_name("Administrador General").id %>
+            <p>Ir a <%= link_to "PLANES", select_plan_path %> para proceder.</p>
+            <% end %>
+          </div>
+          <div class="modal-footer">
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="modal fade" id="printingModal" tabindex="-1" role="dialog" aria-labelledby="printingModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+            <h4 class="modal-title" id="printingModalLabel">Imprimir Horarios de Prestadores</h4>
+          </div>
+          <div class="modal-body">
+            <div class="form-horizontal">
+              <div class="form-group">
+                <%= label_tag "location_id", "Local", class: "col-sm-4 control-label" %>
+                <div class="col-sm-8">
+                  <%= select_tag "location_id", options_from_collection_for_select(Location.where(company_id: current_user.company_id, active: true).accessible_by(current_ability).order(:order), "id", "name"), prompt: "Elige el local...", class: "form-control" %>
+                </div>
+              </div>
+              <div class="form-group">
+                <%= label_tag "service_provider_id", "Prestador de Servicios", class: "col-sm-4 control-label" %>
+                <div class="col-sm-8">
+                  <%= select_tag "service_provider_id", "", prompt: "Elige al prestador...", class: "form-control", disabled: true %>
+                </div>
+              </div>
+              <div class="form-group">
+                <%= label_tag "provider_date", "Fecha", class: "col-sm-4 control-label"%>
+                <div class="col-sm-8">
+                  <%= text_field_tag "provider_date", nil, placeholder: 'ej: 15/10/2014', class: "form-control" %>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <a class="btn btn-default" data-dismiss="modal">Cerrar</a>
+            <%= link_to "Imprimir Horario", service_providers_path, id: "printingButton", class: "btn btn-green", disabled: true %>
+          </div>
+        </div>
+      </div>
+    </div>
+    <%= yield :modals %>
+    <!-- end: Modals -->
 
-	<body>
-		<!-- start: Header -->
-		<header>
-			<a href="<%= root_without_subdomain %>" id="logo"></a>
-			<% if (current_user.role_id == Role.find_by_name("Administrador General").id) %>
-			<ul id="menu-config">
-				<li><a href="#" id="open-config"><div class="pull-right"><i class="fa fa-cog fa-lg"></i></div></a>
-					<ul id="sub-menu-config" class="close-menu-config">
-						<li><%= link_to '<i class="fa fa-wrench"></i> Configuraciones'.html_safe, edit_company_setting_path(Company.find(current_user.company_id).company_setting.id) %></li>
-						<li><%= link_to '<i class="fa fa-sitemap"></i> Usuarios'.html_safe, admin_users_path %></li>
-						<li><%= link_to '<i class="fa fa-dollar"></i> Facturación'.html_safe, select_plan_path %></li>
-					</ul>
-				</li>
-			</ul>
-			<% end %>
-			<a href="#" id="link-imprimir" data-toggle="modal" data-target="#printingModal"><div class="pull-right"><i class="fa fa-print fa-lg"></i></div></a>
-			<ul id="menu-usuario">
-			  <li><a href="#" id="open-usuario"><%= current_user.email %> <span class="fa fa-chevron-down"></span></a>
-				<ul id="sub-menu-usuario" class="close-menu-usuario">
-				  <li>
-					<% if current_user.company_id || current_user.role_id == Role.find_by(:name => 'Super Admin').id %>
-					<%= link_to '<i class="fa fa-dashboard"></i> Panel Empresa'.html_safe, root_url(subdomain: false) + "dashboard" %>
-					<% else %>
-					<%= link_to '<i class="fa fa-building-o"></i> Agregar mi Compañía'.html_safe, add_company_path %>
-					<% end %>
-				  </li>
-				  <li><%= link_to '<i class="fa fa-calendar"></i> Mi Agenda'.html_safe, my_agenda_path(:id => current_user.id) %></li>
-				  <li><%= link_to '<i class="fa fa-user"></i> Perfil'.html_safe, edit_user_registration_path %></li>
-				  <li><%= link_to '<i class="fa fa-question"></i> Tutoriales'.html_safe, tutorials_path %></li>
-				  <li><%= link_to '<i class="fa fa-power-off"></i> Cerrar Sesión'.html_safe, destroy_user_session_path, method: :delete %></li>
-				</ul>
-			  </li>
-			</ul>
-		</header>
-		<!-- end: Header -->
+    <!-- start: Content -->
+    <div class="main">
+      <%= yield %>
+      <%= yield :calendar %>
+      <%= content_tag "div", id: "payment_data", data: { due_payment: @due_payment } do %>
+      <% end %>
+    </div>
+    <!-- end: Content -->
 
-		<div id="sidebar" class="">
-			<!-- MENU LATERAL -->
-			<ul class="menu-lateral">
-				<li><%= link_to '<i class="fa fa-dashboard fa-fw"></i><span class="colapse-hidden"> Resumen</span>'.html_safe, dashboard_path, { :class => if controller.controller_name == "dashboard" then "active" end } %></li>
-				<% if current_user.role_id == Role.find_by_name("Staff (sin edición)").id %>
-				<li><%= link_to '<i class="fa fa-calendar fa-fw"></i><span class="colapse-hidden"> Calendario</span>'.html_safe, fixed_bookings_path, { :class => if controller.controller_name == "bookings" then "active" end } %></li>
-				<% else %>
-				<li><%= link_to '<i class="fa fa-calendar fa-fw"></i><span class="colapse-hidden"> Calendario</span>'.html_safe, bookings_path, { :class => if controller.controller_name == "bookings" then "active" end } %></li>
-				<% end %>
-				<% if controller.controller_name == "bookings" %>
-				<li><div id="dp" class="lateralDatepicker"></div></li>
-				<li><div class="row text-center"><button type="button" class="btn btn-agendapro-claro hours-optimizer-button" data-toggle="modal" data-target="#hoursOptimizer" style="width: 100%; display:none;">Buscador de Horas</button></div></li>
-				<% end %>
-				<% if current_user.role_id == Role.find_by_name("Super Admin").id %>
-					<li>
-						<%= link_to '<i class="fa fa-building fa-fw"></i><span class="remove-txt"> Control de gestión</span>'.html_safe, '/companies_payments', { :class => "submenu" }  %>
-					</li>
-					<li>
-						<%= link_to '<i class="fa fa-exchange fa-fw"></i><span class="remove-txt"> Transferencias</span>'.html_safe, payed_bookings_path, { :class => if controller.controller_name == "payed_bookings" then "submenu active" else "submenu" end }  %>
-					</li>
-				<% end %>
-				<% if current_user.role_id != Role.find_by_name("Staff").id  && current_user.role_id != Role.find_by_name("Staff (sin edición)").id %>
-				<li><%= link_to '<i class="fa fa-group fa-fw"></i><span class="remove-txt"> Clientes</span>'.html_safe, clients_path, { :class => if controller.controller_name == "clients" then "active" end } %></li>
-				<% end %>
-				<% if current_user.role_id == Role.find_by_name("Administrador General").id %>
-				<li><%= link_to '<i class="fa fa-bar-chart-o fa-fw"></i><span class="remove-txt"> Reportes</span>'.html_safe, reports_path, { :class => if controller.controller_name == "reports" then "active" end } %></li>
-				<% end %>
-				<% if current_user.role_id == Role.find_by_name("Super Admin").id %>
-					<li>
-						<a class="open-submenu"><i class="fa fa-check fa-fw"></i><span class="colapse-hidden"> General <span class="fa fa-caret-down caret-especial"></span></span></a>
-						<ul id="submenu" class="submenu-close">
-							<li><%= link_to '<i class="fa fa-user fa-fw"></i><span class="remove-txt"> Usuarios</span>'.html_safe, admin_users_path, { :class => if controller.controller_name == "users" then "submenu active" else "submenu" end } %></li>
-							<li><%= link_to '<i class="fa fa-lock fa-fw"></i><span class="remove-txt"> Roles</span>'.html_safe, roles_path, { :class => if controller.controller_name == "roles" then "submenu active" else "submenu" end }  %></li>
-							<li><%= link_to '<i class="fa fa-usd fa-fw"></i><span class="remove-txt"> Estados de Pago</span>'.html_safe, payment_statuses_path, { :class => if controller.controller_name == "payment_statuses" then "submenu active" else "submenu" end }  %></li>
-							<li><%= link_to '<i class="fa fa-check-square-o fa-fw"></i><span class="remove-txt"> Estados de Reserva</span>'.html_safe, statuses_path, { :class => if controller.controller_name == "statuses" then "submenu active" else "submenu" end }  %></li>
-							<li><%= link_to '<i class="fa fa-cloud fa-fw"></i><span class="remove-txt"> Gestión Planes</span>'.html_safe, plans_path, { :class => "submenu" }  %></li>
-							<li><%= link_to '<i class="fa fa-list-ol fa-fw"></i><span class="remove-txt"> Parámetros Numéricos</span>'.html_safe, numeric_parameters_path, { :class => if controller.controller_name == "numeric_parameters" then "submenu active" else "submenu" end }  %></li>
-							<!-- Link a la vista de transferencias hechas. -->
-							<li>
-							<%= link_to '<i class="fa fa-university fa-fw"></i><span class="remove-txt"> Bancos</span>'.html_safe, banks_path, { :class => if controller.controller_name == "banks" then "submenu active" else "submenu" end }  %>
-							</li>
-						</ul>
-					</li>
+    <!-- start: JavaScript-->
+    <%= javascript_include_tag "admin" %>
+    <!--[if gte IE 9]><!-->
+      <script type="text/javascript">
+        window.jQuery || document.write("<script src='/assets/jquery-2.1.1.min.js'>" + "<" + "/script>");
+      </script>
+    <!--<![endif]-->
+    <%= yield :scripts %>
+    <!-- end: JavaScript-->
 
-					<li>
-						<a class="open-submenu"><i class="fa fa-map-marker fa-fw"></i><span class="colapse-hidden"> Lugares <span class="fa fa-caret-down caret-especial"></span></span></a>
-						<ul id="submenu2" class="submenu-close">
-							<li><%= link_to '<i class="fa fa-globe fa-fw"></i><span class="remove-txt"> Países</span>'.html_safe, countries_path, { :class => if controller.controller_name == "countries" then "submenu active" else "submenu" end } %></li>
-							<li><%= link_to '<i class="fa fa-picture-o fa-fw"></i><span class="remove-txt"> Regiones</span>'.html_safe, regions_path, { :class => if controller.controller_name == "regions" then "submenu active" else "submenu" end } %></li>
-							<li><%= link_to '<i class="fa fa-building-o fa-fw"></i><span class="remove-txt"> Ciudades</span>'.html_safe, cities_path, { :class => if controller.controller_name == "cities" then "submenu active" else "submenu" end } %></li>
-							<li><%= link_to '<i class="fa fa-home fa-fw"></i><span class="remove-txt"> Comunas</span>'.html_safe, districts_path, { :class => if controller.controller_name == "districts" then "submenu active" else "submenu" end } %></li>
-						</ul>
-					</li>
+    <script type="text/javascript">
+      $(document).ready(function(){
+        if ($('#payment_data').data('due-payment') == true) {
+          $('#paymentModal').modal('show');
+        }
 
-					<li>
-						<a class="open-submenu"><i class="fa fa-search fa-fw"></i><span class="colapse-hidden"> Buscador <span class="fa fa-caret-down caret-especial"></span></span></a>
-						<ul id="submenu5" class="submenu-close">
-							<li><%= link_to '<i class="fa fa-usd fa-fw"></i><span class="remove-txt"> Sector Ecónomico</span>'.html_safe, economic_sectors_path, { :class => if controller.controller_name == "economic_sectors" then "submenu active" else "submenu" end } %></li>
-							<li><%= link_to '<i class="fa fa-tags fa-fw"></i><span class="remove-txt"> Tags</span>'.html_safe, tags_path, { :class => if controller.controller_name == "tags" then "submenu active" else "submenu" end } %></li>
-						</ul>
-					</li>
-				<% end %>
+        $('#provider_date').datepicker({
+          dateFormat: 'dd/mm/yy',
+          firstDay: 1,
+          dayNames: [ "Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado" ],
+          dayNamesMin: [ "Do", "Lu", "Ma", "Mi", "Ju", "Vi", "Sá" ],
+          dayNamesShort: [ "Dom", "Lun", "Mar", "Mié", "Jue", "Vie", "Sáb" ],
+          onSelect: function() {
+            if ($('#service_provider_id').val() != "" && $('#provider_date').val() != "") {
+              $('#printingButton').removeAttr("disabled");
+            }
+            else {
+              $('#printingButton').attr("disabled", "disabled");
+            }
+          }
+        });
 
-				<% if (current_user.role_id == Role.find_by_name("Super Admin").id) || (current_user.role_id == Role.find_by_name("Administrador General").id) || (current_user.role_id == Role.find_by_name("Administrador Local").id) %>
-					<li>
-						<a class="open-submenu"><i class="fa fa-briefcase fa-fw"></i><span class="colapse-hidden"> Administración <span class="fa fa-caret-down caret-especial"></span></span></a>
-						<ul id="submenu3" class="submenu-close">
-							<li><%= link_to '<i class="fa fa-home fa-fw"></i><span class="remove-txt"> Locales</span>'.html_safe, locations_path, { :class => if controller.controller_name == "locations" then "submenu active" else "submenu" end } %></li>
-							<li><%= link_to '<i class="fa fa-user fa-fw"></i><span class="remove-txt"> Prestadores de Servicios</span>'.html_safe, service_providers_path, { :class => if controller.controller_name == "service_providers" then "submenu active" else "submenu" end } %></li>
-							<li><%= link_to '<i class="fa fa-book fa-fw"></i><span class="remove-txt"> Servicios</span>'.html_safe, services_path, { :class => if controller.controller_name == "services" then "submenu active" else "submenu" end } %></li>
-							<li><%= link_to '<i class="fa fa-list fa-fw"></i><span class="remove-txt"> Categorías de Servicios</span>'.html_safe, service_categories_path, { :class => if controller.controller_name == "service_categories" then "submenu active" else "submenu" end } %></li>
-							<li><%= link_to '<i class="fa fa-cubes fa-fw"></i><span class="remove-txt"> Recursos</span>'.html_safe, resources_path, { :class => if controller.controller_name == "resources" then "submenu active" else "submenu" end } %></li>
-							<% if current_user.role_id == Role.find_by_name("Administrador General").id && current_user.company.company_setting.online_payment_capable %>
-								<li>
-								<%= link_to '<i class="fa fa-exchange fa-fw"></i><span class="remove-txt"> Pagos en línea</span>'.html_safe, '/company_bookings', { :class => "submenu" }  %>
-								</li>
-							<% end %>
+        $('#provider_date').change(function() {
+          if ($('#location_id').val() != "" && $('#service_provider_id').val() != "" && $('#provider_date').val() != "") {
+            $('#printingButton').removeAttr("disabled");
+          }
+          else {
+            $('#printingButton').attr("disabled", "disabled");
+          }
+        });
 
-						</ul>
-					</li>
-				<% end %>
+        $('#service_provider_id').change(function() {
+          if ($('#location_id').val() != "" && $('#service_provider_id').val() != "" && $('#provider_date').val() != "") {
+            $('#printingButton').removeAttr("disabled");
+          }
+          else {
+            $('#printingButton').attr("disabled", "disabled");
+          }
+        });
 
-				<li><a id="closetab"><span class="fa fa-chevron-left fa-fw"></span> <span class="colapse-hidden"> Esconder Menú </span></a></li>
-			</ul>
-		</div>
+        $('#location_id').change(function (event) {
+          $('#service_provider_id').find('option').remove().end();
+          $('#service_provider_id').append(
+            '<option value="">Elige al prestador...</option>'
+          );
+          <% if current_user.role_id != Role.find_by_name("Staff").id %>
+            $('#service_provider_id').append(
+              '<option value="0">Todos</option>'
+            );
+          <% end %>
+          if ($('#location_id').val() != "") {
+            $.getJSON('/local_providers', {location: event.target.value}, function (providersArray) {
+              $.each(providersArray, function (key, provider) {
+                $('#service_provider_id').append(
+                  '<option value="' + provider.id + '">' + provider.public_name + '</option>'
+                );
+              });
+              $('#service_provider_id').removeAttr('disabled');
+            });
+          }
+          else {
+            $('#service_provider_id').attr("disabled", "disabled");
+          }
+          if ($('#location_id').val() != "" && $('#service_provider_id').val() != "" && $('#provider_date').val() != "") {
+            $('#printingButton').removeAttr("disabled");
+          }
+          else {
+            $('#printingButton').attr("disabled", "disabled");
+          }
+        });
 
-		<div id="admin-content" class="fix-height">
-			<div class="content-fix">
-				<!-- start: Alerts -->
-				<% if notice %>
-					<div class="alert alert-info alert-dismissable">
-						<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-						<%= notice %>
-					</div>
-				<% end %>
-				<% if alert %>
-					<div class="alert alert-warning alert-dismissable">
-						<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-						<%= alert %>
-					</div>
-				<% end %>
-				<!-- end: Alerts -->
-				<%= yield %>
-				<%= content_tag "div", id: "payment_data", data: { due_payment: @due_payment } do %>
-				<% end %>
-				<div class="modal fade" id="paymentModal" tabindex="-1" role="dialog" aria-labelledby="paymentModalLabel" aria-hidden="true">
-					<div class="modal-dialog">
-						<div class="modal-content">
-							<div class="modal-header">
-								<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-								<h4 class="modal-title" id="paymentModalLabel">Cuenta AgendaPro</h4>
-							</div>
-							<div class="modal-body">
-								<p class="justified">¡Recuerda activar tu cuenta AgendaPro! No te pierdas un segundo el acceso a las oportunidades que te da tu cuenta AgendaPro. Si no eres el(la) administrador(a), ponte en contacto con él(ella) para que active la cuenta.</p>
-								<p class="justified">¡Aprovecha las facilidades de pago que ofrecemos y descuentos al pagar por adelantado! Puedes pagar tu cuenta directamente a través de la página, por medio de WebPay o transferencias bancarias de los principales bancos. Si no te acomoda ninguna de estas opciones o tienes alguna duda respecto a tu plan actual, te invitamos a ponerte en contacto con nosotros enviando un e-mail a <%= link_to 'contacto@agendapro.cl', contact_path, :target => "_blank" %>, para recibir las instrucciones a seguir.</p>
-								<p>Medios de pago disponibles:</p>
-								<table class="table">
-									<tr><td><%= image_tag("https://www.puntopagos.com/content/mp4.gif") %></td><td><%= image_tag("https://www.puntopagos.com/content/mp5.gif") %></td></tr>
-									<tr><td><%= image_tag("https://www.puntopagos.com/content/mp6.gif") %></td><td><%= image_tag("https://www.puntopagos.com/content/mp7.gif") %></td><td><%= image_tag("https://www.puntopagos.com/content/mp3.gif") %></td></tr>
-								</table>
-								<% if current_user.role_id == Role.find_by_name("Administrador General").id %>
-								<p>Ir a <%= link_to "PLANES", select_plan_path %> para proceder.</p>
-								<% end %>
-							</div>
-							<div class="modal-footer">
-							</div>
-						</div>
-					</div>
-				</div>
-				<div class="modal fade" id="printingModal" tabindex="-1" role="dialog" aria-labelledby="printingModalLabel" aria-hidden="true">
-					<div class="modal-dialog">
-						<div class="modal-content">
-							<div class="modal-header">
-								<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-								<h4 class="modal-title" id="printingModalLabel">Imprimir Horarios de Prestadores</h4>
-							</div>
-							<div class="modal-body">
-								<div class="form-horizontal">
-									<div class="form-group">
-										<%= label_tag "location_id", "Local", class: "col-sm-4 control-label" %>
-										<div class="col-sm-8">
-											<%= select_tag "location_id", options_from_collection_for_select(Location.where(company_id: current_user.company_id, active: true).accessible_by(current_ability).order(:order), "id", "name"), prompt: "Elige el local...", class: "form-control" %>
-										</div>
-									</div>
-									<div class="form-group">
-										<%= label_tag "service_provider_id", "Prestador de Servicios", class: "col-sm-4 control-label" %>
-										<div class="col-sm-8">
-											<%= select_tag "service_provider_id", "", prompt: "Elige al prestador...", class: "form-control", disabled: true %>
-										</div>
-									</div>
-									<div class="form-group">
-										<%= label_tag "provider_date", "Fecha", class: "col-sm-4 control-label"%>
-										<div class="col-sm-8">
-											<%= text_field_tag "provider_date", nil, placeholder: 'ej: 15/10/2014', class: "form-control" %>
-										</div>
-									</div>
-								</div>
-							</div>
-							<div class="modal-footer">
-								<a class="btn btn-default" data-dismiss="modal">Cerrar</a>
-								<%= link_to "Imprimir Horario", service_providers_path, id: "printingButton", class: "btn btn-agendapro-claro", disabled: true %>
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>
-			<%= yield :calendar %>
-		</div>
-
-		<!-- start: JavaScript-->
-		<!--[if !IE]>-->
-			<%= javascript_include_tag "adminNIE" %>
-		<!--<![endif]-->
-		<!--[if IE]>
-			<%= javascript_include_tag "adminIE" %>
-		<!--<![endif]-->
-			<%= javascript_include_tag "admin" %>
-		<!--[if !IE]>-->
-				<script type="text/javascript">
-				window.jQuery || document.write("<script src='vendor/jquery-2.1.0.min.js'>"+"<"+"/script>");
-				</script>
-		<!--<![endif]-->
-		<!--[if IE]>
-			<script type="text/javascript">
-			window.jQuery || document.write("<script src='vendor/jquery-1.11.0.min.js'>"+"<"+"/script>");
-			</script>
-		<![endif]-->
-		<%= yield :scripts %>
-		<%= javascript_include_tag "jquery.browser.min" %>
-		<%= javascript_include_tag "browser-detect" %>
-		<!--Start of Zopim Live Chat Script-->
-		<%= javascript_include_tag 'zopim' %>
-		<!--End of Zopim Live Chat Script-->
-		
-		<!-- end: JavaScript-->
-		
-		<script type="text/javascript">
-			$(document).ready(function(){
-				$('#closetab').toggle(function () {
-						$("#sidebar").addClass("colapsar");
-						$("#admin-content").addClass("expandir");
-						$(".menu-lateral li").addClass("colapsado-ok");
-						$(".remove-txt").addClass("kill-txt");
-						$('#closetab > span:first').removeClass('fa-chevron-left');
-						$('#closetab > span:first').addClass('fa-chevron-right');
-						$('#dp').addClass('dpCollapse');
-						if (typeof(Storage) !== "undefined") {
-							sessionStorage.menu = "close";
-						}
-				}, function () {
-						$("#sidebar").removeClass("colapsar");
-						$("#admin-content").removeClass("expandir");
-						$(".menu-lateral li").removeClass("colapsado-ok");
-						$(".remove-txt").removeClass("kill-txt");
-						$('#closetab > span:first').removeClass('fa-chevron-right');
-						$('#closetab > span:first').addClass('fa-chevron-left');
-						$('#dp').removeClass('dpCollapse');
-						if (typeof(Storage) !== "undefined") {
-							sessionStorage.menu = "open";
-						}
-				});
-				$('.open-submenu').click( function (event) {
-					var submenu = $(event.target).closest('a').next();
-					if (submenu.hasClass('submenu-close')) {
-						submenu.removeClass('submenu-close');
-					}
-					else {
-						submenu.addClass('submenu-close');
-					}
-				});
-				$('#open-usuario').toggle(function () {
-							$("#sub-menu-usuario").removeClass("close-menu-usuario");
-							$("#sub-menu-config").addClass("close-menu-config");
-				}, function () {
-							$("#sub-menu-usuario").addClass("close-menu-usuario");
-				});
-				$('#open-config').toggle(function () {
-							$("#sub-menu-config").removeClass("close-menu-config");
-							$("#sub-menu-usuario").addClass("close-menu-usuario");
-				}, function () {
-							$("#sub-menu-config").addClass("close-menu-config");
-				});
-				$('#open-imprimir').toggle(function () {
-							$("#sub-menu-config").removeClass("close-menu-config");
-							$("#sub-menu-usuario").addClass("close-menu-usuario");
-				}, function () {
-							$("#sub-menu-config").addClass("close-menu-config");
-				});
-
-				if ($('.active').hasClass('submenu')) {
-					$('.active').closest('ul').removeClass('submenu-close');
-				}
-
-				if (typeof(Storage) !== "undefined") {
-					if (sessionStorage.menu == "close") {
-						$("#sidebar").addClass("colapsar");
-						$("#admin-content").addClass("expandir");
-						$(".menu-lateral li").addClass("colapsado-ok");
-						$(".remove-txt").addClass("kill-txt");
-						$('#closetab > span:first').removeClass('fa-chevron-left');
-						$('#closetab > span:first').addClass('fa-chevron-right');
-						$('#dp').addClass('dpCollapse');
-					}
-				}
-
-				$('#provider_date').datepicker({
-					dateFormat: 'dd/mm/yy',
-					firstDay: 1,
-					dayNames: [ "Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado" ],
-					dayNamesMin: [ "Do", "Lu", "Ma", "Mi", "Ju", "Vi", "Sá" ],
-					dayNamesShort: [ "Dom", "Lun", "Mar", "Mié", "Jue", "Vie", "Sáb" ],
-					onSelect: function() {
-						if ($('#service_provider_id').val() != "" && $('#provider_date').val() != "") {
-							$('#printingButton').removeAttr("disabled");
-						}
-						else {
-							$('#printingButton').attr("disabled", "disabled");
-						}
-					}
-				});
-
-				$('#provider_date').change(function() {
-					if ($('#location_id').val() != "" && $('#service_provider_id').val() != "" && $('#provider_date').val() != "") {
-						$('#printingButton').removeAttr("disabled");
-					}
-					else {
-						$('#printingButton').attr("disabled", "disabled");
-					}
-				});
-
-				$('#service_provider_id').change(function() {
-					if ($('#location_id').val() != "" && $('#service_provider_id').val() != "" && $('#provider_date').val() != "") {
-						$('#printingButton').removeAttr("disabled");
-					}
-					else {
-						$('#printingButton').attr("disabled", "disabled");
-					}
-				});
-
-				$('#location_id').change(function (event) {
-					$('#service_provider_id').find('option').remove().end();
-					$('#service_provider_id').append(
-						'<option value="">Elige al prestador...</option>'
-					);
-					<% if current_user.role_id != Role.find_by_name("Staff").id %>
-						$('#service_provider_id').append(
-							'<option value="0">Todos</option>'
-						);
-					<% end %>
-					if ($('#location_id').val() != "") {
-						$.getJSON('/local_providers', {location: event.target.value}, function (providersArray) {
-							$.each(providersArray, function (key, provider) {
-								$('#service_provider_id').append(
-									'<option value="' + provider.id + '">' + provider.public_name + '</option>'
-								);
-							});
-							$('#service_provider_id').removeAttr('disabled');
-						});
-					}
-					else {
-						$('#service_provider_id').attr("disabled", "disabled");
-					}
-					if ($('#location_id').val() != "" && $('#service_provider_id').val() != "" && $('#provider_date').val() != "") {
-						$('#printingButton').removeAttr("disabled");
-					}
-					else {
-						$('#printingButton').attr("disabled", "disabled");
-					}
-				});
-
-				$('#printingButton').click(function(){
-			        $(this).attr('href', '/service_provider/pdf.pdf?provider_date=' + $('#provider_date').val()+'&location_id=' + $('#location_id').val()+'&service_provider_id=' + $('#service_provider_id').val());
-			    });
-			});
-		</script>
+        $('#printingButton').click(function(){
+          $(this).attr('href', '/service_provider/pdf.pdf?provider_date=' + $('#provider_date').val()+'&location_id=' + $('#location_id').val()+'&service_provider_id=' + $('#service_provider_id').val());
+        });
+      });
+    </script>
+    
 		<!--Start of Crazy Egg Script-->
 		<%= javascript_include_tag 'crazy_egg' %>
 		<!--End of Crazy Egg Script-->

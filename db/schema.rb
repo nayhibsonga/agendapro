@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150415120007) do
+ActiveRecord::Schema.define(version: 20150511221227) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -79,6 +79,8 @@ ActiveRecord::Schema.define(version: 20150415120007) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "user_id"
+    t.text     "notes",               default: ""
+    t.text     "company_comment",     default: ""
   end
 
   add_index "booking_histories", ["booking_id"], name: "index_booking_histories_on_booking_id", using: :btree
@@ -160,6 +162,8 @@ ActiveRecord::Schema.define(version: 20150415120007) do
     t.integer  "birth_day"
     t.integer  "birth_month"
     t.integer  "birth_year"
+    t.string   "record"
+    t.string   "second_phone"
   end
 
   add_index "clients", ["company_id"], name: "index_clients_on_company_id", using: :btree
@@ -236,7 +240,7 @@ ActiveRecord::Schema.define(version: 20150415120007) do
     t.integer  "booking_confirmation_time",   default: 1,                     null: false
     t.integer  "booking_configuration_email", default: 0
     t.integer  "max_changes",                 default: 2
-    t.boolean  "booking_history",             default: false
+    t.boolean  "booking_history",             default: true
     t.boolean  "staff_code",                  default: false
     t.integer  "monthly_mails",               default: 0,                     null: false
     t.boolean  "allows_online_payment",       default: false
@@ -471,6 +475,16 @@ ActiveRecord::Schema.define(version: 20150415120007) do
     t.string   "last_name"
     t.string   "email"
     t.string   "phone"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "provider_break_repeats", force: true do |t|
+    t.datetime "start_date"
+    t.datetime "end_date"
+    t.string   "repeat_option"
+    t.string   "repeat_type"
+    t.integer  "times"
     t.datetime "created_at"
     t.datetime "updated_at"
   end

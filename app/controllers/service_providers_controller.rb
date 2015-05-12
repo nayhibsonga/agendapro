@@ -1,9 +1,9 @@
 class ServiceProvidersController < ApplicationController
   before_action :set_service_provider, only: [:show, :edit, :update, :destroy, :activate, :deactivate]
-  before_action :authenticate_user!, except: [:location_services, :location_providers, :provider_time]
-  before_action :quick_add, except: [:location_services, :location_providers, :provider_time]
+  before_action :authenticate_user!, except: [:location_services, :location_providers, :provider_time, :available_hours_week_html]
+  before_action :quick_add, except: [:location_services, :location_providers, :provider_time, :available_hours_week_html]
   load_and_authorize_resource
-  layout "admin", except: [:location_services, :location_providers, :provider_time]
+  layout "admin", except: [:location_services, :location_providers, :provider_time, :available_hours_week_html]
 
   # GET /service_providers
   # GET /service_providers.json
@@ -173,6 +173,14 @@ class ServiceProvidersController < ApplicationController
       end
     end
     render :json => array_result
+  end
+
+  def available_hours_week_html
+    if !params[:provider].blank? && !params[:service].blank? && !params[:local].blank? && !params[:date].blank?
+      render :json => ServiceProvider.available_hours_week_html(params[:provider], params[:service], params[:local], params[:date])
+    else
+      render :json => ''
+    end
   end
 
   private

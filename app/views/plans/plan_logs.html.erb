@@ -1,59 +1,55 @@
-<div class="row companies_header">
-  <ul class="nav nav-tabs">
-
-    <li><a id="companies_payments" href="/companies_payments">Estados de pagos</a></li>
-
-    <li><a id="companies_incomes" href="/companies_incomes">Ingresos mensuales</a></li>
-
-    <li><a id="companies_locations" href="/companies_locations">Clientes y locales</a></li>
-
-    <li><a id="companies_monthly_locations" href="/companies_monthly_locations">Locales mensuales</a></li>
-
-    <li><a id="companies_monthly_bookings" href="/companies_monthly_bookings">Resumen de reservas</a></li>
-
-    <li class="active"><%= link_to 'Empresas', companies_path, { :id => "companies" } %></li>
-
-  </ul>
-</div>
-<div class="container">
+<div class="container-fluid background-grey">
   <div class="row">
-    <section class="hgroup">
-      <h2>Log de Cambio de Plan</h2>
-      <h2 class="section_header">Intentos de agregar mes, la explicación en los detalles.</h2>
-      <div class="line-breadcrumb">
-        <ul class="breadcrumb pull-right">
-            <li><%= link_to "Resumen", dashboard_path %> </li>
-            <li><%= link_to "Empresas", companies_path %> </li>
-            <li class="active">Log Cambio de Plan</li>
-        </ul>
+    <div class="col-md-12">
+      <h2 class="text-green">Log de Cambio de Plan</h2>
+      <p>Intentos de agregar mes, la explicación en los detalles.</p>
     </div>
-    </section>
   </div>
 </div>
-
-<table class="table">
-	<thead>
-		<tr>
-			<th>Empresa</th>
-			<th>Plan Previo</th>
-			<th>Plan Nuevo</th>
-			<th>TRX ID</th>
-			<th>Creación</th>
-		</tr>
-	</thead>
-	<tbody>
-		<% @plan_logs.each do |plan_log| %>
-			<tr>
-				<td><%= Company.find(plan_log.company_id).name %></td>
-				<td><%= Plan.find(plan_log.prev_plan_id).name %></td>
-				<td><%= Plan.find(plan_log.new_plan_id).name %></td>
-				<td><%= plan_log.trx_id %></td>
-				<td><%= l plan_log.created_at, format: :short %></td>
-			</tr>
-		 <% end %>
-	</tbody>
-</table>
-
-<div class="row">
-	<%= will_paginate @plan_logs, renderer: BootstrapPagination::Rails %>
+<div class="container-fluid">
+  <div class="row">
+    <!-- Navegation Tabs -->
+    <div class="col-md-2">
+      <ul class="nav nav-pills nav-stacked tab-margin">
+        <li><a id="companies_payments" href="/companies_payments">Estados de pagos</a></li>
+        <li><a id="companies_incomes" href="/companies_incomes">Ingresos mensuales</a></li>
+        <li><a id="companies_locations" href="/companies_locations">Clientes y locales</a></li>
+        <li><a id="companies_monthly_locations" href="/companies_monthly_locations">Locales mensuales</a></li>
+        <li><a id="companies_monthly_bookings" href="/companies_monthly_bookings">Resumen de reservas</a></li>
+        <li class="active"><%= link_to 'Empresas', companies_path, { :id => "companies" } %></li>
+      </ul>
+    </div>
+    <!-- Panels -->
+    <div class="col-md-10 left-panel">
+      <div class="tab-margin">
+        <div class="row">
+          <div class="col-md-12">
+            <table class="table table-green">
+              <thead>
+                <tr>
+                  <th>Empresa</th>
+                  <th>Plan Previo</th>
+                  <th>Plan Nuevo</th>
+                  <th>TRX ID</th>
+                  <th>Creación</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% @plan_logs.each do |plan_log| %>
+                  <tr>
+                    <td><%= Company.find(plan_log.company_id).name %></td>
+                    <td><%= Plan.find(plan_log.prev_plan_id).name %></td>
+                    <td><%= Plan.find(plan_log.new_plan_id).name %></td>
+                    <td><%= plan_log.trx_id %></td>
+                    <td><%= l plan_log.created_at, format: :short %></td>
+                  </tr>
+                 <% end %>
+              </tbody>
+            </table>
+            <%= will_paginate @plan_logs, renderer: BootstrapPagination::Rails %>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>

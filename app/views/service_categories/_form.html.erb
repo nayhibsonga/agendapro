@@ -1,40 +1,43 @@
-<div class="container">
-  <div class="row well">
-    <%= form_for @service_category, :html => {:class => 'form-horizontal'} do |f| %>
-      <% if @service_category.errors.any? %>
-        <div id="error_explanation">
-          <h2><%= pluralize(@service_category.errors.count, "error") %> no permitió que la empresa sea creada:</h2>
-
-          <ul>
-          <% @service_category.errors.full_messages.each do |msg| %>
-            <li><%= msg %></li>
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-md-12">
+      <div class="well">
+        <%= form_for @service_category, :html => {:class => 'form-horizontal'} do |f| %>
+          <% if @service_category.errors.any? %>
+            <div id="error_explanation">
+              <h2><%= pluralize(@service_category.errors.count, "error") %> no permitió que la empresa sea creada:</h2>
+              <ul>
+                <% @service_category.errors.full_messages.each do |msg| %>
+                  <li><%= msg %></li>
+                <% end %>
+              </ul>
+            </div>
           <% end %>
-          </ul>
-        </div>
-      <% end %>
-
-      <% if current_user.role_id == Role.find_by_name("Super Admin").id %>
-      <div class="form-group">
-        <%= f.label :company_id, "Empresa", class: "col-sm-3 control-label" %>
-        <div class="col-sm-4">
-          <%= f.collection_select :company_id, Company.where(owned: false).order(:name), :id, :name, {}, { class: "form-control", required: true} %>
-        </div>
+          <% if current_user.role_id == Role.find_by_name("Super Admin").id %>
+          <div class="form-group">
+            <%= f.label :company_id, "Empresa", class: "col-md-3 control-label" %>
+            <div class="col-md-5">
+              <%= f.collection_select :company_id, Company.where(owned: false).order(:name), :id, :name, {}, { class: "form-control", required: true} %>
+              <span class="help-block"></span>
+            </div>
+          </div>
+          <% end %>
+          <div class="form-group has-feedback">
+            <%= f.label :name, 'Nombre de la Categoría', :class => 'col-md-3 control-label' %>
+            <div class="col-md-5">
+              <%= f.text_field :name, :autofocus => true, :required => true, :class => 'form-control', :placeholder => 'Categoría (requerido)' %>
+              <span class="help-block"></span>
+              <span class="form-control-feedback"></span>
+            </div>
+          </div>
+          <div class="form-group">
+            <div class="col-md-offset-3 col-md-5">
+              <%= f.submit 'Guardar', :class => 'btn btn-green' %>
+              <%= link_to 'Cancelar', service_categories_path, class: "btn btn-white" %>
+            </div>
+          </div>
+        <% end %>
       </div>
-      <% end %>
-      <div class="form-group has-feedback">
-        <%= f.label :name, 'Nombre de la Categoría', :class => 'col-sm-3 control-label' %>
-        <div class="col-sm-4">
-          <%= f.text_field :name, :autofocus => true, :required => true, :class => 'form-control', :placeholder => 'Categoría (requerido)' %>
-          <span class="help-block"></span>
-          <span class="form-control-feedback"></span>
-        </div>
-      </div>
-      <div class="form-group">
-        <div class="col-sm-offset-3 col-sm-4">
-          <%= f.submit 'Guardar', :class => 'btn btn-agendapro-claro' %>
-          <%= link_to 'Cancelar', service_categories_path, class: "btn btn-default" %>  
-        </div>
-      </div>
-    <% end %>
+    </div>
   </div>
 </div>

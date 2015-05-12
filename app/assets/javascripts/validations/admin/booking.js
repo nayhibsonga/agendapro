@@ -29,6 +29,10 @@ $(function() {
 			'booking[end_minutes]': {
 				require_from_group: [4, '.date-select']
 			},
+			'booking[client][identification_number]': {
+				rut: true,
+				minlength: 2
+			},
 			'booking[service_provider_id]': {
 				required: true
 			},
@@ -46,6 +50,7 @@ $(function() {
 			'booking[price]': {
 				min: 0
 			},
+
 			full_name: {
 				required: true,
 				minlength: 3
@@ -119,5 +124,9 @@ $(function() {
 		submitHandler: function(form) {
 			// form.submit();
 		}
+	});
+	$('#booking_client_identification_number').change(function() {
+		var rut_string = $('#booking_client_identification_number').val()
+		$('#booking_client_identification_number').val(rut_format(rut_string));
 	});
 });

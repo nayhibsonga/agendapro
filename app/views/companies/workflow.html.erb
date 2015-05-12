@@ -44,16 +44,16 @@
   <div class="container">
     <div class="row">
       <% if !@company.description.blank? %>
-        <div class="col-md-4 company-header-left company-header">
+        <div class="col-xs-5 col-md-4 company-header-left company-header">
           <div class="row">
-            <div class="col-md-3">
+            <div class="col-xs-4 col-md-3">
               <% if @company.logo_url %>
                 <%= image_tag @company.logo_url.to_s, :size => "80x80", :alt => @company.name, :class => "company-logo" %>
               <% else %>
                 <%= image_tag 'logo_vacio.png', :alt => 'AgendaPro', :size => "80x80", :class => "company-logo" %>
               <% end %>
             </div>
-            <div class="col-md-9">
+            <div class="col-xs-8 col-md-9">
               <div class="row">
                 <div class="col-md-12 company-name">
                     <%= @company.name %>
@@ -70,12 +70,12 @@
             </div>
           </div>
         </div>
-        <div class="col-md-4 company-header-center company-header">
+        <div class="col-xs-4 col-md-4 company-header-center company-header">
           <div class="header-description">
             <%= @company.description %>
           </div>
         </div>
-        <div class="col-md-4 company-header-right company-header">
+        <div class="col-xs-3 col-md-4 company-header-right company-header">
           <% if @selectedLocation %>
             <div id="phone-info">
               <%= image_tag 'telefono.png', :alt => '', :size => "12x14", :class=>"loc-icon" %>&nbsp;
@@ -84,8 +84,8 @@
               </span><br />
               <%= image_tag 'ubicacion.png', :alt => '', :size => "12x14", :class=>"loc-icon" %>&nbsp;
               <span id="phone-address">
-                <%= if !@selectedLocation.outcall then @selectedLocation.address+', '+@selectedLocation.district.name else "A Domicilio" end %>
-                <br><%= if !@selectedLocation.second_address.blank? then @selectedLocation.second_address else '' end %>
+                <% @second_address = @selectedLocation.second_address.blank? ? '' : ', ' + @selectedLocation.second_address %>
+                <%= if !@selectedLocation.outcall then @selectedLocation.address+@second_address+', '+@selectedLocation.district.name else "A Domicilio" end %>
               </span>
             </div>
           <% else %>
@@ -99,16 +99,16 @@
           <div style="clear: both;"></div>
         </div>
       <% else %>
-        <div class="col-md-4 company-header-left company-header" style="border-right: 1px solid #949292;">
+        <div class="col-xs-5 col-md-4 company-header-left company-header" style="border-right: 1px solid #949292;">
           <div class="row">
-            <div class="col-md-3">
+            <div class="col-xs-4 col-md-3">
               <% if @company.logo_url %>
                 <%= image_tag @company.logo_url.to_s, :size => "80x80", :alt => @company.name, :class => "company-logo" %>
               <% else %>
                 <%= image_tag 'logo_vacio.png', :alt => 'AgendaPro', :size => "80x80", :class => "company-logo" %>
               <% end %>
             </div>
-            <div class="col-md-9">
+            <div class="col-xs-8 col-md-9">
               <div class="row">
                 <div class="col-md-12 company-name">
                     <%= @company.name %>
@@ -125,7 +125,7 @@
             </div>
           </div>
         </div>
-        <div class="col-md-8 company-header-center2 company-header">
+        <div class="col-xs-7 col-md-8 company-header-center2 company-header">
           <% if @selectedLocation %>
             <div id="phone-info">
               <%= image_tag 'telefono.png', :alt => '', :size => "12x14", :class=>"loc-icon" %>&nbsp;
@@ -134,8 +134,8 @@
               </span><br />
               <%= image_tag 'ubicacion.png', :alt => '', :size => "12x14", :class=>"loc-icon" %>&nbsp;
               <span id="phone-address">
-                <%= if !@selectedLocation.outcall then @selectedLocation.address+', '+@selectedLocation.district.name else "A Domicilio" end %>
-                <br><%= if !@selectedLocation.second_address.blank? then @selectedLocation.second_address else '' end %>
+                <% @second_address = @selectedLocation.second_address.blank? ? '' : ', ' + @selectedLocation.second_address %>
+                <%= if !@selectedLocation.outcall then @selectedLocation.address+@second_address+', '+@selectedLocation.district.name else "A Domicilio" end %>
               </span>
             </div>
           <% else %>
@@ -194,7 +194,7 @@
                 </div>
               </div>
               <div class="col-sm-3 col-md-4" style="text-align: right;">
-                
+
               </div>
               <% if @company.company_setting.allows_optimization %>
               <div class="col-sm-3" style="text-align: right; color: #505050;">
@@ -237,7 +237,6 @@
                   <div class="sub-workflow dark-gray">Selecciona un staff para ver su horario</div>
                     <div class="panel panel-default light-gray">
                       <ul class="list-group" id="staff-selector">
-                        <span style="color: #ccc;"><i class="fa fa-spinner fa-spin fa-lg"></i></span>
                       </ul>
                     </div>
                 </div>
@@ -280,16 +279,15 @@
               </div>
             </div>
             <div class="row change-bar">
-              <div class="col-sm-3">
+              <div class="col-xs-12 col-md-5 col-md-push-2">
+                <p class="p-label"><span class="wf-label label-available">&nbsp;</span> Disponible<span class="wf-label label-past">&nbsp;</span> No Disponible<span class="wf-label label-unavailable">&nbsp;</span> Ocupado</p>
+              </div>
+              <div class="col-xs-4 col-md-2 col-md-pull-5">
                 <div class="btn-change btn-prev">
                   <a class="prev2 prev-btn"><i class="fa fa-chevron-left prev-arrow"></i> Anterior</a>
                 </div>
               </div>
-              <div class="col-sm-4">
-                <p class="p-label"><span class="wf-label label-available">&nbsp;</span> Disponible<span class="wf-label label-past">&nbsp;</span> No Disponible<span class="wf-label label-unavailable">&nbsp;</span> Ocupado</p>
-                
-              </div>
-              <div class="col-sm-5">
+              <div class="col-xs-8 col-md-5">
                 <a class="btn btn-large btn-green btn-add-service" style="padding: 5px 12px; margin-right: 10px; font-size: 20px;" onclick="addNewService()"><i class="fa fa-plus"></i> Agregar Otro Servicio</a>
                 <div class="btn-change btn-next">
                   <a class="next2 next-btn">Siguiente <i class="fa fa-chevron-right next-arrow"></i></a>
@@ -379,22 +377,22 @@
                         </div>
                       </div>
                       <div class="row">
-                        <div class="col-md-6 dark-gray">
+                        <div class="col-sm-6 dark-gray">
                           Email
                         </div>
-                        <div class="col-md-6 dark-gray">
+                        <div class="col-sm-6 dark-gray">
                           Teléfono
                         </div>
                       </div>
                       <div class="row">
-                        <div class="col-md-6">
+                        <div class="col-sm-6">
                           <div class="form-group has-feedback">
                             <%= email_field_tag(:email, nil, :class => "form-control light-gray", :placeholder => "ejemplo@dominio.com (requerido)", :required => true) %>
                             <span class="help-block"></span>
                             <span class="form-control-feedback"></span>
                           </div>
                         </div>
-                        <div class="col-md-6">
+                        <div class="col-sm-6">
                           <div class="form-group has-feedback">
                             <%= telephone_field_tag(:phone, nil, :class => "form-control light-gray", :placeholder => "1122334455 (requerido)", :required => true) %>
                             <span class="help-block"></span>
@@ -466,12 +464,12 @@
                     </div>
                     <% end %>
                     <div class="row" style="margin-top: 20px;">
-                      <div class="col-md-6">
+                      <div class="col-sm-6">
                         <div class="btn-change btn-prev">
                           <a class="prev2 prev-btn"><i class="fa fa-chevron-left prev-arrow"></i> Anterior</a>
                         </div>
                       </div>
-                      <div class="col-md-6" id="reservar1">
+                      <div class="col-sm-6" id="reservar1">
                         <button type="submit" class="submitBtn">Reservar</button>
                       </div>
                     </div>
@@ -479,7 +477,7 @@
                 </div>
                 <!-- FIN FORM -->
               </div>
-              <div class="col-md-6">
+              <div class="col-sm-6">
                 <div id="resumen-reserva">
                   <div class="resumen-heading">
                     Resumen de tu Reserva
@@ -495,45 +493,45 @@
                   <!--<div class="row">
                     <div class="col-md-6">
 
-                      <a href="#" id="openPayOptions">Seleccionar opción de pago</a>
+                      <a href="#" id="openPayOptions">Seleccionar opciÃ³n de pago</a>
 
                     </div>
                   </div>-->
                   <% if @location.company.company_setting.allows_online_payment %>
                     <div class="row">
-                      <div class="col-md-6">
+                      <div class="col-sm-6">
                         <div>
                           <button type="submit" data-loading-text = "Cargando" class="payBtn">Pagar</button>
                         </div>
                       </div>
-                      <div class="col-md-6">
+                      <div class="col-sm-6">
                         <button type="submit" data-loading-text="Cargando..." class="submitBtn">Reservar</button>
                       </div>
                     </div>
                     <div class="row">
-                      <div class="col-md-6">
+                      <div class="col-sm-6">
                         <div id="discount" style="color: #505050; padding: 5px 5px 5px 5px;">
                         </div>
                       </div>
-                      <div class="col-md-6">
+                      <div class="col-sm-6">
                         <div id="normal-book" style="color: #505050; padding: 5px 5px 5px 5px; float: right; text-align: right;">
                         </div>
                       </div>
                     </div>
                     <div class="row">
-                      <div class="col-md-6">
+                      <div class="col-sm-6">
                         <div style="color: #505050; padding: 5px 5px 5px 5px;">
-                          <a href="#" id="open-online-policy" data-toggle="modal" data-target="#online-policy" style="color: #505050 !important; border-top: 1px solid #949292; padding-top: 5px;"><b><%= image_tag 'icono_pago.png', :alt => 'Pago' %>Política de pagos en línea.</b></a>
+                          <a href="#" id="open-online-policy" data-toggle="modal" data-target="#online-policy" style="color: #505050 !important; border-top: 1px solid #949292; padding-top: 5px;"><b><%= image_tag 'icono_pago.png', :alt => 'Pago' %>Política de pagos en lÃínea.</b></a>
                         </div>
                       </div>
-                      <div class="col-md-6">
+                      <div class="col-sm-6">
                         <div style="color: #505050; padding: 5px 5px 5px 5px; float: right; text-align: right;">
                         </div>
                       </div>
                     </div>
                   <% else %>
                     <div class="row">
-                      <div class="col-md-6 col-md-offset-6">
+                      <div class="col-sm-6 col-md-offset-6">
                         <button type="submit" data-loading-text="Cargando..." class="submitBtn">Reservar</button>
                       </div>
                     </div>
@@ -716,15 +714,12 @@
               date: newDate,
               service: $('input[name="serviceRadio"]:checked').val(),
             }
-            console.log(data);
 
             if (calendar) {
-              calendar.rebuild('/get_available_time.json', data);
-              console.log("Rebuild calendar.");
+              calendar.rebuild('/available_hours_week_html', data);
             }
             else {
-              calendar = new Calendar('/get_available_time.json', data);
-              console.log("New calendar.");
+              calendar = new Calendar('/available_hours_week_html', data);
             }
 
             $(document).on('hourClick', function (e) {
@@ -850,7 +845,7 @@
         $("#online-policy").modal('show');
       });
 
-      
+
 
       $('#select-medio').click(function(){
         console.log('clicked select medio');

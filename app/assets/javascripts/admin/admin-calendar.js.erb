@@ -19,7 +19,11 @@ function loadProviders () {
 				if (providersArray.length > 0) {
 					$('#provider_break_service_provider_id').find('option').remove().end();
 					$('#booking_service_provider_id').find('option').remove().end();
-					$('#providers-div').append('<select class="form-control" id="providers-selector"><option value="0">Todos</option></select>');
+					$('#providers-div').append('<select class="form-control" id="providers-selector"></select>');
+					if (providersArray.length > 1) {
+						$('#providers-selector').append('<option value="0">Todos</option>');
+						$('#provider_break_service_provider_id').append('<option value="0">Todos</option>');
+					}
 					$.each(providersArray, function (key, provider) {
 						$('#providers-selector').append('<option name="providerRadio" value="'+provider.id+'">'+provider.public_name+'</option>');
 						resources.push({id: provider.id, name: provider.public_name});
@@ -31,11 +35,8 @@ function loadProviders () {
 							.append('<option value="'+ provider.id +'">'+ provider.public_name +'</option>')
 						;
 					});
-					$('#provider_break_service_provider_id').append(
-						'<option value="0">Todos</option>'
-					);
 					$('#providers-selector').change(function() {
-						providerId = parseInt($('#providers-selector').val())
+						providerId = parseInt($('#providers-selector').val());
 						if (providerId == 0) {
 							loadLocationTime (localId, resources);
 						}
@@ -44,7 +45,12 @@ function loadProviders () {
 						}
 
 					});
-					loadLocationTime (localId, resources);
+					if (providersArray.length > 1) {
+						loadLocationTime (localId, resources);
+					}
+					else {
+						loadProviderTime(parseInt($('#providers-selector').val()));
+					}
 					return true;
 				}
 				else {
@@ -94,10 +100,14 @@ function loadProviderTime (providerId) {
 }
 
 function setAspectRatio() {
-	var width = $('#admin-content').outerWidth();
-	var contentHeight = $('.content-fix').outerHeight();
-	var height = window.innerHeight - 50/*margin de content-fix*/ - 5/*margin entre calendar y content-fix*/ - 45/*Height del header del calendario*/ - contentHeight;
-	return width / height;
+	var calendarWidth = $('#calendar').outerWidth();
+	var calendarHeader = 38; //Altura del header del calendario
+	var headerHeight = $('.navbar-admin').outerHeight();
+	var selectsHeight = $('.background-grey').outerHeight();
+	var margin = 5; //Margen entre el calendario y la barra
+
+	var height = window.innerHeight - headerHeight - calendarHeader - selectsHeight - margin;
+	return calendarWidth / height;
 }
 
 var bookingModalOpen = false;
@@ -126,17 +136,30 @@ function loadResourcesCalendar (startTime, endTime, hiddenDays, resourcesArray, 
 			};
 		},
 		dayClick: function(date, allDay, jsEvent, view) {
-			var p = $('.popover').parent();
-			$('.popover').empty();
-			$('.popover').html('<a id="closePopover" class="closePopover"><i class="fa fa-times"></i></a><br /><a id="bookingPopover" class="actionPopover">Agregar Reserva</a><br /><a id="breakPopover" class="actionPopover">Bloquear Horario</a>');
+			var p = $('#popover').parent();
+			$('#popover').empty();
+			$('#popover').removeClass('popover-right').removeClass('popover-left');
+			$('#popover').html('<a id="closePopover" class="closePopover"><i class="fa fa-times"></i></a><br /><a id="bookingPopover" class="actionPopover">Agregar Reserva</a><br /><a id="breakPopover" class="actionPopover">Bloquear Horario</a>');
 			var offX  = (jsEvent.offsetX || jsEvent.clientX - $(jsEvent.target).offset().left);
-			$('.popover').css('left', offX + 60 + 'px');
-			$('.popover').css('top', jsEvent.pageY - p.offset().top - 40 + 'px');
+
+			if (offX + 75 > p.width() - 150) {
+				$('#popover').addClass('popover-left');
+				offX = offX - 150;
+			}
+			else {
+				$('#popover').addClass('popover-right');
+			}
+
+			$('#popover').css('left', offX + 75 + 'px');
+			$('#popover').css('top', jsEvent.pageY - p.offset().top - 35 + 'px');
+
+			// window.console.log(offX + 60);
+			// window.console.log(jsEvent.pageY - p.offset().top - 40);
 
 			var column_click = $(this).context.cellIndex;
 			var resourceId = view.resources[column_click - 1].id
 			$('#closePopover').click(function() {
-				$('.popover').hide();
+				$('#popover').hide();
 			});
 			$('#bookingPopover').click(function() {
 				if (!bookingModalOpen) {
@@ -144,13 +167,13 @@ function loadResourcesCalendar (startTime, endTime, hiddenDays, resourcesArray, 
 					createBookingModal(date, resourceId);
 
 				};
-				$('.popover').hide();
+				$('#popover').hide();
 			});
 			$('#breakPopover').click(function() {
 				createBreakModal(date, resourceId);
-				$('.popover').hide();
+				$('#popover').hide();
 			});
-			$('.popover').show();
+			$('#popover').show();
 		},
 
 		eventRender: function(event, element) {
@@ -186,14 +209,6 @@ function loadResourcesCalendar (startTime, endTime, hiddenDays, resourcesArray, 
 			   });
 			}
 		},
-		//eventMouseover: function(calEvent, domEvent) {
-		// 	var layer =	"<div id='events-layer' class='fc-transparent' style='position:absolute; width:100%; height:100%; top:-1px; text-align:right; z-index:100'>asdfff</div>";
-		// 	$(this).append(layer);
-		// },
-
-		// eventMouseout: function(calEvent, domEvent) {
-		// 	$(this).find('div[id*=events-layer]').remove();
-		// },
 		firstDay: 1,	//Lunes
 		defaultView: 'resourceDay',
 		allDaySlot: false,
@@ -234,12 +249,6 @@ function loadResourcesCalendar (startTime, endTime, hiddenDays, resourcesArray, 
 			$('#calendar').fullCalendar('option', 'aspectRatio', setAspectRatio());
 		}
 	});
-	// Posible acercamiento para pintar celdas la hacer hover (falta un for para cantidad de resources)
-	// $("table.fc-agenda-slots td.fc-widget-content").each(function () {
-	//     $(this).width(($("table.fc-agenda-days thead th.fc-col0").width()));
-	//     $(this).after("<td class=\"fc-widget-content\"><div style=\"position:relative\"></div></td>");
-	//     $(this).after("<td class=\"fc-widget-content\" style=\"width:" + $("table.fc-agenda-days thead th.fc-col1").width() + "px\"><div style=\"position:relative\"></div></td>");
-	// });
 	$('.fc-button').click(function (event) {
 		var providerId = parseInt($('#providers-selector').val());
 		loadProviderEvents(providerId);
@@ -252,7 +261,8 @@ function loadWeekCalendar (startTime, endTime, hiddenDays, resourcesArray, provi
 	startTime = startTime || 0;
 	endTime = endTime || 24;
 	// var startHour = startTime || 9;
-	hiddenDays = [];
+	// hiddenDays = $('#locals-selector').find(':selected').data('closed-days');
+	hiddenDays = []
 
 	$('#calendar').fullCalendar('removeEvents');
 	$('#calendar').empty();
@@ -262,7 +272,7 @@ function loadWeekCalendar (startTime, endTime, hiddenDays, resourcesArray, provi
 			center: 'prev,today,next',
 			right: ''
 		},
-		hiddenDays: hiddenDays,
+		hiddenDays: [ 2, 4 ] ,
 		resources: resourcesArray,
 		eventClick: function(event) {
 			if (!bookingModalOpen) {
@@ -273,8 +283,18 @@ function loadWeekCalendar (startTime, endTime, hiddenDays, resourcesArray, provi
 		dayClick: function(date, allDay, jsEvent, view) {
 			var p = $('.popover').parent();
 			$('.popover').empty();
+			$('#popover').removeClass('popover-right').removeClass('popover-left');
 			$('.popover').html('<a id="closePopover" class="closePopover"><i class="fa fa-times"></i></a><br /><a id="bookingPopover" class="actionPopover">Agregar Reserva</a><br /><a id="breakPopover" class="actionPopover">Bloquear Horario</a>');
 			var offX  = (jsEvent.offsetX || jsEvent.clientX - $(jsEvent.target).offset().left);
+
+			if (offX + 75 > p.width() - 150) {
+				$('#popover').addClass('popover-left');
+				offX = offX - 150;
+			}
+			else {
+				$('#popover').addClass('popover-right');
+			}
+
 			$('.popover').css('left', offX + 60 + 'px');
 			$('.popover').css('top', jsEvent.pageY - p.offset().top - 40 + 'px');
 			$('#closePopover').click(function() {
@@ -368,21 +388,11 @@ function loadWeekCalendar (startTime, endTime, hiddenDays, resourcesArray, provi
 			$('#calendar').fullCalendar('option', 'aspectRatio', setAspectRatio());
 		}
 	});
-	// $("table.fc-agenda-slots td.fc-widget-content").each(function () {
-	//     $(this).width(($("table.fc-agenda-days thead th.fc-col0").width()));
-	//     $(this).after("<td class=\"fc-widget-content\"><div style=\"position:relative\"></div></td>");
-	//     $(this).after("<td class=\"fc-widget-content\" style=\"width:" + $("table.fc-agenda-days thead th.fc-col5").width() + "px\"><div style=\"position:relative\"></div></td>");
-	//     $(this).after("<td class=\"fc-widget-content\" style=\"width:" + $("table.fc-agenda-days thead th.fc-col4").width() + "px\"><div style=\"position:relative\"></div></td>");
-	//     $(this).after("<td class=\"fc-widget-content\" style=\"width:" + $("table.fc-agenda-days thead th.fc-col3").width() + "px\"><div style=\"position:relative\"></div></td>");
-	//     $(this).after("<td class=\"fc-widget-content\" style=\"width:" + $("table.fc-agenda-days thead th.fc-col2").width() + "px\"><div style=\"position:relative\"></div></td>");
-	//     $(this).after("<td class=\"fc-widget-content\" style=\"width:" + $("table.fc-agenda-days thead th.fc-col1").width() + "px\"><div style=\"position:relative\"></div></td>");
-	// });
 	$('.fc-button').click(function () {
 		var providerId = parseInt($('#providers-selector').val());
 		loadProviderEvents(providerId);
 	});
 	loadProviderEvents(providerId);
-	// $('td.fc-header-left').append('<span class="fc-header-title"><a class="btn btn-agendapro-claro print-schedule" href="/service_provider/pdf.pdf?service_provider_id='+providerId+'"><i class="fa fa-print"></i> Horario de Hoy</a></span>');
 }
 
 function loadProviderEvents(providerId) {
@@ -465,6 +475,8 @@ function editBookingModal(eventId) {
 			$('#booking_client_birth_month option[value="'+booking.birth_month+'"]').attr("selected",true);
 			$('#booking_client_birth_year option[value="'+booking.birth_year+'"]').attr("selected",true);
 			$('#booking_client_age').val(booking.age);
+			$('#booking_client_second_phone').val(booking.second_phone);
+			$('#booking_client_record').val(booking.record);
 			$('#booking_client_gender option[value="'+booking.gender+'"]').attr("selected",true);
 			$('#booking_notes').val(booking.notes);
 			$('#booking_company_comment').val(booking.company_comment);
@@ -513,15 +525,15 @@ function editBookingModal(eventId) {
 			$('.booking-modal-footer').empty();
 			$('.booking-modal-title').append('Editando Reserva');
 			$('.booking-modal-footer').append(
-				'<a class="btn btn-agendapro-oscuro pull-left" href="/bookings/' + eventId + '.pdf">Imprimir</a>' +
+				'<a class="btn btn-white pull-left" href="/bookings/' + eventId + '.pdf">Imprimir</a>' +
 				'<button type="button" class="btn btn-default btn-close booking-button" data-dismiss="modal">Cerrar</button>' +
-				'<button type="button" class="btn btn-agendapro-claro booking-button" onclick="editBooking('+eventId+')">Guardar</button>'
+				'<button type="button" class="btn btn-green booking-button" onclick="editBooking('+eventId+')">Guardar</button>'
 			);
 			$('#cancelBookingDiv').remove();
 			$('#booking_status_id').closest('.col-md-6').append(
 				'<div class="form-group" id="cancelBookingDiv">' +
 					'<div class="col-sm-offset-4 col-sm-8">' +
-						'<button type="button" class="btn btn-danger btn-ss btn-block booking-button" onclick="deleteBooking('+eventId+')" id="cancelBookingButton">Cancelar Reserva</button>' +
+						'<button type="button" class="btn btn-red btn-ss btn-block booking-button" onclick="deleteBooking('+eventId+')" id="cancelBookingButton">Cancelar Reserva</button>' +
 					'</div>' +
 				'</div>'
 			);
@@ -612,6 +624,8 @@ function createBookingModal(date, provider_id) {
 			$('#booking_client_birth_month option[value=""]').prop('selected', true);
 			$('#booking_client_birth_year option[value=""]').prop('selected', true);
 			$('#booking_client_age').val('');
+			$('#booking_client_second_phone').val('');
+			$('#booking_client_record').val('');
 			$('#booking_client_gender option[value="0"]').prop('selected', true);
 			$('#booking_notes').val('');
 			$('#booking_company_comment').val('');
@@ -631,8 +645,8 @@ function createBookingModal(date, provider_id) {
 				// '<button type="button" class="btn btn-agendapro-claro booking-button pull-left" data-toggle="modal" data-target="#hoursOptimizer">Buscador de Horas</button>' +
 			$('.booking-modal-footer').append(
 				'<button type="button" class="btn btn-default btn-close booking-button" data-dismiss="modal">Cerrar</button>' +
-				'<button type="button" class="btn btn-warning booking-button" onclick="addNewService()">Agregar Otro Servicio</button>' +
-				'<button type="button" class="btn btn-agendapro-claro booking-button" onclick="createBooking()">Guardar</button>'
+				'<button type="button" class="btn btn-orange booking-button" onclick="addNewService()">Agregar Otro Servicio</button>' +
+				'<button type="button" class="btn btn-green booking-button" onclick="createBooking()">Guardar</button>'
 			);
 
 			if (provider_id) {
@@ -654,7 +668,6 @@ function createBookingModal(date, provider_id) {
 		}
 		else {
 			alert('Este local no tiene prestadores o servicios\nPor favor completa los datos necesarios para poder generar reservas en este local.');
-			// alertId.showAlert('<h3>Este local no tiene prestadores o servicios</h3>Por favor complete los datos antes de reservar.');
 			bookingModalOpen = false;
 		}
 	});
@@ -754,6 +767,8 @@ function jsonBooking() {
 		"client_birth_month": parseInt($('#booking_client_birth_month').val()) > 0 ? parseInt($('#booking_client_birth_month').val()) : "",
 		"client_birth_year": parseInt($('#booking_client_birth_year').val()) > 0 ? parseInt($('#booking_client_birth_year').val()) : "",
 		"client_age": $('#booking_client_age').val(),
+		"client_record": $('#booking_client_record').val(),
+		"client_second_phone": $('#booking_client_second_phone').val(),
 		"client_gender": parseInt($('#booking_client_gender').val()) > 0 ? parseInt($('#booking_client_gender').val()) : "",
 		"client_identification_number": $('#booking_client_identification_number').val(),
 		"notes": $('#booking_notes').val(),
@@ -779,6 +794,10 @@ function editDrag(event) {
 		var eventJSON = {start: startString, end: endString};
 	}
 	if (event.id.toString().charAt(0) === 'b') {
+		var break_service_providers_ids = new Array();
+		break_service_providers_ids.push(event.resourceId)
+		eventJSON = {start: startString, end: endString, service_provider_id: break_service_providers_ids, provider_lock: false};
+
 		if (confirm('¿Estás seguro que deseas modificar el bloqueo de horario?')) {
 			$.ajax({
 				type: 'PATCH',
@@ -1109,8 +1128,26 @@ function saveBookingBuffer () {
 }
 
 function saveBreak (typeURL, extraURL) {
+	var break_service_providers_ids = new Array();
+	$(".providers_check_boxes").each(function(){
+		if($(this).prop("checked"))
+		{
+			break_service_providers_ids.push($(this).val());
+		}
+	});
+
+	var startDate = new Date(parseInt($('#provider_break_start_1i').val()), parseInt($('#provider_break_start_2i').val())-1, parseInt($('#provider_break_start_3i').val()), parseInt($('#provider_break_start_4i').val()), parseInt($('#provider_break_start_5i').val()), 0);
+
+	var endDate = new Date(parseInt($('#provider_break_end_1i').val()), parseInt($('#provider_break_end_2i').val())-1, parseInt($('#provider_break_end_3i').val()), parseInt($('#provider_break_end_4i').val()), parseInt($('#provider_break_end_5i').val()), 0);
+
+	if (startDate.getTime() >= endDate.getTime())
+	{
+		alert("La fecha de fin no puede ser anterior o igual a la de inicio.");
+		return false;
+	}
+
 	var breakJSON = {
-		"service_provider_id": $('#provider_break_service_provider_id').val(),
+		"service_provider_id": break_service_providers_ids,
 		"name": $('#provider_break_name').val(),
 		"start": $('#provider_break_start_1i').val() +"-"+ $('#provider_break_start_2i').val() +"-"+ $('#provider_break_start_3i').val() +"T"+ $('#provider_break_start_4i').val() +":"+ $('#provider_break_start_5i').val() +":00Z",
 		"end": $('#provider_break_end_1i').val() +"-"+ $('#provider_break_end_2i').val() +"-"+ $('#provider_break_end_3i').val() +"T"+ $('#provider_break_end_4i').val() +":"+ $('#provider_break_end_5i').val() +":00Z",
@@ -1128,38 +1165,16 @@ function saveBreak (typeURL, extraURL) {
 		url: '/provider_breaks'+extraURL+'.json',
 		data: { "provider_break": breakJSON },
 		dataType: 'json',
-		success: function(provider_break){
+		success: function(provider_breaks){
 			switch(typeURL) {
 				case 'POST':
 					$('.break-button').attr("disabled", "disabled");
 					$( '<span id="small_loader"><i class="fa fa-spinner fa-spin"></i> </span>' ).insertBefore( $( ".btn-close" ) );
 					var warnings = '';
-					if ($('#provider_break_service_provider_id').val() != 0 && $('#break_repeat').val() == "never") {
-						var label = provider_break.name;
-						if (label == null) {
-							label = 'Hora Bloqueada';
-						}
-						var events = {
-							id: 'b'+provider_break.id,
-							title: label,
-							allDay: false,
-							start: provider_break.start,
-							end: provider_break.end,
-							resourceId: parseInt(provider_break.service_provider_id),
-							textColor: textColors[7],
-							borderColor: textColors[7],
-							backgroundColor: backColors[7]
-						};
-						$('#calendar').fullCalendar('renderEvent', events, true);
 
-						$('#bookingAlerts').hide();
-						if (provider_break.warnings && provider_break.warnings.length > 0) {
-							for (i in provider_break.warnings) {
-								warnings += provider_break.warnings[i] + '. ';
-							}
-						}
-					} else{
-						$.each(provider_break, function (key, provider_break) {
+					if($("#providers-selector").val() == "0")
+					{
+						$.each(provider_breaks, function (key, provider_break) {
 							var label = provider_break.name;
 							if (label == null) {
 								label = 'Hora Bloqueada';
@@ -1175,14 +1190,45 @@ function saveBreak (typeURL, extraURL) {
 								borderColor: textColors[7],
 								backgroundColor: backColors[7]
 							};
-							if (provider_break.warnings.length > 0) {
+							if (provider_break.warnings && provider_break.warnings.length > 0) {
 								for (i in provider_break.warnings) {
 									warnings += provider_break.warnings[i] + '. ';
 								}
 							}
 							$('#calendar').fullCalendar('renderEvent', events, true);
+
 						});
-					};
+					}
+					else
+					{
+						$.each(provider_breaks, function (key, provider_break) {
+							if ($("#providers-selector").val() == provider_break.service_provider_id)
+							{
+								var label = provider_break.name;
+								if (label == null) {
+									label = 'Hora Bloqueada';
+								};
+								var events = {
+									id: 'b'+provider_break.id,
+									title: label,
+									allDay: false,
+									start: provider_break.start,
+									end: provider_break.end,
+									resourceId: parseInt(provider_break.service_provider_id),
+									textColor: textColors[7],
+									borderColor: textColors[7],
+									backgroundColor: backColors[7]
+								};
+								if (provider_break.warnings && provider_break.warnings.length > 0) {
+									for (i in provider_break.warnings) {
+										warnings += provider_break.warnings[i] + '. ';
+									}
+								}
+								$('#calendar').fullCalendar('renderEvent', events, true);
+							}
+						});
+					}
+
 					$("#break-loader").hide();
 					$("#new_provider_break").show();
 					$(".break-modal-footer").show();
@@ -1200,58 +1246,41 @@ function saveBreak (typeURL, extraURL) {
 					$('.break-button').attr("disabled", "disabled");
 					$( '<span id="small_loader"><i class="fa fa-spinner fa-spin"></i> </span>' ).insertBefore( $( ".btn-close" ) );
 					var warnings = '';
-					if ($('#provider_break_service_provider_id').val() != 0) {
+					
+					$.each(provider_breaks, function (key, provider_break) {
 						var label = provider_break.name;
 						if (label == null) {
 							label = 'Hora Bloqueada';
 						}
 						event = $('#calendar').fullCalendar('clientEvents', 'b'+provider_break.id)[0];
-						event.title = label;
-						event.start = provider_break.start;
-						event.end = provider_break.end;
-						event.resourceId = parseInt(provider_break.service_provider_id);
-						newProviderId = provider_break.service_provider_id;
-						$('#calendar').fullCalendar('updateEvent', event);
-						if (provider_break.warnings.length > 0) {
+						if (event) {
+							event.title = label;
+							event.start = provider_break.start;
+							event.end = provider_break.end;
+							event.resourceId = parseInt(provider_break.service_provider_id);
+							newProviderId = provider_break.service_provider_id;
+							$('#calendar').fullCalendar('updateEvent', event);
+						} else {
+							var events = {
+								id: 'b'+provider_break.id,
+								title: label,
+								allDay: false,
+								start: provider_break.start,
+								end: provider_break.end,
+								resourceId: parseInt(provider_break.service_provider_id),
+								textColor: textColors[7],
+								borderColor: textColors[7],
+								backgroundColor: backColors[7]
+							};
+							$('#calendar').fullCalendar('renderEvent', events, true);
+						};
+						if (provider_break.warnings && provider_break.warnings.length > 0) {
 							for (i in provider_break.warnings) {
 								warnings += provider_break.warnings[i] + '. ';
-							}
-						}
-					} else{
-						$.each(provider_break, function (key, provider_break) {
-							var label = provider_break.name;
-							if (label == null) {
-								label = 'Hora Bloqueada';
-							}
-							event = $('#calendar').fullCalendar('clientEvents', 'b'+provider_break.id)[0];
-							if (event) {
-								event.title = label;
-								event.start = provider_break.start;
-								event.end = provider_break.end;
-								event.resourceId = parseInt(provider_break.service_provider_id);
-								newProviderId = provider_break.service_provider_id;
-								$('#calendar').fullCalendar('updateEvent', event);
-							} else {
-								var events = {
-									id: 'b'+provider_break.id,
-									title: label,
-									allDay: false,
-									start: provider_break.start,
-									end: provider_break.end,
-									resourceId: parseInt(provider_break.service_provider_id),
-									textColor: textColors[7],
-									borderColor: textColors[7],
-									backgroundColor: backColors[7]
-								};
-								$('#calendar').fullCalendar('renderEvent', events, true);
 							};
-							if (provider_break.warnings.length > 0) {
-								for (i in provider_break.warnings) {
-									warnings += provider_break.warnings[i] + '. ';
-								};
-							}
-						});
-					};
+						}
+					});
+
 					selProviderId = parseInt($('#providers-selector').val())
 					if (selProviderId == 0) {
 						//loadLocationTime (resources);
@@ -1269,13 +1298,11 @@ function saveBreak (typeURL, extraURL) {
 				case 'DELETE':
 					$('.break-button').attr("disabled", "disabled");
 					$( '<span id="small_loader"><i class="fa fa-spinner fa-spin"></i> </span>' ).insertBefore( $( ".btn-close" ) );
-					if ($('#provider_break_service_provider_id').val() != 0) {
+
+					$.each(provider_breaks, function (key, provider_break) {
 						$('#calendar').fullCalendar('removeEvents','b'+provider_break.id);
-					} else {
-						$.each(provider_break, function (key, provider_break) {
-							$('#calendar').fullCalendar('removeEvents','b'+provider_break.id);
-						});
-					};
+					});
+
 					break;
 			}
 			$("#break-loader").hide();
@@ -1301,14 +1328,36 @@ function saveBreak (typeURL, extraURL) {
 
 function editRepeatBreak(breakId)
 {
+	var break_service_providers_ids = new Array();
+	$(".providers_check_boxes").each(function(){
+		if($(this).prop("checked"))
+		{
+			break_service_providers_ids.push($(this).val());
+		}
+	});
+
+	var startDate = new Date(parseInt($('#provider_break_start_1i').val()), parseInt($('#provider_break_start_2i').val())-1, parseInt($('#provider_break_start_3i').val()), parseInt($('#provider_break_start_4i').val()), parseInt($('#provider_break_start_5i').val()), 0);
+
+	var endDate = new Date(parseInt($('#provider_break_end_1i').val()), parseInt($('#provider_break_end_2i').val())-1, parseInt($('#provider_break_end_3i').val()), parseInt($('#provider_break_end_4i').val()), parseInt($('#provider_break_end_5i').val()), 0);
+
+	if (startDate.getTime() >= endDate.getTime())
+	{
+		alert("La fecha de fin no puede ser anterior o igual a la de inicio.");
+		return false;
+	}
+	
 	var breakJSON = {
-		"service_provider_id": $('#provider_break_service_provider_id').val(),
+		"service_provider_id": break_service_providers_ids,
 		"name": $('#provider_break_name').val(),
 		"start": $('#provider_break_start_1i').val() +"-"+ $('#provider_break_start_2i').val() +"-"+ $('#provider_break_start_3i').val() +"T"+ $('#provider_break_start_4i').val() +":"+ $('#provider_break_start_5i').val() +":00Z",
 		"end": $('#provider_break_end_1i').val() +"-"+ $('#provider_break_end_2i').val() +"-"+ $('#provider_break_end_3i').val() +"T"+ $('#provider_break_end_4i').val() +":"+ $('#provider_break_end_5i').val() +":00Z",
 		"local": $('#locals-selector').val(),
 		"repeat_id" : $("#provider_break_repeat_id").val(),
-		"id" : breakId
+		"id" : breakId,
+		"repeat": $('#break_repeat').val(),
+		"repeat_end": $('#provider_break_repeat_repeat_end_1i').val() +"-"+ $('#provider_break_repeat_repeat_end_2i').val() +"-"+ $('#provider_break_repeat_repeat_end_3i').val() +"T"+ $('#provider_break_repeat_repeat_end_4i').val() +":"+ $('#provider_break_repeat_repeat_end_5i').val() +":00Z",
+		"times": $("#break_times").val(),
+		"repeat_option": $('input[name="repeat_option"]:checked').val()
 		};
 	$("#break-loader").show();
 	$("#new_provider_break").hide();
@@ -1318,9 +1367,16 @@ function editRepeatBreak(breakId)
 		url: '/provider_breaks/update_repeat_break.json',
 		data: { "provider_break": breakJSON },
 		dataType: 'json',
-		success: function(provider_break){
+		success: function(provider_break_json){
 			var warnings = "";
 			var newProviderId = "0";
+			var provider_break = provider_break_json[0]
+			var break_deletes = provider_break_json[1]
+
+			$.each(break_deletes, function (key, break_delete) {
+				$('#calendar').fullCalendar('removeEvents','b'+break_delete.id);
+			});
+
 			$.each(provider_break, function (key, provider_break) {
 				var label = provider_break.name;
 				newProviderId = provider_break.service_provider_id;
@@ -1378,8 +1434,15 @@ function editRepeatBreak(breakId)
 
 function deleteRepeatBreak(breakId)
 {
+	var break_service_providers_ids = new Array();
+	$(".providers_check_boxes").each(function(){
+		if($(this).prop("checked"))
+		{
+			break_service_providers_ids.push($(this).val());
+		}
+	});
 	var breakJSON = {
-		"service_provider_id": $('#provider_break_service_provider_id').val(),
+		"service_provider_id": break_service_providers_ids,
 		"name": $('#provider_break_name').val(),
 		"start": $('#provider_break_start_1i').val() +"-"+ $('#provider_break_start_2i').val() +"-"+ $('#provider_break_start_3i').val() +"T"+ $('#provider_break_start_4i').val() +":"+ $('#provider_break_start_5i').val() +":00Z",
 		"end": $('#provider_break_end_1i').val() +"-"+ $('#provider_break_end_2i').val() +"-"+ $('#provider_break_end_3i').val() +"T"+ $('#provider_break_end_4i').val() +":"+ $('#provider_break_end_5i').val() +":00Z",
@@ -1454,6 +1517,9 @@ function createBreakModal(date, providerId) {
 		$('#provider_break_repeat_repeat_end_5i option[value="00"]').attr("selected",true);
 	}
 
+	$('#break_repeat option[value="never"]').prop("selected", true);
+	$("#break_times").val('');
+	$("#repeat_option_times").prop("checked", true);
 	$(".form-repeat-div").show();
 
 	var localId = parseInt($('#locals-selector').val());
@@ -1464,24 +1530,27 @@ function createBreakModal(date, providerId) {
 		},
 		dataType: 'json',
 		success: function (providersArray, status, jqXHR) {
-			var selector = $('#provider_break_service_provider_id');
-			selector.empty();
-			$.each(providersArray, function (key, provider) {
-				selector.append(
-					'<option value="' + provider.id + '">' + provider.public_name + '</option>'
+			var checkboxes_selector = $("#providers_checkboxes");
+			checkboxes_selector.empty();
+
+			$.each(providersArray, function (key, provider){
+				checkboxes_selector.append(
+					'<div class="checkbox"><label>' +
+    				'<input class="check_boxes providers_check_boxes" id="provider_break_service_provider_id_' + provider.id + '" name="provider_break[service_provider_id][]" type="checkbox" value="' + provider.id + '"> ' + provider.public_name + ' ' +
+  					'</label></div>'
 				);
 			});
-			selector.append(
-				'<option value="0">Todos</option>'
-			);
+
 		}
 	});
 
 	if (parseInt($('#providers-selector').val()) > 0) {
-		$('#provider_break_service_provider_id option[value="'+parseInt($('#providers-selector').val())+'"]').attr("selected",true);
+		$("#provider_break_service_provider_id_" + parseInt($('#providers-selector').val())).prop("checked", true);
+		
 	}
 	if (providerId > 0) {
-		$('#provider_break_service_provider_id option[value="'+providerId+'"]').attr("selected",true);
+
+		$("#provider_break_service_provider_id_" + providerId).prop("checked", true);
 	}
 
 	var end_minutes = parseInt($('#provider_break_end_5i').val()) + $('#calendar-data').data('calendar-duration');
@@ -1499,17 +1568,22 @@ function createBreakModal(date, providerId) {
 	$('#provider_break_name').val('');
 	$("#provider_break_repeat_id").val('');
 	//$("#provider_break_service_provider_id").attr("disabled", false);
-	$('#provider_break_service_provider_id option[value="0"]').attr("hidden", false);
+	//$('#provider_break_service_provider_id option[value="0"]').attr("hidden", false);
 	$('.break-modal-footer').empty();
 	$('.break-modal-footer').append(
 		'<button type="button" class="btn btn-default btn-close break-button" data-dismiss="modal">Cerrar</button>' +
-		'<button type="button" class="btn btn-agendapro-claro break-button" id="save_break" onClick="saveBreak(\'POST\',\'\')">Guardar</button>'
+		'<button type="button" class="btn btn-green break-button" id="save_break" onClick="saveBreak(\'POST\',\'\')">Guardar</button>'
 	);
 	$('#breakModal').modal('show');
 }
 
 function editBreakModal(breakId) {
-	$.getJSON('/provider_breaks/'+breakId, function (provider_break) {
+	$.getJSON('/provider_breaks/'+breakId, function (provider_break_json) {
+
+		var provider_break = provider_break_json.provider_break
+		var provider_break_repeat = provider_break_json.provider_break_repeat
+		var break_service_providers = provider_break_json.service_providers
+		var group_service_providers = provider_break_json.group_service_providers
 		var start = provider_break.start || 0;
 		var end = provider_break.end || 0;
 		if (start != 0) {
@@ -1547,70 +1621,115 @@ function editBreakModal(breakId) {
 			success: function (providersArray, status, jqXHR) {
 				var selector = $('#provider_break_service_provider_id');
 				selector.empty();
-				$.each(providersArray, function (key, provider) {
-					if (provider.id == provider_break.service_provider_id) {
-							selector.append(
-								'<option value="' + provider.id + '" selected>' + provider.public_name + '</option>'
-							);
-					}
-					else {
-						selector.append(
-							'<option value="' + provider.id + '">' + provider.public_name + '</option>'
-						);
-					}
-					/*if (provider_break.break_group_id) {
-						if (provider.id == provider_break.service_provider_id) {
-							selector.append(
-								'<option value="' + provider.id + '">' + provider.public_name + '</option>'
-							);
-						};
-					} else {
-						selector.append(
-							'<option value="' + provider.id + '">' + provider.public_name + '</option>'
-						);
-					};*/
+
+				var checkboxes_selector = $("#providers_checkboxes");
+				checkboxes_selector.empty();
+
+				$.each(providersArray, function(key, provider){
+
+					checkboxes_selector.append(
+						'<div class="checkbox"><label>' +
+	    				'<input class="check_boxes providers_check_boxes" id="provider_break_service_provider_id_' + provider.id + '" name="provider_break[service_provider_id][]" type="checkbox" value="' + provider.id + '"> ' + provider.public_name + ' ' +
+	  					'</label></div>'
+					);
+
 				});
-				/*selector.append(
-					'<option value="0">Todos</option>'
-				);*/
+
+				console.log(break_service_providers);
+				
+				if(break_service_providers != null && break_service_providers.length > 0)
+				{
+					for(i = 0; i < break_service_providers.length; i++)
+					{
+						$("#provider_break_service_provider_id_" + parseInt(break_service_providers[i].id)).prop("checked", true);
+					}
+				}
+				else if(group_service_providers != null && group_service_providers.length > 0)
+				{
+					for(i = 0; i < group_service_providers.length; i++)
+					{
+						$("#provider_break_service_provider_id_" + parseInt(group_service_providers[i].id)).prop("checked", true);
+					}
+				}
+				else
+				{
+					$("#provider_break_service_provider_id_" + parseInt(provider_break.service_provider_id)).prop("checked", true);
+				}
+
 			}
 		});
 
 		$('#provider_break_name').val(provider_break.name);
-		$('#provider_break_service_provider_id option[value="'+provider_break.service_provider_id+'"]').attr("selected",true);
-		/*if (provider_break.break_group_id) {
-			$('#provider_break_service_provider_id option[value="'+0+'"]').attr("selected",true);
-		};*/
+
 		if(provider_break.break_repeat_id != null)
 		{
 			$("#provider_break_repeat_id").val(provider_break.break_repeat_id);
 		}
 		$('.break-modal-footer').empty();
 		
-		//$("#provider_break_service_provider_id").attr("disabled", "disabled");
-		$('#provider_break_service_provider_id option[value="0"]').attr("hidden", "hidden");
 
 		if(provider_break.break_repeat_id == null)
 		{
 			$('.break-modal-footer').append(
 				'<button type="button" class="btn btn-default btn-close" data-dismiss="modal">Cerrar</button>' +
 				'<button type="button" class="btn btn-danger" id="destroy_break" onClick="saveBreak(\'DELETE\',\'/'+breakId+'\')">Eliminar</button>' +
-				'<button type="button" class="btn btn-agendapro-claro" id="edit_break" onClick="saveBreak(\'PATCH\',\'/'+breakId+'\')">Guardar</button>'
+				'<button type="button" class="btn btn-green" id="edit_break" onClick="saveBreak(\'PATCH\',\'/'+breakId+'\')">Guardar</button>'
 			);
 		}
 		else
 		{
+			$(".form-repeat-div").show();
+
+			$('#break_repeat option[value="' + provider_break_repeat.repeat_type + '"]').prop("selected", true);
+
+			$('[name="repeat_option"][value="' + provider_break_repeat.repeat_option + '"]').prop("checked", true);
+
+
+			if(provider_break_repeat.repeat_option == "times")
+			{
+				$("#break_times").val(provider_break_repeat.times);
+			}
+			else
+			{
+				$("#break_times").val("");
+			}
+			
+
+			repeat_dateArray = provider_break_repeat.end_date.toString().split('T');
+			repeat_date = new Date(provider_break_repeat.end_date)
+			repeat_month = repeat_date.getMonth()+1;
+			repeat_day = repeat_date.getDate();
+			$('#provider_break_repeat_repeat_end_1i option[value="'+repeat_date.getFullYear()+'"]').attr("selected",true);
+			$('#provider_break_repeat_repeat_end_2i option[value="'+repeat_month+'"]').attr("selected",true);
+			$('#provider_break_repeat_repeat_end_3i option[value="'+repeat_day+'"]').attr("selected",true);
+			$('#provider_break_repeat_repeat_end_4i option[value="'+repeat_dateArray[1].split(':')[0]+'"]').attr("selected",true);
+			$('#provider_break_repeat_repeat_end_5i option[value="'+repeat_dateArray[1].split(':')[1]+'"]').attr("selected",true);
+
+
 			$('.break-modal-footer').append(
+				'<div class="row"><div class="col-md-2"></div><div class="col-md-4 pull-l"><span class="custom-span-popover" style="cursor: pointer;" data-toggle="popover" data-placement="top" title="Edición" data-content="Eliminar: Sólo se eliminará este bloqueo para todos los prestadores seleccionados, quedando el resto de la serie de repetición intacta. Guardar: Sólo se editará este bloqueo para los prestadores seleccionados y será removido de la serie de repetición a la que pertencía.">¿Qué estoy editando?&nbsp;<i class="fa fa-question-circle"></i></span></div><div class="col-md-6"><span class="custom-span-popover" style="cursor: pointer;" data-toggle="popover" data-placement="top" title="Edición de serie" data-content="Eliminar: Se eliminará la serie de repetición completa para los prestadores seleccionados. Los otros prestadores mantendrán la serie de bloqueos si la tenían. Guardar: Se guardarán los cambios de la serie de repetición para los prestadores seleccionados. Si se seleccionan menos prestadores que los originales, se separará en dos series: una para los elegidos, y otra para los no elegidos. En cambio, si se agregan prestadores, se crearán bloqueos para ese prestador y serán incluidos en la serie original.">¿Qué estoy editando?&nbsp;<i class="fa fa-question-circle"></i></span></div></div>' +
 				'<div class="row"><div class="col-md-2">'+
 				'<button type="button" class="btn btn-default btn-close pull-left" data-dismiss="modal">Cerrar</button>' +
-				'</div><div class="col-md-4">' + 
-				'<button type="button" class="btn btn-danger" id="destroy_break" onClick="saveBreak(\'DELETE\',\'/'+breakId+'\')">Eliminar</button>' +
-				'<button type="button" class="btn btn-agendapro-claro" id="edit_break" onClick="saveBreak(\'PATCH\',\'/'+breakId+'\')">Editar</button>' +
+				'</div><div class="col-md-4">' +
+				'<button title="Sólo se eliminará este bloqueo para los prestadores seleccionados, quedando el resto de la serie de repetición intacta." type="button" class="btn btn-danger" id="destroy_break" onClick="saveBreak(\'DELETE\',\'/'+breakId+'\')">Eliminar</button>' +
+				'<button title="Sólo se editará este bloqueo para los prestadores seleccionados y será removido de la serie de repetición a la que pertencía." type="button" class="btn btn-green" id="edit_break" onClick="saveBreak(\'PATCH\',\'/'+breakId+'\')">Guardar</button>' +
 				'</div><div class="col-md-6">' + 
-				'<button type="button" class="btn btn-danger" id="destroy_repeat_break" onClick="deleteRepeatBreak(' + breakId +')">Eliminar serie</button>' +
-				'<button type="button" class="btn btn-agendapro-claro" id="edit_repeat_break" onClick="editRepeatBreak(' + breakId +')">Editar serie</button>' +
+				'<button title="Se eliminará la serie de repetición completa para los prestadores seleccionados. Los otros prestadores mantendrán la serie de bloqueos si la tenían." type="button" class="btn btn-danger" id="destroy_repeat_break" onClick="deleteRepeatBreak(' + breakId +')">Eliminar serie</button>' +
+				'<button title="Se guardarán los cambios de la serie de repetición para los prestadores seleccionados. Si se seleccionan menos prestadores que los originales, se separará en dos series: una para los elegidos, y otra para los no elegidos. En cambio, si se agregan prestadores, se crearán bloqueos para ese prestador y serán incluidos en la serie original." type="button" class="btn btn-dark-green" id="edit_repeat_break" onClick="editRepeatBreak(' + breakId +')">Guardar serie</button>' +
 				'</div></div>'
 			);
+			
+			  $('[data-toggle="tooltip"]').tooltip({
+			  	placement: "top"
+			  });
+
+			  $('.custom-span-popover').popover({ 
+			  	placement: 'top',
+				template: '<div class="popover custom-popover"><div class="arrow"></div><h3 class="popover-title"></h3><div class="popover-content"></div></div>'
+				});
+			  $(".custom-popover").css("width", "350px !important");
+			
+
 		}
 		$('#breakModal').modal('show');
 	});
@@ -1704,92 +1823,6 @@ function modalChange() {
 	}
 }
 
-///////////////////////////////////
-//			Slider	Animation	 //
-///////////////////////////////////
-function animateLeft (selector, n) {
-	var sliderSelector = ' .slider-selector label';
-	var selectorWidth = $(selector + sliderSelector + ':first-child').css('width');
-	var once = true;
-
-	//Math calc
-	var sliderWidthValue = $(selector).width();
-	var selectorWidthValue = $(selector + sliderSelector + ':first-child').width();
-	var displayedElements = Math.floor(sliderWidthValue / selectorWidthValue) - 1;
-	var rowElements = $(selector + sliderSelector).length;
-
-	//Reset right property
-	$.each($(selector + sliderSelector), function (key, label) {
-		$(label).prop('style').removeProperty('right');
-	});
-
-	function resetState () {
-		if (once) {
-			once = false;
-			$(selector + ' .slider-selector').append(
-				$(selector + sliderSelector + ':first-child')
-			);
-			$(selector + sliderSelector).animate(
-				{left: ''},
-				0
-			);
-			animateLeft(selector, n + 1);
-		};
-	}
-
-	if (rowElements > displayedElements && n < displayedElements) {
-		//Animation
-		$(selector + sliderSelector).animate(
-			{left: '-' + selectorWidth},
-			{
-				duration: 150,
-				complete: resetState
-			}
-		);
-	};
-}
-function animateRight (selector, n) {
-	var sliderSelector = ' .slider-selector label';
-	var selectorWidth = $(selector + sliderSelector + ':first-child').css('width');
-	var once = true;
-
-	//Math calc
-	var sliderWidthValue = $(selector).width();
-	var selectorWidthValue = $(selector + sliderSelector + ':first-child').width();
-	var displayedElements = Math.floor(sliderWidthValue / selectorWidthValue) - 1;
-	var rowElements = $(selector + sliderSelector).length;
-
-	//Reset left property
-	$.each($(selector + sliderSelector), function (key, label) {
-		$(label).prop('style').removeProperty('left');
-	});
-
-	function resetState () {
-		if (once) {
-			once = false;
-			$(selector + ' .slider-selector').prepend(
-				$(selector + sliderSelector + ':last-child')
-			);
-			$(selector + sliderSelector).animate(
-				{right: ''},
-				0
-			);
-			animateRight(selector, n + 1);
-		};
-	}
-
-	if (rowElements > displayedElements && n < displayedElements) {
-		//Animation
-		$(selector + sliderSelector).animate(
-			{right: '-' + selectorWidth},
-			{
-				duration: 150,
-				complete: resetState
-			}
-		);
-	};
-}
-
 function setAge() {
 
 	if ($('#booking_client_birth_day').val() != '' && $('#booking_client_birth_month').val() != '' && $('#booking_client_birth_year').val() != '')
@@ -1839,11 +1872,11 @@ function loadClientHistory(booking_id) {
 					var created = new Date(booking_history.created);
 					created.setHours(created.getHours() - <%= ENV["TIME_ZONE_OFFSET"].split('.')[0] %>);
 					var date = new Date(booking_history.start);
-					$('#booking-history-tbody').append('<tr><td>'+booking_history.action+'</td><td>'+dateToLocal(created)+'</td><td>'+dateToLocal(date)+'</td><td>'+booking_history.service+'</td><td>'+booking_history.provider+'</td><td>'+booking_history.status+'</td><td>'+booking_history.user+'</td>'+staffCode+'</tr>');
+					$('#booking-history-tbody').append('<tr><td>'+booking_history.action+'</td><td>'+dateToLocal(created)+'</td><td>'+dateToLocal(date)+'</td><td>'+booking_history.service+'</td><td>'+booking_history.provider+'</td><td>'+booking_history.status+'</td><td>'+booking_history.notes+'</td><td>'+booking_history.company_comment+'</td><td>'+booking_history.user+'</td>'+staffCode+'</tr>');
 				});
 			}
 			else {
-				$('#booking-history-tbody').append('<tr><td colspan="6">No hay modificaciones para esta reserva...</td></tr>');
+				$('#booking-history-tbody').append('<tr><td colspan="8">No hay modificaciones para esta reserva...</td></tr>');
 			}
 		});
 	}
@@ -1867,17 +1900,19 @@ function dateFullToLocal(date) {
 $(function() {
 	// alertId = new Alert();
 
+	clearTimeout(alertDismiss);
+
 	$('#new_booking').keypress(function(e){
 		if ( e.which == 13 ) return false;
 	});
 	$('#new_provider_break').keypress(function(e){
 		if ( e.which == 13 ) return false;
 	});
-	$('.createBooking').click(function() {
+	$('#createBooking').click(function() {
 		createBookingModal();
 		return false;
 	});
-	$('.createBreak').click(function() {
+	$('#createBreak').click(function() {
 		createBreakModal();
 		return false;
 	});
@@ -1912,9 +1947,15 @@ $(function() {
 		firstDay: 1,
 		changeMonth: true,
 		changeYear: true,
-		dayNames: [ "Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado" ],
-		dayNamesMin: [ "Do", "Lu", "Ma", "Mi", "Ju", "Vi", "Sá" ],
-		dayNamesShort: [ "Dom", "Lun", "Mar", "Mié", "Jue", "Vie", "Sáb" ],
+		monthNames: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+        monthNamesShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
+        prevText: 'Atrás',
+        nextText: 'Adelante',
+        dayNames: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'],
+        dayNamesShort: ['Dom', 'Lun', 'Mar', 'Mier', 'Jue', 'vie', 'Sáb'],
+        dayNamesMin: ['Dom', 'Lun', 'Mar', 'Mier', 'Jue', 'vie', 'Sáb'],
+        today: 'Hoy',
+        clear: '',
 		onSelect: function(dateText, inst) {
 			var d = new Date(parseInt(dateText.split('-')[2]), parseInt(dateText.split('-')[1]) - 1, parseInt(dateText.split('-')[0]));
 			$('#calendar').fullCalendar('gotoDate', d);
@@ -1922,16 +1963,21 @@ $(function() {
 			loadProviderEvents(providerId);
 		}
 	});
+
 	$("#set-date").datepicker({
 		dateFormat: 'dd-mm-yy',
-		buttonText: '<i class="fa fa-clock-o"></i> Ir a',
 		changeMonth: true,
 		changeYear: true,
-		showOn: 'button',
 		firstDay: 1,
-		dayNames: [ "Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado" ],
-		dayNamesMin: [ "Do", "Lu", "Ma", "Mi", "Ju", "Vi", "Sá" ],
-		dayNamesShort: [ "Dom", "Lun", "Mar", "Mié", "Jue", "Vie", "Sáb" ],
+		monthNames: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+        monthNamesShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
+        prevText: 'Atrás',
+        nextText: 'Adelante',
+        dayNames: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'],
+        dayNamesShort: ['Dom', 'Lun', 'Mar', 'Mier', 'Jue', 'vie', 'Sáb'],
+        dayNamesMin: ['Dom', 'Lun', 'Mar', 'Mier', 'Jue', 'vie', 'Sáb'],
+        today: 'Hoy',
+        clear: '',
 		onSelect: function(dateText, inst) {
 			var d = new Date(parseInt(dateText.split('-')[2]), parseInt(dateText.split('-')[1]) - 1, parseInt(dateText.split('-')[0]));
 			$('#calendar').fullCalendar('gotoDate', d);
@@ -1939,6 +1985,17 @@ $(function() {
 			loadProviderEvents(providerId);
 		}
 	});
+
+	$('#set-date-button').click(function(){
+		if ($('#ui-datepicker-div').css('display') == 'none') {
+			$('#set-date').datepicker('show');
+		}
+		else {
+			$('#set-date').datepicker('hide');
+		}
+	});
+
+	$(".ui-datepicker-trigger").addClass("btn");
 
 	$("#full_name").on('input',function(e){
 		splitFullName();
@@ -1965,6 +2022,8 @@ $(function() {
 			$('#booking_client_birth_month option[value="'+client.birth_month+'"]').prop('selected', true);
 			$('#booking_client_birth_year option[value="'+client.birth_year+'"]').prop('selected', true);
 			$('#booking_client_age').val(client.age);
+			$('#booking_client_second_phone').val(client.second_phone);
+			$('#booking_client_record').val(client.record);
 			$('#booking_client_gender option[value="'+client.gender+'"]').attr("selected",true);
 			$("#full_name").val(client.first_name+' '+client.last_name)
 			if (validEmail($("#booking_client_email").val())) {
@@ -2008,6 +2067,8 @@ $(function() {
 			$('#booking_client_birth_month option[value="'+client.birth_month+'"]').prop('selected', true);
 			$('#booking_client_birth_year option[value="'+client.birth_year+'"]').prop('selected', true);
 			$('#booking_client_age').val(client.age);
+			$('#booking_client_second_phone').val(client.second_phone);
+			$('#booking_client_record').val(client.record);
 			$('#booking_client_gender option[value="'+client.gender+'"]').attr("selected",true);
 			$("#full_name").val(client.first_name+' '+client.last_name)
 			if (validEmail($("#booking_client_email").val())) {
@@ -2063,8 +2124,6 @@ $(function() {
 			$('#booking_service_provider_id').prop('disabled', false);
 		}
 	});
-
-	$(".ui-datepicker-trigger").addClass("btn btn-agendapro-claro pull-right")
 
 	$('#bookingModal').on('hidden.bs.modal', function (e) {
 		$('#booking_service_id').attr('disabled', true);

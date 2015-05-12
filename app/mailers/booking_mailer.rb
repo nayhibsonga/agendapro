@@ -116,6 +116,11 @@ class BookingMailer < ActionMailer::Base
 					}
 		end
 
+		second_address = ''
+		if !book_info.location.second_address.blank?
+			second_address = ", " + book_info.location.second_address
+		end
+
 		# Notificacion cliente
 		if book_info.send_mail
 			message[:to] << {
@@ -128,7 +133,7 @@ class BookingMailer < ActionMailer::Base
 				:vars => [
 					{
 						:name => 'LOCALADDRESS',
-						:content => book_info.location.address + " - " + District.find(book_info.location.district_id).name
+						:content => book_info.location.address + second_address + " - " + District.find(book_info.location.district_id).name
 					},
 					{
 						:name => 'LOCATIONPHONE',
@@ -279,6 +284,11 @@ class BookingMailer < ActionMailer::Base
 					}
 		end
 
+		second_address = ''
+		if !book_info.location.second_address.blank?
+			second_address = ", " + book_info.location.second_address
+		end
+
 		# Notificacion cliente
 		if book_info.send_mail
 			message[:to] << {
@@ -291,7 +301,7 @@ class BookingMailer < ActionMailer::Base
 				:vars => [
 					{
 						:name => 'LOCALADDRESS',
-						:content => book_info.location.address + " - " + District.find(book_info.location.district_id).name
+						:content => book_info.location.address + second_address + " - " + District.find(book_info.location.district_id).name
 					},
 					{
 						:name => 'LOCATIONPHONE',
@@ -332,6 +342,11 @@ class BookingMailer < ActionMailer::Base
 		template_name = 'Confirm Booking'
 		template_content = []
 
+		second_address = ''
+		if !book_info.location.second_address.blank?
+			second_address = ", " + book_info.location.second_address
+		end
+
 		# => Message
 		message = {
 			:from_email => 'no-reply@agendapro.cl',
@@ -346,7 +361,7 @@ class BookingMailer < ActionMailer::Base
 				},
 				{
 					:name => 'LOCALADDRESS',
-					:content => book_info.location.address + " - " + District.find(book_info.location.district_id).name
+					:content => book_info.location.address + second_address + " - " + District.find(book_info.location.district_id).name
 				},
 				{
 					:name => 'CLIENTNAME',
@@ -553,6 +568,11 @@ class BookingMailer < ActionMailer::Base
 					}
 		end
 
+		second_address = ''
+		if !book_info.location.second_address.blank?
+			second_address = ", " + book_info.location.second_address
+		end
+
 		# Notificacion cliente
 		if book_info.send_mail
 			message[:to] << {
@@ -565,7 +585,7 @@ class BookingMailer < ActionMailer::Base
 				:vars => [
 					{
 						:name => 'LOCALADDRESS',
-						:content => book_info.location.address + " - " + District.find(book_info.location.district_id).name
+						:content => book_info.location.address + second_address + " - " + District.find(book_info.location.district_id).name
 					},
 					{
 						:name => 'LOCATIONPHONE',
@@ -617,7 +637,7 @@ class BookingMailer < ActionMailer::Base
 		message = {
 			:from_email => 'no-reply@agendapro.cl',
 			:from_name => book_info.service_provider.company.name,
-			:subject => 'Confirma tu Reserva en ' + book_info.service_provider.company.name,
+			:subject => 'Confirma tu reserva en ' + book_info.service_provider.company.name,
 			:to => [],
 			:headers => { 'Reply-To' => book_info.service_provider.notification_email },
 			:global_merge_vars => [
@@ -712,6 +732,11 @@ class BookingMailer < ActionMailer::Base
 					}
 		end
 
+		second_address = ''
+		if !book_info.location.second_address.blank?
+			second_address = ", " + book_info.location.second_address
+		end
+
 		# Notificacion cliente
 		if book_info.send_mail
 			message[:to] << {
@@ -724,7 +749,7 @@ class BookingMailer < ActionMailer::Base
 			  :vars => [
 					{
 						:name => 'LOCALADDRESS',
-						:content => book_info.location.address + " - " + District.find(book_info.location.district_id).name
+						:content => book_info.location.address + second_address + " - " + District.find(book_info.location.district_id).name
 					},
 					{
 						:name => 'LOCATIONPHONE',

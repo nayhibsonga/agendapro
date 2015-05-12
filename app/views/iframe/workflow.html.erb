@@ -212,7 +212,7 @@
 
                       </td>
                       <td style:"text-align:right;">
-                        
+
                       </td>
                     </tr>
                   </table>
@@ -228,7 +228,7 @@
               <div class="col-sm-6">
                 <div class="descripcion">
                   <div class="descripcion-header">
-                    Descripción del servicio
+                    DescripciÃ³n del servicio
                   </div>
                   <div class="descripcion-body">
                     <table class="table">
@@ -356,7 +356,7 @@
                           Email
                         </div>
                         <div class="col-sm-6 dark-gray">
-                          Teléfono
+                          TelÃ©fono
                         </div>
                       </div>
                       <div class="row">
@@ -398,7 +398,7 @@
                           Email
                         </div>
                         <div class="col-sm-6 dark-gray">
-                          Teléfono
+                          TelÃ©fono
                         </div>
                       </div>
                       <div class="row">
@@ -451,9 +451,9 @@
                       </div>
                     <% end %>
                     <div id="outcallAddress" class="form-group has-feedback">
-                      <%= label_tag(:address, "Dirección", class: "col-sm-12 control-label") %>
+                      <%= label_tag(:address, "DirecciÃ³n", class: "col-sm-12 control-label") %>
                       <div class="col-sm-12">
-                        <%= text_field_tag(:address, nil, :class => "form-control light-gray", :placeholder => "Escribe la dirección donde se debe realizar el servicio" ) %>
+                        <%= text_field_tag(:address, nil, :class => "form-control light-gray", :placeholder => "Escribe la direcciÃ³n donde se debe realizar el servicio" ) %>
                         <span class="help-block"></span>
                         <span class="form-control-feedback"></span>
                       </div>
@@ -466,7 +466,7 @@
                     <div class="row">
                       <div class="col-sm-12">
                         <div class="form-group">
-                          <%= text_area_tag(:comment, nil, :class => "form-control light-gray", :placeholder => "Agrega algún comentario a tu reserva en caso de ser necesario", :rows => 4) %>
+                          <%= text_area_tag(:comment, nil, :class => "form-control light-gray", :placeholder => "Agrega algÃºn comentario a tu reserva en caso de ser necesario", :rows => 4) %>
                         </div>
                       </div>
                     </div>
@@ -500,7 +500,7 @@
                   <!--<div class="row">
                     <div class="col-md-6">
 
-                      <a href="#" id="openPayOptions">Seleccionar opción de pago</a>
+                      <a href="#" id="openPayOptions">Seleccionar opciÃ³n de pago</a>
 
                     </div>
                   </div>-->
@@ -528,7 +528,7 @@
                     <div class="row">
                       <div class="col-sm-6">
                         <div style="color: #505050; padding: 5px 5px 5px 5px;">
-                          <a href="#" id="open-online-policy" data-toggle="modal" data-target="#online-policy" style="color: #505050 !important; border-top: 1px solid #949292; padding-top: 5px;"><b><%= image_tag 'icono_pago.png', :alt => 'Pago' %>Política de pagos en línea.</b></a>
+                          <a href="#" id="open-online-policy" data-toggle="modal" data-target="#online-policy" style="color: #505050 !important; border-top: 1px solid #949292; padding-top: 5px;"><b><%= image_tag 'icono_pago.png', :alt => 'Pago' %>PolÃ­tica de pagos en lÃ­nea.</b></a>
                         </div>
                       </div>
                       <div class="col-sm-6">
@@ -585,7 +585,7 @@
                       </div>
                       <div class="row">
                         <div class="col-md-12" style="padding-left: 10px; padding-top: 10px;">
-                          <p>Antes de pagar, asegúrate de leer la política de pagos en línea de la empresa: <a href="#" id="policy-link" style="color: #505050 !important;"><b>ver.</b></a></p>
+                          <p>Antes de pagar, asegÃºrate de leer la polÃ­tica de pagos en lÃ­nea de la empresa: <a href="#" id="policy-link" style="color: #505050 !important;"><b>ver.</b></a></p>
                         </div>
                       </div>
                     </div>
@@ -597,40 +597,40 @@
               </div><!-- /.modal -->
               <!-- FIN MODAL MEDIO DE PAGO -->
 
-              <!-- MODAL POLÍTICA DE MODIFICACIÓN/CANCELACIÓN PAGOS EN LÍNEA -->
+              <!-- MODAL POLÃTICA DE MODIFICACIÃ“N/CANCELACIÃ“N PAGOS EN LÃNEA -->
               <div class="modal fade" id="online-policy" tabindex="-1" role="dialog" aria-labelledby="siginLabel" aria-hidden="true">
                 <div class="modal-dialog">
                   <div class="modal-content">
                     <div class="modal-header">
                       <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                      <h4 class="modal-title" style="color: #505050 !important;">Política de modificación/cancelación de reservas pagadas en línea.</h4>
+                      <h4 class="modal-title" style="color: #505050 !important;">PolÃ­tica de modificaciÃ³n/cancelaciÃ³n de reservas pagadas en lÃ­nea.</h4>
                     </div>
                     <div class="modal-body" style="color: #505050 !important;">
-                      <h3>Modificación:</h3>
+                      <h3>ModificaciÃ³n:</h3>
                       <% if !@location.company.company_setting.online_cancelation_policy.modifiable %>
-                        <p>La empresa no permite modificar reservas pagadas en línea.</p>
+                        <p>La empresa no permite modificar reservas pagadas en lÃ­nea.</p>
                       <% else %>
                         <p>La reserva se puede modificar:</p>
                         <p>- Hasta <%= @location.company.company_setting.online_cancelation_policy.min_hours.to_s %> horas antes del servicio contratado.<br />
-                        - Hasta <%= @location.company.company_setting.online_cancelation_policy.modification_max.to_s %> <%= TimeUnit.find(@location.company.company_setting.online_cancelation_policy.modification_unit).unit.to_s.downcase %> desde la fecha en que se efectuó el pago.</p>
+                        - Hasta <%= @location.company.company_setting.online_cancelation_policy.modification_max.to_s %> <%= TimeUnit.find(@location.company.company_setting.online_cancelation_policy.modification_unit).unit.to_s.downcase %> desde la fecha en que se efectuÃ³ el pago.</p>
                         <p>
-                          Si no cumple con alguna de las dos restricciones, no podrá modificar su reserva.
+                          Si no cumple con alguna de las dos restricciones, no podrÃ¡ modificar su reserva.
                           <br />
-                          Además, la empresa permite modificar la reserva un máximo de <%= @location.company.company_setting.max_changes.to_s %> veces.
+                          AdemÃ¡s, la empresa permite modificar la reserva un mÃ¡ximo de <%= @location.company.company_setting.max_changes.to_s %> veces.
                         </p>
                       <% end %>
 
-                      <h3>Cancelación:</h3>
+                      <h3>CancelaciÃ³n:</h3>
                       <% if !@location.company.company_setting.online_cancelation_policy.cancelable %>
-                        <p>La empresa no permite cancelar reservas pagadas en línea.</p>
+                        <p>La empresa no permite cancelar reservas pagadas en lÃ­nea.</p>
                       <% else %>
                         <p>La reserva se puede cancelar:</p>
                         <p>- Hasta <%= @location.company.company_setting.online_cancelation_policy.min_hours.to_s %> horas antes del servicio contratado.<br />
-                        - Hasta <%= @location.company.company_setting.online_cancelation_policy.cancel_max.to_s %> <%= TimeUnit.find(@location.company.company_setting.online_cancelation_policy.cancel_unit).unit.to_s.downcase %> desde la fecha en que se efectuó el pago.</p>
-                        <p>Si no cumple con alguna de las dos restricciones, no podrá cancelar su reserva.</p>
+                        - Hasta <%= @location.company.company_setting.online_cancelation_policy.cancel_max.to_s %> <%= TimeUnit.find(@location.company.company_setting.online_cancelation_policy.cancel_unit).unit.to_s.downcase %> desde la fecha en que se efectuÃ³ el pago.</p>
+                        <p>Si no cumple con alguna de las dos restricciones, no podrÃ¡ cancelar su reserva.</p>
                         <br />
                         <p>
-                          Si cancela su reserva, se le devolverá un 90% del monto cancelado debido a los costos de transacción.
+                          Si cancela su reserva, se le devolverÃ¡ un 90% del monto cancelado debido a los costos de transacciÃ³n.
                         </p>
                       <% end %>
                     </div>
@@ -640,7 +640,7 @@
                   </div><!-- /.modal-content -->
                 </div><!-- /.modal-dialog -->
               </div><!-- /.modal -->
-              <!-- FIN MODAL POLÍTICA DE MODIFICACIÓN/CANCELACIÓN PAGOS EN LÍNEA -->
+              <!-- FIN MODAL POLÃTICA DE MODIFICACIÃ“N/CANCELACIÃ“N PAGOS EN LÃNEA -->
 
               <% end %>
             </div>
@@ -706,11 +706,11 @@
       $("#datepicker").datepicker({
           monthNames: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
           monthNamesShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
-          prevText: 'Atrás',
+          prevText: 'AtrÃ¡s',
           nextText: 'Adelante',
-          dayNames: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'],
-          dayNamesShort: ['Dom', 'Lun', 'Mar', 'Mier', 'Jue', 'vie', 'Sáb'],
-          dayNamesMin: ['Dom', 'Lun', 'Mar', 'Mier', 'Jue', 'vie', 'Sáb'],
+          dayNames: ['Domingo', 'Lunes', 'Martes', 'MiÃ©rcoles', 'Jueves', 'Viernes', 'SÃ¡bado'],
+          dayNamesShort: ['Dom', 'Lun', 'Mar', 'Mier', 'Jue', 'vie', 'SÃ¡b'],
+          dayNamesMin: ['Dom', 'Lun', 'Mar', 'Mier', 'Jue', 'vie', 'SÃ¡b'],
           today: 'Hoy',
           clear: '',
           firstDay: 1,
@@ -755,11 +755,11 @@
       $("#optimizerDateSelector").datepicker({
           monthNames: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
           monthNamesShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
-          prevText: 'Atrás',
+          prevText: 'AtrÃ¡s',
           nextText: 'Adelante',
-          dayNames: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'],
-          dayNamesShort: ['Dom', 'Lun', 'Mar', 'Mier', 'Jue', 'vie', 'Sáb'],
-          dayNamesMin: ['Dom', 'Lun', 'Mar', 'Mier', 'Jue', 'vie', 'Sáb'],
+          dayNames: ['Domingo', 'Lunes', 'Martes', 'MiÃ©rcoles', 'Jueves', 'Viernes', 'SÃ¡bado'],
+          dayNamesShort: ['Dom', 'Lun', 'Mar', 'Mier', 'Jue', 'vie', 'SÃ¡b'],
+          dayNamesMin: ['Dom', 'Lun', 'Mar', 'Mier', 'Jue', 'vie', 'SÃ¡b'],
           today: 'Hoy',
           clear: '',
           firstDay: 1,
@@ -856,7 +856,7 @@
         $("#online-policy").modal('show');
       });
 
-      
+
 
       $('#select-medio').click(function(){
         console.log('clicked select medio');

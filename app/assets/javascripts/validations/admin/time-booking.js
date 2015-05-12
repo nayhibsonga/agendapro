@@ -1,5 +1,5 @@
 $(function() {
-	$('.times-form').validate({
+	$('#times-form').validate({
 		errorPlacement: function(error, element) {
 			error.appendTo(element.parent().next());
 		},
@@ -16,12 +16,12 @@ $(function() {
 				required: true,
 				range: [1, 168]
 			},
-			'company_setting[extended_min_hour]': {
-				required: true
-			},
-			'company_setting[extended_max_hour]': {
-				required: true
-			},
+			// 'company_setting[extended_min_hour]': {
+			// 	required: true
+			// },
+			// 'company_setting[extended_max_hour]': {
+			// 	required: true
+			// },
 			'company_setting[max_changes]': {
 				required: true,
 				min: 0

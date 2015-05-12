@@ -53,12 +53,15 @@ function saveBooking (typeURL, booking_id) {
     "notes": $('#booking_notes').val(),
     "company_comment": $('#booking_company_comment').val()
   }
+  var bookingJSON = {"bookings": [JSONData]};
+  if (typeURL != 'POST') {
+    bookingJSON = {"booking": JSONData};
+  }
+  
   $.ajax({
     type: typeURL,
     url: '/bookings' + booking_id + '.json',
-    data: {
-      "bookings": [JSONData]
-    },
+    data: bookingJSON,
     dataType: 'json',
     success: function(booking){
       window.location.href = "/bookings/"
