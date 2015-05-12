@@ -68,7 +68,6 @@ class ClientsController < ApplicationController
         format.html { 
           @activeBookings = Array.new
           @lastBookings = Array.new
-          @client = Client.new
           @client_comment = ClientComment.new
           if mobile_request?
             @company = current_user.company
