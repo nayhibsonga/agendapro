@@ -43,6 +43,7 @@ class CompanySettingsController < ApplicationController
     end
     @web_address = Company.find(current_user.company_id).web_address
     @notification_email = NotificationEmail.new
+    @notifications = NotificationEmail.where(company: @company)
   end
 
   # POST /company_settings

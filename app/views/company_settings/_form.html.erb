@@ -793,15 +793,15 @@
           <div class="row">
             <div class="col-md-6">
               <%= form_for @notification_email, html: {class: ''} do |f| %>
-              <%= f.hidden_field :company, value: @company %>
+                <%= f.hidden_field :company_id, value: @company.id %>
                 <div class="row">
                   <div class="col-md-12">
                     <div class="form-group">
                       <%= f.label :email, "E-mail de Notificación", class: 'text-green' %>
-                      <%= f.email_field :email, class: "form-control" %>
+                      <%= f.email_field :email, class: "form-control", required: true %>
                     </div>
                     <div class="form-group">
-                      <%= f.select :receptor_type, [['Compañía', 0], ['Locales', 1], ['Prestador de Servicio', 2]], {}, {class: 'form-control'} %>
+                      <%= f.select :receptor_type, [['Compañía', 0], ['Local', 1], ['Prestador de Servicio', 2]], {}, {class: 'form-control'} %>
                     </div>
                   </div>
                 </div>
@@ -881,7 +881,7 @@
                         <div class="col-sm-4">
                           <div class="checkbox">
                             <label>
-                              <%= f.check_box :new_web %> Nueva reserva manual
+                              <%= f.check_box :new_web %> Nueva reserva online
                             </label>
                           </div>
                         </div>
@@ -890,21 +890,21 @@
                         <div class="col-sm-4">
                           <div class="checkbox">
                             <label>
-                              <%= f.check_box :modified_web %> Reserva manual modificada
+                              <%= f.check_box :modified_web %> Reserva online modificada
                             </label>
                           </div>
                         </div>
                         <div class="col-sm-4">
                           <div class="checkbox">
                             <label>
-                              <%= f.check_box :confirmed_web %> Reserva manual confirmada
+                              <%= f.check_box :confirmed_web %> Reserva online confirmada
                             </label>
                           </div>
                         </div>
                         <div class="col-sm-4">
                           <div class="checkbox">
                             <label>
-                              <%= f.check_box :canceled_web %> Reserva manual cancelada
+                              <%= f.check_box :canceled_web %> Reserva online cancelada
                             </label>
                           </div>
                         </div>
@@ -935,6 +935,25 @@
                     </tr>
                   </thead>
                   <tbody>
+                    <% for notification in @notifications %>
+                    <tr>
+                      <td><%= notification.email %></td>
+                      <td>
+                        <% if notification.receptor_type == 0 %>
+                        Compañía
+                        <% elsif notification.receptor_type == 1 %>
+                        Locales
+                        <% else %>
+                        Prestador de Servicio
+                        <% end %>
+                      </td>
+                      <td><%= notification.notification_text %></td>
+                      <td class="col-xs-3">
+                        <a class="btn btn-sm btn-orange"><i class="fa fa-pencil"></i> Editar</a>
+                        <a class="btn btn-sm btn-red"><i class="fa fa-trash-o"></i> Eliminar</a>
+                      </td>
+                    </tr>
+                    <% end %>
                   </tbody>
                 </table>
               </div>

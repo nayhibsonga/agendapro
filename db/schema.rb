@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150511221227) do
+ActiveRecord::Schema.define(version: 20150512205119) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -421,14 +421,14 @@ ActiveRecord::Schema.define(version: 20150511221227) do
   add_index "notification_locations", ["notification_email_id"], name: "index_notification_locations_on_notification_email_id", using: :btree
 
   create_table "notification_providers", force: true do |t|
-    t.integer  "provider_id"
+    t.integer  "service_provider_id"
     t.integer  "notification_email_id"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
 
   add_index "notification_providers", ["notification_email_id"], name: "index_notification_providers_on_notification_email_id", using: :btree
-  add_index "notification_providers", ["provider_id"], name: "index_notification_providers_on_provider_id", using: :btree
+  add_index "notification_providers", ["service_provider_id"], name: "index_notification_providers_on_service_provider_id", using: :btree
 
   create_table "numeric_parameters", force: true do |t|
     t.string   "name"

@@ -35,4 +35,36 @@ class NotificationEmail < ActiveRecord::Base
       end
     end
   end
+
+  def notification_text
+    text = ""
+    if self.summary
+      text += "Resumen diario, "
+    end
+    if self.new
+      text += "Nueva reserva manual, "
+    end
+    if self.modified
+      text += "Reserva manual modificada, "
+    end
+    if self.confirmed
+      text += "Reserva manual confirmada, "
+    end
+    if self.canceled
+      text += "Reserva manual cancelada, "
+    end
+    if self.new_web
+      text += "Nueva reserva online, "
+    end
+    if self.modified_web
+      text += "Reserva online modificada, "
+    end
+    if self.confirmed_web
+      text += "Reserva online confirmada, "
+    end
+    if self.canceled_web
+      text += "Reserva online cancelada, "
+    end
+    return text[0..-3]
+  end
 end

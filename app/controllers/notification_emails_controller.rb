@@ -24,7 +24,8 @@ class NotificationEmailsController < ApplicationController
   def create
     @notification_email = NotificationEmail.new(notification_email_params)
     @notification_email.save
-    respond_with(@notification_email)
+    flash[:notice] = "Configuración guardada"
+    respond_with(@notification_email, :location => edit_company_setting_path(User.find(current_user.id).company.company_setting)) #no funciona en caso de error
   end
 
   def update
@@ -43,6 +44,6 @@ class NotificationEmailsController < ApplicationController
     end
 
     def notification_email_params
-      params.require(:notification_email).permit(:company_id, :emails, :notification_type, :receptor_type)
+      params.require(:notification_email).permit(:company_id, :email, :notification_type, :receptor_type, :summary, :new, :modified, :confirmed, :canceled, :new_web, :modified_web, :confirmed_web, :canceled_web, location_ids: [], service_provider_ids: [])
     end
 end
