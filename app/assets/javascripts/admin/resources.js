@@ -56,7 +56,8 @@ function saveCategory (typeURL, extraURL) {
 }
 
 function saveResource (typeURL, extraURL) {
-	if (!$('form').valid()) {
+	if (!$(form).valid()) {
+		window.console.log('no');
 		return false;
 	};
 	$.each($('input[name="resource[location_ids_quantity][]"]'), function (key, resource) {
@@ -118,12 +119,10 @@ function getResourceCategories() {
 		$('#resourceCategoryModal').modal('show');
 	});
 }
-
+var form;
 function initialize() {
 	if ($("#id_data").length > 0){
-		$('#saveResourceButton').click(function() {
-			saveResource('PATCH','/'+$("#id_data").data('id'));
-		});
+		form = '[id^="edit_resource_"]'
 		var resourceLocationsData = $('#resource_locations_data').data('resource-locations');
 		$.each(resourceLocationsData, function(index,resourceLocation) {
 			$('#resource_location_ids_'+resourceLocation.location_id).prop('checked', true);
@@ -132,9 +131,7 @@ function initialize() {
 		});
 	}
 	else {
-		$('#saveResourceButton').click(function() {
-			saveResource('POST','');
-		});
+		form = '#new_resource'
 	}
 }
 
@@ -150,9 +147,6 @@ $(function() {
 	alertId = new Alert();
 	$('#newResourceCategoryButton').click(function() {
 		getResourceCategories();
-	});
-	$('#saveResourceCategryButton').click(function() {
-		saveCategory('POST','');
 	});
 	$('#resourceCategoryModal').on('hidden.bs.modal', function (e) {
 		validator_resource_category.resetForm();
