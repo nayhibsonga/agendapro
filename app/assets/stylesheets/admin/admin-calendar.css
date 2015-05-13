@@ -463,21 +463,40 @@ select[name="serviceOptimizerSelector"] {
 }*/
 
 @media (min-width: 992px) {
-  .hours-optimizer-button {
-    margin-left: 7px;
-    font-size: 14px;
-  }
   .set-date-btn {
-    margin-left: 7px;
-  }
-}
-@media (min-width: 1199px) {
-  .set-date-btn {
-    margin-left: 7px;
     display: none;
-    font-size: 14px;
   }
   #dp {
     display: block;
   }
+  .hours-optimizer-button {
+    margin-left: 7px;
+    font-size: 14px;
+  }
 }
+
+/*
+  ================================
+  === DatePicker Media Queries ===
+  ================================
+*/
+.ui-datepicker table {
+  font-size: 0.6em;
+}
+@media (min-width: 992px) {
+  .ui-datepicker table {
+  }
+}
+
+@media (min-width: 1080px) {
+  .ui-datepicker table {
+    font-size: 0.7em;
+  }
+}
+
+@media (min-width: 1224px) {
+  .ui-datepicker table {
+    font-size: 0.8em;
+  }
+}
+

@@ -14,16 +14,18 @@ $(function() {
     $('ul.nav-pills li.active').not('.dropdown').last().children('a').first().click();
   });
   $("#from").datepicker({
+    dateFormat: 'dd-mm-yy',
+    autoSize: true,
+    changeYear: true,
     monthNames: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
     monthNamesShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
     prevText: 'Atrás',
     nextText: 'Adelante',
     dayNames: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'],
-    dayNamesShort: ['Dom', 'Lun', 'Mar', 'Mier', 'Jue', 'vie', 'Sáb'],
-    dayNamesMin: ['Dom', 'Lun', 'Mar', 'Mier', 'Jue', 'vie', 'Sáb'],
+    dayNamesShort: ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'],
+    dayNamesMin: ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'],
     today: 'Hoy',
     clear: '',
-    dateFormat: 'dd-mm-yy',
     defaultDate: "+1w",
     changeMonth: true,
     numberOfMonths: 3,
@@ -33,16 +35,18 @@ $(function() {
     }
   });
   $("#to").datepicker({
+    dateFormat: 'dd-mm-yy',
+    autoSize: true,
+    changeYear: true,
     monthNames: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
     monthNamesShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
     prevText: 'Atrás',
     nextText: 'Adelante',
     dayNames: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'],
-    dayNamesShort: ['Dom', 'Lun', 'Mar', 'Mier', 'Jue', 'vie', 'Sáb'],
-    dayNamesMin: ['Dom', 'Lun', 'Mar', 'Mier', 'Jue', 'vie', 'Sáb'],
+    dayNamesShort: ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'],
+    dayNamesMin: ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'],
     today: 'Hoy',
     clear: '',
-    dateFormat: 'dd-mm-yy',
     defaultDate: "+1w",
     changeMonth: true,
     numberOfMonths: 3,
