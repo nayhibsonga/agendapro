@@ -37,8 +37,7 @@
   </div>
 </div>
 
-<%= content_tag "div", id: "calendar-data", data: { calendar_duration: @company_setting.calendar_duration, extended_schedule: @company_setting.extended_schedule_bool, extended_min_hour: @company_setting.extended_min_hour.beginning_of_hour.hour, extended_max_hour: @company_setting.extended_max_hour.end_of_hour.hour, booking_history: @company_setting.booking_history, staff_code: @company_setting.staff_code, deal_identification_number: @company_setting.deal_identification_number, deal_required: @company_setting.deal_required } do %>
-<% end %>
+<%= content_tag "div", id: "calendar-data", data: { calendar_duration: @company_setting.calendar_duration, extended_schedule: @company_setting.extended_schedule_bool, extended_min_hour: @company_setting.extended_min_hour.strftime('%H:%M'), extended_max_hour: @company_setting.extended_max_hour.strftime('%H:%M'), booking_history: @company_setting.booking_history, staff_code: @company_setting.staff_code, deal_identification_number: @company_setting.deal_identification_number, deal_required: @company_setting.deal_required } do %>
 
 <% content_for :calendar do %>
   <div class="container-fluid">
