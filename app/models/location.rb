@@ -59,10 +59,10 @@ class Location < ActiveRecord::Base
 
 	pg_search_scope :search, :associated_against => {
 		:company => :name,
-		:services => :name,
 		:economic_sectors => :name,
 		:economic_sectors_dictionaries => :name,
-		:service_categories => :name
+		:service_categories => :name,
+		:services => :name
 	},
 	:using => {
                 :trigram => {
