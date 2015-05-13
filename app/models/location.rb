@@ -58,11 +58,11 @@ class Location < ActiveRecord::Base
     :ranked_by => ":tsearch + (0.5 * :trigram)"
 
 	pg_search_scope :search, :associated_against => {
-	:company => :name,
-	:services => :name,
-	:economic_sectors => :name,
-	:economic_sectors_dictionaries => :name,
-	:service_categories => :name
+		:company => :name,
+		:services => :name,
+		:economic_sectors => :name,
+		:economic_sectors_dictionaries => :name,
+		:service_categories => :name
 	},
 	:using => {
                 :trigram => {
