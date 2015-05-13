@@ -1,91 +1,87 @@
-<div class="container">
+<div class="container-fluid">
   <div class="row">
-    <section class="hgroup">
-			<h2>E-mail a Clientes</h2>
-    	<h2 class="section_header">Acá podrás enviarle e-mails a tus clientes contándoles de tus servicios o promociones.</h2>
-    	<div class="line-breadcrumb">
-        <ul class="breadcrumb pull-right">
-          <li><%= link_to "Resumen", dashboard_path %> </li>
-	        <li><%= link_to "Clientes", clients_path %> </li>
-          <li class="active">E-mail</li>
-        </ul>
-    	</div>
-    </section>
+    <div class="col-md-12">
+      <h2 class="text-green">E-mail a Clientes</h2>
+      <p>Acá podrás enviarle e-mails a tus clientes contandole de tus servicios o promociones.</p>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-12">
+      <div class="well">
+        <%= form_tag('/send_mail_client', name: "client_mailer", id: "client_mailer", multipart: true) do %>
+          <div class="form-group">
+            <%= label_tag :from, 'De' %>
+            <%= select_tag :from, options_from_collection_for_select(@from_collection, :email, :email), :class => 'form-control', :required => true %>
+            <span class="help-block"></span>
+          </div>
+          <div class="form-group">
+            <%= label_tag :to, 'Para' %><small class="pull-right"> Estas enviando el e-mail a <%= pluralize(@to.length, 'persona') %>.</small>
+            <p class="form-control-static"><%= @to.map(&:inspect).join(', ') %></p>
+            <%= hidden_field_tag :to, @to, :required => true %>
+            <span class="help-block"></span>
+          </div>
+          <div class="form-group">
+            <%= label_tag :subject, 'Asunto' %>
+            <%= text_field_tag :subject, nil, :class => 'form-control', :required => true, :autofocus => true, :placeholder => 'Asunto (requerido)' %>
+            <span class="help-block"></span>
+          </div>
+          <div class="form-group">
+            <%= label_tag :message, 'Mensaje' %>
+            <%= text_area_tag :message, nil, :class => 'form-control', :rows => 8, :required => true, :placeholder => 'Mensaje (requerido)' %>
+            <span class="help-block"></span>
+          </div>
+          <div class="form-group">
+            <%= label_tag :attachment, 'Archivo Adjunto' %>
+            <%= file_field_tag :attachment, :class => 'form-control' %>
+            <span class="help-block"></span>
+          </div>
+          <div class="form-group">
+            <button type="submit" id="btnSendMail" class="btn btn-green" data-loading-text='<i class="fa fa-envelope-o"></i> Enviando...' autocomplete="off"><i class="fa fa-envelope-o"></i><span> Enviar</span></button>
+            <p><small><strong>NOTA:</strong> Todos los e-mails son enviados como copia oculta</small></p>
+          </div>
+        <% end %>
+      </div>
+    </div>
   </div>
 </div>
 
-<div class="container">
-	<div class="row well">
-		<%= form_tag('/send_mail_client', name: "client_mailer", id: "client_mailer", multipart: true) do %>
-			<div class="form-group">
-				<%= label_tag :from, 'De' %>
-				<%= select_tag :from, options_from_collection_for_select(@from_collection, :email, :email), :class => 'form-control', :required => true %>
-				<span class="help-block"></span>
-			</div>
-			<div class="form-group">
-				<%= label_tag :to, 'Para' %><small class="pull-right"> Estás enviando el e-mail a <%= pluralize(@to.length, 'persona') %>.</small>
-				<%= text_field_tag :to, @to, :class => 'form-control', :required => true, :placeholder => 'ejemplo@dominio.com (requerido)' %>
-				<span class="help-block"></span>
-			</div>
-			<div class="form-group">
-				<%= label_tag :subject, 'Asunto' %>
-				<%= text_field_tag :subject, nil, :class => 'form-control', :required => true, :autofocus => true, :placeholder => 'Asunto (requerido)' %>
-				<span class="help-block"></span>
-			</div>
-			<div class="form-group">
-				<%= label_tag :message, 'Mensaje' %>
-				<%= text_area_tag :message, nil, :class => 'form-control', :rows => 8, :required => true, :placeholder => 'Mensaje (requerido)' %>
-				<span class="help-block"></span>
-			</div>
-			<div class="form-group">
-				<%= label_tag :attachment, 'Archivo Adjunto' %>
-				<%= file_field_tag :attachment, :class => 'form-control' %>
-				<span class="help-block"></span>
-			</div>
-			<div class="form-group">
-				<button type="submit" id="btnSendMail" class="btn btn-agendapro-claro" data-loading-text='<i class="fa fa-envelope-o"></i> Enviando...' autocomplete="off"><i class="fa fa-envelope-o"></i><span> Enviar</span></button>
-				<p>NOTA: Todos los e-mails son enviados como copia oculta</p>
-			</div>
-		<% end %>
-	</div>
-</div>
+<% content_for :stylesheets do %>
+  <style>
+  .form-control-static {
+    max-height: 100px;
+    overflow-y: scroll;
+  }
+  </style>
+<% end %>
 
 <% content_for :scripts do %>
-	<%= javascript_include_tag 'validations/validate' %>
-	<%= javascript_include_tag 'validations/admin/client-email' %>
-	<%= javascript_include_tag 'ckeditor/init' %>
-	<script type="text/javascript">
-		$(function () {
-			CKEDITOR.replace(message);
-		});
-		$('#btnSendMail').on('click', function (e) {
-			console.log("Entra a click");
-			//console.log($('#message').val());
-			//$('#message').val($('#message').val());
-			//console.log($('#message').val());
-			$("#client_mailer").submit();
-			/*if ($('#client_mailer').valid()) {
-				console.log("Entra a if");
-				var $btn = $(this).button('loading');
-				
-			};*/
-		});
+  <%= javascript_include_tag 'validations/validate' %>
+  <%= javascript_include_tag 'validations/admin/client-email' %>
+  <%= javascript_include_tag 'ckeditor/init' %>
+  <script type="text/javascript">
+    $(function () {
+      CKEDITOR.replace(message);
+    });
+    $('#btnSendMail').on('click', function (e) {
+      if ($('#client_mailer').valid()) {
+        var $btn = $(this).button('loading');
+        $("#client_mailer").submit();
+      };
+    });
+    CKEDITOR.on('instanceReady', function () {
+      $.each(CKEDITOR.instances, function (instance) {
+        CKEDITOR.instances[instance].document.on("keyup", CK_jQ);
+        CKEDITOR.instances[instance].document.on("paste", CK_jQ);
+        CKEDITOR.instances[instance].document.on("keypress", CK_jQ);
+        CKEDITOR.instances[instance].document.on("blur", CK_jQ);
+        CKEDITOR.instances[instance].document.on("change", CK_jQ);
+      });
+    });
 
-		CKEDITOR.on('instanceReady', function () {
-		    $.each(CKEDITOR.instances, function (instance) {
-		        CKEDITOR.instances[instance].document.on("keyup", CK_jQ);
-		        CKEDITOR.instances[instance].document.on("paste", CK_jQ);
-		        CKEDITOR.instances[instance].document.on("keypress", CK_jQ);
-		        CKEDITOR.instances[instance].document.on("blur", CK_jQ);
-		        CKEDITOR.instances[instance].document.on("change", CK_jQ);
-		    });
-		});
-
-		function CK_jQ() {
-		    for (instance in CKEDITOR.instances) {
-		        CKEDITOR.instances[instance].updateElement();
-		    }
-		}
-
-	</script>
+    function CK_jQ() {
+      for (instance in CKEDITOR.instances) {
+        CKEDITOR.instances[instance].updateElement();
+      }
+    }
+  </script>
 <% end %>

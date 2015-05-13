@@ -15,28 +15,28 @@
         <div class="form-group">
           <%= label_tag :date, 'Fecha', class: 'control-label col-xs-3' %>
           <div class="col-xs-9">
-            <%= date_field_tag :date, DateTime.now.to_date, class: 'form-control' %>
+            <%= date_field_tag :date, @date.to_date, class: 'form-control' %>
             <span class="help-block"></span>
           </div>
         </div>
         <div class="form-group">
           <%= label_tag :start, 'Hora Inicio', class: 'control-label col-xs-3' %>
           <div class="col-xs-9">
-            <%= time_field_tag :start, DateTime.now.strftime('%H:%M'), step: 300, class: 'form-control', required: true %>
+            <%= time_field_tag :start, @date.strftime('%H:%M'), step: 300, class: 'form-control', required: true %>
             <span class="help-block"></span>
           </div>
         </div>
         <div class="form-group">
           <%= label_tag :end, 'Hora Termino', class: 'control-label col-xs-3' %>
           <div class="col-xs-9">
-            <%= time_field_tag :end, DateTime.now.strftime('%H:%M'), step: 300, class: 'form-control', required: true %>
+            <%= time_field_tag :end, @date.strftime('%H:%M'), step: 300, class: 'form-control', required: true %>
             <span class="help-block"></span>
           </div>
         </div>
         <div class="form-group">
           <%= f.label :service_provider, 'Prestador', class: 'control-label col-xs-3' %>
           <div class="col-xs-9">
-            <%= f.collection_select :service_provider, ServiceProvider.where(location_id: params[:location]).where(active: true), :id, :public_name, {}, {class: 'form-control'} %>
+            <%= f.collection_select :service_provider, ServiceProvider.where(location_id: params[:location]).where(active: true), :id, :public_name, {selected: params[:provider]}, {class: 'form-control'} %>
             <span class="help-block"></span>
           </div>
         </div>
@@ -166,7 +166,6 @@
 <% end %>
 
 <% content_for :stylesheets do %>
-<%= stylesheet_link_tag "jquery-ui-1.10.4" %>
 <%= stylesheet_link_tag "admin/autocomplete" %>
 <% end %>
 

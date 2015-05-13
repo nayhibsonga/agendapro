@@ -6,45 +6,61 @@ application up and running.
 Things you may want to cover:
 
 * Ruby version
-Install RVM: sudo apt-get instal rvm
-Install ruby: rvm install ruby-2.0.0
+  * Install RVM:
+    user@agendapro$: sudo apt-get install libgdbm-dev libncurses5-dev automake libtool bison libffi-dev
+    user@agendapro$: curl -L https://get.rvm.io | bash -s stable --auto-dotfiles
+    user@agendapro$: source ~/.rvm/scripts/rvm
+    user@agendapro$: echo "source ~/.rvm/scripts/rvm" >> ~/.bashrc
+  * Install Ruby:
+    user@agendapro$: rvm install 2.0.0
+    user@agendapro$: rvm use 2.0.0 --default
+    user@agendapro$: ruby -v
+    user@agendapro$: echo "gem: --no-ri --no-rdoc" > ~/.gemrc
 
 * System dependencies
-Install ImageMagick: sudo apt-get install ImageMagick libmagickwand-dev
-Test ImageMagick: convert
-Usin ImageMagick: convert zoolander.jpg -resize 200x200 -background transparent -gravity center -extent 200x200 zoolander.jpg
+  Install ImageMagick: sudo apt-get install ImageMagick libmagickwand-dev
+  Test ImageMagick: convert
+  Usin ImageMagick: convert zoolander.jpg -resize 200x200 -background transparent -gravity center -extent 200x200 zoolander.jpg
 
 * Configuration
+  * Log rotation:
+   - Create file /etc/logrotate.d/web-app with superuser permissions.
+   - Paste the following formula:
+    # /etc/logrotate.d/web-app
+    # Rotate Rails application logs based on file size
+    # Rotate log if file greater than 20 MB
+    /home/agendapro/web_app/log/*.log {
+        daily
+        missingok
+        rotate 90
+        dateext
+        dateformat .%Y-%m-%d
+        compress
+        delaycompress
+        notifempty
+        copytruncate
+    }
+    - run twice in console to check log creation and compression:
+      sudo /usr/sbin/logrotate -f /etc/logrotate.conf
 
-	1) Log rotation:
-	 - Create file /etc/logrotate.d/web-app with superuser permissions.
-	 - Paste the following formula:
-	 	# /etc/logrotate.d/web-app
-		# Rotate Rails application logs based on file size
-		# Rotate log if file greater than 20 MB
-		/home/agendapro/web_app/log/*.log {
-				daily
-				missingok
-				rotate 90
-				dateext
-				dateformat .%Y-%m-%d
-				compress
-				delaycompress
-				notifempty
-				copytruncate
-		}
-		- run twice in console to check log creation and compression:
-			sudo /usr/sbin/logrotate -f /etc/logrotate.conf
-			
+* Database Instalation
+  sudo apt-get install postgresql postgresql-contrib
+  sudo apt-get install pgadmin3
 
 * Database creation
+  CREATE USER tom WITH CREATEDB PASSWORD 'myPassword';
 
 * Database initialization
+  bundle install
+  sudo nano /etc/postgresql/9.3/main/pg_hba.conf
+    local   all         postgres                          md5
+  sudo /etc/init.d/postgresql restart
+  rake db:setup
 
 * How to run the test suite
 
 * Services (job queues, cache servers, search engines, etc.)
-Update Cronjobs (Whenever Gem): whenever --update-crontab agendapro --set environment=production
+  Update Cronjobs (Whenever Gem): whenever --update-crontab agendapro --set environment=production
 
 * Deployment instructions
 

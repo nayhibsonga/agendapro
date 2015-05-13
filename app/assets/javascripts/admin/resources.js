@@ -9,6 +9,7 @@ function changeLocationStatus(location_id) {
 }
 
 function saveCategory (typeURL, extraURL) {
+	$('#saveResourceCategryButton').attr('disabled', true);
 	var categoryJSON = { "name": $('#resource_category_name').val() };
 	if (typeURL == 'DELETE') {
 		var r = confirm("Estás seguro?");
@@ -30,13 +31,15 @@ function saveCategory (typeURL, extraURL) {
 				$('#resource_resource_category_id').append('<option value="'+resource_category.id+'">'+resource_category.name+'</option>');
 				$('#resource_resource_category_id option[value="'+resource_category.id+'"]').prop('selected', true);
 				$('#resourceCategoryModal').modal('hide');
+				$('#saveResourceCategryButton').attr('disabled', false);
 				break;
 			case 'PATCH':
-				
+				$('#saveResourceCategryButton').attr('disabled', false);
 				break;
 			case 'DELETE':
 				$('#resource_resource_category_id option[value="'+extraURL.substring(1)+'"]').remove();
 				$('#resourceCategoryModal').modal('hide');
+				$('#saveResourceCategryButton').attr('disabled', false);
 				break;
 			}
 		},
@@ -47,6 +50,7 @@ function saveCategory (typeURL, extraURL) {
 				errores += '*' + errors[i] + '\n';
 			}
 			alert(errores);
+			$('#saveResourceCategryButton').attr('disabled', false);
 		}
 	});
 }
@@ -101,14 +105,13 @@ function saveResource (typeURL, extraURL) {
 }
 
 function getResourceCategories() {
-	// $('#resourceCategoriesTable').html('<tr><th>Categoría</th><th>Eliminar</th></tr>');
 	$('#resource_category_name').val('');
 	$('#resourceCategoriesTable').empty();
 	$.getJSON('/resource_categories', function (categoriesArray) {
 		$.each(categoriesArray, function (key, category) {
 			var buttonString = '';
 			if(category.name != "Sin Categoría") {
-				buttonString = '<a class="btn btn-danger" onclick="saveCategory(\'DELETE\',\'/'+category.id+'\')"><i class="fa fa-trash-o"></i></a>';
+				buttonString = '<a class="btn btn-red" onclick="saveCategory(\'DELETE\',\'/'+category.id+'\')"><i class="fa fa-trash-o"></i></a>';
 			}
 			$('#resourceCategoriesTable').append('<tr><td>'+category.name+'</td><td>'+buttonString+'</td></tr>');
 		});
@@ -137,6 +140,13 @@ function initialize() {
 
 var alertId;
 $(function() {
+
+	$('form input, form select').bind('keypress keydown keyup', function(e){
+    	if(e.keyCode == 13) {
+       		e.preventDefault();
+       	}
+    });
+
 	alertId = new Alert();
 	$('#newResourceCategoryButton').click(function() {
 		getResourceCategories();

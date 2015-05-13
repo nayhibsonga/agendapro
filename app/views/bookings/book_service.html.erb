@@ -28,7 +28,8 @@
               </span><br />
               <%= image_tag 'ubicacion.png', :alt => '', :size => "12x14", :class=>"loc-icon" %>&nbsp;
               <span id="phone-address">
-                <%= if !@selectedLocation.outcall then @selectedLocation.address+', '+@selectedLocation.district.name else "A Domicilio" end %>
+                <% @second_address = @selectedLocation.second_address.blank? ? '' : ', ' + @selectedLocation.second_address %>
+                <%= if !@selectedLocation.outcall then @selectedLocation.address+@second_address+', '+@selectedLocation.district.name else "A Domicilio" end %>
               </span>
             </div>
           <% else %>
@@ -63,7 +64,8 @@
               </span><br />
               <%= image_tag 'ubicacion.png', :alt => '', :size => "12x14", :class=>"loc-icon" %>&nbsp;
               <span id="phone-address">
-                <%= if !@selectedLocation.outcall then @selectedLocation.address+', '+@selectedLocation.district.name else "A Domicilio" end %>
+                <% @second_address = @selectedLocation.second_address.blank? ? '' : ', ' + @selectedLocation.second_address %>
+                <%= if !@selectedLocation.outcall then @selectedLocation.address+@second_address+', '+@selectedLocation.district.name else "A Domicilio" end %>
               </span>
             </div>
           <% else %>
@@ -143,7 +145,8 @@
                       <% end %>
                     </dd>
                     <dt class="dark-gray">¿Dónde?</dt>
-                    <dd class="light-gray"><p><%= @bookings[0].location.address %>, <%= @bookings[0].location.district.name %></p></dd>
+                    <% @second_address = @selectedLocation.second_address.blank? ? '' : ', ' + @selectedLocation.second_address %>
+                    <dd class="light-gray"><p><%= if !@selectedLocation.outcall then @selectedLocation.address+@second_address+', '+@selectedLocation.district.name else "A Domicilio" end %></p></dd>
                     <dt class="dark-gray">¿Con quién?</dt>
                     <dd class="light-gray">
                       <% @bookings.each do |booking| %>

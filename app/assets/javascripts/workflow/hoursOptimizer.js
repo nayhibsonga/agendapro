@@ -152,7 +152,6 @@ function loadHours () {
     $("#hoursDetails").empty();
     var services_str = "";
     $.each(hours_array, function (pos, hour) {
-      console.log(hour.bookings);
       services_str = services_str + '<div class="optimizerDetail" pos="'+ pos +'" hidden><div class="optimizerDetailHeader"><span class="odHeader">Detalle</span><span class="odDate">Día ' + hour.full_date + '</span></div><div class="optimizerDetailBody">';
       for(i = 0; i < hour.bookings.length; i++)
       {
@@ -171,7 +170,6 @@ function loadHours () {
             '<i class="fa fa-calendar-o fa-green"></i> ' + hour.date +
             '<br />' +
             '<i class="fa fa-clock-o fa-green"></i> ' + hour.hour +
-            '<br /><a href="#" class="optimizerDetailLink" pos="'+ pos +'">Ver detalle</a>' +
           '</p>' +
         '</label>'
       );
@@ -184,9 +182,9 @@ function loadHours () {
     {
       $("#pickerSelectDate").hide();
       $('#hoursDetails').append(services_str);
-      $('.optimizerDetailLink').on('click', function(e){
-        e.preventDefault();
-        var pos_num = $(this).attr('pos');
+      $('input[type=radio][name="hoursRadio"]').click(function(){
+        // e.preventDefault();
+        var pos_num = $(this).val();
         $('.optimizerDetail').each(function(){
           if($(this).attr("pos") != pos_num)
           {

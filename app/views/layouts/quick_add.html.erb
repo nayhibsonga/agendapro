@@ -1,221 +1,76 @@
 <!DOCTYPE html>
-<html lang="es">
-	<head>
-		<!-- start: Meta -->
-		<meta charset="utf-8" />
-		<title>Administrador - AgendaPro</title>
-		<meta name="description" content="AgendaPro - Sistema de agendamiento OnLine para empresas y usuarios.">
-		<meta name="author" content="AgendaPro">
-		<meta name="keyword" content="agendapro, agenda, agenda online, reserva, reserva online">
+<!--[if lt IE 7]> <html class="no-js lt-ie9 lt-ie8 lt-ie7" lang="es"> <![endif]-->
+<!--[if IE 7]>    <html class="no-js lt-ie9 lt-ie8" lang="es"> <![endif]-->
+<!--[if IE 8]>    <html class="no-js lt-ie9" lang="es"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="es"> <!--<![endif]-->
+  <head>
+    <!-- start: Meta -->
+    <meta charset="utf-8" />
+    <title>Administrador - AgendaPro</title>
+    <meta name="description" content="AgendaPro - Sistema de agendamiento OnLine para empresas y usuarios.">
+    <meta name="author" content="AgendaPro">
+    <meta name="keyword" content="agendapro, agenda, agenda online, reserva, reserva online">
 
-		<%= csrf_meta_tags %>
-		<!-- end: Meta -->
-		
-		<!-- start: Mobile Specific -->
-		<meta name="viewport" content="width=device-width, initial-scale=1">
-		<!-- end: Mobile Specific -->
-		
-		<!-- start: CSS -->
-		<%= stylesheet_link_tag "admin" %>
-		<!-- end: CSS -->
+    <%= csrf_meta_tags %>
+    <!-- end: Meta -->
 
-		<% if ENV["MONITORING_ACTIVATION"] == "TRUE" %>
-        <!-- Begin Inspectlet Embed Code -->
-        <script type="text/javascript" id="inspectletjs">
-        window.__insp = window.__insp || [];
-        __insp.push(['wid', 1883420541]);
-        (function() {
-        function __ldinsp(){var insp = document.createElement('script'); insp.type = 'text/javascript'; insp.async = true; insp.id = "inspsync"; insp.src = ('https:' == document.location.protocol ? 'https' : 'http') + '://cdn.inspectlet.com/inspectlet.js'; var x = document.getElementsByTagName('script')[0]; x.parentNode.insertBefore(insp, x); }
-        if (window.attachEvent) window.attachEvent('onload', __ldinsp);
-        else window.addEventListener('load', __ldinsp, false);
-        })();
-        </script>
-        <!-- End Inspectlet Embed Code -->
-        <% end %>
-		
+    <!-- start: Mobile Specific -->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- end: Mobile Specific -->
 
-		<!-- The HTML5 shim, for IE6-8 support of HTML5 elements -->
-		<!--[if lt IE 9]>
-			<script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
-			<script src="assets/stylesheets/admin/ie6-8.css"></script>
-		<![endif]-->
-		
-		<!-- start: Favicon and Touch Icons -->
-		<%= favicon_link_tag "favicon.png", :rel => "shortcut icon" %>
-		<!-- end: Favicon and Touch Icons -->
+    <!-- start: CSS -->
+    <%= stylesheet_link_tag "quickadd" %>
+    <!-- end: CSS -->
 
-	</head>
+    <% if ENV["MONITORING_ACTIVATION"] == "TRUE" %>
+    <!-- Begin Inspectlet Embed Code -->
+    <script type="text/javascript" id="inspectletjs">
+      window.__insp = window.__insp || [];
+      __insp.push(['wid', 1883420541]);
+      (function() {
+      function __ldinsp(){var insp = document.createElement('script'); insp.type = 'text/javascript'; insp.async = true; insp.id = "inspsync"; insp.src = ('https:' == document.location.protocol ? 'https' : 'http') + '://cdn.inspectlet.com/inspectlet.js'; var x = document.getElementsByTagName('script')[0]; x.parentNode.insertBefore(insp, x); }
+      if (window.attachEvent) window.attachEvent('onload', __ldinsp);
+      else window.addEventListener('load', __ldinsp, false);
+      })();
+    </script>
+    <!-- End Inspectlet Embed Code -->
+    <% end %>
 
-	<body>
-		<!-- start: Header -->
-		<header>
-			<a href="<%= root_without_subdomain %>" id="logo"></a>
-			<ul class="pull-right" id ="menu-usuario">
-				<li><a href="#" id="open-usuario"><%= current_user.email %> <span class="fa fa-chevron-down"></span></a>
-					<ul id="sub-menu-usuario" class="close-menu-usuario">
-						<li><%= link_to '<i class="fa fa-calendar"></i> Mi Agenda'.html_safe, my_agenda_path(:id => current_user.id) %></li>
-						<li><%= link_to '<i class="fa fa-user"></i> Perfil'.html_safe, edit_admin_user_path(current_user) %></li>
-						<li><%= link_to '<i class="fa fa-question"></i> Tutoriales'.html_safe, tutorials_path %></li>
-						<li><%= link_to '<i class="fa fa-power-off"></i> Cerrar Sesión'.html_safe, destroy_user_session_path, method: :delete %></li>
-					</ul>
-				</li>
-			</ul>
-		</header>
+    <!-- start: Favicon and Touch Icons -->
+    <%= favicon_link_tag "favicon.png", :rel => "shortcut icon" %>
+    <!-- end: Favicon and Touch Icons -->
+  </head>
 
-		<!-- start: Alerts -->
-		<% if notice %>
-		  <div class="alert alert-info alert-dismissable">
-			  <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-		  <%= notice %>
-		  </div>
-		<% end %>
-		<% if alert %>
-		  <div class="alert alert-warning alert-dismissable">
-			  <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-		  <%= alert %>
-		  </div>
-		<% end %>
-		<!-- end: Alerts -->
-		<!-- end: Header -->
-		<div class="container">
-			<div class="row">
-				<div class="col-sm-12">
-					<h2>
-						Sólo nos falta un poco más de información sobre tu empresa para poder empezar<br>
-						<small>Por favor, completa la infomación sobre el local, servicios y prestadores.</small>
-					</h2>
-				</div>
-			</div>
-		</div>
+  <body>
+    <!-- start: Header -->
+    <!-- start: Alerts -->
+    <% if notice %>
+      <div class="alert alert-info alert-dismissable fade in">
+        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+      <%= notice %>
+      </div>
+    <% end %>
+    <% if alert %>
+      <div class="alert alert-warning alert-dismissable fade in">
+        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+      <%= alert %>
+      </div>
+    <% end %>
+    <!-- end: Alerts -->
+    <!-- end: Header -->
 
-		<div class="container">
-			<div class="row" id="navegacion-workflow">
-				<div class="col-md-2"><a id="prev2" class="btn btn-agendapro-claro disabled"><i class="fa fa-chevron-left"></i> Anterior</a></div>
-				<div class="col-md-8">
-					<ul id="control-slide">
-						<li class="col-sm-2 col-sm-offset-1"><div class="control-box">Datos Compañia</div></li>
-						<!--<li class="col-sm-2"><div class="control-box">Pago en línea</div></li>-->			
-						<li class="col-sm-2"><div class="control-box">Nuevo Local</div></li>
-						<li class="col-sm-2"><div class="control-box">Nuevo Servicio</div></li>
-						<li class="col-sm-2"><div class="control-box">Nuevo Prestador</div></li>
-					</ul>
-				</div>
-				<div class="col-md-2"><a id="next2" class="btn btn-agendapro-claro pull-right">Siguiente <i class="fa fa-chevron-right"></i></a></div>
-			</div>
-		</div>
+    <!-- start: content -->
+    <%= yield %>
+    <!-- end: content -->
 
-		<div class="container">
-			<div class="row" id="espacio-workflow">
-				<!-- start: Content -->
-				<div class="col-md-12" >
-					<div class ="well">
-						<div class="center-block" style="display: table;">
-							<p>
-								<h3>Cargando Contenido</h3>
-								<span>Por favor espere</span>
-							</p>
-							<%= image_tag 'ajax-loader.gif', :alt => 'Loader' %>
-						</div>
-					</div>
-					<div id="foo5" style="visibility: collapse;">
-						<%= yield %>
-					</div>
-				</div>	
-				<!-- end: Content -->
-			</div><!--/row-->		
-		</div><!--/container-->
-		
-		<!-- start: JavaScript-->
-		<!--[if !IE]>-->
-				<%= javascript_include_tag "adminNIE" %>
-		<!--<![endif]-->
-		<!--[if IE]>
-			<%= javascript_include_tag "adminIE" %>
-		<!--<![endif]-->
-		<%= javascript_include_tag "admin" %>
-		<%= javascript_include_tag 'jquery.carouFredSel-6.2.1.js' %>
-		<%= javascript_include_tag "jquery.browser.min" %>
-		<%= javascript_include_tag "browser-detect" %>
-		<!--[if !IE]>-->
-				<script type="text/javascript">
-					window.jQuery || document.write("<script src='vendor/jquery-2.1.0.min.js'>"+"<"+"/script>");
-				</script>
-		<!--<![endif]-->
-		<!--[if IE]>
-			<script type="text/javascript">
-				window.jQuery || document.write("<script src='vendor/jquery-1.11.0.min.js'>"+"<"+"/script>");
-			</script>
-		<![endif]-->
-		<%= yield :scripts %>
-		<!--Start of Zopim Live Chat Script-->
-		<%= javascript_include_tag 'zopim' %>
-		<!--End of Zopim Live Chat Script-->
-		<script type="text/javascript">
-			$(function() {
-				//	Responsive layout, resizing the items
-				$('#foo5').carouFredSel({
-					responsive: true,
-					auto: false,
-					width: '100%',
-					direction: "left",
-					circular: false,
-					infinite: false,
-					pagination: {
-						container: '#control-slide',
-						anchorBuilder: false,
-						conditions: function () {
-							return false;
-						}
-					},
-					onCreate: function () {
-						hideLoad();
-						$('fieldset:first').attr('disabled', false);
-					},
-					scroll: {
-						conditions: function (direction) {
-							if (direction == 'next') {
-								return true;
-							}
-							else {
-								return false;
-							}
-						},
-						onBefore: function () {
-							$('fieldset:first').attr('disabled', true);
-						},
-						onAfter: function () {
-							$('fieldset:first').attr('disabled', false);
-						}
-					}
-				});
-
-				$('#next2').click(function () {
-					scrollEvents ();
-				});
-
-				$('#open-usuario').toggle(function () {
-					$("#sub-menu-usuario").removeClass("close-menu-usuario");
-					}, function () {
-					$("#sub-menu-usuario").addClass("close-menu-usuario");
-				});
-
-				<% if params[:step] %>
-					$('#foo5').trigger('slideToPage', <%= params[:step] %>);
-					<% if params[:step].to_i == 1 %>
-					nextFn = startLocation;
-					<% elsif params[:step].to_i == 2 %>
-					nextFn = serviceValid;
-					<% elsif params[:step].to_i == 3 %>
-					nextFn = providerValid;
-					loadProvider();
-					<% end %>
-				<% end %>
-			});
-		</script>
-		<!-- end: JavaScript-->
-
-		<!--Start of Crazy Egg Script-->
-		<%= javascript_include_tag 'crazy_egg' %>
-		<!--End of Crazy Egg Script-->
-	</body>
+    <!-- start: JavaScript-->
+    <%= javascript_include_tag "admin" %>
+    <!--[if gte IE 9]><!-->
+      <script type="text/javascript">
+        window.jQuery || document.write("<script src='/assets/jquery-2.1.1.min.js'>" + "<" + "/script>");
+      </script>
+    <!--<![endif]-->
+    <%= yield :scripts %>
+    <!-- end: JavaScript-->
+  </body>
 </html>

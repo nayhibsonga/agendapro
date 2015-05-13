@@ -25,7 +25,7 @@ $(function() {
 		},
 		messages: {
 			'user[email]': {
-				remote: 'El e-mail ya existe, puedes crear tu compañia <a href="/add_company">aquí</a>.'
+				remote: 'El e-mail ya existe, por favor ingresa otro.'
 			}
 		},
 		highlight: function(element) {

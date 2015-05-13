@@ -1,57 +1,65 @@
-<div class="row companies_header">
-  <ul class="nav nav-tabs">
-
-    <li><a id="companies_payments" href="/companies_payments">Estados de pagos</a></li>
-
-    <li><a id="companies_incomes" href="/companies_incomes">Ingresos mensuales</a></li>
-
-    <li><a id="companies_locations" href="/companies_locations">Clientes y locales</a></li>
-
-    <li><a id="companies_monthly_locations" href="/companies_monthly_locations">Locales mensuales</a></li>
-
-    <li><a id="companies_monthly_bookings" href="/companies_monthly_bookings">Resumen de reservas</a></li>
-
-    <li class="active"><%= link_to 'Empresas', companies_path, { :id => "companies" } %></li>
-
-  </ul>
-</div>
-<div class="container">
+<div class="container-fluid background-grey">
   <div class="row">
-    <section class="hgroup">
-      <h2>Log de cambios en empresas</h2>
-      <h2 class="section_header">Automáticos o manuales, la explicación en los detalles. Ref1: descuento normal de mes y pago emitido si corresponde, Ref2: Pago Vencido, Ref3: Bloqueo cuenta, Ref4: Inactivación cuenta, Ref5: Término periodo trial, Ref6: Deuda a la fecha calculada, Ref7: Llega pago y se consolida mes cuenta, Ref8: Llega pago y se ejecuta cambio de plan</h2>
-      <div class="line-breadcrumb">
-        <ul class="breadcrumb pull-right">
-            <li><%= link_to "Resumen", dashboard_path %> </li>
-            <li><%= link_to "Empresas", companies_path %> </li>
-            <li class="active">Log Empresas</li>
-        </ul>
+    <div class="col-md-12">
+      <h2 class="text-green">Log de cambios en empresas</h2>
+      <p>Automáticos o manuales, la explicación en los detalles.</p>
     </div>
-    </section>
   </div>
 </div>
-
-<table class="table">
-	<thead>
-		<tr>
-			<th>Empresa</th>
-			<th>Ref Acción</th>
-			<th>Detalles</th>
-			<th>Creación</th>
-		</tr>
-	</thead>
-	<tbody>
-		<% @company_cron_logs.each do |company_cron_log| %>
-			<tr>
-				<td><%= Company.find(company_cron_log.company_id).name %></td>
-				<td><%= company_cron_log.action_ref %></td>
-				<td><%= company_cron_log.details %></td>
-				<td><%= l company_cron_log.created_at, format: :short %></td>
-			</tr>
-		 <% end %>
-	</tbody>
-</table>
-
-<div class="row">
-	<%= will_paginate @company_cron_logs, renderer: BootstrapPagination::Rails %>
+<div class="container-fluid">
+  <div class="row">
+    <!-- Navegation Tabs -->
+    <div class="col-md-2">
+      <ul class="nav nav-pills nav-stacked tab-margin">
+        <li><a id="companies_payments" href="/companies_payments">Estados de pagos</a></li>
+        <li><a id="companies_incomes" href="/companies_incomes">Ingresos mensuales</a></li>
+        <li><a id="companies_locations" href="/companies_locations">Clientes y locales</a></li>
+        <li><a id="companies_monthly_locations" href="/companies_monthly_locations">Locales mensuales</a></li>
+        <li><a id="companies_monthly_bookings" href="/companies_monthly_bookings">Resumen de reservas</a></li>
+        <li class="active"><%= link_to 'Empresas', companies_path, { :id => "companies" } %></li>
+      </ul>
+    </div>
+    <!-- Panels -->
+    <div class="col-md-10 left-panel">
+      <div class="tab-margin">
+        <div class="row">
+          <div class="col-md-12">
+            <ul class="list-inline">
+              <li>Ref1: descuento normal de mes y pago emitido si corresponde</li>
+              <li>Ref2: Pago Vencido</li>
+              <li>Ref3: Bloqueo cuenta</li>
+              <li>Ref4: Inactivación cuenta</li>
+              <li>Ref5: Término periodo trial</li>
+              <li>Ref6: Deuda a la fecha calculada</li>
+              <li>Ref7: Llega pago y se consolida mes cuenta</li>
+              <li>Ref8: Llega pago y se ejecuta cambio de plan</li>
+            </ul>
+          </div>
+          <div class="col-md-12">
+            <table class="table table-green">
+              <thead>
+                <tr>
+                  <th>Empresa</th>
+                  <th>Ref Acción</th>
+                  <th>Detalles</th>
+                  <th>Creación</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% @company_cron_logs.each do |company_cron_log| %>
+                  <tr>
+                    <td><%= Company.find(company_cron_log.company_id).name %></td>
+                    <td><%= company_cron_log.action_ref %></td>
+                    <td><%= company_cron_log.details %></td>
+                    <td><%= l company_cron_log.created_at, format: :short %></td>
+                  </tr>
+                 <% end %>
+              </tbody>
+            </table>
+            <%= will_paginate @company_cron_logs, renderer: BootstrapPagination::Rails %>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>

@@ -1,80 +1,68 @@
-<div class="container">
+<div class="container-fluid background-grey">
   <div class="row">
-    <section class="hgroup">
-      <h2>Locales</h2>
-      <h2 class="section_header">Crea y edita los locales asociados a tu compañía.</h2>
-      <div class="line-breadcrumb">
-        <ul class="breadcrumb pull-right">
-            <li><%= link_to "Resumen", dashboard_path %> </li>
-            <li class="active">Locales</li>
-        </ul>
+    <div class="col-md-12">
+      <h2 class="text-green">Locales</h2>
+      <p>Crea y edita los locales asociados a tu compañía.</p>
+    </div>
+  </div>
+</div>
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-md-12">
+      <div class="pull-right text-right" style="margin: 10px 0;">
+        <% if @locations.where(active:true).count < @locations.first.company.plan.locations %>
+          <%= link_to '<i class="fa fa-plus"></i> Nuevo Local'.html_safe, new_location_path, :class => "btn btn-green" unless cannot? :create, Location %>
+          <%= link_to '<i class="fa fa-minus"></i> Locales Inactivos'.html_safe, inactive_locations_path, :class => "btn btn-white" unless cannot? :destroy, Location %>
+        <% else %>
+        <p>
+          <a href="#" class="btn btn-green disabled">Nuevo Local</a>
+          <%= link_to '<i class="fa fa-minus"></i> Locales Inactivos'.html_safe, inactive_locations_path, :class => "btn btn-white" unless cannot? :destroy, Location %>
+        </p>
+          <p>
+            No puedes crear más locales con el plan actual. <%= link_to 'Cambiar mi plan', select_plan_path, :class => "btn btn-white" %>
+          </p>
+        <% end %>
       </div>
-    </section>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-12">
+      <table class="table table-bordered table-green">
+        <thead>
+          <tr>
+            <th>Nombre</th>
+            <% if current_user.role_id == Role.find_by_name('Super Admin').id %>
+            <th>Empresa</th>
+            <% end %>
+            <th>Opciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @locations.each do |location| %>
+            <tr draggable="true">
+              <td data-location="<%= location.id %>"><%= location.name %></td>
+              <% if current_user.role_id == Role.find_by_name('Super Admin').id %>
+              <td><%= location.company.name %></td>
+              <% end %>
+              <td>
+                <%= link_to '<i class="fa fa-pencil"></i> Editar'.html_safe, edit_location_path(location), :class => "btn btn-sm btn-orange" %>
+                <%= link_to '<i class="fa fa-trash-o"></i> Eliminar'.html_safe, deactivate_location_path(:id => location.id), :class => "btn btn-sm btn-red", data: { confirm: '¿Estás seguro de desactivar el Local seleccionado?' } unless cannot? :destroy, location %>
+                <span class="pull-right">
+                  <i class="fa fa-bars"></i>
+                </span>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
   </div>
 </div>
 
-<table class="table table-bordered">
-  <thead>
-    <tr>
-      <th>Nombre</th>
-      <% if current_user.role_id == Role.find_by_name('Super Admin').id %>
-      <th>Empresa</th>
-      <% end %>
-      <th>Opciones</th>
-    </tr>
-  </thead>
-
-  <tbody>
-    <% @locations.each do |location| %>
-      <tr draggable="true">
-      <td data-location="<%= location.id %>"><%= location.name %></td>
-      <% if current_user.role_id == Role.find_by_name('Super Admin').id %>
-      <td><%= location.company.name %></td>
-      <% end %>
-        <td>
-          <%= link_to '<i class="fa fa-pencil"></i> Editar'.html_safe, edit_location_path(location), :class => "btn btn-sm btn-warning" %>
-          <%= link_to '<i class="fa fa-trash-o"></i> Eliminar'.html_safe, deactivate_location_path(:id => location.id), :class => "btn btn-sm btn-danger", data: { confirm: '¿Estás seguro de desactivar el Local seleccionado?' } unless cannot? :destroy, location %>
-          <span class="pull-right">
-            <i class="fa fa-bars"></i>
-          </span>
-        </td>
-      </tr>
-    <% end %>
-  </tbody>
-</table>
-
-
-
-<% if @locations.where(active:true).count < @locations.first.company.plan.locations %>
-  <div class="row">
-    <div class="col-md-6">
-      <%= link_to '<i class="fa fa-plus"></i> Nuevo Local'.html_safe, new_location_path, :class => "btn btn-agendapro-claro" unless cannot? :create, Location %>
-    </div>
-    <div class="col-md-6">
-      <%= link_to '<i class="fa fa-minus"></i> Locales Inactivos'.html_safe, inactive_locations_path, :class => "btn btn-agendapro-claro pull-right" unless cannot? :destroy, Location %>
-    </div>
-  </div>
-<% else %>
-  <div class="row">
-    <div class="col-md-6">
-      <a href="#" class="btn btn-agendapro-claro disabled">Nuevo Local</a><br />
-    </div>
-    <div class="col-md-6">
-      <%= link_to '<i class="fa fa-minus"></i> Locales Inactivos'.html_safe, inactive_locations_path, :class => "btn btn-agendapro-claro pull-right" unless cannot? :destroy, Location %>
-    </div>
-  </div>
-  <div class="row">
-    <div class="col-md-6" style="margin-top: 10px;">
-      No puedes crear más locales con el plan actual.<br />
-      <%= link_to 'Cambiar mi plan', select_plan_path %>
-    </div>
-    <div class="col-md-6">
-    </div>
-  </div>
+<% content_for :stylesheets do %>
+  <%= stylesheet_link_tag "admin/draggable" %>
 <% end %>
 
-
-<%= stylesheet_link_tag "admin/draggable" %>
 <% content_for :scripts do %>
   <%= javascript_include_tag 'admin/draggable' %>
   <%= javascript_include_tag 'admin/location_draggable' %>

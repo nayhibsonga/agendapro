@@ -1,30 +1,39 @@
-<h1>Planes</h1>
-
-<table class="table table-bordered">
-  <thead>
-    <tr>
-      <th>Plan</th>
-      <th>Custom</th>
-      <th>Special</th>
-      <th>Opciones</th>
-    </tr>
-  </thead>
-
-  <tbody>
-    <% @plans.each do |plan| %>
-      <tr>
-        <td><%= plan.name %></td>
-        <td><%= plan.custom %></td>
-        <td><%= plan.special %></td>
-        <td>
-          <%= link_to '<i class="fa fa-pencil"></i> Editar'.html_safe, edit_plan_path(plan), :class => "btn btn-warning" %>
-          <%= link_to '<i class="fa fa-trash-o"></i> Eliminar'.html_safe, plan, :class => "btn btn-danger", method: :delete, data: { confirm: '¿Estás seguro?' } %>
-        </td>
-      </tr>
-    <% end %>
-  </tbody>
-</table>
-
-<br>
-
-<%= link_to '<i class="fa fa-plus"></i> Nuevo Plan'.html_safe, new_plan_path, :class => "btn btn-primary" %>
+<div class="container-fluid background-grey">
+  <div class="row">
+    <div class="col-md-12">
+      <h2 class="text-green">
+        Planes
+        <%= link_to '<i class="fa fa-plus"></i> Nuevo Plan'.html_safe, new_plan_path, :class => "btn btn-green pull-right" %>
+      </h2>
+    </div>
+  </div>
+</div>
+<div class="container-fluid tab-margin">
+  <div class="row">
+    <div class="col-md-12">
+      <table class="table table-green">
+        <thead>
+          <tr>
+            <th>Plan</th>
+            <th>Custom</th>
+            <th>Special</th>
+            <th>Opciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @plans.each do |plan| %>
+            <tr>
+              <td><%= plan.name %></td>
+              <td><%= plan.custom %></td>
+              <td><%= plan.special %></td>
+              <td>
+                <%= link_to '<i class="fa fa-pencil"></i> Editar'.html_safe, edit_plan_path(plan), :class => "btn btn-orange" %>
+                <%= link_to '<i class="fa fa-trash-o"></i> Eliminar'.html_safe, plan, :class => "btn btn-red", method: :delete, data: { confirm: '¿Estás seguro?' } %>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

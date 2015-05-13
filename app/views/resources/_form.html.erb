@@ -1,143 +1,147 @@
-<% content_for :scripts do %>
-  <%= javascript_include_tag "resources" %>
-<% end %>
-<div class="container">
-  <div class="row well">
-    <%= form_for @resource, :html => {:class => 'form-horizontal'} do |f| %>
-
-      <div class="form-group has-feedback">
-        <%= f.label :name, 'Nombre del Recurso', :class => 'col-sm-3 control-label' %>
-        <div class="col-sm-5">
-          <%= f.text_field :name, :autofocus => true, :required => true, :class => 'form-control', :placeholder => 'Nombre (requerido)' %>
-          <span class="help-block"></span>
-          <span class="form-control-feedback"></span>
-        </div>
-      </div>
-      <div class="form-group has-feedback">
-        <%= f.label :resource_category, 'Categoría del Recurso', :class => 'col-sm-3 control-label' %>
-        <div class="col-sm-5">
-          <%= f.collection_select :resource_category_id, @resource_categories, :id, :name, { include_blank: true }, {class: "form-control"} %>
-          <span class="help-block"></span>
-          <span class="form-control-feedback"></span>
-        </div>
-        <div class="col-sm-4">
-          <button type="button" class="btn btn-sm btn-agendapro-claro" id="newResourceCategoryButton"><i class="fa fa-plus"></i> Nueva Categoría de Recursos</button>
-        </div>
-      </div>
-      <div class="form-group">
-        <%= f.label :service_ids, "Servicios", class: "col-sm-3 control-label" %>
-        <div class="col-sm-5">
-          <div class="panel-group" id="services-accordion">
-            <% ServiceCategory.where(company_id: current_user.company_id).each do |service_category| %>
-            <% @services = Service.where(active: true, service_category_id: service_category.id) %>
-            <% if @services.length > 0 %>
-            <div class="panel panel-default">
-              <div class="panel-heading">
-                <h4 class="panel-title">
-                  <input type="checkbox" name="selectServiceCategory" id="selectServiceCategory<%= service_category.id %>" value="0">
-                  <a data-toggle="collapse" data-parent="#services-accordion" href="#service_category<%= service_category.id %>"><%= service_category.name %></a>
-                </h4>
-              </div>
-              <div id="service_category<%= service_category.id %>" class="panel-collapse collapse<% if service_category == ServiceCategory.where(company_id: current_user.company_id).first %> in<% end %>">
-                <div class="panel-body">
-                  <%= f.collection_check_boxes :service_ids, @services, :id, :name, {}, {class: "check_boxes resourceServiceCheck"} do |b|%>
-                    <div class="checkbox">
-                      <label>
-                        <%= b.check_box %> <%= b.object.name %>
-                      </label>
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-md-12">
+      <div class="well">
+        <%= form_for @resource, :html => {:class => 'form-horizontal'} do |f| %>
+          <div class="form-group has-feedback">
+            <%= f.label :name, 'Nombre del Recurso', :class => 'col-md-3 control-label' %>
+            <div class="col-md-5">
+              <%= f.text_field :name, :autofocus => true, :required => true, :class => 'form-control', :placeholder => 'Nombre (requerido)' %>
+              <span class="help-block"></span>
+              <span class="form-control-feedback"></span>
+            </div>
+          </div>
+          <div class="form-group has-feedback">
+            <%= f.label :resource_category, 'Categoría del Recurso', :class => 'col-md-3 control-label' %>
+            <div class="col-md-5">
+              <%= f.collection_select :resource_category_id, @resource_categories, :id, :name, { include_blank: true }, {class: "form-control"} %>
+              <span class="help-block"></span>
+              <span class="form-control-feedback"></span>
+            </div>
+            <div class="col-md-4">
+              <button type="button" class="btn btn-sm btn-green" id="newResourceCategoryButton"><i class="fa fa-plus"></i> Nueva Categoría de Recursos</button>
+            </div>
+          </div>
+          <div class="form-group">
+            <%= f.label :service_ids, "Servicios", class: "col-md-3 control-label" %>
+            <div class="col-md-5">
+              <div class="panel-group" id="services-accordion">
+                <% ServiceCategory.where(company_id: current_user.company_id).each do |service_category| %>
+                  <% @services = Service.where(active: true, service_category_id: service_category.id) %>
+                  <% if @services.length > 0 %>
+                  <div class="panel panel-default">
+                    <div class="panel-heading">
+                      <h4 class="panel-title">
+                        <input type="checkbox" name="selectServiceCategory" id="selectServiceCategory<%= service_category.id %>" value="0">
+                        <a data-toggle="collapse" data-parent="#services-accordion" href="#service_category<%= service_category.id %>"><%= service_category.name %></a>
+                      </h4>
                     </div>
+                    <div id="service_category<%= service_category.id %>" class="panel-collapse collapse<% if service_category == ServiceCategory.where(company_id: current_user.company_id).first %> in<% end %>">
+                      <div class="panel-body">
+                        <%= f.collection_check_boxes :service_ids, @services, :id, :name, {}, {class: "check_boxes resourceServiceCheck"} do |b|%>
+                          <div class="checkbox">
+                            <label>
+                              <%= b.check_box %> <%= b.object.name %>
+                            </label>
+                          </div>
+                        <% end %>
+                      </div>
+                    </div>
+                  </div>
                   <% end %>
+                <% end %>
+              </div>
+            </div>
+          </div>
+          <div class="form-group">
+            <div class="col-md-5 col-md-offset-3">
+              <div class="panel panel-green">
+                <div class="panel-heading">
+                  <h3 class="panel-title">Recurso disponible en</h3>
+                </div>
+                <div class="panel-body">
+                  <table class="table">
+                    <thead>
+                      <tr>
+                        <th>Local</th>
+                        <th>Cantidad</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <% @locations.each do |location| %>
+                        <tr <%= if current_user.role_id != Role.find_by_name("Administrador General").id && !current_user.locations.pluck(:id).include?(location.id) then 'style=display:none;' end %>>
+                          <td>
+                            <input type="checkbox" class="check_boxes resourceLocationCheck" id="resource_location_ids_<%= location.id %>" value="<%= location.id %>" name="resource[location_ids][]" onchange="changeLocationStatus(<%= location.id %>)">
+                            <label class="checkbox-text" for="resource_location_ids_<%= location.id %>">&nbsp; <%= location.name %></label>
+                          </td>
+                          <td>
+                            <input type="number" class="form-control" id="resource_location_ids_quantity_<%= location.id %>" name="resource[location_ids_quantity][]" placeholder="1 (requerido)" disabled>
+                            <span class="help-block"></span>
+                          </td>
+                        </tr>
+                      <% end %>
+                    </tbody>
+                  </table>
                 </div>
               </div>
             </div>
-            <% end %>
-            <% end %>
           </div>
-        </div>
-      </div>
-      <div class="form-group">
-        <!-- <%= f.label :location_ids, 'Locales', :class => 'col-sm-3 control-label' %> -->
-        <div class="col-sm-12">
-          <div class="panel panel-info">
-            <div class="panel-heading">
-              <h3 class="panel-title">
-                Recurso disponible en:
-              </h3>
+          <div class="form-group">
+            <div class="col-md-offset-3 col-md-9">
+              <button type="button" class="btn btn-green" id="saveResourceButton">Guardar</button>
+              <%= link_to 'Cancelar', resources_path, class: "btn btn-white" %>
             </div>
-            <div class="panel-body">
-              <table class="table table-checkboxes">
-                <tbody id="locationIdsTable">
-                  <tr>
-                    <th>Local</th>
-                    <th>Cantidad</th>
-                  </tr>
-                  <% @locations.each do |location| %>
-                  <tr <%= if current_user.role_id != Role.find_by_name("Administrador General").id && !current_user.locations.pluck(:id).include?(location.id) then 'style=display:none;' end %>>
-                    <td class="location-checkboxes">
-                      <input type="checkbox" class="check_boxes pull-left resourceLocationCheck" id="resource_location_ids_<%= location.id %>" value="<%= location.id %>" name="resource[location_ids][]" onchange="changeLocationStatus(<%= location.id %>)"><label class="check_boxes" for="resource_location_ids_<%= location.id %>">&nbsp; <%= location.name %></label>
-                    </td>
-                    <td class="location-quantities">
-                      <input type="number" class="form-control" id="resource_location_ids_quantity_<%= location.id %>" name="resource[location_ids_quantity][]" placeholder="1 (requerido)" disabled>
-                      <span class="help-block"></span>
-                      <!-- <span class="form-control-feedback"></span> -->
-                    </td>
-                  </tr>
-                  <% end %>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>
+
+<% content_for :modals do %>
+  <div class="modal fade" id="resourceCategoryModal" tabindex="-1" role="dialog" aria-labelledby="resourceCategoryModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+          <h4 class="modal-title resourceCategory-modal-title" id="resourceCategoryModalLabel">Crear o Borrar Categorías de Recurso</h4>
+        </div>
+        <div class="modal-body">
+          <%= form_for @resource_category, html: {class: "form-horizontal"} do |f| %>
+            <div class="form-group has-feedback">
+              <%= f.label :name, "Nueva Categoría", class: "col-md-3 control-label" %>
+              <div class="col-md-6">
+                <%= f.text_field :name, :class => 'form-control', :placeholder => 'Categoría (requerido)' %>
+                <span class="help-block"></span>
+                <span class="form-control-feedback"></span>
+              </div>
+              <div class="col-md-3">
+                <input class="btn btn-green" id="saveResourceCategryButton" type="button" value="Guardar">
+              </div>
+            </div>
+          <% end %>
+          <div class="row">
+            <div class="col-md-6 col-md-offset-3">
+              <h4>Otras Categorías:</h4>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-6 col-md-offset-3">
+              <table class="table">
+                <tbody id="resourceCategoriesTable">
                 </tbody>
               </table>
             </div>
           </div>
         </div>
-      </div>
-
-      <div class="form-group">
-        <div class="col-sm-offset-3 col-sm-4">
-          <button type="button" class="btn btn-agendapro-oscuro" id="saveResourceButton">Guardar</button>
-          <%= link_to 'Cancelar', resources_path, class: "btn btn-default" %>  
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
         </div>
-      </div>
-    <% end %>
-  </div>
-</div>
-
-<div class="modal fade" id="resourceCategoryModal" tabindex="-1" role="dialog" aria-labelledby="resourceCategoryModalLabel" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-        <h4 class="modal-title resourceCategory-modal-title" id="resourceCategoryModalLabel">Crear o Borrar Categorías de Recurso</h4>
-      </div>
-      <div class="modal-body break-modal-body">
-        <%= form_for @resource_category, html: {class: "form-horizontal"} do |f| %>
-          <div class="form-group has-feedback">
-            <%= f.label :name, "Nueva Categoría", class: "col-sm-3 control-label" %>
-            <div class="col-sm-6">
-              <%= f.text_field :name, :class => 'form-control', :placeholder => 'Categoría (requerido)' %>
-              <span class="help-block"></span>
-              <span class="form-control-feedback"></span>
-            </div>
-            <div class="col-sm-3">
-              <input class="btn btn-agendapro-claro" id="saveResourceCategryButton" type="button" value="Guardar">
-            </div>
-          </div>
-        <% end %>
-        <div class="row">
-          <div class="col-sm-6 col-sm-offset-3">
-            <h4>Otras Categorías:</h4>
-          </div>
-        </div>
-        <div class="row">
-          <div class="col-sm-6 col-sm-offset-3">
-            <table class="table">
-              <tbody id="resourceCategoriesTable">
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </div>
-      <div class="modal-footer break-modal-footer">
-        <button type="button" class="btn btn-default booking-button" data-dismiss="modal">Cerrar</button>
       </div>
     </div>
   </div>
-</div>
+<% end %>
+
+<% content_for :scripts do %>
+  <%= javascript_include_tag "resources" %>
+<% end %>

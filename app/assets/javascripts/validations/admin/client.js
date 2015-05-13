@@ -8,6 +8,7 @@ $(function() {
 				email: true
 			},
 			'client[first_name]': {
+				required: true,
 				minlength: 2
 			},
 			'client[last_name]': {
