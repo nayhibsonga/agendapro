@@ -75,8 +75,8 @@ class Location < ActiveRecord::Base
                 	:any_word => true
                 }
     },
-    :ignoring => :accents,
-    :ranked_by => ":tsearch + (0.5 * :trigram)"
+    :ignoring => :accents
+    #:ranked_by => ":tsearch + (0.5 * :trigram)"
 
 
 	def extended_schedule
