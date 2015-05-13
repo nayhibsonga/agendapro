@@ -70,6 +70,12 @@ function geoerror (error) {
     centerMap(geolocation);
 }
 
+function reCenter(latitude, longitude){
+    console.log(latitude + " - " + longitude);
+    var newCenter = new google.maps.LatLng(latitude, longitude);
+    map.setCenter(newCenter);
+}
+
 $(function() {
 	var map;
 
