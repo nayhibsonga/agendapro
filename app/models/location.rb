@@ -58,11 +58,11 @@ class Location < ActiveRecord::Base
     :ranked_by => ":tsearch + (0.5 * :trigram)"
 
 	pg_search_scope :search, :associated_against => {
-	:company => :name,
-	:services => :name,
-	:economic_sectors => :name,
-	:economic_sectors_dictionaries => :name,
-	:service_categories => :name
+		:company => :name,
+		:economic_sectors => :name,
+		:economic_sectors_dictionaries => :name,
+		:service_categories => :name,
+		:services => :name
 	},
 	:using => {
                 :trigram => {
@@ -75,8 +75,8 @@ class Location < ActiveRecord::Base
                 	:any_word => true
                 }
     },
-    :ignoring => :accents,
-    :ranked_by => ":tsearch + (0.5 * :trigram)"
+    :ignoring => :accents
+    #:ranked_by => ":tsearch + (0.5 * :trigram)"
 
 
 	def extended_schedule
