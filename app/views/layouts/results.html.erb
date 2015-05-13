@@ -184,10 +184,15 @@
 		</footer> -->
 
 		<!-- start: JavaScript-->
-		<%= javascript_include_tag "search" %>
 		<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?libraries=places"></script>
 		<% javascript_include_tag "jquery.browser.min" %><!-- Removido -->
 		<% javascript_include_tag "browser-detect" %><!-- Removido -->
+		<%= javascript_include_tag "search" %>
+		<script type="text/javascript">
+			$('a').click(function() {
+				$('.alert').hide();
+			});
+		</script>
 		<%= yield :scripts %>
 		<!--Start of Zopim Live Chat Script-->
 		<%= javascript_include_tag 'zopim' %>
