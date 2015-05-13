@@ -1492,6 +1492,7 @@ class BookingsController < ApplicationController
     if mobile_request?
       @service = @booking.service
       @provider = @booking.service_provider
+      @location = @booking.location
       cancelled_id = Status.find_by(name: 'Cancelado').id
 
       # Data
