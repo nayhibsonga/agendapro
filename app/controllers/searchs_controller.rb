@@ -92,7 +92,7 @@ class SearchsController < ApplicationController
 				current_rank = query[0].pg_search_rank
 				current_group = Array.new
 				query.each do |res|
-					if res.pg_search_rank == current_rank
+					if res.pg_search_rank <= current_rank && (res.pg_search_rank - current_rank).abs < 0.015
 						current_group << res
 					else
 						results << current_group
@@ -131,12 +131,37 @@ class SearchsController < ApplicationController
 
 			#EMPRESAS SIN DUEÑO
 
-			unowned_query_company_names = Location.search_company_name(normalized_search).where(online_booking: true, id: ServiceProvider.where(active: true, online_booking: true).pluck('location_id')).where(company_id: Company.where(:active => true, :owned => false).where(id: CompanySetting.where(:activate_search => true, :activate_workflow => true).pluck('company_id'))).where(:active => true).where('sqrt((latitude - ' + lat.to_s + ')^2 + (longitude - ' + long.to_s + ')^2) < 0.25')
+			unowned_query1 = Location.search(normalized_search).where(online_booking: true, id: ServiceProvider.where(active: true, online_booking: true).pluck('location_id')).where(company_id: Company.where(:active => true, :owned => false).where(id: CompanySetting.where(:activate_search => true, :activate_workflow => true).pluck('company_id'))).where(:active => true).where('sqrt((latitude - ' + -33.4052419.to_s + ')^2 + (longitude - ' + -70.597557.to_s + ')^2) < 0.025')
 
-			unowned_query_rest = Location.search(normalized_search).where(online_booking: true, id: ServiceProvider.where(active: true, online_booking: true).pluck('location_id')).where(company_id: Company.where(:active => true, :owned => false).where(id: CompanySetting.where(:activate_search => true, :activate_workflow => true).pluck('company_id'))).where(:active => true).where('sqrt((latitude - ' + lat.to_s + ')^2 + (longitude - ' + long.to_s + ')^2) < 0.25') - unowned_query_company_names
+			unowned_query2 = Location.search(normalized_search).where(online_booking: true, id: ServiceProvider.where(active: true, online_booking: true).pluck('location_id')).where(company_id: Company.where(:active => true, :owned => false).where(id: CompanySetting.where(:activate_search => true, :activate_workflow => true).pluck('company_id'))).where(:active => true).where('sqrt((latitude - ' + -33.4052419.to_s + ')^2 + (longitude - ' + -70.597557.to_s + ')^2) < 0.05 and sqrt((latitude - ' + -33.4052419.to_s + ')^2 + (longitude - ' + -70.597557.to_s + ')^2) >= 0.025')
+
+			unowned_query3 = Location.search(normalized_search).where(online_booking: true, id: ServiceProvider.where(active: true, online_booking: true).pluck('location_id')).where(company_id: Company.where(:active => true, :owned => false).where(id: CompanySetting.where(:activate_search => true, :activate_workflow => true).pluck('company_id'))).where(:active => true).where('sqrt((latitude - ' + -33.4052419.to_s + ')^2 + (longitude - ' + -70.597557.to_s + ')^2) < 0.075 and sqrt((latitude - ' + -33.4052419.to_s + ')^2 + (longitude - ' + -70.597557.to_s + ')^2) >= 0.05')
+
+			unowned_query4 = Location.search(normalized_search).where(online_booking: true, id: ServiceProvider.where(active: true, online_booking: true).pluck('location_id')).where(company_id: Company.where(:active => true, :owned => false).where(id: CompanySetting.where(:activate_search => true, :activate_workflow => true).pluck('company_id'))).where(:active => true).where('sqrt((latitude - ' + -33.4052419.to_s + ')^2 + (longitude - ' + -70.597557.to_s + ')^2) < 0.10 and sqrt((latitude - ' + -33.4052419.to_s + ')^2 + (longitude - ' + -70.597557.to_s + ')^2) >= 0.075')
+
+			unowned_query5 = Location.search(normalized_search).where(online_booking: true, id: ServiceProvider.where(active: true, online_booking: true).pluck('location_id')).where(company_id: Company.where(:active => true, :owned => false).where(id: CompanySetting.where(:activate_search => true, :activate_workflow => true).pluck('company_id'))).where(:active => true).where('sqrt((latitude - ' + -33.4052419.to_s + ')^2 + (longitude - ' + -70.597557.to_s + ')^2) < 0.125 and sqrt((latitude - ' + -33.4052419.to_s + ')^2 + (longitude - ' + -70.597557.to_s + ')^2) >= 0.10')
+
+			unowned_query6 = Location.search(normalized_search).where(online_booking: true, id: ServiceProvider.where(active: true, online_booking: true).pluck('location_id')).where(company_id: Company.where(:active => true, :owned => false).where(id: CompanySetting.where(:activate_search => true, :activate_workflow => true).pluck('company_id'))).where(:active => true).where('sqrt((latitude - ' + -33.4052419.to_s + ')^2 + (longitude - ' + -70.597557.to_s + ')^2) < 0.15 and sqrt((latitude - ' + -33.4052419.to_s + ')^2 + (longitude - ' + -70.597557.to_s + ')^2) >= 0.125')
+
+			unowned_query7 = Location.search(normalized_search).where(online_booking: true, id: ServiceProvider.where(active: true, online_booking: true).pluck('location_id')).where(company_id: Company.where(:active => true, :owned => false).where(id: CompanySetting.where(:activate_search => true, :activate_workflow => true).pluck('company_id'))).where(:active => true).where('sqrt((latitude - ' + -33.4052419.to_s + ')^2 + (longitude - ' + -70.597557.to_s + ')^2) < 0.175 and sqrt((latitude - ' + -33.4052419.to_s + ')^2 + (longitude - ' + -70.597557.to_s + ')^2) >= 0.15')
+
+			unowned_query8 = Location.search(normalized_search).where(online_booking: true, id: ServiceProvider.where(active: true, online_booking: true).pluck('location_id')).where(company_id: Company.where(:active => true, :owned => false).where(id: CompanySetting.where(:activate_search => true, :activate_workflow => true).pluck('company_id'))).where(:active => true).where('sqrt((latitude - ' + -33.4052419.to_s + ')^2 + (longitude - ' + -70.597557.to_s + ')^2) < 0.20 and sqrt((latitude - ' + -33.4052419.to_s + ')^2 + (longitude - ' + -70.597557.to_s + ')^2) >= 0.175')
+
+			unowned_query9 = Location.search(normalized_search).where(online_booking: true, id: ServiceProvider.where(active: true, online_booking: true).pluck('location_id')).where(company_id: Company.where(:active => true, :owned => false).where(id: CompanySetting.where(:activate_search => true, :activate_workflow => true).pluck('company_id'))).where(:active => true).where('sqrt((latitude - ' + -33.4052419.to_s + ')^2 + (longitude - ' + -70.597557.to_s + ')^2) < 0.225 and sqrt((latitude - ' + -33.4052419.to_s + ')^2 + (longitude - ' + -70.597557.to_s + ')^2) >= 0.20')
+
+			unowned_query10 = Location.search(normalized_search).where(online_booking: true, id: ServiceProvider.where(active: true, online_booking: true).pluck('location_id')).where(company_id: Company.where(:active => true, :owned => false).where(id: CompanySetting.where(:activate_search => true, :activate_workflow => true).pluck('company_id'))).where(:active => true).where('sqrt((latitude - ' + -33.4052419.to_s + ')^2 + (longitude - ' + -70.597557.to_s + ')^2) < 0.25 and sqrt((latitude - ' + -33.4052419.to_s + ')^2 + (longitude - ' + -70.597557.to_s + ')^2) >= 0.225')
 
 
-			unowned_query = unowned_query_company_names + unowned_query_rest
+			unowned_query = unowned_query1 + unowned_query2 + unowned_query3 + unowned_query4 + unowned_query5 + unowned_query6 + unowned_query7 + unowned_query8 + unowned_query9 + unowned_query10
+
+
+
+			#unowned_query_company_names = Location.search_company_name(normalized_search).where(online_booking: true, id: ServiceProvider.where(active: true, online_booking: true).pluck('location_id')).where(company_id: Company.where(:active => true, :owned => false).where(id: CompanySetting.where(:activate_search => true, :activate_workflow => true).pluck('company_id'))).where(:active => true).where('sqrt((latitude - ' + lat.to_s + ')^2 + (longitude - ' + long.to_s + ')^2) < 0.25')
+
+			#unowned_query_rest = Location.search(normalized_search).where(online_booking: true, id: ServiceProvider.where(active: true, online_booking: true).pluck('location_id')).where(company_id: Company.where(:active => true, :owned => false).where(id: CompanySetting.where(:activate_search => true, :activate_workflow => true).pluck('company_id'))).where(:active => true).where('sqrt((latitude - ' + lat.to_s + ')^2 + (longitude - ' + long.to_s + ')^2) < 0.25') - unowned_query_company_names
+
+
+			#unowned_query = unowned_query_company_names + unowned_query_rest
 
 			unowned_locs = Array.new
 			unowned_ordered_locs = Array.new
@@ -150,7 +175,7 @@ class SearchsController < ApplicationController
 				current_rank = unowned_query[0].pg_search_rank
 				current_group = Array.new
 				unowned_query.each do |res|
-					if res.pg_search_rank == current_rank
+					if res.pg_search_rank <= current_rank && (res.pg_search_rank - current_rank).abs < 0.015
 						current_group << res
 					else
 						unowned_results << current_group
