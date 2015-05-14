@@ -144,11 +144,16 @@
         </div>
 
         <!-- start: JavaScript-->
-        <% yield :scripts %>
-        <%= javascript_include_tag "home" %>
         <%= javascript_include_tag "http://maps.google.com/maps/api/js?sensor=false" %>
         <% javascript_include_tag "jquery.browser.min" %><!-- Removido -->
         <% javascript_include_tag "browser-detect" %><!-- Removido -->
+        <%= javascript_include_tag "home" %>
+        <script type="text/javascript">
+            $('a').click(function() {
+                $('.alert').hide();
+            });
+        </script>
+        <% yield :scripts %>
         <!--Start of Zopim Live Chat Script-->
         <%= javascript_include_tag 'zopim' %><!-- Removido -->
         <!--End of Zopim Live Chat Script-->

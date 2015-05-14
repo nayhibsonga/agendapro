@@ -57,7 +57,6 @@ function saveCategory (typeURL, extraURL) {
 
 function saveResource (typeURL, extraURL) {
 	if (!$(form).valid()) {
-		window.console.log('no');
 		return false;
 	};
 	$.each($('input[name="resource[location_ids_quantity][]"]'), function (key, resource) {
