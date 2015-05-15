@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150511221227) do
+ActiveRecord::Schema.define(version: 20150515145329) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -79,8 +79,8 @@ ActiveRecord::Schema.define(version: 20150511221227) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "user_id"
-    t.text     "notes",               default: ""
-    t.text     "company_comment",     default: ""
+    t.text     "notes"
+    t.text     "company_comment"
   end
 
   add_index "booking_histories", ["booking_id"], name: "index_booking_histories_on_booking_id", using: :btree
@@ -108,9 +108,9 @@ ActiveRecord::Schema.define(version: 20150511221227) do
     t.integer  "client_id"
     t.float    "price",               default: 0.0
     t.boolean  "provider_lock",       default: false
+    t.integer  "max_changes",         default: 2
     t.boolean  "payed",               default: false
     t.string   "trx_id",              default: ""
-    t.integer  "max_changes",         default: 2
     t.string   "token",               default: ""
     t.integer  "deal_id"
     t.integer  "booking_group"
@@ -146,24 +146,24 @@ ActiveRecord::Schema.define(version: 20150511221227) do
 
   create_table "clients", force: true do |t|
     t.integer  "company_id"
-    t.string   "email"
-    t.string   "first_name"
-    t.string   "last_name"
-    t.string   "phone"
-    t.string   "address"
-    t.string   "district"
-    t.string   "city"
+    t.string   "email",                 default: ""
+    t.string   "first_name",            default: ""
+    t.string   "last_name",             default: ""
+    t.string   "phone",                 default: ""
+    t.string   "address",               default: ""
+    t.string   "district",              default: ""
+    t.string   "city",                  default: ""
     t.integer  "age"
     t.integer  "gender"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.string   "identification_number"
+    t.string   "identification_number", default: ""
     t.boolean  "can_book",              default: true
     t.integer  "birth_day"
     t.integer  "birth_month"
     t.integer  "birth_year"
-    t.string   "record"
-    t.string   "second_phone"
+    t.string   "record",                default: ""
+    t.string   "second_phone",          default: ""
   end
 
   add_index "clients", ["company_id"], name: "index_clients_on_company_id", using: :btree
@@ -177,8 +177,8 @@ ActiveRecord::Schema.define(version: 20150511221227) do
     t.integer  "payment_status_id",                  null: false
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.text     "description"
-    t.text     "cancellation_policy"
+    t.text     "description",         default: ""
+    t.text     "cancellation_policy", default: ""
     t.boolean  "active",              default: true
     t.float    "due_amount",          default: 0.0
     t.date     "due_date"
@@ -238,21 +238,21 @@ ActiveRecord::Schema.define(version: 20150511221227) do
     t.boolean  "provider_overcapacity",       default: true,                  null: false
     t.boolean  "resource_overcapacity",       default: true,                  null: false
     t.integer  "booking_confirmation_time",   default: 1,                     null: false
-    t.integer  "booking_configuration_email", default: 0
+    t.integer  "booking_configuration_email", default: 1
     t.integer  "max_changes",                 default: 2
     t.boolean  "booking_history",             default: true
     t.boolean  "staff_code",                  default: false
     t.integer  "monthly_mails",               default: 0,                     null: false
+    t.boolean  "deal_activate",               default: false
+    t.string   "deal_name",                   default: ""
+    t.boolean  "deal_overcharge",             default: true
     t.boolean  "allows_online_payment",       default: false
     t.string   "account_number",              default: ""
     t.string   "company_rut",                 default: ""
     t.string   "account_name",                default: ""
     t.integer  "account_type",                default: 3
     t.integer  "bank_id"
-    t.boolean  "deal_activate",               default: false
-    t.string   "deal_name"
-    t.boolean  "deal_overcharge",             default: true
-    t.boolean  "deal_exclusive",              default: false
+    t.boolean  "deal_exclusive",              default: true
     t.integer  "deal_quantity",               default: 0
     t.integer  "deal_constraint_option",      default: 0
     t.integer  "deal_constraint_quantity",    default: 0
@@ -383,8 +383,8 @@ ActiveRecord::Schema.define(version: 20150511221227) do
     t.boolean  "outcall",                     default: false
     t.string   "email",                       default: ""
     t.boolean  "notification",                default: false
-    t.integer  "booking_configuration_email", default: 0
-    t.string   "second_address"
+    t.integer  "booking_configuration_email", default: 2
+    t.string   "second_address",              default: ""
     t.boolean  "online_booking",              default: true
   end
 
@@ -495,7 +495,7 @@ ActiveRecord::Schema.define(version: 20150511221227) do
     t.integer  "service_provider_id"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.string   "name"
+    t.string   "name",                default: ""
     t.integer  "break_group_id"
     t.integer  "break_repeat_id"
   end
@@ -621,7 +621,7 @@ ActiveRecord::Schema.define(version: 20150511221227) do
     t.boolean  "active",                      default: true
     t.integer  "order",                       default: 0
     t.integer  "block_length",                default: 30
-    t.integer  "booking_configuration_email", default: 0
+    t.integer  "booking_configuration_email", default: 2
     t.boolean  "online_booking",              default: true
   end
 
@@ -747,7 +747,7 @@ ActiveRecord::Schema.define(version: 20150511221227) do
   create_table "users", force: true do |t|
     t.string   "first_name"
     t.string   "last_name"
-    t.string   "phone"
+    t.string   "phone",                  default: ""
     t.integer  "role_id",                               null: false
     t.integer  "company_id"
     t.datetime "created_at"
