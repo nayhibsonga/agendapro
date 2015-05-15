@@ -89,6 +89,12 @@ class Ability
     can :get_direction, District
 
     can :agenda, User, :id => user.id
+    can :get_session_bookings, User
+    can :get_session_summary, User
+    can :delete_session_booking, Booking
+    can :validate_session_booking, Booking
+    can :session_booking_detail, Booking
+    can :book_session_form, Booking
 
     can :pdf, ServiceProvider
 

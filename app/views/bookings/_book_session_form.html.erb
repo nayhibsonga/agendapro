@@ -1,0 +1,74 @@
+<div class="modal-dialog">
+    <div class="modal-content">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal">&times;</button>
+            <h3 class="modal-title">Reservar</h3>
+        </div>
+        <div class="modal-body">
+            <div id="optimizerFirst">
+              <div id="pickerSelectDate">
+                <div class="row">
+                  <div class="col-xs-3" style="text-align: right; font-weight: bold;">
+                    Inicio
+                  </div>
+                  <div class="col-xs-9">
+                    <input id="initialPickerDate" value="<%= I18n.l(DateTime.now.to_date) %>" hidden />
+                    <span id="pickerSelected" style="color: #949292;"><%= I18n.l(DateTime.now.to_date) %></span>&nbsp;&nbsp;
+                    <span class="optimizer-date-span" style="float: right;">
+                      Seleccionar nuevo inicio&nbsp;<i class="fa fa-calendar-o"></i>
+                      <input type="text" class="form-control" name="optimizerDateSelector" id="optimizerDateSelector" class="datepicker" />
+                    </span>
+                  </div>
+                </div>
+              </div>
+              <form class="form-horizontal" id="serviceOptimizer">
+                  <div class="form-group">
+                    <label for="providerOptimizerSelector" class="col-xs-3 control-label">Prestador</label>
+                    <div class="col-xs-9">
+                      <select class="form-control" name="providerOptimizerSelector">
+                        <option value="0">Sin Preferencia</option>
+                        <% @booking.service.service_providers.where(:active => true, online_booking: true).where('location_id = ?', @booking.location.id).order(order: :asc).each do |provider| %>
+                            <option value="<%= provider.id %>">
+                            <%= provider.public_name %>
+                            </option>
+                        <% end %>
+                      </select>
+                    </div>
+                  </div>
+                  <input type="hidden" name="service" value="<%= @booking.service.id %>" />
+              </form>
+              <div id="selectHour"></div>
+              <%= form_tag '/optimizer_data', method: 'post', role: 'form', class: 'hidden', id: 'userData' do %>
+                <input type="hidden" id="local" name="local" value="<%= @booking.location.id %>">
+              <% end %>
+            </div>
+            <div id="hoursDetails"></div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-orange optimizerBtn" id="optimizerPrevButton" hidden><i class="fa fa-chevron-left"></i>&nbsp;Atrás</button>
+            <button type="button" class="btn btn-orange optimizerBtn" id="nextButton">Siguiente&nbsp;<i class="fa fa-chevron-right"></i></button>
+            <a href="#" class="btn btn-white" data-dismiss="modal">Cerrar</a>
+        </div>
+    </div><!-- /.modal-content -->
+</div><!-- /.modal-dialog -->
+
+
+<script type="text/javascript">
+    /*$(".session-btn-book".click(function(){
+
+        $.ajax({
+            type: "post",
+            url: "optimizer_data",
+            dataType: "json",
+            data: {id: booking_id},
+            success: function(response)
+            {
+                $("#session-booking-select").trigger("change");
+            },
+            error: function(response)
+            {
+
+            }
+        });
+    });*/
+</script>

@@ -1,5 +1,5 @@
 class BookingsController < ApplicationController
-  before_action :set_booking, only: [:show, :edit, :update, :destroy]
+  before_action :set_booking, only: [:show, :edit, :update, :destroy, :delete_session_booking, :validate_session_booking, :session_booking_detail, :book_session_form]
   before_action :authenticate_user!, except: [:create, :force_create, :booking_valid, :provider_booking, :book_service, :book_error, :remove_bookings, :edit_booking, :edit_booking_post, :cancel_booking, :cancel_all_booking, :confirm_booking, :check_user_cross_bookings, :blocked_edit, :blocked_cancel, :optimizer_hours, :optimizer_data, :transfer_error_cancel]
   before_action :quick_add, except: [:create, :force_create, :booking_valid, :provider_booking, :book_service, :book_error, :remove_bookings, :edit_booking, :edit_booking_post, :cancel_booking, :confirm_booking, :check_user_cross_bookings, :blocked_edit, :blocked_cancel, :optimizer_hours, :optimizer_data, :transfer_error_cancel]
   layout "admin", except: [:book_service, :book_error, :remove_bookings, :provider_booking, :edit_booking, :edit_booking_post, :cancel_booking, :transfer_error_cancel, :confirm_booking, :check_user_cross_bookings, :blocked_edit, :blocked_cancel, :optimizer_hours, :optimizer_data]
@@ -780,6 +780,54 @@ class BookingsController < ApplicationController
     # @booking.destroy
     respond_to do |format|
       format.html { redirect_to bookings_url }
+      format.json { render :json => @booking }
+    end
+  end
+
+  def delete_session_booking
+    
+    if @booking.destroy
+      respond_to do |format|
+        format.html { redirect_to bookings_url }
+        format.json { render :json => @booking }
+      end
+    else
+      @errors = []
+      @errors << "Hubo un problema al eliminar la sesión."
+      respond_to do |format|
+        format.html { redirect_to bookings_url }
+        format.json { render :json => @errors }
+      end
+    end
+  end
+
+  def validate_session_booking
+    @booking.user_session_confirmed = true
+    if @booking.save
+      respond_to do |format|
+        format.html { redirect_to bookings_url }
+        format.json { render :json => @booking }
+      end
+    else
+      @errors = []
+      @errors << "Hubo un problema al validar la sesión."
+      respond_to do |format|
+        format.html { redirect_to bookings_url }
+        format.json { render :json => @errors }
+      end
+    end
+  end
+
+  def session_booking_detail
+    respond_to do |format|
+      format.html { render :partial => 'session_booking_detail' }
+      format.json { render :json => @booking }
+    end
+  end
+
+  def book_session_form
+    respond_to do |format|
+      format.html { render :partial => 'book_session_form' }
       format.json { render :json => @booking }
     end
   end

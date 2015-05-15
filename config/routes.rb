@@ -118,6 +118,12 @@ Agendapro::Application.routes.draw do
 
   # My Agenda
   get '/my_agenda', :to => 'users#agenda', :as => 'my_agenda'
+  get '/get_session_bookings', :to => 'users#get_session_bookings'
+  get '/get_session_summary', :to => 'users#get_session_summary'
+  post '/delete_session_booking', :to => 'bookings#delete_session_booking'
+  post '/validate_session_booking', :to => 'bookings#validate_session_booking'
+  get '/session_booking_detail', :to => 'bookings#session_booking_detail'
+  get '/book_session_form', :to => 'bookings#book_session_form'
 
   # Add Company from Usuario Registrado
   get '/add_company', :to => 'companies#add_company', :as => 'add_company'
