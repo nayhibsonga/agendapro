@@ -826,6 +826,9 @@ class BookingsController < ApplicationController
   end
 
   def book_session_form
+    #if params[:edit]
+    #  @startDate = @booking.start
+    #end
     respond_to do |format|
       format.html { render :partial => 'book_session_form' }
       format.json { render :json => @booking }

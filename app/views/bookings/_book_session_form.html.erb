@@ -14,10 +14,10 @@
                   <div class="col-xs-9">
                     <input id="initialPickerDate" value="<%= I18n.l(DateTime.now.to_date) %>" hidden />
                     <span id="pickerSelected" style="color: #949292;"><%= I18n.l(DateTime.now.to_date) %></span>&nbsp;&nbsp;
-                    <span class="optimizer-date-span" style="float: right;">
+                    <span class="optimizer-date-span" id="openDatepicker" style="float: right;">
                       Seleccionar nuevo inicio&nbsp;<i class="fa fa-calendar-o"></i>
                       <input type="hidden" name="bookingId" id="bookingId" value="<%= @booking.id %>" />
-                      <input type="text" class="form-control" name="optimizerDateSelector" id="optimizerDateSelector" class="datepicker" />
+                      <input type="text" class="form-control" name="optimizerDateSelector" id="optimizerDateSelector<%= @booking.id %>" class="datepicker" />
                       <input type="hidden" name="selectedLocal" id="selectedLocal" value="<%= @booking.location.id %>" />
                       <input type="hidden" name="selectedService" id="selectedService" value="<%= @booking.service.id %>" />
                     </span>
@@ -31,9 +31,15 @@
                       <select class="form-control" name="providerOptimizerSelector">
                         <option value="0">Sin Preferencia</option>
                         <% @booking.service.service_providers.where(:active => true, online_booking: true).where('location_id = ?', @booking.location.id).order(order: :asc).each do |provider| %>
-                            <option value="<%= provider.id %>">
-                            <%= provider.public_name %>
-                            </option>
+                            <% if @booking.is_session_booked && @booking.service_provider_id == provider.id %>
+                                <option value="<%= provider.id %>" selected>
+                                    <%= provider.public_name %>
+                                </option>
+                            <% else %>
+                                <option value="<%= provider.id %>">
+                                    <%= provider.public_name %>
+                                </option>
+                            <% end %>
                         <% end %>
                       </select>
                     </div>
@@ -61,40 +67,51 @@
 <script type="text/javascript">
 
     var serviceTitle = "Elegir servicio y staff<br><small>Elige los servicios y prestadores para encontrar el mejor horario para realizarlos</small>";
-    var serviceButton = "Agregar otro servicio";
     var hourTitle = "Resultado de la búsqueda<br><small>Selecciona una fecha y hora</small>";
     var hourButton = "Ver mas resultados";
     var resultsLength = 6;
     var bookings = [];
+    var booking_id = $("#bookingId").val();
+
 
     $('#openOptimizerBtn').click(function (e) {
         loadHourModal();
     });
 
-    $("#optimizerDateSelector").datepicker({
-        autoSize: true,
-        firstDay: 1,
-        changeMonth: true,
-        changeYear: true,
-        monthNames: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
-        monthNamesShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
-        prevText: 'Atrás',
-        nextText: 'Adelante',
-        dayNames: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'],
-        dayNamesShort: ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'],
-        dayNamesMin: ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'],
-        today: 'Hoy',
-        clear: '',
-        dateFormat: 'yy-mm-dd',
-        onSelect: function(newDate){
-            $("#pickerSelected").empty();
-            var prettyDate = newDate.split("-")[2] + "/" + newDate.split("-")[1] + "/" + newDate.split("-")[0];
-            $("#pickerSelected").append(prettyDate);
-        }
-    });
+    $(document).ready(function(){
 
-    $(document.body).on('click', '.optimizer-date-span', function(e){
-        $(e.currentTarget).find('input').datepicker('show');
+        
+
+        $("#optimizerDateSelector" + booking_id).datepicker({
+            autoSize: true,
+            firstDay: 1,
+            changeMonth: true,
+            changeYear: true,
+            monthNames: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+            monthNamesShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
+            prevText: 'Atrás',
+            nextText: 'Adelante',
+            dayNames: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'],
+            dayNamesShort: ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'],
+            dayNamesMin: ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'],
+            today: 'Hoy',
+            clear: '',
+            dateFormat: 'yy-mm-dd',
+            onSelect: function(newDate){
+                $("#pickerSelected").empty();
+                var prettyDate = newDate.split("-")[2] + "/" + newDate.split("-")[1] + "/" + newDate.split("-")[0];
+                $("#pickerSelected").append(prettyDate);
+            }
+        });
+
+        $("#openDatepicker").click(function(){
+            $("#optimizerDateSelector" + booking_id).datepicker("show");
+        });
+
+        /*$(document.body).on('click', '.optimizer-date-span', function(e){
+            $(e.currentTarget).find('input').datepicker('show');
+        });*/
+
     });
 
 
@@ -110,10 +127,10 @@
 
         $('#addButton').off('click'); // Unbind click event
         $('#addButton').click(function (e) {
-        $('#addButton').prop('disabled', true);
-        resultsLength += 6;
-        $('#selectHour').empty();
-        loadHours();
+            $('#addButton').prop('disabled', true);
+            resultsLength += 6;
+            $('#selectHour').empty();
+            loadHours();
         }); // Bind click event
 
     }
@@ -133,7 +150,7 @@
         });
         
 
-        var start_date = $("#optimizerDateSelector").val();
+        var start_date = $("#optimizerDateSelector" + booking_id).val();
 
         $.getJSON('/optimizer_hours', { local: localId, serviceStaff: JSON.stringify(selects), resultsLength: resultsLength, start_date: start_date }, function (hours_array) {
         $('#selectHour > p').remove();
@@ -172,7 +189,7 @@
           $("#pickerSelectDate").hide();
           $('#hoursDetails').append(services_str);
           $('input[type=radio][name="hoursRadio"]').click(function(){
-            // e.preventDefault();
+
             var pos_num = $(this).val();
             $('.optimizerDetail').each(function(){
               if($(this).attr("pos") != pos_num)
@@ -200,13 +217,12 @@
     $('#hoursOptimizer').on('show.bs.modal', function (e) {
         resultsLength = 6;
         bookings = [];
-        //loadServiceModal();
+
     });
 
     $('#hoursOptimizer').on('hide.bs.modal', function(e){
         $("#hoursDetails").empty();
         $("#pickerSelected").empty();
-        //var prettyDate = newDate.split("-")[2] + "/" + newDate.split("-")[1] + "/" + newDate.split("-")[0];
         $("#pickerSelected").append($("#initialPickerDate").val());
         $("#pickerSelectDate").show();
     });
@@ -243,7 +259,7 @@
             var booking_id = $("#bookingId").val();
             var start = bookings[pos][0].start;
             var end = bookings[pos][0].end;
-            var provider_id = $('[name="providerOptimizerSelector').val();
+            var provider_id = bookings[pos][0].provider;
 
             $.ajax({
                 url: "update_book_session",
@@ -253,11 +269,13 @@
                 success: function(response)
                 {
                     $("#bookModal").modal('hide');
+                    $('#bookModal').remove();
                     $("#session-booking-select").trigger("change");
                 },
                 error: function(xhr)
                 {
                     $("#bookModal").modal('hide');
+                    $('#bookModal').remove();
                     alert("Error");
                 }
             });
@@ -267,21 +285,5 @@
         };
     });
 
-    /*$(".session-btn-book".click(function(){
 
-        $.ajax({
-            type: "post",
-            url: "optimizer_data",
-            dataType: "json",
-            data: {id: booking_id},
-            success: function(response)
-            {
-                $("#session-booking-select").trigger("change");
-            },
-            error: function(response)
-            {
-
-            }
-        });
-    });*/
 </script>
