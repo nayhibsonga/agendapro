@@ -2,7 +2,7 @@
     <div class="modal-content">
         <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal">&times;</button>
-            <h3 class="modal-title">Reservar</h3>
+            <h3 class="modal-title" id="optimizerTitle" style="line-height: 1.1;">Reservar</h3>
         </div>
         <div class="modal-body">
             <div id="optimizerFirst">
@@ -16,7 +16,10 @@
                     <span id="pickerSelected" style="color: #949292;"><%= I18n.l(DateTime.now.to_date) %></span>&nbsp;&nbsp;
                     <span class="optimizer-date-span" style="float: right;">
                       Seleccionar nuevo inicio&nbsp;<i class="fa fa-calendar-o"></i>
+                      <input type="hidden" name="bookingId" id="bookingId" value="<%= @booking.id %>" />
                       <input type="text" class="form-control" name="optimizerDateSelector" id="optimizerDateSelector" class="datepicker" />
+                      <input type="hidden" name="selectedLocal" id="selectedLocal" value="<%= @booking.location.id %>" />
+                      <input type="hidden" name="selectedService" id="selectedService" value="<%= @booking.service.id %>" />
                     </span>
                   </div>
                 </div>
@@ -45,15 +48,225 @@
             <div id="hoursDetails"></div>
         </div>
         <div class="modal-footer">
-            <button type="button" class="btn btn-orange optimizerBtn" id="optimizerPrevButton" hidden><i class="fa fa-chevron-left"></i>&nbsp;Atrás</button>
-            <button type="button" class="btn btn-orange optimizerBtn" id="nextButton">Siguiente&nbsp;<i class="fa fa-chevron-right"></i></button>
-            <a href="#" class="btn btn-white" data-dismiss="modal">Cerrar</a>
+            <button type="button" class="btn session-btn btn-orange" id="optimizerBackBtn" style="display: none;"><i class="fa fa-chevron-left"></i>&nbsp;Atrás</button>
+            <button type="button" class="btn session-btn btn-orange" id="nextButton" style="display: none;">Siguiente&nbsp;<i class="fa fa-chevron-right"></i></button>
+            <button type="button" class="btn session-btn" id="openCalendarBtn"><i class="fa fa-calendar-o"></i>&nbsp;Ver calendario</button>
+            <button type="button" class="btn session-btn" id="openOptimizerBtn"><i class="fa fa-calendar-o"></i>&nbsp;Sugerir hora</button>
+            <!--<button href="#" class="btn btn-red" data-dismiss="modal">Cerrar</button>-->
         </div>
     </div><!-- /.modal-content -->
 </div><!-- /.modal-dialog -->
 
 
 <script type="text/javascript">
+
+    var serviceTitle = "Elegir servicio y staff<br><small>Elige los servicios y prestadores para encontrar el mejor horario para realizarlos</small>";
+    var serviceButton = "Agregar otro servicio";
+    var hourTitle = "Resultado de la búsqueda<br><small>Selecciona una fecha y hora</small>";
+    var hourButton = "Ver mas resultados";
+    var resultsLength = 6;
+    var bookings = [];
+
+    $('#openOptimizerBtn').click(function (e) {
+        loadHourModal();
+    });
+
+    $("#optimizerDateSelector").datepicker({
+        autoSize: true,
+        firstDay: 1,
+        changeMonth: true,
+        changeYear: true,
+        monthNames: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+        monthNamesShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
+        prevText: 'Atrás',
+        nextText: 'Adelante',
+        dayNames: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'],
+        dayNamesShort: ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'],
+        dayNamesMin: ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'],
+        today: 'Hoy',
+        clear: '',
+        dateFormat: 'yy-mm-dd',
+        onSelect: function(newDate){
+            $("#pickerSelected").empty();
+            var prettyDate = newDate.split("-")[2] + "/" + newDate.split("-")[1] + "/" + newDate.split("-")[0];
+            $("#pickerSelected").append(prettyDate);
+        }
+    });
+
+    $(document.body).on('click', '.optimizer-date-span', function(e){
+        $(e.currentTarget).find('input').datepicker('show');
+    });
+
+
+    function loadHourModal () {
+        $('#serviceOptimizer').hide();
+        $('#selectHour').empty();
+        $('#selectHour').show();
+        $('#optimizerTitle').html(hourTitle);
+        $('#addButton > span').html(hourButton);
+
+        $('#addButton').prop('disabled', true);
+        loadHours();
+
+        $('#addButton').off('click'); // Unbind click event
+        $('#addButton').click(function (e) {
+        $('#addButton').prop('disabled', true);
+        resultsLength += 6;
+        $('#selectHour').empty();
+        loadHours();
+        }); // Bind click event
+
+    }
+
+
+        function loadHours () {
+        $('#selectHour').append('<p class="text-center"><i class="fa fa-spinner fa-spin fa-lg"></i></p>');
+        var localId = $('#selectedLocal').val();
+        var selects = [];
+        
+        var service = $("#selectedService").val();
+        var provider = $('[name="providerOptimizerSelector').val();
+
+        selects.push({
+          service: service,
+          provider: provider
+        });
+        
+
+        var start_date = $("#optimizerDateSelector").val();
+
+        $.getJSON('/optimizer_hours', { local: localId, serviceStaff: JSON.stringify(selects), resultsLength: resultsLength, start_date: start_date }, function (hours_array) {
+        $('#selectHour > p').remove();
+        $("#hoursDetails").empty();
+        var services_str = "";
+
+        $.each(hours_array, function (pos, hour) {
+          services_str = services_str + '<div class="optimizerDetail" pos="'+ pos +'" hidden><div class="optimizerDetailHeader"><span class="odHeader">Detalle</span><span class="odDate">Día ' + hour.full_date + '</span></div><div class="optimizerDetailBody">';
+          for(i = 0; i < hour.bookings.length; i++)
+          {
+            services_str = services_str + '<label class="checkbox-inline"><p><i class="fa fa-check-circle-o fa-green"></i> <span style="color: #505050;">' + hour.bookings[i].service_name +
+                '</span><br />' +
+                '<i class="fa fa-calendar-o fa-green"></i> ' + hour.bookings[i].start.split("T")[1].split("+")[0].split(":")[0] + ":" + hour.bookings[i].start.split("T")[1].split("+")[0].split(":")[1] + ' - ' + hour.bookings[i].end.split("T")[1].split("+")[0].split(":")[0] + ":" + hour.bookings[i].end.split("T")[1].split("+")[0].split(":")[1] +
+                '<br />' + 
+                '<i class="fa fa-user fa-green"></i> ' + hour.bookings[i].provider_name +
+                '</p></label>';
+          }
+          services_str = services_str + "</div></div>";
+          $('#selectHour').append(
+            '<label class="checkbox-inline">' +
+              '<input type="radio" name="hoursRadio" value="' + pos + '">' +
+              '<p>' +
+                '<i class="fa fa-calendar-o fa-green"></i> ' + hour.date +
+                '<br />' +
+                '<i class="fa fa-clock-o fa-green"></i> ' + hour.hour +
+              '</p>' +
+            '</label>'
+          );
+          bookings.push(hour.bookings);
+        });
+        if (hours_array.length == 0) {
+          $('#selectHour').append('<p class="text-center">No encontramos horarios disponibles</p>');
+        }
+        else
+        {
+          $("#pickerSelectDate").hide();
+          $('#hoursDetails').append(services_str);
+          $('input[type=radio][name="hoursRadio"]').click(function(){
+            // e.preventDefault();
+            var pos_num = $(this).val();
+            $('.optimizerDetail').each(function(){
+              if($(this).attr("pos") != pos_num)
+              {
+                $(this).hide();
+              }
+            });
+            $('.optimizerDetail[pos="'+pos_num+'"]').toggle();
+            var elem = document.getElementById('selectHour');
+            elem.scrollTop = elem.scrollHeight;
+          });
+        }
+        var elem = document.getElementById('selectHour');
+        elem.scrollTop = elem.scrollHeight;
+        }).always(function () {
+        $('#openCalendarBtn').hide();
+        $("#openOptimizerBtn").hide();
+        $('#optimizerBackBtn').show();
+        $("#nextButton").show();
+        });
+        var elem = document.getElementById('selectHour');
+        elem.scrollTop = elem.scrollHeight;
+    }
+
+    $('#hoursOptimizer').on('show.bs.modal', function (e) {
+        resultsLength = 6;
+        bookings = [];
+        //loadServiceModal();
+    });
+
+    $('#hoursOptimizer').on('hide.bs.modal', function(e){
+        $("#hoursDetails").empty();
+        $("#pickerSelected").empty();
+        //var prettyDate = newDate.split("-")[2] + "/" + newDate.split("-")[1] + "/" + newDate.split("-")[0];
+        $("#pickerSelected").append($("#initialPickerDate").val());
+        $("#pickerSelectDate").show();
+    });
+
+    $('.optimizerDetailLink').on('click', function(e){
+        e.preventDefault();
+        var pos_num = $(this).attr('pos');
+        $('.optimizerDetail[pos="'+pos_num+'"]').show();
+    });
+
+    $('#optimizerBackBtn').click(function(e){
+        resultsLength = 6;
+        bookings = [];
+        //loadServiceModal();
+        $("#hoursDetails").empty();
+        $("#pickerSelectDate").show();
+        $("#openOptimizerBtn").show();
+        $("#openCalendarBtn").show();
+        $("#optimizerBackBtn").hide();
+        $("#nextButton").hide();
+        $("#hoursDetails").empty();
+        $("#serviceOptimizer").show();
+        $('#selectHour > p').remove();
+        $('#selectHour > label').remove();
+        $("#hoursDetails").empty();
+    });
+
+    $("#nextButton").click(function(){
+
+
+        if ($('input[name="hoursRadio"]:checked').val()) {
+
+            var pos = $('input[name="hoursRadio"]:checked').val();
+            var booking_id = $("#bookingId").val();
+            var start = bookings[pos][0].start;
+            var end = bookings[pos][0].end;
+            var provider_id = $('[name="providerOptimizerSelector').val();
+
+            $.ajax({
+                url: "update_book_session",
+                type: "post",
+                dataType: "json",
+                data: {id: booking_id, start: start, end: end, service_provider_id: provider_id},
+                success: function(response)
+                {
+                    $("#bookModal").modal('hide');
+                    $("#session-booking-select").trigger("change");
+                },
+                error: function(xhr)
+                {
+                    $("#bookModal").modal('hide');
+                    alert("Error");
+                }
+            });
+        }
+        else {
+            alert('Debe seleccionar una hora');
+        };
+    });
+
     /*$(".session-btn-book".click(function(){
 
         $.ajax({

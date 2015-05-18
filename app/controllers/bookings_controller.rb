@@ -832,6 +832,27 @@ class BookingsController < ApplicationController
     end
   end
 
+  def update_book_session
+    @booking = Booking.find(params[:id])
+    @booking.start = params[:start]
+    @booking.end = params[:end]
+    @booking.service_provider_id = params[:service_provider_id]
+    @booking.is_session = true
+    @booking.is_session_booked = true
+    @booking.user_session_confirmed = true
+    if @booking.save
+      respond_to do |format|
+        format.json { render :json => @booking }
+      end
+    else
+      @errors = []
+      @errors << "Hubo un error al rservar la sesión."
+      respond_to do |format|
+        format.json { render :json => @booking }
+      end
+    end
+  end
+
   def booking_history
     staff_code = '-'
     user = '-'
