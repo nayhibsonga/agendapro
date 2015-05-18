@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150515145329) do
+ActiveRecord::Schema.define(version: 20150515170641) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -391,6 +391,16 @@ ActiveRecord::Schema.define(version: 20150515145329) do
   add_index "locations", ["company_id"], name: "index_locations_on_company_id", using: :btree
   add_index "locations", ["district_id"], name: "index_locations_on_district_id", using: :btree
 
+  create_table "mailing_lists", force: true do |t|
+    t.string   "first_name",     default: ""
+    t.string   "last_name",      default: ""
+    t.string   "email",          default: ""
+    t.string   "phone",          default: ""
+    t.boolean  "mailing_option", default: true
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
   create_table "numeric_parameters", force: true do |t|
     t.string   "name"
     t.float    "value"
@@ -765,6 +775,7 @@ ActiveRecord::Schema.define(version: 20150515145329) do
     t.string   "provider"
     t.string   "uid"
     t.boolean  "receives_offers",        default: true
+    t.boolean  "mailing_option",         default: true
   end
 
   add_index "users", ["company_id"], name: "index_users_on_company_id", using: :btree
