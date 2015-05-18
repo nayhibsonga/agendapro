@@ -36,14 +36,15 @@
         <div class="form-group">
           <%= f.label :service_provider, 'Prestador', class: 'control-label col-xs-3' %>
           <div class="col-xs-9">
-            <%= f.collection_select :service_provider, ServiceProvider.where(location_id: params[:location]).where(active: true), :id, :public_name, {selected: params[:provider]}, {class: 'form-control'} %>
+            <%= f.collection_select :service_provider, ServiceProvider.where(location_id: params[:location]).where(active: true).order(:order), :id, :public_name, {include_blank: true, selected: params[:provider]}, {class: 'form-control'} %>
             <span class="help-block"></span>
           </div>
         </div>
+        <% !params[:provider].blank? && ServiceProvider.where(id: params[:provider], company_id: current_user.company_id).count > 0 ? services_array = ServiceProvider.find(params[:provider]).services.where(active: true).order(:order) : services_array = Array.new %>
         <div class="form-group">
           <%= f.label :service, 'Servicio', class: 'control-label col-xs-3' %>
           <div class="col-xs-9">
-            <%= f.collection_select :service, ServiceProvider.where(location_id: params[:location]).where(active: true).first.services.where(:active => true).order(:name), :id, :name, {}, {class: 'form-control'} %>
+            <%= f.collection_select :service, services_array, :id, :name, {include_blank: true}, {class: 'form-control'} %>
             <span class="help-block"></span>
           </div>
         </div>
