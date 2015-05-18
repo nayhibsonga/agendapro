@@ -463,12 +463,12 @@
                       </div>
                     </div>
                     <% end %>
-                    <% if true %>
+                    <% if !user_signed_in? %>
                     <div class="row">
                       <div class="col-md-12">
                         <div class="checkbox">
                           <label>
-                            <%= check_box_tag :mailing_option, 'mailing_option', @mailing, class: 'checkbox' %> Quiero recibir correos de promociones
+                            <%= check_box_tag :mailing_option, @mailing, class: 'checkbox' %> Quiero recibir correos de promociones
                           </label>
                         </div>
                       </div>

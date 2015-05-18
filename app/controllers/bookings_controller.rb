@@ -989,6 +989,18 @@ class BookingsController < ApplicationController
     host = request.host_with_port
     @url = @company.web_address + '.' + host[host.index(request.domain)..host.length]
 
+
+    if !user_signed_in?
+      if params[:mailing_option].blank?
+        params[:mailing_option] = false
+      end
+      if MailingList.where(email: params[:email]).count > 0
+        MailingList.where(email: params[:email]).first.update(first_name: params[:firstName], last_name: params[:lastName], phone: params[:phone], mailing_option: params[:mailing_option])
+      else
+        MailingList.create(email: params[:email], first_name: params[:firstName], last_name: params[:lastName], phone: params[:phone], mailing_option: params[:mailing_option])
+      end
+    end
+
     if @company.company_setting.client_exclusive
       if(params[:client_id])
         client = Client.find(params[:client_id])
