@@ -79,8 +79,8 @@ ActiveRecord::Schema.define(version: 20150518220237) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "user_id"
-    t.text     "notes"
-    t.text     "company_comment"
+    t.text     "notes",               default: ""
+    t.text     "company_comment",     default: ""
   end
 
   add_index "booking_histories", ["booking_id"], name: "index_booking_histories_on_booking_id", using: :btree
@@ -401,6 +401,46 @@ ActiveRecord::Schema.define(version: 20150518220237) do
     t.datetime "updated_at"
   end
 
+  create_table "notification_emails", force: true do |t|
+    t.integer  "company_id"
+    t.string   "email",                         null: false
+    t.integer  "receptor_type", default: 0
+    t.boolean  "summary",       default: true
+    t.boolean  "new",           default: false
+    t.boolean  "modified",      default: false
+    t.boolean  "confirmed",     default: false
+    t.boolean  "canceled",      default: false
+    t.boolean  "new_web",       default: false
+    t.boolean  "modified_web",  default: false
+    t.boolean  "confirmed_web", default: false
+    t.boolean  "canceled_web",  default: false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "notification_emails", ["company_id"], name: "index_notification_emails_on_company_id", using: :btree
+
+  create_table "notification_locations", force: true do |t|
+    t.integer  "location_id"
+    t.integer  "notification_email_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "notification_locations", ["location_id"], name: "index_notification_locations_on_location_id", using: :btree
+  add_index "notification_locations", ["notification_email_id"], name: "index_notification_locations_on_notification_email_id", using: :btree
+
+  create_table "notification_providers", force: true do |t|
+    t.integer  "service_provider_id"
+    t.integer  "notification_email_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "notification_providers", ["notification_email_id"], name: "index_notification_providers_on_notification_email_id", using: :btree
+  add_index "notification_providers", ["service_provider_id"], name: "index_notification_providers_on_service_provider_id", using: :btree
+
+>>>>>>> 3d4a3cdaf9ea7ab7c1373004ae8ab9863b7a8ccd
   create_table "numeric_parameters", force: true do |t|
     t.string   "name"
     t.float    "value"
