@@ -29,7 +29,11 @@
                     <label for="providerOptimizerSelector" class="col-xs-3 control-label">Prestador</label>
                     <div class="col-xs-9">
                       <select class="form-control" name="providerOptimizerSelector">
-                        <option value="0">Sin Preferencia</option>
+                        <% if @booking.service.service_providers.where(:active => true, online_booking: true).where('location_id = ?', @booking.location.id).count > 1 %>
+                            <% if @booking.location.company.company_setting.provider_preference != 0 %>
+                                <option value="0">Sin Preferencia</option>
+                            <% end %>
+                        <% end %>
                         <% @booking.service.service_providers.where(:active => true, online_booking: true).where('location_id = ?', @booking.location.id).order(order: :asc).each do |provider| %>
                             <% if @booking.is_session_booked && @booking.service_provider_id == provider.id %>
                                 <option value="<%= provider.id %>" selected>
@@ -56,7 +60,7 @@
         <div class="modal-footer">
             <button type="button" class="btn session-btn btn-orange" id="optimizerBackBtn" style="display: none;"><i class="fa fa-chevron-left"></i>&nbsp;Atrás</button>
             <button type="button" class="btn session-btn btn-orange" id="nextButton" style="display: none;">Siguiente&nbsp;<i class="fa fa-chevron-right"></i></button>
-            <button type="button" class="btn session-btn" data-toggle="calendarModal" href="sessions_calendar?id=<%= @booking.id %>" id="openCalendarBtn"><i class="fa fa-calendar-o"></i>&nbsp;Ver calendario</button>
+            <button type="button" class="btn session-btn" data-toggle="calendarModal" href="sessions_calendar?id=<%= @booking.id %>&service_provider_id=" id="openCalendarBtn"><i class="fa fa-calendar-o"></i>&nbsp;Ver calendario</button>
             <button type="button" class="btn session-btn" id="openOptimizerBtn"><i class="fa fa-calendar-o"></i>&nbsp;Sugerir hora</button>
             <!--<button href="#" class="btn btn-red" data-dismiss="modal">Cerrar</button>-->
         </div>
@@ -71,7 +75,7 @@
         $("#bookModal").remove();
         e.preventDefault();
         var $this = $(this)
-          , $remote = $this.data('remote') || $this.attr('href') + "&service_provider_id=" + $('[name="providerOptimizerSelector').val()
+          , $remote = $this.data('remote') || $this.attr('href')
           , $modal = $('<div class="modal" id="calendarModal"><div class="modal-body"></div></div>');
         $('body').append($modal);
         $modal.modal({backdrop: 'static', keyboard: false});
@@ -91,7 +95,16 @@
         loadHourModal();
     });
 
+    $('[name="providerOptimizerSelector"]').on('change', function(){
+
+        var href_str = $('[data-toggle="calendarModal"]').attr('href').split("&");
+        var new_href = href_str[0] + "&service_provider_id=" + $('[name="providerOptimizerSelector"]').val();
+        $('[data-toggle="calendarModal"]').attr('href', new_href);
+    });
+
     $(document).ready(function(){
+
+        $('[name="providerOptimizerSelector"]').trigger("change");
 
         $("#optimizerDateSelector" + booking_id).datepicker({
             autoSize: true,
