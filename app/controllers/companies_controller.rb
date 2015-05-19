@@ -680,8 +680,6 @@ class CompaniesController < ApplicationController
 			return
 		end
 
-		@mailing = user_signed_in? ? current_user.mailing_option : true
-
 		if mobile_request?
 			company_setting = @company.company_setting
 			now = DateTime.new(DateTime.now.year, DateTime.now.mon, DateTime.now.mday, DateTime.now.hour, DateTime.now.min)
