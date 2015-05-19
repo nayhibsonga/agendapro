@@ -276,5 +276,16 @@
 	    $('#modal_search').click(function() {
 	        $('#search-form').submit();
 	    });
+
+	    $(".number-pin").click(function(){
+	    	if($(this).closest("li").hasClass("active"))
+	    	{
+		    	var newLat = $(this).attr("lat");
+		    	var newLong = $(this).attr("long");
+		    	reCenter(newLat, newLong);
+		    	$(window).scrollTop(0);
+	    	}
+	    });
+
 	</script>
 <% end %>

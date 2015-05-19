@@ -2,6 +2,7 @@ function loadServices (provider) {
   $('#booking_service').prop('disabled', true);
   $.getJSON('/provider_services', {id: provider}, function (services) {
     $('#booking_service').empty();
+    window.console.log(services);
     $.each(services, function (key, service) {
       $('#booking_service').append(
         '<option value="' + service.id + '">' + service.name + '</option>'

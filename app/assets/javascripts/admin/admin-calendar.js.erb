@@ -258,6 +258,7 @@ function loadResourcesCalendar (startTime, endTime, hiddenDays, resourcesArray, 
 
 function loadWeekCalendar (startTime, endTime, hiddenDays, resourcesArray, providerId) {
 	//Default values
+
 	startTime = startTime || 0;
 	endTime = endTime || 24;
 	// var startHour = startTime || 9;
@@ -477,6 +478,8 @@ function editBookingModal(eventId) {
 			$('#booking_client_age').val(booking.age);
 			$('#booking_client_second_phone').val(booking.second_phone);
 			$('#booking_client_record').val(booking.record);
+			$('#client_link').attr('href','/clients/' + booking.client_id + '/edit');
+			$('#client_link').html('Ir a la ficha del cliente...');
 			$('#booking_client_gender option[value="'+booking.gender+'"]').attr("selected",true);
 			$('#booking_notes').val(booking.notes);
 			$('#booking_company_comment').val(booking.company_comment);
@@ -626,6 +629,8 @@ function createBookingModal(date, provider_id) {
 			$('#booking_client_age').val('');
 			$('#booking_client_second_phone').val('');
 			$('#booking_client_record').val('');
+			$('#client_link').attr('href','/clients');
+			$('#client_link').html('Ir a fichas de clientes...');
 			$('#booking_client_gender option[value="0"]').prop('selected', true);
 			$('#booking_notes').val('');
 			$('#booking_company_comment').val('');
@@ -1902,12 +1907,12 @@ $(function() {
 
 	clearTimeout(alertDismiss);
 
-	$('#new_booking').keypress(function(e){
-		if ( e.which == 13 ) return false;
-	});
-	$('#new_provider_break').keypress(function(e){
-		if ( e.which == 13 ) return false;
-	});
+	$('form input, form select').bind('keypress keydown keyup', function(e){
+    	if(e.keyCode == 13) {
+       		e.preventDefault();
+       	}
+    });
+
 	$('#createBooking').click(function() {
 		createBookingModal();
 		return false;
@@ -1925,11 +1930,20 @@ $(function() {
 		}
 	});
 	$('#datePicker').datepicker({
-		dateFormat: 'dd/mm/yy',
+		dateFormat: 'dd-mm-yy',
+		autoSize: true,
 		firstDay: 1,
-		dayNames: [ "Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado" ],
-		dayNamesMin: [ "Do", "Lu", "Ma", "Mi", "Ju", "Vi", "Sá" ],
-		dayNamesShort: [ "Dom", "Lun", "Mar", "Mié", "Jue", "Vie", "Sáb" ]
+		changeMonth: true,
+		changeYear: true,
+		monthNames: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+        monthNamesShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
+        prevText: 'Atrás',
+        nextText: 'Adelante',
+        dayNames: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'],
+        dayNamesShort: ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'],
+        dayNamesMin: ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'],
+        today: 'Hoy',
+        clear: '',
 	});
 	$("#bookingStartHour").on("change", function() {
 		modalChange();
@@ -1952,8 +1966,8 @@ $(function() {
         prevText: 'Atrás',
         nextText: 'Adelante',
         dayNames: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'],
-        dayNamesShort: ['Dom', 'Lun', 'Mar', 'Mier', 'Jue', 'vie', 'Sáb'],
-        dayNamesMin: ['Dom', 'Lun', 'Mar', 'Mier', 'Jue', 'vie', 'Sáb'],
+        dayNamesShort: ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'],
+        dayNamesMin: ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'],
         today: 'Hoy',
         clear: '',
 		onSelect: function(dateText, inst) {
@@ -1966,16 +1980,17 @@ $(function() {
 
 	$("#set-date").datepicker({
 		dateFormat: 'dd-mm-yy',
+		autoSize: true,
+		firstDay: 1,
 		changeMonth: true,
 		changeYear: true,
-		firstDay: 1,
 		monthNames: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
         monthNamesShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
         prevText: 'Atrás',
         nextText: 'Adelante',
         dayNames: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'],
-        dayNamesShort: ['Dom', 'Lun', 'Mar', 'Mier', 'Jue', 'vie', 'Sáb'],
-        dayNamesMin: ['Dom', 'Lun', 'Mar', 'Mier', 'Jue', 'vie', 'Sáb'],
+        dayNamesShort: ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'],
+        dayNamesMin: ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'],
         today: 'Hoy',
         clear: '',
 		onSelect: function(dateText, inst) {
@@ -2024,6 +2039,8 @@ $(function() {
 			$('#booking_client_age').val(client.age);
 			$('#booking_client_second_phone').val(client.second_phone);
 			$('#booking_client_record').val(client.record);
+			$('#client_link').attr('href','/clients/' + client.id + '/edit');
+			$('#client_link').html('Ir a la ficha del cliente...');
 			$('#booking_client_gender option[value="'+client.gender+'"]').attr("selected",true);
 			$("#full_name").val(client.first_name+' '+client.last_name)
 			if (validEmail($("#booking_client_email").val())) {
@@ -2069,6 +2086,8 @@ $(function() {
 			$('#booking_client_age').val(client.age);
 			$('#booking_client_second_phone').val(client.second_phone);
 			$('#booking_client_record').val(client.record);
+			$('#client_link').attr('href','/clients/' + client.id + '/edit');
+			$('#client_link').html('Ir a la ficha del cliente...');
 			$('#booking_client_gender option[value="'+client.gender+'"]').attr("selected",true);
 			$("#full_name").val(client.first_name+' '+client.last_name)
 			if (validEmail($("#booking_client_email").val())) {
@@ -2093,15 +2112,15 @@ $(function() {
 
 	$("#booking_client_email").on('input',function(e){
 		if (validEmail($("#booking_client_email").val())) {
-			$('#booking_send_mail').prop('disabled', false);
+			$('#booking_send_mail').attr('disabled', false);
 			$('#booking_send_mail').val(1);
-			$('#booking_send_mail').prop('checked', true);
+			$('#booking_send_mail').attr('checked', true);
 			$('label[for=booking_send_mail]').removeClass('disabled');
 		}
 		else {
 			$('#booking_send_mail').val(0);
-			$('#booking_send_mail').prop('checked', false);
-			$('#booking_send_mail').prop('disabled', true);
+			$('#booking_send_mail').attr('checked', false);
+			$('#booking_send_mail').attr('disabled', true);
 			$('label[for=booking_send_mail]').addClass('disabled');
 		}
 	});
@@ -2155,6 +2174,10 @@ $(function() {
 		$('#booking_client_birth_month option[value=""]').prop('selected', true);
 		$('#booking_client_birth_year option[value=""]').prop('selected', true);
 		$('#booking_client_age').val('');
+		$('#booking_client_second_phone').val('');
+		$('#booking_client_record').val('');
+		$('#client_link').attr('href','/clients');
+		$('#client_link').html('Ir a fichas de clientes...');
 		$('#booking_client_gender option[value="0"]').prop('selected', true);
 		$("#full_name").val('');
 		$("#full_name").prop('disabled', false);

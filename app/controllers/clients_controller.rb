@@ -68,7 +68,6 @@ class ClientsController < ApplicationController
         format.html { 
           @activeBookings = Array.new
           @lastBookings = Array.new
-          @client = Client.new
           @client_comment = ClientComment.new
           if mobile_request?
             @company = current_user.company
@@ -159,7 +158,13 @@ class ClientsController < ApplicationController
 
   def compose_mail
     @from_collection = current_user.company.company_from_email.where(confirmed: true)
-    @to = Client.accessible_by(current_ability).search(params[:search], current_user.company_id).filter_location(params[:location]).filter_provider(params[:provider]).filter_service(params[:service]).filter_gender(params[:gender]).filter_birthdate(params[:option]).order(:last_name, :first_name).pluck(:email).uniq
+    mail_list = Client.accessible_by(current_ability).search(params[:search], current_user.company_id).filter_location(params[:location]).filter_provider(params[:provider]).filter_service(params[:service]).filter_gender(params[:gender]).filter_birthdate(params[:option]).order(:last_name, :first_name).pluck(:email).uniq
+
+    @to = Array.new
+
+    mail_list.each do |email|
+      @to.push(email) if email=~ /([^\s]+)@([^\s]+)/ 
+    end
     # @to = '';
     # if params[:to]
     #   params[:to].each do |mail|

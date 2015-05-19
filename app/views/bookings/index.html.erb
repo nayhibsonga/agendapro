@@ -8,7 +8,7 @@
         <div class="col-sm-9">
           <select class="form-control" id="locals-selector" name="localSelector">
             <% @locations.each do |location| %>
-              <option value="<%= location.id %>" data-minhour="<%= location.location_times.order(:open).first.open.beginning_of_hour.hour %>" data-maxhour="<%= location.location_times.order(:close).last.close.end_of_hour.hour %>" data-closed-days="<%= location.closed_days_zero_index %>"><%= location.name %></option>
+              <option value="<%= location.id %>" data-minhour="<%= location.location_times.order(:open).first.open.strftime('%H:%M') %>" data-maxhour="<%= location.location_times.order(:close).last.close.strftime('%H:%M') %>" data-closed-days="<%= location.closed_days_zero_index %>"><%= location.name %></option>
             <% end %>
           </select>
         </div>
@@ -37,7 +37,7 @@
   </div>
 </div>
 
-<%= content_tag "div", id: "calendar-data", data: { calendar_duration: @company_setting.calendar_duration, extended_schedule: @company_setting.extended_schedule_bool, extended_min_hour: @company_setting.extended_min_hour.beginning_of_hour.hour, extended_max_hour: @company_setting.extended_max_hour.end_of_hour.hour, booking_history: @company_setting.booking_history, staff_code: @company_setting.staff_code, deal_identification_number: @company_setting.deal_identification_number, deal_required: @company_setting.deal_required } do %>
+<%= content_tag "div", id: "calendar-data", data: { calendar_duration: @company_setting.calendar_duration, extended_schedule: @company_setting.extended_schedule_bool, extended_min_hour: @company_setting.extended_min_hour.strftime('%H:%M'), extended_max_hour: @company_setting.extended_max_hour.strftime('%H:%M'), booking_history: @company_setting.booking_history, staff_code: @company_setting.staff_code, deal_identification_number: @company_setting.deal_identification_number, deal_required: @company_setting.deal_required } do %>
 <% end %>
 
 <% content_for :calendar do %>
@@ -260,8 +260,8 @@
                       <div class="form-group">
                         <%= f.label :payed, "Pagado en línea", class: "col-sm-4 control-label" %>
                         <div class="col-sm-8">
-                          <div class="input-group" id="is_prepayed">
-                          </div>
+                          <p class="form-control-static" id="is_prepayed">
+                          </p>
                         </div>
                       </div>
                       <% end %>
@@ -399,6 +399,11 @@
                           <%= builder.label :record, "Número de Cliente", class: "col-sm-4 control-label" %>
                           <div class="col-sm-8">
                             <%= builder.text_field :record, class: "form-control" %>
+                          </div>
+                        </div>
+                        <div class="form-group">
+                          <div class="col-sm-8 col-sm-offset-4">
+                            <a href='/clients' id='client_link' target='_blank'>Ir a fichas de clientes...</a>
                           </div>
                         </div>
                       </div>
@@ -723,17 +728,20 @@
     $(function(){
 
       $("#optimizerDateSelector").datepicker({
+        dateFormat: 'dd-mm-yy',
+        autoSize: true,
+        firstDay: 1,
+        changeMonth: true,
+        changeYear: true,
         monthNames: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
         monthNamesShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
         prevText: 'Atrás',
         nextText: 'Adelante',
         dayNames: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'],
-        dayNamesShort: ['Dom', 'Lun', 'Mar', 'Mier', 'Jue', 'vie', 'Sáb'],
-        dayNamesMin: ['Dom', 'Lun', 'Mar', 'Mier', 'Jue', 'vie', 'Sáb'],
+        dayNamesShort: ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'],
+        dayNamesMin: ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'],
         today: 'Hoy',
         clear: '',
-        firstDay: 1,
-        dateFormat: 'yy-mm-dd',
         onSelect: function(newDate){
           $("#pickerSelected").empty();
           var prettyDate = newDate.split("-")[2] + "/" + newDate.split("-")[1] + "/" + newDate.split("-")[0];

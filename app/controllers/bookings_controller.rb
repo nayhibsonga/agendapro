@@ -154,9 +154,15 @@ class BookingsController < ApplicationController
           @client.record = buffer_params[:client_record]
           @client.second_phone = buffer_params[:client_second_phone]
           @client.gender = buffer_params[:client_gender]
-          @client.save
-          if User.find_by_email(@client.email)
-            new_booking_params[:user_id] = User.find_by_email(@client.email).id
+          if @client.save
+            if User.find_by_email(@client.email)
+              new_booking_params[:user_id] = User.find_by_email(@client.email).id
+            end
+          else
+            @errors << {
+              :booking => pos,
+              :errors => ["El cliente no se pudo guardar: " + @client.errors.full_messages.inspect]
+            }
           end
         else
           if !buffer_params[:client_email].nil?
@@ -168,6 +174,11 @@ class BookingsController < ApplicationController
                 client = Client.new(email: buffer_params[:client_email], identification_number: buffer_params[:client_identification_number], first_name: buffer_params[:client_first_name], last_name: buffer_params[:client_last_name], phone: buffer_params[:client_phone], address: buffer_params[:client_address], district: buffer_params[:client_district], city: buffer_params[:client_city], birth_day: buffer_params[:client_birth_day], birth_month: buffer_params[:client_birth_month], birth_year: buffer_params[:client_birth_year], age: buffer_params[:client_age], record: buffer_params[:client_record], second_phone: buffer_params[:client_second_phone], gender: buffer_params[:client_gender], company_id: ServiceProvider.find(buffer_params[:service_provider_id]).company.id)
                 if client.save
                   @booking.client = client
+                else
+                  @errors << {
+                    :booking => pos,
+                    :errors => ["El cliente no se pudo guardar: " + client.errors.full_messages.inspect]
+                  }
                 end
               end
             else
@@ -178,6 +189,11 @@ class BookingsController < ApplicationController
                 client = Client.new(email: buffer_params[:client_email], identification_number: buffer_params[:client_identification_number], first_name: buffer_params[:client_first_name], last_name: buffer_params[:client_last_name], phone: buffer_params[:client_phone], address: buffer_params[:client_address], district: buffer_params[:client_district], city: buffer_params[:client_city], birth_day: buffer_params[:client_birth_day], birth_month: buffer_params[:client_birth_month], birth_year: buffer_params[:client_birth_year], age: buffer_params[:client_age], record: buffer_params[:client_record], second_phone: buffer_params[:client_second_phone], gender: buffer_params[:client_gender], company_id: ServiceProvider.find(buffer_params[:service_provider_id]).company.id)
                 if client.save
                   @booking.client = client
+                else
+                  @errors << {
+                    :booking => pos,
+                    :errors => ["El cliente no se pudo guardar: " + client.errors.full_messages.inspect]
+                  }
                 end
               end
             end
@@ -309,9 +325,15 @@ class BookingsController < ApplicationController
           @client.record = buffer_params[:client_record]
           @client.second_phone = buffer_params[:client_second_phone]
           @client.gender = buffer_params[:client_gender]
-          @client.save
-          if User.find_by_email(@client.email)
-            new_booking_params[:user_id] = User.find_by_email(@client.email).id
+          if @client.save
+            if User.find_by_email(@client.email)
+              new_booking_params[:user_id] = User.find_by_email(@client.email).id
+            end
+          else
+            @errors << {
+              :booking => pos,
+              :errors => ["El cliente no se pudo guardar: " + @client.errors.full_messages.inspect]
+            }
           end
         else
           @errors << {
@@ -338,9 +360,15 @@ class BookingsController < ApplicationController
           @client.record = buffer_params[:client_record]
           @client.second_phone = buffer_params[:client_second_phone]
           @client.gender = buffer_params[:client_gender]
-          @client.save
-          if User.find_by_email(@client.email)
-            new_booking_params[:user_id] = User.find_by_email(@client.email).id
+          if @client.save
+            if User.find_by_email(@client.email)
+              new_booking_params[:user_id] = User.find_by_email(@client.email).id
+            end
+          else
+            @errors << {
+              :booking => pos,
+              :errors => ["El cliente no se pudo guardar: " + @client.errors.full_messages.inspect]
+            }
           end
         else
           if !buffer_params[:client_email].nil?
@@ -352,6 +380,11 @@ class BookingsController < ApplicationController
                 client = Client.new(email: buffer_params[:client_email], identification_number: buffer_params[:client_identification_number], first_name: buffer_params[:client_first_name], last_name: buffer_params[:client_last_name], phone: buffer_params[:client_phone], address: buffer_params[:client_address], district: buffer_params[:client_district], city: buffer_params[:client_city], birth_day: buffer_params[:client_birth_day], birth_month: buffer_params[:client_birth_month], birth_year: buffer_params[:client_birth_year], age: buffer_params[:client_age], record: buffer_params[:client_record], second_phone: buffer_params[:client_second_phone], gender: buffer_params[:client_gender], company_id: ServiceProvider.find(buffer_params[:service_provider_id]).company.id)
                 if client.save
                   @booking.client = client
+                else
+                  @errors << {
+                    :booking => pos,
+                    :errors => ["El cliente no se pudo guardar: " + client.errors.full_messages.inspect]
+                  }
                 end
               end
             else
@@ -362,6 +395,11 @@ class BookingsController < ApplicationController
                 client = Client.new(email: buffer_params[:client_email], identification_number: buffer_params[:client_identification_number], first_name: buffer_params[:client_first_name], last_name: buffer_params[:client_last_name], phone: buffer_params[:client_phone], address: buffer_params[:client_address], district: buffer_params[:client_district], city: buffer_params[:client_city], birth_day: buffer_params[:client_birth_day], birth_month: buffer_params[:client_birth_month], birth_year: buffer_params[:client_birth_year], age: buffer_params[:client_age], record: buffer_params[:client_record], second_phone: buffer_params[:client_second_phone], gender: buffer_params[:client_gender], company_id: ServiceProvider.find(buffer_params[:service_provider_id]).company.id)
                 if client.save
                   @booking.client = client
+                else
+                  @errors << {
+                    :booking => pos,
+                    :errors => ["El cliente no se pudo guardar: " + client.errors.full_messages.inspect]
+                  }
                 end
               end
             end
@@ -485,9 +523,13 @@ class BookingsController < ApplicationController
         @client.record = booking_params[:client_record]
         @client.second_phone = booking_params[:client_second_phone]
         @client.gender = booking_params[:client_gender]
-        @client.save
-        if User.find_by_email(@client.email)
-          new_booking_params[:user_id] = User.find_by_email(@client.email).id
+        if @client.save
+          if User.find_by_email(@client.email)
+            new_booking_params[:user_id] = User.find_by_email(@client.email).id
+          end
+        else
+          render :json => { :errors => ["El cliente no se pudo guardar: " + @client.errors.full_messages.inspect] }, :status => 422
+          return
         end
       else
         render :json => { :errors => ["El cliente no está registrado o no puede reservar."] }, :status => 422
@@ -511,9 +553,13 @@ class BookingsController < ApplicationController
         @client.record = booking_params[:client_record]
         @client.second_phone = booking_params[:client_second_phone]
         @client.gender = booking_params[:client_gender]
-        @client.save
-        if User.find_by_email(@client.email)
-          new_booking_params[:user_id] = User.find_by_email(@client.email).id
+        if @client.save
+          if User.find_by_email(@client.email)
+            new_booking_params[:user_id] = User.find_by_email(@client.email).id
+          end
+        else
+          render :json => { :errors => ["El cliente no se pudo guardar: " + @client.errors.full_messages.inspect] }, :status => 422
+          return
         end
       else
         if !booking_params[:client_email].nil?
@@ -525,6 +571,9 @@ class BookingsController < ApplicationController
               client = Client.new(email: booking_params[:client_email], identification_number: booking_params[:client_identification_number], first_name: booking_params[:client_first_name], last_name: booking_params[:client_last_name], phone: booking_params[:client_phone], address: booking_params[:client_address], district: booking_params[:client_district], city: booking_params[:client_city], birth_day: booking_params[:client_birth_day], birth_month: booking_params[:client_birth_month], birth_year: booking_params[:client_birth_year], age: booking_params[:client_age], record: booking_params[:client_record], second_phone: booking_params[:client_second_phone], gender: booking_params[:client_gender], company_id: ServiceProvider.find(booking_params[:service_provider_id]).company.id)
               if client.save
                 @booking.client = client
+              else
+                render :json => { :errors => ["El cliente no se pudo guardar: " + client.errors.full_messages.inspect] }, :status => 422
+                return
               end
             end
           else
@@ -535,6 +584,9 @@ class BookingsController < ApplicationController
               client = Client.new(email: booking_params[:client_email], identification_number: booking_params[:client_identification_number], first_name: booking_params[:client_first_name], last_name: booking_params[:client_last_name], phone: booking_params[:client_phone], address: booking_params[:client_address], district: booking_params[:client_district], city: booking_params[:client_city], birth_day: booking_params[:client_birth_day], birth_month: booking_params[:client_birth_month], birth_year: booking_params[:client_birth_year], age: booking_params[:client_age], record: booking_params[:client_record], second_phone: booking_params[:client_second_phone], gender: booking_params[:client_gender], company_id: ServiceProvider.find(booking_params[:service_provider_id]).company.id)
               if client.save
                 @booking.client = client
+              else
+                render :json => { :errors => ["El cliente no se pudo guardar: " + client.errors.full_messages.inspect] }, :status => 422
+                return
               end
             end
           end
@@ -627,9 +679,13 @@ class BookingsController < ApplicationController
         @client.record = booking_params[:client_record]
         @client.second_phone = booking_params[:client_second_phone]
         @client.gender = booking_params[:client_gender]
-        @client.save
-        if User.find_by_email(@client.email)
-          new_booking_params[:user_id] = User.find_by_email(@client.email).id
+        if @client.save
+          if User.find_by_email(@client.email)
+            new_booking_params[:user_id] = User.find_by_email(@client.email).id
+          end
+        else
+          render :json => { :errors => ["El cliente no se pudo guardar: " + @client.errors.full_messages.inspect] }, :status => 422
+          return
         end
       elsif !booking_params[:client_id].nil? && booking_params[:client_id].empty?
         render :json => { :errors => ["El cliente no está registrado o no puede reservar."] }, :status => 422
@@ -653,9 +709,13 @@ class BookingsController < ApplicationController
         @client.record = booking_params[:client_record]
         @client.second_phone = booking_params[:client_second_phone]
         @client.gender = booking_params[:client_gender]
-        @client.save
-        if User.find_by_email(booking_params[:client_email])
-          new_booking_params[:user_id] = User.find_by_email(booking_params[:client_email]).id
+        if @client.save
+          if User.find_by_email(booking_params[:client_email])
+            new_booking_params[:user_id] = User.find_by_email(booking_params[:client_email]).id
+          end
+        else
+          render :json => { :errors => ["El cliente no se pudo guardar: " + @client.errors.full_messages.inspect] }, :status => 422
+          return
         end
       else
         if !booking_params[:client_email].nil?
@@ -667,6 +727,9 @@ class BookingsController < ApplicationController
               client = Client.new(email: booking_params[:client_email], identification_number: booking_params[:client_identification_number], first_name: booking_params[:client_first_name], last_name: booking_params[:client_last_name], phone: booking_params[:client_phone], address: booking_params[:client_address], district: booking_params[:client_district], city: booking_params[:client_city], birth_day: booking_params[:client_birth_day], birth_month: booking_params[:client_birth_month], birth_year: booking_params[:client_birth_year], age: booking_params[:client_age], record: booking_params[:client_record], second_phone: booking_params[:client_second_phone], gender: booking_params[:client_gender], company_id: ServiceProvider.find(booking_params[:service_provider_id]).company.id)
               if client.save
                 new_booking_params[:client_id] = client.id
+              else
+                render :json => { :errors => ["El cliente no se pudo guardar: " + client.errors.full_messages.inspect] }, :status => 422
+                return
               end
             end
           else
@@ -677,6 +740,9 @@ class BookingsController < ApplicationController
               client = Client.new(email: booking_params[:client_email], identification_number: booking_params[:client_identification_number], first_name: booking_params[:client_first_name], last_name: booking_params[:client_last_name], phone: booking_params[:client_phone], address: booking_params[:client_address], district: booking_params[:client_district], city: booking_params[:client_city], birth_day: booking_params[:client_birth_day], birth_month: booking_params[:client_birth_month], birth_year: booking_params[:client_birth_year], age: booking_params[:client_age], record: booking_params[:client_record], second_phone: booking_params[:client_second_phone], gender: booking_params[:client_gender], company_id: ServiceProvider.find(booking_params[:service_provider_id]).company.id)
               if client.save
                 new_booking_params[:client_id] = client.id
+              else
+                render :json => { :errors => ["El cliente no se pudo guardar: " + client.errors.full_messages.inspect] }, :status => 422
+                return
               end
             end
           end
@@ -922,6 +988,18 @@ class BookingsController < ApplicationController
     # => Domain parser
     host = request.host_with_port
     @url = @company.web_address + '.' + host[host.index(request.domain)..host.length]
+
+
+    if !user_signed_in?
+      if params[:mailing_option].blank?
+        params[:mailing_option] = false
+      end
+      if MailingList.where(email: params[:email]).count > 0
+        MailingList.where(email: params[:email]).first.update(first_name: params[:firstName], last_name: params[:lastName], phone: params[:phone], mailing_option: params[:mailing_option])
+      else
+        MailingList.create(email: params[:email], first_name: params[:firstName], last_name: params[:lastName], phone: params[:phone], mailing_option: params[:mailing_option])
+      end
+    end
 
     if @company.company_setting.client_exclusive
       if(params[:client_id])
@@ -1426,6 +1504,7 @@ class BookingsController < ApplicationController
     if mobile_request?
       @service = @booking.service
       @provider = @booking.service_provider
+      @location = @booking.location
       cancelled_id = Status.find_by(name: 'Cancelado').id
 
       # Data

@@ -1465,6 +1465,18 @@ div.row.row-padded {
 	padding-bottom: 10px;
 }
 
+.navbar-agendapro .navbar-collapse.collapse,
+.navbar-agendapro .navbar-collapse.collapsing {
+	height: 0px;
+	padding: 0;
+	margin: 0;
+	display: none;
+	overflow: hidden;
+}
+.navbar-collapse.collapse.in {
+    display: none;
+}
+
 /* Media queries */
 @media (max-width: 1199px) {
     .boxed-feature > div > img {
@@ -1556,6 +1568,10 @@ div.row.row-padded {
     /* since 3.1.0 */
     .navbar-collapse.collapse.in {
         display: block!important;
+    }
+    .navbar-agendapro .navbar-collapse.collapsing {
+      display: block;
+      height: auto;
     }
     .navbar-agendapro .navbar-collapse.collapse.in,
     .navbar-agendapro .navbar-collapse.collapsing {

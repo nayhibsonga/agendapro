@@ -463,6 +463,17 @@
                       </div>
                     </div>
                     <% end %>
+                    <% if !user_signed_in? %>
+                    <div class="row">
+                      <div class="col-md-12">
+                        <div class="checkbox">
+                          <label>
+                            <%= check_box_tag :mailing_option, true, class: 'checkbox' %> Quiero recibir correos de promociones
+                          </label>
+                        </div>
+                      </div>
+                    </div>
+                    <% end %>
                     <div class="row" style="margin-top: 20px;">
                       <div class="col-sm-6">
                         <div class="btn-change btn-prev">
@@ -493,7 +504,7 @@
                   <!--<div class="row">
                     <div class="col-md-6">
 
-                      <a href="#" id="openPayOptions">Seleccionar opciÃ³n de pago</a>
+                      <a href="#" id="openPayOptions">Seleccionar opción de pago</a>
 
                     </div>
                   </div>-->
@@ -501,7 +512,7 @@
                     <div class="row">
                       <div class="col-sm-6">
                         <div>
-                          <button type="submit" data-loading-text = "Cargando" class="payBtn">Pagar</button>
+                          <button type="submit" data-loading-text = "Cargando..." class="payBtn">Pagar</button>
                         </div>
                       </div>
                       <div class="col-sm-6">
@@ -521,7 +532,7 @@
                     <div class="row">
                       <div class="col-sm-6">
                         <div style="color: #505050; padding: 5px 5px 5px 5px;">
-                          <a href="#" id="open-online-policy" data-toggle="modal" data-target="#online-policy" style="color: #505050 !important; border-top: 1px solid #949292; padding-top: 5px;"><b><%= image_tag 'icono_pago.png', :alt => 'Pago' %>Política de pagos en lÃínea.</b></a>
+                          <a href="#" id="open-online-policy" data-toggle="modal" data-target="#online-policy" style="color: #505050 !important; border-top: 1px solid #949292; padding-top: 5px;"><b><%= image_tag 'icono_pago.png', :alt => 'Pago' %>Política de pagos en línea.</b></a>
                         </div>
                       </div>
                       <div class="col-sm-6">
@@ -553,14 +564,14 @@
                           <input type="radio" name="mp" value="04" class="mp_radio" id="mp_radio_04" />
                           <label for="mp_radio_04"><image src="https://www.puntopagos.com/content/mp4.gif" alt="Banco Chile" class="mp_link" mp = "04" /></label>
                         </div>
-                        <div class="col-md-4">
+                        <!-- <div class="col-md-4">
                           <input type="radio" name="mp" value="05" class="mp_radio" id="mp_radio_05" />
                           <label for="mp_radio_05"><image src="https://www.puntopagos.com/content/mp5.gif" alt="BCI" class="mp_link" mp = "05" /></label>
-                        </div>
-                        <div class="col-md-4">
+                        </div> -->
+                        <!-- <div class="col-md-4">
                           <input type="radio" name="mp" value="06" class="mp_radio" id="mp_radio_06" />
                           <label for="mp_radio_06"><image src="https://www.puntopagos.com/content/mp6.gif" alt="TBanc" class="mp_link" mp = "06" /></label>
-                        </div>
+                        </div> -->
                       </div>
                       <div class="row">
                         <div class="col-md-4">
@@ -696,16 +707,19 @@
       });
 
       $("#datepicker").datepicker({
+          autoSize: true,
+          firstDay: 1,
+          changeMonth: true,
+          changeYear: true,
           monthNames: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
           monthNamesShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
           prevText: 'Atrás',
           nextText: 'Adelante',
           dayNames: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'],
-          dayNamesShort: ['Dom', 'Lun', 'Mar', 'Mier', 'Jue', 'vie', 'Sáb'],
-          dayNamesMin: ['Dom', 'Lun', 'Mar', 'Mier', 'Jue', 'vie', 'Sáb'],
+          dayNamesShort: ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'],
+          dayNamesMin: ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'],
           today: 'Hoy',
           clear: '',
-          firstDay: 1,
           dateFormat: 'yy-mm-dd',
           onSelect: function(newDate){
             var data = {
@@ -742,16 +756,19 @@
       });
 
       $("#optimizerDateSelector").datepicker({
+          autoSize: true,
+          firstDay: 1,
+          changeMonth: true,
+          changeYear: true,
           monthNames: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
           monthNamesShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
           prevText: 'Atrás',
           nextText: 'Adelante',
           dayNames: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'],
-          dayNamesShort: ['Dom', 'Lun', 'Mar', 'Mier', 'Jue', 'vie', 'Sáb'],
-          dayNamesMin: ['Dom', 'Lun', 'Mar', 'Mier', 'Jue', 'vie', 'Sáb'],
+          dayNamesShort: ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'],
+          dayNamesMin: ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'],
           today: 'Hoy',
           clear: '',
-          firstDay: 1,
           dateFormat: 'yy-mm-dd',
           onSelect: function(newDate){
             $("#pickerSelected").empty();

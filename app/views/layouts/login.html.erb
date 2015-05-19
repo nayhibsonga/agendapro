@@ -134,16 +134,19 @@
         </footer>
 
 		<!-- start: JavaScript-->
-        <%= yield :scripts %>
-        <%= javascript_include_tag "login" %>
         <%= javascript_include_tag "jquery.browser.min" %>
         <%= javascript_include_tag "browser-detect" %>
-
+        <%= javascript_include_tag "login" %>
         <script>
           $( "#menu-display" ).click(function() {
             $( ".nav-pills" ).toggle( "slow" );
           });
+            $('a').click(function() {
+                $('.alert').hide();
+            });
         </script>
+        <%= yield :scripts %>
+
         <!-- end: JavaScript-->
 
         <!--Start of Crazy Egg Script-->

@@ -281,15 +281,15 @@ function setSuggestionData (client) {
 
 function checkEmail () {
   var email = $(userForm + '#booking_send_mail');
-  if (validEmail(email.val())) {
-    email.prop('disabled', false);
+  if ( validEmail( $( userForm + '#booking_client_email').val() ) ) {
+    email.attr('disabled', false);
     email.val(1);
-    email.prop('checked', true);
+    email.attr('checked', true);
   }
   else {
     email.val(0);
-    email.prop('checked', false);
-    email.prop('disabled', true);
+    email.attr('checked', false);
+    email.attr('disabled', true);
   }
 }
 
@@ -524,6 +524,7 @@ $(function () {
       event.preventDefault();
       var client = eval("(" + ui.item.value + ")");
       setSuggestionData(client);
+      checkEmail();
     }
   }).data( "ui-autocomplete" )._renderItem = function( ul, item ) {
     return $( '<li>' ).append( '<a>' + item.label + '<br><span class="auto-desc">' + item.desc + '</span></a>' ).appendTo( ul );
@@ -538,6 +539,7 @@ $(function () {
       event.preventDefault();
       var client = eval("(" + ui.item.value + ")");
       setSuggestionData(client);
+      checkEmail();
     }
   }).data( "ui-autocomplete" )._renderItem = function( ul, item ) {
     return $( '<li>' ).append( '<a>' + item.label + '<br><span class="auto-desc">' + item.desc + '</span></a>' ).appendTo( ul );

@@ -72,7 +72,7 @@
 						</a>
 					</div>
 					<!-- Collect the nav links, forms, and other content for toggling -->
-					<div class="collapse navbar-collapse" id="navbar">
+					<div class="collapse navbar-collapse" id="navbar" aria-expanded="false" style="height: 0px important!;">
 						<ul class="nav navbar-nav navbar-right" id="menu">
 							<li><%= link_to "Buscador", "/#buscador" %></li>
 							<li><%= link_to "Servicios", "/#servicios" %></li>
@@ -144,11 +144,16 @@
 		</footer> -->
 
 		<!-- start: JavaScript-->
-		<%= javascript_include_tag "search" %>
-		<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?libraries=places"></script>
 		<% javascript_include_tag "jquery.browser.min" %><!-- Removido -->
 		<% javascript_include_tag "browser-detect" %><!-- Removido -->
+		<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?libraries=places"></script>
+		<%= javascript_include_tag "search" %>
 		<%= yield :scripts %>
+		<script type="text/javascript">
+			$('a').click(function() {
+				$('.alert').hide();
+			});
+		</script>
 		<!--Start of Zopim Live Chat Script-->
 		<%= javascript_include_tag 'zopim' %>
 		<!--End of Zopim Live Chat Script-->
