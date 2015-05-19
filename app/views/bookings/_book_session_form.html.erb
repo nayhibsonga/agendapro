@@ -56,7 +56,7 @@
         <div class="modal-footer">
             <button type="button" class="btn session-btn btn-orange" id="optimizerBackBtn" style="display: none;"><i class="fa fa-chevron-left"></i>&nbsp;Atrás</button>
             <button type="button" class="btn session-btn btn-orange" id="nextButton" style="display: none;">Siguiente&nbsp;<i class="fa fa-chevron-right"></i></button>
-            <button type="button" class="btn session-btn" id="openCalendarBtn"><i class="fa fa-calendar-o"></i>&nbsp;Ver calendario</button>
+            <button type="button" class="btn session-btn" data-toggle="calendarModal" href="sessions_calendar?id=<%= @booking.id %>" id="openCalendarBtn"><i class="fa fa-calendar-o"></i>&nbsp;Ver calendario</button>
             <button type="button" class="btn session-btn" id="openOptimizerBtn"><i class="fa fa-calendar-o"></i>&nbsp;Sugerir hora</button>
             <!--<button href="#" class="btn btn-red" data-dismiss="modal">Cerrar</button>-->
         </div>
@@ -65,6 +65,19 @@
 
 
 <script type="text/javascript">
+
+    $('[data-toggle="calendarModal"]').on('click', function(e) {
+        $('#calendarModal').remove();
+        $("#bookModal").remove();
+        e.preventDefault();
+        var $this = $(this)
+          , $remote = $this.data('remote') || $this.attr('href') + "&service_provider_id=" + $('[name="providerOptimizerSelector').val()
+          , $modal = $('<div class="modal" id="calendarModal"><div class="modal-body"></div></div>');
+        $('body').append($modal);
+        $modal.modal({backdrop: 'static', keyboard: false});
+        $modal.load($remote); 
+    });
+
 
     var serviceTitle = "Elegir servicio y staff<br><small>Elige los servicios y prestadores para encontrar el mejor horario para realizarlos</small>";
     var hourTitle = "Resultado de la búsqueda<br><small>Selecciona una fecha y hora</small>";
@@ -79,8 +92,6 @@
     });
 
     $(document).ready(function(){
-
-        
 
         $("#optimizerDateSelector" + booking_id).datepicker({
             autoSize: true,

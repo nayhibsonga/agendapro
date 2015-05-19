@@ -96,6 +96,7 @@ class Ability
     can :session_booking_detail, Booking
     can :book_session_form, Booking
     can :update_book_session, Booking
+    can :sessions_calendar, Booking
 
     can :pdf, ServiceProvider
 

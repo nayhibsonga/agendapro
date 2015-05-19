@@ -125,6 +125,7 @@ Agendapro::Application.routes.draw do
   get '/session_booking_detail', :to => 'bookings#session_booking_detail'
   get '/book_session_form', :to => 'bookings#book_session_form'
   post '/update_book_session', :to => 'bookings#update_book_session'
+  get '/sessions_calendar', :to => 'bookings#sessions_calendar'
 
   # Add Company from Usuario Registrado
   get '/add_company', :to => 'companies#add_company', :as => 'add_company'

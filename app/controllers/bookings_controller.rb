@@ -786,7 +786,10 @@ class BookingsController < ApplicationController
 
   def delete_session_booking
     
-    if @booking.destroy
+    @booking.user_session_confirmed = false
+    @booking.is_session_booked = false
+
+    if @booking.save
       respond_to do |format|
         format.html { redirect_to bookings_url }
         format.json { render :json => @booking }
@@ -853,6 +856,15 @@ class BookingsController < ApplicationController
       respond_to do |format|
         format.json { render :json => @booking }
       end
+    end
+  end
+
+  def sessions_calendar
+    @booking = Booking.find(params[:id])
+    @selectedProvider = params[:service_provider_id]
+    respond_to do |format|
+      format.html { render :partial => 'sessions_calendar' }
+      format.json { render :json => @booking }
     end
   end
 
@@ -1312,7 +1324,7 @@ class BookingsController < ApplicationController
     #If they can be payed, redirect to payment_process,
     #then check for error or send notifications mails.
     if group_payment
-      trx_id = DateTime.now.to_s.gsub(/[-:T]/i, '')
+      trx_id = DateTime.now.to_s.gsub(/[-:T]/i, '')[0, 15]
       amount = sprintf('%.2f', final_price)
       payment_method = params[:mp]
       req = PuntoPagos::Request.new()
