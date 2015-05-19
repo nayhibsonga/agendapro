@@ -1,6 +1,7 @@
 class NotificationEmailsController < ApplicationController
   before_action :set_notification_email, only: [:show, :edit, :update, :destroy]
   before_action :authenticate_user!
+  layout "admin"
 
   respond_to :html
 
@@ -30,12 +31,14 @@ class NotificationEmailsController < ApplicationController
 
   def update
     @notification_email.update(notification_email_params)
-    respond_with(@notification_email)
+    flash[:notice] = "Notificación actualizada"
+    respond_with(@notification_email, :location => edit_company_setting_path(User.find(current_user.id).company.company_setting)) #no funciona en caso de error
   end
 
   def destroy
     @notification_email.destroy
-    respond_with(@notification_email)
+    flash[:notice] = "Notificación eliminada"
+    respond_with(@notification_email, :location => edit_company_setting_path(User.find(current_user.id).company.company_setting)) #no funciona en caso de error
   end
 
   private

@@ -791,8 +791,8 @@
         <!-- Notifications -->
         <div class="tab-pane" id="notifications">
           <div class="row">
-            <div class="col-md-6">
-              <%= form_for @notification_email, html: {class: ''} do |f| %>
+            <div class="col-md-5">
+              <%= form_for @notification_email do |f| %>
                 <%= f.hidden_field :company_id, value: @company.id %>
                 <div class="row">
                   <div class="col-md-12">
@@ -809,7 +809,7 @@
                   <div class="col-md-12 hidden" id="local-notification">
                     <div class="form-group">
                       <%= f.label :location_ids, @company.name %>
-                      <%= f.collection_check_boxes :location_ids, @company.locations, :id, :name, {}, {class: "check_boxes"} do |b|%>
+                      <%= f.collection_check_boxes :location_ids, @company.locations.where(active: true), :id, :name, {}, {class: "check_boxes"} do |b|%>
                         <div class="checkbox">
                           <label>
                             <%= b.check_box %> <%= b.text %>
@@ -820,11 +820,11 @@
                   </div>
                   <div class="col-md-12 hidden" id="provider-notification">
                     <div class="row">
-                      <% for local in @company.locations %>
+                      <% for local in @company.locations.where(active: true) %>
                       <div class="col-sm-4">
                         <div class="form-group">
                           <%= f.label :service_provider_ids, local.name %>
-                          <%= f.collection_check_boxes :service_provider_ids, local.service_providers, :id, :public_name, {}, {class: "check_boxes"} do |b|%>
+                          <%= f.collection_check_boxes :service_provider_ids, local.service_providers.where(active: true), :id, :public_name, {}, {class: "check_boxes"} do |b|%>
                             <div class="checkbox">
                               <label>
                                 <%= b.check_box %> <%= b.text %>
@@ -916,46 +916,48 @@
                   <div class="col-md-12">
                     <div class="form-group">
                       <%= f.submit 'Guardar', :class => 'btn btn-green' %>
-                      <%= link_to 'Cancelar', dashboard_path, :class => "btn btn-default" %>
+                      <%= link_to 'Cancelar', edit_company_setting_path(User.find(current_user.id).company.company_setting), :class => "btn btn-default" %>
                     </div>
                   </div>
                 </div>
               <% end %>
             </div>
-            <div class="col-md-6">
+            <div class="col-md-7">
               <div class="background-grey">
                 <h4 class="text-green">Notificaciones Activas</h4>
-                <table class="table table-bordered">
-                  <thead>
-                    <tr>
-                      <th>E-mail</th>
-                      <th>Tipo</th>
-                      <th>Notificaciones</th>
-                      <th></th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <% for notification in @notifications %>
-                    <tr>
-                      <td><%= notification.email %></td>
-                      <td>
-                        <% if notification.receptor_type == 0 %>
-                        Compañía
-                        <% elsif notification.receptor_type == 1 %>
-                        Locales
-                        <% else %>
-                        Prestador de Servicio
-                        <% end %>
-                      </td>
-                      <td><%= notification.notification_text %></td>
-                      <td class="col-xs-3">
-                        <a class="btn btn-sm btn-orange"><i class="fa fa-pencil"></i> Editar</a>
-                        <a class="btn btn-sm btn-red"><i class="fa fa-trash-o"></i> Eliminar</a>
-                      </td>
-                    </tr>
-                    <% end %>
-                  </tbody>
-                </table>
+                <div class="table-responsive">
+                  <table class="table table-bordered">
+                    <thead>
+                      <tr>
+                        <th>E-mail</th>
+                        <th>Tipo</th>
+                        <th>Notificaciones</th>
+                        <th></th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <% for notification in @notifications %>
+                      <tr>
+                        <td><%= notification.email %></td>
+                        <td>
+                          <% if notification.receptor_type == 0 %>
+                          Compañía
+                          <% elsif notification.receptor_type == 1 %>
+                          Locales
+                          <% else %>
+                          Prestador de Servicio
+                          <% end %>
+                        </td>
+                        <td><%= notification.notification_text %></td>
+                        <td style="white-space: nowrap;">
+                          <%= link_to '<i class="fa fa-pencil"></i> Editar'.html_safe, edit_notification_email_path(notification), :class => "btn btn-sm btn-orange" %>
+                          <%= link_to '<i class="fa fa-trash-o"></i> Eliminar'.html_safe, notification, :class => "btn btn-sm btn-red", method: :delete, data: { confirm: '¿Estás seguro de eliminar esta Notificación?' } %>
+                        </td>
+                      </tr>
+                      <% end %>
+                    </tbody>
+                  </table>
+                </div>
               </div>
             </div>
           </div>
