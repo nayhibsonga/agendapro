@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150515145329) do
+ActiveRecord::Schema.define(version: 20150520151003) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -685,7 +685,7 @@ ActiveRecord::Schema.define(version: 20150515145329) do
     t.integer  "comission_option",    default: 0,     null: false
     t.boolean  "online_booking",      default: true
     t.boolean  "has_sessions",        default: false
-    t.integer  "sessions_amount",     default: 0
+    t.integer  "sessions_amount"
   end
 
   add_index "services", ["company_id"], name: "index_services_on_company_id", using: :btree

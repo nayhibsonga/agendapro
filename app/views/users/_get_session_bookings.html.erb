@@ -14,7 +14,7 @@
 						<i class="fa fa-clock-o"></i>&nbsp;<%= I18n.l(booking.start.to_time, format: :hour) %>
 					</div>
 					<div class="col-md-4 session-row-btns">
-						<span><button class="btn session-btn session-btn-edit" data-toggle="bookModal" href="book_session_form?id=<%= booking.id %>">Editar</button><button class="btn session-btn session-btn-delete">Eliminar</button></span>
+						<span><button class="btn session-btn session-btn-edit" data-toggle="bookModal" href="book_session_form?id=<%= booking.id %>">Editar</button><button class="btn session-btn session-btn-delete">Cancelar</button></span>
 					</div>
 				</div>
 			<% else %>

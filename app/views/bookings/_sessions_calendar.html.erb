@@ -74,6 +74,8 @@
 <input type="hidden" id="service_id" value="<%= @booking.service_id %>" />
 <input type="hidden" id="selectedLocal" value="<%= @booking.location_id %>" />
 <input type="hidden" id="selectedProvider" value="<%= @selectedProvider %>" />
+<input type="hidden" id="start_date" value="-1" />
+<input type="hidden" id="end_date" value="-1" />
 
 <%= content_tag "div", id: "providerPreference", data: {provider_preference: @booking.location.company.company_setting.provider_preference } do %>
 <% end %>
@@ -82,6 +84,7 @@
 
 var calendar;
 var staffSelected;
+var hoursSelected = false;
 
 function loadCalendar () {
 
@@ -182,7 +185,11 @@ function loadCalendar () {
         };
 
         $(document).on('hourClick', function (e) {
-          addBooking(e);
+          var sel_start = generateDate(e.date, e.start);
+          var sel_end = generateDate(e.date, e.end);
+          $("#start_date").val(sel_start);
+          $("#end_date").val(sel_end);
+          hoursSelected = true;
         });
 
         $(function () {
@@ -247,7 +254,11 @@ function loadCalendar () {
         $('#foo4').trigger('updateSizes');
 
         $(document).on('hourClick', function (e) {
-          addBooking(e);
+          var sel_start = generateDate(e.date, e.start);
+          var sel_end = generateDate(e.date, e.end);
+          $("#start_date").val(sel_start);
+          $("#end_date").val(sel_end);
+          hoursSelected = true;
         });
 
         $(function () {
@@ -270,6 +281,65 @@ function loadCalendar () {
   }
   
 }
+
+function generateDate(date, time) {
+  var year = date.substring(0, date.indexOf('-'));
+  var month = date.substring(date.indexOf('-') + 1, date.lastIndexOf('-'));
+  var day = date.substring(date.lastIndexOf('-') + 1);
+
+  time += ':00';
+
+  return year + '-' + month + '-' + day + ' ' + time;
+}
+
+function checkUserCrossBookings (b_start, b_end) {
+  $(".alert").alert('close');
+  var user = $('#user_id').val();
+  var booking_start = b_start;
+  var booking_end = b_end;
+  $.getJSON('/check_user_cross_bookings', {user_id: user, booking_start: booking_start, booking_end: booking_end}, function (result) {
+    if (result.crossover) {
+      $('#warning').empty();
+      var warning = '<div class="alert alert-warning alert-dismissable fade in" style="margin-bottom: 0px;">' +
+        '<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>' +
+        '<strong>¡Advertencia!</strong> Tienes agendado <em>' + result.booking.service + '</em> con <em>' + result.booking.service_provider + '</em> el <em>' + formattedTime(result.booking.start) + '</em>.' +
+      '</div>';
+      $('#warning').append(warning);
+    };
+  });
+}
+
+$("#nextButton").click(function(){
+    if (hoursSelected) {
+
+        var booking_id = $("#booking_id").val();
+        var start = $("#start_date").val();
+        var end = $("#end_date").val();
+        var provider_id = $('input[name="staffRadio"]:checked').val();
+
+        $.ajax({
+            url: "update_book_session",
+            type: "post",
+            dataType: "json",
+            data: {id: booking_id, start: start, end: end, service_provider_id: provider_id},
+            success: function(response)
+            {
+                $("#calendarModal").modal('hide');
+                $('#calendarModal').remove();
+                $("#session-booking-select").trigger("change");
+            },
+            error: function(xhr)
+            {
+                $("#calendarModal").modal('hide');
+                $('#calendarModal').remove();
+                alert("Error");
+            }
+        });
+    }
+    else {
+        alert('Debes seleccionar una hora');
+    };
+});
 
 $(document).ready(function(){
   loadCalendar();
