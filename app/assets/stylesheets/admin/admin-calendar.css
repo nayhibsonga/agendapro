@@ -462,6 +462,16 @@ select[name="serviceOptimizerSelector"] {
   table-layout: fixed;
 }*/
 
+.label-calendar {
+  font-size: 11px;
+}
+
+@media (min-width: 768px) {
+  .label-calendar {
+    font-size: 11px;
+  }
+}
+
 @media (min-width: 992px) {
   .set-date-btn {
     display: none;
@@ -473,6 +483,15 @@ select[name="serviceOptimizerSelector"] {
     margin-left: 7px;
     font-size: 14px;
   }
+  .label-calendar {
+    font-size: 15px;
+  }
+}
+
+@media (min-width: 1200px) {
+  .label-calendar {
+    font-size: 17px;
+  }
 }
 
 /*
@@ -481,10 +500,11 @@ select[name="serviceOptimizerSelector"] {
   ================================
 */
 .ui-datepicker table {
-  font-size: 0.6em;
+  font-size: 0.5em;
 }
 @media (min-width: 992px) {
   .ui-datepicker table {
+    font-size: 0.5em;
   }
 }
 
