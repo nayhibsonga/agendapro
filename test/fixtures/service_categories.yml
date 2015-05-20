@@ -5,7 +5,7 @@ service_category_1:
     company: company_1
     order: 0
 service_category_2:
-    name: Sin Categoría
+    name: Otros
     company: company_1
     order: 0
 service_category_4:
@@ -53,7 +53,7 @@ service_category_16:
     company: company_2
     order: 0
 service_category_17:
-    name: Sin Categoría
+    name: Otros
     company: company_2
     order: 0
 service_category_19:
@@ -81,7 +81,7 @@ service_category_30:
     company: company_2
     order: 0
 service_category_31:
-    name: Sin Categoría
+    name: Otros
     company: company_3
     order: 0
 service_category_32:

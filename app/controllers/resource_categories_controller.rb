@@ -60,13 +60,13 @@ class ResourceCategoriesController < ApplicationController
   # DELETE /resources/1
   # DELETE /resources/1.json
   def destroy
-    if @resource_category.name == "Sin Categoría"
-      render :json => { :errors => 'No es posible eliminar la categoría "Sin Categoría".' }, :status => 422
+    if @resource_category.name == "Otros"
+      render :json => { :errors => 'No es posible eliminar la categoría "Otros".' }, :status => 422
     else
       @resources = Resource.where(resource_category_id: @resource_category)
-      @new_resource_category = ResourceCategory.where(company_id: @resource_category.company_id, name: "Sin Categoría").first
+      @new_resource_category = ResourceCategory.where(company_id: @resource_category.company_id, name: "Otros").first
       if @new_resource_category.nil?
-        @new_resource_category = ResourceCategory.create(name: "Sin Categoría", company_id: @resource_category.company_id)
+        @new_resource_category = ResourceCategory.create(name: "Otros", company_id: @resource_category.company_id)
         @new_resource_category.save
       end
       @resources.each do |resource|
