@@ -58,7 +58,7 @@ $(function() {
 			$(element).parent().empty()
 		},
 		submitHandler: function(form) {
-			form.submit();
+			saveCategory('POST','');
 		}
 	});
 });
