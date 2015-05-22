@@ -780,10 +780,12 @@ class BookingMailer < ActionMailer::Base
 		send_at = DateTime.now
 
 		# => Send mail
+		puts 'Mail enviado a API booking_id: ' + booking.id.to_s
 		result = mandrill.messages.send_template template_name, template_content, message, async, send_at
 
 		rescue Mandrill::Error => e
 			puts "A mandrill error occurred: #{e.class} - #{e.message}"
+			puts 'Mail falló booking_id: ' + booking.id.to_s
 			raise
 	end
 
