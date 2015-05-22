@@ -597,7 +597,7 @@ class ProviderBreaksController < ApplicationController
             if break_group.nil?
               new_break_group_id = 0
             else
-              new_break_group = break_group.break_group_id + 1
+              new_break_group_id = break_group.break_group_id + 1
             end
 
             old_provider_breaks = ProviderBreak.where(:service_provider_id => old_providers.map(&:id), :break_group_id => @provider_break.break_group_id)
@@ -675,7 +675,7 @@ class ProviderBreaksController < ApplicationController
           if break_group.nil?
             new_break_group_id = 0
           else
-            new_break_group = break_group.break_group_id + 1
+            new_break_group_id = break_group.break_group_id + 1
           end
 
           @provider_break.name = new_name
