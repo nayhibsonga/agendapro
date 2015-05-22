@@ -2126,6 +2126,7 @@ $(function() {
 	});
 
 	$('#booking_service_provider_id').change(function (event) {
+		var selectedService =  $('#booking_service_id').val();
 		$.getJSON('/provider_services', {id: event.target.value}, function (services) {
 			$('#booking_service_id').empty();
 			$.each(services, function (key, service) {
@@ -2134,6 +2135,7 @@ $(function() {
 				);
 			});
 			$('#booking_service_id').removeAttr('disabled');
+			$('#booking_service_id option[value="' + selectedService + '"]').prop('selected', true);
 			modalChange();
 		});
 		if ($('#booking_provider_lock').prop('checked')) {
