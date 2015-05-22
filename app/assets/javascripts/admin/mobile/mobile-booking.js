@@ -8,7 +8,7 @@ function loadServices (provider) {
         '<option value="' + service.id + '">' + service.name + '</option>'
       );
     });
-    $('#booking_service_id option[value="' + selectedService + '"]').prop('selected', true);
+    $('#booking_service option[value="' + selectedService + '"]').prop('selected', true);
   }).always(function () {
     $('#booking_service').prop('disabled', false);
   });
