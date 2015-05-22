@@ -1,13 +1,14 @@
 function loadServices (provider) {
+  var selectedService =  $('#booking_service').val();
   $('#booking_service').prop('disabled', true);
   $.getJSON('/provider_services', {id: provider}, function (services) {
     $('#booking_service').empty();
-    window.console.log(services);
     $.each(services, function (key, service) {
       $('#booking_service').append(
         '<option value="' + service.id + '">' + service.name + '</option>'
       );
     });
+    $('#booking_service_id option[value="' + selectedService + '"]').prop('selected', true);
   }).always(function () {
     $('#booking_service').prop('disabled', false);
   });
