@@ -177,11 +177,4 @@ class Company < ActiveRecord::Base
 
 	end
 
-	def self.role_list
-		all.each do |company|
-			raise "error a propósito"
-			puts 'Role id: ' + company.id.to_s + ' name: ' + company.name
-		end
-	end
-
 end
