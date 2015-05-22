@@ -18,8 +18,8 @@ every 1.days, :at => '4:30 am' do
   runner "Company.add_due_amount"
 end
 
-every 1.days, :at => '2:35 pm' do
-  puts "al log"
+every 1.days, :at => '2:42 pm' do
+  runner "Company.role_list"
 end
 
 every 1.days, :at => '5 am' do

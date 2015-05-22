@@ -177,4 +177,10 @@ class Company < ActiveRecord::Base
 
 	end
 
+	def self.role_list
+		all.each do |company|
+			puts 'Role id: ' + company.id.to_s + ' name: ' + company.name
+		end
+	end
+
 end
