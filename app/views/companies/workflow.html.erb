@@ -278,6 +278,14 @@
                 </div>
               </div>
             </div>
+            <div class="row sessions-bar" style="display: none;">
+              <div class="col-xs-12 col-md-2">
+                <a class="btn btn-large btn-green btn-add-session" style="padding: 5px 12px; margin-right: 10px; font-size: 20px;" onclick="addNewSession()"><i class="fa fa-plus"></i> Agregar Sesión</a>
+              </div>
+              <div class="col-xs-12 col-md-10">
+                Puedes agendar hasta <span id="sessions-left"></span> sesiones más. Las sesiones que no agendes podrán ser agendadas desde tu cuenta AgendaPro o llamando al local elegido.
+              </div>
+            </div>
             <div class="row change-bar">
               <div class="col-xs-12 col-md-5 col-md-push-2">
                 <p class="p-label"><span class="wf-label label-available">&nbsp;</span> Disponible<span class="wf-label label-past">&nbsp;</span> No Disponible<span class="wf-label label-unavailable">&nbsp;</span> Ocupado</p>
@@ -726,7 +734,14 @@
             }
 
             $(document).on('hourClick', function (e) {
-              addBooking(e);
+              if(!current_service.has_sessions)
+              {
+                addBooking(e);
+              }
+              else
+              {
+                addSession(e);
+              }
             });
 
             $(function () {

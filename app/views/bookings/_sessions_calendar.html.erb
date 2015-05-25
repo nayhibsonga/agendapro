@@ -33,9 +33,9 @@
                           <span class="tittle"></span>
                         </div>
                         <div class="col-xs-2">
-                          <span class="date-span">
+                          <span class="date-span" id="openCalendarDatepicker">
                             Ir a fecha&nbsp;<i class="fa fa-calendar-o"></i>
-                            <input type="text" id="datepicker" name="date" />
+                            <input type="text" id="calendar-datepicker" name="date" />
                           </span>
                         </div>
                         <div class="col-xs-1">
@@ -59,11 +59,16 @@
                 <p class="p-label"><span class="wf-label label-available">&nbsp;</span> Disponible<span class="wf-label label-past">&nbsp;</span> No Disponible<span class="wf-label label-unavailable">&nbsp;</span> Ocupado</p>
               </div>
             </div>
+            <div class="row" id="loader-div" hidden>
+              <p style="text-align: center; margin-top: 40px;">
+                <%= image_tag "ajax-loader.gif", :alt => "Loader" %>
+              </p>
+            </div>
           </div>
         </div>
         <div class="modal-footer">
             <button type="button" class="btn session-btn btn-orange" id="optimizerBackBtn" style="display: none;"><i class="fa fa-chevron-left"></i>&nbsp;Atrás</button>
-            <button type="button" class="btn session-btn btn-orange" id="nextButton" style="display: none;">Siguiente&nbsp;<i class="fa fa-chevron-right"></i></button>
+            <button type="button" class="btn session-btn btn-green" id="nextButton" style="display: none;">Reservar&nbsp;<i class="fa fa-chevron-right"></i></button>
             <!--<button href="#" class="btn btn-red" data-dismiss="modal">Cerrar</button>-->
         </div>
     </div><!-- /.modal-content -->
@@ -85,6 +90,59 @@
 var calendar;
 var staffSelected;
 var hoursSelected = false;
+
+  $("#calendar-datepicker").datepicker({
+      autoSize: true,
+      firstDay: 1,
+      changeMonth: true,
+      changeYear: true,
+      monthNames: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+      monthNamesShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
+      prevText: 'Atrás',
+      nextText: 'Adelante',
+      dayNames: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'],
+      dayNamesShort: ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'],
+      dayNamesMin: ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'],
+      today: 'Hoy',
+      clear: '',
+      dateFormat: 'yy-mm-dd',
+      onSelect: function(newDate){
+        var data = {
+          provider: $("#selectedProvider").val(),
+          date: newDate,
+          local: $('#selectedLocal').val(),
+          service: $("#service_id").val()
+        }
+
+        if (calendar) {
+          calendar.rebuild('/available_hours_week_html', data);
+        }
+        else {
+          calendar = new Calendar('/available_hours_week_html', data);
+        }
+
+        $(document).on('hourClick', function (e) {
+          var sel_start = generateDate(e.date, e.start);
+          var sel_end = generateDate(e.date, e.end);
+          $("#start_date").val(sel_start);
+          $("#end_date").val(sel_end);
+          hoursSelected = true;
+        });
+
+        $(function () {
+          $('.prev-btn').click(function () {
+            selected = false;
+          });
+          $('.next-btn').click(function () {
+            selected = false;
+          });
+        });
+      }
+  });
+
+  $("#openCalendarDatepicker").click(function(){
+    $("#calendar-datepicker").datepicker("show");
+  });
 
 function loadCalendar () {
 
@@ -316,6 +374,11 @@ $("#nextButton").click(function(){
         var start = $("#start_date").val();
         var end = $("#end_date").val();
         var provider_id = $('input[name="staffRadio"]:checked').val();
+        $("#loader-div").show();
+        $(".staff").hide();
+        $(".change-bar").hide();
+        $("#nextButton").attr("disabled", "disabled");
+        $("#optimizerBackBtn").attr("disabled", "disabled");
 
         $.ajax({
             url: "update_book_session",
@@ -343,6 +406,7 @@ $("#nextButton").click(function(){
 
 $(document).ready(function(){
   loadCalendar();
+  
 });
 
 </script>

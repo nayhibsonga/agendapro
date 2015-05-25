@@ -11,7 +11,7 @@
 					</div>
 					<div class="col-md-6 session-row-date">
 						<i class="fa fa-calendar-o"></i>&nbsp;<%= I18n.l(booking.start.to_date, format: :day) %>&nbsp;&nbsp;
-						<i class="fa fa-clock-o"></i>&nbsp;<%= I18n.l(booking.start.to_time, format: :hour) %>
+						<i class="fa fa-clock-o"></i>&nbsp;<%= I18n.l(booking.start.to_time + 4.hours, format: :hour) %>
 					</div>
 					<div class="col-md-4 session-row-btns">
 						<span><button class="btn session-btn session-btn-edit" data-toggle="bookModal" href="book_session_form?id=<%= booking.id %>">Editar</button><button class="btn session-btn session-btn-delete">Cancelar</button></span>
@@ -24,7 +24,7 @@
 					</div>
 					<div class="col-md-6 session-row-date">
 						<i class="fa fa-calendar-o"></i>&nbsp;<%= I18n.l(booking.start.to_date, format: :day) %>&nbsp;&nbsp;
-						<i class="fa fa-clock-o"></i>&nbsp;<%= I18n.l(booking.start.to_time, format: :hour) %>
+						<i class="fa fa-clock-o"></i>&nbsp;<%= I18n.l(booking.start.to_time + 4.hours, format: :hour) %>
 					</div>
 					<div class="col-md-4 session-row-btns">
 						<button class="btn session-btn session-btn-validate">Validar</button>
@@ -38,7 +38,7 @@
 				</div>
 				<div class="col-md-6 session-row-date">
 					<i class="fa fa-calendar-o"></i>&nbsp;<%= I18n.l(booking.start.to_date, format: :day) %>&nbsp;&nbsp;
-						<i class="fa fa-clock-o"></i>&nbsp;<%= I18n.l(booking.start.to_time, format: :hour) %>
+						<i class="fa fa-clock-o"></i>&nbsp;<%= I18n.l(booking.start.to_time + 4.hours, format: :hour) %>
 				</div>
 				<div class="col-md-4 session-row-btns">
 					<button class="btn session-btn session-btn-detail" data-toggle="detailModal" href="session_booking_detail?id=<%= booking.id %>">Ver detalle</button>
@@ -132,6 +132,11 @@
         $modal.modal({backdrop: 'static', keyboard: false});
         $modal.load($remote); 
     });
+
+    $('#detailModal').on('hidden.bs.modal', function(){
+        $("#detailModal").remove();
+    });
+
 
     $('[data-toggle="bookModal"]').on('click', function(e) {
         $('#bookModal').remove();

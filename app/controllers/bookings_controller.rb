@@ -1118,7 +1118,8 @@ class BookingsController < ApplicationController
       params[:comment] += ' - Dirección del cliente (donde se debe realizar el servicio): ' + params[:address]
     end
 
-    booking_data = JSON.parse(params[:bookings], symbolize_names: true)
+    #booking_data = JSON.parse(params[:bookings], symbolize_names: true)
+    #is_session_booking = booking_data[0].has_sessions
 
     deal = nil
     if @company.company_setting.deal_activate
@@ -2252,15 +2253,17 @@ class BookingsController < ApplicationController
         book_start = DateTime.parse(booking.start.to_s)
         book_end = DateTime.parse(booking.end.to_s)
         if !(booking_end <= book_start || book_end <= booking_start)
-          render :json => {
-            :crossover => true,
-            :booking => {
-              :service => booking.service.name,
-              :service_provider => booking.service_provider.public_name,
-              :start => booking.start,
-              :end => booking.end
+          if !booking.is_session || (booking.is_session && booking.is_session_booked)
+            render :json => {
+              :crossover => true,
+              :booking => {
+                :service => booking.service.name,
+                :service_provider => booking.service_provider.public_name,
+                :start => booking.start,
+                :end => booking.end
+              }
             }
-          }
+          end
           return
         end
       end
@@ -2439,7 +2442,6 @@ class BookingsController < ApplicationController
 
             if location_open <= dateTimePointer and (dateTimePointer + service.duration.minutes) <= location_close
               service_valid = true
-              logger.debug "Valid 1"
               break
             end
           end
@@ -2462,7 +2464,6 @@ class BookingsController < ApplicationController
 
               if provider_open <= dateTimePointer and (dateTimePointer + service.duration.minutes) <= provider_close
                 service_valid = true
-                logger.debug "Valid 2"
                 break
               end
             end
@@ -2472,7 +2473,6 @@ class BookingsController < ApplicationController
               provider.provider_breaks.each do |provider_break|
                 if !(provider_break.end.to_datetime <= dateTimePointer || (dateTimePointer + service.duration.minutes) <= provider_break.start.to_datetime)
                   service_valid = false
-                  logger.debug "Invalid 1"
                   break
                 end
               end
@@ -2484,18 +2484,19 @@ class BookingsController < ApplicationController
                 unless provider_booking.status_id == cancelled_id
                   pointerEnd = dateTimePointer+service.duration.minutes
                   if (pointerEnd <= provider_booking.start.to_datetime || provider_booking.end.to_datetime <= dateTimePointer)
-                    if !service.group_service #|| service.id != provider_booking.service_id
-                      #service_valid = false
-                      #logger.debug "Invalid 2"
-                      #break
+                    if !service.group_service || service.id != provider_booking.service_id
+                      if !provider_booking.is_session || (provider_booking.is_session && provider_booking.is_session_booked)
+                        service_valid = false
+                        break
+                      end
                     elsif service.group_service && service.id == provider_booking.service_id && provider.bookings.where(service_id: service.id, start: dateTimePointer).where.not(status_id: Status.find_by_name('Cancelado')).count >= service.capacity
-                      service_valid = false
-                      logger.debug "Invalid 3"
-                      break
+                      if !provider_booking.is_session || (provider_booking.is_session && provider_booking.is_session_booked)
+                        service_valid = false
+                        break
+                      end
                     end
                   else
                     service_valid = false
-                    logger.debug "Invalid 4"
                   end
                 end
               end
@@ -2506,7 +2507,6 @@ class BookingsController < ApplicationController
               service.resources.each do |resource|
                 if !local.resource_locations.pluck(:resource_id).include?(resource.id)
                   service_valid = false
-                  logger.debug "Invalid 5"
                   break
                 end
                 used_resource = 0
@@ -2526,7 +2526,6 @@ class BookingsController < ApplicationController
                 end
                 if group_services.uniq.count + used_resource >= ResourceLocation.where(resource_id: resource.id, location_id: local.id).first.quantity
                   service_valid = false
-                  logger.debug "Invalid 6"
                   break
                 end
               end
