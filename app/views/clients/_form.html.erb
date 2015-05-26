@@ -17,8 +17,13 @@
               </ul>
             </div>
           <% end %>
-            <div class="col-md-6">
+          <% if @client.id %>
+          <div class="col-md-6">
           <div class="well">
+          <% else %>
+          <div class="well">
+          <div class="col-md-6">
+          <% end %>
               <% if Company.find(current_user.company_id).company_setting.client_exclusive %>
               <div class="form-group">
                 <%= f.label :can_book, "¿Puede reservar?", class: "col-sm-3 control-label" %>
