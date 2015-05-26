@@ -5,8 +5,6 @@
 </style>
 
 <div class="container-fluid">
-  <div class="row">
-    <div class="col-md-12">
       <div class="row">
         <%= form_for @client, html: {class: "form-horizontal" } do |f| %>
           <% if @client.errors.any? %>
@@ -19,8 +17,8 @@
               </ul>
             </div>
           <% end %>
+            <div class="col-md-6">
           <div class="well">
-            <div class="<%= if @client.id then 'col-md-6' else 'col-md-6' end %>">
               <% if Company.find(current_user.company_id).company_setting.client_exclusive %>
               <div class="form-group">
                 <%= f.label :can_book, "¿Puede reservar?", class: "col-sm-3 control-label" %>
@@ -207,8 +205,6 @@
           <%= link_to '<i class="fa fa-eye"></i> Historial Completo'.html_safe, client_history_path(:id => @client.id), class: "btn btn-white" %>
         </div>
         <% end %>
-      </div>
-    </div>
   </div>
   <div class="row">
     <div class="col-md-12">
