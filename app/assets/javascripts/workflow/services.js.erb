@@ -352,7 +352,7 @@ function loadStep3 () {
 			{
 				booking_buffer.push(actual_booking);
 				$('.bookings').val(JSON.stringify(booking_buffer));
-
+				$("#has_sessions").val("0");
 				// Summary
 				$('#summary').empty();
 				var service = '';
@@ -468,13 +468,14 @@ function loadStep3 () {
 			else
 			{
 				sessions_buffer.push(actual_booking);
-				booking_buffer = []
-				booking_buffer.push(first_session)
-				for(int i=0; i < sessions_buffer.length; i++)
+				booking_buffer = [];
+				booking_buffer.push(first_session);
+				for(i=0; i < sessions_buffer.length; i++)
 				{
 					booking_buffer.push(sessions_buffer[i]);
 				}
 				$('.bookings').val(JSON.stringify(booking_buffer));
+				$("#has_sessions").val("1");
 				$('#summary').empty();
 				var service = first_session.service_name;
 				var when = '<p class="light-gray">' + formattedTime(first_session.start) + '</p>';

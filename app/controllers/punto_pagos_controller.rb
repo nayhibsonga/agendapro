@@ -205,6 +205,12 @@ class PuntoPagosController < ApplicationController
         elsif Booking.find_by_trx_id(trx_id)
           #Mostrar página similar a la de reserva hecha, confirmando que se pagó
           @bookings = Booking.where(:trx_id => trx_id)
+          @has_session_booking = false
+          @session_booking = nil
+          if @bookings.first.is_session
+            @has_session_booking = true
+            @session_booking = @bookings.first.session_booking
+          end
           @token = params[:token]
           @success_page = "booking"
           host = request.host_with_port

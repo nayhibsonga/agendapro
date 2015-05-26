@@ -223,6 +223,7 @@ Agendapro::Application.routes.draw do
   post '/provider_breaks/destroy_repeat_break', :to => 'provider_breaks#destroy_repeat_break', :as => 'destroy_repeat_break'
   get '/available_providers', :to => 'service_providers#available_providers', :as => 'available_service_providers'
   get '/clients_bookings_history', :to => 'clients#bookings_history'
+  get '/clients_check_sessions', :to => 'clients#check_sessions'
   get '/booking_history', :to => 'bookings#booking_history'
   get '/fixed_bookings', :to => 'bookings#fixed_index', :as => 'fixed_bookings'
   post '/booking_valid', :to => 'bookings#booking_valid'

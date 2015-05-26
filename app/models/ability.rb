@@ -199,6 +199,7 @@ class Ability
         can :suggestion, Client
         can :rut_suggestion, Client
         can :bookings_history, Client
+        can :check_sessions, Client
 
         can :create_comment, Client
         can :update_comment, Client

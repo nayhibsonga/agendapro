@@ -88,32 +88,73 @@
 						                    <a href="<%= root_url(:host => @url) %>"><span class="light-gray">Agendar nuevamente</span> &nbsp;<i class="fa fa-calendar-o fa-lg light-green"></i></a>
 						                </p>
 										<div class="book-subheader dark-gray">Resumen de tu Reserva</div>
-										<dl class="dl-horizontal book-dl">
-											<dt class="dark-gray">¿Qué reservaste?</dt>
-											<dd class="light-gray">
-												<% @bookings.each do |booking| %>
-													<%= booking.service.name %><br />
+
+										<% if @has_session_booking %>
+						                    <dl class="dl-horizontal book-dl">
+						                      <dt class="dark-gray">¿Qué reservaste?</dt>
+						                      <dd class="light-gray">
+						                        <p><%= @bookings.first.service.name %></p>
+						                      </dd>
+
+						                      <dt class="dark-gray">¿Dónde?</dt>
+						                      <% @second_address = @selectedLocation.second_address.blank? ? '' : ', ' + @selectedLocation.second_address %>
+						                      <dd class="light-gray">
+						                        <p><%= if !@selectedLocation.outcall then @selectedLocation.address+@second_address+', '+@selectedLocation.district.name else "A Domicilio" end %></p>
+						                      </dd>
+
+						                      <dt class="dark-gray">¿Cuántas sesiones?</dt>
+						                      <dd class="light-gray">
+						                          <p>Reservaste <%= @session_booking.sessions_taken.to_s %> sesiones de un total de <%= @session_booking.service.sessions_amount %></p>
+						                      </dd>
+
+						                      <dt class="dark-gray">¿Cuándo?</dt>
+						                      <dd class="light-gray">
+						                        <% @bookings.each do |booking| %>
+						                          <% if booking.is_session_booked %>
+						                            <p><%= I18n.l(booking.start.to_datetime).capitalize %>, con <%= booking.service_provider.public_name %></p>
+						                          <% end %>
+						                        <% end %>
+						                      </dd>
+						                      <% @bookings.each do |booking| %>
+						                        <% if !booking.notes.blank? %>
+						                        <dt class="dark-gray">Notas</dt>
+						                        <dd class="light-gray"><p><%= booking.notes %></p></dd>
+						                        <% end %>
+						                      <% end %>
+
+						                    </dl>
+
+						                <% else %>
+
+											<dl class="dl-horizontal book-dl">
+												<dt class="dark-gray">¿Qué reservaste?</dt>
+												<dd class="light-gray">
+													<% @bookings.each do |booking| %>
+														<%= booking.service.name %><br />
+													<% end %>
+												</dd>
+												<dt class="dark-gray">¿Dónde?</dt>
+												<dd class="light-gray"><%= @bookings.first.location.address %>, <%= @bookings.first.location.district.name %></dd>
+												<dt class="dark-gray">¿Con quién?</dt>
+												<dd class="light-gray">
+													<% @bookings.each do |booking| %>
+														<%= booking.service_provider.public_name %><br />
+													<% end %>
+												</dd>
+												<dt class="dark-gray">¿Cuándo?</dt>
+												<dd class="light-gray">
+													<% @bookings.each do |booking| %>
+														<%= I18n.l(booking.start.to_datetime) %><br />
+													<% end %>
+												</dd>
+												<% if !@bookings.first.notes.blank? %>
+												<dt class="dark-gray">Notas</dt>
+												<dd class="light-gray"><%= @bookings.first.notes %></dd>
 												<% end %>
-											</dd>
-											<dt class="dark-gray">¿Dónde?</dt>
-											<dd class="light-gray"><%= @bookings.first.location.address %>, <%= @bookings.first.location.district.name %></dd>
-											<dt class="dark-gray">¿Con quién?</dt>
-											<dd class="light-gray">
-												<% @bookings.each do |booking| %>
-													<%= booking.service_provider.public_name %><br />
-												<% end %>
-											</dd>
-											<dt class="dark-gray">¿Cuándo?</dt>
-											<dd class="light-gray">
-												<% @bookings.each do |booking| %>
-													<%= I18n.l(booking.start.to_datetime) %><br />
-												<% end %>
-											</dd>
-											<% if !@bookings.first.notes.blank? %>
-											<dt class="dark-gray">Notas</dt>
-											<dd class="light-gray"><%= @bookings.first.notes %></dd>
-											<% end %>
-										</dl>
+											</dl>
+										<% end %>
+
+
 										<div class="book-subheader dark-gray">Comprobante de pago</div>
 										<dl class="dl-horizontal book-dl">
 											<dt class="dark-gray">Comercio</dt>

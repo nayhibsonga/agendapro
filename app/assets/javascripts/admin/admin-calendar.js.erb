@@ -1850,6 +1850,32 @@ function setAge() {
 	return false;
 }
 
+function checkClientSessions()
+{
+	$("#sessions-info").empty();
+	$("#sessions-row").hide();
+	if (parseInt($('#booking_client_id').val()) > 0)
+	{
+		if(parseInt($("#booking_service_id").val()) > 0)
+		{
+			$.ajax({
+				type: "get",
+				url: "clients_check_sessions?id=" + $('#booking_client_id').val() + "&service_id=" + $("#booking_service_id").val(),
+				success: function(sessions_bookings)
+				{
+					if(sessions_bookings.length > 0)
+					{
+						$.each(sessions_bookings, function (key, session_booking) {
+							$("#sessions-info").append("Este servicio posee sesiones. El cliente ya ha agendado " + session_booking.sessions_taken + " de un total de ");
+						});
+						$("#sessions-row").show();
+					}
+				}
+			});
+		}
+	}
+}
+
 function loadClientHistory(booking_id) {
 	if (parseInt($('#booking_client_id').val()) > 0) {
 		$('#client-history-tbody').empty();
@@ -1953,6 +1979,7 @@ $(function() {
 	});
 	$("#booking_service_id").on("change", function() {
 		modalChange();
+		checkClientSessions();
 	});
 
 	$("#dp").datepicker({
@@ -2058,6 +2085,7 @@ $(function() {
 			$('#xButton').prop('disabled', false);
 			$("#full_name").prop('disabled', true);
 			loadClientHistory(0);
+			checkClientSessions();
 		}
 	}).data( "ui-autocomplete" )._renderItem = function( ul, item ) {
 		return $( '<li>' ).append( '<a>' + item.label + '<br><span class="auto-desc">' + item.desc + '</span></a>' ).appendTo( ul );

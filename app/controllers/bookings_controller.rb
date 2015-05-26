@@ -1073,6 +1073,7 @@ class BookingsController < ApplicationController
     host = request.host_with_port
     @url = @company.web_address + '.' + host[host.index(request.domain)..host.length]
 
+    booking_data = JSON.parse(params[:bookings], symbolize_names: true)
 
     if !user_signed_in?
       if params[:mailing_option].blank?
@@ -1179,6 +1180,8 @@ class BookingsController < ApplicationController
       end
     end
 
+
+
     booking_group = nil
     if booking_data.length > 1
       provider = booking_data[0][:provider]
@@ -1197,6 +1200,25 @@ class BookingsController < ApplicationController
       group_payment = true
     end
     final_price = 0
+
+    @session_booking = SessionBooking.new
+    @has_session_booking = false
+    first_booking = nil
+    sessions_service = nil
+
+    if booking_data.size > 0
+      if(params[:has_sessions] == "1" || params[:has_sessions] == 1)
+        @has_session_booking = true
+        session_service = Service.find(booking_data.first[:service])
+        @session_booking.service_id = session_service.id
+        @session_booking.client_id = client.id
+        if user_signed_in?
+          @session_booking.user_id = current_user.id
+        end
+        @session_booking.sessions_taken = booking_data.size
+        @session_booking.save
+      end
+    end
 
     booking_data.each do |buffer_params|
       block_it = false
@@ -1280,6 +1302,13 @@ class BookingsController < ApplicationController
         @bookings << @booking
       end
 
+      if @has_session_booking
+        @booking.is_session = true
+        @booking.session_booking_id = @session_booking.id
+        @booking.user_session_confirmed = true
+        @booking.is_session_booked = true
+      end
+
       #
       #   PAGO EN LÍNEA DE RESERVA
       #
@@ -1298,6 +1327,9 @@ class BookingsController < ApplicationController
           num_amount = (service.price - service.price*service.discount/100).round;
         end
         final_price = final_price + num_amount
+        if @has_session_booking
+          final_price = num_amount
+        end
         @booking.price = num_amount
         #amount = sprintf('%.2f', num_amount)
         #payment_method = params[:mp]
@@ -1329,9 +1361,67 @@ class BookingsController < ApplicationController
         end
       end
 
+      if first_booking.nil?
+        first_booking = @booking
+      end
+
     end
 
 
+    #Add bookings for all the sessions that where not booked
+    if @has_session_booking
+
+      @session_booking.sessions_taken = @bookings.size
+      @session_booking.save
+      sessions_missing = session_service.sessions_amount - @session_booking.sessions_taken
+
+      for i in 0..sessions_missing-1
+
+        # new_booking = Booking.new
+        # new_booking.start = first_booking.start
+        # new_booking.end = first_booking.end
+        # new_booking.notes = first_booking.notes
+        # new_booking.service_provider_id = first_booking.service_provider_id
+        # new_booking.user_id = 537
+        # new_booking.service_id = first_booking.service_id
+        # new_booking.location_id = first_booking.location_id
+        # new_booking.status_id = first_booking.status_id
+        # new_booking.promotion_id = first_booking.promotion_id
+        # new_booking.company_comment = first_booking.company_comment
+        # new_booking.web_origin = true
+        # new_booking.send_mail = first_booking.send_mail
+        # new_booking.client_id = first_booking.client_id
+        # new_booking.price = first_booking.price
+        # new_booking.provider_lock = first_booking.provider_lock
+        # new_booking.payed = first_booking.payed
+        # new_booking.trx_id = first_booking.trx_id
+        # new_booking.max_changes = first_booking.max_changes
+        # new_booking.token = first_booking.token
+        # new_booking.deal_id = first_booking.deal_id
+        # new_booking.booking_group = first_booking.booking_group
+        # new_booking.payed_booking_id = first_booking.payed_booking_id
+        # new_booking.is_session = true
+        # new_booking.session_booking_id = session_booking.id
+        # new_booking.user_session_confirmed = false
+        # new_booking.is_session_booked = false
+
+        new_booking = first_booking.dup
+        new_booking.is_session = true
+        new_booking.session_booking_id = @session_booking.id
+        new_booking.user_session_confirmed = false
+        new_booking.is_session_booked = false
+
+        if new_booking.save
+          @bookings << new_booking
+          current_user ? user = current_user.id : user = 0
+          BookingHistory.create(booking_id: new_booking.id, action: "Creada por Cliente", start: new_booking.start, status_id: new_booking.status_id, service_id: new_booking.service_id, service_provider_id: new_booking.service_provider_id, user_id: user, notes: new_booking.notes, company_comment: new_booking.company_comment)
+        else
+          @errors << new_booking.errors.full_messages
+          @blocked_bookings << new_booking.service.name + " con " + new_booking.service_provider.public_name + " el " + I18n.l(new_booking.start.to_datetime)
+        end
+      end
+
+    end
 
 
     #If they can be payed, redirect to payment_process,
@@ -1347,6 +1437,7 @@ class BookingsController < ApplicationController
         @bookings.each do |booking|
           booking.trx_id = trx_id
           booking.token = resp.get_token
+
           if booking.save
             current_user ? user = current_user.id : user = 0
             BookingHistory.create(booking_id: booking.id, action: "Creada por Cliente", start: booking.start, status_id: booking.status_id, service_id: booking.service_id, service_provider_id: booking.service_provider_id, user_id: user, notes: booking.notes, company_comment: booking.company_comment)
@@ -1401,7 +1492,7 @@ class BookingsController < ApplicationController
     end
 
     @bookings.each do |b|
-      if b.id.nil?
+      if b.id.nil?        
         @errors << "Hubo un error al guardar un servicio. " + b.errors.inspect
         @blocked_bookings << b.service.name + " con " + b.service_provider.public_name + " el " + I18n.l(b.start.to_datetime)
       end
