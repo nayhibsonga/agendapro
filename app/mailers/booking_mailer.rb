@@ -79,42 +79,42 @@ class BookingMailer < ActionMailer::Base
 		end
 
 		# Notificacion service provider
-		if book_info.service_provider.get_booking_configuration_email == 0
-			message[:to] << {
-					:email => book_info.service_provider.notification_email,
-					:type => 'to'
-				}
-			message[:merge_vars] << {
-					:rcpt => book_info.service_provider.notification_email,
-					:vars => [
-						{
-							:name => 'COMPANYCOMMENT',
-							:content => book_info.company_comment
-						}
-					]
-				}
-		end
+		# if book_info.service_provider.get_booking_configuration_email == 0
+		# 	message[:to] << {
+		# 			:email => book_info.service_provider.notification_email,
+		# 			:type => 'to'
+		# 		}
+		# 	message[:merge_vars] << {
+		# 			:rcpt => book_info.service_provider.notification_email,
+		# 			:vars => [
+		# 				{
+		# 					:name => 'COMPANYCOMMENT',
+		# 					:content => book_info.company_comment
+		# 				}
+		# 			]
+		# 		}
+		# end
 
 		# Email notificacion local
-		if book_info.location.notification and !book_info.location.email.blank? and book_info.location.get_booking_configuration_email == 0
-			message[:to] << {
-				:email => book_info.location.email,
-				:type => 'to'
-			}
-			message[:merge_vars] << {
-				:rcpt => book_info.location.email,
-				:vars => [
-					{
-						:name => 'COMPANYCOMMENT',
-						:content => book_info.company_comment
-					}
-				]
-			}
-			message[:global_merge_vars][0] = {
-						:name => 'SERVICEPROVIDER',
-						:content => book_info.location.name
-					}
-		end
+		# if book_info.location.notification and !book_info.location.email.blank? and book_info.location.get_booking_configuration_email == 0
+		# 	message[:to] << {
+		# 		:email => book_info.location.email,
+		# 		:type => 'to'
+		# 	}
+		# 	message[:merge_vars] << {
+		# 		:rcpt => book_info.location.email,
+		# 		:vars => [
+		# 			{
+		# 				:name => 'COMPANYCOMMENT',
+		# 				:content => book_info.company_comment
+		# 			}
+		# 		]
+		# 	}
+		# 	message[:global_merge_vars][0] = {
+		# 				:name => 'SERVICEPROVIDER',
+		# 				:content => book_info.location.name
+		# 			}
+		# end
 
 		second_address = ''
 		if !book_info.location.second_address.blank?
@@ -247,42 +247,42 @@ class BookingMailer < ActionMailer::Base
 		end
 
 		# Notificacion service provider
-		if book_info.service_provider.get_booking_configuration_email == 0
-			message[:to] << {
-					:email => book_info.service_provider.notification_email,
-					:type => 'to'
-				}
-			message[:merge_vars] << {
-					:rcpt => book_info.service_provider.notification_email,
-					:vars => [
-						{
-							:name => 'COMPANYCOMMENT',
-							:content => book_info.company_comment
-						}
-					]
-				}
-		end
+		# if book_info.service_provider.get_booking_configuration_email == 0
+		# 	message[:to] << {
+		# 			:email => book_info.service_provider.notification_email,
+		# 			:type => 'to'
+		# 		}
+		# 	message[:merge_vars] << {
+		# 			:rcpt => book_info.service_provider.notification_email,
+		# 			:vars => [
+		# 				{
+		# 					:name => 'COMPANYCOMMENT',
+		# 					:content => book_info.company_comment
+		# 				}
+		# 			]
+		# 		}
+		# end
 
 		# Email notificacion local
-		if book_info.location.notification and !book_info.location.email.blank? and book_info.location.get_booking_configuration_email == 0
-			message[:to] << {
-				:email => book_info.location.email,
-				:type => 'to'
-			}
-			message[:merge_vars] << {
-				:rcpt => book_info.location.email,
-				:vars => [
-					{
-						:name => 'COMPANYCOMMENT',
-						:content => book_info.company_comment
-					}
-				]
-			}
-			message[:global_merge_vars][0] = {
-						:name => 'SERVICEPROVIDER',
-						:content => book_info.location.name
-					}
-		end
+		# if book_info.location.notification and !book_info.location.email.blank? and book_info.location.get_booking_configuration_email == 0
+		# 	message[:to] << {
+		# 		:email => book_info.location.email,
+		# 		:type => 'to'
+		# 	}
+		# 	message[:merge_vars] << {
+		# 		:rcpt => book_info.location.email,
+		# 		:vars => [
+		# 			{
+		# 				:name => 'COMPANYCOMMENT',
+		# 				:content => book_info.company_comment
+		# 			}
+		# 		]
+		# 	}
+		# 	message[:global_merge_vars][0] = {
+		# 				:name => 'SERVICEPROVIDER',
+		# 				:content => book_info.location.name
+		# 			}
+		# end
 
 		second_address = ''
 		if !book_info.location.second_address.blank?
@@ -413,42 +413,42 @@ class BookingMailer < ActionMailer::Base
 		end
 
 		# Notificacion service provider
-		if book_info.service_provider.get_booking_configuration_email == 0
-			message[:to] << {
-					:email => book_info.service_provider.notification_email,
-					:type => 'to'
-				}
-			message[:merge_vars] << {
-					:rcpt => book_info.service_provider.notification_email,
-					:vars => [
-						{
-							:name => 'COMPANYCOMMENT',
-							:content => book_info.company_comment
-						}
-					]
-				}
-		end
+		# if book_info.service_provider.get_booking_configuration_email == 0
+		# 	message[:to] << {
+		# 			:email => book_info.service_provider.notification_email,
+		# 			:type => 'to'
+		# 		}
+		# 	message[:merge_vars] << {
+		# 			:rcpt => book_info.service_provider.notification_email,
+		# 			:vars => [
+		# 				{
+		# 					:name => 'COMPANYCOMMENT',
+		# 					:content => book_info.company_comment
+		# 				}
+		# 			]
+		# 		}
+		# end
 
 		# Email notificacion local
-		if book_info.location.notification and !book_info.location.email.blank? and book_info.location.get_booking_configuration_email == 0
-			message[:to] << {
-				:email => book_info.location.email,
-				:type => 'to'
-			}
-			message[:merge_vars] << {
-				:rcpt => book_info.location.email,
-				:vars => [
-					{
-						:name => 'COMPANYCOMMENT',
-						:content => book_info.company_comment
-					}
-				]
-			}
-			message[:global_merge_vars][0] = {
-						:name => 'SERVICEPROVIDER',
-						:content => book_info.location.name
-					}
-		end
+		# if book_info.location.notification and !book_info.location.email.blank? and book_info.location.get_booking_configuration_email == 0
+		# 	message[:to] << {
+		# 		:email => book_info.location.email,
+		# 		:type => 'to'
+		# 	}
+		# 	message[:merge_vars] << {
+		# 		:rcpt => book_info.location.email,
+		# 		:vars => [
+		# 			{
+		# 				:name => 'COMPANYCOMMENT',
+		# 				:content => book_info.company_comment
+		# 			}
+		# 		]
+		# 	}
+		# 	message[:global_merge_vars][0] = {
+		# 				:name => 'SERVICEPROVIDER',
+		# 				:content => book_info.location.name
+		# 			}
+		# end
 
 		# => Metadata
 		async = false
@@ -533,42 +533,42 @@ class BookingMailer < ActionMailer::Base
 		end
 
 		# Notificacion service provider
-		if book_info.service_provider.get_booking_configuration_email == 0
-			message[:to] << {
-					:email => book_info.service_provider.notification_email,
-					:type => 'to'
-				}
-			message[:merge_vars] << {
-					:rcpt => book_info.service_provider.notification_email,
-					:vars => [
-						{
-							:name => 'COMPANYCOMMENT',
-							:content => book_info.company_comment
-						}
-					]
-				}
-		end
+		# if book_info.service_provider.get_booking_configuration_email == 0
+		# 	message[:to] << {
+		# 			:email => book_info.service_provider.notification_email,
+		# 			:type => 'to'
+		# 		}
+		# 	message[:merge_vars] << {
+		# 			:rcpt => book_info.service_provider.notification_email,
+		# 			:vars => [
+		# 				{
+		# 					:name => 'COMPANYCOMMENT',
+		# 					:content => book_info.company_comment
+		# 				}
+		# 			]
+		# 		}
+		# end
 
 		# Email notificacion local
-		if book_info.location.notification and !book_info.location.email.blank? and book_info.location.get_booking_configuration_email == 0
-			message[:to] << {
-				:email => book_info.location.email,
-				:type => 'to'
-			}
-			message[:merge_vars] << {
-				:rcpt => book_info.location.email,
-				:vars => [
-					{
-						:name => 'COMPANYCOMMENT',
-						:content => book_info.company_comment
-					}
-				]
-			}
-			message[:global_merge_vars][0] = {
-						:name => 'SERVICEPROVIDER',
-						:content => book_info.location.name
-					}
-		end
+		# if book_info.location.notification and !book_info.location.email.blank? and book_info.location.get_booking_configuration_email == 0
+		# 	message[:to] << {
+		# 		:email => book_info.location.email,
+		# 		:type => 'to'
+		# 	}
+		# 	message[:merge_vars] << {
+		# 		:rcpt => book_info.location.email,
+		# 		:vars => [
+		# 			{
+		# 				:name => 'COMPANYCOMMENT',
+		# 				:content => book_info.company_comment
+		# 			}
+		# 		]
+		# 	}
+		# 	message[:global_merge_vars][0] = {
+		# 				:name => 'SERVICEPROVIDER',
+		# 				:content => book_info.location.name
+		# 			}
+		# end
 
 		second_address = ''
 		if !book_info.location.second_address.blank?
@@ -697,42 +697,42 @@ class BookingMailer < ActionMailer::Base
 		end
 
 		# Notificacion service provider
-		if book_info.service_provider.get_booking_configuration_email == 0
-			message[:to] << {
-				  :email => book_info.service_provider.notification_email,
-				  :type => 'to'
-				}
-			message[:merge_vars] << {
-				  :rcpt => book_info.service_provider.notification_email,
-				  :vars => [
-						{
-							:name => 'COMPANYCOMMENT',
-							:content => book_info.company_comment
-						}
-				  ]
-				}
-		end
+		# if book_info.service_provider.get_booking_configuration_email == 0
+		# 	message[:to] << {
+		# 		  :email => book_info.service_provider.notification_email,
+		# 		  :type => 'to'
+		# 		}
+		# 	message[:merge_vars] << {
+		# 		  :rcpt => book_info.service_provider.notification_email,
+		# 		  :vars => [
+		# 				{
+		# 					:name => 'COMPANYCOMMENT',
+		# 					:content => book_info.company_comment
+		# 				}
+		# 		  ]
+		# 		}
+		# end
 
 		# Email notificacion local
-		if book_info.location.notification and !book_info.location.email.blank? and book_info.location.get_booking_configuration_email == 0
-			message[:to] << {
-				:email => book_info.location.email,
-				:type => 'to'
-			}
-			message[:merge_vars] << {
-				:rcpt => book_info.location.email,
-				:vars => [
-					{
-						:name => 'COMPANYCOMMENT',
-						:content => book_info.company_comment
-					}
-				]
-			}
-			message[:global_merge_vars][0] = {
-						:name => 'SERVICEPROVIDER',
-						:content => book_info.location.name
-					}
-		end
+		# if book_info.location.notification and !book_info.location.email.blank? and book_info.location.get_booking_configuration_email == 0
+		# 	message[:to] << {
+		# 		:email => book_info.location.email,
+		# 		:type => 'to'
+		# 	}
+		# 	message[:merge_vars] << {
+		# 		:rcpt => book_info.location.email,
+		# 		:vars => [
+		# 			{
+		# 				:name => 'COMPANYCOMMENT',
+		# 				:content => book_info.company_comment
+		# 			}
+		# 		]
+		# 	}
+		# 	message[:global_merge_vars][0] = {
+		# 				:name => 'SERVICEPROVIDER',
+		# 				:content => book_info.location.name
+		# 			}
+		# end
 
 		second_address = ''
 		if !book_info.location.second_address.blank?
@@ -900,54 +900,54 @@ class BookingMailer < ActionMailer::Base
 		}
 
 		# Notificacion service provider
-		data[:provider][:array].each do |provider|
-			message[:to] << {
-					:email => provider[:email],
-					:type => 'to'
-				}
-			message[:merge_vars] << {
-					:rcpt => provider[:email],
-					:vars => [
-						{
-							:name => 'CLIENTNAME',
-							:content => data[:provider][:client_name]
-						},
-						{
-							:name => 'SERVICEPROVIDER',
-							:content => provider[:name]
-						},
-						{
-							:name => 'BOOKINGS',
-							:content => provider[:provider_table]
-						}
-					]
-				}
-		end
+		# data[:provider][:array].each do |provider|
+		# 	message[:to] << {
+		# 			:email => provider[:email],
+		# 			:type => 'to'
+		# 		}
+		# 	message[:merge_vars] << {
+		# 			:rcpt => provider[:email],
+		# 			:vars => [
+		# 				{
+		# 					:name => 'CLIENTNAME',
+		# 					:content => data[:provider][:client_name]
+		# 				},
+		# 				{
+		# 					:name => 'SERVICEPROVIDER',
+		# 					:content => provider[:name]
+		# 				},
+		# 				{
+		# 					:name => 'BOOKINGS',
+		# 					:content => provider[:provider_table]
+		# 				}
+		# 			]
+		# 		}
+		# end
 
 		# Email notificacion local
-		if data[:location][:send_mail]
-			message[:to] << {
-				:email => data[:location][:email],
-				:type => 'to'
-			}
-			message[:merge_vars] << {
-				:rcpt => data[:location][:email],
-				:vars => [
-					{
-						:name => 'CLIENTNAME',
-						:content => data[:provider][:client_name]
-					},
-					{
-						:name => 'SERVICEPROVIDER',
-						:content => data[:location][:name]
-					},
-					{
-						:name => 'BOOKINGS',
-						:content => data[:location][:location_table]
-					}
-				]
-			}
-		end
+		# if data[:location][:send_mail]
+		# 	message[:to] << {
+		# 		:email => data[:location][:email],
+		# 		:type => 'to'
+		# 	}
+		# 	message[:merge_vars] << {
+		# 		:rcpt => data[:location][:email],
+		# 		:vars => [
+		# 			{
+		# 				:name => 'CLIENTNAME',
+		# 				:content => data[:provider][:client_name]
+		# 			},
+		# 			{
+		# 				:name => 'SERVICEPROVIDER',
+		# 				:content => data[:location][:name]
+		# 			},
+		# 			{
+		# 				:name => 'BOOKINGS',
+		# 				:content => data[:location][:location_table]
+		# 			}
+		# 		]
+		# 	}
+		# end
 
 		# Notificacion cliente
 		if data[:user][:send_mail]
