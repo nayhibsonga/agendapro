@@ -2334,12 +2334,6 @@ class BookingsController < ApplicationController
       bookings = []
       while serviceStaffPos < serviceStaff.length and (dateTimePointer <=> now + company_setting.after_booking.month) == -1
 
-
-        Rails.logger.info "Info: " +dateTimePointer.to_s
-        Rails.logger.debug "Debug: " +dateTimePointer.to_s
-        logger.info "Info: " +dateTimePointer.to_s
-        logger.debug "Debug: " +dateTimePointer.to_s
-
         service_valid = false
         service = Service.find(serviceStaff[serviceStaffPos][:service])
 
