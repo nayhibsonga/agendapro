@@ -206,7 +206,6 @@ function initialize() {
   };
 }
 
-
 function changeDayStatus (value) {
   if ($('#dayStatusId'+ value).val() == 0) {
     $('#openHourId'+ value).prop('disabled', false);
@@ -289,10 +288,7 @@ function locJSON() {
     "latitude": parseFloat($('#location_latitude').val()),
     "longitude": parseFloat($('#location_longitude').val()),
     "location_times_attributes": location_times,
-    "email": $('input[name="location[email]"]').val(),
-    "notification": $('#location_notification').prop('checked'),
     "company_id": $('#location_company_id').val(),
-    "booking_configuration_email": $('#location_booking_configuration_email').val(),
     "online_booking": $('#location_online_booking').prop('checked')
   };
   return locationJSON;
@@ -427,7 +423,7 @@ var map;
 var marker;
 function createMap () {
   var mapProp = {
-    center: new google.maps.LatLng(-33.412819, -70.591945),
+    center: new google.maps.LatLng(-33.413673, -70.573426),
     zoom: 15,
     mapTypeId: google.maps.MapTypeId.ROADMAP
   };

@@ -262,17 +262,12 @@
                       <span class="help-block">Aquí configuras si el cliente puede o debe elegir el prestador con el que se atenderá. Si no se elige, se seleccionará automáticamente al prestador con menos ocupación ese día.</span>
                       <%= f.select :provider_preference, options_for_select([["Cliente puede elegir prestador", 0], ["Cliente debe elegir prestador", 1], ["Cliente no puede elegir prestador", 2]], selected: @company_setting.provider_preference ), {}, {class: "form-control" } %>
                     </div>
+                  </div>
+                  <div class="col-md-6">
                     <div class="form-group">
                       <%= f.label :booking_confirmation_time, 'Recordatorios' %>
                       <span class="help-block">En esta opción defines cuántos días antes de la reserva se envía el recordatorio al cliente..</span>
                       <%= f.select :booking_confirmation_time, options_for_select([["El mismo día", 0], ["1 día antes", 1], ["2 días antes", 2], ["3 días antes", 3]], selected: @company_setting.booking_confirmation_time ), {}, {class: "form-control" } %>
-                    </div>
-                  </div>
-                  <div class="col-md-6">
-                    <div class="form-group">
-                      <%= f.label :booking_configuration_email, 'Notificaciones de Reservas' %>
-                      <span class="help-block">Esta opción define cómo se notifican las reservas al email. Puedes configurar esta opción para cada local y prestador independientemente.</span>
-                      <%= f.select :booking_configuration_email, options_for_select([["Notificación por cada reserva", 0], ["Enviar resumen de reservas diario", 1], ["No notificar reservas por email", 3]], selected: @company_setting.booking_configuration_email ), {}, {class: "form-control" } %>
                     </div>
                     <div class="form-group has-feedback">
                       <%= f.label :before_booking, 'Tiempo Mínimo de Reserva:' %>

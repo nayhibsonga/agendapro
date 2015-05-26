@@ -1339,6 +1339,7 @@ class BookingsController < ApplicationController
     end
 
     @try_register = false
+    @try_signin = false
 
     if !user_signed_in?
       if !User.find_by_email(params[:email])
@@ -1348,9 +1349,10 @@ class BookingsController < ApplicationController
         @user.first_name = params[:firstName]
         @user.last_name = params[:lastName]
         @user.phone = params[:phone]
+      else
+        @try_signin = true
       end
     end
-
     render layout: "workflow"
   end
 
