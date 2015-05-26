@@ -670,7 +670,7 @@ function scrollToAnchor(aid){
 // var marker;
 // function createMap () {
 //   var mapProp = {
-//     center: new google.maps.LatLng(-33.412819, -70.591945),
+//     center: new google.maps.LatLng(-33.413673, -70.573426),
 //     zoom: 15,
 //     mapTypeId: google.maps.MapTypeId.ROADMAP
 //   };
@@ -815,7 +815,7 @@ function scrollToAnchor(aid){
 // 		$('#foo5').trigger('updateSizes');
 // 		$(document).scrollTop(oldTop);
 // 	});
-	
+
 // 	$('#location_district_id, #location_address, #location_outcall').change(function (eve) {
 //     var district = $('#location_district_id').val();
 //     var address = $('#location_address').val();

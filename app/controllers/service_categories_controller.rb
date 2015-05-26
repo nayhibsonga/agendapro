@@ -32,8 +32,8 @@ class ServiceCategoriesController < ApplicationController
 
   # GET /service_categories/1/edit
   def edit
-    if @service_category.name == "Sin Categoría"
-      redirect_to service_categories_path, notice: 'No es posible modificar la categoría "Sin Categoría".'
+    if @service_category.name == "Otros"
+      redirect_to service_categories_path, notice: 'No es posible modificar la categoría "Otros".'
     end
   end
 
@@ -76,13 +76,13 @@ class ServiceCategoriesController < ApplicationController
   # DELETE /service_categories/1
   # DELETE /service_categories/1.json
   def destroy
-    if @service_category.name == "Sin Categoría"
-      redirect_to service_categories_path, notice: 'No es posible eliminar la categoría "Sin Categoría".'
+    if @service_category.name == "Otros"
+      redirect_to service_categories_path, notice: 'No es posible eliminar la categoría "Otros".'
     end
     @services = Service.where(service_category_id: @service_category)
-    @new_service_category = ServiceCategory.where(company_id: @service_category.company_id, name: "Sin Categoría").first
+    @new_service_category = ServiceCategory.where(company_id: @service_category.company_id, name: "Otros").first
     if @new_service_category.nil?
-      @new_service_category = ServiceCategory.create(name: "Sin Categoría", company_id: @service_category.company_id)
+      @new_service_category = ServiceCategory.create(name: "Otros", company_id: @service_category.company_id)
       @new_service_category.save
     end
     @services.each do |service|

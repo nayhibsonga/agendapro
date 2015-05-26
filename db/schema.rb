@@ -395,6 +395,16 @@ ActiveRecord::Schema.define(version: 20150520151003) do
   add_index "locations", ["company_id"], name: "index_locations_on_company_id", using: :btree
   add_index "locations", ["district_id"], name: "index_locations_on_district_id", using: :btree
 
+  create_table "mailing_lists", force: true do |t|
+    t.string   "first_name",     default: ""
+    t.string   "last_name",      default: ""
+    t.string   "email",          default: ""
+    t.string   "phone",          default: ""
+    t.boolean  "mailing_option", default: true
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
   create_table "numeric_parameters", force: true do |t|
     t.string   "name"
     t.float    "value"

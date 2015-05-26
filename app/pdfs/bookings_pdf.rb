@@ -12,7 +12,7 @@ class BookingsPdf < Prawn::Document
 		y_position = cursor
 		bounding_box([0, y_position], width: 260, height: 40) do
 			if @booking.service.company.logo.to_s != ""
-				image "#{Rails.root}/public"+@service_provider.company.logo.to_s, width: 50, height: 50
+				image "#{Rails.root}/public"+@booking.service.company.logo.to_s, width: 50, height: 50
 			else
 				image "#{Rails.root}/app/assets/images/logos/logo_mail.png", width: 100, height: 37
 			end

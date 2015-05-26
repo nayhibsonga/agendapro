@@ -282,6 +282,8 @@ class CompaniesController < ApplicationController
 	#SuperAdmin
 	def incomes
 
+		# @companies = Company.where(active: true).where.not(payment_status_id: PaymentStatus.find_by_name('Inactivo').id).order(:name)
+
 		@companies = Company.all.order(:name)
 
 		@year = DateTime.now.year.to_i

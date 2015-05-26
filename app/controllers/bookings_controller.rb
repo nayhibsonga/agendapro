@@ -1073,6 +1073,18 @@ class BookingsController < ApplicationController
     host = request.host_with_port
     @url = @company.web_address + '.' + host[host.index(request.domain)..host.length]
 
+
+    if !user_signed_in?
+      if params[:mailing_option].blank?
+        params[:mailing_option] = false
+      end
+      if MailingList.where(email: params[:email]).count > 0
+        MailingList.where(email: params[:email]).first.update(first_name: params[:firstName], last_name: params[:lastName], phone: params[:phone], mailing_option: params[:mailing_option])
+      else
+        MailingList.create(email: params[:email], first_name: params[:firstName], last_name: params[:lastName], phone: params[:phone], mailing_option: params[:mailing_option])
+      end
+    end
+
     if @company.company_setting.client_exclusive
       if(params[:client_id])
         client = Client.find(params[:client_id])
@@ -1412,6 +1424,7 @@ class BookingsController < ApplicationController
     end
 
     @try_register = false
+    @try_signin = false
 
     if !user_signed_in?
       if !User.find_by_email(params[:email])
@@ -1421,9 +1434,10 @@ class BookingsController < ApplicationController
         @user.first_name = params[:firstName]
         @user.last_name = params[:lastName]
         @user.phone = params[:phone]
+      else
+        @try_signin = true
       end
     end
-
     render layout: "workflow"
   end
 

@@ -20,12 +20,12 @@ class QuickAddController < ApplicationController
 	end
 
 	def quick_add
-		if ServiceCategory.where(company_id: current_user.company_id, name: "Sin Categoría").count < 1
-	        @service_category = ServiceCategory.new(name: "Sin Categoría", company_id: current_user.company_id)
+		if ServiceCategory.where(company_id: current_user.company_id, name: "Otros").count < 1
+	        @service_category = ServiceCategory.new(name: "Otros", company_id: current_user.company_id)
 	        @service_category.save
     	end
-    	if ResourceCategory.where(company_id: current_user.company_id, name: "Sin Categoría").count < 1
-	        @resource_category = ResourceCategory.new(name: "Sin Categoría", company_id: current_user.company_id)
+    	if ResourceCategory.where(company_id: current_user.company_id, name: "Otros").count < 1
+	        @resource_category = ResourceCategory.new(name: "Otros", company_id: current_user.company_id)
 	        @resource_category.save
     	end
 		@location = Location.new
@@ -165,14 +165,14 @@ class QuickAddController < ApplicationController
   	end
   	def delete_service_category
   		@service_category = ServiceCategory.find(params[:id])
-  		if @service_category.name == "Sin Categoría"
+  		if @service_category.name == "Otros"
 			render :json => { :errors => ['No se puede eliminar esta categoría.']} , :status => 422
 			return
 		end
 		@services = Service.where(service_category_id: @service_category)
-		@new_service_category = ServiceCategory.where(company_id: @service_category.company_id, name: "Sin Categoría").first
+		@new_service_category = ServiceCategory.where(company_id: @service_category.company_id, name: "Otros").first
 		if @new_service_category.nil?
-			@new_service_category = ServiceCategory.create(name: "Sin Categoría", company_id: @service_category.company_id)
+			@new_service_category = ServiceCategory.create(name: "Otros", company_id: @service_category.company_id)
 			@new_service_category.save
 		end
 	    @services.each do |service|

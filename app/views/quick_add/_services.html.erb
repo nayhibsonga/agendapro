@@ -11,7 +11,7 @@
     <div id="service_categories" class="col-sm-12 text-center">
     <% @company.service_categories.each do |service_category| %>
     <div id="service_category_<%= service_category.id %>" class="category-pill">
-      <%= service_category.name %><%= (' <button id="service_category_delete_'+service_category.id.to_s+'" class="btn btn-default btn-xs service-category-delete-btn"><i class="fa fa-times"></i></button>').html_safe if service_category.name != 'Sin Categoría' %>
+      <%= service_category.name %><%= (' <button id="service_category_delete_'+service_category.id.to_s+'" class="btn btn-default btn-xs service-category-delete-btn"><i class="fa fa-times"></i></button>').html_safe if service_category.name != 'Otros' %>
     </div>
     <% end %>
     </div>
