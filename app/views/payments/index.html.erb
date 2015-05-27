@@ -1,0 +1,47 @@
+<h1>Listing payments</h1>
+
+<table>
+  <thead>
+    <tr>
+      <th>Company</th>
+      <th>Amount</th>
+      <th>Receipt type</th>
+      <th>Receipt number</th>
+      <th>Payment method</th>
+      <th>Payment method number</th>
+      <th>Payment method type</th>
+      <th>Installments</th>
+      <th>Payed</th>
+      <th>Payment date</th>
+      <th>Bank</th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @payments.each do |payment| %>
+      <tr>
+        <td><%= payment.company %></td>
+        <td><%= payment.amount %></td>
+        <td><%= payment.receipt_type %></td>
+        <td><%= payment.receipt_number %></td>
+        <td><%= payment.payment_method %></td>
+        <td><%= payment.payment_method_number %></td>
+        <td><%= payment.payment_method_type %></td>
+        <td><%= payment.installments %></td>
+        <td><%= payment.payed %></td>
+        <td><%= payment.payment_date %></td>
+        <td><%= payment.bank %></td>
+        <td><%= link_to 'Show', payment %></td>
+        <td><%= link_to 'Edit', edit_payment_path(payment) %></td>
+        <td><%= link_to 'Destroy', payment, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<br>
+
+<%= link_to 'New Payment', new_payment_path %>

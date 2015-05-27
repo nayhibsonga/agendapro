@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150520134808) do
+ActiveRecord::Schema.define(version: 20150527203947) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -115,11 +115,13 @@ ActiveRecord::Schema.define(version: 20150520134808) do
     t.integer  "deal_id"
     t.integer  "booking_group"
     t.integer  "payed_booking_id"
+    t.integer  "payment_id"
   end
 
   add_index "bookings", ["client_id"], name: "index_bookings_on_client_id", using: :btree
   add_index "bookings", ["deal_id"], name: "index_bookings_on_deal_id", using: :btree
   add_index "bookings", ["location_id"], name: "index_bookings_on_location_id", using: :btree
+  add_index "bookings", ["payment_id"], name: "index_bookings_on_payment_id", using: :btree
   add_index "bookings", ["promotion_id"], name: "index_bookings_on_promotion_id", using: :btree
   add_index "bookings", ["service_id"], name: "index_bookings_on_service_id", using: :btree
   add_index "bookings", ["service_provider_id"], name: "index_bookings_on_service_provider_id", using: :btree
@@ -215,6 +217,15 @@ ActiveRecord::Schema.define(version: 20150520134808) do
   end
 
   add_index "company_from_emails", ["company_id"], name: "index_company_from_emails_on_company_id", using: :btree
+
+  create_table "company_payment_methods", force: true do |t|
+    t.string   "name",       null: false
+    t.integer  "company_id", null: false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "company_payment_methods", ["company_id"], name: "index_company_payment_methods_on_company_id", using: :btree
 
   create_table "company_settings", force: true do |t|
     t.text     "signature"
@@ -449,12 +460,46 @@ ActiveRecord::Schema.define(version: 20150520134808) do
     t.float    "gain_amount",    default: 0.0
   end
 
+  create_table "payment_method_types", force: true do |t|
+    t.string   "name",       null: false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "payment_methods", force: true do |t|
+    t.string   "name",       null: false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
   create_table "payment_statuses", force: true do |t|
     t.string   "name",        null: false
     t.text     "description", null: false
     t.datetime "created_at"
     t.datetime "updated_at"
   end
+
+  create_table "payments", force: true do |t|
+    t.integer  "company_id"
+    t.float    "amount",                 default: 0.0
+    t.integer  "receipt_type_id"
+    t.string   "receipt_number",         default: "",    null: false
+    t.integer  "payment_method_id"
+    t.string   "payment_method_number",  default: "",    null: false
+    t.integer  "payment_method_type_id"
+    t.integer  "installments"
+    t.boolean  "payed",                  default: false
+    t.date     "payment_date"
+    t.integer  "bank_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "payments", ["bank_id"], name: "index_payments_on_bank_id", using: :btree
+  add_index "payments", ["company_id"], name: "index_payments_on_company_id", using: :btree
+  add_index "payments", ["payment_method_id"], name: "index_payments_on_payment_method_id", using: :btree
+  add_index "payments", ["payment_method_type_id"], name: "index_payments_on_payment_method_type_id", using: :btree
+  add_index "payments", ["receipt_type_id"], name: "index_payments_on_receipt_type_id", using: :btree
 
   create_table "plan_logs", force: true do |t|
     t.integer  "prev_plan_id", null: false
@@ -547,6 +592,12 @@ ActiveRecord::Schema.define(version: 20150520134808) do
     t.string   "payment_method", null: false
     t.float    "amount",         null: false
     t.text     "details"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "receipt_types", force: true do |t|
+    t.string   "name",       null: false
     t.datetime "created_at"
     t.datetime "updated_at"
   end

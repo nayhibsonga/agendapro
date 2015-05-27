@@ -1,0 +1,27 @@
+<h1>Listing receipt_types</h1>
+
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @receipt_types.each do |receipt_type| %>
+      <tr>
+        <td><%= receipt_type.name %></td>
+        <td><%= link_to 'Show', receipt_type %></td>
+        <td><%= link_to 'Edit', edit_receipt_type_path(receipt_type) %></td>
+        <td><%= link_to 'Destroy', receipt_type, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<br>
+
+<%= link_to 'New Receipt type', new_receipt_type_path %>

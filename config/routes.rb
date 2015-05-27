@@ -1,6 +1,16 @@
 Agendapro::Application.routes.draw do
 
 
+  resources :payments
+
+  resources :payment_method_types
+
+  resources :receipt_types
+
+  resources :company_payment_methods
+
+  resources :payment_methods
+
   resources :deals
 
   get "users/index"
