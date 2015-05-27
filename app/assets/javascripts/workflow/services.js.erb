@@ -527,7 +527,7 @@ function loadDescription (serviceId) {
 					$('#services-description').append(
 						'<tr>' +
 							'<td class="dark-gray">Precio pago en línea:</td>' +
-							'<td class="light-gray"><b>$ ' + Math.round(service.price*(100-service.discount)/100).toLocaleString() + ' (' + service.discount + '% de descuento)</b></td>' +
+							'<td class="light-gray"><b>' + currency(Math.round(service.price*(100-service.discount)/100)) + ' (' + service.discount + '% de descuento)</b></td>' +
 						'</tr>'
 					);
 				}
@@ -572,10 +572,10 @@ function loadDescription (serviceId) {
 			if(service.has_discount && current_service.discount > 0)
 			{
 				$("#discount").append(
-					'Precio final: $' + Math.round((service.price-service.price*service.discount/100))
+					'Precio final: ' + currency(Math.round((service.price-service.price*service.discount/100)))
 				);
 				$("#normal-book").append(
-					'Precio final: $' + service.price
+					'Precio final: ' + currency(service.price)
 				);
 			}
 		}
