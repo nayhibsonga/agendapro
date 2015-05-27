@@ -1252,7 +1252,7 @@ class BookingsController < ApplicationController
     #If they can be payed, redirect to payment_process,
     #then check for error or send notifications mails.
     if group_payment
-      trx_id = DateTime.now.to_s.gsub(/[-:T]/i, '')
+      trx_id = DateTime.now.to_s.gsub(/[-:T]/i, '')[0,15]
       amount = sprintf('%.2f', final_price)
       payment_method = params[:mp]
       req = PuntoPagos::Request.new()
