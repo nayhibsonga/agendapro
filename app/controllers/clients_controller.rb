@@ -115,6 +115,7 @@ class ClientsController < ApplicationController
 
   def check_sessions
 
+    @respArr = []
     @session_bookings = []
 
     client = Client.find(params[:id])
@@ -123,11 +124,16 @@ class ClientsController < ApplicationController
     
     session_bookings.each do |session_booking|
       if service.sessions_amount > session_booking.sessions_taken
-        @session_bookings << session_booking
+        sessions_hash = session_booking.attributes
+        sessions_hash["sessions_total"] = service.sessions_amount
+        @session_bookings << sessions_hash
       end
     end
 
-    render :json => @session_bookings
+    @respArr << service
+    @respArr << @session_bookings
+
+    render :json => @respArr
 
   end
 

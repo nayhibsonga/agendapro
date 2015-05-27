@@ -28,8 +28,27 @@ class Booking < ActiveRecord::Base
 
 	after_commit validate :bookings_overlap, :bookings_resources, :bookings_deal
 
-	after_create :send_booking_mail, :wait_for_payment
-	after_update :send_update_mail
+	after_create :send_booking_mail, :wait_for_payment, :check_session
+	after_update :send_update_mail, :check_session
+
+	# def check_session
+	# 	if self.is_session
+	# 		if self.is_session_booked
+	# 			self.sessions_taken = self.sessions_taken + 1
+	# 		end
+	# 	end
+	# end
+
+	def check_session
+		sessions_count = 0
+		self.session_booking.bookings.each do |b|
+			if b.is_session_booked
+				sessions_count = sessions_count + 1
+			end
+		end
+		self.session_booking.sessions_taken = sessions_count
+		self.session_booking.save
+	end
 
 	def wait_for_payment
     	self.delay(run_at: 4.minutes.from_now).payment_timeout
@@ -361,6 +380,9 @@ class Booking < ActiveRecord::Base
 	end
 
 	def send_booking_mail
+		if self.is_session
+			return
+		end
 		if !self.id.nil?
 			if self.trx_id == ""
 				if self.start > Time.now - eval(ENV["TIME_ZONE_OFFSET"])
@@ -375,6 +397,9 @@ class Booking < ActiveRecord::Base
 	end
 
 	def send_update_mail
+		if self.is_session
+			return
+		end
 		if self.start > Time.now - eval(ENV["TIME_ZONE_OFFSET"])
 			if self.status == Status.find_by(:name => "Cancelado")
 				if changed_attributes['status_id']
@@ -1257,5 +1282,6 @@ class Booking < ActiveRecord::Base
 			BookingMailer.multiple_booking_mail(@data)
 		end
 	end
+
 
 end

@@ -88,13 +88,13 @@ function loadStep1 (service_id) {
 			var serviceId = event.target.getAttribute('value');
 			if ($(event.target).data('outcall') == true) {
 				$('#outcallAddress').show();
-        var settings = $('#bookingForm').validate().settings;
-        settings.rules.address = {required: true}
+        		var settings = $('#bookingForm').validate().settings;
+        		settings.rules.address = {required: true}
 			}
 			else {
 				$('#outcallAddress').hide();
-        var settings = $('#bookingForm').validate().settings;
-        delete settings.rules.address;
+        		var settings = $('#bookingForm').validate().settings;
+        		delete settings.rules.address;
 			}
 			var oldTop = $(document).scrollTop();
 			$('#foo4').trigger('updateSizes');
@@ -769,6 +769,13 @@ function loadDescription (serviceId) {
 					'<td class="light-gray"><b>Ese servicio consta de ' + service.sessions_amount + ' sesiones.</b></td>' +
 				'</tr>'
 			);
+			$(".optimizer-item").hide();
+			$("#optimizerOpenBtn").attr("disabled", "disabled");
+		}
+		else
+		{
+			$(".optimizer-item").show();
+			$("#optimizerOpenBtn").attr("disabled", false);
 		}
 		$("#discount").empty();
 		$("#normal-book").empty();

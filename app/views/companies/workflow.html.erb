@@ -198,10 +198,14 @@
               </div>
               <% if @company.company_setting.allows_optimization %>
               <div class="col-sm-3" style="text-align: right; color: #505050;">
-                <b>O elige varios servicios y te propondremos los mejores horarios:&nbsp;&nbsp;</b>
+                <div class="optimizer-item">
+                  <b>O elige varios servicios y te propondremos los mejores horarios:&nbsp;&nbsp;</b>
+                </div>
               </div>
               <div class="col-sm-3 col-md-2" style="text-align: right;">
-                <button type="button" id="optimizerOpenBtn" class="btn btn-green" data-toggle="modal" data-target="#hoursOptimizer" style="background: #22c488; color: #ffffff; font-size: 20px;">Elegir servicios</button>
+                <div class="optimizer-item">
+                  <button type="button" id="optimizerOpenBtn" class="btn btn-green" data-toggle="modal" data-target="#hoursOptimizer" style="background: #22c488; color: #ffffff; font-size: 20px;">Elegir servicios</button>
+                </div>
               </div>
               <% end %>
             </div>

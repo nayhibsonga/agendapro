@@ -415,6 +415,9 @@ function loadProviderEvents(providerId) {
 }
 
 function editBookingModal(eventId) {
+
+	$("#is_edit_modal").val("1");
+
 	if (eventId.toString().indexOf('b') >= 0) {
 		editBreakModal(eventId.split('b')[1]);
 	}
@@ -550,7 +553,11 @@ function editBookingModal(eventId) {
 						);
 					});
 					$('#booking_service_id option[value="'+booking.service_id+'"]').attr("selected",true);
-					$('#booking_service_id').removeAttr('disabled');
+
+					if(!booking.is_session)
+					{
+						$('#booking_service_id').removeAttr('disabled');
+					}
 
 					if (!booking.service_provider_active) {
 						if ($('#booking_service_provider_id option[value="' + booking.service_provider_id + '"]').length == 0) {
@@ -567,6 +574,19 @@ function editBookingModal(eventId) {
 				});
 			}
 			setAge();
+
+			$("#sessions-row").hide();
+			$("#has_sessions").val("0");
+
+			if(booking.is_session)
+			{
+			
+				$("#sessions-info").empty();
+				$("#sessions-info").append("Esta reserva corresponde a una sesión de un servicio. Si editas la sesión, se le pedirá al usuario validar la edición.");
+				$("#sessions-row").show();
+				$("#xButton").attr("disabled", true);
+			}
+
 			$('#booking-tab').tab('show');
 			$('#bookingModal').modal('show');
 		});
@@ -578,6 +598,9 @@ function createBookingModal(date, provider_id) {
 	var localId = parseInt($('#locals-selector').val());
 	var date = date || 0;
 	var provider_id = provider_id || 0;
+	$("#sessions-row").hide();
+	$("#is_edit_modal").val("0");
+	$('#booking_service_id').empty();
 	$.getJSON('/local_providers', {location: localId}, function (providersArray) {
 		if (providersArray.length > 0) {
 			if (date != 0) {
@@ -603,6 +626,7 @@ function createBookingModal(date, provider_id) {
 						);
 					});
 					$('#booking_service_id').removeAttr('disabled');
+					$('#booking_service_id option').first().attr("selected", true);
 					modalChange();
 				});
 			}
@@ -650,7 +674,7 @@ function createBookingModal(date, provider_id) {
 				// '<button type="button" class="btn btn-agendapro-claro booking-button pull-left" data-toggle="modal" data-target="#hoursOptimizer">Buscador de Horas</button>' +
 			$('.booking-modal-footer').append(
 				'<button type="button" class="btn btn-default btn-close booking-button" data-dismiss="modal">Cerrar</button>' +
-				'<button type="button" class="btn btn-orange booking-button" onclick="addNewService()">Agregar Otro Servicio</button>' +
+				'<button type="button" class="btn btn-orange booking-button" id="add-service-btn" onclick="addNewService()">Agregar Otro Servicio</button>' +
 				'<button type="button" class="btn btn-green booking-button" onclick="createBooking()">Guardar</button>'
 			);
 
@@ -664,12 +688,14 @@ function createBookingModal(date, provider_id) {
 						);
 					});
 					$('#booking_service_id').removeAttr('disabled');
+					$('#booking_service_id option').first().attr("selected", true);
 					modalChange();
 				});
 			};
 			$('#client-history-tbody').html('<tr><td colspan="6">El cliente no tiene historial...</td></tr>');
 			$('#booking-tab').tab('show');
 			$('#bookingModal').modal('show');
+			checkClientSessions();
 		}
 		else {
 			alert('Este local no tiene prestadores o servicios\nPor favor completa los datos necesarios para poder generar reservas en este local.');
@@ -783,6 +809,10 @@ function jsonBooking() {
 		"staff_code": $('#booking_staff_code').val(),
 		"deal_code": $('#booking_deal_code').val()
 	};
+	if($("#has_sessions").val() == "1")
+	{
+		jsBooking["session_booking_id"] = $('[name="sessions-choice"]:checked').val();
+	}
 	return jsBooking;
 }
 
@@ -1852,23 +1882,86 @@ function setAge() {
 
 function checkClientSessions()
 {
-	$("#sessions-info").empty();
-	$("#sessions-row").hide();
-	if (parseInt($('#booking_client_id').val()) > 0)
+	modalChange();
+	if($("#is_edit_modal").val() == "0")
+	{
+
+		$("#sessions-info").empty();
+		$("#sessions-row").hide();
+		$("#add-service-btn").show();
+		$("#has_sessions").val("0");
+
+		if (parseInt($('#booking_client_id').val()) > 0)
+		{
+			if(parseInt($("#booking_service_id").val()) > 0)
+			{
+				$.ajax({
+					type: "get",
+					url: "clients_check_sessions?id=" + $('#booking_client_id').val() + "&service_id=" + $("#booking_service_id").val(),
+					success: function(response)
+					{
+						var service = response[0]
+						var sessions_bookings = response[1]
+
+						if (service.has_sessions)
+						{
+							$("#sessions-info").append('<div session_booking_id="0"><input type="radio" name="sessions-choice" value="0" checked>&nbsp;Generar una nueva reserva y agendar la primera sesión.');
+							$("#sessions-row").show();
+							$("#add-service-btn").hide();
+							$("#has_sessions").val("1");
+							if(sessions_bookings.length > 0)
+							{
+								$.each(sessions_bookings, function (key, session_booking) {
+									var nextSession = session_booking.sessions_taken + 1;
+									$("#sessions-info").append('<div session_booking_id="' + session_booking.id + '"><input type="radio" name="sessions-choice" value="' + session_booking.id + '">&nbsp;El cliente ha agendado ' + session_booking.sessions_taken + ' de un total de ' + session_booking.sessions_total +'. Agendar la sesión ' + nextSession + '.');
+								});
+							}
+						}
+					}
+				});
+			}
+		}
+		else
+		{
+			if(parseInt($("#booking_service_id").val()) > 0)
+			{
+				$.ajax({
+					type: "get",
+					url: "services/" + $("#booking_service_id").val() + ".json",
+					success: function(service)
+					{
+						console.log(service.name + " has sessions: " + service.has_sessions);
+						if(service.has_sessions)
+						{
+							$("#sessions-info").append('<div session_booking_id="0"><input type="radio" name="sessions-choice" value="0" checked>&nbsp;Este servicio es por sesiones. Generar una nueva reserva y agendar la primera sesión.');
+							$("#sessions-row").show();
+							$("#add-service-btn").hide();
+							$("#has_sessions").val("1");
+						}
+					}
+				});
+			}
+		}
+	}
+	else
 	{
 		if(parseInt($("#booking_service_id").val()) > 0)
 		{
 			$.ajax({
 				type: "get",
-				url: "clients_check_sessions?id=" + $('#booking_client_id').val() + "&service_id=" + $("#booking_service_id").val(),
-				success: function(sessions_bookings)
+				url: "services/" + $("#booking_service_id").val() + ".json",
+				success: function(service)
 				{
-					if(sessions_bookings.length > 0)
+					if(service.has_sessions)
 					{
-						$.each(sessions_bookings, function (key, session_booking) {
-							$("#sessions-info").append("Este servicio posee sesiones. El cliente ya ha agendado " + session_booking.sessions_taken + " de un total de ");
-						});
+						$("#sessions-info").empty();
+						$("#sessions-info").append("Esta reserva corresponde a una sesión de un servicio. Si editas la sesión, se le pedirá al usuario validar la edición.");
 						$("#sessions-row").show();
+					}
+					else
+					{
+						$("#sessions-info").empty();
+						$("#sessions-row").hide();
 					}
 				}
 			});
@@ -2217,6 +2310,7 @@ $(function() {
 		$('label[for=booking_send_mail]').addClass('disabled');
 		$('#client-history-tbody').empty();
 		$('#client-history-tbody').append('<tr><td colspan="6">No hay un cliente seleccionado...</td></tr>');
+		checkClientSessions();
 		$('#xButton').prop('disabled', true);
 	});
 

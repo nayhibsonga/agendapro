@@ -1473,4 +1473,150 @@ class BookingMailer < ActionMailer::Base
 			raise
 	end
 
+	#Mail de reserva de servicio con sesiones
+	def sessions_booking_mail(data)
+		mandrill = Mandrill::API.new Agendapro::Application.config.api_key
+		# => Template
+		template_name = 'Multiple Booking'
+		template_content = []
+
+		# => Message
+		message = {
+			:from_email => 'no-reply@agendapro.cl',
+			:from_name => data[:company],
+			:subject => 'Nueva Reserva en ' + data[:company],
+			:to => [],
+			:global_merge_vars => [
+				{
+					:name => 'URL',
+					:content => data[:url]
+				},
+				{
+					:name => 'COMPANYNAME',
+					:content => data[:company]
+				},
+				{
+					:name => 'SIGNATURE',
+					:content => data[:signature]
+				}
+			],
+			:merge_vars => [],
+			:tags => ['booking', 'new_booking'],
+			:images => [
+				{
+					:type => data[:type],
+					:name => 'LOGO',
+					:content => data[:logo]
+				}
+			]
+		}
+
+		# Notificacion service provider
+		data[:provider][:array].each do |provider|
+			message[:to] << {
+					:email => provider[:email],
+					:type => 'to'
+				}
+			message[:merge_vars] << {
+					:rcpt => provider[:email],
+					:vars => [
+						{
+							:name => 'CLIENTNAME',
+							:content => data[:provider][:client_name]
+						},
+						{
+							:name => 'SERVICEPROVIDER',
+							:content => provider[:name]
+						},
+						{
+							:name => 'BOOKINGS',
+							:content => provider[:provider_table]
+						}
+					]
+				}
+		end
+
+		# Email notificacion local
+		if data[:location][:send_mail]
+			message[:to] << {
+				:email => data[:location][:email],
+				:type => 'to'
+			}
+			message[:merge_vars] << {
+				:rcpt => data[:location][:email],
+				:vars => [
+					{
+						:name => 'CLIENTNAME',
+						:content => data[:provider][:client_name]
+					},
+					{
+						:name => 'SERVICEPROVIDER',
+						:content => data[:location][:name]
+					},
+					{
+						:name => 'BOOKINGS',
+						:content => data[:location][:location_table]
+					}
+				]
+			}
+		end
+
+		# Notificacion cliente
+		if data[:user][:send_mail]
+			message[:to] << {
+					:email => data[:user][:email],
+					:name => data[:user][:name],
+					:type => 'to'
+				}
+			message[:merge_vars] << {
+				:rcpt => data[:user][:email],
+				:vars => [
+					{
+						:name => 'LOCALADDRESS',
+						:content => data[:user][:where]
+					},
+					{
+						:name => 'LOCATIONPHONE',
+						:content => number_to_phone(data[:user][:phone])
+					},
+					{
+						:name => 'BOOKINGS',
+						:content => data[:user][:user_table]
+					},
+					{
+						:name => 'CLIENTNAME',
+						:content => data[:user][:name]
+					},
+					{
+						:name => 'CLIENT',
+						:content => true
+					},
+					{
+						:name => 'CANCEL',
+						:content => data[:user][:cancel]
+					}
+				]
+			}
+		end
+
+		# => Metadata
+		async = false
+		send_at = DateTime.now
+
+		# => Send mail
+		result = mandrill.messages.send_template template_name, template_content, message, async, send_at
+
+		rescue Mandrill::Error => e
+			puts "A mandrill error occurred: #{e.class} - #{e.message}"
+			raise
+	end
+
+	#Mail de reserva de sesión de admin (opción de validar)
+	def admin_session_booking_mail(booking)
+	end
+
+	#Mail de edición de sesión (depende de si es por admin o no)
+	def update_session_booking_mail(booking, is_admin)
+	end
+
 end
