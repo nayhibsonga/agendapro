@@ -49,7 +49,10 @@ class SessionBooking < ActiveRecord::Base
 					'</tr>'
 			end
 
+			@agenda = '<div>Ingresa con tu cuenta en <a href="' + helper.my_agenda_url + '"><b>tu agenda</b></a> para agendar y editar las sesiones del servicio. Si no tienes cuenta, crea una  <a href="' + helper.new_user_session_url + '"><b>acá</b></a>, o comunícate con la empresa prestadora del servicio para agendar las sesiones restantes.</div>';
+
 			@user[:user_table] = @user_table
+			@user[:agenda] = @agenda
 
 			@data[:user] = @user
 

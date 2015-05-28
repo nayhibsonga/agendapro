@@ -259,36 +259,42 @@
 
 <script type="text/javascript">
     $(document).ready(function(){
-        var sb_id = $("#session-booking-select").val();
-        $.ajax({
-            type: 'GET',
-            url: 'get_session_bookings?session_booking_id=' + sb_id,
-            success: function(response)
-            {
-                //alert("success");
-                $("#sessions-div").empty();
-                $("#sessions-div").append(response);
-            },
-            error: function()
-            {
-                alert("error");
-            }
-        });
 
-        $.ajax({
-            type: 'GET',
-            url: 'get_session_summary?session_booking_id=' + sb_id,
-            success: function(response)
-            {
-                //alert("success");
-                $("#sessions-summary").empty();
-                $("#sessions-summary").append(response);
-            },
-            error: function()
-            {
-                alert("error");
-            }
-        });
+        if($("#session-booking-select").length > 0)
+        {
+
+            var sb_id = $("#session-booking-select").val();
+
+            $.ajax({
+                type: 'GET',
+                url: 'get_session_bookings?session_booking_id=' + sb_id,
+                success: function(response)
+                {
+                    //alert("success");
+                    $("#sessions-div").empty();
+                    $("#sessions-div").append(response);
+                },
+                error: function()
+                {
+                    alert("error");
+                }
+            });
+
+            $.ajax({
+                type: 'GET',
+                url: 'get_session_summary?session_booking_id=' + sb_id,
+                success: function(response)
+                {
+                    //alert("success");
+                    $("#sessions-summary").empty();
+                    $("#sessions-summary").append(response);
+                },
+                error: function()
+                {
+                    alert("error");
+                }
+            });
+        }
 
     });
 

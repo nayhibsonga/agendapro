@@ -309,8 +309,13 @@ class BookingsController < ApplicationController
     end
     respond_to do |format|
       if @errors.length == 0
-        if @bookings.length > 1
+
+        if @bookings.length > 1 && session_booking.nil?
           Booking.send_multiple_booking_mail(@booking.location_id, booking_group)
+        end
+
+        if !session_booking.nil?
+          BookingMailer.admin_session_booking_mail(@booking)
         end
 
         format.html { redirect_to bookings_path, notice: 'Booking was successfully created.' }
@@ -571,8 +576,13 @@ class BookingsController < ApplicationController
       end
     end
     respond_to do |format|
-      if @bookings.length > 1
+
+      if @bookings.length > 1 && session_booking.nil?
         Booking.send_multiple_booking_mail(@booking.location_id, booking_group)
+      end
+
+      if !session_booking.nil?
+        BookingMailer.admin_session_booking_mail(@booking)
       end
 
       format.html { redirect_to bookings_path, notice: 'Booking was successfully created.' }
@@ -881,9 +891,14 @@ class BookingsController < ApplicationController
     end
     respond_to do |format|
       if @booking.update(new_booking_params)
+
+        if @booking.is_session
+          BookingMailer.admin_session_booking_mail(@booking)
+        end
+
         u = @booking
         if u.warnings then warnings = u.warnings.full_messages else warnings = [] end
-        @booking_json = { :id => u.id, :start => u.start, :end => u.end, :service_id => u.service_id, :service_provider_id => u.service_provider_id, :status_id => u.status_id, :first_name => u.client.first_name, :last_name => u.client.last_name, :email => u.client.email, :phone => u.client.phone, :notes => u.notes,  :company_comment => u.company_comment, :provider_lock => u.provider_lock, :service_name => u.service.name, :warnings => warnings }
+        @booking_json = { :id => u.id, :start => u.start, :end => u.end, :service_id => u.service_id, :service_provider_id => u.service_provider_id, :status_id => u.status_id, :first_name => u.client.first_name, :last_name => u.client.last_name, :email => u.client.email, :phone => u.client.phone, :notes => u.notes,  :company_comment => u.company_comment, :provider_lock => u.provider_lock, :service_name => u.service.name, :warnings => warnings , :is_session => u.is_session, :is_session_booked => u.is_session_booked, :user_session_confirmed => u.user_session_confirmed}
         BookingHistory.create(booking_id: @booking.id, action: "Modificada por Calendario", start: @booking.start, status_id: @booking.status_id, service_id: @booking.service_id, service_provider_id: @booking.service_provider_id, user_id: current_user.id, staff_code_id: staff_code, notes: @booking.notes, company_comment: @booking.company_comment)
         format.html { redirect_to bookings_path, notice: 'Booking was successfully updated.' }
         format.json { render :json => @booking_json }
@@ -899,8 +914,15 @@ class BookingsController < ApplicationController
   # DELETE /bookings/1
   # DELETE /bookings/1.json
   def destroy
-    status = Status.find_by(:name => 'Cancelado').id
-    @booking.update(status_id: status)
+
+    status = @booking.status.id
+    is_booked = @booking.is_session_booked
+    if !@booking.is_session
+      status = Status.find_by(:name => 'Cancelado').id
+    else
+      is_booked = false
+    end
+    @booking.update(status_id: status, is_session_booked: false)
     # @booking.destroy
     respond_to do |format|
       format.html { redirect_to bookings_url }
@@ -912,6 +934,7 @@ class BookingsController < ApplicationController
     
     @booking.user_session_confirmed = false
     @booking.is_session_booked = false
+    #Send cancel mail
 
     if @booking.save
       respond_to do |format|
@@ -928,7 +951,38 @@ class BookingsController < ApplicationController
     end
   end
 
+  #GET
+  def validate_session_form
+
+    @error = []
+    unless params[:id]
+      crypt = ActiveSupport::MessageEncryptor.new(Agendapro::Application.config.secret_key_base)
+      id = crypt.decrypt_and_verify(params[:confirmation_code])
+      @booking = Booking.find(id)
+
+    else
+      @booking = Booking.find(params[:id])
+      @booking.user_session_confirmed = true
+      if @booking.save
+        current_user ? user = current_user.id : user = 0
+        BookingHistory.create(booking_id: @booking.id, action: "Cancelada por Cliente", start: @booking.start, status_id: @booking.status_id, service_id: @booking.service_id, service_provider_id: @booking.service_provider_id, user_id: user, notes: @booking.notes, company_comment: @booking.company_comment)
+
+        #Send mail to providerZ
+
+      else
+        flash[:alert] = "Hubo un error cancelando tu reserva. Inténtalo nuevamente."
+        @errors = @booking.errors
+      end
+    end
+    @company = @booking.location.company
+    render layout: "workflow"
+
+  end
+
+  #POST
   def validate_session_booking
+
+    #Send mail as if it was a new booking
     @booking.user_session_confirmed = true
     if @booking.save
       respond_to do |format|
@@ -939,7 +993,7 @@ class BookingsController < ApplicationController
       @errors = []
       @errors << "Hubo un problema al validar la sesión."
       respond_to do |format|
-        format.html { redirect_to bookings_url }
+        format.html { redirect_to 'validate_session_form' }
         format.json { render :json => @errors }
       end
     end
@@ -963,6 +1017,7 @@ class BookingsController < ApplicationController
   end
 
   def update_book_session
+    #Send update mail
     @booking = Booking.find(params[:id])
     @booking.start = params[:start]
     @booking.end = params[:end]
@@ -976,7 +1031,7 @@ class BookingsController < ApplicationController
       end
     else
       @errors = []
-      @errors << "Hubo un error al rservar la sesión."
+      @errors << "Hubo un error al reservar la sesión."
       respond_to do |format|
         format.json { render :json => @booking }
       end
@@ -1976,7 +2031,7 @@ class BookingsController < ApplicationController
       end
     end
 
-  end
+    end
 
     render layout: "workflow"
   end
@@ -2227,12 +2282,17 @@ class BookingsController < ApplicationController
         end
       end
 
+      status = @booking.status.id
+      payed = @booking.payed
+      is_booked = @booking.is_session_booked
+      if !@booking.is_session
+        status = Status.find_by(:name => 'Cancelado').id
+        payed = false
+      else
+        is_booked = false
+      end
 
-      status = Status.find_by(:name => 'Cancelado').id
-
-      payed = false
-
-      if @booking.update(status_id: status, payed: payed)
+      if @booking.update(status_id: status, payed: payed, is_session_booked: is_booked)
 
         if !@booking.payed_booking.nil?
           @booking.payed_booking.canceled = true
@@ -2426,16 +2486,27 @@ class BookingsController < ApplicationController
       #Fin pagadas
 
       success = true
+      are_session_bookings = true
       @bookings.each do |book|
-        if book.update(status_id: status)
+
+        is_booked = book.is_session_booked
+
+        if book.is_session
+          is_booked = false
+          status = book.status.id
+        else
+          are_session_bookings = false
+        end
+        if book.update(status_id: status, is_session_booked: is_booked)
           current_user ? user = current_user.id : user = 0
-          BookingHistory.create(booking_id: book.id, action: "Cancelada por Cliente", start: book.start, status_id: book.status_id, service_id: book.service_id, service_provider_id: book.service_provider_id, user_id: user, notes: @booking.notes, company_comment: @booking.company_comment)
+          BookingHistory.create(booking_id: book.id, action: "Cancelada por Cliente", start: book.start, status_id: book.status_id, service_id: book.service_id, service_provider_id: book.service_provider_id, user_id: user, notes: book.notes, company_comment: book.company_comment)
         else
           success = false
         end
+
       end
 
-      if success && were_payed
+      if success && were_payed && !are_session_bookings
         payed_booking = @bookings.first.payed_booking
         BookingMailer.cancel_payment_mail(payed_booking, 1)
         BookingMailer.cancel_payment_mail(payed_booking, 2)

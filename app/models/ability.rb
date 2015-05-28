@@ -93,6 +93,7 @@ class Ability
     can :get_session_summary, User
     can :delete_session_booking, Booking
     can :validate_session_booking, Booking
+    can :validate_session_form, Booking
     can :session_booking_detail, Booking
     can :book_session_form, Booking
     can :update_book_session, Booking

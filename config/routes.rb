@@ -122,6 +122,8 @@ Agendapro::Application.routes.draw do
   get '/get_session_summary', :to => 'users#get_session_summary'
   post '/delete_session_booking', :to => 'bookings#delete_session_booking'
   post '/validate_session_booking', :to => 'bookings#validate_session_booking'
+  post '/validate_session_form', :to => 'bookings#validate_session_form'
+  get '/validate_session_form', :to => 'bookings#validate_session_form'
   get '/session_booking_detail', :to => 'bookings#session_booking_detail'
   get '/book_session_form', :to => 'bookings#book_session_form'
   post '/update_book_session', :to => 'bookings#update_book_session'
