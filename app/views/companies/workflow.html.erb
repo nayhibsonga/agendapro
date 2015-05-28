@@ -463,6 +463,17 @@
                       </div>
                     </div>
                     <% end %>
+                    <% if !user_signed_in? %>
+                    <div class="row">
+                      <div class="col-md-12">
+                        <div class="checkbox">
+                          <label>
+                            <%= check_box_tag :mailing_option, true, class: 'checkbox' %> Quiero recibir promociones a mi email
+                          </label>
+                        </div>
+                      </div>
+                    </div>
+                    <% end %>
                     <div class="row" style="margin-top: 20px;">
                       <div class="col-sm-6">
                         <div class="btn-change btn-prev">
@@ -501,7 +512,7 @@
                     <div class="row">
                       <div class="col-sm-6">
                         <div>
-                          <button type="submit" data-loading-text = "Cargando" class="payBtn">Pagar</button>
+                          <button type="submit" data-loading-text = "Cargando..." class="payBtn">Pagar</button>
                         </div>
                       </div>
                       <div class="col-sm-6">

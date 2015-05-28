@@ -16,7 +16,7 @@ class PuntoPagosController < ApplicationController
   #Métodos de pagos de compañía/plan
 
   def generate_transaction
-  	trx_id = DateTime.now.to_s.gsub(/[-:T]/i, '')
+  	trx_id = DateTime.now.to_s.gsub(/[-:T]/i, '')[0,15]
   	amount = '10000.00'
     payment_method = '03'
   	req = PuntoPagos::Request.new()
@@ -52,7 +52,18 @@ class PuntoPagosController < ApplicationController
       else
         NumericParameter.find_by_name(amount.to_s+"_month_discount") ? month_discount = NumericParameter.find_by_name(amount.to_s+"_month_discount").value : month_discount = 0
         # trx_id = DateTime.now.to_s.gsub(/[-:T]/i, '') + "c" + company.id.to_s + "p" + company.plan.id.to_s
-        trx_id = (company.id.to_s + "0" + company.plan.id.to_s + "0" +  DateTime.now.to_s.gsub(/[-:T]/i, ''))[0..17]
+        
+        trx_comp = company.id.to_s + "0" + company.plan.id.to_s + "0"
+        trx_offset = 4
+        trx_date = DateTime.now.to_s.gsub(/[-:T]/i, '')
+        trx_date = trx_date[0, trx_date.size - trx_offset]
+        trx_date = trx_date[trx_date.size - 15 + trx_comp.size, trx_date.size]
+        trx_id = trx_comp + trx_date
+
+        if trx_id.size > 15
+          trx_id = trx_id[0, 15]
+        end
+
         company.months_active_left > 0 ? plan_1 = (company.due_amount + price*(1+sales_tax)).round(0) : plan_1 = ((company.due_amount + (month_days - day_number + 1)*price/month_days)*(1+sales_tax)).round(0)
         due = sprintf('%.2f', ((plan_1 + price*(amount-1)*(1+sales_tax))*(1-month_discount)).round(0))
         req = PuntoPagos::Request.new()
@@ -94,7 +105,17 @@ class PuntoPagosController < ApplicationController
         due_amount = company.due_amount
         plan_price = Plan.find(plan_id).price
         plan_month_value = (month_days - day_number + 1)*plan_price/month_days
-        trx_id = (company.id.to_s + "0" + plan_id.to_s + "0" +  DateTime.now.to_s.gsub(/[-:T]/i, ''))[0..17]
+
+        trx_comp = company.id.to_s + "0" + plan_id.to_s + "0"
+        trx_offset = 4
+        trx_date = DateTime.now.to_s.gsub(/[-:T]/i, '')
+        trx_date = trx_date[0, trx_date.size - trx_offset]
+        trx_date = trx_date[trx_date.size - 15 + trx_comp.size, trx_date.size]
+        trx_id = trx_comp + trx_date
+
+        if trx_id.size > 15
+          trx_id = trx_id[0, 15]
+        end
 
         if months_active_left > 0
           if plan_value_left > (plan_month_value + due_amount) && payment_method == "00"

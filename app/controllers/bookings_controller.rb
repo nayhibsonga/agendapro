@@ -989,6 +989,18 @@ class BookingsController < ApplicationController
     host = request.host_with_port
     @url = @company.web_address + '.' + host[host.index(request.domain)..host.length]
 
+
+    if !user_signed_in?
+      if params[:mailing_option].blank?
+        params[:mailing_option] = false
+      end
+      if MailingList.where(email: params[:email]).count > 0
+        MailingList.where(email: params[:email]).first.update(first_name: params[:firstName], last_name: params[:lastName], phone: params[:phone], mailing_option: params[:mailing_option])
+      else
+        MailingList.create(email: params[:email], first_name: params[:firstName], last_name: params[:lastName], phone: params[:phone], mailing_option: params[:mailing_option])
+      end
+    end
+
     if @company.company_setting.client_exclusive
       if(params[:client_id])
         client = Client.find(params[:client_id])
@@ -1105,7 +1117,14 @@ class BookingsController < ApplicationController
       block_it = false
       service_provider = ServiceProvider.find(buffer_params[:provider])
       service = Service.find(buffer_params[:service])
-      service_provider.bookings.each do |provider_booking|
+      service_provider.provider_breaks.where("provider_breaks.start < ?", buffer_params[:end].to_datetime).where("provider_breaks.end > ?", buffer_params[:start].to_datetime).each do |provider_break|
+        if (provider_break.start.to_datetime - buffer_params[:end].to_datetime) * (buffer_params[:start].to_datetime - provider_break.end.to_datetime) > 0
+          @errors << "Lo sentimos, la hora " + I18n.l(buffer_params[:start].to_datetime) + " con " + service_provider.public_name + " está bloqueada."
+          block_it = true
+          next
+        end
+      end
+      service_provider.bookings.where("bookings.start < ?", buffer_params[:end].to_datetime).where("bookings.end > ?", buffer_params[:start].to_datetime).each do |provider_booking|
         unless provider_booking.status_id == cancelled_id
           if (provider_booking.start.to_datetime - buffer_params[:end].to_datetime) * (buffer_params[:start].to_datetime - provider_booking.end.to_datetime) > 0
             if !service.group_service || buffer_params[:service].to_i != provider_booking.service_id
@@ -1240,7 +1259,7 @@ class BookingsController < ApplicationController
     #If they can be payed, redirect to payment_process,
     #then check for error or send notifications mails.
     if group_payment
-      trx_id = DateTime.now.to_s.gsub(/[-:T]/i, '')
+      trx_id = DateTime.now.to_s.gsub(/[-:T]/i, '')[0,15]
       amount = sprintf('%.2f', final_price)
       payment_method = params[:mp]
       req = PuntoPagos::Request.new()
@@ -1327,6 +1346,7 @@ class BookingsController < ApplicationController
     end
 
     @try_register = false
+    @try_signin = false
 
     if !user_signed_in?
       if !User.find_by_email(params[:email])
@@ -1336,9 +1356,10 @@ class BookingsController < ApplicationController
         @user.first_name = params[:firstName]
         @user.last_name = params[:lastName]
         @user.phone = params[:phone]
+      else
+        @try_signin = true
       end
     end
-
     render layout: "workflow"
   end
 
@@ -2319,12 +2340,6 @@ class BookingsController < ApplicationController
       serviceStaffPos = 0
       bookings = []
       while serviceStaffPos < serviceStaff.length and (dateTimePointer <=> now + company_setting.after_booking.month) == -1
-
-
-        Rails.logger.info "Info: " +dateTimePointer.to_s
-        Rails.logger.debug "Debug: " +dateTimePointer.to_s
-        logger.info "Info: " +dateTimePointer.to_s
-        logger.debug "Debug: " +dateTimePointer.to_s
 
         service_valid = false
         service = Service.find(serviceStaff[serviceStaffPos][:service])

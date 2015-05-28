@@ -478,6 +478,8 @@ function editBookingModal(eventId) {
 			$('#booking_client_age').val(booking.age);
 			$('#booking_client_second_phone').val(booking.second_phone);
 			$('#booking_client_record').val(booking.record);
+			$('.client_link').attr('href','/clients/' + booking.client_id + '/edit');
+			$('.client_link').html('Ir a la ficha del cliente...');
 			$('#booking_client_gender option[value="'+booking.gender+'"]').attr("selected",true);
 			$('#booking_notes').val(booking.notes);
 			$('#booking_company_comment').val(booking.company_comment);
@@ -627,6 +629,8 @@ function createBookingModal(date, provider_id) {
 			$('#booking_client_age').val('');
 			$('#booking_client_second_phone').val('');
 			$('#booking_client_record').val('');
+			$('.client_link').attr('href','/clients');
+			$('.client_link').html('Ir a fichas de clientes...');
 			$('#booking_client_gender option[value="0"]').prop('selected', true);
 			$('#booking_notes').val('');
 			$('#booking_company_comment').val('');
@@ -2035,6 +2039,8 @@ $(function() {
 			$('#booking_client_age').val(client.age);
 			$('#booking_client_second_phone').val(client.second_phone);
 			$('#booking_client_record').val(client.record);
+			$('.client_link').attr('href','/clients/' + client.id + '/edit');
+			$('.client_link').html('Ir a la ficha del cliente...');
 			$('#booking_client_gender option[value="'+client.gender+'"]').attr("selected",true);
 			$("#full_name").val(client.first_name+' '+client.last_name)
 			if (validEmail($("#booking_client_email").val())) {
@@ -2080,6 +2086,8 @@ $(function() {
 			$('#booking_client_age').val(client.age);
 			$('#booking_client_second_phone').val(client.second_phone);
 			$('#booking_client_record').val(client.record);
+			$('.client_link').attr('href','/clients/' + client.id + '/edit');
+			$('.client_link').html('Ir a la ficha del cliente...');
 			$('#booking_client_gender option[value="'+client.gender+'"]').attr("selected",true);
 			$("#full_name").val(client.first_name+' '+client.last_name)
 			if (validEmail($("#booking_client_email").val())) {
@@ -2118,6 +2126,7 @@ $(function() {
 	});
 
 	$('#booking_service_provider_id').change(function (event) {
+		var selectedService =  $('#booking_service_id').val();
 		$.getJSON('/provider_services', {id: event.target.value}, function (services) {
 			$('#booking_service_id').empty();
 			$.each(services, function (key, service) {
@@ -2126,6 +2135,7 @@ $(function() {
 				);
 			});
 			$('#booking_service_id').removeAttr('disabled');
+			$('#booking_service_id option[value="' + selectedService + '"]').prop('selected', true);
 			modalChange();
 		});
 		if ($('#booking_provider_lock').prop('checked')) {
@@ -2166,6 +2176,10 @@ $(function() {
 		$('#booking_client_birth_month option[value=""]').prop('selected', true);
 		$('#booking_client_birth_year option[value=""]').prop('selected', true);
 		$('#booking_client_age').val('');
+		$('#booking_client_second_phone').val('');
+		$('#booking_client_record').val('');
+		$('.client_link').attr('href','/clients');
+		$('.client_link').html('Ir a fichas de clientes...');
 		$('#booking_client_gender option[value="0"]').prop('selected', true);
 		$("#full_name").val('');
 		$("#full_name").prop('disabled', false);

@@ -110,7 +110,7 @@ function getResourceCategories() {
 	$.getJSON('/resource_categories', function (categoriesArray) {
 		$.each(categoriesArray, function (key, category) {
 			var buttonString = '';
-			if(category.name != "Sin Categoría") {
+			if(category.name != "Otros") {
 				buttonString = '<a class="btn btn-red" onclick="saveCategory(\'DELETE\',\'/'+category.id+'\')"><i class="fa fa-trash-o"></i></a>';
 			}
 			$('#resourceCategoriesTable').append('<tr><td>'+category.name+'</td><td>'+buttonString+'</td></tr>');
