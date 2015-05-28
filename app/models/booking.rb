@@ -40,6 +40,9 @@ class Booking < ActiveRecord::Base
 	# end
 
 	def check_session
+		if self.id.nil?
+			return
+		end
 		sessions_count = 0
 		self.session_booking.bookings.each do |b|
 			if b.is_session_booked

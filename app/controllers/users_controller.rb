@@ -79,10 +79,18 @@ class UsersController < ApplicationController
     #@activeBookings = Booking.where(:user_id => params[:id], :status_id => Status.find_by(:name => ['Reservado', 'Pagado', 'Confirmado'])).where("start > ?", DateTime.now).order(:start) 
     #@lastBookings = Booking.where(:user_id => params[:id]).order(updated_at: :desc).limit(10)
     @user = current_user
-    @client = Client.find_by_email(current_user.email)
-    @sessionBookings = SessionBooking.where(:client_id => @client.id)
-    @activeBookings = Booking.where(:client_id => @client.id, :is_session => false, :status_id => Status.find_by(:name => ['Reservado', 'Pagado', 'Confirmado'])).where("start > ?", DateTime.now).order(:start) 
-    @lastBookings = Booking.where(:client_id => @client.id).order(updated_at: :desc).limit(10)
+    @client_ids = Client.where(:email => current_user.email).pluck(:id)
+    @sessionBookings = SessionBooking.where(:client_id => @client_ids)
+
+    @sessionBookings.each do |sb|
+      if sb.user_id.nil?
+        sb.user_id = current_user.id
+        sb.save
+      end
+    end
+
+    @activeBookings = Booking.where(:client_id => @client_ids, :is_session => false, :status_id => Status.find_by(:name => ['Reservado', 'Pagado', 'Confirmado'])).where("start > ?", DateTime.now).order(:start) 
+    @lastBookings = Booking.where(:client_id => @client_ids).order(updated_at: :desc).limit(10)
     render :layout => 'results'
   end
 
