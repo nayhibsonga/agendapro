@@ -1,20 +1,29 @@
+<style>
+.well {
+  overflow: hidden;
+}
+</style>
+
 <div class="container-fluid">
-  <div class="row">
-    <div class="col-md-12">
       <div class="row">
-        <div class="<%= if @client.id then 'col-md-6' else 'col-md-12' end %>">
+        <%= form_for @client, html: {class: "form-horizontal" } do |f| %>
+          <% if @client.errors.any? %>
+            <div id="error_explanation">
+              <h2 class="text-green"><%= pluralize(@client.errors.count, "error") %> no permitió que el cliente fuera guardado:</h2>
+              <ul>
+                <% @client.errors.full_messages.each do |msg| %>
+                <li><%= msg %></li>
+                <% end %>
+              </ul>
+            </div>
+          <% end %>
+          <% if @client.id %>
+          <div class="col-md-6">
           <div class="well">
-            <%= form_for @client, html: {class: "form-horizontal" } do |f| %>
-              <% if @client.errors.any? %>
-                <div id="error_explanation">
-                  <h2 class="text-green"><%= pluralize(@client.errors.count, "error") %> no permitió que el cliente fuera guardado:</h2>
-                  <ul>
-                    <% @client.errors.full_messages.each do |msg| %>
-                    <li><%= msg %></li>
-                    <% end %>
-                  </ul>
-                </div>
-              <% end %>
+          <% else %>
+          <div class="well">
+          <div class="col-md-6">
+          <% end %>
               <% if Company.find(current_user.company_id).company_setting.client_exclusive %>
               <div class="form-group">
                 <%= f.label :can_book, "¿Puede reservar?", class: "col-sm-3 control-label" %>
@@ -79,6 +88,10 @@
                   <span class="form-control-feedback"></span>
                 </div>
               </div>
+              <% if !@client.id %>
+              </div>
+              <div class="col-md-6">
+              <% end %>
               <div class="form-group has-feedback">
                 <%= f.label :address, "Dirección", class: "col-sm-3 control-label" %>
                 <div class="col-sm-9">
@@ -135,9 +148,9 @@
                   <%= link_to 'Cancelar', clients_path, class: "btn btn-default" %>
                 </div>
               </div>
-            <% end %>
+            </div>
           </div>
-        </div>
+        <% end %>
         <% if @client.id %>
         <div class="col-md-6">
           <div class="panel panel-green">
@@ -197,8 +210,6 @@
           <%= link_to '<i class="fa fa-eye"></i> Historial Completo'.html_safe, client_history_path(:id => @client.id), class: "btn btn-white" %>
         </div>
         <% end %>
-      </div>
-    </div>
   </div>
   <div class="row">
     <div class="col-md-12">

@@ -16,7 +16,9 @@ class PuntoPagosController < ApplicationController
   #Métodos de pagos de compañía/plan
 
   def generate_transaction
+
   	trx_id = DateTime.now.to_s.gsub(/[-:T]/i, '')[0, 15]
+
   	amount = '10000.00'
     payment_method = '03'
   	req = PuntoPagos::Request.new()
@@ -52,7 +54,6 @@ class PuntoPagosController < ApplicationController
       else
         NumericParameter.find_by_name(amount.to_s+"_month_discount") ? month_discount = NumericParameter.find_by_name(amount.to_s+"_month_discount").value : month_discount = 0
         # trx_id = DateTime.now.to_s.gsub(/[-:T]/i, '') + "c" + company.id.to_s + "p" + company.plan.id.to_s
-        #trx_id = (company.id.to_s + "0" + company.plan.id.to_s + "0" +  DateTime.now.to_s.gsub(/[-:T]/i, ''))[0..17]
 
         trx_comp = company.id.to_s + "0" + company.plan.id.to_s + "0"
         trx_offset = 4
@@ -106,8 +107,7 @@ class PuntoPagosController < ApplicationController
         due_amount = company.due_amount
         plan_price = Plan.find(plan_id).price
         plan_month_value = (month_days - day_number + 1)*plan_price/month_days
-        #trx_id = (company.id.to_s + "0" + plan_id.to_s + "0" +  DateTime.now.to_s.gsub(/[-:T]/i, ''))[0..17]
-        
+
         trx_comp = company.id.to_s + "0" + plan_id.to_s + "0"
         trx_offset = 4
         trx_date = DateTime.now.to_s.gsub(/[-:T]/i, '')

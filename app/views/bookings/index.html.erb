@@ -258,6 +258,13 @@
                           </div>
                         </div>
                       <% end %>
+                      <% if current_user.role_id != Role.find_by_name("Staff").id %>
+                        <div class="form-group">
+                          <div class="col-sm-8 col-sm-offset-4">
+                            <a href='/clients' class='client_link' target='_blank'>Ir a fichas de clientes...</a>
+                          </div>
+                        </div>
+                      <% end %>
                       <% if @company_setting.allows_online_payment %>
                       <div class="form-group">
                         <%= f.label :payed, "Pagado en línea", class: "col-sm-4 control-label" %>
@@ -416,11 +423,13 @@
                             <%= builder.text_field :record, class: "form-control" %>
                           </div>
                         </div>
+                        <% if current_user.role_id != Role.find_by_name("Staff").id %>
                         <div class="form-group">
                           <div class="col-sm-8 col-sm-offset-4">
-                            <a href='/clients' id='client_link' target='_blank'>Ir a fichas de clientes...</a>
+                            <a href='/clients' class='client_link' target='_blank'>Ir a fichas de clientes...</a>
                           </div>
                         </div>
+                        <% end %>
                       </div>
                     </div>
                   <% end %>

@@ -1349,7 +1349,14 @@ class BookingsController < ApplicationController
       block_it = false
       service_provider = ServiceProvider.find(buffer_params[:provider])
       service = Service.find(buffer_params[:service])
-      service_provider.bookings.each do |provider_booking|
+      service_provider.provider_breaks.where("provider_breaks.start < ?", buffer_params[:end].to_datetime).where("provider_breaks.end > ?", buffer_params[:start].to_datetime).each do |provider_break|
+        if (provider_break.start.to_datetime - buffer_params[:end].to_datetime) * (buffer_params[:start].to_datetime - provider_break.end.to_datetime) > 0
+          @errors << "Lo sentimos, la hora " + I18n.l(buffer_params[:start].to_datetime) + " con " + service_provider.public_name + " está bloqueada."
+          block_it = true
+          next
+        end
+      end
+      service_provider.bookings.where("bookings.start < ?", buffer_params[:end].to_datetime).where("bookings.end > ?", buffer_params[:start].to_datetime).each do |provider_booking|
         unless provider_booking.status_id == cancelled_id
           if (provider_booking.start.to_datetime - buffer_params[:end].to_datetime) * (buffer_params[:start].to_datetime - provider_booking.end.to_datetime) > 0
             if !service.group_service || buffer_params[:service].to_i != provider_booking.service_id
@@ -1526,7 +1533,9 @@ class BookingsController < ApplicationController
     #If they can be payed, redirect to payment_process,
     #then check for error or send notifications mails.
     if group_payment
+
       trx_id = DateTime.now.to_s.gsub(/[-:T]/i, '')[0, 15]
+
       amount = sprintf('%.2f', final_price)
       payment_method = params[:mp]
       req = PuntoPagos::Request.new()
@@ -2614,12 +2623,6 @@ class BookingsController < ApplicationController
       serviceStaffPos = 0
       bookings = []
       while serviceStaffPos < serviceStaff.length and (dateTimePointer <=> now + company_setting.after_booking.month) == -1
-
-
-        Rails.logger.info "Info: " +dateTimePointer.to_s
-        Rails.logger.debug "Debug: " +dateTimePointer.to_s
-        logger.info "Info: " +dateTimePointer.to_s
-        logger.debug "Debug: " +dateTimePointer.to_s
 
         service_valid = false
         service = Service.find(serviceStaff[serviceStaffPos][:service])

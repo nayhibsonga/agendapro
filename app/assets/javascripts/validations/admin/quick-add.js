@@ -111,9 +111,7 @@ $(function() {
 				min: 0
 			},
 			'service[duration]': {
-				required: true,
-				min: 5,
-				max: 1439
+				required: true
 			},
 			'service[service_category_id]': {
 				required: true
