@@ -87,6 +87,9 @@ class UsersController < ApplicationController
         sb.user_id = current_user.id
         sb.save
       end
+      if sb.bookings.count == 0
+        sb.delete
+      end
     end
 
     @activeBookings = Booking.where(:client_id => @client_ids, :is_session => false, :status_id => Status.find_by(:name => ['Reservado', 'Pagado', 'Confirmado'])).where("start > ?", DateTime.now).order(:start) 

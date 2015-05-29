@@ -1030,11 +1030,23 @@ function saveBooking(typeURL, extraURL) {
 						event.email_qtip = booking.email;
 						event.comment_qtip = booking.company_comment;
 						event.prepayed_qtip = booking.prepayed;
+
+						var selectedProvider = parseInt($("#providers-selector option:selected").val());
+						var eventProvider = parseInt(booking.service_provider_id);
+
+
 						if(booking.is_session)
 						{
 							if(booking.is_session_booked)
 							{
-								$('#calendar').fullCalendar('updateEvent', event);
+								if(selectedProvider == 0 || (selectedProvider == eventProvider))
+								{
+									$('#calendar').fullCalendar('updateEvent', event);
+								}
+								else
+								{
+									$('#calendar').fullCalendar('removeEvents',booking.id);
+								}
 							}
 							else
 							{
@@ -1043,7 +1055,14 @@ function saveBooking(typeURL, extraURL) {
 						}
 						else
 						{
-							$('#calendar').fullCalendar('updateEvent', event);
+							if(selectedProvider == 0 || (selectedProvider == eventProvider))
+							{
+								$('#calendar').fullCalendar('updateEvent', event);
+							}
+							else
+							{
+								$('#calendar').fullCalendar('removeEvents',booking.id);
+							}
 						}
 						if(booking.is_session)
 						{

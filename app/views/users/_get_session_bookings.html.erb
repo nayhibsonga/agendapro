@@ -27,6 +27,7 @@
 						<i class="fa fa-clock-o"></i>&nbsp;<%= I18n.l(booking.start.to_time + 4.hours, format: :hour) %>
 					</div>
 					<div class="col-md-4 session-row-btns">
+						<button class="btn session-btn session-btn-detail" data-toggle="detailModal" href="session_booking_detail?id=<%= booking.id %>">Ver detalle</button>
 						<button class="btn session-btn session-btn-validate">Validar</button>
 					</div>
 				</div>
