@@ -399,6 +399,36 @@ class Booking < ActiveRecord::Base
 		end
 	end
 
+	def send_validate_mail
+		if !self.id.nil?
+			if self.trx_id == ""
+				if self.start > Time.now - eval(ENV["TIME_ZONE_OFFSET"])
+					if self.status != Status.find_by(:name => "Cancelado")
+						if self.booking_group.nil?
+							BookingMailer.book_service_mail(self)
+						end
+					end
+				end
+			end
+		end
+	end
+
+	def send_session_update_mail
+		if !self.id.nil?
+			if self.start > Time.now - eval(ENV["TIME_ZONE_OFFSET"])
+				if !self.is_session_booked
+					if changed_attributes['is_session_booked']	
+						BookingMailer.cancel_booking(self)
+					end
+				else
+					if changed_attributes['start'] && self.user_session_confirmed
+						BookingMailer.update_booking(self, changed_attributes['start'])
+					end
+				end
+			end
+		end
+	end
+
 	def send_update_mail
 		if self.is_session
 			return

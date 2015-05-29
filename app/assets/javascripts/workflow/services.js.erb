@@ -150,6 +150,10 @@ function loadStep2 () {
 			$(".sessions-bar").show();
 			$("#sessions-left").text(current_service.sessions_amount);
 			sessions_left = current_service.sessions_amount;
+			$("#sessions-explanation-total").html(sessions_left);
+			$("#sessions-explanation").modal('show');
+
+			//Show info modal
 		}
 		else
 		{
@@ -479,7 +483,7 @@ function loadStep3 () {
 				$('#summary').empty();
 				var service = first_session.service_name;
 				var when = '<p class="light-gray">' + formattedTime(first_session.start) + '</p>';
-				var provider = first_session.provider_name;
+				//var provider = first_session.provider_name;
 				var prices = '';
 				var payable_prices = '';
 				var payable = true;
@@ -528,11 +532,11 @@ function loadStep3 () {
 					'<tr>' +
 						'<td class="dark-gray">¿Dónde?</td>' +
 						'<td class="light-gray">' + $('#selectedLocal').data('local').address + ', ' + $('#selectedLocal').data('district') + '</td>' +
-					'</tr>' +
-					'<tr>' +
+					'</tr>'
+					/*'<tr>' +
 						'<td class="dark-gray">¿Con quién?</td>' +
 						'<td class="light-gray">' + provider + '</td>' +
-					'</tr>'
+					'</tr>'*/
 				);
 				if(payable)
 				{
@@ -587,8 +591,8 @@ function loadStep3 () {
 				);
 				$('#summary').append(
 					'<tr>' +
-						'<td class="dark-gray">Horarios</td>' +
-						'<td class="light-gray">' + formattedTime(first_session.start) + '</td>' +
+						'<td class="dark-gray">Detalle</td>' +
+						'<td class="light-gray">' + formattedTime(first_session.start) + ', con ' + first_session.provider_name + '</td>' +
 					'</tr>'						
 				);
 				if(sessions_buffer.length > 0)
@@ -597,7 +601,7 @@ function loadStep3 () {
 					for(i=0; i<sessions_buffer.length; i++)
 					{
 						$("#summary").append(
-							'<tr><td></td><td class="light-gray">' + formattedTime(sessions_buffer[i].start) + '</td></tr>'				
+							'<tr><td></td><td class="light-gray">' + formattedTime(sessions_buffer[i].start) + ', con ' + sessions_buffer[i].provider_name + '</td></tr>'		
 						);
 					}
 
@@ -694,6 +698,7 @@ function scrollEvents (direction) {
 			sessions_buffer = [];
 			first_session = null;
 			booking_buffer.pop();
+			sessions_buffer = []
 		};
 		return true;
 	}
@@ -839,6 +844,8 @@ function addSession(booking)
 			has_sessions: service_response.has_sessions,
 			sessions_amount: service_response.sessions_amount
 		};
+
+
 		checkUserCrossBookings();
 
 	});
@@ -924,8 +931,8 @@ function formattedTime (timestamp) {
 }
 
 function blockBookingBufferHour () {
-	//console.log("Entra a block.");
-	for (var i = 0; i < booking_buffer.length; i++) {
+
+	for (i = 0; i < booking_buffer.length; i++) {
 		console.log("For " + i);
 		/*if($('[name="staffRadio"]').val() != "0" && ($('[name="staffRadio"]').val() == booking_buffer[i].service_provider_id || parseInt($('[name="staffRadio"]').val()) == booking_buffer[i].service_provider_id))
 		{*/
@@ -964,6 +971,50 @@ function blockBookingBufferHour () {
 
 		}*/
 	};
+
+	sessions_array = []
+	if (first_session != null)
+	{
+		sessions_array.push(first_session);
+	}
+	for(i=0; i < sessions_buffer.length; i++)
+	{
+		sessions_array.push(sessions_buffer[i]);
+	}
+
+	for(i=0; i < sessions_array.length; i++)
+	{
+
+		var date = sessions_array[i].start.split(' ')[0];
+		var hourBlocks = $('.columna-dia[data-date="' + date + '"]').children('.bloque-hora.hora-disponible');
+		$.each(hourBlocks, function (key, hourBlock) {
+			var start = $(hourBlock).data('start');
+			var end = $(hourBlock).data('end');
+
+			var start_arr = sessions_array[i].start.split(" ");
+			var start_date = start_arr[0].split("-");
+			var start_time = start_arr[1].split(":");
+
+			var end_arr = sessions_array[i].end.split(" ");
+			var end_date = end_arr[0].split("-");
+			var end_time = end_arr[1].split(":");
+
+			var bookingStart = new Date(start_date[0], start_date[1]-1, start_date[2], start_time[0], start_time[1], start_time[2], 0);
+			var bookingEnd = new Date(end_date[0], end_date[1]-1, end_date[2], end_time[0], end_time[1], end_time[2], 0);
+
+			var blockStart = new Date(start_date[0], start_date[1]-1, start_date[2], start.split(":")[0], start.split(":")[1], 0, 0);
+			var blockEnd = new Date(end_date[0], end_date[1]-1, end_date[2], end.split(":")[0], end.split(":")[1], 0, 0);
+			
+			//Check for no overlap and negate it.
+			if(!(bookingEnd <= blockStart || blockEnd <= bookingStart))
+			{
+				$(hourBlock).removeClass('hora-disponible');
+				$(hourBlock).removeClass('hora-activo');
+				$(hourBlock).addClass('hora-ocupada');
+			};
+		});
+		$("#foo4").trigger('update');			
+	}
 }
 
 function addNewSession() {
@@ -1005,8 +1056,8 @@ function addNewSession() {
 			sessions_left = sessions_left - 1;
 			myAlert.showAlert(
 				'<h3><i class="fa fa-check fa-green fa-lg"></i>&nbsp;&nbsp;Sesión agregada.</h3>' + 
-				'<p>Has agregado una sesión de ' + actual_booking.service_name + ' con ' + actual_booking.provider_name + ', el día ' +
-				formattedTime(actual_booking.start) + '. Te quedan ' + sessions_left + ' sesiones por agendar. Si lo deseas, puedes no hacerlo ahora y agendarlas más tarde desde tu cuenta AgendaPro o llamando al local elegido.</p'
+				'<p>Has guardado una sesión de ' + actual_booking.service_name + ' con ' + actual_booking.provider_name + ', el día ' +
+				formattedTime(actual_booking.start) + '. Por favor selecciona otro horario para la siguiente sesión. Luego guárdala apretando "Agregar sesión", o haz click en "Siguiente" para reservar las sesiones guardadas y la elegida. Ahora te quedan ' + sessions_left + ' sesiones por agendar. Si deseas, puedes dejar sesiones sin agendar y hacerlo más tarde desde tu cuenta AgendaPro o llamando al local elegido.</p'
 			);
 			$("#sessions-left").empty();
 			$("#sessions-left").text("" + sessions_left);

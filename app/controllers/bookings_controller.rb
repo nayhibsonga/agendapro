@@ -296,7 +296,10 @@ class BookingsController < ApplicationController
           :provider_lock => u.provider_lock,
           :service_name => u.service.name,
           :warnings => warnings,
-          :prepayed => prepayed
+          :prepayed => prepayed,
+          :is_session => u.is_session,
+          :is_session_booked => u.is_session_booked,
+          :user_session_confirmed => u.user_session_confirmed
         }
 
         BookingHistory.create(booking_id: @booking.id, action: "Creada por Calendario", start: @booking.start, status_id: @booking.status_id, service_id: @booking.service_id, service_provider_id: @booking.service_provider_id, user_id: current_user.id, staff_code_id: staff_code, notes: @booking.notes, company_comment: @booking.company_comment)
@@ -564,7 +567,10 @@ class BookingsController < ApplicationController
           :provider_lock => u.provider_lock,
           :service_name => u.service.name,
           :warnings => warnings,
-          :prepayed => prepayed
+          :prepayed => prepayed,
+          :is_session => u.is_session,
+          :is_session_booked => u.is_session_booked,
+          :user_session_confirmed => u.user_session_confirmed
         }
 
         BookingHistory.create(booking_id: @booking.id, action: "Creada por Calendario", start: @booking.start, status_id: @booking.status_id, service_id: @booking.service_id, service_provider_id: @booking.service_provider_id, user_id: current_user.id, staff_code_id: staff_code, notes: @booking.notes, company_comment: @booking.company_comment)
@@ -937,6 +943,7 @@ class BookingsController < ApplicationController
     #Send cancel mail
 
     if @booking.save
+      @booking.send_session_update_mail
       respond_to do |format|
         format.html { redirect_to bookings_url }
         format.json { render :json => @booking }
@@ -968,6 +975,7 @@ class BookingsController < ApplicationController
         BookingHistory.create(booking_id: @booking.id, action: "Cancelada por Cliente", start: @booking.start, status_id: @booking.status_id, service_id: @booking.service_id, service_provider_id: @booking.service_provider_id, user_id: user, notes: @booking.notes, company_comment: @booking.company_comment)
 
         #Send mail to providerZ
+        @booking.send_validate_mail
 
       else
         flash[:alert] = "Hubo un error cancelando tu reserva. Inténtalo nuevamente."
@@ -985,6 +993,8 @@ class BookingsController < ApplicationController
     #Send mail as if it was a new booking
     @booking.user_session_confirmed = true
     if @booking.save
+      #Send mail to providerZ
+      @booking.send_validate_mail
       respond_to do |format|
         format.html { redirect_to bookings_url }
         format.json { render :json => @booking }
@@ -1026,6 +1036,7 @@ class BookingsController < ApplicationController
     @booking.is_session_booked = true
     @booking.user_session_confirmed = true
     if @booking.save
+      @booking.send_session_update_mail
       respond_to do |format|
         format.json { render :json => @booking }
       end
@@ -1138,6 +1149,13 @@ class BookingsController < ApplicationController
           prepayed = 'No'
         end
 
+        backColor = backColors[booking.status_id]
+        textColor = textColors[booking.status_id]
+        if booking.is_session && booking.is_session_booked && !booking.user_session_confirmed
+          textColor = "#DFDBDB"
+          backColor = "#105E82"
+        end
+
         event = {
           id: booking.id,
           title: title,
@@ -1145,9 +1163,9 @@ class BookingsController < ApplicationController
           start: booking.start,
           end: booking.end,
           resourceId: booking.service_provider_id,
-          textColor: textColors[booking.status_id],
-          borderColor: textColors[booking.status_id],
-          backgroundColor: backColors[booking.status_id],
+          textColor: textColor,
+          borderColor: textColor,
+          backgroundColor: backColor,
           className: originClass,
           title_qtip: qtip,
           time_qtip: booking.start.strftime("%H:%M") + ' - ' + booking.end.strftime("%H:%M"),
@@ -1157,6 +1175,8 @@ class BookingsController < ApplicationController
           comment_qtip: comment,
           prepayed_qtip: prepayed
         }
+        
+
         events.push(event)
       end
     end
@@ -2056,8 +2076,11 @@ class BookingsController < ApplicationController
     @selectedLocation = Location.find(@booking.location_id)
     max_changes = @booking.max_changes - 1
     if @booking.update(start: params[:start], end: params[:end], max_changes: max_changes)
-      #flash[:notice] = "Reserva actualizada exitosamente."
-      # BookingMailer.update_booking(@booking)
+      
+      if @booking.is_session
+        @booking.send_session_update_mail
+      end
+
       current_user ? user = current_user.id : user = 0
       BookingHistory.create(booking_id: @booking.id, action: "Modificada por Cliente", start: @booking.start, status_id: @booking.status_id, service_id: @booking.service_id, service_provider_id: @booking.service_provider_id, user_id: user, notes: @booking.notes, company_comment: @booking.company_comment)
     else
