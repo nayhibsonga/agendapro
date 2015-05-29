@@ -44,7 +44,7 @@ class Booking < ActiveRecord::Base
 			return
 		end
 		sessions_count = 0
-		if !self.sessions_count.nil?
+		if !self.session_booking.nil?
 			self.session_booking.bookings.each do |b|
 				if b.is_session_booked
 					sessions_count = sessions_count + 1
