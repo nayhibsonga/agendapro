@@ -44,13 +44,15 @@ class Booking < ActiveRecord::Base
 			return
 		end
 		sessions_count = 0
-		self.session_booking.bookings.each do |b|
-			if b.is_session_booked
-				sessions_count = sessions_count + 1
+		if !self.sessions_count.nil?
+			self.session_booking.bookings.each do |b|
+				if b.is_session_booked
+					sessions_count = sessions_count + 1
+				end
 			end
+			self.session_booking.sessions_taken = sessions_count
+			self.session_booking.save
 		end
-		self.session_booking.sessions_taken = sessions_count
-		self.session_booking.save
 	end
 
 	def wait_for_payment
