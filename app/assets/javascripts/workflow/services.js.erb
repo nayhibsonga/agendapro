@@ -153,6 +153,15 @@ function loadStep2 () {
 			$("#sessions-explanation-total").html(sessions_left);
 			$("#sessions-explanation").modal('show');
 
+			if(sessions_left < 2)
+			{
+				$(".btn-add-session").attr("disabled", "disabled");
+			}
+			else
+			{
+				$(".btn-add-session").attr("disabled", false);
+			}
+
 			//Show info modal
 		}
 		else
@@ -696,9 +705,16 @@ function scrollEvents (direction) {
 		if (step == 3) {
 			step = 2;
 			sessions_buffer = [];
-			first_session = null;
-			booking_buffer.pop();
-			sessions_buffer = []
+			
+			if(first_session == null)
+			{
+				booking_buffer.pop();
+			}
+			else
+			{
+				first_session = null;
+				booking_buffer = [];
+			}
 		};
 		return true;
 	}
@@ -1062,6 +1078,14 @@ function addNewSession() {
 			$("#sessions-left").empty();
 			$("#sessions-left").text("" + sessions_left);
 			selected = false;
+			if(sessions_left < 2)
+			{
+				$(".btn-add-session").attr("disabled", "disabled");
+			}
+			else
+			{
+				$(".btn-add-session").attr("disabled", false);
+			}
 			//$('input[name=serviceRadio]:checked').prop('checked', false);
 			//$('#services-description').empty();
 			//$('#foo4').trigger('prev');
