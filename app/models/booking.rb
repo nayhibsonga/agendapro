@@ -90,11 +90,13 @@ class Booking < ActiveRecord::Base
 
 	def provider_in_break_warning
 		self.service_provider.provider_breaks.each do |provider_break|
-			if (provider_break.start - self.end) * (self.start - provider_break.end) > 0
-				if !self.is_session || (self.is_session && self.is_session_booked)
-					warnings.add(:base, "El prestador seleccionado tiene bloqueado el horario elegido")
-	        		return
-	        	end
+			if self != provider_booking
+				if (provider_break.start - self.end) * (self.start - provider_break.end) > 0
+					if !self.is_session || (self.is_session && self.is_session_booked) and (!provider_booking.is_session || (provider_booking.is_session && provider_booking.is_session_booked))
+						warnings.add(:base, "El prestador seleccionado tiene bloqueado el horario elegido")
+		        		return
+		        	end
+				end
 			end
 		end
 	end
@@ -107,12 +109,12 @@ class Booking < ActiveRecord::Base
 					unless provider_booking.status_id == cancelled_id
 						if (provider_booking.start - self.end) * (self.start - provider_booking.end) > 0
 							if !self.service.group_service || self.service_id != provider_booking.service_id
-								if !self.is_session || (self.is_session && self.is_session_booked)
+								if (!self.is_session || (self.is_session && self.is_session_booked)) and (!provider_booking.is_session || (provider_booking.is_session && provider_booking.is_session_booked))
 									warnings.add(:base, "La hora seleccionada ya está reservada para el prestador elegido")
 									return
 								end
 							elsif self.service.group_service && self.service_id == provider_booking.service_id && self.service_provider.bookings.where(:service_id => self.service_id, :start => self.start).where.not(status_id: Status.find_by_name('Cancelado')).count > self.service.capacity
-								if !self.is_session || (self.is_session && self.is_session_booked)
+								if !self.is_session || (self.is_session && self.is_session_booked) and (!provider_booking.is_session || (provider_booking.is_session && provider_booking.is_session_booked))
 									warnings.add(:base, "La capacidad del servicio grupal está sobre su límite")
 									return
 								end
@@ -250,12 +252,12 @@ class Booking < ActiveRecord::Base
 						unless provider_booking.status_id == cancelled_id
 							if (provider_booking.start - self.end) * (self.start - provider_booking.end) > 0
 								if !self.service.group_service || self.service_id != provider_booking.service_id
-									if !self.is_session || (self.is_session && self.is_session_booked)
+									if !self.is_session || (self.is_session && self.is_session_booked) and (!provider_booking.is_session || (provider_booking.is_session && provider_booking.is_session_booked))
 										errors.add(:base, "La hora seleccionada ya está reservada para el prestador elegido")
 										return
 									end
 								elsif self.service.group_service && self.service_id == provider_booking.service_id && self.service_provider.bookings.where(:service_id => self.service_id, :start => self.start).where.not(status_id: Status.find_by_name('Cancelado')).count > self.service.capacity
-									if !self.is_session || (self.is_session && self.is_session_booked)
+									if !self.is_session || (self.is_session && self.is_session_booked) and (!provider_booking.is_session || (provider_booking.is_session && provider_booking.is_session_booked))
 										errors.add(:base, "La capacidad del servicio grupal ya llegó a su límite")
 										return
 									end

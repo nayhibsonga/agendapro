@@ -112,16 +112,16 @@
         loadHourModal();
     });
 
-    $('[name="providerOptimizerSelector"]').on('change', function(){
+    $('select[name="providerOptimizerSelector"]').on('change', function(){
 
         var href_str = $('[data-toggle="calendarModal"]').attr('href').split("&");
-        var new_href = href_str[0] + "&service_provider_id=" + $('[name="providerOptimizerSelector"]').val();
+        var new_href = href_str[0] + "&service_provider_id=" + $('select[name="providerOptimizerSelector"]').val();
         $('[data-toggle="calendarModal"]').attr('href', new_href);
     });
 
     $(document).ready(function(){
 
-        $('[name="providerOptimizerSelector"]').trigger("change");
+        $('select[name="providerOptimizerSelector"]').trigger("change");
 
         $("#optimizerDateSelector" + booking_id).datepicker({
             autoSize: true,
@@ -182,7 +182,7 @@
         var selects = [];
         
         var service = $("#selectedService").val();
-        var provider = $('[name="providerOptimizerSelector').val();
+        var provider = $('select[name="providerOptimizerSelector"]').val();
 
         selects.push({
           service: service,
