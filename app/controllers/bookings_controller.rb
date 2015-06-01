@@ -1465,7 +1465,7 @@ class BookingsController < ApplicationController
           next
         end
       end
-      service_provider.bookings.where("bookings.start < ?", buffer_params[:end].to_datetime).where("bookings.end > ?", buffer_params[:start].to_datetime).each do |provider_booking|
+      service_provider.bookings.where("bookings.start < ?", buffer_params[:end].to_datetime).where("bookings.end > ?", buffer_params[:start].to_datetime).where('bookings.is_session = false or (bookings.is_session = true and bookings.is_session_booked = true)').each do |provider_booking|
         unless provider_booking.status_id == cancelled_id
           if (provider_booking.start.to_datetime - buffer_params[:end].to_datetime) * (buffer_params[:start].to_datetime - provider_booking.end.to_datetime) > 0
             if !service.group_service || buffer_params[:service].to_i != provider_booking.service_id
@@ -1596,14 +1596,13 @@ class BookingsController < ApplicationController
         if @booking.save
           current_user ? user = current_user.id : user = 0
           BookingHistory.create(booking_id: @booking.id, action: "Creada por Cliente", start: @booking.start, status_id: @booking.status_id, service_id: @booking.service_id, service_provider_id: @booking.service_provider_id, user_id: user, notes: @booking.notes, company_comment: @booking.company_comment)
+          if first_booking.nil?
+            first_booking = @booking
+          end
         else
           @errors << @booking.errors.full_messages
           @blocked_bookings << @booking.service.name + " con " + @booking.service_provider.public_name + " el " + I18n.l(@booking.start.to_datetime)
         end
-      end
-
-      if first_booking.nil?
-        first_booking = @booking
       end
 
     end
@@ -1620,16 +1619,21 @@ class BookingsController < ApplicationController
 
       for i in 0..sessions_missing-1
 
-        new_booking = first_booking.dup
-        new_booking.is_session = true
-        new_booking.session_booking_id = @session_booking.id
-        new_booking.user_session_confirmed = false
-        new_booking.is_session_booked = false
+        if !first_booking.nil?
+          new_booking = first_booking.dup
+          new_booking.is_session = true
+          new_booking.session_booking_id = @session_booking.id
+          new_booking.user_session_confirmed = false
+          new_booking.is_session_booked = false
 
-        if new_booking.save
-          @bookings << new_booking
-          current_user ? user = current_user.id : user = 0
-          BookingHistory.create(booking_id: new_booking.id, action: "Creada por Cliente", start: new_booking.start, status_id: new_booking.status_id, service_id: new_booking.service_id, service_provider_id: new_booking.service_provider_id, user_id: user, notes: new_booking.notes, company_comment: new_booking.company_comment)
+          if new_booking.save
+            @bookings << new_booking
+            current_user ? user = current_user.id : user = 0
+            BookingHistory.create(booking_id: new_booking.id, action: "Creada por Cliente", start: new_booking.start, status_id: new_booking.status_id, service_id: new_booking.service_id, service_provider_id: new_booking.service_provider_id, user_id: user, notes: new_booking.notes, company_comment: new_booking.company_comment)
+          else
+            @errors << new_booking.errors.full_messages
+            @blocked_bookings << new_booking.service.name + " con " + new_booking.service_provider.public_name + " el " + I18n.l(new_booking.start.to_datetime)
+          end
         else
           @errors << new_booking.errors.full_messages
           @blocked_bookings << new_booking.service.name + " con " + new_booking.service_provider.public_name + " el " + I18n.l(new_booking.start.to_datetime)
@@ -1788,16 +1792,56 @@ class BookingsController < ApplicationController
     @errors = params[:errors]
     @bookings = []
 
+    @are_session_bookings = false
+    if @tried_bookings.count > 0
+      if @tried_bookings.first.is_session
+        @are_session_bookings = true
+        session_booking = SessionBooking.find(@tried_bookings.first.session_booking_id)
+        session_booking.delete
+      end
+    end
+
     #If payed, delete them all.
     if @payment == "payment"
+      if @are_session_bookings
+        session_booking = SessionBooking.find(@tried_bookings.first.session_booking_id)
+        session_booking.delete
+      end
       @tried_bookings.each do |booking|
         booking.delete
       end
     else #Create fake bookings and delete the real ones
-      @tried_bookings.each do |booking|
-        fake_booking = Booking.new(booking.attributes.to_options)
-        @bookings << fake_booking
-        booking.delete
+
+      if !@are_session_bookings
+        @tried_bookings.each do |booking|
+          
+            fake_booking = Booking.new(booking.attributes.to_options)
+            @bookings << fake_booking
+            booking.delete
+
+        end
+      else
+
+        booked_correct = Booking.where(:id => params[:bookings]).where(:is_session_booked => true) 
+        service = @tried_bookings.first.service
+
+        session_bookings = SessionBooking.where(:client_id => @tried_bookings.first.client_id)
+
+        @tried_bookings.each do |booking|
+          if booking.is_session_booked
+            fake_booking = Booking.new(booking.attributes.to_options)
+            fake_booking.session_booking_id = nil
+            @bookings << fake_booking
+          end
+          booking.delete
+        end
+
+        session_bookings.each do |sb|
+          if sb.bookings.count == 0
+            sb.delete
+          end
+        end
+
       end
     end
 
