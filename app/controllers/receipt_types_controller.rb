@@ -1,5 +1,8 @@
 class ReceiptTypesController < ApplicationController
   before_action :set_receipt_type, only: [:show, :edit, :update, :destroy]
+  before_action :verify_is_super_admin
+  layout "admin"
+  load_and_authorize_resource
 
   respond_to :html
 

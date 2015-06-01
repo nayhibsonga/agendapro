@@ -776,11 +776,15 @@ class BookingsController < ApplicationController
   # DELETE /bookings/1.json
   def destroy
     status = Status.find_by(:name => 'Cancelado').id
-    @booking.update(status_id: status)
-    # @booking.destroy
     respond_to do |format|
-      format.html { redirect_to bookings_url }
-      format.json { render :json => @booking }
+      if @booking.update(status_id: status)
+        BookingHistory.create(booking_id: @booking.id, action: "Cancelada por Calendario", start: @booking.start, status_id: @booking.status_id, service_id: @booking.service_id, service_provider_id: @booking.service_provider_id, user_id: current_user.id, notes: @booking.notes, company_comment: @booking.company_comment)
+        format.html { redirect_to bookings_url }
+        format.json { render :json => @booking }
+      else
+        format.html { redirect_to bookings_url }
+        format.json { render :json => { :errors => @booking.errors.full_messages }, :status => 422 }
+      end
     end
   end
 

@@ -1,6 +1,6 @@
 FactoryGirl.define do
   factory :payment_method_type do
-    name "MyString"
+    name "VISA"
   end
 
 end

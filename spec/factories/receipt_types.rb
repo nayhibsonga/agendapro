@@ -1,6 +1,6 @@
 FactoryGirl.define do
   factory :receipt_type do
-    name "MyString"
+    name "Boleta"
   end
 
 end
