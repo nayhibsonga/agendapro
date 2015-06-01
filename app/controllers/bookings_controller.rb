@@ -1035,16 +1035,50 @@ class BookingsController < ApplicationController
     @booking.is_session = true
     @booking.is_session_booked = true
     @booking.user_session_confirmed = true
-    if @booking.save
+
+    @response = []
+
+    @errors = []
+
+    @response << @errors
+    @response << @booking
+
+    block_it = false
+    service_provider = ServiceProvider.find(params[:service_provider_id])
+    service = @booking.service
+
+    service_provider.provider_breaks.where("provider_breaks.start < ?", params[:end].to_datetime).where("provider_breaks.end > ?", params[:start].to_datetime).each do |provider_break|
+      if (provider_break.start.to_datetime - params[:end].to_datetime) * (params[:start].to_datetime - provider_break.end.to_datetime) > 0
+        @errors << "Lo sentimos, la hora " + I18n.l(params[:start].to_datetime) + " con " + service_provider.public_name + " está bloqueada."
+        block_it = true
+        next
+      end
+    end
+    service_provider.bookings.where("bookings.start < ?", params[:end].to_datetime).where("bookings.end > ?", params[:start].to_datetime).each do |provider_booking|
+      unless provider_booking.status_id == Status.find_by_name("Cancelado").id
+        if (provider_booking.start.to_datetime - params[:end].to_datetime) * (params[:start].to_datetime - provider_booking.end.to_datetime) > 0
+          if !service.group_service || service.id.to_i != provider_booking.service_id
+            @errors << "Lo sentimos, la hora " + I18n.l(params[:start].to_datetime) + " con " + service_provider.public_name + " ya fue reservada por otro cliente."
+            block_it = true
+            next
+          elsif service.group_service && service.id.to_i == provider_booking.service_id && service_provider.bookings.where(:service_id => service.id, :start => params[:start].to_datetime).where.not(status_id: Status.find_by_name('Cancelado')).count >= service.capacity
+            @errors << "Lo sentimos, la capacidad del servicio grupal " + service.name + " llegó a su límite."
+            block_it = true
+            next
+          end
+        end
+      end
+    end
+
+
+    if !block_it and @booking.save
       @booking.send_session_update_mail
       respond_to do |format|
-        format.json { render :json => @booking }
+        format.json { render :json => @response }
       end
     else
-      @errors = []
-      @errors << "Hubo un error al reservar la sesión."
       respond_to do |format|
-        format.json { render :json => @booking }
+        format.json { render :json => @response }
       end
     end
   end
