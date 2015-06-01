@@ -1988,15 +1988,31 @@ function checkClientSessions()
 
 						if (service.has_sessions)
 						{
-							$("#sessions-info").append('<div session_booking_id="0"><input type="radio" name="sessions-choice" value="0" checked>&nbsp;Generar una nueva reserva y agendar la primera sesión.');
+							if (sessions_bookings.length > 0)
+							{
+								$("#sessions-info").append('<div session_booking_id="0"><input type="radio" name="sessions-choice" value="0" />&nbsp;Generar una nueva reserva y agendar la primera sesión.');
+							}
+							else
+							{
+								$("#sessions-info").append('<div session_booking_id="0"><input type="radio" name="sessions-choice" value="0" checked>&nbsp;Generar una nueva reserva y agendar la primera sesión.');
+							}
 							$("#sessions-row").show();
 							$("#add-service-btn").hide();
 							$("#has_sessions").val("1");
 							if(sessions_bookings.length > 0)
 							{
+								var index = 0;
 								$.each(sessions_bookings, function (key, session_booking) {
 									var nextSession = session_booking.sessions_taken + 1;
-									$("#sessions-info").append('<div session_booking_id="' + session_booking.id + '"><input type="radio" name="sessions-choice" value="' + session_booking.id + '">&nbsp;El cliente ha agendado ' + session_booking.sessions_taken + ' de un total de ' + session_booking.sessions_total +'. Agendar la sesión ' + nextSession + '.');
+									if(index == 0)
+									{
+										$("#sessions-info").append('<div session_booking_id="' + session_booking.id + '"><input type="radio" name="sessions-choice" value="' + session_booking.id + '" checked />&nbsp;El cliente ha agendado ' + session_booking.sessions_taken + ' de un total de ' + session_booking.sessions_total +'. Agendar la sesión ' + nextSession + '.');
+									}
+									else
+									{
+										$("#sessions-info").append('<div session_booking_id="' + session_booking.id + '"><input type="radio" name="sessions-choice" value="' + session_booking.id + '">&nbsp;El cliente ha agendado ' + session_booking.sessions_taken + ' de un total de ' + session_booking.sessions_total +'. Agendar la sesión ' + nextSession + '.');
+									}
+									index = index + 1;
 								});
 							}
 						}
