@@ -12,9 +12,10 @@ function updateCompany () {
 		contentType: false,
 		processData: false,
 		success: function (result) {
-			window.console.log(result);
 			d = new Date();
-			$('#company_logo_img').attr("src", result+"?ts="+d.getTime());
+			if (result != null && result != "null") {
+				$('#company_logo_img').attr("src", result+"?ts="+d.getTime());
+			}
 			initializeStep2();
 			$('#fieldset_step2').show();
 			$('#fieldset_step2').attr('disabled', false);
