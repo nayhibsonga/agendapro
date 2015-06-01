@@ -2152,7 +2152,7 @@ class BookingsController < ApplicationController
       @bookings.each do |book|
         if book.update(status_id: status)
           current_user ? user = current_user.id : user = 0
-          BookingHistory.create(booking_id: book.id, action: "Cancelada por Cliente", start: book.start, status_id: book.status_id, service_id: book.service_id, service_provider_id: book.service_provider_id, user_id: user, notes: @booking.notes, company_comment: @booking.company_comment)
+          BookingHistory.create(booking_id: book.id, action: "Cancelada por Cliente", start: book.start, status_id: book.status_id, service_id: book.service_id, service_provider_id: book.service_provider_id, user_id: user, notes: book.notes, company_comment: book.company_comment)
         else
           success = false
         end
