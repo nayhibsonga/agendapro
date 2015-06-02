@@ -153,6 +153,8 @@ function loadStep2 () {
 			$("#sessions-explanation-total").html(sessions_left);
 			$("#sessions-explanation").modal('show');
 
+			$("#has_sessions").val("1");
+
 			if(sessions_left < 2)
 			{
 				$(".btn-add-session").attr("disabled", "disabled");
@@ -167,6 +169,7 @@ function loadStep2 () {
 		else
 		{
 			first_session = null;
+			$("#has_sessions").val("0");
 			$(".sessions-bar").hide();
 			$(".btn-add-service").attr("disabled", false);
 			$(".btn-add-service").show();
@@ -349,6 +352,16 @@ function loadStep2 () {
 }
 
 function loadStep3 () {
+
+	if($("#has_sessions").val() == "1")
+	{
+		//If it has sessions and first is not set, then the only booking is the first session
+		if (booking_buffer.length == 0)
+		{
+			first_session = actual_booking;
+		}
+	}
+
 	if ($('#clientExclusive').data('client-exclusive')) {
 		$('#identificationNumber').show();
 		$('#full_name').prop('disabled', true);
@@ -480,9 +493,11 @@ function loadStep3 () {
 			}
 			else
 			{
+
 				sessions_buffer.push(actual_booking);
+				
 				booking_buffer = [];
-				booking_buffer.push(first_session);
+
 				for(i=0; i < sessions_buffer.length; i++)
 				{
 					booking_buffer.push(sessions_buffer[i]);
@@ -595,15 +610,15 @@ function loadStep3 () {
 				$('#summary').append(
 					'<tr>' +
 						'<td class="dark-gray">Sesiones</td>' +
-						'<td class="light-gray">' + (sessions_buffer.length + 1) + ' agendadas de ' + first_session.sessions_amount + '</td>' +
+						'<td class="light-gray">' + (sessions_buffer.length) + ' agendadas de ' + first_session.sessions_amount + '</td>' +
 					'</tr>'
 				);
-				$('#summary').append(
+				/*$('#summary').append(
 					'<tr>' +
 						'<td class="dark-gray">Detalle</td>' +
 						'<td class="light-gray">' + formattedTime(first_session.start) + ', con ' + first_session.provider_name + '</td>' +
 					'</tr>'						
-				);
+				);*/
 				if(sessions_buffer.length > 0)
 				{
 					
@@ -704,18 +719,37 @@ function scrollEvents (direction) {
 	else if (direction == 'prev') {
 		if (step == 3) {
 			step = 2;
-			sessions_buffer = [];
+			//sessions_buffer = [];
 			
-			if(first_session == null)
+			booking_buffer.pop();
+			if(first_session != null)
 			{
-				booking_buffer.pop();
+				sessions_buffer.pop();
 			}
-			else
+			if(sessions_buffer.length == 0)
 			{
 				first_session = null;
+			}
+
+			console.log("Sesiones: " + sessions_buffer.length);
+			console.log("Bookings: " + booking_buffer.length);
+			var active_hour = $(".hora-activo");
+			active_hour.removeClass("hora-activo");
+			active_hour.removeClass("hora-ocupado");
+			active_hour.addClass("hora-disponible");
+
+			blockBookingBufferHour();
+
+		}
+		else if(step == 2)
+		{
+			step = 1;
+			if(first_session != null || $("#has_sessions").val() == "1")
+			{
+				sessions_buffer = [];
 				booking_buffer = [];
 			}
-		};
+		}
 		return true;
 	}
 }
@@ -948,12 +982,13 @@ function formattedTime (timestamp) {
 
 function blockBookingBufferHour () {
 
+
 	for (i = 0; i < booking_buffer.length; i++) {
 		console.log("For " + i);
 		/*if($('[name="staffRadio"]').val() != "0" && ($('[name="staffRadio"]').val() == booking_buffer[i].service_provider_id || parseInt($('[name="staffRadio"]').val()) == booking_buffer[i].service_provider_id))
 		{*/
 			var date = booking_buffer[i].start.split(' ')[0];
-			var hourBlocks = $('.columna-dia[data-date="' + date + '"]').children('.bloque-hora.hora-disponible');
+			var hourBlocks = $('.columna-dia[data-date="' + date + '"]').children('.bloque-hora.bloque-disponible');
 			$.each(hourBlocks, function (key, hourBlock) {
 				var start = $(hourBlock).data('start');
 				var end = $(hourBlock).data('end');
@@ -978,17 +1013,19 @@ function blockBookingBufferHour () {
 					$(hourBlock).removeClass('hora-disponible');
 					$(hourBlock).removeClass('hora-activo');
 					$(hourBlock).addClass('hora-ocupada');
-				};
+				}
+				/*else
+				{
+					$(hourBlock).removeClass('hora-ocupada');
+					$(hourBlock).removeClass('hora-activo');
+					$(hourBlock).addClass('hora-disponible');
+				}*/
 			});
 			$("#foo4").trigger('update');
-		/*}
-		else
-		{
 
-		}*/
-	};
+	}
 
-	sessions_array = []
+	/*sessions_array = []
 	if (first_session != null)
 	{
 		sessions_array.push(first_session);
@@ -996,22 +1033,22 @@ function blockBookingBufferHour () {
 	for(i=0; i < sessions_buffer.length; i++)
 	{
 		sessions_array.push(sessions_buffer[i]);
-	}
+	}*/
 
-	for(i=0; i < sessions_array.length; i++)
+	for(i=0; i < sessions_buffer.length; i++)
 	{
 
-		var date = sessions_array[i].start.split(' ')[0];
-		var hourBlocks = $('.columna-dia[data-date="' + date + '"]').children('.bloque-hora.hora-disponible');
+		var date = sessions_buffer[i].start.split(' ')[0];
+		var hourBlocks = $('.columna-dia[data-date="' + date + '"]').children('.bloque-hora.bloque-disponible');
 		$.each(hourBlocks, function (key, hourBlock) {
 			var start = $(hourBlock).data('start');
 			var end = $(hourBlock).data('end');
 
-			var start_arr = sessions_array[i].start.split(" ");
+			var start_arr = sessions_buffer[i].start.split(" ");
 			var start_date = start_arr[0].split("-");
 			var start_time = start_arr[1].split(":");
 
-			var end_arr = sessions_array[i].end.split(" ");
+			var end_arr = sessions_buffer[i].end.split(" ");
 			var end_date = end_arr[0].split("-");
 			var end_time = end_arr[1].split(":");
 
@@ -1027,7 +1064,13 @@ function blockBookingBufferHour () {
 				$(hourBlock).removeClass('hora-disponible');
 				$(hourBlock).removeClass('hora-activo');
 				$(hourBlock).addClass('hora-ocupada');
-			};
+			}
+			/*else
+			{
+				$(hourBlock).removeClass('hora-ocupada');
+				$(hourBlock).removeClass('hora-activo');
+				$(hourBlock).addClass('hora-disponible');
+			}*/
 		});
 		$("#foo4").trigger('update');			
 	}
@@ -1052,15 +1095,14 @@ function addNewSession() {
 		else {
 
 
-			//booking_buffer.push(actual_booking);
+
 			if(first_session == null)
 			{
 				first_session = actual_booking;
 			}
-			else
-			{
-				sessions_buffer.push(actual_booking);
-			}
+
+			sessions_buffer.push(actual_booking);
+
 
 			var hourBlock = $(".hora-activo");
 			$(hourBlock).removeClass('hora-disponible');
