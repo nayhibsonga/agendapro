@@ -63,11 +63,11 @@
             </div>
         </div>
         <div class="modal-footer">
-            <button type="button" class="btn btn-green pull-left" id="addButton" style="display: none;"><i class="fa fa-plus"></i>&nbsp;<span>Ver más resultados</span></button>
-            <button type="button" class="btn session-btn btn-orange" id="optimizerBackBtn" style="display: none;"><i class="fa fa-chevron-left"></i>&nbsp;Atrás</button>
-            <button type="button" class="btn session-btn btn-green" id="nextButton" style="display: none;">Reservar&nbsp;<i class="fa fa-chevron-right"></i></button>
-            <button type="button" class="btn session-btn" data-toggle="calendarModal" href="sessions_calendar?id=<%= @booking.id %>&service_provider_id=" id="openCalendarBtn"><i class="fa fa-calendar-o"></i>&nbsp;Ver calendario</button>
-            <button type="button" class="btn session-btn" id="openOptimizerBtn"><i class="fa fa-calendar-o"></i>&nbsp;Sugerir hora</button>
+            <button type="button" class="btn btn-green pull-left" id="addButton" style="display: none;" disabled><i class="fa fa-plus"></i>&nbsp;<span>Ver más resultados</span></button>
+            <button type="button" class="btn session-btn btn-orange" id="optimizerBackBtn" style="display: none;" disabled><i class="fa fa-chevron-left"></i>&nbsp;Atrás</button>
+            <button type="button" class="btn session-btn btn-green" id="nextButton" style="display: none;" disabled>Reservar&nbsp;<i class="fa fa-chevron-right"></i></button>
+            <button type="button" class="btn session-btn" data-toggle="calendarModal" href="sessions_calendar?id=<%= @booking.id %>&service_provider_id=" id="openCalendarBtn" disabled><i class="fa fa-calendar-o"></i>&nbsp;Ver calendario</button>
+            <button type="button" class="btn session-btn" id="openOptimizerBtn" disabled><i class="fa fa-calendar-o"></i>&nbsp;Sugerir hora</button>
             <!--<button href="#" class="btn btn-red" data-dismiss="modal">Cerrar</button>-->
         </div>
     </div><!-- /.modal-content -->
@@ -79,6 +79,7 @@
     var myAlert;
     $(document).ready(function(){
         myAlert = new Alert();
+        $(".session-btn").attr("disabled", false);
     });
 
     $('[data-toggle="calendarModal"]').on('click', function(e) {

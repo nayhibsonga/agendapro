@@ -67,8 +67,8 @@
           </div>
         </div>
         <div class="modal-footer">
-            <button type="button" class="btn session-btn btn-orange" id="optimizerBackBtn" style="display: none;"><i class="fa fa-chevron-left"></i>&nbsp;Atrás</button>
-            <button type="button" class="btn session-btn btn-green" id="nextButton" style="display: none;">Reservar&nbsp;<i class="fa fa-chevron-right"></i></button>
+            <button type="button" class="btn session-btn btn-orange" id="optimizerBackBtn" style="display: none;" disabled><i class="fa fa-chevron-left"></i>&nbsp;Atrás</button>
+            <button type="button" class="btn session-btn btn-green" id="nextButton" style="display: none;" disabled>Reservar&nbsp;<i class="fa fa-chevron-right"></i></button>
             <!--<button href="#" class="btn btn-red" data-dismiss="modal">Cerrar</button>-->
         </div>
     </div><!-- /.modal-content -->
@@ -421,7 +421,7 @@ var myAlert;
 $(document).ready(function(){
   loadCalendar();
   myAlert = new Alert();
-  
+  $(".session-btn").attr("disabled", false);
 });
 
 </script>

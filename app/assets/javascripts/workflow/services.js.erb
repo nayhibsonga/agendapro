@@ -984,44 +984,42 @@ function blockBookingBufferHour () {
 
 
 	for (i = 0; i < booking_buffer.length; i++) {
-		console.log("For " + i);
-		/*if($('[name="staffRadio"]').val() != "0" && ($('[name="staffRadio"]').val() == booking_buffer[i].service_provider_id || parseInt($('[name="staffRadio"]').val()) == booking_buffer[i].service_provider_id))
-		{*/
-			var date = booking_buffer[i].start.split(' ')[0];
-			var hourBlocks = $('.columna-dia[data-date="' + date + '"]').children('.bloque-hora.bloque-disponible');
-			$.each(hourBlocks, function (key, hourBlock) {
-				var start = $(hourBlock).data('start');
-				var end = $(hourBlock).data('end');
 
-				var start_arr = booking_buffer[i].start.split(" ");
-				var start_date = start_arr[0].split("-");
-				var start_time = start_arr[1].split(":");
+		var date = booking_buffer[i].start.split(' ')[0];
+		var hourBlocks = $('.columna-dia[data-date="' + date + '"]').children('.bloque-hora.hora-disponible');
+		$.each(hourBlocks, function (key, hourBlock) {
+			var start = $(hourBlock).data('start');
+			var end = $(hourBlock).data('end');
 
-				var end_arr = booking_buffer[i].end.split(" ");
-				var end_date = end_arr[0].split("-");
-				var end_time = end_arr[1].split(":");
+			var start_arr = booking_buffer[i].start.split(" ");
+			var start_date = start_arr[0].split("-");
+			var start_time = start_arr[1].split(":");
 
-				var bookingStart = new Date(start_date[0], start_date[1]-1, start_date[2], start_time[0], start_time[1], start_time[2], 0);
-				var bookingEnd = new Date(end_date[0], end_date[1]-1, end_date[2], end_time[0], end_time[1], end_time[2], 0);
+			var end_arr = booking_buffer[i].end.split(" ");
+			var end_date = end_arr[0].split("-");
+			var end_time = end_arr[1].split(":");
 
-				var blockStart = new Date(start_date[0], start_date[1]-1, start_date[2], start.split(":")[0], start.split(":")[1], 0, 0);
-				var blockEnd = new Date(end_date[0], end_date[1]-1, end_date[2], end.split(":")[0], end.split(":")[1], 0, 0);
-				
-				//Check for no overlap and negate it.
-				if(!(bookingEnd <= blockStart || blockEnd <= bookingStart))
-				{
-					$(hourBlock).removeClass('hora-disponible');
-					$(hourBlock).removeClass('hora-activo');
-					$(hourBlock).addClass('hora-ocupada');
-				}
-				/*else
-				{
-					$(hourBlock).removeClass('hora-ocupada');
-					$(hourBlock).removeClass('hora-activo');
-					$(hourBlock).addClass('hora-disponible');
-				}*/
-			});
-			$("#foo4").trigger('update');
+			var bookingStart = new Date(start_date[0], start_date[1]-1, start_date[2], start_time[0], start_time[1], start_time[2], 0);
+			var bookingEnd = new Date(end_date[0], end_date[1]-1, end_date[2], end_time[0], end_time[1], end_time[2], 0);
+
+			var blockStart = new Date(start_date[0], start_date[1]-1, start_date[2], start.split(":")[0], start.split(":")[1], 0, 0);
+			var blockEnd = new Date(end_date[0], end_date[1]-1, end_date[2], end.split(":")[0], end.split(":")[1], 0, 0);
+			
+			//Check for no overlap and negate it.
+			if(!(bookingEnd <= blockStart || blockEnd <= bookingStart))
+			{
+				$(hourBlock).removeClass('hora-disponible');
+				$(hourBlock).removeClass('hora-activo');
+				$(hourBlock).addClass('hora-ocupada');
+			}
+			/*else
+			{
+				$(hourBlock).removeClass('hora-ocupada');
+				$(hourBlock).removeClass('hora-activo');
+				$(hourBlock).addClass('hora-disponible');
+			}*/
+		});
+		$("#foo4").trigger('update');
 
 	}
 
@@ -1039,7 +1037,7 @@ function blockBookingBufferHour () {
 	{
 
 		var date = sessions_buffer[i].start.split(' ')[0];
-		var hourBlocks = $('.columna-dia[data-date="' + date + '"]').children('.bloque-hora.bloque-disponible');
+		var hourBlocks = $('.columna-dia[data-date="' + date + '"]').children('.bloque-hora.hora-disponible');
 		$.each(hourBlocks, function (key, hourBlock) {
 			var start = $(hourBlock).data('start');
 			var end = $(hourBlock).data('end');
