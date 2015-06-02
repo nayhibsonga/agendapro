@@ -1617,42 +1617,6 @@ class BookingsController < ApplicationController
 
     end
 
-
-    #Add bookings for all the sessions that where not booked
-    if @has_session_booking
-
-      #@session_booking.sessions_taken = @bookings.size
-      sessions_missing = session_service.sessions_amount - @bookings.size
-      @session_booking.sessions_taken = @bookings.size
-      @session_booking.save
-      
-
-      for i in 0..sessions_missing-1
-
-        if !first_booking.nil?
-          new_booking = first_booking.dup
-          new_booking.is_session = true
-          new_booking.session_booking_id = @session_booking.id
-          new_booking.user_session_confirmed = false
-          new_booking.is_session_booked = false
-
-          if new_booking.save
-            @bookings << new_booking
-            current_user ? user = current_user.id : user = 0
-            BookingHistory.create(booking_id: new_booking.id, action: "Creada por Cliente", start: new_booking.start, status_id: new_booking.status_id, service_id: new_booking.service_id, service_provider_id: new_booking.service_provider_id, user_id: user, notes: new_booking.notes, company_comment: new_booking.company_comment)
-          else
-            @errors << new_booking.errors.full_messages
-            @blocked_bookings << new_booking.service.name + " con " + new_booking.service_provider.public_name + " el " + I18n.l(new_booking.start.to_datetime)
-          end
-        else
-          @errors << new_booking.errors.full_messages
-          @blocked_bookings << new_booking.service.name + " con " + new_booking.service_provider.public_name + " el " + I18n.l(new_booking.start.to_datetime)
-        end
-      end
-
-    end
-
-
     #If they can be payed, redirect to payment_process,
     #then check for error or send notifications mails.
     if group_payment
@@ -1672,6 +1636,11 @@ class BookingsController < ApplicationController
           if booking.save
             current_user ? user = current_user.id : user = 0
             BookingHistory.create(booking_id: booking.id, action: "Creada por Cliente", start: booking.start, status_id: booking.status_id, service_id: booking.service_id, service_provider_id: booking.service_provider_id, user_id: user, notes: booking.notes, company_comment: booking.company_comment)
+
+            if first_booking.nil?
+              first_booking = booking
+            end
+
           else
             @errors << booking.errors.full_messages
             proceed_with_payment = false
@@ -1715,6 +1684,40 @@ class BookingsController < ApplicationController
         puts resp.get_error
         redirect_to punto_pagos_failure_path and return
       end
+    end
+
+    #Add bookings for all the sessions that where not booked
+    if @has_session_booking
+
+      #@session_booking.sessions_taken = @bookings.size
+      sessions_missing = session_service.sessions_amount - @bookings.size
+      @session_booking.sessions_taken = @bookings.size
+      @session_booking.save
+      
+
+      for i in 0..sessions_missing-1
+
+        if !first_booking.nil?
+          new_booking = first_booking.dup
+          new_booking.is_session = true
+          new_booking.session_booking_id = @session_booking.id
+          new_booking.user_session_confirmed = false
+          new_booking.is_session_booked = false
+
+          if new_booking.save
+            @bookings << new_booking
+            current_user ? user = current_user.id : user = 0
+            BookingHistory.create(booking_id: new_booking.id, action: "Creada por Cliente", start: new_booking.start, status_id: new_booking.status_id, service_id: new_booking.service_id, service_provider_id: new_booking.service_provider_id, user_id: user, notes: new_booking.notes, company_comment: new_booking.company_comment)
+          else
+            @errors << new_booking.errors.full_messages
+            @blocked_bookings << new_booking.service.name + " con " + new_booking.service_provider.public_name + " el " + I18n.l(new_booking.start.to_datetime)
+          end
+        else
+          @errors << "No existen sesiones agendadas."
+          @blocked_bookings << "No existen sesiones agendadas."
+        end
+      end
+
     end
 
     str_payment = "book"
