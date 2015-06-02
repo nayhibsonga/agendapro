@@ -97,7 +97,8 @@
 			success: function(response)
 			{
 				$('.session-row[booking_id="' + booking_id + '"]').remove();
-				$("#session-booking-select").trigger("change");
+				//$("#session-booking-select").trigger("change");
+				loadSessions();
 			},
 			error: function(response)
 			{
@@ -115,7 +116,8 @@
 			data: {id: booking_id},
 			success: function(response)
 			{
-				$("#session-booking-select").trigger("change");
+				//$("#session-booking-select").trigger("change");
+				loadSessions();
 			},
 			error: function(response)
 			{

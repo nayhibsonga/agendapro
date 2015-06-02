@@ -390,7 +390,8 @@ $("#nextButton").click(function(){
                 {
                     $("#calendarModal").modal('hide');
                     $('#calendarModal').remove();
-                    $("#session-booking-select").trigger("change");
+                    //$("#session-booking-select").trigger("change");
+                    loadSessions();
                 }
                 else
                 {
@@ -401,6 +402,7 @@ $("#nextButton").click(function(){
                       '<h3>Error al reservar</h3>' +
                       '<p>' + response[0][0] + '</p>'
                     );
+                    loadSessions();
                 }
             },
             error: function(xhr)

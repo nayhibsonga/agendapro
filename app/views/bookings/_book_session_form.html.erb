@@ -319,7 +319,8 @@
                     {
                         $("#bookModal").modal('hide');
                         $('#bookModal').remove();
-                        $("#session-booking-select").trigger("change");
+                        //$("#session-booking-select").trigger("change");
+                        loadSessions();
                     }
                     else
                     {
@@ -330,6 +331,7 @@
                           '<h3>Error al reservar</h3>' +
                           '<p>' + response[0][0] + '</p>'
                         );
+                        loadSessions();
                     }
                 },
                 error: function(xhr)
