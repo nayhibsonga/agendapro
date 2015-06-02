@@ -1,18 +1,5 @@
 Agendapro::Application.routes.draw do
 
-
-  resources :payments
-
-  resources :payment_method_types
-
-  resources :receipt_types
-
-  resources :company_payment_methods
-
-  resources :payment_methods
-
-  resources :deals
-
   get "users/index"
   require 'subdomain'
 
@@ -55,11 +42,16 @@ Agendapro::Application.routes.draw do
 
   resources :numeric_parameters
 
-  resources :clients
   resources :deals
 
   resources :payed_bookings
   resources :banks
+
+  resources :payments
+  resources :payment_method_types
+  resources :receipt_types
+  resources :company_payment_methods
+  resources :payment_methods
 
   namespace :admin do
     get '', :to => 'dashboard#index', :as => '/'

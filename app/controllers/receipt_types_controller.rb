@@ -25,13 +25,17 @@ class ReceiptTypesController < ApplicationController
 
   def create
     @receipt_type = ReceiptType.new(receipt_type_params)
-    @receipt_type.save
-    respond_with(@receipt_type)
+    flash[:notice] = "Tipo de Comprobante de Pago creado." if @receipt_type.save
+    respond_with(@receipt_type) do |format|
+      format.html { redirect_to receipt_types_path }
+    end
   end
 
   def update
-    @receipt_type.update(receipt_type_params)
-    respond_with(@receipt_type)
+    flash[:notice] = "Tipo de Comprobante de Pago editado." if @receipt_type.update(receipt_type_params)
+    respond_with(@receipt_type) do |format|
+      format.html { redirect_to receipt_types_path }
+    end
   end
 
   def destroy

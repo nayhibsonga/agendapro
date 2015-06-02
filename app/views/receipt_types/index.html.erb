@@ -1,27 +1,35 @@
-<h1>Listing receipt_types</h1>
-
-<table>
-  <thead>
-    <tr>
-      <th>Name</th>
-      <th></th>
-      <th></th>
-      <th></th>
-    </tr>
-  </thead>
-
-  <tbody>
-    <% @receipt_types.each do |receipt_type| %>
-      <tr>
-        <td><%= receipt_type.name %></td>
-        <td><%= link_to 'Show', receipt_type %></td>
-        <td><%= link_to 'Edit', edit_receipt_type_path(receipt_type) %></td>
-        <td><%= link_to 'Destroy', receipt_type, method: :delete, data: { confirm: 'Are you sure?' } %></td>
-      </tr>
-    <% end %>
-  </tbody>
-</table>
-
-<br>
-
-<%= link_to 'New Receipt type', new_receipt_type_path %>
+<div class="container-fluid background-grey">
+  <div class="row">
+    <div class="col-md-12">
+      <h2 class="text-green">
+        Tipos de Comprobantes de Pago
+        <%= link_to '<i class="fa fa-plus"></i> Nuevo Tipo'.html_safe, new_receipt_type_path, :class => "btn btn-green pull-right" %>
+      </h2>
+    </div>
+  </div>
+</div>
+<div class="container-fluid tab-margin">
+  <div class="row">
+    <div class="col-md-12">
+      <table class="table table-green">
+        <thead>
+          <tr>
+            <th>Nombre</th>
+            <th>Opciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @receipt_types.each do |receipt_type| %>
+            <tr>
+              <td><%= receipt_type.name %></td>
+              <td>
+                <%= link_to '<i class="fa fa-pencil"></i> Editar'.html_safe, edit_receipt_type_path(receipt_type), :class => "btn btn-orange" %>
+                <%= link_to '<i class="fa fa-trash-o"></i> Eliminar'.html_safe, receipt_type, :class => "btn btn-red", method: :delete, data: { confirm: '¿Estás seguro?' } %>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

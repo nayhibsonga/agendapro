@@ -1,5 +1,6 @@
 class CompanyPaymentMethodsController < ApplicationController
   before_action :set_company_payment_method, only: [:show, :edit, :update, :destroy]
+  before_action :authenticate_user!
 
   respond_to :html
 
