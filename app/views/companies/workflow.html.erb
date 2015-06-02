@@ -282,14 +282,14 @@
                 </div>
               </div>
             </div>
-            <div class="row sessions-bar" style="display: none;">
+            <!--<div class="row sessions-bar" style="display: none;">
               <div class="col-xs-12 col-md-2">
                 <a class="btn btn-large btn-green btn-add-session" style="padding: 5px 12px; margin-right: 10px; font-size: 20px;" onclick="addNewSession()"><i class="fa fa-plus"></i> Agregar Sesión</a>
               </div>
               <div class="col-xs-12 col-md-10">
                 Puedes agendar hasta <span id="sessions-left"></span> sesiones más. Las sesiones que no agendes podrán ser agendadas desde tu cuenta AgendaPro o llamando al local elegido.
               </div>
-            </div>
+            </div>-->
             <div class="row change-bar">
               <div class="col-xs-12 col-md-5 col-md-push-2">
                 <p class="p-label"><span class="wf-label label-available">&nbsp;</span> Disponible<span class="wf-label label-past">&nbsp;</span> No Disponible<span class="wf-label label-unavailable">&nbsp;</span> Ocupado</p>
@@ -301,8 +301,27 @@
               </div>
               <div class="col-xs-8 col-md-5">
                 <a class="btn btn-large btn-green btn-add-service" style="padding: 5px 12px; margin-right: 10px; font-size: 20px;" onclick="addNewService()"><i class="fa fa-plus"></i> Agregar Otro Servicio</a>
+                <a class="btn btn-large btn-green btn-add-session sessions-bar" style="padding: 5px 12px; margin-right: 10px; font-size: 20px;" onclick="addNewSession()" style="display: none;"><i class="fa fa-plus"></i> Agregar Sesión</a>
                 <div class="btn-change btn-next">
                   <a class="next2 next-btn">Siguiente <i class="fa fa-chevron-right next-arrow"></i></a>
+                </div>
+              </div>
+            </div>
+            <div class="row sessions-bar">
+              <div class="col-md-3">
+
+              </div>
+              <div class="col-md-9">
+                <div id="sessions-summary">
+                  <div id="sessions-summary-title">
+                    Detalle de reserva
+                    <span id="sessions-summary-subtitle">
+                      Puedes agendar hasta <span id="sessions-left"></span> sesiones más.
+                    </span>
+                  </div>
+                  <div id="sessions-summary-body">
+                    
+                  </div>
                 </div>
               </div>
             </div>

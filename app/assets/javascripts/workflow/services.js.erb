@@ -1093,14 +1093,12 @@ function addNewSession() {
 		else {
 
 
-
 			if(first_session == null)
 			{
 				first_session = actual_booking;
 			}
 
 			sessions_buffer.push(actual_booking);
-
 
 			var hourBlock = $(".hora-activo");
 			$(hourBlock).removeClass('hora-disponible');
@@ -1110,11 +1108,11 @@ function addNewSession() {
 			blockBookingBufferHour();
 
 			sessions_left = sessions_left - 1;
-			myAlert.showAlert(
+			/*myAlert.showAlert(
 				'<h3><i class="fa fa-check fa-green fa-lg"></i>&nbsp;&nbsp;Sesión agregada.</h3>' + 
 				'<p>Has guardado una sesión de ' + actual_booking.service_name + ' con ' + actual_booking.provider_name + ', el día ' +
 				formattedTime(actual_booking.start) + '. Por favor selecciona otro horario para la siguiente sesión. Luego guárdala apretando "Agregar sesión", o haz click en "Siguiente" para reservar las sesiones guardadas y la elegida. Ahora te quedan ' + sessions_left + ' sesiones por agendar. Si deseas, puedes dejar sesiones sin agendar y hacerlo más tarde desde tu cuenta AgendaPro o llamando al local elegido.</p'
-			);
+			);*/
 			$("#sessions-left").empty();
 			$("#sessions-left").text("" + sessions_left);
 			selected = false;
@@ -1126,12 +1124,70 @@ function addNewSession() {
 			{
 				$(".btn-add-session").attr("disabled", false);
 			}
-			//$('input[name=serviceRadio]:checked').prop('checked', false);
-			//$('#services-description').empty();
-			//$('#foo4').trigger('prev');
+			
+			loadSessionsSummary();
+
 		}
 	}
 }
+
+
+function loadSessionsSummary()
+{
+	$("#sessions-summary-body").empty();
+
+	for(i = 0; i < sessions_buffer.length; i++)
+	{
+		$("#sessions-summary-body").append(
+			'<div class="session-summary"><span class="remove-session" index="' + i + '" style="cursor: pointer;"><i class="fa fa-times"></i></span>&nbsp;Sesión ' + (i+1) + '<br />' + sessions_buffer[i].start.split(" ")[0] + '<br />' + sessions_buffer[i].start.split(" ")[1] + '</div>'
+		);
+	}
+
+	$(".remove-session").on('click', function(){
+		console.log("Remove");
+		var sessionIndex = $(this).attr("index");
+		removeSession(sessionIndex);
+	});
+
+	var oldTop = $(document).scrollTop();
+	$('#foo4').trigger('updateSizes');
+	$(document).scrollTop(oldTop);
+}
+
+function removeSession(index)
+{
+	var sessions_aux = [];
+	var removed_session;
+	for(i = 0; i < sessions_buffer.length; i++)
+	{
+		if (i != index)
+		{
+			sessions_aux.push(sessions_buffer[i]);
+		}
+		else
+		{
+			removed_session = sessions_buffer[i];
+		}
+	}
+	sessions_buffer = sessions_aux;
+	
+	var date = removed_session.start.split(' ')[0];
+	var start_time = removed_session.start.split(" ")[1];
+	var start_str = start_time.split(":")[0] + ":" + start_time.split(":")[1];
+	var end_time = removed_session.end.split(" ")[1];
+	var end_str = end_time.split(":")[0] + ":" + end_time.split(":")[1];
+	var hourBlock = $('.columna-dia[data-date="' + date + '"]').children('.bloque-hora[data-start="' + start_str + '"][data-end="' + end_str + '"]');
+
+	sessions_left = sessions_left + 1;
+	$("#sessions-left").html(sessions_left);
+	$(".btn-add-session").attr("disabled", false);
+
+	$(hourBlock).removeClass('hora-ocupada');
+	$(hourBlock).addClass('hora-disponible');
+
+	loadSessionsSummary();
+}
+
 
 function addNewService () {
 	if(!$('[name="staffRadio"]').is(':checked')) {
