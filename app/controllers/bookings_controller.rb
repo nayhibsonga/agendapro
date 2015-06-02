@@ -1900,59 +1900,61 @@ class BookingsController < ApplicationController
     #Revisar si fue pagada en línea.
     #Si lo fue, revisar política de modificación.
     if @booking.payed || !@booking.payed_booking.nil?
-      if !@company.company_setting.online_cancelation_policy.nil?
-        ocp = @company.company_setting.online_cancelation_policy
-        if !ocp.modifiable
-          redirect_to blocked_edit_path(:id => @booking.id, :online => true)
-          return
-        else
-          #Revisar tiempos de modificación, tanto máximo como el mínimo específico para los pagados en línea
-
-          #Mínimo
-          book_start = DateTime.parse(@booking.start.to_s)
-          min_hours = (book_start-now)/(60*60)
-          min_hours = min_hours.to_i.abs
-
-          if min_hours >= ocp.min_hours.to_i
+      if !@booking.is_session
+        if !@company.company_setting.online_cancelation_policy.nil?
+          ocp = @company.company_setting.online_cancelation_policy
+          if !ocp.modifiable
             redirect_to blocked_edit_path(:id => @booking.id, :online => true)
-              return
+            return
+          else
+            #Revisar tiempos de modificación, tanto máximo como el mínimo específico para los pagados en línea
+
+            #Mínimo
+            book_start = DateTime.parse(@booking.start.to_s)
+            min_hours = (book_start-now)/(60*60)
+            min_hours = min_hours.to_i.abs
+
+            if min_hours >= ocp.min_hours.to_i
+              redirect_to blocked_edit_path(:id => @booking.id, :online => true)
+                return
+            end
+
+            #Máximo
+            booking_creation = DateTime.parse(@booking.created_at.to_s)
+            minutes = (booking_creation.to_time - now.to_time)/(60)
+            hours = (booking_creation.to_time - now.to_time)/(60*60)
+            days = (booking_creation.to_time - now.to_time)/(60*60*24)
+            minutes = minutes.to_i.abs
+            hours = hours.to_i.abs
+            days = days.to_i.abs
+            weeks = days/7
+            months = days/30
+
+            #Obtener el máximo
+            num = ocp.modification_max.to_i
+            if ocp.modification_unit == TimeUnit.find_by_unit("Minutos").id
+              if minutes >= num
+                redirect_to blocked_edit_path(:id => @booking.id, :online => true)
+                return
+              end
+            elsif ocp.modification_unit == TimeUnit.find_by_unit("Horas").id
+              if hours >= num
+                redirect_to blocked_edit_path(:id => @booking.id, :online => true)
+                return
+              end
+            elsif ocp.modification_unit == TimeUnit.find_by_unit("Semanas").id
+              if weeks >= num
+                redirect_to blocked_edit_path(:id => @booking.id, :online => true)
+                return
+              end
+            elsif ocp.modification_unit == TimeUnit.find_by_unit("Meses").id
+              if months >= num
+                redirect_to blocked_edit_path(:id => @booking.id, :online => true)
+                return
+              end
+            end
+
           end
-
-          #Máximo
-          booking_creation = DateTime.parse(@booking.created_at.to_s)
-          minutes = (booking_creation.to_time - now.to_time)/(60)
-          hours = (booking_creation.to_time - now.to_time)/(60*60)
-          days = (booking_creation.to_time - now.to_time)/(60*60*24)
-          minutes = minutes.to_i.abs
-          hours = hours.to_i.abs
-          days = days.to_i.abs
-          weeks = days/7
-          months = days/30
-
-          #Obtener el máximo
-          num = ocp.modification_max.to_i
-          if ocp.modification_unit == TimeUnit.find_by_unit("Minutos").id
-            if minutes >= num
-              redirect_to blocked_edit_path(:id => @booking.id, :online => true)
-              return
-            end
-          elsif ocp.modification_unit == TimeUnit.find_by_unit("Horas").id
-            if hours >= num
-              redirect_to blocked_edit_path(:id => @booking.id, :online => true)
-              return
-            end
-          elsif ocp.modification_unit == TimeUnit.find_by_unit("Semanas").id
-            if weeks >= num
-              redirect_to blocked_edit_path(:id => @booking.id, :online => true)
-              return
-            end
-          elsif ocp.modification_unit == TimeUnit.find_by_unit("Meses").id
-            if months >= num
-              redirect_to blocked_edit_path(:id => @booking.id, :online => true)
-              return
-            end
-          end
-
         end
       end
     end
@@ -2241,66 +2243,68 @@ class BookingsController < ApplicationController
       # Revisar si fue pagada en línea.
       # Si lo fue, revisar política de modificación.
       if @booking.payed || !@booking.payed_booking.nil?
-        if !@company.company_setting.online_cancelation_policy.nil?
-          ocp = @company.company_setting.online_cancelation_policy
-          if !ocp.cancelable
-            redirect_to blocked_cancel_path(:id => @booking.id, :online => true)
-            return
-          else
-
-            # No permitir cancelar una particular si fueron pagadas varias juntas.
-            # Puede cancelar todas o ninguna.
-            if @booking.payed_booking.bookings.count > 1
-              redirect_to blocked_cancel_path(:id => @booking.id, :online => true, :only_booking => true)
-              return
-            end
-
-            #Revisar tiempos de modificación, tanto máximo como el mínimo específico para los pagados en línea
-            #Mínimo
-            book_start = DateTime.parse(@booking.start.to_s)
-            min_hours = (book_start-now)/(60*60)
-            min_hours = min_hours.to_i.abs
-
-            if min_hours >= ocp.min_hours.to_i
+        if !@booking.is_session
+          if !@company.company_setting.online_cancelation_policy.nil?
+            ocp = @company.company_setting.online_cancelation_policy
+            if !ocp.cancelable
               redirect_to blocked_cancel_path(:id => @booking.id, :online => true)
+              return
+            else
+
+              # No permitir cancelar una particular si fueron pagadas varias juntas.
+              # Puede cancelar todas o ninguna.
+              if @booking.payed_booking.bookings.count > 1
+                redirect_to blocked_cancel_path(:id => @booking.id, :online => true, :only_booking => true)
                 return
+              end
+
+              #Revisar tiempos de modificación, tanto máximo como el mínimo específico para los pagados en línea
+              #Mínimo
+              book_start = DateTime.parse(@booking.start.to_s)
+              min_hours = (book_start-now)/(60*60)
+              min_hours = min_hours.to_i.abs
+
+              if min_hours >= ocp.min_hours.to_i
+                redirect_to blocked_cancel_path(:id => @booking.id, :online => true)
+                  return
+              end
+
+              #Máximo
+              booking_creation = DateTime.parse(@booking.created_at.to_s)
+              minutes = (booking_creation.to_time - now.to_time)/(60)
+              hours = (booking_creation.to_time - now.to_time)/(60*60)
+              days = (booking_creation.to_time - now.to_time)/(60*60*24)
+              minutes = minutes.to_i.abs
+              hours = hours.to_i.abs
+              days = days.to_i.abs
+              weeks = days/7
+              months = days/30
+
+              #Obtener el máximo
+              num = ocp.cancel_max.to_i
+              if ocp.cancel_unit == TimeUnit.find_by_unit("Minutos").id
+                if minutes >= num
+                  redirect_to blocked_cancel_path(:id => @booking.id, :online => true)
+                  return
+                end
+              elsif ocp.cancel_unit == TimeUnit.find_by_unit("Horas").id
+                if hours >= num
+                  redirect_to blocked_cancel_path(:id => @booking.id, :online => true)
+                  return
+                end
+              elsif ocp.cancel_unit == TimeUnit.find_by_unit("Semanas").id
+                if weeks >= num
+                  redirect_to blocked_cancel_path(:id => @booking.id, :online => true)
+                  return
+                end
+              elsif ocp.cancel_unit == TimeUnit.find_by_unit("Meses").id
+                if months >= num
+                  redirect_to blocked_cancel_path(:id => @booking.id, :online => true)
+                  return
+                end
+              end
+
             end
-
-            #Máximo
-            booking_creation = DateTime.parse(@booking.created_at.to_s)
-            minutes = (booking_creation.to_time - now.to_time)/(60)
-            hours = (booking_creation.to_time - now.to_time)/(60*60)
-            days = (booking_creation.to_time - now.to_time)/(60*60*24)
-            minutes = minutes.to_i.abs
-            hours = hours.to_i.abs
-            days = days.to_i.abs
-            weeks = days/7
-            months = days/30
-
-            #Obtener el máximo
-            num = ocp.cancel_max.to_i
-            if ocp.cancel_unit == TimeUnit.find_by_unit("Minutos").id
-              if minutes >= num
-                redirect_to blocked_cancel_path(:id => @booking.id, :online => true)
-                return
-              end
-            elsif ocp.cancel_unit == TimeUnit.find_by_unit("Horas").id
-              if hours >= num
-                redirect_to blocked_cancel_path(:id => @booking.id, :online => true)
-                return
-              end
-            elsif ocp.cancel_unit == TimeUnit.find_by_unit("Semanas").id
-              if weeks >= num
-                redirect_to blocked_cancel_path(:id => @booking.id, :online => true)
-                return
-              end
-            elsif ocp.cancel_unit == TimeUnit.find_by_unit("Meses").id
-              if months >= num
-                redirect_to blocked_cancel_path(:id => @booking.id, :online => true)
-                return
-              end
-            end
-
           end
         end
       end
@@ -2343,59 +2347,61 @@ class BookingsController < ApplicationController
       #Revisar si fue pagada en línea.
       #Si lo fue, revisar política de modificación.
       if @booking.payed || !@booking.payed_booking.nil?
-        if !@company.company_setting.online_cancelation_policy.nil?
-          ocp = @company.company_setting.online_cancelation_policy
-          if !ocp.cancelable
-            redirect_to blocked_cancel_path(:id => @booking.id, :online => true)
-            return
-          else
-            #Revisar tiempos de modificación, tanto máximo como el mínimo específico para los pagados en línea
-
-            #Mínimo
-            book_start = DateTime.parse(@booking.start.to_s)
-            min_hours = (book_start-now)/(60*60)
-            min_hours = min_hours.to_i.abs
-
-            if min_hours >= ocp.min_hours.to_i
+        if !@booking.is_session
+          if !@company.company_setting.online_cancelation_policy.nil?
+            ocp = @company.company_setting.online_cancelation_policy
+            if !ocp.cancelable
               redirect_to blocked_cancel_path(:id => @booking.id, :online => true)
-                return
+              return
+            else
+              #Revisar tiempos de modificación, tanto máximo como el mínimo específico para los pagados en línea
+
+              #Mínimo
+              book_start = DateTime.parse(@booking.start.to_s)
+              min_hours = (book_start-now)/(60*60)
+              min_hours = min_hours.to_i.abs
+
+              if min_hours >= ocp.min_hours.to_i
+                redirect_to blocked_cancel_path(:id => @booking.id, :online => true)
+                  return
+              end
+
+              #Máximo
+              booking_creation = DateTime.parse(@booking.created_at.to_s)
+              minutes = (booking_creation.to_time - now.to_time)/(60)
+              hours = (booking_creation.to_time - now.to_time)/(60*60)
+              days = (booking_creation.to_time - now.to_time)/(60*60*24)
+              minutes = minutes.to_i.abs
+              hours = hours.to_i.abs
+              days = days.to_i.abs
+              weeks = days/7
+              months = days/30
+
+              #Obtener el máximo
+              num = ocp.cancel_max.to_i
+              if ocp.cancel_unit == TimeUnit.find_by_unit("Minutos").id
+                if minutes >= num
+                  redirect_to blocked_cancel_path(:id => @booking.id, :online => true)
+                  return
+                end
+              elsif ocp.cancel_unit == TimeUnit.find_by_unit("Horas").id
+                if hours >= num
+                  redirect_to blocked_cancel_path(:id => @booking.id, :online => true)
+                  return
+                end
+              elsif ocp.cancel_unit == TimeUnit.find_by_unit("Semanas").id
+                if weeks >= num
+                  redirect_to blocked_cancel_path(:id => @booking.id, :online => true)
+                  return
+                end
+              elsif ocp.cancel_unit == TimeUnit.find_by_unit("Meses").id
+                if months >= num
+                  redirect_to blocked_cancel_path(:id => @booking.id, :online => true)
+                  return
+                end
+              end
+
             end
-
-            #Máximo
-            booking_creation = DateTime.parse(@booking.created_at.to_s)
-            minutes = (booking_creation.to_time - now.to_time)/(60)
-            hours = (booking_creation.to_time - now.to_time)/(60*60)
-            days = (booking_creation.to_time - now.to_time)/(60*60*24)
-            minutes = minutes.to_i.abs
-            hours = hours.to_i.abs
-            days = days.to_i.abs
-            weeks = days/7
-            months = days/30
-
-            #Obtener el máximo
-            num = ocp.cancel_max.to_i
-            if ocp.cancel_unit == TimeUnit.find_by_unit("Minutos").id
-              if minutes >= num
-                redirect_to blocked_cancel_path(:id => @booking.id, :online => true)
-                return
-              end
-            elsif ocp.cancel_unit == TimeUnit.find_by_unit("Horas").id
-              if hours >= num
-                redirect_to blocked_cancel_path(:id => @booking.id, :online => true)
-                return
-              end
-            elsif ocp.cancel_unit == TimeUnit.find_by_unit("Semanas").id
-              if weeks >= num
-                redirect_to blocked_cancel_path(:id => @booking.id, :online => true)
-                return
-              end
-            elsif ocp.cancel_unit == TimeUnit.find_by_unit("Meses").id
-              if months >= num
-                redirect_to blocked_cancel_path(:id => @booking.id, :online => true)
-                return
-              end
-            end
-
           end
         end
       end
@@ -2455,61 +2461,65 @@ class BookingsController < ApplicationController
       #Si lo fue, revisar política de modificación.
       @bookings.each do |booking|
         if booking.payed || !booking.payed_booking.nil?
-          if !@company.company_setting.online_cancelation_policy.nil?
-            ocp = @company.company_setting.online_cancelation_policy
-            if !ocp.cancelable
-              redirect_to blocked_cancel_path(:id => booking.id, :online => true)
-              return
-            else
-              #Revisar tiempos de modificación, tanto máximo como el mínimo específico para los pagados en línea
 
-              #Mínimo
-              book_start = DateTime.parse(booking.start.to_s)
-              min_hours = (book_start-now)/(60*60)
-              min_hours = min_hours.to_i.abs
-
-              if min_hours >= ocp.min_hours.to_i
+          if !booking.is_session
+            if !@company.company_setting.online_cancelation_policy.nil?
+              ocp = @company.company_setting.online_cancelation_policy
+              if !ocp.cancelable
                 redirect_to blocked_cancel_path(:id => booking.id, :online => true)
-                  return
+                return
+              else
+                #Revisar tiempos de modificación, tanto máximo como el mínimo específico para los pagados en línea
+
+                #Mínimo
+                book_start = DateTime.parse(booking.start.to_s)
+                min_hours = (book_start-now)/(60*60)
+                min_hours = min_hours.to_i.abs
+
+                if min_hours >= ocp.min_hours.to_i
+                  redirect_to blocked_cancel_path(:id => booking.id, :online => true)
+                    return
+                end
+
+                #Máximo
+                booking_creation = DateTime.parse(booking.created_at.to_s)
+                minutes = (booking_creation.to_time - now.to_time)/(60)
+                hours = (booking_creation.to_time - now.to_time)/(60*60)
+                days = (booking_creation.to_time - now.to_time)/(60*60*24)
+                minutes = minutes.to_i.abs
+                hours = hours.to_i.abs
+                days = days.to_i.abs
+                weeks = days/7
+                months = days/30
+
+                #Obtener el máximo
+                num = ocp.cancel_max.to_i
+                if ocp.cancel_unit == TimeUnit.find_by_unit("Minutos").id
+                  if minutes >= num
+                    redirect_to blocked_cancel_path(:id => booking.id, :online => true)
+                    return
+                  end
+                elsif ocp.cancel_unit == TimeUnit.find_by_unit("Horas").id
+                  if hours >= num
+                    redirect_to blocked_cancel_path(:id => booking.id, :online => true)
+                    return
+                  end
+                elsif ocp.cancel_unit == TimeUnit.find_by_unit("Semanas").id
+                  if weeks >= num
+                    redirect_to blocked_cancel_path(:id => booking.id, :online => true)
+                    return
+                  end
+                elsif ocp.cancel_unit == TimeUnit.find_by_unit("Meses").id
+                  if months >= num
+                    redirect_to blocked_cancel_path(:id => booking.id, :online => true)
+                    return
+                  end
+                end
+
               end
-
-              #Máximo
-              booking_creation = DateTime.parse(booking.created_at.to_s)
-              minutes = (booking_creation.to_time - now.to_time)/(60)
-              hours = (booking_creation.to_time - now.to_time)/(60*60)
-              days = (booking_creation.to_time - now.to_time)/(60*60*24)
-              minutes = minutes.to_i.abs
-              hours = hours.to_i.abs
-              days = days.to_i.abs
-              weeks = days/7
-              months = days/30
-
-              #Obtener el máximo
-              num = ocp.cancel_max.to_i
-              if ocp.cancel_unit == TimeUnit.find_by_unit("Minutos").id
-                if minutes >= num
-                  redirect_to blocked_cancel_path(:id => booking.id, :online => true)
-                  return
-                end
-              elsif ocp.cancel_unit == TimeUnit.find_by_unit("Horas").id
-                if hours >= num
-                  redirect_to blocked_cancel_path(:id => booking.id, :online => true)
-                  return
-                end
-              elsif ocp.cancel_unit == TimeUnit.find_by_unit("Semanas").id
-                if weeks >= num
-                  redirect_to blocked_cancel_path(:id => booking.id, :online => true)
-                  return
-                end
-              elsif ocp.cancel_unit == TimeUnit.find_by_unit("Meses").id
-                if months >= num
-                  redirect_to blocked_cancel_path(:id => booking.id, :online => true)
-                  return
-                end
-              end
-
             end
           end
+
         end
 
         booking_start = DateTime.parse(booking.start.to_s) - @company.company_setting.before_edit_booking / 24.0
@@ -2542,61 +2552,65 @@ class BookingsController < ApplicationController
 
       @bookings.each do |booking|
         if booking.payed || !booking.payed_booking.nil?
-          if !@company.company_setting.online_cancelation_policy.nil?
-            ocp = @company.company_setting.online_cancelation_policy
-            if !ocp.cancelable
-              redirect_to blocked_cancel_path(:id => booking.id, :online => true)
-              return
-            else
-              #Revisar tiempos de modificación, tanto máximo como el mínimo específico para los pagados en línea
-              now = DateTime.new(DateTime.now.year, DateTime.now.mon, DateTime.now.mday, DateTime.now.hour, DateTime.now.min)
-              #Mínimo
-              book_start = DateTime.parse(booking.start.to_s)
-              min_hours = (book_start-now)/(60*60)
-              min_hours = min_hours.to_i.abs
-
-              if min_hours >= ocp.min_hours.to_i
+          
+          if !booking.is_session
+            if !@company.company_setting.online_cancelation_policy.nil?
+              ocp = @company.company_setting.online_cancelation_policy
+              if !ocp.cancelable
                 redirect_to blocked_cancel_path(:id => booking.id, :online => true)
-                  return
+                return
+              else
+                #Revisar tiempos de modificación, tanto máximo como el mínimo específico para los pagados en línea
+                now = DateTime.new(DateTime.now.year, DateTime.now.mon, DateTime.now.mday, DateTime.now.hour, DateTime.now.min)
+                #Mínimo
+                book_start = DateTime.parse(booking.start.to_s)
+                min_hours = (book_start-now)/(60*60)
+                min_hours = min_hours.to_i.abs
+
+                if min_hours >= ocp.min_hours.to_i
+                  redirect_to blocked_cancel_path(:id => booking.id, :online => true)
+                    return
+                end
+
+                #Máximo
+                booking_creation = DateTime.parse(booking.created_at.to_s)
+                minutes = (booking_creation.to_time - now.to_time)/(60)
+                hours = (booking_creation.to_time - now.to_time)/(60*60)
+                days = (booking_creation.to_time - now.to_time)/(60*60*24)
+                minutes = minutes.to_i.abs
+                hours = hours.to_i.abs
+                days = days.to_i.abs
+                weeks = days/7
+                months = days/30
+
+                #Obtener el máximo
+                num = ocp.cancel_max.to_i
+                if ocp.cancel_unit == TimeUnit.find_by_unit("Minutos").id
+                  if minutes >= num
+                    redirect_to blocked_cancel_path(:id => booking.id, :online => true)
+                    return
+                  end
+                elsif ocp.cancel_unit == TimeUnit.find_by_unit("Horas").id
+                  if hours >= num
+                    redirect_to blocked_cancel_path(:id => booking.id, :online => true)
+                    return
+                  end
+                elsif ocp.cancel_unit == TimeUnit.find_by_unit("Semanas").id
+                  if weeks >= num
+                    redirect_to blocked_cancel_path(:id => booking.id, :online => true)
+                    return
+                  end
+                elsif ocp.cancel_unit == TimeUnit.find_by_unit("Meses").id
+                  if months >= num
+                    redirect_to blocked_cancel_path(:id => booking.id, :online => true)
+                    return
+                  end
+                end
+
               end
-
-              #Máximo
-              booking_creation = DateTime.parse(booking.created_at.to_s)
-              minutes = (booking_creation.to_time - now.to_time)/(60)
-              hours = (booking_creation.to_time - now.to_time)/(60*60)
-              days = (booking_creation.to_time - now.to_time)/(60*60*24)
-              minutes = minutes.to_i.abs
-              hours = hours.to_i.abs
-              days = days.to_i.abs
-              weeks = days/7
-              months = days/30
-
-              #Obtener el máximo
-              num = ocp.cancel_max.to_i
-              if ocp.cancel_unit == TimeUnit.find_by_unit("Minutos").id
-                if minutes >= num
-                  redirect_to blocked_cancel_path(:id => booking.id, :online => true)
-                  return
-                end
-              elsif ocp.cancel_unit == TimeUnit.find_by_unit("Horas").id
-                if hours >= num
-                  redirect_to blocked_cancel_path(:id => booking.id, :online => true)
-                  return
-                end
-              elsif ocp.cancel_unit == TimeUnit.find_by_unit("Semanas").id
-                if weeks >= num
-                  redirect_to blocked_cancel_path(:id => booking.id, :online => true)
-                  return
-                end
-              elsif ocp.cancel_unit == TimeUnit.find_by_unit("Meses").id
-                if months >= num
-                  redirect_to blocked_cancel_path(:id => booking.id, :online => true)
-                  return
-                end
-              end
-
             end
           end
+
         else
           were_payed = false
         end
