@@ -405,15 +405,7 @@ class Booking < ActiveRecord::Base
 
 	def send_validate_mail
 		if !self.id.nil?
-			if self.trx_id == ""
-				if self.start > Time.now - eval(ENV["TIME_ZONE_OFFSET"])
-					if self.status != Status.find_by(:name => "Cancelado")
-						if self.booking_group.nil?
-							BookingMailer.book_service_mail(self)
-						end
-					end
-				end
-			end
+			BookingMailer.book_service_mail(self)
 		end
 	end
 

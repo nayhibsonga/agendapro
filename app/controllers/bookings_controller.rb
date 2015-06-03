@@ -115,7 +115,10 @@ class BookingsController < ApplicationController
           should_create_sessions = true
           session_booking = SessionBooking.new
           #session_booking.sessions_taken = 1
+          serv = Service.find(buffer_params[:service_id])
           session_booking.service_id = buffer_params[:service_id]
+          session_booking.sessions_amount = serv.sessions_amount
+
         end
       end
 
@@ -257,7 +260,7 @@ class BookingsController < ApplicationController
         #Ele if it's an existing session, just save the SessionBooking
         if should_create_sessions
 
-          sessions_missing = session_booking.service.sessions_amount - 1
+          sessions_missing = session_booking.sessions_amount - 1
 
           for i in 0..sessions_missing-1
             new_booking = @booking.dup
@@ -382,7 +385,9 @@ class BookingsController < ApplicationController
           should_create_sessions = true
           session_booking = SessionBooking.new
           #session_booking.sessions_taken = 1
+          serv = Service.find(buffer_params[:service_id])
           session_booking.service_id = buffer_params[:service_id]
+          session_booking.sessions_amount = serv.sessions_amount
         end
       end
 
@@ -529,7 +534,7 @@ class BookingsController < ApplicationController
 
         if should_create_sessions
 
-          sessions_missing = session_booking.service.sessions_amount - 1
+          sessions_missing = session_booking.sessions_amount - 1
 
           for i in 0..sessions_missing-1
             new_booking = @booking.dup
@@ -1450,6 +1455,7 @@ class BookingsController < ApplicationController
         session_service = Service.find(booking_data.first[:service])
         @session_booking.service_id = session_service.id
         @session_booking.client_id = client.id
+        @session_booking.sessions_amount = session_service.sessions_amount
         if user_signed_in?
           @session_booking.user_id = current_user.id
         end
@@ -1690,7 +1696,7 @@ class BookingsController < ApplicationController
     if @has_session_booking
 
       #@session_booking.sessions_taken = @bookings.size
-      sessions_missing = session_service.sessions_amount - @bookings.size
+      sessions_missing = @session_booking.sessions_amount - @bookings.size
       @session_booking.sessions_taken = @bookings.size
       @session_booking.save
       
@@ -2552,7 +2558,7 @@ class BookingsController < ApplicationController
 
       @bookings.each do |booking|
         if booking.payed || !booking.payed_booking.nil?
-          
+
           if !booking.is_session
             if !@company.company_setting.online_cancelation_policy.nil?
               ocp = @company.company_setting.online_cancelation_policy

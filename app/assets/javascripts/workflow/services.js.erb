@@ -151,7 +151,6 @@ function loadStep2 () {
 			$("#sessions-left").text(current_service.sessions_amount);
 			sessions_left = current_service.sessions_amount;
 			$("#sessions-explanation-total").html(sessions_left);
-			$("#sessions-explanation").modal('show');
 
 			$("#has_sessions").val("1");
 
@@ -1012,12 +1011,7 @@ function blockBookingBufferHour () {
 				$(hourBlock).removeClass('hora-activo');
 				$(hourBlock).addClass('hora-ocupada');
 			}
-			/*else
-			{
-				$(hourBlock).removeClass('hora-ocupada');
-				$(hourBlock).removeClass('hora-activo');
-				$(hourBlock).addClass('hora-disponible');
-			}*/
+
 		});
 		$("#foo4").trigger('update');
 
@@ -1063,12 +1057,7 @@ function blockBookingBufferHour () {
 				$(hourBlock).removeClass('hora-activo');
 				$(hourBlock).addClass('hora-ocupada');
 			}
-			/*else
-			{
-				$(hourBlock).removeClass('hora-ocupada');
-				$(hourBlock).removeClass('hora-activo');
-				$(hourBlock).addClass('hora-disponible');
-			}*/
+
 		});
 		$("#foo4").trigger('update');			
 	}
@@ -1108,11 +1097,7 @@ function addNewSession() {
 			blockBookingBufferHour();
 
 			sessions_left = sessions_left - 1;
-			/*myAlert.showAlert(
-				'<h3><i class="fa fa-check fa-green fa-lg"></i>&nbsp;&nbsp;Sesión agregada.</h3>' + 
-				'<p>Has guardado una sesión de ' + actual_booking.service_name + ' con ' + actual_booking.provider_name + ', el día ' +
-				formattedTime(actual_booking.start) + '. Por favor selecciona otro horario para la siguiente sesión. Luego guárdala apretando "Agregar sesión", o haz click en "Siguiente" para reservar las sesiones guardadas y la elegida. Ahora te quedan ' + sessions_left + ' sesiones por agendar. Si deseas, puedes dejar sesiones sin agendar y hacerlo más tarde desde tu cuenta AgendaPro o llamando al local elegido.</p'
-			);*/
+
 			$("#sessions-left").empty();
 			$("#sessions-left").text("" + sessions_left);
 			selected = false;
@@ -1134,12 +1119,20 @@ function addNewSession() {
 
 function loadSessionsSummary()
 {
-	$("#sessions-summary-body").empty();
+	$("#sessions-summary-tr").empty();
 
 	for(i = 0; i < sessions_buffer.length; i++)
 	{
-		$("#sessions-summary-body").append(
-			'<div class="session-summary"><span class="remove-session" index="' + i + '" style="cursor: pointer;"><i class="fa fa-times"></i></span>&nbsp;Sesión ' + (i+1) + '<br />' + sessions_buffer[i].start.split(" ")[0] + '<br />' + sessions_buffer[i].start.split(" ")[1] + '</div>'
+		var sessionStart = sessions_buffer[i].start.split(" ");
+		var sessionStartDate = sessionStart[0].split("-")[2] + "/" + sessionStart[0].split("-")[1] + "/" + sessionStart[0].split("-")[0];
+		var sessionStartTime = sessionStart[1].split(":")[0] + ":" + sessionStart[1].split(":")[1];
+
+		var sessionEnd = sessions_buffer[i].end.split(" ");
+		var sessionEndDate = sessionEnd[0].split("-")[2] + "/" + sessionEnd[0].split("-")[1] + "/" + sessionEnd[0].split("-")[0];
+		var sessionEndTime = sessionEnd[1].split(":")[0] + ":" + sessionEnd[1].split(":")[1];
+
+		$("#sessions-summary-tr").append(
+			'<td class="session-summary"><span class="remove-session" index="' + i + '" style="cursor: pointer;"><div class="session-title"><i class="fa fa-times"></i></span>&nbsp;&nbsp;Sesión ' + (i+1) + '</div><div class="session-time"><i class="fa fa-calendar"></i>&nbsp;' + sessionStartDate + '<br /><i class="fa fa-clock-o"></i>&nbsp;' + sessionStartTime + " - " + sessionEndTime + '</div></td>'
 		);
 	}
 
@@ -1217,6 +1210,12 @@ function addNewService () {
 		}
 	}
 }
+
+
+$("#sessions-help").click(function(){
+	$("#sessions-explanation").modal('show');
+});
+
 
 var myAlert;
 $(function () {
