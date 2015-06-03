@@ -1,0 +1,53 @@
+<div class="modal-dialog">
+    <div class="modal-content">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal">&times;</button>
+            <h3 class="modal-title" id="optimizerTitle" style="line-height: 1.1;">Reserva o edita tu sesión</h3>
+        </div>
+        <div class="modal-body">
+
+        	<%= form_tag("select_hour", method: "post", role: "form") do %>
+        		<%= hidden_field_tag :location, @booking.location.id %>
+        		<%= hidden_field_tag :service, @booking.service.id %>
+        		<%= hidden_field_tag :provider, @booking.service_provider.id %>
+        		<div class="form-group">
+        		
+	            	<%= label_tag :datepicker, 'Selecciona una fecha' %>
+	            	<%= text_field_tag :datepicker, nil, :disabled => true, :placeholder => 'Selecciona fecha...', :class => 'form-control' %>
+	          	</div>
+	        <% end %>
+
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn session-btn btn-green" id="nextButton" disabled>Reservar</button>
+            <button href="#" class="btn" data-dismiss="modal">Cerrar</button>
+        </div>
+    </div>
+</div>
+
+<% content_for :stylesheets do %>
+	<%= stylesheet_link_tag "datepicker" %>
+<% end %>
+
+<% content_for :scripts do %>
+	<%= javascript_include_tag "datepicker" %>
+<% end %>
+
+<script type="text/javascript">
+	$('#datepicker').attr('disabled', false);
+		datepicker('#datepicker', {
+		format: 'dddd d !de mmmm !de yyyy',
+		min: true,
+		klass: {
+		  input: 'datepicker'
+		},
+		onSet: function (context) {
+		  $('#datepicker').val(new Date(context.select));
+          $('#form-date').submit();
+		  /*$.ajax({
+		  	type: "get",
+		  	url: ""
+		  });*/
+		}
+	});
+</script>

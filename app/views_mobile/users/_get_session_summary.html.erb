@@ -1,0 +1,50 @@
+<%
+	count_used = 0
+	count_booked = 0
+	count_unbooked = 0
+	@sessionBooking.bookings.each do |booking|
+		if booking.is_session_booked
+			if DateTime.now < (booking.start.to_datetime - booking.service.company.company_setting.before_edit_booking.hours) && booking.max_changes > 0
+				count_booked = count_booked + 1
+			else
+				count_used = count_used + 1
+			end
+		else
+			count_unbooked = count_unbooked + 1
+		end
+	end
+%>
+<div>
+
+<div class="table-responsive">
+	<table class="table">
+		<tr>
+			<th>
+				Número de sesiones
+			</th>
+			<th>
+				Usadas
+			</th>
+			<th>
+				Reservadas
+			</th>
+			<th>
+				No reservadas
+			</th>
+		</tr>
+		<tr>
+			<td>
+				<%= @sessionBooking.bookings.count.to_s %>
+			</td>
+			<td>
+				<%= count_used %>
+			</td>
+			<td>
+				<%= count_booked %>
+			</td>
+			<td>
+				<%= count_unbooked %>
+			</td>
+		</tr>
+	</table>
+</div>

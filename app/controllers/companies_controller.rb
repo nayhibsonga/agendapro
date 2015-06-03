@@ -1013,15 +1013,15 @@ class CompaniesController < ApplicationController
 			end
     	end
 
-    if params[:provider] == "0"
-    	@lock = false
-    else
-    	@lock = true
-    end
-    @lock
-    @company = @location.company
-    @available_time
-		render layout: 'workflow'
+	    if params[:provider] == "0"
+	    	@lock = false
+	    else
+	    	@lock = true
+	    end
+	    @lock
+	    @company = @location.company
+	    @available_time
+			render layout: 'workflow'
 	end
 
 	def user_data
