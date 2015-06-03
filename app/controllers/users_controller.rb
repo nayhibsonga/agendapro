@@ -92,6 +92,8 @@ class UsersController < ApplicationController
       end
     end
 
+    @sessionBookings = SessionBooking.where(:client_id => @client_ids)
+
     @activeBookings = Booking.where(:client_id => @client_ids, :is_session => false, :status_id => Status.find_by(:name => ['Reservado', 'Pagado', 'Confirmado'])).where("start > ?", DateTime.now).order(:start) 
     @lastBookings = Booking.where(:client_id => @client_ids).order(updated_at: :desc).limit(10)
     render :layout => 'results'
