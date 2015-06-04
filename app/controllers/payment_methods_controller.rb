@@ -25,13 +25,17 @@ class PaymentMethodsController < ApplicationController
 
   def create
     @payment_method = PaymentMethod.new(payment_method_params)
-    @payment_method.save
-    respond_with(@payment_method)
+    flash[:notice] = "Medio de Pago creado." if @payment_method.save
+    respond_with(@payment_method) do |format|
+      format.html { redirect_to payment_methods_path }
+    end
   end
 
   def update
-    @payment_method.update(payment_method_params)
-    respond_with(@payment_method)
+    flash[:notice] = "Medio de Pago editado." if @payment_method.update(payment_method_params)
+    respond_with(@payment_method) do |format|
+      format.html { redirect_to payment_methods_path }
+    end
   end
 
   def destroy

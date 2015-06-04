@@ -18,6 +18,7 @@ class BookingsController < ApplicationController
     @bookings = Booking.where(service_provider_id: @service_providers)
     @booking = Booking.new
     @provider_break = ProviderBreak.new
+    @payment = Payment.new
   end
 
   def fixed_index
