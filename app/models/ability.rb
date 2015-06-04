@@ -71,6 +71,7 @@ class Ability
     can :company_service_categories, ServiceCategory
     can :check_user_cross_bookings, Booking
     can :select_hour, Company
+    can :select_session_hour, Company
     can :user_data, Company
     can :client_loader, Client
     can :available_hours_week_html, ServiceProvider

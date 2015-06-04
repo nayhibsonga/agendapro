@@ -421,7 +421,11 @@ class Booking < ActiveRecord::Base
 					if changed_attributes['is_session_booked']
 						BookingMailer.book_service_mail(self)
 					else
-						BookingMailer.update_booking(self, changed_attributes['start'])
+						if changed_attributes['start']
+							BookingMailer.update_booking(self, changed_attributes['start'])
+						else
+							BookingMailer.book_service_mail(self)
+						end
 					end
 					#end
 				end

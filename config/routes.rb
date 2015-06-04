@@ -208,6 +208,7 @@ Agendapro::Application.routes.draw do
   get '/available_hours_week_html', :to => 'service_providers#available_hours_week_html'
   # Workflow - Mobile
   post '/select_hour', :to => 'companies#select_hour'
+  post '/select_session_hour', :to => 'companies#select_session_hour'
   post '/user_data', :to => 'companies#user_data'
 
   # Fullcalendar
