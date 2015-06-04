@@ -123,9 +123,9 @@ class ClientsController < ApplicationController
     session_bookings = SessionBooking.where(:client_id => client.id, :service_id => service.id)
     
     session_bookings.each do |session_booking|
-      if service.sessions_amount > session_booking.sessions_taken
+      if session_booking.sessions_amount > session_booking.sessions_taken
         sessions_hash = session_booking.attributes
-        sessions_hash["sessions_total"] = service.sessions_amount
+        sessions_hash["sessions_total"] = session_booking.sessions_amount
         @session_bookings << sessions_hash
       end
     end

@@ -240,6 +240,7 @@ class BookingsController < ApplicationController
 
       # If it's a sessions service and it's the first session, save client and user for SessionBooking
       # and associate it with the @booking
+      sessions_ratio = ""
       if should_create_sessions
 
         session_booking.client_id = @booking.client_id
@@ -261,6 +262,7 @@ class BookingsController < ApplicationController
         if should_create_sessions
 
           sessions_missing = session_booking.sessions_amount - 1
+          sessions_ratio = "Sesión 1 de " + @booking.service.sessions_amount.to_s
 
           for i in 0..sessions_missing-1
             new_booking = @booking.dup
@@ -273,6 +275,18 @@ class BookingsController < ApplicationController
 
         elsif !session_booking.nil?
           session_booking.save
+
+          session_index = 1
+          Booking.where(:session_booking_id => session_booking.id, :is_session_booked => true).order('start asc').each do |b|
+            if b.id == @booking.id
+              break
+            else
+              session_index = session_index + 1
+            end
+          end
+
+          sessions_ratio = "Sesión " + session_index.to_s + " de " + session_booking.sessions_amount.to_s 
+
         end
 
         u = @booking
@@ -302,7 +316,8 @@ class BookingsController < ApplicationController
           :prepayed => prepayed,
           :is_session => u.is_session,
           :is_session_booked => u.is_session_booked,
-          :user_session_confirmed => u.user_session_confirmed
+          :user_session_confirmed => u.user_session_confirmed,
+          :sessions_ratio => sessions_ratio
         }
 
         BookingHistory.create(booking_id: @booking.id, action: "Creada por Calendario", start: @booking.start, status_id: @booking.status_id, service_id: @booking.service_id, service_provider_id: @booking.service_provider_id, user_id: current_user.id, staff_code_id: staff_code, notes: @booking.notes, company_comment: @booking.company_comment)
@@ -514,7 +529,11 @@ class BookingsController < ApplicationController
       end
 
 
+      sessions_ratio = ""
+
       if should_create_sessions
+
+        session_booking_index = 1
 
         session_booking.client_id = @booking.client_id
         if User.find_by_email(buffer_params[:client_email])
@@ -535,6 +554,7 @@ class BookingsController < ApplicationController
         if should_create_sessions
 
           sessions_missing = session_booking.sessions_amount - 1
+          sessions_ratio = "Sesión 1 de " + @booking.service.sessions_amount.to_s
 
           for i in 0..sessions_missing-1
             new_booking = @booking.dup
@@ -547,6 +567,18 @@ class BookingsController < ApplicationController
 
         elsif !session_booking.nil?
           session_booking.save
+
+          session_index = 1
+          Booking.where(:session_booking_id => session_booking.id, :is_session_booked => true).order('start asc').each do |b|
+            if b.id == @booking.id
+              break
+            else
+              session_index = session_index + 1
+            end
+          end
+
+          sessions_ratio = "Sesión " + session_index.to_s + " de " + session_booking.sessions_amount.to_s 
+
         end
 
 
@@ -575,7 +607,8 @@ class BookingsController < ApplicationController
           :prepayed => prepayed,
           :is_session => u.is_session,
           :is_session_booked => u.is_session_booked,
-          :user_session_confirmed => u.user_session_confirmed
+          :user_session_confirmed => u.user_session_confirmed,
+          :sessions_ratio => sessions_ratio
         }
 
         BookingHistory.create(booking_id: @booking.id, action: "Creada por Calendario", start: @booking.start, status_id: @booking.status_id, service_id: @booking.service_id, service_provider_id: @booking.service_provider_id, user_id: current_user.id, staff_code_id: staff_code, notes: @booking.notes, company_comment: @booking.company_comment)
@@ -896,9 +929,13 @@ class BookingsController < ApplicationController
       new_booking_params[:location_id] = ServiceProvider.find(booking_params[:service_provider_id]).location.id
     end
 
+    session_booking_index = 0
+    sessions_ratio = ""
     #If updated by admin, mark for user validation
     if @booking.is_session
       @booking.user_session_confirmed = false
+      session_booking_index = @booking.session_booking.sessions_taken + 1
+      sessions_ratio = "Sesión " + session_booking_index.to_s + " de " + @booking.session_booking.sessions_amount
     end
     respond_to do |format|
       if @booking.update(new_booking_params)
@@ -909,7 +946,7 @@ class BookingsController < ApplicationController
 
         u = @booking
         if u.warnings then warnings = u.warnings.full_messages else warnings = [] end
-        @booking_json = { :id => u.id, :start => u.start, :end => u.end, :service_id => u.service_id, :service_provider_id => u.service_provider_id, :status_id => u.status_id, :first_name => u.client.first_name, :last_name => u.client.last_name, :email => u.client.email, :phone => u.client.phone, :notes => u.notes,  :company_comment => u.company_comment, :provider_lock => u.provider_lock, :service_name => u.service.name, :warnings => warnings , :is_session => u.is_session, :is_session_booked => u.is_session_booked, :user_session_confirmed => u.user_session_confirmed}
+        @booking_json = { :id => u.id, :start => u.start, :end => u.end, :service_id => u.service_id, :service_provider_id => u.service_provider_id, :status_id => u.status_id, :first_name => u.client.first_name, :last_name => u.client.last_name, :email => u.client.email, :phone => u.client.phone, :notes => u.notes,  :company_comment => u.company_comment, :provider_lock => u.provider_lock, :service_name => u.service.name, :warnings => warnings , :is_session => u.is_session, :is_session_booked => u.is_session_booked, :user_session_confirmed => u.user_session_confirmed, :sessions_ratio => sessions_ratio}
         BookingHistory.create(booking_id: @booking.id, action: "Modificada por Calendario", start: @booking.start, status_id: @booking.status_id, service_id: @booking.service_id, service_provider_id: @booking.service_provider_id, user_id: current_user.id, staff_code_id: staff_code, notes: @booking.notes, company_comment: @booking.company_comment)
         format.html { redirect_to bookings_path, notice: 'Booking was successfully updated.' }
         format.json { render :json => @booking_json }
@@ -1159,6 +1196,8 @@ class BookingsController < ApplicationController
         email = ''
         comment = ''
         prepayed = ''
+        is_session = false
+        sessions_ratio = ''
 
         if booking.client.first_name
           title += booking.client.first_name
@@ -1192,6 +1231,23 @@ class BookingsController < ApplicationController
           prepayed = 'No'
         end
 
+        if booking.is_session
+          is_session = true
+          session_index = 1
+          Booking.where(:session_booking_id => booking.session_booking.id, :is_session_booked => true).order('start asc').each do |b|
+            if b.id == booking.id
+              break
+            else
+              session_index = session_index + 1
+            end
+          end
+          sessions_ratio = "Sesión " + session_index.to_s + " de " + booking.session_booking.sessions_amount.to_s
+        else
+          sessions_ratio = "0/0"
+          is_session = false
+        end
+
+
         backColor = backColors[booking.status_id]
         textColor = textColors[booking.status_id]
         if booking.is_session && booking.is_session_booked && !booking.user_session_confirmed
@@ -1216,7 +1272,9 @@ class BookingsController < ApplicationController
           phone_qtip: phone,
           email_qtip: email,
           comment_qtip: comment,
-          prepayed_qtip: prepayed
+          prepayed_qtip: prepayed,
+          is_session_qtip: is_session,
+          sessions_ratio_qtip: sessions_ratio
         }
         
 
