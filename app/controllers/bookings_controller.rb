@@ -256,7 +256,11 @@ class BookingsController < ApplicationController
         @booking.session_booking_id = session_booking.id
         @booking.is_session = true
         @booking.is_session_booked = true
-        @booking.user_session_confirmed = false
+        if @booking.payed
+          @booking.user_session_confirmed = false
+        else
+          @booking.user_session_confirmed = true
+        end
       end
 
       if @booking.save
@@ -556,7 +560,11 @@ class BookingsController < ApplicationController
         @booking.session_booking_id = session_booking.id
         @booking.is_session = true
         @booking.is_session_booked = true
-        @booking.user_session_confirmed = false
+        if @booking.payed
+          @booking.user_session_confirmed = false
+        else
+          @booking.user_session_confirmed = true
+        end
       end
 
 
