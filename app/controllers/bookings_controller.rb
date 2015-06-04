@@ -110,7 +110,11 @@ class BookingsController < ApplicationController
           @booking.session_booking_id = session_booking.id
           @booking.is_session = true
           @booking.is_session_booked = true
-          @booking.user_session_confirmed = false
+          if @booking.payed
+            @booking.user_session_confirmed = false
+          else
+            @booking.user_session_confirmed = true
+          end
         else
           should_create_sessions = true
           session_booking = SessionBooking.new
@@ -336,7 +340,11 @@ class BookingsController < ApplicationController
         end
 
         if !session_booking.nil?
-          BookingMailer.admin_session_booking_mail(@booking)
+          if !@booking.user_session_confirmed
+            BookingMailer.admin_session_booking_mail(@booking)
+          else
+            @booking.send_validate_mail
+          end
         end
 
         format.html { redirect_to bookings_path, notice: 'Booking was successfully created.' }
@@ -395,7 +403,11 @@ class BookingsController < ApplicationController
           @booking.session_booking_id = session_booking.id
           @booking.is_session = true
           @booking.is_session_booked = true
-          @booking.user_session_confirmed = false
+          if @booking.payed
+            @booking.user_session_confirmed = false
+          else
+            @booking.user_session_confirmed = true
+          end
         else
           should_create_sessions = true
           session_booking = SessionBooking.new
@@ -626,7 +638,11 @@ class BookingsController < ApplicationController
       end
 
       if !session_booking.nil?
-        BookingMailer.admin_session_booking_mail(@booking)
+        if !@booking.user_session_confirmed
+          BookingMailer.admin_session_booking_mail(@booking)
+        else
+          @booking.send_validate_mail
+        end
       end
 
       format.html { redirect_to bookings_path, notice: 'Booking was successfully created.' }
@@ -933,15 +949,23 @@ class BookingsController < ApplicationController
     sessions_ratio = ""
     #If updated by admin, mark for user validation
     if @booking.is_session
-      @booking.user_session_confirmed = false
+      if @booking.payed
+        @booking.user_session_confirmed = false
+      else
+        @booking.user_session_confirmed = true
+      end
       session_booking_index = @booking.session_booking.sessions_taken + 1
-      sessions_ratio = "Sesión " + session_booking_index.to_s + " de " + @booking.session_booking.sessions_amount
+      sessions_ratio = "Sesión " + session_booking_index.to_s + " de " + @booking.session_booking.sessions_amount.to_s
     end
     respond_to do |format|
       if @booking.update(new_booking_params)
 
         if @booking.is_session
-          BookingMailer.admin_session_booking_mail(@booking)
+          if !@booking.user_session_confirmed
+            BookingMailer.admin_session_booking_mail(@booking)
+          else
+            @booking.send_validate_mail
+          end
         end
 
         u = @booking

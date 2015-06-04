@@ -970,7 +970,7 @@ function editDrag(event) {
 
 					var backColor = backColors[booking.status_id];
 					var textColor = textColors[booking.status_id];
-					if (booking.is_session)
+					if (booking.is_session && !booking.user_session_confirmed)
 					{
 						backColor = "#105E82";
 						textColor = "#DFDBDB";				
@@ -996,7 +996,7 @@ function editDrag(event) {
 					event.is_session_qtip = booking.is_session_booked;
 					event.sessions_ratio_qtip = booking.sessions_ratio;
 					$('#calendar').fullCalendar('updateEvent', event);
-					if(!booking.is_session)
+					if(!booking.is_session || (booking.is_session && booking.user_session_confirmed))
 					{
 						alert("Reserva actualizada exitosamente.");
 					}
@@ -1088,7 +1088,7 @@ function saveBooking(typeURL, extraURL) {
 						};
 						var backColor = backColors[booking.status_id];
 						var textColor = textColors[booking.status_id];
-						if (booking.is_session)
+						if (booking.is_session && !booking.user_session_confirmed)
 						{
 							backColor = "#105E82";
 							textColor = "#DFDBDB";	
@@ -1145,7 +1145,7 @@ function saveBooking(typeURL, extraURL) {
 								$('#calendar').fullCalendar('removeEvents',booking.id);
 							}
 						}
-						if(booking.is_session)
+						if(booking.is_session && !booking.user_session_confirmed)
 						{
 							alert("Se ha enviado un correo al cliente para que valide la sesión agendada.");
 						}
@@ -1204,7 +1204,7 @@ function saveBookingBuffer () {
 						originClass += providerLock + statusIcon[booking.status_id];
 						var backColor = backColors[booking.status_id];
 						var textColor = textColors[booking.status_id];
-						if (booking.is_session)
+						if (booking.is_session && !booking.user_session_confirmed)
 						{
 							backColor = "#174F69";
 							textColor = "#DFDBDB";
@@ -1231,7 +1231,7 @@ function saveBookingBuffer () {
 						};
 
 						$('#calendar').fullCalendar('renderEvent', events, true);
-						if(booking.is_session)
+						if(booking.is_session && !booking.user_session_confirmed)
 						{
 							alert("Se ha enviado un correo al cliente para que valide la sesión agendada.");
 						}
@@ -1278,7 +1278,7 @@ function saveBookingBuffer () {
 								originClass += providerLock + statusIcon[booking.status_id];
 								var backColor = backColors[booking.status_id];
 								var textColor = textColors[booking.status_id];
-								if (booking.is_session)
+								if (booking.is_session && !booking.user_session_confirmed)
 								{
 									backColor = "#105E82";
 									textColor = "#DFDBDB";
@@ -1304,7 +1304,7 @@ function saveBookingBuffer () {
 									sessions_ratio_qtip: booking.sessions_ratio
 								};
 								$('#calendar').fullCalendar('renderEvent', events, true);
-								if(booking.is_session)
+								if(booking.is_session && !booking.user_session_confirmed)
 								{
 									alert("Se ha enviado un correo al cliente para que valide la sesión agendada.");
 								}
