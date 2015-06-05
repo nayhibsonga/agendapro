@@ -150,6 +150,10 @@ $(function () {
       $('#identification_number').val(client.identification_number);
       $('#name').blur();
       validateMail();
+    },
+    open: function(event, ui)
+    {
+      $(".ui-helper-hidden-accessible").hide();
     }
   }).data( "ui-autocomplete" )._renderItem = function( ul, item ) {
     return $( '<li>' ).append( '<a>' + item.label + '<br><span class="auto-desc">' + item.desc + '</span></a>' ).appendTo( ul );
@@ -175,6 +179,11 @@ $(function () {
       $('#identification_number').val(client.identification_number);
       $('#email').blur();
       validateMail();
+      $(".ui-helper-hidden-accessible").hide();
+    },
+    open: function(event, ui)
+    {
+      $(".ui-helper-hidden-accessible").hide();
     }
   }).data( "ui-autocomplete" )._renderItem = function( ul, item ) {
     return $( '<li>' ).append( '<a>' + item.label + '<br><span class="auto-desc">' + item.desc + '</span></a>' ).appendTo( ul );
