@@ -259,7 +259,11 @@
                       <td><%= payed_booking.id %></td>
                       <td><%= payed_booking.payment_account.id %></td>
                       <td><%= payed_booking.bookings.first.location.company.name %></td>
-                      <td><%= payed_booking.bookings.first.client.first_name + " " + payed_booking.bookings.first.client.last_name %></td>
+                      <% if payed_booking.bookings.first.client.nil? %>
+                        <td></td>
+                      <% else %>
+                        <td><%= payed_booking.bookings.first.client.first_name + " " + payed_booking.bookings.first.client.last_name %></td>
+                      <% end %>
                       <td><%= payed_booking.punto_pagos_confirmation.amount %></td>
                       <td><%= payed_booking.punto_pagos_confirmation.operation_number %></td>
                       <td><%= payed_booking.punto_pagos_confirmation.authorization_code %></td>
