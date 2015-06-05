@@ -21,16 +21,29 @@
 
         <!-- start: CSS -->
         <%= stylesheet_link_tag "search" %>
-        <%= stylesheet_link_tag "http://fonts.googleapis.com/css?family=Open+Sans:400,300,400italic,600,600italic,700,700italic,300italic" %>
+        <%= stylesheet_link_tag "https://fonts.googleapis.com/css?family=Open+Sans:400,300,400italic,600,600italic,700,700italic,300italic" %>
 		<%= yield :stylesheets %>
         <!-- end: CSS -->
+
+        <% if ENV["MONITORING_ACTIVATION"] == "TRUE" %>
+        <!-- Begin Inspectlet Embed Code -->
+        <script type="text/javascript" id="inspectletjs">
+        window.__insp = window.__insp || [];
+        __insp.push(['wid', 1883420541]);
+        (function() {
+        function __ldinsp(){var insp = document.createElement('script'); insp.type = 'text/javascript'; insp.async = true; insp.id = "inspsync"; insp.src = ('https:' == document.location.protocol ? 'https' : 'http') + '://cdn.inspectlet.com/inspectlet.js'; var x = document.getElementsByTagName('script')[0]; x.parentNode.insertBefore(insp, x); }
+        if (window.attachEvent) window.attachEvent('onload', __ldinsp);
+        else window.addEventListener('load', __ldinsp, false);
+        })();
+        </script>
+        <!-- End Inspectlet Embed Code -->
+        <% end %>
 
 		<!-- start: JavaScript-->
 		<%= javascript_include_tag "home-head" %><!-- Removido -->
 		<!-- end: JavaScript-->
 
-		<!-- Fav and touch icons -->
-		<%= favicon_link_tag "favicon.png", :rel => "shortcut icon" %>
+		<%= render 'layouts/icons' %>
 
 	</head>
 
@@ -144,7 +157,7 @@
 							<%= render 'layouts/facebook' %>
 							<h3>AgendaPro - Sistema de Reservas Online</h3>
 							<p>
-								<span class="txt-footer"><i class="fa fa-map-marker"></i> Nuestra Se&ntilde;ora de los Angeles 185, Oficina D, Las Condes, Santiago </span>
+								<span class="txt-footer"><i class="fa fa-map-marker"></i> Ana María Carrera 5210, Las Condes, Santiago </span>
 								<span class="txt-footer"><i class="fa fa-phone"></i> (+56 9) 5178 5898 </span>
 								<span><i class="fa fa-envelope"></i> contacto@agendapro.cl </span>
 							</p>
@@ -170,14 +183,23 @@
 		</footer> -->
 
 		<!-- start: JavaScript-->
-		<%= javascript_include_tag "search" %>
 		<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?libraries=places"></script>
 		<% javascript_include_tag "jquery.browser.min" %><!-- Removido -->
 		<% javascript_include_tag "browser-detect" %><!-- Removido -->
+		<%= javascript_include_tag "search" %>
+		<script type="text/javascript">
+			$('a').click(function() {
+				$('.alert').hide();
+			});
+		</script>
 		<%= yield :scripts %>
 		<!--Start of Zopim Live Chat Script-->
 		<%= javascript_include_tag 'zopim' %>
 		<!--End of Zopim Live Chat Script-->
+
+		<!--Start of Crazy Egg Script-->
+		<%= javascript_include_tag 'crazy_egg' %>
+		<!--End of Crazy Egg Script-->
 
 		<!--<script>
           // $( "#menu-display" ).click(function() {

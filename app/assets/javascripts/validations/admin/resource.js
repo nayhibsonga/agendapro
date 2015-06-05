@@ -12,11 +12,12 @@ $(function() {
 			},
 			'resource[resource_category_id]': {
 				required: true
-			},
-			'resource[location_ids_quantity][]': {
-				required: true,
-				min: 0
 			}
+			// ,
+			// 'resource[location_ids_quantity][]': {
+			// 	required: true,
+			// 	min: 0
+			// }
 		},
 		highlight: function(element) {
 			$(element).closest('.form-group').removeClass('has-success').addClass('has-error');
@@ -28,7 +29,12 @@ $(function() {
 			$(element).parent().empty()
 		},
 		submitHandler: function(form) {
-			form.submit();
+			if ($("#id_data").length > 0){
+				saveResource('PATCH','/'+$("#id_data").data('id'));
+			}
+			else {
+				saveResource('POST','');
+			}
 		}
 	});
 
@@ -52,7 +58,7 @@ $(function() {
 			$(element).parent().empty()
 		},
 		submitHandler: function(form) {
-			form.submit();
+			saveCategory('POST','');
 		}
 	});
 });

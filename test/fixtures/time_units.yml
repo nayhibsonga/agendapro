@@ -1,7 +1,19 @@
 # Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
-one:
-  unit: MyString
+hours:
+    id: 1
+    unit: "Minutos"
 
-two:
-  unit: MyString
+months:
+    id: 2
+    unit: "Horas"
+
+days:
+    id: 3
+    unit: "Semanas"
+
+days:
+    id: 4
+    unit: "Meses"
+
+

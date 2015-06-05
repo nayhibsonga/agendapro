@@ -16,7 +16,7 @@ class PuntoPagosController < ApplicationController
   #Métodos de pagos de compañía/plan
 
   def generate_transaction
-  	trx_id = DateTime.now.to_s.gsub(/[-:T]/i, '')
+  	trx_id = DateTime.now.to_s.gsub(/[-:T]/i, '')[0,15]
   	amount = '10000.00'
     payment_method = '03'
   	req = PuntoPagos::Request.new()
@@ -52,7 +52,18 @@ class PuntoPagosController < ApplicationController
       else
         NumericParameter.find_by_name(amount.to_s+"_month_discount") ? month_discount = NumericParameter.find_by_name(amount.to_s+"_month_discount").value : month_discount = 0
         # trx_id = DateTime.now.to_s.gsub(/[-:T]/i, '') + "c" + company.id.to_s + "p" + company.plan.id.to_s
-        trx_id = (company.id.to_s + "0" + company.plan.id.to_s + "0" +  DateTime.now.to_s.gsub(/[-:T]/i, ''))[0..17]
+        
+        trx_comp = company.id.to_s + "0" + company.plan.id.to_s + "0"
+        trx_offset = 4
+        trx_date = DateTime.now.to_s.gsub(/[-:T]/i, '')
+        trx_date = trx_date[0, trx_date.size - trx_offset]
+        trx_date = trx_date[trx_date.size - 15 + trx_comp.size, trx_date.size]
+        trx_id = trx_comp + trx_date
+
+        if trx_id.size > 15
+          trx_id = trx_id[0, 15]
+        end
+
         company.months_active_left > 0 ? plan_1 = (company.due_amount + price*(1+sales_tax)).round(0) : plan_1 = ((company.due_amount + (month_days - day_number + 1)*price/month_days)*(1+sales_tax)).round(0)
         due = sprintf('%.2f', ((plan_1 + price*(amount-1)*(1+sales_tax))*(1-month_discount)).round(0))
         req = PuntoPagos::Request.new()
@@ -94,7 +105,17 @@ class PuntoPagosController < ApplicationController
         due_amount = company.due_amount
         plan_price = Plan.find(plan_id).price
         plan_month_value = (month_days - day_number + 1)*plan_price/month_days
-        trx_id = (company.id.to_s + "0" + plan_id.to_s + "0" +  DateTime.now.to_s.gsub(/[-:T]/i, ''))[0..17]
+
+        trx_comp = company.id.to_s + "0" + plan_id.to_s + "0"
+        trx_offset = 4
+        trx_date = DateTime.now.to_s.gsub(/[-:T]/i, '')
+        trx_date = trx_date[0, trx_date.size - trx_offset]
+        trx_date = trx_date[trx_date.size - 15 + trx_comp.size, trx_date.size]
+        trx_id = trx_comp + trx_date
+
+        if trx_id.size > 15
+          trx_id = trx_id[0, 15]
+        end
 
         if months_active_left > 0
           if plan_value_left > (plan_month_value + due_amount) && payment_method == "00"
@@ -181,11 +202,27 @@ class PuntoPagosController < ApplicationController
           @success_page = "plan"
         elsif Booking.find_by_trx_id(trx_id)
           #Mostrar página similar a la de reserva hecha, confirmando que se pagó
-          @booking = Booking.find_by_trx_id(trx_id)
+          @bookings = Booking.where(:trx_id => trx_id)
           @token = params[:token]
           @success_page = "booking"
           host = request.host_with_port
-          @url = @booking.location.company.web_address + '.' + host[host.index(request.domain)..host.length]
+          @url = @bookings.first.location.company.web_address + '.' + host[host.index(request.domain)..host.length]
+
+          @try_register = false
+          client = @bookings.first.client
+          @company = @bookings.first.location.company
+
+          if !user_signed_in?
+            if !User.find_by_email(client.email)
+              @try_register = true
+              @user = User.new
+              @user.email = client.email
+              @user.first_name = client.first_name
+              @user.last_name = client.last_name
+              @user.phone = client.phone
+            end
+          end
+          render layout: "workflow"
         else
           #Something (lie a booking) was deleted, should redirect to failure
           redirect_to action: 'failure', token: params[:token]
@@ -199,14 +236,24 @@ class PuntoPagosController < ApplicationController
     if PuntoPagosConfirmation.find_by_token(params[:token])
       trx_id = PuntoPagosConfirmation.find_by_token(params[:token]).trx_id
       if(Booking.find_by_trx_id(trx_id))
-        failed_booking = Booking.find_by_trx_id(trx_id)
-        @booking = Booking.new(failed_booking.attributes.to_options)
-        failed_booking.destroy
+        bookings = Booking.where(:trx_id => trx_id)
+        @bookings = Array.new
+        bookings.each do |failed_booking|
+          #failed_booking = Booking.find_by_token(params[:token])
+          booking = Booking.new(failed_booking.attributes.to_options)
+          @bookings << booking
+          failed_booking.destroy
+        end
       end
     elsif Booking.find_by_token(params[:token]) #Cuando el servicio está caído y no hay notificación
-      failed_booking = Booking.find_by_token(params[:token])
-      @booking = Booking.new(failed_booking.attributes.to_options)
-      failed_booking.destroy
+      bookings = Booking.where(:token => params[:token])
+      @bookings = Array.new
+      bookings.each do |failed_booking|
+        #failed_booking = Booking.find_by_token(params[:token])
+        booking = Booking.new(failed_booking.attributes.to_options)
+        @bookings << booking
+        failed_booking.destroy
+      end
     else
       #Nothing found, there was a timeout error
     end
@@ -243,15 +290,30 @@ class PuntoPagosController < ApplicationController
       elsif Booking.find_by_trx_id(params[:trx_id])
 
         #Creamos el registro de la reserva pagada.
-        booking = Booking.find_by_trx_id(params[:trx_id])
-        booking.status_id = Status.find_by(:name => "Pagado").id
-        booking.payed = true
-        booking.save
-        payed_booking = PayedBooking.new 
-        payed_booking.booking = booking
+
+        payed_booking = PayedBooking.new
         payed_booking.punto_pagos_confirmation = punto_pagos_confirmation
         payed_booking.transfer_complete = false
         payed_booking.save
+
+        bookings = Array.new
+        Booking.where(:trx_id => params[:trx_id]).each do |booking|
+          booking.status_id = Status.find_by(:name => "Pagado").id
+          booking.payed = true
+          booking.payed_booking = payed_booking
+          booking.save
+          bookings << booking
+        end
+
+        if bookings.count >1
+          Booking.send_multiple_booking_mail(bookings.first.location_id, bookings.first.booking_group)
+        else
+          BookingMailer.book_service_mail(bookings.first)
+        end
+        #Enviar comprobantes de pago
+        BookingMailer.book_payment_mail(payed_booking)
+        BookingMailer.book_payment_company_mail(payed_booking)
+        BookingMailer.book_payment_agendapro_mail(payed_booking)
         
       end
     end

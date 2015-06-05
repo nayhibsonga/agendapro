@@ -67,12 +67,20 @@ GEM
       capistrano-bundler (~> 1.1)
     capistrano3-delayed-job (1.3.0)
       capistrano (>= 3.0.0)
+    capybara (2.4.4)
+      mime-types (>= 1.16)
+      nokogiri (>= 1.3.3)
+      rack (>= 1.0.0)
+      rack-test (>= 0.5.4)
+      xpath (~> 2.0)
     carrierwave (0.10.0)
       activemodel (>= 3.2.0)
       activesupport (>= 3.2.0)
       json (>= 1.7)
       mime-types (>= 1.16)
     chartkick (1.3.2)
+    childprocess (0.5.6)
+      ffi (~> 1.0, >= 1.0.11)
     chronic (0.10.2)
     ckeditor (4.1.1)
       cocaine
@@ -92,6 +100,7 @@ GEM
     coffee-script-source (1.9.0)
     colorize (0.7.5)
     daemons (1.1.9)
+    database_cleaner (1.4.1)
     debug_inspector (0.0.2)
     delayed_job (4.0.6)
       activesupport (>= 3.0, < 5.0)
@@ -105,9 +114,15 @@ GEM
       responders
       thread_safe (~> 0.1)
       warden (~> 1.2.3)
+    diff-lcs (1.2.5)
     erubis (2.7.0)
     excon (0.44.1)
     execjs (2.3.0)
+    factory_girl (4.5.0)
+      activesupport (>= 3.0.0)
+    factory_girl_rails (4.5.0)
+      factory_girl (~> 4.5.0)
+      railties (>= 3.0.0)
     faker (1.4.3)
       i18n (~> 0.5)
     faraday (0.9.1)
@@ -120,6 +135,7 @@ GEM
       json (>= 1.0.0)
       oauth2 (>= 0.5.0)
       rest-client
+    ffi (1.9.8)
     geocoder (1.2.7)
     groupdate (2.4.0)
       activesupport (>= 3)
@@ -164,6 +180,19 @@ GEM
       multi_json (~> 1.3)
       multi_xml (~> 0.5)
       rack (~> 1.2)
+    omniauth (1.2.2)
+      hashie (>= 1.2, < 4)
+      rack (~> 1.0)
+    omniauth-facebook (2.0.1)
+      omniauth-oauth2 (~> 1.2)
+    omniauth-google-oauth2 (0.2.6)
+      omniauth (> 1.0)
+      omniauth-oauth2 (~> 1.1)
+    omniauth-oauth2 (1.2.0)
+      faraday (>= 0.8, < 0.10)
+      multi_json (~> 1.3)
+      oauth2 (~> 1.0)
+      omniauth (~> 1.2)
     orm_adapter (0.5.0)
     pdf-core (0.4.0)
     pg (0.18.1)
@@ -210,11 +239,32 @@ GEM
       nokogiri
       rubyzip
       spreadsheet (> 0.6.4)
+    rspec-core (3.0.4)
+      rspec-support (~> 3.0.0)
+    rspec-expectations (3.0.4)
+      diff-lcs (>= 1.2.0, < 2.0)
+      rspec-support (~> 3.0.0)
+    rspec-mocks (3.0.4)
+      rspec-support (~> 3.0.0)
+    rspec-rails (3.0.2)
+      actionpack (>= 3.0)
+      activesupport (>= 3.0)
+      railties (>= 3.0)
+      rspec-core (~> 3.0.0)
+      rspec-expectations (~> 3.0.0)
+      rspec-mocks (~> 3.0.0)
+      rspec-support (~> 3.0.0)
+    rspec-support (3.0.4)
     ruby-ole (1.2.11.8)
     rubyzip (1.1.7)
     sdoc (0.4.1)
       json (~> 1.7, >= 1.7.7)
       rdoc (~> 4.0)
+    selenium-webdriver (2.45.0)
+      childprocess (~> 0.5)
+      multi_json (~> 1.0)
+      rubyzip (~> 1.0)
+      websocket (~> 1.0)
     spreadsheet (1.0.1)
       ruby-ole (>= 1.0)
     sprockets (2.12.3)
@@ -249,11 +299,14 @@ GEM
       json (>= 1.8.0)
     warden (1.2.3)
       rack (>= 1.0)
+    websocket (1.2.1)
     whenever (0.9.4)
       chronic (>= 0.6.3)
     will_paginate (3.0.7)
     will_paginate-bootstrap (1.0.1)
       will_paginate (>= 3.0.3)
+    xpath (2.0.0)
+      nokogiri (~> 1.3)
 
 PLATFORMS
   ruby
@@ -270,13 +323,16 @@ DEPENDENCIES
   capistrano-rails (~> 1.1.1)
   capistrano-rvm!
   capistrano3-delayed-job (~> 1.0)
+  capybara
   carrierwave
   chartkick
   ckeditor
   cocoon
   daemons
+  database_cleaner
   delayed_job_active_record
   devise
+  factory_girl_rails
   faker
   fbgraph
   geocoder
@@ -287,6 +343,9 @@ DEPENDENCIES
   mini_magick
   mobu
   newrelic_rpm
+  omniauth
+  omniauth-facebook
+  omniauth-google-oauth2
   pg
   pg_search
   prawn
@@ -296,7 +355,9 @@ DEPENDENCIES
   rails (= 4.0.1)
   ri_cal
   roo
+  rspec-rails (~> 3.0.0)
   sdoc
+  selenium-webdriver (~> 2.45.0)
   therubyracer
   turbolinks
   uglifier (>= 1.3.0)

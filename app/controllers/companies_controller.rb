@@ -89,9 +89,11 @@ class CompaniesController < ApplicationController
 		@record = BillingRecord.find(params[:record_id])
 		@company = Company.find(params[:id])
 		if @record.delete
-			redirect_to :action => 'manage_company', :id => @company.id, :notice => 'Pago eliminado correctamente.'
+			flash[:notice] = 'Pago eliminado correctamente.'
+			redirect_to :action => 'manage_company', :id => @company.id
 		else
-			redirect_to :action => 'manage_company', :id => @company.id, :alert => 'Ocurrió un error al ingresar el pago.'
+			flash[:alert] = 'Ocurrió un error al eliminar el pago.'
+			redirect_to :action => 'manage_company', :id => @company.id
 		end
 	end
 
@@ -124,7 +126,7 @@ class CompaniesController < ApplicationController
 			@company.save
 			redirect_to :action => 'manage_company', :id => @company.id
 		else
-			redirect_to :action => 'payment', :id => @record.id, :alert => 'Ocurrió un error al ingresar el pago.'
+			redirect_to :action => 'payment', :id => @record.id, :alert => 'Ocurrió un error al modificar el pago.'
 		end
 
 	end
@@ -143,10 +145,18 @@ class CompaniesController < ApplicationController
 			@company.months_active_left = params[:new_months_active_left]
 		end
 
-		if @company.save
-			redirect_to :action => 'manage_company', :id => @company.id, :notice => 'Companía editada correctamente.'
+		if @company.payment_status_id != PaymentStatus.find_by_name("Inactivo").id and @company.payment_status_id != PaymentStatus.find_by_name("Bloqueado").id
+			@company.active = true
 		else
-			redirect_to :action => 'manage_company', :id => @company.id, :alert => 'Ocurrió un error al editar la compañía.'
+			@company.active = false
+		end
+
+		if @company.save
+			flash[:notice] = 'Companía editada correctamente.'
+			redirect_to :action => 'manage_company', :id => @company.id
+		else
+			flash[:alert] = 'Ocurrió un error al editar la compañía.'
+			redirect_to :action => 'manage_company', :id => @company.id
 		end
 
 	end
@@ -191,7 +201,7 @@ class CompaniesController < ApplicationController
 			else
 				end_date = DateTime.new(year+1, 1, 1)-1.minutes
 			end
-			billing_logs = BillingLog.where('company_id = ? and created_at BETWEEN ? and ?', @company.id, start_date, end_date).where(:trx_id => PuntoPagosConfirmation(:response => "00").pluck(:trx_id))
+			billing_logs = BillingLog.where('company_id = ? and created_at BETWEEN ? and ?', @company.id, start_date, end_date).where(:trx_id => PuntoPagosConfirmation.where(:response => "00").pluck(:trx_id))
 			billing_records = BillingRecord.where('company_id = ? and date BETWEEN ? and ?', @company.id, start_date, end_date)
 
 			billing_logs.each do |bl|
@@ -271,6 +281,8 @@ class CompaniesController < ApplicationController
 
 	#SuperAdmin
 	def incomes
+
+		# @companies = Company.where(active: true).where.not(payment_status_id: PaymentStatus.find_by_name('Inactivo').id).order(:name)
 
 		@companies = Company.all.order(:name)
 
@@ -454,9 +466,11 @@ class CompaniesController < ApplicationController
 		@company.months_active_left = 0
 		@company.payment_status_id = PaymentStatus.find_by_name("Inactivo").id
 		if @company.save
-			redirect_to :action => 'manage_company', :id => @company.id, :notice => 'Companía editada correctamente.'
+			flash[:notice] = 'Companía editada correctamente.'
+			redirect_to :action => 'manage_company', :id => @company.id
 		else
-			redirect_to :action => 'manage_company', :id => @company.id, :alert => 'Ocurrió un error al editar la compañía.'
+			flash[:alert] = 'Ocurrió un error al editar la compañía.'
+			redirect_to :action => 'manage_company', :id => @company.id
 		end
 	end
 
@@ -484,10 +498,12 @@ class CompaniesController < ApplicationController
         company.payment_status_id = PaymentStatus.find_by_name("Activo").id
         if company.save
           CompanyCronLog.create(company_id: company.id, action_ref: 9, details: "OK add_admin_month")
-          redirect_to edit_payment_company_path(company), notice: 'Mes agregado exitosamente.'
+          flash[:notice] = 'Mes agregado exitosamente.'
+          redirect_to edit_payment_company_path(company)
         else
           CompanyCronLog.create(company_id: company.id, action_ref: 9, details: "ERROR add_admin_month "+company.errors.full_messages.inspect)
-          redirect_to edit_payment_company_path(company), notice: 'Error al agregar mes.'
+          flash[:alert] = 'Error al agregar mes.'
+          redirect_to edit_payment_company_path(company)
         end
 	end
 
@@ -591,7 +607,7 @@ class CompaniesController < ApplicationController
 			redirect_to root_url(:host => domain)
 			return
 		end
-		@locations = Location.where(:active => true).where(company_id: @company.id).where(id: ServiceProvider.where(active: true, company_id: @company.id).joins(:provider_times).joins(:services).where("services.id" => Service.where(active: true, company_id: @company.id).pluck(:id)).pluck(:location_id).uniq).joins(:location_times).uniq.order(order: :asc)
+		@locations = Location.where(:active => true, online_booking: true).where(company_id: @company.id).where(id: ServiceProvider.where(active: true, company_id: @company.id, online_booking: true).joins(:provider_times).joins(:services).where("services.id" => Service.where(active: true, company_id: @company.id, online_booking: true).pluck(:id)).pluck(:location_id).uniq).joins(:location_times).uniq.order(order: :asc)
 
 		# => Domain parser
 		host = request.host_with_port
@@ -600,7 +616,17 @@ class CompaniesController < ApplicationController
 		#Selected local from fase II
 		if(params[:local])
 			@selectedLocal = params[:local]
-			@selectedLocation = Location.find(@selectedLocal)
+			if Location.where(:id => @selectedLocal).count > 0
+				@selectedLocation = Location.find(@selectedLocal)
+			else
+				flash[:alert] = "Lo sentimos, el local ingresado no existe."
+
+				#host = request.host_with_port
+				#domain = host[host.index(request.domain)..host.length]
+
+				#redirect_to root_url(:host => domain)
+				#return
+			end
 		end
 
 		if mobile_request?
@@ -641,12 +667,20 @@ class CompaniesController < ApplicationController
 			redirect_to root_url(:host => domain)
 			return
 		end
-		@location = Location.find(params[:local])
-		@selectedLocation = @location
+
 
 		# => Domain parser
 		host = request.host_with_port
 		@url = @company.web_address + '.' + host[host.index(request.domain)..host.length]
+
+		if Location.where(:id => params[:local]).count > 0
+			@location = Location.find(params[:local])
+			@selectedLocation = @location
+		else
+			flash[:alert] = "Lo sentimos, el local ingresado no existe."
+			redirect_to :action => "overview"
+			return
+		end
 
 		if mobile_request?
 			company_setting = @company.company_setting

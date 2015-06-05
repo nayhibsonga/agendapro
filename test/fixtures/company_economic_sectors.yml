@@ -1,9 +1,61 @@
 # Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
-one:
-  company_id: 
-  economic_sector_id: 
+company_economic_sector_1:
+  company: company_1
+  economic_sector: economic_sector_1
 
-two:
-  company_id: 
-  economic_sector_id: 
+company_economic_sector_2:
+  company: company_1
+  economic_sector: economic_sector_2 
+
+company_economic_sector_3:
+  company: company_2
+  economic_sector: economic_sector_1 
+
+company_economic_sector_4:
+  company: company_2
+  economic_sector: economic_sector_3 
+
+company_economic_sector_5:
+  company: company_2
+  economic_sector: economic_sector_4 
+
+company_economic_sector_6:
+  company: company_3
+  economic_sector: economic_sector_2
+
+company_economic_sector_7:
+  company: company_3
+  economic_sector: economic_sector_5
+
+company_economic_sector_8:
+  company: company_3
+  economic_sector: economic_sector_6
+
+company_economic_sector_9:
+  company: company_3
+  economic_sector: economic_sector_7
+
+company_economic_sector_10:
+  company: company_3
+  economic_sector: economic_sector_8
+
+company_economic_sector_11:
+  company: company_3
+  economic_sector: economic_sector_9
+
+company_economic_sector_12:
+  company: company_3
+  economic_sector: economic_sector_10
+
+company_economic_sector_13:
+  company: company_3
+  economic_sector: economic_sector_11
+
+company_economic_sector_14:
+  company: company_3
+  economic_sector: economic_sector_12
+
+company_economic_sector_15:
+  company: company_3
+  economic_sector: economic_sector_13

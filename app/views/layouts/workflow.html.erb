@@ -23,12 +23,25 @@
         <%= stylesheet_link_tag "https://fonts.googleapis.com/css?family=Open+Sans:400,300,400italic,600,600italic,700,700italic,300italic" %>
         <!-- end: CSS -->
 
+        <% if ENV["MONITORING_ACTIVATION"] == "TRUE" %>
+        <!-- Begin Inspectlet Embed Code -->
+        <script type="text/javascript" id="inspectletjs">
+        window.__insp = window.__insp || [];
+        __insp.push(['wid', 1883420541]);
+        (function() {
+        function __ldinsp(){var insp = document.createElement('script'); insp.type = 'text/javascript'; insp.async = true; insp.id = "inspsync"; insp.src = ('https:' == document.location.protocol ? 'https' : 'http') + '://cdn.inspectlet.com/inspectlet.js'; var x = document.getElementsByTagName('script')[0]; x.parentNode.insertBefore(insp, x); }
+        if (window.attachEvent) window.attachEvent('onload', __ldinsp);
+        else window.addEventListener('load', __ldinsp, false);
+        })();
+        </script>
+        <!-- End Inspectlet Embed Code -->
+        <% end %>
+
         <!-- start: JavaScript-->
         <%= javascript_include_tag "home-head" %>
         <!-- end: JavaScript-->
 
-        <!-- Fav and touch icons -->
-        <%= favicon_link_tag "favicon.png", :rel => "shortcut icon" %>
+        <%= render 'layouts/icons' %>
 
     </head>
 
@@ -113,9 +126,8 @@
                     <!-- <div class="row pull-center">
                         <div class="col-xs-4">
                             <%= image_tag "footer/1.png", size: "22x29" %>
-                            <p>Nuestra Señora de los
-                             Angeles 185, Oficina D,
-                              Las Condes, Santiago</p>
+                            <p>Ana María Carrera 5210,
+                                Las Condes, Santiago</p>
                         </div>
                         <div class="col-xs-4">
                             <%= image_tag "footer/2.png", size: "24x19" %>
@@ -128,7 +140,7 @@
                     </div> -->
                     <div class="row footer">
                         <div class="col-xs-4 col-lg-2 pull-right">
-                            <%= image_tag 'logos/logo2.png', :alt => 'AgendaPro', :size => "127x43", class: "img-responsive pull-right" %>
+                            <%= image_tag 'logos/logo2.png', :alt => 'AgendaPro', :size => "115x39", class: "img-responsive pull-right" %>
                         </div>
                         <div class="col-xs-8 col-lg-5 links-footer pull-right">
                             <%= link_to "Agrega tu Empresa", home_path %> | <%= link_to "Sobre Nosotros", aboutus_path %> | <%= link_to "Tutoriales", tutorials_path %> | <%= link_to 'Términos y Condiciones', '/Term_y_Cond_AgendaPro122014.pdf', :target => :blank %>
@@ -149,6 +161,10 @@
         <!--Start of Zopim Live Chat Script-->
         <%= javascript_include_tag 'zopim' %>
         <!--End of Zopim Live Chat Script-->
+
+        <!--Start of Crazy Egg Script-->
+        <%= javascript_include_tag 'crazy_egg' %>
+        <!--End of Crazy Egg Script-->
 
         <script>
           $( "#menu-display" ).click(function() {

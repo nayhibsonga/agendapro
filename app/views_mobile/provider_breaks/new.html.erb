@@ -1,0 +1,68 @@
+<%= form_for @break, html: {class: 'form-horizontal', style: 'margin-top: 10px; margin-bottom: 10px;'} do |f| %>
+  <div class="background-green">
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-xs-12">
+          <p class="text-center" style="margin: 0;">Datos Bloqueo</p>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-xs-12">
+        <%= f.hidden_field :location, value: params[:location] %>
+        <div class="form-group">
+          <%= f.label :service_provider_id, 'Prestador', class: 'control-label col-xs-3' %>
+          <div class="col-xs-9">
+            <%= f.collection_select :service_provider_id, ServiceProvider.where(location_id: params[:location]).where(active: true), :id, :public_name, {selected: params[:provider]}, {class: 'form-control'} %>
+            <span class="help-block"></span>
+          </div>
+        </div>
+        <div class="form-group">
+          <%= f.label :name, "Etiqueta", class: "col-xs-3 control-label" %>
+          <div class="col-xs-9">
+            <%= f.text_field :name,  class: "form-control" %>
+          </div>
+        </div>
+        <div class="form-group">
+          <%= label_tag :date, 'Fecha', class: 'control-label col-xs-3' %>
+          <div class="col-xs-9">
+            <%= date_field_tag :date, @date.to_date, class: 'form-control' %>
+            <span class="help-block"></span>
+          </div>
+        </div>
+        <div class="form-group">
+          <%= label_tag :start, 'Hora Inicio', class: 'control-label col-xs-3' %>
+          <div class="col-xs-9">
+            <%= time_field_tag :start, @date.strftime('%H:%M'), step: 300, class: 'form-control', required: true %>
+            <span class="help-block"></span>
+          </div>
+        </div>
+        <div class="form-group">
+          <%= label_tag :end, 'Hora Termino', class: 'control-label col-xs-3' %>
+          <div class="col-xs-9">
+            <%= time_field_tag :end, (@date + @duration.minutes).strftime('%H:%M'), step: 300, class: 'form-control', required: true %>
+            <span class="help-block"></span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-xs-12">
+        <button type="submit" class="btn btn-block btn-lg btn-orange" data-url="POST" data-loading="Guardando <i class='fa fa-spinner fa-spin'></i>" autocomplete="off">Guardar</button>
+        <%= link_to 'Volver', bookings_path, class: 'btn btn-block btn-lg btn-default' %>
+      </div>
+    </div>
+  </div>
+<% end %>
+
+<% content_for :stylesheets do %>
+  <%= stylesheet_link_tag "admin/autocomplete" %>
+<% end %>
+
+<% content_for :scripts do %>
+  <%= javascript_include_tag "admin/mobile/mobile-break" %>
+<% end %>

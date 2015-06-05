@@ -1,17 +1,177 @@
-<%= stylesheet_link_tag "calendar" %>
+<div class="modal fade" id="hoursOptimizer" tabindex="-1" role="dialog" aria-labelledby="optimizador de Horas" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Cerrar"><i class="fa fa-times" aria-hidden="true"></i></button>
+        <h3 class="modal-title" id="optimizerTitle" style="line-height: 1.1;"></h3>
+      </div>
+      <div class="modal-body">
+        <div id="optimizerFirst">
+          <div id="pickerSelectDate">
+            <div class="row">
+              <div class="col-xs-3" style="text-align: right; font-weight: bold;">
+                Inicio
+              </div>
+              <div class="col-xs-9">
+                <input id="initialPickerDate" value="<%= I18n.l(DateTime.now.to_date) %>" hidden />
+                <span id="pickerSelected" style="color: #949292;"><%= I18n.l(DateTime.now.to_date) %></span>&nbsp;&nbsp;
+                <span class="optimizer-date-span" style="float: right;">
+                  Seleccionar nuevo inicio&nbsp;<i class="fa fa-calendar-o"></i>
+                  <input type="text" class="form-control" name="optimizerDateSelector" id="optimizerDateSelector" class="datepicker" />
+                </span>
+              </div>
+            </div>
+          </div>
+          <form class="form-horizontal" id="serviceOptimizer"></form>
+          <div id="selectHour"></div>
+          <%= form_tag '/optimizer_data', method: 'post', role: 'form', class: 'hidden', id: 'userData' do %>
+            <input type="hidden" id="local" name="local" value="<%= @location.id %>">
+            <input type="hidden" class="bookings" name="bookings">
+          <% end %>
+        </div>
+        <div id="hoursDetails"></div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-green pull-left" id="addButton"><i class="fa fa-plus"></i>&nbsp;<span></span></button>
+        <button type="button" class="btn btn-orange" id="nextButton">Siguiente</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- <div class="workflow-header">
+  <div class="container">
+    <div class="row">
+      <% if !@company.description.blank? %>
+        <div class="col-md-4 company-header-left company-header">
+          <div class="row">
+            <div class="col-md-3">
+              <% if @company.logo_url %>
+                <%= image_tag @company.logo_url.to_s, :size => "80x80", :alt => @company.name, :class => "company-logo" %>
+              <% else %>
+                <%= image_tag 'logo_vacio.png', :alt => 'AgendaPro', :size => "80x80", :class => "company-logo" %>
+              <% end %>
+            </div>
+            <div class="col-md-9">
+              <div class="row">
+                <div class="col-md-12 company-name">
+                  <%= @company.name %>
+                </div>
+              </div>
+              <div class="row header-btns">
+                <div class="col-md-12">
+                  <div class="header-btn inactive">
+                    <a href="#" id="boton-locales" class="btn btn-default btn-green-wf">Lugares</a>
+                  </div>
+                  <div class="header-btn active" style="float: left;">
+                    <a href="#" id="boton-servicio" class="btn btn-default btn-green-wf">Servicios</a>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4 company-header-center company-header">
+          <div class="header-description">
+            <%= @company.description %>
+          </div>
+        </div>
+        <div class="col-md-4 company-header-right company-header">
+          <% if @selectedLocation %>
+            <div id="phone-info">
+              <%= image_tag 'telefono.png', :alt => '', :size => "12x14", :class=>"loc-icon" %>&nbsp;
+              <span id="phone-number">
+                <%= @selectedLocation.phone %>
+              </span><br />
+              <%= image_tag 'ubicacion.png', :alt => '', :size => "12x14", :class=>"loc-icon" %>&nbsp;
+              <span id="phone-address">
+                <%= if !@selectedLocation.outcall then @selectedLocation.address+', '+@selectedLocation.district.name else "A Domicilio" end %>
+                <br><%= if !@selectedLocation.second_address.blank? then @selectedLocation.second_address else '' end %>
+              </span>
+            </div>
+          <% else %>
+            <div id="phone-info" hidden>
+              <%= image_tag 'telefono.png', :alt => '', :size => "12x14", :class=>"loc-icon" %>&nbsp;
+              <span id="phone-number"></span><br />
+              <%= image_tag 'ubicacion.png', :alt => '', :size => "12x14", :class=>"loc-icon" %>&nbsp;
+              <span id="phone-address"></span>
+            </div>
+          <% end %>
+          <div style="clear: both;"></div>
+        </div>
+      <% else %>
+        <div class="col-md-4 company-header-left company-header" style="border-right: 1px solid #949292;">
+          <div class="row">
+            <div class="col-md-3">
+              <% if @company.logo_url %>
+                <%= image_tag @company.logo_url.to_s, :size => "80x80", :alt => @company.name, :class => "company-logo" %>
+              <% else %>
+                <%= image_tag 'logo_vacio.png', :alt => 'AgendaPro', :size => "80x80", :class => "company-logo" %>
+              <% end %>
+            </div>
+            <div class="col-md-9">
+              <div class="row">
+                <div class="col-md-12 company-name">
+                  <%= @company.name %>
+                </div>
+              </div>
+              <div class="row header-btns">
+                <div class="col-md-12">
+                  <div class="header-btn inactive">
+                    <a href="#" id="boton-locales" class="btn btn-default btn-green-wf">Lugares</a>
+                  </div>
+                  <div class="header-btn active" style="float: left;">
+                    <a href="#" id="boton-servicio" class="btn btn-default btn-green-wf">Servicios</a>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-8 company-header-center2 company-header">
+          <% if @selectedLocation %>
+            <div id="phone-info">
+              <%= image_tag 'telefono.png', :alt => '', :size => "12x14", :class=>"loc-icon" %>&nbsp;
+              <span id="phone-number">
+                <%= @selectedLocation.phone %>
+              </span><br />
+              <%= image_tag 'ubicacion.png', :alt => '', :size => "12x14", :class=>"loc-icon" %>&nbsp;
+              <span id="phone-address">
+                <%= if !@selectedLocation.outcall then @selectedLocation.address+', '+@selectedLocation.district.name else "A Domicilio" end %>
+                <br><%= if !@selectedLocation.second_address.blank? then @selectedLocation.second_address else '' end %>
+              </span>
+            </div>
+          <% else %>
+            <div id="phone-info" hidden>
+              <%= image_tag 'telefono.png', :alt => '', :size => "12x14", :class=>"loc-icon" %>&nbsp;
+              <span id="phone-number"></span><br />
+              <%= image_tag 'ubicacion.png', :alt => '', :size => "12x14", :class=>"loc-icon" %>&nbsp;
+              <span id="phone-address"></span>
+            </div>
+          <% end %>
+          <div style="clear: both;"></div>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div> -->
 
 <div class="row" id="navegacion-workflow">
   <div class="container">
-  <div class="col-md-1"><div id="prev3" class="prev-btn"><i class="fa fa-chevron-left fa-lg"></i></div></div>
-  <div class="col-md-10"><div id="pager2" class="pasos-reserva"></div></div>
-  <div class="col-md-1"><div id="next3" class="next-btn"><i class="fa fa-chevron-right fa-lg"></i></div></div>
+  <div class="col-sm-1">
+    <div id="prev3" class="prev-btn"><i class="fa fa-chevron-left fa-lg"></i></div>
+  </div>
+  <div class="col-sm-10">
+    <div id="pager2" class="pasos-reserva">
+    </div>
+  </div>
+  <div class="col-sm-1">
+    <div id="next3" class="next-btn"><i class="fa fa-chevron-right fa-lg"></i></div>
+  </div>
   </div>
 </div>
 
 <div>
-  <div class="container">
-    
-  </div>
   <div class="container" id="warning"></div>
   <div class="container">
     <div clas="row" id="espacio-workflow">
@@ -22,13 +182,13 @@
               <h3>Cargando Contenido</h3>
               <span>Por favor espere</span>
             </p>
-            <%= image_tag 'ajax-loader.gif', :alt => 'Loader' %>
+            <p class="text-center" style="color: #ccc;"><i class="fa fa-spinner fa-spin fa-lg"></i></p>
           </div>
         </div>
         <div id="foo4" style="visibility: collapse;">
           <div class="box-step">
             <div class="row">
-              <div class="col-sm-6">
+              <div class="col-sm-3">
                 <div class="services-title dark-gray">
                   Servicios
                 </div>
@@ -36,13 +196,34 @@
                   Seleccione un servicio
                 </div>
               </div>
+              <div class="col-sm-9" style="text-align: right;">
+                <% if @company.company_setting.allows_optimization %>
+                  <table style="float: right; margin-top: 10px;">
+                    <tr>
+                      <td style="text-align: right; color: #949292;">
+                        <b>O elige varios servicios y te propondremos los mejores horarios:&nbsp;&nbsp;</b>
+                      </td>
+                      <td style:"text-align:right;">
+                        <button type="button" class="btn btn-green" data-toggle="modal" data-target="#hoursOptimizer" style="background: #22c488; color: #ffffff; font-size: 20px;">Elegir servicios</button>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td style="text-align: right;">
+
+                      </td>
+                      <td style:"text-align:right;">
+
+                      </td>
+                    </tr>
+                  </table>
+                <% end %>
+              </div>
             </div>
             <div class="row">
               <div class="col-sm-6">
                 <div class="panel-group" id="services-selector" style="border-radius: 4px; border: 1px solid #acacac; margin-left: 10px !important;">
-                  <%= image_tag "ajax-loader.gif", :alt => "Loader" %>
+                  <span style="color: #ccc;"><i class="fa fa-spinner fa-spin fa-lg"></i></span>
                 </div>
-                
               </div>
               <div class="col-sm-6">
                 <div class="descripcion">
@@ -63,23 +244,22 @@
             </div>
           </div>
           <div class="box-step">
-            <div class="row">
-              <div class="col-md-3">
-                <div class="staff-wrapper">             
-                  <span class="subtitulos-workflow">Seleccione un Staff<br /> y Horario &nbsp;</span><span><i class="fa fa-clock-o gray-icon"></i>&nbsp;<i class="fa fa-user gray-icon"></i></span>
-                  <div class="sub-workflow dark-gray">Seleccione un staff para ver su horario</div>
-                  <div <%= 'style="display:none;"'.html_safe if @location.company.company_setting.provider_preference == 2 %>>
+            <div class="row staff">
+              <div class="col-md-3 step2-left-col" style="max-height: 346px; overflow-y: scroll;<%= 'display:none;' if @location.company.company_setting.provider_preference == 2 %>">
+                <div class="staff-wrapper">
+                  <span class="subtitulos-workflow">Elige Staff<br /> y Horario &nbsp;</span><span><i class="fa fa-clock-o gray-icon"></i>&nbsp;<i class="fa fa-user gray-icon"></i></span>
+                  <div class="sub-workflow dark-gray">Selecciona un staff para ver su horario</div>
                     <div class="panel panel-default light-gray">
                       <ul class="list-group" id="staff-selector">
-                        <%= image_tag "ajax-loader.gif", :alt => "Loader" %>
                       </ul>
                     </div>
-                  </div>
-                  
+                </div>
+                <div style="clear: both;">
+                </div>
+                <div style="clear: both;">
                 </div>
               </div>
-              <br />
-              <div class="col-md-9" id="staff-calendar">
+              <div class="col-md-<%= @location.company.company_setting.provider_preference == 2 ? '12' : '9' %>" id="staff-calendar">
                 <div class="panel panel-info <%= 'full-margin' if @location.company.company_setting.provider_preference == 2 %>">
                   <div class="calendar-head">
                     <div class="panel-title">
@@ -89,7 +269,6 @@
                         </div>
                         <div class="col-xs-8">
                           <span class="tittle"></span>
-                          
                         </div>
                         <div class="col-xs-2">
                           <span class="date-span">
@@ -104,209 +283,207 @@
                     </div>
                   </div>
                   <div class="days-row">
-                    
                   </div>
                   <div class="panel-body">
                     <div class="horario"></div>
                   </div>
                 </div>
-                
               </div>
             </div>
-
             <div class="row">
-              <div class="col-sm-3">
+              <div class="col-sm-4">
+                <a class="btn btn-large btn-green btn-add-service" style="padding: 5px 12px; margin-right: 10px; margin-bottom: 5px; width: 190px; font-size: 20px;" onclick="addNewService()"><i class="fa fa-plus"></i> Agregar Otro Servicio</a>
+              </div>
+              <div class="col-sm-8">
+                <p class="p-label"><span class="wf-label label-available">&nbsp;</span> Disponible<span class="wf-label label-past">&nbsp;</span> No Disponible<span class="wf-label label-unavailable">&nbsp;</span> Ocupado</p>
+              </div>
+            </div>
+            <div class="row change-bar">
+              <div class="col-sm-6">
                 <div class="btn-change btn-prev">
                   <a class="prev2 prev-btn"><i class="fa fa-chevron-left prev-arrow"></i> Anterior</a>
-                </div>  
+                </div>
               </div>
-              <div class="col-sm-9">
+              <div class="col-sm-6">
                 <div class="btn-change btn-next">
                   <a class="next2 next-btn">Siguiente <i class="fa fa-chevron-right next-arrow"></i></a>
                 </div>
               </div>
             </div>
-            
           </div>
           <div class="box-step">
-
             <div class="row" style="margin-left: 0px !important;">
               <div class="col-sm-6">
                 <div class="subtitulos-workflow">Ingresa tus datos &nbsp;<i class="fa fa-file-text-o gray-icon"></i></div>
               </div>
-              <div class="col-sm-6">
-              </div>
             </div>
-
             <div class="row" style="margin-left: 0px !important;">
-
-              <div class="col-md-6">
-
-
+              <%= form_tag("/iframe/book_service", method: "post", role: "form", class: "form-horizontal", id: "bookingForm" ) do %>
+              <div class="col-sm-6">
                 <!-- INICIO FORM -->
-
                 <div id="form-datos">
                   <div class="datos-heading">
                     Datos de la reserva
                   </div>
                   <div class="panel-body">
-                    <%= form_tag("/iframe/book_service", method: "post", role: "form", class: "form-horizontal", id: "bookingForm" ) do %>
-                      <input type="hidden" name="start" id="start" value="">
-                      <input type="hidden" name="end" id="end" value="">
-                      <input type="hidden" name="provider_lock" id="provider_lock" value="">
-                      <input type="hidden" name="provider" id="provider" value="">
-                      <input type="hidden" name="service" id="service" value="">
-                      <input type="hidden" name="location" id="location" value="<%= @location.id %>">
-                      <input type="hidden" name="origin" id="origin" value="true">
-                      <% if user_signed_in? %>
-                      <div id="user-data">
-                        <%= hidden_field_tag :user_id, current_user.id %>
-                        <%= hidden_field_tag :firstName, current_user.first_name %>
-                        <%= hidden_field_tag :lastName, current_user.last_name %>
+                    <input type="hidden" name="bookings" class="bookings" value="">
+                    <input type="hidden" name="location" id="location" value="<%= @location.id %>">
+                    <input type="hidden" name="origin" id="origin" value="true">
+                    <input type="hidden" name="payment" id="payment" value="0">
 
-                        <div class="row">
-                          <div class="col-xs-12 dark-gray">
-                            Nombre
-                          </div>
+                    <% if user_signed_in? %>
+                    <div id="user-data">
+                      <%= hidden_field_tag :user_id, current_user.id %>
+                      <%= hidden_field_tag :firstName, current_user.first_name %>
+                      <%= hidden_field_tag :lastName, current_user.last_name %>
+                      <div class="row">
+                        <div class="col-sm-12 dark-gray">
+                          Nombre
                         </div>
-                        <div class="row">
-                          <div class="col-xs-12">
-                            <div class="form-group has-feedback">
-                              <input type="text" id="full_name" name="user[full_name]" class="form-control light-gray" placeholder="Nombre completo (requerido)">
-                              <span class="help-block"></span>
-                              <span class="form-control-feedback"></span>
-                            </div>
-                          </div>
-                        </div>
-
-                      
-                        <div class="row">
-                          <div class="col-xs-6 dark-gray">
-                            Email
-                          </div>
-                          <div class="col-xs-6 dark-gray">
-                            Teléfono
-                          </div>
-                        </div>
-                        <div class="row">
-                          <div class="col-xs-6">
-                            <div class="form-group has-feedback">
-                              <%= email_field_tag(:email, current_user.email, :class => "form-control light-gray", :placeholder => "ejemplo@dominio.com (requerido)", :required => true) %>
-                              <span class="help-block"></span>
-                              <span class="form-control-feedback"></span>
-                            </div>
-                          </div>
-                          <div class="col-xs-6">
-                            <div class="form-group has-feedback">
-                              <%= telephone_field_tag(:phone, current_user.phone, :class => "form-control light-gray", :placeholder => "1122334455 (requerido)", :required => true) %>
-                              <span class="help-block"></span>
-                              <span class="form-control-feedback"></span>
-                            </div>
-                          </div>
-                        </div>
-                        
                       </div>
-                      <% else %>
-                        <%= hidden_field_tag :firstName %>
-                        <%= hidden_field_tag :lastName %>
-                        <div class="row">
-                          <div class="col-xs-12 dark-gray">
-                            Nombre
+                      <div class="row">
+                        <div class="col-sm-12">
+                          <div class="form-group has-feedback">
+                            <input type="text" id="full_name" name="user[full_name]" class="form-control light-gray" placeholder="Nombre completo (requerido)">
+                            <span class="help-block"></span>
+                            <span class="form-control-feedback"></span>
                           </div>
                         </div>
-                        <div class="row">
-                          <div class="col-xs-12">
-                            <div class="form-group has-feedback">
-                              <input type="text" id="full_name" name="user[full_name]" class="form-control light-gray" placeholder="Nombre completo (requerido)">
-                              <span class="help-block"></span>
-                              <span class="form-control-feedback"></span>
-                            </div>
+                      </div>
+                      <div class="row">
+                        <div class="col-sm-6 dark-gray">
+                          Email
+                        </div>
+                        <div class="col-sm-6 dark-gray">
+                          Teléfono
+                        </div>
+                      </div>
+                      <div class="row">
+                        <div class="col-sm-6">
+                          <div class="form-group has-feedback">
+                            <%= email_field_tag(:email, current_user.email, :class => "form-control light-gray", :placeholder => "ejemplo@dominio.com (requerido)", :required => true) %>
+                            <span class="help-block"></span>
+                            <span class="form-control-feedback"></span>
                           </div>
                         </div>
-
-                      
-                        <div class="row">
-                          <div class="col-xs-6 dark-gray">
-                            Email
-                          </div>
-                          <div class="col-xs-6 dark-gray">
-                            Teléfono
+                        <div class="col-sm-6">
+                          <div class="form-group has-feedback">
+                            <%= telephone_field_tag(:phone, current_user.phone, :class => "form-control light-gray", :placeholder => "1122334455 (requerido)", :required => true) %>
+                            <span class="help-block"></span>
+                            <span class="form-control-feedback"></span>
                           </div>
                         </div>
-                        <div class="row">
-                          <div class="col-xs-6">
-                            <div class="form-group has-feedback">
-                              <%= email_field_tag(:email, nil, :class => "form-control light-gray", :placeholder => "ejemplo@dominio.com (requerido)", :required => true) %>
-                              <span class="help-block"></span>
-                              <span class="form-control-feedback"></span>
-                            </div>
-                          </div>
-                          <div class="col-xs-6">
-                            <div class="form-group has-feedback">
-                              <%= telephone_field_tag(:phone, nil, :class => "form-control light-gray", :placeholder => "1122334455 (requerido)", :required => true) %>
-                              <span class="help-block"></span>
-                              <span class="form-control-feedback"></span>
-                            </div>
+                      </div>
+                    </div>
+                    <% else %>
+                      <%= hidden_field_tag :firstName %>
+                      <%= hidden_field_tag :lastName %>
+                      <div class="row">
+                        <div class="col-sm-12 dark-gray">
+                          Nombre
+                        </div>
+                      </div>
+                      <div class="row">
+                        <div class="col-sm-12">
+                          <div class="form-group has-feedback">
+                            <input type="text" id="full_name" name="user[full_name]" class="form-control light-gray" placeholder="Nombre completo (requerido)">
+                            <span class="help-block"></span>
+                            <span class="form-control-feedback"></span>
                           </div>
                         </div>
-                      <% end %>
-
-                      <% if @location.company.company_setting.client_exclusive %>
-                        <div id="identificationNumber" class="form-group has-feedback">
-                          <%= label_tag(:identification_number, "RUT", class: "col-xs-3 control-label") %>
-                          <div class="col-xs-9">
+                      </div>
+                      <div class="row">
+                        <div class="col-sm-6 dark-gray">
+                          Email
+                        </div>
+                        <div class="col-sm-6 dark-gray">
+                          Teléfono
+                        </div>
+                      </div>
+                      <div class="row">
+                        <div class="col-sm-6">
+                          <div class="form-group has-feedback">
+                            <%= email_field_tag(:email, nil, :class => "form-control light-gray", :placeholder => "ejemplo@dominio.com (requerido)", :required => true) %>
+                            <span class="help-block"></span>
+                            <span class="form-control-feedback"></span>
+                          </div>
+                        </div>
+                        <div class="col-sm-6">
+                          <div class="form-group has-feedback">
+                            <%= telephone_field_tag(:phone, nil, :class => "form-control light-gray", :placeholder => "1122334455 (requerido)", :required => true) %>
+                            <span class="help-block"></span>
+                            <span class="form-control-feedback"></span>
+                          </div>
+                        </div>
+                      </div>
+                    <% end %>
+                    <% if @location.company.company_setting.client_exclusive %>
+                      <div class="row">
+                        <div class="col-sm-12 dark-gray">
+                          RUT
+                        </div>
+                      </div>
+                      <div class="row">
+                        <div class="col-md-sm">
+                          <div class="form-group has-feedback">
                             <%= text_field_tag(:identification_number, nil, :class => "form-control light-gray", :placeholder => "Escriba su RUT, debe estar autorizado como cliente" ) %>
                             <span class="help-block"></span>
                             <span class="form-control-feedback"></span>
                           </div>
                         </div>
-                      <% end %>
-                      <div id="outcallAddress" class="form-group has-feedback">
-                        <%= label_tag(:address, "Dirección", class: "col-xs-3 control-label") %>
-                        <div class="col-xs-9">
-                          <%= text_field_tag(:address, nil, :class => "form-control light-gray", :placeholder => "Escribe la dirección donde se debe realizar el servicio" ) %>
-                          <span class="help-block"></span>
-                          <span class="form-control-feedback"></span>
-                        </div>
                       </div>
-
-
-                      <div class="row">
-                        <div class="col-xs-12 dark-gray">
-                          Comentario
-                        </div>
-                      </div>
-                      <div class="row">
-                        <div class="col-xs-12">
-                          <div class="form-group">
-                              <%= text_area_tag(:comment, nil, :class => "form-control light-gray", :placeholder => "Agrega algún comentario a tu reserva en caso de ser necesario", :rows => 4) %>
-                          </div>
-                        </div>
-                      </div>
-
-                      <div class="row" style="margin-top: 20px;">
-                        <div class="col-xs-6">
-                          <div class="btn-change btn-prev">
-                            <a class="prev2 prev-btn"><i class="fa fa-chevron-left prev-arrow"></i> Anterior</a>
-                          </div>
-                        </div>
-                        <div class="col-xs-6">
-                          <button type="submit" id="submitBtn">Reservar</button>
-                        </div>
-                      </div>
-
                     <% end %>
+                    <% if @location.company.company_setting.deal_activate %>
+                      <div class="row">
+                        <div class="col-sm-12 dark-gray">
+                          <%= !@location.company.company_setting.deal_name.blank? ? @location.company.company_setting.deal_name : "Convenio" %>
+                        </div>
+                      </div>
+                      <div class="row">
+                        <div class="col-sm-12">
+                          <div class="form-group has-feedback">
+                            <%= text_field_tag(:deal_code, nil, :class => "form-control light-gray" ) %>
+                            <span class="help-block"></span>
+                            <span class="form-control-feedback"></span>
+                          </div>
+                        </div>
+                      </div>
+                    <% end %>
+                    <div id="outcallAddress" class="form-group has-feedback">
+                      <%= label_tag(:address, "Dirección", class: "col-sm-12 control-label") %>
+                      <div class="col-sm-12">
+                        <%= text_field_tag(:address, nil, :class => "form-control light-gray", :placeholder => "Escribe la direcciÃ³n donde se debe realizar el servicio" ) %>
+                        <span class="help-block"></span>
+                        <span class="form-control-feedback"></span>
+                      </div>
+                    </div>
+                    <div class="row">
+                      <div class="col-sm-12 dark-gray">
+                        Comentario
+                      </div>
+                    </div>
+                    <div class="row">
+                      <div class="col-sm-12">
+                        <div class="form-group">
+                          <%= text_area_tag(:comment, nil, :class => "form-control light-gray", :placeholder => "Agrega algún comentario a tu reserva en caso de ser necesario", :rows => 4) %>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="row" style="margin-top: 20px;">
+                      <div class="col-md-6">
+                        <div class="btn-change btn-prev leftBookingButton">
+                          <a class="prev2 prev-btn"><i class="fa fa-chevron-left prev-arrow"></i> Anterior</a>
+                        </div>
+                      </div>
+                      <div class="col-md-6" id="reservar1">
+                        <button type="submit" class="submitBtn leftBookingButton">Reservar</button>
+                      </div>
+                    </div>
                   </div>
                 </div>
-
                 <!-- FIN FORM -->
-
-                
-
-
               </div>
-              <div class="col-md-6">
-
+              <div class="col-sm-6">
                 <div id="resumen-reserva">
                   <div class="resumen-heading">
                     Resumen de tu Reserva
@@ -318,34 +495,159 @@
                     </table>
                   </div>
                 </div>
+                <div id="reservar2" style="margin-top: 20px;">
+                  <!--<div class="row">
+                    <div class="col-md-6">
 
+                      <a href="#" id="openPayOptions">Seleccionar opción de pago</a>
+
+                    </div>
+                  </div>-->
+                  <% if @location.company.company_setting.allows_online_payment %>
+                    <div class="row">
+                      <div class="col-sm-6">
+                        <div>
+                          <button type="submit" data-loading-text = "Cargando" class="payBtn">Pagar</button>
+                        </div>
+                      </div>
+                      <div class="col-sm-6">
+                        <button type="submit" data-loading-text="Cargando..." class="submitBtn">Reservar</button>
+                      </div>
+                    </div>
+                    <div class="row">
+                      <div class="col-sm-6">
+                        <div id="discount" style="color: #505050; padding: 5px 5px 5px 5px;">
+                        </div>
+                      </div>
+                      <div class="col-sm-6">
+                        <div id="normal-book" style="color: #505050; padding: 5px 5px 5px 5px; float: right; text-align: right;">
+                        </div>
+                      </div>
+                    </div>
+                    <div class="row">
+                      <div class="col-sm-6">
+                        <div style="color: #505050; padding: 5px 5px 5px 5px;">
+                          <a href="#" id="open-online-policy" data-toggle="modal" data-target="#online-policy" style="color: #505050 !important; border-top: 1px solid #949292; padding-top: 5px;"><b><%= image_tag 'icono_pago.png', :alt => 'Pago' %>Política de pagos en línea.</b></a>
+                        </div>
+                      </div>
+                      <div class="col-sm-6">
+                        <div style="color: #505050; padding: 5px 5px 5px 5px; float: right; text-align: right;">
+                        </div>
+                      </div>
+                    </div>
+                  <% else %>
+                    <div class="row">
+                      <div class="col-sm-6 col-md-offset-6">
+                        <button type="submit" data-loading-text="Cargando..." class="submitBtn">Reservar</button>
+                      </div>
+                    </div>
+                  <% end %>
+                </div>
               </div>
+
+              <div class="modal fade" id="medio-de-pago" tabindex="-1" role="dialog" aria-labelledby="siginLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                      <h4 class="modal-title" style="color: #505050 !important;">Elige el medio de pago</h4>
+                    </div>
+                    <div class="modal-body" style="color: #505050 !important;">
+
+                      <div class="row">
+                        <div class="col-md-4">
+                          <input type="radio" name="mp" value="04" class="mp_radio" id="mp_radio_04" />
+                          <label for="mp_radio_04"><image src="https://www.puntopagos.com/content/mp4.gif" alt="Banco Chile" class="mp_link" mp = "04" /></label>
+                        </div>
+                        <!-- <div class="col-md-4">
+                          <input type="radio" name="mp" value="05" class="mp_radio" id="mp_radio_05" />
+                          <label for="mp_radio_05"><image src="https://www.puntopagos.com/content/mp5.gif" alt="BCI" class="mp_link" mp = "05" /></label>
+                        </div>
+                        <div class="col-md-4">
+                          <input type="radio" name="mp" value="06" class="mp_radio" id="mp_radio_06" />
+                          <label for="mp_radio_06"><image src="https://www.puntopagos.com/content/mp6.gif" alt="TBanc" class="mp_link" mp = "06" /></label>
+                        </div> -->
+                      </div>
+                      <div class="row">
+                        <div class="col-md-4">
+                          <input type="radio" name="mp" value="07" class="mp_radio" id="mp_radio_07" />
+                          <label for="mp_radio_07"><image src="https://www.puntopagos.com/content/mp7.gif" alt="Banco Estado" class="mp_link" mp = "07" /></label>
+                        </div>
+                        <div class="col-md-4">
+                          <input type="radio" name="mp" value="03" class="mp_radio" id="mp_radio_03" />
+                          <label for="mp_radio_03"><image src="https://www.puntopagos.com/content/mp3.gif" alt="Webpay Transbank" class="mp_link" mp = "03" /></label>
+                        </div>
+                        <div class="col-md-4">
+                          <input type="radio" name="mp" value="01" style="display: none !important;" class="mp_radio" id="mp_radio_01" />
+                          <label for="mp_radio_01"><image style="display: none;" src="https://www.puntopagos.com/content/mp1.gif" alt="Banco Santander" class="mp_link" mp = "01" /></label>
+                        </div>
+                      </div>
+                      <div class="row">
+                        <div class="col-md-12" style="padding-left: 10px; padding-top: 10px;">
+                          <p>Antes de pagar, asegúrate de leer la política de pagos en línea de la empresa: <a href="#" id="policy-link" style="color: #505050 !important;"><b>ver.</b></a></p>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="modal-footer">
+                      <button type="button" class="modal-pay" id="select-medio">Confirmar pago</button>
+                    </div>
+                  </div><!-- /.modal-content -->
+                </div><!-- /.modal-dialog -->
+              </div><!-- /.modal -->
+              <!-- FIN MODAL MEDIO DE PAGO -->
+
+              <!-- MODAL POLÃTICA DE MODIFICACIÃ“N/CANCELACIÃ“N PAGOS EN LÃNEA -->
+              <div class="modal fade" id="online-policy" tabindex="-1" role="dialog" aria-labelledby="siginLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                      <h4 class="modal-title" style="color: #505050 !important;">Política de modificación/cancelación de reservas pagadas en línea.</h4>
+                    </div>
+                    <div class="modal-body" style="color: #505050 !important;">
+                      <h3>Modificación:</h3>
+                      <% if !@location.company.company_setting.online_cancelation_policy.modifiable %>
+                        <p>La empresa no permite modificar reservas pagadas en línea.</p>
+                      <% else %>
+                        <p>La reserva se puede modificar:</p>
+                        <p>- Hasta <%= @location.company.company_setting.online_cancelation_policy.min_hours.to_s %> horas antes del servicio contratado.<br />
+                        - Hasta <%= @location.company.company_setting.online_cancelation_policy.modification_max.to_s %> <%= TimeUnit.find(@location.company.company_setting.online_cancelation_policy.modification_unit).unit.to_s.downcase %> desde la fecha en que se efectuó el pago.</p>
+                        <p>
+                          Si no cumple con alguna de las dos restricciones, no podrá modificar su reserva.
+                          <br />
+                          Además, la empresa permite modificar la reserva un máximo de <%= @location.company.company_setting.max_changes.to_s %> veces.
+                        </p>
+                      <% end %>
+
+                      <h3>Cancelación:</h3>
+                      <% if !@location.company.company_setting.online_cancelation_policy.cancelable %>
+                        <p>La empresa no permite cancelar reservas pagadas en línea.</p>
+                      <% else %>
+                        <p>La reserva se puede cancelar:</p>
+                        <p>- Hasta <%= @location.company.company_setting.online_cancelation_policy.min_hours.to_s %> horas antes del servicio contratado.<br />
+                        - Hasta <%= @location.company.company_setting.online_cancelation_policy.cancel_max.to_s %> <%= TimeUnit.find(@location.company.company_setting.online_cancelation_policy.cancel_unit).unit.to_s.downcase %> desde la fecha en que se efectuó el pago.</p>
+                        <p>Si no cumple con alguna de las dos restricciones, no podrá cancelar su reserva.</p>
+                        <br />
+                        <p>
+                          Si cancela su reserva, se le devolverá un 90% del monto cancelado debido a los costos de transacción.
+                        </p>
+                      <% end %>
+                    </div>
+                    <div class="modal-footer">
+                      <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+                    </div>
+                  </div><!-- /.modal-content -->
+                </div><!-- /.modal-dialog -->
+              </div><!-- /.modal -->
+              <!-- FIN MODAL POLÃTICA DE MODIFICACIÃ“N/CANCELACIÃ“N PAGOS EN LÃNEA -->
+
+              <% end %>
             </div>
-
           </div>
-
-
-
-
         </div>
-
-        <!--<div class="row">
-          <div class="col-md-6">
-            <div class="btn-change btn-prev">
-              <a id="prev2"><i class="fa fa-chevron-left"></i> Anterior</a>
-            </div>
-          </div>
-          <div class="col-md-6">
-            <div class="btn-change btn-next">
-              <a id="next2">Siguiente <i class="fa fa-chevron-right"></i></a>
-            </div>
-          </div>
-        </div>-->
-
       </div>
     </div>
   </div>
-</div>
 </div>
 
 <%= content_tag "div", id: "selectedLocal", data: {local: @location, district: @location.district.name} do %>
@@ -356,34 +658,143 @@
 <% end %>
 <%= content_tag "div", id: "workflow_url", data: {url: @url, location_id: @location.id} do %>
 <% end %>
+<%= content_tag "div", id: "dealCode", data: {deal_identification_number: @location.company.company_setting.deal_identification_number, deal_required: @location.company.company_setting.deal_required } do %>
+<% end %>
+
+<% content_for :stylesheets do %>
+  <%= stylesheet_link_tag "calendar" %>
+<% end %>
 
 <% content_for :scripts do %>
-  <%= javascript_include_tag 'workflow/services' %>
-  <%= javascript_include_tag 'jquery.carouFredSel-6.2.1.js' %>
-  <%= javascript_include_tag "jquery-ui-1.10.4.min.js" %>
-  <%= javascript_include_tag 'split-name' %>
-  <%= javascript_include_tag 'validations/validate' %>
-  <%= javascript_include_tag 'validations/home/workflow' %>
+  <%= javascript_include_tag 'workflow/index' %>
   <script type="text/javascript">
     $(function() {
+      <% if @location.company.company_setting.deal_identification_number %>
+        $('#deal_code').change(function() {
+          var rut_string = $('#deal_code').val()
+          if (rut_string != '') {
+            $('#deal_code').val(rut_format(rut_string));
+          }
+        });
+      <% end %>
+
+      $(".payBtn").click(function(e){
+        e.preventDefault();
+        $("#payment").val("1");
+        $("#bookingForm").submit();
+      });
+
+      $(".submitBtn").click(function(e){
+        e.preventDefault();
+        $("#payment").val("0");
+        $("#bookingForm").submit();
+      });
+
+      //  Responsive layout, resizing the items
+      compose_name('#full_name', '#firstName', '#lastName');
+      split_name('#full_name', '#firstName', '#lastName');
+
+      $('#boton-servicio').click(function () {
+        window.location.href = 'http://' + $('#workflow_url').data('url') + '/workflow?local=' + $('#workflow_url').data('location-id').toString();
+      });
+      $('#boton-locales').click(function () {
+        window.location.href = 'http://' + $('#workflow_url').data('url') + '/?local=' + $('#workflow_url').data('location-id').toString();
+      });
+
+      //$("#datepicker").formatDate('yyyy-mm-dd');
+      $("#datepicker").datepicker({
+          autoSize: true,
+          firstDay: 1,
+          changeMonth: true,
+          changeYear: true,
+          monthNames: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+          monthNamesShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
+          prevText: 'Atrás',
+          nextText: 'Adelante',
+          dayNames: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'],
+          dayNamesShort: ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'],
+          dayNamesMin: ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'],
+          today: 'Hoy',
+          clear: '',
+          dateFormat: 'yy-mm-dd',
+          onSelect: function(newDate){
+            var data = {
+              provider: $('[name="staffRadio"]:checked').val(),
+              local: $('#selectedLocal').data('local').id,
+              date: newDate,
+              service: $('input[name="serviceRadio"]:checked').val(),
+            }
+            console.log(data);
+
+            if (calendar) {
+              calendar.rebuild('/get_available_time.json', data);
+              console.log("Rebuild calendar.");
+            }
+            else {
+              calendar = new Calendar('/get_available_time.json', data);
+              console.log("New calendar.");
+            }
+
+            $(document).on('hourClick', function (e) {
+              addBooking(e);
+            });
+
+            $(function () {
+              $('.prev-btn').click(function () {
+                selected = false;
+              });
+              $('.next-btn').click(function () {
+                selected = false;
+              });
+            });
+          }
+      });
+
+      $(document.body).on('click', '.date-span', function(e){
+        $(e.currentTarget).find('input').datepicker('show');
+      });
+
+      $("#optimizerDateSelector").datepicker({
+          monthNames: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+          monthNamesShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
+          prevText: 'Atrás',
+          nextText: 'Adelante',
+          dayNames: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'],
+          dayNamesShort: ['Dom', 'Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sáb'],
+          dayNamesMin: ['Dom', 'Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sáb'],
+          today: 'Hoy',
+          clear: '',
+          firstDay: 1,
+          dateFormat: 'yy-mm-dd',
+          onSelect: function(newDate){
+            $("#pickerSelected").empty();
+            var prettyDate = newDate.split("-")[2] + "/" + newDate.split("-")[1] + "/" + newDate.split("-")[0];
+            $("#pickerSelected").append(prettyDate);
+          }
+      });
+
+      $(document.body).on('click', '.optimizer-date-span', function(e){
+        $(e.currentTarget).find('input').datepicker('show');
+      });
+
       //  Responsive layout, resizing the items
       $('#foo4').carouFredSel({
         responsive: true,
         auto: false,
         pagination: {
-            container: "#pager2",
-            anchorBuilder: function (nr) {
-              var title;
-              if (nr == 1) {
-                title = '<i class="fa fa-circle fa-2x"></i><span class="circle-number">'+nr+'</span><span class="navigation-title"> | Elegir el servicio</span>';
-              } else if (nr == 2) {
-                title = '<i class="fa fa-circle fa-2x"></i><span class="circle-number">'+nr+'</span><span class="navigation-title"> | Elegir el staff</span>';
-              } else{
-                title = '<i class="fa fa-circle fa-2x"></i><span class="circle-number">'+nr+'</span><span class="navigation-title"> | Ingresa tus datos</span>';
-              };
-              return '<a href="#"><span>' + title + '</span></a>';
-            }
+          container: "#pager2",
+          anchorBuilder: function (nr) {
+            var title;
+            if (nr == 1) {
+              title = '<i class="fa fa-circle fa-2x"></i><span class="circle-number">'+nr+'</span><span class="navigation-title"> | Elegir el servicio</span>';
+            } else if (nr == 2) {
+              title = '<i class="fa fa-circle fa-2x"></i><span class="circle-number">'+nr+'</span><span class="navigation-title"> | Elegir el horario</span>';
+            } else{
+              title = '<i class="fa fa-circle fa-2x"></i><span class="circle-number">'+nr+'</span><span class="navigation-title"> | Ingresa tus datos</span>';
+            };
+            return '<a href="#" id="pager-btn-'+nr+'" class="pager-btn disabled"><span>' + title + '</span></a>';
           },
+        },
         width: '100%',
         height: 'variable',
         prev: '.prev-btn',
@@ -407,70 +818,65 @@
           }
         }
       });
+    });
 
-      compose_name('#full_name', '#firstName', '#lastName');
-      split_name('#full_name', '#firstName', '#lastName');
+    var waitForFinalEvent = (function () {
+      var timers = {};
+      return function (callback, ms, uniqueId) {
+        if (!uniqueId) {
+          uniqueId = "Don't call this twice without a uniqueId";
+        }
+        if (timers[uniqueId]) {
+          clearTimeout (timers[uniqueId]);
+        }
+        timers[uniqueId] = setTimeout(callback, ms);
+      };
+    })();
 
-      $('#boton-servicio').click(function () {
-        window.location.href = 'http://' + $('#workflow_url').data('url') + '/workflow?local=' + $('#workflow_url').data('location-id').toString();
+    $(window).resize(function () {
+      waitForFinalEvent(function(){
+        var count = $('.columna-dia').length;
+        var width = (100 / count);
+
+        var width2 = $(".horario")[0].clientWidth/count;
+        $('.dia-semana').width(width2-1);
+        $('.dia-semana:last').width(width2-1);
+
+        console.log("Resize " + $(".horario")[0].clientWidth);
+        //...
+      }, 100, "some unique string");
+    });
+
+    $(document).ready(function(){
+      var oldTop = $(document).scrollTop();
+      $('#foo4').trigger('updateSizes');
+      $(document).scrollTop(oldTop);
+
+      $("#policy-link").click(function(e){
+        e.preventDefault();
+        $("#medio-de-pago").modal('hide');
+        $("#online-policy").modal('show');
       });
 
-      //$("#datepicker").formatDate('yyyy-mm-dd');
-      $("#datepicker").datepicker({
-          monthNames: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
-          monthNamesShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
-          prevText: 'Atrás',
-          nextText: 'Adelante',
-          dayNames: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'],
-          dayNamesShort: ['Dom', 'Lun', 'Mar', 'Mier', 'Jue', 'vie', 'Sáb'],
-          dayNamesMin: ['Dom', 'Lun', 'Mar', 'Mier', 'Jue', 'vie', 'Sáb'],
-          today: 'Hoy',
-          clear: '',
-          firstDay: 1,
-          dateFormat: 'yy-mm-dd',
-          onSelect: function(newDate){
-            
-            var data = {
-              provider: $('[name="staffRadio"]:checked').val(),
-              local: $('#selectedLocal').data('local').id,
-              date: newDate,
-              service: $('input[name="serviceRadio"]:checked').val(),
-            }
 
-            console.log(data);
 
-            
-
-            if (calendar) {
-              calendar.rebuild('/get_available_time.json', data);
-              console.log("Rebuild calendar.");
-            }
-            else {
-              calendar = new Calendar('/get_available_time.json', data);
-              console.log("New calendar.");
-            }
-            
-            $(document).on('hourClick', function (e) {
-              addBooking(e);
-            });
-            
-
-            $(function () {
-              $('#prev').click(function () {
-                selected = false;
-              });
-              $('#next').click(function () {
-                selected = false;
-              });
-            });
-
+      $('#select-medio').click(function(){
+        console.log('clicked select medio');
+        var is_selected = false;
+        $('.mp_radio').each(function(){
+          if($(this).prop('checked'))
+          {
+            is_selected = true;
+            console.log(is_selected);
           }
+        });
+        if(is_selected)
+        {
+          console.log("Entra");
+          $("#medio-de-pago").modal('hide');
+          $('#bookingForm').submit();
+        }
       });
-
-      $(document.body).on('click', '.date-span', function(e){ 
-        $(e.currentTarget).find('input').datepicker('show');
-      });
-
     });
   </script>
 <% end %>

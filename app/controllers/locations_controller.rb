@@ -28,6 +28,12 @@ class LocationsController < ApplicationController
   def new
     @location = Location.new
     @location.company_id = current_user.company_id
+    if current_user.role_id != Role.find_by_name("Super Admin").id
+      if current_user.company.locations.where(active:true).count >= current_user.company.plan.locations
+        redirect_to locations_path, alert: 'No puedes crear más locales con tu plan actual.'
+        return
+      end
+    end
   end
 
   # GET /locations/1/edit
@@ -47,7 +53,7 @@ class LocationsController < ApplicationController
         format.html { redirect_to locations_path, notice: 'Local creado exitosamente.' }
         format.json { render :json => @location }
       else
-        format.html { render action: 'new' }
+        format.html { redirect_to locations_path, alert: 'No se pudo guardar el local.' }
         format.json { render :json => { :errors => @location.errors.full_messages }, :status => 422 }
       end
     end
@@ -72,7 +78,7 @@ class LocationsController < ApplicationController
           location_time.location_id = @location.id
           location_time.save
         end
-        format.html { render action: 'edit' }
+        format.html { redirect_to locations_path, alert: 'No se pudo guardar el local.' }
         format.json { render :json => { :errors => @location.errors.full_messages }, :status => 422 }
       end
     end
@@ -119,6 +125,16 @@ class LocationsController < ApplicationController
   def location_time
     location_time = Location.find(params[:id]).location_times
     render :json => location_time
+  end
+
+  def check_num_locations
+    ok = 1
+    if current_user.role_id != Role.find_by_name("Super Admin").id
+      if current_user.company.locations.where(active:true).count >= current_user.company.plan.locations
+        ok = 0
+      end
+    end
+    render :json => {:ok => ok}
   end
 
   def get_available_time
@@ -522,6 +538,6 @@ class LocationsController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def location_params
-      params.require(:location).permit(:name, :address, :second_address, :phone, :outcall, :longitude, :latitude, :company_id, :email, :notification, :booking_configuration_email, :district_id, district_ids: [], location_times_attributes: [:id, :open, :close, :day_id, :location_id])
+      params.require(:location).permit(:name, :address, :second_address, :phone, :outcall, :longitude, :latitude, :company_id, :email, :notification, :booking_configuration_email, :online_booking, :district_id, district_ids: [], location_times_attributes: [:id, :open, :close, :day_id, :location_id])
     end
 end

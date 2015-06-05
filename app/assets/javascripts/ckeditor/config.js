@@ -46,13 +46,12 @@ CKEDITOR.editorConfig = function( config ) {
 		{ name: 'editing',     groups: [ 'spellchecker' ] },
 		{ name: 'links' },
 		{ name: 'insert' },
-		{ name: 'tools', groups: ['maximize', 'mode'] },
+		{ name: 'styles' },
 		'/',
 		{ name: 'basicstyles', groups: [ 'basicstyles', 'cleanup' ] },
+		{ name: 'colors' },
 		{ name: 'paragraph',   groups: [ 'list', 'indent', 'blocks', 'align' ] },
-		'/',
-		{ name: 'styles' },
-		{ name: 'colors' }
+		{ name: 'tools', groups: ['maximize', 'mode'] }
 	];
 
 	// Remove some buttons provided by the standard plugins, which are

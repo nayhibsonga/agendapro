@@ -24,9 +24,17 @@ var hourOptions = '<option value="00">00</option>'+
 		'<option value="22">22</option>'+
 		'<option value="23">23</option>';
 var minuteOptions = '<option value="00">00</option>'+
+		'<option value="05">05</option>'+
+		'<option value="10">10</option>'+
 		'<option value="15">15</option>'+
+		'<option value="20">20</option>'+
+		'<option value="25">25</option>'+
 		'<option value="30">30</option>'+
-		'<option value="45">45</option>';
+		'<option value="35">35</option>'+
+		'<option value="40">40</option>'+
+		'<option value="45">45</option>'+
+		'<option value="50">50</option>'+
+		'<option value="55">55</option>';
 
 function buildDay (value) {
 	$('#providerTable').append(
@@ -117,7 +125,7 @@ function addBreak (value, openTime, closeTime) {
 				'</form>' +
 			'</th>' +
 			'<th>' +
-				'<a id="'+value+'removeBreak'+breakCount+'" class="btn btn-danger"><i class="fa fa-trash-o"></i></a>' +
+				'<a id="'+value+'removeBreak'+breakCount+'" class="btn btn-red"><i class="fa fa-trash-o"></i></a>' +
 			'</th>' +
 		'</tr>'
 	);
@@ -127,11 +135,11 @@ function addBreak (value, openTime, closeTime) {
 	});
 	if (openTime != null){
 		$('#'+value+'openHourId'+breakCount+' option[value="'+openTime[0]+'"]').attr("selected",true);
-		$('#'+value+'openMinuteId'+breakCount+' option[value="'+openTime[1]+'"]').attr("selected",true);	
+		$('#'+value+'openMinuteId'+breakCount+' option[value="'+openTime[1]+'"]').attr("selected",true);
 	}
 	if (closeTime != null) {
 		$('#'+value+'closeHourId'+breakCount+' option[value="'+closeTime[0]+'"]').attr("selected",true);
-		$('#'+value+'closeMinuteId'+breakCount+' option[value="'+closeTime[1]+'"]').attr("selected",true);	
+		$('#'+value+'closeMinuteId'+breakCount+' option[value="'+closeTime[1]+'"]').attr("selected",true);
 	}
 }
 
@@ -150,8 +158,6 @@ function initialize() {
 	if ( $('#title').length > 0 ) {
 		var providerTimesData = $('#provider_times_data').data('provider-times');
 		var breaksArray = [0,0,0,0,0,0,0];
-		providerTimesData = sortByKey(providerTimesData,'open');
-		providerTimesData = sortByKey(providerTimesData,'day_id');
 		$.each(providerTimesData, function(index,providerTime) {
 			breaksArray[(providerTime.day_id - 1)] += 1;
 		});
@@ -164,8 +170,8 @@ function initialize() {
 				var value = providerTimesData[arrayCounter].day_id;
 				$('#dayStatusId'+ value).prop('checked', true);
 				$('#dayStatusId'+ value).val(1);
-				$('#dayStatusId'+value).closest('tr').children().last().append('<a id="addBreakdiv'+value+'" onclick="addBreak('+value+')" class="btn btn-agendapro-claro"><i class="fa fa-plus"></i></a>');
-				
+				$('#dayStatusId'+value).closest('tr').children().last().append('<a id="addBreakdiv'+value+'" onclick="addBreak('+value+')" class="btn btn-green"><i class="fa fa-plus"></i></a>');
+
 				$('#openHourId'+ value).prop('disabled', false);
 				$('#openMinuteId'+ value).prop('disabled', false);
 				$('#closeHourId'+ value).prop('disabled', false);
@@ -218,7 +224,7 @@ function changeDayStatus(value) {
 		$('#closeHourId'+ value).prop('disabled', false);
 		$('#closeMinuteId'+ value).prop('disabled', false);
 		$('#dayStatusId'+ value).val(1);
-		$('#dayStatusId'+value).closest('tr').children().last().append('<a id="addBreakdiv'+value+'" class="btn btn-agendapro-claro"><i class="fa fa-plus"></i></a>');
+		$('#dayStatusId'+value).closest('tr').children().last().append('<a id="addBreakdiv'+value+'" class="btn btn-green"><i class="fa fa-plus"></i></a>');
 		$('#addBreakdiv'+value).click(function() {
 			addBreak(value);
 		});
@@ -289,8 +295,9 @@ function saveProvider(method,extraURL) {
 		"service_ids": enabledServices,
 		"provider_times_attributes": provider_times,
 		"booking_configuration_email": $('#service_provider_booking_configuration_email').val(),
+    	"online_booking": $('#service_provider_online_booking').prop('checked')
 	};
-	
+
 	$.ajax({
 		type: method,
 		url: ' /service_providers'+ extraURL +'.json',

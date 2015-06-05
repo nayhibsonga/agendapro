@@ -1,7 +1,104 @@
 # Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
-one:
-  name: MyString
-
-two:
-  name: MyString
+tag_1:
+    name: Tratamientos Especiales
+    economic_sector: economic_sector_2
+tag_2:
+    name: Depilación
+    economic_sector: economic_sector_1
+tag_3:
+    name: Dieta
+    economic_sector: economic_sector_2
+tag_4:
+    name: Remedios Naturales
+    economic_sector: economic_sector_2
+tag_5:
+    name: Acupuntura
+    economic_sector: economic_sector_2
+tag_6:
+    name: Hipnosis
+    economic_sector: economic_sector_3
+tag_7:
+    name: Rehabilitación
+    economic_sector: economic_sector_3
+tag_8:
+    name: Consulta
+    economic_sector: economic_sector_3
+tag_9:
+    name: Psicoanálisis
+    economic_sector: economic_sector_3
+tag_10:
+    name: Tratamiento de conductos
+    economic_sector: economic_sector_4
+tag_11:
+    name: Consulta
+    economic_sector: economic_sector_4
+tag_12:
+    name: Reparación
+    economic_sector: economic_sector_5
+tag_13:
+    name: Chequeo
+    economic_sector: economic_sector_5
+tag_14:
+    name: Cambio de Aceite
+    economic_sector: economic_sector_5
+tag_15:
+    name: Pies
+    economic_sector: economic_sector_6
+tag_16:
+    name: Karate
+    economic_sector: economic_sector_7
+tag_17:
+    name: Kung Fu
+    economic_sector: economic_sector_7
+tag_18:
+    name: Full Contact
+    economic_sector: economic_sector_7
+tag_19:
+    name: Yoga
+    economic_sector: economic_sector_8
+tag_20:
+    name: Cancha
+    economic_sector: economic_sector_9
+tag_21:
+    name: Pista
+    economic_sector: economic_sector_9
+tag_22:
+    name: Relajación
+    economic_sector: economic_sector_10
+tag_23:
+    name: Descontracturante
+    economic_sector: economic_sector_10
+tag_24:
+    name: Kinesioterapia
+    economic_sector: economic_sector_11
+tag_25:
+    name: Rehabilitación
+    economic_sector: economic_sector_11
+tag_26:
+    name: Depilación láser
+    economic_sector: economic_sector_1
+tag_27:
+    name: Tratamientos corporales
+    economic_sector: economic_sector_1
+tag_28:
+    name: Corte de Pelo
+    economic_sector: economic_sector_12
+tag_29:
+    name: Tinturas
+    economic_sector: economic_sector_12
+tag_30:
+    name: Lavado de Cabello
+    economic_sector: economic_sector_12
+tag_31:
+    name: Cirugía 
+    economic_sector: economic_sector_1
+tag_32:
+    name: Cirugía Plástica
+    economic_sector: economic_sector_1
+tag_33:
+    name: Terapia Celular
+    economic_sector: economic_sector_1
+tag_34:
+    name: Células Madre
+    economic_sector: economic_sector_1

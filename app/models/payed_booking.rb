@@ -1,17 +1,22 @@
 class PayedBooking < ActiveRecord::Base
 	
-	belongs_to :booking
+	has_many :bookings
 	belongs_to :punto_pagos_confirmation
 	belongs_to :payment_account
 
-	after_create :send_confirmation
+	#after_create :send_confirmation
 
-	def send_confirmation
-		#Enviar comprobantes de pago
-		BookingMailer.book_service_mail(self.booking)
-		BookingMailer.book_payment_mail(self)
-		BookingMailer.book_payment_company_mail(self)
-	end
+	# def send_confirmation
+	# 	#Enviar resúmenes de reservas
+	# 	if self.bookings.count >1
+	# 		Booking.send_multiple_booking_mail(self.bookings.first.location_id, self.bookings.count)
+	# 	else
+	# 		BookingMailer.book_service_mail(self.bookings.first)
+	# 	end
+	# 	#Enviar comprobantes de pago
+	# 	BookingMailer.book_payment_mail(self)
+	# 	BookingMailer.book_payment_company_mail(self)
+	# end
 
 
 	def self.to_csv(type, p_start_date, p_end_date)
@@ -73,16 +78,21 @@ class PayedBooking < ActiveRecord::Base
 		        	row_array = Array.new
 
 		        	row_array << payed_booking.id
-		        	row_array << payed_booking.booking.client.first_name + " " + payed_booking.booking.client.last_name
+		        	row_array << payed_booking.bookings.first.client.first_name + " " + payed_booking.bookings.first.client.last_name
 
 		        	if canceled 
-		        		row_array << payed_booking.booking.client.email
-		        		row_array << payed_booking.booking.location.company.name
+		        		row_array << payed_booking.bookings.first.client.email
+		        		row_array << payed_booking.bookings.first.location.company.name
 		        	else
-		        		row_array << payed_booking.booking.location.name
+		        		row_array << payed_booking.bookings.first.location.name
 		        	end
 
-		        	row_array << payed_booking.booking.service.name 
+		        	services_str = ""
+		        	payed_booking.bookings.each do |booking|
+		        		services_str = services_str + " - " + booking.service.name
+		        	end
+		        	services_str = services_str[0, services_str.length-3]
+		        	row_array << services_str
 		        	row_array << payed_booking.punto_pagos_confirmation.amount
 		        	row_array << payed_booking.punto_pagos_confirmation.operation_number
 		        	row_array << payed_booking.punto_pagos_confirmation.authorization_code
@@ -94,8 +104,8 @@ class PayedBooking < ActiveRecord::Base
 
 		        	row_array << payed_booking.id
 		        	row_array << payed_booking.payment_account.id
-		        	row_array << payed_booking.booking.location.company.name
-		        	row_array << payed_booking.booking.client.first_name + " " + payed_booking.booking.client.last_name
+		        	row_array << payed_booking.bookings.first.location.company.name
+		        	row_array << payed_booking.bookings.first.client.first_name + " " + payed_booking.bookings.first.client.last_name
 		        	row_array << payed_booking.punto_pagos_confirmation.amount
 		        	row_array << payed_booking.punto_pagos_confirmation.operation_number
 		        	row_array << payed_booking.punto_pagos_confirmation.authorization_code

@@ -73,6 +73,7 @@ class Ability
     can :select_hour, Company
     can :user_data, Company
     can :client_loader, Client
+    can :available_hours_week_html, ServiceProvider
 
     can :edit_booking, Booking
     can :edit_booking_post, Booking
@@ -119,6 +120,8 @@ class Ability
         can :create_provider_break, ProviderBreak
         can :update_provider_break, ProviderBreak
         can :destroy_provider_break, ProviderBreak
+        can :update_repeat_break, ProviderBreak
+        can :destroy_repeat_break, ProviderBreak
 
         can :read, Company, :id => user.company_id
         can :destroy, Company, :id => user.company_id
@@ -180,9 +183,6 @@ class Ability
         can :update, ResourceCategory, :company_id => user.company_id
 
         can :provider_service, ServiceProvider
-
-        can :time_booking_edit, CompanySetting, :company => user.company_id
-        can :minisite, CompanySetting, :id => user.company.company_setting.id
 
         can :get_link, Company
 

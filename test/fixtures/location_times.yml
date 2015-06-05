@@ -1,13 +1,92 @@
 # Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
-one:
-  open: 2013-12-09 17:05:16
-  close: 2013-12-09 17:05:16
-  location_id: 1
-  day_id: 1
+location_time_1:
+    open: 2000-01-01 09:00:00
+    close: 2000-01-01 18:30:00
+    location: location_1
+    day: lunes
 
-two:
-  open: 2013-12-09 17:05:16
-  close: 2013-12-09 17:05:16
-  location_id: 1
-  day_id: 1
+location_time_2:
+    open: 2000-01-01 09:00:00
+    close: 2000-01-01 18:30:00
+    location: location_1
+    day: martes
+
+location_time_3:
+    open: 2000-01-01 09:00:00
+    close: 2000-01-01 18:30:00
+    location: location_1
+    day: miercoles
+
+location_time_4:
+    open: 2000-01-01 09:00:00
+    close: 2000-01-01 18:30:00
+    location: location_1
+    day: jueves
+
+location_time_5:
+    open: 2000-01-01 09:00:00
+    close: 2000-01-01 18:30:00
+    location: location_2
+    day: martes
+
+location_time_6:
+    open: 2000-01-01 09:00:00
+    close: 2000-01-01 18:30:00
+    location: location_2
+    day: miercoles
+
+location_time_7:
+    open: 2000-01-01 09:00:00
+    close: 2000-01-01 18:30:00
+    location: location_2
+    day: jueves
+
+location_time_8:
+    open: 2000-01-01 09:00:00
+    close: 2000-01-01 18:30:00
+    location: location_2
+    day: viernes
+
+location_time_9:
+    open: 2000-01-01 09:00:00
+    close: 2000-01-01 18:30:00
+    location: location_2
+    day: sabado
+
+location_time_10:
+    open: 2000-01-01 09:00:00
+    close: 2000-01-01 18:30:00
+    location: location_3
+    day: martes
+
+
+location_time_11:
+    open: 2000-01-01 09:00:00
+    close: 2000-01-01 18:30:00
+    location: location_3
+    day: miercoles
+
+location_time_12:
+    open: 2000-01-01 09:00:00
+    close: 2000-01-01 18:30:00
+    location: location_3
+    day: jueves
+
+location_time_13:
+    open: 2000-01-01 09:00:00
+    close: 2000-01-01 18:30:00
+    location: location_3
+    day: viernes
+
+location_time_14:
+    open: 2000-01-01 09:00:00
+    close: 2000-01-01 18:30:00
+    location: location_3
+    day: sabado
+
+location_time_15:
+    open: 2000-01-01 09:00:00
+    close: 2000-01-01 18:30:00
+    location: location_3
+    day: domingo

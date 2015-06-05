@@ -1,63 +1,45 @@
 <div class="row">
-	<div class="col-md-12">
-		<div class="panel panel-info">
-			<div class="panel-heading">
-				<h3 class="panel-title">Reservas por Local</h3>
-			</div>
-			<div class="panel-body scrollable">
-				<table class="table">
-					<thead class="head-white">
-						<th>Sucursal</th>
-						<th>Reservas Última Semana</th>
-						<th>Reservas Último Mes</th>
-						<th>Ocupación Última Semana</th>
-						<th>Ocupación Último Mes</th>
-					</thead>
-					<tbody>
-						<% Location.where(company_id: current_user.company_id, active: true).order(:name).each do |location| %>
-						<tr>
-							<td>
-							<%= location.name %>
-							</td>
-							<td>
-								<%= int_with_variation(location_booking_count(0, 0, location.id), location_booking_count(0, 1, location.id)) %>
-							</td>
-							<td>
-								<%= int_with_variation(location_booking_count(1, 0, location.id), location_booking_count(1, 1, location.id)) %>
-							</td>
-							<td>
-								<%= percentage_with_variation(location_booking_occupation(0, 0, location.id), location_booking_occupation(0, 1, location.id)) %>
-							</td>
-							<td>
-								<%= percentage_with_variation(location_booking_occupation(1, 0, location.id), location_booking_occupation(1, 1, location.id)) %>
-							</td>
-						</tr>
-						<% end %>
-						<tr>
-							<td><strong>Total</strong>
-							</td>
-							<td><strong>
-								<%= int_with_variation(booking_count(0, 0, current_user.company_id), booking_count(0, 1, current_user.company_id)) %>
-							</strong></td>
-							<td><strong>
-								<%= int_with_variation(booking_count(1, 0, current_user.company_id), booking_count(1, 1, current_user.company_id)) %>
-							</strong></td>
-							<td><strong>
-								<%= percentage_with_variation(booking_occupation(0, 0, current_user.company_id), booking_occupation(0, 1, current_user.company_id)) %>
-							</strong></td>
-							<td><strong>
-								<%= percentage_with_variation(booking_occupation(1, 0, current_user.company_id), booking_occupation(1, 1, current_user.company_id)) %>
-							</strong></td>
-						</tr>
-					</tbody>
-				</table>
-			</div>
-		</div>
-	</div>
+  <div class="col-md-12">
+    <div class="panel panel-green">
+      <div class="panel-heading">
+        <h3 class="panel-title">Reservas por Local</h3>
+      </div>
+      <div class="panel-body panel-scrollable">
+        <table class="table table-summary">
+          <thead>
+            <tr>
+              <th>Sucursal</th>
+              <th>Reservas</th>
+              <th>Recaudación</th>
+              <th>Ocupación</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% Location.where(company_id: current_user.company_id, active: true).order(:name).each do |location| %>
+              <tr>
+                <td><%= location.name %></td>
+                <td><%= location_booking_count(@from, @to, @status_ids, @option, location.id) %></td>
+                <td><%= number_to_currency(location_booking_revenue(@from, @to, @status_ids, @option, location.id), currency: ' $', separator: ',', delimeter: '.', precision: 0) %></td>
+                <td><%= number_to_percentage(location_booking_occupation(@from, @to, @status_ids, @option, location.id), precision: 2) %></td>
+              </tr>
+            <% end %>
+          </tbody>
+          <tfoot>
+            <tr>
+              <td>Total</td>
+              <td><%= booking_count(@from, @to, @status_ids, @option, current_user.company_id) %></td>
+              <td><%= number_to_currency(booking_revenue(@from, @to, @status_ids, @option, current_user.company_id), currency: ' $', separator: ',', delimeter: '.', precision: 0) %></td>
+              <td><%= number_to_percentage(booking_occupation(@from, @to, @status_ids, @option, current_user.company_id), precision: 2) %></td>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+    </div>
+  </div>
 </div>
 
 <div class="row">
-	<div class="col-md-12">
-		<%= line_chart Location.where(company_id: current_user.company_id, active: true).map{|sp| {name: sp.name, data: sp.bookings.group_by_week(:start, range: 2.months.ago.midnight..2.months.from_now).count} }, library: {hAxis: {title: "Semana", format: "MMM d, yy" }, vAxis: {title: "# Reservas", format: "#"}, title: "Cantidad de Reservas Semanales" } %>
-	</div>
+  <div class="col-md-12">
+    <%= line_chart Location.where(company_id: current_user.company_id, active: true).map{|sp| {name: sp.name, data: sp.bookings.group_by_week(:start, range: 2.months.ago.midnight..2.months.from_now).count} }, library: {hAxis: {title: "Semana", format: "MMM d, yy" }, vAxis: {title: "# Reservas", format: "#"}, title: "Cantidad de Reservas Semanales" } %>
+  </div>
 </div>

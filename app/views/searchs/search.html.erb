@@ -1,7 +1,7 @@
 <div class="main below-navbar">
 	<!-- Barra superior y Buscador -->
 
-	
+
 	<!-- Resultado Buscador -->
 	<div class="container">
 		<% if @results.count >0 %>
@@ -15,11 +15,11 @@
 		</div>
 		<div class="row text-center">
 		<p><br />Estos son los resultados más cerca de "<%= params[:inputLocalization] %>". <a href="" data-toggle="modal" data-target="#geolocation-modal">Cambiar Ubicación</a></p>
-		</div>	
+		</div>
 		<div class="row locations-panel">
 			<div class="col-md-6">
 				<% i = 1 %>
-				
+
 				<% @results.each do |location| %>
 					<% if i%2!=0 %>
 						<div style="float: left; padding: none !important; width: 95%;">
@@ -27,10 +27,10 @@
 						</div>
 					<% end %>
 					<% i = i + 1 %>
-					
+
 				<% end %>
 			</div>
-			<div class="col-md-6">				
+			<div class="col-md-6">
 				<% i = 1 %>
 				<% @results.each do |location| %>
 					<% if i%2==0 %>
@@ -42,9 +42,9 @@
 				<% end %>
 			</div>
 		</div>
-		
+
 		<%= will_paginate @results, renderer: BootstrapPagination::Rails %>
-	
+
 		<div class="row">
 			<div>
 				<!-- mapa -->
@@ -52,8 +52,8 @@
 					<div id="map"></div>
 				</div>-->
 
-				
-				
+
+
 			</div>
 		</div>
 		<% else %>
@@ -74,7 +74,7 @@
 			</div>-->
 			<div class="row text-center">
 			<p><br />Estos son los resultados más cerca de "<%= params[:inputLocalization] %>". <a href="" data-toggle="modal" data-target="#geolocation-modal">Cambiar Ubicación</a></p>
-			</div>	
+			</div>
 			<div class="row">
 				<div class="col-md-12">
 					<p style="font-size: 22px; text-align: center; margin-top: 20px; color: #acacac;">
@@ -92,9 +92,8 @@
         <div class="row pull-center">
             <div class="col-xs-4">
                 <%= image_tag "footer/1.png", size: "22x29" %>
-                <p>Nuestra Señora de los
-                 Angeles 185, Oficina D,
-                  Las Condes, Santiago</p>
+                <p>Ana María Carrera 5210,
+                	Las Condes, Santiago</p>
             </div>
             <div class="col-xs-4">
                 <%= image_tag "footer/2.png", size: "24x19" %>
@@ -124,7 +123,7 @@
 <% end %>
 
 <% content_for :scripts do %>
-	<%= javascript_include_tag "jquery-ui-1.10.4.min.js" %>
+	<%= javascript_include_tag "jquery-ui.min" %>
 	<%= javascript_include_tag "search/map" %>
 	<%= javascript_include_tag "Alert" %>
 	<script type="text/javascript">
@@ -141,10 +140,10 @@
 	    google.maps.event.addListener(autocomplete2, 'place_changed', function() {
 	        if (autocomplete2.getPlace().geometry) {
 	            $('#inputLocalization').val(autocomplete2.getPlace().formatted_address);
-	            $('#latitude').val(autocomplete2.getPlace().geometry.location.k);
-	            $('#longitude').val(autocomplete2.getPlace().geometry.location.D);
-	            document.cookie = "lat=" + escape(autocomplete2.getPlace().geometry.location.k);
-	            document.cookie = "lng=" + escape(autocomplete2.getPlace().geometry.location.D);
+	            $('#latitude').val(autocomplete2.getPlace().geometry.location.A);
+	            $('#longitude').val(autocomplete2.getPlace().geometry.location.F);
+	            document.cookie = "lat=" + escape(autocomplete2.getPlace().geometry.location.A);
+	            document.cookie = "lng=" + escape(autocomplete2.getPlace().geometry.location.F);
 	            document.cookie = "formatted_address=" + escape(autocomplete2.getPlace().formatted_address);
 	        }
 	    });
@@ -162,7 +161,7 @@
 	        }
 	        $(document).unbind("keypress.key2");
 	    });
-	     
+
 	     function selectFirstResult() {
 	        infowindow.close();
 	        $(".pac-container").hide();
@@ -276,5 +275,16 @@
 	    $('#modal_search').click(function() {
 	        $('#search-form').submit();
 	    });
+
+	    $(".number-pin").click(function(){
+	    	if($(this).closest("li").hasClass("active"))
+	    	{
+		    	var newLat = $(this).attr("lat");
+		    	var newLong = $(this).attr("long");
+		    	reCenter(newLat, newLong);
+		    	$(window).scrollTop(0);
+	    	}
+	    });
+
 	</script>
 <% end %>

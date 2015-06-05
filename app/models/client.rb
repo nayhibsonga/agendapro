@@ -4,7 +4,7 @@ class Client < ActiveRecord::Base
   has_many :client_comments, dependent: :destroy
   has_many :bookings, dependent: :destroy
 
-  validate :client_mail_uniqueness, :client_identification_uniqueness
+  validate :mail_uniqueness, :identification_uniqueness, :minimun_info
 
   after_update :client_notification
 
@@ -21,7 +21,7 @@ class Client < ActiveRecord::Base
           valid = true
         end
         if !valid
-          Booking.where('bookings.start >= ?', Time.now - 4.hours).where(client_id: self.id).each do |booking|
+          Booking.where('bookings.start >= ?', Time.now - eval(ENV["TIME_ZONE_OFFSET"])).where(client_id: self.id).each do |booking|
             if booking.send_mail
               booking.send_mail = false
               booking.save
@@ -51,7 +51,7 @@ class Client < ActiveRecord::Base
     return false
   end
 
-  def client_mail_uniqueness
+  def mail_uniqueness
     Client.where(company_id: self.company_id).each do |client|
       if self.email && self.email != "" && client != self && client.email != "" && self.email == client.email
         errors.add(:base, "No se pueden crear dos clientes con el mismo email.")
@@ -59,11 +59,20 @@ class Client < ActiveRecord::Base
     end
   end
 
-  def client_identification_uniqueness
+  def identification_uniqueness
     Client.where(company_id: self.company_id).each do |client|
       if self.identification_number && self.identification_number != "" && client != self && client.identification_number != "" && self.identification_number == client.identification_number
         errors.add(:base, "No se pueden crear dos clientes con el mismo RUT.")
       end
+    end
+  end
+
+  def minimun_info
+    if self.first_name.blank?
+      errors.add(:base, "El cliente debe tener un nombre.")
+    end
+    if self.last_name.blank? && self.email.blank? && self.phone.blank?
+      errors.add(:base, "El cliente debe contener, por lo menos, un apellido, una dirección email o un teléfono.")
     end
   end
 

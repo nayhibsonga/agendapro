@@ -52,17 +52,6 @@ $(function() {
 		}
 	});
 
-	$('#company_name').one('change', function() {
-		var tmp = $('#company_name').val();
-		tmp = tmp.replace(/ /g, '');	//Space
-		tmp = tmp.replace(/[áäâà]/gi, 'a');	//special a
-		tmp = tmp.replace(/[éëêè]/gi, 'e');	//Special e
-		tmp = tmp.replace(/[íïîì]/gi, 'i');	//Special i
-		tmp = tmp.replace(/[óöôò]/gi, 'o');	//Special o
-		tmp = tmp.replace(/[úüûù]/gi, 'u');	//Special u
-		tmp = tmp.replace(/ñ/gi, 'n');	//Special ñ
-		tmp = tmp.toLowerCase();
-		$('#company_web_address').val(tmp);
-	});
+
 
 });

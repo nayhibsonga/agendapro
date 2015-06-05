@@ -1,9 +1,336 @@
-# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
-
-one:
-  name: MyString
-  economic_sector_id: 
-
-two:
-  name: MyString
-  economic_sector_id: 
+economic_sector_dictionary_1:
+    name: SPAs
+    economic_sector: economic_sector_10
+economic_sector_dictionary_2:
+    name: Centros de Estetica
+    economic_sector: economic_sector_1
+economic_sector_dictionary_3:
+    name: Centro de Estética
+    economic_sector: economic_sector_1
+economic_sector_dictionary_4:
+    name: Centro de Estetica
+    economic_sector: economic_sector_1
+economic_sector_dictionary_5:
+    name: Estetica
+    economic_sector: economic_sector_1
+economic_sector_dictionary_6:
+    name: Estética
+    economic_sector: economic_sector_1
+economic_sector_dictionary_7:
+    name: Energia
+    economic_sector: economic_sector_2
+economic_sector_dictionary_8:
+    name: Energía
+    economic_sector: economic_sector_2
+economic_sector_dictionary_9:
+    name: Dieta
+    economic_sector: economic_sector_2
+economic_sector_dictionary_10:
+    name: Reiki
+    economic_sector: economic_sector_2
+economic_sector_dictionary_11:
+    name: Acupuntura
+    economic_sector: economic_sector_2
+economic_sector_dictionary_12:
+    name: Psicologia
+    economic_sector: economic_sector_3
+economic_sector_dictionary_13:
+    name: Psicólogo
+    economic_sector: economic_sector_3
+economic_sector_dictionary_14:
+    name: Sicologa
+    economic_sector: economic_sector_3
+economic_sector_dictionary_15:
+    name: Psicologa
+    economic_sector: economic_sector_3
+economic_sector_dictionary_16:
+    name: Sicóloga
+    economic_sector: economic_sector_3
+economic_sector_dictionary_17:
+    name: Psicóloga
+    economic_sector: economic_sector_3
+economic_sector_dictionary_18:
+    name: Sicologo
+    economic_sector: economic_sector_3
+economic_sector_dictionary_19:
+    name: Sicólogo
+    economic_sector: economic_sector_3
+economic_sector_dictionary_20:
+    name: Sicología
+    economic_sector: economic_sector_3
+economic_sector_dictionary_21:
+    name: Dientes
+    economic_sector: economic_sector_4
+economic_sector_dictionary_22:
+    name: Diente
+    economic_sector: economic_sector_4
+economic_sector_dictionary_23:
+    name: Odontologa
+    economic_sector: economic_sector_4
+economic_sector_dictionary_24:
+    name: Odontologo
+    economic_sector: economic_sector_4
+economic_sector_dictionary_25:
+    name: Odontóloga
+    economic_sector: economic_sector_4
+economic_sector_dictionary_26:
+    name: Odontólogo
+    economic_sector: economic_sector_4
+economic_sector_dictionary_27:
+    name: Dentista
+    economic_sector: economic_sector_4
+economic_sector_dictionary_28:
+    name: Dentistas
+    economic_sector: economic_sector_4
+economic_sector_dictionary_29:
+    name: Garage
+    economic_sector: economic_sector_5
+economic_sector_dictionary_30:
+    name: Mecánico
+    economic_sector: economic_sector_5
+economic_sector_dictionary_31:
+    name: Mecanicos
+    economic_sector: economic_sector_5
+economic_sector_dictionary_32:
+    name: Mecánicos
+    economic_sector: economic_sector_5
+economic_sector_dictionary_33:
+    name: Taller
+    economic_sector: economic_sector_5
+economic_sector_dictionary_34:
+    name: Talleres
+    economic_sector: economic_sector_5
+economic_sector_dictionary_35:
+    name: Talleres Mecanicos
+    economic_sector: economic_sector_5
+economic_sector_dictionary_36:
+    name: Podologia
+    economic_sector: economic_sector_6
+economic_sector_dictionary_37:
+    name: Podología
+    economic_sector: economic_sector_6
+economic_sector_dictionary_38:
+    name: Pies
+    economic_sector: economic_sector_6
+economic_sector_dictionary_39:
+    name: Centros de Podologia
+    economic_sector: economic_sector_6
+economic_sector_dictionary_40:
+    name: Centro de Podologia
+    economic_sector: economic_sector_6
+economic_sector_dictionary_41:
+    name: Centro de Podología
+    economic_sector: economic_sector_6
+economic_sector_dictionary_42:
+    name: Arte Marcial
+    economic_sector: economic_sector_7
+economic_sector_dictionary_43:
+    name: Karate
+    economic_sector: economic_sector_7
+economic_sector_dictionary_44:
+    name: Kung Fu
+    economic_sector: economic_sector_7
+economic_sector_dictionary_45:
+    name: Taekwondo
+    economic_sector: economic_sector_7
+economic_sector_dictionary_46:
+    name: Box
+    economic_sector: economic_sector_7
+economic_sector_dictionary_47:
+    name: Shaolin
+    economic_sector: economic_sector_7
+economic_sector_dictionary_48:
+    name: Jiu Jitzu
+    economic_sector: economic_sector_7
+economic_sector_dictionary_49:
+    name: Defensa Personal
+    economic_sector: economic_sector_7
+economic_sector_dictionary_50:
+    name: Yoga
+    economic_sector: economic_sector_8
+economic_sector_dictionary_51:
+    name: Centro de Yoga
+    economic_sector: economic_sector_8
+economic_sector_dictionary_52:
+    name: Deporte
+    economic_sector: economic_sector_9
+economic_sector_dictionary_53:
+    name: Futbol
+    economic_sector: economic_sector_9
+economic_sector_dictionary_54:
+    name: Tennis
+    economic_sector: economic_sector_9
+economic_sector_dictionary_55:
+    name: Tenis
+    economic_sector: economic_sector_9
+economic_sector_dictionary_56:
+    name: Fútbol
+    economic_sector: economic_sector_9
+economic_sector_dictionary_57:
+    name: Deportes
+    economic_sector: economic_sector_9
+economic_sector_dictionary_58:
+    name: Kine
+    economic_sector: economic_sector_11
+economic_sector_dictionary_59:
+    name: Quinesiólogos
+    economic_sector: economic_sector_11
+economic_sector_dictionary_60:
+    name: Quinesiología
+    economic_sector: economic_sector_11
+economic_sector_dictionary_61:
+    name: Quinesiologo
+    economic_sector: economic_sector_11
+economic_sector_dictionary_62:
+    name: Kinesiólogos
+    economic_sector: economic_sector_11
+economic_sector_dictionary_63:
+    name: Kinesiologia
+    economic_sector: economic_sector_11
+economic_sector_dictionary_64:
+    name: Kinesiologo
+    economic_sector: economic_sector_11
+economic_sector_dictionary_65:
+    name: Kinesiologa
+    economic_sector: economic_sector_11
+economic_sector_dictionary_66:
+    name: Kinesiólogo
+    economic_sector: economic_sector_11
+economic_sector_dictionary_67:
+    name: Kinesióloga
+    economic_sector: economic_sector_11
+economic_sector_dictionary_68:
+    name: Relajación
+    economic_sector: economic_sector_10
+economic_sector_dictionary_69:
+    name: Centro de Relajación
+    economic_sector: economic_sector_10
+economic_sector_dictionary_70:
+    name: Masajes
+    economic_sector: economic_sector_10
+economic_sector_dictionary_71:
+    name: Beauty
+    economic_sector: economic_sector_12
+economic_sector_dictionary_72:
+    name: Beauty Center
+    economic_sector: economic_sector_12
+economic_sector_dictionary_73:
+    name: Belleza
+    economic_sector: economic_sector_12
+economic_sector_dictionary_74:
+    name: Peluquería
+    economic_sector: economic_sector_12
+economic_sector_dictionary_75:
+    name: Peluquero
+    economic_sector: economic_sector_12
+economic_sector_dictionary_76:
+    name: Pelo
+    economic_sector: economic_sector_12
+economic_sector_dictionary_77:
+    name: Depilación
+    economic_sector: economic_sector_1
+economic_sector_dictionary_78:
+    name: Láser
+    economic_sector: economic_sector_1
+economic_sector_dictionary_79:
+    name: Salones de Belleza
+    economic_sector: economic_sector_12
+economic_sector_dictionary_80:
+    name: contacto
+    economic_sector: economic_sector_13
+economic_sector_dictionary_81:
+    name: agendapro
+    economic_sector: economic_sector_13
+economic_sector_dictionary_82:
+    name: Salón de Belleza
+    economic_sector: economic_sector_12
+economic_sector_dictionary_83:
+    name: Peluquerías
+    economic_sector: economic_sector_12
+economic_sector_dictionary_84:
+    name: Clínicas y Centros de Estética
+    economic_sector: economic_sector_1
+economic_sector_dictionary_85:
+    name: Clinicas y Centros de Estética
+    economic_sector: economic_sector_1
+economic_sector_dictionary_86:
+    name: Peluquerias
+    economic_sector: economic_sector_12
+economic_sector_dictionary_87:
+    name: Peluqueria
+    economic_sector: economic_sector_12
+economic_sector_dictionary_88:
+    name: Maquilladora
+    economic_sector: economic_sector_14
+economic_sector_dictionary_89:
+    name: Maquilladoras
+    economic_sector: economic_sector_14
+economic_sector_dictionary_90:
+    name: Maquillajes
+    economic_sector: economic_sector_14
+economic_sector_dictionary_91:
+    name: Maquillador
+    economic_sector: economic_sector_14
+economic_sector_dictionary_92:
+    name: Maquillar
+    economic_sector: economic_sector_14
+economic_sector_dictionary_93:
+    name: Pintar
+    economic_sector: economic_sector_14
+economic_sector_dictionary_94:
+    name: Pintar cara
+    economic_sector: economic_sector_14
+economic_sector_dictionary_95:
+    name: Talleres y Lavado de Autos
+    economic_sector: economic_sector_5
+economic_sector_dictionary_96:
+    name: Clases personalizadas
+    economic_sector: economic_sector_15
+economic_sector_dictionary_97:
+    name: Clases de Pilates
+    economic_sector: economic_sector_16
+economic_sector_dictionary_98:
+    name: Clases personalizadas
+    economic_sector: economic_sector_16
+economic_sector_dictionary_99:
+    name: TRX
+    economic_sector: economic_sector_16
+economic_sector_dictionary_100:
+    name: Manos
+    economic_sector: economic_sector_17
+economic_sector_dictionary_101:
+    name: Fotos
+    economic_sector: economic_sector_18
+economic_sector_dictionary_102:
+    name: Foto
+    economic_sector: economic_sector_18
+economic_sector_dictionary_103:
+    name: Turismo
+    economic_sector: economic_sector_19
+economic_sector_dictionary_104:
+    name: Pies
+    economic_sector: economic_sector_20
+economic_sector_dictionary_105:
+    name: Laser
+    economic_sector: economic_sector_21
+economic_sector_dictionary_106:
+    name: Depilar
+    economic_sector: economic_sector_21
+economic_sector_dictionary_107:
+    name: bronceado
+    economic_sector: economic_sector_22
+economic_sector_dictionary_108:
+    name: solarium
+    economic_sector: economic_sector_22
+economic_sector_dictionary_109:
+    name: tan
+    economic_sector: economic_sector_22
+economic_sector_dictionary_110:
+    name: tanning
+    economic_sector: economic_sector_22
+economic_sector_dictionary_111:
+    name: Manicure
+    economic_sector: economic_sector_12
+economic_sector_dictionary_112:
+    name: Corte de Pelo
+    economic_sector: economic_sector_12

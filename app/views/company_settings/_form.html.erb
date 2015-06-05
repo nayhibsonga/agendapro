@@ -1,921 +1,922 @@
-<div class="modal fade" id="fromEmail" tabindex="-1" role="dialog" aria-labelledby="fromEmailLabel" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-        <h4 class="modal-title" id="myModalLabel">Agregar Remitente</h4>
-      </div>
-      <%= form_for @company_from_email, :html => {:class => 'form-horizontal'} do |f| %>
-        <div class="modal-body">
-          <%= f.hidden_field :company_id, :value => current_user.company.id %>
-          <div class="form-group has-feedback">
-            <%= f.label :email, 'E-mail', :class => 'control-label col-xs-2' %>
-            <div class="col-xs-10">
-              <%= f.text_field :email, :class => 'form-control', :placeholder => 'email@dominio.cl (requerido)' %>
-              <span class="help-block"></span>
-              <span class="form-control-feedback"></span>
-              <span class="help-block">Este es el e-mail desde el cual se enviaran los mensajes.</span>
-            </div>
-          </div>
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
-          <%= f.submit 'Guardar', :class => 'btn btn-agendapro-claro' %>
-        </div>
-      <% end %>
+<% content_for :stylesheets do %>
+  <style>
+    .media {
+      cursor: pointer;
+      cursor: hand;
+    }
+  </style>
+<% end %>
+
+<div class="container-fluid">
+  <div class="row">
+    <!-- Navegation Tabs -->
+    <div class="col-md-2">
+      <ul id="myTab" class="nav nav-pills nav-stacked tab-margin" role="tablist">
+        <li role="presentation"><a id="company_link" href="#company" role="tab" data-toggle="pill" data-title="Empresa" data-description="Configura el nombre de empresa, descripción, url de tu mini-sitio, logo y política de cancelación.">Empresa</a></li>
+        <li role="presentation"><a id="minisite_link" href="#minisite" role="tab" data-toggle="pill" data-title="Reservas" data-description="Habilita tu mini-sitio, la opción de aparecer en el Buscador AgendaPro y limitar que sólo las personas en tu vase de datos puedan reservar.">Reservas</a></li>
+        <li role="presentation"><a id="calendar_link" href="#calendar" role="tab" data-toggle="pill" data-title="Calendario" data-description="Controla el tamaño, el tiempo, de cada bloque del horario en la sección calendario.">Calendario</a></li>
+        <li role="presentation"><a id="email_link" href="#emails" role="tab" data-toggle="pill" data-title="E-mails" data-description="Configura la dirección desde donde se envían los correos masivos (Remitentes) y la firma de estos.">E-mails</a></li>
+        <li role="presentation"><a id="embedded_link" href="#embedded" role="tab" data-toggle="pill" data-title="Facebook / Web" data-description="Agrega una pestaña de reservas a la página de facebook de tu empresa.">Facebook / Web</a></li>
+        <% if current_user.company.company_setting.online_payment_capable %>
+        <li role="presentation"><a id="payment_link" href="#online-payment" role="tab" data-toggle="pill" data-title="Pago Online" data-description="Habilita el pago en línea, configura si es editable o cancelable una reserva pagada">Pago Online</a></li>
+        <% end %>
+        <% if current_user.company.company_setting.deal_activate %>
+        <li role="presentation"><a id="deal_link" href="#deals" role="tab" data-toggle="pill" data-title="Convenios" data-description="Configura el uso de convenios, el tiempo y la cantidad de veces que se pueden usar.">Convenios</a></li>
+        <% end %>
+      </ul>
     </div>
-  </div>
-</div>
-
-<div class="modal fade" id="staffCode" tabindex="-1" role="dialog" aria-labelledby="staffCodeLabel" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-        <h4 class="modal-title" id="staffCodeLabel">Agregar Código de Empleado</h4>
-      </div>
-      <%= form_for @staff_code, :html => {:class => 'form-horizontal'} do |f| %>
-        <div class="modal-body">
-          <%= f.hidden_field :company_id, :value => current_user.company.id %>
-          <div class="form-group has-feedback">
-            <%= f.label :staff, 'Staff', :class => 'control-label col-xs-2' %>
-            <div class="col-xs-10">
-              <%= f.text_field :staff, :class => 'form-control' %>
-              <span class="help-block"></span>
-              <span class="form-control-feedback"></span>
+    <!-- Panels -->
+    <div class="col-md-10 left-panel">
+      <div class="tab-content tab-margin">
+        <!-- Landing -->
+        <div class="tab-pane active" id="landing">
+          <div class="row">
+            <div class="col-md-6">
+              <div onclick="$('#company_link').click();" class="media">
+                <div class="media-left">
+                  <%= image_tag 'admin/1.png', class: 'media-object media-image' %>
+                </div>
+                <div class="media-body">
+                  <span class="text-green">Empresa:</span> configura el nombre de empresa, descripción, url de tu mini-sitio, logo y política de cancelación.
+                </div>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div onclick="$('#email_link').click();" class="media">
+                <div class="media-left">
+                  <%= image_tag 'admin/4.png', class: 'media-object media-image' %>
+                </div>
+                <div class="media-body">
+                  <span class="text-green">E-mails:</span> configura la dirección desde donde se envían los correos masivos (Remitentes) y la firma de estos.
+                </div>
+              </div>
             </div>
           </div>
-          <div class="form-group has-feedback">
-            <%= f.label :code, 'Código', :class => 'control-label col-xs-2' %>
-            <div class="col-xs-10">
-              <%= f.text_field :code, :class => 'form-control' %>
-              <span class="help-block"></span>
-              <span class="form-control-feedback"></span>
+          <div class="row">
+            <div class="col-md-6">
+              <div onclick="$('#minisite_link').click();" class="media">
+                <div class="media-left">
+                  <%= image_tag 'admin/2.png', class: 'media-object media-image' %>
+                </div>
+                <div class="media-body">
+                  <span class="text-green">Reservas:</span> habilita tu mini-sitio, la opción de aparecer en el Buscador AgendaPro y limitar que sólo las personas en tu vase de datos puedan reservar.
+                </div>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div onclick="$('#embedded_link').click();" class="media">
+                <div class="media-left">
+                  <%= image_tag 'admin/5.png', class: 'media-object media-image' %>
+                </div>
+                <div class="media-body">
+                  <span class="text-green">Facebook / Web:</span> agrega una pestaña de reservas a la página de facebook de tu empresa.
+                </div>
+              </div>
             </div>
           </div>
+          <div class="row">
+            <div class="col-md-6">
+              <div onclick="$('#calendar_link').click();" class="media">
+                <div class="media-left">
+                  <%= image_tag 'admin/3.png', class: 'media-object media-image' %>
+                </div>
+                <div class="media-body">
+                  <span class="text-green">Calendario:</span> controla el tamaño, el tiempo, de cada bloque del horario en la sección calendario.
+                </div>
+              </div>
+            </div>
+            <% if current_user.company.company_setting.online_payment_capable %>
+            <div class="col-md-6">
+              <div onclick="$('#payment_link').click();" class="media">
+                <div class="media-left">
+                  <%= image_tag 'admin/6.png', class: 'media-object media-image' %>
+                </div>
+                <div class="media-body">
+                  <span class="text-green">Pago Online:</span> habilita el pago en línea, configura si es editable o cancelable una reserva pagada.
+                </div>
+              </div>
+            </div>
+            <% end %>
+          </div>
+          <% if current_user.company.company_setting.deal_activate %>
+          <div class="row">
+            <div class="col-md-6">
+              <div onclick="$('#deal_link').click();" class="media">
+                <div class="media-left">
+                  <%= image_tag 'admin/6.png', class: 'media-object media-image' %>
+                </div>
+                <div class="media-body">
+                  <span class="text-green">Convenios:</span> configura el uso de convenios, el tiempo y la cantidad de veces que se pueden usar.
+                </div>
+              </div>
+            </div>
+          </div>
+          <% end %>
         </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
-          <%= f.submit 'Guardar', :class => 'btn btn-agendapro-claro' %>
-        </div>
-      <% end %>
-    </div>
-  </div>
-</div>
-
-<div class="modal fade" id="deal" tabindex="-1" role="dialog" aria-labelledby="dealLabel" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-        <h4 class="modal-title" id="dealLabel">Agregar Convenio</h4>
-      </div>
-      <%= form_for @deal, :html => {:class => 'form-horizontal'} do |f| %>
-        <div class="modal-body">
-          <%= f.hidden_field :company_id, :value => current_user.company.id %>
-          <div class="form-group has-feedback">
-            <%= f.label :code, 'Código', :class => 'control-label col-xs-4' %>
-            <div class="col-xs-8">
-              <%= f.text_field :code, :class => 'form-control' %>
-              <span class="help-block"></span>
-              <span class="form-control-feedback"></span>
-            </div>
-          </div>
-          <div class="form-group has-feedback">
-            <%= f.label :quantity, 'Cantidad Utilizable', :class => 'control-label col-xs-4' %>
-            <div class="col-xs-8">
-              <%= f.number_field :quantity, :class => 'form-control' %>
-              <span class="help-block"></span>
-              <span class="form-control-feedback"></span>
-            </div>
-          </div>
-          <div class="form-group has-feedback">
-            <%= f.label :constraint_option, 'Restricción por Periodo', :class => 'control-label col-xs-4' %>
-            <div class="col-xs-8">
-              <%= f.select :constraint_option, options_for_select([["Sin restricción", 0],["Simultáneo", 1],["Por día", 2],["Por semana", 3],["Por mes", 4]]), {}, {:class => 'form-control'} %>
-              <span class="help-block"></span>
-              <span class="form-control-feedback"></span>
-            </div>
-          </div>
-          <div class="form-group has-feedback">
-            <%= f.label :constraint_quantity, 'Cantidad Restricción', :class => 'control-label col-xs-4' %>
-            <div class="col-xs-8">
-              <%= f.number_field :constraint_quantity, :class => 'form-control' %>
-              <span class="help-block"></span>
-              <span class="form-control-feedback"></span>
-            </div>
-          </div>
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
-          <%= f.submit 'Guardar', :class => 'btn btn-agendapro-claro' %>
-        </div>
-      <% end %>
-    </div>
-  </div>
-</div>
-
-<div class="row well well-white">
-	<ul id="myTab" class="nav nav-tabs" role="tablist">
-	  <li class=""><a href="#company" role="tab" data-toggle="tab" class="tab_index">Empresa</a></li>
-	  <% if current_user.company.company_setting.online_payment_capable %>
-	  	<li class=""><a href="#online-payment" role="tab" data-toggle="tab" class="tab_index">Pago en línea</a></li>
-	  <% end %>
-	  <li class=""><a href="#minisite" role="tab" data-toggle="tab" class="tab_index">Reservas</a></li>
-	  <li class=""><a href="#calendar" role="tab" data-toggle="tab" class="tab_index">Calendario</a></li>
-	  <li class=""><a href="#emails" role="tab" data-toggle="tab" class="tab_index">E-mails</a></li>
-	  <li class=""><a href="#times" role="tab" data-toggle="tab" class="tab_index">Periodo Agenda</a></li>
-	  <li class=""><a href="#embedded" role="tab" data-toggle="tab" class="tab_index">Facebook / Web</a></li>
-    <% if current_user.company.company_setting.deal_activate %>
-	   <li class=""><a href="#deals" role="tab" data-toggle="tab" class="tab_index">Convenios</a></li>
-    <% end %>
-	  <li class=""><a href="#link" role="tab" data-toggle="tab" class="tab_index">Link AgendaPro</a></li>
-	</ul>
-	<div id="myTabContent" class="tab-content">
-	<br />
-	<div class="tab-pane active" id="landing">
-	    <div class="row">
-	    	<ol>
-				<li><strong>Empresa: </strong>En esta sección puedes configurar el nombre de empresa, la descripción, la url de tu mini-sitio, el logo que quieres mostrar y la política de cancelación.</li><br />
-				<li><strong>Reservas: </strong>En esta sección puedes habilitar el mini-sitio AgendaPro, la opción de aparecer en el Buscador AgendaPro y limitar que sólo las personas en tu base de datos puedan reservar.</li><br />
-				<li><strong>Calendario: </strong>En esta sección puedes controlar el tamaño, en tiempo, de cada bloque del horario en la sección calendario.</li><br />
-				<li><strong>E-mails: </strong>En esta sección puedes configurar la dirección desde donde se envían los correos masivos (Remitentes) y la firma que se adjuntará en tus e-mails.</li><br />
-				<li><strong>Periodo AgendaPro: </strong>En esta sección puedes configurar el Tiempo Mínimo de Reserva y el Tiempo Máximo a futuro, además de la cantidad de horas mínimas necesarias para que tus clientes puedan modificar o cancelar una reserva.</li><br />
-				<li><strong>Facebook: </strong>En esta sección puedes seguir las instrucciones para permitir reservas por Facebook, agregando una pestaña a la página de tu empresa.</li><br />
-				<li><strong>Facebook: </strong>En esta sección puedes definir c.</li><br />
-				<li><strong>Link AgendaPro: </strong>En esta sección puedes obtener el Link AgendaPro, el cual te permitirá insertar el link a tu mini-sitio en cualquier otro sitio web que tengas. Hay varias opciones para que elijas la que más te acomoda.</li>
-			</ol>
-		</div>
-	  </div>
-	  <div class="tab-pane" id="company">
-	    <div class="row">
-			<%= form_for @company, :html => {:class => 'form-horizontal company-form', :multipart => true} do |f| %>
-				<div class="form-group has-feedback">
-					<%= f.label :name, 'Nombre', :class => 'col-sm-3 control-label' %>
-					<div class="col-sm-5">
-						<%= f.text_field :name, :autofocus => true, :class => 'form-control', :placeholder => 'Nombre Compañía (requerido)' %>
-						<span class="help-block"></span>
-						<span class="form-control-feedback"></span>
-					</div>
-				</div>
-				<div class="form-group">
-					<%= f.label :description, 'Descripción', :class => 'col-sm-3 control-label' %>
-					<div class="col-sm-5">
-						<%= f.text_area :description, :class => 'form-control', :rows => "7" %>
-					</div>
-				</div>
-				<div class="form-group has-feedback">
-					<%= f.label :web_address, 'Dirección Sitio AgendaPro', :class => 'col-sm-3 control-label' %>
-					<div class="col-sm-5">
-						<div class="input-group">
-							<%= f.text_field :web_address, :required => true, :class => 'form-control', :placeholder => 'Empresa (requerido)' %>
-							<span class="input-group-addon">.agendapro.cl</span>
-						</div>
-					</div>
-					<div class="col-sm-offset-3 col-sm-5">
-						<span class="help-block"></span>
-					</div>
-					<span class="help-block">Esta es la página del sitio en AgendaPro. <strong>NO recomendamos editarla.</strong></span>
-				</div>
-
-				<div class="form-group has-feedback">
-					<%= f.label :logo, 'Logo Compañía', :class => 'col-sm-3 control-label' %>
-					<div class="col-sm-5">
-						<%= f.file_field :logo, :accept => 'image/png,image/gif,image/jpeg', :class => 'form-control' %>
-						<span class="help-block"></span>
-						<span class="form-control-feedback"></span>
-						<div class="checkbox">
-							<label>
-								<%= f.check_box :remove_logo %> Quitar Logo
-							</label>
-						</div>
-					</div>
-					<% if @company.logo_url %>
-					<%= image_tag @company.logo_url.to_s, :size => "80x80", :alt => @company.name %>
-					<% end %>
-				</div>
-				<!--<div class="form-group">
-					<%= f.label :cancellation_policy, 'Política de Cancelación', :class => 'col-sm-3 control-label' %>
-					<div class="col-sm-5">
-						<%= f.text_area :cancellation_policy, :class => 'form-control', :rows => "7" %>
-					</div>
-				</div>-->
-
-
-
-
-				<div class="form-group has-feedback">
-					<%= f.label :economic_sector_ids, 'Sector Económico', :class => 'col-sm-3 control-label' %>
-					<div class="col-sm-5">
-						<%= f.collection_check_boxes :economic_sector_ids, EconomicSector.all, :id, :name, {}, {class: "check_boxes"} do |b|%>
-							<div class="col-sm-6">
-								<div class="checkbox">
-									<label>
-										<%= b.check_box %> <%= b.object.name.html_safe %> 
-									</label>
-								</div>
-							</div>
-						<% end %>
-						<span class="help-block"></span>
-						<span class="form-control-feedback"></span>
-					</div>
-				</div>
-
-				<div class="form-group">
-					<div class="col-sm-offset-3 col-sm-4">
-					 <%= f.submit 'Guardar', :class => 'btn btn-agendapro-claro' %>
-					 <%= link_to 'Cancelar', dashboard_path, :class => "btn btn-default" %>
-					</div> 
-				</div>
-			<% end %>
-		</div>
-	  </div>
-	  <div class="tab-pane" id="online-payment">
-	    <!-- PAGO EN LÍNEA -->
-
-      <div class="row">
-
-        <!-- DETALLES PAGO EN LÍNEA -->
-        <%= form_for @company_setting, :html => {:class => 'form-horizontal', :id => 'online-payment-form'} do |f| %>
-        <div class="form-group">
-          <%= f.hidden_field :company_id, :value => current_user.company.id %>
-        <%= f.label :allows_online_payment, 'Pago en línea', :class => 'col-sm-3 control-label' %>
-          <div class="col-sm-5">  
-            <div class="checkbox">
-              <label>
-                <%= f.check_box :allows_online_payment %> Quiero que mis clientes puedan pagar en línea al reservar
-              </label>
-            </div>
-          </div>  
-      </div>
-
-      <div class="form-group hidden account-info">
-        <label class="col-sm-3 control-label">Banco</label>
-        <div class="col-sm-5">
-
-          <select name="company_setting[bank_id]" class="form-control" id="company_bank">
-            <% @banks.each do |bank| %>
-              <% if @company_setting.bank_id == bank.id %>
-                <option value="<%= bank.id %>" selected><%= bank.name %></option>
-              <% else %>
-                <option value="<%= bank.id %>"><%= bank.name %></option>
+        <!-- Company -->
+        <div class="tab-pane" id="company">
+          <div class="row">
+            <div class="col-md-12">
+              <%= form_for @company, :html => {:class => 'company-form', :id => 'company-form', :multipart => true} do |f| %>
+                <div class="row">
+                  <div class="col-md-6">
+                    <div class="form-group has-feedback">
+                      <%= f.label :name, 'Nombre' %>
+                      <%= f.text_field :name, :autofocus => true, :class => 'form-control', :placeholder => 'Nombre Compañía (requerido)' %>
+                      <span class="help-block"></span>
+                      <span class="form-control-feedback"></span>
+                    </div>
+                    <div class="form-group has-feedback">
+                      <%= f.label :web_address, 'Dirección Sitio AgendaPro' %>
+                      <div class="input-group">
+                        <%= f.text_field :web_address, :required => true, :class => 'form-control', :placeholder => 'Empresa (requerido)' %>
+                        <span class="input-group-addon">.agendapro.cl</span>
+                      </div>
+                      <span class="help-block"></span>
+                      <span class="help-block">Esta es la página del sitio en AgendaPro. <strong>NO recomendamos editarla.</strong></span>
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="form-group">
+                      <%= f.label :description, 'Descripción' %>
+                      <%= f.text_area :description, :class => 'form-control', :rows => "7" %>
+                    </div>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-md-3">
+                    <div class="form-group has-feedback">
+                      <%= f.label :logo, 'Logo Compañía' %>
+                      <%= f.file_field :logo, :accept => 'image/png,image/gif,image/jpeg', :class => 'form-control' %>
+                      <span class="help-block"></span>
+                      <span class="form-control-feedback"></span>
+                      <div class="checkbox">
+                        <label>
+                          <%= f.check_box :remove_logo %> Quitar Logo
+                        </label>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-md-3">
+                    <% if @company.logo_url %>
+                    <div class="company-logo">
+                      <%= image_tag @company.logo_url.to_s, :size => "80x80", :alt => @company.name %>
+                    </div>
+                    <% end %>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-md-12">
+                    <div class="form-group has-feedback">
+                      <%= f.label :economic_sector_ids, 'Sector Económico' %>
+                      <div class="background-green">
+                        <div class="row">
+                          <%= f.collection_check_boxes :economic_sector_ids, EconomicSector.all, :id, :name, {}, {class: "check_boxes"} do |b|%>
+                            <div class="col-md-2">
+                              <div class="checkbox">
+                                <label>
+                                  <%= b.check_box %> <%= b.object.name.html_safe %>
+                                </label>
+                              </div>
+                            </div>
+                          <% end %>
+                        </div>
+                        <span class="help-block"></span>
+                        <span class="form-control-feedback"></span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-md-12">
+                    <div class="form-group">
+                      <%= f.submit 'Guardar', :class => 'btn btn-green' %>
+                      <%= link_to 'Cancelar', dashboard_path, :class => "btn btn-default" %>
+                    </div>
+                  </div>
+                </div>
               <% end %>
-            <% end %>
-          </select>
-
-        </div>
-      </div>
-
-      <div class="form-group hidden account-info account-data">
-        <%= f.label :account_name, 'Nombre Titular', :class => 'col-sm-3 control-label' %>
-        <div class="col-sm-5">
-            <%= f.text_field :account_name, :class => 'form-control', placeholder: '' %>
-        </div>
-      </div>
-
-      <div class="form-group hidden account-info account-data">
-        <%= f.label :company_rut, 'Rut Titular', :class => 'col-sm-3 control-label' %>
-        <div class="col-sm-5">
-            <%= f.text_field :company_rut, :class => 'form-control', placeholder: '' %>
-        </div>
-      </div>
-
-      <div class="form-group hidden account-info account-data">
-        <%= f.label :account_number, 'N° de Cuenta', :class => 'col-sm-3 control-label' %>
-        <div class="col-sm-5">
-            <%= f.text_field :account_number, :class => 'form-control', placeholder: '' %>
-        </div>
-      </div>
-
-      <div class="form-group hidden account-info account-data">
-        <%= f.label :account_type, 'Tipo de cuenta', :class => 'col-sm-3 control-label' %>
-        <div class="col-sm-5">
-          <select name="company_setting[account_type]" class="form-control">
-            <option value="3" <%= "selected" if @company_setting.account_type==3 %>>
-              Cuenta Corriente
-            </option>
-            <option value="2" <%= "selected" if @company_setting.account_type==2 %>>
-              Cuenta de ahorro
-            </option>
-            <option value="1" <%= "selected" if @company_setting.account_type==1 %>>
-              Cuenta Vista
-            </option>
-          </select>
-        </div>
-      </div>
-
-      <div class="form-group hidden" id="other-bank">
-        <div class="col-sm-3">
-        </div>
-        <div class="col-sm-5">
-          Tu banco no está soportado, pero después de editar tu empresa puedes ponerte en contacto con nosotros para permitir que recibas pagos en línea.
-        </div>
-        <div class="col-sm-offset-3 col-sm-5">
-          <span class="help-block"></span>
-        </div>
-      </div>
-
-        <!-- FIN DETALLES PAGO EN LÍNEA -->
-
-        <%= f.fields_for :online_cancelation_policy do |p| %>
-        <!-- POLÍTICA DE CANCELACIÓN PAGOS EN LÍNEA -->
-      <div class="form-group has-feedback account-info">
-        
-        <%= p.label :cancelable, "Es cancelable ", class: "col-sm-3 control-label" %>
-        <div class="col-sm-5">
-          <div class="checkbox">
-            <label>
-              <%= p.check_box :cancelable %> Quiero que se puedan cancelar las reservas pagadas en línea.
-            </label>
+            </div>
           </div>
-          <span class="help-block"></span>
-          <span class="form-control-feedback"></span>
         </div>
-        <div class="col-sm-2">
-          <span style="cursor: pointer;" data-toggle="tooltip" data-placement="bottom" title="Si permites cancelaciones, el cliente podrá cancelar su reserva durante el tiempo establecido, y el dinero le será devuelto."><i class="fa fa-question-circle fa-lg"></i></span>
-        </div>
-      </div>
-      <div class="form-group has-feedback account-info cancel-div">
-        <%= p.label :cancel_max, 'Tiempo máximo de cancelación', class: "col-sm-3 control-label" %>
-        <div class="col-sm-5">
-          <div class="input-group">
-            <%= p.number_field :cancel_max, :autofocus => true, :class => 'form-control', placeholder: '' %>
-            <% unit_id = TimeUnit.find_by_unit("Horas").id %>
-            <input type="hidden" name="company_setting[online_cancelation_policy_attributes][cancel_unit]" value="<%= unit_id %>" />
-            <span class="input-group-addon">Horas</span>
-          </div>
-          <div><small>Máximo 48 horas.</small></div>
-          <span class="help-block"></span>
-          <span class="form-control-feedback"></span>
-        </div>
-        <div class="col-sm-2">
-          <span style="cursor: pointer;" data-toggle="tooltip" data-placement="bottom" title="Esto es la cantidad de tiempo, desde el momento en que se efectuó la reserva, que el cliente tendrá para cancelarla, siempre y cuando no se encuentre dentro del límite previo a la hora del servicio. No puede ser más de 48 horas."><i class="fa fa-question-circle fa-lg"></i></span>
-        </div>
-      </div>
-      <div class="form-group has-feedback account-info">
-        <%= p.label :modifiable, "Es modificable ", class: "col-sm-3 control-label" %>
-        <div class="col-sm-5">
-          <div class="checkbox">
-            <label>
-              <%= p.check_box :modifiable %> Quiero que se puedan modificar las reservas pagadas en línea.
-            </label>
-          </div>
-          <span class="help-block"></span>
-          <span class="form-control-feedback"></span>
-        </div>
-        <div class="col-sm-2">
-          <span style="cursor: pointer;" data-toggle="tooltip" data-placement="bottom" title="Si permites modificaciones, el cliente podrá modificar la reserva ya pagada una cantidad de veces igual al máximo definido en Período Agenda, y durante el tiempo establecido."><i class="fa fa-question-circle fa-lg"></i></span>
-        </div>
-      </div>
-      <div class="form-group has-feedback account-info modification-div">
-        <%= p.label :modification_max, 'Tiempo máximo de modificación', class: "col-sm-3 control-label" %>
-        <div class="col-sm-3">
-          <%= p.number_field :modification_max, :class => 'form-control', placeholder: '' %> 
-          <span class="help-block"></span>
-          <span class="form-control-feedback"></span>
-        </div>
-        <div class="col-sm-2">
-          <select name="company_setting[online_cancelation_policy_attributes][modification_unit]" class="form-control">
-            <% TimeUnit.all.each do |u| %>
-              <% if @company.company_setting.online_cancelation_policy.modification_unit == u.id %>
-                <option value="<%= u.id %>" selected><%= u.unit %></option>
-              <% elsif u.unit == "Meses" %>
-                <option value="<%= u.id %>" selected><%= u.unit %></option>
-              <% else %>
-                <option value="<%= u.id %>"><%= u.unit %></option>
+        <!-- Minisite -->
+        <div class="tab-pane" id="minisite">
+          <div class="row">
+            <div class="col-md-12">
+              <%= form_for @company_setting, :html => {:class => 'company-form', :id => '#times-form'} do |f| %>
+                <div class="row">
+                  <div class="col-md-6">
+                    <div class="form-group">
+                      <div class="checkbox">
+                        <label>
+                          <%= f.check_box :activate_workflow %> Reservas en línea
+                        </label>
+                        <span class="help-block">Habilita esta opción para que tus clientes puedan reservar por internet a través del sistema de AgendaPro, sin la necesidad de llamados a tu local para coordinar una hora.</span>
+                      </div>
+                    </div>
+                    <div class="form-group">
+                      <div class="checkbox">
+                        <label>
+                          <%= f.check_box :activate_search %> Aparecer en el Buscador
+                        </label>
+                        <span class="help-block">Habilita esta opción para que tus clientes encuentren tu negocio en el buscador de AgendaPro.</span>
+                      </div>
+                    </div>
+                    <div class="form-group">
+                      <div class="checkbox">
+                        <label>
+                          <%= f.check_box :allows_optimization %> Permitir optimización de horas
+                        </label>
+                        <span class="help-block">Habilita esta opción para que tus clientes puedan elegir un horario óptimo sin importar los bloques horarios predefinidos.</span>
+                      </div>
+                    </div>
+                    <div class="form-group">
+                      <div class="checkbox">
+                        <label>
+                          <%= f.check_box :activate_notes %> Permitir notas del cliente
+                        </label>
+                        <span class="help-block">Habilita esta opción para que tus clientes puedan incluir un comentario de texto libre al reservar a través de la página.</span>
+                      </div>
+                    </div>
+                    <div class="form-group">
+                      <div class="checkbox">
+                        <label>
+                          <%= f.check_box :client_exclusive %> Exclusivo para Clientes
+                        </label>
+                        <span class="help-block">Habilita esta opción para que sólo puedan reservar clientes ingresados en la sección Clientes, usando el RUT.</span>
+                      </div>
+                    </div>
+                    <div class="form-group">
+                      <%= f.label :provider_preference, 'Preferencia Prestador' %>
+                      <span class="help-block">Aquí configuras si el cliente puede o debe elegir el prestador con el que se atenderá. Si no se elige, se seleccionará automáticamente al prestador con menos ocupación ese día.</span>
+                      <%= f.select :provider_preference, options_for_select([["Cliente puede elegir prestador", 0], ["Cliente debe elegir prestador", 1], ["Cliente no puede elegir prestador", 2]], selected: @company_setting.provider_preference ), {}, {class: "form-control" } %>
+                    </div>
+                    <div class="form-group">
+                      <%= f.label :booking_confirmation_time, 'Recordatorios' %>
+                      <span class="help-block">En esta opción defines cuántos días antes de la reserva se envía el recordatorio al cliente..</span>
+                      <%= f.select :booking_confirmation_time, options_for_select([["El mismo día", 0], ["1 día antes", 1], ["2 días antes", 2], ["3 días antes", 3]], selected: @company_setting.booking_confirmation_time ), {}, {class: "form-control" } %>
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="form-group">
+                      <%= f.label :booking_configuration_email, 'Notificaciones de Reservas' %>
+                      <span class="help-block">Esta opción define cómo se notifican las reservas al email. Puedes configurar esta opción para cada local y prestador independientemente.</span>
+                      <%= f.select :booking_configuration_email, options_for_select([["Notificación por cada reserva", 0], ["Enviar resumen de reservas diario", 1], ["No notificar reservas por email", 3]], selected: @company_setting.booking_configuration_email ), {}, {class: "form-control" } %>
+                    </div>
+                    <div class="form-group has-feedback">
+                      <%= f.label :before_booking, 'Tiempo Mínimo de Reserva:' %>
+                      <span class="help-block">Horas mínimas requeridas para que un cliente reserve. No se podrá reservar con menos anticipación.</span>
+                      <div class="input-group">
+                        <%= f.number_field :before_booking, :in => 1...169, :required => true, :class => 'form-control' %>
+                        <span class="input-group-addon">Horas</span>
+                      </div>
+                      <span class="help-block"></span>
+                    </div>
+                    <div class="form-group">
+                      <%= f.label :after_booking, 'Tiempo Máximo a Futuro:' %>
+                      <span class="help-block">Tiempo máximo que una persona puede reservar a futuro. No se permiten reservas para más de X meses a futuro.</span>
+                      <div class="input-group">
+                        <%= f.number_field :after_booking, :in => 1...13, :required => true, :class => 'form-control' %>
+                        <span class="input-group-addon">Meses</span>
+                      </div>
+                      <span class="help-block"></span>
+                    </div>
+                    <div class="form-group">
+                      <%= f.label :before_edit_booking, 'Política de Edición de Reservas:' %>
+                      <span class="help-block">Horas mínimas requeridas para que un cliente edite o cancele su reserva. No se podrá editar o cancelar reservas con menos anticipación.</span>
+                      <div class="input-group">
+                        <%= f.number_field :before_edit_booking, :in => 1...169, :required => true, :class => 'form-control' %>
+                        <span class="input-group-addon">Horas</span>
+                      </div>
+                      <span class="help-block"></span>
+                    </div>
+                    <div class="form-group">
+                      <%= f.label :max_changes, 'Ediciones Maximas:' %>
+                      <span class="help-block">Cantidad de veces que un cliente puede editar su reserva.</span>
+                      <div class="input-group">
+                        <%= f.number_field :max_changes, :min => 0, :required => true, :class => 'form-control' %>
+                        <span class="input-group-addon">Veces</span>
+                      </div>
+                      <span class="help-block"></span>
+                    </div>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-md-12">
+                    <div class="form-group">
+                      <%= f.submit 'Guardar', :class => 'btn btn-green' %>
+                      <%= link_to 'Cancelar', dashboard_path, :class => "btn btn-default" %>
+                    </div>
+                  </div>
+                </div>
               <% end %>
-            <% end %>
-          </select>
-          <span class="help-block"></span>
-          <span class="form-control-feedback"></span>
+            </div>
+          </div>
         </div>
-        <div class="col-sm-2">
-          <span style="cursor: pointer;" data-toggle="tooltip" data-placement="bottom" title="Esto es la cantidad de tiempo, desde el momento en que se efectuó la reserva, que el cliente tendrá para modificarla, siempre y cuando no se encuentre dentro del límite previo a la hora del servicio."><i class="fa fa-question-circle fa-lg"></i></span>
-        </div>
-      </div>
-      <div class="form-group has-feedback account-info min-hours-div">
-        <%= p.label :min_hours, 'Plazo mínimo de cancelación/modificación', class: "col-sm-3 control-label" %>
-        <div class="col-sm-5">
-          <div class="input-group">
-            <%= p.number_field :min_hours, :class => 'form-control', placeholder: '' %>
-            <span class="input-group-addon">Horas</span>
-          </div>
-          <span class="help-block"></span>
-        </div>
-        <div class="col-sm-2">
-        <span style="cursor: pointer;" data-toggle="tooltip" data-placement="bottom" title="Esto es la cantidad de tiempo límite para cancelar o modificar la reserva antes de que el servicio se fuera a llevar a cabo."><i class="fa fa-question-circle fa-lg"></i></span>
-        </div>
-      </div>
-      <div class="form-group">
-        <div class="col-sm-offset-3 col-sm-4">
-          <%= f.submit 'Guardar', :class => 'btn btn-agendapro-claro' %>
-          <%= link_to 'Cancelar', dashboard_path, :class => "btn btn-default" %>    
-        </div>
-      </div>
-      <% end %>
-      <% end %>
-      <!-- FIN POLÍTICA DE CANCELACIÓN PAGOS EN LÍNEA -->
-    </div>
-    <!-- FIN PAGO EN LÍNEA -->
-    </div>
-    <div class="tab-pane" id="minisite">
-      <div class="row">
-        <%= form_for @company_setting, :html => {:class => 'form-horizontal'} do |f| %>
-          <div class="form-group">
-            <%= f.label :activate_workflow, 'Reservas en línea', :class => 'col-sm-3 control-label' %>
-            <div class="col-sm-5">
-              <%= f.check_box :activate_workflow %>
-              <span class="help-block">Habilita esta opción para que tus clientes puedan reservar por internet a través del sistema de AgendaPro, sin la necesidad de llamados a tu local para coordinar una hora.</span>
-            </div>
-          </div>
-          <div class="form-group">
-            <%= f.label :activate_search, 'Aparecer en el Buscador', :class => 'col-sm-3 control-label' %>
-            <div class="col-sm-5">
-              <%= f.check_box :activate_search %>
-              <span class="help-block">Habilita esta opción para que tus clientes encuentren tu negocio en el buscador de AgendaPro.</span>
-            </div>
-          </div>
-          <div class="form-group">
-            <%= f.label :client_exclusive, 'Exclusivo para Clientes', :class => 'col-sm-3 control-label' %>
-            <div class="col-sm-5">
-              <%= f.check_box :client_exclusive %>
-              <span class="help-block">Habilita esta opción para que sólo puedan reservar clientes ingresados en la sección Clientes, usando el RUT.</span>
-            </div>
-          </div>
-          <div class="form-group">
-            <%= f.label :provider_preference, 'Preferencia Prestador', :class => 'col-sm-3 control-label' %>
-            <div class="col-sm-5">
-              <%= f.select :provider_preference, options_for_select([["Cliente puede elegir prestador", 0], ["Cliente debe elegir prestador", 1], ["Cliente no puede elegir prestador", 2]], selected: @company_setting.provider_preference ), {}, {class: "form-control" } %>
-              <span class="help-block">Aquí configuras si el cliente puede o debe elegir el prestador con el que se atenderá. Si no se elige, se seleccionará automáticamente al prestador con menos ocupación ese día.</span>
-            </div>
-          </div>
-          <div class="form-group">
-            <%= f.label :booking_confirmation_time, 'Recordatorios', :class => 'col-sm-3 control-label' %>
-            <div class="col-sm-5">
-              <%= f.select :booking_confirmation_time, options_for_select([["El mismo día", 0], ["1 día antes", 1], ["2 días antes", 2], ["3 días antes", 3]], selected: @company_setting.booking_confirmation_time ), {}, {class: "form-control" } %>
-              <span class="help-block">En esta opción defines cuántos días antes de la reserva se envía el recordatorio al cliente..</span>
-            </div>
-          </div>
-          <div class="form-group">
-            <%= f.label :booking_configuration_email, 'Notificaciones de Reservas', :class => 'col-sm-3 control-label' %>
-            <div class="col-sm-5">
-              <%= f.select :booking_configuration_email, options_for_select([["Notificación por cada reserva", 0], ["Enviar resumen de reservas diario", 1], ["No notificar reservas por email", 3]], selected: @company_setting.booking_configuration_email ), {}, {class: "form-control" } %>
-              <span class="help-block">Esta opción define cómo se notifican las reservas al email. Puedes configurar esta opción para cada local y prestador independientemente.</span>
-            </div>
-          </div>
-          <div class="form-group">
-            <div class="col-sm-offset-3 col-sm-4">
-              <%= f.submit 'Guardar', :class => 'btn btn-agendapro-claro' %>
-              <%= link_to 'Cancelar', dashboard_path, :class => "btn btn-default" %>
-            </div>
-          </div>
-        <% end %>
-      </div>
-    </div>
-    <div class="tab-pane" id="calendar">
-      <div class="row">
-        <%= form_for @company_setting, :html => {:class => 'form-horizontal calendar-form'} do |f| %>
-          <div class="form-group">
-            <%= f.label :calendar_duration, 'Bloque Calendario', :class => 'col-sm-3 control-label' %>
-            <div class="col-sm-5">
-              <div class="input-group">
-                <%= f.select :calendar_duration, options_for_select({ "5" => "5", "10" => "10", "15" => "15", "20" => "20", "30" => "30", "45" => "45", "60" => "60" }, @company_setting.calendar_duration), {}, {class: "form-control"} %>
-                <span class="input-group-addon">minutos</span>
-              </div>
-              <span class="help-block">Esta opción determina el largo de cada bloque en la sección <strong>"Calendario"</strong>.</span>
-            </div>
-          </div>
-          <div class="form-group">
-            <%= f.label :provider_overcapacity, 'Permitir Reservas Sobrepuestas', :class => 'col-sm-3 control-label' %>
-            <div class="col-sm-5">
-              <%= f.check_box :provider_overcapacity %>
-              <span class="help-block">Si habilitas esta opción, los prestadores pueden tener dos reservas en un mismo horario. Esto es sólo válido para reservas ingresadas internamente, tus clientes que reservan desde el buscador y página personal no podrán reservar ellos mismos donde ya haya una reserva.</span>
-            </div>
-          </div>
-          <div class="form-group">
-            <%= f.label :resource_overcapacity, 'Permitir Sobrecarga de Recursos', :class => 'col-sm-3 control-label' %>
-            <div class="col-sm-5">
-              <%= f.check_box :resource_overcapacity %>
-              <span class="help-block">Al habilitar esta opción, podrás hacer reservas incluso cuando los recursos estén siendo utilizados o no disponibles. Esto es sólo válido para reservas ingresadas internamente, tus clientes que reservan desde el buscador y página personal no podrán reservar ellos mismos donde los resursos no estén disponibles.</span>
-            </div>
-          </div>
-          <div class="form-group">
-            <%= f.label :schedule_overcapacity, 'Permitir Reservas Fuera de Horario', :class => 'col-sm-3 control-label' %>
-            <div class="col-sm-5">
-              <%= f.check_box :schedule_overcapacity %>
-              <span class="help-block">Esta opción te permite poder tomar reservas fuera del horario del prestador, para reservas ingresadas internamente. Si habilitas esta opción podrás hacer reservas en todo el horario visible en la sección <strong>"Calendario"</strong>, puedes extender este habilitando la próxima opción.</span>
-            </div>
-          </div>
-          <div class="form-group">
-            <%= f.label :extended_schedule_bool, 'Extender Calendario', :class => 'col-sm-3 control-label' %>
-            <div class="col-sm-5">
-              <%= f.check_box :extended_schedule_bool %>
-              <span class="help-block">Habilita esta opción para extender el horario en la sección <strong>"Calendario"</strong>, y así poder tomar reservas antes y/o después de tu horario normal, si la opción anterior así lo permite.</span>
-            </div>
-          </div>
-          <div class="form-group ">
-            <%= f.label :extended_min_hour, 'Horario Calendario Extendido', :class => 'col-sm-3 control-label' %>
-            <div class="col-sm-5 form-inline">
-              <%= f.time_select :extended_min_hour, {minute_step: 15}, {:class => 'form-control date-select', required: true} %> - <%= f.time_select :extended_max_hour, {minute_step: 15}, {:class => 'form-control date-select', required: true} %>
-            </div>
-          </div>
-          <div class="form-group">
-            <%= f.label :booking_history, 'Historial de Modificaciones de Reservas', :class => 'col-sm-3 control-label' %>
-            <div class="col-sm-5">
-              <%= f.check_box :booking_history %>
-              <span class="help-block">Si activas esta opción, se guardará un historial de modificaciones para cada reserva. Este historial es exclusivamente visible por el Administrador General y el Administrador de Local, para las reservas de el(los) local(es) al que este asociado.</span>
-            </div>
-          </div>
-          <div class="form-group">
-            <%= f.label :staff_code, 'Exigir Código de Staff', :class => 'col-sm-3 control-label' %>
-            <div class="col-sm-5">
-              <%= f.check_box :staff_code %>
-              <span class="help-block">Al activar esta opción, al hacer modificaciones en las reservas, se exigirá un código de empleado que debe coincidir exactamente con algún código permitido. Los códigos permitidos son definidos exclusivamente en la tabla a continuación.</span>
-            </div>
-          </div>
-          <div class="form-group">
-            <div class="col-sm-offset-3 col-sm-4">
-              <%= f.submit 'Guardar', :class => 'btn btn-agendapro-claro' %>
-              <%= link_to 'Cancelar', dashboard_path, :class => "btn btn-default" %>
-            </div>
-          </div>
-        <% end %>
-      </div>
-      <div class="row">
-        <h4>
-          Códigos de Staff
-          <button class="btn btn-agendapro-oscuro pull-right" data-toggle="modal" data-target="#staffCode">
-            Agregar código
-          </button>
-        </h4>
-        <br />
-        <table class="table table-hover">
-          <thead>
-            <tr>
-              <th>Staff</th>
-              <th>Código</th>
-              <th>Eliminar</th>
-            </tr>
-          </thead>
-          <tbody>
-            <% @staff_codes.each do |staff_code| %>
-              <tr>
-                <td><%= staff_code.staff %></td>
-                <td><%= staff_code.code %></td>
-                <td><%= link_to '<i class="fa fa-trash-o"></i>'.html_safe, staff_code, method: :delete, data: { confirm: '¿Estás seguro de eliminar el remitente seleccionado?' }, class: 'btn btn-danger' %></td>
-              </tr>
-            <% end %>
-          </tbody>
-        </table>
-      </div>
-    </div>
-    <div class="tab-pane" id="embedded">
-      <div class="row well well-white">
-        <h4>AgendaPro App (pestaña) para tu página de Facebook:</h4>
-        <ol>
-          <li>Haz click en el siguiente link: <a href="https://www.facebook.com/dialog/pagetab?api_key=739120539456506&next=https%3A%2F%2Fwww.facebook.com%2F" target="_blank">App AgendaPro para Facebook</a><br /><small>Asegúrate que hayas iniciado sesión en Facebook como administrador de la página (la cuenta personal de alguien que puede editar tu página) a la que le quieres agregar reservas en línea. No debes iniciar sesión "usar como" tú página.</small></li>
-          <li>Elige la página a la que quieres agregar reservas en línea</li>
-          <li>En tu página de Facebook, busca el botón <strong>“Más”</strong> y selecciona <strong>“Administrar Pestaña”</strong></li>
-          <li>Arrastra la pestaña <strong>“¡Reserva Online!”</strong> a la posición que deseas (recomendamos entre las primeras 4 posiciones)</li>
-          <li>En la misma página, ahora selecciona la pestaña <strong>“¡Reserva Online!”</strong></li>
-          <li>Pega el siguiente código en el espacio de campo de texto <strong>"Código AgendaPro"</strong>, y haz click en <strong>"Guardar"</strong><pre class="pre-scrollable well-white"><%= (@company.id * 123456).to_s(30) %></pre></li>
-          <li>¡Ya estás listo para que tus clientes reserven tus servicios a través de <strong>Facebook</strong>!</li>
-          <hr />
-          <p><strong>¿Quieres desactivar las reservas en línea por Facebook?</strong></p>
-          <p>Para hacerlo debes desactivar las reservas por Facebook apretando el siquiente botón "Desactivar Facebook", y luego debes eliminar la pestaña de tu página de Facebook manualmente, desde las configuraciones de esta.</p>
-          <p><%= link_to "Desactivar Facebook", delete_facebook_pages_path, data: { confirm: '¿Estás seguro de querer desactivar las reservas desde Facebook? Por favor recuerda eliminar la pestaña de tu página de Facebook.' }, class: "btn btn-danger" %></p>
-        </ol>
-      </div>
-      <div class="row well well-white">
-        <h4>Agendapro directamente en tu Página Web:</h4>
-        <p>Simplemente pega este código en el archivo de tu página a la que quieres agregar las reservas en línea (si necesitas apoyo, puede pedir ayuda al administrador de tu página web o webmaster, o escribirnos a contacto@agendapro.cl con tus dudas).</p>
-        <pre class="pre-scrollable well-white">&lt;iframe src="<%= root_url(subdomain: 'www') %>iframe/overview/<%= @company.secret_code %>" width="810" marginwidth="0" marginheight="0" frameborder="no" scrolling="yes" style="border-width:0px;" &gt;&lt;/iframe&gt;</pre>
-      </div>
-    </div>
-    <div class="tab-pane" id="emails">
-      <div class="row">
-        <h4>
-          Remitentes
-          <button class="btn btn-agendapro-oscuro pull-right" data-toggle="modal" data-target="#fromEmail">
-            Agregar E-mail
-          </button>
-        </h4>
-        <br />
-        <table class="table table-hover">
-          <thead>
-            <tr>
-              <th>Remitente</th>
-              <th>Confirmado</th>
-              <th>Eliminar</th>
-            </tr>
-          </thead>
-          <tbody>
-            <% @emails.each do |email| %>
-              <tr>
-                <td><%= email.email %></td>
-                <td><%= unless email.confirmed then 'Falta confirmación' else 'Si' end %></td>
-                <td><%= link_to '<i class="fa fa-trash-o"></i>'.html_safe, email, method: :delete, data: { confirm: '¿Estás seguro de eliminar el remitente seleccionado?' }, class: 'btn btn-danger' %></td>
-              </tr>
-            <% end %>
-          </tbody>
-        </table>
-      </div>
-      <div class="row">
-        <h4>Firma E-mail</h4>
-        <%= form_for @company_setting, :html => {:class => 'form-horizontal'} do |f| %>
-          <div class="form-group">
-            <%= f.label :signature, 'Firma', :class => 'col-sm-1 control-label' %>
-            <div class="col-sm-11">
-              <%= f.text_area :signature, :class => 'form-control', :rows => "7" %>
-              <span class="help-block">Esta es la firma que irá en los e-mails que se le envien a tus clientes.</span>
-            </div>
-          </div>
-          <div class="form-group">
-            <div class="col-sm-offset-1 col-sm-4">
-              <%= f.submit 'Guardar', :class => 'btn btn-agendapro-claro' %>
-              <%= link_to 'Cancelar', dashboard_path, :class => "btn btn-default" %>
-            </div>
-          </div>
-        <% end %>
-      </div>
-    </div>
-    <% if current_user.company.company_setting.deal_activate %>
-    <div class="tab-pane" id="deals">
-      <div class="row">
-        <%= form_for @company_setting, :html => {:class => 'form-horizontal'} do |f| %>
-          <div class="form-group">
-            <%= f.label :deal_activate, 'Activar Convenios', :class => 'col-sm-3 control-label' %>
-            <div class="col-sm-5">
-              <%= f.check_box :deal_activate %>
-              <span class="help-block">Si habilitas esta opción, para guardar una reserva, tanto como tus clientes como desde el administrador, deberan ingresar un código. Este será validado según las opciones que se muestran a continuación.</span>
-            </div>
-          </div>
-          <div class="form-group">
-            <%= f.label :deal_name, 'Etiqueta del Convenio', :class => 'col-sm-3 control-label' %>
-            <div class="col-sm-5">
-              <%= f.text_field :deal_name, :class => 'form-control', placeholder: 'Ej: RUT Empresa, Código de Promoción, etc...' %>
-              <span class="help-block">Aquí defines el texto de la etiqueta que aparece donde se debe ingresar el código del convenio. Si se deja en blanco, la etiqueta quedará como "Código de Convenio".</span>
-            </div>
-          </div>
-          <div class="form-group">
-            <%= f.label :deal_identification_number, 'Etiqueta es RUT', :class => 'col-sm-3 control-label' %>
-            <div class="col-sm-5">
-              <%= f.check_box :deal_identification_number %>
-              <span class="help-block">Si habilitas esta opción, se validará y dará formato al campo ingresado como si fuera RUT (persona o empresa).</span>
-            </div>
-          </div>
-          <div class="form-group">
-            <%= f.label :deal_quantity, 'Cantidad Permitida', :class => 'col-sm-3 control-label' %>
-            <div class="col-sm-5">
-              <%= f.number_field :deal_quantity, :class => 'form-control' %>
-              <span class="help-block">Cantidad de veces que se puede usar cada convenio por defecto. Si se deja en 0, cada convenio se puede usar ilimitadamente.</span>
-            </div>
-          </div>
-          <div class="form-group">
-            <%= f.label :deal_constraint_option, 'Periodo Restricción', :class => 'col-sm-3 control-label' %>
-            <div class="col-sm-5">
-              <%= f.select :deal_constraint_option, options_for_select([["Sin restricción", 0],["Simultáneo", 1],["Por día", 2],["Por semana", 3],["Por mes", 4]]), {}, {:class => 'form-control'} %>
-              <span class="help-block">Aquí defines si un mismo código puede ser usado más de una vez durante un mismo periodo de tiempo (mismo instante, día, semana o mes).</span>
-            </div>
-          </div>
-          <div class="form-group">
-            <%= f.label :deal_constraint_quantity, 'Límite Restricción', :class => 'col-sm-3 control-label' %>
-            <div class="col-sm-5">
-              <%= f.number_field :deal_constraint_quantity, :class => 'form-control' %>
-              <span class="help-block">Aquí defines cuántas veces puede ser usado un mismo en ese mismo periodo de tiempo. Si se deja en 0, cada convenio se puede usar ilimitadamente en ese mismo periodo de tiempo.</span>
-            </div>
-          </div>
-          <div class="form-group">
-            <%= f.label :deal_exclusive, 'Exclusivo Convenios Creados', :class => 'col-sm-3 control-label' %>
-            <div class="col-sm-5">
-              <%= f.check_box :deal_exclusive %>
-              <span class="help-block">Si habilitas esta opción, sólo se podrán usar códigos que estén previamente creados en la tabla de convenios, al final de esta página.</span>
-            </div>
-          </div>
-          <div class="form-group">
-            <%= f.label :deal_overcharge, 'Sobrecarga Convenios', :class => 'col-sm-3 control-label' %>
-            <div class="col-sm-5">
-              <%= f.check_box :deal_overcharge %>
-              <span class="help-block">Si habilitas esta opción, sólo desde el administrador, podrás sobrecargar las capacidades y límites definidos en cada convenio, y la creación de convenios desde el administrador, aunque la opción anterior esté habilitada.</span>
-            </div>
-          </div>
-          <div class="form-group">
-            <div class="col-sm-offset-1 col-sm-4">
-              <%= f.submit 'Guardar', :class => 'btn btn-agendapro-claro' %>
-              <%= link_to 'Cancelar', dashboard_path, :class => "btn btn-default" %>
-            </div>
-          </div>
-        <% end %>
-      </div>
-      <div class="row">
-        <h4>
-          Listado de Convenios
-          <button class="btn btn-agendapro-oscuro pull-right" data-toggle="modal" data-target="#deal">
-            Agregar Convenio
-          </button>
-        </h4>
-        <br />
-        <table class="table table-hover">
-          <thead>
-            <tr>
-              <th>Código</th>
-              <th>Cantidad</th>
-              <th>Periodo Restricción</th>
-              <th>Límite Restricción</th>
-              <th>Eliminar</th>
-            </tr>
-          </thead>
-          <tbody>
-            <% @deals.each do |deal| %>
-              <tr>
-                <td><%= deal.code %></td>
-                <td><%= deal.quantity %></td>
-                <% options = ["Sin restricción","Simultáneo","Por día","Por semana","Por mes"] %>
-                <td><%= options[deal.constraint_option] %></td>
-                <td><%= deal.constraint_quantity %></td>
-                <td><%= link_to '<i class="fa fa-trash-o"></i>'.html_safe, deal, method: :delete, data: { confirm: '¿Estás seguro de eliminar el convenio seleccionado?' }, class: 'btn btn-danger' %></td>
-              </tr>
-            <% end %>
-          </tbody>
-        </table>
-      </div>
-    </div>
-    <% end %>
-    <div class="tab-pane" id="times">
-      <div class="row">
-        <%= form_for @company_setting, :html => {:class => 'form-horizontal times-form'} do |f| %>
-          <div class="form-group has-feedback">
-            <%= f.label :before_booking, 'Tiempo Mínimo de Reserva:', :class => 'col-sm-3 control-label' %>
-            <div class="col-sm-4">
-              <div class="input-group">
-                <%= f.number_field :before_booking, :in => 1...169, :required => true, :class => 'form-control' %>
-                <span class="input-group-addon">Horas</span>
-              </div>
-              <span class="help-block"></span>
-              <!-- <span class="form-control-feedback"></span> -->
-              <span class="help-block">Horas mínimas requeridas para que un cliente reserve. No se podrá reservar con menos anticipación.</span>
-            </div>
-          </div>
-          <div class="form-group">
-            <%= f.label :after_booking, 'Tiempo Máximo a Futuro:', :class => 'col-sm-3 control-label' %>
-            <div class="col-sm-4">
-              <div class="input-group">
-                <%= f.number_field :after_booking, :in => 1...13, :required => true, :class => 'form-control' %>
-                <span class="input-group-addon">Meses</span>
-              </div>
-              <span class="help-block"></span>
-              <!-- <span class="form-control-feedback"></span> -->
-              <span class="help-block">Tiempo máximo que una persona puede reservar a futuro. No se permiten reservas para más de X meses a futuro.</span>
-            </div>
-          </div>
-          <div class="form-group">
-            <%= f.label :before_edit_booking, 'Política de Edición de Reservas:', :class => 'col-sm-3 control-label' %>
-            <div class="col-sm-4">
-              <div class="input-group">
-                <%= f.number_field :before_edit_booking, :in => 1...169, :required => true, :class => 'form-control' %>
-                <span class="input-group-addon">Horas</span>
-              </div>
-              <span class="help-block"></span>
-              <!-- <span class="form-control-feedback"></span> -->
-              <span class="help-block">Horas mínimas requeridas para que un cliente edite o cancele su reserva. No se podrá editar o cancelar reservas con menos anticipación.</span>
-            </div>
-          </div>
-          <div class="form-group">
-            <%= f.label :max_changes, 'Ediciones Maximas:', :class => 'col-sm-3 control-label' %>
-            <div class="col-sm-4">
-              <div class="input-group">
-                <%= f.number_field :max_changes, :min => 0, :required => true, :class => 'form-control' %>
-                <span class="input-group-addon">Veces</span>
-              </div>
-              <span class="help-block"></span>
-              <span class="help-block">Cantidad de veces que un cliente puede editar su reserva.</span>
-            </div>
-          </div>
-          <div class="form-group">
-            <div class="col-sm-offset-3 col-sm-4">
-              <%= f.submit 'Guardar', :class => 'btn btn-agendapro-claro' %>
-              <%= link_to 'Cancelar', dashboard_path, :class => "btn btn-default" %>
-            </div>
-          </div>
-        <% end %>
-      </div>
-    </div>
-    <div class="tab-pane" id="link">
-      <div class="row">
-        <div class="col-md-6">
-          <div class="col-md-11 well well-white">
-            <div class="row">
-              <h3 class="link_section_header">1. Elige el formato:</h3>
-              <div class="col-md-12">
-                <div class="radio">
-                  <label>
-                    <input type="radio" name="formatRadio" style="float: none;" value="sizeImageRadio">
-                    <%= image_tag 'logos/logo_mail.png', :alt => 'AgendaPro' %>
-                  </label>
+        <!-- Calendar -->
+        <div class="tab-pane" id="calendar">
+          <div class="row">
+            <div class="col-md-12">
+              <%= form_for @company_setting, :html => {:class => 'company-form'} do |f| %>
+                <div class="row">
+                  <div class="col-md-6">
+                    <div class="form-group">
+                      <%= f.label :calendar_duration, 'Bloque Calendario' %>
+                      <span class="help-block">Esta opción determina el largo de cada bloque en la sección <strong>"Calendario"</strong>.</span>
+                      <div class="input-group">
+                        <%= f.select :calendar_duration, options_for_select({ "5" => "5", "10" => "10", "15" => "15", "20" => "20", "30" => "30", "45" => "45", "60" => "60" }, @company_setting.calendar_duration), {}, {class: "form-control"} %>
+                        <span class="input-group-addon">minutos</span>
+                      </div>
+                    </div>
+                    <div class="form-group">
+                      <div class="checkbox">
+                        <label>
+                          <%= f.check_box :provider_overcapacity %> Permitir Reservas Sobrepuestas
+                        </label>
+                        <span class="help-block">Si habilitas esta opción, los prestadores pueden tener dos reservas en un mismo horario. Esto es sólo válido para reservas ingresadas internamente, tus clientes que reservan desde el buscador y página personal no podrán reservar ellos mismos donde ya haya una reserva.</span>
+                      </div>
+                    </div>
+                    <div class="form-group">
+                      <div class="checkbox">
+                        <label>
+                          <%= f.check_box :resource_overcapacity %> Permitir Sobrecarga de Recursos
+                        </label>
+                        <span class="help-block">Al habilitar esta opción, podrás hacer reservas incluso cuando los recursos estén siendo utilizados o no disponibles. Esto es sólo válido para reservas ingresadas internamente, tus clientes que reservan desde el buscador y página personal no podrán reservar ellos mismos donde los resursos no estén disponibles.</span>
+                      </div>
+                    </div>
+                    <div class="form-group">
+                      <div class="checkbox">
+                        <label>
+                          <%= f.check_box :schedule_overcapacity %> Permitir Reservas Fuera de Horario
+                        </label>
+                        <span class="help-block">Esta opción te permite poder tomar reservas fuera del horario del prestador, para reservas ingresadas internamente. Si habilitas esta opción podrás hacer reservas en todo el horario visible en la sección <strong>"Calendario"</strong>, puedes extender este habilitando la próxima opción.</span>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="form-group">
+                      <div class="checkbox">
+                        <label>
+                          <%= f.check_box :extended_schedule_bool %> Extender Calendario
+                        </label>
+                        <span class="help-block">Habilita esta opción para extender el horario en la sección <strong>"Calendario"</strong>, y así poder tomar reservas antes y/o después de tu horario normal, si la opción anterior así lo permite.</span>
+                      </div>
+                    </div>
+                    <div class="form-group ">
+                      <%= f.label :extended_min_hour, 'Horario Calendario Extendido' %>
+                      <div>
+                        <%= f.time_select :extended_min_hour, {minute_step: 15}, {:class => 'form-control date-select', required: true} %> - <%= f.time_select :extended_max_hour, {minute_step: 15}, {:class => 'form-control date-select', required: true} %>
+                      </div>
+                    </div>
+                    <div class="form-group">
+                      <div class="checkbox">
+                        <label>
+                          <%= f.check_box :booking_history %> Historial de Modificaciones de Reservas
+                        </label>
+                        <span class="help-block">Si activas esta opción, se guardará un historial de modificaciones para cada reserva. Este historial es exclusivamente visible por el Administrador General y el Administrador de Local, para las reservas de el(los) local(es) al que este asociado.</span>
+                      </div>
+                    </div>
+                    <div class="form-group">
+                      <div class="checkbox">
+                        <label>
+                          <%= f.check_box :staff_code %> Exigir Código de Staff
+                        </label>
+                        <span class="help-block">Al activar esta opción, al hacer modificaciones en las reservas, se exigirá un código de empleado que debe coincidir exactamente con algún código permitido. Los códigos permitidos son definidos exclusivamente en la tabla a continuación.</span>
+                      </div>
+                    </div>
+                    <div class="form-group">
+                      <%= f.submit 'Guardar', :class => 'btn btn-green' %>
+                      <%= link_to 'Cancelar', dashboard_path, :class => "btn btn-default" %>
+                    </div>
+                  </div>
                 </div>
+              <% end %>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-12">
+              <div class="background-grey">
+                <h3 class="text-green">
+                  Códigos de Staff
+                  <button class="btn btn-green pull-right" data-toggle="modal" data-target="#staffCode">Agregar código</button>
+                </h3>
               </div>
-              <div class="col-md-12">
-                <div class="radio">
-                  <label>
-                    <input type="radio" name="formatRadio" style="float: none;" value="sizeButtonRadio">
-                    <span class="btn btn-agendapro-oscuro">Reserva Online</span>
-                  </label>
-                </div>
-              </div>
-              <div class="col-md-12">
-                <div class="radio">
-                  <label>
-                    <input type="radio" name="formatRadio" value="sizeLinkRadio">
-                    <a>¡Reserva acá!</a>
-                  </label>
-                </div>
-              </div>
+              <table class="table table-hover table-green">
+                <thead>
+                  <tr>
+                    <th>Staff</th>
+                    <th>Código</th>
+                    <th>Eliminar</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <% @staff_codes.each do |staff_code| %>
+                    <tr>
+                      <td><%= staff_code.staff %></td>
+                      <td><%= staff_code.code %></td>
+                      <td><%= link_to '<i class="fa fa-trash-o"></i>'.html_safe, staff_code, method: :delete, data: { confirm: '¿Estás seguro de eliminar el remitente seleccionado?' }, class: 'btn btn-red' %></td>
+                    </tr>
+                  <% end %>
+                </tbody>
+              </table>
             </div>
           </div>
         </div>
-        <div class="col-md-6">
-          <div class="col-md-11 well well-white">
-            <div class="row">
-              <h3 class="link_section_header">2. Elige el tamaño:</h3>
-              <div class="col-md-12">
+        <!-- Emails -->
+        <div class="tab-pane" id="emails">
+          <div class="row">
+            <div class="col-md-12">
+              <div class="background-grey">
+                <h3 class="text-green">
+                  Remitentes
+                  <button class="btn btn-green pull-right" data-toggle="modal" data-target="#fromEmail">Agregar E-mail</button>
+                </h3>
+              </div>
+              <table class="table table-hover table-green">
+                <thead>
+                  <tr>
+                    <th>Remitente</th>
+                    <th>Confirmado</th>
+                    <th>Eliminar</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <% @emails.each do |email| %>
+                    <tr>
+                      <td><%= email.email %></td>
+                      <td><%= unless email.confirmed then 'Falta confirmación' else 'Si' end %></td>
+                      <td><%= link_to '<i class="fa fa-trash-o"></i>'.html_safe, email, method: :delete, data: { confirm: '¿Estás seguro de eliminar el remitente seleccionado?' }, class: 'btn btn-red' %></td>
+                    </tr>
+                  <% end %>
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-12">
+              <h3 class="text-green">
+                Firma E-mail <br />
+                <small>Esta es la firma que irá en los e-mails que se le envien a tus clientes.</small>
+              </h3>
+              <%= form_for @company_setting do |f| %>
+                <div class="form-group">
+                  <%= f.text_area :signature, :class => 'form-control', :rows => "7" %>
+                </div>
+                <div class="form-group">
+                  <%= f.submit 'Guardar', :class => 'btn btn-green' %>
+                  <%= link_to 'Cancelar', dashboard_path, :class => "btn btn-default" %>
+                </div>
+              <% end %>
+            </div>
+          </div>
+        </div>
+        <!-- Embedded -->
+        <div class="tab-pane" id="embedded">
+          <div class="row">
+            <div class="col-md-12">
+              <h3 class="text-green">AgendaPro App (pestaña) para tu página de Facebook:</h3>
+            </div>
+            <div class="col-md-6">
+              <div class="circle-list">
+                <span>1</span>
+                <p>Haz click en el siguiente link: <a href="https://www.facebook.com/dialog/pagetab?api_key=<%= ENV["FACEBOOK_APP_ID"] %>&next=https%3A%2F%2Fwww.facebook.com%2F" target="_blank">App AgendaPro para Facebook</a></p>
+              </div>
+              Asegúrate que hayas iniciado sesión en Facebook como administrador de la página (la cuenta personal de alguien que puede editar tu página) a la que le quieres agregar reservas en línea. No debes iniciar sesión "usar como" tú página.
+              <div class="circle-list">
+                <span>2</span>
+                <p>Elige la página a la que quieres agregar reservas en línea</p>
+              </div>
+              <div class="circle-list">
+                <span>3</span>
+                <p>En tu página de Facebook, busca el botón <mark>“Más”</mark> y selecciona <mark>“Administrar Pestaña”</mark></p>
+              </div>
+              <div class="circle-list">
+                <span>4</span>
+                <p>Arrastra la pestaña <mark>“¡Reserva Online!”</mark> a la posición que deseas (recomendamos entre las primeras 4 posiciones)</p>
+              </div>
+              <div class="circle-list">
+                <span>5</span>
+                <p>En la misma página, ahora selecciona la pestaña <mark>“¡Reserva Online!”</mark></p>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="circle-list">
+                <span>6</span>
+                <p>Pega el siguiente código en el espacio de campo de texto <mark>"Código AgendaPro"</mark>, y haz click en <mark>"Guardar"</mark></p>
+              </div>
+              <pre class="pre-scrollable"><%= (@company.id * 123456).to_s(30) %></pre>
+              <div class="circle-list">
+                <span>7</span>
+                <p>¡Ya estás listo para que tus clientes reserven tus servicios a través de <mark>Facebook</mark>!</p>
+              </div>
+              <h3 class="text-green">¿Quieres desactivar las reservas en línea por Facebook?</h3>
+              <p>Para hacerlo debes desactivar las reservas por Facebook apretando el siquiente botón "Desactivar Facebook", y luego debes eliminar la pestaña de tu página de Facebook manualmente, desde las configuraciones de esta.</p>
+              <p><%= link_to "Desactivar Facebook", delete_facebook_pages_path, data: { confirm: '¿Estás seguro de querer desactivar las reservas desde Facebook? Por favor recuerda eliminar la pestaña de tu página de Facebook.' }, class: "btn btn-red" %></p>
+            </div>
+          </div>
+          <div class="row" style="margin-top: 20px;">
+            <div class="col-md-12">
+              <div class="background-grey">
+                <h3 class="text-green">Agendapro directamente en tu Página Web:</h3>
+                <p>Simplemente pega este código en el archivo de tu página a la que quieres agregar las reservas en línea (si necesitas apoyo, puede pedir ayuda al administrador de tu página web o webmaster, o escribirnos a contacto@agendapro.cl con tus dudas).</p>
+              </div>
+              <pre class="pre-scrollable well-white">&lt;iframe src="<%= root_url(subdomain: 'www') %>iframe/overview/<%= @company.secret_code %>" width="810" marginwidth="0" marginheight="0" frameborder="no" scrolling="yes" style="border-width:0px;" &gt;&lt;/iframe&gt;</pre>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-12">
+              <h3 class="text-green">Agrega el botón AgendaPro</h3>
+              <pre class="pre-scrollable">&lt;a class="btn btn-green btn-lg" href="http://<%= @web_address %>.agendapro.cl" target="_blank" style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;text-decoration:none;display:inline-block;margin-bottom:0;font-weight:normal;text-align:center;white-space:nowrap;vertical-align:middle;-ms-touch-action:manipulation;touch-action:manipulation;cursor:pointer;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;background-image:none;border-width:1px;border-style:solid;padding-top:10px;padding-bottom:10px;padding-right:16px;padding-left:16px;font-size:18px;line-height:1.33;border-radius:6px;color:#ffffff;background-color:#22c488;border-color:#1ba970;" &gt;Reserva Online&lt;/a&gt;</pre>
+            </div>
+          </div>
+        </div>
+        <!-- Pago en Linea -->
+        <% if current_user.company.company_setting.online_payment_capable %>
+        <div class="tab-pane" id="online-payment">
+          <div class="row">
+            <div class="col-md-12">
+              <%= form_for @company_setting, :html => {:class => 'company-form', :id => 'online-payment-form'} do |f| %>
+                <%= f.hidden_field :company_id, :value => current_user.company.id %>
+                <div class="row">
+                  <!-- Detalles -->
+                  <div class="col-md-6">
+                    <div class="form-group">
+                      <div class="checkbox">
+                        <label>
+                          <%= f.check_box :allows_online_payment %> Pago en línea
+                        </label>
+                        <span class="help-block">Quiero que mis clientes puedan pagar en línea al reservar</span>
+                      </div>
+                    </div>
+                    <div class="form-group hidden account-info">
+                      <label>Banco</label>
+                      <select name="company_setting[bank_id]" class="form-control" id="company_bank">
+                        <% @banks.each do |bank| %>
+                          <% if @company_setting.bank_id == bank.id %>
+                            <option value="<%= bank.id %>" selected><%= bank.name %></option>
+                          <% else %>
+                            <option value="<%= bank.id %>"><%= bank.name %></option>
+                          <% end %>
+                        <% end %>
+                      </select>
+                    </div>
+                    <div class="form-group hidden account-info account-data">
+                      <%= f.label :account_name, 'Nombre Titular' %>
+                      <%= f.text_field :account_name, :class => 'form-control', placeholder: '' %>
+                      <span class="help-block"></span>
+                    </div>
+                    <div class="form-group hidden account-info account-data">
+                      <%= f.label :company_rut, 'Rut Titular' %>
+                      <%= f.text_field :company_rut, :class => 'form-control', placeholder: '' %>
+                      <span class="help-block"></span>
+                    </div>
+                    <div class="form-group hidden account-info account-data">
+                      <%= f.label :account_number, 'N° de Cuenta' %>
+                      <%= f.text_field :account_number, :class => 'form-control', placeholder: '' %>
+                      <span class="help-block"></span>
+                    </div>
+                    <div class="form-group hidden account-info account-data">
+                      <%= f.label :account_type, 'Tipo de cuenta' %>
+                      <select name="company_setting[account_type]" class="form-control">
+                        <option value="3" <%= "selected" if @company_setting.account_type==3 %>>Cuenta Corriente</option>
+                        <option value="2" <%= "selected" if @company_setting.account_type==2 %>>Cuenta de ahorro</option>
+                        <option value="1" <%= "selected" if @company_setting.account_type==1 %>>Cuenta Vista</option>
+                      </select>
+                    </div>
+                    <div class="form-group hidden" id="other-bank">
+                      <p>Tu banco no está soportado, pero después de editar tu empresa puedes ponerte en contacto con nosotros para permitir que recibas pagos en línea.</p>
+                    </div>
+                  </div>
+                  <!-- Política de Cancelación -->
+                  <div class="col-md-6">
+                    <%= f.fields_for :online_cancelation_policy do |p| %>
+                      <div class="form-group has-feedback account-info">
+                        <div class="checkbox">
+                          <label>
+                            <%= p.check_box :cancelable %> Es cancelable
+                          </label>
+                          <span class="help-block">
+                            Quiero que se puedan cancelar las reservas pagadas en línea.<br />
+                            Si permites cancelaciones, el cliente podrá cancelar su reserva durante el tiempo establecido, y el dinero le será devuelto.
+                          </span>
+                        </div>
+                      </div>
+                      <div class="form-group has-feedback account-info cancel-div">
+                        <%= p.label :cancel_max, 'Tiempo máximo de cancelación' %>
+                        <span class="help-block">
+                          Máximo 48 horas.<br />
+                          Esto es la cantidad de tiempo, desde el momento en que se efectuó la reserva, que el cliente tendrá para cancelarla, siempre y cuando no se encuentre dentro del límite previo a la hora del servicio. No puede ser más de 48 horas.
+                        </span>
+                        <div class="input-group">
+                          <%= p.number_field :cancel_max, :autofocus => true, :class => 'form-control', placeholder: '', max: "48" %>
+                          <% unit_id = TimeUnit.find_by_unit("Horas").id %>
+                          <input type="hidden" name="company_setting[online_cancelation_policy_attributes][cancel_unit]" value="<%= unit_id %>"/>
+                          <span class="input-group-addon">Horas</span>
+                        </div>
+                        <span class="help-block"></span>
+                        <span class="form-control-feedback"></span>
+                      </div>
+                      <div class="form-group has-feedback account-info">
+                        <div class="checkbox">
+                          <label>
+                            <%= p.check_box :modifiable %> Es modificable
+                          </label>
+                          <span class="help-block">
+                            Quiero que se puedan modificar las reservas pagadas en línea.<br />
+                            Si permites modificaciones, el cliente podrá modificar la reserva ya pagada una cantidad de veces igual al máximo definido en Período Agenda, y durante el tiempo establecido.
+                          </span>
+                        </div>
+                      </div>
+                      <div class="form-group has-feedback account-info modification-div">
+                        <%= p.label :modification_max, 'Tiempo máximo de modificación' %>
+                        <span class="help-block">Esto es la cantidad de tiempo, desde el momento en que se efectuó la reserva, que el cliente tendrá para modificarla, siempre y cuando no se encuentre dentro del límite previo a la hora del servicio.</span>
+                        <%= p.number_field :modification_max, :class => 'form-control select-modification', placeholder: '' %>
+                        <select name="company_setting[online_cancelation_policy_attributes][modification_unit]" class="form-control select-modification">
+                          <% TimeUnit.all.each do |u| %>
+                            <% if @company.company_setting.online_cancelation_policy.modification_unit == u.id %>
+                              <option value="<%= u.id %>" selected><%= u.unit %></option>
+                            <% elsif u.unit == "Meses" %>
+                              <option value="<%= u.id %>" selected><%= u.unit %></option>
+                            <% else %>
+                              <option value="<%= u.id %>"><%= u.unit %></option>
+                            <% end %>
+                          <% end %>
+                        </select>
+                        <span class="help-block"></span>
+                      </div>
+                      <div class="form-group has-feedback account-info min-hours-div">
+                        <%= p.label :min_hours, 'Plazo mínimo de cancelación/modificación' %>
+                        <span class="help-block">Esto es la cantidad de tiempo límite para cancelar o modificar la reserva antes de que el servicio se fuera a llevar a cabo.</span>
+                        <div class="input-group">
+                          <%= p.number_field :min_hours, :class => 'form-control', placeholder: '' %>
+                          <span class="input-group-addon">Horas</span>
+                        </div>
+                        <span class="help-block"></span>
+                      </div>
+                    <% end %>
+                  </div>
+                  <div class="col-md-12">
+                    <div class="form-group">
+                      <%= f.submit 'Guardar', :class => 'btn btn-green' %>
+                      <%= link_to 'Cancelar', dashboard_path, :class => "btn btn-default" %>
+                    </div>
+                  </div>
+                </div>
+              <% end %>
+            </div>
+          </div>
+        </div>
+        <% end %>
+        <!-- Deals -->
+        <% if current_user.company.company_setting.deal_activate %>
+        <div class="tab-pane" id="deals">
+          <div class="row">
+            <div class="col-md-12">
+              <%= form_for @company_setting, :html => {:class => 'company-form'} do |f| %>
+                <div class="row">
+                  <div class="col-md-6">
+                    <div class="form-group">
+                      <div class="checkbox">
+                        <label>
+                          <%= f.check_box :deal_activate %> Activar Convenios
+                        </label>
+                        <span class="help-block">Si habilitas esta opción, para guardar una reserva, tanto como tus clientes como desde el administrador, deberan ingresar un código. Este será validado según las opciones que se muestran a continuación.</span>
+                      </div>
+                    </div>
+                    <div class="form-group">
+                      <%= f.label :deal_name, 'Etiqueta del Convenio' %>
+                      <span class="help-block">Aquí defines el texto de la etiqueta que aparece donde se debe ingresar el código del convenio. Si se deja en blanco, la etiqueta quedará como "Código de Convenio".</span>
+                      <%= f.text_field :deal_name, :class => 'form-control', placeholder: 'Ej: RUT Empresa, Código de Promoción, etc...' %>
+                    </div>
+                    <div class="form-group">
+                      <div class="checkbox">
+                        <label>
+                          <%= f.check_box :deal_identification_number %> Etiqueta es RUT
+                        </label>
+                        <span class="help-block">Si habilitas esta opción, se validará y dará formato al campo ingresado como si fuera RUT (persona o empresa).</span>
+                      </div>
+                    </div>
+                    <div class="form-group">
+                      <%= f.label :deal_quantity, 'Cantidad Permitida' %>
+                      <span class="help-block">Cantidad de veces que se puede usar cada convenio por defecto. Si se deja en 0, cada convenio se puede usar ilimitadamente.</span>
+                      <%= f.number_field :deal_quantity, :class => 'form-control' %>
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="form-group">
+                      <%= f.label :deal_constraint_option, 'Periodo Restricción' %>
+                      <span class="help-block">Aquí defines si un mismo código puede ser usado más de una vez durante un mismo periodo de tiempo (mismo instante, día, semana o mes).</span>
+                      <%= f.select :deal_constraint_option, options_for_select([["Sin restricción", 0],["Simultáneo", 1],["Por día", 2],["Por semana", 3],["Por mes", 4]]), {}, {:class => 'form-control'} %>
+                    </div>
+                    <div class="form-group">
+                      <%= f.label :deal_constraint_quantity, 'Límite Restricción' %>
+                      <span class="help-block">Aquí defines cuántas veces puede ser usado un mismo en ese mismo periodo de tiempo. Si se deja en 0, cada convenio se puede usar ilimitadamente en ese mismo periodo de tiempo.</span>
+                      <%= f.number_field :deal_constraint_quantity, :class => 'form-control' %>
+                    </div>
+                    <div class="form-group">
+                      <div class="checkbox">
+                        <label>
+                          <%= f.check_box :deal_exclusive %> Exclusivo Convenios Creados
+                        </label>
+                        <span class="help-block">Si habilitas esta opción, sólo se podrán usar códigos que estén previamente creados en la tabla de convenios, al final de esta página.</span>
+                      </div>
+                    </div>
+                    <div class="form-group">
+                      <div class="checkbox">
+                        <label>
+                          <%= f.check_box :deal_overcharge %> Sobrecarga Convenios
+                        </label>
+                        <span class="help-block">Si habilitas esta opción, sólo desde el administrador, podrás sobrecargar las capacidades y límites definidos en cada convenio, y la creación de convenios desde el administrador, aunque la opción anterior esté habilitada.</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
                 <div class="row">
                   <div class="col-md-12">
-                    <div class="radio hidden">
-                      <label>
-                        <input type="radio" name="sizeImageRadio" style="float: none;" value="202x74">
-                        <%= image_tag 'logos/logo_mail.png', :alt => 'AgendaPro', :size => '202x74' %>
-                      </label>
-                    </div>
-                  </div>
-                  <div class="col-md-12">
-                    <div class="radio hidden">
-                      <label>
-                        <input type="radio" name="sizeImageRadio" style="float: none;" value="101x37">
-                        <%= image_tag 'logos/logo_mail.png', :alt => 'AgendaPro', :size => '101x37' %>
-                      </label>
+                    <div class="form-group">
+                      <%= f.submit 'Guardar', :class => 'btn btn-green' %>
+                      <%= link_to 'Cancelar', dashboard_path, :class => "btn btn-default" %>
                     </div>
                   </div>
                 </div>
+              <% end %>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-12">
+              <div class="background-grey">
+                <h3 class="text-green">
+                  Listado de Convenios
+                  <button class="btn btn-green pull-right" data-toggle="modal" data-target="#deal">Agregar Convenio</button>
+                </h3>
               </div>
-              <div class="col-md-12">
-                <div class="row">
-                  <div class="col-md-12">
-                    <div class="radio hidden">
-                      <label>
-                        <input type="radio" name="sizeButtonRadio" style="float: none;" value="btn-lg">
-                        <span class="btn btn-agendapro-oscuro btn-lg">Grande</span>
-                      </label>
-                    </div>
-                  </div>
-                  <div class="col-md-12">
-                    <div class="radio hidden">
-                      <label>
-                        <input type="radio" name="sizeButtonRadio" style="float: none;" value="">
-                        <span class="btn btn-agendapro-oscuro">Mediano</span>
-                      </label>
-                    </div>
-                  </div>
-                  <div class="col-md-12">
-                    <div class="radio hidden">
-                      <label>
-                        <input type="radio" name="sizeButtonRadio" style="float: none;" value="btn-sm">
-                        <span class="btn btn-agendapro-oscuro btn-sm">Chico</span>
-                      </label>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div class="col-md-12">
-                <div class="row">
-                  <div class="col-md-12">
-                    <div class="radio hidden">
-                      <label>
-                        <input type="radio" name="sizeLinkRadio" value="">
-                        <a>Link a AgendaPro</a>
-                      </label>
-                    </div>
-                  </div>
-                </div>
-              </div>
+              <table class="table table-hover table-green">
+                <thead>
+                  <tr>
+                    <th>Código</th>
+                    <th>Cantidad</th>
+                    <th>Periodo Restricción</th>
+                    <th>Límite Restricción</th>
+                    <th>Eliminar</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <% @deals.each do |deal| %>
+                    <tr>
+                      <td><%= deal.code %></td>
+                      <td><%= deal.quantity %></td>
+                      <% options = ["Sin restricción","Simultáneo","Por día","Por semana","Por mes"] %>
+                      <td><%= options[deal.constraint_option] %></td>
+                      <td><%= deal.constraint_quantity %></td>
+                      <td><%= link_to '<i class="fa fa-trash-o"></i>'.html_safe, deal, method: :delete, data: { confirm: '¿Estás seguro de eliminar el convenio seleccionado?' }, class: 'btn btn-red' %></td>
+                    </tr>
+                  <% end %>
+                </tbody>
+              </table>
             </div>
           </div>
         </div>
-      </div>
-      <div class="row">
-        <div class="col-md-12">
-          <h3>Copia tu código</h3>
-          <pre class="pre-scrollable well-white"></pre>
-        </div>
+        <% end %>
       </div>
     </div>
   </div>
 </div>
+
+<% content_for :modals do %>
+  <div class="modal fade" id="fromEmail" tabindex="-1" role="dialog" aria-labelledby="fromEmailLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+          <h4 class="modal-title" id="myModalLabel">Agregar Remitente</h4>
+        </div>
+        <%= form_for @company_from_email, :html => {:class => 'form-horizontal'} do |f| %>
+          <div class="modal-body">
+            <%= f.hidden_field :company_id, :value => current_user.company.id %>
+            <div class="form-group has-feedback">
+              <%= f.label :email, 'E-mail', :class => 'control-label col-xs-2' %>
+              <div class="col-xs-10">
+                <%= f.text_field :email, :class => 'form-control', :placeholder => 'email@dominio.cl (requerido)' %>
+                <span class="help-block"></span>
+                <span class="form-control-feedback"></span>
+                <span class="help-block">Este es el e-mail desde el cual se enviaran los mensajes.</span>
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+            <%= f.submit 'Guardar', :class => 'btn btn-green' %>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade" id="staffCode" tabindex="-1" role="dialog" aria-labelledby="staffCodeLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+          <h4 class="modal-title" id="staffCodeLabel">Agregar Código de Empleado</h4>
+        </div>
+        <%= form_for @staff_code, :html => {:class => 'form-horizontal'} do |f| %>
+          <div class="modal-body">
+            <%= f.hidden_field :company_id, :value => current_user.company.id %>
+            <div class="form-group has-feedback">
+              <%= f.label :staff, 'Staff', :class => 'control-label col-xs-2' %>
+              <div class="col-xs-10">
+                <%= f.text_field :staff, :class => 'form-control' %>
+                <span class="help-block"></span>
+                <span class="form-control-feedback"></span>
+              </div>
+            </div>
+            <div class="form-group has-feedback">
+              <%= f.label :code, 'Código', :class => 'control-label col-xs-2' %>
+              <div class="col-xs-10">
+                <%= f.text_field :code, :class => 'form-control' %>
+                <span class="help-block"></span>
+                <span class="form-control-feedback"></span>
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+            <%= f.submit 'Guardar', :class => 'btn btn-green' %>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade" id="deal" tabindex="-1" role="dialog" aria-labelledby="dealLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+          <h4 class="modal-title" id="dealLabel">Agregar Convenio</h4>
+        </div>
+        <%= form_for @deal, :html => {:class => 'form-horizontal'} do |f| %>
+          <div class="modal-body">
+            <%= f.hidden_field :company_id, :value => current_user.company.id %>
+            <div class="form-group has-feedback">
+              <%= f.label :code, 'Código', :class => 'control-label col-xs-4' %>
+              <div class="col-xs-8">
+                <%= f.text_field :code, :class => 'form-control' %>
+                <span class="help-block"></span>
+                <span class="form-control-feedback"></span>
+              </div>
+            </div>
+            <div class="form-group has-feedback">
+              <%= f.label :quantity, 'Cantidad Utilizable', :class => 'control-label col-xs-4' %>
+              <div class="col-xs-8">
+                <%= f.number_field :quantity, :class => 'form-control' %>
+                <span class="help-block"></span>
+                <span class="form-control-feedback"></span>
+              </div>
+            </div>
+            <div class="form-group has-feedback">
+              <%= f.label :constraint_option, 'Restricción por Periodo', :class => 'control-label col-xs-4' %>
+              <div class="col-xs-8">
+                <%= f.select :constraint_option, options_for_select([["Sin restricción", 0],["Simultáneo", 1],["Por día", 2],["Por semana", 3],["Por mes", 4]]), {}, {:class => 'form-control'} %>
+                <span class="help-block"></span>
+                <span class="form-control-feedback"></span>
+              </div>
+            </div>
+            <div class="form-group has-feedback">
+              <%= f.label :constraint_quantity, 'Cantidad Restricción', :class => 'control-label col-xs-4' %>
+              <div class="col-xs-8">
+                <%= f.number_field :constraint_quantity, :class => 'form-control' %>
+                <span class="help-block"></span>
+                <span class="form-control-feedback"></span>
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+            <%= f.submit 'Guardar', :class => 'btn btn-green' %>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+<% end %>
 
 <% content_for :scripts do %>
   <%= javascript_include_tag "admin/company_settings" %>
   <script type="text/javascript">
-    var web_address = '<%= @web_address %>';
+    
+
     $(function () {
+      $('#myTab a').click(function (e) {
+        var title = $(this).data('title');
+        var description = $(this).data('description');
+
+        if (title.length > 0 && description.length > 0) {
+          $('#title').html(title);
+          $('#description').html(description);
+        };
+      });
+
       $('#fromEmail').on('hidden.bs.modal', function (e) {
         validator.resetForm();
         $('.has-success').removeClass('has-success');
@@ -946,208 +947,155 @@
         $("#other-bank").addClass("hidden");
       }
 
+      if($('#company_setting_allows_online_payment').prop('checked')) {
+        $(".account-info").removeClass("hidden");
+
+        if($("#company_setting_bank :selected").text() == "Otro") {
+          $("#other-bank").removeClass("hidden");
+          $(".account-data").addClass("hidden");
+        } else {
+          $("#other-bank").addClass("hidden");
+          $(".account-data").removeClass("hidden");
+        }
+
+        var mod_can = false;
+
+        if($("#company_setting_online_cancelation_policy_attributes_cancelable").prop('checked')) {
+          $(".cancel-div").removeClass('hidden');
+          mod_can = true;
+        } else {
+          $(".cancel-div").addClass('hidden');
+        }
+
+        if($("#company_setting_online_cancelation_policy_attributes_modifiable").prop('checked')) {
+          $(".modification-div").removeClass('hidden');
+          mod_can = true;
+        } else {
+          $(".modification-div").addClass('hidden');
+        }
+
+        if(mod_can) {
+          $('.min-hours-div').removeClass('hidden');
+        } else {
+          $('.min-hours-div').addClass('hidden');
+        }
+      } else {
+        $(".account-info").addClass("hidden");
+        $("#other-bank").addClass("hidden");
+      }
+
+      $("#company_setting_allows_online_payment").change(function(){
+        if($('#company_setting_allows_online_payment').prop('checked')) {
+          $(".account-info").removeClass("hidden");
+          if($("#company_setting_bank :selected").text() == "Otro") {
+            $("#other-bank").removeClass("hidden");
+            $(".account-data").addClass("hidden");
+          } else {
+            $("#other-bank").addClass("hidden");
+            $(".account-data").removeClass("hidden");
+          }
+
+          var mod_can = false;
+
+          if($("#company_setting_online_cancelation_policy_attributes_cancelable").prop('checked')) {
+            $(".cancel-div").removeClass('hidden');
+            mod_can = true;
+          } else {
+            $(".cancel-div").addClass('hidden');
+          }
+
+          if($("#company_setting_online_cancelation_policy_attributes_modifiable").prop('checked')) {
+            $(".modification-div").removeClass('hidden');
+            mod_can = true;
+          } else {
+            $(".modification-div").addClass('hidden');
+          }
+
+          if(mod_can) {
+            $('.min-hours-div').removeClass('hidden');
+          } else {
+            $('.min-hours-div').addClass('hidden');
+          }
+        } else {
+          $("#other-bank").addClass("hidden");
+          $(".account-info").addClass("hidden");
+        }
+      });
+
+      $("#company_setting_bank").change(function(){
+        if($("#company_setting_bank :selected").text() == "Otro") {
+          $("#other-bank").removeClass("hidden");
+          $(".account-data").addClass("hidden");
+        } else {
+          $("#other-bank").addClass("hidden");
+          $(".account-data").removeClass("hidden");
+        }
+      });
+
+
+      $("#company_setting_online_cancelation_policy_attributes_modifiable").change(function(){
+        var mod_can = false;
+
+        if($("#company_setting_online_cancelation_policy_attributes_cancelable").prop('checked')) {
+          $(".cancel-div").removeClass('hidden');
+          mod_can = true;
+        } else {
+          $(".cancel-div").addClass('hidden');
+        }
+
+        if($("#company_setting_online_cancelation_policy_attributes_modifiable").prop('checked')) {
+          $(".modification-div").removeClass('hidden');
+          mod_can = true;
+        } else {
+          $(".modification-div").addClass('hidden');
+        }
+
+        if(mod_can) {
+          $('.min-hours-div').removeClass('hidden');
+        } else {
+          $('.min-hours-div').addClass('hidden');
+        }
+      });
+
+      $("#company_setting_online_cancelation_policy_attributes_cancelable").change(function(){
+
+        var mod_can = false;
+
+        if($("#company_setting_online_cancelation_policy_attributes_cancelable").prop('checked')) {
+          $(".cancel-div").removeClass('hidden');
+          mod_can = true;
+        } else {
+          $(".cancel-div").addClass('hidden');
+        }
+
+        if($("#company_setting_online_cancelation_policy_attributes_modifiable").prop('checked')) {
+          $(".modification-div").removeClass('hidden');
+          mod_can = true;
+        } else {
+          $(".modification-div").addClass('hidden');
+        }
+
+        if(mod_can) {
+          $('.min-hours-div').removeClass('hidden');
+        } else {
+          $('.min-hours-div').addClass('hidden');
+        }
+      });
+
+      $('#company_web_address').on('change', function() {
+        var tmp = $('#company_web_address').val();
+        tmp = tmp.toLowerCase();
+        tmp = tmp.replace(/[áäâà]/gi, 'a'); //special a
+        tmp = tmp.replace(/[éëêè]/gi, 'e'); //Special e
+        tmp = tmp.replace(/[íïîì]/gi, 'i'); //Special i
+        tmp = tmp.replace(/[óöôò]/gi, 'o'); //Special o
+        tmp = tmp.replace(/[úüûù]/gi, 'u'); //Special u
+        tmp = tmp.replace(/ñ/gi, 'n');  //Special ñ
+        tmp = tmp.replace(/[^a-z0-9]/gi,'');
+        $('#company_web_address').val(tmp);
+      });
+
       CKEDITOR.replace(company_setting_signature);
     });
   </script>
-
-  <script type="text/javascript">
-
-  	$(document).ready(function(){
-  		if($('#company_setting_allows_online_payment').prop('checked'))
-		{
-			$(".account-info").removeClass("hidden");
-
-			if($("#company_setting_bank :selected").text() == "Otro")
-			{
-				$("#other-bank").removeClass("hidden");
-				$(".account-data").addClass("hidden");
-			}
-			else
-			{
-				$("#other-bank").addClass("hidden");
-				$(".account-data").removeClass("hidden");
-			}
-
-			var mod_can = false;
-
-			if($("#company_setting_online_cancelation_policy_attributes_cancelable").prop('checked'))
-			{
-				$(".cancel-div").removeClass('hidden');
-				mod_can = true;
-			}
-			else
-			{
-				$(".cancel-div").addClass('hidden');
-			}
-
-			if($("#company_setting_online_cancelation_policy_attributes_modifiable").prop('checked'))
-			{
-				$(".modification-div").removeClass('hidden');
-				mod_can = true;
-			}
-			else
-			{
-				$(".modification-div").addClass('hidden');
-			}
-
-			if(mod_can)
-			{
-				$('.min-hours-div').removeClass('hidden');
-			}
-			else
-			{
-				$('.min-hours-div').addClass('hidden');
-			}
-
-		}
-		else
-		{
-			$(".account-info").addClass("hidden");
-			$("#other-bank").addClass("hidden");
-		}
-	});
-
-	$("#company_setting_allows_online_payment").change(function(){
-		if($('#company_setting_allows_online_payment').prop('checked'))
-		{
-			$(".account-info").removeClass("hidden");
-			if($("#company_setting_bank :selected").text() == "Otro")
-			{
-				$("#other-bank").removeClass("hidden");
-				$(".account-data").addClass("hidden");
-			}
-			else
-			{
-				$("#other-bank").addClass("hidden");
-				$(".account-data").removeClass("hidden");
-			}
-
-			var mod_can = false;
-
-			if($("#company_setting_online_cancelation_policy_attributes_cancelable").prop('checked'))
-			{
-				$(".cancel-div").removeClass('hidden');
-				mod_can = true;
-			}
-			else
-			{
-				$(".cancel-div").addClass('hidden');
-			}
-
-			if($("#company_setting_online_cancelation_policy_attributes_modifiable").prop('checked'))
-			{
-				$(".modification-div").removeClass('hidden');
-				mod_can = true;
-			}
-			else
-			{
-				$(".modification-div").addClass('hidden');
-			}
-
-			if(mod_can)
-			{
-				$('.min-hours-div').removeClass('hidden');
-			}
-			else
-			{
-				$('.min-hours-div').addClass('hidden');
-			}
-
-		}
-		else
-		{
-			$("#other-bank").addClass("hidden");
-			$(".account-info").addClass("hidden");
-		}
-	});
-
-	$("#company_setting_bank").change(function(){
-		if($("#company_setting_bank :selected").text() == "Otro")
-		{
-			$("#other-bank").removeClass("hidden");
-			$(".account-data").addClass("hidden");
-		}
-		else
-		{
-			$("#other-bank").addClass("hidden");
-			$(".account-data").removeClass("hidden");
-		}
-	});
-
-
-	$("#company_setting_online_cancelation_policy_attributes_modifiable").change(function(){
-		var mod_can = false;
-
-		if($("#company_setting_online_cancelation_policy_attributes_cancelable").prop('checked'))
-		{
-			$(".cancel-div").removeClass('hidden');
-			mod_can = true;
-		}
-		else
-		{
-			$(".cancel-div").addClass('hidden');
-		}
-
-		if($("#company_setting_online_cancelation_policy_attributes_modifiable").prop('checked'))
-		{
-			$(".modification-div").removeClass('hidden');
-			mod_can = true;
-		}
-		else
-		{
-			$(".modification-div").addClass('hidden');
-		}
-
-		if(mod_can)
-		{
-			$('.min-hours-div').removeClass('hidden');
-		}
-		else
-		{
-			$('.min-hours-div').addClass('hidden');
-		}
-	});
-
-	$("#company_setting_online_cancelation_policy_attributes_cancelable").change(function(){
-		
-		var mod_can = false;
-
-		if($("#company_setting_online_cancelation_policy_attributes_cancelable").prop('checked'))
-		{
-			$(".cancel-div").removeClass('hidden');
-			mod_can = true;
-		}
-		else
-		{
-			$(".cancel-div").addClass('hidden');
-		}
-
-		if($("#company_setting_online_cancelation_policy_attributes_modifiable").prop('checked'))
-		{
-			$(".modification-div").removeClass('hidden');
-			mod_can = true;
-		}
-		else
-		{
-			$(".modification-div").addClass('hidden');
-		}
-
-		if(mod_can)
-		{
-			$('.min-hours-div').removeClass('hidden');
-		}
-		else
-		{
-			$('.min-hours-div').addClass('hidden');
-		}
-
-	});
-
-
-	</script>
-
-  <script type="text/javascript">
-	var web_address = '<%= @web_address %>';
-	</script>
-	<%= javascript_include_tag "admin/link_agendapro" %>
 <% end %>

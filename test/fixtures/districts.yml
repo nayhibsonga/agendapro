@@ -1,7 +1,1040 @@
 # Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
-one:
-  name: MyString
-
-two:
-  name: MyString
+district_1:
+    name: Las Condes
+    city: city_1
+district_2:
+    name: Providencia
+    city: city_1
+district_3:
+    name: Vitacura
+    city: city_1
+district_4:
+    name: Ñuñoa
+    city: city_1
+district_5:
+    name: Santiago
+    city: city_1
+district_6:
+    name: Lo Barnechea
+    city: city_1
+district_7:
+    name: La Florida
+    city: city_1
+district_8:
+    name: La Reina
+    city: city_1
+district_9:
+    name: Viña del Mar
+    city: city_2
+district_10:
+    name: Recoleta
+    city: city_1
+district_11:
+    name: Arica
+    city: city_3
+district_12:
+    name: Camarones
+    city: city_3
+district_13:
+    name: General Lagos
+    city: city_4
+district_14:
+    name: Putre
+    city: city_4
+district_15:
+    name: Alto Hospicio
+    city: city_5
+district_16:
+    name: Iquique
+    city: city_5
+district_17:
+    name: Camiña
+    city: city_6
+district_18:
+    name: Colchane
+    city: city_6
+district_19:
+    name: Huara
+    city: city_6
+district_20:
+    name: Pica
+    city: city_6
+district_21:
+    name: Pozo Almonte
+    city: city_6
+district_22:
+    name: Antofagasta
+    city: city_7
+district_23:
+    name: Mejillones
+    city: city_7
+district_24:
+    name: Sierra Gorda
+    city: city_7
+district_25:
+    name: Taltal
+    city: city_7
+district_26:
+    name: Calama
+    city: city_8
+district_27:
+    name: Ollagüe
+    city: city_8
+district_28:
+    name: San Pedro de Atacama
+    city: city_8
+district_29:
+    name: María Elena
+    city: city_9
+district_30:
+    name: Tocopilla
+    city: city_9
+district_31:
+    name: Chañaral
+    city: city_10
+district_32:
+    name: Diego de Almagro
+    city: city_10
+district_33:
+    name: Caldera
+    city: city_11
+district_34:
+    name: Copiapó
+    city: city_11
+district_35:
+    name: Tierra Amarilla
+    city: city_11
+district_36:
+    name: Alto del Carmen
+    city: city_12
+district_37:
+    name: Freirina
+    city: city_12
+district_38:
+    name: Huasco
+    city: city_12
+district_39:
+    name: Vallenar
+    city: city_12
+district_40:
+    name: Canela
+    city: city_13
+district_41:
+    name: Illapel
+    city: city_13
+district_42:
+    name: Los Vilos
+    city: city_13
+district_43:
+    name: Salamanca
+    city: city_13
+district_44:
+    name: Andacollo
+    city: city_14
+district_45:
+    name: Coquimbo
+    city: city_14
+district_46:
+    name: La Higuera
+    city: city_14
+district_47:
+    name: La Serena
+    city: city_14
+district_48:
+    name: Paihuano
+    city: city_14
+district_49:
+    name: Vicuña
+    city: city_14
+district_50:
+    name: Combarbalá
+    city: city_15
+district_51:
+    name: Monte Patria
+    city: city_15
+district_52:
+    name: Ovalle
+    city: city_15
+district_53:
+    name: Punitaqui
+    city: city_15
+district_54:
+    name: Río Hurtado
+    city: city_15
+district_55:
+    name: Carahue
+    city: city_20
+district_56:
+    name: Cholchol
+    city: city_20
+district_57:
+    name: Cunco
+    city: city_20
+district_58:
+    name: Curarrehue
+    city: city_20
+district_59:
+    name: Isla de Pascua
+    city: city_16
+district_60:
+    name: Freire
+    city: city_20
+district_61:
+    name: Calle Larga
+    city: city_17
+district_62:
+    name: Galvarino
+    city: city_20
+district_63:
+    name: Los Andes
+    city: city_17
+district_64:
+    name: Gorbea
+    city: city_20
+district_65:
+    name: Lautaro
+    city: city_20
+district_66:
+    name: Rinconada de Los Andes
+    city: city_17
+district_67:
+    name: Loncoche
+    city: city_20
+district_68:
+    name: San Esteban
+    city: city_17
+district_69:
+    name: Melipeuco
+    city: city_20
+district_70:
+    name: Nuevo Imperial
+    city: city_20
+district_71:
+    name: Limache
+    city: city_18
+district_72:
+    name: Padre Las Casas
+    city: city_20
+district_73:
+    name: Olmué
+    city: city_18
+district_74:
+    name: Quilpué
+    city: city_18
+district_75:
+    name: Perquenco
+    city: city_20
+district_76:
+    name: Villa Alemana
+    city: city_18
+district_77:
+    name: Pitrufquén
+    city: city_20
+district_78:
+    name: Pucón
+    city: city_20
+district_79:
+    name: Cabildo
+    city: city_19
+district_80:
+    name: La Ligua
+    city: city_19
+district_81:
+    name: Saavedra
+    city: city_20
+district_82:
+    name: Papudo
+    city: city_19
+district_83:
+    name: Temuco
+    city: city_20
+district_84:
+    name: Petorca
+    city: city_19
+district_85:
+    name: Zapallar
+    city: city_19
+district_86:
+    name: Teodoro Schmidt
+    city: city_20
+district_87:
+    name: Toltén
+    city: city_20
+district_88:
+    name: Hijuelas
+    city: city_21
+district_89:
+    name: La Calera
+    city: city_21
+district_90:
+    name: La Cruz
+    city: city_21
+district_91:
+    name: Nogales
+    city: city_21
+district_92:
+    name: Quillota
+    city: city_21
+district_93:
+    name: Algarrobo
+    city: city_23
+district_94:
+    name: Cartagena
+    city: city_23
+district_95:
+    name: El Quisco
+    city: city_23
+district_96:
+    name: El Tabo
+    city: city_23
+district_97:
+    name: San Antonio
+    city: city_23
+district_98:
+    name: Santo Domingo
+    city: city_23
+district_99:
+    name: Catemu
+    city: city_24
+district_100:
+    name: Llaillay
+    city: city_24
+district_101:
+    name: Panquehue
+    city: city_24
+district_102:
+    name: Vilcún
+    city: city_20
+district_103:
+    name: Putaendo
+    city: city_24
+district_104:
+    name: San Felipe
+    city: city_24
+district_105:
+    name: Santa María
+    city: city_24
+district_106:
+    name: Casablanca
+    city: city_25
+district_107:
+    name: Concón
+    city: city_25
+district_108:
+    name: Villarrica
+    city: city_20
+district_109:
+    name: Juan Fernández
+    city: city_25
+district_110:
+    name: Puchuncaví
+    city: city_25
+district_111:
+    name: Quintero
+    city: city_25
+district_112:
+    name: Angol
+    city: city_22
+district_113:
+    name: Valparaíso
+    city: city_25
+district_114:
+    name: Collipulli
+    city: city_22
+district_115:
+    name: Curacautín
+    city: city_22
+district_116:
+    name: Ercilla
+    city: city_22
+district_117:
+    name: Lonquimay
+    city: city_22
+district_118:
+    name: Los Sauces
+    city: city_22
+district_119:
+    name: Lumaco
+    city: city_22
+district_120:
+    name: Purén
+    city: city_22
+district_121:
+    name: Renaico
+    city: city_22
+district_122:
+    name: Traiguén
+    city: city_22
+district_123:
+    name: Victoria
+    city: city_22
+district_124:
+    name: Futrono
+    city: city_26
+district_125:
+    name: La Unión
+    city: city_26
+district_126:
+    name: Lago Ranco
+    city: city_26
+district_127:
+    name: Río Bueno
+    city: city_26
+district_128:
+    name: Corral
+    city: city_27
+district_129:
+    name: Lanco
+    city: city_27
+district_130:
+    name: Los Lagos
+    city: city_27
+district_131:
+    name: Máfil
+    city: city_27
+district_132:
+    name: Mariquina
+    city: city_27
+district_133:
+    name: Paillaco
+    city: city_27
+district_134:
+    name: Panguipulli
+    city: city_27
+district_135:
+    name: Valdivia
+    city: city_27
+district_136:
+    name: Ancud
+    city: city_28
+district_137:
+    name: Castro
+    city: city_28
+district_138:
+    name: Chonchi
+    city: city_28
+district_139:
+    name: Curaco de Vélez
+    city: city_28
+district_140:
+    name: Dalcahue
+    city: city_28
+district_141:
+    name: Puqueldón
+    city: city_28
+district_142:
+    name: Queilén
+    city: city_28
+district_143:
+    name: Quellón
+    city: city_28
+district_144:
+    name: Quemchi
+    city: city_28
+district_145:
+    name: Quinchao
+    city: city_28
+district_146:
+    name: Calbuco
+    city: city_29
+district_147:
+    name: Cochamó
+    city: city_29
+district_148:
+    name: Fresia
+    city: city_29
+district_149:
+    name: Frutillar
+    city: city_29
+district_150:
+    name: Lllanquihue
+    city: city_29
+district_151:
+    name: Los Muermos
+    city: city_29
+district_152:
+    name: Maullín
+    city: city_29
+district_153:
+    name: Puerto Montt
+    city: city_29
+district_154:
+    name: Puerto Varas
+    city: city_29
+district_155:
+    name: Osorno
+    city: city_30
+district_156:
+    name: Puerto Octay
+    city: city_30
+district_157:
+    name: Purranque
+    city: city_30
+district_158:
+    name: Puyehue
+    city: city_30
+district_159:
+    name: Río Negro
+    city: city_30
+district_160:
+    name: San Pablo
+    city: city_30
+district_161:
+    name: San Juan de la Costa
+    city: city_30
+district_162:
+    name: Chaitén
+    city: city_31
+district_163:
+    name: Futaleufú
+    city: city_31
+district_164:
+    name: Codegua
+    city: city_32
+district_165:
+    name: Coínco
+    city: city_32
+district_166:
+    name: Hualaihué
+    city: city_31
+district_167:
+    name: Palena
+    city: city_31
+district_168:
+    name: Coltauco
+    city: city_32
+district_169:
+    name: Doñihue
+    city: city_32
+district_170:
+    name: Graneros
+    city: city_32
+district_171:
+    name: Las Cabras
+    city: city_32
+district_172:
+    name: Machalí
+    city: city_32
+district_173:
+    name: Malloa
+    city: city_32
+district_174:
+    name: Aysén
+    city: city_35
+district_175:
+    name: Cisnes
+    city: city_35
+district_176:
+    name: Guaitecas
+    city: city_35
+district_177:
+    name: Olivar
+    city: city_32
+district_178:
+    name: Peumo
+    city: city_32
+district_179:
+    name: Cochrane
+    city: city_36
+district_180:
+    name: Pichidegua
+    city: city_32
+district_181:
+    name: O'Higgins
+    city: city_36
+district_182:
+    name: Tortel
+    city: city_36
+district_183:
+    name: Quinta de Tilcoco
+    city: city_32
+district_184:
+    name: Chile Chico
+    city: city_37
+district_185:
+    name: Rancagua
+    city: city_32
+district_186:
+    name: Requínoa
+    city: city_32
+district_187:
+    name: Río Ibáñez
+    city: city_37
+district_188:
+    name: Rengo
+    city: city_32
+district_189:
+    name: San Francisco de Mostazal
+    city: city_32
+district_190:
+    name: San Vicente de Tagua Tagua
+    city: city_32
+district_191:
+    name: Coyhaique
+    city: city_38
+district_192:
+    name: Lago Verde
+    city: city_38
+district_193:
+    name: La Estrella
+    city: city_33
+district_194:
+    name: Litueche
+    city: city_33
+district_195:
+    name: Marchigüe
+    city: city_33
+district_196:
+    name: Navidad
+    city: city_33
+district_197:
+    name: Paredones
+    city: city_33
+district_198:
+    name: Pichilemu
+    city: city_33
+district_199:
+    name: Chépica
+    city: city_34
+district_200:
+    name: Chimbarongo
+    city: city_34
+district_201:
+    name: Antártica
+    city: city_39
+district_202:
+    name: Cabo de Hornos
+    city: city_39
+district_203:
+    name: Laguna Blanca
+    city: city_40
+district_204:
+    name: Punta Arenas
+    city: city_40
+district_205:
+    name: Lolol
+    city: city_34
+district_206:
+    name: Río Verde
+    city: city_40
+district_207:
+    name: San Gregorino
+    city: city_40
+district_208:
+    name: Nancagua
+    city: city_34
+district_209:
+    name: Palmilla
+    city: city_34
+district_210:
+    name: Porvenir
+    city: city_41
+district_211:
+    name: Primavera
+    city: city_41
+district_212:
+    name: Peralillo
+    city: city_34
+district_213:
+    name: Placilla
+    city: city_34
+district_214:
+    name: Pumanque
+    city: city_34
+district_215:
+    name: Timaukel
+    city: city_41
+district_216:
+    name: San Fernando
+    city: city_34
+district_217:
+    name: Natales
+    city: city_42
+district_218:
+    name: Santa Cruz
+    city: city_34
+district_219:
+    name: Torres del Paine
+    city: city_42
+district_220:
+    name: Cauquenes
+    city: city_44
+district_221:
+    name: Chanco
+    city: city_44
+district_222:
+    name: Pelluhue
+    city: city_44
+district_223:
+    name: Curicó
+    city: city_47
+district_224:
+    name: Hualañé
+    city: city_47
+district_225:
+    name: Licantén
+    city: city_47
+district_226:
+    name: Molina
+    city: city_47
+district_227:
+    name: Rauco
+    city: city_47
+district_228:
+    name: Romeral
+    city: city_47
+district_229:
+    name: Colina
+    city: city_43
+district_230:
+    name: Lampa
+    city: city_43
+district_231:
+    name: Sagrada Familia
+    city: city_47
+district_232:
+    name: Tiltil
+    city: city_43
+district_233:
+    name: Teno
+    city: city_47
+district_234:
+    name: Vichuquén
+    city: city_47
+district_235:
+    name: Pirque
+    city: city_45
+district_236:
+    name: Colbún
+    city: city_48
+district_237:
+    name: Linares
+    city: city_48
+district_238:
+    name: Puente Alto
+    city: city_45
+district_239:
+    name: San José de Maipo
+    city: city_45
+district_240:
+    name: Longaví
+    city: city_48
+district_241:
+    name: Parral
+    city: city_48
+district_242:
+    name: Buin
+    city: city_49
+district_243:
+    name: Retiro
+    city: city_48
+district_244:
+    name: Calera de Tango
+    city: city_49
+district_245:
+    name: Paine
+    city: city_49
+district_246:
+    name: San Javier de Loncomilla
+    city: city_48
+district_247:
+    name: San Bernardo
+    city: city_49
+district_248:
+    name: Villa Alegre
+    city: city_48
+district_249:
+    name: Yerbas Buenas
+    city: city_48
+district_250:
+    name: Alhué
+    city: city_50
+district_251:
+    name: Curacaví
+    city: city_50
+district_252:
+    name: Constitución
+    city: city_51
+district_253:
+    name: Curepto
+    city: city_51
+district_254:
+    name: María Pinto
+    city: city_50
+district_255:
+    name: Empedrado
+    city: city_51
+district_256:
+    name: Melipilla
+    city: city_50
+district_257:
+    name: Maule
+    city: city_51
+district_258:
+    name: San Pedro
+    city: city_50
+district_259:
+    name: Pelarco
+    city: city_51
+district_260:
+    name: Pencahue
+    city: city_51
+district_261:
+    name: Río Claro
+    city: city_51
+district_262:
+    name: San Clemente
+    city: city_51
+district_263:
+    name: San Rafael
+    city: city_51
+district_264:
+    name: Talca
+    city: city_51
+district_265:
+    name: Arauco
+    city: city_54
+district_266:
+    name: Cañete
+    city: city_54
+district_267:
+    name: Contulmo
+    city: city_54
+district_268:
+    name: Curanilahue
+    city: city_54
+district_269:
+    name: Lebu
+    city: city_54
+district_270:
+    name: Los Álamos
+    city: city_54
+district_271:
+    name: Tirúa
+    city: city_54
+district_272:
+    name: Alto Biobío
+    city: city_55
+district_273:
+    name: Antuco
+    city: city_55
+district_274:
+    name: Cabrero
+    city: city_55
+district_275:
+    name: Laja
+    city: city_55
+district_276:
+    name: Los Ángeles
+    city: city_55
+district_277:
+    name: Mulchén
+    city: city_55
+district_278:
+    name: Nacimiento
+    city: city_55
+district_279:
+    name: Negrete
+    city: city_55
+district_280:
+    name: Quilaco
+    city: city_55
+district_281:
+    name: Quilleco
+    city: city_55
+district_282:
+    name: San Rosendo
+    city: city_55
+district_283:
+    name: Santa Bárbara
+    city: city_55
+district_284:
+    name: Tucapel
+    city: city_55
+district_285:
+    name: Yumbel
+    city: city_55
+district_286:
+    name: Chiguayante
+    city: city_56
+district_287:
+    name: Concepción
+    city: city_56
+district_288:
+    name: Coronel
+    city: city_56
+district_289:
+    name: Florida
+    city: city_56
+district_290:
+    name: El Monte
+    city: city_53
+district_291:
+    name: Hualpén
+    city: city_56
+district_292:
+    name: Isla de Maipo
+    city: city_53
+district_293:
+    name: Hualqui
+    city: city_56
+district_294:
+    name: Lota
+    city: city_56
+district_295:
+    name: Padre Hurtado
+    city: city_53
+district_296:
+    name: Penco
+    city: city_56
+district_297:
+    name: Peñaflor
+    city: city_53
+district_298:
+    name: San Pedro de la Paz
+    city: city_56
+district_299:
+    name: Santa Juana
+    city: city_56
+district_300:
+    name: Talagante
+    city: city_53
+district_301:
+    name: Talcahuano
+    city: city_56
+district_302:
+    name: Tomé
+    city: city_56
+district_303:
+    name: Bulnes
+    city: city_57
+district_304:
+    name: Chillán
+    city: city_57
+district_305:
+    name: Chillán Viejo
+    city: city_57
+district_306:
+    name: Cobquecura
+    city: city_57
+district_307:
+    name: Coelemu
+    city: city_57
+district_308:
+    name: Coihueco
+    city: city_57
+district_309:
+    name: El Carmen
+    city: city_57
+district_310:
+    name: Ninhue
+    city: city_57
+district_311:
+    name: Ñiquén
+    city: city_57
+district_312:
+    name: Pemuco
+    city: city_57
+district_313:
+    name: Pinto
+    city: city_57
+district_314:
+    name: Portezuelo
+    city: city_57
+district_315:
+    name: Quillón
+    city: city_57
+district_316:
+    name: Quirihue
+    city: city_57
+district_317:
+    name: Ránquil
+    city: city_57
+district_318:
+    name: San Carlos
+    city: city_57
+district_319:
+    name: San Fabián
+    city: city_57
+district_320:
+    name: San Ignacio
+    city: city_57
+district_321:
+    name: San Nicolás
+    city: city_57
+district_322:
+    name: Treguaco
+    city: city_57
+district_323:
+    name: Yungay
+    city: city_57
+district_324:
+    name: Cerrillos
+    city: city_1
+district_325:
+    name: Cerro Navia
+    city: city_1
+district_326:
+    name: Conchalí
+    city: city_1
+district_327:
+    name: El Bosque
+    city: city_1
+district_328:
+    name: Estación Central
+    city: city_1
+district_329:
+    name: Huechuraba
+    city: city_1
+district_330:
+    name: Independencia
+    city: city_1
+district_331:
+    name: La Cisterna
+    city: city_1
+district_332:
+    name: La Granja
+    city: city_1
+district_333:
+    name: La Pintana
+    city: city_1
+district_334:
+    name: Lo Espejo
+    city: city_1
+district_335:
+    name: Lo Prado
+    city: city_1
+district_336:
+    name: Macúl
+    city: city_1
+district_337:
+    name: Maipú
+    city: city_1
+district_338:
+    name: Pedro Aguirre Cerda
+    city: city_1
+district_339:
+    name: Peñanolén
+    city: city_1
+district_340:
+    name: Pudahuel
+    city: city_1
+district_341:
+    name: Quilicura
+    city: city_1
+district_342:
+    name: Quinta Normal
+    city: city_1
+district_343:
+    name: Renca
+    city: city_1
+district_344:
+    name: San Joaquín
+    city: city_1
+district_345:
+    name: San Miguel
+    city: city_1
+district_346:
+    name: San Ramón
+    city: city_1

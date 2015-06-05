@@ -4,22 +4,20 @@
 
     <div class="row">
       <% if !@company.description.blank? %>
-        <div class="col-md-6 company-header-left company-header">
+        <div class="col-xs-5 col-md-4 company-header-left company-header">
           <div class="row">
-            <div class="col-md-3">
+            <div class="col-xs-4 col-md-3">
               <% if @company.logo_url %>
                 <%= image_tag @company.logo_url.to_s, :size => "80x80", :alt => @company.name, :class => "company-logo" %>
               <% else %>
                 <%= image_tag 'logo_vacio.png', :alt => 'AgendaPro', :size => "80x80", :class => "company-logo" %>
               <% end %>
             </div>
-            <div class="col-md-6">
+            <div class="col-xs-8 col-md-9">
               <div class="row">
                 <div class="col-md-12 company-name">
-                  <%= @company.name %>
+                    <%= @company.name %>
                 </div>
-              </div>
-              <div class="row header-btns">
                 <div class="col-md-12">
                   <div class="header-btn active">
                     <a href="#" id="boton-locales" class="btn btn-default btn-green-wf">Lugares</a>
@@ -30,17 +28,17 @@
                 </div>
               </div>
             </div>
-            <div class="col-md-3">
+            <!--<div class="col-md-3">
 
-            </div>
+            </div>-->
           </div>
         </div>
-        <div class="col-md-4 company-header-center company-header">
+        <div class="col-xs-4 col-md-4 company-header-center company-header">
           <div class="header-description">
             <%= @company.description %>
           </div>
         </div>
-        <div class="col-md-2 company-header-right company-header">
+        <div class="col-xs-3 col-md-4 company-header-right company-header">
 
           <% if @selectedLocation %>
             <div id="phone-info">
@@ -50,7 +48,8 @@
               </span><br />
               <%= image_tag 'ubicacion.png', :alt => '', :size => "12x14", :class=>"loc-icon" %>&nbsp;
               <span id="phone-address">
-                <%= if !@selectedLocation.outcall then @selectedLocation.address+', '+@selectedLocation.district.name else "A Domicilio" end %>
+                <% @second_address = @selectedLocation.second_address.blank? ? '' : ', ' + @selectedLocation.second_address %>
+                <%= if !@selectedLocation.outcall then @selectedLocation.address+@second_address+', '+@selectedLocation.district.name else "A Domicilio" end %>
               </span>
             </div>
           <% else %>
@@ -68,22 +67,20 @@
         </div>
 
       <% else %>
-        <div class="col-md-6 company-header-left company-header" style="border-right: 1px solid #949292;">
+        <div class="col-xs-5 col-md-4 company-header-left company-header" style="border-right: 1px solid #949292;">
           <div class="row">
-            <div class="col-md-3">
+            <div class="col-xs-4 col-md-3">
               <% if @company.logo_url %>
                 <%= image_tag @company.logo_url.to_s, :size => "80x80", :alt => @company.name, :class => "company-logo" %>
               <% else %>
                 <%= image_tag 'logo_vacio.png', :alt => 'AgendaPro', :size => "80x80", :class => "company-logo" %>
               <% end %>
             </div>
-            <div class="col-md-6">
+            <div class="col-xs-8 col-md-9">
               <div class="row">
                 <div class="col-md-12 company-name">
-                  <%= @company.name %>
+                    <%= @company.name %>
                 </div>
-              </div>
-              <div class="row header-btns">
                 <div class="col-md-12">
                   <div class="header-btn active">
                     <a href="#" id="boton-locales" class="btn btn-default btn-green-wf">Lugares</a>
@@ -94,12 +91,9 @@
                 </div>
               </div>
             </div>
-            <div class="col-md-3">
-
-            </div>
           </div>
         </div>
-        <div class="col-md-6 company-header-center2 company-header">
+        <div class="col-xs-7 col-md-8 company-header-center2 company-header">
 
           <% if @selectedLocation %>
             <div id="phone-info">
@@ -109,8 +103,8 @@
               </span><br />
               <%= image_tag 'ubicacion.png', :alt => '', :size => "12x14", :class=>"loc-icon" %>&nbsp;
               <span id="phone-address">
-                <%= if !@selectedLocation.outcall then @selectedLocation.address+', '+@selectedLocation.district.name else "A Domicilio" end %>
-                <br><%= if !@selectedLocation.second_address.blank? then @selectedLocation.second_address else '' end %>
+              <% @second_address = @selectedLocation.second_address.blank? ? '' : ', ' + @selectedLocation.second_address %>
+                <%= if !@selectedLocation.outcall then @selectedLocation.address+@second_address+', '+@selectedLocation.district.name else "A Domicilio" end %>
               </span>
             </div>
           <% else %>
@@ -146,14 +140,14 @@
     </div>-->
 
     <div class="row">
-      <div class="col-md-6">
+      <div class="col-xs-6 col-md-6">
         <div class="google-maps-empresa">
           <div id="map"></div>
         </div>
         <div id="outcallDistricts" class="well">
         </div>
       </div>
-      <div class="col-md-3">
+      <div class="col-xs-6 col-md-3">
         <h3 style="color: #505050; padding-top: 0px !important; margin-top: 0px !important;">Selecciona el lugar</h3>
         <table class="table table-locals" id="locales-empresa">
           <tbody>
@@ -165,10 +159,8 @@
                     <input type="radio" name="localRadio" id="localOption<%= local.id %>" value="<%= local.id %>" data-outcall="<%= local.outcall %>" <%= "checked" if @selectedLocal.to_i == local.id %> >
                     <p>
                       <span class="local-name"><%= local.name %></span><br/>
-                      <span class="local-address" localid="<%= local.id %>"><%= if !local.outcall then local.address+', '+local.district.name else "A Domicilio" end %></span>
-                      <% if !local.second_address.blank? %>
-                      <span class="local-address" localid="<%= local.id %>"><%= local.second_address %></span>
-                      <% end %>
+                      <% @second_address = local.second_address.blank? ? '' : ', ' + local.second_address %>
+                      <span class="local-address" localid="<%= local.id %>"><%= if !local.outcall then local.address+@second_address+', '+local.district.name else "A Domicilio" end %></span>
                       <span class="local-phone" localid="<%= local.id %>" hidden><%= local.phone%></span>
                     </p>
 
@@ -180,7 +172,7 @@
           </tbody>
         </table>
       </div>
-      <div class="col-md-3">
+      <div class="col-xs-6 col-md-3">
         <div id="div-agendar">
           <a href="#" class="" id="boton-agendar">
             <i class="fa fa-calendar-o" style="font-size: 20px !important; margin-bottom: 3px !important;"></i>&nbsp;&nbsp;Agendar

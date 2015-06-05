@@ -1,604 +1,661 @@
-<script type="text/javascript">
-  var Chartkick = {"language": "es"};
-</script>
-
-<style type="text/css">
-.datepicker{
-	color: #333 !important;
-}
-</style>
-
-<%= javascript_include_tag "//www.google.com/jsapi", "chartkick" %>
-<%= stylesheet_link_tag "admin/super-admin-style" %>
-
-<div class="row">
-	<h3> </h3>
+<div class="container-fluid background-grey">
+  <div class="row">
+    <div class="col-md-12">
+      <h2 class="text-green">Transferencias</h2>
+    </div>
+  </div>
 </div>
-<div class="row">
-	<div class="col-md-12">
-		<div class="panel panel-info">
-			<div class="panel-heading">
-				<div class="row">
-					<div class="col-md-5">
-						<h3 class="panel-title payments-title">Pagos por transferir a empresas</h3>
-					</div>
-					<div class="col-md-7">
-						<form action="payed_bookings/create_csv.csv" method="post" id="get_pending">
-							<input type="hidden" name="type" value="admin_pending" />
-							Desde: <input type="text" id="not_transfered_start" name="start_date" class="datepicker" value="" />
-							Hasta: <input type="text" id="not_transfered_end" name="end_date" class="datepicker" value="" />
-							<button class="download-csv">&nbsp;Descargar&nbsp;&nbsp;<i class="fa fa-file-excel-o fa-lg"></i></button>
-						</form>
-					</div>
-				</div>
-			</div>
-			<div class="panel-body scrollable">
-				<table class="table">
-					<thead class="head-white" style="font-size: 12px !important;">
-						<tr>
-							<th><input type="checkbox" id="mark-pendings" /></th>
-							<th>ID</th>
-							<th>Empresa</th>
-							<th>N° de transacciones</th>
-							<th>Monto recibido</th>
-							<th>Monto a pagar</th>
-							<th>Ganancia</th>
-							<th>
-								<form method="post" action="payed_bookings/mark_several_as_payed" id="mark-several-as-payed-form">
-									<button class="mark" id="mark-pendings-btn">Pagar seleccionados</button>
-									<!--<a href="#" id="mark-pendings-btn" class="check-btn">Pagar marcados</a>-->
-								</form>
-							</th>
-						</tr>
-					</thead>
-					<tbody style="font-size: 10px !important;">
-						<% @companies_pending_payment.each do |payment_account| %>
-
-							<tr>
-								<td>
-									<input type="checkbox" class="mark-pending" payment_account_id="<%= payment_account.id %>" />
-								</td>
-								<td>
-									<%= payment_account.id %>
-								</td>
-								<td>
-									<%= payment_account.company.name %>
-								</td>
-								<td>
-									<%= payment_account.payed_bookings.count.to_s %>
-								</td>
-								<td>
-									<%= payment_account.amount.round.to_s %>
-								</td>
-								<td>
-									<%= payment_account.company_amount.round.to_s %>
-								</td>
-								<td>
-									<%= payment_account.gain_amount.round.to_s %>
-								</td>
-								<td>
-								<form method="post" action="payed_bookings/mark_as_payed">
-									<input type="hidden" name="id" value="<%= payment_account.id %>" />
-									<button class="mark mark-payment" payment_account_id="<%= payment_account.id %>">Pagar</button>
-								</form>
-								</td>
-							</tr>
-						<% end %>
-					</tbody>
-				</table>
-			</div>
-		</div>		
-	</div>
-</div>
-
-<div class="row">
-	<div class="col-md-12">
-		<div class="panel panel-info">
-			<div class="panel-heading">
-				<div class="row">
-					<div class="col-md-5">
-						<h3 class="panel-title payments-title">Transferencias completas por empresa</h3>
-					</div>
-					<div class="col-md-7">
-						<form action="payed_bookings/create_csv.csv" method="post" id="get_pending">
-							<input type="hidden" name="type" value="admin_transfered" />
-							Desde: <input type="text" id="not_transfered_start" name="start_date" class="datepicker" value="" />
-							Hasta: <input type="text" id="not_transfered_end" name="end_date" class="datepicker" value="" />
-							<button class="download-csv">&nbsp;Descargar&nbsp;&nbsp;<i class="fa fa-file-excel-o fa-lg"></i></button>
-						</form>
-					</div>
-				</div>
-			</div>
-			<div class="panel-body scrollable">
-				<table class="table">
-					<thead class="head-white" style="font-size: 12px !important;">
-						<tr>
-							<th><input type="checkbox" id="mark-transfers" /></th>
-							<th>ID</th>
-							<th>Empresa</th>
-							<th>N° de transacciones</th>
-							<th>Monto recibido</th>
-							<th>Monto a pagar</th>
-							<th>Ganancia</th>
-							<th>
-								<form method="post" action="payed_bookings/unmark_several_as_payed" id="unmark-several-as-payed-form">
-									<button class="mark-cancel" id="mark-transfers-btn">Cancelar seleccionados</button>
-								</form>
-							</th>
-						</tr>
-					</thead>
-					<tbody style="font-size: 10px !important;">
-						<% @transfered_payments.each do |payment_account| %>
-
-							<tr>
-								<td>
-									<input type="checkbox" class="mark-transfer" payment_account_id="<%= payment_account.id %>" />
-								</td>
-								<td>
-									<%= payment_account.id %>
-								</td>
-								<td>
-									<%= payment_account.company.name %>
-								</td>
-								<td>
-									<%= payment_account.payed_bookings.count.to_s %>
-								</td>
-								<td>
-									<%= payment_account.amount.round.to_s %>
-								</td>
-								<td>
-									<%= payment_account.company_amount.round.to_s %>
-								</td>
-								<td>
-									<%= payment_account.gain_amount.round.to_s %>
-								</td>
-								<td>
-								<form method="post" action="payed_bookings/unmark_as_payed">
-									<input type="hidden" name="id" value="<%= payment_account.id %>" />
-									<button class="mark-cancel unmark-payment" payment_account_id="<%= payment_account.id %>">Cancelar</button>
-								</form>
-								</td>
-							</tr>
-						<% end %>
-					</tbody>
-				</table>
-			</div>
-		</div>		
-	</div>
-</div>
-
-<div class="row">
-	<div class="col-md-12">
-		<div class="panel panel-info">
-			<div class="panel-heading">
-				<div class="row">
-					<div class="col-md-5">
-						<h3 class="panel-title payments-title">Transferencias completas por reserva</h3>
-					</div>
-					<div class="col-md-7">
-						<form action="payed_bookings/create_csv.csv" method="post" id="get_transfered">
-							<input type="hidden" name="type" value="admin_transfered_bookings" />
-							Desde: <input type="text" id="transfered_start" name="start_date" class="datepicker" value="" />
-							Hasta: <input type="text" id="transfered_end" name="end_date" class="datepicker" value="" />
-							<button class="download-csv">&nbsp;Descargar&nbsp;&nbsp;<i class="fa fa-file-excel-o fa-lg"></i></button>
-						</form>
-					</div>
-				</div>
-			</div>
-			<div class="panel-body scrollable">
-				<table class="table">
-					<thead class="head-white" style="font-size: 12px !important;">
-						<tr>
-							<th>ID</th>
-							<th>Payment ID</th>
-							<th>Empresa</th>
-							<th>Cliente</th>
-							<th>Monto</th>
-							<th>Order Num.</th>
-							<th>Auth. code</th>
-							<th>Fecha</th>
-						</tr>
-					</thead>
-					<tbody style="font-size: 10px !important;">
-						<% @transfered_bookings.each do |payed_booking| %>
-
-							<tr>
-								<td>
-									<%= payed_booking.id %>
-								</td>
-								<td>
-									<%= payed_booking.payment_account.id %>
-								</td>
-								<td>
-									<%= payed_booking.booking.location.company.name %>
-								</td>
-								<td>
-									<%= payed_booking.booking.client.first_name + " " + payed_booking.booking.client.last_name %>
-								</td>
-								<td>
-									<%= payed_booking.punto_pagos_confirmation.amount %>
-								</td>
-								<td>
-									<%= payed_booking.punto_pagos_confirmation.operation_number %>
-								</td>
-								<td>
-									<%= payed_booking.punto_pagos_confirmation.authorization_code %>
-								</td>
-								<td>
-									<%= payed_booking.punto_pagos_confirmation.approvement_date %>
-								</td>
-							</tr>
-						<% end %>
-					</tbody>
-				</table>
-			</div>
-		</div>		
-	</div>
-</div>
-
-<div class="row">
-	<div class="col-md-12">
-		<div class="panel panel-info">
-			<div class="panel-heading">
-				<div class="row">
-					<div class="col-md-5">
-						<h3 class="panel-title payments-title">Reservas canceladas no devueltas</h3>
-					</div>
-					<div class="col-md-7">
-						<form action="payed_bookings/create_csv.csv" method="post" id="get_pending">
-							<input type="hidden" name="type" value="admin_canceled_pending" />
-							Desde: <input type="text" id="not_transfered_canceled_start" name="start_date" class="datepicker" value="" />
-							Hasta: <input type="text" id="not_transfered_canceled_end" name="end_date" class="datepicker" value="" />
-							<button class="download-csv">&nbsp;Descargar&nbsp;&nbsp;<i class="fa fa-file-excel-o fa-lg"></i></button>
-						</form>
-					</div>
-				</div>
-			</div>
-			<div class="panel-body scrollable">
-				<table class="table">
-					<thead class="head-white" style="font-size: 12px !important;">
-						<tr>
-							<th><input type="checkbox" id="mark-canceled-pendings" /></th>
-							<th>ID</th>
-							<th>Cliente</th>
-							<th>Email</th>
-							<th>Empresa</th>
-							<th>Servicio</th>
-							<th>Monto</th>
-							<th>Order Num.</th>
-							<th>Auth. code</th>
-							<th>Fecha</th>
-							<th>
-								<form method="post" action="payed_bookings/mark_several_canceled_as_payed" id="mark-several-canceled-as-payed-form">
-									<button id="mark-canceled-pendings-btn" class="mark">Pagar seleccionados</button>
-								</form>
-							</th>
-						</tr>
-					</thead>
-					<tbody style="font-size: 10px !important;">
-						<% @pending_canceled_bookings.each do |payed_booking| %>
-
-							<tr>
-								<td>
-									<input type="checkbox" class="mark-canceled-pending" payed_booking_id="<%= payed_booking.id %>" />
-								</td>
-								<td>
-									<%= payed_booking.id %>
-								</td>
-								
-								<td>
-									<%= payed_booking.booking.client.first_name + " " + payed_booking.booking.client.last_name %>
-								</td>
-								<td>
-									<%= payed_booking.booking.client.email %>
-								</td>
-								<td>
-									<%= payed_booking.booking.location.company.name %>
-								</td>
-								<td>
-									<%= payed_booking.booking.service.name %>
-								</td>
-								<td>
-									<%= payed_booking.punto_pagos_confirmation.amount %>
-								</td>
-								<td>
-									<%= payed_booking.punto_pagos_confirmation.operation_number %>
-								</td>
-								<td>
-									<%= payed_booking.punto_pagos_confirmation.authorization_code %>
-								</td>
-								<td>
-									<%= payed_booking.punto_pagos_confirmation.approvement_date %>
-								</td>
-								<td>
-								<form method="post" action="payed_bookings/mark_canceled_as_payed">
-									<input type="hidden" name="id" value="<%= payed_booking.id %>" />
-									<button class="mark mark-canceled" payed_booking_id="<%= payed_booking.id %>">Pagar</button>
-								</form>
-								</td>
-							</tr>
-
-						<% end %>
-					</tbody>
-				</table>
-			</div>
-		</div>		
-	</div>
-</div>
-
-<div class="row">
-	<div class="col-md-12">
-		<div class="panel panel-info">
-			<div class="panel-heading">
-				<div class="row">
-					<div class="col-md-5">
-						<h3 class="panel-title payments-title">Cancelaciones transferidas</h3>
-					</div>
-					<div class="col-md-7">
-						<form action="payed_bookings/create_csv.csv" method="post" id="get_transfered">
-							<input type="hidden" name="type" value="admin_canceled_transfered" />
-							Desde: <input type="text" id="transfered_canceled_start" name="start_date" class="datepicker" value="" />
-							Hasta: <input type="text" id="transfered_canceled_end" name="end_date" class="datepicker" value="" />
-							<button class="download-csv">&nbsp;Descargar&nbsp;&nbsp;<i class="fa fa-file-excel-o fa-lg"></i></button>
-						</form>
-					</div>
-				</div>
-			</div>
-			<div class="panel-body scrollable">
-				<table class="table">
-					<thead class="head-white" style="font-size: 12px !important;">
-						<tr>
-							<th><input type="checkbox" id="mark-canceled-transfers" /></th>
-							<th>ID</th>
-							<th>Cliente</th>
-							<th>Email</th>
-							<th>Empresa</th>
-							<th>Servicio</th>
-							<th>Monto</th>
-							<th>Order Num.</th>
-							<th>Auth. code</th>
-							<th>Fecha</th>
-							<th>
-								<form method="post" action="payed_bookings/unmark_several_canceled_as_payed" id="unmark-several-canceled-as-payed-form">
-									<button id="mark-canceled-transfers-btn" class="mark-cancel">Cancelar seleccionados</button>
-								</form>
-							</th>
-						</tr>
-					</thead>
-					<tbody style="font-size: 10px !important;">
-						<% @cancel_complete.each do |payed_booking| %>
-
-							<tr>
-								<td>
-									<input type="checkbox" class="mark-canceled-transfer" payed_booking_id="<%= payed_booking.id %>" />
-								</td>
-								<td>
-									<%= payed_booking.id %>
-								</td>
-								
-								<td>
-									<%= payed_booking.booking.client.first_name + " " + payed_booking.booking.client.last_name %>
-								</td>
-								<td>
-									<%= payed_booking.booking.client.email %>
-								</td>
-								<td>
-									<%= payed_booking.booking.location.company.name %>
-								</td>
-								<td>
-									<%= payed_booking.booking.service.name %>
-								</td>
-								<td>
-									<%= payed_booking.punto_pagos_confirmation.amount %>
-								</td>
-								<td>
-									<%= payed_booking.punto_pagos_confirmation.operation_number %>
-								</td>
-								<td>
-									<%= payed_booking.punto_pagos_confirmation.authorization_code %>
-								</td>
-								<td>
-									<%= payed_booking.punto_pagos_confirmation.approvement_date %>
-								</td>
-								<td>
-									<form method="post" action="payed_bookings/unmark_canceled_as_payed">
-										<input type="hidden" name="id" value="<%= payed_booking.id %>" />
-										<button class="mark-cancel" payed_booking_id="<%= payed_booking.id %>">Cancelar</button>
-									</form>
-								</td>
-							</tr>
-						<% end %>
-					</tbody>
-				</table>
-			</div>
-		</div>		
-	</div>
+<div class="container-fluid tab-margin">
+  <div class="row">
+    <!-- Navegation Tabs -->
+    <div class="col-md-2">
+      <ul class="nav nav-pills nav-stacked tab-margin" id="myTab">
+        <li class="active"><a href="#pending-payments-tab" role="tab" data-toggle="tab" class="tab_index">Pagos pendientes</a></li>
+        <li><a href="#other-pending-payments-tab" role="tab" data-toggle="tab" class="tab_index">Pagos pendientes (Otro)</a></li>
+        <li><a href="#transfered-payments-tab" role="tab" data-toggle="tab" class="tab_index">Pagos completados</a></li>
+        <li><a href="#transfered-bookings-tab" role="tab" data-toggle="tab" class="tab_index">Reservas completadas</a></li>
+        <li><a href="#pending-bookings-tab" role="tab" data-toggle="tab" class="tab_index">Reservas pendientes</a></li>
+        <li><a href="#canceled-pending-bookings-tab" role="tab" data-toggle="tab" class="tab_index">Cancelaciones pendientes</a></li>
+        <li><a href="#transfered-pending-bookings-tab" role="tab" data-toggle="tab" class="tab_index">Cancelaciones completadas</a></li>
+      </ul>
+    </div>
+    <!-- Panels -->
+    <div class="col-md-10">
+      <div class="tab-content tab-margin" id="myTabContent">
+        <div class="tab-pane fade in active" id="pending-payments-tab">
+          <div class="panel panel-default">
+            <div class="panel-heading">
+              <div class="row">
+                <div class="col-md-5">
+                  <h3 class="panel-title payments-title">Pagos por transferir a empresas</h3>
+                </div>
+                <div class="col-md-7">
+                  <form action="payed_bookings/create_csv.csv" method="post" id="get_pending" class="form-inline">
+                    <input type="hidden" name="type" value="admin_pending" />
+                    <div class="form-group">
+                      <label for="start_date">Desde:</label>
+                      <input type="text" id="not_transfered_start" name="start_date" class="form-control datepicker" value="" />
+                    </div>
+                    <div class="form-group">
+                      <label for="end_date">Hasta:</label>
+                      <input type="text" id="not_transfered_end" name="end_date" class="form-control datepicker" value="" />
+                    </div>
+                    <button class="btn btn-green">Descargar <i class="fa fa-file-text-o fa-lg"></i></button>
+                  </form>
+                </div>
+              </div>
+            </div>
+            <div class="panel-body panel-scrollable">
+              <table class="table table-green">
+                <thead>
+                  <tr>
+                    <th><input type="checkbox" id="mark-pendings" /></th>
+                    <th>ID</th>
+                    <th>Empresa</th>
+                    <th>N° de transacciones</th>
+                    <th>Monto recibido</th>
+                    <th>Monto a pagar</th>
+                    <th>Ganancia</th>
+                    <th>
+                      <form method="post" action="payed_bookings/mark_several_as_payed" id="mark-several-as-payed-form">
+                        <button class="btn btn-white btn-sm" id="mark-pendings-btn">Pagar seleccionados</button>
+                      </form>
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <% @companies_pending_payment.each do |payment_account| %>
+                    <tr>
+                      <td><input type="checkbox" class="mark-pending" payment_account_id="<%= payment_account.id %>" /></td>
+                      <td><%= payment_account.id %></td>
+                      <td><%= payment_account.company.name %></td>
+                      <td><%= payment_account.payed_bookings.count.to_s %></td>
+                      <td><%= payment_account.amount.round.to_s %></td>
+                      <td><%= payment_account.company_amount.round.to_s %></td>
+                      <td><%= payment_account.gain_amount.round.to_s %></td>
+                      <td>
+                        <form method="post" action="payed_bookings/mark_as_payed">
+                          <input type="hidden" name="id" value="<%= payment_account.id %>" />
+                          <button class="btn btn-green btn-sm" payment_account_id="<%= payment_account.id %>">Pagar</button>
+                        </form>
+                      </td>
+                    </tr>
+                  <% end %>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+        <div class="tab-pane fade" id="other-pending-payments-tab">
+          <div class="panel panel-default">
+            <div class="panel-heading">
+              <div class="row">
+                <div class="col-md-5">
+                  <h3 class="panel-title payments-title">Pagos por transferir a empresas (Banco Otro)</h3>
+                </div>
+                <div class="col-md-7">
+                  <form action="payed_bookings/create_csv.csv" method="post" id="get_other_pending" class="form-inline">
+                    <input type="hidden" name="type" value="other_admin_pending" />
+                    <div class="form-group">
+                      <label for="start_date">Desde:</label>
+                      <input type="text" id="other_not_transfered_start" name="start_date" class="form-control datepicker" value="" />
+                    </div>
+                    <div class="form-group">
+                      <label for="end_date">Hasta:</label>
+                      <input type="text" id="other_not_transfered_end" name="end_date" class="form-control datepicker" value="" />
+                    </div>
+                    <button class="btn btn-green">Descargar <i class="fa fa-file-text-o fa-lg"></i></button>
+                  </form>
+                </div>
+              </div>
+            </div>
+            <div class="panel-body panel-scrollable">
+              <table class="table table-green">
+                <thead>
+                  <tr>
+                    <th><input type="checkbox" id="mark-other-pendings" /></th>
+                    <th>ID</th>
+                    <th>Empresa</th>
+                    <th>N° de transacciones</th>
+                    <th>Monto recibido</th>
+                    <th>Monto a pagar</th>
+                    <th>Ganancia</th>
+                    <th>
+                      <form method="post" action="payed_bookings/mark_several_as_payed" id="mark-other-several-as-payed-form">
+                        <button class="btn btn-white btn-sm" id="mark-other-pendings-btn">Pagar seleccionados</button>
+                      </form>
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <% @other_companies_pending_payment.each do |payment_account| %>
+                    <tr>
+                      <td><input type="checkbox" class="mark-other-pending" payment_account_id="<%= payment_account.id %>" /></td>
+                      <td><%= payment_account.id %></td>
+                      <td><%= payment_account.company.name %></td>
+                      <td><%= payment_account.payed_bookings.count.to_s %>
+                      </td>
+                      <td><%= payment_account.amount.round.to_s %></td>
+                      <td><%= payment_account.company_amount.round.to_s %>
+                      </td>
+                      <td><%= payment_account.gain_amount.round.to_s %></td>
+                      <td>
+                        <form method="post" action="payed_bookings/mark_as_payed">
+                          <input type="hidden" name="id" value="<%= payment_account.id %>" />
+                          <button class="btn btn-green btn-sm" payment_account_id="<%= payment_account.id %>">Pagar</button>
+                        </form>
+                      </td>
+                    </tr>
+                  <% end %>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+        <div class="tab-pane fade" id="transfered-payments-tab">
+          <div class="panel panel-default">
+            <div class="panel-heading">
+              <div class="row">
+                <div class="col-md-5">
+                  <h3 class="panel-title payments-title">Transferencias completas por empresa</h3>
+                </div>
+                <div class="col-md-7">
+                  <form action="payed_bookings/create_csv.csv" method="post" id="get_pending" class="form-inline">
+                    <input type="hidden" name="type" value="admin_transfered" />
+                    <div class="form-group">
+                      <label for="start_date">Desde:</label>
+                      <input type="text" id="not_transfered_start" name="start_date" class="form-control datepicker" value="" />
+                    </div>
+                    <div class="form-group">
+                      <label for="end_date">Hasta:</label>
+                      <input type="text" id="not_transfered_end" name="end_date" class="form-control datepicker" value="" />
+                    </div>
+                    <button class="btn btn-green">Descargar <i class="fa fa-file-text-o fa-lg"></i></button>
+                  </form>
+                </div>
+              </div>
+            </div>
+            <div class="panel-body panel-scrollable">
+              <table class="table table-green">
+                <thead>
+                  <tr>
+                    <th><input type="checkbox" id="mark-transfers" /></th>
+                    <th>ID</th>
+                    <th>Empresa</th>
+                    <th>N° de transacciones</th>
+                    <th>Monto recibido</th>
+                    <th>Monto a pagar</th>
+                    <th>Ganancia</th>
+                    <th>
+                      <form method="post" action="payed_bookings/unmark_several_as_payed" id="unmark-several-as-payed-form">
+                        <button class="btn btn-orange btn-sm" id="mark-transfers-btn">Cancelar seleccionados</button>
+                      </form>
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <% @transfered_payments.each do |payment_account| %>
+                    <tr>
+                      <td><input type="checkbox" class="mark-transfer" payment_account_id="<%= payment_account.id %>" /></td>
+                      <td><%= payment_account.id %></td>
+                      <td><%= payment_account.company.name %></td>
+                      <td><%= payment_account.payed_bookings.count.to_s %></td>
+                      <td><%= payment_account.amount.round.to_s %></td>
+                      <td><%= payment_account.company_amount.round.to_s %></td>
+                      <td><%= payment_account.gain_amount.round.to_s %></td>
+                      <td>
+                        <form method="post" action="payed_bookings/unmark_as_payed">
+                          <input type="hidden" name="id" value="<%= payment_account.id %>" />
+                          <button class="btn btn-orange btn-sm" payment_account_id="<%= payment_account.id %>">Cancelar</button>
+                        </form>
+                      </td>
+                    </tr>
+                  <% end %>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+        <div class="tab-pane fade" id="transfered-bookings-tab">
+          <div class="panel panel-default">
+            <div class="panel-heading">
+              <div class="row">
+                <div class="col-md-5">
+                  <h3 class="panel-title payments-title">Transferencias completas por reserva</h3>
+                </div>
+                <div class="col-md-7">
+                  <form action="payed_bookings/create_csv.csv" method="post" id="get_transfered" class="form-inline">
+                    <input type="hidden" name="type" value="admin_transfered_bookings" />
+                    <div class="form-group">
+                      <label for="start_date">Desde:</label>
+                      <input type="text" id="transfered_start" name="start_date" class="form-control datepicker" value="" />
+                    </div>
+                    <div class="form-group">
+                      <label for="end_date">Hasta:</label>
+                      <input type="text" id="transfered_end" name="end_date" class="form-control datepicker" value="" />
+                    </div>
+                    <button class="btn btn-green">Descargar <i class="fa fa-file-text-o fa-lg"></i></button>
+                  </form>
+                </div>
+              </div>
+            </div>
+            <div class="panel-body panel-scrollable">
+              <table class="table table-green">
+                <thead>
+                  <tr>
+                    <th>ID</th>
+                    <th>Payment ID</th>
+                    <th>Empresa</th>
+                    <th>Cliente</th>
+                    <th>Monto</th>
+                    <th>Order Num.</th>
+                    <th>Auth. code</th>
+                    <th>Fecha</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <% @transfered_bookings.each do |payed_booking| %>
+                    <tr>
+                      <td><%= payed_booking.id %></td>
+                      <td><%= payed_booking.payment_account.id %></td>
+                      <td><%= payed_booking.bookings.first.location.company.name %></td>
+                      <td><%= payed_booking.bookings.first.client.first_name + " " + payed_booking.bookings.first.client.last_name %></td>
+                      <td><%= payed_booking.punto_pagos_confirmation.amount %></td>
+                      <td><%= payed_booking.punto_pagos_confirmation.operation_number %></td>
+                      <td><%= payed_booking.punto_pagos_confirmation.authorization_code %></td>
+                      <td><%= payed_booking.punto_pagos_confirmation.approvement_date %></td>
+                    </tr>
+                  <% end %>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+        <div class="tab-pane fade" id="pending-bookings-tab">
+          <div class="panel panel-default">
+            <div class="panel-heading">
+              <div class="row">
+                <div class="col-md-5">
+                  <h3 class="panel-title payments-title">Reservas no transferidas</h3>
+                </div>
+                <div class="col-md-7">
+                  <form action="payed_bookings/create_csv.csv" method="post" id="get_untransfered_bookings" class="form-inline">
+                    <input type="hidden" name="type" value="company_pending" />
+                    <div class="form-group">
+                      <label for="start_date">Desde:</label>
+                      <input type="text" id="transfered_start" name="start_date" class="datepicker" value="" />
+                    </div>
+                    <div class="form-group">
+                      <label for="end_date">hasta:</label>
+                      <input type="text" id="transfered_end" name="end_date" class="datepicker" value="" />
+                    </div>
+                    <button class="btn btn-green">Descargar <i class="fa fa-file-text-o fa-lg"></i></button>
+                  </form>
+                </div>
+              </div>
+            </div>
+            <div class="panel-body panel-default">
+              <table class="table table-green">
+                <thead>
+                  <tr>
+                    <th>ID</th>
+                    <th>Payment ID</th>
+                    <th>Empresa</th>
+                    <th>Cliente</th>
+                    <th>Monto</th>
+                    <th>Order Num.</th>
+                    <th>Auth. code</th>
+                    <th>Fecha</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <% @all_pending_transfers.each do |payed_booking| %>
+                    <tr>
+                      <td><%= payed_booking.id %></td>
+                      <td><%= payed_booking.payment_account.id %></td>
+                      <td><%= payed_booking.bookings.first.location.company.name %></td>
+                      <td><%= payed_booking.bookings.first.client.first_name + " " + payed_booking.bookings.first.client.last_name %></td>
+                      <td><%= payed_booking.punto_pagos_confirmation.amount %></td>
+                      <td><%= payed_booking.punto_pagos_confirmation.operation_number %></td>
+                      <td><%= payed_booking.punto_pagos_confirmation.authorization_code %></td>
+                      <td><%= payed_booking.punto_pagos_confirmation.approvement_date %></td>
+                    </tr>
+                  <% end %>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+        <div class="tab-pane fade" id="canceled-pending-bookings-tab">
+          <div class="panel panel-default">
+            <div class="panel-heading">
+              <div class="row">
+                <div class="col-md-5">
+                  <h3 class="panel-title payments-title">Reservas canceladas no devueltas</h3>
+                </div>
+                <div class="col-md-7">
+                  <form action="payed_bookings/create_csv.csv" method="post" id="get_pending" class="form-inline">
+                    <input type="hidden" name="type" value="admin_canceled_pending" />
+                    <div class="form-group">
+                      <label for="start_date">Desde:</label>
+                      <input type="text" id="not_transfered_canceled_start" name="start_date" class="form-control datepicker" value="" />
+                    </div>
+                    <div class="form-group">
+                      <label for="end_date">Hasta:</label>
+                      <input type="text" id="not_transfered_canceled_end" name="end_date" class="form-control datepicker" value="" />
+                    </div>
+                    <button class="btn btn-green">Descargar <i class="fa fa-file-text-o fa-lg"></i></button>
+                  </form>
+                </div>
+              </div>
+            </div>
+            <div class="panel-body panel-scrollable">
+              <table class="table table-green">
+                <thead>
+                  <tr>
+                    <th><input type="checkbox" id="mark-canceled-pendings" /></th>
+                    <th>ID</th>
+                    <th>Cliente</th>
+                    <th>Email</th>
+                    <th>Empresa</th>
+                    <th>Servicio(s)</th>
+                    <th>Monto</th>
+                    <th>Order Num.</th>
+                    <th>Auth. code</th>
+                    <th>Fecha</th>
+                    <th>
+                      <form method="post" action="payed_bookings/mark_several_canceled_as_payed" id="mark-several-canceled-as-payed-form">
+                        <button id="mark-canceled-pendings-btn" class="btn btn-white btn-sm">Pagar seleccionados</button>
+                      </form>
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <% @pending_canceled_bookings.each do |payed_booking| %>
+                    <tr>
+                      <td><input type="checkbox" class="mark-canceled-pending" payed_booking_id="<%= payed_booking.id %>" /></td>
+                      <td><%= payed_booking.id %></td>
+                      <td><%= payed_booking.bookings.first.client.first_name + " " + payed_booking.bookings.first.client.last_name %></td>
+                      <td><%= payed_booking.bookings.first.client.email %></td>
+                      <td><%= payed_booking.bookings.first.location.company.name %></td>
+                      <td>
+                        <% payed_booking.bookings.each do |booking| %>
+                          <%= booking.service.name %><br />
+                        <% end %>
+                      </td>
+                      <td><%= payed_booking.punto_pagos_confirmation.amount %></td>
+                      <td><%= payed_booking.punto_pagos_confirmation.operation_number %></td>
+                      <td><%= payed_booking.punto_pagos_confirmation.authorization_code %></td>
+                      <td><%= payed_booking.punto_pagos_confirmation.approvement_date %></td>
+                      <td>
+                      <form method="post" action="payed_bookings/mark_canceled_as_payed">
+                        <input type="hidden" name="id" value="<%= payed_booking.id %>" />
+                        <button class="btn btn-green btn-sm" payed_booking_id="<%= payed_booking.id %>">Pagar</button>
+                      </form>
+                      </td>
+                    </tr>
+                  <% end %>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+        <div class="tab-pane" id="transfered-pending-bookings-tab">
+          <div class="panel panel-default">
+            <div class="panel-heading">
+              <div class="row">
+                <div class="col-md-5">
+                  <h3 class="panel-title payments-title">Cancelaciones transferidas</h3>
+                </div>
+                <div class="col-md-7">
+                  <form action="payed_bookings/create_csv.csv" method="post" id="get_transfered" class="form-inline">
+                    <input type="hidden" name="type" value="admin_canceled_transfered" />
+                    <div class="form-group">
+                      <label for="start_date">Desde:</label>
+                      <input type="text" id="transfered_canceled_start" name="start_date" class="form-control datepicker" value="" />
+                    </div>
+                    <div class="form-group">
+                      <label for="end_date">Hasta:</label>
+                      <input type="text" id="transfered_canceled_end" name="end_date" class="form-control datepicker" value="" />
+                    </div>
+                    <button class="btn btn-green">Descargar <i class="fa fa-file-text-o fa-lg"></i></button>
+                  </form>
+                </div>
+              </div>
+            </div>
+            <div class="panel-body panel-scrollable">
+              <table class="table table-green">
+                <thead>
+                  <tr>
+                    <th><input type="checkbox" id="mark-canceled-transfers" /></th>
+                    <th>ID</th>
+                    <th>Cliente</th>
+                    <th>Email</th>
+                    <th>Empresa</th>
+                    <th>Servicio(s)</th>
+                    <th>Monto</th>
+                    <th>Order Num.</th>
+                    <th>Auth. code</th>
+                    <th>Fecha</th>
+                    <th>
+                      <form method="post" action="payed_bookings/unmark_several_canceled_as_payed" id="unmark-several-canceled-as-payed-form">
+                        <button id="mark-canceled-transfers-btn" class="btn btn-orange btn-sm">Cancelar seleccionados</button>
+                      </form>
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <% @cancel_complete.each do |payed_booking| %>
+                    <tr>
+                      <td><input type="checkbox" class="mark-canceled-transfer" payed_booking_id="<%= payed_booking.id %>" /></td>
+                      <td><%= payed_booking.id %></td>
+                      <td><%= payed_booking.bookings.first.client.first_name + " " + payed_booking.bookings.first.client.last_name %></td>
+                      <td><%= payed_booking.bookings.first.client.email %></td>
+                      <td><%= payed_booking.bookings.first.location.company.name %></td>
+                      <td>
+                        <% payed_booking.bookings.each do |booking| %>
+                          <%= booking.service.name %><br />
+                        <% end %>
+                      </td>
+                      <td><%= payed_booking.punto_pagos_confirmation.amount %></td>
+                      <td><%= payed_booking.punto_pagos_confirmation.operation_number %></td>
+                      <td><%= payed_booking.punto_pagos_confirmation.authorization_code %></td>
+                      <td><%= payed_booking.punto_pagos_confirmation.approvement_date %></td>
+                      <td>
+                        <form method="post" action="payed_bookings/unmark_canceled_as_payed">
+                          <input type="hidden" name="id" value="<%= payed_booking.id %>" />
+                          <button class="btn btn-orange btn-sm" payed_booking_id="<%= payed_booking.id %>">Cancelar</button>
+                        </form>
+                      </td>
+                    </tr>
+                  <% end %>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
 
 <% content_for :scripts do %>
-	<%= javascript_include_tag "jquery-ui-1.10.4.min.js" %>
+  <script type="text/javascript">
+    $(".datepicker").datepicker({
+      autoSize: true,
+      firstDay: 1,
+      changeMonth: true,
+      changeYear: true,
+      monthNames: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+      monthNamesShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
+      prevText: 'Atrás',
+      nextText: 'Adelante',
+      dayNames: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'],
+      dayNamesShort: ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'],
+      dayNamesMin: ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'],
+      today: 'Hoy',
+      clear: '',
+      dateFormat: 'yy-mm-dd',
+    });
 
+    $(".datepicker").each(function(){
+      var altField = '#' + $(this).prop('id');
+      $(this).datepicker('option', 'altField', altField);
+    });
 
-	<script type="text/javascript">
+    $("#mark-pendings").change(function(){
+      if($("#mark-pendings").prop('checked')) {
+        $(".mark-pending").prop('checked', true);
+      } else {
+        $(".mark-pending").prop('checked', false)
+      }
+    });
 
-		$(".datepicker").datepicker({
-          monthNames: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
-          monthNamesShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
-          prevText: 'Atrás',
-          nextText: 'Adelante',
-          dayNames: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'],
-          dayNamesShort: ['Dom', 'Lun', 'Mar', 'Mier', 'Jue', 'Vie', 'Sáb'],
-          dayNamesMin: ['Dom', 'Lun', 'Mar', 'Mier', 'Jue', 'Vie', 'Sáb'],
-          today: 'Hoy',
-          clear: '',
-          firstDay: 1,
-          dateFormat: 'yy-mm-dd',
-      	});
+    $("#mark-transfers").change(function(){
+      if($("#mark-transfers").prop('checked')) {
+        $(".mark-transfer").prop('checked', true);
+      } else {
+        $(".mark-transfer").prop('checked', false)
+      }
+    });
 
-		$(".datepicker").each(function(){
-			var altField = '#' + $(this).prop('id');
-			$(this).datepicker('option', 'altField', altField);
-		});
-
-		$("#mark-pendings").change(function(){
-			if($("#mark-pendings").prop('checked'))
-			{
-				$(".mark-pending").prop('checked', true);
-			}
-			else
-			{
-				$(".mark-pending").prop('checked', false)
-			}
-		});
-
-		$("#mark-transfers").change(function(){
-			if($("#mark-transfers").prop('checked'))
-			{
-				$(".mark-transfer").prop('checked', true);
-			}
-			else
-			{
-				$(".mark-transfer").prop('checked', false)
-			}
-		});
-
-		$("#mark-canceled-pendings").change(function(){
-			if($("#mark-canceled-pendings").prop('checked'))
-			{
-				$(".mark-canceled-pending").prop('checked', true);
-			}
-			else
-			{
-				$(".mark-canceled-pending").prop('checked', false)
+		$("#mark-other-pendings").change(function(){
+			if($("#mark-other-pendings").prop('checked')) {
+				$(".mark-other-pending").prop('checked', true);
+			} else {
+				$(".mark-other-pending").prop('checked', false)
 			}
 		});
 
-		$("#mark-canceled-transfers").change(function(){
-			if($("#mark-canceled-transfers").prop('checked'))
-			{
-				$(".mark-canceled-transfer").prop('checked', true);
-			}
-			else
-			{
-				$(".mark-canceled-transfer").prop('checked', false)
-			}
-		});
+    $("#mark-canceled-pendings").change(function(){
+      if($("#mark-canceled-pendings").prop('checked')) {
+        $(".mark-canceled-pending").prop('checked', true);
+      } else {
+        $(".mark-canceled-pending").prop('checked', false)
+      }
+    });
 
+    $("#mark-canceled-transfers").change(function(){
+      if($("#mark-canceled-transfers").prop('checked')) {
+        $(".mark-canceled-transfer").prop('checked', true);
+      } else {
+        $(".mark-canceled-transfer").prop('checked', false)
+      }
+    });
 
-		$("#mark-pendings-btn").click(function(e){
-			e.preventDefault();
-			var ids = new Array();
-			var k = 0;
-			$(".mark-pending").each(function(){
-				
-				if($(this).prop('checked'))
-				{
-					var id = $(this).attr('payment_account_id');
-					console.log(id);
-					ids[k] = id;
-					k = k+1;
-				}
-			});
-			
-			if(ids.length > 0)
-			{
-				for (i=0; i < ids.length; i++)
-				{
-					$("#mark-several-as-payed-form").append(
-						
-						$('<input>').attr('type', 'hidden').attr('name', 'ids[]').attr('value', ids[i])
-					);
-				}
-				$("#mark-several-as-payed-form").submit();
-			}
-		});
+    $("#mark-pendings-btn").click(function(e){
+      e.preventDefault();
+      var ids = new Array();
+      var k = 0;
+      $(".mark-pending").each(function(){
+        if($(this).prop('checked')) {
+          var id = $(this).attr('payment_account_id');
+          console.log(id);
+          ids[k] = id;
+          k = k+1;
+        }
+      });
 
-		$("#mark-transfers-btn").click(function(e){
-			e.preventDefault();
-			var ids = new Array();
-			var k = 0;
-			$(".mark-transfer").each(function(){
-				
-				if($(this).prop('checked'))
-				{
-					var id = $(this).attr('payment_account_id');
-					console.log(id);
-					ids[k] = id;
-					k = k+1;
-				}
-			});
-			
-			if(ids.length > 0)
-			{
-				for (i=0; i < ids.length; i++)
-				{
-					$("#unmark-several-as-payed-form").append(
-						
-						$('<input>').attr('type', 'hidden').attr('name', 'ids[]').attr('value', ids[i])
-					);
-				}
-				$("#unmark-several-as-payed-form").submit();
-			}
-		});
+      if(ids.length > 0) {
+        for (i=0; i < ids.length; i++) {
+          $("#mark-several-as-payed-form").append(
+            $('<input>').attr('type', 'hidden').attr('name', 'ids[]').attr('value', ids[i])
+          );
+        }
+        $("#mark-several-as-payed-form").submit();
+      }
+    });
 
-		$("#mark-canceled-pendings-btn").click(function(e){
-			e.preventDefault();
-			var ids = new Array();
-			var k = 0;
-			$(".mark-canceled-pending").each(function(){
-				
-				if($(this).prop('checked'))
-				{
-					var id = $(this).attr('payed_booking_id');
-					console.log(id);
-					ids[k] = id;
-					k = k+1;
-				}
-			});
-			
-			if(ids.length > 0)
-			{
-				for (i=0; i < ids.length; i++)
-				{
-					$("#mark-several-canceled-as-payed-form").append(
-						
-						$('<input>').attr('type', 'hidden').attr('name', 'ids[]').attr('value', ids[i])
-					);
-				}
-				$("#mark-several-canceled-as-payed-form").submit();
-			}
-		});
+    $("#mark-transfers-btn").click(function(e){
+      e.preventDefault();
+      var ids = new Array();
+      var k = 0;
+      $(".mark-transfer").each(function(){
+        if($(this).prop('checked')) {
+          var id = $(this).attr('payment_account_id');
+          console.log(id);
+          ids[k] = id;
+          k = k+1;
+        }
+      });
 
-		$("#mark-canceled-transfers-btn").click(function(e){
-			e.preventDefault();
-			var ids = new Array();
-			var k = 0;
-			$(".mark-canceled-transfer").each(function(){
-				
-				if($(this).prop('checked'))
-				{
-					var id = $(this).attr('payed_booking_id');
-					console.log(id);
-					ids[k] = id;
-					k = k+1;
-				}
-			});
-			
-			if(ids.length > 0)
-			{
-				for (i=0; i < ids.length; i++)
-				{
-					$("#unmark-several-canceled-as-payed-form").append(
-						
-						$('<input>').attr('type', 'hidden').attr('name', 'ids[]').attr('value', ids[i])
-					);
-				}
-				$("#unmark-several-canceled-as-payed-form").submit();
-			}
-		});
+      if(ids.length > 0) {
+        for (i=0; i < ids.length; i++) {
+          $("#unmark-several-as-payed-form").append(
+            $('<input>').attr('type', 'hidden').attr('name', 'ids[]').attr('value', ids[i])
+          );
+        }
+        $("#unmark-several-as-payed-form").submit();
+      }
+    });
 
+    $("#mark-other-pendings-btn").click(function(e){
+      e.preventDefault();
+      var ids = new Array();
+      var k = 0;
+      $(".mark-other-pending").each(function(){
+        if($(this).prop('checked')) {
+          var id = $(this).attr('payment_account_id');
+          console.log(id);
+          ids[k] = id;
+          k = k+1;
+        }
+      });
 
-	
-	</script>
+      if(ids.length > 0) {
+        for (i=0; i < ids.length; i++) {
+          $("#mark-other-several-as-payed-form").append(
+            $('<input>').attr('type', 'hidden').attr('name', 'ids[]').attr('value', ids[i])
+          );
+        }
+        $("#mark-other-several-as-payed-form").submit();
+      }
+    });
 
+    $("#mark-canceled-pendings-btn").click(function(e){
+      e.preventDefault();
+      var ids = new Array();
+      var k = 0;
+      $(".mark-canceled-pending").each(function(){
+        if($(this).prop('checked')) {
+          var id = $(this).attr('payed_booking_id');
+          console.log(id);
+          ids[k] = id;
+          k = k+1;
+        }
+      });
+
+      if(ids.length > 0) {
+        for (i=0; i < ids.length; i++) {
+          $("#mark-several-canceled-as-payed-form").append(
+            $('<input>').attr('type', 'hidden').attr('name', 'ids[]').attr('value', ids[i])
+          );
+        }
+        $("#mark-several-canceled-as-payed-form").submit();
+      }
+    });
+
+    $("#mark-canceled-transfers-btn").click(function(e){
+      e.preventDefault();
+      var ids = new Array();
+      var k = 0;
+      $(".mark-canceled-transfer").each(function(){
+        if($(this).prop('checked')) {
+          var id = $(this).attr('payed_booking_id');
+          console.log(id);
+          ids[k] = id;
+          k = k+1;
+        }
+      });
+
+      if(ids.length > 0) {
+        for (i=0; i < ids.length; i++) {
+          $("#unmark-several-canceled-as-payed-form").append(
+            $('<input>').attr('type', 'hidden').attr('name', 'ids[]').attr('value', ids[i])
+          );
+        }
+        $("#unmark-several-canceled-as-payed-form").submit();
+      }
+    });
+  </script>
 <% end %>

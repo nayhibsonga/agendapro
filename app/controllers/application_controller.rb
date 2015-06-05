@@ -15,6 +15,7 @@ class ApplicationController < ActionController::Base
     params[resource] &&= send(method) if respond_to?(method, true)
   end
 
+
   rescue_from CanCan::AccessDenied do |exception|
     redirect_to "/403"
   end
@@ -53,18 +54,26 @@ class ApplicationController < ActionController::Base
   end
 
   def verify_is_super_admin
+    host = request.host_with_port
+    @url = host[host.index(request.domain)..host.length]
     redirect_to "/403" unless (current_user.role_id == Role.find_by_name("Super Admin").id)
   end
 
   def verify_is_admin
+    host = request.host_with_port
+    @url = host[host.index(request.domain)..host.length]
     redirect_to "/403" unless (current_user.role_id == Role.find_by_name("Administrador General").id)
   end
 
   def verify_is_local_admin
+    host = request.host_with_port
+    @url = host[host.index(request.domain)..host.length]
     redirect_to "/403" unless (current_user.role_id == Role.find_by_name("Administrador Local").id)
   end
 
   def verify_is_staff
+    host = request.host_with_port
+    @url = host[host.index(request.domain)..host.length]
     redirect_to "/403" unless (current_user.role_id == Role.find_by_name("Staff").id)
   end
 
@@ -82,7 +91,25 @@ class ApplicationController < ActionController::Base
     if current_user && current_user.company_id && current_user.company_id > 0
       dashboard_path
     else
-      request.env['omniauth.origin'] || stored_location_for(resource) || root_path
+      if request.env['omniauth.origin']
+        begin
+          url = request.env['omniauth.origin'].gsub(root_path)
+          Rails.application.routes.recognize_path(url)
+          request.env['omniauth.origin']
+        rescue
+          root_path
+        end
+      elsif stored_location_for(resource)
+        begin 
+          url = stored_location_for(resource).gsub(root_path)
+          Rails.application.routes.recognize_path(url)
+          stored_location_for(resource)
+        rescue
+          root_path
+        end
+      else
+        root_path
+      end
     end
   end
 

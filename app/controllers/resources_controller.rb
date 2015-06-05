@@ -19,7 +19,7 @@ class ResourcesController < ApplicationController
   # GET /resources/new
   def new
     if ResourceCategory.where(company_id: current_user.company_id).count == 0
-      ResourceCategory.create(name: "Sin Categoría", company_id: current_user.company_id)
+      ResourceCategory.create(name: "Otros", company_id: current_user.company_id)
     end
     @resource_category = ResourceCategory.new
     @resource = Resource.new

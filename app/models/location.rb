@@ -21,7 +21,7 @@ class Location < ActiveRecord::Base
 	has_many :user_locations, dependent: :destroy
 	has_many :users, :through => :user_locations
 
-	has_many :services, -> { where active: true }, :through => :active_service_providers
+	has_many :services, -> { where active: true, online_booking: true }, :through => :active_service_providers
 
 	#has_many :services, -> { where active: true }, :through => :service_providers
 
@@ -54,14 +54,15 @@ class Location < ActiveRecord::Base
                 	:any_word => true
                 }
     },
-    :ignoring => :accents
+    :ignoring => :accents,
+    :ranked_by => ":tsearch + (0.5 * :trigram)"
 
 	pg_search_scope :search, :associated_against => {
-	:company => :name,
-	:services => :name,
-	:economic_sectors => :name,
-	:economic_sectors_dictionaries => :name,
-	:service_categories => :name
+		:company => :name,
+		:economic_sectors => :name,
+		:economic_sectors_dictionaries => :name,
+		:service_categories => :name,
+		:services => :name
 	},
 	:using => {
                 :trigram => {
@@ -75,6 +76,7 @@ class Location < ActiveRecord::Base
                 }
     },
     :ignoring => :accents
+    #:ranked_by => ":tsearch + (0.5 * :trigram)"
 
 
 	def extended_schedule
@@ -177,10 +179,10 @@ class Location < ActiveRecord::Base
 	def categorized_services
 
 	    location_resources = self.resource_locations.pluck(:resource_id)
-	    service_providers = self.service_providers.where(active: true)
+	    service_providers = self.service_providers.where(active: true, online_booking: true)
 
 	    categories = ServiceCategory.where(:company_id => self.company_id).order(order: :asc)
-	    services = Service.where(:active => true, :id => ServiceStaff.where(service_provider_id: service_providers.pluck(:id)).pluck(:service_id)).order(order: :asc)
+	    services = Service.where(:active => true, online_booking: true, :id => ServiceStaff.where(service_provider_id: service_providers.pluck(:id)).pluck(:service_id)).order(order: :asc)
 	    service_resources_unavailable = ServiceResource.where(service_id: services)
 	    if location_resources.any?
 	      if location_resources.length > 1
@@ -380,6 +382,44 @@ class Location < ActiveRecord::Base
 
 	#     return services
 	# end
+
+	def get_full_address
+		full_address = self.address
+		full_address += " " + self.second_address if !self.second_address.blank?
+		full_address += ", " + self.district.name
+		full_address += ", " + self.district.city.name
+		return full_address
+	end
+
+	def get_full_address_country
+		full_address = self.address
+		full_address += " " + self.second_address if !self.second_address.blank?
+		full_address += ", " + self.district.name
+		full_address += ", " + self.district.city.name
+		full_address += ", " + self.district.city.region.name
+		full_address += ", " + self.district.city.region.country.name
+		return full_address
+	end
+
+	def opened_days_zero_index
+		opened_days = []
+		self.location_times.each do |location_time|
+			if !opened_days.include? (location_time.day_id % 7)
+				opened_days.push(location_time.day_id % 7)
+			end
+		end
+		return opened_days
+	end
+
+	def closed_days_zero_index
+		closed_days = [0,1,2,3,4,5,6]
+		self.location_times.each do |location_time|
+			if closed_days.include? (location_time.day_id % 7)
+				closed_days.delete(location_time.day_id % 7)
+			end
+		end
+		return closed_days
+	end
 
 end
 

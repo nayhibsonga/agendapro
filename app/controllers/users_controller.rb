@@ -81,8 +81,6 @@ class UsersController < ApplicationController
     @user = current_user
     @activeBookings = Booking.where(:user_id => current_user.id, :status_id => Status.find_by(:name => ['Reservado', 'Pagado', 'Confirmado'])).where("start > ?", DateTime.now).order(:start) 
     @lastBookings = Booking.where(:user_id => current_user.id).order(updated_at: :desc).limit(10)
-
-
     render :layout => 'results'
   end
 
@@ -99,6 +97,6 @@ class UsersController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def user_params
-      params.require(:user).permit(:id, :first_name, :last_name, :email, :phone, :password, :role_id, :company_id)
+      params.require(:user).permit(:id, :first_name, :last_name, :email, :phone, :password, :role_id, :company_id, :uid, :provider, :receives_offers)
     end
 end

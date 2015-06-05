@@ -43,7 +43,7 @@
 </div><!-- /.modal -->
 
 <!-- search -->
-<div class="background fill" style="height: 650px; background-color: #646464; background-image: url(<%= asset_path 'search/fondo'+rand(2..7).to_s+'.png' %>);" id="buscador">
+<div class="background fill" style="height: 650px; background-color: #646464; background-image: url(<%= asset_path 'search/fondo'+rand(2..11).to_s+'.png' %>);" id="buscador">
     <div class="fill">
         <div class="container container-search fill" id="buscador2" style="height: 650px;">
             <div class="row vertical-center-row">
@@ -59,8 +59,8 @@
                         </div>
                         <div class="col-xs-10 col-sm-9 col-md-7">
                             <%= form_tag({controller: "searchs", action: "search"}, method: "GET", class: "form-horizontal search-form", id: "search-form") do %>
-                                <input type="hidden" id="latitude" name="latitude" value="-33.412819">
-                                <input type="hidden" id="longitude" name="longitude" value="-70.591945">
+                                <input type="hidden" id="latitude" name="latitude" value="-33.413673">
+                                <input type="hidden" id="longitude" name="longitude" value="-70.573426">
                                 <div class="form-group">
                                     <div class="col-xs-1">
                                         <span class="step-number pull-right">1</span>
@@ -121,56 +121,48 @@
     <div class="background background-light-grey">
         <div class="container">
             <div class="row row-padded">
-                <div class="btn-toolbar" role="toolbar">
-                <div class="btn-group btn-group-lg btn-group-justified blocks btn-group-fill-height">
                 <a class="btn btn-default sector_search" role="button" data-search="spa">
-                        <%= image_tag "search/1.png", alt: "Spa", size: "48x37" %>
+                        <%= image_tag "search/spa.png", alt: "Spa", size: "48x37" %>
                         <p>Spa</p>
                 </a>
                 <a class="btn btn-default sector_search" role="button" data-search="peluquería">
-                        <%= image_tag "search/2.png", alt: "Peluquerías", size: "48x37" %>
+                        <%= image_tag "search/peluqueria.png", alt: "Peluquerías", size: "48x37" %>
                         <p>Peluquerías</p>
                 </a>
                 <a class="btn btn-default sector_search" role="button" data-search="maquillaje">
-                        <%= image_tag "search/3.png", alt: "Maquillaje", size: "48x37" %>
+                        <%= image_tag "search/maquillaje.png", alt: "Maquillaje", size: "48x37" %>
                         <p>Maquillaje</p>
                 </a>
                 <a class="btn btn-default sector_search" role="button" data-search="centro de estética">
-                        <%= image_tag "search/4.png", alt: "Clinicas y Centros de Estetica", size: "48x37" %>
+                        <%= image_tag "search/centros_de_estetica.png", alt: "Clinicas y Centros de Estetica", size: "48x37" %>
                         <p>Centros de Estética</p>
                 </a>
                 <a class="btn btn-default sector_search" role="button" data-search="masaje">
-                        <%= image_tag "search/5.png", alt: "Masajes", size: "48x37" %>
+                        <%= image_tag "search/masajes.png", alt: "Masajes", size: "48x37" %>
                         <p>Masajes</p>
                 </a>
-                </div>
-                </div>
             </div>
             <div class="row row-padded">
-                <div class="btn-toolbar" role="toolbar">
-                <div class="btn-group btn-group-lg btn-group-justified btn-group-fill-height">
                 <a class="btn btn-default sector_search" role="button" data-search="manicure">
-                        <%= image_tag "search/6.png", alt: "Manos y Pies", size: "48x37" %>
+                        <%= image_tag "search/manicure_pedicure.png", alt: "Manos y Pies", size: "48x37" %>
                         <p>Manos y Pies</p>
                 </a>
                 <a class="btn btn-default sector_search" role="button" data-search="medicina alternativa">
-                        <%= image_tag "search/7.png", alt: "Medicina Alternativa", size: "48x37" %>
+                        <%= image_tag "search/medicina_alternativa.png", alt: "Medicina Alternativa", size: "48x37" %>
                         <p>Medicina Alternativa</p>
                 </a>
                 <a class="btn btn-default sector_search" role="button" data-search="bronceado">
-                        <%= image_tag "search/8.png", alt: "Bronceados", size: "48x37" %>
+                        <%= image_tag "search/bronceado.png", alt: "Bronceados", size: "48x37" %>
                         <p>Bronceados</p>
                 </a>
                 <a class="btn btn-default sector_search" role="button" data-search="tratamiento facial">
-                        <%= image_tag "search/9.png", alt: "Tratamientos Faciales", size: "48x37" %>
+                        <%= image_tag "search/tratamientos_faciales.png", alt: "Tratamientos Faciales", size: "48x37" %>
                         <p>Tratamientos Faciales</p>
                 </a>
                 <a class="btn btn-default sector_search" role="button" data-search="tratamiento corporal">
-                        <%= image_tag "search/10.png", alt: "Tratamientos Corporales", size: "48x37" %>
+                        <%= image_tag "search/tratamientos_corporales.png", alt: "Tratamientos Corporales", size: "48x37" %>
                         <p>Tratamientos Corporales</p>
                 </a>
-                </div>
-                </div>
             </div>
         </div>
     </div>
@@ -253,7 +245,7 @@
             </div>
         </div>
         <div class="row below-navbar">
-            <div class="col-xs-4">
+            <div class="col-xs-12 col-md-4">
                 <div class="media">
                     <a href="#" class="media-left">
                         <%= image_tag "search/slopez.jpg", class: "img-circle", size: "80x80" %>
@@ -267,7 +259,7 @@
                     </div>
                 </div>
             </div>
-            <div class="col-xs-4">
+            <div class="col-xs-12 col-md-4">
                 <div class="media">
                     <a href="#" class="media-left">
                         <%= image_tag "search/minata.png", class: "img-circle", size: "80x80" %>
@@ -281,7 +273,7 @@
                     </div>
                 </div>
             </div>
-            <div class="col-xs-4">
+            <div class="col-xs-12 col-md-4">
                 <div class="media">
                     <a href="#" class="media-left">
                         <%= image_tag "search/sferrer.png", class: "img-circle", size: "80x80" %>
@@ -305,19 +297,19 @@
                         <div class="social">
                             <a href="http://www.facebook.com/agendapro" target="blank">
                             <%= image_tag "search/facebook.png", alt: "Facebook" %>
-                            <span class="text-uppercase">Facebook</span>
+                            <span class="text-uppercase no-focus">Facebook</span>
                             </a>
                         </div>
                         <div class="social">
                             <a href="http://twitter.com/AgendaPro_CL" target="blank">
                             <%= image_tag "search/twitter.png", alt: "Twitter" %>
-                            <span class="text-uppercase">Twitter</span>
+                            <span class="text-uppercase no-focus">Twitter</span>
                             </a>
                         </div>
                         <div class="social">
                             <a href="http://instagram.com/agendapro/" target="blank">
                             <%= image_tag "search/instagram.png", alt: "Instagram" %>
-                            <span class="text-uppercase">Instagram</span>
+                            <span class="text-uppercase no-focus">Instagram</span>
                             </a>
                         </div>
                     </div>
@@ -337,7 +329,9 @@
         </div>
         <div class="row">
             <div class="col-sm-6 office_address">
-                <iframe src="https://mapsengine.google.com/map/u/0/embed?mid=zxyVW9hDKDEg.kYaUAImoWzTg&amp;hl=es-419&amp;z=17" width="100%" height="400"></iframe>
+                <div class="embed-responsive embed-responsive-4by3">
+                    <iframe class="embed-responsive-item" src="https://mapsengine.google.com/map/u/0/embed?mid=zxyVW9hDKDEg.kYaUAImoWzTg&amp;hl=es-419&amp;z=17"></iframe>
+                </div>
             </div>
             <div class="col-sm-6">
                 <%= form_tag("pcontact", method: "post", id: 'contact' ) do %>
@@ -377,14 +371,21 @@
     </div>
 </div>
 <div class="below-navbar">
+    <div class="container">
+        <div class="row pull-center">
+            <%= image_tag 'search/logo_corfo.png', :alt => 'Corfo', :size => "207x72", class: "logo-corfo" %>
+            <%= image_tag 'search/logo_semilla.png', :alt => 'Corfo', :size => "137x72", class: "logo-semilla" %>
+        </div>
+    </div>
+</div>
+<div class="below-navbar">
     <div class="background-repeat contact-footer background-gray-pattern" style="background-image: url(<%= asset_path 'backgrounds/gray-background.png' %>);">
         <div class="container">
             <div class="row pull-center">
                 <div class="col-sm-4">
                     <%= image_tag "footer/1.png", size: "22x29" %>
-                    <p>Nuestra Señora de los
-                     Angeles 185, Oficina D,
-                      Las Condes, Santiago</p>
+                    <p>Ana María Carrera 5210,
+                        Las Condes, Santiago</p>
                 </div>
                 <div class="col-sm-4">
                     <%= image_tag "footer/2.png", size: "24x19" %>
@@ -431,5 +432,4 @@
         $('#inputLocalization').focus();
     </script>
     <% end %>
-
 <% end %>

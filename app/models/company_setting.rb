@@ -7,6 +7,7 @@ class CompanySetting < ActiveRecord::Base
 
 	#validates :email, :sms, :presence => true
 	validate after_commit :extended_schedule
+	after_update :check_payment_accounts
 
 	def extended_schedule
 		if self.extended_min_hour >= self.extended_max_hour
@@ -25,7 +26,20 @@ class CompanySetting < ActiveRecord::Base
 
 	def self.monthly_mails
 		all.each do |setting|
-			setting.update_attributes :monthly_mails => 0
+			setting.monthly_mails  = 0
+			setting.save
 		end
 	end
+
+	def check_payment_accounts
+		self.company.payment_accounts.each do |payment_account|
+			payment_account.name = self.account_name
+			payment_account.rut = self.company_rut
+			payment_account.number = self.account_number
+			payment_account.bank_code = self.bank.code
+			payment_account.account_type = self.account_type
+			payment_account.save
+		end
+	end
+
 end

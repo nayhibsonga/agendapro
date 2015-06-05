@@ -1,80 +1,110 @@
-<div class="row companies_header">
-  <ul class="nav nav-tabs">
-
-    <li><a id="companies_payments" href="/companies_payments">Estados de pagos</a></li>
-
-    <li><a id="companies_incomes" href="/companies_incomes">Ingresos mensuales</a></li>
-
-    <li><a id="companies_locations" href="/companies_locations">Clientes y locales</a></li>
-
-    <li><a id="companies_monthly_locations" href="/companies_monthly_locations">Locales mensuales</a></li>
-
-    <li><a id="companies_monthly_bookings" href="/companies_monthly_bookings">Resumen de reservas</a></li>
-
-    <li class="active"><%= link_to 'Empresas', companies_path, { :id => "companies" } %></li>
-
-  </ul>
-</div>
-
-<h1>Empresas</h1>
-
-<div class="panel panel-info">
-  <div class="panel-heading">
-    <h3 class="panel-title">
-      Estadísticas internas
-    </h3>
-  </div>
-  <div class="panel-body">
-    Cantidad de reservas totales hechas esta semana: <%= Booking.where(created_at: Time.now.beginning_of_week..Time.now.end_of_week).count %><br />
-    Cantidad de empresas totales hechas esta semana: <%= Company.where(created_at: Time.now.beginning_of_week..Time.now.end_of_week).count %><br /><br />
-    Cantidad de reservas totales hechas este mes: <%= Booking.where(created_at: Time.now.beginning_of_month..Time.now.end_of_month).count %><br />
-    Cantidad de empresas totales hechas este mes: <%= Company.where(created_at: Time.now.beginning_of_month..Time.now.end_of_month).count %><br />
-  </div>
-  <div class="panel-body">
-    Cantidad de reservas totales hechas semana pasada: <%= Booking.where(created_at: 1.week.ago.beginning_of_week..1.week.ago.end_of_week).count %><br />
-    Cantidad de empresas totales hechas semana pasada: <%= Company.where(created_at: 1.week.ago.beginning_of_week..1.week.ago.end_of_week).count %><br /><br />
-    Cantidad de reservas totales hechas mes pasado: <%= Booking.where(created_at: 1.month.ago.beginning_of_month..1.month.ago.end_of_month).count %><br />
-    Cantidad de empresas totales hechas mes pasado: <%= Company.where(created_at: 1.month.ago.beginning_of_month..1.month.ago.end_of_month).count %><br />
+<div class="container-fluid background-grey">
+  <div class="row">
+    <div class="col-md-12">
+      <h2 class="text-green">Empresas</h2>
+    </div>
   </div>
 </div>
-
-<div class="row">
-  <%= link_to "Creaciones PuntoPagos", puntopagos_creations_path %> | <%= link_to "Confirmaciones PuntoPagos", puntopagos_confirmations_path %> | 
-<%= link_to "Log Empresas", company_cron_logs_path %> | <%= link_to "Log Mensualidad", billing_logs_path %> | <%= link_to "Log Planes", plan_logs_path %> | <%= link_to "Datos de Facturación", billing_infos_path %></div>
-
-<table class="table table-bordered">
-  <thead>
-    <tr>
-      <th>Nombre</th>
-      <th>Fecha de Creación</th>
-      <th>Administrador</th>
-      <th>Última Reserva</th>
-      <th></th>
-    </tr>
-  </thead>
-
-  <tbody>
-    <% @companies.each do |company| %>
-      <tr>
-        <td><%= link_to company.name, root_url(:subdomain => company.web_address) %></td>
-        <td><%= l company.created_at, format: :short %> (<%= ((Time.now - company.created_at) / 1.day).to_i %>)</td>
-        <td><%= if company.users.where(role_id: Role.find_by_name("Administrador General")).count > 0 then company.users.where(role_id: Role.find_by_name("Administrador General")).first.email end %></td>
-        <td><%= l Booking.where(:service_provider_id => ServiceProvider.where(:company_id => company.id)).last.created_at, format: :short  if  Booking.where(:service_provider_id => ServiceProvider.where(:company_id => company.id)).last %></td>
-        <td><%= link_to '<i class="fa fa-pencil"></i> Editar'.html_safe, edit_company_path(company) %>
-          <%= link_to '<i class="fa fa-pencil"></i> Pagos'.html_safe, edit_payment_company_path(company) %>
-          <% if company.billing_info %>
-          <%= link_to '<i class="fa fa-pencil"></i> Factura'.html_safe, edit_billing_info_path(company.billing_info) %>
-          <% end %>
-        <% if company.active %>
-        <%= link_to '<i class="fa fa-trash-o"></i> Desactivar'.html_safe, deactivate_company_path(:id => company.id), data: { confirm: '¿Estás seguro?' } %></td>
-        <% else %>
-        <%= link_to '<i class="fa fa-check"></i> Re-Activar'.html_safe, activate_company_path(:id => company.id), data: { confirm: '¿Estás seguro?' } %></td>
-        <% end %>
-      </tr>
-    <% end %>
-  </tbody>
-</table>
-
-<br>
-
-<%= link_to '<i class="fa fa-plus"></i> Crear Empresa'.html_safe, new_company_path %>
+<div class="container-fluid">
+  <div class="row">
+    <!-- Navegation Tabs -->
+    <div class="col-md-2">
+      <ul class="nav nav-pills nav-stacked tab-margin">
+        <li><a id="companies_payments" href="/companies_payments">Estados de pagos</a></li>
+        <li><a id="companies_incomes" href="/companies_incomes">Ingresos mensuales</a></li>
+        <li><a id="companies_locations" href="/companies_locations">Clientes y locales</a></li>
+        <li><a id="companies_monthly_locations" href="/companies_monthly_locations">Locales mensuales</a></li>
+        <li><a id="companies_monthly_bookings" href="/companies_monthly_bookings">Resumen de reservas</a></li>
+        <li class="active"><%= link_to 'Empresas', companies_path, { :id => "companies" } %></li>
+      </ul>
+    </div>
+    <!-- Panels -->
+    <div class="col-md-10 left-panel">
+      <div class="tab-margin">
+        <div class="row">
+          <div class="col-md-12">
+            <div class="panel panel-green">
+              <div class="panel-heading">
+                <h3 class="panel-title">Estadísticas internas</h3>
+              </div>
+              <ul class="list-group">
+                <li class="list-group-item">
+                  <ul class="list-unstyled">
+                    <li>Cantidad de reservas totales hechas esta semana: <%= Booking.where(created_at: Time.now.beginning_of_week..Time.now.end_of_week).count %></li>
+                    <li>Cantidad de empresas totales hechas esta semana: <%= Company.where(created_at: Time.now.beginning_of_week..Time.now.end_of_week).count %></li>
+                  </ul>
+                </li>
+                <li class="list-group-item">
+                  <ul class="list-unstyled">
+                    <li>Cantidad de reservas totales hechas este mes: <%= Booking.where(created_at: Time.now.beginning_of_month..Time.now.end_of_month).count %></li>
+                    <li>Cantidad de empresas totales hechas este mes: <%= Company.where(created_at: Time.now.beginning_of_month..Time.now.end_of_month).count %></li>
+                  </ul>
+                </li>
+                <li class="list-group-item">
+                  <ul class="list-unstyled">
+                    <li>Cantidad de reservas totales hechas semana pasada: <%= Booking.where(created_at: 1.week.ago.beginning_of_week..1.week.ago.end_of_week).count %></li>
+                    <li>Cantidad de empresas totales hechas semana pasada: <%= Company.where(created_at: 1.week.ago.beginning_of_week..1.week.ago.end_of_week).count %></li>
+                  </ul>
+                </li>
+                <li class="list-group-item">
+                  <ul class="list-unstyled">
+                    <li>Cantidad de reservas totales hechas mes pasado: <%= Booking.where(created_at: 1.month.ago.beginning_of_month..1.month.ago.end_of_month).count %></li>
+                    <li>Cantidad de empresas totales hechas mes pasado: <%= Company.where(created_at: 1.month.ago.beginning_of_month..1.month.ago.end_of_month).count %></li>
+                  </ul>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-10">
+            <ul class="nav nav-pills nav-justified">
+              <li><%= link_to "Creaciones PuntoPagos", puntopagos_creations_path %></li>
+              <li><%= link_to "Confirmaciones PuntoPagos", puntopagos_confirmations_path %></li>
+              <li><%= link_to "Log Empresas", company_cron_logs_path %></li>
+              <li><%= link_to "Log Mensualidad", billing_logs_path %></li>
+              <li><%= link_to "Log Planes", plan_logs_path %></li>
+              <li><%= link_to "Datos de Facturación", billing_infos_path %></li>
+            </ul>
+          </div>
+          <div class="col-md-2">
+            <%= link_to '<i class="fa fa-plus"></i> Crear Empresa'.html_safe, new_company_path, class: "btn btn-green" %>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-12">
+            <table class="table table-bordered table-green">
+              <thead>
+                <tr>
+                  <th>Nombre</th>
+                  <th>Fecha de Creación</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody>
+                <% @companies.each do |company| %>
+                  <tr>
+                    <td><%= link_to company.name, root_url(:subdomain => company.web_address) %></td>
+                    <td><%= l company.created_at, format: :short %> (<%= ((Time.now - company.created_at) / 1.day).to_i %>)</td>
+                    <td>
+                      <%= link_to '<i class="fa fa-pencil"></i> Editar'.html_safe, edit_company_path(company), class: "btn btn-sm btn-orange" %>
+                      <%= link_to '<i class="fa fa-pencil"></i> Pagos'.html_safe, edit_payment_company_path(company), class: "btn btn-sm btn-orange" %>
+                      <% if company.billing_info %>
+                        <%= link_to '<i class="fa fa-pencil"></i> Factura'.html_safe, edit_billing_info_path(company.billing_info), class: "btn btn-sm btn-orange" %>
+                      <% end %>
+                      <% if company.active %>
+                        <%= link_to '<i class="fa fa-trash-o"></i> Desactivar'.html_safe, deactivate_company_path(:id => company.id), data: { confirm: '¿Estás seguro?' }, class: "btn btn-sm btn-red" %>
+                      <% else %>
+                        <%= link_to '<i class="fa fa-check"></i> Re-Activar'.html_safe, activate_company_path(:id => company.id), data: { confirm: '¿Estás seguro?' }, class: "btn btn-sm btn-red" %>
+                      <% end %>
+                    </td>
+                  </tr>
+                <% end %>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

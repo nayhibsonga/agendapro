@@ -30,6 +30,12 @@ function serviceGroup () {
 }
 
 $(function() {
+	$('form input, form select').bind('keypress keydown keyup', function(e){
+    	if(e.keyCode == 13) {
+       		e.preventDefault();
+       	}
+    });
+
 	$('#service_service_category_attributes_name').prop('disabled', true);
 	$('#service_group_service').click(function (e) {
 		serviceGroup();

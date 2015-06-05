@@ -24,12 +24,25 @@
         <%= yield :stylesheets %>
         <!-- end: CSS -->
 
+        <% if ENV["MONITORING_ACTIVATION"] == "TRUE" %>
+        <!-- Begin Inspectlet Embed Code -->
+        <script type="text/javascript" id="inspectletjs">
+        window.__insp = window.__insp || [];
+        __insp.push(['wid', 1883420541]);
+        (function() {
+        function __ldinsp(){var insp = document.createElement('script'); insp.type = 'text/javascript'; insp.async = true; insp.id = "inspsync"; insp.src = ('https:' == document.location.protocol ? 'https' : 'http') + '://cdn.inspectlet.com/inspectlet.js'; var x = document.getElementsByTagName('script')[0]; x.parentNode.insertBefore(insp, x); }
+        if (window.attachEvent) window.attachEvent('onload', __ldinsp);
+        else window.addEventListener('load', __ldinsp, false);
+        })();
+        </script>
+        <!-- End Inspectlet Embed Code -->
+        <% end %>
+
         <!-- start: JavaScript-->
         <%= javascript_include_tag "home-head" %><!-- Removido -->
         <!-- end: JavaScript-->
 
-        <!-- Fav and touch icons -->
-        <%= favicon_link_tag "favicon.png", :rel => "shortcut icon" %>
+        <%= render 'layouts/icons' %>
 
     </head>
 
@@ -88,13 +101,21 @@
         </div>
         <!-- end: content -->
 
+        <div class="above-navbar">
+            <div class="container">
+                <div class="row pull-center">
+                    <%= image_tag 'search/logo_corfo.png', :alt => 'Corfo', :size => "207x72", class: "logo-corfo" %>
+                    <%= image_tag 'search/logo_semilla.png', :alt => 'Corfo', :size => "137x72", class: "logo-semilla" %>
+                </div>
+            </div>
+        </div>
+
         <div class="background-repeat contact-footer" style="background-image: url(<%= asset_path 'backgrounds/gray-background.png' %>);">
             <div class="container">
                 <div class="row pull-center">
                     <div class="col-xs-4">
                         <%= image_tag "footer/1.png", size: "22x29" %>
-                        <p>Nuestra Señora de los
-                         Angeles 185, Oficina D,
+                        <p>Ana María Carrera 5210,
                           Las Condes, Santiago</p>
                     </div>
                     <div class="col-xs-4">
@@ -121,14 +142,23 @@
         </div>
 
         <!-- start: JavaScript-->
-        <% yield :scripts %>
-        <%= javascript_include_tag "home" %>
-        <%= javascript_include_tag "http://maps.google.com/maps/api/js?sensor=false" %>
+        <%= javascript_include_tag "https://maps.google.com/maps/api/js?sensor=false" %>
         <% javascript_include_tag "jquery.browser.min" %><!-- Removido -->
         <% javascript_include_tag "browser-detect" %><!-- Removido -->
+        <%= javascript_include_tag "home" %>
+        <script type="text/javascript">
+            $('a').click(function() {
+                $('.alert').hide();
+            });
+        </script>
+        <% yield :scripts %>
         <!--Start of Zopim Live Chat Script-->
         <%= javascript_include_tag 'zopim' %><!-- Removido -->
         <!--End of Zopim Live Chat Script-->
+
+        <!--Start of Crazy Egg Script-->
+        <%= javascript_include_tag 'crazy_egg' %>
+        <!--End of Crazy Egg Script-->
 
         <!--<script>
           // $( "#menu-display" ).click(function() {

@@ -5,7 +5,7 @@
   
     <div class="row">
       <% if !@company.description.blank? %>
-        <div class="col-md-6 company-header-left company-header">
+        <div class="col-md-4 company-header-left company-header">
         	<div class="col-md-3">
 				<% if @company.logo_url %>
 					<%= image_tag @company.logo_url.to_s, :size => "80x80", :alt => @company.name, :class => "company-logo img-responsive" %>
@@ -22,7 +22,7 @@
             <%= @company.description %>
           </div>
         </div>
-        <div class="col-md-2 company-header-right company-header">
+        <div class="col-md-4 company-header-right company-header">
           
           <% if @selectedLocation %>
             <div id="phone-info">         
@@ -47,7 +47,7 @@
         </div>
 
       <% else %>
-        <div class="col-md-6 company-header-left company-header" style="border-right: 1px solid #949292;">
+        <div class="col-md-4 company-header-left company-header" style="border-right: 1px solid #949292;">
 			<div class="col-md-3">
 				<% if @company.logo_url %>
 					<%= image_tag @company.logo_url.to_s, :size => "80x80", :alt => @company.name, :class => "company-logo img-responsive" %>
@@ -59,7 +59,7 @@
 				<%= @company.name %>
 			</div>
         </div>
-        <div class="col-md-6 company-header-center2 company-header">
+        <div class="col-md-8 company-header-center2 company-header">
           
           <% if @selectedLocation %>
             <div id="phone-info">         
@@ -166,7 +166,7 @@
 										</div>
 									</div>
 
-									<% if !@booking.notes.empty? %>
+									<% if !@booking.notes.blank? %>
 										<div class="row">
 											<div class="md-col-4">
 												Notas
@@ -187,7 +187,7 @@
 										<dd class="light-gray"><%= @booking.service_provider.public_name %></dd>
 										<dt class="dark-gray">¿Cuándo?</dt>
 										<dd class="light-gray"><%= l @booking.start %></dd>
-										<% if !@booking.notes.empty? %>
+										<% if !@booking.notes.blank? %>
 										<dt class="dark-gray">Notas</dt>
 										<dd class="light-gray"><%= @booking.notes %></dd>
 										<% end %>
@@ -204,7 +204,7 @@
 										</div>
 									</div>
 
-									<% if !@booking.client.email.empty? %>
+									<% if !@booking.client.email.blank? %>
 										<div class="row">
 											<div class="md-col-4">
 												E-mail
@@ -215,7 +215,7 @@
 										</div>
 									<% end %>
 
-									<% if !@booking.client.phone.empty? %>
+									<% if !@booking.client.phone.blank? %>
 										<div class="row">
 											<div class="md-col-4">
 												Teléfono
@@ -231,11 +231,11 @@
 									<dl class="dl-horizontal book-dl">
 										<dt class="dark-gray">Nombre</dt>
 										<dd class="light-gray"><%= @booking.client.first_name %> <%= @booking.client.last_name %></dd>
-										<% if !@booking.client.email.empty? %>
+										<% if !@booking.client.email.blank? %>
 										<dt class="dark-gray">E-mail</dt>
 										<dd class="light-gray"><%= @booking.client.email %></dd>
 										<% end %>
-										<% if !@booking.client.phone.empty? %>
+										<% if !@booking.client.phone.blank? %>
 										<dt class="dark-gray">Teléfono</dt>
 										<dd class="light-gray"><%= @booking.client.phone %></dd>
 										<% end %>
@@ -254,7 +254,7 @@
 				<% if @errors %>
 
 					<div class="col-md-5">
-						<%= image_tag("backgrounds/cross.png", :class => "book-center-error") %>
+						<%= image_tag("backgrounds/error.png", :class => "book-center-error") %>
 					</div>
 
 				<% else %>

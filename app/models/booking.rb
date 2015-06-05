@@ -7,7 +7,7 @@ class Booking < ActiveRecord::Base
 	belongs_to :promotion
 	belongs_to :client
 	belongs_to :deal
-	has_one :payed_booking
+	belongs_to :payed_booking
 
 	has_many :booking_histories, dependent: :destroy
 
@@ -31,13 +31,13 @@ class Booking < ActiveRecord::Base
 	after_update :send_update_mail
 
 	def wait_for_payment
-                self.delay(run_at: 4.minutes.from_now).payment_timeout
+    	self.delay(run_at: 4.minutes.from_now).payment_timeout
     end
 
     def payment_timeout
-            if !self.payed and self.trx_id != "" and self.payed_booking.nil?
-                    self.delete
-            end
+        if !self.payed and self.trx_id != "" and self.payed_booking.nil?
+            self.delete
+        end
     end
 
 	def time_in_provider_time_warning
@@ -69,7 +69,7 @@ class Booking < ActiveRecord::Base
 			end
 		end
 	end
-	
+
 	def bookings_overlap_warning
 		cancelled_id = Status.find_by(name: 'Cancelado').id
 		unless self.status_id == cancelled_id
@@ -80,12 +80,12 @@ class Booking < ActiveRecord::Base
 							if !self.service.group_service || self.service_id != provider_booking.service_id
 								warnings.add(:base, "La hora seleccionada ya está reservada para el prestador elegido")
 								return
-							elsif self.service.group_service && self.service_id == provider_booking.service_id && self.service_provider.bookings.where(:service_id => self.service_id, :start => self.start).count >= self.service.capacity
-								warnings.add(:base, "La capacidad del servicio grupal llegó a su límite")
+							elsif self.service.group_service && self.service_id == provider_booking.service_id && self.service_provider.bookings.where(:service_id => self.service_id, :start => self.start).where.not(status_id: Status.find_by_name('Cancelado')).count > self.service.capacity
+								warnings.add(:base, "La capacidad del servicio grupal está sobre su límite")
 								return
 							end
 						end
-					end	
+					end
 				end
 			end
 		end
@@ -111,7 +111,7 @@ class Booking < ActiveRecord::Base
 									if location_booking.service != self.service || location_booking.service_provider != self.service_provider
 										group_services.push(location_booking.service_provider.id)
 									end
-								end		
+								end
 							end
 						end
 					end
@@ -199,7 +199,7 @@ class Booking < ActiveRecord::Base
 			end
 		end
 	end
-	
+
 	def bookings_overlap
 		unless self.location.company.company_setting.provider_overcapacity
 			cancelled_id = Status.find_by(name: 'Cancelado').id
@@ -211,12 +211,12 @@ class Booking < ActiveRecord::Base
 								if !self.service.group_service || self.service_id != provider_booking.service_id
 									errors.add(:base, "La hora seleccionada ya está reservada para el prestador elegido")
 									return
-								elsif self.service.group_service && self.service_id == provider_booking.service_id && self.service_provider.bookings.where(:service_id => self.service_id, :start => self.start).count >= self.service.capacity
-									errors.add(:base, "La capacidad del servicio grupal llegó a su límite")
+								elsif self.service.group_service && self.service_id == provider_booking.service_id && self.service_provider.bookings.where(:service_id => self.service_id, :start => self.start).where.not(status_id: Status.find_by_name('Cancelado')).count > self.service.capacity
+									errors.add(:base, "La capacidad del servicio grupal ya llegó a su límite")
 									return
 								end
 							end
-						end	
+						end
 					end
 				end
 			end
@@ -244,7 +244,7 @@ class Booking < ActiveRecord::Base
 										if location_booking.service != self.service || location_booking.service_provider != self.service_provider
 											group_services.push(location_booking.service_provider.id)
 										end
-									end		
+									end
 								end
 							end
 						end
@@ -321,7 +321,7 @@ class Booking < ActiveRecord::Base
 
 	def client_exclusive
 		if self.service_provider.company.company_setting.client_exclusive
-			if !self.client.can_book || self.client.identification_number.nil? || self.client.identification_number.empty? 
+			if !self.client.can_book || self.client.identification_number.nil? || self.client.identification_number.empty?
 				errors.add(:base, "El cliente ingresado no figura en los registros o no puede reservar.")
 			end
 		end
@@ -334,24 +334,30 @@ class Booking < ActiveRecord::Base
 	end
 
 	def send_booking_mail
-		if self.trx_id == ""
-			if self.start > Time.now - 4.hours
-				if self.status != Status.find_by(:name => "Cancelado")
-					BookingMailer.book_service_mail(self)
+		if !self.id.nil?
+			if self.trx_id == ""
+				if self.start > Time.now - eval(ENV["TIME_ZONE_OFFSET"])
+					if self.status != Status.find_by(:name => "Cancelado")
+						if self.booking_group.nil?
+							BookingMailer.book_service_mail(self)
+						end
+					end
 				end
 			end
 		end
 	end
 
 	def send_update_mail
-		if self.start > Time.now - 4.hours
+		if self.start > Time.now - eval(ENV["TIME_ZONE_OFFSET"])
 			if self.status == Status.find_by(:name => "Cancelado")
-				BookingMailer.cancel_booking(self)
-				if !self.payed_booking.nil?
-					BookingMailer.cancel_payment_mail(self.payed_booking, 1)
-					BookingMailer.cancel_payment_mail(self.payed_booking, 2)
-					BookingMailer.cancel_payment_mail(self.payed_booking, 3)
+				if changed_attributes['status_id']
+					BookingMailer.cancel_booking(self)
 				end
+				#if !self.payed_booking.nil?
+				#	BookingMailer.cancel_payment_mail(self.payed_booking, 1)
+				#	BookingMailer.cancel_payment_mail(self.payed_booking, 2)
+				#	BookingMailer.cancel_payment_mail(self.payed_booking, 3)
+				#end
 			else
 				if changed_attributes['start']
 					BookingMailer.update_booking(self, changed_attributes['start'])
@@ -363,12 +369,13 @@ class Booking < ActiveRecord::Base
 	end
 
 	def self.booking_reminder
-		where(:start => 4.hours.ago...92.hours.from_now).each do |booking|
+		where(:start => eval(ENV["TIME_ZONE_OFFSET"]).ago...(96.hours - eval(ENV["TIME_ZONE_OFFSET"])).from_now).each do |booking|
 			unless booking.status == Status.find_by(:name => "Cancelado")
 				booking_confirmation_time = booking.location.company.company_setting.booking_confirmation_time
-				if ((booking_confirmation_time.days - 4.hours).from_now..(booking_confirmation_time.days + 1.days - 4.hours).from_now).cover?(booking.start)
+				if ((booking_confirmation_time.days - eval(ENV["TIME_ZONE_OFFSET"])).from_now..(booking_confirmation_time.days + 1.days - eval(ENV["TIME_ZONE_OFFSET"])).from_now).cover?(booking.start)
 					if booking.send_mail
 						BookingMailer.book_reminder_mail(booking)
+						puts 'Mail enviado a mailer booking_id: ' + booking.id.to_s 
 					end
 				end
 			end
@@ -377,16 +384,23 @@ class Booking < ActiveRecord::Base
 
 	def generate_ics
 		booking = self
+		address = ''
+		date = I18n.l booking.start
+		if !self.service.outcall
+			address = booking.location.name + " - " + booking.location.get_full_address
+		else
+			address = "A domicilio"
+		end
 		event = RiCal.Calendar do |cal|
 		  cal.event do |event|
-			event.summary = booking.service.name + ' en ' + booking.location.name
-			event.description = "Se reservó " + booking.service.name + " en "  + booking.location.name + ", con una duración de " + booking.service.duration.to_s
+			event.summary = booking.service.name + ' en ' + booking.location.company.name
+			event.description = "Datos de tu reserva:\n- Fecha: " + date + "\n- Servicio: " + booking.service.name + "\n- Prestador: " + booking.service_provider.public_name + "\n- Lugar: " + address + ".\nNOTA: por favor asegúrate que el calendario de tu celular esté en la zona horario correcta. En caso contrario, este recordatorio podría quedar guardado para otra hora."
 			event.dtstart =  booking.start.strftime('%Y%m%dT%H%M%S')
 			event.dtend = booking.end.strftime('%Y%m%dT%H%M%S')
-			event.location = booking.location.address
+			event.location = booking.location.get_full_address
 			event.add_attendee booking.client.email
 			event.alarm do
-			  description "Recuerda " + booking.service.name + " en "  + booking.location.name
+			  description "Recuerda tu hora de " + booking.service.name + " en "  + booking.location.company.name
 			end
 		  end
 		end
@@ -1110,6 +1124,111 @@ class Booking < ActiveRecord::Base
 			end
 		end
 
+	end
+
+	def self.send_multiple_booking_mail(location, group)
+		helper = Rails.application.routes.url_helpers
+		@data = {}
+
+		# GENERAL
+			bookings = Booking.where(location_id: location).where(booking_group: group).order(:start)
+			@data[:company] = bookings[0].location.company.name
+			@data[:url] = bookings[0].location.company.web_address
+			@data[:signature] = bookings[0].location.company.company_setting.signature
+			@data[:logo] = Base64.encode64(File.read('app/assets/images/logos/logodoble2.png'))
+			@data[:type] = 'image/png'
+			if bookings[0].location.company.logo_url
+				@data[:logo] = Base64.encode64(File.read('public' + bookings[0].location.company.logo_url.to_s))
+				@data[:type] = MIME::Types.type_for(bookings[0].location.company.logo_url).first.content_type
+			end
+
+		# USER
+			@user = {}
+			@user[:where] = bookings[0].location.address + ', ' + bookings[0].location.district.name
+			@user[:phone] = bookings[0].location.phone
+			@user[:name] = bookings[0].client.first_name
+			@user[:send_mail] = bookings[bookings.length - 1].send_mail
+			@user[:email] = bookings[0].client.email
+			@user[:cancel] = helper.cancel_all_booking_url(:confirmation_code => bookings[0].confirmation_code)
+
+			@user_table = ''
+			bookings.each do |book|
+				@user_table += '<tr style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;">' +
+						'<td style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;padding-top:8px;padding-bottom:8px;padding-right:8px;padding-left:8px;line-height:1.42857143;vertical-align:top;border-top-width:1px;border-top-style:solid;border-top-color:#ddd;">' + book.service.name + '</td>' +
+						'<td style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;padding-top:8px;padding-bottom:8px;padding-right:8px;padding-left:8px;line-height:1.42857143;vertical-align:top;border-top-width:1px;border-top-style:solid;border-top-color:#ddd;">' + I18n.l(book.start) + '</td>' +
+						'<td style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;padding-top:8px;padding-bottom:8px;padding-right:8px;padding-left:8px;line-height:1.42857143;vertical-align:top;border-top-width:1px;border-top-style:solid;border-top-color:#ddd;">' + book.service_provider.public_name + '</td>' +
+						'<td style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;padding-top:8px;padding-bottom:8px;padding-right:8px;padding-left:8px;line-height:1.42857143;vertical-align:top;border-top-width:1px;border-top-style:solid;border-top-color:#ddd;">' + if book.notes.blank? then '' else book.notes end + '</td>' +
+						'<td style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;padding-top:8px;padding-bottom:8px;padding-right:8px;padding-left:8px;line-height:1.42857143;vertical-align:top;border-top-width:1px;border-top-style:solid;border-top-color:#ddd;">' +
+							'<a class="btn btn-xs btn-orange" target="_blank" href="' + helper.booking_edit_url(:confirmation_code => book.confirmation_code) + '" style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;text-decoration:none;display:inline-block;margin-bottom:5px;font-weight:normal;text-align:center;white-space:nowrap;vertical-align:middle;-ms-touch-action:manipulation;touch-action:manipulation;cursor:pointer;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;background-image:none;border-width:1px;border-style:solid;padding-top:1px;padding-bottom:1px;padding-right:5px;padding-left:5px;font-size:12px;line-height:1.5;border-radius:3px;color:#ffffff;background-color:#fd9610;border-color:#db7400; width: 90%;">Editar</a>' +
+							'<a class="btn btn-xs btn-red" target="_blank" href="' + helper.booking_cancel_url(:confirmation_code => book.confirmation_code) + '" style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;text-decoration:none;display:inline-block;margin-bottom:5px;font-weight:normal;text-align:center;white-space:nowrap;vertical-align:middle;-ms-touch-action:manipulation;touch-action:manipulation;cursor:pointer;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;background-image:none;border-width:1px;border-style:solid;padding-top:1px;padding-bottom:1px;padding-right:5px;padding-left:5px;font-size:12px;line-height:1.5;border-radius:3px;color:#ffffff;background-color:#fd633f;border-color:#e55938; width: 90%;">Cancelar</a>' +
+						'</td>' +
+					'</tr>'
+			end
+
+			@user[:user_table] = @user_table
+
+			@data[:user] = @user
+
+		# LOCATION
+			@location = {}
+			@location[:name] = bookings[0].location.name
+			@location[:client_name] = bookings[0].client.first_name + ' ' + bookings[0].client.last_name
+			@location[:send_mail] = bookings[0].location.notification and !bookings[0].location.email.blank? and bookings[0].location.get_booking_configuration_email == 0
+			@location[:email] = bookings[0].location.email
+
+			@location_table = ''
+			bookings.each do |book|
+				@location_table += '<tr style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;">' +
+						'<td style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;padding-top:8px;padding-bottom:8px;padding-right:8px;padding-left:8px;line-height:1.42857143;vertical-align:top;border-top-width:1px;border-top-style:solid;border-top-color:#ddd;">' + book.service.name + '</td>' +
+						'<td style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;padding-top:8px;padding-bottom:8px;padding-right:8px;padding-left:8px;line-height:1.42857143;vertical-align:top;border-top-width:1px;border-top-style:solid;border-top-color:#ddd;">' + I18n.l(book.start) + '</td>' +
+						'<td style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;padding-top:8px;padding-bottom:8px;padding-right:8px;padding-left:8px;line-height:1.42857143;vertical-align:top;border-top-width:1px;border-top-style:solid;border-top-color:#ddd;">' + if book.notes.blank? then '' else book.notes end + '</td>' +
+						'<td style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;padding-top:8px;padding-bottom:8px;padding-right:8px;padding-left:8px;line-height:1.42857143;vertical-align:top;border-top-width:1px;border-top-style:solid;border-top-color:#ddd;">' + if book.company_comment.blank? then '' else book.company_comment end + '</td>' +
+					'</tr>'
+			end
+			@location[:location_table] = @location_table
+
+			@data[:location] = @location
+
+		# SERVICE PROVIDER
+
+			#Get providers ids
+			providers_ids = []
+			bookings.each do |book|
+				if !providers_ids.include?(book.service_provider_id)
+					providers_ids << book.service_provider_id
+				end
+			end
+
+			@provider = {}
+			@providers_array = []
+			@provider[:client_name] = bookings[0].client.first_name + ' ' + bookings[0].client.last_name
+
+			ServiceProvider.find(providers_ids).each do |provider|
+				@staff = {}
+				@staff[:name] = provider.public_name
+				@staff[:email] = provider.notification_email
+				if provider.get_booking_configuration_email == 0
+					provider_bookings = Booking.where(location_id: location).where(booking_group: group).where(service_provider: provider).order(:start)
+					@provider_table = ''
+					provider_bookings.each do |book|
+						@provider_table += '<tr style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;">' +
+								'<td style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;padding-top:8px;padding-bottom:8px;padding-right:8px;padding-left:8px;line-height:1.42857143;vertical-align:top;border-top-width:1px;border-top-style:solid;border-top-color:#ddd;">' + book.service.name + '</td>' +
+								'<td style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;padding-top:8px;padding-bottom:8px;padding-right:8px;padding-left:8px;line-height:1.42857143;vertical-align:top;border-top-width:1px;border-top-style:solid;border-top-color:#ddd;">' + I18n.l(book.start) + '</td>' +
+								'<td style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;padding-top:8px;padding-bottom:8px;padding-right:8px;padding-left:8px;line-height:1.42857143;vertical-align:top;border-top-width:1px;border-top-style:solid;border-top-color:#ddd;">' + if book.notes.blank? then '' else book.notes end + '</td>' +
+								'<td style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;padding-top:8px;padding-bottom:8px;padding-right:8px;padding-left:8px;line-height:1.42857143;vertical-align:top;border-top-width:1px;border-top-style:solid;border-top-color:#ddd;">' + if book.company_comment.blank? then '' else book.company_comment end + '</td>' +
+							'</tr>'
+					end
+					@staff[:provider_table] = @provider_table
+					@providers_array << @staff
+				end
+			end
+
+			@provider[:array] = @providers_array
+			@data[:provider] = @provider
+
+		if bookings.order(:start).first.start > Time.now - eval(ENV["TIME_ZONE_OFFSET"])
+			BookingMailer.multiple_booking_mail(@data)
+		end
 	end
 
 end

@@ -51,6 +51,14 @@ group :development do
   gem 'geocoder'
 end
 
+group :development, :test do
+  gem 'rspec-rails', '~> 3.0.0'
+  gem 'factory_girl_rails'
+  gem 'capybara'
+  gem 'database_cleaner'
+  gem 'selenium-webdriver', '~> 2.45.0'
+end
+
 #Accounts, Permissions, Roles:
 #cuentas
 gem 'devise'
@@ -154,3 +162,8 @@ gem 'faker'
 
 #New Relic
 gem 'newrelic_rpm'
+
+#Facebook and Google login
+gem 'omniauth'
+gem 'omniauth-google-oauth2'
+gem 'omniauth-facebook'

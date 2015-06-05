@@ -1,4 +1,5 @@
 function loadServices (provider) {
+  var selectedService =  $('#booking_service').val();
   $('#booking_service').prop('disabled', true);
   $.getJSON('/provider_services', {id: provider}, function (services) {
     $('#booking_service').empty();
@@ -7,6 +8,7 @@ function loadServices (provider) {
         '<option value="' + service.id + '">' + service.name + '</option>'
       );
     });
+    $('#booking_service option[value="' + selectedService + '"]').prop('selected', true);
   }).always(function () {
     $('#booking_service').prop('disabled', false);
   });
@@ -53,18 +55,21 @@ function saveBooking (typeURL, booking_id) {
     "notes": $('#booking_notes').val(),
     "company_comment": $('#booking_company_comment').val()
   }
+  var bookingJSON = {"bookings": [JSONData]};
+  if (typeURL != 'POST') {
+    bookingJSON = {"booking": JSONData};
+  }
+  
   $.ajax({
     type: typeURL,
     url: '/bookings' + booking_id + '.json',
-    data: {
-      "booking": JSONData
-    },
+    data: bookingJSON,
     dataType: 'json',
     success: function(booking){
       window.location.href = "/bookings/"
     },
     error: function(xhr){
-      var errors = $.parseJSON(xhr.responseText).errors;
+      var errors = $.parseJSON(xhr.responseText).errors[0].errors;
       var errores = 'Error\n';
       for (i in errors) {
         errores += '*' + errors[i] + '\n';

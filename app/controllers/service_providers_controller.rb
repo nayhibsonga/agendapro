@@ -1,9 +1,9 @@
 class ServiceProvidersController < ApplicationController
   before_action :set_service_provider, only: [:show, :edit, :update, :destroy, :activate, :deactivate]
-  before_action :authenticate_user!, except: [:location_services, :location_providers, :provider_time]
-  before_action :quick_add, except: [:location_services, :location_providers, :provider_time]
+  before_action :authenticate_user!, except: [:location_services, :location_providers, :provider_time, :available_hours_week_html]
+  before_action :quick_add, except: [:location_services, :location_providers, :provider_time, :available_hours_week_html]
   load_and_authorize_resource
-  layout "admin", except: [:location_services, :location_providers, :provider_time]
+  layout "admin", except: [:location_services, :location_providers, :provider_time, :available_hours_week_html]
 
   # GET /service_providers
   # GET /service_providers.json
@@ -175,6 +175,14 @@ class ServiceProvidersController < ApplicationController
     render :json => array_result
   end
 
+  def available_hours_week_html
+    if !params[:provider].blank? && !params[:service].blank? && !params[:local].blank? && !params[:date].blank?
+      render :json => ServiceProvider.available_hours_week_html(params[:provider], params[:service], params[:local], params[:date])
+    else
+      render :json => ''
+    end
+  end
+
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_service_provider
@@ -183,6 +191,6 @@ class ServiceProvidersController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def service_provider_params
-      params.require(:service_provider).permit(:user_id, :location_id, :public_name, :notification_email, :block_length, :booking_configuration_email, :service_ids => [], provider_times_attributes: [:id, :open, :close, :day_id, :service_provider_id, :_destroy], user_attributes: [:email, :password, :confirm_password, :role_id, :company_id, :location_id])
+      params.require(:service_provider).permit(:user_id, :location_id, :public_name, :notification_email, :block_length, :booking_configuration_email, :online_booking, :service_ids => [], provider_times_attributes: [:id, :open, :close, :day_id, :service_provider_id, :_destroy], user_attributes: [:email, :password, :confirm_password, :role_id, :company_id, :location_id])
     end
 end

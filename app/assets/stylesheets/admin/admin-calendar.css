@@ -1,442 +1,522 @@
-header{
-	position: absolute;
+/*
+  ================================
+  ============ Events ============
+  ================================
+*/
+.origin-web-lock > .fc-event-inner > .fc-event-head > .fc-event-time:before,
+.origin-web-unlock > .fc-event-inner > .fc-event-head > .fc-event-time:before,
+.origin-manual-lock > .fc-event-inner > .fc-event-head > .fc-event-time:before,
+.origin-manual-unlock > .fc-event-inner > .fc-event-head > .fc-event-time:before,
+.confirmed > .fc-event-inner > .fc-event-head > .fc-event-time:after,
+.completed > .fc-event-inner > .fc-event-head > .fc-event-time:after,
+.noshow > .fc-event-inner > .fc-event-head > .fc-event-time:after,
+.payed > .fc-event-inner > .fc-event-head > .fc-event-time:after {
+  display:inline-block;
+  font-family:FontAwesome;
+  font-style:normal;
+  font-weight:normal;
+  line-height:1;
+    -webkit-font-smoothing:antialiased;
+    -moz-osx-font-smoothing:grayscale;
+  margin-left: 3px;
+  margin-right: 3px;
+  font-size:1.3333333333333333em;
+  line-height:.75em;
+  vertical-align:-15%
 }
-.content-fix {
-	margin: 0 20px;
-	margin-top: 44px;
+.origin-web-lock > .fc-event-inner > .fc-event-head > .fc-event-time:before {
+  content:"\f0ac   \f023";
 }
-#admin-content{
-	margin-top: 0;
-	padding-bottom: 0;
+.origin-web-unlock > .fc-event-inner > .fc-event-head > .fc-event-time:before {
+  content:"\f0ac   \f09c";
 }
-#sidebar{
-	margin-top: 44px;
+.origin-manual-lock > .fc-event-inner > .fc-event-head > .fc-event-time:before {
+  content:"\f007   \f023";
 }
-.lateralDatepicker {
-	font-size: 0.725em;
-	font-size: 0.875vw;
-	width: 100%;
+.origin-manual-unlock > .fc-event-inner > .fc-event-head > .fc-event-time:before {
+  content:"\f007   \f09c";
 }
-.fc-header-title h2 {
-	color: rgb(51, 51, 51);
-	direction: ltr;
-	display: block;
-	font-family: TradeGothic, FranklinGothic, "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
-	font-size: 21px;
-	font-weight: 500;
-	line-height: 23.100000381469727px;
-	margin-left: 20px;
-	margin-bottom: 0px;
-	margin-top: 0px;
-	text-align: left;
-	white-space: nowrap;
+.confirmed > .fc-event-inner > .fc-event-head > .fc-event-time:after {
+  content:"\f00c";
 }
-.dpCollapse {
-	display: none;
+.completed > .fc-event-inner > .fc-event-head > .fc-event-time:after {
+  content:"\f046";
 }
-.createBreak {
-	position: absolute;
-	top: 14px;
-	right: 5px;
-	z-index: 1;
+.noshow > .fc-event-inner > .fc-event-head > .fc-event-time:after {
+  content:"\f00d";
 }
-.createBooking {
-	position: absolute;
-	top: 14px;
-	right: 160px;
-	z-index: 1;
-}
-.ui-datepicker-trigger {
-	position: absolute;
-	top: 14px;
-	right: 317px;
-	z-index: 1;
-}
-.modal-textarea {
-	resize: vertical;
-}
-#calendar{
-	margin-top: 5px;
-}
-.disabled {
-   color: #777777;
-}
-.modal-admin label {
-	font-size: 12px;
-}
-.modal-admin .checkbox {
-	padding-top: 0px;
-}
-.booking-modal-body .date-select {
-	padding-left: 0px;
-	padding-right: 0px;
-}
-.booking-modal-body .well-sm {
-	margin-bottom: 0px;
-}
-.booking-modal-body {
-	padding-top: 0px;
-	padding-bottom: 0px;
-}
-.booking-modal-footer {
-	margin-top: 0px;
-	padding: 10px;
-}
-/*.ui-autocomplete {
-	max-height: 50px;
-}*/
-/*.ui-autocomplete .ui-menu-item {
-	overflow-x: hidden;
-}*/
-.auto-desc {
-	font-size: 0.75em;
+.payed > .fc-event-inner > .fc-event-head > .fc-event-time:after {
+  content:"\f155";
 }
 .fc-event {
-	border-radius: 4px;
+  border-radius: 4px;
 }
 .fc-event-inner {
-	border-radius: 4px;
+  border-radius: 4px;
 }
-/*.fc-widget-content:hover {
-	background: #E1E1E1;
-}*/
-.origin-web-lock > .fc-event-inner > .fc-event-head > .fc-event-time:before{
-	display:inline-block;
-	font-family:FontAwesome;
-	font-style:normal;
-	font-weight:normal;
-	line-height:1;
-		-webkit-font-smoothing:antialiased;
-		-moz-osx-font-smoothing:grayscale;
-	content:"\f0ac   \f023";
-	margin-right: 3px;
-	font-size:1.3333333333333333em;
-	line-height:.75em;
-	vertical-align:-15%
+
+/*
+  ================================
+  =========== Popover ============
+  ================================
+*/
+.popover {
+  position: absolute;
+  display: none;
+  background: #f5f5f5;
+  border: 1px solid #e3e3e3;
+  padding: 0px 0px 10px 0px;
+  width: auto;
+  /*box-shadow: 0 0 5px rgba(0, 0, 0, .5);*/
 }
-.origin-web-unlock > .fc-event-inner > .fc-event-head > .fc-event-time:before{
-	display:inline-block;
-	font-family:FontAwesome;
-	font-style:normal;
-	font-weight:normal;
-	line-height:1;
-		-webkit-font-smoothing:antialiased;
-		-moz-osx-font-smoothing:grayscale;
-	content:"\f0ac   \f09c";
-	margin-right: 3px;
-	font-size:1.3333333333333333em;
-	line-height:.75em;
-	vertical-align:-15%
+.popover-right:after,
+.popover-right:before {
+  right: 100%;
+  border: solid transparent;
+  content:" ";
+  height: 0;
+  width: 0;
+  position: absolute;
+  pointer-events: none;
 }
-.origin-manual-lock > .fc-event-inner > .fc-event-head > .fc-event-time:before{
-	display:inline-block;
-	font-family:FontAwesome;
-	font-style:normal;
-	font-weight:normal;
-	line-height:1;
-		-webkit-font-smoothing:antialiased;
-		-moz-osx-font-smoothing:grayscale;
-	content:"\f007   \f023";
-	margin-right: 3px;
-	font-size:1.3333333333333333em;
-	line-height:.75em;
-	vertical-align:-15%
+.popover-right:after {
+  border-color: rgba(255, 255, 255, 0);
+  border-right-color: #f5f5f5;
+  border-width: 10px;
+  top: 50%;
+  margin-top: -10px;
 }
-.origin-manual-unlock > .fc-event-inner > .fc-event-head > .fc-event-time:before{
-	display:inline-block;
-	font-family:FontAwesome;
-	font-style:normal;
-	font-weight:normal;
-	line-height:1;
-		-webkit-font-smoothing:antialiased;
-		-moz-osx-font-smoothing:grayscale;
-	content:"\f007   \f09c";
-	margin-right: 3px;
-	font-size:1.3333333333333333em;
-	line-height:.75em;
-	vertical-align:-15%
+.popover-right:before {
+  border-color: rgba(201, 201, 201, 0);
+  border-right-color: #e3e3e3;
+  border-width: 11px;
+  top: 50%;
+  margin-top: -11px;
 }
-.confirmed > .fc-event-inner > .fc-event-head > .fc-event-time:after{
-	display:inline-block;
-	font-family:FontAwesome;
-	font-style:normal;
-	font-weight:normal;
-	line-height:1;
-		-webkit-font-smoothing:antialiased;
-		-moz-osx-font-smoothing:grayscale;
-	content:"\f00c";
-	margin-left: 3px;
-	margin-right: 3px;
-	font-size:1.3333333333333333em;
-	line-height:.75em;
-	vertical-align:-15%
+.popover-left:after,
+.popover-left:before {
+  left: 100%;
+  border: solid transparent;
+  content:" ";
+  height: 0;
+  width: 0;
+  position: absolute;
+  pointer-events: none;
 }
-.completed > .fc-event-inner > .fc-event-head > .fc-event-time:after{
-	display:inline-block;
-	font-family:FontAwesome;
-	font-style:normal;
-	font-weight:normal;
-	line-height:1;
-		-webkit-font-smoothing:antialiased;
-		-moz-osx-font-smoothing:grayscale;
-	content:"\f046";
-	margin-left: 3px;
-	margin-right: 3px;
-	font-size:1.3333333333333333em;
-	line-height:.75em;
-	vertical-align:-15%
+.popover-left:after {
+  border-color: rgba(255, 255, 255, 0);
+  border-left-color: #f5f5f5;
+  border-width: 10px;
+  top: 50%;
+  margin-top: -10px;
 }
-.noshow > .fc-event-inner > .fc-event-head > .fc-event-time:after{
-	display:inline-block;
-	font-family:FontAwesome;
-	font-style:normal;
-	font-weight:normal;
-	line-height:1;
-		-webkit-font-smoothing:antialiased;
-		-moz-osx-font-smoothing:grayscale;
-	content:"\f00d";
-	margin-left: 3px;
-	margin-right: 3px;
-	font-size:1.3333333333333333em;
-	line-height:.75em;
-	vertical-align:-15%
+.popover-left:before {
+  border-color: rgba(201, 201, 201, 0);
+  border-left-color: #e3e3e3;
+  border-width: 11px;
+  top: 50%;
+  margin-top: -11px;
 }
-.payed > .fc-event-inner > .fc-event-head > .fc-event-time:after{
-	display:inline-block;
-	font-family:FontAwesome;
-	font-style:normal;
-	font-weight:normal;
-	line-height:1;
-		-webkit-font-smoothing:antialiased;
-		-moz-osx-font-smoothing:grayscale;
-	content:"\f155";
-	margin-left: 3px;
-	margin-right: 3px;
-	font-size:1.3333333333333333em;
-	line-height:.75em;
-	vertical-align:-15%
+.actionPopover {
+  font-size: 1em;
+  margin-right: 10px;
+  margin-left: 10px;
+  cursor: pointer;
 }
-.fc-border-separate tbody tr.fc-first td,
-.fc-border-separate tbody tr.fc-first th {
-	border-left-width: 1px;
-	border-right-width: 1px;
-	border-color: #53565A;
+.closePopover i {
+  font-size: 0.7em;
+  margin-right: 10px;
+}
+.closePopover {
+  width: 100%;
+  display: inline-block;
+  text-align: right;
+  cursor: pointer;
+}
+
+/*
+  ================================
+  =========== Calendar ===========
+  ================================
+*/
+#calendar{
+  margin-top: 5px;
+}
+.fc-header-title {
+  vertical-align: sub;
+}
+.fc-header-title h2 {
+  color: #505050;
+  direction: ltr;
+  display: block;
+  font-family: TradeGothic, FranklinGothic, "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
+  font-size: 21px;
+  font-weight: 500;
+  line-height: 23.100000381469727px;
+  margin-left: 20px;
+  margin-bottom: 0px;
+  margin-top: 0px;
+  text-align: left;
+  white-space: nowrap;
+}
+.fc-widget-header,
+.fc-widget-content {
+  background-color: #ffffff;
 }
 .fc-widget-content:hover {  /* <td>, usually */
-	background: #E6E3CF;
+  background: #fd9610;
+  opacity: .2;
 }
-body .modal-admin {
-    width: 790px;
+.fc-agenda-days thead th {
+  background-color: #22c488;
+  color: #ffffff;
 }
-.popover {
-    position:absolute;
-    display:none;
-    background:#ddd;
-    border: 1px solid #999;
-    padding: 0px 0px 10px 0px;
-    width:auto;
-    box-shadow:0 0 5px rgba(0, 0, 0, .5);
-    text-align: right;
+.fc-header td {
+  background-color: #ffffff;
 }
-.popover:after, .popover:before {
-    right: 100%;
-    border: solid transparent;
-    content:" ";
-    height: 0;
-    width: 0;
-    position: absolute;
-    pointer-events: none;
+.fc-header .fc-button {
+  margin-bottom: initial;
+  vertical-align: initial;
 }
-.popover:after {
-    border-color: rgba(255, 255, 255, 0);
-    border-right-color: #ddd;
-    border-width: 10px;
-    top: 50%;
-    margin-top: -10px;
+.fc-widget-header {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
-.popover:before {
-    border-color: rgba(201, 201, 201, 0);
-    border-right-color: #c9c9c9;
-    border-width: 11px;
-    top: 50%;
-    margin-top: -11px;
+.fc-header-left {
+  padding-top: 5px;
 }
+table.fc-agenda-days {
+  table-layout: fixed;
+}
+.small-loader-header {
+  margin-top: 5px;
+  margin-bottom: 17px;
+}
+
+/*
+  ================================
+  ======= Calendar Buttons =======
+  ================================
+*/
+.calendar-btn {
+  position: absolute;
+  top: 5px;
+  right: 15px;
+}
+@media (max-width: 767px) {
+  .calendar-btn {
+    top: 0px;
+  }
+  #createBreak {
+    padding: 4px 6px;
+    font-size: 13px;
+  }
+  #createBooking {
+    padding: 4px 6px;
+    font-size: 13px;
+  }
+  .ui-datepicker-trigger {
+    padding: 4px 6px;
+    font-size: 13px;
+  }
+}
+
+/*
+  ================================
+  ========== Datepicker ==========
+  ================================
+*/
+.ui-datepicker {
+  z-index: 1041 !important;
+}
+.ui-datepicker-trigger {
+  color: #22c488;
+  border-color: #d1d1d1;
+  background-color: #ffffff;
+}
+.ui-datepicker-trigger:hover,
+.ui-datepicker-trigger:focus,
+.ui-datepicker-trigger.focus,
+.ui-datepicker-trigger:active,
+.ui-datepicker-trigger.active {
+  color: #22c488;
+  background-color: #d1d1d1;
+  border-color: #c0c0c0;
+}
+.ui-datepicker-trigger:active,
+.ui-datepicker-trigger.active {
+  background-image: none;
+}
+@media (min-width: 992px) {
+  .ui-datepicker-trigger {
+    display: none;
+  }
+  #dp {
+    padding-top: 43px;
+    margin-right: -15px;
+  }
+  #dp .ui-datepicker {
+    width: 100%;
+  }
+  #dp .ui-datepicker .ui-datepicker-title select {
+    font-size: .8em;
+  }
+}
+
+
+/*
+  ================================
+  ============ Modals ============
+  ================================
+*/
+.modal-body {
+  font-size: 14px;
+}
+.custom-popover:after, .custom-popover:before {
+    display: none;
+}
+.custom-popover:after {
+    display: none;
+}
+.custom-popover:before {
+    display: none;
+}
+
 .closePopover i {
 	font-size:0.7em;
 	margin-right: 10px;
 }
-.actionPopover {
-	font-size:1em;
-	margin-right: 10px;
-	margin-left: 10px;
-	cursor: pointer;
+.modal-body .nav {
+  font-size: 17px;
 }
-.closePopover {
-	cursor: pointer;
+#bookingModal .checkbox {
+  padding-top: 0px;
 }
-
-/*Cambios en modales*/
 .modal-header {
-	padding: 10px;
+  padding: 10px;
+}
+.booking-modal-body .date-select {
+  padding-left: 6px;
+  padding-right: 6px;
+}
+.booking-modal-body .well-sm {
+  margin-bottom: 0px;
+}
+.booking-modal-body {
+  padding-top: 0px;
+  padding-bottom: 0px;
+}
+.booking-modal-footer {
+  margin-top: 0px;
+  padding: 10px;
+}
+.modal-textarea {
+  resize: vertical;
 }
 
-/************************************************************
- *							Slider							*
- ************************************************************/
-.slider {
-	position: relative;
-	width:100%;
-	border: 1px solid rgba(27, 115, 112, 1);
-	background: #ccc;
-	padding: 0px;
-	border-radius: 5px;
-	overflow: hidden;
-	margin-top: 5px;
-	margin-bottom: 0;
-	line-height: 1;
-	height: 36px;
-}
-.slider label {
-	position: relative;
-	display: inline-block;
-	background: #ccc;
-	padding: 0px 15px;
-	margin-bottom: -3px;
-	width: 20%;
-	min-width: 140px;
-	text-align: center;
-}
-.slider label:hover{
-	background: rgba(27, 115, 112, 1);
-	color: #fff;
-}
-.slider label.active{
-	background: rgba(27, 115, 112, 1);
-	color: #fff;
-}
-.slider input[type="radio"]{
-	display: none;
-}
-.slider p{
-	margin: 10px 0 10px;
-	height: 14px;
-	min-width: 140px;
-	overflow: hidden;
-	text-overflow: ellipsis;
-    white-space: nowrap;
-}
-.slider-selector {
-	position: relative;
-	overflow: hidden;
-	margin: 0 33px;
-}
-a.control_prev, a.control_next {
-	position: absolute;
-	/*top: 0px;*/
-	/*z-index: 999;*/
-	/*display: block;*/
-	padding: 10px 10px;
-	/*width: auto;
-	height: 40px;*/
-	background: rgba(27,115,112,1);;
-	color: #fff;
-	font-size: 18px;
-	opacity: 0.8;
-	cursor: pointer;
-}
-a.control_prev:hover, a.control_next:hover {
-	opacity: 1;
-	-webkit-transition: all 0.2s ease;
-}
-a.control_prev {
-	border-radius: 2px 0 0 2px;
-}
-a.control_next {
-	border-radius: 0 2px 2px 0;
-	right: 0;
+.disabled {
+  color: #777777;
 }
 
-table.fc-agenda-days {
-	table-layout: fixed;
+.auto-desc {
+  font-size: 0.75em;
 }
 
-th.fc-widget-header {
-	overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
+.fa-spin {
+  -webkit-animation: spin 1s infinite linear;
+  -moz-animation: spin 1s infinite linear;
+  -o-animation: spin 1s infinite linear;
+  animation: spin 1s infinite linear;
 }
 
-td.fc-header-left {
-	padding-top: 5px;
-}
-td.fc-header-center {
-	padding-top: 5px;
-}
-a.print-schedule {
-	margin-left: 5px;
-}
-
-.datepicker {z-index: 1151 !important;}
-
-.small-loader-header {
-	margin-top: 5px;
-	margin-bottom: 17px;
+/*
+  ================================
+  ======== Hour Optimizer ========
+  ================================
+*/
+.fa-green {
+  color: #22c488;
 }
 
-/*Intento de marcar líneas de columna*/
-/*table.fc-agenda-days > tbody > tr >td.fc-widget-content {
-	border: 1px solid #000000;
-	border-width: 1px 1px 1px 1px;
+#selectHour {
+  max-height: 220px;
+  overflow: auto;
+}
+
+#selectHour > label {
+  width: 33%;
+}
+
+#selectHour > .checkbox-inline {
+  color: #949292;
+  border-right: 1px solid #949292;
+  padding-left: 15px;
+  margin-bottom: 12px;
+}
+
+#selectHour > .checkbox-inline + .checkbox-inline {
+  margin-left: 0;
+}
+
+#selectHour > .checkbox-inline:nth-child(3n) {
+  border-right: none;
+}
+
+#selectHour > .checkbox-inline > p {
+  display: inline-block;
+  vertical-align: top;
+  margin: 0 10px 0 5px;
+  font-size: 15px;
+}
+
+select[name="serviceOptimizerSelector"] {
+  margin-bottom: 5px;
+}
+
+#serviceOptimizer {
+  padding-right: 15px;
+  overflow: auto;
+  max-height: 332px;
+}
+
+.optimizer-date-span {
+  position: relative;
+  font-size: 16px;
+  cursor: pointer;
+  color: #949292;
+  z-index: 2;
+}
+
+.optimizer-date-span input {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  opacity: 0;
+  width: 10px !important;
+  pointer-events: none;
+}
+
+.optimizerDetail > label {
+  width: 33%;
+}
+
+.optimizerDetail > h3 {
+  color: #949292;
+  padding-left: 15px;
+}
+
+.optimizerDetail > .checkbox-inline {
+  color: #949292;
+  border-right: 1px solid #949292;
+  padding-left: 15px;
+  margin-bottom: 12px;
+}
+
+.optimizerDetail > .checkbox-inline + .checkbox-inline {
+  margin-left: 0;
+}
+
+.optimizerDetail > .checkbox-inline > p {
+  display: inline-block;
+  vertical-align: top;
+  margin: 0 10px 0 5px;
+  font-size: 15px;
+}
+
+.set-date-btn {
+  font-size: 12px;
+  margin-top: 5px;
+  display: block;
+}
+.hours-optimizer-button {
+  font-size: 12px;
+}
+
+#dp {
+  display: none;
+}
+
+.optimizerBtn {
+  width: auto;
+}
+
+/*.fc-widget-header
+{
+  width:200px;
+}
+.fc-widget-header.fc-first, .fc-widget-header.fc-last
+{
+  width:auto;
+}
+.fc-widget-content
+{
+  width:200px;
+}
+.fc-widget-content.fc-first, .fc-widget-content.fc-last
+{
+  width:auto;
+}
+
+#calendar table {
+  table-layout: fixed;
 }*/
 
-/* Menu responsivo */
-@media (max-width: 1280px) {
-	#dp {
-		font-size: 0.65em;
-		font-size: 0.875vw;
-	}
+.label-calendar {
+  font-size: 11px;
 }
-@media (max-width: 1124px) {
-	#dp {
-		font-size: 0.585em;
-		font-size: 0.875vw;
-	}
-	.createBreak {
-		right: 5px;
-		padding: 6px 12px;
-		font-size: 12px;
-	}
-	.createBooking {
-		right: 140px;
-		padding: 6px 12px;
-		font-size: 12px;
-	}
-	.ui-datepicker-trigger {
-		right: 276px;
-		padding: 6px 12px;
-		font-size: 12px;
-	}
+
+@media (min-width: 768px) {
+  .label-calendar {
+    font-size: 11px;
+  }
 }
-@media (max-width: 1023px) {
-	#dp {
-		display: none;
-	}
-	.createBreak {
-		right: 5px;
-		padding: 4px 8px;
-		font-size: 12px;
-	}
-	.createBooking {
-		right: 132px;
-		padding: 4px 8px;
-		font-size: 12px;
-	}
-	.ui-datepicker-trigger {
-		right: 260px;
-		padding: 4px 8px;
-		font-size: 12px;
-	}
-	.btn-text {
-		display: none;
-	}
+
+@media (min-width: 992px) {
+  .set-date-btn {
+    display: none;
+  }
+  #dp {
+    display: block;
+  }
+  .hours-optimizer-button {
+    margin-left: 7px;
+    font-size: 14px;
+  }
+  .label-calendar {
+    font-size: 14px;
+  }
 }
+
+@media (min-width: 1200px) {
+  .label-calendar {
+    font-size: 17px;
+  }
+}
+
+/*
+  ================================
+  === DatePicker Media Queries ===
+  ================================
+*/
+.ui-datepicker table {
+  font-size: 0.5em;
+}
+@media (min-width: 992px) {
+  .ui-datepicker table {
+    font-size: 0.5em;
+  }
+}
+
+@media (min-width: 1080px) {
+  .ui-datepicker table {
+    font-size: 0.7em;
+  }
+}
+
+@media (min-width: 1224px) {
+  .ui-datepicker table {
+    font-size: 0.8em;
+  }
+}
+

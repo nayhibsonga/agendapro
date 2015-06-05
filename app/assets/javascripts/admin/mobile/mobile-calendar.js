@@ -53,6 +53,7 @@ function loadProviderEvents(providerId) {
   return false;
 }
 
+var dateSelected = null;
 function loadWeekCalendar (startTime, endTime, providerId) {
   //Default values
   startTime = startTime || 0;
@@ -67,7 +68,70 @@ function loadWeekCalendar (startTime, endTime, providerId) {
     eventClick: function(event) {
       if ($.isNumeric(event.id)) {
         window.location.href = "/bookings/" + event.id;
+      } else if (event.id.indexOf('b') >= 0) {
+        window.location.href = "/provider_breaks/" + event.id.split('b')[1]
+      };
+    },
+    dayClick: function(date, allDay, jsEvent, view) {
+      var dates = {
+        convert:function(d) {
+          // Converts the date in d to a date-object. The input can be:
+          //   a date object: returned without modification
+          //  an array      : Interpreted as [year,month,day]. NOTE: month is 0-11.
+          //   a number     : Interpreted as number of milliseconds
+          //                  since 1 Jan 1970 (a timestamp)
+          //   a string     : Any format supported by the javascript engine, like
+          //                  "YYYY/MM/DD", "MM/DD/YYYY", "Jan 31 2009" etc.
+          //  an object     : Interpreted as an object with year, month and date
+          //                  attributes.  **NOTE** month is 0-11.
+          return (
+            d.constructor === Date ? d :
+            d.constructor === Array ? new Date(d[0],d[1],d[2]) :
+            d.constructor === Number ? new Date(d) :
+            d.constructor === String ? new Date(d) :
+            typeof d === "object" ? new Date(d.year,d.month,d.date) :
+            NaN
+          );
+        },
+        compare:function(a,b) {
+          // Compare two dates (could be of any type supported by the convert
+          // function above) and returns:
+          //  -1 : if a < b
+          //   0 : if a = b
+          //   1 : if a > b
+          // NaN : if a or b is an illegal date
+          // NOTE: The code inside isFinite does an assignment (=).
+          return (
+            isFinite(a=this.convert(a).valueOf()) &&
+            isFinite(b=this.convert(b).valueOf()) ?
+            (a>b)-(a<b) :
+            NaN
+          );
+        }
       }
+      if (dateSelected != null && dates.compare(date, dateSelected) == 0) {
+        var arrDate = date.toString().split(" ");
+        var stringDate = arrDate[0] + " " + arrDate[1] + " " + arrDate[2] + " " + arrDate[3] + " " + arrDate[4];
+        var bookHref = "/bookings/new?" + $.param({
+          location: $('#locals-selector').val(),
+          date: stringDate,
+          provider: providerId
+        });
+        $('#addModal .btn-green').attr('href', bookHref);
+        var breakHref = "/provider_breaks/new?" + $.param({
+          location: $('#locals-selector').val(),
+          date: stringDate,
+          provider: providerId
+        });
+        $('#addModal .btn-grey').attr('href', breakHref);
+        $('#addModal').modal('toggle');
+      } else {
+        $('td.fc-widget-content.active').children().first().html("&nbsp;");
+        $('td.fc-widget-content.active').removeClass('active');
+        $(jsEvent.currentTarget).addClass('active');
+        $(jsEvent.currentTarget).children().first().html('<i class="fa fa-plus fa-lg"></i>');
+        dateSelected = date;
+      };
     },
     firstDay: 1,  //Lunes
     defaultView: 'agendaDay',
@@ -103,7 +167,17 @@ $(function() {
   });
 
   $('#add').click(function () {
-    window.location.href = "/bookings/new?" + $.param({location: $('#locals-selector').val()});
+    var bookHref = "/bookings/new?" + $.param({
+      location: $('#locals-selector').val(),
+      provider: $('#providers-selector').val()
+    });
+    $('#addModal .btn-green').attr('href', bookHref);
+    var breakHref = "/provider_breaks/new?" + $.param({
+      location: $('#locals-selector').val(),
+      provider: $('#providers-selector').val()
+    });
+    $('#addModal .btn-grey').attr('href', breakHref);
+    $('#addModal').modal('toggle');
   });
 
   picker = datepicker('#today', {
