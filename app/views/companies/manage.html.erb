@@ -102,7 +102,7 @@
                     <td><%= link_to company.name, controller: "companies", action: "manage_company", id: company.id %></td>
                     <td><%= company.plan.name %></td>
                     <td>
-                      <% bl = BillingLog.where(:company_id => company.id).order('created_at desc').first %>
+                      <% bl = BillingLog.where(:company_id => company.id).where(:trx_id => PuntoPagosConfirmation.where(:response => "00").pluck(:trx_id)).order('created_at desc').first %>
                       <% rec = BillingRecord.where(:company_id => company.id).order('date desc').first %>
                       <% if !bl.nil? && !rec.nil? %>
                         <%if bl.created_at <= rec.date %>
@@ -145,7 +145,7 @@
                     <td><%= link_to company.name, controller: "companies", action: "manage_company", id: company.id %></td>
                     <td><%= company.plan.name %></td>
                     <td>
-                      <% bl = BillingLog.where(:company_id => company.id).order('created_at desc').first %>
+                      <% bl = BillingLog.where(:company_id => company.id).where(:trx_id => PuntoPagosConfirmation.where(:response => "00").pluck(:trx_id)).order('created_at desc').first %>
                       <% rec = BillingRecord.where(:company_id => company.id).order('date desc').first %>
                       <% if !bl.nil? && !rec.nil? %>
                         <%if bl.created_at <= rec.date %>
@@ -188,7 +188,7 @@
                     <td><%= link_to company.name, controller: "companies", action: "manage_company", id: company.id %></td>
                     <td><%= company.plan.name %></td>
                     <td>
-                      <% bl = BillingLog.where(:company_id => company.id).order('created_at desc').first %>
+                      <% bl = BillingLog.where(:company_id => company.id).where(:trx_id => PuntoPagosConfirmation.where(:response => "00").pluck(:trx_id)).order('created_at desc').first %>
                       <% rec = BillingRecord.where(:company_id => company.id).order('date desc').first %>
                       <% if !bl.nil? && !rec.nil? %>
                         <%if bl.created_at <= rec.date %>
@@ -232,7 +232,7 @@
                     <td><%= link_to company.name, controller: "companies", action: "manage_company", id: company.id %></td>
                     <td><%= company.plan.name %></td>
                     <td>
-                      <% bl = BillingLog.where(:company_id => company.id).order('created_at desc').first %>
+                      <% bl = BillingLog.where(:company_id => company.id).where(:trx_id => PuntoPagosConfirmation.where(:response => "00").pluck(:trx_id)).order('created_at desc').first %>
                       <% rec = BillingRecord.where(:company_id => company.id).order('date desc').first %>
                       <% if !bl.nil? && !rec.nil? %>
                         <%if bl.created_at <= rec.date %>
@@ -277,7 +277,7 @@
                     <td><%= link_to company.name, controller: "companies", action: "manage_company", id: company.id %></td>
                     <td><%= company.plan.name %></td>
                     <td>
-                      <% bl = BillingLog.where(:company_id => company.id).order('created_at desc').first %>
+                      <% bl = BillingLog.where(:company_id => company.id).where(:trx_id => PuntoPagosConfirmation.where(:response => "00").pluck(:trx_id)).order('created_at desc').first %>
                       <% rec = BillingRecord.where(:company_id => company.id).order('date desc').first %>
                       <% if !bl.nil? && !rec.nil? %>
                         <%if bl.created_at <= rec.date %>
@@ -322,7 +322,7 @@
                     <td><%= link_to company.name, controller: "companies", action: "manage_company", id: company.id %></td>
                     <td><%= company.plan.name %></td>
                     <td>
-                      <% bl = BillingLog.where(:company_id => company.id).order('created_at desc').first %>
+                      <% bl = BillingLog.where(:company_id => company.id).where(:trx_id => PuntoPagosConfirmation.where(:response => "00").pluck(:trx_id)).order('created_at desc').first %>
                       <% rec = BillingRecord.where(:company_id => company.id).order('date desc').first %>
                       <% if !bl.nil? && !rec.nil? %>
                         <%if bl.created_at <= rec.date %>
