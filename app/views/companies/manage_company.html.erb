@@ -187,7 +187,7 @@
                         <% logs = @company.billing_logs.order('created_at desc') %>
                         <% logs.each do |log| %>
                           <tr>
-                            <% punto_pago = PuntoPagosConfirmation.where(:trx_id => log.trx_id, :response => "00") %>
+                            <% punto_pago = PuntoPagosConfirmation.where(:trx_id => log.trx_id, :response => "00").first %>
                             <td><%= log.created_at %></td>
                             <td><%= log.payment %></td>
                             <td><%= log.amount %></td>
@@ -196,7 +196,7 @@
                               <td></td>
                               <td></td>
                             <% else %>
-                              <td><%= punto_pago.dues_amount %></td>
+                              <td><%= punto_pago.dues_number %></td>
                               <td><%= punto_pago.operation_number %></td>
                               <td><%= punto_pago.authorization_code %></td>
                             <% end %>
