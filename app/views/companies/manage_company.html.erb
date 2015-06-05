@@ -157,7 +157,7 @@
 					<label class="control-label">Última fecha de pago: </label>
 				</div>
 				<div class="col-sm-8">
-					<% bl = BillingLog.where(:company_id => @company.id).order('created_at desc').first %>
+					<% bl = BillingLog.where(:company_id => @company.id).where(:trx_id => PuntoPagosConfirmation(:response => "00").pluck(:trx_id)).order('created_at desc').first %>
 					<% rec = BillingRecord.where(:company_id => @company.id).order('date desc').first %>
 					<% if !bl.nil? && !rec.nil? %>
 						<%if bl.created_at <= rec.date %>
@@ -179,7 +179,7 @@
 					<label class="control-label">Último monto de pago: </label>
 				</div>
 				<div class="col-sm-8">
-					<% bl = BillingLog.where(:company_id => @company.id).order('created_at desc').first %>
+					<% bl = BillingLog.where(:company_id => @company.id).where(:trx_id => PuntoPagosConfirmation(:response => "00").pluck(:trx_id)).order('created_at desc').first %>
 					<% rec = BillingRecord.where(:company_id => @company.id).order('date desc').first %>
 					<% if !bl.nil? && !rec.nil? %>
 						<% if bl.created_at <= rec.date %>
@@ -309,33 +309,36 @@
 
 					<% logs = @company.billing_logs.order('created_at desc') %>
 					<% logs.each do |log| %>
-						<tr>
-							<% punto_pago = PuntoPagosConfirmation.find_by_trx_id(log.trx_id) %>
-							<td>
-								<%= log.created_at %>
-							</td>
-							<td>
-								<%= log.payment %>
-							</td>
-							<td>
-								<%= log.amount %>
-							</td>
-							<% if punto_pago.nil? %>
-								<td></td>
-								<td></td>
-								<td></td>
-							<% else %>
+						
+						<% punto_pago = PuntoPagosConfirmation.where(:response => "00", :trx_id => log.trx_id).first %>
+						<% if !punto_pago.nil? %>
+							<tr>
 								<td>
-									<%= punto_pago.dues_number %>
+									<%= log.created_at %>
 								</td>
 								<td>
-									<%= punto_pago.operation_number %>
+									<%= log.payment %>
 								</td>
 								<td>
-									<%= punto_pago.authorization_code %>
+									<%= log.amount %>
 								</td>
-							<% end %>
-						</tr>
+								<% if punto_pago.nil? %>
+									<td></td>
+									<td></td>
+									<td></td>
+								<% else %>
+									<td>
+										<%= punto_pago.dues_number %>
+									</td>
+									<td>
+										<%= punto_pago.operation_number %>
+									</td>
+									<td>
+										<%= punto_pago.authorization_code %>
+									</td>
+								<% end %>
+							</tr>
+						<% end %>
 					<% end %>
 
 				</table>
@@ -500,7 +503,7 @@
 					<label class="control-label">Última fecha de pago: </label>
 				</div>
 				<div class="col-sm-2">
-					<% bl = BillingLog.where(:company_id => @company.id).order('created_at desc').first %>
+					<% bl = BillingLog.where(:company_id => @company.id).where(:trx_id => PuntoPagosConfirmation(:response => "00").pluck(:trx_id)).order('created_at desc').first %>
 					<% rec = BillingRecord.where(:company_id => @company.id).order('date desc').first %>
 					<% if !bl.nil? && !rec.nil? %>
 						<%if bl.created_at <= rec.date %>
