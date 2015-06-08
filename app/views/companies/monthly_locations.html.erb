@@ -61,33 +61,35 @@
           <tbody>
           </tbody>
             <%  @companies.each do |company| %>
-              <% company_locations = 0 %>
-              <tr>
-                <td><%= link_to company.name, controller: "companies", action: "manage_company", id: company.id %></td>
-                <% for i in 1..12 do %>
-                  <%
+              <% if company.active %>
+                <% company_locations = 0 %>
+                <tr>
+                  <td><%= link_to company.name, controller: "companies", action: "manage_company", id: company.id %></td>
+                  <% for i in 1..12 do %>
+                    <%
 
-                    month_locations = 0
-                    locations_count = 0
-                    if company.active
-                      start_date = DateTime.new(@year, i, 1)
-                      end_date = start_date
-                      if i < 12
-                        end_date = DateTime.new(@year, i+1, 1)-1.minutes
-                      else
-                        end_date = DateTime.new(@year+1, 1, 1)-1.minutes
+                      month_locations = 0
+                      locations_count = 0
+                      if company.active
+                        start_date = DateTime.new(@year, i, 1)
+                        end_date = start_date
+                        if i < 12
+                          end_date = DateTime.new(@year, i+1, 1)-1.minutes
+                        else
+                          end_date = DateTime.new(@year+1, 1, 1)-1.minutes
+                        end
+                        locations_count = Location.where('company_id = ? and created_at BETWEEN ? and ? and active = true', company.id, start_date, end_date).count
+                        month_locations = locations_count
                       end
-                      locations_count = Location.where('company_id = ? and created_at BETWEEN ? and ? and active = true', company.id, start_date, end_date).count
-                      month_locations = locations_count
-                    end
-                    company_locations = company_locations + locations_count
-                    @locations[i]['count'] = @locations[i]['count'] + locations_count
-                    @locations[13]['count'] = @locations[13]['count'] + locations_count
-                  %>
-                  <td><%= month_locations.to_s %></td>
-                <% end %>
-                <th><%= company_locations.to_s %></th>
-              </tr>
+                      company_locations = company_locations + locations_count
+                      @locations[i]['count'] = @locations[i]['count'] + locations_count
+                      @locations[13]['count'] = @locations[13]['count'] + locations_count
+                    %>
+                    <td><%= month_locations.to_s %></td>
+                  <% end %>
+                  <th><%= company_locations.to_s %></th>
+                </tr>
+              <% end %>
             <% end %>
           <tfoot>
             <tr>
