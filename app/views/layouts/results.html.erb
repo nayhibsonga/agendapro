@@ -21,7 +21,7 @@
 
         <!-- start: CSS -->
         <%= stylesheet_link_tag "search" %>
-        <%= stylesheet_link_tag "http://fonts.googleapis.com/css?family=Open+Sans:400,300,400italic,600,600italic,700,700italic,300italic" %>
+        <%= stylesheet_link_tag "https://fonts.googleapis.com/css?family=Open+Sans:400,300,400italic,600,600italic,700,700italic,300italic" %>
 		<%= yield :stylesheets %>
         <!-- end: CSS -->
 
@@ -43,8 +43,7 @@
 		<%= javascript_include_tag "home-head" %><!-- Removido -->
 		<!-- end: JavaScript-->
 
-		<!-- Fav and touch icons -->
-		<%= favicon_link_tag "favicon.png", :rel => "shortcut icon" %>
+		<%= render 'layouts/icons' %>
 
 	</head>
 
