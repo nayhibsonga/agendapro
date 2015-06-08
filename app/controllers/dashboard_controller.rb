@@ -17,6 +17,9 @@ class DashboardController < ApplicationController
 			current_user.company.company_setting.save
 		end
 
+
+		@session_bookings = SessionBooking.where('sessions_taken < sessions_amount and client_id is not null')
+
 		@due_payment = true if Company.find(current_user.company_id).payment_status == PaymentStatus.find_by_name("Emitido") unless current_user.role_id == Role.find_by_name("Super Admin").id
 		@service_providers = ServiceProvider.where(location_id: Location.where(company_id: current_user.company_id).accessible_by(current_ability))
 		@lastBookings = Booking.where(service_provider_id: @service_providers).where('start >= ?', Time.now).where('is_session = false or (is_session = true and is_session_booked = true)').order(updated_at: :desc).limit(50)
