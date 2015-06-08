@@ -87,7 +87,11 @@
                   <%
                     booking = Booking.where(:session_booking_id => session_booking.id, :is_session_booked => true).order('start asc').last
                   %>
-                  <td><span class="badge"><%= l booking.start %></span></td>
+                  <% if booking.nil? %>
+                    <td>Sin sesiones reservadas.</td>
+                  <% else %>
+                    <td><span class="badge"><%= l booking.start %></span></td>
+                  <% end %>
                 </tr>
                 <% end %>
               </tbody>
