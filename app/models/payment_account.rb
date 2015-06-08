@@ -50,7 +50,7 @@ class PaymentAccount < ActiveRecord::Base
 	        	row_array << 1
 	        	factura = payment_account.rut.gsub(/[\s.-]/,'').to_s + payment_account.bank_code.to_s + payment_account.account_type.to_s
 	        	row_array << factura
-	        	row_array << payment_account.updated_at
+	        	row_array << payment_account.updated_at + eval(ENV["TIME_ZONE_OFFSET"])
 	        	csv << row_array
 	        end
 	    end
