@@ -659,7 +659,7 @@ function editBookingModal(eventId) {
 			{
 			
 				$("#sessions-info").empty();
-				$("#sessions-info").append("Esta reserva corresponde a una sesión de un servicio. Si editas la sesión, se le pedirá al usuario validar la edición.");
+				$("#sessions-info").append("Esta reserva corresponde a una sesión de un servicio.");
 				$("#sessions-row").show();
 				$("#xButton").attr("disabled", true);
 			}
@@ -2139,7 +2139,7 @@ function checkClientSessions()
 					if(service.has_sessions)
 					{
 						$("#sessions-info").empty();
-						$("#sessions-info").append("Esta reserva corresponde a una sesión de un servicio. Si editas la sesión, se le pedirá al usuario validar la edición.");
+						$("#sessions-info").append("Esta reserva corresponde a una sesión de un servicio.");
 						$("#sessions-row").show();
 					}
 					else

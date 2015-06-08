@@ -164,11 +164,11 @@
                     <input type="hidden" name="type" value="admin_transfered" />
                     <div class="form-group">
                       <label for="start_date">Desde:</label>
-                      <input type="text" id="not_transfered_start" name="start_date" class="form-control datepicker" value="" />
+                      <input type="text" id="transfered_start" name="start_date" class="form-control datepicker" value="" />
                     </div>
                     <div class="form-group">
                       <label for="end_date">Hasta:</label>
-                      <input type="text" id="not_transfered_end" name="end_date" class="form-control datepicker" value="" />
+                      <input type="text" id="transfered_end" name="end_date" class="form-control datepicker" value="" />
                     </div>
                     <button class="btn btn-green">Descargar <i class="fa fa-file-text-o fa-lg"></i></button>
                   </form>
@@ -228,11 +228,11 @@
                     <input type="hidden" name="type" value="admin_transfered_bookings" />
                     <div class="form-group">
                       <label for="start_date">Desde:</label>
-                      <input type="text" id="transfered_start" name="start_date" class="form-control datepicker" value="" />
+                      <input type="text" id="bookings_transfered_start" name="start_date" class="form-control datepicker" value="" />
                     </div>
                     <div class="form-group">
                       <label for="end_date">Hasta:</label>
-                      <input type="text" id="transfered_end" name="end_date" class="form-control datepicker" value="" />
+                      <input type="text" id="bookings_transfered_end" name="end_date" class="form-control datepicker" value="" />
                     </div>
                     <button class="btn btn-green">Descargar <i class="fa fa-file-text-o fa-lg"></i></button>
                   </form>
@@ -287,11 +287,11 @@
                     <input type="hidden" name="type" value="company_pending" />
                     <div class="form-group">
                       <label for="start_date">Desde:</label>
-                      <input type="text" id="transfered_start" name="start_date" class="datepicker" value="" />
+                      <input type="text" id="bookings_not_transfered_start" name="start_date" class="form-control datepicker" value="" />
                     </div>
                     <div class="form-group">
                       <label for="end_date">hasta:</label>
-                      <input type="text" id="transfered_end" name="end_date" class="datepicker" value="" />
+                      <input type="text" id="bookings_not_transfered_end" name="end_date" class="form-control datepicker" value="" />
                     </div>
                     <button class="btn btn-green">Descargar <i class="fa fa-file-text-o fa-lg"></i></button>
                   </form>
@@ -515,6 +515,9 @@
       today: 'Hoy',
       clear: '',
       dateFormat: 'yy-mm-dd',
+      onSelect: function(newDate){
+        $(this).val(newDate);
+      }
     });
 
     $(".datepicker").each(function(){
