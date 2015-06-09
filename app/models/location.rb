@@ -287,14 +287,6 @@ class Location < ActiveRecord::Base
     return categories
   end
 
-  # def get_booking_configuration_email
-  #   conf = self.booking_configuration_email
-  #   if conf == 2
-  #     conf = self.company.company_setting.booking_configuration_email
-  #   end
-  #   return conf
-  # end
-
   # def self.booking_summary
   #   where(company_id: Company.where(active: true)).where(active: true).where(notification: true).where.not(email: nil).where.not(email: '').each do |location|
   #     if location.get_booking_configuration_email == 1

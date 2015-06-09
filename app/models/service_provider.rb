@@ -122,14 +122,6 @@ class ServiceProvider < ActiveRecord::Base
 		end
 	end
 
-	# def get_booking_configuration_email
-	# 	conf = self.booking_configuration_email
-	# 	if conf == 2
-	# 		conf = self.location.get_booking_configuration_email
-	# 	end
-	# 	return conf
-	# end
-
 	# def self.booking_summary
 	# 	where(company_id: Company.where(active: true)).where(location_id: Location.where(active: true)).where(active: true).each do |provider|
 	# 		if provider.get_booking_configuration_email == 1

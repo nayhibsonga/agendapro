@@ -1,7 +1,8 @@
 class ConvertOldNotificationToNew < ActiveRecord::Migration
   def change
     # Notificaciones por local
-    Location.where(notification: true, active: true).where.not(booking_configuration_email: 3) do |local|
+    puts "Editing locations"
+    Location.where(notification: true, active: true).where.not(booking_configuration_email: 3).each do |local|
       # Tipo de configuracion
       conf = local.booking_configuration_email
       if conf == 2
@@ -16,7 +17,7 @@ class ConvertOldNotificationToNew < ActiveRecord::Migration
           # Notification email
           notification = notification.where(summary: false).first
           unless notification
-            notification = NotificationEmail.create(
+            notification = NotificationEmail.new(
                 company: local.company,
                 email: local.email,
                 receptor_type: 1,
@@ -30,7 +31,7 @@ class ConvertOldNotificationToNew < ActiveRecord::Migration
                 confirmed_web: true,
                 canceled_web: true
               )
-            notification.save
+            notification.save(validate: false)
           end
 
           # Notification locations
@@ -41,14 +42,14 @@ class ConvertOldNotificationToNew < ActiveRecord::Migration
           nLocation.save
         when 1 # Summary
           # Notification email
-          notificacion = notificacion.where(summary: true).first
+          notification = notification.where(summary: true).first
           unless notification
-            notification = NotificationEmail.create(
+            notification = NotificationEmail.new(
                 company: local.company,
                 email: local.email,
                 receptor_type: 1
               )
-            notification.save
+            notification.save(validate: false)
           end
 
           # Notification locations
@@ -63,7 +64,8 @@ class ConvertOldNotificationToNew < ActiveRecord::Migration
     end
 
     # Notificacion por prestador
-    ServiceProvider.where(active: true, location_id: Location.where(active: true)).where.not(booking_configuration_email: 3).order(:location_id) do |provider|
+    puts "Editing providers"
+    ServiceProvider.where(active: true, location_id: Location.where(active: true)).where.not(booking_configuration_email: 3).order(:location_id).each do |provider|
       # Tipo de configuracion
       conf = provider.booking_configuration_email
       if conf == 2
@@ -81,7 +83,7 @@ class ConvertOldNotificationToNew < ActiveRecord::Migration
           # Notification email
           notification = notification.where(summary: false).first
           unless notification
-            notification = NotificationEmail.create(
+            notification = NotificationEmail.new(
                 company: provider.company,
                 email: provider.notification_email,
                 receptor_type: 2,
@@ -95,31 +97,31 @@ class ConvertOldNotificationToNew < ActiveRecord::Migration
                 confirmed_web: true,
                 canceled_web: true
               )
-            notification.save
+            notification.save(validate: false)
           end
 
           # Notification provider
           nProvider = NotificationProvider.create(
               service_provider: provider,
-              notification_email: notificacion
+              notification_email: notification
             )
           nProvider.save
         when 1 # Summary
           # Notification email
           notification = notification.where(summary: true).first
           unless notification
-            notification = NotificationEmail.create(
+            notification = NotificationEmail.new(
                 company: local.company,
                 email: local.email,
                 receptor_type: 2
               )
-            notification.save
+            notification.save(validate: false)
           end
 
           # Notification provider
           nProvider = NotificationProvider.create(
               service_provider: provider,
-              notification_email: notificacion
+              notification_email: notification
             )
           nProvider.save
         else
