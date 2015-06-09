@@ -19,6 +19,9 @@
         <li role="presentation"><a id="embedded_link" href="#embedded" role="tab" data-toggle="pill" data-title="Facebook / Web" data-description="Agrega una pestaña de reservas a la página de facebook de tu empresa.">Facebook / Web</a></li>
         <% if current_user.company.company_setting.online_payment_capable %>
         <li role="presentation"><a id="payment_link" href="#online-payment" role="tab" data-toggle="pill" data-title="Pago Online" data-description="Habilita el pago en línea, configura si es editable o cancelable una reserva pagada">Pago Online</a></li>
+        
+        <li role="presentation"><a id="promotions_link" href="#promotions" role="tab" data-toggle="pill" data-title="Promociones" data-description="Configura los distintos horarios para ofrecer tus servicios en promoción.">Promociones</a></li>
+        
         <% end %>
         <% if current_user.company.company_setting.deal_activate %>
         <li role="presentation"><a id="deal_link" href="#deals" role="tab" data-toggle="pill" data-title="Convenios" data-description="Configura el uso de convenios, el tiempo y la cantidad de veces que se pueden usar.">Convenios</a></li>
@@ -98,20 +101,36 @@
             </div>
             <% end %>
           </div>
-          <% if current_user.company.company_setting.deal_activate %>
+          
           <div class="row">
-            <div class="col-md-6">
-              <div onclick="$('#deal_link').click();" class="media">
-                <div class="media-left">
-                  <%= image_tag 'admin/6.png', class: 'media-object media-image' %>
-                </div>
-                <div class="media-body">
-                  <span class="text-green">Convenios:</span> configura el uso de convenios, el tiempo y la cantidad de veces que se pueden usar.
+
+            <% if current_user.company.company_setting.online_payment_capable %>
+              <div class="col-md-6">
+                <div onclick="$('#promotions_link').click();" class="media">
+                  <div class="media-left">
+                    <%= image_tag 'admin/icono_promociones.png', class: 'media-object media-image' %>
+                  </div>
+                  <div class="media-body">
+                    <span class="text-green">Promociones:</span> configura los distintos horarios para ofrecer descuentos en tus servicios prepagados en línea.
+                  </div>
                 </div>
               </div>
-            </div>
+            <% end %>
+            <% if current_user.company.company_setting.deal_activate %>
+              <div class="col-md-6">
+                <div onclick="$('#deal_link').click();" class="media">
+                  <div class="media-left">
+                    <%= image_tag 'admin/6.png', class: 'media-object media-image' %>
+                  </div>
+                  <div class="media-body">
+                    <span class="text-green">Convenios:</span> configura el uso de convenios, el tiempo y la cantidad de veces que se pueden usar.
+                  </div>
+                </div>
+              </div>
+            <% end %>
+
           </div>
-          <% end %>
+          
         </div>
         <!-- Company -->
         <div class="tab-pane" id="company">
@@ -667,6 +686,130 @@
           </div>
         </div>
         <% end %>
+
+        <!-- Promociones -->
+
+        <% if current_user.company.company_setting.online_payment_capable %>
+
+        <div class="tab-pane" id="promotions">
+          <div class="row">
+            <div class="col-md-12">
+
+              <%= form_for @company_setting, :html => {:class => 'company-form', :id => 'promo-times-form'} do |f| %>
+
+                <%= f.hidden_field :company_id, :value => current_user.company.id %>
+
+                <%= f.fields_for :promo_time do |p| %>
+                <div class="row">
+                  <div class="col-md-12">
+                    <div class="form-group">
+                      <div class="checkbox">
+                        <label>
+                          <%= p.check_box :active %> Activar promociones
+                        </label>
+                        <span class="help-block">Activa las promociones para ofrecer descuentos en tus servicios prepagados en línea según el horario de la reserva.</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="row">
+                  <div class="col-md-3">
+                    <div class="hour-title">
+                      Mañana
+                    </div>
+                  </div>
+                  <div class="col-md-3">
+                    <div class="promo-hour-select">
+                      <%= p.time_select :morning_start, {minute_step: 15}, {:class => 'form-control date-select', required: true} %> - <%= p.time_select :morning_end, {minute_step: 15}, {:class => 'form-control date-select', required: true} %>
+                    </div>
+                  </div>
+                  <div class="col-md-2">
+                    <div class="form-group">
+                      <div class="input-group">
+                        <div class="input-group-addon">Descuento</div>
+                        <% if @company_setting.promo_time.nil? %>
+                          <%= p.select :morning_default, options_for_select({ "0 %" => "0", "5 %" => "5", "10 %" => "10", "15 %" => "15", "20 %" => "20", "25 %" => "25", "30 %" => "30", "35 %" => "35", "40 %" => "40", "45 %" => "45", "50 %" => "50", "55 %" => "55", "60 %" => "60", "65 %" => "65", "70 %" => "70", "75 %" => "75", "80 %" => "80", "85 %" => "85", "90 %" => "90", "95 %" => "95" }), {}, {class: "form-control"} %>
+                        <% else %>
+                          <%= p.select :morning_default, options_for_select({ "0 %" => "0", "5 %" => "5", "10 %" => "10", "15 %" => "15", "20 %" => "20", "25 %" => "25", "30 %" => "30", "35 %" => "35", "40 %" => "40", "45 %" => "45", "50 %" => "50", "55 %" => "55", "60 %" => "60", "65 %" => "65", "70 %" => "70", "75 %" => "75", "80 %" => "80", "85 %" => "85", "90 %" => "90", "95 %" => "95" }, @company_setting.promo_time.morning_default), {}, {class: "form-control"} %>
+                        <% end %>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="row">
+                  <div class="col-md-3">
+                    <div class="hour-title">
+                      Tarde
+                    </div>
+                  </div>
+                  <div class="col-md-3">
+                    <div class="promo-hour-select">
+                      <%= p.time_select :afternoon_start, {minute_step: 15}, {:class => 'form-control date-select', required: true} %> - <%= p.time_select :afternoon_end, {minute_step: 15}, {:class => 'form-control date-select', required: true} %>
+                    </div>
+                  </div>
+                  <div class="col-md-2">
+                    <div class="form-group">
+                      <div class="input-group">
+                        <div class="input-group-addon">Descuento</div>
+                        <% if @company_setting.promo_time.nil? %>
+                          <%= p.select :afternoon_default, options_for_select({ "0 %" => "0", "5 %" => "5", "10 %" => "10", "15 %" => "15", "20 %" => "20", "25 %" => "25", "30 %" => "30", "35 %" => "35", "40 %" => "40", "45 %" => "45", "50 %" => "50", "55 %" => "55", "60 %" => "60", "65 %" => "65", "70 %" => "70", "75 %" => "75", "80 %" => "80", "85 %" => "85", "90 %" => "90", "95 %" => "95" }), {}, {class: "form-control"} %>
+                        <% else %>
+                          <%= p.select :afternoon_default, options_for_select({ "0 %" => "0", "5 %" => "5", "10 %" => "10", "15 %" => "15", "20 %" => "20", "25 %" => "25", "30 %" => "30", "35 %" => "35", "40 %" => "40", "45 %" => "45", "50 %" => "50", "55 %" => "55", "60 %" => "60", "65 %" => "65", "70 %" => "70", "75 %" => "75", "80 %" => "80", "85 %" => "85", "90 %" => "90", "95 %" => "95" }, @company_setting.promo_time.afternoon_default), {}, {class: "form-control"} %>
+                        <% end %>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="row">
+                  <div class="col-md-3">
+                    <div class="hour-title">
+                      Noche
+                    </div>
+                  </div>
+                  <div class="col-md-3">
+                    <div class="promo-hour-select">
+                      <%= p.time_select :night_start, {minute_step: 15}, {:class => 'form-control date-select', required: true} %> - <%= p.time_select :night_end, {minute_step: 15}, {:class => 'form-control date-select', required: true} %>
+                    </div>
+                  </div>
+                  <div class="col-md-2">
+                    <div class="form-group">
+                      <div class="input-group">
+                        <div class="input-group-addon">Descuento</div>
+                        <% if @company_setting.promo_time.nil? %>
+                          <%= p.select :night_default, options_for_select({ "0 %" => "0", "5 %" => "5", "10 %" => "10", "15 %" => "15", "20 %" => "20", "25 %" => "25", "30 %" => "30", "35 %" => "35", "40 %" => "40", "45 %" => "45", "50 %" => "50", "55 %" => "55", "60 %" => "60", "65 %" => "65", "70 %" => "70", "75 %" => "75", "80 %" => "80", "85 %" => "85", "90 %" => "90", "95 %" => "95" }), {}, {class: "form-control"} %>
+                        <% else %>
+                          <%= p.select :night_default, options_for_select({ "0 %" => "0", "5 %" => "5", "10 %" => "10", "15 %" => "15", "20 %" => "20", "25 %" => "25", "30 %" => "30", "35 %" => "35", "40 %" => "40", "45 %" => "45", "50 %" => "50", "55 %" => "55", "60 %" => "60", "65 %" => "65", "70 %" => "70", "75 %" => "75", "80 %" => "80", "85 %" => "85", "90 %" => "90", "95 %" => "95" }, @company_setting.promo_time.night_default), {}, {class: "form-control"} %>
+                        <% end %>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                  <div class="row">
+                    <div class="col-md-12">
+                      <div class="form-group">
+                        <%= f.submit 'Guardar', :class => 'btn btn-green' %>
+                        <%= link_to 'Cancelar', dashboard_path, :class => "btn btn-default" %>
+                      </div>
+                    </div>
+                  </div>
+
+                <% end %>
+
+              <% end %>
+
+            </div>
+          </div>
+
+        </div>
+
+        <% end %>
+
+        <!-- Fin Promociones -->
+
         <!-- Deals -->
         <% if current_user.company.company_setting.deal_activate %>
         <div class="tab-pane" id="deals">

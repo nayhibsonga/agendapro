@@ -7,7 +7,81 @@
   </div>
 </div>
 
-<%= render 'form' %>
+<div class="row">
+	<div class="col-md-12">
+	  <ul id="myTab" class="nav nav-pills tab-margin" role="tablist">
+	    <li class="active"><a href="#service" role="tab" data-toggle="tab" class="tab_index promotions_tab_index">Servicio</a></li>
+	    <li><a href="#promotions" role="tab" data-toggle="tab" class="tab_index promotions_tab_index">Promociones</a></li>
+	  </ul>
+	</div>
+</div>
+
+<div class="tab-content">
+
+    <!-- Inicio Servicio -->
+
+    <div class="row tab-pane fade in active" id="service">
+		<%= render 'form' %>
+	</div>
+
+	<!-- Fin Servicio -->
+
+
+	<!-- Inicio Promociones -->
+
+	<div class="row tab-pane fade" id="promotions">
+		<div class="container-fluid">
+			<div class="row">
+				<div class="col-md-8">
+					<h3>Promociones</h3>
+
+					<div class="well">
+						<div class="row">
+							<div class="col-md-12">
+								<label>Descuento reservas de último minuto</label>
+								<span class="help-block">Activa descuentos para este servicio cuando sea agendado pocas horas antes de su realización.</span>
+
+								<div class="form-group">
+									<div class="input-group">
+				                        <label>
+				                          	<input type="checkbox" name="has_last_minute_discount" />
+				                        </label>
+			                        	<select name="last_minute_discount" class="form-control">
+			                        		<% for i in 0..19 %>
+			                        			<option value="<%= (i*5).to_s %>"><%= (i*5).to_s %> %</option>
+			                        		<% end %>
+			                        	</select>
+			                        	 de descuento en reservas de último minuto hechas hasta 
+			                        	<select name="last_minute_hours" class="form-control">
+			                        		<% for i in 1..12 %>
+			                        			<option value="<%= i.to_s %>"><%= i.to_s %> horas</option>
+			                        		<% end %>
+			                        	</select>
+			                        	antes de la realización del servicio.
+				                    </div>
+								</div>
+
+							</div>
+						</div>
+					</div>
+
+					<div class="well">
+						<div class="row">
+							<div class="col-md-12">
+								<label>Descuentos en horarios bajos</label>
+								<span class="help-block">Activa descuentos para este servicio según la hora de realización.</span>
+							</div>
+						</div>
+					</div>
+
+				</div>
+			</div>
+		</div>
+	</div>
+
+    <!-- Fin Promociones -->
+
+</div>
 
 <% content_for :scripts do %>
   <%= javascript_include_tag "service" %>

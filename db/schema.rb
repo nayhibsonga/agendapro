@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150603142025) do
+ActiveRecord::Schema.define(version: 20150609171708) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -483,6 +483,32 @@ ActiveRecord::Schema.define(version: 20150603142025) do
     t.integer  "monthly_mails",     default: 5000,  null: false
   end
 
+  create_table "promo_times", force: true do |t|
+    t.integer  "company_setting_id"
+    t.time     "morning_start",      default: '2000-01-01 09:00:00', null: false
+    t.time     "morning_end",        default: '2000-01-01 12:00:00', null: false
+    t.time     "afternoon_start",    default: '2000-01-01 12:00:00', null: false
+    t.time     "afternoon_end",      default: '2000-01-01 18:00:00', null: false
+    t.time     "night_start",        default: '2000-01-01 18:00:00', null: false
+    t.time     "night_end",          default: '2000-01-01 20:00:00', null: false
+    t.integer  "morning_default",    default: 0
+    t.integer  "afternoon_default",  default: 0
+    t.integer  "night_default",      default: 0
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.boolean  "active",             default: false
+  end
+
+  create_table "promos", force: true do |t|
+    t.integer  "service_id"
+    t.integer  "day_id"
+    t.integer  "morning_discount",   default: 0
+    t.integer  "afternoon_discount", default: 0
+    t.integer  "night_discount",     default: 0
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
   create_table "promotions", force: true do |t|
     t.string   "code",       null: false
     t.string   "first_name"
@@ -673,29 +699,33 @@ ActiveRecord::Schema.define(version: 20150603142025) do
   add_index "service_tags", ["tag_id"], name: "index_service_tags_on_tag_id", using: :btree
 
   create_table "services", force: true do |t|
-    t.string   "name",                                null: false
-    t.float    "price",               default: 0.0
-    t.integer  "duration",                            null: false
+    t.string   "name",                                     null: false
+    t.float    "price",                    default: 0.0
+    t.integer  "duration",                                 null: false
     t.text     "description"
-    t.boolean  "group_service",       default: false
+    t.boolean  "group_service",            default: false
     t.integer  "capacity"
-    t.boolean  "waiting_list",        default: false
-    t.integer  "company_id",                          null: false
+    t.boolean  "waiting_list",             default: false
+    t.integer  "company_id",                               null: false
     t.integer  "service_category_id"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.boolean  "active",              default: true
-    t.boolean  "show_price",          default: true
-    t.integer  "order",               default: 0
-    t.boolean  "outcall",             default: false
-    t.boolean  "has_discount",        default: false
-    t.float    "discount",            default: 0.0
-    t.boolean  "online_payable",      default: false
-    t.decimal  "comission_value",     default: 0.0,   null: false
-    t.integer  "comission_option",    default: 0,     null: false
-    t.boolean  "online_booking",      default: true
-    t.boolean  "has_sessions",        default: false
+    t.boolean  "active",                   default: true
+    t.boolean  "show_price",               default: true
+    t.integer  "order",                    default: 0
+    t.boolean  "outcall",                  default: false
+    t.boolean  "has_discount",             default: false
+    t.float    "discount",                 default: 0.0
+    t.boolean  "online_payable",           default: false
+    t.decimal  "comission_value",          default: 0.0,   null: false
+    t.integer  "comission_option",         default: 0,     null: false
+    t.boolean  "online_booking",           default: true
+    t.boolean  "has_sessions",             default: false
     t.integer  "sessions_amount"
+    t.boolean  "has_time_discount",        default: false
+    t.boolean  "has_last_minute_discount", default: false
+    t.integer  "last_minute_hours",        default: 0
+    t.integer  "last_minute_discount",     default: 0
   end
 
   add_index "services", ["company_id"], name: "index_services_on_company_id", using: :btree
