@@ -111,8 +111,8 @@ class ConvertOldNotificationToNew < ActiveRecord::Migration
           notification = notification.where(summary: true).first
           unless notification
             notification = NotificationEmail.new(
-                company: local.company,
-                email: local.email,
+                company: provider.company,
+                email: provider.notification_email,
                 receptor_type: 2
               )
             notification.save(validate: false)
