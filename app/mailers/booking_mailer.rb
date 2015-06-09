@@ -79,42 +79,81 @@ class BookingMailer < ActionMailer::Base
 		end
 
 		# Notificacion service provider
-		# if book_info.service_provider.get_booking_configuration_email == 0
-		# 	message[:to] << {
-		# 			:email => book_info.service_provider.notification_email,
-		# 			:type => 'to'
-		# 		}
-		# 	message[:merge_vars] << {
-		# 			:rcpt => book_info.service_provider.notification_email,
-		# 			:vars => [
-		# 				{
-		# 					:name => 'COMPANYCOMMENT',
-		# 					:content => book_info.company_comment
-		# 				}
-		# 			]
-		# 		}
-		# end
+		providers_emails = NotificationEmail.where(id: NotificationProvider.select(:notification_email_id).where(service_provider: book_info.service_provider), receptor_type: 2).select(:email).distinct
+		if book_info.web_origin
+			providers_emails = providers_emails.where(new_web: true)
+		else
+			providers_emails providers_emails.where(new: true)
+		end
+		providers_emails.each do |provider|
+			message[:to] << {
+					:email => provider.email,
+					:type => 'to'
+				}
+			message[:merge_vars] << {
+					:rcpt => provider.email,
+					:vars => [
+						{
+							:name => 'COMPANYCOMMENT',
+							:content => book_info.company_comment
+						}
+					]
+				}
+		end
 
 		# Email notificacion local
-		# if book_info.location.notification and !book_info.location.email.blank? and book_info.location.get_booking_configuration_email == 0
-		# 	message[:to] << {
-		# 		:email => book_info.location.email,
-		# 		:type => 'to'
-		# 	}
-		# 	message[:merge_vars] << {
-		# 		:rcpt => book_info.location.email,
-		# 		:vars => [
-		# 			{
-		# 				:name => 'COMPANYCOMMENT',
-		# 				:content => book_info.company_comment
-		# 			}
-		# 		]
-		# 	}
-		# 	message[:global_merge_vars][0] = {
-		# 				:name => 'SERVICEPROVIDER',
-		# 				:content => book_info.location.name
-		# 			}
-		# end
+		location_emails = NotificationEmail.where(id:  NotificationLocation.select(:notification_email_id).where(location: book_info.location), receptor_type: 1).select(:email).distinct
+		if book_info.web_origin
+			location_emails = location_emails.where(new_web: true)
+		else
+			location_emails location_emails.where(new: true)
+		end
+		location_emails.each do |local|
+			message[:to] << {
+				:email => local.email,
+				:type => 'to'
+			}
+			message[:merge_vars] << {
+				:rcpt => local.email,
+				:vars => [
+					{
+						:name => 'COMPANYCOMMENT',
+						:content => book_info.company_comment
+					}
+				]
+			}
+			message[:global_merge_vars][0] = {
+						:name => 'SERVICEPROVIDER',
+						:content => book_info.location.name
+					}
+		end
+
+		# Email notificacion compañia
+		company_emails = NotificationEmail.where(company: book_info.location.company, receptor_type: 0).select(:email).distinct
+		if book_info.web_origin
+			company_emails = company_emails.where(new_web: true)
+		else
+			company_emails company_emails.where(new: true)
+		end
+		company_emails.each do |company|
+			message[:to] << {
+				:email => company.email,
+				:type => 'to'
+			}
+			message[:merge_vars] << {
+				:rcpt => company.email,
+				:vars => [
+					{
+						:name => 'COMPANYCOMMENT',
+						:content => book_info.company_comment
+					}
+				]
+			}
+			message[:global_merge_vars][0] = {
+						:name => 'SERVICEPROVIDER',
+						:content => book_info.location.company.name
+					}
+		end
 
 		second_address = ''
 		if !book_info.location.second_address.blank?
@@ -247,42 +286,81 @@ class BookingMailer < ActionMailer::Base
 		end
 
 		# Notificacion service provider
-		# if book_info.service_provider.get_booking_configuration_email == 0
-		# 	message[:to] << {
-		# 			:email => book_info.service_provider.notification_email,
-		# 			:type => 'to'
-		# 		}
-		# 	message[:merge_vars] << {
-		# 			:rcpt => book_info.service_provider.notification_email,
-		# 			:vars => [
-		# 				{
-		# 					:name => 'COMPANYCOMMENT',
-		# 					:content => book_info.company_comment
-		# 				}
-		# 			]
-		# 		}
-		# end
+		providers_emails = NotificationEmail.where(id: NotificationProvider.select(:notification_email_id).where(service_provider: book_info.service_provider), receptor_type: 2).select(:email).distinct
+		if book_info.web_origin
+			providers_emails = providers_emails.where(modified_web: true)
+		else
+			providers_emails providers_emails.where(modified: true)
+		end
+		providers_emails.each do |provider|
+			message[:to] << {
+					:email => provider.email,
+					:type => 'to'
+				}
+			message[:merge_vars] << {
+					:rcpt => provider.email,
+					:vars => [
+						{
+							:name => 'COMPANYCOMMENT',
+							:content => book_info.company_comment
+						}
+					]
+				}
+		end
 
 		# Email notificacion local
-		# if book_info.location.notification and !book_info.location.email.blank? and book_info.location.get_booking_configuration_email == 0
-		# 	message[:to] << {
-		# 		:email => book_info.location.email,
-		# 		:type => 'to'
-		# 	}
-		# 	message[:merge_vars] << {
-		# 		:rcpt => book_info.location.email,
-		# 		:vars => [
-		# 			{
-		# 				:name => 'COMPANYCOMMENT',
-		# 				:content => book_info.company_comment
-		# 			}
-		# 		]
-		# 	}
-		# 	message[:global_merge_vars][0] = {
-		# 				:name => 'SERVICEPROVIDER',
-		# 				:content => book_info.location.name
-		# 			}
-		# end
+		location_emails = NotificationEmail.where(id:  NotificationLocation.select(:notification_email_id).where(location: book_info.location), receptor_type: 1).select(:email).distinct
+		if book_info.web_origin
+			location_emails = location_emails.where(modified_web: true)
+		else
+			location_emails location_emails.where(modified: true)
+		end
+		location_emails.each do |local|
+			message[:to] << {
+				:email => local.email,
+				:type => 'to'
+			}
+			message[:merge_vars] << {
+				:rcpt => local.email,
+				:vars => [
+					{
+						:name => 'COMPANYCOMMENT',
+						:content => book_info.company_comment
+					}
+				]
+			}
+			message[:global_merge_vars][0] = {
+						:name => 'SERVICEPROVIDER',
+						:content => book_info.location.name
+					}
+		end
+
+		# Email notificacion compañia
+		company_emails = NotificationEmail.where(company: book_info.location.company, receptor_type: 0).select(:email).distinct
+		if book_info.web_origin
+			company_emails = company_emails.where(modified_web: true)
+		else
+			company_emails company_emails.where(modified: true)
+		end
+		company_emails.each do |company|
+			message[:to] << {
+				:email => company.email,
+				:type => 'to'
+			}
+			message[:merge_vars] << {
+				:rcpt => company.email,
+				:vars => [
+					{
+						:name => 'COMPANYCOMMENT',
+						:content => book_info.company_comment
+					}
+				]
+			}
+			message[:global_merge_vars][0] = {
+						:name => 'SERVICEPROVIDER',
+						:content => book_info.location.company.name
+					}
+		end
 
 		second_address = ''
 		if !book_info.location.second_address.blank?
@@ -413,42 +491,81 @@ class BookingMailer < ActionMailer::Base
 		end
 
 		# Notificacion service provider
-		# if book_info.service_provider.get_booking_configuration_email == 0
-		# 	message[:to] << {
-		# 			:email => book_info.service_provider.notification_email,
-		# 			:type => 'to'
-		# 		}
-		# 	message[:merge_vars] << {
-		# 			:rcpt => book_info.service_provider.notification_email,
-		# 			:vars => [
-		# 				{
-		# 					:name => 'COMPANYCOMMENT',
-		# 					:content => book_info.company_comment
-		# 				}
-		# 			]
-		# 		}
-		# end
+		providers_emails = NotificationEmail.where(id: NotificationProvider.select(:notification_email_id).where(service_provider: book_info.service_provider), receptor_type: 2).select(:email).distinct
+		if book_info.web_origin
+			providers_emails = providers_emails.where(confirmed_web: true)
+		else
+			providers_emails providers_emails.where(confirmed: true)
+		end
+		providers_emails.each do |provider|
+			message[:to] << {
+					:email => provider.email,
+					:type => 'to'
+				}
+			message[:merge_vars] << {
+					:rcpt => provider.email,
+					:vars => [
+						{
+							:name => 'COMPANYCOMMENT',
+							:content => book_info.company_comment
+						}
+					]
+				}
+		end
 
 		# Email notificacion local
-		# if book_info.location.notification and !book_info.location.email.blank? and book_info.location.get_booking_configuration_email == 0
-		# 	message[:to] << {
-		# 		:email => book_info.location.email,
-		# 		:type => 'to'
-		# 	}
-		# 	message[:merge_vars] << {
-		# 		:rcpt => book_info.location.email,
-		# 		:vars => [
-		# 			{
-		# 				:name => 'COMPANYCOMMENT',
-		# 				:content => book_info.company_comment
-		# 			}
-		# 		]
-		# 	}
-		# 	message[:global_merge_vars][0] = {
-		# 				:name => 'SERVICEPROVIDER',
-		# 				:content => book_info.location.name
-		# 			}
-		# end
+		location_emails = NotificationEmail.where(id:  NotificationLocation.select(:notification_email_id).where(location: book_info.location), receptor_type: 1).select(:email).distinct
+		if book_info.web_origin
+			location_emails = location_emails.where(confirmed_web: true)
+		else
+			location_emails location_emails.where(confirmed: true)
+		end
+		location_emails.each do |local|
+			message[:to] << {
+				:email => local.email,
+				:type => 'to'
+			}
+			message[:merge_vars] << {
+				:rcpt => local.email,
+				:vars => [
+					{
+						:name => 'COMPANYCOMMENT',
+						:content => book_info.company_comment
+					}
+				]
+			}
+			message[:global_merge_vars][0] = {
+						:name => 'SERVICEPROVIDER',
+						:content => book_info.location.name
+					}
+		end
+
+		# Email notificacion compañia
+		company_emails = NotificationEmail.where(company: book_info.location.company, receptor_type: 0).select(:email).distinct
+		if book_info.web_origin
+			company_emails = company_emails.where(confirmed_web: true)
+		else
+			company_emails company_emails.where(confirmed: true)
+		end
+		company_emails.each do |company|
+			message[:to] << {
+				:email => company.email,
+				:type => 'to'
+			}
+			message[:merge_vars] << {
+				:rcpt => company.email,
+				:vars => [
+					{
+						:name => 'COMPANYCOMMENT',
+						:content => book_info.company_comment
+					}
+				]
+			}
+			message[:global_merge_vars][0] = {
+						:name => 'SERVICEPROVIDER',
+						:content => book_info.location.company.name
+					}
+		end
 
 		# => Metadata
 		async = false
@@ -533,42 +650,81 @@ class BookingMailer < ActionMailer::Base
 		end
 
 		# Notificacion service provider
-		# if book_info.service_provider.get_booking_configuration_email == 0
-		# 	message[:to] << {
-		# 			:email => book_info.service_provider.notification_email,
-		# 			:type => 'to'
-		# 		}
-		# 	message[:merge_vars] << {
-		# 			:rcpt => book_info.service_provider.notification_email,
-		# 			:vars => [
-		# 				{
-		# 					:name => 'COMPANYCOMMENT',
-		# 					:content => book_info.company_comment
-		# 				}
-		# 			]
-		# 		}
-		# end
+		providers_emails = NotificationEmail.where(id: NotificationProvider.select(:notification_email_id).where(service_provider: book_info.service_provider), receptor_type: 2).select(:email).distinct
+		if book_info.web_origin
+			providers_emails = providers_emails.where(canceled_web: true)
+		else
+			providers_emails providers_emails.where(canceled: true)
+		end
+		providers_emails.each do |provider|
+			message[:to] << {
+					:email => provider.email,
+					:type => 'to'
+				}
+			message[:merge_vars] << {
+					:rcpt => provider.email,
+					:vars => [
+						{
+							:name => 'COMPANYCOMMENT',
+							:content => book_info.company_comment
+						}
+					]
+				}
+		end
 
 		# Email notificacion local
-		# if book_info.location.notification and !book_info.location.email.blank? and book_info.location.get_booking_configuration_email == 0
-		# 	message[:to] << {
-		# 		:email => book_info.location.email,
-		# 		:type => 'to'
-		# 	}
-		# 	message[:merge_vars] << {
-		# 		:rcpt => book_info.location.email,
-		# 		:vars => [
-		# 			{
-		# 				:name => 'COMPANYCOMMENT',
-		# 				:content => book_info.company_comment
-		# 			}
-		# 		]
-		# 	}
-		# 	message[:global_merge_vars][0] = {
-		# 				:name => 'SERVICEPROVIDER',
-		# 				:content => book_info.location.name
-		# 			}
-		# end
+		location_emails = NotificationEmail.where(id:  NotificationLocation.select(:notification_email_id).where(location: book_info.location), receptor_type: 1).select(:email).distinct
+		if book_info.web_origin
+			location_emails = location_emails.where(canceled_web: true)
+		else
+			location_emails location_emails.where(canceled: true)
+		end
+		location_emails.each do |local|
+			message[:to] << {
+				:email => local.email,
+				:type => 'to'
+			}
+			message[:merge_vars] << {
+				:rcpt => local.email,
+				:vars => [
+					{
+						:name => 'COMPANYCOMMENT',
+						:content => book_info.company_comment
+					}
+				]
+			}
+			message[:global_merge_vars][0] = {
+						:name => 'SERVICEPROVIDER',
+						:content => book_info.location.name
+					}
+		end
+
+		# Email notificacion compañia
+		company_emails = NotificationEmail.where(company: book_info.location.company, receptor_type: 0).select(:email).distinct
+		if book_info.web_origin
+			company_emails = company_emails.where(canceled_web: true)
+		else
+			company_emails company_emails.where(canceled: true)
+		end
+		company_emails.each do |company|
+			message[:to] << {
+				:email => company.email,
+				:type => 'to'
+			}
+			message[:merge_vars] << {
+				:rcpt => company.email,
+				:vars => [
+					{
+						:name => 'COMPANYCOMMENT',
+						:content => book_info.company_comment
+					}
+				]
+			}
+			message[:global_merge_vars][0] = {
+						:name => 'SERVICEPROVIDER',
+						:content => book_info.location.company.name
+					}
+		end
 
 		second_address = ''
 		if !book_info.location.second_address.blank?
@@ -697,42 +853,66 @@ class BookingMailer < ActionMailer::Base
 		end
 
 		# Notificacion service provider
-		# if book_info.service_provider.get_booking_configuration_email == 0
-		# 	message[:to] << {
-		# 		  :email => book_info.service_provider.notification_email,
-		# 		  :type => 'to'
-		# 		}
-		# 	message[:merge_vars] << {
-		# 		  :rcpt => book_info.service_provider.notification_email,
-		# 		  :vars => [
-		# 				{
-		# 					:name => 'COMPANYCOMMENT',
-		# 					:content => book_info.company_comment
-		# 				}
-		# 		  ]
-		# 		}
-		# end
+		providers_emails = NotificationEmail.where(id: NotificationProvider.select(:notification_email_id).where(service_provider: book_info.service_provider), receptor_type: 2, summary: false).select(:email).distinct
+		providers_emails.each do |provider|
+			message[:to] << {
+					:email => provider.email,
+					:type => 'to'
+				}
+			message[:merge_vars] << {
+					:rcpt => provider.email,
+					:vars => [
+						{
+							:name => 'COMPANYCOMMENT',
+							:content => book_info.company_comment
+						}
+					]
+				}
+		end
 
 		# Email notificacion local
-		# if book_info.location.notification and !book_info.location.email.blank? and book_info.location.get_booking_configuration_email == 0
-		# 	message[:to] << {
-		# 		:email => book_info.location.email,
-		# 		:type => 'to'
-		# 	}
-		# 	message[:merge_vars] << {
-		# 		:rcpt => book_info.location.email,
-		# 		:vars => [
-		# 			{
-		# 				:name => 'COMPANYCOMMENT',
-		# 				:content => book_info.company_comment
-		# 			}
-		# 		]
-		# 	}
-		# 	message[:global_merge_vars][0] = {
-		# 				:name => 'SERVICEPROVIDER',
-		# 				:content => book_info.location.name
-		# 			}
-		# end
+		location_emails = NotificationEmail.where(id:  NotificationLocation.select(:notification_email_id).where(location: book_info.location), receptor_type: 1, summary: false).select(:email).distinct
+		location_emails.each do |local|
+			message[:to] << {
+				:email => local.email,
+				:type => 'to'
+			}
+			message[:merge_vars] << {
+				:rcpt => local.email,
+				:vars => [
+					{
+						:name => 'COMPANYCOMMENT',
+						:content => book_info.company_comment
+					}
+				]
+			}
+			message[:global_merge_vars][0] = {
+						:name => 'SERVICEPROVIDER',
+						:content => book_info.location.name
+					}
+		end
+
+		# Email notificacion compañia
+		company_emails = NotificationEmail.where(company: book_info.location.company, receptor_type: 0, summary: false).select(:email).distinct
+		company_emails.each do |company|
+			message[:to] << {
+				:email => company.email,
+				:type => 'to'
+			}
+			message[:merge_vars] << {
+				:rcpt => company.email,
+				:vars => [
+					{
+						:name => 'COMPANYCOMMENT',
+						:content => book_info.company_comment
+					}
+				]
+			}
+			message[:global_merge_vars][0] = {
+						:name => 'SERVICEPROVIDER',
+						:content => book_info.location.company.name
+					}
+		end
 
 		second_address = ''
 		if !book_info.location.second_address.blank?
