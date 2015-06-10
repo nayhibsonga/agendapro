@@ -83,9 +83,14 @@ class CompanySettingsController < ApplicationController
           @company = Company.find(current_user.company_id)
           @emails = current_user.company.company_from_email
           @company_from_email = CompanyFromEmail.new
+          @staff_codes = current_user.company.staff_codes
+          @staff_code = StaffCode.new
+          @deals = current_user.company.deals
+          @deal = Deal.new
           @company_setting = @company.company_setting
           @web_address = Company.find(current_user.company_id).web_address
-          render action: 'edit' }
+          redirect_to edit_company_setting_path(@company_setting)
+        }
         format.json { render json: @company_setting.errors, status: :unprocessable_entity }
       end
     end

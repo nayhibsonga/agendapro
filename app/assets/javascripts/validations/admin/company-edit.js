@@ -100,3 +100,105 @@ $(function() {
 	});
 
 });
+
+$.validator.addMethod('morning', function(value, element, params) {
+    
+    var morningStart = $("#company_setting_promo_time_attributes_morning_start_4i").val() + $("#company_setting_promo_time_attributes_morning_start_5i").val();
+    var morningEnd = $("#company_setting_promo_time_attributes_morning_end_4i").val() + $("#company_setting_promo_time_attributes_morning_end_5i").val();
+
+    return morningStart <= morningEnd;
+
+}, 'El fin de la mañana no puede ser menor al inicio.');
+
+$.validator.addMethod('afternoon', function(value, element, params) {
+    
+    var afternoonStart = $("#company_setting_promo_time_attributes_afternoon_start_4i").val() + $("#company_setting_promo_time_attributes_afternoon_start_5i").val();
+    var afternoonEnd = $("#company_setting_promo_time_attributes_afternoon_end_4i").val() + $("#company_setting_promo_time_attributes_afternoon_end_5i").val();
+    var morningEnd = $("#company_setting_promo_time_attributes_morning_end_4i").val() + $("#company_setting_promo_time_attributes_morning_end_5i").val();
+
+    return afternoonStart <= afternoonEnd && morningEnd <= afternoonStart;
+
+}, 'El inicio de la tarde no puede ser menor al fin de la mañana ni mayor al fin de la tarde.');
+
+$.validator.addMethod('night', function(value, element, params) {
+    
+    var nightStart = $("#company_setting_promo_time_attributes_night_start_4i").val() + $("#company_setting_promo_time_attributes_night_start_5i").val();
+    var afternoonEnd = $("#company_setting_promo_time_attributes_afternoon_end_4i").val() + $("#company_setting_promo_time_attributes_afternoon_end_5i").val();
+    var nightEnd = $("#company_setting_promo_time_attributes_night_end_4i").val() + $("#company_setting_promo_time_attributes_night_end_5i").val();
+
+    return nightStart <= nightEnd && afternoonEnd <= nightStart;
+
+}, 'El inicio de la tarde no puede ser menor al fin de la mañana ni mayor al fin de la tarde.');
+
+
+$(function() {
+	$('#promo-times-form').validate({
+		errorPlacement: function(error, element) {
+			var id = element.attr('id');
+			error.appendTo(element.parent().next());
+		},
+		rules: {
+			'company_setting[promo_time_attributes][morning_start(4i)]': {
+				required: true,
+				morning: true
+			},
+			'company_setting[promo_time_attributes][morning_start(5i)]': {
+				required: true,
+				morning: true
+			},
+			'company_setting[promo_time_attributes][morning_end(4i)]': {
+				required: true,
+				morning: true
+			},
+			'company_setting[promo_time_attributes][morning_end(5i)]': {
+				required: true,
+				morning: true
+			},
+			'company_setting[promo_time_attributes][afternoon_start(4i)]': {
+				required: true,
+				afternoon: true
+			},
+			'company_setting[promo_time_attributes][afternoon_start(5i)]': {
+				required: true,
+				afternoon: true
+			},
+			'company_setting[promo_time_attributes][afternoon_end(4i)]': {
+				required: true,
+				afternoon: true
+			},
+			'company_setting[promo_time_attributes][afternoon_end(5i)]': {
+				required: true,
+				afternoon: true
+			},
+			'company_setting[promo_time_attributes][night_start(4i)]': {
+				required: true,
+				night: true
+			},
+			'company_setting[promo_time_attributes][night_start(5i)]': {
+				required: true,
+				night: true
+			},
+			'company_setting[promo_time_attributes][night_end(4i)]': {
+				required: true,
+				night: true
+			},
+			'company_setting[promo_time_attributes][night_end(5i)]': {
+				required: true,
+				night: true
+			}
+		},
+		highlight: function(element) {
+			$(element).closest('.form-group').removeClass('has-success').addClass('has-error');
+			$(element).parent().children('.form-control-feedback').removeClass('fa fa-check').addClass('fa fa-times');
+		},
+		success: function(element) {
+			$(element).closest('.form-group').removeClass('has-error').addClass('has-success');
+			$(element).parent().parent().children('.form-control-feedback').removeClass('fa fa-times').addClass('fa fa-check');
+			$(element).parent().empty()
+		},
+		submitHandler: function(form) {
+			form.submit();
+		}
+	});
+
+});
