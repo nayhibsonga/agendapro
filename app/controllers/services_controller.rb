@@ -207,6 +207,79 @@ class ServicesController < ApplicationController
     render :json => array_result
   end
 
+  def set_promotions
+
+    @service = Service.find(params[:service_id])
+
+    array_result = []
+    @promos = []
+    @errors = []
+
+    if @service.update(:has_last_minute_discount => params[:has_last_minute_discount], :has_time_discount => params[:has_time_discount], :last_minute_hours => params[:last_minute_hours], :last_minute_discount => params[:last_minute_discount])
+
+      #If it has no promotions, create them.
+      #Else, update each one.
+      if @service.promos.nil? || @service.promos.count == 0
+
+        for i in 1..7
+          promo = Promo.new
+          promo.service_id = @service.id
+          promo.day_id = i
+          promo.morning_discount = params[:morning_discounts][i]
+          promo.afternoon_discount = params[:afternoon_discounts][i]
+          promo.night_discount = params[:night_discounts][i]
+
+          if promo.save
+            @promos << promo
+          else
+            @errors << promo.errors
+          end
+
+        end
+
+      else
+
+        for i in 1..7
+
+          promo = Promo.where(:service_id => @service.id, :day_id => i).first
+
+          promo.morning_discount = params[:morning_discounts][i]
+          promo.afternoon_discount = params[:afternoon_discounts][i]
+          promo.night_discount = params[:night_discounts][i]
+
+          if promo.save
+            @promos << promo
+          else
+            @errors << promo.errors
+          end
+
+        end
+
+      end
+
+      if @errors.length == 0
+        array_result[0] = "ok"
+        array_result[1] = @service
+        array_result[2] = @promos
+      else
+        array_result[0] = "error"
+        array_result[1] = @service
+        array_result[2] = @errors
+      end
+
+    else
+
+      @errors << @service.errors      
+      array_result[0] = "error"
+      array_result[1] = @service
+      array_result[2] = @errors
+
+    end
+
+    render :json => array_result
+
+  end
+
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_service

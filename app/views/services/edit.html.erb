@@ -31,45 +31,236 @@
 
 	<div class="row tab-pane fade" id="promotions">
 		<div class="container-fluid">
-			<div class="row">
-				<div class="col-md-8">
+			<div class="row" style="padding-left: 20px !important;">
+				<div class="col-md-12">
 					<h3>Promociones</h3>
 
-					<div class="well">
+						<input type="hidden" id="promo_service_id" value="<%= @service.id %>" />
 						<div class="row">
 							<div class="col-md-12">
-								<label>Descuento reservas de último minuto</label>
+								<label>Descuento en reservas de último minuto</label>
 								<span class="help-block">Activa descuentos para este servicio cuando sea agendado pocas horas antes de su realización.</span>
 
 								<div class="form-group">
-									<div class="input-group">
+									<div style="display: inline !important;">
 				                        <label>
-				                          	<input type="checkbox" name="has_last_minute_discount" />
+				                        	<% if @service.has_last_minute_discount %>
+				                        		<input type="checkbox" name="has_last_minute_discount" id="has_last_minute_discount" checked/>
+				                        	<% else %>
+				                          		<input type="checkbox" name="has_last_minute_discount" id="has_last_minute_discount" />
+				                          	<% end %>
 				                        </label>
-			                        	<select name="last_minute_discount" class="form-control">
+				                        <span>Permitir</span>
+			                        	<select name="last_minute_discount" id="last_minute_discount" class="promotions-input">
 			                        		<% for i in 0..19 %>
-			                        			<option value="<%= (i*5).to_s %>"><%= (i*5).to_s %> %</option>
+			                        			<% if @service.last_minute_discount == (i*5) %>
+			                        				<option value="<%= (i*5).to_s %>" selected><%= (i*5).to_s %> %</option>
+			                        			<% else %>
+			                        				<option value="<%= (i*5).to_s %>"><%= (i*5).to_s %> %</option>
+			                        			<% end %>
 			                        		<% end %>
 			                        	</select>
-			                        	 de descuento en reservas de último minuto hechas hasta 
-			                        	<select name="last_minute_hours" class="form-control">
+			                        	<span>de descuento en reservas de último minuto hechas hasta</span>
+			                        	<select name="last_minute_hours" id="last_minute_hours" class="promotions-input">
 			                        		<% for i in 1..12 %>
-			                        			<option value="<%= i.to_s %>"><%= i.to_s %> horas</option>
+			                        			<% if @service.last_minute_hours == i %>
+			                        				<option value="<%= i.to_s %>" selected><%= i.to_s %> horas</option>
+			                        			<% else %>
+			                        				<option value="<%= i.to_s %>"><%= i.to_s %> horas</option>
+			                        			<% end %>
 			                        		<% end %>
 			                        	</select>
-			                        	antes de la realización del servicio.
+			                        	<span>antes de la realización del servicio.</span>
 				                    </div>
 								</div>
 
 							</div>
 						</div>
-					</div>
+					
 
-					<div class="well">
+					
 						<div class="row">
 							<div class="col-md-12">
 								<label>Descuentos en horarios bajos</label>
 								<span class="help-block">Activa descuentos para este servicio según la hora de realización.</span>
+
+								<div class="form-group">
+									<div style="display: inline !important;">
+										<label>
+											<% if @service.has_time_discount %>
+				                          		<input type="checkbox" id="has_time_discount" name="has_time_discount" checked />
+				                          	<% else %>
+				                          		<input type="checkbox" id="has_time_discount" name="has_time_discount" />
+				                          	<% end %>
+				                        </label>
+			                        	<span>Permitir descuento</span>
+									</div>
+								</div>
+
+								<div class="form-group">
+									<%
+										promo_time = @service.company.company_setting.promo_time
+									%>
+									<table class="promotions-table">
+										<tr>
+											<th class="first-cell">
+
+											</th>
+											<th>
+												Lunes
+											</th>
+											<th>
+												Martes
+											</th>
+											<th>
+												Miércoles
+											</th>
+											<th>
+												Jueves
+											</th>
+											<th>
+												Viernes
+											</th>
+											<th>
+												Sábado
+											</th>
+											<th>
+												Domingo
+											</th>
+										</tr>
+										<tr>
+
+											<td class="first-cell">
+												<span>Mañana</span><br />
+												<span class="hours"><%= promo_time.morning_start.strftime "%H:%M" %> - <%= promo_time.morning_end.strftime "%H:%M" %></span>
+											</td>
+
+											<%
+												for i in 1..7
+												promo = Promo.where(:service_id => @service.id, :day_id => i).first
+											%>
+
+												<td>
+													<select id="morning-<%= i.to_s %>" class="promotions-input">
+													<% if promo.nil? %>
+
+														<% for j in 0..19 %>
+															<% if (j*5) == promo_time.morning_default %>
+																<option value="<%= (j*5).to_s %>" selected><%= (j*5).to_s + ' %' %></option>	
+															<% else %>
+			                        							<option value="<%= (j*5).to_s %>"><%= (j*5).to_s + ' %' %></option>
+			                        						<% end %>
+			                        					<% end %>
+
+													<% else %>
+
+														<% for j in 0..19 %>
+															<% if (j*5) == promo.morning_discount %>
+			                        							<option value="<%= (j*5).to_s %>" selected><%= (j*5).to_s + ' %' %></option>
+			                        						<% else %>
+			                        							<option value="<%= (j*5).to_s %>"><%= (j*5).to_s + ' %' %></option>
+			                        						<% end %>
+			                        					<% end %>
+
+
+													<% end %>
+												</td>
+
+											<% end %>								
+
+										</tr>
+										<tr>
+											<td class="first-cell">
+												<span>Tarde</span><br />
+												<span class="hours"><%= promo_time.afternoon_start.strftime "%H:%M" %> - <%= promo_time.afternoon_end.strftime "%H:%M" %></span>
+											</td>
+
+											<%
+												for i in 1..7
+												promo = Promo.where(:service_id => @service.id, :day_id => i).first
+											%>
+
+												<td>
+													<select id="afternoon-<%= i.to_s %>" class="promotions-input">
+													<% if promo.nil? %>
+
+														<% for j in 0..19 %>
+															<% if (j*5) == promo_time.afternoon_default %>
+																<option value="<%= (j*5).to_s %>" selected><%= (j*5).to_s + ' %' %></option>
+															<% else %>
+			                        							<option value="<%= (j*5).to_s %>"><%= (j*5).to_s + ' %' %></option>
+			                        						<% end %>
+			                        					<% end %>
+
+													<% else %>
+
+														<% for j in 0..19 %>
+															<% if (j*5) == promo.afternoon_discount %>
+			                        							<option value="<%= (j*5).to_s %>" selected><%= (j*5).to_s + ' %' %></option>
+			                        						<% else %>
+			                        							<option value="<%= (j*5).to_s %>"><%= (j*5).to_s + ' %' %></option>
+			                        						<% end %>
+			                        					<% end %>
+
+
+													<% end %>
+												</td>
+
+											<% end %>
+
+										</tr>
+										<tr>
+											<td class="first-cell">
+												<span>Noche</span><br />
+												<span class="hours"><%= promo_time.night_start.strftime "%H:%M" %> - <%= promo_time.night_end.strftime "%H:%M" %></span>
+											</td>
+											
+											<%
+												for i in 1..7
+												promo = Promo.where(:service_id => @service.id, :day_id => i).first
+											%>
+
+												<td>
+													<select id="night-<%= i.to_s %>" class="promotions-input">
+													<% if promo.nil? %>
+
+														<% for j in 0..19 %>
+															<% if (j*5) == promo_time.night_default %>
+																<option value="<%= (j*5).to_s %>" selected><%= (j*5).to_s + ' %' %></option>
+															<% else %>
+			                        							<option value="<%= (j*5).to_s %>"><%= (j*5).to_s + ' %' %></option>
+			                        						<% end %>
+			                        					<% end %>
+
+													<% else %>
+
+														<% for j in 0..19 %>
+															<% if (j*5) == promo.night_discount %>
+			                        							<option value="<%= (j*5).to_s %>" selected><%= (j*5).to_s + ' %' %></option>
+			                        						<% else %>
+			                        							<option value="<%= (j*5).to_s %>"><%= (j*5).to_s + ' %' %></option>
+			                        						<% end %>
+			                        					<% end %>
+
+
+													<% end %>
+												</td>
+
+											<% end %>
+
+										</tr>
+									</table>
+								</div>
+
+							</div>
+
+						</div>
+					
+					<div class="row">
+						<div class="col-md-12">
+							<div class="form-group">
+								<button class="btn btn-green promotions-submit">Guardar</button>
+								<%= link_to 'Cancelar', dashboard_path, :class => "btn btn-default" %>
 							</div>
 						</div>
 					</div>
@@ -85,4 +276,67 @@
 
 <% content_for :scripts do %>
   <%= javascript_include_tag "service" %>
+
+  <script type="text/javascript">
+
+  	var myAlert;
+
+  	$(document).ready(function(){
+  		myAlert = new Alert('.main');
+  	});
+
+  	$(".promotions-submit").click(function(e){
+
+  		var service_id = $("#promo_service_id").val();
+  		var has_last_minute_discount = $("#has_last_minute_discount").is(":checked");
+  		var last_minute_discount = $("#last_minute_discount").val();
+  		var last_minute_hours = $("#last_minute_hours").val();
+  		var has_time_discount = $("#has_time_discount").is(":checked");
+  		var morning_discounts = []
+  		morning_discounts[0] = 0
+  		var afternoon_discounts = []
+  		afternoon_discounts[0] = 0
+  		var night_discounts = []
+  		night_discounts[0] = 0
+  		for(i = 1; i < 8; i++)
+  		{
+  			morning_discounts[i] = $("#morning-" + i).val();
+  			afternoon_discounts[i] = $("#afternoon-" + i).val();
+  			night_discounts[i] = $("#night-" + i).val();
+  		}
+
+  		$.ajax({
+  			url: "/set_service_promotions",
+  			type: "post",
+  			data: {service_id: service_id, has_last_minute_discount: has_last_minute_discount, last_minute_discount: last_minute_discount, last_minute_hours: last_minute_hours, has_time_discount: has_time_discount, morning_discounts: morning_discounts, afternoon_discounts: afternoon_discounts, night_discounts: night_discounts},
+  			success: function(response){
+  				if(response[0] == "ok")
+  				{
+  					myAlert.showAlert(
+					  '<h3>Promociones guardadas</h3>' +
+					  '<p>Las promociones para el servicio ' + response[1].name + ' se guardaron correctamente.</p>'
+					);
+  					location.reload();
+  				}
+  				else
+  				{
+  					var errors = "";
+  					for(i=0; i < response[2].length; i++)
+  					{
+  						errors = errors + response[2][i] + "<br />";
+  					}
+
+  					myAlert.showAlert(
+					  '<h3>Ocurrió un error</h3>' +
+					  '<p>No se pudieron guardar las sesiones por las siguientes razones: </p>' +
+					  '<p>' + errors + '</p>'
+					);
+  				}
+  			}
+  		});
+
+  	});
+
+  </script>
+
 <% end %>

@@ -302,6 +302,9 @@ Agendapro::Application.routes.draw do
   post "payed_bookings/unmark_several_canceled_as_payed", :to => 'payed_bookings#unmark_several_canceled_as_payed'
   post "payed_bookings/update", :to => 'payed_bookings#update'
 
+  # Promotions
+  post "/set_service_promotions", :to => 'services#set_promotions'
+
   # Root
   get '/' => 'searchs#index', :constraints => { :subdomain => 'www' }
   get '/' => 'companies#overview', :constraints => { :subdomain => /.+/ }

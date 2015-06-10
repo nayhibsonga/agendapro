@@ -222,6 +222,8 @@ class Ability
 
         can :delete_facebook_pages, CompanySetting
 
+        can :set_promotions, Service
+
     elsif user.role_id == Role.find_by_name("Administrador Local").id
 
         can :get_booking, Booking, :location_id => user.locations.pluck(:id)
