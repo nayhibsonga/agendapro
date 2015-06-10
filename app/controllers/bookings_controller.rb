@@ -344,8 +344,8 @@ class BookingsController < ApplicationController
         end
 
         if !session_booking.nil?
-          if !@booking.user_session_confirmed
-            BookingMailer.admin_session_booking_mail(@booking)
+          if @booking.user_session_confirmed
+            session_booking.send_sessions_booking_mail
           else
             @booking.send_validate_mail
           end
@@ -646,8 +646,8 @@ class BookingsController < ApplicationController
       end
 
       if !session_booking.nil?
-        if !@booking.user_session_confirmed
-          BookingMailer.admin_session_booking_mail(@booking)
+        if @booking.user_session_confirmed
+          session_booking.send_sessions_booking_mail
         else
           @booking.send_validate_mail
         end
@@ -969,8 +969,8 @@ class BookingsController < ApplicationController
       if @booking.update(new_booking_params)
 
         if @booking.is_session
-          if !@booking.user_session_confirmed
-            BookingMailer.admin_session_booking_mail(@booking)
+          if @booking.user_session_confirmed
+            @booking.session_booking.send_sessions_booking_mail
           else
             @booking.send_validate_mail
           end
