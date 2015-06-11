@@ -411,7 +411,7 @@ class Booking < ActiveRecord::Base
 
 	def send_admin_payed_session_mail
 		if !self.id.nil?
-			BookingMailer.book_service_mail(self)
+			BookingMailer.admin_session_booking_mail(self)
 		end
 	end
 
