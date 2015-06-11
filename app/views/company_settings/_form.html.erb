@@ -714,15 +714,17 @@
                 </div>
 
                 <div class="row">
-                  <div class="col-md-3">
+                  <div class="col-md-2">
                     <div class="hour-title">
                       Mañana
                     </div>
                   </div>
-                  <div class="col-md-3">
-                    <div class="promo-hour-select">
-                      <%= p.time_select :morning_start, {minute_step: 15}, {:class => 'form-control date-select', required: true} %> - <%= p.time_select :morning_end, {minute_step: 15}, {:class => 'form-control date-select', required: true} %>
-                    </div>
+                  <div class="col-md-5">
+                      <div class="promo-hour-select has-feedback">
+                        <%= p.time_select :morning_start, {minute_step: 15}, {:class => 'form-control date-select', required: true} %> - <%= p.time_select :morning_end, {minute_step: 15}, {:class => 'form-control date-select', required: true} %>
+                        <span class="help-block"></span>
+                        <span class="form-control-feedback"></span>
+                      </div>                 
                   </div>
                   <div class="col-md-2">
                     <div class="form-group">
@@ -739,12 +741,12 @@
                 </div>
 
                 <div class="row">
-                  <div class="col-md-3">
+                  <div class="col-md-2">
                     <div class="hour-title">
                       Tarde
                     </div>
                   </div>
-                  <div class="col-md-3">
+                  <div class="col-md-5">
                     <div class="promo-hour-select">
                       <%= p.time_select :afternoon_start, {minute_step: 15}, {:class => 'form-control date-select', required: true} %> - <%= p.time_select :afternoon_end, {minute_step: 15}, {:class => 'form-control date-select', required: true} %>
                     </div>
@@ -764,12 +766,12 @@
                 </div>
 
                 <div class="row">
-                  <div class="col-md-3">
+                  <div class="col-md-2">
                     <div class="hour-title">
                       Noche
                     </div>
                   </div>
-                  <div class="col-md-3">
+                  <div class="col-md-5">
                     <div class="promo-hour-select">
                       <%= p.time_select :night_start, {minute_step: 15}, {:class => 'form-control date-select', required: true} %> - <%= p.time_select :night_end, {minute_step: 15}, {:class => 'form-control date-select', required: true} %>
                     </div>
