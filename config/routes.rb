@@ -277,6 +277,9 @@ Agendapro::Application.routes.draw do
   get '/iframe/book_error', :to => 'iframe#book_error', :as => 'iframe_book_error'
 
   post '/company_settings/update_payment', :to => 'company_settings#update_payment'
+  get '/company_payment_methods/:id/activate', :to => 'company_payment_methods#activate', :as => 'activate_company_payment_method'
+  get '/company_payment_methods/:id/deactivate', :to => 'company_payment_methods#deactivate', :as => 'deactivate_company_payment_method'
+  get '/booking_payment/:id', :to => 'bookings#booking_payment'
 
   # Payed Bookings
   get "/company_bookings", :to => 'payed_bookings#show'

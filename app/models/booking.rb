@@ -8,6 +8,7 @@ class Booking < ActiveRecord::Base
 	belongs_to :client
 	belongs_to :deal
 	belongs_to :payed_booking
+	belongs_to :payment
 
 	has_many :booking_histories, dependent: :destroy
 

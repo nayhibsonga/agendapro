@@ -75,12 +75,14 @@
             <div class="row well well-sm">
               <ul id="myTab" class="nav nav-tabs" role="tablist">
                 <li id="booking-li" class="active"><a href="#booking-pane" role="tab" data-toggle="tab" class="tab_index" id="booking-tab">Reserva</a></li>
+                <% if Role.where(name: ["Administrador General", "Administrador Local", "Recepcionista"]).include?(current_user.role) %>
+                <li id="payments-li" class=""><a href="#payments-pane" role="tab" data-toggle="tab" class="tab_index" id="payments-tab">Medio de Pago</a></li>
+                <% end %>
                 <li id="client-li" class=""><a href="#client-pane" role="tab" data-toggle="tab" class="tab_index" id="client-tab">Datos Cliente</a></li>
                 <li id="history-li" class=""><a href="#history-pane" role="tab" data-toggle="tab" class="tab_index" id="history-tab">Historial Cliente</a></li>
                 <% if @company_setting.booking_history %>
                 <li id="changes-li" class=""><a href="#changes-pane" role="tab" data-toggle="tab" class="tab_index" id="changes-tab">Modificaciones Reserva</a></li>
                 <% end %>
-                <li id="payments-li" class=""><a href="#payments-pane" role="tab" data-toggle="tab" class="tab_index" id="payments-tab">Medio de Pago</a></li>
               </ul>
               <br />
               <div id="myTabContent" class="tab-content">
@@ -477,14 +479,23 @@
                   </div>
                 </div>
                 <% end %>
+                <% if Role.where(name: ["Administrador General", "Administrador Local", "Recepcionista"]).include?(current_user.role) %>
                 <div class="tab-pane" id="payments-pane">
                   <%= form_for @payment, html: {class: "form-horizontal"} do |f| %>
+                  <div class="row">
+                    <div class="col-md-12">
+                      <h4>Reservas que incluye este pago:</h4>
+                      <div id="payment-bookings-checkbox">
+                      </div>
+                    </div>
+                  </div>
+                  <div class="row">
                     <div class="col-md-6">
-                      <h3>Pago</h3>
+                      <h4>Pago</h4>
                       <div class="form-group">
                         <%= f.label :receipt_type_id, "Comprobante de Pago", class: "col-sm-4 control-label" %>
                         <div class="col-sm-8">
-                          <%= f.collection_select :receipt_type_id, ReceiptType.all.order(:name), :id, :name, {selected: ReceiptType.find_by_name( 'Boleta').id}, { class: "form-control" }%>
+                          <%= f.collection_select :receipt_type_id, ReceiptType.all.order(:name), :id, :name, {selected: ReceiptType.find_by_name("Otro").id}, { class: "form-control" }%>
                         </div>
                       </div>
                       <div class="form-group">
@@ -507,17 +518,23 @@
                       </div>
                     </div>
                     <div class="col-md-6">
-                      <h3>Medio de Pago</h3>
+                      <h4>Medio de Pago</h4>
                       <div class="form-group">
                         <%= f.label :payment_method_id, "Tipo de Pago", class: "col-sm-4 control-label" %>
                         <div class="col-sm-8">
-                          <%= f.collection_select :payment_method_id, PaymentMethod.all.order(:name), :id, :name, {selected: PaymentMethod.find_by_name( 'Efectivo').id}, { class: "form-control" }%>
+                          <%= f.collection_select :payment_method_id, PaymentMethod.where(id: @company_setting.payment_method_settings.where(active: true).pluck(:payment_method_id)).order(:name), :id, :name, {selected: PaymentMethod.find_by_name("Otro").id}, { class: "form-control" }%>
                         </div>
                       </div>
-                      <div class="form-group">
+                      <div class="form-group hidden">
                         <%= f.label :payment_method_type_id, "Tipo de Tarjeta", class: "col-sm-4 control-label" %>
                         <div class="col-sm-8">
                           <%= f.collection_select :payment_method_type_id, PaymentMethodType.all.order(:name), :id, :name, {include_blank: true}, { class: "form-control" }%>
+                        </div>
+                      </div>
+                      <div class="form-group">
+                        <%= f.label :company_payment_method_id, "Otros Medios de Pago", class: "col-sm-4 control-label" %>
+                        <div class="col-sm-8">
+                          <%= f.collection_select :company_payment_method_id, CompanyPaymentMethod.where(company_id: current_user.company_id, active: true).order(:name), :id, :name, {include_blank: true}, { class: "form-control" }%>
                         </div>
                       </div>
                       <div class="form-group">
@@ -533,8 +550,10 @@
                         </div>
                       </div>
                     </div>
+                  </div>
                   <% end %>
                 </div>
+                <% end %>
               </div>
             </div>
           <% end %>

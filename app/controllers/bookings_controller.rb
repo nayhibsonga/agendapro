@@ -2546,6 +2546,20 @@ class BookingsController < ApplicationController
     render layout: "workflow"
   end
 
+  def booking_payment
+    @booking = Booking.find(params[:id])
+    @payment = @booking.payment
+    @elegible_bookings = Booking.where(location_id: @booking.location_id, client_id: @booking.client_id, start: @booking.start.beginning_of_day..@booking.start.end_of_day).order(:start)
+    @payment_bookings = @payment ? @payment.bookings.pluck(:id) : @elegible_bookings.where(payment_id: nil).pluck(:id)
+
+    @elegible_texts = []
+    @elegible_bookings.each do |b|
+      @elegible_texts.push(b.service.name + " con " + b.service_provider.public_name + " el " + I18n.l(b.start.to_datetime))
+    end
+
+    render :json => {payment: @payment, elegible_bookings: @elegible_bookings, payment_bookings: @payment_bookings, elegible_texts: @elegible_texts }
+  end
+
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_booking

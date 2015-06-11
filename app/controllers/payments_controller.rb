@@ -1,5 +1,7 @@
 class PaymentsController < ApplicationController
   before_action :set_payment, only: [:show, :edit, :update, :destroy]
+  before_action :authenticate_user!
+  layout "admin"
 
   respond_to :html
 

@@ -23,6 +23,7 @@
         <% if current_user.company.company_setting.deal_activate %>
         <li role="presentation"><a id="deal_link" href="#deals" role="tab" data-toggle="pill" data-title="Convenios" data-description="Configura el uso de convenios, el tiempo y la cantidad de veces que se pueden usar.">Convenios</a></li>
         <% end %>
+        <li role="presentation"><a id="cashier_link" href="#cashier" role="tab" data-toggle="pill" data-title="Sistema de Caja" data-description="Configura el sistema de caja y medios de pagos que acepta tu empresa.">Sistema de Caja</a></li>
       </ul>
     </div>
     <!-- Panels -->
@@ -85,6 +86,18 @@
                 </div>
               </div>
             </div>
+            <div class="col-md-6">
+              <div onclick="$('#cashier_link').click();" class="media">
+                <div class="media-left">
+                  <%= image_tag 'admin/7.png', class: 'media-object media-image' %>
+                </div>
+                <div class="media-body">
+                  <span class="text-green">Sistema de Caja:</span> Configura el sistema de caja y medios de pagos que acepta tu empresa.
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="row">
             <% if current_user.company.company_setting.online_payment_capable %>
             <div class="col-md-6">
               <div onclick="$('#payment_link').click();" class="media">
@@ -97,9 +110,7 @@
               </div>
             </div>
             <% end %>
-          </div>
           <% if current_user.company.company_setting.deal_activate %>
-          <div class="row">
             <div class="col-md-6">
               <div onclick="$('#deal_link').click();" class="media">
                 <div class="media-left">
@@ -110,8 +121,8 @@
                 </div>
               </div>
             </div>
-          </div>
           <% end %>
+          </div>
         </div>
         <!-- Company -->
         <div class="tab-pane" id="company">
@@ -777,6 +788,106 @@
           </div>
         </div>
         <% end %>
+        <!-- Embedded -->
+        <div class="tab-pane" id="cashier">
+          <div class="row">
+            <div class="col-md-12">
+              <p>Aquí puedes configurar los medios de pago que aceptas y qué campos son obligatorios al registrar el pago de una o varias reservas. El código se refiere a algún registro del medio de pago como código de autorización de tarjetas o número de cheque. Puedes ingresar otro medios de pago, y se podrán elegir siempre y cuando la opción "Otro" esté activa.</p>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-12">
+              <%= form_for @company_setting, :html => {:class => 'company-form', :id => '#payment-method-form'} do |f| %>
+                <div class="form-group">
+                  <div class="checkbox">
+                    <label>
+                      <%= f.check_box :receipt_required %> Requerir número de comprobante de pago
+                    </label>
+                    <span class="help-block">Habilita esta opción para registrar un pago sea obligatorio ingresar el número de comprobante de pago (número de boleta, factura, etc.).</span>
+                  </div>
+                </div>
+                <br />
+                <table class="table table-hover table-green">
+                  <thead>
+                    <tr>
+                      <td>Medio de Pago</td>
+                      <td>Activo</td>
+                      <td>Requerir Código</td>
+                    </tr>
+                  </thead>
+                  <tbody>
+                  <% @payment_methods.each do |payment_method| %>
+                    <tr>
+                      <td><%= payment_method.name %></td>
+                      <%= f.fields_for :payment_method_settings, payment_method.payment_method_settings.find_or_initialize_by(company_setting: @company_setting) do |a| %>
+                      <td>
+                        <%= a.hidden_field :company_setting_id, :value => @company_setting.id %>
+                        <%= a.hidden_field :payment_method_id, :value => payment_method.id %>
+                        <%= a.check_box :active %>
+                      </td>
+                      <td>
+                      <% if payment_method.name != "Efectivo" && payment_method.name != "Otro" %>
+                        <%= a.check_box :number_required %>
+                      <% end %>
+                      </td>
+                      <% end %>
+                    </tr>
+                    <% end %>
+                  </tbody>
+                </table>
+              </div>
+              <div class="col-md-12">
+                <div class="form-group">
+                  <%= f.submit 'Guardar', :class => 'btn btn-green' %>
+                  <%= link_to 'Cancelar', dashboard_path, :class => "btn btn-default" %>
+                </div>
+              <% end %>
+            </div>
+          </div>
+          <br />
+          <br />
+          <div class="row">
+            <div class="col-md-12">
+              <div class="background-grey">
+                <h3 class="text-green">
+                  Listado de Medios de Pago (Otros)
+                  <button class="btn btn-green pull-right" id="new_payment_method_button"><i class="fa fa-plus"></i> Agregar Medio de Pago (Otros)</button>
+                </h3>
+              </div>
+              <table class="table table-hover table-green">
+                <thead>
+                  <tr>
+                    <th>Nombre</th>
+                    <th>Activo</th>
+                    <th>Requerir Código</th>
+                    <th></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <% @company_payment_methods.each do |company_payment_method| %>
+                    <tr>
+                      <td><%= company_payment_method.name %></td>
+                      <td><%= company_payment_method.active ? "Activo" : "Inactivo" %></td>
+                      <td><%= company_payment_method.number_required ? "Requerido" : "No Requerido" %></td>
+                      <td><button class="btn btn-orange edit_company_payment_button" data-name="<%= company_payment_method.name %>" data-active="<%= company_payment_method.active %>" data-number-required="<%= company_payment_method.number_required %>" data-id="<%= company_payment_method.id %>"><i class="fa fa-pencil"></i> Editar</button>
+                      <% if company_payment_method.payments.count < 1 %>
+                        <%= link_to '<i class="fa fa-trash-o"></i> Eliminar'.html_safe, company_payment_method, method: :delete, data: { confirm: '¿Estás seguro de eliminar el medio de pago seleccionado?' }, class: 'btn btn-red' %>
+                      <% else %>
+                        <% if company_payment_method.active %>
+                          <%= link_to '<i class="fa fa-ban"></i> Desactivar'.html_safe, activate_company_payment_method_path(id: company_payment_method.id), data: { confirm: '¿Estás seguro de desactivar el medio de pago seleccionado?' }, class: 'btn btn-red' %>
+                        <% else %>
+                          <%= link_to '<i class="fa fa-check"></i>  Activar'.html_safe, deactivate_company_payment_method_path(id: company_payment_method.id), data: { confirm: '¿Estás seguro de activar el medio de pago seleccionado?' }, class: 'btn btn-green' %>
+                        <% end %>
+                      <% end %>
+                      </td>
+                    </tr>
+                  <% end %>
+                </tbody>
+              </table>
+              <p><strong>Nota:</strong> Si el medio de pago está asociado a algúna reserva, este ya no podrá ser eliminado y sólo podrá ser desactivado.</p>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -853,7 +964,7 @@
       <div class="modal-content">
         <div class="modal-header">
           <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-          <h4 class="modal-title" id="dealLabel">Agregar Convenio</h4>
+          <h4 class="modal-title" id="dealLabel">Medio de Pago</h4>
         </div>
         <%= form_for @deal, :html => {:class => 'form-horizontal'} do |f| %>
           <div class="modal-body">
@@ -888,6 +999,48 @@
                 <%= f.number_field :constraint_quantity, :class => 'form-control' %>
                 <span class="help-block"></span>
                 <span class="form-control-feedback"></span>
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+            <%= f.submit 'Guardar', :class => 'btn btn-green' %>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade" id="payment_method" tabindex="-1" role="dialog" aria-labelledby="paymentMethodLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+          <h4 class="modal-title" id="paymentMethodLabel">Agregar Convenio</h4>
+        </div>
+        <%= form_for @company_payment_method, :html => {:class => 'form-horizontal company_payment_method_form'} do |f| %>
+          <div class="modal-body">
+            <%= f.hidden_field :company_id, :value => current_user.company.id %>
+            <div class="form-group has-feedback">
+              <%= f.label :name, 'Nombre', :class => 'control-label col-xs-4' %>
+              <div class="col-xs-8">
+                <%= f.text_field :name, :class => 'form-control', required: true %>
+                <span class="help-block"></span>
+                <span class="form-control-feedback"></span>
+              </div>
+            </div>
+            <div class="form-group">
+              <div class="col-xs-offset-4 col-xs-8">
+                <label>
+                  <%= f.check_box :active %> Activar medio de pago
+                </label>
+              </div>
+            </div>
+            <div class="form-group">
+              <div class="col-xs-offset-4 col-xs-8">
+                <label>
+                  <%= f.check_box :number_required %> Exigir código al ingresar el pago
+                </label>
               </div>
             </div>
           </div>
@@ -1093,6 +1246,30 @@
         tmp = tmp.replace(/ñ/gi, 'n');  //Special ñ
         tmp = tmp.replace(/[^a-z0-9]/gi,'');
         $('#company_web_address').val(tmp);
+      });
+
+      $('#new_payment_method_button').click(function() {
+        $('form.company_payment_method_form').attr('action', '/company_payment_methods');
+        $('form.company_payment_method_form').attr('id', 'new_company_payment_method');
+        $('form.company_payment_method_form').removeClass('edit_company_payment_method');
+        $('form.company_payment_method_form input[name="_method"]').remove();
+        $('#company_payment_method_name').val('');
+        $('#company_payment_method_active').attr('checked', true);
+        $('#company_payment_method_number_required').attr('checked', true);
+        $('#payment_method').modal('show');
+      });
+
+      $('.edit_company_payment_button').click(function(e) {
+        $('form.company_payment_method_form').attr('action', '/company_payment_methods/' + $(e.currentTarget).data('id'));
+        $('form.company_payment_method_form').attr('id', 'edit_company_payment_method_' + $(e.currentTarget).data('id'));
+        $('form.company_payment_method_form').addClass('edit_company_payment_method');
+        if ($('form.company_payment_method_form input[name="_method"]').length < 1) {
+          $('form.company_payment_method_form').append('<input name="_method" type="hidden" value="patch">');
+        }
+        $('#company_payment_method_name').val($(e.currentTarget).data('name'));
+        $('#company_payment_method_active').attr('checked', $(e.currentTarget).data('active'));
+        $('#company_payment_method_number_required').attr('checked', $(e.currentTarget).data('number-required'));
+        $('#payment_method').modal('show');
       });
 
       CKEDITOR.replace(company_setting_signature);

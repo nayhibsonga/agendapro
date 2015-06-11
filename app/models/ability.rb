@@ -211,6 +211,17 @@ class Ability
 
         can :delete_facebook_pages, CompanySetting
 
+        can :read, CompanyPaymentMethod, :company_id => user.company_id
+        can :create, CompanyPaymentMethod, :company_id => user.company_id
+        can :update, CompanyPaymentMethod, :company_id => user.company_id
+        can :destroy, CompanyPaymentMethod, :company_id => user.company_id
+        can :activate, CompanyPaymentMethod, :company_id => user.company_id
+        can :deactivate, CompanyPaymentMethod, :company_id => user.company_id
+
+        can :read, Deal, :company_id => user.company_id
+        can :create, Deal, :company_id => user.company_id
+        can :update, Deal, :company_id => user.company_id
+
     elsif user.role_id == Role.find_by_name("Administrador Local").id
 
         can :get_booking, Booking, :location_id => user.locations.pluck(:id)

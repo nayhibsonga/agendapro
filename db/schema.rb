@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150527203947) do
+ActiveRecord::Schema.define(version: 20150605142954) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -219,10 +219,12 @@ ActiveRecord::Schema.define(version: 20150527203947) do
   add_index "company_from_emails", ["company_id"], name: "index_company_from_emails_on_company_id", using: :btree
 
   create_table "company_payment_methods", force: true do |t|
-    t.string   "name",       null: false
-    t.integer  "company_id", null: false
+    t.string   "name",                           null: false
+    t.integer  "company_id",                     null: false
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.boolean  "active",          default: true
+    t.boolean  "number_required", default: true
   end
 
   add_index "company_payment_methods", ["company_id"], name: "index_company_payment_methods_on_company_id", using: :btree
@@ -272,6 +274,7 @@ ActiveRecord::Schema.define(version: 20150527203947) do
     t.boolean  "online_payment_capable",      default: false
     t.boolean  "allows_optimization",         default: true
     t.boolean  "activate_notes",              default: true,                  null: false
+    t.boolean  "receipt_required",            default: true
   end
 
   add_index "company_settings", ["company_id"], name: "index_company_settings_on_company_id", using: :btree
@@ -460,6 +463,18 @@ ActiveRecord::Schema.define(version: 20150527203947) do
     t.float    "gain_amount",    default: 0.0
   end
 
+  create_table "payment_method_settings", force: true do |t|
+    t.integer  "company_setting_id"
+    t.integer  "payment_method_id"
+    t.boolean  "active",             default: true
+    t.boolean  "number_required",    default: true
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "payment_method_settings", ["company_setting_id"], name: "index_payment_method_settings_on_company_setting_id", using: :btree
+  add_index "payment_method_settings", ["payment_method_id"], name: "index_payment_method_settings_on_payment_method_id", using: :btree
+
   create_table "payment_method_types", force: true do |t|
     t.string   "name",       null: false
     t.datetime "created_at"
@@ -481,22 +496,24 @@ ActiveRecord::Schema.define(version: 20150527203947) do
 
   create_table "payments", force: true do |t|
     t.integer  "company_id"
-    t.float    "amount",                 default: 0.0
+    t.float    "amount",                    default: 0.0
     t.integer  "receipt_type_id"
-    t.string   "receipt_number",         default: "",    null: false
+    t.string   "receipt_number",            default: "",    null: false
     t.integer  "payment_method_id"
-    t.string   "payment_method_number",  default: "",    null: false
+    t.string   "payment_method_number",     default: "",    null: false
     t.integer  "payment_method_type_id"
     t.integer  "installments"
-    t.boolean  "payed",                  default: false
+    t.boolean  "payed",                     default: false
     t.date     "payment_date"
     t.integer  "bank_id"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "company_payment_method_id"
   end
 
   add_index "payments", ["bank_id"], name: "index_payments_on_bank_id", using: :btree
   add_index "payments", ["company_id"], name: "index_payments_on_company_id", using: :btree
+  add_index "payments", ["company_payment_method_id"], name: "index_payments_on_company_payment_method_id", using: :btree
   add_index "payments", ["payment_method_id"], name: "index_payments_on_payment_method_id", using: :btree
   add_index "payments", ["payment_method_type_id"], name: "index_payments_on_payment_method_type_id", using: :btree
   add_index "payments", ["receipt_type_id"], name: "index_payments_on_receipt_type_id", using: :btree

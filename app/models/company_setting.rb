@@ -1,9 +1,13 @@
 class CompanySetting < ActiveRecord::Base
 	belongs_to :company
 	has_one :online_cancelation_policy
+	has_many :payment_method_settings
+	has_many :payment_methods, through: :payment_method_settings
 	belongs_to :bank
 	
 	accepts_nested_attributes_for :online_cancelation_policy
+
+	accepts_nested_attributes_for :payment_method_settings, :reject_if => :all_blank, :allow_destroy => true
 
 	#validates :email, :sms, :presence => true
 	validate after_commit :extended_schedule

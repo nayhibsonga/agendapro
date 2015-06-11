@@ -458,6 +458,7 @@ function editBookingModal(eventId) {
 			$('#booking_price').val(booking.price);
 			$('#booking_client_id').val(booking.client_id);
 			loadClientHistory(eventId);
+			loadBookingPayment(eventId);
 			$('#booking_client_first_name').val(booking.first_name);
 			$('#booking_client_last_name').val(booking.last_name);
 			$('#booking_client_identification_number').val(booking.identification_number);
@@ -1888,6 +1889,35 @@ function loadClientHistory(booking_id) {
 	return false;
 }
 
+function loadBookingPayment(booking_id) {
+	if (parseInt(booking_id) > 0) {
+		$('#booking-history-tbody').empty();
+		$.getJSON('/booking_payment/' + booking_id, function (bookings_payment) {
+			window.console.log(bookings_payment);
+			if (bookings_payment.payment == null) {
+				window.console.log('payment null');
+			}
+			if (bookings_payment.elegible_bookings.length > 0 && bookings_payment.payment_bookings.length > 0) {
+				$('#payment-bookings-checkbox').empty();
+				$.each(bookings_payment.elegible_bookings, function (key, elegible_booking) {
+					var checked = bookings_payment.payment_bookings.indexOf(elegible_booking.id) > -1 ? 'checked' : ''
+					$('#payment-bookings-checkbox').append(
+						'<div class="checkbox">' +
+							'<label>' +
+								'<input class="payment_booking_checkbox" id="payment_booking_' + elegible_booking.id + '" type="checkbox" value="' + elegible_booking.id + '" ' + checked + '>' + bookings_payment.elegible_texts[key] + 
+							'</label>' +
+						'</div>'
+						);
+				});
+			}
+			else {
+				
+			}
+		});
+	}
+	return false;
+}
+
 var meses = new Array ("Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre");
 var diasSemana = new Array("Domingo","Lunes","Martes","Miércoles","Jueves","Viernes","Sábado");
 function dateToLocal(date) {
@@ -2058,6 +2088,7 @@ $(function() {
 			$('#xButton').prop('disabled', false);
 			$("#full_name").prop('disabled', true);
 			loadClientHistory(0);
+			loadBookingPayment(0);
 		}
 	}).data( "ui-autocomplete" )._renderItem = function( ul, item ) {
 		return $( '<li>' ).append( '<a>' + item.label + '<br><span class="auto-desc">' + item.desc + '</span></a>' ).appendTo( ul );
@@ -2105,6 +2136,7 @@ $(function() {
 			$('#xButton').prop('disabled', false);
 			$("#full_name").prop('disabled', true);
 			loadClientHistory(0);
+			loadBookingPayment(0);
 		}
 	}).data( "ui-autocomplete" )._renderItem = function( ul, item ) {
 		return $( '<li>' ).append( '<a>' + item.label + '<br><span class="auto-desc">' + item.desc + '</span></a>' ).appendTo( ul );
