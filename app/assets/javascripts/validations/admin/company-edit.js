@@ -134,7 +134,8 @@ $.validator.addMethod('night', function(value, element, params) {
 $(function() {
 	$('#promo-times-form').validate({
 		errorPlacement: function(error, element) {
-			error.appendTo(element.next());
+			error.appendTo(element.parent().next());
+			console.log(element.parent().next());
 		},
 		rules: {
 			'company_setting[promo_time_attributes][morning_start(4i)]': {
@@ -187,12 +188,12 @@ $(function() {
 			}
 		},
 		highlight: function(element) {
-			console.log($(element));
+			//console.log($(element));
 			$(element).parent().removeClass('has-success').addClass('has-error');
 			$(element).parent().children('.form-control-feedback').removeClass('fa fa-check').addClass('fa fa-times');
 		},
 		success: function(element) {
-			console.log(element.parent());
+			//console.log($(element).parent());
 			$(element).closest('promo-hour-select').removeClass('has-error').addClass('has-success');
 			$(element).parent().removeClass('has-error').addClass('has-success');
 			$(element).parent().children('.form-control-feedback').removeClass('fa fa-times').addClass('fa fa-check');
