@@ -116,6 +116,40 @@
             </div>
 		</div>
 	</div>
+
+	<% if @sessionBookings.count > 0 %>
+
+	<div class="row">
+
+        <div class="col-xs-12">
+            <div class="panel panel-agendapro">
+				<div class="panel-heading">
+                	<h3>Reservas por sesiones</h3>
+	                <span style="float: right; padding-right: 10px;">
+	                    <select id="session-booking-select" class="form-control">
+	                        <% @sessionBookings.each do |session_booking| %>
+	                            <option value="<%= session_booking.id %>">
+	                                <%= session_booking.service.name %> en <%= session_booking.service.company.name %>
+	                            </option>
+	                        <% end %>
+	                    </select>
+	                </span>
+	            </div>
+	            <div class="panel-body">
+		            <div id="sessions-summary" style="margin-top: 5px; margin-bottom: 5px;">
+
+		            </div>
+		            <div id="sessions-div">
+
+		            </div>
+	            </div>
+            </div>
+        </div>
+
+    </div>
+
+	<% end %>
+
 	<div class="row">
 		<div class="col-xs-12">
 			<div class="panel panel-agendapro">
@@ -149,7 +183,11 @@
 					    				<%= booking.location.name %>
 					    			</td>
 					    			<td>
-					    				<%= booking.service.name %>
+					    				<% if !booking.is_session %>
+					                        <%= booking.service.name %>
+					                    <% else %>
+					                        <%= booking.service.name + " (Sesión)" %>
+					                    <% end %>
 					    			</td>
 					    			<td>
 					    				<%= booking.service_provider.public_name %>
@@ -202,7 +240,11 @@
 					    				<%= booking.location.name %>
 					    			</td>
 					    			<td>
-					    				<%= booking.service.name %>
+					    				<% if !booking.is_session %>
+					                        <%= booking.service.name %>
+					                    <% else %>
+					                        <%= booking.service.name + " (Sesión)" %>
+					                    <% end %>
 					    			</td>
 					    			<td>
 					    				<%= booking.service_provider.public_name %>
@@ -220,3 +262,13 @@
 		</div>
 	</div>
 </div>
+
+<% content_for :stylesheets do %>
+	<%= stylesheet_link_tag "datepicker" %>
+	<%= stylesheet_link_tag "mobile/mobile-agenda" %>
+<% end %>
+
+<% content_for :scripts do %>
+	<%= javascript_include_tag "mobile/agenda" %>
+	<%= javascript_include_tag "datepicker" %>
+<% end %>
