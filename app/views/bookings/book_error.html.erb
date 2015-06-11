@@ -165,118 +165,233 @@
                 <h3> <%= @client.first_name %>, no fue posible guardar todos los servicios. </h3>
                               
                 <% if @payment == "book" %>
-                  <p> A continuación te presentamos el resumen y las opciones de reserva. </p>
-                  <div class="row">
-                    <div class="col-md-4">
-                      <% if @bookings && @bookings.count > 0 %>
-                        <%= form_tag(:controller => "bookings", :action => "book_service", :method => "post") do %>
+                  <% if @are_session_booking %>
+                    <p> A continuación te presentamos el resumen y las opciones de reserva. </p>
+                    <div class="row">
+                      <div class="col-md-4">
+                        <% if @bookings && @bookings.count > 0 %>
+                          <%= form_tag(:controller => "bookings", :action => "book_service", :method => "post") do %>
 
-                          <input type="hidden" name="location" value="<%= @bookings.first.location_id %>" />
-                          <input type="hidden" name="origin" value="<%= @bookings.first.web_origin %>" />
-                          <input type="hidden" name="client_id" value="<%= @bookings.first.client_id %>" />
-                          <input type="hidden" name="comment" value="<%= @bookings.first.notes %>" />
-                          <input type="hidden" name="email" value="<%= @client.email %>" />
-                          <input type="hidden" name="firstName" value="<%= @client.first_name %>" />
-                          <input type="hidden" name="lastName" value="<%= @client.last_name %>" />
-                          <input type="hidden" name="phone" value="<%= @client.phone %>" />
+                            <input type="hidden" name="location" value="<%= @bookings.first.location_id %>" />
+                            <input type="hidden" name="origin" value="<%= @bookings.first.web_origin %>" />
+                            <input type="hidden" name="client_id" value="<%= @bookings.first.client_id %>" />
+                            <input type="hidden" name="comment" value="<%= @bookings.first.notes %>" />
+                            <input type="hidden" name="email" value="<%= @client.email %>" />
+                            <input type="hidden" name="firstName" value="<%= @client.first_name %>" />
+                            <input type="hidden" name="lastName" value="<%= @client.last_name %>" />
+                            <input type="hidden" name="phone" value="<%= @client.phone %>" />
 
-                          <% if @bookings.first.client.address.nil? %>
-                            <input type="hidden" name="address" value="" />
-                          <% else %>
-                            <input type="hidden" name="address" value="<%= @bookings.first.client.address %>" />
+                            <% if @bookings.first.client.address.nil? %>
+                              <input type="hidden" name="address" value="" />
+                            <% else %>
+                              <input type="hidden" name="address" value="<%= @bookings.first.client.address %>" />
+                            <% end %>
+
+                            <% 
+                              hash_array = Array.new
+
+                              @bookings.each do |booking|
+
+                                book_array = {:start => booking.start, :end => booking.end, :provider => booking.service_provider_id, :service => booking.service_id, :provider_lock => booking.provider_lock, :max_changes => booking.max_changes}
+
+                                hash_array << book_array
+
+                              end
+
+                              json_array = JSON.generate(hash_array)
+                            %>
+
+                            <input type="hidden" name="bookings" value="<%= json_array %>" />
+
+                            <input type="hidden" name="payment" value="0" />
+                            
+                            <button type="submit" data-loading-text="Cargando..." class="submitBtn">Mantener correctas</button>
                           <% end %>
-
-                          <% 
-                            hash_array = Array.new
-
-                            @bookings.each do |booking|
-
-                              book_array = {:start => booking.start, :end => booking.end, :provider => booking.service_provider_id, :service => booking.service_id, :provider_lock => booking.provider_lock, :max_changes => booking.max_changes}
-
-                              hash_array << book_array
-
-                            end
-
-                            json_array = JSON.generate(hash_array)
-                          %>
-
-                          <input type="hidden" name="bookings" value="<%= json_array %>" />
-
-                          <input type="hidden" name="payment" value="0" />
-                          
-                          <button type="submit" data-loading-text="Cargando..." class="submitBtn">Mantener correctas</button>
                         <% end %>
+                      </div>
+                      <div class="col-md-4">
+                          <button type="submit" data-loading-text="Cargando..." class="rebookBtn"><a href="<%= root_url(:host => @url) %>">Reagendar</a></button>
+                      </div>
+                      <div class="col-md-4">
+                      <% if @bookings && @bookings.count > 0 %>
+                        <%= link_to '<button type="submit" data-loading-text="Cargando..." class="cancelBtn">Cancelar</button>'.html_safe, controller: 'bookings', action: 'transfer_error_cancel', company_id: @bookings.first.location.company.id %>
+                      <% else %>
+                        <%= link_to '<button type="submit" data-loading-text="Cargando..." class="cancelBtn">Cancelar</button>'.html_safe, controller: 'bookings', action: 'transfer_error_cancel', company_id: @company.id %>
                       <% end %>
+                      </div>
                     </div>
-                    <div class="col-md-4">
-                        <button type="submit" data-loading-text="Cargando..." class="rebookBtn"><a href="<%= root_url(:host => @url) %>">Reagendar</a></button>
-                    </div>
-                    <div class="col-md-4">
+                    <p style="margin-bottom: 20px;">
+                    </p>
                     <% if @bookings && @bookings.count > 0 %>
-                      <%= link_to '<button type="submit" data-loading-text="Cargando..." class="cancelBtn">Cancelar</button>'.html_safe, controller: 'bookings', action: 'transfer_error_cancel', company_id: @bookings.first.location.company.id %>
-                    <% else %>
-                      <%= link_to '<button type="submit" data-loading-text="Cargando..." class="cancelBtn">Cancelar</button>'.html_safe, controller: 'bookings', action: 'transfer_error_cancel', company_id: @company.id %>
+                      <div class="book-subheader dark-gray">Servicios correctamente reservados</div>
+                      <dl class="dl-horizontal book-dl">
+                        <dt class="dark-gray">Servicios</dt>
+                        <dd class="light-gray">
+                          <% @bookings.each do |booking| %>
+                            <p><%= booking.service.name %></p>
+                          <% end %>
+                        </dd>
+                        <dt class="dark-gray">Lugar</dt>
+                        <dd class="light-gray"><%= @location.address %>, <%= @location.district.name %></dd>
+                        <dt class="dark-gray">Prestadores</dt>
+                        <dd class="light-gray">
+                          <% @bookings.each do |booking| %>
+                            <p><%= booking.service_provider.public_name %></p>
+                          <% end %>
+                        </dd>
+                        <dt class="dark-gray">Horarios</dt>
+                        <dd class="light-gray">
+                          <% @bookings.each do |booking| %>
+                            <p><%= I18n.l(booking.start.to_datetime) %></p>
+                          <% end %>
+                        </dd>
+                        <% if !@bookings[0].notes.blank? %>
+                        <dt class="dark-gray">Notas</dt>
+                        <dd class="light-gray"><%= @bookings[0].notes %></dd>
+                        <% end %>
+                      </dl>
                     <% end %>
-                    </div>
-                  </div>
-                  <p style="margin-bottom: 20px;">
-                  </p>
-                  <% if @bookings && @bookings.count > 0 %>
-                    <div class="book-subheader dark-gray">Servicios correctamente reservados</div>
+                    <% if @blocked_bookings %>
+                    <div class="book-subheader dark-gray">Servicios que no pudieron ser reservados</div>
                     <dl class="dl-horizontal book-dl">
+
                       <dt class="dark-gray">Servicios</dt>
                       <dd class="light-gray">
-                        <% @bookings.each do |booking| %>
-                          <p><%= booking.service.name %></p>
+                        <% @blocked_bookings.each do |blocked| %>
+                          <p><%= blocked %></p>
                         <% end %>
                       </dd>
-                      <dt class="dark-gray">Lugar</dt>
-                      <dd class="light-gray"><%= @location.address %>, <%= @location.district.name %></dd>
-                      <dt class="dark-gray">Prestadores</dt>
-                      <dd class="light-gray">
-                        <% @bookings.each do |booking| %>
-                          <p><%= booking.service_provider.public_name %></p>
-                        <% end %>
-                      </dd>
-                      <dt class="dark-gray">Horarios</dt>
-                      <dd class="light-gray">
-                        <% @bookings.each do |booking| %>
-                          <p><%= I18n.l(booking.start.to_datetime) %></p>
-                        <% end %>
-                      </dd>
-                      <% if !@bookings[0].notes.blank? %>
-                      <dt class="dark-gray">Notas</dt>
-                      <dd class="light-gray"><%= @bookings[0].notes %></dd>
+
+                    </dl>
+                    <% end %>
+
+                    <div class="book-subheader dark-gray">Tus Datos</div>
+                    <dl class="dl-horizontal book-dl">
+                      <dt class="dark-gray">Nombre</dt>
+                      <dd class="light-gray"><%= @client.first_name %> <%= @client.last_name %></dd>
+                      <% if !@client.email.blank? %>
+                      <dt class="dark-gray">E-mail</dt>
+                      <dd class="light-gray"><%= @client.email %></dd>
+                      <% end %>
+                      <% if !@client.phone.blank? %>
+                      <dt class="dark-gray">Teléfono</dt>
+                      <dd class="light-gray"><%= @client.phone %></dd>
                       <% end %>
                     </dl>
-                  <% end %>
-                  <% if @blocked_bookings %>
-                  <div class="book-subheader dark-gray">Servicios que no pudieron ser reservados</div>
-                  <dl class="dl-horizontal book-dl">
+                  <% else %>
 
-                    <dt class="dark-gray">Servicios</dt>
-                    <dd class="light-gray">
-                      <% @blocked_bookings.each do |blocked| %>
-                        <p><%= blocked %></p>
+                    <p> A continuación te presentamos el resumen y las opciones de reserva. </p>
+                    <div class="row">
+                      <div class="col-md-4">
+                        <% if @bookings && @bookings.count > 0 %>
+                          <%= form_tag(:controller => "bookings", :action => "book_service", :method => "post") do %>
+
+                            <input type="hidden" name="location" value="<%= @bookings.first.location_id %>" />
+                            <input type="hidden" name="origin" value="<%= @bookings.first.web_origin %>" />
+                            <input type="hidden" name="client_id" value="<%= @bookings.first.client_id %>" />
+                            <input type="hidden" name="comment" value="<%= @bookings.first.notes %>" />
+                            <input type="hidden" name="email" value="<%= @client.email %>" />
+                            <input type="hidden" name="firstName" value="<%= @client.first_name %>" />
+                            <input type="hidden" name="lastName" value="<%= @client.last_name %>" />
+                            <input type="hidden" name="phone" value="<%= @client.phone %>" />
+
+                            <% if @bookings.first.client.address.nil? %>
+                              <input type="hidden" name="address" value="" />
+                            <% else %>
+                              <input type="hidden" name="address" value="<%= @bookings.first.client.address %>" />
+                            <% end %>
+
+                            <% 
+                              hash_array = Array.new
+
+                              @bookings.each do |booking|
+
+                                book_array = {:start => booking.start, :end => booking.end, :provider => booking.service_provider_id, :service => booking.service_id, :provider_lock => booking.provider_lock, :max_changes => booking.max_changes}
+
+                                hash_array << book_array
+
+                              end
+
+                              json_array = JSON.generate(hash_array)
+                            %>
+
+                            <input type="hidden" name="bookings" value="<%= json_array %>" />
+
+                            <input type="hidden" name="payment" value="0" />
+
+                            <input type="hidden" name="has_sessions" value="1" />
+                            
+                            <button type="submit" data-loading-text="Cargando..." class="submitBtn">Mantener correctas</button>
+                          <% end %>
+                        <% end %>
+                      </div>
+                      <div class="col-md-4">
+                          <button type="submit" data-loading-text="Cargando..." class="rebookBtn"><a href="<%= root_url(:host => @url) %>">Reagendar</a></button>
+                      </div>
+                      <div class="col-md-4">
+                      <% if @bookings && @bookings.count > 0 %>
+                        <%= link_to '<button type="submit" data-loading-text="Cargando..." class="cancelBtn">Cancelar</button>'.html_safe, controller: 'bookings', action: 'transfer_error_cancel', company_id: @bookings.first.location.company.id %>
+                      <% else %>
+                        <%= link_to '<button type="submit" data-loading-text="Cargando..." class="cancelBtn">Cancelar</button>'.html_safe, controller: 'bookings', action: 'transfer_error_cancel', company_id: @company.id %>
                       <% end %>
-                    </dd>
+                      </div>
+                    </div>
+                    <p style="margin-bottom: 20px;">
+                    </p>
+                    <% if @bookings && @bookings.count > 0 %>
+                      <div class="book-subheader dark-gray">Sesiones correctamente reservadas de</div>
+                      <dl class="dl-horizontal book-dl">
+                        <dt class="dark-gray">Servicio</dt>
+                        <dd class="light-gray">
+                            <p><%= @bookings.first.service.name %></p>
+                        </dd>
+                        <dt class="dark-gray">Lugar</dt>
+                        <dd class="light-gray"><%= @location.address %>, <%= @location.district.name %></dd>
+                        <dt class="dark-gray">Prestadores</dt>
+                        <dd class="light-gray">
+                            <p><%= @bookings.first.service_provider.public_name %></p>
+                        </dd>
+                        <dt class="dark-gray">Horarios</dt>
+                        <dd class="light-gray">
+                          <% @bookings.each do |booking| %>
+                            <p><%= I18n.l(booking.start.to_datetime) %></p>
+                          <% end %>
+                        </dd>
+                        <% if !@bookings[0].notes.blank? %>
+                        <dt class="dark-gray">Notas</dt>
+                        <dd class="light-gray"><%= @bookings[0].notes %></dd>
+                        <% end %>
+                      </dl>
+                    <% end %>
+                    <% if @blocked_bookings %>
+                    <div class="book-subheader dark-gray">Sesiones que no pudieron ser reservadas</div>
+                    <dl class="dl-horizontal book-dl">
 
-                  </dl>
+                      <dt class="dark-gray">Sesiones</dt>
+                      <dd class="light-gray">
+                        <% @blocked_bookings.each do |blocked| %>
+                          <p><%= blocked %></p>
+                        <% end %>
+                      </dd>
+
+                    </dl>
+                    <% end %>
+
+                    <div class="book-subheader dark-gray">Tus Datos</div>
+                    <dl class="dl-horizontal book-dl">
+                      <dt class="dark-gray">Nombre</dt>
+                      <dd class="light-gray"><%= @client.first_name %> <%= @client.last_name %></dd>
+                      <% if !@client.email.blank? %>
+                      <dt class="dark-gray">E-mail</dt>
+                      <dd class="light-gray"><%= @client.email %></dd>
+                      <% end %>
+                      <% if !@client.phone.blank? %>
+                      <dt class="dark-gray">Teléfono</dt>
+                      <dd class="light-gray"><%= @client.phone %></dd>
+                      <% end %>
+                    </dl>
+
                   <% end %>
-
-                  <div class="book-subheader dark-gray">Tus Datos</div>
-                  <dl class="dl-horizontal book-dl">
-                    <dt class="dark-gray">Nombre</dt>
-                    <dd class="light-gray"><%= @client.first_name %> <%= @client.last_name %></dd>
-                    <% if !@client.email.blank? %>
-                    <dt class="dark-gray">E-mail</dt>
-                    <dd class="light-gray"><%= @client.email %></dd>
-                    <% end %>
-                    <% if !@client.phone.blank? %>
-                    <dt class="dark-gray">Teléfono</dt>
-                    <dd class="light-gray"><%= @client.phone %></dd>
-                    <% end %>
-                  </dl>
 
                 <% else %>
 

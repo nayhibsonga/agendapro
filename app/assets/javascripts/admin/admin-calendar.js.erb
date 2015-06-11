@@ -183,30 +183,66 @@ function loadResourcesCalendar (startTime, endTime, hiddenDays, resourcesArray, 
 		   		{
 		   			prepayed = "No";
 		   		}
-			   element.qtip({
-				   content: {
-						button: true,
-						title: event.title_qtip,
-						text: 'Horario: ' + event.time_qtip + '<br/>' +
-						'Servicio: ' + event.service_qtip + '<br/>' +
-						'Teléfono: ' + event.phone_qtip + '<br/>' +
-						'E-mail: ' + event.email_qtip + '<br/>' +
-						'Comentario: ' + event.comment_qtip + '<br />' +
-						'Pagado en línea: ' + prepayed
-				   },
-				   position: {
-						my: 'bottom center',  // el triángulo sale de abajo al medio
-						at: 'top center' // se ubica arriba del elemento en cuestión
-				   },
-				   style: {
-						classes: 'qtip-bootstrap'
-				   },
-				   hide: {
-						event: 'click mouseleave unfocus',
-						leave: true,
-						fixed: true
-					}
-			   });
+		   		var is_event_session = event.is_session_qtip;
+		   		if (is_event_session === undefined)
+		   		{
+		   			is_event_session = false;
+		   		}
+		   		if (is_event_session)
+		   		{
+		   			element.qtip({
+					   content: {
+							button: true,
+							title: event.title_qtip,
+							text: 'Horario: ' + event.time_qtip + '<br/>' +
+							'Servicio: ' + event.service_qtip + '<br/>' +
+							'Teléfono: ' + event.phone_qtip + '<br/>' +
+							'E-mail: ' + event.email_qtip + '<br/>' +
+							'Comentario: ' + event.comment_qtip + '<br />' +
+							'Pagado en línea: ' + prepayed + '<br />' +
+							event.sessions_ratio_qtip
+					   },
+					   position: {
+							my: 'bottom center',  // el triángulo sale de abajo al medio
+							at: 'top center' // se ubica arriba del elemento en cuestión
+					   },
+					   style: {
+							classes: 'qtip-bootstrap'
+					   },
+					   hide: {
+							event: 'click mouseleave unfocus',
+							leave: true,
+							fixed: true
+						}
+				   	});
+		   		}
+		   		else
+		   		{
+				   	element.qtip({
+					   content: {
+							button: true,
+							title: event.title_qtip,
+							text: 'Horario: ' + event.time_qtip + '<br/>' +
+							'Servicio: ' + event.service_qtip + '<br/>' +
+							'Teléfono: ' + event.phone_qtip + '<br/>' +
+							'E-mail: ' + event.email_qtip + '<br/>' +
+							'Comentario: ' + event.comment_qtip + '<br />' +
+							'Pagado en línea: ' + prepayed
+					   },
+					   position: {
+							my: 'bottom center',  // el triángulo sale de abajo al medio
+							at: 'top center' // se ubica arriba del elemento en cuestión
+					   },
+					   style: {
+							classes: 'qtip-bootstrap'
+					   },
+					   hide: {
+							event: 'click mouseleave unfocus',
+							leave: true,
+							fixed: true
+						}
+				   	});
+			   	}
 			}
 		},
 		firstDay: 1,	//Lunes
@@ -323,30 +359,71 @@ function loadWeekCalendar (startTime, endTime, hiddenDays, resourcesArray, provi
 			   		{
 			   			prepayed = "No";
 			   		}
-				   element.qtip({
-					   content: {
-						   button: true,
-						   title: event.title_qtip,
-						   text: 'Horario: ' + event.time_qtip + '<br/>' +
-								   'Servicio: ' + event.service_qtip + '<br/>' +
-								   'Teléfono: ' + event.phone_qtip + '<br/>' +
-								   'E-mail: ' + event.email_qtip + '<br/>' +
-								   'Comentario: ' + event.comment_qtip + '<br />' +
-								   'Pagado en línea: ' + prepayed
-					   },
-					   position: {
-						   my: 'bottom center',  // el triángulo sale de abajo al medio
-						   at: 'top center' // se ubica arriba del elemento en cuestión
-					   },
-					   style: {
-						   classes: 'qtip-bootstrap'
-					   },
-					   hide: {
-						   event: 'click mouseleave unfocus',
-						   leave: true,
-						   fixed: true
-					   }
-				   });
+			   		var prepayed = event.prepayed_qtip;
+			   		if (prepayed === undefined)
+			   		{
+			   			prepayed = "No";
+			   		}
+			   		var is_event_session = event.is_session_qtip;
+			   		if (is_event_session === undefined)
+			   		{
+			   			is_event_session = false;
+			   		}
+			   		if(is_event_session)
+			   		{
+			   			element.qtip({
+						   content: {
+							   button: true,
+							   title: event.title_qtip,
+							   text: 'Horario: ' + event.time_qtip + '<br/>' +
+									   'Servicio: ' + event.service_qtip + '<br/>' +
+									   'Teléfono: ' + event.phone_qtip + '<br/>' +
+									   'E-mail: ' + event.email_qtip + '<br/>' +
+									   'Comentario: ' + event.comment_qtip + '<br />' +
+									   'Pagado en línea: ' + prepayed + '<br />' +
+									   event.sessions_ratio_qtip
+						   },
+						   position: {
+							   my: 'bottom center',  // el triángulo sale de abajo al medio
+							   at: 'top center' // se ubica arriba del elemento en cuestión
+						   },
+						   style: {
+							   classes: 'qtip-bootstrap'
+						   },
+						   hide: {
+							   event: 'click mouseleave unfocus',
+							   leave: true,
+							   fixed: true
+						   }
+					   	});
+			   		}
+			   		else
+			   		{
+					   	element.qtip({
+						   content: {
+							   button: true,
+							   title: event.title_qtip,
+							   text: 'Horario: ' + event.time_qtip + '<br/>' +
+									   'Servicio: ' + event.service_qtip + '<br/>' +
+									   'Teléfono: ' + event.phone_qtip + '<br/>' +
+									   'E-mail: ' + event.email_qtip + '<br/>' +
+									   'Comentario: ' + event.comment_qtip + '<br />' +
+									   'Pagado en línea: ' + prepayed
+						   },
+						   position: {
+							   my: 'bottom center',  // el triángulo sale de abajo al medio
+							   at: 'top center' // se ubica arriba del elemento en cuestión
+						   },
+						   style: {
+							   classes: 'qtip-bootstrap'
+						   },
+						   hide: {
+							   event: 'click mouseleave unfocus',
+							   leave: true,
+							   fixed: true
+						   }
+					   	});
+					}
 			   }
 			}
 		},
@@ -415,6 +492,9 @@ function loadProviderEvents(providerId) {
 }
 
 function editBookingModal(eventId) {
+
+	$("#is_edit_modal").val("1");
+
 	if (eventId.toString().indexOf('b') >= 0) {
 		editBreakModal(eventId.split('b')[1]);
 	}
@@ -551,7 +631,11 @@ function editBookingModal(eventId) {
 						);
 					});
 					$('#booking_service_id option[value="'+booking.service_id+'"]').attr("selected",true);
-					$('#booking_service_id').removeAttr('disabled');
+
+					if(!booking.is_session)
+					{
+						$('#booking_service_id').removeAttr('disabled');
+					}
 
 					if (!booking.service_provider_active) {
 						if ($('#booking_service_provider_id option[value="' + booking.service_provider_id + '"]').length == 0) {
@@ -568,6 +652,19 @@ function editBookingModal(eventId) {
 				});
 			}
 			setAge();
+
+			$("#sessions-row").hide();
+			$("#has_sessions").val("0");
+
+			if(booking.is_session)
+			{
+			
+				$("#sessions-info").empty();
+				$("#sessions-info").append("Esta reserva corresponde a una sesión de un servicio.");
+				$("#sessions-row").show();
+				$("#xButton").attr("disabled", true);
+			}
+
 			$('#booking-tab').tab('show');
 			$('#bookingModal').modal('show');
 		});
@@ -579,6 +676,9 @@ function createBookingModal(date, provider_id) {
 	var localId = parseInt($('#locals-selector').val());
 	var date = date || 0;
 	var provider_id = provider_id || 0;
+	$("#sessions-row").hide();
+	$("#is_edit_modal").val("0");
+	$('#booking_service_id').empty();
 	$.getJSON('/local_providers', {location: localId}, function (providersArray) {
 		if (providersArray.length > 0) {
 			if (date != 0) {
@@ -604,6 +704,7 @@ function createBookingModal(date, provider_id) {
 						);
 					});
 					$('#booking_service_id').removeAttr('disabled');
+					$('#booking_service_id option').first().attr("selected", true);
 					modalChange();
 				});
 			}
@@ -651,7 +752,7 @@ function createBookingModal(date, provider_id) {
 				// '<button type="button" class="btn btn-agendapro-claro booking-button pull-left" data-toggle="modal" data-target="#hoursOptimizer">Buscador de Horas</button>' +
 			$('.booking-modal-footer').append(
 				'<button type="button" class="btn btn-default btn-close booking-button" data-dismiss="modal">Cerrar</button>' +
-				'<button type="button" class="btn btn-orange booking-button" onclick="addNewService()">Agregar Otro Servicio</button>' +
+				'<button type="button" class="btn btn-orange booking-button" id="add-service-btn" onclick="addNewService()">Agregar Otro Servicio</button>' +
 				'<button type="button" class="btn btn-green booking-button" onclick="createBooking()">Guardar</button>'
 			);
 
@@ -665,12 +766,14 @@ function createBookingModal(date, provider_id) {
 						);
 					});
 					$('#booking_service_id').removeAttr('disabled');
+					$('#booking_service_id option').first().attr("selected", true);
 					modalChange();
 				});
 			};
 			$('#client-history-tbody').html('<tr><td colspan="6">El cliente no tiene historial...</td></tr>');
 			$('#booking-tab').tab('show');
 			$('#bookingModal').modal('show');
+			checkClientSessions();
 		}
 		else {
 			alert('Este local no tiene prestadores o servicios\nPor favor completa los datos necesarios para poder generar reservas en este local.');
@@ -784,6 +887,10 @@ function jsonBooking() {
 		"staff_code": $('#booking_staff_code').val(),
 		"deal_code": $('#booking_deal_code').val()
 	};
+	if($("#has_sessions").val() == "1")
+	{
+		jsBooking["session_booking_id"] = $('[name="sessions-choice"]:checked').val();
+	}
 	return jsBooking;
 }
 
@@ -861,15 +968,24 @@ function editDrag(event) {
 					if (booking.web_origin) {
 						originClass = 'origin-web';
 					};
+
+					var backColor = backColors[booking.status_id];
+					var textColor = textColors[booking.status_id];
+					if (booking.is_session && !booking.user_session_confirmed)
+					{
+						backColor = "#105E82";
+						textColor = "#DFDBDB";				
+					}
+
 					originClass += providerLock + statusIcon[booking.status_id];
 					event.className = originClass;
 					event.title = booking.first_name+' '+booking.last_name+' - '+booking.service_name;
 					event.start = booking.start;
 					event.end = booking.end;
 					event.resourceId = booking.service_provider_id;
-					event.textColor = textColors[booking.status_id];
-					event.borderColor = textColors[booking.status_id];
-					event.backgroundColor = backColors[booking.status_id];
+					event.textColor = textColor;
+					event.borderColor = textColor;
+					event.backgroundColor = backColor;
 					event.className = originClass;
 					event.title_qtip = booking.first_name+' '+booking.last_name;
 					event.time_qtip = booking.start.substring(11,16) + ' - ' + booking.end.substring(11,16);
@@ -878,8 +994,17 @@ function editDrag(event) {
 					event.email_qtip = booking.email;
 					event.prepayed_qtip = booking.prepayed;
 					event.comment_qtip = booking.company_comment;
+					event.is_session_qtip = booking.is_session_booked;
+					event.sessions_ratio_qtip = booking.sessions_ratio;
 					$('#calendar').fullCalendar('updateEvent', event);
-					alert("Reserva actualizada exitosamente.");
+					if(!booking.is_session || (booking.is_session && booking.user_session_confirmed))
+					{
+						alert("Reserva actualizada exitosamente.");
+					}
+					else
+					{
+						alert("Se ha enviado un correo al cliente para que valide la sesión agendada.");
+					}
 					// alertId.showAlert("Horario de la reserva cambiado exitosamente.");
 					$('#bookingAlerts').hide();
 					if (booking.warnings.length > 0) {
@@ -962,14 +1087,21 @@ function saveBooking(typeURL, extraURL) {
 						if (booking.web_origin) {
 							originClass = 'origin-web';
 						};
+						var backColor = backColors[booking.status_id];
+						var textColor = textColors[booking.status_id];
+						if (booking.is_session && !booking.user_session_confirmed)
+						{
+							backColor = "#105E82";
+							textColor = "#DFDBDB";	
+						}
 						originClass += providerLock + statusIcon[booking.status_id];
 						event.title = booking.first_name+' '+booking.last_name+' - '+booking.service_name;
 						event.start = booking.start;
 						event.end = booking.end;
 						event.resourceId = booking.service_provider_id;
-						event.textColor = textColors[booking.status_id];
-						event.borderColor = textColors[booking.status_id];
-						event.backgroundColor = backColors[booking.status_id];
+						event.textColor = textColor;
+						event.borderColor = textColor;
+						event.backgroundColor = backColor;
 						event.className = originClass;
 						event.title_qtip = booking.first_name+' '+booking.last_name;
 						event.time_qtip = booking.start.substring(11,16) + ' - ' + booking.end.substring(11,16);
@@ -978,7 +1110,46 @@ function saveBooking(typeURL, extraURL) {
 						event.email_qtip = booking.email;
 						event.comment_qtip = booking.company_comment;
 						event.prepayed_qtip = booking.prepayed;
-						$('#calendar').fullCalendar('updateEvent', event);
+						event.is_session_qtip = booking.is_session_booked;
+						event.sessions_ratio_qtip = booking.sessions_ratio;
+
+						var selectedProvider = parseInt($("#providers-selector option:selected").val());
+						var eventProvider = parseInt(booking.service_provider_id);
+
+
+						if(booking.is_session)
+						{
+							if(booking.is_session_booked)
+							{
+								if(selectedProvider == 0 || (selectedProvider == eventProvider))
+								{
+									$('#calendar').fullCalendar('updateEvent', event);
+								}
+								else
+								{
+									$('#calendar').fullCalendar('removeEvents',booking.id);
+								}
+							}
+							else
+							{
+								$('#calendar').fullCalendar('removeEvents',booking.id);
+							}
+						}
+						else
+						{
+							if(selectedProvider == 0 || (selectedProvider == eventProvider))
+							{
+								$('#calendar').fullCalendar('updateEvent', event);
+							}
+							else
+							{
+								$('#calendar').fullCalendar('removeEvents',booking.id);
+							}
+						}
+						if(booking.is_session && !booking.user_session_confirmed)
+						{
+							alert("Se ha enviado un correo al cliente para que valide la sesión agendada.");
+						}
 					}
 					else {
 						$('#calendar').fullCalendar('removeEvents',booking.id);
@@ -1032,6 +1203,13 @@ function saveBookingBuffer () {
 						};
 						var originClass = 'origin-manual';
 						originClass += providerLock + statusIcon[booking.status_id];
+						var backColor = backColors[booking.status_id];
+						var textColor = textColors[booking.status_id];
+						if (booking.is_session && !booking.user_session_confirmed)
+						{
+							backColor = "#174F69";
+							textColor = "#DFDBDB";
+						}
 						var events = {
 							id: booking.id,
 							title: booking.first_name+' '+booking.last_name+' - '+booking.service_name,
@@ -1039,18 +1217,25 @@ function saveBookingBuffer () {
 							start: booking.start,
 							end: booking.end,
 							resourceId: booking.service_provider_id,
-							textColor: textColors[booking.status_id],
-							borderColor: textColors[booking.status_id],
-							backgroundColor: backColors[booking.status_id],
+							textColor: textColor,
+							borderColor: textColor,
+							backgroundColor: backColor,
 							className: originClass,
 							title_qtip: booking.first_name+' '+booking.last_name,
 							time_qtip: booking.start.substring(11,16) + ' - ' + booking.end.substring(11,16),
 							service_qtip: booking.service_name,
 							phone_qtip: booking.phone,
 							email_qtip: booking.email,
-							comment_qtip: booking.company_comment
+							comment_qtip: booking.company_comment,
+							is_session_qtip: booking.is_session_booked,
+							sessions_ratio_qtip: booking.sessions_ratio
 						};
+
 						$('#calendar').fullCalendar('renderEvent', events, true);
+						if(booking.is_session && !booking.user_session_confirmed)
+						{
+							alert("Se ha enviado un correo al cliente para que valide la sesión agendada.");
+						}
 					}
 					if (booking.warnings.length > 0) {
 						var warnings = '';
@@ -1092,6 +1277,13 @@ function saveBookingBuffer () {
 								};
 								var originClass = 'origin-manual';
 								originClass += providerLock + statusIcon[booking.status_id];
+								var backColor = backColors[booking.status_id];
+								var textColor = textColors[booking.status_id];
+								if (booking.is_session && !booking.user_session_confirmed)
+								{
+									backColor = "#105E82";
+									textColor = "#DFDBDB";
+								}
 								var events = {
 									id: booking.id,
 									title: booking.first_name+' '+booking.last_name+' - '+booking.service_name,
@@ -1099,18 +1291,24 @@ function saveBookingBuffer () {
 									start: booking.start,
 									end: booking.end,
 									resourceId: booking.service_provider_id,
-									textColor: textColors[booking.status_id],
-									borderColor: textColors[booking.status_id],
-									backgroundColor: backColors[booking.status_id],
+									textColor: textColor,
+									borderColor: textColor,
+									backgroundColor: backColor,
 									className: originClass,
 									title_qtip: booking.first_name+' '+booking.last_name,
 									time_qtip: booking.start.substring(11,16) + ' - ' + booking.end.substring(11,16),
 									service_qtip: booking.service_name,
 									phone_qtip: booking.phone,
 									email_qtip: booking.email,
-									comment_qtip: booking.company_comment
+									comment_qtip: booking.company_comment,
+									is_session_qtip: booking.is_session_booked,
+									sessions_ratio_qtip: booking.sessions_ratio
 								};
 								$('#calendar').fullCalendar('renderEvent', events, true);
+								if(booking.is_session && !booking.user_session_confirmed)
+								{
+									alert("Se ha enviado un correo al cliente para que valide la sesión agendada.");
+								}
 							}
 							if (booking.warnings.length > 0) {
 								var warnings = '';
@@ -1851,6 +2049,111 @@ function setAge() {
 	return false;
 }
 
+function checkClientSessions()
+{
+	modalChange();
+	if($("#is_edit_modal").val() == "0")
+	{
+
+		$("#sessions-info").empty();
+		$("#sessions-row").hide();
+		$("#add-service-btn").show();
+		$("#has_sessions").val("0");
+
+		if (parseInt($('#booking_client_id').val()) > 0)
+		{
+			if(parseInt($("#booking_service_id").val()) > 0)
+			{
+				$.ajax({
+					type: "get",
+					url: "clients_check_sessions?id=" + $('#booking_client_id').val() + "&service_id=" + $("#booking_service_id").val(),
+					success: function(response)
+					{
+						var service = response[0]
+						var sessions_bookings = response[1]
+
+						if (service.has_sessions)
+						{
+							if (sessions_bookings.length > 0)
+							{
+								$("#sessions-info").append('<div session_booking_id="0"><input type="radio" name="sessions-choice" value="0" />&nbsp;Generar una nueva reserva y agendar la primera sesión.');
+							}
+							else
+							{
+								$("#sessions-info").append('<div session_booking_id="0"><input type="radio" name="sessions-choice" value="0" checked>&nbsp;Generar una nueva reserva y agendar la primera sesión.');
+							}
+							$("#sessions-row").show();
+							$("#add-service-btn").hide();
+							$("#has_sessions").val("1");
+							if(sessions_bookings.length > 0)
+							{
+								var index = 0;
+								$.each(sessions_bookings, function (key, session_booking) {
+									var nextSession = session_booking.sessions_taken + 1;
+									if(index == 0)
+									{
+										$("#sessions-info").append('<div session_booking_id="' + session_booking.id + '"><input type="radio" name="sessions-choice" value="' + session_booking.id + '" checked />&nbsp;El cliente ha agendado ' + session_booking.sessions_taken + ' de un total de ' + session_booking.sessions_total +'. Agendar la sesión ' + nextSession + '.');
+									}
+									else
+									{
+										$("#sessions-info").append('<div session_booking_id="' + session_booking.id + '"><input type="radio" name="sessions-choice" value="' + session_booking.id + '">&nbsp;El cliente ha agendado ' + session_booking.sessions_taken + ' de un total de ' + session_booking.sessions_total +'. Agendar la sesión ' + nextSession + '.');
+									}
+									index = index + 1;
+								});
+							}
+						}
+					}
+				});
+			}
+		}
+		else
+		{
+			if(parseInt($("#booking_service_id").val()) > 0)
+			{
+				$.ajax({
+					type: "get",
+					url: "services/" + $("#booking_service_id").val() + ".json",
+					success: function(service)
+					{
+						console.log(service.name + " has sessions: " + service.has_sessions);
+						if(service.has_sessions)
+						{
+							$("#sessions-info").append('<div session_booking_id="0"><input type="radio" name="sessions-choice" value="0" checked>&nbsp;Este servicio es por sesiones. Generar una nueva reserva y agendar la primera sesión.');
+							$("#sessions-row").show();
+							$("#add-service-btn").hide();
+							$("#has_sessions").val("1");
+						}
+					}
+				});
+			}
+		}
+	}
+	else
+	{
+		if(parseInt($("#booking_service_id").val()) > 0)
+		{
+			$.ajax({
+				type: "get",
+				url: "services/" + $("#booking_service_id").val() + ".json",
+				success: function(service)
+				{
+					if(service.has_sessions)
+					{
+						$("#sessions-info").empty();
+						$("#sessions-info").append("Esta reserva corresponde a una sesión de un servicio.");
+						$("#sessions-row").show();
+					}
+					else
+					{
+						$("#sessions-info").empty();
+						$("#sessions-row").hide();
+					}
+				}
+			});
+		}
+	}
+}
+
 function loadClientHistory(booking_id) {
 	if (parseInt($('#booking_client_id').val()) > 0) {
 		$('#client-history-tbody').empty();
@@ -1983,6 +2286,7 @@ $(function() {
 	});
 	$("#booking_service_id").on("change", function() {
 		modalChange();
+		checkClientSessions();
 	});
 
 	$("#dp").datepicker({
@@ -2089,6 +2393,7 @@ $(function() {
 			$("#full_name").prop('disabled', true);
 			loadClientHistory(0);
 			loadBookingPayment(0);
+			checkClientSessions();
 		}
 	}).data( "ui-autocomplete" )._renderItem = function( ul, item ) {
 		return $( '<li>' ).append( '<a>' + item.label + '<br><span class="auto-desc">' + item.desc + '</span></a>' ).appendTo( ul );
@@ -2221,6 +2526,7 @@ $(function() {
 		$('label[for=booking_send_mail]').addClass('disabled');
 		$('#client-history-tbody').empty();
 		$('#client-history-tbody').append('<tr><td colspan="6">No hay un cliente seleccionado...</td></tr>');
+		checkClientSessions();
 		$('#xButton').prop('disabled', true);
 	});
 

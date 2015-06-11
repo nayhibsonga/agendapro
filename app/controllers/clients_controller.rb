@@ -113,6 +113,30 @@ class ClientsController < ApplicationController
     render :json => bookings
   end
 
+  def check_sessions
+
+    @respArr = []
+    @session_bookings = []
+
+    client = Client.find(params[:id])
+    service = Service.find(params[:service_id])
+    session_bookings = SessionBooking.where(:client_id => client.id, :service_id => service.id)
+    
+    session_bookings.each do |session_booking|
+      if session_booking.sessions_amount > session_booking.sessions_taken
+        sessions_hash = session_booking.attributes
+        sessions_hash["sessions_total"] = session_booking.sessions_amount
+        @session_bookings << sessions_hash
+      end
+    end
+
+    @respArr << service
+    @respArr << @session_bookings
+
+    render :json => @respArr
+
+  end
+
   def create_comment
     @client_comment = ClientComment.new(client_comment_params)
     respond_to do |format|

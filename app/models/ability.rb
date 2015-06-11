@@ -71,6 +71,7 @@ class Ability
     can :company_service_categories, ServiceCategory
     can :check_user_cross_bookings, Booking
     can :select_hour, Company
+    can :select_session_hour, Company
     can :user_data, Company
     can :client_loader, Client
     can :available_hours_week_html, ServiceProvider
@@ -89,6 +90,15 @@ class Ability
     can :get_direction, District
 
     can :agenda, User, :id => user.id
+    can :get_session_bookings, User
+    can :get_session_summary, User
+    can :delete_session_booking, Booking
+    can :validate_session_booking, Booking
+    can :validate_session_form, Booking
+    can :session_booking_detail, Booking
+    can :book_session_form, Booking
+    can :update_book_session, Booking
+    can :sessions_calendar, Booking
 
     can :pdf, ServiceProvider
 
@@ -191,6 +201,7 @@ class Ability
         can :suggestion, Client
         can :rut_suggestion, Client
         can :bookings_history, Client
+        can :check_sessions, Client
 
         can :create_comment, Client
         can :update_comment, Client
