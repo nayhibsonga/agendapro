@@ -164,12 +164,11 @@
                           <% end %>
                         <% end %>
                       </dd>
-                      <% @bookings.each do |booking| %>
-                        <% if !booking.notes.blank? %>
+                      
+                        <% if !@bookings.first.notes.blank? %>
                         <dt class="dark-gray">Notas</dt>
-                        <dd class="light-gray"><p><%= booking.notes %></p></dd>
+                        <dd class="light-gray"><p><%= @bookings.first.notes %></p></dd>
                         <% end %>
-                      <% end %>
 
                     </dl>
 
@@ -196,12 +195,10 @@
                           <p><%= I18n.l(booking.start.to_datetime) %></p>
                         <% end %>
                       </dd>
-                      <% @bookings.each do |booking| %>
-                        <% if !booking.notes.blank? %>
+                      <% if !@bookings.first.notes.blank? %>
                         <dt class="dark-gray">Notas</dt>
-                        <dd class="light-gray"><p><%= booking.notes %></p></dd>
+                        <dd class="light-gray"><p><%= @bookings.first.notes %></p></dd>
                         <% end %>
-                      <% end %>
                     </dl>
                   <% end %>
 

@@ -115,11 +115,9 @@
 						                          <% end %>
 						                        <% end %>
 						                      </dd>
-						                      <% @bookings.each do |booking| %>
-						                        <% if !booking.notes.blank? %>
+						                      <% if !@bookings.first.notes.blank? %>
 						                        <dt class="dark-gray">Notas</dt>
-						                        <dd class="light-gray"><p><%= booking.notes %></p></dd>
-						                        <% end %>
+						                        <dd class="light-gray"><p><%= @bookings.first.notes %></p></dd>
 						                      <% end %>
 
 						                    </dl>
@@ -148,9 +146,9 @@
 													<% end %>
 												</dd>
 												<% if !@bookings.first.notes.blank? %>
-												<dt class="dark-gray">Notas</dt>
-												<dd class="light-gray"><%= @bookings.first.notes %></dd>
-												<% end %>
+							                        <dt class="dark-gray">Notas</dt>
+							                        <dd class="light-gray"><p><%= @bookings.first.notes %></p></dd>
+						                        <% end %>
 											</dl>
 										<% end %>
 
