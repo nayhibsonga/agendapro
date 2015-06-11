@@ -181,7 +181,11 @@
                     <%= booking.location.name %>
                 </div>
                 <div class="campo">
-                    <%= booking.service.name %>
+                    <% if !booking.is_session %>
+                        <%= booking.service.name %>
+                    <% else %>
+                        <%= booking.service.name + " (Sesión)" %>
+                    <% end %>
                 </div>
                 <div class="campo">
                     <%= booking.service_provider.public_name %>
@@ -240,7 +244,11 @@
                     <%= booking.location.name %>
                 </div>
                 <div class="campo2">
-                    <%= booking.service.name %>
+                    <% if !booking.is_session %>
+                        <%= booking.service.name %>
+                    <% else %>
+                        <%= booking.service.name + " (Sesión)" %>
+                    <% end %>
                 </div>
                 <div class="campo2">
                     <%= booking.service_provider.public_name %>

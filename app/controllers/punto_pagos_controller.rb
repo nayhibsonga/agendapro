@@ -314,7 +314,11 @@ class PuntoPagosController < ApplicationController
         end
 
         if bookings.count >1
-          Booking.send_multiple_booking_mail(bookings.first.location_id, bookings.first.booking_group)
+          if bookings.first.session_booking.nil?
+            Booking.send_multiple_booking_mail(bookings.first.location_id, bookings.first.booking_group)
+          else
+            bookings.first.session_booking.send_sessions_booking_mail
+          end
         else
           BookingMailer.book_service_mail(bookings.first)
         end

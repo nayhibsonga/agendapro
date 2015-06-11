@@ -183,7 +183,11 @@
 					    				<%= booking.location.name %>
 					    			</td>
 					    			<td>
-					    				<%= booking.service.name %>
+					    				<% if !booking.is_session %>
+					                        <%= booking.service.name %>
+					                    <% else %>
+					                        <%= booking.service.name + " (Sesión)" %>
+					                    <% end %>
 					    			</td>
 					    			<td>
 					    				<%= booking.service_provider.public_name %>
@@ -236,7 +240,11 @@
 					    				<%= booking.location.name %>
 					    			</td>
 					    			<td>
-					    				<%= booking.service.name %>
+					    				<% if !booking.is_session %>
+					                        <%= booking.service.name %>
+					                    <% else %>
+					                        <%= booking.service.name + " (Sesión)" %>
+					                    <% end %>
 					    			</td>
 					    			<td>
 					    				<%= booking.service_provider.public_name %>

@@ -409,6 +409,12 @@ class Booking < ActiveRecord::Base
 		end
 	end
 
+	def send_admin_payed_session_mail
+		if !self.id.nil?
+			BookingMailer.admin_session_booking_mail(self)
+		end
+	end
+
 	def send_session_update_mail
 		if !self.id.nil?
 			if self.start > Time.now - eval(ENV["TIME_ZONE_OFFSET"])

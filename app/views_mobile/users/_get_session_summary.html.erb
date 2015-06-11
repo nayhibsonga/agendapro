@@ -14,13 +14,20 @@
 		end
 	end
 %>
-<div>
 
-<div class="table-responsive">
+<% if @sessionBooking.bookings.first.payed %>
+	<div class="row">
+		<div class="col-xs-12">
+			<i class="fa fa-money"></i>&nbsp;Servicio pagado en línea
+		</div>
+	</div>
+<% end %>
+
+<div class="table-responsive" style="margin-top: 7px;">
 	<table class="table">
 		<tr>
 			<th>
-				Número de sesiones
+				# Sesiones
 			</th>
 			<th>
 				Usadas

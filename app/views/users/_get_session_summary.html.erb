@@ -15,6 +15,15 @@
 	end
 %>
 <div>
+	<% if @sessionBooking.bookings.first.payed %>
+		<div class="row">
+			<div class="col-md-12">
+				<div class="sessions-summary-payed">
+					<i class="fa fa-money"></i>&nbsp;Servicio pagado en línea
+				</div>
+			</div>
+		</div>
+	<% end %>
 	<div class="row">
 		<div class="col-md-1">
 		</div>

@@ -347,7 +347,11 @@ class BookingsController < ApplicationController
           if @booking.user_session_confirmed
             session_booking.send_sessions_booking_mail
           else
-            @booking.send_validate_mail
+            if @booking.payed
+              @booking.send_admin_payed_session_mail
+            else
+              @booking.send_validate_mail
+            end
           end
         end
 
@@ -649,7 +653,11 @@ class BookingsController < ApplicationController
         if @booking.user_session_confirmed
           session_booking.send_sessions_booking_mail
         else
-          @booking.send_validate_mail
+          if @booking.payed
+            @booking.send_admin_payed_session_mail
+          else
+            @booking.send_validate_mail
+          end
         end
       end
 
@@ -972,7 +980,11 @@ class BookingsController < ApplicationController
           if @booking.user_session_confirmed
             @booking.session_booking.send_sessions_booking_mail
           else
-            @booking.send_validate_mail
+            if @booking.payed
+              @booking.send_admin_payed_session_mail
+            else
+              @booking.send_validate_mail
+            end
           end
         end
 
@@ -1753,6 +1765,43 @@ class BookingsController < ApplicationController
             proceed_with_payment = false
           end
         end
+
+
+        if @has_session_booking
+
+          #@session_booking.sessions_taken = @bookings.size
+          sessions_missing = @session_booking.sessions_amount - @bookings.size
+          @session_booking.sessions_taken = @bookings.size
+          @session_booking.save
+          
+
+          for i in 0..sessions_missing-1
+
+            if !first_booking.nil?
+              new_booking = first_booking.dup
+              new_booking.is_session = true
+              new_booking.session_booking_id = @session_booking.id
+              new_booking.user_session_confirmed = false
+              new_booking.is_session_booked = false
+
+              if new_booking.save
+                @bookings << new_booking
+                current_user ? user = current_user.id : user = 0
+                BookingHistory.create(booking_id: new_booking.id, action: "Creada por Cliente", start: new_booking.start, status_id: new_booking.status_id, service_id: new_booking.service_id, service_provider_id: new_booking.service_provider_id, user_id: user, notes: new_booking.notes, company_comment: new_booking.company_comment)
+              else
+                @errors << new_booking.errors.full_messages
+                @blocked_bookings << new_booking.service.name + " con " + new_booking.service_provider.public_name + " el " + I18n.l(new_booking.start.to_datetime)
+                proceed_with_payment = false
+              end
+            else
+              @errors << "No existen sesiones agendadas."
+              @blocked_bookings << "No existen sesiones agendadas."
+              proceed_with_payment = false
+            end
+          end
+
+        end
+
 
         #Check for errors before starting payment
         if @errors.length > 0 and @blocked_bookings.count > 0
