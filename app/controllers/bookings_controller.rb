@@ -347,7 +347,11 @@ class BookingsController < ApplicationController
           if @booking.user_session_confirmed
             session_booking.send_sessions_booking_mail
           else
-            @booking.send_validate_mail
+            if @booking.payed
+              @booking.send_admin_payed_session_mail
+            else
+              @booking.send_validate_mail
+            end
           end
         end
 
@@ -649,7 +653,11 @@ class BookingsController < ApplicationController
         if @booking.user_session_confirmed
           session_booking.send_sessions_booking_mail
         else
-          @booking.send_validate_mail
+          if @booking.payed
+            @booking.send_admin_payed_session_mail
+          else
+            @booking.send_validate_mail
+          end
         end
       end
 
@@ -972,7 +980,11 @@ class BookingsController < ApplicationController
           if @booking.user_session_confirmed
             @booking.session_booking.send_sessions_booking_mail
           else
-            @booking.send_validate_mail
+            if @booking.payed
+              @booking.send_admin_payed_session_mail
+            else
+              @booking.send_validate_mail
+            end
           end
         end
 
