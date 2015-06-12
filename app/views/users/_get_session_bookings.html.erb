@@ -14,7 +14,7 @@
 						<i class="fa fa-clock-o"></i>&nbsp;<%= I18n.l(booking.start.to_time + 4.hours, format: :hour) %>
 					</div>
 					<div class="col-md-4 session-row-btns">
-						<span><button class="btn session-btn session-btn-edit" data-toggle="bookModal" href="book_session_form?id=<%= booking.id %>"disabled>Editar</button><button class="btn session-btn session-btn-delete"disabled>Cancelar</button></span>
+						<span><a class="btn session-btn session-btn-edit" data-target="#bookModal" data-toggle="modal" href="book_session_form?id=<%= booking.id %>"disabled>Editar</a><button class="btn session-btn session-btn-delete"disabled>Cancelar</button></span>
 					</div>
 				</div>
 			<% else %>
@@ -27,7 +27,7 @@
 						<i class="fa fa-clock-o"></i>&nbsp;<%= I18n.l(booking.start.to_time + 4.hours, format: :hour) %>
 					</div>
 					<div class="col-md-4 session-row-btns">
-						<button class="btn session-btn session-btn-detail" data-toggle="detailModal" href="session_booking_detail?id=<%= booking.id %>" disabled>Ver detalle</button>
+						<a class="btn session-btn session-btn-detail" data-target="#detailModal" data-toggle="modal" href="session_booking_detail?id=<%= booking.id %>" disabled>Ver detalle</a>
 						<button class="btn session-btn session-btn-validate" disabled>Validar</button>
 					</div>
 				</div>
@@ -42,7 +42,7 @@
 						<i class="fa fa-clock-o"></i>&nbsp;<%= I18n.l(booking.start.to_time + 4.hours, format: :hour) %>
 				</div>
 				<div class="col-md-4 session-row-btns">
-					<button class="btn session-btn session-btn-detail" data-toggle="detailModal" href="session_booking_detail?id=<%= booking.id %>" disabled>Ver detalle</button>
+					<a class="btn session-btn session-btn-detail" data-target="#detailModal" data-toggle="modal" href="session_booking_detail?id=<%= booking.id %>" disabled>Ver detalle</a>
 				</div>
 			</div>
 		<% end %>
@@ -58,7 +58,7 @@
 				
 			</div>
 			<div class="col-md-4 session-row-btns">
-				<button class="btn session-btn session-btn-book" data-toggle="bookModal" href="book_session_form?id=<%= booking.id %>" disabled>Reservar</button>
+				<a class="btn session-btn session-btn-book" data-target="#bookModal" data-toggle="modal" href="book_session_form?id=<%= booking.id %>" disabled>Reservar</a>
 			</div>
 		</div>
 
@@ -66,25 +66,60 @@
 	<% end %>
 </div>
 
-<div class="modal" id="detailModal">
+<!--<div class="modal" id="detailModal">
 	<div class="modal-body">
 		
 	</div>
-</div>
+</div>-->
 
-<div class="modal" id="bookModal">
-	<div class="modal-body">
-		
-	</div>
-</div>
+<div class="modal" id="detailModal" tabindex="-1" role="basic" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+        </div> <!-- /.modal-content -->
+    </div> <!-- /.modal-dialog -->
+</div> <!-- /.modal -->
 
-<div class="modal" id="calendarModal">
-	<div class="modal-body">
-		
-	</div>
-</div>
+<div class="modal" id="bookModal" tabindex="-1" role="basic" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+        </div> <!-- /.modal-content -->
+    </div> <!-- /.modal-dialog -->
+</div> <!-- /.modal -->
+
+<div class="modal" id="calendarModal"tabindex="-1" role="basic" aria-hidden="true">
+    <div class="modal-dialog calendar-modal">
+        <div class="modal-content">
+        </div> <!-- /.modal-content -->
+    </div> <!-- /.modal-dialog -->
+</div> <!-- /.modal -->
 
 <script type="text/javascript">
+
+	/*$('body').on('hidden.bs.modal', '.modal', function () {
+		$(this).removeData('bs.modal');
+
+	});*/
+	var transition = false;
+
+	$('body').on('hidden.bs.modal', '#calendarModal', function () {
+		//$("#calendarModal .modal-content").empty();
+		$(this).removeData('bs.modal');
+		console.log("Hiding calendar");
+		loadSessions();
+	});
+
+	$('body').on('hidden.bs.modal', '#bookModal', function () {
+		//$("#bookModal .modal-content").empty();
+		$(this).removeData('bs.modal');
+		console.log("Hiding book");
+	});
+
+	$('body').on('hidden.bs.modal', '#detailModal', function () {
+		//$("#detailModal .modal-content").empty();
+		$(this).removeData('bs.modal');
+		console.log("Hiding detail");
+		loadSessions();
+	});
 
 	$(".session-btn-delete").click(function(){
 		$(".session-btn").attr("disabled", "disabled");
@@ -125,33 +160,6 @@
 			}
 		})
 	});
-
-	$('[data-toggle="detailModal"]').on('click', function(e) {
-        $('#detailModal').remove();
-        e.preventDefault();
-        var $this = $(this)
-          , $remote = $this.data('remote') || $this.attr('href')
-          , $modal = $('<div class="modal" id="detailModal"><div class="modal-body"></div></div>');
-        $('body').append($modal);
-        $modal.modal({backdrop: 'static', keyboard: false});
-        $modal.load($remote); 
-    });
-
-    $('#detailModal').on('hidden.bs.modal', function(){
-        $("#detailModal").remove();
-    });
-
-
-    $('[data-toggle="bookModal"]').on('click', function(e) {
-        $('#bookModal').remove();
-        e.preventDefault();
-        var $this = $(this)
-          , $remote = $this.data('remote') || $this.attr('href')
-          , $modal = $('<div class="modal" id="bookModal"><div class="modal-body"></div></div>');
-        $('body').append($modal);
-        $modal.modal({backdrop: 'static', keyboard: false});
-        $modal.load($remote); 
-    });
 
     $(document).ready(function(){
         $(".session-btn").attr("disabled", false);
