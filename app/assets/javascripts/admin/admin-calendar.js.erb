@@ -611,7 +611,7 @@ function editBookingModal(eventId) {
 			$('.booking-modal-footer').append(
 				'<a class="btn btn-white pull-left" href="/bookings/' + eventId + '.pdf">Imprimir</a>' +
 				'<button type="button" class="btn btn-default btn-close booking-button" data-dismiss="modal">Cerrar</button>' +
-				'<button type="button" class="btn btn-green booking-button" onclick="editBooking('+eventId+')">Guardar</button>'
+				'<button type="button" id="save_booking_button" class="btn btn-green booking-button" onclick="editBooking('+eventId+')">Guardar</button>'
 			);
 			$('#cancelBookingDiv').remove();
 			$('#booking_status_id').closest('.col-md-6').append(
@@ -753,7 +753,7 @@ function createBookingModal(date, provider_id) {
 			$('.booking-modal-footer').append(
 				'<button type="button" class="btn btn-default btn-close booking-button" data-dismiss="modal">Cerrar</button>' +
 				'<button type="button" class="btn btn-orange booking-button" id="add-service-btn" onclick="addNewService()">Agregar Otro Servicio</button>' +
-				'<button type="button" class="btn btn-green booking-button" onclick="createBooking()">Guardar</button>'
+				'<button type="button" id="save_booking_button" class="btn btn-green booking-button" onclick="createBooking()">Guardar</button>'
 			);
 
 			if (provider_id) {
@@ -773,6 +773,7 @@ function createBookingModal(date, provider_id) {
 			$('#client-history-tbody').html('<tr><td colspan="6">El cliente no tiene historial...</td></tr>');
 			$('#booking-tab').tab('show');
 			$('#bookingModal').modal('show');
+			loadBookingPayment(0);
 			checkClientSessions();
 		}
 		else {
@@ -2186,35 +2187,6 @@ function loadClientHistory(booking_id) {
 			}
 			else {
 				$('#booking-history-tbody').append('<tr><td colspan="8">No hay modificaciones para esta reserva...</td></tr>');
-			}
-		});
-	}
-	return false;
-}
-
-function loadBookingPayment(booking_id) {
-	if (parseInt(booking_id) > 0) {
-		$('#booking-history-tbody').empty();
-		$.getJSON('/booking_payment/' + booking_id, function (bookings_payment) {
-			window.console.log(bookings_payment);
-			if (bookings_payment.payment == null) {
-				window.console.log('payment null');
-			}
-			if (bookings_payment.elegible_bookings.length > 0 && bookings_payment.payment_bookings.length > 0) {
-				$('#payment-bookings-checkbox').empty();
-				$.each(bookings_payment.elegible_bookings, function (key, elegible_booking) {
-					var checked = bookings_payment.payment_bookings.indexOf(elegible_booking.id) > -1 ? 'checked' : ''
-					$('#payment-bookings-checkbox').append(
-						'<div class="checkbox">' +
-							'<label>' +
-								'<input class="payment_booking_checkbox" id="payment_booking_' + elegible_booking.id + '" type="checkbox" value="' + elegible_booking.id + '" ' + checked + '>' + bookings_payment.elegible_texts[key] + 
-							'</label>' +
-						'</div>'
-						);
-				});
-			}
-			else {
-				
 			}
 		});
 	}

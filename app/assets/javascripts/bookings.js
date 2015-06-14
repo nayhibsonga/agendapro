@@ -4,3 +4,4 @@
 //= require validations/validate
 //= require validations/admin/booking
 //= require admin/hoursOptimizer
+//= require admin/payment-methods

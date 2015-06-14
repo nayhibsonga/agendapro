@@ -1,0 +1,130 @@
+function loadPaymentSettings() {
+	if ($('#payment_payment_method_id option:selected').data("installments")) {
+			$('#installments_group').show();
+			$('#payment_method_type_group').show();
+			
+		}
+		else {
+			$('#installments_group').hide();
+			$('#payment_method_type_group').hide();
+			$('#payment_installments').val('');
+		}
+		if ($('#payment_payment_method_id option:selected').data("number")) {
+			$('#payment_method_number_group').show();
+		}
+		else {
+			$('#payment_method_number_group').hide();
+			$('#payment_payment_method_number').val('');
+		}
+		if ($('#payment_payment_method_id option:selected').data("custom-method")) {
+			$('#company_payment_method_group').show();
+		}
+		else {
+			$('#company_payment_method_group').hide();
+			$('#payment_company_payment_method_id').val('');
+		}
+		if ($('#payment_payment_method_id option:selected').data("number-required")) {
+			window.console.log("required true");
+		}
+		else {
+			window.console.log("required false");
+		}
+}
+
+function loadBookingPayment(booking_id) {
+	var today = new Date();
+    var dd = today.getDate();
+    var mm = today.getMonth()+1;
+
+    var yyyy = today.getFullYear();
+    if(dd<10){
+        dd='0'+dd;
+    } 
+    if(mm<10){
+        mm='0'+mm;
+    } 
+    var today = dd+'-'+mm+'-'+yyyy;
+
+	$('#payment-bookings-checkbox').empty();
+	$('#payment_amount').val('');
+	$('#payment_receipt_number').val('');
+	$('#payment_payment_method_number').val('');
+	$('#payment_installments').val('');
+	$('#payment_receipt_type_id option[value="<%= ReceiptType.find_by_name("Boleta").id %>"]').prop('selected', true);
+	$('#payment_payment_method_id option[value="<% PaymentMethod.find_by_name("Efectivo").id %>"]').prop('selected', true);
+	$('#payment_company_payment_method_id option[value=""]').prop('selected', true);
+	$('#payment_payment_date').val(today);
+
+
+	if (parseInt(booking_id) > 0) {
+		$('#booking-history-tbody').empty();
+		$.getJSON('/booking_payment/' + booking_id, function (bookings_payment) {
+			window.console.log(bookings_payment);
+			if (bookings_payment.elegible_bookings.length > 0 && bookings_payment.payment_bookings.length > 0) {
+				var amount = 0;
+				$.each(bookings_payment.elegible_bookings, function (key, full_elegible_booking) {
+					var elegible_booking = full_elegible_booking.booking;
+					window.console.log(elegible_booking);
+					var checked = bookings_payment.payment_bookings.indexOf(elegible_booking.id) > -1 ? 'checked' : '';
+					amount += elegible_booking.price;
+					$('#payment-bookings-checkbox').append(
+						'<div class="checkbox">' +
+							'<label>' +
+								'<input class="payment_booking_checkbox" id="payment_booking_' + elegible_booking.id + '" type="checkbox" value="' + elegible_booking.id + '" ' + checked + ' data-price="' + elegible_booking.price + '">' + full_elegible_booking.booking_text + 
+							'</label>' +
+						'</div>'
+						);
+				});
+			}
+			var payment = bookings_payment.payment
+			if (payment == null) {
+				$('#payment_amount').val(amount);
+			}
+			else {
+				$('#payment_amount').val(payment.amount);
+				$('#payment_receipt_number').val(payment.receipt_number);
+				$('#payment_payment_date').val(payment.payment_date);
+				$('#payment_payment_method_number').val(payment.payment_method_number);
+				$('#payment_installments').val(payment.installments);
+				$('#payment_receipt_type_id option[value="' + payment.receipt_type_id + '"]').prop('selected', true);
+				$('#payment_payment_method_id option[value="' + payment.payment_method_id + '"]').prop('selected', true);
+				$('#payment_company_payment_method_id option[value="' + payment.company_payment_method_id + '"]').prop('selected', true);
+			}
+			loadPaymentSettings();
+		});
+	}
+
+	return false;
+}
+
+$(function() {
+	$("#payment_payment_date").datepicker({
+		dateFormat: 'dd-mm-yy',
+		autoSize: true,
+		firstDay: 1,
+		changeMonth: true,
+		changeYear: true,
+		monthNames: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+        monthNamesShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
+        prevText: 'Atrás',
+        nextText: 'Adelante',
+        dayNames: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'],
+        dayNamesShort: ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'],
+        dayNamesMin: ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'],
+        today: 'Hoy',
+        clear: ''
+	});
+
+	$('a[data-toggle="tab"]').on('show.bs.tab', function (e) {
+		var target = $(e.target).attr("href");
+		if ((target == '#payments-pane')) {
+			$('#save_booking_button').attr('disabled','disabled');
+		} else {
+			$('#save_booking_button').removeAttr('disabled');
+		}
+	});
+
+	$('#payment_payment_method_id').change(function() {
+		loadPaymentSettings();
+	});
+});

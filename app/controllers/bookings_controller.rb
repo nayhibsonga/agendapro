@@ -3184,10 +3184,10 @@ class BookingsController < ApplicationController
 
     @elegible_texts = []
     @elegible_bookings.each do |b|
-      @elegible_texts.push(b.service.name + " con " + b.service_provider.public_name + " el " + I18n.l(b.start.to_datetime))
+      @elegible_texts.push( { booking: b, booking_text: b.service.name + " con " + b.service_provider.public_name + " el " + I18n.l(b.start.to_datetime) + " ( $ " + b.price.to_i.to_s + " )" } )
     end
 
-    render :json => {payment: @payment, elegible_bookings: @elegible_bookings, payment_bookings: @payment_bookings, elegible_texts: @elegible_texts }
+    render :json => {payment: @payment, elegible_bookings: @elegible_texts, payment_bookings: @payment_bookings }
   end
 
   private
