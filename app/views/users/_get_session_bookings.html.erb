@@ -121,6 +121,19 @@
 		loadSessions();
 	});
 
+	$('body').on('shown.bs.modal', '#bookModal', function(){
+		$("#calendarModal").remove();
+		$('body').append(
+
+			'<div class="modal" id="calendarModal"tabindex="-1" role="basic" aria-hidden="true">' +
+			    '<div class="modal-dialog calendar-modal">' +
+			        '<div class="modal-content">' +
+			        '</div>' +
+			    '</div>' +
+			'</div>'
+		);
+	});
+
 	$(".session-btn-delete").click(function(){
 		$(".session-btn").attr("disabled", "disabled");
 		var booking_id = $(this).closest(".session-row").attr("booking_id");
