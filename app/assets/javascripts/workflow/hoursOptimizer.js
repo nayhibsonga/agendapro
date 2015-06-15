@@ -134,7 +134,7 @@ function loadHourModal () {
 }
 
 function loadHours () {
-  bookings = []
+  bookings = [];
   $('#selectHour').append('<p class="text-center"><i class="fa fa-spinner fa-spin fa-lg"></i></p>');
   var localId = $('#selectedLocal').data('local').id;
   var selects = [];
