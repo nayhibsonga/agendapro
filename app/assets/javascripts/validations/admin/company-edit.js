@@ -106,7 +106,25 @@ $.validator.addMethod('morning', function(value, element, params) {
     var morningStart = $("#company_setting_promo_time_attributes_morning_start_4i").val() + $("#company_setting_promo_time_attributes_morning_start_5i").val();
     var morningEnd = $("#company_setting_promo_time_attributes_morning_end_4i").val() + $("#company_setting_promo_time_attributes_morning_end_5i").val();
 
-    return morningStart <= morningEnd;
+    var result = morningStart <= morningEnd;
+
+    $("#morning-error").empty();
+    $("#morning-error").hide();
+
+    if (result)
+    {
+    	$(".morning-promo-hour").addClass('has-success').removeClass('has-error');
+    	$(".morning-promo-hour").children('.form-control-feedback').addClass('fa fa-check').removeClass('fa fa-times');
+    }
+    else
+    {
+    	$(".morning-promo-hour").removeClass('has-success').addClass('has-error');
+    	$(".morning-promo-hour").children('.form-control-feedback').removeClass('fa fa-check').addClass('fa fa-times');
+    	$("#morning-error").append("El fin de la mañana no puede ser menor al inicio.");
+    	$("#morning-error").show();
+    }
+
+    return result;
 
 }, 'El fin de la mañana no puede ser menor al inicio.');
 
@@ -116,7 +134,40 @@ $.validator.addMethod('afternoon', function(value, element, params) {
     var afternoonEnd = $("#company_setting_promo_time_attributes_afternoon_end_4i").val() + $("#company_setting_promo_time_attributes_afternoon_end_5i").val();
     var morningEnd = $("#company_setting_promo_time_attributes_morning_end_4i").val() + $("#company_setting_promo_time_attributes_morning_end_5i").val();
 
-    return afternoonStart <= afternoonEnd && morningEnd <= afternoonStart;
+    var result1 = afternoonStart <= afternoonEnd;
+    var result2 = morningEnd <= afternoonStart;
+
+    $("#afternoon-error").empty();
+    $("#afternoon-error").hide();
+
+    if (result1 && result2)
+    {
+    	$(".afternoon-promo-hour").addClass('has-success').removeClass('has-error');
+    	$(".afternoon-promo-hour").children('.form-control-feedback').addClass('fa fa-check').removeClass('fa fa-times');
+    }
+    else
+    {
+
+    	$(".afternoon-promo-hour").removeClass('has-success').addClass('has-error');
+    	$(".afternoon-promo-hour").children('.form-control-feedback').removeClass('fa fa-check').addClass('fa fa-times');
+    	var strError = "";
+    	if(!result1 && result2)
+    	{
+    		strError = "El fin de la tarde no puede ser menor al inicio.";
+    	}
+    	else if(!result2 && result1)
+    	{
+    		strError = "El inicio de la tarde no puede ser menor al fin de la mañana.";
+    	}
+    	else
+    	{
+    		strError = "El inicio de la tarde no puede ser menor al fin de la mañana ni mayor al fin de la tarde.";
+    	}
+    	$("#afternoon-error").append(strError);
+    	$("#afternoon-error").show();
+    }
+
+    return result1 && result2;
 
 }, 'El inicio de la tarde no puede ser menor al fin de la mañana ni mayor al fin de la tarde.');
 
@@ -126,7 +177,42 @@ $.validator.addMethod('night', function(value, element, params) {
     var afternoonEnd = $("#company_setting_promo_time_attributes_afternoon_end_4i").val() + $("#company_setting_promo_time_attributes_afternoon_end_5i").val();
     var nightEnd = $("#company_setting_promo_time_attributes_night_end_4i").val() + $("#company_setting_promo_time_attributes_night_end_5i").val();
 
-    return nightStart <= nightEnd && afternoonEnd <= nightStart;
+
+    var result1 = nightStart <= nightEnd;
+    var result2 = afternoonEnd <= nightStart;
+
+    $("#night-error").empty();
+    $("#night-error").hide();
+
+    if (result1 && result2)
+    {
+    	$(".night-promo-hour").addClass('has-success').removeClass('has-error');
+    	$(".night-promo-hour").children('.form-control-feedback').addClass('fa fa-check').removeClass('fa fa-times');
+    }
+    else
+    {
+
+    	$(".night-promo-hour").removeClass('has-success').addClass('has-error');
+    	$(".night-promo-hour").children('.form-control-feedback').removeClass('fa fa-check').addClass('fa fa-times');
+    	var strError = "";
+    	if(!result1 && result2)
+    	{
+    		strError = "El fin de la noche no puede ser menor al inicio.";
+    	}
+    	else if(!result2 && result1)
+    	{
+    		strError = "El inicio de la noche no puede ser menor al fin de la tarde.";
+    	}
+    	else
+    	{
+    		strError = "El inicio de la noche no puede ser menor al fin de la tarde ni mayor al fin de la noche.";
+    	}
+    	$("#night-error").append(strError);
+    	$("#night-error").show();
+    }
+
+    return result1 && result2;
+
 
 }, 'El inicio de la tarde no puede ser menor al fin de la mañana ni mayor al fin de la tarde.');
 
@@ -134,8 +220,8 @@ $.validator.addMethod('night', function(value, element, params) {
 $(function() {
 	$('#promo-times-form').validate({
 		errorPlacement: function(error, element) {
-			error.appendTo(element.parent().next());
-			console.log(element.parent().next());
+			/*error.appendTo(element.parent().next());
+			console.log(element.parent().next());*/
 		},
 		rules: {
 			'company_setting[promo_time_attributes][morning_start(4i)]': {
@@ -189,14 +275,14 @@ $(function() {
 		},
 		highlight: function(element) {
 			//console.log($(element));
-			$(element).parent().removeClass('has-success').addClass('has-error');
-			$(element).parent().children('.form-control-feedback').removeClass('fa fa-check').addClass('fa fa-times');
+			/*$(element).parent().removeClass('has-success').addClass('has-error');
+			$(element).parent().children('.form-control-feedback').removeClass('fa fa-check').addClass('fa fa-times');*/
 		},
 		success: function(element) {
 			//console.log($(element).parent());
-			$(element).closest('promo-hour-select').removeClass('has-error').addClass('has-success');
+			/*$(element).closest('promo-hour-select').removeClass('has-error').addClass('has-success');
 			$(element).parent().removeClass('has-error').addClass('has-success');
-			$(element).parent().children('.form-control-feedback').removeClass('fa fa-times').addClass('fa fa-check');
+			$(element).parent().children('.form-control-feedback').removeClass('fa fa-times').addClass('fa fa-check');*/
 			//$(element).parent().empty()
 		},
 		submitHandler: function(form) {
