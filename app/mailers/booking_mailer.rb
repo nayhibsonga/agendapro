@@ -83,7 +83,7 @@ class BookingMailer < ActionMailer::Base
 		if book_info.web_origin
 			providers_emails = providers_emails.where(new_web: true)
 		else
-			providers_emails providers_emails.where(new: true)
+			providers_emails = providers_emails.where(new: true)
 		end
 		providers_emails.each do |provider|
 			message[:to] << {
@@ -106,7 +106,7 @@ class BookingMailer < ActionMailer::Base
 		if book_info.web_origin
 			location_emails = location_emails.where(new_web: true)
 		else
-			location_emails location_emails.where(new: true)
+			location_emails = location_emails.where(new: true)
 		end
 		location_emails.each do |local|
 			message[:to] << {
@@ -133,7 +133,7 @@ class BookingMailer < ActionMailer::Base
 		if book_info.web_origin
 			company_emails = company_emails.where(new_web: true)
 		else
-			company_emails company_emails.where(new: true)
+			company_emails = company_emails.where(new: true)
 		end
 		company_emails.each do |company|
 			message[:to] << {
@@ -290,7 +290,7 @@ class BookingMailer < ActionMailer::Base
 		if book_info.web_origin
 			providers_emails = providers_emails.where(modified_web: true)
 		else
-			providers_emails providers_emails.where(modified: true)
+			providers_emails = providers_emails.where(modified: true)
 		end
 		providers_emails.each do |provider|
 			message[:to] << {
@@ -313,7 +313,7 @@ class BookingMailer < ActionMailer::Base
 		if book_info.web_origin
 			location_emails = location_emails.where(modified_web: true)
 		else
-			location_emails location_emails.where(modified: true)
+			location_emails = location_emails.where(modified: true)
 		end
 		location_emails.each do |local|
 			message[:to] << {
@@ -340,7 +340,7 @@ class BookingMailer < ActionMailer::Base
 		if book_info.web_origin
 			company_emails = company_emails.where(modified_web: true)
 		else
-			company_emails company_emails.where(modified: true)
+			company_emails = company_emails.where(modified: true)
 		end
 		company_emails.each do |company|
 			message[:to] << {
@@ -495,7 +495,7 @@ class BookingMailer < ActionMailer::Base
 		if book_info.web_origin
 			providers_emails = providers_emails.where(confirmed_web: true)
 		else
-			providers_emails providers_emails.where(confirmed: true)
+			providers_emails = providers_emails.where(confirmed: true)
 		end
 		providers_emails.each do |provider|
 			message[:to] << {
@@ -518,7 +518,7 @@ class BookingMailer < ActionMailer::Base
 		if book_info.web_origin
 			location_emails = location_emails.where(confirmed_web: true)
 		else
-			location_emails location_emails.where(confirmed: true)
+			location_emails = location_emails.where(confirmed: true)
 		end
 		location_emails.each do |local|
 			message[:to] << {
@@ -545,7 +545,7 @@ class BookingMailer < ActionMailer::Base
 		if book_info.web_origin
 			company_emails = company_emails.where(confirmed_web: true)
 		else
-			company_emails company_emails.where(confirmed: true)
+			company_emails = company_emails.where(confirmed: true)
 		end
 		company_emails.each do |company|
 			message[:to] << {
@@ -652,7 +652,7 @@ class BookingMailer < ActionMailer::Base
 		if book_info.web_origin
 			providers_emails = providers_emails.where(canceled_web: true)
 		else
-			providers_emails providers_emails.where(canceled: true)
+			providers_emails = providers_emails.where(canceled: true)
 		end
 		providers_emails.each do |provider|
 			message[:to] << {
@@ -675,7 +675,7 @@ class BookingMailer < ActionMailer::Base
 		if book_info.web_origin
 			location_emails = location_emails.where(canceled_web: true)
 		else
-			location_emails location_emails.where(canceled: true)
+			location_emails = location_emails.where(canceled: true)
 		end
 		location_emails.each do |local|
 			message[:to] << {
@@ -702,7 +702,7 @@ class BookingMailer < ActionMailer::Base
 		if book_info.web_origin
 			company_emails = company_emails.where(canceled_web: true)
 		else
-			company_emails company_emails.where(canceled: true)
+			company_emails = company_emails.where(canceled: true)
 		end
 		company_emails.each do |company|
 			message[:to] << {
