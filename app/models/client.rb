@@ -4,7 +4,7 @@ class Client < ActiveRecord::Base
   has_many :client_comments, dependent: :destroy
   has_many :bookings, dependent: :destroy
 
-  validate :mail_uniqueness, :identification_uniqueness, :minimun_info
+  validate :mail_uniqueness, :identification_uniqueness, :record_uniqueness, :minimun_info
 
   after_update :client_notification
 
@@ -55,6 +55,14 @@ class Client < ActiveRecord::Base
     Client.where(company_id: self.company_id).each do |client|
       if self.email && self.email != "" && client != self && client.email != "" && self.email == client.email
         errors.add(:base, "No se pueden crear dos clientes con el mismo email.")
+      end
+    end
+  end
+
+  def record_uniqueness
+    Client.where(company_id: self.company_id).each do |client|
+      if self.record && self.record != "" && client != self && client.record != "" && self.record == client.record
+        errors.add(:base, "No se pueden crear dos clientes con el mismo número de ficha.")
       end
     end
   end
@@ -154,7 +162,7 @@ class Client < ActiveRecord::Base
     end
   end
   def self.import(file, company_id)
-    allowed_attributes = ["email", "first_name", "last_name", "identification_number", "phone", "address", "district", "city", "age", "gender", "birth_day", "birth_month", "birth_year"]
+    allowed_attributes = ["email", "first_name", "last_name", "identification_number", "phone", "address", "district", "city", "age", "gender", "birth_day", "birth_month", "birth_year", "record", "second_phone"]
     spreadsheet = open_spreadsheet(file)
     if !spreadsheet.nil?
       header = spreadsheet.row(1)
@@ -208,6 +216,14 @@ class Client < ActiveRecord::Base
 
         if row["birth_year"] && row["birth_year"] != ""
           row["birth_year"] = row["birth_year"].to_i
+        end
+
+        if row["record"] && row["record"] != ""
+          row["record"] = row["records"].to_s
+        end
+
+        if row["second_phone"] && row["second_phone"] != ""
+          row["second_phone"] = row["second_phone"].to_s
         end
 
         if row["identification_number"] && row["identification_number"] != ""

@@ -1326,6 +1326,4 @@ class Booking < ActiveRecord::Base
 			BookingMailer.multiple_booking_mail(@data)
 		end
 	end
-
-
-end
+	
