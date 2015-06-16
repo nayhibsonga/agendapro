@@ -91,13 +91,11 @@ class Booking < ActiveRecord::Base
 
 	def provider_in_break_warning
 		self.service_provider.provider_breaks.each do |provider_break|
-			if self != provider_booking
-				if (provider_break.start - self.end) * (self.start - provider_break.end) > 0
-					if !self.is_session || (self.is_session && self.is_session_booked) and (!provider_booking.is_session || (provider_booking.is_session && provider_booking.is_session_booked))
-						warnings.add(:base, "El prestador seleccionado tiene bloqueado el horario elegido")
-		        		return
-		        	end
-				end
+			if (provider_break.start - self.end) * (self.start - provider_break.end) > 0
+				if !self.is_session || (self.is_session && self.is_session_booked) and (!provider_booking.is_session || (provider_booking.is_session && provider_booking.is_session_booked))
+					warnings.add(:base, "El prestador seleccionado tiene bloqueado el horario elegido")
+	        		return
+	        	end
 			end
 		end
 	end
