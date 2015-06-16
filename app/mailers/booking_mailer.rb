@@ -1050,7 +1050,7 @@ class BookingMailer < ActionMailer::Base
 		message = {
 			:from_email => 'no-reply@agendapro.cl',
 			:from_name => data[:company],
-			:subject => 'Nueva Reserva en ' + data[:company].to_s,
+			:subject => 'Nueva Reserva en ' + data[:company_name],
 			:to => [],
 			:headers => { 'Reply-To' => data[:reply_to] },
 			:global_merge_vars => [
@@ -1060,7 +1060,7 @@ class BookingMailer < ActionMailer::Base
 				},
 				{
 					:name => 'COMPANYNAME',
-					:content => data[:company]
+					:content => data[:company_name]
 				},
 				{
 					:name => 'SIGNATURE',
