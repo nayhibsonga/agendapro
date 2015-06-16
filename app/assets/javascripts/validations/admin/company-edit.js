@@ -101,20 +101,33 @@ $(function() {
 
 });
 
-$.validator.addMethod('morning', function(value, element, params) {
+$.validator.addMethod('promoHourCheck', function(value, element, params) {
     
     var morningStart = $("#company_setting_promo_time_attributes_morning_start_4i").val() + $("#company_setting_promo_time_attributes_morning_start_5i").val();
     var morningEnd = $("#company_setting_promo_time_attributes_morning_end_4i").val() + $("#company_setting_promo_time_attributes_morning_end_5i").val();
+    var afternoonStart = $("#company_setting_promo_time_attributes_afternoon_start_4i").val() + $("#company_setting_promo_time_attributes_afternoon_start_5i").val();
+    var afternoonEnd = $("#company_setting_promo_time_attributes_afternoon_end_4i").val() + $("#company_setting_promo_time_attributes_afternoon_end_5i").val();
+    var nightStart = $("#company_setting_promo_time_attributes_night_start_4i").val() + $("#company_setting_promo_time_attributes_night_start_5i").val();
+    var nightEnd = $("#company_setting_promo_time_attributes_night_end_4i").val() + $("#company_setting_promo_time_attributes_night_end_5i").val();
 
     var result = morningStart <= morningEnd;
+    var result1 = afternoonStart <= afternoonEnd;
+    var result2 = morningEnd <= afternoonStart;
+    var result3 = nightStart <= nightEnd;
+    var result4 = afternoonEnd <= nightStart;
+
 
     $("#morning-error").empty();
     $("#morning-error").hide();
+    $("#afternoon-error").empty();
+    $("#afternoon-error").hide();
+    $("#night-error").empty();
+    $("#night-error").hide();
 
     if (result)
     {
     	$(".morning-promo-hour").addClass('has-success').removeClass('has-error');
-    	$(".morning-promo-hour").children('.form-control-feedback').addClass('fa fa-check').removeClass('fa fa-times');
+    	$(".morning-promo-hour").children('.form-control-feedback').removeClass('fa fa-times').addClass('fa fa-check');
     }
     else
     {
@@ -124,26 +137,11 @@ $.validator.addMethod('morning', function(value, element, params) {
     	$("#morning-error").show();
     }
 
-    return result;
-
-}, 'El fin de la mañana no puede ser menor al inicio.');
-
-$.validator.addMethod('afternoon', function(value, element, params) {
-    
-    var afternoonStart = $("#company_setting_promo_time_attributes_afternoon_start_4i").val() + $("#company_setting_promo_time_attributes_afternoon_start_5i").val();
-    var afternoonEnd = $("#company_setting_promo_time_attributes_afternoon_end_4i").val() + $("#company_setting_promo_time_attributes_afternoon_end_5i").val();
-    var morningEnd = $("#company_setting_promo_time_attributes_morning_end_4i").val() + $("#company_setting_promo_time_attributes_morning_end_5i").val();
-
-    var result1 = afternoonStart <= afternoonEnd;
-    var result2 = morningEnd <= afternoonStart;
-
-    $("#afternoon-error").empty();
-    $("#afternoon-error").hide();
 
     if (result1 && result2)
     {
     	$(".afternoon-promo-hour").addClass('has-success').removeClass('has-error');
-    	$(".afternoon-promo-hour").children('.form-control-feedback').addClass('fa fa-check').removeClass('fa fa-times');
+    	$(".afternoon-promo-hour").children('.form-control-feedback').removeClass('fa fa-times').addClass('fa fa-check');
     }
     else
     {
@@ -158,36 +156,30 @@ $.validator.addMethod('afternoon', function(value, element, params) {
     	else if(!result2 && result1)
     	{
     		strError = "El inicio de la tarde no puede ser menor al fin de la mañana.";
+    		$(".morning-promo-hour").removeClass('has-success').addClass('has-error');
+	    	$(".morning-promo-hour").children('.form-control-feedback').removeClass('fa fa-check').addClass('fa fa-times');
+	    	$("#morning-error").append("El fin de la mañana no puede ser mayor al inicio de la tarde.");
+	    	$("#morning-error").show();
     	}
     	else
     	{
     		strError = "El inicio de la tarde no puede ser menor al fin de la mañana ni mayor al fin de la tarde.";
+    		$(".morning-promo-hour").removeClass('has-success').addClass('has-error');
+	    	$(".morning-promo-hour").children('.form-control-feedback').removeClass('fa fa-check').addClass('fa fa-times');
+	    	$("#morning-error").append("El fin de la mañana no puede ser mayor al inicio de la tarde.");
+	    	$("#morning-error").show();
     	}
     	$("#afternoon-error").append(strError);
     	$("#afternoon-error").show();
     }
 
-    return result1 && result2;
 
-}, 'El inicio de la tarde no puede ser menor al fin de la mañana ni mayor al fin de la tarde.');
-
-$.validator.addMethod('night', function(value, element, params) {
     
-    var nightStart = $("#company_setting_promo_time_attributes_night_start_4i").val() + $("#company_setting_promo_time_attributes_night_start_5i").val();
-    var afternoonEnd = $("#company_setting_promo_time_attributes_afternoon_end_4i").val() + $("#company_setting_promo_time_attributes_afternoon_end_5i").val();
-    var nightEnd = $("#company_setting_promo_time_attributes_night_end_4i").val() + $("#company_setting_promo_time_attributes_night_end_5i").val();
 
-
-    var result1 = nightStart <= nightEnd;
-    var result2 = afternoonEnd <= nightStart;
-
-    $("#night-error").empty();
-    $("#night-error").hide();
-
-    if (result1 && result2)
+    if (result3 && result4)
     {
     	$(".night-promo-hour").addClass('has-success').removeClass('has-error');
-    	$(".night-promo-hour").children('.form-control-feedback').addClass('fa fa-check').removeClass('fa fa-times');
+    	$(".night-promo-hour").children('.form-control-feedback').removeClass('fa fa-times').addClass('fa fa-check');
     }
     else
     {
@@ -195,26 +187,33 @@ $.validator.addMethod('night', function(value, element, params) {
     	$(".night-promo-hour").removeClass('has-success').addClass('has-error');
     	$(".night-promo-hour").children('.form-control-feedback').removeClass('fa fa-check').addClass('fa fa-times');
     	var strError = "";
-    	if(!result1 && result2)
+    	if(!result3 && result4)
     	{
     		strError = "El fin de la noche no puede ser menor al inicio.";
     	}
-    	else if(!result2 && result1)
+    	else if(!result4 && result3)
     	{
     		strError = "El inicio de la noche no puede ser menor al fin de la tarde.";
+    		$(".afternoon-promo-hour").removeClass('has-success').addClass('has-error');
+	    	$(".afternoon-promo-hour").children('.form-control-feedback').removeClass('fa fa-check').addClass('fa fa-times');
+	    	$("#afternoon-error").append("El fin de la tarde no puede ser mayor al inicio de la noche.");
+	    	$("#afternoon-error").show();
     	}
     	else
     	{
     		strError = "El inicio de la noche no puede ser menor al fin de la tarde ni mayor al fin de la noche.";
+    		$(".afternoon-promo-hour").removeClass('has-success').addClass('has-error');
+	    	$(".afternoon-promo-hour").children('.form-control-feedback').removeClass('fa fa-check').addClass('fa fa-times');
+	    	$("#afternoon-error").append("El fin de la tarde no puede ser mayor al inicio de la noche.");
+	    	$("#afternoon-error").show();
     	}
     	$("#night-error").append(strError);
     	$("#night-error").show();
     }
 
-    return result1 && result2;
+    return result && result1 && result2 && result3 && result4;
 
-
-}, 'El inicio de la tarde no puede ser menor al fin de la mañana ni mayor al fin de la tarde.');
+}, 'Algunos horarios no son correctos.');
 
 
 $(function() {
@@ -226,51 +225,51 @@ $(function() {
 		rules: {
 			'company_setting[promo_time_attributes][morning_start(4i)]': {
 				required: true,
-				morning: true
+				promoHourCheck: true
 			},
 			'company_setting[promo_time_attributes][morning_start(5i)]': {
 				required: true,
-				morning: true
+				promoHourCheck: true
 			},
 			'company_setting[promo_time_attributes][morning_end(4i)]': {
 				required: true,
-				morning: true
+				promoHourCheck: true
 			},
 			'company_setting[promo_time_attributes][morning_end(5i)]': {
 				required: true,
-				morning: true
+				promoHourCheck: true
 			},
 			'company_setting[promo_time_attributes][afternoon_start(4i)]': {
 				required: true,
-				afternoon: true
+				promoHourCheck: true
 			},
 			'company_setting[promo_time_attributes][afternoon_start(5i)]': {
 				required: true,
-				afternoon: true
+				promoHourCheck: true
 			},
 			'company_setting[promo_time_attributes][afternoon_end(4i)]': {
 				required: true,
-				afternoon: true
+				promoHourCheck: true
 			},
 			'company_setting[promo_time_attributes][afternoon_end(5i)]': {
 				required: true,
-				afternoon: true
+				promoHourCheck: true
 			},
 			'company_setting[promo_time_attributes][night_start(4i)]': {
 				required: true,
-				night: true
+				promoHourCheck: true
 			},
 			'company_setting[promo_time_attributes][night_start(5i)]': {
 				required: true,
-				night: true
+				promoHourCheck: true
 			},
 			'company_setting[promo_time_attributes][night_end(4i)]': {
 				required: true,
-				night: true
+				promoHourCheck: true
 			},
 			'company_setting[promo_time_attributes][night_end(5i)]': {
 				required: true,
-				night: true
+				promoHourCheck: true
 			}
 		},
 		highlight: function(element) {
