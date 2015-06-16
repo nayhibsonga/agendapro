@@ -56,7 +56,7 @@ class Booking < ActiveRecord::Base
 			end
 		end
 		if !in_provider_time
-			warnings.add(:base, "El horario o dÃ­a de la reserva no estÃ¡ disponible para este prestador")
+			warnings.add(:base, "El horario o día de la reserva no está disponible para este prestador")
 			return
 		end
 	end
@@ -78,10 +78,10 @@ class Booking < ActiveRecord::Base
 					unless provider_booking.status_id == cancelled_id
 						if (provider_booking.start - self.end) * (self.start - provider_booking.end) > 0
 							if !self.service.group_service || self.service_id != provider_booking.service_id
-								warnings.add(:base, "La hora seleccionada ya estÃ¡ reservada para el prestador elegido")
+								warnings.add(:base, "La hora seleccionada ya está reservada para el prestador elegido")
 								return
 							elsif self.service.group_service && self.service_id == provider_booking.service_id && self.service_provider.bookings.where(:service_id => self.service_id, :start => self.start).where.not(status_id: Status.find_by_name('Cancelado')).count > self.service.capacity
-								warnings.add(:base, "La capacidad del servicio grupal estÃ¡ sobre su lÃ­mite")
+								warnings.add(:base, "La capacidad del servicio grupal está sobre su límite")
 								return
 							end
 						end
@@ -129,27 +129,27 @@ class Booking < ActiveRecord::Base
 		unless self.status_id == cancelled_id
 			if !self.deal.nil?
 				if self.deal.quantity > 0 && self.deal.bookings.where.not(status_id: cancelled_id).count >= self.deal.quantity
-					warnings.add(:base, "Este convenio ya fue utilizado el mÃ¡ximo de veces que era permitida.")
+					warnings.add(:base, "Este convenio ya fue utilizado el máximo de veces que era permitida.")
 					return
 				elsif self.deal.constraint_option > 0 && self.deal.constraint_quantity > 0
 					if self.deal.constraint_option == 1
 						if self.deal.bookings.where.not(status_id: cancelled_id).where(start: self.start).count >= self.deal.constraint_quantity
-							warnings.add(:base, "Este convenio ya fue utilizado el mÃ¡ximo de veces que era permitida simultÃ¡neamente.")
+							warnings.add(:base, "Este convenio ya fue utilizado el máximo de veces que era permitida simultáneamente.")
 							return
 						end
 					elsif self.deal.constraint_option == 2
 						if self.deal.bookings.where.not(status_id: cancelled_id).where(start: self.start.beginning_of_day..self.start.end_of_day).count >= self.deal.constraint_quantity
-							warnings.add(:base, "Este convenio ya fue utilizado el mÃ¡ximo de veces que era permitida por dÃ­a.")
+							warnings.add(:base, "Este convenio ya fue utilizado el máximo de veces que era permitida por día.")
 							return
 						end
 					elsif self.deal.constraint_option == 3
 						if self.deal.bookings.where.not(status_id: cancelled_id).where(start: self.start.beginning_of_week..self.start.end_of_week).count >= self.deal.constraint_quantity
-							warnings.add(:base, "Este convenio ya fue utilizado el mÃ¡ximo de veces que era permitida por semana.")
+							warnings.add(:base, "Este convenio ya fue utilizado el máximo de veces que era permitida por semana.")
 							return
 						end
 					elsif self.deal.constraint_option == 4
 						if self.deal.bookings.where.not(status_id: cancelled_id).where(start: self.start.beginning_of_month..self.start.end_of_month).count >= self.deal.constraint_quantity
-							warnings.add(:base, "Este convenio ya fue utilizado el mÃ¡ximo de veces que era permitida por mes.")
+							warnings.add(:base, "Este convenio ya fue utilizado el máximo de veces que era permitida por mes.")
 							return
 						end
 					end
@@ -175,16 +175,16 @@ class Booking < ActiveRecord::Base
 		end
 		unless self.location.company.company_setting.schedule_overcapacity
 			if !in_provider_time
-				errors.add(:base, "El horario o dÃ­a de la reserva no estÃ¡ disponible para este prestador")
+				errors.add(:base, "El horario o día de la reserva no está disponible para este prestador")
 				return
 			end
 		else
 			if self.location.company.company_setting.extended_schedule_bool
 				if bstart.change(:month => 1, :day => 1, :year => 2000) < self.location.company.company_setting.extended_min_hour
-					errors.add(:base, "La hora de inicio debe ser mayor o igual a la hora mÃ­nima que se despliega, puedes extender el horario en las configuraciones del calendario.")
+					errors.add(:base, "La hora de inicio debe ser mayor o igual a la hora mínima que se despliega, puedes extender el horario en las configuraciones del calendario.")
 				end
 				if bend.change(:month => 1, :day => 1, :year => 2000) > self.location.company.company_setting.extended_max_hour
-					errors.add(:base, "La hora de fin debe ser menor o igual a la hora mÃ¡xima que se despliega, puedes extender el horario en las configuraciones del calendario.")
+					errors.add(:base, "La hora de fin debe ser menor o igual a la hora máxima que se despliega, puedes extender el horario en las configuraciones del calendario.")
 				end
 			else
 				location_ids = self.location.company.locations.pluck(:id)
@@ -209,10 +209,10 @@ class Booking < ActiveRecord::Base
 						unless provider_booking.status_id == cancelled_id
 							if (provider_booking.start - self.end) * (self.start - provider_booking.end) > 0
 								if !self.service.group_service || self.service_id != provider_booking.service_id
-									errors.add(:base, "La hora seleccionada ya estÃ¡ reservada para el prestador elegido")
+									errors.add(:base, "La hora seleccionada ya está reservada para el prestador elegido")
 									return
 								elsif self.service.group_service && self.service_id == provider_booking.service_id && self.service_provider.bookings.where(:service_id => self.service_id, :start => self.start).where.not(status_id: Status.find_by_name('Cancelado')).count > self.service.capacity
-									errors.add(:base, "La capacidad del servicio grupal ya llegÃ³ a su lÃ­mite")
+									errors.add(:base, "La capacidad del servicio grupal ya llegó a su límite")
 									return
 								end
 							end
@@ -265,34 +265,34 @@ class Booking < ActiveRecord::Base
 				unless self.status_id == cancelled_id
 					if !self.deal.blank?
 						if self.deal.quantity > 0 && self.deal.bookings.where.not(status_id: cancelled_id).count >= self.deal.quantity
-							errors.add(:base, "Este convenio ya fue utilizado el mÃ¡ximo de veces que era permitida.")
+							errors.add(:base, "Este convenio ya fue utilizado el máximo de veces que era permitida.")
 							return
 						elsif self.deal.constraint_option > 0 && self.deal.constraint_quantity > 0
 							if self.deal.constraint_option == 1
 								if self.deal.bookings.where.not(status_id: cancelled_id).where(start: self.start).count >= self.deal.constraint_quantity
-									errors.add(:base, "Este convenio ya fue utilizado el mÃ¡ximo de veces que era permitida simultÃ¡neamente.")
+									errors.add(:base, "Este convenio ya fue utilizado el máximo de veces que era permitida simultáneamente.")
 									return
 								end
 							elsif self.deal.constraint_option == 2
 								if self.deal.bookings.where.not(status_id: cancelled_id).where(start: self.start.beginning_of_day..self.start.end_of_day).count >= self.deal.constraint_quantity
-									errors.add(:base, "Este convenio ya fue utilizado el mÃ¡ximo de veces que era permitida por dÃ­a.")
+									errors.add(:base, "Este convenio ya fue utilizado el máximo de veces que era permitida por día.")
 									return
 								end
 							elsif self.deal.constraint_option == 3
 								if self.deal.bookings.where.not(status_id: cancelled_id).where(start: self.start.beginning_of_week..self.start.end_of_week).count >= self.deal.constraint_quantity
-									errors.add(:base, "Este convenio ya fue utilizado el mÃ¡ximo de veces que era permitida por semana.")
+									errors.add(:base, "Este convenio ya fue utilizado el máximo de veces que era permitida por semana.")
 									return
 								end
 							elsif self.deal.constraint_option == 4
 								if self.deal.bookings.where.not(status_id: cancelled_id).where(start: self.start.beginning_of_month..self.start.end_of_month).count >= self.deal.constraint_quantity
-									errors.add(:base, "Este convenio ya fue utilizado el mÃ¡ximo de veces que era permitida por mes.")
+									errors.add(:base, "Este convenio ya fue utilizado el máximo de veces que era permitida por mes.")
 									return
 								end
 							end
 						end
 					else
 						if self.location.company.company_setting.deal_required
-							errors.add(:base, "Es obligatorio incluir un cÃ³digo de convenio para reservar.")
+							errors.add(:base, "Es obligatorio incluir un código de convenio para reservar.")
 							return
 						end
 					end
@@ -303,7 +303,7 @@ class Booking < ActiveRecord::Base
 
 	def booking_duration
 		if ((self.end - self.start) / 1.minute ).round < 5
-			errors.add(:base, "La duraciÃ³n de la reserva no puede ser menor a 5 minutos.")
+			errors.add(:base, "La duración de la reserva no puede ser menor a 5 minutos.")
 		end
 	end
 
@@ -394,7 +394,7 @@ class Booking < ActiveRecord::Base
 		event = RiCal.Calendar do |cal|
 		  cal.event do |event|
 			event.summary = booking.service.name + ' en ' + booking.location.company.name
-			event.description = "Datos de tu reserva:\n- Fecha: " + date + "\n- Servicio: " + booking.service.name + "\n- Prestador: " + booking.service_provider.public_name + "\n- Lugar: " + address + ".\nNOTA: por favor asegÃºrate que el calendario de tu celular estÃ© en la zona horario correcta. En caso contrario, este recordatorio podrÃ­a quedar guardado para otra hora."
+			event.description = "Datos de tu reserva:\n- Fecha: " + date + "\n- Servicio: " + booking.service.name + "\n- Prestador: " + booking.service_provider.public_name + "\n- Lugar: " + address + ".\nNOTA: por favor asegúrate que el calendario de tu celular esté en la zona horario correcta. En caso contrario, este recordatorio podría quedar guardado para otra hora."
 			event.dtstart =  booking.start.strftime('%Y%m%dT%H%M%S')
 			event.dtend = booking.end.strftime('%Y%m%dT%H%M%S')
 			event.location = booking.location.get_full_address
