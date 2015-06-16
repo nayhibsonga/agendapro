@@ -201,7 +201,7 @@ class CompaniesController < ApplicationController
 			else
 				end_date = DateTime.new(year+1, 1, 1)-1.minutes
 			end
-			billing_logs = BillingLog.where('company_id = ? and created_at BETWEEN ? and ?', @company.id, start_date, end_date)
+			billing_logs = BillingLog.where('company_id = ? and created_at BETWEEN ? and ?', @company.id, start_date, end_date).where(:trx_id => PuntoPagosConfirmation.where(:response => "00").pluck(:trx_id))
 			billing_records = BillingRecord.where('company_id = ? and date BETWEEN ? and ?', @company.id, start_date, end_date)
 
 			billing_logs.each do |bl|
