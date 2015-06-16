@@ -88,7 +88,7 @@ class BookingMailer < ActionMailer::Base
 		providers_emails.each do |provider|
 			message[:to] << {
 					:email => provider.email,
-					:type => 'to'
+					:type => 'bcc'
 				}
 			message[:merge_vars] << {
 					:rcpt => provider.email,
@@ -111,7 +111,7 @@ class BookingMailer < ActionMailer::Base
 		location_emails.each do |local|
 			message[:to] << {
 				:email => local.email,
-				:type => 'to'
+				:type => 'bcc'
 			}
 			message[:merge_vars] << {
 				:rcpt => local.email,
@@ -138,7 +138,7 @@ class BookingMailer < ActionMailer::Base
 		company_emails.each do |company|
 			message[:to] << {
 				:email => company.email,
-				:type => 'to'
+				:type => 'bcc'
 			}
 			message[:merge_vars] << {
 				:rcpt => company.email,
@@ -295,7 +295,7 @@ class BookingMailer < ActionMailer::Base
 		providers_emails.each do |provider|
 			message[:to] << {
 					:email => provider.email,
-					:type => 'to'
+					:type => 'bcc'
 				}
 			message[:merge_vars] << {
 					:rcpt => provider.email,
@@ -318,7 +318,7 @@ class BookingMailer < ActionMailer::Base
 		location_emails.each do |local|
 			message[:to] << {
 				:email => local.email,
-				:type => 'to'
+				:type => 'bcc'
 			}
 			message[:merge_vars] << {
 				:rcpt => local.email,
@@ -345,7 +345,7 @@ class BookingMailer < ActionMailer::Base
 		company_emails.each do |company|
 			message[:to] << {
 				:email => company.email,
-				:type => 'to'
+				:type => 'bcc'
 			}
 			message[:merge_vars] << {
 				:rcpt => company.email,
@@ -500,7 +500,7 @@ class BookingMailer < ActionMailer::Base
 		providers_emails.each do |provider|
 			message[:to] << {
 					:email => provider.email,
-					:type => 'to'
+					:type => 'bcc'
 				}
 			message[:merge_vars] << {
 					:rcpt => provider.email,
@@ -523,7 +523,7 @@ class BookingMailer < ActionMailer::Base
 		location_emails.each do |local|
 			message[:to] << {
 				:email => local.email,
-				:type => 'to'
+				:type => 'bcc'
 			}
 			message[:merge_vars] << {
 				:rcpt => local.email,
@@ -550,7 +550,7 @@ class BookingMailer < ActionMailer::Base
 		company_emails.each do |company|
 			message[:to] << {
 				:email => company.email,
-				:type => 'to'
+				:type => 'bcc'
 			}
 			message[:merge_vars] << {
 				:rcpt => company.email,
@@ -657,7 +657,7 @@ class BookingMailer < ActionMailer::Base
 		providers_emails.each do |provider|
 			message[:to] << {
 					:email => provider.email,
-					:type => 'to'
+					:type => 'bcc'
 				}
 			message[:merge_vars] << {
 					:rcpt => provider.email,
@@ -680,7 +680,7 @@ class BookingMailer < ActionMailer::Base
 		location_emails.each do |local|
 			message[:to] << {
 				:email => local.email,
-				:type => 'to'
+				:type => 'bcc'
 			}
 			message[:merge_vars] << {
 				:rcpt => local.email,
@@ -707,7 +707,7 @@ class BookingMailer < ActionMailer::Base
 		company_emails.each do |company|
 			message[:to] << {
 				:email => company.email,
-				:type => 'to'
+				:type => 'bcc'
 			}
 			message[:merge_vars] << {
 				:rcpt => company.email,
@@ -855,7 +855,7 @@ class BookingMailer < ActionMailer::Base
 		providers_emails.each do |provider|
 			message[:to] << {
 					:email => provider.email,
-					:type => 'to'
+					:type => 'bcc'
 				}
 			message[:merge_vars] << {
 					:rcpt => provider.email,
@@ -873,7 +873,7 @@ class BookingMailer < ActionMailer::Base
 		location_emails.each do |local|
 			message[:to] << {
 				:email => local.email,
-				:type => 'to'
+				:type => 'bcc'
 			}
 			message[:merge_vars] << {
 				:rcpt => local.email,
@@ -895,7 +895,7 @@ class BookingMailer < ActionMailer::Base
 		company_emails.each do |company|
 			message[:to] << {
 				:email => company.email,
-				:type => 'to'
+				:type => 'bcc'
 			}
 			message[:merge_vars] << {
 				:rcpt => company.email,
@@ -1082,7 +1082,7 @@ class BookingMailer < ActionMailer::Base
 		data[:provider][:array].each do |provider|
 			message[:to] << {
 					:email => provider[:email],
-					:type => 'to'
+					:type => 'bcc'
 				}
 			message[:merge_vars] << {
 					:rcpt => provider[:email],
@@ -1107,7 +1107,7 @@ class BookingMailer < ActionMailer::Base
 		data[:location][:email].each do |local|
 			message[:to] << {
 				:email => local,
-				:type => 'to'
+				:type => 'bcc'
 			}
 			message[:merge_vars] << {
 				:rcpt => data[:location][:email],
@@ -1132,7 +1132,7 @@ class BookingMailer < ActionMailer::Base
 		data[:company][:email].each do |company|
 			message[:to] << {
 				:email => company,
-				:type => 'to'
+				:type => 'bcc'
 			}
 			message[:merge_vars] << {
 				:rcpt => data[:company][:email],
@@ -1719,7 +1719,7 @@ class BookingMailer < ActionMailer::Base
 		data[:provider][:array].each do |provider|
 			message[:to] << {
 					:email => provider[:email],
-					:type => 'to'
+					:type => 'bcc'
 				}
 			message[:merge_vars] << {
 					:rcpt => provider[:email],
@@ -1744,7 +1744,7 @@ class BookingMailer < ActionMailer::Base
 		if data[:location][:send_mail]
 			message[:to] << {
 				:email => data[:location][:email],
-				:type => 'to'
+				:type => 'bcc'
 			}
 			message[:merge_vars] << {
 				:rcpt => data[:location][:email],
