@@ -806,7 +806,7 @@ function loadDescription (serviceId) {
 		current_service = service;
 
 		$("#description-heading").empty();
-		$("#description-heading").append('<h3 class="panel-title">' + service.name + '</h3>');
+		$("#description-heading").append(service.name);
 
 		$('#services-description').empty();
 		/*$('#services-description').append(
@@ -839,7 +839,7 @@ function loadDescription (serviceId) {
 		else if (service.show_price && service.price == 0) {
 			$('#services-description').append(
 				'<tr>' +
-					'<td class="dark-gray">Precio:</td>' +
+					'<td class="dark-gray"><%= image_tag("promociones/etiqueta.png", class:"promotion-hour-icon", size: "18x18") %></td>' +
 					'<td class="light-gray">¡Consultar en Local!</td>' +
 				'</tr>'
 			);
@@ -847,33 +847,30 @@ function loadDescription (serviceId) {
 		else{
 			$('#services-description').append(
 				'<tr>' +
-					'<td class="dark-gray">Precio:</td>' +
+					'<td class="dark-gray"><%= image_tag("promociones/etiqueta.png", class:"promotion-hour-icon", size: "18x18") %></td>' +
 					'<td class="light-gray">Consultar en Local</td>' +
 				'</tr>'
 			);
 		};
 		$('#services-description').append(
 			'<tr>' +
-				'<td class="dark-gray">Duración:</td>' +
-				'<td class="light-gray">' + service.duration + ' minutos </td>' +
+				'<td class="dark-gray"><%= image_tag("promociones/reloj.png", class:"promotion-hour-icon", size: "18x18") %></td>' +
+				'<td class="light-gray">' + service.duration + ' min </td>' +
 			'</tr>'
 		);
+
+		$('#description-info').append("Descripción: ");
+		var hasDescription = false;
 		if(service.description) {
-			$('#services-description').append(
-				'<tr>' +
-					'<td class="dark-gray">Descripción:</td>' +
-					'<td class="light-gray">' + service.description + '</td>' +
-				'</tr>'
+			$('#description-info').append(
+				service.description + "<br />"
 			);
+			hasDescription = true;
 		}
 		if(service.has_sessions)
 		{
-			$("#services-description").append(
-				'<tr>' +
-					'<td class="dark-gray">Sesiones:</td>' +
-					'<td class="light-gray"><b>Ese servicio consta de ' + service.sessions_amount + ' sesiones.</b></td>' +
-				'</tr>'
-			);
+			hasDescription = true;
+			$("#description-info").append('Ese servicio consta de ' + service.sessions_amount + ' sesiones.');
 			$(".optimizer-item").hide();
 			$("#optimizerOpenBtn").attr("disabled", "disabled");
 		}
@@ -881,6 +878,10 @@ function loadDescription (serviceId) {
 		{
 			$(".optimizer-item").show();
 			$("#optimizerOpenBtn").attr("disabled", false);
+		}
+		if (!hasDescription)
+		{
+			$("#description-info").empty();
 		}
 		$("#discount").empty();
 		$("#normal-book").empty();
