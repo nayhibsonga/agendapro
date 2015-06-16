@@ -827,10 +827,16 @@ function loadDescription (serviceId) {
 			{
 				if(service.has_discount && service.discount > 0)
 				{
-					$('#services-description').append(
+					/*$('#services-description').append(
 						'<tr>' +
 							'<td class="dark-gray"><%= image_tag("promociones/tarjeta_de_credito.png", class:"promotion-hour-icon", size: "18x18") %></td>' +
 							'<td class="light-gray"><b>' + simple_currency(Math.round(service.price*(100-service.discount)/100)) + ' (' + service.discount + '% de descuento)</b></td>' +
+						'</tr>'
+					);*/
+					$('#services-description').append(
+						'<tr>' +
+							'<td class="dark-gray"><%= image_tag("promociones/tarjeta_de_credito.png", class:"promotion-hour-icon", size: "18x18") %></td>' +
+							'<td class="light-gray"><span class="light-green"><b>' + simple_currency(Math.round(service.price*(100-service.discount)/100)) + '</b></span> (Pago online)</td>' +
 						'</tr>'
 					);
 				}
@@ -840,7 +846,7 @@ function loadDescription (serviceId) {
 			$('#services-description').append(
 				'<tr>' +
 					'<td class="dark-gray"><%= image_tag("promociones/etiqueta.png", class:"promotion-hour-icon", size: "18x18") %></td>' +
-					'<td class="light-gray">¡Consultar en Local!</td>' +
+					'<td class="light-gray">Consultar en Local</td>' +
 				'</tr>'
 			);
 		}
@@ -1005,6 +1011,20 @@ function addBooking (booking) {
 	};
 	checkUserCrossBookings();*/
 }
+
+function addService(name){
+	$("#selected-services").append(
+		'<div id="service-header" class="row">' +
+			'<div class="col-sm-1"><i class="fa fa-times"></i></div>' +
+			'<div class="col-sm-10">' + name + '</div>' +
+			'<div class="col-sm-1"><i class="fa fa-times"></i></div>' +
+		'</div>'
+	);
+}
+
+$("#new-add-service").click(function(){
+	addService($("#description-heading").text());
+});
 
 function generateDate(date, time) {
 	var year = date.substring(0, date.indexOf('-'));
