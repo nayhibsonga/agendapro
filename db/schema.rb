@@ -91,30 +91,34 @@ ActiveRecord::Schema.define(version: 20150616182233) do
   add_index "booking_histories", ["user_id"], name: "index_booking_histories_on_user_id", using: :btree
 
   create_table "bookings", force: true do |t|
-    t.datetime "start",                               null: false
-    t.datetime "end",                                 null: false
-    t.text     "notes",               default: ""
-    t.integer  "service_provider_id",                 null: false
+    t.datetime "start",                                  null: false
+    t.datetime "end",                                    null: false
+    t.text     "notes",                  default: ""
+    t.integer  "service_provider_id",                    null: false
     t.integer  "user_id"
-    t.integer  "service_id",                          null: false
-    t.integer  "location_id",                         null: false
-    t.integer  "status_id",                           null: false
+    t.integer  "service_id",                             null: false
+    t.integer  "location_id",                            null: false
+    t.integer  "status_id",                              null: false
     t.integer  "promotion_id"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.text     "company_comment",     default: ""
-    t.boolean  "web_origin",          default: false
-    t.boolean  "send_mail",           default: true
+    t.text     "company_comment",        default: ""
+    t.boolean  "web_origin",             default: false
+    t.boolean  "send_mail",              default: true
     t.integer  "client_id"
-    t.float    "price",               default: 0.0
-    t.boolean  "provider_lock",       default: false
-    t.integer  "max_changes",         default: 2
-    t.boolean  "payed",               default: false
-    t.string   "trx_id",              default: ""
-    t.string   "token",               default: ""
+    t.float    "price",                  default: 0.0
+    t.boolean  "provider_lock",          default: false
+    t.boolean  "payed",                  default: false
+    t.string   "trx_id",                 default: ""
+    t.integer  "max_changes",            default: 2
+    t.string   "token",                  default: ""
     t.integer  "deal_id"
     t.integer  "booking_group"
     t.integer  "payed_booking_id"
+    t.boolean  "is_session",             default: false
+    t.integer  "session_booking_id"
+    t.boolean  "user_session_confirmed", default: false
+    t.boolean  "is_session_booked",      default: false
   end
 
   add_index "bookings", ["client_id"], name: "index_bookings_on_client_id", using: :btree
@@ -724,10 +728,22 @@ ActiveRecord::Schema.define(version: 20150616182233) do
     t.decimal  "comission_value",     default: 0.0,   null: false
     t.integer  "comission_option",    default: 0,     null: false
     t.boolean  "online_booking",      default: true
+    t.boolean  "has_sessions",        default: false
+    t.integer  "sessions_amount"
   end
 
   add_index "services", ["company_id"], name: "index_services_on_company_id", using: :btree
   add_index "services", ["service_category_id"], name: "index_services_on_service_category_id", using: :btree
+
+  create_table "session_bookings", force: true do |t|
+    t.integer  "sessions_taken"
+    t.integer  "service_id"
+    t.integer  "user_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.integer  "client_id"
+    t.integer  "sessions_amount", default: 0
+  end
 
   create_table "staff_codes", force: true do |t|
     t.string   "staff"

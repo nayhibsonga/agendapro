@@ -1,3 +1,5 @@
+<input type="hidden" id="is_edit_modal" value="0" />
+
 <%= form_for @booking, html: {class: 'form-horizontal', style: 'margin-top: 10px; margin-bottom: 10px;'} do |f| %>
   <div class="background-green">
     <div class="container-fluid">
@@ -130,6 +132,21 @@
         <% end %>
       </div>
     </div>
+
+    <div class="row" id="sessions-row" hidden>
+      <input type="hidden" name="has_sessions" id="has_sessions" value="0" />
+      <div class="col-md-12">
+        <div class="form-group">
+          <%= f.label "sessions-label", "Sesiones", class: "col-sm-2 control-label" %>
+          <div class="col-sm-10">
+            <div id="sessions-info">
+
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
   </div>
   <div class="background-green">
     <div class="container-fluid">

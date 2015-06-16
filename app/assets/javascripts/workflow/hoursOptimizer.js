@@ -40,7 +40,10 @@ function loadService () {
       var category = service_hash.category;
       var services = '';
       $.each(service_hash.services, function (key, service) {
-        services += '<option value="' + service.id + '">' + service.name + '</option>';
+        if(!service.has_sessions)
+        {
+          services += '<option value="' + service.id + '">' + service.name + '</option>';
+        }
       });
       selectData += '<optgroup label="' + category + '">' + services + '</optgroup>';
     });
@@ -134,6 +137,7 @@ function loadHourModal () {
 }
 
 function loadHours () {
+  bookings = [];
   $('#selectHour').append('<p class="text-center"><i class="fa fa-spinner fa-spin fa-lg"></i></p>');
   var localId = $('#selectedLocal').data('local').id;
   var selects = [];

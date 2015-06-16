@@ -41,9 +41,7 @@
     <!-- End Inspectlet Embed Code -->
     <% end %>
 
-    <!-- start: Favicon and Touch Icons -->
-    <%= favicon_link_tag "favicon.png", :rel => "shortcut icon" %>
-    <!-- end: Favicon and Touch Icons -->
+    <%= render 'layouts/icons' %>
   </head>
 
   <body>
@@ -72,7 +70,7 @@
               <li class="<%= 'active' if current_page?(bookings_path) %>"><%= link_to 'Calendario', bookings_path %></li>
               <% end %>
               <!-- Clientes -->
-              <% if current_user.role != Role.find_by(name: "Staff") or current_user.role != Role.find_by(name: "Staff (sin edición)") %>
+              <% if current_user.role != Role.find_by(name: "Staff") and current_user.role != Role.find_by(name: "Staff (sin edición)") %>
               <li class="<%= 'active' if current_page?(clients_path) %>"><%= link_to 'Clientes', clients_path %></li>
               <% end %>
               <!-- Reportes -->

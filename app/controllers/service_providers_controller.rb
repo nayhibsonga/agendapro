@@ -145,7 +145,9 @@ class ServiceProvidersController < ApplicationController
       available = true
       service_provider.bookings.each do |booking|
         if (booking.start - Date(params[:end])) * (Date(params[:start]) - booking.end) > 0
-          available = false
+          if !booking.is_session || (booking.is_session && booking.is_session_booked)
+            available = false
+          end
         end
       end
       if available

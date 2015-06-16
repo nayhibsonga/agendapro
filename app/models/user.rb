@@ -30,6 +30,9 @@ class User < ActiveRecord::Base
 		Booking.where(client_id: Client.where(email: self.email)).each do |booking|
 			booking.update(user_id: self.id)
 		end
+		SessionBooking.where(client_id: Client.where(email: self.email)).each do |session_booking|
+			session_booking.update(user_id: self.id)
+		end
 	end
 	def location_company_users
 		if Role.where(:name => ["Administrador Local","Recepcionista"]).include? self.role

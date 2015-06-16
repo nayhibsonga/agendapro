@@ -1,3 +1,4 @@
+<%= stylesheet_link_tag "home/agenda" %>
 <div class="main">
     <div class="container">
         <div class="row">
@@ -106,6 +107,38 @@
         </div>
     </div>
 
+    <% if @sessionBookings.count > 0 %>
+        <div class="container">
+            <div class="row">
+
+                <div class="col-md-9">
+                    <div class="sessions-header">
+                        Reservas por sesiones
+                        <span style="float: right; padding-right: 10px;">
+                            <select id="session-booking-select" class="form-control">
+                                <% @sessionBookings.each do |session_booking| %>
+                                    <option value="<%= session_booking.id %>">
+                                        <%= session_booking.service.name %> en <%= session_booking.service.company.name %>
+                                    </option>
+                                <% end %>
+                            </select>
+                        </span>
+                    </div>
+                    <div id="sessions-div">
+
+                    </div>
+                </div>
+
+                <div class="col-md-3">
+                    <div id="sessions-summary">
+
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    <% end %>
+
     <div class="container">     
         <div class="reservas-header">
             Reservas Activas
@@ -148,7 +181,11 @@
                     <%= booking.location.name %>
                 </div>
                 <div class="campo">
-                    <%= booking.service.name %>
+                    <% if !booking.is_session %>
+                        <%= booking.service.name %>
+                    <% else %>
+                        <%= booking.service.name + " (Sesión)" %>
+                    <% end %>
                 </div>
                 <div class="campo">
                     <%= booking.service_provider.public_name %>
@@ -207,7 +244,11 @@
                     <%= booking.location.name %>
                 </div>
                 <div class="campo2">
-                    <%= booking.service.name %>
+                    <% if !booking.is_session %>
+                        <%= booking.service.name %>
+                    <% else %>
+                        <%= booking.service.name + " (Sesión)" %>
+                    <% end %>
                 </div>
                 <div class="campo2">
                     <%= booking.service_provider.public_name %>
@@ -223,7 +264,63 @@
     </div>
 
 </div>
+
+<script type="text/javascript">
+    $(document).ready(function(){
+
+        if($("#session-booking-select").length > 0)
+        {
+
+            loadSessions();
+        }
+
+    });
+
+    $("#session-booking-select").on('change', function(){
+
+        loadSessions();
+
+    });
+
+    function loadSessions()
+    {
+        var sb_id = $("#session-booking-select").val();
+
+        $.ajax({
+            type: 'GET',
+            url: 'get_session_bookings?session_booking_id=' + sb_id,
+            success: function(response)
+            {
+                //alert("success");
+                $("#sessions-div").empty();
+                $("#sessions-div").append(response);
+            },
+            error: function()
+            {
+                alert("error");
+            }
+        });
+
+        $.ajax({
+            type: 'GET',
+            url: 'get_session_summary?session_booking_id=' + sb_id,
+            success: function(response)
+            {
+                //alert("success");
+                $("#sessions-summary").empty();
+                $("#sessions-summary").append(response);
+            },
+            error: function()
+            {
+                alert("error");
+            }
+        });
+    }
+
+</script>
+
 <% content_for :scripts do %>
+
     <%= javascript_include_tag "Alert" %>
     <script type="text/javascript">
         myAlert = new Alert();

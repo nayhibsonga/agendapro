@@ -29,6 +29,18 @@ function serviceGroup () {
 	}
 }
 
+function serviceSessions() {
+	if($("#service_has_sessions").is(':checked')){
+		$('#service_sessions_amount').closest('.form-group').removeClass('hidden');
+		$('#foo5').trigger('updateSizes');
+		$('#service_sessions_amount').attr('disabled', false);
+	}
+	else{
+		$('#service_sessions_amount').closest('.form-group').addClass('hidden');
+		$('#service_sessions_amount').attr('disabled', true);
+	}
+}
+
 $(function() {
 	$('form input, form select').bind('keypress keydown keyup', function(e){
     	if(e.keyCode == 13) {
@@ -40,11 +52,19 @@ $(function() {
 	$('#service_group_service').click(function (e) {
 		serviceGroup();
 	});
+	$('#service_has_sessions').click(function (e) {
+		serviceSessions();
+	});
 	$('#categoryCheckboxId').click(function (e) {
 		categoryChange();
 	});
 	if ($('#service_group_service').is(':checked')) {
 		$('#service_capacity').closest('.form-group').removeClass('hidden');
+		$('#foo5').trigger('updateSizes');
+	}
+	if ($('#service_has_sessions').is(':checked')) {
+		$('#service_sessions_amount').closest('.form-group').removeClass('hidden');
+		$('#service_sessions_amount').attr('disabled', false);
 		$('#foo5').trigger('updateSizes');
 	}
 	if ($('#service_outcall').prop('checked')) {

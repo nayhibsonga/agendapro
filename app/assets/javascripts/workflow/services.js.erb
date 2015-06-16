@@ -1,5 +1,8 @@
 var booking_buffer = [];
 var actual_booking = null;
+var first_session = null;
+var sessions_buffer = [];
+var sessions_left = 0;
 
 var current_service;
 
@@ -14,7 +17,7 @@ function currency(price)
 	{
 		j = j+1;
 		stack.push(amount[i]);
-		if(j == 3)
+		if(j == 3 && i>0)
 		{
 			stack.push('.');
 			j = 0;
@@ -23,8 +26,9 @@ function currency(price)
 	var formatted_amount = "CLP $ ";
 	for(i = stack.length-1; i >=0 ; i--)
 	{
-		formatted_amount = formatted_amount + stack[i]
+		formatted_amount = formatted_amount + stack[i];
 	}
+
 	return formatted_amount;
 }
 
@@ -84,13 +88,13 @@ function loadStep1 (service_id) {
 			var serviceId = event.target.getAttribute('value');
 			if ($(event.target).data('outcall') == true) {
 				$('#outcallAddress').show();
-        var settings = $('#bookingForm').validate().settings;
-        settings.rules.address = {required: true}
+        		var settings = $('#bookingForm').validate().settings;
+        		settings.rules.address = {required: true}
 			}
 			else {
 				$('#outcallAddress').hide();
-        var settings = $('#bookingForm').validate().settings;
-        delete settings.rules.address;
+        		var settings = $('#bookingForm').validate().settings;
+        		delete settings.rules.address;
 			}
 			var oldTop = $(document).scrollTop();
 			$('#foo4').trigger('updateSizes');
@@ -130,6 +134,45 @@ function loadStep2 () {
 		$('.horario').hide();
 		selected = false;
 		var serviceId = $('input[name=serviceRadio]:checked').val();
+
+		if (current_service.has_sessions == true)
+		{
+			if(booking_buffer.length > 0)
+			{
+				myAlert.showAlert(
+				  '<h3>Este servicio tiene sesiones</h3>' +
+				  '<p>No puedes agendar un servicio con sesiones además de otros servicios.</p>'
+				);
+				return false;
+			}
+			$(".btn-add-service").attr("disabled", "disabled");
+			$(".btn-add-service").hide();
+			$(".sessions-bar").show();
+			$("#sessions-left").text(current_service.sessions_amount);
+			sessions_left = current_service.sessions_amount;
+			$("#sessions-explanation-total").html(sessions_left);
+
+			$("#has_sessions").val("1");
+
+			if(sessions_left < 2)
+			{
+				$(".btn-add-session").attr("disabled", "disabled");
+			}
+			else
+			{
+				$(".btn-add-session").attr("disabled", false);
+			}
+
+			//Show info modal
+		}
+		else
+		{
+			first_session = null;
+			$("#has_sessions").val("0");
+			$(".sessions-bar").hide();
+			$(".btn-add-service").attr("disabled", false);
+			$(".btn-add-service").show();
+		}
 
 		$.getJSON('/providers_services', {id: serviceId, local: $('#selectedLocal').data('local').id}, function (providers) {
 			$('#staff-selector').empty();
@@ -209,7 +252,14 @@ function loadStep2 () {
 				};
 
 				$(document).on('hourClick', function (e) {
-					addBooking(e);
+					if(!current_service.has_sessions)
+					{
+						addBooking(e);
+					}
+					else
+					{
+						addSession(e);
+					}
 				});
 
 				$(function () {
@@ -274,7 +324,14 @@ function loadStep2 () {
 				$('#foo4').trigger('updateSizes');
 
 				$(document).on('hourClick', function (e) {
-					addBooking(e);
+					if(!current_service.has_sessions)
+					{
+						addBooking(e);
+					}
+					else
+					{
+						addSession(e);
+					}
 				});
 
 				$(function () {
@@ -294,6 +351,16 @@ function loadStep2 () {
 }
 
 function loadStep3 () {
+
+	if($("#has_sessions").val() == "1")
+	{
+		//If it has sessions and first is not set, then the only booking is the first session
+		if (booking_buffer.length == 0)
+		{
+			first_session = actual_booking;
+		}
+	}
+
 	if ($('#clientExclusive').data('client-exclusive')) {
 		$('#identificationNumber').show();
 		$('#full_name').prop('disabled', true);
@@ -304,120 +371,269 @@ function loadStep3 () {
 	}
 	if ($('[name="staffRadio"]').is(':checked')){
 		if (selected) {
-			booking_buffer.push(actual_booking);
-			$('.bookings').val(JSON.stringify(booking_buffer));
 
-			// Summary
-			$('#summary').empty();
-			var service = '';
-			var when = '';
-			var provider = '';
-			var prices = '';
-			var payable_prices = '';
-			var payable = true;
-			var price = 0;
-			var discounted_price = 0;
-			var show_all = true;
-			for (var i = 0; i < booking_buffer.length; i++) {
-				console.log("Booking payable: " + booking_buffer[i].online_payable);
-				service += '<p class="light-gray">' + booking_buffer[i].service_name + '</p>';
-				provider += '<p class="light-gray">' + booking_buffer[i].provider_name + '</p>';
-				when += '<p class="light-gray">' + formattedTime(booking_buffer[i].start) + '</p>';
-				if(!booking_buffer[i].online_payable || !booking_buffer[i].show_price || booking_buffer[i].price == 0)
+
+			if(first_session == null)
+			{
+				booking_buffer.push(actual_booking);
+				$('.bookings').val(JSON.stringify(booking_buffer));
+				$("#has_sessions").val("0");
+				// Summary
+				$('#summary').empty();
+				var service = '';
+				var when = '';
+				var provider = '';
+				var prices = '';
+				var payable_prices = '';
+				var payable = true;
+				var price = 0;
+				var discounted_price = 0;
+				var show_all = true;
+				for (var i = 0; i < booking_buffer.length; i++) {
+					console.log("Booking payable: " + booking_buffer[i].online_payable);
+					service += '<p class="light-gray">' + booking_buffer[i].service_name + '</p>';
+					provider += '<p class="light-gray">' + booking_buffer[i].provider_name + '</p>';
+					when += '<p class="light-gray">' + formattedTime(booking_buffer[i].start) + '</p>';
+					if(!booking_buffer[i].online_payable || !booking_buffer[i].show_price || booking_buffer[i].price == 0)
+					{
+						payable = false;
+						if(!booking_buffer[i].show_price || booking_buffer[i].price == 0)
+						{
+							show_all = false;
+						}
+					}
+					else
+					{
+						if (booking_buffer[i].has_discount)
+						{
+							payable_prices += '<p class="light-gray">Precio normal: ' + currency(booking_buffer[i].price) + ' - Descuento: ' + booking_buffer[i].discount + '%<br />Precio con descuento: ' +  currency(Math.round((100-booking_buffer[i].discount)*booking_buffer[i].price/100)) + '</p>';
+							discounted_price = discounted_price + (100-booking_buffer[i].discount)*booking_buffer[i].price/100;
+						}
+						else
+						{
+							payable_prices += '<p class="light-gray">Precio normal: ' + currency(booking_buffer[i].price) + ' - (Sin descuento)</p>';
+							discounted_price = discounted_price + booking_buffer[i].price;
+						}
+					}
+					if(booking_buffer[i].show_price && booking_buffer[i].price > 0)
+					{
+						prices += '<p class="light-gray">' + currency(booking_buffer[i].price) + '</p>';
+						price = price + booking_buffer[i].price;
+					}
+					else
+					{
+						prices += '<p class="light-gray">Preguntar en local.</p>';
+					}
+				};
+
+				$('#summary').append(
+					'<tr style="border-top: 0px !important;">' +
+						'<td style="border-top: 0px !important;" class="dark-gray">¿Qué estoy reservando?</td>' +
+						'<td style="border-top: 0px !important;" class="light-gray">' + service + '</td>' +
+					'</tr>' +
+					'<tr>' +
+						'<td class="dark-gray">¿Dónde?</td>' +
+						'<td class="light-gray">' + $('#selectedLocal').data('local').address + ', ' + $('#selectedLocal').data('district') + '</td>' +
+					'</tr>' +
+					'<tr>' +
+						'<td class="dark-gray">¿Con quién?</td>' +
+						'<td class="light-gray">' + provider + '</td>' +
+					'</tr>' +
+					'<tr>' +
+						'<td class="dark-gray">¿Cuándo?</td>' +
+						'<td class="light-gray">' + when + '</td>' +
+					'</tr>'
+				);
+				if(payable)
+				{
+					$('#summary').append(
+						'<tr>' +
+							'<td class="dark-gray">Precios</td>' +
+							'<td class="light-gray">' + payable_prices + '</td>' +
+						'</tr>' +
+						'<tr>' +
+							'<td class="dark-gray">Precio normal:</td>' +
+							'<td class="light-gray">' + currency(price) + '</td>' +
+						'</tr>' +
+						'<tr>' +
+							'<td class="dark-gray">Precio pago en línea:</td>' +
+							'<td class="light-gray">' + currency(Math.round(discounted_price)) + '</td>' +
+						'</tr>'
+					);
+
+				}
+				else
+				{
+					$('#summary').append(
+						'<tr>' +
+							'<td class="dark-gray">Precios</td>' +
+							'<td class="light-gray">' + prices + '</td>' +
+						'</tr>'
+					);
+				}
+				$("#discount").empty();
+				$("#normal-book").empty();
+				if(payable){
+					$("#reservar1").hide();
+					$("#reservar2").show();
+					$("#discount").append(
+						'Precio final: ' +  currency(Math.round(discounted_price))
+					);
+					$("#normal-book").append(
+						'Precio final: ' + currency(price)
+					);
+				}
+				else
+				{
+					$("#reservar2").hide();
+					$("#reservar1").show();
+				}
+				return true;
+			}
+			else
+			{
+
+				sessions_buffer.push(actual_booking);
+				
+				booking_buffer = [];
+
+				for(i=0; i < sessions_buffer.length; i++)
+				{
+					booking_buffer.push(sessions_buffer[i]);
+				}
+				$('.bookings').val(JSON.stringify(booking_buffer));
+				$("#has_sessions").val("1");
+				$('#summary').empty();
+				var service = first_session.service_name;
+				var when = '<p class="light-gray">' + formattedTime(first_session.start) + '</p>';
+				//var provider = first_session.provider_name;
+				var prices = '';
+				var payable_prices = '';
+				var payable = true;
+				var price = 0;
+				var discounted_price = 0;
+				var show_all = true;
+
+
+				if(!first_session.online_payable || !first_session.show_price || first_session.price == 0)
 				{
 					payable = false;
-					if(!booking_buffer[i].show_price || booking_buffer[i].price == 0)
+					if(!first_session.show_price || first_session.price == 0)
 					{
 						show_all = false;
 					}
 				}
 				else
 				{
-					if (booking_buffer[i].has_discount)
+					if (first_session.has_discount)
 					{
-						payable_prices += '<p class="light-gray">Precio normal: ' + currency(booking_buffer[i].price) + ' - Descuento: ' + booking_buffer[i].discount + '%<br />Precio con descuento: ' +  currency(Math.round((100-booking_buffer[i].discount)*booking_buffer[i].price/100)) + '</p>';
-						discounted_price = discounted_price + (100-booking_buffer[i].discount)*booking_buffer[i].price/100;
+						payable_prices += '<p class="light-gray">Precio normal: ' + currency(first_session.price) + ' - Descuento: ' + first_session.discount + '%<br />Precio con descuento: ' +  currency(Math.round((100-first_session.discount)*first_session.price/100)) + '</p>';
+						discounted_price = discounted_price + (100-first_session.discount)*first_session.price/100;
 					}
 					else
 					{
-						payable_prices += '<p class="light-gray">Precio normal: ' + currency(booking_buffer[i].price) + ' - (Sin descuento)</p>';
-						discounted_price = discounted_price + booking_buffer[i].price;
+						payable_prices += '<p class="light-gray">Precio normal: ' + currency(first_session.price) + ' - (Sin descuento)</p>';
+						discounted_price = discounted_price + first_session.price;
 					}
 				}
-				if(booking_buffer[i].show_price && booking_buffer[i].price > 0)
+				if(first_session.show_price && first_session.price > 0)
 				{
-					prices += '<p class="light-gray">' + currency(booking_buffer[i].price) + '</p>';
-					price = price + booking_buffer[i].price;
+					prices += '<p class="light-gray">' + currency(first_session.price) + '</p>';
+					price = price + first_session.price;
 				}
 				else
 				{
 					prices += '<p class="light-gray">Preguntar en local.</p>';
 				}
-			};
 
-			$('#summary').append(
-				'<tr style="border-top: 0px !important;">' +
-					'<td style="border-top: 0px !important;" class="dark-gray">¿Qué estoy reservando?</td>' +
-					'<td style="border-top: 0px !important;" class="light-gray">' + service + '</td>' +
-				'</tr>' +
-				'<tr>' +
-					'<td class="dark-gray">¿Dónde?</td>' +
-					'<td class="light-gray">' + $('#selectedLocal').data('local').address + ', ' + $('#selectedLocal').data('district') + '</td>' +
-				'</tr>' +
-				'<tr>' +
-					'<td class="dark-gray">¿Con quién?</td>' +
-					'<td class="light-gray">' + provider + '</td>' +
-				'</tr>' +
-				'<tr>' +
-					'<td class="dark-gray">¿Cuándo?</td>' +
-					'<td class="light-gray">' + when + '</td>' +
-				'</tr>'
-			);
-			if(payable)
-			{
+
 				$('#summary').append(
-					'<tr>' +
-						'<td class="dark-gray">Precios</td>' +
-						'<td class="light-gray">' + payable_prices + '</td>' +
+					'<tr style="border-top: 0px !important;">' +
+						'<td style="border-top: 0px !important;" class="dark-gray">¿Qué estoy reservando?</td>' +
+						'<td style="border-top: 0px !important;" class="light-gray">' + service + '</td>' +
 					'</tr>' +
 					'<tr>' +
-						'<td class="dark-gray">Precio normal:</td>' +
-						'<td class="light-gray">' + currency(price) + '</td>' +
-					'</tr>' +
-					'<tr>' +
-						'<td class="dark-gray">Precio pago en línea:</td>' +
-						'<td class="light-gray">' + currency(Math.round(discounted_price)) + '</td>' +
+						'<td class="dark-gray">¿Dónde?</td>' +
+						'<td class="light-gray">' + $('#selectedLocal').data('local').address + ', ' + $('#selectedLocal').data('district') + '</td>' +
 					'</tr>'
+					/*'<tr>' +
+						'<td class="dark-gray">¿Con quién?</td>' +
+						'<td class="light-gray">' + provider + '</td>' +
+					'</tr>'*/
 				);
+				if(payable)
+				{
+					$('#summary').append(
+						'<tr>' +
+							'<td class="dark-gray">Precios</td>' +
+							'<td class="light-gray">' + payable_prices + '</td>' +
+						'</tr>' +
+						'<tr>' +
+							'<td class="dark-gray">Precio normal:</td>' +
+							'<td class="light-gray">' + currency(price) + '</td>' +
+						'</tr>' +
+						'<tr>' +
+							'<td class="dark-gray">Precio pago en línea:</td>' +
+							'<td class="light-gray">' + currency(Math.round(discounted_price)) + '</td>' +
+						'</tr>'
+					);
 
-			}
-			else
-			{
+				}
+				else
+				{
+					$('#summary').append(
+						'<tr>' +
+							'<td class="dark-gray">Precios</td>' +
+							'<td class="light-gray">' + prices + '</td>' +
+						'</tr>'
+					);
+				}
+				$("#discount").empty();
+				$("#normal-book").empty();
+				if(payable){
+					$("#reservar1").hide();
+					$("#reservar2").show();
+					$("#discount").append(
+						'Precio final: ' +  currency(Math.round(discounted_price))
+					);
+					$("#normal-book").append(
+						'Precio final: ' + currency(price)
+					);
+				}
+				else
+				{
+					$("#reservar2").hide();
+					$("#reservar1").show();
+				}
+
 				$('#summary').append(
 					'<tr>' +
-						'<td class="dark-gray">Precios</td>' +
-						'<td class="light-gray">' + prices + '</td>' +
+						'<td class="dark-gray">Sesiones</td>' +
+						'<td class="light-gray">' + (sessions_buffer.length) + ' agendadas de ' + first_session.sessions_amount + '</td>' +
 					'</tr>'
 				);
+				/*$('#summary').append(
+					'<tr>' +
+						'<td class="dark-gray">Detalle</td>' +
+						'<td class="light-gray">' + formattedTime(first_session.start) + ', con ' + first_session.provider_name + '</td>' +
+					'</tr>'						
+				);*/
+				if(sessions_buffer.length > 0)
+				{
+					
+					for(i=0; i<sessions_buffer.length; i++)
+					{
+						$("#summary").append(
+							'<tr><td></td><td class="light-gray">' + formattedTime(sessions_buffer[i].start) + ', con ' + sessions_buffer[i].provider_name + '</td></tr>'		
+						);
+					}
+
+				}
+
+				return true;
+
+
 			}
-			$("#discount").empty();
-			$("#normal-book").empty();
-			if(payable){
-				$("#reservar1").hide();
-				$("#reservar2").show();
-				$("#discount").append(
-					'Precio final: ' +  currency(Math.round(discounted_price))
-				);
-				$("#normal-book").append(
-					'Precio final: ' + currency(price)
-				);
-			}
-			else
-			{
-				$("#reservar2").hide();
-				$("#reservar1").show();
-			}
-			return true;
 		}
 		myAlert.showAlert(
 		  '<h3>Selecciona un Horario</h3>' +
@@ -460,6 +676,14 @@ function scrollEvents (direction) {
 				);
 				return false;
 			}
+			else if(current_service.has_sessions && booking_buffer.length > 0)
+			{
+				myAlert.showAlert(
+				  '<h3>Este servicio tiene sesiones</h3>' +
+				  '<p>No puedes agendar un servicio con sesiones además de otros servicios.</p>'
+				);
+				return false;
+			}
 			else {
 				loadStep2();
 
@@ -494,8 +718,37 @@ function scrollEvents (direction) {
 	else if (direction == 'prev') {
 		if (step == 3) {
 			step = 2;
+			//sessions_buffer = [];
+			
 			booking_buffer.pop();
-		};
+			if(first_session != null)
+			{
+				sessions_buffer.pop();
+			}
+			if(sessions_buffer.length == 0)
+			{
+				first_session = null;
+			}
+
+			console.log("Sesiones: " + sessions_buffer.length);
+			console.log("Bookings: " + booking_buffer.length);
+			var active_hour = $(".hora-activo");
+			active_hour.removeClass("hora-activo");
+			active_hour.removeClass("hora-ocupado");
+			active_hour.addClass("hora-disponible");
+
+			blockBookingBufferHour();
+
+		}
+		else if(step == 2)
+		{
+			step = 1;
+			if(first_session != null || $("#has_sessions").val() == "1")
+			{
+				sessions_buffer = [];
+				booking_buffer = [];
+			}
+		}
 		return true;
 	}
 }
@@ -526,7 +779,7 @@ function loadDescription (serviceId) {
 					$('#services-description').append(
 						'<tr>' +
 							'<td class="dark-gray">Precio pago en línea:</td>' +
-							'<td class="light-gray"><b>$ ' + Math.round(service.price*(100-service.discount)/100).toLocaleString() + ' (' + service.discount + '% de descuento)</b></td>' +
+							'<td class="light-gray"><b>' + currency(Math.round(service.price*(100-service.discount)/100)) + ' (' + service.discount + '% de descuento)</b></td>' +
 						'</tr>'
 					);
 				}
@@ -562,6 +815,22 @@ function loadDescription (serviceId) {
 				'</tr>'
 			);
 		}
+		if(service.has_sessions)
+		{
+			$("#services-description").append(
+				'<tr>' +
+					'<td class="dark-gray">Sesiones:</td>' +
+					'<td class="light-gray"><b>Ese servicio consta de ' + service.sessions_amount + ' sesiones.</b></td>' +
+				'</tr>'
+			);
+			$(".optimizer-item").hide();
+			$("#optimizerOpenBtn").attr("disabled", "disabled");
+		}
+		else
+		{
+			$(".optimizer-item").show();
+			$("#optimizerOpenBtn").attr("disabled", false);
+		}
 		$("#discount").empty();
 		$("#normal-book").empty();
 		if(service.online_payable){
@@ -571,10 +840,10 @@ function loadDescription (serviceId) {
 			if(service.has_discount && current_service.discount > 0)
 			{
 				$("#discount").append(
-					'Precio final: $' + Math.round((service.price-service.price*service.discount/100))
+					'Precio final: ' + currency(Math.round((service.price-service.price*service.discount/100)))
 				);
 				$("#normal-book").append(
-					'Precio final: $' + service.price
+					'Precio final: ' + currency(service.price)
 				);
 			}
 		}
@@ -588,6 +857,48 @@ function loadDescription (serviceId) {
 
 //====== Manage Booking ======//
 var pressed3 = false;
+
+function addSession(booking)
+{
+	var serviceId = $('input[name=serviceRadio]:checked').val();
+	$.getJSON('/service', {id: serviceId}, function (service_response) {
+		var service_online_payable = false;
+		var service_has_discount = false;
+		var service_discount = 0;
+		var service_price = service_response.price;
+		var show_price = service_response.show_price;
+		if(service_response.online_payable)
+		{
+			service_online_payable = true;
+			if(service_response.has_discount)
+			{
+				service_has_discount = true;
+				service_discount = service_response.discount;
+			}
+		}
+		selected = true;
+		actual_booking = {
+			start: generateDate(booking.date, booking.start),
+			end: generateDate(booking.date, booking.end),
+			provider: booking.provider,
+			provider_name: $('input[name="staffRadio"]:checked').next().html(),
+			provider_lock: $('[name="staffRadio"]:checked').val() == 0 ? false : true,
+			service: $('input[name=serviceRadio]:checked').val(),
+			service_name: $('input[name=serviceRadio]:checked').next().html(),
+			online_payable: service_online_payable,
+			has_discount: service_has_discount,
+			discount: service_discount,
+			price: service_price,
+			show_price: show_price,
+			has_sessions: service_response.has_sessions,
+			sessions_amount: service_response.sessions_amount
+		};
+
+
+		checkUserCrossBookings();
+
+	});
+}
 
 function addBooking (booking) {
 
@@ -669,10 +980,11 @@ function formattedTime (timestamp) {
 }
 
 function blockBookingBufferHour () {
-	//console.log("Entra a block.");
-	for (var i = 0; i < booking_buffer.length; i++) {
-		console.log("For " + i);
-		var date = booking_buffer[i].start.split(' ')[0]
+
+
+	for (i = 0; i < booking_buffer.length; i++) {
+
+		var date = booking_buffer[i].start.split(' ')[0];
 		var hourBlocks = $('.columna-dia[data-date="' + date + '"]').children('.bloque-hora.hora-disponible');
 		$.each(hourBlocks, function (key, hourBlock) {
 			var start = $(hourBlock).data('start');
@@ -695,11 +1007,180 @@ function blockBookingBufferHour () {
 			//Check for no overlap and negate it.
 			if(!(bookingEnd <= blockStart || blockEnd <= bookingStart))
 			{
-				$(hourBlock).removeClass('hora-disponible').addClass('hora-ocupada');
-			};
+				$(hourBlock).removeClass('hora-disponible');
+				$(hourBlock).removeClass('hora-activo');
+				$(hourBlock).addClass('hora-ocupada');
+			}
+
 		});
-	};
+		$("#foo4").trigger('update');
+
+	}
+
+	/*sessions_array = []
+	if (first_session != null)
+	{
+		sessions_array.push(first_session);
+	}
+	for(i=0; i < sessions_buffer.length; i++)
+	{
+		sessions_array.push(sessions_buffer[i]);
+	}*/
+
+	for(i=0; i < sessions_buffer.length; i++)
+	{
+
+		var date = sessions_buffer[i].start.split(' ')[0];
+		var hourBlocks = $('.columna-dia[data-date="' + date + '"]').children('.bloque-hora.hora-disponible');
+		$.each(hourBlocks, function (key, hourBlock) {
+			var start = $(hourBlock).data('start');
+			var end = $(hourBlock).data('end');
+
+			var start_arr = sessions_buffer[i].start.split(" ");
+			var start_date = start_arr[0].split("-");
+			var start_time = start_arr[1].split(":");
+
+			var end_arr = sessions_buffer[i].end.split(" ");
+			var end_date = end_arr[0].split("-");
+			var end_time = end_arr[1].split(":");
+
+			var bookingStart = new Date(start_date[0], start_date[1]-1, start_date[2], start_time[0], start_time[1], start_time[2], 0);
+			var bookingEnd = new Date(end_date[0], end_date[1]-1, end_date[2], end_time[0], end_time[1], end_time[2], 0);
+
+			var blockStart = new Date(start_date[0], start_date[1]-1, start_date[2], start.split(":")[0], start.split(":")[1], 0, 0);
+			var blockEnd = new Date(end_date[0], end_date[1]-1, end_date[2], end.split(":")[0], end.split(":")[1], 0, 0);
+			
+			//Check for no overlap and negate it.
+			if(!(bookingEnd <= blockStart || blockEnd <= bookingStart))
+			{
+				$(hourBlock).removeClass('hora-disponible');
+				$(hourBlock).removeClass('hora-activo');
+				$(hourBlock).addClass('hora-ocupada');
+			}
+
+		});
+		$("#foo4").trigger('update');			
+	}
 }
+
+function addNewSession() {
+	if(!$('[name="staffRadio"]').is(':checked')) 
+	{
+		myAlert.showAlert(
+		  '<h3>Selecciona un Staff</h3>' +
+		  '<p>Debes elegir un staff para poder reservar.</p>'
+		);
+	}
+	else
+	{
+		if(!selected) {
+			myAlert.showAlert(
+			  '<h3>Selecciona un Horario</h3>' +
+			  '<p>Debes elegir un horario antes de agregar otra sesión.</p>'
+			);
+		}
+		else {
+
+
+			if(first_session == null)
+			{
+				first_session = actual_booking;
+			}
+
+			sessions_buffer.push(actual_booking);
+
+			var hourBlock = $(".hora-activo");
+			$(hourBlock).removeClass('hora-disponible');
+			$(hourBlock).removeClass('hora-activo');
+			$(hourBlock).addClass('hora-ocupada');
+
+			blockBookingBufferHour();
+
+			sessions_left = sessions_left - 1;
+
+			$("#sessions-left").empty();
+			$("#sessions-left").text("" + sessions_left);
+			selected = false;
+			if(sessions_left < 2)
+			{
+				$(".btn-add-session").attr("disabled", "disabled");
+			}
+			else
+			{
+				$(".btn-add-session").attr("disabled", false);
+			}
+			
+			loadSessionsSummary();
+
+		}
+	}
+}
+
+
+function loadSessionsSummary()
+{
+	$("#sessions-summary-tr").empty();
+
+	for(i = 0; i < sessions_buffer.length; i++)
+	{
+		var sessionStart = sessions_buffer[i].start.split(" ");
+		var sessionStartDate = sessionStart[0].split("-")[2] + "/" + sessionStart[0].split("-")[1] + "/" + sessionStart[0].split("-")[0];
+		var sessionStartTime = sessionStart[1].split(":")[0] + ":" + sessionStart[1].split(":")[1];
+
+		var sessionEnd = sessions_buffer[i].end.split(" ");
+		var sessionEndDate = sessionEnd[0].split("-")[2] + "/" + sessionEnd[0].split("-")[1] + "/" + sessionEnd[0].split("-")[0];
+		var sessionEndTime = sessionEnd[1].split(":")[0] + ":" + sessionEnd[1].split(":")[1];
+
+		$("#sessions-summary-tr").append(
+			'<td class="session-summary"><span class="remove-session" index="' + i + '" style="cursor: pointer;"><div class="session-title"><i class="fa fa-times"></i></span>&nbsp;&nbsp;Sesión ' + (i+1) + '</div><div class="session-time"><i class="fa fa-calendar"></i>&nbsp;' + sessionStartDate + '<br /><i class="fa fa-clock-o"></i>&nbsp;' + sessionStartTime + " - " + sessionEndTime + '</div></td>'
+		);
+	}
+
+	$(".remove-session").on('click', function(){
+		console.log("Remove");
+		var sessionIndex = $(this).attr("index");
+		removeSession(sessionIndex);
+	});
+
+	var oldTop = $(document).scrollTop();
+	$('#foo4').trigger('updateSizes');
+	$(document).scrollTop(oldTop);
+}
+
+function removeSession(index)
+{
+	var sessions_aux = [];
+	var removed_session;
+	for(i = 0; i < sessions_buffer.length; i++)
+	{
+		if (i != index)
+		{
+			sessions_aux.push(sessions_buffer[i]);
+		}
+		else
+		{
+			removed_session = sessions_buffer[i];
+		}
+	}
+	sessions_buffer = sessions_aux;
+	
+	var date = removed_session.start.split(' ')[0];
+	var start_time = removed_session.start.split(" ")[1];
+	var start_str = start_time.split(":")[0] + ":" + start_time.split(":")[1];
+	var end_time = removed_session.end.split(" ")[1];
+	var end_str = end_time.split(":")[0] + ":" + end_time.split(":")[1];
+	var hourBlock = $('.columna-dia[data-date="' + date + '"]').children('.bloque-hora[data-start="' + start_str + '"][data-end="' + end_str + '"]');
+
+	sessions_left = sessions_left + 1;
+	$("#sessions-left").html(sessions_left);
+	$(".btn-add-session").attr("disabled", false);
+
+	$(hourBlock).removeClass('hora-ocupada');
+	$(hourBlock).addClass('hora-disponible');
+
+	loadSessionsSummary();
+}
+
 
 function addNewService () {
 	if(!$('[name="staffRadio"]').is(':checked')) {
@@ -729,6 +1210,12 @@ function addNewService () {
 		}
 	}
 }
+
+
+$("#sessions-help").click(function(){
+	$("#sessions-explanation").modal('show');
+});
+
 
 var myAlert;
 $(function () {
