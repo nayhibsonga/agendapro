@@ -185,40 +185,52 @@
         <div id="foo4" style="visibility: collapse;">
           <div class="box-step">
             <div class="row">
-              <div class="col-sm-3">
-                <div class="services-title dark-gray">
-                  Servicios
+              <div class="col-sm-5">
+                <div class="services-title light-green">
+                  Elegir servicio
                 </div>
                 <div class="services-subtitle light-gray">
                   Seleccione un servicio
                 </div>
               </div>
-              <div class="col-sm-3 col-md-4" style="text-align: right;">
-
+              <div class="col-sm-3">
+                <div class="services-title light-green">
+                  Detalle
+                </div>
+                <div class="services-subtitle light-gray">
+                  Detalle del servicio
+                </div>
+              </div>
+              <div class="col-sm-4">
+                <div class="services-title light-green">
+                  Elegir prestador
+                </div>
+                <div class="services-subtitle light-gray">
+                  Selecciona staff para el servicio
+                </div>
               </div>
               <% if @company.company_setting.allows_optimization %>
-              <div class="col-sm-3" style="text-align: right; color: #505050;">
-                <div class="optimizer-item">
-                  <b>O elige varios servicios y te propondremos los mejores horarios:&nbsp;&nbsp;</b>
+                <!--<div class="col-sm-3" style="text-align: right; color: #505050;">
+                  <div class="optimizer-item">
+                    <b>O elige varios servicios y te propondremos los mejores horarios:&nbsp;&nbsp;</b>
+                  </div>
                 </div>
-              </div>
-              <div class="col-sm-3 col-md-2" style="text-align: right;">
-                <div class="optimizer-item">
-                  <button type="button" id="optimizerOpenBtn" class="btn btn-green" data-toggle="modal" data-target="#hoursOptimizer" style="background: #22c488; color: #ffffff; font-size: 20px;">Elegir servicios</button>
-                </div>
-              </div>
+                <div class="col-sm-3 col-md-2" style="text-align: right;">
+                  <div class="optimizer-item">
+                    <button type="button" id="optimizerOpenBtn" class="btn btn-green" data-toggle="modal" data-target="#hoursOptimizer" style="background: #22c488; color: #ffffff; font-size: 20px;">Elegir servicios</button>
+                  </div>
+                </div>-->
               <% end %>
             </div>
             <div class="row">
-              <div class="col-sm-6">
+              <div class="col-sm-5">
                 <div class="panel-group" id="services-selector" style="border-radius: 4px; border: 1px solid #acacac; margin-left: 10px !important;">
                   <span style="color: #ccc;"><i class="fa fa-spinner fa-spin fa-lg"></i></span>
                 </div>
               </div>
-              <div class="col-sm-6">
-                <div class="descripcion">
-                  <div class="descripcion-header">
-                    Descripción del servicio
+              <div class="col-sm-3">
+                <div class="panel panel-default">
+                  <div id="description-heading" style="padding-left: 10px; padding-top: 10px;">
                   </div>
                   <div class="descripcion-body">
                     <table class="table">
@@ -227,6 +239,11 @@
                     </table>
                   </div>
                 </div>
+                <div class="btn-change btn-next" style="margin-top: 10px;">
+                  <a class="add-service"><i class="fa fa-chevron-right next-arrow"></i> Agregar servicio</a>
+                </div>
+              </div>
+              <div class="col-sm-5">
                 <div class="btn-change btn-next" style="margin-top: 10px;">
                   <a class="next2 next-btn">Siguiente <i class="fa fa-chevron-right next-arrow"></i></a>
                 </div>

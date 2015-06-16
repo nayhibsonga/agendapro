@@ -32,6 +32,32 @@ function currency(price)
 	return formatted_amount;
 }
 
+function simple_currency(price)
+{
+	var amount = price.toString();
+	//console.log(amount);
+	//console.log(amount.length);
+	var j = 0;
+	var stack = new Array();
+	for(i = amount.length-1; i>=0; i--)
+	{
+		j = j+1;
+		stack.push(amount[i]);
+		if(j == 3 && i>0)
+		{
+			stack.push('.');
+			j = 0;
+		}
+	}
+	var formatted_amount = "$";
+	for(i = stack.length-1; i >=0 ; i--)
+	{
+		formatted_amount = formatted_amount + stack[i];
+	}
+
+	return formatted_amount;
+}
+
 //====== Load Steps ======//
 function loadStep1 (service_id) {
 	$('#services-description').empty();
@@ -46,13 +72,33 @@ function loadStep1 (service_id) {
 				categoryCount = categoryCount + 1;
 				$.each(service_hash.services, function (key, service) {
 					//====== Generando Radios
+					serviceDiscount = "";
+					servicePrice = '';
+					if (service.has_time_discount)
+					{
+						serviceDiscount = '<%= image_tag("promociones/icono_promociones.png", class:"promotion-hour-icon", size: "18x18") %>&nbsp;';
+					}
+					if(service.show_price && service.price > 0)
+					{
+						servicePrice = '<%= image_tag("promociones/etiqueta.png", class:"promotion-hour-icon", size: "18x18") %>&nbsp;' + simple_currency(service.price);
+					}
 					servicesHTML +=
 						'<li class="list-group-item">' +
 							'<div class="radio">' +
-								'<label>' +
-									'<input type="radio" name="serviceRadio" value="' + service.id + '" data-outcall="'+service.outcall+'">' +
-									'<p>' + service.name_with_small_outcall + '</p>' +
-								'</label>' +
+								'<div style="width: 95%"><div class="row">' +
+									'<div class="col-sm-5">' +
+										'<label>' +
+											'<input type="radio" name="serviceRadio" value="' + service.id + '" data-outcall="'+service.outcall+'">' +
+											'<p>' + service.name_with_small_outcall + '</p>' +
+										'</label>' +
+									'</div><div class="col-sm-3">' +
+										servicePrice +
+									'</div><div class="col-sm-3">' +
+										'<%= image_tag("promociones/reloj.png", class:"promotion-hour-icon", size: "18x18") %>&nbsp;' + service.duration + ' min' +
+									'</div><div class="col-sm-1">' +
+										serviceDiscount +
+									'</div>' +
+								'</div></div>' +
 							'</div>' +
 						'</li>';
 				});
@@ -758,18 +804,23 @@ function loadDescription (serviceId) {
 	$('#services-description').html('<tr><td class="text-center" style="color: #ccc;"><i class="fa fa-spinner fa-spin fa-lg"></i></td></tr>');
 	$.getJSON('/service', {id: serviceId}, function (service) {
 		current_service = service;
+
+		$("#description-heading").empty();
+		$("#description-heading").append('<h3 class="panel-title">' + service.name + '</h3>');
+
 		$('#services-description').empty();
-		$('#services-description').append(
+		/*$('#services-description').append(
 			'<tr>' +
 				'<td class="dark-gray">Nombre:</td>' +
 				'<td class="light-gray">' + service.name + '</td>' +
 			'</tr>'
-		);
+		);*/
+
 		if (service.show_price && service.price && service.price > 0) {
 			$('#services-description').append(
 				'<tr>' +
-					'<td class="dark-gray">Precio:</td>' +
-					'<td class="light-gray">' + currency(service.price) + '</td>' +
+					'<td><%= image_tag("promociones/etiqueta.png", class:"promotion-hour-icon", size: "18x18") %></td>' +
+					'<td class="light-gray">' + simple_currency(service.price) + '</td>' +
 				'</tr>'
 			);
 			if(service.online_payable)
@@ -778,8 +829,8 @@ function loadDescription (serviceId) {
 				{
 					$('#services-description').append(
 						'<tr>' +
-							'<td class="dark-gray">Precio pago en línea:</td>' +
-							'<td class="light-gray"><b>' + currency(Math.round(service.price*(100-service.discount)/100)) + ' (' + service.discount + '% de descuento)</b></td>' +
+							'<td class="dark-gray"><%= image_tag("promociones/tarjeta_de_credito.png", class:"promotion-hour-icon", size: "18x18") %></td>' +
+							'<td class="light-gray"><b>' + simple_currency(Math.round(service.price*(100-service.discount)/100)) + ' (' + service.discount + '% de descuento)</b></td>' +
 						'</tr>'
 					);
 				}
