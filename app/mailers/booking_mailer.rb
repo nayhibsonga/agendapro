@@ -1833,7 +1833,7 @@ class BookingMailer < ActionMailer::Base
 			:from_name => book_info.service_provider.company.name,
 			:subject => 'Nueva Reserva en ' + book_info.service_provider.company.name,
 			:to => [],
-			:headers => { 'Reply-To' => book_info.service_provider.notification_email },
+			:headers => { 'Reply-To' => book_info.location.email },
 			:global_merge_vars => [
 				{
 					:name => 'URL',
