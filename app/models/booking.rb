@@ -1297,7 +1297,7 @@ class Booking < ActiveRecord::Base
         emails = NotificationEmail.where(id: NotificationProvider.select(:notification_email_id).where(service_provider: provider), receptor_type: 2, summary: false).select(:email).distinct
         emails.each do |email|
           # Test if the emails doesn't exist
-          providers_array.each do |staff|
+          @providers_array.each do |staff|
             if staff[:email] == email
               @staff = {}
               @staff[:name] = provider.public_name
