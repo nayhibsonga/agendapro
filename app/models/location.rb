@@ -36,7 +36,7 @@ class Location < ActiveRecord::Base
 
   accepts_nested_attributes_for :location_times, :reject_if => :all_blank, :allow_destroy => true
 
-  validates :name, :phone, :company, :district, :presence => true
+  validates :name, :phone, :company, :district, :email, :presence => true
 
   validate :times_overlap, :time_empty_or_negative, :provider_time_in_location_time, :plan_locations, :outcall_services
   validate :new_plan_locations, :on => :create

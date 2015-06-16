@@ -9,7 +9,7 @@
   </div>
 </div>
 </section>
-<section>  
+<section>
 <div class="container">
   <!-- Local -->
   <div class="row">
@@ -33,10 +33,6 @@
           <div class="form-group">
             <%= f.label :public_name, "Nombre: ", class: "control-label" %>
             <%= f.text_field :public_name, class: "form-control" %>
-          </div>
-          <div class="form-group">
-            <%= f.label :notification_email, "Email de Notificación: ", class: "control-label" %>
-            <%= f.text_field :notification_email, class: "form-control" %>
           </div>
           <div class="form-group">
             <%= f.label :location_id, "Local: ", class: "control-label" %>
@@ -73,9 +69,9 @@
     // elt.tagsinput('add', { "value":  <%= service_category.id %>, "text": "<%= service_category.name %>" });
     // <% end %>
   <% if @company.service_providers.where(active:true).count > 0 %>
-    
+
   <% else %>
-    
+
   <% end %>
   </script>
 <% end %>

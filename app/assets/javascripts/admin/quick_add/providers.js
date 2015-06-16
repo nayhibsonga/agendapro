@@ -2,13 +2,12 @@ function saveServiceProvider () {
 	$.ajax({
 	    type: 'POST',
 	    url: '/quick_add/service_provider.json',
-	    data: { "service_provider": { "public_name": $('#service_provider_public_name').val(), "notification_email": $('#service_provider_notification_email').val(), "location_id": $('#service_provider_location_id').val() } },
+	    data: { "service_provider": { "public_name": $('#service_provider_public_name').val(), "location_id": $('#service_provider_location_id').val() } },
 	    dataType: 'json',
 	    success: function (result){
 	    	$('#service_providers').append('<tr id="service_provider_'+ result.service_provider.id +'"><td>'+ result.service_provider.public_name +'</td><td>'+ result.service_provider.notification_email +'</td><td>'+ result.location +'</td><td><button id="service_provider_delete_'+ result.service_provider.id +'" class="btn btn-danger btn-xs service-provider-delete-btn"><i class="fa fa-trash-o"></i></button></td></tr>');
 
 	    	$('#service_provider_public_name').val('');
-	    	$('#service_provider_notification_email').val('');
 	    	$('#service_provider_delete_'+ result.service_provider.id).click(function() {
 	    		$('#update_service_provider_spinner').show();
 				$('#update_service_provider_button').attr('disabled', true);

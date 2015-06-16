@@ -16,7 +16,7 @@ class BookingMailer < ActionMailer::Base
 			:from_name => book_info.service_provider.company.name,
 			:subject => 'Nueva Reserva en ' + book_info.service_provider.company.name,
 			:to => [],
-			:headers => { 'Reply-To' => book_info.service_provider.notification_email },
+			:headers => { 'Reply-To' => book_info.location.email },
 			:global_merge_vars => [
 				{
 					:name => 'URL',
@@ -219,7 +219,7 @@ class BookingMailer < ActionMailer::Base
 			:from_name => book_info.service_provider.company.name,
 			:subject => 'Reserva Actualizada en ' + book_info.service_provider.company.name,
 			:to => [],
-			:headers => { 'Reply-To' => book_info.service_provider.notification_email },
+			:headers => { 'Reply-To' => book_info.location.email },
 			:global_merge_vars => [
 				{
 					:name => 'URL',
@@ -431,7 +431,7 @@ class BookingMailer < ActionMailer::Base
 			:from_name => 'AgendaPro',
 			:subject => 'Reserva Confirmada de ' + book_info.client.first_name + ' ' + book_info.client.last_name,
 			:to => [],
-			:headers => { 'Reply-To' => book_info.service_provider.notification_email },
+			:headers => { 'Reply-To' => book_info.location.email },
 			:global_merge_vars => [
 				{
 					:name => 'SERVICENAME',
@@ -594,7 +594,7 @@ class BookingMailer < ActionMailer::Base
 			:from_name => book_info.service_provider.company.name,
 			:subject => 'Reserva Cancelada en ' + book_info.service_provider.company.name,
 			:to => [],
-			:headers => { 'Reply-To' => book_info.service_provider.notification_email },
+			:headers => { 'Reply-To' => book_info.location.email },
 			:global_merge_vars => [
 				{
 					:name => 'URL',
@@ -797,7 +797,7 @@ class BookingMailer < ActionMailer::Base
 			:from_name => book_info.service_provider.company.name,
 			:subject => 'Confirma tu reserva en ' + book_info.service_provider.company.name,
 			:to => [],
-			:headers => { 'Reply-To' => book_info.service_provider.notification_email },
+			:headers => { 'Reply-To' => book_info.location.email },
 			:global_merge_vars => [
 				{
 					:name => 'URL',
@@ -1054,6 +1054,7 @@ class BookingMailer < ActionMailer::Base
 			:from_name => data[:company],
 			:subject => 'Nueva Reserva en ' + data[:company],
 			:to => [],
+			:headers => { 'Reply-To' => data[:reply_to] },
 			:global_merge_vars => [
 				{
 					:name => 'URL',
