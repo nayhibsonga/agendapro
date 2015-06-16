@@ -2,14 +2,25 @@
   <%= form_tag("book", method: "post", role: "form", id: "bookingForm") do %>
     <div class="row">
       <div class="col-xs-12">
+        Este servicio es por sesiones. Se reservará la primera sesión, y luego podrás reservar las restantes ingresando a tu Agenda desde tu cuenta AgendaPro, o llamando al local que ofrece el servicio. El valor del servicio incluye todas las sesiones.
+        <br />
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-xs-12">
 
-          <% hidden_field_tag :service, @service.id %>
-          <% hidden_field_tag :provider, @provider.id %>
-          <% hidden_field_tag :start, @start %>
-          <% hidden_field_tag :end, @end %>
+          <%= hidden_field_tag :service, @service.id %>
+          <%= hidden_field_tag :provider, @provider.id %>
+          <%= hidden_field_tag :start, @start %>
+          <%= hidden_field_tag :end, @end %>
           <%= hidden_field_tag :origin, @origin %>
           <%= hidden_field_tag :location, @location.id %>
-          <% hidden_field_tag :provider_lock, @lock %>
+          <%= hidden_field_tag :provider_lock, @lock %>
+          <% if @service.has_sessions %>
+            <%= hidden_field_tag :has_sessions, "1" %>
+          <% else %>
+            <%= hidden_field_tag :has_sessions, "0" %>
+          <% end %>
 
           <%= hidden_field_tag :bookings, [{
               start: @start,

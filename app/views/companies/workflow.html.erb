@@ -198,10 +198,14 @@
               </div>
               <% if @company.company_setting.allows_optimization %>
               <div class="col-sm-3" style="text-align: right; color: #505050;">
-                <b>O elige varios servicios y te propondremos los mejores horarios:&nbsp;&nbsp;</b>
+                <div class="optimizer-item">
+                  <b>O elige varios servicios y te propondremos los mejores horarios:&nbsp;&nbsp;</b>
+                </div>
               </div>
               <div class="col-sm-3 col-md-2" style="text-align: right;">
-                <button type="button" id="optimizerOpenBtn" class="btn btn-green" data-toggle="modal" data-target="#hoursOptimizer" style="background: #22c488; color: #ffffff; font-size: 20px;">Elegir servicios</button>
+                <div class="optimizer-item">
+                  <button type="button" id="optimizerOpenBtn" class="btn btn-green" data-toggle="modal" data-target="#hoursOptimizer" style="background: #22c488; color: #ffffff; font-size: 20px;">Elegir servicios</button>
+                </div>
               </div>
               <% end %>
             </div>
@@ -278,19 +282,49 @@
                 </div>
               </div>
             </div>
+            <!--<div class="row sessions-bar" style="display: none;">
+              <div class="col-xs-12 col-md-2">
+                <a class="btn btn-large btn-green btn-add-session" style="padding: 5px 12px; margin-right: 10px; font-size: 20px;" onclick="addNewSession()"><i class="fa fa-plus"></i> Agregar Sesión</a>
+              </div>
+              <div class="col-xs-12 col-md-10">
+                Puedes agendar hasta <span id="sessions-left"></span> sesiones más. Las sesiones que no agendes podrán ser agendadas desde tu cuenta AgendaPro o llamando al local elegido.
+              </div>
+            </div>-->
             <div class="row change-bar">
-              <div class="col-xs-12 col-md-5 col-md-push-2">
+              <div class="col-xs-12 col-md-4 col-md-push-3">
                 <p class="p-label"><span class="wf-label label-available">&nbsp;</span> Disponible<span class="wf-label label-past">&nbsp;</span> No Disponible<span class="wf-label label-unavailable">&nbsp;</span> Ocupado</p>
               </div>
-              <div class="col-xs-4 col-md-2 col-md-pull-5">
+              <div class="col-xs-4 col-md-3 col-md-pull-4">
                 <div class="btn-change btn-prev">
                   <a class="prev2 prev-btn"><i class="fa fa-chevron-left prev-arrow"></i> Anterior</a>
                 </div>
               </div>
               <div class="col-xs-8 col-md-5">
                 <a class="btn btn-large btn-green btn-add-service" style="padding: 5px 12px; margin-right: 10px; font-size: 20px;" onclick="addNewService()"><i class="fa fa-plus"></i> Agregar Otro Servicio</a>
+                <a class="btn btn-large btn-green btn-add-session sessions-bar" style="padding: 5px 12px; margin-right: 10px; font-size: 20px;" onclick="addNewSession()" style="display: none;"><i class="fa fa-plus"></i> Agregar Sesión</a>
                 <div class="btn-change btn-next">
                   <a class="next2 next-btn">Siguiente <i class="fa fa-chevron-right next-arrow"></i></a>
+                </div>
+              </div>
+            </div>
+            <div class="row sessions-bar">
+              <div class="col-md-3">
+
+              </div>
+              <div class="col-md-9">
+                <div id="sessions-summary">
+                  <div id="sessions-summary-title">
+                    Detalle de reserva&nbsp;&nbsp;
+                    <span id="sessions-summary-subtitle">
+                      Puedes agendar hasta <span id="sessions-left"></span> sesiones más. &nbsp;&nbsp; <span id="sessions-help"><i class="fa fa-question-circle"></i>
+                    </span>
+                  </div>
+                  <div id="sessions-summary-body">
+                    <table>
+                      <tr id="sessions-summary-tr">
+                      <tr>
+                    </table>
+                  </div>
                 </div>
               </div>
             </div>
@@ -314,6 +348,7 @@
                     <input type="hidden" name="location" id="location" value="<%= @location.id %>">
                     <input type="hidden" name="origin" id="origin" value="true">
                     <input type="hidden" name="payment" id="payment" value="0">
+                    <input type="hidden" name="has_sessions" id ="has_sessions" value="0" />
 
                     <% if user_signed_in? %>
                     <div id="user-data">
@@ -564,6 +599,10 @@
                           <input type="radio" name="mp" value="04" class="mp_radio" id="mp_radio_04" />
                           <label for="mp_radio_04"><image src="https://www.puntopagos.com/content/mp4.gif" alt="Banco Chile" class="mp_link" mp = "04" /></label>
                         </div>
+                        <div class="col-md-4">
+                          <input type="radio" name="mp" value="10" class="mp_radio" id="mp_radio_10" />
+                          <label for="mp_radio_10"><image src="https://www.puntopagos.com/content/mp10.gif" alt="Banco Ripley" class="mp_link" mp = "10" /></label>
+                        </div>
                         <!-- <div class="col-md-4">
                           <input type="radio" name="mp" value="05" class="mp_radio" id="mp_radio_05" />
                           <label for="mp_radio_05"><image src="https://www.puntopagos.com/content/mp5.gif" alt="BCI" class="mp_link" mp = "05" /></label>
@@ -645,6 +684,40 @@
                 </div><!-- /.modal-dialog -->
               </div><!-- /.modal -->
               <!-- FIN MODAL POLÍTICA DE MODIFICACIÓN/CANCELACIÓN PAGOS EN LÍNEA -->
+
+
+              <!-- MODAL DE EXPLICACIÓN DE SESIONES -->
+
+              <div class="modal fade" id="sessions-explanation" tabindex="-1" role="dialog" aria-labelledby="siginLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                      <h4 class="modal-title" style="color: #505050 !important;">Reserva de sesiones</h4>
+                    </div>
+                    <div class="modal-body" style="color: #505050 !important;">
+
+                      <p style="text-align: justify;">
+                        El servicio que quieres agendar consta de <span id="sessions-explanation-total"></span> sesiones.
+                      </p>
+                      <p style="text-align: justify;">
+                        Haz click sobre un bloque horario para seleccionar el horario de una sesión. Si quieres agendar otra, haz click en el botón "Agregar sesión". La hora seleccionada quedará marcada y podrás elegir una nueva. Cuando hayas seleccionado todas las que quieras, haz click en "Siguiente". Ten en cuenta que sólo debes apretar "Agregar sesión" para bloquear una y poder elegir otra más, por lo que para agendar la última sesión sólo debes hacer click en el bloque horario de preferencia y luego en "Siguiente".
+                      </p>
+                      <p style="text-align: justify;">
+                        No es necesario que agendes todas las sesiones ahora, pero debes agendar al menos la primera. Una vez reservado el servicio, podrás agendar las restantes y modificar las que ya hayas agendado. Esto lo podrás hacer en tu Agenda, ingresando con tu usuario de AgendaPro, o bien llamando al local de la empresa que ofrece el servicio para pedir que agenden tus sesiones. Recomendamos que te hagas una cuenta para poder llevar un manejo más rápido y simple de tus sesiones y otras reservas.
+                      </p>
+
+                    </div>
+                    <div class="modal-footer">
+                      <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+                    </div>
+                  </div><!-- /.modal-content -->
+                </div><!-- /.modal-dialog -->
+              </div><!-- /.modal -->
+
+
+              <!-- FIN MODAL DE EXPLICACIÓN DE SESIONES -->
+
 
               <% end %>
             </div>
@@ -737,7 +810,14 @@
             }
 
             $(document).on('hourClick', function (e) {
-              addBooking(e);
+              if(!current_service.has_sessions)
+              {
+                addBooking(e);
+              }
+              else
+              {
+                addSession(e);
+              }
             });
 
             $(function () {

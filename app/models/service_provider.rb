@@ -282,11 +282,15 @@ class ServiceProvider < ActiveRecord::Base
 	                    unless provider_booking.status_id == cancelled_id
 	                      if (provider_booking.start.to_datetime - end_time_block) * (start_time_block - provider_booking.end.to_datetime) > 0
 	                        if !service.group_service || service.id != provider_booking.service_id
-	                          provider_free = false
-	                          break
+	                        	if !provider_booking.is_session || (provider_booking.is_session && provider_booking.is_session_booked)
+		                          provider_free = false
+		                          break
+		                        end
 	                        elsif service.group_service && service.id == provider_booking.service_id && provider.bookings.where(:service_id => service.id, :start => start_time_block).where.not(status_id: Status.find_by_name('Cancelado')).count >= service.capacity
-	                          provider_free = false
-	                          break
+	                        	if !provider_booking.is_session || (provider_booking.is_session && provider_booking.is_session_booked)
+		                          	provider_free = false
+		                         	break
+		                        end
 	                        end
 	                      end
 	                    end
@@ -465,11 +469,15 @@ class ServiceProvider < ActiveRecord::Base
 	                  unless provider_booking.status_id == cancelled_id
 	                    if (provider_booking.start.to_datetime - end_time_block) * (start_time_block - provider_booking.end.to_datetime) > 0
 	                      if !service.group_service || service.id != provider_booking.service_id
-	                        provider_free = false
-	                        break
+	                      	if !provider_booking.is_session || (provider_booking.is_session && provider_booking.is_session_booked)
+		                        provider_free = false
+		                        break
+		                    end
 	                      elsif service.group_service && service.id == provider_booking.service_id && provider.bookings.where(:service_id => service.id, :start => start_time_block).where.not(status_id: Status.find_by_name('Cancelado')).count >= service.capacity
-	                        provider_free = false
-	                        break
+	                      	if !provider_booking.is_session || (provider_booking.is_session && provider_booking.is_session_booked)
+		                        provider_free = false
+		                        break
+		                    end
 	                      end
 	                    end
 	                  end

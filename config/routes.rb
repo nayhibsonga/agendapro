@@ -118,6 +118,16 @@ Agendapro::Application.routes.draw do
 
   # My Agenda
   get '/my_agenda', :to => 'users#agenda', :as => 'my_agenda'
+  get '/get_session_bookings', :to => 'users#get_session_bookings'
+  get '/get_session_summary', :to => 'users#get_session_summary'
+  post '/delete_session_booking', :to => 'bookings#delete_session_booking'
+  post '/validate_session_booking', :to => 'bookings#validate_session_booking'
+  post '/validate_session_form', :to => 'bookings#validate_session_form'
+  get '/validate_session_form', :to => 'bookings#validate_session_form'
+  get '/session_booking_detail', :to => 'bookings#session_booking_detail'
+  get '/book_session_form', :to => 'bookings#book_session_form'
+  post '/update_book_session', :to => 'bookings#update_book_session'
+  get '/sessions_calendar', :to => 'bookings#sessions_calendar'
 
   # Add Company from Usuario Registrado
   get '/add_company', :to => 'companies#add_company', :as => 'add_company'
@@ -198,6 +208,7 @@ Agendapro::Application.routes.draw do
   get '/available_hours_week_html', :to => 'service_providers#available_hours_week_html'
   # Workflow - Mobile
   post '/select_hour', :to => 'companies#select_hour'
+  post '/select_session_hour', :to => 'companies#select_session_hour'
   post '/user_data', :to => 'companies#user_data'
 
   # Fullcalendar
@@ -215,6 +226,7 @@ Agendapro::Application.routes.draw do
   post '/provider_breaks/destroy_repeat_break', :to => 'provider_breaks#destroy_repeat_break', :as => 'destroy_repeat_break'
   get '/available_providers', :to => 'service_providers#available_providers', :as => 'available_service_providers'
   get '/clients_bookings_history', :to => 'clients#bookings_history'
+  get '/clients_check_sessions', :to => 'clients#check_sessions'
   get '/booking_history', :to => 'bookings#booking_history'
   get '/fixed_bookings', :to => 'bookings#fixed_index', :as => 'fixed_bookings'
   post '/booking_valid', :to => 'bookings#booking_valid'
