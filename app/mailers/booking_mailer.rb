@@ -1049,7 +1049,7 @@ class BookingMailer < ActionMailer::Base
 		# => Message
 		message = {
 			:from_email => 'no-reply@agendapro.cl',
-			:from_name => data[:company],
+			:from_name => data[:company_name],
 			:subject => 'Nueva Reserva en ' + data[:company_name],
 			:to => [],
 			:headers => { 'Reply-To' => data[:reply_to] },
