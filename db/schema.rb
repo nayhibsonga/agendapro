@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150526210816) do
+ActiveRecord::Schema.define(version: 20150616182233) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -218,49 +218,48 @@ ActiveRecord::Schema.define(version: 20150526210816) do
 
   create_table "company_settings", force: true do |t|
     t.text     "signature"
-    t.boolean  "email",                       default: false
-    t.boolean  "sms",                         default: false
-    t.integer  "company_id",                                                  null: false
+    t.boolean  "email",                      default: false
+    t.boolean  "sms",                        default: false
+    t.integer  "company_id",                                                 null: false
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.integer  "before_booking",              default: 3,                     null: false
-    t.integer  "after_booking",               default: 3,                     null: false
-    t.integer  "before_edit_booking",         default: 3
-    t.boolean  "activate_search",             default: false
-    t.boolean  "activate_workflow",           default: true
-    t.boolean  "client_exclusive",            default: false
+    t.integer  "before_booking",             default: 3,                     null: false
+    t.integer  "after_booking",              default: 3,                     null: false
+    t.integer  "before_edit_booking",        default: 3
+    t.boolean  "activate_search",            default: false
+    t.boolean  "activate_workflow",          default: true
+    t.boolean  "client_exclusive",           default: false
     t.integer  "provider_preference"
-    t.integer  "calendar_duration",           default: 15
-    t.boolean  "extended_schedule_bool",      default: false,                 null: false
-    t.time     "extended_min_hour",           default: '2000-01-01 09:00:00', null: false
-    t.time     "extended_max_hour",           default: '2000-01-01 20:00:00', null: false
-    t.boolean  "schedule_overcapacity",       default: true,                  null: false
-    t.boolean  "provider_overcapacity",       default: true,                  null: false
-    t.boolean  "resource_overcapacity",       default: true,                  null: false
-    t.integer  "booking_confirmation_time",   default: 1,                     null: false
-    t.integer  "booking_configuration_email", default: 1
-    t.integer  "max_changes",                 default: 2
-    t.boolean  "booking_history",             default: true
-    t.boolean  "staff_code",                  default: false
-    t.integer  "monthly_mails",               default: 0,                     null: false
-    t.boolean  "deal_activate",               default: false
-    t.string   "deal_name",                   default: ""
-    t.boolean  "deal_overcharge",             default: true
-    t.boolean  "allows_online_payment",       default: false
-    t.string   "account_number",              default: ""
-    t.string   "company_rut",                 default: ""
-    t.string   "account_name",                default: ""
-    t.integer  "account_type",                default: 3
+    t.integer  "calendar_duration",          default: 15
+    t.boolean  "extended_schedule_bool",     default: false,                 null: false
+    t.time     "extended_min_hour",          default: '2000-01-01 09:00:00', null: false
+    t.time     "extended_max_hour",          default: '2000-01-01 20:00:00', null: false
+    t.boolean  "schedule_overcapacity",      default: true,                  null: false
+    t.boolean  "provider_overcapacity",      default: true,                  null: false
+    t.boolean  "resource_overcapacity",      default: true,                  null: false
+    t.integer  "booking_confirmation_time",  default: 1,                     null: false
+    t.integer  "max_changes",                default: 2
+    t.boolean  "booking_history",            default: true
+    t.boolean  "staff_code",                 default: false
+    t.integer  "monthly_mails",              default: 0,                     null: false
+    t.boolean  "deal_activate",              default: false
+    t.string   "deal_name",                  default: ""
+    t.boolean  "deal_overcharge",            default: true
+    t.boolean  "allows_online_payment",      default: false
+    t.string   "account_number",             default: ""
+    t.string   "company_rut",                default: ""
+    t.string   "account_name",               default: ""
+    t.integer  "account_type",               default: 3
     t.integer  "bank_id"
-    t.boolean  "deal_exclusive",              default: true
-    t.integer  "deal_quantity",               default: 0
-    t.integer  "deal_constraint_option",      default: 0
-    t.integer  "deal_constraint_quantity",    default: 0
-    t.boolean  "deal_identification_number",  default: false
-    t.boolean  "deal_required",               default: false,                 null: false
-    t.boolean  "online_payment_capable",      default: false
-    t.boolean  "allows_optimization",         default: true
-    t.boolean  "activate_notes",              default: true,                  null: false
+    t.boolean  "deal_exclusive",             default: true
+    t.integer  "deal_quantity",              default: 0
+    t.integer  "deal_constraint_option",     default: 0
+    t.integer  "deal_constraint_quantity",   default: 0
+    t.boolean  "deal_identification_number", default: false
+    t.boolean  "deal_required",              default: false,                 null: false
+    t.boolean  "online_payment_capable",     default: false
+    t.boolean  "allows_optimization",        default: true
+    t.boolean  "activate_notes",             default: true,                  null: false
   end
 
   add_index "company_settings", ["company_id"], name: "index_company_settings_on_company_id", using: :btree
@@ -369,23 +368,21 @@ ActiveRecord::Schema.define(version: 20150526210816) do
   add_index "location_times", ["location_id"], name: "index_location_times_on_location_id", using: :btree
 
   create_table "locations", force: true do |t|
-    t.string   "name",                                        null: false
-    t.string   "address",                                     null: false
-    t.string   "phone",                                       null: false
+    t.string   "name",                           null: false
+    t.string   "address",                        null: false
+    t.string   "phone",                          null: false
     t.float    "latitude"
     t.float    "longitude"
-    t.integer  "district_id",                                 null: false
-    t.integer  "company_id",                                  null: false
+    t.integer  "district_id",                    null: false
+    t.integer  "company_id",                     null: false
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.boolean  "active",                      default: true
-    t.integer  "order",                       default: 0
-    t.boolean  "outcall",                     default: false
-    t.string   "email",                       default: ""
-    t.boolean  "notification",                default: false
-    t.integer  "booking_configuration_email", default: 2
-    t.string   "second_address",              default: ""
-    t.boolean  "online_booking",              default: true
+    t.boolean  "active",         default: true
+    t.integer  "order",          default: 0
+    t.boolean  "outcall",        default: false
+    t.string   "email",          default: ""
+    t.string   "second_address", default: ""
+    t.boolean  "online_booking", default: true
   end
 
   add_index "locations", ["company_id"], name: "index_locations_on_company_id", using: :btree
@@ -662,16 +659,14 @@ ActiveRecord::Schema.define(version: 20150526210816) do
 
   create_table "service_providers", force: true do |t|
     t.integer  "location_id"
-    t.integer  "company_id",                                 null: false
-    t.string   "notification_email"
+    t.integer  "company_id",                    null: false
     t.string   "public_name"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.boolean  "active",                      default: true
-    t.integer  "order",                       default: 0
-    t.integer  "block_length",                default: 30
-    t.integer  "booking_configuration_email", default: 2
-    t.boolean  "online_booking",              default: true
+    t.boolean  "active",         default: true
+    t.integer  "order",          default: 0
+    t.integer  "block_length",   default: 30
+    t.boolean  "online_booking", default: true
   end
 
   add_index "service_providers", ["company_id"], name: "index_service_providers_on_company_id", using: :btree
