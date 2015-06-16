@@ -1,5 +1,4 @@
-<div class="modal-dialog calendar-modal">
-    <div class="modal-content">
+
         <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal">&times;</button>
             <h3 class="modal-title" id="optimizerTitle" style="line-height: 1.1;">Reservar</h3>
@@ -67,12 +66,11 @@
           </div>
         </div>
         <div class="modal-footer">
-            <button type="button" class="btn session-btn btn-orange" id="optimizerBackBtn" style="display: none;" disabled><i class="fa fa-chevron-left"></i>&nbsp;Atrás</button>
-            <button type="button" class="btn session-btn btn-green" id="nextButton" style="display: none;" disabled>Reservar&nbsp;<i class="fa fa-chevron-right"></i></button>
-            <!--<button href="#" class="btn btn-red" data-dismiss="modal">Cerrar</button>-->
+            <!--<button type="button" class="btn session-btn btn-orange" id="calendarBackBtn" disabled><i class="fa fa-chevron-left"></i>&nbsp;Atrás</button>-->
+            <button type="button" class="btn session-btn btn-green" id="calendarBookSessionBtn" disabled>Reservar&nbsp;<i class="fa fa-chevron-right"></i></button>
+            <a href="#" class="btn btn-white" data-dismiss="modal">Cerrar</a>
         </div>
-    </div><!-- /.modal-content -->
-</div><!-- /.modal-dialog -->
+
 
 
 <input type="hidden" id="booking_id" value="<%= @booking.id %>" />
@@ -81,6 +79,7 @@
 <input type="hidden" id="selectedProvider" value="<%= @selectedProvider %>" />
 <input type="hidden" id="start_date" value="-1" />
 <input type="hidden" id="end_date" value="-1" />
+<input type="hidden" id="hourProvider" value="-1" />
 
 <%= content_tag "div", id: "providerPreference", data: {provider_preference: @booking.location.company.company_setting.provider_preference } do %>
 <% end %>
@@ -126,6 +125,7 @@ var hoursSelected = false;
           var sel_end = generateDate(e.date, e.end);
           $("#start_date").val(sel_start);
           $("#end_date").val(sel_end);
+          $("#hourProvider").val(e.provider);
           hoursSelected = true;
         });
 
@@ -146,16 +146,13 @@ var hoursSelected = false;
 
 function loadCalendar () {
 
-  $("#optimizerBackBtn").show();
-  $("#nextButton").show();
 
 
-  $('#optimizerBackBtn').click(function(e){
+  /*$('#calendarBackBtn').click(function(e){
       var booking_id = $("#booking_id").val();
       $("#calendarModal").modal('hide');
-      $("#calendarModal").remove();
-      $('[data-toggle="bookModal"][href="book_session_form?id=' + booking_id + '"]').trigger("click");
-  });
+      $('.session-btn-book[href="book_session_form?id=' + booking_id + '"]').trigger("click");
+  });*/
 
 
   if($("#service_id").val() != ""){
@@ -246,6 +243,7 @@ function loadCalendar () {
           var sel_end = generateDate(e.date, e.end);
           $("#start_date").val(sel_start);
           $("#end_date").val(sel_end);
+          $("#hourProvider").val(e.provider);
           hoursSelected = true;
         });
 
@@ -315,6 +313,7 @@ function loadCalendar () {
           var sel_end = generateDate(e.date, e.end);
           $("#start_date").val(sel_start);
           $("#end_date").val(sel_end);
+          $("#hourProvider").val(e.provider);
           hoursSelected = true;
         });
 
@@ -366,18 +365,18 @@ function checkUserCrossBookings (b_start, b_end) {
   });
 }
 
-$("#nextButton").click(function(){
+$("#calendarBookSessionBtn").click(function(){
     if (hoursSelected) {
 
         var booking_id = $("#booking_id").val();
         var start = $("#start_date").val();
         var end = $("#end_date").val();
-        var provider_id = $('input[name="staffRadio"]:checked').val();
+        var provider_id = $('#hourProvider').val();
         $("#loader-div").show();
         $(".staff").hide();
         $(".change-bar").hide();
         $("#nextButton").attr("disabled", "disabled");
-        $("#optimizerBackBtn").attr("disabled", "disabled");
+        //$("#calendarBackBtn").attr("disabled", "disabled");
 
         $.ajax({
             url: "update_book_session",
@@ -389,14 +388,14 @@ $("#nextButton").click(function(){
                 if(response[0].length == 0)
                 {
                     $("#calendarModal").modal('hide');
-                    $('#calendarModal').remove();
+                    //$('#calendarModal').remove();
                     //$("#session-booking-select").trigger("change");
                     loadSessions();
                 }
                 else
                 {
                     $("#calendarModal").modal('hide');
-                    $('#calendarModal').remove();
+                    //$('#calendarModal').remove();
                     //$("#session-booking-select").trigger("change");
                     myAlert.showAlert(
                       '<h3>Error al reservar</h3>' +
@@ -408,7 +407,7 @@ $("#nextButton").click(function(){
             error: function(xhr)
             {
                 $("#calendarModal").modal('hide');
-                $('#calendarModal').remove();
+                //$('#calendarModal').remove();
                 alert("Error");
             }
         });
@@ -421,9 +420,21 @@ $("#nextButton").click(function(){
 var myAlert;
 
 $(document).ready(function(){
+
   loadCalendar();
   myAlert = new Alert();
   $(".session-btn").attr("disabled", false);
+  $('#next').removeAttr('disabled');
+  $('#prev').removeAttr('disabled');
+
+});
+
+$("#calendarModal").on('shown.bs.modal', function(){
+  loadCalendar();
+  myAlert = new Alert();
+  $(".session-btn").attr("disabled", false);
+  $('#next').removeAttr('disabled');
+  $('#prev').removeAttr('disabled');
 });
 
 </script>
