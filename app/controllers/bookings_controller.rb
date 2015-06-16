@@ -965,6 +965,7 @@ class BookingsController < ApplicationController
     session_booking_index = 0
     sessions_ratio = ""
     #If updated by admin, mark for user validation
+    #Also, check if client was changed and update SessionBooking and all sessions
     if @booking.is_session
       if @booking.payed
         @booking.user_session_confirmed = false
@@ -973,11 +974,39 @@ class BookingsController < ApplicationController
       end
       session_booking_index = @booking.session_booking.sessions_taken + 1
       sessions_ratio = "Sesión " + session_booking_index.to_s + " de " + @booking.session_booking.sessions_amount.to_s
+
     end
     respond_to do |format|
       if @booking.update(new_booking_params)
 
         if @booking.is_session
+
+          new_user = nil
+          if !@booking.client.email.nil?
+            if User.find_by_email(@booking.client.email).nil?
+              new_user = User.find_by_email(@booking.client.email)
+            end
+          end
+
+          @booking.session_booking.bookings.each do |booking|
+            booking.client_id = @booking.client_id
+            if !new_user.nil?
+              booking.user_id = new_user.id
+            else
+              booking.user_id = nil
+            end
+            booking.save
+          end
+
+          @booking.session_booking.client_id = @booking.client_id
+          if !new_user.nil?
+            @booking.session_booking.user_id = new_user.id
+          else
+            @booking.session_booking.user_id = nil
+          end
+          @booking.session_booking.save
+
+
           if @booking.user_session_confirmed
             @booking.session_booking.send_sessions_booking_mail
           else
