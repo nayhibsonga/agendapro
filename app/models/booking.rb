@@ -463,6 +463,7 @@ class Booking < ActiveRecord::Base
   end
 
   def generate_ics
+    booking = self
     address = ''
     date = I18n.l self.start
     if !self.service.outcall
@@ -479,7 +480,7 @@ class Booking < ActiveRecord::Base
         event.location = self.location.get_full_address
         event.add_attendee self.client.email
         event.alarm do
-          description "Recuerda tu hora de " + self.service.name + " en "  + self.location.company.name
+          description "Recuerda tu hora de " + booking.service.name + " en "  + booking.location.company.name
         end
       end
     end
