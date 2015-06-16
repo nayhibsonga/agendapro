@@ -3,7 +3,7 @@ class PaymentsController < ApplicationController
   before_action :authenticate_user!
   layout "admin"
 
-  respond_to :html
+  respond_to :html, :json
 
   def index
     @payments = Payment.all
@@ -24,6 +24,7 @@ class PaymentsController < ApplicationController
 
   def create
     @payment = Payment.new(payment_params)
+    @payment.company_id = current_user.company_id
     @payment.save
     respond_with(@payment)
   end
@@ -44,6 +45,6 @@ class PaymentsController < ApplicationController
     end
 
     def payment_params
-      params.require(:payment).permit(:company_id, :amount, :receipt_type_id, :receipt_number, :payment_method_id, :payment_method_number, :payment_method_type_id, :installments, :payed, :payment_date, :bank_id)
+      params.require(:payment).permit(:company_id, :amount, :receipt_type_id, :receipt_number, :payment_method_id, :payment_method_number, :payment_method_type_id, :installments, :payed, :payment_date, :bank_id, :company_payment_method_id, booking_ids: [])
     end
 end
