@@ -46,6 +46,10 @@ class Booking < ActiveRecord::Base
 		end
 	end
 
+  def wait_for_payment
+    self.delay(run_at: 4.minutes.from_now).payment_timeout
+  end
+
   def payment_timeout
     if !self.payed and self.trx_id != "" and self.payed_booking.nil?
       self.delete
