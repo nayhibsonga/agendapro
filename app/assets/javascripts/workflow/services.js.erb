@@ -859,7 +859,9 @@ function loadDescription (serviceId) {
 			'</tr>'
 		);
 
-		$('#description-info').append("Descripción: ");
+		$("#description-info").empty();
+
+		$('#description-info').append("<b>Descripción:</b> ");
 		var hasDescription = false;
 		if(service.description) {
 			$('#description-info').append(
