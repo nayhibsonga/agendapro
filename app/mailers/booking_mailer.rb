@@ -1080,54 +1080,79 @@ class BookingMailer < ActionMailer::Base
 		}
 
 		# Notificacion service provider
-		# data[:provider][:array].each do |provider|
-		# 	message[:to] << {
-		# 			:email => provider[:email],
-		# 			:type => 'to'
-		# 		}
-		# 	message[:merge_vars] << {
-		# 			:rcpt => provider[:email],
-		# 			:vars => [
-		# 				{
-		# 					:name => 'CLIENTNAME',
-		# 					:content => data[:provider][:client_name]
-		# 				},
-		# 				{
-		# 					:name => 'SERVICEPROVIDER',
-		# 					:content => provider[:name]
-		# 				},
-		# 				{
-		# 					:name => 'BOOKINGS',
-		# 					:content => provider[:provider_table]
-		# 				}
-		# 			]
-		# 		}
-		# end
+		data[:provider][:array].each do |provider|
+			message[:to] << {
+					:email => provider[:email],
+					:type => 'to'
+				}
+			message[:merge_vars] << {
+					:rcpt => provider[:email],
+					:vars => [
+						{
+							:name => 'CLIENTNAME',
+							:content => data[:provider][:client_name]
+						},
+						{
+							:name => 'SERVICEPROVIDER',
+							:content => provider[:name]
+						},
+						{
+							:name => 'BOOKINGS',
+							:content => provider[:provider_table]
+						}
+					]
+				}
+		end
 
 		# Email notificacion local
-		# if data[:location][:send_mail]
-		# 	message[:to] << {
-		# 		:email => data[:location][:email],
-		# 		:type => 'to'
-		# 	}
-		# 	message[:merge_vars] << {
-		# 		:rcpt => data[:location][:email],
-		# 		:vars => [
-		# 			{
-		# 				:name => 'CLIENTNAME',
-		# 				:content => data[:provider][:client_name]
-		# 			},
-		# 			{
-		# 				:name => 'SERVICEPROVIDER',
-		# 				:content => data[:location][:name]
-		# 			},
-		# 			{
-		# 				:name => 'BOOKINGS',
-		# 				:content => data[:location][:location_table]
-		# 			}
-		# 		]
-		# 	}
-		# end
+		data[:location][:email].each do |local|
+			message[:to] << {
+				:email => local,
+				:type => 'to'
+			}
+			message[:merge_vars] << {
+				:rcpt => data[:location][:email],
+				:vars => [
+					{
+						:name => 'CLIENTNAME',
+						:content => data[:location][:client_name]
+					},
+					{
+						:name => 'SERVICEPROVIDER',
+						:content => data[:location][:name]
+					},
+					{
+						:name => 'BOOKINGS',
+						:content => data[:location][:location_table]
+					}
+				]
+			}
+		end
+
+		# Notificacion Empresa
+		data[:company][:email].each do |company|
+			message[:to] << {
+				:email => company,
+				:type => 'to'
+			}
+			message[:merge_vars] << {
+				:rcpt => data[:company][:email],
+				:vars => [
+					{
+						:name => 'CLIENTNAME',
+						:content => data[:company][:client_name]
+					},
+					{
+						:name => 'SERVICEPROVIDER',
+						:content => data[:company][:name]
+					},
+					{
+						:name => 'BOOKINGS',
+						:content => data[:company][:company_table]
+					}
+				]
+			}
+		end
 
 		# Notificacion cliente
 		if data[:user][:send_mail]
