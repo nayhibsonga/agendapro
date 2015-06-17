@@ -230,6 +230,7 @@
               </div>
               <div class="col-sm-3">
                 <div class="panel panel-default">
+                  <input id="selectedServiceId" type="hidden" />
                   <div id="description-heading">
                   </div>
                   <div class="descripcion-body">
@@ -247,7 +248,7 @@
                 </div>
               </div>
               <div class="col-sm-4">
-                <div id="selected-services">
+                <div id="selected-services" ondrop="drop(event)" ondragover="allowDrop(event)">
 
                 </div>
                 <div class="btn-change btn-next" style="margin-top: 10px;">

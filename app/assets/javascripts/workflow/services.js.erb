@@ -3,6 +3,8 @@ var actual_booking = null;
 var first_session = null;
 var sessions_buffer = [];
 var sessions_left = 0;
+var added_services_count = 0;
+var added_services = [];
 
 var current_service;
 
@@ -805,6 +807,8 @@ function loadDescription (serviceId) {
 	$.getJSON('/service', {id: serviceId}, function (service) {
 		current_service = service;
 
+		$("#selectedServiceId").val(service.id);
+
 		$("#description-heading").empty();
 		$("#description-heading").append(service.name);
 
@@ -1012,19 +1016,152 @@ function addBooking (booking) {
 	checkUserCrossBookings();*/
 }
 
-function addService(name){
-	$("#selected-services").append(
-		'<div id="service-header" class="row">' +
-			'<div class="col-sm-1"><i class="fa fa-times"></i></div>' +
-			'<div class="col-sm-10">' + name + '</div>' +
-			'<div class="col-sm-1"><i class="fa fa-times"></i></div>' +
-		'</div>'
-	);
+
+
+function addService(service_id){
+
+	$.getJSON('/service', {id: service_id}, function (service) {
+
+		
+		$("#selected-services").append(
+			'<div id="selected-service-' + added_services_count + '" class="selected-service" service_id="' + service.id + '" draggable="true" ondragstart="drag(event)">' +
+				'<div class="selected-service-header row">' +
+					'<div class="col-sm-1"><i class="fa fa-times remove-service"></i></div>' +
+					'<div class="col-sm-9">' + service.name + '</div>' +
+					'<div class="col-sm-1"><i class="fa fa-bars move-service"></i></div>' +
+				'</div>' +
+				'<div class="selected-service-providers">' +
+					'<div class="form-group">' +
+				        '<label for="selected-service-provider" class="col-xs-3 control-label">Prestador</label>' +
+				        '<div class="col-xs-9">' +
+				          '<select class="form-control selected-service-provider"></select>' +
+				        '</div>' +
+				    '</div>' +
+				'</div>' +
+				'<div style="clear: both;">' +
+				'</div>' +
+			'</div>'
+		);
+
+		loadServiceStaff(service.id);
+
+		added_services_count = added_services_count + 1;
+		added_services.push(service);
+
+	});
+}
+$("body").on('click', '.remove-service', function(){
+
+	var index = $(this).closest(".selected-service").attr("id").split("-")[2];
+	$(this).closest(".selected-service").remove();
+	added_services_count = added_services_count - 1;
+	added_services.splice(index, 1);
+
+});
+
+function allowDrop(ev) {
+    ev.preventDefault();
+}
+
+function drag(ev) {
+	console.log(ev.target);
+    ev.dataTransfer.setData("source", ev.target.id);
+}
+
+function drop(ev) {
+
+
+	//ARREGLAR ESTO
+
+    ev.preventDefault();
+    var data_id = ev.dataTransfer.getData("source");
+    console.log(data_id);
+    //$('.selected-service[service_id="' + data.attr("service_id") + '"').remove();
+    var data_copy = $('#' + data_id).html();
+    //$("#" + data_id).remove();
+    //$("#selected-services").append(data_copy);
+    //$("selected-service").
+
+    var moved_id = data_id.split("-")[2];
+
+    aux_added_services = []
+
+    for(i = 0; i < added_services.length; i++)
+    {
+    	if(parseInt(moved_id) != i)
+    	{
+	    	if(parseInt(moved_id) > i)
+	    	{
+	    		aux_added_services.push(added_services[i]);
+	    	}
+	    	else
+	    	{
+		    	if(ev.pageY > $("#selected-service-" + i).offset().top)
+		    	{
+		    		if(ev.pageY <= ($("#selected-service-" + i).offset().top + $("#selected-service-" + i).height()))
+		    		{
+		    			aux_added_services.push(added_services[i]);
+		    			aux_added_services.push(added_services[parseInt(moved_id)]);
+		    		}
+		    		else
+		    		{
+		    			aux_added_services.push(added_services[i]);
+		    		}
+		    	}
+		    	else
+		    	{
+		    		aux_added_services.push(added_services[i]);
+		    	}
+		    }
+		}
+    }
+
+    added_services = [];
+    added_services_count = 0;
+    $("#selected-services").empty();
+    for(i = 0; i < aux_added_services.length; i++)
+    {
+    	addService(aux_added_services[i].id);
+    }
+
+    return false;
+}
+
+function loadServiceStaff (service_id) {
+  var serviceId = service_id;
+
+  var localId = $('#selectedLocal').data('local').id;
+  var providerPreference = $('#providerPreference').data('provider-preference');
+
+  var providerSelector = $('.selected-service[service_id="' + serviceId + '"] .selected-service-provider');
+  $.getJSON('/providers_services', {id: serviceId, local: localId}, function (providers) {
+
+    providerSelector.attr('disabled', true);
+    providerSelector.empty();
+
+    if (providerPreference != 1) {
+      if (providers.length > 1) {
+        providerSelector.append(
+          '<option value="0">Sin Preferencia</option>'
+        );
+      }
+    }
+    if (providerPreference != 2) {
+      $.each(providers, function (key, provider) {
+        providerSelector.append(
+          '<option value="' + provider.id + '">' + provider.public_name + '</option>'
+        );
+      });
+    }
+
+    providerSelector.attr('disabled', false);
+  });
 }
 
 $("#new-add-service").click(function(){
-	addService($("#description-heading").text());
+	addService($("#selectedServiceId").val());
 });
+
 
 function generateDate(date, time) {
 	var year = date.substring(0, date.indexOf('-'));

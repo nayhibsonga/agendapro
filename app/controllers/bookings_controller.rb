@@ -957,6 +957,7 @@ class BookingsController < ApplicationController
         end
       end
     end
+    
     if ServiceProvider.where(:id => booking_params[:service_provider_id])
       new_booking_params[:location_id] = ServiceProvider.find(booking_params[:service_provider_id]).location.id
     end
