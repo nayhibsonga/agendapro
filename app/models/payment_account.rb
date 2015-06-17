@@ -25,7 +25,7 @@ class PaymentAccount < ActiveRecord::Base
 	      		status = false
 	      	elsif(type == "admin_transfered")
 	      		status = true
-	      		header = ["Nombre titular", "Rut titular", "Cuenta titular", "Monto", "Banco", "Tipo de cuenta", "Moneda", "Oficina origen", "Oficina destino", "N° Factura"]
+	      		header = ["Nombre titular", "Rut titular", "Cuenta titular", "Monto", "Banco", "Tipo de cuenta", "Moneda", "Oficina origen", "Oficina destino", "N° Factura", "Fecha de pago"]
 	      		csv << header
 	      	end      	
 
@@ -50,6 +50,7 @@ class PaymentAccount < ActiveRecord::Base
 	        	row_array << 1
 	        	factura = payment_account.rut.gsub(/[\s.-]/,'').to_s + payment_account.bank_code.to_s + payment_account.account_type.to_s
 	        	row_array << factura
+	        	row_array << payment_account.updated_at - eval(ENV["TIME_ZONE_OFFSET"])
 	        	csv << row_array
 	        end
 	    end

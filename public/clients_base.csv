@@ -1,4 +1,4 @@
-email,first_name,last_name,identification_number,phone,address,district,city,age,gender,birth_day,birth_month,birth_year
-ejemplo1@mujer.cl,Nombre1,Apellido1,11.111.111-1,12345678,Dirección1,Comuna1,Ciudad1,25,1,18,12,
-ejemplo2@hombre.cl,Nombre2,Apellido2,22222222-2,13245678,Dirección2,Comuna2,Ciudad2,40,2,,,
-ejemplo3@agendapro.cl,Soporte,Agendapro,,+569 5178 5898,Nuestra Señora de los Ángeles 185 of. D,Las Condes,Santiago,100,0,06,06,2006
+email,first_name,last_name,identification_number,record,phone,second_phone,address,district,city,age,gender,birth_day,birth_month,birth_year
+ejemplo1@mujer.cl,Nombre1,Apellido1,11.111.111-1,1,12345678,02 233 44 55,Direccion1,Comuna1,Ciudad1,25,1,18,12,
+ejemplo2@hombre.cl,Nombre2,Apellido2,0,cliente 2,13245678, + 562 2378 5898,Direccion2,Comuna2,Ciudad2,40,2,,,
+ejemplo3@agendapro.cl,Soporte,Agendapro,,paciente 787,+569 5178 5898,,Nuestra Senora de los Angeles 185 of. D,Las Condes,Santiago,100,0,6,6,2006
