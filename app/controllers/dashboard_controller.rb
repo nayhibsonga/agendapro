@@ -26,7 +26,19 @@ class DashboardController < ApplicationController
 
 		@services = Service.where(:company_id => current_user.company_id)
 
-		@session_bookings = SessionBooking.where('sessions_taken < sessions_amount and client_id is not null').where(service_id: @services).order('updated_at desc')
+		@potential_session_bookings = SessionBooking.where('client_id is not null').where(service_id: @services).order('updated_at desc')
+		@session_bookings = []
+
+		@potential_session_bookings.each do |session_booking|
+			if session_booking.sessions_amount > session_booking.sessions_taken
+				@session_bookings << session_booking
+			else
+				active_count = session_booking.bookings.where('start > ?', DateTime.now).count
+				if active_count > 0
+					@session_bookings << session_booking
+				end
+			end
+		end
 
 		@lastBookings = Booking.where(service_provider_id: @service_providers).where('start >= ?', Time.now).where('is_session = false or (is_session = true and is_session_booked = true)').order(updated_at: :desc).limit(50)
 		@todayBookings = Booking.where(service_provider_id: @service_providers).where.not(status_id: Status.find_by_name("Cancelado")).where("DATE(start) = DATE(?)", Time.now - eval(ENV["TIME_ZONE_OFFSET"])).where('is_session = false or (is_session = true and is_session_booked = true)').order(:start)
