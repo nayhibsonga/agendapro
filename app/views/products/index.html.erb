@@ -1,33 +1,44 @@
-<h1>Listing products</h1>
-
-<table>
-  <thead>
-    <tr>
-      <th>Company</th>
-      <th>Name</th>
-      <th>Price</th>
-      <th>Description</th>
-      <th></th>
-      <th></th>
-      <th></th>
-    </tr>
-  </thead>
-
-  <tbody>
-    <% @products.each do |product| %>
-      <tr>
-        <td><%= product.company_id %></td>
-        <td><%= product.name %></td>
-        <td><%= product.price %></td>
-        <td><%= product.description %></td>
-        <td><%= link_to 'Show', product %></td>
-        <td><%= link_to 'Edit', edit_product_path(product) %></td>
-        <td><%= link_to 'Destroy', product, method: :delete, data: { confirm: 'Are you sure?' } %></td>
-      </tr>
-    <% end %>
-  </tbody>
-</table>
-
-<br>
-
-<%= link_to 'New Product', new_product_path %>
+<div class="container-fluid background-grey">
+  <div class="row">
+    <div class="col-md-12">
+      <h2 class="text-green">Productos</h2>
+      <p>Estos son los productos que puedes vender junto a tus servicios. Acá puedes editarlos y crear nuevos.</p>
+    </div>
+  </div>
+</div>
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-md-12">
+      <div class="pull-right" style="margin: 10px 0;">
+        <%= link_to '<i class="fa fa-plus"></i> Nuevo Producto'.html_safe, new_product_path, :class => "btn btn-green" %>
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-12">
+      <table class="table table-bordered table-green">
+        <thead>
+          <tr>
+            <th>Nombre</th>
+            <th>Categoría</th>
+            <th>Opciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @products.each do |product| %>
+            <tr>
+              <td><%= product.name %></td>
+              <td><%= product.product_category.name %></td>
+              <td>
+                <%= link_to '<i class="fa fa-pencil"></i> Editar'.html_safe, edit_product_path(product), :class => "btn btn-sm btn-orange" %>
+                <% if current_user.role_id == Role.find_by_name("Administrador General").id %>
+                <%= link_to '<i class="fa fa-trash-o"></i> Eliminar'.html_safe, product, :class => "btn btn-sm btn-red", method: :delete, data: { confirm: '¿Estás seguro de eliminar el Producto seleccionado?' } %>
+                <% end %>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

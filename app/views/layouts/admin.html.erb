@@ -91,6 +91,7 @@
                   <li><%= link_to '<i class="fa fa-book fa-fw"></i> Servicios'.html_safe, services_path %></li>
                   <li><%= link_to '<i class="fa fa-list fa-fw"></i> Categorías de Servicios'.html_safe, service_categories_path %></li>
                   <li><%= link_to '<i class="fa fa-cubes fa-fw"></i> Recursos'.html_safe, resources_path %></li>
+                  <li><%= link_to '<i class="fa fa-cubes fa-fw"></i> Productos'.html_safe, products_path %></li>
                   <% if current_user.role == Role.find_by(name: "Administrador General") %>
                   <li><%= link_to '<i class="fa fa-exchange fa-fw"></i> Pagos en línea'.html_safe, '/company_bookings' %></li>
                   <% end %>
