@@ -26,6 +26,8 @@
         <!-- start: JavaScript-->
         <%= javascript_include_tag "home-head" %>
 
+        <%= yield :head_scripts %>
+
         <%= render 'layouts/icons' %>
     </head>
 
