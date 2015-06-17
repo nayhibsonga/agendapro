@@ -16,7 +16,9 @@ class PuntoPagosController < ApplicationController
   #Métodos de pagos de compañía/plan
 
   def generate_transaction
-  	trx_id = DateTime.now.to_s.gsub(/[-:T]/i, '')[0,15]
+
+  	trx_id = DateTime.now.to_s.gsub(/[-:T]/i, '')[0, 15]
+
   	amount = '10000.00'
     payment_method = '03'
   	req = PuntoPagos::Request.new()
@@ -52,7 +54,7 @@ class PuntoPagosController < ApplicationController
       else
         NumericParameter.find_by_name(amount.to_s+"_month_discount") ? month_discount = NumericParameter.find_by_name(amount.to_s+"_month_discount").value : month_discount = 0
         # trx_id = DateTime.now.to_s.gsub(/[-:T]/i, '') + "c" + company.id.to_s + "p" + company.plan.id.to_s
-        
+
         trx_comp = company.id.to_s + "0" + company.plan.id.to_s + "0"
         trx_offset = 4
         trx_date = DateTime.now.to_s.gsub(/[-:T]/i, '')
@@ -203,6 +205,12 @@ class PuntoPagosController < ApplicationController
         elsif Booking.find_by_trx_id(trx_id)
           #Mostrar página similar a la de reserva hecha, confirmando que se pagó
           @bookings = Booking.where(:trx_id => trx_id)
+          @has_session_booking = false
+          @session_booking = nil
+          if @bookings.first.is_session
+            @has_session_booking = true
+            @session_booking = @bookings.first.session_booking
+          end
           @token = params[:token]
           @success_page = "booking"
           host = request.host_with_port
@@ -306,7 +314,11 @@ class PuntoPagosController < ApplicationController
         end
 
         if bookings.count >1
-          Booking.send_multiple_booking_mail(bookings.first.location_id, bookings.first.booking_group)
+          if bookings.first.session_booking.nil?
+            Booking.send_multiple_booking_mail(bookings.first.location_id, bookings.first.booking_group)
+          else
+            bookings.first.session_booking.send_sessions_booking_mail
+          end
         else
           BookingMailer.book_service_mail(bookings.first)
         end
