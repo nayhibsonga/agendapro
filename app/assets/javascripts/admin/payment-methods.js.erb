@@ -67,7 +67,7 @@ function loadBookingPayment(booking_id) {
 					var elegible_booking = full_elegible_booking.booking;
 					window.console.log(elegible_booking);
 					var checked = bookings_payment.payment_bookings.indexOf(elegible_booking.id) > -1 ? 'checked' : '';
-					amount += elegible_booking.price;
+					amount += bookings_payment.payment_bookings.indexOf(elegible_booking.id) > -1 ? elegible_booking.price : 0;
 					$('#payment-bookings-checkbox').append(
 						'<div class="checkbox">' +
 							'<label>' +

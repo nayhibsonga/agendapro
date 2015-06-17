@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150605142954) do
+ActiveRecord::Schema.define(version: 20150616215701) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -374,6 +374,17 @@ ActiveRecord::Schema.define(version: 20150605142954) do
   add_index "location_outcall_districts", ["district_id"], name: "index_location_outcall_districts_on_district_id", using: :btree
   add_index "location_outcall_districts", ["location_id"], name: "index_location_outcall_districts_on_location_id", using: :btree
 
+  create_table "location_products", force: true do |t|
+    t.integer  "product_id_id"
+    t.integer  "location_id_id"
+    t.integer  "stock"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "location_products", ["location_id_id"], name: "index_location_products_on_location_id_id", using: :btree
+  add_index "location_products", ["product_id_id"], name: "index_location_products_on_product_id_id", using: :btree
+
   create_table "location_times", force: true do |t|
     t.time     "open",        null: false
     t.time     "close",       null: false
@@ -467,6 +478,20 @@ ActiveRecord::Schema.define(version: 20150605142954) do
     t.float    "gain_amount",    default: 0.0
   end
 
+  create_table "payment_histories", force: true do |t|
+    t.date     "payment_date"
+    t.float    "amount",            default: 0.0
+    t.float    "discount",          default: 0.0
+    t.integer  "payment_method_id"
+    t.integer  "user_id"
+    t.text     "notes",             default: ""
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "payment_histories", ["payment_method_id"], name: "index_payment_histories_on_payment_method_id", using: :btree
+  add_index "payment_histories", ["user_id"], name: "index_payment_histories_on_user_id", using: :btree
+
   create_table "payment_method_settings", force: true do |t|
     t.integer  "company_setting_id"
     t.integer  "payment_method_id"
@@ -491,6 +516,18 @@ ActiveRecord::Schema.define(version: 20150605142954) do
     t.datetime "updated_at"
   end
 
+  create_table "payment_products", force: true do |t|
+    t.integer  "payment_id",               null: false
+    t.integer  "product_id",               null: false
+    t.float    "price",      default: 0.0
+    t.float    "discount",   default: 0.0
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "payment_products", ["payment_id"], name: "index_payment_products_on_payment_id", using: :btree
+  add_index "payment_products", ["product_id"], name: "index_payment_products_on_product_id", using: :btree
+
   create_table "payment_statuses", force: true do |t|
     t.string   "name",        null: false
     t.text     "description", null: false
@@ -513,6 +550,8 @@ ActiveRecord::Schema.define(version: 20150605142954) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "company_payment_method_id"
+    t.float    "discount"
+    t.text     "notes"
   end
 
   add_index "payments", ["bank_id"], name: "index_payments_on_bank_id", using: :btree
@@ -544,6 +583,26 @@ ActiveRecord::Schema.define(version: 20150605142954) do
     t.boolean  "special",           default: false
     t.integer  "monthly_mails",     default: 5000,  null: false
   end
+
+  create_table "product_categories", force: true do |t|
+    t.string   "name"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "products", force: true do |t|
+    t.integer  "company_id_id"
+    t.string   "name"
+    t.float    "price"
+    t.text     "description"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.integer  "product_category_id",              null: false
+    t.string   "sku",                 default: ""
+  end
+
+  add_index "products", ["company_id_id"], name: "index_products_on_company_id_id", using: :btree
+  add_index "products", ["product_category_id"], name: "index_products_on_product_category_id", using: :btree
 
   create_table "promotions", force: true do |t|
     t.string   "code",       null: false

@@ -1,5 +1,9 @@
 Agendapro::Application.routes.draw do
 
+  resources :product_categories
+
+  resources :products
+
   get "users/index"
   require 'subdomain'
 
