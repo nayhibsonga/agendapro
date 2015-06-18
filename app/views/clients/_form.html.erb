@@ -172,7 +172,30 @@
                   <tr>
                     <td><%= l booking.start, format: :short %></td>
                     <td><%= booking.location.name %></td>
-                    <td><%= booking.service.name %></td>
+                    <td>
+                      <% if !booking.is_session %>
+                        <%= booking.service.name %>
+                      <% else %>
+                        <% 
+                            index = 1
+                            session_index = "Sesión "
+                            session_booking = booking.session_booking
+                            session_booking.bookings.where(:is_session_booked => true).order('start asc').each do |b|
+
+                                if b.id == booking.id
+                                    session_index = session_index + index.to_s
+                                    break
+                                end
+                                index = index + 1
+                            end
+
+                            session_index = session_index + " de " + session_booking.sessions_amount.to_s
+
+                        %>
+
+                        <%= booking.service.name %><br /><%= "(" + session_index + ")" %>
+                      <% end %>
+                    </td>
                     <td><%= booking.status.name %></td>
                   </tr>
                   <% end %>
@@ -199,7 +222,30 @@
                   <tr>
                     <td><%= l booking.start, format: :short %></td>
                     <td><%= booking.location.name %></td>
-                    <td><%= booking.service.name %></td>
+                    <td>
+                      <% if !booking.is_session %>
+                        <%= booking.service.name %>
+                      <% else %>
+                        <% 
+                            index = 1
+                            session_index = "Sesión "
+                            session_booking = booking.session_booking
+                            session_booking.bookings.where(:is_session_booked => true).order('start asc').each do |b|
+
+                                if b.id == booking.id
+                                    session_index = session_index + index.to_s
+                                    break
+                                end
+                                index = index + 1
+                            end
+
+                            session_index = session_index + " de " + session_booking.sessions_amount.to_s
+
+                        %>
+
+                        <%= booking.service.name %><br /><%= "(" + session_index + ")" %>
+                      <% end %>
+                    </td>
                     <td><%= booking.status.name %></td>
                   </tr>
                   <% end %>
