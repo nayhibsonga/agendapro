@@ -1,4 +1,3 @@
-// Place all the behaviors and hooks related to the matching controller here.
-// All this logic will automatically be available in application.js.
-
 //= require admin/products
+//= require validations/validate
+//= require validations/admin/product

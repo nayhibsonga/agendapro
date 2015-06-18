@@ -1,10 +1,10 @@
 function changeLocationStatus(location_id) {
-	if( $('#product_location_ids_'+location_id).prop('checked')) {
-		$('#product_location_ids_stock_'+location_id).prop('disabled', false);
+	if( $('#location_product_ids_'+location_id).prop('checked')) {
+		$('#location_product_ids_stock_'+location_id).prop('disabled', false);
 	}
 	else {
-		$('#product_location_ids_stock_'+location_id).prop('disabled', true);
-		$('#product_location_ids_stock_'+location_id).val('');
+		$('#location_product_ids_stock_'+location_id).prop('disabled', true);
+		$('#location_product_ids_stock_'+location_id).val('');
 	}
 }
 
@@ -67,19 +67,13 @@ function saveProduct (typeURL, extraURL) {
 	if (validator_product.numberOfInvalids()) {
 		return false;
 	};
-	var product_services = []
-	$('input.productServiceCheck').each(function() {
-		if ($(this).prop('checked')) {
-	    	product_services.push($(this).val());
-		}
-	});
-	var product_locations = []
+	var location_products = []
 	$('input.productLocationCheck').each(function() {
-		if ($('#product_location_ids_'+$(this).val()).prop('checked')) {
-	    	product_locations.push({ "location_id": $(this).val(), "stock": $('#product_location_ids_stock_'+$(this).val()).val() });
+		if ($('#location_product_ids_'+$(this).val()).prop('checked')) {
+	    	location_products.push({ "location_id": $(this).val(), "stock": $('#location_product_ids_stock_'+$(this).val()).val() });
 		}
 	});
-	var productJSON = { "name": $('#product_name').val(), "product_category_id": $('#product_product_category_id').val(), "service_ids": product_services, "product_locations_attributes": product_locations };
+	var productJSON = { "name": $('#product_name').val(), "product_category_id": $('#product_product_category_id').val(), "price": $('#product_price').val(), "comission_value": $('#product_comission_value').val(), "comission_option": $('#product_comission_option').val(), "location_products_attributes": location_products };
 	$.ajax({
 		type: typeURL,
 		url: '/products'+extraURL+'.json',
@@ -122,11 +116,11 @@ var form;
 function initialize() {
 	if ($("#id_data").length > 0){
 		form = '[id^="edit_product_"]'
-		var productLocationsData = $('#product_locations_data').data('product-locations');
+		var productLocationsData = $('#location_products_data').data('location-products');
 		$.each(productLocationsData, function(index,productLocation) {
-			$('#product_location_ids_'+productLocation.location_id).prop('checked', true);
-			$('#product_location_ids_stock_'+productLocation.location_id).prop('disabled', false);
-			$('#product_location_ids_stock_'+productLocation.location_id).val(productLocation.stock);
+			$('#location_product_ids_'+productLocation.location_id).prop('checked', true);
+			$('#location_product_ids_stock_'+productLocation.location_id).prop('disabled', false);
+			$('#location_product_ids_stock_'+productLocation.location_id).val(productLocation.stock);
 		});
 	}
 	else {
@@ -153,32 +147,6 @@ $(function() {
 		$('.fa.fa-check').removeClass('fa fa-check');
 		$('.has-error').removeClass('has-error');
 		$('.fa.fa-times').removeClass('fa fa-times');
-	});
-	$('input.check_boxes').each(function () {
-		var prop = true;
-		$(this).parents('.panel-body').find('input.check_boxes').each( function () {
-			prop = prop && $(this).prop('checked');
-		});
-		$(this).parents('.panel').find('input[name="selectServiceCategory"]').prop('checked', prop);
-	});
-	$('input[name="selectServiceCategory"]').change(function (event) {
-		var id = $(event.target).attr('id').replace('selectServiceCategory', '');
-		$('#service_category' + id).find('input.check_boxes').each( function () {
-			if ($(event.target).prop('checked')) {
-				$(this).prop('checked', true);
-			}
-			else {
-				$(this).prop('checked', false);
-			}
-		});
-	});
-
-	$('input.check_boxes').change(function (event) {
-		var prop = true;
-		$(event.target).parents('.panel-body').find('input.check_boxes').each( function () {
-			prop = prop && $(this).prop('checked');
-		});
-		$(event.target).parents('.panel').find('input[name="selectServiceCategory"]').prop('checked', prop);
 	});
 	initialize();
 });

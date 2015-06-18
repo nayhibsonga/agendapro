@@ -1,5 +1,6 @@
 class Product < ActiveRecord::Base
   belongs_to :company
+  belongs_to :product_category
   has_many :location_products
   has_many :locations, through: :location_products
   has_many :payment_products
