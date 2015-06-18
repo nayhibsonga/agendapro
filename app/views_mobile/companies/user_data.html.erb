@@ -1,11 +1,13 @@
 <div class="container container-margin">
   <%= form_tag("book", method: "post", role: "form", id: "bookingForm") do %>
-    <div class="row">
-      <div class="col-xs-12">
-        Este servicio es por sesiones. Se reservará la primera sesión, y luego podrás reservar las restantes ingresando a tu Agenda desde tu cuenta AgendaPro, o llamando al local que ofrece el servicio. El valor del servicio incluye todas las sesiones.
-        <br />
+    <% if @service.has_sessions %>
+      <div class="row">
+        <div class="col-xs-12">
+          Este servicio es por sesiones. Se reservará la primera sesión, y luego podrás reservar las restantes ingresando a tu Agenda desde tu cuenta AgendaPro, o llamando al local que ofrece el servicio. El valor del servicio incluye todas las sesiones.
+          <br />
+        </div>
       </div>
-    </div>
+    <% end %>
     <div class="row">
       <div class="col-xs-12">
 
