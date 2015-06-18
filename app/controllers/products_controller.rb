@@ -5,7 +5,7 @@ class ProductsController < ApplicationController
   layout "admin"
   load_and_authorize_resource
 
-  respond_to :html
+  respond_to :html, :json
 
   def index
     @products = Product.all
@@ -17,15 +17,26 @@ class ProductsController < ApplicationController
   end
 
   def new
+    if ProductCategory.where(company_id: current_user.company_id).count == 0
+      ProductCategory.create(name: "Otros", company_id: current_user.company_id)
+    end
+    @product_category = ProductCategory.new
     @product = Product.new
+    @product.location_products.build
+    @product_categories = ProductCategory.where(company_id: current_user.company_id).order(:name)
+    @locations = Location.where(company_id: current_user.company_id, active: true).order(:order)
     respond_with(@product)
   end
 
   def edit
+    @product_category = ProductCategory.new
+    @product_categories = ProductCategory.where(company_id: current_user.company_id).order(:name)
+    @locations = Location.where(company_id: current_user.company_id, active: true).order(:order)
   end
 
   def create
     @product = Product.new(product_params)
+    @product.company_id = current_user.company_id
     @product.save
     respond_with(@product)
   end
@@ -46,6 +57,6 @@ class ProductsController < ApplicationController
     end
 
     def product_params
-      params.require(:product).permit(:company_id_id, :name, :price, :description)
+      params.require(:product).permit(:name, :price, :description, :comission_value, :comission_option, :location_product_attributes => [:id, :location_id, :stock])
     end
 end

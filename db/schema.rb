@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150616215701) do
+ActiveRecord::Schema.define(version: 20150618150847) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -375,15 +375,15 @@ ActiveRecord::Schema.define(version: 20150616215701) do
   add_index "location_outcall_districts", ["location_id"], name: "index_location_outcall_districts_on_location_id", using: :btree
 
   create_table "location_products", force: true do |t|
-    t.integer  "product_id_id"
-    t.integer  "location_id_id"
+    t.integer  "product_id"
+    t.integer  "location_id"
     t.integer  "stock"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
 
-  add_index "location_products", ["location_id_id"], name: "index_location_products_on_location_id_id", using: :btree
-  add_index "location_products", ["product_id_id"], name: "index_location_products_on_product_id_id", using: :btree
+  add_index "location_products", ["location_id"], name: "index_location_products_on_location_id", using: :btree
+  add_index "location_products", ["product_id"], name: "index_location_products_on_product_id", using: :btree
 
   create_table "location_times", force: true do |t|
     t.time     "open",        null: false
@@ -588,20 +588,25 @@ ActiveRecord::Schema.define(version: 20150616215701) do
     t.string   "name"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "company_id"
   end
 
+  add_index "product_categories", ["company_id"], name: "index_product_categories_on_company_id", using: :btree
+
   create_table "products", force: true do |t|
-    t.integer  "company_id_id"
+    t.integer  "company_id"
     t.string   "name"
     t.float    "price"
     t.text     "description"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.integer  "product_category_id",              null: false
+    t.integer  "product_category_id",               null: false
     t.string   "sku",                 default: ""
+    t.decimal  "comission_value",     default: 0.0, null: false
+    t.integer  "comission_option",    default: 0,   null: false
   end
 
-  add_index "products", ["company_id_id"], name: "index_products_on_company_id_id", using: :btree
+  add_index "products", ["company_id"], name: "index_products_on_company_id", using: :btree
   add_index "products", ["product_category_id"], name: "index_products_on_product_category_id", using: :btree
 
   create_table "promotions", force: true do |t|

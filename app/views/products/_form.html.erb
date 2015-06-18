@@ -1,14 +1,149 @@
-<%= simple_form_for(@product) do |f| %>
-  <%= f.error_notification %>
-
-  <div class="form-inputs">
-    <%= f.association :company_id %>
-    <%= f.input :name %>
-    <%= f.input :price %>
-    <%= f.input :description %>
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-md-12">
+      <div class="well">
+        <%= form_for @product, :html => {:class => 'form-horizontal'} do |f| %>
+          <div class="form-group has-feedback">
+            <%= f.label :name, 'Nombre del Producto', :class => 'col-md-3 control-label' %>
+            <div class="col-md-5">
+              <%= f.text_field :name, :autofocus => true, :required => true, :class => 'form-control' %>
+              <span class="help-block"></span>
+              <span class="form-control-feedback"></span>
+            </div>
+          </div>
+          <div class="form-group has-feedback">
+            <%= f.label :product_category_id, 'Categoría del Producto', :class => 'col-md-3 control-label' %>
+            <div class="col-md-5">
+              <%= f.collection_select :product_category_id, @product_categories, :id, :name, { include_blank: true }, {class: "form-control"} %>
+              <span class="help-block"></span>
+              <span class="form-control-feedback"></span>
+            </div>
+            <div class="col-md-4">
+              <button type="button" class="btn btn-sm btn-green" id="newProductCategoryButton"><i class="fa fa-plus"></i> Nueva Categoría de Productos</button>
+            </div>
+          </div>
+          <div class="form-group">
+            <%= f.label :price, "Precio", class: "col-md-3 control-label" %>
+            <div class="col-md-9">
+              <div class="input-group">
+                <span class="input-group-addon">$</span>
+                <%= f.number_field :price, class: "form-control", :min => 0, placeholder: '0 (requerido)' %>
+                <span class="input-group-addon">Pesos</span>
+              </div>
+              <span class="help-block"></span>
+            </div>
+          </div>
+          <div class="form-group has-feedback">
+            <%= f.label :comission_value, 'Comisión de Venta', class: "col-md-3 control-label" %>
+            <div class="col-md-5">
+              <%= f.number_field :comission_value, :class => 'form-control', placeholder: '' %>
+              <span class="help-block"></span>
+              <span class="form-control-feedback"></span>
+            </div>
+            <div class="col-md-3">
+              <%= f.select :comission_option, options_for_select([["%", 0], ["$", 1]], selected: @product.comission_option ), {}, {class: "form-control" } %>
+              <span class="help-block"></span>
+              <span class="form-control-feedback"></span>
+            </div>
+            <div class="col-md-1">
+              <span style="cursor: pointer;" data-toggle="tooltip" data-placement="bottom" title="Si la persona que vende este producto perciben una comisión al realizarlo, puedes definir esto acá y después ver en la sección 'Reportes' el detalle de estas comisiones. Se pueden definir tanto como un porcentaje del precio del servicio o un valor fijo."><i class="fa fa-question-circle fa-lg"></i></span>
+            </div>
+          </div>
+          <div class="form-group">
+            <%= f.label :description, "Descripción", class: "col-md-3 control-label" %>
+            <div class="col-md-9">
+              <%= f.text_area :description, class: "form-control" %>
+            </div>
+          </div>
+          <div class="form-group">
+            <div class="col-md-5 col-md-offset-3">
+              <div class="panel panel-green">
+                <div class="panel-heading">
+                  <h3 class="panel-title">Producto disponible en</h3>
+                </div>
+                <div class="panel-body">
+                  <table class="table">
+                    <thead>
+                      <tr>
+                        <th>Local</th>
+                        <th>Cantidad</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <% @locations.each do |location| %>
+                        <tr <%= if current_user.role_id != Role.find_by_name("Administrador General").id && !current_user.locations.pluck(:id).include?(location.id) then 'style=display:none;' end %>>
+                          <td>
+                            <input type="checkbox" class="check_boxes productLocationCheck" id="product_location_ids_<%= location.id %>" value="<%= location.id %>" name="product[location_ids][]" onchange="changeLocationStatus(<%= location.id %>)">
+                            <label class="checkbox-text" for="product_location_ids_<%= location.id %>">&nbsp; <%= location.name %></label>
+                          </td>
+                          <td>
+                            <input type="number" class="form-control" id="product_location_ids_stock_<%= location.id %>" name="product[location_ids_stock][]" disabled>
+                            <span class="help-block"></span>
+                          </td>
+                        </tr>
+                      <% end %>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="form-group">
+            <div class="col-md-offset-3 col-md-9">
+              <button type="submit" class="btn btn-green">Guardar</button>
+              <%= link_to 'Cancelar', products_path, class: "btn btn-white" %>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    </div>
   </div>
+</div>
 
-  <div class="form-actions">
-    <%= f.button :submit %>
+<% content_for :modals do %>
+  <div class="modal fade" id="productCategoryModal" tabindex="-1" role="dialog" aria-labelledby="productCategoryModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+          <h4 class="modal-title productCategory-modal-title" id="productCategoryModalLabel">Crear o Borrar Categorías de Producto</h4>
+        </div>
+        <div class="modal-body">
+          <%= form_for @product_category, html: {class: "form-horizontal"} do |f| %>
+            <div class="form-group has-feedback">
+              <%= f.label :name, "Nueva Categoría", class: "col-md-3 control-label" %>
+              <div class="col-md-6">
+                <%= f.text_field :name, :class => 'form-control', :placeholder => 'Categoría (requerido)' %>
+                <span class="help-block"></span>
+                <span class="form-control-feedback"></span>
+              </div>
+              <div class="col-md-3">
+                <input class="btn btn-green" id="saveProductCategryButton" type="submit" value="Guardar">
+              </div>
+            </div>
+          <% end %>
+          <div class="row">
+            <div class="col-md-6 col-md-offset-3">
+              <h4>Otras Categorías:</h4>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-6 col-md-offset-3">
+              <table class="table">
+                <tbody id="productCategoriesTable">
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+        </div>
+      </div>
+    </div>
   </div>
+<% end %>
+
+<% content_for :scripts do %>
+  <%= javascript_include_tag "products" %>
 <% end %>

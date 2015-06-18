@@ -1,6 +1,15 @@
-<h1>Editing product</h1>
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-md-12">
+      <h2 class="text-green">Edición de Producto</h2>
+      <p>Modifica el producto seleccionado.</p>
+    </div>
+  </div>
+</div>
+
+<%= content_tag "div", id: "id_data", data: { id: @product.id } do %>
+<% end %>
+<%= content_tag "div", id: "product_locations_data", data: { resource_locations: @product.product_locations.to_json } do %>
+<% end %>
 
 <%= render 'form' %>
-
-<%= link_to 'Show', @product %> |
-<%= link_to 'Back', products_path %>
