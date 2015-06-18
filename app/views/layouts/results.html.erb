@@ -37,11 +37,17 @@
         })();
         </script>
         <!-- End Inspectlet Embed Code -->
+		<!-- start: Facebook Tracker-->
+		<%= render 'layouts/facebook_tracker' %>
+		<!-- end: Facebook Tracker-->
         <% end %>
 
 		<!-- start: JavaScript-->
-		<%= javascript_include_tag "home-head" %><!-- Removido -->
+		<%= javascript_include_tag "home-head" %>
 		<!-- end: JavaScript-->
+
+
+		<%= yield :head_scripts %>
 
 		<%= render 'layouts/icons' %>
 

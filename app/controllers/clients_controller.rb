@@ -47,9 +47,34 @@ class ClientsController < ApplicationController
 
   # GET /clients/1/edit
   def edit
-    @activeBookings = Booking.where(:client_id => @client).where("start > ?", DateTime.now).order(start: :asc)
-    @lastBookings = Booking.where(:client_id => @client).where("start <= ?", DateTime.now).order(start: :desc)
+    @activeBookings = Booking.where('is_session = false or (is_session = true and is_session_booked = true)').where(:client_id => @client).where("start > ?", DateTime.now).order(start: :asc)
+    @lastBookings = Booking.where('is_session = false or (is_session = true and is_session_booked = true)').where(:client_id => @client).where("start <= ?", DateTime.now).order(start: :desc)
     @next_bookings = Booking
+
+    @preSessionBookings = SessionBooking.where(:client_id => @client)
+
+    @sessionBookings = []
+
+    @preSessionBookings.each do |session_booking|
+
+      include_sb = false
+
+      if session_booking.sessions_taken < session_booking.sessions_amount
+        include_sb = true
+      else
+        session_booking.bookings.each do |booking|
+          if booking.start > DateTime.now
+            include_sb = true
+          end
+        end
+      end
+
+      if include_sb
+        @sessionBookings << session_booking
+      end
+
+    end
+
     @client_comment = ClientComment.new
     @client_comments = ClientComment.where(client_id: @client).order(created_at: :desc)
   end
@@ -100,7 +125,7 @@ class ClientsController < ApplicationController
 
   def history
     @client = Client.find(params[:id])
-    @bookings = @client.bookings
+    @bookings = @client.bookings.where('is_session = false or (is_session = true and is_session_booked = true)')
   end
 
   def bookings_history

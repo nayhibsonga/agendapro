@@ -660,7 +660,7 @@ function editBookingModal(eventId) {
 			{
 			
 				$("#sessions-info").empty();
-				$("#sessions-info").append("Esta reserva corresponde a una sesión de un servicio.");
+				$("#sessions-info").append("Esta reserva corresponde a la " + booking.sessions_ratio + " del servicio.");
 				$("#sessions-row").show();
 				$("#xButton").attr("disabled", true);
 			}
