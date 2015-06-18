@@ -80,9 +80,9 @@ class UsersController < ApplicationController
     #@lastBookings = Booking.where(:user_id => params[:id]).order(updated_at: :desc).limit(10)
     @user = current_user
     @client_ids = Client.where(:email => current_user.email).pluck(:id)
-    @sessionBookings = SessionBooking.where(:client_id => @client_ids)
+    @preSessionBookings = SessionBooking.where(:client_id => @client_ids)
 
-    @sessionBookings.each do |sb|
+    @preSessionBookings.each do |sb|
       if sb.user_id.nil?
         sb.user_id = current_user.id
         sb.save
@@ -92,7 +92,29 @@ class UsersController < ApplicationController
       end
     end
 
-    @sessionBookings = SessionBooking.where(:client_id => @client_ids)
+    @preSessionBookings = SessionBooking.where(:client_id => @client_ids)
+
+    @sessionBookings = []
+
+    @preSessionBookings.each do |session_booking|
+
+      include_sb = false
+
+      if session_booking.sessions_taken < session_booking.sessions_amount
+        include_sb = true
+      else
+        session_booking.bookings.each do |booking|
+          if booking.start > DateTime.now
+            include_sb = true
+          end
+        end
+      end
+
+      if include_sb
+        @sessionBookings << session_booking
+      end
+
+    end
 
     @activeBookings = Booking.where('is_session = false or (is_session = true and is_session_booked = true)').where(:client_id => @client_ids, :status_id => Status.find_by(:name => ['Reservado', 'Pagado', 'Confirmado'])).where("start > ?", DateTime.now).order(:start) 
     @lastBookings = Booking.where('is_session = false or (is_session = true and is_session_booked = true)').where(:client_id => @client_ids).order(updated_at: :desc).limit(10)

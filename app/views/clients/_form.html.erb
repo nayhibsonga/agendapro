@@ -157,7 +157,7 @@
             <div class="panel-heading">
               <h3 class="panel-title">Reservas Pasadas</h3>
             </div>
-            <div class="panel-body panel-scrollable">
+            <div class="panel-body panel-scrollable" style="max-height: 220px !important;">
               <table class="table">
                 <thead>
                   <tr>
@@ -172,7 +172,30 @@
                   <tr>
                     <td><%= l booking.start, format: :short %></td>
                     <td><%= booking.location.name %></td>
-                    <td><%= booking.service.name %></td>
+                    <td>
+                      <% if !booking.is_session %>
+                        <%= booking.service.name %>
+                      <% else %>
+                        <% 
+                            index = 1
+                            session_index = "Sesión "
+                            session_booking = booking.session_booking
+                            session_booking.bookings.where(:is_session_booked => true).order('start asc').each do |b|
+
+                                if b.id == booking.id
+                                    session_index = session_index + index.to_s
+                                    break
+                                end
+                                index = index + 1
+                            end
+
+                            session_index = session_index + " de " + session_booking.sessions_amount.to_s
+
+                        %>
+
+                        <%= booking.service.name %><br /><%= "(" + session_index + ")" %>
+                      <% end %>
+                    </td>
                     <td><%= booking.status.name %></td>
                   </tr>
                   <% end %>
@@ -184,7 +207,7 @@
             <div class="panel-heading">
               <h3 class="panel-title">Próximas Reservas</h3>
             </div>
-            <div class="panel-body panel-scrollable">
+            <div class="panel-body panel-scrollable" style="max-height: 230px !important;">
               <table class="table">
                 <thead>
                   <tr>
@@ -199,8 +222,58 @@
                   <tr>
                     <td><%= l booking.start, format: :short %></td>
                     <td><%= booking.location.name %></td>
-                    <td><%= booking.service.name %></td>
+                    <td>
+                      <% if !booking.is_session %>
+                        <%= booking.service.name %>
+                      <% else %>
+                        <% 
+                            index = 1
+                            session_index = "Sesión "
+                            session_booking = booking.session_booking
+                            session_booking.bookings.where(:is_session_booked => true).order('start asc').each do |b|
+
+                                if b.id == booking.id
+                                    session_index = session_index + index.to_s
+                                    break
+                                end
+                                index = index + 1
+                            end
+
+                            session_index = session_index + " de " + session_booking.sessions_amount.to_s
+
+                        %>
+
+                        <%= booking.service.name %><br /><%= "(" + session_index + ")" %>
+                      <% end %>
+                    </td>
                     <td><%= booking.status.name %></td>
+                  </tr>
+                  <% end %>
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <div class="panel panel-green">
+            <div class="panel-heading">
+              <h3 class="panel-title">Sesiones</h3>
+            </div>
+            <div class="panel-body panel-scrollable" style="max-height: 230px !important;">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th>Servicio</th>
+                    <th>Local</th>
+                    <th>Agendadas</th>
+                    <th>Total</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <% @sessionBookings.each do |session_booking| %>
+                  <tr>
+                    <td><%= session_booking.service.name %></td>
+                    <td><%= session_booking.bookings.first.location.name %></td>
+                    <td><%= session_booking.sessions_taken %></td>
+                    <td><%= session_booking.sessions_amount %></td>
                   </tr>
                   <% end %>
                 </tbody>
