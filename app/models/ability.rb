@@ -302,6 +302,7 @@ class Ability
         can :suggestion, Client
         can :rut_suggestion, Client
         can :bookings_history, Client
+        can :check_sessions, Client
         
         can :create_comment, Client, :company_id => user.company_id
         can :update_comment, Client, :company_id => user.company_id
@@ -354,6 +355,7 @@ class Ability
         can :rut_suggestion, Client
         can :provider_service, ServiceProvider
         can :bookings_history, Client
+        can :check_sessions, Client
         
         can :create_comment, Client, :company_id => user.company_id
         can :update_comment, Client, :company_id => user.company_id
@@ -364,10 +366,7 @@ class Ability
         can :import, Client
 
     elsif user.role_id == Role.find_by_name("Staff").id
-
-        can :name_suggestion, Client
-        can :suggestion, Client
-        can :provider_service, ServiceProvider
+        
         can :get_booking, Booking, :service_provider_id => user.service_providers.pluck(:id)
 
         can :read, ServiceProvider, :id => user.service_providers.pluck(:id)
@@ -396,6 +395,7 @@ class Ability
         can :rut_suggestion, Client
         can :provider_service, ServiceProvider
         can :bookings_history, Client
+        can :check_sessions, Client
 
     elsif user.role_id == Role.find_by_name("Staff (sin edición)").id
 
