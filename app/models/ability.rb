@@ -105,6 +105,7 @@ class Ability
     # Singup Validate
     can :check_user_email, User
     can :check_company_web_address, Company
+    can :get_promotions_popover, Service
 
 
     if user.role_id == Role.find_by_name("Super Admin").id

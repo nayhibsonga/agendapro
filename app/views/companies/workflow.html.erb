@@ -248,7 +248,11 @@
                 </div>
               </div>
               <div class="col-sm-4">
-                <div id="selected-services" ondrop="drop(event)" ondragover="allowDrop(event)">
+                <div class="row">
+
+                  <div class="col-sm-12" id="selected-services">
+
+                  </div>
 
                 </div>
                 <div class="btn-change btn-next" style="margin-top: 10px;">
@@ -752,6 +756,10 @@
   </div>
 </div>
 
+<div id="services-popovers-contents" hidden>
+
+</div>
+
 <%= content_tag "div", id: "selectedLocal", data: {local: @location, district: @location.district.name} do %>
 <% end %>
 <%= content_tag "div", id: "clientExclusive", data: {client_exclusive: @location.company.company_setting.client_exclusive} do %>
@@ -770,6 +778,17 @@
 <% content_for :scripts do %>
   <%= javascript_include_tag 'workflow/index' %>
   <script type="text/javascript">
+
+    $(function(){
+      $("#selected-services").sortable({
+        revert: true,
+        axis: "y",
+        handle: ".move-service",
+        containment: "#selected-services",
+        scroll: true
+      });
+    });
+
     $(function() {
       <% if @location.company.company_setting.deal_identification_number %>
         $('#deal_code').change(function() {

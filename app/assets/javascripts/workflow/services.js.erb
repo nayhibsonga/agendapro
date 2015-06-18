@@ -63,6 +63,7 @@ function simple_currency(price)
 //====== Load Steps ======//
 function loadStep1 (service_id) {
 	$('#services-description').empty();
+	$("#services-popovers-contents").empty();
 	$('#services-selector').html('<p class="text-center" style="color: #ccc;"><i class="fa fa-spinner fa-spin fa-lg"></i></p>');
 	var localId = $('#selectedLocal').data('local').id;
 	var categoryCount = 0;
@@ -79,6 +80,7 @@ function loadStep1 (service_id) {
 					if (service.has_time_discount)
 					{
 						serviceDiscount = '<%= image_tag("promociones/icono_promociones.png", class:"promotion-hour-icon", size: "18x18") %>&nbsp;';
+						
 					}
 					if(service.show_price && service.price > 0)
 					{
@@ -97,12 +99,31 @@ function loadStep1 (service_id) {
 										servicePrice +
 									'</div><div class="col-sm-3">' +
 										'<%= image_tag("promociones/reloj.png", class:"promotion-hour-icon", size: "18x18") %>&nbsp;' + service.duration + ' min' +
-									'</div><div class="col-sm-1">' +
+									'</div><div class="col-sm-1" open-promotion-popover service_id="' + service.id + '" data-toggle="popover" data-placement="right" data-content="">' +
 										serviceDiscount +
 									'</div>' +
 								'</div></div>' +
 							'</div>' +
 						'</li>';
+
+						if (service.has_time_discount)
+						{
+							$.ajax({
+								type: "get",
+								url: "get_promotions_popover?service_id=" + service.id,
+								success: function(response){
+
+									$("#services-popovers-contents").append(response);
+
+									$('.promotion-hour-icon[service_id="' + service.id + '"]').popover({
+										html: true,
+										content: $('.service-popover-content[service_id="' + service.id + '"]').html(),
+										placement: 'right'
+									});
+								}
+							});
+						}
+
 				});
 
 				//====== Insertando acordeon
@@ -120,6 +141,7 @@ function loadStep1 (service_id) {
 						'</div>' +
 					'</div>'
 				);
+
 			};
 		});
 
@@ -1046,7 +1068,6 @@ function addService(service_id){
 		loadServiceStaff(service.id);
 
 		added_services_count = added_services_count + 1;
-		added_services.push(service);
 
 	});
 }
@@ -1054,17 +1075,19 @@ $("body").on('click', '.remove-service', function(){
 
 	var index = $(this).closest(".selected-service").attr("id").split("-")[2];
 	$(this).closest(".selected-service").remove();
-	added_services_count = added_services_count - 1;
-	added_services.splice(index, 1);
 
 });
+
+/*$(function() {
+    $('.selected-service').draggable({ handle: ".move-service" });
+    $(".selected-serviced").disableSelection();
+ });
 
 function allowDrop(ev) {
     ev.preventDefault();
 }
 
 function drag(ev) {
-	console.log(ev.target);
     ev.dataTransfer.setData("source", ev.target.id);
 }
 
@@ -1077,55 +1100,35 @@ function drop(ev) {
     var data_id = ev.dataTransfer.getData("source");
     console.log(data_id);
     //$('.selected-service[service_id="' + data.attr("service_id") + '"').remove();
-    var data_copy = $('#' + data_id).html();
+    var data_copy = $('#' + data_id);
     //$("#" + data_id).remove();
     //$("#selected-services").append(data_copy);
     //$("selected-service").
 
     var moved_id = data_id.split("-")[2];
+    
 
-    aux_added_services = []
-
-    for(i = 0; i < added_services.length; i++)
+    for(i = 0; i < $("#selected-services").children().length; i++)
     {
-    	if(parseInt(moved_id) != i)
+    	actual_id = $("#selected-services").children().get(i).id
+    	console.log(moved_id + "    " + actual_id);
+    	if(moved_id != actual_id.split("-")[2])
     	{
-	    	if(parseInt(moved_id) > i)
+
+	    	if(ev.pageY > $("#" + actual_id).offset().top)
 	    	{
-	    		aux_added_services.push(added_services[i]);
+	    		if(ev.pageY <= $("#" + actual_id).offset().top + $("#" + actual_id).height())
+	    		{
+	    			$("#selected-service-" + moved_id).remove();
+	    			$("#" + actual_id).after(data_copy);
+	    		}
 	    	}
-	    	else
-	    	{
-		    	if(ev.pageY > $("#selected-service-" + i).offset().top)
-		    	{
-		    		if(ev.pageY <= ($("#selected-service-" + i).offset().top + $("#selected-service-" + i).height()))
-		    		{
-		    			aux_added_services.push(added_services[i]);
-		    			aux_added_services.push(added_services[parseInt(moved_id)]);
-		    		}
-		    		else
-		    		{
-		    			aux_added_services.push(added_services[i]);
-		    		}
-		    	}
-		    	else
-		    	{
-		    		aux_added_services.push(added_services[i]);
-		    	}
-		    }
+
 		}
     }
 
-    added_services = [];
-    added_services_count = 0;
-    $("#selected-services").empty();
-    for(i = 0; i < aux_added_services.length; i++)
-    {
-    	addService(aux_added_services[i].id);
-    }
-
     return false;
-}
+}*/
 
 function loadServiceStaff (service_id) {
   var serviceId = service_id;

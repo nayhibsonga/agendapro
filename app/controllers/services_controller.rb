@@ -280,6 +280,16 @@ class ServicesController < ApplicationController
 
   end
 
+  #For workflow popovers
+  def get_promotions_popover
+    @service = Service.find(params[:service_id])
+    @promos = Promo.where(:service_id => @service.id).order("day_id asc")
+    respond_to do |format|
+      format.html { render :partial => 'get_promotions_popover' }
+      format.json { render json: @promos }
+    end
+  end
+
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_service

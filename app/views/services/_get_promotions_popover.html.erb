@@ -1,0 +1,30 @@
+<div class=".service-popover-content" service_id="<%= @service.id %>">	
+	<div class="promotion-popover">
+		<div class="promotion-popover-title">
+
+		</div>
+		<div>
+			<table class="promotion-popover-table">
+				<tr>
+					<% @promos.each do |promo| %>
+						<td>
+							<%= promo.day.name %><br />
+							<% if promo.morning_discount > 0 %>
+								<%= @service.company.company_setting.promo_time.morning_start.strftime("%H:%M") %> - <%= @service.company.company_setting.promo_time.morning_end.strftime("%H:%M") %><br />
+								<span class="orange"><%= promo.morning_discount %>% off</span>
+							<% end %>
+							<% if promo.afternoon_discount > 0 %>
+								<%= @service.company.company_setting.promo_time.afternoon_start.strftime("%H:%M") %> - <%= @service.company.company_setting.promo_time.afternoon_end.strftime("%H:%M") %><br />
+								<span class="orange"><%= promo.afternoon_discount %>% off</span>
+							<% end %>
+							<% if promo.night_discount > 0 %>
+								<%= @service.company.company_setting.promo_time.night_start.strftime("%H:%M") %> - <%= @service.company.company_setting.promo_time.night_end.strftime("%H:%M") %><br />
+								<span class="orange"><%= promo.night_discount %>% off</span>
+							<% end %>
+						</td>
+					<% end %>
+				</tr>
+			</table>
+		</div>
+	</div>
+</div>

@@ -779,6 +779,11 @@ div.active > a.btn-green-wf:hover {
 	border: none;
 }
 
+#selected-services{
+	overflow-y: auto;
+	overflow-x: hidden;
+}
+
 #selected-services .selected-service-header{
 	background-color: #f0f0f0;
 	padding-top: 5px;
@@ -787,10 +792,11 @@ div.active > a.btn-green-wf:hover {
 
 #selected-services .selected-service{
 	margin-bottom: 10px;
+	//width: 95%;
 }
 
 .move-service, .remove-service{
-	cursor: pointer;
+	cursor: move;
 }
 
 .panel-group > .panel > .panel-heading > .panel-title.minus > a:after {
