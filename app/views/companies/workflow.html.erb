@@ -785,7 +785,21 @@
         axis: "y",
         handle: ".move-service",
         containment: "#selected-services",
-        scroll: true
+        scroll: true,
+        stop: function(){
+          aux_added_services = [];
+          $("#selected-services").children().each(function(){
+            var service_id = $(this).attr("service_id");
+            for(i=0; i<added_services.length; i++)
+            {
+              if(added_services[i].id == parseInt(service_id))
+              {
+                aux_added_services.push(added_services[i]);
+              }
+            }
+          });
+          added_services = aux_added_services;
+        }
       });
     });
 

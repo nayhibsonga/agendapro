@@ -305,6 +305,7 @@ Agendapro::Application.routes.draw do
   # Promotions
   post "/set_service_promotions", :to => 'services#set_promotions'
   get "/get_promotions_popover", :to => 'services#get_promotions_popover'
+  get "/promotion_hours", :to => 'bookings#promotion_hours'
 
   # Root
   get '/' => 'searchs#index', :constraints => { :subdomain => 'www' }

@@ -99,7 +99,7 @@ function loadStep1 (service_id) {
 										servicePrice +
 									'</div><div class="col-sm-3">' +
 										'<%= image_tag("promociones/reloj.png", class:"promotion-hour-icon", size: "18x18") %>&nbsp;' + service.duration + ' min' +
-									'</div><div class="col-sm-1" open-promotion-popover service_id="' + service.id + '" data-toggle="popover" data-placement="right" data-content="">' +
+									'</div><div class="col-sm-1 open-promotion-popover" rel="popover" service_id="' + service.id + '" data-toggle="popover" data-placement="right" data-content="">' +
 										serviceDiscount +
 									'</div>' +
 								'</div></div>' +
@@ -115,11 +115,13 @@ function loadStep1 (service_id) {
 
 									$("#services-popovers-contents").append(response);
 
-									$('.promotion-hour-icon[service_id="' + service.id + '"]').popover({
+									$('.open-promotion-popover[service_id="' + service.id + '"]').popover({
 										html: true,
 										content: $('.service-popover-content[service_id="' + service.id + '"]').html(),
-										placement: 'right'
+										placement: 'right',
+										trigger: 'hover'
 									});
+
 								}
 							});
 						}
@@ -197,6 +199,8 @@ function loadStep1 (service_id) {
 
 var calendar;
 var staffSelected;
+
+/*
 function loadStep2 () {
 	if($('[name="serviceRadio"]').is(':checked')){
 		$('#staff-selector-spinner').show();
@@ -311,7 +315,7 @@ function loadStep2 () {
 
 					staffSelected = $(this).val();
 					if (calendar) {
-						calendar.rebuild('/available_hours_week_html', data);
+						calendar.rebuild('/promotion_hours', data);
 					}
 					else {
 						calendar = new Calendar('/available_hours_week_html', data);
@@ -418,6 +422,34 @@ function loadStep2 () {
 
 	}
 	
+}
+*/
+
+function loadStep2() {
+
+	var localId = $('#selectedLocal').data('local').id;;
+	var selects = [];
+	var start_date = $("#optimizerDateSelector").val();
+
+	$(".selected-service").each(function() {
+		var provider = $(this).find('.selected-service-provider').val();
+		var service_id = $(this).attr("service_id");
+		console.log(provider)
+		selects.push({
+			service: service_id,
+			provider: provider
+		});
+	});
+
+	var data = {local: localId, serviceStaff: JSON.stringify(selects)}
+
+	if (calendar) {
+		calendar.rebuild('/promotion_hours', data);
+	}
+	else {
+		calendar = new Calendar('/promotion_hours', data);
+	}
+
 }
 
 function loadStep3 () {
@@ -1039,12 +1071,42 @@ function addBooking (booking) {
 }
 
 
+function blockService(service)
+{
+	if(service.has_sessions && added_services.length > 0)
+	{
+		myAlert.showAlert(
+		  '<h3>No se puede agregar el servicio</h3>' +
+		  '<p>El servicio que quieres agregar tiene sesiones, no puede ser reservado junto a otros servicios.</p>'
+		);
+		return true;
+	}
+	for(i = 0; i < added_services.length; i++)
+	{
+		if(added_services[i].has_sessions)
+		{
+			myAlert.showAlert(
+			  '<h3>No se puede agregar el servicio</h3>' +
+			  '<p>Ya existe un servicio con sesiones agregado, no puede ser reservado junto a otros servicios.</p>'
+			);
+			return true;
+		}
+	}
+
+	return false;
+}
+
 
 function addService(service_id){
 
+
 	$.getJSON('/service', {id: service_id}, function (service) {
 
-		
+		if(blockService(service))
+		{
+			return;
+		}
+
 		$("#selected-services").append(
 			'<div id="selected-service-' + added_services_count + '" class="selected-service" service_id="' + service.id + '" draggable="true" ondragstart="drag(event)">' +
 				'<div class="selected-service-header row">' +
@@ -1067,68 +1129,28 @@ function addService(service_id){
 
 		loadServiceStaff(service.id);
 
+		added_services.push(service);
 		added_services_count = added_services_count + 1;
 
 	});
 }
+
 $("body").on('click', '.remove-service', function(){
 
 	var index = $(this).closest(".selected-service").attr("id").split("-")[2];
+	var service_id = $(this).closest(".selected-service").attr("service_id");
+	for(i=0; i<added_services.length; i++)
+	{
+		if (added_services[i].id == parseInt(service_id))
+		{
+			added_services.splice(i, 1);
+		}
+	}
+	added_services_count = added_services_count-1;
 	$(this).closest(".selected-service").remove();
 
 });
 
-/*$(function() {
-    $('.selected-service').draggable({ handle: ".move-service" });
-    $(".selected-serviced").disableSelection();
- });
-
-function allowDrop(ev) {
-    ev.preventDefault();
-}
-
-function drag(ev) {
-    ev.dataTransfer.setData("source", ev.target.id);
-}
-
-function drop(ev) {
-
-
-	//ARREGLAR ESTO
-
-    ev.preventDefault();
-    var data_id = ev.dataTransfer.getData("source");
-    console.log(data_id);
-    //$('.selected-service[service_id="' + data.attr("service_id") + '"').remove();
-    var data_copy = $('#' + data_id);
-    //$("#" + data_id).remove();
-    //$("#selected-services").append(data_copy);
-    //$("selected-service").
-
-    var moved_id = data_id.split("-")[2];
-    
-
-    for(i = 0; i < $("#selected-services").children().length; i++)
-    {
-    	actual_id = $("#selected-services").children().get(i).id
-    	console.log(moved_id + "    " + actual_id);
-    	if(moved_id != actual_id.split("-")[2])
-    	{
-
-	    	if(ev.pageY > $("#" + actual_id).offset().top)
-	    	{
-	    		if(ev.pageY <= $("#" + actual_id).offset().top + $("#" + actual_id).height())
-	    		{
-	    			$("#selected-service-" + moved_id).remove();
-	    			$("#" + actual_id).after(data_copy);
-	    		}
-	    	}
-
-		}
-    }
-
-    return false;
-}*/
 
 function loadServiceStaff (service_id) {
   var serviceId = service_id;
