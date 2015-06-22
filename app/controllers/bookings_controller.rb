@@ -1,6 +1,6 @@
 class BookingsController < ApplicationController
   before_action :set_booking, only: [:show, :edit, :update, :destroy, :delete_session_booking, :validate_session_booking, :session_booking_detail, :book_session_form]
-  before_action :authenticate_user!, except: [:create, :force_create, :booking_valid, :provider_booking, :book_service, :book_error, :remove_bookings, :edit_booking, :edit_booking_post, :cancel_booking, :cancel_all_booking, :confirm_booking, :check_user_cross_bookings, :blocked_edit, :blocked_cancel, :optimizer_hours, :optimizer_data, :transfer_error_cancel]
+  before_action :authenticate_user!, except: [:create, :force_create, :booking_valid, :provider_booking, :book_service, :book_error, :remove_bookings, :edit_booking, :edit_booking_post, :cancel_booking, :cancel_all_booking, :confirm_booking, :check_user_cross_bookings, :blocked_edit, :blocked_cancel, :optimizer_hours, :optimizer_data, :transfer_error_cancel, :promotion_hours]
   before_action :quick_add, except: [:create, :force_create, :booking_valid, :provider_booking, :book_service, :book_error, :remove_bookings, :edit_booking, :edit_booking_post, :cancel_booking, :confirm_booking, :check_user_cross_bookings, :blocked_edit, :blocked_cancel, :optimizer_hours, :optimizer_data, :transfer_error_cancel]
   layout "admin", except: [:book_service, :book_error, :remove_bookings, :provider_booking, :edit_booking, :edit_booking_post, :cancel_booking, :transfer_error_cancel, :confirm_booking, :check_user_cross_bookings, :blocked_edit, :blocked_cancel, :optimizer_hours, :optimizer_data]
 
@@ -2988,17 +2988,17 @@ class BookingsController < ApplicationController
     serviceStaff = JSON.parse(params[:serviceStaff], symbolize_names: true)
     now = DateTime.new(DateTime.now.year, DateTime.now.mon, DateTime.now.mday, DateTime.now.hour, DateTime.now.min)
     
-    if params[:start_date]
-      current_date = params[:start_date]
+    if params[:date]
+      current_date = params[:date]
     else
       current_date = DateTime.now.to_date.to_s
     end
 
     weekDate = Date.strptime(current_date, '%Y-%m-%d')
 
-    if params[:start_date] and params[:start_date] != ""
-      if params[:start_date].to_datetime > now
-        now = params[:start_date].to_datetime
+    if params[:date] and params[:date] != ""
+      if params[:date].to_datetime > now
+        now = params[:date].to_datetime
       end
     end
 
@@ -3010,6 +3010,9 @@ class BookingsController < ApplicationController
     @days_count = 0
     @week_blocks = []
     @days_row = []
+
+    book_index = 0
+    book_summaries = []
 
     weekDate.upto(weekDate + 6) do |date|
 
@@ -3024,193 +3027,260 @@ class BookingsController < ApplicationController
 
       hours_array = []
 
-      serviceStaffPos = 0
-      bookings = []
-
-      logger.debug "servStaffPos " + serviceStaffPos.to_s
-      logger.debug "serviceStaff length " + serviceStaff.length.to_s
-      logger.debug "dateTimePointer" + dateTimePointer.to_s
-      logger.debug "close " + local.location_times.where(day_id: day).order(:close).first.close.to_s
-
       day_close = local.location_times.where(day_id: day).order(:close).first.close
       limit_date = DateTime.new(date.year, date.mon, date.mday, day_close.hour, day_close.min)
 
-      while serviceStaffPos < serviceStaff.length and (dateTimePointer < limit_date)
+      while (dateTimePointer < limit_date)
 
-        logger.debug "***\n Entra al while \n***"
+        serviceStaffPos = 0
+        bookings = []
 
-        service_valid = false
-        service = Service.find(serviceStaff[serviceStaffPos][:service])
+        while serviceStaffPos < serviceStaff.length and (dateTimePointer < limit_date)
 
-        #Find next service block starting from dateTimePointer
-        service_sum = service.duration.minutes
-
-        minHour = now
-        if not params[:admin]
-          minHour += company_setting.before_booking.hours
-        end
-        if dateTimePointer >= minHour
-          service_valid = true
-        end
-
-        # Hora dentro del horario del local
-
-        #if service_valid
-        #  service_valid = false
-        #  for
-        #end
-
-        if service_valid
           service_valid = false
-          local.location_times.where(day_id: dateTimePointer.cwday).each do |times|
-            location_open = DateTime.new(dateTimePointer.year, dateTimePointer.month, dateTimePointer.mday, times.open.hour, times.open.min)
-            location_close = DateTime.new(dateTimePointer.year, dateTimePointer.month, dateTimePointer.mday, times.close.hour, times.close.min)
+          service = Service.find(serviceStaff[serviceStaffPos][:service])
 
-            if location_open <= dateTimePointer and (dateTimePointer + service.duration.minutes) <= location_close
-              service_valid = true
-              break
-            end
+          #Find next service block starting from dateTimePointer
+          service_sum = service.duration.minutes
+
+          minHour = now
+          if not params[:admin]
+            minHour += company_setting.before_booking.hours
           end
-        end
-
-        # Horario dentro del horario del provider
-        if service_valid
-          providers = []
-          if serviceStaff[serviceStaffPos][:provider] != "0"
-            providers << ServiceProvider.find(serviceStaff[serviceStaffPos][:provider])
-          else
-            providers = ServiceProvider.where(id: service.service_providers.pluck(:id), location_id: local.id, active: true).order(order: :desc).sort_by {|service_provider| service_provider.provider_booking_day_occupation(dateTimePointer) }
+          if dateTimePointer >= minHour
+            service_valid = true
           end
 
-          providers.each do |provider|
+          # Hora dentro del horario del local
+
+          #if service_valid
+          #  service_valid = false
+          #  for
+          #end
+
+          if service_valid
             service_valid = false
-            provider.provider_times.where(day_id: dateTimePointer.cwday).each do |provider_time|
-              provider_open = DateTime.new(dateTimePointer.year, dateTimePointer.month, dateTimePointer.mday, provider_time.open.hour, provider_time.open.min)
-              provider_close = DateTime.new(dateTimePointer.year, dateTimePointer.month, dateTimePointer.mday, provider_time.close.hour, provider_time.close.min)
+            local.location_times.where(day_id: dateTimePointer.cwday).each do |times|
+              location_open = DateTime.new(dateTimePointer.year, dateTimePointer.month, dateTimePointer.mday, times.open.hour, times.open.min)
+              location_close = DateTime.new(dateTimePointer.year, dateTimePointer.month, dateTimePointer.mday, times.close.hour, times.close.min)
 
-              if provider_open <= dateTimePointer and (dateTimePointer + service.duration.minutes) <= provider_close
+              if location_open <= dateTimePointer and (dateTimePointer + service.duration.minutes) <= location_close
                 service_valid = true
                 break
               end
             end
+          end
 
-            # Provider breaks
-            if service_valid
-              provider.provider_breaks.each do |provider_break|
-                if !(provider_break.end.to_datetime <= dateTimePointer || (dateTimePointer + service.duration.minutes) <= provider_break.start.to_datetime)
-                  service_valid = false
+          # Horario dentro del horario del provider
+          if service_valid
+            providers = []
+            if serviceStaff[serviceStaffPos][:provider] != "0"
+              providers << ServiceProvider.find(serviceStaff[serviceStaffPos][:provider])
+            else
+              providers = ServiceProvider.where(id: service.service_providers.pluck(:id), location_id: local.id, active: true).order(order: :desc).sort_by {|service_provider| service_provider.provider_booking_day_occupation(dateTimePointer) }
+            end
+
+            providers.each do |provider|
+              service_valid = false
+              provider.provider_times.where(day_id: dateTimePointer.cwday).each do |provider_time|
+                provider_open = DateTime.new(dateTimePointer.year, dateTimePointer.month, dateTimePointer.mday, provider_time.open.hour, provider_time.open.min)
+                provider_close = DateTime.new(dateTimePointer.year, dateTimePointer.month, dateTimePointer.mday, provider_time.close.hour, provider_time.close.min)
+
+                if provider_open <= dateTimePointer and (dateTimePointer + service.duration.minutes) <= provider_close
+                  service_valid = true
                   break
                 end
               end
-            end
 
-            # Cross Booking
-            if service_valid
-              Booking.where(service_provider_id: provider.id, start: dateTimePointer.to_time.beginning_of_day..dateTimePointer.to_time.end_of_day).each do |provider_booking|
-                unless provider_booking.status_id == cancelled_id
-                  pointerEnd = dateTimePointer+service.duration.minutes
-                  if (pointerEnd <= provider_booking.start.to_datetime || provider_booking.end.to_datetime <= dateTimePointer)
-                    if !service.group_service || service.id != provider_booking.service_id
+              # Provider breaks
+              if service_valid
+                provider.provider_breaks.each do |provider_break|
+                  if !(provider_break.end.to_datetime <= dateTimePointer || (dateTimePointer + service.duration.minutes) <= provider_break.start.to_datetime)
+                    service_valid = false
+                    break
+                  end
+                end
+              end
+
+              # Cross Booking
+              if service_valid
+                Booking.where(service_provider_id: provider.id, start: dateTimePointer.to_time.beginning_of_day..dateTimePointer.to_time.end_of_day).each do |provider_booking|
+                  unless provider_booking.status_id == cancelled_id
+                    pointerEnd = dateTimePointer+service.duration.minutes
+                    if (pointerEnd <= provider_booking.start.to_datetime || provider_booking.end.to_datetime <= dateTimePointer)
+                      if !service.group_service || service.id != provider_booking.service_id
+                        if !provider_booking.is_session || (provider_booking.is_session && provider_booking.is_session_booked)
+                          service_valid = false
+                          break
+                        end
+                      elsif service.group_service && service.id == provider_booking.service_id && provider.bookings.where(service_id: service.id, start: dateTimePointer).where.not(status_id: Status.find_by_name('Cancelado')).count >= service.capacity
+                        if !provider_booking.is_session || (provider_booking.is_session && provider_booking.is_session_booked)
+                          service_valid = false
+                          break
+                        end
+                      end
+                    else
                       if !provider_booking.is_session || (provider_booking.is_session && provider_booking.is_session_booked)
                         service_valid = false
-                        break
                       end
-                    elsif service.group_service && service.id == provider_booking.service_id && provider.bookings.where(service_id: service.id, start: dateTimePointer).where.not(status_id: Status.find_by_name('Cancelado')).count >= service.capacity
-                      if !provider_booking.is_session || (provider_booking.is_session && provider_booking.is_session_booked)
-                        service_valid = false
-                        break
-                      end
-                    end
-                  else
-                    if !provider_booking.is_session || (provider_booking.is_session && provider_booking.is_session_booked)
-                      service_valid = false
                     end
                   end
                 end
               end
-            end
 
-            # Recursos
-            if service_valid and service.resources.count > 0
-              service.resources.each do |resource|
-                if !local.resource_locations.pluck(:resource_id).include?(resource.id)
-                  service_valid = false
-                  break
-                end
-                used_resource = 0
-                group_services = []
-                local.bookings.where(:start => dateTimePointer.to_time.beginning_of_day..dateTimePointer.to_time.end_of_day).each do |location_booking|
-                  if location_booking.status_id != cancelled_id && (location_booking.end.to_datetime <= dateTimePointer || (dateTimePointer + service.duration.minutes) <= location_booking.start.to_datetime)
-                    if location_booking.service.resources.include?(resource)
-                      if !location_booking.service.group_service
-                        used_resource += 1
-                      else
-                        if location_booking.service != service || location_booking.service_provider != provider
-                          group_services.push(location_booking.service_provider.id)
+              # Recursos
+              if service_valid and service.resources.count > 0
+                service.resources.each do |resource|
+                  if !local.resource_locations.pluck(:resource_id).include?(resource.id)
+                    service_valid = false
+                    break
+                  end
+                  used_resource = 0
+                  group_services = []
+                  local.bookings.where(:start => dateTimePointer.to_time.beginning_of_day..dateTimePointer.to_time.end_of_day).each do |location_booking|
+                    if location_booking.status_id != cancelled_id && (location_booking.end.to_datetime <= dateTimePointer || (dateTimePointer + service.duration.minutes) <= location_booking.start.to_datetime)
+                      if location_booking.service.resources.include?(resource)
+                        if !location_booking.service.group_service
+                          used_resource += 1
+                        else
+                          if location_booking.service != service || location_booking.service_provider != provider
+                            group_services.push(location_booking.service_provider.id)
+                          end
                         end
                       end
                     end
                   end
-                end
-                if group_services.uniq.count + used_resource >= ResourceLocation.where(resource_id: resource.id, location_id: local.id).first.quantity
-                  service_valid = false
-                  break
+                  if group_services.uniq.count + used_resource >= ResourceLocation.where(resource_id: resource.id, location_id: local.id).first.quantity
+                    service_valid = false
+                    break
+                  end
                 end
               end
-            end
 
-            if service_valid
+              if service_valid
 
-              bookings << {
-                :service => service.id,
-                :provider => provider.id,
-                :start => dateTimePointer,
-                :end => dateTimePointer + service.duration.minutes,
-                :service_name => service.name,
-                :provider_name => provider.public_name,
-                :provider_lock => serviceStaff[serviceStaffPos][:provider] != "0",
-                :price => service.price,
-                :online_payable => service.online_payable,
-                :has_discount => service.has_discount,
-                :discount => service.discount,
-                :show_price => service.show_price
-              }
-              serviceStaffPos += 1
-              dateTimePointer += service.duration.minutes
-              break
+                bookings << {
+                  :service => service.id,
+                  :provider => provider.id,
+                  :start => dateTimePointer,
+                  :end => dateTimePointer + service.duration.minutes,
+                  :service_name => service.name,
+                  :provider_name => provider.public_name,
+                  :provider_lock => serviceStaff[serviceStaffPos][:provider] != "0",
+                  :price => service.price,
+                  :online_payable => service.online_payable,
+                  :has_discount => service.has_discount,
+                  :discount => service.discount,
+                  :show_price => service.show_price,
+                  :has_time_discount => service.has_time_discount
+                }
+
+                if service.has_time_discount
+
+                  promo = Promo.where(:day_id => date.cwday, :service_id => service.id).first
+
+                  #logger.debug "Morning start " + service.company.company_setting.promo_time.morning_start.to_s
+                  #logger.debug "Morning end " + service.company.company_setting.promo_time.morning_end.to_s
+                  #logger.debug "Afternoon start " + service.company.company_setting.promo_time.afternoon_start.to_s
+                  #logger.debug "Afternoon end " + service.company.company_setting.promo_time.afternoon_end.to_s
+                  #logger.debug "Night start " + service.company.company_setting.promo_time.night_start.to_s
+                  #logger.debug "Night end " + service.company.company_setting.promo_time.night_end.to_s
+                  #logger.debug "Booking start " + bookings.last[:start].to_s
+                  #logger.debug "Booking end " + bookings.last[:end].to_s
+
+                  if !(service.company.company_setting.promo_time.morning_start.strftime("%H:%M") > bookings.last[:end].strftime("%H:%M") || service.company.company_setting.promo_time.morning_end.strftime("%H:%M") < bookings.last[:start].strftime("%H:%M"))
+
+                    bookings.last[:time_discount] = promo.morning_discount
+                    logger.debug "Meets morning"
+
+                  elsif !(service.company.company_setting.promo_time.afternoon_start.strftime("%H:%M") > bookings.last[:end].strftime("%H:%M") || service.company.company_setting.promo_time.afternoon_end.strftime("%H:%M") < bookings.last[:start].strftime("%H:%M"))
+
+                    bookings.last[:time_discount] = promo.afternoon_discount
+                    logger.debug "Meets afternoon"
+
+                  elsif !(service.company.company_setting.promo_time.night_start.strftime("%H:%M") > bookings.last[:end].strftime("%H:%M") || service.company.company_setting.promo_time.night_end.strftime("%H:%M") < bookings.last[:start].strftime("%H:%M"))
+
+                    bookings.last[:time_discount] = promo.night_discount
+                    logger.debug "Meets night"
+
+                  else
+
+                    bookings.last[:time_discount] = 0
+
+                  end
+                else
+
+                  bookings.last[:time_discount] = 0
+
+                end
+
+                serviceStaffPos += 1
+                dateTimePointer += service.duration.minutes
+                break
+              end
             end
+          end
+
+          if !service_valid
+            dateTimePointer += service.duration.minutes
+            serviceStaffPos = 0
+            bookings = []
           end
         end
 
-        if !service_valid
-          dateTimePointer += service.duration.minutes
-          serviceStaffPos = 0
-          bookings = []
+        if bookings.length > 0 and (dateTimePointer <=> now + company_setting.after_booking.month) == -1
+
+          has_time_discount = false
+
+          bookings.each do |b|
+            if (b[:has_time_discount] && b[:time_discount] > 0) || (b[:has_discount] && b[:discount] > 0)
+              has_time_discount = true
+              break
+            end
+          end
+
+          status = "hora-disponible"
+
+          if has_time_discount 
+            status = "hora-promocion"
+          end
+
+          new_hour = {
+            index: book_index,
+            date: I18n.l(bookings[0][:start].to_date, format: :day_short),
+            full_date: I18n.l(bookings[0][:start].to_date, format: :day),
+            hour: I18n.l(bookings[0][:start].to_datetime, format: :hour) + ' - ' + I18n.l(bookings[bookings.length - 1][:end].to_datetime, format: :hour) + ' Hrs',
+            bookings: bookings,
+            status: status,
+            start_block: bookings[0][:start].strftime("%H:%M"),
+            end_block: bookings[bookings.length-1][:end].strftime("%H:%M"),
+            available_provider: bookings[0][:provider_name],
+            promo_discount: "0",
+            has_time_discount: has_time_discount
+          }
+
+          book_index = book_index + 1
+          book_summaries << new_hour
+
+          if !hours_array.include?(new_hour)
+
+            hours_array << new_hour
+
+          end
+
         end
-      end
-
-      if bookings.length > 0 and (dateTimePointer <=> now + company_setting.after_booking.month) == -1
-        status = "hora-disponible"
-        hours_array << {
-          date: I18n.l(bookings[0][:start].to_date, format: :day_short),
-          full_date: I18n.l(bookings[0][:start].to_date, format: :day),
-          hour: I18n.l(bookings[0][:start].to_datetime, format: :hour) + ' - ' + I18n.l(bookings[bookings.length - 1][:end].to_datetime, format: :hour) + ' Hrs',
-          bookings: bookings,
-          status: status,
-          start_block: bookings[0][:start].strftime("%H:%M"),
-          end_block: bookings[bookings.length-1][:end].strftime("%H:%M"),
-          available_provider: bookings[0][:provider_name],
-          promo_discount: "0"
-        }
-
-        logger.debug "Hours: " + hours_array.length.to_s
-
-        @days_count += 1
-        @week_blocks << { available_time: hours_array, formatted_date: date.strftime('%Y-%m-%d') }
-        @days_row << { day_name: week_days[date.wday], day_number: date.strftime("%e")}
 
       end
 
+      logger.debug "***"
+      logger.debug "***"
+      logger.debug "Day " + date.to_s + " has " + hours_array.count.to_s
+      logger.debug "***"
+      logger.debug "***"
+
+      @days_count += 1
+      @week_blocks << { available_time: hours_array, formatted_date: date.strftime('%Y-%m-%d') }
+      @days_row << { day_name: week_days[date.wday], day_number: date.strftime("%e")}
 
     end
 
@@ -3224,9 +3294,9 @@ class BookingsController < ApplicationController
       week_blocks += '<div class="columna-dia" data-date="' + week_block[:formatted_date] + '" style="width: ' + width + '%;">'
       week_block[:available_time].each do |hour|
         if hour[:status] != "hora-promocion"
-          week_blocks += '<div class="bloque-hora ' + hour[:status] + '" data-start="' + hour[:start_block] + '" data-end="' + hour[:end_block] + '" data-provider="' + hour[:available_provider] + '" data-discount="' + hour[:promo_discount] + '"><span>' + hour[:start_block] + ' - ' + hour[:end_block] + '</span></div>'
+          week_blocks += '<div class="bloque-hora ' + hour[:status] + '" data-start="' + hour[:start_block] + '" data-end="' + hour[:end_block] + '" data-provider="' + hour[:available_provider] + '" data-discount="' + hour[:promo_discount] + '" data-index="' +  hour[:index].to_s + '" data-timediscount="' + hour[:has_time_discount].to_s + '"><span>' + hour[:start_block] + ' - ' + hour[:end_block] + '</span></div>'
         else
-          week_blocks += '<div class="bloque-hora ' + hour[:status] + '" data-start="' + hour[:start_block] + '" data-end="' + hour[:end_block] + '" data-provider="' + hour[:available_provider] + '" data-discount="' + hour[:promo_discount] + '"><span>' + ActionController::Base.helpers.image_tag('admin/icono_promociones.png', class: 'promotion-hour-icon', size: "18x18") + '&nbsp;&nbsp' + hour[:start_block] + ' - ' + hour[:end_block] + '</span></div>'
+          week_blocks += '<div class="bloque-hora ' + hour[:status] + '" data-start="' + hour[:start_block] + '" data-end="' + hour[:end_block] + '" data-provider="' + hour[:available_provider] + '" data-discount="' + hour[:promo_discount] + '" data-index="' +  hour[:index].to_s + '" data-timediscount="' + hour[:has_time_discount].to_s + '"><span>' + ActionController::Base.helpers.image_tag('admin/icono_promociones.png', class: 'promotion-hour-icon', size: "18x18") + '&nbsp;&nbsp' + hour[:start_block] + ' - ' + hour[:end_block] + '</span></div>'
         end
       end
       week_blocks += '<div class="clear"></div></div>'
@@ -3239,7 +3309,7 @@ class BookingsController < ApplicationController
 
     days_count = @days_count
 
-    render  :json => { panel_body: week_blocks, days_row: days_row, days_count: days_count }
+    render  :json => { panel_body: week_blocks, days_row: days_row, days_count: days_count, book_summaries: book_summaries }
 
   end
 

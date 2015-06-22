@@ -198,6 +198,7 @@ function loadStep1 (service_id) {
 }
 
 var calendar;
+var promoCalendar;
 var staffSelected;
 
 /*
@@ -441,14 +442,97 @@ function loadStep2() {
 		});
 	});
 
-	var data = {local: localId, serviceStaff: JSON.stringify(selects)}
+	var data;
 
-	if (calendar) {
-		calendar.rebuild('/promotion_hours', data);
+	if($("#datepicker").val()!="")
+	{
+		data = {local: localId, serviceStaff: JSON.stringify(selects), date: $("#datepicker").val()}
+	}
+	else
+	{
+		data = {local: localId, serviceStaff: JSON.stringify(selects)}
+	}
+
+	if (promoCalendar) {
+		promoCalendar.rebuild('/promotion_hours', data);
 	}
 	else {
-		calendar = new Calendar('/promotion_hours', data);
+		promoCalendar = new PromoCalendar('/promotion_hours', data);
 	}
+
+	$(document).on('hourClick', function (e) {
+		
+		bookSummary = bookSummaries[e.index];
+
+		$("#selected-hour-body").empty();
+
+		for(k=0; k<bookSummary.bookings.length; k++)
+		{
+			bookDetails = bookSummary.bookings[k];
+			console.log(bookDetails);
+			bookDetailsStart = bookDetails.start.split("T")[1].split(":")[0] + ':' + bookDetails.start.split("T")[1].split(":")[1];
+			bookDetailsEnd = bookDetails.end.split("T")[1].split(":")[0] + ':' + bookDetails.end.split("T")[1].split(":")[1];
+
+			bookDetailsDiscountPrice = bookDetails.price;
+
+			
+			if(bookDetails.has_discount && bookDetails.has_time_discount)
+			{
+				if(bookDetails.discount > bookDetails.has_time_discount)
+				{
+					bookDetailsDiscountPrice = bookDetails.price * (100 - bookDetails.discount) / 100;
+					$("#selected-hour-body").append(
+						'<b>' + bookDetails.service_name + '</b><br />' +
+						'<div class="light-gray"><%= image_tag("promociones/reloj.png", class:"promotion-hour-icon", size: "18x18") %> ' + bookDetailsStart + ' - ' + bookDetailsEnd + '<br />' +
+						'<%= image_tag("promociones/etiqueta.png", class:"promotion-hour-icon", size: "18x18") %>  <strike>' + simple_currency(bookDetails.price) + '</strike>  <span class="light-green"><b>' + simple_currency(bookDetailsDiscountPrice) + '</b></span> (' + bookDetails.discount + ' % off) <br /></div>'
+					);
+				}
+				else
+				{
+					bookDetailsDiscountPrice = bookDetails.price * (100 - bookDetails.time_discount) / 100;
+					$("#selected-hour-body").append(
+						'<b>' + bookDetails.service_name + '</b><br />' +
+						'<div class="light-gray"><%= image_tag("promociones/reloj.png", class:"promotion-hour-icon", size: "18x18") %>' + bookDetailsStart + ' - ' + bookDetailsEnd + '<br />' +
+						'<%= image_tag("promociones/etiqueta.png", class:"promotion-hour-icon", size: "18x18") %> <strike>' + simple_currency(bookDetails.price) + '</strike> ' + '<span class="light-green"><b>' + simple_currency(bookDetailsDiscountPrice) + '</b></span>' + ' (' + bookDetails.time_discount + ' % off) <br /></div>'
+					);
+				}
+			}
+			else if(bookDetails.has_discount && !bookDetails.has_time_discount)
+			{
+				bookDetailsDiscountPrice = bookDetails.price * (100 - bookDetails.discount) / 100;
+				$("#selected-hour-body").append(
+						'<b>' + bookDetails.service_name + '</b><br />' +
+						'<div class="light-gray"><%= image_tag("promociones/reloj.png", class:"promotion-hour-icon", size: "18x18") %> ' + bookDetailsStart + ' - ' + bookDetailsEnd + '<br />' +
+						'<%= image_tag("promociones/etiqueta.png", class:"promotion-hour-icon", size: "18x18") %> <strike>' + simple_currency(bookDetails.price) + '</strike> <span class="light-green"><b>' + simple_currency(bookDetailsDiscountPrice) + '</b></span> (' + bookDetails.discount + ' % off) <br /></div>'
+					);
+			}
+			else if(!bookDetails.has_discount && bookDetails.has_time_discount)
+			{
+				bookDetailsDiscountPrice = bookDetails.price * (100 - bookDetails.time_discount) / 100;
+				$("#selected-hour-body").append(
+						'<b>' + bookDetails.service_name + '</b><br />' +
+						'<div class="light-gray"><%= image_tag("promociones/reloj.png", class:"promotion-hour-icon", size: "18x18") %> ' + bookDetailsStart + ' - ' + bookDetailsEnd + '<br />' +
+						'<%= image_tag("promociones/etiqueta.png", class:"promotion-hour-icon", size: "18x18") %> <strike>' + simple_currency(bookDetails.price) + '</strike> <span class="light-green"><b>' + simple_currency(bookDetailsDiscountPrice) + '</b></span> (' + bookDetails.time_discount + ' % off) <br /></div>'
+					);
+			}
+			else
+			{
+				$("#selected-hour-body").append(
+					'<b>' + bookDetails.service_name + '</b><br />' +
+					'<div class="light-gray"><%= image_tag("promociones/reloj.png", class:"promotion-hour-icon", size: "18x18") %> ' + bookDetailsStart + ' - ' + bookDetailsEnd + '<br />' +
+					'<%= image_tag("promociones/etiqueta.png", class:"promotion-hour-icon", size: "18x18") %> ' + simple_currency(bookDetails.price) + '<br /></div>'
+				);
+			}
+			
+			
+			/*$("#selected-hour-body").append(
+				bookDetails.service_name + '<br />' +
+				bookDetailsStart + ' - ' + bookDetailsEnd + '<br />' + 
+				simple_currency(bookDetails.price)
+			);*/
+
+		}
+	});
 
 }
 

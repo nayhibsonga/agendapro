@@ -263,7 +263,7 @@
           </div>
           <div class="box-step">
             <div class="row staff">
-              <div class="col-md-3 step2-left-col" style="max-height: 346px; overflow-y: hidden;<%= 'display:none;' if @location.company.company_setting.provider_preference == 2 %>">
+              <!--<div class="col-md-3 step2-left-col" style="max-height: 346px; overflow-y: hidden;<%= 'display:none;' if @location.company.company_setting.provider_preference == 2 %>">
                 <div class="staff-wrapper">
                   <span class="subtitulos-workflow">Elige Staff<br /> y Horario &nbsp;</span><span><i class="fa fa-clock-o gray-icon"></i>&nbsp;<i class="fa fa-user gray-icon"></i></span>
                   <div class="sub-workflow dark-gray">Selecciona un staff para ver su horario</div>
@@ -276,8 +276,8 @@
                 </div>
                 <div style="clear: both;">
                 </div>
-              </div>
-              <div class="col-md-<%= @location.company.company_setting.provider_preference == 2 ? '12' : '9' %>" id="staff-calendar">
+              </div>-->
+              <div class="col-md-9" id="staff-calendar">
                 <div class="panel panel-info <%= 'full-margin' if @location.company.company_setting.provider_preference == 2 %>">
                   <div class="calendar-head">
                     <div class="panel-title">
@@ -306,6 +306,16 @@
                     <div class="horario">
                       <!-- <%= image_tag "ajax-loader.gif", :alt => "Loader", :id => "calendar-loader" %> -->
                     </div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-3">
+                <div class="panel panel-default">
+                  <div id="selected-hour-heading">
+                    Detalle Reserva
+                  </div>
+                  <div id="selected-hour-body">
+
                   </div>
                 </div>
               </div>
@@ -859,11 +869,27 @@
               service: $('input[name="serviceRadio"]:checked').val(),
             }
 
-            if (calendar) {
-              calendar.rebuild('/available_hours_week_html', data);
+            var localId = $('#selectedLocal').data('local').id;;
+            var selects = [];
+            var start_date = $("#optimizerDateSelector").val();
+
+            $(".selected-service").each(function() {
+              var provider = $(this).find('.selected-service-provider').val();
+              var service_id = $(this).attr("service_id");
+              console.log(provider)
+              selects.push({
+                service: service_id,
+                provider: provider
+              });
+            });
+
+            data = {local: localId, serviceStaff: JSON.stringify(selects), date: $("#datepicker").val()};
+
+            if (promoCalendar) {
+              promoCalendar.rebuild('/promotion_hours', data);
             }
             else {
-              calendar = new Calendar('/available_hours_week_html', data);
+              promoCalendar = new PromoCalendar('/promotion_hours', data);
             }
 
             $(document).on('hourClick', function (e) {
