@@ -3299,7 +3299,11 @@ class BookingsController < ApplicationController
           week_blocks += '<div class="bloque-hora ' + hour[:status] + '" data-start="' + hour[:start_block] + '" data-end="' + hour[:end_block] + '" data-provider="' + hour[:available_provider] + '" data-discount="' + hour[:promo_discount] + '" data-index="' +  hour[:index].to_s + '" data-timediscount="' + hour[:has_time_discount].to_s + '"><span>' + ActionController::Base.helpers.image_tag('admin/icono_promociones.png', class: 'promotion-hour-icon', size: "18x18") + '&nbsp;&nbsp' + hour[:start_block] + ' - ' + hour[:end_block] + '</span></div>'
         end
       end
-      week_blocks += '<div class="clear"></div></div>'
+      if week_block[:available_time].count < 1
+        week_blocks += '&nbsp;<div class="clear">&nbsp;</div></div>'
+      else
+        week_blocks += '<div class="clear"></div></div>'
+      end
     end
     week_blocks += '<div class="clear"></div>'
 
