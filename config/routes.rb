@@ -184,6 +184,11 @@ Agendapro::Application.routes.draw do
   get '/get_district', :to => 'districts#get_district'
   get '/district_by_name', :to => 'districts#get_district_by_name'
 
+  # Promotions
+  get '/get_promotions', :to => 'searchs#promotions'
+  get '/manage_promotions', :to => 'services#manage_promotions'
+  get '/manage_service_promotion', :to => 'services#manage_service_promotion'
+
   # Workflow
   # Workflow - overview
   get '/schedule', :to => 'location_times#schedule_local'

@@ -1,4 +1,6 @@
 class Service < ActiveRecord::Base
+	require 'pg_search'
+	include PgSearch
 
 	belongs_to :company
 	belongs_to :service_category
@@ -15,6 +17,9 @@ class Service < ActiveRecord::Base
 
 	has_many :promos
 
+	scope :with_time_promotions, -> { where(has_time_discount: true, active: true, online_payable: true, online_booking: true, time_promo_active: true) }
+	scope :with_last_minute_promotions, -> { where(has_last_minute_discount: true, active: true, online_payable: true, online_booking: true).where('last_minute_discount > 0') }
+
 	accepts_nested_attributes_for :service_category, :reject_if => :all_blank, :allow_destroy => true
 
 	validates :name, :duration, :company, :service_category, :presence => true
@@ -22,6 +27,24 @@ class Service < ActiveRecord::Base
 	validates :price, numericality: { greater_than_or_equal_to: 0 }
 
 	validate :group_service_capacity, :outcall_providers
+
+	pg_search_scope :search, 
+	:against => :name,
+	:associated_against => {
+		:service_category => :name
+	},
+	:using => {
+                :trigram => {
+                  	:threshold => 0.1,
+                  	:prefix => true,
+                	:any_word => true
+                },
+                :tsearch => {
+                	:prefix => true,
+                	:any_word => true
+                }
+    },
+    :ignoring => :accents
 
 	def group_service_capacity
 		if self.group_service
@@ -55,4 +78,29 @@ class Service < ActiveRecord::Base
 		self.name << outcallString
 		self.name.html_safe
 	end
+
+	def get_max_time_discount
+
+		discount = 0
+
+		if self.has_time_discount && !self.promos.nil?
+			
+			self.promos.each do |promo|
+				if promo.morning_discount > discount
+					discount = promo.morning_discount
+				end
+				if promo.afternoon_discount > discount
+					discount = promo.afternoon_discount
+				end
+				if promo.night_discount > discount
+					discount = promo.night_discount
+				end
+			end
+
+		end
+
+		return discount
+
+	end
+
 end

@@ -2,6 +2,7 @@ class ServicesController < ApplicationController
   before_action :set_service, only: [:show, :edit, :update, :destroy, :activate, :deactivate]
   before_action :authenticate_user!, except: [:services_data, :service_data, :get_providers, :location_services, :location_categorized_services, :get_promotions_popover]
   before_action :quick_add, except: [:services_data, :service_data, :get_providers]
+  before_action :verify_is_super_admin, only: [:manage_promotions, :manage_service_promotion]
   layout "admin", except: [:get_providers, :services_data, :service_data]
   load_and_authorize_resource
 
@@ -288,6 +289,16 @@ class ServicesController < ApplicationController
       format.html { render :partial => 'get_promotions_popover' }
       format.json { render json: @promos }
     end
+  end
+
+  #For Super Admin
+  def manage_promotions
+    @services = Service.where(:has_time_discount => true, :time_promo_active => false)
+    @approvedServices = Service.where(:has_time_discount => true, :time_promo_active => true)
+  end
+
+  def manage_service_promotion
+    @service = Service.find(params[:id])
   end
 
   private

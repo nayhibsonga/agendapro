@@ -1,0 +1,17 @@
+<div class="promo-service-box row panel-row" style="padding-left: 5px; padding-right: 5px;">
+	<div>
+		<img class="img-responsive" src="" />
+	</div>
+	<div>
+	<%= i.to_s %> <%= service.company.name %>
+	</div>
+	<div class="row">
+		<div class="col-sm-8">
+			<%= service.name %>
+		</div>
+		<div class="col-sm-4" style="text-align: right;">
+			<strike><%= number_to_currency(service.price, unit: "$", delimiter: ".") %></strike><br />
+			Desde <%= number_to_currency(service.price*(100-service.get_max_time_discount)/100, unit: "$", delimiter: ".") %>
+		</div>
+	</div>
+</div>

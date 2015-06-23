@@ -23,7 +23,7 @@ class Location < ActiveRecord::Base
 
 	has_many :services, -> { where active: true, online_booking: true }, :through => :active_service_providers
 
-	#has_many :services, -> { where active: true }, :through => :service_providers
+	#has_many :time_promotion_services, -> { where active: true }, :through => :service_providers
 
 	has_many :service_categories, :through => :services
 
@@ -77,6 +77,23 @@ class Location < ActiveRecord::Base
     },
     :ignoring => :accents
     #:ranked_by => ":tsearch + (0.5 * :trigram)"
+
+    pg_search_scope :search_services, :associated_against => {
+    	:services => :name,
+    	:service_categories => :name
+    },
+    :using => {
+                :trigram => {
+                  	:threshold => 0.1,
+                  	:prefix => true,
+                	:any_word => true
+                },
+                :tsearch => {
+                	:prefix => true,
+                	:any_word => true
+                }
+    },
+    :ignoring => :accents
 
 
 	def extended_schedule

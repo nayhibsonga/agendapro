@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150609171708) do
+ActiveRecord::Schema.define(version: 20150623170121) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -726,6 +726,8 @@ ActiveRecord::Schema.define(version: 20150609171708) do
     t.boolean  "has_last_minute_discount", default: false
     t.integer  "last_minute_hours",        default: 0
     t.integer  "last_minute_discount",     default: 0
+    t.boolean  "time_promo_active",        default: false
+    t.string   "time_promo_photo",         default: ""
   end
 
   add_index "services", ["company_id"], name: "index_services_on_company_id", using: :btree
