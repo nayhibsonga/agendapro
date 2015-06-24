@@ -91,13 +91,27 @@ class ServicesController < ApplicationController
         new_params = service_params.except(:service_category_id)
       end
     end
+    if params[:promo_update]
+      new_params = service_params
+    end
     respond_to do |format|
-      if @service.update(new_params)
-        format.html { redirect_to services_path, notice: 'Servicio actualizado exitosamente.' }
-        format.json { head :no_content }
+
+      if params[:promo_update]
+        if @service.update(new_params)
+          format.html { redirect_to manage_promotions_path, notice: 'Servicio actualizado exitosamente.' }
+          format.json { head :no_content }
+        else
+          format.html { render action: 'manage_service_promotion' }
+          format.json { render json: @service.errors, status: :unprocessable_entity }
+        end
       else
-        format.html { render action: 'edit' }
-        format.json { render json: @service.errors, status: :unprocessable_entity }
+        if @service.update(new_params)
+          format.html { redirect_to services_path, notice: 'Servicio actualizado exitosamente.' }
+          format.json { head :no_content }
+        else
+          format.html { render action: 'edit' }
+          format.json { render json: @service.errors, status: :unprocessable_entity }
+        end
       end
     end
   end
@@ -301,6 +315,12 @@ class ServicesController < ApplicationController
     @service = Service.find(params[:id])
   end
 
+  def admin_update_promo
+    respond_to do |format|
+      
+    end
+  end
+
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_service
@@ -309,6 +329,6 @@ class ServicesController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def service_params
-      params.require(:service).permit(:name, :price, :show_price, :duration, :outcall, :description, :group_service, :capacity, :waiting_list, :outcall, :online_payable, :online_booking, :has_discount, :discount, :comission_value, :comission_option, :company_id, :service_category_id, :has_sessions, :sessions_amount, service_category_attributes: [:name, :company_id, :id],  :tag_ids => [], :service_provider_ids => [], :resource_ids => [])
+      params.require(:service).permit(:name, :price, :show_price, :duration, :outcall, :description, :group_service, :capacity, :waiting_list, :outcall, :online_payable, :online_booking, :has_discount, :discount, :comission_value, :comission_option, :company_id, :service_category_id, :has_sessions, :sessions_amount, :time_promo_active, :time_promo_photo, service_category_attributes: [:name, :company_id, :id],  :tag_ids => [], :service_provider_ids => [], :resource_ids => [])
     end
 end

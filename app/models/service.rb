@@ -17,6 +17,8 @@ class Service < ActiveRecord::Base
 
 	has_many :promos
 
+	mount_uploader :time_promo_photo, TimePromoPhotoUploader
+
 	scope :with_time_promotions, -> { where(has_time_discount: true, active: true, online_payable: true, online_booking: true, time_promo_active: true) }
 	scope :with_last_minute_promotions, -> { where(has_last_minute_discount: true, active: true, online_payable: true, online_booking: true).where('last_minute_discount > 0') }
 

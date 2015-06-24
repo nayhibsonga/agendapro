@@ -727,7 +727,7 @@ ActiveRecord::Schema.define(version: 20150623170121) do
     t.integer  "last_minute_hours",        default: 0
     t.integer  "last_minute_discount",     default: 0
     t.boolean  "time_promo_active",        default: false
-    t.string   "time_promo_photo",         default: ""
+    t.string   "time_promo_photo"
   end
 
   add_index "services", ["company_id"], name: "index_services_on_company_id", using: :btree

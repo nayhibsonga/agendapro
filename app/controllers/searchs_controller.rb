@@ -17,9 +17,9 @@ class SearchsController < ApplicationController
 	  
 	def search
 		if params[:inputSearch] && params[:latitude] && params[:longitude] && params[:inputLocalization]
+
 			@lat = params[:latitude]
 			@lng = params[:longitude]
-
 		
 
 			if cookies[:formatted_address]
@@ -1319,8 +1319,8 @@ class SearchsController < ApplicationController
 	def promotions
 
 
-			@lat = -33.4052419 
-			@lng = -70.597557
+			@lat = "-33.4052419" 
+			@lng = "-70.597557"
 
 			if params[:latitude]
 				@lat = params[:latitude]
@@ -1464,6 +1464,7 @@ class SearchsController < ApplicationController
 			end
 
 			@results = Array.new
+			@locations = Array.new
 			@last_minute_results = Array.new
 
 			ordered_locs.each do |arr|
@@ -1476,7 +1477,12 @@ class SearchsController < ApplicationController
 					end
 
 					time_promo_services.each do |service|
-						@results << service
+						if !@results.include?(service)
+							@results << service
+							if !@locations.include?(s[0])
+								@locations << s[0]
+							end
+						end
 					end
 				end
 			end
@@ -1491,12 +1497,14 @@ class SearchsController < ApplicationController
 					end
 
 					last_minute_promo_services.each do |service|
-						@last_minute_results << service
+						if !@last_minute_results.include?(service)
+							@last_minute_results << service
+						end
 					end
 				end
 			end
 
-			per_page = 10
+			per_page = 9
 
 			@results = @results.paginate(:page => params[:page], :per_page => per_page)
 

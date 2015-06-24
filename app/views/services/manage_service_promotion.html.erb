@@ -10,7 +10,7 @@
   <div class="row">
     <div class="col-md-12">
       <%= form_for @service, :html => {:class => 'form-horizontal'} do |f| %>
-
+      	<input type="hidden" name="promo_update" value="1" />
         <div class="form-group">
           <%= f.label :time_promo_active, "Activar: ", class: "col-md-2 control-label" %>
           <div class="col-md-4">
