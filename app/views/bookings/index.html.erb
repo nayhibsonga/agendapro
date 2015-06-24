@@ -40,6 +40,9 @@
 <%= content_tag "div", id: "calendar-data", data: { calendar_duration: @company_setting.calendar_duration, extended_schedule: @company_setting.extended_schedule_bool, extended_min_hour: @company_setting.extended_min_hour.strftime('%H:%M'), extended_max_hour: @company_setting.extended_max_hour.strftime('%H:%M'), booking_history: @company_setting.booking_history, staff_code: @company_setting.staff_code, deal_identification_number: @company_setting.deal_identification_number, deal_required: @company_setting.deal_required } do %>
 <% end %>
 
+<%= content_tag "div", id: "products_data", data: { products: Product.where(company_id: current_user.company_id).to_json } do %>
+<% end %>
+
 <% content_for :calendar do %>
   <div class="container-fluid">
     <div class="row">
@@ -76,9 +79,9 @@
               <ul id="myTab" class="nav nav-tabs" role="tablist">
                 <li id="booking-li" class="active"><a href="#booking-pane" role="tab" data-toggle="tab" class="tab_index" id="booking-tab">Reserva</a></li>
                 <% if Role.where(name: ["Administrador General", "Administrador Local", "Recepcionista"]).include?(current_user.role) %>
-                <li id="payments-li" class=""><a href="#payments-pane" role="tab" data-toggle="tab" class="tab_index" id="payments-tab">Medio de Pago</a></li>
+                <li id="payments-li" class=""><a href="#payments-pane" role="tab" data-toggle="tab" class="tab_index" id="payments-tab">Pago</a></li>
                 <% end %>
-                <li id="client-li" class=""><a href="#client-pane" role="tab" data-toggle="tab" class="tab_index" id="client-tab">Datos Cliente</a></li>
+                <li id="client-li" class=""><a href="#client-pane" role="tab" data-toggle="tab" class="tab_index" id="client-tab">Cliente</a></li>
                 <li id="history-li" class=""><a href="#history-pane" role="tab" data-toggle="tab" class="tab_index" id="history-tab">Historial Cliente</a></li>
                 <% if @company_setting.booking_history %>
                 <li id="changes-li" class=""><a href="#changes-pane" role="tab" data-toggle="tab" class="tab_index" id="changes-tab">Modificaciones Reserva</a></li>
@@ -442,59 +445,9 @@
                   <p><strong>Nota:</strong> Si modificas estos datos, al guardar la reserva, se actualizarán los datos del cliente.</p>
                 </div>
                 <div class="tab-pane" id="history-pane">
-                  <div class="fixed-table">
-                    <h4>Últimas reservas del cliente (máx. 10 reservas):</h4>
-                    <table class="table">
-                      <thead>
-                        <tr>
-                          <th>Fecha</th>
-                          <th>Servicio</th>
-                          <th>Prestador</th>
-                          <th>Estado</th>
-                          <th>Nota Cliente</th>
-                          <th>Nota Interna</th>
-                        </tr>
-                      </thead>
-                      <tbody id="client-history-tbody">
-                        <tr>
-                          <td colspan="6">No hay un cliente seleccionado...</td>
-                        </tr>
-                      </tbody>
-                    </table>
-                  </div>
                 </div>
                 <% if @company_setting.booking_history %>
                 <div class="tab-pane" id="changes-pane">
-                  <div class="fixed-table">
-                    <h4>Modificaciones a la Reserva:</h4>
-                    <table class="table">
-                      <thead>
-                        <tr>
-                          <th>Acción</th>
-                          <th>Fecha</th>
-                          <th>Reserva</th>
-                          <th>Servicio</th>
-                          <th>Prestador</th>
-                          <th>Estado</th>
-                          <th>Nota</th>
-                          <th>N. Interna</th>
-                          <th>Usuario</th>
-                          <% if @company_setting.staff_code %>
-                          <th>Responsable</th>
-                          <% end %>
-                        </tr>
-                      </thead>
-                      <tbody id="booking-history-tbody">
-                        <tr>
-                          <% if @company_setting.staff_code %>
-                          <td colspan="9">No hay modificaciones para esta reserva...</td>
-                          <% else %>
-                          <td colspan="8">No hay modificaciones para esta reserva...</td>
-                          <% end %>
-                        </tr>
-                      </tbody>
-                    </table>
-                  </div>
                 </div>
                 <% end %>
                 <% if Role.where(name: ["Administrador General", "Administrador Local", "Recepcionista"]).include?(current_user.role) %>
@@ -502,25 +455,65 @@
                   <%= form_for @payment, html: {class: "form-horizontal"} do |f| %>
                   <div class="row">
                     <div class="col-md-12">
-                      <h4>Reservas que incluye este pago:</h4>
-                      <div id="payment-bookings-checkbox">
-                      </div>
+                      <table class="table">
+                        <thead>
+                          <tr>
+                            <th></th>
+                            <th>Servicio</th>
+                            <th>Prestador</th>
+                            <th>Fecha</th>
+                            <th>Hora</th>
+                            <th>Precio Normal</th>
+                            <th style="width: 15%;">Descuento</th>
+                            <th style="width: 15%;">Precio</th>
+                          </tr>
+                        </thead>
+                        <tbody id="payment-bookings-table">
+                          <tr class="tr-strong">
+                            <td colspan="4"><a id="payment_past_bookings_button" class="btn btn-default btn-xs">Agregar una reserva pasada al pago</a></td>
+                            <td>Total:</td>
+                            <td id="booking_total_normal_price">$ 0</td>
+                            <td id="booking_total_discount">0 %</td>
+                            <td id="booking_total_price">$ 0</td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-md-12">
+                      <table class="table">
+                        <thead>
+                          <tr>
+                            <th></th>
+                            <th>Producto</th>
+                            <th>Vendedor</th>
+                            <th>Precio Normal</th>
+                            <th style="width: 15%;">Cantidad</th>
+                            <th style="width: 15%;">Descuento</th>
+                            <th style="width: 15%;">Precio</th>
+                          </tr>
+                        </thead>
+                        <tbody id="payment-products-table">
+                          <tr class="tr-strong">
+                            <td colspan="2"><a id="payment_products_button" class="btn btn-default btn-xs">Agregar producto al pago</a></td>
+                            <td>Total:</td>
+                            <td id="product_total_normal_price">$ 0</td>
+                            <td id="product_total_quantity">0</td>
+                            <td id="product_total_discount">0 %</td>
+                            <td id="product_total_price">$ 0</td>
+                          </tr>
+                        </tbody>
+                      </table>
                     </div>
                   </div>
                   <div class="row">
                     <div class="col-md-6">
-                      <h4>Pago</h4>
                       <%= f.hidden_field :id %>
                       <div class="form-group">
                         <%= f.label :receipt_type_id, "Comprobante de Pago", class: "col-sm-4 control-label" %>
                         <div class="col-sm-8">
                           <%= f.collection_select :receipt_type_id, ReceiptType.all.order(:name), :id, :name, {selected: ReceiptType.find_by_name("Boleta").id}, { class: "form-control" }%>
-                        </div>
-                      </div>
-                      <div class="form-group">
-                        <%= f.label :amount, "Monto", class: "col-sm-4 control-label" %>
-                        <div class="col-sm-8">
-                          <%= f.number_field :amount, class: "form-control" %>
                         </div>
                       </div>
                       <div class="form-group">
@@ -537,11 +530,10 @@
                       </div>
                     </div>
                     <div class="col-md-6">
-                      <h4>Medio de Pago</h4>
                       <div class="form-group">
                         <%= f.label :payment_method_id, "Tipo de Pago", class: "col-sm-4 control-label" %>
                         <div class="col-sm-8">
-                          <%= f.select :payment_method_id, options_for_select(PaymentMethod.where(id: @company_setting.payment_method_settings.where(active: true).pluck(:payment_method_id)).order(:name).map{ |c| [c.name, c.id, {'data-installments'=> c.name == "Tarjeta de Crédito" ? true : false, 'data-number'=> c.name == "Efectivo" ? false : true, 'data-number-required'=> @company_setting.payment_method_settings.where(number_required: true).pluck(:payment_method_id).include?(c.id) ? true : false, 'data-custom-method'=> c.name == "Otro" ? true : false }] }), {}, {class: "form-control"} %>
+                          <%= f.select :payment_method_id, options_for_select(PaymentMethod.where(id: @company_setting.payment_method_settings.where(active: true).pluck(:payment_method_id)).order(:name).map{ |c| [c.name, c.id, {'data-installments'=> c.name == "Tarjeta de Crédito" ? true : false, 'data-number'=> c.name == "Efectivo" ? false : true, 'data-bank'=> c.name == "Cheque" ? true : false, 'data-number-required'=> @company_setting.payment_method_settings.where(number_required: true).pluck(:payment_method_id).include?(c.id) ? true : false, 'data-custom-method'=> c.name == "Otro" ? true : false }] }), {}, {class: "form-control"} %>
                         </div>
                       </div>
                       <div id="payment_method_type_group" class="form-group">
@@ -554,6 +546,12 @@
                         <%= f.label :company_payment_method_id, "Otros Medios de Pago", class: "col-sm-4 control-label" %>
                         <div class="col-sm-8">
                           <%= f.collection_select :company_payment_method_id, CompanyPaymentMethod.where(company_id: current_user.company_id, active: true).order(:name), :id, :name, {include_blank: true}, { class: "form-control" }%>
+                        </div>
+                      </div>
+                      <div id="bank_id_group" class="form-group">
+                        <%= f.label :bank_id, "Banco", class: "col-sm-4 control-label" %>
+                        <div class="col-sm-8">
+                          <%= f.collection_select :bank_id, Bank.all.order(:name), :id, :name, {include_blank: true}, { class: "form-control" }%>
                         </div>
                       </div>
                       <div id="payment_method_number_group" class="form-group">
@@ -572,6 +570,16 @@
                   </div>
                   <div class="row">
                     <div class="col-md-6 col-md-offset-6">
+                      <% if @company_setting.staff_code %>
+                          <div class="form-group has-feedback">
+                            <%= label_tag :payment_staff_code, "Código de Empleado", class: "col-sm-2 control-label" %>
+                            <div class="col-sm-10">
+                              <%= text_field_tag :payments_staff_code, '',{class: "form-control", required: true} %>
+                              <span class="help-block"></span>
+                              <span class="form-control-feedback"></span>
+                            </div>
+                          </div>
+                      <% end %>
                       <div class="form-group">
                         <div class="col-sm-8 col-sm-offset-4">
                           <%= f.submit "Guardar Pago", class: "btn btn-green btn-ss btn-block", id: "save_payment_button" %>
@@ -824,6 +832,144 @@
       </div>
     </div>
   </div>
+
+  <div class="modal fade modalOverModal" id="paymentOverModal" tabindex="-1" role="dialog" aria-labelledby="Modificaciones de Pago" aria-hidden="true">
+    <div class="modal-dialog" style="width: auto;">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Cerrar"><i class="fa fa-times" aria-hidden="true"></i></button>
+          <h3 class="modal-title" id="paymentOverModalTitle" style="line-height: 1.1;">Modificaciones de Pago</h3>
+        </div>
+        <div class="modal-body" id="paymentOverModalBody">
+          
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal" aria-label="Cerrar">Cerrar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade modalOverModal" id="bookingOverModal" tabindex="-1" role="dialog" aria-labelledby="Modificaciones de Reserva" aria-hidden="true">
+    <div class="modal-dialog" style="width: auto;">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Cerrar"><i class="fa fa-times" aria-hidden="true"></i></button>
+          <h3 class="modal-title" id="bookingOverModalTitle" style="line-height: 1.1;">Modificaciones de Reserva</h3>
+        </div>
+        <div class="modal-body" id="bookingOverModalBody">
+          <div class="fixed-table">
+            <h4>Modificaciones a la Reserva:</h4>
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>Acción</th>
+                  <th>Fecha</th>
+                  <th>Reserva</th>
+                  <th>Servicio</th>
+                  <th>Prestador</th>
+                  <th>Estado</th>
+                  <th>Nota</th>
+                  <th>N. Interna</th>
+                  <th>Usuario</th>
+                  <% if @company_setting.staff_code %>
+                  <th>Responsable</th>
+                  <% end %>
+                </tr>
+              </thead>
+              <tbody id="booking-history-tbody">
+                <tr>
+                  <% if @company_setting.staff_code %>
+                  <td colspan="9">No hay modificaciones para esta reserva...</td>
+                  <% else %>
+                  <td colspan="8">No hay modificaciones para esta reserva...</td>
+                  <% end %>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal" aria-label="Cerrar">Cerrar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade modalOverModal" id="clientOverModal" tabindex="-1" role="dialog" aria-labelledby="Historial del Cliente" aria-hidden="true">
+    <div class="modal-dialog" style="width: auto;">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Cerrar"><i class="fa fa-times" aria-hidden="true"></i></button>
+          <h3 class="modal-title" id="clientOverModalTitle" style="line-height: 1.1;">Historial del Cliente</h3>
+        </div>
+        <div class="modal-body" id="clientOverModalBody">
+          <div class="fixed-table">
+            <h4>Últimas reservas del cliente (máx. 10 reservas):</h4>
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>Fecha</th>
+                  <th>Servicio</th>
+                  <th>Prestador</th>
+                  <th>Estado</th>
+                  <th>Nota Cliente</th>
+                  <th>Nota Interna</th>
+                </tr>
+              </thead>
+              <tbody id="client-history-tbody">
+                <tr>
+                  <td colspan="6">No hay un cliente seleccionado...</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal" aria-label="Cerrar">Cerrar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade modalOverModal" id="paymentBookingModal" tabindex="-1" role="dialog" aria-labelledby="Agregar Reserva al Pago" aria-hidden="true">
+    <div class="modal-dialog" style="width: auto;">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Cerrar"><i class="fa fa-times" aria-hidden="true"></i></button>
+          <h3 class="modal-title" id="paymentBookingModalTitle" style="line-height: 1.1;">Agregar Reserva al Pago</h3>
+        </div>
+        <div class="modal-body" id="paymentBookingModalBody">
+          <div class="row">
+            <div class="col-md-12">
+              <div class="fixed-table">
+                <h4>Modificaciones a la Reserva:</h4>
+                <table class="table">
+                  <thead>
+                    <tr>
+                      <th></th>
+                      <th>Servicio</th>
+                      <th>Prestador</th>
+                      <th>Fecha</th>
+                      <th>Hora</th>
+                      <th>Precio Normal</th>
+                      <th>Descuento</th>
+                      <th>Precio</th>
+                    </tr>
+                  </thead>
+                  <tbody id="payment-past-bookings-table">
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal" aria-label="Cerrar">Cerrar</button>
+        </div>
+      </div>
+    </div>
+  </div>
 <% end %>
 
 <% content_for :scripts do %>
@@ -865,6 +1011,15 @@
           $('#ui-datepicker-div').addClass("customDatepicker");
           $(".customDatepicker .ui-datepicker-calendar").css("width", "214px !important");
         }
+      });
+
+      $('.modalOverModal').on('show', function() {
+        $('#bookingModal').css('opacity', .5);
+        $('#bookingModal').unbind();
+      });
+      $('.modalOverModal').on('hidden', function() {
+        $('#bookingModal').css('opacity', 1);
+        $('#bookingModal').removeData("modal").modal({});
       });
 
       $(document.body).on('click', '.optimizer-date-span', function(e){

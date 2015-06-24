@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150618150847) do
+ActiveRecord::Schema.define(version: 20150622192955) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -120,6 +120,7 @@ ActiveRecord::Schema.define(version: 20150618150847) do
     t.integer  "session_booking_id"
     t.boolean  "user_session_confirmed", default: false
     t.boolean  "is_session_booked",      default: false
+    t.float    "discount",               default: 0.0
   end
 
   add_index "bookings", ["client_id"], name: "index_bookings_on_client_id", using: :btree
@@ -523,6 +524,7 @@ ActiveRecord::Schema.define(version: 20150618150847) do
     t.float    "discount",   default: 0.0
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "quantity",   default: 1,   null: false
   end
 
   add_index "payment_products", ["payment_id"], name: "index_payment_products_on_payment_id", using: :btree
@@ -552,11 +554,15 @@ ActiveRecord::Schema.define(version: 20150618150847) do
     t.integer  "company_payment_method_id"
     t.float    "discount"
     t.text     "notes"
+    t.integer  "location_id"
+    t.integer  "client_id"
   end
 
   add_index "payments", ["bank_id"], name: "index_payments_on_bank_id", using: :btree
+  add_index "payments", ["client_id"], name: "index_payments_on_client_id", using: :btree
   add_index "payments", ["company_id"], name: "index_payments_on_company_id", using: :btree
   add_index "payments", ["company_payment_method_id"], name: "index_payments_on_company_payment_method_id", using: :btree
+  add_index "payments", ["location_id"], name: "index_payments_on_location_id", using: :btree
   add_index "payments", ["payment_method_id"], name: "index_payments_on_payment_method_id", using: :btree
   add_index "payments", ["payment_method_type_id"], name: "index_payments_on_payment_method_type_id", using: :btree
   add_index "payments", ["receipt_type_id"], name: "index_payments_on_receipt_type_id", using: :btree

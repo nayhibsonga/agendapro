@@ -470,6 +470,12 @@ select[name="serviceOptimizerSelector"] {
   .label-calendar {
     font-size: 11px;
   }
+
+  .modal.modalOverModal .modal-dialog {
+    max-width: 1300px;
+    padding-right: 50px;
+    padding-left: 50px;
+  }
 }
 
 @media (min-width: 992px) {

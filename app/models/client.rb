@@ -3,6 +3,7 @@ class Client < ActiveRecord::Base
 
   has_many :client_comments, dependent: :destroy
   has_many :bookings, dependent: :destroy
+  has_many :payments, dependent: :destroy
 
   validate :mail_uniqueness, :identification_uniqueness, :record_uniqueness, :minimun_info
 

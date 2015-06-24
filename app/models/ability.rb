@@ -213,6 +213,13 @@ class Ability
         can :bookings_history, Client
         can :check_sessions, Client
 
+        can :booking_payment, Payment
+        can :past_bookings, Payment
+        can :read, Payment, :company_id => user.company_id
+        can :destroy, Payment, :company_id => user.company_id
+        can :create, Payment, :company_id => user.company_id
+        can :update, Payment, :company_id => user.company_id
+
         can :create_comment, Client
         can :update_comment, Client
         can :destroy_comment, Client
@@ -338,8 +345,15 @@ class Ability
         can :create_comment, Client, :company_id => user.company_id
         can :update_comment, Client, :company_id => user.company_id
         can :destroy_comment, Client, :company_id => user.company_id
+
+        can :booking_payment, Payment
+        can :past_bookings, Payment
+        can :read, Payment, :company_id => user.company_id
+        can :destroy, Payment, :company_id => user.company_id
+        can :create, Payment, :company_id => user.company_id
+        can :update, Payment, :company_id => user.company_id
         
-                can :compose_mail, Client, :company_id => user.company_id
+        can :compose_mail, Client, :company_id => user.company_id
         can :send_mail, Client, :company_id => user.company_id
         can :import, Client
 
@@ -387,6 +401,13 @@ class Ability
         can :provider_service, ServiceProvider
         can :bookings_history, Client
         can :check_sessions, Client
+
+        can :booking_payment, Payment
+        can :past_bookings, Payment
+        can :read, Payment, :company_id => user.company_id
+        can :destroy, Payment, :company_id => user.company_id
+        can :create, Payment, :company_id => user.company_id
+        can :update, Payment, :company_id => user.company_id
         
         can :create_comment, Client, :company_id => user.company_id
         can :update_comment, Client, :company_id => user.company_id

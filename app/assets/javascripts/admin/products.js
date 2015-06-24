@@ -73,7 +73,7 @@ function saveProduct (typeURL, extraURL) {
 	    	location_products.push({ "location_id": $(this).val(), "stock": $('#location_product_ids_stock_'+$(this).val()).val() });
 		}
 	});
-	var productJSON = { "name": $('#product_name').val(), "product_category_id": $('#product_product_category_id').val(), "price": $('#product_price').val(), "comission_value": $('#product_comission_value').val(), "comission_option": $('#product_comission_option').val(), "location_products_attributes": location_products };
+	var productJSON = { "name": $('#product_name').val(), "sku": $('#product_sku').val(), "product_category_id": $('#product_product_category_id').val(), "price": $('#product_price').val(), "comission_value": $('#product_comission_value').val(), "comission_option": $('#product_comission_option').val(), "location_products_attributes": location_products };
 	$.ajax({
 		type: typeURL,
 		url: '/products'+extraURL+'.json',

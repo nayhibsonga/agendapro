@@ -8,7 +8,7 @@ class ProductsController < ApplicationController
   respond_to :html, :json
 
   def index
-    @products = Product.all
+    @products = Product.all.order(:product_category_id, :name)
     respond_with(@products)
   end
 
@@ -57,6 +57,6 @@ class ProductsController < ApplicationController
     end
 
     def product_params
-      params.require(:product).permit(:name, :price, :product_category_id, :description, :comission_value, :comission_option, :location_products_attributes => [:id, :location_id, :stock])
+      params.require(:product).permit(:name, :price, :sku, :product_category_id, :description, :comission_value, :comission_option, :location_products_attributes => [:id, :location_id, :stock])
     end
 end
