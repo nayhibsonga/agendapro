@@ -340,7 +340,7 @@
 				        
 				                      <div class="form-group">
 				                        <div class="col-sm-offset-2 col-sm-8">
-				                          <%= f.submit 'Regístrate', :class => 'btn btn-orange pull-right' %>
+				                          <%= f.submit 'Regístrate', :class => 'btn btn-orange pull-right', onclick: "_gaq.push(['_trackEvent', 'Usuarios', 'Sign-Up', 'Registro_desde_pago']);" %>
 				                        </div>
 				                      </div>
 				                    <% end %>
