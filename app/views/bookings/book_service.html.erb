@@ -357,7 +357,7 @@
         
                       <div class="form-group">
                         <div class="col-sm-offset-2 col-sm-8">
-                          <%= f.submit 'Regístrate', :class => 'btn btn-orange pull-right' %>
+                          <%= f.submit 'Regístrate', :class => 'btn btn-orange pull-right', onclick: "_gaq.push(['_trackEvent', 'Usuarios', 'Sign-Up', 'Registro_desde_workflow']);" %>
                         </div>
                       </div>
                     <% end %>
@@ -411,7 +411,7 @@
                     </div>
                     <div class="form-group">
                       <div class="col-sm-offset-4 col-sm-8">
-                        <%= f.submit 'Ingresar', :class => 'btn btn-orange' %>
+                        <%= f.submit 'Ingresar', :class => 'btn btn-orange', onclick: "_gaq.push(['_trackEvent', 'Usuarios', 'Sign-In', 'Ingreso_desde_workflow']);" %>
                       </div>
                     </div>
                     <div class="form-group">
