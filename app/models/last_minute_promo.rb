@@ -1,9 +1,8 @@
-class Promo < ActiveRecord::Base
+class LastMinutePromo < ActiveRecord::Base
 	require 'pg_search'
 	include PgSearch
-
+	
 	belongs_to :service
-	belongs_to :day
 	belongs_to :location
 
 	has_one :service_category, :through => :service

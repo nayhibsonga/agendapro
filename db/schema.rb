@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150623170121) do
+ActiveRecord::Schema.define(version: 20150625161405) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -350,6 +350,15 @@ ActiveRecord::Schema.define(version: 20150623170121) do
 
   add_index "facebook_pages", ["company_id"], name: "index_facebook_pages_on_company_id", using: :btree
 
+  create_table "last_minute_promos", force: true do |t|
+    t.integer  "discount",    default: 0
+    t.integer  "hours",       default: 0
+    t.integer  "location_id"
+    t.integer  "service_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
   create_table "location_outcall_districts", force: true do |t|
     t.integer  "location_id"
     t.integer  "district_id"
@@ -507,6 +516,7 @@ ActiveRecord::Schema.define(version: 20150623170121) do
     t.integer  "night_discount",     default: 0
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "location_id"
   end
 
   create_table "promotions", force: true do |t|
@@ -724,8 +734,6 @@ ActiveRecord::Schema.define(version: 20150623170121) do
     t.integer  "sessions_amount"
     t.boolean  "has_time_discount",        default: false
     t.boolean  "has_last_minute_discount", default: false
-    t.integer  "last_minute_hours",        default: 0
-    t.integer  "last_minute_discount",     default: 0
     t.boolean  "time_promo_active",        default: false
     t.string   "time_promo_photo"
   end

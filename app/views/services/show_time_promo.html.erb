@@ -1,0 +1,112 @@
+<div class="overview-main">
+  <div class="container">
+
+    <div class="row">
+      <div class="col-sm-12">
+      <!-- Imagen de la promoción -->
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-xs-6 col-md-6">
+        <div class="promo-title">
+          @service.name
+        </div>
+        <div class="promo-description">
+          @service.description
+        </div>
+        <div class="google-maps-empresa">
+          <div id="map"></div>
+        </div>
+        <div id="outcallDistricts" class="well">
+        </div>
+      </div>
+      <div class="col-xs-6 col-md-6">
+        <h3 style="color: #505050; padding-top: 0px !important; margin-top: 0px !important;">Selecciona el lugar</h3>
+
+      </div>
+    </div>
+
+  </div>
+</div>
+
+
+
+<% content_for :scripts do %>
+  <%= javascript_include_tag "http://maps.google.com/maps/api/js?sensor=false" %>
+  
+  <script type="text/javascript">
+
+    //====== Google Map ======//
+    function initializeMap(lat, lng, mapDiv) {
+        var properties = {
+            center: new google.maps.LatLng(lat, lng),
+            zoom:   15,
+            panControl: false,
+            zoomControl: true,
+            zoomControlOptions: {
+                style: google.maps.ZoomControlStyle.SMALL
+            },
+            mapTypeControl: true,
+            mapTypeControlOptions: {
+                style: google.maps.MapTypeControlStyle.DROPDOWN_MENU
+            },
+            scaleControl: false,
+            streetViewControl: false,
+            overviewMapControl: false,
+            mapTypeId:  google.maps.MapTypeId.ROADMAP
+        };
+        map = new google.maps.Map(document.getElementById(mapDiv), properties);
+    }
+
+    function setMarker(latlng, local) {
+
+      if(currMarker!=null)
+      {
+        currMarker.setMap(null);
+      }
+
+      var image = '<%= asset_path("pin_googlemap.png") %>';
+
+      var marker = new google.maps.Marker({
+                    position: latlng,
+                    icon: image
+                    /*new google.maps.MarkerImage(
+                "http://chart.googleapis.com/chart?chst=d_map_pin_letter_withshadow&chld=|01e19d|FFFFFF",
+                null, null, new google.maps.Point(0, 42))*/
+                  });
+      currMarker = marker;
+      marker.setMap(map);
+
+      var infowindow = new google.maps.InfoWindow({
+          content: local
+        });
+      google.maps.event.addListener(marker, 'click', function() {
+          infowindow.open(map,marker);
+      });
+    }
+
+    function localMap(id) {
+      $.getJSON('/local', {id: id}, function (local) {
+        var latLng = new google.maps.LatLng(local.latitude, local.longitude);
+        map.setCenter(latLng);
+        setMarker(latLng, local.name);
+      });
+    }
+
+
+    $(document).ready(function(){
+      var map;
+      initializeMap(-33.413084, -70.592161, 'map');
+      
+      if ($('[name="localRadio"]').is(':checked')) {
+        var localId = $('input[name=localRadio]:checked').val();
+
+        loadSchedule(localId);
+        localMap(localId);
+      }
+    });
+
+  </script>
+
+<% end %>

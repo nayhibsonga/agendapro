@@ -12,7 +12,7 @@
 
 		</div>
 		<div class="row text-center">
-		<p><br /><% if params[:inputLocalization] %>Estos son los resultados más cerca de "<%= params[:inputLocalization] %>".<% else %> <% end %> <a href="" data-toggle="modal" data-target="#geolocation-modal">Cambiar Ubicación</a></p>
+		<p><br /><% if params[:inputLocalization] && params[:inputLocalization] != "" %>Estos son los resultados más cerca de "<%= params[:inputLocalization] %>".<% else %> Elige una ubicación nueva para encontrar las promociones más cercanas. <% end %> <a href="" data-toggle="modal" data-target="#geolocation-modal">Cambiar Ubicación</a></p>
 		</div>
 
 		<!--<h3>Promociones de último minuto</h3>
@@ -31,13 +31,13 @@
 			<% end %>
 			</div>
 		</div>-->
-		
+
 		<div class="row locations-panel">
 			<% i = 1 %>
 			<div class="row">
-			<% @results.each do |service| %>
+			<% @results.each do |promo_detail| %>
 				<div class="col-md-4">
-					<%= render :partial => 'service_panel', :locals => { :service => service, :i => i} %>
+					<%= render :partial => 'service_panel', :locals => { :service => promo_detail[0], :location => promo_detail[1], :i => i} %>
 				</div>
 				<% if i%3 == 0 %>
 					</div>
@@ -116,7 +116,7 @@
 </div>
 
 
-<%= content_tag "div", id: "results", data: {results: @locations} do %>
+<%= content_tag "div", id: "results", data: {results: @results.map {|service, location| location}} do %>
 <% end %>
 
 <% content_for :scripts do %>
@@ -124,6 +124,30 @@
 	<%= javascript_include_tag "search/map" %>
 	<%= javascript_include_tag "Alert" %>
 	<script type="text/javascript">
+
+		$("#promotions-search-btn").click(function(){
+			console.log("clicked");
+			$("#promotions-form").submit();
+		});
+
+		/*$('a.overlay').click( function () {
+			if ($(this).data('search')) {
+				$('#inputSearch').val($(this).data('search'));
+				$('button[type="submit"]').trigger('click');
+			};
+		});
+
+		$('.border-box a').click(function() {
+	        $('#inputSearch').val($(this).data('search'));
+	        if ($('#inputLocalization').val() != 0) {
+	            $('#search-form').submit();
+	        }
+	        else {
+	            $('#geolocation-modal').modal('show');
+	            // $('#inputLocalization2').focus();
+	        }
+    	});*/
+
 		myAlert = new Alert();
 
 	    var input2 = document.getElementById('inputLocalization2');

@@ -53,7 +53,15 @@
 				                        <span>Permitir</span>
 			                        	<select name="last_minute_discount" id="last_minute_discount" class="promotions-input">
 			                        		<% for i in 0..19 %>
-			                        			<% if @service.last_minute_discount == (i*5) %>
+			                        			<%
+			                        				last_minute_discount = 0
+			                        				last_minute_hours = 0
+			                        				if !@service.last_minute_promos.nil? && @service.last_minute_promos.count > 0
+			                        					last_minute_discount = @service.last_minute_promos.first.discount
+			                        					last_minute_hours = @service.last_minute_promos.first.hours
+			                        				end
+			                        			%>
+			                        			<% if last_minute_discount == (i*5) %>
 			                        				<option value="<%= (i*5).to_s %>" selected><%= (i*5).to_s %> %</option>
 			                        			<% else %>
 			                        				<option value="<%= (i*5).to_s %>"><%= (i*5).to_s %> %</option>
@@ -63,7 +71,7 @@
 			                        	<span>de descuento en reservas de último minuto hechas hasta</span>
 			                        	<select name="last_minute_hours" id="last_minute_hours" class="promotions-input">
 			                        		<% for i in 1..12 %>
-			                        			<% if @service.last_minute_hours == i %>
+			                        			<% if last_minute_hours == i %>
 			                        				<option value="<%= i.to_s %>" selected><%= i.to_s %> horas</option>
 			                        			<% else %>
 			                        				<option value="<%= i.to_s %>"><%= i.to_s %> horas</option>
@@ -72,6 +80,40 @@
 			                        	</select>
 			                        	<span>antes de la realización del servicio.</span>
 				                    </div>
+								</div>
+
+							</div>
+						</div>
+
+
+						<div class="row">
+							<div class="col-md-12">
+								<label>En los siguientes locales</label>
+								<span class="help-block">Selecciona los locales que prestan este servicio y lo ofrecerán en promoción de último minuto.</span>
+
+								<div class="form-group">
+									
+									<%
+										locations = []
+										@service.service_providers.each do |service_provider|  
+											if !locations.include?(service_provider.location)
+												locations << service_provider.location
+											end
+										end
+									%>
+
+									<% locations.each do |location| %>
+										<div class="checkbox">
+						                    <label>
+						                    	<% if LastMinutePromo.where(:service_id => @service.id, :location_id => location.id).count > 0 || @service.last_minute_promos.nil? || @service.last_minute_promos.count == 0 %>
+						                    		<input type="checkbox" checked="checked" value="<%= location.id %>" name="last_minute_locations" /> <%= location.name %>
+						                    	<% else %>
+						                    		<input type="checkbox" value="<%= location.id %>" name="last_minute_locations" /> <%= location.name %>
+						                    	<% end %>
+						                    </label>
+						                </div>
+									<% end %>
+
 								</div>
 
 							</div>
@@ -86,14 +128,17 @@
 
 								<div class="form-group">
 									<div style="display: inline !important;">
-										<label>
-											<% if @service.has_time_discount %>
-				                          		<input type="checkbox" id="has_time_discount" name="has_time_discount" checked />
-				                          	<% else %>
-				                          		<input type="checkbox" id="has_time_discount" name="has_time_discount" />
-				                          	<% end %>
-				                        </label>
-			                        	<span>Permitir descuento</span>
+										<div class="checkbox">
+											<label>
+												<% if @service.has_time_discount %>
+					                          		<input type="checkbox" id="has_time_discount" name="has_time_discount" checked />
+					                          	<% else %>
+					                          		<input type="checkbox" id="has_time_discount" name="has_time_discount" />
+					                          	<% end %>
+					                          	Permitir descuento
+					                        </label>
+				                        </div>
+			                        	
 									</div>
 								</div>
 
@@ -255,15 +300,50 @@
 							</div>
 
 						</div>
-					
-					<div class="row">
-						<div class="col-md-12">
-							<div class="form-group">
-								<button class="btn btn-green promotions-submit">Guardar</button>
-								<%= link_to 'Cancelar', dashboard_path, :class => "btn btn-default" %>
+
+
+						<div class="row">
+							<div class="col-md-12">
+								<label>En los siguientes locales</label>
+								<span class="help-block">Selecciona los locales que prestan este servicio y lo ofrecerán en promoción por horario.</span>
+
+								<div class="form-group">
+									
+									<%
+										locations = []
+										@service.service_providers.each do |service_provider|  
+											if !locations.include?(service_provider.location)
+												locations << service_provider.location
+											end
+										end
+									%>
+
+									<% locations.each do |location| %>
+										<div class="checkbox">
+						                    <label>
+						                    	<% if Promo.where(:service_id => @service.id, :location_id => location.id).count > 0 || @service.promos.nil? || @service.promos.count == 0 %>
+						                    		<input type="checkbox" checked="checked" value="<%= location.id %>" name="locations" /> <%= location.name %>
+						                    	<% else %>
+						                    		<input type="checkbox" value="<%= location.id %>" name="locations" /> <%= location.name %>
+						                    	<% end %>
+						                    </label>
+						                </div>
+									<% end %>
+
+								</div>
+
 							</div>
 						</div>
-					</div>
+
+					
+						<div class="row">
+							<div class="col-md-12">
+								<div class="form-group">
+									<button class="btn btn-green promotions-submit">Guardar</button>
+									<%= link_to 'Cancelar', services_path, :class => "btn btn-default" %>
+								</div>
+							</div>
+						</div>
 
 				</div>
 			</div>
@@ -298,6 +378,9 @@
   		afternoon_discounts[0] = 0
   		var night_discounts = []
   		night_discounts[0] = 0
+  		var locations = []
+  		var last_minute_locations = []
+
   		for(i = 1; i < 8; i++)
   		{
   			morning_discounts[i] = $("#morning-" + i).val();
@@ -305,10 +388,42 @@
   			night_discounts[i] = $("#night-" + i).val();
   		}
 
+  		$('input[name="locations"]').each(function(){
+  			if ($(this).is(":checked"))
+  			{
+  				locations.push($(this).val());
+  			}
+  		});
+
+  		$('input[name="last_minute_locations"]').each(function(){
+  			if ($(this).is(":checked"))
+  			{
+  				last_minute_locations.push($(this).val());
+  			}
+  		});
+
+  		if (locations.length < 1 && has_time_discount)
+  		{
+  			myAlert.showAlert(
+				'<h3>Selecciona locales</h3>' +
+			  	'<p>Debes seleccionar al menos un local para las promociones por horario.</p>'
+			);
+			return false;
+  		}
+
+  		if (last_minute_locations.length < 1 && has_last_minute_discount)
+  		{
+  			myAlert.showAlert(
+				'<h3>Selecciona locales</h3>' +
+			  	'<p>Debes seleccionar al menos un local para las promociones de último minuto.</p>'
+			);
+			return false;
+  		}
+
   		$.ajax({
   			url: "/set_service_promotions",
   			type: "post",
-  			data: {service_id: service_id, has_last_minute_discount: has_last_minute_discount, last_minute_discount: last_minute_discount, last_minute_hours: last_minute_hours, has_time_discount: has_time_discount, morning_discounts: morning_discounts, afternoon_discounts: afternoon_discounts, night_discounts: night_discounts},
+  			data: {service_id: service_id, has_last_minute_discount: has_last_minute_discount, last_minute_discount: last_minute_discount, last_minute_hours: last_minute_hours, has_time_discount: has_time_discount, morning_discounts: morning_discounts, afternoon_discounts: afternoon_discounts, night_discounts: night_discounts, locations: locations, last_minute_locations: last_minute_locations},
   			success: function(response){
   				if(response[0] == "ok")
   				{
@@ -316,7 +431,7 @@
 					  '<h3>Promociones guardadas</h3>' +
 					  '<p>Las promociones para el servicio ' + response[1].name + ' se guardaron correctamente.</p>'
 					);
-  					location.reload();
+  					
   				}
   				else
   				{
