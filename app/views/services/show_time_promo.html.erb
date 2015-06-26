@@ -37,13 +37,13 @@
           <div class="col-sm-8" style="text-align: right;">
             <table style="width: 100%;">
               <tr>
-                <td style="vertical-align: bottom; text-align: right; width: 30%;">
+                <td style="vertical-align: bottom; text-align: right; width: 20%;">
                   <%= image_tag("backgrounds/flecha.png", :class => "flecha-icon") %>
                 </td>
-                <td style="text-align: right; width: 70%;">
-                  <span style="color: #b5b5b5; font-size: 36px;"><strike><%= number_to_currency(@service.price, unit: "$", delimiter: ".") %></strike></span><br />
-                  <%= image_tag "promociones/price_doble.png", :alt => "Promoción", :size => "50x50", :class => "price-icon" %>&nbsp;<span style="color: #22c488; font-size: 50px;"><%= number_to_currency(@service.price*(100-@service.get_max_time_discount)/100, unit: "", delimiter: ".") %></span><br />
-                  <span style="color: #22c488; font-size: 20px;"><%= @service.get_max_time_discount %>% de descuento</span><br />
+                <td style="text-align: right; width: 80%;">
+                  <span style="color: #b5b5b5; font-size: 40px;"><strike><%= number_to_currency(@service.price, unit: "$", delimiter: ".") %></strike></span><br />
+                  <%= image_tag "promociones/price_doble.png", :alt => "Promoción", :size => "60x60", :class => "price-icon" %>&nbsp;<span style="color: #22c488; font-size: 65px;"><%= number_to_currency(@service.price*(100-@service.get_max_time_discount)/100, unit: "", delimiter: ".") %></span><br />
+                  <span style="color: #22c488; font-size: 24px;"><%= @service.get_max_time_discount %>% de descuento</span><br />
                   <span>
                     <a class="btnBook" href="">Comprar y reservar</a>
                   </span>
