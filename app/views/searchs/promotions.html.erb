@@ -130,24 +130,6 @@
 			$("#promotions-form").submit();
 		});
 
-		/*$('a.overlay').click( function () {
-			if ($(this).data('search')) {
-				$('#inputSearch').val($(this).data('search'));
-				$('button[type="submit"]').trigger('click');
-			};
-		});
-
-		$('.border-box a').click(function() {
-	        $('#inputSearch').val($(this).data('search'));
-	        if ($('#inputLocalization').val() != 0) {
-	            $('#search-form').submit();
-	        }
-	        else {
-	            $('#geolocation-modal').modal('show');
-	            // $('#inputLocalization2').focus();
-	        }
-    	});*/
-
 		myAlert = new Alert();
 
 	    var input2 = document.getElementById('inputLocalization2');
@@ -201,7 +183,7 @@
 	                $("#inputLocalization2").val(results[0].formatted_address);
 	                document.cookie = "formatted_address=" + escape(results[0].formatted_address);
 	                $('#inputSearch').focus();
-	                $('#search-form').submit();
+	                $('#promotions-form').submit();
 	            }
 	            else {
 	                $("#inputLocalization").val('');
@@ -294,7 +276,7 @@
 	        geolocate();
 	    });
 	    $('#modal_search').click(function() {
-	        $('#search-form').submit();
+	        $('#promotions-form').submit();
 	    });
 
 	    $(".number-pin").click(function(){
@@ -305,6 +287,11 @@
 		    	reCenter(newLat, newLong);
 		    	$(window).scrollTop(0);
 	    	}
+	    });
+
+	    $(".promo-service-box").click(function(){
+	      console.log($(this).attr("service_id"));
+	      $('.show-promo-link[service_id="' + $(this).attr("service_id") + '"][location_id="' + $(this).attr("location_id") + '"]')[0].click();
 	    });
 
 	</script>

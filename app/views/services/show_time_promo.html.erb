@@ -1,41 +1,273 @@
+<%= stylesheet_link_tag "search/show-promo" %>
+
 <div class="overview-main">
   <div class="container">
 
     <div class="row">
-      <div class="col-sm-12">
-      <!-- Imagen de la promoción -->
+      <div class="col-sm-12" style="text-align: center;">
+        <%= image_tag "promociones/header_image.png", :alt => "Header", :class => "img-responsive" %>
       </div>
     </div>
 
     <div class="row">
       <div class="col-xs-6 col-md-6">
         <div class="promo-title">
-          @service.name
+          <%= @service.name %>
         </div>
         <div class="promo-description">
-          @service.description
+          <%= @service.description %>
         </div>
         <div class="google-maps-empresa">
+          <h3><%= @service.company.name %></h3>
           <div id="map"></div>
-        </div>
-        <div id="outcallDistricts" class="well">
+          <div style="margin-top: 5px; margin-bottom: 5px;">
+            <%= image_tag "promociones/pin.png", :alt => "Dirección", :size => "18x26" %>
+            <%= if !@location.outcall then @location.address+', '+@location.district.name else "A Domicilio" end %>
+          </div>
+          <div>
+            <%= image_tag "promociones/phone.png", :alt => "Teléfono", :size => "18x18" %>
+            <%= @location.phone %>
+          </div>
         </div>
       </div>
       <div class="col-xs-6 col-md-6">
-        <h3 style="color: #505050; padding-top: 0px !important; margin-top: 0px !important;">Selecciona el lugar</h3>
+        <div class="promo-price">
+          <div class="col-sm-2">
+          </div>
+          <div class="col-sm-8" style="text-align: right;">
+            <table style="width: 100%;">
+              <tr>
+                <td style="vertical-align: bottom; text-align: right; width: 30%;">
+                  <%= image_tag("backgrounds/flecha.png", :class => "flecha-icon") %>
+                </td>
+                <td style="text-align: right; width: 70%;">
+                  <span style="color: #b5b5b5; font-size: 36px;"><strike><%= number_to_currency(@service.price, unit: "$", delimiter: ".") %></strike></span><br />
+                  <%= image_tag "promociones/price_doble.png", :alt => "Promoción", :size => "50x50", :class => "price-icon" %>&nbsp;<span style="color: #22c488; font-size: 50px;"><%= number_to_currency(@service.price*(100-@service.get_max_time_discount)/100, unit: "", delimiter: ".") %></span><br />
+                  <span style="color: #22c488; font-size: 20px;"><%= @service.get_max_time_discount %>% de descuento</span><br />
+                  <span>
+                    <a class="btnBook" href="">Comprar y reservar</a>
+                  </span>
+                </td>
+              </tr>
+            </table>
+          </div>
+          <div class="col-sm-2">
+          </div>
+          <div style="clear: both;"></div>
+        </div>
+        <div class="social">
+          <% 
+            share_text = "Promoción de " + @service.name + " con " + @service.get_max_time_discount.to_s + "% de descuento en AgendaPro"
+            share_text = url_encode(share_text)
+          %>
+          <a href="http://twitter.com/intent/tweet?status=<%= share_text %>+<%= url_encode(request.original_url) %>" onclick="javascript:window.open(this.href,'', 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=600,width=600');return false;"><%= image_tag "promociones/twitter_doble.png", :size => "32x32" %></a> &nbsp;&nbsp; <a href="http://www.facebook.com/sharer.php?u=<%= url_encode(request.original_url) %>
+&t=<%= share_text %>" onclick="javascript:window.open(this.href,'', 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=600,width=600');return false;"><%= image_tag "promociones/facebook_doble.png", :size => "32x32" %></a>
+        </div>
+        <div class="details-accordions">
 
+
+
+          <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+            <div class="panel panel-default">
+              <div class="panel-heading" role="tab" id="headingOne">
+
+                <h4 class="panel-title minus">
+
+                  <a role="button" class="collapsed" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+
+                    <%= image_tag "promociones/reloj_doble.png", :size => "30x30" %> &nbsp;&nbsp; Horarios de reserva
+                    
+                  </a>
+                </h4>
+              </div>
+              <div id="collapseOne" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingOne">
+                <div class="panel-body">
+                  <%
+
+                      promo_time = @service.company.company_setting.promo_time
+
+                      promos = Promo.where(:service_id => @service.id, :location_id => @location.id)
+                      promos.each do |promo|
+
+                      end
+                    %>
+
+                    <p style="color: #949292;">Revisa los descuentos para cada horario y elige la opción que más te convenga.</p>
+                      
+                  <table class="discounts-table">
+                    <tr>
+                      <th class="first-cell">
+
+                      </th>
+                      <th>
+                        Lun
+                      </th>
+                      <th>
+                        Mar
+                      </th>
+                      <th>
+                        Mié
+                      </th>
+                      <th>
+                        Jue
+                      </th>
+                      <th>
+                        Vie
+                      </th>
+                      <th>
+                        Sáb
+                      </th>
+                      <th>
+                        Dom
+                      </th>
+                    </tr>
+                    <tr>
+
+                      <td class="first-cell">
+                        <span>Mañana</span><br />
+                        <span class="hours"><%= promo_time.morning_start.strftime "%H:%M" %> - <%= promo_time.morning_end.strftime "%H:%M" %></span>
+                      </td>
+
+                      <%
+                        for i in 1..7
+                        promo = Promo.where(:service_id => @service.id, :location_id => @location.id, :day_id => i).first
+                      %>
+
+                        <td>
+                          <% if promo.morning_discount > 0 %>
+                            <%= promo.morning_discount %>%
+                          <% else %>
+                            -
+                          <% end %>
+                        </td>
+
+                      <% end %>               
+
+                    </tr>
+                    <tr>
+                      <td class="first-cell">
+                        <span>Tarde</span><br />
+                        <span class="hours"><%= promo_time.afternoon_start.strftime "%H:%M" %> - <%= promo_time.afternoon_end.strftime "%H:%M" %></span>
+                      </td>
+
+                      <%
+                        for i in 1..7
+                        promo = Promo.where(:service_id => @service.id, :day_id => i).first
+                      %>
+
+                        <td>
+                          <% if promo.afternoon_discount > 0 %>
+                            <%= promo.afternoon_discount %>%
+                          <% else %>
+                            -
+                          <% end %>
+                        </td>
+
+                      <% end %>
+
+                    </tr>
+                    <tr>
+                      <td class="first-cell">
+                        <span>Noche</span><br />
+                        <span class="hours"><%= promo_time.night_start.strftime "%H:%M" %> - <%= promo_time.night_end.strftime "%H:%M" %></span>
+                      </td>
+                      
+                      <%
+                        for i in 1..7
+                        promo = Promo.where(:service_id => @service.id, :day_id => i).first
+                      %>
+
+                        <td>
+                          <% if promo.night_discount > 0 %>
+                            <%= promo.night_discount %>%
+                          <% else %>
+                            -
+                          <% end %>
+                        </td>
+
+                      <% end %>
+
+                    </tr>
+                  </table>
+
+
+
+                </div>
+              </div>
+            </div>
+            <div class="panel panel-default">
+              <div class="panel-heading" role="tab" id="headingTwo">
+                <h4 class="panel-title minus">
+                  <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                    <%= image_tag "promociones/tarjeta_doble.png", :size => "30x30" %> &nbsp;&nbsp;Máximo de compras
+                  </a>
+                </h4>
+              </div>
+              <div id="collapseTwo" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingTwo">
+                <div class="panel-body">
+                  Máximo
+                </div>
+              </div>
+            </div>
+            <div class="panel panel-default">
+              <div class="panel-heading" role="tab" id="headingThree">
+                <h4 class="panel-title minus">
+                  <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                    <%= image_tag "promociones/agendapro_doble.png", :size => "30x30" %> &nbsp;&nbsp;Políticas de la empresa
+                  </a>
+                </h4>
+              </div>
+              <div id="collapseThree" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingThree">
+                <div class="panel-body">
+                  Políticas
+                </div>
+              </div>
+            </div>
+          </div>
+
+
+
+        </div>
       </div>
     </div>
+
+    <% if @relatedPromos.count > 0 %>
+      <div class="row">
+        <div class="col-sm-12">
+          <div class="promo-title">
+            Ofertas relacionadas
+          </div>
+
+          <% i = 1 %>
+          <div class="row">
+          <% @relatedPromos.each do |promo_detail| %>
+            <div class="col-md-4">
+              <%= render :partial => 'searchs/service_panel', :locals => { :service => promo_detail[0], :location => promo_detail[1], :i => i} %>
+            </div>
+            <% if i%3 == 0 %>
+              </div>
+              <div class="row">
+            <% end %>
+            <% i = i + 1 %>
+          <% end %>
+          </div>
+
+        </div>
+      </div>
+    <% end %>
 
   </div>
 </div>
 
+<input type="hidden" id="locationId" value="<%= @location.id %>" />
 
 
 <% content_for :scripts do %>
   <%= javascript_include_tag "http://maps.google.com/maps/api/js?sensor=false" %>
   
   <script type="text/javascript">
+
+  var currMarker;
 
     //====== Google Map ======//
     function initializeMap(lat, lng, mapDiv) {
@@ -99,12 +331,17 @@
       var map;
       initializeMap(-33.413084, -70.592161, 'map');
       
-      if ($('[name="localRadio"]').is(':checked')) {
-        var localId = $('input[name=localRadio]:checked').val();
+      if ($("#locationId").val() != "") {
+        var localId = $("#locationId").val();
 
-        loadSchedule(localId);
+        //loadSchedule(localId);
         localMap(localId);
       }
+    });
+
+    $(".promo-service-box").click(function(){
+      console.log($(this).attr("service_id"));
+      $('.show-promo-link[service_id="' + $(this).attr("service_id") + '"][location_id="' + $(this).attr("location_id") + '"]')[0].click();
     });
 
   </script>

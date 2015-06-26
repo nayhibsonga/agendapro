@@ -107,6 +107,7 @@ class Ability
     can :check_company_web_address, Company
     can :get_promotions_popover, Service
     can :promotion_hours, Booking
+    can :show_time_promo, Service
 
 
     if user.role_id == Role.find_by_name("Super Admin").id
