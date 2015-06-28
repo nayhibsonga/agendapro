@@ -2,6 +2,7 @@ class Client < ActiveRecord::Base
   belongs_to :company
 
   has_many :client_comments, dependent: :destroy
+  has_many :session_bookings, dependent: :destroy
   has_many :bookings, dependent: :destroy
 
   validate :mail_uniqueness, :identification_uniqueness, :record_uniqueness, :minimun_info
