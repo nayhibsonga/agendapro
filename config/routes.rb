@@ -296,7 +296,9 @@ Agendapro::Application.routes.draw do
   get '/company_payment_methods/:id/activate', :to => 'company_payment_methods#activate', :as => 'activate_company_payment_method'
   get '/company_payment_methods/:id/deactivate', :to => 'company_payment_methods#deactivate', :as => 'deactivate_company_payment_method'
   get '/booking_payment', :to => 'payments#booking_payment'
+  get '/load_payment', :to => 'payments#load_payment'
   get '/past_bookings', :to => 'payments#past_bookings'
+  get '/payments_index_content', :to=> 'payments#index_content'
 
   # Payed Bookings
   get "/company_bookings", :to => 'payed_bookings#show'

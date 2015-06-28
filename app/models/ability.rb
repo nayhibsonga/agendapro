@@ -214,7 +214,9 @@ class Ability
         can :check_sessions, Client
 
         can :booking_payment, Payment
+        can :load_payment, Payment
         can :past_bookings, Payment
+        can :index_content, Payment
         can :read, Payment, :company_id => user.company_id
         can :destroy, Payment, :company_id => user.company_id
         can :create, Payment, :company_id => user.company_id
@@ -347,7 +349,9 @@ class Ability
         can :destroy_comment, Client, :company_id => user.company_id
 
         can :booking_payment, Payment
+        can :load_payment, Payment
         can :past_bookings, Payment
+        can :index_content, Payment
         can :read, Payment, :company_id => user.company_id
         can :destroy, Payment, :company_id => user.company_id
         can :create, Payment, :company_id => user.company_id

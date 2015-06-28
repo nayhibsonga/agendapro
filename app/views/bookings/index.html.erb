@@ -470,7 +470,7 @@
                         </thead>
                         <tbody id="payment-bookings-table">
                           <tr class="tr-strong">
-                            <td colspan="4"><a id="payment_past_bookings_button" class="btn btn-default btn-xs">Agregar una reserva pasada al pago</a></td>
+                            <td colspan="4"><a id="payment_past_bookings_button" class="btn btn-default btn-xs">Agregar una reserva de otro día al pago...</a></td>
                             <td>Total:</td>
                             <td id="booking_total_normal_price">$ 0</td>
                             <td id="booking_total_discount">0 %</td>
@@ -496,7 +496,7 @@
                         </thead>
                         <tbody id="payment-products-table">
                           <tr class="tr-strong">
-                            <td colspan="2"><a id="payment_products_button" class="btn btn-default btn-xs">Agregar producto al pago</a></td>
+                            <td colspan="2"><a id="payment_products_button" class="btn btn-default btn-xs">Agregar producto al pago...</a></td>
                             <td>Total:</td>
                             <td id="product_total_normal_price">$ 0</td>
                             <td id="product_total_quantity">0</td>
@@ -510,6 +510,7 @@
                   <div class="row">
                     <div class="col-md-6">
                       <%= f.hidden_field :id %>
+                      <%= f.hidden_field :client_id %>
                       <div class="form-group">
                         <%= f.label :receipt_type_id, "Comprobante de Pago", class: "col-sm-4 control-label" %>
                         <div class="col-sm-8">
@@ -569,11 +570,19 @@
                     </div>
                   </div>
                   <div class="row">
-                    <div class="col-md-6 col-md-offset-6">
+                    <div class="col-md-6">
+                      <div class="form-group has-feedback">
+                        <%= f.label :notes, "Notas", class: "col-sm-4 control-label" %>
+                        <div class="col-sm-8">
+                          <%= f.text_area :notes, class: "form-control" %>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-md-6">
                       <% if @company_setting.staff_code %>
                           <div class="form-group has-feedback">
-                            <%= label_tag :payment_staff_code, "Código de Empleado", class: "col-sm-2 control-label" %>
-                            <div class="col-sm-10">
+                            <%= label_tag :payment_staff_code, "Código de Empleado", class: "col-sm-4 control-label" %>
+                            <div class="col-sm-8">
                               <%= text_field_tag :payments_staff_code, '',{class: "form-control", required: true} %>
                               <span class="help-block"></span>
                               <span class="form-control-feedback"></span>
@@ -581,8 +590,11 @@
                           </div>
                       <% end %>
                       <div class="form-group">
-                        <div class="col-sm-8 col-sm-offset-4">
-                          <%= f.submit "Guardar Pago", class: "btn btn-green btn-ss btn-block", id: "save_payment_button" %>
+                        <div class="col-sm-4 col-sm-offset-4">
+                          <a class="btn btn-red btn-block" id="save_payment_button">Elimnar Pago</a>
+                        </div>
+                        <div class="col-sm-4">
+                          <%= f.submit "Guardar Pago", class: "btn btn-green btn-block", id: "save_payment_button" %>
                         </div>
                       </div>
                     </div>

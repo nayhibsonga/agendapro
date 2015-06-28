@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150622192955) do
+ActiveRecord::Schema.define(version: 20150626200745) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -518,7 +518,7 @@ ActiveRecord::Schema.define(version: 20150622192955) do
   end
 
   create_table "payment_products", force: true do |t|
-    t.integer  "payment_id",               null: false
+    t.integer  "payment_id"
     t.integer  "product_id",               null: false
     t.float    "price",      default: 0.0
     t.float    "discount",   default: 0.0
@@ -552,10 +552,17 @@ ActiveRecord::Schema.define(version: 20150622192955) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "company_payment_method_id"
-    t.float    "discount"
-    t.text     "notes"
+    t.float    "discount",                  default: 0.0
+    t.text     "notes",                     default: ""
     t.integer  "location_id"
     t.integer  "client_id"
+    t.float    "bookings_amount",           default: 0.0
+    t.float    "bookings_discount",         default: 0.0
+    t.float    "products_amount",           default: 0.0
+    t.float    "products_discount",         default: 0.0
+    t.integer  "products_quantity",         default: 0
+    t.integer  "bookings_quantity",         default: 0
+    t.integer  "quantity",                  default: 0
   end
 
   add_index "payments", ["bank_id"], name: "index_payments_on_bank_id", using: :btree
@@ -601,9 +608,9 @@ ActiveRecord::Schema.define(version: 20150622192955) do
 
   create_table "products", force: true do |t|
     t.integer  "company_id"
-    t.string   "name"
-    t.float    "price"
-    t.text     "description"
+    t.text     "name",                default: ""
+    t.float    "price",               default: 0.0
+    t.text     "description",         default: ""
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "product_category_id",               null: false

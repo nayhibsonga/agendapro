@@ -1,0 +1,67 @@
+<div class="row">
+  <div class="col-sm-4">
+    <div class="well">
+      <h4>Recaudación General</h4>
+      <p><strong><%= number_to_currency(@payments.sum(:amount), currency: ' $', separator: ',', delimeter: '.', precision: 0) %></strong></p>
+      <p>(Dando <%= @payments.average(:discount) ? @payments.average(:discount).round(2) : '0' %> % de descuento promedio en <%= @payments.count %> pagos)</p>
+    </div>
+  </div>
+  <div class="col-sm-4">
+    <div class="well">
+      <h4>Recaudación por Reservas</h4>
+      <p><strong><%= number_to_currency(@payments.sum(:bookings_amount), currency: ' $', separator: ',', delimeter: '.', precision: 0) %></strong></p>
+      <p>(Dando <%= @payments.average(:bookings_discount) ? @payments.average(:bookings_discount).round(2) : '0'  %> % de descuento promedio en <%= @payments.sum(:bookings_quantity) %> reservas)</p>
+    </div>
+  </div>
+  <div class="col-sm-4">
+    <div class="well">
+      <h4>Recaudación por Productos</h4>
+      <p><strong><%= number_to_currency(@payments.sum(:products_amount), currency: ' $', separator: ',', delimeter: '.', precision: 0) %></strong></p>
+      <p>(Dando <%= @payments.average(:products_discount) ? @payments.average(:products_discount).round(2) : '0'  %> % de descuento promedio en <%= @payments.sum(:products_quantity) %> productos)</p>
+    </div>
+  </div>
+</div>
+<div class="row">
+  <div class="col-sm-12">
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Fecha de Pago</th>
+          <th>Local</th>
+          <th>Comprobante</th>
+          <th># Comp.</th>
+          <th>Medio de Pago</th>
+          <th>Tipo M. de Pago</th>
+          <th># M. de Pago</th>
+          <th>Cuotas</th>
+          <th>Banco</th>
+          <th>Monto</th>
+          <th>Descuento</th>
+          <th>Opciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @payments.each do |payment| %>
+        <tr>
+          <td><%= payment.payment_date %></td>
+          <td><%= payment.location ? payment.location.name : '' %></td>
+          <td><%= payment.receipt_type ? payment.receipt_type.name : '' %></td>
+          <td><%= payment.receipt_number %></td>
+          <td><%= payment.payment_method ? payment.payment_method.name : '' %></td>
+          <td><% if payment.payment_method && payment.payment_method.name == 'Otro' %>
+            <%= payment.company_payment_method ? payment.company_payment_method.name : '' %>
+          <% else %>
+            <%= payment.payment_method_type ? payment.payment_method_type.name : '' %>
+          <% end %></td>
+          <td><%= payment.payment_method_number %></td>
+          <td><%= payment.installments %></td>
+          <td><%= payment.bank ? payment.bank.name : '' %></td>
+          <td><%= number_to_currency(payment.amount, currency: ' $', separator: ',', delimeter: '.', precision: 0) %></td>
+          <td><%= payment.discount.round(2) %> %</td>
+          <td><button class="btn btn-warning btn-xs" onclick="loadPayment(<%= payment.id %>);"><i class="fa fa-pencil"></i></button> <button class="btn btn-red btn-xs" onclick="destroyPayment(<%= payment.id %>);"><i class="fa fa-trash-o"></i></button></td>
+        </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+</div>
