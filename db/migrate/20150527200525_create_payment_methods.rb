@@ -5,5 +5,11 @@ class CreatePaymentMethods < ActiveRecord::Migration
 
       t.timestamps
     end
+
+    PaymentMethod.create(name: 'Efectivo')
+    PaymentMethod.create(name: 'Tarjeta de Crédito')
+    PaymentMethod.create(name: 'Tarjeta de Débito')
+    PaymentMethod.create(name: 'Chaque')
+    PaymentMethod.create(name: 'Otro')
   end
 end
