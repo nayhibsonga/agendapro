@@ -15,6 +15,8 @@ class Payment < ActiveRecord::Base
   accepts_nested_attributes_for :payment_products, :reject_if => :all_blank, :allow_destroy => true
   accepts_nested_attributes_for :bookings, :reject_if => :all_blank
 
+  validates :payment_date, :location_id, :client_id, :presence => true
+
   after_save :set_numbers
 
   def set_numbers

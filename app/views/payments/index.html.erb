@@ -65,12 +65,27 @@
         </div>
         <div class="modal-body payment-modal-body">
           <%= form_for @payment, html: {class: "form-horizontal"} do |f| %>
-          <div class="row">
-            <div class="col-sm-12">
-              <div class="form-group">
-                <%= label_tag :full_name, "Nombre Cliente", class: "col-sm-4 control-label" %>
+          <div class="row" id="client_location_row">
+            <div class="col-sm-6">
+              <div class="form-group has-feedback">
+                <label for="full_name" class="col-sm-4 control-label">Nombre Cliente</label>
                 <div class="col-sm-8">
-                  <%= text_field_tag :full_name, { class: "form-control" }%>
+                  <div class="input-group">
+                    <input type="text" id="full_name" class="form-control" placeholder="Buscar clientes..." name="full_name">
+                    <span class="input-group-btn">
+                      <button class="btn btn-red" type="button" id="xButton"><i class="fa fa-times-circle"></i></button>
+                    </span>
+                  </div>
+                  <span class="help-block"></span>
+                  <ul id="full_name_suggestions"></ul>
+                </div>
+              </div>
+            </div>
+            <div class="col-sm-6">
+              <div class="form-group has-feedback">
+                <label for="payment_location_id" class="col-sm-4 control-label">Local</label>
+                <div class="col-sm-8">
+                  <%= collection_select(:payment, :location_id, Location.where(company_id: current_user.company_id).accessible_by(current_ability), :id, :name, {}, {class: "form-control"} ) %>
                 </div>
               </div>
             </div>
@@ -213,7 +228,7 @@
               <% end %>
               <div class="form-group">
                 <div class="col-sm-4 col-sm-offset-4">
-                  <a class="btn btn-red btn-block" id="save_payment_button">Elimnar Pago</a>
+                  <a class="btn btn-red btn-block" id="delete_payment_button">Elimnar Pago</a>
                 </div>
                 <div class="col-sm-4">
                   <%= f.submit "Guardar Pago", class: "btn btn-green btn-block", id: "save_payment_button" %>

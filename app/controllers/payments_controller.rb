@@ -133,6 +133,16 @@ class PaymentsController < ApplicationController
     render :json => { past_bookings: @past_bookings }
   end
 
+  def client_bookings
+    weekdays = ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb']
+    @full_past_bookings = Booking.where(client_id: params[:client_id], location_id: params[:location_id], payment_id: nil).order(start: :desc).limit(100)
+    @past_bookings = []
+    @full_past_bookings.each do |b|
+      @past_bookings.push({ booking: b, booking_checked: true, booking_service: b.service.name, booking_provider: b.service_provider.public_name, booking_date: weekdays[b.start.wday] + ' ' + b.start.strftime('%d-%m-%Y'), booking_time: b.start.strftime('%R'), booking_price: b.service.price.round(0) })
+    end
+    render :json => { past_bookings: @past_bookings }
+  end
+
   private
     def set_payment
       @payment = Payment.find(params[:id])
