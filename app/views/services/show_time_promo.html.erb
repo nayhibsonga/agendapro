@@ -38,14 +38,14 @@
             <table style="width: 100%;">
               <tr>
                 <td style="vertical-align: bottom; text-align: right; width: 20%;">
-                  <%= image_tag("backgrounds/flecha.png", :class => "flecha-icon") %>
+                  <%= image_tag("promociones/flecha.png", :class => "flecha-icon", :size => "60x120") %>
                 </td>
                 <td style="text-align: right; width: 80%;">
                   <span style="color: #b5b5b5; font-size: 40px;"><strike><%= number_to_currency(@service.price, unit: "$", delimiter: ".") %></strike></span><br />
-                  <%= image_tag "promociones/price_doble.png", :alt => "Promoción", :size => "60x60", :class => "price-icon" %>&nbsp;<span style="color: #22c488; font-size: 65px;"><%= number_to_currency(@service.price*(100-@service.get_max_time_discount)/100, unit: "", delimiter: ".") %></span><br />
+                  <%= image_tag "promociones/price_doble.png", :alt => "Promoción", :size => "46x60", :class => "price-icon" %>&nbsp;<span style="color: #22c488; font-size: 65px;"><%= number_to_currency(@service.price*(100-@service.get_max_time_discount)/100, unit: "", delimiter: ".") %></span><br />
                   <span style="color: #22c488; font-size: 24px;"><%= @service.get_max_time_discount %>% de descuento</span><br />
                   <span>
-                    <a class="btnBook" href="">Comprar y reservar</a>
+                    <button class="btnBook" id="btnPayBook" data-toggle="modal" data-target="#selectProviderModal">Comprar y reservar</button>
                   </span>
                 </td>
               </tr>
@@ -55,7 +55,7 @@
           </div>
           <div style="clear: both;"></div>
         </div>
-        <div class="social">
+        <div class="social-links">
           <% 
             share_text = "Promoción de " + @service.name + " con " + @service.get_max_time_discount.to_s + "% de descuento en AgendaPro"
             share_text = url_encode(share_text)
@@ -259,16 +259,214 @@
   </div>
 </div>
 
-<input type="hidden" id="locationId" value="<%= @location.id %>" />
+<div class="modal" id="selectProviderModal" tabindex="-1" role="basic" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+          <button type="button" class="close closeBookModal" data-dismiss="modal">&times;</button>
+          <h3 class="modal-title" id="optimizerTitle" style="line-height: 1.1;">Reservar</h3>
+      </div>
+      <div class="modal-body">
 
+        <div id="optimizerFirst">
+          <div id="pickerSelectDate">
+            <div class="row">
+              <div class="col-xs-3" style="text-align: right; font-weight: bold;">
+                Inicio
+              </div>
+              <div class="col-xs-9">
+                <input id="initialPickerDate" value="<%= I18n.l(DateTime.now.to_date) %>" hidden />
+                <span id="pickerSelected" style="color: #949292;"><%= I18n.l(DateTime.now.to_date) %></span>&nbsp;&nbsp;
+                <span class="optimizer-date-span" id="openDatepicker" style="float: right;">
+                  Seleccionar nuevo inicio&nbsp;<i class="fa fa-calendar-o"></i>
+                  <input type="text" class="form-control" name="optimizerDateSelector" id="optimizerDateSelector" class="datepicker" />
+                  <input type="hidden" name="selectedLocal" id="selectedLocal" value="<%= @location.id %>" />
+                  <input type="hidden" name="selectedService" id="selectedService" value="<%= @service.id %>" />
+                </span>
+              </div>
+            </div>
+          </div>
+          <form class="form-horizontal" id="serviceOptimizer">
+              <div class="form-group">
+                <label for="providerOptimizerSelector" class="col-xs-3 control-label">Prestador</label>
+                <div class="col-xs-9">
+                  <select class="form-control" name="providerOptimizerSelector" id="providerOptimizerSelector">
+                    <% if @service.service_providers.where(:active => true, online_booking: true).where('location_id = ?', @location.id).count > 1 %>
+                        <% if @location.company.company_setting.provider_preference != 0 %>
+                            <option value="0">Sin Preferencia</option>
+                        <% end %>
+                    <% end %>
+                    <% @service.service_providers.where(:active => true, online_booking: true).where('location_id = ?', @location.id).order(order: :asc).each do |provider| %>
+
+                      <option value="<%= provider.id %>">
+                          <%= provider.public_name %>
+                      </option>
+
+                    <% end %>
+                  </select>
+                </div>
+              </div>
+              <input type="hidden" name="service" value="<%= @service.id %>" />
+          </form>
+          <div id="selectHour"></div>
+          <%= form_tag '/optimizer_data', method: 'post', role: 'form', class: 'hidden', id: 'userData' do %>
+            <input type="hidden" id="local" name="local" value="<%= @location.id %>">
+          <% end %>
+        </div>
+        <div class="row" id="loader-div" hidden>
+          <p style="text-align: center; margin-top: 40px;">
+            <%= image_tag "ajax-loader.gif", :alt => "Loader" %>
+          </p>
+        </div>
+      </div>
+
+      <div id="calendar-div" hidden>
+        <div class="row staff">
+          <div class="col-md-9" id="staff-calendar">
+            <div class="panel panel-info <%= 'full-margin' if @location.company.company_setting.provider_preference == 2 %>">
+              <div class="calendar-head">
+                <div class="panel-title">
+                  <div class="row">
+                    <div class="col-xs-1">
+                      <button type="button" class="btn btn-default" id="prev"><i class="fa fa-chevron-left"></i></button>
+                    </div>
+                    <div class="col-xs-8">
+                      <span class="tittle"></span>
+                    </div>
+                    <div class="col-xs-2">
+                      <span class="date-span">
+                        Ir a fecha&nbsp;<i class="fa fa-calendar-o"></i>
+                        <input type="text" id="datepicker" name="date" />
+                      </span>
+                    </div>
+                    <div class="col-xs-1">
+                      <button type="button" class="btn btn-default pull-right" id="next"><i class="fa fa-chevron-right"></i></button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="days-row">
+              </div>
+              <div class="panel-body">
+                <div class="horario">
+                  <!-- <%= image_tag "ajax-loader.gif", :alt => "Loader", :id => "calendar-loader" %> -->
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div class="panel panel-default">
+              <div id="selected-hour-heading">
+                Detalle Reserva
+              </div>
+              <div id="selected-hour-body">
+
+              </div>
+            </div>
+          </div>
+        </div>
+        <!--<div class="row sessions-bar" style="display: none;">
+          <div class="col-xs-12 col-md-2">
+            <a class="btn btn-large btn-green btn-add-session" style="padding: 5px 12px; margin-right: 10px; font-size: 20px;" onclick="addNewSession()"><i class="fa fa-plus"></i> Agregar Sesión</a>
+          </div>
+          <div class="col-xs-12 col-md-10">
+            Puedes agendar hasta <span id="sessions-left"></span> sesiones más. Las sesiones que no agendes podrán ser agendadas desde tu cuenta AgendaPro o llamando al local elegido.
+          </div>
+        </div>-->
+        <!--<div class="row change-bar">
+          <div class="col-xs-12 col-md-4 col-md-push-3">
+            <p class="p-label"><span class="wf-label label-available">&nbsp;</span> Disponible<span class="wf-label label-past">&nbsp;</span> No Disponible<span class="wf-label label-unavailable">&nbsp;</span> Ocupado</p>
+          </div>
+          <div class="col-xs-4 col-md-3 col-md-pull-4">
+            <div class="btn-change btn-prev">
+              <a class="prev2 prev-btn"><i class="fa fa-chevron-left prev-arrow"></i> Anterior</a>
+            </div>
+          </div>
+          <div class="col-xs-8 col-md-5">
+            <a class="btn btn-large btn-green btn-add-session sessions-bar" style="padding: 5px 12px; margin-right: 10px; font-size: 20px;" onclick="addNewSession()" style="display: none;"><i class="fa fa-plus"></i> Agregar Sesión</a>
+            <div class="btn-change btn-next">
+              <a class="next2 next-btn">Siguiente <i class="fa fa-chevron-right next-arrow"></i></a>
+            </div>
+          </div>
+        </div>-->
+        <!--<div class="row sessions-bar">
+          <div class="col-md-3">
+
+          </div>
+          <div class="col-md-9">
+            <div id="sessions-summary">
+              <div id="sessions-summary-title">
+                Detalle de reserva&nbsp;&nbsp;
+                <span id="sessions-summary-subtitle">
+                  Puedes agendar hasta <span id="sessions-left"></span> sesiones más. &nbsp;&nbsp; <span id="sessions-help"><i class="fa fa-question-circle"></i>
+                </span>
+              </div>
+              <div id="sessions-summary-body">
+                <table>
+                  <tr id="sessions-summary-tr">
+                  <tr>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>-->
+      </div>
+
+      <div class="modal-footer">          
+          <a type="button" class="btn open-calendar-btn" id="openCalendarBtn"><i class="fa fa-calendar-o"></i>&nbsp;Ver calendario</a>
+          <a type="button" class="btn hour-selected-btn" id="openPayFormBtn" style="display: none;" disabled="true"><i class="fa fa-usd"></i>&nbsp;Pagar</a>
+          <!--<button type="button" class="btn session-btn" id="openOptimizerBtn"><i class="fa fa-calendar-o"></i>&nbsp;Sugerir hora</button>-->
+          <a href="#" class="btn btn-white" class="closeBookModal" data-dismiss="modal">Cerrar</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<input type="hidden" id="locationId" value="<%= @location.id %>" />
+<input type="hidden" id="serviceId" value="<%= @service.id %>" />
+
+<% content_for :stylesheets do %>
+  <%= stylesheet_link_tag "calendar" %>
+<% end %>
 
 <% content_for :scripts do %>
-  <%= javascript_include_tag "http://maps.google.com/maps/api/js?sensor=false" %>
   
+  <%= javascript_include_tag 'workflow/promotions-calendar' %>
+    
   <script type="text/javascript">
 
-  var currMarker;
+    
+    var currMarker;
 
+    $(document).ready(function(){
+      $("#optimizerDateSelector").datepicker({
+          autoSize: true,
+          firstDay: 1,
+          changeMonth: true,
+          changeYear: true,
+          monthNames: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+          monthNamesShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
+          prevText: 'Atrás',
+          nextText: 'Adelante',
+          dayNames: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'],
+          dayNamesShort: ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'],
+          dayNamesMin: ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'],
+          today: 'Hoy',
+          clear: '',
+          dateFormat: 'yy-mm-dd',
+          onSelect: function(newDate){
+              $("#pickerSelected").empty();
+              var prettyDate = newDate.split("-")[2] + "/" + newDate.split("-")[1] + "/" + newDate.split("-")[0];
+              $("#pickerSelected").append(prettyDate);
+          }
+      });
+
+      $("#openDatepicker").click(function(){
+          $("#optimizerDateSelector").datepicker("show");
+      });
+    });
+
+    
     //====== Google Map ======//
     function initializeMap(lat, lng, mapDiv) {
         var properties = {
@@ -343,6 +541,187 @@
       console.log($(this).attr("service_id"));
       $('.show-promo-link[service_id="' + $(this).attr("service_id") + '"][location_id="' + $(this).attr("location_id") + '"]')[0].click();
     });
+
+
+
+    var promoCalendar;
+
+    function simple_currency(price)
+    {
+      var amount = price.toString();
+      //console.log(amount);
+      //console.log(amount.length);
+      var j = 0;
+      var stack = new Array();
+      for(i = amount.length-1; i>=0; i--)
+      {
+        j = j+1;
+        stack.push(amount[i]);
+        if(j == 3 && i>0)
+        {
+          stack.push('.');
+          j = 0;
+        }
+      }
+      var formatted_amount = "$";
+      for(i = stack.length-1; i >=0 ; i--)
+      {
+        formatted_amount = formatted_amount + stack[i];
+      }
+
+      return formatted_amount;
+    }
+
+
+    /*function checkUserCrossBookings () {
+      $(".alert").alert('close');
+      var user = $('#user_id').val();
+      var booking_start = actual_booking.start;
+      var booking_end = actual_booking.end;
+      $.getJSON('/check_user_cross_bookings', {user_id: user, booking_start: booking_start, booking_end: booking_end}, function (result) {
+        if (result.crossover) {
+          $('#warning').empty();
+          var warning = '<div class="alert alert-warning alert-dismissable fade in" style="margin-bottom: 0px;">' +
+            '<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>' +
+            '<strong>¡Advertencia!</strong> Tienes agendado <em>' + result.booking.service + '</em> con <em>' + result.booking.service_provider + '</em> el <em>' + formattedTime(result.booking.start) + '</em>.' +
+          '</div>';
+          $('#warning').append(warning);
+        };
+      });
+    }*/
+
+    $('body').on('hidden.bs.modal', '#selectProviderModal', function () {
+      $("#selectProviderModal .modal-dialog").removeClass("calendar-modal");
+      $("#calendar-div").hide();
+      $("#optimizerFirst").show();
+      $("#openCalendarBtn").show();
+      $("#openPayFormBtn").hide();
+      $("#openPayFormBtn").attr("disabled", true);
+    });
+
+    function loadCalendar() {
+
+      var localId = $("#locationId").val();
+      var selects = [];
+      var start_date = $("#optimizerDateSelector").val();
+
+      $("#optimizerFirst").hide();
+      $("#loader-div").show();
+      $("#openCalendarBtn").hide();
+
+
+      selects.push({
+        service: $("#serviceId").val(),
+        provider: $("#providerOptimizerSelector").val()
+      });
+
+      var data;
+
+      if($("#pickerSelected").val()!="")
+      {
+        data = {local: localId, serviceStaff: JSON.stringify(selects), date: $("#pickerSelected").val()}
+      }
+      else
+      {
+        data = {local: localId, serviceStaff: JSON.stringify(selects)}
+      }
+
+      if (promoCalendar) {
+        promoCalendar.rebuild('/promotion_hours', data);
+      }
+      else {
+        promoCalendar = new PromoCalendar('/promotion_hours', data);
+      }
+
+      $(document).on('hourClick', function (e) {
+        
+        bookSummary = bookSummaries[e.index];
+
+        $("#selected-hour-body").empty();
+
+        for(k=0; k<bookSummary.bookings.length; k++)
+        {
+          bookDetails = bookSummary.bookings[k];
+          console.log(bookDetails);
+          bookDetailsStart = bookDetails.start.split("T")[1].split(":")[0] + ':' + bookDetails.start.split("T")[1].split(":")[1];
+          bookDetailsEnd = bookDetails.end.split("T")[1].split(":")[0] + ':' + bookDetails.end.split("T")[1].split(":")[1];
+
+          bookDetailsDiscountPrice = bookDetails.price;
+
+          
+          if(bookDetails.has_discount && bookDetails.has_time_discount)
+          {
+            if(bookDetails.discount > bookDetails.has_time_discount)
+            {
+              bookDetailsDiscountPrice = bookDetails.price * (100 - bookDetails.discount) / 100;
+              $("#selected-hour-body").append(
+                '<b>' + bookDetails.service_name + '</b><br />' +
+                '<div class="light-gray"><%= image_tag("promociones/reloj.png", class:"promotion-hour-icon", size: "18x18") %> ' + bookDetailsStart + ' - ' + bookDetailsEnd + '<br />' +
+                '<%= image_tag("promociones/etiqueta.png", class:"promotion-hour-icon", size: "18x18") %>  <strike>' + simple_currency(bookDetails.price) + '</strike>  <span class="light-green"><b>' + simple_currency(bookDetailsDiscountPrice) + '</b></span> (' + bookDetails.discount + ' % off) <br /></div>'
+              );
+            }
+            else
+            {
+              bookDetailsDiscountPrice = bookDetails.price * (100 - bookDetails.time_discount) / 100;
+              $("#selected-hour-body").append(
+                '<b>' + bookDetails.service_name + '</b><br />' +
+                '<div class="light-gray"><%= image_tag("promociones/reloj.png", class:"promotion-hour-icon", size: "18x18") %>' + bookDetailsStart + ' - ' + bookDetailsEnd + '<br />' +
+                '<%= image_tag("promociones/etiqueta.png", class:"promotion-hour-icon", size: "18x18") %> <strike>' + simple_currency(bookDetails.price) + '</strike> ' + '<span class="light-green"><b>' + simple_currency(bookDetailsDiscountPrice) + '</b></span>' + ' (' + bookDetails.time_discount + ' % off) <br /></div>'
+              );
+            }
+          }
+          else if(bookDetails.has_discount && !bookDetails.has_time_discount)
+          {
+            bookDetailsDiscountPrice = bookDetails.price * (100 - bookDetails.discount) / 100;
+            $("#selected-hour-body").append(
+                '<b>' + bookDetails.service_name + '</b><br />' +
+                '<div class="light-gray"><%= image_tag("promociones/reloj.png", class:"promotion-hour-icon", size: "18x18") %> ' + bookDetailsStart + ' - ' + bookDetailsEnd + '<br />' +
+                '<%= image_tag("promociones/etiqueta.png", class:"promotion-hour-icon", size: "18x18") %> <strike>' + simple_currency(bookDetails.price) + '</strike> <span class="light-green"><b>' + simple_currency(bookDetailsDiscountPrice) + '</b></span> (' + bookDetails.discount + ' % off) <br /></div>'
+              );
+          }
+          else if(!bookDetails.has_discount && bookDetails.has_time_discount)
+          {
+            bookDetailsDiscountPrice = bookDetails.price * (100 - bookDetails.time_discount) / 100;
+            $("#selected-hour-body").append(
+                '<b>' + bookDetails.service_name + '</b><br />' +
+                '<div class="light-gray"><%= image_tag("promociones/reloj.png", class:"promotion-hour-icon", size: "18x18") %> ' + bookDetailsStart + ' - ' + bookDetailsEnd + '<br />' +
+                '<%= image_tag("promociones/etiqueta.png", class:"promotion-hour-icon", size: "18x18") %> <strike>' + simple_currency(bookDetails.price) + '</strike> <span class="light-green"><b>' + simple_currency(bookDetailsDiscountPrice) + '</b></span> (' + bookDetails.time_discount + ' % off) <br /></div>'
+              );
+          }
+          else
+          {
+            $("#selected-hour-body").append(
+              '<b>' + bookDetails.service_name + '</b><br />' +
+              '<div class="light-gray"><%= image_tag("promociones/reloj.png", class:"promotion-hour-icon", size: "18x18") %> ' + bookDetailsStart + ' - ' + bookDetailsEnd + '<br />' +
+              '<%= image_tag("promociones/etiqueta.png", class:"promotion-hour-icon", size: "18x18") %> ' + simple_currency(bookDetails.price) + '<br /></div>'
+            );
+          }
+          
+          
+          /*$("#selected-hour-body").append(
+            bookDetails.service_name + '<br />' +
+            bookDetailsStart + ' - ' + bookDetailsEnd + '<br />' + 
+            simple_currency(bookDetails.price)
+          );*/
+
+        }
+
+        $("#openPayFormBtn").attr("disabled", false);
+
+      });
+  
+      $("#selectProviderModal .modal-dialog").addClass("calendar-modal");
+
+      $("#openPayFormBtn").show();
+      $("#calendar-div").show();
+      $("#loader-div").hide();
+
+    }
+
+    $("#openCalendarBtn").click(function(){
+      loadCalendar();
+    });
+
 
   </script>
 
