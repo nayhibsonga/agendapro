@@ -40,10 +40,10 @@ function loadPaymentSettings() {
 
   //validar codigo de autorizacion required
   if ($('#payment_payment_method_id option:selected').data("number-required")) {
-    $( "#payment_payment_method_number" ).rules( "add", { required: true });
+    // $( "#payment_payment_method_number" ).rules( "add", { required: true });
   }
   else {
-    $( "#payment_payment_method_number" ).rules( "remove", { required: true });
+    // $( "#payment_payment_method_number" ).rules( "remove", { required: true });
   }
 
   return false;
@@ -133,7 +133,7 @@ function loadPayment(payment_id) {
     $('.payment-booking-tr').remove();
     $('.payment-product-tr').remove();
     $.getJSON('/load_payment/', { payment_id: payment_id }, function (full_payment) {
-      window.console.log(full_payment);
+      // window.console.log(full_payment);
       var bookings = full_payment.bookings;
       if (bookings.length > 0) {
         $.each(bookings, function (key, full_booking) {
@@ -181,6 +181,10 @@ function loadPayment(payment_id) {
       loadPaymentSettings();
       $('#newPaymentModal').modal('show');
     });
+  }
+  else {
+    loadPaymentSettings();
+    $('#newPaymentModal').modal('show');
   }
 
 }
@@ -246,7 +250,7 @@ function add_new_product_to_payment(selected_option, quantity, discount, price) 
   $('#payment_product_price_' + new_product_index).val(price);
   $('#payment_product_quantity_' + new_product_index).val(quantity);
 
-  $('#payment_product_normal_' + new_product_index).html('$ ' + $('#payment_product_product_id_' + new_product_index + ' option:selected').data("price").toFixed(0));
+  $('#payment_product_normal_' + new_product_index).html('$ ' + ($('#payment_product_product_id_' + new_product_index + ' option:selected').data("price") * quantity).toFixed(0));
 
   $('#payment_product_product_id_' + new_product_index).change(function() {
     $('#payment_product_price_' + new_product_index).val($('#payment_product_product_id_' + new_product_index + ' option:selected').data("price"));
@@ -486,33 +490,6 @@ $(function() {
     $('#destroy_payment_button').attr('disabled', true);
     $('#destroy_payment_button').html('<i class="fa fa-spinner fa-spin"></i>');
     destroyPayment();
-  });
-
-  $('#new_payment').validate({
-    errorPlacement: function(error, element) {
-      error.appendTo(element.next());
-    },
-    rules: {
-      'payment[payment_date]': {
-        required: true
-      }
-    },
-    highlight: function(element) {
-      $(element).closest('.form-group').removeClass('has-success').addClass('has-error');
-      $(element).parent().children('.form-control-feedback').removeClass('fa fa-check').addClass('fa fa-times');
-    },
-    success: function(element) {
-      $(element).closest('.form-group').removeClass('has-error').addClass('has-success');
-      $(element).parent().parent().children('.form-control-feedback').removeClass('fa fa-times').addClass('fa fa-check');
-      $(element).parent().empty()
-    },
-    submitHandler: function(form) {
-      $('#save_payment_button').attr('disabled', true);
-      $("#save_payment_button").html('<i class="fa fa-spinner fa-spin"></i>');
-      savePayment();
-
-      return false;
-    }
   });
 
   $("#to").datepicker('setDate', new Date());

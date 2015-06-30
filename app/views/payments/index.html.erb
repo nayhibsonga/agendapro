@@ -8,21 +8,21 @@
 <% end %>
 
 <div class="container-fluid">
-  <div class="row">
-    <div class="col-md-12">
+  <div class="row" style="margin-top: 20px;">
+    <div class="col-sm-10">
       <div class="form-group">
-        <label for="from" class="col-md-2 control-label" style="margin-top: 20px;">Desde:</label>
-        <div class="col-md-4">
-          <input type="text" id="from" name="from" class="form-control payments_select" value="<%= Time.now.strftime("%Y-%m-%d") %>" style="margin-top: 20px;">
+        <label for="from" class="col-sm-2 control-label">Desde:</label>
+        <div class="col-sm-4">
+          <input type="text" id="from" name="from" class="form-control payments_select" value="<%= Time.now.strftime("%Y-%m-%d") %>">
         </div>
-        <label for="from" class="col-md-2 control-label" style="margin-top: 20px;">Hasta:</label>
-        <div class="col-md-4">
-          <input type="text" id="to" name="to" class="form-control payments_select" value="<%= Time.now.strftime("%Y-%m-%d") %>" style="margin-top: 20px;">
+        <label for="from" class="col-sm-2 control-label">Hasta:</label>
+        <div class="col-sm-4">
+          <input type="text" id="to" name="to" class="form-control payments_select" value="<%= Time.now.strftime("%Y-%m-%d") %>">
         </div>
       </div>
       <div class="form-group">
-        <label for="location_ids[]" class="col-md-2 control-label" style="margin-top: 20px;">Locales:</label>
-        <div class="col-md-3">
+        <label for="location_ids[]" class="col-sm-2 control-label" style="margin-top: 20px;">Locales:</label>
+        <div class="col-sm-2">
           <% for location in Location.where(company_id: current_user.company_id).accessible_by(current_ability) do %>
             <label class="checkbox-inline" style="margin-top: 20px;">
               <%= check_box_tag 'location_ids[]', location.id, params[:location_ids].blank? ? true : params[:location_ids] && params[:location_ids].includes(location.id), {class: "payments_select payment_location"} %>
@@ -30,8 +30,8 @@
             </label>
           <% end %>
         </div>
-        <label for="payment_method_ids[]" class="col-md-2 control-label" style="margin-top: 20px;">Medio de Pago:</label>
-        <div class="col-md-5">
+        <label for="payment_method_ids[]" class="col-sm-2 control-label" style="margin-top: 20px;">Medio de Pago:</label>
+        <div class="col-sm-6">
           <% for payment_method in PaymentMethod.all do %>
             <label class="checkbox-inline" style="margin-top: 20px;">
               <%= check_box_tag 'payment_method_ids[]', payment_method.id, params[:payment_method_ids].blank? ? true : params[:payment_method_ids] && params[:payment_method_ids].includes(payment_method.id), {class: "payments_select payment_method"} %>
@@ -41,9 +41,16 @@
         </div>
       </div>
     </div>
+    <div class="col-sm-2">
+      <div class="form-group">
+        <a class='btn btn-green' id="new_payment_button" onclick="loadPayment(0);"><i class="fa fa-plus"> </i> Nuevo Pago</a>
+      </div>
+    </div>
   </div>
   <div class="row" style="border-top: 1px solid #e3e3e3; margin-top: 25px;">
-    <div id='render_content'>
+    <div class="col-sm-12">
+      <div id='render_content'>
+      </div>
     </div>
   </div>
 </div>
@@ -59,7 +66,17 @@
         <div class="modal-body payment-modal-body">
           <%= form_for @payment, html: {class: "form-horizontal"} do |f| %>
           <div class="row">
-            <div class="col-md-12">
+            <div class="col-sm-12">
+              <div class="form-group">
+                <%= label_tag :full_name, "Nombre Cliente", class: "col-sm-4 control-label" %>
+                <div class="col-sm-8">
+                  <%= text_field_tag :full_name, { class: "form-control" }%>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-sm-12">
               <table class="table">
                 <thead>
                   <tr>
@@ -86,7 +103,7 @@
             </div>
           </div>
           <div class="row">
-            <div class="col-md-12">
+            <div class="col-sm-12">
               <table class="table">
                 <thead>
                   <tr>
@@ -113,7 +130,7 @@
             </div>
           </div>
           <div class="row">
-            <div class="col-md-6">
+            <div class="col-sm-6">
               <%= f.hidden_field :id %>
               <%= f.hidden_field :client_id %>
               <div class="form-group">
@@ -135,7 +152,7 @@
                 </div>
               </div>
             </div>
-            <div class="col-md-6">
+            <div class="col-sm-6">
               <div class="form-group">
                 <%= f.label :payment_method_id, "Tipo de Pago", class: "col-sm-4 control-label" %>
                 <div class="col-sm-8">
@@ -175,7 +192,7 @@
             </div>
           </div>
           <div class="row">
-            <div class="col-md-6">
+            <div class="col-sm-6">
               <div class="form-group has-feedback">
                 <%= f.label :notes, "Notas", class: "col-sm-4 control-label" %>
                 <div class="col-sm-8">
@@ -183,7 +200,7 @@
                 </div>
               </div>
             </div>
-            <div class="col-md-6">
+            <div class="col-sm-6">
               <% if @company_setting.staff_code %>
                   <div class="form-group has-feedback">
                     <%= label_tag :payment_staff_code, "Código de Empleado", class: "col-sm-4 control-label" %>
@@ -221,7 +238,7 @@
         </div>
         <div class="modal-body" id="paymentBookingModalBody">
           <div class="row">
-            <div class="col-md-12">
+            <div class="col-sm-12">
               <div class="fixed-table">
                 <h4>Modificaciones a la Reserva:</h4>
                 <table class="table">
@@ -254,4 +271,34 @@
 
 <% content_for :scripts do %>
   <%= javascript_include_tag "payment_index" %>
+  <script type="text/javascript">
+  $(function() {
+    $('#new_payment').validate({
+      errorPlacement: function(error, element) {
+        error.appendTo(element.next());
+      },
+      rules: {
+        'payment[payment_date]': {
+          required: true
+        }
+      },
+      highlight: function(element) {
+        $(element).closest('.form-group').removeClass('has-success').addClass('has-error');
+        $(element).parent().children('.form-control-feedback').removeClass('fa fa-check').addClass('fa fa-times');
+      },
+      success: function(element) {
+        $(element).closest('.form-group').removeClass('has-error').addClass('has-success');
+        $(element).parent().parent().children('.form-control-feedback').removeClass('fa fa-times').addClass('fa fa-check');
+        $(element).parent().empty()
+      },
+      submitHandler: function(form) {
+        $('#save_payment_button').attr('disabled', true);
+        $("#save_payment_button").html('<i class="fa fa-spinner fa-spin"></i>');
+        savePayment();
+
+        return false;
+      }
+    });
+  });
+  </script>
 <% end %>
