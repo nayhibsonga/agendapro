@@ -123,8 +123,8 @@ function loadBookingPayment(booking_id) {
 	$('#payment_client_id').val('');
 	$('#payment_location_id').val('');
 	$('#payment_notes').val('');
-	$('#payment_receipt_type_id option[value="<%= ReceiptType.find_by_name("Boleta").id %>"]').prop('selected', true);
-	$('#payment_payment_method_id option[value="<%= PaymentMethod.find_by_name("Efectivo").id %>"]').prop('selected', true);
+	$('#payment_receipt_type_id option[value="<%= ReceiptType.find_by_name("Boleta").id if ReceiptType.find_by_name("Boleta") %>"]').prop('selected', true);
+	$('#payment_payment_method_id option[value="<%= PaymentMethod.find_by_name("Efectivo").id if PaymentMethod.find_by_name("Efectivo") %>"]').prop('selected', true);
 	$('#payment_company_payment_method_id option[value=""]').prop('selected', true);
 	$('#payment_payment_date').val(today);
 

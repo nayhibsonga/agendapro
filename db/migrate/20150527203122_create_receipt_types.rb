@@ -5,10 +5,5 @@ class CreateReceiptTypes < ActiveRecord::Migration
 
       t.timestamps
     end
-
-    ReceiptType.create('Boleta')
-    ReceiptType.create('Factura')
-    ReceiptType.create('Otro')
-    ReceiptType.create('Boleta de Servicios')
   end
 end
