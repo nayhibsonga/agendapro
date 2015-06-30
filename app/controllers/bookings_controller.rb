@@ -3228,7 +3228,7 @@ class BookingsController < ApplicationController
           end
         end
 
-        if bookings.length > 0 and (dateTimePointer <=> now + company_setting.after_booking.month) == -1
+        if bookings.length == serviceStaff.length and (dateTimePointer <=> now + company_setting.after_booking.month) == -1
 
           has_time_discount = false
 
@@ -3369,9 +3369,9 @@ class BookingsController < ApplicationController
 
       week_block[:available_time].each do |hour|
 
-        hour_diff = (400*hour[:time_diff]/hours_diff).round(2)
+        hour_diff = (600*hour[:time_diff]/hours_diff).round(2)
         span_diff = hour_diff - 8
-        top_margin = (400 * (hour[:start_block].to_time - previous_hour.to_time)/(60 * hours_diff) ).round(2)
+        top_margin = (600 * (hour[:start_block].to_time - previous_hour.to_time)/(60 * hours_diff) ).round(2)
         logger.debug hour_diff.to_s
 
         if hour[:status] != "hora-promocion"
