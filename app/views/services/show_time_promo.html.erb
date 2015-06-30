@@ -619,11 +619,11 @@
 
       if($("#pickerSelected").val()!="")
       {
-        data = {local: localId, serviceStaff: JSON.stringify(selects), date: $("#pickerSelected").val()}
+        data = {local: localId, serviceStaff: JSON.stringify(selects), date: $("#pickerSelected").val(), mandatory_discount: true}
       }
       else
       {
-        data = {local: localId, serviceStaff: JSON.stringify(selects)}
+        data = {local: localId, serviceStaff: JSON.stringify(selects), mandatory_discount: true}
       }
 
       if (promoCalendar) {

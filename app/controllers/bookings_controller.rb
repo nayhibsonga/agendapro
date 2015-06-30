@@ -3245,26 +3245,67 @@ class BookingsController < ApplicationController
             status = "hora-promocion"
           end
 
-          new_hour = {
-            index: book_index,
-            date: I18n.l(bookings[0][:start].to_date, format: :day_short),
-            full_date: I18n.l(bookings[0][:start].to_date, format: :day),
-            hour: I18n.l(bookings[0][:start].to_datetime, format: :hour) + ' - ' + I18n.l(bookings[bookings.length - 1][:end].to_datetime, format: :hour) + ' Hrs',
-            bookings: bookings,
-            status: status,
-            start_block: bookings[0][:start].strftime("%H:%M"),
-            end_block: bookings[bookings.length-1][:end].strftime("%H:%M"),
-            available_provider: bookings[0][:provider_name],
-            promo_discount: "0",
-            has_time_discount: has_time_discount
-          }
+          logger.debug "Time diff: "
+          logger.debug bookings[bookings.length-1][:end].to_s
+          logger.debug bookings[0][:start].to_s
+          logger.debug ((bookings[bookings.length-1][:end] - bookings[0][:start])*24*60).to_f.to_s
+          hour_time_diff = ((bookings[bookings.length-1][:end] - bookings[0][:start])*24*60).to_f
 
-          book_index = book_index + 1
-          book_summaries << new_hour
+          if params[:mandatory_discount]
 
-          if !hours_array.include?(new_hour)
+            if has_time_discount
 
-            hours_array << new_hour
+              new_hour = {
+                index: book_index,
+                date: I18n.l(bookings[0][:start].to_date, format: :day_short),
+                full_date: I18n.l(bookings[0][:start].to_date, format: :day),
+                hour: I18n.l(bookings[0][:start].to_datetime, format: :hour) + ' - ' + I18n.l(bookings[bookings.length - 1][:end].to_datetime, format: :hour) + ' Hrs',
+                bookings: bookings,
+                status: status,
+                start_block: bookings[0][:start].strftime("%H:%M"),
+                end_block: bookings[bookings.length-1][:end].strftime("%H:%M"),
+                available_provider: bookings[0][:provider_name],
+                promo_discount: "0",
+                has_time_discount: has_time_discount,
+                time_diff: hour_time_diff
+              }
+
+              book_index = book_index + 1
+              book_summaries << new_hour
+
+              if !hours_array.include?(new_hour)
+
+                hours_array << new_hour
+
+              end
+
+            end
+
+          else
+
+            new_hour = {
+              index: book_index,
+              date: I18n.l(bookings[0][:start].to_date, format: :day_short),
+              full_date: I18n.l(bookings[0][:start].to_date, format: :day),
+              hour: I18n.l(bookings[0][:start].to_datetime, format: :hour) + ' - ' + I18n.l(bookings[bookings.length - 1][:end].to_datetime, format: :hour) + ' Hrs',
+              bookings: bookings,
+              status: status,
+              start_block: bookings[0][:start].strftime("%H:%M"),
+              end_block: bookings[bookings.length-1][:end].strftime("%H:%M"),
+              available_provider: bookings[0][:provider_name],
+              promo_discount: "0",
+              has_time_discount: has_time_discount,
+              time_diff: hour_time_diff
+            }
+
+            book_index = book_index + 1
+            book_summaries << new_hour
+
+            if !hours_array.include?(new_hour)
+
+              hours_array << new_hour
+
+            end
 
           end
 
@@ -3272,11 +3313,11 @@ class BookingsController < ApplicationController
 
       end
 
-      logger.debug "***"
-      logger.debug "***"
-      logger.debug "Day " + date.to_s + " has " + hours_array.count.to_s
-      logger.debug "***"
-      logger.debug "***"
+      #logger.debug "***"
+      #logger.debug "***"
+      #logger.debug "Day " + date.to_s + " has " + hours_array.count.to_s
+      #logger.debug "***"
+      #logger.debug "***"
 
       @days_count += 1
       @week_blocks << { available_time: hours_array, formatted_date: date.strftime('%Y-%m-%d') }
@@ -3288,16 +3329,72 @@ class BookingsController < ApplicationController
     days_row = ''
     width = ( 100.0 / @days_count ).round(2).to_s
 
-    logger.debug "Week blocks " + @week_blocks.length.to_s
+    #logger.debug "Week blocks " + @week_blocks.length.to_s
+    #Get max time distance to construct the calendar
+
+    min_open = 0
+    max_close = 0
+
+    local.location_times.each do |lt|
+      if min_open == 0
+        min_open = lt.open
+      else
+        if lt.open.strftime("%H:%M") < min_open.strftime("%H:%M")
+          min_open = lt.open
+        end
+      end
+    end
+
+    local.location_times.each do |lt|
+      if max_close == 0
+        max_close = lt.close
+      else
+        if lt.close.strftime("%H:%M") > max_close.strftime("%H:%M")
+          max_close = lt.open
+        end
+      end
+    end
+
+    hours_diff = (max_close - min_open)/60
+
+    logger.debug "Hours diff: "
+    logger.debug max_close.to_s
+    logger.debug min_open.to_s
+    logger.debug hours_diff.to_s
 
     @week_blocks.each do |week_block|
       week_blocks += '<div class="columna-dia" data-date="' + week_block[:formatted_date] + '" style="width: ' + width + '%;">'
+
+      previous_hour = min_open.strftime("%H:%M")
+
       week_block[:available_time].each do |hour|
+
+        hour_diff = (400*hour[:time_diff]/hours_diff).round(2)
+        span_diff = hour_diff - 8
+        top_margin = (400 * (hour[:start_block].to_time - previous_hour.to_time)/(60 * hours_diff) ).round(2)
+        logger.debug hour_diff.to_s
+
         if hour[:status] != "hora-promocion"
-          week_blocks += '<div class="bloque-hora ' + hour[:status] + '" data-start="' + hour[:start_block] + '" data-end="' + hour[:end_block] + '" data-provider="' + hour[:available_provider] + '" data-discount="' + hour[:promo_discount] + '" data-index="' +  hour[:index].to_s + '" data-timediscount="' + hour[:has_time_discount].to_s + '"><span>' + hour[:start_block] + ' - ' + hour[:end_block] + '</span></div>'
+
+          #
+
+          if top_margin > 0
+            week_blocks += '<div style="border-top: 1px solid #d2d2d2 !important; margin-top: ' + top_margin.to_s + 'px !important; height: ' + hour_diff.to_s + 'px;" class="bloque-hora ' + hour[:status] + '" data-start="' + hour[:start_block] + '" data-end="' + hour[:end_block] + '" data-provider="' + hour[:available_provider] + '" data-discount="' + hour[:promo_discount] + '" data-index="' + hour[:index].to_s + '" data-timediscount="' + hour[:has_time_discount].to_s + '"><span style="height: ' + span_diff.to_s + 'px;">' + hour[:start_block] + ' - ' + hour[:end_block] + '</span></div>'
+          else
+            week_blocks += '<div style="height: ' + hour_diff.to_s + 'px;" class="bloque-hora ' + hour[:status] + '" data-start="' + hour[:start_block] + '" data-end="' + hour[:end_block] + '" data-provider="' + hour[:available_provider] + '" data-discount="' + hour[:promo_discount] + '" data-index="' + hour[:index].to_s + '" data-timediscount="' + hour[:has_time_discount].to_s + '"><span style="height: ' + span_diff.to_s + 'px;">' + hour[:start_block] + ' - ' + hour[:end_block] + '</span></div>'
+          end
+
         else
-          week_blocks += '<div class="bloque-hora ' + hour[:status] + '" data-start="' + hour[:start_block] + '" data-end="' + hour[:end_block] + '" data-provider="' + hour[:available_provider] + '" data-discount="' + hour[:promo_discount] + '" data-index="' +  hour[:index].to_s + '" data-timediscount="' + hour[:has_time_discount].to_s + '"><span>' + ActionController::Base.helpers.image_tag('admin/icono_promociones.png', class: 'promotion-hour-icon', size: "18x18") + '&nbsp;&nbsp' + hour[:start_block] + ' - ' + hour[:end_block] + '</span></div>'
+
+          if top_margin > 0
+            week_blocks += '<div style="border-top: 1px solid #d2d2d2 !important; margin-top: ' + top_margin.to_s + 'px !important; height: ' + hour_diff.to_s + 'px;" class="bloque-hora ' + hour[:status] + '" data-start="' + hour[:start_block] + '" data-end="' + hour[:end_block] + '" data-provider="' + hour[:available_provider] + '" data-discount="' + hour[:promo_discount] + '" data-index="' +  hour[:index].to_s + '" data-timediscount="' + hour[:has_time_discount].to_s + '"><span style="height: ' + span_diff.to_s + 'px;">' + ActionController::Base.helpers.image_tag('admin/icono_promociones.png', class: 'promotion-hour-icon', size: "18x18") + '&nbsp;&nbsp' + hour[:start_block] + ' - ' + hour[:end_block] + '</span></div>'
+          else
+            week_blocks += '<div style="height: ' + hour_diff.to_s + 'px;" class="bloque-hora ' + hour[:status] + '" data-start="' + hour[:start_block] + '" data-end="' + hour[:end_block] + '" data-provider="' + hour[:available_provider] + '" data-discount="' + hour[:promo_discount] + '" data-index="' +  hour[:index].to_s + '" data-timediscount="' + hour[:has_time_discount].to_s + '"><span style="height: ' + span_diff.to_s + 'px;">' + ActionController::Base.helpers.image_tag('admin/icono_promociones.png', class: 'promotion-hour-icon', size: "18x18") + '&nbsp;&nbsp' + hour[:start_block] + ' - ' + hour[:end_block] + '</span></div>'
+          end
         end
+
+        previous_hour = hour[:end_block]
+
       end
       if week_block[:available_time].count < 1
         week_blocks += '&nbsp;<div class="clear">&nbsp;</div></div>'
@@ -3313,7 +3410,8 @@ class BookingsController < ApplicationController
 
     days_count = @days_count
 
-    render  :json => { panel_body: week_blocks, days_row: days_row, days_count: days_count, book_summaries: book_summaries }
+    render  :json => { panel_body: week_blocks, days_row: days_row, days_count: days_count, book_summaries: book_summaries}
+    # 
 
   end
 
