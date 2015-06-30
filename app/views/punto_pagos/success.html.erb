@@ -340,7 +340,7 @@
 				        
 				                      <div class="form-group">
 				                        <div class="col-sm-offset-2 col-sm-8">
-				                          <%= f.submit 'Regístrate', :class => 'btn btn-orange pull-right' %>
+				                          <%= f.submit 'Regístrate', :class => 'btn btn-orange pull-right', onclick: "_gaq.push(['_trackEvent', 'Usuarios', 'Sign-Up', 'Registro_desde_pago']);" %>
 				                        </div>
 				                      </div>
 				                    <% end %>
@@ -416,4 +416,27 @@
 		});
 
 	</script>
+<% end %>
+
+<% if ENV["MONITORING_ACTIVATION"] == "TRUE" %>
+<% if @success_page != "billing" or @success_page != "plan" %>
+<% content_for :head_scripts do %>
+<!-- Facebook Conversion Code for Pay - AgendaPro -->
+<script>(function() {
+var _fbq = window._fbq || (window._fbq = []);
+if (!_fbq.loaded) {
+var fbds = document.createElement('script');
+fbds.async = true;
+fbds.src = '//connect.facebook.net/en_US/fbds.js';
+var s = document.getElementsByTagName('script')[0];
+s.parentNode.insertBefore(fbds, s);
+_fbq.loaded = true;
+}
+})();
+window._fbq = window._fbq || [];
+window._fbq.push(['track', '6029599081040', {'value':'0.00','currency':'CLP'}]);
+</script>
+<noscript><img height="1" width="1" alt="" style="display:none" src="https://www.facebook.com/tr?ev=6029599081040&amp;cd[value]=0.00&amp;cd[currency]=CLP&amp;noscript=1" /></noscript>
+<% end %>
+<% end %>
 <% end %>

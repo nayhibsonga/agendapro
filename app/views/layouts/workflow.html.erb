@@ -35,11 +35,35 @@
         })();
         </script>
         <!-- End Inspectlet Embed Code -->
+        <!-- start: Facebook Tracker-->
+        <%= render 'layouts/facebook_tracker' %>
+        <!-- end: Facebook Tracker-->
+        <% if @company && @company.id == 108 %>
+        <!-- Facebook Conversion Code for Key Page Views - Qtis (AgendaPro) -->
+        <script>(function() {
+        var _fbq = window._fbq || (window._fbq = []);
+        if (!_fbq.loaded) {
+        var fbds = document.createElement('script');
+        fbds.async = true;
+        fbds.src = '//connect.facebook.net/en_US/fbds.js';
+        var s = document.getElementsByTagName('script')[0];
+        s.parentNode.insertBefore(fbds, s);
+        _fbq.loaded = true;
+        }
+        })();
+        window._fbq = window._fbq || [];
+        window._fbq.push(['track', '6029599663240', {'value':'0.00','currency':'CLP'}]);
+        </script>
+        <noscript><img height="1" width="1" alt="" style="display:none" src="https://www.facebook.com/tr?ev=6029599663240&amp;cd[value]=0.00&amp;cd[currency]=CLP&amp;noscript=1" /></noscript>
+        <% end %>
         <% end %>
 
         <!-- start: JavaScript-->
         <%= javascript_include_tag "home-head" %>
         <!-- end: JavaScript-->
+
+
+        <%= yield :head_scripts %>
 
         <%= render 'layouts/icons' %>
 
@@ -178,3 +202,4 @@
         <!--<script src='http://connect.facebook.net/en_US/all.js'></script>-->
     </body>
 </html>
+
