@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150625161405) do
+ActiveRecord::Schema.define(version: 20150701141646) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -119,6 +119,7 @@ ActiveRecord::Schema.define(version: 20150625161405) do
     t.integer  "session_booking_id"
     t.boolean  "user_session_confirmed", default: false
     t.boolean  "is_session_booked",      default: false
+    t.integer  "service_promo_id"
   end
 
   add_index "bookings", ["client_id"], name: "index_bookings_on_client_id", using: :btree
@@ -509,7 +510,6 @@ ActiveRecord::Schema.define(version: 20150625161405) do
   end
 
   create_table "promos", force: true do |t|
-    t.integer  "service_id"
     t.integer  "day_id"
     t.integer  "morning_discount",   default: 0
     t.integer  "afternoon_discount", default: 0
@@ -517,6 +517,7 @@ ActiveRecord::Schema.define(version: 20150625161405) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "location_id"
+    t.integer  "service_promo_id"
   end
 
   create_table "promotions", force: true do |t|
@@ -661,6 +662,12 @@ ActiveRecord::Schema.define(version: 20150625161405) do
 
   add_index "service_payment_logs", ["transaction_type_id"], name: "index_service_payment_logs_on_transaction_type_id", using: :btree
 
+  create_table "service_promos", force: true do |t|
+    t.integer  "service_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
   create_table "service_providers", force: true do |t|
     t.integer  "location_id"
     t.integer  "company_id",                                 null: false
@@ -736,6 +743,7 @@ ActiveRecord::Schema.define(version: 20150625161405) do
     t.boolean  "has_last_minute_discount", default: false
     t.boolean  "time_promo_active",        default: false
     t.string   "time_promo_photo"
+    t.integer  "active_service_promo_id"
   end
 
   add_index "services", ["company_id"], name: "index_services_on_company_id", using: :btree
@@ -748,7 +756,8 @@ ActiveRecord::Schema.define(version: 20150625161405) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "client_id"
-    t.integer  "sessions_amount", default: 0
+    t.integer  "sessions_amount",  default: 0
+    t.integer  "service_promo_id"
   end
 
   create_table "staff_codes", force: true do |t|

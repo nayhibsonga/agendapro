@@ -41,84 +41,90 @@
 								<label>Descuento en reservas de último minuto</label>
 								<span class="help-block">Activa descuentos para este servicio cuando sea agendado pocas horas antes de su realización.</span>
 
-								<div class="form-group">
-									<div style="display: inline !important;">
-				                        <label>
-				                        	<% if @service.has_last_minute_discount %>
-				                        		<input type="checkbox" name="has_last_minute_discount" id="has_last_minute_discount" checked/>
-				                        	<% else %>
-				                          		<input type="checkbox" name="has_last_minute_discount" id="has_last_minute_discount" />
-				                          	<% end %>
-				                        </label>
-				                        <span>Permitir</span>
-			                        	<select name="last_minute_discount" id="last_minute_discount" class="promotions-input">
-			                        		<% for i in 0..19 %>
-			                        			<%
-			                        				last_minute_discount = 0
-			                        				last_minute_hours = 0
-			                        				if !@service.last_minute_promos.nil? && @service.last_minute_promos.count > 0
-			                        					last_minute_discount = @service.last_minute_promos.first.discount
-			                        					last_minute_hours = @service.last_minute_promos.first.hours
-			                        				end
-			                        			%>
-			                        			<% if last_minute_discount == (i*5) %>
-			                        				<option value="<%= (i*5).to_s %>" selected><%= (i*5).to_s %> %</option>
-			                        			<% else %>
-			                        				<option value="<%= (i*5).to_s %>"><%= (i*5).to_s %> %</option>
-			                        			<% end %>
-			                        		<% end %>
-			                        	</select>
-			                        	<span>de descuento en reservas de último minuto hechas hasta</span>
-			                        	<select name="last_minute_hours" id="last_minute_hours" class="promotions-input">
-			                        		<% for i in 1..12 %>
-			                        			<% if last_minute_hours == i %>
-			                        				<option value="<%= i.to_s %>" selected><%= i.to_s %> horas</option>
-			                        			<% else %>
-			                        				<option value="<%= i.to_s %>"><%= i.to_s %> horas</option>
-			                        			<% end %>
-			                        		<% end %>
-			                        	</select>
-			                        	<span>antes de la realización del servicio.</span>
-				                    </div>
-								</div>
+								<% if !@service.has_sessions %>
+									<div class="form-group">
+										<div style="display: inline !important;">
+					                        <label>
+					                        	<% if @service.has_last_minute_discount %>
+					                        		<input type="checkbox" name="has_last_minute_discount" id="has_last_minute_discount" checked/>
+					                        	<% else %>
+					                          		<input type="checkbox" name="has_last_minute_discount" id="has_last_minute_discount" />
+					                          	<% end %>
+					                        </label>
+					                        <span>Permitir</span>
+				                        	<select name="last_minute_discount" id="last_minute_discount" class="promotions-input">
+				                        		<% for i in 0..19 %>
+				                        			<%
+				                        				last_minute_discount = 0
+				                        				last_minute_hours = 0
+				                        				if !@service.last_minute_promos.nil? && @service.last_minute_promos.count > 0
+				                        					last_minute_discount = @service.last_minute_promos.first.discount
+				                        					last_minute_hours = @service.last_minute_promos.first.hours
+				                        				end
+				                        			%>
+				                        			<% if last_minute_discount == (i*5) %>
+				                        				<option value="<%= (i*5).to_s %>" selected><%= (i*5).to_s %> %</option>
+				                        			<% else %>
+				                        				<option value="<%= (i*5).to_s %>"><%= (i*5).to_s %> %</option>
+				                        			<% end %>
+				                        		<% end %>
+				                        	</select>
+				                        	<span>de descuento en reservas de último minuto hechas hasta</span>
+				                        	<select name="last_minute_hours" id="last_minute_hours" class="promotions-input">
+				                        		<% for i in 1..12 %>
+				                        			<% if last_minute_hours == i %>
+				                        				<option value="<%= i.to_s %>" selected><%= i.to_s %> horas</option>
+				                        			<% else %>
+				                        				<option value="<%= i.to_s %>"><%= i.to_s %> horas</option>
+				                        			<% end %>
+				                        		<% end %>
+				                        	</select>
+				                        	<span>antes de la realización del servicio.</span>
+					                    </div>
+									</div>
+								<% else %>
+									<div class="form-group">
+									Este servicio tiene sesiones, por lo que no puede tener promociones de último minuto.
+									</div>
+								<% end %>
 
 							</div>
 						</div>
 
+						<% if !@service.has_sessions %>
+							<div class="row">
+								<div class="col-md-12">
+									<label>En los siguientes locales</label>
+									<span class="help-block">Selecciona los locales que prestan este servicio y lo ofrecerán en promoción de último minuto.</span>
 
-						<div class="row">
-							<div class="col-md-12">
-								<label>En los siguientes locales</label>
-								<span class="help-block">Selecciona los locales que prestan este servicio y lo ofrecerán en promoción de último minuto.</span>
-
-								<div class="form-group">
-									
-									<%
-										locations = []
-										@service.service_providers.each do |service_provider|  
-											if !locations.include?(service_provider.location)
-												locations << service_provider.location
+									<div class="form-group">
+										
+										<%
+											locations = []
+											@service.service_providers.each do |service_provider|  
+												if !locations.include?(service_provider.location)
+													locations << service_provider.location
+												end
 											end
-										end
-									%>
+										%>
 
-									<% locations.each do |location| %>
-										<div class="checkbox">
-						                    <label>
-						                    	<% if LastMinutePromo.where(:service_id => @service.id, :location_id => location.id).count > 0 || @service.last_minute_promos.nil? || @service.last_minute_promos.count == 0 %>
-						                    		<input type="checkbox" checked="checked" value="<%= location.id %>" name="last_minute_locations" /> <%= location.name %>
-						                    	<% else %>
-						                    		<input type="checkbox" value="<%= location.id %>" name="last_minute_locations" /> <%= location.name %>
-						                    	<% end %>
-						                    </label>
-						                </div>
-									<% end %>
+										<% locations.each do |location| %>
+											<div class="checkbox">
+							                    <label>
+							                    	<% if LastMinutePromo.where(:service_id => @service.id, :location_id => location.id).count > 0 || @service.last_minute_promos.nil? || @service.last_minute_promos.count == 0 %>
+							                    		<input type="checkbox" checked="checked" value="<%= location.id %>" name="last_minute_locations" /> <%= location.name %>
+							                    	<% else %>
+							                    		<input type="checkbox" value="<%= location.id %>" name="last_minute_locations" /> <%= location.name %>
+							                    	<% end %>
+							                    </label>
+							                </div>
+										<% end %>
+
+									</div>
 
 								</div>
-
 							</div>
-						</div>
-					
+						<% end %>
 
 					
 						<div class="row">
@@ -182,7 +188,7 @@
 
 											<%
 												for i in 1..7
-												promo = Promo.where(:service_id => @service.id, :day_id => i).first
+												promo = Promo.where(:service_promo_id => @service.active_service_promo_id, :day_id => i).first
 											%>
 
 												<td>
@@ -222,7 +228,7 @@
 
 											<%
 												for i in 1..7
-												promo = Promo.where(:service_id => @service.id, :day_id => i).first
+												promo = Promo.where(:service_promo_id => @service.active_service_promo_id, :day_id => i).first
 											%>
 
 												<td>
@@ -262,7 +268,7 @@
 											
 											<%
 												for i in 1..7
-												promo = Promo.where(:service_id => @service.id, :day_id => i).first
+												promo = Promo.where(:service_promo_id => @service.active_service_promo_id, :day_id => i).first
 											%>
 
 												<td>
@@ -321,7 +327,7 @@
 									<% locations.each do |location| %>
 										<div class="checkbox">
 						                    <label>
-						                    	<% if Promo.where(:service_id => @service.id, :location_id => location.id).count > 0 || @service.promos.nil? || @service.promos.count == 0 %>
+						                    	<% if Promo.where(:service_promo_id => @service.active_service_promo_id, :location_id => location.id).count > 0 || @service.active_service_promo_id.nil? || @service.service_promos.count == 0 || @service.service_promos.nil? %>
 						                    		<input type="checkbox" checked="checked" value="<%= location.id %>" name="locations" /> <%= location.name %>
 						                    	<% else %>
 						                    		<input type="checkbox" value="<%= location.id %>" name="locations" /> <%= location.name %>

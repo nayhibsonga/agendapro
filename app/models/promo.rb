@@ -2,7 +2,7 @@ class Promo < ActiveRecord::Base
 	require 'pg_search'
 	include PgSearch
 
-	belongs_to :service
+	belongs_to :service_promo
 	belongs_to :day
 	belongs_to :location
 

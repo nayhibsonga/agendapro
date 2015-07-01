@@ -15,7 +15,7 @@ class Service < ActiveRecord::Base
 	has_many :service_staffs, dependent: :destroy
 	has_many :service_providers, :through => :service_staffs
 
-	has_many :promos
+	has_many :service_promos
 	has_many :last_minute_promos
 
 	mount_uploader :time_promo_photo, TimePromoPhotoUploader
@@ -48,6 +48,14 @@ class Service < ActiveRecord::Base
                 }
     },
     :ignoring => :accents
+
+    def active_service_promo
+    	if self.active_service_promo_id.nil?
+    		return nil
+    	else
+    		return ServicePromo.find(self.active_service_promo_id)
+    	end
+    end
 
 	def group_service_capacity
 		if self.group_service
