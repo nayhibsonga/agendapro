@@ -86,7 +86,7 @@
 
                       promo_time = @service.company.company_setting.promo_time
 
-                      promos = Promo.where(:service_id => @service.id, :location_id => @location.id)
+                      promos = Promo.where(:service_promo_id => @service.active_service_promo_id, :location_id => @location.id)
                       promos.each do |promo|
 
                       end
@@ -130,7 +130,7 @@
 
                       <%
                         for i in 1..7
-                        promo = Promo.where(:service_id => @service.id, :location_id => @location.id, :day_id => i).first
+                        promo = Promo.where(:service_promo_id => @service.active_service_promo_id, :location_id => @location.id, :day_id => i).first
                       %>
 
                         <td>
@@ -152,7 +152,7 @@
 
                       <%
                         for i in 1..7
-                        promo = Promo.where(:service_id => @service.id, :day_id => i).first
+                        promo = Promo.where(:service_promo_id => @service.active_service_promo_id, :day_id => i).first
                       %>
 
                         <td>
@@ -174,7 +174,7 @@
                       
                       <%
                         for i in 1..7
-                        promo = Promo.where(:service_id => @service.id, :day_id => i).first
+                        promo = Promo.where(:service_promo_id => @service.active_service_promo_id, :day_id => i).first
                       %>
 
                         <td>

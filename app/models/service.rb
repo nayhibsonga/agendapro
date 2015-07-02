@@ -49,13 +49,13 @@ class Service < ActiveRecord::Base
     },
     :ignoring => :accents
 
-    def active_service_promo
-    	if self.active_service_promo_id.nil?
-    		return nil
-    	else
-    		return ServicePromo.find(self.active_service_promo_id)
-    	end
-    end
+    #def active_service_promo
+    #	if self.active_service_promo_id.nil?
+    #		return nil
+    #	else
+    #		return ServicePromo.find(self.active_service_promo_id)
+    #	end
+    #end
 
 	def group_service_capacity
 		if self.group_service
@@ -94,9 +94,10 @@ class Service < ActiveRecord::Base
 
 		discount = 0
 
-		if self.has_time_discount && !self.promos.nil?
+		if self.has_time_discount && !self.active_service_promo_id.nil?
 			
-			self.promos.each do |promo|
+			service_promo = ServicePromo.find(self.active_service_promo_id)
+			service_promo.promos.each do |promo|
 				if promo.morning_discount > discount
 					discount = promo.morning_discount
 				end
@@ -111,6 +112,33 @@ class Service < ActiveRecord::Base
 		end
 
 		return discount
+
+	end
+
+	def active_promo_max
+		if self.active_service_promo_id.nil?
+			return 0
+		else
+			service_promo = ServicePromo.find(self.active_service_promo_id)
+			service_promo.max_bookings
+		end
+	end
+
+	def active_promo_left_bookings
+
+		if self.active_service_promo_id.nil?
+
+			return 0
+
+		else
+
+			service_promo = ServicePromo.find(self.active_service_promo_id)
+			bookings_count = Booking.where(:service_promo_id => service_promo.id, :is_session => false).where('status_id <> ?', Status.find_by_name('Cancelado')).count
+			session_bookings_count = SessionBooking.where(:service_promo_id => service_promo.id).count
+
+			return service_promo.max_bookings - (bookings_count + session_bookings_count)
+
+		end
 
 	end
 

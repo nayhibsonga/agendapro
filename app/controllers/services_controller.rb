@@ -258,8 +258,8 @@ class ServicesController < ApplicationController
       if params[:has_time_discount]
 
         last_service_promo = nil
-        if !@service.active_service_promo.nil?
-          last_service_promo = @service.active_service_promo
+        if !@service.active_service_promo_id.nil?
+          last_service_promo = ServicePromo.find(@service.active_service_promo_id)
         elsif !@service.service_promos.nil? && @service.service_promos.count > 0
           last_service_promo = @service.service_promos.order('created_at desc').first
         end
@@ -293,7 +293,15 @@ class ServicesController < ApplicationController
 
         if promos_changed
 
-          service_promo = ServicePromo.create(:service_id => @service.id)
+          if params[:reset_on_max_change]
+            service_promo = ServicePromo.create(:service_id => @service.id, :max_bookings => params[:max_bookings])
+          else
+            if last_service_promo != nil
+              service_promo = ServicePromo.create(:service_id => @service.id, :max_bookings => @service.active_promo_left_bookings)
+            else
+              service_promo = ServicePromo.create(:service_id => @service.id, :max_bookings => params[:max_bookings])
+            end
+          end
 
           @locations.each do |location|
             for i in 1..7
@@ -325,6 +333,19 @@ class ServicesController < ApplicationController
         else
 
           @service.active_service_promo_id = last_service_promo.id
+
+          if params[:reset_on_max_change]
+            service_promo = ServicePromo.find(@service.active_service_promo_id)
+            service_promo.max_bookings = params[:max_bookings]
+            
+            if service_promo.save
+
+            else
+              @errors << service_promo.errors
+            end
+
+          end
+
           if @service.save
 
           else
@@ -484,7 +505,8 @@ class ServicesController < ApplicationController
     @relatedPromos = []
 
     @relatedServices.each do |service|
-      locations = service.active_service_promo.promos.pluck(:location_id).uniq
+      service_promo = ServicePromo.find(service.active_service_promo_id)
+      locations = service.service_promo.promos.pluck(:location_id).uniq
       locations.each do |locationId|
         if service.id != @service.id || locationId != @location.id
           promo = [service, Location.find(locationId)]
@@ -499,7 +521,8 @@ class ServicesController < ApplicationController
         @plusRelatedServices = Service.where(:has_time_discount => true, :company_id => CompanyEconomicSector.where(economic_sector_id: @company.economic_sectors).pluck(:company_id)).limit(6 - @relatedPromos.count)
 
         @plusRelatedServices.each do |service|
-          locations = service.active_service_promo.promos.pluck(:location_id).uniq
+          service_promo = ServicePromo.find(service.active_service_promo_id)
+          locations = service.service_promo.promos.pluck(:location_id).uniq
           locations.each do |locationId|
             if service.id != @service.id || locationId != @location.id
               promo = [service, Location.find(locationId)]
@@ -513,7 +536,8 @@ class ServicesController < ApplicationController
         @plusRelatedServices = Service.where(:has_time_discount => true, :company_id => CompanyEconomicSector.where(economic_sector_id: @company.economic_sectors).pluck(:company_id))
 
         @plusRelatedServices.each do |service|
-          locations = service.active_service_promo.promos.pluck(:location_id).uniq
+          service_promo = ServicePromo.find(service.active_service_promo_id)
+          locations = service.service_promo.promos.pluck(:location_id).uniq
           locations.each do |locationId|
             if service.id != @service.id || locationId != @location.id
               promo = [service, Location.find(locationId)]

@@ -341,6 +341,63 @@
 							</div>
 						</div>
 
+
+						<div class="row">
+							<div class="col-md-12">
+								<label>Promociones disponibles</label>
+								<span class="help-block">Selecciona el stock de reservas que tendrán descuento.</span>
+
+								<div class="form-group">
+									
+									<% if @service.active_service_promo_id.nil? %>
+										<div>
+											
+
+											<div class="input-group" style="width: 130px !important;">
+							                    <input type="number" id="max_bookings" name="max_bookings" value="" class="form-control" />
+							                    <span class="input-group-addon">Reservas</span>
+                  							</div>
+
+										
+
+										</div>
+									<% else %>
+										<div>
+											<div class="input-group" style="width: 130px !important;">
+							                    <input type="number" id="max_bookings" name="max_bookings" value="<%= @service.active_promo_left_bookings %>" class="form-control" />
+							                    <span class="input-group-addon">Reservas</span>
+	              							</div>
+											Quedan <%= @service.active_promo_left_bookings.to_s %> reservas disponibles.
+										</div>
+									<% end %>
+									<div style="clear: both;">
+									</div>
+
+								</div>
+
+								<% if !@service.active_service_promo_id.nil? %>
+									<div class="form-group">
+										<div style="display: inline !important;">
+											<div class="checkbox">
+												<label>
+													
+						                          	<input type="checkbox" id="reset_on_max_change" name="reset_on_max_change" checked />	
+						                          		Editar el stock.
+						                          	<span style="cursor: pointer;" data-toggle="tooltip" data-placement="bottom" title="Si marcas esta opción, al cambiar el stock disponible el contador de reservas tomadas volverá a 0. Si no la marcas, se mantendrá el contador de reservas tomadas para la promoción."><i class="fa fa-question-circle fa-lg"></i></span>
+
+						                        </label>
+					                        </div>				                        	
+										</div>
+									</div>
+								<% else %>
+									<div style="display: none;">
+										<input type="checkbox" id="reset_on_max_change" name="reset_on_max_change" checked />
+									</div>
+								<% end %>
+
+							</div>
+						</div>
+
 					
 						<div class="row">
 							<div class="col-md-12">
@@ -378,6 +435,8 @@
   		var last_minute_discount = $("#last_minute_discount").val();
   		var last_minute_hours = $("#last_minute_hours").val();
   		var has_time_discount = $("#has_time_discount").is(":checked");
+  		var reset_on_max_change = $("#reset_on_max_change").is(":checked");
+  		var max_bookings = $("#max_bookings").val();
   		var morning_discounts = []
   		morning_discounts[0] = 0
   		var afternoon_discounts = []
@@ -429,14 +488,16 @@
   		$.ajax({
   			url: "/set_service_promotions",
   			type: "post",
-  			data: {service_id: service_id, has_last_minute_discount: has_last_minute_discount, last_minute_discount: last_minute_discount, last_minute_hours: last_minute_hours, has_time_discount: has_time_discount, morning_discounts: morning_discounts, afternoon_discounts: afternoon_discounts, night_discounts: night_discounts, locations: locations, last_minute_locations: last_minute_locations},
+  			data: {service_id: service_id, has_last_minute_discount: has_last_minute_discount, last_minute_discount: last_minute_discount, last_minute_hours: last_minute_hours, has_time_discount: has_time_discount, morning_discounts: morning_discounts, afternoon_discounts: afternoon_discounts, night_discounts: night_discounts, locations: locations, last_minute_locations: last_minute_locations, max_bookings: max_bookings, reset_on_max_change: reset_on_max_change},
   			success: function(response){
   				if(response[0] == "ok")
   				{
   					myAlert.showAlert(
 					  '<h3>Promociones guardadas</h3>' +
 					  '<p>Las promociones para el servicio ' + response[1].name + ' se guardaron correctamente.</p>'
-					);
+					, function(){
+						location.reload();
+					});
   					
   				}
   				else
@@ -450,7 +511,10 @@
   					myAlert.showAlert(
 					  '<h3>Ocurrió un error</h3>' +
 					  '<p>No se pudieron guardar las sesiones por las siguientes razones: </p>' +
-					  '<p>' + errors + '</p>'
+					  '<p>' + errors + '</p>',
+						function(){
+							location.reload();
+						}
 					);
   				}
   			}
