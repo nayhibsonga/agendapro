@@ -5,7 +5,6 @@ class BookingMailer < ActionMailer::Base
 	include ActionView::Helpers::NumberHelper
 
 	def book_service_mail (book_info)
-		mandrill = Mandrill::API.new Agendapro::Application.config.api_key
 		# => Template
 		template_name = 'Booking'
 		template_content = []
@@ -86,11 +85,11 @@ class BookingMailer < ActionMailer::Base
 			providers_emails = providers_emails.where(new: true)
 		end
 		providers_emails.each do |provider|
-			message[:to] << {
+			message[:to] = [{
 					:email => provider.email,
 					:type => 'bcc'
-				}
-			message[:merge_vars] << {
+				}]
+			message[:merge_vars] = [{
 					:rcpt => provider.email,
 					:vars => [
 						{
@@ -98,7 +97,7 @@ class BookingMailer < ActionMailer::Base
 							:content => book_info.company_comment
 						}
 					]
-				}
+				}]
 		end
 
 		# Email notificacion local
@@ -109,19 +108,19 @@ class BookingMailer < ActionMailer::Base
 			location_emails = location_emails.where(new: true)
 		end
 		location_emails.each do |local|
-			message[:to] << {
-				:email => local.email,
-				:type => 'bcc'
-			}
-			message[:merge_vars] << {
-				:rcpt => local.email,
-				:vars => [
-					{
-						:name => 'COMPANYCOMMENT',
-						:content => book_info.company_comment
-					}
-				]
-			}
+			message[:to] = [{
+							:email => local.email,
+							:type => 'bcc'
+						}]
+			message[:merge_vars] = [{
+							:rcpt => local.email,
+							:vars => [
+								{
+									:name => 'COMPANYCOMMENT',
+									:content => book_info.company_comment
+								}
+							]
+						}]
 			message[:global_merge_vars][0] = {
 						:name => 'SERVICEPROVIDER',
 						:content => book_info.location.name
@@ -136,19 +135,19 @@ class BookingMailer < ActionMailer::Base
 			company_emails = company_emails.where(new: true)
 		end
 		company_emails.each do |company|
-			message[:to] << {
-				:email => company.email,
-				:type => 'bcc'
-			}
-			message[:merge_vars] << {
-				:rcpt => company.email,
-				:vars => [
-					{
-						:name => 'COMPANYCOMMENT',
-						:content => book_info.company_comment
-					}
-				]
-			}
+			message[:to] = [{
+							:email => company.email,
+							:type => 'bcc'
+						}]
+			message[:merge_vars] = [{
+							:rcpt => company.email,
+							:vars => [
+								{
+									:name => 'COMPANYCOMMENT',
+									:content => book_info.company_comment
+								}
+							]
+						}]
 			message[:global_merge_vars][0] = {
 						:name => 'SERVICEPROVIDER',
 						:content => book_info.location.company.name
@@ -162,53 +161,43 @@ class BookingMailer < ActionMailer::Base
 
 		# Notificacion cliente
 		if book_info.send_mail
-			message[:to] << {
-					:email => book_info.client.email,
-					:name => book_info.client.first_name + ' ' + book_info.client.last_name,
-					:type => 'to'
-				}
-			message[:merge_vars] << {
-				:rcpt => book_info.client.email,
-				:vars => [
-					{
-						:name => 'LOCALADDRESS',
-						:content => book_info.location.address + second_address + " - " + District.find(book_info.location.district_id).name
-					},
-					{
-						:name => 'LOCATIONPHONE',
-						:content => number_to_phone(book_info.location.phone)
-					},
-					{
-						:name => 'EDIT',
-						:content => booking_edit_url(:confirmation_code => book_info.confirmation_code)
-					},
-					{
-						:name => 'CANCEL',
-						:content => booking_cancel_url(:confirmation_code => book_info.confirmation_code)
-					},
-					{
-						:name => 'CLIENT',
-						:content => true
-					}
-				]
-			}
+			message[:to] = [{
+								:email => book_info.client.email,
+								:name => book_info.client.first_name + ' ' + book_info.client.last_name,
+								:type => 'to'
+							}]
+			message[:merge_vars] = [{
+							:rcpt => book_info.client.email,
+							:vars => [
+								{
+									:name => 'LOCALADDRESS',
+									:content => book_info.location.address + second_address + " - " + District.find(book_info.location.district_id).name
+								},
+								{
+									:name => 'LOCATIONPHONE',
+									:content => number_to_phone(book_info.location.phone)
+								},
+								{
+									:name => 'EDIT',
+									:content => booking_edit_url(:confirmation_code => book_info.confirmation_code)
+								},
+								{
+									:name => 'CANCEL',
+									:content => booking_cancel_url(:confirmation_code => book_info.confirmation_code)
+								},
+								{
+									:name => 'CLIENT',
+									:content => true
+								}
+							]
+						}]
 		end
 
-		# => Metadata
-		async = false
-		send_at = DateTime.now
-
 		# => Send mail
-		result = mandrill.messages.send_template template_name, template_content, message, async, send_at
-
-		rescue Mandrill::Error => e
-			puts "A mandrill error occurred: #{e.class} - #{e.message}"
-			raise
+		send_mail(template_name, template_content, messages)
 	end
 
 	def update_booking (book_info, old_start)
-		mandrill = Mandrill::API.new Agendapro::Application.config.api_key
-
 		# => Template
 		template_name = 'Update Booking'
 		template_content = []
@@ -293,19 +282,19 @@ class BookingMailer < ActionMailer::Base
 			providers_emails = providers_emails.where(modified: true)
 		end
 		providers_emails.each do |provider|
-			message[:to] << {
-					:email => provider.email,
-					:type => 'bcc'
-				}
-			message[:merge_vars] << {
-					:rcpt => provider.email,
-					:vars => [
-						{
-							:name => 'COMPANYCOMMENT',
-							:content => book_info.company_comment
-						}
-					]
-				}
+			message[:to] = [{
+								:email => provider.email,
+								:type => 'bcc'
+							}]
+			message[:merge_vars] = [{
+								:rcpt => provider.email,
+								:vars => [
+									{
+										:name => 'COMPANYCOMMENT',
+										:content => book_info.company_comment
+									}
+								]
+							}]
 		end
 
 		# Email notificacion local
@@ -316,19 +305,19 @@ class BookingMailer < ActionMailer::Base
 			location_emails = location_emails.where(modified: true)
 		end
 		location_emails.each do |local|
-			message[:to] << {
-				:email => local.email,
-				:type => 'bcc'
-			}
-			message[:merge_vars] << {
-				:rcpt => local.email,
-				:vars => [
-					{
-						:name => 'COMPANYCOMMENT',
-						:content => book_info.company_comment
-					}
-				]
-			}
+			message[:to] = [{
+							:email => local.email,
+							:type => 'bcc'
+						}]
+			message[:merge_vars] = [{
+							:rcpt => local.email,
+							:vars => [
+								{
+									:name => 'COMPANYCOMMENT',
+									:content => book_info.company_comment
+								}
+							]
+						}]
 			message[:global_merge_vars][0] = {
 						:name => 'SERVICEPROVIDER',
 						:content => book_info.location.name
@@ -343,19 +332,19 @@ class BookingMailer < ActionMailer::Base
 			company_emails = company_emails.where(modified: true)
 		end
 		company_emails.each do |company|
-			message[:to] << {
-				:email => company.email,
-				:type => 'bcc'
-			}
-			message[:merge_vars] << {
-				:rcpt => company.email,
-				:vars => [
-					{
-						:name => 'COMPANYCOMMENT',
-						:content => book_info.company_comment
-					}
-				]
-			}
+			message[:to] = [{
+							:email => company.email,
+							:type => 'bcc'
+						}]
+			message[:merge_vars] = [{
+							:rcpt => company.email,
+							:vars => [
+								{
+									:name => 'COMPANYCOMMENT',
+									:content => book_info.company_comment
+								}
+							]
+						}]
 			message[:global_merge_vars][0] = {
 						:name => 'SERVICEPROVIDER',
 						:content => book_info.location.company.name
@@ -369,53 +358,43 @@ class BookingMailer < ActionMailer::Base
 
 		# Notificacion cliente
 		if book_info.send_mail
-			message[:to] << {
-				:email => book_info.client.email,
-				:name => book_info.client.first_name + ' ' + book_info.client.last_name,
-				:type => 'to'
-			}
-			message[:merge_vars] << {
-				:rcpt => book_info.client.email,
-				:vars => [
-					{
-						:name => 'LOCALADDRESS',
-						:content => book_info.location.address + second_address + " - " + District.find(book_info.location.district_id).name
-					},
-					{
-						:name => 'LOCATIONPHONE',
-						:content => number_to_phone(book_info.location.phone)
-					},
-					{
-						:name => 'EDIT',
-						:content => booking_edit_url(:confirmation_code => book_info.confirmation_code)
-					},
-					{
-						:name => 'CANCEL',
-						:content => booking_cancel_url(:confirmation_code => book_info.confirmation_code)
-					},
-					{
-						:name => 'CLIENT',
-						:content => true
-					}
-				]
-			}
+			message[:to] = [{
+							:email => book_info.client.email,
+							:name => book_info.client.first_name + ' ' + book_info.client.last_name,
+							:type => 'to'
+						}]
+			message[:merge_vars] = [{
+							:rcpt => book_info.client.email,
+							:vars => [
+								{
+									:name => 'LOCALADDRESS',
+									:content => book_info.location.address + second_address + " - " + District.find(book_info.location.district_id).name
+								},
+								{
+									:name => 'LOCATIONPHONE',
+									:content => number_to_phone(book_info.location.phone)
+								},
+								{
+									:name => 'EDIT',
+									:content => booking_edit_url(:confirmation_code => book_info.confirmation_code)
+								},
+								{
+									:name => 'CANCEL',
+									:content => booking_cancel_url(:confirmation_code => book_info.confirmation_code)
+								},
+								{
+									:name => 'CLIENT',
+									:content => true
+								}
+							]
+						}]
 		end
 
-		# => Metadata
-		async = false
-		send_at = DateTime.now
-
 		# => Send mail
-		result = mandrill.messages.send_template template_name, template_content, message, async, send_at
-
-		rescue Mandrill::Error => e
-			puts "A mandrill error occurred: #{e.class} - #{e.message}"
-			raise
+		send_mail(template_name, template_content, message)
 	end
 
 	def confirm_booking (book_info)
-		mandrill = Mandrill::API.new Agendapro::Application.config.api_key
-
 		# => Template
 		template_name = 'Confirm Booking'
 		template_content = []
@@ -498,19 +477,19 @@ class BookingMailer < ActionMailer::Base
 			providers_emails = providers_emails.where(confirmed: true)
 		end
 		providers_emails.each do |provider|
-			message[:to] << {
-					:email => provider.email,
-					:type => 'bcc'
-				}
-			message[:merge_vars] << {
-					:rcpt => provider.email,
-					:vars => [
-						{
-							:name => 'COMPANYCOMMENT',
-							:content => book_info.company_comment
-						}
-					]
-				}
+			message[:to] = [{
+								:email => provider.email,
+								:type => 'bcc'
+							}]
+			message[:merge_vars] = [{
+								:rcpt => provider.email,
+								:vars => [
+									{
+										:name => 'COMPANYCOMMENT',
+										:content => book_info.company_comment
+									}
+								]
+							}]
 		end
 
 		# Email notificacion local
@@ -521,19 +500,19 @@ class BookingMailer < ActionMailer::Base
 			location_emails = location_emails.where(confirmed: true)
 		end
 		location_emails.each do |local|
-			message[:to] << {
-				:email => local.email,
-				:type => 'bcc'
-			}
-			message[:merge_vars] << {
-				:rcpt => local.email,
-				:vars => [
-					{
-						:name => 'COMPANYCOMMENT',
-						:content => book_info.company_comment
-					}
-				]
-			}
+			message[:to] = [{
+							:email => local.email,
+							:type => 'bcc'
+						}]
+			message[:merge_vars] = [{
+							:rcpt => local.email,
+							:vars => [
+								{
+									:name => 'COMPANYCOMMENT',
+									:content => book_info.company_comment
+								}
+							]
+						}]
 			message[:global_merge_vars][0] = {
 						:name => 'SERVICEPROVIDER',
 						:content => book_info.location.name
@@ -548,40 +527,30 @@ class BookingMailer < ActionMailer::Base
 			company_emails = company_emails.where(confirmed: true)
 		end
 		company_emails.each do |company|
-			message[:to] << {
-				:email => company.email,
-				:type => 'bcc'
-			}
-			message[:merge_vars] << {
-				:rcpt => company.email,
-				:vars => [
-					{
-						:name => 'COMPANYCOMMENT',
-						:content => book_info.company_comment
-					}
-				]
-			}
+			message[:to] = [{
+							:email => company.email,
+							:type => 'bcc'
+						}]
+			message[:merge_vars] = [{
+							:rcpt => company.email,
+							:vars => [
+								{
+									:name => 'COMPANYCOMMENT',
+									:content => book_info.company_comment
+								}
+							]
+						}]
 			message[:global_merge_vars][0] = {
 						:name => 'SERVICEPROVIDER',
 						:content => book_info.location.company.name
 					}
 		end
 
-		# => Metadata
-		async = false
-		send_at = DateTime.now
-
 		# => Send mail
-		result = mandrill.messages.send_template template_name, template_content, message, async, send_at
-
-		rescue Mandrill::Error => e
-			puts "A mandrill error occurred: #{e.class} - #{e.message}"
-			raise
+		send_mail(template_name, template_content, message)
 	end
 
 	def cancel_booking (book_info)
-		mandrill = Mandrill::API.new Agendapro::Application.config.api_key
-
 		# => Template
 		template_name = 'Cancel Booking'
 		template_content = []
@@ -655,19 +624,19 @@ class BookingMailer < ActionMailer::Base
 			providers_emails = providers_emails.where(canceled: true)
 		end
 		providers_emails.each do |provider|
-			message[:to] << {
-					:email => provider.email,
-					:type => 'bcc'
-				}
-			message[:merge_vars] << {
-					:rcpt => provider.email,
-					:vars => [
-						{
-							:name => 'COMPANYCOMMENT',
-							:content => book_info.company_comment
-						}
-					]
-				}
+			message[:to] = [{
+								:email => provider.email,
+								:type => 'bcc'
+							}]
+			message[:merge_vars] = [{
+								:rcpt => provider.email,
+								:vars => [
+									{
+										:name => 'COMPANYCOMMENT',
+										:content => book_info.company_comment
+									}
+								]
+							}]
 		end
 
 		# Email notificacion local
@@ -678,19 +647,19 @@ class BookingMailer < ActionMailer::Base
 			location_emails = location_emails.where(canceled: true)
 		end
 		location_emails.each do |local|
-			message[:to] << {
-				:email => local.email,
-				:type => 'bcc'
-			}
-			message[:merge_vars] << {
-				:rcpt => local.email,
-				:vars => [
-					{
-						:name => 'COMPANYCOMMENT',
-						:content => book_info.company_comment
-					}
-				]
-			}
+			message[:to] = [{
+							:email => local.email,
+							:type => 'bcc'
+						}]
+			message[:merge_vars] = [{
+							:rcpt => local.email,
+							:vars => [
+								{
+									:name => 'COMPANYCOMMENT',
+									:content => book_info.company_comment
+								}
+							]
+						}]
 			message[:global_merge_vars][0] = {
 						:name => 'SERVICEPROVIDER',
 						:content => book_info.location.name
@@ -705,19 +674,19 @@ class BookingMailer < ActionMailer::Base
 			company_emails = company_emails.where(canceled: true)
 		end
 		company_emails.each do |company|
-			message[:to] << {
-				:email => company.email,
-				:type => 'bcc'
-			}
-			message[:merge_vars] << {
-				:rcpt => company.email,
-				:vars => [
-					{
-						:name => 'COMPANYCOMMENT',
-						:content => book_info.company_comment
-					}
-				]
-			}
+			message[:to] = [{
+							:email => company.email,
+							:type => 'bcc'
+						}]
+			message[:merge_vars] = [{
+							:rcpt => company.email,
+							:vars => [
+								{
+									:name => 'COMPANYCOMMENT',
+									:content => book_info.company_comment
+								}
+							]
+						}]
 			message[:global_merge_vars][0] = {
 						:name => 'SERVICEPROVIDER',
 						:content => book_info.location.company.name
@@ -731,11 +700,11 @@ class BookingMailer < ActionMailer::Base
 
 		# Notificacion cliente
 		if book_info.send_mail
-			message[:to] << {
-				:email => book_info.client.email,
-				:name => book_info.client.first_name + ' ' + book_info.client.last_name,
-				:type => 'to'
-			}
+			message[:to] = [{
+							:email => book_info.client.email,
+							:name => book_info.client.first_name + ' ' + book_info.client.last_name,
+							:type => 'to'
+						}]
 			mergeVars = {
 				:rcpt => book_info.client.email,
 				:vars => [
@@ -767,27 +736,14 @@ class BookingMailer < ActionMailer::Base
 							:content => "true"
 						}
 			end
-			message[:merge_vars] << mergeVars
+			message[:merge_vars] = [mergeVars]
 		end
 
-		# => Metadata
-		async = false
-		send_at = DateTime.now
-
 		# => Send mail
-		result = mandrill.messages.send_template template_name, template_content, message, async, send_at
-
-		rescue Mandrill::Error => e
-			puts "A mandrill error occurred: #{e.class} - #{e.message}"
-			raise
+		send_mail(template_name, template_content, message)
 	end
 
 	def book_reminder_mail (book_info)
-		mandrill = Mandrill::API.new Agendapro::Application.config.api_key
-		# => Metadata
-		async = false
-		send_at = DateTime.now
-
 		# => Template
 		template_name = 'Booking Reminder'
 		template_content = []
@@ -860,49 +816,43 @@ class BookingMailer < ActionMailer::Base
 
 		# Notificacion cliente
 		if book_info.send_mail
-			message[:to] << {
-			  :email => book_info.client.email,
-			  :name => book_info.client.first_name + ' ' + book_info.client.last_name,
-			  :type => 'to'
-			}
-			message[:merge_vars] << {
-			  :rcpt => book_info.client.email,
-			  :vars => [
-					{
-						:name => 'LOCALADDRESS',
-						:content => book_info.location.address + second_address + " - " + District.find(book_info.location.district_id).name
-					},
-					{
-						:name => 'LOCATIONPHONE',
-						:content => number_to_phone(book_info.location.phone)
-					},
-					{
-						:name => 'EDIT',
-						:content => booking_edit_url(:confirmation_code => book_info.confirmation_code)
-					},
-					{
-						:name => 'CANCEL',
-						:content => booking_cancel_url(:confirmation_code => book_info.confirmation_code)
-					},
-					{
-						:name => 'CONFIRM',
-						:content => confirm_booking_url(:confirmation_code => book_info.confirmation_code)
-					},
-					{
-						:name => 'CLIENT',
-						:content => true
-					}
-			  ]
-			}
+			message[:to] = [{
+						  :email => book_info.client.email,
+						  :name => book_info.client.first_name + ' ' + book_info.client.last_name,
+						  :type => 'to'
+						}]
+			message[:merge_vars] = [{
+						  :rcpt => book_info.client.email,
+						  :vars => [
+								{
+									:name => 'LOCALADDRESS',
+									:content => book_info.location.address + second_address + " - " + District.find(book_info.location.district_id).name
+								},
+								{
+									:name => 'LOCATIONPHONE',
+									:content => number_to_phone(book_info.location.phone)
+								},
+								{
+									:name => 'EDIT',
+									:content => booking_edit_url(:confirmation_code => book_info.confirmation_code)
+								},
+								{
+									:name => 'CANCEL',
+									:content => booking_cancel_url(:confirmation_code => book_info.confirmation_code)
+								},
+								{
+									:name => 'CONFIRM',
+									:content => confirm_booking_url(:confirmation_code => book_info.confirmation_code)
+								},
+								{
+									:name => 'CLIENT',
+									:content => true
+								}
+						  ]
+						}]
 
 			# => Send mail
-			puts 'Mail enviado a API booking_id: ' + book_info.id.to_s
-			result = mandrill.messages.send_template template_name, template_content, message, async, send_at
-
-			rescue Mandrill::Error => e
-				puts "A mandrill error occurred: #{e.class} - #{e.message}"
-				puts 'Mail falló booking_id: ' + book_info.id.to_s
-				raise
+			send_mail(template_name, template_content, message)
 		end
 
 		# New subject
@@ -911,37 +861,37 @@ class BookingMailer < ActionMailer::Base
 		# Notificacion service provider
 		providers_emails = NotificationEmail.where(id: NotificationProvider.select(:notification_email_id).where(service_provider: book_info.service_provider), receptor_type: 2, summary: false).select(:email).distinct
 		providers_emails.each do |provider|
-			message[:to] << {
-					:email => provider.email,
-					:type => 'bcc'
-				}
-			message[:merge_vars] << {
-					:rcpt => provider.email,
-					:vars => [
-						{
-							:name => 'COMPANYCOMMENT',
-							:content => book_info.company_comment
-						}
-					]
-				}
+			message[:to] = [{
+								:email => provider.email,
+								:type => 'bcc'
+							}]
+			message[:merge_vars] = [{
+								:rcpt => provider.email,
+								:vars => [
+									{
+										:name => 'COMPANYCOMMENT',
+										:content => book_info.company_comment
+									}
+								]
+							}]
 		end
 
 		# Email notificacion local
 		location_emails = NotificationEmail.where(id:  NotificationLocation.select(:notification_email_id).where(location: book_info.location), receptor_type: 1, summary: false).select(:email).distinct
 		location_emails.each do |local|
-			message[:to] << {
-				:email => local.email,
-				:type => 'bcc'
-			}
-			message[:merge_vars] << {
-				:rcpt => local.email,
-				:vars => [
-					{
-						:name => 'COMPANYCOMMENT',
-						:content => book_info.company_comment
-					}
-				]
-			}
+			message[:to] = [{
+							:email => local.email,
+							:type => 'bcc'
+						}]
+			message[:merge_vars] = [{
+							:rcpt => local.email,
+							:vars => [
+								{
+									:name => 'COMPANYCOMMENT',
+									:content => book_info.company_comment
+								}
+							]
+						}]
 			message[:global_merge_vars][0] = {
 						:name => 'SERVICEPROVIDER',
 						:content => book_info.location.name
@@ -951,19 +901,19 @@ class BookingMailer < ActionMailer::Base
 		# Email notificacion compañia
 		company_emails = NotificationEmail.where(company: book_info.location.company, receptor_type: 0, summary: false).select(:email).distinct
 		company_emails.each do |company|
-			message[:to] << {
-				:email => company.email,
-				:type => 'bcc'
-			}
-			message[:merge_vars] << {
-				:rcpt => company.email,
-				:vars => [
-					{
-						:name => 'COMPANYCOMMENT',
-						:content => book_info.company_comment
-					}
-				]
-			}
+			message[:to] = [{
+							:email => company.email,
+							:type => 'bcc'
+						}]
+			message[:merge_vars] = [{
+							:rcpt => company.email,
+							:vars => [
+								{
+									:name => 'COMPANYCOMMENT',
+									:content => book_info.company_comment
+								}
+							]
+						}]
 			message[:global_merge_vars][0] = {
 						:name => 'SERVICEPROVIDER',
 						:content => book_info.location.company.name
@@ -971,18 +921,10 @@ class BookingMailer < ActionMailer::Base
 		end
 
 		# => Send mail
-		puts 'Mail enviado a API booking_id: ' + book_info.id.to_s
-		result = mandrill.messages.send_template template_name, template_content, message, async, send_at
-
-		rescue Mandrill::Error => e
-			puts "A mandrill error occurred: #{e.class} - #{e.message}"
-			puts 'Mail falló booking_id: ' + book_info.id.to_s
-			raise
+		send_mail(template_name, template_content, message)
 	end
 
 	def booking_summary (booking_data, booking_summary, today_schedule)
-		mandrill = Mandrill::API.new Agendapro::Application.config.api_key
-
 		# => Template
 		template_name = 'Booking Summary'
 		template_content = []
@@ -1039,20 +981,11 @@ class BookingMailer < ActionMailer::Base
 						}]
 		end
 
-		# => Metadata
-		async = false
-		send_at = DateTime.now
-
 		# => Send mail
-		result = mandrill.messages.send_template template_name, template_content, message, async, send_at
-
-		rescue Mandrill::Error => e
-			puts "A mandrill error occurred: #{e.class} - #{e.message}"
-			raise
+		send_mail(template_name, template_content, message)
 	end
 
 	def multiple_booking_mail (data)
-		mandrill = Mandrill::API.new Agendapro::Application.config.api_key
 		# => Template
 		template_name = 'Multiple Booking'
 		template_content = []
@@ -1091,132 +1024,123 @@ class BookingMailer < ActionMailer::Base
 
 		# Notificacion service provider
 		data[:provider][:array].each do |provider|
-			message[:to] << {
-					:email => provider[:email],
-					:type => 'bcc'
-				}
-			message[:merge_vars] << {
-					:rcpt => provider[:email],
-					:vars => [
-						{
-							:name => 'CLIENTNAME',
-							:content => data[:provider][:client_name]
-						},
-						{
-							:name => 'SERVICEPROVIDER',
-							:content => provider[:name]
-						},
-						{
-							:name => 'BOOKINGS',
-							:content => provider[:provider_table]
-						}
-					]
-				}
+			message[:to] = [{
+								:email => provider[:email],
+								:type => 'bcc'
+							}]
+			message[:merge_vars] = [{
+								:rcpt => provider[:email],
+								:vars => [
+									{
+										:name => 'CLIENTNAME',
+										:content => data[:provider][:client_name]
+									},
+									{
+										:name => 'SERVICEPROVIDER',
+										:content => provider[:name]
+									},
+									{
+										:name => 'BOOKINGS',
+										:content => provider[:provider_table]
+									}
+								]
+							}]
 		end
 
 		# Email notificacion local
 		data[:location][:email].each do |local|
-			message[:to] << {
-				:email => local,
-				:type => 'bcc'
-			}
-			message[:merge_vars] << {
-				:rcpt => local,
-				:vars => [
-					{
-						:name => 'CLIENTNAME',
-						:content => data[:location][:client_name]
-					},
-					{
-						:name => 'SERVICEPROVIDER',
-						:content => data[:location][:name]
-					},
-					{
-						:name => 'BOOKINGS',
-						:content => data[:location][:location_table]
-					}
-				]
-			}
+			message[:to] = [{
+							:email => local,
+							:type => 'bcc'
+						}]
+			message[:merge_vars] = [{
+							:rcpt => local,
+							:vars => [
+								{
+									:name => 'CLIENTNAME',
+									:content => data[:location][:client_name]
+								},
+								{
+									:name => 'SERVICEPROVIDER',
+									:content => data[:location][:name]
+								},
+								{
+									:name => 'BOOKINGS',
+									:content => data[:location][:location_table]
+								}
+							]
+						}]
 		end
 
 		# Notificacion Empresa
 		data[:company][:email].each do |company|
-			message[:to] << {
-				:email => company,
-				:type => 'bcc'
-			}
-			message[:merge_vars] << {
-				:rcpt => company,
-				:vars => [
-					{
-						:name => 'CLIENTNAME',
-						:content => data[:company][:client_name]
-					},
-					{
-						:name => 'SERVICEPROVIDER',
-						:content => data[:company][:name]
-					},
-					{
-						:name => 'BOOKINGS',
-						:content => data[:company][:company_table]
-					}
-				]
-			}
+			message[:to] = [{
+							:email => company,
+							:type => 'bcc'
+						}]
+			message[:merge_vars] = [{
+							:rcpt => company,
+							:vars => [
+								{
+									:name => 'CLIENTNAME',
+									:content => data[:company][:client_name]
+								},
+								{
+									:name => 'SERVICEPROVIDER',
+									:content => data[:company][:name]
+								},
+								{
+									:name => 'BOOKINGS',
+									:content => data[:company][:company_table]
+								}
+							]
+						}]
 		end
 
 		# Notificacion cliente
 		if data[:user][:send_mail]
-			message[:to] << {
-					:email => data[:user][:email],
-					:name => data[:user][:name],
-					:type => 'to'
-				}
-			message[:merge_vars] << {
-				:rcpt => data[:user][:email],
-				:vars => [
-					{
-						:name => 'LOCALADDRESS',
-						:content => data[:user][:where]
-					},
-					{
-						:name => 'LOCATIONPHONE',
-						:content => number_to_phone(data[:user][:phone])
-					},
-					{
-						:name => 'BOOKINGS',
-						:content => data[:user][:user_table]
-					},
-					{
-						:name => 'CLIENTNAME',
-						:content => data[:user][:name]
-					},
-					{
-						:name => 'CLIENT',
-						:content => true
-					},
-					{
-						:name => 'CANCEL',
-						:content => data[:user][:cancel]
-					}
-				]
-			}
+			message[:to] = [{
+								:email => data[:user][:email],
+								:name => data[:user][:name],
+								:type => 'to'
+							}]
+			message[:merge_vars] = [{
+							:rcpt => data[:user][:email],
+							:vars => [
+								{
+									:name => 'LOCALADDRESS',
+									:content => data[:user][:where]
+								},
+								{
+									:name => 'LOCATIONPHONE',
+									:content => number_to_phone(data[:user][:phone])
+								},
+								{
+									:name => 'BOOKINGS',
+									:content => data[:user][:user_table]
+								},
+								{
+									:name => 'CLIENTNAME',
+									:content => data[:user][:name]
+								},
+								{
+									:name => 'CLIENT',
+									:content => true
+								},
+								{
+									:name => 'CANCEL',
+									:content => data[:user][:cancel]
+								}
+							]
+						}]
 		end
 
-		# => Metadata
-		async = false
-		send_at = DateTime.now
-
 		# => Send mail
-		result = mandrill.messages.send_template template_name, template_content, message, async, send_at
-
-		rescue Mandrill::Error => e
-			puts "A mandrill error occurred: #{e.class} - #{e.message}"
-			raise
+		send_mail(template_name, template_content, message)
 	end
 
 	#Correo de comprobante de pago para el cliente
 	def book_payment_mail (payed_booking)
-		mandrill = Mandrill::API.new Agendapro::Application.config.api_key
 		# => Template
 		template_name = 'Payment'
 		template_content = []
@@ -1290,21 +1214,12 @@ class BookingMailer < ActionMailer::Base
 			]
 		}
 
-		# => Metadata
-		async = false
-		send_at = DateTime.now
-
 		# => Send mail
-		result = mandrill.messages.send_template template_name, template_content, message, async, send_at
-
-		rescue Mandrill::Error => e
-			puts "A mandrill error occurred: #{e.class} - #{e.message}"
-			raise
+		send_mail(template_name, template_content, messages)
 	end
 
 	#Correo de comprobante de pago para AgendaPro
 	def book_payment_agendapro_mail(payed_booking)
-		mandrill = Mandrill::API.new Agendapro::Application.config.api_key
 		# => Template
 		template_name = 'Payment'
 		template_content = []
@@ -1378,21 +1293,12 @@ class BookingMailer < ActionMailer::Base
 			]
 		}
 
-		# => Metadata
-		async = false
-		send_at = DateTime.now
-
 		# => Send mail
-		result = mandrill.messages.send_template template_name, template_content, message, async, send_at
-
-		rescue Mandrill::Error => e
-			puts "A mandrill error occurred: #{e.class} - #{e.message}"
-		raise
+		send_mail(template_name, template_content, messages)
 	end
 
 	#Comprobante de pago para la empresa
 	def book_payment_company_mail (payed_booking)
-		mandrill = Mandrill::API.new Agendapro::Application.config.api_key
 		# => Template
 		template_name = 'Payment'
 		template_content = []
@@ -1454,21 +1360,12 @@ class BookingMailer < ActionMailer::Base
 			]
 		}
 
-		# => Metadata
-		async = false
-		send_at = DateTime.now
-
 		# => Send mail
-		result = mandrill.messages.send_template template_name, template_content, message, async, send_at
-
-		rescue Mandrill::Error => e
-			puts "A mandrill error occurred: #{e.class} - #{e.message}"
-			raise
+		send_mail(template_name, template_content, messages)
 	end
 
 	#Comprobante de pago para la empresa
 	def cancel_payment_mail (payed_booking, target)
-		mandrill = Mandrill::API.new Agendapro::Application.config.api_key
 		# => Template
 		template_name = 'Payment'
 		template_content = []
@@ -1676,21 +1573,12 @@ class BookingMailer < ActionMailer::Base
 			}
 		end
 
-		# => Metadata
-		async = false
-		send_at = DateTime.now
-
 		# => Send mail
-		result = mandrill.messages.send_template template_name, template_content, message, async, send_at
-
-		rescue Mandrill::Error => e
-			puts "A mandrill error occurred: #{e.class} - #{e.message}"
-			raise
+		send_mail(template_name, template_content, messages)
 	end
 
 	#Mail de reserva de servicio con sesiones
 	def sessions_booking_mail(data)
-		mandrill = Mandrill::API.new Agendapro::Application.config.api_key
 		# => Template
 		template_name = 'Sessions Bookings'
 		template_content = []
@@ -1728,112 +1616,102 @@ class BookingMailer < ActionMailer::Base
 
 		# Notificacion service provider
 		data[:provider][:array].each do |provider|
-			message[:to] << {
-					:email => provider[:email],
-					:type => 'bcc'
-				}
-			message[:merge_vars] << {
-					:rcpt => provider[:email],
-					:vars => [
-						{
-							:name => 'CLIENTNAME',
-							:content => data[:provider][:client_name]
-						},
-						{
-							:name => 'SERVICEPROVIDER',
-							:content => provider[:name]
-						},
-						{
-							:name => 'BOOKINGS',
-							:content => provider[:provider_table]
-						}
-					]
-				}
+			message[:to] = [{
+								:email => provider[:email],
+								:type => 'bcc'
+							}]
+			message[:merge_vars] = [{
+								:rcpt => provider[:email],
+								:vars => [
+									{
+										:name => 'CLIENTNAME',
+										:content => data[:provider][:client_name]
+									},
+									{
+										:name => 'SERVICEPROVIDER',
+										:content => provider[:name]
+									},
+									{
+										:name => 'BOOKINGS',
+										:content => provider[:provider_table]
+									}
+								]
+							}]
 		end
 
 		# Email notificacion local
 		if data[:location][:send_mail]
-			message[:to] << {
-				:email => data[:location][:email],
-				:type => 'bcc'
-			}
-			message[:merge_vars] << {
-				:rcpt => data[:location][:email],
-				:vars => [
-					{
-						:name => 'CLIENTNAME',
-						:content => data[:provider][:client_name]
-					},
-					{
-						:name => 'SERVICEPROVIDER',
-						:content => data[:location][:name]
-					},
-					{
-						:name => 'BOOKINGS',
-						:content => data[:location][:location_table]
-					}
-				]
-			}
+			message[:to] = [{
+							:email => data[:location][:email],
+							:type => 'bcc'
+						}]
+			message[:merge_vars] = [{
+							:rcpt => data[:location][:email],
+							:vars => [
+								{
+									:name => 'CLIENTNAME',
+									:content => data[:provider][:client_name]
+								},
+								{
+									:name => 'SERVICEPROVIDER',
+									:content => data[:location][:name]
+								},
+								{
+									:name => 'BOOKINGS',
+									:content => data[:location][:location_table]
+								}
+							]
+						}]
 		end
 
 		# Notificacion cliente
 		if data[:user][:send_mail]
-			message[:to] << {
-					:email => data[:user][:email],
-					:name => data[:user][:name],
-					:type => 'to'
-				}
-			message[:merge_vars] << {
-				:rcpt => data[:user][:email],
-				:vars => [
-					{
-						:name => 'LOCALADDRESS',
-						:content => data[:user][:where]
-					},
-					{
-						:name => 'LOCATIONPHONE',
-						:content => number_to_phone(data[:user][:phone])
-					},
-					{
-						:name => 'BOOKINGS',
-						:content => data[:user][:user_table]
-					},
-					{
-						:name => 'AGENDA',
-						:content => data[:user][:agenda]
-					},
-					{
-						:name => 'CLIENTNAME',
-						:content => data[:user][:name]
-					},
-					{
-						:name => 'CLIENT',
-						:content => true
-					},
-					{
-						:name => 'CANCEL',
-						:content => data[:user][:cancel]
-					}
-				]
-			}
+			message[:to] = [{
+								:email => data[:user][:email],
+								:name => data[:user][:name],
+								:type => 'to'
+							}]
+			message[:merge_vars] = [{
+							:rcpt => data[:user][:email],
+							:vars => [
+								{
+									:name => 'LOCALADDRESS',
+									:content => data[:user][:where]
+								},
+								{
+									:name => 'LOCATIONPHONE',
+									:content => number_to_phone(data[:user][:phone])
+								},
+								{
+									:name => 'BOOKINGS',
+									:content => data[:user][:user_table]
+								},
+								{
+									:name => 'AGENDA',
+									:content => data[:user][:agenda]
+								},
+								{
+									:name => 'CLIENTNAME',
+									:content => data[:user][:name]
+								},
+								{
+									:name => 'CLIENT',
+									:content => true
+								},
+								{
+									:name => 'CANCEL',
+									:content => data[:user][:cancel]
+								}
+							]
+						}]
 		end
 
-		# => Metadata
-		async = false
-		send_at = DateTime.now
-
 		# => Send mail
-		result = mandrill.messages.send_template template_name, template_content, message, async, send_at
-
-		rescue Mandrill::Error => e
-			puts "A mandrill error occurred: #{e.class} - #{e.message}"
-			raise
+		send_mail(template_name, template_content, messages)
 	end
 
 	#Mail de reserva de sesión de admin (opción de validar)
 	def admin_session_booking_mail(book_info)
-
-		mandrill = Mandrill::API.new Agendapro::Application.config.api_key
 		# => Template
 		template_name = 'Admin Session Booking'
 		template_content = []
@@ -1906,46 +1784,6 @@ class BookingMailer < ActionMailer::Base
 			message[:global_merge_vars] << {:name => 'BNOTES', :content => book_info.notes}
 		end
 
-		# Notificacion service provider
-		# if to_all
-		# 	if book_info.service_provider.get_booking_configuration_email == 0
-		# 		message[:to] << {
-		# 				:email => book_info.service_provider.notification_email,
-		# 				:type => 'to'
-		# 			}
-		# 		message[:merge_vars] << {
-		# 				:rcpt => book_info.service_provider.notification_email,
-		# 				:vars => [
-		# 					{
-		# 						:name => 'COMPANYCOMMENT',
-		# 						:content => book_info.company_comment
-		# 					}
-		# 				]
-		# 			}
-		# 	end
-
-		# 	# Email notificacion local
-		# 	if book_info.location.notification and !book_info.location.email.blank? and book_info.location.get_booking_configuration_email == 0
-		# 		message[:to] << {
-		# 			:email => book_info.location.email,
-		# 			:type => 'to'
-		# 		}
-		# 		message[:merge_vars] << {
-		# 			:rcpt => book_info.location.email,
-		# 			:vars => [
-		# 				{
-		# 					:name => 'COMPANYCOMMENT',
-		# 					:content => book_info.company_comment
-		# 				}
-		# 			]
-		# 		}
-		# 		message[:global_merge_vars][0] = {
-		# 					:name => 'SERVICEPROVIDER',
-		# 					:content => book_info.location.name
-		# 				}
-		# 	end
-		# end
-
 		second_address = ''
 		if !book_info.location.second_address.blank?
 			second_address = ", " + book_info.location.second_address
@@ -1953,56 +1791,62 @@ class BookingMailer < ActionMailer::Base
 
 		# Notificacion cliente
 		if book_info.send_mail
-			message[:to] << {
-					:email => book_info.client.email,
-					:name => book_info.client.first_name + ' ' + book_info.client.last_name,
-					:type => 'to'
-				}
-			message[:merge_vars] << {
-				:rcpt => book_info.client.email,
-				:vars => [
-					{
-						:name => 'LOCALADDRESS',
-						:content => book_info.location.address + second_address + " - " + District.find(book_info.location.district_id).name
-					},
-					{
-						:name => 'LOCATIONPHONE',
-						:content => number_to_phone(book_info.location.phone)
-					},
-					{
-						:name => 'VALIDATE',
-						:content => validate_session_form_url(:confirmation_code => book_info.confirmation_code)
-					},
-					{
-						:name => 'EDIT',
-						:content => booking_edit_url(:confirmation_code => book_info.confirmation_code)
-					},
-					{
-						:name => 'CANCEL',
-						:content => booking_cancel_url(:confirmation_code => book_info.confirmation_code)
-					},
-					{
-						:name => 'CLIENT',
-						:content => true
-					}
-				]
-			}
+			message[:to] = [{
+								:email => book_info.client.email,
+								:name => book_info.client.first_name + ' ' + book_info.client.last_name,
+								:type => 'to'
+							}]
+			message[:merge_vars] = [{
+							:rcpt => book_info.client.email,
+							:vars => [
+								{
+									:name => 'LOCALADDRESS',
+									:content => book_info.location.address + second_address + " - " + District.find(book_info.location.district_id).name
+								},
+								{
+									:name => 'LOCATIONPHONE',
+									:content => number_to_phone(book_info.location.phone)
+								},
+								{
+									:name => 'VALIDATE',
+									:content => validate_session_form_url(:confirmation_code => book_info.confirmation_code)
+								},
+								{
+									:name => 'EDIT',
+									:content => booking_edit_url(:confirmation_code => book_info.confirmation_code)
+								},
+								{
+									:name => 'CANCEL',
+									:content => booking_cancel_url(:confirmation_code => book_info.confirmation_code)
+								},
+								{
+									:name => 'CLIENT',
+									:content => true
+								}
+							]
+						}]
 		end
 
-		# => Metadata
-		async = false
-		send_at = DateTime.now
-
 		# => Send mail
-		result = mandrill.messages.send_template template_name, template_content, message, async, send_at
-
-		rescue Mandrill::Error => e
-			puts "A mandrill error occurred: #{e.class} - #{e.message}"
-			raise
+		send_mail(template_name, template_content, messages)
 	end
 
 	#Mail de edición de sesión (depende de si es por admin o no)
 	def update_session_booking_mail(booking, is_admin)
 	end
+
+	private
+		def send_mail(template_name, template_content, message)
+			mandrill = Mandrill::API.new Agendapro::Application.config.api_key
+			# => Metadata
+			async = false
+			send_at = DateTime.now
+
+			result = mandrill.messages.send_template template_name, template_content, message, async, send_at
+
+			rescue Mandrill::Error => e
+				puts "A mandrill error occurred: #{e.class} - #{e.message}"
+				raise
+		end
 
 end
