@@ -3475,7 +3475,7 @@ class BookingsController < ApplicationController
         service_sum = service.duration.minutes
 
         minHour = now
-        if not params[:admin]
+        if !params[:admin] && minHour <= DateTime.now
           minHour += company_setting.before_booking.hours
         end
         if dateTimePointer >= minHour
