@@ -784,6 +784,9 @@ class BookingMailer < ActionMailer::Base
 
 	def book_reminder_mail (book_info)
 		mandrill = Mandrill::API.new Agendapro::Application.config.api_key
+		# => Metadata
+		async = false
+		send_at = DateTime.now
 
 		# => Template
 		template_name = 'Booking Reminder'
@@ -849,6 +852,56 @@ class BookingMailer < ActionMailer::Base
 							:content => Base64.encode64(File.read('public' + book_info.location.company.logo_url.to_s))
 						}]
 		end
+
+		# Notificacion cliente
+		if book_info.send_mail
+			message[:to] << {
+			  :email => book_info.client.email,
+			  :name => book_info.client.first_name + ' ' + book_info.client.last_name,
+			  :type => 'to'
+			}
+			message[:merge_vars] << {
+			  :rcpt => book_info.client.email,
+			  :vars => [
+					{
+						:name => 'LOCALADDRESS',
+						:content => book_info.location.address + second_address + " - " + District.find(book_info.location.district_id).name
+					},
+					{
+						:name => 'LOCATIONPHONE',
+						:content => number_to_phone(book_info.location.phone)
+					},
+					{
+						:name => 'EDIT',
+						:content => booking_edit_url(:confirmation_code => book_info.confirmation_code)
+					},
+					{
+						:name => 'CANCEL',
+						:content => booking_cancel_url(:confirmation_code => book_info.confirmation_code)
+					},
+					{
+						:name => 'CONFIRM',
+						:content => confirm_booking_url(:confirmation_code => book_info.confirmation_code)
+					},
+					{
+						:name => 'CLIENT',
+						:content => true
+					}
+			  ]
+			}
+
+			# => Send mail
+			puts 'Mail enviado a API booking_id: ' + book_info.id.to_s
+			result = mandrill.messages.send_template template_name, template_content, message, async, send_at
+
+			rescue Mandrill::Error => e
+				puts "A mandrill error occurred: #{e.class} - #{e.message}"
+				puts 'Mail falló booking_id: ' + book_info.id.to_s
+				raise
+		end
+
+		# New subject
+		message[:subject] = 'Recuerda tu reserva en ' + book_info.service_provider.company.name
 
 		# Notificacion service provider
 		providers_emails = NotificationEmail.where(id: NotificationProvider.select(:notification_email_id).where(service_provider: book_info.service_provider), receptor_type: 2, summary: false).select(:email).distinct
@@ -916,48 +969,6 @@ class BookingMailer < ActionMailer::Base
 		if !book_info.location.second_address.blank?
 			second_address = ", " + book_info.location.second_address
 		end
-
-		# Notificacion cliente
-		if book_info.send_mail
-			message[:to] << {
-			  :email => book_info.client.email,
-			  :name => book_info.client.first_name + ' ' + book_info.client.last_name,
-			  :type => 'to'
-			}
-			message[:merge_vars] << {
-			  :rcpt => book_info.client.email,
-			  :vars => [
-					{
-						:name => 'LOCALADDRESS',
-						:content => book_info.location.address + second_address + " - " + District.find(book_info.location.district_id).name
-					},
-					{
-						:name => 'LOCATIONPHONE',
-						:content => number_to_phone(book_info.location.phone)
-					},
-					{
-						:name => 'EDIT',
-						:content => booking_edit_url(:confirmation_code => book_info.confirmation_code)
-					},
-					{
-						:name => 'CANCEL',
-						:content => booking_cancel_url(:confirmation_code => book_info.confirmation_code)
-					},
-					{
-						:name => 'CONFIRM',
-						:content => confirm_booking_url(:confirmation_code => book_info.confirmation_code)
-					},
-					{
-						:name => 'CLIENT',
-						:content => true
-					}
-			  ]
-			}
-		end
-
-		# => Metadata
-		async = false
-		send_at = DateTime.now
 
 		# => Send mail
 		puts 'Mail enviado a API booking_id: ' + book_info.id.to_s
