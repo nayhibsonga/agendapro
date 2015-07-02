@@ -853,6 +853,11 @@ class BookingMailer < ActionMailer::Base
 						}]
 		end
 
+		second_address = ''
+		if !book_info.location.second_address.blank?
+			second_address = ", " + book_info.location.second_address
+		end
+
 		# Notificacion cliente
 		if book_info.send_mail
 			message[:to] << {
@@ -963,11 +968,6 @@ class BookingMailer < ActionMailer::Base
 						:name => 'SERVICEPROVIDER',
 						:content => book_info.location.company.name
 					}
-		end
-
-		second_address = ''
-		if !book_info.location.second_address.blank?
-			second_address = ", " + book_info.location.second_address
 		end
 
 		# => Send mail
