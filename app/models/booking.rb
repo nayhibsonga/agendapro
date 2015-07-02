@@ -1296,27 +1296,22 @@ class Booking < ActiveRecord::Base
         provider = ServiceProvider.find(id)
         emails = NotificationEmail.where(id: NotificationProvider.select(:notification_email_id).where(service_provider: provider), receptor_type: 2, summary: false).select(:email).distinct
         emails.each do |email|
-          # Test if the emails doesn't exist
-          @providers_array.each do |staff|
-            if staff[:email] == email
-              @staff = {}
-              @staff[:name] = provider.public_name
-              @staff[:email] = email
+          @staff = {}
+          @staff[:name] = provider.public_name
+          @staff[:email] = email.email
 
-              provider_bookings = Booking.where(location_id: location).where(booking_group: group).where(service_provider: provider).order(:start)
-              @provider_table = ''
-              provider_bookings.each do |book|
-                @provider_table += '<tr style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;">' +
-                    '<td style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;padding-top:8px;padding-bottom:8px;padding-right:8px;padding-left:8px;line-height:1.42857143;vertical-align:top;border-top-width:1px;border-top-style:solid;border-top-color:#ddd;">' + book.service.name + '</td>' +
-                    '<td style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;padding-top:8px;padding-bottom:8px;padding-right:8px;padding-left:8px;line-height:1.42857143;vertical-align:top;border-top-width:1px;border-top-style:solid;border-top-color:#ddd;">' + I18n.l(book.start) + '</td>' +
-                    '<td style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;padding-top:8px;padding-bottom:8px;padding-right:8px;padding-left:8px;line-height:1.42857143;vertical-align:top;border-top-width:1px;border-top-style:solid;border-top-color:#ddd;">' + if book.notes.blank? then '' else book.notes end + '</td>' +
-                    '<td style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;padding-top:8px;padding-bottom:8px;padding-right:8px;padding-left:8px;line-height:1.42857143;vertical-align:top;border-top-width:1px;border-top-style:solid;border-top-color:#ddd;">' + if book.company_comment.blank? then '' else book.company_comment end + '</td>' +
-                  '</tr>'
-              end
-              @staff[:provider_table] = @provider_table
-              @providers_array << @staff
-            end
+          provider_bookings = Booking.where(location_id: location).where(booking_group: group).where(service_provider: provider).order(:start)
+          @provider_table = ''
+          provider_bookings.each do |book|
+            @provider_table += '<tr style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;">' +
+                '<td style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;padding-top:8px;padding-bottom:8px;padding-right:8px;padding-left:8px;line-height:1.42857143;vertical-align:top;border-top-width:1px;border-top-style:solid;border-top-color:#ddd;">' + book.service.name + '</td>' +
+                '<td style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;padding-top:8px;padding-bottom:8px;padding-right:8px;padding-left:8px;line-height:1.42857143;vertical-align:top;border-top-width:1px;border-top-style:solid;border-top-color:#ddd;">' + I18n.l(book.start) + '</td>' +
+                '<td style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;padding-top:8px;padding-bottom:8px;padding-right:8px;padding-left:8px;line-height:1.42857143;vertical-align:top;border-top-width:1px;border-top-style:solid;border-top-color:#ddd;">' + if book.notes.blank? then '' else book.notes end + '</td>' +
+                '<td style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;padding-top:8px;padding-bottom:8px;padding-right:8px;padding-left:8px;line-height:1.42857143;vertical-align:top;border-top-width:1px;border-top-style:solid;border-top-color:#ddd;">' + if book.company_comment.blank? then '' else book.company_comment end + '</td>' +
+              '</tr>'
           end
+          @staff[:provider_table] = @provider_table
+          @providers_array << @staff
         end
       end
 
@@ -1349,6 +1344,7 @@ class Booking < ActiveRecord::Base
 
     if bookings.order(:start).first.start > Time.now - eval(ENV["TIME_ZONE_OFFSET"])
       BookingMailer.multiple_booking_mail(@data)
+      # logger.debug @data.inspect
     end
   end
 

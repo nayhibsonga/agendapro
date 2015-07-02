@@ -1110,7 +1110,7 @@ class BookingMailer < ActionMailer::Base
 				:type => 'bcc'
 			}
 			message[:merge_vars] << {
-				:rcpt => data[:location][:email],
+				:rcpt => local,
 				:vars => [
 					{
 						:name => 'CLIENTNAME',
@@ -1135,7 +1135,7 @@ class BookingMailer < ActionMailer::Base
 				:type => 'bcc'
 			}
 			message[:merge_vars] << {
-				:rcpt => data[:company][:email],
+				:rcpt => company,
 				:vars => [
 					{
 						:name => 'CLIENTNAME',
