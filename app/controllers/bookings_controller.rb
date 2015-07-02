@@ -2996,11 +2996,16 @@ class BookingsController < ApplicationController
 
     weekDate = Date.strptime(current_date, '%Y-%m-%d')
 
+    logger.debug "current_date: " + current_date.to_s
+    logger.debug "weekDate: " + weekDate.to_s
+
     if params[:date] and params[:date] != ""
       if params[:date].to_datetime > now
         now = params[:date].to_datetime
       end
     end
+
+    logger.debug "now: " + now.to_s
 
     days_ids = [1,2,3,4,5,6,7]
     index = days_ids.find_index(now.cwday)
@@ -3032,6 +3037,8 @@ class BookingsController < ApplicationController
 
       while (dateTimePointer < limit_date)
 
+        logger.debug "DTP: " + dateTimePointer.to_s
+
         serviceStaffPos = 0
         bookings = []
 
@@ -3044,12 +3051,15 @@ class BookingsController < ApplicationController
           service_sum = service.duration.minutes
 
           minHour = now
-          if not params[:admin]
+          logger.debug "min_hours: " + minHour.to_s
+          if !params[:admin] && minHour <= DateTime.now
             minHour += company_setting.before_booking.hours
           end
           if dateTimePointer >= minHour
             service_valid = true
           end
+
+          logger.debug "min_hours: " + minHour.to_s
 
           # Hora dentro del horario del local
 
@@ -3177,7 +3187,7 @@ class BookingsController < ApplicationController
 
                 if service.has_time_discount
 
-                  promo = Promo.where(:day_id => date.cwday, :service_id => service.id).first
+                  promo = Promo.where(:day_id => date.cwday, :service_promo_id => service.active_service_promo_id, :location_id => local.id).first
 
                   #logger.debug "Morning start " + service.company.company_setting.promo_time.morning_start.to_s
                   #logger.debug "Morning end " + service.company.company_setting.promo_time.morning_end.to_s

@@ -43,7 +43,7 @@
                 <td style="text-align: right; width: 80%;">
                   <span style="color: #b5b5b5; font-size: 40px;"><strike><%= number_to_currency(@service.price, unit: "$", delimiter: ".") %></strike></span><br />
                   <%= image_tag "promociones/price_doble.png", :alt => "Promoción", :size => "46x60", :class => "price-icon" %>&nbsp;<span style="color: #22c488; font-size: 65px;"><%= number_to_currency(@service.price*(100-@service.get_max_time_discount)/100, unit: "", delimiter: ".") %></span><br />
-                  <span style="color: #22c488; font-size: 24px;"><%= @service.get_max_time_discount %>% de descuento</span><br />
+                  <span style="color: #22c488; font-size: 22px;">Desde <%= @service.get_max_time_discount %>% de descuento</span><br />
                   <span>
                     <button class="btnBook" id="btnPayBook" data-toggle="modal" data-target="#selectProviderModal">Comprar y reservar</button>
                   </span>
@@ -205,7 +205,12 @@
               </div>
               <div id="collapseTwo" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingTwo">
                 <div class="panel-body">
-                  Máximo
+                  <p style="color: #949292;">Quedan <%= @service.active_promo_left_bookings %> reservas disponibles para esta promoción.</p>
+                  <% if @service.active_promo_left_bookings <= 20 %>
+                    <p style="color: #949292;">
+                      ¡Apúrate y reserva antes que se acaben!
+                    </p>
+                  <% end %>
                 </div>
               </div>
             </div>
@@ -365,14 +370,34 @@
             </div>
           </div>
         </div>
-        <!--<div class="row sessions-bar" style="display: none;">
-          <div class="col-xs-12 col-md-2">
-            <a class="btn btn-large btn-green btn-add-session" style="padding: 5px 12px; margin-right: 10px; font-size: 20px;" onclick="addNewSession()"><i class="fa fa-plus"></i> Agregar Sesión</a>
+        <% if @service.has_sessions %>
+          <div class="row sessions-bar">
+            <div class="col-xs-12 col-md-2">
+              <a class="btn btn-large btn-green btn-add-session" style="padding: 5px 12px; margin-right: 10px; font-size: 20px;" onclick="addNewSession()"><i class="fa fa-plus"></i> Agregar Sesión</a>
+            </div>
           </div>
-          <div class="col-xs-12 col-md-10">
-            Puedes agendar hasta <span id="sessions-left"></span> sesiones más. Las sesiones que no agendes podrán ser agendadas desde tu cuenta AgendaPro o llamando al local elegido.
+          <div class="row sessions-bar">
+            <div class="col-md-3">
+
+            </div>
+            <div class="col-md-9">
+              <div id="sessions-summary">
+                <div id="sessions-summary-title">
+                  Detalle de reserva&nbsp;&nbsp;
+                  <span id="sessions-summary-subtitle">
+                    Puedes agendar hasta <span id="sessions-left"><%= @service.sessions_amount %></span> sesiones más. &nbsp;&nbsp; <span id="sessions-help"><i class="fa fa-question-circle"></i>
+                  </span>
+                </div>
+                <div id="sessions-summary-body">
+                  <table>
+                    <tr id="sessions-summary-tr">
+                    <tr>
+                  </table>
+                </div>
+              </div>
+            </div>
           </div>
-        </div>-->
+        <% end %>
         <!--<div class="row change-bar">
           <div class="col-xs-12 col-md-4 col-md-push-3">
             <p class="p-label"><span class="wf-label label-available">&nbsp;</span> Disponible<span class="wf-label label-past">&nbsp;</span> No Disponible<span class="wf-label label-unavailable">&nbsp;</span> Ocupado</p>
@@ -424,6 +449,10 @@
 
 <input type="hidden" id="locationId" value="<%= @location.id %>" />
 <input type="hidden" id="serviceId" value="<%= @service.id %>" />
+
+<% if user_signed_in? %>
+  <input type="hidden" id="user_id" value="<%= current_user.id %>" />
+<% end %>
 
 <% content_for :stylesheets do %>
   <%= stylesheet_link_tag "calendar" %>
@@ -599,6 +628,165 @@
       $("#openPayFormBtn").attr("disabled", true);
     });
 
+    var first_session;
+    var sessions_buffer = [];
+    var selected = false;
+    var sessions_left = <%= @service.sessions_amount %>;
+    var actual_booking;
+    var booking_buffer = [];
+    var block_discount = 0;
+
+    function addNewSession() {
+
+        if(!selected) {
+          myAlert.showAlert(
+            '<h3>Selecciona un Horario</h3>' +
+            '<p>Debes elegir un horario antes de agregar otra sesión.</p>'
+          );
+        }
+        else {
+
+          if(first_session == null)
+          {
+            first_session = actual_booking;
+          }
+
+          sessions_buffer.push(actual_booking);
+
+          var hourBlock = $(".hora-activo");
+          $(hourBlock).removeClass('hora-disponible');
+          $(hourBlock).removeClass('hora-activo');
+          $(hourBlock).addClass('hora-ocupada');
+
+
+          if(block_discount == 0)
+          {
+            block_discount = actual_booking.discount;
+          }
+          if (actual_booking.discount < block_discount)
+          {
+            block_discount = actual_booking.discount;
+          }
+
+          blockDiscounts();
+
+          blockBookingBufferHour();
+
+          sessions_left = sessions_left - 1;
+
+          $("#sessions-left").empty();
+          $("#sessions-left").text("" + sessions_left);
+          selected = false;
+          if(sessions_left < 2)
+          {
+            $(".btn-add-session").attr("disabled", "disabled");
+          }
+          else
+          {
+            $(".btn-add-session").attr("disabled", false);
+          }
+          
+          loadSessionsSummary();
+
+        }
+      
+    }
+
+
+
+    function loadSessionsSummary()
+    {
+      $("#sessions-summary-tr").empty();
+
+      for(i = 0; i < sessions_buffer.length; i++)
+      {
+        var sessionStart = sessions_buffer[i].start.split(" ");
+        var sessionStartDate = sessionStart[0].split("-")[2] + "/" + sessionStart[0].split("-")[1] + "/" + sessionStart[0].split("-")[0];
+        var sessionStartTime = sessionStart[1].split(":")[0] + ":" + sessionStart[1].split(":")[1];
+
+        var sessionEnd = sessions_buffer[i].end.split(" ");
+        var sessionEndDate = sessionEnd[0].split("-")[2] + "/" + sessionEnd[0].split("-")[1] + "/" + sessionEnd[0].split("-")[0];
+        var sessionEndTime = sessionEnd[1].split(":")[0] + ":" + sessionEnd[1].split(":")[1];
+
+        $("#sessions-summary-tr").append(
+          '<td class="session-summary"><span class="remove-session" index="' + i + '" style="cursor: pointer;"><div class="session-title"><i class="fa fa-times"></i></span>&nbsp;&nbsp;Sesión ' + (i+1) + '</div><div class="session-time"><i class="fa fa-calendar"></i>&nbsp;' + sessionStartDate + '<br /><i class="fa fa-clock-o"></i>&nbsp;' + sessionStartTime + " - " + sessionEndTime + '</div></td>'
+        );
+      }
+
+      $(".remove-session").on('click', function(){
+        console.log("Remove");
+        var sessionIndex = $(this).attr("index");
+        removeSession(sessionIndex);
+      });
+
+      var oldTop = $(document).scrollTop();
+      $('#foo4').trigger('updateSizes');
+      $(document).scrollTop(oldTop);
+    }
+
+    function removeSession(index)
+    {
+      var sessions_aux = [];
+      var removed_session;
+      for(i = 0; i < sessions_buffer.length; i++)
+      {
+        if (i != index)
+        {
+          sessions_aux.push(sessions_buffer[i]);
+        }
+        else
+        {
+          removed_session = sessions_buffer[i];
+        }
+      }
+      sessions_buffer = sessions_aux;
+      
+      var date = removed_session.start.split(' ')[0];
+      var start_time = removed_session.start.split(" ")[1];
+      var start_str = start_time.split(":")[0] + ":" + start_time.split(":")[1];
+      var end_time = removed_session.end.split(" ")[1];
+      var end_str = end_time.split(":")[0] + ":" + end_time.split(":")[1];
+      var hourBlock = $('.columna-dia[data-date="' + date + '"]').children('.bloque-hora[data-start="' + start_str + '"][data-end="' + end_str + '"]');
+
+      sessions_left = sessions_left + 1;
+      $("#sessions-left").html(sessions_left);
+      $(".btn-add-session").attr("disabled", false);
+
+      $(hourBlock).removeClass('hora-ocupada');
+      $(hourBlock).addClass('hora-disponible');
+
+      if(sessions_buffer.length == 0)
+      {
+        block_discount = 0;
+      }
+      else
+      {
+        new_min = 0;
+        for(i = 0; i < sessions_buffer.length; i++)
+        {
+          if(new_min == 0)
+          {
+            new_min = sessions_buffer[i].discount;
+          }
+          else
+          {
+            if(sessions_buffer[i].discount < new_min)
+            {
+              new_min = sessions_buffer[i].discount;
+            }
+          }
+        }
+        block_discount = new_min;
+      }
+
+      blockDiscounts();
+
+      loadSessionsSummary();
+
+    }
+
+
+
     function loadCalendar() {
 
       var localId = $("#locationId").val();
@@ -636,8 +824,11 @@
       $(document).on('hourClick', function (e) {
         
         bookSummary = bookSummaries[e.index];
+        selected = true;
 
         $("#selected-hour-body").empty();
+
+        var book_discount = 0;
 
         for(k=0; k<bookSummary.bookings.length; k++)
         {
@@ -651,8 +842,9 @@
           
           if(bookDetails.has_discount && bookDetails.has_time_discount)
           {
-            if(bookDetails.discount > bookDetails.has_time_discount)
+            if(bookDetails.discount > bookDetails.time_discount)
             {
+              book_discount = bookDetails.discount;
               bookDetailsDiscountPrice = bookDetails.price * (100 - bookDetails.discount) / 100;
               $("#selected-hour-body").append(
                 '<b>' + bookDetails.service_name + '</b><br />' +
@@ -662,16 +854,18 @@
             }
             else
             {
+              book_discount = bookDetails.time_discount;
               bookDetailsDiscountPrice = bookDetails.price * (100 - bookDetails.time_discount) / 100;
               $("#selected-hour-body").append(
                 '<b>' + bookDetails.service_name + '</b><br />' +
                 '<div class="light-gray"><%= image_tag("promociones/reloj.png", class:"promotion-hour-icon", size: "18x18") %>' + bookDetailsStart + ' - ' + bookDetailsEnd + '<br />' +
-                '<%= image_tag("promociones/etiqueta.png", class:"promotion-hour-icon", size: "18x18") %> <strike>' + simple_currency(bookDetails.price) + '</strike> ' + '<span class="light-green"><b>' + simple_currency(bookDetailsDiscountPrice) + '</b></span>' + ' (' + bookDetails.time_discount + ' % off) <br /></div>'
+                '<%= image_tag("promociones/etiqueta.png", class:"promotion-hour-icon", size: "18x18") %> <strike>' + simple_currency(bookDetails.price) + '</strike>  <span class="light-green"><b>' + simple_currency(bookDetailsDiscountPrice) + '</b></span>' + ' (' + bookDetails.time_discount + ' % off) <br /></div>'
               );
             }
           }
           else if(bookDetails.has_discount && !bookDetails.has_time_discount)
           {
+            book_discount = bookDetails.discount;
             bookDetailsDiscountPrice = bookDetails.price * (100 - bookDetails.discount) / 100;
             $("#selected-hour-body").append(
                 '<b>' + bookDetails.service_name + '</b><br />' +
@@ -681,6 +875,7 @@
           }
           else if(!bookDetails.has_discount && bookDetails.has_time_discount)
           {
+            book_discount = bookDetails.time_discount
             bookDetailsDiscountPrice = bookDetails.price * (100 - bookDetails.time_discount) / 100;
             $("#selected-hour-body").append(
                 '<b>' + bookDetails.service_name + '</b><br />' +
@@ -690,21 +885,18 @@
           }
           else
           {
+            book_discount = 0;
             $("#selected-hour-body").append(
               '<b>' + bookDetails.service_name + '</b><br />' +
               '<div class="light-gray"><%= image_tag("promociones/reloj.png", class:"promotion-hour-icon", size: "18x18") %> ' + bookDetailsStart + ' - ' + bookDetailsEnd + '<br />' +
               '<%= image_tag("promociones/etiqueta.png", class:"promotion-hour-icon", size: "18x18") %> ' + simple_currency(bookDetails.price) + '<br /></div>'
             );
           }
-          
-          
-          /*$("#selected-hour-body").append(
-            bookDetails.service_name + '<br />' +
-            bookDetailsStart + ' - ' + bookDetailsEnd + '<br />' + 
-            simple_currency(bookDetails.price)
-          );*/
+          //blockDiscounts(block_discount);
 
         }
+
+        addSession(e, book_discount);
 
         $("#openPayFormBtn").attr("disabled", false);
 
@@ -716,6 +908,147 @@
       $("#calendar-div").show();
       $("#loader-div").hide();
 
+      blockDiscounts();
+
+    }
+
+    function blockDiscounts()
+    {
+
+      if (block_discount == 0)
+      {
+        var hourBlocks = $('.columna-dia').children('.bloque-hora');
+        $.each(hourBlocks, function (key, hourBlock) {
+
+            $(hourBlock).removeClass('hora-ocupada');
+            $(hourBlock).addClass('hora-promocion');
+            $(hourBlock).addClass('hora-disponible');
+
+        });
+      }
+      var hourBlocks = $('.columna-dia').children('.bloque-hora');
+      $.each(hourBlocks, function (key, hourBlock) {
+        
+        var index = $(hourBlock).data('index');
+        
+        bookSummary = bookSummaries[index].bookings[0];
+
+        bookDiscount = bookSummary.discount;
+        if (bookSummary.time_discount > bookSummary.discount)
+        {
+          bookDiscount = bookSummary.time_discount;
+        }
+
+        console.log(bookDiscount + " - " + block_discount);
+
+        if(bookDiscount < block_discount)
+        {
+          $(hourBlock).removeClass('hora-disponible');
+          $(hourBlock).removeClass('hora-activo');
+          $(hourBlock).removeClass('hora-promocion');
+          $(hourBlock).addClass('hora-ocupada');
+        }
+        else
+        {
+          $(hourBlock).removeClass('hora-ocupada');
+          $(hourBlock).addClass('hora-promocion');
+          $(hourBlock).addClass('hora-disponible');
+        }
+
+      });
+    }
+
+    function addSession(booking, discount)
+    {
+
+        selected = true;
+        var b_discount = <%= @service.discount %>;
+
+        actual_booking = {
+          start: generateDate(booking.date, booking.start),
+          end: generateDate(booking.date, booking.end),
+          provider: booking.provider,
+          provider_name: $('#providerOptimizerSelector option[value="'+ $('providerOptimizerSelector').val() +'"]').text(),
+          provider_lock: $('providerOptimizerSelector').val() == 0 ? false : true,
+          service: $('#serviceId').val(),
+          service_name: "<%= @service.name %>",
+          online_payable: true,
+          has_discount: true,
+          discount: discount,
+          price: <%= @service.price %>,
+          show_price: true,
+          has_sessions: true,
+          sessions_amount: <%= @service.sessions_amount %>
+        };
+
+        checkUserCrossBookings();
+
+    }
+
+    function checkUserCrossBookings () {
+      $(".alert").alert('close');
+      var user = $('#user_id').val();
+      var booking_start = actual_booking.start;
+      var booking_end = actual_booking.end;
+      $.getJSON('/check_user_cross_bookings', {user_id: user, booking_start: booking_start, booking_end: booking_end}, function (result) {
+        if (result.crossover) {
+          $('#warning').empty();
+          var warning = '<div class="alert alert-warning alert-dismissable fade in" style="margin-bottom: 0px;">' +
+            '<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>' +
+            '<strong>¡Advertencia!</strong> Tienes agendado <em>' + result.booking.service + '</em> con <em>' + result.booking.service_provider + '</em> el <em>' + formattedTime(result.booking.start) + '</em>.' +
+          '</div>';
+          $('#warning').append(warning);
+        };
+      });
+    }
+
+    function blockBookingBufferHour () {
+
+
+      for(i=0; i < sessions_buffer.length; i++)
+      {
+
+        var date = sessions_buffer[i].start.split(' ')[0];
+        var hourBlocks = $('.columna-dia[data-date="' + date + '"]').children('.bloque-hora.hora-disponible');
+        $.each(hourBlocks, function (key, hourBlock) {
+          var start = $(hourBlock).data('start');
+          var end = $(hourBlock).data('end');
+
+          var start_arr = sessions_buffer[i].start.split(" ");
+          var start_date = start_arr[0].split("-");
+          var start_time = start_arr[1].split(":");
+
+          var end_arr = sessions_buffer[i].end.split(" ");
+          var end_date = end_arr[0].split("-");
+          var end_time = end_arr[1].split(":");
+
+          var bookingStart = new Date(start_date[0], start_date[1]-1, start_date[2], start_time[0], start_time[1], start_time[2], 0);
+          var bookingEnd = new Date(end_date[0], end_date[1]-1, end_date[2], end_time[0], end_time[1], end_time[2], 0);
+
+          var blockStart = new Date(start_date[0], start_date[1]-1, start_date[2], start.split(":")[0], start.split(":")[1], 0, 0);
+          var blockEnd = new Date(end_date[0], end_date[1]-1, end_date[2], end.split(":")[0], end.split(":")[1], 0, 0);
+          
+          //Check for no overlap and negate it.
+          if(!(bookingEnd <= blockStart || blockEnd <= bookingStart))
+          {
+            $(hourBlock).removeClass('hora-disponible');
+            $(hourBlock).removeClass('hora-activo');
+            $(hourBlock).addClass('hora-ocupada');
+          }
+
+        });    
+      }
+
+    }
+
+    function generateDate(date, time) {
+      var year = date.substring(0, date.indexOf('-'));
+      var month = date.substring(date.indexOf('-') + 1, date.lastIndexOf('-'));
+      var day = date.substring(date.lastIndexOf('-') + 1);
+
+      time += ':00';
+
+      return year + '-' + month + '-' + day + ' ' + time;
     }
 
     $("#openCalendarBtn").click(function(){

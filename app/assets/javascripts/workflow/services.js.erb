@@ -478,7 +478,7 @@ function loadStep2() {
 			
 			if(bookDetails.has_discount && bookDetails.has_time_discount)
 			{
-				if(bookDetails.discount > bookDetails.has_time_discount)
+				if(bookDetails.discount > bookDetails.time_discount)
 				{
 					bookDetailsDiscountPrice = bookDetails.price * (100 - bookDetails.discount) / 100;
 					$("#selected-hour-body").append(
