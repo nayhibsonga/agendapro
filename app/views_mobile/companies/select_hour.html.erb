@@ -6,7 +6,7 @@
   </div>
   <div class="row">
     <div class="col-xs-12">
-      <%= form_tag("select_hour", method: "post", role: "form", id: "form-date") do %>
+      <%= form_tag("select_hour", method: "get", role: "form", id: "form-date") do %>
         <%= hidden_field_tag :location, @location.id %>
         <%= hidden_field_tag :service, @service.id %>
         <%= hidden_field_tag :provider, params[:provider] %>
@@ -21,7 +21,7 @@
   </div>
   <div class="row">
     <div class="col-xs-12">
-      <%= form_tag("user_data", method: "post", role: "form") do %>
+      <%= form_tag("user_data", method: "get", role: "form") do %>
         <%= hidden_field_tag :service, @service.id %>
         <%= hidden_field_tag :staff, nil %>
         <%= hidden_field_tag :start, nil %>
