@@ -318,65 +318,98 @@
             <input type="hidden" id="local" name="local" value="<%= @location.id %>">
           <% end %>
         </div>
-        <div class="row" id="loader-div" hidden>
-          <p style="text-align: center; margin-top: 40px;">
-            <%= image_tag "ajax-loader.gif", :alt => "Loader" %>
-          </p>
-        </div>
-      </div>
 
-      <div id="calendar-div" hidden>
-        <div class="row staff">
-          <div class="col-md-9" id="staff-calendar">
-            <div class="panel panel-info <%= 'full-margin' if @location.company.company_setting.provider_preference == 2 %>">
-              <div class="calendar-head">
-                <div class="panel-title">
-                  <div class="row">
-                    <div class="col-xs-1">
-                      <button type="button" class="btn btn-default" id="prev"><i class="fa fa-chevron-left"></i></button>
-                    </div>
-                    <div class="col-xs-8">
-                      <span class="tittle"></span>
-                    </div>
-                    <div class="col-xs-2">
-                      <span class="date-span">
-                        Ir a fecha&nbsp;<i class="fa fa-calendar-o"></i>
-                        <input type="text" id="datepicker" name="date" />
-                      </span>
-                    </div>
-                    <div class="col-xs-1">
-                      <button type="button" class="btn btn-default pull-right" id="next"><i class="fa fa-chevron-right"></i></button>
+
+        <div id="calendar-div" hidden>
+          <div class="row staff">
+            <div class="col-md-9" id="staff-calendar">
+              <div class="panel panel-info <%= 'full-margin' if @location.company.company_setting.provider_preference == 2 %>">
+                <div class="calendar-head">
+                  <div class="panel-title">
+                    <div class="row">
+                      <div class="col-xs-1">
+                        <button type="button" class="btn btn-default" id="prev"><i class="fa fa-chevron-left"></i></button>
+                      </div>
+                      <div class="col-xs-8">
+                        <span class="tittle"></span>
+                      </div>
+                      <div class="col-xs-2">
+                        <span class="date-span">
+                          Ir a fecha&nbsp;<i class="fa fa-calendar-o"></i>
+                          <input type="text" id="datepicker" name="date" />
+                        </span>
+                      </div>
+                      <div class="col-xs-1">
+                        <button type="button" class="btn btn-default pull-right" id="next"><i class="fa fa-chevron-right"></i></button>
+                      </div>
                     </div>
                   </div>
                 </div>
+                <div class="days-row">
+                </div>
+                <div class="panel-body">
+                  <div class="horario">
+                    <!-- <%= image_tag "ajax-loader.gif", :alt => "Loader", :id => "calendar-loader" %> -->
+                  </div>
+                </div>
               </div>
-              <div class="days-row">
-              </div>
-              <div class="panel-body">
-                <div class="horario">
-                  <!-- <%= image_tag "ajax-loader.gif", :alt => "Loader", :id => "calendar-loader" %> -->
+            </div>
+            <div class="col-md-3">
+              <div class="panel panel-default">
+                <div id="selected-hour-heading">
+                  Detalle Reserva
+                </div>
+                <div id="selected-hour-body">
+
                 </div>
               </div>
             </div>
           </div>
-          <div class="col-md-3">
-            <div class="panel panel-default">
-              <div id="selected-hour-heading">
-                Detalle Reserva
+          <% if @service.has_sessions %>
+            <div class="row sessions-bar">
+              <div class="col-xs-12 col-md-2">
+                <a class="btn btn-large btn-green btn-add-session" style="padding: 5px 12px; margin-right: 10px; font-size: 20px;" onclick="addNewSession()"><i class="fa fa-plus"></i> Agregar Sesión</a>
               </div>
-              <div id="selected-hour-body">
+            </div>
+            <div class="row sessions-bar">
+              <div class="col-md-3">
 
               </div>
+              <div class="col-md-9">
+                <div id="sessions-summary">
+                  <div id="sessions-summary-title">
+                    Detalle de reserva&nbsp;&nbsp;
+                    <span id="sessions-summary-subtitle">
+                      Puedes agendar hasta <span id="sessions-left"><%= @service.sessions_amount %></span> sesiones más. &nbsp;&nbsp; <span id="sessions-help"><i class="fa fa-question-circle"></i>
+                    </span>
+                  </div>
+                  <div id="sessions-summary-body">
+                    <table>
+                      <tr id="sessions-summary-tr">
+                      <tr>
+                    </table>
+                  </div>
+                </div>
+              </div>
             </div>
-          </div>
-        </div>
-        <% if @service.has_sessions %>
-          <div class="row sessions-bar">
-            <div class="col-xs-12 col-md-2">
-              <a class="btn btn-large btn-green btn-add-session" style="padding: 5px 12px; margin-right: 10px; font-size: 20px;" onclick="addNewSession()"><i class="fa fa-plus"></i> Agregar Sesión</a>
+          <% end %>
+          <!--<div class="row change-bar">
+            <div class="col-xs-12 col-md-4 col-md-push-3">
+              <p class="p-label"><span class="wf-label label-available">&nbsp;</span> Disponible<span class="wf-label label-past">&nbsp;</span> No Disponible<span class="wf-label label-unavailable">&nbsp;</span> Ocupado</p>
             </div>
-          </div>
-          <div class="row sessions-bar">
+            <div class="col-xs-4 col-md-3 col-md-pull-4">
+              <div class="btn-change btn-prev">
+                <a class="prev2 prev-btn"><i class="fa fa-chevron-left prev-arrow"></i> Anterior</a>
+              </div>
+            </div>
+            <div class="col-xs-8 col-md-5">
+              <a class="btn btn-large btn-green btn-add-session sessions-bar" style="padding: 5px 12px; margin-right: 10px; font-size: 20px;" onclick="addNewSession()" style="display: none;"><i class="fa fa-plus"></i> Agregar Sesión</a>
+              <div class="btn-change btn-next">
+                <a class="next2 next-btn">Siguiente <i class="fa fa-chevron-right next-arrow"></i></a>
+              </div>
+            </div>
+          </div>-->
+          <!--<div class="row sessions-bar">
             <div class="col-md-3">
 
             </div>
@@ -385,7 +418,7 @@
                 <div id="sessions-summary-title">
                   Detalle de reserva&nbsp;&nbsp;
                   <span id="sessions-summary-subtitle">
-                    Puedes agendar hasta <span id="sessions-left"><%= @service.sessions_amount %></span> sesiones más. &nbsp;&nbsp; <span id="sessions-help"><i class="fa fa-question-circle"></i>
+                    Puedes agendar hasta <span id="sessions-left"></span> sesiones más. &nbsp;&nbsp; <span id="sessions-help"><i class="fa fa-question-circle"></i>
                   </span>
                 </div>
                 <div id="sessions-summary-body">
@@ -396,46 +429,18 @@
                 </div>
               </div>
             </div>
-          </div>
-        <% end %>
-        <!--<div class="row change-bar">
-          <div class="col-xs-12 col-md-4 col-md-push-3">
-            <p class="p-label"><span class="wf-label label-available">&nbsp;</span> Disponible<span class="wf-label label-past">&nbsp;</span> No Disponible<span class="wf-label label-unavailable">&nbsp;</span> Ocupado</p>
-          </div>
-          <div class="col-xs-4 col-md-3 col-md-pull-4">
-            <div class="btn-change btn-prev">
-              <a class="prev2 prev-btn"><i class="fa fa-chevron-left prev-arrow"></i> Anterior</a>
-            </div>
-          </div>
-          <div class="col-xs-8 col-md-5">
-            <a class="btn btn-large btn-green btn-add-session sessions-bar" style="padding: 5px 12px; margin-right: 10px; font-size: 20px;" onclick="addNewSession()" style="display: none;"><i class="fa fa-plus"></i> Agregar Sesión</a>
-            <div class="btn-change btn-next">
-              <a class="next2 next-btn">Siguiente <i class="fa fa-chevron-right next-arrow"></i></a>
-            </div>
-          </div>
-        </div>-->
-        <!--<div class="row sessions-bar">
-          <div class="col-md-3">
+          </div>-->
+        </div>
 
-          </div>
-          <div class="col-md-9">
-            <div id="sessions-summary">
-              <div id="sessions-summary-title">
-                Detalle de reserva&nbsp;&nbsp;
-                <span id="sessions-summary-subtitle">
-                  Puedes agendar hasta <span id="sessions-left"></span> sesiones más. &nbsp;&nbsp; <span id="sessions-help"><i class="fa fa-question-circle"></i>
-                </span>
-              </div>
-              <div id="sessions-summary-body">
-                <table>
-                  <tr id="sessions-summary-tr">
-                  <tr>
-                </table>
-              </div>
-            </div>
-          </div>
-        </div>-->
+
+        <div class="row" id="loader-div" hidden>
+          <p style="text-align: center; margin-top: 40px;">
+            <%= image_tag "ajax-loader.gif", :alt => "Loader" %>
+          </p>
+        </div>
       </div>
+
+
 
       <div class="modal-footer">          
           <a type="button" class="btn open-calendar-btn" id="openCalendarBtn"><i class="fa fa-calendar-o"></i>&nbsp;Ver calendario</a>
@@ -631,7 +636,7 @@
     var first_session;
     var sessions_buffer = [];
     var selected = false;
-    var sessions_left = <%= @service.sessions_amount %>;
+    var sessions_left = parseInt("<%= @service.sessions_amount %>");
     var actual_booking;
     var booking_buffer = [];
     var block_discount = 0;
@@ -978,7 +983,7 @@
           price: <%= @service.price %>,
           show_price: true,
           has_sessions: true,
-          sessions_amount: <%= @service.sessions_amount %>
+          sessions_amount: parseInt("<%= @service.sessions_amount %>")
         };
 
         checkUserCrossBookings();

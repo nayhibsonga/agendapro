@@ -5,25 +5,47 @@
 	<!-- Resultado Buscador -->
 	<div class="container">
 
-		<% if @results.count > 0 %>
-			
-			<div class="row">
-				<div class="col-md-12">
-					<div id="map">
-					</div>
-				</div>
-			</div>
 
+		<div class="row">
+			<p style="text-align: center;">
+			<%= link_to "Ir a Promociones por horario", get_promotions_path %>
+			</p>
+		</div>
+
+		<% if @results.count >0 %>
+			<div class="row">
+
+						<div id="map">
+						</div>
+
+			</div>
 			<div class="row text-center">
 			<p><br /><% if params[:inputLocalization] && params[:inputLocalization] != "" %>Estos son los resultados más cerca de "<%= params[:inputLocalization] %>".<% else %> Elige una ubicación nueva para encontrar las promociones más cercanas. <% end %> <a href="" data-toggle="modal" data-target="#geolocation-modal">Cambiar Ubicación</a></p>
 			</div>
+
+			<!--<h3>Promociones de último minuto</h3>
+			<div class="row locations-panel">
+				<% i = 1 %>
+				<div class="row">
+				<% @last_minute_results.each do |service| %>
+					<div class="col-md-4">
+						<%= render :partial => 'service_panel', :locals => { :service => service, :i => i} %>
+					</div>
+					<% if i%3 == 0 %>
+						</div>
+						<div class="row">
+					<% end %>
+					<% i = i + 1 %>
+				<% end %>
+				</div>
+			</div>-->
 
 			<div class="row locations-panel">
 				<% i = 1 %>
 				<div class="row">
 				<% @results.each do |promo_detail| %>
 					<div class="col-md-4">
-						<%= render :partial => 'service_panel', :locals => { :service => promo_detail[0], :location => promo_detail[1], :i => i} %>
+						<%= render :partial => 'last_minute_service_panel', :locals => { :service => promo_detail[0], :location => promo_detail[1], :i => i} %>
 					</div>
 					<% if i%3 == 0 %>
 						</div>
@@ -34,47 +56,6 @@
 				</div>
 			</div>
 
-
-				<% if @last_minute_results.count > 0 %>
-
-					<div class="row">
-						<div class="col-md-12">
-
-							<p style="text-align: center; padding-top: 7px; padding-bottom: 7px;">
-								<%= link_to "Promociones de último minuto", get_last_minute_promotions_path %>
-							</p>
-							<div>
-								<div>
-									
-								</div>
-							</div>
-						</div>
-					</div>
-
-				<% end %>
-
-				<div class="jcarousel-wrapper">
-	                <div class="jcarousel">
-	                    <ul class="jcarousel-inner">
-	                    	<% @last_minute_results.each do |promo_detail| %>
-
-								<li style="cursor: pointer; width: 600px; height: 400px;" class="last-minute-div" service_id="<%= promo_detail[0].id %>" location_id="<%= promo_detail[1].id %>">
-									<%= render :partial => 'last_minute_service_panel', :locals => { :service => promo_detail[0], :location => promo_detail[1], :i => i} %>
-								</li>
-
-							<% end %>
-	                    </ul>
-	                </div>
-
-	                <a href="#" class="jcarousel-control-prev">&lsaquo;</a>
-	                <a href="#" class="jcarousel-control-next">&rsaquo;</a>
-	                
-	                <p class="jcarousel-pagination">
-	                    
-	                </p>
-	            </div>
-
-
 			<%= will_paginate @results, renderer: BootstrapPagination::Rails %>
 
 			<div class="row">
@@ -84,7 +65,6 @@
 
 				</div>
 			</div>
-
 		<% else %>
 			<div hidden>
 				<input type="hidden" id="lat" value="<%= @latitude.to_s %>" />
@@ -151,12 +131,11 @@
 	<%= javascript_include_tag "jquery-ui.min" %>
 	<%= javascript_include_tag "search/map" %>
 	<%= javascript_include_tag "Alert" %>
-	<%= javascript_include_tag "search/carousel" %>
 	<script type="text/javascript">
 
 		$("#promotions-search-btn").click(function(){
 			console.log("clicked");
-			$("#promotions-form").submit();
+			$("#last-minute-promotions-form").submit();
 		});
 
 		myAlert = new Alert();
@@ -212,7 +191,7 @@
 	                $("#inputLocalization2").val(results[0].formatted_address);
 	                document.cookie = "formatted_address=" + escape(results[0].formatted_address);
 	                $('#inputSearch').focus();
-	                $('#promotions-form').submit();
+	                $('#last-minute-promotions-form').submit();
 	            }
 	            else {
 	                $("#inputLocalization").val('');
@@ -305,7 +284,7 @@
 	        geolocate();
 	    });
 	    $('#modal_search').click(function() {
-	        $('#promotions-form').submit();
+	        $('#last-minute-promotions-form').submit();
 	    });
 
 	    $(".number-pin").click(function(){
@@ -322,47 +301,6 @@
 	      console.log($(this).attr("service_id"));
 	      $('.show-promo-link[service_id="' + $(this).attr("service_id") + '"][location_id="' + $(this).attr("location_id") + '"]')[0].click();
 	    });
-
-	    $(".last-minute-div").click(function(){
-	      $('.last-minute-link[service_id="' + $(this).attr("service_id") + '"][location_id="' + $(this).attr("location_id") + '"]')[0].click();
-	    });
-
-	    (function($) {
-		    $(function() {
-		        $('.jcarousel').jcarousel();
-
-		        $('.jcarousel-control-prev')
-		            .on('jcarouselcontrol:active', function() {
-		                $(this).removeClass('inactive');
-		            })
-		            .on('jcarouselcontrol:inactive', function() {
-		                $(this).addClass('inactive');
-		            })
-		            .jcarouselControl({
-		                target: '-=1'
-		            });
-
-		        $('.jcarousel-control-next')
-		            .on('jcarouselcontrol:active', function() {
-		                $(this).removeClass('inactive');
-		            })
-		            .on('jcarouselcontrol:inactive', function() {
-		                $(this).addClass('inactive');
-		            })
-		            .jcarouselControl({
-		                target: '+=1'
-		            });
-
-		        $('.jcarousel-pagination')
-		            .on('jcarouselpagination:active', 'a', function() {
-		                $(this).addClass('active');
-		            })
-		            .on('jcarouselpagination:inactive', 'a', function() {
-		                $(this).removeClass('active');
-		            })
-		            .jcarouselPagination();
-		    });
-		})(jQuery);
 
 	</script>
 <% end %>

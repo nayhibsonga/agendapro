@@ -142,4 +142,34 @@ class Service < ActiveRecord::Base
 
 	end
 
+	def get_last_minute_hours(location_id)
+		if !self.has_last_minute_discount
+			return 0
+		else
+			promo = LastMinutePromo.where(:service_id => self.id, :location_id => location_id).first
+			return promo.hours
+		end
+	end
+
+	def get_last_minute_discount(location_id)
+		if !self.has_last_minute_discount
+			return 0
+		else
+			promo = LastMinutePromo.where(:service_id => self.id, :location_id => location_id).first
+			return promo.discount
+		end
+	end
+
+	def get_last_minute_available_hours(provider_id)
+
+		if provider_id.nil? || provider_id == "0"
+			self.service_providers.each do |service_provider|
+
+			end
+		else
+			service_provider = ServiceProvider.find(provider_id)
+		end
+
+	end
+
 end

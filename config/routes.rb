@@ -186,6 +186,7 @@ Agendapro::Application.routes.draw do
 
   # Promotions
   get '/get_promotions', :to => 'searchs#promotions'
+  get '/get_last_minute_promotions', :to => 'searchs#last_minute_promotions'
   get '/manage_promotions', :to => 'services#manage_promotions'
   get '/manage_service_promotion', :to => 'services#manage_service_promotion'
 
@@ -313,6 +314,7 @@ Agendapro::Application.routes.draw do
   get "/promotion_hours", :to => 'bookings#promotion_hours'
   #post '/admin_update_promo', :to => 'services#admin_update_promo'
   get "/show_time_promo", :to => 'services#show_time_promo'
+  get '/show_last_minute_promo', :to => 'services#show_last_minute_promo'
 
   # Root
   get '/' => 'searchs#index', :constraints => { :subdomain => 'www' }

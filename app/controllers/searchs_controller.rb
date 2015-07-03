@@ -1363,50 +1363,14 @@ class SearchsController < ApplicationController
 
 				time_query = Location.search_services(normalized_search).where(company_id: Company.where(:active => true, :owned => true).where(id: CompanySetting.where(:activate_search => true, :activate_workflow => true).pluck('company_id'))).where(:active => true).where('sqrt((latitude - ' + @latitude.to_s + ')^2 + (longitude - ' + @longitude.to_s + ')^2) < 0.25')
 
-				# time_query2 = Location.search_services(normalized_search).where(company_id: Company.where(:active => true, :owned => true).where(id: CompanySetting.where(:activate_search => true, :activate_workflow => true).pluck('company_id'))).where('sqrt((latitude - ' + @latitude.to_s + ')^2 + (longitude - ' + @longitude.to_s + ')^2) < 0.05 and sqrt((latitude - ' + @latitude.to_s + ')^2 + (longitude - ' + @longitude.to_s + ')^2) >= 0.025')
-
-				# time_query3 = Location.search_services(normalized_search).where(company_id: Company.where(:active => true, :owned => true).where(id: CompanySetting.where(:activate_search => true, :activate_workflow => true).pluck('company_id'))).where(:active => true).where('sqrt((latitude - ' + @latitude.to_s + ')^2 + (longitude - ' + @longitude.to_s + ')^2) < 0.075 and sqrt((latitude - ' + @latitude.to_s + ')^2 + (longitude - ' + @longitude.to_s + ')^2) >= 0.05')
-
-				# time_query4 = Location.search_services(normalized_search).where(company_id: Company.where(:active => true, :owned => true).where(id: CompanySetting.where(:activate_search => true, :activate_workflow => true).pluck('company_id'))).where(:active => true).where('sqrt((latitude - ' + @latitude.to_s + ')^2 + (longitude - ' + @longitude.to_s + ')^2) < 0.1 and sqrt((latitude - ' + @latitude.to_s + ')^2 + (longitude - ' + @longitude.to_s + ')^2) >= 0.075')
-
-				# time_query5 = Location.search_services(normalized_search).where(company_id: Company.where(:active => true, :owned => true).where(id: CompanySetting.where(:activate_search => true, :activate_workflow => true).pluck('company_id'))).where(:active => true).where('sqrt((latitude - ' + @latitude.to_s + ')^2 + (longitude - ' + @longitude.to_s + ')^2) < 0.125 and sqrt((latitude - ' + @latitude.to_s + ')^2 + (longitude - ' + @longitude.to_s + ')^2) >= 0.1')
-
-				# time_query6 = Location.search_services(normalized_search).where(company_id: Company.where(:active => true, :owned => true).where(id: CompanySetting.where(:activate_search => true, :activate_workflow => true).pluck('company_id'))).where(:active => true).where('sqrt((latitude - ' + @latitude.to_s + ')^2 + (longitude - ' + @longitude.to_s + ')^2) < 0.15 and sqrt((latitude - ' + @latitude.to_s + ')^2 + (longitude - ' + @longitude.to_s + ')^2) >= 0.125')
-
-				# time_query7 = Location.search_services(normalized_search).where(company_id: Company.where(:active => true, :owned => true).where(id: CompanySetting.where(:activate_search => true, :activate_workflow => true).pluck('company_id'))).where(:active => true).where('sqrt((latitude - ' + @latitude.to_s + ')^2 + (longitude - ' + @longitude.to_s + ')^2) < 0.175 and sqrt((latitude - ' + @latitude.to_s + ')^2 + (longitude - ' + @longitude.to_s + ')^2) >= 0.15')
-
-				# time_query8 = Location.search_services(normalized_search).where(company_id: Company.where(:active => true, :owned => true).where(id: CompanySetting.where(:activate_search => true, :activate_workflow => true).pluck('company_id'))).where(:active => true).where('sqrt((latitude - ' + @latitude.to_s + ')^2 + (longitude - ' + @longitude.to_s + ')^2) < 0.2 and sqrt((latitude - ' + @latitude.to_s + ')^2 + (longitude - ' + @longitude.to_s + ')^2) >= 0.175')
-
-				# time_query9 = Location.search_services(normalized_search).where(company_id: Company.where(:active => true, :owned => true).where(id: CompanySetting.where(:activate_search => true, :activate_workflow => true).pluck('company_id'))).where(:active => true).where('sqrt((latitude - ' + @latitude.to_s + ')^2 + (longitude - ' + @longitude.to_s + ')^2) < 0.225 and sqrt((latitude - ' + @latitude.to_s + ')^2 + (longitude - ' + @longitude.to_s + ')^2) >= 0.2')
-
-				# time_query10 = Location.search_services(normalized_search).where(company_id: Company.where(:active => true, :owned => true).where(id: CompanySetting.where(:activate_search => true, :activate_workflow => true).pluck('company_id'))).where(:active => true).where('sqrt((latitude - ' + @latitude.to_s + ')^2 + (longitude - ' + @longitude.to_s + ')^2) < 0.25 and sqrt((latitude - ' + @latitude.to_s + ')^2 + (longitude - ' + @longitude.to_s + ')^2) >= 0.225')
 			else
 
 				time_query = Location.where(company_id: Company.where(:active => true, :owned => true).where(id: CompanySetting.where(:activate_search => true, :activate_workflow => true).pluck('company_id'))).where(:active => true).where('sqrt((latitude - ' + @latitude.to_s + ')^2 + (longitude - ' + @longitude.to_s + ')^2) < 0.25')
 
-				# time_query2 = Location.where(company_id: Company.where(:active => true, :owned => true).where(id: CompanySetting.where(:activate_search => true, :activate_workflow => true).pluck('company_id'))).where('sqrt((latitude - ' + @latitude.to_s + ')^2 + (longitude - ' + @longitude.to_s + ')^2) < 0.05 and sqrt((latitude - ' + @latitude.to_s + ')^2 + (longitude - ' + @longitude.to_s + ')^2) >= 0.025')
-
-				# time_query3 = Location.where(company_id: Company.where(:active => true, :owned => true).where(id: CompanySetting.where(:activate_search => true, :activate_workflow => true).pluck('company_id'))).where(:active => true).where('sqrt((latitude - ' + @latitude.to_s + ')^2 + (longitude - ' + @longitude.to_s + ')^2) < 0.075 and sqrt((latitude - ' + @latitude.to_s + ')^2 + (longitude - ' + @longitude.to_s + ')^2) >= 0.05')
-
-				# time_query4 = Location.where(company_id: Company.where(:active => true, :owned => true).where(id: CompanySetting.where(:activate_search => true, :activate_workflow => true).pluck('company_id'))).where(:active => true).where('sqrt((latitude - ' + @latitude.to_s + ')^2 + (longitude - ' + @longitude.to_s + ')^2) < 0.1 and sqrt((latitude - ' + @latitude.to_s + ')^2 + (longitude - ' + @longitude.to_s + ')^2) >= 0.075')
-
-				# time_query5 = Location.where(company_id: Company.where(:active => true, :owned => true).where(id: CompanySetting.where(:activate_search => true, :activate_workflow => true).pluck('company_id'))).where(:active => true).where('sqrt((latitude - ' + @latitude.to_s + ')^2 + (longitude - ' + @longitude.to_s + ')^2) < 0.125 and sqrt((latitude - ' + @latitude.to_s + ')^2 + (longitude - ' + @longitude.to_s + ')^2) >= 0.1')
-
-				# time_query6 = Location.where(company_id: Company.where(:active => true, :owned => true).where(id: CompanySetting.where(:activate_search => true, :activate_workflow => true).pluck('company_id'))).where(:active => true).where('sqrt((latitude - ' + @latitude.to_s + ')^2 + (longitude - ' + @longitude.to_s + ')^2) < 0.15 and sqrt((latitude - ' + @latitude.to_s + ')^2 + (longitude - ' + @longitude.to_s + ')^2) >= 0.125')
-
-				# time_query7 = Location.where(company_id: Company.where(:active => true, :owned => true).where(id: CompanySetting.where(:activate_search => true, :activate_workflow => true).pluck('company_id'))).where(:active => true).where('sqrt((latitude - ' + @latitude.to_s + ')^2 + (longitude - ' + @longitude.to_s + ')^2) < 0.175 and sqrt((latitude - ' + @latitude.to_s + ')^2 + (longitude - ' + @longitude.to_s + ')^2) >= 0.15')
-
-				# time_query8 = Location.where(company_id: Company.where(:active => true, :owned => true).where(id: CompanySetting.where(:activate_search => true, :activate_workflow => true).pluck('company_id'))).where(:active => true).where('sqrt((latitude - ' + @latitude.to_s + ')^2 + (longitude - ' + @longitude.to_s + ')^2) < 0.2 and sqrt((latitude - ' + @latitude.to_s + ')^2 + (longitude - ' + @longitude.to_s + ')^2) >= 0.175')
-
-				# time_query9 = Location.where(company_id: Company.where(:active => true, :owned => true).where(id: CompanySetting.where(:activate_search => true, :activate_workflow => true).pluck('company_id'))).where(:active => true).where('sqrt((latitude - ' + @latitude.to_s + ')^2 + (longitude - ' + @longitude.to_s + ')^2) < 0.225 and sqrt((latitude - ' + @latitude.to_s + ')^2 + (longitude - ' + @longitude.to_s + ')^2) >= 0.2')
-
-				# time_query10 = Location.where(company_id: Company.where(:active => true, :owned => true).where(id: CompanySetting.where(:activate_search => true, :activate_workflow => true).pluck('company_id'))).where(:active => true).where('sqrt((latitude - ' + @latitude.to_s + ')^2 + (longitude - ' + @longitude.to_s + ')^2) < 0.25 and sqrt((latitude - ' + @latitude.to_s + ')^2 + (longitude - ' + @longitude.to_s + ')^2) >= 0.225')
 
 			end
 
-			query = time_query #1 + time_query2 + time_query3 + time_query4 + time_query5 + time_query6 + time_query7 + time_query8 + time_query9 + time_query10
-
-			#Fix service lat long
+			query = time_query
 
 			locs = Array.new
 			ordered_locs = Array.new
@@ -1543,11 +1507,281 @@ class SearchsController < ApplicationController
 			end
 
 
+
+
+			if normalized_search != ""
+
+				last_minute_query = Location.search_services(normalized_search).where(company_id: Company.where(:active => true, :owned => true).where(id: CompanySetting.where(:activate_search => true, :activate_workflow => true).pluck('company_id'))).where(:active => true).where('sqrt((latitude - ' + @latitude.to_s + ')^2 + (longitude - ' + @longitude.to_s + ')^2) < 0.25')
+
+			else
+
+				last_minute_query = Location.where(company_id: Company.where(:active => true, :owned => true).where(id: CompanySetting.where(:activate_search => true, :activate_workflow => true).pluck('company_id'))).where(:active => true).where('sqrt((latitude - ' + @latitude.to_s + ')^2 + (longitude - ' + @longitude.to_s + ')^2) < 0.25')
+
+
+			end
+
+			last_minute_locs = Array.new
+			last_minute_ordered_locs = Array.new
+
+			if normalized_search != ""
+				if last_minute_query.count > 10
+
+					count = (last_minute_query.count.to_f / 10).ceil
+					last_minute_results = Array.new
+
+					current_rank = last_minute_query[0].pg_search_rank
+					current_group = Array.new
+					last_minute_query.each do |res|
+						if res.pg_search_rank <= current_rank && (res.pg_search_rank - current_rank).abs < 0.015
+							current_group << res
+						else
+							last_minute_results << current_group
+							current_group = Array.new
+							current_group << res
+							current_rank = res.pg_search_rank
+						end
+					end
+					last_minute_results << current_group
+
+					j = 0
+					last_minute_results.each do |last_minute_result|
+						locs[j] = Array.new
+						last_minute_result.each do |location|
+							dist_score = Math.sqrt((location.latitude - lat.to_f)**2 + (location.longitude - long.to_f)**2)
+							local = [location, dist_score]
+							last_minute_locs[j].push(local)
+						end
+						j = j+1
+					end
+
+					for i in 0..j-1
+						last_minute_ordered_locs[i] = last_minute_locs[i].sort_by{ |loc| loc[1]}
+					end
+
+				else
+					last_minute_query.each do |location|
+						dist_score = Math.sqrt((location.latitude - lat.to_f)**2 + (location.longitude - long.to_f)**2)
+						local = [location, dist_score]
+						last_minute_locs.push(local)
+					end
+					last_minute_ordered_locs[0] = last_minute_locs.sort_by{ |loc| loc[1]}
+				end
+			else
+				last_minute_query.each do |location|
+					dist_score = Math.sqrt((location.latitude - lat.to_f)**2 + (location.longitude - long.to_f)**2)
+					local = [location, dist_score]
+					last_minute_locs.push(local)
+				end
+				last_minute_ordered_locs[0] = last_minute_locs.sort_by{ |loc| loc[1]}
+			end
+
+			@last_minute_results = Array.new
+			@last_minute_locations = Array.new
+
+			last_minute_ordered_locs.each do |arr|
+				arr.each do |s|
+
+					last_minute_services = []
+
+					ServiceProvider.where(:active => true, :location_id => s[0]).each do |service_provider|
+						if normalized_search != ""
+							last_minute_services = service_provider.services.with_last_minute_promotions.search(normalized_search)
+						else
+							last_minute_services = service_provider.services.with_last_minute_promotions
+						end
+					end
+
+					last_minute_services.each do |service|
+						#if !@results.include?(service)
+							promo_detail = [service, s[0]]
+							@last_minute_results << promo_detail
+							#if !@locations.include?(s[0])
+							@last_minute_locations << s[0]
+							#end
+						#end
+					end
+				end
+			end
+
 			respond_to do |format|
 				format.html
 			end
 
 
+	end
+
+	def last_minute_promotions
+
+		@lat = "-33.4052419" 
+		@lng = "-70.597557"
+
+		if params[:latitude] &&  params[:latitude] != ""
+			@lat = params[:latitude]
+		end
+		if params[:longitude] && params[:longitude] != ""
+			@lng = params[:longitude]
+		end
+
+
+		if cookies[:formatted_address]
+			@formatted_address = cookies[:formatted_address].encode('UTF-8', 'binary', invalid: :replace, undef: :replace, replace: '')
+		end
+		# => Domain parser
+		host = request.host_with_port
+		@domain = host[host.index(request.domain)..host.length]
+
+
+		lat = @lat
+		long = @lng
+
+		@latitude = @lat
+		@longitude = @lng
+
+		@results = Array.new
+		@empty_results = Array.new
+
+		normalized_search = ""
+
+		if params[:inputSearch] && params[:inputSearch] != ""
+
+			search = params[:inputSearch].gsub(/\b([D|d]el?)+\b|\b([U|u]n(o|a)?s?)+\b|\b([E|e]l)+\b|\b([T|t]u)+\b|\b([L|l](o|a)s?)+\b|\b[AaYy]\b|["'.,;:-]|\b([E|e]n)+\b|\b([L|l]a)+\b|\b([C|c]on)+\b|\b([Q|q]ue)+\b|\b([S|s]us?)+\b|\b([E|e]s[o|a]?s?)+\b/i, '')
+
+			normalized_search = search.mb_chars.normalize(:kd).gsub(/[^\x00-\x7F]/,'').downcase.to_s
+
+		end
+
+		if normalized_search != ""
+
+				query = Location.search_services(normalized_search).where(company_id: Company.where(:active => true, :owned => true).where(id: CompanySetting.where(:activate_search => true, :activate_workflow => true).pluck('company_id'))).where(:active => true).where('sqrt((latitude - ' + @latitude.to_s + ')^2 + (longitude - ' + @longitude.to_s + ')^2) < 0.25')
+
+			else
+
+				query = Location.where(company_id: Company.where(:active => true, :owned => true).where(id: CompanySetting.where(:activate_search => true, :activate_workflow => true).pluck('company_id'))).where(:active => true).where('sqrt((latitude - ' + @latitude.to_s + ')^2 + (longitude - ' + @longitude.to_s + ')^2) < 0.25')
+
+
+			end
+
+			locs = Array.new
+			ordered_locs = Array.new
+
+			if normalized_search != ""
+				if query.count > 10
+
+					count = (query.count.to_f / 10).ceil
+					results = Array.new
+
+					current_rank = query[0].pg_search_rank
+					current_group = Array.new
+					query.each do |res|
+						if res.pg_search_rank <= current_rank && (res.pg_search_rank - current_rank).abs < 0.015
+							current_group << res
+						else
+							results << current_group
+							current_group = Array.new
+							current_group << res
+							current_rank = res.pg_search_rank
+						end
+					end
+					results << current_group
+
+					j = 0
+					results.each do |result|
+						locs[j] = Array.new
+						result.each do |location|
+							dist_score = Math.sqrt((location.latitude - lat.to_f)**2 + (location.longitude - long.to_f)**2)
+							local = [location, dist_score]
+							locs[j].push(local)
+						end
+						j = j+1
+					end
+
+					for i in 0..j-1
+						ordered_locs[i] = locs[i].sort_by{ |loc| loc[1]}
+					end
+
+				else
+					query.each do |location|
+						dist_score = Math.sqrt((location.latitude - lat.to_f)**2 + (location.longitude - long.to_f)**2)
+						local = [location, dist_score]
+						locs.push(local)
+					end
+					ordered_locs[0] = locs.sort_by{ |loc| loc[1]}
+				end
+			else
+				query.each do |location|
+					dist_score = Math.sqrt((location.latitude - lat.to_f)**2 + (location.longitude - long.to_f)**2)
+					local = [location, dist_score]
+					locs.push(local)
+				end
+				ordered_locs[0] = locs.sort_by{ |loc| loc[1]}
+			end
+
+			@results = Array.new
+			@locations = Array.new
+			@last_minute_results = Array.new
+
+			ordered_locs.each do |arr|
+				arr.each do |s|
+
+					last_minute_services = []
+
+					ServiceProvider.where(:active => true, :location_id => s[0]).each do |service_provider|
+						if normalized_search != ""
+							last_minute_services = service_provider.services.with_last_minute_promotions.search(normalized_search)
+						else
+							last_minute_services = service_provider.services.with_last_minute_promotions
+						end
+					end
+
+					last_minute_services.each do |service|
+						#if !@results.include?(service)
+							promo_detail = [service, s[0]]
+							@results << promo_detail
+							#if !@locations.include?(s[0])
+							@locations << s[0]
+							#end
+						#end
+					end
+				end
+			end
+
+
+			per_page = 9
+
+			@results = @results.paginate(:page => params[:page], :per_page => per_page)
+
+			i = 1
+			for i in 1..per_page
+				if !File.exist?("app/assets/images/search/pin_map#{i}.png")
+					img = MiniMagick::Image.from_file("app/assets/images/search/pin_map.png")
+					if i<10
+						img.combine_options do |c|
+					    	c.draw "text 9,22 '#{i.to_s}'"
+							c.fill("#FFFFFF")
+							c.pointsize "17"
+						end
+					elsif i<100
+						img.combine_options do |c|
+					    	c.draw "text 4,22 '#{i.to_s}'"
+							c.fill("#FFFFFF")
+							c.pointsize "17"
+						end
+					else
+						img.combine_options do |c|
+					    	c.draw "text 1,22 '#{i.to_s}'"
+							c.fill("#FFFFFF")
+							c.pointsize "17"
+						end
+					end
+						
+					img.write("app/assets/images/search/pin_map#{i}.png")
+				end
+			end
+
+
+			respond_to do |format|
+				format.html
+			end
 
 	end
 

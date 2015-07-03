@@ -23,6 +23,8 @@ class Location < ActiveRecord::Base
 
 	has_many :services, -> { where active: true, online_booking: true }, :through => :active_service_providers
 
+	has_many :last_minute_services, -> { where has_last_minute_discount: true }
+
 	#has_many :time_promotion_services, -> { where active: true }, :through => :service_providers
 
 	has_many :service_categories, :through => :services
@@ -85,17 +87,34 @@ class Location < ActiveRecord::Base
     	:service_categories => :name
     },
     :using => {
-                :trigram => {
-                  	:threshold => 0.1,
-                  	:prefix => true,
-                	:any_word => true
-                },
-                :tsearch => {
-                	:prefix => true,
-                	:any_word => true
-                }
+        :trigram => {
+          	:threshold => 0.1,
+          	:prefix => true,
+        	:any_word => true
+        },
+        :tsearch => {
+        	:prefix => true,
+        	:any_word => true
+        }
     },
     :ignoring => :accents
+
+    # pg_search_scope :search_last_minute_services, :associated_against => {
+    # 	:last_minute_services => :name,
+    # 	:service_categories => :name
+    # },
+    # :using => {
+    # 	:trigram => {
+    #       	:threshold => 0.1,
+    #       	:prefix => true,
+    #     	:any_word => true
+    #     },
+    #     :tsearch => {
+    #     	:prefix => true,
+    #     	:any_word => true
+    #     }
+    # },
+    # :ignoring => :accents
 
 
 	def extended_schedule
