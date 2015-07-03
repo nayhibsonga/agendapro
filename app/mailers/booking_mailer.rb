@@ -98,6 +98,9 @@ class BookingMailer < ActionMailer::Base
 						}
 					]
 				}]
+
+			# => Send mail
+			send_mail(template_name, template_content, message)
 		end
 
 		# Email notificacion local
@@ -121,10 +124,13 @@ class BookingMailer < ActionMailer::Base
 								}
 							]
 						}]
-			message[:global_merge_vars][0] = {
+			message[:global_merge_vars][3] = {
 						:name => 'SERVICEPROVIDER',
 						:content => book_info.location.name
 					}
+
+			# => Send mail
+			send_mail(template_name, template_content, message)
 		end
 
 		# Email notificacion compañia
@@ -148,10 +154,13 @@ class BookingMailer < ActionMailer::Base
 								}
 							]
 						}]
-			message[:global_merge_vars][0] = {
+			message[:global_merge_vars][3] = {
 						:name => 'SERVICEPROVIDER',
 						:content => book_info.location.company.name
 					}
+
+			# => Send mail
+			send_mail(template_name, template_content, message)
 		end
 
 		second_address = ''
@@ -191,10 +200,10 @@ class BookingMailer < ActionMailer::Base
 								}
 							]
 						}]
-		end
 
-		# => Send mail
-		send_mail(template_name, template_content, messages)
+			# => Send mail
+			send_mail(template_name, template_content, message)
+		end
 	end
 
 	def update_booking (book_info, old_start)
@@ -295,6 +304,9 @@ class BookingMailer < ActionMailer::Base
 									}
 								]
 							}]
+
+			# => Send mail
+			send_mail(template_name, template_content, message)
 		end
 
 		# Email notificacion local
@@ -318,10 +330,13 @@ class BookingMailer < ActionMailer::Base
 								}
 							]
 						}]
-			message[:global_merge_vars][0] = {
+			message[:global_merge_vars][3] = {
 						:name => 'SERVICEPROVIDER',
 						:content => book_info.location.name
 					}
+
+			# => Send mail
+			send_mail(template_name, template_content, message)
 		end
 
 		# Email notificacion compañia
@@ -345,10 +360,13 @@ class BookingMailer < ActionMailer::Base
 								}
 							]
 						}]
-			message[:global_merge_vars][0] = {
+			message[:global_merge_vars][3] = {
 						:name => 'SERVICEPROVIDER',
 						:content => book_info.location.company.name
 					}
+
+			# => Send mail
+			send_mail(template_name, template_content, message)
 		end
 
 		second_address = ''
@@ -388,10 +406,10 @@ class BookingMailer < ActionMailer::Base
 								}
 							]
 						}]
-		end
 
-		# => Send mail
-		send_mail(template_name, template_content, message)
+			# => Send mail
+			send_mail(template_name, template_content, message)
+		end
 	end
 
 	def confirm_booking (book_info)
@@ -490,6 +508,9 @@ class BookingMailer < ActionMailer::Base
 									}
 								]
 							}]
+
+			# => Send mail
+			send_mail(template_name, template_content, message)
 		end
 
 		# Email notificacion local
@@ -513,10 +534,13 @@ class BookingMailer < ActionMailer::Base
 								}
 							]
 						}]
-			message[:global_merge_vars][0] = {
+			message[:global_merge_vars][3] = {
 						:name => 'SERVICEPROVIDER',
 						:content => book_info.location.name
 					}
+
+			# => Send mail
+			send_mail(template_name, template_content, message)
 		end
 
 		# Email notificacion compañia
@@ -540,14 +564,14 @@ class BookingMailer < ActionMailer::Base
 								}
 							]
 						}]
-			message[:global_merge_vars][0] = {
+			message[:global_merge_vars][3] = {
 						:name => 'SERVICEPROVIDER',
 						:content => book_info.location.company.name
 					}
-		end
 
-		# => Send mail
-		send_mail(template_name, template_content, message)
+			# => Send mail
+			send_mail(template_name, template_content, message)
+		end
 	end
 
 	def cancel_booking (book_info)
@@ -637,6 +661,9 @@ class BookingMailer < ActionMailer::Base
 									}
 								]
 							}]
+
+			# => Send mail
+			send_mail(template_name, template_content, message)
 		end
 
 		# Email notificacion local
@@ -660,10 +687,13 @@ class BookingMailer < ActionMailer::Base
 								}
 							]
 						}]
-			message[:global_merge_vars][0] = {
+			message[:global_merge_vars][3] = {
 						:name => 'SERVICEPROVIDER',
 						:content => book_info.location.name
 					}
+
+			# => Send mail
+			send_mail(template_name, template_content, message)
 		end
 
 		# Email notificacion compañia
@@ -687,10 +717,13 @@ class BookingMailer < ActionMailer::Base
 								}
 							]
 						}]
-			message[:global_merge_vars][0] = {
+			message[:global_merge_vars][3] = {
 						:name => 'SERVICEPROVIDER',
 						:content => book_info.location.company.name
 					}
+
+			# => Send mail
+			send_mail(template_name, template_content, message)
 		end
 
 		second_address = ''
@@ -737,10 +770,10 @@ class BookingMailer < ActionMailer::Base
 						}
 			end
 			message[:merge_vars] = [mergeVars]
-		end
 
-		# => Send mail
-		send_mail(template_name, template_content, message)
+			# => Send mail
+			send_mail(template_name, template_content, message)
+		end
 	end
 
 	def book_reminder_mail (book_info)
@@ -874,6 +907,9 @@ class BookingMailer < ActionMailer::Base
 									}
 								]
 							}]
+
+			# => Send mail
+			send_mail(template_name, template_content, message)
 		end
 
 		# Email notificacion local
@@ -892,10 +928,13 @@ class BookingMailer < ActionMailer::Base
 								}
 							]
 						}]
-			message[:global_merge_vars][0] = {
+			message[:global_merge_vars][3] = {
 						:name => 'SERVICEPROVIDER',
 						:content => book_info.location.name
 					}
+
+			# => Send mail
+			send_mail(template_name, template_content, message)
 		end
 
 		# Email notificacion compañia
@@ -914,14 +953,14 @@ class BookingMailer < ActionMailer::Base
 								}
 							]
 						}]
-			message[:global_merge_vars][0] = {
+			message[:global_merge_vars][3] = {
 						:name => 'SERVICEPROVIDER',
 						:content => book_info.location.company.name
 					}
-		end
 
-		# => Send mail
-		send_mail(template_name, template_content, message)
+			# => Send mail
+			send_mail(template_name, template_content, message)
+		end
 	end
 
 	def booking_summary (booking_data, booking_summary, today_schedule)
@@ -1045,6 +1084,9 @@ class BookingMailer < ActionMailer::Base
 									}
 								]
 							}]
+
+			# => Send mail
+			send_mail(template_name, template_content, message)
 		end
 
 		# Email notificacion local
@@ -1070,6 +1112,9 @@ class BookingMailer < ActionMailer::Base
 								}
 							]
 						}]
+
+			# => Send mail
+			send_mail(template_name, template_content, message)
 		end
 
 		# Notificacion Empresa
@@ -1095,6 +1140,9 @@ class BookingMailer < ActionMailer::Base
 								}
 							]
 						}]
+
+			# => Send mail
+			send_mail(template_name, template_content, message)
 		end
 
 		# Notificacion cliente
@@ -1133,10 +1181,10 @@ class BookingMailer < ActionMailer::Base
 								}
 							]
 						}]
-		end
 
-		# => Send mail
-		send_mail(template_name, template_content, message)
+			# => Send mail
+			send_mail(template_name, template_content, message)
+		end
 	end
 
 	#Correo de comprobante de pago para el cliente
@@ -1637,6 +1685,9 @@ class BookingMailer < ActionMailer::Base
 									}
 								]
 							}]
+
+			# => Send mail
+			send_mail(template_name, template_content, messages)
 		end
 
 		# Email notificacion local
@@ -1662,6 +1713,9 @@ class BookingMailer < ActionMailer::Base
 								}
 							]
 						}]
+
+			# => Send mail
+			send_mail(template_name, template_content, messages)
 		end
 
 		# Notificacion cliente
@@ -1704,10 +1758,10 @@ class BookingMailer < ActionMailer::Base
 								}
 							]
 						}]
-		end
 
-		# => Send mail
-		send_mail(template_name, template_content, messages)
+			# => Send mail
+			send_mail(template_name, template_content, messages)
+		end
 	end
 
 	#Mail de reserva de sesión de admin (opción de validar)
