@@ -68,6 +68,22 @@ class NotificationEmail < ActiveRecord::Base
     return text[0..-3]
   end
 
+  def receptor_type_text
+    text = ""
+    if self.receptor_type == 0
+      text = "Compañía, "
+    elsif self.receptor_type == 1
+      self.locations.each do |local|
+        text += local.name + ", "
+      end
+    else
+      self.service_providers.each do |provider|
+        text += provider.public_name + ", "
+      end
+    end
+    return text[0..-3]
+  end
+
   def self.booking_summary
     where(summary: true).each do |notification|
       if notification.receptor_type == 0 # Company summary

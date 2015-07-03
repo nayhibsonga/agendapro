@@ -794,9 +794,12 @@
                     <div class="form-group">
                       <%= f.label :email, "E-mail de Notificación", class: 'text-green' %>
                       <%= f.email_field :email, class: "form-control", required: true %>
+                      <span class="help-block">En que dirección desea recibir la notificación.</span>
                     </div>
                     <div class="form-group">
+                      <%= f.label :receptor_type, "Tipo de Notificación", class: 'text-green' %>
                       <%= f.select :receptor_type, [['Compañía', 0], ['Local', 1], ['Prestador de Servicio', 2]], {}, {class: 'form-control'} %>
+                      <span class="help-block">Recibir notificaciones sobre eventos de la compañía, locales o prestadores de servicios.</span>
                     </div>
                   </div>
                 </div>
@@ -835,6 +838,12 @@
                 <div class="row">
                   <div class="col-md-12">
                     <div class="form-group background-green">
+                      <div class="row">
+                        <div class="col-md-12">
+                          <label style="margin: 0;">Cuando recibir la Notificación</label>
+                          <span class="help-block" style="margin: 0;">Sobre cual evento desea recibir la notificación.</span>
+                        </div>
+                      </div>
                       <div class="row">
                         <div class="col-sm-4">
                           <div class="checkbox">
@@ -935,13 +944,7 @@
                       <tr>
                         <td><%= notification.email %></td>
                         <td>
-                          <% if notification.receptor_type == 0 %>
-                          Compañía
-                          <% elsif notification.receptor_type == 1 %>
-                          Locales
-                          <% else %>
-                          Prestador de Servicio
-                          <% end %>
+                          <%= notification.receptor_type_text %>
                         </td>
                         <td><%= notification.notification_text %></td>
                         <td style="white-space: nowrap;">
