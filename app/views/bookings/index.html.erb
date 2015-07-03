@@ -48,6 +48,7 @@
         <input type="hidden" id="set-date" />
         <button type="button" id="set-date-button" class="btn btn-green btn-block set-date-btn">Ir a fecha..</button>
         <button type="button" class="btn btn-green btn-block hours-optimizer-button" data-toggle="modal" data-target="#hoursOptimizer">Buscador de Horas</button>
+        <div class="col-xs-2 calendar-alert"></div>
       </div>
       <div class="col-xs-10">
         <div id="popover" class="popover popover-right"></div>
@@ -522,7 +523,7 @@
                   <%= f.collection_check_boxes :service_provider_id, ServiceProvider.where(location_id: Location.where(company_id: current_user.company_id, :active => true)).accessible_by(current_ability), :id, :public_name, {}, { class: "check_boxes providers_check_boxes" } do |b|%>
                     <div class="checkbox">
                       <label>
-                        <%= b.check_box %> <%= b.object.public_name.html_safe %> 
+                        <%= b.check_box %> <%= b.object.public_name.html_safe %>
                       </label>
                     </div>
                   <% end %>
@@ -603,10 +604,10 @@
                 <%= radio_button_tag :repeat_option, 'date_end', false %>&nbsp;El
               </div>
               <div>
-                <%= datetime_select "provider_break_repeat", "repeat_end", {default: eval(ENV["TIME_ZONE_OFFSET"]).ago, :minute_step => 5}, {class: "form-control date-select"} %> 
+                <%= datetime_select "provider_break_repeat", "repeat_end", {default: eval(ENV["TIME_ZONE_OFFSET"]).ago, :minute_step => 5}, {class: "form-control date-select"} %>
               </div>
             </div>
-          </div>    
+          </div>
 
         <% end %>
       </div>
@@ -750,6 +751,7 @@
     <% end %>
 
     $(function(){
+      $('.calendar-alert').append($('.alert'));
 
       $("#optimizerDateSelector").datepicker({
         dateFormat: 'dd-mm-yy',

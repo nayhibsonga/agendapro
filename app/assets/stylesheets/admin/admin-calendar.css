@@ -520,3 +520,18 @@ select[name="serviceOptimizerSelector"] {
   }
 }
 
+/*
+  ================================
+  ============ Alerts ============
+  ================================
+*/
+.calendar-alert {
+   position: fixed;
+   bottom: 25px;
+   padding-left: 0;
+}
+.calendar-alert > .alert {
+  position: initial;
+  width: initial;
+  /*margin: initial;*/
+}
