@@ -77,6 +77,48 @@ class BookingMailer < ActionMailer::Base
 			message[:global_merge_vars] << {:name => 'BNOTES', :content => book_info.notes}
 		end
 
+		second_address = ''
+		if !book_info.location.second_address.blank?
+			second_address = ", " + book_info.location.second_address
+		end
+
+		# Notificacion cliente
+		if book_info.send_mail
+			message[:to] = [{
+								:email => book_info.client.email,
+								:name => book_info.client.first_name + ' ' + book_info.client.last_name,
+								:type => 'to'
+							}]
+			message[:merge_vars] = [{
+							:rcpt => book_info.client.email,
+							:vars => [
+								{
+									:name => 'LOCALADDRESS',
+									:content => book_info.location.address + second_address + " - " + District.find(book_info.location.district_id).name
+								},
+								{
+									:name => 'LOCATIONPHONE',
+									:content => number_to_phone(book_info.location.phone)
+								},
+								{
+									:name => 'EDIT',
+									:content => booking_edit_url(:confirmation_code => book_info.confirmation_code)
+								},
+								{
+									:name => 'CANCEL',
+									:content => booking_cancel_url(:confirmation_code => book_info.confirmation_code)
+								},
+								{
+									:name => 'CLIENT',
+									:content => true
+								}
+							]
+						}]
+
+			# => Send mail
+			send_mail(template_name, template_content, message)
+		end
+
 		# Notificacion service provider
 		providers_emails = NotificationEmail.where(id: NotificationProvider.select(:notification_email_id).where(service_provider: book_info.service_provider), receptor_type: 2).select(:email).distinct
 		if book_info.web_origin
@@ -162,48 +204,6 @@ class BookingMailer < ActionMailer::Base
 			# => Send mail
 			send_mail(template_name, template_content, message)
 		end
-
-		second_address = ''
-		if !book_info.location.second_address.blank?
-			second_address = ", " + book_info.location.second_address
-		end
-
-		# Notificacion cliente
-		if book_info.send_mail
-			message[:to] = [{
-								:email => book_info.client.email,
-								:name => book_info.client.first_name + ' ' + book_info.client.last_name,
-								:type => 'to'
-							}]
-			message[:merge_vars] = [{
-							:rcpt => book_info.client.email,
-							:vars => [
-								{
-									:name => 'LOCALADDRESS',
-									:content => book_info.location.address + second_address + " - " + District.find(book_info.location.district_id).name
-								},
-								{
-									:name => 'LOCATIONPHONE',
-									:content => number_to_phone(book_info.location.phone)
-								},
-								{
-									:name => 'EDIT',
-									:content => booking_edit_url(:confirmation_code => book_info.confirmation_code)
-								},
-								{
-									:name => 'CANCEL',
-									:content => booking_cancel_url(:confirmation_code => book_info.confirmation_code)
-								},
-								{
-									:name => 'CLIENT',
-									:content => true
-								}
-							]
-						}]
-
-			# => Send mail
-			send_mail(template_name, template_content, message)
-		end
 	end
 
 	def update_booking (book_info, old_start)
@@ -281,6 +281,48 @@ class BookingMailer < ActionMailer::Base
 							:name => 'LOGO',
 							:content => Base64.encode64(File.read('public' + book_info.location.company.logo_url.to_s))
 						}]
+		end
+
+		second_address = ''
+		if !book_info.location.second_address.blank?
+			second_address = ", " + book_info.location.second_address
+		end
+
+		# Notificacion cliente
+		if book_info.send_mail
+			message[:to] = [{
+							:email => book_info.client.email,
+							:name => book_info.client.first_name + ' ' + book_info.client.last_name,
+							:type => 'to'
+						}]
+			message[:merge_vars] = [{
+							:rcpt => book_info.client.email,
+							:vars => [
+								{
+									:name => 'LOCALADDRESS',
+									:content => book_info.location.address + second_address + " - " + District.find(book_info.location.district_id).name
+								},
+								{
+									:name => 'LOCATIONPHONE',
+									:content => number_to_phone(book_info.location.phone)
+								},
+								{
+									:name => 'EDIT',
+									:content => booking_edit_url(:confirmation_code => book_info.confirmation_code)
+								},
+								{
+									:name => 'CANCEL',
+									:content => booking_cancel_url(:confirmation_code => book_info.confirmation_code)
+								},
+								{
+									:name => 'CLIENT',
+									:content => true
+								}
+							]
+						}]
+
+			# => Send mail
+			send_mail(template_name, template_content, message)
 		end
 
 		# Notificacion service provider
@@ -364,48 +406,6 @@ class BookingMailer < ActionMailer::Base
 						:name => 'SERVICEPROVIDER',
 						:content => book_info.location.company.name
 					}
-
-			# => Send mail
-			send_mail(template_name, template_content, message)
-		end
-
-		second_address = ''
-		if !book_info.location.second_address.blank?
-			second_address = ", " + book_info.location.second_address
-		end
-
-		# Notificacion cliente
-		if book_info.send_mail
-			message[:to] = [{
-							:email => book_info.client.email,
-							:name => book_info.client.first_name + ' ' + book_info.client.last_name,
-							:type => 'to'
-						}]
-			message[:merge_vars] = [{
-							:rcpt => book_info.client.email,
-							:vars => [
-								{
-									:name => 'LOCALADDRESS',
-									:content => book_info.location.address + second_address + " - " + District.find(book_info.location.district_id).name
-								},
-								{
-									:name => 'LOCATIONPHONE',
-									:content => number_to_phone(book_info.location.phone)
-								},
-								{
-									:name => 'EDIT',
-									:content => booking_edit_url(:confirmation_code => book_info.confirmation_code)
-								},
-								{
-									:name => 'CANCEL',
-									:content => booking_cancel_url(:confirmation_code => book_info.confirmation_code)
-								},
-								{
-									:name => 'CLIENT',
-									:content => true
-								}
-							]
-						}]
 
 			# => Send mail
 			send_mail(template_name, template_content, message)
@@ -640,6 +640,55 @@ class BookingMailer < ActionMailer::Base
 						}]
 		end
 
+		second_address = ''
+		if !book_info.location.second_address.blank?
+			second_address = ", " + book_info.location.second_address
+		end
+
+		# Notificacion cliente
+		if book_info.send_mail
+			message[:to] = [{
+							:email => book_info.client.email,
+							:name => book_info.client.first_name + ' ' + book_info.client.last_name,
+							:type => 'to'
+						}]
+			mergeVars = {
+				:rcpt => book_info.client.email,
+				:vars => [
+					{
+						:name => 'LOCALADDRESS',
+						:content => book_info.location.address + second_address + " - " + District.find(book_info.location.district_id).name
+					},
+					{
+						:name => 'LOCATIONPHONE',
+						:content => number_to_phone(book_info.location.phone)
+					},
+					{
+						:name => 'EDIT',
+						:content => booking_edit_url(:confirmation_code => book_info.confirmation_code)
+					},
+					{
+						:name => 'CANCEL',
+						:content => booking_cancel_url(:confirmation_code => book_info.confirmation_code)
+					},
+					{
+						:name => 'CLIENT',
+						:content => true
+					}
+				]
+			}
+			if !book_info.payed_booking.nil?
+				mergeVars[:vars] << {
+							:name => 'PAYED',
+							:content => "true"
+						}
+			end
+			message[:merge_vars] = [mergeVars]
+
+			# => Send mail
+			send_mail(template_name, template_content, message)
+		end
+
 		# Notificacion service provider
 		providers_emails = NotificationEmail.where(id: NotificationProvider.select(:notification_email_id).where(service_provider: book_info.service_provider), receptor_type: 2).select(:email).distinct
 		if book_info.web_origin
@@ -721,55 +770,6 @@ class BookingMailer < ActionMailer::Base
 						:name => 'SERVICEPROVIDER',
 						:content => book_info.location.company.name
 					}
-
-			# => Send mail
-			send_mail(template_name, template_content, message)
-		end
-
-		second_address = ''
-		if !book_info.location.second_address.blank?
-			second_address = ", " + book_info.location.second_address
-		end
-
-		# Notificacion cliente
-		if book_info.send_mail
-			message[:to] = [{
-							:email => book_info.client.email,
-							:name => book_info.client.first_name + ' ' + book_info.client.last_name,
-							:type => 'to'
-						}]
-			mergeVars = {
-				:rcpt => book_info.client.email,
-				:vars => [
-					{
-						:name => 'LOCALADDRESS',
-						:content => book_info.location.address + second_address + " - " + District.find(book_info.location.district_id).name
-					},
-					{
-						:name => 'LOCATIONPHONE',
-						:content => number_to_phone(book_info.location.phone)
-					},
-					{
-						:name => 'EDIT',
-						:content => booking_edit_url(:confirmation_code => book_info.confirmation_code)
-					},
-					{
-						:name => 'CANCEL',
-						:content => booking_cancel_url(:confirmation_code => book_info.confirmation_code)
-					},
-					{
-						:name => 'CLIENT',
-						:content => true
-					}
-				]
-			}
-			if !book_info.payed_booking.nil?
-				mergeVars[:vars] << {
-							:name => 'PAYED',
-							:content => "true"
-						}
-			end
-			message[:merge_vars] = [mergeVars]
 
 			# => Send mail
 			send_mail(template_name, template_content, message)
@@ -1061,6 +1061,47 @@ class BookingMailer < ActionMailer::Base
 			]
 		}
 
+		# Notificacion cliente
+		if data[:user][:send_mail]
+			message[:to] = [{
+								:email => data[:user][:email],
+								:name => data[:user][:name],
+								:type => 'to'
+							}]
+			message[:merge_vars] = [{
+							:rcpt => data[:user][:email],
+							:vars => [
+								{
+									:name => 'LOCALADDRESS',
+									:content => data[:user][:where]
+								},
+								{
+									:name => 'LOCATIONPHONE',
+									:content => number_to_phone(data[:user][:phone])
+								},
+								{
+									:name => 'BOOKINGS',
+									:content => data[:user][:user_table]
+								},
+								{
+									:name => 'CLIENTNAME',
+									:content => data[:user][:name]
+								},
+								{
+									:name => 'CLIENT',
+									:content => true
+								},
+								{
+									:name => 'CANCEL',
+									:content => data[:user][:cancel]
+								}
+							]
+						}]
+
+			# => Send mail
+			send_mail(template_name, template_content, message)
+		end
+
 		# Notificacion service provider
 		data[:provider][:array].each do |provider|
 			message[:to] = [{
@@ -1137,47 +1178,6 @@ class BookingMailer < ActionMailer::Base
 								{
 									:name => 'BOOKINGS',
 									:content => data[:company][:company_table]
-								}
-							]
-						}]
-
-			# => Send mail
-			send_mail(template_name, template_content, message)
-		end
-
-		# Notificacion cliente
-		if data[:user][:send_mail]
-			message[:to] = [{
-								:email => data[:user][:email],
-								:name => data[:user][:name],
-								:type => 'to'
-							}]
-			message[:merge_vars] = [{
-							:rcpt => data[:user][:email],
-							:vars => [
-								{
-									:name => 'LOCALADDRESS',
-									:content => data[:user][:where]
-								},
-								{
-									:name => 'LOCATIONPHONE',
-									:content => number_to_phone(data[:user][:phone])
-								},
-								{
-									:name => 'BOOKINGS',
-									:content => data[:user][:user_table]
-								},
-								{
-									:name => 'CLIENTNAME',
-									:content => data[:user][:name]
-								},
-								{
-									:name => 'CLIENT',
-									:content => true
-								},
-								{
-									:name => 'CANCEL',
-									:content => data[:user][:cancel]
 								}
 							]
 						}]
@@ -1662,6 +1662,51 @@ class BookingMailer < ActionMailer::Base
 			]
 		}
 
+		# Notificacion cliente
+		if data[:user][:send_mail]
+			message[:to] = [{
+								:email => data[:user][:email],
+								:name => data[:user][:name],
+								:type => 'to'
+							}]
+			message[:merge_vars] = [{
+							:rcpt => data[:user][:email],
+							:vars => [
+								{
+									:name => 'LOCALADDRESS',
+									:content => data[:user][:where]
+								},
+								{
+									:name => 'LOCATIONPHONE',
+									:content => number_to_phone(data[:user][:phone])
+								},
+								{
+									:name => 'BOOKINGS',
+									:content => data[:user][:user_table]
+								},
+								{
+									:name => 'AGENDA',
+									:content => data[:user][:agenda]
+								},
+								{
+									:name => 'CLIENTNAME',
+									:content => data[:user][:name]
+								},
+								{
+									:name => 'CLIENT',
+									:content => true
+								},
+								{
+									:name => 'CANCEL',
+									:content => data[:user][:cancel]
+								}
+							]
+						}]
+
+			# => Send mail
+			send_mail(template_name, template_content, messages)
+		end
+
 		# Notificacion service provider
 		data[:provider][:array].each do |provider|
 			message[:to] = [{
@@ -1710,51 +1755,6 @@ class BookingMailer < ActionMailer::Base
 								{
 									:name => 'BOOKINGS',
 									:content => data[:location][:location_table]
-								}
-							]
-						}]
-
-			# => Send mail
-			send_mail(template_name, template_content, messages)
-		end
-
-		# Notificacion cliente
-		if data[:user][:send_mail]
-			message[:to] = [{
-								:email => data[:user][:email],
-								:name => data[:user][:name],
-								:type => 'to'
-							}]
-			message[:merge_vars] = [{
-							:rcpt => data[:user][:email],
-							:vars => [
-								{
-									:name => 'LOCALADDRESS',
-									:content => data[:user][:where]
-								},
-								{
-									:name => 'LOCATIONPHONE',
-									:content => number_to_phone(data[:user][:phone])
-								},
-								{
-									:name => 'BOOKINGS',
-									:content => data[:user][:user_table]
-								},
-								{
-									:name => 'AGENDA',
-									:content => data[:user][:agenda]
-								},
-								{
-									:name => 'CLIENTNAME',
-									:content => data[:user][:name]
-								},
-								{
-									:name => 'CLIENT',
-									:content => true
-								},
-								{
-									:name => 'CANCEL',
-									:content => data[:user][:cancel]
 								}
 							]
 						}]
