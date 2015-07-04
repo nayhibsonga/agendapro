@@ -8,21 +8,21 @@
 <% end %>
 
 <div class="container-fluid">
-  <div class="row" style="margin-top: 20px;">
+  <div class="row report-control-row" style="margin-top: 20px;">
     <div class="col-sm-10">
       <div class="form-group">
-        <label for="from" class="col-sm-2 control-label">Desde:</label>
-        <div class="col-sm-4">
+        <label for="from" class="col-sm-1 control-label">Desde:</label>
+        <div class="col-sm-5">
           <input type="text" id="from" name="from" class="form-control payments_select" value="<%= Time.now.strftime("%Y-%m-%d") %>">
         </div>
-        <label for="from" class="col-sm-2 control-label">Hasta:</label>
-        <div class="col-sm-4">
+        <label for="from" class="col-sm-1 control-label">Hasta:</label>
+        <div class="col-sm-5">
           <input type="text" id="to" name="to" class="form-control payments_select" value="<%= Time.now.strftime("%Y-%m-%d") %>">
         </div>
       </div>
       <div class="form-group">
-        <label for="location_ids[]" class="col-sm-2 control-label" style="margin-top: 20px;">Locales:</label>
-        <div class="col-sm-2">
+        <label for="location_ids[]" class="col-sm-1 control-label" style="margin-top: 20px;">Locales:</label>
+        <div class="col-sm-4">
           <% for location in Location.where(company_id: current_user.company_id).accessible_by(current_ability) do %>
             <label class="checkbox-inline" style="margin-top: 20px;">
               <%= check_box_tag 'location_ids[]', location.id, params[:location_ids].blank? ? true : params[:location_ids] && params[:location_ids].includes(location.id), {class: "payments_select payment_location"} %>
@@ -30,7 +30,7 @@
             </label>
           <% end %>
         </div>
-        <label for="payment_method_ids[]" class="col-sm-2 control-label" style="margin-top: 20px;">Medio de Pago:</label>
+        <label for="payment_method_ids[]" class="col-sm-1 control-label" style="margin-top: 20px;">Tipo:</label>
         <div class="col-sm-6">
           <% for payment_method in PaymentMethod.all do %>
             <label class="checkbox-inline" style="margin-top: 20px;">
@@ -47,7 +47,7 @@
       </div>
     </div>
   </div>
-  <div class="row" style="border-top: 1px solid #e3e3e3; margin-top: 25px;">
+  <div class="row" style="border-top: 1px solid #e3e3e3; margin-top: 10px;">
     <div class="col-sm-12">
       <div id='render_content'>
       </div>
@@ -92,7 +92,7 @@
           </div>
           <div class="row">
             <div class="col-sm-12">
-              <table class="table">
+              <table class="table table-white-rows">
                 <thead>
                   <tr>
                     <th></th>
@@ -107,7 +107,7 @@
                 </thead>
                 <tbody id="payment-bookings-table">
                   <tr class="tr-strong">
-                    <td colspan="4"><a id="payment_past_bookings_button" class="btn btn-default btn-xs">Agregar una reserva de otro día al pago...</a></td>
+                    <td colspan="4"><a id="payment_past_bookings_button" class="btn btn-default btn-xs">Agregar un servicio de sesiones al pago...</a></td>
                     <td>Total:</td>
                     <td id="booking_total_normal_price">$ 0</td>
                     <td id="booking_total_discount">0 %</td>
@@ -119,7 +119,32 @@
           </div>
           <div class="row">
             <div class="col-sm-12">
-              <table class="table">
+              <table class="table table-white-rows">
+                <thead>
+                  <tr>
+                    <th></th>
+                    <th>Servicio</th>
+                    <th>Sesiones</th>
+                    <th>Precio Normal</th>
+                    <th style="width: 15%;">Descuento</th>
+                    <th style="width: 15%;">Precio</th>
+                  </tr>
+                </thead>
+                <tbody id="payment-sessions-table">
+                  <tr class="tr-strong">
+                    <td colspan="2"><a id="payment_past_sessions_button" class="btn btn-default btn-xs">Agregar una sesión de otro día al pago...</a></td>
+                    <td>Total:</td>
+                    <td id="session_total_normal_price">$ 0</td>
+                    <td id="session_total_discount">0 %</td>
+                    <td id="session_total_price">$ 0</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-sm-12">
+              <table class="table table-white-rows">
                 <thead>
                   <tr>
                     <th></th>

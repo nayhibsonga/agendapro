@@ -57,6 +57,7 @@
         <div class="calendar-btn">
           <%= link_to '<i class="fa fa-calendar"></i> Agregar Reserva'.html_safe, '#', class: "btn btn-white", id: "createBooking" %>
           <%= link_to '<i class="fa fa-times"></i> Bloquear Horario'.html_safe, '#', class: "btn btn-white", id: "createBreak" %>
+          <%= link_to '<i class="fa fa-dollar"></i> Agregar Pago'.html_safe, '#', class: "btn btn-white", id: "createPayment" %>
         </div>
         <div id='calendar'></div>
       </div>
@@ -455,7 +456,7 @@
                   <%= form_for @payment, html: {class: "form-horizontal"} do |f| %>
                   <div class="row">
                     <div class="col-md-12">
-                      <table class="table">
+                      <table class="table table-white-rows">
                         <thead>
                           <tr>
                             <th></th>
@@ -482,7 +483,32 @@
                   </div>
                   <div class="row">
                     <div class="col-md-12">
-                      <table class="table">
+                      <table class="table table-white-rows">
+                        <thead>
+                          <tr>
+                            <th></th>
+                            <th>Servicio</th>
+                            <th>Sesiones</th>
+                            <th>Precio Normal</th>
+                            <th style="width: 15%;">Descuento</th>
+                            <th style="width: 15%;">Precio</th>
+                          </tr>
+                        </thead>
+                        <tbody id="payment-sessions-table">
+                          <tr class="tr-strong">
+                            <td colspan="2"><a id="payment_past_sessions_button" class="btn btn-default btn-xs">Agregar una sesión de otro día al pago...</a></td>
+                            <td>Total:</td>
+                            <td id="session_total_normal_price">$ 0</td>
+                            <td id="session_total_discount">0 %</td>
+                            <td id="session_total_price">$ 0</td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-md-12">
+                      <table class="table table-white-rows">
                         <thead>
                           <tr>
                             <th></th>
@@ -591,7 +617,7 @@
                       <% end %>
                       <div class="form-group">
                         <div class="col-sm-4 col-sm-offset-4">
-                          <a class="btn btn-red btn-block" id="save_payment_button">Elimnar Pago</a>
+                          <a class="btn btn-red btn-block" id="delete_payment_button">Elimnar Pago</a>
                         </div>
                         <div class="col-sm-4">
                           <%= f.submit "Guardar Pago", class: "btn btn-green btn-block", id: "save_payment_button" %>

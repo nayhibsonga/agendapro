@@ -665,6 +665,8 @@ function editBookingModal(eventId) {
 				$("#xButton").attr("disabled", true);
 			}
 
+			$('#bookingModal #myTab').show();
+			$('#bookingModal .booking-modal-footer').show();
 			$('#booking-tab').tab('show');
 			$('#bookingModal').modal('show');
 		});
@@ -771,6 +773,8 @@ function createBookingModal(date, provider_id) {
 				});
 			};
 			$('#client-history-tbody').html('<tr><td colspan="6">El cliente no tiene historial...</td></tr>');
+			$('#bookingModal #myTab').show();
+			$('#bookingModal .booking-modal-footer').show();
 			$('#booking-tab').tab('show');
 			$('#bookingModal').modal('show');
 			loadBookingPayment(0);

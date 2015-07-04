@@ -150,12 +150,17 @@ function loadPayment(payment_id) {
       var payment = full_payment.payment
       if (payment.id == null) {
 
+        $('#delete_payment_button').hide();
+        $('#delete_payment_button').click(function() {
+          $('#delete_payment_button').unbind( "click" );
+          return false;
+        });
       }
       else {
         $('#payment_id').val(payment.id);
         $('#delete_payment_button').show();
         $('#delete_payment_button').click(function() {
-          destroyPayment(payment.id)
+          destroyPayment(payment.id);
         });
         $('#payment_location_id option[value="' + payment.location_id + '"]').prop('selected', true);
         $('#payment_amount').val(payment.amount);
@@ -535,9 +540,9 @@ $(function() {
     add_new_product_to_payment(0, 1, 0, 0);
   });
 
-  $('#destroy_payment_button').click(function() {
-    $('#destroy_payment_button').attr('disabled', true);
-    $('#destroy_payment_button').html('<i class="fa fa-spinner fa-spin"></i>');
+  $('#delete_payment_button').click(function() {
+    $('#delete_payment_button').attr('disabled', true);
+    $('#delete_payment_button').html('<i class="fa fa-spinner fa-spin"></i>');
     destroyPayment();
   });
 
