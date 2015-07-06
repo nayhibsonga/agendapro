@@ -7,7 +7,7 @@
   </div>
 </div>
 
-<div class="container-fluid background-grey" style="margin: 30px 0;">
+<div class="container-fluid background-grey" style="margin: 30px 0 15px;">
   <div class="row">
     <div class="col-md-12">
       <%= form_tag clients_path, name: "client_filter", id: "client_filter", method: "get", class: "form-horizontal" do %>
@@ -47,6 +47,22 @@
 </div>
 
 <div class="container-fluid">
+  <div class="row" style="margin-bottom: 15px;">
+    <div class="col-sm-2 col-md-2">
+      <%= link_to '<i class="fa fa-plus"></i> Nuevo Cliente'.html_safe, new_client_path, :class => "btn btn-white" %>
+    </div>
+    <div class="col-sm-offset-8 col-md-offset-8 col-sm-2 col-md-2">
+      <% if @from_collection.first %>
+        <% if @monthly_mails_sent < @monthly_mails %>
+          <%= link_to '<i class="fa fa-envelope"></i> Enviar E-mail'.html_safe, send_mail_path(search: params[:search], location: params[:location], provider: params[:provider], service: params[:service], gender: params[:gender], option: params[:option]), class: "btn btn-white pull-right", id: 'sendMail' %>
+        <% else %>
+          <p class="text-right">Has alcanzado el limite de e-mails.</p>
+        <% end %>
+      <% else %>
+        <button id="sendMail" type="button" class="btn btn-white pull-right" data-toggle="modal" data-target="#mailModal"><i class="fa fa-envelope"></i> Enviar E-mail</button>
+      <% end %>
+    </div>
+  </div>
   <div class="row">
     <div class="col-md-12">
       <table class="table table-bordered table-green">
@@ -88,28 +104,12 @@
   </div>
   <div class="row">
     <div class="col-sm-2 col-md-2">
-      <%= link_to '<i class="fa fa-plus"></i> Nuevo Cliente'.html_safe, new_client_path, :class => "btn btn-white" %>
-    </div>
-    <div class="col-sm-8 col-md-8 pagination">
-      <%= will_paginate @clients, renderer: BootstrapPagination::Rails %>
-    </div>
-    <div class="col-sm-2 col-md-2">
-      <% if @from_collection.first %>
-        <% if @monthly_mails_sent < @monthly_mails %>
-          <%= link_to '<i class="fa fa-envelope"></i> Enviar E-mail'.html_safe, send_mail_path(search: params[:search], location: params[:location], provider: params[:provider], service: params[:service], gender: params[:gender], option: params[:option]), class: "btn btn-white pull-right", id: 'sendMail' %>
-        <% else %>
-          <p class="text-right">Has alcanzado el limite de e-mails.</p>
-        <% end %>
-      <% else %>
-        <button id="sendMail" type="button" class="btn btn-white pull-right" data-toggle="modal" data-target="#mailModal"><i class="fa fa-envelope"></i> Enviar E-mail</button>
-      <% end %>
-    </div>
-  </div>
-  <div class="row">
-    <div class="col-sm-6 col-md-6">
       <button id="import_clients" type="button" class="btn btn-white" data-toggle="modal" data-target="#importModal"><i class="fa fa-group"></i> Importar Clientes</button>
     </div>
-    <div class="col-sm-6 col-md-6">
+    <div class="col-sm-6 col-md-6 pagination">
+      <%= will_paginate @clients, renderer: BootstrapPagination::Rails %>
+    </div>
+    <div class="col-sm-4 col-md-4">
       <p class="text-right">
         Descargar este listado de clientes:
         <%= link_to '<i class="fa fa-download"></i> CSV'.html_safe, clients_path(format: "csv", location: params[:location], provider: params[:provider], gender: params[:gender]), class: "btn btn-white" %>
