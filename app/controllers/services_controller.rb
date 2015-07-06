@@ -1,6 +1,6 @@
 class ServicesController < ApplicationController
   before_action :set_service, only: [:show, :edit, :update, :destroy, :activate, :deactivate]
-  before_action :authenticate_user!, except: [:services_data, :service_data, :get_providers, :location_services, :location_categorized_services, :get_promotions_popover, :show_time_promo]
+  before_action :authenticate_user!, except: [:services_data, :service_data, :get_providers, :location_services, :location_categorized_services, :get_promotions_popover, :show_time_promo, :show_last_minute_promo, :last_minute_hours]
   before_action :quick_add, except: [:services_data, :service_data, :get_providers]
   before_action :verify_is_super_admin, only: [:manage_promotions, :manage_service_promotion]
   layout "admin", except: [:get_providers, :services_data, :service_data, :show_time_promo]
@@ -640,6 +640,16 @@ class ServicesController < ApplicationController
 
     render layout: "results"
 
+  end
+
+  def last_minute_hours
+    @service = Service.find(params[:id])
+    @location = Location.find(params[:location_id])
+    @available_hours = @service.get_last_minute_available_hours(params[:service_provider_id], params[:location_id])
+    respond_to do |format|
+      format.html { render :partial => 'last_minute_hours' }
+      format.json { render :json => @available_hours }
+    end
   end
 
   def admin_update_promo

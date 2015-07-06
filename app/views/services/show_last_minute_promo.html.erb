@@ -169,6 +169,9 @@
                   </select>
                 </div>
               </div>
+              <div id="hours-selection-div">
+
+              </div>
               <input type="hidden" name="service" value="<%= @service.id %>" />
           </form>
         </div>
@@ -320,6 +323,30 @@
       return formatted_amount;
     }
 
+    $("#selectProviderModal").on('show.bs.modal', function(e){
+      $("#hours-selection-div").empty();
+    });
+
+    $("#openHoursBtn").click(function(){
+
+      var service_id = $("#serviceId").val();
+      var location_id = $("#locationId").val();
+      var service_provider_id = $("#providerOptimizerSelector").val();
+
+      $.ajax({
+        url: '/last_minute_hours?id=' + service_id + "&location_id=" + location_id + "&service_provider_id" + service_provider_id,
+        type: 'GET',
+        success: function(response){
+          $("#hours-selection-div").empty();
+          $("#hours-selection-div").append(response);
+        },
+        error: function(response){
+          $("#hours-selection-div").empty();
+          alert("Ocurrió un error.");
+        }
+      });
+
+    });
 
   </script>
 

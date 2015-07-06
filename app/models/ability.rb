@@ -105,10 +105,13 @@ class Ability
     # Singup Validate
     can :check_user_email, User
     can :check_company_web_address, Company
+
+    
     can :get_promotions_popover, Service
     can :promotion_hours, Booking
     can :show_time_promo, Service
     can :show_last_minute_promo, Service
+    can :last_minute_hours, Service
 
 
     if user.role_id == Role.find_by_name("Super Admin").id
