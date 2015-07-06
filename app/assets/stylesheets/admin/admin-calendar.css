@@ -441,27 +441,6 @@ select[name="serviceOptimizerSelector"] {
   width: auto;
 }
 
-/*.fc-widget-header
-{
-  width:200px;
-}
-.fc-widget-header.fc-first, .fc-widget-header.fc-last
-{
-  width:auto;
-}
-.fc-widget-content
-{
-  width:200px;
-}
-.fc-widget-content.fc-first, .fc-widget-content.fc-last
-{
-  width:auto;
-}
-
-#calendar table {
-  table-layout: fixed;
-}*/
-
 .label-calendar {
   font-size: 11px;
 }
@@ -533,5 +512,4 @@ select[name="serviceOptimizerSelector"] {
 .calendar-alert > .alert {
   position: initial;
   width: initial;
-  /*margin: initial;*/
 }
