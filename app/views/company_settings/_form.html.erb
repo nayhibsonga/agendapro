@@ -23,6 +23,7 @@
         <% if current_user.company.company_setting.deal_activate %>
         <li role="presentation"><a id="deal_link" href="#deals" role="tab" data-toggle="pill" data-title="Convenios" data-description="Configura el uso de convenios, el tiempo y la cantidad de veces que se pueden usar.">Convenios</a></li>
         <% end %>
+        <li role="presentation"><a id="notifications_link" href="#notifications" role="tab" data-toggle="pill" data-title="Notificaciones" data-description="Configura que e-mails deseas recibir y a que correo.">Notificaciones</a></li>
       </ul>
     </div>
     <!-- Panels -->
@@ -85,6 +86,18 @@
                 </div>
               </div>
             </div>
+            <div class="col-md-6">
+              <div onclick="$('#notifications_link').click();" class="media">
+                <div class="media-left">
+                  <%= image_tag 'admin/7.png', class: 'media-object media-image' %>
+                </div>
+                <div class="media-body">
+                  <span class="text-green">Notificaciones:</span> configura que e-mails deseas recibir y a que correo.
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="row">
             <% if current_user.company.company_setting.online_payment_capable %>
             <div class="col-md-6">
               <div onclick="$('#payment_link').click();" class="media">
@@ -97,9 +110,7 @@
               </div>
             </div>
             <% end %>
-          </div>
-          <% if current_user.company.company_setting.deal_activate %>
-          <div class="row">
+            <% if current_user.company.company_setting.deal_activate %>
             <div class="col-md-6">
               <div onclick="$('#deal_link').click();" class="media">
                 <div class="media-left">
@@ -110,8 +121,8 @@
                 </div>
               </div>
             </div>
+            <% end %>
           </div>
-          <% end %>
         </div>
         <!-- Company -->
         <div class="tab-pane" id="company">
@@ -251,17 +262,12 @@
                       <span class="help-block">Aquí configuras si el cliente puede o debe elegir el prestador con el que se atenderá. Si no se elige, se seleccionará automáticamente al prestador con menos ocupación ese día.</span>
                       <%= f.select :provider_preference, options_for_select([["Cliente puede elegir prestador", 0], ["Cliente debe elegir prestador", 1], ["Cliente no puede elegir prestador", 2]], selected: @company_setting.provider_preference ), {}, {class: "form-control" } %>
                     </div>
+                  </div>
+                  <div class="col-md-6">
                     <div class="form-group">
                       <%= f.label :booking_confirmation_time, 'Recordatorios' %>
                       <span class="help-block">En esta opción defines cuántos días antes de la reserva se envía el recordatorio al cliente..</span>
                       <%= f.select :booking_confirmation_time, options_for_select([["El mismo día", 0], ["1 día antes", 1], ["2 días antes", 2], ["3 días antes", 3]], selected: @company_setting.booking_confirmation_time ), {}, {class: "form-control" } %>
-                    </div>
-                  </div>
-                  <div class="col-md-6">
-                    <div class="form-group">
-                      <%= f.label :booking_configuration_email, 'Notificaciones de Reservas' %>
-                      <span class="help-block">Esta opción define cómo se notifican las reservas al email. Puedes configurar esta opción para cada local y prestador independientemente.</span>
-                      <%= f.select :booking_configuration_email, options_for_select([["Notificación por cada reserva", 0], ["Enviar resumen de reservas diario", 1], ["No notificar reservas por email", 3]], selected: @company_setting.booking_configuration_email ), {}, {class: "form-control" } %>
                     </div>
                     <div class="form-group has-feedback">
                       <%= f.label :before_booking, 'Tiempo Mínimo de Reserva:' %>
@@ -777,6 +783,183 @@
           </div>
         </div>
         <% end %>
+        <!-- Notifications -->
+        <div class="tab-pane" id="notifications">
+          <div class="row">
+            <div class="col-md-5">
+              <%= form_for @notification_email do |f| %>
+                <%= f.hidden_field :company_id, value: @company.id %>
+                <div class="row">
+                  <div class="col-md-12">
+                    <div class="form-group">
+                      <%= f.label :email, "E-mail de Notificación", class: 'text-green' %>
+                      <%= f.email_field :email, class: "form-control", required: true %>
+                      <span class="help-block">En que dirección desea recibir la notificación.</span>
+                    </div>
+                    <div class="form-group">
+                      <%= f.label :receptor_type, "Tipo de Notificación", class: 'text-green' %>
+                      <%= f.select :receptor_type, [['Compañía', 0], ['Local', 1], ['Prestador de Servicio', 2]], {}, {class: 'form-control'} %>
+                      <span class="help-block">Recibir notificaciones sobre eventos de la compañía, locales o prestadores de servicios.</span>
+                    </div>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-md-12 hidden" id="local-notification">
+                    <div class="form-group">
+                      <%= f.label :location_ids, @company.name %>
+                      <%= f.collection_check_boxes :location_ids, @company.locations.where(active: true), :id, :name, {}, {class: "check_boxes"} do |b|%>
+                        <div class="checkbox">
+                          <label>
+                            <%= b.check_box %> <%= b.text %>
+                          </label>
+                        </div>
+                      <% end %>
+                    </div>
+                  </div>
+                  <div class="col-md-12 hidden" id="provider-notification">
+                    <div class="row">
+                      <% for local in @company.locations.where(active: true) %>
+                      <div class="col-sm-4">
+                        <div class="form-group">
+                          <%= f.label :service_provider_ids, local.name %>
+                          <%= f.collection_check_boxes :service_provider_ids, local.service_providers.where(active: true), :id, :public_name, {}, {class: "check_boxes"} do |b|%>
+                            <div class="checkbox">
+                              <label>
+                                <%= b.check_box %> <%= b.text %>
+                              </label>
+                            </div>
+                          <% end %>
+                        </div>
+                      </div>
+                      <% end %>
+                    </div>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-md-12">
+                    <div class="form-group background-green">
+                      <div class="row">
+                        <div class="col-md-12">
+                          <label style="margin: 0;">Cuando recibir la Notificación</label>
+                          <span class="help-block" style="margin: 0;">Sobre cual evento desea recibir la notificación.</span>
+                        </div>
+                      </div>
+                      <div class="row">
+                        <div class="col-sm-4">
+                          <div class="checkbox">
+                            <label>
+                              <%= f.check_box :summary %> Resumen diario
+                            </label>
+                          </div>
+                        </div>
+                        <div class="col-sm-4">
+                          <div class="checkbox">
+                            <label>
+                              <%= f.check_box :new %> Nueva reserva manual
+                            </label>
+                          </div>
+                        </div>
+                        <div class="col-sm-4">
+                          <div class="checkbox">
+                            <label>
+                              <%= f.check_box :modified %> Reserva manual modificada
+                            </label>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="row">
+                        <div class="col-sm-4">
+                          <div class="checkbox">
+                            <label>
+                              <%= f.check_box :confirmed %> Reserva manual confirmada
+                            </label>
+                          </div>
+                        </div>
+                        <div class="col-sm-4">
+                          <div class="checkbox">
+                            <label>
+                              <%= f.check_box :canceled %> Reserva manual cancelada
+                            </label>
+                          </div>
+                        </div>
+                        <div class="col-sm-4">
+                          <div class="checkbox">
+                            <label>
+                              <%= f.check_box :new_web %> Nueva reserva online
+                            </label>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="row">
+                        <div class="col-sm-4">
+                          <div class="checkbox">
+                            <label>
+                              <%= f.check_box :modified_web %> Reserva online modificada
+                            </label>
+                          </div>
+                        </div>
+                        <div class="col-sm-4">
+                          <div class="checkbox">
+                            <label>
+                              <%= f.check_box :confirmed_web %> Reserva online confirmada
+                            </label>
+                          </div>
+                        </div>
+                        <div class="col-sm-4">
+                          <div class="checkbox">
+                            <label>
+                              <%= f.check_box :canceled_web %> Reserva online cancelada
+                            </label>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-md-12">
+                    <div class="form-group">
+                      <%= f.submit 'Guardar', :class => 'btn btn-green' %>
+                      <%= link_to 'Cancelar', edit_company_setting_path(User.find(current_user.id).company.company_setting), :class => "btn btn-default" %>
+                    </div>
+                  </div>
+                </div>
+              <% end %>
+            </div>
+            <div class="col-md-7">
+              <div class="background-grey">
+                <h4 class="text-green">Notificaciones Activas</h4>
+                <div class="table-responsive">
+                  <table class="table table-bordered">
+                    <thead>
+                      <tr>
+                        <th>E-mail</th>
+                        <th>Tipo</th>
+                        <th>Notificaciones</th>
+                        <th></th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <% for notification in @notifications %>
+                      <tr>
+                        <td><%= notification.email %></td>
+                        <td>
+                          <%= notification.receptor_type_text %>
+                        </td>
+                        <td><%= notification.notification_text %></td>
+                        <td style="white-space: nowrap;">
+                          <%= link_to '<i class="fa fa-pencil"></i> Editar'.html_safe, edit_notification_email_path(notification), :class => "btn btn-sm btn-orange" %>
+                          <%= link_to '<i class="fa fa-trash-o"></i> Eliminar'.html_safe, notification, :class => "btn btn-sm btn-red", method: :delete, data: { confirm: '¿Estás seguro de eliminar esta Notificación?' } %>
+                        </td>
+                      </tr>
+                      <% end %>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -903,199 +1086,4 @@
 
 <% content_for :scripts do %>
   <%= javascript_include_tag "admin/company_settings" %>
-  <script type="text/javascript">
-    
-
-    $(function () {
-      $('#myTab a').click(function (e) {
-        var title = $(this).data('title');
-        var description = $(this).data('description');
-
-        if (title.length > 0 && description.length > 0) {
-          $('#title').html(title);
-          $('#description').html(description);
-        };
-      });
-
-      $('#fromEmail').on('hidden.bs.modal', function (e) {
-        validator.resetForm();
-        $('.has-success').removeClass('has-success');
-        $('.fa.fa-check').removeClass('fa fa-check');
-        $('.has-error').removeClass('has-error');
-        $('.fa.fa-times').removeClass('fa fa-times');
-      });
-
-      $('#staffCode').on('hidden.bs.modal', function (e) {
-        validator.resetForm();
-        $('.has-success').removeClass('has-success');
-        $('.fa.fa-check').removeClass('fa fa-check');
-        $('.has-error').removeClass('has-error');
-        $('.fa.fa-times').removeClass('fa fa-times');
-      });
-
-      if($('#company_setting_allows_online_payment').prop('checked')) {
-        $(".account-info").removeClass("hidden");
-        if($("#company_setting_bank :selected").text() == "Otro") {
-          $("#other-bank").removeClass("hidden");
-          $(".account-data").addClass("hidden");
-        } else {
-          $("#other-bank").addClass("hidden");
-          $(".account-data").removeClass("hidden");
-        }
-      } else {
-        $(".account-info").addClass("hidden");
-        $("#other-bank").addClass("hidden");
-      }
-
-      if($('#company_setting_allows_online_payment').prop('checked')) {
-        $(".account-info").removeClass("hidden");
-
-        if($("#company_setting_bank :selected").text() == "Otro") {
-          $("#other-bank").removeClass("hidden");
-          $(".account-data").addClass("hidden");
-        } else {
-          $("#other-bank").addClass("hidden");
-          $(".account-data").removeClass("hidden");
-        }
-
-        var mod_can = false;
-
-        if($("#company_setting_online_cancelation_policy_attributes_cancelable").prop('checked')) {
-          $(".cancel-div").removeClass('hidden');
-          mod_can = true;
-        } else {
-          $(".cancel-div").addClass('hidden');
-        }
-
-        if($("#company_setting_online_cancelation_policy_attributes_modifiable").prop('checked')) {
-          $(".modification-div").removeClass('hidden');
-          mod_can = true;
-        } else {
-          $(".modification-div").addClass('hidden');
-        }
-
-        if(mod_can) {
-          $('.min-hours-div').removeClass('hidden');
-        } else {
-          $('.min-hours-div').addClass('hidden');
-        }
-      } else {
-        $(".account-info").addClass("hidden");
-        $("#other-bank").addClass("hidden");
-      }
-
-      $("#company_setting_allows_online_payment").change(function(){
-        if($('#company_setting_allows_online_payment').prop('checked')) {
-          $(".account-info").removeClass("hidden");
-          if($("#company_setting_bank :selected").text() == "Otro") {
-            $("#other-bank").removeClass("hidden");
-            $(".account-data").addClass("hidden");
-          } else {
-            $("#other-bank").addClass("hidden");
-            $(".account-data").removeClass("hidden");
-          }
-
-          var mod_can = false;
-
-          if($("#company_setting_online_cancelation_policy_attributes_cancelable").prop('checked')) {
-            $(".cancel-div").removeClass('hidden');
-            mod_can = true;
-          } else {
-            $(".cancel-div").addClass('hidden');
-          }
-
-          if($("#company_setting_online_cancelation_policy_attributes_modifiable").prop('checked')) {
-            $(".modification-div").removeClass('hidden');
-            mod_can = true;
-          } else {
-            $(".modification-div").addClass('hidden');
-          }
-
-          if(mod_can) {
-            $('.min-hours-div').removeClass('hidden');
-          } else {
-            $('.min-hours-div').addClass('hidden');
-          }
-        } else {
-          $("#other-bank").addClass("hidden");
-          $(".account-info").addClass("hidden");
-        }
-      });
-
-      $("#company_setting_bank").change(function(){
-        if($("#company_setting_bank :selected").text() == "Otro") {
-          $("#other-bank").removeClass("hidden");
-          $(".account-data").addClass("hidden");
-        } else {
-          $("#other-bank").addClass("hidden");
-          $(".account-data").removeClass("hidden");
-        }
-      });
-
-
-      $("#company_setting_online_cancelation_policy_attributes_modifiable").change(function(){
-        var mod_can = false;
-
-        if($("#company_setting_online_cancelation_policy_attributes_cancelable").prop('checked')) {
-          $(".cancel-div").removeClass('hidden');
-          mod_can = true;
-        } else {
-          $(".cancel-div").addClass('hidden');
-        }
-
-        if($("#company_setting_online_cancelation_policy_attributes_modifiable").prop('checked')) {
-          $(".modification-div").removeClass('hidden');
-          mod_can = true;
-        } else {
-          $(".modification-div").addClass('hidden');
-        }
-
-        if(mod_can) {
-          $('.min-hours-div').removeClass('hidden');
-        } else {
-          $('.min-hours-div').addClass('hidden');
-        }
-      });
-
-      $("#company_setting_online_cancelation_policy_attributes_cancelable").change(function(){
-
-        var mod_can = false;
-
-        if($("#company_setting_online_cancelation_policy_attributes_cancelable").prop('checked')) {
-          $(".cancel-div").removeClass('hidden');
-          mod_can = true;
-        } else {
-          $(".cancel-div").addClass('hidden');
-        }
-
-        if($("#company_setting_online_cancelation_policy_attributes_modifiable").prop('checked')) {
-          $(".modification-div").removeClass('hidden');
-          mod_can = true;
-        } else {
-          $(".modification-div").addClass('hidden');
-        }
-
-        if(mod_can) {
-          $('.min-hours-div').removeClass('hidden');
-        } else {
-          $('.min-hours-div').addClass('hidden');
-        }
-      });
-
-      $('#company_web_address').on('change', function() {
-        var tmp = $('#company_web_address').val();
-        tmp = tmp.toLowerCase();
-        tmp = tmp.replace(/[áäâà]/gi, 'a'); //special a
-        tmp = tmp.replace(/[éëêè]/gi, 'e'); //Special e
-        tmp = tmp.replace(/[íïîì]/gi, 'i'); //Special i
-        tmp = tmp.replace(/[óöôò]/gi, 'o'); //Special o
-        tmp = tmp.replace(/[úüûù]/gi, 'u'); //Special u
-        tmp = tmp.replace(/ñ/gi, 'n');  //Special ñ
-        tmp = tmp.replace(/[^a-z0-9]/gi,'');
-        $('#company_web_address').val(tmp);
-      });
-
-      CKEDITOR.replace(company_setting_signature);
-    });
-  </script>
 <% end %>
