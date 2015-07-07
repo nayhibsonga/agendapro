@@ -187,24 +187,36 @@ class Service < ActiveRecord::Base
 		day = now.cwday
 
 		open_time = location.location_times.where(day_id: day).order(:open).first.open
-		close_time = location.location_times.where(day_id: day).order(:close).first.open
+		close_time = location.location_times.where(day_id: day).order(:close).first.close
 
 		dateTimePointer = DateTime.new(now.year, now.mon, now.mday, now.hour, now.min)
-		open = DateTime.new(now.year, now.mon, now.mday, now.hour, now.min)
-		close = DateTime.new(now.year, now.mon, now.mday, now.hour, now.min)
+		open = DateTime.new(now.year, now.mon, now.mday, open_time.hour, open_time.min)
+		close = DateTime.new(now.year, now.mon, now.mday, close_time.hour, close_time.min)
+
+		
+
+		limit = DateTime.now + last_minute_hours.hours
+		limit = DateTime.new(limit.year, limit.mon, limit.mday, limit.hour, limit.min)
+
+		puts "Times: "
+		puts "DTP: " + dateTimePointer.to_s
+		puts "Open: " + open.to_s
+		puts "Close: " + close.to_s
+		puts "Limit: " + limit.to_s	
 
 		if dateTimePointer > close
-			return
+			return available_hours
 		end
 
 		if DateTime.now < (open - last_minute_hours.hours)
-			return
+			return available_hours
 		end
 
-		limit = DateTime.now + last_minute_hours.hours		
+		puts provider_id.to_s
 
-		if provider_id.nil? || provider_id == "0"
+		if provider_id.nil? || provider_id == "0" || provider_id == 0
 			
+			puts "Sin preferencia"
 
 			while dateTimePointer < limit && dateTimePointer < close
 				
@@ -307,14 +319,14 @@ class Service < ActiveRecord::Base
 		                :start => dateTimePointer,
 		                :end => dateTimePointer + self.duration.minutes,
 		                :service_name => self.name,
-		                :provider_name => servide_provider.public_name,
+		                :provider_name => service_provider.public_name,
 		                :provider_lock => true
 		              }
-		              dateTimePointer += service.duration.minutes
+		              dateTimePointer += self.duration.minutes
 		              break #Break providers loop
 		            end
 
-		            dateTimePointer += service.duration.minutes
+		            dateTimePointer += self.duration.minutes
 
 		        end
 
@@ -322,7 +334,10 @@ class Service < ActiveRecord::Base
 
 
 		else
+
 			service_provider = ServiceProvider.find(provider_id)
+
+			puts service_provider.public_name
 
 			while dateTimePointer < limit && dateTimePointer < close
 				
@@ -331,10 +346,15 @@ class Service < ActiveRecord::Base
 				#Check dtp + duration isn't out of location time
 				if (dateTimePointer + self.duration.minutes) > close
 					service_valid = false
+					puts "Break 1"
+					puts (dateTimePointer + self.duration.minutes).to_s
+					puts close.to_s
 					break
 				else
 					service_valid = true
 				end
+
+				puts "Service valid 1"
 
 				provider_time = service_provider.provider_times.where(day_id: day).first
 
@@ -349,6 +369,8 @@ class Service < ActiveRecord::Base
               		service_valid = true
               	end
 
+              	puts "Service valid 2"
+
               	#Check provider breaks
 	            if service_valid
 	              	service_provider.provider_breaks.each do |provider_break|
@@ -358,6 +380,9 @@ class Service < ActiveRecord::Base
 	                	end
 	              	end
 	            end
+
+              	puts "Service valid 3"
+
 
 	            # Cross Booking
 	            if service_valid
@@ -384,6 +409,8 @@ class Service < ActiveRecord::Base
 	                end
 	              end
 	            end
+
+	            puts "Service valid 4"
 
 
 	            # Recursos
@@ -415,6 +442,8 @@ class Service < ActiveRecord::Base
 	              end
 	            end
 
+	            puts "Service valid 5"
+
 	            if service_valid
 
 	              available_hours << {
@@ -423,16 +452,18 @@ class Service < ActiveRecord::Base
 	                :start => dateTimePointer,
 	                :end => dateTimePointer + self.duration.minutes,
 	                :service_name => self.name,
-	                :provider_name => servide_provider.public_name,
+	                :provider_name => service_provider.public_name,
 	                :provider_lock => true
 	              }
 	            end
 
-	            dateTimePointer += service.duration.minutes
+	            dateTimePointer += self.duration.minutes
 
 			end
 
 		end
+
+		return available_hours
 
 	end
 

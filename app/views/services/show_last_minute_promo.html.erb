@@ -10,6 +10,12 @@
     </div>
 
     <div class="row">
+      <div class="col-sm-12" style="text-align: right;">
+        <%= link_to "Volver a Promociones de último minuto", get_last_minute_promotions_path %>
+      </div>
+    </div>
+
+    <div class="row">
       <div class="col-xs-6 col-md-6">
         <div class="promo-title">
           <%= @service.name %>
@@ -334,7 +340,7 @@
       var service_provider_id = $("#providerOptimizerSelector").val();
 
       $.ajax({
-        url: '/last_minute_hours?id=' + service_id + "&location_id=" + location_id + "&service_provider_id" + service_provider_id,
+        url: '/last_minute_hours?id=' + service_id + "&location_id=" + location_id + "&service_provider_id=" + service_provider_id,
         type: 'GET',
         success: function(response){
           $("#hours-selection-div").empty();
