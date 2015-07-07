@@ -24,9 +24,21 @@ class Payment < ActiveRecord::Base
     self.bookings.each do |booking|
       bookings_total += booking.service.price
     end
-    bookings_amount = self.bookings.sum(:price)
+    bookings_amount = self.bookings.where(is_session: false).sum(:price)
     bookings_quantity = self.bookings.count
     bookings_discount = bookings_total > 0 ? 100 - 100 * bookings_amount / bookings_total : 0
+
+    sessions_total = 0
+    sessions_amount = 0
+    sessions_quantity = 0
+    self.bookings.where.not(is_session: false, session_booking_id: nil).pluck(:session_booking_id).uniq.each do |session_booking_id|
+      puts session_booking_id.to_s
+      session_booking = SessionBooking.find(session_booking_id)
+      sessions_total += session_booking.bookings.first.service.price
+      sessions_amount += session_booking.bookings.first.price
+      sessions_quantity += 1
+    end
+    sessions_discount = bookings_total > 0 ? 100 - 100 * sessions_amount / sessions_total : 0
     
     products_total = 0
     self.payment_products.each do |payment_product|
@@ -36,10 +48,10 @@ class Payment < ActiveRecord::Base
     products_quantity = self.payment_products.sum(:quantity)
     products_discount = products_total > 0 ? 100 - 100 * products_amount / products_total : 0
 
-    amount = bookings_amount + products_amount
-    quantity = bookings_quantity + products_quantity
-    discount = ( bookings_total + products_total ) > 0 ? 100 - 100 * amount / ( bookings_total + products_total ) : 0
+    amount = bookings_amount + sessions_amount + products_amount
+    quantity = bookings_quantity + sessions_quantity + products_quantity
+    discount = ( bookings_total + sessions_total + products_total ) > 0 ? 100 - 100 * amount / ( bookings_total + sessions_total + products_total ) : 0
 
-    self.update_columns(amount: amount, discount: discount, quantity: quantity, bookings_amount: bookings_amount, bookings_quantity: bookings_quantity, bookings_discount: bookings_discount, products_amount: products_amount, products_quantity: products_quantity, products_discount: products_discount)
+    self.update_columns(amount: amount, discount: discount, quantity: quantity, bookings_amount: bookings_amount, bookings_quantity: bookings_quantity, bookings_discount: bookings_discount, sessions_amount: sessions_amount, sessions_quantity: sessions_quantity, sessions_discount: sessions_discount, products_amount: products_amount, products_quantity: products_quantity, products_discount: products_discount)
   end
 end

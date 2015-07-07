@@ -132,7 +132,7 @@ function loadBookingPayment(booking_id) {
     } 
     var today = dd+'-'+mm+'-'+yyyy;
 
-	$('.payment-product-tr').remove();
+	$('.payment-booking-tr').remove();
 	$('.payment-session-tr').remove();
 	$('.payment-product-tr').remove();
 	$('#payment_id').val('');
@@ -147,6 +147,8 @@ function loadBookingPayment(booking_id) {
 	$('#payment_payment_method_id option[value="<%= PaymentMethod.find_by_name("Efectivo").id if PaymentMethod.find_by_name("Efectivo") %>"]').prop('selected', true);
 	$('#payment_company_payment_method_id option[value=""]').prop('selected', true);
 	$('#payment_payment_date').val(today);
+	$('#payment_past_bookings_button').attr("disabled", false);
+	$('#payment_past_sessions_button').attr("disabled", false);
 
 
 	if (parseInt(booking_id) > 0) {
@@ -239,9 +241,14 @@ function past_bookings_modal(past_bookings_array) {
 						    past_bookings_array.splice(index, 1);
 						}
 						$('#payment_past_bookings_button').unbind( "click" );
-						$('#payment_past_bookings_button').click(function() {
-							past_bookings_modal(past_bookings_array);
-						});
+						if (past_bookings_array.length > 0) {
+							$('#payment_past_bookings_button').click(function() {
+								past_bookings_modal(past_bookings_array);
+							});
+						}
+						else {
+							$('#payment_past_bookings_button').attr("disabled", true);
+						}
 						calculateTotals(false);
 						$('#paymentBookingModal').modal('hide');
 					});
@@ -259,17 +266,21 @@ function past_sessions_modal(past_sessions_array) {
 			window.console.log(past_sessions);
 			if (past_sessions.past_sessions.length > 0) {
 				$.each(past_sessions.past_sessions, function (key, past_session) {
-					$('#payment-past-bookings-table').append('<tr class="payment-past-booking-tr"><td><a class="btn btn-default btn-xs" id="past_session_id_' + past_session.session_booking.id + '">Agregar...</a></td><td><div class="table-fixed">' + past_session.session_service + '</div></td><td><div class="table-fixed"></div></td><td><div class="table-fixed"></div></td><td><div class="table-fixed"></div></td><td><div class="table-fixed">$ ' + past_session.session_normal + '</div></td><td><div class="table-fixed">' + past_session.session_discount + ' %</div></td><td><div class="table-fixed">$ ' + past_session.session_price + '</div></td></tr>');
+					$('#payment-past-bookings-table').append('<tr class="payment-past-booking-tr"><td><a class="btn btn-default btn-xs" id="past_session_id_' + past_session.session_booking.id + '" data-bookings="' + past_session.session_booking_ids + '">Agregar...</a></td><td><div class="table-fixed">' + past_session.session_service + '</div></td><td><div class="table-fixed"></div></td><td><div class="table-fixed"></div></td><td><div class="table-fixed"></div></td><td><div class="table-fixed">$ ' + past_session.session_normal + '</div></td><td><div class="table-fixed">' + past_session.session_discount + ' %</div></td><td><div class="table-fixed">$ ' + past_session.session_price + '</div></td></tr>');
 					$('#past_session_id_' + past_session.session_booking.id).click(function() {
 						add_session_to_payment(past_session);
-						window.console.log(past_session.booking_ids);
 						var new_past_sessions_array = $.grep(past_sessions_array, function(value) {
-						    return $.inArray(value, past_session.booking_ids) < 0;
+						    return $.inArray(value, $('#past_session_id_' + past_session.session_booking.id).data("bookings")) < 0;
 						});
 						$('#payment_past_sessions_button').unbind( "click" );
-						$('#payment_past_sessions_button').click(function() {
-							past_sessions_modal(new_past_sessions_array);
-						});
+						if (new_past_sessions_array.length > 0) {
+							$('#payment_past_sessions_button').click(function() {
+								past_sessions_modal(new_past_sessions_array);
+							});
+						}
+						else {
+							$('#payment_past_sessions_button').attr("disabled", true);
+						}
 						calculateTotals(false);
 						$('#paymentBookingModal').modal('hide');
 					});

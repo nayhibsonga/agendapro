@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150630213552) do
+ActiveRecord::Schema.define(version: 20150706184835) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -563,6 +563,9 @@ ActiveRecord::Schema.define(version: 20150630213552) do
     t.integer  "products_quantity",         default: 0
     t.integer  "bookings_quantity",         default: 0
     t.integer  "quantity",                  default: 0
+    t.float    "sessions_amount",           default: 0.0
+    t.float    "sessions_discount",         default: 0.0
+    t.integer  "sessions_quantity",         default: 0
   end
 
   add_index "payments", ["bank_id"], name: "index_payments_on_bank_id", using: :btree
