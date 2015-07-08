@@ -61,6 +61,7 @@ class Location < ActiveRecord::Base
 
 	pg_search_scope :search, :associated_against => {
 		:company => :name,
+		:company => :web_address,
 		:economic_sectors => :name,
 		:economic_sectors_dictionaries => :name,
 		:service_categories => :name,
