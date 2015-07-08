@@ -376,9 +376,9 @@ class CompaniesController < ApplicationController
 		filename = params[:type] + "_" + params[:subtype]
 		year = params[:year]
 		filename = filename + "_" + year + ".csv"
-		
+
 	    send_data Booking.generate_csv(params[:type], params[:subtype], params[:year]), filename: filename
-	    
+
 	end
 
 	#SuperAdmin
@@ -1358,7 +1358,7 @@ class CompaniesController < ApplicationController
 	    @lock
 	    @company = @location.company
 	    @available_time
-		
+
 	    respond_to do |format|
 	      format.html { render :partial => 'select_session_hour' }
 	      format.json { render json: @available_time }
@@ -1411,6 +1411,6 @@ class CompaniesController < ApplicationController
 
 		# Never trust parameters from the scary internet, only allow the white list through.
 		def company_params
-			params.require(:company).permit(:name, :plan_id, :logo, :remove_logo, :payment_status_id, :pay_due, :web_address, :description, :cancellation_policy, :months_active_left, :due_amount, :due_date, :active, company_setting_attributes: [:before_booking, :after_booking, :allows_online_payment, :account_number, :company_rut, :account_name, :account_type, :bank_id], economic_sector_ids: [])
+			params.require(:company).permit(:name, :plan_id, :logo, :remove_logo, :payment_status_id, :pay_due, :web_address, :description, :cancellation_policy, :months_active_left, :due_amount, :due_date, :active, :show_in_home, company_setting_attributes: [:before_booking, :after_booking, :allows_online_payment, :account_number, :company_rut, :account_name, :account_type, :bank_id], economic_sector_ids: [])
 		end
 end
