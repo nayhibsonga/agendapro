@@ -1,3 +1,28 @@
+$.validator.addMethod('mp_check', function(value, element, params) {
+	
+	var is_selected = $("input:radio[name='mp']").is(":checked");
+
+
+	if(is_selected)
+	{
+		$('#payment_title').closest('.form-group').addClass('has-success');
+		$('#payment_title').closest('.form-group').removeClass('has-error');
+		$("#payment_title").closest('.form-group').children('.form-control-feedback').removeClass('fa fa-times').addClass('fa fa-check');
+		$("#payment_title").closest('.form-group').children('.help-block').empty();
+	}
+	else
+	{
+		$('#payment_title').closest('.form-group').removeClass('has-success');
+		$('#payment_title').closest('.form-group').addClass('has-error');
+		$("#payment_title").closest('.form-group').children('.form-control-feedback').removeClass('fa fa-check').addClass('fa fa-times');
+		$("#payment_title").closest('.form-group').children('.help-block').append("Debes elegir un medio de pago.");
+	}
+
+	return is_selected;
+
+}, 'Debes elegir un medio de pago.');
+
+
 $(function() {
 	$('#bookingForm').validate({
 		errorPlacement: function(error, element) {
@@ -13,6 +38,9 @@ $(function() {
 			email: {
 				required: true,
 				email: true
+			},
+			'mp': {
+				mp_check: true
 			},
 			identification_number: {
 				required: true,
@@ -34,36 +62,47 @@ $(function() {
 		success: function(element) {
 			$(element).closest('.form-group').removeClass('has-error').addClass('has-success');
 			$(element).parent().parent().children('.form-control-feedback').removeClass('fa fa-times').addClass('fa fa-check');
-			$(element).parent().empty();
+			$(element).parent().empty()
 		},
 		submitHandler: function(form) {
-		  	var is_selected = false;
-			$('.mp_radio').each(function(){
-			if($(this).prop('checked'))
+			window.console.log("entro incial");
+			$('#submitBtn').attr("disabled", "disabled");
+			$('#submitBtn').html('Cargando...');
+			if($("#payment").val()=="1")
+			{
+				$('#select-medio').attr("disabled", "disabled");
+				$('#select-medio').html('Cargando...');
+				var is_selected = false;
+				$('.mp_radio').each(function(){
+				if($(this).prop('checked'))
+					{
+						is_selected = true;
+						console.log(is_selected);
+					}
+				});
+				if(is_selected)
 				{
-					is_selected = true;
-					console.log(is_selected);
+					$('.modal-pay').attr("disabled", "disabled");
+					$('.submitBtn').attr("disabled", "disabled");
+					$('.payBtn').attr("disabled", "disabled");
+					form.submit();
 				}
-			});
-			if(is_selected)
-			{
-				$('#payBtn').attr("disabled", true);
-				$('#payment-way').addClass('has-success');
-				$('#payment-way').removeClass('has-error');
-				$("#payment-way").children('.form-control-feedback').removeClass('fa fa-times').addClass('fa fa-check');
-				form.submit();
-			}
-			else
-			{
-				$('#payment-way').removeClass('has-success');
-				$('#payment-way').addClass('has-error');
-				$("#payment-way").children('.form-control-feedback').removeClass('fa fa-check').addClass('fa fa-times');
-				$('#payBtn').attr("disabled", false);
-				myAlert.showAlert(
-		            '<h3>Selecciona un medio de pago</h3>' +
-		            '<p>Debes elegir un medio de pago antes de continuar.</p>'
-		        );
-			}
+				else
+				{
+					$("#medio-de-pago").modal('show');
+					$('#select-medio').attr("disabled", false);
+					$('#select-medio').html('Pagar');
+					$('#submitBtn').attr("disabled", false);
+					$('#submitBtn').html('Reservar');
+				}
+		  	}
+		  	else
+		  	{	
+		  		$('.modal-pay').attr("disabled", "disabled");
+				$('.submitBtn').attr("disabled", "disabled");
+				$('.payBtn').attr("disabled", "disabled");
+		  		form.submit();
+		  	}
 		}
 	});
 	$('#identification_number').change(function() {

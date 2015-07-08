@@ -646,9 +646,11 @@
 
                         <div class="row">
                           <div class="col-sm-12 dark-gray" id="payment-way">
-                              Elige el medio de pago
-                              <span class="fom-control-feedback">
-                              </span>
+                              <div class="form-group has-feedback">
+                                <span id="payment_title" name="payment_title">Elige el medio de pago</span>
+                                <span class="help-block"></span>
+                                <span class="form-control-feedback"></span>
+                              </div>
                           </div>
                         </div>
                         <div class="row">
@@ -1130,7 +1132,7 @@
           bookDetailsStart = bookDetails.start.split("T")[1].split(":")[0] + ':' + bookDetails.start.split("T")[1].split(":")[1];
           bookDetailsEnd = bookDetails.end.split("T")[1].split(":")[0] + ':' + bookDetails.end.split("T")[1].split(":")[1];
 
-          bookDetailsDiscountPrice = bookDetails.price;
+          bookDetailsDiscountPrice = Math.round(bookDetails.price);
 
           
           if(bookDetails.has_discount && bookDetails.has_time_discount)
@@ -1138,7 +1140,7 @@
             if(bookDetails.discount > bookDetails.time_discount)
             {
               book_discount = bookDetails.discount;
-              bookDetailsDiscountPrice = bookDetails.price * (100 - bookDetails.discount) / 100;
+              bookDetailsDiscountPrice = Math.round(bookDetails.price * (100 - bookDetails.discount) / 100);
               $("#selected-hour-body").append(
                 '<b>' + bookDetails.service_name + '</b><br />' +
                 '<div class="light-gray"><%= image_tag("promociones/reloj.png", class:"promotion-hour-icon", size: "18x18") %> ' + bookDetailsStart + ' - ' + bookDetailsEnd + '<br />' +
@@ -1148,7 +1150,7 @@
             else
             {
               book_discount = bookDetails.time_discount;
-              bookDetailsDiscountPrice = bookDetails.price * (100 - bookDetails.time_discount) / 100;
+              bookDetailsDiscountPrice = Math.round(bookDetails.price * (100 - bookDetails.time_discount) / 100);
               $("#selected-hour-body").append(
                 '<b>' + bookDetails.service_name + '</b><br />' +
                 '<div class="light-gray"><%= image_tag("promociones/reloj.png", class:"promotion-hour-icon", size: "18x18") %>' + bookDetailsStart + ' - ' + bookDetailsEnd + '<br />' +
@@ -1159,7 +1161,7 @@
           else if(bookDetails.has_discount && !bookDetails.has_time_discount)
           {
             book_discount = bookDetails.discount;
-            bookDetailsDiscountPrice = bookDetails.price * (100 - bookDetails.discount) / 100;
+            bookDetailsDiscountPrice = Math.round(bookDetails.price * (100 - bookDetails.discount) / 100);
             $("#selected-hour-body").append(
                 '<b>' + bookDetails.service_name + '</b><br />' +
                 '<div class="light-gray"><%= image_tag("promociones/reloj.png", class:"promotion-hour-icon", size: "18x18") %> ' + bookDetailsStart + ' - ' + bookDetailsEnd + '<br />' +
@@ -1169,7 +1171,7 @@
           else if(!bookDetails.has_discount && bookDetails.has_time_discount)
           {
             book_discount = bookDetails.time_discount
-            bookDetailsDiscountPrice = bookDetails.price * (100 - bookDetails.time_discount) / 100;
+            bookDetailsDiscountPrice = Math.round(bookDetails.price * (100 - bookDetails.time_discount) / 100);
             $("#selected-hour-body").append(
                 '<b>' + bookDetails.service_name + '</b><br />' +
                 '<div class="light-gray"><%= image_tag("promociones/reloj.png", class:"promotion-hour-icon", size: "18x18") %> ' + bookDetailsStart + ' - ' + bookDetailsEnd + '<br />' +
@@ -1441,7 +1443,7 @@
               }
             }
 
-            var discount_price = price*(100 - min_discount)/100;
+            var discount_price = Math.round(price*(100 - min_discount)/100);
             sessions_str = "";
 
             if(sessions_buffer.length == 1)
@@ -1493,7 +1495,7 @@
 
             booking_buffer.push(actual_booking);
 
-            var discount_price = actual_booking.price*(100 - actual_booking.discount)/100;
+            var discount_price = Math.round(actual_booking.price*(100 - actual_booking.discount)/100);
 
             $('.bookings').val(JSON.stringify(booking_buffer));
 
@@ -1553,7 +1555,7 @@
             }
           }
 
-          var discount_price = price*(100 - min_discount)/100;
+          var discount_price = Math.round(price*(100 - min_discount)/100);
 
           if(sessions_buffer.length == 1)
             {
@@ -1628,7 +1630,9 @@
 
     $("#payBtn").click(function(){
 
+
       $("#bookingForm").submit();
+      
     });
 
     $("#backBtn1").click(function(){
@@ -1697,6 +1701,7 @@
 
       $("#payment-form-div").hide();
       $("#summary").empty();
+      $("#payBtn").hide();
 
       $("#sessions-summary-tr").empty();
       $("#sessions-left").html("<%= @service.sessions_amount %>");
