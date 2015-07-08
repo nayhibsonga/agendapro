@@ -413,6 +413,36 @@
               </div>
             </div>
             <div class="col-md-3">
+
+              <div class="changeStaffPanel" style="margin-bottom: 10px;">
+                <button class="btn" type="button" data-toggle="collapse" data-target="#staffCollapse" aria-expanded="false" aria-controls="staffCollapse">
+                  Cambiar prestador
+                </button>
+                <div class="collapse" id="staffCollapse">
+                  <div class="changeStaff" style="margin-top: 5px;">
+
+                    <% if @location.company.company_setting.provider_preference != 0 %>
+                      <div class="radio">
+                        <label>
+                          <p><input type="radio" name="changeProvider" value="0" style="cursor: pointer;" />Sin preferencia</p>
+                        </label>
+                      </div>
+                    <% end %>
+                    <% @service.service_providers.where(:active => true, online_booking: true).where('location_id = ?', @location.id).order(order: :asc).each do |provider| %>
+                        <div class="radio">
+                          <label>
+                            <p>
+                              <input type="radio" name="changeProvider" value="<%= provider.id %>" style="cursor: pointer;" />
+                            <%= provider.public_name %>
+                            </p>
+                          </label>
+                        </div>
+
+                     <% end %>
+                  </div>
+                </div>
+              </div>
+
               <div class="panel panel-default">
                 <div id="selected-hour-heading">
                   Detalle Reserva
@@ -1349,12 +1379,11 @@
 
     function blockBookingBufferHour () {
 
-
       for(i=0; i < sessions_buffer.length; i++)
       {
 
         var date = sessions_buffer[i].start.split(' ')[0];
-        var hourBlocks = $('.columna-dia[data-date="' + date + '"]').children('.bloque-hora.hora-disponible');
+        var hourBlocks = $('.columna-dia[data-date="' + date + '"]').children('.bloque-hora.hora-promocion');
         $.each(hourBlocks, function (key, hourBlock) {
           var start = $(hourBlock).data('start');
           var end = $(hourBlock).data('end');
@@ -1378,6 +1407,7 @@
           {
             $(hourBlock).removeClass('hora-disponible');
             $(hourBlock).removeClass('hora-activo');
+            $(hourBlock).removeClass('hora-promocion');
             $(hourBlock).addClass('hora-ocupada');
           }
 
@@ -1651,6 +1681,55 @@
 
     $("#backBtn2").click(function(){
       back2();
+    });
+
+    $('[name="changeProvider"]').on('click', function(event){
+
+      var localId = $("#locationId").val();
+      
+      var start_date = $("#optimizerDateSelector").val();
+
+
+      $("#loader-div").show();
+
+
+      var selects = [];
+
+      selects.push({
+        service: $("#serviceId").val(),
+        provider: $('input[name="changeProvider"]:checked').val()
+      });
+
+      $('#providerOptimizerSelector[value="' + $('input[name="changeProvider"]:checked').val() + '"]').attr("selected", true);
+
+      var data;
+
+      if($("#pickerSelected").val()!="")
+      {
+        data = {local: localId, serviceStaff: JSON.stringify(selects), date: $("#pickerSelected").val(), mandatory_discount: true}
+      }
+      else
+      {
+        data = {local: localId, serviceStaff: JSON.stringify(selects), mandatory_discount: true}
+      }
+
+      if (promoCalendar) {
+        promoCalendar.rebuild('/promotion_hours', data);
+      }
+      else {
+        promoCalendar = new PromoCalendar('/promotion_hours', data);
+      }
+
+      $("#loader-div").hide();
+
+      blockBookingBufferHour();
+
+    });
+
+    $(document).on('calendarBuilded', function (e) {
+
+      blockBookingBufferHour();
+  
     });
 
     function resetModal()
