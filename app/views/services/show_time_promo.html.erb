@@ -420,15 +420,16 @@
                 <div id="selected-hour-body">
 
                 </div>
+                
               </div>
             </div>
           </div>
           <% if @service.has_sessions %>
             <div class="row sessions-bar">
-              <div class="col-xs-12 col-md-3">
+              <div class="col-xs-12 col-md-2">
                 <a class="btn btn-large btn-green btn-add-session" style="padding: 5px 12px; margin-right: 10px; font-size: 20px;" onclick="addNewSession()"><i class="fa fa-plus"></i> Agregar Sesión</a>
               </div>
-              <div class="col-md-9 col-xs-12">
+              <div class="col-md-7 col-xs-12">
                 <div id="sessions-summary">
                   <div id="sessions-summary-title">
                     Detalle de reserva&nbsp;&nbsp;
@@ -437,15 +438,16 @@
                     </span>
                   </div>
                   <div id="sessions-summary-body">
-                    <div id="current-discount">
-
-                    </div>
                     <table>
                       <tr id="sessions-summary-tr">
                       <tr>
                     </table>
                   </div>
                 </div>
+              </div>
+              <div class="col-md-3 col-xs-12" id="current-discount-div" style="bottom: 0px !important; color: #949292;" hidden>
+                  Descuento a aplicar: <span id="current-discount" style="color: #22c488;">0%</span>
+                  <div><label id="booking-error" style="color: #fd633f;"></label></div>
               </div>
             </div>
           <% end %>
@@ -977,6 +979,8 @@
           loadSessionsSummary();
 
         }
+
+        selected = false;
       
     }
 
@@ -985,8 +989,9 @@
     function loadSessionsSummary()
     {
       $("#sessions-summary-tr").empty();
+      $("#current-discount-div").show();
       $("#current-discount").empty();
-      $("#current-discount").append("Descuento a aplicar: " + block_discount + "%");
+      $("#current-discount").append(block_discount + "%");
 
       for(i = 0; i < sessions_buffer.length; i++)
       {
@@ -1410,14 +1415,19 @@
 
     function loadPaymentForm(){
 
+      if(!selected)
+      {
+        $("#booking-error").append("Debes elegir un horario antes de ir al siguiente paso.");
+        return;
+      }
+
+      $("#booking-error").empty();
+
       if(sessions_buffer.length == 0)
       {
         if(actual_booking == null)
         {
-          myAlert.showAlert(
-              '<h3>Selecciona un Horario</h3>' +
-              '<p>Debes elegir un horario antes de ir al siguiente paso.</p>'
-          );
+          $("#booking-error").append("Debes elegir un horario antes de ir al siguiente paso.");
           return;
         }
         else
@@ -1558,13 +1568,13 @@
           var discount_price = Math.round(price*(100 - min_discount)/100);
 
           if(sessions_buffer.length == 1)
-            {
-              sessions_str = 'Agendaste 1 sesión de un total de ' + actual_booking.sessions_amount;
-            }
-            else
-            {
-              sessions_str = 'Agendaste ' + sessions_buffer.length + ' sesiones de un total de ' + actual_booking.sessions_amount;
-            }
+          {
+            sessions_str = 'Agendaste 1 sesión de un total de ' + actual_booking.sessions_amount;
+          }
+          else
+          {
+            sessions_str = 'Agendaste ' + sessions_buffer.length + ' sesiones de un total de ' + actual_booking.sessions_amount;
+          }
 
           $('#summary').append(
             '<tr style="border-top: 0px !important;">' +
@@ -1645,6 +1655,16 @@
 
     function resetModal()
     {
+
+      first_session = null;
+      sessions_buffer = [];
+      booking_buffer = [];
+      actual_booking = null;
+      sessions_left = parseInt("<%= @service.sessions_amount %>");
+      selected = false;
+      block_discount = 0;
+      $("#booking-error").empty();
+
       $("#selectProviderModal .modal-dialog").removeClass("calendar-modal");
       $("#calendar-div").hide();
       $("#payment-form-div").hide();
@@ -1652,6 +1672,7 @@
       $("#openCalendarBtn").show();
       $("#openPayFormBtn").hide();
       $("#payBtn").hide();
+      $(".btn-add-session").attr("disabled", false);
 
       $("#backBtn2").attr("disabled", true);
       $("#backBtn2").hide();
@@ -1663,23 +1684,8 @@
 
       block_discount = 0;
       $("#current-discount").empty();
+      $("#current-discount-div").hide();
 
-      if(first_session != null)
-      {
-        first_session = null;
-      }
-      if(sessions_buffer != null)
-      {
-        sessions_buffer = [];
-      }
-      if(booking_buffer != null)
-      {
-        booking_buffer = [];
-      }
-      if(actual_booking != null)
-      {
-        actual_booking = null;
-      }
 
       $("#sessions-summary-tr").empty();
       $("#sessions-left").html("<%= @service.sessions_amount %>");
@@ -1689,8 +1695,18 @@
     function back2()
     {
 
+      first_session = null;
+      sessions_buffer = [];
+      booking_buffer = [];
+      actual_booking = null;
+      sessions_left = parseInt("<%= @service.sessions_amount %>");
+      selected = false;
       block_discount = 0;
+
+      $("#booking-error").empty();
+
       $("#current-discount").empty();
+      $("#current-discount-div").hide();
       $("#optimizerFirst").hide();
       $("#loader-div").show();
       $("#openCalendarBtn").hide();
@@ -1702,27 +1718,11 @@
       $("#payment-form-div").hide();
       $("#summary").empty();
       $("#payBtn").hide();
+      $(".btn-add-session").attr("disabled", false);
 
       $("#sessions-summary-tr").empty();
       $("#sessions-left").html("<%= @service.sessions_amount %>");
       $("#selected-hour-body").empty();
-
-      if(first_session != null)
-      {
-        first_session = null;
-      }
-      if(sessions_buffer != null)
-      {
-        sessions_buffer = [];
-      }
-      if(booking_buffer != null)
-      {
-        booking_buffer = [];
-      }
-      if(actual_booking != null)
-      {
-        actual_booking = null;
-      }
       
       loadCalendar();
       blockBookingBufferHour();
