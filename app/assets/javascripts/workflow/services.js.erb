@@ -77,10 +77,9 @@ function loadStep1 (service_id) {
 					//====== Generando Radios
 					serviceDiscount = "";
 					servicePrice = '';
-					if (service.has_time_discount)
+					if (service.has_time_discount || (service.has_discount && service.online_payable && service.discount > 0))
 					{
-						serviceDiscount = '<%= image_tag("promociones/icono_promociones.png", class:"promotion-hour-icon", size: "18x18") %>&nbsp;';
-						
+						serviceDiscount = '<%= image_tag("promociones/icono_promociones.png", class:"promotion-hour-icon", size: "18x18") %>&nbsp;';						
 					}
 					if(service.show_price && service.price > 0)
 					{
@@ -106,7 +105,7 @@ function loadStep1 (service_id) {
 							'</div>' +
 						'</li>';
 
-						if (service.has_time_discount)
+						if (service.has_time_discount || (service.has_discount && service.online_payable && service.discount > 0))
 						{
 							$.ajax({
 								type: "get",
@@ -121,6 +120,8 @@ function loadStep1 (service_id) {
 										placement: 'right',
 										trigger: 'hover'
 									});
+
+									$('.open-promotion-popover[service_id="' + service.id + '"]').css("cursor", "pointer");
 
 								}
 							});
@@ -851,94 +852,6 @@ function checkUserCrossBookings () {
 	});
 }
 
-var step = 1;
-function scrollEvents (direction) {
-	if (direction == 'next') {
-		if (step == 1) {
-			if(!$('[name="serviceRadio"]').is(':checked')) {
-				myAlert.showAlert(
-				  '<h3>Selecciona un Servicio</h3>' +
-				  '<p>Debes elegir un servicio antes de poder continuar.</p>'
-				);
-				return false;
-			}
-			else if(current_service.has_sessions && booking_buffer.length > 0)
-			{
-				myAlert.showAlert(
-				  '<h3>Este servicio tiene sesiones</h3>' +
-				  '<p>No puedes agendar un servicio con sesiones además de otros servicios.</p>'
-				);
-				return false;
-			}
-			else {
-				loadStep2();
-
-				step = 2;
-				return true;
-			}
-		}
-		else {
-			if(!$('[name="staffRadio"]').is(':checked')) {
-				myAlert.showAlert(
-				  '<h3>Selecciona un Staff</h3>' +
-				  '<p>Debes elegir un staff para poder reservar.</p>'
-				);
-				return false;
-			}
-			else {
-				if(!selected) {
-					myAlert.showAlert(
-					  '<h3>Selecciona un Horario</h3>' +
-					  '<p>Debes elegir un horario antes de poder continuar.</p>'
-					);
-					return false;
-				}
-				else {
-					loadStep3();
-					step = 3;
-					return true;
-				}
-			}
-		}
-	}
-	else if (direction == 'prev') {
-		if (step == 3) {
-			step = 2;
-			//sessions_buffer = [];
-			
-			booking_buffer.pop();
-			if(first_session != null)
-			{
-				sessions_buffer.pop();
-			}
-			if(sessions_buffer.length == 0)
-			{
-				first_session = null;
-			}
-
-			console.log("Sesiones: " + sessions_buffer.length);
-			console.log("Bookings: " + booking_buffer.length);
-			var active_hour = $(".hora-activo");
-			active_hour.removeClass("hora-activo");
-			active_hour.removeClass("hora-ocupado");
-			active_hour.addClass("hora-disponible");
-
-			blockBookingBufferHour();
-
-		}
-		else if(step == 2)
-		{
-			step = 1;
-			if(first_session != null || $("#has_sessions").val() == "1")
-			{
-				sessions_buffer = [];
-				booking_buffer = [];
-			}
-		}
-		return true;
-	}
-}
-
 //====== Load Info ======//
 function loadDescription (serviceId) {
 	$('#services-description').html('<tr><td class="text-center" style="color: #ccc;"><i class="fa fa-spinner fa-spin fa-lg"></i></td></tr>');
@@ -1056,6 +969,96 @@ function loadDescription (serviceId) {
 		}
 	});
 }
+
+var step = 1;
+function scrollEvents (direction) {
+	if (direction == 'next') {
+		if (step == 1) {
+			if(!$('[name="serviceRadio"]').is(':checked')) {
+				myAlert.showAlert(
+				  '<h3>Selecciona un Servicio</h3>' +
+				  '<p>Debes elegir un servicio antes de poder continuar.</p>'
+				);
+				return false;
+			}
+			else if(current_service.has_sessions && booking_buffer.length > 0)
+			{
+				myAlert.showAlert(
+				  '<h3>Este servicio tiene sesiones</h3>' +
+				  '<p>No puedes agendar un servicio con sesiones además de otros servicios.</p>'
+				);
+				return false;
+			}
+			else {
+				loadStep2();
+
+				step = 2;
+				return true;
+			}
+		}
+		else {
+			if(!$('[name="staffRadio"]').is(':checked')) {
+				myAlert.showAlert(
+				  '<h3>Selecciona un Staff</h3>' +
+				  '<p>Debes elegir un staff para poder reservar.</p>'
+				);
+				return false;
+			}
+			else {
+				if(!selected) {
+					myAlert.showAlert(
+					  '<h3>Selecciona un Horario</h3>' +
+					  '<p>Debes elegir un horario antes de poder continuar.</p>'
+					);
+					return false;
+				}
+				else {
+					loadStep3();
+					step = 3;
+					return true;
+				}
+			}
+		}
+	}
+	else if (direction == 'prev') {
+		if (step == 3) {
+			step = 2;
+			//sessions_buffer = [];
+			
+			booking_buffer.pop();
+			if(first_session != null)
+			{
+				sessions_buffer.pop();
+			}
+			if(sessions_buffer.length == 0)
+			{
+				first_session = null;
+			}
+
+			console.log("Sesiones: " + sessions_buffer.length);
+			console.log("Bookings: " + booking_buffer.length);
+			var active_hour = $(".hora-activo");
+			active_hour.removeClass("hora-activo");
+			active_hour.removeClass("hora-ocupado");
+			active_hour.addClass("hora-disponible");
+
+			blockBookingBufferHour();
+
+		}
+		else if(step == 2)
+		{
+			step = 1;
+			if(first_session != null || $("#has_sessions").val() == "1")
+			{
+				sessions_buffer = [];
+				booking_buffer = [];
+			}
+		}
+		return true;
+	}
+}
+
+
 
 //====== Manage Booking ======//
 var pressed3 = false;

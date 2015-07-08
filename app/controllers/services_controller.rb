@@ -1,6 +1,6 @@
 class ServicesController < ApplicationController
   before_action :set_service, only: [:show, :edit, :update, :destroy, :activate, :deactivate]
-  before_action :authenticate_user!, except: [:services_data, :service_data, :get_providers, :location_services, :location_categorized_services, :get_promotions_popover, :show_time_promo, :show_last_minute_promo, :last_minute_hours]
+  before_action :authenticate_user!, except: [:services_data, :service_data, :get_providers, :location_services, :location_categorized_services, :get_promotions_popover, :get_online_discount_popover, :show_time_promo, :show_last_minute_promo, :last_minute_hours]
   before_action :quick_add, except: [:services_data, :service_data, :get_providers]
   before_action :verify_is_super_admin, only: [:manage_promotions, :manage_service_promotion]
   layout "admin", except: [:get_providers, :services_data, :service_data, :show_time_promo]
@@ -470,6 +470,14 @@ class ServicesController < ApplicationController
   def get_promotions_popover
     @service = Service.find(params[:service_id])
     @promos = Promo.where(:service_promo_id => @service.active_service_promo_id).order("day_id asc")
+    respond_to do |format|
+      format.html { render :partial => 'get_promotions_popover' }
+      format.json { render json: @promos }
+    end
+  end
+
+  def get_online_discount_popover
+    @service = Service.find(params[:service_id])
     respond_to do |format|
       format.html { render :partial => 'get_promotions_popover' }
       format.json { render json: @promos }

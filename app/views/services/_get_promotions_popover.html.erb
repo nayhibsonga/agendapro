@@ -4,6 +4,11 @@
 
 		</div>
 		<div>
+			<div class="online-discount-div">
+				<% if @service.online_payable && @service.has_discount && @service.discount > 0 %>
+					Obtén un <span class="light-green"><%= @service.discount.round.to_s %>%</span> de descuento pagando en línea en cualquier horario.
+				<% end %>
+			</div>
 			<table class="promotion-popover-table">
 				<tr>
 					<% @promos.each do |promo| %>
