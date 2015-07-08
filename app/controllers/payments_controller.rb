@@ -127,10 +127,10 @@ class PaymentsController < ApplicationController
     weekdays = ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb']
     @payment = Payment.find(params[:payment_id])
     @client = @payment.client
-    @elegible_bookings = @payment.bookings.where.not(is_session: true)
+    @elegible_bookings = @payment.bookings.where(is_session: false, session_booking_id: nil)
     @past_bookings = Booking.where.not(is_session: true, status_id: Status.find_by_name("Cancelado")).where(location_id: @payment.location_id, client_id: @client.id, payment_id: nil).where.not(id: @elegible_bookings.pluck(:id)).limit(100).pluck(:id)
-    @elegible_sessions = @payment.bookings.not(is_session: false, session_booking_id: nil)
-    @past_bookings = Booking.where.not(is_session: false, session_booking_id: nil, status_id: Status.find_by_name("Cancelado")).where(location_id: @payment.location_id, client_id: @client.id, payment_id: nil).where.not(id: @elegible_bookings.pluck(:id)).limit(100).pluck(:id)
+    @elegible_sessions = @payment.bookings.where.not(is_session: false, session_booking_id: nil)
+    @past_sessions = Booking.where.not(is_session: false, session_booking_id: nil, status_id: Status.find_by_name("Cancelado")).where(location_id: @payment.location_id, client_id: @client.id, payment_id: nil).where.not(id: @elegible_bookings.pluck(:id)).limit(100).pluck(:id)
 
     @payment_bookings = @payment.id ? @payment.bookings.pluck(:id) : (@elegible_bookings.where(payment_id: nil).pluck(:id) + @elegible_sessions.where(payment_id: nil).pluck(:id)).uniq
     @bookings = []
@@ -142,7 +142,7 @@ class PaymentsController < ApplicationController
      @elegible_sessions.pluck(:session_booking_id).uniq.each do |sb|
       session_booking = SessionBooking.find(sb)
       @past_sessions = @past_sessions - session_booking.bookings.pluck(:id)
-      @elegible_bookings = (@elegible_bookings + ession_booking.bookings.pluck(:id)).uniq
+      @elegible_bookings = (@elegible_bookings + session_booking.bookings.pluck(:id)).uniq
       @sessions.push( { session_booking: session_booking, session_booking_ids: session_booking.bookings.pluck(:id), session_checked: (@payment_bookings & session_booking.bookings.pluck(:id)).present?, session_service: session_booking.bookings.first.service.name, session_normal: session_booking.bookings.first.service.price.round(0), session_price: session_booking.bookings.first.price, session_discount: session_booking.bookings.first.discount, session_count: session_booking.bookings.count } )
     end
 
@@ -169,8 +169,6 @@ class PaymentsController < ApplicationController
       session_booking = SessionBooking.find(sb)
       @past_sessions.push( { session_booking: session_booking, session_booking_ids: session_booking.bookings.pluck(:id).inspect, session_checked: true, session_service: session_booking.bookings.first.service.name, session_normal: session_booking.bookings.first.service.price.round(0), session_price: session_booking.bookings.first.price, session_discount: session_booking.bookings.first.discount, session_count: session_booking.bookings.count } )
     end
-
-    puts 
 
     render :json => { past_sessions: @past_sessions }
   end

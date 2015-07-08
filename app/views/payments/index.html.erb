@@ -208,7 +208,7 @@
               <div id="company_payment_method_group" class="form-group">
                 <%= f.label :company_payment_method_id, "Otros Medios de Pago", class: "col-sm-4 control-label" %>
                 <div class="col-sm-8">
-                  <%= f.collection_select :company_payment_method_id, CompanyPaymentMethod.where(company_id: current_user.company_id, active: true).order(:name), :id, :name, {include_blank: true}, { class: "form-control" }%>
+                  <%= f.select :company_payment_method_id, options_for_select(CompanyPaymentMethod.where(company_id: current_user.company_id).where(active: true).order(:name).map{ |c| [c.name, c.id, { 'data-number-required'=> c.number_required ? true : false}] }), {}, {class: "form-control"} %>
                 </div>
               </div>
               <div id="bank_id_group" class="form-group">
@@ -307,6 +307,10 @@
       </div>
     </div>
   </div>
+<% end %>
+
+<% content_for :stylesheets do %>
+  <%= stylesheet_link_tag "payments" %>
 <% end %>
 
 <% content_for :scripts do %>

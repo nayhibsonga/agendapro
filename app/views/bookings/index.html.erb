@@ -456,6 +456,23 @@
                   <%= form_for @payment, html: {class: "form-horizontal"} do |f| %>
                   <div class="row">
                     <div class="col-md-12">
+                      <div id="payment_client_group" class="form-group has-feedback">
+                        <label for="payment_full_name" class="col-sm-4 control-label">Nombre Cliente</label>
+                        <div class="col-sm-8">
+                          <div class="input-group">
+                            <input type="text" id="payment_full_name" class="form-control" placeholder="Buscar clientes..." name="payment_full_name">
+                            <span class="input-group-btn">
+                              <button class="btn btn-red" type="button" id="payment_xButton"><i class="fa fa-times-circle"></i></button>
+                            </span>
+                          </div>
+                          <span class="help-block"></span>
+                          <ul id="payment_full_name_suggestions"></ul>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-md-12">
                       <table class="table table-white-rows">
                         <thead>
                           <tr>

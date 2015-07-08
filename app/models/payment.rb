@@ -21,7 +21,7 @@ class Payment < ActiveRecord::Base
 
   def set_numbers
     bookings_total = 0
-    self.bookings.each do |booking|
+    self.bookings.where(is_session: false, session_booking_id: nil).each do |booking|
       bookings_total += booking.service.price
     end
     bookings_amount = self.bookings.where(is_session: false).sum(:price)
@@ -38,7 +38,7 @@ class Payment < ActiveRecord::Base
       sessions_amount += session_booking.bookings.first.price
       sessions_quantity += 1
     end
-    sessions_discount = bookings_total > 0 ? 100 - 100 * sessions_amount / sessions_total : 0
+    sessions_discount = sessions_total > 0 ? 100 - 100 * sessions_amount / sessions_total : 0
     
     products_total = 0
     self.payment_products.each do |payment_product|

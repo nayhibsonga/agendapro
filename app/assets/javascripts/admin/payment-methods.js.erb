@@ -9,6 +9,7 @@ function loadPaymentSettings() {
 		$('#installments_group').hide();
 		$('#payment_method_type_group').hide();
 		$('#payment_installments').val('');
+    	$('#payment_payment_method_type_id').val('');
 	}
 
 	//codigo autorizacion
@@ -39,12 +40,15 @@ function loadPaymentSettings() {
 	}
 
 	//validar codigo de autorizacion required
-	if ($('#payment_payment_method_id option:selected').data("number-required")) {
-		// $( "#payment_payment_method_number" ).rules( "add", { required: true });
+	if ($('#payment_payment_method_id option:selected').data("number-required") || $('#payment_company_method_id option:selected').data("number-required")) {
+		$( "#payment_payment_method_number" ).rules( "remove");
+		$( "#payment_payment_method_number" ).rules( "add", { required: true });
 	}
 	else {
-		// $( "#payment_payment_method_number" ).rules( "remove", { required: true });
+		$( "#payment_payment_method_number" ).rules( "remove");
 	}
+
+
 
 	return false;
 }
@@ -149,6 +153,7 @@ function loadBookingPayment(booking_id) {
 	$('#payment_payment_date').val(today);
 	$('#payment_past_bookings_button').attr("disabled", false);
 	$('#payment_past_sessions_button').attr("disabled", false);
+	loadPaymentSettings();
 
 
 	if (parseInt(booking_id) > 0) {
@@ -180,10 +185,17 @@ function loadBookingPayment(booking_id) {
 			var payment = bookings_payment.payment
 			if (payment.id == null) {
 				$('#delete_payment_button').hide();
+		        $('#delete_payment_button').click(function() {
+		          $('#delete_payment_button').unbind( "click" );
+		          return false;
+		        });
 			}
 			else {
-				$('#payment_past_bookings_button').show();
 				$('#payment_id').val(payment.id);
+		        $('#delete_payment_button').show();
+		        $('#delete_payment_button').click(function() {
+		          destroyPayment(payment.id);
+		        });
 				$('#payment_receipt_number').val(payment.receipt_number);
 				$('#payment_payment_date').val(payment.payment_date);
 				$('#payment_payment_method_number').val(payment.payment_method_number);
@@ -222,6 +234,24 @@ function loadBookingPayment(booking_id) {
 			var client_id = bookings_payment.client.id;
 			$('#payment_client_id').val(client_id);
 			loadPaymentSettings();
+		});
+	}
+	else {
+		$('#delete_payment_button').hide();
+		$('#payment_client_id').val('');
+		$("#full_name").val('');
+		$("#full_name").prop('disabled', false);
+		$('#xButton').prop('disabled', true);
+		$('#client_location_row').show();
+		loadPaymentSettings();
+		calculateTotals(false);
+		$('#payment_past_bookings_button').unbind( "click" );
+		$('#payment_past_bookings_button').click(function() {
+		  client_bookings_modal();
+		});
+		$('#payment_past_sessions_button').unbind( "click" );
+		$('#payment_past_sessions_button').click(function() {
+		  client_sessions_modal();
 		});
 	}
 }
@@ -263,7 +293,7 @@ function past_sessions_modal(past_sessions_array) {
 	$('#payment-past-bookings-table').empty();
 	if (past_sessions_array.length > 0) {
 		$.getJSON('/past_sessions/', { booking_ids: past_sessions_array }, function (past_sessions) {
-			window.console.log(past_sessions);
+			// window.console.log(past_sessions);
 			if (past_sessions.past_sessions.length > 0) {
 				$.each(past_sessions.past_sessions, function (key, past_session) {
 					$('#payment-past-bookings-table').append('<tr class="payment-past-booking-tr"><td><a class="btn btn-default btn-xs" id="past_session_id_' + past_session.session_booking.id + '" data-bookings="' + past_session.session_booking_ids + '">Agregar...</a></td><td><div class="table-fixed">' + past_session.session_service + '</div></td><td><div class="table-fixed"></div></td><td><div class="table-fixed"></div></td><td><div class="table-fixed"></div></td><td><div class="table-fixed">$ ' + past_session.session_normal + '</div></td><td><div class="table-fixed">' + past_session.session_discount + ' %</div></td><td><div class="table-fixed">$ ' + past_session.session_price + '</div></td></tr>');
@@ -289,6 +319,56 @@ function past_sessions_modal(past_sessions_array) {
 			}
 		});
 	}
+}
+
+function client_bookings_modal() {
+  $('#payment-past-bookings-table').empty();
+  if (parseInt($('#payment_client_id').val()) > 0 && parseInt($('#locals-selector').val()) > 0) {
+    $.getJSON('/payment_client_bookings/', { client_id: parseInt($('#payment_client_id').val()), location_id: parseInt($('#locals-selector').val()) }, function (past_bookings) {
+      // window.console.log(past_bookings);
+      if (past_bookings.past_bookings.length > 0) {
+        $.each(past_bookings.past_bookings, function (key, past_booking) {
+          $('#payment-past-bookings-table').append('<tr class="payment-past-booking-tr"><td><a class="btn btn-default btn-xs" id="past_booking_id_' + past_booking.booking.id + '">Agregar...</a></td><td><div class="table-fixed">' + past_booking.booking_service + '</div></td><td><div class="table-fixed">' + past_booking.booking_provider + '</div></td><td><div class="table-fixed">' + past_booking.booking_date + '</div></td><td><div class="table-fixed">' + past_booking.booking_time + '</div></td><td><div class="table-fixed">$ ' + past_booking.booking_price + '</div></td><td><div class="table-fixed">' + past_booking.booking.discount + ' %</div></td><td><div class="table-fixed">$ ' + past_booking.booking.price + '</div></td></tr>');
+          $('#past_booking_id_' + past_booking.booking.id).click(function() {
+            add_booking_to_payment(past_booking);
+            $('#paymentBookingModal').modal('hide');
+          });
+        });
+        $('#paymentBookingModal').modal('show');
+      }
+      else {
+        alert('No hay reservas para este cliente.');
+      }
+    });
+  }
+  else {
+    alert('Primero debes elegir un cliente.');
+  }
+}
+
+function client_sessions_modal() {
+  $('#payment-past-bookings-table').empty();
+  if (parseInt($('#payment_client_id').val()) > 0 && parseInt($('#locals-selector').val()) > 0) {
+    $.getJSON('/payment_client_sessions/', { client_id: parseInt($('#payment_client_id').val()), location_id: parseInt($('#locals-selector').val()) }, function (past_sessions) {
+      // window.console.log(past_bookings);
+      if (past_sessions.past_sessions.length > 0) {
+        $.each(past_sessions.past_sessions, function (key, past_session) {
+          $('#payment-past-bookings-table').append('<tr class="payment-past-booking-tr"><td><a class="btn btn-default btn-xs" id="past_session_id_' + past_session.session_booking.id + '" data-bookings="' + past_session.session_booking_ids + '">Agregar...</a></td><td><div class="table-fixed">' + past_session.session_service + '</div></td><td><div class="table-fixed"></div></td><td><div class="table-fixed"></div></td><td><div class="table-fixed"></div></td><td><div class="table-fixed">$ ' + past_session.session_normal + '</div></td><td><div class="table-fixed">' + past_session.session_discount + ' %</div></td><td><div class="table-fixed">$ ' + past_session.session_price + '</div></td></tr>');
+          $('#past_session_id_' + past_session.session_booking.id).click(function() {
+            add_session_to_payment(past_session);
+            $('#paymentBookingModal').modal('hide');
+          });
+        });
+        $('#paymentBookingModal').modal('show');
+      }
+      else {
+        alert('No hay tratamientos para este cliente.');
+      }
+    });
+  }
+  else {
+    alert('Primero debes elegir un cliente.');
+  }
 }
 
 function add_booking_to_payment(full_booking) {
@@ -334,7 +414,7 @@ function add_session_to_payment(full_session) {
 		calculateTotals(false);
 	});
 	$('input#session_id_' + full_session.session_booking.id).change(function() {
-		if ($('#booking_id_'+$(this).val()).prop('checked')) {
+		if ($('#session_id_'+$(this).val()).prop('checked')) {
 			$('#payment_session_tr_'+$(this).val()).removeClass("tr-disabled");
 			$('#payment_session_tr_'+$(this).val() + ' input.payment-session-input').attr('disabled', false);
 			calculateTotals(false);
@@ -562,6 +642,7 @@ $(function() {
 		$('#payments-tab').tab('show');
 		$('#bookingModal #myTab').hide();
 		$('#bookingModal .booking-modal-footer').hide();
+		$('#bookingModal #payment_client_group').show();
 		$('#bookingModal').modal('show');
 	});
 
@@ -594,4 +675,21 @@ $(function() {
 			return false;
 		}
 	});
+
+	$("#payment_full_name").autocomplete({
+		source: '/clients_name_suggestion',
+		appendTo: '#payment_full_name_suggestions',
+		autoFocus: true,
+		minLength: 3,
+		select: function( event, ui ) {
+			event.preventDefault();
+			var client = eval("(" + ui.item.value + ")");
+			$('#payment_client_id').val(client.id);
+			$("#payment_full_name").val(client.first_name+' '+client.last_name)
+			$('#payment_xButton').prop('disabled', false);
+			$("#payment_full_name").prop('disabled', true);
+		}
+	}).data( "ui-autocomplete" )._renderItem = function( ul, item ) {
+		return $( '<li>' ).append( '<a>' + item.label + '<br><span class="auto-desc">' + item.desc + '</span></a>' ).appendTo( ul );
+	};
 });

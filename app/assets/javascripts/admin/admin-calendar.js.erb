@@ -667,6 +667,7 @@ function editBookingModal(eventId) {
 
 			$('#bookingModal #myTab').show();
 			$('#bookingModal .booking-modal-footer').show();
+			$('#bookingModal #payment_client_group').hide();
 			$('#booking-tab').tab('show');
 			$('#bookingModal').modal('show');
 		});
@@ -776,6 +777,7 @@ function createBookingModal(date, provider_id) {
 			$('#bookingModal #myTab').show();
 			$('#bookingModal .booking-modal-footer').show();
 			$('#booking-tab').tab('show');
+			$('#bookingModal #payment_client_group').hide();
 			$('#bookingModal').modal('show');
 			loadBookingPayment(0);
 			checkClientSessions();
