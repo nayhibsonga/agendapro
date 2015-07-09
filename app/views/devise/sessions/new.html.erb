@@ -33,7 +33,7 @@
         </div>
         <div class="form-group">
             <div class="col-sm-offset-2 col-sm-4">
-                <%= f.submit 'Ingresar', :class => 'btn btn-orange', onclick: "_gaq.push(['_trackEvent', 'General', 'Sign-In', 'Ingreso_por_login']);" %>
+                <%= f.submit 'Ingresar', :class => 'btn btn-orange', onclick: "ga('send', 'event', 'Usuarios', 'Sign-In Usuarios', 'Ingreso desde Login');" %>
                 <%= link_to "Cancelar", :back, :class => 'btn btn-default' %>
             </div>
         </div>
