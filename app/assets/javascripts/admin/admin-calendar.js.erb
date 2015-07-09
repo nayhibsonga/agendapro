@@ -669,6 +669,7 @@ function editBookingModal(eventId) {
 			$('#bookingModal .booking-modal-footer').show();
 			$('#bookingModal #payment_client_group').hide();
 			$('#booking-tab').tab('show');
+			$('#payments-li, #payments-li > a[data-toggle=tab]').removeClass('disabled');
 			$('#bookingModal').modal('show');
 		});
 	}
@@ -777,6 +778,7 @@ function createBookingModal(date, provider_id) {
 			$('#bookingModal #myTab').show();
 			$('#bookingModal .booking-modal-footer').show();
 			$('#booking-tab').tab('show');
+			$('#payments-li, #payments-li > a[data-toggle=tab]').addClass('disabled');
 			$('#bookingModal #payment_client_group').hide();
 			$('#bookingModal').modal('show');
 			loadBookingPayment(0);
@@ -2370,7 +2372,6 @@ $(function() {
 			$('#xButton').prop('disabled', false);
 			$("#full_name").prop('disabled', true);
 			loadClientHistory(0);
-			loadBookingPayment(0);
 			checkClientSessions();
 		}
 	}).data( "ui-autocomplete" )._renderItem = function( ul, item ) {
@@ -2538,4 +2539,11 @@ $(function() {
 	$('#provider_break_service_provider_id').append(
 		'<option value="0">Todos</option>'
 	);
+
+	$(".nav-tabs > li > a[data-toggle=tab]").on("click", function(e) {
+	  if ($(this).hasClass("disabled")) {
+	    e.preventDefault();
+	    return false;
+	  }
+	});
 });

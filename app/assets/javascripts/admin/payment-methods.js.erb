@@ -676,6 +676,13 @@ $(function() {
 		}
 	});
 
+	$('#payment_xButton').click(function() {
+		$('#payment_client_id').val('');
+		$("#payment_full_name").val('');
+		$("#payment_full_name").prop('disabled', false);
+		$('#payment_xButton').prop('disabled', true);
+	});
+
 	$("#payment_full_name").autocomplete({
 		source: '/clients_name_suggestion',
 		appendTo: '#payment_full_name_suggestions',
