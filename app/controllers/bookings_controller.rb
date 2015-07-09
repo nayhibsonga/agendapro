@@ -3169,6 +3169,11 @@ class BookingsController < ApplicationController
 
               if service_valid
 
+                book_sessions_amount = 0
+                if service.has_sessions
+                  book_sessions_amount = service.sessions_amount
+                end
+
                 bookings << {
                   :service => service.id,
                   :provider => provider.id,
@@ -3177,47 +3182,51 @@ class BookingsController < ApplicationController
                   :service_name => service.name,
                   :provider_name => provider.public_name,
                   :provider_lock => serviceStaff[serviceStaffPos][:provider] != "0",
+                  :provider_id => provider.id,
                   :price => service.price,
                   :online_payable => service.online_payable,
                   :has_discount => service.has_discount,
                   :discount => service.discount,
                   :show_price => service.show_price,
-                  :has_time_discount => service.has_time_discount
+                  :has_time_discount => service.has_time_discount,
+                  :has_sessions => service.has_sessions,
+                  :sessions_amount => book_sessions_amount
                 }
 
                 if service.has_time_discount
 
                   promo = Promo.where(:day_id => date.cwday, :service_promo_id => service.active_service_promo_id, :location_id => local.id).first
 
-                  #logger.debug "Morning start " + service.company.company_setting.promo_time.morning_start.to_s
-                  #logger.debug "Morning end " + service.company.company_setting.promo_time.morning_end.to_s
-                  #logger.debug "Afternoon start " + service.company.company_setting.promo_time.afternoon_start.to_s
-                  #logger.debug "Afternoon end " + service.company.company_setting.promo_time.afternoon_end.to_s
-                  #logger.debug "Night start " + service.company.company_setting.promo_time.night_start.to_s
-                  #logger.debug "Night end " + service.company.company_setting.promo_time.night_end.to_s
-                  #logger.debug "Booking start " + bookings.last[:start].to_s
-                  #logger.debug "Booking end " + bookings.last[:end].to_s
+                  if !promo.nil?
 
-                  if !(service.company.company_setting.promo_time.morning_start.strftime("%H:%M") > bookings.last[:end].strftime("%H:%M") || service.company.company_setting.promo_time.morning_end.strftime("%H:%M") < bookings.last[:start].strftime("%H:%M"))
 
-                    bookings.last[:time_discount] = promo.morning_discount
-                    logger.debug "Meets morning"
+                    if !(service.company.company_setting.promo_time.morning_start.strftime("%H:%M") > bookings.last[:end].strftime("%H:%M") || service.company.company_setting.promo_time.morning_end.strftime("%H:%M") < bookings.last[:start].strftime("%H:%M"))
 
-                  elsif !(service.company.company_setting.promo_time.afternoon_start.strftime("%H:%M") > bookings.last[:end].strftime("%H:%M") || service.company.company_setting.promo_time.afternoon_end.strftime("%H:%M") < bookings.last[:start].strftime("%H:%M"))
+                      bookings.last[:time_discount] = promo.morning_discount
+                      logger.debug "Meets morning"
 
-                    bookings.last[:time_discount] = promo.afternoon_discount
-                    logger.debug "Meets afternoon"
+                    elsif !(service.company.company_setting.promo_time.afternoon_start.strftime("%H:%M") > bookings.last[:end].strftime("%H:%M") || service.company.company_setting.promo_time.afternoon_end.strftime("%H:%M") < bookings.last[:start].strftime("%H:%M"))
 
-                  elsif !(service.company.company_setting.promo_time.night_start.strftime("%H:%M") > bookings.last[:end].strftime("%H:%M") || service.company.company_setting.promo_time.night_end.strftime("%H:%M") < bookings.last[:start].strftime("%H:%M"))
+                      bookings.last[:time_discount] = promo.afternoon_discount
+                      logger.debug "Meets afternoon"
 
-                    bookings.last[:time_discount] = promo.night_discount
-                    logger.debug "Meets night"
+                    elsif !(service.company.company_setting.promo_time.night_start.strftime("%H:%M") > bookings.last[:end].strftime("%H:%M") || service.company.company_setting.promo_time.night_end.strftime("%H:%M") < bookings.last[:start].strftime("%H:%M"))
+
+                      bookings.last[:time_discount] = promo.night_discount
+                      logger.debug "Meets night"
+
+                    else
+
+                      bookings.last[:time_discount] = 0
+
+                    end
 
                   else
 
                     bookings.last[:time_discount] = 0
 
                   end
+
                 else
 
                   bookings.last[:time_discount] = 0
@@ -3275,9 +3284,12 @@ class BookingsController < ApplicationController
                 start_block: bookings[0][:start].strftime("%H:%M"),
                 end_block: bookings[bookings.length-1][:end].strftime("%H:%M"),
                 available_provider: bookings[0][:provider_name],
+                provider_id: bookings[0][:provider_id],
                 promo_discount: "0",
                 has_time_discount: has_time_discount,
-                time_diff: hour_time_diff
+                time_diff: hour_time_diff,
+                has_sessions: bookings[0][:has_sessions],
+                sessions_amount: bookings[0][:sessions_amount]
               }
 
               book_index = book_index + 1
@@ -3303,6 +3315,7 @@ class BookingsController < ApplicationController
               start_block: bookings[0][:start].strftime("%H:%M"),
               end_block: bookings[bookings.length-1][:end].strftime("%H:%M"),
               available_provider: bookings[0][:provider_name],
+              provider_id: bookings[0][:provider_id],
               promo_discount: "0",
               has_time_discount: has_time_discount,
               time_diff: hour_time_diff
@@ -3389,17 +3402,17 @@ class BookingsController < ApplicationController
           #
 
           if top_margin > 0
-            week_blocks += '<div style="border-top: 1px solid #d2d2d2 !important; margin-top: ' + top_margin.to_s + 'px !important; height: ' + hour_diff.to_s + 'px;" class="bloque-hora ' + hour[:status] + '" data-start="' + hour[:start_block] + '" data-end="' + hour[:end_block] + '" data-provider="' + hour[:available_provider] + '" data-discount="' + hour[:promo_discount] + '" data-index="' + hour[:index].to_s + '" data-timediscount="' + hour[:has_time_discount].to_s + '"><span style="line-height: ' + hour_diff.to_s + 'px; height: ' + span_diff.to_s + 'px;">' + hour[:start_block] + ' - ' + hour[:end_block] + '</span></div>'
+            week_blocks += '<div style="border-top: 1px solid #d2d2d2 !important; margin-top: ' + top_margin.to_s + 'px !important; height: ' + hour_diff.to_s + 'px;" class="bloque-hora ' + hour[:status] + '" data-start="' + hour[:start_block] + '" data-end="' + hour[:end_block] + '" data-providerid="' + hour[:provider_id].to_s + '" data-provider="' + hour[:available_provider] + '" data-discount="' + hour[:promo_discount] + '" data-index="' + hour[:index].to_s + '" data-timediscount="' + hour[:has_time_discount].to_s + '"><span style="line-height: ' + hour_diff.to_s + 'px; height: ' + span_diff.to_s + 'px;">' + hour[:start_block] + ' - ' + hour[:end_block] + '</span></div>'
           else
-            week_blocks += '<div style="height: ' + hour_diff.to_s + 'px;" class="bloque-hora ' + hour[:status] + '" data-start="' + hour[:start_block] + '" data-end="' + hour[:end_block] + '" data-provider="' + hour[:available_provider] + '" data-discount="' + hour[:promo_discount] + '" data-index="' + hour[:index].to_s + '" data-timediscount="' + hour[:has_time_discount].to_s + '"><span style="line-height: ' + hour_diff.to_s + 'px; height: ' + span_diff.to_s + 'px;">' + hour[:start_block] + ' - ' + hour[:end_block] + '</span></div>'
+            week_blocks += '<div style="height: ' + hour_diff.to_s + 'px;" class="bloque-hora ' + hour[:status] + '" data-start="' + hour[:start_block] + '" data-end="' + hour[:end_block] + '" data-providerid="' + hour[:provider_id].to_s + '" data-provider="' + hour[:available_provider] + '" data-discount="' + hour[:promo_discount] + '" data-index="' + hour[:index].to_s + '" data-timediscount="' + hour[:has_time_discount].to_s + '"><span style="line-height: ' + hour_diff.to_s + 'px; height: ' + span_diff.to_s + 'px;">' + hour[:start_block] + ' - ' + hour[:end_block] + '</span></div>'
           end
 
         else
 
           if top_margin > 0
-            week_blocks += '<div style="border-top: 1px solid #d2d2d2 !important; margin-top: ' + top_margin.to_s + 'px !important; height: ' + hour_diff.to_s + 'px;" class="bloque-hora ' + hour[:status] + '" data-start="' + hour[:start_block] + '" data-end="' + hour[:end_block] + '" data-provider="' + hour[:available_provider] + '" data-discount="' + hour[:promo_discount] + '" data-index="' +  hour[:index].to_s + '" data-timediscount="' + hour[:has_time_discount].to_s + '"><span style="line-height: ' + hour_diff.to_s + 'px; height: ' + span_diff.to_s + 'px;">' + ActionController::Base.helpers.image_tag('admin/icono_promociones.png', class: 'promotion-hour-icon', size: "18x18") + '&nbsp;&nbsp' + hour[:start_block] + ' - ' + hour[:end_block] + '</span></div>'
+            week_blocks += '<div style="border-top: 1px solid #d2d2d2 !important; margin-top: ' + top_margin.to_s + 'px !important; height: ' + hour_diff.to_s + 'px;" class="bloque-hora ' + hour[:status] + '" data-start="' + hour[:start_block] + '" data-end="' + hour[:end_block] + '" data-providerid="' + hour[:provider_id].to_s + '" data-provider="' + hour[:available_provider] + '" data-discount="' + hour[:promo_discount] + '" data-index="' +  hour[:index].to_s + '" data-timediscount="' + hour[:has_time_discount].to_s + '"><span style="line-height: ' + hour_diff.to_s + 'px; height: ' + span_diff.to_s + 'px;">' + ActionController::Base.helpers.image_tag('admin/icono_promociones.png', class: 'promotion-hour-icon', size: "18x18") + '&nbsp;&nbsp' + hour[:start_block] + ' - ' + hour[:end_block] + '</span></div>'
           else
-            week_blocks += '<div style="height: ' + hour_diff.to_s + 'px;" class="bloque-hora ' + hour[:status] + '" data-start="' + hour[:start_block] + '" data-end="' + hour[:end_block] + '" data-provider="' + hour[:available_provider] + '" data-discount="' + hour[:promo_discount] + '" data-index="' +  hour[:index].to_s + '" data-timediscount="' + hour[:has_time_discount].to_s + '"><span style="line-height: ' + hour_diff.to_s + 'px; height: ' + span_diff.to_s + 'px;">' + ActionController::Base.helpers.image_tag('admin/icono_promociones.png', class: 'promotion-hour-icon', size: "18x18") + '&nbsp;&nbsp' + hour[:start_block] + ' - ' + hour[:end_block] + '</span></div>'
+            week_blocks += '<div style="height: ' + hour_diff.to_s + 'px;" class="bloque-hora ' + hour[:status] + '" data-start="' + hour[:start_block] + '" data-end="' + hour[:end_block] + '" data-providerid="' + hour[:provider_id].to_s + '" data-provider="' + hour[:available_provider] + '" data-discount="' + hour[:promo_discount] + '" data-index="' +  hour[:index].to_s + '" data-timediscount="' + hour[:has_time_discount].to_s + '"><span style="line-height: ' + hour_diff.to_s + 'px; height: ' + span_diff.to_s + 'px;">' + ActionController::Base.helpers.image_tag('admin/icono_promociones.png', class: 'promotion-hour-icon', size: "18x18") + '&nbsp;&nbsp' + hour[:start_block] + ' - ' + hour[:end_block] + '</span></div>'
           end
         end
 

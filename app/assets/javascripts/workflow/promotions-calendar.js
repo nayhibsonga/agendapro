@@ -79,6 +79,7 @@ function PromoCalendar (source, getData) {
 						start: element.data('start'),
 						end: element.data('end'),
 						provider: element.data('provider'),
+						provider_id: element.data('providerid'),
 						objectDate: parsePromoDate(element.parent().data('date'), element.data('start')),
 						index: element.data('index')
 						// status: hours.status
@@ -91,6 +92,7 @@ function PromoCalendar (source, getData) {
 						start: details.start,
 						end: details.end,
 						provider: details.provider,
+						provider_id: details.provider_id,
 						// status: details.status,
 						objectDate: details.objectDate,
 						index: details.index
