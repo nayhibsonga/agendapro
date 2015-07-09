@@ -308,7 +308,8 @@ function locJSON (ctrl) {
 		"district_ids": districtIds,
 		"latitude": parseFloat($('#location_latitude').val()),
 		"longitude": parseFloat($('#location_longitude').val()),
-		"location_times_attributes": location_times
+		"location_times_attributes": location_times,
+		"email": $("#location_email").val()
 	};
 	return locationJSON;
 }
@@ -409,6 +410,7 @@ function new_location() {
 	$('#update_location_button').attr('name', 'new_location_btn');
 	$('#new_location_pill').parent().addClass('active');
 	$('#load_location_spinner').hide();
+	$('#location_email').val('');
 	initialize('local');
 }
 
@@ -424,6 +426,7 @@ function load_location(id) {
 		$('#location_outcall').prop('checked', location.location.outcall);
 		$('#location_latitude').val(location.location.latitude);
 		$('#location_longitude').val(location.location.longitude);
+		$('#location_email').val(location.location.email);
 		$('#location_address').attr('disabled', false);
 		$('#location_second_address').attr('disabled', false);
 	    var latitude = parseFloat($('#location_latitude').val());

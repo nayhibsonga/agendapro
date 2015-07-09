@@ -27,6 +27,7 @@ Agendapro::Application.routes.draw do
   resources :plans
   resources :staff_times
   resources :location_times
+  resources :notification_emails
 
   resources :companies
   resources :locations
