@@ -50,7 +50,8 @@ class LocationsController < ApplicationController
 
     respond_to do |format|
       if @location.save
-        format.html { redirect_to locations_path, notice: 'Local creado exitosamente.' }
+        flash[:notice] = 'Local actualizado exitosamente.'
+        format.html { redirect_to locations_path }
         format.json { render :json => @location }
       else
         format.html { redirect_to locations_path, alert: 'No se pudo guardar el local.' }
@@ -71,7 +72,8 @@ class LocationsController < ApplicationController
     respond_to do |format|
       if @location.update(location_params)
         @location_times.destroy_all
-        format.html { redirect_to locations_path, notice: 'Local actualizado exitosamente.' }
+        flash[:notice] = 'Local actualizado exitosamente.'
+        format.html { redirect_to locations_path }
         format.json { render :json => @location }
       else
         @location_times.each do |location_time|

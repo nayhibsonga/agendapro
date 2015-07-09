@@ -1,3 +1,4 @@
-//= require validations/validate
-//= require split-name
 //= require admin/user
+//= require validations/validate
+//= require validations/admin/edit-user
+//= require split-name
