@@ -48,8 +48,8 @@ class Location < ActiveRecord::Base
   },
   :using => {
     :trigram => {
-        :threshold => 0.1,
-        :prefix => true,
+      :threshold => 0.1,
+      :prefix => true,
       :any_word => true
     },
     :tsearch => {
@@ -62,6 +62,7 @@ class Location < ActiveRecord::Base
 
   pg_search_scope :search, :associated_against => {
     :company => :name,
+    :company => :web_address,
     :economic_sectors => :name,
     :economic_sectors_dictionaries => :name,
     :service_categories => :name,
@@ -69,8 +70,8 @@ class Location < ActiveRecord::Base
   },
   :using => {
     :trigram => {
-        :threshold => 0.1,
-        :prefix => true,
+      :threshold => 0.1,
+      :prefix => true,
       :any_word => true
     },
     :tsearch => {
