@@ -132,7 +132,7 @@
 					</div>
 					<div class="form-group">
 						<div class="col-sm-offset-4 col-sm-8">
-							<%= f.submit 'Regístrate', :class => 'btn btn-orange', onclick: "_gaq.push(['_trackEvent', 'Empresas', 'Sign-Up', 'Registro_desde_landing']);" %>
+							<%= f.submit 'Regístrate', :class => 'btn btn-orange', onclick: "ga('send', 'event', 'Empresas', 'Sign-Up Empresas', 'Registro desde Landing');" %>
 						</div>
 					</div>
 				<!-- end: Company -->
@@ -266,7 +266,7 @@
 			    </div>
 				<div class="form-group">
                    <div class="col-sm-offset-4 col-sm-8">
-                           <%= f.submit 'Regístrate', :class => 'btn btn-orange', onclick: "_gaq.push(['_trackEvent', 'Usuarios', 'Sign-Up', 'Registro_desde_landing']);" %>
+                           <%= f.submit 'Regístrate', :class => 'btn btn-orange', onclick: "ga('send', 'event', 'Usuarios', 'Sign-In Usuarios', 'Registro desde Landing');" %>
                    </div>
                </div>
 			<% end %>
