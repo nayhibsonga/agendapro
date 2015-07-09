@@ -10,7 +10,6 @@
     <% end %>
     <div class="row">
       <div class="col-xs-12">
-
           <%= hidden_field_tag :service, @service.id %>
           <%= hidden_field_tag :provider, @provider.id %>
           <%= hidden_field_tag :start, @start %>
@@ -179,12 +178,6 @@
   $(function() {
     compose_name('#full_name', '#firstName', '#lastName');
     split_name('#full_name', '#firstName', '#lastName');
-
-
-    $('.volver').click(function () {
-      history.back();
-      return false;
-    });
   });
 
   $(document).ready(function(){

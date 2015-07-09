@@ -11,7 +11,7 @@
     </div>
     <div class="col-xs-12 col-sm-10">
       <div id="reservar">
-        <%= form_tag("select_hour", method: "post", role: "form") do %>
+        <%= form_tag("select_hour", method: "get", role: "form") do %>
           <%= hidden_field_tag :location, @location.id %>
           <div class="form-group">
             <%= label_tag :service, 'Selecciona el servicio que quieres' %>
@@ -85,6 +85,11 @@
           </div>
           <ul class="list-group" id="district-body">
             <li class="list-group-item"><%= if !@location.outcall then @location.address+', '+@location.district.name else "A Domicilio" end %></li>
+            <% if @location.outcall %>
+            <% @location.districts.each do |district| %>
+              <li class="list-group-item"><%= district.name %></li>
+            <% end %>
+            <% end %>
           </ul>
         </div>
       </div>
@@ -118,9 +123,6 @@
       }
     });
     loadServices(<%= @location.id %>);
-    <% if @location.outcall %>
-    loadOutcallDistricts(<%= @location.id %>);
-    <% end %>
     loadSchedule(<%= @location.id %>);
   });
 </script>

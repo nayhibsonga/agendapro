@@ -15,8 +15,8 @@ ActiveRecord::Schema.define(version: 20150706184835) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
-  enable_extension "pg_trgm"
   enable_extension "fuzzystrmatch"
+  enable_extension "pg_trgm"
   enable_extension "unaccent"
 
   create_table "banks", force: true do |t|
@@ -236,18 +236,17 @@ ActiveRecord::Schema.define(version: 20150706184835) do
 
   create_table "company_settings", force: true do |t|
     t.text     "signature"
-    t.boolean  "email",                       default: false
-    t.boolean  "sms",                         default: false
-    t.integer  "company_id",                                                  null: false
+    t.boolean  "email",                      default: false
+    t.boolean  "sms",                        default: false
+    t.integer  "company_id",                                                 null: false
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.integer  "before_booking",              default: 3,                     null: false
-    t.integer  "after_booking",               default: 3,                     null: false
-    t.integer  "before_edit_booking",         default: 3
-    t.boolean  "activate_search",             default: false
-    t.boolean  "activate_workflow",           default: true
-    t.boolean  "client_exclusive",            default: false
-    t.integer  "provider_preference"
+    t.integer  "before_booking",             default: 3,                     null: false
+    t.integer  "after_booking",              default: 3,                     null: false
+    t.integer  "before_edit_booking",        default: 3
+    t.boolean  "activate_search",            default: false
+    t.boolean  "activate_workflow",          default: true
+    t.boolean  "client_exclusive",           default: false
     t.integer  "calendar_duration",           default: 15
     t.boolean  "extended_schedule_bool",      default: false,                 null: false
     t.time     "extended_min_hour",           default: '2000-01-01 09:00:00', null: false
@@ -399,13 +398,13 @@ ActiveRecord::Schema.define(version: 20150706184835) do
   add_index "location_times", ["location_id"], name: "index_location_times_on_location_id", using: :btree
 
   create_table "locations", force: true do |t|
-    t.string   "name",                                        null: false
-    t.string   "address",                                     null: false
-    t.string   "phone",                                       null: false
+    t.string   "name",                           null: false
+    t.string   "address",                        null: false
+    t.string   "phone",                          null: false
     t.float    "latitude"
     t.float    "longitude"
-    t.integer  "district_id",                                 null: false
-    t.integer  "company_id",                                  null: false
+    t.integer  "district_id",                    null: false
+    t.integer  "company_id",                     null: false
     t.datetime "created_at"
     t.datetime "updated_at"
     t.boolean  "active",                      default: true
@@ -430,6 +429,45 @@ ActiveRecord::Schema.define(version: 20150706184835) do
     t.datetime "created_at"
     t.datetime "updated_at"
   end
+
+  create_table "notification_emails", force: true do |t|
+    t.integer  "company_id"
+    t.string   "email",                         null: false
+    t.integer  "receptor_type", default: 0
+    t.boolean  "summary",       default: true
+    t.boolean  "new",           default: false
+    t.boolean  "modified",      default: false
+    t.boolean  "confirmed",     default: false
+    t.boolean  "canceled",      default: false
+    t.boolean  "new_web",       default: false
+    t.boolean  "modified_web",  default: false
+    t.boolean  "confirmed_web", default: false
+    t.boolean  "canceled_web",  default: false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "notification_emails", ["company_id"], name: "index_notification_emails_on_company_id", using: :btree
+
+  create_table "notification_locations", force: true do |t|
+    t.integer  "location_id"
+    t.integer  "notification_email_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "notification_locations", ["location_id"], name: "index_notification_locations_on_location_id", using: :btree
+  add_index "notification_locations", ["notification_email_id"], name: "index_notification_locations_on_notification_email_id", using: :btree
+
+  create_table "notification_providers", force: true do |t|
+    t.integer  "service_provider_id"
+    t.integer  "notification_email_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "notification_providers", ["notification_email_id"], name: "index_notification_providers_on_notification_email_id", using: :btree
+  add_index "notification_providers", ["service_provider_id"], name: "index_notification_providers_on_service_provider_id", using: :btree
 
   create_table "numeric_parameters", force: true do |t|
     t.string   "name"
@@ -775,8 +813,7 @@ ActiveRecord::Schema.define(version: 20150706184835) do
 
   create_table "service_providers", force: true do |t|
     t.integer  "location_id"
-    t.integer  "company_id",                                 null: false
-    t.string   "notification_email"
+    t.integer  "company_id",                    null: false
     t.string   "public_name"
     t.datetime "created_at"
     t.datetime "updated_at"

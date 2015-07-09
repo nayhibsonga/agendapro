@@ -60,8 +60,6 @@ function loadProviders (localId, serviceId) {
       $('#provider').prepend(
         '<option value="0">Sin Preferencia</option>'
       );
-      var minDate = new Date($('#timeInterval').data('min'));
-      var maxDate = new Date($('#timeInterval').data('max'));
 
       $('#datepicker').attr('disabled', false);
       datepicker('#datepicker', {
@@ -119,17 +117,4 @@ function generateDate(date, time) {
   time += ':00';
 
   return year + '-' + month + '-' + day + ' ' + time;
-}
-
-function loadOutcallDistricts(id) {
-  $.getJSON('/local_districts', {id: id}, function (local_districts) {
-    var districtsString = '';
-    $.each(local_districts.districts, function(index, district) {
-      $('#district-body').append(
-        '<li class="list-group-item">' +
-          district.name +
-        '</li>'
-      );
-    });
-  });
 }

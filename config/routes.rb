@@ -28,6 +28,7 @@ Agendapro::Application.routes.draw do
   resources :plans
   resources :staff_times
   resources :location_times
+  resources :notification_emails
 
   resources :companies
   resources :locations
@@ -213,9 +214,9 @@ Agendapro::Application.routes.draw do
   post '/optimizer_data', :to => 'bookings#optimizer_data'
   get '/available_hours_week_html', :to => 'service_providers#available_hours_week_html'
   # Workflow - Mobile
-  post '/select_hour', :to => 'companies#select_hour'
+  get '/select_hour', :to => 'companies#select_hour'
   post '/select_session_hour', :to => 'companies#select_session_hour'
-  post '/user_data', :to => 'companies#user_data'
+  get '/user_data', :to => 'companies#user_data'
 
   # Fullcalendar
   get '/provider_breaks/new', :to => 'provider_breaks#new', :as => 'new_provider_break'
