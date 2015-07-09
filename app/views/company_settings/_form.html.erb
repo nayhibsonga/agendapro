@@ -102,7 +102,7 @@
             <div class="col-md-6">
               <div onclick="$('#cashier_link').click();" class="media">
                 <div class="media-left">
-                  <%= image_tag 'admin/7.png', class: 'media-object media-image' %>
+                  <%= image_tag 'admin/8.png', class: 'media-object media-image' %>
                 </div>
                 <div class="media-body">
                   <span class="text-green">Sistema de Caja:</span> Configura el sistema de caja y medios de pagos que acepta tu empresa.
@@ -836,7 +836,7 @@
                       </td>
                       <td>
                       <% if payment_method.name != "Efectivo" && payment_method.name != "Otro" %>
-                        <%= a.check_box :number_required, disabled: false, checked: true %>
+                        <%= a.check_box :number_required %>
                       <% else %>
                         <%= a.check_box :number_required, checked: false, class: "hidden" %>
                       <% end %>
