@@ -8,7 +8,7 @@ class ProductsController < ApplicationController
   respond_to :html, :json
 
   def index
-    @products = Product.all.order(:product_category_id, :name)
+    @products = Product.where(company_id: current_user.company_id).order(:product_category_id, :name)
     respond_with(@products)
   end
 
