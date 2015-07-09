@@ -376,9 +376,9 @@ class CompaniesController < ApplicationController
 		filename = params[:type] + "_" + params[:subtype]
 		year = params[:year]
 		filename = filename + "_" + year + ".csv"
-		
+
 	    send_data Booking.generate_csv(params[:type], params[:subtype], params[:year]), filename: filename
-	    
+
 	end
 
 	#SuperAdmin
@@ -1358,7 +1358,7 @@ class CompaniesController < ApplicationController
 	    @lock
 	    @company = @location.company
 	    @available_time
-		
+
 	    respond_to do |format|
 	      format.html { render :partial => 'select_session_hour' }
 	      format.json { render json: @available_time }
@@ -1367,7 +1367,6 @@ class CompaniesController < ApplicationController
 
 
 	def user_data
-
 		@location = Location.find(params[:location])
 		@company = @location.company
 		@service = Service.find(params[:service])
