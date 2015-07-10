@@ -1367,7 +1367,6 @@ class CompaniesController < ApplicationController
 
 
 	def user_data
-
 		@location = Location.find(params[:location])
 		@company = @location.company
 		@service = Service.find(params[:service])
