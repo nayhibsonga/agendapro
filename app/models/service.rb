@@ -136,6 +136,12 @@ class Service < ActiveRecord::Base
 			bookings_count = Booking.where(:service_promo_id => service_promo.id, :is_session => false).where('status_id <> ?', Status.find_by_name('Cancelado')).count
 			session_bookings_count = SessionBooking.where(:service_promo_id => service_promo.id).count
 
+			if service_promo.max_bookings.nil?
+				service_promo.max_bookings = 0
+				service_promo.save
+				return 0
+			end
+
 			return service_promo.max_bookings - (bookings_count + session_bookings_count)
 
 		end

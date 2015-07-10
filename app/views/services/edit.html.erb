@@ -485,6 +485,15 @@
 			return false;
   		}
 
+  		if(has_time_discount && (max_bookings == "" || parseInt(max_bookings) < 0))
+  		{
+  			myAlert.showAlert(
+				'<h3>Ingresa el stock</h3>' +
+			  	'<p>Debes ingresar el stock de reservas disponibles para la promoción.</p>'
+			);
+			return false;
+  		}
+
   		$.ajax({
   			url: "/set_service_promotions",
   			type: "post",
