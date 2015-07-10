@@ -14,35 +14,29 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <!-- end: Mobile Specific -->
 
-    <script src="http://code.jquery.com/jquery-latest.min.js" type="text/javascript"></script>
+    <!-- start: favicon -->
+    <link href="/assets/favicon.png" rel="shortcut icon" type="image/vnd.microsoft.icon">
+    <link href="/assets/favicon-16x16.png" rel="shortcut icon" type="image/vnd.microsoft.icon">
+    <link href="/assets/favicon-32x32.png" rel="shortcut icon" type="image/vnd.microsoft.icon">
+    <link href="/assets/apple-touch-icon.png" rel="apple-touch-icon" type="image/vnd.microsoft.icon">
+    <link href="/assets/apple-touch-icon-76x76.png" rel="apple-touch-icon" sizes="76x76" type="image/vnd.microsoft.icon">
+    <link href="/assets/apple-touch-icon-120x120.png" rel="apple-touch-icon" sizes="120x120" type="image/vnd.microsoft.icon">
+    <link href="/assets/apple-touch-icon-144x144.png" rel="apple-touch-icon" sizes="144x144" type="image/vnd.microsoft.icon">
+    <link href="/assets/apple-touch-icon-152x152.png" rel="apple-touch-icon" sizes="152x152" type="image/vnd.microsoft.icon">
+    <link href="/assets/apple-touch-icon-180x180.png" rel="apple-touch-icon" sizes="180x180" type="image/vnd.microsoft.icon">
+    <link href="/assets/icon-hires.png" rel="icon" sizes="192x192" type="image/vnd.microsoft.icon">
+    <link href="/assets/icon-normal.png" rel="icon" sizes="128x128" type="image/vnd.microsoft.icon">
+    <!-- end: favicon -->
 
+    <!-- start: css -->
+    <link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Roboto+Condensed:300">
     <!-- Latest compiled and minified CSS -->
     <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
-    <!-- Latest compiled and minified JavaScript -->
-    <script src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
-
     <link href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">
-
     <style type="text/css">
-      @font-face {
-        font-family: TradeGothic;
-        src: url('/assets/Trade Gothic LT Condensed No. 18.ttf');
-        src: url('/assets/Trade Gothic LT Condensed No. 18.ttf?#iefix') format('truetype'),
-        url('/assets/Trade Gothic LT Condensed No. 18.ttf') format('truetype');
-        font-weight: normal;
-        font-style: normal;
-      }
-      @font-face {
-        font-family: FranklinGothic;
-        src: url('/assets/ITC Franklin Gothic LT Book Extra Compressed.ttf');
-        src: url('/assets/ITC Franklin Gothic LT Book Extra Compressed.ttf?#iefix') format('truetype'),
-        url('/assets/ITC Franklin Gothic LT Book Extra Compressed.ttf') format('truetype');
-        font-weight: normal;
-        font-style: normal;
-      }
       html,
       body {
-        font-family: TradeGothic, FranklinGothic, "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
+        font-family: 'Roboto Condensed', sans-serif;
         background: #ffffff;
         font-size: 17px;
       }
@@ -77,8 +71,8 @@
       }
       .background-img {
         height: 400px;
-        background-size: cover;
-        background-position: center center;
+        background-size: 3100px 100%;
+        background-position: right center;
         width: 100%;
         background-image: url(/assets/home/404.jpg);
       }
@@ -110,9 +104,22 @@
         color: #ffffff;
         padding-top: 20px;
         padding-bottom: 10px;
+        background-position: center center;
         background-image: url(/assets/backgrounds/gray-background.png);
       }
+      @media (min-width: 768px) {
+        .background-img {
+          background-size: cover;
+          background-position: 60% center;
+        }
+      }
+      @media (min-width: 992px) {
+        .background-img {
+          background-position: center center;
+        }
+      }
     </style>
+    <!-- end: css -->
   </head>
 
   <body>
@@ -172,16 +179,16 @@
       <div class="container">
         <div class="row pull-center">
           <div class="col-sm-4">
-            <img src="assets/footer/1.png" width="22" height="29">
+            <img src="/assets/footer/1.png" width="22" height="29">
             <p>Ana María Carrera 5210,
               Las Condes, Santiago</p>
           </div>
           <div class="col-sm-4">
-            <img src="assets/footer/2.png" width="22" height="19">
+            <img src="/assets/footer/2.png" width="22" height="19">
             <p>contacto@agendapro.cl</p>
           </div>
           <div class="col-sm-4">
-            <img src="assets/footer/3.png" width="22" height="29">
+            <img src="/assets/footer/3.png" width="22" height="29">
             <p>(+56 9) 5178 5898</p>
           </div>
         </div>
@@ -193,6 +200,10 @@
       </div>
     </div>
 
+    <!-- start: javascript -->
+    <script src="http://code.jquery.com/jquery-latest.min.js" type="text/javascript"></script>
+    <!-- Latest compiled and minified JavaScript -->
+    <script src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
     <script type="text/javascript">
       $(function () {
         $('a[href=#]').click(function (event) {
@@ -201,6 +212,6 @@
         });
       });
     </script>
-
+    <!-- end: javascript -->
   </body>
 </html>

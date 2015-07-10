@@ -176,12 +176,12 @@ ActiveRecord::Schema.define(version: 20150710134007) do
   add_index "clients", ["company_id"], name: "index_clients_on_company_id", using: :btree
 
   create_table "companies", force: true do |t|
-    t.string   "name",                               null: false
-    t.string   "web_address",                        null: false
+    t.string   "name",                                null: false
+    t.string   "web_address",                         null: false
     t.string   "logo"
     t.float    "months_active_left",  default: 0.0
-    t.integer  "plan_id",                            null: false
-    t.integer  "payment_status_id",                  null: false
+    t.integer  "plan_id",                             null: false
+    t.integer  "payment_status_id",                   null: false
     t.datetime "created_at"
     t.datetime "updated_at"
     t.text     "description",         default: ""
@@ -190,6 +190,7 @@ ActiveRecord::Schema.define(version: 20150710134007) do
     t.float    "due_amount",          default: 0.0
     t.date     "due_date"
     t.boolean  "owned",               default: true
+    t.boolean  "show_in_home",        default: false
   end
 
   add_index "companies", ["payment_status_id"], name: "index_companies_on_payment_status_id", using: :btree

@@ -11,15 +11,16 @@ class SearchsController < ApplicationController
 		if cookies[:formatted_address]
 			@formatted_address = cookies[:formatted_address].unpack("C*").pack("U*")
 		end
+		@companies =  Company.where(show_in_home: true).where.not(logo: nil)
 		render layout: "search"
 	end
-	  
+
 	def search
 		if params[:inputSearch] && params[:latitude] && params[:longitude] && params[:inputLocalization]
 			@lat = params[:latitude]
 			@lng = params[:longitude]
 
-		
+
 
 			if cookies[:formatted_address]
 				@formatted_address = cookies[:formatted_address].encode('UTF-8', 'binary', invalid: :replace, undef: :replace, replace: '')
@@ -212,7 +213,7 @@ class SearchsController < ApplicationController
 
 
 			#FIN EMPRESAS SIN DUEÑO
-				
+
 			@results = Array.new
 
 			ordered_locs.each do |arr|
@@ -254,7 +255,7 @@ class SearchsController < ApplicationController
 							c.pointsize "17"
 						end
 					end
-						
+
 					img.write("app/assets/images/search/pin_map#{i}.png")
 				end
 			end
@@ -276,7 +277,7 @@ class SearchsController < ApplicationController
 			@lat = params[:latitude]
 			@lng = params[:longitude]
 
-			
+
 
 			if cookies[:formatted_address]
 				@formatted_address = cookies[:formatted_address].unpack("C*").pack("U*")
@@ -382,7 +383,7 @@ class SearchsController < ApplicationController
 
 				economic_scores[sector.id] = economics_max
 
-				
+
 
 			end #Ends economic_sectors
 
@@ -407,7 +408,7 @@ class SearchsController < ApplicationController
 				 		test_array.push(perm)
 					end
 				end
-				
+
 
 				test_array.each do |ta|
 
@@ -539,7 +540,7 @@ class SearchsController < ApplicationController
 
 					for i in 0..7
 						if((max >= (0.96 - i*0.04)))
-							
+
 							#Calculamos la distancia aproximada
 
 							dist_score = Math.sqrt((location.latitude - lat.to_f)**2 + (location.longitude - long.to_f)**2)
@@ -602,7 +603,7 @@ class SearchsController < ApplicationController
 
 				economic_scores[sector.id] = economics_max
 
-				
+
 
 			end #Ends economic_sectors
 
@@ -626,7 +627,7 @@ class SearchsController < ApplicationController
 				 	str_test_array.permutation(i).to_a.each do |perm|
 				 		test_array.push(perm)
 					end
-				end				
+				end
 
 				test_array.each do |ta|
 
@@ -759,7 +760,7 @@ class SearchsController < ApplicationController
 
 					for i in 0..7
 						if((max >= (0.96 - i*0.04)))
-							
+
 							#Calculamos la distancia aproximada
 
 							dist_score = Math.sqrt((location.latitude - lat.to_f)**2 + (location.longitude - long.to_f)**2)
@@ -833,7 +834,7 @@ class SearchsController < ApplicationController
 			# 	service_providers = location.service_providers.where(active: true)
 
 
-				
+
 				#t5 = Time.now.to_f
 				#timers << "t5-t4: " + (t5-t4).to_s
 
@@ -858,7 +859,7 @@ class SearchsController < ApplicationController
 
 			# 	#t6 = Time.now.to_f
 			# 	#timers << "t6-t5: " + (t6-t5).to_s
-				
+
 
 			# 	test_array.each do |ta|
 
@@ -1007,7 +1008,7 @@ class SearchsController < ApplicationController
 
 			# 	for i in 0..7
 			# 		if((max >= (0.96 - i*0.04)))
-						
+
 			# 			#Calculamos la distancia aproximada
 
 			# 			dist_score = Math.sqrt((location.latitude - lat.to_f)**2 + (location.longitude - long.to_f)**2)
@@ -1037,10 +1038,10 @@ class SearchsController < ApplicationController
 
 			# 	#t13 = Time.now.to_f
 			# 	#timers << "t13-t12: " + (t13-t12).to_s
-					
+
 			# end
 
-			
+
 
 
 			# m1 = JaroWinkler.new(normalized_search)
@@ -1053,7 +1054,7 @@ class SearchsController < ApplicationController
 			# 	categories = location.categories
 			# 	services = Array.new
 			# 	service_providers = location.service_providers.where(active: true)
-				
+
 
 			# 	#Empresa
 
@@ -1074,7 +1075,7 @@ class SearchsController < ApplicationController
 			# 		end
 			# 	end
 
-				
+
 
 			# 	test_array.each do |ta|
 
@@ -1204,7 +1205,7 @@ class SearchsController < ApplicationController
 
 			# 	for i in 0..7
 			# 		if((empty_max >= (0.96 - i*0.04)))
-						
+
 			# 			#Calculamos la distancia aproximada
 
 			# 			dist_score = Math.sqrt((location.latitude - lat.to_f)**2 + (location.longitude - long.to_f)**2)
@@ -1231,12 +1232,12 @@ class SearchsController < ApplicationController
 			# 			break
 			# 		end
 			# 	end
-					
+
 			# end
 
 
 			#t14 = Time.now.to_f
-			
+
 
 			#Ordenamos por distancia
 			ordered_segments = Array.new
@@ -1250,7 +1251,7 @@ class SearchsController < ApplicationController
 			for i in 0..7
 				empty_ordered_segments[i] = empty_loc_segments[i].sort_by{ |loc| loc[1]}
 			end
-					
+
 
 			#Entregamos los ids en orden
 			for i in 0..7
@@ -1299,7 +1300,7 @@ class SearchsController < ApplicationController
 							c.pointsize "17"
 						end
 					end
-						
+
 					img.write("app/assets/images/search/pin_map#{i}.png")
 				end
 			end
