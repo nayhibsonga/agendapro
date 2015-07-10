@@ -13,6 +13,8 @@ class CompanySetting < ActiveRecord::Base
 	validate after_commit :extended_schedule
 	after_update :check_payment_accounts
 
+	after_create :build_payment_settings
+
 	def extended_schedule
 		if self.extended_min_hour >= self.extended_max_hour
 			errors.add(:base, "La hora de fin es menor o igual a la hora de inicio, para el horario extendido.")
@@ -43,6 +45,15 @@ class CompanySetting < ActiveRecord::Base
 			payment_account.bank_code = self.bank.code
 			payment_account.account_type = self.account_type
 			payment_account.save
+		end
+	end
+
+	def build_payment_settings
+		PaymentMethod.all.each do |payment_method|
+			if PaymentMethodSetting.where(company_setting_id: self.id, payment_method_id: payment_method.id).count < 1
+				number_required = payment_method.name == 'Efectivo' || payment_method.name == 'Otro' ? false : true
+				PaymentMethodSetting.create(company_setting_id: self.id, payment_method_id: payment_method.id, active: true, number_required: number_required)
+			end
 		end
 	end
 
