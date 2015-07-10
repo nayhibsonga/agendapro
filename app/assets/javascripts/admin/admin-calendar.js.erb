@@ -2546,4 +2546,10 @@ $(function() {
 	    return false;
 	  }
 	});
+
+	$('.modal.in a').on("click", function(e){
+		setTimeout( function () {
+			$('.modal.in').modal('handleUpdate');
+	    } , 100 );
+	});
 });

@@ -47,7 +47,7 @@
       <tbody>
         <% @payments.each do |payment| %>
         <tr>
-          <td><%= payment.payment_date %></td>
+          <td><%= payment.payment_date.strftime('%d-%m-%Y') %></td>
           <td><%= payment.location ? payment.location.name : '' %></td>
           <td><%= payment.client.first_name %> <%= payment.client.last_name %></td>
           <td><button class="btn btn-green btn-xs" id="payment_details_button_<%= payment.id %>">Vista Rápida</button></td>

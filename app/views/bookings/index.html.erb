@@ -446,9 +446,59 @@
                   <p><strong>Nota:</strong> Si modificas estos datos, al guardar la reserva, se actualizarán los datos del cliente.</p>
                 </div>
                 <div class="tab-pane" id="history-pane">
+                  <div class="fixed-table">
+                    <h4>Últimas reservas del cliente (máx. 10 reservas):</h4>
+                    <table class="table">
+                      <thead>
+                        <tr>
+                          <th>Fecha</th>
+                          <th>Servicio</th>
+                          <th>Prestador</th>
+                          <th>Estado</th>
+                          <th>Nota Cliente</th>
+                          <th>Nota Interna</th>
+                        </tr>
+                      </thead>
+                      <tbody id="client-history-tbody">
+                        <tr>
+                          <td colspan="6">No hay un cliente seleccionado...</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
                 </div>
                 <% if @company_setting.booking_history %>
                 <div class="tab-pane" id="changes-pane">
+                  <div class="fixed-table">
+                    <h4>Modificaciones a la Reserva:</h4>
+                    <table class="table">
+                      <thead>
+                        <tr>
+                          <th>Acción</th>
+                          <th>Fecha</th>
+                          <th>Reserva</th>
+                          <th>Servicio</th>
+                          <th>Prestador</th>
+                          <th>Estado</th>
+                          <th>Nota</th>
+                          <th>N. Interna</th>
+                          <th>Usuario</th>
+                          <% if @company_setting.staff_code %>
+                          <th>Responsable</th>
+                          <% end %>
+                        </tr>
+                      </thead>
+                      <tbody id="booking-history-tbody">
+                        <tr>
+                          <% if @company_setting.staff_code %>
+                          <td colspan="9">No hay modificaciones para esta reserva...</td>
+                          <% else %>
+                          <td colspan="8">No hay modificaciones para esta reserva...</td>
+                          <% end %>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
                 </div>
                 <% end %>
                 <% if Role.where(name: ["Administrador General", "Administrador Local", "Recepcionista"]).include?(current_user.role) %>
@@ -457,8 +507,8 @@
                   <div class="row">
                     <div class="col-md-12">
                       <div id="payment_client_group" class="form-group has-feedback">
-                        <label for="payment_full_name" class="col-sm-4 control-label">Nombre Cliente</label>
-                        <div class="col-sm-8">
+                        <label for="payment_full_name" class="col-sm-2 control-label">Nombre Cliente</label>
+                        <div class="col-sm-4">
                           <div class="input-group">
                             <input type="text" id="payment_full_name" class="form-control" placeholder="Buscar clientes..." name="payment_full_name">
                             <span class="input-group-btn">
@@ -471,24 +521,24 @@
                       </div>
                     </div>
                   </div>
-                  <div class="row">
+                  <div class="row" id="payment_bookings_row">
                     <div class="col-md-12">
-                      <table class="table table-white-rows">
+                      <table class="table table-bordered table-white-rows">
                         <thead>
                           <tr>
-                            <th></th>
+                            <th><a id="payment_past_bookings_button" class="btn btn-green btn-xs"><i class="fa fa-plus"></i></a></th>
                             <th>Servicio</th>
                             <th>Prestador</th>
                             <th>Fecha</th>
                             <th>Hora</th>
-                            <th>Precio Normal</th>
+                            <th style="width: 15%;">Precio Normal</th>
                             <th style="width: 15%;">Descuento</th>
                             <th style="width: 15%;">Precio</th>
                           </tr>
                         </thead>
                         <tbody id="payment-bookings-table">
                           <tr class="tr-strong">
-                            <td colspan="4"><a id="payment_past_bookings_button" class="btn btn-default btn-xs">Agregar una reserva de otro día al pago...</a></td>
+                            <td colspan="4"></td>
                             <td>Total:</td>
                             <td id="booking_total_normal_price">$ 0</td>
                             <td id="booking_total_discount">0 %</td>
@@ -498,22 +548,23 @@
                       </table>
                     </div>
                   </div>
-                  <div class="row">
+                  <% if Service.where(company_id: current_user.company_id, has_sessions: true).count > 0 %>
+                  <div class="row" id="payment_sessions_row">
                     <div class="col-md-12">
-                      <table class="table table-white-rows">
+                      <table class="table table-bordered table-white-rows">
                         <thead>
                           <tr>
-                            <th></th>
+                            <th><a id="payment_past_sessions_button" class="btn btn-green btn-xs"><i class="fa fa-plus"></i></th>
                             <th>Servicio</th>
                             <th>Sesiones</th>
-                            <th>Precio Normal</th>
+                            <th style="width: 15%;">Precio Normal</th>
                             <th style="width: 15%;">Descuento</th>
                             <th style="width: 15%;">Precio</th>
                           </tr>
                         </thead>
                         <tbody id="payment-sessions-table">
                           <tr class="tr-strong">
-                            <td colspan="2"><a id="payment_past_sessions_button" class="btn btn-default btn-xs">Agregar una sesión de otro día al pago...</a></td>
+                            <td colspan="2"></td>
                             <td>Total:</td>
                             <td id="session_total_normal_price">$ 0</td>
                             <td id="session_total_discount">0 %</td>
@@ -523,12 +574,14 @@
                       </table>
                     </div>
                   </div>
-                  <div class="row">
+                  <% end %>
+                  <% if Product.where(company_id: current_user.company_id).count > 0 %>
+                  <div class="row" id="payment_products_row">
                     <div class="col-md-12">
-                      <table class="table table-white-rows">
+                      <table class="table table-bordered table-white-rows">
                         <thead>
                           <tr>
-                            <th></th>
+                            <th><a id="payment_products_button" class="btn btn-green btn-xs"><i class="fa fa-plus"></i></a></th>
                             <th>Producto</th>
                             <th>Detalles</th>
                             <th>Precio Normal</th>
@@ -539,7 +592,7 @@
                         </thead>
                         <tbody id="payment-products-table">
                           <tr class="tr-strong">
-                            <td colspan="2"><a id="payment_products_button" class="btn btn-default btn-xs">Agregar producto al pago...</a></td>
+                            <td colspan="2"></td>
                             <td>Total:</td>
                             <td id="product_total_normal_price">$ 0</td>
                             <td id="product_total_quantity">0</td>
@@ -550,6 +603,7 @@
                       </table>
                     </div>
                   </div>
+                  <% end %>
                   <div class="row">
                     <div class="col-md-6">
                       <%= f.hidden_field :id %>
@@ -634,7 +688,7 @@
                       <% end %>
                       <div class="form-group">
                         <div class="col-sm-4 col-sm-offset-4">
-                          <a class="btn btn-red btn-block" id="delete_payment_button">Elimnar Pago</a>
+                          <a class="btn btn-red btn-block" id="delete_payment_button">Eliminar Pago</a>
                         </div>
                         <div class="col-sm-4">
                           <%= f.submit "Guardar Pago", class: "btn btn-green btn-block", id: "save_payment_button" %>
@@ -913,36 +967,6 @@
           <h3 class="modal-title" id="bookingOverModalTitle" style="line-height: 1.1;">Modificaciones de Reserva</h3>
         </div>
         <div class="modal-body" id="bookingOverModalBody">
-          <div class="fixed-table">
-            <h4>Modificaciones a la Reserva:</h4>
-            <table class="table">
-              <thead>
-                <tr>
-                  <th>Acción</th>
-                  <th>Fecha</th>
-                  <th>Reserva</th>
-                  <th>Servicio</th>
-                  <th>Prestador</th>
-                  <th>Estado</th>
-                  <th>Nota</th>
-                  <th>N. Interna</th>
-                  <th>Usuario</th>
-                  <% if @company_setting.staff_code %>
-                  <th>Responsable</th>
-                  <% end %>
-                </tr>
-              </thead>
-              <tbody id="booking-history-tbody">
-                <tr>
-                  <% if @company_setting.staff_code %>
-                  <td colspan="9">No hay modificaciones para esta reserva...</td>
-                  <% else %>
-                  <td colspan="8">No hay modificaciones para esta reserva...</td>
-                  <% end %>
-                </tr>
-              </tbody>
-            </table>
-          </div>
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-default" data-dismiss="modal" aria-label="Cerrar">Cerrar</button>
@@ -959,26 +983,6 @@
           <h3 class="modal-title" id="clientOverModalTitle" style="line-height: 1.1;">Historial del Cliente</h3>
         </div>
         <div class="modal-body" id="clientOverModalBody">
-          <div class="fixed-table">
-            <h4>Últimas reservas del cliente (máx. 10 reservas):</h4>
-            <table class="table">
-              <thead>
-                <tr>
-                  <th>Fecha</th>
-                  <th>Servicio</th>
-                  <th>Prestador</th>
-                  <th>Estado</th>
-                  <th>Nota Cliente</th>
-                  <th>Nota Interna</th>
-                </tr>
-              </thead>
-              <tbody id="client-history-tbody">
-                <tr>
-                  <td colspan="6">No hay un cliente seleccionado...</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-default" data-dismiss="modal" aria-label="Cerrar">Cerrar</button>
@@ -998,7 +1002,7 @@
           <div class="row">
             <div class="col-md-12">
               <div class="fixed-table">
-                <h4>Modificaciones a la Reserva:</h4>
+                <h4>Agregar al Pago:</h4>
                 <table class="table">
                   <thead>
                     <tr>

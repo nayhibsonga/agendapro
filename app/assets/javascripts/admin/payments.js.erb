@@ -152,6 +152,9 @@ function loadPayment(payment_id) {
   $('#payment_payment_date').val(today);
   $('#payment_past_bookings_button').attr("disabled", false);
   $('#payment_past_sessions_button').attr("disabled", false);
+  $('#payment_bookings_row').show();
+  $('#payment_sessions_row').show();
+  loadPaymentSettings();
 
 
   if (parseInt(payment_id) > 0) {
@@ -214,6 +217,9 @@ function loadPayment(payment_id) {
       }
       else {
         $('#payment_past_bookings_button').attr("disabled", true);
+        if (bookings.length == 0) {
+          $('#payment_bookings_row').hide();
+        }
       }
 
       $('#payment_past_sessions_button').unbind( "click" );
@@ -224,6 +230,9 @@ function loadPayment(payment_id) {
       }
       else {
         $('#payment_past_sessions_button').attr("disabled", true);
+        if (sessions.length == 0) {
+          $('#payment_sessions_row').hide();
+        }
       }
 
       var client_id = full_payment.client.id;
@@ -238,8 +247,8 @@ function loadPayment(payment_id) {
     $('#delete_payment_button').hide();
     $('#payment_client_id').val('');
     $("#full_name").val('');
-    $("#full_name").prop('disabled', false);
-    $('#xButton').prop('disabled', true);
+    $("#full_name").attr('disabled', false);
+    $('#xButton').attr('disabled', true);
     $('#client_location_row').show();
     loadPaymentSettings();
     calculateTotals(false);

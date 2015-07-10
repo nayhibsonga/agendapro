@@ -153,6 +153,8 @@ function loadBookingPayment(booking_id) {
 	$('#payment_payment_date').val(today);
 	$('#payment_past_bookings_button').attr("disabled", false);
 	$('#payment_past_sessions_button').attr("disabled", false);
+	$('#payment_bookings_row').show();
+	$('#payment_sessions_row').show();
 	loadPaymentSettings();
 
 
@@ -218,7 +220,10 @@ function loadBookingPayment(booking_id) {
 				});
 			}
 			else {
-				$('#payment_past_bookings_button').hide();
+				$('#payment_past_bookings_button').attr("disabled", true);
+				if (bookings.length == 0) {
+					$('#payment_bookings_row').hide();
+				}
 			}
 
 			$('#payment_past_sessions_button').unbind( "click" );
@@ -228,7 +233,10 @@ function loadBookingPayment(booking_id) {
 				});
 			}
 			else {
-				$('#payment_past_sessions_button').hide();
+				$('#payment_past_sessions_button').attr("disabled", true);
+				if (sessions.length == 0) {
+					$('#payment_sessions_row').hide();
+				}
 			}
 
 			var client_id = bookings_payment.client.id;

@@ -90,9 +90,9 @@
               </div>
             </div>
           </div>
-          <div class="row">
+          <div class="row" id="payment_bookings_row">
             <div class="col-sm-12">
-              <table class="table table-white-rows">
+              <table class="table table-bordered table-white-rows">
                 <thead>
                   <tr>
                     <th></th>
@@ -100,7 +100,7 @@
                     <th>Prestador</th>
                     <th>Fecha</th>
                     <th>Hora</th>
-                    <th>Precio Normal</th>
+                    <th style="width: 15%;">Precio Normal</th>
                     <th style="width: 15%;">Descuento</th>
                     <th style="width: 15%;">Precio</th>
                   </tr>
@@ -117,15 +117,16 @@
               </table>
             </div>
           </div>
-          <div class="row">
+          <% if Service.where(company_id: current_user.company_id, has_sessions: true).count > 0 %>
+          <div class="row" id="payment_sessions_row">
             <div class="col-sm-12">
-              <table class="table table-white-rows">
+              <table class="table table-bordered table-white-rows">
                 <thead>
                   <tr>
                     <th></th>
                     <th>Servicio</th>
                     <th>Sesiones</th>
-                    <th>Precio Normal</th>
+                    <th style="width: 15%;">Precio Normal</th>
                     <th style="width: 15%;">Descuento</th>
                     <th style="width: 15%;">Precio</th>
                   </tr>
@@ -142,15 +143,17 @@
               </table>
             </div>
           </div>
-          <div class="row">
+          <% end %>
+          <% if Product.where(company_id: current_user.company_id).count > 0 %>
+          <div class="row" id="payment_products_row">
             <div class="col-sm-12">
-              <table class="table table-white-rows">
+              <table class="table table-bordered table-white-rows">
                 <thead>
                   <tr>
                     <th></th>
                     <th>Producto</th>
                     <th>Detalles</th>
-                    <th>Precio Normal</th>
+                    <th style="width: 15%;">Precio Normal</th>
                     <th style="width: 15%;">Cantidad</th>
                     <th style="width: 15%;">Descuento</th>
                     <th style="width: 15%;">Precio</th>
@@ -169,6 +172,7 @@
               </table>
             </div>
           </div>
+          <% end %>
           <div class="row">
             <div class="col-sm-6">
               <%= f.hidden_field :id %>
@@ -253,7 +257,7 @@
               <% end %>
               <div class="form-group">
                 <div class="col-sm-4 col-sm-offset-4">
-                  <a class="btn btn-red btn-block" id="delete_payment_button">Elimnar Pago</a>
+                  <a class="btn btn-red btn-block" id="delete_payment_button">Eliminar Pago</a>
                 </div>
                 <div class="col-sm-4">
                   <%= f.submit "Guardar Pago", class: "btn btn-green btn-block", id: "save_payment_button" %>
