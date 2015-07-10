@@ -48,7 +48,7 @@ class Booking < ActiveRecord::Base
 	end
 
   def wait_for_payment
-    self.delay(run_at: 4.minutes.from_now).payment_timeout
+    self.delay(run_at: 10.minutes.from_now).payment_timeout
   end
 
   def payment_timeout
