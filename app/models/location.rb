@@ -154,7 +154,7 @@ class Location < ActiveRecord::Base
   def time_empty_or_negative
     self.location_times.each do |location_time|
       if location_time.open >= location_time.close
-        errors.add(:base, "El horario del día "+location_time.day.name+" es vacío o negativo.")
+        errors.add(:base, "El horario de término es anterior al de inicio el día " + location_time.day.name + ".")
       end
     end
   end
@@ -173,7 +173,7 @@ class Location < ActiveRecord::Base
           end
         end
         if !in_location_time
-          errors.add(:base, "El horario del staff "+service_provider.public_name+" no es factible para este local, debes cambiarlo antes de poder cambiar el horario del local.")
+          errors.add(:base, "El horario del staff " + service_provider.public_name + " no es factible para para el día " + provider_time.day.name + ", debes cambiarlo antes de poder cambiar el horario del local.")
         end
       end
     end

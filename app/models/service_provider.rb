@@ -71,7 +71,7 @@ class ServiceProvider < ActiveRecord::Base
 				if (provider_time1 != provider_time2)
 					if(provider_time1.day_id == provider_time2.day_id)
 						if (provider_time1.open - provider_time2.close) * (provider_time2.open - provider_time1.close) >= 0
-		      		errors.add(:base, "Existen bloques horarios sobrepuestos para el día "+provider_time1.day.name+".")
+		      		errors.add(:base, "Existen bloques horarios sobrepuestos para el día " + provider_time1.day.name + ".")
 				    end
 			    end
 			   end
@@ -82,7 +82,7 @@ class ServiceProvider < ActiveRecord::Base
 	def time_empty_or_negative
 		self.provider_times.each do |provider_time|
 			if provider_time.open >= provider_time.close
-				errors.add(:base, "El horario del día "+provider_time.day.name+" es vacío o negativo.")
+				errors.add(:base, "El horario de término es anterior al de inicio el día " + provider_time.day.name + ".")
       		end
 		end
 	end
@@ -100,7 +100,7 @@ class ServiceProvider < ActiveRecord::Base
 				end
 			end
 			if !in_location_time
-				errors.add(:base, "El horario del día "+provider_time.day.name+" no es factible para el local seleccionado.")
+				errors.add(:base, "El horario del día " + provider_time.day.name + " no es factible para el local seleccionado.")
 			end
 		end
 	end
