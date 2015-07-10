@@ -185,29 +185,39 @@
         <div id="foo4" style="visibility: collapse;">
           <div class="box-step">
             <div class="row">
-              <div class="col-sm-3">
-                <div class="services-title dark-gray">
-                  Servicios
-                </div>
-                <div class="services-subtitle light-gray">
-                  Seleccione un servicio
+              <div class="col-sm-6">
+                <div class="row">
+                  <div class="col-sm-4">
+                    <div class="services-title dark-gray">
+                      Servicios
+                    </div>
+                    <div class="services-subtitle light-gray">
+                      Seleccione un servicio
+                    </div>
+                  </div>
+                  <% if @company.company_setting.allows_optimization %>
+                  <div class="col-sm-8">
+                    <div class="optimizer-item">
+                      <div class="row">
+                        <div class="col-sm-7 light-gray" style="text-align: right;">
+                          O elige varios servicios y te propondremos los mejores horarios:&nbsp;&nbsp;
+                        </div>
+                        <div class="col-sm-5" style="padding-left: 0;">
+                          <button type="button" id="optimizerOpenBtn" class="btn btn-green" data-toggle="modal" data-target="#hoursOptimizer" style="background: #22c488; color: #ffffff; font-size: 20px;">Elegir servicios</button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <!-- <div class="col-sm-3 col-md-2" style="text-align: right;">
+                    <div class="optimizer-item">
+                    </div>
+                  </div> -->
+                  <% end %>
                 </div>
               </div>
               <div class="col-sm-3 col-md-4" style="text-align: right;">
 
               </div>
-              <% if @company.company_setting.allows_optimization %>
-              <div class="col-sm-3" style="text-align: right; color: #505050;">
-                <div class="optimizer-item">
-                  <b>O elige varios servicios y te propondremos los mejores horarios:&nbsp;&nbsp;</b>
-                </div>
-              </div>
-              <div class="col-sm-3 col-md-2" style="text-align: right;">
-                <div class="optimizer-item">
-                  <button type="button" id="optimizerOpenBtn" class="btn btn-green" data-toggle="modal" data-target="#hoursOptimizer" style="background: #22c488; color: #ffffff; font-size: 20px;">Elegir servicios</button>
-                </div>
-              </div>
-              <% end %>
             </div>
             <div class="row">
               <div class="col-sm-6">

@@ -33,14 +33,14 @@ class DashboardController < ApplicationController
 			if session_booking.sessions_amount > session_booking.sessions_taken
 				@session_bookings << session_booking
 			else
-				active_count = session_booking.bookings.where('start > ?', DateTime.now).count
+				active_count = session_booking.bookings.where('start > ?', DateTime.now - eval(ENV["TIME_ZONE_OFFSET"])).count
 				if active_count > 0
 					@session_bookings << session_booking
 				end
 			end
 		end
 
-		@lastBookings = Booking.where(service_provider_id: @service_providers).where('start >= ?', Time.now).where('is_session = false or (is_session = true and is_session_booked = true)').order(updated_at: :desc).limit(50)
+		@lastBookings = Booking.where(service_provider_id: @service_providers).where('start >= ?', Time.now - eval(ENV["TIME_ZONE_OFFSET"])).where('is_session = false or (is_session = true and is_session_booked = true)').order(updated_at: :desc).limit(50)
 		@todayBookings = Booking.where(service_provider_id: @service_providers).where.not(status_id: Status.find_by_name("Cancelado")).where("DATE(start) = DATE(?)", Time.now - eval(ENV["TIME_ZONE_OFFSET"])).where('is_session = false or (is_session = true and is_session_booked = true)').order(:start)
 		@monthBookings = Booking.where(service_provider_id: @service_providers).where("created_at BETWEEN ? AND ?", Time.now.beginning_of_month - eval(ENV["TIME_ZONE_OFFSET"]), Time.now.end_of_month - eval(ENV["TIME_ZONE_OFFSET"])).where('is_session = false or (is_session = true and is_session_booked = true)')
 		@statusArray = []

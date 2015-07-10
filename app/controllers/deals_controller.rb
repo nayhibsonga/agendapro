@@ -1,6 +1,8 @@
 class DealsController < ApplicationController
   before_action :set_deal, only: [:show, :edit, :update, :destroy]
   before_action :authenticate_user!
+  before_action :quick_add
+  load_and_authorize_resource
   layout "admin"
 
   # GET /deals

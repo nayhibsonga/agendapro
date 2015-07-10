@@ -149,7 +149,7 @@
   color: #505050;
   direction: ltr;
   display: block;
-  font-family: TradeGothic, FranklinGothic, "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
+  font-family: 'Roboto Condensed', sans-serif;
   font-size: 21px;
   font-weight: 500;
   line-height: 23.100000381469727px;
@@ -441,27 +441,6 @@ select[name="serviceOptimizerSelector"] {
   width: auto;
 }
 
-/*.fc-widget-header
-{
-  width:200px;
-}
-.fc-widget-header.fc-first, .fc-widget-header.fc-last
-{
-  width:auto;
-}
-.fc-widget-content
-{
-  width:200px;
-}
-.fc-widget-content.fc-first, .fc-widget-content.fc-last
-{
-  width:auto;
-}
-
-#calendar table {
-  table-layout: fixed;
-}*/
-
 .label-calendar {
   font-size: 11px;
 }
@@ -469,6 +448,12 @@ select[name="serviceOptimizerSelector"] {
 @media (min-width: 768px) {
   .label-calendar {
     font-size: 11px;
+  }
+
+  .modal.modalOverModal .modal-dialog {
+    max-width: 1300px;
+    padding-right: 50px;
+    padding-left: 50px;
   }
 }
 
@@ -520,3 +505,17 @@ select[name="serviceOptimizerSelector"] {
   }
 }
 
+/*
+  ================================
+  ============ Alerts ============
+  ================================
+*/
+.calendar-alert {
+   position: fixed;
+   bottom: 25px;
+   padding-left: 0;
+}
+.calendar-alert > .alert {
+  position: initial;
+  width: initial;
+}

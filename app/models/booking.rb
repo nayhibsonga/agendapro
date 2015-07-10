@@ -1,13 +1,14 @@
 class Booking < ActiveRecord::Base
-  belongs_to :service_provider
-  belongs_to :service
-  belongs_to :user
-  belongs_to :status
-  belongs_to :location
-  belongs_to :promotion
-  belongs_to :client
-  belongs_to :deal
-  belongs_to :payed_booking
+	belongs_to :service_provider
+	belongs_to :service
+	belongs_to :user
+	belongs_to :status
+	belongs_to :location
+	belongs_to :promotion
+	belongs_to :client
+	belongs_to :deal
+	belongs_to :payed_booking
+	belongs_to :payment
 	belongs_to :session_booking
 
   has_many :booking_histories, dependent: :destroy

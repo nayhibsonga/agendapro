@@ -214,6 +214,30 @@ $(function () {
       };
     };
   });
+  $('#new_payment_method_button').click(function() {
+    $('form.company_payment_method_form').attr('action', '/company_payment_methods');
+    $('form.company_payment_method_form').attr('id', 'new_company_payment_method');
+    $('form.company_payment_method_form').removeClass('edit_company_payment_method');
+    $('form.company_payment_method_form input[name="_method"]').remove();
+    $('#company_payment_method_name').val('');
+    $('#company_payment_method_active').attr('checked', true);
+    $('#company_payment_method_number_required').attr('checked', true);
+    $('#payment_method').modal('show');
+  });
+
+  $('.edit_company_payment_button').click(function(e) {
+    $('form.company_payment_method_form').attr('action', '/company_payment_methods/' + $(e.currentTarget).data('id'));
+    $('form.company_payment_method_form').attr('id', 'edit_company_payment_method_' + $(e.currentTarget).data('id'));
+    $('form.company_payment_method_form').addClass('edit_company_payment_method');
+    if ($('form.company_payment_method_form input[name="_method"]').length < 1) {
+      $('form.company_payment_method_form').append('<input name="_method" type="hidden" value="patch">');
+    }
+    $('#company_payment_method_name').val($(e.currentTarget).data('name'));
+    $('#company_payment_method_active').attr('checked', $(e.currentTarget).data('active'));
+    $('#company_payment_method_number_required').attr('checked', $(e.currentTarget).data('number-required'));
+    $('#payment_method').modal('show');
+  });
+  
 });
 
 function uncheckCheckbox (parent) {

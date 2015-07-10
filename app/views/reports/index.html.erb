@@ -4,14 +4,6 @@
 </script>
 <%= javascript_include_tag "//www.google.com/jsapi", "chartkick" %>
 
-<div class="container-fluid background-grey">
-  <div class="row">
-    <div class="col-md-12">
-      <h2 class="text-green">Reportes</h2>
-      <p>Acá podrás visualizar toda la información almacenada en el sistema. Puedes ver el detalle de tu negocio y compararlo con el periodo anterior de forma sencilla.</p>
-    </div>
-  </div>
-</div>
 <div class="container-fluid">
   <div class="row">
     <div class="col-md-12">
@@ -20,7 +12,7 @@
         <div class="col-md-3">
           <input type="text" id="from" name="from" class="form-control report_select" value="<%= Time.now.strftime("%Y-%m-%d") %>" style="margin-top: 20px;">
         </div>
-        <label for="from" class="col-md-1 control-label" style="margin-top: 20px;">Hasta:</label>
+        <label for="to" class="col-md-1 control-label" style="margin-top: 20px;">Hasta:</label>
         <div class="col-md-3">
           <input type="text" id="to" name="to" class="form-control report_select" value="<%= Time.now.strftime("%Y-%m-%d") %>" style="margin-top: 20px;">
         </div>
