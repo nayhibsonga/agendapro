@@ -57,11 +57,10 @@ class SessionBooking < ActiveRecord::Base
 			@data[:user] = @user
 
 		# LOCATION
+			@locations = []
 			@location = {}
 			@location[:name] = bookings[0].location.name
 			@location[:client_name] = bookings[0].client.first_name + ' ' + bookings[0].client.last_name
-			@location[:send_mail] = bookings[0].location.notification and !bookings[0].location.email.blank? and bookings[0].location.get_booking_configuration_email == 0
-			@location[:email] = bookings[0].location.email
 
 			@location_table = ''
 			bookings.each do |book|
@@ -74,7 +73,18 @@ class SessionBooking < ActiveRecord::Base
 			end
 			@location[:location_table] = @location_table
 
-			@data[:location] = @location
+			location_emails = NotificationEmail.where(id:  NotificationLocation.select(:notification_email_id).where(location: bookings[0].location), receptor_type: 1).select(:email).distinct
+			if bookings[0].web_origin
+				location_emails = location_emails.where(new_web: true)
+			else
+				location_emails = location_emails.where(new: true)
+			end
+			location_emails.each do |local|
+				@location[:email] = local.email
+				@locations << @location
+			end
+
+			@data[:locations] = @locations
 
 		# SERVICE PROVIDER
 

@@ -1736,25 +1736,25 @@ class BookingMailer < ActionMailer::Base
 		end
 
 		# Email notificacion local
-		if data[:location][:send_mail]
+		data[:locations].each do |location|
 			message[:to] = [{
-							:email => data[:location][:email],
+							:email => location[:email],
 							:type => 'bcc'
 						}]
 			message[:merge_vars] = [{
-							:rcpt => data[:location][:email],
+							:rcpt => location[:email],
 							:vars => [
 								{
 									:name => 'CLIENTNAME',
-									:content => data[:provider][:client_name]
+									:content => location[:client_name]
 								},
 								{
 									:name => 'SERVICEPROVIDER',
-									:content => data[:location][:name]
+									:content => location[:name]
 								},
 								{
 									:name => 'BOOKINGS',
-									:content => data[:location][:location_table]
+									:content => location[:location_table]
 								}
 							]
 						}]
