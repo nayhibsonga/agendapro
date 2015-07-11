@@ -15,9 +15,27 @@ class Payment < ActiveRecord::Base
   accepts_nested_attributes_for :payment_products, :reject_if => :all_blank, :allow_destroy => true
   accepts_nested_attributes_for :bookings, :reject_if => :all_blank
 
-  validates :payment_date, :location_id, :client_id, :presence => true
+  validate :payment_date_required, :client_required, :location_required
 
   after_save :set_numbers
+
+  def payment_date_required
+    if self.payment_date == nil
+      errors.add(:base, "El pago debe estar asociado a una fecha de pago.")
+    end
+  end
+
+  def client_required
+    if !self.client_id
+      errors.add(:base, "El pago debe estar asociado a un cliente en particular.")
+    end
+  end
+
+  def location_required
+    if !self.location_id
+      errors.add(:base, "El pago debe estar asociado a un local o sucursal.")
+    end
+  end
 
   def set_numbers
     bookings_total = 0

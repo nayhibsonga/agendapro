@@ -23,7 +23,7 @@
       <div class="form-group">
         <label for="location_ids[]" class="col-sm-1 control-label" style="margin-top: 20px;">Locales:</label>
         <div class="col-sm-4">
-          <% for location in Location.where(company_id: current_user.company_id).accessible_by(current_ability) do %>
+          <% for location in Location.where(company_id: current_user.company_id, active: true).accessible_by(current_ability) do %>
             <label class="checkbox-inline" style="margin-top: 20px;">
               <%= check_box_tag 'location_ids[]', location.id, params[:location_ids].blank? ? true : params[:location_ids] && params[:location_ids].includes(location.id), {class: "payments_select payment_location"} %>
               <%= location.name.humanize %>
@@ -85,7 +85,7 @@
               <div class="form-group has-feedback">
                 <label for="payment_location_id" class="col-sm-4 control-label">Local</label>
                 <div class="col-sm-8">
-                  <%= collection_select(:payment, :location_id, Location.where(company_id: current_user.company_id).accessible_by(current_ability), :id, :name, {}, {class: "form-control"} ) %>
+                  <%= collection_select(:payment, :location_id, Location.where(company_id: current_user.company_id, active: true).accessible_by(current_ability), :id, :name, {}, {class: "form-control"} ) %>
                 </div>
               </div>
             </div>

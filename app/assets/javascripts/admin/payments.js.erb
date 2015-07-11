@@ -295,7 +295,7 @@ function past_sessions_modal(past_sessions_array) {
   $('#payment-past-bookings-table').empty();
   if (past_sessions_array.length > 0) {
     $.getJSON('/past_sessions/', { booking_ids: past_sessions_array }, function (past_sessions) {
-      window.console.log(past_sessions);
+      // window.console.log(past_sessions);
       if (past_sessions.past_sessions.length > 0) {
         $.each(past_sessions.past_sessions, function (key, past_session) {
           $('#payment-past-bookings-table').append('<tr class="payment-past-booking-tr"><td><a class="btn btn-default btn-xs" id="past_session_id_' + past_session.session_booking.id + '" data-bookings="' + past_session.session_booking_ids + '">Agregar...</a></td><td><div class="table-fixed">' + past_session.session_service + '</div></td><td><div class="table-fixed"></div></td><td><div class="table-fixed"></div></td><td><div class="table-fixed"></div></td><td><div class="table-fixed">$ ' + past_session.session_normal + '</div></td><td><div class="table-fixed">' + past_session.session_discount + ' %</div></td><td><div class="table-fixed">$ ' + past_session.session_price + '</div></td></tr>');
@@ -546,7 +546,7 @@ function savePayment() {
     dataType: 'json',
     success: function(payment){
       // window.console.log(payment);
-      alert('success');
+      alert('Pago guardado exitosamente.');
       $('#payment_id').val(payment.id);
       $("#save_payment_button").html('Guardar Pago');
       $('#save_payment_button').attr('disabled', false);
@@ -578,7 +578,7 @@ function destroyPayment(payment_id) {
     dataType: 'json',
     success: function(payment){
       // window.console.log(payment);
-      alert('success');
+      alert('Pago eliminado exitosamente.');
       $("#save_payment_button").html('Guardar Pago');
       $('#save_payment_button').attr('disabled', false);
       $('#delete_payment_button').attr('disabled', false);

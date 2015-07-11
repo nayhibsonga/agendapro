@@ -172,7 +172,7 @@ function loadBookingPayment(booking_id) {
 			var sessions = bookings_payment.sessions;
 			if (sessions.length > 0) {
 				$.each(sessions, function (key, full_session) {
-					window.console.log(full_session);
+					// window.console.log(full_session);
 					add_session_to_payment(full_session);
 				});
 			}
@@ -548,7 +548,7 @@ function savePayment() {
 		dataType: 'json',
 		success: function(payment){
 			// window.console.log(payment);
-			alert('success');
+			alert('Pago guardado exitosamente.');
 			$('#payment_id').val(payment.id);
 			$("#save_payment_button").html('Guardar Pago');
 			$('#save_payment_button').attr('disabled', false);
@@ -576,7 +576,7 @@ function destroyPayment() {
 		dataType: 'json',
 		success: function(payment){
 			// window.console.log(payment);
-			alert('success');
+			alert('Pago eliminado exitosamente.');
 			$('#payment_id').val(payment.id);
 			$("#delete_payment_button").html('Eliminar Pago');
 			$('#delete_payment_button').attr('disabled', false);
