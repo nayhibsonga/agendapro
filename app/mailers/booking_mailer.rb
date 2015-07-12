@@ -1704,7 +1704,7 @@ class BookingMailer < ActionMailer::Base
 						}]
 
 			# => Send mail
-			send_mail(template_name, template_content, messages)
+			send_mail(template_name, template_content, message)
 		end
 
 		# Notificacion service provider
@@ -1732,7 +1732,7 @@ class BookingMailer < ActionMailer::Base
 							}]
 
 			# => Send mail
-			send_mail(template_name, template_content, messages)
+			send_mail(template_name, template_content, message)
 		end
 
 		# Email notificacion local
@@ -1760,7 +1760,7 @@ class BookingMailer < ActionMailer::Base
 						}]
 
 			# => Send mail
-			send_mail(template_name, template_content, messages)
+			send_mail(template_name, template_content, message)
 		end
 	end
 
