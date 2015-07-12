@@ -90,38 +90,41 @@ class SessionBooking < ActiveRecord::Base
 
 			#Get providers ids
 			providers_ids = []
-			bookings.each do |book|
-				if !providers_ids.include?(book.service_provider_id)
-					providers_ids << book.service_provider_id
-				end
-			end
+      bookings.each do |book|
+        if !providers_ids.include?(book.service_provider_id)
+          providers_ids << book.service_provider_id
+        end
+      end
 
-			@provider = {}
-			@providers_array = []
-			@provider[:client_name] = bookings[0].client.first_name + ' ' + bookings[0].client.last_name
+      @provider = {}
+      @providers_array = []
+      @provider[:client_name] = bookings[0].client.first_name + ' ' + bookings[0].client.last_name
 
-			ServiceProvider.find(providers_ids).each do |provider|
-				@staff = {}
-				@staff[:name] = provider.public_name
-				@staff[:email] = provider.notification_email
-				if provider.get_booking_configuration_email == 0
-					provider_bookings = self.booked_bookings.where(service_provider: provider).order(:start)
-					@provider_table = ''
-					provider_bookings.each do |book|
-						@provider_table += '<tr style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;">' +
-								'<td style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;padding-top:8px;padding-bottom:8px;padding-right:8px;padding-left:8px;line-height:1.42857143;vertical-align:top;border-top-width:1px;border-top-style:solid;border-top-color:#ddd;">' + book.service.name + '</td>' +
-								'<td style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;padding-top:8px;padding-bottom:8px;padding-right:8px;padding-left:8px;line-height:1.42857143;vertical-align:top;border-top-width:1px;border-top-style:solid;border-top-color:#ddd;">' + I18n.l(book.start) + '</td>' +
-								'<td style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;padding-top:8px;padding-bottom:8px;padding-right:8px;padding-left:8px;line-height:1.42857143;vertical-align:top;border-top-width:1px;border-top-style:solid;border-top-color:#ddd;">' + if book.notes.blank? then '' else book.notes end + '</td>' +
-								'<td style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;padding-top:8px;padding-bottom:8px;padding-right:8px;padding-left:8px;line-height:1.42857143;vertical-align:top;border-top-width:1px;border-top-style:solid;border-top-color:#ddd;">' + if book.company_comment.blank? then '' else book.company_comment end + '</td>' +
-							'</tr>'
-					end
-					@staff[:provider_table] = @provider_table
-					@providers_array << @staff
-				end
-			end
+      providers_ids.each do |id|
+        provider = ServiceProvider.find(id)
+        emails = NotificationEmail.where(id: NotificationProvider.select(:notification_email_id).where(service_provider: provider), receptor_type: 2, summary: false).select(:email).distinct
+        emails.each do |email|
+          @staff = {}
+          @staff[:name] = provider.public_name
+          @staff[:email] = email.email
 
-			@provider[:array] = @providers_array
-			@data[:provider] = @provider
+          provider_bookings = self.booked_bookings.where(service_provider: provider).order(:start)
+          @provider_table = ''
+          provider_bookings.each do |book|
+            @provider_table += '<tr style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;">' +
+                '<td style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;padding-top:8px;padding-bottom:8px;padding-right:8px;padding-left:8px;line-height:1.42857143;vertical-align:top;border-top-width:1px;border-top-style:solid;border-top-color:#ddd;">' + book.service.name + '</td>' +
+                '<td style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;padding-top:8px;padding-bottom:8px;padding-right:8px;padding-left:8px;line-height:1.42857143;vertical-align:top;border-top-width:1px;border-top-style:solid;border-top-color:#ddd;">' + I18n.l(book.start) + '</td>' +
+                '<td style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;padding-top:8px;padding-bottom:8px;padding-right:8px;padding-left:8px;line-height:1.42857143;vertical-align:top;border-top-width:1px;border-top-style:solid;border-top-color:#ddd;">' + if book.notes.blank? then '' else book.notes end + '</td>' +
+                '<td style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;padding-top:8px;padding-bottom:8px;padding-right:8px;padding-left:8px;line-height:1.42857143;vertical-align:top;border-top-width:1px;border-top-style:solid;border-top-color:#ddd;">' + if book.company_comment.blank? then '' else book.company_comment end + '</td>' +
+              '</tr>'
+          end
+          @staff[:provider_table] = @provider_table
+          @providers_array << @staff
+        end
+      end
+
+      @provider[:array] = @providers_array
+      @data[:provider] = @provider
 
 		if bookings.order(:start).first.start > Time.now - eval(ENV["TIME_ZONE_OFFSET"])
 			BookingMailer.sessions_booking_mail(@data)
