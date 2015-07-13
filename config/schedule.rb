@@ -27,6 +27,5 @@ every '0 5 1 * *' do
 end
 
 every 1.days, :at => '5:30 am' do
-	runner "Location.booking_summary"
-	runner "ServiceProvider.booking_summary"
+	runner "NotificationEmail.booking_summary"
 end

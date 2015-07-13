@@ -44,7 +44,8 @@ class ResourcesController < ApplicationController
 
     respond_to do |format|
       if @resource.save
-        format.html { redirect_to resources_path, notice: 'Recurso creado exitosamente.' }
+        flash[:notice] = 'Recurso creado exitosamente.'
+        format.html { redirect_to resources_path }
         format.json { render :json => @resource }
       else
         format.html { render action: 'new' }
@@ -60,7 +61,8 @@ class ResourcesController < ApplicationController
 
     respond_to do |format|
       if @resource.update(resource_params)
-        format.html { redirect_to resources_path, notice: 'Recurso actualizado exitosamente.' }
+        flash[:notice] = 'Recurso actualizado exitosamente.'
+        format.html { redirect_to resources_path }
         format.json { render :json => @resource }
       else
         format.html { render action: 'edit' }

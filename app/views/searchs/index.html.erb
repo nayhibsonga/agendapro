@@ -1,435 +1,422 @@
 <!-- start: Modals -->
 <div class="modal fade" id="vimeo-modal" tabindex="-1" role="dialog" aria-labelledby="siginLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                <h4 class="modal-title">¿Qué es AgendaPro?</h4>
-            </div>
-            <div class="modal-body">
-                <div class="row text-center">
-                    <iframe src="//player.vimeo.com/video/104629013" width="600" height="338" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe> <p><a href="http://vimeo.com/104629013">¿Qué es AgendaPro?</a> from <a href="http://vimeo.com/user28070701">AgendaPro</a> on <a href="https://vimeo.com">Vimeo</a>.</p>
-                </div>
-            </div>
-        </div><!-- /.modal-content -->
-    </div><!-- /.modal-dialog -->
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h4 class="modal-title">¿Qué es AgendaPro?</h4>
+      </div>
+      <div class="modal-body">
+        <div class="row text-center">
+          <iframe src="//player.vimeo.com/video/104629013" width="600" height="338" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe> <p><a href="http://vimeo.com/104629013">¿Qué es AgendaPro?</a> from <a href="http://vimeo.com/user28070701">AgendaPro</a> on <a href="https://vimeo.com">Vimeo</a>.</p>
+        </div>
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
 <div class="modal fade" id="geolocation-modal" tabindex="-1" role="dialog" aria-labelledby="siginLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                <h4 class="modal-title">Escribe la ubicación dónde buscar...</h4>
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h4 class="modal-title">Escribe la ubicación dónde buscar...</h4>
+      </div>
+      <div class="modal-body">
+        <div class="row">
+          <div class="form-group">
+            <div class="col-sm-12">
+              <div class="input-group input-group-lg">
+                <%= text_field_tag :inputLocalization2, params[:inputLocalization], class: "form-control ", placeholder: "Escribe tu dirección, sector o comuna...", required: true %>
+                <span class="input-group-btn">
+                  <button id="geolocate_btn2" class="btn btn-default geolocate_btn" type="button"><i class="fa fa-crosshairs"></i> Encuéntrame</button>
+                </span>
+              </div>
             </div>
-            <div class="modal-body">
-                <div class="row">
-                    <div class="form-group">
-                        <div class="col-sm-12">
-                            <div class="input-group input-group-lg">
-                                <%= text_field_tag :inputLocalization2, params[:inputLocalization], class: "form-control ", placeholder: "Escribe tu dirección, sector o comuna...", required: true %>
-                                <span class="input-group-btn">
-                                    <button id="geolocate_btn2" class="btn btn-default geolocate_btn" type="button"><i class="fa fa-crosshairs"></i> Encuéntrame</button>
-                                </span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-green" id="modal_search">Buscar</button>
-            </div>
-        </div><!-- /.modal-content -->
-    </div><!-- /.modal-dialog -->
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-green" id="modal_search">Buscar</button>
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
 
 <!-- search -->
 <div class="background fill" style="height: 650px; background-color: #646464; background-image: url(<%= asset_path 'search/fondo'+rand(2..11).to_s+'.png' %>);" id="buscador">
-    <div class="fill">
-        <div class="container container-search fill" id="buscador2" style="height: 650px;">
-            <div class="row vertical-center-row">
-                <div class="col-sm-12">
-                    <div class="row">
-                        <div class="col-sm-12">
-                            <h1 class="search-text">Busca, Encuentra y <br> Reserva <span class="search-text-green" id="typed-text"></span></h1>
-                        </div>
-                    </div>
-                    <div class="row search-row">
-                        <div class="col-sm-2 auto-width">
-                            <%= image_tag 'search/pin-overlay.png', :alt => 'Pin', class: "img-responsive pull-left" %>
-                        </div>
-                        <div class="col-xs-10 col-sm-9 col-md-7">
-                            <%= form_tag({controller: "searchs", action: "search"}, method: "GET", class: "form-horizontal search-form", id: "search-form") do %>
-                                <input type="hidden" id="latitude" name="latitude" value="-33.413673">
-                                <input type="hidden" id="longitude" name="longitude" value="-70.573426">
-                                <div class="form-group">
-                                    <div class="col-xs-1">
-                                        <span class="step-number pull-right">1</span>
-                                    </div>
-                                    <div class="col-xs-11">
-                                        <div class="input-group input-group-lg">
-                                            <%= text_field_tag :inputLocalization, params[:inputLocalization], class: "form-control form-transparent", placeholder: "Escribe tu dirección, sector o comuna...", required: true %>
-                                            <span class="input-group-btn">
-                                                <button id="geolocate_btn" class="btn btn-down form-transparent geolocate_btn" type="button"><i class="fa fa-crosshairs"></i> Encuéntrame</button>
-                                            </span>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <div class="col-xs-1">
-                                        <span class="step-number pull-right">2</span>
-                                    </div>
-                                    <div class="col-xs-11">
-                                        <div class="input-group input-group-lg">
-                                            <%= search_field_tag :inputSearch, params[:inputSearch], class: "form-control input-lg green-placeholder", placeholder: "Ejemplo: Corte de Pelo, Masajes", :required => "true", :autofocus => "autofocus" %>
-                                            <span class="input-group-btn">
-                                                <button id="search_btn" class="btn btn-search form-transparent btn-lg" type="submit">&nbsp;&nbsp;&nbsp;&nbsp;<i class="fa fa-search"></i> Buscar&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</button>
-                                            </span>
-                                        </div>
-                                    </div>
-                                    <!-- <div class="col-xs-8">
-                                        <%= search_field_tag :inputSearch, params[:inputSearch], class: "form-control input-lg green-placeholder", placeholder: "Ejemplo: Corte de Pelo, Masajes", :required => "true", :autofocus => "autofocus" %>
-                                    </div>
-                                    <div class="col-xs-4">
-                                        <button id="search_btn" class="btn btn-search form-transparent btn-lg full-width" type="submit" disabled><i class="fa fa-search"></i> Buscar</button>
-                                    </div> -->
-                                </div>
-                            <% end %>
-                        </div>
-                    </div>
-                </div>
+  <div class="fill">
+    <div class="container container-search fill" id="buscador2" style="height: 650px;">
+      <div class="row vertical-center-row">
+        <div class="col-sm-12">
+          <div class="row">
+            <div class="col-sm-12">
+              <h1 class="search-text">Busca, Encuentra y <span class="break">Reserva</span> <span class="search-text-green" id="typed-text"></span></h1>
             </div>
+          </div>
+          <div class="row search-row">
+            <div class="col-sm-2 auto-width">
+              <%= image_tag 'search/pin-overlay.png', :alt => 'Pin', class: "img-responsive pull-left" %>
+            </div>
+            <div class="col-xs-10 col-sm-9 col-md-7">
+              <%= form_tag({controller: "searchs", action: "search"}, method: "GET", class: "form-horizontal search-form", id: "search-form") do %>
+                <input type="hidden" id="latitude" name="latitude" value="-33.413673">
+                <input type="hidden" id="longitude" name="longitude" value="-70.573426">
+                <div class="form-group">
+                  <div class="col-xs-1">
+                    <span class="step-number pull-right">1</span>
+                  </div>
+                  <div class="col-xs-11">
+                    <div class="input-group input-group-lg">
+                      <%= text_field_tag :inputLocalization, params[:inputLocalization], class: "form-control form-transparent", placeholder: "Escribe tu dirección, sector o comuna...", required: true %>
+                      <span class="input-group-btn">
+                        <button id="geolocate_btn" class="btn btn-down form-transparent geolocate_btn" type="button"><i class="fa fa-crosshairs"></i> Encuéntrame</button>
+                      </span>
+                    </div>
+                  </div>
+                </div>
+                <div class="form-group">
+                  <div class="col-xs-1">
+                    <span class="step-number pull-right">2</span>
+                  </div>
+                  <div class="col-xs-11">
+                    <div class="input-group input-group-lg">
+                      <%= search_field_tag :inputSearch, params[:inputSearch], class: "form-control input-lg green-placeholder", placeholder: "Ejemplo: Corte de Pelo, Masajes", :required => "true", :autofocus => "autofocus" %>
+                      <span class="input-group-btn">
+                        <button id="search_btn" class="btn btn-search form-transparent btn-lg" type="submit">&nbsp;&nbsp;&nbsp;&nbsp;<i class="fa fa-search"></i> Buscar&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</button>
+                      </span>
+                    </div>
+                  </div>
+                  <!-- <div class="col-xs-8">
+                    <%= search_field_tag :inputSearch, params[:inputSearch], class: "form-control input-lg green-placeholder", placeholder: "Ejemplo: Corte de Pelo, Masajes", :required => "true", :autofocus => "autofocus" %>
+                  </div>
+                  <div class="col-xs-4">
+                    <button id="search_btn" class="btn btn-search form-transparent btn-lg full-width" type="submit" disabled><i class="fa fa-search"></i> Buscar</button>
+                  </div> -->
+                </div>
+              <% end %>
+            </div>
+          </div>
         </div>
+      </div>
     </div>
-    <div class="row search-pull-up">
-        <div class="col-sm-12 text-center">
-            <h1><a href="/#servicios" class="btn btn-down form-transparent btn-lg"><i class="fa fa-chevron-down"></i></a></h1>
-        </div>
+  </div>
+  <div class="row search-pull-up">
+    <div class="col-sm-12 text-center">
+      <h1><a href="/#servicios" class="btn btn-down form-transparent btn-lg"><i class="fa fa-chevron-down"></i></a></h1>
     </div>
+  </div>
 </div>
 
 <!-- Servicios -->
-<div class="">
+<div>
+  <div class="container">
+    <div class="row text-gray title-row" id="servicios">
+      <div class="col-sm-12">
+        <h1 class="text-center text-uppercase">¿Qué puedes encontrar?</h1>
+        <h3 class="text-center search-text-green">¡Reserva los mejores servicios de salud y belleza en Chile!</h3>
+        <%= image_tag "search/caret-down.png", alt: "caret-down", class: "pull-center caret-down", width: "39px" %>
+      </div>
+    </div>
+  </div>
+  <div class="background background-light-grey">
     <div class="container">
-        <div class="row text-gray title-row" id="servicios">
-            <div class="col-sm-12">
-                <h1 class="text-center text-uppercase">¿Qué puedes encontrar?</h1>
-                <h3 class="text-center search-text-green">¡Reserva los mejores servicios de salud y belleza en Chile!</h3>
-                <%= image_tag "search/caret-down.png", alt: "caret-down", class: "pull-center caret-down", width: "39px" %>
-            </div>
-        </div>
+      <div class="row row-padded">
+        <a class="btn btn-default sector_search" role="button" data-search="spa">
+            <%= image_tag "search/spa.png", alt: "Spa", size: "48x37" %>
+            <p>Spa</p>
+        </a>
+        <a class="btn btn-default sector_search" role="button" data-search="peluquería">
+            <%= image_tag "search/peluqueria.png", alt: "Peluquerías", size: "48x37" %>
+            <p>Peluquerías</p>
+        </a>
+        <a class="btn btn-default sector_search" role="button" data-search="maquillaje">
+            <%= image_tag "search/maquillaje.png", alt: "Maquillaje", size: "48x37" %>
+            <p>Maquillaje</p>
+        </a>
+        <a class="btn btn-default sector_search" role="button" data-search="centro de estética">
+            <%= image_tag "search/centros_de_estetica.png", alt: "Clinicas y Centros de Estetica", size: "48x37" %>
+            <p>Centros de Estética</p>
+        </a>
+        <a class="btn btn-default sector_search" role="button" data-search="masaje">
+            <%= image_tag "search/masajes.png", alt: "Masajes", size: "48x37" %>
+            <p>Masajes</p>
+        </a>
+      </div>
+      <div class="row row-padded">
+        <a class="btn btn-default sector_search" role="button" data-search="manicure">
+            <%= image_tag "search/manicure_pedicure.png", alt: "Manos y Pies", size: "48x37" %>
+            <p>Manos y Pies</p>
+        </a>
+        <a class="btn btn-default sector_search" role="button" data-search="medicina alternativa">
+            <%= image_tag "search/medicina_alternativa.png", alt: "Medicina Alternativa", size: "48x37" %>
+            <p>Medicina Alternativa</p>
+        </a>
+        <a class="btn btn-default sector_search" role="button" data-search="bronceado">
+            <%= image_tag "search/bronceado.png", alt: "Bronceados", size: "48x37" %>
+            <p>Bronceados</p>
+        </a>
+        <a class="btn btn-default sector_search" role="button" data-search="tratamiento facial">
+            <%= image_tag "search/tratamientos_faciales.png", alt: "Tratamientos Faciales", size: "48x37" %>
+            <p>Tratamientos Faciales</p>
+        </a>
+        <a class="btn btn-default sector_search" role="button" data-search="tratamiento corporal">
+            <%= image_tag "search/tratamientos_corporales.png", alt: "Tratamientos Corporales", size: "48x37" %>
+            <p>Tratamientos Corporales</p>
+        </a>
+      </div>
     </div>
-    <div class="background background-light-grey">
-        <div class="container">
-            <div class="row row-padded">
-                <a class="btn btn-default sector_search" role="button" data-search="spa">
-                        <%= image_tag "search/spa.png", alt: "Spa", size: "48x37" %>
-                        <p>Spa</p>
-                </a>
-                <a class="btn btn-default sector_search" role="button" data-search="peluquería">
-                        <%= image_tag "search/peluqueria.png", alt: "Peluquerías", size: "48x37" %>
-                        <p>Peluquerías</p>
-                </a>
-                <a class="btn btn-default sector_search" role="button" data-search="maquillaje">
-                        <%= image_tag "search/maquillaje.png", alt: "Maquillaje", size: "48x37" %>
-                        <p>Maquillaje</p>
-                </a>
-                <a class="btn btn-default sector_search" role="button" data-search="centro de estética">
-                        <%= image_tag "search/centros_de_estetica.png", alt: "Clinicas y Centros de Estetica", size: "48x37" %>
-                        <p>Centros de Estética</p>
-                </a>
-                <a class="btn btn-default sector_search" role="button" data-search="masaje">
-                        <%= image_tag "search/masajes.png", alt: "Masajes", size: "48x37" %>
-                        <p>Masajes</p>
-                </a>
-            </div>
-            <div class="row row-padded">
-                <a class="btn btn-default sector_search" role="button" data-search="manicure">
-                        <%= image_tag "search/manicure_pedicure.png", alt: "Manos y Pies", size: "48x37" %>
-                        <p>Manos y Pies</p>
-                </a>
-                <a class="btn btn-default sector_search" role="button" data-search="medicina alternativa">
-                        <%= image_tag "search/medicina_alternativa.png", alt: "Medicina Alternativa", size: "48x37" %>
-                        <p>Medicina Alternativa</p>
-                </a>
-                <a class="btn btn-default sector_search" role="button" data-search="bronceado">
-                        <%= image_tag "search/bronceado.png", alt: "Bronceados", size: "48x37" %>
-                        <p>Bronceados</p>
-                </a>
-                <a class="btn btn-default sector_search" role="button" data-search="tratamiento facial">
-                        <%= image_tag "search/tratamientos_faciales.png", alt: "Tratamientos Faciales", size: "48x37" %>
-                        <p>Tratamientos Faciales</p>
-                </a>
-                <a class="btn btn-default sector_search" role="button" data-search="tratamiento corporal">
-                        <%= image_tag "search/tratamientos_corporales.png", alt: "Tratamientos Corporales", size: "48x37" %>
-                        <p>Tratamientos Corporales</p>
-                </a>
-            </div>
-        </div>
-    </div>
+  </div>
 </div>
+<% if @companies.length > 0 %>
 <div class="">
-    <div class="background">
-        <div class="container">
-            <div class="row title-row text-gray">
-                <div class="col-xs-12">
-                    <h1 class="text-center text-uppercase">Algunos de Nuestros Clientes</h1>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-xs-1">
-                    <a id="msprev" class="cfs-arrow pull-left" href="#"><%= image_tag "search/prev_arrow.png", alt: "Prev Arrow" %></a>
-                </div>
-                <div class="col-xs-10">
-                    <div id="carousel">
-                        <a href="http://theboss.agendapro.cl/"><%= image_tag "search/companies/thebosscolor.png", alt: "The Boss", size: "169x121" %></a>
-                        <!-- <a href="http://miranda.agendapro.cl/"><%= image_tag "search/companies/mirandacolor.png", alt: "Miranda", size: "121x121" %></a> -->
-                        <a href="http://nutricioncuerpoyalma.agendapro.cl/"><%= image_tag "search/companies/nutricioncuerpoyalmacolor.png", alt: "Nutrición Cuerpo y Alma", size: "135x121" %></a>
-                        <a href="http://labanqueta.agendapro.cl/"><%= image_tag "search/companies/labanquetacolor.png", alt: "La Banqueta", size: "142x121" %></a>
-                        <a href="http://soloparamunecas.agendapro.cl/"><%= image_tag "search/companies/soloparamunecascolor.png", alt: "Solo para Muñecas", size: "123x121" %></a>
-                        <a href="http://captive.agendapro.cl/"><%= image_tag 'search/companies/captivecolor.png', alt: 'Captive', size: '169x121' %></a>
-                        <a href="http://fiercebeauty.agendapro.cl/"><%= image_tag 'search/companies/fiercebeautycolor.png', alt: 'Fierce Beaty Salon', size: '169x121' %></a>
-                        <a href="http://softhair.agendapro.cl/"><%= image_tag 'search/companies/softhaircolor.png', alt: 'Soft Hair', size: '169x121' %></a>
-                        <a href="http://pamelan.agendapro.cl/"><%= image_tag 'search/companies/pamelancolor.png', alt: 'Pamelan', size: '169x121' %></a>
-                        <a href="http://laserbellefemme.agendapro.cl/"><%= image_tag 'search/companies/laserbellefemmecolor.png', alt: 'Laser Belle Femme', size: '169x121' %></a>
-                        <!-- <a href="http://estilosurbanos.agendapro.cl/"><%= image_tag 'search/companies/estilosurbanoscolor.png', alt: 'Estilos Urbanos', size: '169x121' %></a> -->
-                        <a href="http://veronicavergara.agendapro.cl/"><%= image_tag 'search/companies/veronicavergaracolor.png', alt: 'Veronica Vergara', size: '169x121' %></a>
-                        <a href="http://qtis.agendapro.cl/"><%= image_tag 'search/companies/qtiscolor.png', alt: 'Qtis e.i.r.l.', size: '169x121' %></a>
-                        <a href="http://elfoton.agendapro.cl/"><%= image_tag 'search/companies/elfotoncolor.png', alt: 'El Foton', size: '169x121' %></a>
-                        <a href="http://alexletelier.agendapro.cl/"><%= image_tag 'search/companies/alexleteliercolor.png', alt: 'Alex Letelier', size: '169x121' %></a>
-                        <a href="http://esteticadivitiae.agendapro.cl/"><%= image_tag 'search/companies/esteticadivitiaecolor.png', alt: 'Estetica Divitiae', size: '169x121' %></a>
-                        <a href="http://huellas.agendapro.cl/"><%= image_tag 'search/companies/huellascolor.png', alt: 'Huellas', size: '169x121' %></a>
-                        <a href="http://lkstudiodebelleza.agendapro.cl/"><%= image_tag 'search/companies/lkstudiodebellezacolor.png', alt: 'LK Studio de Belleza', size: '169x121' %></a>
-                    </div>
-                </div>
-                <div class="col-xs-1">
-                    <a id="msnext" class="cfs-arrow pull-right" href="#"><%= image_tag "search/next_arrow.png", alt: "Next Arrow" %></a>
-                </div>
-            </div>
+  <div class="background">
+    <div class="container">
+      <div class="row title-row text-gray">
+        <div class="col-xs-12">
+          <h1 class="text-center text-uppercase">Algunos de Nuestros Clientes</h1>
         </div>
+      </div>
+      <div class="row">
+        <div class="col-xs-1">
+          <a id="msprev" class="cfs-arrow pull-left" href="#"><%= image_tag "search/prev_arrow.png", alt: "Prev Arrow" %></a>
+        </div>
+        <div class="col-xs-10">
+          <div id="carousel">
+            <% @companies.each do |company| %>
+              <a href="http://<%= company.web_address %>.agendapro.cl/"><%= image_tag company.logo_url.to_s, :size => "169x121", :alt => company.name %></a>
+            <% end %>
+          </div>
+        </div>
+        <div class="col-xs-1">
+          <a id="msnext" class="cfs-arrow pull-right" href="#"><%= image_tag "search/next_arrow.png", alt: "Next Arrow" %></a>
+        </div>
+      </div>
     </div>
+  </div>
 </div>
+<% end %>
 
 <!-- Qué Hacemos -->
 <div class="below-navbar">
-    <div class="background-repeat background-gray-pattern" style="background-image: url(<%= asset_path 'backgrounds/gray-background.png' %>);" id="quehacemos">
-        <div class="container">
-            <div class="row title-row">
-                <div class="col-sm-12">
-                    <h1 class="text-center text-uppercase">Qué Hacemos</h1>
-                    <p class="text-center" style="margin-top:-15px;">Sistema de Reservas Online enfocado en ayudar a pequeñas y medianas empresas en el manejo y gestión de sus negocios.<a href="" data-toggle="modal" data-target="#vimeo-modal"><%= image_tag "search/play1.png", alt: "play" %> Ver Video</a></p>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-xs-4 row-border box-content box-border-left text-center">
-                    <%= image_tag "search/busca.png", alt: "Busca", class: "center-block", size: "84x84" %>
-                    <p class="text-uppercase">Busca</p>
-                </div>
-                <div class="col-xs-4 row-border box-content box-border-left box-border-right text-center">
-                    <%= image_tag "search/encuentra.png", alt: "Encuentra", class: "center-block", size: "30x84" %>
-                    <p class="text-uppercase">Encuentra</p>
-                </div>
-                <div class="col-xs-4 row-border box-content box-border-right text-center">
-                    <%= image_tag "search/reserva.png", alt: "Reserva", class: "center-block", size: "80x84" %>
-                    <p class="text-uppercase">Reserva</p>
-                </div>
-            </div>
+  <div class="background-repeat background-gray-pattern" style="background-image: url(<%= asset_path 'backgrounds/gray-background.png' %>);" id="quehacemos">
+    <div class="container">
+      <div class="row title-row">
+        <div class="col-sm-12">
+          <h1 class="text-center text-uppercase">Qué Hacemos</h1>
+          <p class="text-center" style="margin-top:-15px;">Sistema de Reservas Online enfocado en ayudar a pequeñas y medianas empresas en el manejo y gestión de sus negocios.<a href="" data-toggle="modal" data-target="#vimeo-modal"><%= image_tag "search/play1.png", alt: "play" %> Ver Video</a></p>
         </div>
+      </div>
+      <div class="row">
+        <div class="col-xs-4 row-border box-content box-border-left text-center">
+          <%= image_tag "search/busca.png", alt: "Busca", class: "center-block", size: "84x84" %>
+          <p class="text-uppercase">Busca</p>
+        </div>
+        <div class="col-xs-4 row-border box-content box-border-left box-border-right text-center">
+          <%= image_tag "search/encuentra.png", alt: "Encuentra", class: "center-block", size: "30x84" %>
+          <p class="text-uppercase">Encuentra</p>
+        </div>
+        <div class="col-xs-4 row-border box-content box-border-right text-center">
+          <%= image_tag "search/reserva.png", alt: "Reserva", class: "center-block", size: "80x84" %>
+          <p class="text-uppercase">Reserva</p>
+        </div>
+      </div>
     </div>
+  </div>
 </div>
 <div class="below-navbar">
+  <div class="container">
+    <div class="row">
+      <div class="col-xs-12 pull-center">
+        <h1 class="text-uppercase text-gray">¡Comentarios sobre nosotros!</h1>
+        <%= image_tag "search/quotes.png", alt: "quote", height: "58px" %>
+      </div>
+    </div>
+    <div class="row below-navbar">
+      <div class="col-xs-12 col-md-4">
+        <div class="media">
+          <a href="#" class="media-left">
+            <%= image_tag "search/slopez.jpg", class: "img-circle", size: "80x80" %>
+          </a>
+          <div class="media-body">
+            <h4 class="media-heading">
+              Sebastián López</br>
+              <small><a href="http://labanqueta.agendapro.cl">La Banqueta Peluquería</a></small>
+            </h4>
+            <p align="justify">Estamos con AgendaPro desde sus inicios y la verdad es que no para de sorprendernos. Nuestros clientes reservan sus horas y llegan siempre sin la necesidad de que estemos pendientes. Además, la visibilidad de nuestra peluquería se ha visto aumentada por toda la gente que busca.</p>
+          </div>
+        </div>
+      </div>
+      <div class="col-xs-12 col-md-4">
+        <div class="media">
+          <a href="#" class="media-left">
+            <%= image_tag "search/minata.png", class: "img-circle", size: "80x80" %>
+          </a>
+          <div class="media-body">
+            <h4 class="media-heading">
+              Minata Rodríguez</br>
+              <small><a href="http://minatarodriguez.blogspot.com/" target="blank">Blogger</a></small>
+            </h4>
+            <p align="justify">Con AgendaPro reservo todas mis horas sin la necesidad de llamar. Ya no pierdo tiempo llamando y esperando que me contesten. Además, con los recordatorios que me envían, siempre me acuerdo de ir. ¡De esta forma no pierdo nunca mis horas!</p>
+          </div>
+        </div>
+      </div>
+      <div class="col-xs-12 col-md-4">
+        <div class="media">
+          <a href="#" class="media-left">
+            <%= image_tag "search/sferrer.png", class: "img-circle", size: "80x80" %>
+          </a>
+          <div class="media-body">
+            <h4 class="media-heading">
+              Sebastián Ferrer</br>
+              <small><a href="http://theboss.agendapro.cl">The Boss Hair Club & Spa</a></small>
+            </h4>
+            <p align="justify">De los muchos sistemas que he utilizado durante mi trayectoria, AgendaPro ha sido el único que ha logrado realmente ayudarnos como Peluquería a ofrecer un mejor servicio a nuestros clientes.<br />Además, el soporte que entregan y las mejoras constantes, hacen que su servicio sea realmente el mejor disponible.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="background background-green social-background" id="contacto">
     <div class="container">
-        <div class="row">
-            <div class="col-xs-12 pull-center">
-                <h1 class="text-uppercase text-gray">¡Comentarios sobre nosotros!</h1>
-                <%= image_tag "search/quotes.png", alt: "quote", height: "58px" %>
+      <div class="row social-row">
+        <div class="col-sm-12">
+          <div class="pull-center">
+            <div class="social">
+              <a href="http://www.facebook.com/agendapro" target="blank">
+              <%= image_tag "search/facebook.png", alt: "Facebook" %>
+              <span class="text-uppercase no-focus">Facebook</span>
+              </a>
             </div>
+            <div class="social">
+              <a href="http://twitter.com/AgendaPro_CL" target="blank">
+              <%= image_tag "search/twitter.png", alt: "Twitter" %>
+              <span class="text-uppercase no-focus">Twitter</span>
+              </a>
+            </div>
+            <div class="social">
+              <a href="http://instagram.com/agendapro/" target="blank">
+              <%= image_tag "search/instagram.png", alt: "Instagram" %>
+              <span class="text-uppercase no-focus">Instagram</span>
+              </a>
+            </div>
+          </div>
         </div>
-        <div class="row below-navbar">
-            <div class="col-xs-12 col-md-4">
-                <div class="media">
-                    <a href="#" class="media-left">
-                        <%= image_tag "search/slopez.jpg", class: "img-circle", size: "80x80" %>
-                    </a>
-                    <div class="media-body">
-                        <h4 class="media-heading">
-                            Sebastián López</br>
-                            <small><a href="http://labanqueta.agendapro.cl">La Banqueta Peluquería</a></small>
-                        </h4>
-                        <p align="justify">Estamos con AgendaPro desde sus inicios y la verdad es que no para de sorprendernos. Nuestros clientes reservan sus horas y llegan siempre sin la necesidad de que estemos pendientes. Además, la visibilidad de nuestra peluquería se ha visto aumentada por toda la gente que busca.</p>
-                    </div>
-                </div>
-            </div>
-            <div class="col-xs-12 col-md-4">
-                <div class="media">
-                    <a href="#" class="media-left">
-                        <%= image_tag "search/minata.png", class: "img-circle", size: "80x80" %>
-                    </a>
-                    <div class="media-body">
-                        <h4 class="media-heading">
-                            Minata Rodríguez</br>
-                            <small><a href="http://minatarodriguez.blogspot.com/" target="blank">Blogger</a></small>
-                        </h4>
-                        <p align="justify">Con AgendaPro reservo todas mis horas sin la necesidad de llamar. Ya no pierdo tiempo llamando y esperando que me contesten. Además, con los recordatorios que me envían, siempre me acuerdo de ir. ¡De esta forma no pierdo nunca mis horas!</p>
-                    </div>
-                </div>
-            </div>
-            <div class="col-xs-12 col-md-4">
-                <div class="media">
-                    <a href="#" class="media-left">
-                        <%= image_tag "search/sferrer.png", class: "img-circle", size: "80x80" %>
-                    </a>
-                    <div class="media-body">
-                        <h4 class="media-heading">
-                            Sebastián Ferrer</br>
-                            <small><a href="http://theboss.agendapro.cl">The Boss Hair Club & Spa</a></small>
-                        </h4>
-                        <p align="justify">De los muchos sistemas que he utilizado durante mi trayectoria, AgendaPro ha sido el único que ha logrado realmente ayudarnos como Peluquería a ofrecer un mejor servicio a nuestros clientes.<br />Además, el soporte que entregan y las mejoras constantes, hacen que su servicio sea realmente el mejor disponible.</p>
-                    </div>
-                </div>
-            </div>
-        </div>
+      </div>
     </div>
-    <div class="background background-green social-background" id="contacto">
-        <div class="container">
-            <div class="row social-row">
-                <div class="col-sm-12">
-                    <div class="pull-center">
-                        <div class="social">
-                            <a href="http://www.facebook.com/agendapro" target="blank">
-                            <%= image_tag "search/facebook.png", alt: "Facebook" %>
-                            <span class="text-uppercase no-focus">Facebook</span>
-                            </a>
-                        </div>
-                        <div class="social">
-                            <a href="http://twitter.com/AgendaPro_CL" target="blank">
-                            <%= image_tag "search/twitter.png", alt: "Twitter" %>
-                            <span class="text-uppercase no-focus">Twitter</span>
-                            </a>
-                        </div>
-                        <div class="social">
-                            <a href="http://instagram.com/agendapro/" target="blank">
-                            <%= image_tag "search/instagram.png", alt: "Instagram" %>
-                            <span class="text-uppercase no-focus">Instagram</span>
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+  </div>
 </div>
 
 <!-- contact -->
 <div class="">
-    <div class="container">
-        <div class="row title-row">
-            <div class="col-sm-12">
-                <h1 class="pull-center text-gray text-uppercase">Contáctanos</h1>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-sm-6 office_address">
-                <div class="embed-responsive embed-responsive-4by3">
-                    <iframe class="embed-responsive-item" src="https://mapsengine.google.com/map/u/0/embed?mid=zxyVW9hDKDEg.kYaUAImoWzTg&amp;hl=es-419&amp;z=17"></iframe>
-                </div>
-            </div>
-            <div class="col-sm-6">
-                <%= form_tag("pcontact", method: "post", id: 'contact' ) do %>
-                    <%= hidden_field_tag :source, "search" %>
-                    <%= hidden_field_tag :inputName %>
-                    <%= hidden_field_tag :inputLastname %>
-                    <div class="row">
-                        <div class="form-group has-feedback">
-                            <label for="full_name" class="label-contacto">Nombre</label>
-                            <input type="text" id="full_name" name="user[full_name]" class="form-control" required>
-                            <span class="help-block"></span>
-                            <span class="form-control-feedback"></span>
-                        </div>
-                        <div class="form-group has-feedback">
-                            <%= label_tag(:inputEmail, 'E-mail', :class => "label-contacto") %>
-                            <%= email_field_tag(:inputEmail, nil, :class => "form-control", :required => true) %>
-                            <span class="help-block"></span>
-                            <span class="form-control-feedback"></span>
-                        </div>
-                        <div class="form-group">
-                            <%= label_tag(:inputSubject, "Asunto", :class => "label-contacto") %>
-                            <%= select_tag(:inputSubject, options_for_select(["Quiero agregar mi empresa a AgendaPro", "Servicio Técnico", "Consulta por plan especial", "Reclamos", "Otros"]), :class => "form-control") %>
-                            <span class="help-block"></span>
-                            <span class="form-control-feedback"></span>
-                        </div>
-                        <div class="form-group has-feedback">
-                            <%= label_tag(:inputMessage, "Mensaje", :class => "label-contacto") %>
-                            <%= text_area_tag(:inputMessage, nil, :class => "form-control", :required => true, :rows => 4) %>
-                            <span class="help-block"></span>
-                            <span class="form-control-feedback"></span>
-                        </div>
-                        <button type="submit" class="btn btn-orange btn-lg pull-right"><i class="fa fa-envelope-o"></i> Enviar</button>
-                    </div>
-                <% end %>
-            </div>
-        </div>
+  <div class="container">
+    <div class="row title-row">
+      <div class="col-sm-12">
+        <h1 class="pull-center text-gray text-uppercase">Contáctanos</h1>
+      </div>
     </div>
+    <div class="row">
+      <div class="col-sm-6 office_address">
+        <div class="embed-responsive embed-responsive-4by3">
+          <iframe class="embed-responsive-item" src="https://mapsengine.google.com/map/u/0/embed?mid=zxyVW9hDKDEg.kYaUAImoWzTg&amp;hl=es-419&amp;z=17"></iframe>
+        </div>
+      </div>
+      <div class="col-sm-6">
+        <%= form_tag("pcontact", method: "post", id: 'contact' ) do %>
+          <%= hidden_field_tag :source, "search" %>
+          <%= hidden_field_tag :inputName %>
+          <%= hidden_field_tag :inputLastname %>
+          <div class="row">
+            <div class="form-group has-feedback">
+              <label for="full_name" class="label-contacto">Nombre</label>
+              <input type="text" id="full_name" name="user[full_name]" class="form-control" required>
+              <span class="help-block"></span>
+              <span class="form-control-feedback"></span>
+            </div>
+            <div class="form-group has-feedback">
+              <%= label_tag(:inputEmail, 'E-mail', :class => "label-contacto") %>
+              <%= email_field_tag(:inputEmail, nil, :class => "form-control", :required => true) %>
+              <span class="help-block"></span>
+              <span class="form-control-feedback"></span>
+            </div>
+            <div class="form-group">
+              <%= label_tag(:inputSubject, "Asunto", :class => "label-contacto") %>
+              <%= select_tag(:inputSubject, options_for_select(["Quiero agregar mi empresa a AgendaPro", "Servicio Técnico", "Consulta por plan especial", "Reclamos", "Otros"]), :class => "form-control") %>
+              <span class="help-block"></span>
+              <span class="form-control-feedback"></span>
+            </div>
+            <div class="form-group has-feedback">
+              <%= label_tag(:inputMessage, "Mensaje", :class => "label-contacto") %>
+              <%= text_area_tag(:inputMessage, nil, :class => "form-control", :required => true, :rows => 4) %>
+              <span class="help-block"></span>
+              <span class="form-control-feedback"></span>
+            </div>
+            <button type="submit" class="btn btn-orange btn-lg pull-right"><i class="fa fa-envelope-o"></i> Enviar</button>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
 </div>
 <div class="below-navbar">
-    <div class="container">
-        <div class="row pull-center">
-            <%= image_tag 'search/logo_corfo.png', :alt => 'Corfo', :size => "207x72", class: "logo-corfo" %>
-            <%= image_tag 'search/logo_semilla.png', :alt => 'Corfo', :size => "137x72", class: "logo-semilla" %>
-        </div>
+  <div class="container">
+    <div class="row pull-center">
+      <%= image_tag 'search/logo_corfo.png', :alt => 'Corfo', :size => "207x72", class: "logo-corfo" %>
+      <%= image_tag 'search/logo_semilla.png', :alt => 'Corfo', :size => "137x72", class: "logo-semilla" %>
     </div>
+  </div>
 </div>
 <div class="below-navbar">
-    <div class="background-repeat contact-footer background-gray-pattern" style="background-image: url(<%= asset_path 'backgrounds/gray-background.png' %>);">
-        <div class="container">
-            <div class="row pull-center">
-                <div class="col-sm-4">
-                    <%= image_tag "footer/1.png", size: "22x29" %>
-                    <p>Ana María Carrera 5210,
-                        Las Condes, Santiago</p>
-                </div>
-                <div class="col-sm-4">
-                    <%= image_tag "footer/2.png", size: "24x19" %>
-                    <p>contacto@agendapro.cl</p>
-                </div>
-                <div class="col-sm-4">
-                    <%= image_tag "footer/3.png", size: "22x29" %>
-                    <p>(+56 9) 5178 5898</p>
-                </div>
-            </div>
-            <div class="row footer">
-                <div class="col-sm-5 copyright-footer">
-                    <i class="fa fa-copyright"></i> Copyright 2013 | Gunei Investment SpA | Todos los derechos reservados
-                </div>
-                <div class="col-sm-5 text-right links-footer">
-                    <%= link_to "Sobre Nosotros", aboutus_path %> | <%= link_to "Tutoriales", tutorials_path %> | <%= link_to 'Términos y Condiciones', '/Term_y_Cond_AgendaPro122014.pdf', :target => :blank %>
-                </div>
-                <div class="col-sm-2">
-                    <%= image_tag 'logos/logo1.png', :alt => 'AgendaPro', :size => "127x43", class: "pull-right" %>
-                </div>
-            </div>
+  <div class="background-repeat contact-footer background-gray-pattern" style="background-image: url(<%= asset_path 'backgrounds/gray-background.png' %>);">
+    <div class="container">
+      <div class="row pull-center">
+        <div class="col-sm-4">
+          <%= image_tag "footer/1.png", size: "22x29" %>
+          <p>Ana María Carrera 5210,
+            Las Condes, Santiago</p>
         </div>
+        <div class="col-sm-4">
+          <%= image_tag "footer/2.png", size: "24x19" %>
+          <p>contacto@agendapro.cl</p>
+        </div>
+        <div class="col-sm-4">
+          <%= image_tag "footer/3.png", size: "22x29" %>
+          <p>(+56 9) 5178 5898</p>
+        </div>
+      </div>
+      <div class="row footer">
+        <div class="col-sm-5 copyright-footer">
+          <i class="fa fa-copyright"></i> Copyright 2013 | Gunei Investment SpA | Todos los derechos reservados
+        </div>
+        <div class="col-sm-5 text-right links-footer">
+          <%= link_to "Sobre Nosotros", aboutus_path %> | <%= link_to "Tutoriales", tutorials_path %> | <%= link_to 'Términos y Condiciones', '/Term_y_Cond_AgendaPro122014.pdf', :target => :blank %>
+        </div>
+        <div class="col-sm-2">
+          <%= image_tag 'logos/logo1.png', :alt => 'AgendaPro', :size => "127x43", class: "pull-right" %>
+        </div>
+      </div>
     </div>
+  </div>
 </div>
 
 <% content_for :scripts do %>
-    <%= javascript_include_tag 'validations/validate' %>
-    <%= javascript_include_tag 'validations/home/contact' %>
-    <%= javascript_include_tag 'split-name' %>
-    <%= javascript_include_tag 'jquery.carouFredSel-6.2.1'  %>
-    <%= javascript_include_tag 'typed'  %>
-    <%= javascript_include_tag 'Alert' %>
-    <%= javascript_include_tag 'search/index'  %>
+  <%= javascript_include_tag 'validations/validate' %>
+  <%= javascript_include_tag 'validations/home/contact' %>
+  <%= javascript_include_tag 'split-name' %>
+  <%= javascript_include_tag 'jquery.carouFredSel-6.2.1'  %>
+  <%= javascript_include_tag 'typed'  %>
+  <%= javascript_include_tag 'Alert' %>
+  <%= javascript_include_tag 'search/index'  %>
 
-    <% if @lat && @lng && @formatted_address %>
-    <script type="text/javascript">
-        $('#latitude').val(<%= @lat %>);
-        $('#longitude').val(<%= @lng %>);
-        $('#inputLocalization').val('<%= @formatted_address %>');
-        $('#inputLocalization2').val('<%= @formatted_address %>');
-    </script>
-    <% else %>
-    <script type="text/javascript">
-        $('#inputLocalization').focus();
-    </script>
-    <% end %>
+  <% if @lat && @lng && @formatted_address %>
+  <script type="text/javascript">
+    $('#latitude').val(<%= @lat %>);
+    $('#longitude').val(<%= @lng %>);
+    $('#inputLocalization').val('<%= @formatted_address %>');
+    $('#inputLocalization2').val('<%= @formatted_address %>');
+  </script>
+  <% else %>
+  <script type="text/javascript">
+    $('#inputLocalization').focus();
+  </script>
+  <% end %>
 <% end %>

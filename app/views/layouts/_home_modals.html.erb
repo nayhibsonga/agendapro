@@ -1,0 +1,82 @@
+<!-- start: Modals -->
+<div class="modal fade" id="signin-modal" tabindex="-1" role="dialog" aria-labelledby="siginLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h4 class="modal-title">Inicia Sesión</h4>
+      </div>
+      <div class="modal-body">
+        <div class="row">
+          <div class="col-sm-12">
+            <span class="login-title">Ingresa con tus cuenta de Facebook o Google</span>
+          </div>
+        </div>
+        <div class="row" style="margin-top: 20px; padding-bottom: 20px; margin-bottom: 10px; border-bottom: 1px solid #949292;">
+          <div class="col-sm-2">
+          </div>
+          <div class="col-sm-4">
+            <%= link_to '<i class="fa fa-facebook"></i> Facebook'.html_safe, social_login_url('facebook'), { :class => "btn btn-block btn-social btn-facebook pull-right" }  %>
+          </div>
+          <div class="col-sm-4">
+            <%= link_to '<i class="fa fa-google"></i> Google'.html_safe, social_login_url('google_oauth2'), { :class => "btn btn-block btn-social btn-google-plus" }  %>
+          </div>
+          <div class="col-sm-2">
+          </div>
+        </div>
+        <div class="row" style="margin-bottom: 15px;">
+          <div class="col-sm-12">
+            <span class="login-title">O ingresa con tu cuenta de AgendaPro</span>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-sm-12">
+            <%= form_for :user, :url => user_session_url(:subdomain => false), :html => { class: 'form-horizontal' } do |f| %>
+            <div class="form-group">
+              <%= f.label :email, 'E-mail', :class => 'col-sm-4 control-label' %>
+              <div class="col-sm-8">
+                <%= f.email_field :email, :autofocus => true, :required => true, :class => 'form-control' %>
+              </div>
+            </div>
+            <div class="form-group">
+              <%= f.label :password, 'Contraseña', :class => 'col-sm-4 control-label' %>
+              <div class="col-sm-8">
+                <%= f.password_field :password, :required => true, :class => 'form-control' %>
+              </div>
+            </div>
+            <div class="form-group">
+              <div class="col-sm-offset-4 col-sm-8">
+                <div class="checkbox">
+                  <label>
+                    <%= f.check_box :remember_me %> Recordarme
+                  </label>
+                </div>
+              </div>
+            </div>
+            <div class="form-group">
+              <div class="col-sm-offset-4 col-sm-8">
+                <%= f.submit 'Ingresar', :class => 'btn btn-orange', onclick: "ga('send', 'event', 'Usuarios', 'Sign-In Usuarios', 'Ingreso desde AP');" %>
+              </div>
+            </div>
+            <% end %>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <%= link_to "¿Olvidaste tu contraseña?", new_password_url(:user, :subdomain => false) %>
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+<!-- end: Modals -->
+
+<% content_for :scripts do %>
+  <%= javascript_include_tag 'split-name' %>
+  <%= javascript_include_tag 'validations/validate' %>
+  <%= javascript_include_tag 'validations/home/signup' %>
+  <script type="text/javascript">
+    $(function () {
+      split_name('#user_full_name', '#user_first_name', '#user_last_name', '#signup-form');
+    });
+  </script>
+<% end %>

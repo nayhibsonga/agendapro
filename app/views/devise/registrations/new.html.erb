@@ -281,6 +281,7 @@
 <% end %>
 
 <% content_for :scripts do %>
+<%= javascript_include_tag 'validations/validate' %>
 <%= javascript_include_tag 'validations/home/new-user' %>
 <%= javascript_include_tag 'split-name' %>
 <script type="text/javascript">

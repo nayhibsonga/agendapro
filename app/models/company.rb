@@ -20,6 +20,7 @@ class Company < ActiveRecord::Base
 	has_many :company_from_email, dependent: :destroy
 	has_many :staff_codes, dependent: :destroy
 	has_many :deals, dependent: :destroy
+	has_many :company_payment_methods, dependent: :destroy
 
 	has_many :payment_accounts, dependent: :destroy
 
