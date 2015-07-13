@@ -131,7 +131,7 @@ class ClientsController < ApplicationController
   def bookings_history
     client = Client.find(params[:id])
     bookings = []
-    client.bookings.where('start < ?', Time.now).order(start: :desc).limit(10).each do |booking|
+    client.bookings.where('start < ?', Time.now).where('is_session = false or (is_session = true and is_session_booked = true)').order(start: :desc).limit(10).each do |booking|
       bookings.push( { start: booking.start, service: booking.service.name, provider: booking.service_provider.public_name, status: booking.status.name, notes: booking.notes, comment: booking.company_comment } )
     end
 
