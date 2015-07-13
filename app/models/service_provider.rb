@@ -520,28 +520,32 @@ class ServiceProvider < ActiveRecord::Base
                     if service.has_time_discount
                     	promo_time = provider.company.company_setting.promo_time
                     	if !promo_time.nil?
-                    		if Promo.where(:service_id => service.id, :day_id => day).where('').count > 0
+                    		service_promo = ServicePromo.find(service.active_service_promo_id)
 
-		                    	promo = Promo.where(:service_id => service.id, :day_id => day).first
+                    		if !service_promo.nil?
+	                    		if Promo.where(:service_promo_id => service_promo.id, :day_id => day, :location_id => local.id).count > 0
 
-	                    		if !(promo_time.morning_end.strftime("%H:%M") <= start_time_block.strftime("%H:%M") || end_time_block.strftime("%H:%M") <= promo_time.morning_start.strftime("%H:%M"))
-				                    		
-			                    	status = 'hora-promocion'
-			                    	promo_discount = promo.morning_discount
+			                    	promo = Promo.where(:service_promo_id => service_promo.id, :day_id => day, :location_id => local.id).first
 
-			                    elsif !(promo_time.afternoon_end.strftime("%H:%M") <= start_time_block.strftime("%H:%M") || end_time_block.strftime("%H:%M") <= promo_time.afternoon_start.strftime("%H:%M"))
+		                    		if !(promo_time.morning_end.strftime("%H:%M") <= start_time_block.strftime("%H:%M") || end_time_block.strftime("%H:%M") <= promo_time.morning_start.strftime("%H:%M"))
+					                    		
+				                    	status = 'hora-promocion'
+				                    	promo_discount = promo.morning_discount
 
-			                    	status = 'hora-promocion'
-			                    	promo_discount = promo.afternoon_discount
+				                    elsif !(promo_time.afternoon_end.strftime("%H:%M") <= start_time_block.strftime("%H:%M") || end_time_block.strftime("%H:%M") <= promo_time.afternoon_start.strftime("%H:%M"))
 
-			                    elsif !(promo_time.night_end.strftime("%H:%M") <= start_time_block.strftime("%H:%M") || end_time_block.strftime("%H:%M") <= promo_time.night_start.strftime("%H:%M"))
+				                    	status = 'hora-promocion'
+				                    	promo_discount = promo.afternoon_discount
 
-			                    	status = 'hora-promocion'
-			                    	promo_discount = promo.night_discount
+				                    elsif !(promo_time.night_end.strftime("%H:%M") <= start_time_block.strftime("%H:%M") || end_time_block.strftime("%H:%M") <= promo_time.night_start.strftime("%H:%M"))
 
-			                    end
+				                    	status = 'hora-promocion'
+				                    	promo_discount = promo.night_discount
 
-			                end
+				                    end
+
+				                end
+				            end
 			            end
                     end
 
