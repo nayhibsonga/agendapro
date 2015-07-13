@@ -351,8 +351,10 @@ class Booking < ActiveRecord::Base
   end
 
   def service_staff
-    if !self.service_provider.services.include?(self.service)
-      errors.add(:base, "El prestador seleccionado no realiza el servicio elegido en la reserva. Por favor agrega el servicio al prestador o elige otro prestador.")
+    unless c.changed_attributes.except("age").empty?
+      if !self.service_provider.services.include?(self.service)
+        errors.add(:base, "El prestador seleccionado no realiza el servicio elegido en la reserva. Por favor agrega el servicio al prestador o elige otro prestador.")
+      end
     end
   end
 
