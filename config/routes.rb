@@ -318,6 +318,12 @@ Agendapro::Application.routes.draw do
   post "payed_bookings/unmark_several_canceled_as_payed", :to => 'payed_bookings#unmark_several_canceled_as_payed'
   post "payed_bookings/update", :to => 'payed_bookings#update'
 
+  namespace :api, defaults: {format: 'json'} do
+    namespace :v1 do
+      resources :locations, only: [:index]
+    end
+  end
+
   # Root
   get '/' => 'searchs#index', :constraints => { :subdomain => 'www' }
   get '/' => 'companies#overview', :constraints => { :subdomain => /.+/ }
