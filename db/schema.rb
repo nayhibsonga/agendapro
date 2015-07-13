@@ -11,13 +11,12 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-
-ActiveRecord::Schema.define(version: 20150710134007) do
+ActiveRecord::Schema.define(version: 20150713145524) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
-  enable_extension "fuzzystrmatch"
   enable_extension "pg_trgm"
+  enable_extension "fuzzystrmatch"
   enable_extension "unaccent"
 
   create_table "banks", force: true do |t|
@@ -109,9 +108,9 @@ ActiveRecord::Schema.define(version: 20150710134007) do
     t.integer  "client_id"
     t.float    "price",                  default: 0.0
     t.boolean  "provider_lock",          default: false
-    t.integer  "max_changes",            default: 2
     t.boolean  "payed",                  default: false
     t.string   "trx_id",                 default: ""
+    t.integer  "max_changes",            default: 2
     t.string   "token",                  default: ""
     t.integer  "deal_id"
     t.integer  "booking_group"
@@ -263,16 +262,16 @@ ActiveRecord::Schema.define(version: 20150710134007) do
     t.boolean  "booking_history",            default: true
     t.boolean  "staff_code",                 default: false
     t.integer  "monthly_mails",              default: 0,                     null: false
-    t.boolean  "deal_activate",              default: false
-    t.string   "deal_name",                  default: ""
-    t.boolean  "deal_overcharge",            default: true
     t.boolean  "allows_online_payment",      default: false
     t.string   "account_number",             default: ""
     t.string   "company_rut",                default: ""
     t.string   "account_name",               default: ""
     t.integer  "account_type",               default: 3
     t.integer  "bank_id"
-    t.boolean  "deal_exclusive",             default: true
+    t.boolean  "deal_activate",              default: false
+    t.string   "deal_name",                  default: ""
+    t.boolean  "deal_overcharge",            default: true
+    t.boolean  "deal_exclusive",             default: false
     t.integer  "deal_quantity",              default: 0
     t.integer  "deal_constraint_option",     default: 0
     t.integer  "deal_constraint_quantity",   default: 0
@@ -282,6 +281,7 @@ ActiveRecord::Schema.define(version: 20150710134007) do
     t.boolean  "allows_optimization",        default: true
     t.boolean  "activate_notes",             default: true,                  null: false
     t.boolean  "receipt_required",           default: true
+    t.float    "online_payment_commission",  default: 5.0
   end
 
   add_index "company_settings", ["company_id"], name: "index_company_settings_on_company_id", using: :btree
@@ -648,6 +648,31 @@ ActiveRecord::Schema.define(version: 20150710134007) do
     t.integer  "monthly_mails",     default: 5000,  null: false
   end
 
+  create_table "product_categories", force: true do |t|
+    t.string   "name"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.integer  "company_id"
+  end
+
+  add_index "product_categories", ["company_id"], name: "index_product_categories_on_company_id", using: :btree
+
+  create_table "products", force: true do |t|
+    t.integer  "company_id"
+    t.text     "name",                default: ""
+    t.float    "price",               default: 0.0
+    t.text     "description",         default: ""
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.integer  "product_category_id",               null: false
+    t.string   "sku",                 default: ""
+    t.decimal  "comission_value",     default: 0.0, null: false
+    t.integer  "comission_option",    default: 0,   null: false
+  end
+
+  add_index "products", ["company_id"], name: "index_products_on_company_id", using: :btree
+  add_index "products", ["product_category_id"], name: "index_products_on_product_category_id", using: :btree
+
   create_table "promo_times", force: true do |t|
     t.integer  "company_setting_id"
     t.time     "morning_start",      default: '2000-01-01 09:00:00', null: false
@@ -674,33 +699,6 @@ ActiveRecord::Schema.define(version: 20150710134007) do
     t.integer  "location_id"
     t.integer  "service_promo_id"
   end
-
-
-  create_table "product_categories", force: true do |t|
-    t.string   "name"
-    t.datetime "created_at"
-    t.datetime "updated_at"
-    t.integer  "company_id"
-  end
-
-  add_index "product_categories", ["company_id"], name: "index_product_categories_on_company_id", using: :btree
-
-  create_table "products", force: true do |t|
-    t.integer  "company_id"
-    t.text     "name",                default: ""
-    t.float    "price",               default: 0.0
-    t.text     "description",         default: ""
-    t.datetime "created_at"
-    t.datetime "updated_at"
-    t.integer  "product_category_id",               null: false
-    t.string   "sku",                 default: ""
-    t.decimal  "comission_value",     default: 0.0, null: false
-    t.integer  "comission_option",    default: 0,   null: false
-  end
-
-  add_index "products", ["company_id"], name: "index_products_on_company_id", using: :btree
-  add_index "products", ["product_category_id"], name: "index_products_on_product_category_id", using: :btree
-
 
   create_table "promotions", force: true do |t|
     t.string   "code",       null: false

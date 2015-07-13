@@ -18,11 +18,13 @@ class PayedBookingsController < ApplicationController
   		@other_companies_pending_payment = Array.new
 
   		#Comisión que se le cobra a la empresa por el pago en línea
-  		commission = NumericParameter.find_by_name("online_payment_commission").value
+  		#commission = NumericParameter.find_by_name("online_payment_commission").value
+
   		now = DateTime.new(DateTime.now.year, DateTime.now.mon, DateTime.now.mday, DateTime.now.hour, DateTime.now.min)
 
   		Company.all.each do |company|
   			c_user = User.find_by_company_id(company.id)
+  			commission = company.company_setting.online_payment_commission
   			
   			if !c_user.nil? and c_user.role_id != Role.find_by_name("Super Admin")
   				

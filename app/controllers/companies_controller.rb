@@ -144,6 +144,10 @@ class CompaniesController < ApplicationController
 		if params[:new_months_active_left].match(/\A[+-]?\d+?(_?\d+)*(\.\d+e?\d*)?\Z/) != nil
 			@company.months_active_left = params[:new_months_active_left]
 		end
+		if params[:new_online_payment_commission]
+			@company.company_setting.online_payment_commission = params[:new_online_payment_commission].to_f
+			@company.company_setting.save
+		end
 
 		if @company.payment_status_id != PaymentStatus.find_by_name("Inactivo").id and @company.payment_status_id != PaymentStatus.find_by_name("Bloqueado").id
 			@company.active = true
