@@ -14,13 +14,20 @@
         <div class="form-group">
           <%= f.label :time_promo_active, "Activar: ", class: "col-md-2 control-label" %>
           <div class="col-md-4">
-            <%= f.check_box :time_promo_active, :autofocus => true, class: "form-control" %>
+            <%= f.check_box :time_promo_active, :autofocus => true %>
           </div>
         </div>
         <div class="form-group">
           <%= f.label :time_promo_photo, "Foto: ", class: "col-md-2 control-label" %>
           <div class="col-md-4">
             <%= f.file_field :time_promo_photo, :accept => 'image/png,image/gif,image/jpeg', :class => 'form-control' %>
+          </div>
+          <div class="col-md-4">
+            <% if @service.time_promo_photo.url.nil? || @service.time_promo_photo.thumb.nil? %>
+              No se ha subido foto
+            <% else %>
+              Foto actual (thumb): <%= image_tag @service.time_promo_photo.thumb.url.to_s, :alt => "Sin foto", :class => "img-responsive" %>
+            <% end %>
           </div>
         </div>
         <div class="form-group">

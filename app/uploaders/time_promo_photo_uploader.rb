@@ -26,7 +26,11 @@ class TimePromoPhotoUploader < CarrierWave::Uploader::Base
   # end
 
   # Process files as they are uploaded:
-  process :resize_and_pad => [390, 200]
+  process :resize_and_pad => [1183, 246]
+
+  version :thumb do
+    process resize_to_fill: [390, 200]
+  end
   
   # def scale(width, height)
   #   :resize_to_limit => [width, height]
@@ -46,7 +50,7 @@ class TimePromoPhotoUploader < CarrierWave::Uploader::Base
   # Override the filename of the uploaded files:
   # Avoid using model.id or version_name here, see uploader/store.rb for details.
   def filename
-    "#{model.name}.#{model.time_promo_photo.file.extension}" if original_filename
+    "#{model.name}_#{model.company.name}.#{model.time_promo_photo.file.extension}" if original_filename
   end
 
 end

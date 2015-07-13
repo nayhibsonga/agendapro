@@ -1,7 +1,7 @@
 <div class="promo-service-box row panel-row" service_id="<%= service.id %>" location_id="<%= location.id %>" style="padding-left: 5px; padding-right: 5px;">
 	<div class="col-sm-12">
 		<div style="background-color: #f0f0f0 !important;">
-			<%= image_tag service.time_promo_photo_url.to_s, :alt => "Loader", :class => "img-responsive" %>
+			<%= image_tag service.time_promo_photo.thumb.url.to_s, :alt => "Loader", :class => "img-responsive" %>
 		</div>
 		<div style="padding-left: 7px; padding-top: 7px; padding-bottom: 4px; background-color: #B5B5B5; color: #fff; display: block; width: 100%;">
 			<%= image_tag "search/pin_map" + i.to_s + ".png", :alt => "Loader", :size => "18x28" %>&nbsp;&nbsp;

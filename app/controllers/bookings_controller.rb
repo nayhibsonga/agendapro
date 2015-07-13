@@ -1611,6 +1611,7 @@ class BookingsController < ApplicationController
         @session_booking.service_id = session_service.id
         @session_booking.client_id = client.id
         @session_booking.sessions_amount = session_service.sessions_amount
+        @session_booking.max_discount = params[:max_discount].to_f
         if user_signed_in?
           @session_booking.user_id = current_user.id
         end
@@ -1726,23 +1727,47 @@ class BookingsController < ApplicationController
       #
       if(params[:payment] == "1")
 
+        group_payment = true
         #Check if all payments are payable
         #Apply grouped discount
-        if !service.online_payable
-          group_payment = false
+
+        #Check if all are payable
+        #If not, pay those which may be paid
+        #and book the others
+
+        #if !service.online_payable
+          #group_payment = false
           # Redirect to error
-        end
+        #end
 
         #trx_id = DateTime.now.to_s.gsub(/[-:T]/i, '')
-        num_amount = service.price
-        if service.has_discount
-          num_amount = (service.price - service.price*service.discount/100).round;
+        if service.online_payable
+
+          if(params[:has_sessions] == "1" || params[:has_sessions] == 1)
+            max_discount = params[:max_discount].to_f
+            num_amount = (service.price - max_discount*service.price/100).round
+            @booking.price = num_amount
+            final_price = num_amount
+          else
+
+            #num_amount = service.price
+            #if service.has_discount
+            #  num_amount = (service.price - service.price*service.discount/100).round;
+            #end
+              #final_price = final_price + num_amount
+            #if @has_session_booking
+              #final_price = num_amount
+            #end
+
+            num_amount = (service.price - buffer_params.discount*service.price/100).round
+
+            @booking.price = num_amount
+            final_price = final_price + num_amount
+
+          end
+        else
+          @booking.price = service.price
         end
-        final_price = final_price + num_amount
-        if @has_session_booking
-          final_price = num_amount
-        end
-        @booking.price = num_amount
         #amount = sprintf('%.2f', num_amount)
         #payment_method = params[:mp]
         #req = PuntoPagos::Request.new()
@@ -1791,20 +1816,34 @@ class BookingsController < ApplicationController
       if resp.success?
         proceed_with_payment = true
         @bookings.each do |booking|
-          booking.trx_id = trx_id
-          booking.token = resp.get_token
 
-          if booking.save
-            current_user ? user = current_user.id : user = 0
-            BookingHistory.create(booking_id: booking.id, action: "Creada por Cliente", start: booking.start, status_id: booking.status_id, service_id: booking.service_id, service_provider_id: booking.service_provider_id, user_id: user, notes: booking.notes, company_comment: booking.company_comment)
+          if booking.service.online_payable
+            booking.trx_id = trx_id
+            booking.token = resp.get_token
 
-            if first_booking.nil?
-              first_booking = booking
+            if booking.save
+              current_user ? user = current_user.id : user = 0
+              BookingHistory.create(booking_id: booking.id, action: "Creada por Cliente", start: booking.start, status_id: booking.status_id, service_id: booking.service_id, service_provider_id: booking.service_provider_id, user_id: user, notes: booking.notes, company_comment: booking.company_comment)
+
+              if first_booking.nil?
+                first_booking = booking
+              end
+
+            else
+              @errors << booking.errors.full_messages
+              proceed_with_payment = false
             end
-
           else
-            @errors << booking.errors.full_messages
-            proceed_with_payment = false
+            if booking.save
+              current_user ? user = current_user.id : user = 0
+              BookingHistory.create(booking_id: booking.id, action: "Creada por Cliente", start: booking.start, status_id: booking.status_id, service_id: booking.service_id, service_provider_id: booking.service_provider_id, user_id: user, notes: booking.notes, company_comment: booking.company_comment)
+              if first_booking.nil?
+                first_booking = booking
+              end
+            else
+              @errors << booking.errors.full_messages
+              proceed_with_payment = false
+            end
           end
         end
         #@blocked_bookings.each do |b_booking|

@@ -641,6 +641,8 @@ function loadStep3 () {
 	              }
 	            }
 
+	            $("#max_discount").val(min_discount);
+
 	            var discount_price = Math.round(price*(100 - min_discount)/100);
 	            sessions_str = "";
 
@@ -848,6 +850,10 @@ function loadStep3 () {
 							'</tr>'
 						);
 
+						console.log("May pay but is not mandatory.");
+
+						$("#open-online-policy").show();
+
 						$(".payBtn").show();
 						$("#discount").empty();
 						$("#discount").append(
@@ -863,6 +869,9 @@ function loadStep3 () {
 					}
 					else if(!may_pay)
 					{
+
+						console.log("Can't pay.");
+
 						$("#summary").append(
 							'<tr>' +
 								'<td class="dark-gray">Costo pago en local</td>' +
@@ -871,6 +880,7 @@ function loadStep3 () {
 						);
 
 						$(".payBtn").hide();
+						$("#open-online-policy").hide();
 						$("#discount").empty();
 
 						$(".submitBtn").show();
@@ -881,7 +891,10 @@ function loadStep3 () {
 					}
 					else if(must_pay)
 					{
+						console.log("Must pay.");
+						$("#reservar2").show();
 						$(".payBtn").show();
+						$("#open-online-policy").show();
 						$("#discount").empty();
 						$("#discount").append(
 							'Precio final: ' +  currency(Math.round(total_price))
@@ -939,6 +952,8 @@ function loadStep3 () {
 				  	min_discount = sessions_buffer[i].discount;
 				}
 			}
+
+			$("#max_discount").val(min_discount);
 
 			var discount_price = Math.round(price*(100 - min_discount)/100);
 
@@ -1378,7 +1393,8 @@ function loadDescription (serviceId) {
 		}
 		$("#discount").empty();
 		$("#normal-book").empty();
-		if(service.online_payable){
+		
+		/*if(service.online_payable){
 			$("#reservar1").hide();
 			$("#reservar2").show();
 
@@ -1396,7 +1412,7 @@ function loadDescription (serviceId) {
 		{
 			$("#reservar2").hide();
 			$("#reservar1").show();
-		}
+		}*/
 	});
 }
 

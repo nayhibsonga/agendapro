@@ -5,7 +5,7 @@
 
     <div class="row">
       <div class="col-sm-12" style="text-align: center;">
-        <%= image_tag "promociones/header_image.png", :alt => "Header", :class => "img-responsive" %>
+        <%= image_tag @service.time_promo_photo.url, :alt => "Header", :class => "img-responsive" %>
       </div>
     </div>
 
@@ -510,7 +510,8 @@
                       <input type="hidden" name="payment" id="payment" value="1" />
                       <input type="hidden" name="is_promo" id="is_promo" value="1" />
                       <% if @service.has_sessions %>
-                        <input type="hidden" name="has_sessions" id ="has_sessions" value="1" />
+                        <input type="hidden" name="has_sessions" id="has_sessions" value="1" />
+                        <input type="hidden" name="max_discount" id="max_discount" value="0" />
                       <% else %>
                         <input type="hidden" name="has_sessions" id ="has_sessions" value="0" />
                       <% end %>
@@ -1486,6 +1487,8 @@
               }
             }
 
+            $("#max_discount").val(min_discount);
+
             var discount_price = Math.round(price*(100 - min_discount)/100);
             sessions_str = "";
 
@@ -1597,6 +1600,8 @@
               min_discount = sessions_buffer[i].discount;
             }
           }
+
+          $("#max_discount").val(min_discount);
 
           var discount_price = Math.round(price*(100 - min_discount)/100);
 
@@ -1745,6 +1750,7 @@
       sessions_left = parseInt("<%= @service.sessions_amount %>");
       selected = false;
       block_discount = 0;
+      $("#max_discount").val("0");
       $("#booking-error").empty();
 
       $("#selectProviderModal .modal-dialog").removeClass("calendar-modal");
@@ -1784,6 +1790,8 @@
       sessions_left = parseInt("<%= @service.sessions_amount %>");
       selected = false;
       block_discount = 0;
+
+      $("#max_discount").val("0");
 
       $("#booking-error").empty();
 
