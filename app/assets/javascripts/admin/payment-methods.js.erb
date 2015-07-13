@@ -553,6 +553,9 @@ function savePayment() {
 			$("#save_payment_button").html('Guardar Pago');
 			$('#save_payment_button').attr('disabled', false);
 			$('#payment_past_bookings_button').show();
+			if ($('#payments-tab').is(":hidden")) {
+				$('#bookingModal').modal('hide');
+			}
 		},
 		error: function(xhr){
 			var errors = $.parseJSON(xhr.responseText).errors;
@@ -577,9 +580,9 @@ function destroyPayment() {
 		success: function(payment){
 			// window.console.log(payment);
 			alert('Pago eliminado exitosamente.');
-			$('#payment_id').val(payment.id);
 			$("#delete_payment_button").html('Eliminar Pago');
 			$('#delete_payment_button').attr('disabled', false);
+			$('#bookingModal').modal('hide');
 		},
 		error: function(xhr){
 			var errors = $.parseJSON(xhr.responseText).errors;
