@@ -23,6 +23,18 @@
       <%= f.text_field :name, :autofocus => true, :class => 'form-control' %>
     </div>
   </div>
+  <div class="form-group">
+    <%= f.label :show_in_home, 'Mostrar en Home: ', :class => 'col-md-2 control-label' %>
+    <div class="col-md-4">
+       <%= f.check_box :show_in_home, :class => 'form-control' %>
+    </div>
+  </div>
+  <div class="form-group">
+    <%= f.label :show_in_company, 'Mostrar en Configuraciones: ', :class => 'col-md-2 control-label' %>
+    <div class="col-md-4">
+      <%= f.check_box :show_in_company, :class => 'form-control' %>
+    </div>
+  </div>
   <legend>Diccionario</legend>
   <% @economic_sector.economic_sectors_dictionaries.build %>
   <%= f.fields_for :economic_sectors_dictionaries do |dictionary| %>
