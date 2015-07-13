@@ -294,10 +294,11 @@ class ServiceProvider < ActiveRecord::Base
 	                    #Check for existing promotions
 	                    if service.has_time_discount
 	                    	promo_time = provider.company.company_setting.promo_time
+	                    	service_promo = ServicePromo.find(service.active_service_promo_id)
 	                    	if !promo_time.nil?
-	                    		if Promo.where(:service_id => service.id, :day_id => day).where('').count > 0
+	                    		if Promo.where(:service_promo_id => service_promo.id, :day_id => day, :location_id => local.id).count > 0
 
-			                    	promo = Promo.where(:service_id => service.id, :day_id => day).first
+			                    	promo = Promo.where(:service_promo_id => service_promo.id, :day_id => day, :location_id => local.id).first
 
 		                    		if !(promo_time.morning_end.strftime("%H:%M") <= start_time_block.strftime("%H:%M") || end_time_block.strftime("%H:%M") <= promo_time.morning_start.strftime("%H:%M"))
 				                    		
