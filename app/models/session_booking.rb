@@ -126,6 +126,36 @@ class SessionBooking < ActiveRecord::Base
       @provider[:array] = @providers_array
       @data[:provider] = @provider
 
+		# Company
+			@companies = []
+			@company = {}
+			@company[:name] = bookings[0].location.company.name
+			@company[:client_name] = bookings[0].client.first_name + ' ' + bookings[0].client.last_name
+
+			@company_table = ''
+			bookings.each do |book|
+				@company_table += '<tr style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;">' +
+						'<td style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;padding-top:8px;padding-bottom:8px;padding-right:8px;padding-left:8px;line-height:1.42857143;vertical-align:top;border-top-width:1px;border-top-style:solid;border-top-color:#ddd;">' + book.service.name + '</td>' +
+						'<td style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;padding-top:8px;padding-bottom:8px;padding-right:8px;padding-left:8px;line-height:1.42857143;vertical-align:top;border-top-width:1px;border-top-style:solid;border-top-color:#ddd;">' + I18n.l(book.start) + '</td>' +
+						'<td style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;padding-top:8px;padding-bottom:8px;padding-right:8px;padding-left:8px;line-height:1.42857143;vertical-align:top;border-top-width:1px;border-top-style:solid;border-top-color:#ddd;">' + if book.notes.blank? then '' else book.notes end + '</td>' +
+						'<td style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;padding-top:8px;padding-bottom:8px;padding-right:8px;padding-left:8px;line-height:1.42857143;vertical-align:top;border-top-width:1px;border-top-style:solid;border-top-color:#ddd;">' + if book.company_comment.blank? then '' else book.company_comment end + '</td>' +
+					'</tr>'
+			end
+			@company[:company_table] = @company_table
+
+			company_emails = NotificationEmail.where(company: bookings[0].location.company, receptor_type: 0).select(:email).distinct
+			if bookings[0].web_origin
+				company_emails = company_emails.where(new_web: true)
+			else
+				company_emails = company_emails.where(new: true)
+			end
+			company_emails.each do |company|
+				@company[:email] = company.email
+				@companies << @company
+			end
+
+			@data[:companies] = @companies
+
 		if bookings.order(:start).first.start > Time.now - eval(ENV["TIME_ZONE_OFFSET"])
 			BookingMailer.sessions_booking_mail(@data)
 		end
