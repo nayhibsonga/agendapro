@@ -1759,7 +1759,7 @@ class BookingsController < ApplicationController
               #final_price = num_amount
             #end
 
-            num_amount = (service.price - buffer_params.discount*service.price/100).round
+            num_amount = (service.price - buffer_params[:discount]*service.price/100).round
 
             @booking.price = num_amount
             final_price = final_price + num_amount
