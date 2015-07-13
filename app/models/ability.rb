@@ -413,6 +413,7 @@ class Ability
         can :check_sessions, Client
 
         can :booking_payment, Payment
+        can :load_payment, Payment
         can :past_bookings, Payment
         can :past_sessions, Payment
         can :client_bookings, Payment

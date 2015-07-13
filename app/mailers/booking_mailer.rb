@@ -1762,6 +1762,34 @@ class BookingMailer < ActionMailer::Base
 			# => Send mail
 			send_mail(template_name, template_content, message)
 		end
+
+		# Email notificacion company
+		data[:companies].each do |company|
+			message[:to] = [{
+							:email => company[:email],
+							:type => 'bcc'
+						}]
+			message[:merge_vars] = [{
+							:rcpt => company[:email],
+							:vars => [
+								{
+									:name => 'CLIENTNAME',
+									:content => company[:client_name]
+								},
+								{
+									:name => 'SERVICEPROVIDER',
+									:content => company[:name]
+								},
+								{
+									:name => 'BOOKINGS',
+									:content => company[:company_table]
+								}
+							]
+						}]
+
+			# => Send mail
+			send_mail(template_name, template_content, message)
+		end
 	end
 
 	#Mail de reserva de sesión de admin (opción de validar)
