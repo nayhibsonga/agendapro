@@ -18,7 +18,7 @@ class ProviderBreak < ActiveRecord::Base
 
   def provider_in_booking
     if !self.break_group_id? && !self.break_repeat_id?
-      self.service_provider.bookings.where("bookings.start < ?", self.end).where("bookings.end > ?", self.start).each do |booking|
+      self.service_provider.bookings.where("bookings.start < ?", self.end).where("bookings.end > ?", self.start).where('is_session = false or (is_session = true and is_session_booked = true)').each do |booking|
         if (booking.start - self.end) * (self.start - booking.end) > 0
           warnings.add(:base, "El prestador seleccionado tiene una reserva en el horario bloqueado")
           return
