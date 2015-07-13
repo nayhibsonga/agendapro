@@ -552,4 +552,34 @@ $(function () {
   $(userForm + '#xButton').click(function() {
     resetForm();
   });
+
+  $("#optimizerDateSelector").datepicker({
+    dateFormat: 'dd-mm-yy',
+    autoSize: true,
+    firstDay: 1,
+    changeMonth: true,
+    changeYear: true,
+    monthNames: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+    monthNamesShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
+    prevText: 'Atrás',
+    nextText: 'Adelante',
+    dayNames: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'],
+    dayNamesShort: ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'],
+    dayNamesMin: ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'],
+    today: 'Hoy',
+    clear: '',
+    onSelect: function(newDate){
+      $("#pickerSelected").empty();
+      var prettyDate = newDate.split("-")[2] + "/" + newDate.split("-")[1] + "/" + newDate.split("-")[0];
+      $("#pickerSelected").append(prettyDate);
+    },
+    beforeShow: function(date) {
+      $('#ui-datepicker-div').addClass("customDatepicker");
+      $(".customDatepicker .ui-datepicker-calendar").css("width", "214px !important");
+    }
+  });
+
+  $(document.body).on('click', '.optimizer-date-span', function(e){
+    $(e.currentTarget).find('input').datepicker('show');
+  });
 });

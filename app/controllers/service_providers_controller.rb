@@ -73,10 +73,11 @@ class ServiceProvidersController < ApplicationController
 
     @service_provider = ServiceProvider.new(service_provider_params)
     @service_provider.company_id = current_user.company_id
-    
+
     respond_to do |format|
       if @service_provider.save
-        format.html { redirect_to service_providers_path, notice: 'Prestador creado exitosamente.' }
+        flash[:notice] = 'Prestador creado exitosamente.'
+        format.html { redirect_to service_providers_path }
         format.json { render :json => @service_provider }
       else
         format.html { render action: 'new' }
@@ -100,9 +101,10 @@ class ServiceProvidersController < ApplicationController
     respond_to do |format|
       if @service_provider.update(service_provider_params)
         @provider_times.destroy_all
-        format.html { redirect_to service_providers_path, notice: 'Prestador actualizado exitosamente.' }
+        flash[:notice] = 'Prestador actualizado exitosamente.'
+        format.html { redirect_to service_providers_path }
         format.json { render :json => @service_provider }
-      else 
+      else
         @provider_times.each do |provider_time|
           provider_time.service_provider_id = @service_provider.id
           provider_time.save
@@ -193,6 +195,6 @@ class ServiceProvidersController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def service_provider_params
-      params.require(:service_provider).permit(:user_id, :location_id, :public_name, :notification_email, :block_length, :booking_configuration_email, :online_booking, :service_ids => [], provider_times_attributes: [:id, :open, :close, :day_id, :service_provider_id, :_destroy], user_attributes: [:email, :password, :confirm_password, :role_id, :company_id, :location_id])
+      params.require(:service_provider).permit(:user_id, :location_id, :public_name, :block_length, :online_booking, :service_ids => [], provider_times_attributes: [:id, :open, :close, :day_id, :service_provider_id, :_destroy], user_attributes: [:email, :password, :confirm_password, :role_id, :company_id, :location_id])
     end
 end

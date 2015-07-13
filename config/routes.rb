@@ -1,7 +1,8 @@
 Agendapro::Application.routes.draw do
 
+  resources :product_categories
 
-  resources :deals
+  resources :products
 
   get "users/index"
   require 'subdomain'
@@ -27,6 +28,7 @@ Agendapro::Application.routes.draw do
   resources :plans
   resources :staff_times
   resources :location_times
+  resources :notification_emails
 
   resources :companies
   resources :locations
@@ -45,11 +47,16 @@ Agendapro::Application.routes.draw do
 
   resources :numeric_parameters
 
-  resources :clients
   resources :deals
 
   resources :payed_bookings
   resources :banks
+
+  resources :payments
+  resources :payment_method_types
+  resources :receipt_types
+  resources :company_payment_methods
+  resources :payment_methods
 
   namespace :admin do
     get '', :to => 'dashboard#index', :as => '/'
@@ -213,9 +220,9 @@ Agendapro::Application.routes.draw do
   post '/optimizer_data', :to => 'bookings#optimizer_data'
   get '/available_hours_week_html', :to => 'service_providers#available_hours_week_html'
   # Workflow - Mobile
-  post '/select_hour', :to => 'companies#select_hour'
+  get '/select_hour', :to => 'companies#select_hour'
   post '/select_session_hour', :to => 'companies#select_session_hour'
-  post '/user_data', :to => 'companies#user_data'
+  get '/user_data', :to => 'companies#user_data'
 
   # Fullcalendar
   get '/provider_breaks/new', :to => 'provider_breaks#new', :as => 'new_provider_break'
@@ -293,6 +300,15 @@ Agendapro::Application.routes.draw do
   get '/iframe/book_error', :to => 'iframe#book_error', :as => 'iframe_book_error'
 
   post '/company_settings/update_payment', :to => 'company_settings#update_payment'
+  get '/company_payment_methods/:id/activate', :to => 'company_payment_methods#activate', :as => 'activate_company_payment_method'
+  get '/company_payment_methods/:id/deactivate', :to => 'company_payment_methods#deactivate', :as => 'deactivate_company_payment_method'
+  get '/booking_payment', :to => 'payments#booking_payment'
+  get '/load_payment', :to => 'payments#load_payment'
+  get '/past_bookings', :to => 'payments#past_bookings'
+  get '/past_sessions', :to => 'payments#past_sessions'
+  get 'payment_client_bookings', :to => 'payments#client_bookings'
+  get 'payment_client_sessions', :to => 'payments#client_sessions'
+  get '/payments_index_content', :to=> 'payments#index_content'
 
   # Payed Bookings
   get "/company_bookings", :to => 'payed_bookings#show'

@@ -11,6 +11,17 @@
     </div>
   <% end %>
 
+  <% if current_user.role == Role.find_by(name: "Super Admin") %>
+  <div class="form-group">
+    <div class="col-md-offset-2 col-md-9">
+      <div class="checkbox">
+        <label>
+          <%= f.check_box :show_in_home %> Mostrar en el inicio
+        </label>
+      </div>
+    </div>
+  </div>
+  <% end %>
   <div class="form-group has-feedback">
     <%= f.label :name, 'Nombre', class: 'control-label col-md-2' %>
     <div class="col-md-9">

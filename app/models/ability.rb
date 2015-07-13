@@ -199,6 +199,16 @@ class Ability
         can :create, ResourceCategory, :company_id => user.company_id
         can :update, ResourceCategory, :company_id => user.company_id
 
+        can :read, Product, :company_id => user.company_id
+        can :destroy, Product, :company_id => user.company_id
+        can :create, Product, :company_id => user.company_id
+        can :update, Product, :company_id => user.company_id
+
+        can :read, ProductCategory, :company_id => user.company_id
+        can :destroy, ProductCategory, :company_id => user.company_id
+        can :create, ProductCategory, :company_id => user.company_id
+        can :update, ProductCategory, :company_id => user.company_id
+
         can :provider_service, ServiceProvider
 
         can :get_link, Company
@@ -209,6 +219,18 @@ class Ability
         can :rut_suggestion, Client
         can :bookings_history, Client
         can :check_sessions, Client
+
+        can :booking_payment, Payment
+        can :load_payment, Payment
+        can :past_bookings, Payment
+        can :past_sessions, Payment
+        can :client_bookings, Payment
+        can :client_sessions, Payment
+        can :index_content, Payment
+        can :read, Payment, :company_id => user.company_id
+        can :destroy, Payment, :company_id => user.company_id
+        can :create, Payment, :company_id => user.company_id
+        can :update, Payment, :company_id => user.company_id
 
         can :create_comment, Client
         can :update_comment, Client
@@ -230,6 +252,16 @@ class Ability
         can :delete_facebook_pages, CompanySetting
 
         can :set_promotions, Service
+        can :read, CompanyPaymentMethod, :company_id => user.company_id
+        can :create, CompanyPaymentMethod, :company_id => user.company_id
+        can :update, CompanyPaymentMethod, :company_id => user.company_id
+        can :destroy, CompanyPaymentMethod, :company_id => user.company_id
+        can :activate, CompanyPaymentMethod, :company_id => user.company_id
+        can :deactivate, CompanyPaymentMethod, :company_id => user.company_id
+
+        can :read, Deal, :company_id => user.company_id
+        can :create, Deal, :company_id => user.company_id
+        can :update, Deal, :company_id => user.company_id
 
     elsif user.role_id == Role.find_by_name("Administrador Local").id
 
@@ -267,6 +299,16 @@ class Ability
         can :destroy, ResourceCategory, :company_id => user.company_id
         can :create, ResourceCategory, :company_id => user.company_id
         can :update, ResourceCategory, :company_id => user.company_id
+
+        can :read, Product, :company_id => user.company_id
+        can :destroy, Product, :company_id => user.company_id
+        can :create, Product, :company_id => user.company_id
+        can :update, Product, :company_id => user.company_id
+
+        can :read, ProductCategory, :company_id => user.company_id
+        can :destroy, ProductCategory, :company_id => user.company_id
+        can :create, ProductCategory, :company_id => user.company_id
+        can :update, ProductCategory, :company_id => user.company_id
 
         @roles = Role.where(:name => ["Recepcionista","Staff"]).pluck(:id)
 
@@ -311,12 +353,25 @@ class Ability
         can :suggestion, Client
         can :rut_suggestion, Client
         can :bookings_history, Client
+        can :check_sessions, Client
         
         can :create_comment, Client, :company_id => user.company_id
         can :update_comment, Client, :company_id => user.company_id
         can :destroy_comment, Client, :company_id => user.company_id
+
+        can :booking_payment, Payment
+        can :load_payment, Payment
+        can :past_bookings, Payment
+        can :past_sessions, Payment
+        can :client_bookings, Payment
+        can :client_sessions, Payment
+        can :index_content, Payment
+        can :read, Payment, :company_id => user.company_id
+        can :destroy, Payment, :company_id => user.company_id
+        can :create, Payment, :company_id => user.company_id
+        can :update, Payment, :company_id => user.company_id
         
-                can :compose_mail, Client, :company_id => user.company_id
+        can :compose_mail, Client, :company_id => user.company_id
         can :send_mail, Client, :company_id => user.company_id
         can :import, Client
 
@@ -363,6 +418,17 @@ class Ability
         can :rut_suggestion, Client
         can :provider_service, ServiceProvider
         can :bookings_history, Client
+        can :check_sessions, Client
+
+        can :booking_payment, Payment
+        can :past_bookings, Payment
+        can :past_sessions, Payment
+        can :client_bookings, Payment
+        can :client_sessions, Payment
+        can :read, Payment, :company_id => user.company_id
+        can :destroy, Payment, :company_id => user.company_id
+        can :create, Payment, :company_id => user.company_id
+        can :update, Payment, :company_id => user.company_id
         
         can :create_comment, Client, :company_id => user.company_id
         can :update_comment, Client, :company_id => user.company_id
@@ -373,10 +439,7 @@ class Ability
         can :import, Client
 
     elsif user.role_id == Role.find_by_name("Staff").id
-
-        can :name_suggestion, Client
-        can :suggestion, Client
-        can :provider_service, ServiceProvider
+        
         can :get_booking, Booking, :service_provider_id => user.service_providers.pluck(:id)
 
         can :read, ServiceProvider, :id => user.service_providers.pluck(:id)
@@ -405,6 +468,7 @@ class Ability
         can :rut_suggestion, Client
         can :provider_service, ServiceProvider
         can :bookings_history, Client
+        can :check_sessions, Client
 
     elsif user.role_id == Role.find_by_name("Staff (sin edición)").id
 

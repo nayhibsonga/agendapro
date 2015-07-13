@@ -3,3 +3,4 @@
 //= require validations/admin/company-email
 //= require validations/admin/time-booking
 //= require ckeditor/init
+//= require admin/company_settings_form

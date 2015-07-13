@@ -126,20 +126,23 @@ class QuickAddController < ApplicationController
 	      end
 	    end
 	end
+
 	def update_location
 		@location = Location.find(params[:id])
-		@location_times = @location.location_times
 		if location_params[:location_times_attributes].blank? || location_params[:location_times_attributes] == [""]
   			render :json => { :errors => ['Debes elegir un horario con al menos un día disponible.'], :location_count => @location.company.locations.where(active: true).count }, :status => 422
   			return
   		end
+		@location_times = @location.location_times
+		@location_time_ids = @location_times.pluck(:id)
 	    @location_times.each do |location_time|
 	      location_time.location_id = nil
 	      location_time.save
 	    end
+	    @location = Location.find(params[:id])
 	    respond_to do |format|
 	      if @location.update(location_params)
-        	@location_times.destroy_all
+        	LocationTime.where(id: @location_time_ids).destroy_all
 	        format.json { render :layout => false, :json => @location }
 	      else
 	        @location_times.each do |location_time|
@@ -262,7 +265,7 @@ class QuickAddController < ApplicationController
   # 	end
 
   	def location_params
-      params.require(:location).permit(:name, :address, :second_address, :phone, :longitude, :latitude, :company_id, :district_id, :outcall, :district_ids => [], location_times_attributes: [:id, :open, :close, :day_id, :location_id, :_destroy])
+      params.require(:location).permit(:name, :address, :second_address, :phone, :longitude, :latitude, :company_id, :district_id, :outcall, :email, :district_ids => [], location_times_attributes: [:id, :open, :close, :day_id, :location_id, :_destroy])
     end
 
     def service_provider_params
