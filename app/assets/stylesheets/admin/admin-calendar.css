@@ -261,25 +261,29 @@ table.fc-agenda-days {
     display: block;
     padding-top: 43px;
     margin-right: -15px;
-    font-size: 0.63em;
-    font-size: 1.09vw;
+    font-size: 0.61em;
+    font-size: 1.05vw;
   }
 }
 @media (min-width: 1080px) {
   #dp {
-    font-size: 0.7em;
-    font-size: 1.09vw;
+    font-size: 0.67em;
+    font-size: 1.05vw;
   }
 }
 @media (min-width: 1200px) {
   #dp {
-    font-size: 0.8em;
-    font-size: 1.09vw;
+    font-size: 0.74em;
+    font-size: 1.05vw;
   }
 }
-@media (min-width: 1440px) {
+@media (min-width: 1600px) {
   #dp {
-    font-size: 0.9em;
+    font-size: 1em;
+  }
+  #dp > .ui-datepicker {
+    margin-left: auto;
+    margin-right: auto;
   }
 }
 
@@ -476,7 +480,6 @@ select[name="serviceOptimizerSelector"] {
     display: none;
   }
   .hours-optimizer-button {
-    margin-left: 7px;
     font-size: 14px;
   }
   .label-calendar {
@@ -487,6 +490,13 @@ select[name="serviceOptimizerSelector"] {
 @media (min-width: 1200px) {
   .label-calendar {
     font-size: 17px;
+  }
+}
+@media (min-width: 1600px) {
+  .hours-optimizer-button {
+    width: 238px;
+    margin-right: auto;
+    margin-left: auto;
   }
 }
 
