@@ -248,22 +248,40 @@ table.fc-agenda-days {
 .ui-datepicker-trigger.active {
   background-image: none;
 }
+
+#dp {
+  display: none;
+}
+
 @media (min-width: 992px) {
   .ui-datepicker-trigger {
     display: none;
   }
   #dp {
+    display: block;
     padding-top: 43px;
     margin-right: -15px;
-  }
-  #dp .ui-datepicker {
-    width: 100%;
-  }
-  #dp .ui-datepicker .ui-datepicker-title select {
-    font-size: .8em;
+    font-size: 0.63em;
+    font-size: 1.09vw;
   }
 }
-
+@media (min-width: 1080px) {
+  #dp {
+    font-size: 0.7em;
+    font-size: 1.09vw;
+  }
+}
+@media (min-width: 1200px) {
+  #dp {
+    font-size: 0.8em;
+    font-size: 1.09vw;
+  }
+}
+@media (min-width: 1440px) {
+  #dp {
+    font-size: 0.9em;
+  }
+}
 
 /*
   ================================
@@ -433,10 +451,6 @@ select[name="serviceOptimizerSelector"] {
   font-size: 12px;
 }
 
-#dp {
-  display: none;
-}
-
 .optimizerBtn {
   width: auto;
 }
@@ -461,9 +475,6 @@ select[name="serviceOptimizerSelector"] {
   .set-date-btn {
     display: none;
   }
-  #dp {
-    display: block;
-  }
   .hours-optimizer-button {
     margin-left: 7px;
     font-size: 14px;
@@ -481,39 +492,12 @@ select[name="serviceOptimizerSelector"] {
 
 /*
   ================================
-  === DatePicker Media Queries ===
-  ================================
-*/
-.ui-datepicker table {
-  font-size: 0.5em;
-}
-@media (min-width: 992px) {
-  .ui-datepicker table {
-    font-size: 0.5em;
-  }
-}
-
-@media (min-width: 1080px) {
-  .ui-datepicker table {
-    font-size: 0.7em;
-  }
-}
-
-@media (min-width: 1224px) {
-  .ui-datepicker table {
-    font-size: 0.8em;
-  }
-}
-
-/*
-  ================================
   ============ Alerts ============
   ================================
 */
 .calendar-alert {
-   position: fixed;
-   bottom: 25px;
-   padding-left: 0;
+  position: fixed;
+  padding-left: 0;
 }
 .calendar-alert > .alert {
   position: initial;

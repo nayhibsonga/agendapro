@@ -28,15 +28,6 @@
   </div>
 </div>
 
-<div class="container-fluid">
-  <div class="row">
-    <div id="bookingAlerts" class="alert alert-warning" style="display: none;">
-      <button id="bookingAlertsClose" type="button" class="close">&times;</button>
-      <strong>¡Advertencia!</strong> <span id="bookingWarnings"></span>
-    </div>
-  </div>
-</div>
-
 <%= content_tag "div", id: "calendar-data", data: { calendar_duration: @company_setting.calendar_duration, extended_schedule: @company_setting.extended_schedule_bool, extended_min_hour: @company_setting.extended_min_hour.strftime('%H:%M'), extended_max_hour: @company_setting.extended_max_hour.strftime('%H:%M'), booking_history: @company_setting.booking_history, staff_code: @company_setting.staff_code, deal_identification_number: @company_setting.deal_identification_number, deal_required: @company_setting.deal_required } do %>
 <% end %>
 
@@ -51,7 +42,24 @@
         <input type="hidden" id="set-date" />
         <button type="button" id="set-date-button" class="btn btn-green btn-block set-date-btn">Ir a fecha..</button>
         <button type="button" class="btn btn-green btn-block hours-optimizer-button" data-toggle="modal" data-target="#hoursOptimizer">Buscador de Horas</button>
-        <div class="col-xs-2 calendar-alert"></div>
+        <div class="col-xs-2 calendar-alert">
+          <div id="bookingAlerts" class="alert alert-warning" style="display: none;">
+            <button id="bookingAlertsClose" type="button" class="close">&times;</button>
+            <strong>¡Advertencia!</strong> <span id="bookingWarnings"></span>
+          </div>
+          <% if notice %>
+            <div class="alert alert-info alert-dismissable fade in">
+              <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+              <%= notice %>
+            </div>
+          <% end %>
+          <% if alert %>
+            <div class="alert alert-warning alert-dismissable fade in">
+              <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+              <%= alert %>
+            </div>
+          <% end %>
+        </div>
       </div>
       <div class="col-xs-10">
         <div id="popover" class="popover popover-right"></div>
@@ -948,7 +956,7 @@
           <h3 class="modal-title" id="paymentOverModalTitle" style="line-height: 1.1;">Modificaciones de Pago</h3>
         </div>
         <div class="modal-body" id="paymentOverModalBody">
-          
+
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-default" data-dismiss="modal" aria-label="Cerrar">Cerrar</button>
