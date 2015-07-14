@@ -64,9 +64,16 @@
       <div class="col-xs-10">
         <div id="popover" class="popover popover-right"></div>
         <div class="calendar-btn">
-          <%= link_to '<i class="fa fa-calendar"></i> Agregar Reserva'.html_safe, '#', class: "btn btn-white", id: "createBooking" %>
-          <%= link_to '<i class="fa fa-times"></i> Bloquear Horario'.html_safe, '#', class: "btn btn-white", id: "createBreak" %>
-          <%= link_to '<i class="fa fa-dollar"></i> Agregar Pago'.html_safe, '#', class: "btn btn-white", id: "createPayment" %>
+          <button type="button" class="btn btn-white" data-toggle="collapse" data-target="#calendarBtns" aria-expanded="false">
+            Opciones <i class="fa fa-bars"></i>
+          </button>
+          <div class="collapse" id="calendarBtns">
+            <ul class="list-unstyled">
+              <li><%= link_to '<i class="fa fa-calendar"></i> Agregar Reserva'.html_safe, '#', id: "createBooking" %></li>
+              <li><%= link_to '<i class="fa fa-times"></i> Bloquear Horario'.html_safe, '#', id: "createBreak" %></li>
+              <li><%= link_to '<i class="fa fa-dollar"></i> Agregar Pago'.html_safe, '#', id: "createPayment" %></li>
+            </ul>
+          </div>
         </div>
         <div id='calendar'></div>
       </div>
