@@ -408,7 +408,8 @@ class ServiceProvider < ActiveRecord::Base
 	            hour = { status: status,
             	start_block: '',
             	end_block: '',
-            	available_provider: ''}
+            	available_provider: '',
+            	promo_discount: '0'}
 	            # hour = '<div class="bloque-hora '+ status +'" data-start data-end data-provider><span></span></div>'
 
 	            available_provider = ''
