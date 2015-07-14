@@ -320,10 +320,14 @@ Agendapro::Application.routes.draw do
 
   namespace :api, defaults: {format: 'json'} do
     namespace :v1 do
+
       resources :locations
-      resources :economic_sectors
-      post 'users/session', to: 'users#login'
       get 'locations_search', to: 'locations#search'
+
+      post 'users/session', to: 'users#login'
+      get 'users/me', to: 'users#mobile_user'
+      
+      resources :economic_sectors
     end
   end
 

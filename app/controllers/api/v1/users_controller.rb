@@ -2,7 +2,7 @@ module Api
   module V1
   	class UsersController < V1Controller
   	  skip_before_filter :check_auth_token, only: [:login]
-  	  before_action :check_login_params
+  	  before_action :check_login_params, only: [:login]
 
   	  def check_login_params
   	  	if !params[:email].present? || !params[:password].present?
@@ -18,6 +18,9 @@ module Api
       	else
       		render json: { error: 'Invalid User' }, status: 403
       	end
+      end
+
+      def mobile_user
       end
   	end
   end
