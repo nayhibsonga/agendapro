@@ -295,7 +295,7 @@ class ServiceProvider < ActiveRecord::Base
 	                    if service.has_time_discount
 	                    	promo_time = provider.company.company_setting.promo_time
 	                    	service_promo = ServicePromo.find(service.active_service_promo_id)
-	                    	if !promo_time.nil?
+	                    	if !promo_time.nil? && !service_promo.nil?
 	                    		if Promo.where(:service_promo_id => service_promo.id, :day_id => day, :location_id => local.id).count > 0
 
 			                    	promo = Promo.where(:service_promo_id => service_promo.id, :day_id => day, :location_id => local.id).first
@@ -351,8 +351,9 @@ class ServiceProvider < ActiveRecord::Base
 	      end
 
 	    else
-
+	    	#There is a provider given
 	      # Data
+	      promo_discount = 0
 	      service = Service.find(service_id)
 	      service_duration = service.duration
 	      weekDate = Date.strptime(start_date, '%Y-%m-%d')
@@ -584,6 +585,9 @@ class ServiceProvider < ActiveRecord::Base
 	    @week_blocks.each do |week_block|
 	    	week_blocks += '<div class="columna-dia" data-date="' + week_block[:formatted_date] + '" style="width: ' + width + '%;">'
 	    	week_block[:available_time].each do |hour|
+
+	    		logger.info hour.inspect
+
 	    		if hour[:status] != "hora-promocion"
 	    			week_blocks += '<div class="bloque-hora ' + hour[:status] + '" data-start="' + hour[:start_block] + '" data-end="' + hour[:end_block] + '" data-provider="' + hour[:available_provider] + '" data-discount="' + hour[:promo_discount] + '"><span>' + hour[:start_block] + ' - ' + hour[:end_block] + '</span></div>'
 	    		else
