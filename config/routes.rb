@@ -326,6 +326,8 @@ Agendapro::Application.routes.draw do
 
       get 'services/:id/service_providers', to: 'services#service_providers'
 
+      get 'service_providers/:id/available_hours', to: 'service_providers#available_hours'
+
       post 'users/session', to: 'users#login'
       get 'users/me', to: 'users#mobile_user'
       
