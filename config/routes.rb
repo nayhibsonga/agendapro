@@ -323,6 +323,7 @@ Agendapro::Application.routes.draw do
       resources :locations
       resources :economic_sectors
       post 'users/session', to: 'users#login'
+      get 'locations_search', to: 'locations#search'
     end
   end
 
