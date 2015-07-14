@@ -841,6 +841,13 @@ class BookingMailer < ActionMailer::Base
 							:content => Base64.encode64(File.read('public' + book_info.location.company.logo_url.to_s))
 						}]
 		end
+		if File.exist?('app/assets/ico/email/flecha_verde.png')
+			message[:images] << {
+					:type => 'image/png',
+					:name => 'ARROW',
+					:content => Base64.encode64(File.read('app/assets/ico/email/flecha_verde.png'))
+				}
+		end
 
 		second_address = ''
 		if !book_info.location.second_address.blank?
