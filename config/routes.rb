@@ -324,6 +324,8 @@ Agendapro::Application.routes.draw do
       resources :locations
       get 'locations_search', to: 'locations#search'
 
+      get 'services/:id/service_providers', to: 'services#service_providers'
+
       post 'users/session', to: 'users#login'
       get 'users/me', to: 'users#mobile_user'
       
