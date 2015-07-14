@@ -321,9 +321,10 @@ Agendapro::Application.routes.draw do
   namespace :api, defaults: {format: 'json'} do
     namespace :v1 do
 
-      resources :locations
+      resources :locations, only: [:index, :show]
       get 'locations_search', to: 'locations#search'
 
+      resources :services, only: [:show]
       get 'services/:id/service_providers', to: 'services#service_providers'
 
       get 'service_providers/:id/available_hours', to: 'service_providers#available_hours'
