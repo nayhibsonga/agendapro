@@ -106,18 +106,26 @@ var hoursSelected = false;
       clear: '',
       dateFormat: 'yy-mm-dd',
       onSelect: function(newDate){
-        var data = {
-          provider: $("#selectedProvider").val(),
-          date: newDate,
+
+        var data;
+        var selects = [];
+        selects.push({
+          service: $("#service_id").val(),
+          provider: $("#selectedProvider").val()
+        });
+
+        data = {
+          serviceStaff: JSON.stringify(selects),
           local: $('#selectedLocal').val(),
-          service: $("#service_id").val()
+          date: newDate,
+          session_booking_id: $("#session_booking_id").val()
         }
 
         if (calendar) {
-          calendar.rebuild('/available_hours_week_html', data);
+          calendar.rebuild('/promotion_hours', data);
         }
         else {
-          calendar = new Calendar('/available_hours_week_html', data);
+          calendar = new Calendar('/promotion_hours', data);
         }
 
         $(document).on('hourClick', function (e) {

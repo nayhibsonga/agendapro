@@ -3532,7 +3532,7 @@ class BookingsController < ApplicationController
         if !session_booking.nil?
 
           if !session_booking.service_promo_id.nil? && session_booking.max_discount != 0
-            if hour[:time_discount] < session_booking.max_discount
+            if hour[:group_discount].to_f < session_booking.max_discount
               break
             end
           end
