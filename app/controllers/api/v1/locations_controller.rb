@@ -5,6 +5,10 @@ module Api
       	@locations = Location.where(active: true, online_booking: true).last(20)
       end
 
+      def show
+      	@location = Location.find(params[:id])
+      end
+
       def search
       	if (params[:search_text].present? || params[:economic_sector_id].present?) && params[:latitude].present? && params[:longitude].present?
 			@lat = params[:latitude]
