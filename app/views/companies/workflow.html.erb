@@ -26,7 +26,7 @@
           <div id="selectHour"></div>
           <%= form_tag '/optimizer_data', method: 'post', role: 'form', class: 'hidden', id: 'userData' do %>
             <input type="hidden" id="local" name="local" value="<%= @location.id %>">
-            <input type="hidden" class="bookings" name="bookings">
+            <!--<input type="hidden" class="bookings" name="bookings">-->
           <% end %>
         </div>
         <div id="hoursDetails"></div>
@@ -350,7 +350,7 @@
             </div>-->
             <div class="row change-bar">
               <div class="col-xs-12 col-md-4 col-md-push-3">
-                <p class="p-label"><span class="wf-label label-available">&nbsp;</span> Disponible<span class="wf-label label-past">&nbsp;</span> No Disponible<span class="wf-label label-unavailable">&nbsp;</span> Ocupado</p>
+                <p class="p-label"><span class="wf-label label-available">&nbsp;</span> Disponible<!--<span class="wf-label label-past">&nbsp;</span> No Disponible--><span class="wf-label label-unavailable">&nbsp;</span> Ocupado</p>
               </div>
               <div class="col-xs-4 col-md-3 col-md-pull-4">
                 <div class="btn-change btn-prev">
@@ -410,6 +410,7 @@
                     <input type="hidden" name="payment" id="payment" value="0">
                     <input type="hidden" name="has_sessions" id ="has_sessions" value="0" />
                     <input type="hidden" name="max_discount" id="max_discount" value="0" />
+                    <input type="hidden" name="used_promo_discount" id="used_promo_discount" value="0" />
 
                     <% if user_signed_in? %>
                     <div id="user-data">

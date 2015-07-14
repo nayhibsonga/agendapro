@@ -132,7 +132,4 @@ class SessionBooking < ActiveRecord::Base
 		end
 	end
 
-
-
-
 end

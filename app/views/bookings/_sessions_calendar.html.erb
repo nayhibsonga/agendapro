@@ -72,7 +72,7 @@
         </div>
 
 
-
+<input type="hidden" id="session_booking_id" value="<%= @booking.session_booking.id %>" />
 <input type="hidden" id="booking_id" value="<%= @booking.id %>" />
 <input type="hidden" id="service_id" value="<%= @booking.service_id %>" />
 <input type="hidden" id="selectedLocal" value="<%= @booking.location_id %>" />
@@ -211,27 +211,32 @@ function loadCalendar () {
         if ($(this).val() != staffSelected) {
 
           var data;
+          var selects = [];
+          selects.push({
+            service: $("#service_id").val(),
+            provider: event.target.getAttribute('value')
+          });
           if($("#datepicker").val()!="") {
             data = {
-              provider: event.target.getAttribute('value'),
+              serviceStaff: JSON.stringify(selects),
               local: $('#selectedLocal').val(),
-              service: $("#service_id").val(),
-              date: $("#datepicker").val()
+              date: $("#datepicker").val(),
+              session_booking_id: $("#session_booking_id").val()
             }
           } else {
             data = {
-              provider: event.target.getAttribute('value'),
+              serviceStaff: JSON.stringify(selects),
               local: $('#selectedLocal').val(),
-              service: $("#service_id").val()
+              session_booking_id: $("#session_booking_id").val()
             }
           }
 
           staffSelected = $(this).val();
           if (calendar) {
-            calendar.rebuild('/available_hours_week_html', data);
+            calendar.rebuild('/promotion_hours', data);
           }
           else {
-            calendar = new Calendar('/available_hours_week_html', data);
+            calendar = new Calendar('/promotion_hours', data);
           }
 
           // $("#calendar-loader").hide();
@@ -277,31 +282,35 @@ function loadCalendar () {
         staffSelected = $('[name="staffRadio"]').first().val();
 
         var data;
+        var selects = [];
+        selects.push({
+          service: $("#service_id").val(),
+          provider: $('[name="staffRadio"]').first().val()
+        });
         if($("#datepicker").val()!="") {
           data = {
-            provider: $('[name="staffRadio"]').first().val(),
+            serviceStaff: JSON.stringify(selects),
             local: $('#selectedLocal').val(),
-            service: $("#service_id").val(),
-            date: $("#datepicker").val()
+            date: $("#datepicker").val(),
+            session_booking_id: $("#session_booking_id").val()
           }
         } else {
           data = {
-            provider: $('[name="staffRadio"]').first().val(),
+            serviceStaff: JSON.stringify(selects),
             local: $('#selectedLocal').val(),
-            service: $("#service_id").val()
+            session_booking_id: $("#session_booking_id").val()
           }
+        }
+
+        if (calendar) {
+          calendar.rebuild('/promotion_hours', data);
+        }
+        else {
+          calendar = new Calendar('/promotion_hours', data);
         }
 
         // $("#calendar-loader").show();
         
-          
-
-        if (calendar) {
-          calendar.rebuild('/available_hours_week_html', data);
-        }
-        else {
-          calendar = new Calendar('/available_hours_week_html', data);
-        }
 
         // $("#calendar-loader").hide();
 

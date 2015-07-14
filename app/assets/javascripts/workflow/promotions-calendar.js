@@ -66,6 +66,10 @@ function PromoCalendar (source, getData) {
 			}
 			$('.bloque-hora').click(function (e) {
 				var element = $(e.currentTarget);
+				if(element.hasClass('hora-ocupada'))
+				{
+					return false;
+				}
 				if (element.hasClass('hora-disponible') || element.hasClass('hora-promocion')) {
 					// Activate block
 					$('.hora-activo').addClass('hora-disponible').removeClass('hora-activo');
