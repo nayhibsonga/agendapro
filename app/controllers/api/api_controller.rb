@@ -1,26 +1,15 @@
 class Api::ApiController < ApplicationController
-	before_filter :check_api_key, :cors_preflight_check
-	after_filter :cors_set_access_control_headers
+	before_filter :check_auth_token
+	skip_before_action :verify_authenticity_token
 
-	def cors_set_access_control_headers
-		headers['Access-Control-Allow-Origin'] = '*'
-		headers['Access-Control-Allow-Methods'] = 'POST, GET, PUT, DELETE, OPTIONS'
-		headers['Access-Control-Allow-Headers'] = 'Origin, Content-Type, Accept, Authorization, Token'
-		headers['Access-Control-Max-Age'] = "1728000"
-	end
-
-	def cors_preflight_check
-		if request.method == 'OPTIONS'
-			headers['Access-Control-Allow-Origin'] = '*'
-			headers['Access-Control-Allow-Methods'] = 'POST, GET, PUT, DELETE, OPTIONS'
-			headers['Access-Control-Allow-Headers'] = 'X-Requested-With, X-Prototype-Version, Token'
-			headers['Access-Control-Max-Age'] = '1728000'
-
-			render :text => '', :content_type => 'text/plain'
+	def check_auth_token
+		if !request.headers['X-Auth-Token'].present?
+			return render json: {error: 'Not authenticated. Token not present.'}, status: 403
+		else
+			@mobile_user = User.find_by_mobile_token(request.headers['X-Auth-Token'])
+			if !@mobile_user.present?
+				return render json: {error: 'Not authenticated. Invalid Mobile Token'}, status: 403
+			end
 		end
-	end
-
-	def check_api_key
-		puts '###checking key###'
 	end
 end

@@ -167,3 +167,6 @@ gem 'newrelic_rpm'
 gem 'omniauth'
 gem 'omniauth-google-oauth2'
 gem 'omniauth-facebook'
+
+#Gema para CORS API
+gem 'rack-cors'

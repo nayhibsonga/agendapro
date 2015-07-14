@@ -322,6 +322,7 @@ Agendapro::Application.routes.draw do
     namespace :v1 do
       resources :locations
       resources :economic_sectors
+      post 'users/session', to: 'users#login'
     end
   end
 

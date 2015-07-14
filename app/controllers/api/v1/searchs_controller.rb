@@ -1,6 +1,6 @@
 module Api
   module V1
-  	class SearchsController < ApiController
+  	class SearchsController < V1Controller
   		
   	end
   end
