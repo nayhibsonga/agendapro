@@ -58,6 +58,8 @@ Agendapro::Application.routes.draw do
   resources :company_payment_methods
   resources :payment_methods
 
+  resources :favorite_locations, only: [:index, :create, :destroy]
+
   namespace :admin do
     get '', :to => 'dashboard#index', :as => '/'
     resources :users

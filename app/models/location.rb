@@ -35,6 +35,9 @@ class Location < ActiveRecord::Base
 
   has_many :payments, dependent: :destroy
 
+  has_many :favorites, dependent: :destroy
+  has_many :favorite_users, through: :favorites, source: :user
+
   accepts_nested_attributes_for :location_times, :reject_if => :all_blank, :allow_destroy => true
 
   validates :name, :phone, :company, :district, :email, :presence => true
