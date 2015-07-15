@@ -15,12 +15,21 @@ class ApplicationController < ActionController::Base
     params[resource] &&= send(method) if respond_to?(method, true)
   end
 
+  before_filter :set_locale
 
   rescue_from CanCan::AccessDenied do |exception|
     redirect_to "/403"
   end
 
   protected
+
+  def set_locale
+    I18n.locale = params[:locale] || :es
+  end
+
+  def default_url_options(options={})
+    { :locale => I18n.locale }
+  end
   
   def quick_add
     @due_payment = false
