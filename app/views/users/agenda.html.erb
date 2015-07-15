@@ -122,12 +122,167 @@
               </select>
             </span>
           </div>
-          <div id="sessions-div">
-          </div>
+
+
+          <% @sessionBookings.each do |sessionBooking| %>
+
+            <div class="sessions-div" session_booking_id="<%= sessionBooking.id %>" hidden>
+              <% i = 1 %>
+              <% sessionBooking.bookings.where(:is_session_booked => true).order('start asc').each do |booking| %>
+
+                <% if DateTime.now < (booking.start.to_datetime - booking.service.company.company_setting.before_edit_booking.hours) && booking.max_changes > 0  %>
+                  <% if booking.user_session_confirmed %>
+                    <div class="row session-row" booking_id="<%= booking.id %>">
+                      <div class="col-md-2 session-row-number">
+                        Sesión <%= i.to_s %>
+                      </div>
+                      <div class="col-md-6 session-row-date">
+                        <i class="fa fa-calendar-o"></i>&nbsp;<%= I18n.l(booking.start.to_date, format: :day) %>&nbsp;&nbsp;
+                        <i class="fa fa-clock-o"></i>&nbsp;<%= I18n.l(booking.start.to_time + 4.hours, format: :hour) %>
+                      </div>
+                      <div class="col-md-4 session-row-btns">
+                        <span><a class="btn session-btn session-btn-edit" booking_id="<%= booking.id %>" session_booking_id='<%= sessionBooking.id %>'>Editar</a><button class="btn session-btn session-btn-delete">Cancelar</button></span>
+                      </div>
+                    </div>
+                  <% else %>
+                    <div class="row session-row" booking_id="<%= booking.id %>">
+                      <div class="col-md-2 session-row-number">
+                        Sesión <%= i.to_s %>
+                      </div>
+                      <div class="col-md-6 session-row-date">
+                        <i class="fa fa-calendar-o"></i>&nbsp;<%= I18n.l(booking.start.to_date, format: :day) %>&nbsp;&nbsp;
+                        <i class="fa fa-clock-o"></i>&nbsp;<%= I18n.l(booking.start.to_time + 4.hours, format: :hour) %>
+                      </div>
+                      <div class="col-md-4 session-row-btns">
+                        <a class="btn session-btn session-btn-detail" booking_id="<%= booking.id %>">Ver detalle</a>
+                        <button class="btn session-btn session-btn-validate">Validar</button>
+                      </div>
+                    </div>
+                  <% end %>
+                <% else %>
+                  <div class="row used-session-row" booking_id="<%= booking.id %>">
+                    <div class="col-md-2 session-row-number">
+                      Sesión <%= i.to_s %>
+                    </div>
+                    <div class="col-md-6 session-row-date">
+                      <i class="fa fa-calendar-o"></i>&nbsp;<%= I18n.l(booking.start.to_date, format: :day) %>&nbsp;&nbsp;
+                        <i class="fa fa-clock-o"></i>&nbsp;<%= I18n.l(booking.start.to_time + 4.hours, format: :hour) %>
+                    </div>
+                    <div class="col-md-4 session-row-btns">
+                      <a class="btn session-btn session-btn-detail" booking_id="<%= booking.id %>">Ver detalle</a>
+                    </div>
+                  </div>
+                <% end %>
+                <% i = i+1 %>
+              <% end %>
+              <% sessionBooking.bookings.where(:is_session_booked => false).order('created_at asc').each do |booking| %>
+
+                <div class="row session-row" booking_id="<%= booking.id %>">
+                  <div class="col-md-2 session-row-number">
+                    Sesión <%= i.to_s %>
+                  </div>
+                  <div class="col-md-6 session-row-date">
+                    
+                  </div>
+                  <div class="col-md-4 session-row-btns">
+                    <a class="btn session-btn session-btn-book" booking_id="<%= booking.id %>" session_booking_id='<%= sessionBooking.id %>'>Reservar</a>
+                  </div>
+                </div>
+
+                <% i = i+1 %>
+              <% end %>
+            </div>
+
+          <% end %>
+
+
+          <!--<div id="sessions-div">
+          </div>-->
         </div>
         <div class="col-md-3">
-          <div id="sessions-summary">
-          </div>
+
+
+          <% @sessionBookings.each do |sessionBooking| %>
+            <div class="sessions-summary" session_booking_id="<%= sessionBooking.id %>" hidden>
+              <%
+                count_used = 0
+                count_booked = 0
+                count_unbooked = 0
+                sessionBooking.bookings.each do |booking|
+                  if booking.is_session_booked
+                    if DateTime.now < (booking.start.to_datetime - booking.service.company.company_setting.before_edit_booking.hours) && booking.max_changes > 0
+                      count_booked = count_booked + 1
+                    else
+                      count_used = count_used + 1
+                    end
+                  else
+                    count_unbooked = count_unbooked + 1
+                  end
+                end
+              %>
+              <div>
+                <% if sessionBooking.bookings.first.payed %>
+                  <div class="row">
+                    <div class="col-md-12">
+                      <div class="sessions-summary-payed">
+                        <i class="fa fa-money"></i>&nbsp;Servicio pagado en línea
+                      </div>
+                    </div>
+                  </div>
+                <% end %>
+                <div class="row">
+                  <div class="col-md-1">
+                  </div>
+                  <div class="col-md-7">
+                    <div class="sessions-summary-title">Número de sesiones</div>
+                  </div>
+                  <div class="col-md-3">
+                    <i class="fa fa-circle fa-2x fa-green"></i><span class="circle-number"><%= sessionBooking.bookings.count.to_s %></span>
+                  </div>
+                  <div class="col-md-1">
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-md-1">
+                  </div>
+                  <div class="col-md-7">
+                    <div class="sessions-summary-title">Usadas</div>
+                  </div>
+                  <div class="col-md-3">
+                    <i class="fa fa-circle fa-2x fa-green"></i><span class="circle-number"><%= count_used %></span>     
+                  </div>
+                  <div class="col-md-1">
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-md-1">
+                  </div>
+                  <div class="col-md-7">
+                    <div class="sessions-summary-title">Reservadas</div>
+                  </div>
+                  <div class="col-md-3">
+                    <i class="fa fa-circle fa-2x fa-green"></i><span class="circle-number"><%= count_booked %></span>
+                  </div>
+                  <div class="col-md-1">
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-md-1">
+                  </div>
+                  <div class="col-md-7">
+                    <div class="sessions-summary-title">No reservadas</div>
+                  </div>
+                  <div class="col-md-3">
+                    <i class="fa fa-circle fa-2x fa-green"></i><span class="circle-number"><%= count_unbooked %></span>
+                  </div>
+                  <div class="col-md-1">
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          <% end %>
+
         </div>
       </div>
     </div>
@@ -287,219 +442,156 @@
   </div>
 </div>
 
+
+
+<div class="modal" id="detailModal" tabindex="-1" role="basic" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal">&times;</button>
+            <h3 class="modal-title">Detalle de sesión</h3>
+          </div>
+          <div class="modal-body">
+                
+          </div>
+          <div class="modal-footer">
+              <a href="#" class="btn btn-white" data-dismiss="modal">Cerrar</a>
+          </div>
+        </div> <!-- /.modal-content -->
+    </div> <!-- /.modal-dialog -->
+</div> <!-- /.modal -->
+
+<div class="modal" id="bookModal" tabindex="-1" role="basic" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close closeBookModal" data-dismiss="modal">&times;</button>
+                <h3 class="modal-title" id="optimizerTitle" style="line-height: 1.1;">Reservar</h3>
+            </div>
+            <div class="modal-body">
+                <div id="optimizerFirst">
+                  <div id="pickerSelectDate">
+                    <div class="row">
+                      <div class="col-xs-3" style="text-align: right; font-weight: bold;">
+                        Inicio
+                      </div>
+                      <div class="col-xs-9">
+                        <input id="initialPickerDate" value="<%= I18n.l(DateTime.now.to_date) %>" hidden />
+                        <span id="pickerSelected" style="color: #949292;"><%= I18n.l(DateTime.now.to_date) %></span>&nbsp;&nbsp;
+                          <input type="hidden" name="bookingId" id="bookingId" value="" />
+                          <input type="hidden" name="selectedLocal" id="selectedLocal" value="" />
+                          <input type="hidden" name="selectedService" id="selectedService" value="" />
+                      </div>
+                    </div>
+                  </div>
+                  <form class="form-horizontal" id="serviceOptimizer">
+                      <div class="form-group">
+                        <label for="providerOptimizerSelector" class="col-xs-3 control-label">Prestador</label>
+                        <div class="col-xs-9">
+                          <select class="form-control" name="providerOptimizerSelector" id="providerOptimizerSelector">
+                            
+                          </select>
+                        </div>
+                      </div>
+                      <input type="hidden" name="service" value="" />
+                  </form>
+                  <div id="selectHour"></div>
+                </div>
+
+                <input type="hidden" id="session_booking_id" value="" />
+
+                <div id="calendar-div" hidden>
+                  <div class="row staff">
+                    <div class="col-md-9" id="staff-calendar">
+                      <div class="panel panel-info">
+                        <div class="calendar-head">
+                          <div class="panel-title">
+                            <div class="row">
+                              <div class="col-xs-1">
+                                <button type="button" class="btn btn-default" id="prev"><i class="fa fa-chevron-left"></i></button>
+                              </div>
+                              <div class="col-xs-8">
+                                <span class="tittle"></span>
+                              </div>
+                              <div class="col-xs-2">
+                                <span class="date-span" id="openCalendarDatepicker">
+                                  Ir a fecha&nbsp;<i class="fa fa-calendar-o"></i>
+                                  <input type="text" id="datepicker" name="date" />
+                                </span>
+                              </div>
+                              <div class="col-xs-1">
+                                <button type="button" class="btn btn-default pull-right" id="next"><i class="fa fa-chevron-right"></i></button>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="days-row">
+                        </div>
+                        <div class="panel-body">
+                          <div class="horario">
+                            <!-- <%= image_tag "ajax-loader.gif", :alt => "Loader", :id => "calendar-loader" %> -->
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-md-3">
+
+                      <div class="changeStaffPanel" style="margin-bottom: 10px;">
+                        <div id="changeStaffTitle" style="display: inline;">
+                          <a data-toggle="collapse" href="#staffCollapse" aria-expanded="false" aria-controls="staffCollapse">
+                            Cambiar prestador
+                            <span style="float: right; color: #22c488;"><i class="fa fa-plus-circle" id="openStaffCollapseIcon"></i><i class="fa fa-minus-circle" id="closeStaffCollapseIcon" style="display: none;"></i></span>
+                          </a>
+                        </div>
+                        <div class="collapse" id="staffCollapse">
+                          <div class="changeStaff" style="margin-top: 5px;">
+
+                            
+                          </div>
+                        </div>
+                      </div>
+
+                      <div class="panel panel-default">
+                        <div id="selected-hour-heading">
+                          Detalle Reserva
+                        </div>
+                        <div id="selected-hour-body">
+
+                        </div>
+                        
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+
+
+                <div class="row" id="loader-div" hidden>
+                  <p style="text-align: center; margin-top: 40px;">
+                    <%= image_tag "ajax-loader.gif", :alt => "Loader" %>
+                  </p>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <!--<button type="button" class="btn btn-green pull-left" id="addButton" style="display: none;" disabled><i class="fa fa-plus"></i>&nbsp;<span>Ver más resultados</span></button>-->
+                <!--<button type="button" class="btn session-btn btn-orange" id="optimizerBackBtn" style="display: none;" disabled><i class="fa fa-chevron-left"></i>&nbsp;Atrás</button>-->
+                <button type="button" class="btn session-btn btn-green" id="nextButton" style="display: none;">Reservar&nbsp;<i class="fa fa-chevron-right"></i></button>
+                <a type="button" class="btn session-btn" id="openCalendarBtn" booking_id=""><i class="fa fa-calendar-o"></i>&nbsp;Ver calendario</a>
+                <!--<button type="button" class="btn session-btn" id="openOptimizerBtn"><i class="fa fa-calendar-o"></i>&nbsp;Sugerir hora</button>-->
+                <a href="#" class="btn btn-white closeBookModal" data-dismiss="modal">Cerrar</a>
+            </div>
+        </div> <!-- /.modal-content -->
+    </div> <!-- /.modal-dialog -->
+</div> <!-- /.modal -->
+
+
+
 <% content_for :stylesheets do %>
   <%= stylesheet_link_tag "home/agenda" %>
 <% end %>
 
 <% content_for :scripts do %>
   <%= javascript_include_tag "Alert" %>
-  <script type="text/javascript">
-    $(document).ready(function() {
-      if($("#session-booking-select").length > 0) {
-        loadSessions();
-      }
-    });
-
-    $("#session-booking-select").on('change', function(){
-      loadSessions();
-    });
-
-    function loadSessions() {
-      var sb_id = $("#session-booking-select").val();
-
-      $.ajax({
-        type: 'GET',
-        url: 'get_session_bookings?session_booking_id=' + sb_id,
-        success: function(response) {
-          //alert("success");
-          $("#sessions-div").empty();
-          $("#sessions-div").append(response);
-        },
-        error: function() {
-          alert("error");
-        }
-      });
-
-      $.ajax({
-        type: 'GET',
-        url: 'get_session_summary?session_booking_id=' + sb_id,
-        success: function(response) {
-          //alert("success");
-          $("#sessions-summary").empty();
-          $("#sessions-summary").append(response);
-        },
-        error: function() {
-          alert("error");
-        }
-      });
-    }
-  </script>
-  <script type="text/javascript">
-    myAlert = new Alert();
-
-    var input2 = document.getElementById('inputLocalization2');
-    var options = {
-      types: ['geocode'],
-      componentRestrictions: {country: 'cl'}
-    };
-    var geocoder = new google.maps.Geocoder();
-    var autocomplete2 = new google.maps.places.Autocomplete(input2, options);
-    var infowindow = new google.maps.InfoWindow();
-    google.maps.event.addListener(autocomplete2, 'place_changed', function() {
-      if (autocomplete2.getPlace().geometry) {
-        $('#inputLocalization').val(autocomplete2.getPlace().formatted_address);
-        $('#latitude').val(autocomplete2.getPlace().geometry.location.A);
-        $('#longitude').val(autocomplete2.getPlace().geometry.location.F);
-        document.cookie = "lat=" + escape(autocomplete2.getPlace().geometry.location.A);
-        document.cookie = "lng=" + escape(autocomplete2.getPlace().geometry.location.F);
-        document.cookie = "formatted_address=" + escape(autocomplete2.getPlace().formatted_address);
-      }
-    });
-    $("#inputLocalization2").focusin(function () {
-      $(document).bind("keypress.key2", function(e) {
-        if (e.which == 13) {
-          e.preventDefault();
-          selectFirstResult();
-        }
-      });
-    });
-    $("#inputLocalization2").focusout(function () {
-      if(!$(".pac-container").is(":focus") && !$(".pac-container").is(":visible")) {
-        selectFirstResult();
-      }
-      $(document).unbind("keypress.key2");
-    });
-
-    function selectFirstResult() {
-      infowindow.close();
-      $(".pac-container").hide();
-      var firstResult = $(".pac-container .pac-item:first").text();
-      geocoder.geocode({"address":firstResult }, function(results, status) {
-        if (status == google.maps.GeocoderStatus.OK) {
-          var lat = results[0].geometry.location.lat(),
-            lng = results[0].geometry.location.lng(),
-            placeName = results[0].address_components[0].long_name,
-            latlng = new google.maps.LatLng(lat, lng);
-          $('#latitude').val(lat);
-          $('#longitude').val(lng);
-          document.cookie = "lat=" + escape(lat);
-          document.cookie = "lng=" + escape(lng);
-          $("#inputLocalization").val(results[0].formatted_address);
-          $("#inputLocalization2").val(results[0].formatted_address);
-          document.cookie = "formatted_address=" + escape(results[0].formatted_address);
-          $('#inputSearch').focus();
-          $('#search-form').submit();
-        }
-        else {
-          $("#inputLocalization").val('');
-          $("#inputLocalization2").val('');
-        }
-      });
-    }
-    function geolocate() {
-      if (navigator.geolocation) {
-        $('.geolocate_btn').html('&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<%= image_tag "small-loader.gif", :alt => "Loader", :id => "small_loader_header", :class => "small-loader-header" %>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;');
-        var positioned = false;
-        navigator.geolocation.getCurrentPosition(
-          function(position) {
-            positioned = true;
-            $('#latitude').val(position.coords.latitude);
-            $('#longitude').val(position.coords.longitude);
-            document.cookie = "lat=" + escape(position.coords.latitude);
-            document.cookie = "lng=" + escape(position.coords.longitude);
-            var latlng = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
-            geocoder.geocode({'latLng': latlng}, function(results, status) {
-              if (status == google.maps.GeocoderStatus.OK) {
-                if (results[0]) {
-                $('#inputLocalization').val(results[0].formatted_address);
-                $('#inputLocalization2').val(results[0].formatted_address);
-                document.cookie = "formatted_address=" + escape(results[0].formatted_address);
-                } else {
-                $('#inputLocalization').val(position.coords.latitude+', '+position.coords.longitude);
-                $('#inputLocalization2').val(position.coords.latitude+', '+position.coords.longitude);
-                document.cookie = "formatted_address=" + escape(position.coords.latitude+', '+position.coords.longitude);
-                }
-              } else {
-                $('#inputLocalization').val(position.coords.latitude+', '+position.coords.longitude);
-                $('#inputLocalization2').val(position.coords.latitude+', '+position.coords.longitude);
-                document.cookie = "formatted_address=" + escape(position.coords.latitude+', '+position.coords.longitude);
-              }
-              $('#inputSearch').focus();
-              $('.geolocate_btn').html('<i class="fa fa-crosshairs"></i> Encuéntrame');
-              return false;
-            });
-          },
-          function (error) {
-            positioned = true;
-            if (error.code == 1) {
-              myAlert.showAlert(
-                '<h3>Hubo un error en el proceso de localización.</h3>' +
-                '<p>No hay permiso, por favor asegúrate permitir la geolicalización automática en tu explorador.</p>'
-              );
-            }
-            else if (error.code == 2) {
-              myAlert.showAlert(
-                '<h3>Hubo un error en el proceso de localización.</h3>' +
-                '<p>Posición no disponible, por favor inténtalo nuevamente o escribe tu ubicación.</p>'
-              );
-            }
-            else if (error.code == 3) {
-              myAlert.showAlert(
-                '<h3>Hubo un error en el proceso de localización.</h3>' +
-                '<p>La consulta tardó mucho, por favor inténtalo nuevamente o escribe tu ubicación.</p>'
-              );
-            }
-            else {
-              myAlert.showAlert(
-                '<h3>Hubo un error en el proceso de localización.</h3>' +
-                '<p>Error desconocido, por favor inténtalo nuevamente o escribe tu ubicación.</p>'
-              );
-            }
-            $('.geolocate_btn').html('<i class="fa fa-crosshairs"></i> Encuéntrame');
-          },
-          {timeout: 10000}
-        );
-        setTimeout(function () {
-          if (!positioned) {
-            myAlert.showAlert(
-              '<h3>Hubo un error en el proceso de localización.</h3>' +
-              '<p>No hubo respuesta, por favor asegúrate permitir la geolicalización automática en tu explorador.</p>'
-            );
-            $('.geolocate_btn').html('<i class="fa fa-crosshairs"></i> Encuéntrame');
-          }
-        }, 15000);
-      }
-      else {
-        myAlert.showAlert(
-          '<h3>Hubo un error en el proceso de localización.</h3>' +
-          '<p>Este explorador no permite geolocalización automática, por favor escribe tu ubicación.</p>'
-        );
-      }
-      return;
-    }
-    $('.geolocate_btn').click(function() {
-      geolocate();
-    });
-    $('.sector_search_agenda').click(function() {
-      $('#inputSearch').val($(this).data('search'));
-      if ($('#inputLocalization').val() != 0) {
-        $('#search-form').submit();
-      }
-      else {
-        $('#geolocation-modal').modal('show');
-        $('#inputLocalization2').focus();
-      }
-    });
-    $('#modal_search').click(function() {
-      $('#search-form').submit();
-    });
-  </script>
-  <% if @lat && @lng && @formatted_address %>
-  <script type="text/javascript">
-    $('#latitude').val(<%= @lat %>);
-    $('#longitude').val(<%= @lng %>);
-    $('#inputLocalization').val('<%= @formatted_address %>');
-    $('#inputLocalization2').val('<%= @formatted_address %>');
-  </script>
-  <% end %>
+  <%= javascript_include_tag "workflow/promotions-calendar" %>
+  <%= javascript_include_tag "agenda/agenda" %>
 <% end %>

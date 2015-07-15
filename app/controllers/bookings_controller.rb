@@ -59,7 +59,7 @@ class BookingsController < ApplicationController
       sessions_ratio = "0/0"
     end
 
-    @booking_json = { :id => u.id, :start => u.start, :end => u.end, :service_id => u.service_id, :service_provider_id => u.service_provider_id, :price => u.price, :status_id => u.status_id, :client_id => u.client.id, :first_name => u.client.first_name, :last_name => u.client.last_name, :email => u.client.email, :phone => u.client.phone, :identification_number => u.client.identification_number, :send_mail => u.send_mail, :provider_lock => u.provider_lock, :notes => u.notes,  :company_comment => u.company_comment, :service_provider_active => u.service_provider.active, :service_active => u.service.active, :service_provider_name => u.service_provider.public_name, :service_name => u.service.name, :address => u.client.address, :district => u.client.district, :city => u.client.city, :birth_day => u.client.birth_day, :birth_month => u.client.birth_month, :birth_year => u.client.birth_year, :age => u.client.age, :record => u.client.record, :second_phone => u.client.second_phone, :gender => u.client.gender, deal_code: @booking.deal.nil? ? nil : @booking.deal.code, :payed => is_payed, :is_session => u.is_session, :sessions_ratio => sessions_ratio}
+    @booking_json = { :id => u.id, :start => u.start, :end => u.end, :service_id => u.service_id, :service_provider_id => u.service_provider_id, :price => u.price, :status_id => u.status_id, :client_id => u.client.id, :first_name => u.client.first_name, :last_name => u.client.last_name, :email => u.client.email, :phone => u.client.phone, :identification_number => u.client.identification_number, :send_mail => u.send_mail, :provider_lock => u.provider_lock, :notes => u.notes,  :company_comment => u.company_comment, :service_provider_active => u.service_provider.active, :service_active => u.service.active, :service_provider_name => u.service_provider.public_name, :service_name => u.service.name, :address => u.client.address, :district => u.client.district, :city => u.client.city, :birth_day => u.client.birth_day, :birth_month => u.client.birth_month, :birth_year => u.client.birth_year, :age => u.client.age, :record => u.client.record, :second_phone => u.client.second_phone, :gender => u.client.gender, deal_code: @booking.deal.nil? ? nil : @booking.deal.code, :payed => is_payed, :is_session => u.is_session, :sessions_ratio => sessions_ratio, :location_id => u.location_id, :provider_preference => u.location.company.company_setting.provider_preference}
     respond_to do |format|
       format.html { }
       format.json { render :json => @booking_json }
@@ -1080,20 +1080,27 @@ class BookingsController < ApplicationController
     @booking.user_session_confirmed = false
     @booking.is_session_booked = false
     #Send cancel mail
+    @json_response = []
 
     if @booking.save
       @booking.send_session_update_mail
-      respond_to do |format|
-        format.html { redirect_to bookings_url }
-        format.json { render :json => @booking }
-      end
+      #respond_to do |format|
+      #  format.html { redirect_to bookings_url }
+      #  format.json { render :json => @booking }
+      #end
+      @json_response << "ok"
+      @json_response << @booking
+      render :json => @json_response
     else
-      @errors = []
-      @errors << "Hubo un problema al eliminar la sesión."
-      respond_to do |format|
-        format.html { redirect_to bookings_url }
-        format.json { render :json => @errors }
-      end
+      #@errors = []
+      #@errors << "Hubo un problema al eliminar la sesión."
+      #respond_to do |format|
+      #  format.html { redirect_to bookings_url }
+      #  format.json { render :json => @errors }
+      #end
+      @json_response << "error"
+      @json_response << @booking.errors
+      render :json => @json_response
     end
   end
 
@@ -1131,20 +1138,17 @@ class BookingsController < ApplicationController
 
     #Send mail as if it was a new booking
     @booking.user_session_confirmed = true
+    @json_response = []
     if @booking.save
       #Send mail to providerZ
       @booking.send_validate_mail
-      respond_to do |format|
-        format.html { redirect_to bookings_url }
-        format.json { render :json => @booking }
-      end
+      @json_response << "ok"
+      @json_response << @booking
+      render :json => @json_response
     else
-      @errors = []
-      @errors << "Hubo un problema al validar la sesión."
-      respond_to do |format|
-        format.html { redirect_to 'validate_session_form' }
-        format.json { render :json => @errors }
-      end
+      @json_response << "ok"
+      @json_response << @booking.errors
+      render :json => @json_response
     end
   end
 
@@ -3281,6 +3285,10 @@ class BookingsController < ApplicationController
 
                   promo = Promo.where(:day_id => date.cwday, :service_promo_id => service.active_service_promo_id, :location_id => local.id).first
 
+                  if !session_booking.nil? && !session_booking.service_promo_id.nil?
+                    promo = Promo.where(:day_id => date.cwday, :service_promo_id => session_booking.service_promo_id, :location_id => local.id).first
+                  end
+
                   if !promo.nil?
 
 
@@ -3532,7 +3540,7 @@ class BookingsController < ApplicationController
         if !session_booking.nil?
 
           if !session_booking.service_promo_id.nil? && session_booking.max_discount != 0
-            if hour[:group_discount].to_f < session_booking.max_discount
+            if hour[:group_discount].to_f < session_booking.max_discount.to_f
               break
             end
           end

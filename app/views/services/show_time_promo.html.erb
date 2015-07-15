@@ -340,12 +340,8 @@
               <div class="col-xs-9">
                 <input id="initialPickerDate" value="<%= I18n.l(DateTime.now.to_date) %>" hidden />
                 <span id="pickerSelected" style="color: #949292;"><%= I18n.l(DateTime.now.to_date) %></span>&nbsp;&nbsp;
-                <span class="optimizer-date-span" id="openDatepicker" style="float: right;">
-                  Seleccionar nuevo inicio&nbsp;<i class="fa fa-calendar-o"></i>
-                  <input type="text" class="form-control" name="optimizerDateSelector" id="optimizerDateSelector" class="datepicker" />
                   <input type="hidden" name="selectedLocal" id="selectedLocal" value="<%= @location.id %>" />
                   <input type="hidden" name="selectedService" id="selectedService" value="<%= @service.id %>" />
-                </span>
               </div>
             </div>
           </div>
@@ -392,7 +388,7 @@
                         <span class="tittle"></span>
                       </div>
                       <div class="col-xs-2">
-                        <span class="date-span">
+                        <span class="date-span" id="openCalendarDatepicker">
                           Ir a fecha&nbsp;<i class="fa fa-calendar-o"></i>
                           <input type="text" id="datepicker" name="date" />
                         </span>
@@ -1733,6 +1729,60 @@
       blockBookingBufferHour();
 
     });
+
+
+     $("#datepicker").datepicker({
+        autoSize: true,
+        firstDay: 1,
+        changeMonth: true,
+        changeYear: true,
+        monthNames: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+        monthNamesShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
+        prevText: 'Atrás',
+        nextText: 'Adelante',
+        dayNames: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'],
+        dayNamesShort: ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'],
+        dayNamesMin: ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'],
+        today: 'Hoy',
+        clear: '',
+        dateFormat: 'yy-mm-dd',
+        onSelect: function(newDate){
+
+            var localId = $("#locationId").val();
+      
+            var start_date = $("#optimizerDateSelector").val();
+
+            $("#loader-div").show();
+
+            var selects = [];
+
+            selects.push({
+              service: $("#serviceId").val(),
+              provider: $('#providerOptimizerSelector').val()
+            });
+
+            var data;
+
+            data = {local: localId, serviceStaff: JSON.stringify(selects), date: newDate, mandatory_discount: true}
+            
+
+            if (promoCalendar) {
+              promoCalendar.rebuild('/promotion_hours', data);
+            }
+            else {
+              promoCalendar = new PromoCalendar('/promotion_hours', data);
+            }
+
+            $("#loader-div").hide();
+
+            blockBookingBufferHour();
+        }
+    });
+
+    $("#openCalendarDatepicker").click(function(){
+      $("#datepicker").datepicker("show");
+    });
+
 
     $(document).on('calendarBuilded', function (e) {
 

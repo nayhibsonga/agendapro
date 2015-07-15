@@ -129,6 +129,7 @@ var hoursSelected = false;
         }
 
         $(document).on('hourClick', function (e) {
+          console.log("click en hora");
           var sel_start = generateDate(e.date, e.start);
           var sel_end = generateDate(e.date, e.end);
           $("#start_date").val(sel_start);
@@ -249,9 +250,10 @@ function loadCalendar () {
 
           // $("#calendar-loader").hide();
 
-        };
+        }
 
         $(document).on('hourClick', function (e) {
+          console.log("click en hora");
           var sel_start = generateDate(e.date, e.start);
           var sel_end = generateDate(e.date, e.end);
           $("#start_date").val(sel_start);
@@ -317,15 +319,10 @@ function loadCalendar () {
           calendar = new Calendar('/promotion_hours', data);
         }
 
-        // $("#calendar-loader").show();
-        
-
-        // $("#calendar-loader").hide();
-
-
         $('#foo4').trigger('updateSizes');
 
         $(document).on('hourClick', function (e) {
+          console.log("click en hora");
           var sel_start = generateDate(e.date, e.start);
           var sel_end = generateDate(e.date, e.end);
           $("#start_date").val(sel_start);
@@ -383,6 +380,7 @@ function checkUserCrossBookings (b_start, b_end) {
 }
 
 $("#calendarBookSessionBtn").click(function(){
+
     if (hoursSelected) {
 
         var booking_id = $("#booking_id").val();
@@ -393,7 +391,6 @@ $("#calendarBookSessionBtn").click(function(){
         $(".staff").hide();
         $(".change-bar").hide();
         $("#nextButton").attr("disabled", "disabled");
-        //$("#calendarBackBtn").attr("disabled", "disabled");
 
         $.ajax({
             url: "update_book_session",
@@ -431,7 +428,7 @@ $("#calendarBookSessionBtn").click(function(){
     }
     else {
         alert('Debes seleccionar una hora');
-    };
+    }
 });
 
 var myAlert;
