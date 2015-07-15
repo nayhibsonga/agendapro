@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150713162956) do
+ActiveRecord::Schema.define(version: 20150715185939) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -852,7 +852,13 @@ ActiveRecord::Schema.define(version: 20150713162956) do
     t.integer  "service_id"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.integer  "max_bookings", default: 0
+    t.integer  "max_bookings",    default: 0
+    t.datetime "morning_start",   default: '2000-01-01 09:00:00', null: false
+    t.datetime "morning_end",     default: '2000-01-01 12:00:00', null: false
+    t.datetime "afternoon_start", default: '2000-01-01 12:00:00', null: false
+    t.datetime "afternoon_end",   default: '2000-01-01 18:00:00', null: false
+    t.datetime "night_start",     default: '2000-01-01 18:00:00', null: false
+    t.datetime "night_end",       default: '2000-01-01 20:00:00', null: false
   end
 
   create_table "service_providers", force: true do |t|

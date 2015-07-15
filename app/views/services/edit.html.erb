@@ -181,9 +181,19 @@
 										</tr>
 										<tr>
 
+										<% 
+											service_promo = nil
+											if !@service.active_service_promo_id.nil?
+												service_promo = ServicePromo.find(@service.active_service_promo_id)
+											end
+										%>
 											<td class="first-cell">
-												<span>Mañana</span><br />
-												<span class="hours"><%= promo_time.morning_start.strftime "%H:%M" %> - <%= promo_time.morning_end.strftime "%H:%M" %></span>
+												<span>Mañana</span>&nbsp;&nbsp;<span style="float: right; padding-right: 3px; cursor: pointer;" id="morning-edit"><i class="fa fa-pencil-square-o"></i></span><br />
+												<% if service_promo.nil? %>
+													<span class="hours"><%= promo_time.morning_start.strftime "%H:%M" %> - <%= promo_time.morning_end.strftime "%H:%M" %></span>
+												<% else %>
+													<span class="hours"><%= service_promo.morning_start.strftime "%H:%M" %> - <%= service_promo.morning_end.strftime "%H:%M" %></span>
+												<% end %>
 											</td>
 
 											<%
@@ -222,8 +232,12 @@
 										</tr>
 										<tr>
 											<td class="first-cell">
-												<span>Tarde</span><br />
-												<span class="hours"><%= promo_time.afternoon_start.strftime "%H:%M" %> - <%= promo_time.afternoon_end.strftime "%H:%M" %></span>
+												<span>Tarde</span>&nbsp;&nbsp;<span style="float: right; padding-right: 3px; cursor: pointer;" id="afternoon-edit"><i class="fa fa-pencil-square-o"></i></span><br />
+												<% if service_promo.nil? %>
+													<span class="hours"><%= promo_time.afternoon_start.strftime "%H:%M" %> - <%= promo_time.afternoon_end.strftime "%H:%M" %></span>
+												<% else %>
+													<span class="hours"><%= service_promo.afternoon_start.strftime "%H:%M" %> - <%= service_promo.afternoon_end.strftime "%H:%M" %></span>
+												<% end %>
 											</td>
 
 											<%
@@ -262,8 +276,12 @@
 										</tr>
 										<tr>
 											<td class="first-cell">
-												<span>Noche</span><br />
-												<span class="hours"><%= promo_time.night_start.strftime "%H:%M" %> - <%= promo_time.night_end.strftime "%H:%M" %></span>
+												<span>Noche</span>&nbsp;&nbsp;<span style="float: right; padding-right: 3px; cursor: pointer;" id="night-edit"><i class="fa fa-pencil-square-o"></i></span><br />
+												<% if service_promo.nil? %>
+													<span class="hours"><%= promo_time.night_start.strftime "%H:%M" %> - <%= promo_time.night_end.strftime "%H:%M" %></span>
+												<% else %>
+													<span class="hours"><%= service_promo.night_start.strftime "%H:%M" %> - <%= service_promo.night_end.strftime "%H:%M" %></span>
+												<% end %>
 											</td>
 											
 											<%
@@ -417,6 +435,108 @@
 
 </div>
 
+<div class="modal" id="morningModal" tabindex="-1" role="basic" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal">&times;</button>
+            <h3 class="modal-title">Horario de mañana</h3>
+          </div>
+          <div class="modal-body">
+            	<div class="promo-hour-select has-feedback morning-promo-hour">
+
+            		<% if service_promo.nil? %>
+
+                		Inicio: <%= time_select "service_promo", "morning_start", {default: promo_time.morning_start, minute_step: 15}, {:class => 'form-control date-select', required: true} %><br />
+                		Fin: <%= time_select "service_promo", "morning_end", {default: promo_time.morning_end, minute_step: 15}, {:class => 'form-control date-select', required: true} %>
+
+                	<% else %>
+
+                		Inicio: <%= time_select "service_promo", "morning_start", {default: service_promo.morning_start, minute_step: 15}, {:class => 'form-control date-select', required: true} %><br />
+                		Fin: <%= time_select "service_promo", "morning_end", {default: service_promo.morning_end, minute_step: 15}, {:class => 'form-control date-select', required: true} %>
+
+                	<% end %>
+
+                	<span class="help-block"><label id="morning-error" class="error" hidden></label></span>
+                	<span class="form-control-feedback"></span>
+
+              	</div>
+          </div>
+          <div class="modal-footer">
+              <a href="#" class="btn btn-white" data-dismiss="modal">Cerrar</a>
+          </div>
+        </div> <!-- /.modal-content -->
+    </div> <!-- /.modal-dialog -->
+</div> <!-- /.modal -->
+
+<div class="modal" id="afternoonModal" tabindex="-1" role="basic" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal">&times;</button>
+            <h3 class="modal-title">Horario de mañana</h3>
+          </div>
+          <div class="modal-body">
+            	<div class="promo-hour-select has-feedback morning-promo-hour">
+
+            		<% if service_promo.nil? %>
+
+                		Inicio: <%= time_select "service_promo", "morning_start", {default: promo_time.afternoon_start, minute_step: 15}, {:class => 'form-control date-select', required: true} %><br />
+                		Fin: <%= time_select "service_promo", "morning_end", {default: promo_time.afternoon_end, minute_step: 15}, {:class => 'form-control date-select', required: true} %>
+
+                	<% else %>
+
+                		Inicio: <%= time_select "service_promo", "morning_start", {default: service_promo.afternoon_start, minute_step: 15}, {:class => 'form-control date-select', required: true} %><br />
+                		Fin: <%= time_select "service_promo", "morning_end", {default: service_promo.afternoon_end, minute_step: 15}, {:class => 'form-control date-select', required: true} %>
+
+                	<% end %>
+
+                	<span class="help-block"><label id="morning-error" class="error" hidden></label></span>
+                	<span class="form-control-feedback"></span>
+
+              	</div>
+          </div>
+          <div class="modal-footer">
+              <a href="#" class="btn btn-white" data-dismiss="modal">Cerrar</a>
+          </div>
+        </div> <!-- /.modal-content -->
+    </div> <!-- /.modal-dialog -->
+</div> <!-- /.modal -->
+
+<div class="modal" id="nightModal" tabindex="-1" role="basic" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal">&times;</button>
+            <h3 class="modal-title">Horario de mañana</h3>
+          </div>
+          <div class="modal-body">
+            	<div class="promo-hour-select has-feedback morning-promo-hour">
+
+            		<% if service_promo.nil? %>
+
+                		Inicio: <%= time_select "service_promo", "morning_start", {default: promo_time.night_start, minute_step: 15}, {:class => 'form-control date-select', required: true} %><br />
+                		Fin: <%= time_select "service_promo", "morning_end", {default: promo_time.night_end, minute_step: 15}, {:class => 'form-control date-select', required: true} %>
+
+                	<% else %>
+
+                		Inicio: <%= time_select "service_promo", "morning_start", {default: service_promo.night_start, minute_step: 15}, {:class => 'form-control date-select', required: true} %><br />
+                		Fin: <%= time_select "service_promo", "morning_end", {default: service_promo.night_end, minute_step: 15}, {:class => 'form-control date-select', required: true} %>
+
+                	<% end %>
+
+                	<span class="help-block"><label id="morning-error" class="error" hidden></label></span>
+                	<span class="form-control-feedback"></span>
+
+              	</div>
+          </div>
+          <div class="modal-footer">
+              <a href="#" class="btn btn-white" data-dismiss="modal">Cerrar</a>
+          </div>
+        </div> <!-- /.modal-content -->
+    </div> <!-- /.modal-dialog -->
+</div> <!-- /.modal -->
+
 <% content_for :scripts do %>
   <%= javascript_include_tag "service" %>
 
@@ -426,6 +546,18 @@
 
   	$(document).ready(function(){
   		myAlert = new Alert('.main');
+  	});
+
+  	$("#morning-edit").click(function(){
+  		$("#morningModal").modal("show");
+  	});
+
+  	$("#afternoon-edit").click(function(){
+  		$("#afternoonModal").modal("show");
+  	});
+
+  	$("#night-edit").click(function(){
+  		$("#nightModal").modal("show");
   	});
 
   	$(".promotions-submit").click(function(e){

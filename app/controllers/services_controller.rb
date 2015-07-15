@@ -234,6 +234,8 @@ class ServicesController < ApplicationController
 
     @service = Service.find(params[:service_id])
 
+    @promo_time = @service.company.company_setting.promo_time
+
     @locations = Location.where(id: params[:locations])
 
     @missingLocations = Location.where(id: ServiceProvider.where(id: @service.service_providers).pluck(:location_id)) - @locations
@@ -294,12 +296,12 @@ class ServicesController < ApplicationController
         if promos_changed
 
           if params[:reset_on_max_change]
-            service_promo = ServicePromo.create(:service_id => @service.id, :max_bookings => params[:max_bookings])
+            service_promo = ServicePromo.create(:service_id => @service.id, :max_bookings => params[:max_bookings], :morning_start => @promo_time.morning_start, :morning_end => @promo_time.morning_end, :afternoon_start => @promo_time.afternoon_start, :afternoon_end => @promo_time.afternoon_end, :night_start => @promo_time.night_start, :night_end => @promo_time.night_end)
           else
             if last_service_promo != nil
-              service_promo = ServicePromo.create(:service_id => @service.id, :max_bookings => @service.active_promo_left_bookings)
+              service_promo = ServicePromo.create(:service_id => @service.id, :max_bookings => @service.active_promo_left_bookings, :morning_start => @promo_time.morning_start, :morning_end => @promo_time.morning_end, :afternoon_start => @promo_time.afternoon_start, :afternoon_end => @promo_time.afternoon_end, :night_start => @promo_time.night_start, :night_end => @promo_time.night_end)
             else
-              service_promo = ServicePromo.create(:service_id => @service.id, :max_bookings => params[:max_bookings])
+              service_promo = ServicePromo.create(:service_id => @service.id, :max_bookings => params[:max_bookings], :morning_start => @promo_time.morning_start, :morning_end => @promo_time.morning_end, :afternoon_start => @promo_time.afternoon_start, :afternoon_end => @promo_time.afternoon_end, :night_start => @promo_time.night_start, :night_end => @promo_time.night_end)
             end
           end
 
