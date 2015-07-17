@@ -7,8 +7,10 @@ module Api
       def login
         @user = User.find_by_email(params[:email])
         if @user.valid_password?(params[:password])
-          @user.mobile_token = SecureRandom.base64(32)
-          render json: { error: 'Invalid User. User not saved.' }, status: 500 if !@user.save
+          if @user.mobile_token.blank?
+            @user.mobile_token = SecureRandom.base64(32)
+            render json: { error: 'Invalid User. User not saved.' }, status: 500 if !@user.save
+          end
         else
           render json: { error: 'Invalid User' }, status: 403
         end
