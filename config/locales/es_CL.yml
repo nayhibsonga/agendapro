@@ -1,0 +1,5 @@
+es_CL:
+  errors: &errors
+    format: ! '%{attribute} %{message}'
+    messages:
+      accepted: debe ser aceptado CL
