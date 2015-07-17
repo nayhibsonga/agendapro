@@ -333,6 +333,8 @@ Agendapro::Application.routes.draw do
 
       post 'users/session', to: 'users#login'
       get 'users/me', to: 'users#mobile_user'
+      get 'users/bookings', to: 'users#bookings'
+      get 'users/favorites', to: 'users#favorites'
       
       resources :economic_sectors
     end
