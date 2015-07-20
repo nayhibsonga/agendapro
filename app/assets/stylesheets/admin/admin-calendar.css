@@ -203,22 +203,101 @@ table.fc-agenda-days {
   position: absolute;
   top: 5px;
   right: 15px;
+  z-index: 10;
 }
-@media (max-width: 767px) {
-  .calendar-btn {
-    top: 0px;
+.calendar-btn div.collapse,
+.calendar-btn div.collapse.in,
+.calendar-btn div.collapsing {
+  position: fixed;
+  right: 15px;
+  left: auto;
+}
+.calendar-btn ul {
+  background-color: #ffffff;
+  border: solid 1px #d1d1d1;
+  border-radius: 4px;
+}
+.calendar-btn ul > li {
+  padding: 5px 10px;
+}
+.calendar-btn ul > li:hover {
+  background-color: #d1d1d1;
+}
+@media (min-width: 992px) {
+  .calendar-btn > button {
+    display: none;
+    visibility: hidden;
   }
-  #createBreak {
-    padding: 4px 6px;
-    font-size: 13px;
+  .calendar-btn > .collapse {
+    display: block;
+    visibility: visible;
   }
-  #createBooking {
-    padding: 4px 6px;
-    font-size: 13px;
+  .calendar-btn ul {
+    border: none;
   }
-  .ui-datepicker-trigger {
-    padding: 4px 6px;
-    font-size: 13px;
+  .calendar-btn ul > li {
+    padding: initial;
+    display: inline-block;
+  }
+  .calendar-btn ul > li:hover {
+    background-color: initial;
+  }
+
+  .calendar-btn a {
+    color: #22c488;
+    display: inline-block;
+    padding: 6px 8px;
+    margin-bottom: 0;
+    font-size: 12px;
+    font-weight: normal;
+    line-height: 1.42857143;
+    text-align: center;
+    white-space: nowrap;
+    vertical-align: middle;
+    -ms-touch-action: manipulation;
+        touch-action: manipulation;
+    cursor: pointer;
+    -webkit-user-select: none;
+       -moz-user-select: none;
+        -ms-user-select: none;
+            user-select: none;
+    background-image: none;
+    border: 1px solid transparent;
+    background-color: #ffffff;
+    border-color: #d1d1d1;
+    border-radius: 4px;
+  }
+  .calendar-btn a:focus,
+  .calendar-btn a:active:focus,
+  .calendar-btn a.active:focus,
+  .calendar-btn a.focus,
+  .calendar-btn a:active.focus,
+  .calendar-btn a.active.focus {
+    outline: thin dotted;
+    outline: 5px auto -webkit-focus-ring-color;
+    outline-offset: -2px;
+  }
+  .calendar-btn a:hover,
+  .calendar-btn a:focus,
+  .calendar-btn a.focus {
+    color: #1ba970;
+    background-color: #d1d1d1;
+    border-color: #c0c0c0;
+    text-decoration: none;
+  }
+  .calendar-btn a:active,
+  .calendar-btn a.active {
+    background-image: none;
+    outline: 0;
+    -webkit-box-shadow: inset 0 3px 5px rgba(0, 0, 0, .125);
+            box-shadow: inset 0 3px 5px rgba(0, 0, 0, .125);
+  }
+}
+@media (min-width: 1200px) {
+  .calendar-btn a {
+    padding: 6px 12px;
+    font-size: 14px;
+    line-height: 1.42857143;
   }
 }
 
@@ -248,22 +327,44 @@ table.fc-agenda-days {
 .ui-datepicker-trigger.active {
   background-image: none;
 }
+
+#dp {
+  display: none;
+}
+
 @media (min-width: 992px) {
   .ui-datepicker-trigger {
     display: none;
   }
   #dp {
+    display: block;
     padding-top: 43px;
     margin-right: -15px;
-  }
-  #dp .ui-datepicker {
-    width: 100%;
-  }
-  #dp .ui-datepicker .ui-datepicker-title select {
-    font-size: .8em;
+    font-size: 0.61em;
+    font-size: 1.05vw;
   }
 }
-
+@media (min-width: 1080px) {
+  #dp {
+    font-size: 0.67em;
+    font-size: 1.05vw;
+  }
+}
+@media (min-width: 1200px) {
+  #dp {
+    font-size: 0.74em;
+    font-size: 1.05vw;
+  }
+}
+@media (min-width: 1600px) {
+  #dp {
+    font-size: 1em;
+  }
+  #dp > .ui-datepicker {
+    margin-left: auto;
+    margin-right: auto;
+  }
+}
 
 /*
   ================================
@@ -433,10 +534,6 @@ select[name="serviceOptimizerSelector"] {
   font-size: 12px;
 }
 
-#dp {
-  display: none;
-}
-
 .optimizerBtn {
   width: auto;
 }
@@ -461,11 +558,7 @@ select[name="serviceOptimizerSelector"] {
   .set-date-btn {
     display: none;
   }
-  #dp {
-    display: block;
-  }
   .hours-optimizer-button {
-    margin-left: 7px;
     font-size: 14px;
   }
   .label-calendar {
@@ -478,30 +571,11 @@ select[name="serviceOptimizerSelector"] {
     font-size: 17px;
   }
 }
-
-/*
-  ================================
-  === DatePicker Media Queries ===
-  ================================
-*/
-.ui-datepicker table {
-  font-size: 0.5em;
-}
-@media (min-width: 992px) {
-  .ui-datepicker table {
-    font-size: 0.5em;
-  }
-}
-
-@media (min-width: 1080px) {
-  .ui-datepicker table {
-    font-size: 0.7em;
-  }
-}
-
-@media (min-width: 1224px) {
-  .ui-datepicker table {
-    font-size: 0.8em;
+@media (min-width: 1600px) {
+  .hours-optimizer-button {
+    width: 238px;
+    margin-right: auto;
+    margin-left: auto;
   }
 }
 
@@ -511,9 +585,8 @@ select[name="serviceOptimizerSelector"] {
   ================================
 */
 .calendar-alert {
-   position: fixed;
-   bottom: 25px;
-   padding-left: 0;
+  position: fixed;
+  padding-left: 0;
 }
 .calendar-alert > .alert {
   position: initial;

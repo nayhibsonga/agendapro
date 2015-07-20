@@ -33,7 +33,7 @@ class NotificationEmailsController < ApplicationController
       end
       flash[:alert] = errors
     end
-    respond_with(@notification_email, :location => edit_company_setting_path(User.find(current_user.id).company.company_setting)) #no funciona en caso de error
+    respond_with(@notification_email, :location => edit_company_setting_path(User.find(current_user.id).company.company_setting, anchor: 'notifications')) #no funciona en caso de error
   end
 
   def update
@@ -46,7 +46,7 @@ class NotificationEmailsController < ApplicationController
       end
       flash[:alert] = errors
     end
-    respond_with(@notification_email, :location => edit_company_setting_path(User.find(current_user.id).company.company_setting)) #no funciona en caso de error
+    respond_with(@notification_email, :location => edit_company_setting_path(User.find(current_user.id).company.company_setting, anchor: 'notifications')) #no funciona en caso de error
   end
 
   def destroy
@@ -59,7 +59,7 @@ class NotificationEmailsController < ApplicationController
       end
       flash[:alert] = errors
     end
-    respond_with(@notification_email, :location => edit_company_setting_path(User.find(current_user.id).company.company_setting)) #no funciona en caso de error
+    respond_with(@notification_email, :location => edit_company_setting_path(User.find(current_user.id).company.company_setting, anchor: 'notifications')) #no funciona en caso de error
   end
 
   private
