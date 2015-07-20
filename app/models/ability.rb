@@ -463,6 +463,17 @@ class Ability
         can :bookings_history, Client
         can :check_sessions, Client
 
+        can :booking_payment, Payment
+        can :load_payment, Payment
+        can :past_bookings, Payment
+        can :past_sessions, Payment
+        can :client_bookings, Payment
+        can :client_sessions, Payment
+        can :read, Payment, :company_id => user.company_id
+        can :destroy, Payment, :company_id => user.company_id
+        can :create, Payment, :company_id => user.company_id
+        can :update, Payment, :company_id => user.company_id
+
     elsif user.role_id == Role.find_by_name("Staff (sin edición)").id
 
         can :read, ServiceProvider, :id => user.service_providers.pluck(:id)
