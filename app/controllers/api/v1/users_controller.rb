@@ -3,12 +3,22 @@ module Api
   	class UsersController < V1Controller
   	  skip_before_filter :check_auth_token, only: [:login, :create]
   	  before_action :check_login_params, only: [:login]
+      before_action :parse_registration_params, only: [:create]
 
       def create
         @user = User.new(user_params)
         @user.role = Role.find_by_name("Usuario Registrado")
         @user.request_mobile_token
         render :json => @user.errors.full_messages, :status=>422 unless @user.save
+      end
+
+      def edit
+        @user = @mobile_user
+        if @user.valid_password?(params[:password])
+          render json: { error: 'Invalid User. User not saved.' }, status: 500 if !@user.update(user_params)
+        else
+          render json: { error: 'Invalid User' }, status: 403
+        end
       end
 
       def login
@@ -88,8 +98,37 @@ module Api
         end
       end
 
+      def parse_registration_params
+        params[:user] = {}
+        params[:user][:email] =  params[:email]
+        params[:user][:password] = params[:password]
+        params[:user][:phone] = params[:phone]
+
+        nameArray = params[:name].split(' ')
+        if nameArray.length == 0
+
+        elsif nameArray.length == 1
+          params[:user][:first_name] = nameArray[0]
+        elsif nameArray.length == 2
+          params[:user][:first_name] = nameArray[0]
+          params[:user][:last_name] = nameArray[1]
+        elsif nameArray.length == 3
+          params[:user][:first_name] = nameArray[0]
+          params[:user][:last_name] = nameArray[1] + ' ' + nameArray[2]
+        else 
+          params[:user][:first_name] = nameArray[0] + ' ' + nameArray[1]
+          last_name = ''
+          (2..nameArray.length - 1).each do |i|
+            last_name += nameArray[i]+' '
+          end
+          strLen = last_name.length
+          last_name = last_name[0..strLen-1]
+          params[:user][:last_name] = last_name
+        end
+      end
+
       def user_params
-        params.require(:user).permit(:first_name, :last_name, :email, :password)
+        params.require(:user).permit(:first_name, :last_name, :email, :password, :phone)
       end
   	end
   end
