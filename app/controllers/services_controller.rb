@@ -95,12 +95,21 @@ class ServicesController < ApplicationController
       new_params = service_params
     end
     respond_to do |format|
-
+      send_promo_notification = false
+      if service_params[:price]
+        if service_params[:price].to_f != @service.price.to_f
+          @service.time_promo_active = false
+          send_promo_notification = true
+        end
+      end
       if params[:promo_update]
         if @service.update(new_params)
           if @service.has_sessions
             @service.has_last_minute_discount = false
             @service.save
+          end
+          if send_promo_notification
+            AdminMailer.notify_promo_creation(@service)
           end
           @service.check_online_discount
           format.html { redirect_to manage_promotions_path, notice: 'Servicio actualizado exitosamente.' }
@@ -114,6 +123,9 @@ class ServicesController < ApplicationController
           if @service.has_sessions
             @service.has_last_minute_discount = false
             @service.save
+          end
+          if send_promo_notification
+            AdminMailer.notify_promo_creation(@service)
           end
           @service.check_online_discount
           format.html { redirect_to services_path, notice: 'Servicio actualizado exitosamente.' }
@@ -250,6 +262,18 @@ class ServicesController < ApplicationController
     @promos = []
     @last_minute_promos = []
     @errors = []
+
+    first_time_promo = true
+
+    if @service.has_time_discount || !@service.active_service_promo_id.nil? || @service.time_promo_active
+      first_time_promo = false
+    else
+      if !@service.active_service_promo_id.nil?
+        if ServicePromo.find(@service.active_service_promo_id)
+          first_time_promo = false
+        end
+      end
+    end
 
     if @service.update(:has_last_minute_discount => params[:has_last_minute_discount], :has_time_discount => params[:has_time_discount])
 
@@ -453,6 +477,12 @@ class ServicesController < ApplicationController
         array_result[1] = @service
         array_result[2] = @promos
         array_result[3] = @last_minute_promos
+
+        if first_time_promo
+          #Send notification for promo_activation.
+          AdminMailer.notify_promo_creation(@service)
+        end
+
       else
         array_result[0] = "error"
         array_result[1] = @service
@@ -498,6 +528,8 @@ class ServicesController < ApplicationController
 
   def manage_service_promotion
     @service = Service.find(params[:id])
+    service_promo = ServicePromo.find(@service.active_service_promo_id)
+    @location = service_promo.promos.first.location
   end
 
   def show_time_promo

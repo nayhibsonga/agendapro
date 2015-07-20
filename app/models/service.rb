@@ -120,7 +120,7 @@ class Service < ActiveRecord::Base
 			return 0
 		else
 			service_promo = ServicePromo.find(self.active_service_promo_id)
-			service_promo.max_bookings
+			return service_promo.max_bookings
 		end
 	end
 

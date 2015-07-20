@@ -31,7 +31,6 @@ class Location < ActiveRecord::Base
 
   has_many :services, -> { where active: true, online_booking: true }, :through => :active_service_providers
 
-
   #has_many :services, -> { where active: true }, :through => :service_providers
 
   has_many :service_categories, :through => :services
