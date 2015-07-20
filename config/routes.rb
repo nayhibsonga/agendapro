@@ -325,6 +325,7 @@ Agendapro::Application.routes.draw do
 
       resources :locations, only: [:index, :show]
       get 'locations_search', to: 'locations#search'
+      post 'locations/:id/favorite', to: 'locations#favorite'
 
       resources :services, only: [:show]
       get 'services/:id/service_providers', to: 'services#service_providers'

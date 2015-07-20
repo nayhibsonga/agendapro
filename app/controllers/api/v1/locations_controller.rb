@@ -9,6 +9,24 @@ module Api
       	@location = Location.find(params[:id])
       end
 
+      def favorite
+      	@location = Location.find(params[:id])
+      	unless @mobile_user.favorite_locations.exists?(id: @location)
+			if Favorite.create(user: @mobile_user, location: @location)
+				render json: { favorite: true }, status: 200
+			else
+				render json: { favorite: false }, status: 422
+			end
+		else
+			@favorite = Favorite.where(location: @location, user: @mobile_user).first
+		    if @favorite.destroy
+		    	render json: { favorite: false }, status: 200
+		    else
+		    	render json: { favorite: true }, status: 422
+		    end
+		end
+      end
+
       def search
       	if (params[:search_text].present? || params[:economic_sector_id].present?) && params[:latitude].present? && params[:longitude].present?
 			@lat = params[:latitude]
