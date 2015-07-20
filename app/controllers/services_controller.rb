@@ -102,6 +102,7 @@ class ServicesController < ApplicationController
             @service.has_last_minute_discount = false
             @service.save
           end
+          @service.check_online_discount
           format.html { redirect_to manage_promotions_path, notice: 'Servicio actualizado exitosamente.' }
           format.json { head :no_content }
         else
@@ -114,6 +115,7 @@ class ServicesController < ApplicationController
             @service.has_last_minute_discount = false
             @service.save
           end
+          @service.check_online_discount
           format.html { redirect_to services_path, notice: 'Servicio actualizado exitosamente.' }
           format.json { head :no_content }
         else
@@ -374,45 +376,12 @@ class ServicesController < ApplicationController
       #If it has no promotions, create them.
       #Else, update each one.
 
-      if !@service.has_sessions
+      if params[:has_last_minute_discount]
+        if !@service.has_sessions
 
-        if @service.last_minute_promos.nil? || @service.last_minute_promos.count == 0
+          if @service.last_minute_promos.nil? || @service.last_minute_promos.count == 0
 
-          @last_minute_locations.each do |last_minute_location|
-
-              last_minute_promo = LastMinutePromo.new
-              last_minute_promo.service_id = @service.id
-              last_minute_promo.location_id = last_minute_location.id
-              last_minute_promo.discount = params[:last_minute_discount]
-              last_minute_promo.hours = params[:last_minute_hours]
-
-              if last_minute_promo.save
-                @last_minute_promos << last_minute_promo
-              else
-                @errors << last_minute_promo.errors
-              end
-
-          end
-
-        else
-
-          @last_minute_locations.each do |last_minute_location|
-
-
-              last_minute_promo = LastMinutePromo.where(:service_id => @service.id, :location_id => last_minute_location.id).first
-
-              if !last_minute_promo.nil?
-                
-                last_minute_promo.discount = params[:last_minute_discount]
-                last_minute_promo.hours = params[:last_minute_hours]
-
-                if last_minute_promo.save
-                  @last_minute_promos << last_minute_promo
-                else
-                  @errors << last_minute_promo.errors
-                end
-
-              else
+            @last_minute_locations.each do |last_minute_location|
 
                 last_minute_promo = LastMinutePromo.new
                 last_minute_promo.service_id = @service.id
@@ -426,20 +395,55 @@ class ServicesController < ApplicationController
                   @errors << last_minute_promo.errors
                 end
 
-              end
-
-            
-          end
-
-          @missingLastMinuteLocations.each do |last_minute_location|
-            last_minute_promos = LastMinutePromo.where(:service_id => @service.id, :location_id => last_minute_location.id)
-            if !last_minute_promos.nil?
-              last_minute_promos.delete_all
             end
+
+          else
+
+            @last_minute_locations.each do |last_minute_location|
+
+
+                last_minute_promo = LastMinutePromo.where(:service_id => @service.id, :location_id => last_minute_location.id).first
+
+                if !last_minute_promo.nil?
+                  
+                  last_minute_promo.discount = params[:last_minute_discount]
+                  last_minute_promo.hours = params[:last_minute_hours]
+
+                  if last_minute_promo.save
+                    @last_minute_promos << last_minute_promo
+                  else
+                    @errors << last_minute_promo.errors
+                  end
+
+                else
+
+                  last_minute_promo = LastMinutePromo.new
+                  last_minute_promo.service_id = @service.id
+                  last_minute_promo.location_id = last_minute_location.id
+                  last_minute_promo.discount = params[:last_minute_discount]
+                  last_minute_promo.hours = params[:last_minute_hours]
+
+                  if last_minute_promo.save
+                    @last_minute_promos << last_minute_promo
+                  else
+                    @errors << last_minute_promo.errors
+                  end
+
+                end
+
+              
+            end
+
+            @missingLastMinuteLocations.each do |last_minute_location|
+              last_minute_promos = LastMinutePromo.where(:service_id => @service.id, :location_id => last_minute_location.id)
+              if !last_minute_promos.nil?
+                last_minute_promos.delete_all
+              end
+            end
+
           end
 
         end
-
       end
 
 

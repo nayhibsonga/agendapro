@@ -473,4 +473,32 @@ class Service < ActiveRecord::Base
 
 	end
 
+	def check_online_discount
+		if !self.online_payable
+			self.must_be_paid_online = false
+			self.has_time_discount = false
+			self.has_discount = false
+		else
+			if self.has_discount
+				self.has_time_discount = false
+			elsif self.has_time_discount
+				self.has_discount = false
+			end
+			self.must_be_paid_online = true
+		end
+		self.save
+	end
+
+	def check_company_promos
+		if self.company.company_setting.nil? || self.company.company_setting.promo_time.nil?
+			return false
+		else
+			if !self.company.company_setting.allows_online_payment || !self.company.company_setting.online_payment_capable || !self.company.company_setting.promo_time.active
+				return false
+			else
+				return true
+			end
+		end
+	end
+
 end

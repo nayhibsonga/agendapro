@@ -36,7 +36,8 @@
 					<h3>Promociones</h3>
 
 						<input type="hidden" id="promo_service_id" value="<%= @service.id %>" />
-						<div class="row">
+						
+						<!--<div class="row">
 							<div class="col-md-12">
 								<label>Descuento en reservas de último minuto</label>
 								<span class="help-block">Activa descuentos para este servicio cuando sea agendado pocas horas antes de su realización.</span>
@@ -124,307 +125,324 @@
 
 								</div>
 							</div>
-						<% end %>
+						<% end %>-->
 
+						<% if !@service.has_discount && @service.online_payable && @service.check_company_promos %>
 					
-						<div class="row">
-							<div class="col-md-12">
-								<label>Descuentos en horarios bajos</label>
-								<span class="help-block">Activa descuentos para este servicio según la hora de realización.</span>
+							<div class="row">
+								<div class="col-md-12">
+									<label>Descuentos en horarios bajos</label>
+									<span class="help-block">Activa descuentos para este servicio según la hora de realización.</span>
 
-								<div class="form-group">
-									<div style="display: inline !important;">
-										<div class="checkbox">
-											<label>
-												<% if @service.has_time_discount %>
-					                          		<input type="checkbox" id="has_time_discount" name="has_time_discount" checked />
-					                          	<% else %>
-					                          		<input type="checkbox" id="has_time_discount" name="has_time_discount" />
-					                          	<% end %>
-					                          	Permitir descuento
-					                        </label>
-				                        </div>
-			                        	
-									</div>
-								</div>
-
-								<div class="form-group">
-									<%
-										promo_time = @service.company.company_setting.promo_time
-									%>
-									<table class="promotions-table">
-										<tr>
-											<th class="first-cell">
-
-											</th>
-											<th>
-												Lunes
-											</th>
-											<th>
-												Martes
-											</th>
-											<th>
-												Miércoles
-											</th>
-											<th>
-												Jueves
-											</th>
-											<th>
-												Viernes
-											</th>
-											<th>
-												Sábado
-											</th>
-											<th>
-												Domingo
-											</th>
-										</tr>
-										<tr>
-
-										<% 
-											service_promo = nil
-											if !@service.active_service_promo_id.nil?
-												service_promo = ServicePromo.find(@service.active_service_promo_id)
-											end
-										%>
-											<td class="first-cell">
-												<span>Mañana</span>&nbsp;&nbsp;<span style="float: right; padding-right: 3px; cursor: pointer;" id="morning-edit"><i class="fa fa-pencil-square-o"></i></span><br />
-												<% if service_promo.nil? %>
-													<span class="hours"><span id="morning-start"><%= promo_time.morning_start.strftime "%H:%M" %></span> - <span id="morning-end"><%= promo_time.morning_end.strftime "%H:%M" %></span></span>
-												<% else %>
-													<span class="hours"><%= service_promo.morning_start.strftime "%H:%M" %> - <%= service_promo.morning_end.strftime "%H:%M" %></span>
-												<% end %>
-											</td>
-
-											<%
-												for i in 1..7
-												promo = Promo.where(:service_promo_id => @service.active_service_promo_id, :day_id => i).first
-											%>
-
-												<td>
-													<select id="morning-<%= i.to_s %>" class="promotions-input">
-													<% if promo.nil? %>
-
-														<% for j in 0..19 %>
-															<% if (j*5) == promo_time.morning_default %>
-																<option value="<%= (j*5).to_s %>" selected><%= (j*5).to_s + ' %' %></option>	
-															<% else %>
-			                        							<option value="<%= (j*5).to_s %>"><%= (j*5).to_s + ' %' %></option>
-			                        						<% end %>
-			                        					<% end %>
-
-													<% else %>
-
-														<% for j in 0..19 %>
-															<% if (j*5) == promo.morning_discount %>
-			                        							<option value="<%= (j*5).to_s %>" selected><%= (j*5).to_s + ' %' %></option>
-			                        						<% else %>
-			                        							<option value="<%= (j*5).to_s %>"><%= (j*5).to_s + ' %' %></option>
-			                        						<% end %>
-			                        					<% end %>
-
-
-													<% end %>
-												</td>
-
-											<% end %>								
-
-										</tr>
-										<tr>
-											<td class="first-cell">
-												<span>Tarde</span>&nbsp;&nbsp;<span style="float: right; padding-right: 3px; cursor: pointer;" id="afternoon-edit"><i class="fa fa-pencil-square-o"></i></span><br />
-												<% if service_promo.nil? %>
-													<span class="hours"><%= promo_time.afternoon_start.strftime "%H:%M" %> - <%= promo_time.afternoon_end.strftime "%H:%M" %></span>
-												<% else %>
-													<span class="hours"><%= service_promo.afternoon_start.strftime "%H:%M" %> - <%= service_promo.afternoon_end.strftime "%H:%M" %></span>
-												<% end %>
-											</td>
-
-											<%
-												for i in 1..7
-												promo = Promo.where(:service_promo_id => @service.active_service_promo_id, :day_id => i).first
-											%>
-
-												<td>
-													<select id="afternoon-<%= i.to_s %>" class="promotions-input">
-													<% if promo.nil? %>
-
-														<% for j in 0..19 %>
-															<% if (j*5) == promo_time.afternoon_default %>
-																<option value="<%= (j*5).to_s %>" selected><%= (j*5).to_s + ' %' %></option>
-															<% else %>
-			                        							<option value="<%= (j*5).to_s %>"><%= (j*5).to_s + ' %' %></option>
-			                        						<% end %>
-			                        					<% end %>
-
-													<% else %>
-
-														<% for j in 0..19 %>
-															<% if (j*5) == promo.afternoon_discount %>
-			                        							<option value="<%= (j*5).to_s %>" selected><%= (j*5).to_s + ' %' %></option>
-			                        						<% else %>
-			                        							<option value="<%= (j*5).to_s %>"><%= (j*5).to_s + ' %' %></option>
-			                        						<% end %>
-			                        					<% end %>
-
-
-													<% end %>
-												</td>
-
-											<% end %>
-
-										</tr>
-										<tr>
-											<td class="first-cell">
-												<span>Noche</span>&nbsp;&nbsp;<span style="float: right; padding-right: 3px; cursor: pointer;" id="night-edit"><i class="fa fa-pencil-square-o"></i></span><br />
-												<% if service_promo.nil? %>
-													<span class="hours"><%= promo_time.night_start.strftime "%H:%M" %> - <%= promo_time.night_end.strftime "%H:%M" %></span>
-												<% else %>
-													<span class="hours"><%= service_promo.night_start.strftime "%H:%M" %> - <%= service_promo.night_end.strftime "%H:%M" %></span>
-												<% end %>
-											</td>
-											
-											<%
-												for i in 1..7
-												promo = Promo.where(:service_promo_id => @service.active_service_promo_id, :day_id => i).first
-											%>
-
-												<td>
-													<select id="night-<%= i.to_s %>" class="promotions-input">
-													<% if promo.nil? %>
-
-														<% for j in 0..19 %>
-															<% if (j*5) == promo_time.night_default %>
-																<option value="<%= (j*5).to_s %>" selected><%= (j*5).to_s + ' %' %></option>
-															<% else %>
-			                        							<option value="<%= (j*5).to_s %>"><%= (j*5).to_s + ' %' %></option>
-			                        						<% end %>
-			                        					<% end %>
-
-													<% else %>
-
-														<% for j in 0..19 %>
-															<% if (j*5) == promo.night_discount %>
-			                        							<option value="<%= (j*5).to_s %>" selected><%= (j*5).to_s + ' %' %></option>
-			                        						<% else %>
-			                        							<option value="<%= (j*5).to_s %>"><%= (j*5).to_s + ' %' %></option>
-			                        						<% end %>
-			                        					<% end %>
-
-
-													<% end %>
-												</td>
-
-											<% end %>
-
-										</tr>
-									</table>
-								</div>
-
-							</div>
-
-						</div>
-
-
-						<div class="row">
-							<div class="col-md-12">
-								<label>En los siguientes locales</label>
-								<span class="help-block">Selecciona los locales que prestan este servicio y lo ofrecerán en promoción por horario.</span>
-
-								<div class="form-group">
-									
-									<%
-										locations = []
-										@service.service_providers.each do |service_provider|  
-											if !locations.include?(service_provider.location)
-												locations << service_provider.location
-											end
-										end
-									%>
-
-									<% locations.each do |location| %>
-										<div class="checkbox">
-						                    <label>
-						                    	<% if Promo.where(:service_promo_id => @service.active_service_promo_id, :location_id => location.id).count > 0 || @service.active_service_promo_id.nil? || @service.service_promos.count == 0 || @service.service_promos.nil? %>
-						                    		<input type="checkbox" checked="checked" value="<%= location.id %>" name="locations" /> <%= location.name %>
-						                    	<% else %>
-						                    		<input type="checkbox" value="<%= location.id %>" name="locations" /> <%= location.name %>
-						                    	<% end %>
-						                    </label>
-						                </div>
-									<% end %>
-
-								</div>
-
-							</div>
-						</div>
-
-
-						<div class="row">
-							<div class="col-md-12">
-								<label>Promociones disponibles</label>
-								<span class="help-block">Selecciona el stock de reservas que tendrán descuento.</span>
-
-								<div class="form-group">
-									
-									<% if @service.active_service_promo_id.nil? %>
-										<div>
-											
-
-											<div class="input-group" style="width: 130px !important;">
-							                    <input type="number" id="max_bookings" name="max_bookings" value="" class="form-control" />
-							                    <span class="input-group-addon">Reservas</span>
-                  							</div>
-
-										
-
-										</div>
-									<% else %>
-										<div>
-											<div class="input-group" style="width: 130px !important;">
-							                    <input type="number" id="max_bookings" name="max_bookings" value="<%= @service.active_promo_left_bookings %>" class="form-control" />
-							                    <span class="input-group-addon">Reservas</span>
-	              							</div>
-											Quedan <%= @service.active_promo_left_bookings.to_s %> reservas disponibles.
-										</div>
-									<% end %>
-									<div style="clear: both;">
-									</div>
-
-								</div>
-
-								<% if !@service.active_service_promo_id.nil? %>
 									<div class="form-group">
 										<div style="display: inline !important;">
 											<div class="checkbox">
 												<label>
-													
-						                          	<input type="checkbox" id="reset_on_max_change" name="reset_on_max_change" checked />	
-						                          		Editar el stock.
-						                          	<span style="cursor: pointer;" data-toggle="tooltip" data-placement="bottom" title="Si marcas esta opción, al cambiar el stock disponible el contador de reservas tomadas volverá a 0. Si no la marcas, se mantendrá el contador de reservas tomadas para la promoción."><i class="fa fa-question-circle fa-lg"></i></span>
-
+													<% if @service.has_time_discount %>
+						                          		<input type="checkbox" id="has_time_discount" name="has_time_discount" checked />
+						                          	<% else %>
+						                          		<input type="checkbox" id="has_time_discount" name="has_time_discount" />
+						                          	<% end %>
+						                          	Permitir descuento
 						                        </label>
-					                        </div>				                        	
+					                        </div>
+				                        	
 										</div>
 									</div>
-								<% else %>
-									<div style="display: none;">
-										<input type="checkbox" id="reset_on_max_change" name="reset_on_max_change" checked />
+
+									<div class="form-group">
+										<%
+											promo_time = @service.company.company_setting.promo_time
+										%>
+										<table class="promotions-table">
+											<tr>
+												<th class="first-cell">
+
+												</th>
+												<th>
+													Lunes
+												</th>
+												<th>
+													Martes
+												</th>
+												<th>
+													Miércoles
+												</th>
+												<th>
+													Jueves
+												</th>
+												<th>
+													Viernes
+												</th>
+												<th>
+													Sábado
+												</th>
+												<th>
+													Domingo
+												</th>
+											</tr>
+											<tr>
+
+											<% 
+												service_promo = nil
+												if !@service.active_service_promo_id.nil?
+													service_promo = ServicePromo.find(@service.active_service_promo_id)
+												end
+											%>
+												<td class="first-cell">
+													<span>Mañana</span>&nbsp;&nbsp;<span style="float: right; padding-right: 3px; cursor: pointer;" id="morning-edit"><i class="fa fa-pencil-square-o"></i></span><br />
+													<% if service_promo.nil? %>
+														<span class="hours"><span id="morning-start"><%= promo_time.morning_start.strftime "%H:%M" %></span> - <span id="morning-end"><%= promo_time.morning_end.strftime "%H:%M" %></span></span>
+													<% else %>
+														<span class="hours"><%= service_promo.morning_start.strftime "%H:%M" %> - <%= service_promo.morning_end.strftime "%H:%M" %></span>
+													<% end %>
+												</td>
+
+												<%
+													for i in 1..7
+													promo = Promo.where(:service_promo_id => @service.active_service_promo_id, :day_id => i).first
+												%>
+
+													<td>
+														<select id="morning-<%= i.to_s %>" class="promotions-input">
+														<% if promo.nil? %>
+
+															<% for j in 0..19 %>
+																<% if (j*5) == promo_time.morning_default %>
+																	<option value="<%= (j*5).to_s %>" selected><%= (j*5).to_s + ' %' %></option>	
+																<% else %>
+				                        							<option value="<%= (j*5).to_s %>"><%= (j*5).to_s + ' %' %></option>
+				                        						<% end %>
+				                        					<% end %>
+
+														<% else %>
+
+															<% for j in 0..19 %>
+																<% if (j*5) == promo.morning_discount %>
+				                        							<option value="<%= (j*5).to_s %>" selected><%= (j*5).to_s + ' %' %></option>
+				                        						<% else %>
+				                        							<option value="<%= (j*5).to_s %>"><%= (j*5).to_s + ' %' %></option>
+				                        						<% end %>
+				                        					<% end %>
+
+
+														<% end %>
+													</td>
+
+												<% end %>								
+
+											</tr>
+											<tr>
+												<td class="first-cell">
+													<span>Tarde</span>&nbsp;&nbsp;<span style="float: right; padding-right: 3px; cursor: pointer;" id="afternoon-edit"><i class="fa fa-pencil-square-o"></i></span><br />
+													<% if service_promo.nil? %>
+														<span class="hours"><%= promo_time.afternoon_start.strftime "%H:%M" %> - <%= promo_time.afternoon_end.strftime "%H:%M" %></span>
+													<% else %>
+														<span class="hours"><%= service_promo.afternoon_start.strftime "%H:%M" %> - <%= service_promo.afternoon_end.strftime "%H:%M" %></span>
+													<% end %>
+												</td>
+
+												<%
+													for i in 1..7
+													promo = Promo.where(:service_promo_id => @service.active_service_promo_id, :day_id => i).first
+												%>
+
+													<td>
+														<select id="afternoon-<%= i.to_s %>" class="promotions-input">
+														<% if promo.nil? %>
+
+															<% for j in 0..19 %>
+																<% if (j*5) == promo_time.afternoon_default %>
+																	<option value="<%= (j*5).to_s %>" selected><%= (j*5).to_s + ' %' %></option>
+																<% else %>
+				                        							<option value="<%= (j*5).to_s %>"><%= (j*5).to_s + ' %' %></option>
+				                        						<% end %>
+				                        					<% end %>
+
+														<% else %>
+
+															<% for j in 0..19 %>
+																<% if (j*5) == promo.afternoon_discount %>
+				                        							<option value="<%= (j*5).to_s %>" selected><%= (j*5).to_s + ' %' %></option>
+				                        						<% else %>
+				                        							<option value="<%= (j*5).to_s %>"><%= (j*5).to_s + ' %' %></option>
+				                        						<% end %>
+				                        					<% end %>
+
+
+														<% end %>
+													</td>
+
+												<% end %>
+
+											</tr>
+											<tr>
+												<td class="first-cell">
+													<span>Noche</span>&nbsp;&nbsp;<span style="float: right; padding-right: 3px; cursor: pointer;" id="night-edit"><i class="fa fa-pencil-square-o"></i></span><br />
+													<% if service_promo.nil? %>
+														<span class="hours"><%= promo_time.night_start.strftime "%H:%M" %> - <%= promo_time.night_end.strftime "%H:%M" %></span>
+													<% else %>
+														<span class="hours"><%= service_promo.night_start.strftime "%H:%M" %> - <%= service_promo.night_end.strftime "%H:%M" %></span>
+													<% end %>
+												</td>
+												
+												<%
+													for i in 1..7
+													promo = Promo.where(:service_promo_id => @service.active_service_promo_id, :day_id => i).first
+												%>
+
+													<td>
+														<select id="night-<%= i.to_s %>" class="promotions-input">
+														<% if promo.nil? %>
+
+															<% for j in 0..19 %>
+																<% if (j*5) == promo_time.night_default %>
+																	<option value="<%= (j*5).to_s %>" selected><%= (j*5).to_s + ' %' %></option>
+																<% else %>
+				                        							<option value="<%= (j*5).to_s %>"><%= (j*5).to_s + ' %' %></option>
+				                        						<% end %>
+				                        					<% end %>
+
+														<% else %>
+
+															<% for j in 0..19 %>
+																<% if (j*5) == promo.night_discount %>
+				                        							<option value="<%= (j*5).to_s %>" selected><%= (j*5).to_s + ' %' %></option>
+				                        						<% else %>
+				                        							<option value="<%= (j*5).to_s %>"><%= (j*5).to_s + ' %' %></option>
+				                        						<% end %>
+				                        					<% end %>
+
+
+														<% end %>
+													</td>
+
+												<% end %>
+
+											</tr>
+										</table>
 									</div>
-								<% end %>
+
+								</div>
 
 							</div>
-						</div>
 
-					
-						<div class="row">
-							<div class="col-md-12">
-								<div class="form-group">
-									<button class="btn btn-green promotions-submit">Guardar</button>
-									<%= link_to 'Cancelar', services_path, :class => "btn btn-default" %>
+
+							<div class="row">
+								<div class="col-md-12">
+									<label>En los siguientes locales</label>
+									<span class="help-block">Selecciona los locales que prestan este servicio y lo ofrecerán en promoción por horario.</span>
+
+									<div class="form-group">
+										
+										<%
+											locations = []
+											@service.service_providers.each do |service_provider|  
+												if !locations.include?(service_provider.location)
+													locations << service_provider.location
+												end
+											end
+										%>
+
+										<% locations.each do |location| %>
+											<div class="checkbox">
+							                    <label>
+							                    	<% if Promo.where(:service_promo_id => @service.active_service_promo_id, :location_id => location.id).count > 0 || @service.active_service_promo_id.nil? || @service.service_promos.count == 0 || @service.service_promos.nil? %>
+							                    		<input type="checkbox" checked="checked" value="<%= location.id %>" name="locations" /> <%= location.name %>
+							                    	<% else %>
+							                    		<input type="checkbox" value="<%= location.id %>" name="locations" /> <%= location.name %>
+							                    	<% end %>
+							                    </label>
+							                </div>
+										<% end %>
+
+									</div>
+
 								</div>
 							</div>
-						</div>
+
+
+							<div class="row">
+								<div class="col-md-12">
+									<label>Promociones disponibles</label>
+									<span class="help-block">Selecciona el stock de reservas que tendrán descuento.</span>
+
+									<div class="form-group">
+										
+										<% if @service.active_service_promo_id.nil? %>
+											<div>
+												
+
+												<div class="input-group" style="width: 130px !important;">
+								                    <input type="number" id="max_bookings" name="max_bookings" value="" class="form-control" />
+								                    <span class="input-group-addon">Reservas</span>
+	                  							</div>
+
+											
+
+											</div>
+										<% else %>
+											<div>
+												<div class="input-group" style="width: 130px !important;">
+								                    <input type="number" id="max_bookings" name="max_bookings" value="<%= @service.active_promo_left_bookings %>" class="form-control" />
+								                    <span class="input-group-addon">Reservas</span>
+		              							</div>
+												Quedan <%= @service.active_promo_left_bookings.to_s %> reservas disponibles.
+											</div>
+										<% end %>
+										<div style="clear: both;">
+										</div>
+
+									</div>
+
+									<% if !@service.active_service_promo_id.nil? %>
+										<div class="form-group">
+											<div style="display: inline !important;">
+												<div class="checkbox">
+													<label>
+														
+							                          	<input type="checkbox" id="reset_on_max_change" name="reset_on_max_change" checked />	
+							                          		Editar el stock.
+							                          	<span style="cursor: pointer;" data-toggle="tooltip" data-placement="bottom" title="Si marcas esta opción, al cambiar el stock disponible el contador de reservas tomadas volverá a 0. Si no la marcas, se mantendrá el contador de reservas tomadas para la promoción."><i class="fa fa-question-circle fa-lg"></i></span>
+
+							                        </label>
+						                        </div>				                        	
+											</div>
+										</div>
+									<% else %>
+										<div style="display: none;">
+											<input type="checkbox" id="reset_on_max_change" name="reset_on_max_change" checked />
+										</div>
+									<% end %>
+
+								</div>
+							</div>
+
+						
+							<div class="row">
+								<div class="col-md-12">
+									<div class="form-group">
+										<button class="btn btn-green promotions-submit">Guardar</button>
+										<%= link_to 'Cancelar', services_path, :class => "btn btn-default" %>
+									</div>
+								</div>
+							</div>
+
+						<% else %>
+
+							<div class="row">
+								<div class="col-md-12">
+									<div class="form-group">
+										<% if @service.has_discount %>
+											Este servicio ya tiene descuento por pago en línea, por lo que no puedes ofrecerlo en promoción.
+										<% else %>
+											Este servicio no se puede pagar en línea, por lo que no puedes ofrecerlo en promoción.
+										<% end %>
+									</div>
+								</div>
+							</div>
+
+						<% end %>
 
 				</div>
 			</div>
@@ -435,107 +453,109 @@
 
 </div>
 
-<div class="modal" id="morningModal" tabindex="-1" role="basic" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-          <div class="modal-header">
-            <button type="button" class="close" data-dismiss="modal">&times;</button>
-            <h3 class="modal-title">Horario de mañana</h3>
-          </div>
-          <div class="modal-body">
-            	<div class="promo-hour-select has-feedback morning-promo-hour">
+<% if !@service.has_discount && @service.online_payable && @service.check_company_promos %>
+	<div class="modal" id="morningModal" tabindex="-1" role="basic" aria-hidden="true">
+	    <div class="modal-dialog">
+	        <div class="modal-content">
+	          <div class="modal-header">
+	            <button type="button" class="close" data-dismiss="modal">&times;</button>
+	            <h3 class="modal-title">Horario de mañana</h3>
+	          </div>
+	          <div class="modal-body">
+	            	<div class="promo-hour-select has-feedback morning-promo-hour">
 
-            		<% if service_promo.nil? %>
+	            		<% if service_promo.nil? %>
 
-                		Inicio: <%= time_select "service_promo", "morning_start", {default: promo_time.morning_start, minute_step: 15}, {:class => 'form-control date-select', required: true} %><br />
-                		Fin: <%= time_select "service_promo", "morning_end", {default: promo_time.morning_end, minute_step: 15}, {:class => 'form-control date-select', required: true} %>
+	                		Inicio: <%= time_select "service_promo", "morning_start", {default: promo_time.morning_start, minute_step: 15}, {:class => 'form-control date-select', required: true} %><br />
+	                		Fin: <%= time_select "service_promo", "morning_end", {default: promo_time.morning_end, minute_step: 15}, {:class => 'form-control date-select', required: true} %>
 
-                	<% else %>
+	                	<% else %>
 
-                		Inicio: <%= time_select "service_promo", "morning_start", {default: service_promo.morning_start, minute_step: 15}, {:class => 'form-control date-select', required: true} %><br />
-                		Fin: <%= time_select "service_promo", "morning_end", {default: service_promo.morning_end, minute_step: 15}, {:class => 'form-control date-select', required: true} %>
+	                		Inicio: <%= time_select "service_promo", "morning_start", {default: service_promo.morning_start, minute_step: 15}, {:class => 'form-control date-select', required: true} %><br />
+	                		Fin: <%= time_select "service_promo", "morning_end", {default: service_promo.morning_end, minute_step: 15}, {:class => 'form-control date-select', required: true} %>
 
-                	<% end %>
+	                	<% end %>
 
-                	<span class="help-block"><label id="morning-error" class="error" hidden></label></span>
-                	<span class="form-control-feedback"></span>
+	                	<span class="help-block"><label id="morning-error" class="error" hidden></label></span>
+	                	<span class="form-control-feedback"></span>
 
-              	</div>
-          </div>
-          <div class="modal-footer">
-              <a href="#" class="btn btn-white" data-dismiss="modal">Cerrar</a>
-          </div>
-        </div> <!-- /.modal-content -->
-    </div> <!-- /.modal-dialog -->
-</div> <!-- /.modal -->
+	              	</div>
+	          </div>
+	          <div class="modal-footer">
+	              <a href="#" class="btn btn-white" data-dismiss="modal">Cerrar</a>
+	          </div>
+	        </div> <!-- /.modal-content -->
+	    </div> <!-- /.modal-dialog -->
+	</div> <!-- /.modal -->
 
-<div class="modal" id="afternoonModal" tabindex="-1" role="basic" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-          <div class="modal-header">
-            <button type="button" class="close" data-dismiss="modal">&times;</button>
-            <h3 class="modal-title">Horario de mañana</h3>
-          </div>
-          <div class="modal-body">
-            	<div class="promo-hour-select has-feedback morning-promo-hour">
+	<div class="modal" id="afternoonModal" tabindex="-1" role="basic" aria-hidden="true">
+	    <div class="modal-dialog">
+	        <div class="modal-content">
+	          <div class="modal-header">
+	            <button type="button" class="close" data-dismiss="modal">&times;</button>
+	            <h3 class="modal-title">Horario de mañana</h3>
+	          </div>
+	          <div class="modal-body">
+	            	<div class="promo-hour-select has-feedback morning-promo-hour">
 
-            		<% if service_promo.nil? %>
+	            		<% if service_promo.nil? %>
 
-                		Inicio: <%= time_select "service_promo", "morning_start", {default: promo_time.afternoon_start, minute_step: 15}, {:class => 'form-control date-select', required: true} %><br />
-                		Fin: <%= time_select "service_promo", "morning_end", {default: promo_time.afternoon_end, minute_step: 15}, {:class => 'form-control date-select', required: true} %>
+	                		Inicio: <%= time_select "service_promo", "morning_start", {default: promo_time.afternoon_start, minute_step: 15}, {:class => 'form-control date-select', required: true} %><br />
+	                		Fin: <%= time_select "service_promo", "morning_end", {default: promo_time.afternoon_end, minute_step: 15}, {:class => 'form-control date-select', required: true} %>
 
-                	<% else %>
+	                	<% else %>
 
-                		Inicio: <%= time_select "service_promo", "morning_start", {default: service_promo.afternoon_start, minute_step: 15}, {:class => 'form-control date-select', required: true} %><br />
-                		Fin: <%= time_select "service_promo", "morning_end", {default: service_promo.afternoon_end, minute_step: 15}, {:class => 'form-control date-select', required: true} %>
+	                		Inicio: <%= time_select "service_promo", "morning_start", {default: service_promo.afternoon_start, minute_step: 15}, {:class => 'form-control date-select', required: true} %><br />
+	                		Fin: <%= time_select "service_promo", "morning_end", {default: service_promo.afternoon_end, minute_step: 15}, {:class => 'form-control date-select', required: true} %>
 
-                	<% end %>
+	                	<% end %>
 
-                	<span class="help-block"><label id="morning-error" class="error" hidden></label></span>
-                	<span class="form-control-feedback"></span>
+	                	<span class="help-block"><label id="morning-error" class="error" hidden></label></span>
+	                	<span class="form-control-feedback"></span>
 
-              	</div>
-          </div>
-          <div class="modal-footer">
-              <a href="#" class="btn btn-white" data-dismiss="modal">Cerrar</a>
-          </div>
-        </div> <!-- /.modal-content -->
-    </div> <!-- /.modal-dialog -->
-</div> <!-- /.modal -->
+	              	</div>
+	          </div>
+	          <div class="modal-footer">
+	              <a href="#" class="btn btn-white" data-dismiss="modal">Cerrar</a>
+	          </div>
+	        </div> <!-- /.modal-content -->
+	    </div> <!-- /.modal-dialog -->
+	</div> <!-- /.modal -->
 
-<div class="modal" id="nightModal" tabindex="-1" role="basic" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-          <div class="modal-header">
-            <button type="button" class="close" data-dismiss="modal">&times;</button>
-            <h3 class="modal-title">Horario de mañana</h3>
-          </div>
-          <div class="modal-body">
-            	<div class="promo-hour-select has-feedback morning-promo-hour">
+	<div class="modal" id="nightModal" tabindex="-1" role="basic" aria-hidden="true">
+	    <div class="modal-dialog">
+	        <div class="modal-content">
+	          <div class="modal-header">
+	            <button type="button" class="close" data-dismiss="modal">&times;</button>
+	            <h3 class="modal-title">Horario de mañana</h3>
+	          </div>
+	          <div class="modal-body">
+	            	<div class="promo-hour-select has-feedback morning-promo-hour">
 
-            		<% if service_promo.nil? %>
+	            		<% if service_promo.nil? %>
 
-                		Inicio: <%= time_select "service_promo", "morning_start", {default: promo_time.night_start, minute_step: 15}, {:class => 'form-control date-select', required: true} %><br />
-                		Fin: <%= time_select "service_promo", "morning_end", {default: promo_time.night_end, minute_step: 15}, {:class => 'form-control date-select', required: true} %>
+	                		Inicio: <%= time_select "service_promo", "morning_start", {default: promo_time.night_start, minute_step: 15}, {:class => 'form-control date-select', required: true} %><br />
+	                		Fin: <%= time_select "service_promo", "morning_end", {default: promo_time.night_end, minute_step: 15}, {:class => 'form-control date-select', required: true} %>
 
-                	<% else %>
+	                	<% else %>
 
-                		Inicio: <%= time_select "service_promo", "morning_start", {default: service_promo.night_start, minute_step: 15}, {:class => 'form-control date-select', required: true} %><br />
-                		Fin: <%= time_select "service_promo", "morning_end", {default: service_promo.night_end, minute_step: 15}, {:class => 'form-control date-select', required: true} %>
+	                		Inicio: <%= time_select "service_promo", "morning_start", {default: service_promo.night_start, minute_step: 15}, {:class => 'form-control date-select', required: true} %><br />
+	                		Fin: <%= time_select "service_promo", "morning_end", {default: service_promo.night_end, minute_step: 15}, {:class => 'form-control date-select', required: true} %>
 
-                	<% end %>
+	                	<% end %>
 
-                	<span class="help-block"><label id="morning-error" class="error" hidden></label></span>
-                	<span class="form-control-feedback"></span>
+	                	<span class="help-block"><label id="morning-error" class="error" hidden></label></span>
+	                	<span class="form-control-feedback"></span>
 
-              	</div>
-          </div>
-          <div class="modal-footer">
-              <a href="#" class="btn btn-white" data-dismiss="modal">Cerrar</a>
-          </div>
-        </div> <!-- /.modal-content -->
-    </div> <!-- /.modal-dialog -->
-</div> <!-- /.modal -->
+	              	</div>
+	          </div>
+	          <div class="modal-footer">
+	              <a href="#" class="btn btn-white" data-dismiss="modal">Cerrar</a>
+	          </div>
+	        </div> <!-- /.modal-content -->
+	    </div> <!-- /.modal-dialog -->
+	</div> <!-- /.modal -->
+<% end %>
 
 <% content_for :scripts do %>
   <%= javascript_include_tag "service" %>
