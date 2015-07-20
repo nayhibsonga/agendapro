@@ -73,11 +73,11 @@
               <li class="<%= 'active' if current_page?(bookings_path) %>"><%= link_to 'Calendario', bookings_path %></li>
               <% end %>
               <!-- Caja -->
-              <% if current_user.role != Role.find_by(name: "Staff") and current_user.role != Role.find_by(name: "Staff (sin edición)") %>
+              <% if current_user.role == Role.find_by(name: "Administrador General") || current_user.role == Role.find_by(name: "Administrador Local") %>
               <li class="<%= 'active' if current_page?(payments_path) %>"><%= link_to 'Caja', payments_path %></li>
               <% end %>
               <!-- Clientes -->
-              <% if current_user.role != Role.find_by(name: "Staff") and current_user.role != Role.find_by(name: "Staff (sin edición)") %>
+              <% if current_user.role != Role.find_by(name: "Staff") and current_user.role != Role.find_by(name: "Staff (sin edición)") and current_user.role != Role.find_by(name: "Super Admin") %>
               <li class="<%= 'active' if current_page?(clients_path) %>"><%= link_to 'Clientes', clients_path %></li>
               <% end %>
               <!-- Reportes -->
@@ -158,6 +158,7 @@
         </div>
       </nav>
       <!-- start: Alerts -->
+      <% unless current_page?(bookings_path) %>
       <% if notice %>
         <div class="alert alert-info alert-dismissable fade in">
           <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
@@ -169,6 +170,7 @@
           <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
           <%= alert %>
         </div>
+      <% end %>
       <% end %>
       <!-- end: Alerts -->
     </header>

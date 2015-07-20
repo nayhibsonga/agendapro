@@ -762,11 +762,50 @@ tr.tr-disabled td {
   color: #a5a5a5;
   background-color: transparent;
 }
-.navbar-default .navbar-nav > .open > a,
-.navbar-default .navbar-nav > .open > a:hover,
-.navbar-default .navbar-nav > .open > a:focus {
+.navbar-admin .navbar-nav > .open > a,
+.navbar-admin .navbar-nav > .open > a:hover,
+.navbar-admin .navbar-nav > .open > a:focus {
   color: #a5a5a5;
   background-color: transparent;
+}
+@media (min-width: 768px) {
+  .navbar-admin .navbar-nav > li > a,
+  .navbar-admin .navbar-nav > li > a:focus {
+    font-size: 12px;
+  }
+  .nav > li > a {
+    padding: 10px 6px;
+  }
+  .dropdown-menu > li > a {
+    padding: 3px 10px;
+    font-size: 12px;
+  }
+}
+@media (min-width: 992px) {
+  .navbar-admin .navbar-nav > li > a,
+  .navbar-admin .navbar-nav > li > a:focus {
+    font-size: 14px;
+  }
+  .nav > li > a {
+    padding: 10px 10px;
+  }
+  .dropdown-menu > li > a {
+    padding: 3px 15px;
+    font-size: 13px;
+  }
+}
+@media (min-width: 1200px) {
+  .navbar-admin .navbar-nav > li > a,
+  .navbar-admin .navbar-nav > li > a:focus {
+    font-size: initial;
+  }
+  .nav > li > a {
+    padding: 10px 15px;
+  }
+  .dropdown-menu > li > a {
+    padding: 3px 20px;
+    font-size: inherit;
+  }
 }
 
 /*
@@ -1191,27 +1230,5 @@ tr[class*="break"] {
   height: 22px;
 }
 .table.table-white-rows input[type="checkbox"] {
-  height: 12px; 
+  height: 12px;
 }
-
-/*
-  ================================
-  ======= Navbar Collapse ========
-  ================================
-*/
-@media (max-width: 991px) {
-    .navbar-admin .navbar-nav > li > a {
-      font-size: 11px;
-      padding-left: 10px;
-      padding-right: 10px;
-    }
-    .navbar-admin .navbar-nav > li > a:focus {
-      font-size: 11px;
-      padding-left: 10px;
-      padding-right: 10px;
-    }
-    .nav-stacked > li {
-      float: left;
-    }
-}
-

@@ -31,10 +31,10 @@ class StaffCodesController < ApplicationController
 
     respond_to do |format|
       if @staff_code.save
-        format.html { redirect_to edit_company_setting_path(current_user.company.company_setting), notice: 'Código de empleado agregado exitosamente.' }
+        format.html { redirect_to edit_company_setting_path(current_user.company.company_setting, anchor: 'calendar'), notice: 'Código de empleado agregado exitosamente.' }
         format.json { render action: 'show', status: :created, location: @staff_code }
       else
-        format.html { redirect_to edit_company_setting_path, notice: 'No se pudo agregar el código. Por favor inténtalo nuevamente.' }
+        format.html { redirect_to edit_company_setting_path(current_user.company.company_setting, anchor: 'calendar'), notice: 'No se pudo agregar el código. Por favor inténtalo nuevamente.' }
         format.json { render json: @staff_code.errors, status: :unprocessable_entity }
       end
     end
@@ -59,7 +59,7 @@ class StaffCodesController < ApplicationController
   def destroy
     @staff_code.destroy
     respond_to do |format|
-      format.html { redirect_to edit_company_setting_path(current_user.company.company_setting), notice: 'Código de empleado eliminado exitosamente.'}
+      format.html { redirect_to edit_company_setting_path(current_user.company.company_setting, anchor: 'calendar'), notice: 'Código de empleado eliminado exitosamente.'}
       format.json { head :no_content }
     end
   end

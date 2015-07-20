@@ -77,7 +77,7 @@ class CompanySettingsController < ApplicationController
         #if(params[:company_setting][:online_cancelation_policy])
           #@company_setting.online_cancelation_policy.update(params[:company_setting][:online_cancelation_policy])
         #end
-        format.html { redirect_to edit_company_setting_path(@company_setting), notice: 'Configuración actualizada exitosamente.' }
+        format.html { redirect_to edit_company_setting_path(@company_setting, anchor: params[:origin]), notice: 'Configuración actualizada exitosamente.' }
         format.json { head :no_content }
       else
         format.html {

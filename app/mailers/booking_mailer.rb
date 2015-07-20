@@ -841,6 +841,13 @@ class BookingMailer < ActionMailer::Base
 							:content => Base64.encode64(File.read('public' + book_info.location.company.logo_url.to_s))
 						}]
 		end
+		if File.exist?('app/assets/ico/email/flecha_verde.png')
+			message[:images] << {
+					:type => 'image/png',
+					:name => 'ARROW',
+					:content => Base64.encode64(File.read('app/assets/ico/email/flecha_verde.png'))
+				}
+		end
 
 		second_address = ''
 		if !book_info.location.second_address.blank?
@@ -1755,6 +1762,34 @@ class BookingMailer < ActionMailer::Base
 								{
 									:name => 'BOOKINGS',
 									:content => location[:location_table]
+								}
+							]
+						}]
+
+			# => Send mail
+			send_mail(template_name, template_content, message)
+		end
+
+		# Email notificacion company
+		data[:companies].each do |company|
+			message[:to] = [{
+							:email => company[:email],
+							:type => 'bcc'
+						}]
+			message[:merge_vars] = [{
+							:rcpt => company[:email],
+							:vars => [
+								{
+									:name => 'CLIENTNAME',
+									:content => company[:client_name]
+								},
+								{
+									:name => 'SERVICEPROVIDER',
+									:content => company[:name]
+								},
+								{
+									:name => 'BOOKINGS',
+									:content => company[:company_table]
 								}
 							]
 						}]

@@ -1,3 +1,8 @@
+var anchor = window.location.hash;
+if (anchor != "") {
+  $('a[href="' + anchor + '"]')[0].click();
+};
+
 $(function () {
   $('#myTab a').click(function (e) {
     var title = $(this).data('title');
@@ -237,7 +242,7 @@ $(function () {
     $('#company_payment_method_number_required').attr('checked', $(e.currentTarget).data('number-required'));
     $('#payment_method').modal('show');
   });
-  
+
 });
 
 function uncheckCheckbox (parent) {
