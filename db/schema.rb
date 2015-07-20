@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150715174727) do
+ActiveRecord::Schema.define(version: 20150720144252) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -347,6 +347,7 @@ ActiveRecord::Schema.define(version: 20150715174727) do
     t.datetime "updated_at"
     t.boolean  "show_in_home",    default: true
     t.boolean  "show_in_company", default: true
+    t.string   "mobile_preview",  default: ""
   end
 
   create_table "economic_sectors_dictionaries", force: true do |t|
