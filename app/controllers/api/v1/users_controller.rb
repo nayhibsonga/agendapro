@@ -1,14 +1,21 @@
 module Api
   module V1
   	class UsersController < V1Controller
-  	  skip_before_filter :check_auth_token, only: [:login]
+  	  skip_before_filter :check_auth_token, only: [:login, :create]
   	  before_action :check_login_params, only: [:login]
+
+      def create
+        @user = User.new(user_params)
+        @user.role = Role.find_by_name("Usuario Registrado")
+        @user.request_mobile_token
+        render :json => @user.errors.full_messages, :status=>422 unless @user.save
+      end
 
       def login
         @user = User.find_by_email(params[:email])
         if @user.valid_password?(params[:password])
           if @user.mobile_token.blank?
-            @user.mobile_token = SecureRandom.base64(32)
+            @user.request_mobile_token
             render json: { error: 'Invalid User. User not saved.' }, status: 500 if !@user.save
           end
         else
@@ -74,6 +81,16 @@ module Api
           render json: { error: 'Invalid User. Param(s) missing.' }, status: 500
   	  	end
   	  end
+
+      def check_registration_params
+        if !params[:email].present? || !params[:password].present? || !params[:name].present?
+          render json: { error: 'Invalid User. Param(s) missing.' }, status: 500
+        end
+      end
+
+      def user_params
+        params.require(:user).permit(:first_name, :last_name, :email, :password)
+      end
   	end
   end
 end
