@@ -190,7 +190,7 @@
 											<td class="first-cell">
 												<span>Mañana</span>&nbsp;&nbsp;<span style="float: right; padding-right: 3px; cursor: pointer;" id="morning-edit"><i class="fa fa-pencil-square-o"></i></span><br />
 												<% if service_promo.nil? %>
-													<span class="hours"><%= promo_time.morning_start.strftime "%H:%M" %> - <%= promo_time.morning_end.strftime "%H:%M" %></span>
+													<span class="hours"><span id="morning-start"><%= promo_time.morning_start.strftime "%H:%M" %></span> - <span id="morning-end"><%= promo_time.morning_end.strftime "%H:%M" %></span></span>
 												<% else %>
 													<span class="hours"><%= service_promo.morning_start.strftime "%H:%M" %> - <%= service_promo.morning_end.strftime "%H:%M" %></span>
 												<% end %>

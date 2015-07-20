@@ -54,6 +54,17 @@ class Booking < ActiveRecord::Base
 
   def payment_timeout
     if !self.payed and self.trx_id != "" and self.payed_booking.nil?
+      if self.is_session && !self.session_booking_id.nil?
+        if SessionBooking.find(self.session_booking_id)
+          session_booking = SessionBooking.find(self.session_booking_id)
+          session_booking.delete
+          if !self.service_promo_id.nil? && ServicePromo.find(self.service_promo_id)
+            service_promo = ServicePromo.find(self.service_promo_id)
+            service_promo.max_bookings = service_promo.max_bookings + 1
+            service_promo.save
+          end
+        end
+      end
       self.delete
     end
   end

@@ -35,44 +35,7 @@
 			</div>
 
 
-				<% if @last_minute_results.count > 0 %>
-
-					<div class="row">
-						<div class="col-md-12">
-
-							<p style="text-align: center; padding-top: 7px; padding-bottom: 7px;">
-								<%= link_to "Promociones de último minuto", get_last_minute_promotions_path %>
-							</p>
-							<div>
-								<div>
-									
-								</div>
-							</div>
-						</div>
-					</div>
-
-				<% end %>
-
-				<div class="jcarousel-wrapper">
-	                <div class="jcarousel">
-	                    <ul class="jcarousel-inner">
-	                    	<% @last_minute_results.each do |promo_detail| %>
-
-								<li style="cursor: pointer; width: 600px; height: 400px;" class="last-minute-div" service_id="<%= promo_detail[0].id %>" location_id="<%= promo_detail[1].id %>">
-									<%= render :partial => 'last_minute_service_panel', :locals => { :service => promo_detail[0], :location => promo_detail[1], :i => i} %>
-								</li>
-
-							<% end %>
-	                    </ul>
-	                </div>
-
-	                <a href="#" class="jcarousel-control-prev">&lsaquo;</a>
-	                <a href="#" class="jcarousel-control-next">&rsaquo;</a>
-	                
-	                <p class="jcarousel-pagination">
-	                    
-	                </p>
-	            </div>
+				
 
 
 			<%= will_paginate @results, renderer: BootstrapPagination::Rails %>
@@ -323,11 +286,11 @@
 	      $('.show-promo-link[service_id="' + $(this).attr("service_id") + '"][location_id="' + $(this).attr("location_id") + '"]')[0].click();
 	    });
 
-	    $(".last-minute-div").click(function(){
+	    /*$(".last-minute-div").click(function(){
 	      $('.last-minute-link[service_id="' + $(this).attr("service_id") + '"][location_id="' + $(this).attr("location_id") + '"]')[0].click();
-	    });
+	    });*/
 
-	    (function($) {
+	    /*(function($) {
 		    $(function() {
 		        $('.jcarousel').jcarousel();
 
@@ -362,7 +325,7 @@
 		            })
 		            .jcarouselPagination();
 		    });
-		})(jQuery);
+		})(jQuery);*/
 
 	</script>
 <% end %>
