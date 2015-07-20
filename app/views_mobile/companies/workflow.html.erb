@@ -15,7 +15,7 @@
           <%= hidden_field_tag :location, @location.id %>
           <div class="form-group">
             <%= label_tag :service, 'Selecciona el servicio que quieres' %>
-            <%= select_tag :service, nil, :class => 'form-control' %>
+            <%= select_tag :service, nil, :class => 'form-control', prompt: "Selecciona un Servicio" %>
           </div>
           <div class="form-group" <%= 'style="display:none;"'.html_safe if @company.company_setting.provider_preference == 2 %>>
             <%= label_tag :provider, 'Selecciona al staff' %>

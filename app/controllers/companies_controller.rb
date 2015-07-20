@@ -694,6 +694,16 @@ class CompaniesController < ApplicationController
 
 	##### Workflow - Mobile #####
 	def select_hour
+		if params[:location].blank?
+			flash[:alert] = "Lo sentimos, el local ingresado no existe."
+			redirect_to :action => "overview"
+			return
+			redirect_to
+		elsif params[:service].blank? or params[:datepicker].blank? or params[:provider].blank?
+			flash[:alert] = "Error ingresando los datos."
+			redirect_to workflow_path(:local => params[:location])
+			return
+		end
 		@service = Service.find(params[:service])
 		service_duration = @service.duration
 		@date = Date.parse(params[:datepicker])
