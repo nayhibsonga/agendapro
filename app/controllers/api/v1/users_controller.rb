@@ -3,7 +3,7 @@ module Api
   	class UsersController < V1Controller
   	  skip_before_filter :check_auth_token, only: [:login, :create]
   	  before_action :check_login_params, only: [:login]
-      before_action :parse_registration_params, only: [:create]
+      before_action :parse_registration_params, only: [:create, :edit]
 
       def create
         @user = User.new(user_params)
@@ -15,7 +15,7 @@ module Api
       def edit
         @user = @mobile_user
         if @user.valid_password?(params[:password])
-          render json: { error: 'Invalid User. User not saved.' }, status: 500 if !@user.update(user_params)
+          render json: { error: @user.errors.full_messages }, status: 422 if !@user.update(user_params)
         else
           render json: { error: 'Invalid User' }, status: 403
         end
@@ -26,7 +26,7 @@ module Api
         if @user.valid_password?(params[:password])
           if @user.mobile_token.blank?
             @user.request_mobile_token
-            render json: { error: 'Invalid User. User not saved.' }, status: 500 if !@user.save
+            render json: { error: @user.errors.full_messages }, status: 422 if !@user.save
           end
         else
           render json: { error: 'Invalid User' }, status: 403
@@ -100,20 +100,20 @@ module Api
 
       def parse_registration_params
         params[:user] = {}
-        params[:user][:email] =  params[:email]
-        params[:user][:password] = params[:password]
-        params[:user][:phone] = params[:phone]
+        params[:user][:email] =  params[:email] unless params[:email].blank?
+        params[:user][:password] = params[:password] unless params[:password].blank?
+        params[:user][:phone] = params[:phone] unless params[:phone].blank?
 
         nameArray = params[:name].split(' ')
         if nameArray.length == 0
 
         elsif nameArray.length == 1
-          params[:user][:first_name] = nameArray[0]
+          params[:user][:first_name] = nameArray[0] unless nameArray[0].blank?
         elsif nameArray.length == 2
-          params[:user][:first_name] = nameArray[0]
-          params[:user][:last_name] = nameArray[1]
+          params[:user][:first_name] = nameArray[0] unless nameArray[0].blank?
+          params[:user][:last_name] = nameArray[1] unless nameArray[1].blank?
         elsif nameArray.length == 3
-          params[:user][:first_name] = nameArray[0]
+          params[:user][:first_name] = nameArray[0] unless nameArray[0].blank?
           params[:user][:last_name] = nameArray[1] + ' ' + nameArray[2]
         else 
           params[:user][:first_name] = nameArray[0] + ' ' + nameArray[1]
@@ -123,7 +123,7 @@ module Api
           end
           strLen = last_name.length
           last_name = last_name[0..strLen-1]
-          params[:user][:last_name] = last_name
+          params[:user][:last_name] = last_name unless last_name.blank?
         end
       end
 
