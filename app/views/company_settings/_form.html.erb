@@ -20,7 +20,9 @@
         <% if current_user.company.company_setting.online_payment_capable %>
         <li role="presentation"><a id="payment_link" href="#online-payment" role="tab" data-toggle="pill" data-title="Pago Online" data-description="Habilita el pago en línea, configura si es editable o cancelable una reserva pagada">Pago Online</a></li>
         
-        <li role="presentation"><a id="promotions_link" href="#promotions" role="tab" data-toggle="pill" data-title="Promociones" data-description="Configura los distintos horarios para ofrecer tus servicios en promoción.">Promociones</a></li>
+        <% if current_user.company.company_setting.promo_offerer_capable %>
+          <li role="presentation"><a id="promotions_link" href="#promotions" role="tab" data-toggle="pill" data-title="Promociones" data-description="Configura los distintos horarios para ofrecer tus servicios en promoción.">Promociones</a></li>
+        <% end %>
         
         <% end %>
         <% if current_user.company.company_setting.deal_activate %>
@@ -128,7 +130,7 @@
           
           <div class="row">
 
-            <% if current_user.company.company_setting.online_payment_capable %>
+            <% if current_user.company.company_setting.online_payment_capable && current_user.company.company_setting.promo_offerer_capable %>
               <div class="col-md-6">
                 <div onclick="$('#promotions_link').click();" class="media">
                   <div class="media-left">
@@ -712,9 +714,18 @@
 
         <!-- Promociones -->
 
-        <% if current_user.company.company_setting.online_payment_capable %>
+        <% if current_user.company.company_setting.online_payment_capable && current_user.company.company_setting.promo_offerer_capable %>
 
         <div class="tab-pane" id="promotions">
+          <% if !current_user.company.company_setting.allows_online_payment %>
+            <div class="row">
+              <div class="col-md-12">
+                <label style="color: fd633f;">
+                  Advertencia: No has configurado los pagos en línea. Puedes configurar los horarios de promociones, pero no podrás crearlas hasta que configures el pago en línea.
+                </label>
+              </div>
+            </div>
+          <% end %>
           <div class="row">
             <div class="col-md-12">
 

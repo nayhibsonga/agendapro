@@ -2152,6 +2152,12 @@ class BookingsController < ApplicationController
       return
     end
 
+    #Check if booking was part of a promo
+    #If true, redirect to blocked_edit_path with the reason
+    if @booking.check_for_promo_payment
+      redirect_to blocked_edit_path(:id => @booking.id, :promo => true)
+    end
+
     #Revisar si fue pagada en línea.
     #Si lo fue, revisar política de modificación.
     if @booking.payed || !@booking.payed_booking.nil?
@@ -2412,8 +2418,10 @@ class BookingsController < ApplicationController
     @booking = Booking.find(params[:id])
     @company = Location.find(@booking.location_id).company
     @reason = "company"
-    if(params[:online])
+    if params[:online]
       @reason = "online"
+    elsif params[:promo]
+      @reason = "promo"
     end
     # => Domain parser
     host = request.host_with_port
@@ -2427,6 +2435,11 @@ class BookingsController < ApplicationController
     @company = Location.find(@booking.location_id).company
     @selectedLocation = Location.find(@booking.location_id)
     max_changes = @booking.max_changes - 1
+
+    if @booking.check_for_promo_payment
+      redirect_to blocked_edit_path(:id => @booking.id, :promo => true)
+    end
+
     if @booking.update(start: params[:start], end: params[:end], max_changes: max_changes)
       
       if @booking.is_session
@@ -2464,7 +2477,9 @@ class BookingsController < ApplicationController
     @booking = Booking.find(params[:id])
     @company = Location.find(@booking.location_id).company
     @reason = "company"
-    if(params[:online])
+    if params[:promo]
+      @reason = "promo"
+    elsif params[:online]
       @reason = "online"
       if !params[:only_booking].nil? and params[:only_booking]
         @reason = "only_booking"
@@ -2493,6 +2508,12 @@ class BookingsController < ApplicationController
       if (booking_start <=> now) < 1
         redirect_to blocked_cancel_path(:id => @booking.id)
         return
+      end
+
+      #Check if booking was part of a promo
+      #If true, redirect to cancel_block_path with reason
+      if @booking.check_for_promo_payment
+        redirect_to blocked_cancel_path(:id => @booking.id, :promo => true)
       end
 
       # Revisar si fue pagada en línea.
@@ -2711,6 +2732,10 @@ class BookingsController < ApplicationController
       now = DateTime.new(DateTime.now.year, DateTime.now.mon, DateTime.now.mday, DateTime.now.hour, DateTime.now.min)
 
       #Pagadas
+
+      if @booking.check_for_promo_payment
+        redirect_to blocked_cancel_path(:id => @booking.id, :promo => true)
+      end
 
       #Revisar si fue pagada en línea.
       #Si lo fue, revisar política de modificación.

@@ -32,6 +32,15 @@ class Booking < ActiveRecord::Base
   after_create :send_booking_mail, :wait_for_payment, :check_session
   after_update :send_update_mail, :check_session
 
+  #Check if booking hour is part of a promo
+  def check_for_promo_payment
+    if !self.service_promo_id.nil? && !self.payed_booking_id.nil? && self.payed && self.trx_id != ""
+      return true
+    else
+      return false
+    end
+  end
+
 	def check_session
 		if self.id.nil?
 			return
