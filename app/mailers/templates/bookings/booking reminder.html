@@ -232,10 +232,11 @@
       }
     </style>
     <style type="text/css">
+      @import url(http://fonts.googleapis.com/css?family=Roboto+Condensed:300);
       /* Containers */
       html,
       body {
-        font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
+        font-family: 'Roboto Condensed', sans-serif;
         font-size: 12px;
         font-weight: 300;
         color: #505050;
@@ -244,7 +245,7 @@
       table {
         width: 100%;
         max-width: 100%;
-        font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
+        font-family: 'Roboto Condensed', sans-serif;
         font-size: 12px;
         font-weight: 300;
         color: #505050;
@@ -379,7 +380,11 @@
       }
       .logo {
         width: 50%;
-        max-width: 118px;
+        max-width: 200px;
+      }
+      .arrow {
+        width: 70px;
+        margin-left: 10px;
       }
       .footer img {
         margin-left: -1px;
@@ -473,8 +478,13 @@
           <td colspan="2">
             <h4 class="text-center">*|COMPANYNAME|*</h4>
             *|IF:CLIENT|*
-            <p class="text-center">*|CLIENTNAME|*, recuerda tu reserva</p>
-            <p class="text-center"><a class="btn btn-lg btn-green" href="*|CONFIRM|*" target="_blank">Confirmar Reserva</a></p>
+            <p class="text-center">*|CLIENTNAME|*, por favor confirma tu reserva haciendo click en el siguiente botón:</p>
+            <p class="text-center">
+              <a class="btn btn-lg btn-green" href="*|CONFIRM|*" target="_blank">Confirmar Reserva</a>
+              *|IF:ARROW|*
+              <img src="cid:ARROW" class="arrow" alt="arrow">
+              *|END:IF|*
+            </p>
             *|ELSE:|*
             <p class="text-center">*|SERVICEPROVIDER|*, recuerda tu reserva</p>
             *|END:IF|*
@@ -534,10 +544,10 @@
                   <tr>
                     <td>
                       <div class="icon-box">
-                        <img src="http://agendapro.cl/assets/email/who.png" alt="¿Con Quien?">
+                        <img src="http://agendapro.cl/assets/email/who.png" alt="¿Con Quién?">
                       </div>
                       <div class="text-box">
-                        <p style="color: #ffffff;"><b>¿Con Quien?</b></p>
+                        <p style="color: #ffffff;"><b>¿Con Quién?</b></p>
                         <p>*|SERVICEPROVIDER|*</p>
                       </div>
                     </td>
@@ -592,10 +602,10 @@
                   <tr>
                     <td>
                       <div class="icon-box">
-                        <img src="http://agendapro.cl/assets/email/who.png" alt="¿Con Quien?">
+                        <img src="http://agendapro.cl/assets/email/who.png" alt="¿Con Quién?">
                       </div>
                       <div class="text-box">
-                        <p style="color: #ffffff;"><b>¿Quien?</b></p>
+                        <p style="color: #ffffff;"><b>¿Quién?</b></p>
                         <p>*|CLIENTNAME|*</p>
                       </div>
                     </td>
