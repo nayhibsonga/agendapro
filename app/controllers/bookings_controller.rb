@@ -1757,8 +1757,10 @@ class BookingsController < ApplicationController
             num_amount = (service.price - max_discount*service.price/100).round
             @booking.price = num_amount
             final_price = num_amount
-            @session_booking.service_promo_id = service.active_service_promo_id
-            @booking.service_promo_id = buffer_params[:service_promo_id]
+            if buffer_params[:is_time_discount]
+              @session_booking.service_promo_id = buffer_params[:service_promo_id]
+              @booking.service_promo_id = buffer_params[:service_promo_id]
+            end
           else
 
             #num_amount = service.price
