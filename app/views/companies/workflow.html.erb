@@ -804,6 +804,8 @@
 <% end %>
 <%= content_tag "div", id: "dealCode", data: {deal_identification_number: @location.company.company_setting.deal_identification_number, deal_required: @location.company.company_setting.deal_required } do %>
 <% end %>
+<%= content_tag "div", id: "online_capabilities", data: {online_payment_capable: @online_payment_capable, promo_offerer_capable: @promo_offerer_capable} do %>
+<% end %>
 
 <% content_for :stylesheets do %>
   <%= stylesheet_link_tag "calendar" %>

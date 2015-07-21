@@ -505,7 +505,12 @@ class ServicesController < ApplicationController
   #For workflow popovers
   def get_promotions_popover
     @service = Service.find(params[:service_id])
-    @promos = Promo.where(:service_promo_id => @service.active_service_promo_id).order("day_id asc")
+    @service_promo = ServicePromo.where(:id => @service.active_service_promo_id)
+    @location = Location.find(params[:location_id])
+    @promos = []
+    if !(@service.has_discount && @service.discount > 0)
+      @promos = Promo.where(:service_promo_id => @service.active_service_promo_id, :location_id => @location.id).order("day_id asc")
+    end
     respond_to do |format|
       format.html { render :partial => 'get_promotions_popover' }
       format.json { render json: @promos }
@@ -514,6 +519,7 @@ class ServicesController < ApplicationController
 
   def get_online_discount_popover
     @service = Service.find(params[:service_id])
+    @promos = []
     respond_to do |format|
       format.html { render :partial => 'get_promotions_popover' }
       format.json { render json: @promos }

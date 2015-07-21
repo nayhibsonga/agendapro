@@ -9,29 +9,31 @@
 					Obtén un <span class="light-green"><%= @service.discount.round.to_s %>%</span> de descuento pagando en línea en cualquier horario.
 				<% end %>
 			</div>
-			<table class="promotion-popover-table">
-				<tr>
-					<% @promos.each do |promo| %>
-						<% if promo.morning_discount > 0 or promo.afternoon_discount > 0 || promo.night_discount > 0 %>
-							<td>
-								<b><%= promo.day.name %></b><br /><br />
-								<% if promo.morning_discount > 0 %>
-									<%= @service.company.company_setting.promo_time.morning_start.strftime("%H:%M") %> - <%= @service.company.company_setting.promo_time.morning_end.strftime("%H:%M") %><br />
-									<span class="orange"><%= promo.morning_discount %>% off</span><br /><br />
-								<% end %>
-								<% if promo.afternoon_discount > 0 %>
-									<%= @service.company.company_setting.promo_time.afternoon_start.strftime("%H:%M") %> - <%= @service.company.company_setting.promo_time.afternoon_end.strftime("%H:%M") %><br />
-									<span class="orange"><%= promo.afternoon_discount %>% off</span><br /><br />
-								<% end %>
-								<% if promo.night_discount > 0 %>
-									<%= @service.company.company_setting.promo_time.night_start.strftime("%H:%M") %> - <%= @service.company.company_setting.promo_time.night_end.strftime("%H:%M") %><br />
-									<span class="orange"><%= promo.night_discount %>% off</span><br />
-								<% end %>
-							</td>
+			<% if @promos.count > 0 %>
+				<table class="promotion-popover-table">
+					<tr>
+						<% @promos.each do |promo| %>
+							<% if promo.morning_discount > 0 or promo.afternoon_discount > 0 || promo.night_discount > 0 %>
+								<td>
+									<b><%= promo.day.name %></b><br /><br />
+									<% if promo.morning_discount > 0 %>
+										<%= @service.company.company_setting.promo_time.morning_start.strftime("%H:%M") %> - <%= @service.company.company_setting.promo_time.morning_end.strftime("%H:%M") %><br />
+										<span class="orange"><%= promo.morning_discount %>% off</span><br /><br />
+									<% end %>
+									<% if promo.afternoon_discount > 0 %>
+										<%= @service.company.company_setting.promo_time.afternoon_start.strftime("%H:%M") %> - <%= @service.company.company_setting.promo_time.afternoon_end.strftime("%H:%M") %><br />
+										<span class="orange"><%= promo.afternoon_discount %>% off</span><br /><br />
+									<% end %>
+									<% if promo.night_discount > 0 %>
+										<%= @service.company.company_setting.promo_time.night_start.strftime("%H:%M") %> - <%= @service.company.company_setting.promo_time.night_end.strftime("%H:%M") %><br />
+										<span class="orange"><%= promo.night_discount %>% off</span><br />
+									<% end %>
+								</td>
+							<% end %>
 						<% end %>
-					<% end %>
-				</tr>
-			</table>
+					</tr>
+				</table>
+			<% end %>
 		</div>
 	</div>
 </div>

@@ -80,7 +80,7 @@ function loadStep1 (service_id) {
 					//====== Generando Radios
 					serviceDiscount = "";
 					servicePrice = '';
-					if (service.online_payable && (service.has_time_discount || (service.has_discount && service.discount > 0)))
+					if ($('#online_capabilities').data('online-payment-capable') && ((service.has_time_discount && $('#online_capabilities').data('promo-offerer-capable')) || (service.has_discount && service.online_payable && service.discount > 0)))
 					{
 						serviceDiscount = '<%= image_tag("promociones/icono_promociones.png", class:"promotion-hour-icon", size: "18x18") %>&nbsp;';						
 					}
@@ -108,11 +108,11 @@ function loadStep1 (service_id) {
 							'</div>' +
 						'</li>';
 
-						if (service.has_time_discount || (service.has_discount && service.online_payable && service.discount > 0))
+						if ($('#online_capabilities').data('online-payment-capable') && ((service.has_time_discount && $('#online_capabilities').data('promo-offerer-capable')) || (service.has_discount && service.online_payable && service.discount > 0)))
 						{
 							$.ajax({
 								type: "get",
-								url: "get_promotions_popover?service_id=" + service.id,
+								url: "get_promotions_popover?service_id=" + service.id + "&location_id=" + localId,
 								success: function(response){
 
 									$("#services-popovers-contents").append(response);
@@ -682,17 +682,38 @@ function loadStep3 () {
 	              '</tr>'
 	            );
 
-	            $('#summary').append(
-	              '<tr>' + 
-	                '<td class="dark-gray">Precio normal</td><td class="light-gray">' + simple_currency(price) + '</td>' +
-	              '</tr>' +
-	              '<tr>' +
-	                '<td class="dark-gray">Descuento</td><td class="light-gray">' + min_discount + '% </td>' +
-	              '</tr>' +
-	              '<tr>' +
-	                '<td class="dark-gray">Precio final</td><td class="light-gray">' + simple_currency(discount_price) + '</td>' +
-	              '</tr>'
-	            );
+	            if($('#online_capabilities').data('online-payment-capable') && $('#online_capabilities').data('promo-offerer-capable'))
+	            {
+		            $('#summary').append(
+		              '<tr>' + 
+		                '<td class="dark-gray">Precio normal</td><td class="light-gray">' + simple_currency(price) + '</td>' +
+		              '</tr>' +
+		              '<tr>' +
+		                '<td class="dark-gray">Descuento</td><td class="light-gray">' + min_discount + '% </td>' +
+		              '</tr>' +
+		              '<tr>' +
+		                '<td class="dark-gray">Precio final</td><td class="light-gray">' + simple_currency(discount_price) + '</td>' +
+		              '</tr>'
+		            );
+	        	}
+	        	else
+	        	{
+	        		$('#summary').append(
+		              '<tr>' + 
+		                '<td class="dark-gray">Precio</td><td class="light-gray">' + simple_currency(price) + '</td>' +
+		              '</tr>'
+		            );
+		            $(".payBtn").hide();
+					$("#open-online-policy").hide();
+					$("#discount").empty();
+	        	}
+
+	        	if(!actual_booking.online_payable)
+	        	{
+	        		$(".payBtn").hide();
+					$("#open-online-policy").hide();
+					$("#discount").empty();
+	        	}
 	        }
 	        else
 	        {
@@ -993,17 +1014,38 @@ function loadStep3 () {
 				'</tr>'
 			);
 
-			$('#summary').append(
-				'<tr>' + 
-				  '<td class="dark-gray">Precio normal</td><td class="light-gray">' + simple_currency(price) + '</td>' +
-				'</tr>' +
-				'<tr>' +
-				  '<td class="dark-gray">Descuento</td><td class="light-gray">' + min_discount + '% </td>' +
-				'</tr>' +
-				'<tr>' +
-				  '<td class="dark-gray">Precio final</td><td class="light-gray">' + simple_currency(discount_price) + '</td>' +
-				'</tr>'
-			);
+			if($('#online_capabilities').data('online-payment-capable') && $('#online_capabilities').data('promo-offerer-capable'))
+			{
+				$('#summary').append(
+					'<tr>' + 
+					  '<td class="dark-gray">Precio normal</td><td class="light-gray">' + simple_currency(price) + '</td>' +
+					'</tr>' +
+					'<tr>' +
+					  '<td class="dark-gray">Descuento</td><td class="light-gray">' + min_discount + '% </td>' +
+					'</tr>' +
+					'<tr>' +
+					  '<td class="dark-gray">Precio final</td><td class="light-gray">' + simple_currency(discount_price) + '</td>' +
+					'</tr>'
+				);
+			}
+			else
+			{
+				$('#summary').append(
+					'<tr>' + 
+					  '<td class="dark-gray">Precio normal</td><td class="light-gray">' + simple_currency(price) + '</td>' +
+					'</tr>'
+				);
+				$(".payBtn").hide();
+				$("#open-online-policy").hide();
+				$("#discount").empty();
+			}
+
+			if(!actual_booking.online_payable)
+        	{
+        		$(".payBtn").hide();
+				$("#open-online-policy").hide();
+				$("#discount").empty();
+        	}
 	    }
 
 

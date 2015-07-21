@@ -694,6 +694,9 @@ class CompaniesController < ApplicationController
 			return
 		end
 
+		@online_payment_capable = @company.company_setting.online_payment_capable
+		@promo_offerer_capable = @company.company_setting.promo_offerer_capable
+
 		if mobile_request?
 			company_setting = @company.company_setting
 			now = DateTime.new(DateTime.now.year, DateTime.now.mon, DateTime.now.mday, DateTime.now.hour, DateTime.now.min)

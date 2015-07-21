@@ -1707,7 +1707,6 @@ class BookingsController < ApplicationController
       end
 
 
-
       @booking.price = service.price
       @booking.max_changes = @company.company_setting.max_changes
       @booking.booking_group = booking_group
@@ -1759,6 +1758,7 @@ class BookingsController < ApplicationController
             @booking.price = num_amount
             final_price = num_amount
             @session_booking.service_promo_id = service.active_service_promo_id
+            @booking.service_promo_id = buffer_params[:service_promo_id]
           else
 
             #num_amount = service.price
@@ -1771,6 +1771,12 @@ class BookingsController < ApplicationController
             #end
 
             num_amount = (service.price - buffer_params[:discount]*service.price/100).round
+
+            if buffer_params[:is_time_discount]
+              @booking.service_promo_id = buffer_params[:service_promo_id]
+              service_promo = ServicePromo.find(buffer_params[:service_promo_id])
+              #service_promo.max_bookings = service_promo.max_bookings - 1
+            end
 
             @booking.price = num_amount
             final_price = final_price + num_amount
@@ -3229,7 +3235,7 @@ class BookingsController < ApplicationController
                 Booking.where(service_provider_id: provider.id, start: dateTimePointer.to_time.beginning_of_day..dateTimePointer.to_time.end_of_day).each do |provider_booking|
                   unless provider_booking.status_id == cancelled_id
                     pointerEnd = dateTimePointer+service.duration.minutes
-                    if (pointerEnd <= provider_booking.start.to_datetime || provider_booking.end.to_datetime <= dateTimePointer)
+                    if !(pointerEnd <= provider_booking.start.to_datetime || provider_booking.end.to_datetime <= dateTimePointer)
                       if !service.group_service || service.id != provider_booking.service_id
                         if !provider_booking.is_session || (provider_booking.is_session && provider_booking.is_session_booked)
                           service_valid = false
@@ -3242,9 +3248,9 @@ class BookingsController < ApplicationController
                         end
                       end
                     else
-                      if !provider_booking.is_session || (provider_booking.is_session && provider_booking.is_session_booked)
-                        service_valid = false
-                      end
+                      #if !provider_booking.is_session || (provider_booking.is_session && provider_booking.is_session_booked)
+                      #  service_valid = false
+                      #end
                     end
                   end
                 end
@@ -3306,7 +3312,17 @@ class BookingsController < ApplicationController
                   :must_be_paid_online => service.must_be_paid_online
                 }
 
-                if service.has_time_discount && service.online_payable
+                if !service.online_payable || !service.company.company_setting.online_payment_capable
+                  bookings.last[:has_discount] = false
+                  bookings.last[:has_time_discount] = false
+                  bookings.last[:discount] = 0
+                  bookings.last[:time_discount] = 0
+                elsif !service.company.company_setting.promo_offerer_capable
+                  bookings.last[:has_time_discount] = false
+                  bookings.last[:time_discount] = 0
+                end
+
+                if service.has_time_discount && service.online_payable && service.company.company_setting.online_payment_capable && service.company.company_setting.promo_offerer_capable
 
                   promo = Promo.where(:day_id => date.cwday, :service_promo_id => service.active_service_promo_id, :location_id => local.id).first
 
