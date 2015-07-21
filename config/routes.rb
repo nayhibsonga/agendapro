@@ -334,7 +334,7 @@ Agendapro::Application.routes.draw do
 
       post 'users/session', to: 'users#login'
       post 'users/registration', to: 'users#create'
-      put 'users/registration', to: 'users#edit'
+      put 'users/me', to: 'users#edit'
       get 'users/me', to: 'users#mobile_user'
       get 'users/bookings', to: 'users#bookings'
       get 'users/favorites', to: 'users#favorites'
