@@ -104,7 +104,8 @@ module Api
         params[:user][:password] = params[:password] unless params[:password].blank?
         params[:user][:phone] = params[:phone] unless params[:phone].blank?
 
-        nameArray = params[:name].split(' ')
+        nameArray = []
+        nameArray = params[:name].split(' ') unless params[:name].blank?
         if nameArray.length == 0
 
         elsif nameArray.length == 1
