@@ -1928,11 +1928,17 @@ class BookingsController < ApplicationController
 
         if proceed_with_payment
 
-          service_promos_ids.each do |sp_id|
-            service_promo = ServicePromo.find(sp_id)
+          if @has_session_booking
+            service_promo = ServicePromo.find(@bookings.first.service.active_service_promo_id)
             service_promo.max_bookings = service_promo.max_bookings - 1
             service_promo.save
-          end          
+          else
+            service_promos_ids.each do |sp_id|
+              service_promo = ServicePromo.find(sp_id)
+              service_promo.max_bookings = service_promo.max_bookings - 1
+              service_promo.save
+            end
+          end     
 
           PuntoPagosCreation.create(trx_id: trx_id, payment_method: payment_method, amount: amount, details: "Pago de varios servicios a la empresa " +@company.name+" (" + @company.id.to_s + "). trx_id: "+trx_id+" - mp: "+@company.id.to_s+". Resultado: Se procesa")
           redirect_to resp.payment_process_url and return
