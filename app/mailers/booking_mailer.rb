@@ -1254,19 +1254,7 @@ class BookingMailer < ActionMailer::Base
 				}
 
 			],
-			:tags => ['payment'],
-			:images => [
-				{
-					:type => 'image/png',
-					:name => 'company_img.jpg',
-					:content => Base64.encode64(File.read('app/assets/ico/Iso_Pro_Color.png'))
-				},
-				{
-					:type => 'image/png',
-					:name => 'LOGO',
-					:content => Base64.encode64(File.read('app/assets/images/logos/logodoble2.png'))
-				}
-			]
+			:tags => ['payment']
 		}
 
 		# => Send mail
