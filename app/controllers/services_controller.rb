@@ -296,7 +296,7 @@ class ServicesController < ApplicationController
 
       locations.each do |location|
         Day.all.each do |day|
-          promo = Promo.create(:day_id => day.id, :morning_discount => promo_time.morning_discount, :afternoon_discount => promo_time.afternoon_discount, :night_discount => promo_time.night_discount, :location_id => location.id, :service_promo_id => service_promo.id)
+          promo = Promo.create(:day_id => day.id, :morning_discount => promo_time.morning_default, :afternoon_discount => promo_time.afternoon_default, :night_discount => promo_time.night_default, :location_id => location.id, :service_promo_id => service_promo.id)
         end
       end
 
