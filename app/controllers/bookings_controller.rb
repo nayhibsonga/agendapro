@@ -2164,6 +2164,7 @@ class BookingsController < ApplicationController
     #If true, redirect to blocked_edit_path with the reason
     if @booking.check_for_promo_payment
       redirect_to blocked_edit_path(:id => @booking.id, :promo => true)
+      return
     end
 
     #Revisar si fue pagada en línea.
@@ -2446,6 +2447,7 @@ class BookingsController < ApplicationController
 
     if @booking.check_for_promo_payment
       redirect_to blocked_edit_path(:id => @booking.id, :promo => true)
+      return
     end
 
     if @booking.update(start: params[:start], end: params[:end], max_changes: max_changes)
