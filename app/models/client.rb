@@ -222,7 +222,7 @@ class Client < ActiveRecord::Base
         end
 
         if row["record"] && row["record"] != ""
-          row["record"] = row["records"].to_s
+          row["record"] = row["record"].to_s
         end
 
         if row["second_phone"] && row["second_phone"] != ""
