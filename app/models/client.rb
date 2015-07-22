@@ -185,8 +185,7 @@ class Client < ActiveRecord::Base
         end
 
         if row["phone"] && row["phone"] != ""
-
-          row["phone"] = row["phone"].to_i.to_s
+          row["phone"] = row["phone"].to_s
         end
 
         if row["address"] && row["address"] != ""
