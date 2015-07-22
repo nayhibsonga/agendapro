@@ -282,7 +282,7 @@ class ServicesController < ApplicationController
 
     else
       #Create a service promo and promos from defaults.
-      service_promo = ServicePromo.create(:service_id => @service.id, :max_bookings => 0, :morning_start => params[:service_promo][:morning_start], :morning_end => params[:service_promo][:morning_end], :afternoon_start => params[:service_promo][:afternoon_start], :afternoon_end => params[:service_promo][:afternoon_end], :night_start => params[:service_promo][:night_start], :night_end => params[:service_promo][:night_end])
+      service_promo = ServicePromo.create(:service_id => @service.id, :max_bookings => 0, :morning_start => params[:morning_start], :morning_end => params[:morning_end], :afternoon_start => params[:afternoon_start], :afternoon_end => params[:afternoon_end], :night_start => params[:night_start], :night_end => params[:night_end])
       
       promo_time = @service.company.company_setting.promo_time
 
