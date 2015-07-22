@@ -258,7 +258,7 @@ class ServicesController < ApplicationController
 
     service_promo = nil
 
-    if @service.has_time_discount || !@service.active_service_promo_id.nil? || @service.time_promo_active
+    if !@service.active_service_promo_id.nil?
       #Create a new one from last one, and create new promos from last ones.
       last_service_promo = ServicePromo.find(@service.active_service_promo_id)
 
