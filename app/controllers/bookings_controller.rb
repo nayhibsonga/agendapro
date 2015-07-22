@@ -2524,6 +2524,7 @@ class BookingsController < ApplicationController
       #If true, redirect to cancel_block_path with reason
       if @booking.check_for_promo_payment
         redirect_to blocked_cancel_path(:id => @booking.id, :promo => true)
+        return
       end
 
       # Revisar si fue pagada en línea.
@@ -2745,6 +2746,7 @@ class BookingsController < ApplicationController
 
       if @booking.check_for_promo_payment
         redirect_to blocked_cancel_path(:id => @booking.id, :promo => true)
+        return
       end
 
       #Revisar si fue pagada en línea.
