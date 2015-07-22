@@ -1933,7 +1933,7 @@ class BookingsController < ApplicationController
             service_promo.max_bookings = service_promo.max_bookings - 1
             service_promo.save
           else
-            @booking.each do |booking|
+            @bookings.each do |booking|
               if !booking.service_promo_id.nil?
                 service_promo = ServicePromo.find(booking.service_promo_id)
                 service_promo.max_bookings = service_promo.max_bookings - 1
