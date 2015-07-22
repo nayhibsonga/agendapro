@@ -1258,7 +1258,7 @@ class BookingMailer < ActionMailer::Base
 		}
 
 		# => Send mail
-		send_mail(template_name, template_content, messages)
+		send_mail(template_name, template_content, message)
 	end
 
 	#Correo de comprobante de pago para AgendaPro
@@ -1337,7 +1337,7 @@ class BookingMailer < ActionMailer::Base
 		}
 
 		# => Send mail
-		send_mail(template_name, template_content, messages)
+		send_mail(template_name, template_content, message)
 	end
 
 	#Comprobante de pago para la empresa
@@ -1404,7 +1404,7 @@ class BookingMailer < ActionMailer::Base
 		}
 
 		# => Send mail
-		send_mail(template_name, template_content, messages)
+		send_mail(template_name, template_content, message)
 	end
 
 	#Comprobante de pago para la empresa
@@ -1617,7 +1617,7 @@ class BookingMailer < ActionMailer::Base
 		end
 
 		# => Send mail
-		send_mail(template_name, template_content, messages)
+		send_mail(template_name, template_content, message)
 	end
 
 	#Mail de reserva de servicio con sesiones
@@ -1905,7 +1905,7 @@ class BookingMailer < ActionMailer::Base
 		end
 
 		# => Send mail
-		send_mail(template_name, template_content, messages)
+		send_mail(template_name, template_content, message)
 	end
 
 	#Mail de edición de sesión (depende de si es por admin o no)
