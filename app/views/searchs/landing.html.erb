@@ -1,0 +1,90 @@
+<% content_for :stylesheets do %>
+	<style type="text/css">
+		html{
+			height: 100%;
+			margin: 0;
+			padding: 0;
+			border: 0;
+			outline: 0;
+			vertical-align: baseline;
+		}
+		body {
+			background-repeat: no-repeat;
+			background-size: cover;
+			background-position: center center;
+			color: #ffffff;
+			height: 100%;
+			width: 100%;
+			background-image: url(<%= asset_path 'search/landing/fondo.png' %>);
+			display: table;
+			border: 0;
+			outline: 0;
+			vertical-align: baseline;
+			padding: 10px;
+		}
+		.table-cell {
+			text-align: center;
+			display: table-cell;
+			vertical-align: middle;
+		}
+		.logo {
+			margin: 30px;
+		}
+		.imageLink{
+            text-align:center;
+        }
+        .imageLink img{
+            display: block;
+            list-style: none;
+            margin: 0 auto;
+        }
+        .countries {
+		    margin-left: auto ;
+		    margin-right: auto ;
+        }
+        .countries ul {
+        	list-style-type: none; /*to remove bullets*/
+		    text-align: center;
+		    margin: 0 auto;
+		    padding: 0px;
+		    display:table;
+		    overflow: hidden;
+        }
+        .countries ul li a {
+        	color: #ffffff;
+        	font-size: 17px;
+        	font-weight: 900;
+        }
+
+        .countries ul li { 
+        	float:left;
+        	padding: 20px;
+		    margin-left: auto ;
+		    margin-right: auto ;
+		}
+
+	</style>
+<% end %>
+
+
+<div class="table-cell">
+	<div class="logo">
+		<%= image_tag "search/landing/logo.png", alt: "AgendaPro", size: "326x125" %>
+	</div>
+	<div class="countries">
+		<ul>
+			<li>
+				<a href="<%= localized_root_path(locale: 'es_CL') %>" class="imageLink">
+					<%= image_tag "search/landing/chile.png", alt: "Chile", size: "47x32" %>
+		            Chile
+		        </a>
+		    </li>
+		    <li>
+		        <a href="<%= localized_root_path(locale: 'es_CO') %>" class="imageLink">
+					<%= image_tag "search/landing/colombia.png", alt: "Colombia", size: "47x32" %>
+		            Colombia
+		        </a>
+		    </li>
+		</ul>
+	</div>
+</div>

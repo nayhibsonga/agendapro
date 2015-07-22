@@ -11,12 +11,12 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150710134007) do
+ActiveRecord::Schema.define(version: 20150721190345) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
-  enable_extension "fuzzystrmatch"
   enable_extension "pg_trgm"
+  enable_extension "fuzzystrmatch"
   enable_extension "unaccent"
 
   create_table "banks", force: true do |t|
@@ -79,8 +79,8 @@ ActiveRecord::Schema.define(version: 20150710134007) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "user_id"
-    t.text     "notes",               default: ""
-    t.text     "company_comment",     default: ""
+    t.text     "notes"
+    t.text     "company_comment"
   end
 
   add_index "booking_histories", ["booking_id"], name: "index_booking_histories_on_booking_id", using: :btree
@@ -115,11 +115,11 @@ ActiveRecord::Schema.define(version: 20150710134007) do
     t.integer  "deal_id"
     t.integer  "booking_group"
     t.integer  "payed_booking_id"
+    t.integer  "payment_id"
     t.boolean  "is_session",             default: false
     t.integer  "session_booking_id"
     t.boolean  "user_session_confirmed", default: false
     t.boolean  "is_session_booked",      default: false
-    t.integer  "payment_id"
     t.float    "discount",               default: 0.0
   end
 
@@ -285,9 +285,11 @@ ActiveRecord::Schema.define(version: 20150710134007) do
   add_index "company_settings", ["company_id"], name: "index_company_settings_on_company_id", using: :btree
 
   create_table "countries", force: true do |t|
-    t.string   "name",       null: false
+    t.string   "name",                    null: false
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.string   "locale",     default: ""
+    t.string   "flag_photo", default: ""
   end
 
   create_table "days", force: true do |t|
@@ -342,9 +344,12 @@ ActiveRecord::Schema.define(version: 20150710134007) do
   add_index "districts", ["city_id"], name: "index_districts_on_city_id", using: :btree
 
   create_table "economic_sectors", force: true do |t|
-    t.string   "name",       null: false
+    t.string   "name",                           null: false
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.boolean  "show_in_home",    default: true
+    t.boolean  "show_in_company", default: true
+    t.string   "mobile_preview",  default: ""
   end
 
   create_table "economic_sectors_dictionaries", force: true do |t|
@@ -365,6 +370,16 @@ ActiveRecord::Schema.define(version: 20150710134007) do
 
   add_index "facebook_pages", ["company_id"], name: "index_facebook_pages_on_company_id", using: :btree
 
+  create_table "favorites", force: true do |t|
+    t.integer  "user_id"
+    t.integer  "location_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "favorites", ["location_id"], name: "index_favorites_on_location_id", using: :btree
+  add_index "favorites", ["user_id"], name: "index_favorites_on_user_id", using: :btree
+
   create_table "location_outcall_districts", force: true do |t|
     t.integer  "location_id"
     t.integer  "district_id"
@@ -376,9 +391,9 @@ ActiveRecord::Schema.define(version: 20150710134007) do
   add_index "location_outcall_districts", ["location_id"], name: "index_location_outcall_districts_on_location_id", using: :btree
 
   create_table "location_products", force: true do |t|
-    t.integer  "product_id",              null: false
-    t.integer  "location_id",             null: false
-    t.integer  "stock",       default: 0
+    t.integer  "product_id"
+    t.integer  "location_id"
+    t.integer  "stock"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
@@ -974,6 +989,7 @@ ActiveRecord::Schema.define(version: 20150710134007) do
     t.string   "provider"
     t.string   "uid"
     t.boolean  "receives_offers",        default: true
+    t.string   "mobile_token"
   end
 
   add_index "users", ["company_id"], name: "index_users_on_company_id", using: :btree

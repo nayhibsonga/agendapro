@@ -20,6 +20,25 @@
           </div>
         </div>
         <div class="form-group">
+          <%= f.label :locale, 'Locale: ', :class => 'col-md-2 control-label' %>
+          <div class="col-md-4">
+            <%= f.text_field :locale, :class => 'form-control' %>
+          </div>
+        </div>
+        <div class="form-group">
+          <%= f.label :flag_photo, "Foto Bandera: ", class: "col-md-2 control-label" %>
+          <div class="col-md-4">
+            <%= f.file_field :flag_photo, :accept => 'image/png,image/gif,image/jpeg', :class => 'form-control' %>
+          </div>
+          <div class="col-md-4">
+            <% if @country.flag_photo.url.nil? %>
+              No se ha subido foto
+            <% else %>
+              Foto actual: <%= image_tag @country.flag_photo.url.to_s, :alt => "", :class => "img-responsive" %>
+            <% end %>
+          </div>
+        </div>
+        <div class="form-group">
           <div class="actions col-md-offset-2 col-md-4">
             <%= f.submit 'Guardar', :class => 'btn btn-green' %>
             <%= link_to 'Cancelar', countries_path, class: "btn btn-default" %>

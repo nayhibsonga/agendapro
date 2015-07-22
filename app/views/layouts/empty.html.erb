@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]> <html class="no-js lt-ie9 lt-ie8 lt-ie7" lang="es"> <![endif]-->
+<!--[if IE 7]>    <html class="no-js lt-ie9 lt-ie8" lang="es"> <![endif]-->
+<!--[if IE 8]>    <html class="no-js lt-ie9" lang="es"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="es"> <!--<![endif]-->
+
+    <head>
+        <!-- start: Meta -->
+        <meta charset="utf-8">
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <title>AgendaPro</title>
+        <meta name="description" content="AgendaPro - Sistema de agendamiento OnLine para empresas y usuarios.">
+        <meta name="author" content="AgendaPro">
+        <meta name="keyword" content="agendapro, agenda, agenda online, reserva, reserva online">
+        <%= csrf_meta_tags %>
+        <!-- end: Meta -->
+
+        <!-- start: Mobile Specific -->
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <!-- end: Mobile Specific -->
+
+        <!-- start: CSS -->
+        <%= stylesheet_link_tag "http://fonts.googleapis.com/css?family=Roboto+Condensed:300", type: "text/css" %>
+        <%= stylesheet_link_tag "home" %>
+        <%= yield :stylesheets %>
+        <!-- end: CSS -->
+
+        <% if ENV["MONITORING_ACTIVATION"] == "TRUE" %>
+        <!-- Begin Inspectlet Embed Code -->
+        <script type="text/javascript" id="inspectletjs">
+        window.__insp = window.__insp || [];
+        __insp.push(['wid', 1883420541]);
+        (function() {
+        function __ldinsp(){var insp = document.createElement('script'); insp.type = 'text/javascript'; insp.async = true; insp.id = "inspsync"; insp.src = ('https:' == document.location.protocol ? 'https' : 'http') + '://cdn.inspectlet.com/inspectlet.js'; var x = document.getElementsByTagName('script')[0]; x.parentNode.insertBefore(insp, x); }
+        if (window.attachEvent) window.attachEvent('onload', __ldinsp);
+        else window.addEventListener('load', __ldinsp, false);
+        })();
+        </script>
+        <!-- End Inspectlet Embed Code -->
+        <!-- start: Facebook Tracker-->
+        <%= render 'layouts/facebook_tracker' %>
+        <!-- end: Facebook Tracker-->
+        <% end %>
+
+        <!-- start: JavaScript-->
+        <%= javascript_include_tag "home-head" %>
+        <!-- end: JavaScript-->
+
+
+        <%= yield :head_scripts %>
+
+        <%= render 'layouts/icons' %>
+
+    </head>
+
+    <body>
+        <script>
+          window.fbAsyncInit = function() {
+            FB.init({
+              appId      : '739120539456506',
+              xfbml      : true,
+              version    : 'v2.1'
+            });
+
+            // ADD ADDITIONAL FACEBOOK CODE HERE
+          };
+
+          (function(d, s, id){
+             var js, fjs = d.getElementsByTagName(s)[0];
+             if (d.getElementById(id)) {return;}
+             js = d.createElement(s); js.id = id;
+             js.src = "//connect.facebook.net/en_US/sdk.js";
+             fjs.parentNode.insertBefore(js, fjs);
+           }(document, 'script', 'facebook-jssdk'));
+        </script>
+
+        <!-- start: content -->
+        <%= yield %>
+        <!-- end: content -->
+
+        <!-- start: JavaScript-->
+        <%= yield :scripts %>
+        <%= javascript_include_tag "jquery.browser.min" %>
+        <%= javascript_include_tag "browser-detect" %>
+
+        <script>
+          $( "#menu-display" ).click(function() {
+            $( ".nav-pills" ).toggle( "slow" );
+          });
+        </script>
+        <!-- end: JavaScript-->
+
+        <!--Start of Crazy Egg Script-->
+        <%= javascript_include_tag 'crazy_egg' %>
+        <!--End of Crazy Egg Script-->
+
+        <!------ Originales ------->
+        <!-- Los JS -->
+        <!--<script src='http://connect.facebook.net/en_US/all.js'></script>-->
+    </body>
+</html>

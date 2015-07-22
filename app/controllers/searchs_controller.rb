@@ -1,9 +1,13 @@
 # encoding: utf-8
 class SearchsController < ApplicationController
-	layout "results", except: [:index]
+	layout "results", except: [:index, :landing]
 	require 'amatch'
 	require 'benchmark'
 	include Amatch
+
+	def landing
+		render layout: "empty"
+	end
 
 	def index
 		@lat = cookies[:lat].to_f

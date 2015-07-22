@@ -22,7 +22,7 @@ module UrlHelper
   end
 
   def social_login_url(provider)
-    url = root_url(subdomain: false) + "users/auth/" + provider
+    url = root_url(subdomain: false, locale: nil) + "users/auth/" + provider
     return url
   end
 

@@ -2,9 +2,7 @@ Agendapro::Application.routes.draw do
 
   devise_for :users, skip: [:session, :password, :registration, :confirmation], :controllers => { omniauth_callbacks: "users/omniauth_callbacks" }
 
-  root :to => 'searchs#index'
-
-  scope ":locale", locale: /es|es_CL|es_CO/, defaults: {locale: "es"} do
+  scope "(:locale)", locale: /es|es_CL|es_CO/ do
 
     # devise_for :users, controllers: {registrations: 'registrations', omniauth_callbacks: "omniauth_callbacks"}
 
@@ -329,11 +327,13 @@ Agendapro::Application.routes.draw do
 
     # Root
     get '/' => 'searchs#index', :constraints => { :subdomain => 'www' }
+    get '/', :to => 'searchs#index', as: 'localized_root'
     get '/' => 'companies#overview', :constraints => { :subdomain => /.+/ }
 
-    get '/', :to => 'searchs#index'
 
   end
+
+  root :to => 'searchs#landing', locale: nil
 
 
   # The priority is based upon order of creation: first created -> highest priority.
