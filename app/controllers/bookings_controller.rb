@@ -1931,7 +1931,7 @@ class BookingsController < ApplicationController
           service_promos_ids.each do |sp_id|
             service_promo = ServicePromo.find(sp_id)
             service_promo.max_bookings = service_promo.max_bookings - 1
-            serice_promo.save
+            service_promo.save
           end          
 
           PuntoPagosCreation.create(trx_id: trx_id, payment_method: payment_method, amount: amount, details: "Pago de varios servicios a la empresa " +@company.name+" (" + @company.id.to_s + "). trx_id: "+trx_id+" - mp: "+@company.id.to_s+". Resultado: Se procesa")
