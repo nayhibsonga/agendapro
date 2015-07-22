@@ -300,17 +300,17 @@ class ServiceProvider < ActiveRecord::Base
 
 			                    	promo = Promo.where(:service_promo_id => service_promo.id, :day_id => day, :location_id => local.id).first
 
-		                    		if !(promo_time.morning_end.strftime("%H:%M") <= start_time_block.strftime("%H:%M") || end_time_block.strftime("%H:%M") <= promo_time.morning_start.strftime("%H:%M"))
+		                    		if !(service_promo.morning_end.strftime("%H:%M") <= start_time_block.strftime("%H:%M") || end_time_block.strftime("%H:%M") <= service_promo.morning_start.strftime("%H:%M"))
 				                    		
 				                    	status = 'hora-promocion'
 				                    	promo_discount = promo.morning_discount
 
-				                    elsif !(promo_time.afternoon_end.strftime("%H:%M") <= start_time_block.strftime("%H:%M") || end_time_block.strftime("%H:%M") <= promo_time.afternoon_start.strftime("%H:%M"))
+				                    elsif !(service_promo.afternoon_end.strftime("%H:%M") <= start_time_block.strftime("%H:%M") || end_time_block.strftime("%H:%M") <= service_promo.afternoon_start.strftime("%H:%M"))
 
 				                    	status = 'hora-promocion'
 				                    	promo_discount = promo.afternoon_discount
 
-				                    elsif !(promo_time.night_end.strftime("%H:%M") <= start_time_block.strftime("%H:%M") || end_time_block.strftime("%H:%M") <= promo_time.night_start.strftime("%H:%M"))
+				                    elsif !(service_promo.night_end.strftime("%H:%M") <= start_time_block.strftime("%H:%M") || end_time_block.strftime("%H:%M") <= service_promo.night_start.strftime("%H:%M"))
 
 				                    	status = 'hora-promocion'
 				                    	promo_discount = promo.night_discount

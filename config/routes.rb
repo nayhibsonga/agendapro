@@ -326,6 +326,7 @@ Agendapro::Application.routes.draw do
 
   # Promotions
   post "/set_service_promotions", :to => 'services#set_promotions'
+  post '/set_service_promo_times', :to => 'services#set_service_promo_times'
   get "/get_promotions_popover", :to => 'services#get_promotions_popover'
   get "/get_online_discount_popover", :to => 'services#get_online_discount_popover'
   get "/promotion_hours", :to => 'bookings#promotion_hours'

@@ -244,6 +244,78 @@ class ServicesController < ApplicationController
     render :json => array_result
   end
 
+  def set_service_promo_times
+
+    #service_promo = ServicePromo.new
+
+    #if params[:service_promo_id]
+    #  service_promo = ServicePromo.find(params[:service_promo_id])
+    #end
+
+    @ret_arr = []
+
+    @service = Service.find(params[:service_id])
+
+    service_promo = nil
+
+    if @service.has_time_discount || !@service.active_service_promo_id.nil? || @service.time_promo_active
+      #Create a new one from last one, and create new promos from last ones.
+      last_service_promo = ServicePromo.find(@service.active_service_promo_id)
+
+      service_promo = ServicePromo.create(:service_id => @service.id, :max_bookings => last_service_promo.max_bookings, :morning_start => params[:morning_start], :morning_end => params[:morning_end], :afternoon_start => params[:afternoon_start], :afternoon_end => params[:afternoon_end], :night_start => params[:night_start], :night_end => params[:night_end])
+
+      last_service_promo.promos.each do |old_promo|
+        promo = Promo.create(:day_id => old_promo.day_id, :morning_discount => old_promo.morning_discount, :afternoon_discount => old_promo.afternoon_discount, :night_discount => old_promo.night_discount, :location_id => old_promo.location_id, :service_promo_id => service_promo.id)
+      end
+
+      @service.active_service_promo_id = service_promo.id
+      
+      if @service.save
+        @ret_arr << "ok"
+        @ret_arr << @service
+        render :json => @ret_arr
+      else
+        @ret_arr << "error"
+        @ret_arr << @service.errors
+        render :json => @ret_arr
+      end
+
+    else
+      #Create a service promo and promos from defaults.
+      service_promo = ServicePromo.create(:service_id => @service.id, :max_bookings => 0, :morning_start => params[:service_promo][:morning_start], :morning_end => params[:service_promo][:morning_end], :afternoon_start => params[:service_promo][:afternoon_start], :afternoon_end => params[:service_promo][:afternoon_end], :night_start => params[:service_promo][:night_start], :night_end => params[:service_promo][:night_end])
+      
+      promo_time = @service.company.company_setting.promo_time
+
+      locations = []
+
+      @service.service_providers.each do |service_provider|  
+        if !locations.include?(service_provider.location)
+          locations << service_provider.location
+        end
+      end
+
+      locations.each do |location|
+        Day.all.each do |day|
+          promo = Promo.create(:day_id => day.id, :morning_discount => promo_time.morning_discount, :afternoon_discount => promo_time.afternoon_discount, :night_discount => promo_time.night_discount, :location_id => location.id, :service_promo_id => service_promo.id)
+        end
+      end
+
+      @service.active_service_promo_id = service_promo.id
+      
+      if @service.save
+        @ret_arr << "ok"
+        @ret_arr << @service
+        render :json => @ret_arr
+      else
+        @ret_arr << "error"
+        @ret_arr << @service.errors
+        render :json => @ret_arr
+      end
+
+    end
+
+  end
+
   def set_promotions
 
     @service = Service.find(params[:service_id])

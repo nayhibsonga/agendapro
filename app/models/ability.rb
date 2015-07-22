@@ -252,6 +252,7 @@ class Ability
         can :delete_facebook_pages, CompanySetting
 
         can :set_promotions, Service
+        can :set_service_promo_times, Service
         can :read, CompanyPaymentMethod, :company_id => user.company_id
         can :create, CompanyPaymentMethod, :company_id => user.company_id
         can :update, CompanyPaymentMethod, :company_id => user.company_id

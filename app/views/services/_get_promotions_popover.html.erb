@@ -12,20 +12,23 @@
 			<% if @promos.count > 0 %>
 				<table class="promotion-popover-table">
 					<tr>
+						<% 
+							service_promo = ServicePromo.find(@service.active_service_promo_id)
+						%>
 						<% @promos.each do |promo| %>
 							<% if promo.morning_discount > 0 or promo.afternoon_discount > 0 || promo.night_discount > 0 %>
 								<td>
 									<b><%= promo.day.name %></b><br /><br />
 									<% if promo.morning_discount > 0 %>
-										<%= @service.company.company_setting.promo_time.morning_start.strftime("%H:%M") %> - <%= @service.company.company_setting.promo_time.morning_end.strftime("%H:%M") %><br />
+										<%= service_promo.morning_start.strftime("%H:%M") %> - <%= service_promo.morning_end.strftime("%H:%M") %><br />
 										<span class="orange"><%= promo.morning_discount %>% off</span><br /><br />
 									<% end %>
 									<% if promo.afternoon_discount > 0 %>
-										<%= @service.company.company_setting.promo_time.afternoon_start.strftime("%H:%M") %> - <%= @service.company.company_setting.promo_time.afternoon_end.strftime("%H:%M") %><br />
+										<%= service_promo.afternoon_start.strftime("%H:%M") %> - <%= service_promo.afternoon_end.strftime("%H:%M") %><br />
 										<span class="orange"><%= promo.afternoon_discount %>% off</span><br /><br />
 									<% end %>
 									<% if promo.night_discount > 0 %>
-										<%= @service.company.company_setting.promo_time.night_start.strftime("%H:%M") %> - <%= @service.company.company_setting.promo_time.night_end.strftime("%H:%M") %><br />
+										<%= service_promo.night_start.strftime("%H:%M") %> - <%= service_promo.night_end.strftime("%H:%M") %><br />
 										<span class="orange"><%= promo.night_discount %>% off</span><br />
 									<% end %>
 								</td>

@@ -1,3 +1,33 @@
+
+<style type="text/css">
+.hour-title{
+  padding-top: 5px;
+  padding-bottom: 5px;
+  width: 100%;
+  margin-left: 15px;
+  text-align: center;
+  background-color: #eaeaea;
+  color: #505050;
+  border: 1px #ccc solid;
+}
+
+.promo-hour-select{
+  text-align: center;
+}
+
+.time-select{
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+.date-select{
+  padding-left: 6px;
+  padding-right: 6px;
+  width: auto;
+  display: inline;
+}
+</style>
+
 <div class="container-fluid">
   <div class="row">
     <div class="col-md-12">
@@ -457,107 +487,122 @@
 </div>
 
 <% if !@service.has_discount && @service.online_payable && @service.check_company_promos && @service.company.company_setting.promo_offerer_capable %>
-	<div class="modal" id="morningModal" tabindex="-1" role="basic" aria-hidden="true">
+	<div class="modal" id="timeModal" tabindex="-1" role="basic" aria-hidden="true">
 	    <div class="modal-dialog">
 	        <div class="modal-content">
 	          <div class="modal-header">
 	            <button type="button" class="close" data-dismiss="modal">&times;</button>
-	            <h3 class="modal-title">Horario de mañana</h3>
+	            <h3 class="modal-title">Horarios de la promoción</h3>
 	          </div>
 	          <div class="modal-body">
-	            	<div class="promo-hour-select has-feedback morning-promo-hour">
 
+	          		<%= form_tag(:controller => "services", :action => "set_service_promo_times", :method => "post") do %>
+	          			<input type="hidden" name="service_id" value="<%= @service.id %>" />
 	            		<% if service_promo.nil? %>
+		            		<div class="row">
+			                  <div class="col-md-2">
+			                    <div class="hour-title">
+			                      Mañana
+			                    </div>
+			                  </div>
+			                  <div class="col-md-10">
+			                      <div class="promo-hour-select has-feedback morning-promo-hour">
+			                        <%= time_select "service_promo", "morning_start", {default: promo_time.morning_start, minute_step: 15}, {:class => 'form-control date-select', required: true} %> - <%= time_select "service_promo", "morning_end", {default: promo_time.morning_end, minute_step: 15}, {:class => 'form-control date-select', required: true} %>
+			                        <span class="help-block"><label id="morning-error" class="error" hidden></label></span>
+			                        <span class="form-control-feedback"></span>
+			                      </div>                 
+			                  </div>
+			                </div>
 
-	                		Inicio: <%= time_select "service_promo", "morning_start", {default: promo_time.morning_start, minute_step: 15}, {:class => 'form-control date-select', required: true} %><br />
-	                		Fin: <%= time_select "service_promo", "morning_end", {default: promo_time.morning_end, minute_step: 15}, {:class => 'form-control date-select', required: true} %>
+			                <div class="row">
+			                  <div class="col-md-2">
+			                    <div class="hour-title">
+			                      Tarde
+			                    </div>
+			                  </div>
+			                  <div class="col-md-10">
+			                    <div class="promo-hour-select has-feedback afternoon-promo-hour">
+			                      <%= time_select "service_promo", "afternoon_start", {default: promo_time.afternoon_start, minute_step: 15}, {:class => 'form-control date-select', required: true} %> - <%= time_select "service_promo", "afternoon_end", {default: promo_time.afternoon_end, minute_step: 15}, {:class => 'form-control date-select', required: true} %>
+			                      <span class="help-block"><label id="afternoon-error" class="error" hidden></label></span>
+			                      <span class="form-control-feedback"></span>
+			                    </div>
+			                  </div>
+			                </div>
 
-	                	<% else %>
+			                <div class="row">
+			                  <div class="col-md-2">
+			                    <div class="hour-title">
+			                      Noche
+			                    </div>
+			                  </div>
+			                  <div class="col-md-10">
+			                    <div class="promo-hour-select has-feedback night-promo-hour">
+			                      <%= time_select "service_promo", "night_start", {default: promo_time.night_start, minute_step: 15}, {:class => 'form-control date-select', required: true} %> - <%= time_select "service_promo", "night_end", {default: promo_time.night_end, minute_step: 15}, {:class => 'form-control date-select', required: true} %>
+			                      <span class="help-block"><label id="night-error" class="error" hidden></label></span>
+			                      <span class="form-control-feedback"></span>
+			                    </div>
+			                  </div>
+			                </div>
+		                <% else %>
 
-	                		Inicio: <%= time_select "service_promo", "morning_start", {default: service_promo.morning_start, minute_step: 15}, {:class => 'form-control date-select', required: true} %><br />
-	                		Fin: <%= time_select "service_promo", "morning_end", {default: service_promo.morning_end, minute_step: 15}, {:class => 'form-control date-select', required: true} %>
+		                	<div class="row">
+			                  <div class="col-md-2">
+			                    <div class="hour-title">
+			                      Mañana
+			                    </div>
+			                  </div>
+			                  <div class="col-md-10">
+			                      <div class="promo-hour-select has-feedback morning-promo-hour">
+			                        <%= time_select "service_promo", "morning_start", {default: service_promo.morning_start, minute_step: 15}, {:class => 'form-control date-select', required: true} %> - <%= time_select "service_promo", "morning_end", {default: service_promo.morning_end, minute_step: 15}, {:class => 'form-control date-select', required: true} %>
+			                        <span class="help-block"><label id="morning-error" class="error" hidden></label></span>
+			                        <span class="form-control-feedback"></span>
+			                      </div>                 
+			                  </div>
+			                </div>
 
-	                	<% end %>
+			                <div class="row">
+			                  <div class="col-md-2">
+			                    <div class="hour-title">
+			                      Tarde
+			                    </div>
+			                  </div>
+			                  <div class="col-md-10">
+			                    <div class="promo-hour-select has-feedback afternoon-promo-hour">
+			                      <%= time_select "service_promo", "afternoon_start", {default: service_promo.afternoon_start, minute_step: 15}, {:class => 'form-control date-select', required: true} %> - <%= time_select "service_promo", "afternoon_end", {default: service_promo.afternoon_end, minute_step: 15}, {:class => 'form-control date-select', required: true} %>
+			                      <span class="help-block"><label id="afternoon-error" class="error" hidden></label></span>
+			                      <span class="form-control-feedback"></span>
+			                    </div>
+			                  </div>
+			                </div>
 
-	                	<span class="help-block"><label id="morning-error" class="error" hidden></label></span>
-	                	<span class="form-control-feedback"></span>
+			                <div class="row">
+			                  <div class="col-md-2">
+			                    <div class="hour-title">
+			                      Noche
+			                    </div>
+			                  </div>
+			                  <div class="col-md-10">
+			                    <div class="promo-hour-select has-feedback night-promo-hour">
+			                      <%= time_select "service_promo", "night_start", {default: service_promo.night_start, minute_step: 15}, {:class => 'form-control date-select', required: true} %> - <%= time_select "service_promo", "night_end", {default: service_promo.night_end, minute_step: 15}, {:class => 'form-control date-select', required: true} %>
+			                      <span class="help-block"><label id="night-error" class="error" hidden></label></span>
+			                      <span class="form-control-feedback"></span>
+			                    </div>
+			                  </div>
+			                </div>
 
-	              	</div>
+		                <% end %>
+					<% end %>
+
 	          </div>
 	          <div class="modal-footer">
-	              <a href="#" class="btn btn-white" data-dismiss="modal">Cerrar</a>
+	          		<%= submit_tag 'Guardar', :class => 'btn btn-green edit_promo_times' %>
+	             	<a href="#" class="btn btn-white" data-dismiss="modal">Cerrar</a>
 	          </div>
 	        </div> <!-- /.modal-content -->
 	    </div> <!-- /.modal-dialog -->
 	</div> <!-- /.modal -->
 
-	<div class="modal" id="afternoonModal" tabindex="-1" role="basic" aria-hidden="true">
-	    <div class="modal-dialog">
-	        <div class="modal-content">
-	          <div class="modal-header">
-	            <button type="button" class="close" data-dismiss="modal">&times;</button>
-	            <h3 class="modal-title">Horario de mañana</h3>
-	          </div>
-	          <div class="modal-body">
-	            	<div class="promo-hour-select has-feedback morning-promo-hour">
-
-	            		<% if service_promo.nil? %>
-
-	                		Inicio: <%= time_select "service_promo", "morning_start", {default: promo_time.afternoon_start, minute_step: 15}, {:class => 'form-control date-select', required: true} %><br />
-	                		Fin: <%= time_select "service_promo", "morning_end", {default: promo_time.afternoon_end, minute_step: 15}, {:class => 'form-control date-select', required: true} %>
-
-	                	<% else %>
-
-	                		Inicio: <%= time_select "service_promo", "morning_start", {default: service_promo.afternoon_start, minute_step: 15}, {:class => 'form-control date-select', required: true} %><br />
-	                		Fin: <%= time_select "service_promo", "morning_end", {default: service_promo.afternoon_end, minute_step: 15}, {:class => 'form-control date-select', required: true} %>
-
-	                	<% end %>
-
-	                	<span class="help-block"><label id="morning-error" class="error" hidden></label></span>
-	                	<span class="form-control-feedback"></span>
-
-	              	</div>
-	          </div>
-	          <div class="modal-footer">
-	              <a href="#" class="btn btn-white" data-dismiss="modal">Cerrar</a>
-	          </div>
-	        </div> <!-- /.modal-content -->
-	    </div> <!-- /.modal-dialog -->
-	</div> <!-- /.modal -->
-
-	<div class="modal" id="nightModal" tabindex="-1" role="basic" aria-hidden="true">
-	    <div class="modal-dialog">
-	        <div class="modal-content">
-	          <div class="modal-header">
-	            <button type="button" class="close" data-dismiss="modal">&times;</button>
-	            <h3 class="modal-title">Horario de mañana</h3>
-	          </div>
-	          <div class="modal-body">
-	            	<div class="promo-hour-select has-feedback morning-promo-hour">
-
-	            		<% if service_promo.nil? %>
-
-	                		Inicio: <%= time_select "service_promo", "morning_start", {default: promo_time.night_start, minute_step: 15}, {:class => 'form-control date-select', required: true} %><br />
-	                		Fin: <%= time_select "service_promo", "morning_end", {default: promo_time.night_end, minute_step: 15}, {:class => 'form-control date-select', required: true} %>
-
-	                	<% else %>
-
-	                		Inicio: <%= time_select "service_promo", "morning_start", {default: service_promo.night_start, minute_step: 15}, {:class => 'form-control date-select', required: true} %><br />
-	                		Fin: <%= time_select "service_promo", "morning_end", {default: service_promo.night_end, minute_step: 15}, {:class => 'form-control date-select', required: true} %>
-
-	                	<% end %>
-
-	                	<span class="help-block"><label id="morning-error" class="error" hidden></label></span>
-	                	<span class="form-control-feedback"></span>
-
-	              	</div>
-	          </div>
-	          <div class="modal-footer">
-	              <a href="#" class="btn btn-white" data-dismiss="modal">Cerrar</a>
-	          </div>
-	        </div> <!-- /.modal-content -->
-	    </div> <!-- /.modal-dialog -->
-	</div> <!-- /.modal -->
+	
 <% end %>
 
 <% content_for :scripts do %>
@@ -572,16 +617,183 @@
   	});
 
   	$("#morning-edit").click(function(){
-  		$("#morningModal").modal("show");
+  		$("#timeModal").modal("show");
   	});
 
   	$("#afternoon-edit").click(function(){
-  		$("#afternoonModal").modal("show");
+  		$("#timeModal").modal("show");
   	});
 
   	$("#night-edit").click(function(){
-  		$("#nightModal").modal("show");
+  		$("#timeModal").modal("show");
   	});
+
+  	$('.edit_promo_times').click(function(e){
+
+  		var service_id = '<%= @service.id %>';
+
+  		var morning_start = $('#service_promo_morning_start_1i').val() + '-' + $('#service_promo_morning_start_2i').val() + '-' + $('#service_promo_morning_start_3i').val() + 'T' + $('#service_promo_morning_start_4i').val() + ':' + $('#service_promo_morning_start_5i').val() + ':00Z';
+
+  		var morning_end = $('#service_promo_morning_end_1i').val() + '-' + $('#service_promo_morning_end_2i').val() + '-' + $('#service_promo_morning_end_3i').val() + 'T' + $('#service_promo_morning_end_4i').val() + ':' + $('#service_promo_morning_end_5i').val() + ':00Z';
+
+  		var afternoon_start = $('#service_promo_afternoon_start_1i').val() + '-' + $('#service_promo_afternoon_start_2i').val() + '-' + $('#service_promo_afternoon_start_3i').val() + 'T' + $('#service_promo_afternoon_start_4i').val() + ':' + $('#service_promo_afternoon_start_5i').val() + ':00Z';
+
+  		var afternoon_end = $('#service_promo_afternoon_end_1i').val() + '-' + $('#service_promo_afternoon_end_2i').val() + '-' + $('#service_promo_afternoon_end_3i').val() + 'T' + $('#service_promo_afternoon_end_4i').val() + ':' + $('#service_promo_afternoon_end_5i').val() + ':00Z';
+
+  		var night_start = $('#service_promo_night_start_1i').val() + '-' + $('#service_promo_night_start_2i').val() + '-' + $('#service_promo_night_start_3i').val() + 'T' + $('#service_promo_night_start_4i').val() + ':' + $('#service_promo_night_start_5i').val() + ':00Z';
+
+  		var night_end = $('#service_promo_night_end_1i').val() + '-' + $('#service_promo_night_end_2i').val() + '-' + $('#service_promo_night_end_3i').val() + 'T' + $('#service_promo_night_end_4i').val() + ':' + $('#service_promo_night_end_5i').val() + ':00Z';
+
+  		//var datos = $("#timeModal form").serialize();
+
+  		if(timeCheck(morning_start, morning_end, afternoon_start, afternoon_end, night_start, night_end))
+  		{
+  			$.ajax({
+  				url: '/set_service_promo_times',
+  				type: 'post',
+  				data: {service_id: service_id, morning_start: morning_start, morning_end: morning_end, afternoon_start: afternoon_start, afternoon_end: afternoon_end, night_start: night_start, night_end: night_end},
+  				success: function(response)
+  				{
+  					$("#timeModal").modal('hide');
+  					if(response[0] == "ok")
+  					{
+  						myAlert.showAlert(
+						  '<h3>Horarios editados</h3>' +
+						  '<p>Los horarios para el servicio ' + response[1].name + ' se guardaron correctamente.</p>'
+						, function(){
+							location.reload();
+						});
+  					}
+  					else
+  					{
+  						myAlert.showAlert(
+						  '<h3>Error</h3>' +
+						  '<p>Ocurrió un error al guardar los horarios para el servicio ' + response[1].name + '.</p>'
+						, function(){
+							location.reload();
+						});
+  					}
+  				},
+  				error: function()
+  				{
+  					$("#timeModal").modal('hide');
+  					myAlert.showAlert(
+					  '<h3>Error</h3>' +
+					  '<p>Ocurrió un error al guardar los horarios para el servicio ' + response[1].name + '.</p>'
+					, function(){
+						location.reload();
+					});
+  				}
+  			})
+  		}
+
+  	});
+
+
+	function timeCheck(morningStart, morningEnd, afternoonStart, afternoonEnd, nightStart, nightEnd)
+	{
+		var result = morningStart <= morningEnd;
+	    var result1 = afternoonStart <= afternoonEnd;
+	    var result2 = morningEnd <= afternoonStart;
+	    var result3 = nightStart <= nightEnd;
+	    var result4 = afternoonEnd <= nightStart;
+
+
+	    $("#morning-error").empty();
+	    $("#morning-error").hide();
+	    $("#afternoon-error").empty();
+	    $("#afternoon-error").hide();
+	    $("#night-error").empty();
+	    $("#night-error").hide();
+
+	    if (result)
+	    {
+	    	$(".morning-promo-hour").addClass('has-success').removeClass('has-error');
+	    	$(".morning-promo-hour").children('.form-control-feedback').removeClass('fa fa-times').addClass('fa fa-check');
+	    }
+	    else
+	    {
+	    	$(".morning-promo-hour").removeClass('has-success').addClass('has-error');
+	    	$(".morning-promo-hour").children('.form-control-feedback').removeClass('fa fa-check').addClass('fa fa-times');
+	    	$("#morning-error").append("El fin de la mañana no puede ser menor al inicio.");
+	    	$("#morning-error").show();
+	    }
+
+
+	    if (result1 && result2)
+	    {
+	    	$(".afternoon-promo-hour").addClass('has-success').removeClass('has-error');
+	    	$(".afternoon-promo-hour").children('.form-control-feedback').removeClass('fa fa-times').addClass('fa fa-check');
+	    }
+	    else
+	    {
+
+	    	$(".afternoon-promo-hour").removeClass('has-success').addClass('has-error');
+	    	$(".afternoon-promo-hour").children('.form-control-feedback').removeClass('fa fa-check').addClass('fa fa-times');
+	    	var strError = "";
+	    	if(!result1 && result2)
+	    	{
+	    		strError = "El fin de la tarde no puede ser menor al inicio.";
+	    	}
+	    	else if(!result2 && result1)
+	    	{
+	    		strError = "El inicio de la tarde no puede ser menor al fin de la mañana.";
+	    		$(".morning-promo-hour").removeClass('has-success').addClass('has-error');
+		    	$(".morning-promo-hour").children('.form-control-feedback').removeClass('fa fa-check').addClass('fa fa-times');
+		    	$("#morning-error").append("El fin de la mañana no puede ser mayor al inicio de la tarde.");
+		    	$("#morning-error").show();
+	    	}
+	    	else
+	    	{
+	    		strError = "El inicio de la tarde no puede ser menor al fin de la mañana ni mayor al fin de la tarde.";
+	    		$(".morning-promo-hour").removeClass('has-success').addClass('has-error');
+		    	$(".morning-promo-hour").children('.form-control-feedback').removeClass('fa fa-check').addClass('fa fa-times');
+		    	$("#morning-error").append("El fin de la mañana no puede ser mayor al inicio de la tarde.");
+		    	$("#morning-error").show();
+	    	}
+	    	$("#afternoon-error").append(strError);
+	    	$("#afternoon-error").show();
+	    }
+
+	    
+
+	    if (result3 && result4)
+	    {
+	    	$(".night-promo-hour").addClass('has-success').removeClass('has-error');
+	    	$(".night-promo-hour").children('.form-control-feedback').removeClass('fa fa-times').addClass('fa fa-check');
+	    }
+	    else
+	    {
+
+	    	$(".night-promo-hour").removeClass('has-success').addClass('has-error');
+	    	$(".night-promo-hour").children('.form-control-feedback').removeClass('fa fa-check').addClass('fa fa-times');
+	    	var strError = "";
+	    	if(!result3 && result4)
+	    	{
+	    		strError = "El fin de la noche no puede ser menor al inicio.";
+	    	}
+	    	else if(!result4 && result3)
+	    	{
+	    		strError = "El inicio de la noche no puede ser menor al fin de la tarde.";
+	    		$(".afternoon-promo-hour").removeClass('has-success').addClass('has-error');
+		    	$(".afternoon-promo-hour").children('.form-control-feedback').removeClass('fa fa-check').addClass('fa fa-times');
+		    	$("#afternoon-error").append("El fin de la tarde no puede ser mayor al inicio de la noche.");
+		    	$("#afternoon-error").show();
+	    	}
+	    	else
+	    	{
+	    		strError = "El inicio de la noche no puede ser menor al fin de la tarde ni mayor al fin de la noche.";
+	    		$(".afternoon-promo-hour").removeClass('has-success').addClass('has-error');
+		    	$(".afternoon-promo-hour").children('.form-control-feedback').removeClass('fa fa-check').addClass('fa fa-times');
+		    	$("#afternoon-error").append("El fin de la tarde no puede ser mayor al inicio de la noche.");
+		    	$("#afternoon-error").show();
+	    	}
+	    	$("#night-error").append(strError);
+	    	$("#night-error").show();
+	    }
+
+	    return result && result1 && result2 && result3 && result4;
+	}
 
   	$(".promotions-submit").click(function(e){
 

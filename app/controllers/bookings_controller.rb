@@ -3338,18 +3338,19 @@ class BookingsController < ApplicationController
 
                   if !promo.nil?
 
+                    service_promo = ServicePromo.find(service.active_service_promo_id)
 
-                    if !(service.company.company_setting.promo_time.morning_start.strftime("%H:%M") > bookings.last[:end].strftime("%H:%M") || service.company.company_setting.promo_time.morning_end.strftime("%H:%M") < bookings.last[:start].strftime("%H:%M"))
+                    if !(service_promo.morning_start.strftime("%H:%M") >= bookings.last[:end].strftime("%H:%M") || service_promo.morning_end.strftime("%H:%M") <= bookings.last[:start].strftime("%H:%M"))
 
                       bookings.last[:time_discount] = promo.morning_discount
                       logger.debug "Meets morning"
 
-                    elsif !(service.company.company_setting.promo_time.afternoon_start.strftime("%H:%M") > bookings.last[:end].strftime("%H:%M") || service.company.company_setting.promo_time.afternoon_end.strftime("%H:%M") < bookings.last[:start].strftime("%H:%M"))
+                    elsif !(service_promo.afternoon_start.strftime("%H:%M") >= bookings.last[:end].strftime("%H:%M") || service_promo.afternoon_end.strftime("%H:%M") <= bookings.last[:start].strftime("%H:%M"))
 
                       bookings.last[:time_discount] = promo.afternoon_discount
                       logger.debug "Meets afternoon"
 
-                    elsif !(service.company.company_setting.promo_time.night_start.strftime("%H:%M") > bookings.last[:end].strftime("%H:%M") || service.company.company_setting.promo_time.night_end.strftime("%H:%M") < bookings.last[:start].strftime("%H:%M"))
+                    elsif !(service_promo.night_start.strftime("%H:%M") >= bookings.last[:end].strftime("%H:%M") || service_promo.night_end.strftime("%H:%M") <= bookings.last[:start].strftime("%H:%M"))
 
                       bookings.last[:time_discount] = promo.night_discount
                       logger.debug "Meets night"
