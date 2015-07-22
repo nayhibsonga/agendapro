@@ -67,6 +67,7 @@ $("#datepicker").datepicker({
     dayNamesMin: ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'],
     today: 'Hoy',
     clear: '',
+    dateFormat: 'yy-mm-dd',
     onSelect: function(newDate){
 
       var selects = [];
@@ -144,6 +145,10 @@ function generateDate(date, time) {
 
 	return year + '-' + month + '-' + day + ' ' + time;
 }
+
+$(document.body).on('click', '.date-span', function(e) {
+  $(e.currentTarget).find('input').datepicker('show');
+});
 
 var myAlert;
 $(function () {
