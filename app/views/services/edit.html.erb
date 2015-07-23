@@ -401,6 +401,15 @@
 
 										<div class="form-group">
 											
+											<div class="checkbox">
+												<label>
+													
+						                          	<input type="checkbox" id="limit_booking" name="limit_booking" checked />	
+						                          		Stock limitado.
+						                          		<span style="cursor: pointer;" data-toggle="tooltip" data-placement="bottom" title="Marca la opción para definir un stock máximo, o desmárcala para definir un stock ilimitado."><i class="fa fa-question-circle fa-lg"></i></span>
+						                        </label>
+					                        </div>
+
 											<% if @service.active_service_promo_id.nil? %>
 												<div>
 													
@@ -428,7 +437,7 @@
 										</div>
 
 										<% if !@service.active_service_promo_id.nil? %>
-											<div class="form-group">
+											<div class="form-group" style="display: none;">
 												<div style="display: inline !important;">
 													<div class="checkbox">
 														<label>

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150721133433) do
+ActiveRecord::Schema.define(version: 20150723153707) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -861,6 +861,9 @@ ActiveRecord::Schema.define(version: 20150721133433) do
     t.datetime "afternoon_end",   default: '2000-01-01 18:00:00', null: false
     t.datetime "night_start",     default: '2000-01-01 18:00:00', null: false
     t.datetime "night_end",       default: '2000-01-01 20:00:00', null: false
+    t.datetime "finish_date",     default: '2016-01-01 09:00:00'
+    t.datetime "book_limit_date", default: '2016-01-01 09:00:00'
+    t.boolean  "limit_booking",   default: true
   end
 
   create_table "service_providers", force: true do |t|
@@ -938,6 +941,7 @@ ActiveRecord::Schema.define(version: 20150721133433) do
     t.string   "time_promo_photo"
     t.integer  "active_service_promo_id"
     t.boolean  "must_be_paid_online",      default: false
+    t.text     "promo_description",        default: ""
   end
 
   add_index "services", ["company_id"], name: "index_services_on_company_id", using: :btree
