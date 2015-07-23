@@ -459,6 +459,52 @@
 									</div>
 								</div>
 
+								<div class="row">
+									<div class="col-md-12">
+										<label>Fechas</label>
+										<span class="help-block">Selecciona la duración y la fecha límite para reservar.</span>
+
+										<div class="form-group">
+											<div class="row">
+												<div class="col-md-2">
+													Finaliza el:
+												</div>
+												<div class="col-md-3">
+													<% if !service_promo.nil? %>
+														<% 
+															finish_date_arr = service_promo.finish_date.to_s.split(' ')[0].split('-')
+															finish_date = finish_date_arr[2] + '/' + finish_date_arr[1] + '/' + finish_date_arr[0]
+														%>
+														<input type="text" id="finish_date" name="finish_date" class="form-control" value="<%= finish_date %>" />
+													<% else %>
+														<input type="text" id="finish_date" name="finish_date" class="form-control" />
+													<% end %>
+												</div>
+											</div>
+										</div>
+										<br />
+										<div class="form-group">
+											<div class="row">
+												<div class="col-md-2">
+													Admite reservas hasta:
+												</div>
+												<div class="col-md-3">
+													<% if !service_promo.nil? %>
+														<% 
+															book_limit_date_arr = service_promo.book_limit_date.to_s.split(' ')[0].split('-')
+															book_limit_date = book_limit_date_arr[2] + '/' + book_limit_date_arr[1] + '/' + book_limit_date_arr[0]
+														%>
+														<input type="text" id="book_limit_date" name="book_limit_date" class="form-control" value="<%= book_limit_date %>" />
+													<% else %>
+														<input type="text" id="book_limit_date" name="book_limit_date" class="form-control" />
+													<% end %>
+												</div>
+											</div>
+										</div>
+
+									</div>
+								</div>
+
 							
 								<div class="row">
 									<div class="col-md-12">
@@ -623,7 +669,48 @@
 
   	$(document).ready(function(){
   		myAlert = new Alert('.main');
+
+  		$("#finish_date").datepicker({
+          autoSize: true,
+          firstDay: 1,
+          changeMonth: true,
+          changeYear: true,
+          monthNames: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+          monthNamesShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
+          prevText: 'Atrás',
+          nextText: 'Adelante',
+          dayNames: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'],
+          dayNamesShort: ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'],
+          dayNamesMin: ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'],
+          today: 'Hoy',
+          clear: '',
+          dateFormat: 'dd/mm/yy',
+          onSelect: function(newDate){
+          	
+          }
+    	});
+
+  		$("#book_limit_date").datepicker({
+          autoSize: true,
+          firstDay: 1,
+          changeMonth: true,
+          changeYear: true,
+          monthNames: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+          monthNamesShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
+          prevText: 'Atrás',
+          nextText: 'Adelante',
+          dayNames: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'],
+          dayNamesShort: ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'],
+          dayNamesMin: ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'],
+          today: 'Hoy',
+          clear: '',
+          dateFormat: 'dd/mm/yy',
+          onSelect: function(newDate){
+          	
+          }
+    	});
   	});
+
 
   	$("#morning-edit").click(function(){
   		$("#timeModal").modal("show");
@@ -821,6 +908,9 @@
   		night_discounts[0] = 0
   		var locations = []
   		var last_minute_locations = []
+  		var finish_date = $("#finish_date").val();
+  		var book_limit_date = $("#book_limit_date").val();
+  		var limit_booking = $("#limit_booking").is(":checked");
 
   		for(i = 1; i < 8; i++)
   		{
@@ -873,7 +963,7 @@
   		$.ajax({
   			url: "/set_service_promotions",
   			type: "post",
-  			data: {service_id: service_id, has_last_minute_discount: has_last_minute_discount, last_minute_discount: last_minute_discount, last_minute_hours: last_minute_hours, has_time_discount: has_time_discount, morning_discounts: morning_discounts, afternoon_discounts: afternoon_discounts, night_discounts: night_discounts, locations: locations, last_minute_locations: last_minute_locations, max_bookings: max_bookings, reset_on_max_change: reset_on_max_change},
+  			data: {service_id: service_id, has_last_minute_discount: has_last_minute_discount, last_minute_discount: last_minute_discount, last_minute_hours: last_minute_hours, has_time_discount: has_time_discount, morning_discounts: morning_discounts, afternoon_discounts: afternoon_discounts, night_discounts: night_discounts, locations: locations, last_minute_locations: last_minute_locations, max_bookings: max_bookings, reset_on_max_change: reset_on_max_change, finish_date: finish_date, book_limit_date: book_limit_date, limit_booking: limit_booking},
   			success: function(response){
   				if(response[0] == "ok")
   				{

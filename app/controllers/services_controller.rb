@@ -387,6 +387,16 @@ class ServicesController < ApplicationController
               end
             end
           end
+
+          #Alter promo is limit date is changed, but don't worry about finish date and stock limiting.
+          if params[:book_limit_date].to_datetime != last_service_promo.book_limit_date.to_datetime
+            promos_changed = true
+          end
+
+          #if params[:limit_booking] != last_service_promo.limit_booking
+          #  promos_changed = true
+          #end
+
         else
           promos_changed = true
         end
@@ -394,12 +404,12 @@ class ServicesController < ApplicationController
         if promos_changed
 
           if params[:reset_on_max_change]
-            service_promo = ServicePromo.create(:service_id => @service.id, :max_bookings => params[:max_bookings], :morning_start => @promo_time.morning_start, :morning_end => @promo_time.morning_end, :afternoon_start => @promo_time.afternoon_start, :afternoon_end => @promo_time.afternoon_end, :night_start => @promo_time.night_start, :night_end => @promo_time.night_end)
+            service_promo = ServicePromo.create(:service_id => @service.id, :max_bookings => params[:max_bookings], :morning_start => @promo_time.morning_start, :morning_end => @promo_time.morning_end, :afternoon_start => @promo_time.afternoon_start, :afternoon_end => @promo_time.afternoon_end, :night_start => @promo_time.night_start, :night_end => @promo_time.night_end, :finish_date => params[:finish_date].to_datetime, :book_limit_date => params[:book_limit_date], :limit_booking => params[:limit_booking])
           else
             if last_service_promo != nil
-              service_promo = ServicePromo.create(:service_id => @service.id, :max_bookings => @service.active_promo_left_bookings, :morning_start => @promo_time.morning_start, :morning_end => @promo_time.morning_end, :afternoon_start => @promo_time.afternoon_start, :afternoon_end => @promo_time.afternoon_end, :night_start => @promo_time.night_start, :night_end => @promo_time.night_end)
+              service_promo = ServicePromo.create(:service_id => @service.id, :max_bookings => @service.active_promo_left_bookings, :morning_start => @promo_time.morning_start, :morning_end => @promo_time.morning_end, :afternoon_start => @promo_time.afternoon_start, :afternoon_end => @promo_time.afternoon_end, :night_start => @promo_time.night_start, :night_end => @promo_time.night_end, :finish_date => params[:finish_date].to_datetime, :book_limit_date => params[:book_limit_date], :limit_booking => params[:limit_booking])
             else
-              service_promo = ServicePromo.create(:service_id => @service.id, :max_bookings => params[:max_bookings], :morning_start => @promo_time.morning_start, :morning_end => @promo_time.morning_end, :afternoon_start => @promo_time.afternoon_start, :afternoon_end => @promo_time.afternoon_end, :night_start => @promo_time.night_start, :night_end => @promo_time.night_end)
+              service_promo = ServicePromo.create(:service_id => @service.id, :max_bookings => params[:max_bookings], :morning_start => @promo_time.morning_start, :morning_end => @promo_time.morning_end, :afternoon_start => @promo_time.afternoon_start, :afternoon_end => @promo_time.afternoon_end, :night_start => @promo_time.night_start, :night_end => @promo_time.night_end, :finish_date => params[:finish_date].to_datetime, :book_limit_date => params[:book_limit_date], :limit_booking => params[:limit_booking])
             end
           end
 
@@ -437,13 +447,17 @@ class ServicesController < ApplicationController
           if params[:reset_on_max_change]
             service_promo = ServicePromo.find(@service.active_service_promo_id)
             service_promo.max_bookings = params[:max_bookings]
+          end
 
-            if service_promo.save
+          service_promo.finish_date = params[:finish_date].to_datetime
+          service_promo.book_limit_date = params[:book_limit_date].to_datetime
+          service_promo.limit_booking = params[:limit_booking]
+          
 
-            else
-              @errors << service_promo.errors
-            end
+          if service_promo.save
 
+          else
+            @errors << service_promo.errors
           end
 
           if @service.save
