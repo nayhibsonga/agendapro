@@ -1666,8 +1666,8 @@ function addBooking (booking, book_index, discount, is_time_discount) {
     }
 
     actual_booking = {
-		start: generateDate(booking.date, booking.start),
-		end: generateDate(booking.date, booking.end),
+		start: generateDate(booking.date, bookDetails.start.split("T")[1].split("+")[0]),
+		end: generateDate(booking.date, bookDetails.end.split("T")[1].split("+")[0]),
 		provider: bookDetails.provider,
 		provider_name: bookDetails.provider_name,
 		provider_lock: bookDetails.provider_lock,
