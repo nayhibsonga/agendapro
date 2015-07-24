@@ -185,7 +185,7 @@ class Client < ActiveRecord::Base
         end
 
         if row["phone"] && row["phone"] != ""
-          row["phone"] = row["phone"].to_s
+          row["phone"] = row["phone"].to_s.chomp('.0')
         end
 
         if row["address"] && row["address"] != ""
@@ -221,11 +221,11 @@ class Client < ActiveRecord::Base
         end
 
         if row["record"] && row["record"] != ""
-          row["record"] = row["record"].to_s
+          row["record"] = row["record"].to_s.chomp('.0')
         end
 
         if row["second_phone"] && row["second_phone"] != ""
-          row["second_phone"] = row["second_phone"].to_s
+          row["second_phone"] = row["second_phone"].to_s.chomp('.0')
         end
 
         if row["identification_number"] && row["identification_number"] != ""
