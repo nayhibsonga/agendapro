@@ -49,13 +49,13 @@ class Service < ActiveRecord::Base
     },
     :ignoring => :accents
 
-    #def active_service_promo
-    #	if self.active_service_promo_id.nil?
-    #		return nil
-    #	else
-    #		return ServicePromo.find(self.active_service_promo_id)
-    #	end
-    #end
+    def active_service_promo
+    	if self.active_service_promo_id.nil?
+    		return nil
+    	else
+    		return ServicePromo.find(self.active_service_promo_id)
+    	end
+    end
 
 	def group_service_capacity
 		if self.group_service

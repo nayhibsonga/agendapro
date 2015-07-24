@@ -1,3 +1,27 @@
+	Date.isLeapYear = function (year) { 
+        return (((year % 4 === 0) && (year % 100 !== 0)) || (year % 400 === 0)); 
+    };
+
+    Date.getDaysInMonth = function (year, month) {
+        return [31, (Date.isLeapYear(year) ? 29 : 28), 31, 30, 31, 30, 31, 31, 30, 31, 30, 31][month];
+    };
+
+    Date.prototype.isLeapYear = function () { 
+        return Date.isLeapYear(this.getFullYear()); 
+    };
+
+    Date.prototype.getDaysInMonth = function () { 
+        return Date.getDaysInMonth(this.getFullYear(), this.getMonth());
+    };
+
+    Date.prototype.addMonths = function (value) {
+        var n = this.getDate();
+        this.setDate(1);
+        this.setMonth(this.getMonth() + value);
+        this.setDate(Math.min(n, this.getDaysInMonth()));
+        return this;
+    };
+
 var booking_buffer = [];
 var actual_booking = null;
 var first_session = null;
@@ -8,6 +32,10 @@ var added_services = [];
 var sessions_service = false;
 var selected = false;
 var block_discount = 0;
+var reload_times = 0;
+
+var now_date = new Date();
+var after_date = now_date.addMonths(parseInt($("#after_booking").val()));
 
 var current_service;
 
@@ -2281,16 +2309,31 @@ $(function () {
 	});
 
 
+	
 	$(document).on('calendarBuilded', function (e) {
 
 		/*
 			If there are no hours for this week,
 			go to next week.
 		*/
-
-		if($(".bloque-hora").size() == 0)
+		
+		if (e.date < after_date)
 		{
-			$("#next").trigger("click");
+			if($(".bloque-hora").size() == 0)
+			{
+				$("#next").trigger("click");
+				reload_times =reload_times + 1;
+				$("#next").attr("disabled", false);
+			}
+		}
+		else
+		{
+			$("#next").attr("disabled", true);
+			$("#prev").trigger("click");
+			myAlert.showAlert(
+	            '<h3>No hay horarios disponibles</h3>' +
+	            '<p>Lo sentimos, no hay más horarios disponibles.</p>'
+	        );
 		}
 
 		blockBookingBufferHour();

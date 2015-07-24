@@ -113,7 +113,8 @@ function PromoCalendar (source, getData) {
 			$('#next').removeAttr('disabled');
 			$('#prev').removeAttr('disabled');
 			$.event.trigger({
-				type: 'calendarBuilded'
+				type: 'calendarBuilded',
+				date: monday
 			});
 			$('#foo4').trigger('updateSizes');
 			$('#staff-selector-spinner').hide();
