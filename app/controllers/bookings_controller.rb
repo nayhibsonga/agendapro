@@ -3554,7 +3554,10 @@ class BookingsController < ApplicationController
 
     week_blocks = ''
     days_row = ''
-    width = ( 100.0 / @days_count ).round(2).to_s
+
+    time_column_width = 0.0
+
+    width = ( (100.0 - time_column_width) / @days_count ).round(2).to_s
 
     #logger.debug "Week blocks " + @week_blocks.length.to_s
     #Get max time distance to construct the calendar
@@ -3582,7 +3585,36 @@ class BookingsController < ApplicationController
       end
     end
 
-    hours_diff = (max_close - min_open)/60
+    min_block = 0
+    min_block_str = ""
+
+    logger.debug "THA: " + total_hours_array.count.to_s
+
+    total_hours_array.each do |hour|
+      if min_block == 0
+        min_block = hour[:bookings][0][:start]
+      else
+        if hour[:start_block] < min_block.strftime("%H:%M")
+          min_block = hour[:bookings][0][:start]
+        end
+      end
+    end
+
+    logger.debug "Min block: " + min_block.to_s
+
+    if min_block != 0
+
+      min_block_str = min_block.strftime("%H:%M")
+      min_block = (min_block.hour * 60 + min_block.min) * 60
+      max_close = (max_close.hour * 60 + max_close.min) * 60
+
+      hours_diff = (max_close - min_block)/60
+
+    else
+
+      hours_diff = (max_close - min_open)/60
+
+    end
 
     logger.debug "Hours diff: "
     logger.debug max_close.to_s
@@ -3599,6 +3631,9 @@ class BookingsController < ApplicationController
       week_blocks += '<div class="columna-dia" data-date="' + week_block[:formatted_date] + '" style="width: ' + width + '%; height: ' + calendar_height.round(2).to_s + 'px !important;">'
 
       previous_hour = min_open.strftime("%H:%M")
+      if min_block != 0
+        previous_hour = min_block_str
+      end
 
       week_block[:available_time].each do |hour|
 
