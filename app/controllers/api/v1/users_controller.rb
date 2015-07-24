@@ -1,7 +1,7 @@
 module Api
   module V1
   	class UsersController < V1Controller
-  	  skip_before_filter :check_auth_token, only: [:login, :create]
+  	  skip_before_filter :check_auth_token, only: [:login, :create, :oauth]
   	  before_action :check_login_params, only: [:login]
       before_action :parse_registration_params, only: [:create, :edit]
 
@@ -82,6 +82,33 @@ module Api
       end
 
       def mobile_user
+      end
+
+      def oauth
+        if params[:devise] == 'facebook'
+          fb_user = FbGraph::User.me(params[:access_token]).fetch
+          if fb_user.raw_attributes[:email].blank?
+            render json: { error: 'Lo sentimos, tu cuenta de Facebook no tiene un correo electrónico asociado, por lo que no podremos registrarte' }, status: 403
+          else
+            if User.find_by_email(fb_user.raw_attributes[:email])
+              @user = User.find_by_email(fb_user.raw_attributes[:email])
+              @user.first_name = fb_user.raw_attributes[:first_name]
+              @user.last_name = fb_user.raw_attributes[:last_name]
+              @user.uid = fb_user.raw_attributes[:id]
+              @user.provider = 'facebook'
+              @user.request_mobile_token
+              render :json => @user.errors.full_messages, :status=>422 unless @user.save
+            else
+              @user = User.new(email: fb_user.raw_attributes[:email], first_name: fb_user.raw_attributes[:first_name], last_name: fb_user.raw_attributes[:last_name], uid: fb_user.raw_attributes[:id], provider: 'facebook', password: SecureRandom.base64(16))
+              @user.request_mobile_token
+              render :json => @user.errors.full_messages, :status=>422 unless @user.save
+            end
+          end
+        elsif params[:devise] == 'google_oauth2'
+
+        else
+          render json: { error: 'Invalid Devise' }, status: 403
+        end
       end
 
       private

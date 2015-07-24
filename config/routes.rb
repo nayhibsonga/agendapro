@@ -1,4 +1,4 @@
-Agendapro::Application.routes.draw do
+ Agendapro::Application.routes.draw do
 
   resources :product_categories
 
@@ -338,6 +338,7 @@ Agendapro::Application.routes.draw do
       get 'users/me', to: 'users#mobile_user'
       get 'users/bookings', to: 'users#bookings'
       get 'users/favorites', to: 'users#favorites'
+      post 'users/oauth', to: 'users#oauth'
       
       resources :economic_sectors
     end

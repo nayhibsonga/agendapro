@@ -130,6 +130,7 @@ gem 'prawn-table'
 
 # Facebook
 gem "fbgraph"
+gem "fb_graph"
 
 # Advertencias en validaciones
 # gem 'validation_scopes'
