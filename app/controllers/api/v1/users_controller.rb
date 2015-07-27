@@ -2,8 +2,9 @@ module Api
   module V1
   	class UsersController < V1Controller
   	  skip_before_filter :check_auth_token, only: [:login, :create, :oauth]
+      skip_before_filter :permitted_params, only: [:oauth]
   	  before_action :check_login_params, only: [:login]
-      before_action :parse_registration_params, only: [:create, :edit]
+      before_action :parse_registration_params, only: [:create]
 
       def create
         @user = User.new(user_params)
@@ -14,11 +15,7 @@ module Api
 
       def edit
         @user = @mobile_user
-        if @user.valid_password?(params[:password])
-          render json: { error: @user.errors.full_messages }, status: 422 if !@user.update(user_params)
-        else
-          render json: { error: 'Invalid User' }, status: 403
-        end
+        render json: { error: @user.errors.full_messages }, status: 422 if !@user.update(user_params.except(:email))
       end
 
       def login
@@ -85,7 +82,7 @@ module Api
       end
 
       def oauth
-        if params[:devise] == 'facebook'
+        if params[:device] == 'facebook'
           fb_user = FbGraph::User.me(params[:access_token]).fetch
           if fb_user.raw_attributes[:email].blank?
             render json: { error: 'Lo sentimos, tu cuenta de Facebook no tiene un correo electrónico asociado, por lo que no podremos registrarte' }, status: 403
@@ -95,19 +92,20 @@ module Api
               @user.first_name = fb_user.raw_attributes[:first_name]
               @user.last_name = fb_user.raw_attributes[:last_name]
               @user.uid = fb_user.raw_attributes[:id]
+              @user.role = Role.find_by_name('Usuario Registrado')
               @user.provider = 'facebook'
               @user.request_mobile_token
               render :json => @user.errors.full_messages, :status=>422 unless @user.save
             else
-              @user = User.new(email: fb_user.raw_attributes[:email], first_name: fb_user.raw_attributes[:first_name], last_name: fb_user.raw_attributes[:last_name], uid: fb_user.raw_attributes[:id], provider: 'facebook', password: SecureRandom.base64(16))
+              @user = User.new(email: fb_user.raw_attributes[:email], first_name: fb_user.raw_attributes[:first_name], last_name: fb_user.raw_attributes[:last_name], role_id: Role.find_by_name('Usuario Registrado').id, uid: fb_user.raw_attributes[:id], provider: 'facebook', password: SecureRandom.base64(16))
               @user.request_mobile_token
               render :json => @user.errors.full_messages, :status=>422 unless @user.save
             end
           end
-        elsif params[:devise] == 'google_oauth2'
+        elsif params[:device] == 'google_oauth2'
 
         else
-          render json: { error: 'Invalid Devise' }, status: 403
+          render json: { error: 'Invalid Device' }, status: 403
         end
       end
 

@@ -9,11 +9,7 @@ class ApplicationController < ActionController::Base
 
   include Mobu::DetectMobile
 
-  before_filter do
-    resource = controller_name.singularize.to_sym
-    method = "#{resource}_params"
-    params[resource] &&= send(method) if respond_to?(method, true)
-  end
+  before_filter :permitted_params
 
 
   rescue_from CanCan::AccessDenied do |exception|
@@ -21,6 +17,12 @@ class ApplicationController < ActionController::Base
   end
 
   protected
+
+  def permitted_params
+    resource = controller_name.singularize.to_sym
+    method = "#{resource}_params"
+    params[resource] &&= send(method) if respond_to?(method, true)
+  end
   
   def quick_add
     @due_payment = false
