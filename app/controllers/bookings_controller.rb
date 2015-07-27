@@ -3574,7 +3574,7 @@ class BookingsController < ApplicationController
             if !session_booking.nil?
 
               if !session_booking.service_promo_id.nil? && session_booking.max_discount != 0
-                if hour[:group_discount].to_f < session_booking.max_discount.to_f
+                if new_hour[:group_discount].to_f < session_booking.max_discount.to_f
                   should_add = false
                 end
               end
