@@ -664,6 +664,7 @@ function loadStep3 () {
 	            var times_str = "";
 	            var price = actual_booking.price;
 	            var min_discount = actual_booking.discount; 
+	            var must_pay = false;
 
 	            for(i = 0; i < sessions_buffer.length; i++)
 	            {
@@ -672,6 +673,10 @@ function loadStep3 () {
 	              {
 	                min_discount = sessions_buffer[i].discount;
 	              }
+	              if(sessions_buffer[i].is_time_discount || sessions_buffer[i].must_be_paid_online)
+				  {
+				  	must_pay = true;
+				  }
 	            }
 
 	            $("#max_discount").val(min_discount);
@@ -710,7 +715,7 @@ function loadStep3 () {
 	              '</tr>'
 	            );
 
-	            if($('#online_capabilities').data('online-payment-capable') && $('#online_capabilities').data('promo-offerer-capable'))
+	            if($('#online_capabilities').data('online-payment-capable'))
 	            {
 		            $('#summary').append(
 		              '<tr>' + 
@@ -723,6 +728,18 @@ function loadStep3 () {
 		                '<td class="dark-gray">Precio final</td><td class="light-gray">' + simple_currency(discount_price) + '</td>' +
 		              '</tr>'
 		            );
+		            if(must_pay)
+		            {
+		            	$("#reservar2").show();
+						$(".payBtn").show();
+						$("#open-online-policy").show();
+						$("#discount").empty();
+						$("#discount").append(
+							'Precio final: ' +  currency(Math.round(discount_price))
+						);
+		            	$("#normal-book").empty();
+						$(".submitBtn").hide();
+		            }
 	        	}
 	        	else
 	        	{
@@ -801,9 +818,7 @@ function loadStep3 () {
 							{
 								min_price = min_price + Math.round(price * (100 - discount) / 100);
 								prices_str = prices_str + '<strike>' + simple_currency(price) + '</strike> - ' + simple_currency(Math.round(price * (100 - discount) / 100)) + ' (' + discount + '% de descuento)<br />';
-								must_pay = true;
-
-							
+								must_pay = true;							
 							}
 							else
 							{
@@ -997,13 +1012,17 @@ function loadStep3 () {
 			var times_str = "";
 			var price = actual_booking.price;
 			var min_discount = actual_booking.discount; 
-
+			var must_pay = false;
 			for(i = 0; i < sessions_buffer.length; i++)
 			{
 				times_str = times_str + formattedTime(sessions_buffer[i].start) + ' con ' + sessions_buffer[i].provider_name + '.<br />';
 				if(sessions_buffer[i].discount < min_discount)
 				{
 				  	min_discount = sessions_buffer[i].discount;
+				}
+				if(sessions_buffer[i].is_time_discount || sessions_buffer[i].must_be_paid_online)
+				{
+				  	must_pay = true;
 				}
 			}
 
@@ -1042,7 +1061,7 @@ function loadStep3 () {
 				'</tr>'
 			);
 
-			if($('#online_capabilities').data('online-payment-capable') && $('#online_capabilities').data('promo-offerer-capable'))
+			if($('#online_capabilities').data('online-payment-capable'))
 			{
 				$('#summary').append(
 					'<tr>' + 
@@ -1055,6 +1074,18 @@ function loadStep3 () {
 					  '<td class="dark-gray">Precio final</td><td class="light-gray">' + simple_currency(discount_price) + '</td>' +
 					'</tr>'
 				);
+				if(must_pay)
+	            {
+	            	$("#reservar2").show();
+					$(".payBtn").show();
+					$("#open-online-policy").show();
+					$("#discount").empty();
+					$("#discount").append(
+						'Precio final: ' +  currency(Math.round(discount_price))
+					);
+	            	$("#normal-book").empty();
+					$(".submitBtn").hide();
+	            }
 			}
 			else
 			{
