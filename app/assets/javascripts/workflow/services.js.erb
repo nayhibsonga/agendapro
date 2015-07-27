@@ -1634,7 +1634,8 @@ function addSession(booking, discount, is_time_discount)
 		has_sessions: true,
 		sessions_amount: bookDetails.sessions_amount,
 		must_be_paid_online: bookDetails.must_be_paid_online,
-		is_time_discount: is_time_discount
+		is_time_discount: bookDetails.has_time_discount,
+		service_promo_id: bookDetails.service_promo_id
     };
 
     console.log("actual_booking: ");
@@ -1709,7 +1710,7 @@ function addBooking (booking, book_index, discount, is_time_discount) {
 		has_sessions: false,
 		sessions_amount: bookDetails.sessions_amount,
 		must_be_paid_online: bookDetails.must_be_paid_online,
-		is_time_discount: is_time_discount,
+		is_time_discount: bookDetails.has_time_discount,
 		service_promo_id: bookDetails.service_promo_id
     };
 
