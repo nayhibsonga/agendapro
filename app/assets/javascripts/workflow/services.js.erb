@@ -2316,6 +2316,8 @@ $(function () {
 			If there are no hours for this week,
 			go to next week.
 		*/
+
+		console.log(e);
 		
 		if (e.date < after_date)
 		{
@@ -2328,11 +2330,44 @@ $(function () {
 		}
 		else
 		{
-			$("#next").attr("disabled", true);
-			$("#prev").trigger("click");
+
+			var day = new Date(after_date.getFullYear(), after_date.getMonth(), after_date.getDate());
+
+		  	var localId = $('#selectedLocal').data('local').id;
+			var selects = [];
+
+			$(".selected-service").each(function() {
+				var provider = $(this).find('.selected-service-provider').val();
+				var service_id = $(this).attr("service_id");
+				console.log("provider: ");
+				console.log(provider);
+				selects.push({
+					service: service_id,
+					provider: provider
+				});
+			});
+
+
+			var data;
+
+			console.log("day: " + day);
+			day_str = after_date.getFullYear() + "-" + (parseInt(after_date.getMonth())+1) + "-" + after_date.getDate();
+
+			console.log(day_str);
+
+			data = {local: localId, serviceStaff: JSON.stringify(selects), date: day_str};
+
+			if (promoCalendar) {
+				promoCalendar.rebuild('/promotion_hours', data);
+			}
+			else {
+				promoCalendar = new PromoCalendar('/promotion_hours', data);
+			}
+
+
 			myAlert.showAlert(
 	            '<h3>No hay horarios disponibles</h3>' +
-	            '<p>Lo sentimos, no hay más horarios disponibles.</p>'
+	            '<p>Lo sentimos, no hay más horarios disponibles después de la semana del ' + after_date.toLocaleDateString() + '.</p>'
 	        );
 		}
 

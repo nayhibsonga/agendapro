@@ -365,6 +365,20 @@
 
 
         <div id="calendar-div" hidden>
+          <div class="row" id="past_date_alert" style="display: none;">
+            <div class="col-md-12">
+
+            <% 
+              after_date = DateTime.now + @service.company.company_setting.after_booking.months
+              book_limit_date = @service.active_service_promo.book_limit_date
+              limit_date = after_date
+              if book_limit_date < after_date
+                limit_date = book_limit_date
+              end
+            %>
+              <label>Lo sentimos, no hay horas disponibles desde el <%= I18n.l limit_date.to_date, format: :day %>.</label>
+            </div>
+          </div>
           <div class="row staff">
             <div class="col-md-9" id="staff-calendar">
               <div class="panel panel-info <%= 'full-margin' if @location.company.company_setting.provider_preference == 2 %>">

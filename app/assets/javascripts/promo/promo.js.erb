@@ -1040,15 +1040,55 @@
             $("#next").trigger("click");
             reload_times++;
           }
+
         }
         else
         {
-          $("#selectProviderModal").modal('hide');
+
+          var localId = $("#locationId").val();
+      
+          var start_date = limit_date;
+          if (after_date < limit_date)
+          {
+            start_date = after_date;
+          }
+
+          $("#loader-div").show();
+
+          var selects = [];
+
+          selects.push({
+            service: $("#serviceId").val(),
+            provider: $('#providerOptimizerSelector').val()
+          });
+
+          var data;
+
+          day_str = start_date.getFullYear() + "-" + (parseInt(start_date.getMonth())+1) + "-" + start_date.getDate();
+
+          data = {local: localId, serviceStaff: JSON.stringify(selects), date: day_str, mandatory_discount: true}
+          
+
+          if (promoCalendar) {
+            promoCalendar.rebuild('/promotion_hours', data);
+          }
+          else {
+            promoCalendar = new PromoCalendar('/promotion_hours', data);
+          }
+
+          $("#loader-div").hide();
+
+          blockBookingBufferHour();
+
+          //$("#selectProviderModal").modal('hide');
           reload_times = 0;
-          myAlert.showAlert(
+          $("#past_date_alert").show();
+
+          window.setTimeout(function(){ $("#past_date_alert").hide(); }, 3000);
+          /*myAlert.showAlert(
             '<h3>No hay horarios disponibles</h3>' +
-            '<p>Lo sentimos, no hay más horarios disponibles.</p>'
-          );
+            '<p>Lo sentimos, no hay más horarios disponibles después del ' + start_date.toLocaleDateString() + '.</p>'
+          );*/
         }
   
     });
