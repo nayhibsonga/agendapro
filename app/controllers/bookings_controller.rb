@@ -3569,11 +3569,25 @@ class BookingsController < ApplicationController
             book_index = book_index + 1
             book_summaries << new_hour
 
-            if !hours_array.include?(new_hour)
+            should_add = true
 
-              hours_array << new_hour
-              total_hours_array << new_hour
+            if !session_booking.nil?
 
+              if !session_booking.service_promo_id.nil? && session_booking.max_discount != 0
+                if hour[:group_discount].to_f < session_booking.max_discount.to_f
+                  should_add = false
+                end
+              end
+
+            end
+
+            if should_add
+              if !hours_array.include?(new_hour)
+
+                hours_array << new_hour
+                total_hours_array << new_hour
+
+              end
             end
 
           end
@@ -3685,15 +3699,6 @@ class BookingsController < ApplicationController
         span_diff = hour_diff - 8
         top_margin = (calendar_height * (hour[:start_block].to_time - previous_hour.to_time)/(60 * hours_diff) ).round(2)
         
-        if !session_booking.nil?
-
-          if !session_booking.service_promo_id.nil? && session_booking.max_discount != 0
-            if hour[:group_discount].to_f < session_booking.max_discount.to_f
-              break
-            end
-          end
-
-        end
 
         if hour[:status] != "hora-promocion"
 
