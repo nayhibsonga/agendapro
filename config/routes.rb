@@ -326,9 +326,8 @@ Agendapro::Application.routes.draw do
     post "payed_bookings/update", :to => 'payed_bookings#update'
 
     # Root
-    get '/' => 'searchs#index', :constraints => { :subdomain => 'www' }
-    get '/', :to => 'searchs#index', as: 'localized_root'
-    get '/' => 'companies#overview', :constraints => { :subdomain => /.+/ }
+    get '/', :to => 'searchs#index', :as => 'localized_root', :constraints => { :subdomain => 'www' }
+    get '/', :to => 'companies#overview', :constraints => { :subdomain => /.+/ }
 
 
   end

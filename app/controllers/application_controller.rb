@@ -24,7 +24,30 @@ class ApplicationController < ActionController::Base
   protected
 
   def set_locale
-    I18n.locale = params[:locale].blank? ? :es : params[:locale]
+    if params[:locale].blank?
+      requested_location = request_location
+      if requested_location == 'CL'
+        I18n.locale = :es_CL
+      elsif requested_location == 'CO'
+        I18n.locale = :es_CO
+      else
+        I18n.locale = :es
+      end
+    else
+      I18n.locale = params[:locale]
+    end
+  end
+
+  def request_location
+    if Rails.env.test? || Rails.env.development?
+      return 'CL'
+    else
+      if request.location
+        return request.location.country_code
+      else
+        return nil
+      end
+    end
   end
 
   def default_url_options(options={})
