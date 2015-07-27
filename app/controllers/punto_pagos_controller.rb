@@ -245,23 +245,91 @@ class PuntoPagosController < ApplicationController
       trx_id = PuntoPagosConfirmation.find_by_token(params[:token]).trx_id
       if(Booking.find_by_trx_id(trx_id))
         bookings = Booking.where(:trx_id => trx_id)
-        @bookings = Array.new
-        bookings.each do |failed_booking|
-          #failed_booking = Booking.find_by_token(params[:token])
-          booking = Booking.new(failed_booking.attributes.to_options)
-          @bookings << booking
-          failed_booking.destroy
+
+        @are_session_bookings = false
+        if bookings.count > 0
+          if bookings.first.is_session
+            @are_session_bookings = true
+          end
         end
+
+        if @are_session_bookings
+          session_booking = SessionBooking.find(bookings.first.session_booking_id)
+
+          if !session_booking.service_promo_id.nil?
+            service_promo = ServicePromo.find(session_booking.service_promo_id)
+            service_promo.max_bookings = service_promo.max_bookings + 1
+            service_promo.save
+          end
+
+          session_booking.delete
+
+          bookings.each do |booking|
+            booking.delete
+          end
+
+        else
+          bookings.each do |booking|
+            if !booking.service_promo_id.nil?
+              service_promo = ServicePromo.find(booking.service_promo_id)
+              service_promo.max_bookings = service_promo.max_bookings + 1
+              service_promo.save
+            end       
+            booking.delete
+          end
+        end
+
+        #@bookings = Array.new
+        #bookings.each do |failed_booking|
+          #failed_booking = Booking.find_by_token(params[:token])
+          #booking = Booking.new(failed_booking.attributes.to_options)
+          #@bookings << booking
+          #failed_booking.destroy
+        #end
       end
     elsif Booking.find_by_token(params[:token]) #Cuando el servicio está caído y no hay notificación
       bookings = Booking.where(:token => params[:token])
-      @bookings = Array.new
-      bookings.each do |failed_booking|
-        #failed_booking = Booking.find_by_token(params[:token])
-        booking = Booking.new(failed_booking.attributes.to_options)
-        @bookings << booking
-        failed_booking.destroy
+
+      @are_session_bookings = false
+      if bookings.count > 0
+        if bookings.first.is_session
+          @are_session_bookings = true
+        end
       end
+
+      if @are_session_bookings
+        session_booking = SessionBooking.find(bookings.first.session_booking_id)
+
+        if !session_booking.service_promo_id.nil?
+          service_promo = ServicePromo.find(session_booking.service_promo_id)
+          service_promo.max_bookings = service_promo.max_bookings + 1
+          service_promo.save
+        end
+
+        session_booking.delete
+
+        bookings.each do |booking|
+          booking.delete
+        end
+
+      else
+        bookings.each do |booking|
+          if !booking.service_promo_id.nil?
+            service_promo = ServicePromo.find(booking.service_promo_id)
+            service_promo.max_bookings = service_promo.max_bookings + 1
+            service_promo.save
+          end       
+          booking.delete
+        end
+      end
+      
+      #@bookings = Array.new
+      #bookings.each do |failed_booking|
+        #failed_booking = Booking.find_by_token(params[:token])
+        #booking = Booking.new(failed_booking.attributes.to_options)
+        #@bookings << booking
+        #failed_booking.destroy
+      #end
     else
       #Nothing found, there was a timeout error
     end

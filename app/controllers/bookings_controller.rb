@@ -2083,54 +2083,89 @@ class BookingsController < ApplicationController
     if @tried_bookings.count > 0
       if @tried_bookings.first.is_session
         @are_session_bookings = true
-        session_booking = SessionBooking.find(@tried_bookings.first.session_booking_id)
-        session_booking.delete
+      end
+    end
+
+
+    #If tried bookings where from service with sessions and promo, add just 1 to promo's max
+    #Else, add 1 for each tried booking
+    #In any case, delete all the bookings
+    if @are_session_bookings
+      session_booking = SessionBooking.find(@tried_bookings.first.session_booking_id)
+
+      if !session_booking.service_promo_id.nil?
+        service_promo = ServicePromo.find(session_booking.service_promo_id)
+        service_promo.max_bookings = service_promo.max_bookings + 1
+        service_promo.save
+      end
+
+      session_booking.delete
+
+      @tried_bookings.each do |booking|
+        booking.delete
+      end
+
+    else
+      @tried_bookings.each do |booking|
+        if !booking.service_promo_id.nil?
+          service_promo = ServicePromo.find(booking.service_promo_id)
+          service_promo.max_bookings = service_promo.max_bookings + 1
+          service_promo.save
+        end       
+        booking.delete
       end
     end
 
     #If payed, delete them all.
-    if @payment == "payment"
-      if @are_session_bookings
-        session_booking = SessionBooking.find(@tried_bookings.first.session_booking_id)
-        session_booking.delete
-      end
-      @tried_bookings.each do |booking|
-        booking.delete
-      end
-    else #Create fake bookings and delete the real ones
+    # if @payment == "payment"
+    #   if @are_session_bookings
+    #     session_booking = SessionBooking.find(@tried_bookings.first.session_booking_id)
 
-      if !@are_session_bookings
-        @tried_bookings.each do |booking|
+    #     if !session_booking.service_promo_id.nil?
+    #       service_promo = ServicePromo.find(session_booking.service_promo_id)
+    #       service_promo.max_bookings = service_promo.max_bookings + 1
+    #       service_promo.save
+    #     end
+
+    #     session_booking.delete
+    #   end
+    #   @tried_bookings.each do |booking|
+    #     booking.delete
+    #   end
+    # else #Create fake bookings and delete the real ones
+
+    #   if !@are_session_bookings
+    #     @tried_bookings.each do |booking|
           
-            fake_booking = Booking.new(booking.attributes.to_options)
-            @bookings << fake_booking
-            booking.delete
+    #         fake_booking = Booking.new(booking.attributes.to_options)
+    #         @bookings << fake_booking
+    #         booking.delete
 
-        end
-      else
+    #     end
+    #   else
 
-        booked_correct = Booking.where(:id => params[:bookings]).where(:is_session_booked => true) 
-        service = @tried_bookings.first.service
+    #     booked_correct = Booking.where(:id => params[:bookings]).where(:is_session_booked => true) 
+    #     service = @tried_bookings.first.service
 
-        session_bookings = SessionBooking.where(:client_id => @tried_bookings.first.client_id)
+    #     session_bookings = SessionBooking.where(:client_id => @tried_bookings.first.client_id)
 
-        @tried_bookings.each do |booking|
-          if booking.is_session_booked
-            fake_booking = Booking.new(booking.attributes.to_options)
-            fake_booking.session_booking_id = nil
-            @bookings << fake_booking
-          end
-          booking.delete
-        end
+    #     @tried_bookings.each do |booking|
+    #       if booking.is_session_booked
+    #         fake_booking = Booking.new(booking.attributes.to_options)
+    #         fake_booking.session_booking_id = nil
+    #         @bookings << fake_booking
+    #       end
+    #       booking.delete
+    #     end
 
-        session_bookings.each do |sb|
-          if sb.bookings.count == 0
-            sb.delete
-          end
-        end
+    #     session_bookings.each do |sb|
+    #       if sb.bookings.count == 0
+    #         sb.delete
+    #       end
+    #     end
 
-      end
-    end
+    #   end
+    # end
 
     host = request.host_with_port
     @url = @company.web_address + '.' + host[host.index(request.domain)..host.length]
