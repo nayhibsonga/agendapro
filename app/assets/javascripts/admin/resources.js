@@ -89,9 +89,9 @@ function saveResource (typeURL, extraURL) {
 			document.location.href = '/resources/';
 		},
 		error: function(xhr){
-			var errors = $.parseJSON(xhr.responseText).errors;
+			var errores = $.parseJSON(xhr.responseText).errors;
 			var errorList = '';
-			for (i in errors) {
+			for (i in errores) {
 				errorList += '<li>' + errores[i] + '</li>'
 			}
 			alertId.showAlert(
