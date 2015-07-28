@@ -20,7 +20,7 @@ class Service < ActiveRecord::Base
 
 	mount_uploader :time_promo_photo, TimePromoPhotoUploader
 
-	scope :with_time_promotions, -> { where(has_time_discount: true, active: true, online_payable: true, online_booking: true, time_promo_active: true) }
+	scope :with_time_promotions, -> { where(has_time_discount: true, active: true, online_payable: true, online_booking: true, time_promo_active: true).where.not(:active_service_promo_id => nil) }
 	scope :with_last_minute_promotions, -> { where(has_last_minute_discount: true, active: true, online_payable: true, online_booking: true)}
 
 	accepts_nested_attributes_for :service_category, :reject_if => :all_blank, :allow_destroy => true
@@ -133,8 +133,6 @@ class Service < ActiveRecord::Base
 		else
 
 			service_promo = ServicePromo.find(self.active_service_promo_id)
-			bookings_count = Booking.where(:service_promo_id => service_promo.id, :is_session => false).where('status_id <> ?', Status.find_by_name('Cancelado')).count
-			session_bookings_count = SessionBooking.where(:service_promo_id => service_promo.id).count
 
 			if service_promo.max_bookings.nil?
 				service_promo.max_bookings = 0
@@ -142,7 +140,7 @@ class Service < ActiveRecord::Base
 				return 0
 			end
 
-			return service_promo.max_bookings - (bookings_count + session_bookings_count)
+			return service_promo.max_bookings
 
 		end
 

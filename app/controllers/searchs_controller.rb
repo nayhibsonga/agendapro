@@ -1447,13 +1447,15 @@ class SearchsController < ApplicationController
 					end
 
 					time_promo_services.each do |service|
-						#if !@results.include?(service)
-							promo_detail = [service, s[0]]
-							@results << promo_detail
-							#if !@locations.include?(s[0])
-							@locations << s[0]
-							#end
-						#end
+						#Check it has stock
+						if service.active_service_promo.max_bookings > 0 || !service.active_service_promo.limit_booking
+							if DateTime.now < service.active_service_promo.finish_date
+								promo_detail = [service, s[0]]
+								@results << promo_detail
+								#if !@locations.include?(s[0])
+								@locations << s[0]
+							end
+						end
 					end
 				end
 			end

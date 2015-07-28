@@ -628,10 +628,29 @@ class ServicesController < ApplicationController
 
     @service = Service.find(params[:id])
     @location = Location.find(params[:location_id])
+
+    #Check existance of promo
     if !@service.has_time_discount || @service.service_promos.nil? || @service.active_service_promo_id.nil?
       flash[:alert] = "No existen promociones para el servicio buscado."
       redirect_to root_path
+      return
     end
+
+    #Check promo has stock
+    if @service.active_service_promo.max_bookings < 1 && @service.active_service_promo.limit_booking
+      flash[:alert] = "No queda stock para la promoción buscada."
+      redirect_to root_path
+      return
+    end
+
+    #Check promo hasn't expired
+    if DateTime.now > @service.active_service_promo.finish_date
+      flash[:alert] = "La promoción buscada ya expiró."
+      redirect_to root_path
+      return
+    end
+
+
     @company = @service.company
 
     str_name = @service.name.gsub(/\b([D|d]el?)+\b|\b([U|u]n(o|a)?s?)+\b|\b([E|e]l)+\b|\b([T|t]u)+\b|\b([L|l](o|a)s?)+\b|\b[AaYy]\b|["'.,;:-]|\b([E|e]n)+\b|\b([L|l]a)+\b|\b([C|c]on)+\b|\b([Q|q]ue)+\b|\b([S|s]us?)+\b|\b([E|e]s[o|a]?s?)+\b/i, '')

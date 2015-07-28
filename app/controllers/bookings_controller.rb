@@ -3491,8 +3491,10 @@ class BookingsController < ApplicationController
 
           status = "hora-disponible"
 
-          if has_time_discount 
-            status = "hora-promocion"
+          if has_time_discount
+            if session_booking.nil? 
+              status = "hora-promocion"
+            end
           end
 
           logger.debug "Time diff: "
