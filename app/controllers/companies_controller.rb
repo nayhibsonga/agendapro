@@ -871,6 +871,7 @@ class CompaniesController < ApplicationController
 						block_hour[:discount] = 0
 						block_hour[:has_time_discount] = false
 						block_hour[:time_discount] = 0
+						block_hour[:service_promo_id] = 0
 						block_hour[:status] = "available"
 
 						#Check if it may be payed online (company and service)
@@ -884,6 +885,10 @@ class CompaniesController < ApplicationController
 										block_hour[:has_discount] = false
 										block_hour[:discount] = 0
 										block_hour[:has_time_discount] = true
+										block_hour[:service_promo_id] = @service.active_service_promo_id
+
+										logger.debug "block spid: " + block_hour[:service_promo_id].to_s
+										logger.debug "service spid: " + @service.active_service_promo_id.to_s
 
 										promo = Promo.where(:service_promo_id => @service.active_service_promo_id, :location_id => @location.id, :day_id => @date.cwday).first
 
@@ -911,10 +916,13 @@ class CompaniesController < ApplicationController
 
 					                          block_hour[:time_discount] = 0
 					                          block_hour[:has_time_discount] = false
+					                          block_hour[:service_promo_id] = 0
+
 					                        end
 					                    else
 					                    	block_hour[:time_discount] = 0
-					                          block_hour[:has_time_discount] = false
+					                        block_hour[:has_time_discount] = false
+					                        block_hour[:service_promo_id] = 0
 					                    end
 
 									else
@@ -1147,6 +1155,9 @@ class CompaniesController < ApplicationController
 										block_hour[:discount] = 0
 										block_hour[:has_time_discount] = true
 										block_hour[:service_promo_id] = @service.active_service_promo_id
+
+										logger.debug "block spid: " + block_hour[:service_promo_id].to_s
+										logger.debug "service spid: " + @service.active_service_promo_id.to_s
 
 										promo = Promo.where(:service_promo_id => @service.active_service_promo_id, :location_id => @location.id, :day_id => @date.cwday).first
 
