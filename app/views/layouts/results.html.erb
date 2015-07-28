@@ -108,7 +108,7 @@
 					<div class="collapse navbar-collapse" id="navbar">
 						<ul class="nav navbar-nav navbar-right" id="menu">
 							<li>
-								<% if current_page?(get_promotions_path) %>
+								<% if current_page?(get_promotions_path) || current_page?(show_time_promo_path) %>
 									<%= form_tag({controller: "searchs", action: "promotions"}, method: "GET", class: "navbar-form", id: "promotions-form") do %>
 		                                <%= hidden_field_tag :latitude, params[:latitude] %>
 		                                <%= hidden_field_tag :longitude, params[:longitude] %>
