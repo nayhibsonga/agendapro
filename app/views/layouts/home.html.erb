@@ -75,6 +75,8 @@
                 <li><a href="#" data-toggle="modal" data-target="#signin-modal" class="menu-green"><i class="fa fa-user"></i> Inicia Sesión</a></li>
                 <li><%= link_to '<i class="fa fa-pencil-square-o"></i> Regístrate</a>'.html_safe, new_user_registration_path(:company => true), :class => "menu-green" %></li>
               <% end %>
+              <li><%= link_to image_tag("search/landing/chile.png", alt: "Chile", size: "24x16", :class => I18n.locale == 'es_CL'.to_sym ? 'selected' : nil), url_for(params.merge({:locale => 'es_CL'})), class: "i18n-flag" %></li>
+              <li><%= link_to image_tag("search/landing/colombia.png", alt: "Colombia", size: "24x16", :class => I18n.locale == 'es_CO'.to_sym ? 'selected' : nil), url_for(params.merge({:locale => 'es_CO'})), class: "i18n-flag" %></li>
             </ul>
           </div>
         </div>
