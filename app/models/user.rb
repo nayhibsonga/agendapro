@@ -49,7 +49,7 @@ class User < ActiveRecord::Base
 		end
 	end
 	def provider_company_users
-		if Role.where(:name => ["Staff"]).include? self.role
+		if Role.where(:name => ["Staff", "Staff (sin edición)"]).include? self.role
 			if self.service_providers.empty?
 				errors.add(:base, "Este tipo de usuario debe tener al menos un prestador asociado.")
 			end
