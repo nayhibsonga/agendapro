@@ -259,10 +259,10 @@
           <div class="col-md-2">
           </div>
           <div class="col-md-4">
-            <% if @service.time_promo_photo.url.nil? || @service.time_promo_photo.thumb.nil? %>
+            <% if @service.time_promo_photo.url.nil? %>
               No se ha subido foto
             <% else %>
-              Foto actual (thumb): <%= image_tag @service.time_promo_photo.thumb.url.to_s, :alt => "Sin foto", :class => "img-responsive" %>
+              Foto actual: <%= image_tag @service.time_promo_photo.url.to_s, :alt => "Sin foto", :class => "img-responsive" %>
             <% end %>
           </div>
         </div>

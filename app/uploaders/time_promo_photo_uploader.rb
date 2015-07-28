@@ -26,11 +26,7 @@ class TimePromoPhotoUploader < CarrierWave::Uploader::Base
   # end
 
   # Process files as they are uploaded:
-  process :resize_and_pad => [1183, 246]
-
-  version :thumb do
-    process resize_to_fill: [390, 200]
-  end
+  process :resize_and_pad => [554, 302]
   
   # def scale(width, height)
   #   :resize_to_limit => [width, height]

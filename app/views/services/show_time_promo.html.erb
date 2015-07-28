@@ -6,42 +6,21 @@
 <input type="hidden" id="after_booking" value="<%= @service.company.company_setting.after_booking %>" />
 <input type="hidden" id="book_limit_date" value="<%= @service.active_service_promo.book_limit_date.to_s %>" />
 
-<div class="overview-main">
+<div class="main below-navbar">
   <div class="container">
 
     <div class="row">
-      <div class="col-sm-12" style="text-align: center;">
-        <%= image_tag @service.time_promo_photo.url, :alt => "Header", :class => "img-responsive" %>
-      </div>
-    </div>
-
-    <div class="row">
-      <div class="col-sm-12" style="text-align: right;">
-        <%= link_to "Volver a Promociones", get_promotions_path %>
-      </div>
-    </div>
-
-    <div class="row">
-      <div class="col-xs-6 col-md-6">
+      <div class="col-sm-12">
         <div class="promo-title">
-          <%= @service.name %>
+          <%= @service.name %> en <%= @location.name %> de <%= @location.company.name %>
         </div>
         <div class="promo-description">
           <%= @service.promo_description.html_safe %>
         </div>
-        <div class="google-maps-empresa">
-          <h3><%= @service.company.name %></h3>
-          <div id="map"></div>
-          <div style="margin-top: 5px; margin-bottom: 5px;">
-            <%= image_tag "promociones/pin.png", :alt => "Dirección", :size => "18x26" %>
-            <%= if !@location.outcall then @location.address+', '+@location.district.name else "A Domicilio" end %>
-          </div>
-          <div>
-            <%= image_tag "promociones/phone.png", :alt => "Teléfono", :size => "18x18" %>
-            <%= @location.phone %>
-          </div>
-        </div>
       </div>
+    </div>
+
+    <div class="row">
       <div class="col-xs-6 col-md-6">
         <div class="promo-price">
           <div class="col-sm-2">
@@ -80,6 +59,27 @@
 
 
           <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+
+            <div class="panel panel-default">
+              <div class="panel-heading" role="tab" id="headingTwo">
+                <h4 class="panel-title minus">
+                  <a class="" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                    <%= image_tag "promociones/tarjeta_doble.png", :size => "30x30" %> &nbsp;&nbsp;Máximo de compras
+                  </a>
+                </h4>
+              </div>
+              <div id="collapseTwo" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingTwo">
+                <div class="panel-body">
+                  <p style="color: #949292;">Quedan <%= @service.active_promo_left_bookings %> reservas disponibles para esta promoción.</p>
+                  <% if @service.active_promo_left_bookings <= 20 %>
+                    <p style="color: #949292;">
+                      ¡Apúrate y reserva antes que se acaben!
+                    </p>
+                  <% end %>
+                </div>
+              </div>
+            </div>
+
             <div class="panel panel-default">
               <div class="panel-heading" role="tab" id="headingOne">
 
@@ -234,25 +234,7 @@
                 </div>
               </div>
             </div>
-            <div class="panel panel-default">
-              <div class="panel-heading" role="tab" id="headingTwo">
-                <h4 class="panel-title minus">
-                  <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
-                    <%= image_tag "promociones/tarjeta_doble.png", :size => "30x30" %> &nbsp;&nbsp;Máximo de compras
-                  </a>
-                </h4>
-              </div>
-              <div id="collapseTwo" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingTwo">
-                <div class="panel-body">
-                  <p style="color: #949292;">Quedan <%= @service.active_promo_left_bookings %> reservas disponibles para esta promoción.</p>
-                  <% if @service.active_promo_left_bookings <= 20 %>
-                    <p style="color: #949292;">
-                      ¡Apúrate y reserva antes que se acaben!
-                    </p>
-                  <% end %>
-                </div>
-              </div>
-            </div>
+            
             <div class="panel panel-default">
               <div class="panel-heading" role="tab" id="headingThree">
                 <h4 class="panel-title minus">
@@ -280,6 +262,23 @@
 
 
 
+        </div>
+      </div>
+      <div class="col-xs-6 col-md-6">
+        <div class="promo-image" style="margin-top: 15px;">
+          <%= image_tag @service.time_promo_photo.url.to_s, :alt => "Loader", :size => "554x302", :class => "img-responsive" %>
+        </div>
+        <div class="google-maps-empresa">
+          <h3><%= @service.company.name %></h3>
+          <div id="time-promo-map"></div>
+          <div style="margin-top: 5px; margin-bottom: 5px;">
+            <%= image_tag "promociones/pin.png", :alt => "Dirección", :size => "18x26" %>
+            <%= if !@location.outcall then @location.address+', '+@location.district.name else "A Domicilio" end %>
+          </div>
+          <div>
+            <%= image_tag "promociones/phone.png", :alt => "Teléfono", :size => "18x18" %>
+            <%= @location.phone %>
+          </div>
         </div>
       </div>
     </div>
