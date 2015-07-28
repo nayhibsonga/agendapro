@@ -1625,9 +1625,9 @@ class CompaniesController < ApplicationController
 
 			if @has_time_discount
 				@is_time_discount = true
-				@hour_discount = @time_discount
+				@hour_discount = @time_discount.to_f
 			else
-				@hour_discount = @discount
+				@hour_discount = @discount.to_f
 			end
 
 		end

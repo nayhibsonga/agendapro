@@ -100,7 +100,7 @@
           <div class="form-group">
             <% if @hour_discount.to_f > 0 %>
               Precio normal:&nbsp;<strike><%= number_to_currency(@service.price, unit: "$", separator: ".", delimiter: ",", precision: 0) %></strike><br />
-              Descuento: <%= @hour_discount %>%<br />
+              Descuento: <%= @hour_discount.to_s %>%<br />
               Precio final:&nbsp;<%= number_to_currency((@service.price*(100-@hour_discount.to_f)/100), unit: "$", separator: ".", delimiter: ",", precision: 0) %>
             <% else %>
               Precio:&nbsp;<%= number_to_currency(@service.price, unit: "$", separator: ".", delimiter: ",", precision: 0) %>
