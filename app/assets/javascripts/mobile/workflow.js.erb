@@ -102,11 +102,16 @@ function loadProviders (localId, serviceId) {
   });
 }
 
-function addBooking (date, start, end, provider) {
+function addBooking (date, start, end, provider, has_time_discount, time_discount, has_discount, discount, service_promo_id) {
   selected = true;
   $('#start').val(generateDate(date, start));
   $('#end').val(generateDate(date, end));
   $('#staff').val(provider);
+  $("#has_time_discount").val(has_time_discount);
+  $("#time_discount").val(time_discount);
+  $("#has_discount").val(has_discount);
+  $("#discount").val(discount);
+  $("#service_promo_id").val(service_promo_id);
 }
 
 function generateDate(date, time) {

@@ -26,13 +26,23 @@
         <%= hidden_field_tag :staff, nil %>
         <%= hidden_field_tag :start, nil %>
         <%= hidden_field_tag :end, nil %>
+        <%= hidden_field_tag :has_time_discount, nil %>
+        <%= hidden_field_tag :time_discount, nil %>
+        <%= hidden_field_tag :has_discount, nil %>
+        <%= hidden_field_tag :discount, nil %>
+        <%= hidden_field_tag :service_promo_id, nil %>
         <%= hidden_field_tag :origin, true %>
         <%= hidden_field_tag :provider_lock, @lock %>
         <%= hidden_field_tag :location, @location.id %>
         <% unless @available_time.length == 0 %>
         <div class="form-group">
           <% @available_time.each do |time| %>
-          <button type="submit" class="btn btn-block btn-default btn-lg" data-date="<%= time[:date] %>" data-start="<%= time[:hour][:start] %>" data-end="<%= time[:hour][:end] %>" data-provider="<%= time[:provider] %>"><%= time[:hour][:start]  %></button>
+
+            <% if time[:status] == "available" %>
+              <button type="submit" class="btn btn-block btn-default btn-lg" data-date="<%= time[:date] %>" data-start="<%= time[:hour][:start] %>" data-end="<%= time[:hour][:end] %>" data-provider="<%= time[:provider] %>" data-has-time-discount="false" data-time-discount="0" data-has-discount="false" data-discount="0" data-service-promo-id="0"><%= time[:hour][:start]  %></button>
+            <% elsif time[:status] == "discount" %>
+              <button type="submit" class="btn btn-block btn-default btn-lg" data-date="<%= time[:date] %>" data-start="<%= time[:hour][:start] %>" data-end="<%= time[:hour][:end] %>" data-provider="<%= time[:provider] %>" data-has-time-discount="<%= time[:has_time_discount] %>" data-time-discount="<%= time[:time_discount] %>" data-has-discount="<%= time[:has_discount] %>" data-discount="<%= time[:discount] %>" data-service-promo-id="<%= time[:service_promo_id] %>"><%= image_tag('promociones/icono_promociones.png', :size => "18x18" ) %>&nbsp;<%= time[:hour][:start]  %></button>
+            <% end %>
           <% end %>
         </div>
         <a type="button" class="btn btn-green btn-block" disabled>Siguiente</a>
@@ -67,7 +77,13 @@
       var start = $(event.target).data('start');
       var end = $(event.target).data('end');
       var provider = $(event.target).data('provider');
-      addBooking(date, start, end, provider);
+      var has_time_discount = $(event.target).data('has-time-discount');
+      var time_discount = $(event.target).data('time-discount');
+      var has_discount = $(event.target).data('has-discount');
+      var discount = $(event.target).data('discount');
+      var service_promo_id = $(event.target).data('service-promo-id');
+
+      addBooking(date, start, end, provider, has_time_discount, time_discount, has_discount, discount, service_promo_id);
     });
     $('a.btn-green').click(function (event) {
       $('form').submit();

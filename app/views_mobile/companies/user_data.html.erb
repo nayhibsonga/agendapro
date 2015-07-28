@@ -23,12 +23,28 @@
             <%= hidden_field_tag :has_sessions, "0" %>
           <% end %>
 
+          <%
+            sessions_amount = 0
+            if !@service.sessions_amount.nil?
+              sessions_amount = @service.sessions_amount
+            end
+          %>
+
           <%= hidden_field_tag :bookings, [{
               start: @start,
               end: @end,
               provider: @provider.id,
               provider_lock: @lock,
-              service: @service.id
+              service: @service.id,
+              has_discount: @has_discount,
+              discount: @hour_discount,
+              price: @service.price,
+              show_price: @service.show_price,
+              has_sessions: @service.has_sessions,
+              sessions_amount: sessions_amount,
+              must_be_paid_online: @must_be_paid_online,
+              is_time_discount: @is_time_discount,
+              service_promo_id: @service_promo_id
             }].to_json %>
 
           <%= hidden_field_tag :firstName, if user_signed_in? then current_user.first_name else nil end %>
@@ -71,32 +87,40 @@
       <!--
         AGREGAR RESUMEN DE RESERVA
       -->
+
       </div>
     </div>
 
-    <% if @company.company_setting.allows_online_payment && @service.online_payable %>
+    <% if @online_payable %>
       <div class="row">
         <div class="col-xs-6">
           <div class="form-group">
             <button type="submit" class="btn btn-green btn-lg btn-block" id="payBtn">Pagar</button>
           </div>
           <div class="form-group">
-            <% if @service.has_discount %>
-              Precio:&nbsp;<%= number_to_currency((@service.price*(100-@service.discount)/100), unit: "$", separator: ".", delimiter: ",", precision: 0) %>
+            <% if @hour_discount.to_f > 0 %>
+              Precio normal:&nbsp;<strike><%= number_to_currency(@service.price, unit: "$", separator: ".", delimiter: ",", precision: 0) %></strike><br />
+              Descuento: <%= @hour_discount %>%<br />
+              Precio final:&nbsp;<%= number_to_currency((@service.price*(100-@hour_discount.to_f)/100), unit: "$", separator: ".", delimiter: ",", precision: 0) %>
+            <% else %>
+              Precio:&nbsp;<%= number_to_currency(@service.price, unit: "$", separator: ".", delimiter: ",", precision: 0) %>
             <% end %>
           </div>
         </div>
         <div class="col-xs-6">
+
+        <% if !@must_be_paid_online %>
           <div class="form-group">
 
             <button type="submit" class="btn btn-orange btn-lg btn-block" id="submitBtn">Reservar</button>
 
           </div>
           <div class="form-group">
-            <% if @service.has_discount %>
               Precio:&nbsp;<%= number_to_currency(@service.price, unit: "$", separator: ".", delimiter: ",", precision: 0) %>
-            <% end %>
           </div>
+
+        <% end %>
+
         </div>
       </div>
     <% else %>
