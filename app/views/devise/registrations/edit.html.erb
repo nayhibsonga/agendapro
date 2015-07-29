@@ -103,17 +103,18 @@
 <% end %>
 
 <% content_for :scripts do %>
-<%= javascript_include_tag 'validations/home/edit-user' %>
-<%= javascript_include_tag 'split-name' %>
-<script type="text/javascript">
-  $(function () {
-    compose_name('#full_name', '#user_first_name', '#user_last_name', '#edit_user');
-    $('#change-password').click(function (event) {
-      event.preventDefault();
-      $('fieldset').removeClass('hidden');
-      $(this).parent().parent().addClass('hidden');
+  <%= javascript_include_tag 'validations/validate' %>
+  <%= javascript_include_tag 'validations/home/edit-user' %>
+  <%= javascript_include_tag 'split-name' %>
+  <script type="text/javascript">
+    $(function () {
+      compose_name('#full_name', '#user_first_name', '#user_last_name', '#edit_user');
+      $('#change-password').click(function (event) {
+        event.preventDefault();
+        $('fieldset').removeClass('hidden');
+        $(this).parent().parent().addClass('hidden');
+      });
+      split_name('#full_name', '#user_first_name', '#user_last_name', '#edit_user');
     });
-    split_name('#full_name', '#user_first_name', '#user_last_name', '#edit_user');
-  });
-</script>
+  </script>
 <% end %>
