@@ -4,202 +4,157 @@
 <!--[if IE 8]>    <html class="no-js lt-ie9" lang="es"> <![endif]-->
 <!--[if gt IE 8]><!--> <html class="no-js" lang="es"> <!--<![endif]-->
 
-    <head>
-        <!-- start: Meta -->
-        <meta charset="utf-8">
-        <title><%= @company.name %> - AgendaPro</title>
-        <meta name="author" content="AgendaPro">
-        <meta name="keyword" content="agendapro, agenda, agenda online, reserva, reserva online">
-        <%= csrf_meta_tags %>
-        <!-- end: Meta -->
+  <head>
+    <!-- start: Meta -->
+    <meta charset="utf-8">
+    <title><%= @company.name %> - AgendaPro</title>
+    <meta name="author" content="AgendaPro">
+    <meta name="keyword" content="agendapro, agenda, agenda online, reserva, reserva online">
+    <%= csrf_meta_tags %>
+    <!-- end: Meta -->
 
-        <!-- start: Mobile Specific -->
-        <meta name="apple-mobile-web-app-capable" content="yes" />
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <!-- end: Mobile Specific -->
+    <!-- start: Mobile Specific -->
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <!-- end: Mobile Specific -->
 
-        <!-- start: CSS -->
-        <%= stylesheet_link_tag "//fonts.googleapis.com/css?family=Roboto+Condensed:300", type: "text/css" %>
-        <%= stylesheet_link_tag "workflow" %>
-        <!-- end: CSS -->
+    <!-- start: CSS -->
+    <%= stylesheet_link_tag "//fonts.googleapis.com/css?family=Roboto+Condensed:300", type: "text/css" %>
+    <%= stylesheet_link_tag "workflow" %>
+    <!-- end: CSS -->
 
-        <% if ENV["MONITORING_ACTIVATION"] == "TRUE" %>
-        <!-- Begin Inspectlet Embed Code -->
-        <script type="text/javascript" id="inspectletjs">
-        window.__insp = window.__insp || [];
-        __insp.push(['wid', 1883420541]);
-        (function() {
-        function __ldinsp(){var insp = document.createElement('script'); insp.type = 'text/javascript'; insp.async = true; insp.id = "inspsync"; insp.src = ('https:' == document.location.protocol ? 'https' : 'http') + '://cdn.inspectlet.com/inspectlet.js'; var x = document.getElementsByTagName('script')[0]; x.parentNode.insertBefore(insp, x); }
-        if (window.attachEvent) window.attachEvent('onload', __ldinsp);
-        else window.addEventListener('load', __ldinsp, false);
-        })();
-        </script>
-        <!-- End Inspectlet Embed Code -->
-        <!-- start: Facebook Tracker-->
-        <%= render 'layouts/facebook_tracker' %>
-        <!-- end: Facebook Tracker-->
-        <% if @company && @company.id == 108 %>
-        <!-- Facebook Conversion Code for Key Page Views - Qtis (AgendaPro) -->
-        <script>(function() {
-        var _fbq = window._fbq || (window._fbq = []);
-        if (!_fbq.loaded) {
-        var fbds = document.createElement('script');
-        fbds.async = true;
-        fbds.src = '//connect.facebook.net/en_US/fbds.js';
-        var s = document.getElementsByTagName('script')[0];
-        s.parentNode.insertBefore(fbds, s);
-        _fbq.loaded = true;
-        }
-        })();
-        window._fbq = window._fbq || [];
-        window._fbq.push(['track', '6029599663240', {'value':'0.00','currency':'CLP'}]);
-        </script>
-        <noscript><img height="1" width="1" alt="" style="display:none" src="https://www.facebook.com/tr?ev=6029599663240&amp;cd[value]=0.00&amp;cd[currency]=CLP&amp;noscript=1" /></noscript>
-        <% end %>
-        <% end %>
+    <% if ENV["MONITORING_ACTIVATION"] == "TRUE" %>
+    <!-- Begin Inspectlet Embed Code -->
+    <script type="text/javascript" id="inspectletjs">
+      window.__insp = window.__insp || [];
+      __insp.push(['wid', 1883420541]);
+      (function() {
+      function __ldinsp(){var insp = document.createElement('script'); insp.type = 'text/javascript'; insp.async = true; insp.id = "inspsync"; insp.src = ('https:' == document.location.protocol ? 'https' : 'http') + '://cdn.inspectlet.com/inspectlet.js'; var x = document.getElementsByTagName('script')[0]; x.parentNode.insertBefore(insp, x); }
+      if (window.attachEvent) window.attachEvent('onload', __ldinsp);
+      else window.addEventListener('load', __ldinsp, false);
+      })();
+    </script>
+    <!-- End Inspectlet Embed Code -->
+    <!-- start: Facebook Tracker-->
+    <%= render 'layouts/facebook_tracker' %>
+    <!-- end: Facebook Tracker-->
+    <% if @company && @company.id == 108 %>
+    <!-- Facebook Conversion Code for Key Page Views - Qtis (AgendaPro) -->
+    <script>(function() {
+      var _fbq = window._fbq || (window._fbq = []);
+      if (!_fbq.loaded) {
+      var fbds = document.createElement('script');
+      fbds.async = true;
+      fbds.src = '//connect.facebook.net/en_US/fbds.js';
+      var s = document.getElementsByTagName('script')[0];
+      s.parentNode.insertBefore(fbds, s);
+      _fbq.loaded = true;
+      }
+      })();
+      window._fbq = window._fbq || [];
+      window._fbq.push(['track', '6029599663240', {'value':'0.00','currency':'CLP'}]);
+    </script>
+    <noscript><img height="1" width="1" alt="" style="display:none" src="https://www.facebook.com/tr?ev=6029599663240&amp;cd[value]=0.00&amp;cd[currency]=CLP&amp;noscript=1" /></noscript>
+    <% end %>
+    <% end %>
 
-        <!-- start: JavaScript-->
-        <%= javascript_include_tag "home-head" %>
-        <!-- end: JavaScript-->
+    <!-- start: JavaScript-->
+    <%= javascript_include_tag "home-head" %>
+    <!-- end: JavaScript-->
+    <%= yield :head_scripts %>
 
+    <%= render 'layouts/icons' %>
+  </head>
 
-        <%= yield :head_scripts %>
-
-        <%= render 'layouts/icons' %>
-
-    </head>
-
-    <body>
-        <%= render 'layouts/modals' %>
-        <!-- start: Header -->
-        <header>
-            <div id="barra-superior">
-                <nav class="navbar navbar-default navbar-fixed-top navbar-home" role="navigation">
-                <div class="container">
-                    <!-- Brand and toggle get grouped for better mobile display -->
-                    <div class="navbar-header">
-                        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
-                            <i class="fa fa-bars"></i>
-                        </button>
-                        <a href="<%= root_without_subdomain %>" class="navbar-brand">
-                            <%= image_tag 'logos/logo2.png', :alt => 'AgendaPro', :size => "127x43" %>
-                        </a>
-                    </div>
-                    <!-- Collect the nav links, forms, and other content for toggling -->
-                    <div class="collapse navbar-collapse" id="navbar">
-                        <ul class="nav navbar-nav navbar-right">
-                            <% if user_signed_in? %>
-                                <%= render 'layouts/home_dropdown' %>
-                            <% else %>
-                                <li><a href="#" data-toggle="modal" data-target="#signin-modal" class="menu-green"><i class="fa fa-user"></i> Inicia Sesión</a></li>
-                                <li><a href="#" data-toggle="modal" data-target="#signup-modal" class="menu-green"><i class="fa fa-pencil-square-o"></i> Regístrate</a></li>
-                            <% end %>
-                            <li><%= link_to "Agrega tu Empresa", home_path, class: "menu-orange" %></li>
-                        </ul>
-                    </div>
-                </div>
-            </nav>
+  <body>
+    <%= render 'layouts/modals' %>
+    <!-- start: Header -->
+    <header>
+      <div id="barra-superior">
+        <nav class="navbar navbar-default navbar-fixed-top navbar-home" role="navigation">
+          <div class="container">
+            <!-- Brand and toggle get grouped for better mobile display -->
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+                <i class="fa fa-bars"></i>
+              </button>
+              <%= link_to root_url(subdomain: false), class: "navbar-brand" do %>
+                <%= image_tag 'logos/logo2.png', :alt => 'AgendaPro', :size => "127x43" %>
+              <% end %>
             </div>
-            <!--<div class="header-empresa">
-                <div class="container">
-                    <div class="row">
-                        <div class="col-xs-3 col-sm-3 col-md-2">
-                            <div class="logo-empresa">
-                                <% if @company.logo_url %>
-                                <%= image_tag @company.logo_url.to_s, :alt => @company.name %>
-                                <% else %>
-                                <%= image_tag 'Iso_Pro_Color.png', :alt => 'AgendaPro' %>
-                                <% end %>
-                            </div>
-                        </div>
-                        <div class="col-xs-9 col-sm-9 col-md-9 margen-workflow" id="datos-empresa">
-                            <h3><%= @company.name %></h3>
-                            <div class="info-empresa">
-                                <%= @company.description %>
-                            </div>
-                            <a href="http://<%= @url %>" class="btn btn-agendapro-oscuro">Lugares</a>
-                            <a href="#" class="btn btn-agendapro-oscuro" id="boton-servicio">Servicios</a>
-                        </div>
-                    </div>
-                </div>
-            </div>-->
-            <!-- start: Alerts -->
-            <% if notice %>
-                <div class="alert alert-info alert-dismissable fade in">
-                    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-                    <%= notice %>
-                </div>
-            <% end %>
-            <% if alert %>
-                <div class="alert alert-warning alert-dismissable fade in">
-                    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-                    <%= alert %>
-                </div>
-            <% end %>
-            <!-- end: Alerts -->
-        </header>
-        <!-- end: Header -->
-
-        <!-- start: content -->
-        <%= yield %>
-        <!-- end: content -->
-
-        <footer>
-            <div class="background-repeat workflow-footer">
-                <div class="container">
-                    <!-- <div class="row pull-center">
-                        <div class="col-xs-4">
-                            <%= image_tag "footer/1.png", size: "22x29" %>
-                            <p>Ana María Carrera 5210,
-                                Las Condes, Santiago</p>
-                        </div>
-                        <div class="col-xs-4">
-                            <%= image_tag "footer/2.png", size: "24x19" %>
-                            <p>contacto@agendapro.cl</p>
-                        </div>
-                        <div class="col-xs-4">
-                            <%= image_tag "footer/3.png", size: "22x29" %>
-                            <p>(+56 9) 5178 5898</p>
-                        </div>
-                    </div> -->
-                    <div class="row footer">
-                        <div class="col-xs-4 col-lg-2 pull-right">
-                            <%= image_tag 'logos/logo2.png', :alt => 'AgendaPro', :size => "115x39", class: "img-responsive pull-right" %>
-                        </div>
-                        <div class="col-xs-8 col-lg-5 links-footer pull-right">
-                            <%= link_to "Agrega tu Empresa", home_path %> | <%= link_to "Sobre Nosotros", aboutus_path %> | <%= link_to "Tutoriales", tutorials_path %> | <%= link_to 'Términos y Condiciones', asset_url('pdf/Term_y_Cond_AgendaPro072015.pdf'), target: :blank %>, target: :blank %>
-                        </div>
-                        <div class="col-xs-12 col-lg-5 copyright-footer">
-                            <i class="fa fa-copyright"></i> Copyright 2013 | Gunei Investment SpA | Todos los derechos reservados
-                        </div>
-                    </div>
-                </div>
+            <!-- Collect the nav links, forms, and other content for toggling -->
+            <div class="collapse navbar-collapse" id="navbar">
+              <ul class="nav navbar-nav navbar-right">
+                <% if user_signed_in? %>
+                  <%= render 'layouts/home_dropdown' %>
+                <% else %>
+                  <li><a href="#" data-toggle="modal" data-target="#signin-modal" class="menu-green"><i class="fa fa-user"></i> Inicia Sesión</a></li>
+                  <li><a href="#" data-toggle="modal" data-target="#signup-modal" class="menu-green"><i class="fa fa-pencil-square-o"></i> Regístrate</a></li>
+                <% end %>
+                <li><%= link_to "Agrega tu Empresa", home_url(subdomain: false), class: "menu-orange" %></li>
+              </ul>
             </div>
-        </footer>
+          </div>
+        </nav>
+      </div>
+      <!-- start: Alerts -->
+      <% if notice %>
+        <div class="alert alert-info alert-dismissable fade in">
+          <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+          <%= notice %>
+        </div>
+      <% end %>
+      <% if alert %>
+        <div class="alert alert-warning alert-dismissable fade in">
+          <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+          <%= alert %>
+        </div>
+      <% end %>
+      <!-- end: Alerts -->
+    </header>
+    <!-- end: Header -->
 
-        <!-- start: JavaScript-->
-        <%= yield :scripts %>
-        <%= javascript_include_tag "workflow" %>
-        <%= javascript_include_tag "jquery.browser.min" %>
-        <%= javascript_include_tag "browser-detect" %>
-        <!--Start of Zopim Live Chat Script-->
-        <%= javascript_include_tag 'zopim' %>
-        <!--End of Zopim Live Chat Script-->
+    <!-- start: content -->
+    <%= yield %>
+    <!-- end: content -->
 
-        <!--Start of Crazy Egg Script-->
-        <%= javascript_include_tag 'crazy_egg' %>
-        <!--End of Crazy Egg Script-->
+    <footer>
+      <div class="background-repeat workflow-footer">
+        <div class="container">
+          <div class="row footer">
+            <div class="col-xs-4 col-lg-2 pull-right">
+              <%= image_tag 'logos/logo2.png', :alt => 'AgendaPro', :size => "115x39", class: "img-responsive pull-right" %>
+            </div>
+            <div class="col-xs-8 col-lg-5 links-footer pull-right">
+              <%= link_to "Agrega tu Empresa", home_url(subdomain: false) %> | <%= link_to "Sobre Nosotros", aboutus_url(subdomain: false) %> | <%= link_to "Tutoriales", tutorials_url(subdomain: false) %> | <%= link_to 'Términos y Condiciones', asset_url('pdf/Term_y_Cond_AgendaPro072015.pdf'), target: :blank %>
+            </div>
+            <div class="col-xs-12 col-lg-5 copyright-footer">
+              <i class="fa fa-copyright"></i> Copyright 2013 | Gunei Investment SpA | Todos los derechos reservados
+            </div>
+          </div>
+        </div>
+      </div>
+    </footer>
 
-        <script>
-          $( "#menu-display" ).click(function() {
-            $( ".nav-pills" ).toggle( "slow" );
-          });
-        </script>
-        <!-- end: JavaScript-->
+    <!-- start: JavaScript-->
+    <%= yield :scripts %>
+    <%= javascript_include_tag "workflow" %>
+    <%= javascript_include_tag "jquery.browser.min" %>
+    <%= javascript_include_tag "browser-detect" %>
+    <!--Start of Zopim Live Chat Script-->
+    <%= javascript_include_tag 'zopim' %>
+    <!--End of Zopim Live Chat Script-->
 
-        <!------ Originales ------->
-        <!-- Los JS -->
-        <!--<script src='http://connect.facebook.net/en_US/all.js'></script>-->
-    </body>
+    <!--Start of Crazy Egg Script-->
+    <%= javascript_include_tag 'crazy_egg' %>
+    <!--End of Crazy Egg Script-->
+
+    <script>
+      $( "#menu-display" ).click(function() {
+      $( ".nav-pills" ).toggle( "slow" );
+      });
+    </script>
+    <!-- end: JavaScript-->
+  </body>
 </html>
 

@@ -57,9 +57,9 @@
             <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
               <i class="fa fa-bars"></i>
             </button>
-            <a href="<%= root_without_subdomain %>" class="navbar-brand">
+            <%= link_to root_url(subdomain: false), class: 'navbar-brand' do %>
               <%= image_tag 'logos/logo2.png', :alt => 'AgendaPro', :size => "127x43" %>
-            </a>
+            <% end %>
           </div>
           <!-- Collect the nav links, forms, and other content for toggling -->
           <div class="collapse navbar-collapse" id="navbar">
@@ -133,7 +133,7 @@
             <i class="fa fa-copyright"></i> Copyright 2013 | Gunei Investment SpA | Todos los derechos reservados
           </div>
           <div class="col-xs-9 col-lg-6 links-footer">
-            <%= link_to "Agrega tu Empresa", home_path %> | <%= link_to "Sobre Nosotros", aboutus_path %> | <%= link_to "Tutoriales", tutorials_path %> | <%= link_to 'Términos y Condiciones', asset_url('pdf/Term_y_Cond_AgendaPro072015.pdf'), target: :blank %>, target: :blank %>
+            <%= link_to "Agrega tu Empresa", home_path %> | <%= link_to "Sobre Nosotros", aboutus_path %> | <%= link_to "Tutoriales", tutorials_path %> | <%= link_to 'Términos y Condiciones', asset_url('pdf/Term_y_Cond_AgendaPro072015.pdf'), target: :blank %>
           </div>
           <div class="col-xs-3 col-lg-1">
             <%= image_tag 'logos/logo1.png', :alt => 'AgendaPro', :size => "127x43", class: "pull-right" %>

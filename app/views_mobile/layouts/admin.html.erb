@@ -37,9 +37,9 @@
             <button type="button" class="navbar-toggle collapsed toggle-menu menu-right push-body" data-toggle="collapse" data-target="#navbar-menu">
               <i class="fa fa-bars"></i>
             </button>
-            <a href="<%= root_without_subdomain %>" class="navbar-brand">
+            <% link_to root_url(subdomain: false), class: 'navbar-brand' do %>
               <%= image_tag 'logos/logo2.png', :alt => 'AgendaPro', :size => '120x41' %>
-            </a>
+            <% end %>
             <p class="navbar-text text-center"><%= @company.name %></p>
           </div>
           <!-- Collect the nav links, forms, and other content for toggling -->
