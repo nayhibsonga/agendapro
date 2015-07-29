@@ -1,0 +1,1 @@
+json.extract! @booking, :id, :start, :end, :service_id, :service_provider_id, :user_id, :web_origin, :location_id, :provider_lock

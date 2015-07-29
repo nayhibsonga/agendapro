@@ -341,6 +341,8 @@
       post 'users/oauth', to: 'users#oauth'
       
       resources :economic_sectors
+
+      post 'bookings', to: 'bookings#book_service'
     end
   end
 
