@@ -95,7 +95,7 @@
             <div class="row well well-sm">
               <ul id="myTab" class="nav nav-tabs" role="tablist">
                 <li id="booking-li" class="active"><a href="#booking-pane" role="tab" data-toggle="tab" class="tab_index" id="booking-tab">Reserva</a></li>
-                <% if Role.where(name: ["Administrador General", "Administrador Local", "Recepcionista"]).include?(current_user.role) %>
+                <% if Role.where(name: ["Administrador General", "Administrador Local", "Recepcionista", "Staff"]).include?(current_user.role) %>
                 <li id="payments-li" class=""><a href="#payments-pane" role="tab" data-toggle="tab" class="tab_index" id="payments-tab">Pago</a></li>
                 <% end %>
                 <li id="client-li" class=""><a href="#client-pane" role="tab" data-toggle="tab" class="tab_index" id="client-tab">Cliente</a></li>
@@ -517,7 +517,7 @@
                   </div>
                 </div>
                 <% end %>
-                <% if Role.where(name: ["Administrador General", "Administrador Local", "Recepcionista"]).include?(current_user.role) %>
+                <% if Role.where(name: ["Administrador General", "Administrador Local", "Recepcionista", "Staff"]).include?(current_user.role) %>
                 <div class="tab-pane" id="payments-pane">
                   <%= form_for @payment, html: {class: "form-horizontal"} do |f| %>
                   <div class="row">

@@ -15,9 +15,9 @@
   </div>
   <div class="col-sm-3">
     <div class="well revenue">
-      <h4>Recaudación por Packs de Reservas:</h4>
+      <h4>Recaudación por Tratamientos:</h4>
       <p class="revenue-price"><strong><%= number_to_currency(@payments.sum(:sessions_amount), currency: ' $', separator: ',', delimeter: '.', precision: 0) %></strong></p>
-      <p class="revenue-description">(Dando <%= @payments.average(:sessions_discount) ? @payments.average(:sessions_discount).round(2) : '0'  %> % de descuento promedio en <%= @payments.sum(:sessions_quantity) %> packs)</p>
+      <p class="revenue-description">(Dando <%= @payments.average(:sessions_discount) ? @payments.average(:sessions_discount).round(2) : '0'  %> % de descuento promedio en <%= @payments.sum(:sessions_quantity) %> tratamientos)</p>
     </div>
   </div>
   <div class="col-sm-3">

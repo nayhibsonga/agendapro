@@ -42,8 +42,26 @@ class ProductsController < ApplicationController
   end
 
   def update
-    @product.update(product_params)
-    respond_with(@product)
+    @location_products = Product.find(params[:id]).location_products
+    @location_products.each do |location_product|
+      location_product.product_id = nil
+      location_product.save
+    end
+    @product = Product.find(params[:id])
+    respond_to do |format|
+      if @product.update(product_params)
+        @location_products.destroy_all
+        format.html { redirect_to products_path, notice: 'Producto actualizado exitosamente.' }
+        format.json { render :json => @product }
+      else
+        @location_products.each do |location_product|
+          location_product.product_id = @product.id
+          location_product.save
+        end
+        format.html { redirect_to products_path, alert: 'No se pudo guardar el producto.' }
+        format.json { render :json => { :errors => @product.errors.full_messages }, :status => 422 }
+      end
+    end
   end
 
   def destroy
