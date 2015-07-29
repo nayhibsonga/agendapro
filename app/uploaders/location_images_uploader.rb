@@ -1,6 +1,6 @@
 # encoding: utf-8
 
-class LogoUploader < CarrierWave::Uploader::Base
+class LocationImagesUploader < CarrierWave::Uploader::Base
 
   # Include RMagick or MiniMagick support:
   # include CarrierWave::RMagick
@@ -14,7 +14,7 @@ class LogoUploader < CarrierWave::Uploader::Base
   # This is a sensible default for uploaders that are meant to be mounted:
   def store_dir
     # "uploads/#{model.class.to_s.underscore}/#{mounted_as}/#{model.id}"
-    'uploads/logos'
+    "uploads/location_images/#{model.id}"
   end
 
   # Provide a default URL as a default if there hasn't been a file uploaded:
@@ -27,22 +27,17 @@ class LogoUploader < CarrierWave::Uploader::Base
 
   # Process files as they are uploaded:
   process :convert => 'png'
-  process :resize_to_limit => [200, 200]
-
-  # Create different versions of your uploaded files:
-  version :email do
-    process :convert => 'png'
-    process :resize_to_limit => [200, 80]
-  end
-
-  version :page do
-    process :convert => 'png'
-    process :resize_and_pad => [200, 200]
-  end
+  process :resize_and_pad => [1024, 576]
 
   # def scale(width, height)
-  #   :resize_to_limit => [width, height]
+  #   # do something
   # end
+
+  # Create different versions of your uploaded files:
+  version :thumb do
+    process :convert => 'png'
+    process :resize_to_fit => [200, 200]
+  end
 
   # Add a white list of extensions which are allowed to be uploaded.
   # For images you might use something like this:
@@ -53,7 +48,7 @@ class LogoUploader < CarrierWave::Uploader::Base
   # Override the filename of the uploaded files:
   # Avoid using model.id or version_name here, see uploader/store.rb for details.
   def filename
-    "#{model.web_address}.png" if original_filename
+    "#{model.name}_#{mounted_as}.png" if original_filename
   end
 
 end

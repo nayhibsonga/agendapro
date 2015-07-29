@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150710134007) do
+ActiveRecord::Schema.define(version: 20150729200154) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -365,6 +365,16 @@ ActiveRecord::Schema.define(version: 20150710134007) do
 
   add_index "facebook_pages", ["company_id"], name: "index_facebook_pages_on_company_id", using: :btree
 
+  create_table "favorites", force: true do |t|
+    t.integer  "user_id"
+    t.integer  "location_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "favorites", ["location_id"], name: "index_favorites_on_location_id", using: :btree
+  add_index "favorites", ["user_id"], name: "index_favorites_on_user_id", using: :btree
+
   create_table "location_outcall_districts", force: true do |t|
     t.integer  "location_id"
     t.integer  "district_id"
@@ -414,6 +424,9 @@ ActiveRecord::Schema.define(version: 20150710134007) do
     t.string   "email",          default: ""
     t.string   "second_address", default: ""
     t.boolean  "online_booking", default: true
+    t.string   "image1"
+    t.string   "image2"
+    t.string   "image3"
   end
 
   add_index "locations", ["company_id"], name: "index_locations_on_company_id", using: :btree

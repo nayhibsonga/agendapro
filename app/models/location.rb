@@ -35,6 +35,10 @@ class Location < ActiveRecord::Base
 
   has_many :payments, dependent: :destroy
 
+  mount_uploader :image1, LocationImagesUploader
+  mount_uploader :image2, LocationImagesUploader
+  mount_uploader :image3, LocationImagesUploader
+
   accepts_nested_attributes_for :location_times, :reject_if => :all_blank, :allow_destroy => true
 
   validates :name, :phone, :company, :district, :email, :presence => true
