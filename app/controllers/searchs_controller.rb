@@ -1335,8 +1335,8 @@ class SearchsController < ApplicationController
 				@formatted_address = cookies[:formatted_address].encode('UTF-8', 'binary', invalid: :replace, undef: :replace, replace: '')
 			end
 			# => Domain parser
-			host = request.host_with_port
-			@domain = host[host.index(request.domain)..host.length]
+			#host = request.host_with_port
+			#@domain = host[host.index(request.domain)..host.length]
 
 
 			lat = @lat

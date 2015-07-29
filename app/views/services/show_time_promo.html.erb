@@ -54,10 +54,8 @@
           <a href="http://twitter.com/intent/tweet?status=<%= share_text %>+<%= url_encode(request.original_url) %>" onclick="javascript:window.open(this.href,'', 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=600,width=600');return false;"><%= image_tag "promociones/twitter_doble.png", :size => "32x32" %></a> &nbsp;&nbsp; <a href="http://www.facebook.com/sharer.php?u=<%= url_encode(request.original_url) %>
 &t=<%= share_text %>" onclick="javascript:window.open(this.href,'', 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=600,width=600');return false;"><%= image_tag "promociones/facebook_doble.png", :size => "32x32" %></a>
         </div>
+
         <div class="details-accordions">
-
-
-
           <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
 
             <div class="panel panel-default">
@@ -172,7 +170,7 @@
 
                       <%
                         for i in 1..7
-                        promo = Promo.where(:service_promo_id => @service.active_service_promo_id, :day_id => i).first
+                        promo = Promo.where(:service_promo_id => @service.active_service_promo_id, :location_id => @location.id, :day_id => i).first
                       %>
 
                         <td>
@@ -202,7 +200,7 @@
                       
                       <%
                         for i in 1..7
-                        promo = Promo.where(:service_promo_id => @service.active_service_promo_id, :day_id => i).first
+                        promo = Promo.where(:service_promo_id => @service.active_service_promo_id, :location_id => @location.id, :day_id => i).first
                       %>
 
                         <td>
@@ -225,11 +223,6 @@
 
                     </tr>
                   </table>
-
-                  <% if @service.has_discount %>
-                    <br />
-                    <p style="color: #949292;">Además, este servicio tiene un descuento por defecto por pago en línea de un <%= @service.discount.round.to_s %>% para reservas en cualquier horario.</p>
-                  <% end %>
 
                 </div>
               </div>

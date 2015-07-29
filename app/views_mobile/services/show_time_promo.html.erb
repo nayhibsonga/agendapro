@@ -1,0 +1,372 @@
+<%
+	economic_sectors = EconomicSector.all
+%>
+<div class="container below-navbar">
+
+	<div id="economic-sectors-wrapper">
+		<div id="economic-sectors-row">
+			<% economic_sectors.each do |economic_sector| %>
+				<span class="economic-sector-span">
+					<button class="economic-sector-btn" economic_sector_id="<%= economic_sector.id %>">
+						<%= economic_sector.name %>
+					</button>
+				</span>
+			<% end %>
+		</div>
+		<div style="clear: both;">
+		</div>
+	</div>
+
+	<div id="promotions-div">
+		<div class="promo-box">
+			<div class="promo-photo">
+				<%= image_tag @service.time_promo_photo.url.to_s, :class => "img-responsive promo-img" %>
+			</div>
+			<div class="promo-title">
+				<div class="col-xs-5 promo-company">
+					<%= @service.company.name %>
+				</div>
+				<div class="col-xs-7 promo-discount">
+					Desde <%= @service.get_max_time_discount %>% de dscto.
+				</div>
+				<div style="clear: both;"></div>
+			</div>
+			<div class="promo-detail">
+				<div class="col-xs-7" style="color: #636363;">
+					<%= @service.name %> en <%= @location.name %>
+				</div>
+				<div class="col-xs-5" style="text-align: right; border-left: 1px solid #b5b5b5;">
+					<span style="color: #b5b5b5; font-size: 12px; padding-top: 10px;"><strike><%= number_to_currency(@service.price, unit: "$", delimiter: ".") %></strike></span><br />
+					<span style="color: #b5b5b5; font-size: 14px;">Desde</span> <span style="color: #22c488; font-size: 14px;"><%= number_to_currency(@service.price*(100-@service.get_max_time_discount)/100, unit: "$", delimiter: ".") %></span>
+				</div>
+				<div style="clear: both;"></div>
+			</div>
+		</div>
+		<div class="promo-description">
+
+			<div class="details-accordions">
+
+	          <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+
+	          	<div class="panel panel-default">
+	              <div class="panel-heading" role="tab" id="headingDescription">
+	                <h4 class="panel-title minus">
+	                  <a class="" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseDescription" aria-expanded="false" aria-controls="collapseDescription">
+	                    <%= image_tag "promociones/descripcion.png", :size => "20x20" %> &nbsp;&nbsp;Descripción
+	                  </a>
+	                </h4>
+	              </div>
+	              <div id="collapseDescription" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingDescription">
+	                <div class="panel-body">
+	                	<div class="description-body">
+	                  		<%= @service.promo_description.html_safe %>.
+	                  	</div>
+	                </div>
+	              </div>
+	            </div>
+
+	            <div class="panel panel-default">
+	              <div class="panel-heading" role="tab" id="headingTwo">
+	                <h4 class="panel-title minus">
+	                  <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+	                    <%= image_tag "promociones/tarjeta_doble.png", :size => "20x20" %> &nbsp;&nbsp;Máximo de compras
+	                  </a>
+	                </h4>
+	              </div>
+	              <div id="collapseTwo" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingTwo">
+	                <div class="panel-body">
+	                  <p style="color: #949292; font-weight: bold; font-size: 14px;">Quedan <%= @service.active_promo_left_bookings %> reservas disponibles para esta promoción.</p>
+	                  <% if @service.active_promo_left_bookings <= 20 %>
+	                    <p style="color: #949292; font-weight: bold; font-size: 14px;">
+	                      ¡Apúrate y reserva antes que se acaben!
+	                    </p>
+	                  <% end %>
+	                </div>
+	              </div>
+	            </div>
+
+	            <div class="panel panel-default">
+	              <div class="panel-heading" role="tab" id="headingOne">
+
+	                <h4 class="panel-title minus">
+
+	                  <a role="button" class="collapsed" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+
+	                    <%= image_tag "promociones/reloj_doble.png", :size => "20x20" %> &nbsp;&nbsp; Horarios de reserva
+	                    
+	                  </a>
+	                </h4>
+	              </div>
+	              <div id="collapseOne" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingOne">
+	                <div class="panel-body">
+	                  <%
+
+	                      promo_time = @service.company.company_setting.promo_time
+
+	                      promos = Promo.where(:service_promo_id => @service.active_service_promo_id, :location_id => @location.id).order('day_id asc')
+
+	                      service_promo = ServicePromo.find(@service.active_service_promo_id)
+
+	                  %>
+
+	                  	<p style="color: #949292; font-size: 14px;">Revisa los descuentos para cada horario y elige la opción que más te convenga.</p>
+	                  	<p>
+
+	                  		<table>
+	                  			<tr>
+	                  				<td>
+	                  					<span class="hours-title">
+	                  						Mañana:&nbsp;&nbsp;
+	                  					</span>
+	                  				</td>
+	                  				<td>
+	                  					<span class="hours"><%= service_promo.morning_start.strftime "%H:%M" %> - <%= service_promo.morning_end.strftime "%H:%M" %></span>
+	                  				</td>
+	                  			</tr>
+	                  			<tr>
+	                  				<td>
+	                  					<span class="hours-title">
+	                  						Tarde:&nbsp;&nbsp;
+	                  					</span> 
+	                  				</td>
+	                  				<td>
+	                  					<span class="hours"><%= service_promo.afternoon_start.strftime "%H:%M" %> - <%= service_promo.afternoon_end.strftime "%H:%M" %></span>
+	                  				</td>
+	                  			</tr>
+	                  			<tr>
+	                  				<td>
+	                  					<span class="hours-title">
+	                  						Noche:&nbsp;&nbsp;
+	                  					</span> 
+	                  				</td>
+	                  				<td>
+	                  					<span class="hours"><%= service_promo.night_start.strftime "%H:%M" %> - <%= service_promo.night_end.strftime "%H:%M" %></span>
+	                  				</td>
+	                  			</tr>
+	                  		</table>
+	                  	</p>
+
+	                  	<div>
+							<div class="col-xs-2">
+							</div>
+							<div class="col-xs-3">
+								<div class="discount-time">
+									<span>Mañana</span>
+								</div>
+							</div>
+							<div class="col-xs-3">
+								<div class="discount-time">
+									<span>Tarde</span>
+								</div>
+							</div>
+							<div class="col-xs-3">
+								<div class="discount-time">
+									<span>Noche</span>
+								</div>
+							</div>
+		                </div>
+		                <div>
+		                	<div class="col-xs-2">
+								<div class="day-title">
+									Lun
+								</div>
+							</div>
+							<div class="col-xs-3">
+								<div class="day-discount">
+									<%= promos[0].morning_discount %>%
+								</div>
+							</div>
+							<div class="col-xs-3">
+								<div class="day-discount">
+									<%= promos[0].afternoon_discount %>%
+								</div>
+							</div>
+							<div class="col-xs-3">
+								<div class="day-discount">
+									<%= promos[0].night_discount %>%
+								</div>
+							</div>
+		                </div>
+		                <div>
+		                	<div class="col-xs-2">
+								<div class="day-title">
+									Mar
+								</div>
+							</div>
+							<div class="col-xs-3">
+								<div class="day-discount">
+									<%= promos[1].morning_discount %>%
+								</div>
+							</div>
+							<div class="col-xs-3">
+								<div class="day-discount">
+									<%= promos[1].afternoon_discount %>%
+								</div>
+							</div>
+							<div class="col-xs-3">
+								<div class="day-discount">
+									<%= promos[1].night_discount %>%
+								</div>
+							</div>
+		                </div>
+		                <div>
+		                	<div class="col-xs-2">
+								<div class="day-title">
+									Mié
+								</div>
+							</div>
+							<div class="col-xs-3">
+								<div class="day-discount">
+									<%= promos[2].morning_discount %>%
+								</div>
+							</div>
+							<div class="col-xs-3">
+								<div class="day-discount">
+									<%= promos[2].afternoon_discount %>%
+								</div>
+							</div>
+							<div class="col-xs-3">
+								<div class="day-discount">
+									<%= promos[2].night_discount %>%
+								</div>
+							</div>
+		                </div>
+		                <div>
+		                	<div class="col-xs-2">
+								<div class="day-title">
+									Jue
+								</div>
+							</div>
+							<div class="col-xs-3">
+								<div class="day-discount">
+									<%= promos[3].morning_discount %>%
+								</div>
+							</div>
+							<div class="col-xs-3">
+								<div class="day-discount">
+									<%= promos[3].afternoon_discount %>%
+								</div>
+							</div>
+							<div class="col-xs-3">
+								<div class="day-discount">
+									<%= promos[3].night_discount %>%
+								</div>
+							</div>
+		                </div>
+		                <div>
+		                	<div class="col-xs-2">
+								<div class="day-title">
+									Vie
+								</div>
+							</div>
+							<div class="col-xs-3">
+								<div class="day-discount">
+									<%= promos[4].morning_discount %>%
+								</div>
+							</div>
+							<div class="col-xs-3">
+								<div class="day-discount">
+									<%= promos[4].afternoon_discount %>%
+								</div>
+							</div>
+							<div class="col-xs-3">
+								<div class="day-discount">
+									<%= promos[4].night_discount %>%
+								</div>
+							</div>
+		                </div>
+		                <div>
+		                	<div class="col-xs-2">
+								<div class="day-title">
+									Sáb
+								</div>
+							</div>
+							<div class="col-xs-3">
+								<div class="day-discount">
+									<%= promos[5].morning_discount %>%
+								</div>
+							</div>
+							<div class="col-xs-3">
+								<div class="day-discount">
+									<%= promos[5].afternoon_discount %>%
+								</div>
+							</div>
+							<div class="col-xs-3">
+								<div class="day-discount">
+									<%= promos[5].night_discount %>%
+								</div>
+							</div>
+		                </div>
+		                <div>
+		                	<div class="col-xs-2">
+								<div class="day-title">
+									Dom
+								</div>
+							</div>
+							<div class="col-xs-3">
+								<div class="day-discount">
+									<%= promos[6].morning_discount %>%
+								</div>
+							</div>
+							<div class="col-xs-3">
+								<div class="day-discount">
+									<%= promos[6].afternoon_discount %>%
+								</div>
+							</div>
+							<div class="col-xs-3">
+								<div class="day-discount">
+									<%= promos[6].night_discount %>%
+								</div>
+							</div>
+		                </div>
+
+	                </div>
+	              </div>
+	            </div>
+	            
+	            <div class="panel panel-default">
+	              <div class="panel-heading" role="tab" id="headingThree">
+	                <h4 class="panel-title minus">
+	                  <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+	                    <%= image_tag "promociones/agendapro_doble.png", :size => "20x20" %> &nbsp;&nbsp;Políticas de la empresa
+	                  </a>
+	                </h4>
+	              </div>
+	              <div id="collapseThree" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingThree">
+	                <div class="panel-body">
+	                    
+	                  <p style="color: #949292; font-size: 14px;">
+	                    La empresa no permite modificar ni cancelar reservas pagadas en promoción.
+	                  </p>
+
+	                  <p style="color: #949292; font-size: 14px;">
+	                    Si la empresa cancela o modifica sus promociones, se respetarán el precio y horario en que efectuaste tu reserva.
+	                  </p>
+	                    
+	                </div>
+	              </div>
+	            </div>
+	          </div>
+
+
+
+	        </div>
+		</div>
+		<div class="promo-footer">
+			<button id="openHoursBtn">
+				Comprar y reservar
+			</button>
+			<div style="clear: both;">
+			</div>
+		</div>
+	</div>
+
+</div>
+
+<% content_for :stylesheets do %>
+	<%= stylesheet_link_tag "mobile/mobile-promotions" %>
+<% end %>
+
+<% content_for :scripts do %>
+	<%= javascript_include_tag "mobile/promotions" %>
+<% end %>

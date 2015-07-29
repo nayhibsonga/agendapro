@@ -49,6 +49,7 @@
 							<li><%= link_to 'Clientes', root_path(anchor: 'clients-target') %></li>
               <li><%= link_to 'Qué Hacemos', root_path(anchor: 'what-we-do-target') %></li>
               <li><%= link_to 'Contacto', root_path(anchor: 'contact-target') %></li>
+              <li><%= link_to 'Promociones', get_promotions_path %></li>
 							<li class="divider"></li>
 							<% if user_signed_in? %>
               <% if current_user.company_id %>
