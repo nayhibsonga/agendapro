@@ -113,7 +113,7 @@ class BookingsController < ApplicationController
     booking_buffer_params[:bookings].each do |pos, buffer_params|
       staff_code = nil
       new_booking_params = buffer_params.except(:client_first_name, :client_last_name, :client_phone, :client_email, :client_identification_number, :client_address, :client_district, :client_city, :client_birth_day, :client_birth_month, :client_birth_year, :client_age, :client_record, :client_second_phone, :client_gender, :staff_code, :session_booking_id, :has_sessions)
-      
+
       @booking = Booking.new(new_booking_params)
 
       should_create_sessions = false
@@ -311,7 +311,7 @@ class BookingsController < ApplicationController
             end
           end
 
-          sessions_ratio = "Sesión " + session_index.to_s + " de " + session_booking.sessions_amount.to_s 
+          sessions_ratio = "Sesión " + session_index.to_s + " de " + session_booking.sessions_amount.to_s
 
         end
 
@@ -619,7 +619,7 @@ class BookingsController < ApplicationController
             end
           end
 
-          sessions_ratio = "Sesión " + session_index.to_s + " de " + session_booking.sessions_amount.to_s 
+          sessions_ratio = "Sesión " + session_index.to_s + " de " + session_booking.sessions_amount.to_s
 
         end
 
@@ -1075,7 +1075,7 @@ class BookingsController < ApplicationController
   end
 
   def delete_session_booking
-    
+
     @booking.user_session_confirmed = false
     @booking.is_session_booked = false
     #Send cancel mail
@@ -1372,7 +1372,7 @@ class BookingsController < ApplicationController
           is_session_qtip: is_session,
           sessions_ratio_qtip: sessions_ratio
         }
-        
+
 
         events.push(event)
       end
@@ -1825,7 +1825,7 @@ class BookingsController < ApplicationController
           sessions_missing = @session_booking.sessions_amount - @bookings.size
           @session_booking.sessions_taken = @bookings.size
           @session_booking.save
-          
+
 
           for i in 0..sessions_missing-1
 
@@ -1890,7 +1890,7 @@ class BookingsController < ApplicationController
       sessions_missing = @session_booking.sessions_amount - @bookings.size
       @session_booking.sessions_taken = @bookings.size
       @session_booking.save
-      
+
 
       for i in 0..sessions_missing-1
 
@@ -1923,7 +1923,7 @@ class BookingsController < ApplicationController
     end
 
     @bookings.each do |b|
-      if b.id.nil?        
+      if b.id.nil?
         @errors << "Hubo un error al guardar un servicio. " + b.errors.inspect
         @blocked_bookings << b.service.name + " con " + b.service_provider.public_name + " el " + I18n.l(b.start.to_datetime)
       end
@@ -2024,7 +2024,7 @@ class BookingsController < ApplicationController
 
       if !@are_session_bookings
         @tried_bookings.each do |booking|
-          
+
             fake_booking = Booking.new(booking.attributes.to_options)
             @bookings << fake_booking
             booking.delete
@@ -2032,7 +2032,7 @@ class BookingsController < ApplicationController
         end
       else
 
-        booked_correct = Booking.where(:id => params[:bookings]).where(:is_session_booked => true) 
+        booked_correct = Booking.where(:id => params[:bookings]).where(:is_session_booked => true)
         service = @tried_bookings.first.service
 
         session_bookings = SessionBooking.where(:client_id => @tried_bookings.first.client_id)
@@ -2370,7 +2370,7 @@ class BookingsController < ApplicationController
     @selectedLocation = Location.find(@booking.location_id)
     max_changes = @booking.max_changes - 1
     if @booking.update(start: params[:start], end: params[:end], max_changes: max_changes)
-      
+
       if @booking.is_session
         @booking.send_session_update_mail
       end
@@ -2855,7 +2855,7 @@ class BookingsController < ApplicationController
       @company = Company.find(params[:company_id])
       render layout: 'workflow'
     else
-      redirect_to root_without_subdomain
+      redirect_to root_url(subdomain: false)
       return
     end
   end

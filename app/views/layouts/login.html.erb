@@ -19,7 +19,7 @@
     <!-- end: Mobile Specific -->
 
     <!-- start: CSS -->
-    <%= stylesheet_link_tag "http://fonts.googleapis.com/css?family=Roboto+Condensed:300", type: "text/css" %>
+    <%= stylesheet_link_tag "//fonts.googleapis.com/css?family=Roboto+Condensed:300", type: "text/css" %>
     <%= stylesheet_link_tag "login" %>
     <!-- end: CSS -->
 
@@ -57,9 +57,9 @@
             <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
               <i class="fa fa-bars"></i>
             </button>
-            <a href="<%= root_without_subdomain %>" class="navbar-brand">
+            <%= link_to root_url(subdomain: false), class: 'navbar-brand' %>
               <%= image_tag 'logos/logo2.png', :alt => 'AgendaPro', :size => "127x43" %>
-            </a>
+            <% end %>
           </div>
           <!-- Collect the nav links, forms, and other content for toggling -->
           <div class="collapse navbar-collapse" id="navbar">
@@ -122,7 +122,7 @@
               <%= image_tag 'logos/logo1.png', :alt => 'AgendaPro', :size => "127x43", class: "img-responsive pull-right" %>
             </div>
             <div class="col-xs-8 col-lg-5 links-footer pull-right">
-              <%= link_to "Agrega tu Empresa", home_path %> | <%= link_to "Sobre Nosotros", aboutus_path %> | <%= link_to "Tutoriales", tutorials_path %> | <%= link_to 'Términos y Condiciones', '/Term_y_Cond_AgendaPro122014.pdf', :target => :blank %>
+              <%= link_to "Agrega tu Empresa", home_path %> | <%= link_to "Sobre Nosotros", aboutus_path %> | <%= link_to "Tutoriales", tutorials_path %> | <%= link_to 'Términos y Condiciones', asset_url('pdf/Term_y_Cond_AgendaPro072015.pdf'), target: :blank %>
             </div>
             <div class="col-xs-12 col-lg-5 copyright-footer">
               <i class="fa fa-copyright"></i> Copyright 2013 | Gunei Investment SpA | Todos los derechos reservados

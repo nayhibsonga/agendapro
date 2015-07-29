@@ -5,12 +5,12 @@
 		<% if current_user.company_id || current_user.role_id == Role.find_by(:name => 'Super Admin').id %>
 			<%= link_to '<i class="fa fa-dashboard fa-fw"></i> Panel Empresa'.html_safe, root_url(subdomain: false) + "dashboard" %>
 		<% else %>
-			<%= link_to '<i class="fa fa-building-o fa-fw"></i> Agregar mi Compañía'.html_safe, add_company_path %>
+			<%= link_to '<i class="fa fa-building-o fa-fw"></i> Agregar mi Compañía'.html_safe, add_company_url(subdomain: false) %>
 		<% end %>
 		</li>
-		<li><%= link_to '<i class="fa fa-calendar fa-fw"></i> Mi Agenda'.html_safe, my_agenda_path %></li>
-		<li><%= link_to '<i class="fa fa-user fa-fw"></i> Editar Perfil'.html_safe, edit_user_registration_path %></li>
-		<li><%= link_to '<i class="fa fa-question fa-fw"></i> Tutoriales'.html_safe, tutorials_path %></li>
-		<li><%= link_to '<i class="fa fa-power-off fa-fw"></i> Salir'.html_safe, destroy_user_session_path, method: :delete %></li>
+		<li><%= link_to '<i class="fa fa-calendar fa-fw"></i> Mi Agenda'.html_safe, my_agenda_url(subdomain: false) %></li>
+		<li><%= link_to '<i class="fa fa-user fa-fw"></i> Editar Perfil'.html_safe, edit_user_registration_url(subdomain: false) %></li>
+		<li><%= link_to '<i class="fa fa-question fa-fw"></i> Tutoriales'.html_safe, tutorials_url(subdomain: false) %></li>
+		<li><%= link_to '<i class="fa fa-power-off fa-fw"></i> Salir'.html_safe, destroy_user_session_url(subdomain: false), method: :delete %></li>
 	</ul>
 </li>
