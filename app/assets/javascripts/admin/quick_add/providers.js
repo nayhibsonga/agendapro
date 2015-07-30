@@ -13,7 +13,6 @@ function saveServiceProvider () {
     	$('#service_providers').append(
     		'<tr id="service_provider_'+ result.service_provider.id +'">' +
     			'<td>' + result.service_provider.public_name + '</td>' +
-    			'<td>' + result.service_provider.notification_email + '</td>' +
     			'<td>' + result.location + '</td>' +
     			'<td><button id="service_provider_delete_' + result.service_provider.id + '" class="btn btn-danger btn-xs service-provider-delete-btn"><i class="fa fa-trash-o"></i></button></td>' +
     		'</tr>'
