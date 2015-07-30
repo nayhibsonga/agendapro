@@ -19,8 +19,7 @@ module Api
 	    host = request.host_with_port
 	    @url = @company.web_address + '.' + host[host.index(request.domain)..host.length]
 
-	    puts params[:bookings].inspect
-	    booking_data = JSON.parse(params[:bookings].inspect)
+	    booking_data = JSON.parse(params[:bookings].to_json).first
 
 	    if @company.company_setting.client_exclusive
 	      if(params[:client_id])
@@ -113,6 +112,7 @@ module Api
 	    end
 
 	    booking_data.each do |buffer_params|
+	    	puts buffer_params
 	      block_it = false
 	      service_provider = ServiceProvider.find(buffer_params[:provider])
 	      service = Service.find(buffer_params[:service])
@@ -447,7 +447,7 @@ module Api
 	  private
 
 	  def parse_booking_params
-	  	raw_params = booking_parms
+	  	raw_params = booking_parms.to_json
 
 	  	nameArray = []
         nameArray = raw_params[:name].split(' ') unless raw_params[:name].blank?
@@ -484,9 +484,7 @@ module Api
 		params[:location] = ServiceProvider.find(params[:provider]).location_id
 		params[:provider_lock] = raw_params[:provider_lock]
 		params[:has_sessions] = Service.find(params[:service]).has_sessions
-		params[:bookings] = []
-		bookings_hash = { :start => params[:start], :end => params[:end], :provider => params[:provider], :provider_lock => params[:provider_lock], :service => params[:service], :price => raw_params[:price] }
-		params[:bookings].push(bookings_hash)
+		params[:bookings] = [{ :start => params[:start], :end => params[:end], :provider => params[:provider], :provider_lock => params[:provider_lock], :service => params[:service], :price => raw_params[:price] }]
 		params[:firstName] = first_name
 		params[:lastName] = last_name
 		params[:user] = { :full_name => raw_params[:name] }
