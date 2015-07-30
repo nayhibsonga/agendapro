@@ -1,9 +1,26 @@
 
 $(document).ready(function(){
 
-	$('.economic-sector-btn').on('click', function(e){
-		$('.economic-sector-btn.active').removeClass('active');
-		$(this).addClass('active');
+	if($('.economic-sector-btn.active').length)
+	{
+		var x = $('.economic-sector-btn.active').position().left;
+		x = x - $("#economic-sectors-wrapper").width()/2;
+		$('#economic-sectors-row').scrollLeft(x);
+	}
+
+	$("#inputLocalizationMarker").click(function(){
+		$("#inputLocalizationRow").toggle();
 	});
+
+	datepicker('#datepicker', {
+	    format: 'dddd d !de mmmm !de yyyy',
+	    min: true,
+	    klass: {
+	      input: 'datepicker'
+	    },
+	    onSet: function (context) {
+	      $('.btn-block').attr('disabled', false);
+	    }
+  	});
 
 });

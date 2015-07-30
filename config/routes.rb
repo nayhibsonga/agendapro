@@ -221,6 +221,7 @@ Agendapro::Application.routes.draw do
   get '/available_hours_week_html', :to => 'service_providers#available_hours_week_html'
   # Workflow - Mobile
   get '/select_hour', :to => 'companies#select_hour'
+  get '/select_promo_hour', :to => 'companies#select_promo_hour'
   post '/select_session_hour', :to => 'companies#select_session_hour'
   get '/user_data', :to => 'companies#user_data'
 

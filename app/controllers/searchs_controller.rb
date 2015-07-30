@@ -1348,6 +1348,8 @@ class SearchsController < ApplicationController
 			@results = Array.new
 			@empty_results = Array.new
 
+			@economic_sector_selected = 0
+
 			normalized_search = ""
 
 			if params[:inputSearch] && params[:inputSearch] != ""
@@ -1356,7 +1358,18 @@ class SearchsController < ApplicationController
 
 				normalized_search = search.mb_chars.normalize(:kd).gsub(/[^\x00-\x7F]/,'').downcase.to_s
 
+			elsif params[:economicSector] && params[:economicSector] != "" && params[:economicSector] != "0" && params[:economicSector] != 0
+
+				economic_sector = EconomicSector.find(params[:economicSector])
+				search = economic_sector.name.gsub(/\b([D|d]el?)+\b|\b([U|u]n(o|a)?s?)+\b|\b([E|e]l)+\b|\b([T|t]u)+\b|\b([L|l](o|a)s?)+\b|\b[AaYy]\b|["'.,;:-]|\b([E|e]n)+\b|\b([L|l]a)+\b|\b([C|c]on)+\b|\b([Q|q]ue)+\b|\b([S|s]us?)+\b|\b([E|e]s[o|a]?s?)+\b/i, '')
+
+				normalized_search = search.mb_chars.normalize(:kd).gsub(/[^\x00-\x7F]/,'').downcase.to_s
+
+				@economic_sector_selected = economic_sector.id
+
 			end
+
+			logger.debug "EcoSec: " + normalized_search
 
 			# First, search services with promotions based on time of book (morning, afternoon, night)
 
@@ -1372,6 +1385,9 @@ class SearchsController < ApplicationController
 			end
 
 			query = time_query
+
+			logger.debug "Query array"
+			logger.debug query.inspect
 
 			locs = Array.new
 			ordered_locs = Array.new
@@ -1428,6 +1444,9 @@ class SearchsController < ApplicationController
 				ordered_locs[0] = locs.sort_by{ |loc| loc[1]}
 			end
 
+			logger.debug "Ordered_locs"
+			logger.debug ordered_locs.inspect
+
 			@results = Array.new
 			@locations = Array.new
 			@last_minute_results = Array.new
@@ -1459,6 +1478,10 @@ class SearchsController < ApplicationController
 					end
 				end
 			end
+
+			logger.debug "Results: "
+			logger.debug @results.inspect
+			logger.debug @locations.inspect
 
 			# ordered_locs.each do |arr|
 			# 	arr.each do |s|
@@ -1523,60 +1546,65 @@ class SearchsController < ApplicationController
 
 			end
 
+
+			########################
+			## LAST MINUTE PROMOS ##
+			########################s
+
 			last_minute_locs = Array.new
 			last_minute_ordered_locs = Array.new
 
-			if normalized_search != ""
-				if last_minute_query.count > 10
+			# if normalized_search != ""
+			# 	if last_minute_query.count > 10
 
-					count = (last_minute_query.count.to_f / 10).ceil
-					last_minute_results = Array.new
+			# 		count = (last_minute_query.count.to_f / 10).ceil
+			# 		last_minute_results = Array.new
 
-					current_rank = last_minute_query[0].pg_search_rank
-					current_group = Array.new
-					last_minute_query.each do |res|
-						if res.pg_search_rank <= current_rank && (res.pg_search_rank - current_rank).abs < 0.015
-							current_group << res
-						else
-							last_minute_results << current_group
-							current_group = Array.new
-							current_group << res
-							current_rank = res.pg_search_rank
-						end
-					end
-					last_minute_results << current_group
+			# 		current_rank = last_minute_query[0].pg_search_rank
+			# 		current_group = Array.new
+			# 		last_minute_query.each do |res|
+			# 			if res.pg_search_rank <= current_rank && (res.pg_search_rank - current_rank).abs < 0.015
+			# 				current_group << res
+			# 			else
+			# 				last_minute_results << current_group
+			# 				current_group = Array.new
+			# 				current_group << res
+			# 				current_rank = res.pg_search_rank
+			# 			end
+			# 		end
+			# 		last_minute_results << current_group
 
-					j = 0
-					last_minute_results.each do |last_minute_result|
-						locs[j] = Array.new
-						last_minute_result.each do |location|
-							dist_score = Math.sqrt((location.latitude - lat.to_f)**2 + (location.longitude - long.to_f)**2)
-							local = [location, dist_score]
-							last_minute_locs[j].push(local)
-						end
-						j = j+1
-					end
+			# 		j = 0
+			# 		last_minute_results.each do |last_minute_result|
+			# 			locs[j] = Array.new
+			# 			last_minute_result.each do |location|
+			# 				dist_score = Math.sqrt((location.latitude - lat.to_f)**2 + (location.longitude - long.to_f)**2)
+			# 				local = [location, dist_score]
+			# 				last_minute_locs[j].push(local)
+			# 			end
+			# 			j = j+1
+			# 		end
 
-					for i in 0..j-1
-						last_minute_ordered_locs[i] = last_minute_locs[i].sort_by{ |loc| loc[1]}
-					end
+			# 		for i in 0..j-1
+			# 			last_minute_ordered_locs[i] = last_minute_locs[i].sort_by{ |loc| loc[1]}
+			# 		end
 
-				else
-					last_minute_query.each do |location|
-						dist_score = Math.sqrt((location.latitude - lat.to_f)**2 + (location.longitude - long.to_f)**2)
-						local = [location, dist_score]
-						last_minute_locs.push(local)
-					end
-					last_minute_ordered_locs[0] = last_minute_locs.sort_by{ |loc| loc[1]}
-				end
-			else
-				last_minute_query.each do |location|
-					dist_score = Math.sqrt((location.latitude - lat.to_f)**2 + (location.longitude - long.to_f)**2)
-					local = [location, dist_score]
-					last_minute_locs.push(local)
-				end
-				last_minute_ordered_locs[0] = last_minute_locs.sort_by{ |loc| loc[1]}
-			end
+			# 	else
+			# 		last_minute_query.each do |location|
+			# 			dist_score = Math.sqrt((location.latitude - lat.to_f)**2 + (location.longitude - long.to_f)**2)
+			# 			local = [location, dist_score]
+			# 			last_minute_locs.push(local)
+			# 		end
+			# 		last_minute_ordered_locs[0] = last_minute_locs.sort_by{ |loc| loc[1]}
+			# 	end
+			# else
+			# 	last_minute_query.each do |location|
+			# 		dist_score = Math.sqrt((location.latitude - lat.to_f)**2 + (location.longitude - long.to_f)**2)
+			# 		local = [location, dist_score]
+			# 		last_minute_locs.push(local)
+			# 	end
+			# 	last_minute_ordered_locs[0] = last_minute_locs.sort_by{ |loc| loc[1]}
+			# end
 
 			@last_minute_results = Array.new
 			@last_minute_locations = Array.new

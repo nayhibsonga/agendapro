@@ -717,7 +717,11 @@ class ServicesController < ApplicationController
       @relatedPromos = @relatedPromos[0, 6]
     end
 
-    render layout: "results"
+    if mobile_request?
+      render layout: "promo"
+    else
+      render layout: "results"
+    end
 
   end
 

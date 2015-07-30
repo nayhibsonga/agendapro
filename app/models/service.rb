@@ -18,6 +18,9 @@ class Service < ActiveRecord::Base
 	has_many :service_promos
 	has_many :last_minute_promos
 
+	has_many :economic_sectors, :through => :company
+  	has_many :economic_sectors_dictionaries, :through => :economic_sectors
+
 	mount_uploader :time_promo_photo, TimePromoPhotoUploader
 
 	scope :with_time_promotions, -> { where(has_time_discount: true, active: true, online_payable: true, online_booking: true, time_promo_active: true).where.not(:active_service_promo_id => nil) }
@@ -34,7 +37,9 @@ class Service < ActiveRecord::Base
 	pg_search_scope :search, 
 	:against => :name,
 	:associated_against => {
-		:service_category => :name
+		:service_category => :name,
+		:economic_sectors => :name,
+    	:economic_sectors_dictionaries => :name
 	},
 	:using => {
                 :trigram => {

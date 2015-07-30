@@ -5,11 +5,30 @@
 
 	<div id="economic-sectors-wrapper">
 		<div id="economic-sectors-row">
+			<% if @economic_sector_selected == 0 %>
+				<span class="economic-sector-span">
+					<a class="economic-sector-btn active" economic_sector_id="0" href="/get_promotions?economicSector=0">
+						Todos
+					</a>
+				</span>
+			<% else %>
+				<span class="economic-sector-span">
+					<a class="economic-sector-btn" economic_sector_id="0" href="/get_promotions?economicSector=0">
+						Todos
+					</a>
+				</span>
+			<% end %>
 			<% economic_sectors.each do |economic_sector| %>
 				<span class="economic-sector-span">
-					<button class="economic-sector-btn" economic_sector_id="<%= economic_sector.id %>">
-						<%= economic_sector.name %>
-					</button>
+					<% if @economic_sector_selected == economic_sector.id %>
+						<a class="economic-sector-btn active" economic_sector_id="<%= economic_sector.id %>" href="/get_promotions?economicSector=<%= economic_sector.id %>">
+							<%= economic_sector.name %>
+						</a>
+					<% else %>
+						<a class="economic-sector-btn" economic_sector_id="<%= economic_sector.id %>" href="/get_promotions?economicSector=<%= economic_sector.id %>">
+							<%= economic_sector.name %>
+						</a>
+					<% end %>
 				</span>
 			<% end %>
 		</div>
@@ -58,6 +77,54 @@
 		<% end %>
 	</div>
 
+</div>
+<div id="inputLocalizationDiv">
+	<div class="row">
+		<div class="col-xs-12">
+			<div id="inputLocalizationMarker">
+				<%= image_tag 'search/location_icon.png', :size => '55x55' %>
+			</div>
+		</div>
+	</div>
+	<div id="inputLocalizationRow" style="display: none;">
+		<div class="row">
+			<div class="col-xs-12">
+				<span style="color: #fff" class="inputLocalizationElement">
+					Escribe la ubicación donde buscar:
+				</span>
+			</div>
+		</div>
+		<div class="row">
+	        <div class="col-xs-12">
+	            <%= form_tag({controller: "searchs", action: "promotions"}, method: "GET", class: "form-horizontal", id: "promotions-form") do %>
+	                <input type="hidden" id="latitude" name="latitude" value="-33.413673">
+	                <input type="hidden" id="longitude" name="longitude" value="-70.573426">
+	                <% if @economic_sector_selected == 0 %>
+	                	<input type="hidden" id="economicSector" name="economicSector" value="0" />
+	                <% else %>
+	                	<input type="hidden" id="economicSector" name="economicSector" value="<%= @economic_sector_selected %>" />
+	                <% end %>
+	                <div class="form-group">
+	                    <div class="col-xs-12">
+	                        <div class="input-group inputLocalizationElement">
+	                            <%= text_field_tag :inputLocalization, params[:inputLocalization], class: "form-control", placeholder: "Escribe tu dirección...", required: true %>
+	                            <span class="input-group-btn">
+	                                <button id="geolocate_btn" class="btn btn-search geolocate_btn" type="button"><i class="fa fa-crosshairs"></i> Encuéntrame</button>
+	                            </span>
+	                        </div>
+	                    </div>
+	                </div>
+	            <% end %>
+	        </div>
+	    </div>
+	    <div class="row">
+		    <div class="col-xs-12">
+		    	<div id="inputLocalizationResults">
+
+		    	</div>
+		    </div>
+	    </div>
+	</div>
 </div>
 
 <% content_for :stylesheets do %>
