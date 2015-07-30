@@ -28,11 +28,7 @@
           <div class="form-group has-feedback">
             <label class="text-center label-green col-md-12">Agrega tu Logotipo (recomendado)</label>
             <div class="col-sm-12 text-center">
-                <% if @company.logo_url %>
-                  <%= image_tag @company.logo_url.to_s, :alt => @company.name, :size => "80x80", :class => "company-logo", id: "company_logo_img" %>
-                <% else %>
-                  <%= image_tag 'logo_vacio.png', :alt => 'AgendaPro', :size => "80x80", :class => "company-logo", id: "company_logo_img" %>
-                <% end %>
+                <%= image_tag @company.logo.thumb.url.to_s, :alt => @company.name, :size => "80x80", :class => "company-logo", id: "company_logo_img" %>
                 </div>
                 <div class="col-sm-12 text-center">
               <%= f.label :logo, '<i class="fa fa-cloud-upload"></i> Seleccionar Archivo'.html_safe, class: "quickadd-logo-label" %>

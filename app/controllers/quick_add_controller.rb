@@ -102,7 +102,7 @@ class QuickAddController < ApplicationController
   		end
   		respond_to do |format|
 			if @company.update(company_params)
-				format.json { render :layout => false, :json => @company.logo_url }
+				format.json { render :layout => false, :json => @company.logo.thumb.url }
 			else
 				format.json { render :layout => false, :json => { :errors => @company.errors.full_messages }, :status => 422 }
 			end

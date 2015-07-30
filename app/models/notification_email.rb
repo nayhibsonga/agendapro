@@ -110,7 +110,7 @@ class NotificationEmail < ActiveRecord::Base
         end
 
         booking_data = {
-          logo: notification.company.logo_url,
+          logo: notification.company.logo.email.url,
           name: notification.company.name,
           to: notification.email,
           company: notification.company.name,
@@ -144,7 +144,7 @@ class NotificationEmail < ActiveRecord::Base
           end
 
           booking_data = {
-            logo: notification.company.logo_url,
+            logo: notification.company.logo.email.url,
             name: location.name,
             to: notification.email,
             company: notification.company.name,
@@ -179,7 +179,7 @@ class NotificationEmail < ActiveRecord::Base
           end
 
           booking_data = {
-            logo: notification.company.logo_url,
+            logo: notification.company.logo.email.url,
             name: provider.public_name,
             to: notification.email,
             company: notification.company.name,
