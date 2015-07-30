@@ -1223,8 +1223,12 @@ class Booking < ActiveRecord::Base
       @data[:reply_to] = bookings[0].location.email
       @data[:url] = bookings[0].location.company.web_address
       @data[:signature] = bookings[0].location.company.company_setting.signature
-      @data[:logo] = Base64.encode64(File.read(bookings[0].location.company.logo.email.url))
       @data[:type] = 'image/png'
+      if bookings[0].location.company.logo.email.url.include? "logo_vacio"
+        @data[:logo] = Base64.encode64(File.read('app/assets/images/logos/logodoble2.png'))
+      else
+        @data[:logo] = Base64.encode64(File.read(bookings[0].location.company.logo.email.url))
+      end
 
     # USER
       @user = {}

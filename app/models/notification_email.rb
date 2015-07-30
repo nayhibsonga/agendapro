@@ -110,12 +110,15 @@ class NotificationEmail < ActiveRecord::Base
         end
 
         booking_data = {
-          logo: notification.company.logo.email.url,
+          logo: 'public' + notification.company.logo.email.url,
           name: notification.company.name,
           to: notification.email,
           company: notification.company.name,
           url: notification.company.web_address
         }
+        if booking_data[:logo].include? "logo_vacio"
+          booking_data[:logo] = 'app/assets/images/logos/logodoble2.png'
+        end
         if booking_summary.length > 0 or today_schedule.length > 0
           BookingMailer.booking_summary(booking_data, booking_summary, today_schedule)
         end
@@ -144,12 +147,15 @@ class NotificationEmail < ActiveRecord::Base
           end
 
           booking_data = {
-            logo: notification.company.logo.email.url,
+            logo: 'publi' + notification.company.logo.email.url,
             name: location.name,
             to: notification.email,
             company: notification.company.name,
             url: notification.company.web_address
           }
+          if booking_data[:logo].include? "logo_vacio"
+            booking_data[:logo] = 'app/assets/images/logos/logodoble2.png'
+          end
           if booking_summary.length > 0 or today_schedule.length > 0
             BookingMailer.booking_summary(booking_data, booking_summary, today_schedule)
           end
@@ -179,12 +185,15 @@ class NotificationEmail < ActiveRecord::Base
           end
 
           booking_data = {
-            logo: notification.company.logo.email.url,
+            logo: 'public' + notification.company.logo.email.url,
             name: provider.public_name,
             to: notification.email,
             company: notification.company.name,
             url: notification.company.web_address
           }
+          if booking_data[:logo].include? "logo_vacio"
+            booking_data[:logo] = 'app/assets/images/logos/logodoble2.png'
+          end
           if booking_summary.length > 0 or today_schedule.length > 0
             BookingMailer.booking_summary(booking_data, booking_summary, today_schedule)
           end
