@@ -1949,7 +1949,93 @@ class CompaniesController < ApplicationController
 					block_hour[:provider] = available_provider
 					block_hour[:booking_id] = @booking.id
 
-					@available_time << block_hour if status == 'available'
+
+					if status == 'available' && !@booking.session_booking.service_promo_id.nil? && @booking.session_booking.max_discount > 0
+
+						block_hour[:has_discount] = false
+						block_hour[:discount] = 0
+						block_hour[:has_time_discount] = false
+						block_hour[:time_discount] = 0
+						block_hour[:service_promo_id] = 0
+						block_hour[:status] = "available"
+
+						service_promo = ServicePromo.find(@booking.session_booking.service_promo_id)
+
+							#Check if it has discount, if date is within limits, and if it has stock left or no stock limit
+
+						if @date.to_datetime < service_promo.finish_date && @date.to_datetime < service_promo.book_limit_date
+
+							block_hour[:has_discount] = false
+							block_hour[:discount] = 0
+							block_hour[:has_time_discount] = true
+							block_hour[:service_promo_id] = service_promo.id
+
+							logger.debug "block spid: " + block_hour[:service_promo_id].to_s
+							logger.debug "service spid: " + service_promo.id.to_s
+
+							promo = Promo.where(:service_promo_id => service_promo.id, :location_id => @location.id, :day_id => @date.cwday).first
+
+							if !promo.nil?
+
+								if !(service_promo.morning_start.strftime("%H:%M") >= block_hour[:hour][:end] || service_promo.morning_end.strftime("%H:%M") <= block_hour[:hour][:start])
+
+		                          block_hour[:time_discount] = promo.morning_discount
+		                          block_hour[:status] = "discount"
+		                          logger.debug "Meets morning"
+
+		                        elsif !(service_promo.afternoon_start.strftime("%H:%M") >= block_hour[:hour][:end] || service_promo.afternoon_end.strftime("%H:%M") <= block_hour[:hour][:start])
+
+		                          block_hour[:time_discount] = promo.afternoon_discount
+		                          block_hour[:status] = "discount"
+		                          logger.debug "Meets afternoon"
+
+		                        elsif !(service_promo.night_start.strftime("%H:%M") >= block_hour[:hour][:end] || service_promo.night_end.strftime("%H:%M") <= block_hour[:hour][:start])
+
+		                          block_hour[:time_discount] = promo.night_discount
+		                          block_hour[:status] = "discount"
+		                          logger.debug "Meets night"
+
+		                        else
+
+		                          block_hour[:time_discount] = 0
+		                          block_hour[:has_time_discount] = false
+		                          block_hour[:service_promo_id] = 0
+
+		                        end
+		                    else
+		                    	block_hour[:time_discount] = 0
+		                        block_hour[:has_time_discount] = false
+		                        block_hour[:service_promo_id] = 0
+		                    end
+						else
+							block_hour[:has_time_discount] = false
+							block_hour[:time_discount] = 0
+						end
+
+
+
+					else
+						block_hour[:has_discount] = false
+						block_hour[:discount] = 0
+						block_hour[:has_time_discount] = false
+						block_hour[:time_discount] = 0
+					end
+
+					logger.debug block_hour.inspect
+
+
+					###################
+					## END DISCOUNTS ##
+					###################
+
+					if !@booking.session_booking.service_promo_id.nil? && @booking.session_booking.max_discount > 0
+						if block_hour[:time_discount] >= @booking.session_booking.max_discount
+							@available_time << block_hour if status == 'available'
+						end
+					else
+						@available_time << block_hour if status == 'available'
+					end
+
 					location_times_first_open_start = location_times_first_open_start + service_duration.minutes
 				end
 			end
@@ -2115,8 +2201,95 @@ class CompaniesController < ApplicationController
 					block_hour[:provider] = available_provider
 					block_hour[:booking_id] = @booking.id
 
-					@available_time << block_hour if status == 'available'
+					
+					if status == 'available' && !@booking.session_booking.service_promo_id.nil? && @booking.session_booking.max_discount > 0
+
+						block_hour[:has_discount] = false
+						block_hour[:discount] = 0
+						block_hour[:has_time_discount] = false
+						block_hour[:time_discount] = 0
+						block_hour[:service_promo_id] = 0
+						block_hour[:status] = "available"
+
+						service_promo = ServicePromo.find(@booking.session_booking.service_promo_id)
+
+							#Check if it has discount, if date is within limits, and if it has stock left or no stock limit
+
+						if @date.to_datetime < service_promo.finish_date && @date.to_datetime < service_promo.book_limit_date
+
+							block_hour[:has_discount] = false
+							block_hour[:discount] = 0
+							block_hour[:has_time_discount] = true
+							block_hour[:service_promo_id] = service_promo.id
+
+							logger.debug "block spid: " + block_hour[:service_promo_id].to_s
+							logger.debug "service spid: " + service_promo.id.to_s
+
+							promo = Promo.where(:service_promo_id => service_promo.id, :location_id => @location.id, :day_id => @date.cwday).first
+
+							if !promo.nil?
+
+								if !(service_promo.morning_start.strftime("%H:%M") >= block_hour[:hour][:end] || service_promo.morning_end.strftime("%H:%M") <= block_hour[:hour][:start])
+
+		                          block_hour[:time_discount] = promo.morning_discount
+		                          block_hour[:status] = "discount"
+		                          logger.debug "Meets morning"
+
+		                        elsif !(service_promo.afternoon_start.strftime("%H:%M") >= block_hour[:hour][:end] || service_promo.afternoon_end.strftime("%H:%M") <= block_hour[:hour][:start])
+
+		                          block_hour[:time_discount] = promo.afternoon_discount
+		                          block_hour[:status] = "discount"
+		                          logger.debug "Meets afternoon"
+
+		                        elsif !(service_promo.night_start.strftime("%H:%M") >= block_hour[:hour][:end] || service_promo.night_end.strftime("%H:%M") <= block_hour[:hour][:start])
+
+		                          block_hour[:time_discount] = promo.night_discount
+		                          block_hour[:status] = "discount"
+		                          logger.debug "Meets night"
+
+		                        else
+
+		                          block_hour[:time_discount] = 0
+		                          block_hour[:has_time_discount] = false
+		                          block_hour[:service_promo_id] = 0
+
+		                        end
+		                    else
+		                    	block_hour[:time_discount] = 0
+		                        block_hour[:has_time_discount] = false
+		                        block_hour[:service_promo_id] = 0
+		                    end
+						else
+							block_hour[:has_time_discount] = false
+							block_hour[:time_discount] = 0
+						end
+
+
+
+					else
+						block_hour[:has_discount] = false
+						block_hour[:discount] = 0
+						block_hour[:has_time_discount] = false
+						block_hour[:time_discount] = 0
+					end
+
+					logger.debug block_hour.inspect
+
+
+					###################
+					## END DISCOUNTS ##
+					###################
+
+					if !@booking.session_booking.service_promo_id.nil? && @booking.session_booking.max_discount > 0
+						if block_hour[:time_discount] >= @booking.session_booking.max_discount
+							@available_time << block_hour if status == 'available'
+						end
+					else
+						@available_time << block_hour if status == 'available'
+					end
+
 					provider_times_first_open_start = provider_times_first_open_end
+					
 				end
 			end
     	end

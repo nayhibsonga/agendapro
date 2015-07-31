@@ -2,7 +2,6 @@ $.validator.addMethod('mp_check', function(value, element, params) {
 	
 	var is_selected = $("input:radio[name='mp']").is(":checked");
 
-
 	if(is_selected)
 	{
 		$('#payment_title').closest('.form-group').addClass('has-success');
@@ -40,7 +39,7 @@ $(function() {
 				email: true
 			},
 			'mp': {
-				mp_check: true
+				required: true
 			},
 			identification_number: {
 				required: true,
@@ -65,46 +64,12 @@ $(function() {
 			$(element).parent().empty()
 		},
 		submitHandler: function(form) {
-			window.console.log("entro incial");
-			$('#submitBtn').attr("disabled", "disabled");
-			$('#submitBtn').html('Cargando...');
-			if($("#payment").val()=="1")
-			{
-				$('#select-medio').attr("disabled", "disabled");
-				$('#select-medio').html('Cargando...');
-				var is_selected = false;
-				$('.mp_radio').each(function(){
-				if($(this).prop('checked'))
-					{
-						is_selected = true;
-						console.log(is_selected);
-					}
-				});
-				if(is_selected)
-				{
-					$('.modal-pay').attr("disabled", "disabled");
-					$('.submitBtn').attr("disabled", "disabled");
-					$('.payBtn').attr("disabled", "disabled");
-					form.submit();
-				}
-				else
-				{
-					$("#medio-de-pago").modal('show');
-					$('#select-medio').attr("disabled", false);
-					$('#select-medio').html('Pagar');
-					$('#submitBtn').attr("disabled", false);
-					$('#submitBtn').html('Reservar');
-				}
-		  	}
-		  	else
-		  	{	
-		  		$('.modal-pay').attr("disabled", "disabled");
-				$('.submitBtn').attr("disabled", "disabled");
-				$('.payBtn').attr("disabled", "disabled");
-		  		form.submit();
-		  	}
+
+		  	form.submit();
+		  	
 		}
 	});
+
 	$('#identification_number').change(function() {
 		var rut_string = $('#identification_number').val()
 		if (rut_string != '') {	
@@ -128,4 +93,5 @@ $(function() {
 			$('#lastName').val('');
 		}
 	});
+
 });
