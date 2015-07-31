@@ -209,6 +209,7 @@ $('.session-btn-book').click(function(e){
       $("#selectedService").val(booking.service_id);
       $('input[name="service"]').val(booking.service_id);
       $("#openCalendarBtn").attr("booking_id", booking.id);
+      $("#session_booking_id").val(session_booking_id);
       $("#after_booking").val(booking.after_booking);
       $("#past_date_label").empty();
       $("#past_date_label").append("Lo sentimos, no se permite agendar después del " + booking.after_date + ".");
