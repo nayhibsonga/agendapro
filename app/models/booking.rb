@@ -482,8 +482,15 @@ class Booking < ActiveRecord::Base
         booking_confirmation_time = booking.location.company.company_setting.booking_confirmation_time
         if ((booking_confirmation_time.days - eval(ENV["TIME_ZONE_OFFSET"])).from_now..(booking_confirmation_time.days + 1.days - eval(ENV["TIME_ZONE_OFFSET"])).from_now).cover?(booking.start)
           if booking.send_mail
-            BookingMailer.book_reminder_mail(booking)
-            puts 'Mail enviado a mailer booking_id: ' + booking.id.to_s
+            if booking.is_session
+              if booking.is_session_booked and booking.user_session_confirmed
+                BookingMailer.book_reminder_mail(booking)
+                puts 'Mail enviado a mailer booking_id: ' + booking.id.to_s
+              end
+            else
+              BookingMailer.book_reminder_mail(booking)
+              puts 'Mail enviado a mailer booking_id: ' + booking.id.to_s
+            end
           end
         end
       end

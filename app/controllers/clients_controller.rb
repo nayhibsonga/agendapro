@@ -94,6 +94,7 @@ class ClientsController < ApplicationController
           @activeBookings = Array.new
           @lastBookings = Array.new
           @client_comment = ClientComment.new
+          @sessionBookings = []
           if mobile_request?
             @company = current_user.company
           end
@@ -117,6 +118,30 @@ class ClientsController < ApplicationController
           @next_bookings = Booking
           @client_comment = ClientComment.new
           @client_comments = ClientComment.where(client_id: @client).order(created_at: :desc)
+
+          @preSessionBookings = SessionBooking.where(:client_id => @client)
+
+          @sessionBookings = []
+
+          @preSessionBookings.each do |session_booking|
+
+            include_sb = false
+
+            if session_booking.sessions_taken < session_booking.sessions_amount
+              include_sb = true
+            else
+              session_booking.bookings.each do |booking|
+                if booking.start > DateTime.now
+                  include_sb = true
+                end
+              end
+            end
+
+            if include_sb
+              @sessionBookings << session_booking
+            end
+
+          end
           render action: 'edit' }
         format.json { render json: @client.errors, status: :unprocessable_entity }
       end

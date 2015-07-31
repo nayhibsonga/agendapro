@@ -90,7 +90,6 @@ class Location < ActiveRecord::Base
       }
   },
   :ignoring => :accents
-    #:ranked_by => ":tsearch + (0.5 * :trigram)"
 
   pg_search_scope :search_services, :associated_against => {
   	:services => :name,

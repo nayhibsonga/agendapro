@@ -825,6 +825,11 @@ class BookingMailer < ActionMailer::Base
 					:type => 'image/png',
 					:name => 'LOGO',
 					:content => Base64.encode64(File.read('app/assets/images/logos/logodoble2.png'))
+				},
+				{
+					:type => 'image/png',
+					:name => 'ARROW',
+					:content => Base64.encode64(File.read('app/assets/ico/email/flecha_verde.png'))
 				}
 			]
 		}
@@ -835,18 +840,11 @@ class BookingMailer < ActionMailer::Base
 
 		# => Logo empresa
 		if book_info.location.company.logo_url
-			message[:images] = [{
+			message[:images][0] = {
 							:type => MIME::Types.type_for(book_info.location.company.logo_url).first.content_type,
 							:name => 'LOGO',
 							:content => Base64.encode64(File.read('public' + book_info.location.company.logo_url.to_s))
-						}]
-		end
-		if File.exist?('app/assets/ico/email/flecha_verde.png')
-			message[:images] << {
-					:type => 'image/png',
-					:name => 'ARROW',
-					:content => Base64.encode64(File.read('app/assets/ico/email/flecha_verde.png'))
-				}
+						}
 		end
 
 		second_address = ''
