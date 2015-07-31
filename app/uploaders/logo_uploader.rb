@@ -35,14 +35,14 @@ class LogoUploader < CarrierWave::Uploader::Base
     process :resize_to_limit => [200, 80]
   end
 
-  version :page do
-    process :convert => 'png'
-    process :resize_and_pad => [200, 200]
-  end
-
   version :thumb do
     process :convert => 'png'
     process :resize_and_pad => [80, 80]
+  end
+
+  version :page do
+    process :convert => 'png'
+    process :resize_and_pad => [200, 200]
   end
 
   # def scale(width, height)
