@@ -5,4 +5,5 @@ json.array!(@results) do |location|
   json.region location.district.city.region.name
   json.country location.district.city.region.country.name
   json.url location_url(location, format: :json)
+  json.favorite @mobile_user.favorite_locations.include?(@location)
 end
