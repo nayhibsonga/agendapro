@@ -6,5 +6,5 @@ json.array!(@results) do |location|
   json.country location.district.city.region.country.name
   json.url location_url(location, format: :json)
   json.favorite @mobile_user.favorite_locations.include?(@location)
-  json.logo location.company.logo ? request.protocol + request.host_with_port + location.company.logo.url : nil
+  json.logo location.company.logo ? request.protocol + request.host_with_port + location.company.logo.url : ""
 end
