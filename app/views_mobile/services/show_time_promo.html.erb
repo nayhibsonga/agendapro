@@ -361,7 +361,7 @@
 			</div>
 			<div class="promo-footer">
 				<div class="col-xs-12">
-				<%= form_tag({controller: "companies", action: "select_promo_hour"}, method: "GET", class: "form-horizontal", id: "promotions-form") do %>
+				<%= form_tag({controller: "companies", action: "select_promo_hour"}, method: "GET", class: "form-horizontal", id: "select-promo-hour-form") do %>
 					<input type="hidden" id="service" name="service" value="<%= @service.id %>" />
 					<input type="hidden" id="location" name="location" value="<%= @location.id %>" />
 					<div class="form-group" style="padding-left: 5px !important; padding-right:5px !important;" <%= 'style="display:none;"'.html_safe if @service.company.company_setting.provider_preference == 2 %>>
@@ -385,7 +385,7 @@
 			            <span>Selecciona una fecha</span>
 			            <%= text_field_tag :datepicker, nil, :placeholder => 'Selecciona fecha...', :class => 'form-control' %>
 			        </div>
-					<button id="openHoursBtn">
+					<button id="openHoursBtn" disabled="true">
 						Comprar y reservar
 					</button>
 				<% end %>

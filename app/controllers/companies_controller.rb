@@ -969,7 +969,7 @@ class CompaniesController < ApplicationController
 
 
 
-					@available_time << block_hour if block_hour[:status] == 'discount'
+					@available_time << block_hour if status == 'available'
 					location_times_first_open_start = location_times_first_open_start + service_duration.minutes
 				end
 			end
@@ -1231,7 +1231,7 @@ class CompaniesController < ApplicationController
 
 					logger.debug block_hour.inspect
 
-					@available_time << block_hour if block_hour[:status] == 'discount'
+					@available_time << block_hour if status == 'available'
 					provider_times_first_open_start = provider_times_first_open_end
 				end
 			end
@@ -1513,7 +1513,7 @@ class CompaniesController < ApplicationController
 
 
 
-					@available_time << block_hour if status == 'available'
+					@available_time << block_hour if block_hour[:status] == 'discount'
 					location_times_first_open_start = location_times_first_open_start + service_duration.minutes
 				end
 			end
@@ -1775,7 +1775,7 @@ class CompaniesController < ApplicationController
 
 					logger.debug block_hour.inspect
 
-					@available_time << block_hour if status == 'available'
+					@available_time << block_hour if block_hour[:status] == 'discount'
 					provider_times_first_open_start = provider_times_first_open_end
 				end
 			end
