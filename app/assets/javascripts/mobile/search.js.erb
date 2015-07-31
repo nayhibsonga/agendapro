@@ -12,15 +12,15 @@ $(function() {
     var infowindow = new google.maps.InfoWindow();
     google.maps.event.addListener(autocomplete, 'place_changed', function() {
         if (autocomplete.getPlace().geometry) {
-            $('#latitude').val(autocomplete.getPlace().geometry.location.A);
-            $('#longitude').val(autocomplete.getPlace().geometry.location.F);
+            $('#latitude').val(autocomplete.getPlace().geometry.location.G);
+            $('#longitude').val(autocomplete.getPlace().geometry.location.K);
         }
     });
     google.maps.event.addListener(autocomplete2, 'place_changed', function() {
         if (autocomplete2.getPlace().geometry) {
             $('#inputLocalization').val(autocomplete2.getPlace().formatted_address);
-            $('#latitude').val(autocomplete2.getPlace().geometry.location.A);
-            $('#longitude').val(autocomplete2.getPlace().geometry.location.F);
+            $('#latitude').val(autocomplete2.getPlace().geometry.location.G);
+            $('#longitude').val(autocomplete2.getPlace().geometry.location.K);
         }
     });
     $("#inputLocalization").focusin(function () {

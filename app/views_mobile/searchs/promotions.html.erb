@@ -97,8 +97,16 @@
 		<div class="row">
 	        <div class="col-xs-12">
 	            <%= form_tag({controller: "searchs", action: "promotions"}, method: "GET", class: "form-horizontal", id: "promotions-form") do %>
-	                <input type="hidden" id="latitude" name="latitude" value="-33.413673">
-	                <input type="hidden" id="longitude" name="longitude" value="-70.573426">
+	            	<% if params[:latitude] && params[:latitude] != "" %>
+	            		<input type="hidden" id="latitude" name="latitude" value="<%= params[:latitude] %>">
+	            	<% else %>
+	                	<input type="hidden" id="latitude" name="latitude" value="-33.413673">
+	                <% end %>
+	                <% if params[:longitude] && params[:longitude] != "" %>
+	                	<input type="hidden" id="longitude" name="longitude" value="<%= params[:longitude] %>">
+	                <% else %>
+	                	<input type="hidden" id="longitude" name="longitude" value="-70.573426">
+	                <% end %>
 	                <% if @economic_sector_selected == 0 %>
 	                	<input type="hidden" id="economicSector" name="economicSector" value="0" />
 	                <% else %>

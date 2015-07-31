@@ -398,12 +398,21 @@
 
 </div>
 
+<!-- Localization inputs -->
+<% if params[:latitude] && params[:latitude] != "" && params[:longitude] && params[:longitude] != "" && params[:inputLocalization] && params[:inputLocalization] != "" %>
+	
+	<input type="hidden" id="latitude" value="<%= params[:latitude] %>" />
+	<input type="hidden" id="longitude" value="<%= params[:longitude] %>" />
+	<input type="hidden" id="inputLocalization" value="<%= params[:inputLocalization] %>" />
+
+<% end %>
+
 <% content_for :stylesheets do %>
 	<%= stylesheet_link_tag "mobile/mobile-promotions" %>
 	<%= stylesheet_link_tag "datepicker" %>
 <% end %>
 
 <% content_for :scripts do %>
-	<%= javascript_include_tag "mobile/promotions" %>
+	<%= javascript_include_tag "mobile/show_time_promo" %>
 	<%= javascript_include_tag "datepicker" %>
 <% end %>

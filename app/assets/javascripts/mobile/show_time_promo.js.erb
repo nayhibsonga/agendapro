@@ -8,18 +8,19 @@ $(document).ready(function(){
 		$('#economic-sectors-row').scrollLeft(x);
 	}
 
-	$("#inputLocalizationMarker").click(function(){
-		$("#inputLocalizationRow").toggle();
-	});
+	datepicker('#datepicker', {
+	    format: 'dddd d !de mmmm !de yyyy',
+	    min: true,
+	    klass: {
+	      input: 'datepicker'
+	    },
+	    onSet: function (context) {
+	      $('#openHoursBtn').attr('disabled', false);
+	    }
+  	});
 
-	$('.economic-sector-btn').on('click', function(e){
-		e.preventDefault();
-		new_href = $(this).attr('href') + '&latitude=' + $("#latitude").val() + '&longitude=' + $('#longitude').val() + '&inputLocalization=' + $('#inputLocalization').val();
-		window.location.href = new_href;
-	});
-
-	$('.show-promo-link').on('click', function(e){
-		if($("#latitude").length && $("#longitude").length && $("#inputLocalization").length)
+  	$('.economic-sector-btn').on('click', function(e){
+  		if($("#latitude").length && $("#longitude").length && $("#inputLocalization").length)
 		{
 			if($("#latitude").val() != "" && $("#longitude").val() != "" && $("#inputLocalization").val != "")
 			{
