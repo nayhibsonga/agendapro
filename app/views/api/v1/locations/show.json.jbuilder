@@ -2,3 +2,4 @@ json.extract! @location, :id, :name, :address, :second_address, :phone, :longitu
 json.description @location.company.description
 json.categorized_services @location.categorized_services
 json.favorite @mobile_user.favorite_locations.include?(@location)
+json.logo request.protocol + request.host_with_port + @location.company.logo.url
