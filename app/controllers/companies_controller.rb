@@ -620,13 +620,10 @@ class CompaniesController < ApplicationController
 				@selectedLocation = Location.find(@selectedLocal)
 			else
 				flash[:alert] = "Lo sentimos, el local ingresado no existe."
-
-				#host = request.host_with_port
-				#domain = host[host.index(request.domain)..host.length]
-
-				#redirect_to root_url(:host => domain)
-				#return
 			end
+		else
+			@selectedLocation = @locations.first
+			@selectedLocal = @selectedLocation.id
 		end
 
 		if mobile_request?
