@@ -31,12 +31,6 @@ function loadServices (localId) {
         );
       };
     });
-    $('#service').prepend(
-      '<option value="0">Selecciona un servicio</option>'
-    );
-    $('#service').one('change', function (event) {
-      $('#service option:first').remove();
-    });
     $('#service').change(function (event) {
       var serviceId = $(event.target).val();
       loadProviders(localId, serviceId);
@@ -45,50 +39,27 @@ function loadServices (localId) {
 }
 
 function loadProviders (localId, serviceId) {
-  $.getJSON('/providers_services', {id: serviceId, local: localId}, function (providers) {
-    $('#provider').attr('disabled', true);
-    $('#provider').empty();
-    if ($('#providerPreference').data('provider-preference') != 2) {
-      $.each(providers, function (key, provider) {
-        $('#provider').append(
-          '<option value="' + provider.id + '">' + provider.public_name + '</option>'
+  if (serviceId) {
+    $.getJSON('/providers_services', {id: serviceId, local: localId}, function (providers) {
+      $('#provider').attr('disabled', true);
+      $('#provider').empty();
+      if ($('#providerPreference').data('provider-preference') != 2) {
+        $.each(providers, function (key, provider) {
+          $('#provider').append(
+            '<option value="' + provider.id + '">' + provider.public_name + '</option>'
+          );
+        });
+      }
+
+      if ($('#providerPreference').data('provider-preference') != 1) {
+        $('#provider').prepend(
+          '<option value="0">Sin Preferencia</option>'
         );
-      });
-    }
-
-    if ($('#providerPreference').data('provider-preference') != 1) {
-      $('#provider').prepend(
-        '<option value="0">Sin Preferencia</option>'
-      );
-
-      $('#datepicker').attr('disabled', false);
-      datepicker('#datepicker', {
-        format: 'dddd d !de mmmm !de yyyy',
-        min: true,
-        klass: {
-          input: 'datepicker'
-        },
-        onSet: function (context) {
-          $('.btn-block').attr('disabled', false);
-        }
-      });
-    }
-    else {
-      $('#provider').prepend(
-        '<option value="0">Selecciona un prestador</option>'
-      );
-      $('#provider').one('change', function (event) {
-        $('#provider option:first').remove();
-      });
-      $('#provider').change(function (event) {
-        var minDate = new Date($('#timeInterval').data('min'));
-        var maxDate = new Date($('#timeInterval').data('max'));
 
         $('#datepicker').attr('disabled', false);
         datepicker('#datepicker', {
           format: 'dddd d !de mmmm !de yyyy',
-          min: minDate,
-          max: maxDate,
+          min: true,
           klass: {
             input: 'datepicker'
           },
@@ -96,10 +67,38 @@ function loadProviders (localId, serviceId) {
             $('.btn-block').attr('disabled', false);
           }
         });
-      });
-    }
-    $('#provider').attr('disabled', false);
-  });
+      }
+      else {
+        $('#provider').prepend(
+          '<option value="0">Selecciona un prestador</option>'
+        );
+        $('#provider').one('change', function (event) {
+          $('#provider option:first').remove();
+        });
+        $('#provider').change(function (event) {
+          var minDate = new Date($('#timeInterval').data('min'));
+          var maxDate = new Date($('#timeInterval').data('max'));
+
+          $('#datepicker').attr('disabled', false);
+          datepicker('#datepicker', {
+            format: 'dddd d !de mmmm !de yyyy',
+            min: minDate,
+            max: maxDate,
+            klass: {
+              input: 'datepicker'
+            },
+            onSet: function (context) {
+              $('.btn-block').attr('disabled', false);
+            }
+          });
+        });
+      }
+      $('#provider').attr('disabled', false);
+    });
+  } else{
+    $('#provider').attr('disabled', true);
+    $('#datepicker').attr('disabled', true);
+  };
 }
 
 function addBooking (date, start, end, provider) {
