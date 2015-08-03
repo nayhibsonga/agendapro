@@ -1480,9 +1480,9 @@ class SearchsController < ApplicationController
 				end
 			end
 
-			logger.debug "Results: "
-			logger.debug @results.inspect
-			logger.debug @locations.inspect
+			logger.info "Results: "
+			logger.info @results.inspect
+			logger.info @locations.inspect
 
 			# ordered_locs.each do |arr|
 			# 	arr.each do |s|
