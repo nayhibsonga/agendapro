@@ -64,6 +64,9 @@ class PayedBookingsController < ApplicationController
   		 					payment_account.account_type = company.company_setting.account_type
   		 				end
   		 				payment_account.amount = payment_account.amount + payed_booking.punto_pagos_confirmation.amount
+  		 				if !payed_booking.bookings.first.service_promo_id.nil?
+  		 					commission = company.company_setting.promo_commission
+  		 				end
   		 				payment_account.company_amount = payment_account.amount*(100-commission)/100		 				
   		 				payed_booking.payment_account = payment_account
   		 				payed_booking.save
