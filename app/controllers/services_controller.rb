@@ -654,7 +654,7 @@ class ServicesController < ApplicationController
     end
 
     #Check promo hasn't expired
-    if DateTime.now > @service.active_service_promo.finish_date
+    if DateTime.now > @service.active_service_promo.finish_date || DateTime.now > @service.active_service_promo.book_limit_date
       flash[:alert] = "La promoción buscada ya expiró."
       redirect_to root_path
       return

@@ -1468,7 +1468,7 @@ class SearchsController < ApplicationController
 						time_promo_services.each do |service|
 							#Check it has stock
 							if service.active_service_promo.max_bookings > 0 || !service.active_service_promo.limit_booking
-								if DateTime.now < service.active_service_promo.finish_date
+								if DateTime.now < service.active_service_promo.finish_date && DateTime.now < service.active_service_promo.book_limit_date
 									promo_detail = [service, s[0]]
 									if !@results.include?(promo_detail)
 										@results << promo_detail
