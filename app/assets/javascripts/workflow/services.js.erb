@@ -641,7 +641,8 @@ function loadStep3 () {
 	}
 
 	$("#booking-error").empty();
-
+	$('#promo-bookings-policy').empty();
+	$('#promo-policy').hide();
 
 		if(sessions_buffer.length == 0)
 		{
@@ -673,9 +674,14 @@ function loadStep3 () {
 	              {
 	                min_discount = sessions_buffer[i].discount;
 	              }
-	              if(sessions_buffer[i].is_time_discount || sessions_buffer[i].must_be_paid_online)
+	              if((sessions_buffer[i].is_time_discount && sessions_buffer[i].discount > 0) || (sessions_buffer[i].must_be_paid_online && sessions_buffer[i].discount > 0 ))
 				  {
 				  	must_pay = true;
+				  }
+				  if(sessions_buffer[i].is_time_discount && sessions_buffer[i].discount > 0)
+				  {
+					$('#promo-bookings-policy').append(formattedTime(sessions_buffer[i].start) + ' con ' + sessions_buffer[i].provider_name + '.<br />');
+					$('#promo-policy').show();
 				  }
 	            }
 
@@ -795,13 +801,11 @@ function loadStep3 () {
 					for(k = 0; k < booking_buffer.length; k++)
 					{
 
-						console.log("k: " + k);
 
 						var booking = booking_buffer[k];
 						var price = booking.price;
 						var discount = booking.discount;
-
-						
+					
 
 						services_str = services_str + booking.service_name + ' con ' + booking.provider_name + '.<br />';
 						
@@ -809,7 +813,7 @@ function loadStep3 () {
 						{
 							
 
-							may_pay = true;
+							//may_pay = true;
 							if(discount > max_discount)
 							{
 								max_discount = discount;
@@ -818,10 +822,23 @@ function loadStep3 () {
 							{
 								min_price = min_price + Math.round(price * (100 - discount) / 100);
 								prices_str = prices_str + '<strike>' + simple_currency(price) + '</strike> - ' + simple_currency(Math.round(price * (100 - discount) / 100)) + ' (' + discount + '% de descuento)<br />';
-								must_pay = true;							
+								if(discount > 0)
+								{
+									must_pay = true;
+								}
+								else
+								{
+									may_pay = true;
+								}
+								if(booking.is_time_discount)
+								{
+									$('#promo-bookings-policy').append(booking.service_name + ' con ' + booking.provider_name + '.<br />');
+									$('#promo-policy').show();
+								}
 							}
 							else
 							{
+								may_pay = true;
 								prices_str = prices_str + '<strike>' + simple_currency(price) + '</strike> - ' + simple_currency(Math.round( (price * (100 - discount))/100 )) + ' (' + discount + '% de descuento)<br />';
 								
 							}
@@ -936,7 +953,7 @@ function loadStep3 () {
 							'Precio final: ' + currency(just_book_price)
 						);
 					}
-					else if(!may_pay)
+					else if(!may_pay && !must_pay)
 					{
 
 						console.log("Can't pay.");
@@ -971,14 +988,14 @@ function loadStep3 () {
 
 						$("#summary").append(
 							'<tr>' +
-								'<td class="dark-gray">Costo total</td>' +
+								'<td class="dark-gray">Costo total&nbsp;' + '<span style="cursor: pointer; float: right;" data-toggle="tooltip" data-placement="right" title="El costo total considera el precio a prepagar en línea, más el costo que deberás pagar en el local por aquellos servicios que no pueden ser prepagados."><i class="fa fa-question-circle fa-lg"></i></span></td>' +
 								'<td class="light-gray">' + simple_currency(not_payable_price + total_price) + '</td>' +
 							'</tr>'
 						);
 
 						$("#summary").append(
 							'<tr>' +
-								'<td class="dark-gray">Pago en línea</td>' +
+								'<td class="dark-gray">Pago en línea&nbsp;' + '<span style="cursor: pointer; float: right;" data-toggle="tooltip" data-placement="right" title="Existen servicios en promoción o que se deben prepagar en línea. Debes cancelar esta suma para poder reservarlos."><i class="fa fa-question-circle fa-lg"></i></span></td>' +
 								'<td class="light-gray">' + simple_currency(total_price) + '</td>' +
 							'</tr>'
 						);
@@ -988,7 +1005,7 @@ function loadStep3 () {
 						{
 							$("#summary").append(
 								'<tr>' +
-									'<td class="dark-gray">Pago pendiente en local</td>' +
+									'<td class="dark-gray">Pago pendiente en local&nbsp;' + '<span style="cursor: pointer; float: right;" data-toggle="tooltip" data-placement="right" title="Existen servicios que no pueden ser pagados en línea. Deberás cancelar su costo el día de la reserva en el local."><i class="fa fa-question-circle fa-lg"></i></span></td>' +
 									'<td class="light-gray">' + simple_currency(not_payable_price) + '</td>' +
 								'</tr>'
 							);
@@ -1020,9 +1037,14 @@ function loadStep3 () {
 				{
 				  	min_discount = sessions_buffer[i].discount;
 				}
-				if(sessions_buffer[i].is_time_discount || sessions_buffer[i].must_be_paid_online)
+				if((sessions_buffer[i].is_time_discount || sessions_buffer[i].must_be_paid_online) && actual_booking.discount > 0)
 				{
 				  	must_pay = true;
+				}
+				if(sessions_buffer[i].is_time_discount && sessions_buffer[i].discount > 0)
+				{
+					$('#promo-bookings-policy').append(formattedTime(sessions_buffer[i].start) + ' con ' + sessions_buffer[i].provider_name + '.<br />');
+					$('#promo-policy').show();
 				}
 			}
 

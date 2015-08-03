@@ -404,7 +404,15 @@
 											<div class="checkbox">
 												<label>
 													
-						                          	<input type="checkbox" id="limit_booking" name="limit_booking" checked />	
+													<% if @service.active_service_promo.nil? %>
+						                          		<input type="checkbox" id="limit_booking" name="limit_booking" checked />
+						                          	<% else %>
+						                          		<% if @service.active_service_promo.limit_booking %>
+						                          			<input type="checkbox" id="limit_booking" name="limit_booking" checked />
+						                          		<% else %>
+						                          			<input type="checkbox" id="limit_booking" name="limit_booking" />
+						                          		<% end %>
+						                          	<% end %>
 						                          		Stock limitado.
 						                          		<span style="cursor: pointer;" data-toggle="tooltip" data-placement="bottom" title="Marca la opción para definir un stock máximo, o desmárcala para definir un stock ilimitado."><i class="fa fa-question-circle fa-lg"></i></span>
 						                        </label>
@@ -414,7 +422,7 @@
 												<div>
 													
 
-													<div class="input-group" style="width: 130px !important;">
+													<div class="input-group" style="width: 160px !important;">
 									                    <input type="number" id="max_bookings" name="max_bookings" value="" class="form-control" />
 									                    <span class="input-group-addon">Reservas</span>
 		                  							</div>
@@ -424,11 +432,15 @@
 												</div>
 											<% else %>
 												<div>
-													<div class="input-group" style="width: 130px !important;">
+													<div class="input-group" style="width: 160px !important;">
 									                    <input type="number" id="max_bookings" name="max_bookings" value="<%= @service.active_promo_left_bookings %>" class="form-control" />
 									                    <span class="input-group-addon">Reservas</span>
 			              							</div>
-													Quedan <%= @service.active_promo_left_bookings.to_s %> reservas disponibles.
+			              							<% if @service.active_service_promo.limit_booking %>
+														Quedan <%= @service.active_promo_left_bookings.to_s %> reservas disponibles.
+													<% else %>
+														No hay límite de reservas. Edita la opción "stock limitado" e ingresa el stock de reservas para modificar esta opción.
+													<% end %>
 												</div>
 											<% end %>
 											<div style="clear: both;">
@@ -951,7 +963,7 @@
 			return false;
   		}
 
-  		if(has_time_discount && (max_bookings == "" || parseInt(max_bookings) < 0))
+  		if(has_time_discount && (max_bookings == "" || parseInt(max_bookings) < 0) && $("#limit_booking").prop('checked'))
   		{
   			myAlert.showAlert(
 				'<h3>Ingresa el stock</h3>' +

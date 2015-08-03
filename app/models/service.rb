@@ -487,7 +487,7 @@ class Service < ActiveRecord::Base
 			elsif self.has_time_discount
 				self.has_discount = false
 			end
-			self.must_be_paid_online = true
+			#self.must_be_paid_online = true
 		end
 		self.save
 	end
