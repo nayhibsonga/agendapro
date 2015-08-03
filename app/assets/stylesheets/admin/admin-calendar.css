@@ -205,12 +205,16 @@ table.fc-agenda-days {
   right: 15px;
   z-index: 10;
 }
-.calendar-btn div.collapse,
-.calendar-btn div.collapse.in,
-.calendar-btn div.collapsing {
-  position: fixed;
-  right: 15px;
+.calendar-btn > button {
+  float: right;
+}
+.calendar-btn > div.collapse.in,
+.calendar-btn > div.collapsing {
+  position: absolute;
+  top: 35px;
   left: auto;
+  right: 0;
+  width: 155px;
 }
 .calendar-btn ul {
   background-color: #ffffff;

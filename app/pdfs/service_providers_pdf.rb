@@ -1,7 +1,16 @@
 class ServiceProvidersPdf < Prawn::Document
 	def initialize(service_provider, provider_date, location_id, current_ability)
+		font_families.update(
+			"Roboto" => {
+				normal: { file: "#{Rails.root.join('public/fonts/RobotoCondensed-Light.ttf')}", font: 'Roboto Condensed Light'},
+				bold: { file: "#{Rails.root.join('public/fonts/RobotoCondensed-Bold.ttf')}", font: 'Roboto Condensed Bold'}
+			}
+		)
+
 		if service_provider != 0
 			super()
+			font 'Roboto'
+
 			@service_provider = ServiceProvider.find(service_provider)
 			@provider_date = provider_date
 			header
@@ -9,6 +18,8 @@ class ServiceProvidersPdf < Prawn::Document
 			table_content
 		else
 			super()
+			font 'Roboto'
+
 			@provider_date = provider_date
 			@providers = ServiceProvider.where(location_id: location_id, active: true).accessible_by(current_ability).order(:order)
 			@providers.each do |provider|
@@ -22,39 +33,38 @@ class ServiceProvidersPdf < Prawn::Document
 			end
 		end
 	end
-	
+
 	def header
 		y_position = cursor
 		bounding_box([0, y_position], width: 260, height: 50) do
 			if @service_provider.company.logo.to_s != ""
 				image "#{Rails.root}/public"+@service_provider.company.logo.to_s, width: 50, height: 50
 			else
-				image "#{Rails.root}/app/assets/images/logos/logo_mail.png", width: 100, height: 37
+				image "#{Rails.root}/app/assets/images/logos/logodoble2.png", width: 100, height: 37
 			end
 		end
 		bounding_box([480, y_position], width: 260, height: 50) do
-			text @provider_date.strftime('%d/%m/%Y')
+			text @provider_date.strftime('%d/%m/%Y'), color: '4a4644', font: "Roboto"
 		end
 	end
 
 	def text_content
-
-		text @service_provider.public_name, size: 11, style: :bold
+		text @service_provider.public_name, size: 11, color: '4a4644', style: :bold
 	end
 
 	def table_content
 		move_down 10
 
-		table(provider_hours, header: true, position: :center, row_colors: ['E6E3CF', 'FFFFFF'], width: 540, :column_widths => [60,190,190,100]) do
+		table(provider_hours, header: true, position: :center, row_colors: ['fbe09c', 'FFFFFF'], width: 540, :column_widths => [60,190,190,100]) do
 			cells.borders = []
 
-			row(0).borders = [:bottom]
+			columns(0..2).text_color = '4a4644'
+			columns(0..2).borders = [:right]
+			columns(0..2).border_color = '4a4644'
+
 			row(0).font_style = :bold
 			row(0).text_color = 'FFFFFF'
-			row(0).background_color = '1E8584'
-
-			columns(0..2).borders = [:right]
-			row(0).columns(0..2).borders = [:bottom, :right]
+			row(0).background_color = '22c488'
 
 			cells.row(0).align = :center
 			cells.column(0).align = :center
@@ -127,12 +137,12 @@ class ServiceProvidersPdf < Prawn::Document
 
 					if last_row >= 0
 						while table_rows[last_row][1] == 'Continuación...'  do
-							# Subir un nivel para ver si es el mismo servicio o no	
+							# Subir un nivel para ver si es el mismo servicio o no
 						   	last_row -=1
 						end
 
-						if (service_name != '') && (service_name == table_rows[last_row][1]) && (client_name == (table_rows[last_row][2])) 
-							
+						if (service_name != '') && (service_name == table_rows[last_row][1]) && (client_name == (table_rows[last_row][2]))
+
 							service_name = 'Continuación...'
 							client_name = '...'
 							client_phone = '...'

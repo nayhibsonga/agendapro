@@ -20,7 +20,7 @@ class SearchsController < ApplicationController
 	end
 
 	def search
-		if params[:inputSearch] && params[:latitude] && params[:longitude] && params[:inputLocalization]
+		if params[:inputSearch].present? && params[:latitude].present? && params[:longitude].present? && params[:inputLocalization].present?
 			@lat = params[:latitude]
 			@lng = params[:longitude]
 
