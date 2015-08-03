@@ -1458,31 +1458,38 @@ class SearchsController < ApplicationController
 					time_promo_services = []
 
 					ServiceProvider.where(:active => true, :location_id => s[0]).each do |service_provider|
+						logger.debug "Provider: " + service_provider.public_name
 						if normalized_search != ""
 							time_promo_services = service_provider.services.with_time_promotions.search(normalized_search)
 						else
 							time_promo_services = service_provider.services.with_time_promotions
 						end
 
-					end
-
-					time_promo_services.each do |service|
-						#Check it has stock
-						if service.active_service_promo.max_bookings > 0 || !service.active_service_promo.limit_booking
-							if DateTime.now < service.active_service_promo.finish_date
-								promo_detail = [service, s[0]]
-								@results << promo_detail
-								#if !@locations.include?(s[0])
-								@locations << s[0]
+						time_promo_services.each do |service|
+							#Check it has stock
+							if service.active_service_promo.max_bookings > 0 || !service.active_service_promo.limit_booking
+								if DateTime.now < service.active_service_promo.finish_date
+									promo_detail = [service, s[0]]
+									if !@results.include?(promo_detail)
+										@results << promo_detail
+										#if !@locations.include?(s[0])
+										@locations << s[0]
+									end
+								end
 							end
 						end
+
+						logger.debug time_promo_services.inspect
+
 					end
+
+					
 				end
 			end
 
-			logger.info "Results: "
-			logger.info @results.inspect
-			logger.info @locations.inspect
+			logger.debug "Results: "
+			logger.debug @results.inspect
+			logger.debug @locations.inspect
 
 			# ordered_locs.each do |arr|
 			# 	arr.each do |s|
@@ -1621,17 +1628,19 @@ class SearchsController < ApplicationController
 						else
 							last_minute_services = service_provider.services.with_last_minute_promotions
 						end
+
+						last_minute_services.each do |service|
+							if !@last_minute_results.include?(service)
+								promo_detail = [service, s[0]]
+								@last_minute_results << promo_detail
+								#if !@locations.include?(s[0])
+								@last_minute_locations << s[0]
+								#end
+							end
+						end
+
 					end
 
-					last_minute_services.each do |service|
-						#if !@results.include?(service)
-							promo_detail = [service, s[0]]
-							@last_minute_results << promo_detail
-							#if !@locations.include?(s[0])
-							@last_minute_locations << s[0]
-							#end
-						#end
-					end
 				end
 			end
 
