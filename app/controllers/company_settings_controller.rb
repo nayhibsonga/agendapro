@@ -41,6 +41,11 @@ class CompanySettingsController < ApplicationController
     else
       @online_cancelation_policy = @company_setting.build_online_cancelation_policy
     end
+    if @company_setting.promo_time.nil?
+      promo_time = PromoTime.new
+      promo_time.company_setting_id = @company_setting.id
+      promo_time.save
+    end
     @web_address = Company.find(current_user.company_id).web_address
 
     @payment_methods = PaymentMethod.all
@@ -57,9 +62,13 @@ class CompanySettingsController < ApplicationController
     @company_setting = CompanySetting.new(company_setting_params)
     @company_setting.company_id = current_user.company_id
 
-
     respond_to do |format|
       if @company_setting.save
+        if @company_setting.promo_time.nil?
+          promo_time = PromoTime.new
+          promo_time.company_setting_id = @company_setting.id
+          promo_time.save
+        end
         format.html { redirect_to @company_setting, notice: 'Company setting was successfully created.' }
         format.json { render action: 'show', status: :created, location: @company_setting }
       else

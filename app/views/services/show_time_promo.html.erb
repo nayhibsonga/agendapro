@@ -28,16 +28,18 @@
           <div class="col-sm-8" style="text-align: right;">
             <table style="width: 100%;">
               <tr>
-                <td style="vertical-align: bottom; text-align: right; width: 20%;">
-                  <%= image_tag("promociones/flecha.png", :class => "flecha-icon", :size => "60x120") %>
+                <td style="vertical-align: bottom; text-align: right; width: 18%; padding-left: 10px;">
+                  <%= image_tag("promociones/flecha.png", :class => "flecha-icon", :size => "58x116") %>
                 </td>
-                <td style="text-align: right; width: 80%;">
-                  <span style="color: #b5b5b5; font-size: 40px;"><strike><%= number_to_currency(@service.price, unit: "$", delimiter: ".") %></strike></span><br />
-                  <%= image_tag "promociones/price_doble.png", :alt => "Promoción", :size => "46x60", :class => "price-icon" %>&nbsp;<span style="color: #22c488; font-size: 65px;"><%= number_to_currency(@service.price*(100-@service.get_max_time_discount)/100, unit: "", delimiter: ".") %></span><br />
-                  <span style="color: #22c488; font-size: 22px;">Desde <%= @service.get_max_time_discount %>% de descuento</span><br />
-                  <span>
-                    <button class="btnBook" id="btnPayBook" data-toggle="modal" data-target="#selectProviderModal">Comprar y reservar</button>
-                  </span>
+                <td style="width: 70%; padding-right: 10px;">
+                  <div style="text-align: right; float: left;">
+                    <span style="color: #b5b5b5; font-size: 36px; text-decoration: line-through;"><%= number_to_currency(@service.price, unit: "$", delimiter: ".") %></span><br />
+                    <%= image_tag "promociones/price_doble.png", :alt => "Promoción", :size => "42x52", :class => "price-icon" %>&nbsp;<span style="color: #22c488; font-size: 58px;"><%= number_to_currency(@service.price*(100-@service.get_max_time_discount)/100, unit: "", delimiter: ".") %></span><br />
+                    <span style="color: #22c488; font-size: 20px;">Desde <%= @service.get_max_time_discount %>% de descuento</span><br />
+                    <span>
+                      <button class="btnBook" id="btnPayBook" data-toggle="modal" data-target="#selectProviderModal">Comprar y reservar</button>
+                    </span>
+                  </div>
                 </td>
               </tr>
             </table>

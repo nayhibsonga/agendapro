@@ -61,6 +61,8 @@
 .flecha-icon{
 	vertical-align: bottom;
 	margin-bottom: 7px;
+  opacity: 0.8;
+  filter: alpha(opacity=80); /* For IE8 and earlier */
 }
 
 .social-links{
@@ -90,8 +92,8 @@
     vertical-align: center;
     position:absolute;
     top:0px;
-    left:0px;
-    width:390px;
+    left:14px;
+    width: 93%;
     height:100%;
     display: none;
     z-index: 100;
@@ -897,4 +899,13 @@ section.copyright a:hover {
     display: block;
     overflow-x: auto;
     padding-bottom: 15px;
+}
+
+#selected-hour-heading{
+  padding-left: 10px;
+  padding-top: 10px;
+}
+
+#selected-hour-body{
+  padding: 10px;
 }

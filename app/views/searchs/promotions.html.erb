@@ -22,7 +22,7 @@
 				<% i = 1 %>
 				<div class="row">
 				<% @results.each do |promo_detail| %>
-					<div class="col-md-4">
+					<div class="col-md-4 promo-box-col">
 						<%= render :partial => 'service_panel', :locals => { :service => promo_detail[0], :location => promo_detail[1], :i => i} %>
 					</div>
 					<% if i%3 == 0 %>
