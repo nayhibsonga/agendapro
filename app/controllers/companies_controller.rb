@@ -157,7 +157,7 @@ class CompaniesController < ApplicationController
 		@company.company_setting.promo_offerer_capable = params[:new_promo_offerer_capable]
 		@company.company_setting.save
 
-		if @company_setting.promo_time.nil?
+		if @company.company_setting.promo_time.nil?
 			promo_time = PromoTime.new
 			promo_time.company_setting_id = @company_setting.id
 			promo_time.save
