@@ -1514,13 +1514,13 @@ class BookingsController < ApplicationController
         client.phone = params[:phone]
         client.save
         if client.errors
-          puts client.errors.full_messages.inspect
+          @errors << client.errors.full_messages.inspect
         end
       else
         client = Client.new(email: params[:email], first_name: params[:firstName], last_name: params[:lastName], phone: params[:phone], company_id: @company.id)
         client.save
         if client.errors
-          puts client.errors.full_messages.inspect
+          @errors << client.errors.full_messages.inspect
         end
       end
     end
