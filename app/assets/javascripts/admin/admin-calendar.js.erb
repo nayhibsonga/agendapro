@@ -22,10 +22,10 @@ function loadProviders () {
 					$('#providers-div').append('<select class="form-control" id="providers-selector"></select>');
 					if (providersArray.length > 1) {
 						$('#providers-selector').append('<option value="0">Todos</option>');
-						$('#provider_break_service_provider_id').append('<option value="0">Todos</option>');
+						$('#provider_break_service_provider_id').append('<option value="0" data-block="' + $('#calendar-data').data('calendar-duration') + '">Todos</option>');
 					}
 					$.each(providersArray, function (key, provider) {
-						$('#providers-selector').append('<option name="providerRadio" value="'+provider.id+'">'+provider.public_name+'</option>');
+						$('#providers-selector').append('<option name="providerRadio" value="'+provider.id+'" data-block="' + provider.block_length + '">'+provider.public_name+'</option>');
 						resources.push({id: provider.id, name: provider.public_name});
 						count += 1;
 						$('#booking_service_provider_id')
@@ -454,13 +454,13 @@ function loadWeekCalendar (startTime, endTime, hiddenDays, resourcesArray, provi
 		minTime: startTime,
 		maxTime: endTime,
 		// firstHour: startHour,
-		defaultEventMinutes: duration,
+		defaultEventMinutes: $('#providers-selector option:selected').data("block"),
 		editable: true,
 		disableResizing: true,
 		eventDrop: function (event) {
 			editDrag(event);
 		},
-		slotMinutes: duration,
+		slotMinutes: $('#providers-selector option:selected').data("block"),
 		aspectRatio: setAspectRatio(),
 		windowResize: function(view) {
 			$('#calendar').fullCalendar('option', 'aspectRatio', setAspectRatio());
