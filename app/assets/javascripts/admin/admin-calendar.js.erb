@@ -2355,7 +2355,7 @@ $(function() {
 			$('.client_link').attr('href','/clients/' + client.id + '/edit');
 			$('.client_link').html('Ir a la ficha del cliente...');
 			$('#booking_client_gender option[value="'+client.gender+'"]').attr("selected",true);
-			$("#full_name").val(client.first_name+' '+client.last_name)
+			$("#full_name").val(client.first_name+' '+client.last_name);
 			if (validEmail($("#booking_client_email").val())) {
 				$('#booking_send_mail').prop('disabled', false);
 				$('#booking_send_mail').val(1);
@@ -2407,7 +2407,7 @@ $(function() {
 			$('.client_link').attr('href','/clients/' + client.id + '/edit');
 			$('.client_link').html('Ir a la ficha del cliente...');
 			$('#booking_client_gender option[value="'+client.gender+'"]').attr("selected",true);
-			$("#full_name").val(client.first_name+' '+client.last_name)
+			$("#full_name").val(client.first_name+' '+client.last_name);
 			if (validEmail($("#booking_client_email").val())) {
 				$('#booking_send_mail').prop('disabled', false);
 				$('#booking_send_mail').val(1);
