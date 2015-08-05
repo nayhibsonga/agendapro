@@ -113,18 +113,29 @@
   <div class="container">
     <div class="row">
       <div class="col-xs-12 col-md-5">
+        <% if @has_images %>
         <div id="carousel">
-          <%= image_tag @selectedLocation.image1.url.to_s, alt: @selectedLocation.name, class: 'img-responsive' if @selectedLocation.image1.url %>
-          <%= image_tag @selectedLocation.image2.url.to_s, alt: @selectedLocation.name, class: 'img-responsive' if @selectedLocation.image2.url %>
-          <%= image_tag @selectedLocation.image3.url.to_s, alt: @selectedLocation.name, class: 'img-responsive' if @selectedLocation.image3.url %>
+          <%= image_tag @selectedLocation.image1.url.to_s, alt: @selectedLocation.name, class: 'img-responsive' %>
+          <%= image_tag @selectedLocation.image2.url.to_s, alt: @selectedLocation.name, class: 'img-responsive' %>
+          <%= image_tag @selectedLocation.image3.url.to_s, alt: @selectedLocation.name, class: 'img-responsive' %>
         </div>
-      </div>
-      <div class="col-xs-6 col-md-4">
+        <div class="carousel-pager"></div>
+        <% else %>
         <div class="google-maps-empresa">
           <div id="map"></div>
         </div>
         <div id="outcallDistricts" class="well">
         </div>
+        <% end %>
+      </div>
+      <div class="col-xs-6 col-md-4">
+        <% if @has_images %>
+        <div class="google-maps-empresa">
+          <div id="map"></div>
+        </div>
+        <div id="outcallDistricts" class="well">
+        </div>
+        <% end %>
         <h3 style="color: #505050; padding-top: 0px !important; margin-top: 0px !important;">Selecciona el lugar</h3>
         <table class="table table-locals" id="locales-empresa">
           <tbody>

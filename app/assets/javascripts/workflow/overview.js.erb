@@ -26,30 +26,29 @@ var currMarker = null;
 
 //====== Google Map ======//
 function initializeMap(lat, lng, mapDiv) {
-    var properties = {
-        center: new google.maps.LatLng(lat, lng),
-        zoom:   15,
-        panControl: false,
-        zoomControl: true,
-        zoomControlOptions: {
-            style: google.maps.ZoomControlStyle.SMALL
-        },
-        mapTypeControl: true,
-        mapTypeControlOptions: {
-            style: google.maps.MapTypeControlStyle.DROPDOWN_MENU
-        },
-        scaleControl: false,
-        streetViewControl: false,
-        overviewMapControl: false,
-        mapTypeId:  google.maps.MapTypeId.ROADMAP
-    };
-    map = new google.maps.Map(document.getElementById(mapDiv), properties);
+  var properties = {
+    center: new google.maps.LatLng(lat, lng),
+    zoom:   15,
+    panControl: false,
+    zoomControl: true,
+    zoomControlOptions: {
+      style: google.maps.ZoomControlStyle.SMALL
+    },
+    mapTypeControl: true,
+    mapTypeControlOptions: {
+      style: google.maps.MapTypeControlStyle.DROPDOWN_MENU
+    },
+    scaleControl: false,
+    streetViewControl: false,
+    overviewMapControl: false,
+    mapTypeId:  google.maps.MapTypeId.ROADMAP
+  };
+  map = new google.maps.Map(document.getElementById(mapDiv), properties);
 }
 
 function setMarker(latlng, local) {
 
-  if(currMarker!=null)
-  {
+  if(currMarker != null) {
     currMarker.setMap(null);
   }
 
@@ -92,14 +91,19 @@ function loadOutcallDistricts(id) {
 }
 
 function carousel () {
-  window.console.log('carousel')
   $('#carousel').carouFredSel({
     items: 1,
     circular: true,
     direction: "left",
     width: "100%",
     height: "auto",
-    responsive: true
+    responsive: true,
+    pagination: {
+      container: ".carousel-pager",
+      anchorBuilder: function (nr) {
+        return '<a href="#' + nr + '"><i class="fa fa-circle-o"></i></a>';
+      }
+    }
   });
 }
 
@@ -135,19 +139,13 @@ $(function() {
     var id = event.target.getAttribute('value');
     loadSchedule(id);
     localMap(id);
-    $.getJSON('/locations/' + id + '.json', function (local) {
+    $.getJSON('/local', {id: id}, function (local) {
       $('#carousel').trigger('stop');
       $('#carousel').trigger('destroy');
       $('#carousel').empty();
-      if (local.image1.image1.url) {
-        $('#carousel').append('<img alt="' + local.name + '" src="' + local.image1.image1.url + '">');
-      };
-      if (local.image2.image2.url) {
-        $('#carousel').append('<img alt="' + local.name + '" src="' + local.image2.image2.url + '">');
-      };
-      if (local.image3.image3.url) {
-        $('#carousel').append('<img alt="' + local.name + '" src="' + local.image3.image3.url + '">');
-      };
+      $('#carousel').append('<img alt="' + local.name + '" src="' + local.image1.url + '">');
+      $('#carousel').append('<img alt="' + local.name + '" src="' + local.image2.url + '">');
+      $('#carousel').append('<img alt="' + local.name + '" src="' + local.image3.url + '">');
       carousel();
     });
 
