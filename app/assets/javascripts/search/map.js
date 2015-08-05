@@ -82,7 +82,7 @@ $(function() {
     var latitude = $("#lat").val();
     var longitude = $("#long").val();
     console.log(latitude + " / " + longitude);
-    initializeMap(latitude, longitude, 'map');
+    initializeMap(parseFloat(latitude), parseFloat(longitude), 'map');
     //initializeMap(-33.413084, -70.592161, 'map');
     
     var fullBounds = new google.maps.LatLngBounds();

@@ -191,6 +191,12 @@ Agendapro::Application.routes.draw do
   get '/get_district', :to => 'districts#get_district'
   get '/district_by_name', :to => 'districts#get_district_by_name'
 
+  # Promotions
+  get '/get_promotions', :to => 'searchs#promotions'
+  get '/get_last_minute_promotions', :to => 'searchs#last_minute_promotions'
+  get '/manage_promotions', :to => 'services#manage_promotions'
+  get '/manage_service_promotion', :to => 'services#manage_service_promotion'
+
   # Workflow
   # Workflow - overview
   get '/schedule', :to => 'location_times#schedule_local'
@@ -215,6 +221,7 @@ Agendapro::Application.routes.draw do
   get '/available_hours_week_html', :to => 'service_providers#available_hours_week_html'
   # Workflow - Mobile
   get '/select_hour', :to => 'companies#select_hour'
+  get '/select_promo_hour', :to => 'companies#select_promo_hour'
   post '/select_session_hour', :to => 'companies#select_session_hour'
   get '/user_data', :to => 'companies#user_data'
 
@@ -317,6 +324,17 @@ Agendapro::Application.routes.draw do
   post "payed_bookings/mark_several_canceled_as_payed", :to => 'payed_bookings#mark_several_canceled_as_payed'
   post "payed_bookings/unmark_several_canceled_as_payed", :to => 'payed_bookings#unmark_several_canceled_as_payed'
   post "payed_bookings/update", :to => 'payed_bookings#update'
+
+  # Promotions
+  post "/set_service_promotions", :to => 'services#set_promotions'
+  post '/set_service_promo_times', :to => 'services#set_service_promo_times'
+  get "/get_promotions_popover", :to => 'services#get_promotions_popover'
+  get "/get_online_discount_popover", :to => 'services#get_online_discount_popover'
+  get "/promotion_hours", :to => 'bookings#promotion_hours'
+  #post '/admin_update_promo', :to => 'services#admin_update_promo'
+  get "/show_time_promo", :to => 'services#show_time_promo'
+  get '/show_last_minute_promo', :to => 'services#show_last_minute_promo'
+  get '/last_minute_hours', :to => 'services#last_minute_hours'
 
   # Root
   get '/' => 'searchs#index', :constraints => { :subdomain => 'www' }

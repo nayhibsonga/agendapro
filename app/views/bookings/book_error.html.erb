@@ -161,10 +161,13 @@
               </div>
               <div class="col-md-10">
                 <!--<div class="book-title"></div>-->
-
-                <h3> <%= @client.first_name %>, no fue posible guardar todos los servicios. </h3>
+                <% if !@client.nil? %>
+                  <h3> <%= @client.first_name %>, no fue posible guardar todos los servicios. </h3>
+                <% else %>
+                  <h3> No fue posible guardar todos los servicios. </h3>
+                <% end %>
                               
-                <% if @payment == "book" %>
+                <% if false %>
                   <% if @are_session_booking %>
                     <p> A continuación te presentamos el resumen y las opciones de reserva. </p>
                     <div class="row">
@@ -448,7 +451,7 @@
       var src = $('img.book-center-error').attr('src');
       src = src.replace('cross', 'icono_reserva2');
       $('img.book-center-error').attr('src', src);
-      $('.book-title').html('<%= @client.first_name %>, tu reserva fue realizada con exito');
+      
     });
   });
 </script>

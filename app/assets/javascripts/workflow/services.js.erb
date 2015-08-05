@@ -1,8 +1,41 @@
+	Date.isLeapYear = function (year) { 
+        return (((year % 4 === 0) && (year % 100 !== 0)) || (year % 400 === 0)); 
+    };
+
+    Date.getDaysInMonth = function (year, month) {
+        return [31, (Date.isLeapYear(year) ? 29 : 28), 31, 30, 31, 30, 31, 31, 30, 31, 30, 31][month];
+    };
+
+    Date.prototype.isLeapYear = function () { 
+        return Date.isLeapYear(this.getFullYear()); 
+    };
+
+    Date.prototype.getDaysInMonth = function () { 
+        return Date.getDaysInMonth(this.getFullYear(), this.getMonth());
+    };
+
+    Date.prototype.addMonths = function (value) {
+        var n = this.getDate();
+        this.setDate(1);
+        this.setMonth(this.getMonth() + value);
+        this.setDate(Math.min(n, this.getDaysInMonth()));
+        return this;
+    };
+
 var booking_buffer = [];
 var actual_booking = null;
 var first_session = null;
 var sessions_buffer = [];
 var sessions_left = 0;
+var added_services_count = 0;
+var added_services = [];
+var sessions_service = false;
+var selected = false;
+var block_discount = 0;
+var reload_times = 0;
+
+var now_date = new Date();
+var after_date = now_date.addMonths(parseInt($("#after_booking").val()));
 
 var current_service;
 
@@ -32,9 +65,36 @@ function currency(price)
 	return formatted_amount;
 }
 
+function simple_currency(price)
+{
+	var amount = Math.round(price).toString();
+	//console.log(amount);
+	//console.log(amount.length);
+	var j = 0;
+	var stack = new Array();
+	for(i = amount.length-1; i>=0; i--)
+	{
+		j = j+1;
+		stack.push(amount[i]);
+		if(j == 3 && i>0)
+		{
+			stack.push('.');
+			j = 0;
+		}
+	}
+	var formatted_amount = "$";
+	for(i = stack.length-1; i >=0 ; i--)
+	{
+		formatted_amount = formatted_amount + stack[i];
+	}
+
+	return formatted_amount;
+}
+
 //====== Load Steps ======//
 function loadStep1 (service_id) {
 	$('#services-description').empty();
+	$("#services-popovers-contents").empty();
 	$('#services-selector').html('<p class="text-center" style="color: #ccc;"><i class="fa fa-spinner fa-spin fa-lg"></i></p>');
 	var localId = $('#selectedLocal').data('local').id;
 	var categoryCount = 0;
@@ -46,15 +106,64 @@ function loadStep1 (service_id) {
 				categoryCount = categoryCount + 1;
 				$.each(service_hash.services, function (key, service) {
 					//====== Generando Radios
+					serviceDiscount = "";
+					servicePrice = '';
+					if ($('#online_capabilities').data('online-payment-capable') && ((service.has_time_discount && $('#online_capabilities').data('promo-offerer-capable')) || (service.has_discount && service.online_payable && service.discount > 0)))
+					{
+						serviceDiscount = '<%= image_tag("promociones/icono_promociones.png", class:"promotion-hour-icon", size: "18x18") %>&nbsp;';						
+					}
+					if(service.show_price && service.price > 0)
+					{
+						servicePrice = '<%= image_tag("promociones/etiqueta.png", class:"promotion-hour-icon", size: "18x18") %>&nbsp;' + simple_currency(service.price);
+					}
 					servicesHTML +=
 						'<li class="list-group-item">' +
 							'<div class="radio">' +
-								'<label>' +
-									'<input type="radio" name="serviceRadio" value="' + service.id + '" data-outcall="'+service.outcall+'">' +
-									'<p>' + service.name_with_small_outcall + '</p>' +
-								'</label>' +
+								'<div style="width: 95%"><div class="row">' +
+									'<div class="col-sm-5">' +
+										'<label>' +
+											'<input type="radio" name="serviceRadio" value="' + service.id + '" data-outcall="'+service.outcall+'">' +
+											'<p>' + service.name_with_small_outcall + '</p>' +
+										'</label>' +
+									'</div><div class="col-sm-3">' +
+										servicePrice +
+									'</div><div class="col-sm-3">' +
+										'<%= image_tag("promociones/reloj.png", class:"promotion-hour-icon", size: "18x18") %>&nbsp;' + service.duration + ' min' +
+									'</div><div class="col-sm-1 open-promotion-popover" rel="popover" service_id="' + service.id + '" data-toggle="popover" data-placement="right" data-content="">' +
+										serviceDiscount +
+									'</div>' +
+								'</div></div>' +
 							'</div>' +
 						'</li>';
+
+						if ($('#online_capabilities').data('online-payment-capable') && ((service.has_time_discount && $('#online_capabilities').data('promo-offerer-capable')) || (service.has_discount && service.online_payable && service.discount > 0)))
+						{
+							$.ajax({
+								type: "get",
+								url: "get_promotions_popover?service_id=" + service.id + "&location_id=" + localId,
+								success: function(response){
+
+									$("#services-popovers-contents").append(response);
+
+									$('.open-promotion-popover[service_id="' + service.id + '"]').popover({
+										html: true,
+										content: $('.service-popover-content[service_id="' + service.id + '"]').html(),
+										placement: 'right',
+										trigger: 'hover'
+									});
+
+									$('.open-promotion-popover[service_id="' + service.id + '"]').css("cursor", "pointer");
+
+									/*$('.open-promotion-popover').on('shown.bs.popover', function(e){
+										var oldTop = $(document).scrollTop();
+										$('#foo4').height($("#foo4").height() + 30);
+										$(document).scrollTop(oldTop);
+									});*/
+
+								}
+							});
+						}
+
 				});
 
 				//====== Insertando acordeon
@@ -72,6 +181,7 @@ function loadStep1 (service_id) {
 						'</div>' +
 					'</div>'
 				);
+
 			};
 		});
 
@@ -117,7 +227,7 @@ function loadStep1 (service_id) {
 
 	 	if (service_id != 0) {
 	 		$('input[name="serviceRadio"][value="' + service_id + '"]').click();
-	 		$('#foo4').trigger('next');
+	 		//$('#foo4').trigger('next');
 	 		$('input[name="serviceRadio"][value="' + service_id + '"]').closest('.panel-collapse').addClass('in');
 	 		$('input[name="serviceRadio"][value="' + service_id + '"]').closest('.panel-collapse').prev().children('.panel-title').removeClass('collapsed');
 	 	};
@@ -126,7 +236,10 @@ function loadStep1 (service_id) {
 }
 
 var calendar;
+var promoCalendar;
 var staffSelected;
+
+/*
 function loadStep2 () {
 	if($('[name="serviceRadio"]').is(':checked')){
 		$('#staff-selector-spinner').show();
@@ -241,7 +354,7 @@ function loadStep2 () {
 
 					staffSelected = $(this).val();
 					if (calendar) {
-						calendar.rebuild('/available_hours_week_html', data);
+						calendar.rebuild('/promotion_hours', data);
 					}
 					else {
 						calendar = new Calendar('/available_hours_week_html', data);
@@ -349,27 +462,693 @@ function loadStep2 () {
 	}
 	
 }
+*/
 
-function loadStep3 () {
+function loadStep2() {
 
-	if($("#has_sessions").val() == "1")
+	var localId = $('#selectedLocal').data('local').id;
+	var selects = [];
+	var start_date = $("#optimizerDateSelector").val();
+
+	sessions_left = 0;
+	
+	$("#selected-hour-body").empty();
+
+	for(k = 0; k < added_services.length; k++)
 	{
-		//If it has sessions and first is not set, then the only booking is the first session
-		if (booking_buffer.length == 0)
+		if (added_services[k].has_sessions)
 		{
-			first_session = actual_booking;
+			sessions_service = true;
+			loadStaffForSessions(added_services[k].id);
+			sessions_left = added_services[k].sessions_amount;
+		}
+		else
+		{
+			sessions_service = false;
+			sessions_left = 0;
 		}
 	}
 
-	if ($('#clientExclusive').data('client-exclusive')) {
-		$('#identificationNumber').show();
-		$('#full_name').prop('disabled', true);
+	if(sessions_service)
+	{
+		$(".btn-add-session").show();
+		$(".sessions-bar").show();
+		$(".changeStaffPanel").show();
+		$("#sessions-summary").show();
+		$("#sessions-left").empty();
+		$("#sessions-left").html("" + sessions_left);
+		console.log("Sessions left: " + sessions_left);
+		$("#has_sessions").val("1");
+	}
+	else
+	{
+		$(".btn-add-session").hide();
+		$(".sessions-bar").hide();
+		$(".changeStaffPanel").hide();
+		$("#sessions-left").empty();
+		$("#has_sessions").val("0");
+	}
+
+	$(".selected-service").each(function() {
+		var provider = $(this).find('.selected-service-provider').val();
+		var service_id = $(this).attr("service_id");
+		console.log("provider: ");
+		console.log(provider);
+		selects.push({
+			service: service_id,
+			provider: provider
+		});
+	});
+
+	var data;
+
+	if($("#datepicker").val()!="")
+	{
+		data = {local: localId, serviceStaff: JSON.stringify(selects), date: $("#datepicker").val()}
+	}
+	else
+	{
+		data = {local: localId, serviceStaff: JSON.stringify(selects)}
+	}
+
+	if (promoCalendar) {
+		promoCalendar.rebuild('/promotion_hours', data);
 	}
 	else {
-		$('#identificationNumber').hide();
-		$('#full_name').prop('disabled', false);
+		promoCalendar = new PromoCalendar('/promotion_hours', data);
 	}
-	if ($('[name="staffRadio"]').is(':checked')){
+
+
+	$(document).on('hourClick', function (e) {
+
+		selected = true;
+		
+		bookSummary = bookSummaries[e.index];
+
+		$("#selected-hour-body").empty();
+		var book_discount = 0;
+		var is_time_discount = false;
+		booking_buffer = []
+
+		for(k=0; k<bookSummary.bookings.length; k++)
+		{
+			bookDetails = bookSummary.bookings[k];
+			console.log("bookDetails: ");
+			console.log(bookDetails);
+			bookDetailsStart = bookDetails.start.split("T")[1].split(":")[0] + ':' + bookDetails.start.split("T")[1].split(":")[1];
+			bookDetailsEnd = bookDetails.end.split("T")[1].split(":")[0] + ':' + bookDetails.end.split("T")[1].split(":")[1];
+
+			bookDetailsDiscountPrice = bookDetails.price;
+
+			
+			if(bookDetails.has_discount && bookDetails.has_time_discount)
+			{
+				if(bookDetails.discount > bookDetails.time_discount)
+				{
+					book_discount = bookDetails.discount;
+					bookDetailsDiscountPrice = bookDetails.price * (100 - bookDetails.discount) / 100;
+					$("#selected-hour-body").append(
+						'<b>' + bookDetails.service_name + '</b><br />' +
+						'<div class="light-gray"><%= image_tag("promociones/reloj.png", class:"promotion-hour-icon", size: "18x18") %> ' + bookDetailsStart + ' - ' + bookDetailsEnd + '<br />' +
+						'<%= image_tag("promociones/etiqueta.png", class:"promotion-hour-icon", size: "18x18") %>  <strike>' + simple_currency(bookDetails.price) + '</strike>  <span class="light-green"><b>' + simple_currency(bookDetailsDiscountPrice) + '</b></span> (' + bookDetails.discount + ' % off) <br /></div>'
+					);
+				}
+				else
+				{
+					book_discount = bookDetails.time_discount;
+					is_time_discount = true;
+					bookDetailsDiscountPrice = bookDetails.price * (100 - bookDetails.time_discount) / 100;
+					$("#selected-hour-body").append(
+						'<b>' + bookDetails.service_name + '</b><br />' +
+						'<div class="light-gray"><%= image_tag("promociones/reloj.png", class:"promotion-hour-icon", size: "18x18") %>' + bookDetailsStart + ' - ' + bookDetailsEnd + '<br />' +
+						'<%= image_tag("promociones/etiqueta.png", class:"promotion-hour-icon", size: "18x18") %> <strike>' + simple_currency(bookDetails.price) + '</strike> ' + '<span class="light-green"><b>' + simple_currency(bookDetailsDiscountPrice) + '</b></span>' + ' (' + bookDetails.time_discount + ' % off) <br /></div>'
+					);
+				}
+			}
+			else if(bookDetails.has_discount && !bookDetails.has_time_discount)
+			{
+				book_discount = bookDetails.discount;
+				bookDetailsDiscountPrice = bookDetails.price * (100 - bookDetails.discount) / 100;
+				$("#selected-hour-body").append(
+						'<b>' + bookDetails.service_name + '</b><br />' +
+						'<div class="light-gray"><%= image_tag("promociones/reloj.png", class:"promotion-hour-icon", size: "18x18") %> ' + bookDetailsStart + ' - ' + bookDetailsEnd + '<br />' +
+						'<%= image_tag("promociones/etiqueta.png", class:"promotion-hour-icon", size: "18x18") %> <strike>' + simple_currency(bookDetails.price) + '</strike> <span class="light-green"><b>' + simple_currency(bookDetailsDiscountPrice) + '</b></span> (' + bookDetails.discount + ' % off) <br /></div>'
+					);
+			}
+			else if(!bookDetails.has_discount && bookDetails.has_time_discount)
+			{
+				book_discount = bookDetails.time_discount;
+				is_time_discount = true;
+				bookDetailsDiscountPrice = bookDetails.price * (100 - bookDetails.time_discount) / 100;
+				$("#selected-hour-body").append(
+						'<b>' + bookDetails.service_name + '</b><br />' +
+						'<div class="light-gray"><%= image_tag("promociones/reloj.png", class:"promotion-hour-icon", size: "18x18") %> ' + bookDetailsStart + ' - ' + bookDetailsEnd + '<br />' +
+						'<%= image_tag("promociones/etiqueta.png", class:"promotion-hour-icon", size: "18x18") %> <strike>' + simple_currency(bookDetails.price) + '</strike> <span class="light-green"><b>' + simple_currency(bookDetailsDiscountPrice) + '</b></span> (' + bookDetails.time_discount + ' % off) <br /></div>'
+					);
+			}
+			else
+			{
+				book_discount = 0;
+				$("#selected-hour-body").append(
+					'<b>' + bookDetails.service_name + '</b><br />' +
+					'<div class="light-gray"><%= image_tag("promociones/reloj.png", class:"promotion-hour-icon", size: "18x18") %> ' + bookDetailsStart + ' - ' + bookDetailsEnd + '<br />' +
+					'<%= image_tag("promociones/etiqueta.png", class:"promotion-hour-icon", size: "18x18") %> ' + simple_currency(bookDetails.price) + '<br /></div>'
+				);
+			}
+			
+			
+			if(!sessions_service)
+			{
+				addBooking(e, k, book_discount, is_time_discount);
+				booking_buffer.push(actual_booking);
+			}
+
+		}
+		console.log("e: ");
+		console.log(e);
+		if (sessions_service)
+		{
+			addSession(e, book_discount, is_time_discount);
+		}
+	});
+
+
+}
+
+function loadStep3 () {
+
+	if(!selected)
+	{
+		myAlert.showAlert(
+		  '<h3>Selecciona un horario</h3>' +
+		  '<p>Debes elegir un horario para continuar.</p>'
+		);
+		return false;
+	}
+
+	$("#booking-error").empty();
+	$('#promo-bookings-policy').empty();
+	$('#promo-policy').hide();
+
+		if(sessions_buffer.length == 0)
+		{
+			if(actual_booking == null)
+			{
+			  	myAlert.showAlert(
+					'<h3>Selecciona un horario</h3>' +
+					'<p>Debes elegir un horario para continuar.</p>'
+				);
+				return false;
+			}
+			if(actual_booking.has_sessions)
+	        {
+	            $('#summary').empty();
+
+	            sessions_buffer.push(actual_booking);
+
+	            $('.bookings').val(JSON.stringify(sessions_buffer));
+
+	            var times_str = "";
+	            var price = actual_booking.price;
+	            var min_discount = actual_booking.discount; 
+	            var must_pay = false;
+
+	            for(i = 0; i < sessions_buffer.length; i++)
+	            {
+	              times_str = times_str + formattedTime(sessions_buffer[i].start) + ' con ' + sessions_buffer[i].provider_name + '.<br />';
+	              if(sessions_buffer[i].discount < min_discount)
+	              {
+	                min_discount = sessions_buffer[i].discount;
+	              }
+	              if((sessions_buffer[i].is_time_discount && sessions_buffer[i].discount > 0) || (sessions_buffer[i].must_be_paid_online && sessions_buffer[i].discount > 0 ))
+				  {
+				  	must_pay = true;
+				  }
+				  if(sessions_buffer[i].is_time_discount && sessions_buffer[i].discount > 0)
+				  {
+					$('#promo-bookings-policy').append(formattedTime(sessions_buffer[i].start) + ' con ' + sessions_buffer[i].provider_name + '.<br />');
+					$('#promo-policy').show();
+				  }
+	            }
+
+	            $("#max_discount").val(min_discount);
+
+	            var discount_price = Math.round(price*(100 - min_discount)/100);
+	            sessions_str = "";
+
+	            if(sessions_buffer.length == 1)
+	            {
+	              sessions_str = 'Agendaste 1 sesión de un total de ' + actual_booking.sessions_amount;
+	            }
+	            else
+	            {
+	              sessions_str = 'Agendaste ' + sessions_buffer.length + ' sesiones de un total de ' + actual_booking.sessions_amount;
+	            }
+
+	            $('#summary').append(
+	              '<tr style="border-top: 0px !important;">' +
+	                '<td style="border-top: 0px !important;" class="dark-gray">¿Qué estoy reservando?</td>' +
+	                '<td style="border-top: 0px !important;" class="light-gray">' + actual_booking.service_name + '</td>' +
+	              '</tr>' +
+	              '<tr>' +
+	                '<td class="dark-gray">¿Dónde?</td>' +
+	                '<td class="light-gray">' + $('#selectedLocal').data('local').address + ', ' + $('#selectedLocal').data('district') + '</td>' +
+	              '</tr>'
+	            );
+
+	            $('#summary').append(
+	              '<tr>' +
+	                '<td class="dark-gray">¿Cuándo?</td>' +
+	                '<td class="light-gray">' + times_str + '</td>' +
+	              '</tr>' +
+	              '<tr>' +
+	                '<td class="dark-gray">Sesiones</td>' +
+	                '<td class="light-gray">' + sessions_str + '</td>' +
+	              '</tr>'
+	            );
+
+	            if($('#online_capabilities').data('online-payment-capable'))
+	            {
+		            $('#summary').append(
+		              '<tr>' + 
+		                '<td class="dark-gray">Precio normal</td><td class="light-gray">' + simple_currency(price) + '</td>' +
+		              '</tr>' +
+		              '<tr>' +
+		                '<td class="dark-gray">Descuento</td><td class="light-gray">' + min_discount + '% </td>' +
+		              '</tr>' +
+		              '<tr>' +
+		                '<td class="dark-gray">Precio final</td><td class="light-gray">' + simple_currency(discount_price) + '</td>' +
+		              '</tr>'
+		            );
+		            if(must_pay)
+		            {
+		            	$("#reservar2").show();
+						$(".payBtn").show();
+						$("#open-online-policy").show();
+						$("#discount").empty();
+						$("#discount").append(
+							'Precio final: ' +  currency(Math.round(discount_price))
+						);
+		            	$("#normal-book").empty();
+						$(".submitBtn").hide();
+		            }
+	        	}
+	        	else
+	        	{
+	        		$('#summary').append(
+		              '<tr>' + 
+		                '<td class="dark-gray">Precio</td><td class="light-gray">' + simple_currency(price) + '</td>' +
+		              '</tr>'
+		            );
+		            $(".payBtn").hide();
+					$("#open-online-policy").hide();
+					$("#discount").empty();
+	        	}
+
+	        	if(!actual_booking.online_payable)
+	        	{
+	        		$(".payBtn").hide();
+					$("#open-online-policy").hide();
+					$("#discount").empty();
+	        	}
+	        }
+	        else
+	        {
+	        	if(booking_buffer.length == 0)
+	        	{
+	        		myAlert.showAlert(
+						'<h3>Selecciona un horario</h3>' +
+					  	'<p>Debes elegir un horario para continuar.</p>'
+					);
+					return false;
+	        	}
+	        	else
+	        	{
+	        		$('.bookings').val(JSON.stringify(booking_buffer));
+	        		$('#summary').empty();
+
+
+					var services_str = '';
+					var times_str = '';
+					var discounts_str = '';
+					var max_discount = 0;
+					var min_pay = '';
+					var may_pay = false;
+					var must_pay = false;
+					var some_not_payable = false;
+					var total_price = 0;
+					var min_price = 0;
+					var just_book_price = 0;
+					var not_payable_price = 0;
+					var prices_str = '';
+
+					times_str = times_str + formattedTime(booking_buffer[0].start) + '.<br />';
+
+					for(k = 0; k < booking_buffer.length; k++)
+					{
+
+
+						var booking = booking_buffer[k];
+						var price = booking.price;
+						var discount = booking.discount;
+					
+
+						services_str = services_str + booking.service_name + ' con ' + booking.provider_name + '.<br />';
+						
+						if(booking.has_discount && discount > 0 && booking.online_payable)
+						{
+							
+
+							//may_pay = true;
+							if(discount > max_discount)
+							{
+								max_discount = discount;
+							}
+							if(booking.is_time_discount || booking.must_be_paid_online)
+							{
+								min_price = min_price + Math.round(price * (100 - discount) / 100);
+								prices_str = prices_str + '<strike>' + simple_currency(price) + '</strike> - ' + simple_currency(Math.round(price * (100 - discount) / 100)) + ' (' + discount + '% de descuento)<br />';
+								if(discount > 0)
+								{
+									must_pay = true;
+								}
+								else
+								{
+									may_pay = true;
+								}
+								if(booking.is_time_discount)
+								{
+									$('#promo-bookings-policy').append(booking.service_name + ' con ' + booking.provider_name + '.<br />');
+									$('#promo-policy').show();
+								}
+							}
+							else
+							{
+								may_pay = true;
+								prices_str = prices_str + '<strike>' + simple_currency(price) + '</strike> - ' + simple_currency(Math.round( (price * (100 - discount))/100 )) + ' (' + discount + '% de descuento)<br />';
+								
+							}
+							total_price = total_price + Math.round(price * (100 - discount) / 100);
+						
+
+						}
+						else
+						{
+				
+							if(booking.show_price)
+							{
+								prices_str = prices_str + simple_currency(price) + '<br />';
+								
+								if(!booking.online_payable)
+								{
+									some_not_payable = true;
+									not_payable_price = not_payable_price + Math.round(price);
+								}
+								else
+								{
+									may_pay = true;
+									total_price = total_price + Math.round(price);
+								}
+							}
+							else
+							{
+								prices_str = prices_str + 'Preguntar en local<br />';
+								
+								some_not_payable = true;
+							}
+						}
+						just_book_price = just_book_price + price;
+					}
+
+
+
+					$('#summary').append(
+						'<tr style="border-top: 0px !important;">' +
+						  '<td style="border-top: 0px !important;" class="dark-gray">¿Qué estoy reservando?</td>' +
+						  '<td style="border-top: 0px !important;" class="light-gray">' + services_str + '</td>' +
+						'</tr>' +
+						'<tr>' +
+						  '<td class="dark-gray">¿Dónde?</td>' +
+						  '<td class="light-gray">' + $('#selectedLocal').data('local').address + ', ' + $('#selectedLocal').data('district') + '</td>' +
+						'</tr>'
+					);
+
+					$('#summary').append(
+						'<tr>' +
+						  '<td class="dark-gray">¿Cuándo?</td>' +
+						  '<td class="light-gray">' + times_str + '</td>' +
+						'</tr>'
+					);
+
+					$("#summary").append(
+						'<tr>' +
+						  '<td class="dark-gray">Precios</td>' +
+						  '<td class="light-gray">' + prices_str + '</td>' +
+						'</tr>'
+					);
+
+					/*$("#summary").append(
+						'<tr>' +
+							'<td class="dark-gray">Pago mínimo en línea</td>' +
+							'<td class="light-gray">' + simple_currency(min_price) + '</td>' +
+						'</tr>'
+					);*/
+
+
+					if(!must_pay && may_pay)
+					{
+
+						$("#summary").append(
+							'<tr>' +
+								'<td class="dark-gray">Costo pago en línea</td>' +
+								'<td class="light-gray">' + simple_currency(total_price) + '</td>' +
+							'</tr>'
+						);
+
+						if(some_not_payable)
+						{
+							$("#summary").append(
+								'<tr>' +
+									'<td class="dark-gray">Pago pendiente en local</td>' +
+									'<td class="light-gray">' + simple_currency(not_payable_price) + '</td>' +
+								'</tr>'
+							);
+						}
+
+						$("#summary").append(
+							'<tr>' +
+								'<td class="dark-gray">Costo sólo pago en local</td>' +
+								'<td class="light-gray">' + simple_currency(just_book_price) + '</td>' +
+							'</tr>'
+						);
+
+						console.log("May pay but is not mandatory.");
+
+						$("#open-online-policy").show();
+
+						$(".payBtn").show();
+						$("#discount").empty();
+						$("#discount").append(
+							'Precio final: ' +  currency(Math.round(total_price))
+						);
+
+
+						$(".submitBtn").show();
+						$("#normal-book").empty();
+						$("#normal-book").append(
+							'Precio final: ' + currency(just_book_price)
+						);
+					}
+					else if(!may_pay && !must_pay)
+					{
+
+						console.log("Can't pay.");
+
+						$("#summary").append(
+							'<tr>' +
+								'<td class="dark-gray">Costo pago en local</td>' +
+								'<td class="light-gray">' + simple_currency(just_book_price) + '</td>' +
+							'</tr>'
+						);
+
+						$(".payBtn").hide();
+						$("#open-online-policy").hide();
+						$("#discount").empty();
+
+						$(".submitBtn").show();
+						$("#normal-book").empty();
+						$("#normal-book").append(
+							'Precio final: ' + currency(just_book_price)
+						);
+					}
+					else if(must_pay)
+					{
+						console.log("Must pay.");
+						$("#reservar2").show();
+						$(".payBtn").show();
+						$("#open-online-policy").show();
+						$("#discount").empty();
+						$("#discount").append(
+							'Precio final: ' +  currency(Math.round(total_price))
+						);
+
+						$("#summary").append(
+							'<tr>' +
+								'<td class="dark-gray">Costo total&nbsp;' + '<span style="cursor: pointer; float: right;" data-toggle="tooltip" data-placement="right" title="El costo total considera el precio a prepagar en línea, más el costo que deberás pagar en el local por aquellos servicios que no pueden ser prepagados."><i class="fa fa-question-circle fa-lg"></i></span></td>' +
+								'<td class="light-gray">' + simple_currency(not_payable_price + total_price) + '</td>' +
+							'</tr>'
+						);
+
+						$("#summary").append(
+							'<tr>' +
+								'<td class="dark-gray">Pago en línea&nbsp;' + '<span style="cursor: pointer; float: right;" data-toggle="tooltip" data-placement="right" title="Existen servicios en promoción o que se deben prepagar en línea. Debes cancelar esta suma para poder reservarlos."><i class="fa fa-question-circle fa-lg"></i></span></td>' +
+								'<td class="light-gray">' + simple_currency(total_price) + '</td>' +
+							'</tr>'
+						);
+
+
+						if(some_not_payable)
+						{
+							$("#summary").append(
+								'<tr>' +
+									'<td class="dark-gray">Pago pendiente en local&nbsp;' + '<span style="cursor: pointer; float: right;" data-toggle="tooltip" data-placement="right" title="Existen servicios que no pueden ser pagados en línea. Deberás cancelar su costo el día de la reserva en el local."><i class="fa fa-question-circle fa-lg"></i></span></td>' +
+									'<td class="light-gray">' + simple_currency(not_payable_price) + '</td>' +
+								'</tr>'
+							);
+						}
+
+						$("#normal-book").empty();
+						$(".submitBtn").hide();
+					}
+
+	        	}
+	        }
+	    }
+	    else
+	    {
+	    	$('#summary').empty();
+
+			sessions_buffer.push(actual_booking);
+
+			$('.bookings').val(JSON.stringify(sessions_buffer));
+
+			var times_str = "";
+			var price = actual_booking.price;
+			var min_discount = actual_booking.discount; 
+			var must_pay = false;
+			for(i = 0; i < sessions_buffer.length; i++)
+			{
+				times_str = times_str + formattedTime(sessions_buffer[i].start) + ' con ' + sessions_buffer[i].provider_name + '.<br />';
+				if(sessions_buffer[i].discount < min_discount)
+				{
+				  	min_discount = sessions_buffer[i].discount;
+				}
+				if((sessions_buffer[i].is_time_discount || sessions_buffer[i].must_be_paid_online) && actual_booking.discount > 0)
+				{
+				  	must_pay = true;
+				}
+				if(sessions_buffer[i].is_time_discount && sessions_buffer[i].discount > 0)
+				{
+					$('#promo-bookings-policy').append(formattedTime(sessions_buffer[i].start) + ' con ' + sessions_buffer[i].provider_name + '.<br />');
+					$('#promo-policy').show();
+				}
+			}
+
+			$("#max_discount").val(min_discount);
+
+			var discount_price = Math.round(price*(100 - min_discount)/100);
+
+			if(sessions_buffer.length == 1)
+			{
+				sessions_str = 'Agendaste 1 sesión de un total de ' + actual_booking.sessions_amount;
+			}
+			else
+			{
+				sessions_str = 'Agendaste ' + sessions_buffer.length + ' sesiones de un total de ' + actual_booking.sessions_amount;
+			}
+
+			$('#summary').append(
+				'<tr style="border-top: 0px !important;">' +
+				  '<td style="border-top: 0px !important;" class="dark-gray">¿Qué estoy reservando?</td>' +
+				  '<td style="border-top: 0px !important;" class="light-gray">' + actual_booking.service_name + '</td>' +
+				'</tr>' +
+				'<tr>' +
+				  '<td class="dark-gray">¿Dónde?</td>' +
+				  '<td class="light-gray">' + $('#selectedLocal').data('local').address + ', ' + $('#selectedLocal').data('district') + '</td>' +
+				'</tr>'
+			);
+
+			$('#summary').append(
+				'<tr>' +
+				  '<td class="dark-gray">¿Cuándo?</td>' +
+				  '<td class="light-gray">' + times_str + '</td>' +
+				'</tr>' +
+				'<tr>' +
+				  '<td class="dark-gray">Sesiones</td>' +
+				  '<td class="light-gray">' + sessions_str + '</td>' +
+				'</tr>'
+			);
+
+			if($('#online_capabilities').data('online-payment-capable'))
+			{
+				$('#summary').append(
+					'<tr>' + 
+					  '<td class="dark-gray">Precio normal</td><td class="light-gray">' + simple_currency(price) + '</td>' +
+					'</tr>' +
+					'<tr>' +
+					  '<td class="dark-gray">Descuento</td><td class="light-gray">' + min_discount + '% </td>' +
+					'</tr>' +
+					'<tr>' +
+					  '<td class="dark-gray">Precio final</td><td class="light-gray">' + simple_currency(discount_price) + '</td>' +
+					'</tr>'
+				);
+				if(must_pay)
+	            {
+	            	$("#reservar2").show();
+					$(".payBtn").show();
+					$("#open-online-policy").show();
+					$("#discount").empty();
+					$("#discount").append(
+						'Precio final: ' +  currency(Math.round(discount_price))
+					);
+	            	$("#normal-book").empty();
+					$(".submitBtn").hide();
+	            }
+			}
+			else
+			{
+				$('#summary').append(
+					'<tr>' + 
+					  '<td class="dark-gray">Precio normal</td><td class="light-gray">' + simple_currency(price) + '</td>' +
+					'</tr>'
+				);
+				$(".payBtn").hide();
+				$("#open-online-policy").hide();
+				$("#discount").empty();
+			}
+
+			if(!actual_booking.online_payable)
+        	{
+        		$(".payBtn").hide();
+				$("#open-online-policy").hide();
+				$("#discount").empty();
+        	}
+	    }
+
+
+		if ($('#clientExclusive').data('client-exclusive')) {
+			$('#identificationNumber').show();
+			$('#full_name').prop('disabled', true);
+		}
+		else {
+			$('#identificationNumber').hide();
+			$('#full_name').prop('disabled', false);
+		}
+
+		$("#foo4").trigger("updateSizes");
+
+
+	/*if ($('[name="staffRadio"]').is(':checked')){
 		if (selected) {
 
 
@@ -556,10 +1335,7 @@ function loadStep3 () {
 						'<td class="dark-gray">¿Dónde?</td>' +
 						'<td class="light-gray">' + $('#selectedLocal').data('local').address + ', ' + $('#selectedLocal').data('district') + '</td>' +
 					'</tr>'
-					/*'<tr>' +
-						'<td class="dark-gray">¿Con quién?</td>' +
-						'<td class="light-gray">' + provider + '</td>' +
-					'</tr>'*/
+
 				);
 				if(payable)
 				{
@@ -612,12 +1388,7 @@ function loadStep3 () {
 						'<td class="light-gray">' + (sessions_buffer.length) + ' agendadas de ' + first_session.sessions_amount + '</td>' +
 					'</tr>'
 				);
-				/*$('#summary').append(
-					'<tr>' +
-						'<td class="dark-gray">Detalle</td>' +
-						'<td class="light-gray">' + formattedTime(first_session.start) + ', con ' + first_session.provider_name + '</td>' +
-					'</tr>'						
-				);*/
+
 				if(sessions_buffer.length > 0)
 				{
 					
@@ -640,12 +1411,7 @@ function loadStep3 () {
 		  '<p>Debes elegir un horario antes de poder continuar.</p>'
 		);
 		return false;
-	}
-	myAlert.showAlert(
-	  '<h3>Selecciona un Staff</h3>' +
-	  '<p>Debes elegir un staff para poder reservar.</p>'
-	);
-	return false;
+	}*/
 }
 
 function checkUserCrossBookings () {
@@ -665,121 +1431,46 @@ function checkUserCrossBookings () {
 	});
 }
 
-var step = 1;
-function scrollEvents (direction) {
-	if (direction == 'next') {
-		if (step == 1) {
-			if(!$('[name="serviceRadio"]').is(':checked')) {
-				myAlert.showAlert(
-				  '<h3>Selecciona un Servicio</h3>' +
-				  '<p>Debes elegir un servicio antes de poder continuar.</p>'
-				);
-				return false;
-			}
-			else if(current_service.has_sessions && booking_buffer.length > 0)
-			{
-				myAlert.showAlert(
-				  '<h3>Este servicio tiene sesiones</h3>' +
-				  '<p>No puedes agendar un servicio con sesiones además de otros servicios.</p>'
-				);
-				return false;
-			}
-			else {
-				loadStep2();
-
-				step = 2;
-				return true;
-			}
-		}
-		else {
-			if(!$('[name="staffRadio"]').is(':checked')) {
-				myAlert.showAlert(
-				  '<h3>Selecciona un Staff</h3>' +
-				  '<p>Debes elegir un staff para poder reservar.</p>'
-				);
-				return false;
-			}
-			else {
-				if(!selected) {
-					myAlert.showAlert(
-					  '<h3>Selecciona un Horario</h3>' +
-					  '<p>Debes elegir un horario antes de poder continuar.</p>'
-					);
-					return false;
-				}
-				else {
-					loadStep3();
-					step = 3;
-					return true;
-				}
-			}
-		}
-	}
-	else if (direction == 'prev') {
-		if (step == 3) {
-			step = 2;
-			//sessions_buffer = [];
-			
-			booking_buffer.pop();
-			if(first_session != null)
-			{
-				sessions_buffer.pop();
-			}
-			if(sessions_buffer.length == 0)
-			{
-				first_session = null;
-			}
-
-			console.log("Sesiones: " + sessions_buffer.length);
-			console.log("Bookings: " + booking_buffer.length);
-			var active_hour = $(".hora-activo");
-			active_hour.removeClass("hora-activo");
-			active_hour.removeClass("hora-ocupado");
-			active_hour.addClass("hora-disponible");
-
-			blockBookingBufferHour();
-
-		}
-		else if(step == 2)
-		{
-			step = 1;
-			if(first_session != null || $("#has_sessions").val() == "1")
-			{
-				sessions_buffer = [];
-				booking_buffer = [];
-			}
-		}
-		return true;
-	}
-}
-
 //====== Load Info ======//
 function loadDescription (serviceId) {
 	$('#services-description').html('<tr><td class="text-center" style="color: #ccc;"><i class="fa fa-spinner fa-spin fa-lg"></i></td></tr>');
 	$.getJSON('/service', {id: serviceId}, function (service) {
 		current_service = service;
+
+		$("#selectedServiceId").val(service.id);
+
+		$("#description-heading").empty();
+		$("#description-heading").append(service.name);
+
 		$('#services-description').empty();
-		$('#services-description').append(
+		/*$('#services-description').append(
 			'<tr>' +
 				'<td class="dark-gray">Nombre:</td>' +
 				'<td class="light-gray">' + service.name + '</td>' +
 			'</tr>'
-		);
+		);*/
+
 		if (service.show_price && service.price && service.price > 0) {
 			$('#services-description').append(
 				'<tr>' +
-					'<td class="dark-gray">Precio:</td>' +
-					'<td class="light-gray">' + currency(service.price) + '</td>' +
+					'<td><%= image_tag("promociones/etiqueta.png", class:"promotion-hour-icon", size: "18x18") %></td>' +
+					'<td class="light-gray">' + simple_currency(service.price) + '</td>' +
 				'</tr>'
 			);
 			if(service.online_payable)
 			{
 				if(service.has_discount && service.discount > 0)
 				{
+					/*$('#services-description').append(
+						'<tr>' +
+							'<td class="dark-gray"><%= image_tag("promociones/tarjeta_de_credito.png", class:"promotion-hour-icon", size: "18x18") %></td>' +
+							'<td class="light-gray"><b>' + simple_currency(Math.round(service.price*(100-service.discount)/100)) + ' (' + service.discount + '% de descuento)</b></td>' +
+						'</tr>'
+					);*/
 					$('#services-description').append(
 						'<tr>' +
-							'<td class="dark-gray">Precio pago en línea:</td>' +
-							'<td class="light-gray"><b>' + currency(Math.round(service.price*(100-service.discount)/100)) + ' (' + service.discount + '% de descuento)</b></td>' +
+							'<td class="dark-gray"><%= image_tag("promociones/tarjeta_de_credito.png", class:"promotion-hour-icon", size: "18x18") %></td>' +
+							'<td class="light-gray"><span class="light-green"><b>' + simple_currency(Math.round(service.price*(100-service.discount)/100)) + '</b></span> (Pago online)</td>' +
 						'</tr>'
 					);
 				}
@@ -788,41 +1479,40 @@ function loadDescription (serviceId) {
 		else if (service.show_price && service.price == 0) {
 			$('#services-description').append(
 				'<tr>' +
-					'<td class="dark-gray">Precio:</td>' +
-					'<td class="light-gray">¡Consultar en Local!</td>' +
+					'<td class="dark-gray"><%= image_tag("promociones/etiqueta.png", class:"promotion-hour-icon", size: "18x18") %></td>' +
+					'<td class="light-gray">Consultar en Local</td>' +
 				'</tr>'
 			);
 		}
 		else{
 			$('#services-description').append(
 				'<tr>' +
-					'<td class="dark-gray">Precio:</td>' +
+					'<td class="dark-gray"><%= image_tag("promociones/etiqueta.png", class:"promotion-hour-icon", size: "18x18") %></td>' +
 					'<td class="light-gray">Consultar en Local</td>' +
 				'</tr>'
 			);
 		};
 		$('#services-description').append(
 			'<tr>' +
-				'<td class="dark-gray">Duración:</td>' +
-				'<td class="light-gray">' + service.duration + ' minutos </td>' +
+				'<td class="dark-gray"><%= image_tag("promociones/reloj.png", class:"promotion-hour-icon", size: "18x18") %></td>' +
+				'<td class="light-gray">' + service.duration + ' min </td>' +
 			'</tr>'
 		);
+
+		$("#description-info").empty();
+
+		$('#description-info').append("<b>Descripción:</b> ");
+		var hasDescription = false;
 		if(service.description) {
-			$('#services-description').append(
-				'<tr>' +
-					'<td class="dark-gray">Descripción:</td>' +
-					'<td class="light-gray">' + service.description + '</td>' +
-				'</tr>'
+			$('#description-info').append(
+				service.description + "<br />"
 			);
+			hasDescription = true;
 		}
 		if(service.has_sessions)
 		{
-			$("#services-description").append(
-				'<tr>' +
-					'<td class="dark-gray">Sesiones:</td>' +
-					'<td class="light-gray"><b>Ese servicio consta de ' + service.sessions_amount + ' sesiones.</b></td>' +
-				'</tr>'
-			);
+			hasDescription = true;
+			$("#description-info").append('Ese servicio consta de ' + service.sessions_amount + ' sesiones.');
 			$(".optimizer-item").hide();
 			$("#optimizerOpenBtn").attr("disabled", "disabled");
 		}
@@ -831,9 +1521,14 @@ function loadDescription (serviceId) {
 			$(".optimizer-item").show();
 			$("#optimizerOpenBtn").attr("disabled", false);
 		}
+		if (!hasDescription)
+		{
+			$("#description-info").empty();
+		}
 		$("#discount").empty();
 		$("#normal-book").empty();
-		if(service.online_payable){
+		
+		/*if(service.online_payable){
 			$("#reservar1").hide();
 			$("#reservar2").show();
 
@@ -851,17 +1546,163 @@ function loadDescription (serviceId) {
 		{
 			$("#reservar2").hide();
 			$("#reservar1").show();
-		}
+		}*/
 	});
 }
+
+var step = 1;
+function scrollEvents (direction) {
+	if (direction == 'next') {
+		if (step == 1) {
+			/*if(!$('[name="serviceRadio"]').is(':checked')) {
+				myAlert.showAlert(
+				  '<h3>Selecciona un Servicio</h3>' +
+				  '<p>Debes elegir un servicio antes de poder continuar.</p>'
+				);
+				return false;
+			}
+			else if(current_servicecurrent_service.has_sessions && booking_buffer.length > 0)
+			{
+				myAlert.showAlert(
+				  '<h3>Este servicio tiene sesiones</h3>' +
+				  '<p>No puedes agendar un servicio con sesiones además de otros servicios.</p>'
+				);
+				return false;
+			}*/
+			if(added_services.length == 0)
+			{
+				myAlert.showAlert(
+				  '<h3>Selecciona un Servicio</h3>' +
+				  '<p>Debes elegir un servicio antes de poder continuar.</p>'
+				);
+			}
+			else {
+				loadStep2();
+
+				step = 2;
+				return true;
+			}
+		}
+		else {
+
+			if(!selected) {
+				myAlert.showAlert(
+				  '<h3>Selecciona un horario</h3>' +
+				  '<p>Debes elegir un horario antes de poder continuar.</p>'
+				);
+				return false;
+			}
+			else {
+				loadStep3();
+				step = 3;
+				return true;
+			}
+			
+		}
+	}
+	else if (direction == 'prev') {
+		if (step == 3) {
+			step = 2;
+			//sessions_buffer = [];
+			
+			if (sessions_service)
+			{
+				sessions_left = actual_booking.sessions_amount;
+				$("#sessions-left").html("" + actual_booking.sessions_amount);
+			}
+			else
+			{
+				sessions_left = 0;
+				$("#sessions-left").html("0");
+			}
+			first_session = null;
+			sessions_buffer = [];
+			booking_buffer = [];
+			actual_booking = null;
+			selected = false;
+			block_discount = 0;
+
+			$("#booking-error").empty();
+
+			$("#current-discount").empty();
+			$("#current-discount-div").hide();
+			$("#summary").empty();
+
+			$("#sessions-summary-tr").empty();
+      		
+      		$("#selected-hour-body").empty();
+
+			console.log("Sesiones: " + sessions_buffer.length);
+			console.log("Bookings: " + booking_buffer.length);
+			//var active_hour = $(".hora-activo");
+			//active_hour.removeClass("hora-activo");
+			//active_hour.removeClass("hora-ocupado");
+
+			blockBookingBufferHour();
+
+			loadStep2();
+
+		}
+		else if(step == 2)
+		{
+			step = 1;
+
+			sessions_buffer = [];
+			booking_buffer = [];
+			var active_hour = $(".hora-activo");
+			active_hour.removeClass("hora-activo");
+			active_hour.removeClass("hora-ocupado");
+
+			blockBookingBufferHour();
+
+		}
+		return true;
+	}
+}
+
+
 
 //====== Manage Booking ======//
 var pressed3 = false;
 
-function addSession(booking)
+function addSession(booking, discount, is_time_discount)
 {
-	var serviceId = $('input[name=serviceRadio]:checked').val();
-	$.getJSON('/service', {id: serviceId}, function (service_response) {
+
+	bookSummary = bookSummaries[booking.index];
+    bookDetails = bookSummary.bookings[0];
+
+    var book_has_discount = false;
+    if(discount > 0)
+    {
+    	book_has_discount = true;
+    }
+
+    actual_booking = {
+		start: generateDate(booking.date, booking.start),
+		end: generateDate(booking.date, booking.end),
+		provider: bookDetails.provider,
+		provider_name: bookDetails.provider_name,
+		provider_lock: bookDetails.provider_lock,
+		service: bookDetails.service,
+		service_name: bookDetails.service_name,
+		online_payable: bookDetails.online_payable,
+		has_discount: book_has_discount,
+		discount: discount,
+		price: bookDetails.price,
+		show_price: bookDetails.show_price,
+		has_sessions: true,
+		sessions_amount: bookDetails.sessions_amount,
+		must_be_paid_online: bookDetails.must_be_paid_online,
+		is_time_discount: bookDetails.has_time_discount,
+		service_promo_id: bookDetails.service_promo_id
+    };
+
+    console.log("actual_booking: ");
+    console.log(actual_booking);
+
+    checkUserCrossBookings();
+
+	/*$.getJSON('/service', {id: serviceId}, function (service_response) {
 		var service_online_payable = false;
 		var service_has_discount = false;
 		var service_discount = 0;
@@ -876,7 +1717,7 @@ function addSession(booking)
 				service_discount = service_response.discount;
 			}
 		}
-		selected = true;
+
 		actual_booking = {
 			start: generateDate(booking.date, booking.start),
 			end: generateDate(booking.date, booking.end),
@@ -897,14 +1738,47 @@ function addSession(booking)
 
 		checkUserCrossBookings();
 
-	});
+	});*/
 }
 
-function addBooking (booking) {
+function addBooking (booking, book_index, discount, is_time_discount) {
 
 	//Add AJAX call to check if service accepts online payment
 
-	var serviceId = $('input[name=serviceRadio]:checked').val();
+	bookSummary = bookSummaries[booking.index];
+    bookDetails = bookSummary.bookings[book_index];
+    var book_has_discount = false;
+    if(discount > 0)
+    {
+    	book_has_discount = true;
+    }
+
+    actual_booking = {
+		start: generateDate(booking.date, bookDetails.start.split("T")[1].split("+")[0]),
+		end: generateDate(booking.date, bookDetails.end.split("T")[1].split("+")[0]),
+		provider: bookDetails.provider,
+		provider_name: bookDetails.provider_name,
+		provider_lock: bookDetails.provider_lock,
+		service: bookDetails.service,
+		service_name: bookDetails.service_name,
+		online_payable: bookDetails.online_payable,
+		has_discount: book_has_discount,
+		discount: discount,
+		price: bookDetails.price,
+		show_price: bookDetails.show_price,
+		has_sessions: false,
+		sessions_amount: bookDetails.sessions_amount,
+		must_be_paid_online: bookDetails.must_be_paid_online,
+		is_time_discount: bookDetails.has_time_discount,
+		service_promo_id: bookDetails.service_promo_id
+    };
+
+    console.log("actual_booking: ");
+    console.log(actual_booking);
+
+    checkUserCrossBookings();
+
+	/*var serviceId = $('input[name=serviceRadio]:checked').val();
 	$.getJSON('/service', {id: serviceId}, function (service_response) {
 		var service_online_payable = false;
 		var service_has_discount = false;
@@ -937,20 +1811,216 @@ function addBooking (booking) {
 		};
 		checkUserCrossBookings();
 
+	});*/
+
+}
+
+
+function blockService(service)
+{
+	if(service.has_sessions && added_services.length > 0)
+	{
+		myAlert.showAlert(
+		  '<h3>No se puede agregar el servicio</h3>' +
+		  '<p>El servicio que quieres agregar tiene sesiones, no puede ser reservado junto a otros servicios.</p>'
+		);
+		return true;
+	}
+	for(i = 0; i < added_services.length; i++)
+	{
+		if(added_services[i].has_sessions)
+		{
+			myAlert.showAlert(
+			  '<h3>No se puede agregar el servicio</h3>' +
+			  '<p>Ya existe un servicio con sesiones agregado, no puede ser reservado junto a otros servicios.</p>'
+			);
+			return true;
+		}
+	}
+
+	return false;
+}
+
+
+function addService(service_id){
+
+
+	$.getJSON('/service', {id: service_id}, function (service) {
+
+		if(blockService(service))
+		{
+			return;
+		}
+
+		$("#selected-services").append(
+			'<div id="selected-service-' + added_services_count + '" class="selected-service" service_id="' + service.id + '" draggable="true" ondragstart="drag(event)">' +
+				'<div class="selected-service-header row">' +
+					'<div class="col-sm-1"><i class="fa fa-times remove-service"></i></div>' +
+					'<div class="col-sm-9">' + service.name + '</div>' +
+					'<div class="col-sm-1"><i class="fa fa-bars move-service"></i></div>' +
+				'</div>' +
+				'<div class="selected-service-providers">' +
+					'<div class="form-group">' +
+				        '<label for="selected-service-provider" class="col-xs-3 control-label">Prestador</label>' +
+				        '<div class="col-xs-9">' +
+				          '<select class="form-control selected-service-provider"></select>' +
+				        '</div>' +
+				    '</div>' +
+				'</div>' +
+				'<div style="clear: both;">' +
+				'</div>' +
+			'</div>'
+		);
+
+		loadServiceStaff(service.id);
+
+		added_services.push(service);
+		added_services_count = added_services_count + 1;
+
+	});
+}
+
+$("body").on('click', '.remove-service', function(){
+
+	var index = $(this).closest(".selected-service").attr("id").split("-")[2];
+	var service_id = $(this).closest(".selected-service").attr("service_id");
+	for(i=0; i<added_services.length; i++)
+	{
+		if (added_services[i].id == parseInt(service_id))
+		{
+			added_services.splice(i, 1);
+		}
+	}
+	added_services_count = added_services_count-1;
+	$(this).closest(".selected-service").remove();
+
+});
+
+
+function loadServiceStaff (service_id) {
+  var serviceId = service_id;
+
+  var localId = $('#selectedLocal').data('local').id;
+  var providerPreference = $('#providerPreference').data('provider-preference');
+
+  var providerSelector = $('.selected-service[service_id="' + serviceId + '"] .selected-service-provider');
+  $.getJSON('/providers_services', {id: serviceId, local: localId}, function (providers) {
+
+    providerSelector.attr('disabled', true);
+    providerSelector.empty();
+
+    if (providerPreference != 1) {
+      if (providers.length > 1) {
+        providerSelector.append(
+          '<option value="0">Sin Preferencia</option>'
+        );
+      }
+    }
+    if (providerPreference != 2) {
+      $.each(providers, function (key, provider) {
+        providerSelector.append(
+          '<option value="' + provider.id + '">' + provider.public_name + '</option>'
+        );
+      });
+    }
+
+    providerSelector.attr('disabled', false);
+  });
+}
+
+function loadStaffForSessions(service_id)
+{
+	var serviceId = service_id;
+
+  	var localId = $('#selectedLocal').data('local').id;
+  	var providerPreference = $('#providerPreference').data('provider-preference');
+
+  	$.getJSON('/providers_services', {id: serviceId, local: localId}, function (providers) {
+
+	    $(".changeStaff").empty();
+
+	    if (providerPreference != 1) {
+	      if (providers.length > 1) {
+	        $(".changeStaff").append(
+	          '<div class="radio">' +
+                  '<label>' +
+                    '<p><input type="radio" name="changeProvider" value="0" style="cursor: pointer;" />Sin preferencia</p>' +
+                  '</label>' +
+                '</div>'
+	        );
+	      }
+	    }
+	    if (providerPreference != 2) {
+	      $.each(providers, function (key, provider) {
+	        $(".changeStaff").append(
+	          '<div class="radio">' +
+                '<label>' +
+                  '<p>' +
+                    '<input type="radio" name="changeProvider" value="' + provider.id + '" style="cursor: pointer;" />' + provider.public_name +
+                  '</p>' +
+                '</label>' +
+              '</div>'
+	        );
+	      });
+	    }
+
 	});
 
-	/*selected = true;
-	actual_booking = {
-		start: generateDate(booking.date, booking.start),
-		end: generateDate(booking.date, booking.end),
-		provider: booking.provider,
-		provider_name: $('input[name="staffRadio"]:checked').next().html(),
-		provider_lock: $('[name="staffRadio"]:checked').val() == 0 ? false : true,
-		service: $('input[name=serviceRadio]:checked').val(),
-		service_name: $('input[name=serviceRadio]:checked').next().html()
-	};
-	checkUserCrossBookings();*/
 }
+
+$('body').on('click', '[name="changeProvider"]', function(event){
+
+
+  	$("#loader-div").show();
+
+	var localId = $('#selectedLocal').data('local').id;
+	var selects = [];
+	var start_date = $("#optimizerDateSelector").val();
+	
+	$("#selected-hour-body").empty();
+
+	$(".selected-service").each(function() {
+		var provider = $('input[name="changeProvider"]:checked').val();
+		var service_id = $(this).attr("service_id");
+		console.log("provider: ");
+		console.log(provider)
+		selects.push({
+			service: service_id,
+			provider: provider
+		});
+	});
+
+  	
+
+  	var data;
+
+  	if($("#pickerSelected").val()!="")
+  	{
+    	data = {local: localId, serviceStaff: JSON.stringify(selects), date: $("#pickerSelected").val()}
+  	}
+  	else
+  	{
+    	data = {local: localId, serviceStaff: JSON.stringify(selects)}
+  	}
+
+  	if (promoCalendar) {
+    	promoCalendar.rebuild('/promotion_hours', data);
+  	}
+  	else {
+    	promoCalendar = new PromoCalendar('/promotion_hours', data);
+  	}
+
+  	$("#loader-div").hide();
+
+  	blockBookingBufferHour();
+
+});
+
+
+$("#new-add-service").click(function(){
+	addService($("#selectedServiceId").val());
+});
+
 
 function generateDate(date, time) {
 	var year = date.substring(0, date.indexOf('-'));
@@ -984,22 +2054,26 @@ function blockBookingBufferHour () {
 
 	for (i = 0; i < booking_buffer.length; i++) {
 
+		var start_arr = booking_buffer[i].start.split(" ");
+		var start_date = start_arr[0].split("-");
+		var start_time = start_arr[1].split(":");
+
+		var end_arr = booking_buffer[i].end.split(" ");
+		var end_date = end_arr[0].split("-");
+		var end_time = end_arr[1].split(":");
+
+		var bookingStart = new Date(start_date[0], start_date[1]-1, start_date[2], start_time[0], start_time[1], start_time[2], 0);
+		var bookingEnd = new Date(end_date[0], end_date[1]-1, end_date[2], end_time[0], end_time[1], end_time[2], 0);
+
 		var date = booking_buffer[i].start.split(' ')[0];
 		var hourBlocks = $('.columna-dia[data-date="' + date + '"]').children('.bloque-hora.hora-disponible');
+		var promoBlocks = $('.columna-dia[data-date="' + date + '"]').children('.bloque-hora.hora-promocion');
+
 		$.each(hourBlocks, function (key, hourBlock) {
 			var start = $(hourBlock).data('start');
 			var end = $(hourBlock).data('end');
 
-			var start_arr = booking_buffer[i].start.split(" ");
-			var start_date = start_arr[0].split("-");
-			var start_time = start_arr[1].split(":");
-
-			var end_arr = booking_buffer[i].end.split(" ");
-			var end_date = end_arr[0].split("-");
-			var end_time = end_arr[1].split(":");
-
-			var bookingStart = new Date(start_date[0], start_date[1]-1, start_date[2], start_time[0], start_time[1], start_time[2], 0);
-			var bookingEnd = new Date(end_date[0], end_date[1]-1, end_date[2], end_time[0], end_time[1], end_time[2], 0);
+			
 
 			var blockStart = new Date(start_date[0], start_date[1]-1, start_date[2], start.split(":")[0], start.split(":")[1], 0, 0);
 			var blockEnd = new Date(end_date[0], end_date[1]-1, end_date[2], end.split(":")[0], end.split(":")[1], 0, 0);
@@ -1007,45 +2081,60 @@ function blockBookingBufferHour () {
 			//Check for no overlap and negate it.
 			if(!(bookingEnd <= blockStart || blockEnd <= bookingStart))
 			{
-				$(hourBlock).removeClass('hora-disponible');
-				$(hourBlock).removeClass('hora-activo');
+				//$(hourBlock).removeClass('hora-disponible');
+				//$(hourBlock).removeClass('hora-activo');
 				$(hourBlock).addClass('hora-ocupada');
 			}
 
 		});
-		$("#foo4").trigger('update');
+
+		$.each(promoBlocks, function (key, hourBlock) {
+			var start = $(hourBlock).data('start');
+			var end = $(hourBlock).data('end');
+
+			
+
+			var blockStart = new Date(start_date[0], start_date[1]-1, start_date[2], start.split(":")[0], start.split(":")[1], 0, 0);
+			var blockEnd = new Date(end_date[0], end_date[1]-1, end_date[2], end.split(":")[0], end.split(":")[1], 0, 0);
+			
+			//Check for no overlap and negate it.
+			if(!(bookingEnd <= blockStart || blockEnd <= bookingStart))
+			{
+				//$(hourBlock).removeClass('hora-promocion');
+				//$(hourBlock).removeClass('hora-activo');
+				$(hourBlock).addClass('hora-ocupada');
+			}
+
+		});
+
+
+		$("#foo4").trigger('updateSizes');
 
 	}
 
-	/*sessions_array = []
-	if (first_session != null)
-	{
-		sessions_array.push(first_session);
-	}
-	for(i=0; i < sessions_buffer.length; i++)
-	{
-		sessions_array.push(sessions_buffer[i]);
-	}*/
 
 	for(i=0; i < sessions_buffer.length; i++)
 	{
 
 		var date = sessions_buffer[i].start.split(' ')[0];
 		var hourBlocks = $('.columna-dia[data-date="' + date + '"]').children('.bloque-hora.hora-disponible');
+		var promoBlocks = $('.columna-dia[data-date="' + date + '"]').children('.bloque-hora.hora-promocion');
+
+		var start_arr = sessions_buffer[i].start.split(" ");
+		var start_date = start_arr[0].split("-");
+		var start_time = start_arr[1].split(":");
+
+		var end_arr = sessions_buffer[i].end.split(" ");
+		var end_date = end_arr[0].split("-");
+		var end_time = end_arr[1].split(":");
+
+		var bookingStart = new Date(start_date[0], start_date[1]-1, start_date[2], start_time[0], start_time[1], start_time[2], 0);
+		var bookingEnd = new Date(end_date[0], end_date[1]-1, end_date[2], end_time[0], end_time[1], end_time[2], 0);
+
 		$.each(hourBlocks, function (key, hourBlock) {
+
 			var start = $(hourBlock).data('start');
 			var end = $(hourBlock).data('end');
-
-			var start_arr = sessions_buffer[i].start.split(" ");
-			var start_date = start_arr[0].split("-");
-			var start_time = start_arr[1].split(":");
-
-			var end_arr = sessions_buffer[i].end.split(" ");
-			var end_date = end_arr[0].split("-");
-			var end_time = end_arr[1].split(":");
-
-			var bookingStart = new Date(start_date[0], start_date[1]-1, start_date[2], start_time[0], start_time[1], start_time[2], 0);
-			var bookingEnd = new Date(end_date[0], end_date[1]-1, end_date[2], end_time[0], end_time[1], end_time[2], 0);
 
 			var blockStart = new Date(start_date[0], start_date[1]-1, start_date[2], start.split(":")[0], start.split(":")[1], 0, 0);
 			var blockEnd = new Date(end_date[0], end_date[1]-1, end_date[2], end.split(":")[0], end.split(":")[1], 0, 0);
@@ -1053,8 +2142,24 @@ function blockBookingBufferHour () {
 			//Check for no overlap and negate it.
 			if(!(bookingEnd <= blockStart || blockEnd <= bookingStart))
 			{
-				$(hourBlock).removeClass('hora-disponible');
-				$(hourBlock).removeClass('hora-activo');
+				//$(hourBlock).removeClass('hora-disponible');
+				//$(hourBlock).removeClass('hora-activo');
+				$(hourBlock).addClass('hora-ocupada');
+			}
+
+		});
+		$.each(promoBlocks, function (key, hourBlock) {
+			var start = $(hourBlock).data('start');
+			var end = $(hourBlock).data('end');
+
+			var blockStart = new Date(start_date[0], start_date[1]-1, start_date[2], start.split(":")[0], start.split(":")[1], 0, 0);
+			var blockEnd = new Date(end_date[0], end_date[1]-1, end_date[2], end.split(":")[0], end.split(":")[1], 0, 0);
+			
+			//Check for no overlap and negate it.
+			if(!(bookingEnd <= blockStart || blockEnd <= bookingStart))
+			{
+				//$(hourBlock).removeClass('hora-promocion');
+				//$(hourBlock).removeClass('hora-activo');
 				$(hourBlock).addClass('hora-ocupada');
 			}
 
@@ -1064,15 +2169,7 @@ function blockBookingBufferHour () {
 }
 
 function addNewSession() {
-	if(!$('[name="staffRadio"]').is(':checked')) 
-	{
-		myAlert.showAlert(
-		  '<h3>Selecciona un Staff</h3>' +
-		  '<p>Debes elegir un staff para poder reservar.</p>'
-		);
-	}
-	else
-	{
+
 		if(!selected) {
 			myAlert.showAlert(
 			  '<h3>Selecciona un Horario</h3>' +
@@ -1090,16 +2187,25 @@ function addNewSession() {
 			sessions_buffer.push(actual_booking);
 
 			var hourBlock = $(".hora-activo");
-			$(hourBlock).removeClass('hora-disponible');
-			$(hourBlock).removeClass('hora-activo');
+			//$(hourBlock).removeClass('hora-disponible');
+			//$(hourBlock).removeClass('hora-activo');
 			$(hourBlock).addClass('hora-ocupada');
+
+			if(block_discount == 0)
+			{
+				block_discount = actual_booking.discount;
+			}
+			if (actual_booking.discount < block_discount)
+			{
+				block_discount = actual_booking.discount;
+			}
 
 			blockBookingBufferHour();
 
 			sessions_left = sessions_left - 1;
 
 			$("#sessions-left").empty();
-			$("#sessions-left").text("" + sessions_left);
+			$("#sessions-left").html("" + sessions_left);
 			selected = false;
 			if(sessions_left < 2)
 			{
@@ -1109,17 +2215,22 @@ function addNewSession() {
 			{
 				$(".btn-add-session").attr("disabled", false);
 			}
+
+			$(hourBlock).removeClass("hora-activo");
 			
 			loadSessionsSummary();
 
 		}
-	}
+
 }
 
 
 function loadSessionsSummary()
 {
 	$("#sessions-summary-tr").empty();
+    $("#current-discount-div").show();
+    $("#current-discount").empty();
+    $("#current-discount").append(block_discount + "%");
 
 	for(i = 0; i < sessions_buffer.length; i++)
 	{
@@ -1176,7 +2287,7 @@ function removeSession(index)
 	$(".btn-add-session").attr("disabled", false);
 
 	$(hourBlock).removeClass('hora-ocupada');
-	$(hourBlock).addClass('hora-disponible');
+	//$(hourBlock).addClass('hora-disponible');
 
 	loadSessionsSummary();
 }
@@ -1216,6 +2327,16 @@ $("#sessions-help").click(function(){
 	$("#sessions-explanation").modal('show');
 });
 
+$("#staffCollapse").on("shown.bs.collapse", function(){
+  $("#openStaffCollapseIcon").hide();
+  $("#closeStaffCollapseIcon").show();
+});
+
+$("#staffCollapse").on("hidden.bs.collapse", function(){
+  $("#openStaffCollapseIcon").show();
+  $("#closeStaffCollapseIcon").hide();
+});
+
 
 var myAlert;
 $(function () {
@@ -1248,10 +2369,72 @@ $(function () {
 	});
 
 
+	
 	$(document).on('calendarBuilded', function (e) {
 
+		/*
+			If there are no hours for this week,
+			go to next week.
+		*/
+
+		console.log(e);
+		
+		if (e.date < after_date)
+		{
+			if($(".bloque-hora").size() == 0)
+			{
+				$("#next").trigger("click");
+				reload_times =reload_times + 1;
+				$("#next").attr("disabled", false);
+			}
+		}
+		else
+		{
+
+			var day = new Date(after_date.getFullYear(), after_date.getMonth(), after_date.getDate());
+
+		  	var localId = $('#selectedLocal').data('local').id;
+			var selects = [];
+
+			$(".selected-service").each(function() {
+				var provider = $(this).find('.selected-service-provider').val();
+				var service_id = $(this).attr("service_id");
+				console.log("provider: ");
+				console.log(provider);
+				selects.push({
+					service: service_id,
+					provider: provider
+				});
+			});
+
+
+			var data;
+
+			console.log("day: " + day);
+			day_str = after_date.getFullYear() + "-" + (parseInt(after_date.getMonth())+1) + "-" + after_date.getDate();
+
+			console.log(day_str);
+
+			data = {local: localId, serviceStaff: JSON.stringify(selects), date: day_str};
+
+			if (promoCalendar) {
+				promoCalendar.rebuild('/promotion_hours', data);
+			}
+			else {
+				promoCalendar = new PromoCalendar('/promotion_hours', data);
+			}
+
+
+			myAlert.showAlert(
+	            '<h3>No hay horarios disponibles</h3>' +
+	            '<p>Lo sentimos, no hay más horarios disponibles después de la semana del ' + after_date.toLocaleDateString() + '.</p>'
+	        );
+		}
+
 		blockBookingBufferHour();
+		var oldTop = $(document).scrollTop();
 		$('#foo4').trigger('updateSizes');
+		$(document).scrollTop(oldTop);
 	});
 
 });

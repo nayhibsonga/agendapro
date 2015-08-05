@@ -200,6 +200,8 @@ class ServiceProvider < ActiveRecord::Base
 	            before_now = start_time_block - company_setting.before_booking / 24.0
 	            after_now = now + company_setting.after_booking * 30
 
+	            promo_discount = 0
+
 	            available_provider = ''
 	            ordered_providers.each do |provider|
 	              provider_time_valid = false
@@ -288,17 +290,52 @@ class ServiceProvider < ActiveRecord::Base
 	                  if provider_free
 	                    status = 'hora-disponible'
 	                    available_provider = provider.id
+
+	                    #Check for existing promotions
+	                    if service.has_time_discount
+	                    	promo_time = provider.company.company_setting.promo_time
+	                    	service_promo = ServicePromo.find(service.active_service_promo_id)
+	                    	if !promo_time.nil? && !service_promo.nil?
+	                    		if Promo.where(:service_promo_id => service_promo.id, :day_id => day, :location_id => local.id).count > 0
+
+			                    	promo = Promo.where(:service_promo_id => service_promo.id, :day_id => day, :location_id => local.id).first
+
+		                    		if !(service_promo.morning_end.strftime("%H:%M") <= start_time_block.strftime("%H:%M") || end_time_block.strftime("%H:%M") <= service_promo.morning_start.strftime("%H:%M"))
+				                    		
+				                    	status = 'hora-promocion'
+				                    	promo_discount = promo.morning_discount
+
+				                    elsif !(service_promo.afternoon_end.strftime("%H:%M") <= start_time_block.strftime("%H:%M") || end_time_block.strftime("%H:%M") <= service_promo.afternoon_start.strftime("%H:%M"))
+
+				                    	status = 'hora-promocion'
+				                    	promo_discount = promo.afternoon_discount
+
+				                    elsif !(service_promo.night_end.strftime("%H:%M") <= start_time_block.strftime("%H:%M") || end_time_block.strftime("%H:%M") <= service_promo.night_start.strftime("%H:%M"))
+
+				                    	status = 'hora-promocion'
+				                    	promo_discount = promo.night_discount
+
+				                    end
+
+				                end
+				            end
+	                    end
+
+	                    #Check for last minute promotion
+
+
 	                  end
 	                end
-	                break if ['hora-pasada','hora-disponible'].include? status
+	                break if ['hora-pasada','hora-disponible', 'hora-promocion'].include? status
 	              end
 	            end
 
-	            if ['hora-pasada','hora-disponible','hora-ocupada'].include? status
+	            if ['hora-pasada','hora-disponible','hora-ocupada', 'hora-promocion'].include? status
 	            	hour = { status: status,
 	            	start_block: start_block,
 	            	end_block: end_block,
-	            	available_provider: available_provider.to_s}
+	            	available_provider: available_provider.to_s,
+	            	promo_discount: promo_discount.to_s}
 	            	# hour = '<div class="bloque-hora '+ status +'" data-start="'+ start_block +'" data-end="'+ end_block +'" data-provider="' + available_provider.to_s + '"><span>'+ start_block +' - '+ end_block +'</span></div>'
 	            end
 
@@ -314,8 +351,9 @@ class ServiceProvider < ActiveRecord::Base
 	      end
 
 	    else
-
+	    	#There is a provider given
 	      # Data
+	      promo_discount = 0
 	      service = Service.find(service_id)
 	      service_duration = service.duration
 	      weekDate = Date.strptime(start_date, '%Y-%m-%d')
@@ -370,7 +408,8 @@ class ServiceProvider < ActiveRecord::Base
 	            hour = { status: status,
             	start_block: '',
             	end_block: '',
-            	available_provider: ''}
+            	available_provider: '',
+            	promo_discount: '0'}
 	            # hour = '<div class="bloque-hora '+ status +'" data-start data-end data-provider><span></span></div>'
 
 	            available_provider = ''
@@ -408,6 +447,8 @@ class ServiceProvider < ActiveRecord::Base
 	            next_open_hour = provider_times_first_open_end.hour
 	            next_open_min = provider_times_first_open_end.min
 	            end_block = (next_open_hour < 10 ? '0' : '') + next_open_hour.to_s + ':' + (next_open_min < 10 ? '0' : '') + next_open_min.to_s
+
+	            promo_discount = 0
 
 	            start_time_block = DateTime.new(date.year, date.mon, date.mday, open_hour, open_min)
 	            end_time_block = DateTime.new(date.year, date.mon, date.mday, next_open_hour, next_open_min)
@@ -476,15 +517,53 @@ class ServiceProvider < ActiveRecord::Base
 	                if provider_free
 	                  status = 'hora-disponible'
 	                  available_provider = provider.id
+
+	                  #Check for existing promotions
+                    if service.has_time_discount
+                    	promo_time = provider.company.company_setting.promo_time
+                    	if !promo_time.nil?
+                    		service_promo = ServicePromo.find(service.active_service_promo_id)
+
+                    		if !service_promo.nil?
+	                    		if Promo.where(:service_promo_id => service_promo.id, :day_id => day, :location_id => local.id).count > 0
+
+			                    	promo = Promo.where(:service_promo_id => service_promo.id, :day_id => day, :location_id => local.id).first
+
+		                    		if !(promo_time.morning_end.strftime("%H:%M") <= start_time_block.strftime("%H:%M") || end_time_block.strftime("%H:%M") <= promo_time.morning_start.strftime("%H:%M"))
+					                    		
+				                    	status = 'hora-promocion'
+				                    	promo_discount = promo.morning_discount
+
+				                    elsif !(promo_time.afternoon_end.strftime("%H:%M") <= start_time_block.strftime("%H:%M") || end_time_block.strftime("%H:%M") <= promo_time.afternoon_start.strftime("%H:%M"))
+
+				                    	status = 'hora-promocion'
+				                    	promo_discount = promo.afternoon_discount
+
+				                    elsif !(promo_time.night_end.strftime("%H:%M") <= start_time_block.strftime("%H:%M") || end_time_block.strftime("%H:%M") <= promo_time.night_start.strftime("%H:%M"))
+
+				                    	status = 'hora-promocion'
+				                    	promo_discount = promo.night_discount
+
+				                    end
+
+				                end
+				            end
+			            end
+                    end
+
+                    #Check for last minute promotion
+
+
 	                end
 	              end
 	            end
 
-	            if ['hora-pasada','hora-disponible','hora-ocupada'].include? status
+	            if ['hora-pasada','hora-disponible','hora-ocupada', 'hora-promocion'].include? status
 	            	hour = { status: status,
 	            	start_block: start_block,
 	            	end_block: end_block,
-	            	available_provider: available_provider.to_s}
+	            	available_provider: available_provider.to_s,
+	            	promo_discount: promo_discount.to_s}
 	            	# hour = '<div class="bloque-hora '+ status +'" data-start="'+ start_block +'" data-end="'+ end_block +'" data-provider="' + available_provider.to_s + '"><span>'+ start_block +' - '+ end_block +'</span></div>'
 	            end
 
@@ -507,7 +586,14 @@ class ServiceProvider < ActiveRecord::Base
 	    @week_blocks.each do |week_block|
 	    	week_blocks += '<div class="columna-dia" data-date="' + week_block[:formatted_date] + '" style="width: ' + width + '%;">'
 	    	week_block[:available_time].each do |hour|
-	    		week_blocks += '<div class="bloque-hora ' + hour[:status] + '" data-start="' + hour[:start_block] + '" data-end="' + hour[:end_block] + '" data-provider="' + hour[:available_provider] + '"><span>' + hour[:start_block] + ' - ' + hour[:end_block] + '</span></div>'
+
+	    		logger.info hour.inspect
+
+	    		if hour[:status] != "hora-promocion"
+	    			week_blocks += '<div class="bloque-hora ' + hour[:status] + '" data-start="' + hour[:start_block] + '" data-end="' + hour[:end_block] + '" data-provider="' + hour[:available_provider] + '" data-discount="' + hour[:promo_discount] + '"><span>' + hour[:start_block] + ' - ' + hour[:end_block] + '</span></div>'
+	    		else
+	    			week_blocks += '<div class="bloque-hora ' + hour[:status] + '" data-start="' + hour[:start_block] + '" data-end="' + hour[:end_block] + '" data-provider="' + hour[:available_provider] + '" data-discount="' + hour[:promo_discount] + '"><span>' + ActionController::Base.helpers.image_tag('admin/icono_promociones.png', class: 'promotion-hour-icon', size: "18x18") + '&nbsp;&nbsp' + hour[:start_block] + ' - ' + hour[:end_block] + '</span></div>'
+	    		end
 	    	end
 	    	week_blocks += '<div class="clear"></div></div>'
 	    end

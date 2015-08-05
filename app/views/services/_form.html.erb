@@ -85,17 +85,42 @@
                   <div class="col-md-9">
                     <div class="checkbox">
                       <label>
-                        <%= f.check_box :online_payable %> Este servicio se puede pagar en línea
+                        <%= f.check_box :online_payable %> Este servicio se pude pagar en línea
                       </label>
                     </div>
                   </div>
                 </div>
+                <% if @service.online_payable %>
+                  <div class="form-group" id="must_be_paid_div">
+                    <div class="col-md-3">
+                    </div>
+                    <div class="col-md-9">
+                      <div class="checkbox">
+                        <label>
+                          <%= f.check_box :must_be_paid_online %> Este servicio se debe pagar en línea
+                        </label>
+                      </div>
+                    </div>
+                  </div>
+                <% else %>
+                  <div class="form-group" hidden id="must_be_paid_div">
+                    <div class="col-md-3">
+                    </div>
+                    <div class="col-md-9">
+                      <div class="checkbox">
+                        <label>
+                          <%= f.check_box :must_be_paid_online, {:checked=>false} %> Este servicio se debe pagar en línea
+                        </label>
+                      </div>
+                    </div>
+                  </div>
+                <% end %>
                 <div class="form-group">
                   <%= f.label :has_discount, "Descuento", class: "col-md-3 control-label" %>
                   <div class="col-md-9">
                     <div class="checkbox">
                       <label>
-                        <%= f.check_box :has_discount %> Tiene descuento por pago en línea en línea
+                        <%= f.check_box :has_discount %> Tiene descuento por pago en línea
                       </label>
                     </div>
                   </div>

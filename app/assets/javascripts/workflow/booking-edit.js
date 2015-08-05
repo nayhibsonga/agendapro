@@ -1,30 +1,122 @@
 var calendar;
-function loadCalendar () {
-	var data = {
-		provider: $('#booking').data('booking').service_provider_id,
-		local: $('#booking').data('booking').location_id,
-		service: $('#booking').data('booking').service_id
-	}
-	calendar = new Calendar('/available_hours_week_html', data);
-	
-	$(document).on('hourClick', function (e) {
-		addBooking(e);
+var selected = false;
+
+function loadCalendar()
+{
+	var selects = [];
+
+	date = Date.new;
+
+	selects.push({
+	  service: $('#booking').data('booking').service_id,
+	  provider: $('#booking').data('booking').service_provider_id
 	});
 
-	$(function () {
-		$('#prev').click(function () {
-			selected = false;
+	var data = {
+	  date: date,
+	  serviceStaff: JSON.stringify(selects),
+	  local: $('#booking').data('booking').location_id,
+	  edit: true
+	}
+
+	console.log(data);
+
+	calendar = new PromoCalendar('/promotion_hours', data);
+
+	$(document).on('hourClick', function (e) {
+
+	  
+	    bookSummary = bookSummaries[e.index];
+	    bookDetails = bookSummary.bookings[0];
+
+	    bookDetailsStart = bookDetails.start.split("T")[1].split(":")[0] + ':' + bookDetails.start.split("T")[1].split(":")[1];
+	    bookDetailsEnd = bookDetails.end.split("T")[1].split(":")[0] + ':' + bookDetails.end.split("T")[1].split(":")[1];
+
+
+	    addBooking(e);
+
+	    selected = true;
+
+	    $(function () {
+			$('#prev').click(function () {
+				selected = false;
+			});
+			$('#next').click(function () {
+				selected = false;
+			});
+			$('#today').click(function () {
+				selected = false;
+			});
 		});
-		$('#next').click(function () {
-			selected = false;
-		});
-		$('#today').click(function () {
-			selected = false;
-		});
+
 	});
 }
 
-var selected = false;
+$("#datepicker").datepicker({
+    dateFormat: 'dd-mm-yy',
+    autoSize: true,
+    firstDay: 1,
+    changeMonth: true,
+    changeYear: true,
+    monthNames: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+    monthNamesShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
+    prevText: 'Atrás',
+    nextText: 'Adelante',
+    dayNames: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'],
+    dayNamesShort: ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'],
+    dayNamesMin: ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'],
+    today: 'Hoy',
+    clear: '',
+    dateFormat: 'yy-mm-dd',
+    onSelect: function(newDate){
+
+      var selects = [];
+
+      selects.push({
+        service: $('#booking').data('booking').service_id,
+        provider: $('#booking').data('booking').service_provider_id
+      });
+
+      var data = {
+        date: newDate,
+        serviceStaff: JSON.stringify(selects),
+        local: $('#booking').data('booking').location_id,
+        edit: true
+      }
+
+      console.log(data);
+
+      calendar.rebuild('/promotion_hours', data);
+
+      $(document).on('hourClick', function (e) {
+
+        
+			bookSummary = bookSummaries[e.index];
+			bookDetails = bookSummary.bookings[0];
+
+			bookDetailsStart = bookDetails.start.split("T")[1].split(":")[0] + ':' + bookDetails.start.split("T")[1].split(":")[1];
+			bookDetailsEnd = bookDetails.end.split("T")[1].split(":")[0] + ':' + bookDetails.end.split("T")[1].split(":")[1];
+
+			addBooking(e);
+
+			selected = true;
+
+	      	$(function () {
+				$('#prev').click(function () {
+					selected = false;
+				});
+				$('#next').click(function () {
+					selected = false;
+				});
+				$('#today').click(function () {
+					selected = false;
+				});
+			});
+
+      });
+
+    }
+});
 
 function addBooking (booking) {
 	var today = new Date();
@@ -53,6 +145,10 @@ function generateDate(date, time) {
 
 	return year + '-' + month + '-' + day + ' ' + time;
 }
+
+$(document.body).on('click', '.date-span', function(e) {
+  $(e.currentTarget).find('input').datepicker('show');
+});
 
 var myAlert;
 $(function () {
