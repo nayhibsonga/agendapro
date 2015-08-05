@@ -995,7 +995,6 @@ class BookingsController < ApplicationController
       end
       session_booking_index = @booking.session_booking.sessions_taken + 1
       sessions_ratio = "Sesión " + session_booking_index.to_s + " de " + @booking.session_booking.sessions_amount.to_s
-
     end
     respond_to do |format|
       if @booking.update(new_booking_params)
@@ -1037,6 +1036,103 @@ class BookingsController < ApplicationController
               @booking.send_validate_mail
             end
           end
+
+        else
+
+          if @booking.service.has_sessions
+
+
+            should_create_sessions = false
+            session_booking = nil
+
+
+            if booking_params[:session_booking_id]
+              if booking_params[:session_booking_id] != "0" && booking_params[:session_booking_id] != 0
+                session_booking = SessionBooking.find(booking_params[:session_booking_id])
+                #session_booking.sessions_taken = session_booking.sessions_taken + 1
+                #@booking = Booking.where(:session_booking_id => session_booking.id, :is_session_booked => false).first
+                #@booking.start = booking_params[:start]
+                #@booking.end = booking_params[:end]
+                #@booking.service_provider_id = booking_params[:service_provider_id]
+                @booking.session_booking_id = session_booking.id
+                @booking.is_session = true
+                @booking.is_session_booked = true
+                if @booking.payed
+                  @booking.user_session_confirmed = false
+                else
+                  @booking.user_session_confirmed = true
+                end
+
+                session_booking.sessions_taken = session_booking.sessions_taken+1
+                session_booking.save
+
+                @booking.save
+              else
+                should_create_sessions = true
+                session_booking = SessionBooking.new
+                #session_booking.sessions_taken = 1
+                serv = Service.find(booking_params[:service_id])
+                session_booking.service_id = booking_params[:service_id]
+                session_booking.sessions_amount = serv.sessions_amount
+
+              end
+            end
+
+            # If it's a sessions service and it's the first session, save client and user for SessionBooking
+            # and associate it with the @booking
+            sessions_ratio = ""
+            if should_create_sessions
+
+              session_booking.client_id = @booking.client_id
+              if User.find_by_email(booking_params[:client_email])
+                session_booking.user_id = User.find_by_email(booking_params[:client_email]).id
+              end
+
+              session_booking.sessions_taken = 1
+              session_booking.save
+              @booking.session_booking_id = session_booking.id
+              @booking.is_session = true
+              @booking.is_session_booked = true
+              if @booking.payed
+                @booking.user_session_confirmed = false
+              else
+                @booking.user_session_confirmed = true
+              end
+              @booking.save
+            end
+
+            if should_create_sessions
+
+              sessions_missing = session_booking.sessions_amount - 1
+              sessions_ratio = "Sesión 1 de " + @booking.service.sessions_amount.to_s
+
+              for i in 0..sessions_missing-1
+                new_booking = @booking.dup
+                new_booking.is_session = true
+                new_booking.is_session_booked = false
+                new_booking.user_session_confirmed = false
+                new_booking.session_booking_id = session_booking.id
+                new_booking.save
+              end
+
+            elsif !session_booking.nil?
+              session_booking.save
+
+              session_index = 1
+              Booking.where(:session_booking_id => session_booking.id, :is_session_booked => true).order('start asc').each do |b|
+                if b.id == @booking.id
+                  break
+                else
+                  session_index = session_index + 1
+                end
+              end
+
+              sessions_ratio = "Sesión " + session_index.to_s + " de " + session_booking.sessions_amount.to_s
+
+            end
+
+          end
+
         end
 
         u = @booking
