@@ -216,6 +216,13 @@ class PuntoPagosController < ApplicationController
           host = request.host_with_port
           @url = @bookings.first.location.company.web_address + '.' + host[host.index(request.domain)..host.length]
 
+          if !@bookings.first.booking_group.nil?
+            not_payed_bookings = Booking.where(:booking_group => @bookings.first.booking_group, :payed => false)
+            not_payed_bookings.each do |not_payed_booking|
+              @bookings << not_payed_booking
+            end 
+          end
+
           @try_register = false
           client = @bookings.first.client
           @company = @bookings.first.location.company
