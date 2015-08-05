@@ -94,12 +94,20 @@
 				<%= f.fields_for :company_attributes do |builder| %>
 					<!-- start: Companny Settings -->
 					<%= builder.fields_for :company_setting_attributes do |settings| %>
-						<%= settings.hidden_field :before_booking, :value => 24 %>
+						<%= settings.hidden_field :before_booking, :value => 3 %>
 						<%= settings.hidden_field :after_booking, :value => 6 %>
 					<% end %>
 					<!-- end: Company Settings -->
 					<%= builder.hidden_field :payment_status_id, :value => PaymentStatus.where(:name => "Trial").first.id %>
 					<%= builder.hidden_field :plan_id, :value => Plan.find_by(:name => 'Trial').id %>
+					<div class="form-group has-feedback">
+						<%= builder.label :country_id, 'País de la Compañía', :class => 'col-sm-4 control-label' %>
+						<div class="col-sm-8">
+							<%= builder.collection_select :country_id, Country.all, :id, :name, { selected: Country.find_by(locale: I18n.locale.to_s).id, placeholder: 'Elige el país donde está tu empresa' },  { :class => 'form-control' } %>
+						<span class="help-block"></span>
+						<span class="form-control-feedback"></span>
+						</div>
+					</div>
 					<div class="form-group has-feedback">
 						<%= builder.label :name, 'Nombre de la Compañia', :class => 'col-sm-4 control-label' %>
 						<div class="col-sm-8">

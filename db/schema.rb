@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150721190345) do
+ActiveRecord::Schema.define(version: 20150804142619) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -191,8 +191,10 @@ ActiveRecord::Schema.define(version: 20150721190345) do
     t.date     "due_date"
     t.boolean  "owned",               default: true
     t.boolean  "show_in_home",        default: false
+    t.integer  "country_id"
   end
 
+  add_index "companies", ["country_id"], name: "index_companies_on_country_id", using: :btree
   add_index "companies", ["payment_status_id"], name: "index_companies_on_payment_status_id", using: :btree
   add_index "companies", ["plan_id"], name: "index_companies_on_plan_id", using: :btree
 
@@ -285,11 +287,12 @@ ActiveRecord::Schema.define(version: 20150721190345) do
   add_index "company_settings", ["company_id"], name: "index_company_settings_on_company_id", using: :btree
 
   create_table "countries", force: true do |t|
-    t.string   "name",                    null: false
+    t.string   "name",                       null: false
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.string   "locale",     default: ""
-    t.string   "flag_photo", default: ""
+    t.string   "locale",        default: ""
+    t.string   "flag_photo",    default: ""
+    t.string   "currency_code", default: ""
   end
 
   create_table "days", force: true do |t|
@@ -429,6 +432,9 @@ ActiveRecord::Schema.define(version: 20150721190345) do
     t.string   "email",          default: ""
     t.string   "second_address", default: ""
     t.boolean  "online_booking", default: true
+    t.string   "image1"
+    t.string   "image2"
+    t.string   "image3"
   end
 
   add_index "locations", ["company_id"], name: "index_locations_on_company_id", using: :btree
@@ -629,6 +635,17 @@ ActiveRecord::Schema.define(version: 20150721190345) do
   add_index "payments", ["payment_method_type_id"], name: "index_payments_on_payment_method_type_id", using: :btree
   add_index "payments", ["receipt_type_id"], name: "index_payments_on_receipt_type_id", using: :btree
 
+  create_table "plan_countries", force: true do |t|
+    t.integer  "plan_id"
+    t.integer  "country_id"
+    t.float    "price"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "plan_countries", ["country_id"], name: "index_plan_countries_on_country_id", using: :btree
+  add_index "plan_countries", ["plan_id"], name: "index_plan_countries_on_plan_id", using: :btree
+
   create_table "plan_logs", force: true do |t|
     t.integer  "prev_plan_id", null: false
     t.integer  "new_plan_id",  null: false
@@ -647,7 +664,6 @@ ActiveRecord::Schema.define(version: 20150721190345) do
     t.boolean  "custom",            default: false
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.float    "price",             default: 0.0,   null: false
     t.boolean  "special",           default: false
     t.integer  "monthly_mails",     default: 5000,  null: false
   end

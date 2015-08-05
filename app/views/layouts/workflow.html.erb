@@ -80,9 +80,9 @@
                         <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
                             <i class="fa fa-bars"></i>
                         </button>
-                        <a href="<%= root_without_subdomain %>" class="navbar-brand">
-                            <%= image_tag 'logos/logo2.png', :alt => 'AgendaPro', :size => "127x43" %>
-                        </a>
+                        <%= link_to root_url(subdomain: false), class: 'navbar-brand', id: 'agendapro-brand' do %>
+                            <%= image_tag 'logos/logo2.png', :alt => 'AgendaPro', :size => '127x43' %>
+                        <% end %>
                     </div>
                     <!-- Collect the nav links, forms, and other content for toggling -->
                     <div class="collapse navbar-collapse" id="navbar">

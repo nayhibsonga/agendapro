@@ -36,7 +36,7 @@ class PuntoPagosController < ApplicationController
     amount = params[:amount].to_i
     payment_method = params[:mp]
     company = Company.find(current_user.company_id)
-    company.payment_status == PaymentStatus.find_by_name("Trial") ? price = Plan.where(custom: false, locations: company.locations.where(active: true).count).where('service_providers >= ?', company.service_providers.where(active: true).count).order(:price).first.price : price = company.plan.price
+    company.payment_status == PaymentStatus.find_by_name("Trial") ? price = Plan.where(custom: false, locations: company.locations.where(active: true).count).where('service_providers >= ?', company.service_providers.where(active: true).count).order(:service_providers).first.plan_countries.find_by(country_id: company.country.id).price : price = company.plan.plan_countries.find_by(country_id: company.country.id).price
     sales_tax = NumericParameter.find_by_name("sales_tax").value
     day_number = Time.now.day
     month_number = Time.now.month

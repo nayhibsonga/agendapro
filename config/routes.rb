@@ -326,14 +326,16 @@ Agendapro::Application.routes.draw do
     post "payed_bookings/update", :to => 'payed_bookings#update'
 
     # Root
-    get '/', :to => 'searchs#index', :as => 'localized_root'
     get '/', :to => 'searchs#index', :as => 'localized_root2', :constraints => { :subdomain => 'www' }
     get '/', :to => 'companies#overview', :constraints => { :subdomain => /.+/ }
+    get '/', :to => 'searchs#index', :as => 'localized_root'
+    get '/landing', :to => 'searchs#landing', :as => 'landing'
 
 
   end
 
-  root :to => 'searchs#landing', locale: nil
+
+  root :to => 'searchs#index', locale: nil
 
 
   # The priority is based upon order of creation: first created -> highest priority.

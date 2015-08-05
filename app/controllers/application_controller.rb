@@ -24,23 +24,27 @@ class ApplicationController < ActionController::Base
   protected
 
   def set_locale
-    if params[:locale].blank?
-      requested_location = request_location
-      if requested_location == 'CL'
-        I18n.locale = :es_CL
-      elsif requested_location == 'CO'
-        I18n.locale = :es_CO
-      else
-        I18n.locale = :es
-      end
+    if current_user && current_user.company_id && current_user.company_id > 0
+      I18n.locale = Company.find(current_user.company_id).country.locale
     else
-      I18n.locale = params[:locale]
+      if params[:locale].blank?
+        requested_location = request_location
+        if requested_location == 'CL'
+          I18n.locale = :es_CL
+        elsif requested_location == 'CO'
+          I18n.locale = :es_CO
+        else
+          I18n.locale = :es
+        end
+      else
+        I18n.locale = params[:locale]
+      end
     end
   end
 
   def request_location
     if Rails.env.test? || Rails.env.development?
-      return 'CL'
+      return nil
     else
       if request.location
         return request.location.country_code
@@ -52,6 +56,12 @@ class ApplicationController < ActionController::Base
 
   def default_url_options(options={})
     { :locale => I18n.locale }
+  end
+
+  def constraint_locale
+    unless Country.all.pluck(:locale).include? (I18n.locale.to_s)
+      redirect_to landing_path(redirect_params: params.inspect)
+    end
   end
   
   def quick_add

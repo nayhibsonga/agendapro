@@ -26,6 +26,12 @@
           </div>
         </div>
         <div class="form-group">
+          <%= f.label :currency_code, 'Moneda: ', :class => 'col-md-2 control-label' %>
+          <div class="col-md-4">
+            <%= f.text_field :currency_code, :class => 'form-control' %>
+          </div>
+        </div>
+        <div class="form-group">
           <%= f.label :flag_photo, "Foto Bandera: ", class: "col-md-2 control-label" %>
           <div class="col-md-4">
             <%= f.file_field :flag_photo, :accept => 'image/png,image/gif,image/jpeg', :class => 'form-control' %>
