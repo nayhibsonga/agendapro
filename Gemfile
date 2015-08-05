@@ -167,3 +167,6 @@ gem 'newrelic_rpm'
 gem 'omniauth'
 gem 'omniauth-google-oauth2'
 gem 'omniauth-facebook'
+
+#Oink para revisión de memoria
+gem "oink"
