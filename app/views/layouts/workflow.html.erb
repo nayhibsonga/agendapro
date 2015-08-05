@@ -126,7 +126,7 @@
               <%= image_tag 'logos/logo2.png', :alt => 'AgendaPro', :size => "115x39", class: "img-responsive pull-right" %>
             </div>
             <div class="col-xs-8 col-lg-5 links-footer pull-right">
-              <%= link_to "Agrega tu Empresa", home_url(subdomain: false) %> | <%= link_to "Sobre Nosotros", aboutus_url(subdomain: false) %> | <%= link_to "Tutoriales", tutorials_url(subdomain: false) %> | <%= link_to 'Términos y Condiciones', asset_url('pdf/Term_y_Cond_AgendaPro072015.pdf'), target: :blank %>
+              <%= link_to "Agrega tu Empresa", home_url(subdomain: false) %> | <%= link_to "Sobre Nosotros", aboutus_url(subdomain: false) %> | <%= link_to "Tutoriales", tutorials_url(subdomain: false) %> | <%= link_to 'Términos y Condiciones', root_url(subdomain: false) << asset_path('pdf/Term_y_Cond_AgendaPro072015.pdf'), target: :blank %>
             </div>
             <div class="col-xs-12 col-lg-5 copyright-footer">
               <i class="fa fa-copyright"></i> Copyright 2013 | Gunei Investment SpA | Todos los derechos reservados
