@@ -566,7 +566,9 @@
           price: $("#service_price").val(),
           show_price: true,
           has_sessions: true,
-          sessions_amount: parseInt($("#sessions_amount").val())
+          sessions_amount: parseInt($("#sessions_amount").val()),
+          is_time_discount: true,
+          service_promo_id: bookDetails.service_promo_id
         };
 
         checkUserCrossBookings();
@@ -598,7 +600,9 @@
           price: $("#service_price").val(),
           show_price: true,
           has_sessions: false,
-          sessions_amount: 0
+          sessions_amount: 0,
+          is_time_discount: true,
+          service_promo_id: bookDetails.service_promo_id
         };
 
         checkUserCrossBookings();

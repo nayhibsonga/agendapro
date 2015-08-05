@@ -2046,19 +2046,26 @@ class BookingsController < ApplicationController
 
   def book_error
 
-    @client = Client.find(params[:client])
+     @try_register = false
 
-    @try_register = false
+    if params[:client] && params[:client] != ""
 
-    if !user_signed_in?
-      if !User.find_by_email(@client.email)
-        @try_register = true
-        @user = User.new
-        @user.email = @client.email
-        @user.first_name = @client.first_name
-        @user.last_name = @client.last_name
-        @user.phone = @client.phone
+      if !Client.find(params[:client]).nil?
+
+      @client = Client.find(params[:client])
+
+        if !user_signed_in?
+          if !User.find_by_email(@client.email)
+            @try_register = true
+            @user = User.new
+            @user.email = @client.email
+            @user.first_name = @client.first_name
+            @user.last_name = @client.last_name
+            @user.phone = @client.phone
+          end
+        end
       end
+      
     end
 
 
