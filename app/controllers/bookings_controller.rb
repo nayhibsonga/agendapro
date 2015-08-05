@@ -1509,14 +1509,8 @@ class BookingsController < ApplicationController
     else
       if Client.where(email: params[:email], company_id: @company).count > 0
         client = Client.where(email: params[:email], company_id: @company).first
-
-        
-        if params[:firstName] && params[:lastName] && params[:firstName] != "" && params[:lastName] != ""
-          client.first_name = params[:firstName]
-          client.last_name = params[:lastName]
-        else
-          params[:full_name]
-        end
+        client.first_name = params[:firstName]
+        client.last_name = params[:lastName]
         client.phone = params[:phone]
         client.save
         if client.errors
