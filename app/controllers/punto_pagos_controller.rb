@@ -381,14 +381,22 @@ class PuntoPagosController < ApplicationController
           bookings << booking
         end
 
-        if bookings.count >1
-          if bookings.first.session_booking.nil?
-            Booking.send_multiple_booking_mail(bookings.first.location_id, bookings.first.booking_group)
+        if bookings.count > 0
+
+          if bookings.first.booking_group.nil?
+            BookingMailer.book_service_mail(bookings.first)
           else
-            bookings.first.session_booking.send_sessions_booking_mail
+            if bookings.first.session_booking.nil?
+              Booking.send_multiple_booking_mail(bookings.first.location_id, bookings.first.booking_group)
+            else
+              bookings.first.session_booking.send_sessions_booking_mail
+            end
           end
+
         else
-          BookingMailer.book_service_mail(bookings.first)
+          #¿No bookings? There's an error
+          redirect_to action: 'failure', token: params[:token]
+          return
         end
         #Enviar comprobantes de pago
         BookingMailer.book_payment_mail(payed_booking)
