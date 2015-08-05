@@ -694,6 +694,9 @@
 
     function loadPaymentForm(){
 
+      compose_name('#full_name', '#firstName', '#lastName');
+      split_name('#full_name', '#firstName', '#lastName');
+
       if(!selected)
       {
         $("#booking-error").append("Debes elegir un horario antes de ir al siguiente paso.");
