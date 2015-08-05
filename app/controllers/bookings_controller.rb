@@ -1936,7 +1936,7 @@ class BookingsController < ApplicationController
         final_price = 0
 
         # Just check for discount, correct the price and calculate final_price
-        @booking.each do |booking|
+        @bookings.each do |booking|
 
           if !booking.service.online_payable || !booking.service.company.company_setting.online_payment_capable || !booking.service.company.company_setting.allows_online_payment
 
