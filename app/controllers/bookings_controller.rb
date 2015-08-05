@@ -1940,10 +1940,7 @@ class BookingsController < ApplicationController
 
           if !booking.service.online_payable || !booking.service.company.company_setting.online_payment_capable || !booking.service.company.company_setting.allows_online_payment
 
-            @errors << "El servicio " + current_service.name + " no puede ser pagado en línea."
-
-            redirect_to book_error_path(bookings: @bookings.map{|b| b.id}, location: @selectedLocation.id, client: client.id, errors: @errors, payment: "payment", blocked_bookings: @blocked_bookings)
-            return
+            booking.price = booking.service.price
 
           else
 
