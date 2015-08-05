@@ -698,7 +698,6 @@ class CompaniesController < ApplicationController
 			flash[:alert] = "Lo sentimos, el local ingresado no existe."
 			redirect_to :action => "overview"
 			return
-			redirect_to
 		elsif params[:service].blank? or params[:datepicker].blank? or params[:provider].blank?
 			flash[:alert] = "Error ingresando los datos."
 			redirect_to workflow_path(:local => params[:location])
@@ -857,7 +856,7 @@ class CompaniesController < ApplicationController
 				end
 			end
 
-    	else
+    else
 
 			# Data
 			provider = ServiceProvider.find(params[:provider])
@@ -1021,17 +1020,19 @@ class CompaniesController < ApplicationController
 					provider_times_first_open_start = provider_times_first_open_end
 				end
 			end
-    	end
+  	end
 
-	    if params[:provider] == "0"
-	    	@lock = false
-	    else
-	    	@lock = true
-	    end
-	    @lock
-	    @company = @location.company
-	    @available_time
-			render layout: 'workflow'
+    if params[:provider] == "0"
+    	@lock = false
+    else
+    	@lock = true
+    end
+    @lock
+    @company = @location.company
+    @available_time
+		render layout: 'workflow'
+		rescue ActionView::MissingTemplate => e
+			redirect_to :action => "overview"
 	end
 
 
@@ -1387,6 +1388,8 @@ class CompaniesController < ApplicationController
 		@lock = params[:provider_lock]
 
 		render layout: 'workflow'
+		rescue ActionView::MissingTemplate => e
+			redirect_to :action => "overview"
 	end
 
 	def add_company
