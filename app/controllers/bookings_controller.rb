@@ -1507,9 +1507,7 @@ class BookingsController < ApplicationController
         return
       end
     else
-      if(params[:client_id])
-        client = Client.find(params[:client_id])
-      elsif Client.where(email: params[:email], company_id: @company).count > 0
+      if Client.where(email: params[:email], company_id: @company).count > 0
         client = Client.where(email: params[:email], company_id: @company).first
         client.first_name = params[:firstName]
         client.last_name = params[:lastName]
