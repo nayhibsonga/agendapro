@@ -1864,7 +1864,7 @@ class BookingsController < ApplicationController
               #Look for the highest discount
               @bookings.each do |booking|
 
-                promo = Promo.where(:day_id => booking.start.cwday, :service_promo_id => @session_booking.service_promo_id, :location_id => @selectedLocation.id).first
+                promo = Promo.where(:day_id => booking.start.to_datetime.cwday, :service_promo_id => @session_booking.service_promo_id, :location_id => @selectedLocation.id).first
 
                 if !promo.nil?
 
@@ -1955,7 +1955,7 @@ class BookingsController < ApplicationController
 
             else
 
-              promo = Promo.where(:day_id => booking.start.cwday, :service_promo_id => booking.service.active_service_promo_id, :location_id => @selectedLocation.id).first
+              promo = Promo.where(:day_id => booking.start.to_datetime.cwday, :service_promo_id => booking.service.active_service_promo_id, :location_id => @selectedLocation.id).first
 
               new_book_discount = 0
 
