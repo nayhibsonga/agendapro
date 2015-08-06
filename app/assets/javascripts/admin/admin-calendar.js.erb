@@ -2077,7 +2077,7 @@ function checkClientSessions()
 			{
 				$.ajax({
 					type: "get",
-					url: "clients_check_sessions?id=" + $('#booking_client_id').val() + "&service_id=" + $("#booking_service_id").val(),
+					url: "/clients_check_sessions?id=" + $('#booking_client_id').val() + "&service_id=" + $("#booking_service_id").val(),
 					success: function(response)
 					{
 						var service = response[0]
@@ -2173,7 +2173,7 @@ function checkClientSessions()
 			{
 				$.ajax({
 					type: "get",
-					url: "clients_check_sessions?id=" + $('#booking_client_id').val() + "&service_id=" + $("#booking_service_id").val(),
+					url: "/clients_check_sessions?id=" + $('#booking_client_id').val() + "&service_id=" + $("#booking_service_id").val(),
 					success: function(response)
 					{
 						var service = response[0]
