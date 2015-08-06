@@ -153,8 +153,6 @@ function loadResourcesCalendar (startTime, endTime, hiddenDays, resourcesArray, 
 			$('#popover').css('left', offX + 75 + 'px');
 			$('#popover').css('top', jsEvent.pageY - p.offset().top - 35 + 'px');
 
-			// window.console.log(offX + 60);
-			// window.console.log(jsEvent.pageY - p.offset().top - 40);
 
 			var column_click = $(this).context.cellIndex;
 			var resourceId = view.resources[column_click - 1].id
@@ -772,6 +770,7 @@ function createBookingModal(date, provider_id) {
 					$('#booking_service_id').removeAttr('disabled');
 					$('#booking_service_id option').first().attr("selected", true);
 					modalChange();
+					checkClientSessions();
 				});
 			};
 			$('#client-history-tbody').html('<tr><td colspan="6">El cliente no tiene historial...</td></tr>');
@@ -782,7 +781,6 @@ function createBookingModal(date, provider_id) {
 			$('#bookingModal #payment_client_group').hide();
 			$('#bookingModal').modal('show');
 			loadBookingPayment(0);
-			checkClientSessions();
 		}
 		else {
 			alert('Este local no tiene prestadores o servicios\nPor favor completa los datos necesarios para poder generar reservas en este local.');
@@ -1850,7 +1848,6 @@ function editBreakModal(breakId) {
 
 				});
 
-				console.log(break_service_providers);
 
 				if(break_service_providers != null && break_service_providers.length > 0)
 				{
@@ -2062,6 +2059,7 @@ function setAge() {
 
 function checkClientSessions()
 {
+
 	modalChange();
 	if($("#is_edit_modal").val() == "0")
 	{
@@ -2119,14 +2117,16 @@ function checkClientSessions()
 		}
 		else
 		{
+
+
 			if(parseInt($("#booking_service_id").val()) > 0)
 			{
+
 				$.ajax({
 					type: "get",
 					url: "services/" + $("#booking_service_id").val() + ".json",
 					success: function(service)
 					{
-						console.log(service.name + " has sessions: " + service.has_sessions);
 						if(service.has_sessions)
 						{
 							$("#sessions-info").append('<div session_booking_id="0"><input type="radio" name="sessions-choice" value="0" checked>&nbsp;Este servicio es por sesiones. Generar una nueva reserva y agendar la primera sesión.');
@@ -2222,7 +2222,6 @@ function checkClientSessions()
 					url: "services/" + $("#booking_service_id").val() + ".json",
 					success: function(service)
 					{
-						console.log(service.name + " has sessions: " + service.has_sessions);
 						if(service.has_sessions)
 						{
 							$("#sessions-info").append('<div session_booking_id="0"><input type="radio" name="sessions-choice" value="0" checked>&nbsp;Este servicio es por sesiones. Generar una nueva reserva y agendar la primera sesión.');
