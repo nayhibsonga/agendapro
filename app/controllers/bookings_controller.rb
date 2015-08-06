@@ -1608,15 +1608,21 @@ class BookingsController < ApplicationController
         client.first_name = params[:firstName]
         client.last_name = params[:lastName]
         client.phone = params[:phone]
-        client.save
-        if client.errors
-          @errors << client.errors.full_messages.inspect
+        if client.save
+
+        else
+          @errors << client.errors.full_messages
+          logger.debug "Client errors 1"
+          logger.debug @errors.inspect
         end
       else
         client = Client.new(email: params[:email], first_name: params[:firstName], last_name: params[:lastName], phone: params[:phone], company_id: @company.id)
-        client.save
-        if client.errors
-          @errors << client.errors.full_messages.inspect
+        if client.save
+
+        else
+          @errors << client.errors.full_messages
+          logger.debug "Client errors 2"
+          logger.debug @errors.inspect
         end
       end
     end
@@ -1910,6 +1916,7 @@ class BookingsController < ApplicationController
         if @booking.save
           current_user ? user = current_user.id : user = 0
           BookingHistory.create(booking_id: @booking.id, action: "Creada por Cliente", start: @booking.start, status_id: @booking.status_id, service_id: @booking.service_id, service_provider_id: @booking.service_provider_id, user_id: user, notes: @booking.notes, company_comment: @booking.company_comment)
+          logger.debug "Creada 1"
           if first_booking.nil?
             first_booking = @booking
           end
@@ -2112,7 +2119,7 @@ class BookingsController < ApplicationController
             if booking.save
               current_user ? user = current_user.id : user = 0
               BookingHistory.create(booking_id: booking.id, action: "Creada por Cliente", start: booking.start, status_id: booking.status_id, service_id: booking.service_id, service_provider_id: booking.service_provider_id, user_id: user, notes: booking.notes, company_comment: booking.company_comment)
-
+              logger.debug "Creada 2"
               if first_booking.nil?
                 first_booking = booking
               end
@@ -2125,6 +2132,7 @@ class BookingsController < ApplicationController
             if booking.save
               current_user ? user = current_user.id : user = 0
               BookingHistory.create(booking_id: booking.id, action: "Creada por Cliente", start: booking.start, status_id: booking.status_id, service_id: booking.service_id, service_provider_id: booking.service_provider_id, user_id: user, notes: booking.notes, company_comment: booking.company_comment)
+              logger.debug "Creada 3"
               if first_booking.nil?
                 first_booking = booking
               end
@@ -2168,6 +2176,7 @@ class BookingsController < ApplicationController
                 @bookings << new_booking
                 current_user ? user = current_user.id : user = 0
                 BookingHistory.create(booking_id: new_booking.id, action: "Creada por Cliente", start: new_booking.start, status_id: new_booking.status_id, service_id: new_booking.service_id, service_provider_id: new_booking.service_provider_id, user_id: user, notes: new_booking.notes, company_comment: new_booking.company_comment)
+                logger.debug "Creada 4"
               else
                 @errors << new_booking.errors.full_messages
                 @blocked_bookings << new_booking.service.name + " con " + new_booking.service_provider.public_name + " el " + I18n.l(new_booking.start.to_datetime)
@@ -2248,6 +2257,7 @@ class BookingsController < ApplicationController
             @bookings << new_booking
             current_user ? user = current_user.id : user = 0
             BookingHistory.create(booking_id: new_booking.id, action: "Creada por Cliente", start: new_booking.start, status_id: new_booking.status_id, service_id: new_booking.service_id, service_provider_id: new_booking.service_provider_id, user_id: user, notes: new_booking.notes, company_comment: new_booking.company_comment)
+            logger.debug "Creada 5"
           else
             @errors << new_booking.errors.full_messages
             @blocked_bookings << new_booking.service.name + " con " + new_booking.service_provider.public_name + " el " + I18n.l(new_booking.start.to_datetime)
@@ -2272,16 +2282,20 @@ class BookingsController < ApplicationController
       end
     end
 
+    logger.debug "Llega a errors"
+    logger.debug @errors.inspect
 
     if @errors.length > 0 and booking_data.length > 0
-      books = []
-      @bookings.each do |b|
-        if !b.id.nil?
-          books << b
+      if @errors.first.length > 0
+        books = []
+        @bookings.each do |b|
+          if !b.id.nil?
+            books << b
+          end
         end
+        redirect_to book_error_path(bookings: books.map{|b| b.id}, location: @selectedLocation.id, client: client.id, errors: @errors, payment: str_payment, blocked_bookings: @blocked_bookings)
+        return
       end
-      redirect_to book_error_path(bookings: books.map{|b| b.id}, location: @selectedLocation.id, client: client.id, errors: @errors, payment: str_payment, blocked_bookings: @blocked_bookings)
-      return
     end
 
     if @bookings.length > 1
@@ -2291,6 +2305,8 @@ class BookingsController < ApplicationController
         @session_booking.send_sessions_booking_mail
       end
     end
+
+    logger.debug "Llega al final"
 
     @try_register = false
     @try_signin = false
