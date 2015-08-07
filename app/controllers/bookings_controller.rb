@@ -3926,7 +3926,7 @@ class BookingsController < ApplicationController
         max_close = lt.close
       else
         if lt.close.strftime("%H:%M") > max_close.strftime("%H:%M")
-          max_close = lt.open
+          max_close = lt.close
         end
       end
     end
@@ -3947,6 +3947,7 @@ class BookingsController < ApplicationController
     end
 
     logger.info "Min block: " + min_block.to_s
+    logger.info "Max block: " + max_block.to_s
 
     if min_block != 0
 
