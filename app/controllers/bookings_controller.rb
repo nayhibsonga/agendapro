@@ -3960,6 +3960,7 @@ class BookingsController < ApplicationController
     else
 
       min_open = (min_open.hour * 60 + min_open.min) * 60
+      max_close = (max_close.hour * 60 + max_close.min) * 60
       hours_diff = (max_close - min_open)/60
 
     end
