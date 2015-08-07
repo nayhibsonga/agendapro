@@ -1612,8 +1612,8 @@ class BookingsController < ApplicationController
 
         else
           @errors << client.errors.full_messages
-          logger.info "Client errors 1"
-          logger.info @errors.inspect
+          logger.debug "Client errors 1"
+          logger.debug @errors.inspect
         end
       else
         client = Client.new(email: params[:email], first_name: params[:firstName], last_name: params[:lastName], phone: params[:phone], company_id: @company.id)
@@ -1621,8 +1621,8 @@ class BookingsController < ApplicationController
 
         else
           @errors << client.errors.full_messages
-          logger.info "Client errors 2"
-          logger.info @errors.inspect
+          logger.debug "Client errors 2"
+          logger.debug @errors.inspect
         end
       end
     end
@@ -1916,7 +1916,7 @@ class BookingsController < ApplicationController
         if @booking.save
           current_user ? user = current_user.id : user = 0
           BookingHistory.create(booking_id: @booking.id, action: "Creada por Cliente", start: @booking.start, status_id: @booking.status_id, service_id: @booking.service_id, service_provider_id: @booking.service_provider_id, user_id: user, notes: @booking.notes, company_comment: @booking.company_comment)
-          logger.info "Creada 1"
+          logger.debug "Creada 1"
           if first_booking.nil?
             first_booking = @booking
           end
@@ -2119,7 +2119,7 @@ class BookingsController < ApplicationController
             if booking.save
               current_user ? user = current_user.id : user = 0
               BookingHistory.create(booking_id: booking.id, action: "Creada por Cliente", start: booking.start, status_id: booking.status_id, service_id: booking.service_id, service_provider_id: booking.service_provider_id, user_id: user, notes: booking.notes, company_comment: booking.company_comment)
-              logger.info "Creada 2"
+              logger.debug "Creada 2"
               if first_booking.nil?
                 first_booking = booking
               end
@@ -2132,7 +2132,7 @@ class BookingsController < ApplicationController
             if booking.save
               current_user ? user = current_user.id : user = 0
               BookingHistory.create(booking_id: booking.id, action: "Creada por Cliente", start: booking.start, status_id: booking.status_id, service_id: booking.service_id, service_provider_id: booking.service_provider_id, user_id: user, notes: booking.notes, company_comment: booking.company_comment)
-              logger.info "Creada 3"
+              logger.debug "Creada 3"
               if first_booking.nil?
                 first_booking = booking
               end
@@ -2176,7 +2176,7 @@ class BookingsController < ApplicationController
                 @bookings << new_booking
                 current_user ? user = current_user.id : user = 0
                 BookingHistory.create(booking_id: new_booking.id, action: "Creada por Cliente", start: new_booking.start, status_id: new_booking.status_id, service_id: new_booking.service_id, service_provider_id: new_booking.service_provider_id, user_id: user, notes: new_booking.notes, company_comment: new_booking.company_comment)
-                logger.info "Creada 4"
+                logger.debug "Creada 4"
               else
                 @errors << new_booking.errors.full_messages
                 @blocked_bookings << new_booking.service.name + " con " + new_booking.service_provider.public_name + " el " + I18n.l(new_booking.start.to_datetime)
@@ -2257,7 +2257,7 @@ class BookingsController < ApplicationController
             @bookings << new_booking
             current_user ? user = current_user.id : user = 0
             BookingHistory.create(booking_id: new_booking.id, action: "Creada por Cliente", start: new_booking.start, status_id: new_booking.status_id, service_id: new_booking.service_id, service_provider_id: new_booking.service_provider_id, user_id: user, notes: new_booking.notes, company_comment: new_booking.company_comment)
-            logger.info "Creada 5"
+            logger.debug "Creada 5"
           else
             @errors << new_booking.errors.full_messages
             @blocked_bookings << new_booking.service.name + " con " + new_booking.service_provider.public_name + " el " + I18n.l(new_booking.start.to_datetime)
@@ -2282,8 +2282,8 @@ class BookingsController < ApplicationController
       end
     end
 
-    logger.info "Llega a errors"
-    logger.info @errors.inspect
+    logger.debug "Llega a errors"
+    logger.debug @errors.inspect
 
     if @errors.length > 0 and booking_data.length > 0
       if @errors.first.length > 0
@@ -2306,7 +2306,7 @@ class BookingsController < ApplicationController
       end
     end
 
-    logger.info "Llega al final"
+    logger.debug "Llega al final"
 
     @try_register = false
     @try_signin = false
@@ -3436,8 +3436,8 @@ class BookingsController < ApplicationController
 
     weekDate = Date.strptime(current_date, '%Y-%m-%d')
 
-    logger.info "current_date: " + current_date.to_s
-    logger.info "weekDate: " + weekDate.to_s
+    logger.debug "current_date: " + current_date.to_s
+    logger.debug "weekDate: " + weekDate.to_s
 
     if params[:date] and params[:date] != ""
       if params[:date].to_datetime > now
@@ -3445,7 +3445,7 @@ class BookingsController < ApplicationController
       end
     end
 
-    logger.info "now: " + now.to_s
+    logger.debug "now: " + now.to_s
 
     days_ids = [1,2,3,4,5,6,7]
     index = days_ids.find_index(now.cwday)
@@ -3485,7 +3485,7 @@ class BookingsController < ApplicationController
       day = date.cwday
       dtp = local.location_times.where(day_id: day).order(:open).first
       if dtp.nil?
-        logger.info "Nil day " + day.to_s
+        logger.debug "Nil day " + day.to_s
         next
       end
       dateTimePointer = dtp.open
@@ -3502,7 +3502,7 @@ class BookingsController < ApplicationController
 
       while (dateTimePointer < limit_date)
 
-        logger.info "DTP: " + dateTimePointer.to_s
+        logger.debug "DTP: " + dateTimePointer.to_s
 
         serviceStaffPos = 0
         bookings = []
@@ -3516,7 +3516,7 @@ class BookingsController < ApplicationController
           service_sum = service.duration.minutes
 
           minHour = now
-          logger.info "min_hours: " + minHour.to_s
+          logger.debug "min_hours: " + minHour.to_s
           if !params[:admin] && minHour <= DateTime.now
             minHour += company_setting.before_booking.hours
           end
@@ -3524,7 +3524,7 @@ class BookingsController < ApplicationController
             service_valid = true
           end
 
-          logger.info "min_hours: " + minHour.to_s
+          logger.debug "min_hours: " + minHour.to_s
 
           # Hora dentro del horario del local
 
@@ -3783,10 +3783,10 @@ class BookingsController < ApplicationController
             end
           end
 
-          logger.info "Time diff: "
-          logger.info bookings[bookings.length-1][:end].to_s
-          logger.info bookings[0][:start].to_s
-          logger.info ((bookings[bookings.length-1][:end] - bookings[0][:start])*24*60).to_f.to_s
+          logger.debug "Time diff: "
+          logger.debug bookings[bookings.length-1][:end].to_s
+          logger.debug bookings[0][:start].to_s
+          logger.debug ((bookings[bookings.length-1][:end] - bookings[0][:start])*24*60).to_f.to_s
           hour_time_diff = ((bookings[bookings.length-1][:end] - bookings[0][:start])*24*60).to_f
 
           if hour_time_diff > max_time_diff
@@ -3905,7 +3905,7 @@ class BookingsController < ApplicationController
 
     width = ( (100.0 - time_column_width) / @days_count ).round(2).to_s
 
-    #logger.info "Week blocks " + @week_blocks.length.to_s
+    #logger.debug "Week blocks " + @week_blocks.length.to_s
     #Get max time distance to construct the calendar
 
     min_open = 0
@@ -3934,7 +3934,7 @@ class BookingsController < ApplicationController
     min_block = 0
     min_block_str = ""
 
-    logger.info "THA: " + total_hours_array.count.to_s
+    logger.debug "THA: " + total_hours_array.count.to_s
 
     total_hours_array.each do |hour|
       if min_block == 0
@@ -3946,8 +3946,8 @@ class BookingsController < ApplicationController
       end
     end
 
-    logger.info "Min block: " + min_block.to_s
-    logger.info "Max close: " + max_close.to_s
+    logger.debug "Min block: " + min_block.to_s
+    logger.debug "Max close: " + max_close.to_s
 
     if min_block != 0
 
@@ -3965,11 +3965,11 @@ class BookingsController < ApplicationController
 
     end
 
-    logger.info "Hours diff: "
-    logger.info "Max close: " + max_close.to_s
-    logger.info "Min open:" + min_open.to_s
-    logger.info "Min block: " + min_block.to_s
-    logger.info "Hours diff:" + hours_diff.to_s
+    logger.debug "Hours diff: "
+    logger.debug "Max close: " + max_close.to_s
+    logger.debug "Min open:" + min_open.to_s
+    logger.debug "Min block: " + min_block.to_s
+    logger.debug "Hours diff:" + hours_diff.to_s
 
     time_prop = 0
 
@@ -3979,7 +3979,7 @@ class BookingsController < ApplicationController
 
     calendar_height = time_prop*67
 
-    logger.info "Time prop: " + time_prop.to_s
+    logger.debug "Time prop: " + time_prop.to_s
 
 
     if time_prop != 0
