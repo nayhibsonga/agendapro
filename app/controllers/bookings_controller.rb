@@ -3947,7 +3947,7 @@ class BookingsController < ApplicationController
     end
 
     logger.info "Min block: " + min_block.to_s
-    logger.info "Max block: " + max_block.to_s
+    logger.info "Max close: " + max_close.to_s
 
     if min_block != 0
 
