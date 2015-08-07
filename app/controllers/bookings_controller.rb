@@ -3959,9 +3959,9 @@ class BookingsController < ApplicationController
 
     else
 
-      min_open = (min_open.hour * 60 + min_open.min) * 60
+      min_block = (min_open.hour * 60 + min_open.min) * 60
       max_close = (max_close.hour * 60 + max_close.min) * 60
-      hours_diff = (max_close - min_open)/60
+      hours_diff = (max_close - min_block)/60
 
     end
 
@@ -3981,84 +3981,89 @@ class BookingsController < ApplicationController
 
     logger.info "Time prop: " + time_prop.to_s
 
-    @week_blocks.each do |week_block|
-      week_blocks += '<div class="columna-dia" data-date="' + week_block[:formatted_date] + '" style="width: ' + width + '%; height: ' + calendar_height.round(2).to_s + 'px !important;">'
 
-      previous_hour = min_open.strftime("%H:%M")
-      if min_block != 0
-        previous_hour = min_block_str
-      end
+    if time_prop != 0
 
-      week_block[:available_time].each do |hour|
+      @week_blocks.each do |week_block|
+        week_blocks += '<div class="columna-dia" data-date="' + week_block[:formatted_date] + '" style="width: ' + width + '%; height: ' + calendar_height.round(2).to_s + 'px !important;">'
 
-        if hours_diff != 0
+        previous_hour = min_open.strftime("%H:%M")
+        if min_block != 0
+          previous_hour = min_block_str
+        end
 
-          hour_diff = (calendar_height*hour[:time_diff]/hours_diff).round(2)
-          span_diff = hour_diff - 8
-          top_margin = (calendar_height * (hour[:start_block].to_time - previous_hour.to_time)/(60 * hours_diff) ).round(2)
-        else
+        week_block[:available_time].each do |hour|
 
-          new_min_open = 0
-          new_max_close = 0
+          if hours_diff != 0
 
-          local.location_times.each do |lt|
-            if new_min_open == 0
-              new_min_open = lt.open
-            else
-              if lt.open.strftime("%H:%M") < new_min_open.strftime("%H:%M")
+            hour_diff = (calendar_height*hour[:time_diff]/hours_diff).round(2)
+            span_diff = hour_diff - 8
+            top_margin = (calendar_height * (hour[:start_block].to_time - previous_hour.to_time)/(60 * hours_diff) ).round(2)
+          else
+
+            new_min_open = 0
+            new_max_close = 0
+
+            local.location_times.each do |lt|
+              if new_min_open == 0
                 new_min_open = lt.open
+              else
+                if lt.open.strftime("%H:%M") < new_min_open.strftime("%H:%M")
+                  new_min_open = lt.open
+                end
               end
             end
-          end
 
-          local.location_times.each do |lt|
-            if new_max_close == 0
-              new_max_close = lt.close
+            local.location_times.each do |lt|
+              if new_max_close == 0
+                new_max_close = lt.close
+              else
+                if lt.close.strftime("%H:%M") > new_max_close.strftime("%H:%M")
+                  new_max_close = lt.open
+                end
+              end
+            end
+
+            new_min_block = (new_min_open.hour * 60 + new_min_open.min) * 60
+            new_max_close = (new_max_close.hour * 60 + new_max_close.min) * 60
+
+            hours_diff = (new_max_close - new_min_block)/60
+
+            hour_diff = (calendar_height*hour[:time_diff]/hours_diff).round(2)
+            span_diff = hour_diff - 8
+            top_margin = (calendar_height * (hour[:start_block].to_time - previous_hour.to_time)/(60 * hours_diff) ).round(2)
+          end
+          
+
+          if hour[:status] != "hora-promocion"
+
+            #
+
+            if top_margin > 0
+              week_blocks += '<div style="border-top: 1px solid #d2d2d2 !important; margin-top: ' + top_margin.to_s + 'px !important; height: ' + hour_diff.to_s + 'px;" class="bloque-hora ' + hour[:status] + '" data-start="' + hour[:start_block] + '" data-end="' + hour[:end_block] + '" data-providerid="' + hour[:provider_id].to_s + '" data-provider="' + hour[:available_provider] + '" data-discount="' + hour[:promo_discount] + '" data-index="' + hour[:index].to_s + '" data-timediscount="' + hour[:has_time_discount].to_s + '" data-groupdiscount="' + hour[:group_discount] + '"><span style="line-height: ' + hour_diff.to_s + 'px; height: ' + span_diff.to_s + 'px;">' + hour[:start_block] + ' - ' + hour[:end_block] + '</span></div>'
             else
-              if lt.close.strftime("%H:%M") > new_max_close.strftime("%H:%M")
-                new_max_close = lt.open
-              end
+              week_blocks += '<div style="height: ' + hour_diff.to_s + 'px;" class="bloque-hora ' + hour[:status] + '" data-start="' + hour[:start_block] + '" data-end="' + hour[:end_block] + '" data-providerid="' + hour[:provider_id].to_s + '" data-provider="' + hour[:available_provider] + '" data-discount="' + hour[:promo_discount] + '" data-index="' + hour[:index].to_s + '" data-timediscount="' + hour[:has_time_discount].to_s + '" data-groupdiscount="' + hour[:group_discount] + '"><span style="line-height: ' + hour_diff.to_s + 'px; height: ' + span_diff.to_s + 'px;">' + hour[:start_block] + ' - ' + hour[:end_block] + '</span></div>'
+            end
+
+          else
+
+            if top_margin > 0
+              week_blocks += '<div style="border-top: 1px solid #d2d2d2 !important; margin-top: ' + top_margin.to_s + 'px !important; height: ' + hour_diff.to_s + 'px;" class="bloque-hora ' + hour[:status] + '" data-start="' + hour[:start_block] + '" data-end="' + hour[:end_block] + '" data-providerid="' + hour[:provider_id].to_s + '" data-provider="' + hour[:available_provider] + '" data-discount="' + hour[:promo_discount] + '" data-index="' +  hour[:index].to_s + '" data-timediscount="' + hour[:has_time_discount].to_s + '" data-groupdiscount="' + hour[:group_discount] + '"><span style="line-height: ' + hour_diff.to_s + 'px; height: ' + span_diff.to_s + 'px;">' + '<div class="in-block-discount">' + ActionController::Base.helpers.image_tag('promociones/icono_promociones.png', class: 'promotion-hour-icon-green', size: "18x18") + ActionController::Base.helpers.image_tag('promociones/icono_promociones_blanco.png', class: 'promotion-hour-icon-white', size: "18x18") + '&nbsp;-' + hour[:group_discount] + '%</div> &nbsp;' + hour[:start_block] + ' - ' + hour[:end_block]  + '</span></div>'
+            else
+              week_blocks += '<div style="height: ' + hour_diff.to_s + 'px;" class="bloque-hora ' + hour[:status] + '" data-start="' + hour[:start_block] + '" data-end="' + hour[:end_block] + '" data-providerid="' + hour[:provider_id].to_s + '" data-provider="' + hour[:available_provider] + '" data-discount="' + hour[:promo_discount] + '" data-index="' +  hour[:index].to_s + '" data-timediscount="' + hour[:has_time_discount].to_s + '" data-groupdiscount="' + hour[:group_discount] + '"><span style="line-height: ' + hour_diff.to_s + 'px; height: ' + span_diff.to_s + 'px;">' + '<div class="in-block-discount">' + ActionController::Base.helpers.image_tag('promociones/icono_promociones.png', class: 'promotion-hour-icon-green', size: "18x18") + ActionController::Base.helpers.image_tag('promociones/icono_promociones_blanco.png', class: 'promotion-hour-icon-white', size: "18x18") + '&nbsp;-' + hour[:group_discount] + '%</div> &nbsp;' + hour[:start_block] + ' - ' + hour[:end_block]  + '</span></span></div>'
             end
           end
 
-          new_min_block = (new_min_open.hour * 60 + new_min_open.min) * 60
-          new_max_close = (new_max_close.hour * 60 + new_max_close.min) * 60
+          previous_hour = hour[:end_block]
 
-          hours_diff = (new_max_close - new_min_block)/60
-
-          hour_diff = (calendar_height*hour[:time_diff]/hours_diff).round(2)
-          span_diff = hour_diff - 8
-          top_margin = (calendar_height * (hour[:start_block].to_time - previous_hour.to_time)/(60 * hours_diff) ).round(2)
         end
-        
-
-        if hour[:status] != "hora-promocion"
-
-          #
-
-          if top_margin > 0
-            week_blocks += '<div style="border-top: 1px solid #d2d2d2 !important; margin-top: ' + top_margin.to_s + 'px !important; height: ' + hour_diff.to_s + 'px;" class="bloque-hora ' + hour[:status] + '" data-start="' + hour[:start_block] + '" data-end="' + hour[:end_block] + '" data-providerid="' + hour[:provider_id].to_s + '" data-provider="' + hour[:available_provider] + '" data-discount="' + hour[:promo_discount] + '" data-index="' + hour[:index].to_s + '" data-timediscount="' + hour[:has_time_discount].to_s + '" data-groupdiscount="' + hour[:group_discount] + '"><span style="line-height: ' + hour_diff.to_s + 'px; height: ' + span_diff.to_s + 'px;">' + hour[:start_block] + ' - ' + hour[:end_block] + '</span></div>'
-          else
-            week_blocks += '<div style="height: ' + hour_diff.to_s + 'px;" class="bloque-hora ' + hour[:status] + '" data-start="' + hour[:start_block] + '" data-end="' + hour[:end_block] + '" data-providerid="' + hour[:provider_id].to_s + '" data-provider="' + hour[:available_provider] + '" data-discount="' + hour[:promo_discount] + '" data-index="' + hour[:index].to_s + '" data-timediscount="' + hour[:has_time_discount].to_s + '" data-groupdiscount="' + hour[:group_discount] + '"><span style="line-height: ' + hour_diff.to_s + 'px; height: ' + span_diff.to_s + 'px;">' + hour[:start_block] + ' - ' + hour[:end_block] + '</span></div>'
-          end
-
+        if week_block[:available_time].count < 1
+          week_blocks += '&nbsp;<div class="clear">&nbsp;</div></div>'
         else
-
-          if top_margin > 0
-            week_blocks += '<div style="border-top: 1px solid #d2d2d2 !important; margin-top: ' + top_margin.to_s + 'px !important; height: ' + hour_diff.to_s + 'px;" class="bloque-hora ' + hour[:status] + '" data-start="' + hour[:start_block] + '" data-end="' + hour[:end_block] + '" data-providerid="' + hour[:provider_id].to_s + '" data-provider="' + hour[:available_provider] + '" data-discount="' + hour[:promo_discount] + '" data-index="' +  hour[:index].to_s + '" data-timediscount="' + hour[:has_time_discount].to_s + '" data-groupdiscount="' + hour[:group_discount] + '"><span style="line-height: ' + hour_diff.to_s + 'px; height: ' + span_diff.to_s + 'px;">' + '<div class="in-block-discount">' + ActionController::Base.helpers.image_tag('promociones/icono_promociones.png', class: 'promotion-hour-icon-green', size: "18x18") + ActionController::Base.helpers.image_tag('promociones/icono_promociones_blanco.png', class: 'promotion-hour-icon-white', size: "18x18") + '&nbsp;-' + hour[:group_discount] + '%</div> &nbsp;' + hour[:start_block] + ' - ' + hour[:end_block]  + '</span></div>'
-          else
-            week_blocks += '<div style="height: ' + hour_diff.to_s + 'px;" class="bloque-hora ' + hour[:status] + '" data-start="' + hour[:start_block] + '" data-end="' + hour[:end_block] + '" data-providerid="' + hour[:provider_id].to_s + '" data-provider="' + hour[:available_provider] + '" data-discount="' + hour[:promo_discount] + '" data-index="' +  hour[:index].to_s + '" data-timediscount="' + hour[:has_time_discount].to_s + '" data-groupdiscount="' + hour[:group_discount] + '"><span style="line-height: ' + hour_diff.to_s + 'px; height: ' + span_diff.to_s + 'px;">' + '<div class="in-block-discount">' + ActionController::Base.helpers.image_tag('promociones/icono_promociones.png', class: 'promotion-hour-icon-green', size: "18x18") + ActionController::Base.helpers.image_tag('promociones/icono_promociones_blanco.png', class: 'promotion-hour-icon-white', size: "18x18") + '&nbsp;-' + hour[:group_discount] + '%</div> &nbsp;' + hour[:start_block] + ' - ' + hour[:end_block]  + '</span></span></div>'
-          end
+          week_blocks += '<div class="clear"></div></div>'
         end
-
-        previous_hour = hour[:end_block]
-
       end
-      if week_block[:available_time].count < 1
-        week_blocks += '&nbsp;<div class="clear">&nbsp;</div></div>'
-      else
-        week_blocks += '<div class="clear"></div></div>'
-      end
+
     end
     week_blocks += '<div class="clear"></div>'
 
