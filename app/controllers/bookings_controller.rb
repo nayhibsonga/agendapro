@@ -3958,14 +3958,16 @@ class BookingsController < ApplicationController
 
     else
 
+      min_open = (min_open.hour * 60 + min_open.min) * 60
       hours_diff = (max_close - min_open)/60
 
     end
 
     logger.info "Hours diff: "
-    logger.info max_close.to_s
-    logger.info min_open.to_s
-    logger.info hours_diff.to_s
+    logger.info "Max close: " + max_close.to_s
+    logger.info "Min open:" + min_open.to_s
+    logger.info "Min block: " + min_block.to_s
+    logger.info "Hours diff:" + hours_diff.to_s
 
     time_prop = hours_diff/max_time_diff
 
