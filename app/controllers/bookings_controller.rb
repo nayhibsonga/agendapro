@@ -3971,7 +3971,11 @@ class BookingsController < ApplicationController
     logger.info "Min block: " + min_block.to_s
     logger.info "Hours diff:" + hours_diff.to_s
 
-    time_prop = hours_diff/max_time_diff
+    time_prop = 0
+
+    if max_time_diff != 0
+      time_prop = hours_diff/max_time_diff
+    end
 
     calendar_height = time_prop*67
 
