@@ -39,6 +39,11 @@ class LocationImagesUploader < CarrierWave::Uploader::Base
     process :resize_to_fit => [200, 200]
   end
 
+  version :mobile do
+    process :convert => 'png'
+    process :resize_to_fit => [1024, 250]
+  end
+
   # Add a white list of extensions which are allowed to be uploaded.
   # For images you might use something like this:
   def extension_white_list
