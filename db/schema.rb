@@ -120,6 +120,7 @@ ActiveRecord::Schema.define(version: 20150805214438) do
     t.integer  "session_booking_id"
     t.boolean  "user_session_confirmed", default: false
     t.boolean  "is_session_booked",      default: false
+    t.integer  "payment_id"
     t.float    "discount",               default: 0.0
     t.integer  "service_promo_id"
   end

@@ -42,8 +42,7 @@ var current_service;
 function currency(price)
 {
 	var amount = price.toString();
-	//console.log(amount);
-	//console.log(amount.length);
+
 	var j = 0;
 	var stack = new Array();
 	for(i = amount.length-1; i>=0; i--)
@@ -68,8 +67,7 @@ function currency(price)
 function simple_currency(price)
 {
 	var amount = Math.round(price).toString();
-	//console.log(amount);
-	//console.log(amount.length);
+
 	var j = 0;
 	var stack = new Array();
 	for(i = amount.length-1; i>=0; i--)
@@ -497,7 +495,7 @@ function loadStep2() {
 		$("#sessions-summary").show();
 		$("#sessions-left").empty();
 		$("#sessions-left").html("" + sessions_left);
-		console.log("Sessions left: " + sessions_left);
+
 		$("#has_sessions").val("1");
 	}
 	else
@@ -512,8 +510,7 @@ function loadStep2() {
 	$(".selected-service").each(function() {
 		var provider = $(this).find('.selected-service-provider').val();
 		var service_id = $(this).attr("service_id");
-		console.log("provider: ");
-		console.log(provider);
+
 		selects.push({
 			service: service_id,
 			provider: provider
@@ -553,8 +550,7 @@ function loadStep2() {
 		for(k=0; k<bookSummary.bookings.length; k++)
 		{
 			bookDetails = bookSummary.bookings[k];
-			console.log("bookDetails: ");
-			console.log(bookDetails);
+
 			bookDetailsStart = bookDetails.start.split("T")[1].split(":")[0] + ':' + bookDetails.start.split("T")[1].split(":")[1];
 			bookDetailsEnd = bookDetails.end.split("T")[1].split(":")[0] + ':' + bookDetails.end.split("T")[1].split(":")[1];
 
@@ -624,8 +620,7 @@ function loadStep2() {
 			}
 
 		}
-		console.log("e: ");
-		console.log(e);
+
 		if (sessions_service)
 		{
 			addSession(e, book_discount, is_time_discount);
@@ -942,7 +937,7 @@ function loadStep3 () {
 							'</tr>'
 						);
 
-						console.log("May pay but is not mandatory.");
+
 
 						$("#open-online-policy").show();
 
@@ -962,7 +957,7 @@ function loadStep3 () {
 					else if(!may_pay && !must_pay)
 					{
 
-						console.log("Can't pay.");
+
 
 						$("#summary").append(
 							'<tr>' +
@@ -983,7 +978,7 @@ function loadStep3 () {
 					}
 					else if(must_pay)
 					{
-						console.log("Must pay.");
+
 						$("#reservar2").show();
 						$(".payBtn").show();
 						$("#open-online-policy").show();
@@ -1632,8 +1627,7 @@ function scrollEvents (direction) {
       		
       		$("#selected-hour-body").empty();
 
-			console.log("Sesiones: " + sessions_buffer.length);
-			console.log("Bookings: " + booking_buffer.length);
+
 			//var active_hour = $(".hora-activo");
 			//active_hour.removeClass("hora-activo");
 			//active_hour.removeClass("hora-ocupado");
@@ -1697,8 +1691,7 @@ function addSession(booking, discount, is_time_discount)
 		service_promo_id: bookDetails.service_promo_id
     };
 
-    console.log("actual_booking: ");
-    console.log(actual_booking);
+
 
     checkUserCrossBookings();
 
@@ -1773,8 +1766,7 @@ function addBooking (booking, book_index, discount, is_time_discount) {
 		service_promo_id: bookDetails.service_promo_id
     };
 
-    console.log("actual_booking: ");
-    console.log(actual_booking);
+
 
     checkUserCrossBookings();
 
@@ -1982,8 +1974,7 @@ $('body').on('click', '[name="changeProvider"]', function(event){
 	$(".selected-service").each(function() {
 		var provider = $('input[name="changeProvider"]:checked').val();
 		var service_id = $(this).attr("service_id");
-		console.log("provider: ");
-		console.log(provider)
+
 		selects.push({
 			service: service_id,
 			provider: provider
@@ -2248,7 +2239,7 @@ function loadSessionsSummary()
 	}
 
 	$(".remove-session").on('click', function(){
-		console.log("Remove");
+
 		var sessionIndex = $(this).attr("index");
 		removeSession(sessionIndex);
 	});
@@ -2377,7 +2368,7 @@ $(function () {
 			go to next week.
 		*/
 
-		console.log(e);
+
 		
 		if (e.date < after_date)
 		{
@@ -2399,8 +2390,7 @@ $(function () {
 			$(".selected-service").each(function() {
 				var provider = $(this).find('.selected-service-provider').val();
 				var service_id = $(this).attr("service_id");
-				console.log("provider: ");
-				console.log(provider);
+
 				selects.push({
 					service: service_id,
 					provider: provider
@@ -2410,10 +2400,10 @@ $(function () {
 
 			var data;
 
-			console.log("day: " + day);
+
 			day_str = after_date.getFullYear() + "-" + (parseInt(after_date.getMonth())+1) + "-" + after_date.getDate();
 
-			console.log(day_str);
+
 
 			data = {local: localId, serviceStaff: JSON.stringify(selects), date: day_str};
 

@@ -17,6 +17,7 @@
           <%= hidden_field_tag :origin, @origin %>
           <%= hidden_field_tag :location, @location.id %>
           <%= hidden_field_tag :provider_lock, @lock %>
+          <%= hidden_field_tag :max_discount, @hour_discount %>
           <% if @service.has_sessions %>
             <%= hidden_field_tag :has_sessions, "1" %>
           <% else %>
@@ -34,8 +35,11 @@
               start: @start,
               end: @end,
               provider: @provider.id,
+              provider_name: @provider.public_name,
               provider_lock: @lock,
               service: @service.id,
+              service_name: @service.name,
+              online_payable: @online_payable,
               has_discount: @has_discount,
               discount: @hour_discount,
               price: @service.price,
