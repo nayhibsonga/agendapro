@@ -3983,9 +3983,45 @@ class BookingsController < ApplicationController
 
       week_block[:available_time].each do |hour|
 
-        hour_diff = (calendar_height*hour[:time_diff]/hours_diff).round(2)
-        span_diff = hour_diff - 8
-        top_margin = (calendar_height * (hour[:start_block].to_time - previous_hour.to_time)/(60 * hours_diff) ).round(2)
+        if hours_diff != 0
+
+          hour_diff = (calendar_height*hour[:time_diff]/hours_diff).round(2)
+          span_diff = hour_diff - 8
+          top_margin = (calendar_height * (hour[:start_block].to_time - previous_hour.to_time)/(60 * hours_diff) ).round(2)
+        else
+
+          new_min_open = 0
+          new_max_close = 0
+
+          local.location_times.each do |lt|
+            if new_min_open == 0
+              new_min_open = lt.open
+            else
+              if lt.open.strftime("%H:%M") < new_min_open.strftime("%H:%M")
+                new_min_open = lt.open
+              end
+            end
+          end
+
+          local.location_times.each do |lt|
+            if new_max_close == 0
+              new_max_close = lt.close
+            else
+              if lt.close.strftime("%H:%M") > new_max_close.strftime("%H:%M")
+                new_max_close = lt.open
+              end
+            end
+          end
+
+          new_min_block = (new_min_open.hour * 60 + new_min_open.min) * 60
+          new_max_close = (new_max_close.hour * 60 + new_max_close.min) * 60
+
+          hours_diff = (new_max_close - new_min_block)/60
+
+          hour_diff = (calendar_height*hour[:time_diff]/hours_diff).round(2)
+          span_diff = hour_diff - 8
+          top_margin = (calendar_height * (hour[:start_block].to_time - previous_hour.to_time)/(60 * hours_diff) ).round(2)
+        end
         
 
         if hour[:status] != "hora-promocion"
