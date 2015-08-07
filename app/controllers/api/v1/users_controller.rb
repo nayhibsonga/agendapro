@@ -83,7 +83,7 @@ module Api
 
       def oauth
         if params[:device] == 'facebook'
-          fb_user = FbGraph::User.me(params[:access_token]).fetch
+          fb_user = FbGraph::User.me(access_token: params[:access_token], fields: ['email', 'name']).fetch(fields: [:email, :first_name, :last_name, :id])
           if fb_user.raw_attributes[:email].blank?
             render json: { error: 'Lo sentimos, tu cuenta de Facebook no tiene un correo electrónico asociado, por lo que no podremos registrarte' }, status: 403
           else
