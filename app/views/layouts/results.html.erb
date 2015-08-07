@@ -108,21 +108,46 @@
 					<div class="collapse navbar-collapse" id="navbar">
 						<ul class="nav navbar-nav navbar-right" id="menu">
 							<li>
-								<%= form_tag({controller: "searchs", action: "search"}, method: "GET", class: "navbar-form", id: "search-form") do %>
-                                <%= hidden_field_tag :latitude, params[:latitude], :required => "true" %>
-                                <%= hidden_field_tag :longitude, params[:longitude], :required => "true" %>
-                                <%= hidden_field_tag :inputLocalization, params[:inputLocalization], :required => "true" %>
-								<div class="input-group">
-                                    <%= search_field_tag :inputSearch, params[:inputSearch], class: "form-control", placeholder: "Buscar...", :required => "true" %>
-                                    <span class="input-group-btn">
-                                        <button id="search_btn" class="btn btn-default" type="submit"><i class="fa fa-search"></i></button>
-                                    </span>
-                                </div>
+								<% if current_page?(get_promotions_path) || current_page?(show_time_promo_path) %>
+									<%= form_tag({controller: "searchs", action: "promotions"}, method: "GET", class: "navbar-form", id: "promotions-form") do %>
+		                                <%= hidden_field_tag :latitude, params[:latitude] %>
+		                                <%= hidden_field_tag :longitude, params[:longitude] %>
+		                                <%= hidden_field_tag :inputLocalization, params[:inputLocalization] %>
+										<div class="input-group">
+		                                    <%= search_field_tag :inputSearch, params[:inputSearch], class: "form-control", placeholder: "Buscar..." %>
+		                                    <span class="input-group-btn">
+		                                        <button id="promotions-search-btn" class="btn btn-default" type="submit"><i class="fa fa-search"></i></button>
+		                                    </span>
+		                                </div>
+	                                <% end %>
+	                            <% elsif current_page?(get_last_minute_promotions_path) %>
+	                            	<%= form_tag({controller: "searchs", action: "last_minute_promotions"}, method: "GET", class: "navbar-form", id: "last-minute-promotions-form") do %>
+		                                <%= hidden_field_tag :latitude, params[:latitude] %>
+		                                <%= hidden_field_tag :longitude, params[:longitude] %>
+		                                <%= hidden_field_tag :inputLocalization, params[:inputLocalization] %>
+										<div class="input-group">
+		                                    <%= search_field_tag :inputSearch, params[:inputSearch], class: "form-control", placeholder: "Buscar..." %>
+		                                    <span class="input-group-btn">
+		                                        <button id="promotions-search-btn" class="btn btn-default" type="submit"><i class="fa fa-search"></i></button>
+		                                    </span>
+		                                </div>
+	                                <% end %>
+								<% else %>
+									<%= form_tag({controller: "searchs", action: "search"}, method: "GET", class: "navbar-form", id: "search-form") do %>
+		                                <%= hidden_field_tag :latitude, params[:latitude], :required => "true" %>
+		                                <%= hidden_field_tag :longitude, params[:longitude], :required => "true" %>
+		                                <%= hidden_field_tag :inputLocalization, params[:inputLocalization], :required => "true" %>
+										<div class="input-group">
+		                                    <%= search_field_tag :inputSearch, params[:inputSearch], class: "form-control", placeholder: "Buscar...", :required => "true" %>
+		                                    <span class="input-group-btn">
+		                                        <button id="search_btn" class="btn btn-default" type="submit"><i class="fa fa-search"></i></button>
+		                                    </span>
+		                                </div>
+	                                <% end %>
                                 <% end %>
 							</li>
-							<li><%= link_to "Servicios", "/#servicios" %></li>
-							<li><%= link_to "Qué Hacemos", "/#quehacemos" %></li>
 							<li><%= link_to "Contacto", "/#contacto" %></li>
+							<li><%= link_to "Promociones", get_promotions_path, :class => "nav-bar-orange" %></li>
 							<% if user_signed_in? %>
                                 <%= render 'layouts/home_dropdown' %>
                             <% else %>

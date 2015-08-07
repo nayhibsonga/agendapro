@@ -181,4 +181,17 @@ $(function() {
 		$('.has-error').removeClass('has-error');
 		$('.fa.fa-times').removeClass('fa fa-times');
 	});
+
+	$('#service_online_payable').on('change', function(e){
+		if($(this).prop('checked'))
+		{
+			$('#must_be_paid_div').show();
+		}
+		else
+		{
+			$("#service_must_be_paid_online").prop('checked', false);
+			$("#must_be_paid_div").hide();
+		}
+	});
+
 });

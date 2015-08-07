@@ -897,7 +897,7 @@ class BookingMailer < ActionMailer::Base
 		message[:subject] = 'Recuerda tu reserva en ' + book_info.service_provider.company.name
 
 		# Notificacion service provider
-		providers_emails = NotificationEmail.where(id: NotificationProvider.select(:notification_email_id).where(service_provider: book_info.service_provider), receptor_type: 2, summary: false).select(:email).distinct
+		providers_emails = NotificationEmail.where(id: NotificationProvider.select(:notification_email_id).where(service_provider: book_info.service_provider), company_id: Company.where(active: true), receptor_type: 2, summary: false).select(:email).distinct
 		providers_emails.each do |provider|
 			message[:to] = [{
 								:email => provider.email,
@@ -918,7 +918,7 @@ class BookingMailer < ActionMailer::Base
 		end
 
 		# Email notificacion local
-		location_emails = NotificationEmail.where(id:  NotificationLocation.select(:notification_email_id).where(location: book_info.location), receptor_type: 1, summary: false).select(:email).distinct
+		location_emails = NotificationEmail.where(id:  NotificationLocation.select(:notification_email_id).where(location: book_info.location), company_id: Company.where(active: true), receptor_type: 1, summary: false).select(:email).distinct
 		location_emails.each do |local|
 			message[:to] = [{
 							:email => local.email,
@@ -943,7 +943,7 @@ class BookingMailer < ActionMailer::Base
 		end
 
 		# Email notificacion compañia
-		company_emails = NotificationEmail.where(company: book_info.location.company, receptor_type: 0, summary: false).select(:email).distinct
+		company_emails = NotificationEmail.where(company_id: Company.where(id: book_info.location.company.id, active: true), receptor_type: 0, summary: false).select(:email).distinct
 		company_emails.each do |company|
 			message[:to] = [{
 							:email => company.email,
@@ -1252,23 +1252,11 @@ class BookingMailer < ActionMailer::Base
 				}
 
 			],
-			:tags => ['payment'],
-			:images => [
-				{
-					:type => 'image/png',
-					:name => 'company_img.jpg',
-					:content => Base64.encode64(File.read('app/assets/ico/Iso_Pro_Color.png'))
-				},
-				{
-					:type => 'image/png',
-					:name => 'LOGO',
-					:content => Base64.encode64(File.read('app/assets/images/logos/logodoble2.png'))
-				}
-			]
+			:tags => ['payment']
 		}
 
 		# => Send mail
-		send_mail(template_name, template_content, messages)
+		send_mail(template_name, template_content, message)
 	end
 
 	#Correo de comprobante de pago para AgendaPro
@@ -1347,7 +1335,7 @@ class BookingMailer < ActionMailer::Base
 		}
 
 		# => Send mail
-		send_mail(template_name, template_content, messages)
+		send_mail(template_name, template_content, message)
 	end
 
 	#Comprobante de pago para la empresa
@@ -1414,7 +1402,7 @@ class BookingMailer < ActionMailer::Base
 		}
 
 		# => Send mail
-		send_mail(template_name, template_content, messages)
+		send_mail(template_name, template_content, message)
 	end
 
 	#Comprobante de pago para la empresa
@@ -1627,7 +1615,7 @@ class BookingMailer < ActionMailer::Base
 		end
 
 		# => Send mail
-		send_mail(template_name, template_content, messages)
+		send_mail(template_name, template_content, message)
 	end
 
 	#Mail de reserva de servicio con sesiones
@@ -1915,7 +1903,7 @@ class BookingMailer < ActionMailer::Base
 		end
 
 		# => Send mail
-		send_mail(template_name, template_content, messages)
+		send_mail(template_name, template_content, message)
 	end
 
 	#Mail de edición de sesión (depende de si es por admin o no)

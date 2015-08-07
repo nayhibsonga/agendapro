@@ -13,6 +13,8 @@
 						<% else %>
 							<br />Puedes cancelar el conjunto completo de reservas apretando "Cancelar todos los servicios" en el correo de resumen.
 						<% end %>
+					<% elsif @reason == "promo" %>
+						No se permite modificar horas reservadas en promoción.
 					<% else %>
 						<% if !@company.company_setting.online_cancelation_policy.cancelable %>
 							La empresa <strong><%= @company.name %></strong> no permite cancelar reservas pagadas en línea.
