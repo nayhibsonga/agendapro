@@ -24,14 +24,14 @@ class ProductsController < ApplicationController
     @product = Product.new
     @product.location_products.build
     @product_categories = ProductCategory.where(company_id: current_user.company_id).order(:name)
-    @locations = Location.where(company_id: current_user.company_id, active: true).order(:order)
+    @locations = Location.where(company_id: current_user.company_id, active: true).order(:order, :name)
     respond_with(@product)
   end
 
   def edit
     @product_category = ProductCategory.new
     @product_categories = ProductCategory.where(company_id: current_user.company_id).order(:name)
-    @locations = Location.where(company_id: current_user.company_id, active: true).order(:order)
+    @locations = Location.where(company_id: current_user.company_id, active: true).order(:order, :name)
   end
 
   def create

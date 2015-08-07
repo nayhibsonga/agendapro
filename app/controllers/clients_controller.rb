@@ -11,9 +11,9 @@ class ClientsController < ApplicationController
     if mobile_request?
       @company = current_user.company
     end
-    @locations = Location.where(company_id: current_user.company_id, active: true)
-    @service_providers = ServiceProvider.where(company_id: current_user.company_id, active: true)
-    @services = Service.where(company_id: current_user.company_id, active: true)
+    @locations = Location.where(company_id: current_user.company_id, active: true).order(:order, :name)
+    @service_providers = ServiceProvider.where(company_id: current_user.company_id, active: true).order(:order, :public_name)
+    @services = Service.where(company_id: current_user.company_id, active: true).order(:order, :name)
     @clients = Client.accessible_by(current_ability).search(params[:search], current_user.company_id).filter_location(params[:location]).filter_provider(params[:provider]).filter_service(params[:service]).filter_gender(params[:gender]).filter_birthdate(params[:option]).order(:last_name, :first_name).paginate(:page => params[:page], :per_page => 25)
 
     @monthly_mails = current_user.company.plan.monthly_mails
