@@ -24,6 +24,11 @@ class Location < ActiveRecord::Base
   has_many :notification_locations, dependent: :destroy
   has_many :notification_emails, :through => :notification_locations
 
+
+  has_many :last_minute_services, -> { where has_last_minute_discount: true }
+
+	#has_many :time_promotion_services, -> { where active: true }, :through => :service_providers
+
   has_many :services, -> { where active: true, online_booking: true }, :through => :active_service_providers
 
   #has_many :services, -> { where active: true }, :through => :service_providers
@@ -32,6 +37,10 @@ class Location < ActiveRecord::Base
 
   has_many :economic_sectors, :through => :company
   has_many :economic_sectors_dictionaries, :through => :economic_sectors
+
+  has_many :promos
+
+  accepts_nested_attributes_for :location_times, :reject_if => :all_blank, :allow_destroy => true
 
   has_many :payments, dependent: :destroy
 
@@ -76,260 +85,301 @@ class Location < ActiveRecord::Base
     :services => :name
   },
   :using => {
-    :trigram => {
-      :threshold => 0.1,
-      :prefix => true,
-      :any_word => true
-    },
-    :tsearch => {
-      :prefix => true,
-      :any_word => true
-    }
+	  :trigram => {
+	    :threshold => 0.1,
+	    :prefix => true,
+	    :any_word => true
+	  	},
+      :tsearch => {
+      	:prefix => true,
+      	:any_word => true
+      }
   },
   :ignoring => :accents
 
-  def extended_schedule
-    company_setting = self.company.company_setting
-    location_ids = self.company.locations.pluck(:id)
-    changed = false
-    first_open_time = LocationTime.where(location_id: location_ids).order(:open).first.open
-    last_close_time = LocationTime.where(location_id: location_ids).order(:close).last.close
-    if company_setting.extended_min_hour > first_open_time
-      company_setting.extended_min_hour = first_open_time
-      changed = true
-    end
-    if company_setting.extended_max_hour < last_close_time
-      company_setting.extended_max_hour = last_close_time
-      changed = true
-    end
-    if changed
-      company_setting.save
-    end
-  end
+  pg_search_scope :search_services, :associated_against => {
+  	:services => :name,
+  	:service_categories => :name,
+  	:economic_sectors => :name,
+  	:economic_sectors_dictionaries => :name
+  },
+  :using => {
+      :trigram => {
+        	:threshold => 0.1,
+        	:prefix => true,
+      	:any_word => true
+      },
+      :tsearch => {
+      	:prefix => true,
+      	:any_word => true
+      }
+  },
+  :ignoring => :accents
 
-  def plan_locations
-    if self.active_changed? && self.active
-      if self.company.locations.where(active:true).count >= self.company.plan.locations
-        errors.add(:base, "No se pueden agregar más locales con el plan actual, ¡mejóralo!.")
-      end
-    else
-      if self.company.locations.where(active:true).count > self.company.plan.locations
-        errors.add(:base, "No se pueden agregar más locales con el plan actual, ¡mejóralo!.")
-      end
-    end
-  end
 
-  def new_plan_locations
-    if self.company.locations.where(active:true).count >= self.company.plan.locations
-      errors.add(:base, "No se pueden agregar más locales con el plan actual, ¡mejóralo!.")
-    end
-  end
+	def extended_schedule
+		company_setting = self.company.company_setting
+		location_ids = self.company.locations.pluck(:id)
+		changed = false
+		first_open_time = LocationTime.where(location_id: location_ids).order(:open).first.open
+		last_close_time = LocationTime.where(location_id: location_ids).order(:close).last.close
+		if company_setting.extended_min_hour > first_open_time
+			company_setting.extended_min_hour = first_open_time
+			changed = true
+		end
+		if company_setting.extended_max_hour < last_close_time
+			company_setting.extended_max_hour = last_close_time
+			changed = true
+		end
+		if changed
+			company_setting.save
+		end
+	end
 
-  def outcall_services
-    if self.outcall
-      notOutcall = false
-      self.service_providers.each do |service_provider|
-        if service_provider.active
-          service_provider.services.each do |service|
-            if service.active && !service.outcall
-              notOutcall = true
-            end
-          end
-        end
-      end
-      if notOutcall
-        errors.add(:base, "El local a domicilio no puede tener prestadores que realizan servicios que no son a domicilio.")
-      end
-    end
-  end
+	def plan_locations
+		if self.active_changed? && self.active
+			if self.company.locations.where(active:true).count >= self.company.plan.locations
+				errors.add(:base, "No se pueden agregar más locales con el plan actual, ¡mejóralo!.")
+			end
+		else
+			if self.company.locations.where(active:true).count > self.company.plan.locations
+				errors.add(:base, "No se pueden agregar más locales con el plan actual, ¡mejóralo!.")
+			end
+		end
+	end
 
-  def times_overlap
+	def new_plan_locations
+		if self.company.locations.where(active:true).count >= self.company.plan.locations
+			errors.add(:base, "No se pueden agregar más locales con el plan actual, ¡mejóralo!.")
+		end
+	end
+
+	def outcall_services
+		if self.outcall
+			notOutcall = false
+			self.service_providers.each do |service_provider|
+				if service_provider.active
+					service_provider.services.each do |service|
+						if service.active && !service.outcall
+							notOutcall = true
+						end
+					end
+				end
+			end
+			if notOutcall
+				errors.add(:base, "El local a domicilio no puede tener prestadores que realizan servicios que no son a domicilio.")
+			end
+		end
+	end
+
+	def times_overlap
     self.location_times.each do |location_time1|
-      self.location_times.each do |location_time2|
-        if (location_time1 != location_time2)
-          if(location_time1.day_id == location_time2.day_id)
-            if (location_time1.open - location_time2.close) * (location_time2.open - location_time1.close) >= 0
-              errors.add(:base, "Existen bloques horarios sobrepuestos para el día "+location_time1.day.name+".")
-            end
-          end
-        end
-      end
-    end
+			self.location_times.each do |location_time2|
+				if (location_time1 != location_time2)
+					if(location_time1.day_id == location_time2.day_id)
+						if (location_time1.open - location_time2.close) * (location_time2.open - location_time1.close) >= 0
+				      		errors.add(:base, "Existen bloques horarios sobrepuestos para el día "+location_time1.day.name+".")
+			    	end
+		    	end
+		    end
+			end
+		end
   end
 
   def time_empty_or_negative
-    self.location_times.each do |location_time|
-      if location_time.open >= location_time.close
-        errors.add(:base, "El horario de término es anterior al de inicio el día " + location_time.day.name + ".")
-      end
-    end
-  end
+  	self.location_times.each do |location_time|
+			if location_time.open >= location_time.close
+				errors.add(:base, "El horario del día "+location_time.day.name+" es vacío o negativo.")
+			end
+		end
+	end
 
   def provider_time_in_location_time
-    self.service_providers.each do |service_provider|
-      service_provider.provider_times.each do |provider_time|
-        provider_time_open = provider_time.open.clone()
-        provider_time_close = provider_time.close.clone()
-        in_location_time = false
-        self.location_times.each do |location_time|
-          if provider_time.day_id == location_time.day_id
-            if (provider_time_open.change(:month => 1, :day => 1, :year => 2000) >= location_time.open) && (provider_time_close.change(:month => 1, :day => 1, :year => 2000) <= location_time.close)
-              in_location_time = true
-            end
-          end
-        end
-        if !in_location_time
-          errors.add(:base, "El horario del staff " + service_provider.public_name + " no es factible para para el día " + provider_time.day.name + ", debes cambiarlo antes de poder cambiar el horario del local.")
-        end
-      end
-    end
-  end
+  	self.service_providers.each do |service_provider|
+			service_provider.provider_times.each do |provider_time|
+				provider_time_open = provider_time.open.clone()
+				provider_time_close = provider_time.close.clone()
+				in_location_time = false
+				self.location_times.each do |location_time|
+					if provider_time.day_id == location_time.day_id
+						if (provider_time_open.change(:month => 1, :day => 1, :year => 2000) >= location_time.open) && (provider_time_close.change(:month => 1, :day => 1, :year => 2000) <= location_time.close)
+							in_location_time = true
+						end
+					end
+				end
+				if !in_location_time
+					errors.add(:base, "El horario del staff "+service_provider.public_name+" no es factible para este local, debes cambiarlo antes de poder cambiar el horario del local.")
+				end
+			end
+		end
+	end
 
-  def categorized_services
-    location_resources = self.resource_locations.pluck(:resource_id)
-    service_providers = self.service_providers.where(active: true, online_booking: true)
+	def categorized_services
 
-    categories = ServiceCategory.where(:company_id => self.company_id).order(order: :asc)
-    services = Service.where(:active => true, online_booking: true, :id => ServiceStaff.where(service_provider_id: service_providers.pluck(:id)).pluck(:service_id)).order(order: :asc)
-    service_resources_unavailable = ServiceResource.where(service_id: services)
-    if location_resources.any?
-      if location_resources.length > 1
-        service_resources_unavailable = service_resources_unavailable.where('resource_id NOT IN (?)', location_resources)
-      else
-        service_resources_unavailable = service_resources_unavailable.where('resource_id <> ?', location_resources)
-      end
-    end
-    if service_resources_unavailable.any?
-      if service_resources_unavailable.length > 1
-        services = services.where('services.id NOT IN (?)', service_resources_unavailable.pluck(:service_id))
-      else
-        services = services.where('id <> ?', service_resources_unavailable.pluck(:service_id))
-      end
-    end
+	    location_resources = self.resource_locations.pluck(:resource_id)
+	    service_providers = self.service_providers.where(active: true, online_booking: true)
 
-    categorized_services = Array.new
-    categories.each do |category|
-      services_array = Array.new
-      services.each do |service|
-        if service.service_category_id == category.id
-          serviceJSON = service.attributes.merge({'name_with_small_outcall' => service.name_with_small_outcall })
-          services_array.push(serviceJSON)
-        end
-      end
-      service_hash = {
-        :id => category.id,
-        :category => category.name,
-        :services => services_array
-      }
-      categorized_services.push(service_hash)
-    end
+	    categories = ServiceCategory.where(:company_id => self.company_id).order(order: :asc)
+	    services = Service.where(:active => true, online_booking: true, :id => ServiceStaff.where(service_provider_id: service_providers.pluck(:id)).pluck(:service_id)).order(order: :asc)
+	    service_resources_unavailable = ServiceResource.where(service_id: services)
+	    if location_resources.any?
+	      if location_resources.length > 1
+	        service_resources_unavailable = service_resources_unavailable.where('resource_id NOT IN (?)', location_resources)
+	      else
+	        service_resources_unavailable = service_resources_unavailable.where('resource_id <> ?', location_resources)
+	      end
+	    end
+	    if service_resources_unavailable.any?
+	      if service_resources_unavailable.length > 1
+	        services = services.where('services.id NOT IN (?)', service_resources_unavailable.pluck(:service_id))
+	      else
+	        services = services.where('id <> ?', service_resources_unavailable.pluck(:service_id))
+	      end
+	    end
 
-    return categorized_services
-  end
-
-  def categories
-    # def location_categorized_services
-   #    location_resources = Location.find(params[:location]).resource_locations.pluck(:resource_id)
-   #    service_providers = ServiceProvider.where(location_id: params[:location])
-
-   #    categories = ServiceCategory.where(:company_id => Location.find(params[:location]).company_id).order(order: :asc)
-   #    services = Service.where(:active => true, :id => ServiceStaff.where(service_provider_id: service_providers.pluck(:id)).pluck(:service_id)).order(order: :asc)
-   #    service_resources_unavailable = ServiceResource.where(service_id: services)
-   #    if location_resources.any?
-   #      if location_resources.length > 1
-   #        service_resources_unavailable = service_resources_unavailable.where('resource_id NOT IN (?)', location_resources)
-   #      else
-   #        service_resources_unavailable = service_resources_unavailable.where('resource_id <> ?', location_resources)
-   #      end
-   #    end
-   #    if service_resources_unavailable.any?
-   #      if service_resources_unavailable.length > 1
-   #        services = services.where('services.id NOT IN (?)', service_resources_unavailable.pluck(:service_id))
-   #      else
-   #        services = services.where('id <> ?', service_resources_unavailable.pluck(:service_id))
-   #      end
-   #    end
-
-   #    categorized_services = Array.new
-   #    categories.each do |category|
-   #      services_array = Array.new
-   #      services.each do |service|
-   #        if service.service_category_id == category.id
-   #          serviceJSON = service.attributes.merge({'name_with_small_outcall' => service.name_with_small_outcall })
-   #          services_array.push(serviceJSON)
-   #        end
-   #      end
-   #      service_hash = {
-   #        :id => category.id,
-   #        :category => category.name,
-   #        :services => services_array
-   #      }
-   #      categorized_services.push(service_hash)
-   #    end
-
-   #    render :json => categorized_services
-   #  end
+	    categorized_services = Array.new
+	    categories.each do |category|
+	      services_array = Array.new
+	      services.each do |service|
+	        if service.service_category_id == category.id
+	          serviceJSON = service.attributes.merge({'name_with_small_outcall' => service.name_with_small_outcall })
+	          services_array.push(serviceJSON)
+	        end
+	      end
+	      service_hash = {
+	        :id => category.id,
+	        :category => category.name,
+	        :services => services_array
+	      }
+	      categorized_services.push(service_hash)
+	    end
 
 
-    # categories = self.service_providers.services.where(:active => true).pluck('service_category_id')
-    # categories = ServiceCategory.where(:service_id => Service.where(:active => true, :id => ServiceProvider.where(:location_id => loc.id)))
-    # categories = .service_providers.join(:service).where(:active => true).pluck('service_category_id')
+	    return categorized_services
 
-    service_providers = self.service_providers
 
-    services_ids = Array.new
-    services = Array.new
-    categories = Array.new
-    service_providers.each do |sp|
-      sp.services.where(active: true).each do |s|
-        services_ids.push(s.id)
-        services.push(s)
-        if(!categories.include?(s.service_category))
-          categories.push(s.service_category)
-        end
-      end
-    end
+	    # service_providers = self.service_providers
 
-    return categories
-  end
+	    # services_ids = Array.new
+	    # services = Array.new
+	    # categories = Array.new
+	    # service_providers.each do |sp|
+	    # 	sp.services.where(active: true).each do |s|
+	    # 		services_ids.push(s.id)
+	    # 		services.push(s)
+	    # 		if(!categories.include?(s.service_category))
+	    # 			categories.push(s.service_category)
+	    # 		end
+	    # 	end
+	    # end
 
-  def get_full_address
-    full_address = self.address
-    full_address += " " + self.second_address if !self.second_address.blank?
-    full_address += ", " + self.district.name
-    full_address += ", " + self.district.city.name
-    return full_address
-  end
+	    # return categories
 
-  def get_full_address_country
-    full_address = self.address
-    full_address += " " + self.second_address if !self.second_address.blank?
-    full_address += ", " + self.district.name
-    full_address += ", " + self.district.city.name
-    full_address += ", " + self.district.city.region.name
-    full_address += ", " + self.district.city.region.country.name
-    return full_address
-  end
+	end
 
-  def opened_days_zero_index
-    opened_days = []
-    self.location_times.each do |location_time|
-      if !opened_days.include? (location_time.day_id % 7)
-        opened_days.push(location_time.day_id % 7)
-      end
-    end
-    return opened_days
-  end
+	def categories
+		# def location_categorized_services
+	 #    location_resources = Location.find(params[:location]).resource_locations.pluck(:resource_id)
+	 #    service_providers = ServiceProvider.where(location_id: params[:location])
 
-  def closed_days_zero_index
-    closed_days = [0,1,2,3,4,5,6]
-    self.location_times.each do |location_time|
-      if closed_days.include? (location_time.day_id % 7)
-        closed_days.delete(location_time.day_id % 7)
-      end
-    end
-    return closed_days
-  end
+	 #    categories = ServiceCategory.where(:company_id => Location.find(params[:location]).company_id).order(order: :asc)
+	 #    services = Service.where(:active => true, :id => ServiceStaff.where(service_provider_id: service_providers.pluck(:id)).pluck(:service_id)).order(order: :asc)
+	 #    service_resources_unavailable = ServiceResource.where(service_id: services)
+	 #    if location_resources.any?
+	 #      if location_resources.length > 1
+	 #        service_resources_unavailable = service_resources_unavailable.where('resource_id NOT IN (?)', location_resources)
+	 #      else
+	 #        service_resources_unavailable = service_resources_unavailable.where('resource_id <> ?', location_resources)
+	 #      end
+	 #    end
+	 #    if service_resources_unavailable.any?
+	 #      if service_resources_unavailable.length > 1
+	 #        services = services.where('services.id NOT IN (?)', service_resources_unavailable.pluck(:service_id))
+	 #      else
+	 #        services = services.where('id <> ?', service_resources_unavailable.pluck(:service_id))
+	 #      end
+	 #    end
+
+	 #    categorized_services = Array.new
+	 #    categories.each do |category|
+	 #      services_array = Array.new
+	 #      services.each do |service|
+	 #        if service.service_category_id == category.id
+	 #          serviceJSON = service.attributes.merge({'name_with_small_outcall' => service.name_with_small_outcall })
+	 #          services_array.push(serviceJSON)
+	 #        end
+	 #      end
+	 #      service_hash = {
+	 #        :id => category.id,
+	 #        :category => category.name,
+	 #        :services => services_array
+	 #      }
+	 #      categorized_services.push(service_hash)
+	 #    end
+
+	 #    render :json => categorized_services
+	 #  end
+
+
+	 	# categories = self.service_providers.services.where(:active => true).pluck('service_category_id')
+	 	# categories = ServiceCategory.where(:service_id => Service.where(:active => true, :id => ServiceProvider.where(:location_id => loc.id)))
+	 	# categories = .service_providers.join(:service).where(:active => true).pluck('service_category_id')
+
+	    service_providers = self.service_providers
+
+	    services_ids = Array.new
+	    services = Array.new
+	    categories = Array.new
+	    service_providers.each do |sp|
+	     	sp.services.where(active: true).each do |s|
+	     		services_ids.push(s.id)
+	     		services.push(s)
+	     		if(!categories.include?(s.service_category))
+	     			categories.push(s.service_category)
+	     		end
+	    	end
+	    end
+
+	    return categories
+	end
+
+	def get_full_address
+		full_address = self.address
+		full_address += " " + self.second_address if !self.second_address.blank?
+		full_address += ", " + self.district.name
+		full_address += ", " + self.district.city.name
+		return full_address
+	end
+
+	def get_full_address_country
+		full_address = self.address
+		full_address += " " + self.second_address if !self.second_address.blank?
+		full_address += ", " + self.district.name
+		full_address += ", " + self.district.city.name
+		full_address += ", " + self.district.city.region.name
+		full_address += ", " + self.district.city.region.country.name
+		return full_address
+	end
+
+	def opened_days_zero_index
+		opened_days = []
+		self.location_times.each do |location_time|
+			if !opened_days.include? (location_time.day_id % 7)
+				opened_days.push(location_time.day_id % 7)
+			end
+		end
+		return opened_days
+	end
+
+	def closed_days_zero_index
+		closed_days = [0,1,2,3,4,5,6]
+		self.location_times.each do |location_time|
+			if closed_days.include? (location_time.day_id % 7)
+				closed_days.delete(location_time.day_id % 7)
+			end
+		end
+		return closed_days
+	end
 
 end
 

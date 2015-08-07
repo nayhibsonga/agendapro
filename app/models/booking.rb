@@ -10,6 +10,7 @@ class Booking < ActiveRecord::Base
 	belongs_to :payed_booking
 	belongs_to :payment
 	belongs_to :session_booking
+	belongs_to :service_promo
 
   has_many :booking_histories, dependent: :destroy
 
@@ -30,6 +31,15 @@ class Booking < ActiveRecord::Base
 
   after_create :send_booking_mail, :wait_for_payment, :check_session
   after_update :send_update_mail, :check_session
+
+  #Check if booking hour is part of a promo
+  def check_for_promo_payment
+    if !self.service_promo_id.nil? && !self.payed_booking_id.nil? && self.payed && self.trx_id != ""
+      return true
+    else
+      return false
+    end
+  end
 
 	def check_session
 		if self.id.nil?
@@ -53,6 +63,17 @@ class Booking < ActiveRecord::Base
 
   def payment_timeout
     if !self.payed and self.trx_id != "" and self.payed_booking.nil?
+      if self.is_session && !self.session_booking_id.nil?
+        if SessionBooking.find(self.session_booking_id)
+          session_booking = SessionBooking.find(self.session_booking_id)
+          session_booking.delete
+          if !self.service_promo_id.nil? && ServicePromo.find(self.service_promo_id)
+            service_promo = ServicePromo.find(self.service_promo_id)
+            service_promo.max_bookings = service_promo.max_bookings + 1
+            service_promo.save
+          end
+        end
+      end
       self.delete
     end
   end
@@ -83,10 +104,8 @@ class Booking < ActiveRecord::Base
   def provider_in_break_warning
     self.service_provider.provider_breaks.each do |provider_break|
       if (provider_break.start - self.end) * (self.start - provider_break.end) > 0
-        if !self.is_session || (self.is_session && self.is_session_booked) and (!provider_booking.is_session || (provider_booking.is_session && provider_booking.is_session_booked))
-          warnings.add(:base, "El prestador seleccionado tiene bloqueado el horario elegido")
-          return
-        end
+        warnings.add(:base, "El prestador seleccionado tiene bloqueado el horario elegido")
+        return
       end
     end
   end
@@ -461,8 +480,15 @@ class Booking < ActiveRecord::Base
         booking_confirmation_time = booking.location.company.company_setting.booking_confirmation_time
         if ((booking_confirmation_time.days - eval(ENV["TIME_ZONE_OFFSET"])).from_now..(booking_confirmation_time.days + 1.days - eval(ENV["TIME_ZONE_OFFSET"])).from_now).cover?(booking.start)
           if booking.send_mail
-            BookingMailer.book_reminder_mail(booking)
-            puts 'Mail enviado a mailer booking_id: ' + booking.id.to_s
+            if booking.is_session
+              if booking.is_session_booked and booking.user_session_confirmed
+                BookingMailer.book_reminder_mail(booking)
+                puts 'Mail enviado a mailer booking_id: ' + booking.id.to_s
+              end
+            else
+              BookingMailer.book_reminder_mail(booking)
+              puts 'Mail enviado a mailer booking_id: ' + booking.id.to_s
+            end
           end
         end
       end

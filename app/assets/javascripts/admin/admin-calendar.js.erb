@@ -22,10 +22,10 @@ function loadProviders () {
 					$('#providers-div').append('<select class="form-control" id="providers-selector"></select>');
 					if (providersArray.length > 1) {
 						$('#providers-selector').append('<option value="0">Todos</option>');
-						$('#provider_break_service_provider_id').append('<option value="0">Todos</option>');
+						$('#provider_break_service_provider_id').append('<option value="0" data-block="' + $('#calendar-data').data('calendar-duration') + '">Todos</option>');
 					}
 					$.each(providersArray, function (key, provider) {
-						$('#providers-selector').append('<option name="providerRadio" value="'+provider.id+'">'+provider.public_name+'</option>');
+						$('#providers-selector').append('<option name="providerRadio" value="'+provider.id+'" data-block="' + provider.block_length + '">'+provider.public_name+'</option>');
 						resources.push({id: provider.id, name: provider.public_name});
 						count += 1;
 						$('#booking_service_provider_id')
@@ -153,8 +153,6 @@ function loadResourcesCalendar (startTime, endTime, hiddenDays, resourcesArray, 
 			$('#popover').css('left', offX + 75 + 'px');
 			$('#popover').css('top', jsEvent.pageY - p.offset().top - 35 + 'px');
 
-			// window.console.log(offX + 60);
-			// window.console.log(jsEvent.pageY - p.offset().top - 40);
 
 			var column_click = $(this).context.cellIndex;
 			var resourceId = view.resources[column_click - 1].id
@@ -454,13 +452,13 @@ function loadWeekCalendar (startTime, endTime, hiddenDays, resourcesArray, provi
 		minTime: startTime,
 		maxTime: endTime,
 		// firstHour: startHour,
-		defaultEventMinutes: duration,
+		defaultEventMinutes: $('#providers-selector option:selected').data("block"),
 		editable: true,
 		disableResizing: true,
 		eventDrop: function (event) {
 			editDrag(event);
 		},
-		slotMinutes: duration,
+		slotMinutes: $('#providers-selector option:selected').data("block"),
 		aspectRatio: setAspectRatio(),
 		windowResize: function(view) {
 			$('#calendar').fullCalendar('option', 'aspectRatio', setAspectRatio());
@@ -772,6 +770,7 @@ function createBookingModal(date, provider_id) {
 					$('#booking_service_id').removeAttr('disabled');
 					$('#booking_service_id option').first().attr("selected", true);
 					modalChange();
+					checkClientSessions();
 				});
 			};
 			$('#client-history-tbody').html('<tr><td colspan="6">El cliente no tiene historial...</td></tr>');
@@ -782,7 +781,6 @@ function createBookingModal(date, provider_id) {
 			$('#bookingModal #payment_client_group').hide();
 			$('#bookingModal').modal('show');
 			loadBookingPayment(0);
-			checkClientSessions();
 		}
 		else {
 			alert('Este local no tiene prestadores o servicios\nPor favor completa los datos necesarios para poder generar reservas en este local.');
@@ -1850,7 +1848,6 @@ function editBreakModal(breakId) {
 
 				});
 
-				console.log(break_service_providers);
 
 				if(break_service_providers != null && break_service_providers.length > 0)
 				{
@@ -2062,6 +2059,7 @@ function setAge() {
 
 function checkClientSessions()
 {
+
 	modalChange();
 	if($("#is_edit_modal").val() == "0")
 	{
@@ -2077,7 +2075,105 @@ function checkClientSessions()
 			{
 				$.ajax({
 					type: "get",
-					url: "clients_check_sessions?id=" + $('#booking_client_id').val() + "&service_id=" + $("#booking_service_id").val(),
+					url: "/clients_check_sessions?id=" + $('#booking_client_id').val() + "&service_id=" + $("#booking_service_id").val(),
+					success: function(response)
+					{
+						var service = response[0]
+						var sessions_bookings = response[1]
+
+						if (service.has_sessions)
+						{
+							if (sessions_bookings.length > 0)
+							{
+								$("#sessions-info").append('<div session_booking_id="0"><input type="radio" name="sessions-choice" value="0" />&nbsp;Generar una nueva reserva y agendar la primera sesión.');
+							}
+							else
+							{
+								$("#sessions-info").append('<div session_booking_id="0"><input type="radio" name="sessions-choice" value="0" checked>&nbsp;Generar una nueva reserva y agendar la primera sesión.');
+							}
+							$("#sessions-row").show();
+							$("#add-service-btn").hide();
+							$("#has_sessions").val("1");
+							if(sessions_bookings.length > 0)
+							{
+								var index = 0;
+								$.each(sessions_bookings, function (key, session_booking) {
+									var nextSession = session_booking.sessions_taken + 1;
+									if(index == 0)
+									{
+										$("#sessions-info").append('<div session_booking_id="' + session_booking.id + '"><input type="radio" name="sessions-choice" value="' + session_booking.id + '" checked />&nbsp;El cliente ha agendado ' + session_booking.sessions_taken + ' de un total de ' + session_booking.sessions_total +'. Agendar la sesión ' + nextSession + '.');
+									}
+									else
+									{
+										$("#sessions-info").append('<div session_booking_id="' + session_booking.id + '"><input type="radio" name="sessions-choice" value="' + session_booking.id + '">&nbsp;El cliente ha agendado ' + session_booking.sessions_taken + ' de un total de ' + session_booking.sessions_total +'. Agendar la sesión ' + nextSession + '.');
+									}
+									index = index + 1;
+								});
+							}
+						}
+					}
+				});
+			}
+		}
+		else
+		{
+
+
+			if(parseInt($("#booking_service_id").val()) > 0)
+			{
+
+				$.ajax({
+					type: "get",
+					url: "services/" + $("#booking_service_id").val() + ".json",
+					success: function(service)
+					{
+						if(service.has_sessions)
+						{
+							$("#sessions-info").append('<div session_booking_id="0"><input type="radio" name="sessions-choice" value="0" checked>&nbsp;Este servicio es por sesiones. Generar una nueva reserva y agendar la primera sesión.');
+							$("#sessions-row").show();
+							$("#add-service-btn").hide();
+							$("#has_sessions").val("1");
+						}
+					}
+				});
+			}
+		}
+	}
+	else
+	{
+		/*if(parseInt($("#booking_service_id").val()) > 0)
+		{
+			$.ajax({
+				type: "get",
+				url: "services/" + $("#booking_service_id").val() + ".json",
+				success: function(service)
+				{
+					if(service.has_sessions)
+					{
+						$("#sessions-info").empty();
+						$("#sessions-info").append("Esta reserva corresponde a una sesión de un servicio.");
+						$("#sessions-row").show();
+					}
+					else
+					{
+						$("#sessions-info").empty();
+						$("#sessions-row").hide();
+					}
+				}
+			});
+		}*/
+		$("#sessions-info").empty();
+		$("#sessions-row").hide();
+		$("#add-service-btn").show();
+		$("#has_sessions").val("0");
+
+		if (parseInt($('#booking_client_id').val()) > 0)
+		{
+			if(parseInt($("#booking_service_id").val()) > 0)
+			{
+				$.ajax({
+					type: "get",
+					url: "/clients_check_sessions?id=" + $('#booking_client_id').val() + "&service_id=" + $("#booking_service_id").val(),
 					success: function(response)
 					{
 						var service = response[0]
@@ -2126,7 +2222,6 @@ function checkClientSessions()
 					url: "services/" + $("#booking_service_id").val() + ".json",
 					success: function(service)
 					{
-						console.log(service.name + " has sessions: " + service.has_sessions);
 						if(service.has_sessions)
 						{
 							$("#sessions-info").append('<div session_booking_id="0"><input type="radio" name="sessions-choice" value="0" checked>&nbsp;Este servicio es por sesiones. Generar una nueva reserva y agendar la primera sesión.');
@@ -2137,30 +2232,6 @@ function checkClientSessions()
 					}
 				});
 			}
-		}
-	}
-	else
-	{
-		if(parseInt($("#booking_service_id").val()) > 0)
-		{
-			$.ajax({
-				type: "get",
-				url: "services/" + $("#booking_service_id").val() + ".json",
-				success: function(service)
-				{
-					if(service.has_sessions)
-					{
-						$("#sessions-info").empty();
-						$("#sessions-info").append("Esta reserva corresponde a una sesión de un servicio.");
-						$("#sessions-row").show();
-					}
-					else
-					{
-						$("#sessions-info").empty();
-						$("#sessions-row").hide();
-					}
-				}
-			});
 		}
 	}
 }
@@ -2332,7 +2403,7 @@ $(function() {
 	$("#full_name").autocomplete({
 		source: '/clients_name_suggestion',
 		appendTo: '#full_name_suggestions',
-		autoFocus: true,
+		autoFocus: false,
 		minLength: 3,
 		select: function( event, ui ) {
 			event.preventDefault();
@@ -2355,7 +2426,7 @@ $(function() {
 			$('.client_link').attr('href','/clients/' + client.id + '/edit');
 			$('.client_link').html('Ir a la ficha del cliente...');
 			$('#booking_client_gender option[value="'+client.gender+'"]').attr("selected",true);
-			$("#full_name").val(client.first_name+' '+client.last_name)
+			$("#full_name").val(client.first_name+' '+client.last_name);
 			if (validEmail($("#booking_client_email").val())) {
 				$('#booking_send_mail').prop('disabled', false);
 				$('#booking_send_mail').val(1);
@@ -2372,6 +2443,10 @@ $(function() {
 			$("#full_name").prop('disabled', true);
 			loadClientHistory(0);
 			checkClientSessions();
+		},
+		focus: function (event, ui) {
+			event.preventDefault();
+			$("#full_name").val(ui.item.label);
 		}
 	}).data( "ui-autocomplete" )._renderItem = function( ul, item ) {
 		return $( '<li>' ).append( '<a>' + item.label + '<br><span class="auto-desc">' + item.desc + '</span></a>' ).appendTo( ul );
@@ -2380,7 +2455,7 @@ $(function() {
 	$("#booking_client_email").autocomplete({
 		source: '/clients_suggestion',
 		appendTo: '#email_suggestions',
-		autoFocus: true,
+		autoFocus: false,
 		minLength: 3,
 		select: function( event, ui ) {
 			event.preventDefault();
@@ -2403,7 +2478,7 @@ $(function() {
 			$('.client_link').attr('href','/clients/' + client.id + '/edit');
 			$('.client_link').html('Ir a la ficha del cliente...');
 			$('#booking_client_gender option[value="'+client.gender+'"]').attr("selected",true);
-			$("#full_name").val(client.first_name+' '+client.last_name)
+			$("#full_name").val(client.first_name+' '+client.last_name);
 			if (validEmail($("#booking_client_email").val())) {
 				$('#booking_send_mail').prop('disabled', false);
 				$('#booking_send_mail').val(1);
@@ -2420,6 +2495,11 @@ $(function() {
 			$("#full_name").prop('disabled', true);
 			loadClientHistory(0);
 			loadBookingPayment(0);
+		},
+		focus: function (event, ui) {
+			event.preventDefault();
+			var client = eval("(" + ui.item.value + ")");
+			$("#booking_client_email").val(client.email);
 		}
 	}).data( "ui-autocomplete" )._renderItem = function( ul, item ) {
 		return $( '<li>' ).append( '<a>' + item.label + '<br><span class="auto-desc">' + item.desc + '</span></a>' ).appendTo( ul );

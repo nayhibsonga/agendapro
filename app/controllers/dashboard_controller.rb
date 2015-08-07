@@ -30,7 +30,7 @@ class DashboardController < ApplicationController
 		@session_bookings = []
 
 		@potential_session_bookings.each do |session_booking|
-			if session_booking.sessions_amount > session_booking.sessions_taken
+			if session_booking.sessions_amount && session_booking.sessions_taken && session_booking.sessions_amount > session_booking.sessions_taken
 				@session_bookings << session_booking
 			else
 				active_count = session_booking.bookings.where('start > ?', DateTime.now - eval(ENV["TIME_ZONE_OFFSET"])).count

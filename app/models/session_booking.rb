@@ -6,6 +6,7 @@ class SessionBooking < ActiveRecord::Base
 	belongs_to :service
 	belongs_to :user
 	belongs_to :client
+	belongs_to :service_promo
 
 
 	def send_sessions_booking_mail
@@ -160,8 +161,5 @@ class SessionBooking < ActiveRecord::Base
 			BookingMailer.sessions_booking_mail(@data)
 		end
 	end
-
-
-
 
 end

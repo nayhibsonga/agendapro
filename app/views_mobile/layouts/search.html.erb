@@ -19,7 +19,7 @@
 		<!-- end: Mobile Specific -->
 
 		<!-- start: CSS -->
-    <%= stylesheet_link_tag "http://fonts.googleapis.com/css?family=Roboto+Condensed:300", type: "text/css" %>
+    <%= stylesheet_link_tag "//fonts.googleapis.com/css?family=Roboto+Condensed:300", type: "text/css" %>
 		<%= stylesheet_link_tag "mobile" %>
 		<%= stylesheet_link_tag "mobile/mobile-search" %>
 		<%= yield :stylesheets %>
@@ -38,9 +38,9 @@
 						<button type="button" class="navbar-toggle collapsed toggle-menu menu-right push-body" data-toggle="collapse" data-target="#navbar-menu">
 							<i class="fa fa-bars"></i>
 						</button>
-						<a href="<%= root_without_subdomain %>" class="navbar-brand">
-							<%= image_tag 'logos/logo1.png', :alt => 'AgendaPro', :size => '120x41' %>
-						</a>
+						<% link_to root_url(subdomain: false), class: 'navbar-brand' do %>
+              <%= image_tag 'logos/logo2.png', :alt => 'AgendaPro', :size => '120x41' %>
+            <% end %>
 					</div>
 					<!-- Collect the nav links, forms, and other content for toggling -->
 					<div class="cbp-spmenu cbp-spmenu-vertical cbp-spmenu-right collapse navbar-collapse" id="navbar-menu">
@@ -49,6 +49,7 @@
 							<li><%= link_to 'Clientes', root_path(anchor: 'clients-target') %></li>
 							<li><%= link_to 'Qué Hacemos', root_path(anchor: 'what-we-do-target') %></li>
 							<li><%= link_to 'Contacto', root_path(anchor: 'contact-target') %></li>
+							<li><%= link_to 'Promociones', get_promotions_path %></li>
 							<li class="divider"></li>
 							<% if user_signed_in? %>
               <% if current_user.company_id %>

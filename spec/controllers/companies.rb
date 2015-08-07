@@ -83,16 +83,16 @@ describe CompaniesController do
 
 	let(:params) do
 		{
-			:id => @company.id, 
-			:amount => @new_plan.price, 
-			:date => @date, 
-			:transaction_type_id => @transaction_type.id, 
-			:new_plan_id => @new_plan.id, 
-			:new_due => 0.0, 
-			:new_months => 1, 
+			:id => @company.id,
+			:amount => @new_plan.price,
+			:date => @date,
+			:transaction_type_id => @transaction_type.id,
+			:new_plan_id => @new_plan.id,
+			:new_due => 0.0,
+			:new_months => 1,
 			:new_status_id => @new_payment_status.id
 		}
-	end		
+	end
 
 
 	#Super Admin
@@ -147,12 +147,12 @@ describe CompaniesController do
 		it "should redirect to root_path with wrong web_address " do
 
 			wrong_address = @company.web_address + "wrong"
-			
+
 			@request.host = "#{wrong_address}.test.host"
 
 			get :overview
 
-			expect(response).to redirect_to(root_without_subdomain)
+			expect(response).to redirect_to(root_url(subdomain: false))
 
 		end
 
@@ -161,7 +161,7 @@ describe CompaniesController do
 			@request.host = "#{@company2}.test.host"
 			get :overview
 
-			expect(response).to redirect_to(root_without_subdomain)
+			expect(response).to redirect_to(root_url(subdomain: false))
 			expect(flash[:alert]).to_not be_nil
 
 		end
@@ -200,12 +200,12 @@ describe CompaniesController do
 		it "(Workflow) should redirect to root_path with wrong web_address " do
 
 			wrong_address = @company.web_address + "wrong"
-			
+
 			@request.host = "#{wrong_address}.test.host"
 
 			get :workflow
 
-			expect(response).to redirect_to(root_without_subdomain)
+			expect(response).to redirect_to(root_url(subdomain: false))
 
 		end
 
@@ -214,7 +214,7 @@ describe CompaniesController do
 			@request.host = "#{@company2}.test.host"
 			get :workflow
 
-			expect(response).to redirect_to(root_without_subdomain)
+			expect(response).to redirect_to(root_url(subdomain: false))
 			expect(flash[:alert]).to_not be_nil
 
 		end

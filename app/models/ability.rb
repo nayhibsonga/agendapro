@@ -71,6 +71,7 @@ class Ability
     can :company_service_categories, ServiceCategory
     can :check_user_cross_bookings, Booking
     can :select_hour, Company
+    can :select_promo_hour, Company
     can :select_session_hour, Company
     can :user_data, Company
     can :client_loader, Client
@@ -105,6 +106,13 @@ class Ability
     # Singup Validate
     can :check_user_email, User
     can :check_company_web_address, Company
+
+    
+    can :get_promotions_popover, Service
+    can :promotion_hours, Booking
+    can :show_time_promo, Service
+    can :show_last_minute_promo, Service
+    can :last_minute_hours, Service
 
 
     if user.role_id == Role.find_by_name("Super Admin").id
@@ -244,6 +252,8 @@ class Ability
 
         can :delete_facebook_pages, CompanySetting
 
+        can :set_promotions, Service
+        can :set_service_promo_times, Service
         can :read, CompanyPaymentMethod, :company_id => user.company_id
         can :create, CompanyPaymentMethod, :company_id => user.company_id
         can :update, CompanyPaymentMethod, :company_id => user.company_id

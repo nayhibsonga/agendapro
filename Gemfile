@@ -171,3 +171,6 @@ gem 'omniauth-facebook'
 
 #Gema para CORS API
 gem 'rack-cors'
+
+#Oink para revisión de memoria
+gem "oink"

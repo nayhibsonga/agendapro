@@ -72,7 +72,7 @@
         </div>
 
 
-
+<input type="hidden" id="session_booking_id" value="<%= @booking.session_booking.id %>" />
 <input type="hidden" id="booking_id" value="<%= @booking.id %>" />
 <input type="hidden" id="service_id" value="<%= @booking.service_id %>" />
 <input type="hidden" id="selectedLocal" value="<%= @booking.location_id %>" />
@@ -106,21 +106,30 @@ var hoursSelected = false;
       clear: '',
       dateFormat: 'yy-mm-dd',
       onSelect: function(newDate){
-        var data = {
-          provider: $("#selectedProvider").val(),
-          date: newDate,
+
+        var data;
+        var selects = [];
+        selects.push({
+          service: $("#service_id").val(),
+          provider: $("#selectedProvider").val()
+        });
+
+        data = {
+          serviceStaff: JSON.stringify(selects),
           local: $('#selectedLocal').val(),
-          service: $("#service_id").val()
+          date: newDate,
+          session_booking_id: $("#session_booking_id").val()
         }
 
         if (calendar) {
-          calendar.rebuild('/available_hours_week_html', data);
+          calendar.rebuild('/promotion_hours', data);
         }
         else {
-          calendar = new Calendar('/available_hours_week_html', data);
+          calendar = new Calendar('/promotion_hours', data);
         }
 
         $(document).on('hourClick', function (e) {
+          console.log("click en hora");
           var sel_start = generateDate(e.date, e.start);
           var sel_end = generateDate(e.date, e.end);
           $("#start_date").val(sel_start);
@@ -211,34 +220,40 @@ function loadCalendar () {
         if ($(this).val() != staffSelected) {
 
           var data;
+          var selects = [];
+          selects.push({
+            service: $("#service_id").val(),
+            provider: event.target.getAttribute('value')
+          });
           if($("#datepicker").val()!="") {
             data = {
-              provider: event.target.getAttribute('value'),
+              serviceStaff: JSON.stringify(selects),
               local: $('#selectedLocal').val(),
-              service: $("#service_id").val(),
-              date: $("#datepicker").val()
+              date: $("#datepicker").val(),
+              session_booking_id: $("#session_booking_id").val()
             }
           } else {
             data = {
-              provider: event.target.getAttribute('value'),
+              serviceStaff: JSON.stringify(selects),
               local: $('#selectedLocal').val(),
-              service: $("#service_id").val()
+              session_booking_id: $("#session_booking_id").val()
             }
           }
 
           staffSelected = $(this).val();
           if (calendar) {
-            calendar.rebuild('/available_hours_week_html', data);
+            calendar.rebuild('/promotion_hours', data);
           }
           else {
-            calendar = new Calendar('/available_hours_week_html', data);
+            calendar = new Calendar('/promotion_hours', data);
           }
 
           // $("#calendar-loader").hide();
 
-        };
+        }
 
         $(document).on('hourClick', function (e) {
+          console.log("click en hora");
           var sel_start = generateDate(e.date, e.start);
           var sel_end = generateDate(e.date, e.end);
           $("#start_date").val(sel_start);
@@ -277,38 +292,37 @@ function loadCalendar () {
         staffSelected = $('[name="staffRadio"]').first().val();
 
         var data;
+        var selects = [];
+        selects.push({
+          service: $("#service_id").val(),
+          provider: $('[name="staffRadio"]').first().val()
+        });
         if($("#datepicker").val()!="") {
           data = {
-            provider: $('[name="staffRadio"]').first().val(),
+            serviceStaff: JSON.stringify(selects),
             local: $('#selectedLocal').val(),
-            service: $("#service_id").val(),
-            date: $("#datepicker").val()
+            date: $("#datepicker").val(),
+            session_booking_id: $("#session_booking_id").val()
           }
         } else {
           data = {
-            provider: $('[name="staffRadio"]').first().val(),
+            serviceStaff: JSON.stringify(selects),
             local: $('#selectedLocal').val(),
-            service: $("#service_id").val()
+            session_booking_id: $("#session_booking_id").val()
           }
         }
 
-        // $("#calendar-loader").show();
-        
-          
-
         if (calendar) {
-          calendar.rebuild('/available_hours_week_html', data);
+          calendar.rebuild('/promotion_hours', data);
         }
         else {
-          calendar = new Calendar('/available_hours_week_html', data);
+          calendar = new Calendar('/promotion_hours', data);
         }
-
-        // $("#calendar-loader").hide();
-
 
         $('#foo4').trigger('updateSizes');
 
         $(document).on('hourClick', function (e) {
+          console.log("click en hora");
           var sel_start = generateDate(e.date, e.start);
           var sel_end = generateDate(e.date, e.end);
           $("#start_date").val(sel_start);
@@ -366,6 +380,7 @@ function checkUserCrossBookings (b_start, b_end) {
 }
 
 $("#calendarBookSessionBtn").click(function(){
+
     if (hoursSelected) {
 
         var booking_id = $("#booking_id").val();
@@ -376,7 +391,6 @@ $("#calendarBookSessionBtn").click(function(){
         $(".staff").hide();
         $(".change-bar").hide();
         $("#nextButton").attr("disabled", "disabled");
-        //$("#calendarBackBtn").attr("disabled", "disabled");
 
         $.ajax({
             url: "update_book_session",
@@ -414,7 +428,7 @@ $("#calendarBookSessionBtn").click(function(){
     }
     else {
         alert('Debes seleccionar una hora');
-    };
+    }
 });
 
 var myAlert;
