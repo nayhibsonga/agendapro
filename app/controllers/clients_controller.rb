@@ -11,9 +11,9 @@ class ClientsController < ApplicationController
     if mobile_request?
       @company = current_user.company
     end
-    @locations = Location.where(company_id: current_user.company_id, active: true)
-    @service_providers = ServiceProvider.where(company_id: current_user.company_id, active: true)
-    @services = Service.where(company_id: current_user.company_id, active: true)
+    @locations = Location.where(company_id: current_user.company_id, active: true).order(:order, :name)
+    @service_providers = ServiceProvider.where(company_id: current_user.company_id, active: true).order(:order, :public_name)
+    @services = Service.where(company_id: current_user.company_id, active: true).order(:order, :name)
     @clients = Client.accessible_by(current_ability).search(params[:search], current_user.company_id).filter_location(params[:location]).filter_provider(params[:provider]).filter_service(params[:service]).filter_gender(params[:gender]).filter_birthdate(params[:option]).order(:last_name, :first_name).paginate(:page => params[:page], :per_page => 25)
 
     @monthly_mails = current_user.company.plan.monthly_mails
@@ -90,7 +90,7 @@ class ClientsController < ApplicationController
         format.html { redirect_to clients_path, notice: 'Cliente creado exitosamente.' }
         format.json { render action: 'edit', status: :created, location: @client }
       else
-        format.html { 
+        format.html {
           @activeBookings = Array.new
           @lastBookings = Array.new
           @client_comment = ClientComment.new
@@ -112,7 +112,7 @@ class ClientsController < ApplicationController
         format.html { redirect_to clients_path, notice: 'Cliente actualizado exitosamente.' }
         format.json { head :no_content }
       else
-        format.html { 
+        format.html {
           @activeBookings = Booking.where(:client_id => @client).where("start > ?", DateTime.now).order(start: :asc)
           @lastBookings = Booking.where(:client_id => @client).where("start <= ?", DateTime.now).order(start: :desc)
           @next_bookings = Booking
@@ -171,7 +171,7 @@ class ClientsController < ApplicationController
     client = Client.find(params[:id])
     service = Service.find(params[:service_id])
     session_bookings = SessionBooking.where(:client_id => client.id, :service_id => service.id)
-    
+
     session_bookings.each do |session_booking|
       if session_booking.sessions_amount > session_booking.sessions_taken
         sessions_hash = session_booking.attributes
@@ -237,7 +237,7 @@ class ClientsController < ApplicationController
     @to = Array.new
 
     mail_list.each do |email|
-      @to.push(email) if email=~ /([^\s]+)@([^\s]+)/ 
+      @to.push(email) if email=~ /([^\s]+)@([^\s]+)/
     end
     # @to = '';
     # if params[:to]
@@ -325,9 +325,9 @@ class ClientsController < ApplicationController
       end
     end
     @clients1 = Client.where(company_id: current_user.company_id).where('first_name ILIKE ANY ( array[:s] )', :s => search_array2).where('last_name ILIKE ANY ( array[:s] )', :s => search_array2).pluck(:id).uniq
-    @clients2 = Client.where(company_id: current_user.company_id).where("CONCAT(unaccent(first_name), ' ', unaccent(last_name)) ILIKE unaccent(:s) OR unaccent(first_name) ILIKE unaccent(:s) OR unaccent(last_name) ILIKE unaccent(:s)", :s => "%#{params[:term]}%").order(:last_name, :first_name).pluck(:id).uniq
+    @clients2 = Client.where(company_id: current_user.company_id).where("CONCAT(unaccent(first_name), ' ', unaccent(last_name)) ILIKE unaccent(:s) OR unaccent(first_name) ILIKE unaccent(:s) OR unaccent(last_name) ILIKE unaccent(:s)", :s => "%#{params[:term]}%").pluck(:id).uniq
 
-    @clients = Client.where(id: (@clients1 + @clients2).uniq)
+    @clients = Client.where(id: (@clients1 + @clients2).uniq).order(:last_name, :first_name)
 
     @clients_arr = Array.new
     @clients.each do |client|
@@ -355,7 +355,7 @@ class ClientsController < ApplicationController
 
   def rut_suggestion
     search_rut = params[:term].gsub(/[.-]/, "")
-    @clients = Client.where(company_id: current_user.company_id).where("replace(replace(identification_number, '.', ''), '-', '') ILIKE ?", "%#{search_rut}%").uniq
+    @clients = Client.where(company_id: current_user.company_id).where("replace(replace(identification_number, '.', ''), '-', '') ILIKE ?", "%#{search_rut}%").order(:last_name, :first_name).uniq
 
     @clients_arr = Array.new
     @clients.each do |client|
