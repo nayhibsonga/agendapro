@@ -25,14 +25,14 @@ class ResourcesController < ApplicationController
     @resource = Resource.new
     @resource.resource_locations.build
     @resource_categories = ResourceCategory.where(company_id: current_user.company_id).order(:name)
-    @locations = Location.where(company_id: current_user.company_id, active: true).order(:order)
+    @locations = Location.where(company_id: current_user.company_id, active: true).order(:order, :name)
   end
 
   # GET /resources/1/edit
   def edit
     @resource_category = ResourceCategory.new
     @resource_categories = ResourceCategory.where(company_id: current_user.company_id).order(:name)
-    @locations = Location.where(company_id: current_user.company_id, active: true).order(:order)
+    @locations = Location.where(company_id: current_user.company_id, active: true).order(:order, :name)
   end
 
   # POST /resources

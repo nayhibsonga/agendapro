@@ -11,7 +11,7 @@ class ServicesController < ApplicationController
   def index
     if current_user.role_id == Role.find_by_name('Super Admin').id
       @services = Service.where(company_id: Company.where(owned: false).pluck(:id)).order(order: :asc, name: :asc)
-      @service_categories = ServiceCategory.where(company_id: Company.where(owned: false).pluck(:id)).order(:company_id, :order)
+      @service_categories = ServiceCategory.where(company_id: Company.where(owned: false).pluck(:id)).order(:order, :name)
     else
       @services = Service.where(company_id: current_user.company_id, :active => true).order(order: :asc, name: :asc)
       @service_categories = ServiceCategory.where(company_id: current_user.company_id).order(order: :asc, name: :asc)
@@ -19,8 +19,8 @@ class ServicesController < ApplicationController
   end
 
   def inactive_index
-    @services = Service.where(company_id: current_user.company_id, :active => false).order(name: :asc)
-    @service_categories = ServiceCategory.where(company_id: current_user.company_id).order(name: :asc)
+    @services = Service.where(company_id: current_user.company_id, :active => false).order(order: :asc, name: :asc)
+    @service_categories = ServiceCategory.where(company_id: current_user.company_id).order(order: :asc, name: :asc)
   end
 
   def activate
@@ -269,7 +269,7 @@ class ServicesController < ApplicationController
       end
 
       @service.active_service_promo_id = service_promo.id
-      
+
       if @service.save
         @ret_arr << "ok"
         @ret_arr << @service
@@ -283,12 +283,12 @@ class ServicesController < ApplicationController
     else
       #Create a service promo and promos from defaults.
       service_promo = ServicePromo.create(:service_id => @service.id, :max_bookings => 0, :morning_start => params[:morning_start], :morning_end => params[:morning_end], :afternoon_start => params[:afternoon_start], :afternoon_end => params[:afternoon_end], :night_start => params[:night_start], :night_end => params[:night_end])
-      
+
       promo_time = @service.company.company_setting.promo_time
 
       locations = []
 
-      @service.service_providers.each do |service_provider|  
+      @service.service_providers.each do |service_provider|
         if !locations.include?(service_provider.location)
           locations << service_provider.location
         end
@@ -301,7 +301,7 @@ class ServicesController < ApplicationController
       end
 
       @service.active_service_promo_id = service_promo.id
-      
+
       if @service.save
         @ret_arr << "ok"
         @ret_arr << @service
@@ -462,7 +462,7 @@ class ServicesController < ApplicationController
           service_promo.finish_date = def_finish_date
           service_promo.book_limit_date = def_book_limit_date
           service_promo.limit_booking = params[:limit_booking]
-          
+
 
           if service_promo.save
 
@@ -483,7 +483,7 @@ class ServicesController < ApplicationController
 
         @service.active_service_promo_id = nil
         if @service.save
-          
+
         else
           @errors << @service.errors
         end
@@ -525,7 +525,7 @@ class ServicesController < ApplicationController
                 last_minute_promo = LastMinutePromo.where(:service_id => @service.id, :location_id => last_minute_location.id).first
 
                 if !last_minute_promo.nil?
-                  
+
                   last_minute_promo.discount = params[:last_minute_discount]
                   last_minute_promo.hours = params[:last_minute_hours]
 
@@ -551,7 +551,7 @@ class ServicesController < ApplicationController
 
                 end
 
-              
+
             end
 
             @missingLastMinuteLocations.each do |last_minute_location|
@@ -587,7 +587,7 @@ class ServicesController < ApplicationController
 
     else
 
-      @errors << @service.errors      
+      @errors << @service.errors
       array_result[0] = "error"
       array_result[1] = @service
       array_result[2] = @errors
@@ -703,7 +703,7 @@ class ServicesController < ApplicationController
         logger.debug time_promo_services.inspect
 
       end
-        
+
     end
 
 
@@ -746,7 +746,7 @@ class ServicesController < ApplicationController
           logger.debug time_promo_services.inspect
 
         end
-          
+
       end
 
     end
@@ -761,7 +761,7 @@ class ServicesController < ApplicationController
 
 
     #       ServiceProvider.where(:active => true, :location_id => locationId).each do |service_provider|
-            
+
     #         if normalized_search != ""
     #           time_promo_services = service_provider.services.with_time_promotions.search(normalized_search)
     #         else
@@ -803,10 +803,10 @@ class ServicesController < ApplicationController
     #       locations = service_promo.promos.pluck(:location_id).uniq
 
     #       locations.each do |locationId|
-            
+
 
     #           ServiceProvider.where(:active => true, :location_id => locationId).each do |service_provider|
-            
+
     #             if normalized_search != ""
     #               time_promo_services = service_provider.services.with_time_promotions.search(normalized_search)
     #             else
@@ -834,7 +834,7 @@ class ServicesController < ApplicationController
 
     #           end
 
-            
+
     #       end
     #     end
 
@@ -846,9 +846,9 @@ class ServicesController < ApplicationController
     #       service_promo = ServicePromo.find(service.active_service_promo_id)
     #       locations = service_promo.promos.pluck(:location_id).uniq
     #       locations.each do |locationId|
-              
+
     #           ServiceProvider.where(:active => true, :location_id => locationId).each do |service_provider|
-            
+
     #             if normalized_search != ""
     #               time_promo_services = service_provider.services.with_time_promotions.search(normalized_search)
     #             else
@@ -985,7 +985,7 @@ class ServicesController < ApplicationController
 
   def admin_update_promo
     #respond_to do |format|
-      
+
     #end
   end
 

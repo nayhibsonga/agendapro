@@ -1902,11 +1902,9 @@ function loadServiceStaff (service_id) {
     providerSelector.empty();
 
     if (providerPreference != 1) {
-      if (providers.length > 1) {
-        providerSelector.append(
-          '<option value="0">Sin Preferencia</option>'
-        );
-      }
+	    providerSelector.append(
+	      '<option value="0">Sin Preferencia</option>'
+	    );
     }
     if (providerPreference != 2) {
       $.each(providers, function (key, provider) {
